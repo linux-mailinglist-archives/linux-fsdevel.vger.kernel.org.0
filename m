@@ -1,152 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-41313-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41314-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA9E7A2DCB3
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 11:56:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6EABA2DE32
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 14:56:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1636018868C5
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 10:56:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78C723A5AF0
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Feb 2025 13:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521E6190692;
-	Sun,  9 Feb 2025 10:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C831DE889;
+	Sun,  9 Feb 2025 13:56:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XoismmyF"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=truemaisha.co.tz header.i=@truemaisha.co.tz header.b="Xui8yHEN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from server-598995.kolorio.com (server-598995.kolorio.com [162.241.152.247])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7EF1684B4;
-	Sun,  9 Feb 2025 10:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A8A1DE3BE
+	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Feb 2025 13:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.241.152.247
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739098575; cv=none; b=rlKhosSqRH9brfgfPJlupqeooRm54TVXwK82qblXm9F/vgJOmDf/0+DoxtLW5i+i+HgMaXrtUqZCeqVnddocHj3jjl9eGgzC2+peyvz7deSdkt8xD6mW+iD0aFlLsGJcnBewAXj5nMrRWtsrr6ukK2ulr95OtxrPyhaOr3JPjSY=
+	t=1739109384; cv=none; b=OPWEPr6K/w/uG6D502Fthyb/Rx0C1Kn+216AxjSW2crBRYYIzvANLxz/6jY7kLF+jFetEURSy9ZMUvsqUXYyHCMHckzzeoU35XAeaSn5oRYow0NgyPfJYZcAaal/HLd56zzQYM9Lu/EH9SuONJYe1SDCzFE1G7DmB/D6XatDx8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739098575; c=relaxed/simple;
-	bh=LNRBaLU6n3SSswnYQMTXgXBJNyg5anDMPmBQtlZCdYs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pnoZo5yCgA80BmBqGSHMw5BibOExXQtO4cG25JN25G5e6Li5j5xFqtKhJl8WHh/mWwMOpbR61Vfr1qF1ZsPPzEh7xE7n7ovg8iqBaGBLs9eMwnW4vI5bt2++CDpS0uAgNXSk6AWRyw79O5iVqq+0SEY8tMuwfuIovp7S5hWaOc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XoismmyF; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38dc5764fc0so2264903f8f.3;
-        Sun, 09 Feb 2025 02:56:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739098572; x=1739703372; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iuqNM4OrcH8qX6ei9TmPLzMmYDM1c1NblMlEWwW3XBc=;
-        b=XoismmyFKKSKa7E1YzfQuhpiPD92kCgiZNPfrsQ0tViJfokpU7UtIc7og0PklWLpv8
-         lR22xTWea/qpM37AfmhyMGFDsRcVMO1QpXb97rlnrR5Z53in/GdpS1xF7TwImEVooPHi
-         DZe5fzQJh3k5TtyoAsq6MT8Juw+/ZBzeSH3ClYm8f1sc0eoOeJGaAuIQdUgV0GQ3vCu1
-         i+emfb+zvrF0SJVfuTYjO3ArYDtb/YHksqw+CCXCXJoOrpUNNJItRdq6Z7Bf46iHerka
-         O/Yxg58nL6VsNwGgafVW+c8nR4/d0Bujdl0QG8Qv04s8qfSx+QJqWuck1eEbjOHMbgix
-         bAzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739098572; x=1739703372;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iuqNM4OrcH8qX6ei9TmPLzMmYDM1c1NblMlEWwW3XBc=;
-        b=jvxOk+yaVOvEmR4teGrkWNUd3yIclnVxzfe+PMANI659THI+CtLcFJOlu37z7aBtMa
-         kExeXPw4TZA2nXkzRhkXhMqJ46Ywoeu/6OeqKDwEmvq3Uc997suz7mAsOkyAFRteeR/H
-         Wmnx0zPEAckp3p/Ltr4pXFRTY9O/3Y4ZzErDTVcPWwiNxsLuRoI38RI/65I6YZuTzvmn
-         +GGZYoRnSHkd60esngjIvQjPxPD0MOeNg170bQkI1iIhhzwiDAd3lgsBjEhbNo6ssOG1
-         bDjVp6HnU8dyKbBQ1vJw3T0NXe+nBhJ0nsY5OBaq3oYZXM8Qppw/kagxYVxN7NvdSyra
-         eZQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUW5xvIkkI5HdHjovlOgGq3BcfPe/jLrHkow91tFm8YpP1pucpaEzPUOryJUfFC3wghcPTlpzsU78eV/N4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWaiXgvPWkPN/gwufyw2WQTEnAIorjrqByna1n0b89ZZcc4Q14
-	CbQN4ctruKzXXQNIB0XGIzLfuQmvzTzBzyEZQ+uNkZyfXR565gBKXsZf9Q==
-X-Gm-Gg: ASbGncvmU4lzfMGsZW6p/rev9CWK/6EBG6YXwuMTlxb4ZmAMr5NSGqzOdYlJflnIL+p
-	iRnCHBhEPn0mLu0Ntg4i/4aPSxoznbPN/lOT1iB92ccZhZeC6Op/ycdBZF2Cc1ZiDwgUr8ft2kF
-	wVOvfJhdfUJN2aFFbv5jLC0MOHOGl02UNsgzduusKUphPPmhF9FtIjBaDLRAo07ux/uENDvAwbS
-	ZTC2XrxMfodwqHhhp4/qdvBFaj8ZMPxLHjlYcvARNDMvaPF23/Dk2KoBWT2X6tCZh2V+uJqTxSa
-	ulfagsD7T+liTbSwuWsq+AM/YpbiC2uYrLZkxBVbME0arjEBzi6BvcDXEmOts+n6mSKzO2QS
-X-Google-Smtp-Source: AGHT+IG5+0w3d+vA8DrljBFuEDJlBTRXom8zYj1WGrZaU1rYNUcVtb+uklcUd37Ibmt6WpDnmBRu/w==
-X-Received: by 2002:a05:6000:1549:b0:38d:d0ca:fbad with SMTP id ffacd0b85a97d-38dd0cb7163mr4534918f8f.14.1739098572307;
-        Sun, 09 Feb 2025 02:56:12 -0800 (PST)
-Received: from snowdrop.snailnet.com (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dcb781bdcsm6325791f8f.23.2025.02.09.02.56.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Feb 2025 02:56:11 -0800 (PST)
-From: David Laight <david.laight.linux@gmail.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Laight <david.laight.linux@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kees Cook <kees@kernel.org>
-Subject: [PATCH 2/2] fs: Use masked_user_read_access_begin()
-Date: Sun,  9 Feb 2025 10:56:00 +0000
-Message-Id: <20250209105600.3388-3-david.laight.linux@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250209105600.3388-1-david.laight.linux@gmail.com>
-References: <20250209105600.3388-1-david.laight.linux@gmail.com>
+	s=arc-20240116; t=1739109384; c=relaxed/simple;
+	bh=gl4+7vNxgV9+JzZtw7EthQ6aGDgi0WVn3wQV/lnKiyo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j+5UkYPfh3QtfJuuDSKPfT84/j6+sF1hGDfu3sXwbCvStNolz2d50yoppJHn5r5XzUSpf01PEPw/VMrAZJWiPiBN2iX8lvC1pQGx7IWNVS/ULe4OMqK2FRdcxH946CTN1GFhFmO2uMM7mh0OMFK+97oWQx1QgIAJoZor9bWohWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=truemaisha.co.tz; spf=pass smtp.mailfrom=truemaisha.co.tz; dkim=pass (2048-bit key) header.d=truemaisha.co.tz header.i=@truemaisha.co.tz header.b=Xui8yHEN; arc=none smtp.client-ip=162.241.152.247
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=truemaisha.co.tz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=truemaisha.co.tz
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=truemaisha.co.tz; s=default; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Message-ID:Date:Subject:To:From:Reply-To:Sender:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=gl4+7vNxgV9+JzZtw7EthQ6aGDgi0WVn3wQV/lnKiyo=; b=Xui8yHEN72jWXNNpUKaPNi8ntD
+	grsZ6aC9BM02uU0GEmnDEqduqdshwWniwKlwg8c1O7EP+CSJ9pAo+4+jjEtiYt8KUZbReoLQlPDb/
+	GJvjWZ4TWN7cDMKFN/dwEdYAmyBzx+HxvgmSQpx0h6FLoQN/IAMgpytShGbs+hauP1aezeiP8YEwy
+	/o/QSxyIQ5eJyEjU9kEIw8vUhMkb5PF9P9UO8SBlvBj+dGzm7uTjQuSkKzApqZGIwRSPUNjhQZip4
+	X2UQk5ePU7HXkOxLc61MqpRQouI6Vb8r3s9opovdY4+FKPImVxp9p2Q6sKzNw7i6SNwYVT2BQtPWO
+	dB+JyenA==;
+Received: from [74.208.124.33] (port=53269 helo=truemaisha.co.tz)
+	by server-598995.kolorio.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <chrispinerick@truemaisha.co.tz>)
+	id 1th7nI-0008Ay-15
+	for linux-fsdevel@vger.kernel.org;
+	Sun, 09 Feb 2025 07:56:20 -0600
+Reply-To: dsong@aa4financialservice.com
+From: David Song <chrispinerick@truemaisha.co.tz>
+To: linux-fsdevel@vger.kernel.org
+Subject: Re: The business loan- 
+Date: 09 Feb 2025 13:56:21 +0000
+Message-ID: <20250209095302.E452C1917A2F0CBF@truemaisha.co.tz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server-598995.kolorio.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - truemaisha.co.tz
+X-Get-Message-Sender-Via: server-598995.kolorio.com: authenticated_id: chrispinerick@truemaisha.co.tz
+X-Authenticated-Sender: server-598995.kolorio.com: chrispinerick@truemaisha.co.tz
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-Commit 2865baf54077a changed get_sigset_argpack() to use
-masked_user_access_begin() and avoid a slow synchronisation instruction.
+Hello,
 
-Replace the rather unwieldy code pattern with
-masked_user_read_access_begin().
-Make the same change to get_compat_sigset_argpack().
+My name is David Song, at AA4 FS, we are a consultancy and
+brokerage Firm specializing in Growth Financial Loan and joint
+partnership venture. We specialize in investments in all Private
+and public sectors in a broad range of areas within our Financial
+Investment Services.
 
-Use masked_user_write_access_begin() in do_sys_poll() to avoid
-the size calculation and conditional branch for access_ok().
+ We are experts in financial and operational management, due
+diligence and capital planning in all markets and industries. Our
+Investors wish to invest in any viable Project presented by your
+Management after reviews on your Business Project Presentation
+Plan.
 
-Code generated for get_sigset_argpack() is identical.
+ We look forward to your Swift response. We also offer commission
+to consultants and brokers for any partnership referrals.
 
-Signed-off-by: David Laight <david.laight.linux@gmail.com>
----
- fs/select.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ Regards,
+David Song
+Senior Broker
 
-diff --git a/fs/select.c b/fs/select.c
-index 7da531b1cf6b..abe2c1a57274 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -776,9 +776,7 @@ static inline int get_sigset_argpack(struct sigset_argpack *to,
- {
- 	// the path is hot enough for overhead of copy_from_user() to matter
- 	if (from) {
--		if (can_do_masked_user_access())
--			from = masked_user_access_begin(from);
--		else if (!user_read_access_begin(from, sizeof(*from)))
-+		if (!masked_user_read_access_begin(&from, sizeof(*from)))
- 			return -EFAULT;
- 		unsafe_get_user(to->p, &from->p, Efault);
- 		unsafe_get_user(to->size, &from->size, Efault);
-@@ -1009,7 +1007,7 @@ static int do_sys_poll(struct pollfd __user *ufds, unsigned int nfds,
- 	fdcount = do_poll(head, &table, end_time);
- 	poll_freewait(&table);
- 
--	if (!user_write_access_begin(ufds, nfds * sizeof(*ufds)))
-+	if (!masked_user_write_access_begin(&ufds, nfds * sizeof(*ufds)))
- 		goto out_fds;
- 
- 	for (walk = head; walk; walk = walk->next) {
-@@ -1347,7 +1345,7 @@ static inline int get_compat_sigset_argpack(struct compat_sigset_argpack *to,
- 					    struct compat_sigset_argpack __user *from)
- {
- 	if (from) {
--		if (!user_read_access_begin(from, sizeof(*from)))
-+		if (!masked_user_read_access_begin(&from, sizeof(*from)))
- 			return -EFAULT;
- 		unsafe_get_user(to->p, &from->p, Efault);
- 		unsafe_get_user(to->size, &from->size, Efault);
--- 
-2.39.5
+AA4 Financial Services
+13 Wonersh Way, Cheam,
+Sutton, Surrey, SM2 7LX
+Email: dsong@aa4financialservice.com
 
 
