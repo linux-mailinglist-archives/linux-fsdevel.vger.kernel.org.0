@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-41392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55522A2ECA9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 13:39:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3838A2ECAB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 13:39:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D98C0163954
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 12:39:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 442D53A47B1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 12:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9F4222577;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB24B1BE23E;
 	Mon, 10 Feb 2025 12:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CijJy3qF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hnKKrWah"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D1D1BE23E;
-	Mon, 10 Feb 2025 12:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215DE222575;
+	Mon, 10 Feb 2025 12:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739191151; cv=none; b=Guf22+57SySPK+DJKH51TV7FmcDL6gpP/ER/o58fWK6FamgIxZouxSeLfRrdo5OTBvRQOvsYvK2RbPgzcWE2BUMhaShX1Y2Dus0zLByxnowcExAWdj3WGwNDWJ5EKkOYUMCaYOduaKKoIrbe9LHMadAGGxcpuTthAFlzjrNyKyE=
+	t=1739191152; cv=none; b=Tm1mL07qrHUQGvW4p+XcwKrT6waVeWDvnBYofF/KxTIUju9mEjR05n0ko430ly29/EtFhWcGkBfT4MB9B9MbKyUfU/VaFntzsloPPmli9y7sxjmRBo3pbIZmRqItlx6xnExrWMz/orLJwccbpa19YsRpu8AU7mvTNtkwxUJGN+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739191151; c=relaxed/simple;
-	bh=XCL+HvyLM4d7o9BC3lETgD3TuRng7yro8rHN4ZTChAk=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AnrxK0Oxa5SFKnRGgYWB31wq9CbkUdJqXEyTNQAK/JkzPLf0adk6+WQCTytRZfNdm9KUSWvIIJW7Ii0LkgYmoOf9oWTjERhUMssW1+566gDZOWSMJ2ZuJn744VkfamecvDX+bUMJW4Ma5auCUkQS/YlyrllVu/gfDJyfG/5kAZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CijJy3qF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 808DAC4CED1;
-	Mon, 10 Feb 2025 12:39:08 +0000 (UTC)
+	s=arc-20240116; t=1739191152; c=relaxed/simple;
+	bh=WBQB0hQsS8wj6sXR0LdPoQXO+BSkN20LwUKgMV/+DiY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=TgcoRbSP7DUakUlm5XZ9LCN2QpHvMrsxvc/V/SN2UCWNs0YlummTIennAVDVwty/7/KNXDxMBJ7kC4AP8Dj5ay1MHsc5A7v1WVZsOsGApsTPWURPMLJByFg8F4ru6YwhZWGtZDI9B+Vd5QI+RvQwS4DjDCUAmOt1l8XWz7SB/FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hnKKrWah; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C660C4CEE5;
+	Mon, 10 Feb 2025 12:39:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739191150;
-	bh=XCL+HvyLM4d7o9BC3lETgD3TuRng7yro8rHN4ZTChAk=;
-	h=From:Subject:Date:To:Cc:From;
-	b=CijJy3qFMykan8vg9i0f6bdgsYaq0H+v1hyU6bVLUM3Y3Jv2d690WKmpFy8yVqZim
-	 QR2PnKDhoQqoy5UskonQAbIMbhfO5OAakk1nZvM0GVxaVnJTUloo829q95IjiNyGi+
-	 MC1Z07ytclvV5350aNm8jm/FYCGD/ZmB/O+PsSuE1FeiCbFYphtvzL3yXKGJs+55v0
-	 xWOIMZFjTJkvHmvocExrZDcKjkWP4o4f11J9VICo+nD6MaMpt3AGj7dInnScNmzn/l
-	 Utm3iiRP0bgw2/n4KFTMuLYhmoqfqj97i/+RRXubGjY5r/hZDyTsT2Cku4kSI75LU2
-	 pBR560sb5qACg==
+	s=k20201202; t=1739191151;
+	bh=WBQB0hQsS8wj6sXR0LdPoQXO+BSkN20LwUKgMV/+DiY=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=hnKKrWah+jp5rQmyRNET7EBrrGDFtp2IC+HwRIDCxTOgnyTsjcD6aOaNWylgXIAzz
+	 B8zxjcnvWm3ARn5sJXeyaxJfiV5yrUJEimSGHZswEwhCSGjWMNUXCYdkpzGdSN9iXy
+	 4022e1LiRjffbBKrIiY8Of6a6DunPgWNbGR8qwQZecYPXCsMV5n65uihXNhVkFvOfN
+	 F+ChdcwAr6RGfDm5BYMnkzPbFWog+2p7lo6ub5kRA1rFyMXeuTun0UNvotp6LDsIEF
+	 terWaWex7Ti7WUA5nmdzocClXx8YPGaet11Hi0qLhwdD3pUQ5fzCVcc4QjZvPeFM5D
+	 mVk23RZsCYt5Q==
 From: Christian Brauner <brauner@kernel.org>
-Subject: [PATCH v2 0/2] ovl: allow O_PATH file descriptor when specifying
- layers
-Date: Mon, 10 Feb 2025 13:38:58 +0100
-Message-Id: <20250210-work-overlayfs-v2-0-ed2a949b674b@kernel.org>
+Date: Mon, 10 Feb 2025 13:38:59 +0100
+Subject: [PATCH v2 1/2] fs: support O_PATH fds with FSCONFIG_SET_FD
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,50 +52,64 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGLzqWcC/3WOyw6DIBQFf8WwLoaHQttV/6NxgXhVooXmYmiN8
- d+L7rucxcw5G4mADiK5FxtBSC664DOIS0HsaPwA1HWZiWCiZoJp+gk40ZAAZ7P2kcpr3954rbr
- KViRLb4Tefc/gs8ncmgi0RePteGReJi6AZVIlryhafiiji0vA9byQ+CH+XUucMqo4v2kFWkotH
- xOgh7kMOJBm3/cf0OPSdNAAAAA=
-X-Change-ID: 20250207-work-overlayfs-38fb9156d4c4
+Message-Id: <20250210-work-overlayfs-v2-1-ed2a949b674b@kernel.org>
+References: <20250210-work-overlayfs-v2-0-ed2a949b674b@kernel.org>
+In-Reply-To: <20250210-work-overlayfs-v2-0-ed2a949b674b@kernel.org>
 To: linux-unionfs@vger.kernel.org
 Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
  Mike Baynton <mike@mbaynton.com>, linux-fsdevel@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-d23a9
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1137; i=brauner@kernel.org;
- h=from:subject:message-id; bh=XCL+HvyLM4d7o9BC3lETgD3TuRng7yro8rHN4ZTChAk=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSv/Jxz++mKSbO/XzixfLnhpKSVBk0Xpyyw13FtDN9+M
- 0Xjjad9dEcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBEjN8z/NPcFPHD5/abuct/
- nPhayxPEN+tqXPpX41ixOV+lyuY4tBxnZNj8u63WvHW9y2s5tbeCQd/0L34wEL4knPPIbdsu+Sq
- ltzwA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1420; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=WBQB0hQsS8wj6sXR0LdPoQXO+BSkN20LwUKgMV/+DiY=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSv/JwzLd5D8t26L1cDD7R9cF32qez/749X0201HrHJ8
+ Fnf+i+o2FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjARf1aGfyqB6clrolyvrz7W
+ 8GHdX+8zJ+xTPjbmVHmVNbsWBvklhjD84Tzgnb5OSv1/Wsi2FWtlOd/t7J8mWCr1j6Hm1ganhdI
+ mrAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Allow overlayfs to use O_PATH file descriptors when specifying layers.
-Userspace must currently use non-O_PATH file desriptors which is often
-pointless especially if the file descriptors have been created via
-open_tree(OPEN_TREE_CLONE). This has been a frequent request and came up
-again in [1].
+Let FSCONFIG_SET_FD handle O_PATH file descriptors. This is particularly
+useful in the context of overlayfs where layers can be specified via
+file descriptors instead of paths. But userspace must currently use
+non-O_PATH file desriptors which is often pointless especially if
+the file descriptors have been created via open_tree(OPEN_TREE_CLONE).
 
-Link: https://lore.kernel.org/r/fd8f6574-f737-4743-b220-79c815ee1554@mbaynton.com [1]
-
+Fixes: a08557d19ef41 ("ovl: specify layers via file descriptors")
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
-Changes in v2:
-- Unconditionally enable O_PATH file descriptors.
-- Link to v1: https://lore.kernel.org/r/20250207-work-overlayfs-v1-0-611976e73373@kernel.org
+ fs/autofs/autofs_i.h | 2 ++
+ fs/fsopen.c          | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
----
-Christian Brauner (2):
-      fs: support O_PATH fds with FSCONFIG_SET_FD
-      selftests/overlayfs: test specifying layers as O_PATH file descriptors
+diff --git a/fs/autofs/autofs_i.h b/fs/autofs/autofs_i.h
+index 77c7991d89aa..23cea74f9933 100644
+--- a/fs/autofs/autofs_i.h
++++ b/fs/autofs/autofs_i.h
+@@ -218,6 +218,8 @@ void autofs_clean_ino(struct autofs_info *);
+ 
+ static inline int autofs_check_pipe(struct file *pipe)
+ {
++	if (pipe->f_mode & FMODE_PATH)
++		return -EINVAL;
+ 	if (!(pipe->f_mode & FMODE_CAN_WRITE))
+ 		return -EINVAL;
+ 	if (!S_ISFIFO(file_inode(pipe)->i_mode))
+diff --git a/fs/fsopen.c b/fs/fsopen.c
+index 094a7f510edf..1aaf4cb2afb2 100644
+--- a/fs/fsopen.c
++++ b/fs/fsopen.c
+@@ -453,7 +453,7 @@ SYSCALL_DEFINE5(fsconfig,
+ 	case FSCONFIG_SET_FD:
+ 		param.type = fs_value_is_file;
+ 		ret = -EBADF;
+-		param.file = fget(aux);
++		param.file = fget_raw(aux);
+ 		if (!param.file)
+ 			goto out_key;
+ 		param.dirfd = aux;
 
- fs/autofs/autofs_i.h                               |  2 +
- fs/fsopen.c                                        |  2 +-
- .../filesystems/overlayfs/set_layers_via_fds.c     | 65 ++++++++++++++++++++++
- 3 files changed, 68 insertions(+), 1 deletion(-)
----
-base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-change-id: 20250207-work-overlayfs-38fb9156d4c4
+-- 
+2.47.2
 
 
