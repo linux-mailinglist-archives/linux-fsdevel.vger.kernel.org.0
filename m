@@ -1,71 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-41357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87853A2E37B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 06:21:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24D97A2E37C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 06:21:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB3F67A2E80
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 05:20:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C23D0165C09
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 05:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0839D18C008;
-	Mon, 10 Feb 2025 05:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0E9192580;
+	Mon, 10 Feb 2025 05:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidreaver.com header.i=@davidreaver.com header.b="k6uHerG0";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ujMgz1H9"
+	dkim=pass (2048-bit key) header.d=davidreaver.com header.i=@davidreaver.com header.b="eN+YVGFH";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="y7XXu+U2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7943213FD86;
-	Mon, 10 Feb 2025 05:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39F0189F20;
+	Mon, 10 Feb 2025 05:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739164881; cv=none; b=dsB54G+vrze2JGtERp+1hsYZhB2vAOcLtFpMc31JHPgVKxXCi8AV7WxKiEVgzMq0kvhCU6AvKPI3BKIWvXgWb/RosI6MWjuZ+Gxk4N7LB/f/Nnec5s0StQytnGemrm5EdhQ0LM67pUBkkMVWNxJGXFJRh2svdSF1uJzLRHvkwAg=
+	t=1739164883; cv=none; b=tPCPkqQYm28e2Me67CMBmXYtr7h6htNAirn4MP0EVtpdRla+RvxU4nyNFUe04zQPyNo5yw+jcvNETGaxfzB9GdACEXGVAgQJJnL0iiNfGh2stJ3B3fPBg1gUF1bFMCdhwMm+bsZavi+qAVRIENVNH9fxBEclwTYIALGUNqgSiTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739164881; c=relaxed/simple;
-	bh=0KxQId9bTKtoK2s44heydkxZsinvfosJaAjLqTmIy8M=;
+	s=arc-20240116; t=1739164883; c=relaxed/simple;
+	bh=2vSMEoX0Evv+1Tz969k9GK0fXp0LkjywetRjgGkKadU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dC7aOEbiRpdp3asWZGxZ76FbSgyaoKE04X+rdYpl2afcCtEWjk1KVuAC5WFlmj/pQDj0mMq3NDt8DA3RXsMMr0MqaXXtN9oYi9iursdRuLxFy8VzFAdKXUjALOhA9tuWxNRxiNNfY75vwCv/fLevPWV74rDFuvxvt2uNAICiLj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidreaver.com; spf=pass smtp.mailfrom=davidreaver.com; dkim=pass (2048-bit key) header.d=davidreaver.com header.i=@davidreaver.com header.b=k6uHerG0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ujMgz1H9; arc=none smtp.client-ip=103.168.172.151
+	 MIME-Version; b=qt5CZLaOR8rIsh90I/YyUqh8kkdqmd/b5qphoYotUtr6737oGcI/x851/t44vW72SaQhitAA2cIEJ0i94x6F5yqydO016peKOxzdlLxH7i69faMWNKFGa/vGNGhsJDKtDK9tlbC9XqBV63guB3vwNCTR9sT1O/2JXJPktMZ311s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidreaver.com; spf=pass smtp.mailfrom=davidreaver.com; dkim=pass (2048-bit key) header.d=davidreaver.com header.i=@davidreaver.com header.b=eN+YVGFH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=y7XXu+U2; arc=none smtp.client-ip=103.168.172.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidreaver.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=davidreaver.com
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfout.phl.internal (Postfix) with ESMTP id 56F94138014C;
-	Mon, 10 Feb 2025 00:21:18 -0500 (EST)
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.phl.internal (Postfix) with ESMTP id 00D6F138010C;
+	Mon, 10 Feb 2025 00:21:21 -0500 (EST)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Mon, 10 Feb 2025 00:21:18 -0500
+  by phl-compute-09.internal (MEProxy); Mon, 10 Feb 2025 00:21:21 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=davidreaver.com;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1739164878; x=
-	1739251278; bh=GXDpGKMgcY+JAEBNv/Xlu0NnEc1xzI1Njjd5bVIHNog=; b=k
-	6uHerG0uAjXSLWOUKvYLIp15nyfW55xmLcgDs4VenhADqANihgDDofcaAxs2/An+
-	sybw63Ohs7W3j08QSOtzHonkFwXrtO6kMX9hI3D0Ishn+CRKW/VKso3T1c7O50WA
-	c5+UHq2X0f57qjfd8oYImQuofrSE9PgLDIWQydDwV5aRcTM1ZGzTdgYOAvxmjQCh
-	1YJKOgPjn8pDT6Ug//I3eXFzpBqM5QWmaUFfJbsC/boDjW3Co9KscoQHqD4gwkLO
-	IDW7cwpIzAhJdHLVwlu3VkkWlYai6l4MiwEMYPA9HiaOuf8YbQ0TkZgFZMsijuKc
-	9qypXnja74uMRwVaUAdsA==
+	:reply-to:subject:subject:to:to; s=fm1; t=1739164880; x=
+	1739251280; bh=/M2Nru2NZro488gTVTzJhmdDjcvACD8WWOsTwksoVh4=; b=e
+	N+YVGFHiY3Y/gF/cpS0Mh+bC4gVAgX8HwHHQonFV/uxvYtGd+2aVSrSfK8w7raCb
+	ZdQlJknLRyndLWN7N8zabhZ/I6i1grQEWBe1UsJ0+oAmbA5XUgmzgAH1+4Oti9me
+	QK6eIYpYqyKoJvX99CsIMXWAUkISM3G9mguW6+1GN5WiI03SnUIy/jTuGozvkYjB
+	kHkGh2RtOHoEzwgyd/jgf3WS9qq3VMr4NSLzMMAaszNyna1tIjGmT1rvlGK0WV2L
+	ZTn9/Xn7sRTgHePIRciGNUXwzcnVcIXy10mx9UomSHernqT4BTSmp+7nsKbdCP+W
+	ce/7g+PUgAw6YXZ7FCGXg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1739164878; x=1739251278; bh=G
-	XDpGKMgcY+JAEBNv/Xlu0NnEc1xzI1Njjd5bVIHNog=; b=ujMgz1H9c9dR6nVwm
-	S/ULZTFRdroJX9QnzHpZ4GfMFwqhLbAI2ln8N6g4YhFb6Hp7EP5ZOlWeJYiEHbHR
-	BDh4DbK8zOftSORlXZR2HOc4c+7EQRD0YonkGBIpI7FPP2Fi1jv70gbJOrBFX9Q8
-	W4X0VPUSNoukzV1OW/5z04qhWpOnNyFFfs2vB9elNi0JPJhAeZIDEOBZKxPo+AQM
-	pjW+7e8qVqIbseDOoA0+BW/7daM4fcWCX3cWlnD9WwV9wyOYd8zAVI4hKr83CKFK
-	LDtugryCYfrbXp9V7KV1W2zqUUSQBNDnGV6PrB4VJl7odb5thFxKZEVoJTkuxb3C
-	RZ5Xg==
-X-ME-Sender: <xms:zoypZ5eOHdGqreM_SQWIdCRpG9QQqMCWcMVaYJz9Qc1-dH-nAeHDxw>
-    <xme:zoypZ3N820R1HpK-lXkfDYvWfrzXYwJ3EuRwBHwFGV91KBX-aQAHTaIiARVPMRJYv
-    6ohlzx1j-nEmo-V8GY>
-X-ME-Received: <xmr:zoypZyinp-79rcTu1V3qR8YUMIJKZfHWhVsQ1GcjrvZksDOFOFjR4kDjiq_1DTihvK2ySsvafhvfKKM6pwXsCJiReau3MlxETyzpQ7MYJlFY9Fk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefjedulecutefuodetggdotefrod
+	:x-me-sender:x-sasl-enc; s=fm3; t=1739164880; x=1739251280; bh=/
+	M2Nru2NZro488gTVTzJhmdDjcvACD8WWOsTwksoVh4=; b=y7XXu+U2Z0pF9JM2I
+	YGsbX662Nw6O8Ef2ZPF3G3KfC/cBGymONrxgZrIR/mL01L4d45tNbBFnRJrRVYYL
+	66/LBbbqejibI3VPjo8lBLjXTA9WQFOuI858pznRMhJQ53B/uXj6Vw/JIMr7/bOc
+	N9zYv6xv98dlynRlMMha95G5YZTtSOOY9b/BqYi3YiftnIWKgNy6VShbpqHaVtBx
+	DKf+MkFtV8G71Zsj8wGj8mlzzflN6MLjzXGfzw4h24JiK3gy2UJHYNjUMVKw4euE
+	ebc2liN9UEPHfcFOXV8/h0nsXe6mqTZFXPr1vq7KDXtxGAf918Hi7YMU4LiAOlAQ
+	D4a0Q==
+X-ME-Sender: <xms:0IypZ5EQINYkMcUZJK17vmn5CrBuS0L1k1KcE2Zt4klW7F9NQoKRUw>
+    <xme:0IypZ-VvK0YZAeYRmkQZoL3a_bJZ9n4Z-c5lNkuOqzJIK-mxt16bFq0na3mHyyI7b
+    cCIdHwpXC8iiWGzhEA>
+X-ME-Received: <xmr:0IypZ7K6gpvON7wYtxXDBvfS9AXWwXkS4fI1SJD68z_8I4LUumuULEKTzSw44V2nGI83TZmB74r5N8zs7CcE8fY_og68c6XO9gD4TchoIO03dqs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefjedvtdcutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
     uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
     hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddt
@@ -81,14 +81,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefjedulecutefuodetgg
     gvlhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdr
     uhhkpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlh
     drohhrghdprhgtphhtthhopegtohgttghisehinhhrihgrrdhfrh
-X-ME-Proxy: <xmx:zoypZy-IU0u4T3DONKl-ZJYVzvb-9LzTzlXooDV6bm7ayDQ1SVixNw>
-    <xmx:zoypZ1v6gqhSVOednqTFibVOLiiVSYYh9hlHyggFacpRWz-03IOsSA>
-    <xmx:zoypZxH3fKNcsM2I7yAkaL-SKQNkorxUikpvCyvkc8FfuuVKTW9hIA>
-    <xmx:zoypZ8MJeNb1m44uStnF-8FsyqkZAciLkYChp6Bn02dB4txuFLbyxA>
-    <xmx:zoypZ2nZ2PD2GZlXKZJSiUCkFtc1uQaXitbeFcjDEowzomtw_JZ_iKnv>
+X-ME-Proxy: <xmx:0IypZ_HVYGe_UJ_lfrg7oQ81Mvcx1xnWVu2M_G1DB4VvuudneeastA>
+    <xmx:0IypZ_Vh4XhuoTFEune1QNdJJwF9EPE7udYUnJPqvnwf7ECuu6z_YA>
+    <xmx:0IypZ6Nvuzrn71dUm7n6oN4yv9Mbc_tlKYnTF-ZhgHGc8bz7E7i8yg>
+    <xmx:0IypZ-2L_B4aftB5ye4axSbl9dcGiGFm_C2EmljOaNN9UXZqreceVQ>
+    <xmx:0IypZ4NbaEcdiw1vFe-px8kM2gDBIC3qNFsp3mNoWb07uggKuqnFiW5_>
 Feedback-ID: i67e946c9:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 10 Feb 2025 00:21:16 -0500 (EST)
+ 10 Feb 2025 00:21:19 -0500 (EST)
 From: David Reaver <me@davidreaver.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	"Rafael J . Wysocki" <rafael@kernel.org>,
@@ -100,9 +100,9 @@ Cc: David Reaver <me@davidreaver.com>,
 	linux-fsdevel@vger.kernel.org,
 	cocci@inria.fr,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 1/6] debugfs: Add temporary "#define debugfs_node dentry" directives
-Date: Sun,  9 Feb 2025 21:20:21 -0800
-Message-ID: <20250210052039.144513-2-me@davidreaver.com>
+Subject: [RFC PATCH 2/6] debugfs: Add helper functions for debugfs_node encapsulation
+Date: Sun,  9 Feb 2025 21:20:22 -0800
+Message-ID: <20250210052039.144513-3-me@davidreaver.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20250210052039.144513-1-me@davidreaver.com>
 References: <20250210052039.144513-1-me@davidreaver.com>
@@ -114,44 +114,123 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add some temporary "#define debugfs_node dentry" directives to facilitate
-migrating debugfs APIs from dentry to a new opaque descriptor,
-debugfs_node. Subsequent commits that replace dentry with debugfs_node rely
-on these #defines until the final commit in this series removes them.
-
-This is also added to dcache.h, right below struct dentry, so it is
-available where dentry is transitively included.
+Once debugfs_node becomes a struct, users will need helper functions since
+direct access to the underlying dentry will no longer be possible. This
+commit introduces these helpers, which will be used in the automated
+Coccinelle conversion.
 
 Signed-off-by: David Reaver <me@davidreaver.com>
 ---
- include/linux/dcache.h  | 2 ++
- include/linux/debugfs.h | 2 ++
- 2 files changed, 4 insertions(+)
+ fs/debugfs/inode.c      | 38 ++++++++++++++++++++++++++++++++++++++
+ include/linux/debugfs.h | 41 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 79 insertions(+)
 
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index 4afb60365675..4b0c11cd3d50 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -127,6 +127,8 @@ struct dentry {
- 	} d_u;
- };
+diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+index 75715d8877ee..6892538d9d49 100644
+--- a/fs/debugfs/inode.c
++++ b/fs/debugfs/inode.c
+@@ -353,6 +353,44 @@ struct dentry *debugfs_lookup(const char *name, struct dentry *parent)
+ }
+ EXPORT_SYMBOL_GPL(debugfs_lookup);
  
-+#define debugfs_node dentry
++char *debugfs_node_path_raw(struct debugfs_node *node, char *buf, size_t buflen)
++{
++	return dentry_path_raw(node, buf, buflen);
++}
++EXPORT_SYMBOL_GPL(debugfs_node_path_raw);
 +
- /*
-  * dentry->d_lock spinlock nesting subclasses:
-  *
++struct debugfs_node *debugfs_node_get(struct debugfs_node *node)
++{
++	return dget(node);
++}
++EXPORT_SYMBOL_GPL(debugfs_node_get);
++
++void debugfs_node_put(struct debugfs_node *node)
++{
++	dput(node);
++}
++EXPORT_SYMBOL_GPL(debugfs_node_put);
++
++struct inode *debugfs_node_inode(struct debugfs_node *node)
++{
++	return d_inode(node);
++}
++EXPORT_SYMBOL_GPL(debugfs_node_inode);
++
++struct debugfs_node *debugfs_node_from_dentry(struct dentry *dentry)
++{
++	if (dentry->d_sb->s_op == &debugfs_super_operations)
++		return dentry;
++	return NULL;
++}
++EXPORT_SYMBOL_GPL(debugfs_node_from_dentry);
++
++struct dentry *debugfs_node_dentry(struct debugfs_node *node)
++{
++	return node;
++}
++EXPORT_SYMBOL_GPL(debugfs_node_dentry);
++
+ static struct dentry *start_creating(const char *name, struct dentry *parent)
+ {
+ 	struct dentry *dentry;
 diff --git a/include/linux/debugfs.h b/include/linux/debugfs.h
-index fa2568b4380d..e6ee571e8c36 100644
+index e6ee571e8c36..738a990f99cd 100644
 --- a/include/linux/debugfs.h
 +++ b/include/linux/debugfs.h
-@@ -21,6 +21,8 @@
- struct device;
- struct file_operations;
+@@ -79,6 +79,18 @@ struct debugfs_short_fops {
  
-+#define debugfs_node dentry
+ struct dentry *debugfs_lookup(const char *name, struct dentry *parent);
+ 
++char *debugfs_node_path_raw(struct debugfs_node *node, char *buf, size_t buflen);
 +
- struct debugfs_blob_wrapper {
- 	void *data;
- 	unsigned long size;
++struct debugfs_node *debugfs_node_get(struct debugfs_node *node);
++
++void debugfs_node_put(struct debugfs_node *node);
++
++struct inode *debugfs_node_inode(struct debugfs_node *node);
++
++struct debugfs_node *debugfs_node_from_dentry(struct dentry *dentry);
++
++struct dentry *debugfs_node_dentry(struct debugfs_node *node);
++
+ struct dentry *debugfs_create_file_full(const char *name, umode_t mode,
+ 					struct dentry *parent, void *data,
+ 					const void *aux,
+@@ -271,6 +283,35 @@ static inline struct dentry *debugfs_lookup(const char *name,
+ 	return ERR_PTR(-ENODEV);
+ }
+ 
++static inline char *debugfs_node_path_raw(struct debugfs_node *node, char *buf,
++					  size_t buflen)
++{
++	return ERR_PTR(-ENODEV);
++}
++
++static inline struct debugfs_node *debugfs_node_get(struct debugfs_node *node)
++{
++	return ERR_PTR(-ENODEV);
++}
++
++void debugfs_node_put(struct debugfs_node *node)
++{ }
++
++struct inode *debugfs_node_inode(struct debugfs_node *node)
++{
++	return ERR_PTR(-ENODEV);
++}
++
++struct debugfs_node *debugfs_node_from_dentry(struct dentry *dentry)
++{
++	return ERR_PTR(-ENODEV);
++}
++
++struct dentry *debugfs_node_dentry(struct debugfs_node *node)
++{
++	return ERR_PTR(-ENODEV);
++}
++
+ static inline struct dentry *debugfs_create_file_aux(const char *name,
+ 					umode_t mode, struct dentry *parent,
+ 					void *data, void *aux,
 
