@@ -1,191 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-41391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA323A2EC4F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 13:08:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55522A2ECA9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 13:39:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21059163AED
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 12:08:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D98C0163954
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 12:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CF22206A4;
-	Mon, 10 Feb 2025 12:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9F4222577;
+	Mon, 10 Feb 2025 12:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bNplEuSY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CijJy3qF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814761F3D41;
-	Mon, 10 Feb 2025 12:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D1D1BE23E;
+	Mon, 10 Feb 2025 12:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739189265; cv=none; b=bqAD15s396VVQG/q0FjZVSvvhVmJTgJZ6sVe3VgUbg58vf6bTNlL5AG0Jx2VwiyLy+1dOZWMplHaZrlb9UshhtPH5P6jkZe1ZwUJnZ2EMR5z5cp/+BjiwraKPfGL44r+VshcTmHo3GWTyZEZyw0sth8YZJSea1ms8y9cWfqTvYM=
+	t=1739191151; cv=none; b=Guf22+57SySPK+DJKH51TV7FmcDL6gpP/ER/o58fWK6FamgIxZouxSeLfRrdo5OTBvRQOvsYvK2RbPgzcWE2BUMhaShX1Y2Dus0zLByxnowcExAWdj3WGwNDWJ5EKkOYUMCaYOduaKKoIrbe9LHMadAGGxcpuTthAFlzjrNyKyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739189265; c=relaxed/simple;
-	bh=s181Jubq9d+h3pMYKA+D/39Slev57NIU5oQbDQHj7eQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dUkiBB4guLmQVKjKM+sxJTgElr/BFKsKZEuBWGkS/npIZmwLDvEYcLxrWkuxsbGgoui6S5+/0ifkzM+bdJmBEKlry3SgQjLcZB+Lm5nA5bArOD+EkK56mwXQjMgGTqKt9I4Pk5JvakUgAtYAAILJ14edPfKGy15j5B9RnrsoAcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bNplEuSY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96D46C4CED1;
-	Mon, 10 Feb 2025 12:07:43 +0000 (UTC)
+	s=arc-20240116; t=1739191151; c=relaxed/simple;
+	bh=XCL+HvyLM4d7o9BC3lETgD3TuRng7yro8rHN4ZTChAk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AnrxK0Oxa5SFKnRGgYWB31wq9CbkUdJqXEyTNQAK/JkzPLf0adk6+WQCTytRZfNdm9KUSWvIIJW7Ii0LkgYmoOf9oWTjERhUMssW1+566gDZOWSMJ2ZuJn744VkfamecvDX+bUMJW4Ma5auCUkQS/YlyrllVu/gfDJyfG/5kAZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CijJy3qF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 808DAC4CED1;
+	Mon, 10 Feb 2025 12:39:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739189264;
-	bh=s181Jubq9d+h3pMYKA+D/39Slev57NIU5oQbDQHj7eQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bNplEuSYbUNSonnGwwBdorihaBhFzzZl6ltXZCcpz8PSyHAhQ+P2dQ2kZmkhRrQpx
-	 yiUckDyiUQSobrg3TXQbhc4lqkWaA0WCPeR4K1dWymQTP1Wz3gTTZo6YLSY4CDNmsC
-	 g7WoDP28um2UrSnkp6ToI5VeIIsO0e/0QZGx2UamXuQ768pRPcbC1gsnWEgKu8ifGj
-	 63nzAH0IOW+LgkOpJaJSfN75oIYWOqd98LQUVvJyhxmaL1eC8rRljVMVgE71wLnJiy
-	 c2n0Hjz7RujS9RzZeyTGjfqJoCeZ/QFpAYdi7R0wCuqRI9l+4mU6Bj/YAlw//9GOX5
-	 BNv+NEU8dvP+A==
-Date: Mon, 10 Feb 2025 13:07:41 +0100
+	s=k20201202; t=1739191150;
+	bh=XCL+HvyLM4d7o9BC3lETgD3TuRng7yro8rHN4ZTChAk=;
+	h=From:Subject:Date:To:Cc:From;
+	b=CijJy3qFMykan8vg9i0f6bdgsYaq0H+v1hyU6bVLUM3Y3Jv2d690WKmpFy8yVqZim
+	 QR2PnKDhoQqoy5UskonQAbIMbhfO5OAakk1nZvM0GVxaVnJTUloo829q95IjiNyGi+
+	 MC1Z07ytclvV5350aNm8jm/FYCGD/ZmB/O+PsSuE1FeiCbFYphtvzL3yXKGJs+55v0
+	 xWOIMZFjTJkvHmvocExrZDcKjkWP4o4f11J9VICo+nD6MaMpt3AGj7dInnScNmzn/l
+	 Utm3iiRP0bgw2/n4KFTMuLYhmoqfqj97i/+RRXubGjY5r/hZDyTsT2Cku4kSI75LU2
+	 pBR560sb5qACg==
 From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: linux-unionfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>, 
-	Mike Baynton <mike@mbaynton.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] fs: support O_PATH fds with FSCONFIG_SET_FD
-Message-ID: <20250210-modehaus-unfertig-5935435cabfb@brauner>
-References: <20250207-work-overlayfs-v1-0-611976e73373@kernel.org>
- <20250207-work-overlayfs-v1-1-611976e73373@kernel.org>
- <CAOQ4uxg4pCP9EL20vO=X1rwkJ8gVXXzeSDvsxkretH_3hm_nJg@mail.gmail.com>
- <CAOQ4uxhM5j-99ckPzyubdzg66_WBo_39b4_RJKGfVneqnNbxtA@mail.gmail.com>
+Subject: [PATCH v2 0/2] ovl: allow O_PATH file descriptor when specifying
+ layers
+Date: Mon, 10 Feb 2025 13:38:58 +0100
+Message-Id: <20250210-work-overlayfs-v2-0-ed2a949b674b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxhM5j-99ckPzyubdzg66_WBo_39b4_RJKGfVneqnNbxtA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGLzqWcC/3WOyw6DIBQFf8WwLoaHQttV/6NxgXhVooXmYmiN8
+ d+L7rucxcw5G4mADiK5FxtBSC664DOIS0HsaPwA1HWZiWCiZoJp+gk40ZAAZ7P2kcpr3954rbr
+ KViRLb4Tefc/gs8ncmgi0RePteGReJi6AZVIlryhafiiji0vA9byQ+CH+XUucMqo4v2kFWkotH
+ xOgh7kMOJBm3/cf0OPSdNAAAAA=
+X-Change-ID: 20250207-work-overlayfs-38fb9156d4c4
+To: linux-unionfs@vger.kernel.org
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+ Mike Baynton <mike@mbaynton.com>, linux-fsdevel@vger.kernel.org, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-d23a9
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1137; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=XCL+HvyLM4d7o9BC3lETgD3TuRng7yro8rHN4ZTChAk=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSv/Jxz++mKSbO/XzixfLnhpKSVBk0Xpyyw13FtDN9+M
+ 0Xjjad9dEcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBEjN8z/NPcFPHD5/abuct/
+ nPhayxPEN+tqXPpX41ixOV+lyuY4tBxnZNj8u63WvHW9y2s5tbeCQd/0L34wEL4knPPIbdsu+Sq
+ ltzwA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Fri, Feb 07, 2025 at 07:09:44PM +0100, Amir Goldstein wrote:
-> On Fri, Feb 7, 2025 at 6:39 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Fri, Feb 7, 2025 at 4:46 PM Christian Brauner <brauner@kernel.org> wrote:
-> > >
-> > > Let FSCONFIG_SET_FD handle O_PATH file descriptors. This is particularly
-> > > useful in the context of overlayfs where layers can be specified via
-> > > file descriptors instead of paths. But userspace must currently use
-> > > non-O_PATH file desriptors which is often pointless especially if
-> > > the file descriptors have been created via open_tree(OPEN_TREE_CLONE).
-> > >
-> >
-> > Shall we?
-> > Fixes: a08557d19ef41 ("ovl: specify layers via file descriptors")
-> >
-> > I think that was the intention of the API and we are not far enough to fix
-> > it in 6.12.y.
-> >
-> 
-> Oh it's not in 6.12. it's in 6.13, so less important to backport I guess.
-> 
-> Thanks,
-> Amir.
-> 
-> >
-> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > > ---
-> > >  fs/fs_parser.c             | 12 +++++++-----
-> > >  fs/fsopen.c                |  7 +++++--
-> > >  fs/overlayfs/params.c      | 10 ++++++----
-> > >  include/linux/fs_context.h |  1 +
-> > >  include/linux/fs_parser.h  |  6 +++---
-> > >  5 files changed, 22 insertions(+), 14 deletions(-)
-> > >
-> > > diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-> > > index e635a81e17d9..35aaea224007 100644
-> > > --- a/fs/fs_parser.c
-> > > +++ b/fs/fs_parser.c
-> > > @@ -310,15 +310,17 @@ int fs_param_is_fd(struct p_log *log, const struct fs_parameter_spec *p,
-> > >  }
-> > >  EXPORT_SYMBOL(fs_param_is_fd);
-> > >
-> > > -int fs_param_is_file_or_string(struct p_log *log,
-> > > -                              const struct fs_parameter_spec *p,
-> > > -                              struct fs_parameter *param,
-> > > -                              struct fs_parse_result *result)
-> > > +int fs_param_is_raw_file_or_string(struct p_log *log,
-> >
-> > Besides being too long of a helper name I do not think
-> > that it correctly reflects the spirit of the question.
-> >
-> > The arguments for overlayfs upperdir/workdir/lowerdir+/datadir+
-> > need to be *a path*, either a path string, or an O_PATH fd and
-> > maybe later on also dirfd+name.
-> >
-> > I imagine that if other filesystems would want to use this parser
-> > helper they would need it for the same purpose.
-> >
-> > Can we maybe come up with a name that better reflects that
-> > intention?
-> >
-> > > +                                  const struct fs_parameter_spec *p,
-> > > +                                  struct fs_parameter *param,
-> > > +                                  struct fs_parse_result *result)
-> > >  {
-> > >         switch (param->type) {
-> > >         case fs_value_is_string:
-> > >                 return fs_param_is_string(log, p, param, result);
-> > >         case fs_value_is_file:
-> > > +               fallthrough;
-> > > +       case fs_value_is_raw_file:
-> > >                 result->uint_32 = param->dirfd;
-> > >                 if (result->uint_32 <= INT_MAX)
-> > >                         return 0;
-> > > @@ -328,7 +330,7 @@ int fs_param_is_file_or_string(struct p_log *log,
-> > >         }
-> > >         return fs_param_bad_value(log, param);
-> > >  }
-> > > -EXPORT_SYMBOL(fs_param_is_file_or_string);
-> > > +EXPORT_SYMBOL(fs_param_is_raw_file_or_string);
-> > >
-> > >  int fs_param_is_uid(struct p_log *log, const struct fs_parameter_spec *p,
-> > >                     struct fs_parameter *param, struct fs_parse_result *result)
-> > > diff --git a/fs/fsopen.c b/fs/fsopen.c
-> > > index 094a7f510edf..3b5fc9f1f774 100644
-> > > --- a/fs/fsopen.c
-> > > +++ b/fs/fsopen.c
-> > > @@ -451,11 +451,14 @@ SYSCALL_DEFINE5(fsconfig,
-> > >                 param.size = strlen(param.name->name);
-> > >                 break;
-> > >         case FSCONFIG_SET_FD:
-> > > -               param.type = fs_value_is_file;
-> > >                 ret = -EBADF;
-> > > -               param.file = fget(aux);
-> > > +               param.file = fget_raw(aux);
-> > >                 if (!param.file)
-> > >                         goto out_key;
-> > > +               if (param.file->f_mode & FMODE_PATH)
-> > > +                       param.type = fs_value_is_raw_file;
-> > > +               else
-> > > +                       param.type = fs_value_is_file;
-> > >                 param.dirfd = aux;
-> >
-> > Here it even shouts more to me that the distinction is not needed.
-> >
-> > If the parameter would be defined as
-> > fsparam_path_description("workdir",   Opt_workdir),
-> > and we set param.type = fs_value_is_path_fd;
-> > unconditional to f_mode & FMODE_PATH, because we
-> > do not care if fd is O_PATH or not for the purpose of this parameter
-> > we only care that the parameter *can* be resolved to a path
-> > and *how* to resolve it to a path, and the answer to those questions
-> > does not change depending on _mode & FMODE_PATH.
-> >
-> > I admit that that's a very long rant about a mostly meaningless nuance,
-> > and I was also not very involved in the development of the new mount API
-> > so there may be things about it that I don't understand, so feel free to
-> > dismiss this rant and add my Ack if you do not share my concerns.
+Allow overlayfs to use O_PATH file descriptors when specifying layers.
+Userspace must currently use non-O_PATH file desriptors which is often
+pointless especially if the file descriptors have been created via
+open_tree(OPEN_TREE_CLONE). This has been a frequent request and came up
+again in [1].
 
-So the reason I originally carried this distinction into the api was
-that autofs can't use O_PATH fds. It needs a fully functional pipe. And
-I was worried that just enabling them would break it. That's probably
-not an issue because the code checks if (!(pipe->f_mode & FMODE_CAN_WRITE))
-which isn't set for FMODE_PATH/O_PATH file descriptors. So that's
-probably safe. So I agree we could erradicate this distinction for now.
+Link: https://lore.kernel.org/r/fd8f6574-f737-4743-b220-79c815ee1554@mbaynton.com [1]
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Changes in v2:
+- Unconditionally enable O_PATH file descriptors.
+- Link to v1: https://lore.kernel.org/r/20250207-work-overlayfs-v1-0-611976e73373@kernel.org
+
+---
+Christian Brauner (2):
+      fs: support O_PATH fds with FSCONFIG_SET_FD
+      selftests/overlayfs: test specifying layers as O_PATH file descriptors
+
+ fs/autofs/autofs_i.h                               |  2 +
+ fs/fsopen.c                                        |  2 +-
+ .../filesystems/overlayfs/set_layers_via_fds.c     | 65 ++++++++++++++++++++++
+ 3 files changed, 68 insertions(+), 1 deletion(-)
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20250207-work-overlayfs-38fb9156d4c4
+
 
