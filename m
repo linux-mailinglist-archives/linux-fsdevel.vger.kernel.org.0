@@ -1,67 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-41413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB7C2A2F259
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 16:59:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2A6A2F293
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 17:08:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C62D31886C5D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 15:59:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F36B818829D9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 16:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8F4244E97;
-	Mon, 10 Feb 2025 15:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703B724F599;
+	Mon, 10 Feb 2025 16:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="oCpARjO5"
+	dkim=pass (2048-bit key) header.d=davidreaver.com header.i=@davidreaver.com header.b="Fleujqiz";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hwDyZJzE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE8E23DE95;
-	Mon, 10 Feb 2025 15:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991802451C3;
+	Mon, 10 Feb 2025 16:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739203141; cv=none; b=tQ4DIjAQqhn3xo1JHni24BzCcBj5Gl/7wqoRlMHPzslbqEpKCWu68Jvy7+lVTLeaczm+86U3mQZtTWQrhWGVTKFp1l6Sg8UrLJMbFxCuOIBKsk8Z+pgRJGWHAFVLmABgl4MlMl6lQWKIuwOf8kWwhAMTVX3BCESWRUvcVd3MgO8=
+	t=1739203711; cv=none; b=s3y61L7Tb3Ye4edXTWcjVk8do+Rgot7zB/dBpeyoCWj4Da/rXiGZG4HyOlyhffskyRO7gg80jxHfZbP53pKdwmN/IsR3rEKoxhbbAuP3OmrFNoYOSRhDzolb2EWikGE1ZfmlSbCAK26crn6QSjU3G8xDrcjQRUcMAiDLLV0CwTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739203141; c=relaxed/simple;
-	bh=t9SogXVxL/5WPzfiLBOGrtGLBPCTLCQqLO9guXUl1mI=;
+	s=arc-20240116; t=1739203711; c=relaxed/simple;
+	bh=7/N3ApYexJ1r7W6X12UmkGuxHbBnaVUPJA2U74dJ4+8=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UrQDwROwOIgVCwEv2ql86uhPMLeSii60dTDUcJK7UQ81DATdR/S+ICtvAIi3ls3kehWEVLN8vef9KakQ8CAtea5s0djzYBx7J7cfVwIs3LMHJqb8tcI6dkwG885EKHh6syCYvfcai9X4qlQXU8TU8Di5+9tV8yJFV3CLmJfhsso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=oCpARjO5; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=qG5JSe/MUA8/F3lXIvVyeYzuIarTiII9ZoFYq4BQaKw=; b=oCpARjO5x5JDPDqTOABX1Kkwig
-	2NRefj2TJAM0KRJ1wW2lBlJo792WS/ycXtR7Pa6GXFxu08cD9pq8ZsFt2G3gPD8DI/9wWRmj6YNf5
-	E96PeBb8PovVe7yS7Nx5rDwqSpAXHeVc+XM/0oXIjjuC52+ezmDtlsYIV1flWYSPfzYkoflEL34AV
-	WjCyIxtEI39xMsor/TosVve1jVmReLGY/xU1p36AvcM+jyPhxeiHmiN+P8RuJ1NiF6VplBPn5nbZk
-	SN0mdT07mJKL0rpxQwNs3PAJLv7TkSKHUQguyTfWEH4zqnRyo4t9uUjo83wgI+0rktn3OpwjwAbUS
-	y667BFIQ==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1thWBI-007Jn0-FE; Mon, 10 Feb 2025 16:58:50 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: Bernd Schubert <bschubert@ddn.com>,  Miklos Szeredi <miklos@szeredi.hu>,
-  "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH v2] fuse: add new function to invalidate cache for
- all inodes
-In-Reply-To: <400ffcf9-9b98-4e94-81eb-3e33177ba334@bsbernd.com> (Bernd
-	Schubert's message of "Mon, 10 Feb 2025 16:18:30 +0100")
-References: <20250210094840.5627-1-luis@igalia.com>
-	<b5db41a7-1b26-4d12-b99f-c630f3054585@ddn.com>
-	<87pljqyt10.fsf@igalia.com>
-	<400ffcf9-9b98-4e94-81eb-3e33177ba334@bsbernd.com>
-Date: Mon, 10 Feb 2025 15:58:41 +0000
-Message-ID: <877c5xzt8u.fsf@igalia.com>
+	 MIME-Version:Content-Type; b=eHaWrCQ2CXkYxAfM/8yFKLqh+AlTy72N0vg1MG3EclIUI9I7yad4FzvJYF636rUw1UajbY4a33bfMbSBgPvt4HKFstDQAQPblGF2WGzGGrueLj92BV7JAVKsctp5snGbVYfHMm0NvQ0JDuCrnFRlzhQH/DeAwZJpRI3pB9Bo8RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidreaver.com; spf=pass smtp.mailfrom=davidreaver.com; dkim=pass (2048-bit key) header.d=davidreaver.com header.i=@davidreaver.com header.b=Fleujqiz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hwDyZJzE; arc=none smtp.client-ip=202.12.124.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidreaver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=davidreaver.com
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.stl.internal (Postfix) with ESMTP id 6E91D114015E;
+	Mon, 10 Feb 2025 11:08:28 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Mon, 10 Feb 2025 11:08:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=davidreaver.com;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
+	 t=1739203708; x=1739290108; bh=JzKPtw2fgUvh5taA0kG4OvjEYLfehOFh
+	/dM3hqPQhW8=; b=FleujqizzGq3xiM3FDALPqu7RLYrqqprmFq3kvG0MyNSEGS4
+	aXKXG8WbGp0by+/rObKbvC6YJIqQleFWF/wKIVwL4jVy1KRqBK6j7xcsyuKpB8lb
+	cUGNmG665qEwbyokq9eyimoZWEffz1XuIPbkZw65Ac+3cuha5ARUzlngSgTIyue7
+	rpNKtK843kltIthxZLu6Pkp5Y1SYLatgDH2wY1VhMftZv/XYrVI0NZBvRLWmxkXK
+	p1pDBFNhv76EutHkBZc5xfH9f0Y9ilKz07HVIqUvXGQBDmHgcakBU5SVPHVCZpD+
+	i/q+0ACoXaKMCytIbOtr9d7T0V/wRZEOnQ4syw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739203708; x=
+	1739290108; bh=JzKPtw2fgUvh5taA0kG4OvjEYLfehOFh/dM3hqPQhW8=; b=h
+	wDyZJzEFSRtf1e0WYOkqpal/CDgTRnaMekkBD8UhUyBVR6gcqGLS2wM+jushD1jX
+	gj5dk+88yJK13ud+AedryKqd17CHN7EKohd3+YGLdxeba5nCa7ehtoPrdbnZBH5P
+	q3lOQSSC8Nr6fR6+7OPl8kZmK7ZJ2S/c0tJ0oPJyrVRIA1ejYBHDJHbNl/Ozpvw4
+	znDTnoKT62UNLHwY8NafokBVXUTWuaY7lRu/6ScsrFe/ID6kDGKf9sVe3JOUlASm
+	868lXZAKDfxI+eVhq2nyW8DBt97msUIsKoonWRrfit1qXqq19kCZGVAW8jEdy7bW
+	QXlXTP/4jYF8+7yT4EdRg==
+X-ME-Sender: <xms:eySqZ-zXD93FW3EfUwcLdaaphi8OFfK4H-Olil0Dpnl0BJ54KfGd5Q>
+    <xme:eySqZ6QTQ1mj5sY6NFsZeEe3yloe4hFd7y5uDZtzF8DjFt3w9Ze1Wof1uQSpBEICz
+    3oz_cCRnd5qE6_RIjw>
+X-ME-Received: <xmr:eySqZwUNxY_sAWeNi-vTFSBK_OGi-qq6BYkMbA1wJj665mI464tLAHFmR6tfctMGCDhl3ku3glD2gCpLrsGxXafRcQ5Cuw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefkeehudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttder
+    jeenucfhrhhomhepffgrvhhiugcutfgvrghvvghruceomhgvsegurghvihgurhgvrghvvg
+    hrrdgtohhmqeenucggtffrrghtthgvrhhnpedvvdeifeegieeiffdtgeduiedtuefhieeu
+    jeefkeegueehieetgfejtddtgfehffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehmvgesuggrvhhiughrvggrvhgvrhdrtghomhdpnhgspghr
+    tghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhinhhugidqkh
+    gvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghotggtihes
+    ihhnrhhirgdrfhhrpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrd
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidr
+    ohhrghdruhhkpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheprhhoshhtvgguthesghhoohgumhhishdrohhrghdprhgtphhtthhopegurghk
+    rheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhr
+    gh
+X-ME-Proxy: <xmx:eySqZ0h1GNzkSHisLb1d6E5Bq5aR_CbatiGWRQyKcFz7Lk2mTNrBOg>
+    <xmx:eySqZwBkbHoBjTTT9pcx046ZKa6NfRtnsxqUu8uM17PEGPcEwgbUVQ>
+    <xmx:eySqZ1Iw5TINisdD-AN1nUxhUqdFgjh-yR8RQojwPXzi5pmIntwLfw>
+    <xmx:eySqZ3DQNK8vChr9rsV5tXVRciJ8029uHqq_lqR1dwihuIGZ7IsFPA>
+    <xmx:fCSqZwt41VSNqNUPgmhAuLdZBK0gra4vvyWcSKr9pgw2itB87AjPKWN2>
+Feedback-ID: i67e946c9:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 10 Feb 2025 11:08:26 -0500 (EST)
+From: David Reaver <me@davidreaver.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,  Danilo Krummrich
+ <dakr@kernel.org>,  Steven Rostedt <rostedt@goodmis.org>,  Christian
+ Brauner <brauner@kernel.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
+  linux-fsdevel@vger.kernel.org,  cocci@inria.fr,
+  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/6] debugfs: Replace dentry with an opaque handle
+ in debugfs API
+In-Reply-To: <2025021048-thieving-failing-7831@gregkh> (Greg Kroah-Hartman's
+	message of "Mon, 10 Feb 2025 08:08:19 +0100")
+References: <20250210052039.144513-1-me@davidreaver.com>
+	<2025021048-thieving-failing-7831@gregkh>
+User-Agent: mu4e 1.12.8; emacs 29.4
+Date: Mon, 10 Feb 2025 08:08:25 -0800
+Message-ID: <86ldud3hqe.fsf@davidreaver.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -71,105 +115,123 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 10 2025, Bernd Schubert wrote:
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
 
-> On 2/10/25 11:48, Luis Henriques wrote:
->> [re-sending -- for some reason I did a simple 'reply', not a 'reply-all'=
-.]
->>=20
->> On Mon, Feb 10 2025, Bernd Schubert wrote:
->>=20
->>> On 2/10/25 10:48, Luis Henriques wrote:
->>>> Currently userspace is able to notify the kernel to invalidate the cac=
-he for
->>>> an inode.  This means that, if all the inodes in a filesystem need to =
-be
->>>> invalidated, then userspace needs to iterate through all of them and d=
-o this
->>>> kernel notification separately.
->>>>
->>>> This patch adds a new option that allows userspace to invalidate all t=
-he
->>>> inodes with a single notification operation.  In addition to invalidat=
-e all
->>>> the inodes, it also shrinks the sb dcache.
->>>>
->>>> Signed-off-by: Luis Henriques <luis@igalia.com>
->>>> ---
->>>> Hi!
->>>>
->>>> As suggested by Bernd, this patch v2 simply adds an helper function th=
-at
->>>> will make it easier to replace most of it's code by a call to function
->>>> super_iter_inodes() when Dave Chinner's patch[1] eventually gets merge=
-d.
->>>>
->>>> [1] https://lore.kernel.org/r/20241002014017.3801899-3-david@fromorbit=
-.com
->>>>
->>>>  fs/fuse/inode.c           | 59 +++++++++++++++++++++++++++++++++++++++
->>>>  include/uapi/linux/fuse.h |  3 ++
->>>>  2 files changed, 62 insertions(+)
->>>>
->>>> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
->>>> index e9db2cb8c150..be51b53006d8 100644
->>>> --- a/fs/fuse/inode.c
->>>> +++ b/fs/fuse/inode.c
->>>> @@ -547,6 +547,62 @@ struct inode *fuse_ilookup(struct fuse_conn *fc, =
-u64 nodeid,
->>>>  	return NULL;
->>>>  }
->>>>=20=20
->>>> +static void inval_single_inode(struct inode *inode, struct fuse_conn =
-*fc)
->>>> +{
->>>> +	struct fuse_inode *fi;
->>>> +
->>>> +	fi =3D get_fuse_inode(inode);
->>>> +	spin_lock(&fi->lock);
->>>> +	fi->attr_version =3D atomic64_inc_return(&fc->attr_version);
->>>> +	spin_unlock(&fi->lock);
->>>> +	fuse_invalidate_attr(inode);
->>>> +	forget_all_cached_acls(inode);
->>>
->>>
->>> Thank you, much easier to read.
->>>
->>> Could fuse_reverse_inval_inode() call into this?
->>=20
->> Yep, it could indeed.  I'll do that in the next iteration, thanks!
->>=20
->>> What are the semantics=20
->>> for  invalidate_inode_pages2_range() in this case? Totally invalidate?
->>> No page cache invalidation at all as right now? If so, why?
->>=20
->> So, if I change fuse_reverse_inval_inode() to use this help, it will sti=
-ll
->> need to keep the call to invalidate_inode_pages2_range().  But in the new
->> function fuse_reverse_inval_all(), I'm not doing it explicitly.  Instead,
->> that function calls into shrink_dcache_sb().  I *think* that by doing so
->> the invalidation will eventually happen.  Or am I wrong assuming that?
 >
-> I think it will drop it, if the dentry cache is the last user/reference
-> of the inode. My issue is that it changes semantics a bit - without
-> FUSE_INVAL_ALL_INODES the page cache is invalidated based on the given
-> offset. Obviously we cannot give the offset for all inodes, but we
-> at least document the different semantics in a comment above
-> FUSE_INVAL_ALL_INODES? Sorry, should have asked earlier for it, just
-> busy with multiple things in parallel...
+> First off, many thanks for attempting this, I didn't think it was ready
+> to even be attempted, so it's very nice to see this.
+>
 
-Yep, that makes sense.  In fact, my initial approach was to add a
-completely different API with a FUSE_NOTIFY_INVAL_INODE_ALL operation.
-But then I realized that I could simply hijack FUSE_NOTIFY_INVAL_INODE.
-This would make things a lot easier, specially in the userspace side --
-libfuse could even be used without *any* change at all.  (Obviously, I
-expect to send a PR with the new flag and some documentation once this
-patch is acceptable.)
+No problem, and thank you for taking a look!
 
-Anyway, I'll also add some comments to this patch.  Thanks for your
-feedback, Bernd.
+> That being said, I agree with Al, we can't embed a dentry in a structure
+> like that as the lifecycles are going to get messy fast.
+>
 
-Cheers,
---=20
-Lu=C3=ADs
+Ack, I'll do something different in v2.
+
+For my own education: what goes wrong with lifecycles with this embed?
+Feel free to point me at a doc or something.
+
+Also, Al and Greg, would wrapping a pointer be fine?
+
+	struct debugfs_node {
+		struct dentry *dentry;
+	};
+
+I was trying to do the simplest thing possible so the bulk of the change
+was mechanical. Wrapping a pointer is slightly more complicated because
+we have to deal with memory allocation, but it is still totally doable.
+
+> Also, your replacement of many of the dentry functions with wrappers
+> seems at bit odd, ideally you would just return a dentry from a call
+> like "debugfs_node_to_dentry()" and then let the caller do with it what
+> it wants to, that way you don't need to wrap everything.
+>
+
+Understood. I considered exposing the underlying dentry as a "dirty
+backdoor" around the opaque wrapper, so I was trying to minimize it :)
+I'm happy to undo some of these wrappers though, it will make the change
+simpler.
+
+> And finally, I think that many of the places where you did have to
+> convert the code to save off a debugfs node instead of a dentry can be
+> removed entirely as a "lookup this file" can be used instead.  I was
+> waiting for more conversions of that logic, removing the need to store
+> anything in a driver/subsystem first, before attempting to get rid of
+> the returned dentry pointer.
+>
+
+Yeah this is a great idea, and could even be done in a few patches
+outside of this large migration patch series if necessary. I'll
+investigate.
+
+> As an example of this, why not look at removing almost all of those
+> pointers in the relay code?  Why is all of that being stored at all?
+>
+
+I'll take another look at the relay code as well and see if I can remove
+the pointers.
+
+> Oh, also, all of those forward declarations look really odd, something
+> feels wrong with needing that type of patch if we are doing things
+> right.  Are you sure it was needed?
+>
+
+I agree with this sentiment, and I discussed this in the cover letter a
+bit under the section "#includes and #defines". The need for peppering
+temporary #defines (for intermediate commits) and forward declarations
+around is my least favorite part of this patch series.
+
+I am indeed sure they are needed in most cases. I'll give a few examples
+for both the temporary #defines Coccinelle adds and the forward
+declarations that replace the #defines in the last commit:
+
+1. If you remove the forward declaration (or the corresponding temporary
+   #define in the Coccincelle commit) in
+   drivers/gpu/drm/xe/xe_gsc_debugfs.h, you get this compilation error:
+
+   drivers/gpu/drm/xe/xe_gsc_debugfs.h:12:57: error: =E2=80=98struct debugf=
+s_node=E2=80=99 declared inside parameter list will not be visible outside =
+of this definition or declaration [-Werror]
+      12 | void xe_gsc_debugfs_register(struct xe_gsc *gsc, struct debugfs_=
+node *parent);
+
+   gcc does not like implicitly-defined types inside of function
+   arguments. As far as I can tell, we only get this error for function
+   arguments; this is apparently okay for a top-level declaration, like:
+
+   struct debugfs_node *my_root_node;
+
+
+2. In the Coccinelle commit, if you remove the #define debugfs_node from
+   include/linux/fault-inject.h, you get errors of this sort:
+
+   mm/fail_page_alloc.c:55:13: error: assignment to =E2=80=98struct dentry =
+*=E2=80=99 from incompatible pointer type =E2=80=98struct debugfs_node *=E2=
+=80=99 [-Werror=3Dincompatible-pointer-types]
+      55 |         dir =3D fault_create_debugfs_attr("fail_page_alloc", NUL=
+L,
+         |             ^
+
+   Because the #define is not in scope, the compiler is assuming we are
+   implicitly defining a new type.
+
+
+The Coccinelle script adds a forward declaration of struct debugfs_node
+wherever there was one for struct dentry. This is just a heuristic I
+found that seemed to do the job and was easy to automate.
+
+I originally did this whole patch series in reverse, where we
+immediately make struct debugfs_node, migrate debugfs internals, and
+migrate all users of the API, but that leads to one very large commit
+and appeared harder to review to me. I went with this intermediate
+#define idea so the commits could be split up and each commit would
+compile, but I don't like the little bit of extra complexity it adds.
+
+I'm open to any other migration ideas folks have! I'm not tied to these
+two plans at all.
+
+Thanks,
+David Reaver
 
