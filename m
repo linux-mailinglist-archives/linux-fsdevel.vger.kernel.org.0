@@ -1,234 +1,261 @@
-Return-Path: <linux-fsdevel+bounces-41484-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C04A2FC72
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 22:42:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2221CA2FC87
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 22:54:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACA531886A4B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 21:42:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B999B165D4D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 21:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5970424CEFF;
-	Mon, 10 Feb 2025 21:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D70C24CEC0;
+	Mon, 10 Feb 2025 21:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="F5u+MBba"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="f65VgwxR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B69924C695;
-	Mon, 10 Feb 2025 21:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BDC17BCE
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2025 21:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739223573; cv=none; b=qn0pmiWZDKQdbN7J6fiMxU96Wsopb1tBCFnozm4aLnPqzQGG5+kIHHaE7apT6u5BBRoFcYsIctPm6WARCRkuevJQH0kWq26kaP8QqYCU5TSJrqWgawIf3QrBCay2I33LIixym61GuCREJXwoGvKKPhOqgdjsmz4JEykL29a/nMQ=
+	t=1739224466; cv=none; b=aMinPhfGFwif5yGchdyXyYxSYd17uqYni0fJE1uT8TcZsFNutbT933+XwD5vpGkZ8wpGKlVUEoBN3errsESJAxFRLHz7L2gtWOnItIdQ2lcIxr53qfeR+6WX8WaAicKIo92PL+7kkqHjwXlDac4lv0GnXrIUdGUI/+wXzlVzE9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739223573; c=relaxed/simple;
-	bh=pUd8G1lEHIr4FyqRhYKWcC0X0a1TUfs3GscBx3Y8kfU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=r5FYi3RDC9J1XZmmmzY4XEaW4jkrMlQY/JlBaQguGitZZdhyEpzMCWye9sMh+ZyFJQ1d9WpOPCtLbaTNEJSLIGSnF543sZK4LP4qnrGutZMf0JuyTpww+r2KJTxv8QtTWXRK558aElla3a+lhAModIKi6tDvgbUC8jYzmKVmNU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=F5u+MBba; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=LXu9fiu+mUqGI1GuzBd2KNs6r7deHhqAfb3igrUF3No=; b=F5u+MBbaL47TNeo4+8Xmh7hue8
-	UnMD9bAm06+PfPBcJBZ9OZgIbPqYZI1c/6GE91TLTJtYKY42X5QieIOPTUenXdT+Jw43qHw4PCmDR
-	4i7npP4CiKsCirs1pQo5RAl9qxYKAI2dfnIxBsM1HMDHV1qKZfLVPz8HG59dQm7zbovFzxYp7ijd+
-	UgFbU8+htaHnNb/UJD4pYzWtJM8qPDEuPV9hD5Lx90LQpkRsghQnBR1UQ36Rw9JI3OGTg5vPb1B6D
-	M+BYgjSk5G9SXiyFekVVzgpNrcyUQsqpAMmiEGCcjXgEY/lqGPlw/EUsg8gmQn6+lrgoAnShpAk/9
-	FiSY0rZA==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1thbUr-007RfQ-D4; Mon, 10 Feb 2025 22:39:23 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Joanne Koong <joannelkoong@gmail.com>,  Miklos Szeredi
- <miklos@szeredi.hu>,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  Matt Harvey <mharvey@jumptrading.com>
-Subject: Re: [RFC PATCH v3] fuse: add new function to invalidate cache for
- all inodes
-In-Reply-To: <a5c3eb63-0fab-4751-af2f-8cb48c06b47f@ddn.com> (Bernd Schubert's
-	message of "Mon, 10 Feb 2025 20:06:55 +0000")
-References: <20250210143351.31119-1-luis@igalia.com>
-	<2b65778e-7d26-4168-9346-6c1e01de350b@gmail.com>
-	<a5c3eb63-0fab-4751-af2f-8cb48c06b47f@ddn.com>
-Date: Mon, 10 Feb 2025 21:39:14 +0000
-Message-ID: <871pw5zdh9.fsf@igalia.com>
+	s=arc-20240116; t=1739224466; c=relaxed/simple;
+	bh=AyQraTfsD0eAKJNbpAIj37781+CGfi6OdK1JVn5lhT4=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=q3mG32b3qQczWc9OBQe/8fau7ThqKY0UDiLG8bxKAl+SJ1X+JNkT6EAvbCW2qU6A6cPYLYtUqAYcRjk8zpZTRZl7FpbNxAnOsqTqJ9Y6musFkDSN2JRAZH8uxBDg6Hwptu53CrVv6uxV+J6Vb6Mdm95zMQbRGHs8tV2W1mH7Xww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=f65VgwxR; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739224461;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=41Jhkvba1WFpStcLbcComfly4EhWKsI/5ZXXHmjcCPc=;
+	b=f65VgwxRDwvtEdsu7NuNmtX7Cgk1A2R7ciEt77+LFeoEdkDCJpP46zQl/tiWsPH6GSyHXV
+	3BH4gtWmgsJ/ZkYujW+eU7UhgmO9yYvbv9BNFhJxWx7L9V32PfS1aGM82g5GOAQqkBbJN7
+	tc0lxdvFecc/O7MqyUewFbtWj8ltvmk=
+Date: Mon, 10 Feb 2025 21:54:19 +0000
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Ihor Solodrai" <ihor.solodrai@linux.dev>
+Message-ID: <8d8a5d5b00688ea553b106db690e8a01f15b1410@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH] netfs: Add retry stat counters
+To: "David Howells" <dhowells@redhat.com>
+Cc: dhowells@redhat.com, "Marc Dionne" <marc.dionne@auristor.com>, "Steve
+ French" <stfrench@microsoft.com>, "Eric Van Hensbergen"
+ <ericvh@kernel.org>, "Latchesar  Ionkov" <lucho@ionkov.net>, "Dominique
+ Martinet" <asmadeus@codewreck.org>, "Christian Schoenebeck"
+ <linux_oss@crudebyte.com>, "Paulo Alcantara" <pc@manguebit.com>, "Jeff
+ Layton" <jlayton@kernel.org>, "Christian Brauner" <brauner@kernel.org>,
+ v9fs@lists.linux.dev, linux-cifs@vger.kernel.org, netfs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ast@kernel.org, bpf@vger.kernel.org
+In-Reply-To: <2986469.1739185956@warthog.procyon.org.uk>
+References: <335ad811ae2cf5ebdfc494c185b9f02e9ca40c3e@linux.dev>
+ <3173328.1738024385@warthog.procyon.org.uk>
+ <3187377.1738056789@warthog.procyon.org.uk>
+ <2986469.1739185956@warthog.procyon.org.uk>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Joanne
-
-Bernd has already added a few comments.  I'm just adding a few more on
-top.
-
-On Mon, Feb 10 2025, Bernd Schubert wrote:
-
-> On 2/10/25 20:33, Joanne Koong wrote:
->> On 2/10/25 6:33 AM, Luis Henriques wrote:
->>> Currently userspace is able to notify the kernel to invalidate the cache
->>> for an inode.=C2=A0 This means that, if all the inodes in a filesystem =
-need to
->>> be invalidated, then userspace needs to iterate through all of them
->>> and do
->>> this kernel notification separately.
->>>
->>> This patch adds a new option that allows userspace to invalidate all the
->>> inodes with a single notification operation.=C2=A0 In addition to
->>> invalidate all
->>> the inodes, it also shrinks the sb dcache.
->>>
->>> Signed-off-by: Luis Henriques <luis@igalia.com>
->>> ---
->>> * Changes since v2
->>> Use the new helper from fuse_reverse_inval_inode(), as suggested by
->>> Bernd.
->>>
->>> Also updated patch description as per checkpatch.pl suggestion.
->>>
->>> * Changes since v1
->>> As suggested by Bernd, this patch v2 simply adds an helper function that
->>> will make it easier to replace most of it's code by a call to function
->>> super_iter_inodes() when Dave Chinner's patch[1] eventually gets merged.
->>>
->>> [1] https://lore.kernel.org/r/20241002014017.3801899-3-
->>> david@fromorbit.com
->>>
->>> =C2=A0 fs/fuse/inode.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 67 +++++++++++++++++++++++++++++++++++----
->>> =C2=A0 include/uapi/linux/fuse.h |=C2=A0 3 ++
->>> =C2=A0 2 files changed, 63 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
->>> index e9db2cb8c150..45b9fbb54d42 100644
->>> --- a/fs/fuse/inode.c
->>> +++ b/fs/fuse/inode.c
->>> @@ -547,25 +547,78 @@ struct inode *fuse_ilookup(struct fuse_conn *fc,
->>> u64 nodeid,
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return NULL;
->>> =C2=A0 }
->>> =C2=A0 +static void inval_single_inode(struct inode *inode, struct
->>> fuse_conn *fc)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0 struct fuse_inode *fi;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 fi =3D get_fuse_inode(inode);
->>> +=C2=A0=C2=A0=C2=A0 spin_lock(&fi->lock);
->>> +=C2=A0=C2=A0=C2=A0 fi->attr_version =3D atomic64_inc_return(&fc->attr_=
-version);
->>> +=C2=A0=C2=A0=C2=A0 spin_unlock(&fi->lock);
->>> +=C2=A0=C2=A0=C2=A0 fuse_invalidate_attr(inode);
->>> +=C2=A0=C2=A0=C2=A0 forget_all_cached_acls(inode);
->>> +}
->>> +
->>> +static int fuse_reverse_inval_all(struct fuse_conn *fc)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0 struct fuse_mount *fm;
->>> +=C2=A0=C2=A0=C2=A0 struct super_block *sb;
->>> +=C2=A0=C2=A0=C2=A0 struct inode *inode, *old_inode =3D NULL;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 inode =3D fuse_ilookup(fc, FUSE_ROOT_ID, NULL);
->>> +=C2=A0=C2=A0=C2=A0 if (!inode)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -ENOENT;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 fm =3D get_fuse_mount(inode);
->>=20
->> I think if you pass in &fm as the 3rd arg to fuse_ilookup(), it'll pass
->> back the fuse mount and we won't need get_fuse_mount().
-
-Yeah, good catch!  That makes sense, I didn't noticed that this third
-argument could be used that way.  I'll make sure next rev simplifies this
-code.
-
->>> +=C2=A0=C2=A0=C2=A0 iput(inode);
->>> +=C2=A0=C2=A0=C2=A0 if (!fm)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -ENOENT;
->>> +=C2=A0=C2=A0=C2=A0 sb =3D fm->sb;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 spin_lock(&sb->s_inode_list_lock);
->>> +=C2=A0=C2=A0=C2=A0 list_for_each_entry(inode, &sb->s_inodes, i_sb_list=
-) {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_lock(&inode->i_lock);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if ((inode->i_state & (I_FR=
-EEING|I_WILL_FREE|I_NEW)) ||
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 !at=
-omic_read(&inode->i_count)) {
->>=20
->> Will inode->i_count ever be 0? AFAIU, inode->i_count tracks the inode
->> refcount, so if this is 0, doesn't this mean it wouldn't be on the sb-
->>>s_inodes list?
-
-My point in having this check is that, while iterating the inodes list,
-the inode may be iput()'ed before we actually have the chance to lock it.
-This is simply to skip the (unlikely) case when this happens.  Maybe it's
-not really necessary, maybe the previous checks (the ->i_state) are
-enough.  But I've seen this pattern in other places (for example, in
-evict_inodes()).
-
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spi=
-n_unlock(&inode->i_lock);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 con=
-tinue;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __iget(inode);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_unlock(&inode->i_lock);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_unlock(&sb->s_inode_li=
-st_lock);
->>=20
->> Maybe worth adding a comment here since there can be inodes added after
->> the s_inode_list_lock is dropped and before it's acquired again that
->> when inodes get added to the head of sb->s_inodes, it's always for I_NEW
->> inodes.
->>=20
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iput(old_inode);
->>=20
->> Maybe a dumb question but why is old_inode needed? Why can't iput()just
->> be called right after inval_single_inode()?
+On 2/10/25 2:57 AM, David Howells wrote:
+> Ihor Solodrai <ihor.solodrai@linux.dev> wrote:
 >
-> I had wondered the same in v1. Issue is that there is a list iteration
-> that releases the locks - if the put would be done immediately it could
-> not continue on "old_inode" as it might not exist anymore.
-
-Exactly, thanks Bernd.  We release the locks and do the cond_resched()
-below for the cases where we have a huge amount of inodes to invalidate.
-
-I'll prepare a new rev with some extra code comments (including those
-suggested by Bernd before) and remove the call to get_fuse_mount().
-
-Thank you both for your feedback.  Much appreciated!
-
-Cheers,
---=20
-Lu=C3=ADs
-
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 inval_single_inode(inode, f=
-c);
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 old_inode =3D inode;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cond_resched();
->>=20
->> Could you explain why a cond_resched() is needed here?
+>> I recommend trying to reproduce with steps I shared in my initial repo=
+rt:
+>> https://lore.kernel.org/bpf/a7x33d4dnMdGTtRivptq6S1i8btK70SNBP2XyX_xwD=
+AhLvgQoPox6FVBOkifq4eBinfFfbZlIkMZBe3QarlWTxoEtHZwJCZbNKtaqrR7PvI=3D@pm.m=
+e/
+>>
+>> I know it may not be very convenient due to all the CI stuff,
 >
-> Give other threads a chance to work? The list might be huge?
+> That's an understatement. :-)
 >
+>> but you should be able to use it to iterate on the kernel source local=
+ly and
+>> narrow down the problem.
 >
+> Can you share just the reproducer without all the docker stuff?=20=20
+
+I=20wrote a couple of shell scripts with a gist of what's happening on
+CI: build kernel, build selftests and run. You may try them.
+
+Pull this branch from my github:
+https://github.com/theihor/bpf/tree/netfs-debug
+
+It's the kernel source in a broken state with the scripts.
+Inlining the scripts here:
+
+## ./reproducer.sh
+
+#!/bin/bash
+
+set -euo pipefail
+
+export KBUILD_OUTPUT=3D$(realpath kbuild-output)
+mkdir -p $KBUILD_OUTPUT
+
+cp -f repro.config $KBUILD_OUTPUT/.config
+make olddefconfig
+make -j$(nproc) all
+make -j$(nproc) headers
+
+# apt install lsb-release wget software-properties-common gnupg
+# bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+export LLVM_VERSION=3D18
+
+make -C tools/testing/selftests/bpf \
+     CLANG=3Dclang-${LLVM_VERSION} \
+     LLC=3Dllc-${LLVM_VERSION} \
+     LLVM_STRIP=3Dllvm-strip-${LLVM_VERSION} \
+     -j$(nproc) test_progs-no_alu32
+
+# wget https://github.com/danobi/vmtest/releases/download/v0.15.0/vmtest-=
+x86_64
+# chmod +x vmtest-x86_64
+./vmtest-x86_64 -k $KBUILD_OUTPUT/$(make -s image_name) ./run-bpf-selftes=
+ts.sh | tee test.log
+
+## end of ./reproducer.sh
+
+## ./run-bpf-selftests.sh
+
+#!/bin/bash
+
+/bin/mount bpffs /sys/fs/bpf -t bpf
+ip link set lo up
+
+echo 10 > /proc/sys/kernel/hung_task_timeout_secs
+echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_read/enable
+echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_write/enable
+echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_write_iter/enable
+echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_rreq/enable
+echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_rreq_ref/enable
+echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_sreq/enable
+echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_sreq_ref/enable
+echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_failure/enable
+
+function tail_proc {
+    src=3D$1
+    dst=3D$2
+    echo -n > $dst
+    while true; do
+        echo >> $dst
+        cat $src >> $dst
+        sleep 1
+    done
+}
+export -f tail_proc
+
+nohup bash -c 'tail_proc /proc/fs/netfs/stats netfs-stats.log' & disown
+nohup bash -c 'tail_proc /proc/fs/netfs/requests netfs-requests.log' & di=
+sown
+nohup bash -c 'trace-cmd show -p > trace-cmd.log' & disown
+
+cd tools/testing/selftests/bpf
+./test_progs-no_alu32
+
+## end of ./run-bpf-selftests.sh
+
+One of the reasons for suggesting docker is that all the dependencies
+are pre-packaged in the image, and so the environment is pretty close
+to the actual CI environment. With only shell scripts you will have to
+detect and install missing dependencies on your system and hope
+package versions are more or less the same and don't affect the issue.
+
+Notable things: LLVM 18, pahole, qemu, qemu-guest-agent, vmtest tool.
+
+> Is this one
+> of those tests that requires 9p over virtio?  I have a different enviro=
+nment
+> for that.
+
+We run the tests via vmtest tool: https://github.com/danobi/vmtest
+This is essentially a qemu wrapper.
+
+I am not familiar with its internals, but for sure it is using 9p.
+
+
+On 2/10/25 3:12 AM, David Howells wrote:
+> Ihor Solodrai <ihor.solodrai@linux.dev> wrote:
+>
+>> Bash piece starting a process collecting /proc/fs/netfs/stats:
+>>
+>>     function tail_netfs {
+>>         echo -n > /mnt/vmtest/netfs-stats.log
+>>         while true; do
+>>             echo >> /mnt/vmtest/netfs-stats.log
+>>             cat /proc/fs/netfs/stats >> /mnt/vmtest/netfs-stats.log
+>>             sleep 1
+>>         done
+>>     }
+>>     export -f tail_netfs
+>>     nohup bash -c 'tail_netfs' & disown
+>
+> I'm afraid, intermediate snapshots of this file aren't particularly use=
+ful -
+> just the last snapshot:
+
+The reason I wrote it like this is because the test runner hangs, and
+so I have to kill qemu to stop it (with no ability to run
+post-processing within qemu instance; well, at least I don't know how
+to do it).
+
+>
+> [...]
+>
+> Could you collect some tracing:
+>
+> echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_read/enable
+> echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_write/enable
+> echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_write_iter/enable
+> echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_rreq/enable
+> echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_rreq_ref/enable
+> echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_sreq/enable
+> echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_sreq_ref/enable
+> echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_failure/enable
+>
+> and then collect the tracelog:
+>
+> trace-cmd show | bzip2 >some_file_somewhere.bz2
+>
+> And if you could collect /proc/fs/netfs/requests as well, that will sho=
+w the
+> debug IDs of the hanging requests.  These can be used to grep the trace=
+ by
+> prepending "R=3D".  For example, if you see:
+>
+> 	REQUEST  OR REF FL ERR  OPS COVERAGE
+> 	=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D =3D=3D=3D =3D=3D =3D=3D=3D=3D =3D=3D=
+=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D
+> 	00000043 WB   1 2120    0   0 @34000000 0/0
+>
+> then:
+>
+> 	trace-cmd show | grep R=3D00000043
+
+Done. I pushed the logs to the previously mentioned github branch:
+https://github.com/kernel-patches/bpf/commit/699a3bb95e2291d877737438fb64=
+1628702fd18f
+
+Let me know if I can help with anything else.
+
 >
 > Thanks,
-> Bernd
-
+> David
+>
 
