@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-41437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDFA8A2F781
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 19:42:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 900EDA2F79D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 19:44:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 472687A20A3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 18:41:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F3CC18855D4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 18:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BA4257AD1;
-	Mon, 10 Feb 2025 18:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30CC257432;
+	Mon, 10 Feb 2025 18:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HHfABv4R"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="igTIMuiw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7FE125A2B7
-	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2025 18:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98EE179A7
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2025 18:43:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739212895; cv=none; b=UvY2//Z0o2g6dFkGaKZWhtQu//5FdQFOOZal0hzXElXu211rfGmTJ+J2kce5v0zMqEKa/MRRBJ2OQLYMdGV9qURfC5J4MfKFaEIAIgwv52Nh3vJl+EgakZrKHnzzAqPDXjXkN6lSPzBuB9IN1G4d/UnDreyL9+621yI5YLPO7to=
+	t=1739213011; cv=none; b=Sq1qehBySU35Tb9EY3HuNHdTDF2JCZAxOYOcM7AqAPZdZ38Q/y4FlcRVJurOlHwbNN5BB81xU8l04VfHgfzTQItXDinna5/cD4ioNUgqnUeksngB7dJgheaxZEGnHZrdDQsjoAt05uYaEDFWu1Y57GzrcVYvIjIK46I8/4K5McE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739212895; c=relaxed/simple;
-	bh=bygnSuQXiuOQjyaBUGwyRn+UXTRR8Z74RGWMpAmL/Ro=;
+	s=arc-20240116; t=1739213011; c=relaxed/simple;
+	bh=9Jl7Y6/T/ZwlfQk+GM7pxBzgJeex8ck2OrzDzPmY47U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SIvDtwSwfVN5ViwWc8N+DCml+Mkz/NpLyU6EeflsPfJ2kCkzdEa2EOB48dGwTd6WRG4VIr7RKV8YqOlIGqMBWqFx+nhb0ns2pRI9XaQo40deM9PuuOalQkUenXHf42CwLy3GkGI1SQXPNzze3ccQr+EgYJ0T/I10t+t+eQ8+Jeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HHfABv4R; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=I0FHcWS2QHezFWDLo4fJQ+ivI4ixea4WVJzI2pR9o/Ojc+pou3poeAwZ1IHWzf925/NzhcKVAswKVKxtNR4j5GhgL7EW3KoO2gOinOLJNibCf2kYp9UtiJuJbJ/+HhJFZHxwFytv9CIJeSpN5mKNEMiWTIe0+VZafYnHW7FqMlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=igTIMuiw; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739212892;
+	s=mimecast20190719; t=1739213007;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=y5Y8uzPh19Vq/79ybTl3j5BilFyRa3IBZXW8XJ411wM=;
-	b=HHfABv4RYeWqipXHSq04/wi4MMP0m9hznxA36W2EYX2tPB7aNG16Qru2I9uOnCG+uNGPL3
-	EBxRaEid2bVY9OVosrqB5GsoImZ0siYJOvaSJYqgNi2kzpBS4VFDJZDCmx1wvR5NlPiLMJ
-	jwyKYA2azhRRLMdtFR453Vyljj+rFEk=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=HyPCciy90tVW6T2lcHcuWFhDLKyw85xuvM/qhIPk9VI=;
+	b=igTIMuiwl3wIhJ5uWJe2j1RMDWe9DzrhjQoKHAoRBL9S7BBJpFNFeIAIdaNdA/3Ppz/lZG
+	o5xqR9KwQrckVNZIoXYA9IVWY4jPWd+T2WB9r2CadcQ9FouzMTXEYf6pn/Y6wxceMeJcjN
+	R6V1darc5zFpzVgMNdCJey1UgnxVFNI=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-615-PdX6QDOJOsKJo121POqmeA-1; Mon, 10 Feb 2025 13:41:31 -0500
-X-MC-Unique: PdX6QDOJOsKJo121POqmeA-1
-X-Mimecast-MFC-AGG-ID: PdX6QDOJOsKJo121POqmeA
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-38dca55788eso1786967f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2025 10:41:31 -0800 (PST)
+ us-mta-687-Ba862C5NOpOjC9xksbDmwQ-1; Mon, 10 Feb 2025 13:43:26 -0500
+X-MC-Unique: Ba862C5NOpOjC9xksbDmwQ-1
+X-Mimecast-MFC-AGG-ID: Ba862C5NOpOjC9xksbDmwQ
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4392fc6bd21so9566095e9.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2025 10:43:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739212890; x=1739817690;
+        d=1e100.net; s=20230601; t=1739213005; x=1739817805;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=y5Y8uzPh19Vq/79ybTl3j5BilFyRa3IBZXW8XJ411wM=;
-        b=kTOZp/7g+g02+x2IW87knOnMMnVoXv0sP6p1HAsqkatp8MFKZ3BgxuCBlidgMAItqn
-         IoCEGc5TMNicaaP4U0JaKQJ9aBOUn/Q9+FNjURKSS9l+bWt1VzwkUExh8QimuVbHz08d
-         +C6qFhNHj9H1HsHj8jWTPx6Dtj+f/0Dn/UDLVivIDkVPp1BISGCTe8WLkCSy69+R6MhL
-         B4Ajz3opn99zLnsfeBOPwPgbeKA34GE2aF4ISRWgQKuwijcXRdGT9Qiho6Bn869aZiKJ
-         53x4MmfMIiqcZO2hVnUGxWCrZaytCC8Cz35fZeci3CAxhv+f49Pe3qHxHQNviFv3eLv7
-         73Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCWoFiggQDKiNXXK26+Bmhs5W3PImCSIeyCYz0h28KujLdRw9j64Y+ctUhPK6e8nFkU7cmynMNYFZgR0/Hyc@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxUvwUK+IF6DCu8q+Zsnz9MHCt0RUomEmJ4GC/9AlKIf1Trgs2
-	YutSvrlAqlSqBOIxaMOhFBdqO0PwEC7iOclnunssEMGu3ccChHLbDtl1U+01uLb4s0olLiv103G
-	44ADCQJ9fWwAsltZH0MklEC6uD+G8zee3KHKMyV9MK8jlNzXSrNzHLdBbRqPW1S8=
-X-Gm-Gg: ASbGncsxEBykbyZy7LZfSLBHZuJPTlfG1JBz4Kylpmuo6IHQZKx5ckmKACnAt27Lg1h
-	62FiS043UcGdSFA8MZ8OTS0rFKsakdOcNdY52O/mORkHTLSEVLn/mii0LzeIh/tFDZNjwVy4W2Y
-	lxt6Fa/rU7/elncYFr2GwFrvhGI+KLlPQXrh90ZMWUnmOsCR+U8jTAgR+WBzQWaGnBPeKHblkr2
-	xDMmii9xiR8USAK6x2l2d7kPYCo9GZC2bQLULvn1Ej5jVS1u/afDDXtjvVy5EkT7CpJZwIp9AxV
-	xuMEB4mgow68vNi0moEFcnVFnO7VHmSlTvjvvh/vbEYkdKNhwUut404a0a843/KgbzsFHndS7l9
-	TJLFYcLUYHSu+9tM1+zxoREOGolzbXUJ2
-X-Received: by 2002:adf:f552:0:b0:38d:ba09:86b5 with SMTP id ffacd0b85a97d-38dc935fd30mr8356789f8f.52.1739212890432;
-        Mon, 10 Feb 2025 10:41:30 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEjt5GOWnPQL8qWJWzWicp05/2CzwbVpqP4Iexee9A79WecGjReB/qxF3GuYmscVUvKpxlGrQ==
-X-Received: by 2002:adf:f552:0:b0:38d:ba09:86b5 with SMTP id ffacd0b85a97d-38dc935fd30mr8356754f8f.52.1739212890044;
-        Mon, 10 Feb 2025 10:41:30 -0800 (PST)
+        bh=HyPCciy90tVW6T2lcHcuWFhDLKyw85xuvM/qhIPk9VI=;
+        b=KWOhtZ7FqiKhDJHrDabqeUcwVy6y7AcqkG0mV58N0ry5ZxJhvxEWdJlBLCvJvgazab
+         1rQwlVSSSpEDUedO7cjbc6d3Smar30MNDmb/dniq8gxyVqf07h+tMm9dvA9Kh9I3Hoso
+         dnORg1B+BPR628VFyS7P5ezs5XjQnHQVcBdABSiV0LdV1nemKGbntjTnsp+LP0nBLjL7
+         GCiuVElTkKrUn4PARHDdHF4617Oz7jqJuA66G/JyKRANB5MDp8gStuCFLywchRW0GZgB
+         EJe5iaHnO2m14WY87tKTvewhhLt6qu4MUD9tD7U/OR5hlI8Ptc8Tqv9ZphDWZjlPiUGJ
+         swfg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/UtDXghPibB5pGbNxuJlhhgYuMTPgOBeg8PRSCXckTZdPQdicinNKmPQ9yJkN8Pwt0Nzt6FaQ5TsogCaB@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLnVyuiRGYWSvj/7qqdjkfveeNHUff14cKfa6SJZ18XE9o85/y
+	Bo+j/ZEB5iuPyrLaZx2qPWo0XYcLc7nkj/Zr5C9UykiQSgZcO+X8JxNXUkH3etRQ5WaxrC50Ymj
+	TKN9fmZMwADj+Xjd6sMl7vItbAvhQ4DPnQqP5zntPp2C6PaOYrexWyn+k9hb1KFQ=
+X-Gm-Gg: ASbGnculrkGxWTsrduzDBTxxjLMDAfKxfj35cQWGWXd2QoXHwROvDbYF4dKTxQ1nhc0
+	6AunwbdXYorWVJwukrlJupI8UDqoTC1u9IxYlN2XJFF3ShI7EQwjbg9VrAWAR7fzr4Svg+6hfDd
+	zHfm7Fjf9GLfhjYGCJPMgMLH0tVM033TBFM1OdtBSS+bkk+VkP2QoQNw+xDa3nEriJmYV+c0ROD
+	wbFiBOpJSuW40klDomXEVxhQnmiUKQ/SpVCjAAus5SJeIlUZW8EFSTKVdD3vCIjYBy8DG7nvrdF
+	SVR9LBdXwTzRhPBerS3K7SbYuqzwZBTSfwVe+vGeqFnVn2oMjy7ireAP9+mscUOcXNJsJz9gTkn
+	zGM/DQ1SdEyeq1NLT6Z5+No4s83EGFIPW
+X-Received: by 2002:a05:600c:1c25:b0:439:41dd:c066 with SMTP id 5b1f17b1804b1-43941ddc1f0mr58352115e9.31.1739213005108;
+        Mon, 10 Feb 2025 10:43:25 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGzpaPXHrmO8a6oz7FN6p5yKvrmK4zLskiJi4ioSu4niVqT7krVP8gCmrI1SDPa3yDqdwKozQ==
+X-Received: by 2002:a05:600c:1c25:b0:439:41dd:c066 with SMTP id 5b1f17b1804b1-43941ddc1f0mr58351885e9.31.1739213004744;
+        Mon, 10 Feb 2025 10:43:24 -0800 (PST)
 Received: from ?IPV6:2003:cb:c734:b800:12c4:65cd:348a:aee6? (p200300cbc734b80012c465cd348aaee6.dip0.t-ipconnect.de. [2003:cb:c734:b800:12c4:65cd:348a:aee6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dd34f2af5sm7815443f8f.78.2025.02.10.10.41.26
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dbde1dfaesm13124217f8f.90.2025.02.10.10.43.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Feb 2025 10:41:28 -0800 (PST)
-Message-ID: <cca05a6f-fbfe-43c9-815b-eadbdcd7050b@redhat.com>
-Date: Mon, 10 Feb 2025 19:41:26 +0100
+        Mon, 10 Feb 2025 10:43:23 -0800 (PST)
+Message-ID: <ff5af15f-8f9b-4ddf-88d2-5bab52449399@redhat.com>
+Date: Mon, 10 Feb 2025 19:43:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,7 +90,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 14/20] rmap: Add support for PUD sized mappings to rmap
+Subject: Re: [PATCH v7 15/20] huge_memory: Add vmf_insert_folio_pud()
 To: Alistair Popple <apopple@nvidia.com>, akpm@linux-foundation.org,
  dan.j.williams@intel.com, linux-mm@kvack.org
 Cc: Alison Schofield <alison.schofield@intel.com>, lina@asahilina.net,
@@ -108,7 +108,7 @@ Cc: Alison Schofield <alison.schofield@intel.com>, lina@asahilina.net,
  david@fromorbit.com, chenhuacai@kernel.org, kernel@xen0n.name,
  loongarch@lists.linux.dev
 References: <cover.472dfc700f28c65ecad7591096a1dc7878ff6172.1738709036.git-series.apopple@nvidia.com>
- <1518b89f5659d2595bf9878da4a76221ffcfef60.1738709036.git-series.apopple@nvidia.com>
+ <ef0f8d6a6fd340531613c351c99c98fd6f94ad93.1738709036.git-series.apopple@nvidia.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -156,23 +156,27 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <1518b89f5659d2595bf9878da4a76221ffcfef60.1738709036.git-series.apopple@nvidia.com>
+In-Reply-To: <ef0f8d6a6fd340531613c351c99c98fd6f94ad93.1738709036.git-series.apopple@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 04.02.25 23:48, Alistair Popple wrote:
-> The rmap doesn't currently support adding a PUD mapping of a
-> folio. This patch adds support for entire PUD mappings of folios,
-> primarily to allow for more standard refcounting of device DAX
-> folios. Currently DAX is the only user of this and it doesn't require
-> support for partially mapped PUD-sized folios so we don't support for
-> that for now.
+> Currently DAX folio/page reference counts are managed differently to
+> normal pages. To allow these to be managed the same as normal pages
+> introduce vmf_insert_folio_pud. This will map the entire PUD-sized folio
+> and take references as it would for a normally mapped page.
+> 
+> This is distinct from the current mechanism, vmf_insert_pfn_pud, which
+> simply inserts a special devmap PUD entry into the page table without
+> holding a reference to the page for the mapping.
 > 
 > Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
 > Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> 
 
-Nit: patch subject should start with "mm/rmap:"
+Nit: patch subject should start with "mm/huge_memory:"
+
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
 Cheers,
