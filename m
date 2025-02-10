@@ -1,200 +1,274 @@
-Return-Path: <linux-fsdevel+bounces-41379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63E7DA2E6F7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 09:52:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04C84A2E6FD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 09:52:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65DD03AA0AB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 08:51:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A7CB1673A5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 08:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03181C1F13;
-	Mon, 10 Feb 2025 08:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E1C1C1F0F;
+	Mon, 10 Feb 2025 08:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="d53xoIA/"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jcLSpBn4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jgzFjWA+";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jcLSpBn4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jgzFjWA+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B2C199E80;
-	Mon, 10 Feb 2025 08:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722AF1C07EC;
+	Mon, 10 Feb 2025 08:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739177469; cv=none; b=ieHKrveEv4AFmAGM5yFEJ45yCrRlrMa/0FjBxJtLXMT/o649RWGZrsx77O+jEkboW3Dc9b4j4sLizC8o66mYLX+zzKoH+Ib0KpWm+kxHFrEzKMVU9Jzh4srIAnHdud+FE82nyAcw+m0gbDgcvXPxmAkHhV/8v1fbr2GLlxA1OsU=
+	t=1739177527; cv=none; b=HqG87OzYymC62kn+sq5F4pU1FzoKq8GFgXbrJXe3XV19JgHlcIjj86GKZEngpJtJk18olh1RJIYOK7jXjGc3wT8Z0OPSyve1Q1MNfQut3Uui/kzMR5y1XWOwqWNEdqX3NzvIju+NXkt8L/z/QAioTiC7yI1quZ5C/i9hU7pth2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739177469; c=relaxed/simple;
-	bh=IkD2+ChwLyf7QngQzQdC06wltUn1TertBzU1HJdYxDo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e2qfVKqIZaVdSMuZ9/JBx2O8hV6+Jj0tAnpIDOXubbBmmVJ05lPLy7dFMJGukAzHPBz5CvWQgz9lYu0qFSc+q8QpXr/1SZLWjVfKh3/Mhnog967x7iER92lp0itZzTqH7MjXxneqwkGvKlY1l64HWUEyEtq7dp+GxNdebLCLpZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=d53xoIA/; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1739177465; x=1739782265; i=quwenruo.btrfs@gmx.com;
-	bh=IkD2+ChwLyf7QngQzQdC06wltUn1TertBzU1HJdYxDo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=d53xoIA/rqN6+i1XcZjINVNbCHOBlW2tgeq2Xu+IfvICfyJU5UE22CI8P/mfFBAn
-	 /qG5zNAVjfjU+8ramUbPXezOQNVv4tt6bqGZ6mK9VLwD53Es1tFnayxirUJFLgmTd
-	 g5R+lc4RGCSoqB4HWYYTF5VyBr9AKuDGbSXes0l4sKC0WY7/nn9HB2yghoLF8zFQV
-	 d0KadnEwOqwNG8Zwxw5lN1U5+qLLdVuEzhwq/YVXRScjrfbOEvv8YZrW2Ybd9EeGw
-	 AW5wdgXIy+n9jsex+AXrK+QN1YyPXpL+6j2wECga5ZNQ+4G0V6tn7KEI2OeTEjv5V
-	 x/o2bdabq1Tek4PQ2A==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MC30P-1tXBgr2A8b-0088n4; Mon, 10
- Feb 2025 09:51:05 +0100
-Message-ID: <669898c1-e998-461d-9381-9143a3cb39c2@gmx.com>
-Date: Mon, 10 Feb 2025 19:20:58 +1030
+	s=arc-20240116; t=1739177527; c=relaxed/simple;
+	bh=tx0SakQudmWy7pQ2yssX7Lq1PY1uAjUJ2xYm5K/RDPo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GqEVUNa2BLJZLrFLfrnZ0q0Of6hOdaGRjpo4z6yWH5Wf6Cxah8B6Tgt3yWXiG5w8nZzk6pQYn29m51btzzl+CZzwGrsxoObGw7mQDwaPXUhjCX16b7JcpWwa6zQMWzr0kBPLpFn/4KnPsE73XJWrIdG2e1nsvMOsI/EeKlciyC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jcLSpBn4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jgzFjWA+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jcLSpBn4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jgzFjWA+; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 91CC41F37E;
+	Mon, 10 Feb 2025 08:52:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1739177523; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X7ImRDEq0mvCvZM+o+oq2w3SAOJ+hD1BFuS0nDAv2EA=;
+	b=jcLSpBn4p1UMOPYdW+8hqUByIr2BdL8MqW4gx999LZGDMCotBeiIyxhkPzEpoalBFlPYNs
+	3TQVYh6QZhaLzZT/srK7Bqb0sxBoU7GE/xHb5u9y9ah2y93pG9MovMT0v8dtZGd17ts034
+	qlIl99fJ3Xv1ny2HJWheNoVX+crd7yE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1739177523;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X7ImRDEq0mvCvZM+o+oq2w3SAOJ+hD1BFuS0nDAv2EA=;
+	b=jgzFjWA+T5ZWTCqA3ZauMbMytyB2f96a6FyrBcJamtP5wn8hyf5YsXVNyqBrScn3oMiYSg
+	ogUzS1ZOqB97zdCQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1739177523; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X7ImRDEq0mvCvZM+o+oq2w3SAOJ+hD1BFuS0nDAv2EA=;
+	b=jcLSpBn4p1UMOPYdW+8hqUByIr2BdL8MqW4gx999LZGDMCotBeiIyxhkPzEpoalBFlPYNs
+	3TQVYh6QZhaLzZT/srK7Bqb0sxBoU7GE/xHb5u9y9ah2y93pG9MovMT0v8dtZGd17ts034
+	qlIl99fJ3Xv1ny2HJWheNoVX+crd7yE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1739177523;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X7ImRDEq0mvCvZM+o+oq2w3SAOJ+hD1BFuS0nDAv2EA=;
+	b=jgzFjWA+T5ZWTCqA3ZauMbMytyB2f96a6FyrBcJamtP5wn8hyf5YsXVNyqBrScn3oMiYSg
+	ogUzS1ZOqB97zdCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 78A0D13707;
+	Mon, 10 Feb 2025 08:52:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GtoIHTO+qWcoKgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 10 Feb 2025 08:52:03 +0000
+From: Vlastimil Babka <vbabka@suse.cz>
+To: miklos@szeredi.hu
+Cc: christian@heusel.eu,
+	joannelkoong@gmail.com,
+	josef@toxicpanda.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	mszeredi@redhat.com,
+	regressions@lists.linux.dev,
+	willy@infradead.org,
+	Vlastimil Babka <vbabka@suse.cz>,
+	=?UTF-8?q?Mantas=20Mikul=C4=97nas?= <grawity@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] fuse: prevent folio use-after-free in readahead
+Date: Mon, 10 Feb 2025 09:52:03 +0100
+Message-ID: <20250210085202.14943-2-vbabka@suse.cz>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <CAJfpegtaTET+R7Tc1MozTQWmYfgsRp6Bzc=HKonO=Uq1h6Nzgw@mail.gmail.com>
+References: <CAJfpegtaTET+R7Tc1MozTQWmYfgsRp6Bzc=HKonO=Uq1h6Nzgw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: xfs/folio splat with v6.14-rc1
-To: Qi Zheng <zhengqi.arch@bytedance.com>, Zi Yan <ziy@nvidia.com>,
- Matthew Wilcox <willy@infradead.org>, Christian Brauner
- <brauner@kernel.org>, David Hildenbrand <david@redhat.com>,
- Jann Horn <jannh@google.com>
-Cc: "Darrick J . Wong" <djwong@kernel.org>, Dave Chinner
- <david@fromorbit.com>, linux-mm@kvack.org, linux-xfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <20250207-anbot-bankfilialen-acce9d79a2c7@brauner>
- <20250207-handel-unbehagen-fce1c4c0dd2a@brauner>
- <Z6aGaYkeoveytgo_@casper.infradead.org>
- <2766D04E-5A04-4BF6-A2A3-5683A3054973@nvidia.com>
- <8c71f41e-3733-4100-ab55-1176998ced29@bytedance.com>
- <dda6b378-c344-4de6-9a55-8571df3149a7@bytedance.com>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
- sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
- xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
- naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
- tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
- 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
- VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
- CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
- B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
- Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
- +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
- HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
-In-Reply-To: <dda6b378-c344-4de6-9a55-8571df3149a7@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
-X-Provags-ID: V03:K1:EC4xqQatFtQ165vekt4XxHWulLePZUCb3+pYQTwnOhpmUIfxqvG
- FhFFZ42M0gOnF7hXP1NbJ5iymVQWA3m8FCMD5QwZq76u/3o47hBZU863/Fhsy+0cklMPqWq
- A57+pZkfngM8x4v8VzMNFLioskYgjVAAoFheQoIr81NQy99khjt9KHVj5r0tcz1cjoM0Uw8
- clFVHd8hEJmLWv6nHtTaw==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[heusel.eu,gmail.com,toxicpanda.com,vger.kernel.org,kvack.org,redhat.com,lists.linux.dev,infradead.org,suse.cz];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:email,opensuse.org:url]
+X-Spam-Score: -3.30
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:JRDyHF5gkyo=;6gm8y+IjhBmx+14I4X07PPltlde
- WulmlpauDBy+S81bf4cDYc2p4UL7k5SmrlRM4Ra0gx51GXKx9y/GzOrej6h8ozWWPLrWsMnA6
- JqnCiiYi5goyEjpsywEwlcyboWcFZvyTJAEyU+0QyH5OaHTzxVUHn4iU4A8vyJa3URRIG0Oue
- RS+uxyjTE6tGqXhG1gdwq/wirCMX+WI1X31w9/wO3Ie02R4fdLeoCwAxPZyGRKMIF3XChRwN8
- bPLhvclaF3HkMo/Kut/fCkp+dsPTiaFU3ZSiyYf+mgXt89XU+5yVK6uFKvxCWwPVzXoGxdSRS
- s88kfs5Hz+ugsBBUBfqxDz4XfBegcTm2JJVJVx/8KnDiyx7g16F46DTpH/eRtw0NMDBUFn6zw
- kaeygzbf1Is2MsPckOT7HCEySCih1v0mOShabxqAkO8NeZMYUghYUHOfAdKpKOOVBDocdiDi3
- pfhZgLcqPIb2TtM448RX054DNwNh4zo75AgNov1mWo4VjVFqIu2N3l2ztIPdHnZ+H2mtGv4UQ
- ibcG+wk9DtJdFHTvjSmDjqIA/cXnJl3T4hh9MK/tuaeJO+AkpxCRJ6YUY8zM35jKRy4Grkh8v
- vigy3GXnImu56Vll7hO9iuHbBdN6b4SZsBZc/n7+VgVKfW+zwX8yBiLFP5PZJQtjGz6qXx3aG
- V/sYOnECIG+vhJ2X8ZoWV6S91YWGyKO/X0mcccLrWTCwMLEy/BmlatmHas1qeaW0YjKnkFgrp
- 957SkFZzZah86OykJB6heUovRMpEANdAEQvHZwBYhOGmynDa3OKoovbn67bvXhzal9/WonOmM
- tUFEXrrSLk/qvg19K1zeh2hx9fd+FeP+dskElhJW/kb3Ff6VC1XFeQae79PKN39NkKQ/3mDh9
- 9Nv6WQ132j14GgGjbkUj3qTDqskSqW8xfI1B6k7HMNkPeo3nxjrDEVQ6pM2Z8qLnGZA10y8FI
- qjmjbUyLx+M7jDj4mrA/ljFGiKKz0qXv4ugfDGIh0FcyD5EBq9iV9b8DgDqagLZ+PdCk3y3Tw
- CBj+dSOvTaBeRmI152IBEmdwULvTHg2tnwZyNPcKl4pZpXaqsp2QX1cnakY1M5H7nng/wXOWI
- 2AGtO62YmsOqmbK2kfHxRBMeU1T9grjKXUjQ7oIeCrOrRtlnMBgXD4yLu7IV/D6KxHiyEHuvp
- +2sq2wdco8RCI6ifh5yk6YmRWAwkJ5APJMsXLUHEHoxQDtOMRW1g8j7s/wl+8QuwJY9jubrmh
- fEZGZxbCHcaIMZFAfNCJ+IYQyhyI6oPlPLBGy5q4ptuGZPjzc/pjMQKf2oUrGp/YXtFqkSc56
- +GRoi6L/6UUzqzkXBTZk/9rVfoFq3a1PuNYHY8z6bgbV+XEKCWxDCfmA+CYdxgHn/0ukKm2+2
- u4Uf64uWXItjNc+rlnFwluRQFjXUyMMCDXZCRUjydh+NXbOqz3PCmYeLlu
 
-DQoNCuWcqCAyMDI1LzIvMTAgMTg6NDgsIFFpIFpoZW5nIOWGmemBkzoNCj4gSGkgYWxsLA0KPiAN
-Cj4gT24gMjAyNS8yLzEwIDEyOjAyLCBRaSBaaGVuZyB3cm90ZToNCj4+IEhpIFppLA0KPj4NCj4+
-IE9uIDIwMjUvMi8xMCAxMTozNSwgWmkgWWFuIHdyb3RlOg0KPj4+IE9uIDcgRmViIDIwMjUsIGF0
-IDE3OjE3LCBNYXR0aGV3IFdpbGNveCB3cm90ZToNCj4+Pg0KPj4+PiBPbiBGcmksIEZlYiAwNywg
-MjAyNSBhdCAwNDoyOTozNlBNICswMTAwLCBDaHJpc3RpYW4gQnJhdW5lciB3cm90ZToNCj4+Pj4+
-IHdoaWxlIHRydWU7IGRvIC4veGZzLnJ1bi5zaCAiZ2VuZXJpYy80MzciOyBkb25lDQo+Pj4+Pg0K
-Pj4+Pj4gYWxsb3dzIG1lIHRvIHJlcHJvZHVjZSB0aGlzIGZhaXJseSBxdWlja2x5Lg0KPj4+Pg0K
-Pj4+PiBvbiBob2xpZGF5LCBiYWNrIG1vbmRheQ0KPj4+DQo+Pj4gZ2l0IGJpc2VjdCBwb2ludHMg
-dG8gY29tbWl0DQo+Pj4gNDgxN2Y3MGMyNWI2ICgieDg2OiBzZWxlY3QgQVJDSF9TVVBQT1JUU19Q
-VF9SRUNMQUlNIGlmIFg4Nl82NCIpLg0KPj4+IFFpIGlzIGNjJ2QuDQo+Pj4NCj4+PiBBZnRlciBk
-ZXNlbGVjdCBQVF9SRUNMQUlNIG9uIHY2LjE0LXJjMSwgdGhlIGlzc3VlIGlzIGdvbmUuDQo+Pj4g
-QXQgbGVhc3QsIG5vIHNwbGF0IGFmdGVyIHJ1bm5pbmcgZm9yIG1vcmUgdGhhbiAzMDBzLA0KPj4+
-IHdoZXJlYXMgdGhlIHNwbGF0IGlzIHVzdWFsbHkgdHJpZ2dlcmVkIGFmdGVyIH4yMHMgd2l0aA0K
-Pj4+IFBUX1JFQ0xBSU0gc2V0Lg0KPj4NCj4+IFRoZSBQVF9SRUNMQUlNIG1haW5seSBtYWRlIHRo
-ZSBmb2xsb3dpbmcgdHdvIGNoYW5nZXM6DQo+Pg0KPj4gMSkgdHJ5IHRvIHJlY2xhaW0gcGFnZSB0
-YWJsZSBwYWdlcyBkdXJpbmcgbWFkdmlzZShNQURWX0RPTlRORUVEKQ0KPj4gMikgVW5jb25kaXRp
-b25hbGx5IHNlbGVjdCBNTVVfR0FUSEVSX1JDVV9UQUJMRV9GUkVFDQo+Pg0KPj4gV2lsbCAuL3hm
-cy5ydW4uc2ggImdlbmVyaWMvNDM3IiBwZXJmb3JtIHRoZSBtYWR2aXNlKE1BRFZfRE9OVE5FRUQp
-Pw0KPj4NCj4+IEFueXdheSwgSSB3aWxsIHRyeSB0byByZXByb2R1Y2UgaXQgbG9jYWxseSBhbmQg
-dHJvdWJsZXNob290IGl0Lg0KPiANCj4gSSByZXByb2R1Y2VkIGl0IGxvY2FsbHkgYW5kIGl0IHdh
-cyBpbmRlZWQgY2F1c2VkIGJ5IFBUX1JFQ0xBSU0uDQo+IA0KPiBUaGUgcm9vdCBjYXVzZSBpcyB0
-aGF0IHRoZSBwdGUgbG9jayBtYXkgYmUgcmVsZWFzZWQgbWlkd2F5IGluDQo+IHphcF9wdGVfcmFu
-Z2UoKSBhbmQgdGhlbiByZXRyaWVkLiBJbiB0aGlzIGNhc2UsIHRoZSBvcmlnaW5hbGx5IG5vbmUg
-cHRlDQo+IGVudHJ5IG1heSBiZSByZWZpbGxlZCB3aXRoIHBoeXNpY2FsIHBhZ2VzLg0KPiANCj4g
-U28gd2Ugc2hvdWxkIHJlY2hlY2sgYWxsIHB0ZSBlbnRyaWVzIGluIHRoaXMgY2FzZToNCj4gDQo+
-IGRpZmYgLS1naXQgYS9tbS9tZW1vcnkuYyBiL21tL21lbW9yeS5jDQo+IGluZGV4IGE4MTk2YWU3
-MmU5YWUuLmNhMWIxMzNhMjg4YjUgMTAwNjQ0DQo+IC0tLSBhL21tL21lbW9yeS5jDQo+ICsrKyBi
-L21tL21lbW9yeS5jDQo+IEBAIC0xNzIxLDcgKzE3MjEsNyBAQCBzdGF0aWMgdW5zaWduZWQgbG9u
-ZyB6YXBfcHRlX3JhbmdlKHN0cnVjdCANCj4gbW11X2dhdGhlciAqdGxiLA0KPiAgwqDCoMKgwqDC
-oMKgwqAgcG1kX3QgcG1kdmFsOw0KPiAgwqDCoMKgwqDCoMKgwqAgdW5zaWduZWQgbG9uZyBzdGFy
-dCA9IGFkZHI7DQo+ICDCoMKgwqDCoMKgwqDCoCBib29sIGNhbl9yZWNsYWltX3B0ID0gcmVjbGFp
-bV9wdF9pc19lbmFibGVkKHN0YXJ0LCBlbmQsIGRldGFpbHMpOw0KPiAtwqDCoMKgwqDCoMKgIGJv
-b2wgZGlyZWN0X3JlY2xhaW0gPSBmYWxzZTsNCj4gK8KgwqDCoMKgwqDCoCBib29sIGRpcmVjdF9y
-ZWNsYWltID0gdHJ1ZTsNCj4gIMKgwqDCoMKgwqDCoMKgIGludCBucjsNCj4gDQo+ICDCoHJldHJ5
-Og0KPiBAQCAtMTczNiw4ICsxNzM2LDEwIEBAIHN0YXRpYyB1bnNpZ25lZCBsb25nIHphcF9wdGVf
-cmFuZ2Uoc3RydWN0IA0KPiBtbXVfZ2F0aGVyICp0bGIsDQo+ICDCoMKgwqDCoMKgwqDCoCBkbyB7
-DQo+ICDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgYm9vbCBhbnlfc2tpcHBlZCA9IGZh
-bHNlOw0KPiANCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgKG5lZWRfcmVzY2hl
-ZCgpKQ0KPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpZiAobmVlZF9yZXNjaGVkKCkp
-IHsNCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGRpcmVj
-dF9yZWNsYWltID0gZmFsc2U7DQo+ICDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgIGJyZWFrOw0KPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9DQo+
-IA0KPiAgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIG5yID0gZG9femFwX3B0ZV9yYW5n
-ZSh0bGIsIHZtYSwgcHRlLCBhZGRyLCBlbmQsIA0KPiBkZXRhaWxzLCByc3MsDQo+ICDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCAmZm9yY2VfZmx1c2gsICZmb3JjZV9icmVhaywgDQo+ICZhbnlfc2tpcHBlZCk7
-DQo+IEBAIC0xNzQ1LDExICsxNzQ3LDEyIEBAIHN0YXRpYyB1bnNpZ25lZCBsb25nIHphcF9wdGVf
-cmFuZ2Uoc3RydWN0IA0KPiBtbXVfZ2F0aGVyICp0bGIsDQo+ICDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGNhbl9yZWNsYWltX3B0ID0gZmFsc2U7DQo+ICDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgKHVubGlrZWx5KGZvcmNlX2JyZWFrKSkg
-ew0KPiAgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBhZGRy
-ICs9IG5yICogUEFHRV9TSVpFOw0KPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqAgZGlyZWN0X3JlY2xhaW0gPSBmYWxzZTsNCj4gIMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgYnJlYWs7DQo+ICDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgfQ0KPiAgwqDCoMKgwqDCoMKgwqAgfSB3aGlsZSAocHRlICs9IG5yLCBh
-ZGRyICs9IFBBR0VfU0laRSAqIG5yLCBhZGRyICE9IGVuZCk7DQo+IA0KPiAtwqDCoMKgwqDCoMKg
-IGlmIChjYW5fcmVjbGFpbV9wdCAmJiBhZGRyID09IGVuZCkNCj4gK8KgwqDCoMKgwqDCoCBpZiAo
-Y2FuX3JlY2xhaW1fcHQgJiYgZGlyZWN0X3JlY2xhaW0gJiYgYWRkciA9PSBlbmQpDQo+ICDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZGlyZWN0X3JlY2xhaW0gPSB0cnlfZ2V0X2FuZF9j
-bGVhcl9wbWQobW0sIHBtZCwgJnBtZHZhbCk7DQo+IA0KPiAgwqDCoMKgwqDCoMKgwqAgYWRkX21t
-X3Jzc192ZWMobW0sIHJzcyk7DQo+IA0KPiBJIHRlc3RlZCB0aGUgYWJvdmUgY29kZSBhbmQgbm8g
-YnVncyB3ZXJlIHJlcG9ydGVkIGZvciBhIHdoaWxlLiBEb2VzIGl0DQo+IHdvcmsgZm9yIHlvdT8N
-Cg0KVGVzdGVkIDEyOCBnZW5lcmljLzQzNyBydW5zIHdpdGggQ09ORklHX1BUX1JFQ0xBSU0gb24g
-YnRyZnMuDQpObyBtb3JlIGNyYXNoLCB3aWxsIGRvIGEgbG9uZ2VyIHJ1biwgYnV0IGl0IGxvb2tz
-IGxpa2UgdG8gZ2V0IHRoZSBidWcgZml4ZWQuDQoNCkJlZm9yZSB0aGUgZml4IG1lcmdlZCwgSSds
-bCBkZXNlbGVjdCBQVF9SRUNMQUlNIGFzIGEgd29ya2Fyb3VuZCBmb3IgbXkgDQpydW5zIG9uIGJ0
-cmZzL2Zvci1uZXh0IGJyYW5jaC4NCg0KVGhhbmtzLA0KUXUNCg0KPiANCj4gVGhhbmtzLA0KPiBR
-aQ0KPiANCj4+DQo+PiBUaGFua3MhDQo+Pg0KPj4+DQo+Pj4gLS0gDQo+Pj4gQmVzdCBSZWdhcmRz
-LA0KPj4+IFlhbiwgWmkNCg0K
+There have been crash reports in 6.13+ kernels related to FUSE and
+Flatpak, such as from Christian:
+
+ BUG: Bad page state in process rnote  pfn:67587
+ page: refcount:-1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x67587
+ flags: 0xfffffc8000020(lru|node=0|zone=1|lastcpupid=0x1fffff)
+ raw: 000fffffc8000020 dead000000000100 dead000000000122 0000000000000000
+ raw: 0000000000000000 0000000000000000 ffffffffffffffff 0000000000000000
+ page dumped because: PAGE_FLAGS_CHECK_AT_PREP flag(s) set
+ CPU: 0 UID: 1000 PID: 1962 Comm: rnote Not tainted 6.14.0-rc1-1-mainline #1 715c0460cf5d3cc18e3178ef3209cee42e97ae1c
+ Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS unknown 02/02/2022
+ Call Trace:
+
+  dump_stack_lvl+0x5d/0x80
+  bad_page.cold+0x7a/0x91
+  __rmqueue_pcplist+0x200/0xc50
+  get_page_from_freelist+0x2ae/0x1740
+  ? srso_return_thunk+0x5/0x5f
+  ? __pm_runtime_suspend+0x69/0xc0
+  ? srso_return_thunk+0x5/0x5f
+  ? __seccomp_filter+0x303/0x520
+  ? srso_return_thunk+0x5/0x5f
+  __alloc_frozen_pages_noprof+0x184/0x330
+  alloc_pages_mpol+0x7d/0x160
+  folio_alloc_mpol_noprof+0x14/0x40
+  vma_alloc_folio_noprof+0x69/0xb0
+  do_anonymous_page+0x32a/0x8b0
+  ? srso_return_thunk+0x5/0x5f
+  ? ___pte_offset_map+0x1b/0x180
+  __handle_mm_fault+0xb5e/0xfe0
+  handle_mm_fault+0xe2/0x2c0
+  do_user_addr_fault+0x217/0x620
+  exc_page_fault+0x81/0x1b0
+  asm_exc_page_fault+0x26/0x30
+ RIP: 0033:0x7fcfc31c8cf9
+
+Or Mantas:
+
+ list_add corruption. next->prev should be prev (ffff889c8f5bd5f0), but was ffff889940066a10. (next=ffffe3ce8b683548).
+ WARNING: CPU: 3 PID: 2184 at lib/list_debug.c:29 __list_add_valid_or_report+0x62/0xb0
+  spi_intel_pci soundcore nvme_core spi_intel rfkill rtsx_pci nvme_auth cec i8042 video serio wmi
+ CPU: 3 UID: 1000 PID: 2184 Comm: fuse mainloop Tainted: G     U     OE      6.13.1-arch1-1 #1 c1258adae10e6ad423427764ae6ad3679b7d8e8a
+ Tainted: [U]=USER, [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+ Hardware name: LENOVO 20S6003QPB/20S6003QPB, BIOS N2XET42W (1.32 ) 06/12/2024
+ RIP: 0010:__list_add_valid_or_report+0x62/0xb0
+
+ Call Trace:
+  <TASK>
+  ? __list_add_valid_or_report+0x62/0xb0
+  ? __warn.cold+0x93/0xf6
+  ? __list_add_valid_or_report+0x62/0xb0
+  ? report_bug+0xff/0x140
+  ? handle_bug+0x58/0x90
+  ? exc_invalid_op+0x17/0x70
+  ? asm_exc_invalid_op+0x1a/0x20
+  ? __list_add_valid_or_report+0x62/0xb0
+  free_unref_page_commit.cold+0x9/0x12
+  free_unref_page+0x46e/0x570
+  fuse_copy_page+0x37e/0x6c0
+  fuse_copy_args+0x186/0x210
+  fuse_dev_do_write+0x796/0x12a0
+  fuse_dev_splice_write+0x29d/0x380
+  do_splice+0x308/0x890
+  __do_splice+0x204/0x220
+  __x64_sys_splice+0x84/0xf0
+  do_syscall_64+0x82/0x190
+  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+ RIP: 0033:0x77e0dde36e56
+
+Christian bisected the issue to 3eab9d7bc2f4 ("fuse: convert readahead
+to use folios"). The bug reports suggest a refcount underflow on struct
+page due to a use after free or double free. The bisected commit
+switches fuse_readahead() to readahead_folio() which includes a
+folio_put() and removes folio_put() from fuse_readpages_end(). As a
+result folios on the ap->folios (previously ap->pages) don't have an
+elevated refcount. According to Matthew the folio lock should protect
+them from being freed prematurely. It's unclear why not, but before this
+is fully resolved we can stop the kernels from crashing by having the
+refcount relevated again. Thus switch to __readahead_folio() that does
+not drop the refcount, and reinstate folio_put() in
+fuse_readpages_end().
+
+Fixes: 3eab9d7bc2f4 ("fuse: convert readahead to use folios")
+Reported-by: Christian Heusel <christian@heusel.eu>
+Closes: https://lore.kernel.org/all/2f681f48-00f5-4e09-8431-2b3dbfaa881e@heusel.eu/
+Closes: https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/issues/110
+Reported-by: Mantas Mikulėnas <grawity@gmail.com>
+Closes: https://lore.kernel.org/all/34feb867-09e2-46e4-aa31-d9660a806d1a@gmail.com/
+Closes: https://bugzilla.opensuse.org/show_bug.cgi?id=1236660
+Tested-by: Joanne Koong <joannelkoong@gmail.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+Given the impact on users and positive testing feedback, this is the
+proper patch in case Miklos decides to mainline and stable it before the
+full picture is known.
+
+ fs/fuse/file.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 7d92a5479998..a40d65ffb94d 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -955,8 +955,10 @@ static void fuse_readpages_end(struct fuse_mount *fm, struct fuse_args *args,
+ 		fuse_invalidate_atime(inode);
+ 	}
+ 
+-	for (i = 0; i < ap->num_folios; i++)
++	for (i = 0; i < ap->num_folios; i++) {
+ 		folio_end_read(ap->folios[i], !err);
++		folio_put(ap->folios[i]);
++	}
+ 	if (ia->ff)
+ 		fuse_file_put(ia->ff, false);
+ 
+@@ -1048,7 +1050,7 @@ static void fuse_readahead(struct readahead_control *rac)
+ 		ap = &ia->ap;
+ 
+ 		while (ap->num_folios < cur_pages) {
+-			folio = readahead_folio(rac);
++			folio = __readahead_folio(rac);
+ 			ap->folios[ap->num_folios] = folio;
+ 			ap->descs[ap->num_folios].length = folio_size(folio);
+ 			ap->num_folios++;
+-- 
+2.48.1
+
 
