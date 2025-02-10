@@ -1,232 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-41430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B669A2F689
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 19:13:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46AA1A2F68E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 19:14:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD83A7A2838
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 18:12:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87D057A1F6C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 18:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10BD255E5B;
-	Mon, 10 Feb 2025 18:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB0B255E4B;
+	Mon, 10 Feb 2025 18:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=scylladb.com header.i=@scylladb.com header.b="z0b8llt8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YBRFAMbl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766FE255E46
-	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2025 18:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F7322E412;
+	Mon, 10 Feb 2025 18:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739211163; cv=none; b=jrpK9IkT1iLYP0KfDdKtgAt4fOatjrz0WwdpLZ3jYkOhHiHtXMrwa+PpJg+m5l+FXaKeWIsQ33lrPVKWuZjT5xpR2vv15zLr3EnD1cE438EqhmSUsISdZE7KK2ue9csd1c6Wgh5wc1Rb7jTe+PMwGapXVbVfxBvNE0+qkJhvxuo=
+	t=1739211246; cv=none; b=L38449pxsy9Hgfi6v8dwg70p37Z74Dgu+iROtRQ5/KvSAKSF8vE5B6XEg0ILmCL4ObDUeP/ItU3sv08fiMiOaFfCKnX70r4DQqwVTd+zNdhyCwzRFkmVTTXpkrUdb7H7eEQ/jDVBMl19hSiOG7rTmtsoC5UHS99oMfEXs93FA9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739211163; c=relaxed/simple;
-	bh=3/MHfhlR7A1fMCKuzyQ9kYjcRJa0otc+shpPn/Aicas=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=tVQ8ieMQKFMGrZiHlnmvdXvZ33Fs/0IT1hfFcx5/25JmycsaOsc9Dn9KD0AGK7czIFlobgnslqTY66mqron73hxXcUjP3gzU8wzzjM/DA/7JS9rg/BfVKdmr2EQJ/ZwIqGQiQh3ouXlQeVW5p6A0sGOnGIF9lrBaNiL/npFtzqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=scylladb.com; spf=pass smtp.mailfrom=scylladb.com; dkim=pass (2048-bit key) header.d=scylladb.com header.i=@scylladb.com header.b=z0b8llt8; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=scylladb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=scylladb.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2f9f6a2fa8dso6482140a91.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2025 10:12:41 -0800 (PST)
+	s=arc-20240116; t=1739211246; c=relaxed/simple;
+	bh=VpbyY1Ghxa+2INjf8c3BfLUMYL0IPb0Mb1W29+1Ek4A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=geFeoWwwMyn9U5pKLRvoceMgBjmpXXsrCHcNaxyxhKuPD2lzmOu63eM4EcQvLl7HFgaf8sZc+aMB6AiT2/s4DLXbrKupzkaiE5RHsuxQh2iWCYuD8QXQR9hiFUc8rkTpSPfy76ZjIrexR8ebjpc3dDEYU/ZQvfdTaf5KYiSRf/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YBRFAMbl; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-471a01060f3so1807151cf.0;
+        Mon, 10 Feb 2025 10:14:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=scylladb.com; s=google; t=1739211161; x=1739815961; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739211244; x=1739816044; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ghqe50qYZAx8/Up2NeOnbz1uVUWHYq1gR6XXZUhiI3o=;
-        b=z0b8llt83pPx5PjRHlWIT7qmb5sy1rAJz8lWlbXxjsxf2997pHjrpVh9l1c8qCvvLf
-         3H3fGGd1Ct4HGcCmGjba0UAOTxveLF0yFRGbIny8AERJ3ScAOJ7kbwpa3TtZ2HnRfFYi
-         +OG6mrocqNnj3NLvLSu/Xk8Je8wPNOB9utiNESqwULsaqiyKZHU+Fv2fR6nkTpincS0w
-         kooryDLcPvjhIDePU8YnhtLluGxBj4YOsUlZCgWNIK/d9e7dOwb8BECvakXyIrlHs4jy
-         c0OZrbTVdy4XAfoAU4rAckhgQIWDKaCMSCLyEPxg7Z1GfkkIz4RWhhaOO15IcHvLWrvM
-         +3nQ==
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9GAon67fTF+Z/QksfmcN1Wg362w+GO/sYKO+48/Qp2g=;
+        b=YBRFAMbljysCdAOobEFbrwcO2w1kQI8qtFhyjqLOr/zylmrSTdjSDHNO6uSxSovkaC
+         mkVPFWyt3SJDqxEi901Me7kbkKKAEoG5lDz49Hsfpb4RXHD7BTPoqfw+3tvWRlfAR6K5
+         rSa+J/66wXV14JNeqhuHorUmqcShi5EYRmz/E3I53h0PEWHd2qbyiHTscSLnBQX2KwK7
+         Ie41D647kb5xX8ZjYy069OMGhkrAnfhN4c3vuMfrxddIMOI3MVviRsnsII6TYbh47/Wl
+         a76hyM0Kt/TCScrQbBSES4qdu74PYNPcZlib69q1d/Q5wLURR5wJF/p7cJj6qVs2Yksi
+         gsvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739211161; x=1739815961;
+        d=1e100.net; s=20230601; t=1739211244; x=1739816044;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ghqe50qYZAx8/Up2NeOnbz1uVUWHYq1gR6XXZUhiI3o=;
-        b=A+N59wVs4PrtQmw64inkAjE/m062RzWQMR+1KgdIMvBGKq0Z3FonW7spweouzK06Sf
-         kUi/2DANlFwZS4yqoOGian6MJEI++RMjjAd6hHN3RFjDkx11xety3DynAsMc1RID0dWL
-         DzZPqx5YF3t9hU8kcJGnJZkc5z+LULne52c9zN+Navf2qIHCaotSGzFFMojUC3AjHfmH
-         NbS8BoXYtxAErV6UqQdFXQq/8238AhkmzS3SEUWuXY1m3PzL8iix13n550OBtoP4pRMc
-         HnRVPwsDcQuuZpnoZJhZRFzXbFR0qQvxxeAw0iH2UsJVS10grCIHz9OqBAhtLJsBqo0v
-         Uj7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWCUrIhK6lbWGh4IvcNqushOvUnqXEgEBeoQKYxW6onhvV3ibFuZyZjwKKCd5AJs9sGnEjec/sgf2Z1iDgh@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHisTtCN6J48e+nZBYoZhVdBg/Dx0C8hSOpKWOPphktjT3FArZ
-	Wsp8bIMMaMV85edhy9VABHY+40RYLtfeuYV571whv1eH9g0YRIBgMx4PuYPueUtO/VxoCsVTbY8
-	vwM50Rit1EYlj31sCccyaoHFGiUgYKwjwZEsCMlg9MAnOJ+pRTJPmqcuoxHoLGBu6mEiNB/Xv2h
-	p924ylfWqTujFKE1V5euIhdsaMTc456ndcq4MBpuCo2JPxj7ccmNWfiBH8hqrxVnXOxIZYCq8vO
-	1JqBV0+nsIb4SYPx2VljH1h3X9dfAe2Ug1Sj4dvhUry45ArkNxv4+aTaS2RzxIImoY3Zrch3GLy
-	weWiN3WuKgRQphP/llOwhYRPFDGH1tGlyR8C0GqlotLkcC0vrs+2/uKg4Ac9VvoL7qCdaM4+AWu
-	W6yPKzeipM9ECVLXhMF1+uax2
-X-Gm-Gg: ASbGnctSgsuBGsuom9sxkJ1jnrZd/wHGx/7h6BDNxXoOpmVqPaPjJf/B0QR9baJBBqF
-	xU/3AwCKqYo7nS0cATPKJiAI1wmz7dYfTgYsGQcz8Xx6HLoFhrQqQ+fy+rW8+Cbr0WxA1wpAa6U
-	e3vNuO9NPJDtYCNw==
-X-Google-Smtp-Source: AGHT+IH42tWjnTVpToH+j5t5Jo4/pmVQaB9GJtJldKzz+C6W598q1wQBxNOoLHTh4L4xQClrCInTELzbqnmG1Vghncw=
-X-Received: by 2002:a17:90b:2e47:b0:2fa:20f4:d277 with SMTP id
- 98e67ed59e1d1-2fa243e39dbmr22125692a91.24.1739211160478; Mon, 10 Feb 2025
- 10:12:40 -0800 (PST)
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9GAon67fTF+Z/QksfmcN1Wg362w+GO/sYKO+48/Qp2g=;
+        b=mk/DAVodbWVdNq6p0F47BJlLagZCUAUSyfO60FmMLJbmn6/8Bz7TbJBDn0jWH1ZhZe
+         LUvTh5IM/dLMc3Oly590+xv5Ndoc78gkAq6V9BDvG139rqqFN/KMt3cF/VaPQPKyPBFJ
+         15E99eqmQ6I5hqBBM8dvlw9rOS+9I9LsoVJ9fR1i8RmRU0iP6mubji8awYqYzy2WCkre
+         Bg4TR1NZ2Bb7z5HK+LnQ0KCPDScGWFd8HPxEg01iPn4uYlX9JZSrICr0V+K7Y0ZLK3Ty
+         sHoMbsGSFOQrZ9JnZqmAFrpsLX7KK1eHEBvJ6Dr7xtWsgGRD+WGwfY4r2V2bwg/kU8cy
+         /aVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVX8VWmsEID2iRZhzapRWbWHZdLb56ZCXBemPrIk9gwm1qYkXkFuFZniOYkP38ysImYttgyFZg2wdDcC3Vt@vger.kernel.org, AJvYcCWae+3gWKpeijNJrGAnUt3DDTEqQFVdzaOaao9Jl4iOjDQrHy5UJpQDUD+4ebmDsgDX34EIJqB9KOD26Bhz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz46Rcvx4ficOG5W/JDvYK4xUE/b9RiyMBKdUdfp8N5zlAQ/Kn2
+	avL4MdNuAXCV3UciWe9v+jQqM8PuJj5aAHgUtp8ha8zegBt19mhYGE1wQMwDHnHpwmUu/IFIxNC
+	PGpPQ9aku+qc/+rT9J2ts9zs1Zuw=
+X-Gm-Gg: ASbGncv0JR3DgEWKWIGeu4+Tscbp3IVOIoMbTIkwuFcQQtmnw9nm/piMs/NsEEPUREQ
+	Zz3kYdg8bzsK9sbUKKVrb4J/tAwKeVDLIy0Wp3QYUPdtwMKA9bQSq13iC8i/HM0Ke6Tc2/Hbxzv
+	fPl+v7oTHoFmBD
+X-Google-Smtp-Source: AGHT+IHw7qyHtO12sVFUjn+ibik5SqtRzWi/aq5Gq5MrMU1FTFBx2agmOq4G5FuHhwgn6PL4m2EdV38mrVh7lb23k5M=
+X-Received: by 2002:a05:622a:1f06:b0:471:997f:39ec with SMTP id
+ d75a77b69052e-471997f3e9cmr41192771cf.30.1739211243688; Mon, 10 Feb 2025
+ 10:14:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Raphael S. Carvalho" <raphaelsc@scylladb.com>
-Date: Mon, 10 Feb 2025 15:12:24 -0300
-X-Gm-Features: AWEUYZla75N_T1omj1dgRRrPxpzZF8m_so82a-s0ma_JD4_WjgtvDUIb2E1F1E8
-Message-ID: <CAKhLTr1UL3ePTpYjXOx2AJfNk8Ku2EdcEfu+CH1sf3Asr=B-Dw@mail.gmail.com>
-Subject: Possible regression with buffered writes + NOWAIT behavior, under
- memory pressure
-To: linux-xfs@vger.kernel.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org
-Cc: djwong@kernel.org, Dave Chinner <david@fromorbit.com>, hch@lst.de, 
-	Avi Kivity <avi@scylladb.com>
+References: <2f681f48-00f5-4e09-8431-2b3dbfaa881e@heusel.eu>
+ <CAJfpegtaTET+R7Tc1MozTQWmYfgsRp6Bzc=HKonO=Uq1h6Nzgw@mail.gmail.com>
+ <9cd88643-daa8-4379-be0a-bd31de277658@suse.cz> <20250207172917.GA2072771@perftesting>
+ <8f7333f2-1ba9-4df4-bc54-44fd768b3d5b@suse.cz> <CAJnrk1aNVMCfTjL0vo-Qki68-5t1W+6-bJHg+x67kHEo_-q0Eg@mail.gmail.com>
+ <Z6ct4bEdeZwmksxS@casper.infradead.org> <CAJnrk1aY0ZFcS4JvmJL=icigencsCD8g4qmZiTuoPWj2S2Y_LQ@mail.gmail.com>
+ <81298bd1-e630-4940-ae5b-7882576b6bf4@suse.cz>
+In-Reply-To: <81298bd1-e630-4940-ae5b-7882576b6bf4@suse.cz>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 10 Feb 2025 10:13:51 -0800
+X-Gm-Features: AWEUYZnd9EDodvxc9WlMkRecfw_ALKaRXXREZ3ZlXO6DJg6l6ogEuCyV301mPcc
+Message-ID: <CAJnrk1aBc5uvL78s3kdpXojH-B11wtOPSDUJ0XnCzmHH+eO2Nw@mail.gmail.com>
+Subject: Re: [REGRESSION][BISECTED] Crash with Bad page state for FUSE/Flatpak
+ related applications since v6.13
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Matthew Wilcox <willy@infradead.org>, Josef Bacik <josef@toxicpanda.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Christian Heusel <christian@heusel.eu>, 
+	Miklos Szeredi <mszeredi@redhat.com>, regressions@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm <linux-mm@kvack.org>, =?UTF-8?Q?Mantas_Mikul=C4=97nas?= <grawity@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-CLOUD-SEC-AV-Sent: true
-X-CLOUD-SEC-AV-Info: scylladb,google_mail,monitor
-X-Gm-Spam: 0
-X-Gm-Phishy: 0
-X-CLOUD-SEC-AV-Sent: true
-X-CLOUD-SEC-AV-Info: scylla,google_mail,monitor
-X-Gm-Spam: 0
-X-Gm-Phishy: 0
 
-While running scylladb test suite, which uses io_uring + buffered
-writes + XFS, the system was spuriously returning ENOMEM, despite
-there being plenty of available memory to be reclaimed from the page
-cache. FWIW, I am running: 6.12.9-100.fc40.x86_64
+On Mon, Feb 10, 2025 at 12:27=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> w=
+rote:
+>
+> On 2/8/25 16:46, Joanne Koong wrote:
+> > On Sat, Feb 8, 2025 at 2:11=E2=80=AFAM Matthew Wilcox <willy@infradead.=
+org> wrote:
+> >>
+> >> On Fri, Feb 07, 2025 at 04:22:56PM -0800, Joanne Koong wrote:
+> >> > > Thanks, Josef. I guess we can at least try to confirm we're on the=
+ right track.
+> >> > > Can anyone affected see if this (only compile tested) patch fixes =
+the issue?
+> >> > > Created on top of 6.13.1.
+> >> >
+> >> > This fixes the crash for me on 6.14.0-rc1. I ran the repro using
+> >> > Mantas's instructions for Obfuscate. I was able to trigger the crash
+> >> > on a clean build and then with this patch, I'm not seeing the crash
+> >> > anymore.
+> >>
+> >> Since this patch fixes the bug, we're looking for one call to folio_pu=
+t()
+> >> too many.  Is it possibly in fuse_try_move_page()?  In particular, thi=
+s
+> >> one:
+> >>
+> >>         /* Drop ref for ap->pages[] array */
+> >>         folio_put(oldfolio);
+> >>
+> >> I don't know fuse very well.  Maybe this isn't it.
+> >
+> > Yeah, this looks it to me. We don't grab a folio reference for the
+> > ap->pages[] array for readahead and it tracks with Mantas's
+> > fuse_dev_splice_write() dmesg. this patch fixed the crash for me when
+> > I tested it yesterday:
+> >
+> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> > index 7d92a5479998..172cab8e2caf 100644
+> > --- a/fs/fuse/file.c
+> > +++ b/fs/fuse/file.c
+> > @@ -955,8 +955,10 @@ static void fuse_readpages_end(struct fuse_mount
+> > *fm, struct fuse_args *args,
+> >                 fuse_invalidate_atime(inode);
+> >         }
+> >
+> > -       for (i =3D 0; i < ap->num_folios; i++)
+> > +       for (i =3D 0; i < ap->num_folios; i++) {
+> >                 folio_end_read(ap->folios[i], !err);
+> > +               folio_put(ap->folios[i]);
+> > +       }
+> >         if (ia->ff)
+> >                 fuse_file_put(ia->ff, false);
+> >
+> > @@ -1049,6 +1051,7 @@ static void fuse_readahead(struct readahead_contr=
+ol *rac)
+> >
+> >                 while (ap->num_folios < cur_pages) {
+> >                         folio =3D readahead_folio(rac);
+> > +                       folio_get(folio);
+>
+> This is almost the same as my patch, but balances the folio_put() in
+> readahead_folio() with another folio_get(), while mine uses
+> __readahead_folio() that does not do folio_put() in the first place.
+>
+> But I think neither patch proves the extraneous folio_put() comes from
+> fuse_try_move_page().
+>
+> >                         ap->folios[ap->num_folios] =3D folio;
+> >                         ap->descs[ap->num_folios].length =3D folio_size=
+(folio);
+> >                         ap->num_folios++;
+> >
+> >
+> > I reran it just now with a printk by that ref drop in
+> > fuse_try_move_page() and I'm indeed seeing that path get hit.
+>
+> It might get hit, but is it hit in the readahead paths? One way to test
+> would be to instead of yours above or mine change, to stop doing the
+> foio_put() in fuse_try_move_page(). But maybe it's called also from other
+> contexts that do expect it, and will leak memory otherwise.
 
-Tracing showed io_uring_complete failing the request with ENOMEM:
-# cat /sys/kernel/debug/tracing/trace | grep "result -12" -B 100 |
-grep "0000000065b91cd1"
-       reactor-1-707139  [000] ..... 46737.358518:
-io_uring_submit_req: ring 00000000e52339b8, req 0000000065b91cd1,
-user_data 0x50f0001e4000, opcode WRITE, flags 0x200000, sq_thread 0
-       reactor-1-707139  [000] ..... 46737.358526: io_uring_file_get:
-ring 00000000e52339b8, req 0000000065b91cd1, user_data 0x50f0001e4000,
-fd 45
-       reactor-1-707139  [000] ...1. 46737.358560: io_uring_complete:
-ring 00000000e52339b8, req 0000000065b91cd1, user_data 0x50f0001e4000,
-result -12, cflags 0x0 extra1 0 extra2 0
+When I tested it a few days ago, I printk-ed the address of the folio
+and it matched in fuse_readahead() and try_move_page(). I think that
+proves that the extra folio_put() came from fuse_try_move_page()
+through the readahead path.
 
-That puzzled me.
-
-Using retsnoop, it pointed to iomap_get_folio:
-
-00:34:16.180612 -> 00:34:16.180651 TID/PID 253786/253721
-(reactor-1/combined_tests):
-
-                    entry_SYSCALL_64_after_hwframe+0x76
-                    do_syscall_64+0x82
-                    __do_sys_io_uring_enter+0x265
-                    io_submit_sqes+0x209
-                    io_issue_sqe+0x5b
-                    io_write+0xdd
-                    xfs_file_buffered_write+0x84
-                    iomap_file_buffered_write+0x1a6
-    32us [-ENOMEM]  iomap_write_begin+0x408
-iter=3D&{.inode=3D0xffff8c67aa031138,.len=3D4096,.flags=3D33,.iomap=3D{.add=
-r=3D0xffffffffffffffff,.length=3D4096,.type=3D1,.flags=3D3,.bdev=3D0x=E2=80=
-=A6
-pos=3D0 len=3D4096 foliop=3D0xffffb32c296b7b80
-!    4us [-ENOMEM]  iomap_get_folio
-iter=3D&{.inode=3D0xffff8c67aa031138,.len=3D4096,.flags=3D33,.iomap=3D{.add=
-r=3D0xffffffffffffffff,.length=3D4096,.type=3D1,.flags=3D3,.bdev=3D0x=E2=80=
-=A6
-pos=3D0 len=3D4096
-
-Another trace shows iomap_file_buffered_write with ki_flags 2359304,
-which translate into (IOCB_WRITE & IOCB_ALLOC_CACHE & IOCB_NOWAIT)
-And flags 33 in iomap_get_folio means IOMAP_NOWAIT, which makes sense
-since XFS translates IOCB_NOWAIT into IOMAP_NOWAIT for performing the
-buffered write through iomap subsystem:
-
-fs/iomap/buffered-io.c- if (iocb->ki_flags & IOCB_NOWAIT)
-fs/iomap/buffered-io.c: iter.flags |=3D IOMAP_NOWAIT;
-
-
-We know io_uring works by first attempting to write with IOCB_NOWAIT,
-and if it fails with EAGAIN, it falls back to worker thread without
-the NOWAIT semantics.
-
-iomap_get_folio(), once called with IOMAP_NOWAIT, will request the
-allocation to follow GFP_NOWAIT behavior, so allocation can
-potentially fail under pressure.
-
-Coming across 'iomap: Add async buffered write support', I see Darrick wrot=
-e:
-
-"FGP_NOWAIT can cause __filemap_get_folio to return a NULL folio, which
-makes iomap_write_begin return -ENOMEM.  If nothing has been written
-yet, won't that cause the ENOMEM to escape to userspace?  Why do we want
-that instead of EAGAIN?"
-
-In the patch ''mm: return an ERR_PTR from __filemap_get_folio', I see
-the following changes:
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -468,19 +468,12 @@ EXPORT_SYMBOL_GPL(iomap_is_partially_uptodate);
- struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos)
- {
-        unsigned fgp =3D FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE | FG=
-P_NOFS;
--       struct folio *folio;
-
-        if (iter->flags & IOMAP_NOWAIT)
-                fgp |=3D FGP_NOWAIT;
-
--       folio =3D __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_S=
-HIFT,
-+       return __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_SHIF=
-T,
-                        fgp, mapping_gfp_mask(iter->inode->i_mapping));
--       if (folio)
--               return folio;
--
--       if (iter->flags & IOMAP_NOWAIT)
--               return ERR_PTR(-EAGAIN);
--       return ERR_PTR(-ENOMEM);
- }
-
-This leads to me believe we have a regression in this area, after that
-patch, since iomap_get_folio() is no longer returning EAGAIN with
-IOMAP_NOWAIT, if __filemap_get_folio() failed to get a folio. Now it
-returns ENOMEM unconditionally.
-
-Since we pushed the error picking decision to __filemap_get_folio, I
-think it makes sense for us to patch it such that it returns EAGAIN if
-allocation failed (under pressure) because IOMAP_NOWAIT was requested
-by its caller and allocation is not allowed to block waiting for
-reclaimer to do its thing.
-
-A possible way to fix it is this one-liner, but I am not well versed
-in this area, so someone may end up suggesting a better fix:
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 804d7365680c..9e698a619545 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1964,7 +1964,7 @@ struct folio *__filemap_get_folio(struct
-address_space *mapping, pgoff_t index,
-                do {
-                        gfp_t alloc_gfp =3D gfp;
-
--                       err =3D -ENOMEM;
-+                       err =3D (fgp_flags & FGP_NOWAIT) ? -ENOMEM : -EAGAI=
-N;
-                        if (order > min_order)
-                                alloc_gfp |=3D __GFP_NORETRY | __GFP_NOWARN=
-;
-                        folio =3D filemap_alloc_folio(alloc_gfp, order);
-
-
-Am I missing something?
-
-Regards,
-Raphael
+>
+> > Not sure why fstests didn't pick this up though since splice is
+> > enabled by default in passthrough_hp, i'll look into this next week.
+> >
+>
 
