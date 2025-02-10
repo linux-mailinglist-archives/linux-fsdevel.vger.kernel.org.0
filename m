@@ -1,69 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-41428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41429-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AF59A2F5F3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 18:53:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 283EDA2F638
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 18:59:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3FFA18803A4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 17:53:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5B2A16258D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 17:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE7125B68B;
-	Mon, 10 Feb 2025 17:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B28D243945;
+	Mon, 10 Feb 2025 17:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidreaver.com header.i=@davidreaver.com header.b="mX7KiW8e";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nADWn/nf"
+	dkim=pass (2048-bit key) header.d=davidreaver.com header.i=@davidreaver.com header.b="EMoPI71J";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mjlzsF6u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63BA25B680;
-	Mon, 10 Feb 2025 17:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E72C25B66C;
+	Mon, 10 Feb 2025 17:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739210027; cv=none; b=h0o/yovoXedNHN+7buyRqC0fMUfQE0kWuY2Wlof4Pvd3mtjQZkjEkipwEDXKDSgrNq8QaB6xMn3wTjpdMjcC7mJ1dGnbymnrAoJQt0Io7OUATD8pCQ/oWDqXxRD/vFF2EdljFFvc79nkJsZGqMnRjIboMcPwA43DFs+QlXnQo0I=
+	t=1739210370; cv=none; b=Qh/pnw7VZG35KcVTqoNUjMVEVgxys4T5tOyVo8G2+Gu2DVhdI6d0phFlo6ruvyNrhuoYaH/sxuY4pLijOZOQCdczq9gdcjFeu42qUmi0Tl0UNIwM2JRpQZd6y5j5CPiEDJAW0pwqMcKxlq0TfW1EL/Y9dSbCf2tsBV/U/GwB7uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739210027; c=relaxed/simple;
-	bh=g4hD9FU044pQJDiMUw+fFqeYHEj1TgqWTXH3iBwJrkU=;
+	s=arc-20240116; t=1739210370; c=relaxed/simple;
+	bh=4P6/1dURFqAqbcScPagqy0vCCJUhFevL4Gk1hMohsY8=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=a+Yiz3vqZHy2yed6/nEUiP2PfGHfVu/k7o9WpeEHz/UL4bM44YNzX7LYS4J149poFRTYE2oICMwlGwWiL7w6geS3E/ayyvGuJU8cTiYvtUocf/YpL231aevXLFQlBPudlSf4+rHqlvfwCV5u1GlQ4Kj/mYbjwZjmCWsgjjXwc3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidreaver.com; spf=pass smtp.mailfrom=davidreaver.com; dkim=pass (2048-bit key) header.d=davidreaver.com header.i=@davidreaver.com header.b=mX7KiW8e; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nADWn/nf; arc=none smtp.client-ip=202.12.124.154
+	 MIME-Version:Content-Type; b=qcCY8pC61Jxz5hbTnFgylzZNecLYDwehUzmQ5yYqOdCM0dQGoKYk7ryY+TTv/RMEpiLWC780jp1T6cxnp63NhcuY9ZFTg1QA/g3cC75XFyhgHFbWr2nWvbD+YvH8Hztc3Y9f/WUpJuJN7q5jKxfCQW5iHxPyrhCpVdygeiN5+fA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidreaver.com; spf=pass smtp.mailfrom=davidreaver.com; dkim=pass (2048-bit key) header.d=davidreaver.com header.i=@davidreaver.com header.b=EMoPI71J; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mjlzsF6u; arc=none smtp.client-ip=202.12.124.145
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidreaver.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=davidreaver.com
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 83DD72540135;
-	Mon, 10 Feb 2025 12:53:43 -0500 (EST)
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfout.stl.internal (Postfix) with ESMTP id 5F43F1140181;
+	Mon, 10 Feb 2025 12:59:27 -0500 (EST)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Mon, 10 Feb 2025 12:53:43 -0500
+  by phl-compute-06.internal (MEProxy); Mon, 10 Feb 2025 12:59:27 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=davidreaver.com;
 	 h=cc:cc:content-type:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1739210023; x=
-	1739296423; bh=9YNp4mbohM/7lWf7uXTJa3pcrFvbaYJczil0eE5s/Tc=; b=m
-	X7KiW8eJ7fsz9er8oiEGA9j2sthF2lsHF4fw5aoI4VXRGIskHsAboyuX4Ya3aX6z
-	O32CcGTn625nzZ1dMroVnJ6D+yrcadUws74AXu3snihjbTwr6Fy27C5fdEV2WMR5
-	8pDYeZHHLMKpZbUWzzmhnI743b4Ke6Ly9FKGAdh4QY/UrtgufpySQQxzMUy5eU7K
-	u5gK2Yljp0LbY8wBuIRfQcVtY31x2c6uSBdD+1YeLIAVIbnlpjCd6feZF1zTPWEJ
-	4ZWlP196DIeg+h3VTRN5sEzBoG7QVtnRvNvo2G+SxtmP0svKOJZ7h0lXwT59VZiF
-	EG4tYS0fEDrQDYq5+yxiw==
+	:reply-to:subject:subject:to:to; s=fm1; t=1739210367; x=
+	1739296767; bh=4P6/1dURFqAqbcScPagqy0vCCJUhFevL4Gk1hMohsY8=; b=E
+	MoPI71JsKi0L0suLHYCwmMPyfFF5vT+tA+zdNDm1DI1MgXtqjYzNsFZfbcbXRmys
+	Xh4QD9SKGWgXuGpZJsZY5IsEowIq5UDw8PYrdPT6aWBV6jajvmesfZ6ApM0ugq9H
+	a7shKWw1+L0qCjsolEb+1LcKX+AuGbHgfSjUB/b9yngdScR8qp+SGmlrQOASvcWL
+	WqvJTuHRF2xx1VcgnZ33yFcnY2a7f8fy3SMtB5zTu+gzXu8owAi++z02vSECF+rw
+	bde32Juk6RWYDlZZGqynkpuZD7OG18tuaaqnJa503elLqtTS/+H3xm6sC9umSL/Q
+	QdI/oDyjOKUK7060BP/6Q==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-type:content-type:date:date
 	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
 	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1739210023; x=1739296423; bh=9YNp4mbohM/7lWf7uXTJa3pcrFvbaYJczil
-	0eE5s/Tc=; b=nADWn/nf34RFQ9hy1ns2O4bHDiVhrzes1ytP9wbOur331SzhB4G
-	Og/M5rML1fKw5H9cyXtQaRvIUNSsb+ol2IEcOrhVSJaPdrZ6IJripYlQ4iHh2Bg+
-	rOTO8zo4yLoluvfdR8mSaGMTNRLL91kU8DL9mL/p6SsynwuNYSu8v4NwL47e7mLH
-	aOtF/C9j4otTDXLO7fHcUKPrY0LsG0qDqj2xhPQAAX/qSD2h0NkYslg577TWUR87
-	Q0qNB7TWsZ/B//IPqOTdFVfr1tdL7wLLYrLPzSfaB0JZ+l+5md0kosDGsbx3UoGg
-	kF3l8NNXCgFhEpejrxZwSXckywTpiO3AvpQ==
-X-ME-Sender: <xms:Jj2qZ1X5QKiMIF0WMtUUADbP5bcq1w5C5zKLehz8QAURUcdKRToDcA>
-    <xme:Jj2qZ1mj_ts1e6D9lU1YmLYC1A2BCwDT_45Ej62PDFsWr-yc37q-fKm-q9Pp1hUjf
-    vEoZfDig-FZJs3N8NQ>
-X-ME-Received: <xmr:Jj2qZxbbmS21-RUUGPaxp7K8MZnyQ-iGdlx8p7Og7aVp2Mh21V-VGh61WdMRfqqAxz1erae_eERKeOTgM5FyRqsIc3Jy1w>
+	1739210367; x=1739296767; bh=4P6/1dURFqAqbcScPagqy0vCCJUhFevL4Gk
+	1hMohsY8=; b=mjlzsF6uF9om03EU2kE3gtAG20uUa2vHnl+XbFOHmGjQi7XgV3r
+	KFIj7QbWeIIGVlT6lpuZtxfzcgkIe6AI19lgGNBmKNcqfW7w7JTMZrLj9Bg+7FAc
+	000Qmcen6FGwE891/Uz/gLR/YBivQzicGZbeX41Brmpx+Uk0ER/z3Yr6SuU6r0ti
+	TbKdGtDeV5lz7SdiLZmqyjjl3CaFGmSJV038SeOwMGx8qA36KegvXT18zzKox9R1
+	I8YVE/XMtGOlgKukuPi8ipEIEXrVOHCnzC2JqMy4m0QLPrNT6lDBLee3UxS5W+ae
+	CvnLfITbMF2FVyzX6nI8EYiJjrT95Th5XSQ==
+X-ME-Sender: <xms:fj6qZ7WhUp9AMc2RQkPVa6I8IF-BvPyIf4mjoqGAqXta6wabyJyvnQ>
+    <xme:fj6qZzmUSWROoyF_LEEIUIJ4lHWmJoKqtw87p8_I_Q-5vrOoGAXG6qRDS-qFIdQXp
+    6LpFAWrOtJgqDTNXwQ>
+X-ME-Received: <xmr:fj6qZ3aqa9i1ASu55emdnHRiybA6hy99e8PdShDphZ9uJj_4sLS5KGxd6XD7KOPFfG3pBPOu9r_tOmAAay2xrrzy63AJ_Q>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefkeejfecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
     uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
@@ -80,14 +80,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefkeejfecutefuodetgg
     htthhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehk
     vghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurg
     htihhonhdrohhrghdprhgtphhtthhopehrohhsthgvughtsehgohhoughmihhsrdhorhhg
-X-ME-Proxy: <xmx:Jj2qZ4V4g_a7bgpbXcYypZhG0TuLqtlIA1S8isTJzLz5FcgS5JUEOQ>
-    <xmx:Jj2qZ_mSIcEpsNEmdPdxMqccuGjkJHDIs3LQzOtfBm7yYaYdXPuBlA>
-    <xmx:Jj2qZ1fmyVFc6QOSJgLFG_rKewDiC4ib-orj-s1YhZ0qUhhYGZSnQg>
-    <xmx:Jj2qZ5HOunSPNAw0Ife39dI5YEfkaSSSTdy9WVxumpzJ6JRT08Fwhw>
-    <xmx:Jz2qZ4jEqzdgQ8PgV_S73J_t6e9k_R9_PZpCp0lL3IR-qMLFKd6eo8LW>
+X-ME-Proxy: <xmx:fj6qZ2UEqZ5MJ3eutGBKyJ2riIHJsf_mjtkNJS6raicpGP5VV6Bncg>
+    <xmx:fj6qZ1lhSUevRqU24X2knacWjm4hQgVWUf8ikeuR9bsPiSnUf6LGYw>
+    <xmx:fj6qZzcFp7Rx5PuFeKYtuWa1xdjjZR7JH54aYNC_gPkPNAP1GuHUvw>
+    <xmx:fj6qZ_EzHu3RoeHgoHOC9h3V0-TZdiB3sFuD5BWqfbC9LYFBn8Cs2Q>
+    <xmx:fz6qZ2gIzJWL_zVP73DvZEBMBzzGhWmS1JmHRIt5VHJBib0gZMOb6QFD>
 Feedback-ID: i67e946c9:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 10 Feb 2025 12:53:41 -0500 (EST)
+ 10 Feb 2025 12:59:25 -0500 (EST)
 From: David Reaver <me@davidreaver.com>
 To: Steven Rostedt <rostedt@goodmis.org>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,  "Rafael J . Wysocki"
@@ -95,16 +95,17 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,  "Rafael J . Wysocki"
  Brauner <brauner@kernel.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
   linux-fsdevel@vger.kernel.org,  cocci@inria.fr,
   linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 5/6] debugfs: Manual fixes for incomplete Coccinelle
- conversions
-In-Reply-To: <20250210114531.20ea15cf@gandalf.local.home> (Steven Rostedt's
-	message of "Mon, 10 Feb 2025 11:45:31 -0500")
+Subject: Re: [RFC PATCH 0/6] debugfs: Replace dentry with an opaque handle
+ in debugfs API
+In-Reply-To: <20250210115313.69299472@gandalf.local.home> (Steven Rostedt's
+	message of "Mon, 10 Feb 2025 11:53:13 -0500")
 References: <20250210052039.144513-1-me@davidreaver.com>
-	<20250210052039.144513-6-me@davidreaver.com>
-	<20250210114531.20ea15cf@gandalf.local.home>
+	<2025021048-thieving-failing-7831@gregkh>
+	<86ldud3hqe.fsf@davidreaver.com>
+	<20250210115313.69299472@gandalf.local.home>
 User-Agent: mu4e 1.12.8; emacs 29.4
-Date: Mon, 10 Feb 2025 09:53:40 -0800
-Message-ID: <86cyfp3cuz.fsf@davidreaver.com>
+Date: Mon, 10 Feb 2025 09:59:24 -0800
+Message-ID: <867c5x3clf.fsf@davidreaver.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -114,39 +115,34 @@ MIME-Version: 1.0
 Content-Type: text/plain
 
 Steven Rostedt <rostedt@goodmis.org> writes:
+
 >
-> Why are you adding these defines?
+> No it will not be fine. You should not be using dentry at all. I thought
+> this was going to convert debugfs over to kernfs. The debugfs_node should
+> be using kernfs and completely eliminate the use of dentry.
 >
-> All files should be just including <linux/debugfs.h>
+> <snip>
 >
-> so that they can use either "dentry" or "debugfs_node" while you do he
-> conversion.
->
-> Then the last patch should just modify debugfs and debugfs.h and no other
-> file should be touched.
->
-> I'll comment on the last patch to explain what I was expecting to be done
-> that should satisfy Al.
+> What caller should ever touch a dentry? What I got from my "conversation"
+> with Linus, is that dentry is an internal caching descriptor of the VFS
+> layer, and should only be used by the VFS layer. Nothing outside of VFS
+> should ever need a dentry.
 >
 > -- Steve
 
-Hey Steve, there are two reasons for the temporary defines:
+I agree that just wrapping a dentry shouldn't be the final state for
+debugfs_node, but this patch series is _only_ trying to introduce
+debugfs_node as an opaque wrapper/handle.
 
-1. There are a few files touched in this series where replacing the
-   define or later forward declaration with an include <linux/debugfs.h>
-   caused errors related to circular includes.
+It isn't clear to me that there is consensus on even using kernfs for
+debugfs. Even if there was consensus, a full conversion to kernfs would
+take 10x as much code and be extremely difficult to automate. For
+example, using kernfs would require migrating all of the debugfs users'
+file_operations to use the kernfs equivalent.
 
-2. The heuristic of adding a define or forward declaration wherever a
-   struct dentry declaration existed was far easier to automate than
-   conditionally adding an #include <linux/debugfs.h>. It is harder for
-   Coccinelle figure out where to put the #include if there multiple
-   #include blocks, no #includes in the file, etc.
-
-However, I'm having trouble reproducing point 1. I'd be happy to use
-#include <linux/debugfs.h> instead of forward declarations. I'll see if
-I can find a way to mostly automate that. There are "only" 56 additions
-of struct dentry forward declarations so far in this patch series, so
-even if I have to eyeball these #includes by hand that might be okay.
+I figure any change away from persistent dentry handles for debugfs
+requires introducing something akin to debugfs_node, so we could get
+that out of the way first.
 
 Thanks,
 David Reaver
