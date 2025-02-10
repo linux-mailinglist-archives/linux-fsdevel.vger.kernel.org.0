@@ -1,142 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-41396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41397-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E809A2EDBE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 14:27:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5E70A2EE76
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 14:39:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDA123A8058
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 13:27:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4CD03A42BE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 13:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3362122E402;
-	Mon, 10 Feb 2025 13:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AD7231A21;
+	Mon, 10 Feb 2025 13:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HUw5SG4w"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mfkG3AFE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76C222CBF0;
-	Mon, 10 Feb 2025 13:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D01225A25;
+	Mon, 10 Feb 2025 13:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739194031; cv=none; b=glebYthoXpoetsVcW3cwteNYSO6RFcdOQV0ra8W1JL0S1Cw4eaGyAbQGGG8d25cifeN7FCXsvMKLnJerMm3BAit/Dx9cXX3IMIFuk/wIveQjl1L3OQr8PDK/hzBdN0fZIgMZJmnRv9Efg5Xt76Y5hBtL5xKzNXM0Pjp0qWi56nI=
+	t=1739194497; cv=none; b=IkvxVQgBR+lPGV/TYrb5bwOvFLhxhH7lldH69o1SxxZqTrWVmaQDf8lJsbxnjaTv4lZlvVEZgYvbC0hBCnYAu3RsOE0QBexoE+O6YslfF1odMz6QkhvgTZ7xkTQnAE2e7pbMHg6MvQCrPSkBSfTPRxXhUAVCRPfOXzAXLnrt834=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739194031; c=relaxed/simple;
-	bh=JG137+wVJR35Xb2Lwl9Tp8s9PIn8BsCMpROGSvTtSNw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TGMGkl3nCgjkk3h+6fMoVpRZfy+s5AS5UXq6/pJcHtSHVj+Pd83uBVDvrN/rSATGKT04vfUBvXJCkPezh7juwKRO8qtfwO8o1cIX3LlIwg0WRXmfhEhI/Zd2dTDp69rzi3jRlFZ2BcQWCnpU76B1gE1sEGMi4np2R6dUpeae9D4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HUw5SG4w; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ab7483b9bf7so646916166b.3;
-        Mon, 10 Feb 2025 05:27:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739194028; x=1739798828; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MKfrkYSNYGseqTKIlquzIIAPBMHuIR1EbIObrXoKY8E=;
-        b=HUw5SG4wmxAsTmP0eLpf8spysy4fiAKUBDCDZ2U9SRpQdgLF32s8ZuGfFZLstx3/+i
-         sjl24qNJtlGRGiumyQFFoPKeV1X+rPVFvvpeGJkVKD2UHk1pXXjd+bIAAm++LgFB4wxs
-         vbRVVwBWWhdxPYsnl5zk7iW99HRMjGVcPbu8H1xcUuXDyv4zZgBVhCsIzQrVQ0y4GQMT
-         5jgcoSlhTndSN10uzZrdwzMuqkNs9Ow7aLj1pwxlyvTOOElBT6MxqOpCuZo3sUbfzsVW
-         EmP34mIbNpYrFHyq8fULZkqYSXS/+BNBZ2oTIaZny1OsuluZfvCyjc56dpZYdGuXTT64
-         MCPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739194028; x=1739798828;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MKfrkYSNYGseqTKIlquzIIAPBMHuIR1EbIObrXoKY8E=;
-        b=n6N+KR9B0XrAJYpQrlXnBY5P2qtPolotC6jb4U5tdYxpRO4VJhuDffEC0KGoF9G55l
-         k7i5r0Nso+bLCjtm9LCfFJVG+0nh8Hdg0TWDRUQfwIVDIokG+6TxP45879uA1zJ32D7z
-         IdlNxrA/gMJzTVvnzqL+2fWbyLob8iI1ilskLiJ20SWv2JubzW8wemmmbqmjqnRR1g78
-         eH4uXJCdKtD6lvZDRetsiIO1JHNUMzEPgj5IUm6lVg5cvdf8V+uAHPUgkZogBG6U27Au
-         SpOZ4bicnC3hmLFmuVGm4WNg2U2XgZ0G0HzVSiN6vF+KoBjgwTNknfjUtzEQ6GZT6vf0
-         aSrg==
-X-Forwarded-Encrypted: i=1; AJvYcCXS7uFyti7FC1NOjsWAULAEbPtaCTz4hWQUR2pAHEfzqsJoxR3ouct6GvMJggppbcUMlgbF7GdRp56OQbyL@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdD1FQdVk4cHVmhAJXFALaOxlc0XVFi81NEYPP5t9MTJr5LczJ
-	inJs+qpYCG1jak96ZKkdvSUqZiAjXuAtPT2pdnp8U1vpd/EqDsjokW98AawlUJgZqnI6YptHzZr
-	DgR0MVn+K2Z6AifDpjiObQGa51ZQ=
-X-Gm-Gg: ASbGnctDGgGfxCGAFPxnabBZ+4C8R5asEI5z8ba23yJ9Qm5tdwAzDCkoI3VuQZOkDvN
-	QB2Ul/UxVTWylOE6ihiOdcX5lMOJLdJUZh8lQk+MQ6tv7s/if1w12xXSybIjoceYrKRYS7M6X
-X-Google-Smtp-Source: AGHT+IHaQ9Ht+GfxlNdtWsVMwUIdYrHDdHAOmLP1Kh5Kn0CzLdXKez91cYQP8sgUIR/jIPlL+B3o4CQtt+CPqpPQpAg=
-X-Received: by 2002:a17:907:6d23:b0:ab6:949f:c52f with SMTP id
- a640c23a62f3a-ab789aef87emr1208294466b.28.1739194027468; Mon, 10 Feb 2025
- 05:27:07 -0800 (PST)
+	s=arc-20240116; t=1739194497; c=relaxed/simple;
+	bh=ZPv/E2kQ5rsDl5eC30qVzIl7hp98x7UfyNieyYQNjwM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dlGc/qM6adj0x1Q4+y5CC8FDZMwLeO6zvBjF5ndXZfZzlacZeJNoGUHf8zhk33H48zKRMRj2U4DjPD2Oxqi9BMI7NkMIC13uuz0+9lSOxhNjRXPMM5BWoIrM0UpIlpnH+A0R8Esjk/KajuX5nV+SEJg6RVe7Nm+9TEK1aviWRco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mfkG3AFE; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=PoNpukNrLHKByBh0E4RE3AdFZaWRSwZfgI3hxGdDr8c=; b=mfkG3AFE7dLUQ8IUbtufhzuDpY
+	17tgZFSb3NBFnE2IMsPqEGBelT+oiKxrz3zC+hRG9KGrpwatjeiz9NOJgVkr7BYhQAMvPUGLqhkaF
+	SOD5/6Dd/f0U3PbMkQMKqrCnp/n2buCoOeMNfWHd8b4dMHOTWqmsYvdMuOwfnLaNp8hQddggyjH+b
+	TPcnjnc7+HsqnT7AVgFV6OO9FKcXjyYrHFBokAFoO+RrvksqRmUmM8TLPGuCAbG8DfKZBRhytAUAh
+	KE0Ib4amHJ070fCaOQnSH+lbQcnKflIbQFtiZPKTL+STh0HT3/GxE+2E45xADVBkI+ICPp9zPLIHt
+	issW4EEw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1thTw5-0000000FvZm-2jN7;
+	Mon, 10 Feb 2025 13:34:53 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: Andreas Gruenbacher <agruenba@redhat.com>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	gfs2@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/8] More GFS2 folio conversions
+Date: Mon, 10 Feb 2025 13:34:38 +0000
+Message-ID: <20250210133448.3796209-1-willy@infradead.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210-work-overlayfs-v2-0-ed2a949b674b@kernel.org> <20250210-work-overlayfs-v2-1-ed2a949b674b@kernel.org>
-In-Reply-To: <20250210-work-overlayfs-v2-1-ed2a949b674b@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 10 Feb 2025 14:26:56 +0100
-X-Gm-Features: AWEUYZl0i0RkYKsmEtsyroeltjWQ8UTpcYFTcQy0mXH2BfHzUfkE_P0xPacWaWk
-Message-ID: <CAOQ4uxgzv-k2hL5pecxt=+2AyRkdr+LGvm9wYYuWxs9LQyyN2Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] fs: support O_PATH fds with FSCONFIG_SET_FD
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-unionfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>, 
-	Mike Baynton <mike@mbaynton.com>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 10, 2025 at 1:39=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> Let FSCONFIG_SET_FD handle O_PATH file descriptors. This is particularly
-> useful in the context of overlayfs where layers can be specified via
-> file descriptors instead of paths. But userspace must currently use
-> non-O_PATH file desriptors which is often pointless especially if
-> the file descriptors have been created via open_tree(OPEN_TREE_CLONE).
->
-> Fixes: a08557d19ef41 ("ovl: specify layers via file descriptors")
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  fs/autofs/autofs_i.h | 2 ++
->  fs/fsopen.c          | 2 +-
->  2 files changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/autofs/autofs_i.h b/fs/autofs/autofs_i.h
-> index 77c7991d89aa..23cea74f9933 100644
-> --- a/fs/autofs/autofs_i.h
-> +++ b/fs/autofs/autofs_i.h
-> @@ -218,6 +218,8 @@ void autofs_clean_ino(struct autofs_info *);
->
->  static inline int autofs_check_pipe(struct file *pipe)
->  {
-> +       if (pipe->f_mode & FMODE_PATH)
-> +               return -EINVAL;
->         if (!(pipe->f_mode & FMODE_CAN_WRITE))
->                 return -EINVAL;
+I think this may be the last batch of patches to gfs2 for folio
+conversions.  The only remaining references to struct page that I see are
+for filesystem metadata that isn't stored in the page cache, so those are
+fine to continue using struct page.  The only mild improvement would be if
+we could have different bio completion handlers for gfs2_end_log_write()
+when it's using mempool pages vs folio pages, but that may not even be
+feasible and I like the current solution well enough.
 
-I thought you said the above check is redundant due to the lower check.
+This all seems fairly straightforward to me, but as usual only
+compile-tested.  I don't anticipate the change to buffer_head.h to have
+any conflicts; removing the last user of page_buffers() is not on the
+cards for the next merge window.
 
-In any case feel free to add
+Matthew Wilcox (Oracle) (8):
+  gfs2: Use b_folio in gfs2_log_write_bh()
+  gfs2: Use b_folio in gfs2_trans_add_meta()
+  gfs2: Use b_folio in gfs2_submit_bhs()
+  gfs2: Use b_folio in gfs2_check_magic()
+  gfs2: Convert gfs2_jhead_pg_srch() to gfs2_jhead_folio_srch()
+  gfs2: Convert gfs2_find_jhead() to use a folio
+  gfs2: Convert gfs2_end_log_write_bh() to work on a folio
+  gfs2: Convert gfs2_meta_read_endio() to use a folio
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+ fs/gfs2/lops.c              | 69 ++++++++++++++++++-------------------
+ fs/gfs2/meta_io.c           | 15 ++++----
+ fs/gfs2/trans.c             |  4 +--
+ include/linux/buffer_head.h |  1 -
+ 4 files changed, 43 insertions(+), 46 deletions(-)
 
->         if (!S_ISFIFO(file_inode(pipe)->i_mode))
-> diff --git a/fs/fsopen.c b/fs/fsopen.c
-> index 094a7f510edf..1aaf4cb2afb2 100644
-> --- a/fs/fsopen.c
-> +++ b/fs/fsopen.c
-> @@ -453,7 +453,7 @@ SYSCALL_DEFINE5(fsconfig,
->         case FSCONFIG_SET_FD:
->                 param.type =3D fs_value_is_file;
->                 ret =3D -EBADF;
-> -               param.file =3D fget(aux);
-> +               param.file =3D fget_raw(aux);
->                 if (!param.file)
->                         goto out_key;
->                 param.dirfd =3D aux;
->
-> --
-> 2.47.2
->
+-- 
+2.47.2
+
 
