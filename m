@@ -1,165 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-41427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 700C1A2F571
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 18:38:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AF59A2F5F3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 18:53:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD1111888F9F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 17:38:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3FFA18803A4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 17:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42DD255E3D;
-	Mon, 10 Feb 2025 17:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE7125B68B;
+	Mon, 10 Feb 2025 17:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MggNZwAf"
+	dkim=pass (2048-bit key) header.d=davidreaver.com header.i=@davidreaver.com header.b="mX7KiW8e";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nADWn/nf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820A92500DA
-	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2025 17:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63BA25B680;
+	Mon, 10 Feb 2025 17:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739209089; cv=none; b=kd9EHjWv96oFiYxTGNjNBkv0LHsrqk+EnGSfQbESF9jNU7VHzLvstsz8bGua1iNjSf9a4qzGMraYr7VNWOfmGJMd4Bft11mGQQMX4RjTk0rUZgzMwvdGYh31BNrWfGbd0V3hNoV66j6xKhfZV5beFC5C/hH0ekUj49SGB7PFLaE=
+	t=1739210027; cv=none; b=h0o/yovoXedNHN+7buyRqC0fMUfQE0kWuY2Wlof4Pvd3mtjQZkjEkipwEDXKDSgrNq8QaB6xMn3wTjpdMjcC7mJ1dGnbymnrAoJQt0Io7OUATD8pCQ/oWDqXxRD/vFF2EdljFFvc79nkJsZGqMnRjIboMcPwA43DFs+QlXnQo0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739209089; c=relaxed/simple;
-	bh=KveOwdYLnyMvdHPkIhUVg6hHWpjgSHD3jdqobeFCKGg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XpszghuVgpOjsYabblzUJtozblmkhNK3gRNoogJKrc+qJQ43DHnYzKdr5z5rsA3kXf+EZs3x+11I+mNyl1MVQF4spjIfOU+Y7q2XDD/jJzt3Kcx0MaiJs1HcPfwQJxLMd84SNTndFfifjAJ3Iu2nZuC3kclH4f2m6X59COO4z+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MggNZwAf; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5de47cf93dfso4947717a12.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2025 09:38:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1739209086; x=1739813886; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qVjjNIhYDEU4EznaGkWhHigqbNvzcXCKCHwh1pZR13Y=;
-        b=MggNZwAfEofmTJ92obRF+CiS0oEKGjmbaB5ly5W8XVtlL5IVq/mC0NW4XQVJV8/zXO
-         vq6MPlUj+g7vTCtw7AFq5bPaSRZeAgU56XoN0ZEAYXlFDl8iqBeDO/9iliNNauWcm/fx
-         DPajmdOHY4VHxtWloK7miCFy+QqnajLJZPLe8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739209086; x=1739813886;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qVjjNIhYDEU4EznaGkWhHigqbNvzcXCKCHwh1pZR13Y=;
-        b=miF5mACgsLOn8zJwQq0TmvX0THNN/+/xhH4rdh3eOeMQVcimGD+atkIwe+9ykxWCxB
-         leAIZekNbMOJGSXvcJ+Q9mQBQIUQbQ7oP9okcNescx6GehblGQEgLWiS9GZH+r8KMPFT
-         GgvMbmSx9mxzv+ILnvpwVKzrjDWg0mJ+Cbr+7BtdF8tjNqYqv5Xow/1XjB1advUzB1WQ
-         tGCqe8WH9Gp8oHyaAlZMEsP4Evlhu/+nfkZAoT/Vi3Enwfi4xM+9ATjicMIEtfpKuGy7
-         y/+L+Vocx4LcmhYcQyVHQeLH1l3PPaeiyyYkkAmEJZDWnJ382LZppr7w3y9ByDr6iwSp
-         +hLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVE6p/oazozSj3JbB1QhJNEr6gI1g5VysiXPgRl9xK1xj70Nar4UkkLvJV44RTuubC8MM3BeB+JIiuBOC+l@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPyBpwHuDW9mvBc0kFoE8Xx2PMUz1p+WWr6ocP8JYbnB8K6hQg
-	kWY1BY2g1sRUAtJ8cAo+bHMBR32A87D0kYDxYIiFHwP+V/O+vR0ZJU9MJGbXEIy6fgCbs+JjkfA
-	nwjY=
-X-Gm-Gg: ASbGnctY6ZAr3eP4ihdvwMGMDsYvspVDV/Ex0aoDqoGVx/eRL1s6/iknD3Gk0zU7Huh
-	DcmlqY7EPxSSYJ9ov+UY2ud8UXpYdYT8Y3x6AI+T9Lditl1NLdGiXkLX46hoZ3Fn+nfchv5TWo1
-	iNlcUCD+1py1Xc8PLOybrb0NSX6cFZMafnwDXkG/eHI+3c/b6hCD48pvHHEiPYgyjaBsFpknsi/
-	n2SeZQGqHox3TPex04kvETGolTt+yDL7pWb6QRhRx6rNi2sI/IzBLEKm8BFMWQWzRiFkmXWLhWy
-	5P1VcWChdJlFwzz1cTldarM6I2cnbk3S+dN9WKqyunBvPXdckXJWdC0rwIQVrIxeXA==
-X-Google-Smtp-Source: AGHT+IHsLpuCXJ1jCSuWEW0H+vkh9llz5u72lwXovrOcRZXYfJP1AxG0z+APbf2W5DKdvEY48yOqAg==
-X-Received: by 2002:a05:6402:360d:b0:5de:5865:69ae with SMTP id 4fb4d7f45d1cf-5de58656b68mr29437942a12.29.1739209084708;
-        Mon, 10 Feb 2025 09:38:04 -0800 (PST)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5de6e1bd66dsm3551638a12.0.2025.02.10.09.38.03
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Feb 2025 09:38:03 -0800 (PST)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ab78e6edb48so468543566b.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2025 09:38:03 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVuewMB+MO6UhFUJCYdWSvFcPW7Z5YllWn0UZhgUXZPfQGmzMMw4UDRK8awRveXAsTKlRXdyTgMgFo0HUnv@vger.kernel.org
-X-Received: by 2002:a05:6402:5386:b0:5dc:74fd:abf1 with SMTP id
- 4fb4d7f45d1cf-5de45017b76mr38928096a12.15.1739209083436; Mon, 10 Feb 2025
- 09:38:03 -0800 (PST)
+	s=arc-20240116; t=1739210027; c=relaxed/simple;
+	bh=g4hD9FU044pQJDiMUw+fFqeYHEj1TgqWTXH3iBwJrkU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=a+Yiz3vqZHy2yed6/nEUiP2PfGHfVu/k7o9WpeEHz/UL4bM44YNzX7LYS4J149poFRTYE2oICMwlGwWiL7w6geS3E/ayyvGuJU8cTiYvtUocf/YpL231aevXLFQlBPudlSf4+rHqlvfwCV5u1GlQ4Kj/mYbjwZjmCWsgjjXwc3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidreaver.com; spf=pass smtp.mailfrom=davidreaver.com; dkim=pass (2048-bit key) header.d=davidreaver.com header.i=@davidreaver.com header.b=mX7KiW8e; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nADWn/nf; arc=none smtp.client-ip=202.12.124.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidreaver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=davidreaver.com
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 83DD72540135;
+	Mon, 10 Feb 2025 12:53:43 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Mon, 10 Feb 2025 12:53:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=davidreaver.com;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1739210023; x=
+	1739296423; bh=9YNp4mbohM/7lWf7uXTJa3pcrFvbaYJczil0eE5s/Tc=; b=m
+	X7KiW8eJ7fsz9er8oiEGA9j2sthF2lsHF4fw5aoI4VXRGIskHsAboyuX4Ya3aX6z
+	O32CcGTn625nzZ1dMroVnJ6D+yrcadUws74AXu3snihjbTwr6Fy27C5fdEV2WMR5
+	8pDYeZHHLMKpZbUWzzmhnI743b4Ke6Ly9FKGAdh4QY/UrtgufpySQQxzMUy5eU7K
+	u5gK2Yljp0LbY8wBuIRfQcVtY31x2c6uSBdD+1YeLIAVIbnlpjCd6feZF1zTPWEJ
+	4ZWlP196DIeg+h3VTRN5sEzBoG7QVtnRvNvo2G+SxtmP0svKOJZ7h0lXwT59VZiF
+	EG4tYS0fEDrQDYq5+yxiw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1739210023; x=1739296423; bh=9YNp4mbohM/7lWf7uXTJa3pcrFvbaYJczil
+	0eE5s/Tc=; b=nADWn/nf34RFQ9hy1ns2O4bHDiVhrzes1ytP9wbOur331SzhB4G
+	Og/M5rML1fKw5H9cyXtQaRvIUNSsb+ol2IEcOrhVSJaPdrZ6IJripYlQ4iHh2Bg+
+	rOTO8zo4yLoluvfdR8mSaGMTNRLL91kU8DL9mL/p6SsynwuNYSu8v4NwL47e7mLH
+	aOtF/C9j4otTDXLO7fHcUKPrY0LsG0qDqj2xhPQAAX/qSD2h0NkYslg577TWUR87
+	Q0qNB7TWsZ/B//IPqOTdFVfr1tdL7wLLYrLPzSfaB0JZ+l+5md0kosDGsbx3UoGg
+	kF3l8NNXCgFhEpejrxZwSXckywTpiO3AvpQ==
+X-ME-Sender: <xms:Jj2qZ1X5QKiMIF0WMtUUADbP5bcq1w5C5zKLehz8QAURUcdKRToDcA>
+    <xme:Jj2qZ1mj_ts1e6D9lU1YmLYC1A2BCwDT_45Ej62PDFsWr-yc37q-fKm-q9Pp1hUjf
+    vEoZfDig-FZJs3N8NQ>
+X-ME-Received: <xmr:Jj2qZxbbmS21-RUUGPaxp7K8MZnyQ-iGdlx8p7Og7aVp2Mh21V-VGh61WdMRfqqAxz1erae_eERKeOTgM5FyRqsIc3Jy1w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefkeejfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtsehttdertddtredt
+    necuhfhrohhmpeffrghvihguucftvggrvhgvrhcuoehmvgesuggrvhhiughrvggrvhgvrh
+    drtghomheqnecuggftrfgrthhtvghrnhepudetjefhvdeujefhkefhteelffelheevtddu
+    ueelkeeludevteekteekjeevvddunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepmhgvsegurghvihgurhgvrghvvghrrdgtohhmpdhnsggprhgt
+    phhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdhkvg
+    hrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohgttghisehi
+    nhhrihgrrdhfrhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdho
+    rhhgrdhukhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurg
+    htihhonhdrohhrghdprhgtphhtthhopehrohhsthgvughtsehgohhoughmihhsrdhorhhg
+X-ME-Proxy: <xmx:Jj2qZ4V4g_a7bgpbXcYypZhG0TuLqtlIA1S8isTJzLz5FcgS5JUEOQ>
+    <xmx:Jj2qZ_mSIcEpsNEmdPdxMqccuGjkJHDIs3LQzOtfBm7yYaYdXPuBlA>
+    <xmx:Jj2qZ1fmyVFc6QOSJgLFG_rKewDiC4ib-orj-s1YhZ0qUhhYGZSnQg>
+    <xmx:Jj2qZ5HOunSPNAw0Ife39dI5YEfkaSSSTdy9WVxumpzJ6JRT08Fwhw>
+    <xmx:Jz2qZ4jEqzdgQ8PgV_S73J_t6e9k_R9_PZpCp0lL3IR-qMLFKd6eo8LW>
+Feedback-ID: i67e946c9:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 10 Feb 2025 12:53:41 -0500 (EST)
+From: David Reaver <me@davidreaver.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,  "Rafael J . Wysocki"
+ <rafael@kernel.org>,  Danilo Krummrich <dakr@kernel.org>,  Christian
+ Brauner <brauner@kernel.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
+  linux-fsdevel@vger.kernel.org,  cocci@inria.fr,
+  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 5/6] debugfs: Manual fixes for incomplete Coccinelle
+ conversions
+In-Reply-To: <20250210114531.20ea15cf@gandalf.local.home> (Steven Rostedt's
+	message of "Mon, 10 Feb 2025 11:45:31 -0500")
+References: <20250210052039.144513-1-me@davidreaver.com>
+	<20250210052039.144513-6-me@davidreaver.com>
+	<20250210114531.20ea15cf@gandalf.local.home>
+User-Agent: mu4e 1.12.8; emacs 29.4
+Date: Mon, 10 Feb 2025 09:53:40 -0800
+Message-ID: <86cyfp3cuz.fsf@davidreaver.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250209150718.GA17013@redhat.com> <20250209150749.GA16999@redhat.com>
- <CAHk-=wgYC-iAp4dw_wN3DBWUB=NzkjT42Dpr46efpKBuF4Nxkg@mail.gmail.com>
- <20250209180214.GA23386@redhat.com> <CAHk-=whirZek1fZQ_gYGHZU71+UKDMa_MYWB5RzhP_owcjAopw@mail.gmail.com>
- <20250209184427.GA27435@redhat.com> <CAHk-=wihBAcJLiC9dxj1M8AKHpdvrRneNk3=s-Rt-Hv5ikqo4g@mail.gmail.com>
- <20250209191510.GB27435@redhat.com> <b050f92e-4117-4e93-8ec6-ec595fd8570a@amd.com>
- <20250210172200.GA16955@redhat.com>
-In-Reply-To: <20250210172200.GA16955@redhat.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 10 Feb 2025 09:37:47 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wj8V1v6QmJ_8X6zznautRq29tXMYzxorOniFx4NtxRE1A@mail.gmail.com>
-X-Gm-Features: AWEUYZmJaL8TbJ7lk4Lr0c0O26PwdykcaxCrEyPDuubQIkvHJrL2OOK5W6KVmlM
-Message-ID: <CAHk-=wj8V1v6QmJ_8X6zznautRq29tXMYzxorOniFx4NtxRE1A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] pipe: change pipe_write() to never add a zero-sized buffer
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>, Christian Brauner <brauner@kernel.org>, 
-	Jeff Layton <jlayton@kernel.org>, David Howells <dhowells@redhat.com>, 
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, Oliver Sang <oliver.sang@intel.com>, 
-	Swapnil Sapkal <swapnil.sapkal@amd.com>, WangYuli <wangyuli@uniontech.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-On Mon, 10 Feb 2025 at 09:22, Oleg Nesterov <oleg@redhat.com> wrote:
+Steven Rostedt <rostedt@goodmis.org> writes:
 >
-> +               int avail = PAGE_SIZE - offset;
+> Why are you adding these defines?
 >
-> -               if ((buf->flags & PIPE_BUF_FLAG_CAN_MERGE) &&
-> -                   offset + chars <= PAGE_SIZE) {
-> +               if (avail && (buf->flags & PIPE_BUF_FLAG_CAN_MERGE)) {
->                         ret = pipe_buf_confirm(pipe, buf);
->                         if (ret)
->                                 goto out;
+> All files should be just including <linux/debugfs.h>
 >
-> +                       chars = min_t(ssize_t, chars, avail);
+> so that they can use either "dentry" or "debugfs_node" while you do he
+> conversion.
+>
+> Then the last patch should just modify debugfs and debugfs.h and no other
+> file should be touched.
+>
+> I'll comment on the last patch to explain what I was expecting to be done
+> that should satisfy Al.
+>
+> -- Steve
 
-If I read this correctly, this patch is horribly broken.
+Hey Steve, there are two reasons for the temporary defines:
 
-You can't do partial writes. Pipes have one very core atomicity
-guarantee: from the man-pages:
+1. There are a few files touched in this series where replacing the
+   define or later forward declaration with an include <linux/debugfs.h>
+   caused errors related to circular includes.
 
-   PIPE_BUF
-       POSIX.1 says that writes of less than PIPE_BUF bytes must be
-       atomic: the output data is written to the pipe as a contiguous
-       sequence.  Writes of more than PIPE_BUF bytes may be nonatomic:
-       the kernel may interleave the data with data written by other
-       processes.  POSIX.1 requires PIPE_BUF to be at least 512 bytes.
-       (On Linux, PIPE_BUF is 4096 bytes.)
+2. The heuristic of adding a define or forward declaration wherever a
+   struct dentry declaration existed was far easier to automate than
+   conditionally adding an #include <linux/debugfs.h>. It is harder for
+   Coccinelle figure out where to put the #include if there multiple
+   #include blocks, no #includes in the file, etc.
 
-IOW, that whole "try to write as many chars as there is room" is very
-very broken. You have to write all or nothing.
+However, I'm having trouble reproducing point 1. I'd be happy to use
+#include <linux/debugfs.h> instead of forward declarations. I'll see if
+I can find a way to mostly automate that. There are "only" 56 additions
+of struct dentry forward declarations so far in this patch series, so
+even if I have to eyeball these #includes by hand that might be okay.
 
-So you can't (say) first write just 50 bytes of a 100-byte pipe write
-because it fits in the last buffer, and then wait for another buffer
-to become free to write the rest. Not just because another writer
-might come in and start mixing in data, but because *readers* may well
-expect to get 100 bytes or nothing.
-
-And to make matters worse, you'll never notice the bug until something
-breaks very subtly (unless we happen to have a good test-case for this
-somewhere - there might be a test for this in LTP).
-
-And yes, this is actually something I know for a fact that people
-depend on. Lots of traditional UNIX "send packet commands over pipes"
-programs around, which expect the packets to be atomic.
-
-So things *will* break, but it might take a while before you hit just
-the right race condition for things to go south, and the errors migth
-end up being very non-obvious indeed.
-
-Note that the initial
-
-        chars = total_len & (PAGE_SIZE-1);
-
-before the whole test for "can we merge" is fine, because if total_len
-is larger than a page, it's no longer a write we need to worry about
-atomicity with.
-
-Maybe we should add a comment somewhere about this.
-
-          Linus
+Thanks,
+David Reaver
 
