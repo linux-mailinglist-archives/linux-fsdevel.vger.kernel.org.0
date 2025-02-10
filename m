@@ -1,56 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-41407-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41408-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD909A2EEF3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 14:55:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91CE4A2EF16
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 15:00:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAF2B3A35BC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 13:55:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C36601885EC7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 14:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCDF230D07;
-	Mon, 10 Feb 2025 13:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3944F230D28;
+	Mon, 10 Feb 2025 14:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmyAbXzi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VN6x//Ao"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC3023099E;
-	Mon, 10 Feb 2025 13:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E673F230D05;
+	Mon, 10 Feb 2025 14:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739195718; cv=none; b=owqnERdq576Ep6tm6eOdXj7AJmnifRrheQ8OmDiVfxtDbxwuPG4q5yAk6uEFRQ5TQZ+cEqphKSnVX7ZoBMe2MwM1z74O6V6d6ugvTvl25q7Q1CJuKDzgmfMVOqGYrGOr4Ps1w093iRFamXgJS3yfibJgldUJnYZXDoRNmIdW3n4=
+	t=1739196004; cv=none; b=RXtYKF3qx8KOoqZaiB0ohYJxlS+9CHOYDFnq5DnCyBTrYQGtAThuvax4gFHRJAx0zrmL1y7/N6+pqbqYWUdLoCNdWXQSDqVLpUPKdPnDgE/HfZGYJ0LVqejOZ+4pN5IysoSzH907NVcAok8BOQmPpVYRX9mEOeZ5ms8HRPnd4zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739195718; c=relaxed/simple;
-	bh=bPCMAk+P4O3r4JMhqHW+cBZGX57aPQ3MXzkvM8woBQQ=;
+	s=arc-20240116; t=1739196004; c=relaxed/simple;
+	bh=Uxwy4hKp1bY3GwUnF6oPfX3suQJvksR4VgdwJabFpV4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K69yDcWMBBfJ+7a8uYE5swDMjBAVQL/i8DkrJVr3jrjyYw2BUx7tIYZ6Lx37Om3pBxOeAzziKBh/nU3s7NjIvgU5cdM2xrsKgqW8zu94y4WdmODwGVmKSjwFk/UiVTtPY72R73JrIW1+QaFA/dfH0eiOcYF7HcOZlkxdpCnYEjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dmyAbXzi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E55DDC4CEDF;
-	Mon, 10 Feb 2025 13:55:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739195716;
-	bh=bPCMAk+P4O3r4JMhqHW+cBZGX57aPQ3MXzkvM8woBQQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dmyAbXzik0gcwKokg5/d/ZCMtnzQJXFlNtK598hHT2aGhkGye2UkZtF5zuZ2TZZu3
-	 nb0z/+jRyP/qzKT16MI/qdTH0XuTdYdPJEqAt3k/248HW6r0UaelPAc7xEMHIjplO0
-	 RKv1U50oOHH2OvMdlcpbrRcj7pF2PTrE8icFCCPCeekaVJFMHqh8KXRZHtwy+frbkK
-	 VQXBPEUBWbHZ30lxiSUMG1/jTVgZSnKJNDSd2utHGMOkt7NRtbM0kcg4MEDpJ5fh0I
-	 VlkNEwVr0pbvGrJcESg7jjrobw7db217zCvh4AbvYVxQYQC+c+kDZZ7+nzeD9CqTIV
-	 7RaZbwZquWGhg==
-Date: Mon, 10 Feb 2025 14:55:12 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: linux-unionfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>, 
-	Mike Baynton <mike@mbaynton.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] fs: support O_PATH fds with FSCONFIG_SET_FD
-Message-ID: <20250210-deppen-zwielicht-306b01568a17@brauner>
-References: <20250210-work-overlayfs-v2-0-ed2a949b674b@kernel.org>
- <20250210-work-overlayfs-v2-1-ed2a949b674b@kernel.org>
- <CAOQ4uxgzv-k2hL5pecxt=+2AyRkdr+LGvm9wYYuWxs9LQyyN2Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PJo7SdqDf8di90Xl54A6hqWLKG6LBA5TYUlefuLA27I2y3AMpXTS0N0pvRHQP7LQVUc9ln4bms+qOqD+TWQuKbJhBI1k1i9UPA0f1BfbDZr4tavT9W9emAy/FZC4zKdgKWUYjwoErWjXCD3PHYebZEJ8BksdwdhUVx2zF9nN2Co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VN6x//Ao; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ab7b7250256so208053766b.0;
+        Mon, 10 Feb 2025 06:00:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739196001; x=1739800801; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Uxwy4hKp1bY3GwUnF6oPfX3suQJvksR4VgdwJabFpV4=;
+        b=VN6x//AoccAAGrI7ETqxEMxOFy4hERtpGZkqLL7cM2pRM0gA++XA10Ze3ZQv9q7zor
+         OtxtQC0Ah1uA+ROCcPL04fCqYiuLCY64vTzYskFxthKqjQm7f78PkyZZwo4N5oq6290x
+         ATlzmMHotajo3964f9tjPSlO3yuNbafBuISF3facLhefJzSqMTIGL/62zKCkalEpmZCZ
+         27X0Pttlq1ESXdDb79MaZiaT/CURbAj7B5urDob6viTZFyFl9Jgi2OE29RlyZ/l8bPg4
+         LRcJRXCjcPIBcss4G8fz7WZZ98qIjlJBbwOCgCJNY1vdyH1U1foYybrf77EEbf1mwV52
+         5qoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739196001; x=1739800801;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uxwy4hKp1bY3GwUnF6oPfX3suQJvksR4VgdwJabFpV4=;
+        b=swnTjjiffjUCbUwZTW2kC9JAYIjWMqdRZFifcqBgjy+FKInOsdJHFu+Pq9Fnz5z1V8
+         9g6zU9fpXHNmjJCjcq17Pq4OMLYdkXwWtApIFZpllHhPo0rxCWTUnkuKOoclIfDvowR5
+         SAp4mgGhsHjJ/xG6/LNyHfyqUnivPwzv5rRgoq3cB9wHOOQs8Ccxe1A43cpYHX46jyD3
+         Ku3K3Gl9GRHulv8h72PafVCbfpDhbm5A0ceLsPT5o2WvOq1z6cxwS4Rlsv4hdWQlCWyl
+         lEnJYmGwJDudmd+5r/rcE0jthIgC4y5hps8Dkqty/DCPcYm6kbwnrytD00SMqpOUXCt7
+         5XhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWABmkKOXMA0JzzBl24gDq2HeLnqJmq59OFpjRNO9NKEbZEAnP9+UfRPyk/PHuzyOAxJhYeP+joDkz6NS39@vger.kernel.org, AJvYcCWNQQjOnd623IUNQ5RJIpmirqy28ZzaGL3kz4705O6Rr9gR5qCPf4Lm5fyYoJrLIT8e+XZnqq6gfFeLu2VI@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFiOI9wvlnbe1ke+NQHj5WIFvP6Rs06a67ElCGKAInDVlcIO1z
+	VmaYWwdbGkCah4yrJ30RHGYpAxwuW2XvToIs+VlRN/k9P51ohvFh
+X-Gm-Gg: ASbGnctdEW+5Tznr9n2B8iBlwbts8Ygr0XFhw2OSVzRz0r8NgqOapDrlAYBbk0ZLbxF
+	/4PcgdNVMje7DvtChfQPRU071JNfVn5l80N9z04C0NNjoMVsuKIB2RXA6zjBg1rJUmCf1GcXGk3
+	JzrAItIXuLXjJdPNJfC6L33YMV9z7+OaW5SDbD5De2TFJeECGARXk1WHY0VmU1AMA0gS0MPAAbb
+	5+KPIQ4XAmkzY4C67+uxnrhqMF3x9NGSVF500Vty5eboC+yOkIRjfQyM0DzBr74RwpXevW8k/u2
+	tmz4+TWMVA73Db6WMTPLqiy8t0x/+hk=
+X-Google-Smtp-Source: AGHT+IHx+qhU6Idq8jRm0WRWXe7TwvHeKMTg7snP+Bx40IzlGFDOH18fAqC/rTYvXM6eVCNUT6vjuw==
+X-Received: by 2002:a17:907:36cc:b0:ab7:9a7a:d37a with SMTP id a640c23a62f3a-ab79a7ad49amr1081195466b.43.1739196001199;
+        Mon, 10 Feb 2025 06:00:01 -0800 (PST)
+Received: from f (cst-prg-84-201.cust.vodafone.cz. [46.135.84.201])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7832a02fcsm786876266b.94.2025.02.10.05.59.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Feb 2025 06:00:00 -0800 (PST)
+Date: Mon, 10 Feb 2025 14:59:52 +0100
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH next 1/1] fs: Mark get_sigset_argpack() __always_inline
+Message-ID: <oo4w7ennuubxt4h4c3p226op77xm74g7rzelpna7ejlfmikjoh@pn2iymeg6flf>
+References: <20250208151347.89708-1-david.laight.linux@gmail.com>
+ <CAHk-=wicUO4WaEE6b010icQPpq+Gk_ZK5V2hF2iBQe-FqmBc3Q@mail.gmail.com>
+ <20250208190600.18075c88@pumpkin>
+ <CAHk-=whvmGhOzJJr1LeZ7vdSNt_CE+VJCUJ9FcLe0-Nv8UqgoA@mail.gmail.com>
+ <20250208230500.05ad57a5@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,64 +92,16 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxgzv-k2hL5pecxt=+2AyRkdr+LGvm9wYYuWxs9LQyyN2Q@mail.gmail.com>
+In-Reply-To: <20250208230500.05ad57a5@pumpkin>
 
-On Mon, Feb 10, 2025 at 02:26:56PM +0100, Amir Goldstein wrote:
-> On Mon, Feb 10, 2025 at 1:39 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > Let FSCONFIG_SET_FD handle O_PATH file descriptors. This is particularly
-> > useful in the context of overlayfs where layers can be specified via
-> > file descriptors instead of paths. But userspace must currently use
-> > non-O_PATH file desriptors which is often pointless especially if
-> > the file descriptors have been created via open_tree(OPEN_TREE_CLONE).
-> >
-> > Fixes: a08557d19ef41 ("ovl: specify layers via file descriptors")
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  fs/autofs/autofs_i.h | 2 ++
-> >  fs/fsopen.c          | 2 +-
-> >  2 files changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/autofs/autofs_i.h b/fs/autofs/autofs_i.h
-> > index 77c7991d89aa..23cea74f9933 100644
-> > --- a/fs/autofs/autofs_i.h
-> > +++ b/fs/autofs/autofs_i.h
-> > @@ -218,6 +218,8 @@ void autofs_clean_ino(struct autofs_info *);
-> >
-> >  static inline int autofs_check_pipe(struct file *pipe)
-> >  {
-> > +       if (pipe->f_mode & FMODE_PATH)
-> > +               return -EINVAL;
-> >         if (!(pipe->f_mode & FMODE_CAN_WRITE))
-> >                 return -EINVAL;
-> 
-> I thought you said the above check is redundant due to the lower check.
+On Sat, Feb 08, 2025 at 11:05:00PM +0000, David Laight wrote:
+> Defaulting to SMAP just requires a bit of bravery!
+> After all (as you said) it ought to get patched out before userspace exists.
+> It is still fairly new (Broadwell ix-5xxx).
+> I'm sure a lot of people are still running Linux on Sandy bridge cpu.
 
-It is but that's only obvious to people quite familiar with VFS code.
-So I like the explicitly check here.
-
-> 
-> In any case feel free to add
-> 
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> 
-> >         if (!S_ISFIFO(file_inode(pipe)->i_mode))
-> > diff --git a/fs/fsopen.c b/fs/fsopen.c
-> > index 094a7f510edf..1aaf4cb2afb2 100644
-> > --- a/fs/fsopen.c
-> > +++ b/fs/fsopen.c
-> > @@ -453,7 +453,7 @@ SYSCALL_DEFINE5(fsconfig,
-> >         case FSCONFIG_SET_FD:
-> >                 param.type = fs_value_is_file;
-> >                 ret = -EBADF;
-> > -               param.file = fget(aux);
-> > +               param.file = fget_raw(aux);
-> >                 if (!param.file)
-> >                         goto out_key;
-> >                 param.dirfd = aux;
-> >
-> > --
-> > 2.47.2
-> >
+The Intel folk posting over at https://lore.kernel.org/oe-lkp/ have a
+bunch of old yellers they test on (and probably more they can dig up if
+needed) and will likely be happy to boot test a patch of the sort, just
+explicitly state you want a pre-SMAP CPU.
 
