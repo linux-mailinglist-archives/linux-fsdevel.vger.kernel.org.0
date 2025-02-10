@@ -1,92 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-41447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5872CA2F94A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 20:46:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1417EA2F947
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 20:46:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DA0C169526
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 19:46:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D128188A3C7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 19:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD7924C68D;
-	Mon, 10 Feb 2025 19:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4B224C680;
+	Mon, 10 Feb 2025 19:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="exTWMI3J"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AnoQv4LO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3399524C67E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2025 19:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD9424C673
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2025 19:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739216720; cv=none; b=rnFMIMnKLTXK4MZ1kSKZC3Tb+RUD3pc/zsBO7DarZA8KB6kWuD2ZuBdxRguX3lenAkJC0IPoTU8N3cdSLw8SW9K84iy6wAbZRsYG44r3cA/LXD1iz1zZ1UubmLQgV+LOMZJ2/2WacMMnTjLwm6rgPUute02Xo7s0IQkcFgcis4g=
+	t=1739216722; cv=none; b=JSBFt31VU94pbLp05yqPgry/4BC+Dr8+VS0W8c7DOLgzFlAFqZLY9sjMvLseCCZcIhM4QsHYdxiXOD6MAEKYBrb8f1+io6JynfY2BkjtKzVVozk4WT+uJyaLYzTkDUWDZsvkGnlIAwGselIJEB0tVLlDdl8SLPxMt+riNtceHzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739216720; c=relaxed/simple;
-	bh=uRat+cUyQajKEyuB4dBz6csHrUX7Fiqv34ihZIzWhBk=;
+	s=arc-20240116; t=1739216722; c=relaxed/simple;
+	bh=6I3nvrty6mIsXbdzuMVgchvm2WTK3+v1V3YGpFXZSsU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Q6nFuJVujC2JR6qsRQ+ujhNxCGWoz8tg8jF1NM7kRR0RkfNB0K6n9gojodTZkpvaouC6iptMDFiJFhGfG8EOjWBC3cMzuAVKnRhwDIT55VNtZEf+wW00oA4vyamT7G/n/OBKPfSWQX6RM+zSrz9+q2wsWElKE3Nr6rb1yk7gGf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=exTWMI3J; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=tuPr/yeeYnPD9ytou3jD0WHgIz/TiKf+EWBDFfG5X8FAoTq9/PrrkpHq2Lj7ma38h4+hfcs6yHxD439HXaQyiV6HlMBX8pMNm6JtQvSHMC2iuQGMeKNjoq3r1rinZtOSPQRmTpLpwbtaU30NeYRFKEr+x6iovGPl0fFm33dqN/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AnoQv4LO; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739216718;
+	s=mimecast20190719; t=1739216719;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4UE9EuMWS8G/WY3PW4PUElfvLYYRRN8pOZXqxaL6Pog=;
-	b=exTWMI3JfYNtDV3DNOpF3nsIlyjUI2Du9tv55ZzqRUTq/LF4fKRYnS7fbm7E+RIF3HgWHl
-	UOHZGMVAJ12uO5Kf7jNELA2Ib1X1DRZy3xHqT5/TTm+h611z8ZQPxy7MDw3Uqy5JYVCkhL
-	Cyzv170H3dri44G217cIu/SN6LaXYZQ=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=0OxMWC3XA5FgD49oXcSz1TwT0Kbb0QMAHeVEoh+RJ7k=;
+	b=AnoQv4LOQ5cMWCZ8Ms9IfZN1uLhX++dM5GMM8eBJDVVP+ZVPfChyVBFQloWyOni7eIgAaa
+	cUhfSZR5gWDmRU4W3Wrzx5qUOlxjpjeJRk7sn2aA+8ULig2BXu6cb/bU2XCPdzzPgXXSHz
+	sGafhDVxQTlWxf1bgocrciFvjO/Qmeg=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-651-XglucPsPNjKKw2Pl2jMW_Q-1; Mon, 10 Feb 2025 14:45:16 -0500
-X-MC-Unique: XglucPsPNjKKw2Pl2jMW_Q-1
-X-Mimecast-MFC-AGG-ID: XglucPsPNjKKw2Pl2jMW_Q
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ab7cae13359so153392966b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2025 11:45:16 -0800 (PST)
+ us-mta-618-iCUPVHWhO6mDXKPPBRprRw-1; Mon, 10 Feb 2025 14:45:18 -0500
+X-MC-Unique: iCUPVHWhO6mDXKPPBRprRw-1
+X-Mimecast-MFC-AGG-ID: iCUPVHWhO6mDXKPPBRprRw
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ab79e8c2ee0so201350766b.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2025 11:45:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739216715; x=1739821515;
+        d=1e100.net; s=20230601; t=1739216717; x=1739821517;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4UE9EuMWS8G/WY3PW4PUElfvLYYRRN8pOZXqxaL6Pog=;
-        b=GQY2bWaKZkpBQYDLMsJ0L8Tko4PeYYpGIgT5pN3eyxAUY4tRQpkyHzbT+Z/s91UR6W
-         z8Vpi6lbXt4t5QHBO4+8RtMYtj04+P/cspv3ZWVDYKMR9YTEFhXyhAA/s2fzj1ctH1Rh
-         CuiJfdm28JS0rCCVwNlAR+eeP4uRABV8NYrrm2q8VLsVc2tR/iHPV8016moF+4Qwt6hp
-         qPclyd+Fvx1hhaa4w4p+qn+BUMZMW6QPKzt3H/RfdhQo2HaM2KbZepfikBtwVbAdKb3A
-         F993NDsaXSK85T6VdvTkNIKqtpVaXWqs2sCzCbwi8p8KlpQ2aaVkDIzrE+4HAhJ/L/ey
-         ctNw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIm9s1WiDWuckzs260pB/r1xFHuY49r+XDMGDqdL5AbB4c/qGpL30MBoxYc0ZcMM1F4z95AGKt5QMldE0h@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5sA2v7Wxc3fiVenqpPRztcU1zLaaIihGfHDHAf5S9LgMtvYKI
-	uI4hmNnf35CB/AM/JZVG5eFCkoQEWSg7OPCn012C5e6Cuji5ehnYFFi+wL2m1kVg25GWbHwBEVy
-	/Xo3Y84L0g1yFB4LVxZO/kWTeoGsZkrJFCK6HPGN6aU2rD+EaU+U53J1Tdd8l/QU=
-X-Gm-Gg: ASbGnct41KMjC1dS5sfhd5+3dd0IkNca+LxIZRQHmBqwZ5qhm/0xD1j8PbCFyDLbSbt
-	BvKdAZCmkrLPlK9RsZy354oe5LnYiWZ0kOgJT4dQs6NUw5pT9oc9JpFA/SdL04rw92oyDeUqX7v
-	7buY098EWJ3bv37Ze5j47kbW8AcP2XI5XPmTFIyyzXzOO088jSIRRz+kuF0lG/uvu/yyN/HxKj/
-	L/QQlAckFNhpDECyxuNQW3Y4dtbvQz0a8MG5R7G2606ML0cuFQKBva7a4CA6o+ISCGd1pHspa1C
-	1cW71kGvtQpaSmx6p/EOHHR2+ExSaYCpj3kkFCAMKXzE34ngJhomOg==
-X-Received: by 2002:a17:907:3f09:b0:ab2:f6e5:3f1 with SMTP id a640c23a62f3a-ab7daf31198mr53789466b.8.1739216715458;
-        Mon, 10 Feb 2025 11:45:15 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFrs+omVoA5InHSI5b+I9wMwwSULuAuTHHS9tgGKk5Q3H8nhwHvO0O/ryPvBgmiLaperNlrlQ==
-X-Received: by 2002:a17:907:3f09:b0:ab2:f6e5:3f1 with SMTP id a640c23a62f3a-ab7daf31198mr53787766b.8.1739216715077;
-        Mon, 10 Feb 2025 11:45:15 -0800 (PST)
+        bh=0OxMWC3XA5FgD49oXcSz1TwT0Kbb0QMAHeVEoh+RJ7k=;
+        b=WGmWHzZpwbgt4GhAInZpOEPK7oHqdvVZX0tb0lJ9a4sfFIXaI2IHntlZPBW9O7A5ct
+         P6d/ikCAJfU1MNTLNbVOB2xrR5GdfEhCe4nM9d9QSoBQoWmNjsKP7o9VE7ykhYJwDbHL
+         FtOIWS4PmPTSlwtZHTXlBrvsorn429PXrl8DMUqJjxHezxEkNEa7JYBOwrgNk413EqD6
+         w7jliIgxpG1ZCH4BwYVBG6f8g1ZgLOUZj50IhaH5MP5HXTbBV6kQrlEHL5kJQsLIFEOn
+         g28JoEMhXzHILDWJT8/rDFkYhYGRVhMiTRGvqk+pW13UQ4tn4jZd8jlrb/UglF5buFZj
+         YPrA==
+X-Forwarded-Encrypted: i=1; AJvYcCULdJ9wjEx7nGm0Vu3AdFd4mY8UFLEf6zZnX9k74lxpUZGcq7A0rrFh/rCAUNZa9bbc48KhajFuOjrkmrvX@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOXyOeVbMsgd0fRoSwrKsA1m6SkMmPLc076cypaaVS+9MLmQwe
+	jv8JyRcoHnNwC6gPdTWtQeGhRmiglu/UPsfZ/2e6mUX4tlpWiCpNgzJFz8lMTu3LPRN+cDRYWgx
+	sLdL/7xow349s4GkTlXh+7q47TjH0gyxCHxvFAt2w11nUB0D8mI45yYMiIiH3oTqW5NqUvrnwew
+	==
+X-Gm-Gg: ASbGncvCS9GeO/aty/rT1XVWZ13s/nBU729TaEBRqrsICIsmIZw0nvxdhiT7jyHfQ5m
+	/rjzYn3O/NBfDz0MGlX6utk/RfwLxcUpet20xgN9o664vtez8Zts+kkNSnbmgjSanmFzV8Q2JV7
+	IKFK665HkorKuJH/wkJiJSVCEW4u45NfvAG9NzzsLm66owtxZNFci9du8M50Fyk/2sFKsyB5RTB
+	sEMWls39jc5l7ox6yCXHktWvzhgXmkGM0t0uOTMJMMGkUBjFAva7i4zfb5oQJmxcQjsjIZQt+Uv
+	0bH26260Zy/s90XLPHBKfCMsKCYo3ueJoDS9V34/+Fj3VzKErBvYSg==
+X-Received: by 2002:a17:907:3f27:b0:ab6:f06b:4a26 with SMTP id a640c23a62f3a-ab789aef91amr1549089366b.34.1739216716730;
+        Mon, 10 Feb 2025 11:45:16 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGj+bPdauKCbaejXpaZDhdSfocK61NbRSKwlc7SJwI6g7ThhBURLvAXfYEoXrNhskWnPyPIqw==
+X-Received: by 2002:a17:907:3f27:b0:ab6:f06b:4a26 with SMTP id a640c23a62f3a-ab789aef91amr1549086866b.34.1739216716303;
+        Mon, 10 Feb 2025 11:45:16 -0800 (PST)
 Received: from maszat.piliscsaba.szeredi.hu (84-236-3-29.pool.digikabel.hu. [84.236.3.29])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7922efbb7sm702006666b.2.2025.02.10.11.45.14
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7922efbb7sm702006666b.2.2025.02.10.11.45.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2025 11:45:14 -0800 (PST)
+        Mon, 10 Feb 2025 11:45:15 -0800 (PST)
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
-Cc: Giuseppe Scrivano <gscrivan@redhat.com>,
-	Amir Goldstein <amir73il@gmail.com>,
+Cc: Amir Goldstein <amir73il@gmail.com>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/5] ovl: remove unused forward declaration
-Date: Mon, 10 Feb 2025 20:45:06 +0100
-Message-ID: <20250210194512.417339-2-mszeredi@redhat.com>
+Subject: [PATCH 3/5] ovl: make redirect/metacopy rejection consistent
+Date: Mon, 10 Feb 2025 20:45:07 +0100
+Message-ID: <20250210194512.417339-3-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250210194512.417339-1-mszeredi@redhat.com>
 References: <20250210194512.417339-1-mszeredi@redhat.com>
@@ -98,30 +98,143 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Giuseppe Scrivano <gscrivan@redhat.com>
+When overlayfs finds a file with metacopy and/or redirect attributes and
+the metacopy and/or redirect features are not enabled, then it refuses to
+act on those attributes while also issuing a warning.
 
-The ovl_get_verity_xattr() function was never added only its declaration.
+There was a slight inconsistency of only warning on an upper metacopy if it
+found the next file on the lower layer, while always warning for metacopy
+found on a lower layer.
 
-Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
-Fixes: 184996e92e86 ("ovl: Validate verity xattr when resolving lowerdata")
+Fix this inconsistency and make the logic more straightforward, pavig the
+way for following patches to change when dataredirects are allowed.
+
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/overlayfs/overlayfs.h | 2 --
- 1 file changed, 2 deletions(-)
+ fs/overlayfs/namei.c | 67 +++++++++++++++++++++++++++++---------------
+ 1 file changed, 44 insertions(+), 23 deletions(-)
 
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index 0021e2025020..be86d2ed71d6 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -540,8 +540,6 @@ int ovl_set_metacopy_xattr(struct ovl_fs *ofs, struct dentry *d,
- bool ovl_is_metacopy_dentry(struct dentry *dentry);
- char *ovl_get_redirect_xattr(struct ovl_fs *ofs, const struct path *path, int padding);
- int ovl_ensure_verity_loaded(struct path *path);
--int ovl_get_verity_xattr(struct ovl_fs *ofs, const struct path *path,
--			 u8 *digest_buf, int *buf_length);
- int ovl_validate_verity(struct ovl_fs *ofs,
- 			struct path *metapath,
- 			struct path *datapath);
+diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+index be5c65d6f848..da322e9768d1 100644
+--- a/fs/overlayfs/namei.c
++++ b/fs/overlayfs/namei.c
+@@ -1040,6 +1040,8 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 	struct inode *inode = NULL;
+ 	bool upperopaque = false;
+ 	char *upperredirect = NULL;
++	bool nextredirect = false;
++	bool nextmetacopy = false;
+ 	struct dentry *this;
+ 	unsigned int i;
+ 	int err;
+@@ -1087,8 +1089,10 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 			if (err)
+ 				goto out_put_upper;
+ 
+-			if (d.metacopy)
++			if (d.metacopy) {
+ 				uppermetacopy = true;
++				nextmetacopy = true;
++			}
+ 			metacopy_size = d.metacopy;
+ 		}
+ 
+@@ -1099,6 +1103,7 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 				goto out_put_upper;
+ 			if (d.redirect[0] == '/')
+ 				poe = roe;
++			nextredirect = true;
+ 		}
+ 		upperopaque = d.opaque;
+ 	}
+@@ -1113,6 +1118,29 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 	for (i = 0; !d.stop && i < ovl_numlower(poe); i++) {
+ 		struct ovl_path lower = ovl_lowerstack(poe)[i];
+ 
++		/*
++		 * Following redirects/metacopy can have security consequences:
++		 * it's like a symlink into the lower layer without the
++		 * permission checks.
++		 *
++		 * This is only a problem if the upper layer is untrusted (e.g
++		 * comes from an USB drive).  This can allow a non-readable file
++		 * or directory to become readable.
++		 *
++		 * Only following redirects when redirects are enabled disables
++		 * this attack vector when not necessary.
++		 */
++		if (nextmetacopy && !ofs->config.metacopy) {
++			pr_warn_ratelimited("refusing to follow metacopy origin for (%pd2)\n", dentry);
++			err = -EPERM;
++			goto out_put;
++		}
++		if (nextredirect && !ovl_redirect_follow(ofs)) {
++			pr_warn_ratelimited("refusing to follow redirect for (%pd2)\n", dentry);
++			err = -EPERM;
++			goto out_put;
++		}
++
+ 		if (!ovl_redirect_follow(ofs))
+ 			d.last = i == ovl_numlower(poe) - 1;
+ 		else if (d.is_dir || !ofs->numdatalayer)
+@@ -1126,12 +1154,8 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 		if (!this)
+ 			continue;
+ 
+-		if ((uppermetacopy || d.metacopy) && !ofs->config.metacopy) {
+-			dput(this);
+-			err = -EPERM;
+-			pr_warn_ratelimited("refusing to follow metacopy origin for (%pd2)\n", dentry);
+-			goto out_put;
+-		}
++		if (d.metacopy)
++			nextmetacopy = true;
+ 
+ 		/*
+ 		 * If no origin fh is stored in upper of a merge dir, store fh
+@@ -1185,22 +1209,8 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 			ctr++;
+ 		}
+ 
+-		/*
+-		 * Following redirects can have security consequences: it's like
+-		 * a symlink into the lower layer without the permission checks.
+-		 * This is only a problem if the upper layer is untrusted (e.g
+-		 * comes from an USB drive).  This can allow a non-readable file
+-		 * or directory to become readable.
+-		 *
+-		 * Only following redirects when redirects are enabled disables
+-		 * this attack vector when not necessary.
+-		 */
+-		err = -EPERM;
+-		if (d.redirect && !ovl_redirect_follow(ofs)) {
+-			pr_warn_ratelimited("refusing to follow redirect for (%pd2)\n",
+-					    dentry);
+-			goto out_put;
+-		}
++		if (d.redirect)
++			nextredirect = true;
+ 
+ 		if (d.stop)
+ 			break;
+@@ -1218,6 +1228,17 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 		ctr++;
+ 	}
+ 
++	if (nextmetacopy && !ofs->config.metacopy) {
++		pr_warn_ratelimited("refusing to follow metacopy origin for (%pd2)\n", dentry);
++		err = -EPERM;
++		goto out_put;
++	}
++	if (nextredirect && !ovl_redirect_follow(ofs)) {
++		pr_warn_ratelimited("refusing to follow redirect for (%pd2)\n", dentry);
++		err = -EPERM;
++		goto out_put;
++	}
++
+ 	/*
+ 	 * For regular non-metacopy upper dentries, there is no lower
+ 	 * path based lookup, hence ctr will be zero. If a dentry is found
 -- 
 2.48.1
 
