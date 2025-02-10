@@ -1,105 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-41395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D6F3A2ECE9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 13:53:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E809A2EDBE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 14:27:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF6783A7C66
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 12:53:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDA123A8058
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 13:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71A5225384;
-	Mon, 10 Feb 2025 12:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3362122E402;
+	Mon, 10 Feb 2025 13:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ar9YbKxs"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HUw5SG4w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCDF22489B;
-	Mon, 10 Feb 2025 12:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76C222CBF0;
+	Mon, 10 Feb 2025 13:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739191976; cv=none; b=K5C0qrdrr2LbbFlZqB1RQDw/drlxpN6HovlS0Z9Rv4CxMt2r60LQZE0y+25HfHROAYnHX3rjFHWxBN1jfdhz2Z0JrQ7zEo7z+BJmQTXtUGkCCYMkPNiTHeUDeDAqjq4D55ExfGH34meSAAdIjx4NblJp2bV0fHWUjSjTm/aK44w=
+	t=1739194031; cv=none; b=glebYthoXpoetsVcW3cwteNYSO6RFcdOQV0ra8W1JL0S1Cw4eaGyAbQGGG8d25cifeN7FCXsvMKLnJerMm3BAit/Dx9cXX3IMIFuk/wIveQjl1L3OQr8PDK/hzBdN0fZIgMZJmnRv9Efg5Xt76Y5hBtL5xKzNXM0Pjp0qWi56nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739191976; c=relaxed/simple;
-	bh=ZC5nhsoii6SlSeT3VZ6+rinFj3qNAQbm4oYFU9a2f4Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zo9QBbgJ2xOVfEgTM1QNz8YUDrhMscvWyfWbp7dQVobovzZEmaWBL3vL1FEKv+ibw967BZt2Se38Fad6OMP4qhnyZTQJxc15vo+jbKgguUau2pDMuAuYSbjn5inbNZnbyHZ9iVVxwRBd2V4heXpAdXdtZ4URAH04++9IOVdpMis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ar9YbKxs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4175DC4CED1;
-	Mon, 10 Feb 2025 12:52:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739191972;
-	bh=ZC5nhsoii6SlSeT3VZ6+rinFj3qNAQbm4oYFU9a2f4Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ar9YbKxsGraERWgFZlpbkKf8oF1fedHVI1IursPBtH8wnBlV/qViMPJlFym70723A
-	 7EMC7OF28+SQhMsOKNkZMnS6fHVw2BN9ZhdmVmiCNV6ibf/Lf4ZQGF0t1hJ+00u/K4
-	 k8bG2DNyt+6EwkaAuUHDkFnN9ys5iNSjXtznl8akYq2g0ZlaKgQ5aC18qdlQhE7UnL
-	 qHmsIHNZoTe2KSHx8EZsfyWQFALZplkqhRIYcvp9lsgRDr6zgAr21qanfiz+4Qjwdq
-	 A+lbt7Qhi66bzr+CtwSu3WMtJ2TgIwFQxehi/4l6VefnP0kL8UWkFeabOWb3PNwmW1
-	 YdwIfZkwnDk5g==
-From: Christian Brauner <brauner@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
-	Oliver Sang <oliver.sang@intel.com>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	WangYuli <wangyuli@uniontech.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jeff Layton <jlayton@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 0/2] pipe: change pipe_write() to never add a zero-sized buffer
-Date: Mon, 10 Feb 2025 13:52:33 +0100
-Message-ID: <20250210-podest-bankdaten-fe88240abf98@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250209150718.GA17013@redhat.com>
-References: <20250209150718.GA17013@redhat.com>
+	s=arc-20240116; t=1739194031; c=relaxed/simple;
+	bh=JG137+wVJR35Xb2Lwl9Tp8s9PIn8BsCMpROGSvTtSNw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TGMGkl3nCgjkk3h+6fMoVpRZfy+s5AS5UXq6/pJcHtSHVj+Pd83uBVDvrN/rSATGKT04vfUBvXJCkPezh7juwKRO8qtfwO8o1cIX3LlIwg0WRXmfhEhI/Zd2dTDp69rzi3jRlFZ2BcQWCnpU76B1gE1sEGMi4np2R6dUpeae9D4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HUw5SG4w; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ab7483b9bf7so646916166b.3;
+        Mon, 10 Feb 2025 05:27:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739194028; x=1739798828; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MKfrkYSNYGseqTKIlquzIIAPBMHuIR1EbIObrXoKY8E=;
+        b=HUw5SG4wmxAsTmP0eLpf8spysy4fiAKUBDCDZ2U9SRpQdgLF32s8ZuGfFZLstx3/+i
+         sjl24qNJtlGRGiumyQFFoPKeV1X+rPVFvvpeGJkVKD2UHk1pXXjd+bIAAm++LgFB4wxs
+         vbRVVwBWWhdxPYsnl5zk7iW99HRMjGVcPbu8H1xcUuXDyv4zZgBVhCsIzQrVQ0y4GQMT
+         5jgcoSlhTndSN10uzZrdwzMuqkNs9Ow7aLj1pwxlyvTOOElBT6MxqOpCuZo3sUbfzsVW
+         EmP34mIbNpYrFHyq8fULZkqYSXS/+BNBZ2oTIaZny1OsuluZfvCyjc56dpZYdGuXTT64
+         MCPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739194028; x=1739798828;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MKfrkYSNYGseqTKIlquzIIAPBMHuIR1EbIObrXoKY8E=;
+        b=n6N+KR9B0XrAJYpQrlXnBY5P2qtPolotC6jb4U5tdYxpRO4VJhuDffEC0KGoF9G55l
+         k7i5r0Nso+bLCjtm9LCfFJVG+0nh8Hdg0TWDRUQfwIVDIokG+6TxP45879uA1zJ32D7z
+         IdlNxrA/gMJzTVvnzqL+2fWbyLob8iI1ilskLiJ20SWv2JubzW8wemmmbqmjqnRR1g78
+         eH4uXJCdKtD6lvZDRetsiIO1JHNUMzEPgj5IUm6lVg5cvdf8V+uAHPUgkZogBG6U27Au
+         SpOZ4bicnC3hmLFmuVGm4WNg2U2XgZ0G0HzVSiN6vF+KoBjgwTNknfjUtzEQ6GZT6vf0
+         aSrg==
+X-Forwarded-Encrypted: i=1; AJvYcCXS7uFyti7FC1NOjsWAULAEbPtaCTz4hWQUR2pAHEfzqsJoxR3ouct6GvMJggppbcUMlgbF7GdRp56OQbyL@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdD1FQdVk4cHVmhAJXFALaOxlc0XVFi81NEYPP5t9MTJr5LczJ
+	inJs+qpYCG1jak96ZKkdvSUqZiAjXuAtPT2pdnp8U1vpd/EqDsjokW98AawlUJgZqnI6YptHzZr
+	DgR0MVn+K2Z6AifDpjiObQGa51ZQ=
+X-Gm-Gg: ASbGnctDGgGfxCGAFPxnabBZ+4C8R5asEI5z8ba23yJ9Qm5tdwAzDCkoI3VuQZOkDvN
+	QB2Ul/UxVTWylOE6ihiOdcX5lMOJLdJUZh8lQk+MQ6tv7s/if1w12xXSybIjoceYrKRYS7M6X
+X-Google-Smtp-Source: AGHT+IHaQ9Ht+GfxlNdtWsVMwUIdYrHDdHAOmLP1Kh5Kn0CzLdXKez91cYQP8sgUIR/jIPlL+B3o4CQtt+CPqpPQpAg=
+X-Received: by 2002:a17:907:6d23:b0:ab6:949f:c52f with SMTP id
+ a640c23a62f3a-ab789aef87emr1208294466b.28.1739194027468; Mon, 10 Feb 2025
+ 05:27:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1205; i=brauner@kernel.org; h=from:subject:message-id; bh=ZC5nhsoii6SlSeT3VZ6+rinFj3qNAQbm4oYFU9a2f4Q=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSv/DZX77uY7VKe2YcPHj103UDOTX+uzIYr3BGzuEx1I /+LTjHz7ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIj0eMDN++7/ULT1aQMsj6 dvb4GpcVz2bfqki63RQlJ8U1hy9utgEjwzGe/wsmneLOZ8r+HHIqKWHRZXmTmWuiDmZMnVfkvX7 qPiYA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20250210-work-overlayfs-v2-0-ed2a949b674b@kernel.org> <20250210-work-overlayfs-v2-1-ed2a949b674b@kernel.org>
+In-Reply-To: <20250210-work-overlayfs-v2-1-ed2a949b674b@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 10 Feb 2025 14:26:56 +0100
+X-Gm-Features: AWEUYZl0i0RkYKsmEtsyroeltjWQ8UTpcYFTcQy0mXH2BfHzUfkE_P0xPacWaWk
+Message-ID: <CAOQ4uxgzv-k2hL5pecxt=+2AyRkdr+LGvm9wYYuWxs9LQyyN2Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] fs: support O_PATH fds with FSCONFIG_SET_FD
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-unionfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>, 
+	Mike Baynton <mike@mbaynton.com>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 09 Feb 2025 16:07:18 +0100, Oleg Nesterov wrote:
-> Please review.
-> 
-> pipe_write() can insert the empty buffer and this looks very confusing
-> to me. Because it looks obviously unnecessary and complicates the code.
-> 
-> In fact this logic doesn't even look strictly correct. For example,
-> eat_empty_buffer() simply updates pipe->tail but (unlike pipe_read) it
-> doesn't wake the writers.
-> 
-> [...]
+On Mon, Feb 10, 2025 at 1:39=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> Let FSCONFIG_SET_FD handle O_PATH file descriptors. This is particularly
+> useful in the context of overlayfs where layers can be specified via
+> file descriptors instead of paths. But userspace must currently use
+> non-O_PATH file desriptors which is often pointless especially if
+> the file descriptors have been created via open_tree(OPEN_TREE_CLONE).
+>
+> Fixes: a08557d19ef41 ("ovl: specify layers via file descriptors")
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>  fs/autofs/autofs_i.h | 2 ++
+>  fs/fsopen.c          | 2 +-
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/autofs/autofs_i.h b/fs/autofs/autofs_i.h
+> index 77c7991d89aa..23cea74f9933 100644
+> --- a/fs/autofs/autofs_i.h
+> +++ b/fs/autofs/autofs_i.h
+> @@ -218,6 +218,8 @@ void autofs_clean_ino(struct autofs_info *);
+>
+>  static inline int autofs_check_pipe(struct file *pipe)
+>  {
+> +       if (pipe->f_mode & FMODE_PATH)
+> +               return -EINVAL;
+>         if (!(pipe->f_mode & FMODE_CAN_WRITE))
+>                 return -EINVAL;
 
-Applied to the vfs-6.15.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.15.misc branch should appear in linux-next soon.
+I thought you said the above check is redundant due to the lower check.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+In any case feel free to add
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.15.misc
-
-[1/1] pipe: change pipe_write() to never add a zero-sized buffer
-      https://git.kernel.org/vfs/vfs/c/af69e27b3c82
+>         if (!S_ISFIFO(file_inode(pipe)->i_mode))
+> diff --git a/fs/fsopen.c b/fs/fsopen.c
+> index 094a7f510edf..1aaf4cb2afb2 100644
+> --- a/fs/fsopen.c
+> +++ b/fs/fsopen.c
+> @@ -453,7 +453,7 @@ SYSCALL_DEFINE5(fsconfig,
+>         case FSCONFIG_SET_FD:
+>                 param.type =3D fs_value_is_file;
+>                 ret =3D -EBADF;
+> -               param.file =3D fget(aux);
+> +               param.file =3D fget_raw(aux);
+>                 if (!param.file)
+>                         goto out_key;
+>                 param.dirfd =3D aux;
+>
+> --
+> 2.47.2
+>
 
