@@ -1,145 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-41384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EECADA2E9EF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 11:49:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3CFEA2EA45
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 11:58:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C8911884B39
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 10:49:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 142A83A07D7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2025 10:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62371D61B5;
-	Mon, 10 Feb 2025 10:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DBD1DED6B;
+	Mon, 10 Feb 2025 10:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="K+JwDkOF"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="boPdFcxG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154E51CB337;
-	Mon, 10 Feb 2025 10:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3711D47C7
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2025 10:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739184529; cv=none; b=XY+7l+6+Fcu/395GY+sdPnGewpOlHzYUkcBc7/clsz4zDGQQi0zRDp0hR5F7Zbzu+1fkU5WU8sCYrvL1m7LFCRJxiPpiM25ZQxhilSt0egAMJupjeADVNidVWvoKLeuwTeNu/2IFtpeLMY7BRTwTpadVR8iEakLKOJapS0F01Bc=
+	t=1739185087; cv=none; b=QL7LhnCGmo7hWO9QoaI+1RqxNyGmSa9X+2UKkrhjyk2hr9+uSDqme3T6rg6dWQBz4ydGhtBHyRcrejS8dMNuBIH6NEwHZyuvvs/NyV2zTVB78qlT8Oa8au5VmfGxjGgColaBGgkmzhxzkM5kGLE6ZW0byjaYDRwhwToxBXXFYJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739184529; c=relaxed/simple;
-	bh=+++62FqyJUpu4h0Fs4qZYksjMnaHxdrYV6EtX0OnlUY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QTPlndfs2qlhxKkz02GtSErKw5QeR1n+X3rOpP1z9dhsDvdXM9q9ssjwGyORLSF3ZqhxeG62WwyYnLWmhVq37iuxs8TfdYo0wMvjlXOY52TXvztOgY+eUqJrSQCXUTzRSqAaua88osZOPKxW4AXsCH5RL5YgtrwQJ7FTa5w/GbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=K+JwDkOF; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=eNMrZugY6p5xhcNydkrbdN20xj//vuU8bkAAB3XLH8g=; b=K+JwDkOFl897vvO9tGmmPmO++b
-	Q/Cer33anVwvEsluArYzuifBVNI/zf6NZRLciRzGagddmVUO7KVJ5iuegPbVHEXV7WM0jRXCLk0db
-	E+IWx3raJpQ5jdhaxB6rX63GKGx7EOnf27hbPy1HenzQhWptnG8FVDBDNiWBiw4OW3MhBEl93FSQu
-	V5gOw12sHDbpX56oXyaWz+NM6Ee0pRO/d112ZhYtSLPuPjijxW9G93RNDe7VY0kczKszDh7Uej4dp
-	9PQgh1Q5NGPt/HpStepyvyRoNaGSkPvqLexwrOqL7uWXDg7WcUgGP6anzqbo5uF/ZYsjOi5IcJ3qN
-	7XXCBWXg==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1thRLB-007CVp-Ra; Mon, 10 Feb 2025 11:48:43 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  "linux-fsdevel@vger.kernel.org"
- <linux-fsdevel@vger.kernel.org>,  "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH v2] fuse: add new function to invalidate cache for
- all inodes
-In-Reply-To: <b5db41a7-1b26-4d12-b99f-c630f3054585@ddn.com> (Bernd Schubert's
-	message of "Mon, 10 Feb 2025 09:58:21 +0000")
-References: <20250210094840.5627-1-luis@igalia.com>
-	<b5db41a7-1b26-4d12-b99f-c630f3054585@ddn.com>
-Date: Mon, 10 Feb 2025 10:48:43 +0000
-Message-ID: <87pljqyt10.fsf@igalia.com>
+	s=arc-20240116; t=1739185087; c=relaxed/simple;
+	bh=vWv7UNywuHbbX95H499CJg9o/VWBHM3d/g4SWjJwcx0=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=mcjZ6nkykmbA4uhQWCOibXZLXY1d9mQfndEIcVrk2bUQErzGduO9lxhYe+typz9XmoZ1idCMMMQ+wPKQtBa+c0/e3nqupCKba0ZHEnd0r5UtAkDjsfsSLQ7eQOnlLGVf/hjQMmS2ZMjinLDZp2FmwBgmUz4lGJO898GQxKBOnV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=boPdFcxG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739185084;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qyNTaqn/k/Z/XNNjhpEEGmhvU1IQLM++33YHYodhCTg=;
+	b=boPdFcxGDFdOkYBon7p9CxXE4eNYFQpt0UwH9x+qJ1VthhxPeuPzI+A0xHmr8PAiexsOJV
+	siTD7JLgyWZeZ76FCee/fiGPpt0udkbsx+yhnnNX6r8Kth/TSPX8f7FMcPQs7iENK4agpl
+	dGBD0PI/LdAldk1yWv6Z+t99ZUF5Jno=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-44-CEEK-4T5M4mNX5PdTFK0ug-1; Mon,
+ 10 Feb 2025 05:58:00 -0500
+X-MC-Unique: CEEK-4T5M4mNX5PdTFK0ug-1
+X-Mimecast-MFC-AGG-ID: CEEK-4T5M4mNX5PdTFK0ug
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4747A195604F;
+	Mon, 10 Feb 2025 10:57:57 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.92])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E900218004A7;
+	Mon, 10 Feb 2025 10:57:51 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <335ad811ae2cf5ebdfc494c185b9f02e9ca40c3e@linux.dev>
+References: <335ad811ae2cf5ebdfc494c185b9f02e9ca40c3e@linux.dev> <3173328.1738024385@warthog.procyon.org.uk> <3187377.1738056789@warthog.procyon.org.uk>
+To: "Ihor Solodrai" <ihor.solodrai@linux.dev>
+Cc: dhowells@redhat.com, "Marc Dionne" <marc.dionne@auristor.com>,
+    "Steve French" <stfrench@microsoft.com>,
+    "Eric Van Hensbergen" <ericvh@kernel.org>,
+    "Latchesar
+ Ionkov" <lucho@ionkov.net>,
+    "Dominique Martinet" <asmadeus@codewreck.org>,
+    "Christian Schoenebeck" <linux_oss@crudebyte.com>,
+    "Paulo Alcantara" <pc@manguebit.com>,
+    "Jeff Layton" <jlayton@kernel.org>,
+    "Christian Brauner" <brauner@kernel.org>, v9fs@lists.linux.dev,
+    linux-cifs@vger.kernel.org, netfs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+    ast@kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH] netfs: Add retry stat counters
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2985986.1739185070.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
+Date: Mon, 10 Feb 2025 10:57:50 +0000
+Message-ID: <2985987.1739185070@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-[re-sending -- for some reason I did a simple 'reply', not a 'reply-all'.]
+Ihor Solodrai <ihor.solodrai@linux.dev> wrote:
 
-On Mon, Feb 10 2025, Bernd Schubert wrote:
+> I recommend trying to reproduce with steps I shared in my initial report=
+:
+> https://lore.kernel.org/bpf/a7x33d4dnMdGTtRivptq6S1i8btK70SNBP2XyX_xwDAh=
+LvgQoPox6FVBOkifq4eBinfFfbZlIkMZBe3QarlWTxoEtHZwJCZbNKtaqrR7PvI=3D@pm.me/
+> =
 
-> On 2/10/25 10:48, Luis Henriques wrote:
->> Currently userspace is able to notify the kernel to invalidate the cache=
- for
->> an inode.  This means that, if all the inodes in a filesystem need to be
->> invalidated, then userspace needs to iterate through all of them and do =
-this
->> kernel notification separately.
->>=20
->> This patch adds a new option that allows userspace to invalidate all the
->> inodes with a single notification operation.  In addition to invalidate =
-all
->> the inodes, it also shrinks the sb dcache.
->>=20
->> Signed-off-by: Luis Henriques <luis@igalia.com>
->> ---
->> Hi!
->>=20
->> As suggested by Bernd, this patch v2 simply adds an helper function that
->> will make it easier to replace most of it's code by a call to function
->> super_iter_inodes() when Dave Chinner's patch[1] eventually gets merged.
->>=20
->> [1] https://lore.kernel.org/r/20241002014017.3801899-3-david@fromorbit.c=
-om
->>=20
->>  fs/fuse/inode.c           | 59 +++++++++++++++++++++++++++++++++++++++
->>  include/uapi/linux/fuse.h |  3 ++
->>  2 files changed, 62 insertions(+)
->>=20
->> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
->> index e9db2cb8c150..be51b53006d8 100644
->> --- a/fs/fuse/inode.c
->> +++ b/fs/fuse/inode.c
->> @@ -547,6 +547,62 @@ struct inode *fuse_ilookup(struct fuse_conn *fc, u6=
-4 nodeid,
->>  	return NULL;
->>  }
->>=20=20
->> +static void inval_single_inode(struct inode *inode, struct fuse_conn *f=
-c)
->> +{
->> +	struct fuse_inode *fi;
->> +
->> +	fi =3D get_fuse_inode(inode);
->> +	spin_lock(&fi->lock);
->> +	fi->attr_version =3D atomic64_inc_return(&fc->attr_version);
->> +	spin_unlock(&fi->lock);
->> +	fuse_invalidate_attr(inode);
->> +	forget_all_cached_acls(inode);
->
->
-> Thank you, much easier to read.
->
-> Could fuse_reverse_inval_inode() call into this?
+> I know it may not be very convenient due to all the CI stuff,
 
-Yep, it could indeed.  I'll do that in the next iteration, thanks!
+That's an understatement. :-)
 
-> What are the semantics=20
-> for  invalidate_inode_pages2_range() in this case? Totally invalidate?
-> No page cache invalidation at all as right now? If so, why?
+> but you should be able to use it to iterate on the kernel source locally=
+ and
+> narrow down the problem.
 
-So, if I change fuse_reverse_inval_inode() to use this help, it will still
-need to keep the call to invalidate_inode_pages2_range().  But in the new
-function fuse_reverse_inval_all(), I'm not doing it explicitly.  Instead,
-that function calls into shrink_dcache_sb().  I *think* that by doing so
-the invalidation will eventually happen.  Or am I wrong assuming that?
+Can you share just the reproducer without all the docker stuff?  Is this o=
+ne
+of those tests that requires 9p over virtio?  I have a different environme=
+nt
+for that.
 
-Cheers,
---=20
-Lu=C3=ADs
+David
+
 
