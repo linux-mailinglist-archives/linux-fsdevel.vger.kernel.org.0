@@ -1,95 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-41504-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 508F5A30474
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 08:28:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B29CA306F2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 10:26:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFA031665FE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 07:28:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E12271889BC0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 09:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8CDC1EBFE6;
-	Tue, 11 Feb 2025 07:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5931F130D;
+	Tue, 11 Feb 2025 09:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="KAVy5F4q"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="sxQ81AtR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A711EB9F6
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Feb 2025 07:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338911E4106;
+	Tue, 11 Feb 2025 09:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739258894; cv=none; b=LntzZV62RJusWPn3mF1kkL+r/tf43PomNKdRxkfcnuFHP0nkKlsixxS9TqMnw2USCzWfgv9McgjpeRbZEPfbvglHWEbYP3mHxgEyZoWisVNOG3ytqiNX1CweMNYYD0reqHZYJLwJ9/htJKwbEipo4rZSLbxj1Kpqip3HaomOcz0=
+	t=1739265973; cv=none; b=mJW4w6Xx3Ka4rzbdBQdLUG37OAYNBJyiGgjmoSJsEMI5pW4aMAp40fyEve4OaqZzITRQCgjpA2bUMusH9e/ndh3EYURLvsLYd1wlNL18ciG1J1zoEzZf2pktDNvSS93UzSUOQsTlAnOsMyw462S3xHxIYkfVh4x7CNaPjwBA5Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739258894; c=relaxed/simple;
-	bh=xDphkzp7YOwassCx3klJnQSoSwa0N8eY8DjCLu7euf4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tkAr9iUNQKx93uG2Wz3mhJiPl/SQTtVMUNJcAKy49xDMfDMwHmtnqBSjK/TB4C14LKXkxAiCdt9/jigTX/pYRyaMZ/bSld8uqKORpHMUC1Mr/ewI7hzxBkJuLNdL56PXghdwWEb5DQkxJTJoaB7b1dq+8xjZA9xOsNuAvWO+KoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=KAVy5F4q; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2fa0f222530so9586462a91.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2025 23:28:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1739258892; x=1739863692; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=u8JvwZe222+nCD5D0NlDaqFgopE4s8QEJ665TCjR17Q=;
-        b=KAVy5F4qSoiLjA+7OYEDq7MqwzJY7gIB72ynzU1CY1DcFkTAYzC/kX8KGPZ4GVjiFW
-         7z5mYuPFyWdKsTLBD4pVsBrC/+0GvFUMq043BmjnaBPwuMrDzm23jsqQQo2eBj3LvhEi
-         WRL39VjNnuXSErih5638WF0lFM/CWPj4h2sMCI4cFMEzYVLhyNNAUpYm6uVDou36ZZmx
-         uy4myemNHB1NzCjeH5oxHorWvbUE8Y6iiaNgUJfYdcvq22d/6MwpxDAZcrZ6+PQZJXCP
-         UcSNLgat75JZ3zPkTmFa46XKnkSui333Tiw1vy/epquGXZPYreHjQOsTNWB9Lr+TjD9i
-         0uRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739258892; x=1739863692;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u8JvwZe222+nCD5D0NlDaqFgopE4s8QEJ665TCjR17Q=;
-        b=JIZF6W4lLhRbRF8el+pYEciF9aZnlUwQj+rfTPx80YPN6nyFu/mn06i6ygAQcjkGtj
-         Ma8eYiLpHOnO6Yk2CM85tcNg+S61V2N5CbW/AqoExVEKn15ekkyXvpcSleYZKCUpM+me
-         rvU/a2iLa8kV3d1jllBpsPJ32cHrYRPdMV2kDFS6fEKYZYBkdlyNIEhRmAMKzIbcRj9I
-         xLmYemDihJ4ltgla1hb8UCgn50YzwGE4OXqdv0DpoCei9p5BsK+vlQkP+UmQFOrEGTQp
-         ATEFthwq6D40f2TCSJ7TZ3bmxffl5DB6MNOsPaOyOysjfzKpYJDjF3IFx1hqnqO6BzBe
-         GhDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjW/FMUOoZ9YPzZolBcrGzHPmCA1CVA8cdQ8TMahatL8iu5zhNtfzAZV1VwY020M5T9sFgkz+2rkdf0cVo@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTv6rZRZwH9ye2rXZw7uGU738JYixNp+6uPRrkp0SfiyXg4uOx
-	F26r7og775DcrbjsfHKMuoh+fbeUnp7Nmy/G8kMI1zj6Kob3Twf9Q6CyqdEXboI=
-X-Gm-Gg: ASbGncueh4vfvZ+XbnV8QFn5ZKmvD8fJ4W+/GE9bc+M3vjD3CdhvRdK8+7iyfgGqgF8
-	T6RHV33GP+EJ4cMUx+SpICzJGpi0RxytmGbt6y7Zp9eZnxzU1Ub8XMDl7KyDBfzvYuyysDP4Mlu
-	7Zem3qCy8jmNTDkFlrkfR3ezd0ScCli/EjXvDHvK5fo1HJ+GH7LgAFwsLyRWxICrknHMdy5Ag/G
-	9XfRJd3zNJXd4VqE6U6jfBppVHi1U9iKO/O+DVww2+EfvNj9QOA3YZ44LfsfMBthPjnlkhYhagE
-	qHVYClK6jYozoj5Fmm2eKx3hzqOa2LHUup0BZjI/4OH3PiHAvnwuNiVd
-X-Google-Smtp-Source: AGHT+IEGFQNt5sPJaZzJIBOUWjXNir7ONpzC/zGumrQumqkRxYesmObQGhXHsFIIUFr5ys2Z+8JnCg==
-X-Received: by 2002:a05:6a21:350d:b0:1ed:9e58:5195 with SMTP id adf61e73a8af0-1ee03a45ccdmr32137005637.13.1739258891851;
-        Mon, 10 Feb 2025 23:28:11 -0800 (PST)
-Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.150])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ad54a066811sm3946778a12.8.2025.02.10.23.28.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2025 23:28:11 -0800 (PST)
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-To: brauner@kernel.org,
-	willy@infradead.org,
-	ziy@nvidia.com,
-	quwenruo.btrfs@gmx.com,
-	david@redhat.com,
-	jannh@google.com,
-	akpm@linux-foundation.org,
-	david@fromorbit.com,
-	djwong@kernel.org,
-	muchun.song@linux.dev
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] mm: pgtable: fix incorrect reclaim of non-empty PTE pages
-Date: Tue, 11 Feb 2025 15:26:25 +0800
-Message-Id: <20250211072625.89188-1-zhengqi.arch@bytedance.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
+	s=arc-20240116; t=1739265973; c=relaxed/simple;
+	bh=0/6SlMvqxzhB7Qlw/3nmpge/TZTMVnJdiiMq8WXc0i8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EC5EA0YiGghmUNeY0UHQOrHHK4BXI4kCUeAFRvH1qPV2d8UjtPy0g18OsqWMqEOZXuol936JGwIzKj1fJefUI61BmLypjz3GQ/0YRotOeQd782GlhyYVeGMU8iwfJPt685PCwVVwiZ5hQuoWuE3SpLOjYtjGMbr0cAVU8mLpNxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=sxQ81AtR; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=OEfvOJJA+O1fPUax0iJ9whI9+BMjOivJ72Lg/TWzn/c=; b=sxQ81AtRIcHkT5S5isVmbl9i1l
+	4ACoSmRN5Oz/c4UHiaRF87Fc+eBzKGLsLThI5d8CkCQtPw8fl8pI6nNZEAygpHZa2rhdEwRRBp6RV
+	UJXwY9E1At0p3CKxM3m7K1fcYuaAkTJGMi2Ckh5kuXrntl/Ne4bcJTKW2mSbKtfcPT5F3iifUkzXC
+	dib8gh3SEVkbL4llbbd7TwiudA6yRhcbeXAnHIWLnofntoVkFSwILF/XIC1/JFmCWKfGcHSMpyfZM
+	poO/CwB4UCEtFXb90HUMpJAJdAZMIT/X93GyRtm0OdOy2H9Ts3S2TIdORqLGR53nuIhaBlgUlXK7P
+	gaC3O9sw==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1thmWm-007fB4-3W; Tue, 11 Feb 2025 10:26:05 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Matt Harvey <mharvey@jumptrading.com>,
+	Bernd Schubert <bschubert@ddn.com>,
+	Joanne Koong <joannelkoong@gmail.com>,
+	Luis Henriques <luis@igalia.com>
+Subject: [PATCH v4] fuse: add new function to invalidate cache for all inodes
+Date: Tue, 11 Feb 2025 09:26:04 +0000
+Message-ID: <20250211092604.15160-1-luis@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -98,74 +65,160 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In zap_pte_range(), if the pte lock was released midway, the pte entries
-may be refilled with physical pages by another thread, which may cause a
-non-empty PTE page to be reclaimed and eventually cause the system to
-crash.
+Currently userspace is able to notify the kernel to invalidate the cache
+for an inode.  This means that, if all the inodes in a filesystem need to
+be invalidated, then userspace needs to iterate through all of them and do
+this kernel notification separately.
 
-To fix it, fall back to the slow path in this case to recheck if all pte
-entries are still none.
+This patch adds a new option that allows userspace to invalidate all the
+inodes with a single notification operation.  In addition to invalidate
+all the inodes, it also shrinks the sb dcache.
 
-Fixes: 6375e95f381e ("mm: pgtable: reclaim empty PTE page in madvise(MADV_DONTNEED)")
-Reported-by: Christian Brauner <brauner@kernel.org>
-Closes: https://lore.kernel.org/all/20250207-anbot-bankfilialen-acce9d79a2c7@brauner/
-Reported-by: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Closes: https://lore.kernel.org/all/152296f3-5c81-4a94-97f3-004108fba7be@gmx.com/
-Tested-by: Zi Yan <ziy@nvidia.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+Signed-off-by: Luis Henriques <luis@igalia.com>
 ---
- mm/memory.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+* Changes since v3
+- Added comments to clarify semantic changes in fuse_reverse_inval_inode()
+  when called with FUSE_INVAL_ALL_INODES (suggested by Bernd).
+- Added comments to inodes iteration loop to clarify __iget/iput usage
+  (suggested by Joanne)
+- Dropped get_fuse_mount() call -- fuse_mount can be obtained from
+  fuse_ilookup() directly (suggested by Joanne)
 
-diff --git a/mm/memory.c b/mm/memory.c
-index a8196ae72e9ae..7c7193cb21248 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1721,7 +1721,7 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
- 	pmd_t pmdval;
- 	unsigned long start = addr;
- 	bool can_reclaim_pt = reclaim_pt_is_enabled(start, end, details);
--	bool direct_reclaim = false;
-+	bool direct_reclaim = true;
- 	int nr;
+(Also dropped the RFC from the subject.)
+
+* Changes since v2
+- Use the new helper from fuse_reverse_inval_inode(), as suggested by Bernd.
+- Also updated patch description as per checkpatch.pl suggestion.
+
+* Changes since v1
+As suggested by Bernd, this patch v2 simply adds an helper function that
+will make it easier to replace most of it's code by a call to function
+super_iter_inodes() when Dave Chinner's patch[1] eventually gets merged.
+
+[1] https://lore.kernel.org/r/20241002014017.3801899-3-david@fromorbit.com
+
+ fs/fuse/inode.c           | 83 +++++++++++++++++++++++++++++++++++----
+ include/uapi/linux/fuse.h |  3 ++
+ 2 files changed, 79 insertions(+), 7 deletions(-)
+
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index e9db2cb8c150..5aa49856731a 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -547,25 +547,94 @@ struct inode *fuse_ilookup(struct fuse_conn *fc, u64 nodeid,
+ 	return NULL;
+ }
  
- retry:
-@@ -1736,8 +1736,10 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
- 	do {
- 		bool any_skipped = false;
- 
--		if (need_resched())
-+		if (need_resched()) {
-+			direct_reclaim = false;
- 			break;
++static void inval_single_inode(struct inode *inode, struct fuse_conn *fc)
++{
++	struct fuse_inode *fi;
++
++	fi = get_fuse_inode(inode);
++	spin_lock(&fi->lock);
++	fi->attr_version = atomic64_inc_return(&fc->attr_version);
++	spin_unlock(&fi->lock);
++	fuse_invalidate_attr(inode);
++	forget_all_cached_acls(inode);
++}
++
++static int fuse_reverse_inval_all(struct fuse_conn *fc)
++{
++	struct fuse_mount *fm;
++	struct super_block *sb;
++	struct inode *inode, *old_inode = NULL;
++
++	inode = fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
++	if (!inode || !fm)
++		return -ENOENT;
++
++	iput(inode);
++	sb = fm->sb;
++
++	spin_lock(&sb->s_inode_list_lock);
++	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
++		spin_lock(&inode->i_lock);
++		if ((inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) ||
++		    !atomic_read(&inode->i_count)) {
++			spin_unlock(&inode->i_lock);
++			continue;
 +		}
++
++		/*
++		 * This __iget()/iput() dance is required so that we can release
++		 * the sb lock and continue the iteration on the previous
++		 * inode.  If we don't keep a ref to the old inode it could have
++		 * disappear.  This way we can safely call cond_resched() when
++		 * there's a huge amount of inodes to iterate.
++		 */
++		__iget(inode);
++		spin_unlock(&inode->i_lock);
++		spin_unlock(&sb->s_inode_list_lock);
++		iput(old_inode);
++
++		inval_single_inode(inode, fc);
++
++		old_inode = inode;
++		cond_resched();
++		spin_lock(&sb->s_inode_list_lock);
++	}
++	spin_unlock(&sb->s_inode_list_lock);
++	iput(old_inode);
++
++	shrink_dcache_sb(sb);
++
++	return 0;
++}
++
++/*
++ * Notify to invalidate inodes cache.  It can be called with @nodeid set to
++ * either:
++ *
++ * - An inode number - Any pending writebacks within the rage [@offset @len]
++ *   will be triggered and the inode will be validated.  To invalidate the whole
++ *   cache @offset has to be set to '0' and @len needs to be <= '0'; if @offset
++ *   is negative, only the inode attributes are invalidated.
++ *
++ * - FUSE_INVAL_ALL_INODES - All the inodes in the superblock are invalidated
++ *   and the whole dcache is shrinked.
++ */
+ int fuse_reverse_inval_inode(struct fuse_conn *fc, u64 nodeid,
+ 			     loff_t offset, loff_t len)
+ {
+-	struct fuse_inode *fi;
+ 	struct inode *inode;
+ 	pgoff_t pg_start;
+ 	pgoff_t pg_end;
  
- 		nr = do_zap_pte_range(tlb, vma, pte, addr, end, details, rss,
- 				      &force_flush, &force_break, &any_skipped);
-@@ -1745,11 +1747,20 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
- 			can_reclaim_pt = false;
- 		if (unlikely(force_break)) {
- 			addr += nr * PAGE_SIZE;
-+			direct_reclaim = false;
- 			break;
- 		}
- 	} while (pte += nr, addr += PAGE_SIZE * nr, addr != end);
++	if (nodeid == FUSE_INVAL_ALL_INODES)
++		return fuse_reverse_inval_all(fc);
++
+ 	inode = fuse_ilookup(fc, nodeid, NULL);
+ 	if (!inode)
+ 		return -ENOENT;
  
--	if (can_reclaim_pt && addr == end)
-+	/*
-+	 * Fast path: try to hold the pmd lock and unmap the PTE page.
-+	 *
-+	 * If the pte lock was released midway (retry case), or if the attempt
-+	 * to hold the pmd lock failed, then we need to recheck all pte entries
-+	 * to ensure they are still none, thereby preventing the pte entries
-+	 * from being repopulated by another thread.
-+	 */
-+	if (can_reclaim_pt && direct_reclaim && addr == end)
- 		direct_reclaim = try_get_and_clear_pmd(mm, pmd, &pmdval);
+-	fi = get_fuse_inode(inode);
+-	spin_lock(&fi->lock);
+-	fi->attr_version = atomic64_inc_return(&fc->attr_version);
+-	spin_unlock(&fi->lock);
++	inval_single_inode(inode, fc);
  
- 	add_mm_rss_vec(mm, rss);
--- 
-2.20.1
-
+-	fuse_invalidate_attr(inode);
+-	forget_all_cached_acls(inode);
+ 	if (offset >= 0) {
+ 		pg_start = offset >> PAGE_SHIFT;
+ 		if (len <= 0)
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 5e0eb41d967e..e5852b63f99f 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -669,6 +669,9 @@ enum fuse_notify_code {
+ 	FUSE_NOTIFY_CODE_MAX,
+ };
+ 
++/* The nodeid to request to invalidate all inodes */
++#define FUSE_INVAL_ALL_INODES 0
++
+ /* The read buffer is required to be at least 8k, but may be much larger */
+ #define FUSE_MIN_READ_BUFFER 8192
+ 
 
