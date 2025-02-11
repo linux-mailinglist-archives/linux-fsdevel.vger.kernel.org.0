@@ -1,240 +1,233 @@
-Return-Path: <linux-fsdevel+bounces-41518-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41516-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 075CDA30EAD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 15:44:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 841A5A30D8C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 15:01:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEC2E3A74BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 14:44:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0456C7A2A75
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 14:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E62250C00;
-	Tue, 11 Feb 2025 14:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCAF215799;
+	Tue, 11 Feb 2025 14:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="O1SScb7C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AWylvlJq";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="O1SScb7C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AWylvlJq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MO1i98Qj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0FB2505B3
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Feb 2025 14:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C7D1F891F;
+	Tue, 11 Feb 2025 14:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739285047; cv=none; b=JC0iOKEecLai+/UyODuI96lZhpgx3dMnwZtI/wJ25xAeyIigxrn1Slx1xONI07gLi6am/juFIGJ0lZD4hbIfMrTZjpXQSlmGqUz9lglQMcnQfwrR7oVJxBnVzhahAtzBJ46uRX736HHE0POlqoJx2Nxh9rTu14XZDMwLhvjAHtM=
+	t=1739282471; cv=none; b=SFPZrQ43jO/UHz3VdfjUo3nZt4wp2wZ9aQ8WwEqX5Lz4D+lPRTQjVqlRfcLhW/AUGouHWfFBNknAIHuFrBt6dstSEs7ZkoGEIoSJkSWU0cjtujBj1NRhYNMNo+rxp4EA7Z/1l2hr83DIOXjNXL5kdxbuS0DKP3hgTDO1PWEG3Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739285047; c=relaxed/simple;
-	bh=IahyDTbjrcYjCoDJUv3OnlbwGd5shCRC4kJSNcEwGo4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AVpc0NA9H9UO0pSRSy4WKmcBvmAqa+NTmidh0bnTi6xF1kSj7azId4t/oHPcJmyRlhkziN+Nxdt7rvf8yV/EuVNdlCQSKYAjWeFzfCN46ttTSpodEEMHqJI44TIwK0L6m/tFNWI/BiaNVtT4bzlrhK03vrVuy0tkzQiyqfXIWn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=O1SScb7C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AWylvlJq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=O1SScb7C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AWylvlJq; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3163E389AD;
-	Tue, 11 Feb 2025 13:43:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1739281397; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+VEBIexmL7SWSiS0m6pdz8xGnSXtW/lNBhhiiEd8WIw=;
-	b=O1SScb7C08E7Y/NJoR+I/57RazP96XEZvgVIezmjZa1/5BKqJMkga7r1BjfsdtIfkh3PDv
-	ElrhlUclxJISnSZhEyaAQy6AS72NcHmeC5N37TSTVNoXQ0rSGEDTRc3xWGd7r/kU8OMx6D
-	uuZYzrL8GaDBELiXu0FNMNbDjegAEdc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1739281397;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+VEBIexmL7SWSiS0m6pdz8xGnSXtW/lNBhhiiEd8WIw=;
-	b=AWylvlJq/MJv5IsvIWFgfUFPQdWl8OsM46cPlDzqXO+WYsuNqhUt+WTiGzIfD1MWrvRKNS
-	fAvCSYYcQVY9FWAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1739281397; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+VEBIexmL7SWSiS0m6pdz8xGnSXtW/lNBhhiiEd8WIw=;
-	b=O1SScb7C08E7Y/NJoR+I/57RazP96XEZvgVIezmjZa1/5BKqJMkga7r1BjfsdtIfkh3PDv
-	ElrhlUclxJISnSZhEyaAQy6AS72NcHmeC5N37TSTVNoXQ0rSGEDTRc3xWGd7r/kU8OMx6D
-	uuZYzrL8GaDBELiXu0FNMNbDjegAEdc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1739281397;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+VEBIexmL7SWSiS0m6pdz8xGnSXtW/lNBhhiiEd8WIw=;
-	b=AWylvlJq/MJv5IsvIWFgfUFPQdWl8OsM46cPlDzqXO+WYsuNqhUt+WTiGzIfD1MWrvRKNS
-	fAvCSYYcQVY9FWAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2139213715;
-	Tue, 11 Feb 2025 13:43:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id C/gUCPVTq2dVPgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 11 Feb 2025 13:43:17 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C9E34A095C; Tue, 11 Feb 2025 14:43:01 +0100 (CET)
-Date: Tue, 11 Feb 2025 14:43:01 +0100
-From: Jan Kara <jack@suse.cz>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
-	Kundan Kumar <kundan.kumar@samsung.com>, lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	anuj20.g@samsung.com, mcgrof@kernel.org, joshi.k@samsung.com, axboe@kernel.dk, 
-	clm@meta.com, willy@infradead.org, gost.dev@samsung.com
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Parallelizing filesystem writeback
-Message-ID: <jafwdcn2jvl6mr3byswuj3jakolpfzbirnzpmlj3y7teooo7sx@vaptimf74pjl>
-References: <CGME20250129103448epcas5p1f7d71506e4443429a0b0002eb842e749@epcas5p1.samsung.com>
- <20250129102627.161448-1-kundan.kumar@samsung.com>
- <Z5qw_1BOqiFum5Dn@dread.disaster.area>
- <20250131093209.6luwm4ny5kj34jqc@green245>
- <Z6GAYFN3foyBlUxK@dread.disaster.area>
- <20250204050642.GF28103@lst.de>
- <s43qlmnbtjbpc5vn75gokti3au7qhvgx6qj7qrecmkd2dgrdfv@no2i7qifnvvk>
- <Z6qkLjSj1K047yPt@dread.disaster.area>
+	s=arc-20240116; t=1739282471; c=relaxed/simple;
+	bh=W4EbBbuyk3MpknoCIOAaHOmpmm2WzX6Vs/PF/x622I4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=igNpd60pfPRaYS6j20lO7b125Phpymuhnk3J0RiBhwL+Q8HJdB4bO/m+lk1CoSIGUg9MfJ/uM7pHuPyVFOI/cqycTRvcLE9qS+VmxAtCBQTbLUqLUXJcLAfN5zESlnkD+aIEEDN/RMfbOyy1YwVXkJVtq/NVZfhVN+pevotZsdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MO1i98Qj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88CFAC4CEDD;
+	Tue, 11 Feb 2025 14:01:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739282470;
+	bh=W4EbBbuyk3MpknoCIOAaHOmpmm2WzX6Vs/PF/x622I4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=MO1i98QjauLQEkR3Kc2jCjTk4qRtMKjUtLgq+2ba88HwI1W+xtibo+hkFXIqzcOsU
+	 ZuoG8c//mA7HBFSDFfxWsZWvivwNXx2UfV8RlcB/sP2i6b5TI7otyrka2jTh+FE8XT
+	 JxZbSHESobO3K+X3JaeIiQ17BxxaexGP9eox4IGqjle9Z9oAIUY//CfLJR+Cy3crGz
+	 zgFnNV1nVLSo4c/Qt3zUwHK4UzS6dIn2YfeODiEiLtIhwRkplrrSWRhKrUy+aOU3ZA
+	 6zvixRrDRM2B5z8WCWz3qOcCTRJW6WAyCqpULOLh31axI7P958wyOAZNpzXmNNO3sn
+	 bUt0vDdyzS7vQ==
+Message-ID: <ecee2d1392fcb9b075687e7b59ec69057d3c1bb3.camel@kernel.org>
+Subject: Re: [REGRESSION][BISECTED] Crash with Bad page state for
+ FUSE/Flatpak related applications since v6.13
+From: Jeff Layton <jlayton@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>, Josef Bacik <josef@toxicpanda.com>
+Cc: Joanne Koong <joannelkoong@gmail.com>, Vlastimil Babka <vbabka@suse.cz>,
+  Miklos Szeredi <miklos@szeredi.hu>, Christian Heusel
+ <christian@heusel.eu>, Miklos Szeredi <mszeredi@redhat.com>, 
+	regressions@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>, Mantas
+ =?UTF-8?Q?Mikul=C4=97nas?=	 <grawity@gmail.com>
+Date: Tue, 11 Feb 2025 09:01:08 -0500
+In-Reply-To: <8a99f6bf3f0b5cb909f11539fb3b0ef0d65b3a73.camel@kernel.org>
+References: 
+	<CAJfpegtaTET+R7Tc1MozTQWmYfgsRp6Bzc=HKonO=Uq1h6Nzgw@mail.gmail.com>
+		 <9cd88643-daa8-4379-be0a-bd31de277658@suse.cz>
+		 <20250207172917.GA2072771@perftesting>
+		 <8f7333f2-1ba9-4df4-bc54-44fd768b3d5b@suse.cz>
+		 <CAJnrk1aNVMCfTjL0vo-Qki68-5t1W+6-bJHg+x67kHEo_-q0Eg@mail.gmail.com>
+		 <Z6ct4bEdeZwmksxS@casper.infradead.org>
+		 <CAJnrk1aY0ZFcS4JvmJL=icigencsCD8g4qmZiTuoPWj2S2Y_LQ@mail.gmail.com>
+		 <81298bd1-e630-4940-ae5b-7882576b6bf4@suse.cz>
+		 <CAJnrk1aBc5uvL78s3kdpXojH-B11wtOPSDUJ0XnCzmHH+eO2Nw@mail.gmail.com>
+		 <20250210191235.GA2256827@perftesting>
+		 <Z6pjSYyzFJHaQo73@casper.infradead.org>
+	 <8a99f6bf3f0b5cb909f11539fb3b0ef0d65b3a73.camel@kernel.org>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z6qkLjSj1K047yPt@dread.disaster.area>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
 
-On Tue 11-02-25 12:13:18, Dave Chinner wrote:
-> On Mon, Feb 10, 2025 at 06:28:28PM +0100, Jan Kara wrote:
-> > On Tue 04-02-25 06:06:42, Christoph Hellwig wrote:
-> > > On Tue, Feb 04, 2025 at 01:50:08PM +1100, Dave Chinner wrote:
-> > > > I doubt that will create enough concurrency for a typical small
-> > > > server or desktop machine that only has a single NUMA node but has a
-> > > > couple of fast nvme SSDs in it.
-> > > > 
-> > > > > 2) Fixed number of writeback contexts, say min(10, numcpu).
-> > > > > 3) NUMCPU/N number of writeback contexts.
-> > > > 
-> > > > These don't take into account the concurrency available from
-> > > > the underlying filesystem or storage.
-> > > > 
-> > > > That's the point I was making - CPU count has -zero- relationship to
-> > > > the concurrency the filesystem and/or storage provide the system. It
-> > > > is fundamentally incorrect to base decisions about IO concurrency on
-> > > > the number of CPU cores in the system.
-> > > 
-> > > Yes.  But as mention in my initial reply there is a use case for more
-> > > WB threads than fs writeback contexts, which is when the writeback
-> > > threads do CPU intensive work like compression.  Being able to do that
-> > > from normal writeback threads vs forking out out to fs level threads
-> > > would really simply the btrfs code a lot.  Not really interesting for
-> > > XFS right now of course.
-> > > 
-> > > Or in other words: fs / device geometry really should be the main
-> > > driver, but if a file systems supports compression (or really expensive
-> > > data checksums) being able to scale up the numbes of threads per
-> > > context might still make sense.  But that's really the advanced part,
-> > > we'll need to get the fs geometry aligned to work first.
-> > 
-> > As I'm reading the thread it sounds to me the writeback subsystem should
-> > provide an API for the filesystem to configure number of writeback
-> > contexts which would be kind of similar to what we currently do for cgroup
-> > aware writeback?
-> 
-> Yes, that's pretty much what I've been trying to say.
-> 
-> > Currently we create writeback context per cgroup so now
-> > additionally we'll have some property like "inode writeback locality" that
-> > will also influence what inode->i_wb gets set to and hence where
-> > mark_inode_dirty() files inodes etc.
-> 
-> Well, that's currently selected by __inode_attach_wb() based on
-> whether there is a memcg attached to the folio/task being dirtied or
-> not. If there isn't a cgroup based writeback task, then it uses the
-> bdi->wb as the wb context.
-> 
-> In my mind, what you are describing above sounds like we would be
-> heading down the same road list_lru started down back in 2012 to
-> support NUMA scalability for LRU based memory reclaim.
-> 
-> i.e. we originally had a single global LRU list for important
-> caches. This didn't scale up, so I introduced the list_lru construct
-> to abstract the physical layout of the LRU from the objects being
-> stored on it and the reclaim infrastructure walking it. That gave us
-> per-NUMA-node LRUs and NUMA-aware shrinkers for memory reclaim. The
-> fundamental concept was that we abstract away the sharding of the
-> object tracking into per-physical-node structures via generic
-> infrastructure (i.e. list_lru).
-> 
-> Then memcgs needed memory reclaim, and so they were added as extra
-> lists with a different indexing mechanism to the list-lru contexts.
-> These weren't per-node lists because there could be thousands of
-> them. Hence it was just a single "global" list per memcg, and so it
-> didn't scale on large machines.
-> 
-> This wasn't seen as a problem initially, but a few years later
-> applications using memcgs wanted to scale properly on large NUMA
-> systems. So now we have each memcg tracking the physical per-node
-> memory usage for reclaim purposes (i.e.  combinatorial explosion of
-> memcg vs per-node lists).
-> 
-> Hence suggesting "physically sharded lists for global objects,
-> single per-cgroup lists for cgroup-owned objects" sounds like
-> exactly the same problem space progression is about to play out with
-> writeback contexts.
-> 
-> i.e. we shared the global writeback context into a set of physically
-> sharded lists for scalability and perofrmance reasons, but leave
-> cgroups with the old single threaded list constructs. Then someone
-> says "my cgroup based workload doesn't perform the same as a global
-> workload" and we're off to solve the problem list_lru solves again.
-> 
-> So....
-> 
-> Should we be looking towards using a subset of the existing list_lru
-> functionality for writeback contexts here? i.e. create a list_lru
-> object with N-way scalability, allow the fs to provide an
-> inode-number-to-list mapping function, and use the list_lru
-> interfaces to abstract away everything physical and cgroup related
-> for tracking dirty inodes?
+On Mon, 2025-02-10 at 17:38 -0500, Jeff Layton wrote:
+> On Mon, 2025-02-10 at 20:36 +0000, Matthew Wilcox wrote:
+> > On Mon, Feb 10, 2025 at 02:12:35PM -0500, Josef Bacik wrote:
+> > > From: Josef Bacik <josef@toxicpanda.com>
+> > > Date: Mon, 10 Feb 2025 14:06:40 -0500
+> > > Subject: [PATCH] fuse: drop extra put of folio when using pipe splice
+> > >=20
+> > > In 3eab9d7bc2f4 ("fuse: convert readahead to use folios"), I converte=
+d
+> > > us to using the new folio readahead code, which drops the reference o=
+n
+> > > the folio once it is locked, using an inferred reference on the folio=
+.
+> > > Previously we held a reference on the folio for the entire duration o=
+f
+> > > the readpages call.
+> > >=20
+> > > This is fine, however I failed to catch the case for splice pipe
+> > > responses where we will remove the old folio and splice in the new
+> > > folio.  Here we assumed that there is a reference held on the folio f=
+or
+> > > ap->folios, which is no longer the case.
+> > >=20
+> > > To fix this, simply drop the extra put to keep us consistent with the
+> > > non-splice variation.  This will fix the UAF bug that was reported.
+> > >=20
+> > > Link: https://lore.kernel.org/linux-fsdevel/2f681f48-00f5-4e09-8431-2=
+b3dbfaa881e@heusel.eu/
+> > > Fixes: 3eab9d7bc2f4 ("fuse: convert readahead to use folios")
+> > > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> > > ---
+> > >  fs/fuse/dev.c | 2 --
+> > >  1 file changed, 2 deletions(-)
+> > >=20
+> > > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> > > index 5b5f789b37eb..5bd6e2e184c0 100644
+> > > --- a/fs/fuse/dev.c
+> > > +++ b/fs/fuse/dev.c
+> > > @@ -918,8 +918,6 @@ static int fuse_try_move_page(struct fuse_copy_st=
+ate *cs, struct page **pagep)
+> > >  	}
+> > > =20
+> > >  	folio_unlock(oldfolio);
+> > > -	/* Drop ref for ap->pages[] array */
+> > > -	folio_put(oldfolio);
+> > >  	cs->len =3D 0;
+> >=20
+> > But aren't we now leaking a reference to newfolio?  ie shouldn't
+> > we also:
+> >=20
+> > -	folio_get(newfolio);
+> >=20
+> > a few lines earlier?
+> >=20
+>=20
+>=20
+> I think that ref was leaking without Josef's patch, but your proposed
+> fix seems correct to me. There is:
+>=20
+> - 1 reference stolen from the pipe_buffer
+> - 1 reference taken for the pagecache in replace_page_cache_folio()
+> - the folio_get(newfolio) just after that
+>=20
+> The pagecache ref doesn't count here, and we only need the reference
+> that was stolen from the pipe_buffer to replace the one in pagep.
 
-Interesting idea. Indeed, the similarity with problems list_lru is solving
-is significant. I like the idea.
+Actually, no. I'm wrong here. A little after the folio_get(newfolio)
+call, we do:
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+        /*
+         * Release while we have extra ref on stolen page.  Otherwise
+         * anon_pipe_buf_release() might think the page can be reused.
+         */
+        pipe_buf_release(cs->pipe, buf);
+
+...so that accounts for the extra reference. I think the newfolio
+refcounting is correct as-is.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
