@@ -1,210 +1,241 @@
-Return-Path: <linux-fsdevel+bounces-41522-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41526-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F71A31032
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 16:51:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EBE3A31127
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 17:22:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A6231889F92
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 15:51:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BB241881D4E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 16:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF76253B7A;
-	Tue, 11 Feb 2025 15:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1369421D5B8;
+	Tue, 11 Feb 2025 16:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y+D9bioG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cUfJNtWX";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y+D9bioG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cUfJNtWX"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YD6bYT2L";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZLPb1XVz";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YD6bYT2L";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZLPb1XVz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D21253B4C;
-	Tue, 11 Feb 2025 15:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82A726BDAB
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Feb 2025 16:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739289046; cv=none; b=ovdTJTLkn/95DomUBi+9WQrnNf3KBrAX0zTFM1g+/6do2sfEBrsYuyyw7/pxjBD4qR6loaHrXdZS5NuPwJYzPSc93Y51lFy27xbuRJaM0vKwKBY681mr+OjKx3ZphRnZ2P/W1A0Y1nhabGnGj9mq+LH9Emhz5sNYngaKGohb2xA=
+	t=1739290926; cv=none; b=FcmC4o7NT67TAqUqWdSoRGbtZW4knP2F97A05RS3C4mlRGZUJ61u2sReaSRem90btpT4DIfGfyR24lpeMNZ5YxYmrZv8X8GJ+/JU+gQGJmkF1luvW2ASHidnqi/x7X/E0KPQ1jw579WZfHCh3Je3Wdm0PRugfpMj90Ghx7QO+44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739289046; c=relaxed/simple;
-	bh=DLoVaWN4pPM06i7274kUimEBAEHvEAUb+WbMY772pi4=;
+	s=arc-20240116; t=1739290926; c=relaxed/simple;
+	bh=XVWAdJB34+ddUPrIAMiMey89jdieh+eZFJcQTX8leA4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LKVMwjvJ+uqCU1O3fFX8zTCxB01A6G/cmKtEDDS1E6kCI6v0bLfgKvqFo3xgLusxIiRYA1XIe0PJEH5XlZL09WCRBcIUQYcpc8AFGd7fwiZSP+FAqwbn86JhXU2qjzJirj2YrX3t9++q8SJ8d3EI1gX/f3A4BRvIs8oLTS9R4ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y+D9bioG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cUfJNtWX; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y+D9bioG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cUfJNtWX; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=SMrTQxRzg+Eqm96GFnM+1j/pgdzxgppuRjYJe+r9hUsWuQJDxK/00WeILSx+7fsctP+HTZvX0eI0tir5AObfdg/l/o6iqbK7wsucKTRhXJnLmUShedEyBL9H6jCJQsiRjnpYD2EqQ4wmoE1ji1MFRjjwlEqr5dK5L7nds4eBXrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YD6bYT2L; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZLPb1XVz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YD6bYT2L; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZLPb1XVz; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 90B43339CA;
-	Tue, 11 Feb 2025 13:32:21 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 838D620AF1;
+	Tue, 11 Feb 2025 14:53:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1739280741; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1739285621; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OQgKLohp9UJppT3FHipy+VgWaxpWCieTbQmYejKjYXo=;
-	b=Y+D9bioGmHa3DDMKdgMsSTgkLT52ggg513kAY8MGyJo9J+RRuPxmzxrz2jzIjsDWXn/LZ8
-	gEyfQUVq5fthuIEy1dQCcDrvTlKHeG82eM0LeaBA5HNEqG/YHozg+247wLhrLpkFo/hl5R
-	pFWJ2Z2FDhZp23o6G91hAm+hxv4AFXI=
+	bh=YS244AXQwCXDgtfb7NADhCw8c6ahdX2isUo+yb7AuRU=;
+	b=YD6bYT2LtWf9y/jzsjQJpg191aRiAtAZGcG1ogyVgvERXyt+yNAHmzgQu0vwx0IoizVobT
+	JegmAujqI2afTFqkhvzvYqvCe77zCRk5cf1dY2sLqsb0J3vkEz1NODYNzjCXhtmAnDzV+G
+	AK68DMZD1EPfCeQ3X1Mvsw2ogP03Qg0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1739280741;
+	s=susede2_ed25519; t=1739285621;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OQgKLohp9UJppT3FHipy+VgWaxpWCieTbQmYejKjYXo=;
-	b=cUfJNtWXPk4bQ4zdkwAwWtQYsC8ktoRqy5MbAny9T2dyKu7Ut+agGB3+Aw1OF1M/YyifI0
-	0iL5fMt+7L4VmmAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Y+D9bioG;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=cUfJNtWX
+	bh=YS244AXQwCXDgtfb7NADhCw8c6ahdX2isUo+yb7AuRU=;
+	b=ZLPb1XVz67/piZXfHzhEH/p5MYwsouksIzxMF37FVMtecu0CZ7nvjYICoAInxfaZPpH5Zi
+	PxjmAo0czukgjADQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1739280741; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1739285621; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OQgKLohp9UJppT3FHipy+VgWaxpWCieTbQmYejKjYXo=;
-	b=Y+D9bioGmHa3DDMKdgMsSTgkLT52ggg513kAY8MGyJo9J+RRuPxmzxrz2jzIjsDWXn/LZ8
-	gEyfQUVq5fthuIEy1dQCcDrvTlKHeG82eM0LeaBA5HNEqG/YHozg+247wLhrLpkFo/hl5R
-	pFWJ2Z2FDhZp23o6G91hAm+hxv4AFXI=
+	bh=YS244AXQwCXDgtfb7NADhCw8c6ahdX2isUo+yb7AuRU=;
+	b=YD6bYT2LtWf9y/jzsjQJpg191aRiAtAZGcG1ogyVgvERXyt+yNAHmzgQu0vwx0IoizVobT
+	JegmAujqI2afTFqkhvzvYqvCe77zCRk5cf1dY2sLqsb0J3vkEz1NODYNzjCXhtmAnDzV+G
+	AK68DMZD1EPfCeQ3X1Mvsw2ogP03Qg0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1739280741;
+	s=susede2_ed25519; t=1739285621;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OQgKLohp9UJppT3FHipy+VgWaxpWCieTbQmYejKjYXo=;
-	b=cUfJNtWXPk4bQ4zdkwAwWtQYsC8ktoRqy5MbAny9T2dyKu7Ut+agGB3+Aw1OF1M/YyifI0
-	0iL5fMt+7L4VmmAA==
+	bh=YS244AXQwCXDgtfb7NADhCw8c6ahdX2isUo+yb7AuRU=;
+	b=ZLPb1XVz67/piZXfHzhEH/p5MYwsouksIzxMF37FVMtecu0CZ7nvjYICoAInxfaZPpH5Zi
+	PxjmAo0czukgjADQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8292513715;
-	Tue, 11 Feb 2025 13:32:21 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 73CBB13AA6;
+	Tue, 11 Feb 2025 14:53:41 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id AW7cH2VRq2dTOgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 11 Feb 2025 13:32:21 +0000
+	id XfVBHHVkq2dqWAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 11 Feb 2025 14:53:41 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 41745A095C; Tue, 11 Feb 2025 14:32:17 +0100 (CET)
-Date: Tue, 11 Feb 2025 14:32:17 +0100
+	id 1ECECA095C; Tue, 11 Feb 2025 15:53:41 +0100 (CET)
+Date: Tue, 11 Feb 2025 15:53:41 +0100
 From: Jan Kara <jack@suse.cz>
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
-	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux-refpolicy@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] fanotify: notify on mount attach and detach
-Message-ID: <7fjcocufagvqgytwiqvbcehovmehgwytz67jv76327c52jrz2y@5re5g57otcws>
-References: <20250129165803.72138-1-mszeredi@redhat.com>
- <20250129165803.72138-3-mszeredi@redhat.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Amir Goldstein <amir73il@gmail.com>, 
+	Dave Chinner <david@fromorbit.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	lsf-pc <lsf-pc@lists.linux-foundation.org>, Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
+	Josef Bacik <josef@toxicpanda.com>
+Subject: Re: [LSF/MM/BPF TOPIC] vfs write barriers
+Message-ID: <gihbrvdkldci257z5amkrowcsrzgjjmtnif7ycvpi6rsbktvnz@rfqybs7klfkj>
+References: <CAOQ4uxj00D_fP3nRUBjAry6vwUCNjYuUpCZg2Uc8hwMk6n+2HA@mail.gmail.com>
+ <Z41rfVwqp6mmgOt9@dread.disaster.area>
+ <CAOQ4uxgYERCmPrTXjuM4Q3HdWK_HxuOkkpAEnesDHCAD=9fsOg@mail.gmail.com>
+ <dc0649f70ca69741d351060c8c3816a347c00687.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250129165803.72138-3-mszeredi@redhat.com>
-X-Rspamd-Queue-Id: 90B43339CA
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dc0649f70ca69741d351060c8c3816a347c00687.camel@kernel.org>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
 	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,suse.cz,gmail.com,redhat.com,poettering.net,themaw.net,zeniv.linux.org.uk,paul-moore.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,fromorbit.com,vger.kernel.org,lists.linux-foundation.org,suse.cz,kernel.org,toxicpanda.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -3.80
 X-Spam-Flag: NO
-X-Spam-Level: 
 
-On Wed 29-01-25 17:58:00, Miklos Szeredi wrote:
-> Add notifications for attaching and detaching mounts.  The following new
-> event masks are added:
+On Thu 23-01-25 13:14:11, Jeff Layton wrote:
+> On Mon, 2025-01-20 at 12:41 +0100, Amir Goldstein wrote:
+> > On Sun, Jan 19, 2025 at 10:15 PM Dave Chinner <david@fromorbit.com> wrote:
+> > > 
+> > > On Fri, Jan 17, 2025 at 07:01:50PM +0100, Amir Goldstein wrote:
+> > > > Hi all,
+> > > > 
+> > > > I would like to present the idea of vfs write barriers that was proposed by Jan
+> > > > and prototyped for the use of fanotify HSM change tracking events [1].
+> > > > 
+> > > > The historical records state that I had mentioned the idea briefly at the end of
+> > > > my talk in LSFMM 2023 [2], but we did not really have a lot of time to discuss
+> > > > its wider implications at the time.
+> > > > 
+> > > > The vfs write barriers are implemented by taking a per-sb srcu read side
+> > > > lock for the scope of {mnt,file}_{want,drop}_write().
+> > > > 
+> > > > This could be used by users - in the case of the prototype - an HSM service -
+> > > > to wait for all in-flight write syscalls, without blocking new write syscalls
+> > > > as the stricter fsfreeze() does.
+> > > > 
+> > > > This ability to wait for in-flight write syscalls is used by the prototype to
+> > > > implement a crash consistent change tracking method [3] without the
+> > > > need to use the heavy fsfreeze() hammer.
+> > > 
+> > > How does this provide anything guarantee at all? It doesn't order or
+> > > wait for physical IOs in any way, so writeback can be active on a
+> > > file and writing data from both sides of a syscall write "barrier".
+> > > i.e. there is no coherency between what is on disk, the cmtime of
+> > > the inode and the write barrier itself.
+> > > 
+> > > Freeze is an actual physical write barrier. A very heavy handed
+> > > physical right barrier, yes, but it has very well defined and
+> > > bounded physical data persistence semantics.
+> > 
+> > Yes. Freeze is a "write barrier to persistence storage".
+> > This is not what "vfs write barrier" is about.
+> > I will try to explain better.
+> > 
+> > Some syscalls modify the data/metadata of filesystem objects in memory
+> > (a.k.a "in-core") and some syscalls query in-core data/metadata
+> > of filesystem objects.
+> > 
+> > It is often the case that in-core data/metadata readers are not fully
+> > synchronized with in-core data/metadata writers and it is often that
+> > in-core data and metadata are not modified atomically w.r.t the
+> > in-core data/metadata readers.
+> > Even related metadata attributes are often not modified atomically
+> > w.r.t to their readers (e.g. statx()).
+> > 
+> > When it comes to "observing changes" multigrain ctime/mtime has
+> > improved things a lot for observing a change in ctime/mtime since
+> > last sampled and for observing an order of ctime/mtime changes
+> > on different inodes, but it hasn't changed the fact that ctime/mtime
+> > changes can be observed *before* the respective metadata/data
+> > changes can be observed.
+> > 
+> > An example problem is that a naive backup or indexing program can
+> > read old data/metadata with new timestamp T and wrongly conclude
+> > that it read all changes up to time T.
+> > 
+> > It is true that "real" backup programs know that applications and
+> > filesystem needs to be quisences before backup, but actual
+> > day to day cloud storage sync programs and indexers cannot
+> > practically freeze the filesystem for their work.
+> > 
 > 
->   FAN_MNT_ATTACH  - Mount was attached
->   FAN_MNT_DETACH  - Mount was detached
+> Right. That is still a known problem. For directory operations, the
+> i_rwsem keeps things consistent, but for regular files, it's possible
+> to see new timestamps alongside with old file contents. That's a
+> problem since caching algorithms that watch for timestamp changes can
+> end up not seeing the new contents until the _next_ change occurs,
+> which might not ever happen.
 > 
-> If a mount is moved, then the event is reported with (FAN_MNT_ATTACH |
-> FAN_MNT_DETACH).
+> It would be better to change the file write code to update the
+> timestamps after copying data to the pagecache. It would still be
+> possible in that case to see old attributes + new contents, but that's
+> preferable to the reverse for callers that are watching for changes to
+> attributes.
 > 
-> These events add an info record of type FAN_EVENT_INFO_TYPE_MNT containing
-> these fields identifying the affected mounts:
-> 
->   __u64 mnt_id    - the ID of the mount (see statmount(2))
-> 
-> FAN_REPORT_MNT must be supplied to fanotify_init() to receive these events
-> and no other type of event can be received with this report type.
-> 
-> Marks are added with FAN_MARK_MNTNS, which records the mount namespace from
-> an nsfs file (e.g. /proc/self/ns/mnt).
-> 
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> Would fixing that help your use-case at all?
 
-Just one small comment below. Otherwise feel free to add:
+I think Amir wanted to make here a point in the other direction: I.e., if
+the application did:
+ * sample inode timestamp
+ * vfs_write_barrier()
+ * read file data
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+then it is *guaranteed* it will never see old data & new timestamp and hence
+the caching problem is solved. No need to update timestamp after the write.
 
-> @@ -1847,6 +1890,19 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
->  		return -EINVAL;
->  	group = fd_file(f)->private_data;
->  
-> +	/* Only report mount events on mnt namespace */
-> +	if (FAN_GROUP_FLAG(group, FAN_REPORT_MNT)) {
-> +		if (mask & ~FANOTIFY_MOUNT_EVENTS)
-> +			return -EINVAL;
-> +		if (mark_type != FAN_MARK_MNTNS)
-> +			return -EINVAL;
-> +	} else {
-> +		if (mask & FANOTIFY_MOUNT_EVENTS)
-> +			return -EINVAL;
-> +		if (mark_type == FAN_MARK_MNTNS)
-> +			return -EINVAL;
-> +	}
-> +
->  	/*
->  	 * An unprivileged user is not allowed to setup mount nor filesystem
->  	 * marks.  This also includes setting up such marks by a group that
-> @@ -1888,7 +1944,7 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
->  	 * point.
->  	 */
->  	fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
-> -	if (mask & ~(FANOTIFY_FD_EVENTS|FANOTIFY_EVENT_FLAGS) &&
-> +	if (mask & ~(FANOTIFY_FD_EVENTS|FANOTIFY_MOUNT_EVENTS|FANOTIFY_EVENT_FLAGS) &&
-
-I understand why you need this but the condition is really hard to
-understand now and the comment above it becomes out of date. Perhaps I'd
-move this and the following two checks for FAN_RENAME and
-FANOTIFY_PRE_CONTENT_EVENTS into !FAN_GROUP_FLAG(group, FAN_REPORT_MNT)
-branch to make things more obvious?
+Now I agree updating timestamps after write is much nicer from usability
+POV (given how common pattern above it) but this is just a simple example
+demonstrating possible uses for vfs_write_barrier().
 
 								Honza
+
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
