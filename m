@@ -1,120 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-41514-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA87A30BB4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 13:25:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E12A30BC9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 13:34:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B72053AC2B7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 12:25:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF02B165F00
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 12:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1D91FDA9C;
-	Tue, 11 Feb 2025 12:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05391FCFE5;
+	Tue, 11 Feb 2025 12:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H1w+BTQG"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="dLUnV9Fw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93416215067;
-	Tue, 11 Feb 2025 12:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955EC1E5B8D
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Feb 2025 12:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739276705; cv=none; b=P9nCJlfN+ULKJeB7SZGkHdZA9fUsRwQJi5cTJXkbaECPsbg/4sJzbwfYV0jS4TpIt0ns81+s4A3/z9XB5SkK/HqiZPhKzjV3g5PuIjAQajOtiXTNYCSFNbXMk8cO3xkPOvSnpGpUZSIwl/BuNDqeny1cMGVHlGLMBvuaQPL4L1o=
+	t=1739277267; cv=none; b=odraAxN/s8FbENojCQw8r4O5IWS7+kw+e0Q+uTg9xzgizZ7lriMOjCcm4o+8b8dvILXe8TAUMfaxtF0pFER5bNRFxi/17Y98BptLo0OelZwu+j7QbwfZkNkKSrgWvIiQMwZWhFStAEBemLQaDvJhZC4cNEndCJqQGJ4xyxO5xtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739276705; c=relaxed/simple;
-	bh=luIF/y8mz4y5i6r2JfpBlxxy/vxVKvXnmc1mgeWO/Pw=;
+	s=arc-20240116; t=1739277267; c=relaxed/simple;
+	bh=1GMpC8GzPN7He92KH3FqGLSxjeb+6D0O/Fw9gYQLRf8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q6w9IMNozSEk+nnGcGXB42uuUvfM/8CsA4RiC8/DIajZtsDvmLh2isq88hH12tVcQUW9A2QM+ZqzqD72YP4MtEvi4IWk7+M5Ss5QzwGK00hY9nOhyO4NNnwuYqZIxOSPEpt5Sk7qvHxnSR5kK+DqjkPQY3QpaqJ2BSSRbww47wE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H1w+BTQG; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5dccaaca646so10772536a12.0;
-        Tue, 11 Feb 2025 04:25:03 -0800 (PST)
+	 To:Cc:Content-Type; b=rdJI7zzHulaKc6mH+n1aAC3i3diM4+2YuRP1XWrUlDZ1YXct/Zk2lwfva50d7HEsIs03X+32IhCSKNk6dgyMtCosVQjkGJ3OcBFtt9EM5yPxcobKlGPIjFQd9lhNtT8wZKGSGo6m/SaaOQocF3t7zQKrv8qhPAhHcW2aPq2LRxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=dLUnV9Fw; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-471a25753a4so6857581cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Feb 2025 04:34:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739276702; x=1739881502; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=luIF/y8mz4y5i6r2JfpBlxxy/vxVKvXnmc1mgeWO/Pw=;
-        b=H1w+BTQGjGlMBhBGQj+argR8Jzwd1CpESsIqn3sdJLv6fOtPfmmw4cg6lk1nyrQcNu
-         BPjL79puS0eNLI0gwBUsrQC534EPEr52OMIPZCE/m70zCfeiDTQQU+RsM6SC5WfS4Lyc
-         g8hGa+kukgMcF1omELnDEpxPzbGgetocz4dM8UyI1hyhl4QQBlT+Rtk7NloCGQMMo5ZQ
-         P3ZooR0Vd26TXHHYAFHaznK+UwDHml4FEIZAuqmcdWlqT0zijAGhK1PKvAz/v4gJqE9a
-         s0fD+G+saEqdw34C2MB1fnlfvcqnUMg+GObN3rfx7om4W9gnGy6GKrvOJkZH2EoHUs9S
-         OoPA==
+        d=szeredi.hu; s=google; t=1739277264; x=1739882064; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wumgzwh+yCJeJjW9Ubiwef4L4mKQ4r1o+D6YExE/ZAM=;
+        b=dLUnV9Fwz6finpM1PAlddHmMxHX/GSUllcTEtscPiMrD7IeXaKGXxvrj3DI38hYQsr
+         LmD7s8ucVkhKMO7mCA8SAcRH7TRtWOcQ8nbhgu29bsvHaHL8LjTiJaAyqlB6vR+F95Xv
+         +XXMJMwsaq2anCuDTG292ndCAdY65cVryEZzY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739276702; x=1739881502;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=luIF/y8mz4y5i6r2JfpBlxxy/vxVKvXnmc1mgeWO/Pw=;
-        b=WSF9OdDjBTepEm+S22NFkdXkT8ZU05+/agVR/i4wVJ0KrejAbNYQunv5UCt9DsGtM9
-         rhfcj31CoxCDHjCSDCHOcqyjtGYVt30pMVk8V7yiEzhSwG9bBlrHajH49mKSEdpZ73l5
-         /4lS6+rVrw/NjITcqDm1JzCblY4TZi1mKjUrhTHZd67wqLXUWIi142HuCa09PNwx8KAO
-         peGhE2iw1UlHRfbz1/aJikTt/KMWacYk9b6aBqY3ea1ysWjnB7ivT9eAW+0u/cn2CUaA
-         xDYTHNQhttn69xbYbyEswb7wnjjT8YGJ9yMk88Q+3HtRirN38lT0o28GOSPzYpr9Ytfs
-         ErZA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8rDYrXeEk0BW1IBMBnZDtjs6LnCvUhbsaKJ/loxWZtJjve2EKqqRblCA1UuHGe3A9dP3rx/rcLNhadcyCbA==@vger.kernel.org, AJvYcCVJFPuORWNSuCUj193qrlaX92ZtyfBKD9eGiidE5UdwBgFrh9Oi0Z8B0RKa5ACNCiBUKq/b2/9rJOa4DFdO@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUsTlAyn5Qb6mhN2hLSnuJOwZfjzgtdzrhAXTxzVP/gm6l4vzM
-	bl+aycAnc7wMAB4qepP7ZopcGmcN1R/yYgMQIOfcKpmbEnCQMDruubC6VqxoqwA6TBrCiHVE/k5
-	IFhmrNASO9og4A963z/6t1Zkct8WFQexgRmc=
-X-Gm-Gg: ASbGncvsxtdknghevTn4k1nJUaFO5FN5hAJd7dxgxcKrzewzdnLdyuZSfcQz1XKvQh8
-	uFZGBy9az7/Zqi0FhVW2ieJPgQUGk+txwCtTTHbJYzWplGcfqR/7JWHi0JGsiz/aE4fQwZrse
-X-Google-Smtp-Source: AGHT+IEw5iy9IvJHFTgVY/mCL4X9T/JUy1OHL1GrpeFqk3wnWbt8gbcNVXssDvFoQbPsh7P2omk4ysuFHoCLj8MfKqQ=
-X-Received: by 2002:a05:6402:51cd:b0:5de:5a85:2f1f with SMTP id
- 4fb4d7f45d1cf-5de9b900d4emr2832752a12.7.1739276701715; Tue, 11 Feb 2025
- 04:25:01 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739277264; x=1739882064;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Wumgzwh+yCJeJjW9Ubiwef4L4mKQ4r1o+D6YExE/ZAM=;
+        b=OaDF9W0uh3COuIByCLmE5m7zFCTz+JN1HclKEjwtBWjy6Bgc3yV9LVpRhI3DI32Ulm
+         Pbv2SWSA3FaQgrWgyFIFY8E7UzpeC4odiQlW62HCdQcS/ZkKnVAqiiTzWpLzyNqLK6sI
+         qeUBjNvPIwVdbxKs0fOoahM5so9WVr/sIxOIxpUbTpfZpypCdY1nJl48+SvLEYySdxCx
+         YCPpVCBLMwH1C3YDeR9XXVhEOE7dmEZjFOKrwivYNJrJqqZ1T2+8ceJDWEePdX+9k41b
+         ZsBDuw5ZOIgU3P8JhXb0KxJtUyPhJ1Y/Ez/i7ipI4KhjCqLPeThRK35ZLxQuasrUJHq1
+         sBgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUATB0R0QVdu6zRX0HKyOzploFY3hjvrmL38Vs30zgR0XLiBOrq0rX0yR9BKo7vIOEjRzvG06Oz/bjlCASU@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvT15PW5g4UgH9vQ+ihEiuIq7NP8EvCcdvFG75mLvLUvhWU12F
+	2SKswSIEwOLqSz/SXd2AThXnbyPclmhj8VLJ1Td8r+yLT8SHWsJAA7EpPUI2XQoxs71hF8896SD
+	x7gjM6bzTIHo4DVv80HImTzQERg19E3d07mSwMA==
+X-Gm-Gg: ASbGncvoOTG6mxKNSaPPxaQiheG6FLbf+36+mTKY7UyO2JXQdIeqIXgYqgEabPEkwKC
+	HiadhsHs9oqMOJ++OBFpTLx67oqdTBh0UrwBTJzaMBLQWW/FY3zL1NlSgf57X/wPAUsA+6g==
+X-Google-Smtp-Source: AGHT+IHozEj9gx89foscCa7JXUMl12FuGx+Az1IuaZwmHCkw+oG4JmiEFd4xJmOVYC0MTBAfFa3t6L6/hbTtBALPdo0=
+X-Received: by 2002:a05:622a:cc:b0:471:9016:71f6 with SMTP id
+ d75a77b69052e-471a070eeddmr54508521cf.38.1739277264462; Tue, 11 Feb 2025
+ 04:34:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210194512.417339-1-mszeredi@redhat.com> <20250210194512.417339-5-mszeredi@redhat.com>
- <CAOQ4uxgOwu1pnS9BoMYDua6D4aJ+UUOwbsSyUakP2dMd5wQaBg@mail.gmail.com> <CAJfpegtPj6FW59xpVBSxL8UwhC8qPv6gCQov=2QQUty0YW-6rg@mail.gmail.com>
-In-Reply-To: <CAJfpegtPj6FW59xpVBSxL8UwhC8qPv6gCQov=2QQUty0YW-6rg@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 11 Feb 2025 13:24:50 +0100
-X-Gm-Features: AWEUYZlXNHXcmXflhsl9AkTBs3sHqs5v0LA4AQXrrCyGA3Aa7I593YvV9gfeKoc
-Message-ID: <CAOQ4uxgkzSsiqaQn0EXBespMo+Yck2KnCAE8+Yydbi+zOtMN9w@mail.gmail.com>
-Subject: Re: [PATCH 5/5] ovl: don't require "metacopy=on" for "verity"
-To: Miklos Szeredi <miklos@szeredi.hu>
+References: <20250210194512.417339-1-mszeredi@redhat.com> <20250210194512.417339-3-mszeredi@redhat.com>
+ <CAOQ4uxiqis6kawuv4pa6jxHYgpQPc18izFP8e0TORfA_mVu_-w@mail.gmail.com>
+ <CAJfpegt=PWs8ZDF11p3nOCWHbWescE5nwVtUt82f=B6B+S0Miw@mail.gmail.com> <CAOQ4uxiQQV_O1MJgTksKycBjJ6Bneqc=CQbUoghvXc=8KEEsMg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxiQQV_O1MJgTksKycBjJ6Bneqc=CQbUoghvXc=8KEEsMg@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 11 Feb 2025 13:34:13 +0100
+X-Gm-Features: AWEUYZmtDkURhfMAUEr39zOqPbJ0A7HA5QI3PQUEOtK2gQ2uHWdo4gsFv9jvmnY
+Message-ID: <CAJfpegsuN+C4YiA9PAuY3+-BJ959aSAaXTYBwKNCjEnhXVw0pg@mail.gmail.com>
+Subject: Re: [PATCH 3/5] ovl: make redirect/metacopy rejection consistent
+To: Amir Goldstein <amir73il@gmail.com>
 Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-unionfs@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 11, 2025 at 1:14=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
->
-> On Tue, 11 Feb 2025 at 11:50, Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Mon, Feb 10, 2025 at 8:45=E2=80=AFPM Miklos Szeredi <mszeredi@redhat=
-.com> wrote:
-> > >
-> > > Allow the "verity" mount option to be used with "userxattr" data-only
-> > > layer(s).
-> >
-> > This standalone sentence sounds like a security risk,
-> > because unpriv users could change the verity digest.
-> > I suggest explaining it better.
->
-> Same condition as in previous patch applies: if xattr is on a
-> read-only layer or modification is prevented in any other way, then
-> it's safe. Otherwise no.
->
+On Tue, 11 Feb 2025 at 13:01, Amir Goldstein <amir73il@gmail.com> wrote:
 
-Yes, but one has to follow the series to figure out that userxattr
-means that redirect/metacopy are allowed from lower -> data only,
-so it is better to mention this again in the context of the commit
-message that relaxes the requirement.
+> Really? I looked at the next patch before suggesting this
+> I did not see the breakage. Can you point it out?
 
-And also even if lower is on a read-only layer, maybe we need
-to fix the uppermetacpy vector from index to make it safe.
+When lookup "falls off" of the normal lower layers while in metacopy
+mode with an absolute redirect, then it jumps to the data-only layers.
+The above suggestion imitates this falling off when it's really a
+permission problem, which would result in weird behavior, AFAICS.
+
+> BTW, this patch is adding consistency to following upperredirect
+> but the case of upperredirect and uppermetacopy read from
+> index still does not check metacopy/redirect config.
+
+True.  Also that case should probably "loop back" to verifying that
+the redirection indeed results in the same origin as pointed to by the
+index, right?
+
+> Looking closer at ovl_maybe_validate_verity(), it's actually
+> worse - if you create an upper without metacopy above
+> a lower with metacopy, ovl_validate_verity() will only check
+> the metacopy xattr on metapath, which is the uppermost
+> and find no md5digest, so create an upper above a metacopy
+> lower is a way to avert verity check.
+
+I need to dig into how verity is supposed to work as I'm not seeing it
+clearly yet...
+
+> So I think lookup code needs to disallow finding metacopy
+> in middle layer and need to enforce that also when upper is found
+> via index.
+
+That's the hard link case.  I.e. with metacopy=on,index=on it's
+possible that one link is metacopyied up, and the other one is then
+found through the index.  Metacopy *should* work in this case, no?
 
 Thanks,
-Amir.
+Miklos
 
