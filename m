@@ -1,470 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-41493-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41494-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4DC9A2FFE8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 02:07:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BB1FA2FFF6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 02:13:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A99D3A488C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 01:07:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0AB53A34C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 01:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E0E157A6B;
-	Tue, 11 Feb 2025 01:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A70175D50;
+	Tue, 11 Feb 2025 01:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gOyTqtoq"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Q9x+RLsU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA011805E;
-	Tue, 11 Feb 2025 01:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4DE3597B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Feb 2025 01:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739236046; cv=none; b=ZQcsdHIOhNw5wPYJhsjHlAEuXrewKX0Y7rG/zmsUI7OhdFHv/vlsBuT0RboxuwE5K12nPASL7AiCXUF+AFC68zTNWi7F5iwLfYbP2rToWNkdsMmKoZCddwq0z+0ke5rU/2TPi0EK/ZWK/ItoSdafvYJf2oKMvdE+Z4szQDOTrI8=
+	t=1739236405; cv=none; b=Y6CTSfTVE8fG5pQxBfvhOVh+BbvYWsizbqf5uZSNsF/OtzC1ScLLcDYlAIiEy9bQFKex0gY3wiBZ718CRk4cScF/c5TkMjO8ZbmCLFErRAD64VFdsdQy4T3fQUUF+1fLn2UVu+GLMwaJSK5DJz7cEyU2ZxflmmJscmbS1rqVWZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739236046; c=relaxed/simple;
-	bh=VtjSX7NVMNTMsIobvwS6cshGZ2l7KlG3DCyzTH34EPs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bRQsvs4DbFy+erprw8OlfFuhJ3JWThJJWkZ8+IIBnIWUwuOHrKfewe34YJu2APSwZQIu8F9XDNNicGG1IboRUWxmvJayNFzM+5pf6Eax6BIVlo/q8XEChkdGqw7ezUbDR0NUkJrcSdjz/ImAT0Nj8SzWxeg2oBHgXRkQWAkt5tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gOyTqtoq; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5450cf3ebc2so1625370e87.2;
-        Mon, 10 Feb 2025 17:07:24 -0800 (PST)
+	s=arc-20240116; t=1739236405; c=relaxed/simple;
+	bh=SmMcYPlIcOOEv2FK6hAGHvO595m3+nNe2QXoWqq2KqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P+ZrWD8XXFnSAZ7DqvJvZFl2jKWzTlsNClkbCcxDTU5K5fbFXhGu86nyX7Wr/KWB3OahKx+I2vFR+wkdXKdruIE51KzrvSMhX14F2zcysspXe3KFNWThumNXZP+Cc9DD9Gn+C/PVEw9ZUVEQLdhJ+PeSkZZNvEZbgOr3J5EnS2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Q9x+RLsU; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2f9f5caa37cso8650553a91.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2025 17:13:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739236042; x=1739840842; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B3aiVLMNRlyfUkDqwbDVYlMoR0XccIIxNWtQMkt7xoU=;
-        b=gOyTqtoqsOFQwCxNfU8WYln61DGC9X0eXZRE1H59Fzn3EeroBWFuBZMNUYDj2woKYV
-         yqtRp/rnHEexp2yE3knrVkJcsaFlofjk+hl/Ef9VycYjnwEKBNWnlGg/jGbikVOkXmd2
-         Kga+DojDrt1FmXEPSphBvnIJY7/n/PfDeZlHmKHQfTSUxuEkjpEqXf1j3WFVPn1Kat6U
-         BDNDwwN3a4ZvXjO8alSjzvxMfHW3RZdCu5hw63AFtgUQUdyLwo2APpPAu7uQohUAgU2w
-         DNkmGn6F+uAUPh+r1FHJEHdAKXapDcxI3qcNfPvFo4r9NHwdpVFsYBzQX4od4+1QAaSw
-         7JJQ==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1739236402; x=1739841202; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KU7wbaLY8iqIzyNycRaeoE4nIz2QfexpAlnBD6/ff+Q=;
+        b=Q9x+RLsUa2ftZSA7YLwS87+Aw2EPZRfpb9/6n2Jur4Tm3Tbv8d6M2VgTOzkhZjDiFv
+         X2AsKM81v6B8Pzos86cIY/lJopPPiGIbUQwz3C7q0BBtVUx+6QrPbpzI9nIYMi3+ER1R
+         VN4fOP2zuLrsgqIZrGLpqnNmhc1T06T+3Iofu1/eJNymZ64NozaLBp/L5L7+B37zw51N
+         usMxH+HRzr4Zgj7o5UkF8vQwLZJY7wBFWlLewE5VNQNkHHMLp8KPOOvbYfi0KjdlFkKT
+         N8X4slNbfcHQP++N7994WugGLaFvGckk2E897EsX8HjJ8XJzthWnLBFpx4bnfYa3CsW4
+         f+eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739236042; x=1739840842;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B3aiVLMNRlyfUkDqwbDVYlMoR0XccIIxNWtQMkt7xoU=;
-        b=HhH6SACltF5kQfASIe9pbkCgdmd5F1moTm+oIDp5uQKaeKJQF8eV3f/7y/yDZ3BZbb
-         33M0t7hBBVh/Gmp+6g0v+zgzzbGhi82U7czbIVb8zr5kxHWggH/KA2K3Y7iubxZSg2d7
-         R1uZQLYVNME3Zr6z3rX+N4bN5iSe7/6BvOtSZgJZEpELfEOVkpADZwKG5P/gFUqg6ycR
-         XFXcRFegSqpsWavHKasmu4VATfDLYOv6hhBuicuDvoWwpNCvsaTXXi49YpSWmCgJXNHF
-         5inZsz59OE23gYcoeBbi2wXiuLyxRFFm0TQPWwxozmbk+oQx0yGS5/tdHNYpsXNJrfnX
-         d3Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXxibCmkzoKCuVrcqRnsT7qo2C8IFbl0Tb4bpXibkJFZdZYQjNrO2UNX8hx6UJDAx3uxCEaCwgfG5zGUrFtA==@vger.kernel.org, AJvYcCVJpEbLTb2iVlaIshRB7Hd0HS1ONZKl96iQy7JGxyHnImGBd6lPRAlId2BqgjYsxfpV4uV6Cf84p+lb@vger.kernel.org, AJvYcCXobjn9ZY7W9DNPMBhMZeb14oOoIPfuS0G5aO5r+Vx0JJS/nWsnmhOGd5UhoCa7CM47QtBXQV5VazJlfIoj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyppv9+fryF3kuhnRiUuzu7iwc3zpmNIVFPCXbUzxTQAOXV8Mp2
-	ghjRb7cpf2e4WY7iStxeZ8sNhmTuiYdRiOtyo7KsAkteYxMov2CazkxY4zTCQxvUJ17A0ijNvpz
-	WTztDDdmbUqYigTQAk5VxLKubpr4FTSb0
-X-Gm-Gg: ASbGncuQeBJLzDZmjVVfReTNUopeKOg25L4v1J/6l1CUFINWyOcEL0udaakNmS4YC8C
-	zDhhWi7SBO58gWntGXvEviZOIYvpl+roZGs6qrzT6aVmz1SzcsU49mI+xjuMozXuh7QvN0YimUA
-	==
-X-Google-Smtp-Source: AGHT+IH8obq45a+qNxBooIODCvuLPlny+GRRvg8vhmVaa7eHC5ijRJaPNEfU/tlz7UQMZA7GAVDryYzPzrl5ImEylSo=
-X-Received: by 2002:a05:6512:4024:b0:545:746:f36f with SMTP id
- 2adb3069b0e04-5450746f4f3mr2904851e87.42.1739236042041; Mon, 10 Feb 2025
- 17:07:22 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739236402; x=1739841202;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KU7wbaLY8iqIzyNycRaeoE4nIz2QfexpAlnBD6/ff+Q=;
+        b=buQO1j9SeDQwLS6QX1Sd1ICPQ7t7QqPRneHGqcAX4rVU4teaUZ5iCS6rPKN0GwO8Q1
+         Btaj/iEoskcXoPxcbbsGxUOZ3Pkme5Xj+qqVblGSXNzhCDhDDN11lJtaV/mmxOL6eitV
+         XQCAvuE5gJx2dMzqVrZxXaKu8tX5dnCqvm7iojFc94VK6CrxGS5mM2TPu2bj2yZfP7eU
+         ldmZ9iDd2yNY8c4PfPK2yu/GYlPqLLBvhqC66EhALKHk9uVi8uGiuCAROn2+rB5gW+wx
+         VdVt6C4v5CszD8BhN+FrwP8IPodKSkhEN3AxRxy8QA6ohsXy4HlR/3f4G0mloxUqVI1o
+         amqA==
+X-Forwarded-Encrypted: i=1; AJvYcCX8c49AV9tQoShLHC5el7pa3eahN+KSgoxPLj2Yf84pqHIAVpYnhrsndXoATaoUCdltprBv0S/JctRNSCoK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9c5RIq8M/H7vhWBc1QZAN5aaGNVesfmZPvoqvmCy8hM+OOjvj
+	vM8QXEYgAAw1NJT65N6Dpcc36MpuNLM7YKof85aWnHQ4IGQ8gvtzWv8WWWlZxydSWpZk5snZMTb
+	i
+X-Gm-Gg: ASbGncsk0koFhuyBUNynE+GK4JQ6ym/m9HQoQmBes8DvbsX5/1DCS2+rhGIBdK2Cwr5
+	030Z+s7W04G7QJ8FIPKApjhsDe2HMYMJGAF9d92XiFgJfANxZwswZYnQMHN8qAEt9oCdGjHclH6
+	xvriJxpG7SWF6GLS0AxIDZAPZIWrDyWS9jgTkgwup3wxHTKaNOlX8WJKD1Pw1nLxO4BWA0ckhoy
+	0umNw5rrkW88amF12N/+ntbmMZUNFx7cLgh34QSGgQtcrORw2ZWPumdNFdrIByx8BqOgDPQejjB
+	JPFlUnoFQhtsiWA3MMSVR26tHtr/PRpShkQBK+DRFxrCENaV3nBG04k5tF7HTN/SCaI=
+X-Google-Smtp-Source: AGHT+IF1Z3e+O30aeZjrAbE2ylR2ddkFt/SQeAFQG892cO0ScdagUjGfXoC90W+wUwOfDkw2XVaaaw==
+X-Received: by 2002:a17:90b:3b8b:b0:2f5:63a:44f8 with SMTP id 98e67ed59e1d1-2faa08f523emr2516907a91.8.1739236402291;
+        Mon, 10 Feb 2025 17:13:22 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21f3683d551sm84589785ad.110.2025.02.10.17.13.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Feb 2025 17:13:21 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1thepy-0000000HGZ0-3bTH;
+	Tue, 11 Feb 2025 12:13:18 +1100
+Date: Tue, 11 Feb 2025 12:13:18 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Christoph Hellwig <hch@lst.de>, Kundan Kumar <kundan.kumar@samsung.com>,
+	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	anuj20.g@samsung.com, mcgrof@kernel.org, joshi.k@samsung.com,
+	axboe@kernel.dk, clm@meta.com, willy@infradead.org,
+	gost.dev@samsung.com
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Parallelizing filesystem writeback
+Message-ID: <Z6qkLjSj1K047yPt@dread.disaster.area>
+References: <CGME20250129103448epcas5p1f7d71506e4443429a0b0002eb842e749@epcas5p1.samsung.com>
+ <20250129102627.161448-1-kundan.kumar@samsung.com>
+ <Z5qw_1BOqiFum5Dn@dread.disaster.area>
+ <20250131093209.6luwm4ny5kj34jqc@green245>
+ <Z6GAYFN3foyBlUxK@dread.disaster.area>
+ <20250204050642.GF28103@lst.de>
+ <s43qlmnbtjbpc5vn75gokti3au7qhvgx6qj7qrecmkd2dgrdfv@no2i7qifnvvk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3173328.1738024385@warthog.procyon.org.uk>
-In-Reply-To: <3173328.1738024385@warthog.procyon.org.uk>
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 10 Feb 2025 19:07:10 -0600
-X-Gm-Features: AWEUYZkK1I5w5IJb7KEfEYF23bHLVE0P8v8Dh-x3wpYUU-U4ZGbsjmuT8ReSpmw
-Message-ID: <CAH2r5muh6-PtS3TcAEAP9xjStcib3KzDtiQmmmWOPHaV2jr2xA@mail.gmail.com>
-Subject: Re: [PATCH] netfs: Fix a number of read-retry hangs
-To: David Howells <dhowells@redhat.com>
-Cc: Ihor Solodrai <ihor.solodrai@pm.me>, Marc Dionne <marc.dionne@auristor.com>, 
-	Steve French <stfrench@microsoft.com>, Eric Van Hensbergen <ericvh@kernel.org>, 
-	Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Christian Schoenebeck <linux_oss@crudebyte.com>, Paulo Alcantara <pc@manguebit.com>, 
-	Jeff Layton <jlayton@kernel.org>, Christian Brauner <brauner@kernel.org>, v9fs@lists.linux.dev, 
-	linux-cifs@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <s43qlmnbtjbpc5vn75gokti3au7qhvgx6qj7qrecmkd2dgrdfv@no2i7qifnvvk>
 
-Tested-by: Steve French <stfrench@microsoft.com>
+On Mon, Feb 10, 2025 at 06:28:28PM +0100, Jan Kara wrote:
+> On Tue 04-02-25 06:06:42, Christoph Hellwig wrote:
+> > On Tue, Feb 04, 2025 at 01:50:08PM +1100, Dave Chinner wrote:
+> > > I doubt that will create enough concurrency for a typical small
+> > > server or desktop machine that only has a single NUMA node but has a
+> > > couple of fast nvme SSDs in it.
+> > > 
+> > > > 2) Fixed number of writeback contexts, say min(10, numcpu).
+> > > > 3) NUMCPU/N number of writeback contexts.
+> > > 
+> > > These don't take into account the concurrency available from
+> > > the underlying filesystem or storage.
+> > > 
+> > > That's the point I was making - CPU count has -zero- relationship to
+> > > the concurrency the filesystem and/or storage provide the system. It
+> > > is fundamentally incorrect to base decisions about IO concurrency on
+> > > the number of CPU cores in the system.
+> > 
+> > Yes.  But as mention in my initial reply there is a use case for more
+> > WB threads than fs writeback contexts, which is when the writeback
+> > threads do CPU intensive work like compression.  Being able to do that
+> > from normal writeback threads vs forking out out to fs level threads
+> > would really simply the btrfs code a lot.  Not really interesting for
+> > XFS right now of course.
+> > 
+> > Or in other words: fs / device geometry really should be the main
+> > driver, but if a file systems supports compression (or really expensive
+> > data checksums) being able to scale up the numbes of threads per
+> > context might still make sense.  But that's really the advanced part,
+> > we'll need to get the fs geometry aligned to work first.
+> 
+> As I'm reading the thread it sounds to me the writeback subsystem should
+> provide an API for the filesystem to configure number of writeback
+> contexts which would be kind of similar to what we currently do for cgroup
+> aware writeback?
 
-Verified it fixed various hangs I saw in testing cifs.ko  Here is a
-success run with the patch e.g.:
-http://smb311-linux-testing.southcentralus.cloudapp.azure.com/#/builders/5/=
-builds/342
+Yes, that's pretty much what I've been trying to say.
 
+> Currently we create writeback context per cgroup so now
+> additionally we'll have some property like "inode writeback locality" that
+> will also influence what inode->i_wb gets set to and hence where
+> mark_inode_dirty() files inodes etc.
 
-On Mon, Jan 27, 2025 at 6:33=E2=80=AFPM David Howells <dhowells@redhat.com>=
- wrote:
->
-> Hi Ihor, Marc, Steve,
->
-> I think this patch should better fix the hangs that have been seen than I=
-hor's
-> previously tested fix (which I think isn't actually correct).
->
-> David
-> ---
-> From: David Howells <dhowells@redhat.com>
->
-> netfs: Fix a number of read-retry hangs
->
-> Fix a number of hangs in the netfslib read-retry code, including:
->
->  (1) netfs_reissue_read() doubles up the getting of references on
->      subrequests, thereby leaking the subrequest and causing inode evicti=
-on
->      to wait indefinitely.  This can lead to the kernel reporting a hang =
-in
->      the filesystem's evict_inode().
->
->      Fix this by removing the get from netfs_reissue_read() and adding on=
-e
->      to netfs_retry_read_subrequests() to deal with the one place that
->      didn't double up.
->
->  (2) The loop in netfs_retry_read_subrequests() that retries a sequence o=
-f
->      failed subrequests doesn't record whether or not it retried the one
->      that the "subreq" pointer points to when it leaves the loop.  It may
->      not if renegotiation/repreparation of the subrequests means that few=
-er
->      subrequests are needed to span the cumulative range of the sequence.
->
->      Because it doesn't record this, the piece of code that discards
->      now-superfluous subrequests doesn't know whether it should discard t=
-he
->      one "subreq" points to - and so it doesn't.
->
->      Fix this by noting whether the last subreq it examines is superfluou=
-s
->      and if it is, then getting rid of it and all subsequent subrequests.
->
->      If that one one wasn't superfluous, then we would have tried to go
->      round the previous loop again and so there can be no further unretri=
-ed
->      subrequests in the sequence.
->
->  (3) netfs_retry_read_subrequests() gets yet an extra ref on any addition=
-al
->      subrequests it has to get because it ran out of ones it could reuse =
-to
->      to renegotiation/repreparation shrinking the subrequests.
->
->      Fix this by removing that extra ref.
->
->  (4) In netfs_retry_reads(), it was using wait_on_bit() to wait for
->      NETFS_SREQ_IN_PROGRESS to be cleared on all subrequests in the
->      sequence - but netfs_read_subreq_terminated() is now using a wait
->      queue on the request instead and so this wait will never finish.
->
->      Fix this by waiting on the wait queue instead.  To make this work, a
->      new flag, NETFS_RREQ_RETRYING, is now set around the wait loop to te=
-ll
->      the wake-up code to wake up the wait queue rather than requeuing the
->      request's work item.
->
->      Note that this flag replaces the NETFS_RREQ_NEED_RETRY flag which is
->      no longer used.
->
->  (5) Whilst not strictly anything to do with the hang,
->      netfs_retry_read_subrequests() was also doubly incrementing the
->      subreq_counter and re-setting the debug index, leaving a gap in the
->      trace.  This is also fixed.
->
-> One of these hangs was observed with 9p and with cifs.  Others were force=
-d
-> by manual code injection into fs/afs/file.c.  Firstly, afs_prepare_read()
-> was created to provide an changing pattern of maximum subrequest sizes:
->
->         static int afs_prepare_read(struct netfs_io_subrequest *subreq)
->         {
->                 struct netfs_io_request *rreq =3D subreq->rreq;
->                 if (!S_ISREG(subreq->rreq->inode->i_mode))
->                         return 0;
->                 if (subreq->retry_count < 20)
->                         rreq->io_streams[0].sreq_max_len =3D
->                                 umax(200, 2222 - subreq->retry_count * 40=
-);
->                 else
->                         rreq->io_streams[0].sreq_max_len =3D 3333;
->                 return 0;
->         }
->
-> and pointed to by afs_req_ops.  Then the following:
->
->         struct netfs_io_subrequest *subreq =3D op->fetch.subreq;
->         if (subreq->error =3D=3D 0 &&
->             S_ISREG(subreq->rreq->inode->i_mode) &&
->             subreq->retry_count < 20) {
->                 subreq->transferred =3D subreq->already_done;
->                 __clear_bit(NETFS_SREQ_HIT_EOF, &subreq->flags);
->                 __set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
->                 afs_fetch_data_notify(op);
->                 return;
->         }
->
-> was inserted into afs_fetch_data_success() at the beginning and struct
-> netfs_io_subrequest given an extra field, "already_done" that was set to
-> the value in "subreq->transferred" by netfs_reissue_read().
->
-> When reading a 4K file, the subrequests would get gradually smaller, a ne=
-w
-> subrequest would be allocated around the 3rd retry and then eventually be
-> rendered superfluous when the 20th retry was hit and the limit on the fir=
-st
-> subrequest was eased.
->
-> Reported-by: Ihor Solodrai <ihor.solodrai@pm.me>
-> Closes: https://lore.kernel.org/r/a7x33d4dnMdGTtRivptq6S1i8btK70SNBP2XyX_=
-xwDAhLvgQoPox6FVBOkifq4eBinfFfbZlIkMZBe3QarlWTxoEtHZwJCZbNKtaqrR7PvI=3D@pm.=
-me/
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Marc Dionne <marc.dionne@auristor.com>
-> cc: Steve French <stfrench@microsoft.com>
-> cc: Eric Van Hensbergen <ericvh@kernel.org>
-> cc: Latchesar Ionkov <lucho@ionkov.net>
-> cc: Dominique Martinet <asmadeus@codewreck.org>
-> cc: Christian Schoenebeck <linux_oss@crudebyte.com>
-> cc: Paulo Alcantara <pc@manguebit.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: v9fs@lists.linux.dev
-> cc: linux-cifs@vger.kernel.org
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
-> ---
->  fs/netfs/read_collect.c      |    6 ++++--
->  fs/netfs/read_retry.c        |   40 ++++++++++++++++++++++++++++++------=
-----
->  include/linux/netfs.h        |    2 +-
->  include/trace/events/netfs.h |    4 +++-
->  4 files changed, 38 insertions(+), 14 deletions(-)
->
-> diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
-> index f65affa5a9e4..636cc5a98ef5 100644
-> --- a/fs/netfs/read_collect.c
-> +++ b/fs/netfs/read_collect.c
-> @@ -470,7 +470,8 @@ void netfs_read_collection_worker(struct work_struct =
-*work)
->   */
->  void netfs_wake_read_collector(struct netfs_io_request *rreq)
->  {
-> -       if (test_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &rreq->flags)) {
-> +       if (test_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &rreq->flags) &&
-> +           !test_bit(NETFS_RREQ_RETRYING, &rreq->flags)) {
->                 if (!work_pending(&rreq->work)) {
->                         netfs_get_request(rreq, netfs_rreq_trace_get_work=
-);
->                         if (!queue_work(system_unbound_wq, &rreq->work))
-> @@ -586,7 +587,8 @@ void netfs_read_subreq_terminated(struct netfs_io_sub=
-request *subreq)
->         smp_mb__after_atomic(); /* Clear IN_PROGRESS before task state */
->
->         /* If we are at the head of the queue, wake up the collector. */
-> -       if (list_is_first(&subreq->rreq_link, &stream->subrequests))
-> +       if (list_is_first(&subreq->rreq_link, &stream->subrequests) ||
-> +           test_bit(NETFS_RREQ_RETRYING, &rreq->flags))
->                 netfs_wake_read_collector(rreq);
->
->         netfs_put_subrequest(subreq, true, netfs_sreq_trace_put_terminate=
-d);
-> diff --git a/fs/netfs/read_retry.c b/fs/netfs/read_retry.c
-> index 2290af0d51ac..8316c4533a51 100644
-> --- a/fs/netfs/read_retry.c
-> +++ b/fs/netfs/read_retry.c
-> @@ -14,7 +14,6 @@ static void netfs_reissue_read(struct netfs_io_request =
-*rreq,
->  {
->         __clear_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
->         __set_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags);
-> -       netfs_get_subrequest(subreq, netfs_sreq_trace_get_resubmit);
->         subreq->rreq->netfs_ops->issue_read(subreq);
->  }
->
-> @@ -48,6 +47,7 @@ static void netfs_retry_read_subrequests(struct netfs_i=
-o_request *rreq)
->                                 __clear_bit(NETFS_SREQ_MADE_PROGRESS, &su=
-breq->flags);
->                                 subreq->retry_count++;
->                                 netfs_reset_iter(subreq);
-> +                               netfs_get_subrequest(subreq, netfs_sreq_t=
-race_get_resubmit);
->                                 netfs_reissue_read(rreq, subreq);
->                         }
->                 }
-> @@ -75,7 +75,7 @@ static void netfs_retry_read_subrequests(struct netfs_i=
-o_request *rreq)
->                 struct iov_iter source;
->                 unsigned long long start, len;
->                 size_t part;
-> -               bool boundary =3D false;
-> +               bool boundary =3D false, subreq_superfluous =3D false;
->
->                 /* Go through the subreqs and find the next span of conti=
-guous
->                  * buffer that we then rejig (cifs, for example, needs th=
-e
-> @@ -116,8 +116,10 @@ static void netfs_retry_read_subrequests(struct netf=
-s_io_request *rreq)
->                 /* Work through the sublist. */
->                 subreq =3D from;
->                 list_for_each_entry_from(subreq, &stream->subrequests, rr=
-eq_link) {
-> -                       if (!len)
-> +                       if (!len) {
-> +                               subreq_superfluous =3D true;
->                                 break;
-> +                       }
->                         subreq->source  =3D NETFS_DOWNLOAD_FROM_SERVER;
->                         subreq->start   =3D start - subreq->transferred;
->                         subreq->len     =3D len   + subreq->transferred;
-> @@ -154,19 +156,21 @@ static void netfs_retry_read_subrequests(struct net=
-fs_io_request *rreq)
->
->                         netfs_get_subrequest(subreq, netfs_sreq_trace_get=
-_resubmit);
->                         netfs_reissue_read(rreq, subreq);
-> -                       if (subreq =3D=3D to)
-> +                       if (subreq =3D=3D to) {
-> +                               subreq_superfluous =3D false;
->                                 break;
-> +                       }
->                 }
->
->                 /* If we managed to use fewer subreqs, we can discard the
->                  * excess; if we used the same number, then we're done.
->                  */
->                 if (!len) {
-> -                       if (subreq =3D=3D to)
-> +                       if (!subreq_superfluous)
->                                 continue;
->                         list_for_each_entry_safe_from(subreq, tmp,
->                                                       &stream->subrequest=
-s, rreq_link) {
-> -                               trace_netfs_sreq(subreq, netfs_sreq_trace=
-_discard);
-> +                               trace_netfs_sreq(subreq, netfs_sreq_trace=
-_superfluous);
->                                 list_del(&subreq->rreq_link);
->                                 netfs_put_subrequest(subreq, false, netfs=
-_sreq_trace_put_done);
->                                 if (subreq =3D=3D to)
-> @@ -187,14 +191,12 @@ static void netfs_retry_read_subrequests(struct net=
-fs_io_request *rreq)
->                         subreq->source          =3D NETFS_DOWNLOAD_FROM_S=
-ERVER;
->                         subreq->start           =3D start;
->                         subreq->len             =3D len;
-> -                       subreq->debug_index     =3D atomic_inc_return(&rr=
-eq->subreq_counter);
->                         subreq->stream_nr       =3D stream->stream_nr;
->                         subreq->retry_count     =3D 1;
->
->                         trace_netfs_sreq_ref(rreq->debug_id, subreq->debu=
-g_index,
->                                              refcount_read(&subreq->ref),
->                                              netfs_sreq_trace_new);
-> -                       netfs_get_subrequest(subreq, netfs_sreq_trace_get=
-_resubmit);
->
->                         list_add(&subreq->rreq_link, &to->rreq_link);
->                         to =3D list_next_entry(to, rreq_link);
-> @@ -256,14 +258,32 @@ void netfs_retry_reads(struct netfs_io_request *rre=
-q)
->  {
->         struct netfs_io_subrequest *subreq;
->         struct netfs_io_stream *stream =3D &rreq->io_streams[0];
-> +       DEFINE_WAIT(myself);
-> +
-> +       set_bit(NETFS_RREQ_RETRYING, &rreq->flags);
->
->         /* Wait for all outstanding I/O to quiesce before performing retr=
-ies as
->          * we may need to renegotiate the I/O sizes.
->          */
->         list_for_each_entry(subreq, &stream->subrequests, rreq_link) {
-> -               wait_on_bit(&subreq->flags, NETFS_SREQ_IN_PROGRESS,
-> -                           TASK_UNINTERRUPTIBLE);
-> +               if (!test_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags))
-> +                       continue;
-> +
-> +               trace_netfs_rreq(rreq, netfs_rreq_trace_wait_queue);
-> +               for (;;) {
-> +                       prepare_to_wait(&rreq->waitq, &myself, TASK_UNINT=
-ERRUPTIBLE);
-> +
-> +                       if (!test_bit(NETFS_SREQ_IN_PROGRESS, &subreq->fl=
-ags))
-> +                               break;
-> +
-> +                       trace_netfs_sreq(subreq, netfs_sreq_trace_wait_fo=
-r);
-> +                       schedule();
-> +                       trace_netfs_rreq(rreq, netfs_rreq_trace_woke_queu=
-e);
-> +               }
-> +
-> +               finish_wait(&rreq->waitq, &myself);
->         }
-> +       clear_bit(NETFS_RREQ_RETRYING, &rreq->flags);
->
->         trace_netfs_rreq(rreq, netfs_rreq_trace_resubmit);
->         netfs_retry_read_subrequests(rreq);
-> diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-> index 071d05d81d38..c86a11cfc4a3 100644
-> --- a/include/linux/netfs.h
-> +++ b/include/linux/netfs.h
-> @@ -278,7 +278,7 @@ struct netfs_io_request {
->  #define NETFS_RREQ_PAUSE               11      /* Pause subrequest gener=
-ation */
->  #define NETFS_RREQ_USE_IO_ITER         12      /* Use ->io_iter rather t=
-han ->i_pages */
->  #define NETFS_RREQ_ALL_QUEUED          13      /* All subreqs are now qu=
-eued */
-> -#define NETFS_RREQ_NEED_RETRY          14      /* Need to try retrying *=
-/
-> +#define NETFS_RREQ_RETRYING            14      /* Set if we're in the re=
-try path */
->  #define NETFS_RREQ_USE_PGPRIV2         31      /* [DEPRECATED] Use PG_pr=
-ivate_2 to mark
->                                                  * write to cache on read=
- */
->         const struct netfs_request_ops *netfs_ops;
-> diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
-> index 6e699cadcb29..f880835f7695 100644
-> --- a/include/trace/events/netfs.h
-> +++ b/include/trace/events/netfs.h
-> @@ -99,7 +99,7 @@
->         EM(netfs_sreq_trace_limited,            "LIMIT")        \
->         EM(netfs_sreq_trace_need_clear,         "N-CLR")        \
->         EM(netfs_sreq_trace_partial_read,       "PARTR")        \
-> -       EM(netfs_sreq_trace_need_retry,         "NRTRY")        \
-> +       EM(netfs_sreq_trace_need_retry,         "ND-RT")        \
->         EM(netfs_sreq_trace_prepare,            "PREP ")        \
->         EM(netfs_sreq_trace_prep_failed,        "PRPFL")        \
->         EM(netfs_sreq_trace_progress,           "PRGRS")        \
-> @@ -108,7 +108,9 @@
->         EM(netfs_sreq_trace_short,              "SHORT")        \
->         EM(netfs_sreq_trace_split,              "SPLIT")        \
->         EM(netfs_sreq_trace_submit,             "SUBMT")        \
-> +       EM(netfs_sreq_trace_superfluous,        "SPRFL")        \
->         EM(netfs_sreq_trace_terminated,         "TERM ")        \
-> +       EM(netfs_sreq_trace_wait_for,           "_WAIT")        \
->         EM(netfs_sreq_trace_write,              "WRITE")        \
->         EM(netfs_sreq_trace_write_skip,         "SKIP ")        \
->         E_(netfs_sreq_trace_write_term,         "WTERM")
->
->
+Well, that's currently selected by __inode_attach_wb() based on
+whether there is a memcg attached to the folio/task being dirtied or
+not. If there isn't a cgroup based writeback task, then it uses the
+bdi->wb as the wb context.
 
+In my mind, what you are describing above sounds like we would be
+heading down the same road list_lru started down back in 2012 to
+support NUMA scalability for LRU based memory reclaim.
 
---=20
-Thanks,
+i.e. we originally had a single global LRU list for important
+caches. This didn't scale up, so I introduced the list_lru construct
+to abstract the physical layout of the LRU from the objects being
+stored on it and the reclaim infrastructure walking it. That gave us
+per-NUMA-node LRUs and NUMA-aware shrinkers for memory reclaim. The
+fundamental concept was that we abstract away the sharding of the
+object tracking into per-physical-node structures via generic
+infrastructure (i.e. list_lru).
 
-Steve
+Then memcgs needed memory reclaim, and so they were added as extra
+lists with a different indexing mechanism to the list-lru contexts.
+These weren't per-node lists because there could be thousands of
+them. Hence it was just a single "global" list per memcg, and so it
+didn't scale on large machines.
+
+This wasn't seen as a problem initially, but a few years later
+applications using memcgs wanted to scale properly on large NUMA
+systems. So now we have each memcg tracking the physical per-node
+memory usage for reclaim purposes (i.e.  combinatorial explosion of
+memcg vs per-node lists).
+
+Hence suggesting "physically sharded lists for global objects,
+single per-cgroup lists for cgroup-owned objects" sounds like
+exactly the same problem space progression is about to play out with
+writeback contexts.
+
+i.e. we shared the global writeback context into a set of physically
+sharded lists for scalability and perofrmance reasons, but leave
+cgroups with the old single threaded list constructs. Then someone
+says "my cgroup based workload doesn't perform the same as a global
+workload" and we're off to solve the problem list_lru solves again.
+
+So....
+
+Should we be looking towards using a subset of the existing list_lru
+functionality for writeback contexts here? i.e. create a list_lru
+object with N-way scalability, allow the fs to provide an
+inode-number-to-list mapping function, and use the list_lru
+interfaces to abstract away everything physical and cgroup related
+for tracking dirty inodes?
+
+Then selecting inodes for writeback becomes a list_lru_walk()
+variant depending on what needs to be written back (e.g. physical
+node, memcg, both, everything that is dirty everywhere, etc).
+
+> Then additionally you'd like to have possibility to have more processes
+> operate on one struct wb_writeback (again configurable by filesystem?) to
+> handle cases of cpu intensive writeback submission more efficiently.
+
+Yeah, that is a separate problem...
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
