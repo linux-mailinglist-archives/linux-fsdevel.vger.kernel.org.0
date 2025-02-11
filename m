@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-41499-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32925A300EA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 02:46:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8126DA300FE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 02:47:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F27713A191F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 01:45:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D13F164458
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 01:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E985426836B;
-	Tue, 11 Feb 2025 01:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBFEA1E9B1A;
+	Tue, 11 Feb 2025 01:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJdqx2SG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f9N0RKxY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D105268353;
-	Tue, 11 Feb 2025 01:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2A026A19F;
+	Tue, 11 Feb 2025 01:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739237568; cv=none; b=Ag4hElAfOY9iE/RKlxOmhj3Fn47r3qXjBpbwU1zjCtNPGWNhGpuSMi9+YSueQQHAjfzm7IZGjwug8B3B85wD3jT+jFSh8FrtXaY6VexHdAM9IKgXlHuWohXZKpLmBsUticBXdAUmmpO0NMJyAw8FDv/HcSUxwWmTAI5N41HJuuM=
+	t=1739237585; cv=none; b=MTAAm2zWCBkPoNE2BScPVVMi1ELvtmkndIBT/xx6uD7qLi+L9celQ666BjDrFzwQhhy1BdKvOTvqydasOHk6fyVa82aMvo2cGTJlggCe3KfC9d9up/d4AwuWKk3PEe5AbUzvq+CJAqc0FdieqVwspfFcKeVNMOIUnRu3xrEnOlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739237568; c=relaxed/simple;
-	bh=OQNUzGizrNbSp6MOMrDJCWnxrsY/qqoTfQ60hKwmtn8=;
+	s=arc-20240116; t=1739237585; c=relaxed/simple;
+	bh=fxG5dlCvkHMfVSFY/V4lmA0UjLabxaSyXibSTQm4Zco=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pbCgW3V+ax3wnQ/Sd/wJqvNZ3RAs8REtSo71s8Pw7lO0NisahgAUUEUb1J1RIxjWskz58i6xxbwu3KMNKp8UC6y/7HrER4nJvEbTMUk5CQCg2LUjSroqv0GW+ySVOcO+q6Wzr7cYXp+OY+n39FPgmhNp3HgVcTSDhOo6Z1lOuVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KJdqx2SG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E77FC4CED1;
-	Tue, 11 Feb 2025 01:32:47 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Vur2b3a7Vrz90fnHOEqBJKQPnenYrzpC0ZXXfm7zEjyvXT7gMhsH3fYYpf8mVaDv2qSx0HwYiAUHbrfBSEtcN++5INzfBUfxmi9GxzCZ99J4SR/X2Jn0A3uWmaHqRTyp0KbJmEKRVxSEGb1EtTShoG6ykaBNYcFDmQd6SKWn9as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f9N0RKxY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEE7BC4CEE7;
+	Tue, 11 Feb 2025 01:33:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739237568;
-	bh=OQNUzGizrNbSp6MOMrDJCWnxrsY/qqoTfQ60hKwmtn8=;
+	s=k20201202; t=1739237584;
+	bh=fxG5dlCvkHMfVSFY/V4lmA0UjLabxaSyXibSTQm4Zco=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KJdqx2SGu+bep8ZqAf7RLrwTnpgYUec6Y15VGpnfhtxBxl8DDAA6vVT6otfrPAUN2
-	 VlU24bKT6AG31yKXWSFtLjuJWPUEOMKUwhlr9cpVrQ6Ywj2DVfHzOcJ8++bdphcTe1
-	 rL1jMMOwnc7SBrB64nRhYmz2cqYJh2tSSjiXN2TpGEDl0JUk298jVpnnNIsviuQpOb
-	 2k6gWUehLabImqV2rIlyi5IU3Dp0ID+cu2a8AWhMqxI9bfdWdBvLhnNWEijZhoaENW
-	 n3poQHRH23a4JbAQ8aZbCxk0hdfOjlo2TxXv1l63yDS7RlMKraXchkvhp+0YaJrdV/
-	 PaIZebLZAcsQQ==
+	b=f9N0RKxYQjiPDdHxQqtqxbV3JwndNXoux+1psilNLw5ZTsA43OxJwx35FklCuTdgl
+	 PPg7Y0b4SiJJYLRjh24aJkpkSTAASW2n7ALIlGAORl3oXttYO/TiKrgcC8raazhEK9
+	 WAGnmU4e5pSNj3DvalzBDZFj7V4PJrnKHJiqGBn0FP/BidQNabDi53vEIA8uiDBj21
+	 IXHsEX313ZW95emcl5t85rAjoBcAHlrKkBXKU3ddzRbziFXQN/wjxl+ahl63j7aBaE
+	 hzo8+iQ5fGk1uGrqKfAsvOY6gEXmlgPHtN5Bt376UiNpnUm9rxkLm28Li6Wa/ZIv1o
+	 EZoHHR1sri+bw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -49,12 +49,12 @@ Cc: Brahmajit Das <brahmajit.xyz@gmail.com>,
 	Christian Brauner <brauner@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 9/9] vboxsf: fix building with GCC 15
-Date: Mon, 10 Feb 2025 20:32:30 -0500
-Message-Id: <20250211013230.4098681-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 8/8] vboxsf: fix building with GCC 15
+Date: Mon, 10 Feb 2025 20:32:48 -0500
+Message-Id: <20250211013248.4098848-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250211013230.4098681-1-sashal@kernel.org>
-References: <20250211013230.4098681-1-sashal@kernel.org>
+In-Reply-To: <20250211013248.4098848-1-sashal@kernel.org>
+References: <20250211013248.4098848-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,7 +64,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.178
+X-stable-base: Linux 5.10.234
 Content-Transfer-Encoding: 8bit
 
 From: Brahmajit Das <brahmajit.xyz@gmail.com>
@@ -94,7 +94,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
-index 44725007ccc2c..20cfb2a9e8707 100644
+index f11bcbac77278..4a77a5a3109ee 100644
 --- a/fs/vboxsf/super.c
 +++ b/fs/vboxsf/super.c
 @@ -21,7 +21,8 @@
