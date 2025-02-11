@@ -1,139 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-41506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBB98A307DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 11:01:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30630A307E6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 11:02:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D43F3A3ACE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 10:01:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A55DB188A538
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 10:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBEE1F2B9C;
-	Tue, 11 Feb 2025 10:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC021F2B92;
+	Tue, 11 Feb 2025 10:02:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JsdXNvrd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TsKaqWki"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC85C1F2391;
-	Tue, 11 Feb 2025 10:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE2B1F2396;
+	Tue, 11 Feb 2025 10:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739268094; cv=none; b=liFtXIDlnFd0HwqxF+nh/5EMYHwLcuyo2C88PZIqMBoq+jS2k3U2KU9kDkaCDVjsZlm4NFZwZ+1bIw1+pZ0oLP/l2wOXnibXNtfzAS3HKqPAXOZCznsmzoHl2JNqURP97BS45MRrsXKtDW5KurnZRPNYV6oVcWS49AO2L8jvKBk=
+	t=1739268140; cv=none; b=EQN47H1hbIDlsl+sHvqD9KwsSAOZeiCwI7xiPB1b568aKdz7NeM3fF1cXiU7g+rJhDTfi2DPDzQIW0uHVXfhkeSJi0m6KMxC9o8RBJ0KOQQirea5xlZHtKuybDN7WbZKoMfhJlKzZd5drY3mTF0erMlfWEIUXS2uQ95XayHtMik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739268094; c=relaxed/simple;
-	bh=HASz2SIXkZk7wVz66HBZBa0aLQg22tcnuQpb+8/n5Jw=;
+	s=arc-20240116; t=1739268140; c=relaxed/simple;
+	bh=S1RUrjTsYuldRS53Y0wnxLNR1irESTHWaLAVSdnbNEI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X/bKc7F9skSLz/FESRVovTwhLtUrU7COLJXmmuyhaMqM2y7X6VQfFDNAvYo8QeLEOfyQ4/aDzIxrUIu2V9IGIp7090hYcPI8kpBn3EEFv7hLTurDC2U6ofAJHMnYDu2rYsD5Rib/uOppHHOHJo4T/59PeuWLODGQjo+rI55YYqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JsdXNvrd; arc=none smtp.client-ip=209.85.218.49
+	 To:Cc:Content-Type; b=RzxJjbTZ++xMLr+WqckSZlZr4P7ctjrlZmNiOK2PwhZ+FCkvoHjGhRH6C/rivTa6fkmn/ngao3VBl2Zuq7cVXcn5WdrfT72+S7fK1J+pSia18VLAjGC5LfQ7TNhkfEw1Q6uHuBGs/ve9MKusNVEEKcU9G4DFUgYiDsbULUYI/Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TsKaqWki; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ab78e6edb48so568760866b.2;
-        Tue, 11 Feb 2025 02:01:32 -0800 (PST)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5de6e26d4e4so4832345a12.1;
+        Tue, 11 Feb 2025 02:02:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739268091; x=1739872891; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739268137; x=1739872937; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=drxTkmiH59O7gmAzQISbFw15AbvxlUD3UzcmVMUxQaQ=;
-        b=JsdXNvrdZE5/Tg0wxFhxOU3UW2ZnI89ZgB8FN+H1LmxefDhcXPsVZr+OTfC1JXOsZq
-         jpVPQABDpWUMO1qaJ+UDFzvVgaOsNrgtpvzC6DN6STpYnlHpDNcBKfGyLkj7WNof51tF
-         z9ciSBnrrDa99Mf48VQTQbI4wBxqCdJUw5Z72erXTIF4U4yzCAMKkXA7TovgMMoJViNJ
-         mg7U8l3AhfaM3m7ey9QwdOaaGNiYp80Gu/uxLf1+LkgvdcqC2xBnvttpNlF8+kCJ/Un5
-         HqXp4KrABvClrlgFsVakQ8ED2DwcmFElWRhbihkNNEVdCd/okb0NAJY+kxsIl8jxZhky
-         Pgeg==
+        bh=IcGS6UCbGHb5oxo+EDRgwiLzKfnAHwzvUCP7UJie9sA=;
+        b=TsKaqWkippj0/7CdXRjpPsLYgaUbk5ZVoAfYQegLpNzJra/tn8wolGXHJ04VlTLxUg
+         GyzqHX/PchZmrQISHB00ahxMeucC+II7i4CP82I2uvz04P/ZTHDkAUkciqn08SQlr50Y
+         lzJ0sZNZffy7doKHY3ik+h6I0SvYbOq4Thcvsnr7otuPyKK7OoYyYON0+CMsTFmv473c
+         aI14KjGn2K+R0cssLp/hwcUZgYlT8+uEDr+ekir43UzI5r0zxQHFuPXljVGciiYVnze2
+         PyYoAYwVw2yKg8QmVGodetsPMe+R8Ptx5v6RcK9ynL2x3ycu5GQAjxFMRcY3a7Egm9Vn
+         tJWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739268091; x=1739872891;
+        d=1e100.net; s=20230601; t=1739268137; x=1739872937;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=drxTkmiH59O7gmAzQISbFw15AbvxlUD3UzcmVMUxQaQ=;
-        b=iJM1eh8oiosgtJ+gBqRgEOH1xcT75+cIsP2cHJWcVfmFkeLvfMfB5/s2uDE2uZeygr
-         Z1qC3FPhtqGrr0i+WceqOUwMvjv6lgaEdZlS8RzSDmXRtECVSA2cUdUvNlsYuVIP24Fg
-         f12T87kFafgu+6zmC/dB8Ftm90355bH6WEnuKkiNfAu3IQPD48rL2ewH7C/q9xaN9oX4
-         1aERSNy5xqpw528gB0RdfOLO1EuA5Yc6gnnUHyhiejBXqF/8qryVI/XVte3gRySnSUVM
-         hZ2wUs/8Ow0HXCNAWsg5Ni9Bci4Leb+6cUtuWdT3vRI7TiamGZYLlEH84CvdHOXMEiuC
-         +bvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYxvN2XIcFkV/c7594uoyvUPgXwNxAEwGo4pnfAIACl2xtIh6IqUUHEWU6GNarnyQrn7E3Ym9mX1gFbTcd@vger.kernel.org, AJvYcCXp5GMzlMBqIecZ1DR3Sn9UOpNVu7lcJjRjPjSxLFV+NgWuBedjIFPM/ynLCc/9Yy0lLvDOqCvF@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ+EMbXfWy/ESy5SEFYAE2zAy9qgf48u8gLE/e+PTbFJsDyXTe
-	rcfZP7OCBUFljMbr4q48+5dGdI3GlvBXV1L+E3tiJpffrkLXhdKvsl3rL1DAOcRJIJH/3LxWDet
-	cKF3qP8vNQRW1hnRlqNKhsS8xESEgN35s5T4=
-X-Gm-Gg: ASbGncsl0LZP1U431gZTp2R2kAKSUt2kH8djKdMDzL+t8cjy5026S99iGuUI5hJ65sd
-	MhmtoW0NkFLdXXxrkAWgcuxBnTvvEDLzXiHP/Fwa1hw1lbrqRafqu3KPh/13QoF47/5LbUe5y
-X-Google-Smtp-Source: AGHT+IF8HxNs85ro7G3Qf6KaAWvjjbB7hSGrf1/e/Pv78U588doGeFifTiWPtpSw0fBJ1cifsJ9uNbbXsbVNpG9Qh5g=
-X-Received: by 2002:a05:6402:40cb:b0:5d0:bf5e:eb8 with SMTP id
- 4fb4d7f45d1cf-5de45070884mr36659596a12.23.1739268090664; Tue, 11 Feb 2025
- 02:01:30 -0800 (PST)
+        bh=IcGS6UCbGHb5oxo+EDRgwiLzKfnAHwzvUCP7UJie9sA=;
+        b=Kt4iOMCUgYOUvdYievfnOtV+R7GyZMFllCaqXB/MqDT6rLY+ze42qCJmA/sI5lGPRb
+         fuqzeZRdHOBiJ+4/x4eKbr8Jxa8fI5AW9AK32rzGuwUBqRUdUYlSa7invpiS1ez5g/AT
+         rsEadEWtbnJ4jRNUvYLRPtSrlArtwVqn73f4HlfbyF2v1SbPrFARYRSgKuo7PxlJou7z
+         w7Rh0XEuo8z1BcVFlSUEkny+spuyHisZ+Ij2HE9+JMkogT8JSDsRTWeqjyWvXvz4aJyI
+         JetknwHAj98H6fM3yWztNYXgr9ZRWlstWzU1YAan+hoV74e7WDBRRZQDpJSJuphLbIfY
+         RQ4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVLBCxgXMcQrWpgNhJodPeQ+RLDnvJLoCjpZxX9jiXIIWegtFPQK0g7inH4/j02SWsuqZSc8lMKFH0bd5Bh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1JKL4NpDOytNgy+wK6I3pVjEFvv5+ebnU/3bBdYb0EaNGt4dS
+	rwKEvMEM74H9iOC0uzFrooNcZme3J5CVJhJGey8q0R/53c6GBqRj5RpZQEoOk81fExg1/zRz97Y
+	ZcV2Fkw7FC7fDfTJ1D6UswjhMkVg=
+X-Gm-Gg: ASbGncsOYat3UTZk6qDKpWLsOaHfOvXSLYKdif4KLPxxLAfthIrzDMRqtfoOyXx4Hxn
+	aZ2Sdv6mhCjIn0RYf1KkVwbLCEQQNcMfvNWISzuKXQyVBAnIllJkMWdvMQfVd/hRjYGnzvk75
+X-Google-Smtp-Source: AGHT+IF/MC5h4tqa8nTowJ3Ny7BSI0o+2FHpuTJfBFWLpPUdXrVg82SPCr26RvTuSt1YUqcB33YWxeUS1UTAqc0TATs=
+X-Received: by 2002:a05:6402:2546:b0:5d9:f21a:aa26 with SMTP id
+ 4fb4d7f45d1cf-5de450a9e4cmr16531818a12.24.1739268136920; Tue, 11 Feb 2025
+ 02:02:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210194512.417339-1-mszeredi@redhat.com>
-In-Reply-To: <20250210194512.417339-1-mszeredi@redhat.com>
+References: <20250210194512.417339-1-mszeredi@redhat.com> <20250210194512.417339-2-mszeredi@redhat.com>
+In-Reply-To: <20250210194512.417339-2-mszeredi@redhat.com>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 11 Feb 2025 11:01:18 +0100
-X-Gm-Features: AWEUYZlfqkIP2gwVXL5U5NR1NwtgUTHPI9agZ4JF-sQfLty9_RCkMkdkKc2HiQ0
-Message-ID: <CAOQ4uxg0RQuNbRx9LBZfb+XztKVOu2Qad7ZHRKHHSQcYFY6AYQ@mail.gmail.com>
-Subject: Re: [PATCH 1/5] ovl: don't allow datadir only
+Date: Tue, 11 Feb 2025 11:02:05 +0100
+X-Gm-Features: AWEUYZlE4c1txpQvmKDdEhm7259DhcfXAGl1SNSHqgv6Nf6q0Pk6xgZordsRZlw
+Message-ID: <CAOQ4uxg6O=yKdhN8WB7pma9d8qAVYpAx4Zrq1fhg0ag755LDDA@mail.gmail.com>
+Subject: Re: [PATCH 2/5] ovl: remove unused forward declaration
 To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Giuseppe Scrivano <gscrivan@redhat.com>, stable@vger.kernel.org
+Cc: linux-unionfs@vger.kernel.org, Giuseppe Scrivano <gscrivan@redhat.com>, 
+	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Mon, Feb 10, 2025 at 8:45=E2=80=AFPM Miklos Szeredi <mszeredi@redhat.com=
 > wrote:
 >
-> In theory overlayfs could support upper layer directly referring to a dat=
-a
-> layer, but there's no current use case for this.
+> From: Giuseppe Scrivano <gscrivan@redhat.com>
 >
-> Originally, when data-only layers were introduced, this wasn't allowed,
-> only introduced by the "datadir+" feture, but without actually handling
-
-Spelling s/feture/feature
-
-> this case, resuting in an Oops.
-
-Spelling s/resuting/resulting
-
+> The ovl_get_verity_xattr() function was never added only its declaration.
 >
-> Fix by disallowing datadir without lowerdir.
->
-> Reported-by: Giuseppe Scrivano <gscrivan@redhat.com>
-> Fixes: 24e16e385f22 ("ovl: add support for appending lowerdirs one by one=
+> Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
+> Fixes: 184996e92e86 ("ovl: Validate verity xattr when resolving lowerdata=
 ")
-> Cc: <stable@vger.kernel.org> # v6.7
 > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
 > ---
->  fs/overlayfs/super.c | 5 +++++
->  1 file changed, 5 insertions(+)
+>  fs/overlayfs/overlayfs.h | 2 --
+>  1 file changed, 2 deletions(-)
 >
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index 86ae6f6da36b..b11094acdd8f 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -1137,6 +1137,11 @@ static struct ovl_entry *ovl_get_lowerstack(struct=
- super_block *sb,
->                 return ERR_PTR(-EINVAL);
->         }
->
-> +       if (ctx->nr =3D=3D ctx->nr_data) {
-> +               pr_err("at least one non-data lowerdir is required\n");
-> +               return ERR_PTR(-EINVAL);
-> +       }
-> +
->         err =3D -EINVAL;
->         for (i =3D 0; i < ctx->nr; i++) {
->                 l =3D &ctx->lower[i];
+> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> index 0021e2025020..be86d2ed71d6 100644
+> --- a/fs/overlayfs/overlayfs.h
+> +++ b/fs/overlayfs/overlayfs.h
+> @@ -540,8 +540,6 @@ int ovl_set_metacopy_xattr(struct ovl_fs *ofs, struct=
+ dentry *d,
+>  bool ovl_is_metacopy_dentry(struct dentry *dentry);
+>  char *ovl_get_redirect_xattr(struct ovl_fs *ofs, const struct path *path=
+, int padding);
+>  int ovl_ensure_verity_loaded(struct path *path);
+> -int ovl_get_verity_xattr(struct ovl_fs *ofs, const struct path *path,
+> -                        u8 *digest_buf, int *buf_length);
+>  int ovl_validate_verity(struct ovl_fs *ofs,
+>                         struct path *metapath,
+>                         struct path *datapath);
 > --
 > 2.48.1
 >
