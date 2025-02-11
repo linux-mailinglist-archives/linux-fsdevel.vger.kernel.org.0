@@ -1,168 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-41549-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E3FDA317FA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 22:43:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDC0EA3182F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 22:48:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD54F3A8791
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 21:43:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C037188209A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 21:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7281326A0AF;
-	Tue, 11 Feb 2025 21:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79122676DB;
+	Tue, 11 Feb 2025 21:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="alFWLWxq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JvYlWauU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9224C26A0AC;
-	Tue, 11 Feb 2025 21:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E04267706;
+	Tue, 11 Feb 2025 21:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739310008; cv=none; b=sfjarApoZXqwsJO+wZ6l41hPk8MbAZPwU6zOCa9OdfhIt+DllCtJ1uxFSEYLXa8QqUuOSNl6Kwu3LMdUURWwzDJrT0tUMrZ7tfWz10QVYbNSaMiEPefYPAWHeNU9o27TziS9WXvhZoMMDW6WSnWXuA5uiO250ifS9HVCRjp0eGk=
+	t=1739310494; cv=none; b=NoZ9Rj+oVsdm8sQpWHU5VSeR7hJ0JJmxE2yVxPkMsOuCZBWE9R37iTnUTBo5T5FlKHqNRGGTYdqvYBWGvUfjL5N723FJEcthKKbGvbTZxLqolkVa4JtYcfJBGKsxRjzAwp+nZl1rS9EyYiqsZ6tU7ApzzOJapROgYnBL/kzPfq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739310008; c=relaxed/simple;
-	bh=giHnIo+hakgD9NRjoF3zJywYlIsmkgPB43zMZje+l5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tQ9PYtjm+l3GzKdOcT3iRrGwiiVrQt4DsNwFJTnl7ilQUDNLvXRHsBdvXn5MxCUfAvgI+wPJbBH9HRpd26Gt8EQrQFtDQxUIYu0lTeq8Q7yPcK6Hzs2g06MuljS3OFqR+U0af4nUJF3kL+y7QQ0m90dmXyJOK+jHgNRHgzFZt6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=alFWLWxq; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=7Imfx4OXdUIAlFlS91dg2h2kuZIkDMJDHnsX6odgDWE=; b=alFWLWxqkJa2DWKJkj6LUtJWR4
-	pzxMF6ZBfTMzesyG/S8vtda8SnB6rweMaigl0BQFyX2P8x9f+66Tl5HYC5CHQyoqY+I0ZJFbm4gfa
-	RMZ+RLZcMskmuHeQlIiZjfri/OQTHHgBEgDDSPIyaYYggay2mFkVwtTIXI9xRc/ibSernJiJoIHfK
-	4aVo9YwfcZ9FvuKtqbf+GDQmNo2w0OIydEruPOpKqTo6CssXoVmgUJ4y2A6QJlAcZqTJEj1arUmOA
-	FGhEVTo3elrVEAqw5X5KlUwOwQZ0SoM56rDKRRsa0moE/l5G8XgzxLLHbB8X39blUfVxw/kNxYACb
-	iGmfqTIA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1thxz8-0000000Azsv-2ALL;
-	Tue, 11 Feb 2025 21:40:02 +0000
-Date: Tue, 11 Feb 2025 21:40:02 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "idryomov@gmail.com" <idryomov@gmail.com>,
-	Alex Markuze <amarkuze@redhat.com>,
-	"slava@dubeyko.com" <slava@dubeyko.com>,
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	Patrick Donnelly <pdonnell@redhat.com>
-Subject: Re: [PATCH] ceph: is_root_ceph_dentry() cleanup
-Message-ID: <20250211214002.GJ1977892@ZenIV>
-References: <20250128011023.55012-1-slava@dubeyko.com>
- <20250128030728.GN1977892@ZenIV>
- <dfafe82535b7931e99790a956d5009a960dc9e0d.camel@ibm.com>
- <20250129011218.GP1977892@ZenIV>
- <37677603fd082e3435a1fa76224c09ab6141dc22.camel@ibm.com>
- <20250211001521.GF1977892@ZenIV>
- <01dc18199e660f7f9b9ea78c89aa0c24ba09a173.camel@ibm.com>
- <20250211190111.GH1977892@ZenIV>
- <36afe0ca1c80a97962858b81619501e5a5483fe1.camel@ibm.com>
+	s=arc-20240116; t=1739310494; c=relaxed/simple;
+	bh=smFxIaIAXeeqpVCzuwHHa9+Ysar++uL50ST4BXoCjgU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Rmold/1ErxSe2nXQTYot0U9CDXCce1QOXZUC57YXrvWUDaQFvHX4snzbnwZaP/HS2jDzpSNg6bGwanZ8UjtHqgmAt6T5A1dDeVuqZv9Fxgbni/eHQzazf6IxjOk7UiyVxsMW2DDm7R/RN24F0YCQZar3++HvWdmw5EnvkYxrQc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JvYlWauU; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6f9c6d147edso33531337b3.3;
+        Tue, 11 Feb 2025 13:48:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739310491; x=1739915291; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FVq1XCnOjA2ULEK5C3J/qIxsMb/DbCnqqJ27wKR3a2M=;
+        b=JvYlWauUdKH09yMPS4702jawNQ2iNp7tbKnvFJKWk8Rct/aPZq04Oo5aBQYqeKcP4S
+         Wose/YlkaqyDUHVtuTSepQ5r6GfdQbs78oTTd46ueacwhoPio2kj0UtMKJswYpHzDWqu
+         NUuu83YVBxZuHZ7GYMuej+Jwtgi4Xb9S2/dpSAu034nAphhpFv+nkKwlNEHPHxnEYQd7
+         k6+KAGFo0lNkV+AIfEDsCOPOidYrNJRBzYBZfXLigNFBO1tPB7M3uM3vGVF3fjKajICJ
+         AEZoztTU2XsntM/mZdQz9/jblUDNPYEyJnAD8vsGea6sBdhI59XmHkMjVDLgCQxEnGf3
+         w/TQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739310491; x=1739915291;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FVq1XCnOjA2ULEK5C3J/qIxsMb/DbCnqqJ27wKR3a2M=;
+        b=YVtfp3/g1AXT5t0FoBXpkNEtKROFYhm0bNe2j1zoXPVSKE2HUTSAQ2QRHguLyb3VHF
+         OfGB82/KfcZXz9B1M+hBTiy+SACGx2sFa4hQRIf0IHHWRZEbTf1I7y/wxkJUgY9xzC3s
+         kfGIYYDcy3S2iWtKu+51gltFEo0zpp1cHiMTuR4/H8u5zG1oBi28D6SGrSFv1seLyQtq
+         anWWIDsiXNgW92D3YBi6EvcrVxmB9f3hR/zT0k7ZCR4pOaHdkF46R65jinU+h464pAto
+         So5hnUDmZdsWDCyMWHSNVNIAH046ZtTEz65q7b8CnJUHD0kr+mm3uOBZ2QCPF4Zt4ku9
+         CXyA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHdxCg9CyeDBwaaHBKPlwJ+rjXMSWDOf9xyzWjSHXvXfIYn26CP96mlYEVyRYOHi+1Im26Ypg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMAkatt2C70Xx0VukoumkqeByv+FXy3+Y9MXVFjkOaSbsRiQJG
+	jwOw5AhitSWZSOeIO8M/7bjTbsLZ5sm2BzezZKSUsE31tALKWOOZ
+X-Gm-Gg: ASbGncuYwVuEYbbCL0kGR0jGqWnzSTjB1Z3pzBNST83321iaiAj0gSZ7sVyxKQ2U/SP
+	eJNMnPSwJbPkyoB6Ss1qB6fAUg4eiooF+/jjvV+X+sq+i6BEYi7B8nSM1wY5PjUZkcW8PzFR9gR
+	tqG+j9lxBOYsE8k0zK/FIoUdaiqNHG29tGHqRYjldqBvKlrgOXI6KrROLwdWdnK54i3Ge92A0mO
+	a2/uRfH2iwlh1sEdcaZjZASsdDhKczTr2/mQHx5PxtKNkWSnmxEqttftazMJlCguj03NKzIno9R
+	3Tj1lE2hLVXe
+X-Google-Smtp-Source: AGHT+IEo7IxtRR6PzGm/SfI5sQJxiyKa44TtElTnQMf54sThW551Y7HVQNixqBFpbcUds98lboCRkA==
+X-Received: by 2002:a05:690c:3687:b0:6f9:aecf:ab34 with SMTP id 00721157ae682-6fb1f2d5ad0mr12862547b3.38.1739310491552;
+        Tue, 11 Feb 2025 13:48:11 -0800 (PST)
+Received: from localhost ([2a03:2880:25ff:3::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6f99ff6a605sm23287767b3.80.2025.02.11.13.48.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2025 13:48:11 -0800 (PST)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: miklos@szeredi.hu
+Cc: linux-fsdevel@vger.kernel.org,
+	jlayton@kernel.org,
+	josef@toxicpanda.com,
+	vbabka@suse.cz,
+	bernd.schubert@fastmail.fm,
+	christian@heusel.eu,
+	grawity@gmail.com,
+	willy@infradead.org,
+	stable@vger.kernel.org
+Subject: [PATCH] fuse: revert back to __readahead_folio() for readahead
+Date: Tue, 11 Feb 2025 13:47:50 -0800
+Message-ID: <20250211214750.1527026-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <36afe0ca1c80a97962858b81619501e5a5483fe1.camel@ibm.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 11, 2025 at 07:32:16PM +0000, Viacheslav Dubeyko wrote:
+In 3eab9d7bc2f4 ("fuse: convert readahead to use folios"), the logic
+was converted to using the new folio readahead code, which drops the
+reference on the folio once it is locked, using an inferred reference
+on the folio. Previously we held a reference on the folio for the
+entire duration of the readpages call.
 
-> > The really unpleasant question is whether ceph_handle_notrace_create() could
-> > end up feeding an already-positive dentry to direct call of ceph_lookup()...
-> 
-> We have ceph_handle_notrace_create() call in several methods:
-> (1) ceph_mknod()
-> (2) ceph_symlink()
-> (3) ceph_mkdir()
-> (4) ceph_atomic_open()
-> 
-> Every time we create object at first and, then, we call
-> ceph_handle_notrace_create() if creation was successful. We have such pattern:
-> 
-> req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_MKNOD, USE_AUTH_MDS);
-> 
-> <skipped>
-> 
-> err = ceph_mdsc_do_request(mdsc, dir, req);
-> if (!err && !req->r_reply_info.head->is_dentry)
->      err = ceph_handle_notrace_create(dir, dentry);
-> 
-> And ceph_lookup() has such logic:
-> 
-> if (d_really_is_negative(dentry)) {
->     <execute logic>
->     if (-ENOENT)
->         return NULL;
-> }
-> 
-> req = ceph_mdsc_create_request(mdsc, op, USE_ANY_MDS);
-> 
-> <skipped>
-> 
-> err = ceph_mdsc_do_request(mdsc, NULL, req);
-> 
-> So, we have two different type of requests here:
-> (1) ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_MKNOD, USE_AUTH_MDS)
-> (2) ceph_mdsc_create_request(mdsc, op, USE_ANY_MDS)
-> 
-> The first request creates an object on MDS side and second one checks that this
-> object exists on MDS side by lookup. I assume that first request simply reports
-> success or failure of object creation. And only second one can extract metadata
-> from MDS side.
+This is fine, however for the case for splice pipe responses where we
+will remove the old folio and splice in the new folio (see
+fuse_try_move_page()), we assume that there is a reference held on the
+folio for ap->folios, which is no longer the case.
 
-If only...  The first request may return that metadata, in which case we'll get
-splice_dentry() called by ceph_fill_trace() when reply arrives.  Note that
-calls of ceph_handle_notrace_create() are conditional.
+To fix this, revert back to __readahead_folio() which allows us to hold
+the reference on the folio for the duration of readpages until either we
+drop the reference ourselves in fuse_readpages_end() or the reference is
+dropped after it's replaced in the page cache in the splice case.
+This will fix the UAF bug that was reported.
 
-Intent is as you've described and normally that's how it works, but that
-assumes sane reply.  Which is not a good assumption to make, when it comes
-to memory corruption on client...
+Link: https://lore.kernel.org/linux-fsdevel/2f681f48-00f5-4e09-8431-2b3dbfaa881e@heusel.eu/
+Fixes: 3eab9d7bc2f4 ("fuse: convert readahead to use folios")
+Reported-by: Christian Heusel <christian@heusel.eu>
+Closes: https://lore.kernel.org/all/2f681f48-00f5-4e09-8431-2b3dbfaa881e@heusel.eu/
+Closes: https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/issues/110
+Reported-by: Mantas Mikulėnas <grawity@gmail.com>
+Closes: https://lore.kernel.org/all/34feb867-09e2-46e4-aa31-d9660a806d1a@gmail.com/
+Closes: https://bugzilla.opensuse.org/show_bug.cgi?id=1236660
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/fuse/dev.c  |  6 ++++++
+ fs/fuse/file.c | 13 +++++++++++--
+ 2 files changed, 17 insertions(+), 2 deletions(-)
 
-I _think_ the conditions are sufficient.  There are 4 callers of
-ceph_handle_notrace_create().  All of them require is_dentry in reply to be false;
-the one in ceph_mkdir() requires both is_dentry and is_target to be false.
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 3c03aac480a4..de9e25e7dd2d 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -933,6 +933,12 @@ static int fuse_check_folio(struct folio *folio)
+ 	return 0;
+ }
+ 
++/*
++ * Attempt to steal a page from the splice() pipe and move it into the
++ * pagecache. If successful, the pointer in @pagep will be updated. The
++ * folio that was originally in @pagep will lose a reference and the new
++ * folio returned in @pagep will carry a reference.
++ */
+ static int fuse_try_move_page(struct fuse_copy_state *cs, struct page **pagep)
+ {
+ 	int err;
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 7d92a5479998..d63e56fd3dd2 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -955,8 +955,10 @@ static void fuse_readpages_end(struct fuse_mount *fm, struct fuse_args *args,
+ 		fuse_invalidate_atime(inode);
+ 	}
+ 
+-	for (i = 0; i < ap->num_folios; i++)
++	for (i = 0; i < ap->num_folios; i++) {
+ 		folio_end_read(ap->folios[i], !err);
++		folio_put(ap->folios[i]);
++	}
+ 	if (ia->ff)
+ 		fuse_file_put(ia->ff, false);
+ 
+@@ -1048,7 +1050,14 @@ static void fuse_readahead(struct readahead_control *rac)
+ 		ap = &ia->ap;
+ 
+ 		while (ap->num_folios < cur_pages) {
+-			folio = readahead_folio(rac);
++			/*
++			 * This returns a folio with a ref held on it.
++			 * The ref needs to be held until the request is
++			 * completed, since the splice case (see
++			 * fuse_try_move_page()) drops the ref after it's
++			 * replaced in the page cache.
++			 */
++			folio = __readahead_folio(rac);
+ 			ap->folios[ap->num_folios] = folio;
+ 			ap->descs[ap->num_folios].length = folio_size(folio);
+ 			ap->num_folios++;
+-- 
+2.43.5
 
-ceph_fill_trace() does not call splice_dentry() when both is_dentry and is_target
-are false, so we are only interested in the mknod/symlink/atomic_open callers.
-
-Past the handling of !is_dentry && !is_target case ceph_fill_trace() has
-a large if (is_dentry); not a concern for us.  Next comes if (is_target) where
-we deal with ceph_fill_inode(); no calls of splice_dentry() in it.
-
-After that we have
-	if (is_dentry && ....) {
-		...
-		splice_dentry() call possible here
-		...
-	} else if ((req->r_op == CEPH_MDS_OP_LOOKUPSNAP ||
-		    req->r_op == CEPH_MDS_OP_MKSNAP) &&
-		   test_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags) &&
-		   !test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags)) {
-		...
-		splice_dentry() call possible here
-		...
-	} else if (is_dentry && ...) {
-		...
-	}
-
-Since we only care about !is_dentry case, that leaves the middle
-part.  LOOKUPSNAP can come from ceph_lookup() or ceph_d_revalidate(),
-neither of which call ceph_handle_notrace_create().  MKSNAP comes
-only from ceph_mkdir(), which _does_ call ceph_handle_notrace_create(),
-but only in case !is_dentry && !is_target, so that call of splice_dentry()
-is not going to happen there.
-
-*IF* the analysis above is correct, we can rely upon the ceph_lookup()
-always getting a negative dentry and that if (d_really_is_negative(dentry))
-is always taken.  But I could be missing something subtle in there ;-/
 
