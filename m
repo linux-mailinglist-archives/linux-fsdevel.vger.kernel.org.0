@@ -1,80 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-41502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24831A301A1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 03:43:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0547AA30269
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 04:59:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 578487A28B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 02:42:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 357AE7A1A58
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2025 03:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21E51CD1FD;
-	Tue, 11 Feb 2025 02:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47031D61BB;
+	Tue, 11 Feb 2025 03:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="NnIqdFut"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bGNVVSmv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2056.outbound.protection.outlook.com [40.107.95.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B4B26BDBF
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Feb 2025 02:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739241793; cv=none; b=aPRl9tZ1UdofUCOLtR7W0W/hUDdCkzAgRUfHezL6GnNesHbCLztgXmp19KUkGfNjocaC9epd6HOH1ROMTxDycSMnUuFA66ygwAkZzfgublD3zZ5KvgA+lJQDrXeMbI/fTsU5Otxa0gG/8MA4CcZOJlEr9SK+PB2hdgK6/kBvdro=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739241793; c=relaxed/simple;
-	bh=SnrILxBvVbQ0cRNiroVouG4W+Eu+lgpyCFoKaXn2Nck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=neV8tisNmz0Az201+b8AZ32E4YlHVGPuW9mK8TiCrcTTSkJKnS7+d2FV+k4faNNvaZz1sF5ImqGtCfl0JMiJb4TmU3vyuvSVw0U7pX7t1vIO0quwDygHz5LdTAmiJmHXCGc7IlVZFo/mJpsQJludHPvCdKiGA84IH5T2szT0eMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=NnIqdFut; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21f61b01630so50580025ad.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2025 18:43:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1739241790; x=1739846590; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nKziBAtg1HbGc0JeoxKdx+SKqD36Jtb1BCQ3ewTgytY=;
-        b=NnIqdFutHYTXD/ZSYT262ogBJR2LVzqI1BOyB8mymKwwjaKldgosFH4t+MiM7QPQlY
-         p5PYmiXXCzce8waZIDAx/StIC3ki2rQUXkKZG5oImXjLbf3qH63iat/ZMF/jEHkZANm+
-         8Uo448CYDS7h6Ie44xmc9R9YkWaMIXFN/zUlTDYTIgzIZljDDhQBQyZs2kWloXBU/R8/
-         E1qSUIu/PG6ZwHA7u4bjsxuSjYWumopj1RMuD6i+c/0WFPNYu3nJPIejZlNfa4g8FQzC
-         SP34lUw2USXAyEXsxoD5FtCcHONFxH2PRE/OOXj28f/i7GJptN7rswErbsS5jWCSaY9s
-         H51w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739241790; x=1739846590;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nKziBAtg1HbGc0JeoxKdx+SKqD36Jtb1BCQ3ewTgytY=;
-        b=MIet1Fsp/YR9vKIcVDnlCT1tbnAzuhcIsoJKWrJhF+e1kwCy1xGsy9hPADnXZwz31d
-         L355pH/iitrfEDg6crdeMxi0xY3g1OXxt2+9Gp091rv2usExXO7zEK3/g9mffG+958s3
-         7TIKPs8by3vtCYfBp2Q0lrP80qoctjE902GQK1J721GC4xe+6ZldHxXXMETlaNoAjvjb
-         QUIdX9/XvPAKLU0vGa6qHbZ73LCKLnqP50ir59bDr5pxiGwHASdjzzxdi0sVnGqG0XnB
-         ZA/vU0AZe5C7EWQ5rqKDUgQgDiDWQx/aEF9sxKLcU0gHeab0V+azFAq1V90yoPDxpdgv
-         fjOA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4R9g5sranKXnx9SGZxvHzLtYLcKmynKWzABcEx1IGbn5QVpl8QT7QuoiCDXmKZD97geLoRk1dZtx8pWSS@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhKuJe0UOlEoArC29fZBts7aB0CzhcJKzj0HU7Ce3umo7/6+mz
-	yTB/xZKI6gC2tTWNtxKqasBEOantNgqF2LKbX695Hq48/qBTBmeZxRX2DE6SFiJbmqMr1JoxZy1
-	O
-X-Gm-Gg: ASbGncuaI7m32cM+YprBfc3apNhNWcsCUd4aoXJpRTvNAOvIuD9ms4kM5puuPdwGYgm
-	l6u1TUYH0Y6HQNPQ2fSyx8mCOYIDh8oFMcUvxCGxGNCI29C/ggoUbJ6E4m4kSQfSwux1fJ/S4rx
-	ngs7juQkDrEInxSi+d+BguCsZ5Bo7Va6XnEKw5DlYX0PLvnqAfc8+yxlyC62suEerBR6ZFe7dmI
-	TE8+vQWlAAD+LyPVJyca17nGgjr9B1EAa3lzgkIERmMXLRpcXnDSzD3dWlmj+QYxV3fMnqLsxzK
-	gYHRPwTdazFeCzKgeoUf1YbrK+yITxUX5vJQH9eiDw==
-X-Google-Smtp-Source: AGHT+IFlEAc+CgziEvPOi9yauHYGiTs+Qr4sD978MXRUIfJA2SzIAo/wb3fB3Fzd3ri1y7dsaJ0SWA==
-X-Received: by 2002:a05:6a20:430b:b0:1e1:9e9f:ae4 with SMTP id adf61e73a8af0-1ee4b6eb26dmr2442064637.13.1739241790209;
-        Mon, 10 Feb 2025 18:43:10 -0800 (PST)
-Received: from [10.84.150.121] ([203.208.167.150])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73089afd0cdsm3307414b3a.134.2025.02.10.18.43.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Feb 2025 18:43:09 -0800 (PST)
-Message-ID: <7bc425c1-2b4a-4221-afa5-5c7230e85a0a@bytedance.com>
-Date: Tue, 11 Feb 2025 10:43:03 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9152226BD8E;
+	Tue, 11 Feb 2025 03:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739246385; cv=fail; b=UWTD1DXbJQ5KDv4zXg8OWW4u6skEjMj0WRvknnAjsKt0oyYXLUV3i6ANFoCiwHWKTvW8l5cgduoPfjarhUFw5EbBesTamR3VLnAWTI225FLBwjMpruSsAx5kXndV61F50jjTiH7M2oJ/oi4n/HcUkEl0Th7qjyvY2dyyITiIsLM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739246385; c=relaxed/simple;
+	bh=twbG7yY8I5BZGDKXOxhE1QcKcilPOIu3SeE51y2BwAU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Zoburmzu3rXV2VXqtYa81VWZbi9RL1yMkDpOne/FE8Z9lXq2c6yUENGOPp2a66PGsTDK71vA69QW/EgD0TJodYQwBcIRXlqU2E9eSX0WsXQty2IDSfF8WrQuT7Mk38qTVZ7hMWja2iSCYlXZM4aU5tIxrJKo8b42hsm7uacUN7Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bGNVVSmv; arc=fail smtp.client-ip=40.107.95.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a08Ix4/YqZZc8ZoEON7YvRGURhEk6ceKfFot85+Bmapj3JBQEFhwAGQycX0uQgkYoM5kZBvUuAj59uDxb5PwzPWECMDNEA1/5g3mv1Msa/RPiVB3EiId53P7PMd/6toVNUD+d4CAQpCo8XgC8VFPSd2+Ue9OGc9PgLU15AhUj767PrTq3dDo9ZNMKrJBR7NvJw0Ke6sq7sjHDZ8t4DCXYR0hwjjU8c1ISbTpGF+yV9SQzbalJe/Y/Qor93JEiw5LVkOAcFKdj97fUb2gOtic6S/rVN5TU0DlsexdvbV02ihsWYGY7lxFgmi1d/y53uqoUL5bA5gDCzbEpOsdJwpf3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VtU9XlG8GhvKetMNjIAwRFYIPD1lto0nh089+TU9epU=;
+ b=I9y+siINqoaaGVOlLsvOiBKJ6EEBrCeICleiPD+jySqZFFJdXiLDFT8kC0+sN0PQ4l3YHqz0r6Q9ZpRtB6xyv6l5sMC2z6F5PEIx6PHQ0UzEZJWhgxivG45HCHpt185aWQANhjixuFxNTE3VDFK9XBoxxF7q55hl46o1PKRHFYiREIJQwyD+8byJG7P5YKORrQ9UEqVy0ulWn3UTOeeKuqLU6tiynRyJStHq5+UqXyBpm5suaNjZtJAmtYRy0R7dCjrSCTxZMY8gyfK+fmOfiiUSuUz/P7TqLcapnQvpNebkgbj0GtLRoqYlBgz7TYVPbMtVKznSpq1voVliceZoqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VtU9XlG8GhvKetMNjIAwRFYIPD1lto0nh089+TU9epU=;
+ b=bGNVVSmvEZoOOyGIcPQFv+wvg/4Dp/zchqb5ywE7dn7mPlsI43etXrMwuGndukK1mKOjar3qMGk3iT0jNGgspUNNO8aXjPJOKxNQ8cj9zK6dtMXUa/sz0xpDl70kfPZPSegI9z8hC1u7RlhD3e9cyDrLQ+sUot2EuQpRRKeZEYk=
+Received: from BY5PR17CA0047.namprd17.prod.outlook.com (2603:10b6:a03:167::24)
+ by DM4PR12MB7744.namprd12.prod.outlook.com (2603:10b6:8:100::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.18; Tue, 11 Feb
+ 2025 03:59:38 +0000
+Received: from SJ5PEPF000001EE.namprd05.prod.outlook.com
+ (2603:10b6:a03:167:cafe::e3) by BY5PR17CA0047.outlook.office365.com
+ (2603:10b6:a03:167::24) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8398.31 via Frontend Transport; Tue,
+ 11 Feb 2025 03:59:37 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ5PEPF000001EE.mail.protection.outlook.com (10.167.242.202) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8445.10 via Frontend Transport; Tue, 11 Feb 2025 03:59:37 +0000
+Received: from [10.136.45.220] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 10 Feb
+ 2025 21:59:28 -0600
+Message-ID: <fff8727a-29d7-45fe-a997-d9bd55e07f52@amd.com>
+Date: Tue, 11 Feb 2025 09:29:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -82,127 +79,184 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: xfs/folio splat with v6.14-rc1
+Subject: Re: [PATCH 1/2] pipe: change pipe_write() to never add a zero-sized
+ buffer
+To: Oleg Nesterov <oleg@redhat.com>
+CC: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>,
+	David Howells <dhowells@redhat.com>, "Gautham R. Shenoy"
+	<gautham.shenoy@amd.com>, Mateusz Guzik <mjguzik@gmail.com>, Neeraj Upadhyay
+	<Neeraj.Upadhyay@amd.com>, Oliver Sang <oliver.sang@intel.com>, "Swapnil
+ Sapkal" <swapnil.sapkal@amd.com>, WangYuli <wangyuli@uniontech.com>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Linus
+ Torvalds" <torvalds@linux-foundation.org>
+References: <20250209150718.GA17013@redhat.com>
+ <20250209150749.GA16999@redhat.com>
+ <CAHk-=wgYC-iAp4dw_wN3DBWUB=NzkjT42Dpr46efpKBuF4Nxkg@mail.gmail.com>
+ <20250209180214.GA23386@redhat.com>
+ <CAHk-=whirZek1fZQ_gYGHZU71+UKDMa_MYWB5RzhP_owcjAopw@mail.gmail.com>
+ <20250209184427.GA27435@redhat.com>
+ <CAHk-=wihBAcJLiC9dxj1M8AKHpdvrRneNk3=s-Rt-Hv5ikqo4g@mail.gmail.com>
+ <20250209191510.GB27435@redhat.com>
+ <b050f92e-4117-4e93-8ec6-ec595fd8570a@amd.com>
+ <20250210172200.GA16955@redhat.com>
 Content-Language: en-US
-To: Zi Yan <ziy@nvidia.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
- Christian Brauner <brauner@kernel.org>, David Hildenbrand
- <david@redhat.com>, Jann Horn <jannh@google.com>,
- Qu Wenruo <quwenruo.btrfs@gmx.com>, "Darrick J . Wong" <djwong@kernel.org>,
- Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20250207-anbot-bankfilialen-acce9d79a2c7@brauner>
- <20250207-handel-unbehagen-fce1c4c0dd2a@brauner>
- <Z6aGaYkeoveytgo_@casper.infradead.org>
- <2766D04E-5A04-4BF6-A2A3-5683A3054973@nvidia.com>
- <8c71f41e-3733-4100-ab55-1176998ced29@bytedance.com>
- <dda6b378-c344-4de6-9a55-8571df3149a7@bytedance.com>
- <CD159586-D306-478B-8E73-AEDA90088619@nvidia.com>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <CD159586-D306-478B-8E73-AEDA90088619@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20250210172200.GA16955@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001EE:EE_|DM4PR12MB7744:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0c97c079-2cc3-4bd0-40d7-08dd4a5080fc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|7416014|376014|1800799024|82310400026|30052699003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eFB5bGJ4WkYzenJDUGt3V09oVTZaR09YeWJrbXpudGFEQW11UGZONWtBSzRj?=
+ =?utf-8?B?Zkt4RitETWQ4QUhqbFl5L3d1a1d5M0MrNlRheVdoZWg1dng1bEkyZjY0M2xQ?=
+ =?utf-8?B?Z3NKeXBMRGZKUlJvRkZhRjk2dzBueE4zYkM5Q2RxdjQ2RW9leDB3TDl1QXlI?=
+ =?utf-8?B?eXpwYTJVMWVRQXdjcnI4TlJTTzBrUkFhaFpnNGNTVUE1VzVYRk1tTDQ1ZStm?=
+ =?utf-8?B?RGlVemhBV1FnSEprZy9kUWFaSEFFRTl1UXJUMksveVhXTlFud3l4dy9YREJD?=
+ =?utf-8?B?NDZuak1kNjRuVTRpYXBYYlVTUFJPMy9IU1N3VVFKWTVEYVRENVliRDNTNDRB?=
+ =?utf-8?B?Y0J5cFFnMDJ0dXhiKzM3WXpRV3dLNzRzRGJTOUh4V3hSbVdqaENFRjFESmZK?=
+ =?utf-8?B?VmpiWkVZOEdCTUFDMHdkQWRQa1pYdkdmQjQ5aU1rREVhaW42cGlwUkViNGJY?=
+ =?utf-8?B?cnpiR25DZ2FwRUtRU282bHFMTmRURi9vc08xZWRsSzNIMG00NHRaSWtLU3BL?=
+ =?utf-8?B?T2dTMFh5RWRtSzhITEs3K2I3N3VOOExvbzNiVDc0YXZJMTU4RXJBcmk4TFN1?=
+ =?utf-8?B?VlN6dE5IZTFYSHV0VFZWUkJOdTUvWExHdEFLMlZPYW5GbGpRbzJRUDhRWUph?=
+ =?utf-8?B?bE9xMUtZRTFlYitMWGlyMTI5UWV1SldFNmZCY1dkYVhhc3YyNEtqMDR3Ukto?=
+ =?utf-8?B?WGtVR0JzM1gxUXhHdG92M1ZIRnBqWnkxV0M3K2tQdGdGTXM3anJQdDhhbzBQ?=
+ =?utf-8?B?cVRteEYySnBpRVZ4Z1RwMzdXSkNkd0RFQnpOUjljanlQVmo1Y3RpeFlnSktS?=
+ =?utf-8?B?MHhZOUE5V3BOaHhORkFEaWxhSWc4Z1NhRW1Gc3dTeVpqUEZmajNpeVkxZWpq?=
+ =?utf-8?B?Tk9yNjcvc0c4YzVpTSs5YTJxZGhHSUs5b2ZlaERsM0s2VVhLMmpkM0RQUk8r?=
+ =?utf-8?B?V1NvQ2hFeml6bFZJVno3YUUwZmhNdGswbWR1ZEFqTVVSVVIxc3MyMWFIMUI4?=
+ =?utf-8?B?MU9nWjQ2VkI1ZHROSjd3WmoybC9PQVlNMHVSUmJKZHdyTmRDYVJtRTljNkZD?=
+ =?utf-8?B?d3ZnZ0xMNldxTktJOStZQmxFbVo5d1B6clF1eFNaNlA0V3dmaHRsUVpWTWx2?=
+ =?utf-8?B?UUpiN1ZGaENCemUyWHIyRGxOK1dXSUQxdnE4aGc0bnMyZ0N0bkQ3MDlZelNY?=
+ =?utf-8?B?TFBKbDlzbGh0dmNodzdlTVJhSzBwODRiZG9jNDQ0bi82V2VJbC82RGJpVkhW?=
+ =?utf-8?B?b1ZNWmJxRDhlSnMyQzVKbGl4ZEpkNFZicVA4NnhjOXFKUkVOMi83a0x2V0NY?=
+ =?utf-8?B?akY4MVYwUnNxNE9maE02Y3JLUU9PdWE1LzBXd0RiRTZOQWMrcXdsUTduSlBQ?=
+ =?utf-8?B?dVA1NHVoYjdMTjBhR1Zna3RFUWc1d2hjbmltSktUbnNYQkFDR2h5Uk51ZUdu?=
+ =?utf-8?B?cktFU3REQ3JPbURlbXkwVkdrVTBPRXo4eUUvMGdGanZTa2NNZmxtQkxxZlk0?=
+ =?utf-8?B?Sm1DaFk4YWZsSUtBb056cE9ZZ0xJdnV5N0RIZFFFaXhzNS9jRW9JMXFlNlpV?=
+ =?utf-8?B?bTFldzFTaVdQWllPbHg5S3h1bnhJbmVzRGllTzJadlVaSmZTamJoR0syZ1Fu?=
+ =?utf-8?B?d2JGRk5FdTRERmptQjNxKzA4UFgwc2kvbjJBNjIzS1krY1NjZ3lsMXhYM2Fr?=
+ =?utf-8?B?akVwTmRBdTZZQmRmaDlWN3NKNkNzcDBUbUdKTVhtQnZNaHVDQVBiZWwwRVY3?=
+ =?utf-8?B?eWlGcm5wNG9GZyt1Yk1zbmE5T3RCWVNzNlFUdk9TV2dFWGNyOWhMbW5NWVlM?=
+ =?utf-8?B?LzB1OWpnYnNPa3RINWUwQXdkWmV6YlFsUUM3bEdEYlplOSt3Q25ocjZ3R1pt?=
+ =?utf-8?B?dFkxREFYWThDa3Y0dWw5TXNqb0h2RnVjS3RFRTEzelFoVGN4TldnZk5JTEU4?=
+ =?utf-8?B?b1ZaWWRPWEQxYlg2bms2TzdZcXFlT1hraWQrOW44SUc3TWlpb1FyRVkrRlBW?=
+ =?utf-8?Q?FfTYCY9eZnflDnB4gOSJ0BMTa84Uu0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(1800799024)(82310400026)(30052699003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Feb 2025 03:59:37.6770
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0c97c079-2cc3-4bd0-40d7-08dd4a5080fc
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001EE.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7744
 
+Hello Oleg,
 
-
-On 2025/2/10 22:12, Zi Yan wrote:
-> On 10 Feb 2025, at 3:18, Qi Zheng wrote:
+On 2/10/2025 10:52 PM, Oleg Nesterov wrote:
+> Hi Prateek,
 > 
->> Hi all,
+> On 02/10, K Prateek Nayak wrote:
 >>
->> On 2025/2/10 12:02, Qi Zheng wrote:
->>> Hi Zi,
->>>
->>> On 2025/2/10 11:35, Zi Yan wrote:
->>>> On 7 Feb 2025, at 17:17, Matthew Wilcox wrote:
->>>>
->>>>> On Fri, Feb 07, 2025 at 04:29:36PM +0100, Christian Brauner wrote:
->>>>>> while true; do ./xfs.run.sh "generic/437"; done
->>>>>>
->>>>>> allows me to reproduce this fairly quickly.
->>>>>
->>>>> on holiday, back monday
->>>>
->>>> git bisect points to commit
->>>> 4817f70c25b6 ("x86: select ARCH_SUPPORTS_PT_RECLAIM if X86_64").
->>>> Qi is cc'd.
->>>>
->>>> After deselect PT_RECLAIM on v6.14-rc1, the issue is gone.
->>>> At least, no splat after running for more than 300s,
->>>> whereas the splat is usually triggered after ~20s with
->>>> PT_RECLAIM set.
->>>
->>> The PT_RECLAIM mainly made the following two changes:
->>>
->>> 1) try to reclaim page table pages during madvise(MADV_DONTNEED)
->>> 2) Unconditionally select MMU_GATHER_RCU_TABLE_FREE
->>>
->>> Will ./xfs.run.sh "generic/437" perform the madvise(MADV_DONTNEED)?
->>>
->>> Anyway, I will try to reproduce it locally and troubleshoot it.
+>>   1-groups     1.00 [ -0.00]( 7.19)                0.95 [  4.90](12.39)
+>>   2-groups     1.00 [ -0.00]( 3.54)                1.02 [ -1.92]( 6.55)
+>>   4-groups     1.00 [ -0.00]( 2.78)                1.01 [ -0.85]( 2.18)
+>>   8-groups     1.00 [ -0.00]( 1.04)                0.99 [  0.63]( 0.77)
+>> 16-groups     1.00 [ -0.00]( 1.02)                1.00 [ -0.26]( 0.98)
 >>
->> I reproduced it locally and it was indeed caused by PT_RECLAIM.
->>
->> The root cause is that the pte lock may be released midway in
->> zap_pte_range() and then retried. In this case, the originally none pte
->> entry may be refilled with physical pages.
->>
->> So we should recheck all pte entries in this case:
->>
->> diff --git a/mm/memory.c b/mm/memory.c
->> index a8196ae72e9ae..ca1b133a288b5 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -1721,7 +1721,7 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
->>          pmd_t pmdval;
->>          unsigned long start = addr;
->>          bool can_reclaim_pt = reclaim_pt_is_enabled(start, end, details);
->> -       bool direct_reclaim = false;
->> +       bool direct_reclaim = true;
->>          int nr;
->>
->>   retry:
->> @@ -1736,8 +1736,10 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
->>          do {
->>                  bool any_skipped = false;
->>
->> -               if (need_resched())
->> +               if (need_resched()) {
->> +                       direct_reclaim = false;
->>                          break;
->> +               }
->>
->>                  nr = do_zap_pte_range(tlb, vma, pte, addr, end, details, rss,
->>                                        &force_flush, &force_break, &any_skipped);
->> @@ -1745,11 +1747,12 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
->>                          can_reclaim_pt = false;
->>                  if (unlikely(force_break)) {
->>                          addr += nr * PAGE_SIZE;
->> +                       direct_reclaim = false;
->>                          break;
->>                  }
->>          } while (pte += nr, addr += PAGE_SIZE * nr, addr != end);
->>
->> -       if (can_reclaim_pt && addr == end)
->> +       if (can_reclaim_pt && direct_reclaim && addr == end)
->>                  direct_reclaim = try_get_and_clear_pmd(mm, pmd, &pmdval);
->>
->>          add_mm_rss_vec(mm, rss);
->>
->> I tested the above code and no bugs were reported for a while. Does it
->> work for you?
+>> I don't see any regression / improvements from a performance standpoint
 > 
-> It also fixed the issue I see on xfs as well.
+> Yes, this patch shouldn't make any difference performance-wise, at least
+> in this case. Although I was thinking the same thing when I sent "pipe_read:
+> don't wake up the writer if the pipe is still full" ;)
+> 
+>> Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> 
+> Thanks! Please see v2, I've included you tag.
 
-Got it. And my local test reported no more issues overnight.
+Thank you. I can confirm it is same as the variant I tested.
 
 > 
-> Tested-by: Zi Yan <ziy@nvidia.com>
+> Any chance you can also test the patch below?
+> 
+> To me it looks like a cleanup which makes the "merge small writes" logic
+> more understandable. And note that "page-align the rest of the writes"
+> doesn't work anyway if "total_len & (PAGE_SIZE-1)" can't fit in the last
+> buffer.
+> 
+> However, in this particular case with DATASIZE=100 this patch can increase
+> the number of copy_page_from_iter()'s in pipe_write(). And with this change
+> receiver() can certainly get the short reads, so this can increase the
+> number of sys_read() calls.
+> 
+> So I am just curious if this change can cause any noticeable regression on
+> your machine.
 
-Thanks! Will send a formal fix patch.
+For the sake of science:
+
+==================================================================
+Test          : sched-messaging
+Units         : Normalized time in seconds
+Interpretation: Lower is better
+Statistic     : AMean
+==================================================================
+Case:         baseline[pct imp](CV)  merge_writes[pct imp](CV)
+  1-groups     1.00 [ -0.00](12.39)     1.08 [ -7.62](11.73)
+  2-groups     1.00 [ -0.00]( 6.55)     0.97 [  2.52]( 3.01)
+  4-groups     1.00 [ -0.00]( 2.18)     1.00 [  0.42]( 1.97)
+  8-groups     1.00 [ -0.00]( 0.77)     1.03 [ -3.35]( 5.07)
+16-groups     1.00 [ -0.00]( 0.98)     1.01 [ -1.37]( 2.20)
+
+I see some improvements up until 4 groups (160 tasks) but beyond that it
+goes into a slight regression territory but the variance is large to
+draw any conclusions.
+
+Science experiment concluded.
 
 > 
-> --
-> Best Regards,
-> Yan, Zi
+> Thank you!
+> 
+> Oleg.
+> 
+> --- a/fs/pipe.c
+> +++ b/fs/pipe.c
+> @@ -459,16 +459,16 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
+>   	was_empty = pipe_empty(head, pipe->tail);
+>   	chars = total_len & (PAGE_SIZE-1);
+>   	if (chars && !was_empty) {
+> -		unsigned int mask = pipe->ring_size - 1;
+> -		struct pipe_buffer *buf = &pipe->bufs[(head - 1) & mask];
+> +		struct pipe_buffer *buf = pipe_buf(pipe, head - 1);
+>   		int offset = buf->offset + buf->len;
+> +		int avail = PAGE_SIZE - offset;
+>   
+> -		if ((buf->flags & PIPE_BUF_FLAG_CAN_MERGE) &&
+> -		    offset + chars <= PAGE_SIZE) {
+> +		if (avail && (buf->flags & PIPE_BUF_FLAG_CAN_MERGE)) {
+>   			ret = pipe_buf_confirm(pipe, buf);
+>   			if (ret)
+>   				goto out;
+>   
+> +			chars = min_t(ssize_t, chars, avail);
+>   			ret = copy_page_from_iter(buf->page, offset, chars, from);
+>   			if (unlikely(ret < chars)) {
+>   				ret = -EFAULT;
+> 
+
+-- 
+Thanks and Regards,
+Prateek
+
 
