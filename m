@@ -1,84 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-41601-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BAC6A329F3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2025 16:28:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B14FA32AE9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2025 16:58:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B6923A5438
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2025 15:27:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 830EF188EA54
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2025 15:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6D2211A39;
-	Wed, 12 Feb 2025 15:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6E22580C8;
+	Wed, 12 Feb 2025 15:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="laZvZrLv"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="qZFm/zSV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14A521170B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Feb 2025 15:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5164E211A2C;
+	Wed, 12 Feb 2025 15:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739374074; cv=none; b=LMCYrMXp6XkyJcOzmPephHFkPeCrrvYY4IS6InLzdbHY5XLql0ViN8/+gO8a/6ZiZb/VkP5cItFDv5Dy4RtdQvd6YfiX6aTn+KPWfd3XwPWTJnzxrHXN0ZMY6IlrFcP6Gnz7DfIFOSdfS4VwX3AJOKYLkprHXizbD6MzdE/UXTc=
+	t=1739375498; cv=none; b=gTZhEopTy1znjfLT+Sa6VNL29Rj5FI5FMx/XIDslzKWNj86rbYbQf3QrSkuQCcLpA8EQ33hiyk9/VZbbrudVniTtj9MkEaU9etn3AyAr5iMeRPJZYYdPHk6cgRevV0AznUvePCrfj890o1xJ6+dHBI/V5ay/U4/1+aZuFZn0/8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739374074; c=relaxed/simple;
-	bh=nGOHHKMn8GtXJDicwnkL8tmz9VcKp2LxDT7FzaficDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GO/gI5SdOXLdQt09kwMHwa06n1F0QlqjG1gecxaLLn+wzcWC4jbmkfPlwRhIqjJWTEtC2wR6DV/LnxLJLSOwOTCGmG1pp8Bh6Gqf+eQzXFSAdhrS5owuEAV9amx5fm72v8dyNTzvmztDga4NVvjm5RYm67Rnd8bwn0Mq0stx5oM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=laZvZrLv; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ab7c6fc35b3so576192366b.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Feb 2025 07:27:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739374070; x=1739978870; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gIK/hsLjBmZb4Q7phf+8q1FhCeVWqfbKwX81hLs6leU=;
-        b=laZvZrLvajbe2NVmhCSHQkDLWb84Kp2eSfV0E9fjiZ0hDzBWt7T15XZM3Anp8FpC/8
-         75KKTUx5rQ3P2ObiIGcxyImsSbpRd4t3LlCiZQ6QAMMppDnnupbyWUWqPIlM4gAvNxOo
-         diABh2kPy4TFr9xlDiW+2LzDex9uU5LlDOCqpJMgQTrdLcaQfPm6UVkfXgessfNkr6no
-         mUtquWoWyCCjxbWCxWy09TOjRzvRDughZg6V7GVyC7oHFTutcWYAIpd+bxu63mXmIxO3
-         Axi6Cplv2dqrfgjLH9WWGIuSNTi4ujywvZhQSOoZ/rAtOUVMToDtZqP9Hs302RaWrNXw
-         ZvsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739374070; x=1739978870;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gIK/hsLjBmZb4Q7phf+8q1FhCeVWqfbKwX81hLs6leU=;
-        b=UAA8Hsv2zzrFADWe6VLr2fs/QrQCO0viDceMzL/wsrzxMA9eUs65RhN6PmXWeqdkbz
-         3lv6XbpiTX+U5NkHdwvhFpzRdWjJRiwoyhq65iA3iq0bNfU7+KnsR4gAJwN2faTiyLj2
-         C6gBhcvB9L+h2Lp2Ph1HoAnQpJFvUOz1B/57D8P3kIOVJPrSWFyl8JhhzV+ulBs+pZmv
-         CP2ZiZAMssVqRS6kcqmX8ZCDMUmERKwrHSTFKuw/uZ8Of5PNVBjca8gKKQrTS4EDniMO
-         CNEQa9/xNUOxJLqXZ+1tlrauA/X6OR0WC+hubnHksjNeknvtFUHQvNXvfqUaBA7PP17S
-         v32w==
-X-Forwarded-Encrypted: i=1; AJvYcCU27320vVsHJupgHZi58NAskJPFFnKKdyq2Lo0bIbGtv+ubjk6QJZBHVkk5BAYUY8FKADnmmWm3kmYWkE+m@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGVE9D5ln24wAA11ttpgLyWto7zKtKKsq5kvsRG1J3cP1ab5wg
-	VU0on2befh0smm400K0Cu9E3O6sLQhYY5VpWziIXeAgSJI1WyU0/bF7EBJXoYr0=
-X-Gm-Gg: ASbGncuAUVcOYWZEEreG1Goh9yn8ytPWLOcpztZknpYXVtISWyiOUH9gZ3i5HS5HhVZ
-	DbXzUT7snvvefx/x+lqe1PmLT4vbzflrLKOiKow6Hi7BosGRzLmrzO6fr4IWLpYXaqJW7+3DsrN
-	RUPsgtenaxsjApF0JWDRC371mwj6FYqs4v1Uzn9Z7UWxXlV1XdMO8MjrRQubeC/sdNcfUuynSFn
-	VnLkYA2JQkMDIgcceMkZZGBpVqCy61SOON2/4TNYOhHC8GC5Bu4nJlcr4J5pr56ILh0kPc+aRwS
-	kcLfItqUF82nEfuMtzjW
-X-Google-Smtp-Source: AGHT+IFpL8Nw1g0cPCijD/OhpU2DBTaHM0/BqrJs7pa0K+2D+M9iqhuvdq5hwJqMDWlN3ZppYMHMIA==
-X-Received: by 2002:a17:906:dc91:b0:ab7:eeae:b23b with SMTP id a640c23a62f3a-ab7f354ed67mr381322466b.0.1739374070037;
-        Wed, 12 Feb 2025 07:27:50 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ab79d9ced43sm967079866b.78.2025.02.12.07.27.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 07:27:49 -0800 (PST)
-Date: Wed, 12 Feb 2025 18:27:46 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dan Williams <dan.j.williams@intel.com>
+	s=arc-20240116; t=1739375498; c=relaxed/simple;
+	bh=3Elp7Du8dvj8VL6H/WKoQqrGeu2o20YDyZQHxgN5FAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Btzewv/N8it+QaAl+dPLtHTnnefNtWkLTOBQeCjFJM5BWh4/yeMaAn+jjcXqfJYvjcYm/BsT8A2em1zcusgbHhhbSpU3BB/besD+xjzxXHkK4DlQHP0Y4TTGSqn/zliv7CJjEaUUff01IunFdcfo2NhYrt1cQ7JwX+xL0OZlZTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=qZFm/zSV; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ZJ8yWD/bsXA52HjsSAj+1eQUzVgGh8hI50BViS2oWb8=; b=qZFm/zSVGEGD4sJc6jQwefzOiw
+	dxo5mq4gwYYgScpNb5/A93EBCeN6ENM6sHDw4wz/EsllDTwptIHrrC4t4FKgpFn1g0zChWkzuzA8Z
+	nKqdWL3ZiZZH4Wd7BsELqNsvq3o/YuwZfDreAZac/YLCjFtykAdvH+7wCeVKhpQJuuXASUTmujekO
+	K//FGuZOrboUKbj+u1ECwaDEfAiXNiZ6BAuWJTRrWWDHVB63OuwD1HSBWoW/y/1lpjj82sQNULS8k
+	M6BqRAXX80eYANdwHU4iyR3qs70mWHvZE2zN03vEgiKrRQBYN/pMPI8orlb4o9Mm/TAj4nUwMF5Ht
+	md+/f6Jw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tiF1Q-0000000Bp8E-2B5g;
+	Wed, 12 Feb 2025 15:51:32 +0000
+Date: Wed, 12 Feb 2025 15:51:32 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neilb@suse.de>
 Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] fs/dax: Remove unnecessary check in dax_break_layout_final()
-Message-ID: <ddd61469-637c-4a1f-a024-141574fd76a8@stanley.mountain>
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/19] VFS: introduce lookup_and_lock() and friends
+Message-ID: <20250212155132.GQ1977892@ZenIV>
+References: <>
+ <20250208231819.GR1977892@ZenIV>
+ <173933773664.22054.1727909798811618895@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -87,31 +65,64 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <173933773664.22054.1727909798811618895@noble.neil.brown.name>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-The "page" pointer is always NULL at this point.  Adding a check is
-a bit confusing.  Delete it.
+On Wed, Feb 12, 2025 at 04:22:16PM +1100, NeilBrown wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- fs/dax.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> lookup_for_removal() etc would only be temporarily needed.  Eventually
+> (I hope) we would get to a place where all filesystems support all
+> operations with only a shared lock.  When we get there,
+> lookup_for_remove() and lookup_for_create() would be identical again.
+> 
+> And the difference wouldn't be that one takes a shared lock and the
+> other takes an exclusive lock.  It would be that one takes a shared or
+> exclusive lock based on flag X stored somewhere (inode, inode_operations,
+> ...) while the other takes a shared or exclusive lock based on flag Y.
+> 
+> It would be nice to be able to accelerate that and push the locking down
+> into the filesystems call at once as Linus suggested last time:
+> 
+> https://lore.kernel.org/all/CAHk-=whz69y=98udgGB5ujH6bapYuapwfHS2esWaFrKEoi9-Ow@mail.gmail.com/
+> 
+> That would require either adding a new rwsem to each inode, possibly in
+> the filesystem-private part of the inode, or changing VFS to not lock
+> the inode at all.  The first would be unwelcome by fs developers I
+> expect, the second would be a serious challenge.  I started thinking
+> about and quickly decided I had enough challenges already.
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 9e4940a0b286..21a743996f90 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -987,8 +987,7 @@ void dax_break_layout_final(struct inode *inode)
- 		wait_page_idle_uninterruptible(page, inode);
- 	} while (true);
- 
--	if (!page)
--		dax_delete_mapping_range(inode->i_mapping, 0, LLONG_MAX);
-+	dax_delete_mapping_range(inode->i_mapping, 0, LLONG_MAX);
- }
- EXPORT_SYMBOL_GPL(dax_break_layout_final);
- 
--- 
-2.47.2
+I think it's the wrong way to go.
 
+Your "in-update" state does make sense, but it doesn't go far enough
+and it's not really about parallel anything - it's simply "this
+dentry is nailed down <here> with <this> name for now".
+
+And _that_ is really useful, provided that it's reliable.  What we
+need to avoid is d_drop()/d_rehash() windows, when that "operated
+upon" dentry ceases to be visible.
+
+Currently we can do that, provided that parent is held exclusive.
+Any lookup will hit dcache miss and proceed to lookup_slow()
+path, which will block on attempt to get the parent shared.
+
+As soon as you switch to holding parent shared, that pattern becomes
+a source of problems.
+
+And if we deal with that, there's not much reason to nest this
+dentry lock inside ->i_rwsem.  Then ->i_rwsem would become easy
+to push inside the methods.
+
+Right now the fundamental problem with your locking is that you
+get dentry locks sandwiched between ->i_rwsem on parents and that
+on children.  We can try to be clever with how we acquire them
+(have ->d_parent rechecked before going to sleep, etc.), but
+that's rather brittle.
+
+_IF_ we push them outside of ->i_rwsem, the role of ->i_rwsem
+would shrink to protecting (1) the directory internal representation,
+(2) emptiness checks and (3) link counts.
+
+What goes away is "we are holding it exclusive, so anything that
+comes here with dcache miss won't get around to doing anything
+until we unlock".
 
