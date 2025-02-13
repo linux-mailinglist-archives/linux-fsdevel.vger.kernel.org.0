@@ -1,153 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-41644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8904EA33FE9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 14:08:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3444CA34028
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 14:20:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EED251882106
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 13:08:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26AD73A934C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 13:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05A823F41B;
-	Thu, 13 Feb 2025 13:08:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C660227EA7;
+	Thu, 13 Feb 2025 13:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gV6dwiN0"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="T8BRTuYK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A508823F400;
-	Thu, 13 Feb 2025 13:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EFE23F420;
+	Thu, 13 Feb 2025 13:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739452101; cv=none; b=M/8ML20uDPd0YD2SjKPZvVg2MmXB+Wj0ZvYzKdZkOPUorwXcm9x6FVFpXsQe90EQK//r+dUiQW/NcU5Xco+EGOjwPcjZ24FAbR1Fg2L2w8Mh2hJ3OTb0Z5bU3COc32XiF8o+R27+W+M3ogcFDDFeEGzyDm3XJWSfPD85dx8IaCU=
+	t=1739452818; cv=none; b=CPt2b5QGB89UmH9SE0/Pbyri41iUoraFOqK94JFlE5yqrmkWXBMiR/6gvQ3pEmiexS8U1VLE7mxb1ZKc10xHzJ06uFN0CyxQmzaIvn6/MUu/DEMv22JLIy8QEtd2CPOh6RutcgX3NWbPxIe4B3KUFKDdrI5msIbpedJRdFi2VOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739452101; c=relaxed/simple;
-	bh=bSk0Hj/FyM593T3rKpHDAYfymSX6ObFE0W2NcT1pn+U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nDsNEteYrh+B5+0jEsjviTZqxF5f7MaSfh2nsozI7wYjgoJ+x5ot0Yjh83RWuXyL1YdnbepQGhp+i5OuMNzhUhm7IucbuYcW7+f8tQcvkalE7Uz+L+3xdZ+IahCC5ayjN0cgWjGgVGJqO4xrPxNekXAO/0vtZP1atho7SaQmRiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gV6dwiN0; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ab7d58aa674so132367766b.0;
-        Thu, 13 Feb 2025 05:08:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739452098; x=1740056898; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KUTp6AuhiLhqO2Q9yLQzvCOyNBqKEFt3i2WwkPPjzIU=;
-        b=gV6dwiN0F0jePTT7swIx91ZnJ8fXLGEfD6P4we7ZuDetNS9QaIJQtk3tEc+/8PyQDO
-         2P7SKEc3POAnB2XkgNDvqKwPYMf5HZ09tlylREp0lw+YmqraiT7bWwOo8pmafexgdjle
-         NP15ui/cOI5McxxR2xH3J8GTIROZbo/YL/x5CQS6ly/yKxU0f/tpuijxjO55z+rEb4Rf
-         Bi2oggs27okktBiM8WkHP9rH+0TKJU92mjHcgrqxEIs/8plzq3yUM6cIU7XbwZkI7vYJ
-         s4OG1WV4Z+XjBBCD7JeyxJTOt6bE8XtBHHrV1UufvVNjxuKygTy3BW1x3PidoowBFc8c
-         OhDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739452098; x=1740056898;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KUTp6AuhiLhqO2Q9yLQzvCOyNBqKEFt3i2WwkPPjzIU=;
-        b=c2dHqdvxsRFn+ZMY+NhFj1E3WGhbPVqjKncscxcdXO7vWxh4u/9nzO8vh7W3VNp7Dd
-         BOx2o1teRqhwt8jxLs/EafFICM8LT2zvtbrwwth7Q0AuvzGId4iyHdKl6rI55FaykDjz
-         V/9fDrKda4xHwCSNuUqZGI8vNSjzI/E0DTx5tMjMhmtVdm8T0d6ZpVItTR9ykMbtaAeo
-         cF2jM9dgAZUcBUW5VY/D8qXdz29sUqIciA/TXBm2jbzxXN1DoR80u6ZlQgAmkoliZB0I
-         3oWJkeqQKjFowx3HB4qEiTms3HGIoxryeAQNU9joa7bwsvYJKh6OKbLJ9XcKiq9AeFWY
-         fSNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGFBM+8K3KgaSmLAykYNJ2r4rhceQ7rM+GU0q8aDrQFzoZlBTw+RsDxpQoUsT2tfSmClLpH5ECn3A3VtJPt28vSLs=@vger.kernel.org, AJvYcCVTZwm2gYn+HlKEvUO/jA4TypvhH6C8GcuADkeNxfWroljF38xzDLLSj+fQjEsvn75UmZ2nMRe/FQ==@vger.kernel.org, AJvYcCWOyE+fHYbsWC8nAaxrkV8Yp7TBTIktSOCJtqnKk93wEcl79DZ9fKaxvcML8hhVdeb5I49GGrWoSZ00BAjg@vger.kernel.org, AJvYcCWczGHN43tB0dIqhtHAzt/3yUxbp80o+skJN76CyxlojyO4HqfSGs33J/f3hginfLVGoFyb29TZ2DiYLH+FBa0elK7kVewV@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO5/dSgORyQziGUfLpfHK7rXIIS1wKwx4gNdSAnWTthJS7CSSG
-	Y4XW8X/HXwmKTWV1BPRGLpBVSJNiu7fY8mF6o0rJ9yq+krAnfIYlbSHuZ+9VIp2pG1JT+ygeZg3
-	OW55+TqSSPO6mXKb+ha3xsTLV0hY=
-X-Gm-Gg: ASbGncuSHKRln7mWtzOKXT83pJBlx6xjpt67ZRTrellRpgqV+27Gi6qtT1ei5hwF/jk
-	W4Id4KWBrqqTr9K/AHuhb0qhzultrY3xh5nmBgi3leR5PQ1b9+0N+bQ+eCcATbH22h9hn3avf
-X-Google-Smtp-Source: AGHT+IEIALstVYu3cDxkEPtjAZqx9bJqNL+AJl9CVv+xsffpsTYOrZGLAzrGmbsNN1f1CV+Xf2LjM/0osE2ACK25KOU=
-X-Received: by 2002:a17:907:720d:b0:ab7:86af:9e19 with SMTP id
- a640c23a62f3a-ab7f34af3a5mr637030066b.43.1739452097409; Thu, 13 Feb 2025
- 05:08:17 -0800 (PST)
+	s=arc-20240116; t=1739452818; c=relaxed/simple;
+	bh=bFjz/8MKj1nHjIQ7WsIdLhSA+XQX+erWp7JBMI2ycZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PSdL1WlRf6Ic9N7wKAPU+y0pcHIXDA3qERRSAqbJHVm43oX9sr+JEGS2HlM8y9t0geCiQJtDPXXvIaRNQmmUWP1PruV2/G97ltqI2Z1Je0PezLl/r4pXD0l2omh8Ve9yWJS3WPA+GWi4MrG63vXND9/W4gvE04oIZoplqcc3JPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=T8BRTuYK; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=O9/j/ctUg2mHVWHwpXKsXKlmyr6GshoziQPuOAsorqo=; b=T8BRTuYKDUOyNIb7Y61SzZJr9y
+	+W6P2RVi4rPJj6Jb9eaTqDm/FQmL44WBwRa6LZlFN3O/RKGwkQWsdtI8oyRVdToEf6uafVm5oT/Zp
+	bAP9okkmPyxB358L/vrDpsWpwlQ1QVaeREGsRNAwghQRmIvWmp045TpPbCl2mi+iXzXib/tOcorQ/
+	/54r9ZYktFFQo9x1YSuO70JxY4CpuaVX6y1YLiqGfPlv3LUPs4ROiqocTBOd3SxwmiA41l6/0GCQe
+	baqurdP4ybwvi7T4GF7PJX7LeGo+tbk/ofQyrCZhusSjobjUUwram6AfyXuPEIiz0RuXNm9IdZcIb
+	bv9+0S1A==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tiZ8Q-0000000Cl36-1T6M;
+	Thu, 13 Feb 2025 13:20:06 +0000
+Date: Thu, 13 Feb 2025 13:20:06 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Jinliang Zheng <alexjlzheng@gmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, alexjlzheng@tencent.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: remove useless d_unhashed() retry in
+ d_alloc_parallel()
+Message-ID: <20250213132006.GV1977892@ZenIV>
+References: <20250213122137.11830-1-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250129165803.72138-1-mszeredi@redhat.com> <20250129165803.72138-3-mszeredi@redhat.com>
- <7fjcocufagvqgytwiqvbcehovmehgwytz67jv76327c52jrz2y@5re5g57otcws> <CAJfpegs2qoZHG4P+WiopDo92MxHQ_0QrZi0qMz7niannGFiPDQ@mail.gmail.com>
-In-Reply-To: <CAJfpegs2qoZHG4P+WiopDo92MxHQ_0QrZi0qMz7niannGFiPDQ@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 13 Feb 2025 14:08:05 +0100
-X-Gm-Features: AWEUYZk768_4685HNZwQTbBM11mfG4zvZDgHs1ea8YV4kaLv6t1_0XExpCDgqrI
-Message-ID: <CAOQ4uxjdMeMq9OCkoJVH1GTgUQHN2-03B-T531eCdKmw0kc=rA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] fanotify: notify on mount attach and detach
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jan Kara <jack@suse.cz>, Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, Karel Zak <kzak@redhat.com>, 
-	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux-refpolicy@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213122137.11830-1-alexjlzheng@tencent.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, Feb 13, 2025 at 1:00=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
->
-> On Tue, 11 Feb 2025 at 16:50, Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Wed 29-01-25 17:58:00, Miklos Szeredi wrote:
->
-> > >       fid_mode =3D FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
-> > > -     if (mask & ~(FANOTIFY_FD_EVENTS|FANOTIFY_EVENT_FLAGS) &&
-> > > +     if (mask & ~(FANOTIFY_FD_EVENTS|FANOTIFY_MOUNT_EVENTS|FANOTIFY_=
-EVENT_FLAGS) &&
-> >
-> > I understand why you need this but the condition is really hard to
-> > understand now and the comment above it becomes out of date. Perhaps I'=
-d
-> > move this and the following two checks for FAN_RENAME and
-> > FANOTIFY_PRE_CONTENT_EVENTS into !FAN_GROUP_FLAG(group, FAN_REPORT_MNT)
-> > branch to make things more obvious?
->
-> Okay.  git diff -w below.
->
-> Thanks,
-> Miklos
->
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -1936,6 +1936,8 @@ static int do_fanotify_mark(int fanotify_fd,
-> unsigned int flags, __u64 mask,
->              mark_type !=3D FAN_MARK_INODE)
->                 return -EINVAL;
->
-> +       /* The following checks are not relevant to mount events */
-> +       if (!FAN_GROUP_FLAG(group, FAN_REPORT_MNT)) {
+On Thu, Feb 13, 2025 at 08:21:37PM +0800, Jinliang Zheng wrote:
+> After commit 45f78b0a2743 ("fs/dcache: Move the wakeup from
+> __d_lookup_done() to the caller."), we will only wake up
+> d_wait_lookup() after adding dentry to dentry_hashtable.
 
-Sorry for nit picking, but you already have this !FAN_REPORT_MNT
-branch above:
+Not true.  d_lookup_done() might be called without having
+*ever* hashed the sucker.
 
-+       /* Only report mount events on mnt namespace */
-+       if (FAN_GROUP_FLAG(group, FAN_REPORT_MNT)) {
-+               if (mask & ~FANOTIFY_MOUNT_EVENTS)
-+                       return -EINVAL;
-...
-+       } else {
-+               if (mask & FANOTIFY_MOUNT_EVENTS)
+Just think for a moment - what, for example, should happen
+if ->lookup() fails?  Would you have d_alloc_parallel()
+coming during that ->lookup() (while dentry is in in-lookup
+hash) hang forever?
 
-Which can be easily moved down here and then we get in one place:
-
-if (FAN_REPORT_MNT) {
-    /* event rules for FAN_REPORT_MNT */
-} else {
-    /* event rules for !FAN_REPORT_MNT */
-}
-
-TBH, with the check for (mask & ~FANOTIFY_MOUNT_EVENTS)
-I personally wouldn't mind leaving checks for FAN_RENAME and
- FANOTIFY_PRE_CONTENT_EVENTS outside of the else branch,
-but I don't have a strong objection to including them in the else branch.
-
-Thanks,
-Amir.
+NAK.
 
