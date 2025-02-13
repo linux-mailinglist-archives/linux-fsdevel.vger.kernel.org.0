@@ -1,60 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-41622-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41623-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4500DA33650
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 04:44:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA632A33655
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 04:44:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3CC91883E9E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 03:44:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E866167E14
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 03:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF222054E7;
-	Thu, 13 Feb 2025 03:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39BF205E3F;
+	Thu, 13 Feb 2025 03:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="iNKR/mPT"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="X63yJOHz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2051.outbound.protection.outlook.com [40.107.243.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1D42046A0;
-	Thu, 13 Feb 2025 03:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C733204F91;
+	Thu, 13 Feb 2025 03:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.51
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739418250; cv=fail; b=pIkMnWfJtcln/EIceoIp3B+BLfxSicGX3Cf+pfXJ74VexKGFXXpNpG0jWKZq+JZ6i0UJYiDDJOkg4HxBwoQ17TliPJ5eeagiS4uNgjgzac33CgV2lw/H0A46/tLaNLtQRBFKEWo1+7BUmmBrq6wna08qWy1QJuf9XSfYsXOugto=
+	t=1739418252; cv=fail; b=TTmhbOFfxdOS2NBCQWn08G4AY0Q7n8pcJOj5VPmkWNlTwDuicPX+8AhZn58b2s2UE0j47lov4X8Ag6+QjSBukxPjgWe39rFnm8wXYpFmKeXALDGqFwHroexyldx5OfWTuwueHPs64iDFun3UuJnqF5JpEvTpv8mmEH47s/6BLUs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739418250; c=relaxed/simple;
-	bh=ZhXrQrsnZMhTKpSb6NwG81Dd729JZhO63Qy/8V4xTDU=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=XfA8hwX4s1H7F3HI2ydmzkp7ua6jkF4aI3bR68OdlkebI2rIiQPF5Tlqp57xQZ255ZZzTZweptqYyKvgFqyKpczv+LZMuMuZs+37zmtVs9rLoFVmbpOO3fEQtlCqfhpUZR0yG/CC1YnTpfY211/g6U/6/hurcPyCgYG41cM3Mb0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=iNKR/mPT; arc=fail smtp.client-ip=40.107.243.51
+	s=arc-20240116; t=1739418252; c=relaxed/simple;
+	bh=7hq7HXRvRTRUjEhMPGre7EXJiiSdpbqfqVHgLWE13ck=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aXDgZF9NX6yyvXAcUk+sw7gcTMlGeZks7I2scEi229e0xgxhKdn8Lxt0pbc9fc/I8uHukU8r1DlRIRDt9CDh0NjHN8erC4ZVRcFRjxG1WLkyXD/OfrmBihhAsUN0xDyPk0fdr8v3drWLTtMborEanPCu9KIC9EG7R+UHJcOC+Y0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=X63yJOHz; arc=fail smtp.client-ip=40.107.243.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eOfDiZafDv8S1gudP5Ky5/gU+UT/RojfjkvOLerVVuTlPh0F44N+2k+Mnww/hknRHJs0A5Xdgwm2qlfTCoufg1lWCGS2nhvI2cnIkQ4GsSz/lIBdBvlUnS3yB+FG2U9oYhjcdISjI+dCsfeBPWBJQLLYDtiavX5o6NR8eiWbg5TgWUxdFdaOAXiyextXRwbVqYU96+cKOFqreDaegrh/Bm58OqaCSGPIiGDfMPvsyfjXTLS24v+KX7+FKkpHDRyNK92WVoIOItFkFOb6dbiddNuXwEjjuo7tnB18l0H+qH9fKcHrgSddFWPOqYW0wMvGGwLFdrvqxfTUdwYCOQs1ZA==
+ b=DnDzcwYZFgHZdgkCu8OUbAu7ZMCfOPKmgpESS/wkws81zragX3PHd4EMzCv4ngvnYtubOh0ZP6ZHNhJTijGebWDsGoYHj2+WwJhqru7cg5NLGqNVHQc5CNKYq6ocWNeaDHd11Lx5lQGnXbc67M5PlRJSJiOuhkQ2Z5IienhV22q+BRzWfGalsWptO/97+EuvM6om+t3lg0NVQXfSUAfWZZ4rjNYZWdTtVHPOGHSjSDF/pEuIGwnOQFlCo+swDGZguU3AflvDeNTlcTNylVdnI9SY3gp5N5PcHpy4VRUTAR/QO1JNg+T9+OzSZV4gPM0N4os+wZksG5/VRhtL2IjaQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VInofvJmKEQrkuI9e0xkzHXnPkIrtJJSW7rPPx61bN0=;
- b=QLBeDE3kIhWLbbM65zBQ0gTwoFAoT0LzNOLDxKSw/oPKelj301MwF329rpZRn/MpX83By4iGSc88lGBqh8hbd0RiO5t18hErildoq4/uL6UrEJHfH+PDwOmuYbpI5NyoxGztOOtPVLYLb3skn7Bb5rlJ8jZ5+0tpmtOE89A7CnqTtxCYqmPQrHE7QsvVguU5pGiuAedmeF57C56GpUlf0Yr3ISbaAQnerUNJB/RT/tdJVwfrcP1sfkQaSnL2lxiyGAwWKCTssA83Ho8Q7BC10kRrF8po6VlQuD2/ZkwMabVhdej4RUzZhd+SfIJ7l72pw0/nYbQtuHoFycKfZPUsQQ==
+ bh=arKOQe462duZLGgRb8IwStyimqTscy81tSdsFMgbflI=;
+ b=dWjNbMxbquwjLsKnqNh2y5kkjUTHYPW90E22tlO0z4hZJlE9dRHmhLlP1D9XXZVnoaNTa/jXPC+7ezULhtvNzzFpYfRLvv+hWpfZ2bTjjd9aSojKGdSvnyo/mwGAcTk6wKo9r0sz29PLIoGbOfbHU/HYy9m+zbPmBksEJHEEQWdC+vt/oIixW0OHRiQ9TuWaempKjJChemz11NNlEAIuTsGjd06a5vZ/7QYlwUacoRnpJ2zW2SDdEYZuF4T9T0Oc/jPzGgoCF3xXIhgTgTTJyCKfnwNN1CTob7HxPbTqUyqXyRBsgx5Og5a6Xt0oMgpCTYzAvPQyDxhMceAJPDyp6w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VInofvJmKEQrkuI9e0xkzHXnPkIrtJJSW7rPPx61bN0=;
- b=iNKR/mPTtJZWSxifLOrjfipdvxJ9+iv7xt9qKlKNu8jgXgUGplSyf/AsCRf4LBEDHceDEoFRHwuXopvdDbQWPKSk+CDcdqKXvI8W7Tp1nj2BWgjtqHtwiFxtpoR1mrd7XiZlpjzUhmIN2lfA7gd93CSCaky1velH2rzOXNMr7d5r9kTJSVL9RPNJ1U+B4A01JRvrTjVf4TTEh93+1Jy4S4wc81GSiLDNieIWD6gQahTtv39cSC2OjhUF3gnqbmn+DELg75vgafKoVXViwNO4oedXOCLAg3AJGr1TDi1prM+jQyjbop8wZf6KnczqpQeVoCTMgjcpWyN3WWrOkfHrUg==
+ bh=arKOQe462duZLGgRb8IwStyimqTscy81tSdsFMgbflI=;
+ b=X63yJOHzrEafK8k5+NfGb2tcgfeikEiL1augvQ5Y4jpEwhzRsZP50xrv8bOE5U12f1Ls/l8yvlaK1HeqBz5DF809gaJvJr70l76FefJv8xEw0klJVpG/z9PhPXgjGFmEm6lQsrN6O/fQrfbQ9YHh4hRKxKak2GsAhSvI4rD/qyaStqa+Okn/AX8esr2p8PIYIsjCyzF2yUeTjI4qyGRPNFtiLJ3HMgNHu0g1kSw/uP1gkqJNSXZYoYmsDmE9XTN2jWPdKbnkMA2CcNsOe2m8dxE4+DUgE0UCHoklVYsNhiu0Xr5eKjqtpu7R+unm9b3P2CWO8eFM4eM/h4D34nEg/Q==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
  DM3PR12MB9434.namprd12.prod.outlook.com (2603:10b6:0:4b::18) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8422.12; Thu, 13 Feb 2025 03:44:05 +0000
+ 15.20.8422.12; Thu, 13 Feb 2025 03:44:07 +0000
 Received: from DS7PR12MB9473.namprd12.prod.outlook.com
  ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
  ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8445.013; Thu, 13 Feb 2025
- 03:44:05 +0000
+ 03:44:07 +0000
 From: Zi Yan <ziy@nvidia.com>
 To: Matthew Wilcox <willy@infradead.org>,
 	linux-mm@kvack.org,
@@ -66,14 +67,16 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Miaohe Lin <linmiaohe@huawei.com>,
 	linux-kernel@vger.kernel.org,
 	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH 0/2] Minimize xa_node allocation during xarry split
-Date: Wed, 12 Feb 2025 22:43:53 -0500
-Message-ID: <20250213034355.516610-1-ziy@nvidia.com>
+Subject: [PATCH 1/2] mm/filemap: use xas_try_split() in __filemap_add_folio().
+Date: Wed, 12 Feb 2025 22:43:54 -0500
+Message-ID: <20250213034355.516610-2-ziy@nvidia.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250213034355.516610-1-ziy@nvidia.com>
+References: <20250213034355.516610-1-ziy@nvidia.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: BN0PR07CA0001.namprd07.prod.outlook.com
- (2603:10b6:408:141::12) To DS7PR12MB9473.namprd12.prod.outlook.com
+X-ClientProxiedBy: BN0PR07CA0007.namprd07.prod.outlook.com
+ (2603:10b6:408:141::24) To DS7PR12MB9473.namprd12.prod.outlook.com
  (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -83,145 +86,258 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DM3PR12MB9434:EE_
-X-MS-Office365-Filtering-Correlation-Id: 14d754a9-c501-4bf2-fb23-08dd4be0aa20
+X-MS-Office365-Filtering-Correlation-Id: 4f726e5c-e83c-4600-6b4c-08dd4be0aaf7
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QtbocV5ztZV41GnzNQD6cZ3MWYn1v3LNy2SVLXK9w/Nwo6sJfdUSBYXpZsKg?=
- =?us-ascii?Q?aL+IQj38ZZjj4SelSjIvCZ2/hW7MsAvk6COQJBsU/bdp4fbCEiecAHq0C9Qm?=
- =?us-ascii?Q?jmyeWau3dmxoQRFTRwOaRAI27XRwLiSTOQec56xhw4CZolBpogxEcHDkFOWh?=
- =?us-ascii?Q?27NmSMOdNndJaVw5fHLXQcDTscQgR7SxU/NHE5o3pJwQrX30FsLH1ctzlcK5?=
- =?us-ascii?Q?UiWebo/PiepH8I85Ge1My6SOVx4we2mmy5TqxAXD1Yme4vejzfvSDvd/s5qz?=
- =?us-ascii?Q?PQbHzmQYbotZQKp9MUukzsNSOM2mVLGiL0XJpk8hK78J0wGQxCsdYaV3bvig?=
- =?us-ascii?Q?91jGh3oyUePJ9ZcozLgL1KxYjQpCWV6xg5uC4YW1B5ONrWbhstwXCQ0tYxrc?=
- =?us-ascii?Q?D3whRsimsr8wipBmllcyV5KPO93a/2NhjW8WMr+D20GL+0Ozvpc+8O4WGgbl?=
- =?us-ascii?Q?anFWeS5BG9JSutr1Kk1wNBFcFGwCgXsRAZ71gCGee0PkNC0fKBk3Fk75PBAV?=
- =?us-ascii?Q?JAbtB/7SQ++bq1Z7CC9w4OLc08jPIQAEamqOqSeLFAPSwmOZ6DGQNJ4GmyCE?=
- =?us-ascii?Q?V9Lr588YotVCJYvxkIpWbf4eaJQPiBxZ9x90AgTfcj29rVKxYEEnPGrzw28a?=
- =?us-ascii?Q?3ICQrLOpJtYawEZS6u5Yfs4DTKsrLgeq6oTbVsFXlTBaiC2mOo7g6d04T1en?=
- =?us-ascii?Q?z+0IgNa4z68GynB+4v8hUBdPbaeeKnTmoX8wYBQRV1L4dP/Gn1Nuo9EobF6m?=
- =?us-ascii?Q?Nq22BSodOq2JlNSXl/5fuysa4NckZ73f7wuuUTAKagQ1W8u0RNkuGNo2WoVl?=
- =?us-ascii?Q?QrcIoFbImCFbBIbjn/0tjsuMCMvUF/S7btgnzq5cPlcfrJh1IG34j3wAY/2m?=
- =?us-ascii?Q?9TjK6ppPKaUYZPOvfp3lvuWfQYQLwdw6ASOGXzNn6NKM0FcxEMMqgP2lm4ls?=
- =?us-ascii?Q?+6VLZjfJiVpf6ZCBTAsovUKmSFwzynAHey3Y9wzXgxD6+vAi8SL3YUetkfxJ?=
- =?us-ascii?Q?hsqoA7Grsnjn7YO679CurspX2Lhnth66hzNLvBQbA6NwX/j4zvwqJRcdR2q8?=
- =?us-ascii?Q?RWATQnWdbB3ImAzMcodzBHAnts3xxA7NMflxrFfSqRU1jbqJvGFtWE5PPCzb?=
- =?us-ascii?Q?QMQlbLo1iOAzixUzXyFQdXbtyrxybAyLx8RwvyybfX0pBPe+P8y54O1WFayR?=
- =?us-ascii?Q?VT2nKusAHzAWRh6tAdbDbwL0ESIFHdBePlYR7xfsQik8Cks/3SvzDn0eLej9?=
- =?us-ascii?Q?VM1EGUpsyoc/QoUssv2j1E6DAN8znpTUKtG9Obh3dHOsDpRVv0Wa4/vr7E/x?=
- =?us-ascii?Q?uMPmS5DOghAghxHetrY7A5xyBOe/5hLNu+/rfTbSXBKEf59t1awCBKlw8Ebk?=
- =?us-ascii?Q?kdudi0pAyWgk0DSFvpNnorQtEZUl?=
+	=?us-ascii?Q?JaNN4P14DDN9Ts/m3M7ieaSND9q+KihDDWGPx2xLfsQfqfxe3FM2lV/Llkms?=
+ =?us-ascii?Q?Ra35U4W/hT2jwYpbBWg9hwfCGTfnaCPM7jvUVFpeOL4YKvWKWmQfT3ZrD1YC?=
+ =?us-ascii?Q?1OWrZ9GrcqCItTl526TkNCqN5LHkgrK1Nd+Ep8PqitNM8Eg7xneucCrg6l8z?=
+ =?us-ascii?Q?kJcHhwXJAFs0A+v4VVps+8nMNHZaOO26hNWKcXUTYo0rovA1BDjCiN8C33vE?=
+ =?us-ascii?Q?hZd4C8y2vrJJHSOnKtUPaPHtx5qkhf5wHje07wKEixJ7hTqbJtcCVwlQjKPP?=
+ =?us-ascii?Q?ttWrOogj89uF7yGrvdv7f3Ykkl6jMHcMY7URFHhRNMnltQxGWeM7SkMRuYei?=
+ =?us-ascii?Q?MoZUUe/Ctba0IgVGlFvx3yhaQboF+PCvtKheF3sivDcDnn5R3kFhfh6o2Gs8?=
+ =?us-ascii?Q?lnde/2BwwMwewngt/3I0Mideb8fn153JcKznKphq4jixIEHxfTbqu6y8lPn/?=
+ =?us-ascii?Q?AlZyqR+O/fV8ayxXAUUzpbXd8D+BvkTKa/EK1eyQQ9FRMSI9Jfx8H7S0p5WG?=
+ =?us-ascii?Q?luTwWOG2LaL63T5vBWs+7b0CCj6+JP+vgD3MKqxq7wYmd8lICc7UE52U2FFz?=
+ =?us-ascii?Q?8XBdgIGdzyB2TBxn8mWLAbIrjvMDW2QTg6qT3zp8QWc5LjqFB9UIn+aNSz+1?=
+ =?us-ascii?Q?MF7Z06ttwjtdxnI4GZBrbMUcPEENt6PCmaciK4eT+JuACqha/GKliOm60Y8G?=
+ =?us-ascii?Q?8USKxPbWn/r3euzejFPkXbONPJWgNDeMze6gx+ZX1iCeuNc7F5DzIgeVcQZ5?=
+ =?us-ascii?Q?zPABHGU2mLegreZt/z2/wTRx39zlgMXxgw7u1sM7V0zDdz3qvwwrnyVWnTih?=
+ =?us-ascii?Q?Z4Y9qo5+CAUiLZt+oni22ITQm1gL6gt7bKZ+1eUXYTf6XzUTWc2ma4V3NqMP?=
+ =?us-ascii?Q?QF93HB2lL4hraLZKbyVC5ZlNAeeJohX1zhYm/4HqJVdfRMs7z4WSS3nxOOCu?=
+ =?us-ascii?Q?adOObbY3vTN5fCbhSc46eGXayQBZhQFT5BwyUsHUrlNm5P1mcUWG4oo5J1cZ?=
+ =?us-ascii?Q?LTo1d9+R9Ub7YAJus36P5ebArOsHb8OMXhjG8k7dMFuoL4MfYzOkZCcBXqGi?=
+ =?us-ascii?Q?pSY1+ql/3Zmf6MTebkwCV7pjhhlhLxImjReBiSDXshUCOBcf/eEci4VXhBa3?=
+ =?us-ascii?Q?FB/R/OPP+fGhB0vLOww4JNXWlDmbzcurMTOKMs86DMp3ue3eN8h9L4HzwCne?=
+ =?us-ascii?Q?5R7svenAafqdfZx5ZJ22IpFllpN7Mx4JXW48l0Hg3ODNIF9o8+6B6A88yvVU?=
+ =?us-ascii?Q?5QvAZhWWi7eGm0GTxduFMiOSituSgyQ2dCAiS2WC1z1I63el52ArEXe49Q1F?=
+ =?us-ascii?Q?acyp/7+4ZXJ7mVXQiptpUjnDKVnJPDI7v4sxYDHVYaage7tmeW9v3UEvFHsf?=
+ =?us-ascii?Q?hVI4qiYWJfbkAg5zybDG3z1zfWyd?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?IMGVceIC+9f8AjCLDzBzbsuzNivBQONrf4a3sfQksZBw8wYRi8lAJk/ZLqRV?=
- =?us-ascii?Q?pj0PG1Pt0NhbhpEx4qRR81YsiarfMRjHgPMa3nuXbhK7BGEwhp6ZGpjq4gF+?=
- =?us-ascii?Q?bWk1Kec/CBwq8ZX7R9BpWCRaS0FKh2/NmPdrI9VEj2Nfwg57B5XEN8PWUA2w?=
- =?us-ascii?Q?8DfNI/iBQftcJhs7i24bj7txuGijP6Hl/vBPh1RF1LopWq34B3x26AAUrPXR?=
- =?us-ascii?Q?zcfa3TYi0aXYj661ljzTWu4Pi5Kw4ZMItnyijH6IXkMeM0EsPyMabJAOFb2F?=
- =?us-ascii?Q?qbiIQG5T9oWQeS5QNHO5VMELsnpaZmkmXYrO+Zo8bQRVyeeJ4xyZlTnHX9GX?=
- =?us-ascii?Q?TT27FJIpnsUfrRvWBpZYsSL6L3Ow0WvsO6VfwukYp0i+PekEsOzKVbbqr+fw?=
- =?us-ascii?Q?2Wy5gia26f0Gm8DKK7lUnyO42EQ9bUYxa0Hiu8E0RO6CS9McA2WySY7xaghB?=
- =?us-ascii?Q?HXRs3bKCZws+pAz7uJHKrRuVf9DgGKLxIl6l550eMvfWfLvV1oncUegMKMxJ?=
- =?us-ascii?Q?jDiUhmEpv3qtaR+wb/sOHMs67JjkXRv5fUylI8K7FXcFNf1xxi+Op9bb955O?=
- =?us-ascii?Q?pHGqYjtv3Dm2nAsTuA/D9ajW9ZznT/QNnH1nBEiBmXkj7fJe0NqcVjjRYhJ1?=
- =?us-ascii?Q?RmVw4KvGggEHpKm2AuU5B0G11nlqRCBVOViqn04rF3F/HOk8c57oZCO3RbFl?=
- =?us-ascii?Q?ds29Z3/K2HqljBxSrFm8fzn0vO10DZ16+aQjXZHaZ7bS7yizxi5Lox6D2Xro?=
- =?us-ascii?Q?MP2ZWmTps6Eve6r4J4rS+kj1JSPpedQHIIAW3/n9TGbv0etFNjqg3QjQ3lOx?=
- =?us-ascii?Q?uYAksSdqKwS/3kPhYnvGPEIuIfkYwEyadjFQ6cPHXOYX2XIskzyfGwuu1/Dh?=
- =?us-ascii?Q?3WCFU5udfdXzRnaH7fxwlB337fXG1ILIFA2QN7DPFFvo8e9wktY5EYMZ5Gwm?=
- =?us-ascii?Q?hAua2lBD3+1vTF0Y0vTqXH6yRyr2edGLjZfLMKL6s/WUs5kthKyfeWoJBKtm?=
- =?us-ascii?Q?W7Z7f5oNLwTv9y3EYRAls1B8pFe56Fw/ooQTAYTyDwGWVzjMTvsWygNI4baz?=
- =?us-ascii?Q?zh35YYDDxVo6R3z72Dfx5sDOuvfY/95yOSOBR0qdacCQPFEmfaM5JokQNsX2?=
- =?us-ascii?Q?gMwc1BV37gs7CIU7RaQ8ZRJTst4Hs7vFujfmbjGCAWJkXrMxxMPDFXel955z?=
- =?us-ascii?Q?3UVDoCLQeaXopAmen1txdH5lnq3slcJrbZENOqF2sRPmhA+dJW1KBFpXQq38?=
- =?us-ascii?Q?WOssOjtz4oWP6t0NrfTa3/MJIshx6W9wOkJiWxi4zJc056to/FxylhAFmJIC?=
- =?us-ascii?Q?91Aq2mhLTJSiThZLZ8xmZTHCdYFPN5ufpzpAu9NCNSGak9QGcemrvgoMUgoL?=
- =?us-ascii?Q?mi3jef0GNfsMgIKTamQcDXonTtQ9Qo7aYHbFuz1RThvcKjjooc6A3k+zUZVC?=
- =?us-ascii?Q?XjOOWJPZzCZ3+xebbpy6FSka8GyBVG230zIuIxPmz9ETCezSmSY9siWO+0wS?=
- =?us-ascii?Q?HI8q4MYG01xJVCokAAM7ceBeNnt9iWNW9nwRbCjBN56yR2sC2Gylw4r27zP0?=
- =?us-ascii?Q?NAcsJtb0lzhQ5UY9KpJtGpPgznSEV/S7NuTh1MDo?=
+	=?us-ascii?Q?oXajlNh9K0jvbG8HNGCTudk5but1SJnjN/gajXcJ7faXTJCbdUDZ0FROgarJ?=
+ =?us-ascii?Q?k9Rj//axjghncrxoA3nuEaRWZV0zVoIdOnXk5EZVemYeEREUC+EYnTSxx4k/?=
+ =?us-ascii?Q?VJcycF75RE7396VC7LFy8RrAunPwk6f35h1XoTFJG32kMJ3aIK5CbvLD0tB9?=
+ =?us-ascii?Q?9nKyov+vxvD1YXlrjo93NJtASx0EdVSOkEt7BrmC+oJd4VBGdgFgomkPen1B?=
+ =?us-ascii?Q?2nwPLFhQJ4ULXWoso/wITKvEzDBTnCamiMtdwn1/2KY533zfmoURXlc1mJ/d?=
+ =?us-ascii?Q?TaZSBnAIOUTh6gg6CQLp1C0zgRD4RQGUJiez470ITDZs33KMlFUF5PzE1hJN?=
+ =?us-ascii?Q?eo6ovQVfCoCGZRudvLPlBr4XMJOXJKgs84B0+nLQEY0unDTg0RliQUpM4MQR?=
+ =?us-ascii?Q?73SugE4ksWYYack22a/Zj1RWFUYb5bQ8FGBD3vwEVvLOVIA3hZ4k3jIwwZac?=
+ =?us-ascii?Q?wtBZBz6mHwykwTNoqzNJIFZbv85etIWWQGt07e/xh7Oo55SSxesci/kOFOFr?=
+ =?us-ascii?Q?itL9QuTheTYOCE19WAS0JJgv5rghm7h1x4kDYOvjh1XNTDddTAXeVAUhm470?=
+ =?us-ascii?Q?dsyVNvkZUSm5t8i9YOMQyl75A2ERgva7cLY23EsF03IUHd08U9p0df/We54x?=
+ =?us-ascii?Q?8eLLLVhIg/mQ2zvNBoL8b3J+oIcwSv9yufvcJwYlumI64doMlt/pR9/9feRU?=
+ =?us-ascii?Q?5TabNcDb4NeQmJBCAHXjGdLH0ssswzImI6O+MHZFXXJw2+fSvzwwcPuOea4S?=
+ =?us-ascii?Q?LxDMARbvsaVYi3CLemWvQuzo5FH3dPgBLxrU/JihYMsmsPYar0H8rIjFMfO+?=
+ =?us-ascii?Q?+4jaDIQVTM0X0VSI4jNzqzV3cibMeImIdopePFecRyoEO1ePGV+pRrtlILBt?=
+ =?us-ascii?Q?nrE5VKNhEt92itBQ1r2PhN9HHhTRP68PhzXiaxHY7hV7dmvfaj/shLCE2cfx?=
+ =?us-ascii?Q?288vVESFb5SFTREjdOS3MIYmjiuST+m2x+9FKIBaXqG1EmpIxivT+bblwtFu?=
+ =?us-ascii?Q?S7Rs30HUlp6R1jKXX2TqTJ4XqrbBHdQDJfw2z8IhAQAhtsYQd/oji5yYmjeP?=
+ =?us-ascii?Q?MQ88OMrtIQ0vwub4zSHa2/9OX6cY6XKpMtHY+Q3boRIOM2aSO2kp3jVeUejt?=
+ =?us-ascii?Q?j0UHsPktpm/BP3oL6SzzODIS2WD27flw+utsYRRyrPmL1ut4Xvq4z4Azmglo?=
+ =?us-ascii?Q?StT3DkTtjVyaTxjrDhRwOc0S1eviSYDlPOKuYVaVt9cpSUKUXp8Lz0EznxTk?=
+ =?us-ascii?Q?VipSZpYffSmozewray8SMnVIPqs2T8wr1OexWWJvPdY4UVjWuWiOE2Esewex?=
+ =?us-ascii?Q?znRdwgwCc73suhFdQtnAw6c0O5Or75By8QwQEqMx3kKHP7yt71i3vxx6SEz/?=
+ =?us-ascii?Q?H7D/RiuFpUnmwp7NSjE9JFUQE9y0v/12Me4T8ZKkvql+i7cV9TIfEKWhZa44?=
+ =?us-ascii?Q?S8laKwIjyeqqroldZIgPjmszyoOxNBUtAMRwzgnYZ2YH1kqoAR75TuLyapP/?=
+ =?us-ascii?Q?1EXd3jICYByATnBedkpklJTNKn/4SSRpAoywaVp1SZ5x7JfOKn2f/+agb+6Z?=
+ =?us-ascii?Q?g9PTqjAj3O8JN9uR2Gg5suJpqc1QhBHUCgH+NoOV?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 14d754a9-c501-4bf2-fb23-08dd4be0aa20
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f726e5c-e83c-4600-6b4c-08dd4be0aaf7
 X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 03:44:05.6716
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 03:44:07.0605
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YrxT9ede1Ud3buDavK67404aQBpiNxbx7fM9BlzKYRg4xgPyR6gm9OXPVCY5z6rj
+X-MS-Exchange-CrossTenant-UserPrincipalName: K6HKpw9gcrWuHmhGhmT891TxB1+4wEt9JQw1AkBCOHxxj1Gu3/V4xok0btbwM9p4
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9434
 
-Hi all,
+During __filemap_add_folio(), a shadow entry is covering n slots and a
+folio covers m slots with m < n is to be added. Instead of splitting all
+n slots, only the m slots covered by the folio need to be split and the
+remaining n-m shadow entries can be retained with orders ranging from m to
+n-1. This method only requires (n/XA_CHUNK_SHIFT) - (m/XA_CHUNK_SHIFT)
+new xa_nodes instead of
+(n % XA_CHUNK_SHIFT) * ((n/XA_CHUNK_SHIFT) - (m/XA_CHUNK_SHIFT)) new
+xa_nodes, compared to the original xas_split_alloc() + xas_split() one.
+For example, to insert an order-0 folio when an order-9 shadow entry is
+present (assuming XA_CHUNK_SHIFT is 6), 1 xa_node is needed instead of 8.
 
-When splitting a multi-index entry in XArray from order-n to order-m,
-existing xas_split_alloc()+xas_split() approach requires
-2^(n % XA_CHUNK_SHIFT) xa_node allocations. But its callers,
-__filemap_add_folio() and shmem_split_large_entry(), use at most 1 xa_node.
-To minimize xa_node allocation and remove the limitation of no split from
-order-12 (or above) to order-0 (or anything between 0 and 5)[1],
-xas_try_split() was added[2], which allocates
-(n / XA_CHUNK_SHIFT - m / XA_CHUNK_SHIFT) xa_node. It is used
-for non-uniform folio split, but can be used by __filemap_add_folio()
-and shmem_split_large_entry().
+xas_try_split_min_order() is introduced to reduce the number of calls to
+xas_try_split() during split.
 
-xas_split_alloc() and xas_split() split an order-9 to order-0:
-
-         ---------------------------------
-         |   |   |   |   |   |   |   |   |
-         | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
-         |   |   |   |   |   |   |   |   |
-         ---------------------------------
-           |   |                   |   |
-     -------   ---               ---   -------
-     |           |     ...       |           |
-     V           V               V           V
------------ -----------     ----------- -----------
-| xa_node | | xa_node | ... | xa_node | | xa_node |
------------ -----------     ----------- -----------
-
-xas_try_split() splits an order-9 to order-0:
-   ---------------------------------
-   |   |   |   |   |   |   |   |   |
-   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
-   |   |   |   |   |   |   |   |   |
-   ---------------------------------
-     |
-     |
-     V
------------
-| xa_node |
------------
-
-xas_try_split() is designed to be called iteratively with n = m + 1.
-xas_try_split_mini_order() is added to minmize the number of calls to
-xas_try_split() by telling the caller the next minimal order to split to
-instead of n - 1. Splitting order-n to order-m when m= l * XA_CHUNK_SHIFT
-does not require xa_node allocation and requires 1 xa_node
-when n=l * XA_CHUNK_SHIFT and m = n - 1, so it is OK to use
-xas_try_split() with n > m + 1 when no new xa_node is needed.
-
-xfstests quick group test passed on xfs and tmpfs.
-
-Let me know your comments.
-
-
-[1] https://lore.kernel.org/linux-mm/Z6YX3RznGLUD07Ao@casper.infradead.org/
-[2] https://lore.kernel.org/linux-mm/20250211155034.268962-2-ziy@nvidia.com/
-
-Zi Yan (2):
-  mm/filemap: use xas_try_split() in __filemap_add_folio().
-  mm/shmem: use xas_try_split() in shmem_split_large_entry().
-
+Signed-off-by: Zi Yan <ziy@nvidia.com>
+---
  include/linux/xarray.h |  7 +++++++
  lib/xarray.c           | 25 +++++++++++++++++++++++
  mm/filemap.c           | 46 +++++++++++++++++-------------------------
- mm/shmem.c             | 43 +++++++++++++++------------------------
- 4 files changed, 67 insertions(+), 54 deletions(-)
+ 3 files changed, 51 insertions(+), 27 deletions(-)
 
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index 9eb8c7425090..6ef3d682b189 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -1557,6 +1557,7 @@ void xas_split(struct xa_state *, void *entry, unsigned int order);
+ void xas_split_alloc(struct xa_state *, void *entry, unsigned int order, gfp_t);
+ void xas_try_split(struct xa_state *xas, void *entry, unsigned int order,
+ 		gfp_t gfp);
++unsigned int xas_try_split_min_order(unsigned int order);
+ #else
+ static inline int xa_get_order(struct xarray *xa, unsigned long index)
+ {
+@@ -1583,6 +1584,12 @@ static inline void xas_try_split(struct xa_state *xas, void *entry,
+ 		unsigned int order, gfp_t gfp)
+ {
+ }
++
++static inline unsigned int xas_try_split_min_order(unsigned int order)
++{
++	return 0;
++}
++
+ #endif
+ 
+ /**
+diff --git a/lib/xarray.c b/lib/xarray.c
+index c38beca77830..1805fde1c361 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -1133,6 +1133,28 @@ void xas_split(struct xa_state *xas, void *entry, unsigned int order)
+ }
+ EXPORT_SYMBOL_GPL(xas_split);
+ 
++/**
++ * xas_try_split_min_order() - Minimal split order xas_try_split() can accept
++ * @order: Current entry order.
++ *
++ * xas_try_split() can split a multi-index entry to smaller than @order - 1 if
++ * no new xa_node is needed. This function provides the minimal order
++ * xas_try_split() supports.
++ *
++ * Return: the minimal order xas_try_split() supports
++ *
++ * Context: Any context.
++ *
++ */
++unsigned int xas_try_split_min_order(unsigned int order)
++{
++	if (order % XA_CHUNK_SHIFT == 0)
++		return order == 0 ? 0 : order - 1;
++
++	return order - (order % XA_CHUNK_SHIFT);
++}
++EXPORT_SYMBOL_GPL(xas_try_split_min_order);
++
+ /**
+  * xas_try_split() - Try to split a multi-index entry.
+  * @xas: XArray operation state.
+@@ -1145,6 +1167,9 @@ EXPORT_SYMBOL_GPL(xas_split);
+  * be allocated, the function will use @gfp to get one. If more xa_node are
+  * needed, the function gives EINVAL error.
+  *
++ * NOTE: use xas_try_split_min_order() to get next split order instead of
++ * @order - 1 if you want to minmize xas_try_split() calls.
++ *
+  * Context: Any context.  The caller should hold the xa_lock.
+  */
+ void xas_try_split(struct xa_state *xas, void *entry, unsigned int order,
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 804d7365680c..e28a7a623889 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -860,11 +860,10 @@ EXPORT_SYMBOL_GPL(replace_page_cache_folio);
+ noinline int __filemap_add_folio(struct address_space *mapping,
+ 		struct folio *folio, pgoff_t index, gfp_t gfp, void **shadowp)
+ {
+-	XA_STATE(xas, &mapping->i_pages, index);
+-	void *alloced_shadow = NULL;
+-	int alloced_order = 0;
++	XA_STATE_ORDER(xas, &mapping->i_pages, index, folio_order(folio));
+ 	bool huge;
+ 	long nr;
++	unsigned int forder = folio_order(folio);
+ 
+ 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+ 	VM_BUG_ON_FOLIO(folio_test_swapbacked(folio), folio);
+@@ -873,7 +872,6 @@ noinline int __filemap_add_folio(struct address_space *mapping,
+ 	mapping_set_update(&xas, mapping);
+ 
+ 	VM_BUG_ON_FOLIO(index & (folio_nr_pages(folio) - 1), folio);
+-	xas_set_order(&xas, index, folio_order(folio));
+ 	huge = folio_test_hugetlb(folio);
+ 	nr = folio_nr_pages(folio);
+ 
+@@ -883,7 +881,7 @@ noinline int __filemap_add_folio(struct address_space *mapping,
+ 	folio->index = xas.xa_index;
+ 
+ 	for (;;) {
+-		int order = -1, split_order = 0;
++		int order = -1;
+ 		void *entry, *old = NULL;
+ 
+ 		xas_lock_irq(&xas);
+@@ -901,21 +899,26 @@ noinline int __filemap_add_folio(struct address_space *mapping,
+ 				order = xas_get_order(&xas);
+ 		}
+ 
+-		/* entry may have changed before we re-acquire the lock */
+-		if (alloced_order && (old != alloced_shadow || order != alloced_order)) {
+-			xas_destroy(&xas);
+-			alloced_order = 0;
+-		}
+-
+ 		if (old) {
+-			if (order > 0 && order > folio_order(folio)) {
++			if (order > 0 && order > forder) {
++				unsigned int split_order = max(forder,
++						xas_try_split_min_order(order));
++
+ 				/* How to handle large swap entries? */
+ 				BUG_ON(shmem_mapping(mapping));
+-				if (!alloced_order) {
+-					split_order = order;
+-					goto unlock;
++
++				while (order > forder) {
++					xas_set_order(&xas, index, split_order);
++					xas_try_split(&xas, old, order,
++						      GFP_NOWAIT);
++					if (xas_error(&xas))
++						goto unlock;
++					order = split_order;
++					split_order =
++						max(xas_try_split_min_order(
++							    split_order),
++						    forder);
+ 				}
+-				xas_split(&xas, old, order);
+ 				xas_reset(&xas);
+ 			}
+ 			if (shadowp)
+@@ -939,17 +942,6 @@ noinline int __filemap_add_folio(struct address_space *mapping,
+ unlock:
+ 		xas_unlock_irq(&xas);
+ 
+-		/* split needed, alloc here and retry. */
+-		if (split_order) {
+-			xas_split_alloc(&xas, old, split_order, gfp);
+-			if (xas_error(&xas))
+-				goto error;
+-			alloced_shadow = old;
+-			alloced_order = split_order;
+-			xas_reset(&xas);
+-			continue;
+-		}
+-
+ 		if (!xas_nomem(&xas, gfp))
+ 			break;
+ 	}
 -- 
 2.47.2
 
