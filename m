@@ -1,106 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-41674-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41675-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0A76A34D54
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 19:17:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF4C6A34D82
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 19:22:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E193B3A9932
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 18:14:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 287BE18872F7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 18:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6052F6F073;
-	Thu, 13 Feb 2025 18:14:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFD3245008;
+	Thu, 13 Feb 2025 18:20:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jabberwocky.com header.i=@jabberwocky.com header.b="Vhb+DUER"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f7tqWJi+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from walrus.jabberwocky.com (walrus.jabberwocky.com [173.9.29.57])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E3523A9AE
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Feb 2025 18:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.9.29.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0566C2036FF;
+	Thu, 13 Feb 2025 18:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739470490; cv=none; b=dznwZxXpjES8dJx484wZzBQz0g6Qk2RrspaC+CCCosays/WeEWA1W9CjojeaGVytHwwuH9CNQFIKNm2B4hM3I3i3k/xnD8HdKMIjs2Fo9DrLSoZ3A4uaqxv6Sz13vDD7NGYMWqevfhGgTqP5tjR9LEbbyQRzyG3s0tdQCDJLZZ8=
+	t=1739470858; cv=none; b=f3EGyzNqqH8wLWW1u1ETvNTj3+C2rn6fbPOj4dztANkpVCfxvur6UBwZ8MYmEU5+3y1saa6+PiMvNJJcge390E1mp8ocuN4t+hCc9sDuXE8KpuZQtd87/p7EdhO48iE3FbKy8F8l7XuMkA8lIM7pai9dlf24fwyADpmezy3Pd2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739470490; c=relaxed/simple;
-	bh=YxzSN5iJdz7U63kmVid0vIQp/FcEAlEt2AZvqXWcXjs=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=aZlJgX3eckjeh0KoLBDWnhduljVqu7/eoISBtXuNrFzL2bKfWnvW7bATPv2x76Tjl4dIar84J8Iw91qCty7RX4UVTRPjPrLCWVPSknvM2KbjPl4IWmseIPLLKoDhEPOO1JlvbOEnjRKXtPfUveBBUSMqyeqqCNpCw7YbY+1J02M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jabberwocky.com; spf=pass smtp.mailfrom=jabberwocky.com; dkim=pass (2048-bit key) header.d=jabberwocky.com header.i=@jabberwocky.com header.b=Vhb+DUER; arc=none smtp.client-ip=173.9.29.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jabberwocky.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jabberwocky.com
-Received: from smtpclient.apple (grover.home.jabberwocky.com [172.24.84.28])
-	by walrus.jabberwocky.com (Postfix) with ESMTPSA id 7D52A206F016;
-	Thu, 13 Feb 2025 13:14:47 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 walrus.jabberwocky.com 7D52A206F016
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jabberwocky.com;
-	s=s1; t=1739470487; bh=oP3Uhvp5gyKQiXOc66+awg4NVVHK64zKNuN7ggLwrf8=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To:From;
-	b=Vhb+DUERhbkiBcSOr3ILlVlS1AViPviKKHp0ZmnP317e327nVikbU1VqOUrV2aFvU
-	 4JJEMS64KCJZQVg2d2zhCrCQfrTMW/Ps3OI8jH1ljrzGtyVobXUt7Mum0Z5qnNXXNI
-	 MFQ9bnBYMfEb/n9BaNGe6akMx8qzLIm+9FxMaKnUmCRox9MKUEuvpPG/wpGbbBn0RH
-	 b6dZxPgsYjKW3b8dhAnyzX8pNjgS3uwAAPewmOQS9BhVYLASYXr4oh8151ZDfE/ReY
-	 5vU3YN7TXi2q1QoK8jQfI9HH9D7uZ/1OVMStAzFtHW2LAuDG8vEajEmB4ERqZfY34k
-	 PFy7/Qln/NY8A==
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1739470858; c=relaxed/simple;
+	bh=4Vg82AC/5gDtPXGykDauQPdymUd43FQ3195zRfcKIko=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tlX6/faMubghZOZVuRE+Wl6nA+8gKH/wndqx/26x6UQPcoTLXJdqoVM/XVeQxLYIqVHnMgcM3QkHGC2fqecxgGqjCFC/bCcLj380dUegsUtVMJ8fxLhwZLk1fz/qtKuobrfabITOiB6AoFdxC2dhusQJkQ5jDQXuc5mSxbtn6io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=f7tqWJi+; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=7/aIj9xuYsDybw9On8Ao7mbYiCDQk1kEHDh39AlhraQ=; b=f7tqWJi+snhkvMGnoM+NwLlSVK
+	kRQ6ikNXNCTdTebrgq07PfmhiahbYmZCx6UN3Kg9TyMMdkliSXLDGf6HJlmc8TE0tWonk4tQJlLDB
+	Wd1X8x+C9EQ6tFLLhluM4lJDRENUEFUblmms3SUz6KqtbUTbkXYb8GyeuKCFwFxFfAm/Ep66sfR61
+	vwwBkboD3EGWmaFaieK+b+IUl6Pz8N4M7jF0eWjg5Db7ufXVeHSqG6ti4X1oujp/MXb7T9biZu16f
+	PBzEeE9mCmF2I2/Ii5SiV5scgN8eO24PVFG4CsLlN8uBr9gSQNt2lLZlFveGwUYI3bwd7DEzYkTpn
+	WuWnmg0A==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tidpQ-00000008wTr-3E54;
+	Thu, 13 Feb 2025 18:20:48 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: Jan Kara <jack@suse.com>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] ext2: Remove reference to bh->b_page
+Date: Thu, 13 Feb 2025 18:20:43 +0000
+Message-ID: <20250213182045.2131356-1-willy@infradead.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
-Subject: Re: Odd split writes in fuse when going from kernel 3.10 to 4.18
-From: Daphne Shaw <dshaw@jabberwocky.com>
-In-Reply-To: <CAJfpeguq5phZwqCDv0OtMkubmAmo6LnQxZaex2=z4Xhe4Mz3fw@mail.gmail.com>
-Date: Thu, 13 Feb 2025 13:14:37 -0500
-Cc: linux-fsdevel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <8BE8C6E7-FB3A-4ABA-8493-E37B69732E50@jabberwocky.com>
-References: <34823B36-2354-49B0-AC44-A8C02BCD1D9D@jabberwocky.com>
- <CAJfpeguq5phZwqCDv0OtMkubmAmo6LnQxZaex2=z4Xhe4Mz3fw@mail.gmail.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-X-Mailer: Apple Mail (2.3826.400.131.1.6)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Feb 13, 2025, at 4:58=E2=80=AFAM, Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
->=20
-> On Wed, 12 Feb 2025 at 21:01, Daphne Shaw <dshaw@jabberwocky.com> =
-wrote:
->=20
->> Can anyone help explain why one of the 4000-byte writes is being =
-split into a 96-byte and then 3904-byte write?
->=20
-> Commit 4f06dd92b5d0 ("fuse: fix write deadlock") introduced this
-> behavior change and has a good description of the problem and the
-> solution.  Here's an excerpt:
->=20
-> "...serialize the synchronous write with reads from
->    the partial pages.  The easiest way to do this is to keep the =
-partial pages
->    locked.  The problem is that a write() may involve two such pages =
-(one head
->    and one tail).  This patch fixes it by only locking the partial =
-tail page.
->    If there's a partial head page as well, then split that off as a =
-separate
->    WRITE request."
->=20
-> Your example triggered exactly this "two partial pages" case.
+Buffer heads are attached to folios, not to pages.  Also
+flush_dcache_page() is now deprecated in favour of flush_dcache_folio().
 
-Ah, we suspected something like this. Thanks for the pointer.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/ext2/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> One way out of this is to switch to writeback_cache mode.  Would that
-> work for your case?
-
-I will run some tests - it should, as the only access is via fuse so =
-nobody can modify the files behind its back. Even so, you said that was =
-"one way out". What would be another way out of this?
-
-Thanks,
-
-Daphne
+diff --git a/fs/ext2/super.c b/fs/ext2/super.c
+index 37f7ce56adce..21bea926e0ee 100644
+--- a/fs/ext2/super.c
++++ b/fs/ext2/super.c
+@@ -1556,7 +1556,7 @@ static ssize_t ext2_quota_write(struct super_block *sb, int type,
+ 		}
+ 		lock_buffer(bh);
+ 		memcpy(bh->b_data+offset, data, tocopy);
+-		flush_dcache_page(bh->b_page);
++		flush_dcache_folio(bh->b_folio);
+ 		set_buffer_uptodate(bh);
+ 		mark_buffer_dirty(bh);
+ 		unlock_buffer(bh);
+-- 
+2.47.2
 
 
