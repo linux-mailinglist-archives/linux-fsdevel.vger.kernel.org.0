@@ -1,104 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-41637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2D9AA33BD2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 10:59:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC158A33CE0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 11:40:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 584ED3A91FE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 09:58:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA88F1679F0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 10:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D85211474;
-	Thu, 13 Feb 2025 09:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61AD1212FAC;
+	Thu, 13 Feb 2025 10:40:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="JB09AI4y"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="H2FNE6/8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343B3210F58
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Feb 2025 09:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4421FAC42
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Feb 2025 10:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739440726; cv=none; b=Xg62HhohuSsAaT8J55uR+jdwQolrtt+7u+rZJ0zNsNgJnWdrMWck0HqfZ7xB6sxbyxPF4ZHmlildYI/mmowwn6jHZYVAcXBgLXMPsyoYsgDE+fbB4N8zTCyZQcYyj+Uw7dYgmnCm7z7nAc5EqSoxTIqbjmasAHgWBIjz058sCmg=
+	t=1739443227; cv=none; b=GAkPot2LRx1pyJ7hydIdqrIQrGLAAzo5siSyfaR83+uQaMJUi13QRcJmVEJAE+sAYowlag5VB63l0kmaY/Kt6mdfriRJ+D3qPF/zOS3pjAfbd1z7PvmjFr8BWJuqB+bUi2yxvSYCMqP2kiHGR3WArJmVHwGNkEjFDLGW4m9sii8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739440726; c=relaxed/simple;
-	bh=StmPhKIFQywwGqms2juyWiG6YmrqmqzTO5aFCTovbYM=;
+	s=arc-20240116; t=1739443227; c=relaxed/simple;
+	bh=JsVXYWKYEmqlueQ5Dmhe4uJrs2X53jk8MY1CucfezlY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gBXYdNdtWoqO63A5EVtzyBr6g57y4KJxap0numGs+l24SUyPhhRCNEWteqqE46IFc1l9AEqfM+NMn3CAN6sCf9EcOMEpxwGdkwwwTkoJk5JPytguC3nLefrL7kIWnDjh53u3takUdPBkp252MpN1PpS9CYrEet+HOjDV1IVjf0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=JB09AI4y; arc=none smtp.client-ip=209.85.160.173
+	 To:Cc:Content-Type; b=UVrPMnQNffByItFMRCptXMnOdxyMkNAuLDvN1wEsZaD3qxqBH2sW5Hc458QbI9zoE/dg41w7nb6lY0yyncj+hSHhE//CM1lxqCLQdWzrEUutRS/zb4oCvv7LGWKOi3ARSx/nUxeaKKIZhSgT41I522Nd44kqhS1ZH77DLJLA5dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=H2FNE6/8; arc=none smtp.client-ip=209.85.222.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-47196e33b43so5686751cf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Feb 2025 01:58:42 -0800 (PST)
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7be8f28172dso43372485a.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Feb 2025 02:40:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1739440722; x=1740045522; darn=vger.kernel.org;
+        d=szeredi.hu; s=google; t=1739443225; x=1740048025; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qmoXKEPpDiwYiwkcoL499qmaoS2UDsoaVvwbvblraKY=;
-        b=JB09AI4yl6sRlc6DGAObx2YDVob3X3a+6/Kx0Fz3HJbLXIVyp1AmhlKgacBupTc69f
-         1quBqNEK+36Q9NlfdyB5Mk/ca+e2E5uSqqvUzMMNOgTpL6o6k+Z18qXO8IqWB1fQ/PEV
-         UWUE22SjXj5jokKzM+d9hO2dlmNpLSwBgMb+Y=
+        bh=JsVXYWKYEmqlueQ5Dmhe4uJrs2X53jk8MY1CucfezlY=;
+        b=H2FNE6/8+ao5s3Rubq4Vcq1qewNccgBcXGVv55TMCMxkAFZTw4d7Yvd5p7QCp5gpx0
+         xUJMSq6FbeJOXoqrxi8/rju0m8Alid17eiRU//QMtGb+yhb5pKMFvs9hQt5ADj0xOlQD
+         DcdeSEpq+fdN/sI7P/8qffMT2pGAEsQ8Ij6uo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739440722; x=1740045522;
+        d=1e100.net; s=20230601; t=1739443225; x=1740048025;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qmoXKEPpDiwYiwkcoL499qmaoS2UDsoaVvwbvblraKY=;
-        b=RxRq5UJx8RzU7tSyVZPhTCMplSkT54ZL2rQ84Ff9GsLpvp3k+d2YA9n48vPWuuK1xG
-         GsDdInv2S36InLroIO8qAgsDV/qVTWsyilT/zvpYk6NJrrgZnNSTH8URGhgB+UzHUoSX
-         5OURiJfldrHWBB0zGqlOC7UJ9xxCDK9gLrneQmM3BYDkgjN24zi50FlvxWorJxiqim5J
-         nE4KTTyiQKO3CqxOTAqcuVyfpPej0AyUY0sK1k8uIXInfIsD4FkJCIHtT0YzXqn96QXg
-         baOh/XhbYJr9KPShBANBGe8xjLFgmyCy9aPH2qAEd4X6qic4bvBM/xfvqvgoajTD76P9
-         zuIw==
-X-Gm-Message-State: AOJu0YyN54xVOWHopv97Rc4+blkKgvRkSIOx8jgIFV1oYkybvDymIJZC
-	Zu2x+PeeRq2UnMDpxXDc+W3D9TvKwXycrsc6kAnimJDmSaQQmSePLsxEms2Z1a2/A1BoCTYFE0b
-	EcwvJvO3pXPNNjjbTpUCRWuAoRdIBPzDjdN6KcA==
-X-Gm-Gg: ASbGncv523bgV9t3ORzwj8xR1BtF7W0o0L+WbjXIVK4PGAwoGvL0TtkcoHDR4lw/z/z
-	SRzcQbKEfabOyZVYdvuLmY2b7GGX7fIxM8Xfwb7otnEr5YRkqRS/dhm+B4mDZzi172zOf6w==
-X-Google-Smtp-Source: AGHT+IGSqjKRN/qEtF0plKwAMR3j5yFbisFJsZyHey3wBo/dTXRWorFVhgTAnrgiHCuTo0+THF4t8yk2WP8sKZfeMac=
-X-Received: by 2002:ac8:59cd:0:b0:471:9ce9:449c with SMTP id
- d75a77b69052e-471afecd36amr95520201cf.41.1739440721742; Thu, 13 Feb 2025
- 01:58:41 -0800 (PST)
+        bh=JsVXYWKYEmqlueQ5Dmhe4uJrs2X53jk8MY1CucfezlY=;
+        b=KqwjY1ghgMoHjRja8srjdycgFrFAMidwpvxRQYxMVRqaz0f9qvbWtiz5UInAB7+y+/
+         bHBQwIq5EBBoEElJ1+bu5+8wqUYKcFTE3+vqtlVvGshHog5aw3W4cqsbEurih28ikuOa
+         SbATs+7YxvbBB7hLZzgduPBozm1aBkPbsJZz7dkRbYvUIfsPGxTU6EEqAkZ8AaLOIlWl
+         T3xB6pRDWbkLcS9/e1yYb3P6tO1O59E6DGn/16BrsfwJAbeoB9MzNk62i3a1n81ojmbW
+         NSHste10Z5MIXLVLsj0/9K7ar2ZFx28tQIx3bJtZUH5yvR56qS8HX60OZUGjUx9k7oNG
+         2FnA==
+X-Gm-Message-State: AOJu0Yx3VnWJvzqdilwMxzfQiRz2L97rBVvTZAIwX5MXF5zgbIc6xG2v
+	J7P5apbkgXAqaFQFVfbu43rw1mI4aWDwOyOhOwBGRtU9ec7b/kg3BvjhGTBJjEuJkyeQjR3LT7v
+	V6Vl1qrRgo6b8AhiEU2bC2PltpAqO9ymwihuS/A==
+X-Gm-Gg: ASbGnctP5mt36VcxiOZOAHK7DBY07VBuAuIXg5zScZN05DN1Onv7ACyyQHvOySBA5xO
+	zA2PZlt7p/8o05o/VTWDEhMhVVtdO7CMWizimOhK2XfLMi4+QCfubdgVJSo7qOaknXYF8dg==
+X-Google-Smtp-Source: AGHT+IES7Wq/c8Wha7OQPciT4W4vsKg4h55hXzDfZBmTqkbm4nWumYHNj5nAJMi7S6W4FwEcaH6bfqCs+of3dBRm+AA=
+X-Received: by 2002:a05:622a:1449:b0:471:c14f:5ef6 with SMTP id
+ d75a77b69052e-471c14f6144mr27620461cf.17.1739443224991; Thu, 13 Feb 2025
+ 02:40:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <34823B36-2354-49B0-AC44-A8C02BCD1D9D@jabberwocky.com>
-In-Reply-To: <34823B36-2354-49B0-AC44-A8C02BCD1D9D@jabberwocky.com>
+References: <20250211214750.1527026-1-joannelkoong@gmail.com>
+In-Reply-To: <20250211214750.1527026-1-joannelkoong@gmail.com>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 13 Feb 2025 10:58:29 +0100
-X-Gm-Features: AWEUYZmm4NWlnL4czkos9InKJpLOZZUM7PmapWGLBOELkGXA6q3CCJNTZD33Ag4
-Message-ID: <CAJfpeguq5phZwqCDv0OtMkubmAmo6LnQxZaex2=z4Xhe4Mz3fw@mail.gmail.com>
-Subject: Re: Odd split writes in fuse when going from kernel 3.10 to 4.18
-To: Daphne Shaw <dshaw@jabberwocky.com>
-Cc: linux-fsdevel@vger.kernel.org
+Date: Thu, 13 Feb 2025 11:40:14 +0100
+X-Gm-Features: AWEUYZnH71sCx2vS7F-ixqQY8DRlp00tM7NXt4xsKY8ZKjLN5VbJHLl2N1KwWi8
+Message-ID: <CAJfpegs58oGMrjCpmYbzZ1ZLPzMXTOm86TXbdko9ndYE4F7NRQ@mail.gmail.com>
+Subject: Re: [PATCH] fuse: revert back to __readahead_folio() for readahead
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, jlayton@kernel.org, josef@toxicpanda.com, 
+	vbabka@suse.cz, bernd.schubert@fastmail.fm, christian@heusel.eu, 
+	grawity@gmail.com, willy@infradead.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 12 Feb 2025 at 21:01, Daphne Shaw <dshaw@jabberwocky.com> wrote:
+On Tue, 11 Feb 2025 at 22:48, Joanne Koong <joannelkoong@gmail.com> wrote:
+>
+> In 3eab9d7bc2f4 ("fuse: convert readahead to use folios"), the logic
+> was converted to using the new folio readahead code, which drops the
+> reference on the folio once it is locked, using an inferred reference
+> on the folio. Previously we held a reference on the folio for the
+> entire duration of the readpages call.
 
-> Can anyone help explain why one of the 4000-byte writes is being split into a 96-byte and then 3904-byte write?
+Applied to #for-next
 
-Commit 4f06dd92b5d0 ("fuse: fix write deadlock") introduced this
-behavior change and has a good description of the problem and the
-solution.  Here's an excerpt:
+Thanks everyone for taking care of this.
 
-"...serialize the synchronous write with reads from
-    the partial pages.  The easiest way to do this is to keep the partial pages
-    locked.  The problem is that a write() may involve two such pages (one head
-    and one tail).  This patch fixes it by only locking the partial tail page.
-    If there's a partial head page as well, then split that off as a separate
-    WRITE request."
-
-Your example triggered exactly this "two partial pages" case.
-
-One way out of this is to switch to writeback_cache mode.  Would that
-work for your case?
-
-Thanks,
 Miklos
 
