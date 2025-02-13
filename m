@@ -1,99 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-41628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90DE5A3379D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 06:56:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C231A33835
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 07:50:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48B2E167B97
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 05:56:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A630165B6A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 06:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CC2207657;
-	Thu, 13 Feb 2025 05:56:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C05207A35;
+	Thu, 13 Feb 2025 06:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HjOh95ZJ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="x99Z+VOv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011B4207670;
-	Thu, 13 Feb 2025 05:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D717EADC;
+	Thu, 13 Feb 2025 06:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739426185; cv=none; b=HqJZzbk9Zf5BRPfkTYktUNH4bPCVgLEUCfbB+ayoIVxCLQ4ma386yg53fQsyK6tRlRaWeJAlO4bmLe7B0eA9u3mTPE/250/OaZytCqWM8iMyhy7CdC2MK4uoYTDmifikHHY7ijeiKqKkvji1+DOLaqKOqESgnOpRzV4tafwxiMw=
+	t=1739429414; cv=none; b=Tgje58THWCDDuzqgc4ylhJsFRziyrIMF8wfbmuxY5ab/wXkgPHZ6zOGp19UO/CEaEKETaeJFN4P2qgGKJxPF4FqofmmOIKZ7xOP0b4usaDJzbfvDYvZJhEZMQ7hHGOwmbnqDWvaC+psWPUh5/Es8pzaTe/IxEbzxJ9IHmhEetf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739426185; c=relaxed/simple;
-	bh=/ctVPI1RMkXy1FiC9qg/UhR+kvm9gPz3ywgM1bFQm8Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a8k+upjJC16KBN9a78LYBAcr171NSZR/zL1djPUC9/Ad/ujP2S4MWCpP0zZ3l5wh+YTQPyRJOzeTtBN7Oe/w/uhjPAK7u5s0AB9dzbFPJLG1wq7SPHFa1Xu+e7HaR0MAjnlWT+b75Nx2xeSAm3P8xJvauTfW9HA8LsxxZLDxqZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HjOh95ZJ; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1739426173; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=rASHGD09VIAcvDVE/Y5zG8ZXrXsg0FttXsa+JAeYPMY=;
-	b=HjOh95ZJu9C0fD6ebAJkjFfWYE9CguTlClzZqHOZcehz5kwg0EVc5RTlbxrl0ZLJ4vqyTKJh3EOkcsu52xGL/IUyvaxc/R8+Mr7xWpRgIM72LwQ8V4uYGO22RHpNbHkeaGe7qWYDlt4j8w9Tpu3ffVWRPdxiaxNMqDMDPZUSq9w=
-Received: from localhost(mailfrom:guanjun@linux.alibaba.com fp:SMTPD_---0WPMKlTX_1739426172 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 13 Feb 2025 13:56:12 +0800
-From: 'Guanjun' <guanjun@linux.alibaba.com>
-To: willy@infradead.org,
-	akpm@linux-foundation.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: guanjun@linux.alibaba.com
-Subject: [PATCH mm 1/1] filemap: Remove redundant folio_test_large check in filemap_free_folio
-Date: Thu, 13 Feb 2025 13:56:12 +0800
-Message-ID: <20250213055612.490993-1-guanjun@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1739429414; c=relaxed/simple;
+	bh=zLlalgvnPlPl79Pj4q3EdUNwzxP11KfmHvMaKmr3Q/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qrz0ylUeQlWKHyhIXPiuYiCksckm46qZuxmfzYccmolbjpuNepQB3OexOGJ4/TN6V80W90EBpfx38kpjnyRhaoFmG/IGGSUKGw9M5x6ZR2t4mqFbZP52VtpAVn/6M4MsDQCE5xtG+pD3n4VbklvIYQWrDP7m3rb8bV1RlBZ9k/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=x99Z+VOv; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rS0Zr3qHL+nTaU3fg6ZrpT0K/XiaxWPKoH/sIaK/eEU=; b=x99Z+VOvliCIQvvVKtQ0DIamoA
+	muTCcrYz0G5p/y69w69R1TXBE3SyErGXrSbihv5q1MmzajUbgFyDUAGxdvq+9bQkGjIadzIHHGLVZ
+	YqRL3X68yFlf5rPx6EH+HZt4MTNPcd3V+GlG7JRnLbItRVoirMd6OZJOjI6H6w630QpFGKxJsW0bz
+	c4u+FEtg54I8amrWW8EbjPWy3M5itglBr9/oXHzDjo/iVv85/g/ldwIIVgNLWm50AUBPVAEly82Ja
+	yI91joYQQugc/EMrkrMB1zzYiUoWz9dw0n17WJ3wbryDy64mHz1bcg4JCExsY+uqrCNQ/PhBRwHkc
+	mwA2Rnlg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tiT36-00000009zhO-07rZ;
+	Thu, 13 Feb 2025 06:50:12 +0000
+Date: Wed, 12 Feb 2025 22:50:12 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Brian Foster <bfoster@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	"Darrick J . Wong" <djwong@kernel.org>
+Subject: Re: [PATCH 01/10] iomap: advance the iter directly on buffered read
+Message-ID: <Z62WJACaaAP2oH1S@infradead.org>
+References: <20250212135712.506987-1-bfoster@redhat.com>
+ <20250212135712.506987-2-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212135712.506987-2-bfoster@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-From: Guanjun <guanjun@linux.alibaba.com>
+On Wed, Feb 12, 2025 at 08:57:03AM -0500, Brian Foster wrote:
+> iomap buffered read advances the iter via iter.processed. To
+> continue separating iter advance from return status, update
+> iomap_readpage_iter() to advance the iter instead of returning the
+> number of bytes processed. In turn, drop the offset parameter and
+> sample the updated iter->pos at the start of the function. Update
+> the callers to loop based on remaining length in the current
+> iteration instead of number of bytes processed.
+> 
+> Signed-off-by: Brian Foster <bfoster@redhat.com>
+> ---
+>  fs/iomap/buffered-io.c | 44 +++++++++++++++++++-----------------------
+>  1 file changed, 20 insertions(+), 24 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index ec227b45f3aa..44a366736289 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -366,12 +366,12 @@ static inline bool iomap_block_needs_zeroing(const struct iomap_iter *iter,
+>  		pos >= i_size_read(iter->inode);
+>  }
+>  
+> -static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+> -		struct iomap_readpage_ctx *ctx, loff_t offset)
+> +static loff_t iomap_readpage_iter(struct iomap_iter *iter,
+> +		struct iomap_readpage_ctx *ctx)
+>  {
+>  	const struct iomap *iomap = &iter->iomap;
+> -	loff_t pos = iter->pos + offset;
+> -	loff_t length = iomap_length(iter) - offset;
+> +	loff_t pos = iter->pos;
+> +	loff_t length = iomap_length(iter);
+>  	struct folio *folio = ctx->cur_folio;
+>  	struct iomap_folio_state *ifs;
+>  	loff_t orig_pos = pos;
+> @@ -438,25 +438,22 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+>  	 * we can skip trailing ones as they will be handled in the next
+>  	 * iteration.
+>  	 */
+> -	return pos - orig_pos + plen;
+> +	length = pos - orig_pos + plen;
+> +	return iomap_iter_advance(iter, &length);
 
-The folio_test_large check in filemap_free_folio is unnecessary because
-folio_nr_pages, which is called internally, already performs this check.
-Removing the redundant condition simplifies the code and avoids double
-validation.
+At this point orig_pos should orig_pos should always be just iter->pos
+and we could trivially drop the variable, right?
 
-This change improves code readability and reduces unnecessary operations
-in the folio freeing path.
+> -static loff_t iomap_read_folio_iter(const struct iomap_iter *iter,
+> +static loff_t iomap_read_folio_iter(struct iomap_iter *iter,
+>  		struct iomap_readpage_ctx *ctx)
+>  {
+> -	struct folio *folio = ctx->cur_folio;
+> -	size_t offset = offset_in_folio(folio, iter->pos);
+> -	loff_t length = min_t(loff_t, folio_size(folio) - offset,
+> -			      iomap_length(iter));
+> -	loff_t done, ret;
+> -
+> -	for (done = 0; done < length; done += ret) {
+> -		ret = iomap_readpage_iter(iter, ctx, done);
+> -		if (ret <= 0)
+> +	loff_t ret;
+> +
+> +	while (iomap_length(iter)) {
+> +		ret = iomap_readpage_iter(iter, ctx);
+> +		if (ret)
+>  			return ret;
 
-Signed-off-by: Guanjun <guanjun@linux.alibaba.com>
----
- mm/filemap.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+This looks so much nicer!
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 804d7365680c..2b860b59a521 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -227,15 +227,12 @@ void __filemap_remove_folio(struct folio *folio, void *shadow)
- void filemap_free_folio(struct address_space *mapping, struct folio *folio)
- {
- 	void (*free_folio)(struct folio *);
--	int refs = 1;
- 
- 	free_folio = mapping->a_ops->free_folio;
- 	if (free_folio)
- 		free_folio(folio);
- 
--	if (folio_test_large(folio))
--		refs = folio_nr_pages(folio);
--	folio_put_refs(folio, refs);
-+	folio_put_refs(folio, folio_nr_pages(folio));
- }
- 
- /**
--- 
-2.43.5
+> -static loff_t iomap_readahead_iter(const struct iomap_iter *iter,
+> +static loff_t iomap_readahead_iter(struct iomap_iter *iter,
+>  		struct iomap_readpage_ctx *ctx)
+>  {
+> -	loff_t length = iomap_length(iter);
+> -	loff_t done, ret;
+> +	loff_t ret;
+>  
+> -	for (done = 0; done < length; done += ret) {
+> +	while (iomap_length(iter) > 0) {
 
+iomap_length can't really be negative, so we could just drop the "> 0"
+here.  Or if you think it's useful add it in the other loop above to
+be consistent.
+
+Otherwise looks good:
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
