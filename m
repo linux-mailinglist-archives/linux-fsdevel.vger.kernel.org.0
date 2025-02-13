@@ -1,74 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-41660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41661-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25C64A3454E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 16:14:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 323C4A345CC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 16:19:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AB933AE25E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 15:04:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49F42188801E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 15:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025CD227EB3;
-	Thu, 13 Feb 2025 15:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6E7187550;
+	Thu, 13 Feb 2025 15:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a05nNJBU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5bPOXko"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DF1148855;
-	Thu, 13 Feb 2025 15:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6973C16D4E6;
+	Thu, 13 Feb 2025 15:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739458905; cv=none; b=Q8GPrG7Spj997zNbW3wPi4GJa5sge6WHOoIe95RTtMTdlc/1uYxCaZr9NlDOwo/OLQJseNLmmPQ/aHVPo41imocAODFpOqAKMVKMdr4lXeNiZIiEjGqf3X59dYbw6NeoxVEF9Jy+oogwhojZKJiujh6roTgC4Nv+dzDzDo57XE4=
+	t=1739459120; cv=none; b=gksSc9e4R7G4rYnSsHrp4X3fCTXnGDZHG+bDKZ1atweDZwyqSVuDTicgPFBhQG/RgGF6Dua2Oga4aPflQzRQyzbcWRmZZFqixqYMQIWWYCz+2quUacve1CIL+Ah/tbN7xu0ZHLlWngRd9ziFTKkt/F0aD8SqBk+YN/9dDnIjVaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739458905; c=relaxed/simple;
-	bh=M392JolpqBN59UU7gj1lCbZNzReqJFGeXEqLCAtPZIo=;
+	s=arc-20240116; t=1739459120; c=relaxed/simple;
+	bh=WJMQWBQFwuhi/gc3R8BLmRiHN8CmAmzH+WpsOlb8MLM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u08Q8hKKewjA/jOEwxAsPpv7+yyDbQoUVmu4QdjBo3e6BANPTgkxLoA9bvfbshyg4xtr36PINphRNHtO2QUnQX0gZ8ni4Tn7WSH/Ty7Npru/48kfpcO5Un68UqD9DRQ8ubUbk9Rbb3kyU4js1867rR9Y9JJuLe93+e0DHG86BWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a05nNJBU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4582FC4CED1;
-	Thu, 13 Feb 2025 15:01:40 +0000 (UTC)
+	 MIME-Version:Content-Type; b=YR5JG9InX/Jywdno8Z2DgX4Pm1dINZuCPdadIahA9IApQBb00vh/NGb0MwiFkp813eA2w170FKYkKEkbp3kgdXsY2dl36BU2HqL6xE64s2ZO/ARHJI8yHLOdZ5H/SPZKR5H++0yLvWdYcPqwnWtqPlChni2YBCnjfcIQU1pPV1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U5bPOXko; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79F56C4CED1;
+	Thu, 13 Feb 2025 15:05:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739458905;
-	bh=M392JolpqBN59UU7gj1lCbZNzReqJFGeXEqLCAtPZIo=;
+	s=k20201202; t=1739459120;
+	bh=WJMQWBQFwuhi/gc3R8BLmRiHN8CmAmzH+WpsOlb8MLM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=a05nNJBUGp8ldp6m7CxxQpionQHaidKP1wtCgpsDBiaAlk+TJxXuOBid1JHLpxhYe
-	 RRYvXjSgJTb6djMCF88SXDmbPfTU0RCq+MnBP1LFA1VUpRPXpjZ+Tsd1Uj4GPOGDW5
-	 xtZETGfyQamJSU/DaXSN7wG1yuq0y70qozSS5ztzjnvGF0RNaFQc+F50d9FkkZ3u22
-	 GlXPPbGgDI6NkXrMxE7EfE8Gkq5jopatEuyWY70TopeDiNOx6MUkF17E9PZvSjUnaR
-	 yASl9kNkKq706ougqtL3coEehtbb9A3sEraayr/vC1irSrBQB9IyKkJu8PdoHDmbFP
-	 DKMMA1AQurMGQ==
+	b=U5bPOXkodSTE4SU2bByq6qLxDe52q1exxLaMKzQCp+dm9nQFZZfPwtNXypVzLdSYs
+	 9DNzIXFEzRBKG43yVlQ/Jzz2xyptDPQimMp1UO1tjgChDj99rgBfNps0xxvy9OVkP7
+	 NR850+gITCE49yaRod7fng0i8Jpg6hEkjl+QQo9/Wcn8AoQTBVV1f9NK0ikOOKrBfL
+	 KbFn6dQfluGcDRW8mtwIUx5FlYlAJI5M/nDjw+r2UB+lvORlV3xEH0C7AHZGOmq7K8
+	 GRRucLyA+ciqlrR9Dor+rGzrvLTfjub2Um+dB26+TYiHhq84pUn3AWEmfWbX2Dkyyc
+	 Hiv3QCN8roeuQ==
 From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
 Cc: Christian Brauner <brauner@kernel.org>,
-	Ihor Solodrai <ihor.solodrai@linux.dev>,
-	Max Kellermann <max.kellermann@ionos.com>,
-	Steve French <sfrench@samba.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] netfs: Miscellaneous fixes
-Date: Thu, 13 Feb 2025 16:01:24 +0100
-Message-ID: <20250213-kosenamen-bestochen-0d997261875e@brauner>
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: inline new_inode_pseudo() and de-staticize alloc_inode()
+Date: Thu, 13 Feb 2025 16:05:13 +0100
+Message-ID: <20250213-knabe-sitzbank-c74871dc3e38@brauner>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250212222402.3618494-1-dhowells@redhat.com>
-References: <20250212222402.3618494-1-dhowells@redhat.com>
+In-Reply-To: <20250212180459.1022983-1-mjguzik@gmail.com>
+References: <20250212180459.1022983-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,23 +61,22 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1290; i=brauner@kernel.org; h=from:subject:message-id; bh=M392JolpqBN59UU7gj1lCbZNzReqJFGeXEqLCAtPZIo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSv4wx4qRqnFzRflWne51XHu+cbHcxM/LR4XWtwoIP68 pjO1Di5jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIncUGH4Hzljn3D5UVnhu+8v H3HpkQj4c+vpHef+E9JuPMKmR1fNfsfwP+BBsxSb6ufgd6c/ROlzPtv598zXZ99Sq1J6GpewNHO oMAAA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1115; i=brauner@kernel.org; h=from:subject:message-id; bh=WJMQWBQFwuhi/gc3R8BLmRiHN8CmAmzH+WpsOlb8MLM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSv49L6upPv+obqdol7wr4/Or0Dg76pHe5xb9YLS9S++ vGmT/qijlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIls/s7IcPfSOmaGyuMBZ/fE nl3IlfRaNUbyf8pdtWXsn+wj2f698mNk2KCW8SNjvdZX+83rDNyuVSz59qY469Ahp2T3eM+aT0u M2AE=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Wed, 12 Feb 2025 22:23:58 +0000, David Howells wrote:
-> Here are some miscellaneous fixes and changes for netfslib, if you could
-> pull them:
+On Wed, 12 Feb 2025 19:04:59 +0100, Mateusz Guzik wrote:
+> The former is a no-op wrapper with the same argument.
 > 
->  (1) Fix a number of read-retry hangs, including:
+> I left it in place to not lose the information who needs it -- one day
+> "pseudo" inodes may start differing from what alloc_inode() returns.
 > 
->      (a) Incorrect getting/putting of references on subreqs as we retry
->      	 them.
+> In the meantime no point taking a detour.
 > 
 > [...]
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Applied to the vfs-6.15.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.15.misc branch should appear in linux-next soon.
 
 Please report any outstanding bugs that were missed during review in a
 new review to the original patch series allowing us to drop it.
@@ -104,12 +88,8 @@ Note that commit hashes shown below are subject to change due to rebase,
 trailer updates or similar. If in doubt, please check the listed branch.
 
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
+branch: vfs-6.15.misc
 
-[1/3] netfs: Fix a number of read-retry hangs
-      https://git.kernel.org/vfs/vfs/c/1d0013962d22
-[2/3] netfs: Add retry stat counters
-      https://git.kernel.org/vfs/vfs/c/d01c495f432c
-[3/3] netfs: Fix setting NETFS_RREQ_ALL_QUEUED to be after all subreqs queued
-      https://git.kernel.org/vfs/vfs/c/5de0219a9bb9
+[1/1] vfs: inline new_inode_pseudo() and de-staticize alloc_inode()
+      https://git.kernel.org/vfs/vfs/c/e298fc4edca8
 
