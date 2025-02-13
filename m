@@ -1,110 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-41659-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F0FEA344D8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 16:09:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C64A3454E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 16:14:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B30AA1897420
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 15:00:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AB933AE25E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 15:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF72241684;
-	Thu, 13 Feb 2025 14:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025CD227EB3;
+	Thu, 13 Feb 2025 15:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iP24EfKu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a05nNJBU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB3726B097;
-	Thu, 13 Feb 2025 14:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DF1148855;
+	Thu, 13 Feb 2025 15:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739458603; cv=none; b=CQJpogPwPcxvv4G26u42Q4qj44/MzJ5wuXTHvDuOf38U1thEVULlk3E3XQYMWyqpQAyGOrMHJv32hUHkj9DSAyBdMmj1I+Mh/YMvv+Zoz6QkSYIa69U6xaZnwYAWZhIr4PED/HQ9DXqolGF4QwTQ+n0kaaeDMtgsi0quWkFqO1A=
+	t=1739458905; cv=none; b=Q8GPrG7Spj997zNbW3wPi4GJa5sge6WHOoIe95RTtMTdlc/1uYxCaZr9NlDOwo/OLQJseNLmmPQ/aHVPo41imocAODFpOqAKMVKMdr4lXeNiZIiEjGqf3X59dYbw6NeoxVEF9Jy+oogwhojZKJiujh6roTgC4Nv+dzDzDo57XE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739458603; c=relaxed/simple;
-	bh=1c+8kd6RcCKre+0HsXei01s42nKKjeClsDrJF/DX180=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J2sD00OyFAQZA9eA7JnyqyQ4VV/nsFELI7YvabXYF5k8ZzfRk6qz0Pg6cBpmHoXF6VAAtkhstz1t/IIuSpQ/eAyz8NR9lbi+lybDHOySvZG+t9ru53DgWBHH138gdAuC9k1KoqxgqZi5odNGMRxyr4kPbYVAXMCB59KK5oQHIuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iP24EfKu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59BDAC4CED1;
-	Thu, 13 Feb 2025 14:56:38 +0000 (UTC)
+	s=arc-20240116; t=1739458905; c=relaxed/simple;
+	bh=M392JolpqBN59UU7gj1lCbZNzReqJFGeXEqLCAtPZIo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=u08Q8hKKewjA/jOEwxAsPpv7+yyDbQoUVmu4QdjBo3e6BANPTgkxLoA9bvfbshyg4xtr36PINphRNHtO2QUnQX0gZ8ni4Tn7WSH/Ty7Npru/48kfpcO5Un68UqD9DRQ8ubUbk9Rbb3kyU4js1867rR9Y9JJuLe93+e0DHG86BWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a05nNJBU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4582FC4CED1;
+	Thu, 13 Feb 2025 15:01:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739458602;
-	bh=1c+8kd6RcCKre+0HsXei01s42nKKjeClsDrJF/DX180=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iP24EfKu6fDycnZNKLaIdiIAbJyaTBdhhzW3raL6Kjl30uXTw7Jyc/zWZ3kDJ9W7C
-	 LqVhnR+gwbkmlm9M+B5SqPEFuRYDxoyGFALjD8knWVh/X+gDBPJuqr87DlbQhDDKcQ
-	 VfyHteUOw9m/XZ6OuPOM75UmfWDG7i+dqrvA/nNpyfY9knM2PDPkWlrCzl8uwzLG9e
-	 0fXOFAopCWqhBiAqdX7Wq6NMJMhGmc395DnUF3Py/UYCokLs7wm7w9M29kdjx7PDQ9
-	 ppKiteIYc+d8jikrPu4NGUBrfYzbu9LYlPwFvUKaW+ABHzjZxEmPGMxJI76VgOBPu/
-	 FR8yBJmaDRe6w==
-Date: Thu, 13 Feb 2025 15:56:35 +0100
+	s=k20201202; t=1739458905;
+	bh=M392JolpqBN59UU7gj1lCbZNzReqJFGeXEqLCAtPZIo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=a05nNJBUGp8ldp6m7CxxQpionQHaidKP1wtCgpsDBiaAlk+TJxXuOBid1JHLpxhYe
+	 RRYvXjSgJTb6djMCF88SXDmbPfTU0RCq+MnBP1LFA1VUpRPXpjZ+Tsd1Uj4GPOGDW5
+	 xtZETGfyQamJSU/DaXSN7wG1yuq0y70qozSS5ztzjnvGF0RNaFQc+F50d9FkkZ3u22
+	 GlXPPbGgDI6NkXrMxE7EfE8Gkq5jopatEuyWY70TopeDiNOx6MUkF17E9PZvSjUnaR
+	 yASl9kNkKq706ougqtL3coEehtbb9A3sEraayr/vC1irSrBQB9IyKkJu8PdoHDmbFP
+	 DKMMA1AQurMGQ==
 From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Zicheng Qu <quzicheng@huawei.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, axboe@kernel.dk, joel.granados@kernel.org, tglx@linutronix.de, 
-	viro@zeniv.linux.org.uk, hch@lst.de, len.brown@intel.com, pavel@ucw.cz, 
-	pengfei.xu@intel.com, rafael@kernel.org, tanghui20@huawei.com, zhangqiao22@huawei.com, 
-	judy.chenhui@huawei.com, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, linux-pm@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 0/2] acct: don't allow access to internal filesystems
-Message-ID: <20250213-fehlgriff-filmt-1dfdd558ab78@brauner>
-References: <20250210-unordnung-petersilie-90e37411db18@brauner>
- <20250211-work-acct-v1-0-1c16aecab8b3@kernel.org>
- <c780964d17b908846f07d01f4020be7bc784ec8b.camel@kernel.org>
- <20250212-giert-spannend-8893f1eaba7d@brauner>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Ihor Solodrai <ihor.solodrai@linux.dev>,
+	Max Kellermann <max.kellermann@ionos.com>,
+	Steve French <sfrench@samba.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Tom Talpey <tom@talpey.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] netfs: Miscellaneous fixes
+Date: Thu, 13 Feb 2025 16:01:24 +0100
+Message-ID: <20250213-kosenamen-bestochen-0d997261875e@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250212222402.3618494-1-dhowells@redhat.com>
+References: <20250212222402.3618494-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250212-giert-spannend-8893f1eaba7d@brauner>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1290; i=brauner@kernel.org; h=from:subject:message-id; bh=M392JolpqBN59UU7gj1lCbZNzReqJFGeXEqLCAtPZIo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSv4wx4qRqnFzRflWne51XHu+cbHcxM/LR4XWtwoIP68 pjO1Di5jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIncUGH4Hzljn3D5UVnhu+8v H3HpkQj4c+vpHef+E9JuPMKmR1fNfsfwP+BBsxSb6ufgd6c/ROlzPtv598zXZ99Sq1J6GpewNHO oMAAA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 12, 2025 at 12:16:44PM +0100, Christian Brauner wrote:
-> On Tue, Feb 11, 2025 at 01:56:41PM -0500, Jeff Layton wrote:
-> > On Tue, 2025-02-11 at 18:15 +0100, Christian Brauner wrote:
-> > > In [1] it was reported that the acct(2) system call can be used to
-> > > trigger a NULL deref in cases where it is set to write to a file that
-> > > triggers an internal lookup.
-> > > 
-> > > This can e.g., happen when pointing acct(2) to /sys/power/resume. At the
-> > > point the where the write to this file happens the calling task has
-> > > already exited and called exit_fs() but an internal lookup might be
-> > > triggered through lookup_bdev(). This may trigger a NULL-deref
-> > > when accessing current->fs.
-> > > 
-> > > This series does two things:
-> > > 
-> > > - Reorganize the code so that the the final write happens from the
-> > >   workqueue but with the caller's credentials. This preserves the
-> > >   (strange) permission model and has almost no regression risk.
-> > > 
-> > > - Block access to kernel internal filesystems as well as procfs and
-> > >   sysfs in the first place.
-> > > 
-> > > This api should stop to exist imho.
-> > > 
-> > 
-> > I wonder who uses it these days, and what would we suggest they replace
-> > it with? Maybe syscall auditing?
+On Wed, 12 Feb 2025 22:23:58 +0000, David Howells wrote:
+> Here are some miscellaneous fixes and changes for netfslib, if you could
+> pull them:
 > 
-> Someone pointed me to atop but that also works without it. Since this is
-> a privileged api I think the natural candidate to replace all of this is
-> bpf. I'm pretty sure that it's relatively straightforward to get a lot
-> more information out of it than with acct(2) and it will probably be
-> more performant too.
+>  (1) Fix a number of read-retry hangs, including:
 > 
-> Without any limitations as it is right now, acct(2) can easily lockup
-> the system quite easily by pointing it to various things in sysfs and
-> I'm sure it can be abused in other ways. So I wouldn't enable it.
+>      (a) Incorrect getting/putting of references on subreqs as we retry
+>      	 them.
+> 
+> [...]
 
-And I totally forgot about taskstats via Netlink:
-https://www.kernel.org/doc/Documentation/accounting/taskstats.txt
-include/uapi/linux/taskstats.h
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/3] netfs: Fix a number of read-retry hangs
+      https://git.kernel.org/vfs/vfs/c/1d0013962d22
+[2/3] netfs: Add retry stat counters
+      https://git.kernel.org/vfs/vfs/c/d01c495f432c
+[3/3] netfs: Fix setting NETFS_RREQ_ALL_QUEUED to be after all subreqs queued
+      https://git.kernel.org/vfs/vfs/c/5de0219a9bb9
 
