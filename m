@@ -1,239 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-41640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF5CA33D7B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 12:10:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27C07A33EAA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 13:02:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A03F18886B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 11:08:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 359983A8365
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2025 12:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B269215190;
-	Thu, 13 Feb 2025 11:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73EC24292D;
+	Thu, 13 Feb 2025 12:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="NIgwJXjN"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Dg/FZGLk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B99214238;
-	Thu, 13 Feb 2025 11:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CC122156F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Feb 2025 12:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739444919; cv=none; b=inyAkcEJUhzYJXNG9pMI9L3ebbbu0BdtMqS8GEWtKQ0DvRqCZdQYBMBBNR6JZdOkh0K/3E9/Glre6UpaUdJx1L8E4he5P5SjgOrsD9V4WWJDjUVvizK4NgDrBaWwdJGMAqtlQWg5wYBOfKfw8lvVDmU8x1a8Yk3xGWXIBFJcpnY=
+	t=1739448010; cv=none; b=m30JqM9FOiQYlq7qfO9nB4sPOn0tawgAdwFt2afCG+ByfhkGCGF3WRIdCWkcvOamGJwWv1AX6Dwp/iZS0zRAj5y4Q+xsSj/1SYo5jf/7N6BNQXIz5a6PACgV+yaeTV7QmQXC4Syq+vyTpORBqEV3mI1vlXVGAwHkyeHyHMwQUgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739444919; c=relaxed/simple;
-	bh=EOBiQL2i0ZXLCxz8ZRPi5i6PvJHEc5UOe7SQ5492xeI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=d+2L9N6nydX+bzPd4IzyRa0w4d/fddKA1FixtByWXCInUQvXrH/OqSYcwJb2mJnjAHMitT6MDwm00q73VeMf41YFOTUUo5OjhkRAHuHjQAKFUrPLvtf+fnC9TTtKQwvHoBKyfe88bufamotbvnRmLVNx5afil6wcurac/gKPw1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=NIgwJXjN; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=DznlSHtJ15TXUJBEI7kzkOuDVk92KIybVPX2ql7XlRc=; b=NIgwJXjNiNh4TOL4r74Z1Wm82s
-	RlWiIxFQXEyRa2Kj2qNTxUQPo+yE0teNHh0p0/cCtJcFVLN6euqFY25Bcsrl9tc7nc4Dnl8AkAOi7
-	pwqF56OvbU2wpgaLfVYAXFi0DqKkgBeY2Cf5NpBOYtA+ua9X9haOnrxZtChDx80mMmoSAShRawLxD
-	juem+hTJD98dXAd6/gYxoVo+dftZbjzxjI/9TmoyZ2jNndcc/CWQ+sxCzEosVrypFzPypl3/rpZKv
-	p3gIRUGoT4/iOxLpD/KQyTAOVqZXZ7s7u59v47O6Csg9VfiYNZILJK0C9I1E5wzKIEX4K4rfH4L5+
-	hoyqfPjA==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tiX4x-00AAdl-0g; Thu, 13 Feb 2025 12:08:28 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  Matt Harvey <mharvey@jumptrading.com>,
-  Bernd Schubert <bschubert@ddn.com>,  Joanne Koong
- <joannelkoong@gmail.com>
-Subject: Re: [PATCH v4] fuse: add new function to invalidate cache for all
- inodes
-In-Reply-To: <Z60bD3C_p_PHao0n@dread.disaster.area> (Dave Chinner's message of
-	"Thu, 13 Feb 2025 09:05:03 +1100")
-References: <20250211092604.15160-1-luis@igalia.com>
-	<Z6u5dumvZHf_BDHM@dread.disaster.area> <875xlf4cvb.fsf@igalia.com>
-	<Z60bD3C_p_PHao0n@dread.disaster.area>
-Date: Thu, 13 Feb 2025 11:08:28 +0000
-Message-ID: <87mseqcdar.fsf@igalia.com>
+	s=arc-20240116; t=1739448010; c=relaxed/simple;
+	bh=jO0lN5x9guXp1a4LurUsJQThejvJaKRkotHrdOiQ9pk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jW7tJDXMt9Vp8yjVYzTJvQEaPH6g3UccfxYMNUZrPx/ZPOqR55exfCighSlw3jf8rJvod35mNLninT7FGo/c+7fZKMTSF26LcVnPDGMTDc5qJbiXVnE4FhTRzM1RVkSwKQeJ+2+4hC8z3h6Repy/JVFzD6lMdGkws+e9/HXsqVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Dg/FZGLk; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-471a25753a4so6257001cf.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Feb 2025 04:00:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1739448006; x=1740052806; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WxIbGeZdAUj59XbtP18FGXOievh8ogWpoWw7ACveybI=;
+        b=Dg/FZGLkaZ7ie6M7KfJ0TS6y+1v6GfledRzDEjzhrFVkV7uxrcCLh+GQvS5H4KHXL8
+         B51WJr8ZenjcTJprsEiiDlKCbKsZzxvg9FvDFhorRi45bII61nN42/Ul+A/gOXOVchwk
+         Bary65zTIufxEg3GLS9b65341xcV8kC1py7lY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739448006; x=1740052806;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WxIbGeZdAUj59XbtP18FGXOievh8ogWpoWw7ACveybI=;
+        b=kGaOKRle6bMwuugm2pt8k4qQ17G5zZY2Al1zw8ZTvquEABmh1maIOKGcNPqB87QpBK
+         7YanRRQVOTha2FM9L02z4Md6KxLsyPpi0nMIbEYmxvdjLcZvP8vwX/YT789TAfNRc0Jv
+         yo9OBlA5GVFLpUX0GxPRpeVTf67A3xd0Mq4XcKPkiNdjLjHPCpIudtgQM8c/2n1GDfup
+         lSkqDs1iS77rJ4W8pTLd73zScqMFcR1popiiCSH8g8nANP45pfmOVzQbkIfLeW6HtO9r
+         0ueOeNFicJ8O+Ovcs2gfX6/GvThlJF5mVAqIIPLYpLc5kGPsixyWcN4ufHgNTs/VT4Rd
+         YvMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVE9ImSTYwN7cD84HYn0OsCyZHyJwYhy/L5BJdV1PrhXCa52FUJFF78gLS2eosiGQDw1R12uxKHF4Stpsam@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLL/1tUWcvnbxpwhWP0cO8Txg5+5G1pUnPbZ80XcU1tGF/ZVVJ
+	542Q6T8H7c91V0fYfWq7FOyARJBVVci06o+JUCPlP8QS7VWMAVxyOpXDZEfdBi4cR6sUDUW7Gk3
+	9OfghZu6vCv2i1/YHXfAbKGcMhuo94FEIvu/feg==
+X-Gm-Gg: ASbGncsSrflnPL2Ay6tTYg5fZYJSYjhNRQ8WEFxRKsAFYVbhqeZjzh+DhYnZ1XYuekb
+	CWsWTB1MrLDMJYvPQU6+5O+yuM6eFYibG+uCh9mJQSvIBT4ER9sHTncGRqCiKo49VE8vE5w==
+X-Google-Smtp-Source: AGHT+IECakDoTpDhiyRznxkiGj71HtCaKMx16upveVIQZiceah1ZrEWHrFOAhOuh92zW9TRY+grheUmpzNv0IRyez9s=
+X-Received: by 2002:ac8:7e96:0:b0:471:bbdb:9f43 with SMTP id
+ d75a77b69052e-471bbdba074mr60632641cf.24.1739448006112; Thu, 13 Feb 2025
+ 04:00:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20250129165803.72138-1-mszeredi@redhat.com> <20250129165803.72138-3-mszeredi@redhat.com>
+ <7fjcocufagvqgytwiqvbcehovmehgwytz67jv76327c52jrz2y@5re5g57otcws>
+In-Reply-To: <7fjcocufagvqgytwiqvbcehovmehgwytz67jv76327c52jrz2y@5re5g57otcws>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 13 Feb 2025 12:59:55 +0100
+X-Gm-Features: AWEUYZlbIShCppFI0DHhIK5cm-ltnuxnlVq8Qowgi16SzeDjxo4poRs6xazAudA
+Message-ID: <CAJfpegs2qoZHG4P+WiopDo92MxHQ_0QrZi0qMz7niannGFiPDQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] fanotify: notify on mount attach and detach
+To: Jan Kara <jack@suse.cz>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
+	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, selinux-refpolicy@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Feb 13 2025, Dave Chinner wrote:
-
-> On Wed, Feb 12, 2025 at 11:32:40AM +0000, Luis Henriques wrote:
->> On Wed, Feb 12 2025, Dave Chinner wrote:
->>=20
->> > [ FWIW: if the commit message directly references someone else's
->> > related (and somewhat relevant) work, please directly CC those
->> > people on the patch(set). I only noticed this by chance, not because
->> > I read every FUSE related patch that goes by me. ]
->>=20
->> Point taken -- I should have included you on CC since the initial RFC.
->>=20
->> > On Tue, Feb 11, 2025 at 09:26:04AM +0000, Luis Henriques wrote:
->> >> Currently userspace is able to notify the kernel to invalidate the ca=
-che
->> >> for an inode.  This means that, if all the inodes in a filesystem nee=
-d to
->> >> be invalidated, then userspace needs to iterate through all of them a=
-nd do
->> >> this kernel notification separately.
->> >>=20
->> >> This patch adds a new option that allows userspace to invalidate all =
-the
->> >> inodes with a single notification operation.  In addition to invalida=
-te
->> >> all the inodes, it also shrinks the sb dcache.
->> >
->> > That, IMO, seems like a bit naive - we generally don't allow user
->> > controlled denial of service vectors to be added to the kernel. i.e.
->> > this is the equivalent of allowing FUSE fs specific 'echo 1 >
->> > /proc/sys/vm/drop_caches' via some fuse specific UAPI. We only allow
->> > root access to /proc/sys/vm/drop_caches because it can otherwise be
->> > easily abused to cause system wide performance issues.
->> >
->> > It also strikes me as a somewhat dangerous precendent - invalidating
->> > random VFS caches through user APIs hidden deep in random fs
->> > implementations makes for poor visibility and difficult maintenance
->> > of VFS level functionality...
->>=20
->> Hmm... OK, I understand the concern and your comment makes perfect sense.
->> But would it be acceptable to move this API upper in the stack and make =
-it
->> visible at the VFS layer?  Something similar to the 'drop_caches' but wi=
-th
->> a superblock granularity.  I haven't spent any time thinking how could
->> that be done, but it wouldn't be "hidden deep" anymore.
+On Tue, 11 Feb 2025 at 16:50, Jan Kara <jack@suse.cz> wrote:
 >
-> I'm yet to see any justification for why 'user driven entire
-> filesystem cache invalidation' is needed. Get agreement on whether
-> the functionality should exist first, then worry about how to
-> implement it.
+> On Wed 29-01-25 17:58:00, Miklos Szeredi wrote:
+
+> >       fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
+> > -     if (mask & ~(FANOTIFY_FD_EVENTS|FANOTIFY_EVENT_FLAGS) &&
+> > +     if (mask & ~(FANOTIFY_FD_EVENTS|FANOTIFY_MOUNT_EVENTS|FANOTIFY_EVENT_FLAGS) &&
 >
->> >> Signed-off-by: Luis Henriques <luis@igalia.com>
->> >> ---
->> >> * Changes since v3
->> >> - Added comments to clarify semantic changes in fuse_reverse_inval_in=
-ode()
->> >>   when called with FUSE_INVAL_ALL_INODES (suggested by Bernd).
->> >> - Added comments to inodes iteration loop to clarify __iget/iput usage
->> >>   (suggested by Joanne)
->> >> - Dropped get_fuse_mount() call -- fuse_mount can be obtained from
->> >>   fuse_ilookup() directly (suggested by Joanne)
->> >>=20
->> >> (Also dropped the RFC from the subject.)
->> >>=20
->> >> * Changes since v2
->> >> - Use the new helper from fuse_reverse_inval_inode(), as suggested by=
- Bernd.
->> >> - Also updated patch description as per checkpatch.pl suggestion.
->> >>=20
->> >> * Changes since v1
->> >> As suggested by Bernd, this patch v2 simply adds an helper function t=
-hat
->> >> will make it easier to replace most of it's code by a call to function
->> >> super_iter_inodes() when Dave Chinner's patch[1] eventually gets merg=
-ed.
->> >>=20
->> >> [1] https://lore.kernel.org/r/20241002014017.3801899-3-david@fromorbi=
-t.com
->> >
->> > That doesn't make the functionality any more palatable.
->> >
->> > Those iterators are the first step in removing the VFS inode list
->> > and only maintaining it in filesystems that actually need this
->> > functionality. We want this list to go away because maintaining it
->> > is a general VFS cache scalability limitation.
->> >
->> > i.e. if a filesystem has internal functionality that requires
->> > iterating all instantiated inodes, the filesystem itself should
->> > maintain that list in the most efficient manner for the filesystem's
->> > iteration requirements not rely on the VFS to maintain this
->> > information for it.
->>=20
->> Right, and in my use-case that's exactly what is currently being done: t=
-he
->> FUSE API to invalidate individual inodes is being used.
->>
->> This new
->> functionality just tries to make life easier to userspace when *all* the
->> inodes need to be invalidated. (For reference, the use-case is CVMFS, a
->> read-only FS, where new generations of a filesystem snapshot may become
->> available at some point and the previous one needs to be wiped from the
->> cache.)
->
-> But you can't actually "wipe" referenced inodes from cache. That is a
-> use case for revoke(), not inode cache invalidation.
+> I understand why you need this but the condition is really hard to
+> understand now and the comment above it becomes out of date. Perhaps I'd
+> move this and the following two checks for FAN_RENAME and
+> FANOTIFY_PRE_CONTENT_EVENTS into !FAN_GROUP_FLAG(group, FAN_REPORT_MNT)
+> branch to make things more obvious?
 
-I guess the word "wipe" wasn't the best choice.  See below.
+Okay.  git diff -w below.
 
->> > I'm left to ponder why the invalidation isn't simply:
->> >
->> > 	/* Remove all possible active references to cached inodes */
->> > 	shrink_dcache_sb();
->> >
->> > 	/* Remove all unreferenced inodes from cache */
->> > 	invalidate_inodes();
->> >
->> > Which will result in far more of the inode cache for the filesystem
->> > being invalidated than the above code....
->>=20
->> To be honest, my initial attempt to implement this feature actually used
->> invalidate_inodes().  For some reason that I don't remember anymore why I
->> decided to implement the iterator myself.  I'll go look at that code aga=
-in
->> and run some tests on this (much!) simplified version of the invalidation
->> function your suggesting.
->
-> The above code, while simpler, still doesn't resolve the problem of
-> invalidation of inodes that have active references (e.g. open files
-> on them). They can't be "invalidated" in this way - they can't be
-> removed from cache until all active references go away.
+Thanks,
+Miklos
 
-Sure, I understand that and that's *not* what I'm trying to do.  I guess
-I'm just failing to describe my goal.  If there's a userspace process that
-has a file open for an inode that does not exist anymore, that process
-will continue using it -- the user-space filesystem will have to deal with
-that.
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -1936,6 +1936,8 @@ static int do_fanotify_mark(int fanotify_fd,
+unsigned int flags, __u64 mask,
+             mark_type != FAN_MARK_INODE)
+                return -EINVAL;
 
-Right now, fuse allows the user-space filesystem to notify the kernel that
-*one* inode is not valid anymore.  This is a per inode operation.  I guess
-this is very useful, for example, for network filesystems, where an inode
-may have been deleted from somewhere else.
++       /* The following checks are not relevant to mount events */
++       if (!FAN_GROUP_FLAG(group, FAN_REPORT_MNT)) {
+                /*
+                 * Events that do not carry enough information to report
+                 * event->fd require a group that supports reporting fid.  Those
+@@ -1944,21 +1946,25 @@ static int do_fanotify_mark(int fanotify_fd,
+unsigned int flags, __u64 mask,
+                 * point.
+                 */
+                fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
+-       if (mask &
+~(FANOTIFY_FD_EVENTS|FANOTIFY_MOUNT_EVENTS|FANOTIFY_EVENT_FLAGS) &&
++               if (mask & ~(FANOTIFY_FD_EVENTS|FANOTIFY_EVENT_FLAGS) &&
+                    (!fid_mode || mark_type == FAN_MARK_MOUNT))
+                        return -EINVAL;
 
-However, when user-space wants to do this for all the filesystem inodes,
-it will be slow.  With my patch all I wanted to do is to make it a bit
-less painful by moving the inodes iteration into the kernel.
+                /*
+-        * FAN_RENAME uses special info type records to report the old and
+-        * new parent+name.  Reporting only old and new parent id is less
+-        * useful and was not implemented.
++                * FAN_RENAME uses special info type records to report the old
++                * and new parent+name.  Reporting only old and new parent id is
++                * less useful and was not implemented.
+                 */
+                if (mask & FAN_RENAME && !(fid_mode & FAN_REPORT_NAME))
+                        return -EINVAL;
 
-Cheers,
---=20
-Lu=C3=ADs
+-       /* Pre-content events are not currently generated for directories. */
++               /*
++                * Pre-content events are not currently generated for
++                * directories.
++                */
+                if (mask & FANOTIFY_PRE_CONTENT_EVENTS && mask & FAN_ONDIR)
+                        return -EINVAL;
++       }
 
-> i.e. any operation that is based on the assumption that we can
-> remove all references to inodes and dentries by walking across them
-> and dropping cache references to them is fundamentally flawed. To do
-> this reliably, all active references have to be hunted down and
-> released before the inodes can be removed from VFS visibility. i.e.
-> the mythical revoke() operation would need to be implemented for
-> this to work...
->
-> -Dave.
->
-> --=20
-> Dave Chinner
-> david@fromorbit.com
-
+        if (mark_cmd == FAN_MARK_FLUSH) {
+                if (mark_type == FAN_MARK_MOUNT)
 
