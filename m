@@ -1,95 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-41717-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B81DCA35E74
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2025 14:11:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E28A35FD9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2025 15:07:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 731701892AA0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2025 13:04:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA217188F320
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2025 14:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833E22641FC;
-	Fri, 14 Feb 2025 13:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22202263F48;
+	Fri, 14 Feb 2025 14:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="T2b7UZJc"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="nPPES9Ry"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C30F1DF261
-	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Feb 2025 13:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B34643AB7;
+	Fri, 14 Feb 2025 14:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739538277; cv=none; b=L1NClnItMh9lJofFIOsEP5/kZYvweOFwYxG3WA2bRYAgCc0lptmGjtfRqrm5qXd5StMaYkgxvYzfxV4XfuUqH+LBO1OwjRqo2srCYoQWqrt+TDqIU3FkEvAKzIaw0UxVWtBYdFAVX+7imeqSKmuSP56ywVEMKfRJTw5TJeSKfEY=
+	t=1739541938; cv=none; b=L/kO2HakKdC3TrqfbiTMs/tP4BqUnWgUA9ylu+jHi0CtJ4VKxxOuc6lzmojO1e62mKpW+k5pHAZxOB9wm/zpdVwl6v8ZPYDxm5TvkHONmsgENSrW0LGAMz4aR2ZQE0bsUfKuc85QmljqQiqVI2Wf0lJ01IN+U7vu3gg/BsEM6nA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739538277; c=relaxed/simple;
-	bh=kGaoVgiLrAptOxmwP6NwhdVGvRR6+XxpWuwi1Jikbtg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SMXHN9Yoh4egW8pjogxJyMmAcadUnPc/YR5I+6VQLTLDyZhPzyM49MjuoSW1dhcPVPQ5UIY05XtNSIjUXRbGvmLNftPsged8vmPICLAxaMXlCzKl3NoIf30+NvLrA2SYW+UnCiS2p523MxHcmkOxep/lSsMXxp3mCRsfemX8O04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=T2b7UZJc; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-46c8474d8f6so17093801cf.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Feb 2025 05:04:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1739538274; x=1740143074; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vHmrVly4vSIGIYyzUZmKOCsqXSVt8EErpUP4XcPKMr0=;
-        b=T2b7UZJca3LzpCfkJPWK6V5bg+bkr/gLt14DsWvnb/zQXsYybaIz7eN/DjbqJmyBaj
-         P359geUYIxffyWtMCWN42ER2GUW8QJt8RTLiNjENCz3H8JuXUaY93ExY0/y2RJvZ423Y
-         nV2pdm/jtR25QpTj8JOOh+t0cNOIhV2x+XdRM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739538274; x=1740143074;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vHmrVly4vSIGIYyzUZmKOCsqXSVt8EErpUP4XcPKMr0=;
-        b=gdwm60u1IxZ6xbkLtoPv2ZWRecUYCdUoEZNAHFYIxo/kCPVGfEjNsHt7rVMWJPkhNd
-         KAc/TfWc+dD9J1cwoKSpiBBkFXqZ/Igx1b5UBtEacjVhiq7Z6ZEhzFCjvwiOXq3akV1Q
-         /Qqok4Fx4V4GTOylpBDltLoxiUT+SlEBbwBxnAKePJ5w4+WZIj/GN044/WKiJeZ2PR5Q
-         hRirkafJbUK2SJA7tBCUMzC2F4zaEsxQOtU5ewNPuFatKlRvY5j8FpwN3ovXJpRLPPOQ
-         Vcve3mVnVleL4LogVBJgvapR4cUbqHnfIYfqGmPlMwdDnM3Q0sax6jkTWyX7fISyu0Cj
-         FNlQ==
-X-Gm-Message-State: AOJu0YyuSxnOoaVyzDanwim7Jm7PvB/91b7FBLdUgaG37vtHq8uhp9X7
-	O5GTkRFoELsFPp6sw1jAlQeBa1qFiP/TTY+bQkmNFvwwQXbUlNApPVgdON3HfeyX6NZxbqILqI4
-	EqVyF3pZz5gx3R1aMvGRpVsV39dc8xuM2eSegMiXpqrZIBKoW
-X-Gm-Gg: ASbGncvO8yTs81Y85X+QhoLZlmtABAQICntDhSsUybK7JF72eZy/0VMEApkvtefUCYY
-	layudxdh2xAPPJd66H6MHAS1/Yc+rJdEcrpTxBuo8SBuCXvIQxMpSo11AKP2aGC4+tFPpQpU=
-X-Google-Smtp-Source: AGHT+IG5kEh3YPDEBWIqGR1p6/QdcG8b7Iu1qWbMrjez2iR0FJKFb8x2TLZXC+sfw+BSDXjsMLaUEB6y1UUJwV5p8cA=
-X-Received: by 2002:ac8:5988:0:b0:471:bf91:816b with SMTP id
- d75a77b69052e-471bf9182b2mr119967451cf.32.1739538274221; Fri, 14 Feb 2025
- 05:04:34 -0800 (PST)
+	s=arc-20240116; t=1739541938; c=relaxed/simple;
+	bh=qbTep7DWwVVPGr9yAbsTjbeGA2rp+k6QNTAJdohXydI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=VF6dQWaw1zqNHX0201DV/mfoTQbzxBjkO4pPlobM9vt52E91qFr9ACNMoAtNusjbcIASe4jDzMhTesabGD3mjn0t/hP903O8MnLl3ndwjSwLurCelFf38aTIOfzygpkQUYyCqvs4hHBjzkDLcTbcM/qWJvf9Op4uXZ/ctiRuPOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=nPPES9Ry; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=1J+F7+b3AxQOy6Rj57+X0K27oSk2Zb3KYBkytmzjEMA=; b=nPPES9RyY0a732LFDGlEWkixex
+	8FPiAjCNw7iGYDOoxwjWjR8obQPmykZ1F97ALsoz+uoPyOvAw0cT3ADZcqMIsDveja1uFUdGBDtkW
+	vq9CnC9j9rCuQa0N7SI9fOezZ5Kha7KvOBo6FtpIpyW/FwLXrERjXVA62krsifWkvmqkUmhxZwB1A
+	97NWWAIMF4hAS8CkvaN0kvprvKpdMu1Osk+Goo56xlB4EpqDgFyvrTRTEI/zUhJw1TEs54X+ShnUP
+	ubIOY6T4BxQQ+WmCIrMvdBhDI6iDjdu5ur5whMA7qdDQBj70ilubSmR/RaKClCJTk7Q3A5kVmLWSE
+	ZLS+ssIQ==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tiwJc-001QBL-LZ; Fri, 14 Feb 2025 15:05:18 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jeff Layton <jlayton@kernel.org>, =?utf-8?Q?Lu=C3=ADs?= Henriques
+ <lhenriques@suse.de>,
+  ceph-devel@vger.kernel.org,  linux-fsdevel@vger.kernel.org,  Ilya Dryomov
+ <idryomov@gmail.com>
+Subject: Re: [RFC] odd check in ceph_encode_encrypted_dname()
+In-Reply-To: <20250214032820.GZ1977892@ZenIV> (Al Viro's message of "Fri, 14
+	Feb 2025 03:28:20 +0000")
+References: <20250214024756.GY1977892@ZenIV> <20250214032820.GZ1977892@ZenIV>
+Date: Fri, 14 Feb 2025 14:05:18 +0000
+Message-ID: <87jz9s7hb5.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250204-fuse-fixes-v1-1-c1e1bed8cdb7@kernel.org>
- <CAJfpegsOOv7c3R5zQZWWvYEgZxyWGCJyf8z=A8swQQZsGyvuDQ@mail.gmail.com> <2ec361038d22e9ed5dbe8e69b08a0a31685c7274.camel@kernel.org>
-In-Reply-To: <2ec361038d22e9ed5dbe8e69b08a0a31685c7274.camel@kernel.org>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 14 Feb 2025 14:04:23 +0100
-X-Gm-Features: AWEUYZmahJ6iPY3B9j5L8nh0hKDFOG0aES3WJjmrI2sFzF2I1X0TUqGuRE9Y918
-Message-ID: <CAJfpegvKGa6RzxNKCDER+hXvKCJuMzeHq-xQaRNYzgQr_9yhUg@mail.gmail.com>
-Subject: Re: [PATCH] fuse: don't set file->private_data in fuse_conn_waiting_read
-To: Jeff Layton <jlayton@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 14 Feb 2025 at 13:58, Jeff Layton <jlayton@kernel.org> wrote:
+On Fri, Feb 14 2025, Al Viro wrote:
 
-> It's just an unnecessary assignment. Nothing will look at or use
-> private_data in this codepath, so there is no need to set it.
+> On Fri, Feb 14, 2025 at 02:47:56AM +0000, Al Viro wrote:
+>
+> [snip]
+>
+>> Am I missing something subtle here?  Can elen be non-positive at that po=
+int?
 
-I think the reason it was done this way is to return a sane value even
-in the case of small reads (i.e. char-by-char).  It's unlikely to
-matter in real life, but removing it is not a big enough win to be
-worth risking it.
+It has been a while since I last looked into this code, so the details are
+quite foggy.  I don't think you're missing something and that '(elen > 0)'
+test could be dropped.  Unfortunately, I can only tell that through code
+analysis -- I don't have a test environment anymore where I could try
+that.
 
-Thanks,
-Miklos
+> Another fun question: for dentries with name of form _<something>_<inumbe=
+r>
+> we end up looking at fscrypt_has_encryption_key() not for the parent,
+> but for inode with inumber encoded in dentry name.  Fair enough, but...
+> what happens if we run into such dentry in ceph_mdsc_build_path()?
+>
+> There the call of ceph_encode_encrypted_fname() is under
+> 	if (fscrypt_has_encryption_key(d_inode(parent)))
+>
+> Do we need the keys for both?
+
+I'm not sure I totally understand your question, but here are my thoughts:
+if we have the key for the parent, then we *do* have the key for an inode
+under that encrypted subtree.  This is because AFAIR we can not have
+nested encryption.  Thus, the call to ceph_encode_encrypted_fname()
+*should* be OK.
+
+But I'm CC'ing Jeff as he wrote most of the cephfs fscrypt code and he
+might correct me.  Or maybe he has a better memory than I do.
+
+Cheers,
+--=20
+Lu=C3=ADs
 
