@@ -1,58 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-41729-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21D29A36285
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2025 17:01:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B62CA36277
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2025 16:59:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55C523AE21B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2025 15:57:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68A1A168FD6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2025 15:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C671726773C;
-	Fri, 14 Feb 2025 15:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BADD267391;
+	Fri, 14 Feb 2025 15:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ca8A/UHD"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CHp7C0G/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C187926770A;
-	Fri, 14 Feb 2025 15:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E28A26738A;
+	Fri, 14 Feb 2025 15:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739548640; cv=none; b=EPX2DlIiIFvRVFGJ+xKyECjcmhpyjD9bOPSC3k8mcQ8VKKT4E7vIPXzAx+fl2id73m5SdPpqRBzWTug5HOtsQ54I3BmXvpvxna3SZPnwqUN9ojKjmkVgPU71uLIX+i2kCVQwaHtRDgXfMKwY2qBzL6hP1mdkbpeqXUJPKRLUOro=
+	t=1739548641; cv=none; b=sIf8oEIGmt4+vZnRCQ/0hO2mo9Z/7WvR5H7S0S47wsmI/dDMRsJ+iQi135Wr+IAg5uQ5TLCq6H2Wu89B6DkZ+e+e3KEJcV6acV966f5F+97aoyCX8lM0OVtoQcfpPngAoplt0RrHihMLtD0F9S4dmYVDXLd0d5M+/aOSFqQny4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739548640; c=relaxed/simple;
-	bh=XNgbG1zMI7UoF0mxdU2YRvp3YIrcbdP5wEyJha0nWt4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qGTWILZ1nia4VLG/WuqVEl0DdTFUNQf65V5W6QSP6SQJKHn/VjFbH9K+B2B/Cf9u2k2GHB7Cil4NcZNCws+A2BKB1Xz1s6z6oCNxxGDVf0CVv5TkIk2y27Q94Q16gAOpZQRwgr5rR1F+a+zUorJnLqZn6mbpkYAEWXJqLJa2xZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ca8A/UHD; arc=none smtp.client-ip=90.155.50.34
+	s=arc-20240116; t=1739548641; c=relaxed/simple;
+	bh=V2WdWZtV5sJK08vSrHBslh3FN1BkfppKSS1kC9pPA18=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Qm55XIGJPlRwVS4aeJL5hkTLFC+mawdpGAZBNkC7v/MRex0WhFMrXOvuENdWTFyVWWHyXSw76Q9o5zas0oG+2LZiVEN/S7hFO4t4aKkQd45dx3Q8VxGiZ/6QdSKI/ucYqHr8MbeMyX52qulG5/IyD7Exugqtipk8uwyGJRINZ9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CHp7C0G/; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=azWlzhNcRk6YIClEheIyNJuukxKnhh7eEfcNy8j+HRk=; b=ca8A/UHDDTejE0G1C9fLbJgU0V
-	f/JD4z8FigWAKvRSuJkBa8M7gk9ke1UEVX4nfGvj0eK3k4h/Q2YsWAULXbH622zeZ16joYlGPhMkF
-	aFqca069wefFNe+3SHzchsleRNMUnfNwbpD8eAKhCceWloVMTa7bCqGdjRI0KZC0EtWAFnNLgfN3n
-	KTpfqvVoJU5Ca1kdU2yBkIDpyqKMmKSuC6AnLnxCHX4AVuMEF0FtwKL4scm7n31kzp836a7jwI/gn
-	sz/3JpsIKigN+e1aB7onhCf5gP3J6WnKqUhmrWHygQgEUUHtUUZtmyfclRGRzqxTRj54e8YdD8LEk
-	qEGSA6kw==;
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-Type:Content-ID:Content-Description;
+	bh=BtaM8vIK6fc91Qwjb0IkXbeZzTod+97mIFynOQfgp8Y=; b=CHp7C0G/XX1J8zETRZg0UPhJLK
+	QZ2L7mSNY77eehE102qB0cbwVPXyeTjSQnPkLwF6eoPhvQohh1w9tJHqGBrtaDs8Ld9k32Vluw3dL
+	vtC5woduSDqgT0WML3et8m8+I9YHuk6qcOYNBwfTsX+hmH044M59T7/YHYqC5qOnKWkNragqc4l+F
+	Ysu6R/lTp1ryMNBcfRga5RCcwWNhiYWZy6TOfY1ULxV98y/TM6W5IZ9xlDLmTdhxkLe3E7T79EQ12
+	aCRUIJI4A/Aq0fG3bLN3mJj56TLiRiRnYFRPHBOBvKUsbfDv4pqXxQijTXXQB97GRs5j1NHC67GrW
+	4HrRQXjQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tiy40-0000000BhxZ-1FRQ;
+	id 1tiy40-0000000Bhxk-1ieL;
 	Fri, 14 Feb 2025 15:57:12 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Ilya Dryomov <idryomov@gmail.com>
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	ceph-devel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	David Howells <dhowells@redhat.com>
-Subject: [PATCH v2 0/7] Remove accesses to page->index from ceph
-Date: Fri, 14 Feb 2025 15:57:02 +0000
-Message-ID: <20250214155710.2790505-1-willy@infradead.org>
+	David Howells <dhowells@redhat.com>,
+	stable@vger.kernel.org,
+	Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v2 1/7] ceph: Do not look at the index of an encrypted page
+Date: Fri, 14 Feb 2025 15:57:03 +0000
+Message-ID: <20250214155710.2790505-2-willy@infradead.org>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250214155710.2790505-1-willy@infradead.org>
+References: <20250214155710.2790505-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,33 +66,55 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The first patch is a bugfix.  I'm not quite clear on the consequences
-of looking at the wrong index; possibly some pages get written back
-that shouldn't be, or some pages don't get written back that should be.
-Anyway, I think it deserves to go in and get backported.
+If the pages array contains encrypted pages, we cannot look at
+page->index because that field is uninitialised.  Instead, use the new
+ceph_fscrypt_pagecache_folio() to get the pagecache folio and look at
+the index of that.
 
-The other six patches I would like to see merged for v6.15.  Unless
-Dave finishes his rewrite first.  I have only compile tested this,
-but it's _mostly_ a one-to-one transformation.
+Fixes: d55207717ded (ceph: add encryption support to writepage and writepages)
+Cc: stable@vger.kernel.org
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/addr.c   | 5 ++++-
+ fs/ceph/crypto.h | 7 +++++++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-v1: https://lore.kernel.org/linux-fsdevel/20241129055058.858940-1-willy@infradead.org/
-
-Matthew Wilcox (Oracle) (7):
-  ceph: Do not look at the index of an encrypted page
-  ceph: Remove ceph_writepage()
-  ceph: Use a folio in ceph_page_mkwrite()
-  ceph: Convert ceph_find_incompatible() to take a folio
-  ceph: Convert ceph_readdir_cache_control to store a folio
-  ceph: Convert writepage_nounlock() to write_folio_nounlock()
-  ceph: Use a folio in ceph_writepages_start()
-
- fs/ceph/addr.c   | 223 +++++++++++++++++++++--------------------------
- fs/ceph/crypto.h |   7 ++
- fs/ceph/dir.c    |  13 +--
- fs/ceph/inode.c  |  26 +++---
- fs/ceph/super.h  |   2 +-
- 5 files changed, 129 insertions(+), 142 deletions(-)
-
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index f5224a566b69..80bc0cbacd7a 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -1356,8 +1356,11 @@ static int ceph_writepages_start(struct address_space *mapping,
+ 			memset(data_pages + i, 0,
+ 			       locked_pages * sizeof(*pages));
+ 		} else {
++			struct folio *folio;
++
+ 			BUG_ON(num_ops != req->r_num_ops);
+-			index = pages[i - 1]->index + 1;
++			folio = ceph_fscrypt_pagecache_folio(pages[i - 1]);
++			index = folio->index + 1;
+ 			/* request message now owns the pages array */
+ 			pages = NULL;
+ 		}
+diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
+index d0768239a1c9..e4404ef589a1 100644
+--- a/fs/ceph/crypto.h
++++ b/fs/ceph/crypto.h
+@@ -280,6 +280,13 @@ static inline struct page *ceph_fscrypt_pagecache_page(struct page *page)
+ }
+ #endif /* CONFIG_FS_ENCRYPTION */
+ 
++static inline struct folio *ceph_fscrypt_pagecache_folio(struct page *page)
++{
++	if (fscrypt_is_bounce_page(page))
++		page = fscrypt_pagecache_page(page);
++	return page_folio(page);
++}
++
+ static inline loff_t ceph_fscrypt_page_offset(struct page *page)
+ {
+ 	return page_offset(ceph_fscrypt_pagecache_page(page));
 -- 
 2.47.2
 
