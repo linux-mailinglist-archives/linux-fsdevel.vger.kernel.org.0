@@ -1,95 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-41711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B144FA35AC9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2025 10:49:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FC03A35B27
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2025 11:06:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D87207A49D5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2025 09:48:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCDC21892831
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2025 10:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CE625A64D;
-	Fri, 14 Feb 2025 09:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CCE2580D6;
+	Fri, 14 Feb 2025 10:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="QYT4nrEd"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="eEaOnbWG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0325625A2AD
-	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Feb 2025 09:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9617422CBDC
+	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Feb 2025 10:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739526521; cv=none; b=XkNec723ijr34ewAV3bx194JwdHyHUqYkCTBYPnx0KMEfH1eQhYE6iNQ5SDbWwOsslq45hoRSvypHO2pAJwR0o007gkD/b6yqJKfl8NNP4O4OdGTnZGsTFeVuUIB1hT5PP1AUQJEBeqnGgJsxoJ+FINJVhp+Rm18/EiUOmK+onQ=
+	t=1739527598; cv=none; b=DfS8uuqw6U3udZe5evGP4dXfHqoeDYkqyk0A1QA7epHsBd9+sB1rPK+SKvVNYaWTZzvA++81Ls4M+g7ARsEGpEZukdxrBJvu+IkOFlFcPX1MTHdPewQtbch5vAEhSy5XXI//JR2cIS7dFQuk75Uw5Rit56dIgNVPx4My5ZWkmrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739526521; c=relaxed/simple;
-	bh=KE/1PS8bSk4dH0R2K60/pmTjlC5i51phdJ5NWCLMzN0=;
+	s=arc-20240116; t=1739527598; c=relaxed/simple;
+	bh=Z2hQWnMO/cuxNXqdnzJgv5SA+gYsgmkuptio2Sc8Dsk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L+n9FeYcFwmKl2YapCNCW4w2Fxc4HgPUW5N+yFQGfiKkf9fk+x1RX747tCbHwaybLrW/QHHEutH00vxQ98/fGBobl267i8zRuQzia6dHlg7qUpoq1TEi/uHdCk/yGuVXVUQny8emXLw4Xw0rJpRgdPTX+mOFLFb3LMg2+Vv5fac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=QYT4nrEd; arc=none smtp.client-ip=209.85.160.170
+	 To:Cc:Content-Type; b=PHyUnrHiRaDvhOBr2ef90mKZPepwqi4RvJ4dVb3V9MpLceNfIHCP5aZPLkAnoFjV4V2gx2HPpXjIFYGWhdHcaXeZak/pwImekwyxbtUBojFMBi9GLmP9FfrSLIMdnCBLmPuCIMozRaWOMJxiNWvftDC7JxAx+SVXZEKFI5aHgrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=eEaOnbWG; arc=none smtp.client-ip=209.85.160.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-471d1af90a0so2876921cf.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Feb 2025 01:48:38 -0800 (PST)
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-471d1af90a0so2997341cf.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Feb 2025 02:06:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1739526518; x=1740131318; darn=vger.kernel.org;
+        d=szeredi.hu; s=google; t=1739527595; x=1740132395; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MDr4jsMykS2/ggucs0AcLI/tKQzpn55xwyUNyvWALTY=;
-        b=QYT4nrEdOPWxvCEE7dk0xSkC0VkmKFlVurzHzDGB8XaeZCciACCLQdg+xtXbPgj/My
-         199RhFB16sD1A6q+SPkQ7t2UEnlf+qjxeiHQvi6qleDy7ptoPsMDPisxS/m0euzAh0qN
-         UJ6WKSa0xmSunLQWF/EJjHMFQUJLnAIfw7rY4=
+        bh=xfcGPvuK2E3K4HbGI9BW41bEoS/vaYyRr9Y0bgqZ6+Y=;
+        b=eEaOnbWGnIbQZ+8puvWVrdyteUQ+ux3kYU1f9OSReQFDaVlB1kHZz5DphAyniDgp6S
+         S2mrSFq+xOoF3xp/lfz4c671W1Yr/F8MKtAeUZkOKGBFUbsd6F3rdLrTr10FnCoNudaB
+         NdguVfvQ+qZ24MXqsNIi1bjkQy0BrKX7RpHrQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739526518; x=1740131318;
+        d=1e100.net; s=20230601; t=1739527595; x=1740132395;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MDr4jsMykS2/ggucs0AcLI/tKQzpn55xwyUNyvWALTY=;
-        b=mprLjyQ08eCUP7VgxffoqzZnBnbhWbEHu5Ew0jZuZG7kb+AK/IiFsD1pPeRUbLKwfS
-         FW93QL3gaTN3p5+/6sDwVsgvHvDB0pB7pyVRkGZkns/lLCmextPST5PORfxNX25lXUr+
-         1juMHZkx40Ebjb5HnN0BQa4WAdEDm0t5EDT7gajERgJ74jgkg9Mc/Ah+Wv2pxuj5vCgg
-         nsUNOgFlYW+ZPWEsR7PwobJ1+wxkrI6xxucicG6/T1vSXhpLt4X/hIQ45MBD1UlYGRkW
-         +uDxqnM+wiAJbEPqPNfT5AFS+ZGlL4piyxCbhT5d21iAfELt9MyibxdXi/VkbAP6ygoo
-         XDgw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTBndYvaOXBNSU2GCEeBXCimFd80i1+iIiMNsXrCktjpWm95Z2d80UgDG+RE/vNlbx8c1NxjbrvLgbDuD8@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywo2fhL1OBB1WHSRAHR+OtWxUL+Pxs40LOQtlcK+EgLUgh/pnFl
-	7gOX/CTM5zKnwkby6WsvcBVlDIvLiNj8/8mi+ft3sItjOKLK2SY1NLkvgeAKyWr6tSVkiryuL7c
-	Gyng+UVr/dracH3NuUyOXGlcU2gk+bXuCiC9sbA==
-X-Gm-Gg: ASbGncu3vH8MbN7Il9zhVgrUkpR89UdJhZhzuvgVvF+lFn+coytari/lyXaENNcmM6C
-	y340MklqtItOGr471ABunuKgsYd+keM/zELtZB+jraT6Z33PBXH/BzYwZY0/7GWLZ212Glew=
-X-Google-Smtp-Source: AGHT+IGuB62P59Ol+6vxloURqcamERa0qYdF0pLayov3aelu2QkTJBkViDqxaan7Awl6SY9eZnVYSryW0tCpG8J74gQ=
-X-Received: by 2002:a05:622a:593:b0:461:22f0:4f83 with SMTP id
- d75a77b69052e-471afef5585mr160384561cf.43.1739526517753; Fri, 14 Feb 2025
- 01:48:37 -0800 (PST)
+        bh=xfcGPvuK2E3K4HbGI9BW41bEoS/vaYyRr9Y0bgqZ6+Y=;
+        b=Evvs/n/jpecvvnEKnR08LGbVNvDazAbdud2+pTDQmazOWjNWrvgZLSYOg0uPkTJ0On
+         N2qNiYNx9cXfd/KaDhHSN7ZZ4Hk99+RBmlnynPO2sNqVYcTSIWSrfeS7xbxQyfMNRGkQ
+         U9/USV/UztWFTXpPPuvXiFcg2qg54b04pNQrBA2xXGwjFXiIJpLboDd9FqYfRGUS4I34
+         FwW0KCB1Lje8Ku9evPobQuQSDPUQGZVR+NbRnVsvJhhNAYD5tWpYm+AxBIGt+sZe3CkM
+         2TlBEsIRCDrKd8X/qJyyJDo1KLY6dhrR35M8009/O1CJ/yNuI00Vg68MIwoBm0mJu16M
+         YqvA==
+X-Gm-Message-State: AOJu0YzCQGMHFxt6eiMzDlKgX60WWUPJlIJMFFBU8Rpc/khqLkiwBrCv
+	skytpuylrEGyvE6F8FAvWruHqQr7UfaHGEMQ2NZIaH33aBQvvK34VRwosRL09WYyz7gE0+oRQM6
+	xnEK/LzB6g8XPLkkGrf65ggdjxXCdovvP6uQMi8JVWY01HmKGUK0=
+X-Gm-Gg: ASbGncvzFZoC2loAyI/m0U71vz5LFiZ3pCgZIsSQT0SWhOeJpBTSz/Vfjaz4rYqe3Uz
+	M/5APYvCdXUAHYQkFJhf2EBS7UTJQ5tPjeu8wKNSdeFO0RfHohfgAKpZzrSpSi8pL/Wg3byQ=
+X-Google-Smtp-Source: AGHT+IH9BCwJnBeiCDLpxtUf5qtu9S16bi3Qw6Q24rvoCdQf88eD1AI68lvaUEv+O10sqGS29QN5psqb0ylEQE11ETo=
+X-Received: by 2002:a05:622a:164a:b0:471:a31b:2ed4 with SMTP id
+ d75a77b69052e-471afef63bfmr167397611cf.52.1739527595439; Fri, 14 Feb 2025
+ 02:06:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250207133502.24209-1-luis@igalia.com>
-In-Reply-To: <20250207133502.24209-1-luis@igalia.com>
+References: <20250214-fuse-link-eperm-v1-1-8c241d987008@codeconstruct.com.au>
+In-Reply-To: <20250214-fuse-link-eperm-v1-1-8c241d987008@codeconstruct.com.au>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 14 Feb 2025 10:48:27 +0100
-X-Gm-Features: AWEUYZnbRxMitMiVBkeyxPOZvfKFE0ntNolS4pNWHZK8u6Gg05D8SwmA8SFkAbc
-Message-ID: <CAJfpegsymDHQj800wtD6Tq9fSOHjJ+UJ7dhvPf9Ut0LT71us4g@mail.gmail.com>
-Subject: Re: [PATCH] fuse: removed unused function fuse_uring_create() from header
-To: Luis Henriques <luis@igalia.com>
-Cc: Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Date: Fri, 14 Feb 2025 11:06:24 +0100
+X-Gm-Features: AWEUYZn7zwQ3shb9JZW2YLtEOBEI_Vd7AFYLazyP6GrkLTYJdws2jLrohVwysU8
+Message-ID: <CAJfpegv0NfbLNcRaJP4Te8XX+EoKdA1z7i0CpeuE8Yc5r8f18Q@mail.gmail.com>
+Subject: Re: [PATCH] fuse: Return EPERM rather than ENOSYS from link()
+To: Matt Johnston <matt@codeconstruct.com.au>
+Cc: linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 7 Feb 2025 at 14:35, Luis Henriques <luis@igalia.com> wrote:
+On Fri, 14 Feb 2025 at 02:18, Matt Johnston <matt@codeconstruct.com.au> wrote:
 >
-> Function fuse_uring_create() is used only from dev_uring.c and does not
-> need to be exposed in the header file.  Furthermore, it has the wrong
-> signature.
->
-> While there, also remove the 'struct fuse_ring' forward declaration.
+> link() is documented to return EPERM when a filesystem doesn't support
+> the operation, return that instead.
 
 Applied, thanks.
 
+Also added the following optimization patch if link is not supported.
+
+Thanks,
 Miklos
+
+From 150b838b03e887f4e5ffdadcffafef698e34c619 Mon Sep 17 00:00:00 2001
+From: Miklos Szeredi <mszeredi@redhat.com>
+Date: Fri, 14 Feb 2025 11:00:53 +0100
+Subject: [PATCH] fuse: optmize missing FUSE_LINK support
+
+If filesystem doesn't support FUSE_LINK (i.e. returns -ENOSYS), then
+remember this and next time return immediately, without incurring the
+overhead of a round trip to the server.
+
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ fs/fuse/dir.c    | 9 ++++++++-
+ fs/fuse/fuse_i.h | 3 +++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index f07ccaefd1ec..589e88822368 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1123,6 +1123,9 @@ static int fuse_link(struct dentry *entry,
+struct inode *newdir,
+        struct fuse_mount *fm = get_fuse_mount(inode);
+        FUSE_ARGS(args);
+
++       if (fm->fc->no_link)
++               goto out;
++
+        memset(&inarg, 0, sizeof(inarg));
+        inarg.oldnodeid = get_node_id(inode);
+        args.opcode = FUSE_LINK;
+@@ -1138,7 +1141,11 @@ static int fuse_link(struct dentry *entry,
+struct inode *newdir,
+                fuse_invalidate_attr(inode);
+
+        if (err == -ENOSYS)
+-               err = -EPERM;
++               fm->fc->no_link = 1;
++out:
++       if (fm->fc->no_link)
++               return -EPERM;
++
+        return err;
+ }
+
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index fee96fe7887b..3ad5d4b8f7c5 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -867,6 +867,9 @@ struct fuse_conn {
+        /* Use pages instead of pointer for kernel I/O */
+        unsigned int use_pages_for_kvec_io:1;
+
++       /* Is link not implemented by fs? */
++       unsigned int no_link:1;
++
+        /* Use io_uring for communication */
+        unsigned int io_uring;
+
+-- 
+2.48.1
 
