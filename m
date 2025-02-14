@@ -1,202 +1,239 @@
-Return-Path: <linux-fsdevel+bounces-41761-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F542A367B7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2025 22:45:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAA0DA3683B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2025 23:25:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7A617A5A86
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2025 21:44:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07D663AEEA9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2025 22:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD331FCCE7;
-	Fri, 14 Feb 2025 21:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D55F1FC104;
+	Fri, 14 Feb 2025 22:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HcOmQFxp"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="WCgrY6fq";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NENfwtyh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C061FC7EA;
-	Fri, 14 Feb 2025 21:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739569470; cv=fail; b=UTrq9hEcdNwBgCYkQ2fMPA2Dnaxsqd+Ir/pFSu1IJDNTFKdipu5wsfpacm9VzaJuFSBvTxCBS3Iyhklrr1tXWbUbivPQ7woOEQ1KIqAJBPoDSZ1b04F9E5kGRkNXLgnnIw25u6LISpo7miyziTcOJYKLK2Qel/y5UjA2wEt9dNc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739569470; c=relaxed/simple;
-	bh=tHARa5JN9kX+UBPiev+j50ACJ6iodE8pzhAvJs8yPy0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bwzprbbKU+5c+uabv5kFtmvBG5qXZwLdJv7appl3NffnFmbQLaPLhcf3TYuMEg+DL4sAE2WWXsr1wc7E3vjkM4Nw8uR/QAmyi8oyLdggiJ6npmK1KKVB5S+hYBFNfMdO6H+3JubgnpuNZmVcDVYf2rX1rZ4Z5szZUTSSZBBjsw0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HcOmQFxp; arc=fail smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739569468; x=1771105468;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=tHARa5JN9kX+UBPiev+j50ACJ6iodE8pzhAvJs8yPy0=;
-  b=HcOmQFxpZFRigUqSYS60ydnGdb8E4kL84pSmDVlF6y16mefReQLlKi7D
-   jmnbgxQTHEesk80qn6Ufh6J4uLctvH8EHJf0sTwIlxHw0cxwSY50JEYbn
-   EUxbVLDYT7cQC+rTbNmH2Lif1s8BNOqtwMahA2rDfJDUPqkrjcAF0POuS
-   A6dIsdXQeAKL8QbL1WkGeK+Qc6R3GKNVXhTAxVshwyQoc2AL7VOxoAR21
-   uNA02Sou7TcfJminsU5vIfZpbzNp8oXUlJRv7kkltmOJ2cT2d5M37kgl3
-   NKuvVaAdF27oXNQed3Xg3FsWVmUvMEEW+sKdJ8OMr/hFAaf965xOA3Vqb
-   w==;
-X-CSE-ConnectionGUID: Fg8mO866QiWVD9uUsDdn6w==
-X-CSE-MsgGUID: gYDdHl81RiOAZ+hKiYuzVw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40039604"
-X-IronPort-AV: E=Sophos;i="6.13,287,1732608000"; 
-   d="scan'208";a="40039604"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 13:44:27 -0800
-X-CSE-ConnectionGUID: ILBpsKihR46jl/UORflaVQ==
-X-CSE-MsgGUID: YdMbnoSVQ4arxsO6+Jv8EQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,287,1732608000"; 
-   d="scan'208";a="113532897"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 Feb 2025 13:44:27 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Fri, 14 Feb 2025 13:44:27 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Fri, 14 Feb 2025 13:44:27 -0800
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.46) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Fri, 14 Feb 2025 13:44:26 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CRtuzCltlkm5aVs7WQx6POZBsxtbe4uQNg6xptroF/8F5gXTeUJEqVI1f0aomQPmlU4MnvBtIr2n/qs8drj8hgaRItPl7x4G4VxEXOG4VpLcHRMiScFgNDlruZKnE6IZdIRQE0RGZmLqVLGOmZ7SowOK+dM54gBCexykoFGoTWFZukGoeo84Fw3O/aTs4I2TE2VYbKiOfP4zCDgjOUYxzEsw4iF0O2EWJzyqhBPb6Ap2lOF1IRHRTmWJr4RyXjBKs4Ei0eHS4bTEuZORPKbBda/S1vdCmNpppf594UMGWlDm5giOvQhitTuOQ1iylpV4eagkWwaR2Ij7Uw8moOm6LQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tHARa5JN9kX+UBPiev+j50ACJ6iodE8pzhAvJs8yPy0=;
- b=fxno/fGOTbH+Yy7TBHtLXLAm1f6niCKAb3bg3NrNrBls65aH+eDSPTV1uoVTqDwfzUFaloO5L3XKCqpc+12uuEwQz3ZnjVJ2L9SsPoeE53L5tAqkKOc6qFLhAm5HcfHSXm8wh613ELi0l4e5tnpHvTduRnQFPg4Gskaip2Tw0NM7xLEPSJVQfnHrpQaqmiM9y86YQuhjuko8oYhtgGFggISECc+qhDCyhESqo5elwb3M53Eie09Ayq+yydABAMtuO2vGLIFYK4gVbjNo4gQQV+I7jPlfjvpCO+329pzWMobQaAPqQqx1Aq9XK8JDN9YbPkB+cLhMrYOQK3Zep8VUIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by PH8PR11MB8063.namprd11.prod.outlook.com (2603:10b6:510:252::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.18; Fri, 14 Feb
- 2025 21:44:09 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%4]) with mapi id 15.20.8445.008; Fri, 14 Feb 2025
- 21:44:09 +0000
-Date: Fri, 14 Feb 2025 13:44:06 -0800
-From: Dan Williams <dan.j.williams@intel.com>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>, Dan Williams
-	<dan.j.williams@intel.com>
-CC: "Matthew Wilcox (Oracle)" <willy@infradead.org>, Vishal Verma
-	<vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
-	<nvdimm@lists.linux.dev>, <linux-cxl@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<akpm@linux-foundation.org>, <apopple@nvidia.com>
-Subject: Re: [PATCH 1/2] dax: Remove access to page->index
-Message-ID: <67afb926331c4_2d2c294d6@dwillia2-xfh.jf.intel.com.notmuch>
-References: <20241216155408.8102-1-willy@infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241216155408.8102-1-willy@infradead.org>
-X-ClientProxiedBy: MW4PR04CA0098.namprd04.prod.outlook.com
- (2603:10b6:303:83::13) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4FA1953A9
+	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Feb 2025 22:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739571903; cv=none; b=VuNMsTm6xmbMO1M8HNIQzOErW8gJVGkh9efj9WVxiFH9QvATQvTmMXGfJOvCZlOPTnTjkmoiHh5SQsvP3RqbN+wBEqOaXzI+FEjaR6njv7wLdY84K4zDOKN8HLr/4oW7M1icpEUO8eREy1RVP89cLlF2+mAZr97mZzS0RxIbk9o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739571903; c=relaxed/simple;
+	bh=RaxBKtZB5As2jjOl1vXvWW8zqYsvMQEu385DlGMr9vo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bRIigG4fEqUTidje7KKt9XOrt3MZ6tZvqPJpz1J/WYmQxI3Cdt2I+Rls0T4Ni3yhlvGgNhlhDWcLYu+72XGXrpe/9QGhQSRfxjlTQ1I4KDtPagY4wXEF5BsY1z5kobTvTTf4ZO+d6apoHSbFLh0JX35rhUigBjF4VHj4XR1i9c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=WCgrY6fq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NENfwtyh; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 6FE1813801AF;
+	Fri, 14 Feb 2025 17:25:00 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Fri, 14 Feb 2025 17:25:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1739571900;
+	 x=1739658300; bh=/Q7/MR8fom6L+KfdjUt9VT3j7R0D+AjofniOi3/vHHU=; b=
+	WCgrY6fqKSwlQd4ArbBMNBew/o2bXetdOEMsnSdKq+qXHwmScprP731ub284PIve
+	F9jt57o51KOC1rAa3TDXnJY4YD+gYMlL925zslzbn0M0GNx342ifp4dzZnBu8Ntk
+	Ya4c0DfH+vyDtrohVECiiqbzrt28NWvlfY9qjna/7+73qfv1lNr+JjhX1yVrAUkk
+	5q9XRQDvw4Us9yxSF11yEwxGMLi1c6zECtpYdEwswZz2BjepBrtr53n+VlSReMT0
+	sY6q2KpHtBEF01SPhxn6uGWrL3jXB21dDzvfj/uD9NpiE6xb3NOO2MAlrVmuf9IZ
+	42cGRY4s3Rk7p/si/yon2Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739571900; x=
+	1739658300; bh=/Q7/MR8fom6L+KfdjUt9VT3j7R0D+AjofniOi3/vHHU=; b=N
+	ENfwtyhdzvzQjmmSmcnq9YVbUDbsU0n2YRinku6LoMFRAK6N5EFRuMAcFlUxAGhw
+	DBsOGI4jN4EjSbkVO8UvDrSVzkDLsWCd77RS4MuaGMILkTB92CYACbiEkMkkZGOK
+	M1dt61IS4hM4wGZC0HGv2miN3qwOnZyUxOuFwQbBNMhjAQdSqGoDwCPnpSdZAsEl
+	pj/25WbpOJxn+UocTSysxvkv6p43v31dW940NMXec+vnnW2VXV4jZEFYTQkWlkHB
+	lOHKlf6ZUlO9sXm6aIs7GoQRejzbj072q/mgiDvQBFNsKO6hQqBYcjnDzJ8eeud6
+	BCKlKwiZqXF63mQq2XmHA==
+X-ME-Sender: <xms:u8KvZ4gQsxknuYvBBH705YIAY-4RZsy-o5i2I29mVCVmRp9P0tHoBA>
+    <xme:u8KvZxBWbkfruXODlGGWGnEycvY6QUbRGwa1iIly85kWMi240MrNkirAWXlOYotAd
+    -iN4ACmo7MXes1v>
+X-ME-Received: <xmr:u8KvZwFdbbl1wRWiCVY1-mDCdHg0PZ4tej-_B0Va4iLyA559lXOEBjsC70R_i8vvKwmOwggBnsFg4jmLPieKmc14iL2fF7_DaJEhuIGjJjMyqGeij0Nx>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehtdekgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddv
+    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusg
+    gvrhhtsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeeutdekieelgeeh
+    udekgffhtdduvddugfehleejjeegleeuffeukeehfeehffevleenucffohhmrghinhepgh
+    hithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
+    lhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdrfhhmpdhnsg
+    gprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehjohgrnhhn
+    vghlkhhoohhnghesghhmrghilhdrtghomhdprhgtphhtthhopehmihhklhhoshesshiivg
+    hrvgguihdrhhhupdhrtghpthhtohepsghstghhuhgsvghrthesuggunhdrtghomhdprhgt
+    phhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtohepjhhoshgvfhesthhogihitghprghnuggrrdgtohhmpdhrtghpthhtohep
+    jhgvfhhflhgvgihusehlihhnuhigrdgrlhhisggrsggrrdgtohhm
+X-ME-Proxy: <xmx:u8KvZ5Tr7hTTB3tRo9Wv9XI_wvyq75dEFHSaO0SCXII71l8uGSxmqg>
+    <xmx:u8KvZ1wKFVINSgfs_tSDjqbslzGSdmrp6EouC7YOZeINqsaWw97FUg>
+    <xmx:u8KvZ36t-q80T6ojcnRnwoDvuNU6yxvFxm1qOE8gIfetfoMaCTISHw>
+    <xmx:u8KvZyykYMyznr24qUTCQLMeUJOFdsRHs1-xpV_tVsFAoUtEKsizlg>
+    <xmx:vMKvZ8mnpRUueEXXR-d3weIVyQ2WlPzfHLuqCO6-V3Z8Qzg2uODgh7LV>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 14 Feb 2025 17:24:58 -0500 (EST)
+Message-ID: <015b0ab9-1346-40d6-a94f-e6ef56239db4@fastmail.fm>
+Date: Fri, 14 Feb 2025 23:24:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|PH8PR11MB8063:EE_
-X-MS-Office365-Filtering-Correlation-Id: afe3cce1-9f05-4432-a0ed-08dd4d40b65f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?rbt+E1hxV8VC3Q2mJuKJBSUcfLUsG6I1DiTwD3OI61jxWK/WS/HvcN5SdZjJ?=
- =?us-ascii?Q?SJ71HSUgR8oPtVtKcXq3+9PD1duYv/6aK2hR5zAnEencwxVFyaGRKy0iWhnI?=
- =?us-ascii?Q?E0mp746qsawUXbBXKOALllcmnR66eStC7XwkgnV1KcX8aiJF4KiaPZPiUvd/?=
- =?us-ascii?Q?DR0EpghdDSycb8pLE7oIOXXvq/CCKUNYtb9ENYeuKfoOughBkPPTUvVvWnHW?=
- =?us-ascii?Q?b2jYZxiVwOh0Pvn1g9xmqOGx9W1FkWn5YRvV/6qWTkamgM7GwkcFhnHW7HS6?=
- =?us-ascii?Q?aVVxNhZz8tiw3GTN1HzyXHnj4gYpCaZRgE46cscQeg+Scf3JhC+E/PqKdQBZ?=
- =?us-ascii?Q?Yqu7NHgyQ05WPMOpRVRjV/KJjUOQXLfR4izfQi3at/7Ki9vzk3wqpQo4oWPm?=
- =?us-ascii?Q?lZEokEjINkKD6Y+Jm2ArQmux8aA4ZMvpsql8u1XXXuHN+Uf7quqwX9XfzLZ5?=
- =?us-ascii?Q?MUHfs7izo02U2QyvL0o3q4oGYAUeu3TJnpsku1NpeiSzdZ3YxF0UXkQ1sSSw?=
- =?us-ascii?Q?Zj/ID75XW8OW/7AKph3XyjcQHDxzuh4EYIWCQ/Q5a/gDIqH0yvaCcs7iPX16?=
- =?us-ascii?Q?1PwZnJGAuEmiFRS8zndWHek5jBSfrGid1+Jrwt4Ad/ecTKKkTP53pQ/gbK3C?=
- =?us-ascii?Q?dk3Ixb2HS5jl7KtUf+JZ/8EdW3MTm4PugzTl3JdJ29pP5+XcFmp8mFElh+XG?=
- =?us-ascii?Q?9kDxSganJ6Cmb83Gy4RdUwkQzf64y/rX9jTCVFUDPXAyAb1lokqH2P+eHLZf?=
- =?us-ascii?Q?SWAWPpSXVuzNdpkZR94cIluUeoN1FC+29ASyCL7LB987rLhH+T3IVja672pN?=
- =?us-ascii?Q?/qkUEZW+Re+OQjEL40rfgMKejQxjq9p8fdBrwmfmgpWjjJNPVGcFWBNnWdEw?=
- =?us-ascii?Q?GllANP9mRe8iomRTJJzQGBBzAncGXeXEVXB/eGR9WFWVzMknTByP5nMXsx6j?=
- =?us-ascii?Q?9MpvZtVSNt2KvpNpvW9v2d4pK2xn9gZ+XoBl99GVx1hmc6mN2cxf2ZubNWJt?=
- =?us-ascii?Q?SMrmXR62nRweAvicrTwGrnUaPZFoLlrkCJ7vhV6zvzdCClGvnygPeywL4Hye?=
- =?us-ascii?Q?WB3Z7hG2uFLDAYnBWiZ2UlIbAkMBYIXPwfIvhkkVZ1ZsKi3ZiUzLKl0NTiNG?=
- =?us-ascii?Q?fKFA+wTPqonSvMq4HHIJaO9YOJ+vJu7LEGiK6ZRB3/m0HqHZ3/71NO2ukTVs?=
- =?us-ascii?Q?E0icSixYSm05XtVgT+wZlI3EelqnhBEDALHdP5KvhOyVUWb+vxyYi43GQ4Vi?=
- =?us-ascii?Q?hz8JplroJUKcXiYBt1OlSvYhgMRiI4WwOATudEJy7GVila3yE/MiTWiBxA/0?=
- =?us-ascii?Q?BjwS8+vri0dccWH6A4nx/LJjABQxhLUrJqDbZt1/MlT1h6X9AKXBg1Jsa9VR?=
- =?us-ascii?Q?+ojywbWDkv/c2MHusOyT8c7uS7iR?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?uk5ZyJhdAYU+EqGlC17sCXN6DoAwZQbku09B831EQADiaBrIzS0gsaeh560P?=
- =?us-ascii?Q?ppGwoLPnSDJzj9qUcvIs8F0zNJOJ4+Tx1E+zeXpD1R2+aofrwCwCkA4su7aD?=
- =?us-ascii?Q?dfrrhCIvfWzpfxjrXFEaQ/D8Ybkux+BswitVXJhxk6sypS54m9jA7jMZEpFl?=
- =?us-ascii?Q?z6GrmHtYb5vmYaF90qfUzKjLc7MmC/HMxWBh9P6zPV22NeEFGvFBIhkelnfY?=
- =?us-ascii?Q?2JDe46hTL8TiiU01DWiahuE1V90H781L9UkARevN09Mk11XX8E1k5f+utoL+?=
- =?us-ascii?Q?RS9t48Okim2nHNKpiBGZ7b/rVaQva+MiBj8FCnqVSVTv3BIfetHOqOELHH+W?=
- =?us-ascii?Q?d/TtKq9Mu4O4hh3rcSqhMRcfCgSuRI/ZuofflvHy/5g92xoDd9T+iWv/v9jJ?=
- =?us-ascii?Q?6q0CBDGcDs/sgG5inygUDYlOf4XZ0Saku9omgoD6VUDuGNLby5QUee5YwSp4?=
- =?us-ascii?Q?vF7Rnyt2YmeXps1yzrkf0LYizpoyMs6rjYIrtHPTX8/cHN8TZMcZFsLo3NXg?=
- =?us-ascii?Q?xyquNXBmz5s+jN8Rwk+EQPflrloADIN3jhyKXdFZYOkc3B6kuFVb43EyFxuU?=
- =?us-ascii?Q?KOfoK/MTfsKp5fYG6xr9BO304MYF2sUFMmFmcO6zb4e8VELUlC2nSZ3eqe6f?=
- =?us-ascii?Q?tcuY4zIqOXi4OLJgtnMsZIO4j6yoyUemTOdRtzgi71hdoc7zENmnn7I1rdHC?=
- =?us-ascii?Q?PcmSNhQxn0TX8bi8j1rhV+ih8VVFJR7cyPPD4JblG5Ce/goglHwnCmE96MLU?=
- =?us-ascii?Q?Yahss6G6167O0yQ3c260+Q9qteuaH5PvPAsWiFJC795OnK+ZQFyj4AxTQBNc?=
- =?us-ascii?Q?ufHs1AADiJUszEidBiReMU5YXezENsgPXdU7pV70K2cILbs1dCJEbbSZN1rx?=
- =?us-ascii?Q?nQtKdLS10YxEpeaY9Aa56/fXNRa4gOVkNVvfNePIf1DBdLDKGObz43ehIJm3?=
- =?us-ascii?Q?6x9UhnglrhPN+f7tNQ5Xz39XpEIiYI3+w3YZZzhUmR2ILl22Yf2vMsMakTmF?=
- =?us-ascii?Q?4t/uL+34pWG4sKs4fpCMIxDuzHm9aoVoAji/wUNcrU8yajt0xqEM5BbgF6tY?=
- =?us-ascii?Q?TvhQ2M5/gQv0wgQTtZe3NxVK2uTxgDIjYN/93LqTRmaRJ3AVBz+QYyMjWrYk?=
- =?us-ascii?Q?eRXbeVRjORSGjeOAW0AhV+/ZaT/OPYsEm1a9ylwi4NRL/xSxtlCdhlNCX2jO?=
- =?us-ascii?Q?ysRwUlH/PAUq2+pTgTw6N9Qgwo2aPosaNCFF6WEsGUZrPB8OSI4Pz0qJLIId?=
- =?us-ascii?Q?kjqWw5EwHkNrCadDBY8NROXUuc65feiyu58r8kjefwsQ76p4hUkNaRP9xc5/?=
- =?us-ascii?Q?mx7k+PqQAOX61tka/1lyZGcmwkbSf3iK6gEYCeAKXvDWZJI2GXPHYAU7FWsx?=
- =?us-ascii?Q?U8nD2/cmHubIZPvSePnppNyCvF3RbZt7cyptlv0wtgv0zV9WHtL64s03XrTH?=
- =?us-ascii?Q?NQZPaZ92AFQXJKkBtLw5jjvuduGSDc8mzSFs3Wi7VwVjcTqZ1O2Xht0kXo1W?=
- =?us-ascii?Q?YaUU00bkJ392+tXpiN5XyY2eub6OjrudwQn0OGgOCwzAAE8lApQuWhhIqyQC?=
- =?us-ascii?Q?OymCwJqLwPYGXp64iVgdt9fVcV96FZTFhFtywWL07jQAEl6LYHY8TEczBOZq?=
- =?us-ascii?Q?jw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: afe3cce1-9f05-4432-a0ed-08dd4d40b65f
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 21:44:09.0991
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tjZn8SrZBoWhtE4hwP5f4H1hhjRgLkUkapo340ic80MSNYeBl2l3nyultne4I6IupwAtNSYpiXCgrLtzC7UWK4YoX3HI7jnz9Km2PCK36aI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB8063
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fuse: Add open-gettr for fuse-file-open
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>,
+ linux-fsdevel@vger.kernel.org, josef@toxicpanda.com,
+ jefflexu@linux.alibaba.com
+References: <20240820211735.2098951-1-bschubert@ddn.com>
+ <CAJfpegvdXpkaxL9sdDCE=MePdDDoLVGfLsJrTafk=9L1iSQ0vg@mail.gmail.com>
+ <38c1583f-aa19-4c8a-afb7-a0528d1035b0@fastmail.fm>
+ <CAJfpegsFdWun1xZ-uHXnWBeRz3Bmyf0FSYWiX1pGYU8LEz12WA@mail.gmail.com>
+ <CAJnrk1YaE3O91hTjicR6UMcLYiXHSntyqMkRWngxWW58Uu0-4g@mail.gmail.com>
+ <0d766a98-9da7-4448-825a-3f938b1c09d9@fastmail.fm>
+ <CAJnrk1b0z7+hrs3q9dGqhtnC3e2wQEEoHEyKQgvgTwg9THd_Xw@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1b0z7+hrs3q9dGqhtnC3e2wQEEoHEyKQgvgTwg9THd_Xw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Matthew Wilcox (Oracle) wrote:
-> This looks like a complete mess (why are we setting page->index at page
-> fault time?), but I no longer care about DAX, and there's no reason to
-> let DAX hold us back from removing page->index.
 
-This is a safe conversion for the same reason that Alistair's conversion
-to vmf_insert_folio_* is safe, folio metadata is always initialized for
-device-dax.
 
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+On 2/14/25 22:26, Joanne Koong wrote:
+> On Fri, Feb 14, 2025 at 12:27 PM Bernd Schubert
+> <bernd.schubert@fastmail.fm> wrote:
+>>
+>> Hi Joanne,
+>>
+>> On 2/14/25 21:01, Joanne Koong wrote:
+>>> On Wed, Aug 21, 2024 at 8:04 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>>>>
+>>>> On Wed, 21 Aug 2024 at 16:44, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+>>>>
+>>>>> struct atomic_open
+>>>>> {
+>>>>>         uint64_t atomic_open_flags;
+>>>>>         struct fuse_open_out open_out;
+>>>>>         uint8_t future_padding1[16];
+>>>>>         struct fuse_entry_out entry_out;
+>>>>>         uint8_t future_padding2[16];
+>>>>> }
+>>>>>
+>>>>>
+>>>>> What do you think?
+>>>>
+>>>> I'm wondering if something like the "compound procedure" in NFSv4
+>>>> would work for fuse as well?
+>>>
+>>> Are compound requests still something that's planned to be added to
+>>> fuse given that fuse now has support for sending requests over uring,
+>>> which diminishes the overhead of kernel/userspace context switches for
+>>> sending multiple requests vs 1 big compound request?
+>>>
+>>> The reason I ask is because the mitigation for the stale attributes
+>>> data corruption for servers backed by network filesystems we saw in
+>>> [1]  is dependent on this patch / compound requests. If compound
+>>> requests are no longer useful / planned, then what are your thoughts
+>>> on [1] as an acceptable solution?
+>>
+> 
+> Hi Bernd,
+> 
+>> sorry, I have it in our ticket system, but I'm totally occupied with
+>> others issues for weeks *sigh*
+>>
+> 
+> No worries!
+> 
+>> Does io-uring really help if there is just on application doing IO to
+>> the current core/ring-queue?
+>>
+>> open - blocking fg request
+>> getattr - blocking fg request
+>>
+> 
+> My understanding (and please correct me here if i'm wrong) is that the
+> main benefit of compound requests is that it bundles multiple requests
+> into 1 request to minimize kernel/userspace context switches. For fuse
 
-Andrew, can you pick this one up at the end of Alistair's series?
+I think it would be good, to give fuse-server also the chance to handle
+the compound on its own. Example, sshfs would benefit from it as well
+(ok, the sftp protocol needs to get an extension, afaik), see here
+
+https://github.com/libfuse/libfuse/issues/945
+
+If sshfs would now do two requests, it would introduce double network
+latency - not your about you, but from my home to main lab hardware 
+(US) that would already be quite noticeable.
+If sshfs/sftp would get a protocol extension and handle open+getattr
+in one request, there would be basically zero overhead.
+
+> io-uring [2], "motivation ... is... to increase fuse performance by:
+> Reducing kernel/userspace context switches. Part of that is given by
+> the ring ring - handling multiple requests on either side of
+> kernel/userspace without the need to switch per request".
+> 
+> Am I missing something in my understanding of io-uring reducing
+> context switches?
+
+With fuse-io-uring we have reduced context switches, because
+result submit can immediately fetch the next request, vs previous
+read + write.
+
+Then we also avoid context switches if the ring is busy - it
+can stay on either side if there is still work to do.
+
+For open and then getattr and if the ring is idle, we still
+have the overhead of two independent operations.
+
+One issue I'm currently working is is reducing memory overhead,
+we actually might need a fuse-io-uring mode with less rings. 
+In that mode chances to have a busy ring are higher. Although
+I'm still fighting against it, because it takes away core affinity
+and that was showing 3x performance gains with blocking / fg requests.
+
+
+> 
+> 
+>> If we could dispatch both as bg request and wait for the response it
+>> might work out, but in the current form not ideal.
+>>
+>> I can only try to find the time over the weekend to work on the
+>> compound reuqest, although need to send out the other patch and
+>> especially to test it (the one about possible list corruption).
+> 
+> If you need an extra pair of hands, i'm happy to help out with this.
+> Internally, we'd like to get the proper fix in for the issue in [1],
+> but we have a hacky workaround for it right now (returning -ESTALE to
+> redo the lookup and update the file size), so we're not in a huge
+> rush.
+
+
+Could you ping me in latest two weeks again? Either I found some
+time for compound requests by then, or we need to go the easier
+way. As long as our DLM mode is not ready we also need this
+feature, just a lot of the more urgent issues before that.
+
+
+
+Thanks,
+Bernd
 
