@@ -1,253 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-41726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41732-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B7EDA36281
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2025 17:00:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E675A362AA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2025 17:06:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48FB53AB5FB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2025 15:57:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F02F07A3FD1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2025 16:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FAF2676F2;
-	Fri, 14 Feb 2025 15:57:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909FF2673B0;
+	Fri, 14 Feb 2025 16:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ira+kID6"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Ho6KfJ+l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F7A245002;
-	Fri, 14 Feb 2025 15:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07A1265CA1;
+	Fri, 14 Feb 2025 16:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739548638; cv=none; b=Vb0CTN/m9VHRUXZUSKqcZmCTNkZozTDxZYHx0JTLoNJtLyHZDgKYg0MGo3e8rD81W8ZJerbeJvoA7z0cXoW1aKessJEGddVdyh/DNwWh5M2i7/uAXjrspWLqW0AkSwNPwTPjVZxw8RhMLutl/mnjHPGatXndp9vZPbdD/cPdtZQ=
+	t=1739549153; cv=none; b=rdm4JDnlL9SVDrmwL7w8zTzJCfsxbQJMH1tYmSOb8yrsLsnXhvBquIgyj2Lxb5Z0r83K1xk7AHkIlOK7I8A4xjxemLaatMvCgIFsNym558KSBMFx8qLKbv0CGdkJjgMFVcMRhVtg6XAWwSKioRdtt2F2kM4N89PQKjWRkOZQtgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739548638; c=relaxed/simple;
-	bh=x1e5i4T7IKPvRMvtUDrxtuf+t5sIjprfd6MBdXqW8FI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tRhSpNU7QM75v4kVkvE1wdnZkIMoGkmkBbrQqzYPnUJajqM2wUg3qi7/raaqEOtC+puisU6RD+36LXfBwM8+Uw05mSrJGtGd0zm5P6ZAwXECpn9TsblXPFm/iIH6kHq8dY7Vx+T2lh25gtWcaxBXLDywzQrKhosrRpZhgEHCOWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ira+kID6; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-Type:Content-ID:Content-Description;
-	bh=0zDsTnPiuyqkimhuCkvyQZpsdg8vGZA67YRzdY9g7Jw=; b=Ira+kID6A8hlNPPBVP+N8L11wf
-	c6LHtsQ3LGU2X/e1coKYIXJMqzIW6jDrlwcGD3cBSwgJMoovDUGY0zq1wjHtIR47vlB990QC01+Jx
-	UOwJ+H0PKIc5blHgG1G/spi6jVOzAOajPJy7AQohZ6yCtajOx7ngqbevEz86Tfz5zpLB5BUsbkeYd
-	U2hQdistl/Qn1ZI8IgEPT64/YJ9foLbe+4O52ts8tAoI5s43c0Xd7H9YRuoMjD2o1qY4vKt6VoDcB
-	nPtNFwubUV0mUi31Dha0I5c91xeYo5pemvoOi1e/4tnBVH0H2BxvJ4btNsN/x2NeqT5jAsCMCj6kd
-	BMmEtnRw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tiy41-0000000Bhzk-0drX;
-	Fri, 14 Feb 2025 15:57:13 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To: Ilya Dryomov <idryomov@gmail.com>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	ceph-devel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	David Howells <dhowells@redhat.com>
-Subject: [PATCH v2 7/7] ceph: Use a folio in ceph_writepages_start()
-Date: Fri, 14 Feb 2025 15:57:09 +0000
-Message-ID: <20250214155710.2790505-8-willy@infradead.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250214155710.2790505-1-willy@infradead.org>
-References: <20250214155710.2790505-1-willy@infradead.org>
+	s=arc-20240116; t=1739549153; c=relaxed/simple;
+	bh=OWtVFxWed1y/+c25INbIxFFkpoczUni/1VRykkO7eA4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Qb2myBzUCkmsDU8RBgltH6HJ7CFyqhYUTwxunaRJCyWnfjATCTT6dNnASXZjZ1zrPpn1ydG0kbp8nB+5q4T5O6wF+M3k0qoZbbbKdpILFBFC0wRvmNijAoUANXzl433P3sy/YIhLbWi1+sVnlBDcSPcY5lR7QDyAligQZWFbnqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Ho6KfJ+l; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=+AifcspyR2RnstEaZObXT/25pWWtjDWp+b441hJbOpM=; b=Ho6KfJ+laC1iRSmPqUeMMa373B
+	Sv5vo89alyIw1I3lafOoXZeoH/aUg4adz0FAjKNXEvFyErFb3xf8KbTH30MRZ0sLRYCKOcEEAcndx
+	FAlCPEc47sJI/m3HhdqFLqYA4N8mWT9UwNs+SRoFuAChS4DJ8ejadJQlZU2rBSjt5wRKJoAEU14tv
+	natPe0WlZoynerPzkuwJxPBPn/nsrFofWri8smJ2ye0dec9Ax+gEh3VN8tQarTk22CGkTGj5YolQ9
+	wdcH1XsgySSV5vjhUuSweLVkb48uWgQr0OchJNylgn2/bdk1W2/mX0qnLXy1tt20HbSruX3SH+4ej
+	qI+zsqww==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tiyC9-001lBi-0P; Fri, 14 Feb 2025 17:05:42 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,  ceph-devel@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org,  Ilya Dryomov <idryomov@gmail.com>
+Subject: Re: [RFC] odd check in ceph_encode_encrypted_dname()
+In-Reply-To: <bbc3361f9c241942f44298286ba09b087a10b78b.camel@kernel.org> (Jeff
+	Layton's message of "Fri, 14 Feb 2025 10:41:15 -0500")
+References: <20250214024756.GY1977892@ZenIV> <20250214032820.GZ1977892@ZenIV>
+	<bbc3361f9c241942f44298286ba09b087a10b78b.camel@kernel.org>
+Date: Fri, 14 Feb 2025 16:05:42 +0000
+Message-ID: <87frkg7bqh.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-We currently convert the folio returned from filemap_get_folios_tag()
-to a page and operate on that page.  Remove this and operate on the
-folio.  Removes a lot of calls to obsolete functions and references
-to page->index and page->mapping.
+[ Dropping my previous email from the CC list ]
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/ceph/addr.c | 63 +++++++++++++++++++++++++-------------------------
- 1 file changed, 31 insertions(+), 32 deletions(-)
+On Fri, Feb 14 2025, Jeff Layton wrote:
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 822485db234e..a97a3eee426b 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -1025,7 +1025,7 @@ static int ceph_writepages_start(struct address_space *mapping,
- 		int num_ops = 0, op_idx;
- 		unsigned i, nr_folios, max_pages, locked_pages = 0;
- 		struct page **pages = NULL, **data_pages;
--		struct page *page;
-+		struct folio *folio;
- 		pgoff_t strip_unit_end = 0;
- 		u64 offset = 0, len = 0;
- 		bool from_pool = false;
-@@ -1039,24 +1039,23 @@ static int ceph_writepages_start(struct address_space *mapping,
- 		if (!nr_folios && !locked_pages)
- 			break;
- 		for (i = 0; i < nr_folios && locked_pages < max_pages; i++) {
--			struct folio *folio = fbatch.folios[i];
-+			folio = fbatch.folios[i];
- 
--			page = &folio->page;
--			doutc(cl, "? %p idx %lu\n", page, page->index);
-+			doutc(cl, "? %p idx %lu\n", folio, folio->index);
- 			if (locked_pages == 0)
--				lock_page(page);  /* first page */
--			else if (!trylock_page(page))
-+				folio_lock(folio);  /* first page */
-+			else if (!folio_trylock(folio))
- 				break;
- 
- 			/* only dirty pages, or our accounting breaks */
--			if (unlikely(!PageDirty(page)) ||
--			    unlikely(page->mapping != mapping)) {
--				doutc(cl, "!dirty or !mapping %p\n", page);
--				unlock_page(page);
-+			if (unlikely(!folio_test_dirty(folio)) ||
-+			    unlikely(folio->mapping != mapping)) {
-+				doutc(cl, "!dirty or !mapping %p\n", folio);
-+				folio_unlock(folio);
- 				continue;
- 			}
- 			/* only if matching snap context */
--			pgsnapc = page_snap_context(page);
-+			pgsnapc = page_snap_context(&folio->page);
- 			if (pgsnapc != snapc) {
- 				doutc(cl, "page snapc %p %lld != oldest %p %lld\n",
- 				      pgsnapc, pgsnapc->seq, snapc, snapc->seq);
-@@ -1064,10 +1063,10 @@ static int ceph_writepages_start(struct address_space *mapping,
- 				    !ceph_wbc.head_snapc &&
- 				    wbc->sync_mode != WB_SYNC_NONE)
- 					should_loop = true;
--				unlock_page(page);
-+				folio_unlock(folio);
- 				continue;
- 			}
--			if (page_offset(page) >= ceph_wbc.i_size) {
-+			if (folio_pos(folio) >= ceph_wbc.i_size) {
- 				doutc(cl, "folio at %lu beyond eof %llu\n",
- 				      folio->index, ceph_wbc.i_size);
- 				if ((ceph_wbc.size_stable ||
-@@ -1078,9 +1077,9 @@ static int ceph_writepages_start(struct address_space *mapping,
- 				folio_unlock(folio);
- 				continue;
- 			}
--			if (strip_unit_end && (page->index > strip_unit_end)) {
--				doutc(cl, "end of strip unit %p\n", page);
--				unlock_page(page);
-+			if (strip_unit_end && (folio->index > strip_unit_end)) {
-+				doutc(cl, "end of strip unit %p\n", folio);
-+				folio_unlock(folio);
- 				break;
- 			}
- 			if (folio_test_writeback(folio) ||
-@@ -1095,9 +1094,9 @@ static int ceph_writepages_start(struct address_space *mapping,
- 				folio_wait_private_2(folio); /* [DEPRECATED] */
- 			}
- 
--			if (!clear_page_dirty_for_io(page)) {
--				doutc(cl, "%p !clear_page_dirty_for_io\n", page);
--				unlock_page(page);
-+			if (!folio_clear_dirty_for_io(folio)) {
-+				doutc(cl, "%p !clear_page_dirty_for_io\n", folio);
-+				folio_unlock(folio);
- 				continue;
- 			}
- 
-@@ -1113,7 +1112,7 @@ static int ceph_writepages_start(struct address_space *mapping,
- 				u32 xlen;
- 
- 				/* prepare async write request */
--				offset = (u64)page_offset(page);
-+				offset = folio_pos(folio);
- 				ceph_calc_file_object_mapping(&ci->i_layout,
- 							      offset, wsize,
- 							      &objnum, &objoff,
-@@ -1121,7 +1120,7 @@ static int ceph_writepages_start(struct address_space *mapping,
- 				len = xlen;
- 
- 				num_ops = 1;
--				strip_unit_end = page->index +
-+				strip_unit_end = folio->index +
- 					((len - 1) >> PAGE_SHIFT);
- 
- 				BUG_ON(pages);
-@@ -1136,23 +1135,23 @@ static int ceph_writepages_start(struct address_space *mapping,
- 				}
- 
- 				len = 0;
--			} else if (page->index !=
-+			} else if (folio->index !=
- 				   (offset + len) >> PAGE_SHIFT) {
- 				if (num_ops >= (from_pool ?  CEPH_OSD_SLAB_OPS :
- 							     CEPH_OSD_MAX_OPS)) {
--					redirty_page_for_writepage(wbc, page);
--					unlock_page(page);
-+					folio_redirty_for_writepage(wbc, folio);
-+					folio_unlock(folio);
- 					break;
- 				}
- 
- 				num_ops++;
--				offset = (u64)page_offset(page);
-+				offset = folio_pos(folio);
- 				len = 0;
- 			}
- 
- 			/* note position of first page in fbatch */
- 			doutc(cl, "%llx.%llx will write page %p idx %lu\n",
--			      ceph_vinop(inode), page, page->index);
-+			      ceph_vinop(inode), folio, folio->index);
- 
- 			if (atomic_long_inc_return(&fsc->writeback_count) >
- 			    CONGESTION_ON_THRESH(
-@@ -1161,7 +1160,7 @@ static int ceph_writepages_start(struct address_space *mapping,
- 
- 			if (IS_ENCRYPTED(inode)) {
- 				pages[locked_pages] =
--					fscrypt_encrypt_pagecache_blocks(page,
-+					fscrypt_encrypt_pagecache_blocks(&folio->page,
- 						PAGE_SIZE, 0,
- 						locked_pages ? GFP_NOWAIT : GFP_NOFS);
- 				if (IS_ERR(pages[locked_pages])) {
-@@ -1172,17 +1171,17 @@ static int ceph_writepages_start(struct address_space *mapping,
- 					/* better not fail on first page! */
- 					BUG_ON(locked_pages == 0);
- 					pages[locked_pages] = NULL;
--					redirty_page_for_writepage(wbc, page);
--					unlock_page(page);
-+					folio_redirty_for_writepage(wbc, folio);
-+					folio_unlock(folio);
- 					break;
- 				}
- 				++locked_pages;
- 			} else {
--				pages[locked_pages++] = page;
-+				pages[locked_pages++] = &folio->page;
- 			}
- 
- 			fbatch.folios[i] = NULL;
--			len += thp_size(page);
-+			len += folio_size(folio);
- 		}
- 
- 		/* did we get anything? */
-@@ -1289,7 +1288,7 @@ static int ceph_writepages_start(struct address_space *mapping,
- 			/* writepages_finish() clears writeback pages
- 			 * according to the data length, so make sure
- 			 * data length covers all locked pages */
--			u64 min_len = len + 1 - thp_size(page);
-+			u64 min_len = len + 1 - folio_size(folio);
- 			len = get_writepages_data_length(inode, pages[i - 1],
- 							 offset);
- 			len = max(len, min_len);
--- 
-2.47.2
+> On Fri, 2025-02-14 at 03:28 +0000, Al Viro wrote:
+>> On Fri, Feb 14, 2025 at 02:47:56AM +0000, Al Viro wrote:
+>>=20
+>> [snip]
+>>=20
+>> > Am I missing something subtle here?  Can elen be non-positive at that =
+point?
+>>=20
+>> Another fun question: for dentries with name of form _<something>_<inumb=
+er>
+>> we end up looking at fscrypt_has_encryption_key() not for the parent,
+>> but for inode with inumber encoded in dentry name.  Fair enough, but...
+>> what happens if we run into such dentry in ceph_mdsc_build_path()?
+>>=20
+>> There the call of ceph_encode_encrypted_fname() is under
+>> 	if (fscrypt_has_encryption_key(d_inode(parent)))
+>>=20
+>> Do we need the keys for both?
+>>=20
+>
+> That sounds like a bug, but I don't fully recall whether snapshots have
+> a special case here for some reason. Let me rephrase Al's question:
+>
+> If I have a snapshot dir that is prefixed with '_', why does it use a
+> different filename encryption key than other snapshot dirs that don't
+> start with that character?
+>
+> My guess here is that this code ought not overwrite "dir" with the
+> result of parse_longname(), but I don't recall the significance of a
+> snapshot name that starts with '_'.
 
+This bit I _think_ I remember.  Imagine this tree structure:
+
+   /mnt/ceph
+   |-- mydir1
+   |-- mydir2
+
+If you create a snapshot in /mnt/ceph:
+
+  mkdir /mnt/ceph/.snap/my-snapshot
+
+you'll see this:
+
+   /mnt/ceph
+   |-- .snap
+   |     |-- my-snapshot
+   |-- mydir1
+   |     |-- _my-snapshot_1099511627782
+   |-- mydir2
+         |-- _my-snapshot_1099511627782
+
+('1099511627782' is the inode number where the snapshot was created.)
+
+So, IIRC, when encrypting the snapshot name (the "my-snapshot" string),
+you'll use key from the original inode.  That's why we need to handle
+snapshot names starting with '_' differently.  And why we have a
+customized base64 encoding function.
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+
+>         /* Handle the special case of snapshot names that start with '_' =
+*/
+>         if ((ceph_snap(dir) =3D=3D CEPH_SNAPDIR) && (name_len > 0) &&
+>             (iname.name[0] =3D=3D '_')) {
+>                 dir =3D parse_longname(parent, iname.name, &name_len);
+>                 if (IS_ERR(dir))
+>                         return PTR_ERR(dir);
+>                 iname.name++; /* skip initial '_' */
+>         }
+>         iname.len =3D name_len;
+>
+>         if (!fscrypt_has_encryption_key(dir)) {
+>                 memcpy(buf, d_name->name, d_name->len);
+>                 elen =3D d_name->len;
+>                 goto out;
+>         }
+>
+>
+> --=20
+> Jeff Layton <jlayton@kernel.org>
+>
+=20
 
