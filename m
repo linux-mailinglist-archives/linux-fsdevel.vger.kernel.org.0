@@ -1,68 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-41771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9854A36C53
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2025 07:37:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F61A36C94
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2025 09:10:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 592D71895FAC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2025 06:37:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D51E03B176D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2025 08:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0241922DE;
-	Sat, 15 Feb 2025 06:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F8419CC36;
+	Sat, 15 Feb 2025 08:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UjrZ/oIG"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CaQJLhRL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BADC2ED;
-	Sat, 15 Feb 2025 06:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 943D318B484;
+	Sat, 15 Feb 2025 08:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739601432; cv=none; b=QE2WtjBmzw4a2yeobGWX4E3Qm0AndlwUqtHjApqjlcFXbHTUKknf9ytwANEXQbdraBKsyEOsM+CRUc0SDmXjwyMs6m6cDRh6ZpkrT0fD4Xb749Q5Z+tKw1grFbdk71yRGr7EHdRlLOkB8pbyR3De99459B0YXWN9N07i+EYKlOs=
+	t=1739607021; cv=none; b=kAP6kjMWhrH1EP9kQrvz2K6+14o/US1ihqXl8grzlVaLyO0EeJMZDu/haAEYLFyKRsKMyXoBiCZWdWg5epLg0me40G6wmNYxyXtSUmKJzLncsjv1H+9tGVA2yDRo7Y3xEP0sf18UeVE6OiwhVKfXYwo6L7Zx6AaVq3/ClWOg3dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739601432; c=relaxed/simple;
-	bh=xNoorQKTVK0QWI0cD/BSlH3mfl4SWfNf/loP2EWe6lM=;
+	s=arc-20240116; t=1739607021; c=relaxed/simple;
+	bh=8Z1xP31hwmqaAUASq29l4vz+9GKnK9tTM4TAZIAgEjQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hTdgK7AKGBaxN/srJAMVb1CELHJwGBCs5S5GvjyQzQgrTUuHto/TAt66RckosrG/RFYyA6nf6l+1IE5Ina5INd/tOH8Au5g/VfzFl8mmgFJdqvoOlIpyjYwp2zOgGt4FPy2zUtOGsIeSklZ18Ik4dWqYPFKm3oDF7a6T9M2So/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UjrZ/oIG; arc=none smtp.client-ip=198.175.65.16
+	 Content-Type:Content-Disposition:In-Reply-To; b=PnOCA4KGn7S/rZowDqQAJcxJD6t2qvVEFpWNAUaIkO/yBnCc6feoiccvi1b/AXQ2EnWj1vVoCUaXuslBgvGg3d8DPUkbCEe0JKA71Twfe2wWIIq4lF/R6uYBWAIu2obelPEz9K0b+EaPHVMlz+pvz3AKG3FY2UpA39Z0HgE4Qyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CaQJLhRL; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739601432; x=1771137432;
+  t=1739607019; x=1771143019;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=xNoorQKTVK0QWI0cD/BSlH3mfl4SWfNf/loP2EWe6lM=;
-  b=UjrZ/oIGCGPy8Qj1aTCNwLLVnMVLoihmfR94CN65jCiqW+Nu6+GMwVgJ
-   jPX6XnfUKsr8+MtiPXu9ZOXvietQ4sXX7Ure4mc0d/MdwTafzYDkbsunQ
-   9djIgt0eWsLaXl6Al3JpK02qBpTyfqQobCHxVcIMLeS8iTfkHeMFRDklG
-   wd9kccZn4rmc8qzyg6SDQML71EIY0L9oN0jR572m4Nr7R+i9u+cs2DzM5
-   fpXeHivwz8EC0Q5YqGdhFfrd/fOoDkC9Xa99Lt/Scf73xXgLFH35ExMkU
-   +R24mL3z3owhGVSPzXD0imRVLltZZflMpJoKsELTG+azbRUdtwd4DU53o
-   Q==;
-X-CSE-ConnectionGUID: ehf8eOQjT1Wrv0Bnrn5WHw==
-X-CSE-MsgGUID: YRD2V9sbSG2LijKQB9ct9A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40480991"
+  bh=8Z1xP31hwmqaAUASq29l4vz+9GKnK9tTM4TAZIAgEjQ=;
+  b=CaQJLhRLwBMYUbFt8GQXz+aEdq+wzHxM485Ojc6D7HUqrJgjQO+ONHHA
+   X9XBRHyBnxRfNV5Z6opbttNtO4yLdrfPusW4JaBdXNTFLnLMynzvXrcEt
+   E+L/jA+xLHuOwsF6stIfnbFJfHioJjVQ17L+bJFCDgGT4f1uRQ8hEvYKh
+   qvJ0R6FlyM7+o+EOSX+rJb8fdSDbKP8jejIt4LIU3SVW7dqfeEHSXUqlS
+   Xtr/lYfdE1PBq2hSGZPpFRwzzvLvpRL4cxSaztmEDJHYCOW62yrEvqb8d
+   doSNC4PPvbsBseRy5k0ZUYIYiAsKZ0VkaknkMbSqD2BnRZRJ76QHxVRCW
+   w==;
+X-CSE-ConnectionGUID: qdOo8fNXRNCCBjFtBu6KcA==
+X-CSE-MsgGUID: TYJoTJ73THOOO/7C9Yd0Tw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40064499"
 X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
-   d="scan'208";a="40480991"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 22:37:11 -0800
-X-CSE-ConnectionGUID: QIvQ+UdoRPCdWZQq5yO+/A==
-X-CSE-MsgGUID: zOxWroNvQnGTMiUQUDoTnQ==
+   d="scan'208";a="40064499"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 00:10:18 -0800
+X-CSE-ConnectionGUID: bewlr2URSS6r3bJaAzTbLA==
+X-CSE-MsgGUID: fd0/3d0CTemnZX0S3D0SMQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="118566029"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="150825252"
 Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 14 Feb 2025 22:37:07 -0800
+  by orviesa001.jf.intel.com with ESMTP; 15 Feb 2025 00:10:15 -0800
 Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tjBnV-001AZB-0e;
-	Sat, 15 Feb 2025 06:37:05 +0000
-Date: Sat, 15 Feb 2025 14:36:20 +0800
+	id 1tjDFd-001AcR-0H;
+	Sat, 15 Feb 2025 08:10:13 +0000
+Date: Sat, 15 Feb 2025 16:09:31 +0800
 From: kernel test robot <lkp@intel.com>
 To: NeilBrown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -71,9 +71,10 @@ To: NeilBrown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>,
 Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
 	linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] VFS: Change vfs_mkdir() to return the dentry.
-Message-ID: <202502151435.jfkY8wb2-lkp@intel.com>
-References: <20250214052204.3105610-4-neilb@suse.de>
+Subject: Re: [PATCH 1/3] Change inode_operations.mkdir to return struct
+ dentry *
+Message-ID: <202502151519.0MA7hz8D-lkp@intel.com>
+References: <20250214052204.3105610-2-neilb@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -82,7 +83,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250214052204.3105610-4-neilb@suse.de>
+In-Reply-To: <20250214052204.3105610-2-neilb@suse.de>
 
 Hi NeilBrown,
 
@@ -90,179 +91,119 @@ kernel test robot noticed the following build errors:
 
 [auto build test ERROR on brauner-vfs/vfs.all]
 [also build test ERROR on trondmy-nfs/linux-next driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus cifs/for-next xfs-linux/for-next linus/master v6.14-rc2 next-20250214]
-[cannot apply to ericvh-v9fs/for-next tyhicks-ecryptfs/next]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
 url:    https://github.com/intel-lab-lkp/linux/commits/NeilBrown/nfs-change-mkdir-inode_operation-to-return-alternate-dentry-if-needed/20250214-141741
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20250214052204.3105610-4-neilb%40suse.de
-patch subject: [PATCH 3/3] VFS: Change vfs_mkdir() to return the dentry.
-config: riscv-randconfig-001-20250215 (https://download.01.org/0day-ci/archive/20250215/202502151435.jfkY8wb2-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250215/202502151435.jfkY8wb2-lkp@intel.com/reproduce)
+patch link:    https://lore.kernel.org/r/20250214052204.3105610-2-neilb%40suse.de
+patch subject: [PATCH 1/3] Change inode_operations.mkdir to return struct dentry *
+config: um-randconfig-001-20250215 (https://download.01.org/0day-ci/archive/20250215/202502151519.0MA7hz8D-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 910be4ff90d7d07bd4518ea03b85c0974672bf9c)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250215/202502151519.0MA7hz8D-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502151435.jfkY8wb2-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502151519.0MA7hz8D-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
+   In file included from fs/hostfs/hostfs_kern.c:13:
+   In file included from include/linux/pagemap.h:11:
    In file included from include/linux/highmem.h:12:
    In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
+   In file included from arch/um/include/asm/hardirq.h:5:
    In file included from include/asm-generic/hardirq.h:17:
    In file included from include/linux/irq.h:20:
    In file included from include/linux/io.h:14:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:812:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     812 |         insw(addr, buffer, count);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:105:53: note: expanded from macro 'insw'
-     105 | #define insw(addr, buffer, count) __insw(PCI_IOBASE + (addr), buffer, count)
-         |                                          ~~~~~~~~~~ ^
-   In file included from fs/smb/server/vfs.c:11:
-   In file included from include/linux/backing-dev.h:16:
-   In file included from include/linux/writeback.h:13:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:549:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     549 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:567:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     567 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from fs/hostfs/hostfs_kern.c:13:
+   In file included from include/linux/pagemap.h:11:
    In file included from include/linux/highmem.h:12:
    In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
+   In file included from arch/um/include/asm/hardirq.h:5:
    In file included from include/asm-generic/hardirq.h:17:
    In file included from include/linux/irq.h:20:
    In file included from include/linux/io.h:14:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:820:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     820 |         insl(addr, buffer, count);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:106:53: note: expanded from macro 'insl'
-     106 | #define insl(addr, buffer, count) __insl(PCI_IOBASE + (addr), buffer, count)
-         |                                          ~~~~~~~~~~ ^
-   In file included from fs/smb/server/vfs.c:11:
-   In file included from include/linux/backing-dev.h:16:
-   In file included from include/linux/writeback.h:13:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:585:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from fs/hostfs/hostfs_kern.c:13:
+   In file included from include/linux/pagemap.h:11:
    In file included from include/linux/highmem.h:12:
    In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
+   In file included from arch/um/include/asm/hardirq.h:5:
    In file included from include/asm-generic/hardirq.h:17:
    In file included from include/linux/irq.h:20:
    In file included from include/linux/io.h:14:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:829:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     829 |         outsb(addr, buffer, count);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:118:55: note: expanded from macro 'outsb'
-     118 | #define outsb(addr, buffer, count) __outsb(PCI_IOBASE + (addr), buffer, count)
-         |                                            ~~~~~~~~~~ ^
-   In file included from fs/smb/server/vfs.c:11:
-   In file included from include/linux/backing-dev.h:16:
-   In file included from include/linux/writeback.h:13:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:838:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     838 |         outsw(addr, buffer, count);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:119:55: note: expanded from macro 'outsw'
-     119 | #define outsw(addr, buffer, count) __outsw(PCI_IOBASE + (addr), buffer, count)
-         |                                            ~~~~~~~~~~ ^
-   In file included from fs/smb/server/vfs.c:11:
-   In file included from include/linux/backing-dev.h:16:
-   In file included from include/linux/writeback.h:13:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:847:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     847 |         outsl(addr, buffer, count);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:120:55: note: expanded from macro 'outsl'
-     120 | #define outsl(addr, buffer, count) __outsl(PCI_IOBASE + (addr), buffer, count)
-         |                                            ~~~~~~~~~~ ^
-   In file included from fs/smb/server/vfs.c:11:
-   In file included from include/linux/backing-dev.h:16:
-   In file included from include/linux/writeback.h:13:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:1175:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-    1175 |         return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
-         |                                                   ~~~~~~~~~~ ^
->> fs/smb/server/vfs.c:226:2: error: use of undeclared identifier 'entry'; did you mean 'dentry'?
-     226 |         entry = vfs_mkdir(idmap, d_inode(path.dentry), dentry, mode);
-         |         ^~~~~
-         |         dentry
-   fs/smb/server/vfs.c:209:17: note: 'dentry' declared here
-     209 |         struct dentry *dentry, *d;
-         |                        ^
-   7 warnings and 1 error generated.
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:601:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     601 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:616:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     616 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:631:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     631 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:724:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     724 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:737:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     737 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:750:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     750 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:764:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     764 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:778:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     778 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:792:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     792 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+>> fs/hostfs/hostfs_kern.c:689:10: error: incompatible integer to pointer conversion returning 'int' from a function with result type 'struct dentry *' [-Wint-conversion]
+     689 |                 return -ENOMEM;
+         |                        ^~~~~~~
+   12 warnings and 1 error generated.
 
 
-vim +226 fs/smb/server/vfs.c
+vim +689 fs/hostfs/hostfs_kern.c
 
-   196	
-   197	/**
-   198	 * ksmbd_vfs_mkdir() - vfs helper for smb create directory
-   199	 * @work:	work
-   200	 * @name:	directory name that is relative to share
-   201	 * @mode:	directory create mode
-   202	 *
-   203	 * Return:	0 on success, otherwise error
-   204	 */
-   205	int ksmbd_vfs_mkdir(struct ksmbd_work *work, const char *name, umode_t mode)
-   206	{
-   207		struct mnt_idmap *idmap;
-   208		struct path path;
-   209		struct dentry *dentry, *d;
-   210		int err;
-   211	
-   212		dentry = ksmbd_vfs_kern_path_create(work, name,
-   213						    LOOKUP_NO_SYMLINKS | LOOKUP_DIRECTORY,
-   214						    &path);
-   215		if (IS_ERR(dentry)) {
-   216			err = PTR_ERR(dentry);
-   217			if (err != -EEXIST)
-   218				ksmbd_debug(VFS, "path create failed for %s, err %d\n",
-   219					    name, err);
-   220			return err;
-   221		}
-   222	
-   223		idmap = mnt_idmap(path.mnt);
-   224		mode |= S_IFDIR;
-   225		d = dentry;
- > 226		entry = vfs_mkdir(idmap, d_inode(path.dentry), dentry, mode);
-   227		err = PTR_ERR_OR_ZERO(dentry);
-   228		if (!err && dentry != d)
-   229			ksmbd_vfs_inherit_owner(work, d_inode(path.dentry), d_inode(d));
-   230	
-   231		done_path_create(&path, dentry);
-   232		if (err)
-   233			pr_err("mkdir(%s): creation failed (err:%d)\n", name, err);
-   234		return err;
-   235	}
-   236	
+^1da177e4c3f41 Linus Torvalds    2005-04-16  681  
+456289e0bd14ce NeilBrown         2025-02-14  682  static struct dentry *hostfs_mkdir(struct mnt_idmap *idmap, struct inode *ino,
+549c7297717c32 Christian Brauner 2021-01-21  683  				   struct dentry *dentry, umode_t mode)
+^1da177e4c3f41 Linus Torvalds    2005-04-16  684  {
+^1da177e4c3f41 Linus Torvalds    2005-04-16  685  	char *file;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  686  	int err;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  687  
+c5322220eb91b9 Al Viro           2010-06-06  688  	if ((file = dentry_name(dentry)) == NULL)
+f1adc05e773830 Jeff Dike         2007-05-08 @689  		return -ENOMEM;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  690  	err = do_mkdir(file, mode);
+e9193059b1b373 Al Viro           2010-06-06  691  	__putname(file);
+456289e0bd14ce NeilBrown         2025-02-14  692  	if (err)
+456289e0bd14ce NeilBrown         2025-02-14  693  		return ERR_PTR(err);
+456289e0bd14ce NeilBrown         2025-02-14  694  	else
+456289e0bd14ce NeilBrown         2025-02-14  695  		return dentry;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  696  }
+^1da177e4c3f41 Linus Torvalds    2005-04-16  697  
 
 -- 
 0-DAY CI Kernel Test Service
