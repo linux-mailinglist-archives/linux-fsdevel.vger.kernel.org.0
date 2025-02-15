@@ -1,117 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-41779-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C7FA36F28
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2025 16:39:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EEE1A36FA8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2025 18:11:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 933EC3B16B8
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2025 15:39:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06B833AFF06
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2025 17:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430181DF75A;
-	Sat, 15 Feb 2025 15:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22FE1E5B98;
+	Sat, 15 Feb 2025 17:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="YSPcda9g"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cLAWtnnV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9187A84D02;
-	Sat, 15 Feb 2025 15:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B56F1C6FE4
+	for <linux-fsdevel@vger.kernel.org>; Sat, 15 Feb 2025 17:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739633970; cv=none; b=Pt2QpJHeWOya+bZBkg0v5F9Cl9n8I3JzRVeadf8No61OzC6VvDcYNOD+YNYIh1XvRaKntAgNLPpsr+5nsVPRkoSHVTsyEZ/hxEQoBKWSLFke+AMI32npipRMRhl81pec8NwBawcV2Vp7TpPsbccuuSp5iERgZJx+kNQPZ5RmJgw=
+	t=1739639489; cv=none; b=JCyYeDO8P3Iity8J9FYnSsdPHeIyr2/PxOBu5naLN0edemat3XBE9bPzqClYdXuFripyd1Oq6qmNvMjrrRImShcD+nU8bBO8r/J7QUViN4l5niDl2B3FxYr67TTvD84Zjb19MbgB2tC8THWU7UJ/0qxm0ctInUarkdq6UkxQGtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739633970; c=relaxed/simple;
-	bh=xtfHuXaWpnh1/sq1x5UK0zr87+KgD01WT+3TsvtsYeE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iqEJ0vqJLMTPWfGU9Kasqivg8gwJGWBhy87V32DGSph3B+JSMJ9zK+A42hTnxXyIz+BoPc48uZhgy5dU8BmtFtbI5Y5rYVVuLeL5eQCA0EOavHJUS9o+BT7xPuqDkpZEBvcDwcHu5eLzneLPYo6MSDiIJsZkA/Mhda5PQ90wasE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=YSPcda9g; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=kE4yi5zTVZgY7FrbYROODhBOp5QIWUOq1BPaFkh4qV4=; b=YSPcda9giw9RPpY1GhYKr3c/4n
-	lm5CfwC2lN+PqPAc8a5zzSVsB4TB6Un123pOsO1S5+eg7OZHSNPTXfkY1DRZVfoDJQs15rlgphgdF
-	H7iD2GDatCt+ucgqc8hN1Z9W+Ok/FJINX96NVqcU+o8465ib7IO+vsvlJa6v4wV0DP59951tmsH8L
-	5cLis6OsfTNTxoBchCx1DdZiM8v3IE5Uhd8o05nNWkzRTh3vwgUrGwkCQ+lMbCWGKa6k0XtgSgdu5
-	3K2TRw/aYWe/TPbLsPOiZxu283lQmxwaDG8yFCLRldeR6Yn0Zsc1dKv22tie1TNZ5LJsrlmsK0By6
-	0qOrOqsQ==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tjKG5-0042co-VN; Sat, 15 Feb 2025 16:39:15 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, Jeff Layton
- <jlayton@kernel.org>,  ceph-devel@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  Ilya Dryomov <idryomov@gmail.com>
-Subject: Re: [RFC] odd check in ceph_encode_encrypted_dname()
-In-Reply-To: <20250215044616.GF1977892@ZenIV> (Al Viro's message of "Sat, 15
-	Feb 2025 04:46:16 +0000")
-References: <20250214024756.GY1977892@ZenIV> <20250214032820.GZ1977892@ZenIV>
-	<bbc3361f9c241942f44298286ba09b087a10b78b.camel@kernel.org>
-	<87frkg7bqh.fsf@igalia.com> <20250215044616.GF1977892@ZenIV>
-Date: Sat, 15 Feb 2025 15:39:15 +0000
-Message-ID: <877c5rxlng.fsf@igalia.com>
+	s=arc-20240116; t=1739639489; c=relaxed/simple;
+	bh=7Mrf6qToUc+ooKdVSK9qwZCScO/hUiwrQR3sR3vnfcM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uIDrVZ/LyrZz9EpXCz9jBzBlv7xtM5a1BhAfpR+cgol6DtXDJhFaAEFY/8VSYa1tjTOoEIYj+xfr//XsiDmj9sSHPGGw+Ot8R3BwKFebhX2Fi2TXwSTGmJw2usv8Wb17kgHvV50kWf5Xw3vPvqCRkbSBkauA88IJfQ1bE+hZf4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cLAWtnnV; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=d51xcY9perJbBE2LdGtDlNMNtPq4i/0yM6wtK4zlsZI=; b=cLAWtnnVuMdvSH3o2REL2KPDPB
+	rIEOHnK0p1CSORi/1Polc1MnWHY6gTnGBrOziLdeiVNxWLkOeMa0C99m9nTcmNgtHh1k7Qil5emhK
+	odIHozXZuDwqohKcyj9phPvfVVQPcEU6kpMvxYgC3hPSV35mxdR+ukNzvHsxAkx3LMS+uyTF57h7+
+	yp6Fx5kFks9o0AvN7W8ob7kh+4zx9wRTHftYfGhmmU/LqBAa+MBfoxnrJ/6vzT4gjlSrAycLpf9EM
+	3Y0rqAewzqC/NbYZrGM1OYq2jQ3EaVydW4TGafxh3fxxzYnEsZjIWU7yBEbbpNU6JYyXDsDa8QjBq
+	/mRoiayQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tjLhE-0000000DLLj-0KwG;
+	Sat, 15 Feb 2025 17:11:16 +0000
+Date: Sat, 15 Feb 2025 17:11:15 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Malte =?iso-8859-1?Q?Schr=F6der?= <malte.schroeder@tnxip.de>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: Random desktop freezes since 6.14-rc. Seems VFS related
+Message-ID: <Z7DKs3dSPdDLRRmF@casper.infradead.org>
+References: <39cc7426-3967-45de-b1a1-526c803b9a84@tnxip.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <39cc7426-3967-45de-b1a1-526c803b9a84@tnxip.de>
 
-On Sat, Feb 15 2025, Al Viro wrote:
+On Sat, Feb 15, 2025 at 01:34:33PM +0100, Malte Schröder wrote:
+> Hi,
+> I am getting stuff freezing randomly since 6.14-rc. I do not have a clear way to 
 
-> On Fri, Feb 14, 2025 at 04:05:42PM +0000, Luis Henriques wrote:
->
->> So, IIRC, when encrypting the snapshot name (the "my-snapshot" string),
->> you'll use key from the original inode.  That's why we need to handle
->> snapshot names starting with '_' differently.  And why we have a
->> customized base64 encoding function.
->
-> OK...  The reason I went looking at that thing was the race with rename()
-> that can end up with UAF in ceph_mdsc_build_path().
->
-> We copy the plaintext name under ->d_lock, but then we call
-> ceph_encode_encrypted_fname() which passes dentry->d_name to
-> ceph_encode_encrypted_dname() with no locking whatsoever.
->
-> Have it race with rename and you've got a lot of unpleasantness.
->
-> The thing is, we can have all ceph_encode_encrypted_dname() put the
-> plaintext name into buf; that eliminates the need to have a separate
-> qstr (or dentry, in case of ceph_encode_encrypted_fname()) argument and
-> simplifies ceph_encode_encrypted_dname() while we are at it.
->
-> Proposed fix in git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.gi=
-t #d_name
->
-> WARNING: it's completely untested and needs review.  It's split in two co=
-mmits
-> (massage of ceph_encode_encrypted_dname(), then changing the calling conv=
-entions);
-> both patches in followups.
->
-> Please, review.
+When you say "since 6.14-rc", what exactly do you mean?  6.13 is fine
+and 6.14-rc2 is broken?  Or some other version?
 
-I've reviewed both patches and they seem to be OK, so feel free to add my
+> [19136.543931] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+> [19136.543938] rcu: 	Tasks blocked on level-1 rcu_node (CPUs 16-31): P314703
+> [19136.543943] rcu: 	(detected by 29, t=21002 jiffies, g=8366533, q=26504 ncpus=32)
+> [19136.543946] task:KIO::WorkerThre state:R  running task     stack:0     pid:314703 tgid:314656 ppid:3984   task_flags:0x400040 flags:0x00004006
+> [19136.543951] Call Trace:
+> [19136.543953]  <TASK>
+> [19136.543958]  __schedule+0x784/0x1520
+> [19136.543963]  ? __schedule+0x784/0x1520
+> [19136.543966]  ? __schedule+0x784/0x1520
+> [19136.543969]  preempt_schedule_irq+0x52/0x90
+> [19136.543972]  raw_irqentry_exit_cond_resched+0x2f/0x40
+> [19136.543975]  irqentry_exit+0x3e/0x50
+> [19136.543977]  irqentry_exit+0x3e/0x50
+> [19136.543979]  ? sysvec_apic_timer_interrupt+0x48/0x90
+> [19136.543982]  ? asm_sysvec_apic_timer_interrupt+0x1f/0x30
+> [19136.543985]  ? local_clock_noinstr+0x10/0xc0
+> [19136.543987]  ? local_clock+0x14/0x30
+> [19136.543990]  ? __lock_acquire+0x1fd/0x6c0
+> [19136.543995]  ? local_clock+0x14/0x30
+> [19136.543997]  ? lock_release+0x120/0x470
+> [19136.544000]  ? find_get_entries+0x76/0x2e0
+> [19136.544004]  ? find_get_entries+0xfb/0x2e0
+> [19136.544006]  ? find_get_entries+0x76/0x2e0
+> [19136.544011]  ? shmem_undo_range+0x35f/0x520
+> [19136.544027]  ? shmem_evict_inode+0x135/0x290
 
-Reviewed-by: Luis Henriques <luis@igalia.com>
+This seems very similar to all of these syzbot reports:
+https://lore.kernel.org/linux-bcachefs/Z6-o5A4Y-rf7Hq8j@casper.infradead.org/
 
-But as I said, I don't have a test environment at the moment.  I'm adding
-Slava to CC with the hope that he may be able to run some fscrypt-specific
-tests (including snapshots creation) against these patches.
+Fortunately, syzbot thinks it's bisected one of them:
+https://lore.kernel.org/linux-bcachefs/67b0bf29.050a0220.6f0b7.0010.GAE@google.com/
 
-Cheers,
---=20
-Lu=C3=ADs
+Can you confirm?
 
