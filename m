@@ -1,136 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-41766-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41767-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0948DA369E3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2025 01:19:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6604A36BF2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2025 05:11:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A302C1885C89
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2025 00:19:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D56F7170050
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2025 04:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F2F146A6F;
-	Sat, 15 Feb 2025 00:18:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1D518950A;
+	Sat, 15 Feb 2025 04:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PFoGy4Nx"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ViylrUhi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DC613C809;
-	Sat, 15 Feb 2025 00:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452C21714D7;
+	Sat, 15 Feb 2025 04:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739578717; cv=none; b=Kdrn8HNF083Yw1GZCDdB2KQhmgPXpw3AMPTabPoTLGtJu90aTS6VUR+znIc4YaOklc9207Sa0zpCtSDBjQbBgFkg1QYqhFMGbarXWSj6uWKO99ETL0BkY3kxwiz4nwE0ZhdV3ArNifQPNZuus8JmIk9hsGSC61DWdD3E5fMZObY=
+	t=1739592660; cv=none; b=sC+XhdDKANIDB1gSsjCnvg2WdBqM2kSOYoA9i1xtvq3JL6YNXRK70fqbg/pI18BTTuHNbxwqjHSkxnESE8V0P9Yzb1P3CE8JLjzSgyjsQ3owgWYPaiS33rJ+t0NOfWVhpjjeTVBmJ0/wJGeNADpH2SB47DYAlGruuc5QdZdAEQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739578717; c=relaxed/simple;
-	bh=DP6GsL2kiXTrrcYvfd1/F15R3RNSwOVsk9p/xw6ZWpg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZM0yHTALr9GlU8BxenTTVgDLpdexF7+rbJ0jYZA7PXWX7Hrv97jTwI87Ce6f+FJggySyqH+L6/hQVCprD8ZhmVso/HTFaYXG9Nedq9O8Wtn3YCe++yxU0bicALZgFhe3XmbR8AdhHMx3m5R28LtdEA5a8w6mLTDNSOZItIbSSXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PFoGy4Nx; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5450f2959f7so2663163e87.2;
-        Fri, 14 Feb 2025 16:18:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739578714; x=1740183514; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5q0cGxquaLNwCjeJniPTIWT3xWlmuT23BV3wVLOJcDQ=;
-        b=PFoGy4NxddWNwLRRFdHEDOO7GC1GybizWpFjbiiC3Gh9GSeIW56V/O+T7o6PvDSK/a
-         VKSZS/UTPEr+NUzbc2Z4FHe2vkBeWlqIo65ufBUTKjJ7ZOlT6HoET2I3C2MxjnVnUrHV
-         8U2qC2xYD50/GyaK+a9K6G4Y03NlovXvhRVXiZh8Gwj69f5vizI/CNrfZbE6vW1kugVF
-         PJsBKR9qurse+LGwXRIWoatjwJ0OQqmyqRi1mk1/nt/4wQa+vMgDYkLaZUdefR9WeALp
-         /UchtxrVdVT1mWBjyFOZkxKWqgs+BYJtOvlhCZyIwRQRd+mOv8HQS+C9btN1Mfvw9VOV
-         Rn2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739578714; x=1740183514;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5q0cGxquaLNwCjeJniPTIWT3xWlmuT23BV3wVLOJcDQ=;
-        b=fMxhf0BRIcLvbp88cuyjPgvhUQRXSwSfTVYgHsA4okkjO1xn5FS5sOHxtPIRrzPsdS
-         GhPPVe4o99MnTIndqVJILSBCwq/T1OB7cg7wuugoT6wAyac0wYu46EXbfsFfnUZuGcDn
-         nuHIhg1OLwySeWox45qy2kUe6BwEfXCfgeyHTMVvDbbX9HhIb8vLim2xtCkd+NoxZTEG
-         nJbYNHcWfT7I2Rti8R+wVKFhn+lKe1IZY5Zkeu0loidTF8ncJC1hjFnmozaBbgf5cFYk
-         RwsJhIBW3CF+5+cZO4htMvOzoymvPLe1Ua0L9TtvOhGCpHMv81OQU8RBUAyNTMXMjbZe
-         CElw==
-X-Forwarded-Encrypted: i=1; AJvYcCXKFTxyzGAjU7Ri+kvcNaZZRejnCn83EVyWLS6SbG/fwueXNO3aZt+BgnaMt0bQrLQ8wFfkh6Gilj4a2g==@vger.kernel.org, AJvYcCXOtvA0c7sVVaDeh/TeJklpHXTz644cnWAX/I9/TfbRET6dAuFzEuT/j8Pn/kD34cbnFdvO7PC+Ww7KYfIDyBk=@vger.kernel.org, AJvYcCXUHRlRvisei4kbIX5o7la/awgh4Ju/TjS1biWGhbDSvu0Zqm3mzKLAamSD0sKanYLG5uf3iL9CNdrbHlk/6w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzGRDLCPwCgvhTAhUk8t74pyMKXd6z80f4YSNy4fK4KmgDUpOa
-	2cyenI2Yr9w7edlm/SBmFjPbcCMmfVpjIv80hd2sFK7u3UFuxoGr1Mh3wH3pReYyLA9yH1Tl8Jt
-	f4cjunVkHxwXOA2kKOXnZExyVBr0=
-X-Gm-Gg: ASbGncv6smRp7Pswc/w30zrR8WuyPps+iwfhd5oWsXeAB7RRhgtT1Zhwa8RnDbqnyCT
-	rSszpSdz3vKkKmx4EwuGOwfY4edz1eT0EbN0DxvFUMoK7VTENwvwj+yg0Z64WussbO/+QRFkQbf
-	t0+ArptYA5tvgyqzxR4W5qBOwK8o+nhqY=
-X-Google-Smtp-Source: AGHT+IFtmaqWPTKsjF9xPyuivvMTpfcSv9taFHOoRqpftBJxz5+gTjTkafOXFctObtPlzQyB3bqyopqomah5xPPCwn4=
-X-Received: by 2002:a05:6512:3b8e:b0:545:4df:4c1d with SMTP id
- 2adb3069b0e04-5452fe938b9mr498637e87.46.1739578713338; Fri, 14 Feb 2025
- 16:18:33 -0800 (PST)
+	s=arc-20240116; t=1739592660; c=relaxed/simple;
+	bh=3Es96yiweOVuX8TpMQ2C9w014YwlugLJ7ksbEKEAo1U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S0DajfNQrbHkZntzbiQlNn4KmSpO3gtas4M94pXNXncB7W/p0AQ/qyce354vfI/xvoXqkS4R7mW+rtwawePr3bia6hOql1tSZli+I3gxnGMi7YxDfp6ILfyAbGv1G33dPUkFl+X7/agk9MSJ6TYNzNkEE1wEZ2r/XJ6WkTJLJec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ViylrUhi; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739592658; x=1771128658;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3Es96yiweOVuX8TpMQ2C9w014YwlugLJ7ksbEKEAo1U=;
+  b=ViylrUhincyZP4RP34R1atiFBjtMolXZLc1bZGMLHUkQzySfZP58vMzC
+   AsIDMltbn7rm02y7H/E3dNFKOkhXxq2IzTsPMlwPJ1rHzk39b3IikAA7M
+   uG+hrMtoNZTX8pHTWGQeKULM+DgLRmhaHFv+qMABzBrbRyzSTsLqLcMQs
+   ZlDBi+ihoSOgBgu57RGqxD9tfWPU6Lg8Jz3Zyjm/WYZiL1DqgIw8N9Et5
+   jxiMtN51td8q7wFiRug8DY957d1n9kKO0zkxe9eXIqMRIXSH6Z4L1dkst
+   p3BaPdUfYP9PI6mPkH+99rtoOeMiWNFrD/Yhj48NDcKWvQ1XwOiCoJwW6
+   A==;
+X-CSE-ConnectionGUID: CkLrFsydQlauwA0iT1ybcA==
+X-CSE-MsgGUID: em1S292YTmKjgpC4lkyBIw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40221664"
+X-IronPort-AV: E=Sophos;i="6.13,287,1732608000"; 
+   d="scan'208";a="40221664"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 20:10:57 -0800
+X-CSE-ConnectionGUID: Q1bKLB5ERQq+tOPgb6THtw==
+X-CSE-MsgGUID: 9aGfC/PNT86DjBXMFPbQVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="118831898"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 14 Feb 2025 20:10:55 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tj9W0-001AUV-0y;
+	Sat, 15 Feb 2025 04:10:52 +0000
+Date: Sat, 15 Feb 2025 12:10:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: NeilBrown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-nfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] VFS: Change vfs_mkdir() to return the dentry.
+Message-ID: <202502151124.LyMTodTU-lkp@intel.com>
+References: <20250214052204.3105610-4-neilb@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87ldu9uiyo.fsf@kernel.org>
-In-Reply-To: <87ldu9uiyo.fsf@kernel.org>
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 14 Feb 2025 18:18:21 -0600
-X-Gm-Features: AWEUYZnZelshUZNe61cfBSMPcuylKF3W5d60tuBaF_HvPU3xYbsEJ4yF2WnLyI0
-Message-ID: <CAH2r5mvh7gFftj1rbZoocbLO9mGffOskVgAhJ3gwSb4ufO5cpA@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Rust in FS, Storage, MM
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: lsf-pc@lists.linux-foundation.org, linux-block@vger.kernel.org, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214052204.3105610-4-neilb@suse.de>
 
-sounds like a good idea.
+Hi NeilBrown,
 
-I would love to have some experimental helper drivers in Rust for
-cifs.ko and/or ksmbd
-(e.g. fs/smb/common module for improved compression support over
-SMB3.1.1, or SMB3.1.1 over QUIC, or for optional protocol features
-that could be segmented into a common module shared by client and
-server in fs/smb/common)
+kernel test robot noticed the following build errors:
 
-On Fri, Feb 14, 2025 at 12:41=E2=80=AFAM Andreas Hindborg <a.hindborg@kerne=
-l.org> wrote:
->
-> Hi All,
->
-> On behalf of the Linux kernel Rust subsystem team, I would like to sugges=
-t a
-> general plenary session focused on Rust. Based on audience interest we wo=
-uld
-> discuss:
->
->  - Status of rust adoption in each subsystem - what did we achieve since =
-last
->    LSF?
->  - Insights from the maintainers of subsystems that have merged Rust - ho=
-w was
->    the experience?
->  - A reflection on process - does the current approach work or should we =
-change
->    something?
->  - General Q&A
->
-> Please note that unfortunately I will be the only representative from the=
- Rust
-> subsystem team on site this year.
->
-> Best regards,
-> Andreas Hindborg
->
->
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on trondmy-nfs/linux-next driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus cifs/for-next xfs-linux/for-next linus/master v6.14-rc2 next-20250214]
+[cannot apply to ericvh-v9fs/for-next tyhicks-ecryptfs/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/NeilBrown/nfs-change-mkdir-inode_operation-to-return-alternate-dentry-if-needed/20250214-141741
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20250214052204.3105610-4-neilb%40suse.de
+patch subject: [PATCH 3/3] VFS: Change vfs_mkdir() to return the dentry.
+config: x86_64-buildonly-randconfig-001-20250215 (https://download.01.org/0day-ci/archive/20250215/202502151124.LyMTodTU-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250215/202502151124.LyMTodTU-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502151124.LyMTodTU-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   fs/smb/server/vfs.c: In function 'ksmbd_vfs_mkdir':
+>> fs/smb/server/vfs.c:226:9: error: 'entry' undeclared (first use in this function); did you mean 'dentry'?
+     226 |         entry = vfs_mkdir(idmap, d_inode(path.dentry), dentry, mode);
+         |         ^~~~~
+         |         dentry
+   fs/smb/server/vfs.c:226:9: note: each undeclared identifier is reported only once for each function it appears in
 
 
---=20
-Thanks,
+vim +226 fs/smb/server/vfs.c
 
-Steve
+   196	
+   197	/**
+   198	 * ksmbd_vfs_mkdir() - vfs helper for smb create directory
+   199	 * @work:	work
+   200	 * @name:	directory name that is relative to share
+   201	 * @mode:	directory create mode
+   202	 *
+   203	 * Return:	0 on success, otherwise error
+   204	 */
+   205	int ksmbd_vfs_mkdir(struct ksmbd_work *work, const char *name, umode_t mode)
+   206	{
+   207		struct mnt_idmap *idmap;
+   208		struct path path;
+   209		struct dentry *dentry, *d;
+   210		int err;
+   211	
+   212		dentry = ksmbd_vfs_kern_path_create(work, name,
+   213						    LOOKUP_NO_SYMLINKS | LOOKUP_DIRECTORY,
+   214						    &path);
+   215		if (IS_ERR(dentry)) {
+   216			err = PTR_ERR(dentry);
+   217			if (err != -EEXIST)
+   218				ksmbd_debug(VFS, "path create failed for %s, err %d\n",
+   219					    name, err);
+   220			return err;
+   221		}
+   222	
+   223		idmap = mnt_idmap(path.mnt);
+   224		mode |= S_IFDIR;
+   225		d = dentry;
+ > 226		entry = vfs_mkdir(idmap, d_inode(path.dentry), dentry, mode);
+   227		err = PTR_ERR_OR_ZERO(dentry);
+   228		if (!err && dentry != d)
+   229			ksmbd_vfs_inherit_owner(work, d_inode(path.dentry), d_inode(d));
+   230	
+   231		done_path_create(&path, dentry);
+   232		if (err)
+   233			pr_err("mkdir(%s): creation failed (err:%d)\n", name, err);
+   234		return err;
+   235	}
+   236	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
