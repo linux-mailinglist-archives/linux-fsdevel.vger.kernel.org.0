@@ -1,299 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-41774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7CABA36D2E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2025 11:02:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 149D1A36E2D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2025 13:40:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0971E3B1B47
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2025 10:02:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D391616F792
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2025 12:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBF919E7ED;
-	Sat, 15 Feb 2025 10:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA221ADC8F;
+	Sat, 15 Feb 2025 12:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K2HAmND0"
+	dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="EXMC1qvz";
+	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="S8CsQ5JK";
+	dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="lTa9zUMI";
+	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="w9c6U+ly"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.tnxip.de (mail.tnxip.de [49.12.77.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22EA2C2ED;
-	Sat, 15 Feb 2025 10:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465F6748D
+	for <linux-fsdevel@vger.kernel.org>; Sat, 15 Feb 2025 12:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.77.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739613771; cv=none; b=NKkryUKcz5NM8JOqVEQkYtc76ClheYLz0SyDTfapfDa704spx9TtspwjMQvxWca8VI7idsK7je63TrERQc31bj4Yb/O8R6LS7U1ysxVgWg7sB3s86gP0ReBk79dvT/Fl5zB+Eywjt1uKBT/voci0Q0RIrt60EHmkrAVkqDuvS0M=
+	t=1739623217; cv=none; b=FPB7tFFVuxWYydXXozTNxT5JjlkyK1+Sl17A+kAjqoEHQUyYZQeAwT9AFZY2GqjDNO1Ex6xQzd+ZIVqtaEXz3+oxyA5fZ7vLgp2lW+pWfuIlAvVRpirMpKZ1CoeutLl+GtO9ucAvHcv7jDMZmOxEgh2SiRZik631v5bRvns8ByM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739613771; c=relaxed/simple;
-	bh=Dsqx6ltlYvLB7mdp/GM5KjCi3QZxaw1BFlvvfc4i8SA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EN10a1elckWmpn5nFK9Wkzs0zzkFLMkGpRydHW2zUHSYlEGvgvd9u7fhZgKAFSfAZhJqXRAPIWOfxVc+OG1VBxaC/EMIv599ScxGS6+bIrzLsHl19O0VQ7zLJaXcqlnqwpKyu7X7E9TL7aeNAm2EU+Vs06GolNyjxzR4JmUOLMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K2HAmND0; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5de5a853090so6255688a12.3;
-        Sat, 15 Feb 2025 02:02:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739613767; x=1740218567; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rJLpXRCHqsYg/hKbfo0O3x2rqU5ktrblNiEK1UnDr8c=;
-        b=K2HAmND0qGfnN+isx/xDDCV6bmMM69AcJJA3kkDhYH6gk98J8yO18tHFaC/jXlFgb2
-         rYAlzOezFbCkGsYTA73hFK0B3P9xWxFGYxTh0fmz3BTPKNIWvrYmBVnTg62KXroQ9G7p
-         nkhEQJPTa1RbzdxGxwTEhMMVsGNvWwMn71cYt9Kcky5NixIa2GOD4ABaxUAr0/1xj8WO
-         JJDnsCBwdrKSwYV/BUQ23ZxzV9IpaHRrtIaHY2Cdc0A99GGs81OSDBAA5Dz6TbaKHsLl
-         1RUwAsSB2plSKJBWKL7qS0gprs+zuw3yyIRLjvYLSksTCYwOWzHfYTOmfWD9QuJSZBxh
-         ylCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739613767; x=1740218567;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rJLpXRCHqsYg/hKbfo0O3x2rqU5ktrblNiEK1UnDr8c=;
-        b=GqKB9Co2w6aS1KXr9hbL023PIcdHOtqjtBmx4P/N9mdeRG9gVqmlkjzMHWxuTU0W+0
-         x9cCOXGLuiryKweMEs8Y/pJZiViTM18StYHBTrXNqQrTYLe0+q0/Cayl+KxHRvTQAIAh
-         QfoFtecolqgb2cLz4VbeQwNWhuE3rTCy3uisrz4fk5Lgryb1hjSTl9okU02yfXbNrX1x
-         2MCl3UAFLvWVgJ/QTK0cll5oIaLjLNwyyUHLmWN7lsQbH2ht5I+sEFhEs6isQtVLf2AL
-         XL+reatLqQvX/D+1ZIV2dBfb5zHzrnyVHDcvAPIcXUf/+O7TJCT8Zg2PJx9Tmtd/GskV
-         Uniw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKBXMWXPvZJwV9jPVRy5Ij/0TbyanuZCiiekljZnim4Oj4JX1V/oyhRpsG4D1cANC0zVbONLpi19dXzRLfNw==@vger.kernel.org, AJvYcCXlVMTNwff1OTt55zNHsPxqltheSi4vy5YCpTLk0GitwTjHJ1xl/PWzYMVIzPRS4bVWFopbRmckn9Earyk3@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDZCSHafauVJ6EPYZwkRZMjXtN2UpbtiScuCtDyseuU05qdbns
-	UnGMbnDpH49NzO4AKJAdynvGXjydKgwN40EDPKgQY1S7ktnHYssg3fKG3gNbkzgriMD60NMhc/+
-	71xMYdubmK/zAraXfkqNKjNdGrWoCqQa4R10=
-X-Gm-Gg: ASbGncvmFXNy2RgeyZ26Lha9zmycquljKvanRolDRug3Ka2d3n0FX5UboncgejH25+B
-	8yAMQ08fiEDhZkaliYkzy+iRDJwXrIbCNfnt8X9UJ6I1HZnyat4KurCW1pIQK92TEWCTV5pg0
-X-Google-Smtp-Source: AGHT+IGdNtJNKfuTMSWgGX9jCMa212c6oXSXaOb52QTuCMII5iuSPU579QMwps2wZGQ8aFjNw/6B6BZgyEoLSj9bfqA=
-X-Received: by 2002:a17:906:3087:b0:ab7:b643:edd3 with SMTP id
- a640c23a62f3a-abb70921ademr205728366b.11.1739613767016; Sat, 15 Feb 2025
- 02:02:47 -0800 (PST)
+	s=arc-20240116; t=1739623217; c=relaxed/simple;
+	bh=4Me3tq187CJqjKZNxE4uX5x4ec+XCIKou+0o7H0prQw=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=DyAH2xBig9yXBwP0F9L0CyI6REBQIz/5+azbmHh9Uc5WEKqMjyKhF2NBxPRprEv3omZ5O27tG5Bqlm0jzIY6o0Xjs3ZcqvgDI1fiSqA31LobqGu5jVarVlglWRDZwmMShejV1ZkVbU3ZHulWO9/MGOdBptAHVuUC/74jggtpTYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de; spf=pass smtp.mailfrom=tnxip.de; dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=EXMC1qvz; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=S8CsQ5JK; dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=lTa9zUMI; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=w9c6U+ly; arc=none smtp.client-ip=49.12.77.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tnxip.de
+Received: from gw.tnxip.de (unknown [IPv6:fdc7:1cc3:ec03:1:73d2:3698:9cbf:e408])
+	by mail.tnxip.de (Postfix) with ESMTPS id 3555B208C9
+	for <linux-fsdevel@vger.kernel.org>; Sat, 15 Feb 2025 13:34:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-vps;
+	t=1739622877;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=eAjAZKVIatXynFH5H/vLQ+HOBY8dTC3ZiCaNubT/v9w=;
+	b=EXMC1qvzPDGdV+aAwuqzXpXfjMiI5/1YuDt6645r/oBJUt5QOrMQ8pUGonHWX0+FoLQ/qK
+	jQs4LteFzPlXPVrnpPWAXoNqdZf/MhfKTeVyBRMrSCdSLzrqZ04ODmS/JoyAkaeDShqo+Z
+	FTgPI3PcA0hrTJOgnxWLXCsRkA12Bhg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
+	s=mail-vps-ed; t=1739622877;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=eAjAZKVIatXynFH5H/vLQ+HOBY8dTC3ZiCaNubT/v9w=;
+	b=S8CsQ5JKFgiWpObJPpszWKUX5h9rgRXJH/RU11dnQO/6HeTRKEhXrXb1Vw4sqHCAvRBc/5
+	Wz0RqoTDo4LDs3DA==
+Received: from [IPV6:2a04:4540:8c0a:7600:11ef:cffe:93dd:6a59] (unknown [IPv6:2a04:4540:8c0a:7600:11ef:cffe:93dd:6a59])
+	by gw.tnxip.de (Postfix) with ESMTPSA id EBD4330000000002E1306
+	for <linux-fsdevel@vger.kernel.org>; Sat, 15 Feb 2025 13:34:33 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-gw;
+	t=1739622877;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=eAjAZKVIatXynFH5H/vLQ+HOBY8dTC3ZiCaNubT/v9w=;
+	b=lTa9zUMIy+xu2AXsUJcjoxFqxblTiqFHAbr+ilDQK2TJ4YvGmNWHot3abzvlalwGcdOzgi
+	sfDkxsh2sZTljVVuKwdJLYXQcg9ZLVzG8q4icpxglRe4c7XBryRtfMZZ29FZfAFIgDV2QQ
+	oKzT+/Kp/ljeHyB1wH7MPePfs69rHg0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
+	s=mail-gw-ed; t=1739622877;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=eAjAZKVIatXynFH5H/vLQ+HOBY8dTC3ZiCaNubT/v9w=;
+	b=w9c6U+lyKehwYEzauMdoxUkqQk+G1kOW4dH35As5bnQAw8iaNdS001rH2zkac1EEdpYf9s
+	hDL+ERcjmLoLxLBw==
+Message-ID: <39cc7426-3967-45de-b1a1-526c803b9a84@tnxip.de>
+Date: Sat, 15 Feb 2025 13:34:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214-work-overlayfs-v1-0-465d1867d3d4@kernel.org> <20250214-work-overlayfs-v1-1-465d1867d3d4@kernel.org>
-In-Reply-To: <20250214-work-overlayfs-v1-1-465d1867d3d4@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sat, 15 Feb 2025 11:02:35 +0100
-X-Gm-Features: AWEUYZniiL5hg5CDL_JO6yXArih1EhkKN79A6e8zvmEkt10ej3-PLTmy3Maz8HU
-Message-ID: <CAOQ4uxgTZGSC0uYKJA10E_CuEE_tw-20t7kaZkp6=rGVZQURZg@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/2] ovl: allow to specify override credentials
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Seth Forshee <sforshee@kernel.org>, 
-	Gopal Kakivaya <gopalk@microsoft.com>, linux-unionfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Betterbird (Linux)
+Content-Language: en-US, de-DE
+To: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+From: =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>
+Subject: Random desktop freezes since 6.14-rc. Seems VFS related
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 14, 2025 at 5:46=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> Currently overlayfs uses the mounter's credentials for it's
-> override_creds() calls. That provides a consistent permission model.
->
-> This patches allows a caller to instruct overlayfs to use its
-> credentials instead. The caller must be located in the same user
-> namespace as the user namespace the overlayfs instance will be mounted
-> in. This provides a consistent and simple security model.
->
-> With this it is possible to e.g., mount an overlayfs instance where the
-> mounter must have CAP_SYS_ADMIN but the credentials used for
-> override_creds() have dropped CAP_SYS_ADMIN. It also allows the usage of
-> custom fs{g,u}id different from the callers and other tweaks.
->
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  fs/overlayfs/ovl_entry.h |  1 +
->  fs/overlayfs/params.c    | 25 +++++++++++++++++++++++++
->  fs/overlayfs/super.c     | 13 ++++++++++++-
->  3 files changed, 38 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
-> index cb449ab310a7..ed45553943e1 100644
-> --- a/fs/overlayfs/ovl_entry.h
-> +++ b/fs/overlayfs/ovl_entry.h
-> @@ -19,6 +19,7 @@ struct ovl_config {
->         bool metacopy;
->         bool userxattr;
->         bool ovl_volatile;
-> +       bool ovl_credentials;
-
-IMO this is not a configuration...
-
->  };
->
->  struct ovl_sb {
-> diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
-> index 1115c22deca0..5dad23d6f121 100644
-> --- a/fs/overlayfs/params.c
-> +++ b/fs/overlayfs/params.c
-> @@ -59,6 +59,7 @@ enum ovl_opt {
->         Opt_metacopy,
->         Opt_verity,
->         Opt_volatile,
-> +       Opt_override_creds,
->  };
->
->  static const struct constant_table ovl_parameter_bool[] =3D {
-> @@ -155,6 +156,7 @@ const struct fs_parameter_spec ovl_parameter_spec[] =
-=3D {
->         fsparam_enum("metacopy",            Opt_metacopy, ovl_parameter_b=
-ool),
->         fsparam_enum("verity",              Opt_verity, ovl_parameter_ver=
-ity),
->         fsparam_flag("volatile",            Opt_volatile),
-> +       fsparam_flag_no("override_creds",   Opt_override_creds),
->         {}
->  };
->
-> @@ -662,6 +664,27 @@ static int ovl_parse_param(struct fs_context *fc, st=
-ruct fs_parameter *param)
->         case Opt_userxattr:
->                 config->userxattr =3D true;
->                 break;
-> +       case Opt_override_creds: {
-> +               const struct cred *cred =3D ofs->creator_cred;
-> +
-> +               if (!result.negated) {
-> +                       if (fc->user_ns !=3D current_user_ns()) {
-> +                               err =3D -EINVAL;
-> +                               break;
-> +                       }
-> +
-> +                       ofs->creator_cred =3D prepare_creds();
-> +                       if (!ofs->creator_cred)
-> +                               err =3D -EINVAL;
-> +                       else
-> +                               config->ovl_credentials =3D true;
-> +               } else {
-> +                       ofs->creator_cred =3D NULL;
-> +                       config->ovl_credentials =3D false;
-> +               }
-> +               put_cred(cred);
-> +               break;
-> +       }
->         default:
->                 pr_err("unrecognized mount option \"%s\" or missing value=
-\n",
->                        param->key);
-> @@ -1071,5 +1094,7 @@ int ovl_show_options(struct seq_file *m, struct den=
-try *dentry)
->         if (ofs->config.verity_mode !=3D ovl_verity_mode_def())
->                 seq_printf(m, ",verity=3D%s",
->                            ovl_verity_mode(&ofs->config));
-> +       if (ofs->config.ovl_credentials)
-> +               seq_puts(m, ",override_creds");
-
-...and there is no meaning to showing it in mount options, because this
-is not a replayable configuration.
-If you strap ",override_creds" to a normal shell command line mount
-it means nothing and showing this option does not carry any information
-about how (in which context) it was executed.
-I am willing to be convinced otherwise.
+Hi,
+I am getting stuff freezing randomly since 6.14-rc. I do not have a clear way to 
+reproduce this, but it tends to happen when I delete stuff on /tmp (tmpfs) using
+KDE's dolphin. I usually loose the ability to switch vtys or launch new terminals,
+so by chance I had dmesg running and got the call trace below when things started 
+to go south. At this point dolphin was defunct state, and was consuming 100% CPU.
+'perf top' was showing xas_find, __lock_acquire, lock_release and sched_clock_noinstr
+with highest percentage. Since I also have current bcachefs merged in my kernel I
+already checked with Kent, but nothing seems to point to bcachefs. Also my other
+(non-desktop) systems running the same kernel do not show this behavior. 
+Hopefully someone in here can make sense of this ...
 
 
->         return 0;
->  }
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index 86ae6f6da36b..157ab9e8f6f8 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -654,6 +654,7 @@ static int ovl_make_workdir(struct super_block *sb, s=
-truct ovl_fs *ofs,
->                             const struct path *workpath)
->  {
->         struct vfsmount *mnt =3D ovl_upper_mnt(ofs);
-> +       const struct cred *old_cred;
->         struct dentry *workdir;
->         struct file *tmpfile;
->         bool rename_whiteout;
-> @@ -665,6 +666,8 @@ static int ovl_make_workdir(struct super_block *sb, s=
-truct ovl_fs *ofs,
->         if (err)
->                 return err;
->
-> +       old_cred =3D ovl_override_creds(sb);
-> +
->         workdir =3D ovl_workdir_create(ofs, OVL_WORKDIR_NAME, false);
->         err =3D PTR_ERR(workdir);
->         if (IS_ERR_OR_NULL(workdir))
-> @@ -788,6 +791,7 @@ static int ovl_make_workdir(struct super_block *sb, s=
-truct ovl_fs *ofs,
->                 ofs->config.nfs_export =3D false;
->         }
->  out:
-> +       ovl_revert_creds(old_cred);
->         mnt_drop_write(mnt);
->         return err;
->  }
-> @@ -830,6 +834,7 @@ static int ovl_get_indexdir(struct super_block *sb, s=
-truct ovl_fs *ofs,
->                             struct ovl_entry *oe, const struct path *uppe=
-rpath)
->  {
->         struct vfsmount *mnt =3D ovl_upper_mnt(ofs);
-> +       const struct cred *old_cred;
->         struct dentry *indexdir;
->         struct dentry *origin =3D ovl_lowerstack(oe)->dentry;
->         const struct ovl_fh *fh;
-> @@ -843,6 +848,8 @@ static int ovl_get_indexdir(struct super_block *sb, s=
-truct ovl_fs *ofs,
->         if (err)
->                 goto out_free_fh;
->
-> +       old_cred =3D ovl_override_creds(sb);
-> +
->         /* Verify lower root is upper root origin */
->         err =3D ovl_verify_origin_fh(ofs, upperpath->dentry, fh, true);
->         if (err) {
-> @@ -893,6 +900,7 @@ static int ovl_get_indexdir(struct super_block *sb, s=
-truct ovl_fs *ofs,
->                 pr_warn("try deleting index dir or mounting with '-o inde=
-x=3Doff' to disable inodes index.\n");
->
->  out:
-> +       ovl_revert_creds(old_cred);
->         mnt_drop_write(mnt);
->  out_free_fh:
->         kfree(fh);
-> @@ -1318,7 +1326,10 @@ int ovl_fill_super(struct super_block *sb, struct =
-fs_context *fc)
->         sb->s_d_op =3D &ovl_dentry_operations;
->
->         err =3D -ENOMEM;
-> -       ofs->creator_cred =3D cred =3D prepare_creds();
-> +       if (!ofs->creator_cred)
-> +               ofs->creator_cred =3D cred =3D prepare_creds();
-> +       else
-> +               cred =3D (struct cred *)ofs->creator_cred;
->         if (!cred)
->                 goto out_err;
->
+[19136.543931] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+[19136.543938] rcu: 	Tasks blocked on level-1 rcu_node (CPUs 16-31): P314703
+[19136.543943] rcu: 	(detected by 29, t=21002 jiffies, g=8366533, q=26504 ncpus=32)
+[19136.543946] task:KIO::WorkerThre state:R  running task     stack:0     pid:314703 tgid:314656 ppid:3984   task_flags:0x400040 flags:0x00004006
+[19136.543951] Call Trace:
+[19136.543953]  <TASK>
+[19136.543958]  __schedule+0x784/0x1520
+[19136.543963]  ? __schedule+0x784/0x1520
+[19136.543966]  ? __schedule+0x784/0x1520
+[19136.543969]  preempt_schedule_irq+0x52/0x90
+[19136.543972]  raw_irqentry_exit_cond_resched+0x2f/0x40
+[19136.543975]  irqentry_exit+0x3e/0x50
+[19136.543977]  irqentry_exit+0x3e/0x50
+[19136.543979]  ? sysvec_apic_timer_interrupt+0x48/0x90
+[19136.543982]  ? asm_sysvec_apic_timer_interrupt+0x1f/0x30
+[19136.543985]  ? local_clock_noinstr+0x10/0xc0
+[19136.543987]  ? local_clock+0x14/0x30
+[19136.543990]  ? __lock_acquire+0x1fd/0x6c0
+[19136.543995]  ? local_clock+0x14/0x30
+[19136.543997]  ? lock_release+0x120/0x470
+[19136.544000]  ? find_get_entries+0x76/0x2e0
+[19136.544004]  ? find_get_entries+0xfb/0x2e0
+[19136.544006]  ? find_get_entries+0x76/0x2e0
+[19136.544011]  ? shmem_undo_range+0x35f/0x520
+[19136.544027]  ? shmem_evict_inode+0x135/0x290
+[19136.544029]  ? lock_release+0x120/0x470
+[19136.544031]  ? evict+0x1a8/0x340
+[19136.544036]  ? evict+0x1c5/0x340
+[19136.544038]  ? lock_release+0x120/0x470
+[19136.544040]  ? iput+0x1f2/0x290
+[19136.544044]  ? iput+0x1fa/0x290
+[19136.544047]  ? do_unlinkat+0x1e7/0x2c0
+[19136.544051]  ? __x64_sys_unlink+0x20/0x30
+[19136.544053]  ? x64_sys_call+0xa9a/0x20a0
+[19136.544055]  ? do_syscall_64+0x58/0xf0
+[19136.544057]  ? entry_SYSCALL_64_after_hwframe+0x50/0x58
+[19136.544063]  </TASK>
+[19157.614008] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+[19157.614014] rcu: 	Tasks blocked on level-1 rcu_node (CPUs 16-31): P314703
+[19157.614019] rcu: 	(detected by 8, t=21002 jiffies, g=8366553, q=40992 ncpus=32)
+[19157.614022] task:KIO::WorkerThre state:R  running task     stack:0     pid:314703 tgid:314656 ppid:3984   task_flags:0x400040 flags:0x00004006
+[19157.614027] Call Trace:
+[19157.614029]  <TASK>
+[19157.614033]  __schedule+0x784/0x1520
+[19157.614041]  ? irqentry_exit+0x3e/0x50
+[19157.614043]  ? sysvec_apic_timer_interrupt+0x48/0x90
+[19157.614046]  ? asm_sysvec_apic_timer_interrupt+0x1f/0x30
+[19157.614048]  ? find_get_entries+0x76/0x2e0
+[19157.614052]  ? local_clock_noinstr+0x10/0xc0
+[19157.614055]  ? local_clock+0x14/0x30
+[19157.614057]  ? __lock_acquire+0x1fd/0x6c0
+[19157.614061]  ? local_clock_noinstr+0x10/0xc0
+[19157.614063]  ? local_clock+0x14/0x30
+[19157.614065]  ? lock_release+0x120/0x470
+[19157.614068]  ? find_get_entries+0x76/0x2e0
+[19157.614071]  ? find_get_entries+0x76/0x2e0
+[19157.614073]  ? find_get_entries+0xfb/0x2e0
+[19157.614075]  ? find_get_entries+0x76/0x2e0
+[19157.614080]  ? shmem_undo_range+0x35f/0x520
+[19157.614096]  ? shmem_evict_inode+0x135/0x290
+[19157.614098]  ? lock_release+0x120/0x470
+[19157.614100]  ? evict+0x1a8/0x340
+[19157.614105]  ? evict+0x1c5/0x340
+[19157.614107]  ? lock_release+0x120/0x470
+[19157.614109]  ? iput+0x1f2/0x290
+[19157.614113]  ? iput+0x1fa/0x290
+[19157.614115]  ? do_unlinkat+0x1e7/0x2c0
+[19157.614120]  ? __x64_sys_unlink+0x20/0x30
+[19157.614122]  ? x64_sys_call+0xa9a/0x20a0
+[19157.614124]  ? do_syscall_64+0x58/0xf0
+[19157.614127]  ? entry_SYSCALL_64_after_hwframe+0x50/0x58
+[19157.614132]  </TASK>
 
-Is there any reason not to scope the rest of ovl_fill_super()
-with the alternative override_creds instead of scoping
-helper functions?
-If there is a reason then I do not see what it is.
 
-My opinion is that it does not change the permission model if we
-switch one mounter_creds with another, as long as we execute all
-operations on underlying layers with a consistent set of creds
-(give or take CAP_SYS_RESOURCE).
+Kind regards
+Malte
 
-If we scope the entire ovl_fill_super() with the override_creds used
-later on, then we get this consistent property.
-
-I should note that before the new mount API, it was obvious that
-all operations on underlying layers are performed with "mounter creds".
-with new API, "mounter creds" are really "fsconfig setup creds", and
-kern_path() doing lookup when parsing string *dir=3D mount options
-may be executed with different creds than fsconfig setup creds.
-
-So the way I see it, the override_creds option is more of a command,
-which allows better control over the single consistent set of ovl creds.
-
-Thanks,
-Amir.
 
