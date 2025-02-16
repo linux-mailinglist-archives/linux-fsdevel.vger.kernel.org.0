@@ -1,154 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-41794-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54131A37600
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Feb 2025 17:50:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F99BA3762B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Feb 2025 18:07:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1609C7A2CFC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Feb 2025 16:49:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A5BA189099D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Feb 2025 17:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9714419D09C;
-	Sun, 16 Feb 2025 16:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1BDF19D083;
+	Sun, 16 Feb 2025 17:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="X0NHws+j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ROq5nN8R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B91199935;
-	Sun, 16 Feb 2025 16:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FC6188724;
+	Sun, 16 Feb 2025 17:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739724635; cv=none; b=h5iUWg3OzyoTViHeb1pQnB06o+HaWKCvmJf94JRX+yl1UxduEQkF5yxenZexAnSOcIlD5B6nGHgOlxB2XuLrJvmCcUgB7KkqEugBEUjQqlk4o0PHMT8LFqxOVg1fJp00Ah/Z43d5hMjQ5SWZVfGnbvPHE7j2SZ0SKf023xgtVIs=
+	t=1739725660; cv=none; b=Ul4YhJtnpFGI+qBsPhW2Gxlt3UsUJ06YDwNvh3b/+lwUfYYqYDCekrwreYiKadh93W5CWrNdgg2AhP/ZPRik4EJ9AICbM8Q4fL8edq5FIsfNcErW2UP+SACNKrp9vAAkouMsX4jJNa3KhzvtHrDM2n3GS2eseRZ25bhGkFHraPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739724635; c=relaxed/simple;
-	bh=MYDNA7vQdGwvrR9u4naOeO04qzzQoPZZQw+WAtjhwI8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cVpisn6SminYFklCizv7aIsWQXD7kWtLh+NX+7NTKYgnYYhfTddQvA3FpwmVDokHdIuCNZbCFw0XMu+5qsCYmTDKYXXFb1IBhEk5+GpwyL9ZDrR7URfEpZ6XpA8XyUXf2Tzf7hcXF2lv3HDamdUrzZqfncH95BXPaCukA3Zm2ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=X0NHws+j; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=X//16u3A076vRnXiSh6q78jzmve7NLCpY7kdhsSSP7E=; b=X0NHws+jlyf6zpAJhycCm8HZ72
-	8QLIr6FQ+1nB04GXQ8oA3AMcRk0rsKxWJiX7dJxKj5oMBE6bPlbeAxKyFH09m3dEHJgkyl71M9EUp
-	OZht1174YB1hCQkMwG1Lqv0fZkvJi8nOeB4G/U9o6TVptF9j0gnYEq9kFdtVlV6NTYNxO+mnENZHX
-	vMPVopPhkQGLnM/eWad/cu1CzGglPla0wR/rrQpT743UMuCgKT8ZUm4c87UrjOWQeRXWMxEFBjG/l
-	Pzw9XEf6w1pNh0coSn/65ik+6V6GkB7ixdBVtLwWHpRnMe6GkCfhmRVczpujhhdyMkmYs6T4HBkKX
-	FVWsa9hQ==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tjhqO-005FJw-Sa; Sun, 16 Feb 2025 17:50:18 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>,
-	Bernd Schubert <bschubert@ddn.com>
-Cc: Dave Chinner <david@fromorbit.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Matt Harvey <mharvey@jumptrading.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luis Henriques <luis@igalia.com>
-Subject: [PATCH v5 2/2] fuse: add new function to invalidate cache for all inodes
-Date: Sun, 16 Feb 2025 16:50:08 +0000
-Message-ID: <20250216165008.6671-3-luis@igalia.com>
-In-Reply-To: <20250216165008.6671-1-luis@igalia.com>
-References: <20250216165008.6671-1-luis@igalia.com>
+	s=arc-20240116; t=1739725660; c=relaxed/simple;
+	bh=c/9tgpooSevtIXvhv7PfQOLK0UYpRmLA8i6VZpmd/iY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M+V4zDbDGUYpNRvDPo7Yr96q1aoa9ZZOeGY8dfphTDQTFJ4XC4qtRe+fDVpR7ImK6bjaArWN+xVsQKhG2HDByqfvUVGkYpY2dylWacJFRru9yC6HtNcCvowJ1M6zRb16ylTz6WQ4z/apFV+SjziLEMThKFuY4gQkYGBF9YbaXuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ROq5nN8R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A380AC4CEDD;
+	Sun, 16 Feb 2025 17:07:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739725659;
+	bh=c/9tgpooSevtIXvhv7PfQOLK0UYpRmLA8i6VZpmd/iY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ROq5nN8RVyJAMn17jXCyBSVuaEax3FPssecRERcsRwBH3AHln2IMI1OzwOYnJT4su
+	 /POZOgxKJL+W8w0TIeDJ3N5uMBPfvUIpY3t2ZVLgY5/CUW9kF0k2hrsoIdIMbVrX5H
+	 hwOMIOHqcVr2u/DkGxscJtNzZ++N+fdGSd5I045laZYna0p5b6rIev7XGetR5k0U5h
+	 WCrYazJLBjKOMjQmJ8L5NJzwkGlVj7g4vlkpwFGinrZGX24RLLsen368EKtPtfesxl
+	 DAeCS9f9NLcrGeuPHdSw33HXpd02y5fTcr7YkCo0m3SHmIaInFgISngBZPa2rxWe5u
+	 FrXx6uqkC8A1w==
+Date: Sun, 16 Feb 2025 09:07:39 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ruiwu Chen <rwchen404@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	kees@kernel.org, joel.granados@kernel.org, zachwade.k@gmail.com
+Subject: Re: [PATCH] drop_caches: re-enable message after disabling
+Message-ID: <20250216170739.GA1564284@frogsfrogsfrogs>
+References: <20250216101729.2332-1-rwchen404@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250216101729.2332-1-rwchen404@gmail.com>
 
-Currently userspace is able to notify the kernel to invalidate the cache
-for an inode.  This means that, if all the inodes in a filesystem need to
-be invalidated, then userspace needs to iterate through all of them and do
-this kernel notification separately.
+On Sun, Feb 16, 2025 at 06:17:29PM +0800, Ruiwu Chen wrote:
+> When 'echo 4 > /proc/sys/vm/drop_caches' the message is disabled,
+> but there is no interface to enable the message, only by restarting
+> the way, so I want to add the 'echo 0 > /proc/sys/vm/drop_caches'
+> way to enabled the message again.
 
-This patch adds a new option that allows userspace to invalidate all the
-inodes with a single notification operation.  In addition to invalidate
-all the inodes, it also shrinks the sb dcache.
+Please update Documentation/ to note this new API.
 
-Signed-off-by: Luis Henriques <luis@igalia.com>
----
- fs/fuse/inode.c           | 33 +++++++++++++++++++++++++++++++++
- include/uapi/linux/fuse.h |  3 +++
- 2 files changed, 36 insertions(+)
+--D
 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index e9db2cb8c150..01a4dc5677ae 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -547,6 +547,36 @@ struct inode *fuse_ilookup(struct fuse_conn *fc, u64 nodeid,
- 	return NULL;
- }
- 
-+static int fuse_reverse_inval_all(struct fuse_conn *fc)
-+{
-+	struct fuse_mount *fm;
-+	struct inode *inode;
-+
-+	inode = fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
-+	if (!inode || !fm)
-+		return -ENOENT;
-+
-+	/* Remove all possible active references to cached inodes */
-+	shrink_dcache_sb(fm->sb);
-+
-+	/* Remove all unreferenced inodes from cache */
-+	invalidate_inodes(fm->sb);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Notify to invalidate inodes cache.  It can be called with @nodeid set to
-+ * either:
-+ *
-+ * - An inode number - Any pending writebacks within the rage [@offset @len]
-+ *   will be triggered and the inode will be validated.  To invalidate the whole
-+ *   cache @offset has to be set to '0' and @len needs to be <= '0'; if @offset
-+ *   is negative, only the inode attributes are invalidated.
-+ *
-+ * - FUSE_INVAL_ALL_INODES - All the inodes in the superblock are invalidated
-+ *   and the whole dcache is shrinked.
-+ */
- int fuse_reverse_inval_inode(struct fuse_conn *fc, u64 nodeid,
- 			     loff_t offset, loff_t len)
- {
-@@ -555,6 +585,9 @@ int fuse_reverse_inval_inode(struct fuse_conn *fc, u64 nodeid,
- 	pgoff_t pg_start;
- 	pgoff_t pg_end;
- 
-+	if (nodeid == FUSE_INVAL_ALL_INODES)
-+		return fuse_reverse_inval_all(fc);
-+
- 	inode = fuse_ilookup(fc, nodeid, NULL);
- 	if (!inode)
- 		return -ENOENT;
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 5e0eb41d967e..e5852b63f99f 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -669,6 +669,9 @@ enum fuse_notify_code {
- 	FUSE_NOTIFY_CODE_MAX,
- };
- 
-+/* The nodeid to request to invalidate all inodes */
-+#define FUSE_INVAL_ALL_INODES 0
-+
- /* The read buffer is required to be at least 8k, but may be much larger */
- #define FUSE_MIN_READ_BUFFER 8192
- 
+> Signed-off-by: Ruiwu Chen <rwchen404@gmail.com>
+> ---
+>  fs/drop_caches.c | 7 +++++--
+>  kernel/sysctl.c  | 2 +-
+>  2 files changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+> index d45ef541d848..c90cfaf9756d 100644
+> --- a/fs/drop_caches.c
+> +++ b/fs/drop_caches.c
+> @@ -57,7 +57,7 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
+>  	if (ret)
+>  		return ret;
+>  	if (write) {
+> -		static int stfu;
+> +		static bool stfu;
+>  
+>  		if (sysctl_drop_caches & 1) {
+>  			lru_add_drain_all();
+> @@ -73,7 +73,10 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
+>  				current->comm, task_pid_nr(current),
+>  				sysctl_drop_caches);
+>  		}
+> -		stfu |= sysctl_drop_caches & 4;
+> +		if (sysctl_drop_caches == 0)
+> +			stfu = false;
+> +		else if (sysctl_drop_caches == 4)
+> +			stfu = true;
+>  	}
+>  	return 0;
+>  }
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index cb57da499ebb..f2e06e074724 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -2088,7 +2088,7 @@ static const struct ctl_table vm_table[] = {
+>  		.maxlen		= sizeof(int),
+>  		.mode		= 0200,
+>  		.proc_handler	= drop_caches_sysctl_handler,
+> -		.extra1		= SYSCTL_ONE,
+> +		.extra1		= SYSCTL_ZERO,
+>  		.extra2		= SYSCTL_FOUR,
+>  	},
+>  	{
+> -- 
+> 2.27.0
+> 
+> 
 
