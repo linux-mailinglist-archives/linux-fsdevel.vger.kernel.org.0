@@ -1,528 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-41792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C6A9A375EE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Feb 2025 17:42:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06A71A37601
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Feb 2025 17:51:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA6BE7A3AC7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Feb 2025 16:41:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14AD716C28F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Feb 2025 16:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B92719E826;
-	Sun, 16 Feb 2025 16:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A40D19CD0B;
+	Sun, 16 Feb 2025 16:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XbYMQD7G"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="G/71Qlyf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1D219C558;
-	Sun, 16 Feb 2025 16:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B271993BD;
+	Sun, 16 Feb 2025 16:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739724139; cv=none; b=p4LvEHQ97MAkVSe/9q4OYqMt2x+cyinaRFWiFeME7WQh2k8Ab6CCJeJmWQz8NpfS2S8n3UU0aDdEVxhbObYEoAFm0dby3wrYBEy3IGtiimmMaLnS1IK4h3elALZ1k7M37fN7Wh12Jga/QolCB8vX5T3d5VQdp36jyuuYC4zcTXs=
+	t=1739724634; cv=none; b=QSXz4l6JZnDIgHIwZgwc45GskJonN4Ni9ownHNVy90hOVHNQJjziQTpRNoigKCvV12+qh+sDNy72s9PziFbznOY/o26hYwRuTGH2hVuEcbrfhOi3TiRFfmaZhzQ+p2vd8HWi7viaiS8k7gzjDE550LwZeoivQiCCHFKlIgn0oY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739724139; c=relaxed/simple;
-	bh=RGGcyeHiog1KdXGjsvhFU0C6fu7FKSWGs4nXS+PgjfU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MUQrerH6TSJtOwOANHL3mOcq63GqtsJwWYuosGWP4ROSfnumm/Ar0iSmy8kcSidpMlejTztZqeT9sNm9jfP6BRZpz8JHkgxKo2IQgWoIo8FRmKjEeFqLVQAxkZQ9myknfXgK7kAZCrmCqGslfvJ5r/N7PwXhBovF+R0YXjdXK5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XbYMQD7G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25AD1C4CEE8;
-	Sun, 16 Feb 2025 16:42:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739724139;
-	bh=RGGcyeHiog1KdXGjsvhFU0C6fu7FKSWGs4nXS+PgjfU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XbYMQD7G8F3Hv+GsBBgFG5Xc7/hqAFD4+PE+XD88b9nu06i0Zy4PXyGKd+t7d9fJf
-	 5pNNTLrrDZxdJo9NlTisUa/L91ib/x526j0cdxFlV2rXNVeq/IKR+L9Xuz9S1xq9Qu
-	 v63Rj3cUqGolEWgGrvFsU6JYOc27kAxhQnbF9+W9vQNqXbAiZ6LffmVOanXlJSe2ya
-	 0cTA3vkZTYuFEapj6YdheLOZlhW8A4xcQSbm+fY5yc8Un99FQknQ4Dt4W2tJZkqPtf
-	 x8oerz50XwyNnD9BF2hbMK3DqdQOokJSqxwm7INf5HYwlzavndLAZaRF9YAZRs6jWP
-	 G7slU7mA1z03g==
-Received: by pali.im (Postfix)
-	id 9E644F2E; Sun, 16 Feb 2025 17:42:06 +0100 (CET)
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	ronnie sahlberg <ronniesahlberg@gmail.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
+	s=arc-20240116; t=1739724634; c=relaxed/simple;
+	bh=K8160Mpl70SxTgtjMA/0Q+r9PBVwXxxO9s5QYPkl8aw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G8tF46deF1eAMoC+PD4iqqRCrJo09brpqjexksswyfcHAkT/I6yjMxq7qFEVtHr7hDYMFaPfTG7tQn6cdu5TDi8+Wk459pDVCG8ftfsEvk8kbnss00uPiRcWzyraMnCQYnXWgzN0lkP5rwXbxj3JaVR+eGBJycAnSvGajv8HwMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=G/71Qlyf; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=GuJjkzhA/wxq6jSIF/WL5nNUMyBZkTHRN/TfStd13Ks=; b=G/71QlyfRee1MbPwJBS7D94Jds
+	TFLe+ku8YKFGPTerJNTl0/Z0f9SYMhZhDAZJq55CrodjM5SegC+cjzvwndhiXNc9FNkQWiG84B5iD
+	fws/7fDkx3Ke3peQ6e0u/EpJRbp3gnDUATm5mw4hpmW54mhD/SPWWjHUd6uYx3/vT9s6WzWbs62VK
+	9dUDeK+x1pNkukzHmcrO5fbV96TUU6AGZlQLtPWOf6J6g1cxM8GRBc7Eq2wCHOlytA6AGZVBHqjHC
+	G+a7E7HKvcJrANWWUGgV1+KWo8RkfQOWwEzKMbthQR4rg7agrYO6S8WLwgVZoAIFU2T0uQWWHbP7X
+	CtmUG3MA==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tjhqM-005FJd-Cg; Sun, 16 Feb 2025 17:50:16 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>,
+	Bernd Schubert <bschubert@ddn.com>
+Cc: Dave Chinner <david@fromorbit.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
 	Jan Kara <jack@suse.cz>,
-	Steve French <sfrench@samba.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 4/4] cifs: Implement FS_IOC_FS[GS]ETXATTR API for Windows attributes
-Date: Sun, 16 Feb 2025 17:40:29 +0100
-Message-Id: <20250216164029.20673-5-pali@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250216164029.20673-1-pali@kernel.org>
-References: <20250216164029.20673-1-pali@kernel.org>
+	Matt Harvey <mharvey@jumptrading.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Luis Henriques <luis@igalia.com>
+Subject: [PATCH v5 0/2] fuse: allow notify_inval for all inodes
+Date: Sun, 16 Feb 2025 16:50:06 +0000
+Message-ID: <20250216165008.6671-1-luis@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
- fs/smb/client/cifsfs.c    |   4 +
- fs/smb/client/cifsfs.h    |   2 +
- fs/smb/client/cifsglob.h  |   4 +-
- fs/smb/client/cifsproto.h |   2 +-
- fs/smb/client/cifssmb.c   |   4 +-
- fs/smb/client/inode.c     | 181 ++++++++++++++++++++++++++++++++++++++
- fs/smb/client/ioctl.c     |   8 +-
- fs/smb/client/smb1ops.c   |   4 +-
- fs/smb/client/smb2ops.c   |   8 +-
- fs/smb/client/smb2pdu.c   |   4 +-
- fs/smb/client/smb2proto.h |   2 +-
- fs/smb/common/smb2pdu.h   |   2 +
- 12 files changed, 209 insertions(+), 16 deletions(-)
+Hi!
 
-diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-index ea31d693ea9f..b441675f9afd 100644
---- a/fs/smb/client/cifsfs.c
-+++ b/fs/smb/client/cifsfs.c
-@@ -1182,6 +1182,8 @@ const struct inode_operations cifs_dir_inode_ops = {
- 	.listxattr = cifs_listxattr,
- 	.get_acl = cifs_get_acl,
- 	.set_acl = cifs_set_acl,
-+	.fileattr_get = cifs_fileattr_get,
-+	.fileattr_set = cifs_fileattr_set,
- };
- 
- const struct inode_operations cifs_file_inode_ops = {
-@@ -1192,6 +1194,8 @@ const struct inode_operations cifs_file_inode_ops = {
- 	.fiemap = cifs_fiemap,
- 	.get_acl = cifs_get_acl,
- 	.set_acl = cifs_set_acl,
-+	.fileattr_get = cifs_fileattr_get,
-+	.fileattr_set = cifs_fileattr_set,
- };
- 
- const char *cifs_get_link(struct dentry *dentry, struct inode *inode,
-diff --git a/fs/smb/client/cifsfs.h b/fs/smb/client/cifsfs.h
-index 831fee962c4d..b1e6025e2cbc 100644
---- a/fs/smb/client/cifsfs.h
-+++ b/fs/smb/client/cifsfs.h
-@@ -77,6 +77,8 @@ extern int cifs_setattr(struct mnt_idmap *, struct dentry *,
- 			struct iattr *);
- extern int cifs_fiemap(struct inode *, struct fiemap_extent_info *, u64 start,
- 		       u64 len);
-+extern int cifs_fileattr_get(struct dentry *dentry, struct fileattr *fa);
-+extern int cifs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry, struct fileattr *fa);
- 
- extern const struct inode_operations cifs_file_inode_ops;
- extern const struct inode_operations cifs_symlink_inode_ops;
-diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
-index b764bfe916b4..233a0a13b0e2 100644
---- a/fs/smb/client/cifsglob.h
-+++ b/fs/smb/client/cifsglob.h
-@@ -426,7 +426,7 @@ struct smb_version_operations {
- 	int (*set_file_info)(struct inode *, const char *, FILE_BASIC_INFO *,
- 			     const unsigned int);
- 	int (*set_compression)(const unsigned int, struct cifs_tcon *,
--			       struct cifsFileInfo *);
-+			       struct cifsFileInfo *, bool);
- 	/* check if we can send an echo or nor */
- 	bool (*can_echo)(struct TCP_Server_Info *);
- 	/* send echo request */
-@@ -538,7 +538,7 @@ struct smb_version_operations {
- 	int (*calc_signature)(struct smb_rqst *, struct TCP_Server_Info *,
- 				bool allocate_crypto);
- 	int (*set_integrity)(const unsigned int, struct cifs_tcon *tcon,
--			     struct cifsFileInfo *src_file);
-+			     struct cifsFileInfo *src_file, bool enable);
- 	int (*enum_snapshots)(const unsigned int xid, struct cifs_tcon *tcon,
- 			     struct cifsFileInfo *src_file, void __user *);
- 	int (*notify)(const unsigned int xid, struct file *pfile,
-diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
-index 47ecc0884a74..f5f6be6f343e 100644
---- a/fs/smb/client/cifsproto.h
-+++ b/fs/smb/client/cifsproto.h
-@@ -506,7 +506,7 @@ extern struct inode *cifs_create_reparse_inode(struct cifs_open_info_data *data,
- 					       struct kvec *reparse_iov,
- 					       struct kvec *xattr_iov);
- extern int CIFSSMB_set_compression(const unsigned int xid,
--				   struct cifs_tcon *tcon, __u16 fid);
-+				   struct cifs_tcon *tcon, __u16 fid, bool enable);
- extern int CIFS_open(const unsigned int xid, struct cifs_open_parms *oparms,
- 		     int *oplock, FILE_ALL_INFO *buf);
- extern int SMBOldOpen(const unsigned int xid, struct cifs_tcon *tcon,
-diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
-index 3dbff55b639d..643a55db3ca9 100644
---- a/fs/smb/client/cifssmb.c
-+++ b/fs/smb/client/cifssmb.c
-@@ -3454,7 +3454,7 @@ struct inode *cifs_create_reparse_inode(struct cifs_open_info_data *data,
- 
- int
- CIFSSMB_set_compression(const unsigned int xid, struct cifs_tcon *tcon,
--		    __u16 fid)
-+		    __u16 fid, bool enable)
- {
- 	int rc = 0;
- 	int bytes_returned;
-@@ -3467,7 +3467,7 @@ CIFSSMB_set_compression(const unsigned int xid, struct cifs_tcon *tcon,
- 	if (rc)
- 		return rc;
- 
--	pSMB->compression_state = cpu_to_le16(COMPRESSION_FORMAT_DEFAULT);
-+	pSMB->compression_state = cpu_to_le16(enable ? COMPRESSION_FORMAT_DEFAULT : COMPRESSION_FORMAT_NONE);
- 
- 	pSMB->TotalParameterCount = 0;
- 	pSMB->TotalDataCount = cpu_to_le32(2);
-diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
-index dfad9284a87c..d07ebb99c262 100644
---- a/fs/smb/client/inode.c
-+++ b/fs/smb/client/inode.c
-@@ -13,6 +13,7 @@
- #include <linux/sched/signal.h>
- #include <linux/wait_bit.h>
- #include <linux/fiemap.h>
-+#include <linux/fileattr.h>
- #include <asm/div64.h>
- #include "cifsfs.h"
- #include "cifspdu.h"
-@@ -83,6 +84,7 @@ static void cifs_set_ops(struct inode *inode)
- 		inode->i_op = &cifs_symlink_inode_ops;
- 		break;
- 	default:
-+		inode->i_op = &cifs_file_inode_ops;
- 		init_special_inode(inode, inode->i_mode, inode->i_rdev);
- 		break;
- 	}
-@@ -3282,3 +3284,182 @@ cifs_setattr(struct mnt_idmap *idmap, struct dentry *direntry,
- 	/* BB: add cifs_setattr_legacy for really old servers */
- 	return rc;
- }
-+
-+int cifs_fileattr_get(struct dentry *dentry, struct fileattr *fa)
-+{
-+	struct cifs_sb_info *cifs_sb = CIFS_SB(dentry->d_sb);
-+	struct cifs_tcon *tcon = cifs_sb_master_tcon(cifs_sb);
-+	struct inode *inode = d_inode(dentry);
-+	u32 attrs = CIFS_I(inode)->cifsAttrs;
-+	u32 fsattrs = le32_to_cpu(tcon->fsAttrInfo.Attributes);
-+	u32 xflags = 0;
-+	u32 xflags_mask = FS_XFLAG_IMMUTABLEUSER;
-+	u16 xflags2 = 0;
-+	u16 xflags2_mask = FS_XFLAG2_HIDDEN | FS_XFLAG2_SYSTEM | FS_XFLAG2_ARCHIVE |
-+			   FS_XFLAG2_TEMPORARY | FS_XFLAG2_NOTINDEXED |
-+			   FS_XFLAG2_NOSCRUBDATA | FS_XFLAG2_OFFLINE |
-+			   FS_XFLAG2_PINNED | FS_XFLAG2_UNPINNED;
-+
-+	if (fsattrs & FILE_FILE_COMPRESSION)
-+		xflags_mask |= FS_XFLAG_COMPRESSED;
-+	if (fsattrs & FILE_SUPPORTS_ENCRYPTION)
-+		xflags_mask |= FS_XFLAG_COMPRESSED;
-+	if (fsattrs & FILE_SUPPORT_INTEGRITY_STREAMS)
-+		xflags_mask |= FS_XFLAG_CHECKSUMS;
-+
-+	if (attrs & FILE_ATTRIBUTE_READONLY)
-+		xflags |= FS_XFLAG_IMMUTABLEUSER;
-+	if (attrs & FILE_ATTRIBUTE_HIDDEN)
-+		xflags2 |= FS_XFLAG2_HIDDEN;
-+	if (attrs & FILE_ATTRIBUTE_SYSTEM)
-+		xflags2 |= FS_XFLAG2_SYSTEM;
-+	if (attrs & FILE_ATTRIBUTE_ARCHIVE)
-+		xflags2 |= FS_XFLAG2_ARCHIVE;
-+	if (attrs & FILE_ATTRIBUTE_TEMPORARY)
-+		xflags2 |= FS_XFLAG2_TEMPORARY;
-+	if (attrs & FILE_ATTRIBUTE_COMPRESSED)
-+		xflags |= FS_XFLAG_COMPRESSED;
-+	if (attrs & FILE_ATTRIBUTE_OFFLINE)
-+		xflags2 |= FS_XFLAG2_OFFLINE;
-+	if (attrs & FILE_ATTRIBUTE_NOT_CONTENT_INDEXED)
-+		xflags2 |= FS_XFLAG2_NOTINDEXED;
-+	if (attrs & FILE_ATTRIBUTE_ENCRYPTED)
-+		xflags |= FS_XFLAG_ENCRYPTED;
-+	if (attrs & FILE_ATTRIBUTE_INTEGRITY_STREAM)
-+		xflags |= FS_XFLAG_CHECKSUMS;
-+	if (attrs & FILE_ATTRIBUTE_NO_SCRUB_DATA)
-+		xflags2 |= FS_XFLAG2_NOSCRUBDATA;
-+	if (attrs & FILE_ATTRIBUTE_PINNED)
-+		xflags2 |= FS_XFLAG2_PINNED;
-+	if (attrs & FILE_ATTRIBUTE_UNPINNED)
-+		xflags2 |= FS_XFLAG2_UNPINNED;
-+
-+	fileattr_fill_xflags(fa, xflags, xflags_mask, xflags2, xflags2_mask);
-+	return 0;
-+}
-+
-+#define MODIFY_ATTRS_COND(attrs, xflags, xflag, attr) (attrs) ^= ((-(!!((xflags) & (xflag))) ^ (attrs)) & (attr))
-+
-+int cifs_fileattr_set(struct mnt_idmap *idmap,
-+		      struct dentry *dentry, struct fileattr *fa)
-+{
-+	struct cifs_sb_info *cifs_sb = CIFS_SB(dentry->d_sb);
-+	struct cifs_tcon *tcon = cifs_sb_master_tcon(cifs_sb);
-+	struct inode *inode = d_inode(dentry);
-+	u32 attrs = CIFS_I(inode)->cifsAttrs;
-+	struct cifsFileInfo open_file_tmp = {};
-+	struct cifsFileInfo *open_file = NULL;
-+	struct cifs_open_parms oparms;
-+	FILE_BASIC_INFO info_buf = {};
-+	bool do_close = false;
-+	const char *full_path;
-+	unsigned int xid;
-+	__u32 oplock;
-+	void *page;
-+	int rc;
-+
-+	if ((fa->fsx_xflags_mask & ~(FS_XFLAG_IMMUTABLEUSER | FS_XFLAG_COMPRESSED |
-+				 FS_XFLAG_ENCRYPTED | FS_XFLAG_CHECKSUMS)) ||
-+	    (fa->fsx_xflags2_mask & ~(FS_XFLAG2_HIDDEN | FS_XFLAG2_SYSTEM | FS_XFLAG2_ARCHIVE |
-+				  FS_XFLAG2_TEMPORARY | FS_XFLAG2_NOTINDEXED |
-+				  FS_XFLAG2_NOSCRUBDATA | FS_XFLAG2_OFFLINE |
-+				  FS_XFLAG2_PINNED | FS_XFLAG2_UNPINNED)) ||
-+	    (fa->flags & ~FS_COMMON_FL))
-+		return -EOPNOTSUPP;
-+
-+	if (fa->fsx_xflags_mask & FS_XFLAG_IMMUTABLEUSER)
-+		MODIFY_ATTRS_COND(attrs, fa->fsx_xflags, FS_XFLAG_IMMUTABLEUSER, FILE_ATTRIBUTE_READONLY);
-+	if (fa->fsx_xflags2_mask & FS_XFLAG2_HIDDEN)
-+		MODIFY_ATTRS_COND(attrs, fa->fsx_xflags2, FS_XFLAG2_HIDDEN, FILE_ATTRIBUTE_HIDDEN);
-+	if (fa->fsx_xflags2_mask & FS_XFLAG2_SYSTEM)
-+		MODIFY_ATTRS_COND(attrs, fa->fsx_xflags2, FS_XFLAG2_SYSTEM, FILE_ATTRIBUTE_SYSTEM);
-+	if (fa->fsx_xflags2_mask & FS_XFLAG2_ARCHIVE)
-+		MODIFY_ATTRS_COND(attrs, fa->fsx_xflags2, FS_XFLAG2_ARCHIVE, FILE_ATTRIBUTE_ARCHIVE);
-+	if (fa->fsx_xflags2_mask & FS_XFLAG2_TEMPORARY)
-+		MODIFY_ATTRS_COND(attrs, fa->fsx_xflags2, FS_XFLAG2_TEMPORARY, FILE_ATTRIBUTE_TEMPORARY);
-+	if (fa->fsx_xflags2_mask & FS_XFLAG2_NOTINDEXED)
-+		MODIFY_ATTRS_COND(attrs, fa->fsx_xflags2, FS_XFLAG2_NOTINDEXED, FILE_ATTRIBUTE_NOT_CONTENT_INDEXED);
-+	if (fa->fsx_xflags2_mask & FS_XFLAG2_NOSCRUBDATA)
-+		MODIFY_ATTRS_COND(attrs, fa->fsx_xflags2, FS_XFLAG2_NOSCRUBDATA, FILE_ATTRIBUTE_NO_SCRUB_DATA);
-+	if (fa->fsx_xflags2_mask & FS_XFLAG2_OFFLINE)
-+		MODIFY_ATTRS_COND(attrs, fa->fsx_xflags2, FS_XFLAG2_OFFLINE, FILE_ATTRIBUTE_OFFLINE);
-+	if (fa->fsx_xflags2_mask & FS_XFLAG2_PINNED)
-+		MODIFY_ATTRS_COND(attrs, fa->fsx_xflags2, FS_XFLAG2_PINNED, FILE_ATTRIBUTE_PINNED);
-+	if (fa->fsx_xflags2_mask & FS_XFLAG2_UNPINNED)
-+		MODIFY_ATTRS_COND(attrs, fa->fsx_xflags2, FS_XFLAG2_UNPINNED, FILE_ATTRIBUTE_UNPINNED);
-+
-+	page = alloc_dentry_path();
-+
-+	full_path = build_path_from_dentry(dentry, page);
-+	if (IS_ERR(full_path)) {
-+		rc = PTR_ERR(full_path);
-+		goto out_page;
-+	}
-+
-+	xid = get_xid();
-+
-+	if (attrs != CIFS_I(inode)->cifsAttrs) {
-+		info_buf.Attributes = cpu_to_le32(attrs);
-+		if (tcon->ses->server->ops->set_file_info)
-+			rc = tcon->ses->server->ops->set_file_info(inode, full_path, &info_buf, xid);
-+		else
-+			rc = -EOPNOTSUPP;
-+		if (rc)
-+			goto out_xid;
-+		CIFS_I(inode)->cifsAttrs = attrs;
-+	}
-+
-+	if (fa->fsx_xflags_mask & (FS_XFLAG_COMPRESSED | FS_XFLAG_ENCRYPTED | FS_XFLAG_CHECKSUMS)) {
-+		open_file = find_writable_file(CIFS_I(inode), FIND_WR_FSUID_ONLY);
-+		if (!open_file) {
-+			oparms = CIFS_OPARMS(cifs_sb, tcon, full_path, FILE_WRITE_DATA, FILE_OPEN, 0, ACL_NO_MODE);
-+			oparms.fid = &open_file_tmp.fid;
-+			oplock = 0;
-+			oparms.create_options = cifs_create_options(cifs_sb, 0);
-+			rc = tcon->ses->server->ops->open(xid, &oparms, &oplock, NULL);
-+			if (rc)
-+				goto out_file;
-+			do_close = true;
-+			open_file = &open_file_tmp;
-+		}
-+	}
-+
-+	if (fa->fsx_xflags_mask & FS_XFLAG_COMPRESSED) {
-+		if (tcon->ses->server->ops->set_compression)
-+			rc = tcon->ses->server->ops->set_compression(xid, tcon, open_file, fa->fsx_xflags & FS_XFLAG_COMPRESSED);
-+		else
-+			rc = -EOPNOTSUPP;
-+		if (rc)
-+			goto out_file;
-+		CIFS_I(inode)->cifsAttrs |= FILE_ATTRIBUTE_COMPRESSED;
-+	}
-+
-+	if (fa->fsx_xflags_mask & FS_XFLAG_ENCRYPTED) {
-+		/* TODO */
-+		rc = -EOPNOTSUPP;
-+		if (rc)
-+			goto out_file;
-+		CIFS_I(inode)->cifsAttrs |= FILE_ATTRIBUTE_ENCRYPTED;
-+	}
-+
-+	if (fa->fsx_xflags_mask & FS_XFLAG_CHECKSUMS) {
-+		if (tcon->ses->server->ops->set_integrity)
-+			rc = tcon->ses->server->ops->set_integrity(xid, tcon, open_file, fa->fsx_xflags & FS_XFLAG_CHECKSUMS);
-+		else
-+			rc = -EOPNOTSUPP;
-+		if (rc)
-+			goto out_file;
-+		CIFS_I(inode)->cifsAttrs |= FILE_ATTRIBUTE_INTEGRITY_STREAM;
-+	}
-+
-+out_file:
-+	if (do_close)
-+		tcon->ses->server->ops->close(xid, tcon, oparms.fid);
-+	else if (open_file)
-+		cifsFileInfo_put(open_file);
-+out_xid:
-+	free_xid(xid);
-+out_page:
-+	free_dentry_path(page);
-+	return rc;
-+}
-diff --git a/fs/smb/client/ioctl.c b/fs/smb/client/ioctl.c
-index 56439da4f119..7c245085f891 100644
---- a/fs/smb/client/ioctl.c
-+++ b/fs/smb/client/ioctl.c
-@@ -356,12 +356,14 @@ long cifs_ioctl(struct file *filep, unsigned int command, unsigned long arg)
- 	struct cifs_tcon *tcon;
- 	struct tcon_link *tlink;
- 	struct cifs_sb_info *cifs_sb;
-+#if 0
- 	__u64	ExtAttrBits = 0;
- #ifdef CONFIG_CIFS_POSIX
- #ifdef CONFIG_CIFS_ALLOW_INSECURE_LEGACY
- 	__u64   caps;
- #endif /* CONFIG_CIFS_ALLOW_INSECURE_LEGACY */
- #endif /* CONFIG_CIFS_POSIX */
-+#endif
- 
- 	xid = get_xid();
- 
-@@ -372,6 +374,7 @@ long cifs_ioctl(struct file *filep, unsigned int command, unsigned long arg)
- 		trace_smb3_ioctl(xid, pSMBFile->fid.persistent_fid, command);
- 
- 	switch (command) {
-+#if 0
- 		case FS_IOC_GETFLAGS:
- 			if (pSMBFile == NULL)
- 				break;
-@@ -429,10 +432,11 @@ long cifs_ioctl(struct file *filep, unsigned int command, unsigned long arg)
- 			/* Try to set compress flag */
- 			if (tcon->ses->server->ops->set_compression) {
- 				rc = tcon->ses->server->ops->set_compression(
--							xid, tcon, pSMBFile);
-+							xid, tcon, pSMBFile, true);
- 				cifs_dbg(FYI, "set compress flag rc %d\n", rc);
- 			}
- 			break;
-+#endif
- 		case CIFS_IOC_COPYCHUNK_FILE:
- 			rc = cifs_ioctl_copychunk(xid, filep, arg);
- 			break;
-@@ -445,7 +449,7 @@ long cifs_ioctl(struct file *filep, unsigned int command, unsigned long arg)
- 			tcon = tlink_tcon(pSMBFile->tlink);
- 			if (tcon->ses->server->ops->set_integrity)
- 				rc = tcon->ses->server->ops->set_integrity(xid,
--						tcon, pSMBFile);
-+						tcon, pSMBFile, true);
- 			else
- 				rc = -EOPNOTSUPP;
- 			break;
-diff --git a/fs/smb/client/smb1ops.c b/fs/smb/client/smb1ops.c
-index ba6452d89df3..2e854bde67de 100644
---- a/fs/smb/client/smb1ops.c
-+++ b/fs/smb/client/smb1ops.c
-@@ -1245,9 +1245,9 @@ smb_set_file_info(struct inode *inode, const char *full_path,
- 
- static int
- cifs_set_compression(const unsigned int xid, struct cifs_tcon *tcon,
--		   struct cifsFileInfo *cfile)
-+		   struct cifsFileInfo *cfile, bool enable)
- {
--	return CIFSSMB_set_compression(xid, tcon, cfile->fid.netfid);
-+	return CIFSSMB_set_compression(xid, tcon, cfile->fid.netfid, enable);
- }
- 
- static int
-diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-index f8445a9ff9a1..9c66e413c59c 100644
---- a/fs/smb/client/smb2ops.c
-+++ b/fs/smb/client/smb2ops.c
-@@ -2106,20 +2106,20 @@ smb2_duplicate_extents(const unsigned int xid,
- 
- static int
- smb2_set_compression(const unsigned int xid, struct cifs_tcon *tcon,
--		   struct cifsFileInfo *cfile)
-+		   struct cifsFileInfo *cfile, bool enable)
- {
- 	return SMB2_set_compression(xid, tcon, cfile->fid.persistent_fid,
--			    cfile->fid.volatile_fid);
-+			    cfile->fid.volatile_fid, enable);
- }
- 
- static int
- smb3_set_integrity(const unsigned int xid, struct cifs_tcon *tcon,
--		   struct cifsFileInfo *cfile)
-+		   struct cifsFileInfo *cfile, bool enable)
- {
- 	struct fsctl_set_integrity_information_req integr_info;
- 	unsigned int ret_data_len;
- 
--	integr_info.ChecksumAlgorithm = cpu_to_le16(CHECKSUM_TYPE_UNCHANGED);
-+	integr_info.ChecksumAlgorithm = cpu_to_le16(enable ? CHECKSUM_TYPE_CRC64 : CHECKSUM_TYPE_NONE);
- 	integr_info.Flags = 0;
- 	integr_info.Reserved = 0;
- 
-diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-index a75947797d58..57d716cfc800 100644
---- a/fs/smb/client/smb2pdu.c
-+++ b/fs/smb/client/smb2pdu.c
-@@ -3537,14 +3537,14 @@ SMB2_ioctl(const unsigned int xid, struct cifs_tcon *tcon, u64 persistent_fid,
- 
- int
- SMB2_set_compression(const unsigned int xid, struct cifs_tcon *tcon,
--		     u64 persistent_fid, u64 volatile_fid)
-+		     u64 persistent_fid, u64 volatile_fid, bool enable)
- {
- 	int rc;
- 	struct  compress_ioctl fsctl_input;
- 	char *ret_data = NULL;
- 
- 	fsctl_input.CompressionState =
--			cpu_to_le16(COMPRESSION_FORMAT_DEFAULT);
-+			cpu_to_le16(enable ? COMPRESSION_FORMAT_DEFAULT : COMPRESSION_FORMAT_NONE);
- 
- 	rc = SMB2_ioctl(xid, tcon, persistent_fid, volatile_fid,
- 			FSCTL_SET_COMPRESSION,
-diff --git a/fs/smb/client/smb2proto.h b/fs/smb/client/smb2proto.h
-index cec5921bfdd2..6086bbdeeae0 100644
---- a/fs/smb/client/smb2proto.h
-+++ b/fs/smb/client/smb2proto.h
-@@ -250,7 +250,7 @@ extern int SMB2_set_ea(const unsigned int xid, struct cifs_tcon *tcon,
- 		       u64 persistent_fid, u64 volatile_fid,
- 		       struct smb2_file_full_ea_info *buf, int len);
- extern int SMB2_set_compression(const unsigned int xid, struct cifs_tcon *tcon,
--				u64 persistent_fid, u64 volatile_fid);
-+				u64 persistent_fid, u64 volatile_fid, bool enable);
- extern int SMB2_oplock_break(const unsigned int xid, struct cifs_tcon *tcon,
- 			     const u64 persistent_fid, const u64 volatile_fid,
- 			     const __u8 oplock_level);
-diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
-index ab902b155650..a24194bef849 100644
---- a/fs/smb/common/smb2pdu.h
-+++ b/fs/smb/common/smb2pdu.h
-@@ -1077,6 +1077,8 @@ struct smb2_server_client_notification {
- #define FILE_ATTRIBUTE_ENCRYPTED		0x00004000
- #define FILE_ATTRIBUTE_INTEGRITY_STREAM		0x00008000
- #define FILE_ATTRIBUTE_NO_SCRUB_DATA		0x00020000
-+#define FILE_ATTRIBUTE_PINNED			0x00080000
-+#define FILE_ATTRIBUTE_UNPINNED			0x00100000
- #define FILE_ATTRIBUTE__MASK			0x00007FB7
- 
- #define FILE_ATTRIBUTE_READONLY_LE              cpu_to_le32(0x00000001)
--- 
-2.20.1
+In this version, invalidate_inodes() needs to be exported to be used by
+fuse_reverse_inval_all().  This is a big simplification of this function,
+which now simply calls shrink_dcache_sb() and invalidate_inodes().
+
+It's clear that inodes still being referenced will not be invalidated --
+but that's already the case for the single inode NOTIFY_INVAL_INODE fuse
+operation.  
+
+* Changes since v4
+- Replaced superblock inodes iteration by a single call to
+  invalidate_inodes().  Also do the shrink_dcache_sb() first. (Dave Chinner)
+
+* Changes since v3
+- Added comments to clarify semantic changes in fuse_reverse_inval_inode()
+  when called with FUSE_INVAL_ALL_INODES (suggested by Bernd).
+- Added comments to inodes iteration loop to clarify __iget/iput usage
+  (suggested by Joanne)
+- Dropped get_fuse_mount() call -- fuse_mount can be obtained from
+  fuse_ilookup() directly (suggested by Joanne)
+
+(Also dropped the RFC from the subject.)
+
+* Changes since v2
+- Use the new helper from fuse_reverse_inval_inode(), as suggested by Bernd.
+- Also updated patch description as per checkpatch.pl suggestion.
+
+* Changes since v1
+As suggested by Bernd, this patch v2 simply adds an helper function that
+will make it easier to replace most of it's code by a call to function
+super_iter_inodes() when Dave Chinner's patch[1] eventually gets merged.
+
+[1] https://lore.kernel.org/r/20241002014017.3801899-3-david@fromorbit.com
+
+
+Luis Henriques (2):
+  vfs: export invalidate_inodes()
+  fuse: add new function to invalidate cache for all inodes
+
+ fs/fuse/inode.c           | 33 +++++++++++++++++++++++++++++++++
+ fs/inode.c                |  1 +
+ fs/internal.h             |  1 -
+ include/linux/fs.h        |  1 +
+ include/uapi/linux/fuse.h |  3 +++
+ 5 files changed, 38 insertions(+), 1 deletion(-)
 
 
