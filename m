@@ -1,175 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-41872-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 675D7A38A9F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 18:34:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7867A38AA6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 18:36:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA7803A99A4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 17:33:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95ABF16D1A8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 17:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2CA229B23;
-	Mon, 17 Feb 2025 17:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5489E229B30;
+	Mon, 17 Feb 2025 17:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B/kgzopK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gGRWO/0E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6577822540F;
-	Mon, 17 Feb 2025 17:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8CB155C83;
+	Mon, 17 Feb 2025 17:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739813631; cv=none; b=V50pr+GFomr4m5Xe8KIhg6qAHMtBGMm/7yDtgw1A1VYyoS3h6o/Kg0cmkURPhlHkUIM6CK9tyY3UKwyC+LXI1rhWmCey297DlDmuEptfBfC2bIMqrjRnha/ozCg1izuXYnkyFhv1EPvdgE+EwE2HCwH1/0R3BU8U4qW2AOlk2Zk=
+	t=1739813798; cv=none; b=nRxh7SEKaSUIxn/IbJO3BOgr6y564DK2Jb9RB1jO9Ux6u8kCHKH+cAM8caKVSioUowv/Br3Tae0PeQfA4bYCYAHQtweniwHhJkv6SSYb+CSU2uqSGPWyQweORwDDLDSt+CfEwa8cFGA1jBFqsm3WTyddSijFEaPhOBAyPYWBh2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739813631; c=relaxed/simple;
-	bh=EsMTxchL/+qRXxcJQQGMEd1C37/sV2jkPmF5oFcvccw=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=lgLtwqNiFl8n10CMaCE4DKZ0EOMmCG0czUxmFTOmt8vmoWunlCSkEUn4Ppm9RIEnM7BfcUIKicyOUEyRFmh3m1U3pAharZe74w6qqloixn9NKm4hiIl7IfP8b+IZqi/Y5NbyfmmPsIEyVWIMGTwnzxCDU+m8s4LQR9gIWkLjfAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B/kgzopK; arc=none smtp.client-ip=209.85.214.193
+	s=arc-20240116; t=1739813798; c=relaxed/simple;
+	bh=SwO7vDsfD9Xzz/NGxBz8ksCtoWFceyTR4jwgR61JskQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=naiLadESxdkrC+90+sKOa5DduPlSMPQ6msCpK3ZtbQ0OUJlS72zZ4/5ajbBQAJn24nOEsHRd8sND7jIZDcZ72rr/7IUUgsXRdUgaELqJALfzpi95luHW2UA184qfMVotmoOwodI5HRwzJkZhj6CDwCNlzPM1+4Qkve/toQc3YII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gGRWO/0E; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-220ecbdb4c2so86874275ad.3;
-        Mon, 17 Feb 2025 09:33:50 -0800 (PST)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2166db59927so9957725ad.0;
+        Mon, 17 Feb 2025 09:36:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739813629; x=1740418429; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1739813797; x=1740418597; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=v9P9H3YBcyOxNExufhwVnRqWtrvWAZlTnbL5BKFsIaA=;
-        b=B/kgzopKrDAo9DXzgTcHkforgmjCzdhZkk/+oJkkWLqIXcSPJK+pdykUf8X5NjQKHS
-         nsKquSHy1RNjuQzFeeEHgQ1pb6yZYXtMigkMyLMewrWj6Hj2c20vsqsQeCKu8R2pyTpa
-         yxEIHBkmSroZ14yJ3N+PzSG2RSEk5GvWwST1Vy31srhnpCkse7XKeh9+u2Z49+/MsPcx
-         CGA3mfzRLRthaOVN7cs1GO8VtQRChzm2k9JcNI2NJwCEBVEsGqw+kSj6JeJEBdlvJFm1
-         JRELAdSzQhuNTnxeXbur4jDUxHUvgxydKNrAGLqPyFmYzBy+VSLYwawfRbwrqzf/MFl2
-         nAzQ==
+        bh=SwO7vDsfD9Xzz/NGxBz8ksCtoWFceyTR4jwgR61JskQ=;
+        b=gGRWO/0E7YpMAthvkN5RjZkzmA6OCmCs4e0zpWd42CdCPT4T1ljwsIjkwf7kDdXobK
+         5DquvPuLO7EEcQVaiKh1yywltIitli5bGUwas1+cThYYMLwIuMtRzyToF5uKR6MCcoUO
+         CJ0MkXSBHZWihzVyVKt79UUuS4gbNs3RZtvyoXx3chKSe5vP9yJOVeHxT+OaclXJmr0B
+         LE68zzCim7xlwj0NEwy1E+aCafm6rQMtSKAxamiRK4KH3yv7y0LSrbfSedFWRIuq2PDZ
+         PPApD11j+sP8tZ4BR0aBOWncwLI4r8KU4KEfSGW175eKALKYTGneE/wfc2ygRTT+0UH7
+         PEIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739813629; x=1740418429;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1739813797; x=1740418597;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=v9P9H3YBcyOxNExufhwVnRqWtrvWAZlTnbL5BKFsIaA=;
-        b=OaBCGnjdWd8DBJuyo6aoKpgy6B5ucy3yolMeWYoOt0D8QTbvd46a6I3NmoLxfb/ENP
-         Fb6JWvsEQ8muvBlAqwXta7lQMSBPC1xCcUyN6ShIBJVzxC/SZMcO8Wrt/0jrBP1sEjDB
-         r52WRB0lFpi5IFfdWVpE68hhKafRW6TZZcy3nAubKGxAZ2yTZrTaKAEJc5iSReTSRoMW
-         nOW7qg/s6n2o+9y7eDq1PhBetaZMQE1seVn9rslNghi4BkCCsM932dJWB75uKOi93u9K
-         ddSsaYbgKlpoaCchw2wUdAAhCrVSUg87xZR2otLnF0798NKzLW9FQkCoeuyCuTVn1F0w
-         jquA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSAl2PEHXaNDHGTOxgn09ySG5qat/pEtY+451m1GLUZIHisuU8QYfIqzGUg5CQwO6cBPagooRlx98=@vger.kernel.org, AJvYcCW6oz1q5EUSQM9MupZZaivKjoyoVqCYsL5y/a7mStpIlmMVTD2usXwBaqrNLuyxWDIQn49nbhqFRIdb5y4cXA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaFSV0K438VtS/SuIHpmzCd67BAGCpt3zBMbdJgFpuUAMf4Gw+
-	BdJFVAQ8CalTIpIRgFwmgJqIzl1Mj+I2NUeLZqMpinapHyRI7gMG8LlxDX1MfNcziA==
-X-Gm-Gg: ASbGncsm4xkVqPHaikYrCzbZEujfgGgEDDICAAgyv5fy9svfISkeBjetUiYG9I1pt4L
-	lB30bVikA3Sy9AWRRPmx4TCbkMPJCjDq881j3fMvFcEfijyxC9q29QWjeWVbnVapZqh2OU5Qrry
-	TC9ljBIUA/OcCb3ReyReoqUBMkO8axfyu7nQ46FCKhANPhODMfOWHg5nHxZcZhs3LeJzN2bO1Nw
-	k/gIy5TeXrYrJ56GpgRKQgl8BNbQf7AufB31+CA+FGw1vWk7LPL+Lwl1r9CGsdh8HVwZtGNcNZD
-	LSqSftGQfPoxVERGBkrM08uWjI527yrCc8z1GOM=
-X-Google-Smtp-Source: AGHT+IFCpkha+YyzDli16uY7DAmxbuU6YfLZLwRKbbDveajyqZ0h54qaNzlBrLduLmU16ZHx+gCmsg==
-X-Received: by 2002:a17:902:dac5:b0:21f:507b:9ada with SMTP id d9443c01a7336-2210405cc66mr168080165ad.31.1739813629392;
-        Mon, 17 Feb 2025 09:33:49 -0800 (PST)
-Received: from localhost.localdomain ([103.49.135.232])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5349203sm74338045ad.29.2025.02.17.09.33.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Feb 2025 09:33:49 -0800 (PST)
-From: Ruiwu Chen <rwchen404@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Cc: corbet@lwn.net,
-	viro@zeniv.linux.org.uk,
-	mcgrof@kernel.org,
-	keescook@chromium.org,
-	zachwade.k@gmail.com,
-	Ruiwu Chen <rwchen404@gmail.com>
-Subject: [PATCH v2] drop_caches: re-enable message after disabling
-Date: Tue, 18 Feb 2025 01:33:33 +0800
-Message-Id: <20250217173333.2448-1-rwchen404@gmail.com>
-X-Mailer: git-send-email 2.18.0.windows.1
+        bh=SwO7vDsfD9Xzz/NGxBz8ksCtoWFceyTR4jwgR61JskQ=;
+        b=hjCv2ntj33lO923Y1RKe7dlKw8XnYNr5eZm6SolHhsEWlw7OSXn37ulfNhlZZOWrVs
+         RPNmB1lV74C/WosQESccVsaKi7aUrP+E23DK6vbOZjgQ5kaDORr6IQjtDn/0Q9ra49t0
+         d3Szk8oxVfU3tr4Q8K+RUGprtXc+NcaTaZxOJn5DSWhKNB9mrAhBkZUl1ldnz17+zu9O
+         iFRvdtYUc/XFlMavVKougD1Sx4OKoQD6svxfAkqow5eASZVOLnFlHdii00gWJTR4VXBv
+         6gRzMveOBwlq/Q1QJu989UJ5Y93BooYcFRgWh4QCRo/2OlTay7cCwkaVhZrGUc0GBdrz
+         zoug==
+X-Forwarded-Encrypted: i=1; AJvYcCWZTfggrVYKGA11fgEone7VyJ6xBzJOWt72/7EsVYFpCWj8xDIsABmsnSYiDuZ7hU9PqMT+pSPXbQt/9U4y@vger.kernel.org, AJvYcCWbUA6UUDVcAfeTXMABwSx6z5dQwr9HxrXGQrcBfrbOTHbYibkUfaJTNAgBtWGOxA5xLk66CB+Stjrpxv8e@vger.kernel.org, AJvYcCX57Lb1jt59VRqZD0bY9zQdQ+2a7cKYxi4b9MHoKzS/SLnw3NnHqZ4BeadsFmq4qTYn0xA05/3/7fwi@vger.kernel.org, AJvYcCXbikPIGdaTLshzK33v/x2+52yxfULne5Abwti0OqIWxmLZ5DokDetSczDf+7yeg2pJI0lA/rPyHnh8TwjXDD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9M3iN74xZUUW2LJiyYXPsR64mUvywGJPrdS1qWD8UrNncMj2h
+	trbmlXF3H0i2doSKzGRmdrkUrI0Cmzri5yZn+zAa53GFtEFl2AVtWL1eEgZi6hAwOIJmg1QNkw1
+	GmVU88mIsk2+ZJkw1J05Ch0XOccg=
+X-Gm-Gg: ASbGncvl64YG5kq0AlP9RYErZGTNbsq5Jhv/RsVdbBVKkrLa5cYyb6Yv9EbqN6MKfRi
+	Xojxa97r9rSO+GwJKuStq4pR5uxN85BNQ61vks7ENv0Io9yqDmA3EepIbgYxvhOVk+JTvwnZX
+X-Google-Smtp-Source: AGHT+IHoUzKFz6KdsRlLbiPBD4oc1ayhlO4iOKanwFszVBIiP5IHTNgEjME2IqdlTDlUFzJMK4fxDeg1fRPOi9UfJDY=
+X-Received: by 2002:a17:902:fc8d:b0:215:8721:30b7 with SMTP id
+ d9443c01a7336-221040a7a59mr62404795ad.11.1739813796701; Mon, 17 Feb 2025
+ 09:36:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250207-rust-xarray-bindings-v16-0-256b0cf936bd@gmail.com>
+ <20250207-rust-xarray-bindings-v16-2-256b0cf936bd@gmail.com>
+ <Z7MnxKSSNY7IyExt@cassiopeiae> <CAJ-ks9=OG2zPPPPfZd5KhGKgNsv3Qm9iHr2eWXFeL7Zv16QVdw@mail.gmail.com>
+ <Z7NEZfuXSr3Ofh1G@cassiopeiae> <CAJ-ks9=TrFHiLFkRfyawNquDY2x6t3dwGi6FxnfgFLvQLYwc+A@mail.gmail.com>
+ <CANiq72kAhw6XwPzGu+FrF64PZ9P_eSzX3gqG9CLvy7YJnbXgoQ@mail.gmail.com>
+ <CAJ-ks9mFT1Gaao+OrdYF+hg6Sp=XghyHWu1VTALdeMJPwkX=Uw@mail.gmail.com> <CANiq72kFpDt230zBugN12q978LRSJiZB5dJZszWkL2p7XqQ52w@mail.gmail.com>
+In-Reply-To: <CANiq72kFpDt230zBugN12q978LRSJiZB5dJZszWkL2p7XqQ52w@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 17 Feb 2025 18:36:24 +0100
+X-Gm-Features: AWEUYZkXXe9ucp731IUnfF8Mkzrw90VtoilSTq_--wgHn6jSTiKyQT8lGbY5FVI
+Message-ID: <CANiq72kjAx4a20cnE3XrJ-z4K=8pCRuc+TOa+WtcuUsdZ22tSA@mail.gmail.com>
+Subject: Re: [PATCH v16 2/4] rust: types: add `ForeignOwnable::PointedTo`
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Matthew Wilcox <willy@infradead.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, "Rob Herring (Arm)" <robh@kernel.org>, 
+	=?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, Fiona Behrens <me@kloenk.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When 'echo 4 > /proc/sys/vm/drop_caches' the message is disabled,
-but there is no interface to enable the message, only by restarting
-the way, so I want to add the 'echo 0 > /proc/sys/vm/drop_caches'
-way to enabled the message again.
+On Mon, Feb 17, 2025 at 6:24=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> I understand the rationale -- what I meant to ask is if you saw that
 
-Signed-off-by: Ruiwu Chen <rwchen404@gmail.com>
----
-v2: - updated Documentation/ to note this new API.
-    - renamed the variable.
- Documentation/admin-guide/sysctl/vm.rst | 11 ++++++++++-
- fs/drop_caches.c                        |  9 ++++++---
- kernel/sysctl.c                         |  2 +-
- 3 files changed, 17 insertions(+), 5 deletions(-)
+By the way, I don't agree with the rationale, because it sounds to me
+like optimizing for `git blame` readers, while pessimizing for normal
+readers.
 
-diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
-index f48eaa98d22d..1b9ae9bc6cf9 100644
---- a/Documentation/admin-guide/sysctl/vm.rst
-+++ b/Documentation/admin-guide/sysctl/vm.rst
-@@ -266,7 +266,16 @@ used::
- 	cat (1234): drop_caches: 3
- 
- These are informational only.  They do not mean that anything is wrong
--with your system.  To disable them, echo 4 (bit 2) into drop_caches.
-+with your system.
-+
-+To disable informational::
-+
-+    echo 4 > /proc/sys/vm/drop_caches
-+
-+To enable informational::
-+
-+    echo 0 > /proc/sys/vm/drop_caches
-+
- 
- enable_soft_offline
- ===================
-diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-index d45ef541d848..5d02c1d99d9f 100644
---- a/fs/drop_caches.c
-+++ b/fs/drop_caches.c
-@@ -57,7 +57,7 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
- 	if (ret)
- 		return ret;
- 	if (write) {
--		static int stfu;
-+		static bool silent;
- 
- 		if (sysctl_drop_caches & 1) {
- 			lru_add_drain_all();
-@@ -68,12 +68,15 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
- 			drop_slab();
- 			count_vm_event(DROP_SLAB);
- 		}
--		if (!stfu) {
-+		if (!silent) {
- 			pr_info("%s (%d): drop_caches: %d\n",
- 				current->comm, task_pid_nr(current),
- 				sysctl_drop_caches);
- 		}
--		stfu |= sysctl_drop_caches & 4;
-+		if (sysctl_drop_caches == 0)
-+			silent = false;
-+		else if (sysctl_drop_caches == 4)
-+			silent = true;
- 	}
- 	return 0;
- }
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index cb57da499ebb..f2e06e074724 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2088,7 +2088,7 @@ static const struct ctl_table vm_table[] = {
- 		.maxlen		= sizeof(int),
- 		.mode		= 0200,
- 		.proc_handler	= drop_caches_sysctl_handler,
--		.extra1		= SYSCTL_ONE,
-+		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_FOUR,
- 	},
- 	{
--- 
-2.27.0
+We do a lot of `git blame` in the kernel, especially since our Git log
+is quite good, but we still read the files themselves more... I can
+imagine ending up with a lot of extra lines over time everywhere, it
+could dissuade small fixes and so on.
 
+Cheers,
+Miguel
 
