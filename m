@@ -1,72 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-41873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7867A38AA6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 18:36:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FEFFA38AD6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 18:44:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95ABF16D1A8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 17:36:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F21B7A4558
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 17:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5489E229B30;
-	Mon, 17 Feb 2025 17:36:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E3022C355;
+	Mon, 17 Feb 2025 17:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gGRWO/0E"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JEqnG1BC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8CB155C83;
-	Mon, 17 Feb 2025 17:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE16224AF6;
+	Mon, 17 Feb 2025 17:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739813798; cv=none; b=nRxh7SEKaSUIxn/IbJO3BOgr6y564DK2Jb9RB1jO9Ux6u8kCHKH+cAM8caKVSioUowv/Br3Tae0PeQfA4bYCYAHQtweniwHhJkv6SSYb+CSU2uqSGPWyQweORwDDLDSt+CfEwa8cFGA1jBFqsm3WTyddSijFEaPhOBAyPYWBh2I=
+	t=1739814250; cv=none; b=NitXBQ9cjJCKV8ysG0D4S80ut7XIF9Umx5Salfn0iM3FU8Xt7QMZJBOt2HL1ldrSHfvyFO/VVQekM9AzpgQ3Yct5HUKlA+RgE+xjNxpWzxFEHdd9i2zGZyHupwyFY8ygHSq27k8dOzsFy/PmeghYSAfzoG0EsH4UuU9KWxLBFmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739813798; c=relaxed/simple;
-	bh=SwO7vDsfD9Xzz/NGxBz8ksCtoWFceyTR4jwgR61JskQ=;
+	s=arc-20240116; t=1739814250; c=relaxed/simple;
+	bh=QJEQnNzyerVZgPIqexLxIHlai98K7LAJ91eV7IWhhIo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=naiLadESxdkrC+90+sKOa5DduPlSMPQ6msCpK3ZtbQ0OUJlS72zZ4/5ajbBQAJn24nOEsHRd8sND7jIZDcZ72rr/7IUUgsXRdUgaELqJALfzpi95luHW2UA184qfMVotmoOwodI5HRwzJkZhj6CDwCNlzPM1+4Qkve/toQc3YII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gGRWO/0E; arc=none smtp.client-ip=209.85.214.170
+	 To:Cc:Content-Type; b=l3JoxNlROLac9OWNRIrwhWSupbcxZMlvgmJWHHj2L7C19NNQcMScEckSBGnQ5Mp6Bv0V/GTooYjTKgMgdq1qyHjXz2YlEvN28qXxjNBAve7uMLksUVLg5IqrCIWHtdgfmMZzl+SBbJkyT5Z7EwVm2uisdxj7ld2tu0Ujrc3U6IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JEqnG1BC; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2166db59927so9957725ad.0;
-        Mon, 17 Feb 2025 09:36:37 -0800 (PST)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-546237cd3cbso1158305e87.0;
+        Mon, 17 Feb 2025 09:44:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739813797; x=1740418597; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739814246; x=1740419046; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SwO7vDsfD9Xzz/NGxBz8ksCtoWFceyTR4jwgR61JskQ=;
-        b=gGRWO/0E7YpMAthvkN5RjZkzmA6OCmCs4e0zpWd42CdCPT4T1ljwsIjkwf7kDdXobK
-         5DquvPuLO7EEcQVaiKh1yywltIitli5bGUwas1+cThYYMLwIuMtRzyToF5uKR6MCcoUO
-         CJ0MkXSBHZWihzVyVKt79UUuS4gbNs3RZtvyoXx3chKSe5vP9yJOVeHxT+OaclXJmr0B
-         LE68zzCim7xlwj0NEwy1E+aCafm6rQMtSKAxamiRK4KH3yv7y0LSrbfSedFWRIuq2PDZ
-         PPApD11j+sP8tZ4BR0aBOWncwLI4r8KU4KEfSGW175eKALKYTGneE/wfc2ygRTT+0UH7
-         PEIg==
+        bh=QJEQnNzyerVZgPIqexLxIHlai98K7LAJ91eV7IWhhIo=;
+        b=JEqnG1BCXjgLFFHv9Eey4/b8QHXJzxCpLoO6zPBEqeFIp4rUSXHhmIrUy6bfi+1DI3
+         I6C8wK8imrdSyf0lEkWugBzPVBSTKqRg6Xaz5X3qzfv94VYQRjvF6L9oiDZpP1jo4IDa
+         aDAqCSikuOozKwHQmMYxMvg5thYgelTGUMrRgQFTbDHtiLhZ2cz5xa/Xn68w4bxw6UaF
+         N8Hb04Pp6waWd6IcA9DTcr2x4W04qOXw/nuca+51/iIthV9FoGtwM1jz7dLp5dhH/n4U
+         mrH9FBSQDkIX/exfWJRGUpVT5BA1nSFGiGLyHNevsWJnMNRL2o6q2WggdfQJ8yApuV8T
+         J9sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739813797; x=1740418597;
+        d=1e100.net; s=20230601; t=1739814246; x=1740419046;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SwO7vDsfD9Xzz/NGxBz8ksCtoWFceyTR4jwgR61JskQ=;
-        b=hjCv2ntj33lO923Y1RKe7dlKw8XnYNr5eZm6SolHhsEWlw7OSXn37ulfNhlZZOWrVs
-         RPNmB1lV74C/WosQESccVsaKi7aUrP+E23DK6vbOZjgQ5kaDORr6IQjtDn/0Q9ra49t0
-         d3Szk8oxVfU3tr4Q8K+RUGprtXc+NcaTaZxOJn5DSWhKNB9mrAhBkZUl1ldnz17+zu9O
-         iFRvdtYUc/XFlMavVKougD1Sx4OKoQD6svxfAkqow5eASZVOLnFlHdii00gWJTR4VXBv
-         6gRzMveOBwlq/Q1QJu989UJ5Y93BooYcFRgWh4QCRo/2OlTay7cCwkaVhZrGUc0GBdrz
-         zoug==
-X-Forwarded-Encrypted: i=1; AJvYcCWZTfggrVYKGA11fgEone7VyJ6xBzJOWt72/7EsVYFpCWj8xDIsABmsnSYiDuZ7hU9PqMT+pSPXbQt/9U4y@vger.kernel.org, AJvYcCWbUA6UUDVcAfeTXMABwSx6z5dQwr9HxrXGQrcBfrbOTHbYibkUfaJTNAgBtWGOxA5xLk66CB+Stjrpxv8e@vger.kernel.org, AJvYcCX57Lb1jt59VRqZD0bY9zQdQ+2a7cKYxi4b9MHoKzS/SLnw3NnHqZ4BeadsFmq4qTYn0xA05/3/7fwi@vger.kernel.org, AJvYcCXbikPIGdaTLshzK33v/x2+52yxfULne5Abwti0OqIWxmLZ5DokDetSczDf+7yeg2pJI0lA/rPyHnh8TwjXDD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9M3iN74xZUUW2LJiyYXPsR64mUvywGJPrdS1qWD8UrNncMj2h
-	trbmlXF3H0i2doSKzGRmdrkUrI0Cmzri5yZn+zAa53GFtEFl2AVtWL1eEgZi6hAwOIJmg1QNkw1
-	GmVU88mIsk2+ZJkw1J05Ch0XOccg=
-X-Gm-Gg: ASbGncvl64YG5kq0AlP9RYErZGTNbsq5Jhv/RsVdbBVKkrLa5cYyb6Yv9EbqN6MKfRi
-	Xojxa97r9rSO+GwJKuStq4pR5uxN85BNQ61vks7ENv0Io9yqDmA3EepIbgYxvhOVk+JTvwnZX
-X-Google-Smtp-Source: AGHT+IHoUzKFz6KdsRlLbiPBD4oc1ayhlO4iOKanwFszVBIiP5IHTNgEjME2IqdlTDlUFzJMK4fxDeg1fRPOi9UfJDY=
-X-Received: by 2002:a17:902:fc8d:b0:215:8721:30b7 with SMTP id
- d9443c01a7336-221040a7a59mr62404795ad.11.1739813796701; Mon, 17 Feb 2025
- 09:36:36 -0800 (PST)
+        bh=QJEQnNzyerVZgPIqexLxIHlai98K7LAJ91eV7IWhhIo=;
+        b=U9pxbFhAH0rJR4LWmeZNji0gVjOIxeKTXS1L7Ml9jyVBweoC3rjsGQQZD44gGi+JTr
+         PKNFrcuhDVgiH1UAjyn0HiDD+r9wGix6frpIFoYdZ9Vh4VGzyu+ZTtNIv+60ajqBFyDz
+         VI4oOYG6Py8TJ1tpGWJUeB98hINmOgkDHGOTp2JjDKE62KVyGgx54uNmxR8ftUHGITCE
+         3YwPK66tcVxTdiWGZ1oJoHJhF+4X6z9IcCmlyZBahDIf9cQTBahaPDbS5TG8IIbB2dH5
+         N32RpxGkm5Q1fH4RHA5iRdr7nx3vKV5c+wvi+wxpaJF+gRBXkcWed49IeDpmqXBxiGbZ
+         Ve+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUSry5Q9oA6+f2tLAiRCxH25bdB+c1prOSugarlTMPL/IFaLn5K0JP28suK/CfsuOnA0Fuy4wjiCc7MRW+p@vger.kernel.org, AJvYcCVDpFzXMgCkhcoN682c2AZz9sLJGdIT9tQY6CncF3oXpfJibTSrJvxDINXTGTjuMPbBY2NJhg86Xp2fMm4C@vger.kernel.org, AJvYcCX5/HPrMMorqprzyquxS8C3Yr8mM3GKRoMdseXKg8TDg1vXr6DOtibPlqNtFIwJu4kRqWKxZudU5Cnp@vger.kernel.org, AJvYcCXCpp9Or7MWq1Xxixil8ArbxPxvqq7eEt+ljWBiR3B7JVP4/M+YjsypVU2TrJNaBO8lOD+yw2NRt3Rw6r9yQc0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvmnJauB/rQ4+HVN3s6jdj0d0oXyJi1pSyFPlB2XrE/xygLGp2
+	kqgaKh069EyNT5HT/EjN5HtB/VS4nDSFBr2zNhw9rNO8ynH9VKRCONxw+u5oTEkKHZdpUkfLdiM
+	PzLi7Z61R6YGhYejJkx9qxCzrBGM=
+X-Gm-Gg: ASbGnct3/aDfWRExs6GnWW/eElweUh74By7emnk8uhAx2qrv9Ic/aIYGpyEmSF3Vbyv
+	MJQHYJmkpwiBK/+m1rVD+QRGf1lskehuAUqTzjcPyCdOjP+ZDCWx2gcYSVHUYASGIf51dpttkRW
+	cpjasbnaApSZSIGF3jCzLzFnFiAGiEuck=
+X-Google-Smtp-Source: AGHT+IGvTTJx+4fmB6AiH15jyXQdH56zreYNvD8IuJPmSgHpB2B5M+YKesYWMnr39buRTcTkrufTrgW10VlcB2t4AYk=
+X-Received: by 2002:a05:6512:12c4:b0:545:81b:1510 with SMTP id
+ 2adb3069b0e04-5452fe2cf34mr2727826e87.2.1739814245579; Mon, 17 Feb 2025
+ 09:44:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,14 +79,15 @@ References: <20250207-rust-xarray-bindings-v16-0-256b0cf936bd@gmail.com>
  <Z7MnxKSSNY7IyExt@cassiopeiae> <CAJ-ks9=OG2zPPPPfZd5KhGKgNsv3Qm9iHr2eWXFeL7Zv16QVdw@mail.gmail.com>
  <Z7NEZfuXSr3Ofh1G@cassiopeiae> <CAJ-ks9=TrFHiLFkRfyawNquDY2x6t3dwGi6FxnfgFLvQLYwc+A@mail.gmail.com>
  <CANiq72kAhw6XwPzGu+FrF64PZ9P_eSzX3gqG9CLvy7YJnbXgoQ@mail.gmail.com>
- <CAJ-ks9mFT1Gaao+OrdYF+hg6Sp=XghyHWu1VTALdeMJPwkX=Uw@mail.gmail.com> <CANiq72kFpDt230zBugN12q978LRSJiZB5dJZszWkL2p7XqQ52w@mail.gmail.com>
-In-Reply-To: <CANiq72kFpDt230zBugN12q978LRSJiZB5dJZszWkL2p7XqQ52w@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 17 Feb 2025 18:36:24 +0100
-X-Gm-Features: AWEUYZkXXe9ucp731IUnfF8Mkzrw90VtoilSTq_--wgHn6jSTiKyQT8lGbY5FVI
-Message-ID: <CANiq72kjAx4a20cnE3XrJ-z4K=8pCRuc+TOa+WtcuUsdZ22tSA@mail.gmail.com>
+ <CAJ-ks9mFT1Gaao+OrdYF+hg6Sp=XghyHWu1VTALdeMJPwkX=Uw@mail.gmail.com>
+ <CANiq72kFpDt230zBugN12q978LRSJiZB5dJZszWkL2p7XqQ52w@mail.gmail.com> <CANiq72kjAx4a20cnE3XrJ-z4K=8pCRuc+TOa+WtcuUsdZ22tSA@mail.gmail.com>
+In-Reply-To: <CANiq72kjAx4a20cnE3XrJ-z4K=8pCRuc+TOa+WtcuUsdZ22tSA@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 17 Feb 2025 12:43:28 -0500
+X-Gm-Features: AWEUYZnFvQEX9h2gQjKgTPirDmHanhzbOTBFPiisQ8hREXZBp_w-sIzV1ECjzO4
+Message-ID: <CAJ-ks9nZNzrPbK577ibUUjs_aE_o5QrpZbRuwCTEKuuSKG6ZHQ@mail.gmail.com>
 Subject: Re: [PATCH v16 2/4] rust: types: add `ForeignOwnable::PointedTo`
-To: Tamir Duberstein <tamird@gmail.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
 	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
 	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
@@ -101,20 +103,37 @@ Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 17, 2025 at 6:24=E2=80=AFPM Miguel Ojeda
+On Mon, Feb 17, 2025 at 12:36=E2=80=AFPM Miguel Ojeda
 <miguel.ojeda.sandonis@gmail.com> wrote:
 >
-> I understand the rationale -- what I meant to ask is if you saw that
+> On Mon, Feb 17, 2025 at 6:24=E2=80=AFPM Miguel Ojeda
+> <miguel.ojeda.sandonis@gmail.com> wrote:
+> >
+> > I understand the rationale -- what I meant to ask is if you saw that
+>
+> By the way, I don't agree with the rationale, because it sounds to me
+> like optimizing for `git blame` readers, while pessimizing for normal
+> readers.
+>
+> We do a lot of `git blame` in the kernel, especially since our Git log
+> is quite good, but we still read the files themselves more... I can
+> imagine ending up with a lot of extra lines over time everywhere, it
+> could dissuade small fixes and so on.
 
-By the way, I don't agree with the rationale, because it sounds to me
-like optimizing for `git blame` readers, while pessimizing for normal
-readers.
+I almost addressed this in my original reply - I regret that I didn't.
 
-We do a lot of `git blame` in the kernel, especially since our Git log
-is quite good, but we still read the files themselves more... I can
-imagine ending up with a lot of extra lines over time everywhere, it
-could dissuade small fixes and so on.
+I agree with you that optimizing for git blame while pessimizing for
+normal readers is not what we should do. I don't agree that putting
+boilerplate on its own line is a pessimization for the normal reader -
+in my opinion it is the opposite. Trivial expressions of the form
 
-Cheers,
-Miguel
+let foo =3D foo.cast();
+
+can be very easily skimmed by a reader, whereas an expression of the form
+
+unsafe { <type as trait>::associated_type::function(foo.cast()) }
+
+become more difficult to read with every operation that is added to it.
+
+As always, this is just my opinion.
 
