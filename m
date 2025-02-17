@@ -1,209 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-41896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41897-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB3FCA38DF1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 22:24:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD530A38E37
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 22:40:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E165E169B93
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 21:24:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B5C8188D48A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 21:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB91523A560;
-	Mon, 17 Feb 2025 21:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CBD1A9B40;
+	Mon, 17 Feb 2025 21:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="L86YPNKS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DWGvmnKn";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ao5vxJiL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ElbHV3LG"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P9L6uob3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8C522B8A1
-	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Feb 2025 21:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420592A8C1;
+	Mon, 17 Feb 2025 21:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739827466; cv=none; b=cD2jAnPeDSYQp0Gv3IJ7rhMlycnXE7rONvEzHQlIqzbTQsp7FFagb90q7zjv3KVsbdIr73u+QTNVhmR4Uq92IaBSDpjX62zSJuZhqYSCED3iOriQIvymUpQMG9xJpECMkKZ3yBVsjYBjJNIIkZ4crCBWGgc8W+vasN2QITMsfeo=
+	t=1739828410; cv=none; b=eRCD0/s1CMsYdFY37qZIRQwVkMcwhLgqixbBZS2R5mC5+GiUPF9M9aQBP8YDff6pyNDeKrtQi5AVOYevH2zNU/NtarQhkobfLY8cLfh8IGxZ8gcMM8EREU8tIyaZcUXNhkiNQQf+5aT6dw/BbwXXx1aL5AN1uuDiwzOd/x7i/7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739827466; c=relaxed/simple;
-	bh=tt+NJK5nQxgKW+KB993hAzHX8Tc/Mw7ryX7jpOR3FaU=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=R6WXLJKORvK4meryDE5AQfcFgWzDGR8s/ETUClHnXkXML2+DGfGv9/O5R4g+rw6jiLWruKZRBFSVAIxHfyGItY6Ikvp09rmd4lRUb1VH97g2kJ2SvJQDWqCZNFZxfLAMn/5Tk6FhqU53p8Iq+qDnL9mzJ5QKcWj50lw9iIQbcok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=L86YPNKS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DWGvmnKn; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ao5vxJiL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ElbHV3LG; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DB82C1F443;
-	Mon, 17 Feb 2025 21:24:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739827462; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dlveDQrAnfTMK0qdtzIydX2OoEQGvqaMhg1QN8QjYTI=;
-	b=L86YPNKS/IeNdaCEWLjzF3oCMzEPo2kqoYBEenDwXyYSi3qtgVXOBrmRmyD5AaCfeqZfPA
-	YETL9I6sUzb0z6dD8YaWNGADOz3idcUxd/uBk38BZXekOigc4oWFEml5zk3OZumHRiSKdt
-	Ev1eVcdyKVFKHO1eFWLqHbRlk5mR5p0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739827462;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dlveDQrAnfTMK0qdtzIydX2OoEQGvqaMhg1QN8QjYTI=;
-	b=DWGvmnKnS7hy9Qlteej+QsPA975tdpsQwIjAFBwJVlOcTLxKGmueQTiT24HurYVerMXaOi
-	EEgJ9ppWyThz1RAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ao5vxJiL;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ElbHV3LG
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739827460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dlveDQrAnfTMK0qdtzIydX2OoEQGvqaMhg1QN8QjYTI=;
-	b=ao5vxJiLWfM3zU1rcDpgEKZNeXJwUpzY6697nu6x0MVP2EVrP324qa62hPCrfV+08W4SX9
-	MsEkeeg6bxJc5ylFmJupeHACLs9/5vsj8ruHBFjfLsK6cVccMWoP9G5qP+2WcxgyAxxeho
-	oV3oSp6cBtVLaEiuRnjr3x5LGC1JSBU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739827460;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dlveDQrAnfTMK0qdtzIydX2OoEQGvqaMhg1QN8QjYTI=;
-	b=ElbHV3LGXU+un1/fAiMmxs/O7AfXXLCzmu/pPqFrtaaTgegZfcIz8EuAS/3kXWTGmX1gwt
-	FtJF+LSOGyrJ91CQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F2E5A13485;
-	Mon, 17 Feb 2025 21:24:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BYW+KQOps2eIHAAAD6G6ig
-	(envelope-from <neilb@suse.de>); Mon, 17 Feb 2025 21:24:19 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1739828410; c=relaxed/simple;
+	bh=mDOJpH9wr0GAuWGnE8twFQUiLYLbrcXebGiv62ABvJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ilKc2KsXGfk7+tL7+lEPC0c4hVJsEGRY8MgSkYA9bcY36NGQjT/tbaI3NwrL32TZdOVf9J+aAObMMosH4m4dv2oixJoMAyuTdx+refF69KT6rYlE8yTftFzJwMT4J2B8ZMUdP5vxQrNdcQJoODN3l16KA5eMfcKAtxL96EozxSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=P9L6uob3; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=KY8nyubrU5h1fWAeCYwM70hwEZhksrwYllCElbQXlTA=; b=P9L6uob3gnsA9z7fl3KVtM5ac1
+	eVA7gQ/xKeKMmu5K/T68/i7b2E7FfiSjoVn6j7pKgh1O40M1rEvWGcgf0YGXHMmfNYX9En37jJpGL
+	xJke9LGh+DVVO0EVQkQSfA1rd53OPsx3VcQIvnbmvmp07QmR4qh9BUkbrFKWhXoVaQSb++xbVU/mF
+	24r9uZvwgbLme2F5nkNGmATd66YThEBl6PsgnKbzWDOwoeryQSd3vmhFu8vUAM8HH1JzvQlJFnLoL
+	I7nRalertEjJ+MhNEKuVc926mVYTTIqe7kRm/bmHIwsNSzKmmGj4EWlykONbrj0JHXU6bgX8klIr8
+	3z46BjHw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tk8qO-00000001yqZ-0ysr;
+	Mon, 17 Feb 2025 21:40:00 +0000
+Date: Mon, 17 Feb 2025 21:40:00 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: hare@suse.de, dave@stgolabs.net, david@fromorbit.com, djwong@kernel.org,
+	kbusch@kernel.org, john.g.garry@oracle.com, hch@lst.de,
+	ritesh.list@gmail.com, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+	linux-block@vger.kernel.org, gost.dev@samsung.com,
+	p.raghav@samsung.com, da.gomez@samsung.com, kernel@pankajraghav.com
+Subject: Re: [PATCH v2 2/8] fs/buffer: remove batching from async read
+Message-ID: <Z7OssHQSgVEVzbSZ@casper.infradead.org>
+References: <20250204231209.429356-1-mcgrof@kernel.org>
+ <20250204231209.429356-3-mcgrof@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Dan Carpenter" <dan.carpenter@linaro.org>
-Cc: linux-fsdevel@vger.kernel.org
-Subject:
- Re: [bug report] VFS: add common error checks to lookup_one_qstr_excl()
-In-reply-to: <2037958b-8b1a-4355-be22-294b782aac31@stanley.mountain>
-References: <2037958b-8b1a-4355-be22-294b782aac31@stanley.mountain>
-Date: Tue, 18 Feb 2025 08:24:15 +1100
-Message-id: <173982745596.3118120.8498317331771966862@noble.neil.brown.name>
-X-Rspamd-Queue-Id: DB82C1F443
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_TWO(0.00)[2];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,noble.neil.brown.name:mid];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250204231209.429356-3-mcgrof@kernel.org>
 
-On Mon, 17 Feb 2025, Dan Carpenter wrote:
-> Hello NeilBrown,
-> 
-> Commit 22d9d5e93d0e ("VFS: add common error checks to
-> lookup_one_qstr_excl()") from Feb 7, 2025 (linux-next), leads to the
-> following Smatch static checker warning:
-> 
-> 	fs/namei.c:1696 lookup_one_qstr_excl()
-> 	error: 'dentry' dereferencing possible ERR_PTR()
-> 
-> fs/namei.c
->   1671  struct dentry *lookup_one_qstr_excl(const struct qstr *name,
->   1672                                      struct dentry *base,
->   1673                                      unsigned int flags)
->   1674  {
->   1675          struct dentry *dentry = lookup_dcache(name, base, flags);
->   1676          struct dentry *old;
->   1677          struct inode *dir = base->d_inode;
->   1678  
->   1679          if (dentry)
->   1680                  goto found;
-> 
-> It looks like lookup_dcache() can return both error pointers and NULL.
+On Tue, Feb 04, 2025 at 03:12:03PM -0800, Luis Chamberlain wrote:
+> From: Matthew Wilcox <willy@infradead.org>
 
-Yes it can.
+From: Matthew Wilcox (Oracle) <willy@infradead.org>
 
+block_read_full_folio() currently puts all !uptodate buffers into
+an array allocated on the stack, then iterates over it twice, first
+locking the buffers and then submitting them for read.  We want to
+remove this array because it occupies too much stack space on
+configurations with a larger PAGE_SIZE (eg 512 bytes with 8 byte
+pointers and a 64KiB PAGE_SIZE).
+
+We cannot simply submit buffer heads as we find them as the completion
+handler needs to be able to tell when all reads are finished, so it can
+end the folio read.  So we keep one buffer in reserve (using the 'prev'
+variable) until the end of the function.
+
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index b99560e8a142..167fa3e33566 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -2361,9 +2361,8 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
+>  {
+>  	struct inode *inode = folio->mapping->host;
+>  	sector_t iblock, lblock;
+> -	struct buffer_head *bh, *head, *arr[MAX_BUF_PER_PAGE];
+> +	struct buffer_head *bh, *head, *prev = NULL;
+>  	size_t blocksize;
+> -	int nr, i;
+>  	int fully_mapped = 1;
+>  	bool page_error = false;
+>  	loff_t limit = i_size_read(inode);
+> @@ -2380,7 +2379,6 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
+>  	iblock = div_u64(folio_pos(folio), blocksize);
+>  	lblock = div_u64(limit + blocksize - 1, blocksize);
+>  	bh = head;
+> -	nr = 0;
+>  
+>  	do {
+>  		if (buffer_uptodate(bh))
+> @@ -2410,40 +2408,33 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
+>  			if (buffer_uptodate(bh))
+>  				continue;
+>  		}
+> -		arr[nr++] = bh;
+> +
+> +		lock_buffer(bh);
+> +		if (buffer_uptodate(bh)) {
+> +			unlock_buffer(bh);
+> +			continue;
+> +		}
+> +
+> +		mark_buffer_async_read(bh);
+> +		if (prev)
+> +			submit_bh(REQ_OP_READ, prev);
+> +		prev = bh;
+>  	} while (iblock++, (bh = bh->b_this_page) != head);
+>  
+>  	if (fully_mapped)
+>  		folio_set_mappedtodisk(folio);
+>  
+> -	if (!nr) {
+> -		/*
+> -		 * All buffers are uptodate or get_block() returned an
+> -		 * error when trying to map them - we can finish the read.
+> -		 */
+> -		folio_end_read(folio, !page_error);
+> -		return 0;
+> -	}
+> -
+> -	/* Stage two: lock the buffers */
+> -	for (i = 0; i < nr; i++) {
+> -		bh = arr[i];
+> -		lock_buffer(bh);
+> -		mark_buffer_async_read(bh);
+> -	}
+> -
+>  	/*
+> -	 * Stage 3: start the IO.  Check for uptodateness
+> -	 * inside the buffer lock in case another process reading
+> -	 * the underlying blockdev brought it uptodate (the sct fix).
+> +	 * All buffers are uptodate or get_block() returned an error
+> +	 * when trying to map them - we must finish the read because
+> +	 * end_buffer_async_read() will never be called on any buffer
+> +	 * in this folio.
+>  	 */
+> -	for (i = 0; i < nr; i++) {
+> -		bh = arr[i];
+> -		if (buffer_uptodate(bh))
+> -			end_buffer_async_read(bh, 1);
+> -		else
+> -			submit_bh(REQ_OP_READ, bh);
+> -	}
+> +	if (prev)
+> +		submit_bh(REQ_OP_READ, prev);
+> +	else
+> +		folio_end_read(folio, !page_error);
+> +
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL(block_read_full_folio);
+> -- 
+> 2.45.2
 > 
->   1681  
->   1682          /* Don't create child dentry for a dead directory. */
->   1683          if (unlikely(IS_DEADDIR(dir)))
->   1684                  return ERR_PTR(-ENOENT);
->   1685  
->   1686          dentry = d_alloc(base, name);
->   1687          if (unlikely(!dentry))
->   1688                  return ERR_PTR(-ENOMEM);
->   1689  
->   1690          old = dir->i_op->lookup(dir, dentry, flags);
->   1691          if (unlikely(old)) {
->   1692                  dput(dentry);
->   1693                  dentry = old;
->   1694          }
->   1695  found:
->   1696          if (d_is_negative(dentry) && !(flags & LOOKUP_CREATE)) {
->                                   ^^^^^^
-> Unchecked dereference.
-
-so that is bad.  A corrected version was merged in the vfs tree a few
-hours after this post.
-
-Thanks for your ongoing service!
-
-NeilBrown
-
-> 
->   1697                  dput(dentry);
->   1698                  return ERR_PTR(-ENOENT);
->   1699          }
->   1700          if (d_is_positive(dentry) && (flags & LOOKUP_EXCL)) {
->   1701                  dput(dentry);
->   1702                  return ERR_PTR(-EEXIST);
->   1703          }
->   1704          return dentry;
->   1705  }
-> 
-> regards,
-> dan carpenter
-> 
-
 
