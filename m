@@ -1,143 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-41850-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41852-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA15A38456
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 14:18:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D74D4A384BC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 14:33:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 206FE175164
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 13:15:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0532C7A2C21
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 13:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D51221CC55;
-	Mon, 17 Feb 2025 13:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1359921CC7B;
+	Mon, 17 Feb 2025 13:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="Hr76/uRW"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="BLwPzHCZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.tlmp.cc (unknown [148.135.104.50])
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4155821C191;
-	Mon, 17 Feb 2025 13:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.104.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1ACA216E35;
+	Mon, 17 Feb 2025 13:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739798041; cv=none; b=MX5ru+cD/YgMQrejwEgEbtopk6d/1chZIhi4A8OUm+NGBF2N2H16vprcusIZYMZQbY0pfqXC0cTNVMbc8+x9d/cqV5lIf1rg4YPuSpbRb2pbv7JE5EvrdZqOo6We7Kc5gdWPOQIMIR3MzWJ/ofyMLEJRD1cJmwBeJJ3LPVRrdSA=
+	t=1739799166; cv=none; b=elZBUoju6pf6bwIP/wE6KrtWi7quqMdaeOef5WW7RIRF8Sj3b56CrfNvSsU/K8fNJl7nZNdKt3WyMlejvJ3mWW7sNweR7jyPgG97BK9V78BQnbPhwJQ4vyfGkQdqPAMAEGix47gozBBFNWMbrxCFOF+KS/qiELlVLfdUNCUjiPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739798041; c=relaxed/simple;
-	bh=yfcja7yr+aI/lTUxW5RMXDC86vGcZIWVsYT+gOG/FC0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T9Kkf2jJGdiZSjEcO05cHf1lauE0dDsARzpOow4QXIrjaoUw3Bv4tTBQasfN0kVQ9ks6rPVNKqbVwFXkCkVTc4pyzKHe6gG3q9NzDyL5ImEZ4+uvjPyW/N23yOnYKEDdbpzMQDPULo/gf02YQhlSt0sI5gynHXgSu1EW3nDZLOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=Hr76/uRW; arc=none smtp.client-ip=148.135.104.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4759F5F587;
-	Mon, 17 Feb 2025 08:08:28 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
-	t=1739797721; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:in-reply-to:in-reply-to:  references:references;
-	bh=gzJ2YG6weSz+CFbCyKl4mnY+VTrcTl16Wh/C2tZm7So=;
-	b=Hr76/uRWkKlFnJ9mXitWgfsKCR5bkSaoSUi28tvfsejgjGS7BsOSdwwTTBRJ2aMhY84EvA
-	Z1GmO8cvlB684BYprLOXvewp9WqhhBHQWOoFcsRkxFbFGbAi57FqGbl1AozUC+JU+9WIa3
-	yId6kAVXF+SKz8jn8vA53vqzQHdibStxZmf0dXPvMqHff39grxtCH/o72AmCiiWEXVBQel
-	uxHJTSm6BdZT1jAyg02UE4lSjPM3uAo6bUshW2HKEJIJ5ojz3y6eM1BnXR/yA1Nt+kAbiA
-	LHuOAVPMVCvQ5Bloss2LMlUtOnj1icsD4L7xjpZMC0Dcsoqz1XrNrqx6a38WlA==
-Date: Mon, 17 Feb 2025 21:08:21 +0800
-From: Yiyang Wu <toolmanp@tlmp.cc>
-To: Andreas Hindborg <a.hindborg@kernel.org>, 
-	lsf-pc@lists.linux-foundation.org
-Cc: linux-block@vger.kernel.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Gao Xiang <hsiangkao@linux.alibaba.com>, linux-erofs mailing list <linux-erofs@lists.ozlabs.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Rust in FS, Storage, MM
-Message-ID: <g5tqgpda4wbhpmi5ahh5btujwajy5dolcouhk2hx6qo2fg5nwr@ua2wnnuvxmeb>
-Reply-To: 0290170c-39df-4609-8de1-55695d6ec0ad@linux.alibaba.com
-References: <87ldu9uiyo.fsf@kernel.org>
- <0290170c-39df-4609-8de1-55695d6ec0ad@linux.alibaba.com>
+	s=arc-20240116; t=1739799166; c=relaxed/simple;
+	bh=/peew0N0sYIEeywo5Qi44geS0So+iTeYQWeqk48ZKnA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lRA/6K15Pn3oJpYdf6lolyu0DnsijuC4y0zmKWTCRiBVn+0OsHDE/gVJY4rDAg+NcPUs0rhJrVUDhXe5m2naLacizcg46LisEDwea7Btknx4aw/oLCaH1/P2vjvKiHwe5RLb2CyCUZSsK7oDU0APGjesnqMMLRqkfSTo2CUIHts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=BLwPzHCZ; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=Mrpii7aiMFOF7c2Q6EMdLlKuMvw80fO9NyNXLvoPESc=; b=BLwPzHCZ3fpXoGLIsCiP6VAtW6
+	LLBuHDxjXuAdlJFXzuCssgP5PIfzC6JxtER4jdCVEqSIK5f6IoTkF+FPQb7LOeAiOzh/KAmPVgjCC
+	aodPuc+u+czzSm/2+ovwXyajjF0ukMCDWc0P1YF4GTroTY3TlcQKIzADrgHn45JsEtB+4Q1Zm4Ljo
+	+58ZorSLEMUid5hiv509t6Mvw9I+xga/Pqwy+xNzXUeEdD+xYn35k1wnd/mVlA7PwwI5BW1pUyqeC
+	6xe85OTJ4lTJboqVlJovWaZhAPNoHmJld10MA5lmfCjx4sv18mhMQRp3C1b+ylwTduiAKiJiCp2dJ
+	O253GvcQ==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tk1EV-006AK6-QT; Mon, 17 Feb 2025 14:32:29 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>,
+	Bernd Schubert <bschubert@ddn.com>
+Cc: Dave Chinner <david@fromorbit.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Matt Harvey <mharvey@jumptrading.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Luis Henriques <luis@igalia.com>
+Subject: [PATCH v6 0/2] fuse: allow notify_inval for all inodes
+Date: Mon, 17 Feb 2025 13:32:26 +0000
+Message-ID: <20250217133228.24405-1-luis@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0290170c-39df-4609-8de1-55695d6ec0ad@linux.alibaba.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 17, 2025 at 06:41:32PM +0800, Gao Xiang wrote:
-> 
-> 
-> On 2025/2/14 14:41, Andreas Hindborg wrote:
-> > Hi All,
-> > 
-> > On behalf of the Linux kernel Rust subsystem team, I would like to suggest a
-> > general plenary session focused on Rust. Based on audience interest we would
-> > discuss:
-> > 
-> >   - Status of rust adoption in each subsystem - what did we achieve since last
-> >     LSF?
-> >   - Insights from the maintainers of subsystems that have merged Rust - how was
-> >     the experience?
-> >   - A reflection on process - does the current approach work or should we change
-> >     something?
-> >   - General Q&A
-> 
-> Last year Yiyang worked on an experimental Rust EROFS codebase and
-> ran into some policy issue (c+rust integration), although Rust
-> adaption is not the top priority stuff in our entire TODO list but
-> we'd like to see it could finally get into shape and landed as an
-> alternative part to replace some C code (maybe finally the whole
-> part) if anyone really would like to try to switch to the new one.
-> 
-> Hopefully some progress could be made this year (by Yiyang), but
-> unfortunately I have no more budget to travel this year, yet
-> that is basically the current status anyway.
-> 
-> Thanks,
-> Gao Xiang
-> 
-> > 
-> > Please note that unfortunately I will be the only representative from the Rust
-> > subsystem team on site this year.
-> > 
-> > Best regards,
-> > Andreas Hindborg
-> > 
-> 
+Hi!
 
-Since i'm cued in, I'd like to share some of my thoughts on the Rust.
+In this version, invalidate_inodes() needs to be exported to be used by
+fuse_reverse_inval_all().  This is a big simplification of this function,
+which now simply calls shrink_dcache_sb() and invalidate_inodes().
 
-I've worked on the EROFS Rust codebase so far. I may have insights on
-the current status of Rust subsystem progress. On the Filesystem level,
-there still left a lot of yet to be determined especially.
+It's clear that inodes still being referenced will not be invalidated --
+but that's already the case for the single inode NOTIFY_INVAL_INODE fuse
+operation.  
 
-Reimplementing the core functionality of a filesystem is already ok,
-though not from perfect, and certainly we need a better abstraction
-to model the filesystem correctly in rust language.A lot of helpers (MM,
-BDev, Network Application Layer for NFS, etc.)
+* Changes since v5
+- Added missing iput() in function fuse_reverse_inval_all()
 
-are still left in the wild to be completed and it requires a lot of
-coordination from other subsystem maintainer and rust maintainer
-to abstract the C-API into Rust code a way that all parties can hold on to.
-I guess it's not the right time to do so in general, we can use rust in
-some specific filesystems but generally before other subsystems's API
-are stabilized, it's not a good idea to refactor the whole VFS codebase
-and abstract the API into Rust one.
+* Changes since v4
+- Replaced superblock inodes iteration by a single call to
+  invalidate_inodes().  Also do the shrink_dcache_sb() first. (Dave Chinner)
 
-Filesystem should be free from memory corruption and rust is
-definitely worth the efforts to refactor some of the codebase. 
-That means that we may need restrict the flexibility or somehow refactor
-the object model that current VFS uses and this certainly requires the
-original team that implements the VFS to be involved, at least express
-some willingness and interest to refactor instead of gatekeeping the
-whole codebase and shutting down the whole discussion (i don't mean to
-make criticism here BTW since we should be pretty cautionous on the
-original code and don't introduce certain regression issues.) But i guess the
-whole community is somehow polarized on this issue, it may not be an
-easy job to begin with, alas.
+* Changes since v3
+- Added comments to clarify semantic changes in fuse_reverse_inval_inode()
+  when called with FUSE_INVAL_ALL_INODES (suggested by Bernd).
+- Added comments to inodes iteration loop to clarify __iget/iput usage
+  (suggested by Joanne)
+- Dropped get_fuse_mount() call -- fuse_mount can be obtained from
+  fuse_ilookup() directly (suggested by Joanne)
 
-Best Regards,
-Yiyang
+(Also dropped the RFC from the subject.)
+
+* Changes since v2
+- Use the new helper from fuse_reverse_inval_inode(), as suggested by Bernd.
+- Also updated patch description as per checkpatch.pl suggestion.
+
+* Changes since v1
+As suggested by Bernd, this patch v2 simply adds an helper function that
+will make it easier to replace most of it's code by a call to function
+super_iter_inodes() when Dave Chinner's patch[1] eventually gets merged.
+
+[1] https://lore.kernel.org/r/20241002014017.3801899-3-david@fromorbit.com
+
+
+Luis Henriques (2):
+  vfs: export invalidate_inodes()
+  fuse: add new function to invalidate cache for all inodes
+
+ fs/fuse/inode.c           | 34 ++++++++++++++++++++++++++++++++++
+ fs/inode.c                |  1 +
+ fs/internal.h             |  1 -
+ include/linux/fs.h        |  1 +
+ include/uapi/linux/fuse.h |  3 +++
+ 5 files changed, 39 insertions(+), 1 deletion(-)
+
 
