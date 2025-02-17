@@ -1,157 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-41823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E11A0A37BD5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 08:06:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45FD9A37CB1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 09:03:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7098188D969
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 07:06:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E6CA3AB0AF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 08:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4609D193409;
-	Mon, 17 Feb 2025 07:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88573195F0D;
+	Mon, 17 Feb 2025 08:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iS/WmFFB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5310F4C70;
-	Mon, 17 Feb 2025 07:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D67136349;
+	Mon, 17 Feb 2025 08:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739776003; cv=none; b=L2ffj+iaCihDdhmWmbEyvSbe9qVDRqjVNEIGj3nnIaHv3+EkZyEjw0E61K59987ry9oucfIdckZ8gKx1d3YgPNTuj0l2m+RbfFEbzonbNojAIFhniXj/St8PvEL78LzFHkDj/q902G/TkN/xA0FSnurWY8Moee2zKKpfO1Y/3OQ=
+	t=1739779411; cv=none; b=R+1i0q8MIg2T/n2Jz+QRsC6Y7rVTDz1joRIi+NRsmsakAWjsqyU1Bsrz7TkyiY2F+7MAprbf7OljwlQM01NeErPRUa75zCURdBmWR5VmbV4kMc/tgnZApPYLCrwXBF77ZZkWoaZnIxL8+F52Inql0pX89cBQ5PEcZrq4ulqmQuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739776003; c=relaxed/simple;
-	bh=qJDsd2z/942OOOCUg26TueeBOG1V50FZockYoCDzi5s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o0CRNkiEIucaGEMnCxSTOCMslakTZh4GX6a1zqvLcNkKNNUT0GOG5ahazoWGkJOd2cK3EJWuPwCoghlXO5vCtB6cEXPzwFhkCbhxeHzQss5Fkj2Cg/BKJ5ZEWF2TkyW334O0ZNp3zyDtLmtWONro6c0kfk3XFPXlFj3K5CED3yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YxDGG4fllz4f3lCf;
-	Mon, 17 Feb 2025 15:06:14 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 891AD1A1527;
-	Mon, 17 Feb 2025 15:06:37 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgDXOl_137JnjbRXEA--.5607S4;
-	Mon, 17 Feb 2025 15:06:37 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	leah.rumancik@gmail.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	libaokun1@huawei.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH] jbd2: fix off-by-one while erasing journal
-Date: Mon, 17 Feb 2025 14:59:55 +0800
-Message-ID: <20250217065955.3829229-1-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1739779411; c=relaxed/simple;
+	bh=og+p5GUQckHP5nxbEyvN6VtE9n9dSmRvKYzq880VS7w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C4JxL5vdhJjVXOJz4GfBsXg7Bs9nvgP1u24BG2G69vdzJGfORI6H4kmslndYw/rVye0Z4PFa/ErhPflCxuXYpNBKJkt/UhrAXR8X7mYZhYf/PJv5nT1qk10dRvb5DPwnG/u7eYdKAsBZnK8atqSFFw6f7zzr/3ITJA5Fj3KVvy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iS/WmFFB; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5dc89df7eccso7404937a12.3;
+        Mon, 17 Feb 2025 00:03:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739779408; x=1740384208; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=og+p5GUQckHP5nxbEyvN6VtE9n9dSmRvKYzq880VS7w=;
+        b=iS/WmFFBfpr7tdyGD/xQOzUAm/DhAtzd1095gUMpKFLofZR6AWkMOedHwhD4THuksf
+         PbYvjrW4Vv8p2cousSfBOn9La/98JJr8KREo46XG3Y8AyM1gNhaxTRiYbKI89H07pfyx
+         vFzzwG1xIXgWu5OGSR8HM/2zy6QGH0OytLugSRvFkxieV8r0r4eJsCfZtLPXNfwSlgoK
+         rGx+iyttudIATRem8JpRinsghcn9552f5qiUDP5SZcr2mVIrhO0fkZU5pzMXxOiMHPSn
+         piHv6yfLOVmEmlZWetG5MnFlwB73WEmnBj4JyszGK+HSxbr5u0L28a14vZ8NVqtczvpP
+         fSww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739779408; x=1740384208;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=og+p5GUQckHP5nxbEyvN6VtE9n9dSmRvKYzq880VS7w=;
+        b=mZJI+5pTK2ntEa9NNx0uG6U55jXaA76L3rw3t9xaVMKFKEp4sszG7qCopE3n+Sk6QI
+         qCUP/YEZSBKIjcn8D/p36SqM8c7zzmSiQg3RVfI1CsW+JLs1WBQZg+aTzFGAavmg6Qdp
+         WRPCbz6bZfqCDYC2I+SCQCCbJEEItYJeZ4DL8Y5Dk7hQdfv8803XCAMP+ft8dA7AVh74
+         u+OEllaQ3e1EMXStef44I2MHUrvQl4zWAuwqSiBeo5QSpIN5zuxviRN3dWUXasU+PbYn
+         Nda6KmsEhyG96HclPdXjdb/VlU+uE2yz1PlwPHKvHGQR98U1wOrXOAdiW+PcSXSJKxqT
+         SNCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVecKUGq/BHc24uFC8KlyGr1dJ4kVvm7D1h2MotqNSC28ZF1u4r3X4YvTN0fikxsTsIQ9CzM2GSfyu/woNz@vger.kernel.org, AJvYcCWDBGAVjZjp+hp1wdsHCbmToJiaiZNSv4j3D0tOgviOZ21efEe2pfd4XY9DqffY4sgimxoNg8PaHZDafjm+@vger.kernel.org
+X-Gm-Message-State: AOJu0YwToSMd7dH8lu5kiX+S9v/jvHMAQM1uRAf5hpDdNceyf/cztbcK
+	3yw6gOp4ROU4g4gd3HrR9sH/MPt3gaLdlVRV41VjyWngVm0ro4q6dqnbDYIU74Gy6qx4eeEcdA4
+	FuqZG3gGC80b3583cFx2kv15NE+g=
+X-Gm-Gg: ASbGncvYnf15fnht2L9T5TMCWwtuC8ZtZU1NqfcrgQEHVrDSvAowxCwe3nDb9M0zP5N
+	4MEqwBdwB0j+u5aMf4cX0CVShdbqB2kpDoF4qR9J8ejRY3HwT6MbpSpYXpZNhNjYcg+6PIZOz
+X-Google-Smtp-Source: AGHT+IF7NbVnwAYiRCoa4WT68JzdRFWhztnH3TUzWcaTCtgXMnkY2M+AGZFKbTQqkjVf9WRONFmw4NDk7X0prL4nfyU=
+X-Received: by 2002:a05:6402:268a:b0:5d9:a62:32b with SMTP id
+ 4fb4d7f45d1cf-5e0360440a0mr10035398a12.7.1739779407426; Mon, 17 Feb 2025
+ 00:03:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDXOl_137JnjbRXEA--.5607S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxZF43Ar4rtr1DJFW7CFW5trb_yoW5JFWDpr
-	W7G3W3GrWku340vFn7WrWkXry5XayqkFWUGr4Duwn3X3yfJr1ak34kK3s8J34jqFyxGay7
-	ZF15A3yUGw42q37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUFg4SDUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <20240807063350.GV5334@ZenIV> <CAGudoHH29otD9u8Eaxhmc19xuTK2yBdQH4jW11BoS4BzGqkvOw@mail.gmail.com>
+ <20240807070552.GW5334@ZenIV> <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
+ <20240807075218.GX5334@ZenIV> <CAGudoHE1dPb4m=FsTPeMBiqittNOmFrD-fJv9CmX8Nx8_=njcQ@mail.gmail.com>
+ <CAGudoHFm07iqjhagt-SRFcWsnjqzOtVD4bQC86sKBFEFQRt3kA@mail.gmail.com>
+ <20240807124348.GY5334@ZenIV> <20240807203814.GA5334@ZenIV>
+ <CAGudoHHF-j5kLQpbkaFUUJYLKZiMcUUOFMW1sRtx9Y=O9WC4qw@mail.gmail.com> <20240822003359.GO504335@ZenIV>
+In-Reply-To: <20240822003359.GO504335@ZenIV>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 17 Feb 2025 09:03:15 +0100
+X-Gm-Features: AWEUYZnYwfQezLXamJtJQUkfd4R4J-WC2vcMCH6zbVOjTje8hbkpimf0YKjJQ2Q
+Message-ID: <CAGudoHF-S-8YBWMcpgiKO8vcjEvR7SGHyV-+X4jo_e7co+esRw@mail.gmail.com>
+Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On Thu, Aug 22, 2024 at 2:34=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>
+> On Tue, Aug 20, 2024 at 01:38:05PM +0200, Mateusz Guzik wrote:
+> > do you plan to submit this to next?
+> >
+> > anything this is waiting for?
+> >
+> > my quick skim suggests this only needs more testing (and maybe a review=
+)
+>
+> OK, let me post the current variant of that series, then we'll see
+> if anyone screams...
 
-In __jbd2_journal_erase(), the block_stop parameter includes the last
-block of a contiguous region; however, the calculation of byte_stop is
-incorrect, as it does not account for the bytes in that last block.
-Consequently, the page cache is not cleared properly, which occasionally
-causes the ext4/050 test to fail.
+looks like this fell through the cracks
 
-Since block_stop operates on inclusion semantics, it involves repeated
-increments and decrements by 1, significantly increasing the complexity
-of the calculations. Optimize the calculation and fix the incorrect
-byte_stop by make both block_stop and byte_stop to use exclusion
-semantics.
+anything i can help with to get this in?
 
-This fixes a failure in fstests ext4/050.
-
-Fixes: 01d5d96542fd ("ext4: add discard/zeroout flags to journal flush")
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/jbd2/journal.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
-
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index d8084b31b361..49a9e99cbc03 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -1965,17 +1965,15 @@ static int __jbd2_journal_erase(journal_t *journal, unsigned int flags)
- 			return err;
- 		}
- 
--		if (block_start == ~0ULL) {
--			block_start = phys_block;
--			block_stop = block_start - 1;
--		}
-+		if (block_start == ~0ULL)
-+			block_stop = block_start = phys_block;
- 
- 		/*
- 		 * last block not contiguous with current block,
- 		 * process last contiguous region and return to this block on
- 		 * next loop
- 		 */
--		if (phys_block != block_stop + 1) {
-+		if (phys_block != block_stop) {
- 			block--;
- 		} else {
- 			block_stop++;
-@@ -1994,11 +1992,10 @@ static int __jbd2_journal_erase(journal_t *journal, unsigned int flags)
- 		 */
- 		byte_start = block_start * journal->j_blocksize;
- 		byte_stop = block_stop * journal->j_blocksize;
--		byte_count = (block_stop - block_start + 1) *
--				journal->j_blocksize;
-+		byte_count = (block_stop - block_start) * journal->j_blocksize;
- 
- 		truncate_inode_pages_range(journal->j_dev->bd_mapping,
--				byte_start, byte_stop);
-+				byte_start, byte_stop - 1);
- 
- 		if (flags & JBD2_JOURNAL_FLUSH_DISCARD) {
- 			err = blkdev_issue_discard(journal->j_dev,
-@@ -2013,7 +2010,7 @@ static int __jbd2_journal_erase(journal_t *journal, unsigned int flags)
- 		}
- 
- 		if (unlikely(err != 0)) {
--			pr_err("JBD2: (error %d) unable to wipe journal at physical blocks %llu - %llu",
-+			pr_err("JBD2: (error %d) unable to wipe journal at physical blocks [%llu, %llu)",
- 					err, block_start, block_stop);
- 			return err;
- 		}
--- 
-2.46.1
-
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
