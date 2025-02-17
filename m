@@ -1,133 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-41879-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41880-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD76EA38B7A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 19:49:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71D11A38B86
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 19:51:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BD2D188C48D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 18:49:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AC337A4F94
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 18:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B37236427;
-	Mon, 17 Feb 2025 18:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF50236A9C;
+	Mon, 17 Feb 2025 18:51:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="lzpO2IMM"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qvlvJAP8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62E2137C35;
-	Mon, 17 Feb 2025 18:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348CA22A1E6;
+	Mon, 17 Feb 2025 18:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739818140; cv=none; b=E9GeA5uR1+ErWg08CIYC+CGeNrcUAQoZIdkZyErvSpg+CGYbkeUQj0XsmP3iZG2U9XhFpexVb6zd7PU0xiPzPyodLbIGYuztRjoiMNY9+TM7kJAxz6Ez+a1JgImEuaQDBvqwsSDITna4gSiLyANy4DT6G4dZOyR1M3izg3hWkuU=
+	t=1739818284; cv=none; b=L5RnUaEBEKB6ZYXDTjRjayyIo5WoTmVGG8eTAiVtIkp85pFz33ZUxNWMVxZxcWGEgZZkNbQ+0tieOiyj7aM10tAr5kpFpLLf8Xmq/dLHts5sdFJc67RG7jojWoh7JPc8/9+/gFow6yr0oSNeZocKBpQOJLZuilwSAegYqooWcB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739818140; c=relaxed/simple;
-	bh=Qs9Nil2R/XxJ5XjFccwRIWDUcU/WSJf2XzHumfIdwdM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Igo9K1WqRUkBNCKGkJXeKg2KwURlxIOkXlAspbboc9p5uKnfqTJpL7zxmx4fzjblJFQPuFYbdzfeioFfMpparQGPoSm4g1mDLFfk/gloNbS4QKyw8UqFMfk72fOPADDrmhz2r75oRVSn9F7V0pXyqGKltMaRHXD0HDJnKXJeJko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=lzpO2IMM; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=+3WSWnDNr9QaA4O1ueCYToheHUKAnyW6aGcOiPLcDkg=; b=lzpO2IMMyeJBBIHf4UpdIWcTnj
-	BwJlFj+zEYtj0Cdb4Keiu50VO2uAzIjfBHv+cJQA3dEiH0qodeiVNdUIgu2+vomnR7J1sB+Pp6Jdf
-	zE05ZLmvotUpxuKLz18so3WL8jTDo5muj4ZjbEsQl2VeXzlgTMAviKnIIRPvs9MHptaX6xR9MLU6L
-	ASr37kcaz/01Jk6rOt8iYXc9rgx435VHz+ECwaL0ELIqWYpGpoAu8bT4+SYhnniYu9h1qjgeX9Hj+
-	H7TfD/Ib0ul5j5C31HFUGgee3inH1YSHo5+jSQLFV3kI3w6kqppMR5AYG/Dov8IajJIGaIQgqjShp
-	iRuJ1F5Q==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tk6AY-006wmZ-1O; Mon, 17 Feb 2025 19:48:43 +0100
-From: Luis Henriques <luis@igalia.com>
+	s=arc-20240116; t=1739818284; c=relaxed/simple;
+	bh=2eQc7nvh42nEffNI7qjDvuXRyDqLqHSynT+xP9Plq5M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uYC0W+bumVj4vlz9koCeCh5X9pjcstaqlCmhZOBVQ88W5xBMURW3ZbPcUUbnVnfX1aIUQtQGEeXliePE2MtuTP7rCq+dWuK9qBEWP1PvYgypste/Er59AHV/Ndb1VQOIImNWRqTvz2JQFK5nnaC+XK9Cx6fGqvrMUANzuL/TU00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qvlvJAP8; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=5iiwKG65PVOjsfmb6e1Nu6WPlqtL78lpUf8uESALYso=; b=qvlvJAP83DyfnNoLfVrp3RwAA0
+	74uObTitBr7G3Sax60qYIjxMV13+xgHYwakUpGfRHRmEQ9GRGUHNsZuld9KwiQmrObqsutgK00A4B
+	4Gs6rZ53zIwDSiDMN7SVuhF4L9oo9WfXBskK8k/VC9XlRKVHLeVYFMT77OQqPuPMdwanl0scfh/9T
+	Z9Lmbgppfnrsz0mXq4NcoJmxbu8nz2+YJlav1POAxw7OVI6YB/s0EqbnjlWW0keL5WnQ1TP0EqZ+9
+	UZj5aLQpp4Yz48HUJ+CLMZLjETCiB9ceAYZkPYtHsdMJN3iYGPVTsaTsPxMOvMfqn8gd8JlWAojMW
+	e1pUd08g==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tk6DB-00000001nva-0N4L;
+	Mon, 17 Feb 2025 18:51:21 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-  "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-  "jlayton@kernel.org" <jlayton@kernel.org>,
-  "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-  "idryomov@gmail.com" <idryomov@gmail.com>
-Subject: Re: [RFC] odd check in ceph_encode_encrypted_dname()
-In-Reply-To: <4ac938a32997798a0b76189b33d6e4d65c23a32f.camel@ibm.com>
-	(Viacheslav Dubeyko's message of "Mon, 17 Feb 2025 17:56:56 +0000")
-References: <20250214024756.GY1977892@ZenIV> <20250214032820.GZ1977892@ZenIV>
-	<bbc3361f9c241942f44298286ba09b087a10b78b.camel@kernel.org>
-	<87frkg7bqh.fsf@igalia.com> <20250215044616.GF1977892@ZenIV>
-	<877c5rxlng.fsf@igalia.com>
-	<4ac938a32997798a0b76189b33d6e4d65c23a32f.camel@ibm.com>
-Date: Mon, 17 Feb 2025 18:48:43 +0000
-Message-ID: <87cyfgwgok.fsf@igalia.com>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	ceph-devel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	David Howells <dhowells@redhat.com>
+Subject: [PATCH v3 0/9] Remove accesses to page->index from ceph
+Date: Mon, 17 Feb 2025 18:51:08 +0000
+Message-ID: <20250217185119.430193-1-willy@infradead.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 17 2025, Viacheslav Dubeyko wrote:
+This is a rebase of Friday's patchset onto
+git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git netfs-fixes
+as requested by Dave.
 
-> On Sat, 2025-02-15 at 15:39 +0000, Luis Henriques wrote:
->> On Sat, Feb 15 2025, Al Viro wrote:
->>=20
->> > On Fri, Feb 14, 2025 at 04:05:42PM +0000, Luis Henriques wrote:
->> >=20
->> > > So, IIRC, when encrypting the snapshot name (the "my-snapshot" strin=
-g),
->> > > you'll use key from the original inode.  That's why we need to handle
->> > > snapshot names starting with '_' differently.  And why we have a
->> > > customized base64 encoding function.
->> >=20
->> > OK...  The reason I went looking at that thing was the race with renam=
-e()
->> > that can end up with UAF in ceph_mdsc_build_path().
->> >=20
->> > We copy the plaintext name under ->d_lock, but then we call
->> > ceph_encode_encrypted_fname() which passes dentry->d_name to
->> > ceph_encode_encrypted_dname() with no locking whatsoever.
->> >=20
->> > Have it race with rename and you've got a lot of unpleasantness.
->> >=20
->> > The thing is, we can have all ceph_encode_encrypted_dname() put the
->> > plaintext name into buf; that eliminates the need to have a separate
->> > qstr (or dentry, in case of ceph_encode_encrypted_fname()) argument and
->> > simplifies ceph_encode_encrypted_dname() while we are at it.
->> >=20
->> > Proposed fix in git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs=
-.git #d_name
->> >=20
->> > WARNING: it's completely untested and needs review.  It's split in two=
- commits
->> > (massage of ceph_encode_encrypted_dname(), then changing the calling c=
-onventions);
->> > both patches in followups.
->> >=20
->> > Please, review.
->>=20
->> I've reviewed both patches and they seem to be OK, so feel free to add my
->>=20
->> Reviewed-by: Luis Henriques <luis@igalia.com>
->>=20
->> But as I said, I don't have a test environment at the moment.  I'm adding
->> Slava to CC with the hope that he may be able to run some fscrypt-specif=
-ic
->> tests (including snapshots creation) against these patches.
->>=20
->>=20
->
-> Let me apply the patches and test it. I'll share the testing results ASAP.
+The original patch 1/7 is gone as it is no longer necessary.
+Patches 2-6 are retained intact as patches 1-5 in this patchset.
+Patch 7 is hopefully patches 6-9 in this patchset.
 
-Awesome!  Thanks a lot.
+Matthew Wilcox (Oracle) (9):
+  ceph: Remove ceph_writepage()
+  ceph: Use a folio in ceph_page_mkwrite()
+  ceph: Convert ceph_find_incompatible() to take a folio
+  ceph: Convert ceph_readdir_cache_control to store a folio
+  ceph: Convert writepage_nounlock() to write_folio_nounlock()
+  ceph: Convert ceph_check_page_before_write() to use a folio
+  ceph: Remove uses of page from ceph_process_folio_batch()
+  ceph: Convert ceph_move_dirty_page_in_page_array() to
+    move_dirty_folio_in_page_array()
+  ceph: Pass a folio to ceph_allocate_page_array()
 
-Cheers,
---=20
-Lu=C3=ADs
+ fs/ceph/addr.c  | 239 +++++++++++++++++++++---------------------------
+ fs/ceph/dir.c   |  15 +--
+ fs/ceph/inode.c |  26 +++---
+ fs/ceph/super.h |   2 +-
+ 4 files changed, 127 insertions(+), 155 deletions(-)
+
+-- 
+2.47.2
+
 
