@@ -1,139 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-41845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACB0EA381E0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 12:36:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EB56A381E6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 12:37:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5079516F1E5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 11:36:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9E5C7A06D0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 11:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39DC7218EB0;
-	Mon, 17 Feb 2025 11:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0FA218EA7;
+	Mon, 17 Feb 2025 11:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dDhlAgJW"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Xy8M7sav"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B56D218ADD;
-	Mon, 17 Feb 2025 11:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1134E194C8B;
+	Mon, 17 Feb 2025 11:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739792153; cv=none; b=i3MiIZ+B34RJg0tsPCLrA8WVQekvvmDKTOmnrjpmYBBIZ9TU9m2WibMkI9Vw3tE/Y5+dLUbKu60FrMyc3liE55ICIRKFqYZ3GXzs7cgxpiquF1Ed3N1MgqieQBKoF3QqqP2/i3llAu3IfSaaVlomCAbAQ/FAJSUsNnQwvhTHfw4=
+	t=1739792227; cv=none; b=fLn+wjGlS2Tlt0xv4J/Sv9kHEnM7xwkMXLwEPB7J/SPyeY4d0zV6yNYqKkHl6RBEdNdZPkxkHdE/2ga07R0ygEWariOvPdPTYqjoToRxxjnoS9OBTSTrROjFMOnNK5//q7e4pQHc+DnrSaHrjy5VxYEHxJCx3zyYaWukbtHM4qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739792153; c=relaxed/simple;
-	bh=+IGG54n1lmfSbU9emZ51GaDiateiqm/EMpg9ehhM86w=;
+	s=arc-20240116; t=1739792227; c=relaxed/simple;
+	bh=7nF6WKIMD0Koam7Ku83wpKSZ4ebHAFoccY30ttsjZPg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TvR2P3agYKxaoFGK/N/ApxIYZfJnULwg+y8tV2HrHFCJXtkF3972FRDfo9Ipstz6BvR/TZUG3pilTivNUEWwxSF05PrAITbZk/xih2OjvQkDnYWoblleGKDjrb0IlhCe208kJIV59+LPlzNvjv6sVl5XqIQiSAF7M3VPYoCViGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dDhlAgJW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 760D6C4CED1;
-	Mon, 17 Feb 2025 11:35:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739792152;
-	bh=+IGG54n1lmfSbU9emZ51GaDiateiqm/EMpg9ehhM86w=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=V/yYr8innLgfjdleaM6u1FmMxEwu40yqpSRfPgxoePCuzy9CnXm10DyK6jP75aSQXQo5jz/aALAAO8uRfa7TCppyLyXWajV5Sj2nNPbb0gKmbbzJcisWypPtrp5TAlcky/XpiMYx7tXVInZIhRkBQY15gsgp5xXVgZsnjn2KiMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Xy8M7sav; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9702C4CED1;
+	Mon, 17 Feb 2025 11:37:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739792226;
+	bh=7nF6WKIMD0Koam7Ku83wpKSZ4ebHAFoccY30ttsjZPg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dDhlAgJWcH8yw/tYPDr27ADbMMiim3kxn9Fhxmq+D1Qt28Ejs7cIOjrGKbYcf2tvJ
-	 CLlT7Xp/ZMcveUlu/EiJFxcWNe0nsQCg9Ji5p+sUZCSEqnXTKwwlkfAYcLLl4AE6QA
-	 4iX+bPA+Rdw3W4gW29pNnEnDcUHXfds4lO+iyYWvqsVj1QU/3zlP1VQStSL8MzPQbX
-	 9W7cu9s/cdLL+pX7sx342DyG0a1ARoir2Ja+se4d9nCE2/Mpo5hwSUnxBYbuSjN507
-	 P0j3Pe3jhUEmoZVhT/ny9C0wTu/CXnBRy0ICie7Ba8WT+3m0gVAAn3jQwWgNWRXfm6
-	 9dGkgbWLXXZcA==
-Date: Mon, 17 Feb 2025 12:35:45 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Matthew Wilcox <willy@infradead.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
-	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH v16 3/4] rust: xarray: Add an abstraction for XArray
-Message-ID: <Z7MfETop-rGSNLFo@cassiopeiae>
-References: <20250207-rust-xarray-bindings-v16-0-256b0cf936bd@gmail.com>
- <20250207-rust-xarray-bindings-v16-3-256b0cf936bd@gmail.com>
+	b=Xy8M7savn9j3irkGmRvfXsrYgcsmNYqRFpNXByjiysepoxAQq9axWXmlhHZKEHt0b
+	 Z37gzyKT7wBsNtsOlsAZUtw3Os9LcgBO5cCdeic8/lPgYueliRiFa4matTf7rqC4uh
+	 tJ3UMokdBmo6MSMNBnK2GQ9SjOb2gtDLlBJNbm04=
+Date: Mon, 17 Feb 2025 12:37:03 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Herbert Xu <herbert@gondor.apana.org.au>, willy@infradead.org,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Yang Shi <yang@os.amperecomputing.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 6.6 000/389] 6.6.76-rc2 review
+Message-ID: <2025021739-jackpot-lip-09f9@gregkh>
+References: <20250206155234.095034647@linuxfoundation.org>
+ <CA+G9fYvKzV=jo9AmKH2tJeLr0W8xyjxuVO-P+ZEBdou6C=mKUw@mail.gmail.com>
+ <CA+G9fYtqBxt+JwSLCcVBchh94GVRhbo9rTP26ceJ=sf4MDo61Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250207-rust-xarray-bindings-v16-3-256b0cf936bd@gmail.com>
+In-Reply-To: <CA+G9fYtqBxt+JwSLCcVBchh94GVRhbo9rTP26ceJ=sf4MDo61Q@mail.gmail.com>
 
-On Fri, Feb 07, 2025 at 08:58:26AM -0500, Tamir Duberstein wrote:
-> `XArray` is an efficient sparse array of pointers. Add a Rust
-> abstraction for this type.
+On Mon, Feb 17, 2025 at 05:00:43PM +0530, Naresh Kamboju wrote:
+> On Sat, 8 Feb 2025 at 16:54, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> >
+> > On Thu, 6 Feb 2025 at 21:36, Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > This is the start of the stable review cycle for the 6.6.76 release.
+> > > There are 389 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > >
+> > > Responses should be made by Sat, 08 Feb 2025 15:51:12 +0000.
+> > > Anything received after that time might be too late.
+> > >
+> > > The whole patch series can be found in one patch at:
+> > >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.76-rc2.gz
+> > > or in the git tree and branch at:
+> > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> > > and the diffstat can be found below.
+> > >
+> > > thanks,
+> > >
+> > > greg k-h
+> >
+> >
+> > There are three different regressions found and reporting here,
+> > We are working on bisecting and investigating these issues,
 > 
-> This implementation bounds the element type on `ForeignOwnable` and
-> requires explicit locking for all operations. Future work may leverage
-> RCU to enable lockless operation.
+> We observed a kernel warning on QEMU-ARM64 and FVP while running the
+> newly added selftest: arm64: check_hugetlb_options. This issue appears
+> on 6.6.76 onward and 6.12.13 onward, as reported in the stable review [1].
+> However, the test case passes successfully on stable 6.13.
 > 
-> Inspired-by: Maíra Canal <mcanal@igalia.com>
-> Inspired-by: Asahi Lina <lina@asahilina.net>
-> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
->  rust/bindings/bindings_helper.h |   6 +
->  rust/helpers/helpers.c          |   1 +
->  rust/helpers/xarray.c           |  28 ++++
->  rust/kernel/alloc.rs            |   5 +
->  rust/kernel/lib.rs              |   1 +
->  rust/kernel/xarray.rs           | 276 ++++++++++++++++++++++++++++++++++++++++
->  6 files changed, 317 insertions(+)
+> The selftests: arm64: check_hugetlb_options test was introduced following
+> the recent upgrade of kselftest test sources to the stable 6.13 branch.
+> As you are aware, LKFT runs the latest kselftest sources (from stable
+> 6.13.x) on 6.12.x, 6.6.x, and older kernels for validation purposes.
 > 
-> diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
-> index fc9c9c41cd79..77840413598d 100644
-> --- a/rust/kernel/alloc.rs
-> +++ b/rust/kernel/alloc.rs
-> @@ -39,6 +39,11 @@
->  pub struct Flags(u32);
->  
->  impl Flags {
-> +    /// Get a flags value with all bits unset.
-> +    pub fn empty() -> Self {
-> +        Self(0)
-> +    }
+> >From Anders' bisection results, we identified that the missing patch on
+> 6.12 is likely causing this regression:
+> 
+> First fixed commit:
+> [25c17c4b55def92a01e3eecc9c775a6ee25ca20f]
+> hugetlb: arm64: add MTE support
+> 
+> Could you confirm whether this patch is eligible for backporting to
+> 6.12 and 6.6 kernels?
+> If backporting is not an option, we will need to skip running this
+> test case on older kernels.
 
-No! Zero is not a reasonable default for GFP flags. In fact, I don't know any
-place in the kernel where we would want no reclaim + no IO + no FS without any
-other flags (such as high-priority or kswapd can wake). Especially, because for
-NOIO and NOFS, memalloc_noio_{save, restore} and memalloc_nofs_{save, restore}
-guards should be used instead.
+The test case itself should properly "skip" if the feature is not
+present in the kernel.  Why not fix that up instead?
 
-You also don't seem to use this anywhere anyways.
+thanks,
 
-Please also make sure to not bury such changes in unrelated other patches.
-
-> +/// The error returned by [`store`](Guard::store).
-> +///
-> +/// Contains the underlying error and the value that was not stored.
-> +pub struct StoreError<T> {
-> +    /// The error that occurred.
-> +    pub error: Error,
-> +    /// The value that was not stored.
-> +    pub value: T,
-> +}
-> +
-> +impl<T> From<StoreError<T>> for Error {
-> +    fn from(value: StoreError<T>) -> Self {
-> +        let StoreError { error, value: _ } = value;
-> +        error
-
-Why not just `value.error`?
+greg k-h
 
