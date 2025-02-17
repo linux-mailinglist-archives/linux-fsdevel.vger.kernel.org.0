@@ -1,69 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-41849-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41850-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29326A382A2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 13:13:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA15A38456
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 14:18:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 316483A2D7F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 12:13:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 206FE175164
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 13:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90BC21A443;
-	Mon, 17 Feb 2025 12:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D51221CC55;
+	Mon, 17 Feb 2025 13:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sF2WsCXn"
+	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="Hr76/uRW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.tlmp.cc (unknown [148.135.104.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D822185A8;
-	Mon, 17 Feb 2025 12:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4155821C191;
+	Mon, 17 Feb 2025 13:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.104.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739794380; cv=none; b=pz57ANKm9F1crhq+0NOXUVHdsf0Ul/n6MEjGZFoMBnII0lat23HWI/ZqicglecMnxJHXZthLtCy9YMlpDgV+L/i9ydtibeYR/jfZlqJBIm8LWZhDFsWWxPFMOG6xTdjsILi9DBgxKu2reLdWYmAuknKvfPxOH9msChS523mn3Ag=
+	t=1739798041; cv=none; b=MX5ru+cD/YgMQrejwEgEbtopk6d/1chZIhi4A8OUm+NGBF2N2H16vprcusIZYMZQbY0pfqXC0cTNVMbc8+x9d/cqV5lIf1rg4YPuSpbRb2pbv7JE5EvrdZqOo6We7Kc5gdWPOQIMIR3MzWJ/ofyMLEJRD1cJmwBeJJ3LPVRrdSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739794380; c=relaxed/simple;
-	bh=VJNVrcvoIcKGWBC4m+wwvcuEU2F2sV9NM4ZPEjdhRA0=;
+	s=arc-20240116; t=1739798041; c=relaxed/simple;
+	bh=yfcja7yr+aI/lTUxW5RMXDC86vGcZIWVsYT+gOG/FC0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ti2g6STouqN97krAphPnZVywqT2hHIOAfayGT837V90l9BOIjuYlCdJ7AqXf/9YKmpXzBFnXGy3k8/rptlw6vMsxfjueEk0C8FcdU6mY1Q/rc53zOt8FV8HaSgCdCggZbWgDfXrjfrQsgHOw9OoRoIES/J0qaJz2kfXDFEVEfqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sF2WsCXn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0FC7C4CED1;
-	Mon, 17 Feb 2025 12:12:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739794379;
-	bh=VJNVrcvoIcKGWBC4m+wwvcuEU2F2sV9NM4ZPEjdhRA0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sF2WsCXnNO2Mq09ZP8eSrQmmecWEJZ6QCZhrPgk69AgUzET9dlUqjJDIWCzUCPaXi
-	 XgYLSeUO/aw0P3rJE8SbUet5UGF3b7SZFuw72dDnFbVXzCZXFmW7Cc4cXokrYIRKpJ
-	 nni21nwzpaC1ZBEzhUMsTfl59HQ6Gc3+ZOkz35+gE+RRIUl10OF3Xhso+ULq/JLgCE
-	 aP0VHmM27BR2OcELOO6pHlSLkKQcTPctahl1VztCZON8O1G2PIokz75s6hbUPjk3bE
-	 0H2a1ekaqdCVSNMvyc9F3QB1b/UiWwaqe1WXhvTvcwhirt15WONul4o3b642kNFsH/
-	 cBdb+gVEj0FEg==
-Date: Mon, 17 Feb 2025 13:12:52 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Matthew Wilcox <willy@infradead.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
-	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, Fiona Behrens <me@kloenk.dev>
-Subject: Re: [PATCH v16 2/4] rust: types: add `ForeignOwnable::PointedTo`
-Message-ID: <Z7MnxKSSNY7IyExt@cassiopeiae>
-References: <20250207-rust-xarray-bindings-v16-0-256b0cf936bd@gmail.com>
- <20250207-rust-xarray-bindings-v16-2-256b0cf936bd@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T9Kkf2jJGdiZSjEcO05cHf1lauE0dDsARzpOow4QXIrjaoUw3Bv4tTBQasfN0kVQ9ks6rPVNKqbVwFXkCkVTc4pyzKHe6gG3q9NzDyL5ImEZ4+uvjPyW/N23yOnYKEDdbpzMQDPULo/gf02YQhlSt0sI5gynHXgSu1EW3nDZLOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=Hr76/uRW; arc=none smtp.client-ip=148.135.104.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4759F5F587;
+	Mon, 17 Feb 2025 08:08:28 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
+	t=1739797721; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:in-reply-to:in-reply-to:  references:references;
+	bh=gzJ2YG6weSz+CFbCyKl4mnY+VTrcTl16Wh/C2tZm7So=;
+	b=Hr76/uRWkKlFnJ9mXitWgfsKCR5bkSaoSUi28tvfsejgjGS7BsOSdwwTTBRJ2aMhY84EvA
+	Z1GmO8cvlB684BYprLOXvewp9WqhhBHQWOoFcsRkxFbFGbAi57FqGbl1AozUC+JU+9WIa3
+	yId6kAVXF+SKz8jn8vA53vqzQHdibStxZmf0dXPvMqHff39grxtCH/o72AmCiiWEXVBQel
+	uxHJTSm6BdZT1jAyg02UE4lSjPM3uAo6bUshW2HKEJIJ5ojz3y6eM1BnXR/yA1Nt+kAbiA
+	LHuOAVPMVCvQ5Bloss2LMlUtOnj1icsD4L7xjpZMC0Dcsoqz1XrNrqx6a38WlA==
+Date: Mon, 17 Feb 2025 21:08:21 +0800
+From: Yiyang Wu <toolmanp@tlmp.cc>
+To: Andreas Hindborg <a.hindborg@kernel.org>, 
+	lsf-pc@lists.linux-foundation.org
+Cc: linux-block@vger.kernel.org, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Gao Xiang <hsiangkao@linux.alibaba.com>, linux-erofs mailing list <linux-erofs@lists.ozlabs.org>
+Subject: Re: [LSF/MM/BPF TOPIC] Rust in FS, Storage, MM
+Message-ID: <g5tqgpda4wbhpmi5ahh5btujwajy5dolcouhk2hx6qo2fg5nwr@ua2wnnuvxmeb>
+Reply-To: 0290170c-39df-4609-8de1-55695d6ec0ad@linux.alibaba.com
+References: <87ldu9uiyo.fsf@kernel.org>
+ <0290170c-39df-4609-8de1-55695d6ec0ad@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,154 +63,81 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250207-rust-xarray-bindings-v16-2-256b0cf936bd@gmail.com>
+In-Reply-To: <0290170c-39df-4609-8de1-55695d6ec0ad@linux.alibaba.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Feb 07, 2025 at 08:58:25AM -0500, Tamir Duberstein wrote:
-> Allow implementors to specify the foreign pointer type; this exposes
-> information about the pointed-to type such as its alignment.
+On Mon, Feb 17, 2025 at 06:41:32PM +0800, Gao Xiang wrote:
 > 
-> This requires the trait to be `unsafe` since it is now possible for
-> implementors to break soundness by returning a misaligned pointer.
 > 
-> Encoding the pointer type in the trait (and avoiding pointer casts)
-> allows the compiler to check that implementors return the correct
-> pointer type. This is preferable to directly encoding the alignment in
-> the trait using a constant as the compiler would be unable to check it.
+> On 2025/2/14 14:41, Andreas Hindborg wrote:
+> > Hi All,
+> > 
+> > On behalf of the Linux kernel Rust subsystem team, I would like to suggest a
+> > general plenary session focused on Rust. Based on audience interest we would
+> > discuss:
+> > 
+> >   - Status of rust adoption in each subsystem - what did we achieve since last
+> >     LSF?
+> >   - Insights from the maintainers of subsystems that have merged Rust - how was
+> >     the experience?
+> >   - A reflection on process - does the current approach work or should we change
+> >     something?
+> >   - General Q&A
 > 
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
-> Reviewed-by: Fiona Behrens <me@kloenk.dev>
-
-I know that Andreas also asked you to pick up the RBs from [1], but - without
-speaking for any of the people above - given that you changed this commit after
-you received all those RBs you should also consider dropping them. Especially,
-since you do not mention the changes you did for this commit in the version
-history.
-
-Just to be clear, often it is also fine to keep tags for minor changes, but then
-you should make people aware of them in the version history, such that they get
-the chance to double check.
-
-[1] https://lore.kernel.org/rust-for-linux/20250131-configfs-v1-1-87947611401c@kernel.org/
-
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
->  rust/kernel/alloc/kbox.rs | 38 ++++++++++++++++++++------------------
->  rust/kernel/miscdevice.rs |  7 ++++++-
->  rust/kernel/pci.rs        |  2 ++
->  rust/kernel/platform.rs   |  2 ++
->  rust/kernel/sync/arc.rs   | 21 ++++++++++++---------
->  rust/kernel/types.rs      | 46 +++++++++++++++++++++++++++++++---------------
->  6 files changed, 73 insertions(+), 43 deletions(-)
+> Last year Yiyang worked on an experimental Rust EROFS codebase and
+> ran into some policy issue (c+rust integration), although Rust
+> adaption is not the top priority stuff in our entire TODO list but
+> we'd like to see it could finally get into shape and landed as an
+> alternative part to replace some C code (maybe finally the whole
+> part) if anyone really would like to try to switch to the new one.
 > 
-> diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-> index e14433b2ab9d..f1a081dd64c7 100644
-> --- a/rust/kernel/miscdevice.rs
-> +++ b/rust/kernel/miscdevice.rs
-> @@ -225,13 +225,15 @@ impl<T: MiscDevice> VtableHelper<T> {
->          Ok(ptr) => ptr,
->          Err(err) => return err.to_errno(),
->      };
-> +    let ptr = ptr.into_foreign();
-> +    let ptr = ptr.cast();
+> Hopefully some progress could be made this year (by Yiyang), but
+> unfortunately I have no more budget to travel this year, yet
+> that is basically the current status anyway.
+> 
+> Thanks,
+> Gao Xiang
+> 
+> > 
+> > Please note that unfortunately I will be the only representative from the Rust
+> > subsystem team on site this year.
+> > 
+> > Best regards,
+> > Andreas Hindborg
+> > 
+> 
 
-I still think that it's unnecessary to factor this out, you can just do it
-inline as you did in previous versions of this patch and as this code did
-before.
+Since i'm cued in, I'd like to share some of my thoughts on the Rust.
 
->  
->      // This overwrites the private data with the value specified by the user, changing the type of
->      // this file's private data. All future accesses to the private data is performed by other
->      // fops_* methods in this file, which all correctly cast the private data to the new type.
->      //
->      // SAFETY: The open call of a file can access the private data.
-> -    unsafe { (*raw_file).private_data = ptr.into_foreign() };
-> +    unsafe { (*raw_file).private_data = ptr };
->  
->      0
->  }
-> @@ -246,6 +248,7 @@ impl<T: MiscDevice> VtableHelper<T> {
->  ) -> c_int {
->      // SAFETY: The release call of a file owns the private data.
->      let private = unsafe { (*file).private_data };
-> +    let private = private.cast();
->      // SAFETY: The release call of a file owns the private data.
->      let ptr = unsafe { <T::Ptr as ForeignOwnable>::from_foreign(private) };
->  
-> @@ -267,6 +270,7 @@ impl<T: MiscDevice> VtableHelper<T> {
->  ) -> c_long {
->      // SAFETY: The ioctl call of a file can access the private data.
->      let private = unsafe { (*file).private_data };
-> +    let private = private.cast();
->      // SAFETY: Ioctl calls can borrow the private data of the file.
->      let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
->  
-> @@ -316,6 +320,7 @@ impl<T: MiscDevice> VtableHelper<T> {
->  ) {
->      // SAFETY: The release call of a file owns the private data.
->      let private = unsafe { (*file).private_data };
-> +    let private = private.cast();
->      // SAFETY: Ioctl calls can borrow the private data of the file.
->      let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
->      // SAFETY:
-> diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-> index 6c3bc14b42ad..eb25fabbff9c 100644
-> --- a/rust/kernel/pci.rs
-> +++ b/rust/kernel/pci.rs
-> @@ -73,6 +73,7 @@ extern "C" fn probe_callback(
->          match T::probe(&mut pdev, info) {
->              Ok(data) => {
->                  let data = data.into_foreign();
-> +                let data = data.cast();
+I've worked on the EROFS Rust codebase so far. I may have insights on
+the current status of Rust subsystem progress. On the Filesystem level,
+there still left a lot of yet to be determined especially.
 
-Same here and below, see also [2].
+Reimplementing the core functionality of a filesystem is already ok,
+though not from perfect, and certainly we need a better abstraction
+to model the filesystem correctly in rust language.A lot of helpers (MM,
+BDev, Network Application Layer for NFS, etc.)
 
-I understand you like this style and I'm not saying it's wrong or forbidden and
-for code that you maintain such nits are entirely up to you as far as I'm
-concerned.
+are still left in the wild to be completed and it requires a lot of
+coordination from other subsystem maintainer and rust maintainer
+to abstract the C-API into Rust code a way that all parties can hold on to.
+I guess it's not the right time to do so in general, we can use rust in
+some specific filesystems but generally before other subsystems's API
+are stabilized, it's not a good idea to refactor the whole VFS codebase
+and abstract the API into Rust one.
 
-But I also don't think there is a necessity to convert things to your preference
-wherever you touch existing code.
+Filesystem should be free from memory corruption and rust is
+definitely worth the efforts to refactor some of the codebase. 
+That means that we may need restrict the flexibility or somehow refactor
+the object model that current VFS uses and this certainly requires the
+original team that implements the VFS to be involved, at least express
+some willingness and interest to refactor instead of gatekeeping the
+whole codebase and shutting down the whole discussion (i don't mean to
+make criticism here BTW since we should be pretty cautionous on the
+original code and don't introduce certain regression issues.) But i guess the
+whole community is somehow polarized on this issue, it may not be an
+easy job to begin with, alas.
 
-I already explicitly asked you not to do so in [3] and yet you did so while
-keeping my ACK. :(
-
-(Only saying the latter for reference, no need to send a new version of [3],
-otherwise I would have replied.)
-
-[2] https://lore.kernel.org/rust-for-linux/Z7MYNQgo28sr_4RS@cassiopeiae/
-[3] https://lore.kernel.org/rust-for-linux/20250213-aligned-alloc-v7-1-d2a2d0be164b@gmail.com/
-
->                  // Let the `struct pci_dev` own a reference of the driver's private data.
->                  // SAFETY: By the type invariant `pdev.as_raw` returns a valid pointer to a
->                  // `struct pci_dev`.
-> @@ -88,6 +89,7 @@ extern "C" fn remove_callback(pdev: *mut bindings::pci_dev) {
->          // SAFETY: The PCI bus only ever calls the remove callback with a valid pointer to a
->          // `struct pci_dev`.
->          let ptr = unsafe { bindings::pci_get_drvdata(pdev) };
-> +        let ptr = ptr.cast();
->  
->          // SAFETY: `remove_callback` is only ever called after a successful call to
->          // `probe_callback`, hence it's guaranteed that `ptr` points to a valid and initialized
-> diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
-> index dea104563fa9..53764cb7f804 100644
-> --- a/rust/kernel/platform.rs
-> +++ b/rust/kernel/platform.rs
-> @@ -64,6 +64,7 @@ extern "C" fn probe_callback(pdev: *mut bindings::platform_device) -> kernel::ff
->          match T::probe(&mut pdev, info) {
->              Ok(data) => {
->                  let data = data.into_foreign();
-> +                let data = data.cast();
->                  // Let the `struct platform_device` own a reference of the driver's private data.
->                  // SAFETY: By the type invariant `pdev.as_raw` returns a valid pointer to a
->                  // `struct platform_device`.
-> @@ -78,6 +79,7 @@ extern "C" fn probe_callback(pdev: *mut bindings::platform_device) -> kernel::ff
->      extern "C" fn remove_callback(pdev: *mut bindings::platform_device) {
->          // SAFETY: `pdev` is a valid pointer to a `struct platform_device`.
->          let ptr = unsafe { bindings::platform_get_drvdata(pdev) };
-> +        let ptr = ptr.cast();
->  
->          // SAFETY: `remove_callback` is only ever called after a successful call to
->          // `probe_callback`, hence it's guaranteed that `ptr` points to a valid and initialized
-
+Best Regards,
+Yiyang
 
