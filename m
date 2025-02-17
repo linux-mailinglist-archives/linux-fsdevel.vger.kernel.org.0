@@ -1,423 +1,304 @@
-Return-Path: <linux-fsdevel+bounces-41812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A593A37935
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 01:31:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1C59A37946
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 01:51:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 026271887F3A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 00:31:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E88516D363
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 00:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F0F101EE;
-	Mon, 17 Feb 2025 00:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F06D528;
+	Mon, 17 Feb 2025 00:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OIqU7N3A";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cyMs895y";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OIqU7N3A";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cyMs895y"
+	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="dkgQdio0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from outbound-ip168b.ess.barracuda.com (outbound-ip168b.ess.barracuda.com [209.222.82.102])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75FED7483
-	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Feb 2025 00:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739752258; cv=none; b=PdDdI8vJ2clw3UFl+Y/z4H/DbTuhvg6taODQipf4hqjlH6aBJU31TVZIq3Sv/CR2gU+qqdUjpmHAuyHPTxr6gEPgtIGk6i1vB3kL1c5mmnEpwxs92K3UWNG+rTk/9I2goZ2soNYPVfefpNNdIiTv4y1IgZ15oNhdR4tCtui8/hU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739752258; c=relaxed/simple;
-	bh=zldPhPfWi24bHWNiNznSpIaITcjoLGS52Sun5Ysd2KE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WRB52VrAwoQYJNN957dj7lejOGG2PMKBL48p962pC766oX45UC1KrP4i+Tvbx47CDjoo5kud3BD+PLJpk87PgkyxdSLpPkzWWkmBg+9qxmLw/qIkpEQHrOhptvmeCIicoNcyavQsz9nrExfFeaY+htyr6fxZphapzzQtWTegvSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OIqU7N3A; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cyMs895y; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OIqU7N3A; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cyMs895y; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9AA6A1F38E;
-	Mon, 17 Feb 2025 00:30:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739752251; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rzntZag4Jyd7I2J65VWUhUDAU6A8G27ubNJ4dWYpTrM=;
-	b=OIqU7N3AnyWXjPqWRNAyxuWMwjD2aP8aEtxDwkPLWNowLTB3ZGz3p0bb7toZcsdJh2jwkM
-	tY1cUhX9P3NgiU/X4XyUwUXlfWHAY4vx050+PTiUTxRJPjzloJCH6H7aHXYWN2fvea5szE
-	+wEeKGbxis8ZUMZfoZ468fm4Wxdqqrs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739752251;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rzntZag4Jyd7I2J65VWUhUDAU6A8G27ubNJ4dWYpTrM=;
-	b=cyMs895yVljvJZ/Zj4TiLFIXwGK3kb+8wdSZLZqrBUE7VKW3p3NAJQiCjlp8xcTcj/T8KA
-	RV/TecOS1DR8zQCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=OIqU7N3A;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=cyMs895y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739752251; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rzntZag4Jyd7I2J65VWUhUDAU6A8G27ubNJ4dWYpTrM=;
-	b=OIqU7N3AnyWXjPqWRNAyxuWMwjD2aP8aEtxDwkPLWNowLTB3ZGz3p0bb7toZcsdJh2jwkM
-	tY1cUhX9P3NgiU/X4XyUwUXlfWHAY4vx050+PTiUTxRJPjzloJCH6H7aHXYWN2fvea5szE
-	+wEeKGbxis8ZUMZfoZ468fm4Wxdqqrs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739752251;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rzntZag4Jyd7I2J65VWUhUDAU6A8G27ubNJ4dWYpTrM=;
-	b=cyMs895yVljvJZ/Zj4TiLFIXwGK3kb+8wdSZLZqrBUE7VKW3p3NAJQiCjlp8xcTcj/T8KA
-	RV/TecOS1DR8zQCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CDF63136AD;
-	Mon, 17 Feb 2025 00:30:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id TFK8IDmDsmfWJwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Mon, 17 Feb 2025 00:30:49 +0000
-From: NeilBrown <neilb@suse.de>
-To: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: [PATCH 2/2] VFS: add common error checks to lookup_one_qstr_excl()
-Date: Mon, 17 Feb 2025 11:27:21 +1100
-Message-ID: <20250217003020.3170652-3-neilb@suse.de>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250217003020.3170652-1-neilb@suse.de>
-References: <20250217003020.3170652-1-neilb@suse.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FDC7483;
+	Mon, 17 Feb 2025 00:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.102
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739753458; cv=fail; b=L1iMHCYq+xxSuW+jgcKr5Nwk+JDmiVjCOI35gDef6ufsVoryEnYsDhGYS84t8Ogy7z5358ewQAgucsnGjM64VLpHraVGfcuD31UE6Vig1xlPEu91obIT+PDAzgER1Q5gNmk3dK+txNuWrOZ1Lx2fDRRiJ1ZDg0GqFJkOgOOKjL0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739753458; c=relaxed/simple;
+	bh=iYtd1r1XLtDtR3BPEbjR585GNtbHHHLn7/nOtlNsV7w=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Rj/blt+XHGopez2LE7ZWajz/hGLGoAgot8Q/iksZTifTo17g7PITpHMiBCkHjxfdm8+kFmXNtmc59unUaL7lPHW1QnKU0JHYbTvQA7KSM9GPhzbAOhIGEzyNtdQ8+CS5zPo+hG1iXYGuoiK9fu04CMY2B8OP0QIqqeWjbaErJ74=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=dkgQdio0; arc=fail smtp.client-ip=209.222.82.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2044.outbound.protection.outlook.com [104.47.55.44]) by mx-outbound-ea18-150.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Mon, 17 Feb 2025 00:40:15 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DQusfoeXdIC2/172AVF3M5BusddskOcPjvNKI6B3EzhsesthKq3sFlb4mJXSHeM1CVCLZ5c9TJsVDgBNQStkhkWIIHU5NWpjrsP6C0Mj9QgCj7KWTOHnSD74iAr2sIPbZmBM/oJaMeN6rpkjMdrl5uGK61Wj/3mXm3k7tzvrtiucpGgKDOLea4ONjaGszHqao6Ei0TnhMlNeUXsothn0wIsnFppXRNq+Du2tvC2XGxnJU3GY2q8sfutP5Vgw0NEEVgXhwjSQ9UtwqkHZqbDsaSbBOWmuQDj431oVhRPZqHDBmKmI/MBRdY65HG+vBDWlhYEIf2aMJMl7nBZKAsbbdA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dLZXDTHk3vK0Ai4Akb24AXjXn53eh11wbT4EMjqtnsk=;
+ b=av8L8PMAL7ggO360c4wBveGSSrzTCLiyEFWuM29bPwqbY3TnyXN6W0orxlwpNRlKN+i8eDTF2nwQnZxAUiPQb9JdJVQ1fEaDakHuv4cyS1mN3NdUrR4x9zuHkyBGALaWXtaMD5lEuEyU37PlAmZ8UnYaRrNiV1U6snpkCNKbxtSUnGWsQkHXDMMnGhtHwmhecY6+44Js0A4yWcO53man06+1iPGCj9OvXxLQkxPcOX6dPwFs9quUev6YYlBuImSr2MhbTkX5o2fxnKsiymA/WnpK5GmqB120FjBRhbMCP7B20gSOal9IJK10NM0W1ZA7INglnxeVFDl2qrHJYZNmEA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ddn.com; dmarc=pass action=none header.from=ddn.com; dkim=pass
+ header.d=ddn.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dLZXDTHk3vK0Ai4Akb24AXjXn53eh11wbT4EMjqtnsk=;
+ b=dkgQdio0U2lmtA2SnHBid7chFsP6nQHuzERDM0np+wcC5g7hcEKQ/pu3uGo/j7LiimrHrCPSHdSBmj715iT4PA3xv+j8xIR5ldq0R0OaLWCnDBscpNiyysFVdcULylJZEoB6iwbm0XHD/PPzraszy6ho9uixOG7BqXVoDq0FVPM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=ddn.com;
+Received: from MN2PR19MB3872.namprd19.prod.outlook.com (2603:10b6:208:1e8::8)
+ by PH7PR19MB7533.namprd19.prod.outlook.com (2603:10b6:510:27c::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Mon, 17 Feb
+ 2025 00:40:11 +0000
+Received: from MN2PR19MB3872.namprd19.prod.outlook.com
+ ([fe80::739:3aed:4ea0:3911]) by MN2PR19MB3872.namprd19.prod.outlook.com
+ ([fe80::739:3aed:4ea0:3911%5]) with mapi id 15.20.8445.017; Mon, 17 Feb 2025
+ 00:40:11 +0000
+Message-ID: <3fac8c84-2c41-461d-92f1-255903fc62a9@ddn.com>
+Date: Mon, 17 Feb 2025 01:40:06 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/2] fuse: add new function to invalidate cache for all
+ inodes
+To: Luis Henriques <luis@igalia.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Dave Chinner <david@fromorbit.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Matt Harvey <mharvey@jumptrading.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250216165008.6671-1-luis@igalia.com>
+ <20250216165008.6671-3-luis@igalia.com>
+From: Bernd Schubert <bschubert@ddn.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <20250216165008.6671-3-luis@igalia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PR3P251CA0010.EURP251.PROD.OUTLOOK.COM
+ (2603:10a6:102:b5::17) To MN2PR19MB3872.namprd19.prod.outlook.com
+ (2603:10b6:208:1e8::8)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 9AA6A1F38E
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR19MB3872:EE_|PH7PR19MB7533:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0c04fb82-13b6-4a93-2ba1-08dd4eeba224
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|10070799003|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z0dleEx3S3VZT0VJeTJ5cHhpUG1mNEdZV1pqRTFUckZNdlVKS3JWZjFmVjMw?=
+ =?utf-8?B?VEVEL1dpVWpmTDIxQTJBQ1JpOVdwZnd2Vnh0MVZaZC9neDRuNXZ6STlZVkM1?=
+ =?utf-8?B?Q1pIbHR1cTBReXFoUk1XcXpjcEhDaGhrcUpMVnZHd3NQTHA1WGY2SFRMd0No?=
+ =?utf-8?B?U1NYckQ4RVp2dWZaRUZvaXpURTVwYmhCcVlwWHpaZUtndUF3ZXc2ZGM4SmxI?=
+ =?utf-8?B?UXp0Rjl1TmNHalI1LytGN05hYnk5Nk1nNElhQUs3VHdIcnp6NnpQQVB4TTB1?=
+ =?utf-8?B?bzR0THdQS0h4QnIzcnhUUWQ0M1ErVlV3YjdwcDByOHNOUTNjRmxVZmlFS1Av?=
+ =?utf-8?B?ZWc1RWRxcnBNT3VIK1NMZHhtbkVtdHRiWTEweGNubjlzWGRQZW1ackw2Y21W?=
+ =?utf-8?B?QkZOZGdpY0tveUlIOWhNZVkwT1JGOHNpY0daV0NqZGRaN3BUdW9qUlY0RXdt?=
+ =?utf-8?B?V2sxdmtJWXhuSUlabDRUNTcrTlBUbXlBeS9DVkhJTFNZZGdLNzl4UEM2SkdE?=
+ =?utf-8?B?K25Ed3FrdzhITGh4M0ZLRFQrMlV0S2RjZXlaWlViR1VWNndQQjk0ZCtiWkdE?=
+ =?utf-8?B?K01MYkkxdWt5UGRwOVkyVG9nZzlYQWVrMmQwaUc3UUt0MzB1QWdNZ0ZWVnlt?=
+ =?utf-8?B?UzZmNHQ2aExWVSt5T2FnaUswclRQZm5FQjJsNkhnRkE0cXJUem1vSEtvUUcy?=
+ =?utf-8?B?Zmtsd3hLSkJqTTZDTi9SbGptRG13QkkzZlQvVzdGdUh2TGdRclVCNjlONStn?=
+ =?utf-8?B?Qjl4ekFIZEtOM3dDMjViZ3BFQXVHMFRSNCs0RVg4R0VJUXEzYVRHWTZsVzh2?=
+ =?utf-8?B?NEZJMWJ6SFFQeEhvWGsxVXdIQmpuN1NvSWFsWTdrRTM2SXVaZnRtRkFYdVJ6?=
+ =?utf-8?B?V0N3S01ZYnFJY2dhdjJpQnRCT3AyNWRhUXFQTHVZSlZRVVJLSzZhRTE3cnBq?=
+ =?utf-8?B?TU5CU29ZRkhSZ1E0UlFONXdpY2VKZy9EbVN5SFp4VzVwejJjZVU5cjQ0VlJV?=
+ =?utf-8?B?elJMUnNhanRHNmdOOTB4dFRCZFRoVXhpVUJ1amt6VmdZVjhFeWl5ZmVwRlNx?=
+ =?utf-8?B?VDcvdDBESXJKbGFqeVB5Tm80cmtVMCtaZVJHOHl4ZjkzL1Zpd2FxWFVLWGRF?=
+ =?utf-8?B?MUREZEZXTU5MeGpPYnlVODNEUGY5Njd5Y1A5U0E3ZkV2aDc2QVZ5N0I3cGht?=
+ =?utf-8?B?SndKaXNSRzY5Z2ZSOEJVU1lDVmJnaXluYUNyTU12WWpHM2p3Vzc5VGpaSlQ0?=
+ =?utf-8?B?Mi83K3BLOFB6am5lbk5IL3hmdlhSQVNWS0MvRnR3WGd1eitNWFVBVGhSK1Nl?=
+ =?utf-8?B?aUkyTDNnVlRraFJmUmYwWitsUzZNZ1ZvZE5QUGRQMjF1OENyT0V3dzkzVnUv?=
+ =?utf-8?B?Y2FOc29YelJUb3F1SjNCTWFVajk2L1ZCSWVuUXhBeGcwOVZpT3psM0xBT2Zm?=
+ =?utf-8?B?N1VINEZ0QTNGQTRoRFZsQVR4TmdFZW9JQ2xrUmJTUmwybldtZjE5b2hSTjV3?=
+ =?utf-8?B?cEtxMWNGTkRWdS9GY2lRSkdrNS9kM3M5MkVMUVk1L1Y5N1BEWDR4eDJXZnFu?=
+ =?utf-8?B?a09qNzh4VzBIN1dsMXg5QThCMEdjaU1CTUNPeXVSUG93aW9TVmh0YnpVekpI?=
+ =?utf-8?B?M0hXcnJ3Skg3MmVTQmF6T3MzcFJRdm1aa0xJeCtKNUtMRUZ2ckRjL2pyYlFy?=
+ =?utf-8?B?MFVrbW5LZXVxMUpHelJLZ1h6NTMrb0psS1orNnZEdUIvTk5jUjJJRFJWVHcw?=
+ =?utf-8?B?M0kyb1pjQ0tJRm9YTjB6azdPTFIvQXBxdjU2TFpjenJzU1ZqdGVXMENyTkRs?=
+ =?utf-8?B?QW5kcDdzOUZRZDNaZkdubHpLRHgvcGhMS2dwVFJJMlNuS1dMaDdiL3hSRENM?=
+ =?utf-8?Q?inj0aWBhfW/Kl?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR19MB3872.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(10070799003)(376014)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SE5NeUJaTWRkQnFzQTdvZmRuRk5TTDNQNnFYc3dPYWdCck5UMTRJRlhFUWdY?=
+ =?utf-8?B?cC9tMkFlMGtRZ0UyQWJKdXl4RmVZdVZZUlB1alUreU9RVXZGajRqbmJkbkhP?=
+ =?utf-8?B?M001dE5qaU81TUhNVmlXTFBOZ0p6V2pkT0tWcHI4N20vVEJNN2ZXNWxHN2k2?=
+ =?utf-8?B?UVEyVkY4MzZFNjJiWW9uNXB0Uk5aMEtpS054Wk9OdWVDMExtRUx3YytmM29R?=
+ =?utf-8?B?K3M5NUVXNGRET0J3b1hwczU0NnU4MFVJb1VQcndXaG5VbnQwR3haRFI2M3Fz?=
+ =?utf-8?B?YTNoZTRKMG9DRk9rOGdnMi8zQkxkbUZzcHZkcTZIZVBwdkJRNGk1aUE5Zld2?=
+ =?utf-8?B?NGlzVWNjaVVVMDZUdXl2QXViczc1QUFJYVk1OWZSL1k4L3BQS1NSY2d3V0Qz?=
+ =?utf-8?B?QVRsWnNJWjNEbCs4MVlqSldwaVlPM0dOSFVzRWJxb3VTOFJ5RXNralBSbCta?=
+ =?utf-8?B?UGpCVGhwYkM2WFZ2U2ltdWZFbmpZZ21kUVU1TXNtb1NrajJkRWtjT0FjTmYy?=
+ =?utf-8?B?YmxXTHNkaE9yMzc1SHV4UXk3SFZHUk51ajd3N1k1Z2c5UkI3SG5ITGsyaVFz?=
+ =?utf-8?B?dHF6anJqSlJHV3UrdUNiQ1hsYU5FY1FmV3ZBS0t5a0EvZHFkVG1hSWlXdU5W?=
+ =?utf-8?B?azk4OVJnZ2RMYmY4Q25nMVllYWxPWFhqbG96cEdMVWd0TGxPRG5PWXNKb1ZS?=
+ =?utf-8?B?b1IyNlFRR1FPK2ZZY0YwY2JTK2p4NHExS2RVMEdJTkhyOGFxZ1FHNjBaOHlv?=
+ =?utf-8?B?bWVzWUQrWVhlNDFsL1BDSlNidEJacEk2SkthLzRUTm5IVlQ0YzcxaXA3OXNL?=
+ =?utf-8?B?NEZlNWMyVm1ZNVRiUUlPOHNwbU5hL2tOY3NxM0F0YTBDdkluVWgzM1kwei9u?=
+ =?utf-8?B?dks5RjZmMkVxVmJxMGlyaUF2eTlvNjlaUWVxNWdMMWVFdzFFam8vL3JtbFVm?=
+ =?utf-8?B?alFvajNpVjVLVERpbzcwenBVTHlTaFVDUzZxOW5yd085bnJaYUMydTYvMWUv?=
+ =?utf-8?B?dkhVWDZIaUtTKzl2Zkd1ZDhpV0djSzg3Q21UQ29jTDVuWDRFdktLZW5SV2Vu?=
+ =?utf-8?B?bEVoeXUwYlRERDdLMXFON210L2tUbnpqL1BoUTRBcWxPOHpRcjZ5ZTBUZXlh?=
+ =?utf-8?B?cTh6RWxkL3M3R0VUTHZyVnlIM0Rub3lHRE1oWURJV3c4QmQxTnFyRC94aVhq?=
+ =?utf-8?B?VEdzbjZ3UHRJMkxGNzd2RTVySlRBejlhTDFsc29iUXczaG9TeXZ1MGRXVE1a?=
+ =?utf-8?B?Sll2dEI4RDFianBHMk9Ray9KVm9DV240RWVCVlNqaXEzdUQ4K0VUWTBxRHFu?=
+ =?utf-8?B?U3NhMUdRVVNmVVp0YTBtc3VmSDhJb1dod2NKTVlaRnUrNXRIMndrT3NLTWxn?=
+ =?utf-8?B?UXIxaEZOVWVNaG9QQTdpUkJlcERoZExFaDgxOEdiZGRYbXpTMm5HUk5teVhH?=
+ =?utf-8?B?eXpsRGhxS0E5cTZyclM0SnQ0b1JhSHBLY0hxWC9MT1JQcjRKRTNrbTRlSTFF?=
+ =?utf-8?B?eUR2SEpLVHoyd0gyR2ppVUd1TWQwQVV0RU50NXZydXhESWttL25FNGhyK1hU?=
+ =?utf-8?B?N1RKN3lOMXlDK1RqVUJZaTBjTk1hSFE2S0JLaC9ZVEl0d1dzMDUzdlZIZGNo?=
+ =?utf-8?B?VWk4bmJYdlVjQUVkcG0rbUhnZGRqbjE1SFVTK0NnTTE5SllXeUpFdFNXVThD?=
+ =?utf-8?B?ajBKYWxtZkhNSG03Y1BQenQzaDlYbW0yUVN4SW5FK29oVHl5U29BcFFOYmkr?=
+ =?utf-8?B?NCtQZDVzNi94anczQVY5NUJjUVhTOVd3aXNSNXIxblJoUTJMYktqREdiaStO?=
+ =?utf-8?B?OTN2Skl3bllnc2RtS1Q5Nzh6VkMzZEZybG5icndFWldRV21raGp1OVdFaFRL?=
+ =?utf-8?B?SHI3NnFGME93ZmNJbDU0bFQ3SmliVXRIdUc5ckcwOGhXUGt4Qm5yTy9JQVVJ?=
+ =?utf-8?B?aWRrQzh3aDFFRWI5eVVnczVQam4wMnU0elFhNmhDdHBUOHJTMTlCMFJaenNI?=
+ =?utf-8?B?THdYTGw3ZGpwZjVZZGgrWHdaWG82NVVHWjZEQkMvZjdwUTFMRlU5MHpyL0I3?=
+ =?utf-8?B?OUJab0pib0w0aVQxb3BHL1MyQzhNZDZjTk5yeGlxSVNyQVVJdG1uVU9Yd2N4?=
+ =?utf-8?B?MHpyTkxoMTQwVEFVWXpjMlNNc0hOR0x0N0txdWxsWDhuZEd5UkNqRlR2SWNj?=
+ =?utf-8?Q?jyy/BCp0oUI/0AmwxFSFChSchA1pYgvzwbS66XVIpHvs?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	B7YbnlKIztfS3YqIel0gnQi0seZR0x5XqyP+nhrG0GD3dZ0bxDNr7tmQZ7r0LaP1v4ip2uhSPsY4HBgwiW6dr5wCMSS4nsp99qxwWh9/LEPoxwK7k78DZo+VJmNUir8MwOyBm+sKnl3mftniXvhwHzj7vOaB2vN5FoN2ip/H+HdJkaEwy4QA7iUOkvyTa7XaAH0NS631bWiXEFa03XabtbOLfcKbgQpQi70A2HOYoJ0ek2GpLXODshQEoXenUVl5uGhzztAPsO+MZ6CtkgqWxSu8qPDRwId+0Ko3n00oKefnEbwMy3NPfqZ8wQdGe10f861dR/XkYNcSZgTd1HkOR/zy1qhNHLCFueRTaCLzE3UkOIo1+OLPMz4hnPYr0T+fXaI/5lTw9/a1zE/COAGg783eZ9Bo3vXqPAHLTbE0ux8YmWHOK/uK1gqllz0uhh98lGXMao9CZ+wUtdED4T3yp9LoOJGmxFx6bpxMYU130VWnwnxHRxxsTZJDVu0TBJm/D0SjfmQbEXrW0V1278iGen9GQwDgMKMxm+ManZAjFd71yUtyxAPCrrBu8l98QDY/hzaMX1x8LtN+G5hCSswZQ/KgYj/ZY9N8eDEq/Ta9ce0nTKYO6n5vs/mYtGkdNusA/vtwgVCSVUSNfb6S6othWw==
+X-OriginatorOrg: ddn.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0c04fb82-13b6-4a93-2ba1-08dd4eeba224
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR19MB3872.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 00:40:11.2160
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dqyv7byHptrA15Z0P73JLcWPGvJrBELI9HOWso9mbbHx2d2dpl7QBqcfFfA0gTK3u+ATOr1ZCE8sHCodMBgZzg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR19MB7533
+X-BESS-ID: 1739752815-104758-15691-124873-1
+X-BESS-VER: 2019.3_20250210.2243
+X-BESS-Apparent-Source-IP: 104.47.55.44
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVsZAAGRlAAUNkk2NUkzTUkzSzM
+	ySk4B0sqlJqlliYqJFSqqBmbGhUm0sAJc/5lNBAAAA
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.262567 [from 
+	cloudscan23-23.us-east-2b.ess.aws.cudaops.com]
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------
+	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status:1
 
-Callers of lookup_one_qstr_excl() often check if the result is negative or
-positive.
-These changes can easily be moved into lookup_one_qstr_excl() by checking the
-lookup flags:
-LOOKUP_CREATE means it is NOT an error if the name doesn't exist.
-LOOKUP_EXCL means it IS an error if the name DOES exist.
 
-This patch adds these checks, then removes error checks from callers,
-and ensures that appropriate flags are passed.
 
-This subtly changes the meaning of LOOKUP_EXCL.  Previously it could
-only accompany LOOKUP_CREATE.  Now it can accompany LOOKUP_RENAME_TARGET
-as well.  A couple of small changes are needed to accommodate this.  The
-NFS change is functionally a no-op but ensures nfs_is_exclusive_create() does
-exactly what the name says.
+On 2/16/25 17:50, Luis Henriques wrote:
+> Currently userspace is able to notify the kernel to invalidate the cache
+> for an inode.  This means that, if all the inodes in a filesystem need to
+> be invalidated, then userspace needs to iterate through all of them and do
+> this kernel notification separately.
+> 
+> This patch adds a new option that allows userspace to invalidate all the
+> inodes with a single notification operation.  In addition to invalidate
+> all the inodes, it also shrinks the sb dcache.
+> 
+> Signed-off-by: Luis Henriques <luis@igalia.com>
+> ---
+>  fs/fuse/inode.c           | 33 +++++++++++++++++++++++++++++++++
+>  include/uapi/linux/fuse.h |  3 +++
+>  2 files changed, 36 insertions(+)
+> 
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index e9db2cb8c150..01a4dc5677ae 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -547,6 +547,36 @@ struct inode *fuse_ilookup(struct fuse_conn *fc, u64 nodeid,
+>  	return NULL;
+>  }
+>  
+> +static int fuse_reverse_inval_all(struct fuse_conn *fc)
+> +{
+> +	struct fuse_mount *fm;
+> +	struct inode *inode;
+> +
+> +	inode = fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
+> +	if (!inode || !fm)
+> +		return -ENOENT;
+> +
+> +	/* Remove all possible active references to cached inodes */
+> +	shrink_dcache_sb(fm->sb);
+> +
+> +	/* Remove all unreferenced inodes from cache */
+> +	invalidate_inodes(fm->sb);
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Notify to invalidate inodes cache.  It can be called with @nodeid set to
+> + * either:
+> + *
+> + * - An inode number - Any pending writebacks within the rage [@offset @len]
+> + *   will be triggered and the inode will be validated.  To invalidate the whole
+> + *   cache @offset has to be set to '0' and @len needs to be <= '0'; if @offset
+> + *   is negative, only the inode attributes are invalidated.
+> + *
+> + * - FUSE_INVAL_ALL_INODES - All the inodes in the superblock are invalidated
+> + *   and the whole dcache is shrinked.
+> + */
+>  int fuse_reverse_inval_inode(struct fuse_conn *fc, u64 nodeid,
+>  			     loff_t offset, loff_t len)
+>  {
+> @@ -555,6 +585,9 @@ int fuse_reverse_inval_inode(struct fuse_conn *fc, u64 nodeid,
+>  	pgoff_t pg_start;
+>  	pgoff_t pg_end;
+>  
+> +	if (nodeid == FUSE_INVAL_ALL_INODES)
+> +		return fuse_reverse_inval_all(fc);
+> +
+>  	inode = fuse_ilookup(fc, nodeid, NULL);
+>  	if (!inode)
+>  		return -ENOENT;
+> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> index 5e0eb41d967e..e5852b63f99f 100644
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -669,6 +669,9 @@ enum fuse_notify_code {
+>  	FUSE_NOTIFY_CODE_MAX,
+>  };
+>  
+> +/* The nodeid to request to invalidate all inodes */
+> +#define FUSE_INVAL_ALL_INODES 0
+> +
+>  /* The read buffer is required to be at least 8k, but may be much larger */
+>  #define FUSE_MIN_READ_BUFFER 8192
+>  
 
-Signed-off-by: NeilBrown <neilb@suse.de>
-Link: https://lore.kernel.org/r/20250207034040.3402438-3-neilb@suse.de
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- Documentation/filesystems/porting.rst | 12 ++++++
- fs/namei.c                            | 61 +++++++++------------------
- fs/nfs/dir.c                          |  3 +-
- fs/smb/server/vfs.c                   | 26 +++++-------
- 4 files changed, 45 insertions(+), 57 deletions(-)
 
-diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-index 2ead47e20677..3b6622fbd66b 100644
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@ -1165,3 +1165,15 @@ magic.
- kern_path_locked() and user_path_locked() no longer return a negative
- dentry so this doesn't need to be checked.  If the name cannot be found,
- ERR_PTR(-ENOENT) is returned.
-+
-+** recommend**
-+
-+lookup_one_qstr_excl() is changed to return errors in more cases, so
-+these conditions don't require explicit checks.
-+ - if LOOKUP_CREATE is NOT given, then the dentry won't be negative,
-+   ERR_PTR(-ENOENT) is returned instead
-+ - if LOOKUP_EXCL IS given, then the dentry won't be positive,
-+   ERR_PTR(-EEXIST) is rreturned instread
-+
-+LOOKUP_EXCL now means "target must not exist".  It can be combined with 
-+LOOK_CREATE or LOOKUP_RENAME_TARGET.
-diff --git a/fs/namei.c b/fs/namei.c
-index fb6da3ca0ca5..b7cdca902803 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1670,6 +1670,8 @@ static struct dentry *lookup_dcache(const struct qstr *name,
-  * dentries - as the matter of fact, this only gets called
-  * when directory is guaranteed to have no in-lookup children
-  * at all.
-+ * Will return -ENOENT if name isn't found and LOOKUP_CREATE wasn't passed.
-+ * Will return -EEXIST if name is found and LOOKUP_EXCL was passed.
-  */
- struct dentry *lookup_one_qstr_excl(const struct qstr *name,
- 				    struct dentry *base,
-@@ -1680,7 +1682,7 @@ struct dentry *lookup_one_qstr_excl(const struct qstr *name,
- 	struct inode *dir = base->d_inode;
- 
- 	if (dentry)
--		return dentry;
-+		goto found;
- 
- 	/* Don't create child dentry for a dead directory. */
- 	if (unlikely(IS_DEADDIR(dir)))
-@@ -1695,6 +1697,17 @@ struct dentry *lookup_one_qstr_excl(const struct qstr *name,
- 		dput(dentry);
- 		dentry = old;
- 	}
-+found:
-+	if (IS_ERR(dentry))
-+		return dentry;
-+	if (d_is_negative(dentry) && !(flags & LOOKUP_CREATE)) {
-+		dput(dentry);
-+		return ERR_PTR(-ENOENT);
-+	}
-+	if (d_is_positive(dentry) && (flags & LOOKUP_EXCL)) {
-+		dput(dentry);
-+		return ERR_PTR(-EEXIST);
-+	}
- 	return dentry;
- }
- EXPORT_SYMBOL(lookup_one_qstr_excl);
-@@ -2741,10 +2754,6 @@ static struct dentry *__kern_path_locked(int dfd, struct filename *name, struct
- 	}
- 	inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
- 	d = lookup_one_qstr_excl(&last, path->dentry, 0);
--	if (!IS_ERR(d) && d_is_negative(d)) {
--		dput(d);
--		d = ERR_PTR(-ENOENT);
--	}
- 	if (IS_ERR(d)) {
- 		inode_unlock(path->dentry->d_inode);
- 		path_put(path);
-@@ -4082,27 +4091,13 @@ static struct dentry *filename_create(int dfd, struct filename *name,
- 	 * '/', and a directory wasn't requested.
- 	 */
- 	if (last.name[last.len] && !want_dir)
--		create_flags = 0;
-+		create_flags &= ~LOOKUP_CREATE;
- 	inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
- 	dentry = lookup_one_qstr_excl(&last, path->dentry,
- 				      reval_flag | create_flags);
- 	if (IS_ERR(dentry))
- 		goto unlock;
- 
--	error = -EEXIST;
--	if (d_is_positive(dentry))
--		goto fail;
--
--	/*
--	 * Special case - lookup gave negative, but... we had foo/bar/
--	 * From the vfs_mknod() POV we just have a negative dentry -
--	 * all is fine. Let's be bastards - you had / on the end, you've
--	 * been asking for (non-existent) directory. -ENOENT for you.
--	 */
--	if (unlikely(!create_flags)) {
--		error = -ENOENT;
--		goto fail;
--	}
- 	if (unlikely(err2)) {
- 		error = err2;
- 		goto fail;
-@@ -4449,10 +4444,6 @@ int do_rmdir(int dfd, struct filename *name)
- 	error = PTR_ERR(dentry);
- 	if (IS_ERR(dentry))
- 		goto exit3;
--	if (!dentry->d_inode) {
--		error = -ENOENT;
--		goto exit4;
--	}
- 	error = security_path_rmdir(&path, dentry);
- 	if (error)
- 		goto exit4;
-@@ -4583,7 +4574,7 @@ int do_unlinkat(int dfd, struct filename *name)
- 	if (!IS_ERR(dentry)) {
- 
- 		/* Why not before? Because we want correct error value */
--		if (last.name[last.len] || d_is_negative(dentry))
-+		if (last.name[last.len])
- 			goto slashes;
- 		inode = dentry->d_inode;
- 		ihold(inode);
-@@ -4617,9 +4608,7 @@ int do_unlinkat(int dfd, struct filename *name)
- 	return error;
- 
- slashes:
--	if (d_is_negative(dentry))
--		error = -ENOENT;
--	else if (d_is_dir(dentry))
-+	if (d_is_dir(dentry))
- 		error = -EISDIR;
- 	else
- 		error = -ENOTDIR;
-@@ -5119,7 +5108,8 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
- 	struct qstr old_last, new_last;
- 	int old_type, new_type;
- 	struct inode *delegated_inode = NULL;
--	unsigned int lookup_flags = 0, target_flags = LOOKUP_RENAME_TARGET;
-+	unsigned int lookup_flags = 0, target_flags =
-+		LOOKUP_RENAME_TARGET | LOOKUP_CREATE;
- 	bool should_retry = false;
- 	int error = -EINVAL;
- 
-@@ -5132,6 +5122,8 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
- 
- 	if (flags & RENAME_EXCHANGE)
- 		target_flags = 0;
-+	if (flags & RENAME_NOREPLACE)
-+		target_flags |= LOOKUP_EXCL;
- 
- retry:
- 	error = filename_parentat(olddfd, from, lookup_flags, &old_path,
-@@ -5173,23 +5165,12 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
- 	error = PTR_ERR(old_dentry);
- 	if (IS_ERR(old_dentry))
- 		goto exit3;
--	/* source must exist */
--	error = -ENOENT;
--	if (d_is_negative(old_dentry))
--		goto exit4;
- 	new_dentry = lookup_one_qstr_excl(&new_last, new_path.dentry,
- 					  lookup_flags | target_flags);
- 	error = PTR_ERR(new_dentry);
- 	if (IS_ERR(new_dentry))
- 		goto exit4;
--	error = -EEXIST;
--	if ((flags & RENAME_NOREPLACE) && d_is_positive(new_dentry))
--		goto exit5;
- 	if (flags & RENAME_EXCHANGE) {
--		error = -ENOENT;
--		if (d_is_negative(new_dentry))
--			goto exit5;
--
- 		if (!d_is_dir(new_dentry)) {
- 			error = -ENOTDIR;
- 			if (new_last.name[new_last.len])
-diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
-index 2b04038b0e40..56cf16a72334 100644
---- a/fs/nfs/dir.c
-+++ b/fs/nfs/dir.c
-@@ -1532,7 +1532,8 @@ static int nfs_is_exclusive_create(struct inode *dir, unsigned int flags)
- {
- 	if (NFS_PROTO(dir)->version == 2)
- 		return 0;
--	return flags & LOOKUP_EXCL;
-+	return (flags & (LOOKUP_CREATE | LOOKUP_EXCL)) ==
-+		(LOOKUP_CREATE | LOOKUP_EXCL);
- }
- 
- /*
-diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-index 6890016e1923..fe29acef5872 100644
---- a/fs/smb/server/vfs.c
-+++ b/fs/smb/server/vfs.c
-@@ -113,11 +113,6 @@ static int ksmbd_vfs_path_lookup_locked(struct ksmbd_share_config *share_conf,
- 	if (IS_ERR(d))
- 		goto err_out;
- 
--	if (d_is_negative(d)) {
--		dput(d);
--		goto err_out;
--	}
--
- 	path->dentry = d;
- 	path->mnt = mntget(parent_path->mnt);
- 
-@@ -693,6 +688,7 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
- 	struct ksmbd_file *parent_fp;
- 	int new_type;
- 	int err, lookup_flags = LOOKUP_NO_SYMLINKS;
-+	int target_lookup_flags = LOOKUP_RENAME_TARGET;
- 
- 	if (ksmbd_override_fsids(work))
- 		return -ENOMEM;
-@@ -703,6 +699,14 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
- 		goto revert_fsids;
- 	}
- 
-+	/*
-+	 * explicitly handle file overwrite case, for compatibility with
-+	 * filesystems that may not support rename flags (e.g: fuse)
-+	 */
-+	if (flags & RENAME_NOREPLACE)
-+		target_lookup_flags |= LOOKUP_EXCL;
-+	flags &= ~(RENAME_NOREPLACE);
-+
- retry:
- 	err = vfs_path_parent_lookup(to, lookup_flags | LOOKUP_BENEATH,
- 				     &new_path, &new_last, &new_type,
-@@ -743,7 +747,7 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
- 	}
- 
- 	new_dentry = lookup_one_qstr_excl(&new_last, new_path.dentry,
--					  lookup_flags | LOOKUP_RENAME_TARGET);
-+					  lookup_flags | target_lookup_flags);
- 	if (IS_ERR(new_dentry)) {
- 		err = PTR_ERR(new_dentry);
- 		goto out3;
-@@ -754,16 +758,6 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
- 		goto out4;
- 	}
- 
--	/*
--	 * explicitly handle file overwrite case, for compatibility with
--	 * filesystems that may not support rename flags (e.g: fuse)
--	 */
--	if ((flags & RENAME_NOREPLACE) && d_is_positive(new_dentry)) {
--		err = -EEXIST;
--		goto out4;
--	}
--	flags &= ~(RENAME_NOREPLACE);
--
- 	if (old_child == trap) {
- 		err = -EINVAL;
- 		goto out4;
--- 
-2.47.1
+I think this version might end up in 
+
+static void fuse_evict_inode(struct inode *inode)
+{
+	struct fuse_inode *fi = get_fuse_inode(inode);
+
+	/* Will write inode on close/munmap and in all other dirtiers */
+	WARN_ON(inode->i_state & I_DIRTY_INODE);
+
+
+if the fuse connection has writeback cache enabled.
+
+
+Without having it tested, reproducer would probably be to run
+something like passthrough_hp (without --direct-io), opening
+and writing to a file and then sending FUSE_INVAL_ALL_INODES.
+
+
+
+Thanks,
+Bernd
 
 
