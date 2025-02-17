@@ -1,104 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-41827-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D72B9A37D1C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 09:24:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7768A37D29
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 09:27:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94D291894429
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 08:24:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B93D1170AF3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 08:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56051A2380;
-	Mon, 17 Feb 2025 08:24:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35841A0BFD;
+	Mon, 17 Feb 2025 08:27:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rnVHDz4E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RyKrXC3B"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC5017B421;
-	Mon, 17 Feb 2025 08:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3C8192B63;
+	Mon, 17 Feb 2025 08:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739780667; cv=none; b=dVTnlpmnIAj4VANQNzkaUPWVXH8uyaHiaiZbsgr4WXxkvAuau+EGe2FM9p/EI69J7dG7OT0VjtI9iLkVCnhWKOZgqyPKzHiONMNN8SzfKiEWQ1tjZ7rWWzsHsx1G1EBEobUHTFd3ubF/llI8S2NEfrGrYLgE3jTBKd7OtEYcVCs=
+	t=1739780820; cv=none; b=X+hm7RkuycSqsYVK0tbvnEinbZu5CVNeHoW/dv4oaeGzkuB57nUi58veBRAsJyMvFGXPlJ1DULcrCu1zyuc4ihTIbxYvr9qXVqplX9VuWfc/8w2oZFnTLnDERvzv4OkeNcu1GEYrBdkh9HAjDowW0TH7+RkQGLWdxqSgErYbFxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739780667; c=relaxed/simple;
-	bh=kzC2rWJn3pxTWye8A2AoSrj0peIJ4fHIOEE6DGFsjRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KqG9YrO4fOQ9KIKVYebZhbTF7jBrOsI+kDSt4V2smp0SMCoGlYJK1zZC1OuCiMf/FWOd3XzWDO9cgxTkg1GZuJKdNr+19addJODa0A6Q5xbM9eq1wQCn+eRCjeCpcuJdSXi0e6OL4myGHCqb01oGPJby/ShT2Vs26YTiLXYLECs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rnVHDz4E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 763D9C4CED1;
-	Mon, 17 Feb 2025 08:24:22 +0000 (UTC)
+	s=arc-20240116; t=1739780820; c=relaxed/simple;
+	bh=sm2EZjnhx6J7VSpn7U999FYUOZrMabD6174jywXnIiY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HHyJIST7A/JRWUDYNMlRMZjseKK8yKnaFgJ7lSekPEIZ19bo7az7c05GKcsawJth4hhyPabfswGeGhGbvROOBYmnaQHONBAw5KaR0yOC/TOYWOrQ/UuLmUZKb1/eVQRPJXfbI31CotOHT0HwGvof1MNbqSfGHtKDSrRBsphvf+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RyKrXC3B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42F8CC4CED1;
+	Mon, 17 Feb 2025 08:26:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739780666;
-	bh=kzC2rWJn3pxTWye8A2AoSrj0peIJ4fHIOEE6DGFsjRA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rnVHDz4EFIAU2HHn5aZmpGUtyeZMgZ5V4j3s9L7RdwctkMpGbvmjGOPGptK1ozmSD
-	 pzt0uuKWygvjzw9YpX+xeBj3TGTXDEfQhtbvsiQx4N5E8q0d8rXUDirxpqoMpb7SW0
-	 Wxwx1N4HllnSIoIY3HePJ0oOne6MeJTgFlScCxg2S3oKoyd6E7I98qxaomg4vXU2KG
-	 tdev/hzAORXsBRvWWwycG1rWDwTj7GP7njsBgpEWvumTqfQt/rORi5ltnVHNd5ngUL
-	 N80KecCGjBTS0lBlOHltZGAOd5P5GiDawqDg8oXRj4W72wrdAMafANejnYTIE5QMtD
-	 DxG/RUk04MwCw==
-Date: Mon, 17 Feb 2025 09:24:19 +0100
+	s=k20201202; t=1739780819;
+	bh=sm2EZjnhx6J7VSpn7U999FYUOZrMabD6174jywXnIiY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=RyKrXC3BlJTtlOqrfoIFRDb+MTcVuuuGbWZAOkpXFhOZC8HewxgZg4MVnn8CpduMw
+	 ZKhhIp+j+rtPDGnZSHv7uX2x5T896AW/DG2Et7sr9db+iGApNej2QTCtvX6Xvzeg+X
+	 n0yr3BpZX0gFNCAGtP7OjaFP43q3K6uJcCXNakyrG+6hjsuepWhs+1RqFVUPGB4wKj
+	 KvOZXVHaNYaYdqxagbj8yLT7J2Evc6Fuup7zXa8+mDrjYyNGWicxzjFjdr+DynbORk
+	 /tCdirZyg2IpCoa92eBQ+AudWLDIPP6v1bDkwCkxe7fc8IHQskG0FCKGVmIVwnVOZD
+	 u0J3O8ux5Kv3w==
 From: Christian Brauner <brauner@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Christian Brauner <christian@brauner.io>, Shuah Khan <shuah@kernel.org>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Oliver Sang <oliver.sang@intel.com>, 
-	John Hubbard <jhubbard@nvidia.com>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Shakeel Butt <shakeel.butt@linux.dev>
-Subject: Re: [PATCH v7 1/6] pidfd: add PIDFD_SELF* sentinels to refer to own
- thread/process
-Message-ID: <20250217-endlich-etwas-ce9c8d815a6e@brauner>
-References: <cover.1738268370.git.lorenzo.stoakes@oracle.com>
- <24315a16a3d01a548dd45c7515f7d51c767e954e.1738268370.git.lorenzo.stoakes@oracle.com>
- <gij5nh63s73dj5u33uvzl5lbmsvoh6zr5xnqpnfltwi6aamy7j@47iop2wgtdac>
- <dfbeb51e-f6ce-4cdf-9b91-a7d4f5e995dc@lucifer.local>
+To: NeilBrown <neilb@suse.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 1/2] VFS: change kern_path_locked() and user_path_locked_at() to never return negative dentry
+Date: Mon, 17 Feb 2025 09:26:46 +0100
+Message-ID: <20250217-summen-fuhren-b46dddda6d71@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250217003020.3170652-2-neilb@suse.de>
+References: <20250217003020.3170652-1-neilb@suse.de> <20250217003020.3170652-2-neilb@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1430; i=brauner@kernel.org; h=from:subject:message-id; bh=sm2EZjnhx6J7VSpn7U999FYUOZrMabD6174jywXnIiY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRv+nTu9Jr/l7+ZWDxfIcYqKMQfZZCWnV60RmFr9j+LR V9Y9yfs7ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhIShHDXzHL5SxR2+7GS816 53NPNGzmFabsizVeW/3XdN68utH1zntGhp9c+bvPR6j3a7lPm/1Vlckh/MHJ220+crNTFkfP3yD zlBcA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <dfbeb51e-f6ce-4cdf-9b91-a7d4f5e995dc@lucifer.local>
 
-On Tue, Feb 11, 2025 at 03:45:20PM +0000, Lorenzo Stoakes wrote:
-> On Tue, Feb 11, 2025 at 04:24:07PM +0100, Michal Koutný wrote:
-> > On Thu, Jan 30, 2025 at 08:40:26PM +0000, Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
-> > >
-> > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > > ---
-> > >  include/uapi/linux/pidfd.h |  24 +++++++++
-> > >  kernel/pid.c               |  24 +++++++--
-> > >  kernel/signal.c            | 106 ++++++++++++++++++++++---------------
-> > >  3 files changed, 107 insertions(+), 47 deletions(-)
-> >
-> > Practical idea, thanks.
+On Mon, 17 Feb 2025 11:27:20 +1100, NeilBrown wrote:
+> No callers of kern_path_locked() or user_path_locked_at() want a
+> negative dentry.  So change them to return -ENOENT instead.  This
+> simplifies callers.
 > 
-> Thanks!
+> This results in a subtle change to bcachefs in that an ioctl will now
+> return -ENOENT in preference to -EXDEV.  I believe this restores the
+> behaviour to what it was prior to
+>  Commit bbe6a7c899e7 ("bch2_ioctl_subvolume_destroy(): fix locking")
 > 
-> >
-> > > diff --git a/include/uapi/linux/pidfd.h b/include/uapi/linux/pidfd.h
-> > > + * To cut the Gideon knot, for internal kernel usage, we refer to
-> >
-> > A nit
-> > https://en.wikipedia.org/wiki/Gordian_Knot
-> >
-> > (if still applicable)
-> 
-> MY GOD. Hahaha. How embarrassing. God knows how 'Gideon' ended up
-> there. Apologies to all, I appear to have had a senior moment there...
-> 
-> Feel free to correct Christian, unless we want to leave this as an Easter
-> Egg?  :P
+> [...]
 
-Everybody knows it's the "quotidian knot" that's the most challenging.
+Applied to the vfs-6.15.async.dir branch of the vfs/vfs.git tree.
+Patches in the vfs-6.15.async.dir branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.15.async.dir
+
+[1/2] VFS: change kern_path_locked() and user_path_locked_at() to never return negative dentry
+      https://git.kernel.org/vfs/vfs/c/a97b8bfbb9f1
+[2/2] VFS: add common error checks to lookup_one_qstr_excl()
+      https://git.kernel.org/vfs/vfs/c/20c2c1baa9ab
 
