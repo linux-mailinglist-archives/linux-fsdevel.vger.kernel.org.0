@@ -1,87 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-41893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41894-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87709A38CC8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 20:53:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7C68A38CE4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 20:59:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 835C03A48C3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 19:52:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 530EB1895333
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2025 19:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4192376F5;
-	Mon, 17 Feb 2025 19:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF2223957D;
+	Mon, 17 Feb 2025 19:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jG46r1Xo"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XEv90QqL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95EE2187858
-	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Feb 2025 19:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB92238D3C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Feb 2025 19:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739821961; cv=none; b=FZ85tOsjLpF6IEHQ90kKhpNDDNf4P76wwY7FWK8JKE+G7OXtXvXeUs7uSmFo1QrzFZP1EAib3d/R8EcL21pcx5UVwrUhAPXesHfTqkCc20OIoxqmTg5bkN9Q2JwsnANcCb359VLntemzB6DcUOMdFpQC1keDli7h6DYuk+cV/Ok=
+	t=1739822331; cv=none; b=ice2IeRO6xK22ED3ORAOrhAXFRdYg05nT7vNzSalaDnhu2PgfyHv7zEWxRTn6vhS7zEf6qmr1GD2u9TH0R81WJ67m99rTXBp/IPKgnQcDx/V1B0S9+JSvtNLzN+pRZCZaWU1c+UVeCeS7VzLcFFvqV4qj5nrh4aNvr4Am2YWVl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739821961; c=relaxed/simple;
-	bh=DJMKpnTHwr+LdItMMSCGe47GOiJK1Uk52r2+n37U+lg=;
+	s=arc-20240116; t=1739822331; c=relaxed/simple;
+	bh=H7EXqVyyi+kLT8T3AFWH4gU/uM442cOf8FS+Ncb8NkM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q0V3yUJO3kIQELK5GfoI5velpDCSNNUg4z4GsKBWlFgxx6O9jnshuD2YklJ+GaaP+amFlPLM0ZE7GuF7m+ymqGZ8nMNp0cjyVcKetBrMAdAXC/FcBe2bV3a8LmevvMoswdgVZH8YPafPMelbIvsI3xVyd1gvGW8ktbEia6uMCvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jG46r1Xo; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=JzmBbCHJZJzKt8pEA0L+TYooYyJVJ/ngb0lIp1W2AxtB52bJcizt1Nn2nMfyWP82Ug1F6gyngc+/9WY9K0/+9wOpp7mxw94vm3jXJxXF0zMItc7EqvxawCRXjTWM31e2xSrcYsFEMvYqXtkyGJSpkvEZEfd3bq7S6DLgIRllsLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XEv90QqL; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739821958;
+	s=mimecast20190719; t=1739822328;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=dSgud9IFu9zBU2/yrWAzazkl9insW+YrIX8GunCoEkA=;
-	b=jG46r1XowxG6lmGwyssqQ77VLRCQdhEoV4HRZs7UbJHpIQ7MZ9ox2JEhtRRRAjfz4zib64
-	dInZ1ST5MTVZfKpsJtz0E3YbVfgnhlyyVR5Ek25XUHDdJH2zZLSr+r9Q4pj9Cr8Z//7wtr
-	Nj65w0pnyBCoOn68cvX0u0UukXdgyXo=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=NlktFKbt7fWOri2OGRbyYiQR64jGh1ap4Xy3JViDRMo=;
+	b=XEv90QqLiwNBMjF1S27daonlXuEOOLHs7NrLdcZ852Eyi1X0g2ufVb6bYGyDj1wuiNUSyK
+	OOBPeN7XymK/ge0Rmg+nO6mu7L5GXaisEI3ml3V4pcEkt4r95P8NqsEYp/9GUtEx4L6ur7
+	MgBXpRf8Wjsgw/9gagCKLkl9aewXYac=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-80-DNoLSOWbPluX5kopiuuIsg-1; Mon, 17 Feb 2025 14:52:37 -0500
-X-MC-Unique: DNoLSOWbPluX5kopiuuIsg-1
-X-Mimecast-MFC-AGG-ID: DNoLSOWbPluX5kopiuuIsg_1739821956
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43933b8d9b1so25580565e9.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Feb 2025 11:52:36 -0800 (PST)
+ us-mta-295-Fk7BQ6mFO1ysF16xZ6iM5Q-1; Mon, 17 Feb 2025 14:58:46 -0500
+X-MC-Unique: Fk7BQ6mFO1ysF16xZ6iM5Q-1
+X-Mimecast-MFC-AGG-ID: Fk7BQ6mFO1ysF16xZ6iM5Q_1739822326
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-439870ceef3so6144725e9.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Feb 2025 11:58:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739821956; x=1740426756;
+        d=1e100.net; s=20230601; t=1739822325; x=1740427125;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=dSgud9IFu9zBU2/yrWAzazkl9insW+YrIX8GunCoEkA=;
-        b=RZiAkf9r3rFUMUyYQE6jqaQgxt+1bgRNfhymWqhy+iPXe1m8X0tYSSFxzE9FkrCW77
-         PwPUeH4EPLo/MtWbVWa/MVBXaX8aWZT1BDp4INRe14CdwUr5TRfgf7FH0m8HUG16uRgW
-         C0WGwW2OXYd7loQLjrPNcV8HzgWgxvouZcM9Cz7mx+ScBmUg8zchwvncxnMDQ2qw+6MP
-         2yNAsE/ZcCF6scjmjplYlqfOif9EBm5lzPTCqjQX7OgxI7sGTVw6wCThEUTi0Lph6kxa
-         Qwd9Ubf/GU/IfPNL7+H9mDohRoXSOhHSeo1DTwaJLM5fddx0edQEwiJPLBZJLi/1cuju
-         DgBQ==
-X-Gm-Message-State: AOJu0YxHpWhD1a0o/aCqaRCibOQ/s9OAAE+S7UdbgkmL4fM7Soeh2URI
-	KFq2lJgc1aquzU9QJeCLc2kZ/jzvqRNshBU00o7bvDzqqLtrmelnFyD9Ap1LHbDHd1xlFdtiiu5
-	yZnP5RHuht/TqOKBmU+7qer3EKaRrOUTek4tDr4dpbWyTTYJG09lJffoIepAKDPw=
-X-Gm-Gg: ASbGncsXqCjovTTZBpUwTrW2uNVVY97MhxJf6DiclAZ8XwDtGI/VWVVuLJkt5foJJg+
-	3ydNv5uCXQpJLcK3diz1ABZI9Up8ZSW/tl3E7lrQWPZuTxPsgjkFluF9QJD56D6OTVvJ3+isnoP
-	J3ana7Yg0eau7a82ErBAMCHkJwZEE0J5J3mLiDiVSK6LP4fayuWLRrBSskaMFLyaIxIuXPhBE6o
-	PQUZI1WvbpW75DLgS/3u36HVdJno9gYcLCSczBVTttnAHmR8fiHGAJNLXlRgvxZ3yQo4j/0k6/b
-	lZV+tSydtpb/DrXYNbh+vPu2/CKpBUArqHzzaQpJDQYnJoHsXusU8fIGXTN7VZbygkrMJiQNuD0
-	wj4OYqq0CTH+bk065rc3PpqR5mGzSeA==
-X-Received: by 2002:a05:600c:5487:b0:439:8a8c:d3d8 with SMTP id 5b1f17b1804b1-4398a8cd568mr31393925e9.29.1739821955821;
-        Mon, 17 Feb 2025 11:52:35 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEyDxt9ziBk25VblfQc1zoKMTJeD5SerjisAnql1pNBHcQPqv9b6CUDpFtmZRLpJojsitSOKg==
-X-Received: by 2002:a05:600c:5487:b0:439:8a8c:d3d8 with SMTP id 5b1f17b1804b1-4398a8cd568mr31393715e9.29.1739821955440;
-        Mon, 17 Feb 2025 11:52:35 -0800 (PST)
+        bh=NlktFKbt7fWOri2OGRbyYiQR64jGh1ap4Xy3JViDRMo=;
+        b=seyfX5QYYyWyO+6b/V5VTCvpFGKQYs1Bme3xz5FcPGar6zgdUNEnCnn7BtSZbuV0cf
+         R4OBixt3PUalrqAKeukKRg22lthKH140njmMJTH1xJhZmjiDmrLmMKqWdO0YENSg1p2W
+         EpZ84ljL+jCqyi3IOMPi8QZw+UgQX2R6HvzDHS9jQkbefK2fC/FsSi/sUV5/pzc7BEEg
+         yQo7SpR3k2Z90m088bcTr7Ik1U26uA2gDtCewDmjhnZERyamnONvIHzIZT7/GVKKuU1j
+         ZcMcxWKXPqGXzj4BC2GOnplKJZq65RMGInvIVaQptSc3cwU33zfh87JR77F/jMJkO10H
+         JioQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWzB9PzzcPJmC3QByDVQb4M5wVNtU+LyLolZ6KbmOSCVeiH5hdg4nVLU0/5nGd7BSjXLethcWaaMSF9r9ok@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLOQDRy8dT1OMg7hO+Mcb0xN/rzyi5lQKY3InZAI/YzqZNlT4x
+	w90c9cBSyELv1v3Kc7q384lAhmU/0PhWe3uGRtbrctkCjwKSjbyJvGqzucYAsdvQKpqYNe8rhFK
+	buWfKn4roKn78LznArUvun9A6rhJzJ82Gf1UsHRqU+5Jb7s1DqJtc29zSQUFNL4U=
+X-Gm-Gg: ASbGncviVBBDu79yPnOOTpQ+P+/90GBkgYV8jdynyYFNRW/4NTsPXsr4lBAcLoxO+ZJ
+	8iG2MFWU6Tzbf8rFlA8vjPioaROfRn44X5v/ZbXQ4wbXiwpcQWWmVyjqH/sbeTrrBi3wtVu55/U
+	deolCHeAEiHMUYQvCbvo42Ful4o+1ZFFYxe+CwlDpSOYMx801uS33il3uyMnA99ScYweeLU8Dot
+	I75bsCKh0DduzK6cyYwYVpC8h+tKbTxvWpxWZp12S/erMBYUxAGFjHG8dnTaVE3kWrYtYobvliY
+	zP5H8VJf9beRvV97009lujU2VxNhBUqhaYPstAWp8CpLHXcS4e9YWSmKCLzSZLrdvVWRw4OjN76
+	zMRDTOqq/voo2RBgZdpHcN5tm91Te5A==
+X-Received: by 2002:a5d:4a43:0:b0:38f:3392:9fd8 with SMTP id ffacd0b85a97d-38f33f2cb57mr8062638f8f.18.1739822325463;
+        Mon, 17 Feb 2025 11:58:45 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGmnf+EH+x2w9Z3amJyvk4I4a5QL1krZ5SQiXGUsJvRabwqfhUp4vd7zVPxaXWLqtKKNwXS0Q==
+X-Received: by 2002:a5d:4a43:0:b0:38f:3392:9fd8 with SMTP id ffacd0b85a97d-38f33f2cb57mr8062617f8f.18.1739822325081;
+        Mon, 17 Feb 2025 11:58:45 -0800 (PST)
 Received: from ?IPV6:2003:cb:c739:900:900f:3c9e:2f7b:5d0a? (p200300cbc7390900900f3c9e2f7b5d0a.dip0.t-ipconnect.de. [2003:cb:c739:900:900f:3c9e:2f7b:5d0a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d8dd6sm13231254f8f.62.2025.02.17.11.52.32
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b4118sm13425148f8f.18.2025.02.17.11.58.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Feb 2025 11:52:34 -0800 (PST)
-Message-ID: <f880cf51-8703-444c-ac7e-b89cc5816931@redhat.com>
-Date: Mon, 17 Feb 2025 20:52:31 +0100
+        Mon, 17 Feb 2025 11:58:43 -0800 (PST)
+Message-ID: <519c6ef7-ca56-4aac-8e43-f75b17353d66@redhat.com>
+Date: Mon, 17 Feb 2025 20:58:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,21 +90,27 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 1/3] mm/filemap: add mempolicy support to the
- filemap layer
-To: Shivank Garg <shivankg@amd.com>, akpm@linux-foundation.org,
- willy@infradead.org, pbonzini@redhat.com
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- linux-coco@lists.linux.dev, chao.gao@intel.com, seanjc@google.com,
- ackerleytng@google.com, vbabka@suse.cz, bharata@amd.com, nikunj@amd.com,
- michael.day@amd.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com,
- michael.roth@amd.com, Shivansh Dhiman <shivansh.dhiman@amd.com>,
- baolin.wang@linux.alibaba.com
-References: <20250210063227.41125-1-shivankg@amd.com>
- <20250210063227.41125-2-shivankg@amd.com>
- <76537454-272b-4fbb-b073-5387bbaaf28d@redhat.com>
- <d504979a-3f25-4a57-9632-5c17cbc2acda@amd.com>
+Subject: Re: [PATCH v7 16/20] huge_memory: Add vmf_insert_folio_pmd()
+To: Alistair Popple <apopple@nvidia.com>
+Cc: akpm@linux-foundation.org, dan.j.williams@intel.com, linux-mm@kvack.org,
+ Alison Schofield <alison.schofield@intel.com>, lina@asahilina.net,
+ zhang.lyra@gmail.com, gerald.schaefer@linux.ibm.com,
+ vishal.l.verma@intel.com, dave.jiang@intel.com, logang@deltatee.com,
+ bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
+ will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
+ dave.hansen@linux.intel.com, ira.weiny@intel.com, willy@infradead.org,
+ djwong@kernel.org, tytso@mit.edu, linmiaohe@huawei.com, peterx@redhat.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
+ david@fromorbit.com, chenhuacai@kernel.org, kernel@xen0n.name,
+ loongarch@lists.linux.dev
+References: <cover.472dfc700f28c65ecad7591096a1dc7878ff6172.1738709036.git-series.apopple@nvidia.com>
+ <9f10e88441f3cb26eff6be0c9ef5997844c8c24e.1738709036.git-series.apopple@nvidia.com>
+ <afff4368-9401-4943-b802-1b15bdcf5aaa@redhat.com>
+ <6mmjoe27y63cfe5cycqje63gehgumod3bp7zzgvpz7qehgfuv4@uomvqgizba2m>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -151,68 +158,88 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <d504979a-3f25-4a57-9632-5c17cbc2acda@amd.com>
+In-Reply-To: <6mmjoe27y63cfe5cycqje63gehgumod3bp7zzgvpz7qehgfuv4@uomvqgizba2m>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+On 17.02.25 05:29, Alistair Popple wrote:
+> On Mon, Feb 10, 2025 at 07:45:09PM +0100, David Hildenbrand wrote:
+>> On 04.02.25 23:48, Alistair Popple wrote:
+>>> Currently DAX folio/page reference counts are managed differently to normal
+>>> pages. To allow these to be managed the same as normal pages introduce
+>>> vmf_insert_folio_pmd. This will map the entire PMD-sized folio and take
+>>> references as it would for a normally mapped page.
+>>>
+>>> This is distinct from the current mechanism, vmf_insert_pfn_pmd, which
+>>> simply inserts a special devmap PMD entry into the page table without
+>>> holding a reference to the page for the mapping.
+>>>
+>>> It is not currently useful to implement a more generic vmf_insert_folio()
+>>> which selects the correct behaviour based on folio_order(). This is because
+>>> PTE faults require only a subpage of the folio to be PTE mapped rather than
+>>> the entire folio. It would be possible to add this context somewhere but
+>>> callers already need to handle PTE faults and PMD faults separately so a
+>>> more generic function is not useful.
+>>>
+>>> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+>>
+>> Nit: patch subject ;)
+>>
+>>>
+>>> ---
+>>>
+>>> Changes for v7:
+>>>
+>>>    - Fix bad pgtable handling for PPC64 (Thanks Dan and Dave)
+>>
+>> Is it? ;) insert_pfn_pmd() still doesn't consume a "pgtable_t *"
+>>
+>> But maybe I am missing something ...
 > 
-> (1) As you noted later, shmem has unique requirements due to handling swapin.
-> It does considerable open-coding.
-> Initially, I was considering simplifying the shmem but it was not possible due
-> to above constraints.
-> One option would be to add shmem's special cases in the filemap and check for
-> themusing shmem_mapping()?
-> But, I don't understand the shmem internals well enough to determine if it is
-> feasible.
+> At a high-level all I'm trying to do (perhaps badly) is pull the ptl locking one
+> level up the callstack.
 > 
+> As far as I can tell the pgtable is consumed here:
+> 
+> static int insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+> 		pmd_t *pmd, pfn_t pfn, pgprot_t prot, bool write,
+> 		pgtable_t pgtable)
+> 
+> [...]
+> 
+> 	if (pgtable) {
+> 		pgtable_trans_huge_deposit(mm, pmd, pgtable);
+> 		mm_inc_nr_ptes(mm);
+> 		pgtable = NULL;
+> 	}
+> 
+> [...]
+> 
+> 	return 0;
+> 
+> Now I can see I failed to clean up the useless pgtable = NULL asignment, which
+> is confusing because I'm not trying to look at pgtable in the caller (ie.
+> vmf_insert_pfn_pmd()/vmf_insert_folio_pmd()) to determine if it needs freeing.
+> So I will remove this assignment.
 
-Okay, thanks for looking into this.
-
-> (2) I considered handling it manually in guest_memfd like shmem does, but this
-> would lead to code duplication and more open-coding in guest_memfd. The current
-> approach seems cleaner.
-
-Okay, thanks.
+Ahhh, yes, the "pgtable = NULL" confused me, so I was looking for a 
+"pgtable_t *pgtable" being passed instead, that we could manipulate.
 
 > 
->> Two tabs indent on second parameter line, please.
->>
-> ..
->>
->> This should go below the variable declaration. (and indentation on second parameter line should align with the first parameter)
->>
-> ..
->> "The mempolicy to apply when allocating a new folio." ?
->>
+> Instead callers just look at the return code from insert_pfn_pmd() - if there
+> was an error pgtable_trans_huge_deposit(pgtable) wasn't called and if the caller
+> passed a pgtable it should be freed. Otherwise if insert_pfn_pmd() succeeded
+> then callers can assume the pgtable was consumed by pgtable_trans_huge_deposit()
+> and therefore should not be freed.
 > 
-> I'll address all the formatting and documentation issues in next posting.
-> 
->>
->> For guest_memfd, where pages are un-movable and un-swappable, the memory policy will never change later.
->>
->> shmem seems to handle the swap-in case, because it keeps care of allocating pages in that case itself.
->>
->> For ordinary pagecache pages (movable), page migration would likely not be aware of the specified mpol; I assume the same applies to shmem?
->>
->> alloc_migration_target() seems to prefer the current nid (nid = folio_nid(src)), but apart from that, does not lookup any mempolicy.
-> 
-> Page migration does handle the NUMA mempolicy using mtc (struct migration_target_control *)
-> which takes node ID input and allocates on the "preferred" node id.
-> The target node in migrate_misplaced_folio() is obtained using get_vma_policy(), so the
-> per-VMA policy handles proper node placement for mapped pages.
-> It use current nid (folio_nid(src)) only if NUMA_NO_NODE is passed.
-> 
-> mempolicy.c provides the alloc_migration_target_by_mpol() that allocates according to
-> NUMA mempolicy, which is used by do_mbind().
-> 
->>
->> compaction likely handles this by comapcting within a node/zone.
->>
->> Maybe migration to the right target node on misplacement is handled on a higher level lagter (numa hinting faults -> migrate_misplaced_folio). Likely at least for anon memory, not sure about unmapped shmem.
-> 
-> Yes.
+> Hopefully that all makes sense, but maybe I've missed something obvious too...
 
-Thanks, LGTM.
+Yes, you assume that if insert_pfn_pmd() succeeds, the table was 
+consumed, otherwise it must be freed.
+
+Thanks!
+
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
 Cheers,
