@@ -1,202 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-41969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40AB8A3974E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 10:42:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57975A397D0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 10:57:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 855CF3A6558
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 09:37:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4D24188DFAE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 09:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8D62309B5;
-	Tue, 18 Feb 2025 09:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145A5236A6B;
+	Tue, 18 Feb 2025 09:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SMgR7bo0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B32422FAC3
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2025 09:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFDA653;
+	Tue, 18 Feb 2025 09:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739871446; cv=none; b=ZcZyvARShdsp02888hfw0sM9C/+LDdFKJW83N9ZgZJkY5umvOlu21hN6G8yHoi5yEBj1fW/WZNVXNzEBtWYOTFrP2421jfRuauu0U8Ko+Q+EnsrPML3jdGnEuznAE045QHkTdxNggqF49ER18rA7VYbn4iaj8bL982BuFWl/ajo=
+	t=1739872606; cv=none; b=edKSVzXpWOqNkMVHDidxxUKIJgWx+XK24kVlArWSABePdaAj5pMdNiqKSJUUavoNbQJwet4rqN/KbL51Xr6dR5skoDnoch1mSwctJEhmMDB9uSkkgEbLpOfWP1ykpOYUmS1neugIEWRyvuFbQ1cECbf5nspuMwlS5CSEZfIBc9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739871446; c=relaxed/simple;
-	bh=1vzXxAhEudrAhyb1CsSMVfihnBRlSdyHD0J4se+ZkKs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GNz8VAfksU8ksuPrZ0wR+qtkJ9yyUg2q/a6yrXIsLJp1xNBilQnCC6mkurzXusx6QRZqwnyloFUup3fwV/FJ+MMBwdlf13Npw+/SbF7r1s+lCJaAR0rlI8tcno35iC2UCeVOP6dvmgM2r7eFgz/4Cy9LclN8oTCRGCuP7jsKphY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d18e28a0c1so97200475ab.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2025 01:37:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739871444; x=1740476244;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FLZ4fY1/NxqwbUdjoAoI1yEPFjdoeZ2kiHEcyPZJC1Y=;
-        b=W9zOuuecs4CZxibDuAJDdjQ7HO+CvmuWmmWXSsvoFHIvHrP9lb0A7QAdCnL4BBA1lw
-         BjfZwGgO/CYjGQ7jzKdVM6ceXri7bdEBHjf9uXjm+9QstFGPxrIk+K8uu6kORo9rql+U
-         ItQ2tyyh4dlRFQ5JM4gj14URF+dB75PEZ/eLBq7BcWjIVNCNMj8YkemkIkbg6ZCWcT9P
-         4EKXIh0C7tOLYH3GTv2CGp9K627ZxjEYEo18dDbx3xxT1GYZoziZjLVSY3CVtGGYV+w2
-         1z831rp0duhwiP9PE4xBgLRWVPI/anWrKMRGk5Nf8Hq/Op6Uf+sqAw/BHtr601Tk9PVv
-         GFBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGwyIL/kqpky8eJgu4myLNVys6ZPrZgfNO7IGt/t4ec/RFcfSJAGNUpF5qkCo1UtAW7EN+Yf4Rn+hv4Q4n@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0W0L1pM1ty70ZUwBE/7mSjPduk+gMySFokMeT9V9y10N+FtE9
-	NG2SfTJIw3rsw3oxpITArtD1WHPqxG9BWk52bpJ/6VBkImkpccUHAyx4EvVtqF+mRyO3uaDYaLm
-	SOICiLJOg6EMQPnequpUiet2dZEGTFeXWZ2KfDAaHBGhgs6MN5zYehGU=
-X-Google-Smtp-Source: AGHT+IEm82RK3nnYqiu/mYzAVrx+dILIstbP39Ck3XYMaxYLNL9eyMHJ8hlfxzpUGC53uwrwTtS1l7Y1imi/shDsJlP6RzNpi6m1
+	s=arc-20240116; t=1739872606; c=relaxed/simple;
+	bh=+Ro/oqfvGVYxj3TObN+RDoEaw0SsbEolN0PZuCXlz9k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uYHzTxCopfIqNlL9fZIsd9ZlkbjQlqqB0FSPAbU9raWkheXIwSPGzvzr6MI8lUaYF80gqWiJzyPq9FWk2NLovVsJs31n0itMeXkPd980MCTV06C8douf4oGBxzHw+g8x8yYHZv3XuC8qwTEtlz4g36N4JNOTPN+oY4zdSxbh29s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SMgR7bo0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 95764C4CEE6;
+	Tue, 18 Feb 2025 09:56:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739872605;
+	bh=+Ro/oqfvGVYxj3TObN+RDoEaw0SsbEolN0PZuCXlz9k=;
+	h=From:Subject:Date:To:Cc:From;
+	b=SMgR7bo0E+ouRwWv2YvMzhmzTV+dFvpmu7Lma8D7TUmyIH5hYiVeFzWzUlFZJoutb
+	 f05KVq+MZlenDC5MWPIgPrTgrnV6Sc7eKiMqi5nmr6P9WWQBxjFKynSnA5C4aBNNjq
+	 1JkCYGyaKn+TnGrQZFC+/Az9Nh2GMPHSRrBBPSboWsJl5iC9wOSC+B8PVl1G+tGiuI
+	 0FbjrPB0bq+A0aX+GoUtRNNTfj5Pt1IyW//rcGk6Qf+Etsn06zaLxC+6JQ8/jQGgWC
+	 yT0/o0fIMG9SAleyJunM3B9G5lj/+8c50gRHHCwjeL9maUtymw4TUE+tSzvSrC/wsP
+	 S6q37d2NUHiEw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82441C02198;
+	Tue, 18 Feb 2025 09:56:45 +0000 (UTC)
+From: Joel Granados <joel.granados@kernel.org>
+Subject: [PATCH 0/8] sysctl: Move sysctls from kern_table into their
+ respective subsystems
+Date: Tue, 18 Feb 2025 10:56:16 +0100
+Message-Id: <20250218-jag-mv_ctltables-v1-0-cd3698ab8d29@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c8c:b0:3d0:21aa:a756 with SMTP id
- e9e14a558f8ab-3d2807aba07mr117250795ab.5.1739871444163; Tue, 18 Feb 2025
- 01:37:24 -0800 (PST)
-Date: Tue, 18 Feb 2025 01:37:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b454d4.050a0220.173698.0051.GAE@google.com>
-Subject: [syzbot] [netfs?] INFO: task hung in pipe_write (6)
-From: syzbot <syzbot+5984e31a805252b3b40a@syzkaller.appspotmail.com>
-To: brauner@kernel.org, ceph-devel@vger.kernel.org, dhowells@redhat.com, 
-	idryomov@gmail.com, jack@suse.cz, jlayton@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com, 
-	mhiramat@kernel.org, netfs@lists.linux.dev, rostedt@goodmis.org, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk, xiubli@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEBZtGcC/x3MTQqAIBBA4avErBNMEqOrRITZZBP2g4oE4d2Tl
+ t/ivRcCesIAffWCx0SBrrOgqSswmz4tMlqKQXAhuWgU27VlR5pMdFHPDgMzq5LYKo68k1Cy2+N
+ Kz78cxpw/2JeJ2mIAAAA=
+X-Change-ID: 20250217-jag-mv_ctltables-cf75e470e085
+To: Kees Cook <kees@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, 
+ "Liang, Kan" <kan.liang@linux.intel.com>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Andreas Larsson <andreas@gaisler.com>, Heiko Carstens <hca@linux.ibm.com>, 
+ Vasily Gorbik <gor@linux.ibm.com>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, 
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+ Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+ "H. Peter Anvin" <hpa@zytor.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Len Brown <lenb@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+ sparclinux@vger.kernel.org, linux-s390@vger.kernel.org, 
+ linux-acpi@vger.kernel.org, Joel Granados <joel.granados@kernel.org>
+X-Mailer: b4 0.15-dev-64da2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2573;
+ i=joel.granados@kernel.org; h=from:subject:message-id;
+ bh=+Ro/oqfvGVYxj3TObN+RDoEaw0SsbEolN0PZuCXlz9k=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGe0WVOoj6LvNDW0CL4P50y0ZMFe6cFQ86kia
+ kfkpVTXzGuYgYkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJntFlTAAoJELqXzVK3
+ lkFPJpIL/2715yYj/GmvnxpGika5Ef5M6h06gykmNbmK/8jadbKLcQAe9tsLGnF3+Ojw7ChLrol
+ HlTolz82WQ2I/xVSm4XoRxfixCkZfY0coFA9OeuPhHMNzQ+Ut1JWZewtKtxIVAG4H8bqDVQRs/G
+ Aaoy15GXfo+rPVTu3r8Kd/VugKe9FQzDSRgXpTGLCBzWBv1sn/+QBdW9/9pbGXf6gfdq4Mn8aoO
+ S9nuRmKjQ1q+k3kfif/7TakTbtjGwuTxksRI1SlBbrkubYjAK2StDNNwqOyblX+rvIZIAdue5hJ
+ FbqZ17s9ye/NoC/0AxPYsf6C34UOU5GQIVEQzhHskYb8iVUc6nooUVtM1I/4/cpc8zJomftwpsf
+ KaNmZx6F1CuttQ/3bCA+xAxEQB3SkjpJ8nbvFEki/OFbxXTUwu2lnxX8EFVwsj0AmT9G7CanU+H
+ Fz2s1gjQFsVpWSQ9URUj1XmxuoZBETbem4y9lXwW0L5ar2wZN266UfFAX7nD2+01sHs6eY5WoB7
+ D8=
+X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
+ auth_id=239
 
-Hello,
+This series relocates sysctl tables from kern_table to their respective
+subsystems. To keep the scope manageable, this patchset focuses on
+architecture-specific and core kernel sysctl tables. Further relocations
+will follow once this series progresses.
 
-syzbot found the following issue on:
+By decentralizing sysctl registrations, subsystem maintainers regain
+control over their sysctl interfaces, improving maintainability and
+reducing the likelihood of merge conflicts. All this is made possible by
+the work done to reduce the ctl_table memory footprint in commit
+d7a76ec87195 ("sysctl: Remove check for sentinel element in ctl_table
+arrays").
 
-HEAD commit:    ad1b832bf1cf Merge tag 'devicetree-fixes-for-6.14-1' of gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1251a898580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e55cabe422b4fcaf
-dashboard link: https://syzkaller.appspot.com/bug?extid=5984e31a805252b3b40a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=170d57df980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12df35a4580000
+* Birds eye view of what has changed:
+    - Archs: sparc, s390 and x86
+        arch/s390/{lib/spinlock.c,mm/fault.c}
+        arch/sparc/kernel/{Makefile,setup.c}
+        arch/x86/include/asm/{setup.h,traps.h}
+    - Kernel core:
+        kernel/{panic.c,signal.c,trace/trace.c}
+        kernel/events/{core.c,callchain.c}
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9de6d97a8d34/disk-ad1b832b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/258463d6a9b5/vmlinux-ad1b832b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f0449b94f00a/bzImage-ad1b832b.xz
+* Testing was done by running sysctl selftests on x86_64 and 0-day.
 
-The issue was bisected to:
+Comments are greatly appreciated
 
-commit 7ba167c4c73ed96eb002c98a9d7d49317dfb0191
-Author: David Howells <dhowells@redhat.com>
-Date:   Mon Mar 18 16:57:31 2024 +0000
-
-    netfs: Switch to using unsigned long long rather than loff_t
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=166625b0580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=156625b0580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=116625b0580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5984e31a805252b3b40a@syzkaller.appspotmail.com
-Fixes: 7ba167c4c73e ("netfs: Switch to using unsigned long long rather than loff_t")
-
-INFO: task kworker/1:2:837 blocked for more than 143 seconds.
-      Not tainted 6.14.0-rc2-syzkaller-00303-gad1b832bf1cf #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/1:2     state:D stack:25360 pid:837   tgid:837   ppid:2      task_flags:0x4208060 flags:0x00004000
-Workqueue: events p9_write_work
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5377 [inline]
- __schedule+0x18bc/0x4c40 kernel/sched/core.c:6764
- __schedule_loop kernel/sched/core.c:6841 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6856
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6913
- __mutex_lock_common kernel/locking/mutex.c:662 [inline]
- __mutex_lock+0x817/0x1010 kernel/locking/mutex.c:730
- pipe_write+0x1c6/0x1a30 fs/pipe.c:456
- __kernel_write_iter+0x433/0x950 fs/read_write.c:612
- __kernel_write fs/read_write.c:632 [inline]
- kernel_write+0x214/0x330 fs/read_write.c:653
- p9_fd_write net/9p/trans_fd.c:432 [inline]
- p9_write_work+0x57d/0xd70 net/9p/trans_fd.c:483
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xabe/0x18e0 kernel/workqueue.c:3317
- worker_thread+0x870/0xd30 kernel/workqueue.c:3398
- kthread+0x7a9/0x920 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/30:
- #0: ffffffff8eb38f60 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8eb38f60 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8eb38f60 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6746
-3 locks held by kworker/1:2/837:
- #0: ffff88801b080d48 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
- #0: ffff88801b080d48 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x98b/0x18e0 kernel/workqueue.c:3317
- #1: ffffc90003547c60 ((work_completion)(&m->wq)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
- #1: ffffc90003547c60 ((work_completion)(&m->wq)){+.+.}-{0:0}, at: process_scheduled_works+0x9c6/0x18e0 kernel/workqueue.c:3317
- #2: ffff8880233c5468 (&pipe->mutex){+.+.}-{4:4}, at: pipe_write+0x1c6/0x1a30 fs/pipe.c:456
-2 locks held by getty/5577:
- #0: ffff8880354a20a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc9000332b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x616/0x1770 drivers/tty/n_tty.c:2211
-2 locks held by syz-executor138/5815:
- #0: ffff8880233c5468 (&pipe->mutex){+.+.}-{4:4}, at: pipe_write+0x1c6/0x1a30 fs/pipe.c:456
- #1: ffff888077e802e8 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:932 [inline]
- #1: ffff888077e802e8 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: page_cache_ra_unbounded+0x156/0x820 mm/readahead.c:229
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.14.0-rc2-syzkaller-00303-gad1b832bf1cf #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:236 [inline]
- watchdog+0x1058/0x10a0 kernel/hung_task.c:399
- kthread+0x7a9/0x920 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0 skipped: idling at native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
-NMI backtrace for cpu 0 skipped: idling at arch_safe_halt arch/x86/include/asm/irqflags.h:106 [inline]
-NMI backtrace for cpu 0 skipped: idling at acpi_safe_halt+0x21/0x30 drivers/acpi/processor_idle.c:111
-
-
+Signed-off-by: Joel Granados <joel.granados@kernel.org>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Joel Granados (7):
+      panic: Move panic ctl tables into panic.c
+      signal: Move signal ctl tables into signal.c
+      ftrace: Move trace sysctls into trace.c
+      stack_tracer: move sysctl registration to kernel/trace/trace.c
+      events: Move perf_event sysctls into kernel/events
+      sparc: mv sparc sysctls into their own file under arch/sparc/kernel
+      x86: Move sysctls into arch/x86
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+joel granados (1):
+      s390: mv s390 sysctls into their own file under arch/s390 dir
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+ arch/s390/lib/spinlock.c     |  23 ++++
+ arch/s390/mm/fault.c         |  17 +++
+ arch/sparc/kernel/Makefile   |   1 +
+ arch/sparc/kernel/setup.c    |  46 ++++++++
+ arch/x86/include/asm/setup.h |   1 +
+ arch/x86/include/asm/traps.h |   2 -
+ arch/x86/kernel/setup.c      |  66 ++++++++++++
+ include/linux/acpi.h         |   1 -
+ include/linux/ftrace.h       |   7 --
+ include/linux/perf_event.h   |   9 --
+ kernel/events/callchain.c    |  38 +++++--
+ kernel/events/core.c         |  57 ++++++++--
+ kernel/panic.c               |  30 ++++++
+ kernel/signal.c              |  11 ++
+ kernel/sysctl.c              | 250 -------------------------------------------
+ kernel/trace/trace.c         |  45 +++++++-
+ 16 files changed, 322 insertions(+), 282 deletions(-)
+---
+base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+change-id: 20250217-jag-mv_ctltables-cf75e470e085
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Best regards,
+-- 
+Joel Granados <joel.granados@kernel.org>
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
