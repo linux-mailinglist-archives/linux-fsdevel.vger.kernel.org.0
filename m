@@ -1,104 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-41980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BC8AA3994D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 11:41:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F04ADA39955
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 11:41:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86FC5189A739
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 10:37:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A487B1742EF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 10:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA92F241124;
-	Tue, 18 Feb 2025 10:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBD4234973;
+	Tue, 18 Feb 2025 10:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="EkFPl5E+"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W4Y/EKVP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726381EB1A6
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2025 10:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1B61A83E6;
+	Tue, 18 Feb 2025 10:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739874907; cv=none; b=FK1c/agpcJ4QNHH+kdT8piT+8h4dqUH847eK0Ed/toarhaMHTX3ZoPL2F+ex/FKjdQE33kiNrg0IaZEDUzRylmTPT1OQBreQ15HLH23u1UYlUx2Tplwbu9Nv9dm2E2tZBT+V+T0Fv+deQ7C6JgTYTNHEBCq2HvdytoLay3VdRnc=
+	t=1739874928; cv=none; b=DITk07AbNjqeW2m3KdS7Uq0D5T2/6NXjAAlvl7kF+oB86gEN38HhyjaupEvfiNXqYGe84voTYzuPBH0AzMZjSfJEAi5al3QIkvGvwA6TtFjthlFDJk5eL37BIkNwk4Cq4JAcFUIYlKfoUCOJhvUfHGuwjnfAuT6pgEPfv536doo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739874907; c=relaxed/simple;
-	bh=5rVqKyMcxcqdLy/ItiSD5rAI6C4AMSRB2IYrY+2LyXQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oO10ZbtLNfk/CN3Lr15jNgCV4k/zT2ISPKZVIvVzl1PAsZ5rzFuThQubht+0umPl4keGL9L7teBTfY4OT6eAAjqCRaeDnjGVX6ITgR1obYmQO8ENqqanT5kaDE0KTRcfcrKBIS+b/dHaOv0LwZlJaN905TfDRvreF822TjRHArU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=EkFPl5E+; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-46fa7678ef3so56940811cf.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2025 02:35:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1739874904; x=1740479704; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=E/Z0qExHB4GnNF4mgGk1aX339Qt06BNhHNrDyWrDNuc=;
-        b=EkFPl5E+rCJE6IfFs/oZAUYxPfZ4JEtKRwZpSibx4AVYbOsI7rBei9boiZ5hch4ohm
-         3LWV13xAIEFKCV1YhbIfWsctZhYvimpJA0EjU+9ftAx2dTZmJWRdO6n0zc6FApX+Fa7i
-         REBt+goEZZU6WntXba9yDNq8407ZuqoEhixh0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739874904; x=1740479704;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=E/Z0qExHB4GnNF4mgGk1aX339Qt06BNhHNrDyWrDNuc=;
-        b=GeVemVVmoV0MOnO27FlyhG0pz0U9YFB6oQhg8I6QbunfxL1vRfU7fABd7nYUd0SU9B
-         Yu3pdIX0UNXA0944EyIc0njfTfy8QHiHwSE8IIktFOCrpk6GzpElGn1FDtcyvM5I22zG
-         mdY/q9tlTHw3I99NjLNbBk64NcO5FwDKKp9hcHB35zAdPbZLyvUBssUiPrVgUOv6RM33
-         z56YLFgWnSykGfgvGFEDgSpJ0C0Hyq6+alby3XVk1SzMExYCAlbmXQvCvacaFTk+bwHt
-         da+1O2BYxHvIB039ivXAkuwsYZ8Xt2wRGvV5z0pr+rfbdzbV06EzChrD1iH59peTeQr1
-         BsLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUG/Fllb2mVclnrbBIhGpTVQewLadiohCaHVB9NTc1fj1NcSFv6qhXddqttU2CK5p/3RR0zB1fHaU/Uwdet@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJxPCVe2CtooS6PQMze82MA/ejBcaPRvRO15ozaTXPu6eQeJ9i
-	c0Tdb/gmwXd45EtCLZylYjmwiHiPrZ4W8afj0XckdyxFt8y4ZActOw55WBYnTe83zYw/NIiOack
-	CwXrh4mFZijtuTp+q6n/FV2KOjt9M4DGEwyTBhA==
-X-Gm-Gg: ASbGncvVUzXUOajaKRPHDuIM/yOZ+64bJibwNEnVonsaopRxct0fFUl8SfZoc3enZ4i
-	75Db3AgjkShH/ZfKNebPDHCjbS7xmRWklu3Zo22tG20l7jjrB6/ZTNsEzJjhQLkMLIkkLC6k=
-X-Google-Smtp-Source: AGHT+IEpiwSZX4vRhJbDFJ1X30VOuKKiT69jv9pwa/7/xaXy7HKIP1sTQTKwyHkROyECd2XtP/LxfpUAt7HLKX1xnSE=
-X-Received: by 2002:ac8:5a82:0:b0:471:bb6f:5799 with SMTP id
- d75a77b69052e-471dbe7c15cmr179985471cf.35.1739874904391; Tue, 18 Feb 2025
- 02:35:04 -0800 (PST)
+	s=arc-20240116; t=1739874928; c=relaxed/simple;
+	bh=79AO6bTHkKJw32dqRF2AF+8XNyX9+vCi3Y0PvNk8y84=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RmE99f2X3kqt+DwQ7BwVPeyYWoxRucPT31tv2+u6meqgymYXxDhdfLqM2RPDBVKCzXp9RD6VMA/Dyhcc1S3ooshuBOJ+2pxOF7aXyZOxbljs7/D3gQzwRwCQsfNMR72ZpGt1lpaifSx1htuQbeaU3aVAHgSlJTDrP9wypw3tAGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W4Y/EKVP; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=q4C/73vH91GCh7UHpZKzP24a0BJc42bSJY2IG/ewQfU=; b=W4Y/EKVPAAtPrMxbuTzp0xSsld
+	bxgXL8V+H54wLt1Tybtjaz5pMBhebgjBl1td2Wkzu4RVhDEja9QxKDHHdLwPeibT11EH+JRMlu1VJ
+	hbjU1v7zAl0+SRTglWnX5DX9C85FRyM+Kfrs5aVQY7L5uSiDbZtoGBiIVwpAauElZiIZAB5v4oYeP
+	/dvRiq5iL7OV0jAVUAzTL+MBAZTP2NBJSG/JQuLCVyWEsSZiWlPtpM6avqld/oS7uAaIBxfUAJzvK
+	4HJ9jcrlxnCD8WDNqUIbg4XW0QDY43U1A2nHbQyp9C0cRpjvZE0HNb6O2pNdEhvYKScVMty3Fq4ub
+	kMocr2hQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tkKwW-00000001yxF-0ipX;
+	Tue, 18 Feb 2025 10:35:08 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3740030066A; Tue, 18 Feb 2025 11:35:07 +0100 (CET)
+Date: Tue, 18 Feb 2025 11:35:07 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Joel Granados <joel.granados@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, sparclinux@vger.kernel.org,
+	linux-s390@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH 5/8] events: Move perf_event sysctls into kernel/events
+Message-ID: <20250218103507.GC40464@noisy.programming.kicks-ass.net>
+References: <20250218-jag-mv_ctltables-v1-0-cd3698ab8d29@kernel.org>
+ <20250218-jag-mv_ctltables-v1-5-cd3698ab8d29@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217133228.24405-1-luis@igalia.com> <20250217133228.24405-3-luis@igalia.com>
- <Z7PaimnCjbGMi6EQ@dread.disaster.area> <CAJfpegszFjRFnnPbetBJrHiW_yCO1mFOpuzp30CCZUnDZWQxqg@mail.gmail.com>
- <87r03v8t72.fsf@igalia.com>
-In-Reply-To: <87r03v8t72.fsf@igalia.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 18 Feb 2025 11:34:53 +0100
-X-Gm-Features: AWEUYZm174Vtkg8CGi97zDvZOoF7lSynxrUSzinYaOe0zIR4ksp5V1ftEBvZ570
-Message-ID: <CAJfpegu51xNUKURj5rKSM5-SYZ6pn-+ZCH0d-g6PZ8vBQYsUSQ@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] fuse: add new function to invalidate cache for all inodes
-To: Luis Henriques <luis@igalia.com>
-Cc: Dave Chinner <david@fromorbit.com>, Bernd Schubert <bschubert@ddn.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Matt Harvey <mharvey@jumptrading.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218-jag-mv_ctltables-v1-5-cd3698ab8d29@kernel.org>
 
-On Tue, 18 Feb 2025 at 11:04, Luis Henriques <luis@igalia.com> wrote:
+On Tue, Feb 18, 2025 at 10:56:21AM +0100, Joel Granados wrote:
+> Move ctl tables to two files:
+> * perf_event_{paranoid,mlock_kb,max_sample_rate} and
+>   perf_cpu_time_max_percent into kernel/events/core.c
+> * perf_event_max_{stack,context_per_stack} into
+>   kernel/events/callchain.c
+> 
+> Make static variables and functions that are fully contained in core.c
+> and callchain.cand remove them from include/linux/perf_event.h.
+> Additionally six_hundred_forty_kb is moved to callchain.c.
+> 
+> Two new sysctl tables are added ({callchain,events_core}_sysctl_table)
+> with their respective sysctl registration functions.
+> 
+> This is part of a greater effort to move ctl tables into their
+> respective subsystems which will reduce the merge conflicts in
+> kerenel/sysctl.c.
+> 
+> Signed-off-by: Joel Granados <joel.granados@kernel.org>
 
-> The problem I'm trying to solve is that, if a filesystem wants to ask the
-> kernel to get rid of all inodes, it has to request the kernel to forget
-> each one, individually.  The specific filesystem I'm looking at is CVMFS,
-> which is a read-only filesystem that needs to be able to update the full
-> set of filesystem objects when a new generation snapshot becomes
-> available.
-
-Yeah, we talked about this use case.  As I remember there was a
-proposal to set an epoch, marking all objects for "revalidate needed",
-which I think is a better solution to the CVMFS problem, than just
-getting rid of unused objects.
-
-Thanks,
-Miklos
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
