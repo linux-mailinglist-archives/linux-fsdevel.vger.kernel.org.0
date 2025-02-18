@@ -1,47 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-41937-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41938-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C80BA3932B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 06:52:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EF78A3932D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 06:52:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAC381890DEC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 05:52:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86C901890BA6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 05:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA2E21B87CB;
-	Tue, 18 Feb 2025 05:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3149B1B043A;
+	Tue, 18 Feb 2025 05:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="e2dzg8tq"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HDgJOe83"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B3329D05
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AFE7482
 	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2025 05:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739857929; cv=none; b=ReoDOKD7oGCRLav4aYVwJ/r3SURO+PLjxrA8r1v7k6dkYfF/cDLISus5Le0MEtQa5WcSK54L/dwnIw19FIbqpb9/vDVNh2cQfdn+NO/c7mj3Srz68TsHeRUWstbokw+l5+KE0qNzwrYyJGqW6Xiv+2guafdOxbjZQuN1YtVchU8=
+	t=1739857930; cv=none; b=dv4YdvIWvqcmii+vXUcYC/aZFSITCs9lCJQ3mV5JPC8LzjrWkXwzoP1OdYte8bYnvK+94WPQV64f6OxkuTQCQdSuGoUGGeJMcCHc38DH60h1pFsjF6wc5wBhAvkhgjEexrhnbho4MgDZb2J5XeBQFGHg16n7HuVLoCwYak53Roo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739857929; c=relaxed/simple;
-	bh=pQ9r7NvQSANmG4X1dPWfgoh8CabblT4kKEsiz/UBwE4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uuFcTkrr1njnvFCdQVN3v+nT7xkQdzxTqt75zs+bwhnq8xqLhCrY1xwTil3h80Ax82rkMCQMcN0gGMwxccgxoyfuBvKN9dw4Ot25Fi0FuCswFEEsh5KctqAPk61U6Qqzyhlpam1wGdaDNxfg4btsrsILcDZS++e5eXkTWsVBCvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=e2dzg8tq; arc=none smtp.client-ip=90.155.50.34
+	s=arc-20240116; t=1739857930; c=relaxed/simple;
+	bh=uL38O1R8SF6xT9zEeJv5DENjSF6b4R89wsanuT8e3Vo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=APOnYyWfN9QCL/LUZwnZTKoFPjZyfd/ZW+RckPfkRHmWCf4gO4Id5QrkiaTsNhgT+cRSEZrddX6++HSac7ptMFtfNhhhQC1q14lM4+1WQSj9UEUexTRzX5MjqLe2bb2IdFkA1aebfUU0qQf8xWzt5f5JDzA6+8zsCn85BzekF1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HDgJOe83; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=QSBcAaMb/qljfoVgIF4wX+lU6va9sOZY2zsNylGwXQg=; b=e2dzg8tqt/QSPBSeNAzY1ONhod
-	Hoa0X16axLyTsvZu924I+7nVrEryNCvx6c53V0dgzZqX8cm6JvIX/iDZLc5cKG4UY/iRwyNEpbG9Y
-	2V+g0P8n25gLwGorLdGC1Cbi+svqLcnU3DsfxEUstid1GGNsgPijjoGZu/c4yVzx45mx0q7Kf3qkQ
-	pphGccOQUVme3Wg2vE1GbjwUAJGih2YjhWg0qhLFVnPWxep2NA3QoyU2UkLE3ZldrhiMRIcUmJW+O
-	69YuOJvjdL/Iei1Bza4B9WjRHoIHxE7OaiMJajPKUYLeDY1N2bojYy6mzv1X+Tr9R6LGDa5Gvv33F
-	j4+gikfQ==;
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-Type:Content-ID:Content-Description;
+	bh=mK1rK9VHgwCXb2pvCWp3vRM3/SS+G08uY5YQR+MXCiI=; b=HDgJOe83+MqhmfuCiBO4cn9hoN
+	0tDDAGK8VgMvIJubPAbNGh+3jpCx4fXB9+PpeQWr/1gZBXLlRFNUQGqZaOLaiLwD+uRNHvJ8qMLOB
+	aRcyiFj+svn6+HkI2OHPplU9eM2yjkKO5zpXivSQyFirdIUV9biB24uh1bVelAqK9ZVh14rDKqixc
+	XgqEkPjuke7puapm4hWCZ+8e4eOvKwlfB8BNRfq+6P0p7G5P0sPUq0c2iuh5Y4ESmsBpaI2N15a4K
+	jSgL1IogdQgi33ubg85+DOvPDISq+AvM+DDHOr35QM3pX5vzWaOOEACgmVj5G6A0t6WCTTY0FvNeU
+	jfi8HxEg==;
 Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tkGWb-00000002Tqv-1Abt;
+	id 1tkGWb-00000002Tqx-1YKP;
 	Tue, 18 Feb 2025 05:52:05 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
@@ -49,10 +50,12 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>,
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	linux-f2fs-devel@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 00/27] f2fs folio conversions for v6.15
-Date: Tue, 18 Feb 2025 05:51:34 +0000
-Message-ID: <20250218055203.591403-1-willy@infradead.org>
+Subject: [PATCH 01/27] f2fs: Add f2fs_folio_wait_writeback()
+Date: Tue, 18 Feb 2025 05:51:35 +0000
+Message-ID: <20250218055203.591403-2-willy@infradead.org>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250218055203.591403-1-willy@infradead.org>
+References: <20250218055203.591403-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,55 +64,69 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-More f2fs folio conversions.  This time I'm focusing on removing
-accesses to page->mapping as well as getting rid of accesses to
-old APIs.  f2fs was the last user of wait_for_stable_page(),
-grab_cache_page_write_begin() and wait_on_page_locked(), so
-I've included those removals in this series too.
+Convert f2fs_wait_on_page_writeback() to f2fs_folio_wait_writeback()
+and add a compatibiility wrapper.  Replaces five calls to
+compound_head() with one.
 
-Matthew Wilcox (Oracle) (27):
-  f2fs: Add f2fs_folio_wait_writeback()
-  mm: Remove wait_for_stable_page()
-  f2fs: Add f2fs_folio_put()
-  f2fs: Convert f2fs_flush_inline_data() to use a folio
-  f2fs: Convert f2fs_sync_node_pages() to use a folio
-  f2fs: Pass a folio to flush_dirty_inode()
-  f2fs: Convert f2fs_fsync_node_pages() to use a folio
-  f2fs: Convert last_fsync_dnode() to use a folio
-  f2fs: Return a folio from last_fsync_dnode()
-  f2fs: Add f2fs_grab_cache_folio()
-  mm: Remove grab_cache_page_write_begin()
-  f2fs: Use a folio in __get_node_page()
-  f2fs: Use a folio in do_write_page()
-  f2fs: Convert f2fs_write_end_io() to use a folio_iter
-  f2fs: Mark some functions as taking a const page pointer
-  f2fs: Convert f2fs_in_warm_node_list() to take a folio
-  f2fs: Add f2fs_get_node_folio()
-  f2fs: Use a folio throughout f2fs_truncate_inode_blocks()
-  f2fs: Use a folio throughout __get_meta_page()
-  f2fs: Hoist the page_folio() call to the start of
-    f2fs_merge_page_bio()
-  f2fs: Add f2fs_get_read_data_folio()
-  f2fs: Add f2fs_get_lock_data_folio()
-  f2fs: Convert move_data_page() to use a folio
-  f2fs: Convert truncate_partial_data_page() to use a folio
-  f2fs: Convert gc_data_segment() to use a folio
-  f2fs: Add f2fs_find_data_folio()
-  mm: Remove wait_on_page_locked()
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/f2fs/f2fs.h    |  6 ++++--
+ fs/f2fs/segment.c | 19 +++++++++----------
+ 2 files changed, 13 insertions(+), 12 deletions(-)
 
- fs/f2fs/checkpoint.c    |  26 ++--
- fs/f2fs/data.c          | 130 ++++++++++---------
- fs/f2fs/f2fs.h          |  90 +++++++++----
- fs/f2fs/file.c          |  24 ++--
- fs/f2fs/gc.c            |  42 +++---
- fs/f2fs/node.c          | 279 ++++++++++++++++++++--------------------
- fs/f2fs/node.h          |   6 +-
- fs/f2fs/segment.c       |  26 ++--
- include/linux/pagemap.h |   9 --
- mm/filemap.c            |   2 +-
- mm/folio-compat.c       |  14 --
- 11 files changed, 338 insertions(+), 310 deletions(-)
-
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 395f9d37449c..b05653f196dd 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3760,8 +3760,10 @@ int f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+ 			struct f2fs_io_info *fio);
+ void f2fs_update_device_state(struct f2fs_sb_info *sbi, nid_t ino,
+ 					block_t blkaddr, unsigned int blkcnt);
+-void f2fs_wait_on_page_writeback(struct page *page,
+-			enum page_type type, bool ordered, bool locked);
++void f2fs_folio_wait_writeback(struct folio *folio, enum page_type type,
++		bool ordered, bool locked);
++#define f2fs_wait_on_page_writeback(page, type, ordered, locked)	\
++		f2fs_folio_wait_writeback(page_folio(page), type, ordered, locked)
+ void f2fs_wait_on_block_writeback(struct inode *inode, block_t blkaddr);
+ void f2fs_wait_on_block_writeback_range(struct inode *inode, block_t blkaddr,
+ 								block_t len);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 6ebe25eafafa..a29da14c5f19 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4154,22 +4154,21 @@ void f2fs_replace_block(struct f2fs_sb_info *sbi, struct dnode_of_data *dn,
+ 	f2fs_update_data_blkaddr(dn, new_addr);
+ }
+ 
+-void f2fs_wait_on_page_writeback(struct page *page,
+-				enum page_type type, bool ordered, bool locked)
++void f2fs_folio_wait_writeback(struct folio *folio, enum page_type type,
++		bool ordered, bool locked)
+ {
+-	if (folio_test_writeback(page_folio(page))) {
+-		struct f2fs_sb_info *sbi = F2FS_P_SB(page);
++	if (folio_test_writeback(folio)) {
++		struct f2fs_sb_info *sbi = F2FS_F_SB(folio);
+ 
+ 		/* submit cached LFS IO */
+-		f2fs_submit_merged_write_cond(sbi, NULL, page, 0, type);
++		f2fs_submit_merged_write_cond(sbi, NULL, &folio->page, 0, type);
+ 		/* submit cached IPU IO */
+-		f2fs_submit_merged_ipu_write(sbi, NULL, page);
++		f2fs_submit_merged_ipu_write(sbi, NULL, &folio->page);
+ 		if (ordered) {
+-			wait_on_page_writeback(page);
+-			f2fs_bug_on(sbi, locked &&
+-				folio_test_writeback(page_folio(page)));
++			folio_wait_writeback(folio);
++			f2fs_bug_on(sbi, locked && folio_test_writeback(folio));
+ 		} else {
+-			wait_for_stable_page(page);
++			folio_wait_stable(folio);
+ 		}
+ 	}
+ }
 -- 
 2.47.2
 
