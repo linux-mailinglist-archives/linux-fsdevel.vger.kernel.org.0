@@ -1,98 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-41963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41964-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70BC2A3955A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 09:29:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE207A39641
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 09:58:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C102D1897A8B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 08:27:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D612176E30
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 08:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C958022C322;
-	Tue, 18 Feb 2025 08:26:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8AC022D4FA;
+	Tue, 18 Feb 2025 08:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zhUQ+e6H"
+	dkim=pass (2048-bit key) header.d=i3wm.org header.i=@i3wm.org header.b="H6I9UgWn";
+	dkim=pass (2048-bit key) header.d=stapelberg.ch header.i=@stapelberg.ch header.b="AGMqCj4Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E561722B8BE;
-	Tue, 18 Feb 2025 08:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796851DD886
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2025 08:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739867168; cv=none; b=NdOtmBmF7j508RZr+KvYl2BV47KyTOhT/uA+t4+QqMLqVnrRnKd3712ssutnYv4tcY+v6GbxgXl+j71MkSJDIHb0Rjs1EBDGiNZzY4ilUGQ75Qlxx4/CdSSoVeOrf4jtmMy/RjnIzbu8BiFcUvR4q3zwd/fPORkMxqywlyt3awc=
+	t=1739868854; cv=none; b=UjxHTqmjOucQQJhv4oC4pDAUZZ0yhuuqccMmJv4OdCztcOkUaXlqYgkZveyIryTGsIRaCPlxaXVnjrCiYobrB6eeLfde4yB530x6YyXLAbTn7XzvwJ5rAfJxKje5DXbnN8c5oUxhoMQTfo4C5vUxWuLXwuYe2E1Xn4EZFcAepGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739867168; c=relaxed/simple;
-	bh=6+V3lp5W22nRBogzJ+Ne1Q5jwm+N2HfbNVp8+d6wAmc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=VQqaNseWIraIvWYO0x4oYG6HXSbBiUKWpZLy7JbWZZqY6lZhV2IPGxgGRidZsUapbYw2Zo/lCwvZhr2MiQdhRZ6veNjabF71uwSAxLYhnCu7hN0G4/1Hi9+KIbIaHyVAMUtHhAjWJ/FboLuG03CDAyhZEi3R3xIP2yR7tcpHQww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=zhUQ+e6H; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
-	:Content-ID:Content-Description:References;
-	bh=FkUCjxz9vjqxLei0utw3tRN3Rl77dSlMqLgpoQD9LSw=; b=zhUQ+e6HSttPyyE2/vmwfPYv33
-	X+w/gXVba5sH/Xs9XQ6XLUasYNrzvNvxOvX7Nb/XdZlh4iIa94HDOCqLQ+o/ZIVmxhCScLRN/MzTw
-	YxQy84GMZef8zz4k+rqrdU5SeKL29sLd3kN1Ez5nhGt39B+KHRdlw5Wgx89hjcwDX55Oev9byfxVQ
-	ko5eHRSUOjD80H85xR8DfMNvPlQRqotlBiVOgI2YbOZDuzxYfHaI1V0xUklb6YTAQpVD2p3GTLDH2
-	44PtrClYGsMkeWE0CHFmCANkhTCwyZs4rxxz8RR8mhke5UaII8tGB9vd1jJxb7c1JfQouNLYAxfZt
-	0tWPxfew==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tkIve-00000007GjS-2N6c;
-	Tue, 18 Feb 2025 08:26:06 +0000
-Date: Tue, 18 Feb 2025 00:26:06 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-api@vger.kernel.org
-Subject: Re: [PATCH 0/2 v9] reclaim file-backed pages given POSIX_FADV_NOREUSE
-Message-ID: <Z7REHrJ3ImdrF476@infradead.org>
+	s=arc-20240116; t=1739868854; c=relaxed/simple;
+	bh=758zpFMpsf4T0pGdRX7PvDeXZaVnukHdlST1KAQoIy8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ma1lD8qbcTUXqMyuKpv/GOPRcH+VMmJM+BPMgGDWeaihUr4MgdNHkcNnKYahYL3EyRuD+Ign8Mc6NRSq2cpRbFHgz0jVRryaJSGh/qSzC97mXv/gui2qNlwAu0dZSxf2BbE9a0/SvD8k4aHXWBh+5WyQIe4FcNkoMvwqQTho8B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stapelberg.ch; spf=pass smtp.mailfrom=i3wm.org; dkim=pass (2048-bit key) header.d=i3wm.org header.i=@i3wm.org header.b=H6I9UgWn; dkim=pass (2048-bit key) header.d=stapelberg.ch header.i=@stapelberg.ch header.b=AGMqCj4Z; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stapelberg.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=i3wm.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38f406e9f80so1779591f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2025 00:54:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=i3wm.org; s=google; t=1739868851; x=1740473651; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=758zpFMpsf4T0pGdRX7PvDeXZaVnukHdlST1KAQoIy8=;
+        b=H6I9UgWnz8q+ewmMM6mN862rcFhAJlYTZn7OQwFz1hU9ZIq0qH9ruX722w6V0pYv7p
+         IRuaxapJUVpB/AcvorraDO57ElRcPqHcGQUB9qFYJ/Zn0i5uugYxjTC9rcj6mD6pso6Z
+         AOu1Vh7aQtdhUmo9nfLFFw03qKZO77gTZ+3VBVpp3zuXigtai2TXiqGi79vSQqw+H0gZ
+         VZbKPenn8G1WnH88onUv2+cr8F0L5oWrNjaOSvISFUnzSR7FOxoSweeowYMen8kf0HvJ
+         YvOVC+neTtKaEYj4WyuxC+oNf+d+Qxj2Rjaj2b5EY7XJ+r83oTlTBvJcJq8oubQMDl+0
+         4IrQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=stapelberg.ch; s=google; t=1739868851; x=1740473651; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=758zpFMpsf4T0pGdRX7PvDeXZaVnukHdlST1KAQoIy8=;
+        b=AGMqCj4ZgiJ0LoTjL0n5i+6I/hypqWSm4moAy4RnCy1wShZiSKF64hIuzeo/lslIrq
+         qe0pPWyIFt0ZNTkSwwMiK48adnx2VWdxdQoXG2e0Wn503O5jlDhrRNats170yJfkKi4K
+         n7tYTG/FQveWKouxgMRKVl31bAxuEHVxRu2Bx6SCYvb/PDjmQZKDRYtibWpZrFnOlIso
+         Lsfc5Hi9x4WMsWq5IwMArGBYzB6SuSusccKGUQcIwLsxvZzm2h3OcA3DZlAA8+SGIeJH
+         NOD43M44KvxmkUeOyYOloGAJ3SAmaOyIGV11AuYYxyZjPk4ne0nDJmynR12P9OFMLd6r
+         yHqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739868851; x=1740473651;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=758zpFMpsf4T0pGdRX7PvDeXZaVnukHdlST1KAQoIy8=;
+        b=gTOascD2oOqHqNLQpVz4TQ7SHHn2WTcAFrl9y0MhCTxJGQVGlWzsmLsyqKyP3Lakd5
+         imUdTPO3K0pvsY1TYcyVRjAl07hF9jb4NGc7BE6tzxGtiuHFiRp411hi8WqgTDAYrSbZ
+         PYiEzenYplq4HrXJtnILBd4Ar4bs9CBBPfJPM7PauAAAZgf5dDkOQNoWTc7eidSkRIyE
+         DbMC6Ek/90xnrtvtiZTOXTzbunYFL+LGb7Id8Jpp/tJmxzoItWdYh87mPUqvFh8titLw
+         OaeFOszdbongcgEfUvx1nwmxdEBGTrJN4bBOtXPqg2HmtE/3V1imCbkt8AIUXJ+ZrUVA
+         kP4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUf1vqeVpAXl8Ej1bu8GGGnE3sCk53mRcQZY/C7VMVbk9UDNx5Lt+rPWWubhUtgMEEM5UnignqY3NQxWZo9@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywmjn+iGm9bwHYbALZp26zIyqIzSi/fW1wl+rcRJ2miWxYk7yzV
+	Aj2ydFsICOFRD09pdMaO25DvWFKYwIORCtZ3qRnE0A816RUg4Qzc2aPdPEwPneo=
+X-Gm-Gg: ASbGncsx8lxk+dQigyCe8v3ONOEVJAikT7pUaNnjwdH8r3hg2MiURNj0DY82RjthKKA
+	Rn1ycw3K2SDQtE19gT6977DyfPsZE6/fnQCdATP7WLyYamYV0A0CRLoaewN3JWUlbCanpvcxdXu
+	5qLaebZJDp4W4/WMTZN9yKgnWKBzvkui4haS+jb7UqeId21eqcXUsh1VfkSIh+fRDY0im1CMJiN
+	lE4TNvI+utiiE7g/WmPEdTDGKysC6MDrtlgb/OuXY1gNaSFBNpP7tOpsPyuYIf1qWwTTY8ORfrv
+	uTSNgmussm4hPA==
+X-Google-Smtp-Source: AGHT+IG9SYoRvEq3m0HtuwXoCMJqDOynlqQun7kLkdRbUn0QNGwSb00dHbCF/DGeSWjnCNLlYUxPOQ==
+X-Received: by 2002:a5d:498b:0:b0:38d:e411:7dcc with SMTP id ffacd0b85a97d-38f33f44cd8mr7957635f8f.37.1739868850622;
+        Tue, 18 Feb 2025 00:54:10 -0800 (PST)
+Received: from midna.lan ([2a02:168:4a00:0:62cf:84ff:fe65:d9e3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4396b5267eesm76997295e9.0.2025.02.18.00.54.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 00:54:09 -0800 (PST)
+Sender: Michael Stapelberg <michael@i3wm.org>
+From: Michael Stapelberg <michael@stapelberg.ch>
+X-Google-Original-From: Michael Stapelberg <michael@stapelberg.de>
+To: makb@juniper.net
+Cc: brauner@kernel.org,
+	ebiederm@xmission.com,
+	jack@suse.cz,
+	kees@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	oleg@redhat.com,
+	torvalds@linux-foundation.org,
+	viro@zeniv.linux.org.uk
+Subject: [PATCH v3] binfmt_elf: Dump smaller VMAs first in ELF cores
+Date: Tue, 18 Feb 2025 09:54:04 +0100
+Message-ID: <20250218085407.61126-1-michael@stapelberg.de>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net>
+References: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250212023518.897942-1-jaegeuk@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-This still has a file system sysfs HACK, you're still not Ccing the
-right list, etc.
+Hey Brian and folks
 
-Can you pleae at least try to get it right?
+> […]
+> backtrace, and it turned out to be a non-trivial problem. Instead, we
+> try simply sorting the VMAs by size, which has the intended effect.
+> […]
+> Still need to run rr tests on this, per Kees Cook's suggestion, will
+> update back once done. GDB and readelf show that this patch works
+> without issue though.
 
-On Wed, Feb 12, 2025 at 02:31:55AM +0000, Jaegeuk Kim wrote:
-> This patch series does not add new API, but implements POSIX_FADV_NOREUSE where
-> it keeps the page ranges in the f2fs superblock and add a way for users to
-> reclaim the pages manually.
-> 
-> Change log from v8:
->  - remove new APIs, but use fadvise(POSIX_FADV_NOREUSE)
-> 
-> Jaegeuk Kim (2):
->   f2fs: keep POSIX_FADV_NOREUSE ranges
->   f2fs: add a sysfs entry to reclaim POSIX_FADV_NOREUSE pages
-> 
->  Documentation/ABI/testing/sysfs-fs-f2fs |  7 ++
->  fs/f2fs/debug.c                         |  3 +
->  fs/f2fs/f2fs.h                          | 14 +++-
->  fs/f2fs/file.c                          | 60 +++++++++++++++--
->  fs/f2fs/inode.c                         | 14 ++++
->  fs/f2fs/shrinker.c                      | 90 +++++++++++++++++++++++++
->  fs/f2fs/super.c                         |  1 +
->  fs/f2fs/sysfs.c                         | 63 +++++++++++++++++
->  8 files changed, 246 insertions(+), 6 deletions(-)
-> 
-> -- 
-> 2.48.1.601.g30ceb7b040-goog
-> 
-> 
----end quoted text---
+I think in your testing, you probably did not try the eu-stack tool
+from the elfutils package, because I think I found a bug:
+
+Current elfutils cannot symbolize core dumps created by Linux 6.12+.
+I noticed this because systemd-coredump(8) uses elfutils, and when
+a program crashed on my machine, syslog did not show function names.
+
+I reported this issue with elfutils at:
+https://sourceware.org/bugzilla/show_bug.cgi?id=32713
+…but figured it would be good to give a heads-up here, too.
+
+Is this breakage sufficient reason to revert the commit?
+Or are we saying userspace just needs to be updated to cope?
+
+Thanks
+Best regards
+Michael
 
