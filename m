@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-41905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41906-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 496D5A38FFE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 01:39:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DEA6A3900E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 01:55:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C84D3B2C88
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 00:39:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A523169B19
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 00:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE983EEC3;
-	Tue, 18 Feb 2025 00:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC67D383A2;
+	Tue, 18 Feb 2025 00:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="k1GS52qJ"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="l/b8xtS/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9B5C8EB
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2025 00:39:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB7CEED8
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2025 00:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739839169; cv=none; b=H/WVGlD0D0NezH8L6rtlKelibDOxqlX0hOcqz3yy5z4bOS6W+oMrd9EC9SUJpFnK257bJE50YaJON7Q8J4I2VDFm2JbjigAADT8QqVeT3fauaeiEGUvGTtLvxYwX8kD3tjTYYTAXtIxlJxuwCE8K+WrmQSt9EKPFBG+RdNEzM6o=
+	t=1739840144; cv=none; b=LB2cG+HWbqYFRIodp3g1G8sz2rRlD9/eb2v3jTGbl1bRCVxWiDgK3OeGZt2DEpCO0hChE1KAjTUF3D4UESC7JecKYC3o06w9Dhhuxd5djGvxKQxPTbsvgQT2c1XFVW56SdCbZ11+aAq/CHO8tbgIkQqX1xa73goGx0oWttO8Cfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739839169; c=relaxed/simple;
-	bh=kkCI+MIWkW4j32PzOZgwC/VBvKTSy5hkrZazhISQnyA=;
+	s=arc-20240116; t=1739840144; c=relaxed/simple;
+	bh=5iuvPIe6yThTSOpvBOv+EQ4YP0v5TOWcae6xoF1FT8Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZIB0NBQyITP3s9ymDG/h0qbdAS1Q50zAnabTtcoU4qalyDEy86H4HXg1+EAzo48CZANWnCx6GObkNUkVMQ9oEOdchCJI1OCUDctAUtSACslHf6QgUY3Mnryqo3REdhjmolUJMB8yxUOR8msHbRvSsd3nO8BMnOtNNXnWFX3hBEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=k1GS52qJ; arc=none smtp.client-ip=209.85.216.49
+	 Content-Type:Content-Disposition:In-Reply-To; b=IlTVHPsTL3P5mBjmmArs7pPVAYGRBIyI1r8OsYAZoMKnL5RKo3wcxw25Z2kNmlJvpLjhX4Vjpwe2nnS2kiuXLSVdOAxqB0tg8DGmdKo3gm4sQrYxYzpif5Qqe3tehZnCUCfjeEiU6rXrTF9zD0i2TVXGAaF+ezEBDh/l8jDLp9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=l/b8xtS/; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2fbffe0254fso9073165a91.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Feb 2025 16:39:27 -0800 (PST)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-220ca204d04so64575745ad.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Feb 2025 16:55:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1739839167; x=1740443967; darn=vger.kernel.org;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1739840142; x=1740444942; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=De5WQOe6k2skbiipS+ducGoEsMfnwQochicbgjZO/bs=;
-        b=k1GS52qJLD7N4uAHd5fk/ayrA96CBRnX5ctEd2XqncPJyMjG7587yJlJxkyClL4HLN
-         HzwfOUsOg9t9IHcIdhaTTA0BuMfd5bQu+4HBfFl+kg4OjV1M0h6ewm9/Cn5KBDqK7Y7O
-         5oaUV7WWs9iHTyXz3FcLfboRrPQIT3u2ouZbVm9RdzN/7wJIpPdZKHbpO6NxI7xvAq2k
-         tkf0WnPYxcRIiQb3wv3XaBt9lQ7bRFsSa5uvViu0RFfChvBExBkojtRlqH8l+6UW0Dnx
-         yj/zDid2x5nFHo0zJHZXfD9Pex2SFAXJUnCpUdnQK7CFy5CkYLTEgXyhVY9sBt28ik5Q
-         ECVQ==
+        bh=Nry7GFraP5dID7OEFezKs+H87qqk4KNOlEl9BWM4owk=;
+        b=l/b8xtS/bAfry6WThw6zhkwA/GPQlF5r8Do0uquunXOgzYdXa8DctAr4GUJyjAVpRC
+         YMmNN9aDejYfoVcAVLJd/Z4tt1q51JpiEm/ul3eYErm3LhJ4YcME0qKBYyiESq/kDbkD
+         H5I7Rd0nX3TNkzqFcF5GuJqxfednzbA/9ROhx5+eSB8VFCb05V5T+PLzLOASeMf06tY9
+         mI0dZ5Fj+8XzWXN6K/2sjteiIU9/40v5g+cb3gSivEQpsrDXONtrxhrTK0zO1cRb5E90
+         Hdjqcyf/8haAx5MuaBU30Favm/yWKpwzTA6vs0VeCpmKLBbsFlWXsv99AwQOrzswTJL6
+         Ve8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739839167; x=1740443967;
+        d=1e100.net; s=20230601; t=1739840142; x=1740444942;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=De5WQOe6k2skbiipS+ducGoEsMfnwQochicbgjZO/bs=;
-        b=H1G1nNMi7h3km3tr4gx64EwUp6rTMP19Ar9DLWuw4hEQF4aq/EGlaiAFEhDivMnQAZ
-         hsbRFsS15BHPiuD5phFU/vFnVdHjGkGOGry2xRahNeCi+aHrs+LC7L99xBxPcIo5d4NJ
-         OKq9M33MGo6kj5/ZfexZ2wyenCfp+s8hUPWeV2w2ymAHZR+6oBKmYZr1GxwQaGo+BxUj
-         GizQiv/zKCN9uPaugUpPLgY8RC3fhBIn64t7d/rZIQ9Qy2qX4Wc1ODYlGoM0tjs2VOjE
-         2v0dRj8crbLsf8DyzahzfoVhbsuf4QfPEEQASenMXzVx/xUQrNbuAz2tXKShAijlxhO3
-         ZQhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVv61R2b5XtSj6Z3LrrmonniTQAsxRHTjPlDBCtUfXi2bSAYJmAtirgOxQWzcaL+/yHJaB6CxjCa17f4kcO@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaxLjniKVcy+pmRg11qVMS69dAyGIqZlrCiH8veh6AtNZNuMPT
-	fcCqh5SznCCQdN6CY+0gfdEfVcIyQmZEgLHSXbSbZwb8fbtk7YY13VfNmjyjbXM=
-X-Gm-Gg: ASbGncsVqz3WKaNbij5x+QNjQxQfAkT5jfzIdVbaVZ+utfgqh6yaapxgc37Eg+SQ0Pv
-	7dDUzThjboSX0vU+ltX5PvM4MVf3Np8iIj3FLClZpvXOjySSx6wV5bgSt6X05dG1BTxW9qk6EXT
-	aM31MrF4aYHBC8lvOihC9AT2WI1Kq6MnpGle/4na3+dKvpZwRi57r1YbASIQdiUqSIHwweIgTqV
-	8xL8MGEa9/9LX/6gm+IkIh2s9SvQDCzCizTnJH01W8eVwHoNWsjjKnwBlorsFBdZtwaIWEiv7hX
-	tJVqp/mH4d7LnYgM3uzSWqPcejAHyXnsNlvTsD50jaM97yqEZpGFiu1NTGoV43KhlP4=
-X-Google-Smtp-Source: AGHT+IEeMGa7xPwEtMlpXZafvTTjPq0Al51DL+lbvh4II9Auk36aN41MyoHA6pK5zQJ2LCv7QhzaMA==
-X-Received: by 2002:a05:6a00:2d9d:b0:730:95a6:3761 with SMTP id d2e1a72fcca58-7326177e484mr22261738b3a.3.1739839167098;
-        Mon, 17 Feb 2025 16:39:27 -0800 (PST)
+        bh=Nry7GFraP5dID7OEFezKs+H87qqk4KNOlEl9BWM4owk=;
+        b=LyMX0OW2OjN/p1NK8/rqgWEnJaSMi9qG0mN0o7IxgII0sNtDR80GXOdPG2gzGvA+6Z
+         4OGL8ERXZPxP6TpNkVcwy7DY6/sZ7Esf+GN6IpOy+kFPpMAh0MMhorRfNOpHRaI+gG7Z
+         1nMtb4gbMk/Fx8XS9ux+d02btDJ123RXQGS5Sfv8c3NuXJNM38auOkwLQe891nJxpC8t
+         qcyrdoyqL8FzUPfB+KT1wAM0XwVtjmg1G7DgJT4XF7gAumlUOxJpSl4fGqN4oUHHwNx/
+         NWMLJ/4nKWALZC9rz6hjE8oiS9/JFtP3CgRr0qXED3eYNNjfQTEiNGFNJTSR83eOCTeY
+         6pMA==
+X-Forwarded-Encrypted: i=1; AJvYcCURqq8Cf2TuBterL/thM0V0dVpzCiAQopNv0A8aYHPZbVRK1131AqxeygmUgd4XOZ3Vn0E/rsT5xWW3elEN@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcrZFdzJowFn1ZAc90fmhvH3QXtINREm4iFfjA/tmx1PDJW9zP
+	da6952/ZuqKWvQLhIbUjKf2/6YtbzEp/TPoRisfOHLlitSpF51KpFRGzeenSYv0=
+X-Gm-Gg: ASbGnct6xoQVGS1fvopVahVE1oqAqJi4T2aPmV0DOFU/FrvI7PohdF8XHu89AQVug1l
+	BKGKtaNVzZvxavekpc/Teg9f+Al2m2SYQWa0b6d74oaXU51Z0duLcLkDWMHnvvHsLQRiyoYekok
+	fh6J9rKarE+y7HfTTo213sfDJU4ArioaUNuNV5upoWdILdiM9hCq4HeZbbo0uGQXK9a4JlPf1ri
+	y/sP4eB2yOZ2vfFw6kXSzpYvDFbwcna5SHgsnOQiNczsClfMzoDmSKlU78blbrHifu9vdEo/qqp
+	KYUImG967dmhSTM9Kbnzw106n5tD/cwzz3NRA9TBIKC2XYYgwNHbwnV2
+X-Google-Smtp-Source: AGHT+IGFnm0d4B9MpsOMTdi9dSjhG9Pb2tiGpMdEdFXl3Ihlm4sCRnTwugA8JT8DiRGGw0PKCpmO0w==
+X-Received: by 2002:a05:6a21:1707:b0:1ee:b7e8:5e14 with SMTP id adf61e73a8af0-1eeb7e85ef2mr7886159637.8.1739840141910;
+        Mon, 17 Feb 2025 16:55:41 -0800 (PST)
 Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73242568961sm8750148b3a.38.2025.02.17.16.39.26
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73242546149sm8705791b3a.36.2025.02.17.16.55.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 16:39:26 -0800 (PST)
+        Mon, 17 Feb 2025 16:55:41 -0800 (PST)
 Received: from dave by dread.disaster.area with local (Exim 4.98)
 	(envelope-from <david@fromorbit.com>)
-	id 1tkBdz-00000002bHy-1hQn;
-	Tue, 18 Feb 2025 11:39:23 +1100
-Date: Tue, 18 Feb 2025 11:39:23 +1100
+	id 1tkBti-00000002be0-3zn4;
+	Tue, 18 Feb 2025 11:55:38 +1100
+Date: Tue, 18 Feb 2025 11:55:38 +1100
 From: Dave Chinner <david@fromorbit.com>
 To: Luis Henriques <luis@igalia.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>,
@@ -83,10 +83,11 @@ Cc: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>,
 	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
 	Matt Harvey <mharvey@jumptrading.com>,
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] vfs: export invalidate_inodes()
-Message-ID: <Z7PWuwQApEWI8b06@dread.disaster.area>
+Subject: Re: [PATCH v6 2/2] fuse: add new function to invalidate cache for
+ all inodes
+Message-ID: <Z7PaimnCjbGMi6EQ@dread.disaster.area>
 References: <20250217133228.24405-1-luis@igalia.com>
- <20250217133228.24405-2-luis@igalia.com>
+ <20250217133228.24405-3-luis@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -95,33 +96,40 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250217133228.24405-2-luis@igalia.com>
+In-Reply-To: <20250217133228.24405-3-luis@igalia.com>
 
-On Mon, Feb 17, 2025 at 01:32:27PM +0000, Luis Henriques wrote:
-> Signed-off-by: Luis Henriques <luis@igalia.com>
-> ---
->  fs/inode.c         | 1 +
->  fs/internal.h      | 1 -
->  include/linux/fs.h | 1 +
->  3 files changed, 2 insertions(+), 1 deletion(-)
+On Mon, Feb 17, 2025 at 01:32:28PM +0000, Luis Henriques wrote:
+> Currently userspace is able to notify the kernel to invalidate the cache
+> for an inode.  This means that, if all the inodes in a filesystem need to
+> be invalidated, then userspace needs to iterate through all of them and do
+> this kernel notification separately.
 > 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 5587aabdaa5e..88387ecb2c34 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -939,6 +939,7 @@ void invalidate_inodes(struct super_block *sb)
->  
->  	dispose_list(&dispose);
->  }
-> +EXPORT_SYMBOL(invalidate_inodes);
+> This patch adds a new option that allows userspace to invalidate all the
+> inodes with a single notification operation.  In addition to invalidate
+> all the inodes, it also shrinks the sb dcache.
 
-Oh, I didn't realise the FUSE core wasn't built in. That makes me
-even less enthusiastic about this....
+You still haven't justified why we should be exposing this
+functionality in a low level filesystem ioctl out of sight of the
+VFS.
 
-Ok, if this is going to happen, you need to pull in the change I
-made to get rid of invalidate_inodes() because it is now a duplicate of
-evict_inodes(). evict_inodes() is already EXPORT_SYMBOL_GPL(), so
-then this patch goes away.
+User driven VFS cache invalidation has long been considered a
+DOS-in-waiting, hence we don't allow user APIs to invalidate caches
+like this. This is one of the reasons that /proc/sys/vm/drop_caches
+requires root access - it's system debug and problem triage
+functionality, not a production system interface....
+
+Every other situation where filesystems invalidate vfs caches is
+during mount, remount or unmount operations.  Without actually
+explaining how this functionality is controlled and how user abuse
+is not possible (e.g. explain the permission model and/or how only
+root can run this operation), it is not really possible to determine
+whether we should unconditional allow VFS cache invalidation outside
+of the existing operation scope....
+
+FInally, given that the VFS can only do best-effort invalidation
+and won't provide FUSE (or any other filesystem) with any cache
+invalidation guarantees outside of specific mount and unmount
+contexts, I'm not convinced that this is actually worth anything...
 
 -Dave.
 -- 
