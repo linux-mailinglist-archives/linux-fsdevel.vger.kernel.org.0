@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-41940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41946-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C006DA39339
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 06:53:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8BE4A39333
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 06:52:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF5E83AC387
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 05:52:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A26C716E7D5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 05:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028291C07C2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489F41C5D6E;
 	Tue, 18 Feb 2025 05:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZBJn8dKc"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WctRG+C4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5162E1B0F1B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730561B21AC
 	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2025 05:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739857930; cv=none; b=JIj/iZq31oBf51rpBZIoMao+dXzoKzOBCuhlKjTCx5nIGrly7XRdobuheTHHpKfyLGAn/F0XCzxGZ6sKi5RkHHJTJ1AHUYy4xPCSCyMRCAOYE0VyE5NuMec3dXKvJ9lyHQwcEZFCv9uBZwc64XYBKiEBqluz3c1xvcbCJzAi/eA=
+	t=1739857930; cv=none; b=Dl1h5EIheb3HO2+8T1wQtPx+zAujDuZ0OhC5trCIfJqvPichXSRN729OMu2cu0cqf9hnSxRBt8aQLwS9i7uS6HwrfDPC7azm4XDMQxbpdGSHyIn92jzfzOIcGQhN5sRP2ZfTV7izWnL0F+2diiUc5BzfTLAZcO+WWm6jkHTDZiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739857930; c=relaxed/simple;
-	bh=pnTJOqWZU/WHC4fVU9CwNgpCCNXFluE8bDxDCRI50ss=;
+	bh=7gjeFdrpF9DXJEHkm7PmZFbKBM9P+b0kCi+vJVipZJU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mSbYwR08fbICrueVwz95r1zd9zAsON7WhBxnD16DsiATN8ajahaDt+C8Ha2Xh7sLOgA02Y58K8s7hHOvO/TnOXvoIJeTPAWro3NIfbjhAitKhcbx7QMTBS/Eo81hOTG+rewjp288ub3lR2EM8picx97zo4eB8KgTVZQMj4QI4zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZBJn8dKc; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=kMhh4D1bROP4r3+mXZ1u2nmywOiEa4csjXICjt7xfiZSd9VKPBlVzFj9UEDMT/KNrXMVCGRwXixM3L7R+h3MXDGsiNXiEH2KZTs4JevGMsxmrMTawqLto5hIjs6KXDLm3lKktTq1tu31Q0TwTEjT1AJCdm/5b/OQTzrp6kp3XiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WctRG+C4; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=8hfEr/bs2O93cTTYBjuHfYQrmaf2LnuSS7qSOXK8nGg=; b=ZBJn8dKca5FE5jhJgQAJMDN0W3
-	ps1D9yGjREvu8T/x6oOTyJ2u30HcwMcb5641vNoqBPsDxuSRD5gxF2yJwnNcr3kBFSpfewiLcfm6z
-	/P16nriyVs75bzWhXI5a7UsPG1YDIaKvtdo8nW8fcZ7m8KcrT25cD7wVvfRmUdJHLkVUOJdb65kIB
-	+S5nGmfyfgip+RZ+1/up3N0WIHdix+gDb/uC4134lG/CH1lttGZJrQnD3rC9UPUJR5yEeEJEvzRZa
-	9G/VZSBmS0mM0FXzN/UBfZdW8NiHd8VOZcGbydXDU1Caj5AvlWUuOLWhU2OFXhge49otVx+p+cCje
-	7rGs/MMw==;
+	bh=+Syw2hpXqanXPir38dFqOWLHHdVuEk3K5wwtxHpZ/n4=; b=WctRG+C4lsUZm+Zrddr4t3s0gi
+	of/RkQflhhZ8vazQsxlQW3tw+X2p1IBuoiljtcJXf2c1FwKu4ew7MY8aMX/0UZbzwRgDvj3WARn01
+	q+PLjAelPSitbzHTrPcY5Xp6emsgV3zXBeK0vMv953eb+0hD3ZzoRrZ2jZf2eMpVf0CeOCwFn1FML
+	i+y2dtv8lCfKsXGJGEDQ5+8fmk3GwlKObGXrVxrohJCP2mZKmgO7wFtom0ascQwPjDsYyLc+QlULT
+	CaGvwklCWYz78eFU2d6cbojv5tpKcZomUGxwNjIildopRHoHfuUQwYLGMZSgUKOxrb6VU7Ze8gFcg
+	1aHC1yxA==;
 Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tkGWc-00000002Try-2aHs;
+	id 1tkGWc-00000002Ts5-3AXx;
 	Tue, 18 Feb 2025 05:52:06 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
@@ -50,9 +50,9 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>,
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	linux-f2fs-devel@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 10/27] f2fs: Add f2fs_grab_cache_folio()
-Date: Tue, 18 Feb 2025 05:51:44 +0000
-Message-ID: <20250218055203.591403-11-willy@infradead.org>
+Subject: [PATCH 11/27] mm: Remove grab_cache_page_write_begin()
+Date: Tue, 18 Feb 2025 05:51:45 +0000
+Message-ID: <20250218055203.591403-12-willy@infradead.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250218055203.591403-1-willy@infradead.org>
 References: <20250218055203.591403-1-willy@infradead.org>
@@ -64,77 +64,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert f2fs_grab_cache_page() into f2fs_grab_cache_folio()
-and add a wrapper.  Removes several calls to deprecated functions.
+All callers have now been converted to use folios, so remove this
+compatibility wrapper.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/f2fs.h | 37 +++++++++++++++++++++++++------------
- 1 file changed, 25 insertions(+), 12 deletions(-)
+ include/linux/pagemap.h | 3 ---
+ mm/folio-compat.c       | 8 --------
+ 2 files changed, 11 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 5e01a08afbd7..cf664ca38905 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2767,33 +2767,46 @@ static inline s64 valid_inode_count(struct f2fs_sb_info *sbi)
- 	return percpu_counter_sum_positive(&sbi->total_valid_inode_count);
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index a19d8e334194..45817e2106ee 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -990,9 +990,6 @@ unsigned filemap_get_folios_contig(struct address_space *mapping,
+ unsigned filemap_get_folios_tag(struct address_space *mapping, pgoff_t *start,
+ 		pgoff_t end, xa_mark_t tag, struct folio_batch *fbatch);
+ 
+-struct page *grab_cache_page_write_begin(struct address_space *mapping,
+-			pgoff_t index);
+-
+ /*
+  * Returns locked page at given index in given cache, creating it if needed.
+  */
+diff --git a/mm/folio-compat.c b/mm/folio-compat.c
+index 5766d135af1e..45540942d148 100644
+--- a/mm/folio-compat.c
++++ b/mm/folio-compat.c
+@@ -84,11 +84,3 @@ struct page *pagecache_get_page(struct address_space *mapping, pgoff_t index,
+ 	return folio_file_page(folio, index);
  }
- 
--static inline struct page *f2fs_grab_cache_page(struct address_space *mapping,
--						pgoff_t index, bool for_write)
-+static inline struct folio *f2fs_grab_cache_folio(struct address_space *mapping,
-+		pgoff_t index, bool for_write)
- {
--	struct page *page;
-+	struct folio *folio;
- 	unsigned int flags;
- 
- 	if (IS_ENABLED(CONFIG_F2FS_FAULT_INJECTION)) {
-+		fgf_t fgf_flags;
-+
- 		if (!for_write)
--			page = find_get_page_flags(mapping, index,
--							FGP_LOCK | FGP_ACCESSED);
-+			fgf_flags = FGP_LOCK | FGP_ACCESSED;
- 		else
--			page = find_lock_page(mapping, index);
--		if (page)
--			return page;
-+			fgf_flags = FGP_LOCK;
-+		folio = __filemap_get_folio(mapping, index, fgf_flags, 0);
-+		if (!IS_ERR(folio))
-+			return folio;
- 
- 		if (time_to_inject(F2FS_M_SB(mapping), FAULT_PAGE_ALLOC))
--			return NULL;
-+			return ERR_PTR(-ENOMEM);
- 	}
- 
- 	if (!for_write)
--		return grab_cache_page(mapping, index);
-+		return filemap_grab_folio(mapping, index);
- 
- 	flags = memalloc_nofs_save();
--	page = grab_cache_page_write_begin(mapping, index);
-+	folio = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
-+			mapping_gfp_mask(mapping));
- 	memalloc_nofs_restore(flags);
- 
--	return page;
-+	return folio;
-+}
-+
-+static inline struct page *f2fs_grab_cache_page(struct address_space *mapping,
-+						pgoff_t index, bool for_write)
-+{
-+	struct folio *folio = f2fs_grab_cache_folio(mapping, index, for_write);
-+
-+	if (IS_ERR(folio))
-+		return NULL;
-+	return &folio->page;
- }
- 
- static inline struct page *f2fs_pagecache_get_page(
+ EXPORT_SYMBOL(pagecache_get_page);
+-
+-struct page *grab_cache_page_write_begin(struct address_space *mapping,
+-					pgoff_t index)
+-{
+-	return pagecache_get_page(mapping, index, FGP_WRITEBEGIN,
+-			mapping_gfp_mask(mapping));
+-}
+-EXPORT_SYMBOL(grab_cache_page_write_begin);
 -- 
 2.47.2
 
