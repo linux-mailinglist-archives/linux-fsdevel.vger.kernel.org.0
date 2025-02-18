@@ -1,303 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-41967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 636F1A396AA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 10:14:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0C6AA396F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 10:24:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FC5D188BE53
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 09:14:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2767A3A3E7B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 09:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2F722E015;
-	Tue, 18 Feb 2025 09:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE1B22F3BC;
+	Tue, 18 Feb 2025 09:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FV9jLOa+"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="WZTgsvIt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DC622AE42;
-	Tue, 18 Feb 2025 09:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5C61FFC48
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2025 09:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739870042; cv=none; b=BAPMuhhFysZPcNSW/0pc5hQwsXhDFxdXU5twCqnsOpjS8b2rzF138PQuUVFgOqWECXWo7QexIJ3WKISQd8LJdbMIRci3lpu/FmhEWEZQUCujS+6pG0KafEF1RpmnRjtKktZubqGAvpxZSgK53dnQlZEXV2nEichDFlUKzC2HyUM=
+	t=1739870139; cv=none; b=cLALkNtlKloYaMthMk2htq0Scbyol+QlRzW92g4Tdac+C++F399y4ekCLVURLR6PgEGPlWM9oiB7IuYUKwDEJNoY8eg5m2hb+Wo+89rGtdrA88qPNpPwQ3RFEH6G/k7Dp4WhJnul7oo80C2/cuokwm7LP+SUat6nm3QCGpeBzLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739870042; c=relaxed/simple;
-	bh=gWNVM12RivD5MRbtbQ5MAGzTtirxN9oxOsKoZrKbhCk=;
+	s=arc-20240116; t=1739870139; c=relaxed/simple;
+	bh=iA9AGMXcymWk0aqUD2HB51dKBFnWqCxYYVvRaHqRk0I=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FzdZ8ZfMAaDSy7cmQFrkMHUZvmAxpv+ZeHUqcrmHiyGv7fsuddgNn4XVdNeATWg2JyaJjYVUDA9HUwpEYJSWaflqsl6XchSZHkrg+jZBNac57X6UKaUiiK9WDaZ0nn5CQvtr+4zrQzhgvYbMuj2y96syCa6RB6vREGow+Kd9g0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FV9jLOa+; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ab7483b9bf7so671039666b.3;
-        Tue, 18 Feb 2025 01:13:59 -0800 (PST)
+	 To:Cc:Content-Type; b=IrT392B9MBNI19/aHGD4+Me/cjSJUtSl1kfNUlxCqRMPdtcN93+ehIs1hKDJ7xSOrIbrQLtyntJ6cUMXithDmV5btSKHtF225Q7lfE7G4AV0U4JWpFeqRAxD4C+w3RrenzxPVoD8MljsW5MWKtsg/CatWpaBEu+QlPhMVDTpj8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=WZTgsvIt; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-46fcbb96ba9so59310101cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2025 01:15:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739870038; x=1740474838; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JWEFbTINzWxsW/JqJ2SNOyfzIlQF1fNTD3RtsW2hBTc=;
-        b=FV9jLOa+HHNnhNNRhI8ut12KBQ9wXXhoTxp0WOEDOQ8XGWWb6QG+KTLoTKcdUXeMyO
-         88n5Oy9kCPcmVd3iISdMVcq+xUqsCptZxiRs/V/YjVeZlhupkFabB8O5BO2NM7a+deNS
-         mBUMwUXSuDC/NFv+glSU8e31woTv3FvTdtlLzu9xiwGJmO12eT0iXTZtmyQsuP0hPSah
-         x6qElP+neGqBkFzrYrIlZwMi6cTUzblWFKlMRHZhRfk9kyyUUYX7Lx0FI4MhNBOo+HBW
-         l+VgYUhAp5huYQXnrbxGO2sCClnygaeQKOpZvdGoQau3BcWBowBsXvY/zXXAAtWzRmFI
-         C+lg==
+        d=szeredi.hu; s=google; t=1739870137; x=1740474937; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/9o60+wmpu1uSsdLe+fAGgKFk/Xz6Tn0Yptqhrl0H24=;
+        b=WZTgsvItBLhqEE0bzy29A8rH0IS7Ma4m1qEmpMJg9/TzVG7qKWER+0AYmxKbiOs2tT
+         9mS6fjiQgyWnFgQlotdjMdL9W6MfnfsoTtGOajV5iBXBqZsqBYzppoPF4ROAOICJCUl5
+         9LpNtjrAOvLYpNp/cOBSHFd8KtynNd+Mrolpk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739870038; x=1740474838;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JWEFbTINzWxsW/JqJ2SNOyfzIlQF1fNTD3RtsW2hBTc=;
-        b=NQkiZclvKf04cncHXI5x9TsqdGS1BFOCM4dSrWgHfoC/AwPQJ1FbetQIQyuzfrt6BE
-         V1OV1O1PNw2BeKjO3H6/9aEXLDDEnw6AKkF8Kw/Bo5259lcaMhEM615aewFuwG+mxBac
-         lp41l+KQFSBFtqIuDgcbvkEUwSZ0MbxYY9X4pvmB4KX+5kgmQtu+Hhl8MMicLo3BguPO
-         Fj2NXxrQ2sNgfnacmmFPBKxy50VHsIXwe10x4SZKBQvM4EEOz/vHlC1rmaigOh2s9/0i
-         JbB29M2A31/rGQVJ0f/EuQqgMZv8d1U2t75Mo3/NUkKn+Cn8O/ggTcdtp+M2pRx9DH3x
-         /ILQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUImb3vSLJL/yg0ue/rb46mnZD/EUCJTsJUOcWqo+IO8UHeyeTXIQoEVhA4F04ZsfocNc6upxEVl1Ck@vger.kernel.org, AJvYcCUMkGCCzGW1rJjUhl1uaeulbnO0q3pYA3N/IZItJb7RF0jVKcbylgZvPjtEfMJ+M9dPHtPTiiDFO6313Tv3qw==@vger.kernel.org, AJvYcCXgXWqgcnVtapdkPRdP8xq4r4VFrRR0FfBMlGkdcRkcrErTZevwpm8sneQKuMMjrefyBqG1ueHMqlITAVlV@vger.kernel.org
-X-Gm-Message-State: AOJu0YydcvATTB+xseuHNMaj9OlYQ2KAAe2dUF+XvcTTiR9RUtg/siJh
-	pFPIf9a6nNzGOiirIOLdNWgTsSYwGDT5y0oCcSuvm+gsT5sml1qOX54QYKRx+x53a0C3cmyCN2z
-	uxEGhcZxf5BoojUeJS9Fs6Xxz+9Q=
-X-Gm-Gg: ASbGncv8UuFOhOnDPnDv8RJBQe8TGmGDts4Eq6bN8FxeysldxeHUsFQi29uN4nkGX3W
-	pGaPOADZ3/rGvafMb0xhjZsFbgi/ttKOAriYeW0ETq7/yRZkx2h/zng0zWB8/qNDJt2CrrPx4
-X-Google-Smtp-Source: AGHT+IEB0b+dHr5UqG8M9ZVSRBF+tFuJVIUL+OTTFEJ9S68qBDv9eHEC4O94JlwUw1UT3y8fVIlx1AqV8ksDo8W53NE=
-X-Received: by 2002:a17:906:3ca9:b0:ab7:bac4:b321 with SMTP id
- a640c23a62f3a-abb70be2be7mr1178156566b.29.1739870037904; Tue, 18 Feb 2025
- 01:13:57 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739870137; x=1740474937;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/9o60+wmpu1uSsdLe+fAGgKFk/Xz6Tn0Yptqhrl0H24=;
+        b=FxX4n1E12M8Ta92Id1d+wskRYhxhv8OxaOM9uFYiU/mVg/xEJ6Lqq2Yvj+zogFmOCm
+         JF+K1Ws+cY6duAYvXYhcGSU46qadJmytvqqNrPI4KAWnyH5+EqTpL8VYqKst7F8wRDXG
+         DZR/QOTjXa+1qVjg7CJCqfV0VIkaRQcFhqPzMm17MPz5gTfOx9ZxWuGFulryKM0L8cIp
+         7ZP39p++chfgzBfBuMcYkt9UtBJtlJ2X/UIV8zVtnha/IHbi/H9mheJ4456n8Zya/rC9
+         +PbrqYY4K7EWBVv1OvjIQTi3SH/9S0pMeQq7Bp2PSru9eWKfsW+z3ACsp3ERKQ9BEzDQ
+         Hdlw==
+X-Forwarded-Encrypted: i=1; AJvYcCWcgjwFYSA7pRYaOcbH0BEaWsAiVhXz5fRnsJPjpokPsi+ik2f7rO0rsXKCNEtz3kyBww5qnA6LRbsPoKgA@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUF8DS193lX6psahDpMndNiPXF9FhMObYT8Mv8OJ5PCrMQhwfh
+	9488Spal9FyWMJW0Ak1V0WEBaWgrbI2lF1CTaSsF06Q+1p5JJiBMbuBy/I66Y4d8R7AbCEyJo59
+	tdva80SyZtGBUFhQi+oQDiDiaHI4jF/VqtlmBng==
+X-Gm-Gg: ASbGncs7Uc+tWw04X+Hp5Mz+2LNw5e2DsSm0pkU5lp1km30ZddrE30dphghwg0V8PM8
+	Ec1yeUrmn+gcZGjtwhPdlU/HuG91Htql0sVCLsk0EBBeUTO2q5LB0WM8SskBQJaIKi7wAuLA=
+X-Google-Smtp-Source: AGHT+IF7OXUuVZIvUWcHSkdB3EmL6eX0eRGEnz8G+dLsYP7tcuw3hlXDLltRlig3xpi6GmrpcVyeyIAffsvZWcWIA0M=
+X-Received: by 2002:a05:622a:59c6:b0:471:f5d8:5f56 with SMTP id
+ d75a77b69052e-471f5d86142mr83888681cf.1.1739870137132; Tue, 18 Feb 2025
+ 01:15:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250216164029.20673-1-pali@kernel.org> <20250216164029.20673-2-pali@kernel.org>
- <20250216183432.GA2404@sol.localdomain> <CAOQ4uxigYpzpttfaRc=xAxJc=f2bz89_eCideuftf3egTiE+3A@mail.gmail.com>
- <20250216202441.d3re7lfky6bcozkv@pali> <CAOQ4uxj4urR70FmLB_4Qwbp1O5TwvHWSW6QPTCuq7uXp033B7Q@mail.gmail.com>
- <Z7Pjb5tI6jJDlFZn@dread.disaster.area>
-In-Reply-To: <Z7Pjb5tI6jJDlFZn@dread.disaster.area>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 18 Feb 2025 10:13:46 +0100
-X-Gm-Features: AWEUYZnHvp-MpYsMxX-gG5kYL3y3kpV6TbAqFUCYIVrD73Pbml11umh0ZwxDxJs
-Message-ID: <CAOQ4uxh6aWO7Emygi=dXCE3auDcZZCmDP+jmjhgdffuz1Vx6uQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/4] fs: Add FS_XFLAG_COMPRESSED & FS_XFLAG_ENCRYPTED
- for FS_IOC_FS[GS]ETXATTR API
+References: <20250217133228.24405-1-luis@igalia.com> <20250217133228.24405-3-luis@igalia.com>
+ <Z7PaimnCjbGMi6EQ@dread.disaster.area>
+In-Reply-To: <Z7PaimnCjbGMi6EQ@dread.disaster.area>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 18 Feb 2025 10:15:26 +0100
+X-Gm-Features: AWEUYZlMbyj79ggSvwhwNFRl4UDBvs13x_6taoPW6P6cYlPOsVcloafHbUopCZ4
+Message-ID: <CAJfpegszFjRFnnPbetBJrHiW_yCO1mFOpuzp30CCZUnDZWQxqg@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] fuse: add new function to invalidate cache for all inodes
 To: Dave Chinner <david@fromorbit.com>
-Cc: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
-	Eric Biggers <ebiggers@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>, 
-	ronnie sahlberg <ronniesahlberg@gmail.com>, Chuck Lever <chuck.lever@oracle.com>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steve French <sfrench@samba.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Luis Henriques <luis@igalia.com>, Bernd Schubert <bschubert@ddn.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Matt Harvey <mharvey@jumptrading.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 18, 2025 at 2:33=E2=80=AFAM Dave Chinner <david@fromorbit.com> =
-wrote:
+On Tue, 18 Feb 2025 at 01:55, Dave Chinner <david@fromorbit.com> wrote:
 >
-> On Sun, Feb 16, 2025 at 09:43:02PM +0100, Amir Goldstein wrote:
-> > On Sun, Feb 16, 2025 at 9:24=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.or=
-g> wrote:
-> > >
-> > > On Sunday 16 February 2025 21:17:55 Amir Goldstein wrote:
-> > > > On Sun, Feb 16, 2025 at 7:34=E2=80=AFPM Eric Biggers <ebiggers@kern=
-el.org> wrote:
-> > > > >
-> > > > > On Sun, Feb 16, 2025 at 05:40:26PM +0100, Pali Roh=C3=A1r wrote:
-> > > > > > This allows to get or set FS_COMPR_FL and FS_ENCRYPT_FL bits vi=
-a FS_IOC_FSGETXATTR/FS_IOC_FSSETXATTR API.
-> > > > > >
-> > > > > > Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
-> > > > >
-> > > > > Does this really allow setting FS_ENCRYPT_FL via FS_IOC_FSSETXATT=
-R, and how does
-> > > > > this interact with the existing fscrypt support in ext4, f2fs, ub=
-ifs, and ceph
-> > > > > which use that flag?
-> > > >
-> > > > As far as I can tell, after fileattr_fill_xflags() call in
-> > > > ioctl_fssetxattr(), the call
-> > > > to ext4_fileattr_set() should behave exactly the same if it came so=
-me
-> > > > FS_IOC_FSSETXATTR or from FS_IOC_SETFLAGS.
-> > > > IOW, EXT4_FL_USER_MODIFIABLE mask will still apply.
-> > > >
-> > > > However, unlike the legacy API, we now have an opportunity to deal =
-with
-> > > > EXT4_FL_USER_MODIFIABLE better than this:
-> > > >         /*
-> > > >          * chattr(1) grabs flags via GETFLAGS, modifies the result =
-and
-> > > >          * passes that to SETFLAGS. So we cannot easily make SETFLA=
-GS
-> > > >          * more restrictive than just silently masking off visible =
-but
-> > > >          * not settable flags as we always did.
-> > > >          */
-> > > >
-> > > > if we have the xflags_mask in the new API (not only the xflags) the=
-n
-> > > > chattr(1) can set EXT4_FL_USER_MODIFIABLE in xflags_mask
-> > > > ext4_fileattr_set() can verify that
-> > > > (xflags_mask & ~EXT4_FL_USER_MODIFIABLE =3D=3D 0).
-> > > >
-> > > > However, Pali, this is an important point that your RFC did not fol=
-low -
-> > > > AFAICT, the current kernel code of ext4_fileattr_set() and xfs_file=
-attr_set()
-> > > > (and other fs) does not return any error for unknown xflags, it jus=
-t
-> > > > ignores them.
-> > > >
-> > > > This is why a new ioctl pair FS_IOC_[GS]ETFSXATTR2 is needed IMO
-> > > > before adding support to ANY new xflags, whether they are mapped to
-> > > > existing flags like in this patch or are completely new xflags.
-> > > >
-> > > > Thanks,
-> > > > Amir.
-> > >
-> > > But xflags_mask is available in this new API. It is available if the
-> > > FS_XFLAG_HASEXTFIELDS flag is set. So I think that the ext4 improveme=
-nt
-> > > mentioned above can be included into this new API.
-> > >
-> > > Or I'm missing something?
+> On Mon, Feb 17, 2025 at 01:32:28PM +0000, Luis Henriques wrote:
+> > Currently userspace is able to notify the kernel to invalidate the cache
+> > for an inode.  This means that, if all the inodes in a filesystem need to
+> > be invalidated, then userspace needs to iterate through all of them and do
+> > this kernel notification separately.
 > >
-> > Yes, you are missing something very fundamental to backward compat API =
--
-> > You cannot change the existing kernels.
-> >
-> > You should ask yourself one question:
-> > What happens if I execute the old ioctl FS_IOC_FSSETXATTR
-> > on an existing old kernel with the new extended flags?
+> > This patch adds a new option that allows userspace to invalidate all the
+> > inodes with a single notification operation.  In addition to invalidate
+> > all the inodes, it also shrinks the sb dcache.
 >
-> It should ignore all the things it does not know about.
+> You still haven't justified why we should be exposing this
+> functionality in a low level filesystem ioctl out of sight of the
+> VFS.
 >
-
-I don't know about "should" but it certainly does, that's why I was
-wondering if a new fresh ioctl was in order before extending to new flags.
-
-> But the correct usage of FS_IOC_FSSETXATTR is to call
-> FS_IOC_FSGETXATTR to initialise the structure with all the current
-> inode state.
-
-Yeh, this is how the API is being used by exiting xfs_io chattr.
-It does not mean that this is a good API.
-
-> In this situation, the fsx.fsx_xflags field needs to
-> return a flag that says "FS_XFLAGS_HAS_WIN_ATTRS" and now userspace
-> knows that it can set/clear the MS windows attr flags.  Hence if the
-> filesystem supports windows attributes, we can require them to
-> -support the entire set-.
+> User driven VFS cache invalidation has long been considered a
+> DOS-in-waiting, hence we don't allow user APIs to invalidate caches
+> like this. This is one of the reasons that /proc/sys/vm/drop_caches
+> requires root access - it's system debug and problem triage
+> functionality, not a production system interface....
 >
-> i.e. if an attempt to set a win attr that the filesystem cannot
-> implement (e.g. compression) then it returns an error (-EINVAL),
-> otherwise it will store the attr and perform whatever operation it
-> requires.
->
+> Every other situation where filesystems invalidate vfs caches is
+> during mount, remount or unmount operations.  Without actually
+> explaining how this functionality is controlled and how user abuse
+> is not possible (e.g. explain the permission model and/or how only
+> root can run this operation), it is not really possible to determine
+> whether we should unconditional allow VFS cache invalidation outside
+> of the existing operation scope....
 
-I prefer not to limit the discussion to new "win" attributes,
-especially when discussing COMPR/ENCRYPT flags which are existing
-flags that are also part of the win attributes.
+I think you are grabbing the wrong end of the stick here.
 
-To put it another way, suppose Pali did not come forward with a patch set
-to add win attribute control to smb, but to add ENCRYPT support to xfs.
-What would have been your prefered way to set the ENCRYPT flag in xfs?
-via FS_IOC_SETFLAGS or by extending FS_IOC_FSSETXATTR?
-and if the latter, then how would xfs_io chattr be expected to know if
-setting the ENCRYPT flag is supported or not?
+This is not about an arbitrary user being able to control caching
+behavior of a fuse filesystem.  It's about the filesystem itself being
+able to control caching behavior.
 
-> IMO, the whole implementation in the patchset is wrong - there is no
-> need for a new xflags2 field,
-
-xflags2 is needed to add more bits. I am not following.
-
-> and there is no need for whacky field
-> masks or anything like that. All it needs is a single bit to
-> indicate if the windows attributes are supported, and they are all
-> implemented as normal FS_XFLAG fields in the fsx_xflags field.
->
-
-Sorry, I did not understand your vision about the API.
-On the one hand, you are saying that there is no need for xflags2.
-On the other hand, that new flags should be treated differently than
-old flags (FS_XFLAGS_HAS_WIN_ATTRS).
-Either I did not understand what you mean or the documentation of
-what you are proposing sounds terribly confusing to me.
-
-> > The answer, to the best of my code emulation abilities is that
-> > old kernel will ignore the new xflags including FS_XFLAG_HASEXTFIELDS
-> > and this is suboptimal, because it would be better for the new chattr t=
-ool
-> > to get -EINVAL when trying to set new xflags and mask on an old kernel.
->
-> What new chattr tool? I would expect that xfs_io -c "chattr ..."
-> will be extended to support all these new fields because that is the
-> historical tool we use for FS_IOC_FS{GS}ETXATTR regression test
-> support in fstests. I would also expect that the e2fsprogs chattr(1)
-> program to grow support for the new FS_XFLAGS bits as well...
->
-
-That's exactly what I meant by "new chattr tool".
-when user executes chattr +i or xfs_io -c "chattr +i"
-user does not care which ioctl is used and it is best if both
-utils will support the entire set of modern flags with the new ioctls
-so that eventually (after old fs are deprecated) the old ioctl may also
-be deprecated.
-
-> > It is true that the new chattr can call the old FS_IOC_FSGETXATTR
-> > ioctl and see that it has no FS_XFLAG_HASEXTFIELDS,
-> > so I agree that a new ioctl is not absolutely necessary,
-> > but I still believe that it is a better API design.
->
-> This is how FS{GS}ETXATTR interface has always worked. You *must*
-> do a GET before a SET so that the fsx structure has been correctly
-> initialised so the SET operation makes only the exact change being
-> asked for.
->
-> This makes the -API pair- backwards compatible by allowing struct
-> fsxattr feature bits to be reported in the GET operation. If the
-> feature bit is set, then those optional fields can be set. If the
-> feature bit is not set by the GET operation, then if you try to use
-> it on a SET operation you'll either get an error or it will be
-> silently ignored.
->
-
-Yes, I know. I still think that this is a poor API design pattern.
-Imagine that people will be interested to include the fsxattr
-in rsync or such (it has been mentioned in the context of this effort)
-The current API is pretty useless for backup/restore and for
-copying supported attributes across filesystems.
-
-BTW, the internal ->fileattr_[gs]et() vfs API was created so that
-overlayfs could copy flags between filesystems on copy-up,
-but right now it only copies common flags.
-
-Adding a support mask to the API will allow smarter copy of
-supported attributes between filesystems that have a more
-specific common set of supported flags.
-
-> > Would love to hear what other fs developers prefer.
->
-> Do not overcomplicate the problem. Use the interface as intended:
-> GET then SET, and GET returns feature bits in the xflags field to
-> indicate what is valid in the overall struct fsxattr. It's trivial
-> to probe for native fs support of windows attributes like this. It
-> also allows filesystems to be converted one at a time to support the
-> windows attributes (e.g. as they have on-disk format support for
-> them added). Applications like Samba can then switch behaviours
-> based on what they probe from the underlying filesystem...
->
-
-OK, so we have two opinions.
-Debating at design time is much better than after API is released...
-
-I'd still like to hear from other stakeholders before we perpetuate
-the existing design pattern which requires apps to GET before SET
-and treat new (WIN) flags differently than old flags.
+I'm not arguing for the validity of this particular patch, just saying
+that something like this could be valid.  And as explained in my other
+reply there's actually a real problem out there waiting for a
+solution.
 
 Thanks,
-Amir.
+Miklos
+
+
+>
+> FInally, given that the VFS can only do best-effort invalidation
+> and won't provide FUSE (or any other filesystem) with any cache
+> invalidation guarantees outside of specific mount and unmount
+> contexts, I'm not convinced that this is actually worth anything...
+>
+> -Dave.
+> --
+> Dave Chinner
+> david@fromorbit.com
 
