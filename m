@@ -1,53 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-41970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57975A397D0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 10:57:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C863CA397CB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 10:57:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4D24188DFAE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 09:57:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26428188ADFD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 09:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145A5236A6B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46481238D25;
 	Tue, 18 Feb 2025 09:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SMgR7bo0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="swFHRr0t"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFDA653;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC78200111;
 	Tue, 18 Feb 2025 09:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739872606; cv=none; b=edKSVzXpWOqNkMVHDidxxUKIJgWx+XK24kVlArWSABePdaAj5pMdNiqKSJUUavoNbQJwet4rqN/KbL51Xr6dR5skoDnoch1mSwctJEhmMDB9uSkkgEbLpOfWP1ykpOYUmS1neugIEWRyvuFbQ1cECbf5nspuMwlS5CSEZfIBc9I=
+	t=1739872606; cv=none; b=Ol9mT9LX8holFdakJKC3JbOzKT92vQolgjytzPhQEhlfVMyDCi9rI/JdK65DTRRgfHEkGIRPD8JJ6PxgO6lcv1uOmrk5QN/kkKPOnRowC8knPsRCbmE6gUL7NlKpYPIbbBfzTCXGnyFWWV4K9w5ncNR+f50cXFgkQkow4SKhwy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739872606; c=relaxed/simple;
-	bh=+Ro/oqfvGVYxj3TObN+RDoEaw0SsbEolN0PZuCXlz9k=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uYHzTxCopfIqNlL9fZIsd9ZlkbjQlqqB0FSPAbU9raWkheXIwSPGzvzr6MI8lUaYF80gqWiJzyPq9FWk2NLovVsJs31n0itMeXkPd980MCTV06C8douf4oGBxzHw+g8x8yYHZv3XuC8qwTEtlz4g36N4JNOTPN+oY4zdSxbh29s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SMgR7bo0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 95764C4CEE6;
+	bh=NyFjle3l0026Gd8PBKMPo4EmMXIGmeeTI/HzQnjZhwo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=fOUkPDDWJiz2up0RWG/5MFwf8fDt6K8cVq6UPb4T3IcTp3YQP60dRAEn7dff0oB0pmwMPJh02ZAUXb3JgX5HjqOkScwfUnKlc53R6V0bnkbJxC3ttqQqMO5LjNOc7y8DUV1btb8qvSd/ggMS4rOvuFAr29aGgfH3JorsF9UC12o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=swFHRr0t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A93C3C4CEE8;
 	Tue, 18 Feb 2025 09:56:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1739872605;
-	bh=+Ro/oqfvGVYxj3TObN+RDoEaw0SsbEolN0PZuCXlz9k=;
-	h=From:Subject:Date:To:Cc:From;
-	b=SMgR7bo0E+ouRwWv2YvMzhmzTV+dFvpmu7Lma8D7TUmyIH5hYiVeFzWzUlFZJoutb
-	 f05KVq+MZlenDC5MWPIgPrTgrnV6Sc7eKiMqi5nmr6P9WWQBxjFKynSnA5C4aBNNjq
-	 1JkCYGyaKn+TnGrQZFC+/Az9Nh2GMPHSRrBBPSboWsJl5iC9wOSC+B8PVl1G+tGiuI
-	 0FbjrPB0bq+A0aX+GoUtRNNTfj5Pt1IyW//rcGk6Qf+Etsn06zaLxC+6JQ8/jQGgWC
-	 yT0/o0fIMG9SAleyJunM3B9G5lj/+8c50gRHHCwjeL9maUtymw4TUE+tSzvSrC/wsP
-	 S6q37d2NUHiEw==
+	bh=NyFjle3l0026Gd8PBKMPo4EmMXIGmeeTI/HzQnjZhwo=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=swFHRr0tDDufCCwCcsmIuxhpVCjoWLszRL/1eJdiJg6oXKm87Kv7AJt6wcfTaSmcX
+	 fq972tanKzPkgD6kSLevKopQ9pBsqeHV6wiJ9cdhNBMOohMpnF4H2u3OGqzeZudZ0Y
+	 E/h0F2SMeYWytLUBLkgeH5zJfBVgJfbTt/i787BdPv6LG5APnTir1sgZ2b607DiM/a
+	 TyUhnOFZLMPB2NvNechpgtN9Od7s9FVG8xUhCwr3fnilKTpsGd/dzOlAhXbCWbQfL4
+	 CLNJenH6NTW2iiWgXVEMfxXCrm7I3iBs/n6G9aZpWmZZZKkd7T1P3JiyCKhIQjfUd4
+	 dIrkVYtYBG3Xg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82441C02198;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92BCFC021A9;
 	Tue, 18 Feb 2025 09:56:45 +0000 (UTC)
 From: Joel Granados <joel.granados@kernel.org>
-Subject: [PATCH 0/8] sysctl: Move sysctls from kern_table into their
- respective subsystems
-Date: Tue, 18 Feb 2025 10:56:16 +0100
-Message-Id: <20250218-jag-mv_ctltables-v1-0-cd3698ab8d29@kernel.org>
+Date: Tue, 18 Feb 2025 10:56:17 +0100
+Subject: [PATCH 1/8] panic: Move panic ctl tables into panic.c
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,10 +55,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAEBZtGcC/x3MTQqAIBBA4avErBNMEqOrRITZZBP2g4oE4d2Tl
- t/ivRcCesIAffWCx0SBrrOgqSswmz4tMlqKQXAhuWgU27VlR5pMdFHPDgMzq5LYKo68k1Cy2+N
- Kz78cxpw/2JeJ2mIAAAA=
-X-Change-ID: 20250217-jag-mv_ctltables-cf75e470e085
+Message-Id: <20250218-jag-mv_ctltables-v1-1-cd3698ab8d29@kernel.org>
+References: <20250218-jag-mv_ctltables-v1-0-cd3698ab8d29@kernel.org>
+In-Reply-To: <20250218-jag-mv_ctltables-v1-0-cd3698ab8d29@kernel.org>
 To: Kees Cook <kees@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
  Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
@@ -86,87 +84,142 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  sparclinux@vger.kernel.org, linux-s390@vger.kernel.org, 
  linux-acpi@vger.kernel.org, Joel Granados <joel.granados@kernel.org>
 X-Mailer: b4 0.15-dev-64da2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2573;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3111;
  i=joel.granados@kernel.org; h=from:subject:message-id;
- bh=+Ro/oqfvGVYxj3TObN+RDoEaw0SsbEolN0PZuCXlz9k=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGe0WVOoj6LvNDW0CL4P50y0ZMFe6cFQ86kia
- kfkpVTXzGuYgYkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJntFlTAAoJELqXzVK3
- lkFPJpIL/2715yYj/GmvnxpGika5Ef5M6h06gykmNbmK/8jadbKLcQAe9tsLGnF3+Ojw7ChLrol
- HlTolz82WQ2I/xVSm4XoRxfixCkZfY0coFA9OeuPhHMNzQ+Ut1JWZewtKtxIVAG4H8bqDVQRs/G
- Aaoy15GXfo+rPVTu3r8Kd/VugKe9FQzDSRgXpTGLCBzWBv1sn/+QBdW9/9pbGXf6gfdq4Mn8aoO
- S9nuRmKjQ1q+k3kfif/7TakTbtjGwuTxksRI1SlBbrkubYjAK2StDNNwqOyblX+rvIZIAdue5hJ
- FbqZ17s9ye/NoC/0AxPYsf6C34UOU5GQIVEQzhHskYb8iVUc6nooUVtM1I/4/cpc8zJomftwpsf
- KaNmZx6F1CuttQ/3bCA+xAxEQB3SkjpJ8nbvFEki/OFbxXTUwu2lnxX8EFVwsj0AmT9G7CanU+H
- Fz2s1gjQFsVpWSQ9URUj1XmxuoZBETbem4y9lXwW0L5ar2wZN266UfFAX7nD2+01sHs6eY5WoB7
- D8=
+ bh=NyFjle3l0026Gd8PBKMPo4EmMXIGmeeTI/HzQnjZhwo=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGe0WVcAzJMiraNriDVA+Jt05tU4vLaM0b9zm
+ pQ2Aq7OP5eX/YkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJntFlXAAoJELqXzVK3
+ lkFPLfAL/20rjwkdDzYb51zKDdgXrnBcdHhkgJERVMP5kLuoDZPIpCzZp0dzglrDGrmWlA8rhxN
+ NQU/dO9PP0QZrfy/Hfe2s8RXLT20avONnO7wYWu18KpWrTsp6TWbmJ7Zw3nAzDrGhpM+kO8VE2z
+ IQntkQdUb1PWcV5Vm2G5GzZ01F6vKIVWYRw/z/gNZQF8csmvMOmkOIu+irJCgNCzhygDkPmhzDY
+ efozZo2EblyEvFTgKPaP2s13syORR3hbJc4QjhOP57eR3WBTD+0GSaFFL0rIEGk++DJCX9VXFjM
+ Cud8ZlqEMrbXPiE4LIWZsa5ce4O2Ik2fAPxhBwPWwE27VcFmVwE08vnP+EurCOP7EBMst60ZQPC
+ KFowdYMyOAKk6890XxRSNZ2dYj/lWpNAjY6wgZPxVb9COHxmqfmT22EGGtdlw5rOJM0bMQop0PP
+ vEgf8A6vjycLBM+VlS8tZpT/YLtLex21joa/9v6Wvmj7UWlN+ibSIzK/WRs1HVOWVIhWAVmnBQ6
+ Qs=
 X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
  fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
 X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
  auth_id=239
 
-This series relocates sysctl tables from kern_table to their respective
-subsystems. To keep the scope manageable, this patchset focuses on
-architecture-specific and core kernel sysctl tables. Further relocations
-will follow once this series progresses.
-
-By decentralizing sysctl registrations, subsystem maintainers regain
-control over their sysctl interfaces, improving maintainability and
-reducing the likelihood of merge conflicts. All this is made possible by
-the work done to reduce the ctl_table memory footprint in commit
-d7a76ec87195 ("sysctl: Remove check for sentinel element in ctl_table
-arrays").
-
-* Birds eye view of what has changed:
-    - Archs: sparc, s390 and x86
-        arch/s390/{lib/spinlock.c,mm/fault.c}
-        arch/sparc/kernel/{Makefile,setup.c}
-        arch/x86/include/asm/{setup.h,traps.h}
-    - Kernel core:
-        kernel/{panic.c,signal.c,trace/trace.c}
-        kernel/events/{core.c,callchain.c}
-
-* Testing was done by running sysctl selftests on x86_64 and 0-day.
-
-Comments are greatly appreciated
+Move panic, panic_on_oops, panic_print, panic_on_warn into
+kerne/panic.c. This is part of a greater effort to move ctl tables into
+their respective subsystems which will reduce the merge conflicts in
+kerenel/sysctl.c.
 
 Signed-off-by: Joel Granados <joel.granados@kernel.org>
 ---
-Joel Granados (7):
-      panic: Move panic ctl tables into panic.c
-      signal: Move signal ctl tables into signal.c
-      ftrace: Move trace sysctls into trace.c
-      stack_tracer: move sysctl registration to kernel/trace/trace.c
-      events: Move perf_event sysctls into kernel/events
-      sparc: mv sparc sysctls into their own file under arch/sparc/kernel
-      x86: Move sysctls into arch/x86
+ kernel/panic.c  | 30 ++++++++++++++++++++++++++++++
+ kernel/sysctl.c | 31 -------------------------------
+ 2 files changed, 30 insertions(+), 31 deletions(-)
 
-joel granados (1):
-      s390: mv s390 sysctls into their own file under arch/s390 dir
+diff --git a/kernel/panic.c b/kernel/panic.c
+index d8635d5cecb2..f9bf88f4c262 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -96,6 +96,36 @@ static const struct ctl_table kern_panic_table[] = {
+ 		.extra2         = SYSCTL_ONE,
+ 	},
+ #endif
++	{
++		.procname	= "panic",
++		.data		= &panic_timeout,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec,
++	},
++	{
++		.procname	= "panic_on_oops",
++		.data		= &panic_on_oops,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec,
++	},
++	{
++		.procname	= "panic_print",
++		.data		= &panic_print,
++		.maxlen		= sizeof(unsigned long),
++		.mode		= 0644,
++		.proc_handler	= proc_doulongvec_minmax,
++	},
++	{
++		.procname	= "panic_on_warn",
++		.data		= &panic_on_warn,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_ONE,
++	},
+ 	{
+ 		.procname       = "warn_limit",
+ 		.data           = &warn_limit,
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index cb57da499ebb..7759b1ed7221 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -26,7 +26,6 @@
+ #include <linux/sysctl.h>
+ #include <linux/bitmap.h>
+ #include <linux/signal.h>
+-#include <linux/panic.h>
+ #include <linux/printk.h>
+ #include <linux/proc_fs.h>
+ #include <linux/security.h>
+@@ -1610,13 +1609,6 @@ int proc_do_static_key(const struct ctl_table *table, int write,
+ }
+ 
+ static const struct ctl_table kern_table[] = {
+-	{
+-		.procname	= "panic",
+-		.data		= &panic_timeout,
+-		.maxlen		= sizeof(int),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
+-	},
+ #ifdef CONFIG_PROC_SYSCTL
+ 	{
+ 		.procname	= "tainted",
+@@ -1803,20 +1795,6 @@ static const struct ctl_table kern_table[] = {
+ 		.proc_handler	= proc_dointvec,
+ 	},
+ #endif
+-	{
+-		.procname	= "panic_on_oops",
+-		.data		= &panic_on_oops,
+-		.maxlen		= sizeof(int),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
+-	},
+-	{
+-		.procname	= "panic_print",
+-		.data		= &panic_print,
+-		.maxlen		= sizeof(unsigned long),
+-		.mode		= 0644,
+-		.proc_handler	= proc_doulongvec_minmax,
+-	},
+ 	{
+ 		.procname	= "ngroups_max",
+ 		.data		= (void *)&ngroups_max,
+@@ -1990,15 +1968,6 @@ static const struct ctl_table kern_table[] = {
+ 		.extra2		= SYSCTL_ONE_THOUSAND,
+ 	},
+ #endif
+-	{
+-		.procname	= "panic_on_warn",
+-		.data		= &panic_on_warn,
+-		.maxlen		= sizeof(int),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_ONE,
+-	},
+ #ifdef CONFIG_TREE_RCU
+ 	{
+ 		.procname	= "panic_on_rcu_stall",
 
- arch/s390/lib/spinlock.c     |  23 ++++
- arch/s390/mm/fault.c         |  17 +++
- arch/sparc/kernel/Makefile   |   1 +
- arch/sparc/kernel/setup.c    |  46 ++++++++
- arch/x86/include/asm/setup.h |   1 +
- arch/x86/include/asm/traps.h |   2 -
- arch/x86/kernel/setup.c      |  66 ++++++++++++
- include/linux/acpi.h         |   1 -
- include/linux/ftrace.h       |   7 --
- include/linux/perf_event.h   |   9 --
- kernel/events/callchain.c    |  38 +++++--
- kernel/events/core.c         |  57 ++++++++--
- kernel/panic.c               |  30 ++++++
- kernel/signal.c              |  11 ++
- kernel/sysctl.c              | 250 -------------------------------------------
- kernel/trace/trace.c         |  45 +++++++-
- 16 files changed, 322 insertions(+), 282 deletions(-)
----
-base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
-change-id: 20250217-jag-mv_ctltables-cf75e470e085
-
-Best regards,
 -- 
-Joel Granados <joel.granados@kernel.org>
+2.44.2
 
 
 
