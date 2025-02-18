@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-41951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41960-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4368BA3933A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 06:53:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D17D1A3933E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 06:53:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48B73163EC2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 05:53:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3CDC18924AC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 05:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4D51C84AD;
-	Tue, 18 Feb 2025 05:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3C41D5AD3;
+	Tue, 18 Feb 2025 05:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Nw/1Hpsz"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aL190dfJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B743F1B4257
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2025 05:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539F91B6CEF
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2025 05:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739857931; cv=none; b=MZqv4kvf9HGKUuz/1dRwEc7EwVRYFpshaeMVxF3J4/OctvbnnT0lrvj5FCGHBEkW7Kp4UdP3xuHO3EkTk8eS3fw/XasJi62wWNCaKucyf/pGBTlL/114MODQO/CmM2l8V1o0avOyW/vBBvC55f7tKfsc3g2Dpqv5bgrNhwrZiC4=
+	t=1739857933; cv=none; b=sWQYO4xhXulFkruZIghBknHWfEQDjBBJYgl6cEn1JLon1sQDsTulu+ZaVf4K8hjY8tUjZJkay+acpa4x9IMQkNyNRF24MNNKrwHingSXjuF4EDNAQgTpVesUBAvDsn5cAKR9kS7wx27Db6CG/Kz7OrqfD1QMYFeSIHIuzy6Ve5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739857931; c=relaxed/simple;
-	bh=IcfUIuJFe1jSg2nfBErvtw7oeGJX2WbxFfY4yCcJLOo=;
+	s=arc-20240116; t=1739857933; c=relaxed/simple;
+	bh=ZQ5JZWHZMlhqSH5+j3pOdD2tvWU6Pifjgnz21zgmNBg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tADbjoUgjXCGMnLvwEFHjCI1e+nR6EKFLxXE2ecvOv3QoNIp3StFQr0cF/IX75oHpTQqiLahCVc4oE1tER8vTTB9rO+OCT3xIEl+23y0i9YOOUQ6aZN0HS3W5EWSZ+JmcerFfOUORrUTog8yXOKcE0VafpxLJ7l5tkFgJeUze9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Nw/1Hpsz; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=sBISh0UAhm44G/ydyPlDEg4HnIJvbIv/waYXJEAtraNLiYLtxxU/nURSi44aMUGNh6l6ZIfwQ5s3OutRwQ1qJ5C2VdFgO4eBud9fiFmevVl+YSEMoxqFB8U9mmLO9dtHyzDNtzNIIIT+1n0+Rfk94zeHTGd3jVRg8Sd0G6oYJt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aL190dfJ; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=Mg8CE4y5cf1Snnnvi8f+NPDzZONlmEcVa2aiieEuBaA=; b=Nw/1HpszThT9iCqTEk4sQAiZK2
-	yeqli20VboViPfpHNFI/hU+cQPYD84UyG3KQ67ONrPZpuORE/6o1oeZJqBmSA04XmiuDwsRNx9FOw
-	Su85IOGF5kZ0P0eyJXPBepKHEIAgU6u+oYX52+uIRs+OAqU/SSxeXjmtIhPJDuJS72KsWK8f5s5jU
-	4ySJavkhcvPI3DvSh5HzqHAENSgMzdQoRl8Vrae+mGKHcTFW+fMw5dGWxbM8MEyU4Bx0X0CE4HSjN
-	+dgeK0c4BL6ZbAKWFdojGIE2a9kNIti4dSmw7a9fm8besxiQR9OM0QXr3xbkxGOIh2PBbD7nK86vr
-	vI5NW0MA==;
+	bh=s3c7AWPy08doWb2YiUJsZUuX3HKazlJ1Pyn3H6oNhmo=; b=aL190dfJeede3TxaHZlFtG85bQ
+	ymLD1EIYtytc7E5a/Wb1RSSvx2QXoQdKym07WGr2yfOxTM71bz/Zz1R9UV/1ClNuWHUORu3UXR4bN
+	wAOSiWfW0u6ZVIHtiegFvLcriGJc25I+OuzVcdvRTb4CQ+CzlVoT46ys/iFcdDeRyCbKSJkfFPZL5
+	jz+U9phrbfU0QvBcr2LhEmlDfGmx+/3qq9vfzg/y8STZl0yElIRebH1raDw9Hfd44ehtJHQsIaHTg
+	klw24VEp/Uuxb2Ub2m9CXtl1CJNXGAqYHufq7s0tpB2l+PXv2FnsuNufQiuMzTxpYRBkc573KqS1u
+	X53JZBIQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tkGWe-00000002Tt8-0nfT;
+	id 1tkGWe-00000002TtF-1GeZ;
 	Tue, 18 Feb 2025 05:52:08 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
@@ -50,9 +50,9 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>,
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	linux-f2fs-devel@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 20/27] f2fs: Hoist the page_folio() call to the start of f2fs_merge_page_bio()
-Date: Tue, 18 Feb 2025 05:51:54 +0000
-Message-ID: <20250218055203.591403-21-willy@infradead.org>
+Subject: [PATCH 21/27] f2fs: Add f2fs_get_read_data_folio()
+Date: Tue, 18 Feb 2025 05:51:55 +0000
+Message-ID: <20250218055203.591403-22-willy@infradead.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250218055203.591403-1-willy@infradead.org>
 References: <20250218055203.591403-1-willy@infradead.org>
@@ -64,47 +64,119 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove one call to compound_head() and a reference to page->mapping
-by calling page_folio() early on.
+Convert f2fs_get_read_data_page() into f2fs_get_read_data_folio() and
+add a compatibility wrapper.  Saves seven hidden calls to compound_head().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/data.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/f2fs/data.c | 35 +++++++++++++++++------------------
+ fs/f2fs/f2fs.h | 14 ++++++++++++--
+ 2 files changed, 29 insertions(+), 20 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index d297e9ae6391..fe7fa08b20c7 100644
+index fe7fa08b20c7..f0747c7f669d 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -888,6 +888,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
- 	struct bio *bio = *fio->bio;
- 	struct page *page = fio->encrypted_page ?
- 			fio->encrypted_page : fio->page;
-+	struct folio *folio = page_folio(fio->page);
+@@ -1203,18 +1203,17 @@ int f2fs_reserve_block(struct dnode_of_data *dn, pgoff_t index)
+ 	return err;
+ }
  
- 	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
- 			__is_meta_io(fio) ? META_GENERIC : DATA_GENERIC))
-@@ -901,8 +902,8 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
- alloc_new:
- 	if (!bio) {
- 		bio = __bio_alloc(fio, BIO_MAX_VECS);
--		f2fs_set_bio_crypt_ctx(bio, fio->page->mapping->host,
--				page_folio(fio->page)->index, fio, GFP_NOIO);
-+		f2fs_set_bio_crypt_ctx(bio, folio->mapping->host,
-+				folio->index, fio, GFP_NOIO);
+-struct page *f2fs_get_read_data_page(struct inode *inode, pgoff_t index,
+-				     blk_opf_t op_flags, bool for_write,
+-				     pgoff_t *next_pgofs)
++struct folio *f2fs_get_read_data_folio(struct inode *inode, pgoff_t index,
++		blk_opf_t op_flags, bool for_write, pgoff_t *next_pgofs)
+ {
+ 	struct address_space *mapping = inode->i_mapping;
+ 	struct dnode_of_data dn;
+-	struct page *page;
++	struct folio *folio;
+ 	int err;
  
- 		add_bio_entry(fio->sbi, bio, page, fio->temp);
- 	} else {
-@@ -911,8 +912,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+-	page = f2fs_grab_cache_page(mapping, index, for_write);
+-	if (!page)
+-		return ERR_PTR(-ENOMEM);
++	folio = f2fs_grab_cache_folio(mapping, index, for_write);
++	if (IS_ERR(folio))
++		return folio;
+ 
+ 	if (f2fs_lookup_read_extent_cache_block(inode, index,
+ 						&dn.data_blkaddr)) {
+@@ -1249,9 +1248,9 @@ struct page *f2fs_get_read_data_page(struct inode *inode, pgoff_t index,
+ 		goto put_err;
+ 	}
+ got_it:
+-	if (PageUptodate(page)) {
+-		unlock_page(page);
+-		return page;
++	if (folio_test_uptodate(folio)) {
++		folio_unlock(folio);
++		return folio;
  	}
  
- 	if (fio->io_wbc)
--		wbc_account_cgroup_owner(fio->io_wbc, page_folio(fio->page),
--					 PAGE_SIZE);
-+		wbc_account_cgroup_owner(fio->io_wbc, folio, folio_size(folio));
+ 	/*
+@@ -1262,21 +1261,21 @@ struct page *f2fs_get_read_data_page(struct inode *inode, pgoff_t index,
+ 	 * f2fs_init_inode_metadata.
+ 	 */
+ 	if (dn.data_blkaddr == NEW_ADDR) {
+-		zero_user_segment(page, 0, PAGE_SIZE);
+-		if (!PageUptodate(page))
+-			SetPageUptodate(page);
+-		unlock_page(page);
+-		return page;
++		folio_zero_segment(folio, 0, folio_size(folio));
++		if (!folio_test_uptodate(folio))
++			folio_mark_uptodate(folio);
++		folio_unlock(folio);
++		return folio;
+ 	}
  
- 	inc_page_count(fio->sbi, WB_DATA_TYPE(page, false));
+-	err = f2fs_submit_page_read(inode, page_folio(page), dn.data_blkaddr,
++	err = f2fs_submit_page_read(inode, folio, dn.data_blkaddr,
+ 						op_flags, for_write);
+ 	if (err)
+ 		goto put_err;
+-	return page;
++	return folio;
  
+ put_err:
+-	f2fs_put_page(page, 1);
++	f2fs_folio_put(folio, true);
+ 	return ERR_PTR(err);
+ }
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 8f23bb082c6f..3e02df63499e 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3895,8 +3895,8 @@ int f2fs_reserve_new_blocks(struct dnode_of_data *dn, blkcnt_t count);
+ int f2fs_reserve_new_block(struct dnode_of_data *dn);
+ int f2fs_get_block_locked(struct dnode_of_data *dn, pgoff_t index);
+ int f2fs_reserve_block(struct dnode_of_data *dn, pgoff_t index);
+-struct page *f2fs_get_read_data_page(struct inode *inode, pgoff_t index,
+-			blk_opf_t op_flags, bool for_write, pgoff_t *next_pgofs);
++struct folio *f2fs_get_read_data_folio(struct inode *inode, pgoff_t index,
++		blk_opf_t op_flags, bool for_write, pgoff_t *next_pgofs);
+ struct page *f2fs_find_data_page(struct inode *inode, pgoff_t index,
+ 							pgoff_t *next_pgofs);
+ struct page *f2fs_get_lock_data_page(struct inode *inode, pgoff_t index,
+@@ -3926,6 +3926,16 @@ int f2fs_init_post_read_wq(struct f2fs_sb_info *sbi);
+ void f2fs_destroy_post_read_wq(struct f2fs_sb_info *sbi);
+ extern const struct iomap_ops f2fs_iomap_ops;
+ 
++static inline struct page *f2fs_get_read_data_page(struct inode *inode,
++		pgoff_t index, blk_opf_t op_flags, bool for_write,
++		pgoff_t *next_pgofs)
++{
++	struct folio *folio = f2fs_get_read_data_folio(inode, index, op_flags,
++			for_write, next_pgofs);
++
++	return &folio->page;
++}
++
+ /*
+  * gc.c
+  */
 -- 
 2.47.2
 
