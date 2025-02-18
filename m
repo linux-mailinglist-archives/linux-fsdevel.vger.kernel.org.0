@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-42000-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42002-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADBF7A3A047
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 15:45:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66579A3A052
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 15:46:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABCCC175C7E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 14:40:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87C96176D0A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 14:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1E226E657;
-	Tue, 18 Feb 2025 14:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9227926FA44;
+	Tue, 18 Feb 2025 14:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J3qp6dbP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DGNkgHl6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA4B26D5DA;
-	Tue, 18 Feb 2025 14:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054F526F440;
+	Tue, 18 Feb 2025 14:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739889475; cv=none; b=BozO4FimSdOjdyf7FHm+273S6cc7TODY3wyzbUmmiuzeNY0h+BjieS/+Xgvdl2NuzE696pAs1TlKTr+f7lyDp5Rj+vSkPiT0v3nE6GeBEQ8ioyQDdSc/RfpFu+zFQh6CWdzObYJbP/iuRVIH4VRtWd0qxELqHOtNePHnQE90Nz8=
+	t=1739889478; cv=none; b=XbL4I87M3wMUDZp77NstH7IdIsTgWEaesh/lguZg4ZTanvuFCdqHlUVUod6vUsr7ssbNPWnXhb3VpUMLKwC2GvoNuAMYTDHUTDSCoqOUSmxWv0vSK8hcEEYh9oDVLRICzBXQ+BbFG25npFYMEeiD+OXAm29udZ0EBlvHaSYRMMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739889475; c=relaxed/simple;
-	bh=gKIwIAMUk680WuMqJJeTzqc522zJd9bKepYyrQS3lq0=;
+	s=arc-20240116; t=1739889478; c=relaxed/simple;
+	bh=kueqj7bO2f5ioUdF2ktV29zxWC9Hxme4gKFtpQTFWzU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CReqZ0gxbk2g7fDOcW1H+zUHwK8T1rzOeqyFlqX2ktlL39zRzWAV+FFIWuparxFMzlS+d7ErxvM78IrTdYOpViKFYuqbG9GLVTIX7qGkRvC6B42fD0ZuZJECsBtq4Mssedzt9QYhsNF0yzKnqn9dqfM3l5s3PlwO3LtIN9+7kRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J3qp6dbP; arc=none smtp.client-ip=209.85.160.179
+	 In-Reply-To:To:Cc; b=msLgoo0/Vg5jKgfqjDWZ0b5FRMOCSizRcX/Fds3YRU54zXigreqIBuJQ854MoW/L3ejMMOyzmqs1TqLXEmsmnDCHuaU+cKQ2v0ZH2vY0ua9V7dFIBH7D404XsZbk/3EuFu6hSH7VSoxgd8Y+NiCiGSEFFwNrGiZtguZDEf7D7dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DGNkgHl6; arc=none smtp.client-ip=209.85.160.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-471f88518c8so9049251cf.0;
-        Tue, 18 Feb 2025 06:37:52 -0800 (PST)
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-471d1af90a0so39724271cf.0;
+        Tue, 18 Feb 2025 06:37:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739889471; x=1740494271; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739889475; x=1740494275; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=IBZQ4vW8YsCOYlmddtvM37kczHY1oS2be8hh2FPySu4=;
-        b=J3qp6dbPDtfy0SnWSvhsYnVcCgp2+17ZjWa3nR/6uZcbLVqU8TEmaqnvcrj/cK1/hL
-         0KkEEKbhiE7pBMS7ucT0BRuovV1NasxQLsjrIYtGcqx0JmA05PztchZPMevUpul4xYRz
-         Ir/bLEmmRLB/UF8fpov0IeHFd6dpf4YvzoVgsme5NjK17WDWirqm7iQizHalJNdtXuw+
-         4pXp/74iFVusFkVSdElPB4sC/aHIjD/e9DoP4GzinOZ6p1nK8vLgm0lI8EOE0LzKbrOK
-         ml3qai4ToGrLa9JZFwo6bPlR/eAr/kXE6I4eRe0YQHWgYxkNqjHUrPIaAqCDex1UvTtZ
-         yrwA==
+        bh=QBIhM+lIkvkp7qSyW7If2ZKneRovuPb8mWVkg8T5lWw=;
+        b=DGNkgHl6XUR3RZm+nXqchsdAhUVMGOjxoBM361JRDK1/vY5K4FDXmJXvCNYqiyX9ew
+         trWllZPyF5g8BMuPfNLF/d74LS0XJf2UYeFaiQXtdMmb9+AQEmC8Rk0BRjSoUL/ZSsIO
+         Rz+xbLgVaJ1wIPDGaVaYBLyteg6RaHRDL7Y2UZdDRpGjl2E4h1VijarcgHD0gWQRUOTz
+         Ij+GSbOW3NQF3QHsNXVZTRzPCdoA+gIaoew0rLCQW0O0gh0y+las1tyaqAT3Lzh5HkoS
+         ZX+oW1g3qySKv1eGnxdF4Ge7mGVfj0d2RCLWa5TL0s3cdA/PgocjCaZ1egzCX42Ms5o1
+         U/qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739889471; x=1740494271;
+        d=1e100.net; s=20230601; t=1739889475; x=1740494275;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IBZQ4vW8YsCOYlmddtvM37kczHY1oS2be8hh2FPySu4=;
-        b=BUuSb+iV3sqncxYKSQQYV88Tt1RJbbq4ZD0ZNe7kziMkbCpqbW0QRaibQLzUaNgzXp
-         QZUgthKLwwMCrX9SPcwpzEjHP6US5El1T5LV2/hFqDsQSKTqPgBhmg8axfCiPFztebLL
-         Zkqm1qKYnuwL1InBrs0T+5XrK7Ahhy+BRRGtHLpHvYbtqnewqvGrKAfREzBbFNi5euXx
-         6OQSBV+fikJ5vvpzI1/pCCNAwcH4Q29lS3RFDYQ3HiPYgmr/dOMcIdb5q8SLE5Irf6Hj
-         xppjiz7pLOEsKlaqM4qcYinCpl7TKSPqYtdNGctNXPkK8h/k3r9U1s0CYxbnB980ZeMC
-         3B9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUUuO1hnCnbVE+vLgU3cVOS9NAnISCh3JYWcxEBxRVvIU5wSsLawZsA/8s6OkF1nxyh4djeTccMykvY@vger.kernel.org, AJvYcCUjuLLL6bjx6CwJbYuY9EC0eFo/Kdj/CegsxU/ST/caCMjAQU55jnZJ126+QWa2tGun18OW8ikm+iQyop9x@vger.kernel.org, AJvYcCVA+SNDTGY93eNJamD3GUa04iLx0LzGYMQ1ow5dV7zHFR6/su1hcE9hU2X0RkVlS27Eo22gnv//j0af3lZw@vger.kernel.org, AJvYcCWwRfLz4vLKkc2++cRWlerz81RClLmUof0PyliFBBoNymZ9Qjg2h8SU91LcVBj0EpojU38+r3/dwSD5UkntgNs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeBE30bTiPCmvo5Z7fJioxY+c/Z9NJ4pZs2Io42pcUayLzxhG8
-	FvAZHKpwhEETBjECWVUMdHb4h/M8eGUlJl3xhHCU3QzcDkLuNcwi
-X-Gm-Gg: ASbGnctnaMdrrRtNkVmjNPoXEKQ2DKNx+tpn6Dgww4nQXL49yuBjLd3/aD5rpwRQrjk
-	ct8Lktnu0J3iJznF7lgK2IyDVbCqO94r2eApX1eQ4/Kk3KP9D9jsILWhDhu5Cyfke0HyeJcCfjZ
-	7g3tKbGxTgR4EbQ8INww/FNdngOXvZCpEJWztZaXf4to4QuKGZcZ6cfIRkwMBQRrObyapTi29Y3
-	KQ2o9lDdGssMzbqFnKasUWfOxNWO9O/1h84DpblLx98P6rbMw2PzXT54ItXc3l9zdcCIjK/ktdd
-	e7RpMbjK48PeLM+DsCUXcffiiCawNPYJY/LmuCg=
-X-Google-Smtp-Source: AGHT+IHBuyM+BnBQ4vecoZCyLVazsNY5qPbV+henTzUM2Ez6D34niKWI2ML/CSvE7hC7MSLsCiPktw==
-X-Received: by 2002:a05:622a:6a01:b0:471:efd1:af19 with SMTP id d75a77b69052e-471efd1b0f0mr76637701cf.0.1739889471422;
-        Tue, 18 Feb 2025 06:37:51 -0800 (PST)
+        bh=QBIhM+lIkvkp7qSyW7If2ZKneRovuPb8mWVkg8T5lWw=;
+        b=LlOIff0LJh234mj1QwCiJKRiiKSliNSlvPljJbgKyZlCiUbU5tZSpH8qhsArZutnfR
+         XqFgumblMOtMFGgOpXNCo8Vh1qhjP7lFVGIvFFJiI9VYL8ACo1N8nf5EIz1OYRrdKnN3
+         6j1jaX/fzoFbCUNRi2RXo4pi/PNsBq0M688fQ6deRCnoA4OMtknikH1mMADc9KxSebkp
+         1VdZXWt55x83wmRgpKkV5P/iwApzUcV5ribeIhjqdXilVfSsuSQ/8BxkAtDVappAA0j/
+         E1nxAlt7wGw8V+tImi2yIgiiD7rxWOg1qpFMYAuTaJILadAAxz1PuKnQ7xSt42+DHHON
+         oP3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUx4V04XighCHuWeRS2TYazy+ausblaTcqMUvHu6+VODqMOQaqHf6AHh0GSsLVnvtLkqLFbMbADJePeqkmZWwk=@vger.kernel.org, AJvYcCVAYurJxFqccWjY4uf4rQFlKcrPkdHUVV3OHo+Qhlg9QQ6LER4kizAyqf3its7K2ADGJRpnghhdVrQg@vger.kernel.org, AJvYcCVRy47TSMluD3qtmzjdEjJc6i+pFLSky4nKzqL2W9e4skdoXVTBPZedTRsxWmda16KdNtZPBkDwKGK0JJDi@vger.kernel.org, AJvYcCXIE3+QUv9Tb9y4WUNfFvcA4/gVNd7DqTxL+rC5yj5JlClNfIiRVL04IGvcq62bLTBbCvJhzRLZHoqGntnY@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDYJyvAKzFVsD8xRdHoNpQZbP3dFI4Ahzwbm5PJamhDDwSjacT
+	CS9FRCoypmYGDyfyapHZlJu+DIElrdvDMgYNZDYkPRB81gP56rhy
+X-Gm-Gg: ASbGncvQHlL7HgIqA98n3ExnUlD8tQP2yXJk8QP2OrTQbTPz9uvt4DIHWpaXN9av62E
+	MnhHVK3ah9+wbpIE+bC9ntIJEfo2UqsgYNoQesX3hFpfF8ajqYbQfeUClXsQfFpeZv1izZIJ/nx
+	rjfFXojYV/Q3J+kpre/xYAmCV2FMI2XpvkbOt+x3p3MxsWmDBEe64azTpB+UQzNcKuYIFegwDLI
+	g3AO3DpPksQT6Fb28yVqAFIDzi19Km6xXczgPGzm93Ae0IFI2bIuG4xPuwJBea9ceLIw9vsFCJO
+	fxphntk/z7KypDg9h1I/hhID+WrOjGrHMOwreQQ=
+X-Google-Smtp-Source: AGHT+IFXnYUPfHJhQ8FPGJ+gckvPjzN+e0ps0hCCVta/xhTZy1e+XT/Smi05Dxis+L529RtcCt0OMg==
+X-Received: by 2002:a05:622a:352:b0:471:c03d:cd6c with SMTP id d75a77b69052e-471dbd21f69mr197344521cf.19.1739889473081;
+        Tue, 18 Feb 2025 06:37:53 -0800 (PST)
 Received: from tamird-mac.local ([2600:4041:5be7:7c00:283f:a857:19c2:7622])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-471ef0a5943sm24409281cf.51.2025.02.18.06.37.49
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-471ef0a5943sm24409281cf.51.2025.02.18.06.37.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 06:37:50 -0800 (PST)
+        Tue, 18 Feb 2025 06:37:52 -0800 (PST)
 From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 18 Feb 2025 09:37:43 -0500
-Subject: [PATCH v17 1/3] rust: types: add `ForeignOwnable::PointedTo`
+Date: Tue, 18 Feb 2025 09:37:44 -0500
+Subject: [PATCH v17 2/3] rust: xarray: Add an abstraction for XArray
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -82,8 +82,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250218-rust-xarray-bindings-v17-1-f3a99196e538@gmail.com>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250218-rust-xarray-bindings-v17-2-f3a99196e538@gmail.com>
 References: <20250218-rust-xarray-bindings-v17-0-f3a99196e538@gmail.com>
 In-Reply-To: <20250218-rust-xarray-bindings-v17-0-f3a99196e538@gmail.com>
 To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
@@ -105,364 +105,384 @@ Cc: =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
  linux-pci@vger.kernel.org
 X-Mailer: b4 0.15-dev
 
-Allow implementors to specify the foreign pointer type; this exposes
-information about the pointed-to type such as its alignment.
+`XArray` is an efficient sparse array of pointers. Add a Rust
+abstraction for this type.
 
-This requires the trait to be `unsafe` since it is now possible for
-implementors to break soundness by returning a misaligned pointer.
+This implementation bounds the element type on `ForeignOwnable` and
+requires explicit locking for all operations. Future work may leverage
+RCU to enable lockless operation.
 
-Encoding the pointer type in the trait (and avoiding pointer casts)
-allows the compiler to check that implementors return the correct
-pointer type. This is preferable to directly encoding the alignment in
-the trait using a constant as the compiler would be unable to check it.
-
+Inspired-by: Maíra Canal <mcanal@igalia.com>
+Inspired-by: Asahi Lina <lina@asahilina.net>
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 ---
- rust/kernel/alloc/kbox.rs | 38 ++++++++++++++++++++------------------
- rust/kernel/miscdevice.rs | 10 +++++-----
- rust/kernel/pci.rs        |  2 +-
- rust/kernel/platform.rs   |  2 +-
- rust/kernel/sync/arc.rs   | 21 ++++++++++++---------
- rust/kernel/types.rs      | 46 +++++++++++++++++++++++++++++++---------------
- 6 files changed, 70 insertions(+), 49 deletions(-)
+ rust/bindings/bindings_helper.h |   6 +
+ rust/helpers/helpers.c          |   1 +
+ rust/helpers/xarray.c           |  28 ++++
+ rust/kernel/lib.rs              |   1 +
+ rust/kernel/xarray.rs           | 276 ++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 312 insertions(+)
 
-diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
-index cb4ebea3b074..55529832db54 100644
---- a/rust/kernel/alloc/kbox.rs
-+++ b/rust/kernel/alloc/kbox.rs
-@@ -349,68 +349,70 @@ fn try_init<E>(init: impl Init<T, E>, flags: Flags) -> Result<Self, E>
-     }
- }
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index f46cf3bb7069..18a40a83453d 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -35,6 +35,7 @@
+ #include <linux/tracepoint.h>
+ #include <linux/wait.h>
+ #include <linux/workqueue.h>
++#include <linux/xarray.h>
+ #include <trace/events/rust_sample.h>
  
--impl<T: 'static, A> ForeignOwnable for Box<T, A>
-+// SAFETY: The `into_foreign` function returns a pointer that is well-aligned.
-+unsafe impl<T: 'static, A> ForeignOwnable for Box<T, A>
- where
-     A: Allocator,
- {
-+    type PointedTo = T;
-     type Borrowed<'a> = &'a T;
-     type BorrowedMut<'a> = &'a mut T;
- 
--    fn into_foreign(self) -> *mut crate::ffi::c_void {
--        Box::into_raw(self).cast()
-+    fn into_foreign(self) -> *mut Self::PointedTo {
-+        Box::into_raw(self)
-     }
- 
--    unsafe fn from_foreign(ptr: *mut crate::ffi::c_void) -> Self {
-+    unsafe fn from_foreign(ptr: *mut Self::PointedTo) -> Self {
-         // SAFETY: The safety requirements of this function ensure that `ptr` comes from a previous
-         // call to `Self::into_foreign`.
--        unsafe { Box::from_raw(ptr.cast()) }
-+        unsafe { Box::from_raw(ptr) }
-     }
- 
--    unsafe fn borrow<'a>(ptr: *mut crate::ffi::c_void) -> &'a T {
-+    unsafe fn borrow<'a>(ptr: *mut Self::PointedTo) -> &'a T {
-         // SAFETY: The safety requirements of this method ensure that the object remains alive and
-         // immutable for the duration of 'a.
--        unsafe { &*ptr.cast() }
-+        unsafe { &*ptr }
-     }
- 
--    unsafe fn borrow_mut<'a>(ptr: *mut crate::ffi::c_void) -> &'a mut T {
--        let ptr = ptr.cast();
-+    unsafe fn borrow_mut<'a>(ptr: *mut Self::PointedTo) -> &'a mut T {
-         // SAFETY: The safety requirements of this method ensure that the pointer is valid and that
-         // nothing else will access the value for the duration of 'a.
-         unsafe { &mut *ptr }
-     }
- }
- 
--impl<T: 'static, A> ForeignOwnable for Pin<Box<T, A>>
-+// SAFETY: The `into_foreign` function returns a pointer that is well-aligned.
-+unsafe impl<T: 'static, A> ForeignOwnable for Pin<Box<T, A>>
- where
-     A: Allocator,
- {
-+    type PointedTo = T;
-     type Borrowed<'a> = Pin<&'a T>;
-     type BorrowedMut<'a> = Pin<&'a mut T>;
- 
--    fn into_foreign(self) -> *mut crate::ffi::c_void {
-+    fn into_foreign(self) -> *mut Self::PointedTo {
-         // SAFETY: We are still treating the box as pinned.
--        Box::into_raw(unsafe { Pin::into_inner_unchecked(self) }).cast()
-+        Box::into_raw(unsafe { Pin::into_inner_unchecked(self) })
-     }
- 
--    unsafe fn from_foreign(ptr: *mut crate::ffi::c_void) -> Self {
-+    unsafe fn from_foreign(ptr: *mut Self::PointedTo) -> Self {
-         // SAFETY: The safety requirements of this function ensure that `ptr` comes from a previous
-         // call to `Self::into_foreign`.
--        unsafe { Pin::new_unchecked(Box::from_raw(ptr.cast())) }
-+        unsafe { Pin::new_unchecked(Box::from_raw(ptr)) }
-     }
- 
--    unsafe fn borrow<'a>(ptr: *mut crate::ffi::c_void) -> Pin<&'a T> {
-+    unsafe fn borrow<'a>(ptr: *mut Self::PointedTo) -> Pin<&'a T> {
-         // SAFETY: The safety requirements for this function ensure that the object is still alive,
-         // so it is safe to dereference the raw pointer.
-         // The safety requirements of `from_foreign` also ensure that the object remains alive for
-         // the lifetime of the returned value.
--        let r = unsafe { &*ptr.cast() };
-+        let r = unsafe { &*ptr };
- 
-         // SAFETY: This pointer originates from a `Pin<Box<T>>`.
-         unsafe { Pin::new_unchecked(r) }
-     }
- 
--    unsafe fn borrow_mut<'a>(ptr: *mut crate::ffi::c_void) -> Pin<&'a mut T> {
--        let ptr = ptr.cast();
-+    unsafe fn borrow_mut<'a>(ptr: *mut Self::PointedTo) -> Pin<&'a mut T> {
-         // SAFETY: The safety requirements for this function ensure that the object is still alive,
-         // so it is safe to dereference the raw pointer.
-         // The safety requirements of `from_foreign` also ensure that the object remains alive for
-diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-index e14433b2ab9d..463701adbfcd 100644
---- a/rust/kernel/miscdevice.rs
-+++ b/rust/kernel/miscdevice.rs
-@@ -231,7 +231,7 @@ impl<T: MiscDevice> VtableHelper<T> {
-     // fops_* methods in this file, which all correctly cast the private data to the new type.
-     //
-     // SAFETY: The open call of a file can access the private data.
--    unsafe { (*raw_file).private_data = ptr.into_foreign() };
-+    unsafe { (*raw_file).private_data = ptr.into_foreign().cast() };
- 
-     0
- }
-@@ -245,7 +245,7 @@ impl<T: MiscDevice> VtableHelper<T> {
-     file: *mut bindings::file,
- ) -> c_int {
-     // SAFETY: The release call of a file owns the private data.
--    let private = unsafe { (*file).private_data };
-+    let private = unsafe { (*file).private_data }.cast();
-     // SAFETY: The release call of a file owns the private data.
-     let ptr = unsafe { <T::Ptr as ForeignOwnable>::from_foreign(private) };
- 
-@@ -266,7 +266,7 @@ impl<T: MiscDevice> VtableHelper<T> {
-     arg: c_ulong,
- ) -> c_long {
-     // SAFETY: The ioctl call of a file can access the private data.
--    let private = unsafe { (*file).private_data };
-+    let private = unsafe { (*file).private_data }.cast();
-     // SAFETY: Ioctl calls can borrow the private data of the file.
-     let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
- 
-@@ -291,7 +291,7 @@ impl<T: MiscDevice> VtableHelper<T> {
-     arg: c_ulong,
- ) -> c_long {
-     // SAFETY: The compat ioctl call of a file can access the private data.
--    let private = unsafe { (*file).private_data };
-+    let private = unsafe { (*file).private_data }.cast();
-     // SAFETY: Ioctl calls can borrow the private data of the file.
-     let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
- 
-@@ -315,7 +315,7 @@ impl<T: MiscDevice> VtableHelper<T> {
-     file: *mut bindings::file,
- ) {
-     // SAFETY: The release call of a file owns the private data.
--    let private = unsafe { (*file).private_data };
-+    let private = unsafe { (*file).private_data }.cast();
-     // SAFETY: Ioctl calls can borrow the private data of the file.
-     let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
-     // SAFETY:
-diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-index 4c98b5b9aa1e..e33e3373b84e 100644
---- a/rust/kernel/pci.rs
-+++ b/rust/kernel/pci.rs
-@@ -86,7 +86,7 @@ extern "C" fn probe_callback(
-     extern "C" fn remove_callback(pdev: *mut bindings::pci_dev) {
-         // SAFETY: The PCI bus only ever calls the remove callback with a valid pointer to a
-         // `struct pci_dev`.
--        let ptr = unsafe { bindings::pci_get_drvdata(pdev) };
-+        let ptr = unsafe { bindings::pci_get_drvdata(pdev) }.cast();
- 
-         // SAFETY: `remove_callback` is only ever called after a successful call to
-         // `probe_callback`, hence it's guaranteed that `ptr` points to a valid and initialized
-diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
-index 50e6b0421813..a956a39035b4 100644
---- a/rust/kernel/platform.rs
-+++ b/rust/kernel/platform.rs
-@@ -76,7 +76,7 @@ extern "C" fn probe_callback(pdev: *mut bindings::platform_device) -> kernel::ff
- 
-     extern "C" fn remove_callback(pdev: *mut bindings::platform_device) {
-         // SAFETY: `pdev` is a valid pointer to a `struct platform_device`.
--        let ptr = unsafe { bindings::platform_get_drvdata(pdev) };
-+        let ptr = unsafe { bindings::platform_get_drvdata(pdev) }.cast();
- 
-         // SAFETY: `remove_callback` is only ever called after a successful call to
-         // `probe_callback`, hence it's guaranteed that `ptr` points to a valid and initialized
-diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
-index 3cefda7a4372..dfe4abf82c25 100644
---- a/rust/kernel/sync/arc.rs
-+++ b/rust/kernel/sync/arc.rs
-@@ -140,9 +140,10 @@ pub struct Arc<T: ?Sized> {
-     _p: PhantomData<ArcInner<T>>,
- }
- 
-+#[doc(hidden)]
- #[pin_data]
- #[repr(C)]
--struct ArcInner<T: ?Sized> {
-+pub struct ArcInner<T: ?Sized> {
-     refcount: Opaque<bindings::refcount_t>,
-     data: T,
- }
-@@ -342,18 +343,20 @@ pub fn into_unique_or_drop(self) -> Option<Pin<UniqueArc<T>>> {
-     }
- }
- 
--impl<T: 'static> ForeignOwnable for Arc<T> {
-+// SAFETY: The `into_foreign` function returns a pointer that is well-aligned.
-+unsafe impl<T: 'static> ForeignOwnable for Arc<T> {
-+    type PointedTo = ArcInner<T>;
-     type Borrowed<'a> = ArcBorrow<'a, T>;
-     type BorrowedMut<'a> = Self::Borrowed<'a>;
- 
--    fn into_foreign(self) -> *mut crate::ffi::c_void {
--        ManuallyDrop::new(self).ptr.as_ptr().cast()
-+    fn into_foreign(self) -> *mut Self::PointedTo {
-+        ManuallyDrop::new(self).ptr.as_ptr()
-     }
- 
--    unsafe fn from_foreign(ptr: *mut crate::ffi::c_void) -> Self {
-+    unsafe fn from_foreign(ptr: *mut Self::PointedTo) -> Self {
-         // SAFETY: The safety requirements of this function ensure that `ptr` comes from a previous
-         // call to `Self::into_foreign`.
--        let inner = unsafe { NonNull::new_unchecked(ptr.cast::<ArcInner<T>>()) };
-+        let inner = unsafe { NonNull::new_unchecked(ptr) };
- 
-         // SAFETY: By the safety requirement of this function, we know that `ptr` came from
-         // a previous call to `Arc::into_foreign`, which guarantees that `ptr` is valid and
-@@ -361,17 +364,17 @@ unsafe fn from_foreign(ptr: *mut crate::ffi::c_void) -> Self {
-         unsafe { Self::from_inner(inner) }
-     }
- 
--    unsafe fn borrow<'a>(ptr: *mut crate::ffi::c_void) -> ArcBorrow<'a, T> {
-+    unsafe fn borrow<'a>(ptr: *mut Self::PointedTo) -> ArcBorrow<'a, T> {
-         // SAFETY: The safety requirements of this function ensure that `ptr` comes from a previous
-         // call to `Self::into_foreign`.
--        let inner = unsafe { NonNull::new_unchecked(ptr.cast::<ArcInner<T>>()) };
-+        let inner = unsafe { NonNull::new_unchecked(ptr) };
- 
-         // SAFETY: The safety requirements of `from_foreign` ensure that the object remains alive
-         // for the lifetime of the returned value.
-         unsafe { ArcBorrow::new(inner) }
-     }
- 
--    unsafe fn borrow_mut<'a>(ptr: *mut crate::ffi::c_void) -> ArcBorrow<'a, T> {
-+    unsafe fn borrow_mut<'a>(ptr: *mut Self::PointedTo) -> ArcBorrow<'a, T> {
-         // SAFETY: The safety requirements for `borrow_mut` are a superset of the safety
-         // requirements for `borrow`.
-         unsafe { Self::borrow(ptr) }
-diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-index 2bbaab83b9d6..55ddd50e8aaa 100644
---- a/rust/kernel/types.rs
-+++ b/rust/kernel/types.rs
-@@ -18,7 +18,19 @@
- ///
- /// This trait is meant to be used in cases when Rust objects are stored in C objects and
- /// eventually "freed" back to Rust.
--pub trait ForeignOwnable: Sized {
-+///
-+/// # Safety
-+///
-+/// Implementers must ensure that [`into_foreign`] returns a pointer which meets the alignment
-+/// requirements of [`PointedTo`].
-+///
-+/// [`into_foreign`]: Self::into_foreign
-+/// [`PointedTo`]: Self::PointedTo
-+pub unsafe trait ForeignOwnable: Sized {
-+    /// Type used when the value is foreign-owned. In practical terms only defines the alignment of
-+    /// the pointer.
-+    type PointedTo;
+ /* `bindgen` gets confused at certain things. */
+@@ -48,3 +49,8 @@ const gfp_t RUST_CONST_HELPER___GFP_ZERO = __GFP_ZERO;
+ const gfp_t RUST_CONST_HELPER___GFP_HIGHMEM = ___GFP_HIGHMEM;
+ const gfp_t RUST_CONST_HELPER___GFP_NOWARN = ___GFP_NOWARN;
+ const blk_features_t RUST_CONST_HELPER_BLK_FEAT_ROTATIONAL = BLK_FEAT_ROTATIONAL;
 +
-     /// Type used to immutably borrow a value that is currently foreign-owned.
-     type Borrowed<'a>;
++const xa_mark_t RUST_CONST_HELPER_XA_PRESENT = XA_PRESENT;
++
++const gfp_t RUST_CONST_HELPER_XA_FLAGS_ALLOC = XA_FLAGS_ALLOC;
++const gfp_t RUST_CONST_HELPER_XA_FLAGS_ALLOC1 = XA_FLAGS_ALLOC1;
+diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+index 0640b7e115be..6811f71f2cbb 100644
+--- a/rust/helpers/helpers.c
++++ b/rust/helpers/helpers.c
+@@ -35,3 +35,4 @@
+ #include "vmalloc.c"
+ #include "wait.c"
+ #include "workqueue.c"
++#include "xarray.c"
+diff --git a/rust/helpers/xarray.c b/rust/helpers/xarray.c
+new file mode 100644
+index 000000000000..60b299f11451
+--- /dev/null
++++ b/rust/helpers/xarray.c
+@@ -0,0 +1,28 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/xarray.h>
++
++int rust_helper_xa_err(void *entry)
++{
++	return xa_err(entry);
++}
++
++void rust_helper_xa_init_flags(struct xarray *xa, gfp_t flags)
++{
++	return xa_init_flags(xa, flags);
++}
++
++int rust_helper_xa_trylock(struct xarray *xa)
++{
++	return xa_trylock(xa);
++}
++
++void rust_helper_xa_lock(struct xarray *xa)
++{
++	return xa_lock(xa);
++}
++
++void rust_helper_xa_unlock(struct xarray *xa)
++{
++	return xa_unlock(xa);
++}
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 398242f92a96..e6e49dcdcb4c 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -85,6 +85,7 @@
+ pub mod types;
+ pub mod uaccess;
+ pub mod workqueue;
++pub mod xarray;
  
-@@ -27,16 +39,18 @@ pub trait ForeignOwnable: Sized {
- 
-     /// Converts a Rust-owned object to a foreign-owned one.
-     ///
--    /// The foreign representation is a pointer to void. There are no guarantees for this pointer.
--    /// For example, it might be invalid, dangling or pointing to uninitialized memory. Using it in
--    /// any way except for [`from_foreign`], [`try_from_foreign`], [`borrow`], or [`borrow_mut`] can
--    /// result in undefined behavior.
-+    /// # Guarantees
+ #[doc(hidden)]
+ pub use bindings;
+diff --git a/rust/kernel/xarray.rs b/rust/kernel/xarray.rs
+new file mode 100644
+index 000000000000..8115dd7b4dd0
+--- /dev/null
++++ b/rust/kernel/xarray.rs
+@@ -0,0 +1,276 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! XArray abstraction.
++//!
++//! C header: [`include/linux/xarray.h`](srctree/include/linux/xarray.h)
++
++use crate::{
++    alloc, bindings, build_assert,
++    error::{Error, Result},
++    init::PinInit,
++    pin_init,
++    types::{ForeignOwnable, NotThreadSafe, Opaque},
++};
++use core::{iter, marker::PhantomData, mem, pin::Pin, ptr::NonNull};
++use macros::{pin_data, pinned_drop};
++
++/// An array which efficiently maps sparse integer indices to owned objects.
++///
++/// This is similar to a [`crate::alloc::kvec::Vec<Option<T>>`], but more efficient when there are
++/// holes in the index space, and can be efficiently grown.
++///
++/// # Invariants
++///
++/// `self.xa` is always an initialized and valid [`bindings::xarray`] whose entries are either
++/// `XA_ZERO_ENTRY` or came from `T::into_foreign`.
++///
++/// # Examples
++///
++/// ```rust
++/// use kernel::alloc::KBox;
++/// use kernel::xarray::{AllocKind, XArray};
++///
++/// let xa = KBox::pin_init(XArray::new(AllocKind::Alloc1), GFP_KERNEL)?;
++///
++/// let dead = KBox::new(0xdead, GFP_KERNEL)?;
++/// let beef = KBox::new(0xbeef, GFP_KERNEL)?;
++///
++/// let mut guard = xa.lock();
++///
++/// assert_eq!(guard.get(0), None);
++///
++/// assert_eq!(guard.store(0, dead, GFP_KERNEL)?.as_deref(), None);
++/// assert_eq!(guard.get(0).copied(), Some(0xdead));
++///
++/// *guard.get_mut(0).unwrap() = 0xffff;
++/// assert_eq!(guard.get(0).copied(), Some(0xffff));
++///
++/// assert_eq!(guard.store(0, beef, GFP_KERNEL)?.as_deref().copied(), Some(0xffff));
++/// assert_eq!(guard.get(0).copied(), Some(0xbeef));
++///
++/// guard.remove(0);
++/// assert_eq!(guard.get(0), None);
++///
++/// # Ok::<(), Error>(())
++/// ```
++#[pin_data(PinnedDrop)]
++pub struct XArray<T: ForeignOwnable> {
++    #[pin]
++    xa: Opaque<bindings::xarray>,
++    _p: PhantomData<T>,
++}
++
++#[pinned_drop]
++impl<T: ForeignOwnable> PinnedDrop for XArray<T> {
++    fn drop(self: Pin<&mut Self>) {
++        self.iter().for_each(|ptr| {
++            let ptr = ptr.as_ptr();
++            // SAFETY: `ptr` came from `T::into_foreign`.
++            //
++            // INVARIANT: we own the only reference to the array which is being dropped so the
++            // broken invariant is not observable on function exit.
++            drop(unsafe { T::from_foreign(ptr) })
++        });
++
++        // SAFETY: `self.xa` is always valid by the type invariant.
++        unsafe { bindings::xa_destroy(self.xa.get()) };
++    }
++}
++
++/// Flags passed to [`XArray::new`] to configure the array's allocation tracking behavior.
++pub enum AllocKind {
++    /// Consider the first element to be at index 0.
++    Alloc,
++    /// Consider the first element to be at index 1.
++    Alloc1,
++}
++
++impl<T: ForeignOwnable> XArray<T> {
++    /// Creates a new [`XArray`].
++    pub fn new(kind: AllocKind) -> impl PinInit<Self> {
++        let flags = match kind {
++            AllocKind::Alloc => bindings::XA_FLAGS_ALLOC,
++            AllocKind::Alloc1 => bindings::XA_FLAGS_ALLOC1,
++        };
++        pin_init!(Self {
++            // SAFETY: `xa` is valid while the closure is called.
++            xa <- Opaque::ffi_init(|xa| unsafe {
++                bindings::xa_init_flags(xa, flags)
++            }),
++            _p: PhantomData,
++        })
++    }
++
++    fn iter(&self) -> impl Iterator<Item = NonNull<T::PointedTo>> + '_ {
++        let mut index = 0;
++
++        // SAFETY: `self.xa` is always valid by the type invariant.
++        iter::once(unsafe {
++            bindings::xa_find(self.xa.get(), &mut index, usize::MAX, bindings::XA_PRESENT)
++        })
++        .chain(iter::from_fn(move || {
++            // SAFETY: `self.xa` is always valid by the type invariant.
++            Some(unsafe {
++                bindings::xa_find_after(self.xa.get(), &mut index, usize::MAX, bindings::XA_PRESENT)
++            })
++        }))
++        .map_while(|ptr| NonNull::new(ptr.cast()))
++    }
++
++    /// Attempts to lock the [`XArray`] for exclusive access.
++    pub fn try_lock(&self) -> Option<Guard<'_, T>> {
++        // SAFETY: `self.xa` is always valid by the type invariant.
++        if (unsafe { bindings::xa_trylock(self.xa.get()) } != 0) {
++            Some(Guard {
++                xa: self,
++                _not_send: NotThreadSafe,
++            })
++        } else {
++            None
++        }
++    }
++
++    /// Locks the [`XArray`] for exclusive access.
++    pub fn lock(&self) -> Guard<'_, T> {
++        // SAFETY: `self.xa` is always valid by the type invariant.
++        unsafe { bindings::xa_lock(self.xa.get()) };
++
++        Guard {
++            xa: self,
++            _not_send: NotThreadSafe,
++        }
++    }
++}
++
++/// A lock guard.
++///
++/// The lock is unlocked when the guard goes out of scope.
++#[must_use = "the lock unlocks immediately when the guard is unused"]
++pub struct Guard<'a, T: ForeignOwnable> {
++    xa: &'a XArray<T>,
++    _not_send: NotThreadSafe,
++}
++
++impl<T: ForeignOwnable> Drop for Guard<'_, T> {
++    fn drop(&mut self) {
++        // SAFETY:
++        // - `self.xa.xa` is always valid by the type invariant.
++        // - The caller holds the lock, so it is safe to unlock it.
++        unsafe { bindings::xa_unlock(self.xa.xa.get()) };
++    }
++}
++
++/// The error returned by [`store`](Guard::store).
++///
++/// Contains the underlying error and the value that was not stored.
++pub struct StoreError<T> {
++    /// The error that occurred.
++    pub error: Error,
++    /// The value that was not stored.
++    pub value: T,
++}
++
++impl<T> From<StoreError<T>> for Error {
++    fn from(value: StoreError<T>) -> Self {
++        let StoreError { error, value: _ } = value;
++        error
++    }
++}
++
++impl<'a, T: ForeignOwnable> Guard<'a, T> {
++    fn load<F, U>(&self, index: usize, f: F) -> Option<U>
++    where
++        F: FnOnce(NonNull<T::PointedTo>) -> U,
++    {
++        // SAFETY: `self.xa.xa` is always valid by the type invariant.
++        let ptr = unsafe { bindings::xa_load(self.xa.xa.get(), index) };
++        let ptr = NonNull::new(ptr.cast())?;
++        Some(f(ptr))
++    }
++
++    /// Provides a reference to the element at the given index.
++    pub fn get(&self, index: usize) -> Option<T::Borrowed<'_>> {
++        self.load(index, |ptr| {
++            // SAFETY: `ptr` came from `T::into_foreign`.
++            unsafe { T::borrow(ptr.as_ptr()) }
++        })
++    }
++
++    /// Provides a mutable reference to the element at the given index.
++    pub fn get_mut(&mut self, index: usize) -> Option<T::BorrowedMut<'_>> {
++        self.load(index, |ptr| {
++            // SAFETY: `ptr` came from `T::into_foreign`.
++            unsafe { T::borrow_mut(ptr.as_ptr()) }
++        })
++    }
++
++    /// Removes and returns the element at the given index.
++    pub fn remove(&mut self, index: usize) -> Option<T> {
++        // SAFETY: `self.xa.xa` is always valid by the type invariant.
++        //
++        // SAFETY: The caller holds the lock.
++        let ptr = unsafe { bindings::__xa_erase(self.xa.xa.get(), index) }.cast();
++        // SAFETY: `ptr` is either NULL or came from `T::into_foreign`.
++        //
++        // SAFETY: `&mut self` guarantees that the lifetimes of [`T::Borrowed`] and
++        // [`T::BorrowedMut`] borrowed from `self` have ended.
++        unsafe { T::try_from_foreign(ptr) }
++    }
++
++    /// Stores an element at the given index.
 +    ///
-+    /// The return value is guaranteed to be well-aligned, but there are no other guarantees for
-+    /// this pointer. For example, it might be null, dangling, or point to uninitialized memory.
-+    /// Using it in any way except for [`ForeignOwnable::from_foreign`], [`ForeignOwnable::borrow`],
-+    /// [`ForeignOwnable::try_from_foreign`] can result in undefined behavior.
-     ///
-     /// [`from_foreign`]: Self::from_foreign
-     /// [`try_from_foreign`]: Self::try_from_foreign
-     /// [`borrow`]: Self::borrow
-     /// [`borrow_mut`]: Self::borrow_mut
--    fn into_foreign(self) -> *mut crate::ffi::c_void;
-+    fn into_foreign(self) -> *mut Self::PointedTo;
- 
-     /// Converts a foreign-owned object back to a Rust-owned one.
-     ///
-@@ -46,7 +60,7 @@ pub trait ForeignOwnable: Sized {
-     /// must not be passed to `from_foreign` more than once.
-     ///
-     /// [`into_foreign`]: Self::into_foreign
--    unsafe fn from_foreign(ptr: *mut crate::ffi::c_void) -> Self;
-+    unsafe fn from_foreign(ptr: *mut Self::PointedTo) -> Self;
- 
-     /// Tries to convert a foreign-owned object back to a Rust-owned one.
-     ///
-@@ -58,7 +72,7 @@ pub trait ForeignOwnable: Sized {
-     /// `ptr` must either be null or satisfy the safety requirements for [`from_foreign`].
-     ///
-     /// [`from_foreign`]: Self::from_foreign
--    unsafe fn try_from_foreign(ptr: *mut crate::ffi::c_void) -> Option<Self> {
-+    unsafe fn try_from_foreign(ptr: *mut Self::PointedTo) -> Option<Self> {
-         if ptr.is_null() {
-             None
-         } else {
-@@ -81,7 +95,7 @@ unsafe fn try_from_foreign(ptr: *mut crate::ffi::c_void) -> Option<Self> {
-     ///
-     /// [`into_foreign`]: Self::into_foreign
-     /// [`from_foreign`]: Self::from_foreign
--    unsafe fn borrow<'a>(ptr: *mut crate::ffi::c_void) -> Self::Borrowed<'a>;
-+    unsafe fn borrow<'a>(ptr: *mut Self::PointedTo) -> Self::Borrowed<'a>;
- 
-     /// Borrows a foreign-owned object mutably.
-     ///
-@@ -109,21 +123,23 @@ unsafe fn try_from_foreign(ptr: *mut crate::ffi::c_void) -> Option<Self> {
-     /// [`from_foreign`]: Self::from_foreign
-     /// [`borrow`]: Self::borrow
-     /// [`Arc`]: crate::sync::Arc
--    unsafe fn borrow_mut<'a>(ptr: *mut crate::ffi::c_void) -> Self::BorrowedMut<'a>;
-+    unsafe fn borrow_mut<'a>(ptr: *mut Self::PointedTo) -> Self::BorrowedMut<'a>;
- }
- 
--impl ForeignOwnable for () {
-+// SAFETY: The `into_foreign` function returns a pointer that is dangling, but well-aligned.
-+unsafe impl ForeignOwnable for () {
-+    type PointedTo = ();
-     type Borrowed<'a> = ();
-     type BorrowedMut<'a> = ();
- 
--    fn into_foreign(self) -> *mut crate::ffi::c_void {
-+    fn into_foreign(self) -> *mut Self::PointedTo {
-         core::ptr::NonNull::dangling().as_ptr()
-     }
- 
--    unsafe fn from_foreign(_: *mut crate::ffi::c_void) -> Self {}
-+    unsafe fn from_foreign(_: *mut Self::PointedTo) -> Self {}
- 
--    unsafe fn borrow<'a>(_: *mut crate::ffi::c_void) -> Self::Borrowed<'a> {}
--    unsafe fn borrow_mut<'a>(_: *mut crate::ffi::c_void) -> Self::BorrowedMut<'a> {}
-+    unsafe fn borrow<'a>(_: *mut Self::PointedTo) -> Self::Borrowed<'a> {}
-+    unsafe fn borrow_mut<'a>(_: *mut Self::PointedTo) -> Self::BorrowedMut<'a> {}
- }
- 
- /// Runs a cleanup function/closure when dropped.
++    /// May drop the lock if needed to allocate memory, and then reacquire it afterwards.
++    ///
++    /// On success, returns the element which was previously at the given index.
++    ///
++    /// On failure, returns the element which was attempted to be stored.
++    pub fn store(
++        &mut self,
++        index: usize,
++        value: T,
++        gfp: alloc::Flags,
++    ) -> Result<Option<T>, StoreError<T>> {
++        build_assert!(
++            mem::align_of::<T::PointedTo>() >= 4,
++            "pointers stored in XArray must be 4-byte aligned"
++        );
++        let new = value.into_foreign();
++
++        let old = {
++            let new = new.cast();
++            // SAFETY: `self.xa.xa` is always valid by the type invariant.
++            //
++            // SAFETY: The caller holds the lock.
++            //
++            // INVARIANT: `new` came from `T::into_foreign`.
++            unsafe { bindings::__xa_store(self.xa.xa.get(), index, new, gfp.as_raw()) }
++        };
++
++        // SAFETY: `__xa_store` returns the old entry at this index on success or `xa_err` if an
++        // error happened.
++        let errno = unsafe { bindings::xa_err(old) };
++        if errno != 0 {
++            // SAFETY: `new` came from `T::into_foreign` and `__xa_store` does not take
++            // ownership of the value on error.
++            let value = unsafe { T::from_foreign(new) };
++            Err(StoreError {
++                value,
++                error: Error::from_errno(errno),
++            })
++        } else {
++            let old = old.cast();
++            // SAFETY: `ptr` is either NULL or came from `T::into_foreign`.
++            //
++            // NB: `XA_ZERO_ENTRY` is never returned by functions belonging to the Normal XArray
++            // API; such entries present as `NULL`.
++            Ok(unsafe { T::try_from_foreign(old) })
++        }
++    }
++}
++
++// SAFETY: `XArray<T>` has no shared mutable state so it is `Send` iff `T` is `Send`.
++unsafe impl<T: ForeignOwnable + Send> Send for XArray<T> {}
++
++// SAFETY: `XArray<T>` serialises the interior mutability it provides so it is `Sync` iff `T` is
++// `Send`.
++unsafe impl<T: ForeignOwnable + Send> Sync for XArray<T> {}
 
 -- 
 2.48.1
