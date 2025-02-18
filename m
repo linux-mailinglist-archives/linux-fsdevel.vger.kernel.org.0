@@ -1,398 +1,248 @@
-Return-Path: <linux-fsdevel+bounces-41993-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC9DA39D7B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 14:31:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20A20A39DA2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 14:37:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9EB8177985
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 13:26:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CAF6189640A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 13:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0AD26A0EE;
-	Tue, 18 Feb 2025 13:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5399D270ED1;
+	Tue, 18 Feb 2025 13:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZjAcgSt4"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="T1XgF5GJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263C5269AE6;
-	Tue, 18 Feb 2025 13:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C39270EB9;
+	Tue, 18 Feb 2025 13:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739885112; cv=none; b=i8pFd3vnrWLiVlRiEmbWTdE9HyULAcjkkyixA5VNmoZ6IZ3ipKnpz3b52+TB1y/7CEoc+pCKwJhIhIwfWK73msSgObE0tofRkQFzU/Sy7+04rWgdQV3/d2FAUXXKLO0Hc8sCt4WEWShN3drjaRWyf47SVAI/I33QCKSBqVNfCSg=
+	t=1739885362; cv=none; b=T5NW9eox9U0IRGHTuC+d6UARaUbCcjjgGqvksdZmw1OgolKRPlUUzlgvhoeu3CNkjdXtuVjG2fDfE126deURcBPpyqm7NCsLP8QmFlvZA3yvoRSkh5Mt6YNH/Rcj1Raq0g/jlMwXXHzZpBcHKTayLdBkWWovC3GX4Lese/F9Ibc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739885112; c=relaxed/simple;
-	bh=VrIjIZAZz8Rl4bMr2G6NPAiEWAu5uVe7sTfVpxCKLL0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BjXHtstz317psaPPQfWl+CWkSjiczAGw5IiTg1UdB4QGawjLfusPKE3oSzq/YJ9BsdnGLdtJmznMfYdAiCTbAnh0Zvz291muleKyIDXywdMUIOVwap3tx2KsAum83Ym7Q7+QyDo9iBY+xbYMbEgNkaHA25iYXc6RbIAdBF0nQpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZjAcgSt4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BCAFC4CEE2;
-	Tue, 18 Feb 2025 13:25:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739885111;
-	bh=VrIjIZAZz8Rl4bMr2G6NPAiEWAu5uVe7sTfVpxCKLL0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=ZjAcgSt4Jvg4lIspq3tbpmD4X9/NZQD/eBebeQVzJ5aRTkSUqdFqH1Ce1pI3xi+PY
-	 LlZvDb3pLGR1vFGhg/PhFuoKGsemdF7dL8+VTXOcqoiltAberwN2BgVA4F/151hxCW
-	 SWAnAGSyIOjwKlWmlJYxNIGaqAYKNV3EsRpCY+LVuwTFVki9oZgP796pqeoKNRSwmB
-	 KH7eDXTZWDHOrJr5K6/r63R9HbJ07YQtuU2nqiGGZbzwL+yCwXF9HrNliuR/m2vc1D
-	 O8MPbAAVxYiFD32Sd2TZ4L+KLnocUaCoaZ6ukBMrd8IP/ZwJcokm6UI5SlLpSChPEq
-	 F8RiPsDOyl/mg==
-Message-ID: <855e6fd0ed0ef303d7bb2b515726699d280183b4.camel@kernel.org>
-Subject: Re: [PATCH 2/3] nfs: change mkdir inode_operation to return
- alternate dentry if needed.
-From: Jeff Layton <jlayton@kernel.org>
-To: NeilBrown <neilb@suse.de>, Christian Brauner <brauner@kernel.org>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 18 Feb 2025 08:25:09 -0500
-In-Reply-To: <20250217053727.3368579-3-neilb@suse.de>
-References: <20250217053727.3368579-1-neilb@suse.de>
-	 <20250217053727.3368579-3-neilb@suse.de>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1739885362; c=relaxed/simple;
+	bh=rYjXngdQ0dbFzgwgn7WGaRs5H4t0BPJlZAYlLdGZ3MY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cvFmZD4WCHPzE+mC7m5yydKvLYb/acwmS96vG67uRBh0ppsKOlDlsxkMIK0NkPbWNcL9khAwnJxL+w6ff9Pe7+B0MYdgWpp84OOpmU+UZ9AX2NaI+b+pdA8R6Og7NXsnTs6OodpIJtl/CVnHWaPQQyt5J/cvLFqJUo8vqPkTpyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=T1XgF5GJ; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=R9zhQrQxExKFJv3fYFW1IElfhSiSEpY6hem10hrKIVc=; b=T1XgF5GJTFc7sFp9yg3KuIyNhu
+	MhzngxTkzJPcwWXf2K7zTycetZEIxkXJTrC65pGlgkQVN75mFxiKkqqT/ofRZ/5sV3bqjOXlQokOM
+	ZSJIRtb4yEfo8w0o0/ssCp5l//pqLNpL0f3OZugQlNqHKrmBQ87KwpcT6osG30gddCPKTxKNsvrUt
+	FZYVxaZs3XZKj7w86gVIswcvr8z0pjXnu77b1pb+MG5m21FSuzERou+6LEKQSa6uor22L0XgfhkMI
+	rEqJI8LL6cMDcrooDk974GXUBpJDWyLcnWuCwzCEd/Vo9Y/d5qzbEjcXZ0yx7ZBJjEuvBgXctDaN6
+	ASIDVTeA==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tkNeg-00AOyU-AF; Tue, 18 Feb 2025 14:29:00 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Bernd Schubert <bschubert@ddn.com>,  Miklos Szeredi <miklos@szeredi.hu>,
+  Dave Chinner <david@fromorbit.com>,  Alexander Viro
+ <viro@zeniv.linux.org.uk>,  Christian Brauner <brauner@kernel.org>,  Matt
+ Harvey <mharvey@jumptrading.com>,  "linux-fsdevel@vger.kernel.org"
+ <linux-fsdevel@vger.kernel.org>,  "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 2/2] fuse: add new function to invalidate cache for
+ all inodes
+In-Reply-To: <bpevrif4k5h2l4pscsnsj3flwmwdw6w5nge5n7ji2yshk5pz6z@tngefti6stld>
+	(Jan Kara's message of "Tue, 18 Feb 2025 12:57:28 +0100")
+References: <20250216165008.6671-1-luis@igalia.com>
+	<20250216165008.6671-3-luis@igalia.com>
+	<3fac8c84-2c41-461d-92f1-255903fc62a9@ddn.com>
+	<87r03wx4th.fsf@igalia.com>
+	<847288fa-b66a-4f3d-9f50-52fa293a1189@ddn.com>
+	<87ldu4x076.fsf@igalia.com>
+	<bpevrif4k5h2l4pscsnsj3flwmwdw6w5nge5n7ji2yshk5pz6z@tngefti6stld>
+Date: Tue, 18 Feb 2025 13:28:59 +0000
+Message-ID: <877c5n8jqc.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2025-02-17 at 16:30 +1100, NeilBrown wrote:
-> mkdir now allows a different dentry to be returned which is sometimes
-> relevant for nfs.
->=20
-> This patch changes the nfs_rpc_ops mkdir op to return a dentry, and
-> passes that back to the caller.
->=20
-> The mkdir nfs_rpc_op will return NULL if the original dentry should be
-> used.  This matches the mkdir inode_operation.
->=20
-> Signed-off-by: NeilBrown <neilb@suse.de>
-> ---
->  fs/nfs/dir.c            | 16 ++++++---------
->  fs/nfs/nfs3proc.c       |  7 ++++---
->  fs/nfs/nfs4proc.c       | 43 +++++++++++++++++++++++++++++------------
->  fs/nfs/proc.c           | 12 ++++++++----
->  include/linux/nfs_xdr.h |  2 +-
->  5 files changed, 50 insertions(+), 30 deletions(-)
->=20
-> diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
-> index 5700f73d48bc..afb1afe0af8e 100644
-> --- a/fs/nfs/dir.c
-> +++ b/fs/nfs/dir.c
-> @@ -2426,7 +2426,7 @@ struct dentry *nfs_mkdir(struct mnt_idmap *idmap, s=
-truct inode *dir,
->  			 struct dentry *dentry, umode_t mode)
->  {
->  	struct iattr attr;
-> -	int error;
-> +	struct dentry *ret;
-> =20
->  	dfprintk(VFS, "NFS: mkdir(%s/%lu), %pd\n",
->  			dir->i_sb->s_id, dir->i_ino, dentry);
-> @@ -2435,15 +2435,11 @@ struct dentry *nfs_mkdir(struct mnt_idmap *idmap,=
- struct inode *dir,
->  	attr.ia_mode =3D mode | S_IFDIR;
-> =20
->  	trace_nfs_mkdir_enter(dir, dentry);
-> -	error =3D NFS_PROTO(dir)->mkdir(dir, dentry, &attr);
-> -	trace_nfs_mkdir_exit(dir, dentry, error);
-> -	if (error !=3D 0)
-> -		goto out_err;
-> -	/* FIXME - ->mkdir might have used an alternate dentry */
-> -	return NULL;
-> -out_err:
-> -	d_drop(dentry);
-> -	return ERR_PTR(error);
-> +	ret =3D NFS_PROTO(dir)->mkdir(dir, dentry, &attr);
-> +	trace_nfs_mkdir_exit(dir, dentry, PTR_ERR_OR_ZERO(ret));
+On Tue, Feb 18 2025, Jan Kara wrote:
 
-FWIW, this should be fine even since the old dentry should have the
-same d_name as the one in ret, if one is returned.
-=20
-> +	if (IS_ERR(ret))
-> +		d_drop(dentry);
-> +	return ret;
->  }
->  EXPORT_SYMBOL_GPL(nfs_mkdir);
-> =20
-> diff --git a/fs/nfs/nfs3proc.c b/fs/nfs/nfs3proc.c
-> index 0c3bc98cd999..cccb12ba19dc 100644
-> --- a/fs/nfs/nfs3proc.c
-> +++ b/fs/nfs/nfs3proc.c
-> @@ -578,7 +578,7 @@ nfs3_proc_symlink(struct inode *dir, struct dentry *d=
-entry, struct folio *folio,
->  	return status;
->  }
-> =20
-> -static int
-> +static struct dentry *
->  nfs3_proc_mkdir(struct inode *dir, struct dentry *dentry, struct iattr *=
-sattr)
->  {
->  	struct posix_acl *default_acl, *acl;
-> @@ -613,14 +613,15 @@ nfs3_proc_mkdir(struct inode *dir, struct dentry *d=
-entry, struct iattr *sattr)
-> =20
->  	status =3D nfs3_proc_setacls(d_inode(dentry), acl, default_acl);
-> =20
-> -	dput(d_alias);
->  out_release_acls:
->  	posix_acl_release(acl);
->  	posix_acl_release(default_acl);
->  out:
->  	nfs3_free_createdata(data);
->  	dprintk("NFS reply mkdir: %d\n", status);
-> -	return status;
-> +	if (status)
-> +		return ERR_PTR(status);
-> +	return d_alias;
->  }
-> =20
->  static int
-> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-> index df9669d4ded7..164c9f3f36c8 100644
-> --- a/fs/nfs/nfs4proc.c
-> +++ b/fs/nfs/nfs4proc.c
-> @@ -5135,9 +5135,6 @@ static int nfs4_do_create(struct inode *dir, struct=
- dentry *dentry, struct nfs4_
->  				    &data->arg.seq_args, &data->res.seq_res, 1);
->  	if (status =3D=3D 0) {
->  		spin_lock(&dir->i_lock);
-> -		/* Creating a directory bumps nlink in the parent */
-> -		if (data->arg.ftype =3D=3D NF4DIR)
-> -			nfs4_inc_nlink_locked(dir);
->  		nfs4_update_changeattr_locked(dir, &data->res.dir_cinfo,
->  					      data->res.fattr->time_start,
->  					      NFS_INO_INVALID_DATA);
-> @@ -5147,6 +5144,25 @@ static int nfs4_do_create(struct inode *dir, struc=
-t dentry *dentry, struct nfs4_
->  	return status;
->  }
-> =20
-> +static struct dentry *nfs4_do_mkdir(struct inode *dir, struct dentry *de=
-ntry,
-> +				    struct nfs4_createdata *data)
-> +{
-> +	int status =3D nfs4_call_sync(NFS_SERVER(dir)->client, NFS_SERVER(dir),=
- &data->msg,
-> +				    &data->arg.seq_args, &data->res.seq_res, 1);
-> +
-> +	if (status)
-> +		return ERR_PTR(status);
-> +
-> +	spin_lock(&dir->i_lock);
-> +	/* Creating a directory bumps nlink in the parent */
-> +	nfs4_inc_nlink_locked(dir);
-> +	nfs4_update_changeattr_locked(dir, &data->res.dir_cinfo,
-> +				      data->res.fattr->time_start,
-> +				      NFS_INO_INVALID_DATA);
-> +	spin_unlock(&dir->i_lock);
-> +	return nfs_add_or_obtain(dentry, data->res.fh, data->res.fattr);
-> +}
-> +
->  static void nfs4_free_createdata(struct nfs4_createdata *data)
->  {
->  	nfs4_label_free(data->fattr.label);
-> @@ -5203,32 +5219,34 @@ static int nfs4_proc_symlink(struct inode *dir, s=
-truct dentry *dentry,
->  	return err;
->  }
-> =20
-> -static int _nfs4_proc_mkdir(struct inode *dir, struct dentry *dentry,
-> -		struct iattr *sattr, struct nfs4_label *label)
-> +static struct dentry *_nfs4_proc_mkdir(struct inode *dir, struct dentry =
-*dentry,
-> +				       struct iattr *sattr,
-> +				       struct nfs4_label *label)
->  {
->  	struct nfs4_createdata *data;
-> -	int status =3D -ENOMEM;
-> +	struct dentry *ret =3D ERR_PTR(-ENOMEM);
-> =20
->  	data =3D nfs4_alloc_createdata(dir, &dentry->d_name, sattr, NF4DIR);
->  	if (data =3D=3D NULL)
->  		goto out;
-> =20
->  	data->arg.label =3D label;
-> -	status =3D nfs4_do_create(dir, dentry, data);
-> +	ret =3D nfs4_do_mkdir(dir, dentry, data);
-> =20
->  	nfs4_free_createdata(data);
->  out:
-> -	return status;
-> +	return ret;
->  }
-> =20
-> -static int nfs4_proc_mkdir(struct inode *dir, struct dentry *dentry,
-> -		struct iattr *sattr)
-> +static struct dentry *nfs4_proc_mkdir(struct inode *dir, struct dentry *=
-dentry,
-> +				      struct iattr *sattr)
->  {
->  	struct nfs_server *server =3D NFS_SERVER(dir);
->  	struct nfs4_exception exception =3D {
->  		.interruptible =3D true,
->  	};
->  	struct nfs4_label l, *label;
-> +	struct dentry *alias;
->  	int err;
-> =20
->  	label =3D nfs4_label_init_security(dir, dentry, sattr, &l);
-> @@ -5236,14 +5254,15 @@ static int nfs4_proc_mkdir(struct inode *dir, str=
-uct dentry *dentry,
->  	if (!(server->attr_bitmask[2] & FATTR4_WORD2_MODE_UMASK))
->  		sattr->ia_mode &=3D ~current_umask();
->  	do {
-> -		err =3D _nfs4_proc_mkdir(dir, dentry, sattr, label);
-> +		alias =3D _nfs4_proc_mkdir(dir, dentry, sattr, label);
-> +		err =3D PTR_ERR_OR_ZERO(alias);
->  		trace_nfs4_mkdir(dir, &dentry->d_name, err);
->  		err =3D nfs4_handle_exception(NFS_SERVER(dir), err,
->  				&exception);
->  	} while (exception.retry);
->  	nfs4_label_release_security(label);
-> =20
-> -	return err;
-> +	return alias;
->  }
-> =20
->  static int _nfs4_proc_readdir(struct nfs_readdir_arg *nr_arg,
-> diff --git a/fs/nfs/proc.c b/fs/nfs/proc.c
-> index 77920a2e3cef..63e71310b9f6 100644
-> --- a/fs/nfs/proc.c
-> +++ b/fs/nfs/proc.c
-> @@ -446,13 +446,14 @@ nfs_proc_symlink(struct inode *dir, struct dentry *=
-dentry, struct folio *folio,
->  	return status;
->  }
-> =20
-> -static int
-> +static struct dentry *
->  nfs_proc_mkdir(struct inode *dir, struct dentry *dentry, struct iattr *s=
-attr)
->  {
->  	struct nfs_createdata *data;
->  	struct rpc_message msg =3D {
->  		.rpc_proc	=3D &nfs_procedures[NFSPROC_MKDIR],
->  	};
-> +	struct dentry *alias =3D NULL;
->  	int status =3D -ENOMEM;
-> =20
->  	dprintk("NFS call  mkdir %pd\n", dentry);
-> @@ -464,12 +465,15 @@ nfs_proc_mkdir(struct inode *dir, struct dentry *de=
-ntry, struct iattr *sattr)
-> =20
->  	status =3D rpc_call_sync(NFS_CLIENT(dir), &msg, 0);
->  	nfs_mark_for_revalidate(dir);
-> -	if (status =3D=3D 0)
-> -		status =3D nfs_instantiate(dentry, data->res.fh, data->res.fattr);
-> +	if (status =3D=3D 0) {
-> +		alias =3D nfs_add_or_obtain(dentry, data->res.fh, data->res.fattr);
-> +		status =3D PTR_ERR_OR_ZERO(alias);
-> +	} else
-> +		alias =3D ERR_PTR(status);
->  	nfs_free_createdata(data);
->  out:
->  	dprintk("NFS reply mkdir: %d\n", status);
-> -	return status;
-> +	return alias;
->  }
-> =20
->  static int
-> diff --git a/include/linux/nfs_xdr.h b/include/linux/nfs_xdr.h
-> index 9155a6ffc370..d66c61cbbd1d 100644
-> --- a/include/linux/nfs_xdr.h
-> +++ b/include/linux/nfs_xdr.h
-> @@ -1802,7 +1802,7 @@ struct nfs_rpc_ops {
->  	int	(*link)    (struct inode *, struct inode *, const struct qstr *);
->  	int	(*symlink) (struct inode *, struct dentry *, struct folio *,
->  			    unsigned int, struct iattr *);
-> -	int	(*mkdir)   (struct inode *, struct dentry *, struct iattr *);
-> +	struct dentry *(*mkdir)   (struct inode *, struct dentry *, struct iatt=
-r *);
->  	int	(*rmdir)   (struct inode *, const struct qstr *);
->  	int	(*readdir) (struct nfs_readdir_arg *, struct nfs_readdir_res *);
->  	int	(*mknod)   (struct inode *, struct dentry *, struct iattr *,
+> On Mon 17-02-25 11:47:09, Luis Henriques wrote:
+>> On Mon, Feb 17 2025, Bernd Schubert wrote:
+>> > On 2/17/25 11:07, Luis Henriques wrote:
+>> >> On Mon, Feb 17 2025, Bernd Schubert wrote:
+>> >>=20
+>> >>> On 2/16/25 17:50, Luis Henriques wrote:
+>> >>>> Currently userspace is able to notify the kernel to invalidate the =
+cache
+>> >>>> for an inode.  This means that, if all the inodes in a filesystem n=
+eed to
+>> >>>> be invalidated, then userspace needs to iterate through all of them=
+ and do
+>> >>>> this kernel notification separately.
+>> >>>>
+>> >>>> This patch adds a new option that allows userspace to invalidate al=
+l the
+>> >>>> inodes with a single notification operation.  In addition to invali=
+date
+>> >>>> all the inodes, it also shrinks the sb dcache.
+>> >>>>
+>> >>>> Signed-off-by: Luis Henriques <luis@igalia.com>
+>> >>>> ---
+>> >>>>  fs/fuse/inode.c           | 33 +++++++++++++++++++++++++++++++++
+>> >>>>  include/uapi/linux/fuse.h |  3 +++
+>> >>>>  2 files changed, 36 insertions(+)
+>> >>>>
+>> >>>> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+>> >>>> index e9db2cb8c150..01a4dc5677ae 100644
+>> >>>> --- a/fs/fuse/inode.c
+>> >>>> +++ b/fs/fuse/inode.c
+>> >>>> @@ -547,6 +547,36 @@ struct inode *fuse_ilookup(struct fuse_conn *f=
+c, u64 nodeid,
+>> >>>>  	return NULL;
+>> >>>>  }
+>> >>>>=20=20
+>> >>>> +static int fuse_reverse_inval_all(struct fuse_conn *fc)
+>> >>>> +{
+>> >>>> +	struct fuse_mount *fm;
+>> >>>> +	struct inode *inode;
+>> >>>> +
+>> >>>> +	inode =3D fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
+>> >>>> +	if (!inode || !fm)
+>> >>>> +		return -ENOENT;
+>> >>>> +
+>> >>>> +	/* Remove all possible active references to cached inodes */
+>> >>>> +	shrink_dcache_sb(fm->sb);
+>> >>>> +
+>> >>>> +	/* Remove all unreferenced inodes from cache */
+>> >>>> +	invalidate_inodes(fm->sb);
+>> >>>> +
+>> >>>> +	return 0;
+>> >>>> +}
+>> >>>> +
+>> >>>> +/*
+>> >>>> + * Notify to invalidate inodes cache.  It can be called with @node=
+id set to
+>> >>>> + * either:
+>> >>>> + *
+>> >>>> + * - An inode number - Any pending writebacks within the rage [@of=
+fset @len]
+>> >>>> + *   will be triggered and the inode will be validated.  To invali=
+date the whole
+>> >>>> + *   cache @offset has to be set to '0' and @len needs to be <=3D =
+'0'; if @offset
+>> >>>> + *   is negative, only the inode attributes are invalidated.
+>> >>>> + *
+>> >>>> + * - FUSE_INVAL_ALL_INODES - All the inodes in the superblock are =
+invalidated
+>> >>>> + *   and the whole dcache is shrinked.
+>> >>>> + */
+>> >>>>  int fuse_reverse_inval_inode(struct fuse_conn *fc, u64 nodeid,
+>> >>>>  			     loff_t offset, loff_t len)
+>> >>>>  {
+>> >>>> @@ -555,6 +585,9 @@ int fuse_reverse_inval_inode(struct fuse_conn *=
+fc, u64 nodeid,
+>> >>>>  	pgoff_t pg_start;
+>> >>>>  	pgoff_t pg_end;
+>> >>>>=20=20
+>> >>>> +	if (nodeid =3D=3D FUSE_INVAL_ALL_INODES)
+>> >>>> +		return fuse_reverse_inval_all(fc);
+>> >>>> +
+>> >>>>  	inode =3D fuse_ilookup(fc, nodeid, NULL);
+>> >>>>  	if (!inode)
+>> >>>>  		return -ENOENT;
+>> >>>> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+>> >>>> index 5e0eb41d967e..e5852b63f99f 100644
+>> >>>> --- a/include/uapi/linux/fuse.h
+>> >>>> +++ b/include/uapi/linux/fuse.h
+>> >>>> @@ -669,6 +669,9 @@ enum fuse_notify_code {
+>> >>>>  	FUSE_NOTIFY_CODE_MAX,
+>> >>>>  };
+>> >>>>=20=20
+>> >>>> +/* The nodeid to request to invalidate all inodes */
+>> >>>> +#define FUSE_INVAL_ALL_INODES 0
+>> >>>> +
+>> >>>>  /* The read buffer is required to be at least 8k, but may be much =
+larger */
+>> >>>>  #define FUSE_MIN_READ_BUFFER 8192
+>> >>>>=20=20
+>> >>>
+>> >>>
+>> >>> I think this version might end up in=20
+>> >>>
+>> >>> static void fuse_evict_inode(struct inode *inode)
+>> >>> {
+>> >>> 	struct fuse_inode *fi =3D get_fuse_inode(inode);
+>> >>>
+>> >>> 	/* Will write inode on close/munmap and in all other dirtiers */
+>> >>> 	WARN_ON(inode->i_state & I_DIRTY_INODE);
+>> >>>
+>> >>>
+>> >>> if the fuse connection has writeback cache enabled.
+>> >>>
+>> >>>
+>> >>> Without having it tested, reproducer would probably be to run
+>> >>> something like passthrough_hp (without --direct-io), opening
+>> >>> and writing to a file and then sending FUSE_INVAL_ALL_INODES.
+>> >>=20
+>> >> Thanks, Bernd.  So far I couldn't trigger this warning.  But I just f=
+ound
+>> >> that there's a stupid bug in the code: a missing iput() after doing t=
+he
+>> >> fuse_ilookup().
+>> >>=20
+>> >> I'll spend some more time trying to understand how (or if) the warnin=
+g you
+>> >> mentioned can triggered before sending a new revision.
+>> >>=20
+>> >
+>> > Maybe I'm wrong, but it calls=20
+>> >
+>> >    invalidate_inodes()
+>> >       dispose_list()
+>> >         evict(inode)
+>> >            fuse_evict_inode()
+>> >
+>> > and if at the same time something writes to inode page cache, the
+>> > warning would be triggered?=20
+>> > There are some conditions in evict, like inode_wait_for_writeback()
+>> > that might protect us, but what is if it waited and then just
+>> > in the right time the another write comes and dirties the inode
+>> > again?
+>>=20
+>> Right, I have looked into that too but my understanding is that this can
+>> not happen because, before doing that wait, the code does:
+>>=20
+>> 	inode_sb_list_del(inode);
+>>=20
+>> and the inode state will include I_FREEING.
+>>=20
+>> Thus, before writing to it again, the inode will need to get added back =
+to
+>> the sb list.  Also, reading the comments on evict(), if something writes
+>> into the inode at that point that's likely a bug.  But this is just my
+>> understanding, and I may be missing something.
+>
+> Yes. invalidate_inodes() checks i_count =3D=3D 0 and sets I_FREEING. Once
+> I_FREEING is set nobody can acquire inode reference until the inode is
+> fully destroyed. So nobody should be writing to the inode or anything like
+> that.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Awesome, it's good to have that confirmed.  Thank you, Jan!
+
+Cheers,
+--=20
+Lu=C3=ADs
 
