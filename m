@@ -1,137 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-41998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41999-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B637FA39F6F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 15:28:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55C77A3A04A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 15:45:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E600F18969BC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 14:27:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3F1F3B74CA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 14:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF4726B2AA;
-	Tue, 18 Feb 2025 14:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CAAD26E630;
+	Tue, 18 Feb 2025 14:37:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="adisqPGE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PBE19Myi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A8A26B0B5
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2025 14:26:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA8526B2DB;
+	Tue, 18 Feb 2025 14:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739888798; cv=none; b=kri57JSzhGRJsN6/QguPg8lTzJPbsG7qqPekwzuZaH+Noreo8Vy+OQ+jSs/kNhiU4e3sfPexNsMjhTxBa508lBFwQRXFe/OJYies2kL7+Vl2av9F3ydYhiQOXqU5bYRUDpJFur8bzvoYCiXm8MIpHSDREbCZa7NUswROvFC5PJA=
+	t=1739889472; cv=none; b=pYSap0VBHWCZ52iRCkfO3cwNV9WIpu/GN8FW8Rsp6MEs3APr8n691XmVGfb0Cj6MwE4PBbr7j8pCwYELLHXe6HooxhNQDBYNpb0Z8h70DZlOFiPEZZoIZUCD5dNd0PWDDj69PAEwCYkU/COGV3ehwIU4BPfY+I+cNTP2mo82F0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739888798; c=relaxed/simple;
-	bh=sS36fJX8Vbth94UBPCAo0LFNfvI4rCKWV8qYzF0ZOPE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ehNI1L93L5Q28ylIeGDNrydiOGwjz3ymg9HQbFzIeSndrBcaMDSUl6TwN7KK9F4y1e8CfYfvV39lrS6xs0u5sCk7YLM4Rz1yiLBxW8iXpbw8oiUS/rN1yo3WeJX7SRQW8e+Pr9pnCmH+o3emF7gDxl6o4Mg0vXspR9SqrmY5J4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=adisqPGE; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-471f686642cso14546001cf.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2025 06:26:36 -0800 (PST)
+	s=arc-20240116; t=1739889472; c=relaxed/simple;
+	bh=kTZkgisOeW801Sth2+lerhok9tOzKPXAzYpArOKOy6U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=J818UMEMoN7kyeX9AA1h2v0skWOjla0QEkb2wWJZdhY8rXury5bri5UuUUh+LYpaBsJbeDmhg+sTVlyBKIO/yYNyUtCcRKkx6abHLk0yePrpx9ZCqHlmScAJg65mf4gO9FRQmEfRpAyxogLZk9oUdfkUUdr/OLbKK65VFQdPN5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PBE19Myi; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-471f257f763so16314031cf.0;
+        Tue, 18 Feb 2025 06:37:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1739888795; x=1740493595; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8/EmbDSl+l5HXRvJiyRxM4EbJGeupWnXKptfCU5Nq4k=;
-        b=adisqPGEX6vQCq4dkLfAUSAd24zrAldAXaDhjB+5olCkvWnEkLtUPvSz1a4NR+N+sx
-         4qWZVc+KLFVczKkU6lNn6ojfLCEBm6oQ4X8blfIgxaN+Rbpwr2hajiKUMFfgmjCSP9gM
-         f8Ckzqf0sDHuEXbJtug+XhHjdITP3UwR+M0nM=
+        d=gmail.com; s=20230601; t=1739889470; x=1740494270; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+HcaZw8R1wNpH+/hwT2VE9RWMhIZpp47OuhMJQ43oHw=;
+        b=PBE19MyiA6N1yIcjTl3Mz55/aM9hzFAqGPkNCe8ia8XxGCl6ZWu/5dSM7UyLj819T2
+         cwA6H6s1A9sg/ukSUc85PQA0SX2BmIfgYZntwYat705J5wyoaNSLRFvjNjGe+sL4FvU1
+         LMyRAnlPaww/RNpzDlcT2WDe/3PtudgmMRVWmgyaOH0xodA0uJTy5Bn8AwM40snfRBHP
+         yyLZGNvJdqVznhR26ilLvVul56HrD6J7OdIZfkh22KsYI2Tc7ms/Vpm+Ga7qx0LYoFz/
+         aL8UVrfkYh69IPs+8WMmlUa7gbSz+myJ+iq5NSwgmH8m9n15w1L7OopM5bxZo+5SsUr0
+         BVeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739888795; x=1740493595;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1739889470; x=1740494270;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=8/EmbDSl+l5HXRvJiyRxM4EbJGeupWnXKptfCU5Nq4k=;
-        b=VdGXp9S+53Krhwwz1uo2HqpXLrspnRswjY6wdf3YwCn0+TdNMkBAp8erm4TJUBdMZd
-         qJI+jIg8bFWBllB8A4exmq2cv8H9eactJTSp4qN3o4Io7K/l43EUJVfk1m2nSRKuMCSQ
-         rX+kLneHvr7TOuJvlNQ8DWHN4MmNpZJs4CYx9MUai9ygG/Slf4pX19o9SbZ+OlipgDG0
-         bfnZHiHVS6ytKXhd7R9gM0zQr7XfRO6f8q8RfqKLselB3r2XmsNVrPbjFv6qgICF1UXO
-         XhiKPK2xTBvulMcVsCJ/38y6Y76x+TDG4L2gLV1N9uEJrBvVILfy5EU4Epax/afl/qTg
-         cOmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVU4sCTaxE9CvrejngSsT7BsN+PXlDzVnk8d/u1EsH/7abgPq9NvHpOc+dIif8IdkcO5CypgTk7dittvNWE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9o89dzb2IVnb1kiDs+HPiU9QOB53UkcjZHkHOAv178ZNV1GaY
-	aQmxNyV99cYVoqf3XNcnZDw5vSzyH9hTNec7wgQxZNiyj9foQpJutX8q9AK4rdj39auFpSbNmrE
-	1EKM6h3M/S1TEhj6XbCFeLVBDaobqoSsmgp1e+g==
-X-Gm-Gg: ASbGncuNBCUhuJTVc6sTfQWRyJfL1+qSLy3J1ltq54b464f8vvV3cizoA8wOsCGHpKd
-	MhV7HKZDgyD8Cl2yC0ShjfjjB++QVko09S5lPAZ2NjShUggAE278PL/wxePQmjqXiV/aj3OY=
-X-Google-Smtp-Source: AGHT+IGET3EbYLamjGGt8dSMpL8Nkri+TYxZim1J3IHFlr3O5sraAFYYOQ2HRKm+Tx9aTfNhy4qqarSD/WPsGZTxgfQ=
-X-Received: by 2002:a05:622a:15c6:b0:471:fc9e:8de8 with SMTP id
- d75a77b69052e-471fc9e905fmr67186901cf.4.1739888795313; Tue, 18 Feb 2025
- 06:26:35 -0800 (PST)
+        bh=+HcaZw8R1wNpH+/hwT2VE9RWMhIZpp47OuhMJQ43oHw=;
+        b=upozvza4G3c74X4obCFPODUbB8D6ZvGTrMpSCI3alApyNiLOPtpevwOwqAmuvG38qp
+         oEGX5ky/m1Hb7ioyTqGO8WvgZHDk7wHstBWlrQeFfeYMMew6awXqBfaWRtqKRc2K9iuP
+         e7FRRNflavwxeTnn6Tsj6aBgwrY6A1oF+9rUdagnKG8mJY3ivUzM/IU/MZTWQZ0PXqRt
+         fJp3ysUaTN1lZtmSKcnip4uG8m4Y8nCdxCnHRm6Ar/j2LhJbsGe6o4nA2dHkSQIZznyp
+         KusTRO5g3u1egmAT/zNMsRlvoYi38sfRoV9nsVXnREQhjqNjZVZNA9kUIGcETZUW0ilf
+         yhCw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAfvoK6RB6qhBoEr1M8WIFUDGYmp4nfiK3KpPVqmO8tHs/CqlgC/yCDAZbQ0hEwA2s0/WKuIKz0XNxcI81@vger.kernel.org, AJvYcCVB9HRsGJH7LVdnGn6ligFKPQVigb/iDBgUtiPAZLEwt8PnWVhV3PAxflL+5MwE65ZYqO3SGUMQqOXH@vger.kernel.org, AJvYcCWZhdbTPYp2BABtbR5QsFt/KXlySxVRvwQWEFtYe15k4aV6WcXZOo0sVMHkX0R/zYFtr9cb4NnpY9DGaR8c@vger.kernel.org, AJvYcCWpGQGoq7npRrIkgLctAOipmBibiqw3C91tHFrzzCR/goppMgDUsz0hC852hMF8CgXwttx/ycnpr5DdHawfl70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDJvnEe2QHztdf4u/sYPRK35GhCkWN47wbX+vS1Kr4+grXhNMl
+	ZV0BoiToGQ6JDGtpUtEgzabNJEodr9Uq5duqA0uXk8hR0ej5xw4l1JeHeI9P
+X-Gm-Gg: ASbGncsbtshNGC2+WZY8l+FX270Uc/UteUxdlrj1Nb0kuYqSjCKxTnpOW+2TpKuT1l9
+	jrqmQy43oCw+ASZz/2zphvZwikcFwEt8uQBclH/lJnyojufAcwdQGV0I4YApe8+DEi0J1cnBa2k
+	gPXwhgnLYsbX0KiPWgWC+g+qMGAyNLHObHaK+AllWQVuXfjTiwJ9Eo+bVGBF4O+W9rG4Avfsf0e
+	aJB/XTSad/Mk3yeV60h4zT8akcubM2qIBUJUjpKRKn6qpfAw5nfripA7Eh6SPiWdKYxhjALuqES
+	9FyssthjZkniXP3GuQNMUgcu4Bc55joxMYBrh1k=
+X-Google-Smtp-Source: AGHT+IG7VJe+61wvnIsolh0sANxc/xJbP61UOhGcDR2IAysdCbfSG3tsR8slb+Tj/RTbi9efoyXXNg==
+X-Received: by 2002:ac8:5892:0:b0:471:cdae:ac44 with SMTP id d75a77b69052e-471dbe978a2mr220943451cf.47.1739889469779;
+        Tue, 18 Feb 2025 06:37:49 -0800 (PST)
+Received: from tamird-mac.local ([2600:4041:5be7:7c00:283f:a857:19c2:7622])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-471ef0a5943sm24409281cf.51.2025.02.18.06.37.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 06:37:49 -0800 (PST)
+From: Tamir Duberstein <tamird@gmail.com>
+Subject: [PATCH v17 0/3] rust: xarray: Add a minimal abstraction for XArray
+Date: Tue, 18 Feb 2025 09:37:42 -0500
+Message-Id: <20250218-rust-xarray-bindings-v17-0-f3a99196e538@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217133228.24405-1-luis@igalia.com> <20250217133228.24405-3-luis@igalia.com>
- <Z7PaimnCjbGMi6EQ@dread.disaster.area> <CAJfpegszFjRFnnPbetBJrHiW_yCO1mFOpuzp30CCZUnDZWQxqg@mail.gmail.com>
- <87r03v8t72.fsf@igalia.com> <CAJfpegu51xNUKURj5rKSM5-SYZ6pn-+ZCH0d-g6PZ8vBQYsUSQ@mail.gmail.com>
- <87frkb8o94.fsf@igalia.com>
-In-Reply-To: <87frkb8o94.fsf@igalia.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 18 Feb 2025 15:26:24 +0100
-X-Gm-Features: AWEUYZlBOOIIaYs34OYy_0E3-HRJyLG5kCRwuFnjQlWeGTg0omw4orTEC-iLSMc
-Message-ID: <CAJfpegsThcFwhKb9XA3WWBXY_m=_0pRF+FZF+vxAxe3RbZ_c3A@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] fuse: add new function to invalidate cache for all inodes
-To: Luis Henriques <luis@igalia.com>
-Cc: Dave Chinner <david@fromorbit.com>, Bernd Schubert <bschubert@ddn.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Matt Harvey <mharvey@jumptrading.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Valentin Volkl <valentin.volkl@cern.ch>, 
-	Laura Promberger <laura.promberger@cern.ch>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIADabtGcC/3XSzW7DIAwH8Fepch4VNpiEnfoe0w5AIEVqko2kU
+ auq7z6afTRSlqMt/OMP8q0YfIp+KF53tyL5KQ6x73IB5cuucEfTNZ7FOjcK5CiBI2fpPIzsYlI
+ yV2ZjV8euGZj1gUCCRK2qIo9+JB/iZXbf3nMdUt+y8Zi8+cO44BoFaSz3oCoNxJC1znTmdIiNO
+ UWzd337YyX/ec7Rxid4jMPYp+uce9KP7ndCgOr/hJNmnAkE7WpLQlV0aFoTT/MlD3ACvlC23pl
+ PZcYgWbTcBqpwxcCTQS62GMgMVUZTDaL0bs3gggHcYvDBaGO1hSBr9CtGLJnNNCIzlSICJb1CG
+ VaMXDLlFiMzo4MPwvngrIQVQ78M5U1SWwzNX4yWamecsWLFqCWzmUZlBklZ7oIWytZL5n6/fwF
+ gM3Xg+wIAAA==
+X-Change-ID: 20241020-rust-xarray-bindings-bef514142968
+To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Matthew Wilcox <willy@infradead.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Tamir Duberstein <tamird@gmail.com>, 
+ FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+ "Rob Herring (Arm)" <robh@kernel.org>
+Cc: =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org
+X-Mailer: b4 0.15-dev
 
-On Tue, 18 Feb 2025 at 12:51, Luis Henriques <luis@igalia.com> wrote:
->
-> On Tue, Feb 18 2025, Miklos Szeredi wrote:
->
-> > On Tue, 18 Feb 2025 at 11:04, Luis Henriques <luis@igalia.com> wrote:
-> >
-> >> The problem I'm trying to solve is that, if a filesystem wants to ask the
-> >> kernel to get rid of all inodes, it has to request the kernel to forget
-> >> each one, individually.  The specific filesystem I'm looking at is CVMFS,
-> >> which is a read-only filesystem that needs to be able to update the full
-> >> set of filesystem objects when a new generation snapshot becomes
-> >> available.
-> >
-> > Yeah, we talked about this use case.  As I remember there was a
-> > proposal to set an epoch, marking all objects for "revalidate needed",
-> > which I think is a better solution to the CVMFS problem, than just
-> > getting rid of unused objects.
->
-> OK, so I think I'm missing some context here.  And, obviously, I also miss
-> some more knowledge on the filesystem itself.  But, if I understand it
-> correctly, the concept of 'inode' in CVMFS is very loose: when a new
-> snapshot generation is available (you mentioned 'epoch', which is, I
-> guess, the same thing) the inodes are all renewed -- the inode numbers
-> aren't kept between generations/epochs.
->
-> Do you have any links for such discussions, or any details on how this
-> proposal is being implemented?  This would probably be done mostly in
-> user-space I guess, but it would still need a way to get rid of the unused
-> inodes from old snapshots, right?  (inodes from old snapshots still in use
-> would obvious be kept aroud).
+This is a reimagining relative to earlier versions[0] by Asahi Lina and
+Maíra Canal.
 
-I don't have links.  Adding Valentin Volkl and Laura Promberger to the
-Cc list, maybe they can help with clarification.
+It is needed to support rust-binder, though this version only provides
+enough machinery to support rnull.
 
-As far as I understand it would work by incrementing fc->epoch on
-FUSE_INVALIDATE_ALL. When an object is looked up/created the current
-epoch is copied to e.g. dentry->d_time.  fuse_dentry_revalidate() then
-compares d_time with fc->epoch and forces an invalidate on mismatch.
+Link: https://lore.kernel.org/rust-for-linux/20240309235927.168915-2-mcanal@igalia.com/ [0]
+---
+Changes in v17:
+- Drop patch "rust: remove redundant `as _` casts". (Danilo Krummrich)
+- Drop trailers for shared commit from configfs series[0]. (Danilo
+  Krummrich)
+- Avoid shadowing expressions with .cast() calls. (Danilo Krummrich)
+- Link to v16: https://lore.kernel.org/r/20250207-rust-xarray-bindings-v16-0-256b0cf936bd@gmail.com
 
-Only problem with this is that it seems very CVMFS specific, but I
-guess so is your proposal.
+Changes in v16:
+- Extract prequel patch for `as _` casts. (Danilo Krummrich)
+- Improve doc and safety comments. (Boqun Feng)
+- Pull trailers for shared commit from configfs series[0]. (Andreas Hindborg, Alice Ryhl, Fiona Behrens)
+- Link to configfs series: https://lore.kernel.org/rust-for-linux/20250131-configfs-v1-1-87947611401c@kernel.org/
+- Link to v15: https://lore.kernel.org/r/20250206-rust-xarray-bindings-v15-0-a22b5dcacab3@gmail.com
 
-Implementing the LRU purge is more generally useful, but I'm not sure
-if that helps CVMFS, since it would only get rid of unused objects.
+Changes in v15:
+- Rebase on v6.14-rc1.
+- Add MAINTAINERS entry.
+- Link to v14: https://lore.kernel.org/r/20241217-rust-xarray-bindings-v14-0-9fef3cefcb41@gmail.com
 
-Thanks,
-Miklos
+Changes in v14:
+- Remove TODO made stale by Gary Guo's FFI type series.
+- Link: https://lore.kernel.org/all/20240913213041.395655-5-gary@garyguo.net/
+- Link to v13: https://lore.kernel.org/r/20241213-rust-xarray-bindings-v13-0-8655164e624f@gmail.com
+
+Changes in v13:
+- Replace `bool::then` with `if`. (Miguel Ojeda)
+- Replace `match` with `let` + `if`. (Miguel Ojeda)
+- Link to v12: https://lore.kernel.org/r/20241212-rust-xarray-bindings-v12-0-59ab9b1f4d2e@gmail.com
+
+Changes in v12:
+- Import `core::ptr::NonNull`. (Alice Ryhl)
+- Introduce `StoreError` to allow `?` to be used with `Guard::store`.
+  (Alice Ryhl)
+- Replace `{crate,core}::ffi::c_ulong` and clarify TODO with respect to
+  `usize`. (Alice Ryhl)
+- Drop `T: Sync` bound on `impl Sync for XArray<T>`. (Alice Ryhl)
+- Reword `Send` and `Sync` safety comments to match the style used in
+  `lock.rs`. (Alice Ryhl and Andreas
+  Hindborg)
+- Link to v11: https://lore.kernel.org/r/20241203-rust-xarray-bindings-v11-0-58a95d137ec2@gmail.com
+
+Changes in v11:
+- Consolidate imports. (Alice Ryhl)
+- Use literal `0` rather than `MIN`. (Alice Ryhl)
+- Use bulleted list in SAFETY comment. (Alice Ryhl)
+- Document (un)locking behavior of `Guard::store`. (Alice Ryhl)
+- Document Normal API behavior WRT `XA_ZERO_ENTRY`. (Alice Ryhl)
+- Rewrite `unsafe impl Sync` SAFETY comment. (Andreas Hindborg)
+- Link to v10: https://lore.kernel.org/r/20241120-rust-xarray-bindings-v10-0-a25b2b0bf582@gmail.com
+
+Changes in v10:
+- Guard::get takes &self instead of &mut self. (Andreas Hindborg)
+- Guard is !Send. (Boqun Feng)
+- Add Inspired-by tags. (Maíra Canal and Asahi Lina)
+- Rebase on linux-next, use NotThreadSafe. (Alice Ryhl)
+- Link to v9: https://lore.kernel.org/r/20241118-rust-xarray-bindings-v9-0-3219cdb53685@gmail.com
+
+---
+Tamir Duberstein (3):
+      rust: types: add `ForeignOwnable::PointedTo`
+      rust: xarray: Add an abstraction for XArray
+      MAINTAINERS: add entry for Rust XArray API
+
+ MAINTAINERS                     |  11 ++
+ rust/bindings/bindings_helper.h |   6 +
+ rust/helpers/helpers.c          |   1 +
+ rust/helpers/xarray.c           |  28 ++++
+ rust/kernel/alloc/kbox.rs       |  38 +++---
+ rust/kernel/lib.rs              |   1 +
+ rust/kernel/miscdevice.rs       |  10 +-
+ rust/kernel/pci.rs              |   2 +-
+ rust/kernel/platform.rs         |   2 +-
+ rust/kernel/sync/arc.rs         |  21 +--
+ rust/kernel/types.rs            |  46 ++++---
+ rust/kernel/xarray.rs           | 276 ++++++++++++++++++++++++++++++++++++++++
+ 12 files changed, 393 insertions(+), 49 deletions(-)
+---
+base-commit: 11668f3b4a446222f0f3fe89b21247c176928c72
+change-id: 20241020-rust-xarray-bindings-bef514142968
+
+Best regards,
+-- 
+Tamir Duberstein <tamird@gmail.com>
+
 
