@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-41987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-41989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3968A39BB7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 13:05:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 259BFA39BB4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 13:04:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2466E3A551E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 12:02:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FA49176B0D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2025 12:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A815423FC6A;
-	Tue, 18 Feb 2025 12:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C5524113E;
+	Tue, 18 Feb 2025 12:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="aQRw741K"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qb8Jbre8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF632405F4;
-	Tue, 18 Feb 2025 12:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198912417F5;
+	Tue, 18 Feb 2025 12:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739880138; cv=none; b=dWEVvDB+E39eaw5z00yigLH78B6uGSo7Bnyvpc0yaEU2XJK4FGYVS4MADlxoMXsK3rp6faQpZX+wAmLpzuB6RKEe7FrXaJUpJomgvS3/72XFK/yAe9JdOy5FtKDzS3A5cpyW1gSCAbEByOqTn7g9kREDe8q3AQJki/AAHXsY8x4=
+	t=1739880143; cv=none; b=X1LciEc7k/6Tzb+9Kj1MqDZx83zXkt/Nh4XQpTP1Zt55NS3BCOS6+I0W+woOsTBh5OFRqHYJBYLXBn+G5JoOBYqcWF1eq++X1lkyHl6E7PpQFWppuekWPRN+ZNhMXXE6wVKvn2whEbjzvqZPkb8Kqu+XVvTnSuDwMTZ1WYEDE6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739880138; c=relaxed/simple;
-	bh=nM1XAO5eqp6vtR9efrMqEu/JQNy+fzh77uKaHlP7S9w=;
+	s=arc-20240116; t=1739880143; c=relaxed/simple;
+	bh=nIdJEvkyZQ7T7/5JibDOh7O052g4JLx9pmwanwQJVaE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tlLVUkpXRQSswGLzA+jjLv0v+rqrWZnuLg4T2+A5GICPhe3vqX7wvbTIHfZBlrnYDwTJvaJop2SkZ8xJQ71KiROw4lVw4RZUbQLbNHT4VBXxIPy6VtPnCfX++XOjPvimis/Y2IyvnZeIm82GQ22CnEprvDxCrdGisfBajG4XjLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=aQRw741K; arc=none smtp.client-ip=115.124.30.113
+	 MIME-Version; b=HgWwSMK79yfSdOzgFywg9sGgREvkF70eQ6N/W3h9qbTcVS7OqiCUK4vR8cUf5qWAslmXoRHs/Z+O9+Qtjdwc5dDI18crlD7Xejpf8wQbw1ZNBmpfR/AGA7MwAIJnkujHMyMKhQqEnRlzfBx5AIFMuwuUr5tbbXrAwBpFVXRS5Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qb8Jbre8; arc=none smtp.client-ip=115.124.30.98
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
 	t=1739880131; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=ELWahEziw1ddKeNrxVKn7NIq0FKyA7vh3KDs9oWRZaM=;
-	b=aQRw741K2yfuoBWZ+U4TakRkc/wD5Go4eUXa3hzXJ01UGtLCaRb6zj6KeD1aDvSEiuveKqNDGJtmQBYechs/8rowQaSZYfllYZQ8OLx5CKmdoBMYHdbXQH3zWbd2zrq6MiNKU+FSHwijkaS4NETKNusn807gn8dnd73PvcnTNpE=
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WPlpQxT_1739880130 cluster:ay36)
+	bh=y2bMkeNnyOpZdT1loclRjOTBfK3X6l+kij6eDknKmKE=;
+	b=qb8Jbre8jrN8stePbbKnmrf/8cPIWR3UXfLBVrll6c9af9zGhKOl6dFk8WkheM3QJhfB3tLPNHWErNpozEIuY25z9QjmpZVzkLQcXot9zJamORJMhy2pd3LkhRTWPaT5qwYaGrID0TGSyNvbw0uExfHscUFAbXABwz91q6mttlw=
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WPlpQxk_1739880130 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Tue, 18 Feb 2025 20:02:10 +0800
+          Tue, 18 Feb 2025 20:02:11 +0800
 From: Jingbo Xu <jefflexu@linux.alibaba.com>
 To: axboe@kernel.dk,
 	linux-fsdevel@vger.kernel.org,
@@ -46,9 +46,9 @@ To: axboe@kernel.dk,
 Cc: brauner@kernel.org,
 	linux-kernel@vger.kernel.org,
 	viro@zeniv.linux.org.uk
-Subject: [PATCH 1/2] mm/filemap: fix miscalculated file range for filemap_fdatawrite_range_kick()
-Date: Tue, 18 Feb 2025 20:02:08 +0800
-Message-Id: <20250218120209.88093-2-jefflexu@linux.alibaba.com>
+Subject: [PATCH 2/2] mm/truncate: don't skip dirty page in folio_unmap_invalidate()
+Date: Tue, 18 Feb 2025 20:02:09 +0800
+Message-Id: <20250218120209.88093-3-jefflexu@linux.alibaba.com>
 X-Mailer: git-send-email 2.19.1.6.gb485710b
 In-Reply-To: <20250218120209.88093-1-jefflexu@linux.alibaba.com>
 References: <20250218120209.88093-1-jefflexu@linux.alibaba.com>
@@ -60,47 +60,28 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-iocb->ki_pos has been updated with the number of written bytes since
-generic_perform_write().
+... otherwise this is a behavior change for the previous callers of
+invalidate_complete_folio2(), e.g. the page invalidation routine.
 
-Besides __filemap_fdatawrite_range() accepts the inclusive end of the
-data range.
-
-Fixes: 1d4457576570 ("mm: call filemap_fdatawrite_range_kick() after IOCB_DONTCACHE issue")
+Fixes: 4a9e23159fd3 ("mm/truncate: add folio_unmap_invalidate() helper")
 Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
 ---
- include/linux/fs.h | 4 ++--
- mm/filemap.c       | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ mm/truncate.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 2c3b2f8a621f..f12774291423 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2975,8 +2975,8 @@ static inline ssize_t generic_write_sync(struct kiocb *iocb, ssize_t count)
- 	} else if (iocb->ki_flags & IOCB_DONTCACHE) {
- 		struct address_space *mapping = iocb->ki_filp->f_mapping;
+diff --git a/mm/truncate.c b/mm/truncate.c
+index e2e115adfbc5..76d8fcd89bd0 100644
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@ -548,8 +548,6 @@ int folio_unmap_invalidate(struct address_space *mapping, struct folio *folio,
  
--		filemap_fdatawrite_range_kick(mapping, iocb->ki_pos,
--					      iocb->ki_pos + count);
-+		filemap_fdatawrite_range_kick(mapping, iocb->ki_pos - count,
-+					      iocb->ki_pos - 1);
- 	}
+ 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
  
- 	return count;
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 804d7365680c..d4564a79eb35 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -445,7 +445,7 @@ EXPORT_SYMBOL(filemap_fdatawrite_range);
-  * filemap_fdatawrite_range_kick - start writeback on a range
-  * @mapping:	target address_space
-  * @start:	index to start writeback on
-- * @end:	last (non-inclusive) index for writeback
-+ * @end:	last (inclusive) index for writeback
-  *
-  * This is a non-integrity writeback helper, to start writing back folios
-  * for the indicated range.
+-	if (folio_test_dirty(folio))
+-		return 0;
+ 	if (folio_mapped(folio))
+ 		unmap_mapping_folio(folio);
+ 	BUG_ON(folio_mapped(folio));
 -- 
 2.19.1.6.gb485710b
 
