@@ -1,158 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-42073-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42074-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7520A3C0E9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 15:00:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3075EA3C3F6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 16:43:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55FA87A7203
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 13:59:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0546A189C8F6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 15:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983891EEA2C;
-	Wed, 19 Feb 2025 14:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3522D212FA8;
+	Wed, 19 Feb 2025 15:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="HhPCt1z9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182781E1A3B;
-	Wed, 19 Feb 2025 14:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF86212D69
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2025 15:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739973636; cv=none; b=fN60iAVogz15l9nFLg04/CIrRDOsYUBd/WGEQMCHL5csu9tRYg1baJ1iUxDD+nkOUnNMVZ5eMmcnSqhH8k/0P0CiESqsLM3JpkSS52WxMEBHa1RHZRsWu8rO1QyjYnQXOACZbiyZ0NBF4077yabm+G9vXB7Uo3tW4oPQJsW3xGQ=
+	t=1739979608; cv=none; b=g2AQTZuUgzTGTDyO4u9Ddvx4p7d5adCpTo74WQLpk2mMpWOMwF7owy1sPPBwNFzZ9mzZEu4Fwr862urXAxj7GUo0Wd/pC7zyR65jR8NbPBzhscyMaA0Xt7zzbf1GlMYUOhHZMysp2fNt9NpcqvnqFu4JIPj7f+HOEU9GR1dUkO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739973636; c=relaxed/simple;
-	bh=X+M3x8vareZ1kGwEPWZ3GJcEu+0g9qcC+YP820OHeSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PdJnZu0djCyCsV5qbTbTWtyRNZyTcjcbyL1VAOyaF9nbvBSXaKoFJOE1aSDFzJqQIx6r3ew/RNZFm7CGUFBqrp4HFmtIu0z7ZasToxsXB6X+b9oWV8AlSgX5ICdZkR+MZDHl/A4r/bbmZVSDcaJ02r0USR4DSL30JhvOJqNUD5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B8DAC4CED1;
-	Wed, 19 Feb 2025 14:00:30 +0000 (UTC)
-Date: Wed, 19 Feb 2025 14:00:27 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Herbert Xu <herbert@gondor.apana.org.au>, willy@infradead.org,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Yang Shi <yang@os.amperecomputing.com>,
-	David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH 6.6 000/389] 6.6.76-rc2 review
-Message-ID: <Z7Xj-zIe-Sa1syG7@arm.com>
-References: <20250206155234.095034647@linuxfoundation.org>
- <CA+G9fYvKzV=jo9AmKH2tJeLr0W8xyjxuVO-P+ZEBdou6C=mKUw@mail.gmail.com>
- <CA+G9fYtqBxt+JwSLCcVBchh94GVRhbo9rTP26ceJ=sf4MDo61Q@mail.gmail.com>
+	s=arc-20240116; t=1739979608; c=relaxed/simple;
+	bh=buTHsj2oaFq5Wqga1EBuGagDv+saNvOZR/UVtfuyT4c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KetDOefBJ9jP0Ci/PUDvGpNXZ1+jgVEV3fN29+VVo5ZgJSeoHcMNrzg2gDuPi4cBaqvgZRFPN1v7AnlQkT+9X+hz/5NXCjvaOci/LlqcH56HHBqBbeozyLYbd+Z/G96KYb7g3XbQxHxokG1iMEL3ToobOVOeNzeVqM6KHO6pXa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=HhPCt1z9; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-472003f8c47so8875821cf.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2025 07:40:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1739979604; x=1740584404; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=92iIBWqK77Z7RcDzOrfe8c0bA9AELD7+jjJwAT/7JP0=;
+        b=HhPCt1z96x0HkTwLe/IKTSeyx0/SOX03j11AitZXAifIeLfRbKtaTUf4FVqm0A9QW4
+         aahVvQ2Wgrqs7Fga8Vic/BcH7HZ1nbhh1y4e/yKNBPmz7GkvT54cAyU+n5Tead6a7Coa
+         vfI831sXwnkxlpZDxsDC2wtHQjHp2Up3fyxfw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739979604; x=1740584404;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=92iIBWqK77Z7RcDzOrfe8c0bA9AELD7+jjJwAT/7JP0=;
+        b=qk7xqPJTfY9icmWI583kkhLtv7gq1io/vg/vB5tgAOX24BXjVhrCNqsrqXr/Skb1oQ
+         EVGtivVufQj7/QeYpiT0xX+itxIcoEPAIO3SvzAsyiyZo/yzD+xhXln4MUbgKqc++G3y
+         8u5BxJ15Xo1kHSeXfMjjlBK9oaqa+QFXWgdKpjrk8TlCmlOk+pA53OUU6oHfeWFVq8dr
+         rtfPU70DhLAlW9hyqdRZMTbuk1Y0x8+solDwFLpvh+4p6vh9TV8QzWiL3Hg7iLfCFY9z
+         sbl+asNV/kUeIUx2IfrlW4wlpjbjLuNBIiCxYbY3YjwuuZW5XJDU8VeDtGKJl6QwRsEb
+         70XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4t14owbSdQkdZlV3aOvcWy/79+/V6/WOEmD8W5OR08yLY0uui/fj+qLS2B0+O4fD5V7dcAzgBhAtqOxrt@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu9ib8VJR4L6eKn5xUCDl57Y4Wz/dlHk0JNfYGTuUeHM57LeT/
+	jYyvKySfX3HpczffpRyVPSwmhPmxp0rQaCIA3rHiHc9r7gLkOpI0pmkxLInknfFkyEJgxQxjX1Q
+	qC8UK7Pr6k41uSPNLCEWpYLS5gr/CbtsvKl0P0g==
+X-Gm-Gg: ASbGncsGdOiTtL4irkrjzxLgWJxqRg6fsw9CLeEuJ9BjhwV+OPjdDkybtZkyXIS7+NK
+	/XWMNhqBm7MYrGhItG0Ubwx/UcKLjCh8U31qYO+QaTv9Wv0XkN8XhfeQp4GxdHZ604CfjlRE=
+X-Google-Smtp-Source: AGHT+IFAeU/+H+SJFluznNcKJQGWZ0dI8+j7igAo72ORVv+picT+17KaUR1+ksOwgZMe+UPUb+KJUxbhqcefENa7mOM=
+X-Received: by 2002:a05:622a:250e:b0:472:2bc:8763 with SMTP id
+ d75a77b69052e-472081120acmr72334071cf.17.1739979604016; Wed, 19 Feb 2025
+ 07:40:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYtqBxt+JwSLCcVBchh94GVRhbo9rTP26ceJ=sf4MDo61Q@mail.gmail.com>
+References: <20250217133228.24405-1-luis@igalia.com> <20250217133228.24405-3-luis@igalia.com>
+ <Z7PaimnCjbGMi6EQ@dread.disaster.area> <CAJfpegszFjRFnnPbetBJrHiW_yCO1mFOpuzp30CCZUnDZWQxqg@mail.gmail.com>
+ <87r03v8t72.fsf@igalia.com> <CAJfpegu51xNUKURj5rKSM5-SYZ6pn-+ZCH0d-g6PZ8vBQYsUSQ@mail.gmail.com>
+ <87frkb8o94.fsf@igalia.com> <CAJfpegsThcFwhKb9XA3WWBXY_m=_0pRF+FZF+vxAxe3RbZ_c3A@mail.gmail.com>
+ <87tt8r6s3e.fsf@igalia.com> <Z7UED8Gh7Uo-Yj6K@dread.disaster.area> <87eczu41r9.fsf@igalia.com>
+In-Reply-To: <87eczu41r9.fsf@igalia.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 19 Feb 2025 16:39:53 +0100
+X-Gm-Features: AWEUYZnsd8RmZK6RM-APkCg4E8uZetY9FeJcgcAmTH8on7mvgs9rhtwhdwChAuM
+Message-ID: <CAJfpegs-_sFPnMBwEa-2OSiaNriH6ZvEnM73vNZBiwzrSWFraw@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] fuse: add new function to invalidate cache for all inodes
+To: Luis Henriques <luis@igalia.com>
+Cc: Dave Chinner <david@fromorbit.com>, Bernd Schubert <bschubert@ddn.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Matt Harvey <mharvey@jumptrading.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Valentin Volkl <valentin.volkl@cern.ch>, 
+	Laura Promberger <laura.promberger@cern.ch>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Feb 17, 2025 at 05:00:43PM +0530, Naresh Kamboju wrote:
-> On Sat, 8 Feb 2025 at 16:54, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
-[...]
-> We observed a kernel warning on QEMU-ARM64 and FVP while running the
-> newly added selftest: arm64: check_hugetlb_options. This issue appears
-> on 6.6.76 onward and 6.12.13 onward, as reported in the stable review [1].
-> However, the test case passes successfully on stable 6.13.
-> 
-> The selftests: arm64: check_hugetlb_options test was introduced following
-> the recent upgrade of kselftest test sources to the stable 6.13 branch.
-> As you are aware, LKFT runs the latest kselftest sources (from stable
-> 6.13.x) on 6.12.x, 6.6.x, and older kernels for validation purposes.
-> 
-> From Anders' bisection results, we identified that the missing patch on
-> 6.12 is likely causing this regression:
-> 
-> First fixed commit:
-> [25c17c4b55def92a01e3eecc9c775a6ee25ca20f]
-> hugetlb: arm64: add MTE support
+On Wed, 19 Feb 2025 at 12:23, Luis Henriques <luis@igalia.com> wrote:
 
-I wouldn't backport this and it's definitely not a fix for the problem
-reported.
+> +static int fuse_notify_update_epoch(struct fuse_conn *fc)
+> +{
+> +       struct fuse_mount *fm;
+> +       struct inode *inode;
+> +
+> +       inode = fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
+> +       if (!inode) || !fm)
+> +               return -ENOENT;
+> +
+> +       iput(inode);
+> +       atomic_inc(&fc->epoch);
+> +       shrink_dcache_sb(fm->sb);
 
-> Could you confirm whether this patch is eligible for backporting to
-> 6.12 and 6.6 kernels?
-> If backporting is not an option, we will need to skip running this
-> test case on older kernels.
-> 
-> > 1)
-> > Regression on qemu-arm64 and FVP noticed this kernel warning running
-> > selftests: arm64: check_hugetlb_options test case on 6.6.76-rc1 and
-> > 6.6.76-rc2.
-> >
-> > Test regression: WARNING-arch-arm64-mm-copypage-copy_highpage
-> >
-> > ------------[ cut here ]------------
-> > [   96.920028] WARNING: CPU: 1 PID: 3611 at
-> > arch/arm64/mm/copypage.c:29 copy_highpage
-> > (arch/arm64/include/asm/mte.h:87)
-> > [   96.922100] Modules linked in: crct10dif_ce sm3_ce sm3 sha3_ce
-> > sha512_ce sha512_arm64 fuse drm backlight ip_tables x_tables
-> > [   96.925603] CPU: 1 PID: 3611 Comm: check_hugetlb_o Not tainted 6.6.76-rc2 #1
-> > [   96.926956] Hardware name: linux,dummy-virt (DT)
-> > [   96.927695] pstate: 43402009 (nZcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-> > [   96.928687] pc : copy_highpage (arch/arm64/include/asm/mte.h:87)
-> > [   96.929037] lr : copy_highpage
-> > (arch/arm64/include/asm/alternative-macros.h:232
-> > arch/arm64/include/asm/cpufeature.h:443
-> > arch/arm64/include/asm/cpufeature.h:504
-> > arch/arm64/include/asm/cpufeature.h:814 arch/arm64/mm/copypage.c:27)
-> > [   96.929399] sp : ffff800088aa3ab0
-> > [   96.930232] x29: ffff800088aa3ab0 x28: 00000000000001ff x27: 0000000000000000
-> > [   96.930784] x26: 0000000000000000 x25: 0000ffff9b800000 x24: 0000ffff9b9ff000
-> > [   96.931402] x23: fffffc0003257fc0 x22: ffff0000c95ff000 x21: ffff0000c93ff000
-> > [   96.932054] x20: fffffc0003257fc0 x19: fffffc000324ffc0 x18: 0000ffff9b800000
-> > [   96.933357] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-> > [   96.934091] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
-> > [   96.935095] x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
-> > [   96.935982] x8 : 0bfffc0001800000 x7 : 0000000000000000 x6 : 0000000000000000
-> > [   96.936536] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-> > [   96.937089] x2 : 0000000000000000 x1 : ffff0000c9600000 x0 : ffff0000c9400080
-> > [   96.939431] Call trace:
-> > [   96.939920] copy_highpage (arch/arm64/include/asm/mte.h:87)
-> > [   96.940443] copy_user_highpage (arch/arm64/mm/copypage.c:40)
-> > [   96.940963] copy_user_large_folio (mm/memory.c:5977 mm/memory.c:6109)
-> > [   96.941535] hugetlb_wp (mm/hugetlb.c:5701)
-> > [   96.941948] hugetlb_fault (mm/hugetlb.c:6237)
-> > [   96.942344] handle_mm_fault (mm/memory.c:5330)
-> > [   96.942794] do_page_fault (arch/arm64/mm/fault.c:513
-> > arch/arm64/mm/fault.c:626)
-> > [   96.943341] do_mem_abort (arch/arm64/mm/fault.c:846)
-> > [   96.943797] el0_da (arch/arm64/kernel/entry-common.c:133
-> > arch/arm64/kernel/entry-common.c:144
-> > arch/arm64/kernel/entry-common.c:547)
-> > [   96.944229] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:0)
-> > [   96.944765] el0t_64_sync (arch/arm64/kernel/entry.S:599)
-> > [   96.945383] ---[ end trace 0000000000000000 ]---
+This is just an optimization and could be racy, kicking out valid
+cache (harmlessly of course).  I'd leave it out of the first version.
 
-Prior to commit 25c17c4b55de ("hugetlb: arm64: add mte support"), there
-was no hugetlb support with MTE, so the above code path should not
-happen - it seems to get a PROT_MTE hugetlb page which should have been
-prevented by arch_validate_flags(). Or something else corrupts the page
-flags and we end up with some random PG_mte_tagged set.
+There could be more than one fuse_mount instance.  Wondering if epoch
+should be per-fm not per-fc...
 
-Does this happen with vanilla 6.6? I wonder whether we always had this
-issue, only that we haven't noticed until the hugetlb MTE kselftest.
-There were some backports in this area but I don't see how they would
-have caused this.
+> @@ -204,6 +204,12 @@ static int fuse_dentry_revalidate(struct inode *dir, const struct qstr *name,
+>         int ret;
+>
+>         inode = d_inode_rcu(entry);
+> +       if (inode) {
+> +               fm = get_fuse_mount(inode);
+> +               if (entry->d_time < atomic_read(&fm->fc->epoch))
+> +                       goto invalid;
+> +       }
 
--- 
-Catalin
+Negative dentries need to be invalidated too.
+
+> @@ -446,6 +452,12 @@ static struct dentry *fuse_lookup(struct inode *dir, struct dentry *entry,
+>                 goto out_err;
+>
+>         entry = newent ? newent : entry;
+> +       if (inode) {
+> +               struct fuse_mount *fm = get_fuse_mount(inode);
+> +               entry->d_time = atomic_read(&fm->fc->epoch);
+> +       } else {
+> +               entry->d_time = 0;
+> +       }
+
+Again, should do the same for positive and negative dentries.
+
+Need to read out fc->epoch before sending the request to the server,
+otherwise might get a stale dentry with an updated epoch.
+
+This also needs to be done in fuse_create_open(), create_new_entry()
+and fuse_direntplus_link().
+
+Thanks,
+Miklos
 
