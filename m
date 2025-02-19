@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-42110-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F9F5A3C69C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 18:49:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D796A3C6AB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 18:50:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3BF817A3ED
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 17:49:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F151D188D85E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 17:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA8D215041;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511DB214805;
 	Wed, 19 Feb 2025 17:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RFTXStzG"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b7rJnWIQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19537214A9B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2025 17:48:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84659214A72
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2025 17:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739987316; cv=none; b=AoKt9kFQt26lB9utSgfLvUGjg/HfoMuRoSINIG1+RgY2eGY0qHNnjcjsNh3qCbyz2l0pugtUBj9f63jP2Lalhp66vMbNy0NIZzBGaMTmVLBKU5OY8dP3/TFGNpyj1Ptua1oLDeaG9r223Px55JuXbVBV50Hb3dKPXOKz1/q+4fQ=
+	t=1739987315; cv=none; b=AADqKuBHO/j4mugoRM7C9lh22QR49oA2MoKbuBRtIRM2W3lFcL/0tfhLx2xgERFaIEYsIN83JGpbVSjfegIaWUVMbXSl+dCA5LneBPWqokzyo+4i633ZLbA9eAzgq952Huiv1P9eAoNm2nFWgr2HR6zlWNIMQ7NtSV6gPUDM13w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739987316; c=relaxed/simple;
-	bh=i9iv/0xYwn1lq226n0k/wS4jm1DBrmAhZ47fyRs40O4=;
+	s=arc-20240116; t=1739987315; c=relaxed/simple;
+	bh=JKROBRF7IP5GPphNge9Vh/4KunoD+rLRRFUCmBdcvLw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XB41o0Xd9J9ZaKJkdAoyq4dKacbJuCW5dHMPTNal7bF94XW0L2GJzMAv8q491CKWYk3QbQbA4/NU7WGyQSe/5B9LVspTR416/0LkyVgcO4sGKJaOWyUtr/UdxNBcnXEUFlbItE6nNAYKl9AumMiy2GWx+q9wYElAUAWgHNBtKxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RFTXStzG; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version:Content-Type; b=N3l0iAhCOZizRO4NjNMXi2p3PitGcw2ATEeVFyQznCiChLG6YeEYkpFJYlq7HMk+q2NkduwFA/q1nbFfUCL7qpnvq0m3ZkSYbDziPlF5p3RbLR0/o+jjgdrcGFAxwkQ3JuCMnXTEuV/WPyxjPm0LTfoyeDHm7aEX1b0norRSaig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b7rJnWIQ; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739987313;
+	s=mimecast20190719; t=1739987312;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8MdMYcyXoZnVbgUxP3iCNsW6Hnq0enHJZ7kvfb+MIbg=;
-	b=RFTXStzGRWL+lUUnu7JqvQYa9/bPRzhYxxV/0NBILPvkF5sUcEglYu9RoGZlQxoLsLRFV9
-	hJGjDXGI6upOILR37SGw3l+SsrTS6qh5q9F6lfmy4MiMjTueX9pmHZ3M7IF+wUfXE3SSFA
-	Qhx3umtwhhN3U/5x+3O4pHve2lyBNMc=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=gbBGUTiTIzap/EX4smSF0j4RvXup8WhyaRsEhY//Dwg=;
+	b=b7rJnWIQdj5wTPHEtAcig6Wj+jqehSRim8aCsoVIxWUDXT5wjEjOI2wypy8NZe1O29Cz+v
+	dMvNsLyiePKYKMi8J3IKJGaKgE5Zqk78qEqGVYcI/Qy7iK4ZWaVi0OqCJaTzKmIrofSm3P
+	x5ZaKpEfMjaVY789O1/N9y9kxMuAt74=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-358-UE7AjkIbMmu-qcgDhULyYg-1; Wed,
- 19 Feb 2025 12:48:28 -0500
-X-MC-Unique: UE7AjkIbMmu-qcgDhULyYg-1
-X-Mimecast-MFC-AGG-ID: UE7AjkIbMmu-qcgDhULyYg_1739987307
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-456-roUw30rzOAqAckkAfE9aJw-1; Wed,
+ 19 Feb 2025 12:48:31 -0500
+X-MC-Unique: roUw30rzOAqAckkAfE9aJw-1
+X-Mimecast-MFC-AGG-ID: roUw30rzOAqAckkAfE9aJw_1739987309
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9B8A518EAB39;
-	Wed, 19 Feb 2025 17:48:27 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EBB731800878;
+	Wed, 19 Feb 2025 17:48:28 +0000 (UTC)
 Received: from bfoster.redhat.com (unknown [10.22.88.79])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 53DB81800362;
-	Wed, 19 Feb 2025 17:48:26 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E072D1800359;
+	Wed, 19 Feb 2025 17:48:27 +0000 (UTC)
 From: Brian Foster <bfoster@redhat.com>
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-xfs@vger.kernel.org,
 	Christoph Hellwig <hch@infradead.org>,
 	"Darrick J . Wong" <djwong@kernel.org>
-Subject: [PATCH v2 11/12] iomap: rename iomap_iter processed field to status
-Date: Wed, 19 Feb 2025 12:50:49 -0500
-Message-ID: <20250219175050.83986-12-bfoster@redhat.com>
+Subject: [PATCH v2 12/12] iomap: introduce a full map advance helper
+Date: Wed, 19 Feb 2025 12:50:50 -0500
+Message-ID: <20250219175050.83986-13-bfoster@redhat.com>
 In-Reply-To: <20250219175050.83986-1-bfoster@redhat.com>
 References: <20250219175050.83986-1-bfoster@redhat.com>
 Precedence: bulk
@@ -77,490 +77,135 @@ Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-The iter.processed field name is no longer appropriate now that
-iomap operations do not return the number of bytes processed. Rename
-the field to iter.status to reflect that a success or error code is
-expected.
-
-Also change the type to int as there is no longer a need for an s64.
-This reduces the size of iomap_iter by 8 bytes due to a combination
-of smaller type and reduction in structure padding. While here, fix
-up the return types of various _iter() helpers to reflect the type
-change.
+Various iomap_iter_advance() calls advance by the full mapping
+length and thus have no need for the current length input or
+post-advance remaining length output from the standard advance
+function. Add an iomap_iter_advance_full() helper to clean up these
+cases.
 
 Signed-off-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/dax.c               | 20 ++++++++++----------
- fs/iomap/buffered-io.c | 42 +++++++++++++++++++++---------------------
- fs/iomap/direct-io.c   |  2 +-
- fs/iomap/fiemap.c      |  6 +++---
- fs/iomap/iter.c        | 12 ++++++------
- fs/iomap/seek.c        |  8 ++++----
- fs/iomap/swapfile.c    |  4 ++--
- fs/iomap/trace.h       |  8 ++++----
- include/linux/iomap.h  |  7 +++----
- 9 files changed, 54 insertions(+), 55 deletions(-)
+ fs/dax.c               | 10 ++++------
+ fs/iomap/buffered-io.c |  3 +--
+ fs/iomap/fiemap.c      |  3 +--
+ fs/iomap/swapfile.c    |  4 +---
+ include/linux/iomap.h  |  9 +++++++++
+ 5 files changed, 16 insertions(+), 13 deletions(-)
 
 diff --git a/fs/dax.c b/fs/dax.c
-index 44701865ca94..cab3c5abe5cb 100644
+index cab3c5abe5cb..7fd4cd9a51f2 100644
 --- a/fs/dax.c
 +++ b/fs/dax.c
-@@ -1258,7 +1258,7 @@ static vm_fault_t dax_pmd_load_hole(struct xa_state *xas, struct vm_fault *vmf,
- }
- #endif /* CONFIG_FS_DAX_PMD */
+@@ -1266,11 +1266,11 @@ static int dax_unshare_iter(struct iomap_iter *iter)
+ 	u64 copy_len = iomap_length(iter);
+ 	u32 mod;
+ 	int id = 0;
+-	s64 ret = iomap_length(iter);
++	s64 ret;
+ 	void *daddr = NULL, *saddr = NULL;
  
--static s64 dax_unshare_iter(struct iomap_iter *iter)
-+static int dax_unshare_iter(struct iomap_iter *iter)
- {
- 	struct iomap *iomap = &iter->iomap;
- 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
-@@ -1328,7 +1328,7 @@ int dax_file_unshare(struct inode *inode, loff_t pos, loff_t len,
- 
- 	iter.len = min(len, size - pos);
- 	while ((ret = iomap_iter(&iter, ops)) > 0)
--		iter.processed = dax_unshare_iter(&iter);
-+		iter.status = dax_unshare_iter(&iter);
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(dax_file_unshare);
-@@ -1356,12 +1356,12 @@ static int dax_memzero(struct iomap_iter *iter, loff_t pos, size_t size)
- 	return ret;
- }
- 
--static s64 dax_zero_iter(struct iomap_iter *iter, bool *did_zero)
-+static int dax_zero_iter(struct iomap_iter *iter, bool *did_zero)
- {
- 	const struct iomap *iomap = &iter->iomap;
- 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
- 	u64 length = iomap_length(iter);
--	s64 ret;
-+	int ret;
- 
- 	/* already zeroed?  we're done. */
- 	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
-@@ -1416,7 +1416,7 @@ int dax_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
- 	int ret;
- 
- 	while ((ret = iomap_iter(&iter, ops)) > 0)
--		iter.processed = dax_zero_iter(&iter, did_zero);
-+		iter.status = dax_zero_iter(&iter, did_zero);
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(dax_zero_range);
-@@ -1588,7 +1588,7 @@ dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
- 		iomi.flags |= IOMAP_NOWAIT;
- 
- 	while ((ret = iomap_iter(&iomi, ops)) > 0)
--		iomi.processed = dax_iomap_iter(&iomi, iter);
-+		iomi.status = dax_iomap_iter(&iomi, iter);
- 
- 	done = iomi.pos - iocb->ki_pos;
- 	iocb->ki_pos = iomi.pos;
-@@ -1759,7 +1759,7 @@ static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 
- 	while ((error = iomap_iter(&iter, ops)) > 0) {
- 		if (WARN_ON_ONCE(iomap_length(&iter) < PAGE_SIZE)) {
--			iter.processed = -EIO;	/* fs corruption? */
-+			iter.status = -EIO;	/* fs corruption? */
- 			continue;
- 		}
- 
-@@ -1773,7 +1773,7 @@ static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 
- 		if (!(ret & VM_FAULT_ERROR)) {
- 			u64 length = PAGE_SIZE;
--			iter.processed = iomap_iter_advance(&iter, &length);
-+			iter.status = iomap_iter_advance(&iter, &length);
- 		}
- 	}
- 
-@@ -1889,7 +1889,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 		ret = dax_fault_iter(vmf, &iter, pfnp, &xas, &entry, true);
- 		if (ret != VM_FAULT_FALLBACK) {
- 			u64 length = PMD_SIZE;
--			iter.processed = iomap_iter_advance(&iter, &length);
-+			iter.status = iomap_iter_advance(&iter, &length);
- 		}
- 	}
- 
-@@ -2079,7 +2079,7 @@ int dax_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
- 				min(src_iter.len, dst_iter.len), same);
- 		if (status < 0)
- 			return ret;
--		src_iter.processed = dst_iter.processed = status;
-+		src_iter.status = dst_iter.status = status;
- 	}
- 	return ret;
- }
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index ddc82dab6bb5..2b86978010bb 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -366,7 +366,7 @@ static inline bool iomap_block_needs_zeroing(const struct iomap_iter *iter,
- 		pos >= i_size_read(iter->inode);
- }
- 
--static loff_t iomap_readpage_iter(struct iomap_iter *iter,
-+static int iomap_readpage_iter(struct iomap_iter *iter,
- 		struct iomap_readpage_ctx *ctx)
- {
- 	const struct iomap *iomap = &iter->iomap;
-@@ -441,10 +441,10 @@ static loff_t iomap_readpage_iter(struct iomap_iter *iter,
- 	return iomap_iter_advance(iter, &length);
- }
- 
--static loff_t iomap_read_folio_iter(struct iomap_iter *iter,
-+static int iomap_read_folio_iter(struct iomap_iter *iter,
- 		struct iomap_readpage_ctx *ctx)
- {
--	loff_t ret;
-+	int ret;
- 
- 	while (iomap_length(iter)) {
- 		ret = iomap_readpage_iter(iter, ctx);
-@@ -470,7 +470,7 @@ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
- 	trace_iomap_readpage(iter.inode, 1);
- 
- 	while ((ret = iomap_iter(&iter, ops)) > 0)
--		iter.processed = iomap_read_folio_iter(&iter, &ctx);
-+		iter.status = iomap_read_folio_iter(&iter, &ctx);
- 
- 	if (ctx.bio) {
- 		submit_bio(ctx.bio);
-@@ -489,10 +489,10 @@ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
- }
- EXPORT_SYMBOL_GPL(iomap_read_folio);
- 
--static loff_t iomap_readahead_iter(struct iomap_iter *iter,
-+static int iomap_readahead_iter(struct iomap_iter *iter,
- 		struct iomap_readpage_ctx *ctx)
- {
--	loff_t ret;
-+	int ret;
- 
- 	while (iomap_length(iter)) {
- 		if (ctx->cur_folio &&
-@@ -542,7 +542,7 @@ void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops)
- 	trace_iomap_readahead(rac->mapping->host, readahead_count(rac));
- 
- 	while (iomap_iter(&iter, ops) > 0)
--		iter.processed = iomap_readahead_iter(&iter, &ctx);
-+		iter.status = iomap_readahead_iter(&iter, &ctx);
- 
- 	if (ctx.bio)
- 		submit_bio(ctx.bio);
-@@ -902,10 +902,10 @@ static bool iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
- 	return __iomap_write_end(iter->inode, pos, len, copied, folio);
- }
- 
--static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
-+static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- {
- 	ssize_t total_written = 0;
--	long status = 0;
-+	int status = 0;
- 	struct address_space *mapping = iter->inode->i_mapping;
- 	size_t chunk = mapping_max_folio_size(mapping);
- 	unsigned int bdp_flags = (iter->flags & IOMAP_NOWAIT) ? BDP_ASYNC : 0;
-@@ -1025,7 +1025,7 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
- 		iter.flags |= IOMAP_NOWAIT;
- 
- 	while ((ret = iomap_iter(&iter, ops)) > 0)
--		iter.processed = iomap_write_iter(&iter, i);
-+		iter.status = iomap_write_iter(&iter, i);
- 
- 	if (unlikely(iter.pos == iocb->ki_pos))
- 		return ret;
-@@ -1259,7 +1259,7 @@ void iomap_write_delalloc_release(struct inode *inode, loff_t start_byte,
- }
- EXPORT_SYMBOL_GPL(iomap_write_delalloc_release);
- 
--static loff_t iomap_unshare_iter(struct iomap_iter *iter)
-+static int iomap_unshare_iter(struct iomap_iter *iter)
- {
- 	struct iomap *iomap = &iter->iomap;
- 	u64 bytes = iomap_length(iter);
-@@ -1319,7 +1319,7 @@ iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
- 
- 	iter.len = min(len, size - pos);
- 	while ((ret = iomap_iter(&iter, ops)) > 0)
--		iter.processed = iomap_unshare_iter(&iter);
-+		iter.status = iomap_unshare_iter(&iter);
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(iomap_file_unshare);
-@@ -1338,7 +1338,7 @@ static inline int iomap_zero_iter_flush_and_stale(struct iomap_iter *i)
- 	return filemap_write_and_wait_range(mapping, i->pos, end);
- }
- 
--static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
-+static int iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- {
- 	u64 bytes = iomap_length(iter);
- 	int status;
-@@ -1411,7 +1411,7 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
- 	    filemap_range_needs_writeback(mapping, pos, pos + plen - 1)) {
- 		iter.len = plen;
- 		while ((ret = iomap_iter(&iter, ops)) > 0)
--			iter.processed = iomap_zero_iter(&iter, did_zero);
-+			iter.status = iomap_zero_iter(&iter, did_zero);
- 
- 		iter.len = len - (iter.pos - pos);
- 		if (ret || !iter.len)
-@@ -1430,20 +1430,20 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
- 
- 		if (srcmap->type == IOMAP_HOLE ||
- 		    srcmap->type == IOMAP_UNWRITTEN) {
--			s64 proc;
-+			s64 status;
- 
- 			if (range_dirty) {
- 				range_dirty = false;
--				proc = iomap_zero_iter_flush_and_stale(&iter);
-+				status = iomap_zero_iter_flush_and_stale(&iter);
- 			} else {
- 				u64 length = iomap_length(&iter);
--				proc = iomap_iter_advance(&iter, &length);
-+				status = iomap_iter_advance(&iter, &length);
- 			}
--			iter.processed = proc;
-+			iter.status = status;
- 			continue;
- 		}
- 
--		iter.processed = iomap_zero_iter(&iter, did_zero);
-+		iter.status = iomap_zero_iter(&iter, did_zero);
- 	}
- 	return ret;
- }
-@@ -1463,7 +1463,7 @@ iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
- }
- EXPORT_SYMBOL_GPL(iomap_truncate_page);
- 
--static loff_t iomap_folio_mkwrite_iter(struct iomap_iter *iter,
-+static int iomap_folio_mkwrite_iter(struct iomap_iter *iter,
- 		struct folio *folio)
- {
- 	loff_t length = iomap_length(iter);
-@@ -1499,7 +1499,7 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
- 	iter.pos = folio_pos(folio);
- 	iter.len = ret;
- 	while ((ret = iomap_iter(&iter, ops)) > 0)
--		iter.processed = iomap_folio_mkwrite_iter(&iter, folio);
-+		iter.status = iomap_folio_mkwrite_iter(&iter, folio);
- 
- 	if (ret < 0)
- 		goto out_unlock;
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index b3599f8d12ac..a84bba651e14 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -696,7 +696,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 
- 	blk_start_plug(&plug);
- 	while ((ret = iomap_iter(&iomi, ops)) > 0) {
--		iomi.processed = iomap_dio_iter(&iomi, dio);
-+		iomi.status = iomap_dio_iter(&iomi, dio);
- 
- 		/*
- 		 * We can only poll for single bio I/Os.
-diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
-index 8a0d8b034218..6776b800bde7 100644
---- a/fs/iomap/fiemap.c
-+++ b/fs/iomap/fiemap.c
-@@ -39,7 +39,7 @@ static int iomap_to_fiemap(struct fiemap_extent_info *fi,
- 			iomap->length, flags);
- }
- 
--static loff_t iomap_fiemap_iter(struct iomap_iter *iter,
-+static int iomap_fiemap_iter(struct iomap_iter *iter,
- 		struct fiemap_extent_info *fi, struct iomap *prev)
- {
- 	u64 length = iomap_length(iter);
-@@ -78,7 +78,7 @@ int iomap_fiemap(struct inode *inode, struct fiemap_extent_info *fi,
- 		return ret;
- 
- 	while ((ret = iomap_iter(&iter, ops)) > 0)
--		iter.processed = iomap_fiemap_iter(&iter, fi, &prev);
-+		iter.status = iomap_fiemap_iter(&iter, fi, &prev);
- 
- 	if (prev.type != IOMAP_HOLE) {
- 		ret = iomap_to_fiemap(fi, &prev, FIEMAP_EXTENT_LAST);
-@@ -114,7 +114,7 @@ iomap_bmap(struct address_space *mapping, sector_t bno,
- 	while ((ret = iomap_iter(&iter, ops)) > 0) {
- 		if (iter.iomap.type == IOMAP_MAPPED)
- 			bno = iomap_sector(&iter.iomap, iter.pos) >> blkshift;
--		/* leave iter.processed unset to abort loop */
-+		/* leave iter.status unset to abort loop */
- 	}
- 	if (ret)
- 		return 0;
-diff --git a/fs/iomap/iter.c b/fs/iomap/iter.c
-index e4dfe64029cc..6ffc6a7b9ba5 100644
---- a/fs/iomap/iter.c
-+++ b/fs/iomap/iter.c
-@@ -9,7 +9,7 @@
- 
- static inline void iomap_iter_reset_iomap(struct iomap_iter *iter)
- {
--	iter->processed = 0;
-+	iter->status = 0;
- 	memset(&iter->iomap, 0, sizeof(iter->iomap));
- 	memset(&iter->srcmap, 0, sizeof(iter->srcmap));
- }
-@@ -54,7 +54,7 @@ static inline void iomap_iter_done(struct iomap_iter *iter)
-  * function must be called in a loop that continues as long it returns a
-  * positive value.  If 0 or a negative value is returned, the caller must not
-  * return to the loop body.  Within a loop body, there are two ways to break out
-- * of the loop body:  leave @iter.processed unchanged, or set it to a negative
-+ * of the loop body:  leave @iter.status unchanged, or set it to a negative
-  * errno.
-  */
- int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
-@@ -86,8 +86,8 @@ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
- 	}
- 
- 	/* detect old return semantics where this would advance */
--	if (WARN_ON_ONCE(iter->processed > 0))
--		iter->processed = -EIO;
-+	if (WARN_ON_ONCE(iter->status > 0))
-+		iter->status = -EIO;
+ 	if (!iomap_want_unshare_iter(iter))
+-		return iomap_iter_advance(iter, &ret);
++		return iomap_iter_advance_full(iter);
  
  	/*
- 	 * Use iter->len to determine whether to continue onto the next mapping.
-@@ -95,8 +95,8 @@ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
- 	 * advanced at all (i.e. no work was done for some reason) unless the
- 	 * mapping has been marked stale and needs to be reprocessed.
- 	 */
--	if (iter->processed < 0)
--		ret = iter->processed;
-+	if (iter->status < 0)
-+		ret = iter->status;
- 	else if (iter->len == 0 || (!advanced && !stale))
- 		ret = 0;
- 	else
-diff --git a/fs/iomap/seek.c b/fs/iomap/seek.c
-index 83c687d6ccc0..04d7919636c1 100644
---- a/fs/iomap/seek.c
-+++ b/fs/iomap/seek.c
-@@ -10,7 +10,7 @@
- #include <linux/pagemap.h>
- #include <linux/pagevec.h>
- 
--static loff_t iomap_seek_hole_iter(struct iomap_iter *iter,
-+static int iomap_seek_hole_iter(struct iomap_iter *iter,
- 		loff_t *hole_pos)
- {
- 	loff_t length = iomap_length(iter);
-@@ -47,7 +47,7 @@ iomap_seek_hole(struct inode *inode, loff_t pos, const struct iomap_ops *ops)
- 
- 	iter.len = size - pos;
- 	while ((ret = iomap_iter(&iter, ops)) > 0)
--		iter.processed = iomap_seek_hole_iter(&iter, &pos);
-+		iter.status = iomap_seek_hole_iter(&iter, &pos);
+ 	 * Extend the file range to be aligned to fsblock/pagesize, because
+@@ -1300,16 +1300,14 @@ static int dax_unshare_iter(struct iomap_iter *iter)
  	if (ret < 0)
- 		return ret;
- 	if (iter.len) /* found hole before EOF */
-@@ -56,7 +56,7 @@ iomap_seek_hole(struct inode *inode, loff_t pos, const struct iomap_ops *ops)
+ 		goto out_unlock;
+ 
+-	if (copy_mc_to_kernel(daddr, saddr, copy_len) == 0)
+-		ret = iomap_length(iter);
+-	else
++	if (copy_mc_to_kernel(daddr, saddr, copy_len) != 0)
+ 		ret = -EIO;
+ 
+ out_unlock:
+ 	dax_read_unlock(id);
+ 	if (ret < 0)
+ 		return dax_mem2blk_err(ret);
+-	return iomap_iter_advance(iter, &ret);
++	return iomap_iter_advance_full(iter);
  }
- EXPORT_SYMBOL_GPL(iomap_seek_hole);
  
--static loff_t iomap_seek_data_iter(struct iomap_iter *iter,
-+static int iomap_seek_data_iter(struct iomap_iter *iter,
- 		loff_t *hole_pos)
+ int dax_file_unshare(struct inode *inode, loff_t pos, loff_t len,
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 2b86978010bb..e53ac635e47c 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1436,8 +1436,7 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
+ 				range_dirty = false;
+ 				status = iomap_zero_iter_flush_and_stale(&iter);
+ 			} else {
+-				u64 length = iomap_length(&iter);
+-				status = iomap_iter_advance(&iter, &length);
++				status = iomap_iter_advance_full(&iter);
+ 			}
+ 			iter.status = status;
+ 			continue;
+diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
+index 6776b800bde7..80675c42e94e 100644
+--- a/fs/iomap/fiemap.c
++++ b/fs/iomap/fiemap.c
+@@ -42,7 +42,6 @@ static int iomap_to_fiemap(struct fiemap_extent_info *fi,
+ static int iomap_fiemap_iter(struct iomap_iter *iter,
+ 		struct fiemap_extent_info *fi, struct iomap *prev)
  {
- 	loff_t length = iomap_length(iter);
-@@ -93,7 +93,7 @@ iomap_seek_data(struct inode *inode, loff_t pos, const struct iomap_ops *ops)
+-	u64 length = iomap_length(iter);
+ 	int ret;
  
- 	iter.len = size - pos;
- 	while ((ret = iomap_iter(&iter, ops)) > 0)
--		iter.processed = iomap_seek_data_iter(&iter, &pos);
-+		iter.status = iomap_seek_data_iter(&iter, &pos);
- 	if (ret < 0)
- 		return ret;
- 	if (iter.len) /* found data before EOF */
+ 	if (iter->iomap.type == IOMAP_HOLE)
+@@ -56,7 +55,7 @@ static int iomap_fiemap_iter(struct iomap_iter *iter,
+ 		return 0;
+ 
+ advance:
+-	return iomap_iter_advance(iter, &length);
++	return iomap_iter_advance_full(iter);
+ }
+ 
+ int iomap_fiemap(struct inode *inode, struct fiemap_extent_info *fi,
 diff --git a/fs/iomap/swapfile.c b/fs/iomap/swapfile.c
-index 4395e46a4dc7..9ea185e58ca7 100644
+index 9ea185e58ca7..c1a762c10ce4 100644
 --- a/fs/iomap/swapfile.c
 +++ b/fs/iomap/swapfile.c
-@@ -94,7 +94,7 @@ static int iomap_swapfile_fail(struct iomap_swapfile_info *isi, const char *str)
-  * swap only cares about contiguous page-aligned physical extents and makes no
-  * distinction between written and unwritten extents.
-  */
--static loff_t iomap_swapfile_iter(struct iomap_iter *iter,
-+static int iomap_swapfile_iter(struct iomap_iter *iter,
+@@ -97,8 +97,6 @@ static int iomap_swapfile_fail(struct iomap_swapfile_info *isi, const char *str)
+ static int iomap_swapfile_iter(struct iomap_iter *iter,
  		struct iomap *iomap, struct iomap_swapfile_info *isi)
  {
- 	u64 length = iomap_length(iter);
-@@ -169,7 +169,7 @@ int iomap_swapfile_activate(struct swap_info_struct *sis,
- 		return ret;
+-	u64 length = iomap_length(iter);
+-
+ 	switch (iomap->type) {
+ 	case IOMAP_MAPPED:
+ 	case IOMAP_UNWRITTEN:
+@@ -135,7 +133,7 @@ static int iomap_swapfile_iter(struct iomap_iter *iter,
+ 		memcpy(&isi->iomap, iomap, sizeof(isi->iomap));
+ 	}
  
- 	while ((ret = iomap_iter(&iter, ops)) > 0)
--		iter.processed = iomap_swapfile_iter(&iter, &iter.iomap, &isi);
-+		iter.status = iomap_swapfile_iter(&iter, &iter.iomap, &isi);
- 	if (ret < 0)
- 		return ret;
+-	return iomap_iter_advance(iter, &length);
++	return iomap_iter_advance_full(iter);
+ }
  
-diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
-index 4118a42cdab0..9eab2c8ac3c5 100644
---- a/fs/iomap/trace.h
-+++ b/fs/iomap/trace.h
-@@ -207,7 +207,7 @@ TRACE_EVENT(iomap_iter,
- 		__field(u64, ino)
- 		__field(loff_t, pos)
- 		__field(u64, length)
--		__field(s64, processed)
-+		__field(int, status)
- 		__field(unsigned int, flags)
- 		__field(const void *, ops)
- 		__field(unsigned long, caller)
-@@ -217,17 +217,17 @@ TRACE_EVENT(iomap_iter,
- 		__entry->ino = iter->inode->i_ino;
- 		__entry->pos = iter->pos;
- 		__entry->length = iomap_length(iter);
--		__entry->processed = iter->processed;
-+		__entry->status = iter->status;
- 		__entry->flags = iter->flags;
- 		__entry->ops = ops;
- 		__entry->caller = caller;
- 	),
--	TP_printk("dev %d:%d ino 0x%llx pos 0x%llx length 0x%llx processed %lld flags %s (0x%x) ops %ps caller %pS",
-+	TP_printk("dev %d:%d ino 0x%llx pos 0x%llx length 0x%llx status %d flags %s (0x%x) ops %ps caller %pS",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
- 		   __entry->ino,
- 		   __entry->pos,
- 		   __entry->length,
--		   __entry->processed,
-+		   __entry->status,
- 		   __print_flags(__entry->flags, "|", IOMAP_FLAGS_STRINGS),
- 		   __entry->flags,
- 		   __entry->ops,
+ /*
 diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index d832a540cc72..29b72a671104 100644
+index 29b72a671104..4c7e9fe32117 100644
 --- a/include/linux/iomap.h
 +++ b/include/linux/iomap.h
-@@ -213,9 +213,8 @@ struct iomap_ops {
-  *	It is updated at the same time as @pos.
-  * @iter_start_pos: The original start pos for the current iomap. Used for
-  *	incremental iter advance.
-- * @processed: The number of bytes the most recent iteration needs iomap_iter()
-- *	to advance the iter, zero if the iter was already advanced, or a
-- *	negative errno for an error during the operation.
-+ * @status: Status of the most recent iteration. Zero on success or a negative
-+ *	errno on error.
-  * @flags: Zero or more of the iomap_begin flags above.
-  * @iomap: Map describing the I/O iteration
-  * @srcmap: Source map for COW operations
-@@ -225,7 +224,7 @@ struct iomap_iter {
- 	loff_t pos;
- 	u64 len;
- 	loff_t iter_start_pos;
--	s64 processed;
-+	int status;
- 	unsigned flags;
- 	struct iomap iomap;
- 	struct iomap srcmap;
+@@ -264,6 +264,15 @@ static inline u64 iomap_length(const struct iomap_iter *iter)
+ 	return iomap_length_trim(iter, iter->pos, iter->len);
+ }
+ 
++/**
++ * iomap_iter_advance_full - advance by the full length of current map
++ */
++static inline int iomap_iter_advance_full(struct iomap_iter *iter)
++{
++	u64 length = iomap_length(iter);
++	return iomap_iter_advance(iter, &length);
++}
++
+ /**
+  * iomap_iter_srcmap - return the source map for the current iomap iteration
+  * @i: iteration structure
 -- 
 2.48.1
 
