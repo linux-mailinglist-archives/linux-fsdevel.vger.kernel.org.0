@@ -1,143 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-42064-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42065-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48FCCA3BE0B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 13:30:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73063A3BE38
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 13:35:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D41916A662
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 12:30:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1834B162B9C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 12:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01101E04BF;
-	Wed, 19 Feb 2025 12:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA4E1BC094;
+	Wed, 19 Feb 2025 12:35:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A951DFD91;
-	Wed, 19 Feb 2025 12:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606BD1DE8BC
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2025 12:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739968197; cv=none; b=jD51Y2iDrl6YBv+go5rxZ2BrMSnmXNBRZPt0Gdi1Q2LLVX8JzM2rJGuo/Iwdtc/AZaY9zmyVePKtVkyzSC9GNfipGraFxXnPk3IeD3jSPJ3oAaecveVKC+7uOU06cwkrR5Rsrato7MGmmh/79R1VICSIJaIE7VYyBU4oZ7HRqjc=
+	t=1739968523; cv=none; b=DieoynAzdz7F/WvHjlCSRw+tl0sqvHNdlj8yhN/a9oNfGTLWg7CANY4pQfw+rCz04wAvv2uCsAWBLYlaXi1NgwcGYQDuht3m4ZwQlJXwjl1fFJxd6h7hfPJ5ErZ8gEQ1qt9ZEU3hCdhQQHoPZqoVBnkTWz/PLT4U2Wf+yQXubwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739968197; c=relaxed/simple;
-	bh=FCJOtv41Agf4mc6AQxG+YamyhLe7kyxpnwVuSp1A3Ac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=d5tr2WnoJ9yA9fPnkmCmYG8qBf/55Eg5SZnb1/cmfuOsHimtnFRVdrfJBrJ3DzzGAyLz3x1VA3obHmVDA7QUbtSVSZ999Eho2vHvSJAzjeAR0NVlWWn/chJqKU5/9UhVG0bUM5DQgcaBZusLArSYsFTAQGXofiAg3iTVrb92GZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4YybGW1tRNzhZx2;
-	Wed, 19 Feb 2025 20:26:11 +0800 (CST)
-Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
-	by mail.maildlp.com (Postfix) with ESMTPS id DA40A180116;
-	Wed, 19 Feb 2025 20:29:34 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
- (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 19 Feb
- 2025 20:29:33 +0800
-Message-ID: <68912db5-bfce-427c-b523-3407e0804d15@huawei.com>
-Date: Wed, 19 Feb 2025 20:29:32 +0800
+	s=arc-20240116; t=1739968523; c=relaxed/simple;
+	bh=j/dc1VpWzAYMng4cMhn0zh4R4rf3LGP1QYSyVP4Dl5Q=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=knutdsNnZaXk1QMdZwImCnNpTwWLEe++tv/mKyBwbzVHU3uzdGorUf+s7x2bvzT7cWX2gnsC+q4pSkEvlKp1ooKqjK+65mjzQmAKIE6MPDMZDt0atPHpN4YSuXQVzpn9AwE70S1w5XGq/Q41mByYQeKiEaQbhBIMHcqsTOOq1wY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d2b1e1e89fso11008595ab.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2025 04:35:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739968521; x=1740573321;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bkwiZ0yOIfJpjcP0g90Xxcuz3evpjUpvvJsCWnN10IA=;
+        b=K7hD96CxqnkDEVr+rKZHLa2O+7Ch+EVtoSYlaSo+Zt3dx1fgY/6YZnbA7kN4P12eEW
+         2E+XtVXDlLSQ4QKZ1CpbU/G7C744K2W9a6wFY5P2kx1fuYFMSt4tU+1WxKIxcfuXoa7t
+         51UVUrtmqMYfJTDbaUc8xe9BDmL5vvggVBAzNNa/a4J1J0ENfuMSzw7fMi17PLFRwT/3
+         wr5yenTZu2kyhNwE2ANW8viYvdbUWvDgBV01uQcTL2n2KnKGYCqjAJQnPSiq/2VYFzmP
+         mlUB/YyoGUnlAm3kw5LdyYXccRO42/fh+K9ysakFE/YNpWJqVMPzxewEhk9U+Eo5EWvZ
+         ES9g==
+X-Gm-Message-State: AOJu0YyhmMgKqcX2z/EF/TSzcsQDKi2nJnZ8UviUqR+/H5TtohD5qqoD
+	cbJVafskzeAej7CrYnWt1cCdu8lNSrAJblA9D2VtISXlhPQldusvJsWm48tXyTVlb3D5bbqniuu
+	iN4xUfol80x45uYoLkoO92ZUIf5Q2bxUNkB8TByvJU+esvZCS9rqFD9E=
+X-Google-Smtp-Source: AGHT+IG69LGDutTU11/v/OdTOcXCteXA3LgdwC79Z9Ktipmm6KW2i65mTGy2RJOLEYuFyiVuvYS65W9Cvh6r+DgxZtMYRzl1aori
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] jbd2: fix off-by-one while erasing journal
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-CC: <linux-ext4@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
-	<jack@suse.cz>, <leah.rumancik@gmail.com>, <yi.zhang@huawei.com>,
-	<chengzhihao1@huawei.com>, <yukuai3@huawei.com>, <yangerkun@huawei.com>,
-	Baokun Li <libaokun1@huawei.com>
-References: <20250217065955.3829229-1-yi.zhang@huaweicloud.com>
-Content-Language: en-US
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <20250217065955.3829229-1-yi.zhang@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemg500008.china.huawei.com (7.202.181.45)
+X-Received: by 2002:a05:6e02:2181:b0:3d1:4b97:4f2d with SMTP id
+ e9e14a558f8ab-3d280763f51mr132538045ab.5.1739968521525; Wed, 19 Feb 2025
+ 04:35:21 -0800 (PST)
+Date: Wed, 19 Feb 2025 04:35:21 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b5d009.050a0220.14d86d.00e3.GAE@google.com>
+Subject: [syzbot] Monthly hfs report (Feb 2025)
+From: syzbot <syzbot+list3025ad65a9369424c0f5@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025/2/17 14:59, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
->
-> In __jbd2_journal_erase(), the block_stop parameter includes the last
-> block of a contiguous region; however, the calculation of byte_stop is
-> incorrect, as it does not account for the bytes in that last block.
-> Consequently, the page cache is not cleared properly, which occasionally
-> causes the ext4/050 test to fail.
->
-> Since block_stop operates on inclusion semantics, it involves repeated
-> increments and decrements by 1, significantly increasing the complexity
-> of the calculations. Optimize the calculation and fix the incorrect
-> byte_stop by make both block_stop and byte_stop to use exclusion
-> semantics.
->
-> This fixes a failure in fstests ext4/050.
->
-> Fixes: 01d5d96542fd ("ext4: add discard/zeroout flags to journal flush")
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-Looks good, thanks for the patch!
+Hello hfs maintainers/developers,
 
-Reviewed-by: Baokun Li <libaokun1@huawei.com>
-> ---
->   fs/jbd2/journal.c | 15 ++++++---------
->   1 file changed, 6 insertions(+), 9 deletions(-)
->
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index d8084b31b361..49a9e99cbc03 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -1965,17 +1965,15 @@ static int __jbd2_journal_erase(journal_t *journal, unsigned int flags)
->   			return err;
->   		}
->   
-> -		if (block_start == ~0ULL) {
-> -			block_start = phys_block;
-> -			block_stop = block_start - 1;
-> -		}
-> +		if (block_start == ~0ULL)
-> +			block_stop = block_start = phys_block;
->   
->   		/*
->   		 * last block not contiguous with current block,
->   		 * process last contiguous region and return to this block on
->   		 * next loop
->   		 */
-> -		if (phys_block != block_stop + 1) {
-> +		if (phys_block != block_stop) {
->   			block--;
->   		} else {
->   			block_stop++;
-> @@ -1994,11 +1992,10 @@ static int __jbd2_journal_erase(journal_t *journal, unsigned int flags)
->   		 */
->   		byte_start = block_start * journal->j_blocksize;
->   		byte_stop = block_stop * journal->j_blocksize;
-> -		byte_count = (block_stop - block_start + 1) *
-> -				journal->j_blocksize;
-> +		byte_count = (block_stop - block_start) * journal->j_blocksize;
->   
->   		truncate_inode_pages_range(journal->j_dev->bd_mapping,
-> -				byte_start, byte_stop);
-> +				byte_start, byte_stop - 1);
->   
->   		if (flags & JBD2_JOURNAL_FLUSH_DISCARD) {
->   			err = blkdev_issue_discard(journal->j_dev,
-> @@ -2013,7 +2010,7 @@ static int __jbd2_journal_erase(journal_t *journal, unsigned int flags)
->   		}
->   
->   		if (unlikely(err != 0)) {
-> -			pr_err("JBD2: (error %d) unable to wipe journal at physical blocks %llu - %llu",
-> +			pr_err("JBD2: (error %d) unable to wipe journal at physical blocks [%llu, %llu)",
->   					err, block_start, block_stop);
->   			return err;
->   		}
+This is a 31-day syzbot report for the hfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/hfs
 
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 43 issues are still open and 22 have already been fixed.
 
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  58216   Yes   kernel BUG in hfs_write_inode
+                   https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b
+<2>  13879   Yes   kernel BUG in __hfsplus_setxattr
+                   https://syzkaller.appspot.com/bug?extid=1107451c16b9eb9d29e6
+<3>  12134   Yes   possible deadlock in hfsplus_get_block
+                   https://syzkaller.appspot.com/bug?extid=b7ef7c0c8d8098686ae2
+<4>  4961    Yes   KMSAN: uninit-value in hfsplus_cat_case_cmp_key
+                   https://syzkaller.appspot.com/bug?extid=50d8672fea106e5387bb
+<5>  3014    Yes   KMSAN: uninit-value in hfsplus_delete_cat
+                   https://syzkaller.appspot.com/bug?extid=fdedff847a0e5e84c39f
+<6>  2963    Yes   possible deadlock in hfs_find_init (2)
+                   https://syzkaller.appspot.com/bug?extid=e390d66dda462b51fde1
+<7>  2775    Yes   KMSAN: uninit-value in hfsplus_attr_bin_cmp_key
+                   https://syzkaller.appspot.com/bug?extid=c6d8e1bffb0970780d5c
+<8>  2732    Yes   KMSAN: uninit-value in hfs_find_set_zero_bits
+                   https://syzkaller.appspot.com/bug?extid=773fa9d79b29bd8b6831
+<9>  2560    Yes   KASAN: slab-out-of-bounds Read in hfsplus_uni2asc
+                   https://syzkaller.appspot.com/bug?extid=076d963e115823c4b9be
+<10> 2430    Yes   KMSAN: uninit-value in hfsplus_lookup
+                   https://syzkaller.appspot.com/bug?extid=91db973302e7b18c7653
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
