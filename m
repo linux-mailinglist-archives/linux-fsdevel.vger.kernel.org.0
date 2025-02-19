@@ -1,238 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-42097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42099-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11F8A3C62F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 18:27:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A740A3C68B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 18:48:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A4513AABEB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 17:26:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E41E1796DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 17:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49631214801;
-	Wed, 19 Feb 2025 17:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B192144D3;
+	Wed, 19 Feb 2025 17:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="C2nFRDgx"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XSPwCFi+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F8F214A6A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2025 17:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89481A7264
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2025 17:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739985972; cv=none; b=CkHFT7ieUAl6bFAJZweDKX6NAPm3W8etWCA7MYbWPHF8EtTJnxUzcKIhKdbLcZ/zZflqkr5hrZhju6h5jaX1TTBBzV3GiiwgDlwLREK8aOZL7qQXaImFu3fP3AtYcWjZx1aaUFAKRrCttrnfnkT4lCq4q7n7iNwvQUcLOUNGqmA=
+	t=1739987301; cv=none; b=cFvtU3DaHMQE6+yRzPxto88nefd/DszEOd5mmzUYHioswVDeloVrNwQTfdkoP9w9ppU3skPwvJOJVzBAJgrB/7qv49Z7bFBPk/Nvafvh0MsjwRcUPo30XVuF/xcDlmfgJ6ny+P2z12sz8vFNh1dDOysXZnhIeOfH3wp3Psdvm6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739985972; c=relaxed/simple;
-	bh=Dgu/2bYkWXrAMq3iF1/8GI7X79S6G6gmhyLC1ec2mfY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HS9FkTk5V0dbtpMjzxZknyS98wkFaDwQCI2Qvxg8FiS/cD4rE374tU6X1gCPyq4jw5THhdsI3IVPyzA2sHIl8wslGwyLZsB8hpj70YaQTKQNJWmUt4EDbR0GToiOmSYSutEnKoEtW4ULB2AizjkSkXv9BVhRZCVVX85JJf5AFxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=C2nFRDgx; arc=none smtp.client-ip=209.85.166.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-854a68f5aeeso1110239f.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2025 09:26:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1739985970; x=1740590770; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1gAHZg9kSYTvKQ33H52aoGebUTskPe032Qb9P2hQu70=;
-        b=C2nFRDgxkeUJxOFus0XdLUwXUYVZZEsSkdAI1XHXzqRNSSQQmrJD9OXmqK81dXZ+BU
-         niwem1/kEPxvdxUZ4YiskDmNk3XSt7OfAbpvEKkdN7ArTzI6ot1FF25GTJ5yH7Pn9+uZ
-         flvqOxHUsldj7pQwY3oAWiOs9wBRDD647+RID/uADI4JAAEs46G5JA7AsA7MMk5HErtN
-         XhWEQDxMA0mD9Ygz5zU2DfKt8w2L6YiZuftaXcoJiiDHarie7tDMknHTp/GULPB2F199
-         xFwnXfySPzu1SCSPP34lIziFl53ES2XTG+iMHkehQXmKmPF++FLWcvkUio6s1clC0SOr
-         tiAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739985970; x=1740590770;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1gAHZg9kSYTvKQ33H52aoGebUTskPe032Qb9P2hQu70=;
-        b=B4j7Wg89dz0nqDfgwzTK4HNd6MViN361thmAmvvvh3KcS0QbcFLv+PGQqa1LuKMXn1
-         vTNBWNt+8MU7R1HsrPFjXr+DMZVoRZO9ZZjvfkD7XUZ7h4f0alS2KQoiXRDqwOAU0TsM
-         UDBMgzDaM+c/hxv81krOon4tdbk7AEs4BQSG4PuR70dNrRWq/ZTbqXDbV6ODIWVpkVbr
-         BL33JYMvDrckQrGnmLSD2kbuY2k0OHrdQGKSIdwKzy4RwpK+LG2jkFqt4QOfbsNH+ZlA
-         s+Mh81WgpSzidEmAwBjBjpwbEkMF1luhVfAgnkH5xzctXPSkwLzEItYtuoztg00mMOtw
-         +TBg==
-X-Gm-Message-State: AOJu0Yx6bUOOf0haMEbOgAd9FpzVLF5fYS2Eluv50SL6FP4MOOKRmAV+
-	HCqeaJt3g3920dv37ekKPdQv20RXXWB+JeoKi0qdnMIopygB+3rnjQytP+kuYNY=
-X-Gm-Gg: ASbGncu0FDcmVVBl245lRuKtFdi668TUD1R7pgHG2xCSHs94UbRACqZ0G5vA5iE1gKG
-	qcJOhdI7DjZVF5SHBBj13gHC/cODP6zo5p2jt5bUvdvSCfRUtcTy1ucWmgxxAA60NQ8IDfJatTZ
-	VP8FFpeUEghKTxsvMPuFYAuEEbu+LAozu6HI318b0NJh8sbU+wTzDZxG+aXlExktC2kDJisEJsl
-	ITrgM4sqDEv0KOqgJF/P+blta4y2NsWkp8zpzr5NIiwc36baYw4HBqsIiSoG0slQRIO1nn0+tcB
-	qNPTDiBKEvX4Vx8jShc=
-X-Google-Smtp-Source: AGHT+IHjnt3iA5lsKLTSE6k9kN1FP0fHcpHTu6e9TZVmjZOfhdBtx2VkZxFxTUM+se6BvwdrScUk8Q==
-X-Received: by 2002:a05:6602:6d8d:b0:855:b5fe:3fb7 with SMTP id ca18e2360f4ac-855b5fe4041mr283100139f.7.1739985970155;
-        Wed, 19 Feb 2025 09:26:10 -0800 (PST)
-Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8558f3ccdcesm142192839f.16.2025.02.19.09.26.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 09:26:09 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	brauner@kernel.org,
-	asml.silence@gmail.com,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5/5] io_uring/epoll: add support for IORING_OP_EPOLL_WAIT
-Date: Wed, 19 Feb 2025 10:22:28 -0700
-Message-ID: <20250219172552.1565603-6-axboe@kernel.dk>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250219172552.1565603-1-axboe@kernel.dk>
-References: <20250219172552.1565603-1-axboe@kernel.dk>
+	s=arc-20240116; t=1739987301; c=relaxed/simple;
+	bh=xG0L2swbpW3Pz4XEIRFnx1UbFBHfVeEEsPzNjm9prfA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eepsrINYYjkklsFsB35iHvhJgg8hFk2tzrGzD9MWo0QwjLSCHt4ACVjmo2ybLEFHZ84GVUQI5cQkzjIk0HlFBNozWosaVHGfftXCmhvXOVbIqYVSV/WL3FkwuWfzBXdWRFZo2G1LLehGyfYizVNkLNZUYBt92yMpTqflFYq/dw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XSPwCFi+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739987297;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hLIJ3v3ml7toyras9AOIJJI0QXeCL3LCa+ags1sL47E=;
+	b=XSPwCFi+aaArpojWAHlr/t6qf9cfBwttgfuw/lEhSR5+xxF/6/lPUa4dYqpgejXW4FdYc5
+	PBpu5H6Hc4P3/9GlziQiFLhkVHeEvldVs6tfsREtCvSMy6Jh74XGc7l6/Iy2IgtPWzLBm4
+	txy1xPZrstQUhlDzYsBGFO902MO/gmg=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-669-DkulQ59gPeaeLlSVAeCSmQ-1; Wed,
+ 19 Feb 2025 12:48:14 -0500
+X-MC-Unique: DkulQ59gPeaeLlSVAeCSmQ-1
+X-Mimecast-MFC-AGG-ID: DkulQ59gPeaeLlSVAeCSmQ_1739987293
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3262619783B4;
+	Wed, 19 Feb 2025 17:48:13 +0000 (UTC)
+Received: from bfoster.redhat.com (unknown [10.22.88.79])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0F74B1800265;
+	Wed, 19 Feb 2025 17:48:11 +0000 (UTC)
+From: Brian Foster <bfoster@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org,
+	Christoph Hellwig <hch@infradead.org>,
+	"Darrick J . Wong" <djwong@kernel.org>
+Subject: [PATCH v2 00/12] iomap: incremental advance conversion -- phase 2
+Date: Wed, 19 Feb 2025 12:50:38 -0500
+Message-ID: <20250219175050.83986-1-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-For existing epoll event loops that can't fully convert to io_uring,
-the used approach is usually to add the io_uring fd to the epoll
-instance and use epoll_wait() to wait on both "legacy" and io_uring
-events. While this work, it isn't optimal as:
+Hi all,
 
-1) epoll_wait() is pretty limited in what it can do. It does not support
-   partial reaping of events, or waiting on a batch of events.
+Here's phase 2 of the incremental iter advance conversions. This updates
+all remaining iomap operations to advance the iter within the operation
+and thus removes the need to advance from the core iomap iterator. Once
+all operations are switched over, the core advance code is removed and
+the processed field is renamed to reflect that it is now a pure status
+code.
 
-2) When an io_uring ring is added to an epoll instance, it activates the
-   io_uring "I'm being polled" logic which slows things down.
+For context, this was first introduced in a previous series [1] that
+focused mainly on the core mechanism and iomap buffered write. This is
+because original impetus was to facilitate a folio batch mechanism where
+a filesystem can optionally provide a batch of folios to process for a
+given mapping (i.e. zero range of an unwritten mapping with dirty folios
+in pagecache). That is still WIP, but the broader point is that this was
+originally intended as an optional mode until consensus that fell out of
+discussion was that it would be preferable to convert over everything.
+This presumably facilitates some other future work and simplifies
+semantics in the core iteration code.
 
-Rather than use this approach, with EPOLL_WAIT support added to io_uring,
-event loops can use the normal io_uring wait logic for everything, as
-long as an epoll wait request has been armed with io_uring.
+Patches 1-3 convert over iomap buffered read, direct I/O and various
+other remaining ops (swap, etc.). Patches 4-9 convert over the various
+DAX iomap operations. Finally, patches 10-12 introduce some cleanups now
+that all iomap operations have updated iteration semantics.
 
-Note that IORING_OP_EPOLL_WAIT does NOT take a timeout value, as this
-is an async request. Waiting on io_uring events in general has various
-timeout parameters, and those are the ones that should be used when
-waiting on any kind of request. If events are immediately available for
-reaping, then This opcode will return those immediately. If none are
-available, then it will post an async completion when they become
-available.
+Thoughts, reviews, flames appreciated.
 
-cqe->res will contain either an error code (< 0 value) for a malformed
-request, invalid epoll instance, etc. It will return a positive result
-indicating how many events were reaped.
+Brian
 
-IORING_OP_EPOLL_WAIT requests may be canceled using the normal io_uring
-cancelation infrastructure.
+[1] https://lore.kernel.org/linux-fsdevel/20250207143253.314068-1-bfoster@redhat.com/
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- include/uapi/linux/io_uring.h |  1 +
- io_uring/epoll.c              | 33 +++++++++++++++++++++++++++++++++
- io_uring/epoll.h              |  2 ++
- io_uring/opdef.c              | 14 ++++++++++++++
- 4 files changed, 50 insertions(+)
+v2:
+- Push dax_iomap_iter() advance changes down into type specific helpers
+  (new patch).
+- Added patch for iomap_iter_advance_full() helper.
+- Various minor cleanups.
+v1: https://lore.kernel.org/linux-fsdevel/20250212135712.506987-1-bfoster@redhat.com/
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 05d6255b0f6a..135eb9296296 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -280,6 +280,7 @@ enum io_uring_op {
- 	IORING_OP_BIND,
- 	IORING_OP_LISTEN,
- 	IORING_OP_RECV_ZC,
-+	IORING_OP_EPOLL_WAIT,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
-diff --git a/io_uring/epoll.c b/io_uring/epoll.c
-index 7848d9cc073d..6d2c48ba1923 100644
---- a/io_uring/epoll.c
-+++ b/io_uring/epoll.c
-@@ -20,6 +20,12 @@ struct io_epoll {
- 	struct epoll_event		event;
- };
- 
-+struct io_epoll_wait {
-+	struct file			*file;
-+	int				maxevents;
-+	struct epoll_event __user	*events;
-+};
-+
- int io_epoll_ctl_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_epoll *epoll = io_kiocb_to_cmd(req, struct io_epoll);
-@@ -57,3 +63,30 @@ int io_epoll_ctl(struct io_kiocb *req, unsigned int issue_flags)
- 	io_req_set_res(req, ret, 0);
- 	return IOU_OK;
- }
-+
-+int io_epoll_wait_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-+{
-+	struct io_epoll_wait *iew = io_kiocb_to_cmd(req, struct io_epoll_wait);
-+
-+	if (sqe->off || sqe->rw_flags || sqe->buf_index || sqe->splice_fd_in)
-+		return -EINVAL;
-+
-+	iew->maxevents = READ_ONCE(sqe->len);
-+	iew->events = u64_to_user_ptr(READ_ONCE(sqe->addr));
-+	return 0;
-+}
-+
-+int io_epoll_wait(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_epoll_wait *iew = io_kiocb_to_cmd(req, struct io_epoll_wait);
-+	int ret;
-+
-+	ret = epoll_sendevents(req->file, iew->events, iew->maxevents);
-+	if (ret == 0)
-+		return -EAGAIN;
-+	if (ret < 0)
-+		req_set_fail(req);
-+
-+	io_req_set_res(req, ret, 0);
-+	return IOU_OK;
-+}
-diff --git a/io_uring/epoll.h b/io_uring/epoll.h
-index 870cce11ba98..4111997c360b 100644
---- a/io_uring/epoll.h
-+++ b/io_uring/epoll.h
-@@ -3,4 +3,6 @@
- #if defined(CONFIG_EPOLL)
- int io_epoll_ctl_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
- int io_epoll_ctl(struct io_kiocb *req, unsigned int issue_flags);
-+int io_epoll_wait_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
-+int io_epoll_wait(struct io_kiocb *req, unsigned int issue_flags);
- #endif
-diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index 89f50ecadeaf..9344534780a0 100644
---- a/io_uring/opdef.c
-+++ b/io_uring/opdef.c
-@@ -527,6 +527,17 @@ const struct io_issue_def io_issue_defs[] = {
- 		.issue			= io_recvzc,
- #else
- 		.prep			= io_eopnotsupp_prep,
-+#endif
-+	},
-+	[IORING_OP_EPOLL_WAIT] = {
-+		.needs_file		= 1,
-+		.audit_skip		= 1,
-+		.pollin			= 1,
-+#if defined(CONFIG_EPOLL)
-+		.prep			= io_epoll_wait_prep,
-+		.issue			= io_epoll_wait,
-+#else
-+		.prep			= io_eopnotsupp_prep,
- #endif
- 	},
- };
-@@ -761,6 +772,9 @@ const struct io_cold_def io_cold_defs[] = {
- 	[IORING_OP_RECV_ZC] = {
- 		.name			= "RECV_ZC",
- 	},
-+	[IORING_OP_EPOLL_WAIT] = {
-+		.name			= "EPOLL_WAIT",
-+	},
- };
- 
- const char *io_uring_get_opcode(u8 opcode)
+Brian Foster (12):
+  iomap: advance the iter directly on buffered read
+  iomap: advance the iter on direct I/O
+  iomap: convert misc simple ops to incremental advance
+  dax: advance the iomap_iter in the read/write path
+  dax: push advance down into dax_iomap_iter() for read and write
+  dax: advance the iomap_iter on zero range
+  dax: advance the iomap_iter on unshare range
+  dax: advance the iomap_iter on dedupe range
+  dax: advance the iomap_iter on pte and pmd faults
+  iomap: remove unnecessary advance from iomap_iter()
+  iomap: rename iomap_iter processed field to status
+  iomap: introduce a full map advance helper
+
+ fs/dax.c               | 111 ++++++++++++++++++++++-------------------
+ fs/iomap/buffered-io.c |  80 ++++++++++++++---------------
+ fs/iomap/direct-io.c   |  24 ++++-----
+ fs/iomap/fiemap.c      |  21 ++++----
+ fs/iomap/iter.c        |  43 +++++++---------
+ fs/iomap/seek.c        |  16 +++---
+ fs/iomap/swapfile.c    |   7 +--
+ fs/iomap/trace.h       |   8 +--
+ include/linux/iomap.h  |  16 ++++--
+ 9 files changed, 163 insertions(+), 163 deletions(-)
+
 -- 
-2.47.2
+2.48.1
 
 
