@@ -1,145 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-42074-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42075-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3075EA3C3F6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 16:43:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83D1AA3C407
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 16:46:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0546A189C8F6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 15:43:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46DDE17A2F6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 15:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3522D212FA8;
-	Wed, 19 Feb 2025 15:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696E41FCCE1;
+	Wed, 19 Feb 2025 15:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="HhPCt1z9"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QoSGvJO8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF86212D69
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2025 15:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81821F9F7C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2025 15:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739979608; cv=none; b=g2AQTZuUgzTGTDyO4u9Ddvx4p7d5adCpTo74WQLpk2mMpWOMwF7owy1sPPBwNFzZ9mzZEu4Fwr862urXAxj7GUo0Wd/pC7zyR65jR8NbPBzhscyMaA0Xt7zzbf1GlMYUOhHZMysp2fNt9NpcqvnqFu4JIPj7f+HOEU9GR1dUkO0=
+	t=1739979840; cv=none; b=Qz83rFERMnApBFWKB1UcLegQ4VTEwf17CGttv3g33qw5va3w/E9BVqhtax+QGfOitWusnz+CNKUvxBjPyM4Ykur/CVST0J6UndDHkBug49LCPh/ZLXTr6hgZr3+1i9YGMDVuZ+xDYGZLLgzxu7ABfDR+/5BZcCcbZkYDgD+M1R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739979608; c=relaxed/simple;
-	bh=buTHsj2oaFq5Wqga1EBuGagDv+saNvOZR/UVtfuyT4c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KetDOefBJ9jP0Ci/PUDvGpNXZ1+jgVEV3fN29+VVo5ZgJSeoHcMNrzg2gDuPi4cBaqvgZRFPN1v7AnlQkT+9X+hz/5NXCjvaOci/LlqcH56HHBqBbeozyLYbd+Z/G96KYb7g3XbQxHxokG1iMEL3ToobOVOeNzeVqM6KHO6pXa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=HhPCt1z9; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-472003f8c47so8875821cf.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2025 07:40:04 -0800 (PST)
+	s=arc-20240116; t=1739979840; c=relaxed/simple;
+	bh=YNmYlTClH6f57hMX0irzBAGNNqToOG6S23UwEJ2SIOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fmb/KGyEsxB0TT2a3tDM3cXCyomjCarv4dA9dzl0FuHY1afKCLUJLje6GIMDYlY5kz4YT5W7OwX4Y0bOny9mwLfoXstMVYCTLIB9jwLmXYPyBDgNbHyDRQ4LIcuHU6NA3k6rZB5NpCJ7ugK39y1H+calh9Jrjk4LPjTGUGYfkwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QoSGvJO8; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-abbdc4a0b5aso125848266b.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2025 07:43:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1739979604; x=1740584404; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=92iIBWqK77Z7RcDzOrfe8c0bA9AELD7+jjJwAT/7JP0=;
-        b=HhPCt1z96x0HkTwLe/IKTSeyx0/SOX03j11AitZXAifIeLfRbKtaTUf4FVqm0A9QW4
-         aahVvQ2Wgrqs7Fga8Vic/BcH7HZ1nbhh1y4e/yKNBPmz7GkvT54cAyU+n5Tead6a7Coa
-         vfI831sXwnkxlpZDxsDC2wtHQjHp2Up3fyxfw=
+        d=linaro.org; s=google; t=1739979837; x=1740584637; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ztTcSqiM5jchwSh7zNDJUJXvpA9bZcVb5dRh9uYh8nc=;
+        b=QoSGvJO83q8cWOJJ8KKjrnClpNxrJ0kdQZzcO3aB88o1NUKX5dQSIXXXqUJfs3YR/5
+         6DVZQbJOqSLfag/Gm15Q6deG1TVw2E+Wj//os0FCD8Chr9/v1PH+UuEkEeTxrOutOl+2
+         tzcms0G5JyMZ4dtMhx+aY4kO+ZNkMtJYder+9p2yRGK6oY7JuQX7FXEfufSApqVPYqBs
+         CWMNn7ytav+OFZJv61mZNB24RzH97CIT6apKcohOToJj1YTkoNVAgGo8GNasIhWKqDbW
+         AuYQQsh19to4MC1wDMKWyni3kDwygPJl5adZztkb6KTwBA9tUu7JMJ8JBDuqMgxeu7V/
+         s0tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739979604; x=1740584404;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=92iIBWqK77Z7RcDzOrfe8c0bA9AELD7+jjJwAT/7JP0=;
-        b=qk7xqPJTfY9icmWI583kkhLtv7gq1io/vg/vB5tgAOX24BXjVhrCNqsrqXr/Skb1oQ
-         EVGtivVufQj7/QeYpiT0xX+itxIcoEPAIO3SvzAsyiyZo/yzD+xhXln4MUbgKqc++G3y
-         8u5BxJ15Xo1kHSeXfMjjlBK9oaqa+QFXWgdKpjrk8TlCmlOk+pA53OUU6oHfeWFVq8dr
-         rtfPU70DhLAlW9hyqdRZMTbuk1Y0x8+solDwFLpvh+4p6vh9TV8QzWiL3Hg7iLfCFY9z
-         sbl+asNV/kUeIUx2IfrlW4wlpjbjLuNBIiCxYbY3YjwuuZW5XJDU8VeDtGKJl6QwRsEb
-         70XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX4t14owbSdQkdZlV3aOvcWy/79+/V6/WOEmD8W5OR08yLY0uui/fj+qLS2B0+O4fD5V7dcAzgBhAtqOxrt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu9ib8VJR4L6eKn5xUCDl57Y4Wz/dlHk0JNfYGTuUeHM57LeT/
-	jYyvKySfX3HpczffpRyVPSwmhPmxp0rQaCIA3rHiHc9r7gLkOpI0pmkxLInknfFkyEJgxQxjX1Q
-	qC8UK7Pr6k41uSPNLCEWpYLS5gr/CbtsvKl0P0g==
-X-Gm-Gg: ASbGncsGdOiTtL4irkrjzxLgWJxqRg6fsw9CLeEuJ9BjhwV+OPjdDkybtZkyXIS7+NK
-	/XWMNhqBm7MYrGhItG0Ubwx/UcKLjCh8U31qYO+QaTv9Wv0XkN8XhfeQp4GxdHZ604CfjlRE=
-X-Google-Smtp-Source: AGHT+IFAeU/+H+SJFluznNcKJQGWZ0dI8+j7igAo72ORVv+picT+17KaUR1+ksOwgZMe+UPUb+KJUxbhqcefENa7mOM=
-X-Received: by 2002:a05:622a:250e:b0:472:2bc:8763 with SMTP id
- d75a77b69052e-472081120acmr72334071cf.17.1739979604016; Wed, 19 Feb 2025
- 07:40:04 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739979837; x=1740584637;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ztTcSqiM5jchwSh7zNDJUJXvpA9bZcVb5dRh9uYh8nc=;
+        b=o/Fmc0dae0vvYC/lIiJyx6DdHU8/rm4hb5ZG3ZE4fT/w3ggHT2p1ANrVmlTNze4RMB
+         85/aIGHELww4SPqToNSZ9DXh9KFbrd+DUNv0OPBJFrM/3FmZApOkoynn5zPVi9Et7YIy
+         aaM4GpWJEQXClzK3AwuPgWpP6sDxFVRyrgS9ELyQ9tZ3HLJLoPT2FF1tQ9Elw7CTAIWH
+         hK/NaAJY9u3y/5XE6eINSLct63Bnk1wvrLUQFcQrO3HvV4ZynRfRNirX+7qSkS7Y/aE8
+         MTbXLRY2xPnxTEqf/+JricBZJaxiVS4hUWqM969SgXNkrUuGisw226fUqchcrYmgrnKJ
+         u+RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKgnJU8Bi3DSf+zoTL3Z97QSXLZVm0I+a3W/kYGPag66FX/wuRWFyqzVWcehiHSmcdeXR23qr9ZUau5oUG@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzJpMmaohIivZA5/mpdvocYQ0U6hJPKKkC4uN4sQfxbVqMbK3q
+	vOeHP0dZVnRXeMDDEd9EYrhBvgNgKxV+z4n1o/TXrL4Un0qgKxAXAN2IB6DojQg=
+X-Gm-Gg: ASbGncsj+SiW9yXsNfoUznJWXVLoABvp3vDhYddhaL3mCohaoVYOyKzgdlSaHjiAhiS
+	pHjKMeajmfjaTuxHxSGMyjd9sUTSSC39zMpc0lKVvP7OaiYI9vs5bFqVFAR793UC+RBcOcfQgug
+	pb8MIvxX0xBRsdY24LaOJqkHuV2YwqC7wXUmDNvD5E9H/rOXBU7EKMl+qZIJIom3Zw5u6O10iNU
+	bpdJl3hmzmS3LbokR9Pb/7kAepUP+/TUN2XYR6ftYw874InTJ/ilDcveVP2a/mxe6QyphZoisS1
+	R4y72PZOthBPKdsmJKot
+X-Google-Smtp-Source: AGHT+IEuAZ/31Yw+onuB6dX7P6MBrwUPKEqWPMc6/GLwGLwgBLIZWvMyIkebqkSIVitXPRtyLX0fJg==
+X-Received: by 2002:a17:907:d307:b0:abb:aa8f:c9cd with SMTP id a640c23a62f3a-abbcc7f2ab3mr419789166b.28.1739979836924;
+        Wed, 19 Feb 2025 07:43:56 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abbaa56026fsm491684066b.113.2025.02.19.07.43.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 07:43:56 -0800 (PST)
+Date: Wed, 19 Feb 2025 18:43:52 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Yang Shi <yang@os.amperecomputing.com>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Herbert Xu <herbert@gondor.apana.org.au>, willy@infradead.org,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Yang Shi <yang@os.amperecomputing.com>,
+	David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 6.6 000/389] 6.6.76-rc2 review
+Message-ID: <b44dc8f6-7abf-4168-b96d-54f1562008e6@stanley.mountain>
+References: <20250206155234.095034647@linuxfoundation.org>
+ <CA+G9fYvKzV=jo9AmKH2tJeLr0W8xyjxuVO-P+ZEBdou6C=mKUw@mail.gmail.com>
+ <CA+G9fYtqBxt+JwSLCcVBchh94GVRhbo9rTP26ceJ=sf4MDo61Q@mail.gmail.com>
+ <Z7Xj-zIe-Sa1syG7@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217133228.24405-1-luis@igalia.com> <20250217133228.24405-3-luis@igalia.com>
- <Z7PaimnCjbGMi6EQ@dread.disaster.area> <CAJfpegszFjRFnnPbetBJrHiW_yCO1mFOpuzp30CCZUnDZWQxqg@mail.gmail.com>
- <87r03v8t72.fsf@igalia.com> <CAJfpegu51xNUKURj5rKSM5-SYZ6pn-+ZCH0d-g6PZ8vBQYsUSQ@mail.gmail.com>
- <87frkb8o94.fsf@igalia.com> <CAJfpegsThcFwhKb9XA3WWBXY_m=_0pRF+FZF+vxAxe3RbZ_c3A@mail.gmail.com>
- <87tt8r6s3e.fsf@igalia.com> <Z7UED8Gh7Uo-Yj6K@dread.disaster.area> <87eczu41r9.fsf@igalia.com>
-In-Reply-To: <87eczu41r9.fsf@igalia.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 19 Feb 2025 16:39:53 +0100
-X-Gm-Features: AWEUYZnsd8RmZK6RM-APkCg4E8uZetY9FeJcgcAmTH8on7mvgs9rhtwhdwChAuM
-Message-ID: <CAJfpegs-_sFPnMBwEa-2OSiaNriH6ZvEnM73vNZBiwzrSWFraw@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] fuse: add new function to invalidate cache for all inodes
-To: Luis Henriques <luis@igalia.com>
-Cc: Dave Chinner <david@fromorbit.com>, Bernd Schubert <bschubert@ddn.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Matt Harvey <mharvey@jumptrading.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Valentin Volkl <valentin.volkl@cern.ch>, 
-	Laura Promberger <laura.promberger@cern.ch>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7Xj-zIe-Sa1syG7@arm.com>
 
-On Wed, 19 Feb 2025 at 12:23, Luis Henriques <luis@igalia.com> wrote:
+Hi Catalin and Yang Shi,
 
-> +static int fuse_notify_update_epoch(struct fuse_conn *fc)
-> +{
-> +       struct fuse_mount *fm;
-> +       struct inode *inode;
-> +
-> +       inode = fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
-> +       if (!inode) || !fm)
-> +               return -ENOENT;
-> +
-> +       iput(inode);
-> +       atomic_inc(&fc->epoch);
-> +       shrink_dcache_sb(fm->sb);
+What's happening is that we backport the latest kselftests and run
+them on the old kernels.  This is a supported thing so kselftests
+are supposed to be able to handle that.
 
-This is just an optimization and could be racy, kicking out valid
-cache (harmlessly of course).  I'd leave it out of the first version.
+So we need to modify the testing/selftests/arm64/mte/check_hugetlb_options.c
+to check if the feature is present and disable the test for older
+kernels.
 
-There could be more than one fuse_mount instance.  Wondering if epoch
-should be per-fm not per-fc...
+This is not an issue with the stable kernel it's an issue with the
+new selftest.
 
-> @@ -204,6 +204,12 @@ static int fuse_dentry_revalidate(struct inode *dir, const struct qstr *name,
->         int ret;
->
->         inode = d_inode_rcu(entry);
-> +       if (inode) {
-> +               fm = get_fuse_mount(inode);
-> +               if (entry->d_time < atomic_read(&fm->fc->epoch))
-> +                       goto invalid;
-> +       }
+regards,
+dan carpenter
 
-Negative dentries need to be invalidated too.
-
-> @@ -446,6 +452,12 @@ static struct dentry *fuse_lookup(struct inode *dir, struct dentry *entry,
->                 goto out_err;
->
->         entry = newent ? newent : entry;
-> +       if (inode) {
-> +               struct fuse_mount *fm = get_fuse_mount(inode);
-> +               entry->d_time = atomic_read(&fm->fc->epoch);
-> +       } else {
-> +               entry->d_time = 0;
-> +       }
-
-Again, should do the same for positive and negative dentries.
-
-Need to read out fc->epoch before sending the request to the server,
-otherwise might get a stale dentry with an updated epoch.
-
-This also needs to be done in fuse_create_open(), create_new_entry()
-and fuse_direntplus_link().
-
-Thanks,
-Miklos
 
