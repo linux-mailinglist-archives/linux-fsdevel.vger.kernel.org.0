@@ -1,150 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-42063-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42064-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5588A3BDD5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 13:13:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48FCCA3BE0B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 13:30:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE4133A99B1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 12:13:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D41916A662
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 12:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A857F1DFE32;
-	Wed, 19 Feb 2025 12:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="sdwpvn88"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01101E04BF;
+	Wed, 19 Feb 2025 12:29:57 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72631BD4E4;
-	Wed, 19 Feb 2025 12:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A951DFD91;
+	Wed, 19 Feb 2025 12:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739967216; cv=none; b=idRTBhOupZUklHxxhh1pvv4lAreBtgqFjhm7p2tRnHL4B6EHgL61O766gIWFpUQKnn5I6HDxcSxydlEdacb55fB02Ot6WD/WKpLpapFgKN4uJutdf+SAxjVe71fmK9ciZYcqQzVpux/HimR25P/DiJs/s5tm8K5Cr0uKsj4x4TE=
+	t=1739968197; cv=none; b=jD51Y2iDrl6YBv+go5rxZ2BrMSnmXNBRZPt0Gdi1Q2LLVX8JzM2rJGuo/Iwdtc/AZaY9zmyVePKtVkyzSC9GNfipGraFxXnPk3IeD3jSPJ3oAaecveVKC+7uOU06cwkrR5Rsrato7MGmmh/79R1VICSIJaIE7VYyBU4oZ7HRqjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739967216; c=relaxed/simple;
-	bh=VwZvAjw6hrQKHNmoh6jgmw70TBaConXEcu8BQE9Ymbs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BkbiNzRHXlNQMNSpHTpgvzAZVOiMoXPI5xV5403kfuN8EqBK4mRochLkW0luPo8nhqiSzPkjVXflpdKcVC2XESsJXjvqzc6RPky+CZtn5K/7DL3a1ThuDyB1Sba2TBZvrl2cTNf+hk25RVAnY0NFlmykXyD0SDmwrbETeSOg7KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=sdwpvn88; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C37CFC4CED1;
-	Wed, 19 Feb 2025 12:13:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739967215;
-	bh=VwZvAjw6hrQKHNmoh6jgmw70TBaConXEcu8BQE9Ymbs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sdwpvn88YqYn+PFnG/VmA6j5cmCZfbkJa0i5Cs+LZQt5dXQSGcZTxEL/0KeLMYYl/
-	 UFxkcA4dBqGez51nO+VC+/fspD6+etar/FDZKN0IvjV/7KupJYA+oWu2Cbd7JK6JBs
-	 TDEWnQPHp2pGaXO3fkphVMRt0Bpql3vyOC8gjEig=
-Date: Wed, 19 Feb 2025 13:13:32 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Herbert Xu <herbert@gondor.apana.org.au>, willy@infradead.org,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Yang Shi <yang@os.amperecomputing.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH 6.6 000/389] 6.6.76-rc2 review
-Message-ID: <2025021901-silenced-phonebook-9b81@gregkh>
-References: <20250206155234.095034647@linuxfoundation.org>
- <CA+G9fYvKzV=jo9AmKH2tJeLr0W8xyjxuVO-P+ZEBdou6C=mKUw@mail.gmail.com>
- <CA+G9fYtqBxt+JwSLCcVBchh94GVRhbo9rTP26ceJ=sf4MDo61Q@mail.gmail.com>
- <2025021739-jackpot-lip-09f9@gregkh>
- <CA+G9fYtJzD8+BkyBZEss9Vvv2f=8tJUcSyWDGjyOshj1D5hMyA@mail.gmail.com>
+	s=arc-20240116; t=1739968197; c=relaxed/simple;
+	bh=FCJOtv41Agf4mc6AQxG+YamyhLe7kyxpnwVuSp1A3Ac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=d5tr2WnoJ9yA9fPnkmCmYG8qBf/55Eg5SZnb1/cmfuOsHimtnFRVdrfJBrJ3DzzGAyLz3x1VA3obHmVDA7QUbtSVSZ999Eho2vHvSJAzjeAR0NVlWWn/chJqKU5/9UhVG0bUM5DQgcaBZusLArSYsFTAQGXofiAg3iTVrb92GZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4YybGW1tRNzhZx2;
+	Wed, 19 Feb 2025 20:26:11 +0800 (CST)
+Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
+	by mail.maildlp.com (Postfix) with ESMTPS id DA40A180116;
+	Wed, 19 Feb 2025 20:29:34 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
+ (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 19 Feb
+ 2025 20:29:33 +0800
+Message-ID: <68912db5-bfce-427c-b523-3407e0804d15@huawei.com>
+Date: Wed, 19 Feb 2025 20:29:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYtJzD8+BkyBZEss9Vvv2f=8tJUcSyWDGjyOshj1D5hMyA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] jbd2: fix off-by-one while erasing journal
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+CC: <linux-ext4@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
+	<jack@suse.cz>, <leah.rumancik@gmail.com>, <yi.zhang@huawei.com>,
+	<chengzhihao1@huawei.com>, <yukuai3@huawei.com>, <yangerkun@huawei.com>,
+	Baokun Li <libaokun1@huawei.com>
+References: <20250217065955.3829229-1-yi.zhang@huaweicloud.com>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20250217065955.3829229-1-yi.zhang@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemg500008.china.huawei.com (7.202.181.45)
 
-On Wed, Feb 19, 2025 at 05:16:19PM +0530, Naresh Kamboju wrote:
-> On Mon, 17 Feb 2025 at 17:07, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Mon, Feb 17, 2025 at 05:00:43PM +0530, Naresh Kamboju wrote:
-> > > On Sat, 8 Feb 2025 at 16:54, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
-> > > >
-> > > > On Thu, 6 Feb 2025 at 21:36, Greg Kroah-Hartman
-> > > > <gregkh@linuxfoundation.org> wrote:
-> > > > >
-> > > > > This is the start of the stable review cycle for the 6.6.76 release.
-> > > > > There are 389 patches in this series, all will be posted as a response
-> > > > > to this one.  If anyone has any issues with these being applied, please
-> > > > > let me know.
-> > > > >
-> > > > > Responses should be made by Sat, 08 Feb 2025 15:51:12 +0000.
-> > > > > Anything received after that time might be too late.
-> > > > >
-> > > > > The whole patch series can be found in one patch at:
-> > > > >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.76-rc2.gz
-> > > > > or in the git tree and branch at:
-> > > > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> > > > > and the diffstat can be found below.
-> > > > >
-> > > > > thanks,
-> > > > >
-> > > > > greg k-h
-> > > >
-> > > >
-> > > > There are three different regressions found and reporting here,
-> > > > We are working on bisecting and investigating these issues,
-> > >
-> > > We observed a kernel warning on QEMU-ARM64 and FVP while running the
-> > > newly added selftest: arm64: check_hugetlb_options. This issue appears
-> > > on 6.6.76 onward and 6.12.13 onward, as reported in the stable review [1].
-> > > However, the test case passes successfully on stable 6.13.
-> > >
-> > > The selftests: arm64: check_hugetlb_options test was introduced following
-> > > the recent upgrade of kselftest test sources to the stable 6.13 branch.
-> > > As you are aware, LKFT runs the latest kselftest sources (from stable
-> > > 6.13.x) on 6.12.x, 6.6.x, and older kernels for validation purposes.
-> > >
-> > > >From Anders' bisection results, we identified that the missing patch on
-> > > 6.12 is likely causing this regression:
-> > >
-> > > First fixed commit:
-> > > [25c17c4b55def92a01e3eecc9c775a6ee25ca20f]
-> > > hugetlb: arm64: add MTE support
-> > >
-> > > Could you confirm whether this patch is eligible for backporting to
-> > > 6.12 and 6.6 kernels?
-> > > If backporting is not an option, we will need to skip running this
-> > > test case on older kernels.
-> >
-> > The test case itself should properly "skip" if the feature is not
-> > present in the kernel.  Why not fix that up instead?
-> 
-> The reported test gets PASS at the end, but generates kernel warning
-> while running the test case (always reproducible) on 6.12 and 6.6.
-> 
-> The reported warning was not seen on stable 6.13.
+On 2025/2/17 14:59, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+>
+> In __jbd2_journal_erase(), the block_stop parameter includes the last
+> block of a contiguous region; however, the calculation of byte_stop is
+> incorrect, as it does not account for the bytes in that last block.
+> Consequently, the page cache is not cleared properly, which occasionally
+> causes the ext4/050 test to fail.
+>
+> Since block_stop operates on inclusion semantics, it involves repeated
+> increments and decrements by 1, significantly increasing the complexity
+> of the calculations. Optimize the calculation and fix the incorrect
+> byte_stop by make both block_stop and byte_stop to use exclusion
+> semantics.
+>
+> This fixes a failure in fstests ext4/050.
+>
+> Fixes: 01d5d96542fd ("ext4: add discard/zeroout flags to journal flush")
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Looks good, thanks for the patch!
 
-So this implies that userspace can cause a kernel warning?  That means
-it can cause a DoS, that's not good at all.
+Reviewed-by: Baokun Li <libaokun1@huawei.com>
+> ---
+>   fs/jbd2/journal.c | 15 ++++++---------
+>   1 file changed, 6 insertions(+), 9 deletions(-)
+>
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index d8084b31b361..49a9e99cbc03 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -1965,17 +1965,15 @@ static int __jbd2_journal_erase(journal_t *journal, unsigned int flags)
+>   			return err;
+>   		}
+>   
+> -		if (block_start == ~0ULL) {
+> -			block_start = phys_block;
+> -			block_stop = block_start - 1;
+> -		}
+> +		if (block_start == ~0ULL)
+> +			block_stop = block_start = phys_block;
+>   
+>   		/*
+>   		 * last block not contiguous with current block,
+>   		 * process last contiguous region and return to this block on
+>   		 * next loop
+>   		 */
+> -		if (phys_block != block_stop + 1) {
+> +		if (phys_block != block_stop) {
+>   			block--;
+>   		} else {
+>   			block_stop++;
+> @@ -1994,11 +1992,10 @@ static int __jbd2_journal_erase(journal_t *journal, unsigned int flags)
+>   		 */
+>   		byte_start = block_start * journal->j_blocksize;
+>   		byte_stop = block_stop * journal->j_blocksize;
+> -		byte_count = (block_stop - block_start + 1) *
+> -				journal->j_blocksize;
+> +		byte_count = (block_stop - block_start) * journal->j_blocksize;
+>   
+>   		truncate_inode_pages_range(journal->j_dev->bd_mapping,
+> -				byte_start, byte_stop);
+> +				byte_start, byte_stop - 1);
+>   
+>   		if (flags & JBD2_JOURNAL_FLUSH_DISCARD) {
+>   			err = blkdev_issue_discard(journal->j_dev,
+> @@ -2013,7 +2010,7 @@ static int __jbd2_journal_erase(journal_t *journal, unsigned int flags)
+>   		}
+>   
+>   		if (unlikely(err != 0)) {
+> -			pr_err("JBD2: (error %d) unable to wipe journal at physical blocks %llu - %llu",
+> +			pr_err("JBD2: (error %d) unable to wipe journal at physical blocks [%llu, %llu)",
+>   					err, block_start, block_stop);
+>   			return err;
+>   		}
 
-So the commit you mention actually fixes a bug then?  Otherwise this
-feels really odd, as that means that any kernel without that change can
-crash this way.  What changed to cause this to happen?
 
-thanks,
-
-greg k-h
 
