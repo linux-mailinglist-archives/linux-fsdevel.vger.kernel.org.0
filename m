@@ -1,271 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-42062-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42063-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D0DAA3BDB2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 13:02:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5588A3BDD5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 13:13:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 256EE1897BC3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 11:59:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE4133A99B1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 12:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08EE11DF265;
-	Wed, 19 Feb 2025 11:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A857F1DFE32;
+	Wed, 19 Feb 2025 12:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AqP3SZUM"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="sdwpvn88"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD4A1DE4F1;
-	Wed, 19 Feb 2025 11:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72631BD4E4;
+	Wed, 19 Feb 2025 12:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739966343; cv=none; b=AscQ6BsNx+/INDLIQmSjKa84vf9tLKoGO09ieS+Um2JiZcdTu8+BA7n1/PTxYs2c19WcshdMWhplnVP1ARAYHhIf53EWfmPNyw8eR48UXomGjlWZ8GgYhXRZRLogjrY2pV35x4xuZ1H8OGVmTqVGVM7x1K/hTfjOU0GBCY2Xllo=
+	t=1739967216; cv=none; b=idRTBhOupZUklHxxhh1pvv4lAreBtgqFjhm7p2tRnHL4B6EHgL61O766gIWFpUQKnn5I6HDxcSxydlEdacb55fB02Ot6WD/WKpLpapFgKN4uJutdf+SAxjVe71fmK9ciZYcqQzVpux/HimR25P/DiJs/s5tm8K5Cr0uKsj4x4TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739966343; c=relaxed/simple;
-	bh=+8E+Tp3IJf4a/K04iCQAPxr+DuwdESTQYelrCyfd8QM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hhDYFgCGB0i3kaW10gNbuCAwTPulaqJ0QWtgbZof5c8D1pNHv8exn4JxlMyWXsv9IfsTiPXoJN3cEVokYQWzaN+i8Tqq5JP3euAlLyH0S+O9jUqtweolBjSzvNskHFE+EgZwbR3q1LOMTk6TWxeSWmw+/Qx4gncmU5ySCkJWx/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AqP3SZUM; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e0505275b7so5986673a12.3;
-        Wed, 19 Feb 2025 03:59:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739966340; x=1740571140; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=83jqep/4cCVQ82axkl9XjMreVK5wzoStksIYL/TaPVM=;
-        b=AqP3SZUMuKYrIxMpG57u5EZJTMPj4RgbP2qO30I/5sOUPwbujFrCZSHP3wPwP8MBDM
-         2LDxdUlOB21RtwDEtLWw/+pQWvcSjXMAKJmoULS0gIVjpF1PuNb5I6vN4/IJS94y4SvQ
-         PJ3quuAM13nR48HO5hGfS0g2zuOvnR02Sd5bLWPb+36Qi9IHfdmXSLZDKwR7rLUZWYOC
-         6mh6ftr9FlJMMOHxN7pbQn96F9eNBS0QIGyh+pmkulcYRJq3C3wsNgnbMqi0gX1d2uec
-         8vnJxqkIehf6DYIViu/srbofK2RrzrXdP3LpbYV3VNoUig+qw8/Vel6/JcPH1g9AJyYC
-         bG9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739966340; x=1740571140;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=83jqep/4cCVQ82axkl9XjMreVK5wzoStksIYL/TaPVM=;
-        b=ZIRVS3UV/CGOPLW0OZ0POqUczdwKjy8n7Hfj59tZurZBLTUyNMqMrfCZNXxZ5Q6ais
-         OWTt0szFxuTMHslPw384D6x3D15geplXOTbQvYJilAjXDLbKYMXvQa9vdbfVSyPKoHys
-         C380U9piL/MorKPuT8PkfjOI8RTELj4uQ5vodvVQbv7qj5nDeWiFwG5/kvBwQLFTlWwi
-         Dw9uJO/RYuilZsoQzFR+78hdgmGDeaN3gR2Tlf8s8mPoYiGvc/d7fGkPxT2zwmscwKjn
-         A0PZ/cTsWYx/HdXNCMS25Np+pZT687oehDSbd6nzgIWHiLa8R1Vjso/i8je3kSRjWiuX
-         vgmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOwVa4hxca5ErSzxaYpfRmPaC2IHOsUgC6J4BkRW5HnmV0nWv1ExVywyxnOH/ZxwSm9/RIvx8QGot/+vKv/Q==@vger.kernel.org, AJvYcCXqg1UqKUKUQTfYhuIZoklYPRnb93T0b1W5Lg4292mtmVbcd/UUs2b8wc9MRCRGx47JshmvTNyBeuodGBRW@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyGsBAhOFNuZhSrNVZ9g3y6Jg3gho6jgd4vvHFW9IW6tRpxUsK
-	NAcDPN7JwtbGLr1PhB7W+ZkC/sK2ppWdqM6/VKCVrHgFegUNlwNvfh0mtc81PUmoWKeehsKXrHw
-	So8ZWR7JzSUqscDtQZ7hpsu/YX6o=
-X-Gm-Gg: ASbGncsBraIHpPm4gK5T1W9ftxeQyu6wi0nlhmB8BEEMrW+gQ/CYNxHCmM+w12l2lNJ
-	fmMx6DankgiO0lZAq5/YNvNgjLi9JX1Qs+o1Wg1188TWd1eB88MT4vpWuQRJLytZQrLTcCm3a
-X-Google-Smtp-Source: AGHT+IGpSOMqup7l3ifK3V71zakqNsKCvo7XkXKcj92bgSmvAl4cU1cw35LiDCsiRdLq+qMUwa471jz6eTYFzBzMOuY=
-X-Received: by 2002:a05:6402:50ca:b0:5e0:4a92:6b34 with SMTP id
- 4fb4d7f45d1cf-5e089516998mr2970063a12.12.1739966339327; Wed, 19 Feb 2025
- 03:58:59 -0800 (PST)
+	s=arc-20240116; t=1739967216; c=relaxed/simple;
+	bh=VwZvAjw6hrQKHNmoh6jgmw70TBaConXEcu8BQE9Ymbs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BkbiNzRHXlNQMNSpHTpgvzAZVOiMoXPI5xV5403kfuN8EqBK4mRochLkW0luPo8nhqiSzPkjVXflpdKcVC2XESsJXjvqzc6RPky+CZtn5K/7DL3a1ThuDyB1Sba2TBZvrl2cTNf+hk25RVAnY0NFlmykXyD0SDmwrbETeSOg7KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=sdwpvn88; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C37CFC4CED1;
+	Wed, 19 Feb 2025 12:13:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739967215;
+	bh=VwZvAjw6hrQKHNmoh6jgmw70TBaConXEcu8BQE9Ymbs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sdwpvn88YqYn+PFnG/VmA6j5cmCZfbkJa0i5Cs+LZQt5dXQSGcZTxEL/0KeLMYYl/
+	 UFxkcA4dBqGez51nO+VC+/fspD6+etar/FDZKN0IvjV/7KupJYA+oWu2Cbd7JK6JBs
+	 TDEWnQPHp2pGaXO3fkphVMRt0Bpql3vyOC8gjEig=
+Date: Wed, 19 Feb 2025 13:13:32 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Herbert Xu <herbert@gondor.apana.org.au>, willy@infradead.org,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Yang Shi <yang@os.amperecomputing.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 6.6 000/389] 6.6.76-rc2 review
+Message-ID: <2025021901-silenced-phonebook-9b81@gregkh>
+References: <20250206155234.095034647@linuxfoundation.org>
+ <CA+G9fYvKzV=jo9AmKH2tJeLr0W8xyjxuVO-P+ZEBdou6C=mKUw@mail.gmail.com>
+ <CA+G9fYtqBxt+JwSLCcVBchh94GVRhbo9rTP26ceJ=sf4MDo61Q@mail.gmail.com>
+ <2025021739-jackpot-lip-09f9@gregkh>
+ <CA+G9fYtJzD8+BkyBZEss9Vvv2f=8tJUcSyWDGjyOshj1D5hMyA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219-work-overlayfs-v3-0-46af55e4ceda@kernel.org> <20250219-work-overlayfs-v3-4-46af55e4ceda@kernel.org>
-In-Reply-To: <20250219-work-overlayfs-v3-4-46af55e4ceda@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 19 Feb 2025 12:58:48 +0100
-X-Gm-Features: AWEUYZkVobRRw6w9EW299HDHp8ljiu2E96Kg27ESwUqqgkjAiFtG5ARMgNEz5MM
-Message-ID: <CAOQ4uxifdNi3Tg0XMjSoT5M-iwGHLBXELvRSnXO6dMm12kmgAA@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] selftests/ovl: add third selftest for "override_creds"
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Seth Forshee <sforshee@kernel.org>, 
-	Gopal Kakivaya <gopalk@microsoft.com>, linux-unionfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYtJzD8+BkyBZEss9Vvv2f=8tJUcSyWDGjyOshj1D5hMyA@mail.gmail.com>
 
-On Wed, Feb 19, 2025 at 11:02=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
->
-> Add a simple test to verify that the new "override_creds" option works.
->
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+On Wed, Feb 19, 2025 at 05:16:19PM +0530, Naresh Kamboju wrote:
+> On Mon, 17 Feb 2025 at 17:07, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Mon, Feb 17, 2025 at 05:00:43PM +0530, Naresh Kamboju wrote:
+> > > On Sat, 8 Feb 2025 at 16:54, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> > > >
+> > > > On Thu, 6 Feb 2025 at 21:36, Greg Kroah-Hartman
+> > > > <gregkh@linuxfoundation.org> wrote:
+> > > > >
+> > > > > This is the start of the stable review cycle for the 6.6.76 release.
+> > > > > There are 389 patches in this series, all will be posted as a response
+> > > > > to this one.  If anyone has any issues with these being applied, please
+> > > > > let me know.
+> > > > >
+> > > > > Responses should be made by Sat, 08 Feb 2025 15:51:12 +0000.
+> > > > > Anything received after that time might be too late.
+> > > > >
+> > > > > The whole patch series can be found in one patch at:
+> > > > >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.76-rc2.gz
+> > > > > or in the git tree and branch at:
+> > > > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> > > > > and the diffstat can be found below.
+> > > > >
+> > > > > thanks,
+> > > > >
+> > > > > greg k-h
+> > > >
+> > > >
+> > > > There are three different regressions found and reporting here,
+> > > > We are working on bisecting and investigating these issues,
+> > >
+> > > We observed a kernel warning on QEMU-ARM64 and FVP while running the
+> > > newly added selftest: arm64: check_hugetlb_options. This issue appears
+> > > on 6.6.76 onward and 6.12.13 onward, as reported in the stable review [1].
+> > > However, the test case passes successfully on stable 6.13.
+> > >
+> > > The selftests: arm64: check_hugetlb_options test was introduced following
+> > > the recent upgrade of kselftest test sources to the stable 6.13 branch.
+> > > As you are aware, LKFT runs the latest kselftest sources (from stable
+> > > 6.13.x) on 6.12.x, 6.6.x, and older kernels for validation purposes.
+> > >
+> > > >From Anders' bisection results, we identified that the missing patch on
+> > > 6.12 is likely causing this regression:
+> > >
+> > > First fixed commit:
+> > > [25c17c4b55def92a01e3eecc9c775a6ee25ca20f]
+> > > hugetlb: arm64: add MTE support
+> > >
+> > > Could you confirm whether this patch is eligible for backporting to
+> > > 6.12 and 6.6 kernels?
+> > > If backporting is not an option, we will need to skip running this
+> > > test case on older kernels.
+> >
+> > The test case itself should properly "skip" if the feature is not
+> > present in the kernel.  Why not fix that up instead?
+> 
+> The reported test gets PASS at the end, but generates kernel warning
+> while running the test case (always reproducible) on 6.12 and 6.6.
+> 
+> The reported warning was not seen on stable 6.13.
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+So this implies that userspace can cause a kernel warning?  That means
+it can cause a DoS, that's not good at all.
 
-> ---
->  .../filesystems/overlayfs/set_layers_via_fds.c     | 80 ++++++++++++++++=
-++++++
->  tools/testing/selftests/filesystems/utils.c        | 27 ++++++++
->  tools/testing/selftests/filesystems/utils.h        |  1 +
->  3 files changed, 108 insertions(+)
->
-> diff --git a/tools/testing/selftests/filesystems/overlayfs/set_layers_via=
-_fds.c b/tools/testing/selftests/filesystems/overlayfs/set_layers_via_fds.c
-> index 6b65e3610578..fd1e5d7c13a3 100644
-> --- a/tools/testing/selftests/filesystems/overlayfs/set_layers_via_fds.c
-> +++ b/tools/testing/selftests/filesystems/overlayfs/set_layers_via_fds.c
-> @@ -8,6 +8,7 @@
->  #include <string.h>
->  #include <sys/socket.h>
->  #include <sys/stat.h>
-> +#include <sys/sysmacros.h>
->  #include <sys/mount.h>
->  #include <unistd.h>
->
-> @@ -442,4 +443,83 @@ TEST_F(set_layers_via_fds, set_override_creds_invali=
-d)
->         ASSERT_EQ(close(fd_userns2), 0);
->  }
->
-> +TEST_F(set_layers_via_fds, set_override_creds_nomknod)
-> +{
-> +       int fd_context, fd_tmpfs, fd_overlay;
-> +       int layer_fds[] =3D { [0 ... 3] =3D -EBADF };
-> +       pid_t pid;
-> +       int pidfd;
-> +
-> +       ASSERT_EQ(unshare(CLONE_NEWNS), 0);
-> +       ASSERT_EQ(sys_mount(NULL, "/", NULL, MS_SLAVE | MS_REC, NULL), 0)=
-;
-> +
-> +       fd_context =3D sys_fsopen("tmpfs", 0);
-> +       ASSERT_GE(fd_context, 0);
-> +
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_CMD_CREATE, NULL, NUL=
-L, 0), 0);
-> +       fd_tmpfs =3D sys_fsmount(fd_context, 0, 0);
-> +       ASSERT_GE(fd_tmpfs, 0);
-> +       ASSERT_EQ(close(fd_context), 0);
-> +
-> +       ASSERT_EQ(mkdirat(fd_tmpfs, "w", 0755), 0);
-> +       ASSERT_EQ(mkdirat(fd_tmpfs, "u", 0755), 0);
-> +       ASSERT_EQ(mkdirat(fd_tmpfs, "l1", 0755), 0);
-> +       ASSERT_EQ(mkdirat(fd_tmpfs, "l2", 0755), 0);
-> +
-> +       layer_fds[0] =3D openat(fd_tmpfs, "w", O_DIRECTORY);
-> +       ASSERT_GE(layer_fds[0], 0);
-> +
-> +       layer_fds[1] =3D openat(fd_tmpfs, "u", O_DIRECTORY);
-> +       ASSERT_GE(layer_fds[1], 0);
-> +
-> +       layer_fds[2] =3D openat(fd_tmpfs, "l1", O_DIRECTORY);
-> +       ASSERT_GE(layer_fds[2], 0);
-> +
-> +       layer_fds[3] =3D openat(fd_tmpfs, "l2", O_DIRECTORY);
-> +       ASSERT_GE(layer_fds[3], 0);
-> +
-> +       ASSERT_EQ(sys_move_mount(fd_tmpfs, "", -EBADF, "/tmp", MOVE_MOUNT=
-_F_EMPTY_PATH), 0);
-> +       ASSERT_EQ(close(fd_tmpfs), 0);
-> +
-> +       fd_context =3D sys_fsopen("overlay", 0);
-> +       ASSERT_GE(fd_context, 0);
-> +
-> +       ASSERT_NE(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "lowerdir", N=
-ULL, layer_fds[2]), 0);
-> +
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "workdir",   =
-NULL, layer_fds[0]), 0);
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "upperdir",  =
-NULL, layer_fds[1]), 0);
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "lowerdir+", =
-NULL, layer_fds[2]), 0);
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "lowerdir+", =
-NULL, layer_fds[3]), 0);
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FLAG, "userxattr"=
-, NULL, 0), 0);
-> +
-> +       pid =3D create_child(&pidfd, 0);
-> +       ASSERT_GE(pid, 0);
-> +       if (pid =3D=3D 0) {
-> +               if (!cap_down(CAP_MKNOD))
-> +                       _exit(EXIT_FAILURE);
-> +
-> +               if (!cap_down(CAP_SYS_ADMIN))
-> +                       _exit(EXIT_FAILURE);
-> +
-> +               if (sys_fsconfig(fd_context, FSCONFIG_SET_FLAG, "override=
-_creds", NULL, 0))
-> +                       _exit(EXIT_FAILURE);
-> +
-> +               _exit(EXIT_SUCCESS);
-> +       }
-> +       ASSERT_EQ(sys_waitid(P_PID, pid, NULL, WEXITED), 0);
-> +       ASSERT_GE(close(pidfd), 0);
-> +
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_CMD_CREATE, NULL, NUL=
-L, 0), 0);
-> +
-> +       fd_overlay =3D sys_fsmount(fd_context, 0, 0);
-> +       ASSERT_GE(fd_overlay, 0);
-> +
-> +       ASSERT_EQ(sys_move_mount(fd_overlay, "", -EBADF, "/set_layers_via=
-_fds", MOVE_MOUNT_F_EMPTY_PATH), 0);
-> +       ASSERT_EQ(mknodat(fd_overlay, "dev-zero", S_IFCHR | 0644, makedev=
-(1, 5)), -1);
-> +       ASSERT_EQ(errno, EPERM);
-> +
-> +       ASSERT_EQ(close(fd_context), 0);
-> +       ASSERT_EQ(close(fd_overlay), 0);
-> +}
-> +
->  TEST_HARNESS_MAIN
-> diff --git a/tools/testing/selftests/filesystems/utils.c b/tools/testing/=
-selftests/filesystems/utils.c
-> index 0e8080bd0aea..e553c89c5b19 100644
-> --- a/tools/testing/selftests/filesystems/utils.c
-> +++ b/tools/testing/selftests/filesystems/utils.c
-> @@ -472,3 +472,30 @@ int caps_down(void)
->         cap_free(caps);
->         return fret;
->  }
-> +
-> +/* cap_down - lower an effective cap */
-> +int cap_down(cap_value_t down)
-> +{
-> +       bool fret =3D false;
-> +       cap_t caps =3D NULL;
-> +       cap_value_t cap =3D down;
-> +       int ret =3D -1;
-> +
-> +       caps =3D cap_get_proc();
-> +       if (!caps)
-> +               goto out;
-> +
-> +       ret =3D cap_set_flag(caps, CAP_EFFECTIVE, 1, &cap, 0);
-> +       if (ret)
-> +               goto out;
-> +
-> +       ret =3D cap_set_proc(caps);
-> +       if (ret)
-> +               goto out;
-> +
-> +       fret =3D true;
-> +
-> +out:
-> +       cap_free(caps);
-> +       return fret;
-> +}
-> diff --git a/tools/testing/selftests/filesystems/utils.h b/tools/testing/=
-selftests/filesystems/utils.h
-> index f35001a75f99..7f1df2a3e94c 100644
-> --- a/tools/testing/selftests/filesystems/utils.h
-> +++ b/tools/testing/selftests/filesystems/utils.h
-> @@ -24,6 +24,7 @@ extern int get_userns_fd(unsigned long nsid, unsigned l=
-ong hostid,
->                          unsigned long range);
->
->  extern int caps_down(void);
-> +extern int cap_down(cap_value_t down);
->
->  extern bool switch_ids(uid_t uid, gid_t gid);
->
->
-> --
-> 2.47.2
->
+So the commit you mention actually fixes a bug then?  Otherwise this
+feels really odd, as that means that any kernel without that change can
+crash this way.  What changed to cause this to happen?
+
+thanks,
+
+greg k-h
 
