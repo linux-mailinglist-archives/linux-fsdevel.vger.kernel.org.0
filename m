@@ -1,296 +1,317 @@
-Return-Path: <linux-fsdevel+bounces-42058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1266A3BB60
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 11:18:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC55DA3BCAF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 12:25:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ED0916E632
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 10:18:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E73E3B817A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 11:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 108511DF739;
-	Wed, 19 Feb 2025 10:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064F31DEFE5;
+	Wed, 19 Feb 2025 11:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bQ+iQtCi"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="MdcdGX+X"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2081.outbound.protection.outlook.com [40.107.94.81])
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FFC1DB546;
-	Wed, 19 Feb 2025 10:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739960209; cv=fail; b=WerSdBTw9qefqMUOY+FNw+bMPY5F1z8OrQDLmKcQF/5kfpAt9ySFOkR3xY3497A9t4utxSAy16jtJiIK99O7Z8O7PnzqsirzWvNnjXyiWqD6+5vrRZTQ06eBRXh9u94DgyzCkjxF9rmHihmSSHKz34RhBtnBSta/RYD0kjXVfcU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739960209; c=relaxed/simple;
-	bh=J8IkQ8exK8diwPH576ssWWGA365nMDJvs9NtBQOq4lc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YZ01972XX1wkLyfUDj1GPf6MWimWtZdvCe7pBaJHLJDhjBGq+zaOxVmvuE07SwyjknLW/X8hQCU3ABtMOdK7u3DE2R8EaQEYbFT089YZ3wl1SwDnbT3+2crN4Y+1kWF6oe2RtWqjgNeJ67I9oVb5Re5QxrUHuEKzo8lJRZdCL+c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bQ+iQtCi; arc=fail smtp.client-ip=40.107.94.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OD/yPLGAf78CV7Vz+QblO4DHdxtGMV6l9cXaRk59ENXIvpcvKUf2kCV4fJ7P0/Dmvmj1CdSWDO3UPS+qMV4fS881dcOVvrV9j5mpOM43x74MYLbz7eCA3ok7Spn5GI16Kr46U6qyKmFW+tcwkt21UQJXuc9KGu5pYasasAWD6Lkxlq0YFFJ68N1oG0+NzLCfHVjTF904e6vga6b5D8VPavvC+GPRVmMpxpf2coGaoBvloySdUIaFJ15df6XXFma7WwHHDjmvzYxfRWBzzoaoGCJ8jPcFqQr0T1qZMXfHHsuh95xdlUVaViEoPyU7rBDq84Hj+ZBuqYsiP3AFGrj9jQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZradmVSI1c/lwUMCGwWhjOQwoPNyHTXQz6PDS/1+2YM=;
- b=izyhdWPM4VXFOceTMQ7nU4PsebwhGf/65B7wVzwLzndMjGGgVDX7uODm2a/Eur26gEyYEWZJZKgxMbolTs0OXRvB7GxVnnO2TWdpbvBVXreLLlIy4LQ7OHMPUvGw+4Zg9DU7JLWYKMoGOzef4Bi7YEM+a4iUOeonVRsfLaCMB3OJCtXe5uYhracB/LcKxhNM3C6917ke+0pFmXH4ukRwkFfSSW/8zsi6wTTudxnAHKIIEj40jhNV1dOlcmLBD3jwff9nE79xhmaegv/EvzjwVL6PWElm1TIoP5n7lsvBd2lPf8GpKUN1Pm4qEwLCwg57pF6DwbtAjuxGEJ9YVhLjGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZradmVSI1c/lwUMCGwWhjOQwoPNyHTXQz6PDS/1+2YM=;
- b=bQ+iQtCiAcD/niKBwByKDlMG6wQF+mMARuA2QOF+ou65Qt4DYmDUw5gZV82+Bt5TWavELNKjV/Iqaz5/2qkNH+HXxHV/w/gARFWK9jIeQSqpZN2a/0RhdZ2rYDI3guZ7SeZWbwBUdmytcTokp3rZGBXW/yY/8gc9RZcwtUCUD8Q=
-Received: from DS7PR03CA0335.namprd03.prod.outlook.com (2603:10b6:8:55::34) by
- IA1PR12MB7591.namprd12.prod.outlook.com (2603:10b6:208:429::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8445.19; Wed, 19 Feb 2025 10:16:42 +0000
-Received: from DS1PEPF00017097.namprd05.prod.outlook.com
- (2603:10b6:8:55:cafe::55) by DS7PR03CA0335.outlook.office365.com
- (2603:10b6:8:55::34) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.14 via Frontend Transport; Wed,
- 19 Feb 2025 10:16:42 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS1PEPF00017097.mail.protection.outlook.com (10.167.18.101) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8466.11 via Frontend Transport; Wed, 19 Feb 2025 10:16:41 +0000
-Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 19 Feb
- 2025 04:16:36 -0600
-From: Shivank Garg <shivankg@amd.com>
-To: <akpm@linux-foundation.org>, <willy@infradead.org>, <pbonzini@redhat.com>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
-	<linux-coco@lists.linux.dev>, <chao.gao@intel.com>, <seanjc@google.com>,
-	<ackerleytng@google.com>, <david@redhat.com>, <vbabka@suse.cz>,
-	<bharata@amd.com>, <nikunj@amd.com>, <michael.day@amd.com>,
-	<Neeraj.Upadhyay@amd.com>, <thomas.lendacky@amd.com>, <michael.roth@amd.com>,
-	<shivankg@amd.com>
-Subject: [RFC PATCH v5 4/4] KVM: guest_memfd: Enforce NUMA mempolicy using shared policy
-Date: Wed, 19 Feb 2025 10:15:59 +0000
-Message-ID: <20250219101559.414878-5-shivankg@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250219101559.414878-1-shivankg@amd.com>
-References: <20250219101559.414878-1-shivankg@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64CF1BD9DB;
+	Wed, 19 Feb 2025 11:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739964226; cv=none; b=Q7Kh74EAX8r0lyvwcsXgFbap022Nu51hnPvxHj6zw0+7Gwa0g0Khg3Vg+tgTrzejOCEy6DBbgyISdWvnqTLoQlzsM5kTRw+m2TtfV0tC0qfXDuxIeuTeJkb7rsmqKGzXCzq8fgLLZ/xtrt5DxEhLCgX7jgrVIvfNsJXUW1ovxW4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739964226; c=relaxed/simple;
+	bh=2GfmnZLTwDvjfFV4+WSWOSZjT0JHfkcV2BbYmd+PPug=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NKHwVSbRGf2wN2f09ZoCz0EqPQWQBjQk5Z3zxPkftqlB+fB4aCvQyfECOT7JT8h5zuziHJrYhgZS9ze0yqEk0vjwmCDj3vnT1D7DKnBbLMkDfCcXkbFtFxXnya082Z6CYXa8+WkiFdk8pUtqzcRDnSlOnkfXTGwdXL1p7gqxGNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=MdcdGX+X; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=q/OmHWTq4XerUF1L4M0RNHTg34waSasZ17r0WBzdYBw=; b=MdcdGX+X/my7D8jWVZyqU/WM5/
+	K/zNGukDGBR0dHeOkJ6Ikl4QsWb1k8jyCp08RiCjoeB7hzHgM7+kasnUP/A0Hs4IG0CjVtZ9zFIbQ
+	rBmW9rvHk+K3FTfdfNIJ7BjdgY+2WHpkcZA1lBpMh/qVaRtvRTRitxN0VKTp9kmZBaaIG3kqEemJZ
+	I6qcgAyxnXnPkGl+/l1qby6x+FLwRqvksnz7QTycdRjSmvRUZ1/QecwukNiGuSGFFZl1OZ7zjKM/1
+	ntninm1p+BX/zStSZ1SEnYl1kdBi/4f+ZVcVI8hlSNPIZtTRKf9ZjcLUyY3Duox4arKPKiTq+YHeU
+	rvhfgicw==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tkiAW-00ELjI-1c; Wed, 19 Feb 2025 12:23:13 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,  Bernd Schubert <bschubert@ddn.com>,
+  Alexander Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
+ <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Matt Harvey
+ <mharvey@jumptrading.com>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  Valentin Volkl <valentin.volkl@cern.ch>,
+  Laura Promberger <laura.promberger@cern.ch>
+Subject: Re: [PATCH v6 2/2] fuse: add new function to invalidate cache for
+ all inodes
+In-Reply-To: <Z7UED8Gh7Uo-Yj6K@dread.disaster.area> (Dave Chinner's message of
+	"Wed, 19 Feb 2025 09:05:03 +1100")
+References: <20250217133228.24405-1-luis@igalia.com>
+	<20250217133228.24405-3-luis@igalia.com>
+	<Z7PaimnCjbGMi6EQ@dread.disaster.area>
+	<CAJfpegszFjRFnnPbetBJrHiW_yCO1mFOpuzp30CCZUnDZWQxqg@mail.gmail.com>
+	<87r03v8t72.fsf@igalia.com>
+	<CAJfpegu51xNUKURj5rKSM5-SYZ6pn-+ZCH0d-g6PZ8vBQYsUSQ@mail.gmail.com>
+	<87frkb8o94.fsf@igalia.com>
+	<CAJfpegsThcFwhKb9XA3WWBXY_m=_0pRF+FZF+vxAxe3RbZ_c3A@mail.gmail.com>
+	<87tt8r6s3e.fsf@igalia.com> <Z7UED8Gh7Uo-Yj6K@dread.disaster.area>
+Date: Wed, 19 Feb 2025 11:23:06 +0000
+Message-ID: <87eczu41r9.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF00017097:EE_|IA1PR12MB7591:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6b332aca-a3ae-4fad-f87e-08dd50ce8160
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|7416014|82310400026|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?u9bxdLOcqOqJA9Y5VtAJNtbQuH8lsZEJWscBxLK7GWdTi3Zu1nsEIMKIYV0E?=
- =?us-ascii?Q?fveLsYdNWbICj1AQNKE61XroPyGlydlHPCjMI7cyjZ0HNzpjBWTSfR8wv8zw?=
- =?us-ascii?Q?BW6LQvPZWgB6UmIUJfxUCL86wDoaiWmpTomK3AnjJMd24cUdmTiDKfD8p+pt?=
- =?us-ascii?Q?wZQ/gc2yfnLGwDzhezDbBMklh2bwnxh8JoFtCQTbI8p6K92oNFX19U+8KXm7?=
- =?us-ascii?Q?GmjIW3DXEqGjaWo7T60FDrMu3rKObp0Sy00EfbxcPkCcRru98ThPsnzKai1W?=
- =?us-ascii?Q?6TpyuznU+FlIuSCf/mW/eWGgeuzTWVRGIvHKefp+SOAwiDtiHjmbj8qFIPiM?=
- =?us-ascii?Q?3ODyyP1X/hr9m6DZ4KDLq7VffI5qCYNsSRBXWch/4UjSRlpzcUK482TnzUDK?=
- =?us-ascii?Q?/tR4HXieXhe19bnhNEKnhgOMAk42rC4QRMqdmPVpIyHDhqxfG4sO081bDg0t?=
- =?us-ascii?Q?3pCe73FAebVaqLb3aWSNiHzNs8ozpD0iZgHLqj55K1XxwYjgWJ+TykRLbkQO?=
- =?us-ascii?Q?xdv5Qs2M1tXxbJQz5a73VM+PHYJRCDRHoxP8E/sqZ5BEMMPUFUfuIntvO0u5?=
- =?us-ascii?Q?OkJG9BOjrSyM4t+c/nbASn/dBlt4LcYipd2HxX2mMVFuS/sgBqGSgQjcJYCN?=
- =?us-ascii?Q?eD6byOBBOc5PgtUKrekwrnOL7COMyFrcEcg78mFXDctQfe+5JI0BgQidisC+?=
- =?us-ascii?Q?K/L7A764cfrdKiDY3s/ehwlMA06VtPwHlb73+QnJYybnQ9Xbpscx/bdC84GN?=
- =?us-ascii?Q?kGBwCdxBpIH8k3FRGQZ+JgLtkg8ex0eoKJ+yzvkmuGGT6y2YndyRqnwyjayI?=
- =?us-ascii?Q?M0aNViMu7LACSVKpnrhS1juwUPN3lCCA9WG9cdMvSbV4nh28/AlIsefmBKs7?=
- =?us-ascii?Q?kD4+4IlLvBDFfxw02I2bgibU2L1ubSbmUekl5qW1+ruBfYxS7GFW8LSja2nm?=
- =?us-ascii?Q?okMzbgdnS6RIaZ6D33I+qzJGOhlfa8LE1+fihCePvFjbLtSWj8M5TR1pwIdO?=
- =?us-ascii?Q?OEA6Kz4q5b3/ZsWeWrFfIJLnRfwgvAG/cev36/aj50LTPszR+aabA0w/3Miv?=
- =?us-ascii?Q?RMH7I7st9Bc34yuPFSQWlx9JuKt13T2cQx2pH/irEHuu35HM8EvKtq4KoGcN?=
- =?us-ascii?Q?TCwkb8myi+Nnjx0jNVAtCAtBPdMq+XzZ+roGrVGf0s6pxiLVrAHSSfpKAfKy?=
- =?us-ascii?Q?9C8lNbWBr7zgihStUn1XW+/FewHQTFcvQwVTZR+j5D10FrTe1+bllBxxL4wU?=
- =?us-ascii?Q?ZKo1tMjl4ZtjkiUhLANGcIQ53+2YyGFuO+vcpECgTNJz09+bGl9Eds5iqpqW?=
- =?us-ascii?Q?qAJBRVTbLttWCn5nAf6BtJ79WZt3/T0vO0q6GMUYgDvzmYzEhi+GbT5yERjV?=
- =?us-ascii?Q?rNjfy/WYScwJ/eCBKPfvPJAF/ld4icX0ur9uFkJxrIfRRges4ds/YjyaJpxP?=
- =?us-ascii?Q?bOkeUOGZ1djwia7LzeVopgdARjIGhSZ3WBz2TK9B9QZFia/adhRLWsosmyYk?=
- =?us-ascii?Q?yAsyVFzH5pJnPfE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 10:16:41.9641
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b332aca-a3ae-4fad-f87e-08dd50ce8160
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF00017097.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7591
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Previously, guest-memfd allocations were following local NUMA node id
-in absence of process mempolicy, resulting in random memory allocation.
-Moreover, mbind() couldn't be used since memory wasn't mapped to userspace
-in VMM.
+On Wed, Feb 19 2025, Dave Chinner wrote:
 
-Enable NUMA policy support by implementing vm_ops for guest-memfd mmap
-operation. This allows VMM to map the memory and use mbind() to set the
-desired NUMA policy. The policy is then retrieved via
-mpol_shared_policy_lookup() and passed to filemap_grab_folio_mpol() to
-ensure that allocations follow the specified memory policy.
+> On Tue, Feb 18, 2025 at 06:11:17PM +0000, Luis Henriques wrote:
+>> On Tue, Feb 18 2025, Miklos Szeredi wrote:
+>>=20
+>> > On Tue, 18 Feb 2025 at 12:51, Luis Henriques <luis@igalia.com> wrote:
+>> >>
+>> >> On Tue, Feb 18 2025, Miklos Szeredi wrote:
+>> >>
+>> >> > On Tue, 18 Feb 2025 at 11:04, Luis Henriques <luis@igalia.com> wrot=
+e:
+>> >> >
+>> >> >> The problem I'm trying to solve is that, if a filesystem wants to =
+ask the
+>> >> >> kernel to get rid of all inodes, it has to request the kernel to f=
+orget
+>> >> >> each one, individually.  The specific filesystem I'm looking at is=
+ CVMFS,
+>> >> >> which is a read-only filesystem that needs to be able to update th=
+e full
+>> >> >> set of filesystem objects when a new generation snapshot becomes
+>> >> >> available.
+>> >> >
+>> >> > Yeah, we talked about this use case.  As I remember there was a
+>> >> > proposal to set an epoch, marking all objects for "revalidate neede=
+d",
+>> >> > which I think is a better solution to the CVMFS problem, than just
+>> >> > getting rid of unused objects.
+>> >>
+>> >> OK, so I think I'm missing some context here.  And, obviously, I also=
+ miss
+>> >> some more knowledge on the filesystem itself.  But, if I understand it
+>> >> correctly, the concept of 'inode' in CVMFS is very loose: when a new
+>> >> snapshot generation is available (you mentioned 'epoch', which is, I
+>> >> guess, the same thing) the inodes are all renewed -- the inode numbers
+>> >> aren't kept between generations/epochs.
+>> >>
+>> >> Do you have any links for such discussions, or any details on how this
+>> >> proposal is being implemented?  This would probably be done mostly in
+>> >> user-space I guess, but it would still need a way to get rid of the u=
+nused
+>> >> inodes from old snapshots, right?  (inodes from old snapshots still i=
+n use
+>> >> would obvious be kept aroud).
+>> >
+>> > I don't have links.  Adding Valentin Volkl and Laura Promberger to the
+>> > Cc list, maybe they can help with clarification.
+>> >
+>> > As far as I understand it would work by incrementing fc->epoch on
+>> > FUSE_INVALIDATE_ALL. When an object is looked up/created the current
+>> > epoch is copied to e.g. dentry->d_time.  fuse_dentry_revalidate() then
+>> > compares d_time with fc->epoch and forces an invalidate on mismatch.
+>>=20
+>> OK, so hopefully Valentin or Laura will be able to help providing some
+>> more details.  But, from your description, we would still require this
+>> FUSE_INVALIDATE_ALL operation to exist in order to increment the epoch.
+>> And this new operation could do that *and* also already invalidate those
+>> unused objects.
+>
+> I think you are still looking at this from the wrong direction.
+>
+> Invalidation is -not the operation- that is being requested. The
+> CVMFS fuse server needs to update some global state in the kernel
+> side fuse mount (i.e. the snapshot ID/epoch), and the need to evict
+> cached inodes from previous IDs is a CVMFS implementation
+> optimisation related to changing the global state.
+>
+>> > Only problem with this is that it seems very CVMFS specific, but I
+>> > guess so is your proposal.
+>> >
+>> > Implementing the LRU purge is more generally useful, but I'm not sure
+>> > if that helps CVMFS, since it would only get rid of unused objects.
+>>=20
+>> The LRU inodes purge can indeed work for me as well, because my patch is
+>> also only getting rid of unused objects, right?  Any inode still being
+>> referenced will be kept around.
+>>=20
+>> So, based on your reply, let me try to summarize a possible alternative
+>> solution, that I think would be useful for CVMFS but also generic enough
+>> for other filesystems:
+>>=20
+>> - Add a new operation FUSE_INVAL_LRU_INODES, which would get rid of, at
+>>   most, 'N' unused inodes.
+>>
+>> - This operation would have an argument 'N' with the maximum number of
+>>   inodes to invalidate.
+>>
+>> - In addition, it would also increment this new fuse_connection attribute
+>>   'epoch', to be used in the dentry revalidation as you suggested above
+>
+> As per above: invalidation is an implementation optimisation for the
+> CVMFS epoch update. Invalidation, OTOH, does not imply that any fuse
+> mount/connector global state (e.g. the epoch) needs to change...
+>
+> ii.e. the operation should be FUSE_UPDATE_EPOCH, not
+> FUSE_INVAL_LRU_INODES...
+>
+>>=20
+>> - This 'N' could also be set to a pre-#define'ed value that would mean
+>>   *all* (unused) inodes.
+>
+> Saying "only invalidate N inodes" makes no sense to me - it is
+> fundamentally impossible for userspace to get right. Either the
+> epoch update should evict all unreferenced inodes immediately, or it
+> should leave them all behind to be purged by memory pressure or
+> other periodic garbage collection mechanisms.
 
-This enables VMM to control guest memory NUMA placement by calling mbind()
-on the mapped memory regions, providing fine-grained control over guest
-memory allocation across NUMA nodes.
+So, below I've a patch that is totally untested (not even compile-tested).
+It's unlikely to be fully correct, but I just wanted to make sure I got
+the main idea right.
 
-Suggested-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Shivank Garg <shivankg@amd.com>
----
- virt/kvm/guest_memfd.c | 76 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 75 insertions(+), 1 deletion(-)
+What I'm trying to do there is to initialize this new 'epoch'
+counter, both in the fuse connection and in every new dentry.  Then, in
+the ->d_revalidate() it simply invalidate a dentry if the epochs don't
+match.  Then, there's the new fuse notify operation to increment the
+epoch and shrink dcache (dropped the call to {evict,invalidate}_inodes()
+as Miklos suggested elsewhere).
 
-diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index f18176976ae3..8d1dfce5d3dc 100644
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@ -2,6 +2,7 @@
- #include <linux/backing-dev.h>
- #include <linux/falloc.h>
- #include <linux/kvm_host.h>
-+#include <linux/mempolicy.h>
- #include <linux/pagemap.h>
- #include <linux/anon_inodes.h>
- 
-@@ -11,8 +12,12 @@ struct kvm_gmem {
- 	struct kvm *kvm;
- 	struct xarray bindings;
- 	struct list_head entry;
-+	struct shared_policy policy;
- };
- 
-+static struct mempolicy *kvm_gmem_get_pgoff_policy(struct kvm_gmem *gmem,
-+						   pgoff_t index);
-+
- /**
-  * folio_file_pfn - like folio_file_page, but return a pfn.
-  * @folio: The folio which contains this index.
-@@ -99,7 +104,25 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
- static struct folio *kvm_gmem_get_folio(struct file *file, pgoff_t index)
- {
- 	/* TODO: Support huge pages. */
--	return filemap_grab_folio(file_inode(file)->i_mapping, index);
-+	struct kvm_gmem *gmem = file->private_data;
-+	struct inode *inode = file_inode(file);
-+	struct mempolicy *policy;
-+	struct folio *folio;
-+
-+	/*
-+	 * Fast-path: See if folio is already present in mapping to avoid
-+	 * policy_lookup.
-+	 */
-+	folio = __filemap_get_folio(inode->i_mapping, index,
-+				    FGP_LOCK | FGP_ACCESSED, 0);
-+	if (!IS_ERR(folio))
-+		return folio;
-+
-+	policy = kvm_gmem_get_pgoff_policy(gmem, index);
-+	folio =  filemap_grab_folio_mpol(inode->i_mapping, index, policy);
-+	mpol_cond_put(policy);
-+
-+	return folio;
+Does this look reasonable?
+
+(I may be missing other places where epoch should be checked or
+initialized.)
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 5b5f789b37eb..f560d1bc327e 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1902,6 +1902,22 @@ static int fuse_notify_resend(struct fuse_conn *fc)
+ 	return 0;
  }
- 
- static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
-@@ -291,6 +314,7 @@ static int kvm_gmem_release(struct inode *inode, struct file *file)
- 	mutex_unlock(&kvm->slots_lock);
- 
- 	xa_destroy(&gmem->bindings);
-+	mpol_free_shared_policy(&gmem->policy);
- 	kfree(gmem);
- 
- 	kvm_put_kvm(kvm);
-@@ -312,8 +336,57 @@ static pgoff_t kvm_gmem_get_index(struct kvm_memory_slot *slot, gfn_t gfn)
- {
- 	return gfn - slot->base_gfn + slot->gmem.pgoff;
- }
-+#ifdef CONFIG_NUMA
-+static int kvm_gmem_set_policy(struct vm_area_struct *vma, struct mempolicy *new)
+=20
++static int fuse_notify_update_epoch(struct fuse_conn *fc)
 +{
-+	struct file *file = vma->vm_file;
-+	struct kvm_gmem *gmem = file->private_data;
++	struct fuse_mount *fm;
++	struct inode *inode;
 +
-+	return mpol_set_shared_policy(&gmem->policy, vma, new);
-+}
++	inode =3D fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
++	if (!inode) || !fm)
++		return -ENOENT;
++=09
++	iput(inode);
++	atomic_inc(&fc->epoch);
++	shrink_dcache_sb(fm->sb);
 +
-+static struct mempolicy *kvm_gmem_get_policy(struct vm_area_struct *vma,
-+		unsigned long addr, pgoff_t *pgoff)
-+{
-+	struct file *file = vma->vm_file;
-+	struct kvm_gmem *gmem = file->private_data;
-+
-+	*pgoff = vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT);
-+	return mpol_shared_policy_lookup(&gmem->policy, *pgoff);
-+}
-+
-+static struct mempolicy *kvm_gmem_get_pgoff_policy(struct kvm_gmem *gmem,
-+						   pgoff_t index)
-+{
-+	struct mempolicy *mpol;
-+
-+	mpol = mpol_shared_policy_lookup(&gmem->policy, index);
-+	return mpol ? mpol : get_task_policy(current);
-+}
-+#else
-+static struct mempolicy *kvm_gmem_get_pgoff_policy(struct kvm_gmem *gmem,
-+						   pgoff_t index)
-+{
-+	return NULL;
-+}
-+#endif /* CONFIG_NUMA */
-+
-+static const struct vm_operations_struct kvm_gmem_vm_ops = {
-+#ifdef CONFIG_NUMA
-+	.get_policy	= kvm_gmem_get_policy,
-+	.set_policy	= kvm_gmem_set_policy,
-+#endif
-+};
-+
-+static int kvm_gmem_mmap(struct file *file, struct vm_area_struct *vma)
-+{
-+	file_accessed(file);
-+	vma->vm_ops = &kvm_gmem_vm_ops;
 +	return 0;
 +}
- 
- static struct file_operations kvm_gmem_fops = {
-+	.mmap		= kvm_gmem_mmap,
- 	.open		= generic_file_open,
- 	.release	= kvm_gmem_release,
- 	.fallocate	= kvm_gmem_fallocate,
-@@ -446,6 +519,7 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
- 	kvm_get_kvm(kvm);
- 	gmem->kvm = kvm;
- 	xa_init(&gmem->bindings);
-+	mpol_shared_policy_init(&gmem->policy, NULL);
- 	list_add(&gmem->entry, &inode->i_mapping->i_private_list);
- 
- 	fd_install(fd, file);
--- 
-2.34.1
-
++
+ static int fuse_notify(struct fuse_conn *fc, enum fuse_notify_code code,
+ 		       unsigned int size, struct fuse_copy_state *cs)
+ {
+@@ -1930,6 +1946,9 @@ static int fuse_notify(struct fuse_conn *fc, enum fus=
+e_notify_code code,
+ 	case FUSE_NOTIFY_RESEND:
+ 		return fuse_notify_resend(fc);
+=20
++	case FUSE_NOTIFY_UPDATE_EPOCH:
++		return fuse_notify_update_epoch(fc);
++
+ 	default:
+ 		fuse_copy_finish(cs);
+ 		return -EINVAL;
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 198862b086ff..d4d58b169c57 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -204,6 +204,12 @@ static int fuse_dentry_revalidate(struct inode *dir, c=
+onst struct qstr *name,
+ 	int ret;
+=20
+ 	inode =3D d_inode_rcu(entry);
++	if (inode) {
++		fm =3D get_fuse_mount(inode);
++		if (entry->d_time < atomic_read(&fm->fc->epoch))
++			goto invalid;
++	}
++
+ 	if (inode && fuse_is_bad(inode))
+ 		goto invalid;
+ 	else if (time_before64(fuse_dentry_time(entry), get_jiffies_64()) ||
+@@ -446,6 +452,12 @@ static struct dentry *fuse_lookup(struct inode *dir, s=
+truct dentry *entry,
+ 		goto out_err;
+=20
+ 	entry =3D newent ? newent : entry;
++	if (inode) {
++		struct fuse_mount *fm =3D get_fuse_mount(inode);
++		entry->d_time =3D atomic_read(&fm->fc->epoch);
++	} else {
++		entry->d_time =3D 0;
++	}
+ 	if (outarg_valid)
+ 		fuse_change_entry_timeout(entry, &outarg);
+ 	else
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index fee96fe7887b..bb6b1ebaa42d 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -611,6 +611,8 @@ struct fuse_conn {
+ 	/** Number of fuse_dev's */
+ 	atomic_t dev_count;
+=20
++	atomic_t epoch;
++
+ 	struct rcu_head rcu;
+=20
+ 	/** The user id for this mount */
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index e9db2cb8c150..5d2d29fad658 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -959,6 +959,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_m=
+ount *fm,
+ 	init_rwsem(&fc->killsb);
+ 	refcount_set(&fc->count, 1);
+ 	atomic_set(&fc->dev_count, 1);
++	atomic_set(&fc->epoch, 1);
+ 	init_waitqueue_head(&fc->blocked_waitq);
+ 	fuse_iqueue_init(&fc->iq, fiq_ops, fiq_priv);
+ 	INIT_LIST_HEAD(&fc->bg_queue);
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 5e0eb41d967e..62cc60e61cca 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -666,6 +666,7 @@ enum fuse_notify_code {
+ 	FUSE_NOTIFY_RETRIEVE =3D 5,
+ 	FUSE_NOTIFY_DELETE =3D 6,
+ 	FUSE_NOTIFY_RESEND =3D 7,
++	FUSE_NOTIFY_UPDATE_EPOCH =3D 8,
+ 	FUSE_NOTIFY_CODE_MAX,
+ };
+=20
 
