@@ -1,114 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-42047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42048-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EC97A3BA80
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 10:43:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33881A3BB0F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 11:02:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66AC67A86ED
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 09:37:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A20F188C39F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 10:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABF41BC9F0;
-	Wed, 19 Feb 2025 09:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41CD91D5ACD;
+	Wed, 19 Feb 2025 10:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mk4X7I+4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rQ4gAJzr"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C46B15B971;
-	Wed, 19 Feb 2025 09:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5531BEF75;
+	Wed, 19 Feb 2025 10:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739957904; cv=none; b=ncq7NJgalyvsVEO7PRVdLWXmE8CVKOThWEK5yt22cFIk7KilMcXYV6LUADUtVFT0Kp7s43sgHzjzztBm7SdvRI5Z8v7vgv6xZEFNOYCZSHA9/NRc/wAYju2qr29oKGaJIV78vMPwhyBusVMCV4UbwtbWse8FzxelwQe89FmTeYA=
+	t=1739959337; cv=none; b=TZFMqHY9ZsOa82DBKSzRECRaIWLsn7rios9HUZKj0cVxCotAZlfR2+ZX4KCl3GKfKVUMO7IlWOsXQZsii/8XbcYxV6hfmQP1Y3i8xgEDOhUiALGgvcDcWW6kYjkMb0Uii+3M0o0fRpooaoz6iNcugDf8r+kYO//AFW/kaQzh+B0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739957904; c=relaxed/simple;
-	bh=80I3NFEQ9dB3idbQ3rrlutO1WpxNEwV3ESxpvEHssw8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GCAPEHz8CWug/WFODb9ulfYVJSZAm2LMR9eTSEI00dczsLlCFNSeDP/ZdIFRuHHRhsMv2MHbhYrUKbJjQ0PaErgSZvRswIKtGOVM5jDhYzPbEqCru5Q2l8jSrSGby97iD+f5uLWCOME0QDLVhQ160X0MzRij93EGfowPGLvoGY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mk4X7I+4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D3B1C4CED1;
-	Wed, 19 Feb 2025 09:38:23 +0000 (UTC)
+	s=arc-20240116; t=1739959337; c=relaxed/simple;
+	bh=l8WjW69U7BhePUL3SbnqsroGKmyglhcniS7YuSnpAA0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=c8NJp8kTRCSuPvVglw110jo0o3qA/mAtlvFPScNP2TWA8FzsNxnpMS8GshKlm8Fp/QZMve32CRWmPtH4vAkCd0cAhjMhiHHqU4NR5lcpX0GKJMKMi5bW0aylxcsBEA80BiJkyxgS9z63/pluJznPd/+919hpmF5HgHP6Nev2dhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rQ4gAJzr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82C1FC4CED1;
+	Wed, 19 Feb 2025 10:02:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739957903;
-	bh=80I3NFEQ9dB3idbQ3rrlutO1WpxNEwV3ESxpvEHssw8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mk4X7I+4NK641JPh0lH3mxXQjPoMemeHNJVvxuFmmLHC/ixCa1WumSq6dDN+UTlpw
-	 zpUgxeiJXqYBElyQ0DUuYW0guCtjDYpCi78mBTZdKc1ZYh1YOvEi9mJvXP9b6EHWlm
-	 YQERNL01Ou2rIWZUSUECfVGTKQQXNoBJ3nDyfpn9bhl6froDTMMH46SmIILX7oxuAg
-	 Gc9nPV0WuyOoDvloGJC95f13CxxB9MO5/fFpM0spaDwQ25NgZy/oitF3thNmdPPSOc
-	 4MrXUl8X5T49bOg9sM1P1IOiNOngbfg1IgoTW8bfr/EAseOp0qJHA7zCpi7XDqslBr
-	 ZZRGTJCy24gpQ==
-Date: Wed, 19 Feb 2025 09:38:21 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-api@vger.kernel.org
-Subject: Re: [PATCH 0/2 v9] reclaim file-backed pages given POSIX_FADV_NOREUSE
-Message-ID: <Z7WmjagtARpTA781@google.com>
-References: <20250212023518.897942-1-jaegeuk@kernel.org>
- <Z7REHrJ3ImdrF476@infradead.org>
+	s=k20201202; t=1739959336;
+	bh=l8WjW69U7BhePUL3SbnqsroGKmyglhcniS7YuSnpAA0=;
+	h=From:Subject:Date:To:Cc:From;
+	b=rQ4gAJzrX7i+h/p9alxlyRa6+35cub7g9CY+jbZn1r3F/4QOdptTe2IoxI54JPSsS
+	 M9V60NyFtLRWtJZjKEBQHrg2kJWnIk1A5Wh4vaKzeknqdGcdXBUGJdhDZGENGgpQ1q
+	 vpOvjR6ZtIzEVOyshwAdBY+G0mbxIW3700mbEbkOMFdoJqpDpMZI+ufRQx1tWdoXca
+	 IAALWlROXJNP3qUDzZO/8Fq/lGg8lSZLfR7EkAH5GGAGB2YQzj9ZZRotlrqXN7OEzu
+	 MI27+yOr24jvbv4mZ1sLOKwN0jFBr55H44Eq7WeIQlSvwnH0UblBec3e65I69n8F9V
+	 aNt2OIG4riC+g==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v3 0/4] ovl: add override_creds mount option
+Date: Wed, 19 Feb 2025 11:01:48 +0100
+Message-Id: <20250219-work-overlayfs-v3-0-46af55e4ceda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7REHrJ3ImdrF476@infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAystWcC/3XOTQ7CIBQE4KsY1tIU+kN15T2MCwqPlrQW82jQp
+ undha40xuUsvplZiQe04Mn5sBKEYL11UwzF8UBUL6cOqNUxE57zKuespE+HA3UBcJSL8VQbZVS
+ ptIBWk4geCMa+9sLrLeZWeqAtykn1qeYu/QyYhTqLVahYIr31s8NlvxBYgn/XAqM5LetKs6YWu
+ tDlZQCcYMwcdiTNBf7pxY/nyTNtQAjWnOriy2/b9gYg/QAEEAEAAA==
+X-Change-ID: 20250214-work-overlayfs-dfcfc4cd7ebd
+To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+ Seth Forshee <sforshee@kernel.org>
+Cc: Gopal Kakivaya <gopalk@microsoft.com>, linux-unionfs@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-d23a9
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2002; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=l8WjW69U7BhePUL3SbnqsroGKmyglhcniS7YuSnpAA0=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRvXaN6K+OixvclvGv+u0zlXDtbqK5dKKT5JsuihXanl
+ 8+dmpC2t6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiT1oY/grvvaY2O3KlXpqm
+ WdOt2NIFzInGjUd65Z/UBXSfUIy8vYThn6ntFjXGb/8b3h23PC25U/D1hqxJzDMPPCldlz7V13K
+ mAQ8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On 02/18, Christoph Hellwig wrote:
-> This still has a file system sysfs HACK, you're still not Ccing the
-> right list, etc.
-> 
-> Can you pleae at least try to get it right?
+Hey,
 
-I was modifying the patch having 1) declaring a static global list, 2) adding
-some fields to superblock and inode structures to keep the given range in the
-inode through fadvise, 3) adding hooks in evict_inode to handle the list, 4)
-exploring which sysfs entry in MM to reclaim them explicitly.
+Currently overlayfs uses the mounter's credentials for it's
+override_creds() calls. That provides a consistent permission model.
 
-But, I stopped at some point, as it looks not good at all. Moreover, I started
-to be questioning why not just doing in F2FS back, given sementically I didn't
-change anything  on general behavior of fadvise(POSIX_FADV_NOREUSE), IIUC, which
-moves pages back to LRU. In addiiton to that, I'd like to keep the range hint in
-a filesystem and provide a sysfs entry to manage the hints additionally.
-In addition, I don't think there's rule that filesystem cannot reclaim file-back
-pages, as it just uses the exported symbol that all filesystems are using in
-various different purpose. Hence, I don't get the point which is wrong.
+This patches allows a caller to instruct overlayfs to use its
+credentials instead. The caller must be located in the same user
+namespace hierarchy as the user namespace the overlayfs instance will be
+mounted in. This provides a consistent and simple security model.
 
-Thanks,
+With this it is possible to e.g., mount an overlayfs instance where the
+mounter must have CAP_SYS_ADMIN but the credentials used for
+override_creds() have dropped CAP_SYS_ADMIN. It also allows the usage of
+custom fs{g,u}id different from the callers and other tweaks.
 
-> 
-> On Wed, Feb 12, 2025 at 02:31:55AM +0000, Jaegeuk Kim wrote:
-> > This patch series does not add new API, but implements POSIX_FADV_NOREUSE where
-> > it keeps the page ranges in the f2fs superblock and add a way for users to
-> > reclaim the pages manually.
-> > 
-> > Change log from v8:
-> >  - remove new APIs, but use fadvise(POSIX_FADV_NOREUSE)
-> > 
-> > Jaegeuk Kim (2):
-> >   f2fs: keep POSIX_FADV_NOREUSE ranges
-> >   f2fs: add a sysfs entry to reclaim POSIX_FADV_NOREUSE pages
-> > 
-> >  Documentation/ABI/testing/sysfs-fs-f2fs |  7 ++
-> >  fs/f2fs/debug.c                         |  3 +
-> >  fs/f2fs/f2fs.h                          | 14 +++-
-> >  fs/f2fs/file.c                          | 60 +++++++++++++++--
-> >  fs/f2fs/inode.c                         | 14 ++++
-> >  fs/f2fs/shrinker.c                      | 90 +++++++++++++++++++++++++
-> >  fs/f2fs/super.c                         |  1 +
-> >  fs/f2fs/sysfs.c                         | 63 +++++++++++++++++
-> >  8 files changed, 246 insertions(+), 6 deletions(-)
-> > 
-> > -- 
-> > 2.48.1.601.g30ceb7b040-goog
-> > 
-> > 
-> ---end quoted text---
+Thanks!
+Christian
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Changes in v3:
+- Extended selftests.
+- Allowed all user descendant namespaces.
+- Link to v2: https://lore.kernel.org/r/20250217-work-overlayfs-v2-0-41dfe7718963@kernel.org
+
+Changes in v2:
+- Added new section to overlayfs Documentation.
+- Link to v1: https://lore.kernel.org/r/20250214-work-overlayfs-v1-0-465d1867d3d4@kernel.org
+
+---
+Christian Brauner (4):
+      ovl: allow to specify override credentials
+      selftests/ovl: add first selftest for "override_creds"
+      selftests/ovl: add second selftest for "override_creds"
+      selftests/ovl: add third selftest for "override_creds"
+
+ Documentation/filesystems/overlayfs.rst            |  24 +-
+ fs/overlayfs/params.c                              |  25 +
+ fs/overlayfs/super.c                               |  16 +-
+ .../selftests/filesystems/overlayfs/Makefile       |  11 +-
+ .../filesystems/overlayfs/set_layers_via_fds.c     | 312 ++++++++++++-
+ tools/testing/selftests/filesystems/utils.c        | 501 +++++++++++++++++++++
+ tools/testing/selftests/filesystems/utils.h        |  45 ++
+ 7 files changed, 924 insertions(+), 10 deletions(-)
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20250214-work-overlayfs-dfcfc4cd7ebd
+
 
