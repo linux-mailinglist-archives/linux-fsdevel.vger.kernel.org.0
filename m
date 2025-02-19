@@ -1,56 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-42090-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42091-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC44A3C5CB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 18:13:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A686DA3C5F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 18:19:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C0711888778
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 17:13:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6BD91885657
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 17:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76DE2144CF;
-	Wed, 19 Feb 2025 17:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVJIOehH"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C1F2144A7;
+	Wed, 19 Feb 2025 17:18:33 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296BB214230;
-	Wed, 19 Feb 2025 17:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA35286284;
+	Wed, 19 Feb 2025 17:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739985188; cv=none; b=Cl6IOLUew90ZxEKudCiv9tahpJtqrBZJPTwDE5/LmCAKVe5ADBWrp+7D0EoKWc9SmFp7iDJB4r4v5F/P6QC0o5fePX0pxVOJHTDeTDbKw3gftHVuUv0Yz6cPyXeWWTz9F0ErhuQIn5ds5A3+LvI/QLhhqt7uLHvrTm5F8TkRJBw=
+	t=1739985513; cv=none; b=n+vkqaGfi+s1rq88fESmo37QCQiO2obys74PNfd6qG7hgC3wMFYvASLfbRSPds2nrx7yh0qFEPOT85+MUH9oQarSHuX69TRxIWJZt8xtPygwKOzndFlELK+04QOKuyCyLPl1wsv40QkCdbJZC5dpdbYinqH3sGozocI1/1dpSLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739985188; c=relaxed/simple;
-	bh=L/QYV+Qom79g9HuHBK43mFl7f5J5yQqARQ5i2sJ4WKY=;
+	s=arc-20240116; t=1739985513; c=relaxed/simple;
+	bh=Axex9ugl2cp1Mnn+czrujd78B3to4P86gl7uF640N9c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JD0hkMfPTiVJ3bO/PjvxTBL8icNPTyl1u5tfFC/knx03MIX26wPXL1gj5j63d01XeEMgFTud+O9n7JANsfJQX4rozX16tABVjg/mMzrdIgeOmiRktUo1+b4zde1NKWVC0zG8mKwXntwcZJZREHTND8iamVdCQfUrrQSEM0drtlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EVJIOehH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8093CC4CED1;
-	Wed, 19 Feb 2025 17:13:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739985187;
-	bh=L/QYV+Qom79g9HuHBK43mFl7f5J5yQqARQ5i2sJ4WKY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EVJIOehHSqr8PKdEefVAoXdXxWoapJRSOxmVK3UoxthHWmfMSOMEMGCr7xaDzEF6o
-	 Is5xIokYrUnXoeRayJe7O2SZ42wr51wSr6SxMOhXttVT0KxLJuIohuHF6dlwMMx5Qj
-	 xCQdOVVGTq5rWzu0QYppjX1UM3PJxjjetCo6ozhsNGHe1QPbLp23NFx+9HCRMdTJH5
-	 eWYIa9cAcoSxHY1nmbzrXdGRgvTwDZhD5EMXwqlXf2jIZrko1nqOY9ZH0RdrHOSPnS
-	 eeFOFR2Ycd6Rz+cyS0qSWyak0G9/68xiw1Em0Fd7tWDFbbUnNjJ7gCq4PEZ+zOEOPQ
-	 y6DiYo85VJqFg==
-Date: Wed, 19 Feb 2025 09:13:04 -0800
-From: Kees Cook <kees@kernel.org>
-To: Sumya Hoque <sumyahoque2012@gmail.com>
-Cc: skhan@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	shuah@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] selftests:sysctl:Fix minor grammers in sysctl test
-Message-ID: <202502190912.CA03B56796@keescook>
-References: <20250219030451.39782-1-sumyahoque2012@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lAfpFm2X5BhcubaymMPd4bacljPfkuFkNW9L5v5L0iovcYYVgXjoUdRnKghTXg2SHcJVrULcEV1JJeeF/pqhin8+Xz08yvOhFsekrvf/dY5rY/sf/xyk6hWkcjx+COwU544KopoWgnwwEMkIAe72DuGeGt/unPlOQsiOhtFHD7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 358C4C4CEE0;
+	Wed, 19 Feb 2025 17:18:27 +0000 (UTC)
+Date: Wed, 19 Feb 2025 17:18:24 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Herbert Xu <herbert@gondor.apana.org.au>, willy@infradead.org,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Yang Shi <yang@os.amperecomputing.com>,
+	David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 6.6 000/389] 6.6.76-rc2 review
+Message-ID: <Z7YSYArXkRFEy6FO@arm.com>
+References: <20250206155234.095034647@linuxfoundation.org>
+ <CA+G9fYvKzV=jo9AmKH2tJeLr0W8xyjxuVO-P+ZEBdou6C=mKUw@mail.gmail.com>
+ <CA+G9fYtqBxt+JwSLCcVBchh94GVRhbo9rTP26ceJ=sf4MDo61Q@mail.gmail.com>
+ <Z7Xj-zIe-Sa1syG7@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,44 +63,97 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250219030451.39782-1-sumyahoque2012@gmail.com>
+In-Reply-To: <Z7Xj-zIe-Sa1syG7@arm.com>
 
-On Wed, Feb 19, 2025 at 03:04:51AM +0000, Sumya Hoque wrote:
-> Hello everyone,
-> Some minor grammer issues that I have fixed:
-> 1. echo "If an error every occurs -->  echo "If an error occurs, every execution
-> 2. Example uses --> Example Usage 
+On Wed, Feb 19, 2025 at 02:00:27PM +0000, Catalin Marinas wrote:
+> > On Sat, 8 Feb 2025 at 16:54, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> > > Regression on qemu-arm64 and FVP noticed this kernel warning running
+> > > selftests: arm64: check_hugetlb_options test case on 6.6.76-rc1 and
+> > > 6.6.76-rc2.
+> > >
+> > > Test regression: WARNING-arch-arm64-mm-copypage-copy_highpage
+> > >
+> > > ------------[ cut here ]------------
+> > > [   96.920028] WARNING: CPU: 1 PID: 3611 at
+> > > arch/arm64/mm/copypage.c:29 copy_highpage
+> > > (arch/arm64/include/asm/mte.h:87)
+> > > [   96.922100] Modules linked in: crct10dif_ce sm3_ce sm3 sha3_ce
+> > > sha512_ce sha512_arm64 fuse drm backlight ip_tables x_tables
+> > > [   96.925603] CPU: 1 PID: 3611 Comm: check_hugetlb_o Not tainted 6.6.76-rc2 #1
+> > > [   96.926956] Hardware name: linux,dummy-virt (DT)
+> > > [   96.927695] pstate: 43402009 (nZcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+> > > [   96.928687] pc : copy_highpage (arch/arm64/include/asm/mte.h:87)
+> > > [   96.929037] lr : copy_highpage
+> > > (arch/arm64/include/asm/alternative-macros.h:232
+> > > arch/arm64/include/asm/cpufeature.h:443
+> > > arch/arm64/include/asm/cpufeature.h:504
+> > > arch/arm64/include/asm/cpufeature.h:814 arch/arm64/mm/copypage.c:27)
+> > > [   96.929399] sp : ffff800088aa3ab0
+> > > [   96.930232] x29: ffff800088aa3ab0 x28: 00000000000001ff x27: 0000000000000000
+> > > [   96.930784] x26: 0000000000000000 x25: 0000ffff9b800000 x24: 0000ffff9b9ff000
+> > > [   96.931402] x23: fffffc0003257fc0 x22: ffff0000c95ff000 x21: ffff0000c93ff000
+> > > [   96.932054] x20: fffffc0003257fc0 x19: fffffc000324ffc0 x18: 0000ffff9b800000
+> > > [   96.933357] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+> > > [   96.934091] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+> > > [   96.935095] x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
+> > > [   96.935982] x8 : 0bfffc0001800000 x7 : 0000000000000000 x6 : 0000000000000000
+> > > [   96.936536] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
+> > > [   96.937089] x2 : 0000000000000000 x1 : ffff0000c9600000 x0 : ffff0000c9400080
+> > > [   96.939431] Call trace:
+> > > [   96.939920] copy_highpage (arch/arm64/include/asm/mte.h:87)
+> > > [   96.940443] copy_user_highpage (arch/arm64/mm/copypage.c:40)
+> > > [   96.940963] copy_user_large_folio (mm/memory.c:5977 mm/memory.c:6109)
+> > > [   96.941535] hugetlb_wp (mm/hugetlb.c:5701)
+> > > [   96.941948] hugetlb_fault (mm/hugetlb.c:6237)
+> > > [   96.942344] handle_mm_fault (mm/memory.c:5330)
+> > > [   96.942794] do_page_fault (arch/arm64/mm/fault.c:513
+> > > arch/arm64/mm/fault.c:626)
+> > > [   96.943341] do_mem_abort (arch/arm64/mm/fault.c:846)
+> > > [   96.943797] el0_da (arch/arm64/kernel/entry-common.c:133
+> > > arch/arm64/kernel/entry-common.c:144
+> > > arch/arm64/kernel/entry-common.c:547)
+> > > [   96.944229] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:0)
+> > > [   96.944765] el0t_64_sync (arch/arm64/kernel/entry.S:599)
+> > > [   96.945383] ---[ end trace 0000000000000000 ]---
 > 
-> Signed-off-by: Sumya Hoque <sumyahoque2012@gmail.com>
-> ---
->  tools/testing/selftests/sysctl/sysctl.sh | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/sysctl/sysctl.sh b/tools/testing/selftests/sysctl/sysctl.sh
-> index 84472b436c07..a4d76147ed8a 100755
-> --- a/tools/testing/selftests/sysctl/sysctl.sh
-> +++ b/tools/testing/selftests/sysctl/sysctl.sh
-> @@ -891,11 +891,11 @@ usage()
->  	echo "    -l      List all test ID list"
->  	echo " -h|--help  Help"
->  	echo
-> -	echo "If an error every occurs execution will immediately terminate."
-> +	echo "If an error occurs, every execution will immediately terminate."
+> Prior to commit 25c17c4b55de ("hugetlb: arm64: add mte support"), there
+> was no hugetlb support with MTE, so the above code path should not
+> happen - it seems to get a PROT_MTE hugetlb page which should have been
+> prevented by arch_validate_flags(). Or something else corrupts the page
+> flags and we end up with some random PG_mte_tagged set.
 
-I think the typo here is just "every" -> "ever"
+The problem is in the arm64 arch_calc_vm_flag_bits() as it returns
+VM_MTE_ALLOWED for any MAP_ANONYMOUS ignoring MAP_HUGETLB (it's been
+doing this since day 1 of MTE). The implementation does handle the
+hugetlb file mmap() correctly but not the MAP_ANONYMOUS case.
 
->  	echo "If you are adding a new test try using -w <test-ID> first to"
->  	echo "make sure the test passes a series of tests."
->  	echo
-> -	echo Example uses:
-> +	echo Example usage:
->  	echo
->  	echo "$TEST_NAME.sh            -- executes all tests"
->  	echo "$TEST_NAME.sh -t 0002    -- Executes test ID 0002 number of times is recomended"
-> -- 
-> 2.34.1
-> 
+The fix would be something like below:
+
+-----------------8<--------------------------
+diff --git a/arch/arm64/include/asm/mman.h b/arch/arm64/include/asm/mman.h
+index 5966ee4a6154..8ff5d88c9f12 100644
+--- a/arch/arm64/include/asm/mman.h
++++ b/arch/arm64/include/asm/mman.h
+@@ -28,7 +28,8 @@ static inline unsigned long arch_calc_vm_flag_bits(unsigned long flags)
+ 	 * backed by tags-capable memory. The vm_flags may be overridden by a
+ 	 * filesystem supporting MTE (RAM-based).
+ 	 */
+-	if (system_supports_mte() && (flags & MAP_ANONYMOUS))
++	if (system_supports_mte() &&
++	    ((flags & MAP_ANONYMOUS) && !(flags & MAP_HUGETLB)))
+ 		return VM_MTE_ALLOWED;
+
+ 	return 0;
+-------------------8<-----------------------
+
+This fix won't make sense for mainline since it supports MAP_HUGETLB
+already.
+
+Greg, are you ok with a stable-only fix as above or you'd rather see the
+full 25c17c4b55de ("hugetlb: arm64: add mte support") backported?
+
+Thanks.
 
 -- 
-Kees Cook
+Catalin
 
