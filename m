@@ -1,161 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-42085-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42086-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98DC9A3C513
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 17:34:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78043A3C53D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 17:41:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5730F189D10A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 16:31:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 532A7172C72
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 16:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA881FE463;
-	Wed, 19 Feb 2025 16:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DB11FECAF;
+	Wed, 19 Feb 2025 16:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="ihJ2db4y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mc+u4Fy5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47BD1FBEB0;
-	Wed, 19 Feb 2025 16:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403031F8F09
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2025 16:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739982704; cv=none; b=EGdsU5aMzBZ90jl7As6BYOrlx9HTwqPQHf8Dh3iZTXqIkBRsn+gXoVnI+1Neg6DUwvQNjBt1RuLosNnlIIFp1pj86O9GkkzUkSQLORkQOdKivuF+9XoCZSMjQE3wF0+lIES2LSBnzRsDHDbpHzsr42yORuIpbPlFkAdOdXttSf0=
+	t=1739983234; cv=none; b=KyMv4g7r6+xUfRhyb00vWWh+5yf4HKrXXkNtYi47cvwbvH8fqX/IDd3dPlmj65JGblcb+VQp97ReX+zYruYZSAkyHklBKAamBOeYeaQZNQNX8xbQvBTDFSMUfZwjB7NyfmlZMtUt3T3y39rO+C7ZVsaQZfopGJRSRarA4xNMrlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739982704; c=relaxed/simple;
-	bh=kScvtj0CmiaIsaBdVp7RnRZK3qaIvSEdNfxOqJe1nMs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pZbsiVBgKqLLgIlFGXkhpGFU7kUMrL4uMo+irTmvmM10KgJy/A9MTbAIvWJZ/iMXNHvO7X5SEHbC+QWwR6o3+LgJp9Xe2kfvRkrdZrIm5uVYUvwUpQsPZg97d7mpGRgHOZN5/zy5ccWYG+ot9D59BQPK+sIwSjP1vdUt1JRpOpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=ihJ2db4y; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=Wh2NiKlrRJHAhrnRgglxjzPK0JRgg6l5YPt+TAPLTkg=; b=ihJ2db4yilg1wMgpDIQWHpnHFR
-	QRjjZ6J/st+F7DB4W4p45H4sqkhh4RHX/ntUI7O0lCTFM0LPWwDmziOlvR07nk48seL2rA+ZopTiA
-	KbRhblx6HTbumnMKeITZkyNDtQ1oKO0EZ5O/d9gF+8aS1IDt9UErkeWeYERosGWYjUVoJIEZ6Ik8j
-	/saK+ui2iyX/5A+pxFn+DKUk1thM+H7b6N1wNp8vC1mdRfIbNa2bli1AVCO10lFxe/q1sJ1kK0lSk
-	ro6ZZWmmYPuf4SHG5RG2LW4vc+ZAltKJRTtESFejMVdIsuoBf0VD7NHFhiQo96jGfKJyV9493iKuK
-	iiv983Hg==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tkmyh-00ErAp-Te; Wed, 19 Feb 2025 17:31:21 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Dave Chinner <david@fromorbit.com>,  Bernd Schubert <bschubert@ddn.com>,
-  Alexander Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
- <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Matt Harvey
- <mharvey@jumptrading.com>,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  Valentin Volkl <valentin.volkl@cern.ch>,
-  Laura Promberger <laura.promberger@cern.ch>
-Subject: Re: [PATCH v6 2/2] fuse: add new function to invalidate cache for
- all inodes
-In-Reply-To: <CAJfpegs-_sFPnMBwEa-2OSiaNriH6ZvEnM73vNZBiwzrSWFraw@mail.gmail.com>
-	(Miklos Szeredi's message of "Wed, 19 Feb 2025 16:39:53 +0100")
-References: <20250217133228.24405-1-luis@igalia.com>
-	<20250217133228.24405-3-luis@igalia.com>
-	<Z7PaimnCjbGMi6EQ@dread.disaster.area>
-	<CAJfpegszFjRFnnPbetBJrHiW_yCO1mFOpuzp30CCZUnDZWQxqg@mail.gmail.com>
-	<87r03v8t72.fsf@igalia.com>
-	<CAJfpegu51xNUKURj5rKSM5-SYZ6pn-+ZCH0d-g6PZ8vBQYsUSQ@mail.gmail.com>
-	<87frkb8o94.fsf@igalia.com>
-	<CAJfpegsThcFwhKb9XA3WWBXY_m=_0pRF+FZF+vxAxe3RbZ_c3A@mail.gmail.com>
-	<87tt8r6s3e.fsf@igalia.com> <Z7UED8Gh7Uo-Yj6K@dread.disaster.area>
-	<87eczu41r9.fsf@igalia.com>
-	<CAJfpegs-_sFPnMBwEa-2OSiaNriH6ZvEnM73vNZBiwzrSWFraw@mail.gmail.com>
-Date: Wed, 19 Feb 2025 16:31:21 +0000
-Message-ID: <87a5ah521y.fsf@igalia.com>
+	s=arc-20240116; t=1739983234; c=relaxed/simple;
+	bh=s0P8ZhtIPtgkg4FTrsINrklSChJ3ZFLrJa/rfHzPV4E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=d1pW2dR+Mjx47q8kTqmrK1zhg8usFp9C7HXVadlxFdr0tIWBpA/KMbIR3fktxZFMhe7LqoAyLx/rDeVtqxW8x31RvvXz7vGi4mLfjDYY4RQPS2e99i0Oh26oaS5e2h79mOUzd0a6hsGI+HkNJCZ8UFmxO9gI9tuRt8lru6nGe70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mc+u4Fy5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DA76C4CED1;
+	Wed, 19 Feb 2025 16:40:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739983233;
+	bh=s0P8ZhtIPtgkg4FTrsINrklSChJ3ZFLrJa/rfHzPV4E=;
+	h=From:Subject:Date:To:Cc:From;
+	b=mc+u4Fy5T1ED9H2RR7oOgeOBTDepxM83l3sDzVyr/gjbkQmWUqTaArKU6c3CySKaK
+	 mYVE8PaNWHCPeR9CaVJ8NT/aDDf5IAnFBlcylYrhTZ0LZBmt+4jsmFRfoohsxjGgML
+	 fJnk42+vix9/6NBT/jwtTH7ZTBgRBvNP9VhKK8ae5Eemylt3MgaFNRc3Ox6hs6uNkb
+	 PEqpc5SgXLmo7lMlHtchTgYduah5A64lodzNhFsRvTN1rWFDmF0fG/wmm6Uhan7N9j
+	 KRhZCsTuURD3BDEO9MD3B4/pUaq2lgKZ7fPy3ZXl5YfLjbiLS/QSnQUpkD8UTT7ScH
+	 HfW9QGDh9eUpg==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 0/2] nsfs: validate ioctls
+Date: Wed, 19 Feb 2025 17:40:27 +0100
+Message-Id: <20250219-work-nsfs-v1-0-21128d73c5e8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHsJtmcC/x3M0Q6CMAxA0V8hfbZkm6jgrxgfRlekMQ7SGjQh/
+ LvDx5Pc3BWMVdjgWq2gvIjJlAv8oQIaY34wSiqG4MLJBd/hZ9InZhsM6RJS27rU0ZGh9LPyIN/
+ /63Yv7qMx9hozjfvhFe3NWi/n2jeo5GHbfohAtCJ+AAAA
+X-Change-ID: 20250219-work-nsfs-c72d880d9c3e
+To: linux-fsdevel@vger.kernel.org
+Cc: Jeff Layton <jlayton@kernel.org>, Jann Horn <jannh@google.com>, 
+ Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-d23a9
+X-Developer-Signature: v=1; a=openpgp-sha256; l=539; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=s0P8ZhtIPtgkg4FTrsINrklSChJ3ZFLrJa/rfHzPV4E=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRv42xgNOF8kVpy9cYTb4vQLU+zn3wLOjRj9eKo3MIU4
+ RDf5eVLO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZyLZOR4fnXopvT11k/fHH1
+ WXS4e1BrwK/tM0+4GcV+O911mLXjWwgjwwxFe/WKUtbXRz87vvl6dNq/ELmSK8bXUr2ev93l2by
+ 8gQ8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Wed, Feb 19 2025, Miklos Szeredi wrote:
+This series ensures that nsfs protects against ioctl overloading.
 
-> On Wed, 19 Feb 2025 at 12:23, Luis Henriques <luis@igalia.com> wrote:
->
->> +static int fuse_notify_update_epoch(struct fuse_conn *fc)
->> +{
->> +       struct fuse_mount *fm;
->> +       struct inode *inode;
->> +
->> +       inode =3D fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
->> +       if (!inode) || !fm)
->> +               return -ENOENT;
->> +
->> +       iput(inode);
->> +       atomic_inc(&fc->epoch);
->> +       shrink_dcache_sb(fm->sb);
->
-> This is just an optimization and could be racy, kicking out valid
-> cache (harmlessly of course).  I'd leave it out of the first version.
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Christian Brauner (2):
+      nsfs: validate ioctls
+      selftests/nsfs: add ioctl validation tests
 
-OK, will do.
+ fs/nsfs.c                                          | 32 +++++++++++++++++++++-
+ .../selftests/filesystems/nsfs/iterate_mntns.c     | 14 ++++++++++
+ 2 files changed, 45 insertions(+), 1 deletion(-)
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20250219-work-nsfs-c72d880d9c3e
 
-> There could be more than one fuse_mount instance.  Wondering if epoch
-> should be per-fm not per-fc...
-
-Good question.  Because the cache is shared among the several fuse_mount
-instances the epoch may eventually affect all of them even if it's a
-per-fm attribute.  But on the other hand, different mounts could focus on
-a different set of filesystem subtrees so... yeah, I'll probably leave it
-in fc for now while thinking about it some more.
-
->> @@ -204,6 +204,12 @@ static int fuse_dentry_revalidate(struct inode *dir=
-, const struct qstr *name,
->>         int ret;
->>
->>         inode =3D d_inode_rcu(entry);
->> +       if (inode) {
->> +               fm =3D get_fuse_mount(inode);
->> +               if (entry->d_time < atomic_read(&fm->fc->epoch))
->> +                       goto invalid;
->> +       }
->
-> Negative dentries need to be invalidated too.
-
-Ack.
-
->> @@ -446,6 +452,12 @@ static struct dentry *fuse_lookup(struct inode *dir=
-, struct dentry *entry,
->>                 goto out_err;
->>
->>         entry =3D newent ? newent : entry;
->> +       if (inode) {
->> +               struct fuse_mount *fm =3D get_fuse_mount(inode);
->> +               entry->d_time =3D atomic_read(&fm->fc->epoch);
->> +       } else {
->> +               entry->d_time =3D 0;
->> +       }
->
-> Again, should do the same for positive and negative dentries.
->
-> Need to read out fc->epoch before sending the request to the server,
-> otherwise might get a stale dentry with an updated epoch.
-
-Ah, good point.
-
-> This also needs to be done in fuse_create_open(), create_new_entry()
-> and fuse_direntplus_link().
-
-Yeah I suspected there were a few other places where this would be
-required.  I'll look closer into that.
-
-Thanks a lot for your feedback, Miklos.  I'll work on this new approach,
-so that I can send a real patch soon.
-
-Cheers,
---=20
-Lu=C3=ADs
 
