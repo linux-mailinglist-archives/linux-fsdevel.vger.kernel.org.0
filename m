@@ -1,61 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-42032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D5A3A3B087
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 06:05:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7DABA3B091
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 06:06:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80E783A7613
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 05:05:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6D0218985A2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 05:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594151B0F20;
-	Wed, 19 Feb 2025 05:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34771B4F21;
+	Wed, 19 Feb 2025 05:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VU7h5314"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="C04A9M8b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2078.outbound.protection.outlook.com [40.107.236.78])
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2050.outbound.protection.outlook.com [40.107.236.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DB1199FBA;
-	Wed, 19 Feb 2025 05:05:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1911B3953;
+	Wed, 19 Feb 2025 05:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.50
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739941518; cv=fail; b=Qhvyw5iCJh9wAO2y3GhF31LOcnH63AZvuPWLzQHpk6ODBqidlgmJldOdhSXo8ntO+8myddcyOTwuND6YZSEqtwQD2t66Wkapr/AwFNL5kjuS+Al/S0p7nd3c5jMX3RxHVt+yuNmLFFiWJytLOHNe6p5b1SdnxAU091yGYO1VtR8=
+	t=1739941523; cv=fail; b=fuRvv5HH7jtAJqg0zJCSWbrY8GT8PnmFUmCBYXQg/btjh9U1oszF+xoISwsC03U+bxl+lVz1BaVFCKAirTRlEI+82w6h3PuprkQ6MlScFXOlIhYIlPqEhh3nfvSZlTJsuihIIAsloT1aZXc6R9d1W/00nkzhvDBlOLgBE3EvJhU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739941518; c=relaxed/simple;
-	bh=adrix3AyvOnmjPbfa1dSa0JRgtHYHWkJw9p1AHyYLcw=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=cvUp/BR0tR434fmUBjdHkHWy0aQn8TE917+CvX9OG2EKoRlz57rCBbJjUkaVEOY5vets+PvIPyBE8OLqVHi5PD9nPF7yrHYeISeeWvE19W7Ri1XTXhLUYTAeO1tjgft1sKC/epSpfaWiumJvXdrnF0iAr979WTlOwqHgZKr+rT4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VU7h5314; arc=fail smtp.client-ip=40.107.236.78
+	s=arc-20240116; t=1739941523; c=relaxed/simple;
+	bh=AX6FR2rU/D3SNZ9iw06OqyPpjihnlRsUq8fvGYv+als=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=P0yI8KiUe1EXKsfmZtiKNCZGL3W1kNEARWUeypUWzEYFDdnhGWI7a8c1pGV84CcP+WfVJYxBOf00jQnTeUUFn6TVA3TK5AXI6I+n4x6RGfM+WDghWSwZ5axiBlVowYwd32h0/6K2mf7jPekeXKHPefWzCSd2QA3AhiLE/VxddiU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=C04A9M8b; arc=fail smtp.client-ip=40.107.236.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=y4jS9Ij9oMF+p9HX7Qh3MGXgXuq9GVEPJDm40+l0V/JFTpI+XBneYfhfz2iIh1shxqz4Bq0rcIZSpc0s4JdsQgxxd6gCJHSMWLZQ4LOVlZTf6eSdYy/yyApgUqENy9hgLPFE8sG5mJh6/Ovd0Mh8zoZyKOl6eHcIXDpnyBqRXcKyDmclZi/XCICdRzhIdvpS62k6duaOsQi6GEXGWRIbjmIK3NM8vBbHXSKlpzJnpDnJfaNaV1spW3RCxWArn2o2MGVCyLPMstr1UpnlYHiPKYm6AkDVgpZ3Bh5pwiIgFWAUAyCyyppQoSwyrzPCOC85aJdNLGzv+XPs3roCLmTcMw==
+ b=BTwJGql/erpFH87NyXma5/GX1dUMgkVpjD1jnFyyDGFS6rRm2X0999MlideHlWNp5ilTtlv1kfrxve7JiKvLWlHyLAI1DhmQ7ot3tdPqmBlBOrZVYwbUN/692CfuG4a3nlcxgfwzwJzqFFfdWte6y7TFv+tZ0D1/E9PyDXkzY4gM6sUukbLL+HrX9E0ZNVDWhzO10jEfYaYK+Oeof2kfoQ/u/P3pskyWM9uwzINS/8qvp8SnzVcjIyWK+I6YsMYAIcLtaHEq7CJOh2G8jTL5WjQ+eSwfOEgwIjgvukgWyRpzHgHiqxPg1vIJaxTRM+Cs6HAmjASHWtIp3Yz/M7XbDQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=esVAOH93aULWVaOAGxVXmZxF26Og/DobGoFTYuc0UHY=;
- b=Opozo6meNIYW9LdkM2yM84wD52DnlocGP0/Qgs2qDjf+vL0B+EIvpwwj/Pibc9Y2HpMGYAuM5vrH5NXwxa/84emFUhYX50u4nhbQiXJD3SJromu3VRhtt0j+VrZ+/e9U6hki9D86LLP0gXbjJrn/DCiqN48bvv7AabbpxQKy4mM13Gjk8QVfgPZXp3OugbfedwYXIsTg6Ito9Kpzo7Dc17eE+90JP9JedvjO8oF7OBFmOSVcDvmfOHUe+VZjR3uO4hdstT0cLusupmTxHbSY+JRth2H/c70IJKUxjuTgJfn2RxdX2koy6EWBK2zqtWbwMtFpK0CXwZkFMgKRl7Sq9Q==
+ bh=b6kKPGTMdoDN9ubKiRbTsfXxTkV3fH76JCjE7nf1IvQ=;
+ b=PM7WLnM+CSLOzuFMTeUnQpTmyPY40Lo+PSptZ1NhJCHKquYqlpkIvAEri+10gHnImlpTXW5ZeJ28LOWFBtgU/im1WYu71x4XKD/+flu3QttRNKjGRI1JucRH2BPdS/VDA6xEsT7Fr2iTco0iizSNTW+iQWqIvAJ821LxATykG/6OWGvqtXBfJGLifowdSmI5eiRE3A4ewisNW5yDfqkQlBM4dF6FybZYupsYuIs0RzbSp/OHyD6DlsWjfLZedrIbp35y/FtIw8mqwG8euwkJsn2G+OCPmMUcYoRr9ZETa0fdWAtN9CwkJLIrrgA+q7wsDK7D0Y5VVpkCltdQ1/DHgg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=esVAOH93aULWVaOAGxVXmZxF26Og/DobGoFTYuc0UHY=;
- b=VU7h5314MQnpfqVIkksjPD+gEJImQC8Hz0f49WnGcy7iS0/feoHIKmrA/HhrCHivYZ4x90OsBIbtP3q5rPJq4LQxF4E13TWYQ8WCS0vBl/zYgMH7oWXvAm17EAl3f9fqY3xLO69YizNbpPaNejP1btAe8WzawKL/7EmRX6PQCkxmVT/poOsWHcqeaJzduxJoBq5u/bi4PckGTi+P+4o4yKvvBUHCb+S6tnIW2MmIR04w7OyzIyo6wtvNHqWDyJrhbotBjNIASqf7eKPw2afNUy03cV1nwf6Sagg8aJrpeFaKtSDcff4N/iTTltutej2ssScejek5DriJ01tu+zHk9w==
+ bh=b6kKPGTMdoDN9ubKiRbTsfXxTkV3fH76JCjE7nf1IvQ=;
+ b=C04A9M8bPcyZaR7KdjNDr9dhGRi1UxjMfIkRN4SFY/8y+Mo8A8M+AXzHGFcd3xPfHWjZyz2qnlSiCk2uc1rKbrXcZCRBZacl2JJTIid2a0xK0ZJXPQqA6jjiL9j53budJWwGs0tluHNNGoI21XNv7jm144iRJe7OQ+wof37p5KKyJVS4CFgNS/2YqBQExQIWB4Amsw3uYekbJYg+oxD7tNyQgxZQZ2e+sVvGtVsFozBRki/MRbEoks89dORKz5BJ5/Rx6eUw4Bi1z2B7JF7xd/r/TmyVy6MsUM36EOEajxEIcvhBAUDdafOwPlwNMM20hHufTZEru5IyQMOIwhWZkw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
  SJ2PR12MB8875.namprd12.prod.outlook.com (2603:10b6:a03:543::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.14; Wed, 19 Feb
- 2025 05:05:13 +0000
+ 2025 05:05:17 +0000
 Received: from DS0PR12MB7726.namprd12.prod.outlook.com
  ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
  ([fe80::953f:2f80:90c5:67fe%7]) with mapi id 15.20.8445.017; Wed, 19 Feb 2025
- 05:05:12 +0000
+ 05:05:17 +0000
 From: Alistair Popple <apopple@nvidia.com>
 To: akpm@linux-foundation.org,
 	linux-mm@kvack.org
@@ -76,14 +77,16 @@ Cc: Alistair Popple <apopple@nvidia.com>,
 	debug@rivosinc.com,
 	bjorn@kernel.org,
 	balbirs@nvidia.com
-Subject: [PATCH RFC v2 00/12] mm: Remove pXX_devmap page table bit and pfn_t type
-Date: Wed, 19 Feb 2025 16:04:44 +1100
-Message-ID: <cover.95ff0627bc727f2bae44bea4c00ad7a83fbbcfac.1739941374.git-series.apopple@nvidia.com>
+Subject: [PATCH RFC v2 01/12] mm: Remove PFN_MAP, PFN_SG_CHAIN and PFN_SG_LAST
+Date: Wed, 19 Feb 2025 16:04:45 +1100
+Message-ID: <5b91f54d5e608e0ba4555e6d107a58a9d7f7e2ad.1739941374.git-series.apopple@nvidia.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <cover.95ff0627bc727f2bae44bea4c00ad7a83fbbcfac.1739941374.git-series.apopple@nvidia.com>
+References: <cover.95ff0627bc727f2bae44bea4c00ad7a83fbbcfac.1739941374.git-series.apopple@nvidia.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SY5PR01CA0091.ausprd01.prod.outlook.com
- (2603:10c6:10:207::8) To DS0PR12MB7726.namprd12.prod.outlook.com
+X-ClientProxiedBy: SY5P282CA0110.AUSP282.PROD.OUTLOOK.COM
+ (2603:10c6:10:20b::15) To DS0PR12MB7726.namprd12.prod.outlook.com
  (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -93,233 +96,185 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|SJ2PR12MB8875:EE_
-X-MS-Office365-Filtering-Correlation-Id: 99426b2b-9f33-4a0d-8f23-08dd50a2fd6b
+X-MS-Office365-Filtering-Correlation-Id: 959f831e-1f39-4119-92ca-08dd50a30079
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ymhs0ClJXHBQMr6FSuztBRaXrPADf/ENQUEgjVTxYzfNPNW7EZwfqLKj0/D3?=
- =?us-ascii?Q?nu2M9vDf09B0CaTaB6WqpZZd//ocYNPTYXsbc2+hYSsU0rWjBIc9LlHDPGhI?=
- =?us-ascii?Q?YY9Wrz5C5oPORdKbRn6dyW4OTkotiEpWA9PYpyKq9Msm+H5R4uSTslytXHQd?=
- =?us-ascii?Q?seIk5AmegG3v/2ZgTNZDqa1p6rMLkb9ISvblLMa5z29wHCV75pD0+j/amIB5?=
- =?us-ascii?Q?AOnrfXDsSMThOTVWEyARflj2zTkGwCUQD+MlkKleQ1h3uNY9tG1xG/V+bDlT?=
- =?us-ascii?Q?+gtZlSTlMmmkCyrPQz1yxK+jveQBw7Y9j/ZcZAQIW6kb9pG6HopQ/ql0vowr?=
- =?us-ascii?Q?RPsh/lfbOrO0+HbFr6QR7TpGZqHjxr6MNQutx6AGLUlFfe+4YrBeWaTi2gX9?=
- =?us-ascii?Q?ClYIQvcOsRJem/3OdZcHVwPE6p/BImgC+66cNagp3IQkAmT+HKG4wYx+vVLL?=
- =?us-ascii?Q?q8Zl4GLJVOpQCtLEA1n/u8FCNOeqwpVluuxzBB/UZ44Qz9HTCPjoFGIlefPC?=
- =?us-ascii?Q?nloq1WoCu1XQz3IdQpippyg3JwShBP3p833zc4BEIXszi7OcmSTr1MwtL/9S?=
- =?us-ascii?Q?5jyHSr2hBt3SW6KGp4mVjkBEC+laU4nWlyhSauujoqgDjG2oujnFjcpbMQX1?=
- =?us-ascii?Q?i0AjjQsch1DfKO7nqMcRbUKnYoZCZp20ajSVhhUAfD9SflTGi7duA+3poMzN?=
- =?us-ascii?Q?I/ps38AmgZlXPxes3cdCxdk3dkMWt0C8ap3eGyoXbs1qhJNNnvDVb/qpfmkS?=
- =?us-ascii?Q?FhBoFZpCJCQ3slbtt6axvEQmAHa0SDyqoXgTAFD3ZQLadJGtAcfaS8WL4RcC?=
- =?us-ascii?Q?+nlh+6da8CAi81rkcc174ReIkAogDNPuQEao+903dfFd774WKDynKEFFnoxZ?=
- =?us-ascii?Q?XMD6+PWqtyujeW44uxMvrfhDl1kxFH24yg9w41KX+33E7G34GwyDsKEsfeyk?=
- =?us-ascii?Q?bLfd/4C8JKKmUgXFEVtSo+CN2+doLBKxQZYfMaUxC79yOhaytd+08obaMPCU?=
- =?us-ascii?Q?UN6cpoJ4O12PU7G/IZ+dpAVuIL7hGw09ZeAa/JMfIQZXPOk5hRKB/9uVo/hB?=
- =?us-ascii?Q?vVp+uNEQLLVO1VVmgLYnyel+ccDqhlG6P0KsLuzdgdRrRFpq0kMD0p+Xk6CE?=
- =?us-ascii?Q?hiIzwN+dEn1WLbgPQIRYUUc1U+RCs0WBJeeY1Vfq123Mq2mk3L06zF0I3HGo?=
- =?us-ascii?Q?qHzfgO7I2wj08k4vTn749PDTdf7KAJQMR+uwmWNgqZCIr4Rbd/ezvxAYjnbd?=
- =?us-ascii?Q?fbsd0ZZqAOGxhUZTCvzx3fulczdayFFAV6fku2NHw0YX8r+l7felqo1NXmZd?=
- =?us-ascii?Q?xoKK1R+tyDIpmI1DyPW32uXx2rnpXyBVLTwQBrVqMqJ0K04T1MQCudbyOX9/?=
- =?us-ascii?Q?NWrBYT6xgzOq452smEv4YKdmUSYg?=
+	=?us-ascii?Q?Ao8sVwtODJHL1XCoKXcVQh7wqXfWjaVSuAitGENHbnpUrgtPtTWljOGbrF0f?=
+ =?us-ascii?Q?C7R0Monu18oGFJgnR4mIaGrRUz67GPhZPEwrrIu/0df8G5Kxrgkuz5z2ye11?=
+ =?us-ascii?Q?07+DwxSeQUWey397/42Hdg7CfwvRcUA93z/tKFXr9N+1HUYjUuppmDBLR8qk?=
+ =?us-ascii?Q?hFjcfaIBQvURLnbBwD5mbmLPV5PJnIYyWjHmmLdAlA3TFqc0pZd5DcWlawK/?=
+ =?us-ascii?Q?VRRYKwfoQOBWxWkwFoWoRnQrbguKZI549CTiRPyj8UvcGn7r7gccV5yNOLqs?=
+ =?us-ascii?Q?TCoXd4oH2/Fblifw5k5556dWMVhhv/LVcAFrwOp3yPVMS3RdeJhboev1BgdH?=
+ =?us-ascii?Q?hJE3s5+R/u+Ijwtyiu5HvaBYzlBTOPoQADkde8h0wSZMuWgjPv6KtZcUuoUs?=
+ =?us-ascii?Q?wc9mBopjXJh84sV/XQmatJEsBWEk1GeUaOXF+MEq75CbzxvXNKUwpSZLZyrs?=
+ =?us-ascii?Q?EbPUhuazddfPThdfHoUj2GIisOIaD3dTwNUDTNlKNspEcyK8qgI9lZyoaMhj?=
+ =?us-ascii?Q?jy67GQfJN0N210i2gueVi3ZIGK56mqgLEbllBbMiNyzKjzrjKXJXISNjHYVa?=
+ =?us-ascii?Q?A7EkXsdkHBBNDM1rWmBvC8e/wsvdUmuo3rR28m+5JCZWLAyTyQ1fl1B3pmKC?=
+ =?us-ascii?Q?E0w9IcoZarsVQilKZ1G91TOZlnLc8Vvjhf8rCPORFHQqIa258K30+JYUrjEY?=
+ =?us-ascii?Q?2M+OpOHZakED751rNDSEeRGwcMiOHaznIjHvoqNy7dPS49fP28r+kEfmlMC8?=
+ =?us-ascii?Q?eUp1W6jjicmMVa4jTeRRe3qgVCgpBOA7rIHlKiqgL9VRYRXf3VpjImwkY326?=
+ =?us-ascii?Q?usG1We60+YyIFM5OzFaXP9JP/UMD30KIrXk20D9eKuL+IR1zVxLIk7+Uh0d1?=
+ =?us-ascii?Q?D2ORAiE85yyoJWOnN4bL+Lu4O5QKWf5aGF3iUYyDzCNLywsCH2M95u883A1j?=
+ =?us-ascii?Q?aCm+PZD8a2nxkqdB6zmUbqdrwQnKAmF8YF4UZiSHH1ZxFLqoK1bhg6BINNeW?=
+ =?us-ascii?Q?I4aZ7+V6TWudJUpRKzVTrhfJl/+d+gbmiKYU7CoRFXxq/zgv97RZJoYAEOkV?=
+ =?us-ascii?Q?i3mu1HMvvnOiwXOb1TmCdUhR8ql9ngDwvXbNN+2GqC3dZuLToNvxArhHjTYj?=
+ =?us-ascii?Q?Zm8Higfl6OOl2+cgbSnOA0s9v37rRrX2aTfj+JnOktzYtFcN8etRC20CvhOG?=
+ =?us-ascii?Q?YPgnrD/PULeQ3jiDqBr2dMS2msTxQhT/LKPJMAE+Vrfv6A0RMfk40vp8HLm7?=
+ =?us-ascii?Q?TjgkTr4SkQo5LcwqFTVDskR9KE0kYSTXVKyTtR29phKgyh/PkTNLEwj59Whv?=
+ =?us-ascii?Q?oZGa/7X4mWRlV/Cxihuap04jZwOshSh7fOPYzby8/YUKV0VjgQaqTyXEr1Cm?=
+ =?us-ascii?Q?yn5lbxvlXwTbRjWsnQ6jDpPmkif2?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?JORL87su0lSQlGFWRbYczsWtGPv1992WWP+kKcxS+pBpYl/xOp3bG57Py+VA?=
- =?us-ascii?Q?xtAdrYfaYNxL5esHAPSUFeG45BT39XLwoOB1j3BWAYRf7+T79x8HDQp9P9y3?=
- =?us-ascii?Q?QLTnxAYAnjRcKxUgSOV/kRG19vrww7hSlIwfmf8NaFMjuTEQALF/kBFpnGQZ?=
- =?us-ascii?Q?LjzIS020E3x8zvuNRwCH1/dEmX41RXXcm3Dm3cH9yb2/YaNj/PwbkVutvtDI?=
- =?us-ascii?Q?o+QBMUP+a1x0is6xWaN933mRLdvxa3TKtffxpvdnj+iEOTEa2vBGhQ3wVog6?=
- =?us-ascii?Q?p8UY8pe7pUOsKBOztrcOSPqQBUMk+IpLztMLfSWIp2Wxa6sPQrirM4p0tjNG?=
- =?us-ascii?Q?TeDfdxDu+JISvnsGO/aZ9fSNc/85cH67HuGQDtWGeP3g8KV+26lXfvldD5Iv?=
- =?us-ascii?Q?bpqS6UEw1yAfOZunsLQ4zsdTP6ZNNcaVmy4ddlZtVYa7o2ygDm0vTOF1q+VX?=
- =?us-ascii?Q?WNYODxXFLo9B8sQb6Z3fIqUpdTf6xbRCFM/JKPkWTbPIHTH99W4xCfMG7EpP?=
- =?us-ascii?Q?H8AcKk+1PgendEH1vKUR7tpX6hh0MxWp0cRUtxctNQQbSdtee+5PxC5H3uat?=
- =?us-ascii?Q?YgHAvZ9/vpSsHk8Zo4B1xrhHLlnCaSL4cKt9JOnsNiSGW0gawf8OpvOiOlWW?=
- =?us-ascii?Q?1o5Rslkz53GmsvGla+lNgimjDhHSdzsRdKr3sZEkZie6CdNndZZux0FxpwY7?=
- =?us-ascii?Q?PGU3gbs5Xcs0H9J4CRIKuosEY/G1rAMpPjWFmwrwCseRXorZJI3ktWiyqvlt?=
- =?us-ascii?Q?DfrGv+FWtg5dVifiOdb9iiLV4m2ZgWpC7Rf7I9A0R5TROBaqXYntqSeBiptW?=
- =?us-ascii?Q?xP2XipGjl7PKO0fVJj03JNV3aNZw7W5k09FLazE89BSnDiUaVseTQiSjsQll?=
- =?us-ascii?Q?uevHb+/amSGEB9mWGW4uVxdxir9BrcFaRA51IaGEQUPRXmri2TVCqr06RDqA?=
- =?us-ascii?Q?p60o9gFXvMPsEsE9paek8K4WItNPvmf7MAUEui9+irzwuqwhSWOeisUAo1IX?=
- =?us-ascii?Q?jwJYxZrnUpZ01M33fHSme2547as9VuruVYRU/tDxHHHyxM+fOHCaClGRYxvv?=
- =?us-ascii?Q?SXilT3E6WcufkG8Esf+6XFcggiX9DLfoVKDkLv46MuR8VweTU4lQjcB2s1h0?=
- =?us-ascii?Q?EJcwdCPoZFeLRUnBFkNCZOuaiEvnI5PkBLm9AkTi9gA6LLxJTmcKiRgY6YHk?=
- =?us-ascii?Q?9WpM0l+iUy+UksmhAPmtkJxJ7uDknOOM5SK+b30aiM/JCrLxovm7dh/Zf+vS?=
- =?us-ascii?Q?6N+hwkBDtTbiLyfj0UtaF6zZJHzMK1sLilJmnaj0PegihZAjubugcrBb039r?=
- =?us-ascii?Q?fQCD5nvCDwkmf+8/QQp/RaKLSwvAjiKvd/Pq6i/t5iy+ZhyuepgWWlZBt+E0?=
- =?us-ascii?Q?v94mL0u3g2sMKf9vOVsGyYk8Ahtvyz4Dl7lSWQLvugfbfU7Y3SX8AwJMiwPI?=
- =?us-ascii?Q?Vxpu0g/FHuVmfOW/WeC4dXT7c0iyXy/LUzuMRsM5dB/+X608KLZUUq/Lro32?=
- =?us-ascii?Q?zot598ch34cg1x/CN0SEQo1helep781Uns0T7MQN4Hs7/ED75pEooQZgT/Kt?=
- =?us-ascii?Q?wOVT740r2Lc+K2la9ReKopxv9hQm7gMHOXbzFW6Q?=
+	=?us-ascii?Q?yqMKoGmK1dRYg50lE0tLoLsUFc5abEH4tXB0uXxqDdEXv1gLm9XWXcZyPTpv?=
+ =?us-ascii?Q?e0knXOJ/NlCUTAWrMKFTPHbk+ODoj439WgYu3NanXz8RwU16eLlSYrelaumL?=
+ =?us-ascii?Q?0aPW8r0LmD8N/oF6AAM4YBVwOk3kOx7SrPEki9/4YdRat8tRWlbCEE5ZL06P?=
+ =?us-ascii?Q?Uv3P6bhmckrWRXDAXDdNvVCLgLcZJKOTCH/WBvVUzmNCY46a2vTUDZcD5peP?=
+ =?us-ascii?Q?Hh98WMuwO4YV/h/KyztANxTR4zwvGZcDPTQ+mqWLa+UM5k3dPJrh3twGxFLW?=
+ =?us-ascii?Q?eldI/twb1fActijLUq/LLIP1fcRGN5wRzIme5f0RZrKD5IIxUuUc56W2l+2q?=
+ =?us-ascii?Q?AniYIL0m29/LMxDISn4NuHAQTHnFk93IlaEh6TgEyOICqfnrbhsalOhBNdC6?=
+ =?us-ascii?Q?VPiYKcK0m1DOSwIU1a48jzbIkEkeTgpdkgT6vasXtLYhLOAFonJGhulhBfw+?=
+ =?us-ascii?Q?mYTC1nDvrDpdu9BcsPa4il97lIELPhFOAlFA33uq7hJvrPX5zOzog+sV9rhs?=
+ =?us-ascii?Q?md+kR6ty0G+71y2Ea1hmQiTuRuNb7fi4cRLRGPGWdjL5mbogW1s2o/Az0Gvk?=
+ =?us-ascii?Q?k+GrpzqDtuKOFq3ohaWh6IKvM5Sl/cMQ6GgWRKXrGAQFmzlowfaFM6Q8J+Uz?=
+ =?us-ascii?Q?SsBPOWEfGMHkgtaGTxxOg/uK07Bkvd3rwjZ0UzM6uqhAjjy8nUZ0udDC6swq?=
+ =?us-ascii?Q?e44UBFuk5qw4vJiuubBGK0LcvUikXs3zWJUMUMAXHx+PYuWbL8J+ox89NJNY?=
+ =?us-ascii?Q?UYTX8OES7NypPALJk2eztbQIXcCyezrhDiV3iGGZRoWEKGpqos9CkMiQYqA6?=
+ =?us-ascii?Q?Jza/IvXYY0iud3OSGKFUWTDPdtQDdoO3SkO+YjC6EyhLSsqoax/MTzCYf1Nq?=
+ =?us-ascii?Q?O0rmO9KDBmipiQA0BW77CNKmxKxvU5f5TNqoK6DM2jM0F5u+ToKpyRF5gw2S?=
+ =?us-ascii?Q?TZ2v61iLgIvA6ohKUS2SY9pdNw1KjUhYqAOyNjX9GmCBuuaubnmB3JVp3bo+?=
+ =?us-ascii?Q?Y6wqOgH1/Ek11vEiLtBmH8jIYnbUK2KJEobc3b62HztaLMnIW/k2MjA0uvZI?=
+ =?us-ascii?Q?1b7SLfVQWQdKHY6bXxsdGbJcXZxVDVWcwKGTB9vFPmnIAm1JAmZgTh8G07fe?=
+ =?us-ascii?Q?D2r4aZoSTy0VQdjTbTAbEjXIOO2dJyRRHr/zrgjos34bRz5te6q0eU+bvfJa?=
+ =?us-ascii?Q?K7wIc5t9f8xN01tNxzuKH4v3RwsJxt9RQOPsvr/6rtCJxHr3iAikx+b4u7dy?=
+ =?us-ascii?Q?nVBgvKPYz+mvb7geC+5j6ABT7cPqNfWYRsHQGvZgHE7b18DyHh1CmHv618BV?=
+ =?us-ascii?Q?qNZ577CLB9JS5V9SjHJxhsOV3k8kaf99NhYUcIItqsJmyOjJhjCs7jmIB7EX?=
+ =?us-ascii?Q?nJ7+OB+IPyT9RdQhIhtfPRq4WOs13tiA0Wo57IKita9UVJ1E9BTiIFqhA5G7?=
+ =?us-ascii?Q?nc6CNpoPzESR23tS6x3MJaA/4ySq6UlZl+8jRgidMkggd4G/WdApv3txs0fn?=
+ =?us-ascii?Q?HrAKqJ7xHnl7HL5ac8PUfzkRpH9fV6ZA0ckUCYCIkPYQBZtNsReeEXXt5qBk?=
+ =?us-ascii?Q?aGvE9shr4F7Vjv8tIiOSE0TC4dkyvYR3TuYJwFp0?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99426b2b-9f33-4a0d-8f23-08dd50a2fd6b
+X-MS-Exchange-CrossTenant-Network-Message-Id: 959f831e-1f39-4119-92ca-08dd50a30079
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 05:05:12.6133
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 05:05:17.7570
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ymQ5eHZ20VrfWCqLbLChk/yFjn5HZjcIBMMtFMSUqn8v7SyiEbV9wyU27CiU3WJ0d1K6qViglX0PQUFYoILSCw==
+X-MS-Exchange-CrossTenant-UserPrincipalName: RqF6EMXXSa4CJFg17zpqBX2EOA/eMM/QiGO9zvrI9tC1MZm8BfTRyP0zM/48xgXAHzwRDwxjd2S9du6xOZkfPg==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8875
 
-Changes for v2:
+The PFN_MAP flag is no longer used for anything, so remove it. The
+PFN_SG_CHAIN and PFN_SG_LAST flags never appear to have been used so
+also remove them.
 
- - This is an update to my previous RFC[1] removing just pfn_t rebased
-   on today's mm-unstable which includes my ZONE_DEVICE refcounting
-   clean-up.
-
- - The removal of the devmap PTE bit and associated infrastructure was
-   dropped from that series so I have rolled it into this series.
-
- - Logically this series makes sense to me, but the dropping of devmap
-   is wide ranging and touches some areas I'm less familiar with so
-   would definitely appreciate any review comments there.
-
-[1] - https://lore.kernel.org/linux-mm/cover.a7cdeffaaa366a10c65e2e7544285059cc5d55a4.1736299058.git-series.apopple@nvidia.com/
-[2] - https://lore.kernel.org/linux-mm/cover.a782e309b1328f961da88abddbbc48e5b4579021.1739850794.git-series.apopple@nvidia.com/
-
-All users of dax now require a ZONE_DEVICE page which is properly
-refcounted. This means there is no longer any need for the PFN_DEV, PFN_MAP
-and PFN_SPECIAL flags. Furthermore the PFN_SG_CHAIN and PFN_SG_LAST flags
-never appear to have been used. It is therefore possible to remove the
-pfn_t type and replace any usage with raw pfns.
-
-The remaining users of PFN_DEV have simply passed this to
-vmf_insert_mixed() to create pte_devmap() mappings. It is unclear why this
-was the case but presumably to ensure vm_normal_page() does not return
-these pages. These users can be trivially converted to raw pfns and
-creating a pXX_special() mapping to ensure vm_normal_page() still doesn't
-return these pages.
-
-Now that there are no users of PFN_DEV we can remove the devmap page table
-bit and all associated functions and macros, freeing up a software page
-table bit.
-
+Signed-off-by: Alistair Popple <apopple@nvidia.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
+ include/linux/pfn_t.h             | 31 +++----------------------------
+ mm/memory.c                       |  2 --
+ tools/testing/nvdimm/test/iomap.c |  4 ----
+ 3 files changed, 3 insertions(+), 34 deletions(-)
 
-Cc: gerald.schaefer@linux.ibm.com
-Cc: dan.j.williams@intel.com
-Cc: jgg@ziepe.ca
-Cc: willy@infradead.org
-Cc: david@redhat.com
-Cc: linux-kernel@vger.kernel.org
-Cc: nvdimm@lists.linux.dev
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: linux-ext4@vger.kernel.org
-Cc: linux-xfs@vger.kernel.org
-Cc: jhubbard@nvidia.com
-Cc: hch@lst.de
-Cc: zhang.lyra@gmail.com
-Cc: debug@rivosinc.com
-Cc: bjorn@kernel.org
-Cc: balbirs@nvidia.com
-
-Alistair Popple (12):
-  mm: Remove PFN_MAP, PFN_SG_CHAIN and PFN_SG_LAST
-  mm: Convert pXd_devmap checks to vma_is_dax
-  mm/pagewalk: Skip dax pages in pagewalk
-  mm: Convert vmf_insert_mixed() from using pte_devmap to pte_special
-  mm: Remove remaining uses of PFN_DEV
-  mm/gup: Remove pXX_devmap usage from get_user_pages()
-  mm: Remove redundant pXd_devmap calls
-  mm/khugepaged: Remove redundant pmd_devmap() check
-  powerpc: Remove checks for devmap pages and PMDs/PUDs
-  mm: Remove devmap related functions and page table bits
-  mm: Remove callers of pfn_t functionality
-  mm/memremap: Remove unused devmap_managed_key
-
- Documentation/mm/arch_pgtable_helpers.rst     |   6 +-
- arch/arm64/Kconfig                            |   1 +-
- arch/arm64/include/asm/pgtable-prot.h         |   1 +-
- arch/arm64/include/asm/pgtable.h              |  24 +---
- arch/loongarch/Kconfig                        |   1 +-
- arch/loongarch/include/asm/pgtable-bits.h     |   6 +-
- arch/loongarch/include/asm/pgtable.h          |  19 +--
- arch/powerpc/Kconfig                          |   1 +-
- arch/powerpc/include/asm/book3s/64/hash-4k.h  |   6 +-
- arch/powerpc/include/asm/book3s/64/hash-64k.h |   7 +-
- arch/powerpc/include/asm/book3s/64/pgtable.h  |  53 +------
- arch/powerpc/include/asm/book3s/64/radix.h    |  14 +--
- arch/powerpc/mm/book3s64/hash_hugepage.c      |   2 +-
- arch/powerpc/mm/book3s64/hash_pgtable.c       |   3 +-
- arch/powerpc/mm/book3s64/hugetlbpage.c        |   2 +-
- arch/powerpc/mm/book3s64/pgtable.c            |  10 +-
- arch/powerpc/mm/book3s64/radix_pgtable.c      |   5 +-
- arch/powerpc/mm/pgtable.c                     |   2 +-
- arch/riscv/Kconfig                            |   1 +-
- arch/riscv/include/asm/pgtable-64.h           |  20 +--
- arch/riscv/include/asm/pgtable-bits.h         |   1 +-
- arch/riscv/include/asm/pgtable.h              |  17 +--
- arch/x86/Kconfig                              |   1 +-
- arch/x86/include/asm/pgtable.h                |  51 +------
- arch/x86/include/asm/pgtable_types.h          |   5 +-
- arch/x86/mm/pat/memtype.c                     |   6 +-
- drivers/dax/device.c                          |  23 +--
- drivers/dax/hmem/hmem.c                       |   1 +-
- drivers/dax/kmem.c                            |   1 +-
- drivers/dax/pmem.c                            |   1 +-
- drivers/dax/super.c                           |   3 +-
- drivers/gpu/drm/exynos/exynos_drm_gem.c       |   1 +-
- drivers/gpu/drm/gma500/fbdev.c                |   3 +-
- drivers/gpu/drm/i915/gem/i915_gem_mman.c      |   1 +-
- drivers/gpu/drm/msm/msm_gem.c                 |   1 +-
- drivers/gpu/drm/omapdrm/omap_gem.c            |   7 +-
- drivers/gpu/drm/v3d/v3d_bo.c                  |   1 +-
- drivers/md/dm-linear.c                        |   2 +-
- drivers/md/dm-log-writes.c                    |   2 +-
- drivers/md/dm-stripe.c                        |   2 +-
- drivers/md/dm-target.c                        |   2 +-
- drivers/md/dm-writecache.c                    |   9 +-
- drivers/md/dm.c                               |   2 +-
- drivers/nvdimm/pmem.c                         |   8 +-
- drivers/nvdimm/pmem.h                         |   4 +-
- drivers/s390/block/dcssblk.c                  |  10 +-
- drivers/vfio/pci/vfio_pci_core.c              |   7 +-
- fs/cramfs/inode.c                             |   5 +-
- fs/dax.c                                      |  55 ++----
- fs/ext4/file.c                                |   2 +-
- fs/fuse/dax.c                                 |   3 +-
- fs/fuse/virtio_fs.c                           |   5 +-
- fs/userfaultfd.c                              |   2 +-
- fs/xfs/xfs_file.c                             |   2 +-
- include/linux/dax.h                           |   9 +-
- include/linux/device-mapper.h                 |   2 +-
- include/linux/huge_mm.h                       |  19 +--
- include/linux/memremap.h                      |  11 +-
- include/linux/mm.h                            |  11 +-
- include/linux/pfn.h                           |   9 +-
- include/linux/pfn_t.h                         | 131 +---------------
- include/linux/pgtable.h                       |  25 +---
- include/trace/events/fs_dax.h                 |  12 +-
- mm/Kconfig                                    |   4 +-
- mm/debug_vm_pgtable.c                         |  60 +-------
- mm/gup.c                                      | 162 +-------------------
- mm/hmm.c                                      |  12 +-
- mm/huge_memory.c                              |  98 ++---------
- mm/khugepaged.c                               |   2 +-
- mm/madvise.c                                  |   8 +-
- mm/mapping_dirty_helpers.c                    |   4 +-
- mm/memory.c                                   |  64 ++------
- mm/memremap.c                                 |  28 +---
- mm/migrate.c                                  |   1 +-
- mm/migrate_device.c                           |   2 +-
- mm/mprotect.c                                 |   2 +-
- mm/mremap.c                                   |   5 +-
- mm/page_vma_mapped.c                          |   5 +-
- mm/pagewalk.c                                 |  20 +-
- mm/pgtable-generic.c                          |   7 +-
- mm/userfaultfd.c                              |   6 +-
- mm/vmscan.c                                   |   5 +-
- tools/testing/nvdimm/pmem-dax.c               |   6 +-
- tools/testing/nvdimm/test/iomap.c             |  11 +-
- 84 files changed, 216 insertions(+), 955 deletions(-)
- delete mode 100644 include/linux/pfn_t.h
-
-base-commit: cf42737e247a159abe9b0dc065a3ea44808a83a0
+diff --git a/include/linux/pfn_t.h b/include/linux/pfn_t.h
+index 2d91482..46afa12 100644
+--- a/include/linux/pfn_t.h
++++ b/include/linux/pfn_t.h
+@@ -5,26 +5,13 @@
+ 
+ /*
+  * PFN_FLAGS_MASK - mask of all the possible valid pfn_t flags
+- * PFN_SG_CHAIN - pfn is a pointer to the next scatterlist entry
+- * PFN_SG_LAST - pfn references a page and is the last scatterlist entry
+  * PFN_DEV - pfn is not covered by system memmap by default
+- * PFN_MAP - pfn has a dynamic page mapping established by a device driver
+- * PFN_SPECIAL - for CONFIG_FS_DAX_LIMITED builds to allow XIP, but not
+- *		 get_user_pages
+  */
+ #define PFN_FLAGS_MASK (((u64) (~PAGE_MASK)) << (BITS_PER_LONG_LONG - PAGE_SHIFT))
+-#define PFN_SG_CHAIN (1ULL << (BITS_PER_LONG_LONG - 1))
+-#define PFN_SG_LAST (1ULL << (BITS_PER_LONG_LONG - 2))
+ #define PFN_DEV (1ULL << (BITS_PER_LONG_LONG - 3))
+-#define PFN_MAP (1ULL << (BITS_PER_LONG_LONG - 4))
+-#define PFN_SPECIAL (1ULL << (BITS_PER_LONG_LONG - 5))
+ 
+ #define PFN_FLAGS_TRACE \
+-	{ PFN_SPECIAL,	"SPECIAL" }, \
+-	{ PFN_SG_CHAIN,	"SG_CHAIN" }, \
+-	{ PFN_SG_LAST,	"SG_LAST" }, \
+-	{ PFN_DEV,	"DEV" }, \
+-	{ PFN_MAP,	"MAP" }
++	{ PFN_DEV,	"DEV" }
+ 
+ static inline pfn_t __pfn_to_pfn_t(unsigned long pfn, u64 flags)
+ {
+@@ -46,7 +33,7 @@ static inline pfn_t phys_to_pfn_t(phys_addr_t addr, u64 flags)
+ 
+ static inline bool pfn_t_has_page(pfn_t pfn)
+ {
+-	return (pfn.val & PFN_MAP) == PFN_MAP || (pfn.val & PFN_DEV) == 0;
++	return (pfn.val & PFN_DEV) == 0;
+ }
+ 
+ static inline unsigned long pfn_t_to_pfn(pfn_t pfn)
+@@ -100,7 +87,7 @@ static inline pud_t pfn_t_pud(pfn_t pfn, pgprot_t pgprot)
+ #ifdef CONFIG_ARCH_HAS_PTE_DEVMAP
+ static inline bool pfn_t_devmap(pfn_t pfn)
+ {
+-	const u64 flags = PFN_DEV|PFN_MAP;
++	const u64 flags = PFN_DEV;
+ 
+ 	return (pfn.val & flags) == flags;
+ }
+@@ -116,16 +103,4 @@ pmd_t pmd_mkdevmap(pmd_t pmd);
+ pud_t pud_mkdevmap(pud_t pud);
+ #endif
+ #endif /* CONFIG_ARCH_HAS_PTE_DEVMAP */
+-
+-#ifdef CONFIG_ARCH_HAS_PTE_SPECIAL
+-static inline bool pfn_t_special(pfn_t pfn)
+-{
+-	return (pfn.val & PFN_SPECIAL) == PFN_SPECIAL;
+-}
+-#else
+-static inline bool pfn_t_special(pfn_t pfn)
+-{
+-	return false;
+-}
+-#endif /* CONFIG_ARCH_HAS_PTE_SPECIAL */
+ #endif /* _LINUX_PFN_T_H_ */
+diff --git a/mm/memory.c b/mm/memory.c
+index 1e4424a..bdc8dce 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2570,8 +2570,6 @@ static bool vm_mixed_ok(struct vm_area_struct *vma, pfn_t pfn, bool mkwrite)
+ 		return true;
+ 	if (pfn_t_devmap(pfn))
+ 		return true;
+-	if (pfn_t_special(pfn))
+-		return true;
+ 	if (is_zero_pfn(pfn_t_to_pfn(pfn)))
+ 		return true;
+ 	return false;
+diff --git a/tools/testing/nvdimm/test/iomap.c b/tools/testing/nvdimm/test/iomap.c
+index e431372..ddceb04 100644
+--- a/tools/testing/nvdimm/test/iomap.c
++++ b/tools/testing/nvdimm/test/iomap.c
+@@ -137,10 +137,6 @@ EXPORT_SYMBOL_GPL(__wrap_devm_memremap_pages);
+ 
+ pfn_t __wrap_phys_to_pfn_t(phys_addr_t addr, unsigned long flags)
+ {
+-	struct nfit_test_resource *nfit_res = get_nfit_res(addr);
+-
+-	if (nfit_res)
+-		flags &= ~PFN_MAP;
+         return phys_to_pfn_t(addr, flags);
+ }
+ EXPORT_SYMBOL(__wrap_phys_to_pfn_t);
 -- 
 git-series 0.9.1
 
