@@ -1,130 +1,431 @@
-Return-Path: <linux-fsdevel+bounces-42024-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42025-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7597FA3ACF8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 01:11:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A043A3AD21
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 01:34:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44CBA189085A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 00:11:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AA6A16D6FD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 00:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BCF0C125;
-	Wed, 19 Feb 2025 00:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4B51A28D;
+	Wed, 19 Feb 2025 00:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="CSaauxeo"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JWDu6Ntg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CT6L9jjj";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JWDu6Ntg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CT6L9jjj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE5D8F58
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2025 00:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EECDEEAA
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2025 00:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739923869; cv=none; b=VuiIQET4AQCzcv3szRoZnyL2lYznEWfOyjqfvYjlnH9624ZrGNQRaieQsNO5IZsYtBHLlx706Wp7PZqNLf2brKb1B/z/U6jNTpLuSvl5YKFcIW6Z2rdHh9qCRh2BjXHeW6D2ZybGWoxTljrGVBmD1X8Trllk2Jq9++Owcx+MprM=
+	t=1739925235; cv=none; b=rMUq6H9frWXzI2gW8S7r/XkNlvpRbY/YXntQXmk7HchQs36v1ko8SLsgsITxoI8inoetkyiwp2imHAQ7sn+ZFsRD1rACszPUQRdgr0WwXlzFSjp4iovvo6vPfFN/Uh8DL2fGU+7SDSjrnWXwBqcoN+21XYyQkds3SHmydgrA53I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739923869; c=relaxed/simple;
-	bh=GKth8OgfzFdg1eI08wTLXySe0/ivwrF4OJZlEoIUS3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A2eQgmnQirur4FTntOIAEjtnVMdUHhOvUUeLkIICj8lq4hYKfa/eG8A5yYb1c9ve/XLyl+ehtjiAqTkLCgXiKTRVFusRDJD68TMbdC2j8hHxIZnARZRTiczACr2sZL0vIybOc6BL+XBAnzAO5qGaC0q1lvBF3pX9vnddNdQuZ8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=CSaauxeo; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22113560c57so65432925ad.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2025 16:11:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1739923866; x=1740528666; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wje+37OUw3EOY3E8DdGEm6PdRUyXBW2L3woHBy7T6PU=;
-        b=CSaauxeosHvEhvX7OJSF9HR/qn2/ZC5RoSq5l5l69nbJreEo6zEzKaYQE1VeGlM8qO
-         BfELA0Ur6tlUHqwaF766krLn+YOUDQ/GlfakF6txn0jRFi1F8p+8c9z0mVf9pruWe6MZ
-         UPY9g/M3AB12EvW9Kvyu0zTwN/0miKCvrpWFwcDrW70deVgwZGcFCgbuugjQEheX9hxT
-         OFLDofbRAdf3/gQOa3dVwQEzLaki2zusN6lYU5hSVD0NW3cwmKjnvhOEsiQnJxlipmmF
-         ZlnXJE08/RCyjRIPQbSvLUsd7B09JYYVXS5qd0JM32xpph4fKoc6yKywmWvabmar+tEU
-         2z/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739923866; x=1740528666;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wje+37OUw3EOY3E8DdGEm6PdRUyXBW2L3woHBy7T6PU=;
-        b=I2p0nRA+XiDc29vcbIMPefDCAOFQAE4X/U5qm9/gy/Te86S0h7cPOd/O+bp9rvHqcD
-         h+xHkpq0TiNSJzQilq8VWS6jAVyKMnw/m8BjJotm1htBSDiEelsYISp+0VAHjoPHijH1
-         37w1XoZO6L4k6FJKu/v5piCRP84+Ry+YKerTtG2OMpAqPKpF85bQwcG54D8UdbLRtWgK
-         y5FKr4eYC1ZWA/a0+Zy//0zWU+/h800eJdpQDaLqEwtZHWH6OSdkMctQuTYCOF04ts/2
-         UJuOr7m/CgNYLJmEr9RsL0ZrK8F9f8RPdiUGRzZ7KKw9DbX2FndLsLigGe75t+bHnOKa
-         YE1w==
-X-Forwarded-Encrypted: i=1; AJvYcCX0rHUhj8lkd5hSqQMNjlFjWxJuA4ZwKbbLWd02FbjyO15Q0yKQYu3FpjPs34voEaxMhzrs4hJ7DmlKJQ+g@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVTArFv2TMQrfZE3mmSn6Jm1zaW1ySa+YsmVG7usrxXqhxFqST
-	BIRwaLfPi/CiM6N3+ahbMitkQgfCsvWWlNyKoeuNth7ZGtCXzv2oNJR9YTb/gQw=
-X-Gm-Gg: ASbGncsj+/9ZQb+92v1c+lCMlK4dELQOTwM9CjoF/lCtr56/w+U2PGW/fOlRKpCgc8G
-	WpuuU4DHH+O+eBZeE9k98dYb+tSkOGhn45GYJl9QHGRpX0WuAGYCn+08arflV0qkRGZhtgsg0pb
-	0s7mkcSDPWqWr9R1KrBqwS+PWrQh1OW/oTMIfXlAVzJ7gEtcN5dXZSRbxL0qiJxgF1METHbiCO1
-	0Y8/ZXzeJ9vmQdKMbIr/OBWm+LsRJ3AGmkY2Wlhs2f5ISVIhVlgsA9dXBPyP5TfeXdCE41GwNjY
-	Xq3k0pRxAonc1THD7M6+ysr+H5e3+l4JZjcVT8pfUyaT671CAq84PHm4bjdWrTtiRXc=
-X-Google-Smtp-Source: AGHT+IGzNw9N6vIVHFFoSDN7U/7f25cr4Ncvov37jFAYdeOGbe9w5NFdAS1CNJKBD1dXb4wW4OuzXQ==
-X-Received: by 2002:a05:6a00:3d42:b0:730:8d0c:1066 with SMTP id d2e1a72fcca58-73261911238mr28880688b3a.24.1739923865977;
-        Tue, 18 Feb 2025 16:11:05 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73272a28fe5sm5802089b3a.101.2025.02.18.16.11.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 16:11:05 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tkXg7-0000000314I-00od;
-	Wed, 19 Feb 2025 11:11:03 +1100
-Date: Wed, 19 Feb 2025 11:11:02 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
-Cc: axboe@kernel.dk, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	brauner@kernel.org, linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH 2/2] mm/truncate: don't skip dirty page in
- folio_unmap_invalidate()
-Message-ID: <Z7UhllvPUxVuYOqf@dread.disaster.area>
-References: <20250218120209.88093-1-jefflexu@linux.alibaba.com>
- <20250218120209.88093-3-jefflexu@linux.alibaba.com>
+	s=arc-20240116; t=1739925235; c=relaxed/simple;
+	bh=pqS5oTvAk0giOqfJRkK2BApGw4XmrLld11iaLG8GYWw=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=UaI4hHkIztgvC5/Jnwr6Ml9Pd/ZDJaWGnfpYRy4uCC9xk5MpgGvw1Lb3a76EJwJ1aE5fNuSbq+SyXERwCnPZ7xqs8CXRi61oNSTQcaZdqUH7b+e0Ufcit/cHvb+/C0/+T1IYSwDVhD4Fox2vmJgQN/IcQxwkNSTdXg2AorIj56A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=fail smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JWDu6Ntg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CT6L9jjj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JWDu6Ntg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CT6L9jjj; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A5CCA1F399;
+	Wed, 19 Feb 2025 00:33:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739925230; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vw08EzFgdB6JLWlY70hu+Irj6szsZNns2mHfhg1FblE=;
+	b=JWDu6NtgOtAwAiNjvIvz7jJYVYInd+aPgKUXCktVCYBBNfCw1em7dFR7Yar5ATegxItjtv
+	J7dBxSxoKBqtcRxsmGCJ9EMVq815GHc+51qrf/OHE0LisVRVGmcqxH2/TTYWli/cSqVDZd
+	MzgfJe+PlBEi1DjGIf9Uf96MsgFzXz8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739925230;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vw08EzFgdB6JLWlY70hu+Irj6szsZNns2mHfhg1FblE=;
+	b=CT6L9jjjM6NgTUd+8nQYiOrgUAMFm1eeXnVtJ1bC5uHu1fjS6/nEQfMiotgni//NRAQ2kA
+	OqfBgegi75RYKkCw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739925230; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vw08EzFgdB6JLWlY70hu+Irj6szsZNns2mHfhg1FblE=;
+	b=JWDu6NtgOtAwAiNjvIvz7jJYVYInd+aPgKUXCktVCYBBNfCw1em7dFR7Yar5ATegxItjtv
+	J7dBxSxoKBqtcRxsmGCJ9EMVq815GHc+51qrf/OHE0LisVRVGmcqxH2/TTYWli/cSqVDZd
+	MzgfJe+PlBEi1DjGIf9Uf96MsgFzXz8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739925230;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vw08EzFgdB6JLWlY70hu+Irj6szsZNns2mHfhg1FblE=;
+	b=CT6L9jjjM6NgTUd+8nQYiOrgUAMFm1eeXnVtJ1bC5uHu1fjS6/nEQfMiotgni//NRAQ2kA
+	OqfBgegi75RYKkCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9430E13A53;
+	Wed, 19 Feb 2025 00:33:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id y87PEuwmtWcNGAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Wed, 19 Feb 2025 00:33:48 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218120209.88093-3-jefflexu@linux.alibaba.com>
+From: "NeilBrown" <neilb@suse.de>
+To: "Jeff Layton" <jlayton@kernel.org>
+Cc: "Christian Brauner" <brauner@kernel.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] VFS: Change vfs_mkdir() to return the dentry.
+In-reply-to: <29c98d43dee593901a37dd910851c9606a7e9278.camel@kernel.org>
+References: <>, <29c98d43dee593901a37dd910851c9606a7e9278.camel@kernel.org>
+Date: Wed, 19 Feb 2025 11:33:44 +1100
+Message-id: <173992522496.3118120.85231226577537565@noble.neil.brown.name>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_FIVE(0.00)[6]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Tue, Feb 18, 2025 at 08:02:09PM +0800, Jingbo Xu wrote:
-> ... otherwise this is a behavior change for the previous callers of
-> invalidate_complete_folio2(), e.g. the page invalidation routine.
-> 
-> Fixes: 4a9e23159fd3 ("mm/truncate: add folio_unmap_invalidate() helper")
-> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
-> ---
->  mm/truncate.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/mm/truncate.c b/mm/truncate.c
-> index e2e115adfbc5..76d8fcd89bd0 100644
-> --- a/mm/truncate.c
-> +++ b/mm/truncate.c
-> @@ -548,8 +548,6 @@ int folio_unmap_invalidate(struct address_space *mapping, struct folio *folio,
->  
->  	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
->  
-> -	if (folio_test_dirty(folio))
-> -		return 0;
+On Wed, 19 Feb 2025, Jeff Layton wrote:
+> On Mon, 2025-02-17 at 16:30 +1100, NeilBrown wrote:
+> > vfs_mkdir() does not currently guarantee to leave the child dentry
+> > hashed or make it positive on success.  It may leave it unhashed and
+> > negative and then the caller needs to perform a lookup to find the
+> > target dentry, if it needs it.
+> >=20
+> > This patch changes vfs_mkdir() to return the dentry provided by the
+> > filesystems which is hashed and positive when provided.  This reduces
+> > the need for lookup code which is now included in vfs_mkdir() rather
+> > than at various call-sites.  The included lookup does not include the
+> > permission check that some of the existing code included in e.g.
+> > lookup_one_len().  This should not be necessary for lookup up a
+> > directory which has just be successfully created.
+> >=20
+> > If a different dentry is returned, the first one is put.  If necessary
+> > the fact that it is new can be determined by comparing pointers.  A new
+> > dentry will certainly have a new pointer (as the old is put after the
+> > new is obtained).
+> >=20
+> > The dentry returned by vfs_mkdir(), when not an error, *is* now
+> > guaranteed to be hashed and positive.
+> >=20
+> > A few callers do not need the dentry, but will now sometimes perform the
+> > lookup anyway.  This should be cheap except possibly in the case of cifs.
+> >=20
+> > Signed-off-by: NeilBrown <neilb@suse.de>
+> > ---
+> >  drivers/base/devtmpfs.c  |  7 ++--
+> >  fs/cachefiles/namei.c    | 10 +++---
+> >  fs/ecryptfs/inode.c      | 14 +++++---
+> >  fs/init.c                |  7 ++--
+> >  fs/namei.c               | 70 +++++++++++++++++++++++++++++++---------
+> >  fs/nfsd/nfs4recover.c    |  7 ++--
+> >  fs/nfsd/vfs.c            | 28 +++++-----------
+> >  fs/overlayfs/dir.c       | 37 +++------------------
+> >  fs/overlayfs/overlayfs.h | 15 ++++-----
+> >  fs/overlayfs/super.c     |  7 ++--
+> >  fs/smb/server/vfs.c      | 31 ++++++------------
+> >  fs/xfs/scrub/orphanage.c |  9 +++---
+> >  include/linux/fs.h       |  4 +--
+> >  13 files changed, 121 insertions(+), 125 deletions(-)
+> >=20
+> > diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
+> > index c9e34842139f..8ec756b5dec4 100644
+> > --- a/drivers/base/devtmpfs.c
+> > +++ b/drivers/base/devtmpfs.c
+> > @@ -160,18 +160,17 @@ static int dev_mkdir(const char *name, umode_t mode)
+> >  {
+> >  	struct dentry *dentry;
+> >  	struct path path;
+> > -	int err;
+> > =20
+> >  	dentry =3D kern_path_create(AT_FDCWD, name, &path, LOOKUP_DIRECTORY);
+> >  	if (IS_ERR(dentry))
+> >  		return PTR_ERR(dentry);
+> > =20
+> > -	err =3D vfs_mkdir(&nop_mnt_idmap, d_inode(path.dentry), dentry, mode);
+> > -	if (!err)
+> > +	dentry =3D vfs_mkdir(&nop_mnt_idmap, d_inode(path.dentry), dentry, mode=
+);
+> > +	if (!IS_ERR(dentry))
+> >  		/* mark as kernel-created inode */
+> >  		d_inode(dentry)->i_private =3D &thread;
+> >  	done_path_create(&path, dentry);
+> > -	return err;
+> > +	return PTR_ERR_OR_ZERO(dentry);
+> >  }
+> > =20
+> >  static int create_path(const char *nodepath)
+> > diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+> > index 7cf59713f0f7..8a8337d1be05 100644
+> > --- a/fs/cachefiles/namei.c
+> > +++ b/fs/cachefiles/namei.c
+> > @@ -95,7 +95,6 @@ struct dentry *cachefiles_get_directory(struct cachefil=
+es_cache *cache,
+> >  	/* search the current directory for the element name */
+> >  	inode_lock_nested(d_inode(dir), I_MUTEX_PARENT);
+> > =20
+> > -retry:
+> >  	ret =3D cachefiles_inject_read_error();
+> >  	if (ret =3D=3D 0)
+> >  		subdir =3D lookup_one_len(dirname, dir, strlen(dirname));
+> > @@ -128,10 +127,11 @@ struct dentry *cachefiles_get_directory(struct cach=
+efiles_cache *cache,
+> >  		ret =3D security_path_mkdir(&path, subdir, 0700);
+> >  		if (ret < 0)
+> >  			goto mkdir_error;
+> > -		ret =3D cachefiles_inject_write_error();
+> > -		if (ret =3D=3D 0)
+> > -			ret =3D vfs_mkdir(&nop_mnt_idmap, d_inode(dir), subdir, 0700);
+> > -		if (ret < 0) {
+> > +		subdir =3D ERR_PTR(cachefiles_inject_write_error());
+> > +		if (!IS_ERR(subdir))
+> > +			subdir =3D vfs_mkdir(&nop_mnt_idmap, d_inode(dir), subdir, 0700);
+> > +		ret =3D PTR_ERR(subdir);
+> > +		if (IS_ERR(subdir)) {
+> >  			trace_cachefiles_vfs_error(NULL, d_inode(dir), ret,
+> >  						   cachefiles_trace_mkdir_error);
+> >  			goto mkdir_error;
+> > diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+> > index 6315dd194228..51a5c54eb740 100644
+> > --- a/fs/ecryptfs/inode.c
+> > +++ b/fs/ecryptfs/inode.c
+> > @@ -511,10 +511,16 @@ static struct dentry *ecryptfs_mkdir(struct mnt_idm=
+ap *idmap, struct inode *dir,
+> >  	struct inode *lower_dir;
+> > =20
+> >  	rc =3D lock_parent(dentry, &lower_dentry, &lower_dir);
+> > -	if (!rc)
+> > -		rc =3D vfs_mkdir(&nop_mnt_idmap, lower_dir,
+> > -			       lower_dentry, mode);
+> > -	if (rc || d_really_is_negative(lower_dentry))
+> > +	if (rc)
+> > +		goto out;
+> > +
+> > +	lower_dentry =3D vfs_mkdir(&nop_mnt_idmap, lower_dir,
+> > +				 lower_dentry, mode);
+> > +	rc =3D PTR_ERR(lower_dentry);
+> > +	if (IS_ERR(lower_dentry))
+> > +		goto out;
+> > +	rc =3D 0;
+> > +	if (d_unhashed(lower_dentry))
+> >  		goto out;
+> >  	rc =3D ecryptfs_interpose(lower_dentry, dentry, dir->i_sb);
+> >  	if (rc)
+> > diff --git a/fs/init.c b/fs/init.c
+> > index e9387b6c4f30..eef5124885e3 100644
+> > --- a/fs/init.c
+> > +++ b/fs/init.c
+> > @@ -230,9 +230,12 @@ int __init init_mkdir(const char *pathname, umode_t =
+mode)
+> >  		return PTR_ERR(dentry);
+> >  	mode =3D mode_strip_umask(d_inode(path.dentry), mode);
+> >  	error =3D security_path_mkdir(&path, dentry, mode);
+> > -	if (!error)
+> > -		error =3D vfs_mkdir(mnt_idmap(path.mnt), path.dentry->d_inode,
+> > +	if (!error) {
+> > +		dentry =3D vfs_mkdir(mnt_idmap(path.mnt), path.dentry->d_inode,
+> >  				  dentry, mode);
+> > +		if (IS_ERR(dentry))
+> > +			error =3D PTR_ERR(dentry);
+> > +	}
+> >  	done_path_create(&path, dentry);
+> >  	return error;
+> >  }
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index 19d5ea340a18..f76fee6df369 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -4132,7 +4132,8 @@ EXPORT_SYMBOL(kern_path_create);
+> > =20
+> >  void done_path_create(struct path *path, struct dentry *dentry)
+> >  {
+> > -	dput(dentry);
+> > +	if (!IS_ERR(dentry))
+> > +		dput(dentry);
+> >  	inode_unlock(path->dentry->d_inode);
+> >  	mnt_drop_write(path->mnt);
+> >  	path_put(path);
+> > @@ -4278,7 +4279,7 @@ SYSCALL_DEFINE3(mknod, const char __user *, filenam=
+e, umode_t, mode, unsigned, d
+> >  }
+> > =20
+> >  /**
+> > - * vfs_mkdir - create directory
+> > + * vfs_mkdir - create directory returning correct dentry is possible
+> >   * @idmap:	idmap of the mount the inode was found from
+> >   * @dir:	inode of the parent directory
+> >   * @dentry:	dentry of the child directory
+> > @@ -4291,9 +4292,20 @@ SYSCALL_DEFINE3(mknod, const char __user *, filena=
+me, umode_t, mode, unsigned, d
+> >   * care to map the inode according to @idmap before checking permissions.
+> >   * On non-idmapped mounts or if permission checking is to be performed o=
+n the
+> >   * raw inode simply pass @nop_mnt_idmap.
+> > + *
+> > + * In the event that the filesystem does not use the *@dentry but leaves=
+ it
+> > + * negative or unhashes it and possibly splices a different one returnin=
+g it,
+> > + * the original dentry is dput() and the alternate is returned.
+> > + *
+> > + * If the file-system reports success but leaves the dentry unhashed or
+> > + * negative, a lookup is performed and providing that is positive and
+> > + * a directory, it will be returned.  If the lookup is not successful
+> > + * the original dentry is unhashed and returned.
+> > + *
+> > + * In case of an error the dentry is dput() and an ERR_PTR() is returned.
+> >   */
+> > -int vfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+> > -	      struct dentry *dentry, umode_t mode)
+> > +struct dentry *vfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+> > +			 struct dentry *dentry, umode_t mode)
+> >  {
+> >  	int error;
+> >  	unsigned max_links =3D dir->i_sb->s_max_links;
+> > @@ -4301,30 +4313,54 @@ int vfs_mkdir(struct mnt_idmap *idmap, struct ino=
+de *dir,
+> > =20
+> >  	error =3D may_create(idmap, dir, dentry);
+> >  	if (error)
+> > -		return error;
+> > +		goto err;
+> > =20
+> > +	error =3D -EPERM;
+> >  	if (!dir->i_op->mkdir)
+> > -		return -EPERM;
+> > +		goto err;
+> > =20
+> >  	mode =3D vfs_prepare_mode(idmap, dir, mode, S_IRWXUGO | S_ISVTX, 0);
+> >  	error =3D security_inode_mkdir(dir, dentry, mode);
+> >  	if (error)
+> > -		return error;
+> > +		goto err;
+> > =20
+> > +	error =3D -EMLINK;
+> >  	if (max_links && dir->i_nlink >=3D max_links)
+> > -		return -EMLINK;
+> > +		goto err;
+> > =20
+> >  	de =3D dir->i_op->mkdir(idmap, dir, dentry, mode);
+> > +	error =3D PTR_ERR(de);
+> >  	if (IS_ERR(de))
+> > -		return PTR_ERR(de);
+> > +		goto err;
+> > +	if (!de && (d_unhashed(dentry) || d_is_negative(dentry))) {
+>=20
+> Would it be better to push this down into the callers that need it and
+> make returning a hashed, positive dentry a requirement for the mkdir
+> operation?
 
-Shouldn't that actually return -EBUSY because the folio could not be
-invalidated?
+nit: I think you mean callees, not callers ?
 
-Indeed, further down the function the folio gets locked and the
-dirty test is repeated. If it fails there it returns -EBUSY....
+>=20
+> You could just turn this block of code into a helper function that
+> those four filesystems could call, which would mean that you could
+> avoid the d_unhashed() and d_is_negative() checks on the other
+> filesystems.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+yes and no.  or maybe...
+
+yes: I would rally like to require that ->mkdir always provided a hashed
+positive dentry on success.
+no: I would not do it by asking them to use this case, as each
+filesystem could more easily do it with internal interfaces more
+simply
+yes: I guess we could impose this code as a first-cut and encourage each
+fs to convert it to better internal code
+no: it isn't always possible.  cifs is the main problem (that I'm aware
+of).
+
+ cifs is a network filesystem but doesn't (I think) have a concept
+ comparable with the NFS filehandle.  I think some handle is involved
+ when a file is open, but not otherwise.  The only handle you can use on
+ a non-open file is the path name.  This is actually much the same as
+ the POSIX user-space interface.
+ It means that if you "mkdir" and directory and then want to act on it,
+ you need to give the name again, and some other process might have
+ removed, or moved the directory and possibly put something else under
+ the same name between the lookup and the subsequent act.  So inside
+ cifs it can perform a remote lookup for the name after the mkdir and
+ might find a directory and can reasonable expect it to be the same
+ directory and can fill in some inode information.  But it might find a
+ file, or nothing...
+
+How much does this matter?  Is POSIX doesn't allow a 'stat' after
+'mkdir' to guarantee to hit the same object, why do we need it in the
+kernel?
+
+1/ nfsd needs to reply to "mkdir" with a filehandle for the created
+   directory.  This is actually optional in v3 and v4.  So providing we
+   get the filesys to return a good dentry whenever it can, we don't
+   really need the lookup when the filesys honestly cannot provide
+   something.=20
+
+2/ ksmbd wants to effect an "inherit_owner" request to set the owner
+   of the child to match the parent ... though it only writes the uid,
+   it doesn't call setattr, so that doesn't seem all that important
+   for the filesystems which would be problematic
+
+3/ cachefiles ... I've messed up that part of the patch!
+   It wants to start creating files in the directory.  I now think it
+   would be safest for cachefiles to refused to work on filesystems
+   which cannot give an inode back from a mkdir request.  The code in
+   question is quite able to fail of something looks wrong.  The inode
+   being NULL should just be another wrong thing.
+
+So thanks for asking.  I think it is important for ->mkdir to be able to
+return a good dentry if it is possible, but we must accept that
+sometimes it isn't possible and I now don't think it is worthwhile for
+the in-kernel clients to try a lookup in those cases.  Filesystems can
+be encouraged to do the best they can and clients shouldn't assume they
+can do any better.
+
+I'll revise my last patch.
+
+Thanks,
+NeilBrown
+
 
