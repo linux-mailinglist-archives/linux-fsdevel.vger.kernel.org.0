@@ -1,158 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-42111-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42112-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D191A3C6E8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 19:01:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C9CA3C70A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 19:09:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 768C81892411
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 17:59:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA8CF3AABB3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 18:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79682147E6;
-	Wed, 19 Feb 2025 17:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C616214A6A;
+	Wed, 19 Feb 2025 18:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qe9EkqaZ"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LTG+FjzA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61CAB214230
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2025 17:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787812147E8;
+	Wed, 19 Feb 2025 18:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739987939; cv=none; b=qvl0O5epFuVfj7aZqhrwrQrxglgahgMu3VeC2N9P0nRMZ/bNbNmVtBpycG2KxmYuInpEzefHyz3rqaxl3q6y9XY63ZV5m/jwKPypvZOhE2OzUD8BCeSr15U4DGiDJBRw7PnQh/xxeQTLEpFe0nQPEsmBt6fVBH8k8qpkyrpeGSs=
+	t=1739988569; cv=none; b=MCY/SdI/47UNEFXiycESsSIacxKO4VjwIGjF42JvG5Uwfj4yvoTg4p/8m4LIjbeJ5KJkg873+WOZ6/7RoM41giPtorc9zoTeEP21OwlAAAgbIGUkyV3ClfKSR2ZrJPu0x/zXgNBYMyKuM0BZuTUyM5naN6C/e3/K+M37P++5V34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739987939; c=relaxed/simple;
-	bh=qeVZZCl70fo92RGRX0CxSyUEL18jKIx+OWPU9Z2cSTE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eifw9wY5KAbsCVQ/oSXzLxrj47hFQQ8Mggag1TpEDWSFa1t9SNvvjX9pek50C2NhP+B2lre0oJIP5roYmBANlQ8BROdVwyY9znqqrR+yXRpPjg6zluG7BodU7867e2vf/PiBfY9nilFDs+o9Te2Ob0+ZqbM8ImJ712sEC09HIYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qe9EkqaZ; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5dec817f453so11920646a12.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2025 09:58:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739987936; x=1740592736; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+4DqovM4Ou0UcJY5/Qp8ERIFvHMLB5AQH/4HoGU6zwY=;
-        b=Qe9EkqaZoSY+eWShX/S5954jPBa33UF8OjnWiurrSRh5emDtnTD9fut9xrNV2zBIen
-         Yt3KCICHq+EuetreKp6F281MLMYFqfWFd4fae63JqD+ef3lQb4/0wJ8jZkk3gunzhNvp
-         vYYrAI1MZs+1XDVj50jlRF0LRCyraQhfvBDRExxJfa3RNdG83ME1PgZacxlnw5LkiAF1
-         RuII2ntds1iGDWncCNYn41qnpjMdnguTVwzOPppf8CQDHbRKDESasIX0sT5K0FG9EVKW
-         wKhsh+NmNkqBn7EiT1kSI1i0jODpxBuQhAK3zvL+CgqM1UIR+I87AQ1Tljn7TftuOhh9
-         aAxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739987936; x=1740592736;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+4DqovM4Ou0UcJY5/Qp8ERIFvHMLB5AQH/4HoGU6zwY=;
-        b=ERf66TeBfxA/F/crno1LpOecIbMyntBUexR4sj4OcKjrOUOiNksoRhixqUdB/zaAjl
-         FOndDJymfmDC7T6SjaSVW9x3d69oqDVv4Dzxp1zq838hEf+k5x+cDeSX51T/IW1Ne6fx
-         ZbdNSzOyfBSJWcKOvPWPBTFF+dOpc8xo3dhc6BfMsI8OAUxFFKfPp8PDKZEfaQZYa6nD
-         7ZkG0jrpLhg1ag4HlbFRy1ZQ+TmwXT/p98OgLImsaYHukafpwdsX8eIU9FYR8kZjPvb0
-         N9gCbzaaVV83wAo/UTKUpBQ69cEBOQJvBTYkIpp+AJRkhBOeCV2LzdVUi32jVHDs8pmD
-         clvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvGaBqRpWysU9onosW0IMnikyzYq1dB+j7ZVMz9QXV8TiqtdKx8pXeZr2e/f6vXHTmd1YLf5luqDPNYSXS@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPMN4Li2m6te28u1EA5R1L23gfqsnlkqb2QHmsxoSGYsr7WVzw
-	bOUB8hUlPRzMk/D8H1H6b7StU5iCZZ/Suoj2GtCKKGqt3oA15ovEA6+iY/R1KD9rqh1G/WNO1uA
-	Ms4nrkJs5mJAPPKtvzVjDkoNwG60=
-X-Gm-Gg: ASbGncs/dV4Oje+16WOKtAO6ooo7aM0RYfYxeBGLmEVMP4pKETfHbwn5MOfvwexF9E4
-	C+WFRFL0UcuzkIhStvMMJG3ZRfRQUXgIU//+D0PmC5/+fl6szPwNMIfFGnWxZCi6V8LHF/I21
-X-Google-Smtp-Source: AGHT+IG93GVdgzPX9ZdwmOFV8Uf6c6MNSkc8SUwaEixJk//FsuJ1LhBRkLijKAirWCWSqZ/Kyc4N3Xi6n2SDf4JUF4o=
-X-Received: by 2002:a05:6402:34c6:b0:5e0:4408:6bab with SMTP id
- 4fb4d7f45d1cf-5e089524924mr4050562a12.19.1739987935166; Wed, 19 Feb 2025
- 09:58:55 -0800 (PST)
+	s=arc-20240116; t=1739988569; c=relaxed/simple;
+	bh=89pN2lzpnqx4pWKh5CtnkftsUiCXfM/YS4po5Dm9sWw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mQU8+XjZgPha3R01o/VSKaL1HGD+lZhgWBhWkp96kJJKlZvJaKS6igzluVVhw6nIe8S7pAUQT5dU8GB9Kc5eVn6VscgxImjh8jf5aV/Mh/iznGzjZbIUUER7SUgmviHjZMPsb8rf9W1Kia2MQ6fu1GCrJyoL/4ghVTAqff0sgms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LTG+FjzA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABE1AC4CED1;
+	Wed, 19 Feb 2025 18:09:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739988569;
+	bh=89pN2lzpnqx4pWKh5CtnkftsUiCXfM/YS4po5Dm9sWw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LTG+FjzABQ7n7DrisxPtoZmA2zEvi4uzF9hzOHHpMb5sB6eWt5cCLd8cAhHAzbPe6
+	 EYcNhRG2vo3DAhoUmQtN7iN8JrDv9YWu1AM8OPan6/tSHDfSZ2iIqHyxJDXow5aU8K
+	 a9XJsPDHtMBPOu16IiImWiw7pN+dh4YezumkgO+w=
+Date: Wed, 19 Feb 2025 19:09:26 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Herbert Xu <herbert@gondor.apana.org.au>, willy@infradead.org,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Yang Shi <yang@os.amperecomputing.com>,
+	David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 6.6 000/389] 6.6.76-rc2 review
+Message-ID: <2025021959-koala-flypaper-1ad5@gregkh>
+References: <20250206155234.095034647@linuxfoundation.org>
+ <CA+G9fYvKzV=jo9AmKH2tJeLr0W8xyjxuVO-P+ZEBdou6C=mKUw@mail.gmail.com>
+ <CA+G9fYtqBxt+JwSLCcVBchh94GVRhbo9rTP26ceJ=sf4MDo61Q@mail.gmail.com>
+ <Z7Xj-zIe-Sa1syG7@arm.com>
+ <Z7YSYArXkRFEy6FO@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <a8828676-210a-99e8-30d7-6076f334ed71@virtuozzo.com>
- <CAOQ4uxgZ08ePA5WFOYFoLZaq_-Kjr-haNzBN5Aj3MfF=f9pjdg@mail.gmail.com>
- <1bb71cbf-0a10-34c7-409d-914058e102f6@virtuozzo.com> <CAOQ4uxieqnKENV_kJYwfcnPjNdVuqH3BnKVx_zLz=N_PdAguNg@mail.gmail.com>
- <dc696835-bbb5-ed4e-8708-bc828d415a2b@virtuozzo.com> <CAOQ4uxg0XVEEzc+HyyC63WWZuA2AsRjJmbZBuNimtj=t+quVyg@mail.gmail.com>
- <20200922210445.GG57620@redhat.com> <CAOQ4uxg_FV8U833qVkgPaAWJ4MNcnGoy9Gci41bmak4_ROSc3g@mail.gmail.com>
- <CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com> <CAOQ4uxiJ3qxb_XNWdmQPZ3omT3fjEhoMfG=3CSKucvoJbj6JSg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxiJ3qxb_XNWdmQPZ3omT3fjEhoMfG=3CSKucvoJbj6JSg@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 19 Feb 2025 18:58:43 +0100
-X-Gm-Features: AWEUYZnOzQNz-FJuWsfPmeGuSBDTPOkzpthsuawIgy7fmi1_65O43jVZS8zJHQY
-Message-ID: <CAOQ4uxi2w+S4yy3yiBvGpJYSqC6GOTAZQzzjygaH3TjH7Uc4+Q@mail.gmail.com>
-Subject: Re: LOOKUP_HANDLE and FUSE passthrough (was: Persistent FUSE file handles)
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	Hanna Reitz <hreitz@redhat.com>, Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7YSYArXkRFEy6FO@arm.com>
 
-On Sun, Sep 11, 2022 at 12:14=E2=80=AFPM Amir Goldstein <amir73il@gmail.com=
-> wrote:
->
-> On Wed, Sep 23, 2020 at 10:44 AM Miklos Szeredi <miklos@szeredi.hu> wrote=
-:
-> >
-> > One proposal was to add  LOOKUP_HANDLE operation that is similar to
-> > LOOKUP except it takes a {variable length handle, name} as input and
-> > returns a variable length handle *and* a u64 node_id that can be used
-> > normally for all other operations.
-> >
-> > The advantage of such a scheme for virtio-fs (and possibly other fuse
-> > based fs) would be that userspace need not keep a refcounted object
-> > around until the kernel sends a FORGET, but can prune its node ID
-> > based cache at any time.   If that happens and a request from the
-> > client (kernel) comes in with a stale node ID, the server will return
-> > -ESTALE and the client can ask for a new node ID with a special
-> > lookup_handle(fh, NULL).
-> >
-> > Disadvantages being:
-> >
-> >  - cost of generating a file handle on all lookups
-> >  - cost of storing file handle in kernel icache
-> >
-> > I don't think either of those are problematic in the virtiofs case.
-> > The cost of having to keep fds open while the client has them in its
-> > cache is much higher.
-> >
->
-> I was thinking of taking a stab at LOOKUP_HANDLE for a generic
-> implementation of persistent file handles for FUSE.
->
+On Wed, Feb 19, 2025 at 05:18:24PM +0000, Catalin Marinas wrote:
+> On Wed, Feb 19, 2025 at 02:00:27PM +0000, Catalin Marinas wrote:
+> > > On Sat, 8 Feb 2025 at 16:54, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> > > > Regression on qemu-arm64 and FVP noticed this kernel warning running
+> > > > selftests: arm64: check_hugetlb_options test case on 6.6.76-rc1 and
+> > > > 6.6.76-rc2.
+> > > >
+> > > > Test regression: WARNING-arch-arm64-mm-copypage-copy_highpage
+> > > >
+> > > > ------------[ cut here ]------------
+> > > > [   96.920028] WARNING: CPU: 1 PID: 3611 at
+> > > > arch/arm64/mm/copypage.c:29 copy_highpage
+> > > > (arch/arm64/include/asm/mte.h:87)
+> > > > [   96.922100] Modules linked in: crct10dif_ce sm3_ce sm3 sha3_ce
+> > > > sha512_ce sha512_arm64 fuse drm backlight ip_tables x_tables
+> > > > [   96.925603] CPU: 1 PID: 3611 Comm: check_hugetlb_o Not tainted 6.6.76-rc2 #1
+> > > > [   96.926956] Hardware name: linux,dummy-virt (DT)
+> > > > [   96.927695] pstate: 43402009 (nZcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+> > > > [   96.928687] pc : copy_highpage (arch/arm64/include/asm/mte.h:87)
+> > > > [   96.929037] lr : copy_highpage
+> > > > (arch/arm64/include/asm/alternative-macros.h:232
+> > > > arch/arm64/include/asm/cpufeature.h:443
+> > > > arch/arm64/include/asm/cpufeature.h:504
+> > > > arch/arm64/include/asm/cpufeature.h:814 arch/arm64/mm/copypage.c:27)
+> > > > [   96.929399] sp : ffff800088aa3ab0
+> > > > [   96.930232] x29: ffff800088aa3ab0 x28: 00000000000001ff x27: 0000000000000000
+> > > > [   96.930784] x26: 0000000000000000 x25: 0000ffff9b800000 x24: 0000ffff9b9ff000
+> > > > [   96.931402] x23: fffffc0003257fc0 x22: ffff0000c95ff000 x21: ffff0000c93ff000
+> > > > [   96.932054] x20: fffffc0003257fc0 x19: fffffc000324ffc0 x18: 0000ffff9b800000
+> > > > [   96.933357] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+> > > > [   96.934091] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+> > > > [   96.935095] x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
+> > > > [   96.935982] x8 : 0bfffc0001800000 x7 : 0000000000000000 x6 : 0000000000000000
+> > > > [   96.936536] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
+> > > > [   96.937089] x2 : 0000000000000000 x1 : ffff0000c9600000 x0 : ffff0000c9400080
+> > > > [   96.939431] Call trace:
+> > > > [   96.939920] copy_highpage (arch/arm64/include/asm/mte.h:87)
+> > > > [   96.940443] copy_user_highpage (arch/arm64/mm/copypage.c:40)
+> > > > [   96.940963] copy_user_large_folio (mm/memory.c:5977 mm/memory.c:6109)
+> > > > [   96.941535] hugetlb_wp (mm/hugetlb.c:5701)
+> > > > [   96.941948] hugetlb_fault (mm/hugetlb.c:6237)
+> > > > [   96.942344] handle_mm_fault (mm/memory.c:5330)
+> > > > [   96.942794] do_page_fault (arch/arm64/mm/fault.c:513
+> > > > arch/arm64/mm/fault.c:626)
+> > > > [   96.943341] do_mem_abort (arch/arm64/mm/fault.c:846)
+> > > > [   96.943797] el0_da (arch/arm64/kernel/entry-common.c:133
+> > > > arch/arm64/kernel/entry-common.c:144
+> > > > arch/arm64/kernel/entry-common.c:547)
+> > > > [   96.944229] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:0)
+> > > > [   96.944765] el0t_64_sync (arch/arm64/kernel/entry.S:599)
+> > > > [   96.945383] ---[ end trace 0000000000000000 ]---
+> > 
+> > Prior to commit 25c17c4b55de ("hugetlb: arm64: add mte support"), there
+> > was no hugetlb support with MTE, so the above code path should not
+> > happen - it seems to get a PROT_MTE hugetlb page which should have been
+> > prevented by arch_validate_flags(). Or something else corrupts the page
+> > flags and we end up with some random PG_mte_tagged set.
+> 
+> The problem is in the arm64 arch_calc_vm_flag_bits() as it returns
+> VM_MTE_ALLOWED for any MAP_ANONYMOUS ignoring MAP_HUGETLB (it's been
+> doing this since day 1 of MTE). The implementation does handle the
+> hugetlb file mmap() correctly but not the MAP_ANONYMOUS case.
+> 
+> The fix would be something like below:
+> 
+> -----------------8<--------------------------
+> diff --git a/arch/arm64/include/asm/mman.h b/arch/arm64/include/asm/mman.h
+> index 5966ee4a6154..8ff5d88c9f12 100644
+> --- a/arch/arm64/include/asm/mman.h
+> +++ b/arch/arm64/include/asm/mman.h
+> @@ -28,7 +28,8 @@ static inline unsigned long arch_calc_vm_flag_bits(unsigned long flags)
+>  	 * backed by tags-capable memory. The vm_flags may be overridden by a
+>  	 * filesystem supporting MTE (RAM-based).
+>  	 */
+> -	if (system_supports_mte() && (flags & MAP_ANONYMOUS))
+> +	if (system_supports_mte() &&
+> +	    ((flags & MAP_ANONYMOUS) && !(flags & MAP_HUGETLB)))
+>  		return VM_MTE_ALLOWED;
+> 
+>  	return 0;
+> -------------------8<-----------------------
+> 
+> This fix won't make sense for mainline since it supports MAP_HUGETLB
+> already.
+> 
+> Greg, are you ok with a stable-only fix as above or you'd rather see the
+> full 25c17c4b55de ("hugetlb: arm64: add mte support") backported?
 
-Hi Miklos,
+A stable-only fix for this is fine, thanks!  Can you send it with a
+changelog and I'll queue it up.  Does it also need to go to older
+kernels as well?
 
-I circled back to this. I don't suppose you know of any patches
-in the works?
+thanks,
 
-I was thinking about LOOKUP_HANDLE in the context of our
-discussion at Plumbers on readdirplus passthrough.
-
-What we discussed is that kernel could instantiate some FUSE inodes
-(populated during readdirplus passthrough) and at some later time,
-kernel will notify server about those inodes via FUSE_INSTANTIATE
-or similar command, which will instantiate a fuse server inode with
-pre-defined nodeid.
-
-My thinking was to simplify a bit and require a 1-to-1 mapping
-of kernel-server inode numbers to enable the feature of
-FUSE_PASSTHOUGH_INODE (operations), meaning that
-every FUSE inode has at least a potential backing inode which
-reserves its inode number.
-
-But I think that 1-to-1 mapping of ino is not enough and to avoid
-races it is better to have 1-to-1 mapping of file handles so
-FUSE_INSTANTIATE would look a bit like LOOKUP_HANDLE
-but "found" server inode must match the kernel's file handle.
-
-Is any of this making any sense to you?
-Do you think that the 1-to-1 ino mapping restriction is acceptable
-for the first version of inode operations passthrough?
-
-Thanks,
-Amir.
+greg k-h
 
