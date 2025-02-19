@@ -1,940 +1,302 @@
-Return-Path: <linux-fsdevel+bounces-42066-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42067-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BE34A3BE42
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 13:37:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F108A3BE61
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 13:44:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03D951692EF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 12:36:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B8DC3ACEC1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 12:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA53D1D5AC0;
-	Wed, 19 Feb 2025 12:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC6A1E0DCD;
+	Wed, 19 Feb 2025 12:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GkM9WeFs"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dF4wdF+v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51F41BC094;
-	Wed, 19 Feb 2025 12:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AA61DF974
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2025 12:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739968594; cv=none; b=Y6jnHx7mhTRzpfyzv/VsUtP9O/31e3OXujvvGHIG5f2fWLv9n8jFtfXWVeWMzBd0snTYA/IB4Y4LVsJjAe2XI1QSNUftTrghZ3AA4ZfJ1awEZXbQz+GASF2Y1d4dytcc65CfXtI9omAe+LMmAaMNXT0DG7+ZEm5sNB26LgXiPj4=
+	t=1739969090; cv=none; b=WbNASAXPJ8dEvA+fJpzkcgkdR7pnpaZ1al7U3AccNpI2aL5GflFBkXj/GriES/lauOo4dib0dQTTHSP685QH6SXrotRH3kLfic8BaG93CI1cSfusQSuGjZafyhQfAIw296O+rVU9utJP27SvFuND1aWuXmvqbCKyoqLaPzdVDCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739968594; c=relaxed/simple;
-	bh=L8fwd21IsefCstQcqGmKT4PTpg97Dv2TpbWQC1NJvUE=;
+	s=arc-20240116; t=1739969090; c=relaxed/simple;
+	bh=yMDpB6Zo4D+TTRUTIFhHpwv9UC15iD30hhHIP34BnYQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PizjmdRqTbQts+beYCqiUTA6x0PnYQrjaFr+miaHiS4ceBFLR5PWC9YlhPx2eYEJuGCi4Er04DzJd69P6MIjsaLOuAgUXfDYTkb+OO24fHwW3jONe5xsHKxJK/wabN9N8mD8EU9KZvc7HoaYDc7Hnntm6SbJ4lWT2NfOX2SlNEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GkM9WeFs; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e095d47a25so577281a12.0;
-        Wed, 19 Feb 2025 04:36:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739968590; x=1740573390; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j0xIVbPj+USq+VYmSU3xLWEpvIIW2qx6JaYKVE8KSu4=;
-        b=GkM9WeFsuD5Z5pThjgVWaElJrO1lYhy7+XFvs0GzPUqTtH+/jwWb6fZOveNirMV9nv
-         g3Q2JSe5oCLzZwFo7gm3e2L/EuqYHV0mbTirxwnaz4W7O3+KFfOwgKMffSTJ+bkPAiz9
-         GKgZqOrUVj3NyVyUurpDAqX+0Bcs2vB4mw7sJKuBdnvHYQ02xU0tYC6Rrm6pjL6MXSWn
-         GeCukkbwcREPkIqtbZN01YKnJ1ywKS1Xm3mKNpUDKsho5KBeYZ9OeWEe0ljMgUeMIg/E
-         kf4m1vaGjswaj2mBnaSPde2Z1JVPA0LZHPCgsWcaciK0PK4ZnlJabjXncP/f2xlZNHuo
-         a/oA==
+	 To:Cc:Content-Type; b=elDqbGG8yKfIn6goqqoqM9+g6FNL546JInf9mELyCXqxPswWUhRWScsBN5dgd1mYYdyyCqIKavc2BSCpsdgkD46WcVfLE8PACnTZwaSvLGudAuMKx1FudfQMdE5insSYosdISsdwPF7bktlvF9j/D9Jga7G317jPJlCu6ZmRE8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dF4wdF+v; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739969087;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VGuYwa0tEb+EDnahlJH+Kml1lukEdn6aNzMvNWvEPss=;
+	b=dF4wdF+vIQaxJBT7SDlmwWLdJn72RqjT8+tMvXmzL3tL0WdpMdaM1w7v272LiwRyhLLDlQ
+	IvBsRLB0KRFOSNvLxV3q3DAGSIky66QkfMYGOS8flQbvMForS7LagcFuqKLBno8wd2+Ctx
+	dngry0KgK8fWrB3ye2WwemmEmIwmdSs=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-304-L8nD_Pw4OtuKH-pAsdCEFw-1; Wed, 19 Feb 2025 07:44:46 -0500
+X-MC-Unique: L8nD_Pw4OtuKH-pAsdCEFw-1
+X-Mimecast-MFC-AGG-ID: L8nD_Pw4OtuKH-pAsdCEFw_1739969085
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-abb8f65af3dso297269466b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2025 04:44:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739968590; x=1740573390;
+        d=1e100.net; s=20230601; t=1739969085; x=1740573885;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=j0xIVbPj+USq+VYmSU3xLWEpvIIW2qx6JaYKVE8KSu4=;
-        b=fWhOKGe3kEvvDut0lKiB7fMPHNqLY0qL/9F/Gq8Xxk+t4Gut+Ml4sh0205YzalwRiW
-         s10fTwBaW1CzJdDH3/dOAqb0AVpkaEQuo75xH542AiDWM2j2LZ1gTfeUG2WqthcD3CXY
-         coYANR2igcQA9Vs+o5OLLIobvEjCGPIIjaDAD8g4W4LBleQ009sDpxknF1w5j1h0W4iT
-         847Ghcail044gAMC1zk3KwxfNEQGjDMW7ISyCq+iiVqmACjZoszbcN5TNYkLR5gZ8JHB
-         Edy9CjkMtCq6DIhvIm9V9rlVKY6qBTkQQ4tloJErahbU3Dxu4OPH7xhwFtupdv5YQafc
-         AyLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUhqjWEGuDkDIzR7E07hdIGVrKntcuILfxISbw8GFiEkkGgm0VBAlFs6Gucv0EmVaB5Kl8fFkrEJluh0nVE@vger.kernel.org, AJvYcCWdIAUHlAuwkd1hHASRkYwH4nUjPhw50fEQVn1fItAPixzHjcDA7F0skk+p9GUh/TWrhShYBJSd6lyyBDE1AQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxinC/kj91hrIf+HIMfjXRqznKIxytndRPtsYXRkUNZavmRXju
-	EU6laGuCMbytDCcodPpZ1LvFXvJCMjC/4jrMMq51ID+Paan3YzcvHm3cpTS1gkprFXv1vrg5VqU
-	m67eg/VRmrbE60cPLaN/S7e/kY9Y=
-X-Gm-Gg: ASbGncsyQDtAYP1tE/jTFEZ/nqynBZ4IP1TbR1smqEk9wAqYTiiAsS295WQAWHlmjyB
-	4RloKOp+oZyyiDQceouTfzKPzI4lTIeErJE3LYIfMRad/E4zSjNEuae6gzYqx+i3o/5JX+VoH
-X-Google-Smtp-Source: AGHT+IFkfWXqfal2fEHYC4gnm3i5PHa3KJF14xt7Wp9uMnItJa8AN5+f7bnw5Gq3Y8v+jRafOpDL+pZi3WvhM5+qmQE=
-X-Received: by 2002:a05:6402:3481:b0:5e0:9959:83cd with SMTP id
- 4fb4d7f45d1cf-5e0995984bcmr209979a12.21.1739968589552; Wed, 19 Feb 2025
- 04:36:29 -0800 (PST)
+        bh=VGuYwa0tEb+EDnahlJH+Kml1lukEdn6aNzMvNWvEPss=;
+        b=uEmFgPZun61IsSTv7wVTutK7L2+c+HRF9qpIeoEGpEq/aIP+Hyw2Lr1aE71RQW6Va0
+         zZFW4Jq7a/F9Fq4ETOog4n8y055zy/UpbJ5B7trIW1Ln1Zwk6fHeHsiJayoc7xb4o2tG
+         GHSeNjC2ef6BqNSnHJuXLIQtSILRiBB2WikRzExYLKu78+S8yekC2XVXd7n3yY2icJXb
+         eKVhILSwYpZHmL7rMXGWt5zrSKLozdRIYO+iRKeoXu+evBds0SqeFfoBqpP2ZX0CYdZN
+         l0CJ0Rf3zY9dNxOKty4fn6RqvkzWUJSPKk4eqO8Y2vkni26qtHfKZ5g7IYBQtAHR/+Hc
+         s33g==
+X-Forwarded-Encrypted: i=1; AJvYcCUTIGjtFSkiOAbW5UPmm9NI50q5K8bBhchZu3lYhgFolbz/7CQkGxYtxLMXqsvblVxwEjGOWjkn+CtTKrEM@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWMZsoG99l8FHf1LHTCg9TUXSQb2nkK7VxwYSkUpn8aTeq08PH
+	wh76ccznhjkbiX3lmIvbJy/g19tDX34gB9TmnXOuhCpthVNFiKwxibHkdnB2VflBGIM8KKjwscv
+	mUSUUj6KjLNCyRUEv8XbWHpDNbYwFLatw9IV9bm15O0RNPhPwtbu8hEORkogiOGRW3bUPmj/5oF
+	+II5AOUCCpyh1THbvMI+bKBz40sUqZyGfz8o9Sew==
+X-Gm-Gg: ASbGncvxr50e7TLil5mi6ZW69aIi/ohKxqkl8ZSmtJKzFg+Xo/SsrW1PT7vNZa8Tc2Y
+	/d6ZZu7PUdpL+mcmrhkWxulU5k5DCAdplyu7jrDt1EUHX5tL8i47nCiSdRnI=
+X-Received: by 2002:a17:907:3f18:b0:ab2:db7b:5db3 with SMTP id a640c23a62f3a-abbcd0c2b1emr299401066b.54.1739969084671;
+        Wed, 19 Feb 2025 04:44:44 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG3/fQsga0scILn/gp/rI/u2nbcj3uPd3PHHFOf5C1dwtjxyfCXeKfmyRL2uv+VEsMDV2Yqi5t8wsFBHkic5jE=
+X-Received: by 2002:a17:907:3f18:b0:ab2:db7b:5db3 with SMTP id
+ a640c23a62f3a-abbcd0c2b1emr299397966b.54.1739969084234; Wed, 19 Feb 2025
+ 04:44:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219-work-overlayfs-v3-0-46af55e4ceda@kernel.org> <20250219-work-overlayfs-v3-3-46af55e4ceda@kernel.org>
-In-Reply-To: <20250219-work-overlayfs-v3-3-46af55e4ceda@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 19 Feb 2025 13:36:17 +0100
-X-Gm-Features: AWEUYZkNli0q9wqdCkFTy2VnIk9CQP3JGS5SYflXF3UfYRqqvAYnWnvDBVKK0Qk
-Message-ID: <CAOQ4uxhmzcQxB+udEwsLjJVxqtof_Py9Ctn41=q6Xvi1PaaA6A@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] selftests/ovl: add second selftest for "override_creds"
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Seth Forshee <sforshee@kernel.org>, 
-	Gopal Kakivaya <gopalk@microsoft.com>, linux-unionfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
+References: <20250219003419.241017-1-slava@dubeyko.com>
+In-Reply-To: <20250219003419.241017-1-slava@dubeyko.com>
+From: Alex Markuze <amarkuze@redhat.com>
+Date: Wed, 19 Feb 2025 14:44:32 +0200
+X-Gm-Features: AWEUYZk2id_fLg839br33zLq9NKfALR_lvQ09fkQinIRAjPzOSPxi-cpTAvpjsQ
+Message-ID: <CAO8a2SjeD0_OryT7i028WgdOG5kB=FyNMe+KnPHEujVtU1p7WQ@mail.gmail.com>
+Subject: Re: [PATCH] ceph: fix slab-use-after-free in have_mon_and_osd_map()
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: ceph-devel@vger.kernel.org, dhowells@redhat.com, idryomov@gmail.com, 
+	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 19, 2025 at 11:02=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
+This fixes the TOCTOU problem of accessing the epoch field after map-free.
+I'd like to know if it's not leaving a correctness problem instead. Is
+the return value of  have_mon_and_osd_map still valid and relevant in
+this case, where it is being concurrently freed?
+
+On Wed, Feb 19, 2025 at 2:34=E2=80=AFAM Viacheslav Dubeyko <slava@dubeyko.c=
+om> wrote:
 >
-> Add a simple test to verify that the new "override_creds" option works.
+> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 >
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-
-For the added test you may add:
-
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-
-But you may want to consider splitting the large infrastructure
-and the churn to the previous test to a separate patch, to make this
-patch cleaner.
-
-Thanks,
-Amir.
-
+> The generic/395 and generic/397 is capable of generating
+> the oops is on line net/ceph/ceph_common.c:794 with
+> KASAN enabled.
+>
+> BUG: KASAN: slab-use-after-free in have_mon_and_osd_map+0x56/0x70
+> Read of size 4 at addr ffff88811012d810 by task mount.ceph/13305
+>
+> CPU: 2 UID: 0 PID: 13305 Comm: mount.ceph Not tainted 6.14.0-rc2-build2+ =
+#1266
+> Hardware name: ASUS All Series/H97-PLUS, BIOS 2306 10/09/2014
+> Call Trace:
+> <TASK>
+> dump_stack_lvl+0x57/0x80
+> ? have_mon_and_osd_map+0x56/0x70
+> print_address_description.constprop.0+0x84/0x330
+> ? have_mon_and_osd_map+0x56/0x70
+> print_report+0xe2/0x1e0
+> ? rcu_read_unlock_sched+0x60/0x80
+> ? kmem_cache_debug_flags+0xc/0x20
+> ? fixup_red_left+0x17/0x30
+> ? have_mon_and_osd_map+0x56/0x70
+> kasan_report+0x8d/0xc0
+> ? have_mon_and_osd_map+0x56/0x70
+> have_mon_and_osd_map+0x56/0x70
+> ceph_open_session+0x182/0x290
+> ? __pfx_ceph_open_session+0x10/0x10
+> ? __init_swait_queue_head+0x8d/0xa0
+> ? __pfx_autoremove_wake_function+0x10/0x10
+> ? shrinker_register+0xdd/0xf0
+> ceph_get_tree+0x333/0x680
+> vfs_get_tree+0x49/0x180
+> do_new_mount+0x1a3/0x2d0
+> ? __pfx_do_new_mount+0x10/0x10
+> ? security_capable+0x39/0x70
+> path_mount+0x6dd/0x730
+> ? __pfx_path_mount+0x10/0x10
+> ? kmem_cache_free+0x1e5/0x270
+> ? user_path_at+0x48/0x60
+> do_mount+0x99/0xe0
+> ? __pfx_do_mount+0x10/0x10
+> ? lock_release+0x155/0x190
+> __do_sys_mount+0x141/0x180
+> do_syscall_64+0x9f/0x100
+> entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> RIP: 0033:0x7f01b1b14f3e
+> Code: 48 8b 0d d5 3e 0f 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 0=
+0 00 00 00 00 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff=
+ ff 73 01 c3 48 8b 0d a2 3e 0f 00 f7 d8 64 89 01 48
+> RSP: 002b:00007fffd129fa08 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 0000564ec01a7850 RCX: 00007f01b1b14f3e
+> RDX: 0000564ec00f2225 RSI: 00007fffd12a1964 RDI: 0000564ec0147a20
+> RBP: 00007fffd129fbd0 R08: 0000564ec014da90 R09: 0000000000000080
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007fffd12a194e
+> R13: 0000000000000000 R14: 00007fffd129fa50 R15: 00007fffd129fa40
+> </TASK>
+>
+> Allocated by task 13305:
+> stack_trace_save+0x8c/0xc0
+> kasan_save_stack+0x1e/0x40
+> kasan_save_track+0x10/0x30
+> __kasan_kmalloc+0x3a/0x50
+> __kmalloc_noprof+0x247/0x290
+> ceph_osdmap_alloc+0x16/0x130
+> ceph_osdc_init+0x27a/0x4c0
+> ceph_create_client+0x153/0x190
+> create_fs_client+0x50/0x2a0
+> ceph_get_tree+0xff/0x680
+> vfs_get_tree+0x49/0x180
+> do_new_mount+0x1a3/0x2d0
+> path_mount+0x6dd/0x730
+> do_mount+0x99/0xe0
+> __do_sys_mount+0x141/0x180
+> do_syscall_64+0x9f/0x100
+> entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>
+> Freed by task 9475:
+> stack_trace_save+0x8c/0xc0
+> kasan_save_stack+0x1e/0x40
+> kasan_save_track+0x10/0x30
+> kasan_save_free_info+0x3b/0x50
+> __kasan_slab_free+0x18/0x30
+> kfree+0x212/0x290
+> handle_one_map+0x23c/0x3b0
+> ceph_osdc_handle_map+0x3c9/0x590
+> mon_dispatch+0x655/0x6f0
+> ceph_con_process_message+0xc3/0xe0
+> ceph_con_v1_try_read+0x614/0x760
+> ceph_con_workfn+0x2de/0x650
+> process_one_work+0x486/0x7c0
+> process_scheduled_works+0x73/0x90
+> worker_thread+0x1c8/0x2a0
+> kthread+0x2ec/0x300
+> ret_from_fork+0x24/0x40
+> ret_from_fork_asm+0x1a/0x30
+>
+> The buggy address belongs to the object at ffff88811012d800
+> which belongs to the cache kmalloc-512 of size 512
+> The buggy address is located 16 bytes inside of
+> freed 512-byte region [ffff88811012d800, ffff88811012da00)
+>
+> The buggy address belongs to the physical page:
+> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1101=
+2c
+> head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+> flags: 0x200000000000040(head|node=3D0|zone=3D2)
+> page_type: f5(slab)
+> raw: 0200000000000040 ffff888100042c80 dead000000000100 dead000000000122
+> raw: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
+> head: 0200000000000040 ffff888100042c80 dead000000000100 dead000000000122
+> head: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
+> head: 0200000000000002 ffffea0004404b01 ffffffffffffffff 0000000000000000
+> head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
+> page dumped because: kasan: bad access detected
+>
+> Memory state around the buggy address:
+> ffff88811012d700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff88811012d780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>
+>     ffff88811012d800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>
+> ^
+> ffff88811012d880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff88811012d900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb =3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> Disabling lock debugging due to kernel taint
+> libceph: client274326 fsid 8598140e-35c2-11ee-b97c-001517c545cc
+> libceph: mon0 (1)90.155.74.19:6789 session established
+> libceph: client274327 fsid 8598140e-35c2-11ee-b97c-001517c545cc
+>
+> We have such scenario:
+>
+> Thread 1:
+> void ceph_osdmap_destroy(...) {
+>     <skipped>
+>     kfree(map);
+> }
+> Thread 1 sleep...
+>
+> Thread 2:
+> static bool have_mon_and_osd_map(struct ceph_client *client) {
+>     return client->monc.monmap && client->monc.monmap->epoch &&
+>         client->osdc.osdmap && client->osdc.osdmap->epoch;
+> }
+> Thread 2 has oops...
+>
+> Thread 1 wake up:
+> static int handle_one_map(...) {
+>     <skipped>
+>     osdc->osdmap =3D newmap;
+>     <skipped>
+> }
+>
+> This patch fixes the issue by means of locking
+> client->osdc.lock and client->monc.mutex before
+> the checking client->osdc.osdmap and
+> client->monc.monmap.
+>
+> Reported-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 > ---
->  .../selftests/filesystems/overlayfs/Makefile       |  11 +-
->  .../filesystems/overlayfs/set_layers_via_fds.c     | 149 ++++++-
->  tools/testing/selftests/filesystems/utils.c        | 474 +++++++++++++++=
-++++++
->  tools/testing/selftests/filesystems/utils.h        |  44 ++
->  4 files changed, 665 insertions(+), 13 deletions(-)
+>  net/ceph/ceph_common.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
 >
-> diff --git a/tools/testing/selftests/filesystems/overlayfs/Makefile b/too=
-ls/testing/selftests/filesystems/overlayfs/Makefile
-> index e8d1adb021af..6c661232b3b5 100644
-> --- a/tools/testing/selftests/filesystems/overlayfs/Makefile
-> +++ b/tools/testing/selftests/filesystems/overlayfs/Makefile
-> @@ -1,7 +1,14 @@
->  # SPDX-License-Identifier: GPL-2.0
->
-> -TEST_GEN_PROGS :=3D dev_in_maps set_layers_via_fds
-> +CFLAGS +=3D -Wall
-> +CFLAGS +=3D $(KHDR_INCLUDES)
-> +LDLIBS +=3D -lcap
->
-> -CFLAGS :=3D -Wall -Werror
-> +LOCAL_HDRS +=3D wrappers.h log.h
-> +
-> +TEST_GEN_PROGS :=3D dev_in_maps
-> +TEST_GEN_PROGS +=3D set_layers_via_fds
->
->  include ../../lib.mk
-> +
-> +$(OUTPUT)/set_layers_via_fds: ../utils.c
-> diff --git a/tools/testing/selftests/filesystems/overlayfs/set_layers_via=
-_fds.c b/tools/testing/selftests/filesystems/overlayfs/set_layers_via_fds.c
-> index 70acd833581d..6b65e3610578 100644
-> --- a/tools/testing/selftests/filesystems/overlayfs/set_layers_via_fds.c
-> +++ b/tools/testing/selftests/filesystems/overlayfs/set_layers_via_fds.c
-> @@ -6,6 +6,7 @@
->  #include <sched.h>
->  #include <stdio.h>
->  #include <string.h>
-> +#include <sys/socket.h>
->  #include <sys/stat.h>
->  #include <sys/mount.h>
->  #include <unistd.h>
-> @@ -13,20 +14,27 @@
->  #include "../../kselftest_harness.h"
->  #include "../../pidfd/pidfd.h"
->  #include "log.h"
-> +#include "../utils.h"
->  #include "wrappers.h"
->
->  FIXTURE(set_layers_via_fds) {
-> +       int pidfd;
->  };
->
->  FIXTURE_SETUP(set_layers_via_fds)
+> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+> index 4c6441536d55..5c8fd78d6bd5 100644
+> --- a/net/ceph/ceph_common.c
+> +++ b/net/ceph/ceph_common.c
+> @@ -790,8 +790,18 @@ EXPORT_SYMBOL(ceph_reset_client_addr);
+>   */
+>  static bool have_mon_and_osd_map(struct ceph_client *client)
 >  {
-> -       ASSERT_EQ(mkdir("/set_layers_via_fds", 0755), 0);
-> +       self->pidfd =3D -EBADF;
-> +       EXPECT_EQ(mkdir("/set_layers_via_fds", 0755), 0);
+> -       return client->monc.monmap && client->monc.monmap->epoch &&
+> -              client->osdc.osdmap && client->osdc.osdmap->epoch;
+> +       bool have_mon_map =3D false;
+> +       bool have_osd_map =3D false;
+> +
+> +       mutex_lock(&client->monc.mutex);
+> +       have_mon_map =3D client->monc.monmap && client->monc.monmap->epoc=
+h;
+> +       mutex_unlock(&client->monc.mutex);
+> +
+> +       down_read(&client->osdc.lock);
+> +       have_osd_map =3D client->osdc.osdmap && client->osdc.osdmap->epoc=
+h;
+> +       up_read(&client->osdc.lock);
+> +
+> +       return have_mon_map && have_osd_map;
 >  }
 >
->  FIXTURE_TEARDOWN(set_layers_via_fds)
->  {
-> +       if (self->pidfd >=3D 0) {
-> +               EXPECT_EQ(sys_pidfd_send_signal(self->pidfd, SIGKILL, NUL=
-L, 0), 0);
-> +               EXPECT_EQ(close(self->pidfd), 0);
-> +       }
->         umount2("/set_layers_via_fds", 0);
-> -       ASSERT_EQ(rmdir("/set_layers_via_fds"), 0);
-> +       EXPECT_EQ(rmdir("/set_layers_via_fds"), 0);
->  }
->
->  TEST_F(set_layers_via_fds, set_layers_via_fds)
-> @@ -266,7 +274,7 @@ TEST_F(set_layers_via_fds, set_override_creds)
->         ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_STRING, "metacopy=
-", "on", 0), 0);
->
->         pid =3D create_child(&pidfd, 0);
-> -       EXPECT_GE(pid, 0);
-> +       ASSERT_GE(pid, 0);
->         if (pid =3D=3D 0) {
->                 if (sys_fsconfig(fd_context, FSCONFIG_SET_FLAG, "override=
-_creds", NULL, 0)) {
->                         TH_LOG("sys_fsconfig should have succeeded");
-> @@ -275,11 +283,11 @@ TEST_F(set_layers_via_fds, set_override_creds)
->
->                 _exit(EXIT_SUCCESS);
->         }
-> -       EXPECT_EQ(sys_waitid(P_PID, pid, NULL, WEXITED), 0);
-> -       EXPECT_EQ(close(pidfd), 0);
-> +       ASSERT_GE(sys_waitid(P_PID, pid, NULL, WEXITED), 0);
-> +       ASSERT_GE(close(pidfd), 0);
->
->         pid =3D create_child(&pidfd, 0);
-> -       EXPECT_GE(pid, 0);
-> +       ASSERT_GE(pid, 0);
->         if (pid =3D=3D 0) {
->                 if (sys_fsconfig(fd_context, FSCONFIG_SET_FLAG, "nooverri=
-de_creds", NULL, 0)) {
->                         TH_LOG("sys_fsconfig should have succeeded");
-> @@ -288,11 +296,11 @@ TEST_F(set_layers_via_fds, set_override_creds)
->
->                 _exit(EXIT_SUCCESS);
->         }
-> -       EXPECT_EQ(sys_waitid(P_PID, pid, NULL, WEXITED), 0);
-> -       EXPECT_EQ(close(pidfd), 0);
-> +       ASSERT_GE(sys_waitid(P_PID, pid, NULL, WEXITED), 0);
-> +       ASSERT_GE(close(pidfd), 0);
->
->         pid =3D create_child(&pidfd, 0);
-> -       EXPECT_GE(pid, 0);
-> +       ASSERT_GE(pid, 0);
->         if (pid =3D=3D 0) {
->                 if (sys_fsconfig(fd_context, FSCONFIG_SET_FLAG, "override=
-_creds", NULL, 0)) {
->                         TH_LOG("sys_fsconfig should have succeeded");
-> @@ -301,8 +309,125 @@ TEST_F(set_layers_via_fds, set_override_creds)
->
->                 _exit(EXIT_SUCCESS);
->         }
-> -       EXPECT_EQ(sys_waitid(P_PID, pid, NULL, WEXITED), 0);
-> -       EXPECT_EQ(close(pidfd), 0);
-> +       ASSERT_GE(sys_waitid(P_PID, pid, NULL, WEXITED), 0);
-> +       ASSERT_GE(close(pidfd), 0);
-> +
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_CMD_CREATE, NULL, NUL=
-L, 0), 0);
-> +
-> +       fd_overlay =3D sys_fsmount(fd_context, 0, 0);
-> +       ASSERT_GE(fd_overlay, 0);
-> +
-> +       ASSERT_EQ(sys_move_mount(fd_overlay, "", -EBADF, "/set_layers_via=
-_fds", MOVE_MOUNT_F_EMPTY_PATH), 0);
-> +
-> +       ASSERT_EQ(close(fd_context), 0);
-> +       ASSERT_EQ(close(fd_overlay), 0);
-> +}
-> +
-> +TEST_F(set_layers_via_fds, set_override_creds_invalid)
-> +{
-> +       int fd_context, fd_tmpfs, fd_overlay, ret;
-> +       int layer_fds[] =3D { [0 ... 3] =3D -EBADF };
-> +       pid_t pid;
-> +       int fd_userns1, fd_userns2;
-> +       int ipc_sockets[2];
-> +       char c;
-> +       const unsigned int predictable_fd_context_nr =3D 123;
-> +
-> +       fd_userns1 =3D get_userns_fd(0, 0, 10000);
-> +       ASSERT_GE(fd_userns1, 0);
-> +
-> +       fd_userns2 =3D get_userns_fd(0, 1234, 10000);
-> +       ASSERT_GE(fd_userns2, 0);
-> +
-> +       ret =3D socketpair(AF_LOCAL, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_s=
-ockets);
-> +       ASSERT_GE(ret, 0);
-> +
-> +       pid =3D create_child(&self->pidfd, 0);
-> +       ASSERT_GE(pid, 0);
-> +       if (pid =3D=3D 0) {
-> +               if (close(ipc_sockets[0])) {
-> +                       TH_LOG("close should have succeeded");
-> +                       _exit(EXIT_FAILURE);
-> +               }
-> +
-> +               if (!switch_userns(fd_userns2, 0, 0, false)) {
-> +                       TH_LOG("switch_userns should have succeeded");
-> +                       _exit(EXIT_FAILURE);
-> +               }
-> +
-> +               if (read_nointr(ipc_sockets[1], &c, 1) !=3D 1) {
-> +                       TH_LOG("read_nointr should have succeeded");
-> +                       _exit(EXIT_FAILURE);
-> +               }
-> +
-> +               if (close(ipc_sockets[1])) {
-> +                       TH_LOG("close should have succeeded");
-> +                       _exit(EXIT_FAILURE);
-> +               }
-> +
-> +               if (!sys_fsconfig(predictable_fd_context_nr, FSCONFIG_SET=
-_FLAG, "override_creds", NULL, 0)) {
-> +                       TH_LOG("sys_fsconfig should have failed");
-> +                       _exit(EXIT_FAILURE);
-> +               }
-> +
-> +               _exit(EXIT_SUCCESS);
-> +       }
-> +
-> +       ASSERT_EQ(close(ipc_sockets[1]), 0);
-> +       ASSERT_EQ(switch_userns(fd_userns1, 0, 0, false), true);
-> +       ASSERT_EQ(unshare(CLONE_NEWNS), 0);
-> +       ASSERT_EQ(sys_mount(NULL, "/", NULL, MS_SLAVE | MS_REC, NULL), 0)=
-;
-> +
-> +       fd_context =3D sys_fsopen("tmpfs", 0);
-> +       ASSERT_GE(fd_context, 0);
-> +
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_CMD_CREATE, NULL, NUL=
-L, 0), 0);
-> +       fd_tmpfs =3D sys_fsmount(fd_context, 0, 0);
-> +       ASSERT_GE(fd_tmpfs, 0);
-> +       ASSERT_EQ(close(fd_context), 0);
-> +
-> +       ASSERT_EQ(mkdirat(fd_tmpfs, "w", 0755), 0);
-> +       ASSERT_EQ(mkdirat(fd_tmpfs, "u", 0755), 0);
-> +       ASSERT_EQ(mkdirat(fd_tmpfs, "l1", 0755), 0);
-> +       ASSERT_EQ(mkdirat(fd_tmpfs, "l2", 0755), 0);
-> +
-> +       layer_fds[0] =3D openat(fd_tmpfs, "w", O_DIRECTORY);
-> +       ASSERT_GE(layer_fds[0], 0);
-> +
-> +       layer_fds[1] =3D openat(fd_tmpfs, "u", O_DIRECTORY);
-> +       ASSERT_GE(layer_fds[1], 0);
-> +
-> +       layer_fds[2] =3D openat(fd_tmpfs, "l1", O_DIRECTORY);
-> +       ASSERT_GE(layer_fds[2], 0);
-> +
-> +       layer_fds[3] =3D openat(fd_tmpfs, "l2", O_DIRECTORY);
-> +       ASSERT_GE(layer_fds[3], 0);
-> +
-> +       ASSERT_EQ(sys_move_mount(fd_tmpfs, "", -EBADF, "/tmp", MOVE_MOUNT=
-_F_EMPTY_PATH), 0);
-> +       ASSERT_EQ(close(fd_tmpfs), 0);
-> +
-> +       fd_context =3D sys_fsopen("overlay", 0);
-> +       ASSERT_GE(fd_context, 0);
-> +       ASSERT_EQ(dup3(fd_context, predictable_fd_context_nr, 0), predict=
-able_fd_context_nr);
-> +       ASSERT_EQ(close(fd_context), 0);
-> +       fd_context =3D predictable_fd_context_nr;
-> +       ASSERT_EQ(write_nointr(ipc_sockets[0], "1", 1), 1);
-> +       ASSERT_EQ(close(ipc_sockets[0]), 0);
-> +
-> +       ASSERT_EQ(wait_for_pid(pid), 0);
-> +       ASSERT_EQ(close(self->pidfd), 0);
-> +       self->pidfd =3D -EBADF;
-> +
-> +       ASSERT_NE(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "lowerdir", N=
-ULL, layer_fds[2]), 0);
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "workdir",   =
-NULL, layer_fds[0]), 0);
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "upperdir",  =
-NULL, layer_fds[1]), 0);
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "lowerdir+", =
-NULL, layer_fds[2]), 0);
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FD, "lowerdir+", =
-NULL, layer_fds[3]), 0);
-> +
-> +       for (int i =3D 0; i < ARRAY_SIZE(layer_fds); i++)
-> +               ASSERT_EQ(close(layer_fds[i]), 0);
-> +
-> +       ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_SET_FLAG, "userxattr"=
-, NULL, 0), 0);
->
->         ASSERT_EQ(sys_fsconfig(fd_context, FSCONFIG_CMD_CREATE, NULL, NUL=
-L, 0), 0);
->
-> @@ -313,6 +438,8 @@ TEST_F(set_layers_via_fds, set_override_creds)
->
->         ASSERT_EQ(close(fd_context), 0);
->         ASSERT_EQ(close(fd_overlay), 0);
-> +       ASSERT_EQ(close(fd_userns1), 0);
-> +       ASSERT_EQ(close(fd_userns2), 0);
->  }
->
->  TEST_HARNESS_MAIN
-> diff --git a/tools/testing/selftests/filesystems/utils.c b/tools/testing/=
-selftests/filesystems/utils.c
-> new file mode 100644
-> index 000000000000..0e8080bd0aea
-> --- /dev/null
-> +++ b/tools/testing/selftests/filesystems/utils.c
-> @@ -0,0 +1,474 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#ifndef _GNU_SOURCE
-> +#define _GNU_SOURCE
-> +#endif
-> +#include <fcntl.h>
-> +#include <sys/types.h>
-> +#include <dirent.h>
-> +#include <grp.h>
-> +#include <linux/limits.h>
-> +#include <sched.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <sys/eventfd.h>
-> +#include <sys/fsuid.h>
-> +#include <sys/prctl.h>
-> +#include <sys/socket.h>
-> +#include <sys/stat.h>
-> +#include <sys/types.h>
-> +#include <sys/wait.h>
-> +#include <sys/xattr.h>
-> +
-> +#include "utils.h"
-> +
-> +#define MAX_USERNS_LEVEL 32
-> +
-> +#define syserror(format, ...)                           \
-> +       ({                                              \
-> +               fprintf(stderr, "%m - " format "\n", ##__VA_ARGS__); \
-> +               (-errno);                               \
-> +       })
-> +
-> +#define syserror_set(__ret__, format, ...)                    \
-> +       ({                                                    \
-> +               typeof(__ret__) __internal_ret__ =3D (__ret__); \
-> +               errno =3D labs(__ret__);                        \
-> +               fprintf(stderr, "%m - " format "\n", ##__VA_ARGS__);     =
-  \
-> +               __internal_ret__;                             \
-> +       })
-> +
-> +#define STRLITERALLEN(x) (sizeof(""x"") - 1)
-> +
-> +#define INTTYPE_TO_STRLEN(type)             \
-> +       (2 + (sizeof(type) <=3D 1             \
-> +                 ? 3                       \
-> +                 : sizeof(type) <=3D 2       \
-> +                       ? 5                 \
-> +                       : sizeof(type) <=3D 4 \
-> +                             ? 10          \
-> +                             : sizeof(type) <=3D 8 ? 20 : sizeof(int[-2 =
-* (sizeof(type) > 8)])))
-> +
-> +#define list_for_each(__iterator, __list) \
-> +       for (__iterator =3D (__list)->next; __iterator !=3D __list; __ite=
-rator =3D __iterator->next)
-> +
-> +typedef enum idmap_type_t {
-> +       ID_TYPE_UID,
-> +       ID_TYPE_GID
-> +} idmap_type_t;
-> +
-> +struct id_map {
-> +       idmap_type_t map_type;
-> +       __u32 nsid;
-> +       __u32 hostid;
-> +       __u32 range;
-> +};
-> +
-> +struct list {
-> +       void *elem;
-> +       struct list *next;
-> +       struct list *prev;
-> +};
-> +
-> +struct userns_hierarchy {
-> +       int fd_userns;
-> +       int fd_event;
-> +       unsigned int level;
-> +       struct list id_map;
-> +};
-> +
-> +static inline void list_init(struct list *list)
-> +{
-> +       list->elem =3D NULL;
-> +       list->next =3D list->prev =3D list;
-> +}
-> +
-> +static inline int list_empty(const struct list *list)
-> +{
-> +       return list =3D=3D list->next;
-> +}
-> +
-> +static inline void __list_add(struct list *new, struct list *prev, struc=
-t list *next)
-> +{
-> +       next->prev =3D new;
-> +       new->next =3D next;
-> +       new->prev =3D prev;
-> +       prev->next =3D new;
-> +}
-> +
-> +static inline void list_add_tail(struct list *head, struct list *list)
-> +{
-> +       __list_add(list, head->prev, head);
-> +}
-> +
-> +static inline void list_del(struct list *list)
-> +{
-> +       struct list *next, *prev;
-> +
-> +       next =3D list->next;
-> +       prev =3D list->prev;
-> +       next->prev =3D prev;
-> +       prev->next =3D next;
-> +}
-> +
-> +static ssize_t read_nointr(int fd, void *buf, size_t count)
-> +{
-> +       ssize_t ret;
-> +
-> +       do {
-> +               ret =3D read(fd, buf, count);
-> +       } while (ret < 0 && errno =3D=3D EINTR);
-> +
-> +       return ret;
-> +}
-> +
-> +static ssize_t write_nointr(int fd, const void *buf, size_t count)
-> +{
-> +       ssize_t ret;
-> +
-> +       do {
-> +               ret =3D write(fd, buf, count);
-> +       } while (ret < 0 && errno =3D=3D EINTR);
-> +
-> +       return ret;
-> +}
-> +
-> +#define __STACK_SIZE (8 * 1024 * 1024)
-> +static pid_t do_clone(int (*fn)(void *), void *arg, int flags)
-> +{
-> +       void *stack;
-> +
-> +       stack =3D malloc(__STACK_SIZE);
-> +       if (!stack)
-> +               return -ENOMEM;
-> +
-> +#ifdef __ia64__
-> +       return __clone2(fn, stack, __STACK_SIZE, flags | SIGCHLD, arg, NU=
-LL);
-> +#else
-> +       return clone(fn, stack + __STACK_SIZE, flags | SIGCHLD, arg, NULL=
-);
-> +#endif
-> +}
-> +
-> +static int get_userns_fd_cb(void *data)
-> +{
-> +       for (;;)
-> +               pause();
-> +       _exit(0);
-> +}
-> +
-> +static int wait_for_pid(pid_t pid)
-> +{
-> +       int status, ret;
-> +
-> +again:
-> +       ret =3D waitpid(pid, &status, 0);
-> +       if (ret =3D=3D -1) {
-> +               if (errno =3D=3D EINTR)
-> +                       goto again;
-> +
-> +               return -1;
-> +       }
-> +
-> +       if (!WIFEXITED(status))
-> +               return -1;
-> +
-> +       return WEXITSTATUS(status);
-> +}
-> +
-> +static int write_id_mapping(idmap_type_t map_type, pid_t pid, const char=
- *buf, size_t buf_size)
-> +{
-> +       int fd =3D -EBADF, setgroups_fd =3D -EBADF;
-> +       int fret =3D -1;
-> +       int ret;
-> +       char path[STRLITERALLEN("/proc/") + INTTYPE_TO_STRLEN(pid_t) +
-> +                 STRLITERALLEN("/setgroups") + 1];
-> +
-> +       if (geteuid() !=3D 0 && map_type =3D=3D ID_TYPE_GID) {
-> +               ret =3D snprintf(path, sizeof(path), "/proc/%d/setgroups"=
-, pid);
-> +               if (ret < 0 || ret >=3D sizeof(path))
-> +                       goto out;
-> +
-> +               setgroups_fd =3D open(path, O_WRONLY | O_CLOEXEC);
-> +               if (setgroups_fd < 0 && errno !=3D ENOENT) {
-> +                       syserror("Failed to open \"%s\"", path);
-> +                       goto out;
-> +               }
-> +
-> +               if (setgroups_fd >=3D 0) {
-> +                       ret =3D write_nointr(setgroups_fd, "deny\n", STRL=
-ITERALLEN("deny\n"));
-> +                       if (ret !=3D STRLITERALLEN("deny\n")) {
-> +                               syserror("Failed to write \"deny\" to \"/=
-proc/%d/setgroups\"", pid);
-> +                               goto out;
-> +                       }
-> +               }
-> +       }
-> +
-> +       ret =3D snprintf(path, sizeof(path), "/proc/%d/%cid_map", pid, ma=
-p_type =3D=3D ID_TYPE_UID ? 'u' : 'g');
-> +       if (ret < 0 || ret >=3D sizeof(path))
-> +               goto out;
-> +
-> +       fd =3D open(path, O_WRONLY | O_CLOEXEC);
-> +       if (fd < 0) {
-> +               syserror("Failed to open \"%s\"", path);
-> +               goto out;
-> +       }
-> +
-> +       ret =3D write_nointr(fd, buf, buf_size);
-> +       if (ret !=3D buf_size) {
-> +               syserror("Failed to write %cid mapping to \"%s\"",
-> +                        map_type =3D=3D ID_TYPE_UID ? 'u' : 'g', path);
-> +               goto out;
-> +       }
-> +
-> +       fret =3D 0;
-> +out:
-> +       close(fd);
-> +       close(setgroups_fd);
-> +
-> +       return fret;
-> +}
-> +
-> +static int map_ids_from_idmap(struct list *idmap, pid_t pid)
-> +{
-> +       int fill, left;
-> +       char mapbuf[4096] =3D {};
-> +       bool had_entry =3D false;
-> +       idmap_type_t map_type, u_or_g;
-> +
-> +       if (list_empty(idmap))
-> +               return 0;
-> +
-> +       for (map_type =3D ID_TYPE_UID, u_or_g =3D 'u';
-> +            map_type <=3D ID_TYPE_GID; map_type++, u_or_g =3D 'g') {
-> +               char *pos =3D mapbuf;
-> +               int ret;
-> +               struct list *iterator;
-> +
-> +
-> +               list_for_each(iterator, idmap) {
-> +                       struct id_map *map =3D iterator->elem;
-> +                       if (map->map_type !=3D map_type)
-> +                               continue;
-> +
-> +                       had_entry =3D true;
-> +
-> +                       left =3D 4096 - (pos - mapbuf);
-> +                       fill =3D snprintf(pos, left, "%u %u %u\n", map->n=
-sid, map->hostid, map->range);
-> +                       /*
-> +                        * The kernel only takes <=3D 4k for writes to
-> +                        * /proc/<pid>/{g,u}id_map
-> +                        */
-> +                       if (fill <=3D 0 || fill >=3D left)
-> +                               return syserror_set(-E2BIG, "Too many %ci=
-d mappings defined", u_or_g);
-> +
-> +                       pos +=3D fill;
-> +               }
-> +               if (!had_entry)
-> +                       continue;
-> +
-> +               ret =3D write_id_mapping(map_type, pid, mapbuf, pos - map=
-buf);
-> +               if (ret < 0)
-> +                       return syserror("Failed to write mapping: %s", ma=
-pbuf);
-> +
-> +               memset(mapbuf, 0, sizeof(mapbuf));
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static int get_userns_fd_from_idmap(struct list *idmap)
-> +{
-> +       int ret;
-> +       pid_t pid;
-> +       char path_ns[STRLITERALLEN("/proc/") + INTTYPE_TO_STRLEN(pid_t) +
-> +                    STRLITERALLEN("/ns/user") + 1];
-> +
-> +       pid =3D do_clone(get_userns_fd_cb, NULL, CLONE_NEWUSER | CLONE_NE=
-WNS);
-> +       if (pid < 0)
-> +               return -errno;
-> +
-> +       ret =3D map_ids_from_idmap(idmap, pid);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       ret =3D snprintf(path_ns, sizeof(path_ns), "/proc/%d/ns/user", pi=
-d);
-> +       if (ret < 0 || (size_t)ret >=3D sizeof(path_ns))
-> +               ret =3D -EIO;
-> +       else
-> +               ret =3D open(path_ns, O_RDONLY | O_CLOEXEC | O_NOCTTY);
-> +
-> +       (void)kill(pid, SIGKILL);
-> +       (void)wait_for_pid(pid);
-> +       return ret;
-> +}
-> +
-> +int get_userns_fd(unsigned long nsid, unsigned long hostid, unsigned lon=
-g range)
-> +{
-> +       struct list head, uid_mapl, gid_mapl;
-> +       struct id_map uid_map =3D {
-> +               .map_type       =3D ID_TYPE_UID,
-> +               .nsid           =3D nsid,
-> +               .hostid         =3D hostid,
-> +               .range          =3D range,
-> +       };
-> +       struct id_map gid_map =3D {
-> +               .map_type       =3D ID_TYPE_GID,
-> +               .nsid           =3D nsid,
-> +               .hostid         =3D hostid,
-> +               .range          =3D range,
-> +       };
-> +
-> +       list_init(&head);
-> +       uid_mapl.elem =3D &uid_map;
-> +       gid_mapl.elem =3D &gid_map;
-> +       list_add_tail(&head, &uid_mapl);
-> +       list_add_tail(&head, &gid_mapl);
-> +
-> +       return get_userns_fd_from_idmap(&head);
-> +}
-> +
-> +bool switch_ids(uid_t uid, gid_t gid)
-> +{
-> +       if (setgroups(0, NULL))
-> +               return syserror("failure: setgroups");
-> +
-> +       if (setresgid(gid, gid, gid))
-> +               return syserror("failure: setresgid");
-> +
-> +       if (setresuid(uid, uid, uid))
-> +               return syserror("failure: setresuid");
-> +
-> +       /* Ensure we can access proc files from processes we can ptrace. =
-*/
-> +       if (prctl(PR_SET_DUMPABLE, 1, 0, 0, 0))
-> +               return syserror("failure: make dumpable");
-> +
-> +       return true;
-> +}
-> +
-> +static int create_userns_hierarchy(struct userns_hierarchy *h);
-> +
-> +static int userns_fd_cb(void *data)
-> +{
-> +       struct userns_hierarchy *h =3D data;
-> +       char c;
-> +       int ret;
-> +
-> +       ret =3D read_nointr(h->fd_event, &c, 1);
-> +       if (ret < 0)
-> +               return syserror("failure: read from socketpair");
-> +
-> +       /* Only switch ids if someone actually wrote a mapping for us. */
-> +       if (c =3D=3D '1') {
-> +               if (!switch_ids(0, 0))
-> +                       return syserror("failure: switch ids to 0");
-> +       }
-> +
-> +       ret =3D write_nointr(h->fd_event, "1", 1);
-> +       if (ret < 0)
-> +               return syserror("failure: write to socketpair");
-> +
-> +       ret =3D create_userns_hierarchy(++h);
-> +       if (ret < 0)
-> +               return syserror("failure: userns level %d", h->level);
-> +
-> +       return 0;
-> +}
-> +
-> +static int create_userns_hierarchy(struct userns_hierarchy *h)
-> +{
-> +       int fret =3D -1;
-> +       char c;
-> +       int fd_socket[2];
-> +       int fd_userns =3D -EBADF, ret =3D -1;
-> +       ssize_t bytes;
-> +       pid_t pid;
-> +       char path[256];
-> +
-> +       if (h->level =3D=3D MAX_USERNS_LEVEL)
-> +               return 0;
-> +
-> +       ret =3D socketpair(AF_LOCAL, SOCK_STREAM | SOCK_CLOEXEC, 0, fd_so=
-cket);
-> +       if (ret < 0)
-> +               return syserror("failure: create socketpair");
-> +
-> +       /* Note the CLONE_FILES | CLONE_VM when mucking with fds and memo=
-ry. */
-> +       h->fd_event =3D fd_socket[1];
-> +       pid =3D do_clone(userns_fd_cb, h, CLONE_NEWUSER | CLONE_FILES | C=
-LONE_VM);
-> +       if (pid < 0) {
-> +               syserror("failure: userns level %d", h->level);
-> +               goto out_close;
-> +       }
-> +
-> +       ret =3D map_ids_from_idmap(&h->id_map, pid);
-> +       if (ret < 0) {
-> +               kill(pid, SIGKILL);
-> +               syserror("failure: writing id mapping for userns level %d=
- for %d", h->level, pid);
-> +               goto out_wait;
-> +       }
-> +
-> +       if (!list_empty(&h->id_map))
-> +               bytes =3D write_nointr(fd_socket[0], "1", 1); /* Inform t=
-he child we wrote a mapping. */
-> +       else
-> +               bytes =3D write_nointr(fd_socket[0], "0", 1); /* Inform t=
-he child we didn't write a mapping. */
-> +       if (bytes < 0) {
-> +               kill(pid, SIGKILL);
-> +               syserror("failure: write to socketpair");
-> +               goto out_wait;
-> +       }
-> +
-> +       /* Wait for child to set*id() and become dumpable. */
-> +       bytes =3D read_nointr(fd_socket[0], &c, 1);
-> +       if (bytes < 0) {
-> +               kill(pid, SIGKILL);
-> +               syserror("failure: read from socketpair");
-> +               goto out_wait;
-> +       }
-> +
-> +       snprintf(path, sizeof(path), "/proc/%d/ns/user", pid);
-> +       fd_userns =3D open(path, O_RDONLY | O_CLOEXEC);
-> +       if (fd_userns < 0) {
-> +               kill(pid, SIGKILL);
-> +               syserror("failure: open userns level %d for %d", h->level=
-, pid);
-> +               goto out_wait;
-> +       }
-> +
-> +       fret =3D 0;
-> +
-> +out_wait:
-> +       if (!wait_for_pid(pid) && !fret) {
-> +               h->fd_userns =3D fd_userns;
-> +               fd_userns =3D -EBADF;
-> +       }
-> +
-> +out_close:
-> +       if (fd_userns >=3D 0)
-> +               close(fd_userns);
-> +       close(fd_socket[0]);
-> +       close(fd_socket[1]);
-> +       return fret;
-> +}
-> +
-> +/* caps_down - lower all effective caps */
-> +int caps_down(void)
-> +{
-> +       bool fret =3D false;
-> +       cap_t caps =3D NULL;
-> +       int ret =3D -1;
-> +
-> +       caps =3D cap_get_proc();
-> +       if (!caps)
-> +               goto out;
-> +
-> +       ret =3D cap_clear_flag(caps, CAP_EFFECTIVE);
-> +       if (ret)
-> +               goto out;
-> +
-> +       ret =3D cap_set_proc(caps);
-> +       if (ret)
-> +               goto out;
-> +
-> +       fret =3D true;
-> +
-> +out:
-> +       cap_free(caps);
-> +       return fret;
-> +}
-> diff --git a/tools/testing/selftests/filesystems/utils.h b/tools/testing/=
-selftests/filesystems/utils.h
-> new file mode 100644
-> index 000000000000..f35001a75f99
-> --- /dev/null
-> +++ b/tools/testing/selftests/filesystems/utils.h
-> @@ -0,0 +1,44 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#ifndef __IDMAP_UTILS_H
-> +#define __IDMAP_UTILS_H
-> +
-> +#ifndef _GNU_SOURCE
-> +#define _GNU_SOURCE
-> +#endif
-> +#include <errno.h>
-> +#include <linux/types.h>
-> +#include <sched.h>
-> +#include <signal.h>
-> +#include <stdbool.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <string.h>
-> +#include <syscall.h>
-> +#include <sys/capability.h>
-> +#include <sys/fsuid.h>
-> +#include <sys/types.h>
-> +#include <unistd.h>
-> +
-> +extern int get_userns_fd(unsigned long nsid, unsigned long hostid,
-> +                        unsigned long range);
-> +
-> +extern int caps_down(void);
-> +
-> +extern bool switch_ids(uid_t uid, gid_t gid);
-> +
-> +static inline bool switch_userns(int fd, uid_t uid, gid_t gid, bool drop=
-_caps)
-> +{
-> +       if (setns(fd, CLONE_NEWUSER))
-> +               return false;
-> +
-> +       if (!switch_ids(uid, gid))
-> +               return false;
-> +
-> +       if (drop_caps && !caps_down())
-> +               return false;
-> +
-> +       return true;
-> +}
-> +
-> +#endif /* __IDMAP_UTILS_H */
->
+>  /*
 > --
-> 2.47.2
+> 2.48.0
 >
+
 
