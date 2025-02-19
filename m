@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-42129-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42130-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E009BA3CC58
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 23:31:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 619CCA3CC5D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 23:32:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 403CA7A50C0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 22:30:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EB913B27A9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2025 22:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF87259495;
-	Wed, 19 Feb 2025 22:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740C425A2C8;
+	Wed, 19 Feb 2025 22:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D/U0cIbG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J5O7EeM2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE1317CA12;
-	Wed, 19 Feb 2025 22:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECE617CA12;
+	Wed, 19 Feb 2025 22:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740004305; cv=none; b=vGgJNUuyoszutSECIstVETCM+ygILdnQGK3Ph380IF5qESqvjY8XbOXL1KUdJuTGtZSv69+y2nwpbHd+B+8+z4YFkiXV82Bcs7Ppx8atPVq9b64vCMchlev3jHVnlCzlqaLsDRHgPue5IMP5SrS3wi52GxMpH0EoQrOUSYx6blg=
+	t=1740004319; cv=none; b=QB7WVwcCBVYSwvYx2qmOtjEFxewfkHqupt6Qnl4KPrMyc3cNE/65OcItbwqy0LsIns9HiEwDOYOj5dvjuNNL0iYWdm8yYV1L936uUDAzyBdX/hKl+hjjadnLW2VV1ff3ATxiFRzcinN1qQAnDgCFEQD988HWu5olpMeN8Pa0flg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740004305; c=relaxed/simple;
-	bh=rjSUNO4FBfyczkNOrpnaKO1/3mMyZPB4f6E+zbJobb4=;
+	s=arc-20240116; t=1740004319; c=relaxed/simple;
+	bh=GEUpahsgaTjUKu6d9vdqNrav7AuflItWoHWwzOj3LMw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m8Sow1k3eK0Edk+4uss0DhDqoZrMpC7gRu2AqOSUugOHCtVnq4Jd3zddT5Zeh9sqDRL1SADzagzSwdC/0NeL7U3f2Zwewa11NVNvrmq38zugPEPVY4eqVG+4Ei2vTQJDQoZ0r9VObWhV0Vd+mLqzwer5sP6GNmYzRk7HhAm1r6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D/U0cIbG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6AC5C4CED1;
-	Wed, 19 Feb 2025 22:31:44 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=KtCnJh3pBOJRNUUIRUCrph7BpWZmFgRhHSPdjGZieJT7mOScRvqlTF5UXOEaQz4mS0LzFHMyKZg3mo4RK/Q0cNEUCXIj8pxfp9n+82ObfrFlKERurJQ6sUF7/MWwZxHqB0D27gkmbcWtOI/icVXvKUVZ5EnODa/vxdK5dyWakh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J5O7EeM2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41657C4CED1;
+	Wed, 19 Feb 2025 22:31:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740004305;
-	bh=rjSUNO4FBfyczkNOrpnaKO1/3mMyZPB4f6E+zbJobb4=;
+	s=k20201202; t=1740004319;
+	bh=GEUpahsgaTjUKu6d9vdqNrav7AuflItWoHWwzOj3LMw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D/U0cIbGvZlIIdF7wVL4bdsv01qrfUlAkE7buOO/aiDblUfGUkFm4kubdK65pQF1n
-	 vUtQjjky8XwFQDLmVbaFOF9mSto67WKF5s0JfhpZ0gXWVALaz2o8p5xvZLRgG/M5c2
-	 qv5KjecULUorrDFpoHa3rNVjOUeRMru2XO48DfcGK6L5qQephYhdNBdsNCEvfZMPME
-	 HRO7E6W8/vDpCPISAgnmyIgW+8Dc75CIqI9GRC+hwC7ccHVgdo/BJO/3/ec5m95iu0
-	 9H1KiP+G85k2mCBu0K6DLlheKS648u/v5QevgHJQbr2MWIV1/1hjCbMya32UHOQpNa
-	 Pw/zZZl+WUaRw==
-Date: Wed, 19 Feb 2025 14:31:44 -0800
+	b=J5O7EeM2zE3MHjqqYn9o//ukEl1Xl8tAf/8rf0L4666yDzXQDiW1tqjHLaAcO+RUt
+	 uyT5k20tN4mknIhEgqtOiaRP99xHeUGWFTmIEzYs3FvVaGlghXRgheZ89a2c1bAU+O
+	 ZOGfrDIb9Tc8ivNl7tOIg02pweKeHgA116Qwvo6I8Vhs2d6iQ35d9akvQUEBnx66Jo
+	 giNRq8Yh2Vs/bayqoxutFwsQFtOV+OB+g+5/IjtkLi0FspqU1Hvz2IpkLZQ3tY67Jv
+	 8PuiklEB3hpw45q9kM2LZhRQ25fe458f/CdMGb5kBDwTnVpq3dEUjARZcb06IKEpyS
+	 fOWOIaJLIl56A==
+Date: Wed, 19 Feb 2025 14:31:58 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Brian Foster <bfoster@redhat.com>
 Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
 	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v2 01/12] iomap: advance the iter directly on buffered
- read
-Message-ID: <20250219223144.GH21808@frogsfrogsfrogs>
+Subject: Re: [PATCH v2 03/12] iomap: convert misc simple ops to incremental
+ advance
+Message-ID: <20250219223158.GI21808@frogsfrogsfrogs>
 References: <20250219175050.83986-1-bfoster@redhat.com>
- <20250219175050.83986-2-bfoster@redhat.com>
- <20250219222235.GB21808@frogsfrogsfrogs>
+ <20250219175050.83986-4-bfoster@redhat.com>
+ <20250219222428.GD21808@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,41 +60,37 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250219222235.GB21808@frogsfrogsfrogs>
+In-Reply-To: <20250219222428.GD21808@frogsfrogsfrogs>
 
-On Wed, Feb 19, 2025 at 02:22:35PM -0800, Darrick J. Wong wrote:
-> On Wed, Feb 19, 2025 at 12:50:39PM -0500, Brian Foster wrote:
-> > iomap buffered read advances the iter via iter.processed. To
-> > continue separating iter advance from return status, update
-> > iomap_readpage_iter() to advance the iter instead of returning the
-> > number of bytes processed. In turn, drop the offset parameter and
-> > sample the updated iter->pos at the start of the function. Update
-> > the callers to loop based on remaining length in the current
-> > iteration instead of number of bytes processed.
+On Wed, Feb 19, 2025 at 02:24:28PM -0800, Darrick J. Wong wrote:
+> On Wed, Feb 19, 2025 at 12:50:41PM -0500, Brian Foster wrote:
+> > Update several of the remaining iomap operations to advance the iter
+> > directly rather than via return value. This includes page faults,
+> > fiemap, seek data/hole and swapfile activation.
 > > 
 > > Signed-off-by: Brian Foster <bfoster@redhat.com>
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
 > > ---
-> >  fs/iomap/buffered-io.c | 45 +++++++++++++++++++-----------------------
-> >  1 file changed, 20 insertions(+), 25 deletions(-)
+> >  fs/iomap/buffered-io.c |  2 +-
+> >  fs/iomap/fiemap.c      | 18 +++++++++---------
+> >  fs/iomap/seek.c        | 12 ++++++------
+> >  fs/iomap/swapfile.c    |  7 +++++--
+> >  4 files changed, 21 insertions(+), 18 deletions(-)
 > > 
 > > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > index ec227b45f3aa..215866ba264d 100644
+> > index 215866ba264d..ddc82dab6bb5 100644
 > > --- a/fs/iomap/buffered-io.c
 > > +++ b/fs/iomap/buffered-io.c
-> > @@ -366,15 +366,14 @@ static inline bool iomap_block_needs_zeroing(const struct iomap_iter *iter,
-> >  		pos >= i_size_read(iter->inode);
-> >  }
+> > @@ -1480,7 +1480,7 @@ static loff_t iomap_folio_mkwrite_iter(struct iomap_iter *iter,
+> >  		folio_mark_dirty(folio);
+> >  	}
 > >  
-> > -static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
-> > -		struct iomap_readpage_ctx *ctx, loff_t offset)
-> > +static loff_t iomap_readpage_iter(struct iomap_iter *iter,
+> > -	return length;
+> > +	return iomap_iter_advance(iter, &length);
 > 
-> I wonder, do we really need to return loff_t from some of these
-> functions now?  I thought the only return codes were the -EIO/0 from
-> iomap_iter_advance?
+> Same dorky question here -- doesn't iomap_iter_advance return int, so
+> all these functions can now return int instead of loff_t?
 
-And that's provided in the last patch so
+Same dorky answer too!
 Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
 --D
@@ -102,90 +98,126 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > 
 > --D
 > 
-> > +		struct iomap_readpage_ctx *ctx)
-> >  {
-> >  	const struct iomap *iomap = &iter->iomap;
-> > -	loff_t pos = iter->pos + offset;
-> > -	loff_t length = iomap_length(iter) - offset;
-> > +	loff_t pos = iter->pos;
-> > +	loff_t length = iomap_length(iter);
-> >  	struct folio *folio = ctx->cur_folio;
-> >  	struct iomap_folio_state *ifs;
-> > -	loff_t orig_pos = pos;
-> >  	size_t poff, plen;
-> >  	sector_t sector;
+> >  }
 > >  
-> > @@ -438,25 +437,22 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
-> >  	 * we can skip trailing ones as they will be handled in the next
-> >  	 * iteration.
-> >  	 */
-> > -	return pos - orig_pos + plen;
-> > +	length = pos - iter->pos + plen;
+> >  vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
+> > diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
+> > index 610ca6f1ec9b..8a0d8b034218 100644
+> > --- a/fs/iomap/fiemap.c
+> > +++ b/fs/iomap/fiemap.c
+> > @@ -39,24 +39,24 @@ static int iomap_to_fiemap(struct fiemap_extent_info *fi,
+> >  			iomap->length, flags);
+> >  }
+> >  
+> > -static loff_t iomap_fiemap_iter(const struct iomap_iter *iter,
+> > +static loff_t iomap_fiemap_iter(struct iomap_iter *iter,
+> >  		struct fiemap_extent_info *fi, struct iomap *prev)
+> >  {
+> > +	u64 length = iomap_length(iter);
+> >  	int ret;
+> >  
+> >  	if (iter->iomap.type == IOMAP_HOLE)
+> > -		return iomap_length(iter);
+> > +		goto advance;
+> >  
+> >  	ret = iomap_to_fiemap(fi, prev, 0);
+> >  	*prev = iter->iomap;
+> > -	switch (ret) {
+> > -	case 0:		/* success */
+> > -		return iomap_length(iter);
+> > -	case 1:		/* extent array full */
+> > -		return 0;
+> > -	default:	/* error */
+> > +	if (ret < 0)
+> >  		return ret;
+> > -	}
+> > +	if (ret == 1)	/* extent array full */
+> > +		return 0;
+> > +
+> > +advance:
 > > +	return iomap_iter_advance(iter, &length);
 > >  }
 > >  
-> > -static loff_t iomap_read_folio_iter(const struct iomap_iter *iter,
-> > +static loff_t iomap_read_folio_iter(struct iomap_iter *iter,
-> >  		struct iomap_readpage_ctx *ctx)
+> >  int iomap_fiemap(struct inode *inode, struct fiemap_extent_info *fi,
+> > diff --git a/fs/iomap/seek.c b/fs/iomap/seek.c
+> > index a845c012b50c..83c687d6ccc0 100644
+> > --- a/fs/iomap/seek.c
+> > +++ b/fs/iomap/seek.c
+> > @@ -10,7 +10,7 @@
+> >  #include <linux/pagemap.h>
+> >  #include <linux/pagevec.h>
+> >  
+> > -static loff_t iomap_seek_hole_iter(const struct iomap_iter *iter,
+> > +static loff_t iomap_seek_hole_iter(struct iomap_iter *iter,
+> >  		loff_t *hole_pos)
 > >  {
-> > -	struct folio *folio = ctx->cur_folio;
-> > -	size_t offset = offset_in_folio(folio, iter->pos);
-> > -	loff_t length = min_t(loff_t, folio_size(folio) - offset,
-> > -			      iomap_length(iter));
-> > -	loff_t done, ret;
-> > -
-> > -	for (done = 0; done < length; done += ret) {
-> > -		ret = iomap_readpage_iter(iter, ctx, done);
-> > -		if (ret <= 0)
-> > +	loff_t ret;
+> >  	loff_t length = iomap_length(iter);
+> > @@ -20,13 +20,13 @@ static loff_t iomap_seek_hole_iter(const struct iomap_iter *iter,
+> >  		*hole_pos = mapping_seek_hole_data(iter->inode->i_mapping,
+> >  				iter->pos, iter->pos + length, SEEK_HOLE);
+> >  		if (*hole_pos == iter->pos + length)
+> > -			return length;
+> > +			return iomap_iter_advance(iter, &length);
+> >  		return 0;
+> >  	case IOMAP_HOLE:
+> >  		*hole_pos = iter->pos;
+> >  		return 0;
+> >  	default:
+> > -		return length;
+> > +		return iomap_iter_advance(iter, &length);
+> >  	}
+> >  }
+> >  
+> > @@ -56,19 +56,19 @@ iomap_seek_hole(struct inode *inode, loff_t pos, const struct iomap_ops *ops)
+> >  }
+> >  EXPORT_SYMBOL_GPL(iomap_seek_hole);
+> >  
+> > -static loff_t iomap_seek_data_iter(const struct iomap_iter *iter,
+> > +static loff_t iomap_seek_data_iter(struct iomap_iter *iter,
+> >  		loff_t *hole_pos)
+> >  {
+> >  	loff_t length = iomap_length(iter);
+> >  
+> >  	switch (iter->iomap.type) {
+> >  	case IOMAP_HOLE:
+> > -		return length;
+> > +		return iomap_iter_advance(iter, &length);
+> >  	case IOMAP_UNWRITTEN:
+> >  		*hole_pos = mapping_seek_hole_data(iter->inode->i_mapping,
+> >  				iter->pos, iter->pos + length, SEEK_DATA);
+> >  		if (*hole_pos < 0)
+> > -			return length;
+> > +			return iomap_iter_advance(iter, &length);
+> >  		return 0;
+> >  	default:
+> >  		*hole_pos = iter->pos;
+> > diff --git a/fs/iomap/swapfile.c b/fs/iomap/swapfile.c
+> > index b90d0eda9e51..4395e46a4dc7 100644
+> > --- a/fs/iomap/swapfile.c
+> > +++ b/fs/iomap/swapfile.c
+> > @@ -94,9 +94,11 @@ static int iomap_swapfile_fail(struct iomap_swapfile_info *isi, const char *str)
+> >   * swap only cares about contiguous page-aligned physical extents and makes no
+> >   * distinction between written and unwritten extents.
+> >   */
+> > -static loff_t iomap_swapfile_iter(const struct iomap_iter *iter,
+> > +static loff_t iomap_swapfile_iter(struct iomap_iter *iter,
+> >  		struct iomap *iomap, struct iomap_swapfile_info *isi)
+> >  {
+> > +	u64 length = iomap_length(iter);
 > > +
-> > +	while (iomap_length(iter)) {
-> > +		ret = iomap_readpage_iter(iter, ctx);
-> > +		if (ret)
-> >  			return ret;
+> >  	switch (iomap->type) {
+> >  	case IOMAP_MAPPED:
+> >  	case IOMAP_UNWRITTEN:
+> > @@ -132,7 +134,8 @@ static loff_t iomap_swapfile_iter(const struct iomap_iter *iter,
+> >  			return error;
+> >  		memcpy(&isi->iomap, iomap, sizeof(isi->iomap));
 > >  	}
-> >  
-> > -	return done;
-> > +	return 0;
+> > -	return iomap_length(iter);
+> > +
+> > +	return iomap_iter_advance(iter, &length);
 > >  }
 > >  
-> >  int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
-> > @@ -493,15 +489,14 @@ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
-> >  }
-> >  EXPORT_SYMBOL_GPL(iomap_read_folio);
-> >  
-> > -static loff_t iomap_readahead_iter(const struct iomap_iter *iter,
-> > +static loff_t iomap_readahead_iter(struct iomap_iter *iter,
-> >  		struct iomap_readpage_ctx *ctx)
-> >  {
-> > -	loff_t length = iomap_length(iter);
-> > -	loff_t done, ret;
-> > +	loff_t ret;
-> >  
-> > -	for (done = 0; done < length; done += ret) {
-> > +	while (iomap_length(iter)) {
-> >  		if (ctx->cur_folio &&
-> > -		    offset_in_folio(ctx->cur_folio, iter->pos + done) == 0) {
-> > +		    offset_in_folio(ctx->cur_folio, iter->pos) == 0) {
-> >  			if (!ctx->cur_folio_in_bio)
-> >  				folio_unlock(ctx->cur_folio);
-> >  			ctx->cur_folio = NULL;
-> > @@ -510,12 +505,12 @@ static loff_t iomap_readahead_iter(const struct iomap_iter *iter,
-> >  			ctx->cur_folio = readahead_folio(ctx->rac);
-> >  			ctx->cur_folio_in_bio = false;
-> >  		}
-> > -		ret = iomap_readpage_iter(iter, ctx, done);
-> > -		if (ret <= 0)
-> > +		ret = iomap_readpage_iter(iter, ctx);
-> > +		if (ret)
-> >  			return ret;
-> >  	}
-> >  
-> > -	return done;
-> > +	return 0;
-> >  }
-> >  
-> >  /**
+> >  /*
 > > -- 
 > > 2.48.1
 > > 
