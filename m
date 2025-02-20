@@ -1,125 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-42141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42142-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B530DA3D0D2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 06:35:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB81A3D118
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 07:02:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF335189D98E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 05:35:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16B9D1889BFF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 06:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB6A1E284C;
-	Thu, 20 Feb 2025 05:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7FE1B2194;
+	Thu, 20 Feb 2025 06:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gcQcFc6k"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mDglXJtR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC53E524F;
-	Thu, 20 Feb 2025 05:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B4E179BC;
+	Thu, 20 Feb 2025 06:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740029722; cv=none; b=MPau/kqzhYjmt2BlpYp1AU3IFbvIXNaEIR59S3e0maUUAAFKYhkullJgzBnhWVbA3tWPUkqeIGDESsoE5gaqC9JBsScHxXVh7rcrxPCuBS7grNROPbHnBVBthsUt2lRNtDSs4kpxSb7gKNnAc/TPzBUcoBAGgvejUGXQPS/6DIU=
+	t=1740031317; cv=none; b=GynV57Z2SzdLNHY4uP3ax7yI5MBbut2gv7KloBpBHeAT8UZ5VojmqfWFMcD7ANwGhQlq47N5Slp39454YlojP0gojRKJpnRqhEZ1eLCLwJu1GlBtEFY2V11dslvW9btOgr1ZXtirgb0gQ6ngsoDa0745X00HNO2Fz5C3Z27xm6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740029722; c=relaxed/simple;
-	bh=XQ508VSSFA97njrwo7AFNEChjQJ70/G58Y0criKE2Yo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d5t8mwOZNU3PGji8ObUiEFAGCS4iISVlyoWduL7PYqtP9ZGZ9wi845nuY2326WfZOmya3wYhnw4GcwlCgz3vzuNZFtW/z2GyxrxxqUYZyEokPSD9GQz1iECHZsjYm+XR/cvTnYODH7HWMIsYGO+Q90bM4rzVMhYg3i6YDxvLPR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gcQcFc6k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9285C4CED1;
-	Thu, 20 Feb 2025 05:35:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740029722;
-	bh=XQ508VSSFA97njrwo7AFNEChjQJ70/G58Y0criKE2Yo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gcQcFc6k7bwz5ZFusHhNK9TWljz9mmJJqPobwzpDeLGDURG4YxXgfG4ujqmex0bRy
-	 WHxrkmAdzen0xyZtgd5ONLjZYq+brEQDsY8ygCZOhcZq1gCtXWVfToaeEHOjHmoFUw
-	 uB4W9uU0dXDutW16dAO53aFk5cUuLtkY5S2Os5TI=
-Date: Thu, 20 Feb 2025 06:35:19 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Sumya Hoque <sumyahoque2012@gmail.com>
-Cc: skhan@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	shuah@kernel.org, linux-fsdevel@vger.kernel.org, kees@kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH v2] selftests:sysctl:Fix minor typos in sysctl test
-Message-ID: <2025022055-cubicle-kebab-b9b6@gregkh>
-References: <202502190912.CA03B56796@keescook>
- <20250219193301.46563-1-sumyahoque2012@gmail.com>
+	s=arc-20240116; t=1740031317; c=relaxed/simple;
+	bh=9C7GalXDNpRN1s0FWvwP3LdMQ/uTcVOs3vy246T4DcI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O8p0aqU6A50dyWh35fQ9SLF+dgvBOLdFxh14XNNJyRq7JfBQ9MOCLkmwt1azrAkplHmIbhq/niLEtQgNq+h3DaKrmYV2F4xY5ROc+i9UZQj5O1nDw/jCwWrTIKu910eoCpRxxwHHvvv9RQflsVulLfqjyF30pxmWv7IUK3/nL5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mDglXJtR; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-543e4bbcd86so651911e87.1;
+        Wed, 19 Feb 2025 22:01:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740031313; x=1740636113; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a1TUOP5JGHi5U7PjVMb2rHP874qjAsCEPguVt9MseEI=;
+        b=mDglXJtRF2ymFX0F7A55ncRPtDXuUd6+Wo4EXkUVJVBeoG9nfL42RX0w/PsYVtXKve
+         SB5EmDG0j8hRmLtVXiQQmpkNuQnvdlGmiGftseBfvtBMhfNxWVxmCnvbj0hzMuIIl1bM
+         ctJTJKC6f1LC4XZPF8IszQiIyPc7daSedY6fBnKjPm8dTav1BD7PuvQwaFais3DfUn1c
+         Q5tba32kBlbMQXK6COg5UfJpqtwSbpyuPoXZzEcr88hy7l3OuMJ4SB4+gbRN7gkn0Woj
+         IjhcJh0gCIcGObKYJay3UjxXn7KSq8Q7d6MVhOFEDALXgs8tlOhoNxI030vgA+zoYpKK
+         OdPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740031313; x=1740636113;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a1TUOP5JGHi5U7PjVMb2rHP874qjAsCEPguVt9MseEI=;
+        b=XvXfxyjcQxEg5jHSos4NubDx/yOQT4/WiMCARYRrVcwUqCFcBmz01pGFyNwG1VEpBU
+         c2H1HcNOEnmaqOf1lCjYBguBVLbnjDmaVoCWtjWpg5YuwQUckESV6uNeE8KfxNqZe8oe
+         ScmmuiwGKNsaXzjphWqgr0Mft9qNIFdx1+lHy2hYUYjO/ozKaCILwhKKs15iuzyC52Oj
+         XtCDmfKPeiLnfFF5n8pnhZbbE3nVP0JYjxpGN97V4TNJu0gNgwTvbM/CDrJLPDY9zpUo
+         4NxxwdSfLK655s9zqCxnjb5S3ZmSkZv7152Mk9b/kJ91CgG96KpNzjc77g4UV0LFs2a8
+         7MaA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ/jdwnnfdO+l//Ug7WvH+1W7mTpey7Rfgix8A0UtGuAGlIGrmZqQQhKcbAr6iYPR1cK1ez/YRfDA4tGHA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzuqmro9YHx4hbSp9L+K/JSHURfXItp+Wgj6HEN48Y+VFqwI3V/
+	tDbo+EdGycNdFjuqO/KfKJpWszwYHR4hzXZu1BfeHv+egOhVSv/eC1/u89DCk71/GjgWdxssq1q
+	lrzzA4UTUdLnTHB0WuyXk0XgIdEwwVOaf
+X-Gm-Gg: ASbGncu9ObD0/IgHMABUL17pXV/wi5rXeHrOh+5WpMuHq9CM9kj4PK/LlP42IYJWKks
+	bVMCjEYDOHaqcyujy+wZjlvUvGPpxM6nDD4/HXjSnJD1HFENidm6jLJyOeTp7CClh3MQZT85/
+X-Google-Smtp-Source: AGHT+IEnW2vZIlFxU0c5YKA09HUsOM3D6VZ4G8gwcFJJiP2s9hIU5t9LZQzWQCPRRe2KRO7hUMvPEkEhg88iEHIRrJA=
+X-Received: by 2002:a05:6512:3da9:b0:540:1f75:1b05 with SMTP id
+ 2adb3069b0e04-5462eee6fbcmr3005253e87.19.1740031312414; Wed, 19 Feb 2025
+ 22:01:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250219193301.46563-1-sumyahoque2012@gmail.com>
+References: <CAH2r5mvgkPdLQ_oz_faa=4CVCaHNDcNVZfqBbdKTENrW5COSTA@mail.gmail.com>
+ <526482.1739982363@warthog.procyon.org.uk>
+In-Reply-To: <526482.1739982363@warthog.procyon.org.uk>
+From: Steve French <smfrench@gmail.com>
+Date: Thu, 20 Feb 2025 00:01:37 -0600
+X-Gm-Features: AWEUYZll2Jfq_2grz7XzNP4Xg8dKU2recFJJmsUbeN2KjQTGAauBHyOagA1jAEU
+Message-ID: <CAH2r5muW+LW8i9VDB9_WknzAo_ubXJEKiY10k46OxKVLvqXHbw@mail.gmail.com>
+Subject: Re: netfs read failures with current mainline
+To: David Howells <dhowells@redhat.com>
+Cc: CIFS <linux-cifs@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 19, 2025 at 07:33:01PM +0000, Sumya Hoque wrote:
-> 
-> Signed-off-by: Sumya Hoque <sumyahoque2012@gmail.com>
-> ---
->  tools/testing/selftests/sysctl/sysctl.sh | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/sysctl/sysctl.sh b/tools/testing/selftests/sysctl/sysctl.sh
-> index 84472b436c07..323468653327 100755
-> --- a/tools/testing/selftests/sysctl/sysctl.sh
-> +++ b/tools/testing/selftests/sysctl/sysctl.sh
-> @@ -891,11 +891,11 @@ usage()
->  	echo "    -l      List all test ID list"
->  	echo " -h|--help  Help"
->  	echo
-> -	echo "If an error every occurs execution will immediately terminate."
-> +	echo "If an error ever occurs execution will immediately terminate."
->  	echo "If you are adding a new test try using -w <test-ID> first to"
->  	echo "make sure the test passes a series of tests."
->  	echo
-> -	echo Example uses:
-> +	echo Example usage:
->  	echo
->  	echo "$TEST_NAME.sh            -- executes all tests"
->  	echo "$TEST_NAME.sh -t 0002    -- Executes test ID 0002 number of times is recomended"
-> -- 
-> 2.34.1
-> 
-> 
+test cifs/102 (a test for handle leaks) does appear to pass with
+current mainline (it should return "no locked files" in the output)
+but here is the test:
 
-Hi,
+# Test for Open leaks
+#
+seq=3D`basename $0`
+seqres=3D$RESULT_DIR/$seq
+echo "QA output created by $seq"
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+here=3D`pwd`
+tmp=3D/tmp/$$
+status=3D1        # failure is the default!
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+_cleanup()
+{
+        rm -f $tmp.*
+}
 
-- You did not specify a description of why the patch is needed, or
-  possibly, any description at all, in the email body.  Please read the
-  section entitled "The canonical patch format" in the kernel file,
-  Documentation/process/submitting-patches.rst for what is needed in
-  order to properly describe the change.
+trap "_cleanup ; exit \$status" 0 1 2 3 15
 
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
+# get standard environment, filters and checks
+. ./common/rc
+. ./common/filter
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+# real QA test starts here
+_supported_fs cifs
+_require_test
 
-thanks,
+mkdir -p $TEST_DIR/$$ || _fail "failed to create test dir"
 
-greg k-h's patch email bot
+# Create a file to test with
+echo "hello world" > $TEST_DIR/leak
+# Try to kill a 'cat' when it is opening/closing a file
+(for i in {1..5000} ; do cat $TEST_DIR/leak & sleep 0.0001 ; kill -9
+$! ; done) >/dev/null 2>&1
+sleep 3
+# and verify if we have any leaked filehandles
+smbstatus | grep -i Locked -A1000
+
+status=3D0
+exit
+
+On Wed, Feb 19, 2025 at 10:26=E2=80=AFAM David Howells <dhowells@redhat.com=
+> wrote:
+>
+> Steve French <smfrench@gmail.com> wrote:
+>
+> > cifs/102
+>
+> What's cifs/102?
+>
+> David
+>
+
+
+--=20
+Thanks,
+
+Steve
 
