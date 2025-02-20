@@ -1,116 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-42175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56746A3DE48
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 16:22:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEFC2A3DF5C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 16:53:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD5487ADBCA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 15:14:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EE3C17996A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 15:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1BD1FBEA7;
-	Thu, 20 Feb 2025 15:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E860E1F63EA;
+	Thu, 20 Feb 2025 15:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Ybn03y8W"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ARxCtaZF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C3940BF5
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2025 15:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C413F204F94
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2025 15:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740064522; cv=none; b=B/6Ss98/z6drqARDz++hOeXfUJGIo+DMkfQwrxUiAk609R4Up2TX/tQE5S4C6Rr5ZJViZCE7xfSr5xdPvIWjiS+w//L2KGn2+rZRm3m04gE4HGG6utWz+bjtvhz5YITTPqw1NGMWVGH9aREZroV7FXVyVGnHNIOkvHKBoFE/Vs4=
+	t=1740066648; cv=none; b=Tq0taM8yby0WiLni2Mzhoz+TDH+9MNh5GcakDzcJTTmjK47226X1Otm/dFD3vZiP2stVO8c+xMILxzWLrM3badJoSUnh3uHO9+fEsk4h3KT0ztyHNy9IJFZ6fBUJPqLNJL5BP7m9lZx11ImcEHPQRhwGRE/p1Ueir46bbz36Ouw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740064522; c=relaxed/simple;
-	bh=2lypZIVM4573Oy9ASIWmYUX19E/cTsKcVfrLLtJ4Yzo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kAHzE5LNz/Ml61IZGWTfM9pQN6bNWPvWpryMNADh2ttWqe2/HTBjyqwy4SeSOZvDAVew4NlJ77VxT4Dx+byPuuP65nzidg0e8CW2anSmWtfHfSXI2A/xNwISgHp8kgqwnnSSeVh2Mgz1vVTiLnqF82s8hGKy8DKpsz+8ShJbvLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Ybn03y8W; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3cf8e017abcso3348885ab.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2025 07:15:19 -0800 (PST)
+	s=arc-20240116; t=1740066648; c=relaxed/simple;
+	bh=NOZ6hwtAfDPTUx2chY/KuMq7RkUkUAjyQesgIkb6ybw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PPDeQ4eRehDQDwBVNGLN0mDRmz7rFQEaGDdI/BEBC0kXClp1GODrNYWdqSU2OCpHa9AoFdCHKs08sIoHF7Sxi9UBiAxWCM+uuv7HoQkYXoazafof2CHrnm0KE8irovICQ2Eq0W6nzBHeurtRQJFP6TnxX1e6dLCoV3eSo74yWUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ARxCtaZF; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6efe4324f96so9779057b3.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2025 07:50:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740064518; x=1740669318; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lc0kVOcVBa+1xUpdAG1o0QP4R1TQ3LE6XaKlxbsDJBY=;
-        b=Ybn03y8W9RPU5p99kyJxhFSZxUuvtJgOUwdMBdCUgdoelYkpnQUQ549AaKBpOLgNAQ
-         odTs0NffCuIT1/QT3pla4wk6eKbS1IUMN7TMvLh0lAeYmVYRWOWINCNk/UoNKQy+gp1d
-         yTVCr35Dthvqh0KPESeOXCV53OY2rC5cgSIw0Hlnxz41hcRrnepQ+8hn4Xw+sI7OqdaQ
-         kseIRHTE7d4gGadqj8xQEhsTArRwZwQXSb5z9hCv73zgnIbX+HH6cMqDGdBcXHNDHeG+
-         zB0tLNu/sPj8D/VdvSHr2aN6HR7vOYNCP2UEYnSdI+zX0FRV8Lo/BXb//Y4DG6j2r/Kz
-         gY1Q==
+        d=google.com; s=20230601; t=1740066645; x=1740671445; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NOZ6hwtAfDPTUx2chY/KuMq7RkUkUAjyQesgIkb6ybw=;
+        b=ARxCtaZF4VgTKB5Epe32R1Zqa0EVGoz/H6H83Jqw4LC3ierLwRMzQXnleYX2dSLKpe
+         sY1BzOLumC3bsXOm4qWJ/8KxAAw4+89p9Fw9TTdRVMkA60RNXgIil9+n/b3M4eGjmzrD
+         nHnqwF352fRKfQCD4Hhxhs1o4ZmkEicGxh+NN84XKV0eGprm+VWaYn5lPjm1QP+PE5bD
+         R2+4CAyHtokvyETk5K1qNKyf7PqYUUv/CAM4Vw8pTYvkyu1YGIEzKK+bYl4GMZ3UT/sA
+         /vkkSTOEo78a5TkxyuNLiyCRpGT3SQI3C88bXM0gFHpY8jzpdZuVH9pzjUvnL3Ty4zS/
+         ik6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740064518; x=1740669318;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lc0kVOcVBa+1xUpdAG1o0QP4R1TQ3LE6XaKlxbsDJBY=;
-        b=pcifYqbsM6ZAcWvl6mwUX3kqvKYjjMjctX8sinhcInGyugNOcsPm8ARRqIyGk0S0/Q
-         ijrYXm01qVW3H4t+ytMaHQwntg6hJjpS9zXetzCKEhHYGW3a9cAm6V/C0N8Gl+cyFE5W
-         BUPKkArKmUJpraFfYiVOdUVjgjvaLOsuu83DkCo9ISQlOsu8qepRUf9xzWbZ6N/s5vhi
-         MHa5mzKWPCuWhEK8EJgRQOUo/Slggg19fTPfZKLSQQO9Z+kcSZXzbpKmyQbnhXax8wci
-         na4MTF+7wwFffLzMXCswKqxY5On0uG09nuKRdO/iEN8U5dVj14XbKxAlXsGmtmTYJLml
-         Av/A==
-X-Gm-Message-State: AOJu0YyDDf/sIa0n+pNVRK+jD9spKLhdg6qlqmJQM6L0E6QzXMtVXePn
-	2wouGvKLGeAIw1VuxcYf3vSMG70c/WzbhyXoRHVAXXVkEQIRelTKA56fGF1OmAG90dhf/mMXJaW
-	Q
-X-Gm-Gg: ASbGncsUgGIoDLi3X4hbgQqjVDY+V4OvWzYbGyLsI7fvnySPqDZAJbNwVjad4PEa9co
-	MK7Vrz+gedDG27Ae/FUakXaToe2b3g0P8rFac4btt9J2SN5H3eKoxMPqVdAJ6VPznBJ0ixKbSXs
-	Anxpn0NJ+zCq6r7o0aIvLIwlHajZGDqXKWm5xtn+s3WTOyiximg4v5w5kJumkK6/AeijqjcbfwB
-	R89YnWKS+ylxw63QdjMy4eiE8esyEf/M2b4MyVbAU5ycgnvmAaTOEtjBoo75FLX7e3FzcOjFcjO
-	5Z1z8u6o9h34
-X-Google-Smtp-Source: AGHT+IG5rDxrXr/58y2FFTwSJH1Vf/agd3/d6YIX7/gBYJunps3a/dJzWBXOHv418SAu54/Zhbnqsg==
-X-Received: by 2002:a05:6e02:2408:b0:3d0:4e2b:9bbb with SMTP id e9e14a558f8ab-3d2809580eemr247850825ab.21.1740064518236;
-        Thu, 20 Feb 2025 07:15:18 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d29a06fb6csm19565835ab.4.2025.02.20.07.15.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 07:15:17 -0800 (PST)
-Message-ID: <2bbd9c79-27aa-4c28-80b4-29c3280f3d71@kernel.dk>
-Date: Thu, 20 Feb 2025 08:15:16 -0700
+        d=1e100.net; s=20230601; t=1740066645; x=1740671445;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NOZ6hwtAfDPTUx2chY/KuMq7RkUkUAjyQesgIkb6ybw=;
+        b=q6GZ6gavVusLuHSV6p78FkpEGP1oBUxVhE+oBsqSUHE40p1NC8oq4j+HWh/EdDrSWj
+         ArWUNKwxLKENrg1p2NomOm9mHGnTr1llnQrpHrsJB/5sBsiTdl7p6yH7x+X8ZVpjAmCR
+         /MKi+2vDaAk1bc0oaACLMZaQhd9tIr8zJaELOtCW2pYmP4vL1qHjcWIkUvFYKa05Amvq
+         xl09IvqKKcl7GZ6145WHSGNsqejyUgwXJUBFYcdtra9iyP7y3/Hu69TNqfQj8NXALFvw
+         /VSKTd7F/Qr26EH6cUAL0q6ayFb04OqL9kV2Gw5bCzthbKf3H5y6m21m/24h4aLaPwKH
+         gbLA==
+X-Forwarded-Encrypted: i=1; AJvYcCX89538zm6fzv5g/ldgzndV82e3pMnElznM/x1GhXIGSmR5FpwZwXp0zurXkSuNDHZRQvwIfvtHJzu4llVC@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEf3lo+vpBzc9hsxnycgxJFzpzAInfze/Mps1tb+IxPZpzeeoV
+	mi/KfzyGlNDcF0ys8tDbO5Sqge5scAKfiuyffuL6kwKCVhnLlo2YnYduWppqytJdJr0GhFzDm1U
+	/YC0xFTm1H8dB2PbBCUhsUWTBe8UN6kx/27fT
+X-Gm-Gg: ASbGncu/VQdx8Xu/yQy4poQeRLemsuh8jHfnIqq43yLMfpjfBfJ5Sv3KU1/WEGnuF7K
+	3S+/DG+5bR9TcAqojXEtzyTqi6UCPi5Y28MFqT9FrAccJT9GbIItb5+5EQ/gAC1tk+WxKI1Y6Xn
+	N2r9UzvQx7a8q1hdAxwXBL6jk+M3KGAnM=
+X-Google-Smtp-Source: AGHT+IF4QHAlr0jbcej+otWDQUPRsMGqBGsy5kXYbQZNkMvCk6/6+ktBjnvNBNEXqNih9Sq6wNtxFrNOxWGqH+4vrP4=
+X-Received: by 2002:a05:690c:650f:b0:6f9:a402:ff2e with SMTP id
+ 00721157ae682-6fbbb617953mr25513367b3.16.1740066645419; Thu, 20 Feb 2025
+ 07:50:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (subset) [PATCHSET v4 0/7] io_uring epoll wait support
-To: Christian Brauner <brauner@kernel.org>, io-uring@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, asml.silence@gmail.com
-References: <20250219172552.1565603-1-axboe@kernel.dk>
- <20250220-aneinander-equipment-8125c16177e4@brauner>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250220-aneinander-equipment-8125c16177e4@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CAJfpegvVtao9OotO3sZopxxkSTkRV-cizpE1r2VtG7xZExZFOQ@mail.gmail.com>
+ <20250219195400.1700787-1-samclewis@google.com> <568e942f-7ef9-4a00-a94f-441f156471b1@fastmail.fm>
+ <CAJfpeguEsq2amd-UxiSEktZLSpR0s+LXFeknpLdZR6vk8fbb_A@mail.gmail.com> <76b3d8c4-65dc-4545-ae61-4def20a71374@fastmail.fm>
+In-Reply-To: <76b3d8c4-65dc-4545-ae61-4def20a71374@fastmail.fm>
+From: Sam Lewis <samclewis@google.com>
+Date: Thu, 20 Feb 2025 10:50:08 -0500
+X-Gm-Features: AWEUYZlScyW9IcaUma2P1laZspbPeDCLXncbxhRc5nFcALB-qlaDPuVoFgH9COM
+Message-ID: <CAATiN+EMAQF=u8HHeTcKGHYZxuiSJ_FWkpr9VZ4McVqGa63GNA@mail.gmail.com>
+Subject: Re: [fuse-devel] Symlink caching: Updating the target can result in
+ corrupted symlinks - kernel issue?
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, fuse-devel@lists.sourceforge.net, 
+	laura.promberger@cern.ch, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/20/25 2:21 AM, Christian Brauner wrote:
-> On Wed, 19 Feb 2025 10:22:23 -0700, Jens Axboe wrote:
->> One issue people consistently run into when converting legacy epoll
->> event loops with io_uring is that parts of the event loop still needs to
->> use epoll. And since event loops generally need to wait in one spot,
->> they add the io_uring fd to the epoll set and continue to use
->> epoll_wait(2) to wait on events. This is suboptimal on the io_uring
->> front as there's now an active poller on the ring, and it's suboptimal
->> as it doesn't give the application the batch waiting (with fine grained
->> timeouts) that io_uring provides.
->>
->> [...]
-> 
-> Preparatory patches in vfs-6.15.eventpoll with tag vfs-6.15-rc1.eventpoll.
-> Stable now.
+On Thu, Feb 20, 2025 at 5:00=E2=80=AFAM Bernd Schubert
+<bernd.schubert@fastmail.fm> wrote:
+> @Sam could you please describe your reproducer?
 
-Thanks, I'll rebase on your branch.
+Absolutely. We have an internal networked filesystem that implements
+the FUSE interface =E2=80=93 not CVMFS. So stat, readlink, etc end up as RP=
+Cs
+to another backend.
 
--- 
-Jens Axboe
+We need to avoid stale readlink calls, so we clear the kernel symlink
+cache whenever we receive a new snapshot from the network, and this is
+where the race condition comes in.
 
+I reproduced the bug by interacting with the same filesystem location
+on two different machines. On the first machine, we have a C for loop
+that calls readlink and prints the destination whenever it changes[1].
+On the second machine, I manually switched the symlink back and forth
+between two destinations of different lengths using `ln -sf`.
+
+When the kernel cache was enabled, changing the link destination from
+"dest" to "longerdest" would result in the first machine printing
+"long". It happened very consistently, usually immediately or with 1
+or 2 tries. Here are the things that fixed the bug:
+- Disabling the kernel cache
+- Applying Miklos' patch to a custom kernel
+- Uncommenting the 1 second sleep in [1] to make the race condition
+very unlikely
+
+I hope that helps!
+
+[1] basically the script seen here:
+https://github.com/cvmfs/cvmfs/issues/3626#issue-2390818866
+
+Sam
 
