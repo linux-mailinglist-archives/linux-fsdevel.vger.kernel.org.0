@@ -1,93 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-42196-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE303A3E8D5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 00:49:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7AD9A3E8D3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 00:49:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 431DF3BF310
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 23:47:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36F1019C5A7D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 23:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF87268C78;
-	Thu, 20 Feb 2025 23:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3815826A09A;
+	Thu, 20 Feb 2025 23:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fAnJmkUi";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8wyPm5Ha";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fAnJmkUi";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8wyPm5Ha"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FOA9d4pN";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CElbpe/k";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FOA9d4pN";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CElbpe/k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40242267B79
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2025 23:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F7B267B00
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2025 23:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740095243; cv=none; b=LLn4XZSKLRtYerDf+bUf6dSqWDdY/0q55/7y6wNN/oHfIPX7dsS5iay5T5FJU4j4E7gffGedQEA+zpig6XAJMaAqMiUvGHrMSUjB4bEVjZ0Eb4t9L8Q/aH/Y+ycLqL6BKjtFglxrZihMqOoATMgdoav+v93ANdYt2eb3aqhhtjE=
+	t=1740095265; cv=none; b=cmha/23/apiSfzIzXfyfu7EE+CkQusbHIhDwsUB4NspahqEgUiGNAn1lO0xVT24tuA+52nXNmmbb0F6NlQWbXVkm5iC3QBR6lxcuFr4CVLk/TwYRIsXTGKLDu2BSem4cRnoL//VBvgJ1BLBEmlgT05PZjv8RJSci/t3To7rXT1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740095243; c=relaxed/simple;
-	bh=w8j9NCIPMxa9VdEOwDdQGiCk3OEfujoYyM5nNBepi3k=;
+	s=arc-20240116; t=1740095265; c=relaxed/simple;
+	bh=x2SIt9ND6ULrhwzk9rJ49eRCnjOJLyCayfqwUU5/xnU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ey7/V0h/kXor+otUmuYlPZ69cb6dIYiwbE3yIe9SDFstMafj61zPyqJo9Czx7Nr85k8lNR+cfOqXZmqnYyw8+3Twmmaum7kPw6KxnRCgyVk97VkeAHT7BqLLz6ER7oDOmU35sr0mIt5Es1mfCFNwgU7XRrslqlAASentJUgu/pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fAnJmkUi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8wyPm5Ha; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fAnJmkUi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8wyPm5Ha; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=P8QQHUdgkaYJydIHcfPcFF/v653tocd/y1l+xun221QgrqvKQPNy6ozpU+XDeBuj5S6X79NkDRf/hGnSbKxQKf6Y2v9U/x+Avha7i8hTMqbAFovBzzTaR9l/msl+XqluL3P9J7lwVObP3oMCDa0Jmhm6Em6h1xQkieoZHC1yTNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FOA9d4pN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CElbpe/k; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FOA9d4pN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CElbpe/k; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 47B6C21193;
-	Thu, 20 Feb 2025 23:47:19 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B70761F390;
+	Thu, 20 Feb 2025 23:47:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740095239; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1740095260; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=K365lrHE4tT4tHcA+ZRmIzk529KAE57axlSUnXIkK90=;
-	b=fAnJmkUiRBLf9T8Gc6/VkmKEIvWQU98UxDilOFtsaIq6ALZLsXpC71p5TiFfY/wDLlGE6U
-	9KhDZYIVRqEHv70nB6mSUWJFRAY4vpG/XTYV9LYkzKhaOl9j0AS2Ptj7+T1NUCePgAr+C2
-	k5wn/0mncmYgpwWXZJcpmvEl0rOxS/4=
+	bh=aoUEZE9gdd4nSK2AHL7We1oeRMUiSMAlbOSJdILwOp4=;
+	b=FOA9d4pNDzEP/9E8FSFcKR/sifQe7eWkW1qUq6HxWFui0ud88gxTOyoNuRKrYkcSB+UrfH
+	1Zozlc+/fblLw+4jCHXJIwkxYm2hGy2Tzo+FypSxNRHxFhWrIxOpmOmwVZ6Uh1f7svVaCC
+	+srBY8b6HJ6pg3d0PnPJXtUpTAq1VHU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740095239;
+	s=susede2_ed25519; t=1740095260;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=K365lrHE4tT4tHcA+ZRmIzk529KAE57axlSUnXIkK90=;
-	b=8wyPm5HalY3T2xTNgJwrL9khVs8CjsoixgSP9yNucBoog4ot4uNU1F18b0KbeNwzZU8vVb
-	iSEQjbpZo05SfJCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
+	bh=aoUEZE9gdd4nSK2AHL7We1oeRMUiSMAlbOSJdILwOp4=;
+	b=CElbpe/kE3VPzDV5a0Sf7TSgt/tH6PQyHjUoUYal00s9LlXgDr8EiDgzeTDK8DA80seRb6
+	roA4DZFcZ0+NcsCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=FOA9d4pN;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="CElbpe/k"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740095239; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1740095260; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=K365lrHE4tT4tHcA+ZRmIzk529KAE57axlSUnXIkK90=;
-	b=fAnJmkUiRBLf9T8Gc6/VkmKEIvWQU98UxDilOFtsaIq6ALZLsXpC71p5TiFfY/wDLlGE6U
-	9KhDZYIVRqEHv70nB6mSUWJFRAY4vpG/XTYV9LYkzKhaOl9j0AS2Ptj7+T1NUCePgAr+C2
-	k5wn/0mncmYgpwWXZJcpmvEl0rOxS/4=
+	bh=aoUEZE9gdd4nSK2AHL7We1oeRMUiSMAlbOSJdILwOp4=;
+	b=FOA9d4pNDzEP/9E8FSFcKR/sifQe7eWkW1qUq6HxWFui0ud88gxTOyoNuRKrYkcSB+UrfH
+	1Zozlc+/fblLw+4jCHXJIwkxYm2hGy2Tzo+FypSxNRHxFhWrIxOpmOmwVZ6Uh1f7svVaCC
+	+srBY8b6HJ6pg3d0PnPJXtUpTAq1VHU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740095239;
+	s=susede2_ed25519; t=1740095260;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=K365lrHE4tT4tHcA+ZRmIzk529KAE57axlSUnXIkK90=;
-	b=8wyPm5HalY3T2xTNgJwrL9khVs8CjsoixgSP9yNucBoog4ot4uNU1F18b0KbeNwzZU8vVb
-	iSEQjbpZo05SfJCg==
+	bh=aoUEZE9gdd4nSK2AHL7We1oeRMUiSMAlbOSJdILwOp4=;
+	b=CElbpe/kE3VPzDV5a0Sf7TSgt/tH6PQyHjUoUYal00s9LlXgDr8EiDgzeTDK8DA80seRb6
+	roA4DZFcZ0+NcsCQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E2B3913301;
-	Thu, 20 Feb 2025 23:47:11 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5EFE313301;
+	Thu, 20 Feb 2025 23:47:33 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MWYQJv++t2cbAwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Thu, 20 Feb 2025 23:47:11 +0000
+	id cwgABhW/t2coAwAAD6G6ig
+	(envelope-from <neilb@suse.de>); Thu, 20 Feb 2025 23:47:33 +0000
 From: NeilBrown <neilb@suse.de>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -113,9 +114,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	linux-um@lists.infradead.org,
 	ceph-devel@vger.kernel.org,
 	netfs@lists.linux.dev
-Subject: [PATCH 2/6] hostfs: store inode in dentry after mkdir if possible.
-Date: Fri, 21 Feb 2025 10:36:31 +1100
-Message-ID: <20250220234630.983190-3-neilb@suse.de>
+Subject: [PATCH 3/6] ceph: return the correct dentry on mkdir
+Date: Fri, 21 Feb 2025 10:36:32 +1100
+Message-ID: <20250220234630.983190-4-neilb@suse.de>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250220234630.983190-1-neilb@suse.de>
 References: <20250220234630.983190-1-neilb@suse.de>
@@ -126,69 +127,86 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: B70761F390
 X-Spam-Level: 
-X-Spamd-Result: default: False [-2.79 / 50.00];
+X-Spamd-Result: default: False [-3.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	MID_CONTAINS_FROM(1.00)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.19)[-0.960];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
 	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
 	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[24];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo];
-	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,szeredi.hu,redhat.com,gmail.com,nod.at,cambridgegreys.com,sipsolutions.net,oracle.com,talpey.com,chromium.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
 	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCPT_COUNT_TWELVE(0.00)[24];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,szeredi.hu,redhat.com,gmail.com,nod.at,cambridgegreys.com,sipsolutions.net,oracle.com,talpey.com,chromium.org];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim,suse.de:mid];
+	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn),to_ip_from(RL41gfrsx5ox46amq79i8sk6fy)];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	FREEMAIL_ENVRCPT(0.00)[gmail.com]
-X-Spam-Score: -2.79
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
 X-Spam-Flag: NO
 
-After handling a mkdir, get the inode for the name and use
-d_splice_alias() to store the correct dentry in the dcache.
+ceph already splices the correct dentry (in splice_dentry()) from the
+result of mkdir but does nothing more with it.
+
+Now that ->mkdir can return a dentry, return the correct dentry.
 
 Signed-off-by: NeilBrown <neilb@suse.de>
 ---
- fs/hostfs/hostfs_kern.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ fs/ceph/dir.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
-index ccbb48fe830d..a2c6b9051c5b 100644
---- a/fs/hostfs/hostfs_kern.c
-+++ b/fs/hostfs/hostfs_kern.c
-@@ -682,14 +682,22 @@ static int hostfs_symlink(struct mnt_idmap *idmap, struct inode *ino,
- static struct dentry *hostfs_mkdir(struct mnt_idmap *idmap, struct inode *ino,
- 				   struct dentry *dentry, umode_t mode)
- {
-+	struct inode *inode;
- 	char *file;
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index 39e0f240de06..c1a1c168bb27 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -1099,6 +1099,7 @@ static struct dentry *ceph_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 	struct ceph_client *cl = mdsc->fsc->client;
+ 	struct ceph_mds_request *req;
+ 	struct ceph_acl_sec_ctx as_ctx = {};
++	struct dentry *ret = NULL;
  	int err;
+ 	int op;
  
- 	if ((file = dentry_name(dentry)) == NULL)
- 		return ERR_PTR(-ENOMEM);
- 	err = do_mkdir(file, mode);
-+	if (err) {
-+		dentry = ERR_PTR(err);
-+	} else {
-+		inode = hostfs_iget(dentry->d_sb, file);
-+		d_drop(dentry);
-+		dentry = d_splice_alias(inode, dentry);
-+	}
- 	__putname(file);
+@@ -1166,14 +1167,20 @@ static struct dentry *ceph_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 	    !req->r_reply_info.head->is_dentry)
+ 		err = ceph_handle_notrace_create(dir, dentry);
+ out_req:
++	if (!err && req->r_dentry != dentry)
++		/* Some other dentry was spliced in */
++		ret = dget(req->r_dentry);
+ 	ceph_mdsc_put_request(req);
+ out:
+ 	if (!err)
++		/* Should this use 'ret' ?? */
+ 		ceph_init_inode_acls(d_inode(dentry), &as_ctx);
+ 	else
+ 		d_drop(dentry);
+ 	ceph_release_acl_sec_ctx(&as_ctx);
 -	return ERR_PTR(err);
-+	return dentry;
++	if (err)
++		return ERR_PTR(err);
++	return ret;
  }
  
- static int hostfs_rmdir(struct inode *ino, struct dentry *dentry)
+ static int ceph_link(struct dentry *old_dentry, struct inode *dir,
 -- 
 2.47.1
 
