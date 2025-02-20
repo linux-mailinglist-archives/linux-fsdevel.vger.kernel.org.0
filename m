@@ -1,100 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-42171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7E85A3DD49
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 15:50:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A96AEA3DD73
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 15:57:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4FC23A9758
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 14:48:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A0B4189F6FC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 14:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBA31D5ADE;
-	Thu, 20 Feb 2025 14:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76F75258;
+	Thu, 20 Feb 2025 14:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q46io9xH"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E4umO0Ww"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7294D19D06E
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2025 14:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D2A1CEAC3
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2025 14:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740062926; cv=none; b=XdssmYfq/HwBBGsZwBtCPiC21xZZ3XSm+J8kyIdkIzXiSWfEaFpDr14Zc18eQ0sN3lxyaLT9Tc+G+Eh6ZSSbCtmLQ8cy7TN1nSDRo5bT74e6kpmD/XJFJYd7v5C/K24ebyTviASo0kD6CPb0SoIsRE9B3HpExs2IguU77Y83j0U=
+	t=1740063362; cv=none; b=rJ2qrUq8Mkj+aowvZ1ze1xxI/RPl7VJGuCxLuQ9/dYhpDtPfMM+ngyVuxUaW01EkRI3doRzenWJcxTCnrnAfw2CaBE0Lhsjx45MYyEf0rpKki3IXMKw0a3vKnlOEcTVhnYf1wsmwn6DnWpis2kdDvZXj8BCn7qe8rnCFFEo0h4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740062926; c=relaxed/simple;
-	bh=gFLGh3sA2mLudrpV3yYeXbKs1c/klVkG5ILcdlc2C6g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gq8ZlZYJTEQPy/AsgdT1HuxEYxcI0bsIAxdP2b6TW1cxxg2NeCxPi5CrQaWc5Ejg1lLkpuwpnbz43bicGAb//yyBhL8YBbVeE8+61krQA94xH8t5psdo1Nj0HF80bb9t4IWXCn0aH4Pk1LSqHI0XmwmMRx7A26IY3qf7dfFPXSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q46io9xH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FE67C4CED1;
-	Thu, 20 Feb 2025 14:48:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740062925;
-	bh=gFLGh3sA2mLudrpV3yYeXbKs1c/klVkG5ILcdlc2C6g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Q46io9xH2rcEVSn+wrCw6uj29axotSBuG95y8iKtYLJNqSKw3v0PIaoFpgpp0EU7m
-	 kwvbSaFNEKEbbVMl+lbNByUnf7OLDpbv5OtyK00VQldhpl2rRRplV+297NIywn5TiI
-	 /O0pOd/d8wdF6ZB9IctXor5N9GPBXph2HICNYkyc7IavbQ/gskG9Ce9fVz9XCi0red
-	 lphP1wcOhWQVTv3syKGfmyBkRybhV+/tkXAnOzpS5y31s5JjKIon5DcganWgieJujJ
-	 6WBpl++BdgcT/Tzbulf3wkjuR2eM0wrjBv219HRiiVZAvBu/qGNcCHA/FcnQ/k9/T5
-	 fhLSx/9XDgslw==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	Miklos Szeredi <mszeredi@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Bernd Schubert <bernd.schubert@fastmail.fm>,
-	Laura Promberger <laura.promberger@cern.ch>,
-	Sam Lewis <samclewis@google.com>
-Subject: Re: [PATCH] fuse: don't truncate cached, mutated symlink
-Date: Thu, 20 Feb 2025 15:48:36 +0100
-Message-ID: <20250220-dromedar-blocken-d9140a10ed2e@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250220100258.793363-1-mszeredi@redhat.com>
-References: <20250220100258.793363-1-mszeredi@redhat.com>
+	s=arc-20240116; t=1740063362; c=relaxed/simple;
+	bh=emqtLvNALPmiTcQ3Ik62lKdn8OxDJ1NlfE+3b+1vMag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mFTr0tJYPT8XCR3Sc5IokYtb/3D8/l+Wmz/qah9XphLrNeFWZUEx5BeBnUKe4+IZToGJiFcYoSYbzQ25WDxczQEXfjVpyCEAnneD68gmCq6/IYFwEx5aBuA9MYFtTMxbGtp2sWI4HsZni4t5/LMY9mWScUIb9GV9FKN8aDW6VwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E4umO0Ww; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740063359;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rCsov8prd8heQb0uF1vmhgOVm4gP80hrFewU7CrwR60=;
+	b=E4umO0WwrhocRoSTYMcKf4ST16y1OqsmoOBV80XDZmQul1FQOf4jCy6Chic+RjNTNA2X+V
+	U3rbcHbPRWHab5BvQyjLaVqnd5pjrJHn1ZFtpbGWI7ZJ0xHV9B9h3zmSkbXZ3NifojFhlc
+	V000xgR3iyvoO3uzApmnbBq81fKK3bw=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-619-qEmkRRNFPhetdT5wL5JnNg-1; Thu,
+ 20 Feb 2025 09:55:53 -0500
+X-MC-Unique: qEmkRRNFPhetdT5wL5JnNg-1
+X-Mimecast-MFC-AGG-ID: qEmkRRNFPhetdT5wL5JnNg_1740063352
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8D48418D95F1;
+	Thu, 20 Feb 2025 14:55:52 +0000 (UTC)
+Received: from bfoster (unknown [10.22.88.79])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7990C180034D;
+	Thu, 20 Feb 2025 14:55:51 +0000 (UTC)
+Date: Thu, 20 Feb 2025 09:58:28 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2 04/12] dax: advance the iomap_iter in the read/write
+ path
+Message-ID: <Z7dDFDXSi-gpw48O@bfoster>
+References: <20250219175050.83986-1-bfoster@redhat.com>
+ <20250219175050.83986-5-bfoster@redhat.com>
+ <20250219223344.GJ21808@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1314; i=brauner@kernel.org; h=from:subject:message-id; bh=gFLGh3sA2mLudrpV3yYeXbKs1c/klVkG5ILcdlc2C6g=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRvdzj+yGv21IV1FzX8tmqYrF0ud3ffnnid/HvXNUrXH l/O83RdXUcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBExMsZGRZeuv7V6kj6scfv GkwZH1/3/mp74+jbIH9J9YxzrlnMel8ZGS5mBZQzzi4pnf6Gb+nVPQ4dRz+xR11Mzeb6eehNz6b XdSwA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250219223344.GJ21808@frogsfrogsfrogs>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Thu, 20 Feb 2025 11:02:58 +0100, Miklos Szeredi wrote:
-> Fuse allows the value of a symlink to change and this property is exploited
-> by some filesystems (e.g. CVMFS).
+On Wed, Feb 19, 2025 at 02:33:44PM -0800, Darrick J. Wong wrote:
+> On Wed, Feb 19, 2025 at 12:50:42PM -0500, Brian Foster wrote:
+> > DAX reads and writes flow through dax_iomap_iter(), which has one or
+> > more subtleties in terms of how it processes a range vs. what is
+> > specified in the iomap_iter. To keep things simple and remove the
+> > dependency on iomap_iter() advances, convert a positive return from
+> > dax_iomap_iter() to the new advance and status return semantics. The
+> > advance can be pushed further down in future patches.
+> > 
+> > Signed-off-by: Brian Foster <bfoster@redhat.com>
+> > Reviewed-by: Christoph Hellwig <hch@lst.de>
 > 
-> It has been observed, that sometimes after changing the symlink contents,
-> the value is truncated to the old size.
+> Not sure why this and the next patch are split up but it's fsdax so meh.
+> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > 
-> This is caused by fuse_getattr() racing with fuse_reverse_inval_inode().
-> fuse_reverse_inval_inode() updates the fuse_inode's attr_version, which
-> results in fuse_change_attributes() exiting before updating the cached
-> attributes
+
+Heh.. mainly just out of caution and bisectability. The subsequent patch
+took a bit of fighting for me to get right and this patch served as a
+nice baseline to isolate changes in the DAX I/O path from the functional
+iomap change, since this patch is relatively trivial.
+
+Thanks for the reviews..
+
+Brian
+
+> --D
 > 
-> [...]
+> > ---
+> >  fs/dax.c | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/dax.c b/fs/dax.c
+> > index 21b47402b3dc..296f5aa18640 100644
+> > --- a/fs/dax.c
+> > +++ b/fs/dax.c
+> > @@ -1585,8 +1585,12 @@ dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
+> >  	if (iocb->ki_flags & IOCB_NOWAIT)
+> >  		iomi.flags |= IOMAP_NOWAIT;
+> >  
+> > -	while ((ret = iomap_iter(&iomi, ops)) > 0)
+> > +	while ((ret = iomap_iter(&iomi, ops)) > 0) {
+> >  		iomi.processed = dax_iomap_iter(&iomi, iter);
+> > +		if (iomi.processed > 0)
+> > +			iomi.processed = iomap_iter_advance(&iomi,
+> > +							    &iomi.processed);
+> > +	}
+> >  
+> >  	done = iomi.pos - iocb->ki_pos;
+> >  	iocb->ki_pos = iomi.pos;
+> > -- 
+> > 2.48.1
+> > 
+> > 
+> 
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] fuse: don't truncate cached, mutated symlink
-      https://git.kernel.org/vfs/vfs/c/b4c173dfbb6c
 
