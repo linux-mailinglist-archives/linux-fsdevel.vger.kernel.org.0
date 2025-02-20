@@ -1,137 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-42156-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC93A3D586
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 10:56:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00736A3D588
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 10:57:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AC9B16C6A3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 09:54:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27A85189D2F3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 09:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8E51EFFA7;
-	Thu, 20 Feb 2025 09:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448241F03D9;
+	Thu, 20 Feb 2025 09:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QiaX2qhm"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="dHGo4aUg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6095E1EE7C4
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2025 09:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFB31D7984
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2025 09:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740045250; cv=none; b=U4IKaveE22eMz4Ltw1k5YgIu2dO7b8D/VUJqPpsvEcNL1mymzK8MKMo/wxELHnLmRN9BqSw/eAq7xW8aHVxLcZFlFdSET8HT2zKxIYABwffgHacT0m7/c4dIlN/Jhvi35yd+NqtGRkl/+UYGST0TAOrEql8kCmhg28yB7+cZrnw=
+	t=1740045435; cv=none; b=I/gBdkZR+mGcaGCeUtve2QlaRJcEQ+aeS2Nji8VTRdIgWm8DKm1IzrIUztenPFM+p0oUO0FefUwd4JCMaJW0b/9sREOApUAueuqgaPscPu+hrgdvwZdXMBIeG3shxZ0GxPY1akaCQwlit2ggTHVNO9Kxw47UM4Pjap6CfJqdRGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740045250; c=relaxed/simple;
-	bh=+VZRYVqIuwD7qh9ESBsfALtQS3D6YlY3oIdB/hY0f9s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ldGV2nLLvPOLuKTxNkoAg4u3odYcg1/IxHq6ULIcEBTEq0Q/vPGExeXO/vpS09bnpQRegzyC/Sg1LVBOQi/ze+VhIl5Ijgr8I6XP0kHIK/1sbT64JdkFpfLwmdA9ebF2KKOWVKhKpH51VZ8K2QjSiQ/MzI4BHbGmL5SQ81NZU/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QiaX2qhm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740045247;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KejBM56aDgLmHo1KH1mgvdjJXqmeByoSUgLPzHmbYVk=;
-	b=QiaX2qhm8gWCjUsMuzqMCV0E87TOf1tWqVCl7GgqrBwucqOYgmXy6u4TrnmbLAIHu93s0N
-	i4VpTbBbMeaA8CwIpu04UdGTOIQu5VbAluNI5JTwYruzdskFaWvbM55ZpcnJiImRHxntBm
-	GWQWj8kwb5BAnOTn2LR407/2XU2K4fY=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-62-hQY9_Dz7OQWtYP_WvQaFiA-1; Thu,
- 20 Feb 2025 04:54:03 -0500
-X-MC-Unique: hQY9_Dz7OQWtYP_WvQaFiA-1
-X-Mimecast-MFC-AGG-ID: hQY9_Dz7OQWtYP_WvQaFiA_1740045242
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C0FB2190F9E4;
-	Thu, 20 Feb 2025 09:54:00 +0000 (UTC)
-Received: from localhost (unknown [10.44.33.68])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 106251955BCB;
-	Thu, 20 Feb 2025 09:53:59 +0000 (UTC)
-From: Giuseppe Scrivano <gscrivan@redhat.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Amir Goldstein <amir73il@gmail.com>,  Miklos Szeredi
- <mszeredi@redhat.com>,  linux-unionfs@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 3/5] ovl: make redirect/metacopy rejection consistent
-In-Reply-To: <CAJfpegvUdaCeBcPPc_Qe6vK4ELz7NXWCxuDcVHLpbzZJazXsqA@mail.gmail.com>
-	(Miklos Szeredi's message of "Wed, 12 Feb 2025 17:57:50 +0100")
-References: <20250210194512.417339-1-mszeredi@redhat.com>
-	<20250210194512.417339-3-mszeredi@redhat.com>
-	<CAOQ4uxiqis6kawuv4pa6jxHYgpQPc18izFP8e0TORfA_mVu_-w@mail.gmail.com>
-	<CAJfpegt=PWs8ZDF11p3nOCWHbWescE5nwVtUt82f=B6B+S0Miw@mail.gmail.com>
-	<CAOQ4uxiQQV_O1MJgTksKycBjJ6Bneqc=CQbUoghvXc=8KEEsMg@mail.gmail.com>
-	<CAJfpegsuN+C4YiA9PAuY3+-BJ959aSAaXTYBwKNCjEnhXVw0pg@mail.gmail.com>
-	<CAOQ4uxjkBQP=x6+2YPYw4pCfaNy0=x48McLCMPJdEJYEb85f-A@mail.gmail.com>
-	<CAJfpegvUdaCeBcPPc_Qe6vK4ELz7NXWCxuDcVHLpbzZJazXsqA@mail.gmail.com>
-Date: Thu, 20 Feb 2025 10:53:58 +0100
-Message-ID: <87a5ahdjrd.fsf@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1740045435; c=relaxed/simple;
+	bh=pio6oGY9tvwmnSgztfKFb9YvN2qyDo3So7AeU0yw2Dc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UUrvsXvGuVwPecQF0/y0sRZhuKFTsqtAb/c0IE39g2yJ88Q0YkCZPZIOz2f2tl4akVgl7CcolWx5MwmKmVVVwYDoRyo2lD+nvtA40RAzN1tX7hT8va9h37SO7WSL3AcstifZYbFQcvpZaWisni/CquyoFxZqt2OjOXG3jkUzMqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=dHGo4aUg; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-46fa764aac2so6323711cf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2025 01:57:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1740045430; x=1740650230; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dnYWhNeFVyqRiq1Mh4/pJI4c8Rl0YKmvBSdG+3U/2FQ=;
+        b=dHGo4aUgrQuW5b0n20bpkPt8F/oIuenuLBRWkjHGpbEXW7B4XdIA8t0xXP12UK8AZA
+         knqHn34Y785T03lywXxzdxQ38h30NMaB1wTDTi/Zs+3EIe3xikSlY4cjBnlozfFTnDxY
+         I2w2nqNmsqIRUkY/KDnCOUJYL6/M+/CXo6U2U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740045430; x=1740650230;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dnYWhNeFVyqRiq1Mh4/pJI4c8Rl0YKmvBSdG+3U/2FQ=;
+        b=n0YxtKG0s6eq4BU/S7CoaExIpCXK4ShMRGegu/bZw5AZhgHWeXroEV5/K5Hh6W08jx
+         Ecw9fdW4bQq8NAGaI6Dyi26I2LOkI2ZcuwZ99v0dqjnmiFAITc+jX693/373ohLF/3HI
+         k5kZvVYKt9ubemAvABN4p1uYrTpfwFr89wKMHaG8syIGDg0vPPgQFuSEtpWG9ttzKXdt
+         ptXVh93FkX5Z1nUflWMdpMIHzL1YLodyREnmQkFmdxXjn52BVMJn+OZueJtpjQ3PEiwJ
+         J1/5GOpfhB3hhyPK+yi0j2OOXeITC0kvyAmcujNMJSsRHI8boZNqoMbs4NDasJQKG7fO
+         IjVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXrte9jDqI9Q8R+SDnlRwBYPmUsYSDREssLHf/cAykdf5YcISyyKLdTw6IinND/15apyAo5g6p530Zfe0aF@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDlfGIFt6Y8kltzEa4GrUwm1kCEc+lixCc33u5+XNk/oy4qlnV
+	vfZaF6LFWe74HjNwFnKtzoe5+ZyvPDk1iitGTVXcKPXpjCjRQJw33+wtAEJYV+TSG5HReuo+Qx/
+	hP8dP+9TFWqZ+USL8bzBpP+yAGV5a+Pmr48jDzw==
+X-Gm-Gg: ASbGnctyZPdhH0x1/af/HpKnL7SoPRjt/hydD5bUqoZp5Y2/D8XpNvS6J3i/ckTqJDM
+	eWJ79BR1kA8jqlh3gksDl/+yQ9iDVgFvZFuAvtjfcPLF9XYDy+99b3ilT2Fwiy2BtVSZOkWI=
+X-Google-Smtp-Source: AGHT+IGQjO0U3qilppnMG3dkKlU8X+OBfiLfGH6bLul2BZ+8eV/+TR6r55gpTPj+sEOza/pJa+rxtFcoFnOpl7BOzlw=
+X-Received: by 2002:a05:622a:2598:b0:472:1e5:d576 with SMTP id
+ d75a77b69052e-47201e5d846mr157254781cf.32.1740045430742; Thu, 20 Feb 2025
+ 01:57:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <CAJfpegvVtao9OotO3sZopxxkSTkRV-cizpE1r2VtG7xZExZFOQ@mail.gmail.com>
+ <20250219195400.1700787-1-samclewis@google.com> <568e942f-7ef9-4a00-a94f-441f156471b1@fastmail.fm>
+In-Reply-To: <568e942f-7ef9-4a00-a94f-441f156471b1@fastmail.fm>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 20 Feb 2025 10:57:00 +0100
+X-Gm-Features: AWEUYZkWQrExWCOYElmxx4wZYN9nYtIQSBHjeLN1ADKxUdRnMvXV5PyI_CpAjzI
+Message-ID: <CAJfpeguEsq2amd-UxiSEktZLSpR0s+LXFeknpLdZR6vk8fbb_A@mail.gmail.com>
+Subject: Re: [fuse-devel] Symlink caching: Updating the target can result in
+ corrupted symlinks - kernel issue?
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Sam Lewis <samclewis@google.com>, fuse-devel@lists.sourceforge.net, 
+	laura.promberger@cern.ch, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Miklos Szeredi <miklos@szeredi.hu> writes:
+On Wed, 19 Feb 2025 at 21:22, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
 
-> On Tue, 11 Feb 2025 at 16:52, Amir Goldstein <amir73il@gmail.com> wrote:
->
->> It sounds very complicated. Is that even possible?
->> Do we always know the path of the upper alias?
->> IIRC, the absolute redirect path in upper is not necessary
->> the absolute path where the origin is found.
->> e.g. if there are middle layer redirects of parents.
->
-> Okay, it was a stupid idea.
->
->> > > Looking closer at ovl_maybe_validate_verity(), it's actually
->> > > worse - if you create an upper without metacopy above
->> > > a lower with metacopy, ovl_validate_verity() will only check
->> > > the metacopy xattr on metapath, which is the uppermost
->> > > and find no md5digest, so create an upper above a metacopy
->> > > lower is a way to avert verity check.
->> >
->> > I need to dig into how verity is supposed to work as I'm not seeing it
->> > clearly yet...
->> >
->>
->> The short version - for lazy data lookup we store the lowerdata
->> redirect absolute path in the ovl entry stack, but we do not store
->> the verity digest, we just store OVL_HAS_DIGEST inode flag if there
->> is a digest in metacopy xattr.
->>
->> If we store the digest from lookup time in ovl entry stack, your changes
->> may be easier.
->
-> Sorry, I can't wrap my head around this issue.  Cc-ing Giuseppe.
->
->> > > So I think lookup code needs to disallow finding metacopy
->> > > in middle layer and need to enforce that also when upper is found
->> > > via index.
->> >
->> > That's the hard link case.  I.e. with metacopy=on,index=on it's
->> > possible that one link is metacopyied up, and the other one is then
->> > found through the index.  Metacopy *should* work in this case, no?
->> >
->>
->> Right. So I guess we only need to disallow uppermetacopy from
->> index when metacoy=off.
+> I think we should write tests for all of these fuse specific operations,
+> ideally probably as part of xfstests.
 
-is that be safe from a user namespace?
+That's a good idea, but for now the above Tested-by should be
+sufficient.   I'll post a proper patch.
 
-Regards,
-Giuseppe
-
+Thanks,
+Miklos
 
