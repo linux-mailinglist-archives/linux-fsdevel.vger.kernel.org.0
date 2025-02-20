@@ -1,101 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-42155-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42156-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 811AAA3D4EE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 10:38:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC93A3D586
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 10:56:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FDDC7A5A00
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 09:36:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AC9B16C6A3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 09:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91D11F03EA;
-	Thu, 20 Feb 2025 09:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8E51EFFA7;
+	Thu, 20 Feb 2025 09:54:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="B9nNp1Kj"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QiaX2qhm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331001F03D3
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2025 09:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6095E1EE7C4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2025 09:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740044247; cv=none; b=VLaEc8VWfJjClyD9o6QMoyrgHrGfvFuGEUfHSlBmdKkkjsHFnqpctgaCi18GzBQ/jDCNRpRwPircZP1HEW0RtWRUsVQj2myxSSV3Jq5JjNf7JInX3quKVGzPZq89itq8QTjgFuJbiiqYFACB+sKAMcAicJLjAWsXNbnQuyLl3RU=
+	t=1740045250; cv=none; b=U4IKaveE22eMz4Ltw1k5YgIu2dO7b8D/VUJqPpsvEcNL1mymzK8MKMo/wxELHnLmRN9BqSw/eAq7xW8aHVxLcZFlFdSET8HT2zKxIYABwffgHacT0m7/c4dIlN/Jhvi35yd+NqtGRkl/+UYGST0TAOrEql8kCmhg28yB7+cZrnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740044247; c=relaxed/simple;
-	bh=Zm9lcTFIuefAMNw1nCB+oawkK/6nd23DDWGDq3hZ+Og=;
+	s=arc-20240116; t=1740045250; c=relaxed/simple;
+	bh=+VZRYVqIuwD7qh9ESBsfALtQS3D6YlY3oIdB/hY0f9s=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=H4+MrFGT8ISbsxV85DoauJF0gNwaFc/zk6CRPHi3K5DSGgmB0UQ1PqMxiV+sn45MjND6kU+VZFyU+Zel/5BCQFu47VpZ14JpWsRTISWRPoa+92xyXjNrWxH8laH4F1lZ0I+RwbH8Oia/57nz8H5pdzvhGuus82HPcmMFBzhgNkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=B9nNp1Kj; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=mU8lW38cQIahWA8UM+45YRP4XAvQLqSXRVOqOVBwWyc=; b=B9nNp1KjpNGflpfNEefIoGJJVU
-	6Ylu7bDlVOkfs2p7p8N9XsoxJH4dpxNpiXPtc1moZxIpJRTmiVDzCtFJKR1KGtwztUU+jA4pEKQnW
-	DEq4aEbmppn+STAEjrOfduQc0t+2lonPCd7Z5j5rhOP8Mv2XWzAiUTY+tKpfwbyGmlD0aBHI3KL0K
-	QCYoEuM4MR8ky2LmUoLhl3TjbpS4a132AATeGvqJwV5vMy7WOhSpuXwECt3diDpYMdl0OGFrhJrFB
-	1LUynlssV0MRp3FHK4noYg2VERPwqYN6qAA/9Vu3kROaz3P3b7jiSme42538TvHgTkCEa14pSEYnb
-	AqTeuPNw==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tl2zU-00FGrv-Ia; Thu, 20 Feb 2025 10:37:14 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Sam Lewis via fuse-devel <fuse-devel@lists.sourceforge.net>
-Cc: miklos@szeredi.hu,  Sam Lewis <samclewis@google.com>,
-  bernd.schubert@fastmail.fm,  linux-fsdevel@vger.kernel.org
-Subject: Re: [fuse-devel] Symlink caching: Updating the target can result in
- corrupted symlinks - kernel issue?
-In-Reply-To: <20250219195400.1700787-1-samclewis@google.com> (Sam Lewis via
-	fuse-devel's message of "Wed, 19 Feb 2025 19:54:00 +0000")
-References: <CAJfpegvVtao9OotO3sZopxxkSTkRV-cizpE1r2VtG7xZExZFOQ@mail.gmail.com>
-	<20250219195400.1700787-1-samclewis@google.com>
-Date: Thu, 20 Feb 2025 09:37:07 +0000
-Message-ID: <87h64p7y9o.fsf@igalia.com>
+	 MIME-Version:Content-Type; b=ldGV2nLLvPOLuKTxNkoAg4u3odYcg1/IxHq6ULIcEBTEq0Q/vPGExeXO/vpS09bnpQRegzyC/Sg1LVBOQi/ze+VhIl5Ijgr8I6XP0kHIK/1sbT64JdkFpfLwmdA9ebF2KKOWVKhKpH51VZ8K2QjSiQ/MzI4BHbGmL5SQ81NZU/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QiaX2qhm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740045247;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KejBM56aDgLmHo1KH1mgvdjJXqmeByoSUgLPzHmbYVk=;
+	b=QiaX2qhm8gWCjUsMuzqMCV0E87TOf1tWqVCl7GgqrBwucqOYgmXy6u4TrnmbLAIHu93s0N
+	i4VpTbBbMeaA8CwIpu04UdGTOIQu5VbAluNI5JTwYruzdskFaWvbM55ZpcnJiImRHxntBm
+	GWQWj8kwb5BAnOTn2LR407/2XU2K4fY=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-62-hQY9_Dz7OQWtYP_WvQaFiA-1; Thu,
+ 20 Feb 2025 04:54:03 -0500
+X-MC-Unique: hQY9_Dz7OQWtYP_WvQaFiA-1
+X-Mimecast-MFC-AGG-ID: hQY9_Dz7OQWtYP_WvQaFiA_1740045242
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C0FB2190F9E4;
+	Thu, 20 Feb 2025 09:54:00 +0000 (UTC)
+Received: from localhost (unknown [10.44.33.68])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 106251955BCB;
+	Thu, 20 Feb 2025 09:53:59 +0000 (UTC)
+From: Giuseppe Scrivano <gscrivan@redhat.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Amir Goldstein <amir73il@gmail.com>,  Miklos Szeredi
+ <mszeredi@redhat.com>,  linux-unionfs@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 3/5] ovl: make redirect/metacopy rejection consistent
+In-Reply-To: <CAJfpegvUdaCeBcPPc_Qe6vK4ELz7NXWCxuDcVHLpbzZJazXsqA@mail.gmail.com>
+	(Miklos Szeredi's message of "Wed, 12 Feb 2025 17:57:50 +0100")
+References: <20250210194512.417339-1-mszeredi@redhat.com>
+	<20250210194512.417339-3-mszeredi@redhat.com>
+	<CAOQ4uxiqis6kawuv4pa6jxHYgpQPc18izFP8e0TORfA_mVu_-w@mail.gmail.com>
+	<CAJfpegt=PWs8ZDF11p3nOCWHbWescE5nwVtUt82f=B6B+S0Miw@mail.gmail.com>
+	<CAOQ4uxiQQV_O1MJgTksKycBjJ6Bneqc=CQbUoghvXc=8KEEsMg@mail.gmail.com>
+	<CAJfpegsuN+C4YiA9PAuY3+-BJ959aSAaXTYBwKNCjEnhXVw0pg@mail.gmail.com>
+	<CAOQ4uxjkBQP=x6+2YPYw4pCfaNy0=x48McLCMPJdEJYEb85f-A@mail.gmail.com>
+	<CAJfpegvUdaCeBcPPc_Qe6vK4ELz7NXWCxuDcVHLpbzZJazXsqA@mail.gmail.com>
+Date: Thu, 20 Feb 2025 10:53:58 +0100
+Message-ID: <87a5ahdjrd.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed, Feb 19 2025, Sam Lewis via fuse-devel wrote:
+Miklos Szeredi <miklos@szeredi.hu> writes:
 
-> Hi Miklos.
+> On Tue, 11 Feb 2025 at 16:52, Amir Goldstein <amir73il@gmail.com> wrote:
 >
-> I work at Google on the Android team, and we have a build system that wou=
-ld
-> benefit greatly from the kernel symlink cache. In my testing, I can easily
-> reproduce the truncation using the steps outlined by Laura. I tested your=
- patch
-> and have confirmed it fixes the bug.
-
-Oh, wow!  I've tried to reproduce the issue myself and I've been failing
-miserably.  Are you using CVMFS as well, or can you reproduce it with some
-synthetic fuse server?  I've tried both approaches but no luck so far.
-
-Cheers,
---=20
-Lu=C3=ADs
-
-> What steps need to be taken to merge your fix? Can I help in any way?
+>> It sounds very complicated. Is that even possible?
+>> Do we always know the path of the upper alias?
+>> IIRC, the absolute redirect path in upper is not necessary
+>> the absolute path where the origin is found.
+>> e.g. if there are middle layer redirects of parents.
 >
-> Thanks,
-> Sam Lewis
+> Okay, it was a stupid idea.
 >
+>> > > Looking closer at ovl_maybe_validate_verity(), it's actually
+>> > > worse - if you create an upper without metacopy above
+>> > > a lower with metacopy, ovl_validate_verity() will only check
+>> > > the metacopy xattr on metapath, which is the uppermost
+>> > > and find no md5digest, so create an upper above a metacopy
+>> > > lower is a way to avert verity check.
+>> >
+>> > I need to dig into how verity is supposed to work as I'm not seeing it
+>> > clearly yet...
+>> >
+>>
+>> The short version - for lazy data lookup we store the lowerdata
+>> redirect absolute path in the ovl entry stack, but we do not store
+>> the verity digest, we just store OVL_HAS_DIGEST inode flag if there
+>> is a digest in metacopy xattr.
+>>
+>> If we store the digest from lookup time in ovl entry stack, your changes
+>> may be easier.
 >
-> --=20
-> fuse-devel mailing list
-> To unsubscribe or subscribe, visit https://lists.sourceforge.net/lists/li=
-stinfo/fuse-devel
+> Sorry, I can't wrap my head around this issue.  Cc-ing Giuseppe.
+>
+>> > > So I think lookup code needs to disallow finding metacopy
+>> > > in middle layer and need to enforce that also when upper is found
+>> > > via index.
+>> >
+>> > That's the hard link case.  I.e. with metacopy=on,index=on it's
+>> > possible that one link is metacopyied up, and the other one is then
+>> > found through the index.  Metacopy *should* work in this case, no?
+>> >
+>>
+>> Right. So I guess we only need to disallow uppermetacopy from
+>> index when metacoy=off.
+
+is that be safe from a user namespace?
+
+Regards,
+Giuseppe
 
 
