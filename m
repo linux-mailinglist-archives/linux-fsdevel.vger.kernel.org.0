@@ -1,80 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-42185-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42186-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13C32A3E439
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 19:50:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C24FAA3E595
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 21:06:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AB3F7AA76F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 18:49:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D5A4174118
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 20:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67B1263889;
-	Thu, 20 Feb 2025 18:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98E22638A0;
+	Thu, 20 Feb 2025 20:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MiJovzEH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XVlPP9GE"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B4C262D37
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2025 18:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29870214218
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2025 20:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740077438; cv=none; b=VngHghWQjSuWTxGkvCyzVRVCzcfDxGB0ZNnt3uylJFwzmV1x/CKk1E//tUoc/BkHPbghItqkOGZ9aiGV/Y/ZXeS0rH74d4c9n0uWKpGhzc0VlQLfizOFaIy+nafTtLYNUlm5NtWYOsvppv0bbsWXUkEKsf6kbtVPQJkZmhUiVvE=
+	t=1740082007; cv=none; b=VeTB5dhwVr/LQWep5sRkljkoIGBdeWjNbfZRhVYX4aATN5nrc/dYsvYI2T9Mn9Cu+83eIOry199shPwQqJB5Swg6QMQzzJw/cV4v4QqWCPqQmj/fR+w5f5n8NfnsNKfHCE7aXTGUybNTMmjtUqjk16+Tflxg8QnOsbvusg8Q1Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740077438; c=relaxed/simple;
-	bh=CfaU/8uFfWBCMNZBjAFj9ds/EzXo7lJmwKT/nfVGcMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UFYAWQU0MUirl1YJveoff30Qx7C2FvyeS4rp0X0InBkgx3EiJyEZk9B/MR8GfNIdasms8bgOeXN3s3vlWyP1KxCkolxxbnOSKxQU8DBJHuYwAUJQOMamnvvIXtowzy19AT04oU8tnqFTl/r+ZgJDJWf05RJLZFko9sZkM6AzgdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MiJovzEH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C285C4CED1;
-	Thu, 20 Feb 2025 18:50:37 +0000 (UTC)
+	s=arc-20240116; t=1740082007; c=relaxed/simple;
+	bh=cKugbOpgswlis1Z5dV3I5Hd+22d512BRQuZU+Ew9wL4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PNmybNSnI2bUa2lxuY8U7zQuqyOivGETJ3OAbmnqngwWTJjw3mWbo+Qge/4VPeRV7dxq9ZrPR7Ske2Qw/MUmwG0Dhb7wBTe/9Ps0Sfw3S7IFdxF15oRIg3gmnYFVaV6siHDoDDpo7EfE13OVlgNNIzfvsEB2YD3Z/gFB463V9Uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XVlPP9GE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11B7FC4CED1;
+	Thu, 20 Feb 2025 20:06:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740077437;
-	bh=CfaU/8uFfWBCMNZBjAFj9ds/EzXo7lJmwKT/nfVGcMo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MiJovzEHVIFdq+LEYlaLfL/NVbhumbye73cXaVcW9tZJfyH4rBSbCscwDTcSOSzWo
-	 39VNdvRloT2mpdlIavIGQdNjCSbCOvDmEpm508sqVBG58hbSKa09Iq3iOQ9RpWsGUA
-	 yndJoiGD2HHDMKfG0ARnz9mAaLyl6DsEnbMEv+mHdG6c8RtZxGbq8Ua6VUntgx+jql
-	 vTxvV1yk6cha4fUuD8Hf2sd3aeNVIFT5HreXrphEA7Y96kgGIziQuqDbVsh71bUQWU
-	 fjdprR2dh8i0kmZ+yzROzUicZ6wAz6ZCbaUOARJMg9HTKl/9CHhleoufR0qoPzm6Qa
-	 +ewb5zJ0Erl2Q==
-Date: Thu, 20 Feb 2025 10:50:36 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+	s=k20201202; t=1740082006;
+	bh=cKugbOpgswlis1Z5dV3I5Hd+22d512BRQuZU+Ew9wL4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=XVlPP9GErFAsL0C9DPp1Hppwo6E9lK3eb7Wj6aSglno69yNVqmMDOMUwzDts8Fmj9
+	 Xjo3P3r4z0GPfAo40ybfsWn/lhVjp3gf1U0WHzShxdKjIy4BIfvKxcDK9qKSJcWIsr
+	 PcAHtwDrn4ynomVdp/KrZ3TKIDw74UavoaZkN/u58qkH/uWBw+ZDQn5BV2iLiJSYIA
+	 Sp9SAhbTO8CKVide5x/9EyitNNiMTz7m478saMZj+XO16tbDI+ifqsVLS9ic//qHm3
+	 XKeaBINIPPER0lJxmW/S+wDhW/A/qKDQGXC/KIjxLt6ma7KClDC82gwHnJkrtCbyAa
+	 aqrCY33jQZjfw==
+Message-ID: <16f621e592978794737f4b547ee23b7d41201cbe.camel@kernel.org>
 Subject: Re: [PATCH] sysv: Remove the filesystem
-Message-ID: <20250220185036.GB1564284@frogsfrogsfrogs>
+From: Jeff Layton <jlayton@kernel.org>
+To: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+Date: Thu, 20 Feb 2025 15:06:44 -0500
+In-Reply-To: <20250220163940.10155-2-jack@suse.cz>
 References: <20250220163940.10155-2-jack@suse.cz>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
+ n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
+ egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
+ T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
+ 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
+ YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
+ VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
+ cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
+ CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
+ LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
+ MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
+ gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
+ 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
+ R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
+ rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
+ ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
+ Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
+ lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
+ iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
+ QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
+ YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
+ wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
+ LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
+ 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
+ c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
+ LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
+ TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
+ 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
+ xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
+ +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
+ Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
+ BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
+ N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
+ naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
+ RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
+ FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
+ 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
+ P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
+ aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
+ T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
+ dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
+ 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
+ kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
+ uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
+ AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
+ FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
+ 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
+ sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
+ qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
+ sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
+ IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
+ UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
+ dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
+ EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
+ apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
+ M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
+ dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
+ 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
+ jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
+ flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
+ BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
+ AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
+ 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
+ HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
+ 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
+ uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
+ DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
+ CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
+ Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
+ AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
+ aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
+ f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220163940.10155-2-jack@suse.cz>
 
-On Thu, Feb 20, 2025 at 05:39:41PM +0100, Jan Kara wrote:
+On Thu, 2025-02-20 at 17:39 +0100, Jan Kara wrote:
 > Since 2002 (change "Replace BKL for chain locking with sysvfs-private
 > rwlock") the sysv filesystem was doing IO under a rwlock in its
 > get_block() function (yes, a non-sleepable lock hold over a function
 > used to read inode metadata for all reads and writes).  Nobody noticed
 > until syzbot in 2023 [1]. This shows nobody is using the filesystem.
 > Just drop it.
-> 
+>=20
 > [1] https://lore.kernel.org/all/0000000000000ccf9a05ee84f5b0@google.com/
-> 
+>=20
 > Signed-off-by: Jan Kara <jack@suse.cz>
-
-Excellent!  Less code for us all to maintain!
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-
---D
-
 > ---
 >  Documentation/filesystems/index.rst         |   1 -
 >  Documentation/filesystems/sysv-fs.rst       | 264 ---------
@@ -127,14 +196,17 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 >  delete mode 100644 fs/sysv/super.c
 >  delete mode 100644 fs/sysv/sysv.h
 >  delete mode 100644 include/linux/sysv_fs.h
-> 
+>=20
 > Hello Christian!
-> 
-> Here is sysv removal patch rebased on top of your vfs.all branch. Can you pull
-> it into your tree? Or I could carry it in my tree but I guess there's no point.
+>=20
+> Here is sysv removal patch rebased on top of your vfs.all branch. Can you=
+ pull
+> it into your tree? Or I could carry it in my tree but I guess there's no =
+point.
 > Thanks!
-> 
-> diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
+>=20
+> diff --git a/Documentation/filesystems/index.rst b/Documentation/filesyst=
+ems/index.rst
 > index 2636f2a41bd3..a9cf8e950b15 100644
 > --- a/Documentation/filesystems/index.rst
 > +++ b/Documentation/filesystems/index.rst
@@ -146,7 +218,8 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 >     tmpfs
 >     ubifs
 >     ubifs-authentication
-> diff --git a/Documentation/filesystems/sysv-fs.rst b/Documentation/filesystems/sysv-fs.rst
+> diff --git a/Documentation/filesystems/sysv-fs.rst b/Documentation/filesy=
+stems/sysv-fs.rst
 > deleted file mode 100644
 > index 89e40911ad7c..000000000000
 > --- a/Documentation/filesystems/sysv-fs.rst
@@ -154,9 +227,9 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > @@ -1,264 +0,0 @@
 > -.. SPDX-License-Identifier: GPL-2.0
 > -
-> -==================
+> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 > -SystemV Filesystem
-> -==================
+> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 > -
 > -It implements all of
 > -  - Xenix FS,
@@ -165,7 +238,8 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -To install:
 > -
-> -* Answer the 'System V and Coherent filesystem support' question with 'y'
+> -* Answer the 'System V and Coherent filesystem support' question with 'y=
+'
 > -  when configuring the kernel.
 > -* To mount a disk or a partition, use::
 > -
@@ -177,14 +251,16 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -               -t xenix
 > -               -t coherent
 > -
-> -  may be used interchangeably, but the last two will eventually disappear.
+> -  may be used interchangeably, but the last two will eventually disappea=
+r.
 > -
 > -Bugs in the present implementation:
 > -
 > -- Coherent FS:
 > -
 > -  - The "free list interleave" n:m is currently ignored.
-> -  - Only file systems with no filesystem name and no pack name are recognized.
+> -  - Only file systems with no filesystem name and no pack name are recog=
+nized.
 > -    (See Coherent "man mkfs" for a description of these features.)
 > -
 > -- SystemV Release 2 FS:
@@ -194,7 +270,8 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -  for this FS on hard disk yet.
 > -
 > -
-> -These filesystems are rather similar. Here is a comparison with Minix FS:
+> -These filesystems are rather similar. Here is a comparison with Minix FS=
+:
 > -
 > -* Linux fdisk reports on partitions
 > -
@@ -212,8 +289,10 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -* General layout: all have one boot block, one super block and
 > -  separate areas for inodes and for directories/data.
-> -  On SystemV Release 2 FS (e.g. Microport) the first track is reserved and
-> -  all the block numbers (including the super block) are offset by one track.
+> -  On SystemV Release 2 FS (e.g. Microport) the first track is reserved a=
+nd
+> -  all the block numbers (including the super block) are offset by one tr=
+ack.
 > -
 > -* Byte ordering of "short" (16 bit entities) on disk:
 > -
@@ -222,7 +301,8 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -  - SystemV FS   little endian  0 1
 > -  - Coherent FS  little endian  0 1
 > -
-> -  Of course, this affects only the file system, not the data of files on it!
+> -  Of course, this affects only the file system, not the data of files on=
+ it!
 > -
 > -* Byte ordering of "long" (32 bit entities) on disk:
 > -
@@ -231,53 +311,66 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -  - SystemV FS   little endian  0 1 2 3
 > -  - Coherent FS  PDP-11         2 3 0 1
 > -
-> -  Of course, this affects only the file system, not the data of files on it!
+> -  Of course, this affects only the file system, not the data of files on=
+ it!
 > -
 > -* Inode on disk: "short", 0 means non-existent, the root dir ino is:
 > -
-> -  =================================  ==
+> -  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D
 > -  Minix FS                            1
 > -  Xenix FS, SystemV FS, Coherent FS   2
-> -  =================================  ==
+> -  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D
 > -
 > -* Maximum number of hard links to a file:
 > -
-> -  ===========  =========
+> -  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D
 > -  Minix FS     250
 > -  Xenix FS     ??
 > -  SystemV FS   ??
-> -  Coherent FS  >=10000
-> -  ===========  =========
+> -  Coherent FS  >=3D10000
+> -  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D
 > -
 > -* Free inode management:
 > -
 > -  - Minix FS
 > -      a bitmap
 > -  - Xenix FS, SystemV FS, Coherent FS
-> -      There is a cache of a certain number of free inodes in the super-block.
-> -      When it is exhausted, new free inodes are found using a linear search.
+> -      There is a cache of a certain number of free inodes in the super-b=
+lock.
+> -      When it is exhausted, new free inodes are found using a linear sea=
+rch.
 > -
 > -* Free block management:
 > -
 > -  - Minix FS
 > -      a bitmap
 > -  - Xenix FS, SystemV FS, Coherent FS
-> -      Free blocks are organized in a "free list". Maybe a misleading term,
+> -      Free blocks are organized in a "free list". Maybe a misleading ter=
+m,
 > -      since it is not true that every free block contains a pointer to
-> -      the next free block. Rather, the free blocks are organized in chunks
-> -      of limited size, and every now and then a free block contains pointers
-> -      to the free blocks pertaining to the next chunk; the first of these
-> -      contains pointers and so on. The list terminates with a "block number"
-> -      0 on Xenix FS and SystemV FS, with a block zeroed out on Coherent FS.
+> -      the next free block. Rather, the free blocks are organized in chun=
+ks
+> -      of limited size, and every now and then a free block contains poin=
+ters
+> -      to the free blocks pertaining to the next chunk; the first of thes=
+e
+> -      contains pointers and so on. The list terminates with a "block num=
+ber"
+> -      0 on Xenix FS and SystemV FS, with a block zeroed out on Coherent =
+FS.
 > -
 > -* Super-block location:
 > -
-> -  ===========  ==========================
-> -  Minix FS     block 1 = bytes 1024..2047
-> -  Xenix FS     block 1 = bytes 1024..2047
+> -  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> -  Minix FS     block 1 =3D bytes 1024..2047
+> -  Xenix FS     block 1 =3D bytes 1024..2047
 > -  SystemV FS   bytes 512..1023
-> -  Coherent FS  block 1 = bytes 512..1023
-> -  ===========  ==========================
+> -  Coherent FS  block 1 =3D bytes 512..1023
+> -  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 > -
 > -* Super-block layout:
 > -
@@ -309,7 +402,8 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -                    unsigned long  s_free_zones;
 > -                    unsigned short s_free_inodes;
 > -                    short          s_dinfo[4]; -- Xenix FS only
-> -                    unsigned short s_interleave_m,s_interleave_n; -- Coherent FS only
+> -                    unsigned short s_interleave_m,s_interleave_n; -- Coh=
+erent FS only
 > -                    char           s_fname[6];
 > -                    char           s_fpack[6];
 > -
@@ -373,17 +467,21 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -             - 10 direct blocks
 > -             -  1 indirect block (pointers to blocks)
 > -             -  1 double-indirect block (pointer to pointers to blocks)
-> -             -  1 triple-indirect block (pointer to pointers to pointers to blocks)
+> -             -  1 triple-indirect block (pointer to pointers to pointers=
+ to blocks)
 > -
 > -
-> -  ===========  ==========   ================
+> -  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D   =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 > -               Inode size   inodes per block
-> -  ===========  ==========   ================
+> -  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D   =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 > -  Minix FS        32        32
 > -  Xenix FS        64        16
 > -  SystemV FS      64        16
 > -  Coherent FS     64        8
-> -  ===========  ==========   ================
+> -  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D   =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 > -
 > -* Directory entry on disk
 > -
@@ -397,16 +495,23 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -                    unsigned short inode;
 > -                    char name[14];
 > -
-> -  ===========    ==============    =====================
+> -  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
 > -                 Dir entry size    dir entries per block
-> -  ===========    ==============    =====================
+> -  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
 > -  Minix FS       16/32             64/32
 > -  Xenix FS       16                64
 > -  SystemV FS     16                64
 > -  Coherent FS    16                32
-> -  ===========    ==============    =====================
+> -  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
 > -
-> -* How to implement symbolic links such that the host fsck doesn't scream:
+> -* How to implement symbolic links such that the host fsck doesn't scream=
+:
 > -
 > -  - Minix FS     normal
 > -  - Xenix FS     kludge: as regular files with  chmod 1000
@@ -414,7 +519,8 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -  - Coherent FS  kludge: as regular files with  chmod 1000
 > -
 > -
-> -Notation: We often speak of a "block" but mean a zone (the allocation unit)
+> -Notation: We often speak of a "block" but mean a zone (the allocation un=
+it)
 > -and not the disk driver's notion of "block".
 > diff --git a/MAINTAINERS b/MAINTAINERS
 > index 4e17764cb6ed..58534bc39b2d 100644
@@ -423,7 +529,7 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > @@ -23075,12 +23075,6 @@ L:	platform-driver-x86@vger.kernel.org
 >  S:	Maintained
 >  F:	drivers/platform/x86/system76_acpi.c
->  
+> =20
 > -SYSV FILESYSTEM
 > -S:	Orphan
 > -F:	Documentation/filesystems/sysv-fs.rst
@@ -433,246 +539,266 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 >  TASKSTATS STATISTICS INTERFACE
 >  M:	Balbir Singh <bsingharora@gmail.com>
 >  S:	Maintained
-> diff --git a/arch/loongarch/configs/loongson3_defconfig b/arch/loongarch/configs/loongson3_defconfig
+> diff --git a/arch/loongarch/configs/loongson3_defconfig b/arch/loongarch/=
+configs/loongson3_defconfig
 > index 73c77500ac46..3c240afe5aed 100644
 > --- a/arch/loongarch/configs/loongson3_defconfig
 > +++ b/arch/loongarch/configs/loongson3_defconfig
-> @@ -981,7 +981,6 @@ CONFIG_MINIX_FS=m
->  CONFIG_ROMFS_FS=m
->  CONFIG_PSTORE=m
->  CONFIG_PSTORE_COMPRESS=y
-> -CONFIG_SYSV_FS=m
->  CONFIG_UFS_FS=m
->  CONFIG_EROFS_FS=m
->  CONFIG_EROFS_FS_ZIP_LZMA=y
-> diff --git a/arch/m68k/configs/amiga_defconfig b/arch/m68k/configs/amiga_defconfig
+> @@ -981,7 +981,6 @@ CONFIG_MINIX_FS=3Dm
+>  CONFIG_ROMFS_FS=3Dm
+>  CONFIG_PSTORE=3Dm
+>  CONFIG_PSTORE_COMPRESS=3Dy
+> -CONFIG_SYSV_FS=3Dm
+>  CONFIG_UFS_FS=3Dm
+>  CONFIG_EROFS_FS=3Dm
+>  CONFIG_EROFS_FS_ZIP_LZMA=3Dy
+> diff --git a/arch/m68k/configs/amiga_defconfig b/arch/m68k/configs/amiga_=
+defconfig
 > index dbf2ea561c85..68a2e299ea71 100644
 > --- a/arch/m68k/configs/amiga_defconfig
 > +++ b/arch/m68k/configs/amiga_defconfig
-> @@ -486,7 +486,6 @@ CONFIG_OMFS_FS=m
->  CONFIG_HPFS_FS=m
->  CONFIG_QNX4FS_FS=m
->  CONFIG_QNX6FS_FS=m
-> -CONFIG_SYSV_FS=m
->  CONFIG_UFS_FS=m
->  CONFIG_EROFS_FS=m
->  CONFIG_NFS_FS=y
-> diff --git a/arch/m68k/configs/apollo_defconfig b/arch/m68k/configs/apollo_defconfig
+> @@ -486,7 +486,6 @@ CONFIG_OMFS_FS=3Dm
+>  CONFIG_HPFS_FS=3Dm
+>  CONFIG_QNX4FS_FS=3Dm
+>  CONFIG_QNX6FS_FS=3Dm
+> -CONFIG_SYSV_FS=3Dm
+>  CONFIG_UFS_FS=3Dm
+>  CONFIG_EROFS_FS=3Dm
+>  CONFIG_NFS_FS=3Dy
+> diff --git a/arch/m68k/configs/apollo_defconfig b/arch/m68k/configs/apoll=
+o_defconfig
 > index b0fd199cc0a4..3696d0c19579 100644
 > --- a/arch/m68k/configs/apollo_defconfig
 > +++ b/arch/m68k/configs/apollo_defconfig
-> @@ -443,7 +443,6 @@ CONFIG_OMFS_FS=m
->  CONFIG_HPFS_FS=m
->  CONFIG_QNX4FS_FS=m
->  CONFIG_QNX6FS_FS=m
-> -CONFIG_SYSV_FS=m
->  CONFIG_UFS_FS=m
->  CONFIG_EROFS_FS=m
->  CONFIG_NFS_FS=y
-> diff --git a/arch/m68k/configs/atari_defconfig b/arch/m68k/configs/atari_defconfig
+> @@ -443,7 +443,6 @@ CONFIG_OMFS_FS=3Dm
+>  CONFIG_HPFS_FS=3Dm
+>  CONFIG_QNX4FS_FS=3Dm
+>  CONFIG_QNX6FS_FS=3Dm
+> -CONFIG_SYSV_FS=3Dm
+>  CONFIG_UFS_FS=3Dm
+>  CONFIG_EROFS_FS=3Dm
+>  CONFIG_NFS_FS=3Dy
+> diff --git a/arch/m68k/configs/atari_defconfig b/arch/m68k/configs/atari_=
+defconfig
 > index bb5b2d3b6c10..dbd4b58b724c 100644
 > --- a/arch/m68k/configs/atari_defconfig
 > +++ b/arch/m68k/configs/atari_defconfig
-> @@ -463,7 +463,6 @@ CONFIG_OMFS_FS=m
->  CONFIG_HPFS_FS=m
->  CONFIG_QNX4FS_FS=m
->  CONFIG_QNX6FS_FS=m
-> -CONFIG_SYSV_FS=m
->  CONFIG_UFS_FS=m
->  CONFIG_EROFS_FS=m
->  CONFIG_NFS_FS=y
-> diff --git a/arch/m68k/configs/bvme6000_defconfig b/arch/m68k/configs/bvme6000_defconfig
+> @@ -463,7 +463,6 @@ CONFIG_OMFS_FS=3Dm
+>  CONFIG_HPFS_FS=3Dm
+>  CONFIG_QNX4FS_FS=3Dm
+>  CONFIG_QNX6FS_FS=3Dm
+> -CONFIG_SYSV_FS=3Dm
+>  CONFIG_UFS_FS=3Dm
+>  CONFIG_EROFS_FS=3Dm
+>  CONFIG_NFS_FS=3Dy
+> diff --git a/arch/m68k/configs/bvme6000_defconfig b/arch/m68k/configs/bvm=
+e6000_defconfig
 > index 8315a13bab73..95178e66703f 100644
 > --- a/arch/m68k/configs/bvme6000_defconfig
 > +++ b/arch/m68k/configs/bvme6000_defconfig
-> @@ -435,7 +435,6 @@ CONFIG_OMFS_FS=m
->  CONFIG_HPFS_FS=m
->  CONFIG_QNX4FS_FS=m
->  CONFIG_QNX6FS_FS=m
-> -CONFIG_SYSV_FS=m
->  CONFIG_UFS_FS=m
->  CONFIG_EROFS_FS=m
->  CONFIG_NFS_FS=y
-> diff --git a/arch/m68k/configs/hp300_defconfig b/arch/m68k/configs/hp300_defconfig
+> @@ -435,7 +435,6 @@ CONFIG_OMFS_FS=3Dm
+>  CONFIG_HPFS_FS=3Dm
+>  CONFIG_QNX4FS_FS=3Dm
+>  CONFIG_QNX6FS_FS=3Dm
+> -CONFIG_SYSV_FS=3Dm
+>  CONFIG_UFS_FS=3Dm
+>  CONFIG_EROFS_FS=3Dm
+>  CONFIG_NFS_FS=3Dy
+> diff --git a/arch/m68k/configs/hp300_defconfig b/arch/m68k/configs/hp300_=
+defconfig
 > index 350370657e5f..68372a0b05ac 100644
 > --- a/arch/m68k/configs/hp300_defconfig
 > +++ b/arch/m68k/configs/hp300_defconfig
-> @@ -445,7 +445,6 @@ CONFIG_OMFS_FS=m
->  CONFIG_HPFS_FS=m
->  CONFIG_QNX4FS_FS=m
->  CONFIG_QNX6FS_FS=m
-> -CONFIG_SYSV_FS=m
->  CONFIG_UFS_FS=m
->  CONFIG_EROFS_FS=m
->  CONFIG_NFS_FS=y
-> diff --git a/arch/m68k/configs/mac_defconfig b/arch/m68k/configs/mac_defconfig
+> @@ -445,7 +445,6 @@ CONFIG_OMFS_FS=3Dm
+>  CONFIG_HPFS_FS=3Dm
+>  CONFIG_QNX4FS_FS=3Dm
+>  CONFIG_QNX6FS_FS=3Dm
+> -CONFIG_SYSV_FS=3Dm
+>  CONFIG_UFS_FS=3Dm
+>  CONFIG_EROFS_FS=3Dm
+>  CONFIG_NFS_FS=3Dy
+> diff --git a/arch/m68k/configs/mac_defconfig b/arch/m68k/configs/mac_defc=
+onfig
 > index f942b4755702..a9beb4ec8a15 100644
 > --- a/arch/m68k/configs/mac_defconfig
 > +++ b/arch/m68k/configs/mac_defconfig
-> @@ -462,7 +462,6 @@ CONFIG_OMFS_FS=m
->  CONFIG_HPFS_FS=m
->  CONFIG_QNX4FS_FS=m
->  CONFIG_QNX6FS_FS=m
-> -CONFIG_SYSV_FS=m
->  CONFIG_UFS_FS=m
->  CONFIG_EROFS_FS=m
->  CONFIG_NFS_FS=y
-> diff --git a/arch/m68k/configs/multi_defconfig b/arch/m68k/configs/multi_defconfig
+> @@ -462,7 +462,6 @@ CONFIG_OMFS_FS=3Dm
+>  CONFIG_HPFS_FS=3Dm
+>  CONFIG_QNX4FS_FS=3Dm
+>  CONFIG_QNX6FS_FS=3Dm
+> -CONFIG_SYSV_FS=3Dm
+>  CONFIG_UFS_FS=3Dm
+>  CONFIG_EROFS_FS=3Dm
+>  CONFIG_NFS_FS=3Dy
+> diff --git a/arch/m68k/configs/multi_defconfig b/arch/m68k/configs/multi_=
+defconfig
 > index b1eaad02efab..45a898e9c1d1 100644
 > --- a/arch/m68k/configs/multi_defconfig
 > +++ b/arch/m68k/configs/multi_defconfig
-> @@ -549,7 +549,6 @@ CONFIG_OMFS_FS=m
->  CONFIG_HPFS_FS=m
->  CONFIG_QNX4FS_FS=m
->  CONFIG_QNX6FS_FS=m
-> -CONFIG_SYSV_FS=m
->  CONFIG_UFS_FS=m
->  CONFIG_EROFS_FS=m
->  CONFIG_NFS_FS=y
-> diff --git a/arch/m68k/configs/mvme147_defconfig b/arch/m68k/configs/mvme147_defconfig
+> @@ -549,7 +549,6 @@ CONFIG_OMFS_FS=3Dm
+>  CONFIG_HPFS_FS=3Dm
+>  CONFIG_QNX4FS_FS=3Dm
+>  CONFIG_QNX6FS_FS=3Dm
+> -CONFIG_SYSV_FS=3Dm
+>  CONFIG_UFS_FS=3Dm
+>  CONFIG_EROFS_FS=3Dm
+>  CONFIG_NFS_FS=3Dy
+> diff --git a/arch/m68k/configs/mvme147_defconfig b/arch/m68k/configs/mvme=
+147_defconfig
 > index 6309a4442bb3..350dc6d08461 100644
 > --- a/arch/m68k/configs/mvme147_defconfig
 > +++ b/arch/m68k/configs/mvme147_defconfig
-> @@ -435,7 +435,6 @@ CONFIG_OMFS_FS=m
->  CONFIG_HPFS_FS=m
->  CONFIG_QNX4FS_FS=m
->  CONFIG_QNX6FS_FS=m
-> -CONFIG_SYSV_FS=m
->  CONFIG_UFS_FS=m
->  CONFIG_EROFS_FS=m
->  CONFIG_NFS_FS=y
-> diff --git a/arch/m68k/configs/mvme16x_defconfig b/arch/m68k/configs/mvme16x_defconfig
+> @@ -435,7 +435,6 @@ CONFIG_OMFS_FS=3Dm
+>  CONFIG_HPFS_FS=3Dm
+>  CONFIG_QNX4FS_FS=3Dm
+>  CONFIG_QNX6FS_FS=3Dm
+> -CONFIG_SYSV_FS=3Dm
+>  CONFIG_UFS_FS=3Dm
+>  CONFIG_EROFS_FS=3Dm
+>  CONFIG_NFS_FS=3Dy
+> diff --git a/arch/m68k/configs/mvme16x_defconfig b/arch/m68k/configs/mvme=
+16x_defconfig
 > index 3feb0731f814..7ea283ba86b7 100644
 > --- a/arch/m68k/configs/mvme16x_defconfig
 > +++ b/arch/m68k/configs/mvme16x_defconfig
-> @@ -436,7 +436,6 @@ CONFIG_OMFS_FS=m
->  CONFIG_HPFS_FS=m
->  CONFIG_QNX4FS_FS=m
->  CONFIG_QNX6FS_FS=m
-> -CONFIG_SYSV_FS=m
->  CONFIG_UFS_FS=m
->  CONFIG_EROFS_FS=m
->  CONFIG_NFS_FS=y
-> diff --git a/arch/m68k/configs/q40_defconfig b/arch/m68k/configs/q40_defconfig
+> @@ -436,7 +436,6 @@ CONFIG_OMFS_FS=3Dm
+>  CONFIG_HPFS_FS=3Dm
+>  CONFIG_QNX4FS_FS=3Dm
+>  CONFIG_QNX6FS_FS=3Dm
+> -CONFIG_SYSV_FS=3Dm
+>  CONFIG_UFS_FS=3Dm
+>  CONFIG_EROFS_FS=3Dm
+>  CONFIG_NFS_FS=3Dy
+> diff --git a/arch/m68k/configs/q40_defconfig b/arch/m68k/configs/q40_defc=
+onfig
 > index ea04b1b0da7d..eb0de405e6a9 100644
 > --- a/arch/m68k/configs/q40_defconfig
 > +++ b/arch/m68k/configs/q40_defconfig
-> @@ -452,7 +452,6 @@ CONFIG_OMFS_FS=m
->  CONFIG_HPFS_FS=m
->  CONFIG_QNX4FS_FS=m
->  CONFIG_QNX6FS_FS=m
-> -CONFIG_SYSV_FS=m
->  CONFIG_UFS_FS=m
->  CONFIG_EROFS_FS=m
->  CONFIG_NFS_FS=y
-> diff --git a/arch/m68k/configs/sun3_defconfig b/arch/m68k/configs/sun3_defconfig
+> @@ -452,7 +452,6 @@ CONFIG_OMFS_FS=3Dm
+>  CONFIG_HPFS_FS=3Dm
+>  CONFIG_QNX4FS_FS=3Dm
+>  CONFIG_QNX6FS_FS=3Dm
+> -CONFIG_SYSV_FS=3Dm
+>  CONFIG_UFS_FS=3Dm
+>  CONFIG_EROFS_FS=3Dm
+>  CONFIG_NFS_FS=3Dy
+> diff --git a/arch/m68k/configs/sun3_defconfig b/arch/m68k/configs/sun3_de=
+fconfig
 > index f52d9af92153..7026a139ccf8 100644
 > --- a/arch/m68k/configs/sun3_defconfig
 > +++ b/arch/m68k/configs/sun3_defconfig
-> @@ -433,7 +433,6 @@ CONFIG_OMFS_FS=m
->  CONFIG_HPFS_FS=m
->  CONFIG_QNX4FS_FS=m
->  CONFIG_QNX6FS_FS=m
-> -CONFIG_SYSV_FS=m
->  CONFIG_UFS_FS=m
->  CONFIG_EROFS_FS=m
->  CONFIG_NFS_FS=y
-> diff --git a/arch/m68k/configs/sun3x_defconfig b/arch/m68k/configs/sun3x_defconfig
+> @@ -433,7 +433,6 @@ CONFIG_OMFS_FS=3Dm
+>  CONFIG_HPFS_FS=3Dm
+>  CONFIG_QNX4FS_FS=3Dm
+>  CONFIG_QNX6FS_FS=3Dm
+> -CONFIG_SYSV_FS=3Dm
+>  CONFIG_UFS_FS=3Dm
+>  CONFIG_EROFS_FS=3Dm
+>  CONFIG_NFS_FS=3Dy
+> diff --git a/arch/m68k/configs/sun3x_defconfig b/arch/m68k/configs/sun3x_=
+defconfig
 > index f348447824da..c91abb80b081 100644
 > --- a/arch/m68k/configs/sun3x_defconfig
 > +++ b/arch/m68k/configs/sun3x_defconfig
-> @@ -433,7 +433,6 @@ CONFIG_OMFS_FS=m
->  CONFIG_HPFS_FS=m
->  CONFIG_QNX4FS_FS=m
->  CONFIG_QNX6FS_FS=m
-> -CONFIG_SYSV_FS=m
->  CONFIG_UFS_FS=m
->  CONFIG_EROFS_FS=m
->  CONFIG_NFS_FS=y
-> diff --git a/arch/mips/configs/malta_defconfig b/arch/mips/configs/malta_defconfig
+> @@ -433,7 +433,6 @@ CONFIG_OMFS_FS=3Dm
+>  CONFIG_HPFS_FS=3Dm
+>  CONFIG_QNX4FS_FS=3Dm
+>  CONFIG_QNX6FS_FS=3Dm
+> -CONFIG_SYSV_FS=3Dm
+>  CONFIG_UFS_FS=3Dm
+>  CONFIG_EROFS_FS=3Dm
+>  CONFIG_NFS_FS=3Dy
+> diff --git a/arch/mips/configs/malta_defconfig b/arch/mips/configs/malta_=
+defconfig
 > index 4390d30206d9..e308b82c094a 100644
 > --- a/arch/mips/configs/malta_defconfig
 > +++ b/arch/mips/configs/malta_defconfig
-> @@ -347,7 +347,6 @@ CONFIG_CRAMFS=m
->  CONFIG_VXFS_FS=m
->  CONFIG_MINIX_FS=m
->  CONFIG_ROMFS_FS=m
-> -CONFIG_SYSV_FS=m
->  CONFIG_UFS_FS=m
->  CONFIG_NFS_FS=y
->  CONFIG_ROOT_NFS=y
-> diff --git a/arch/mips/configs/malta_kvm_defconfig b/arch/mips/configs/malta_kvm_defconfig
+> @@ -347,7 +347,6 @@ CONFIG_CRAMFS=3Dm
+>  CONFIG_VXFS_FS=3Dm
+>  CONFIG_MINIX_FS=3Dm
+>  CONFIG_ROMFS_FS=3Dm
+> -CONFIG_SYSV_FS=3Dm
+>  CONFIG_UFS_FS=3Dm
+>  CONFIG_NFS_FS=3Dy
+>  CONFIG_ROOT_NFS=3Dy
+> diff --git a/arch/mips/configs/malta_kvm_defconfig b/arch/mips/configs/ma=
+lta_kvm_defconfig
 > index d63d8be8cb50..fa5b04063ddb 100644
 > --- a/arch/mips/configs/malta_kvm_defconfig
 > +++ b/arch/mips/configs/malta_kvm_defconfig
-> @@ -354,7 +354,6 @@ CONFIG_CRAMFS=m
->  CONFIG_VXFS_FS=m
->  CONFIG_MINIX_FS=m
->  CONFIG_ROMFS_FS=m
-> -CONFIG_SYSV_FS=m
->  CONFIG_UFS_FS=m
->  CONFIG_NFS_FS=y
->  CONFIG_ROOT_NFS=y
-> diff --git a/arch/mips/configs/maltaup_xpa_defconfig b/arch/mips/configs/maltaup_xpa_defconfig
+> @@ -354,7 +354,6 @@ CONFIG_CRAMFS=3Dm
+>  CONFIG_VXFS_FS=3Dm
+>  CONFIG_MINIX_FS=3Dm
+>  CONFIG_ROMFS_FS=3Dm
+> -CONFIG_SYSV_FS=3Dm
+>  CONFIG_UFS_FS=3Dm
+>  CONFIG_NFS_FS=3Dy
+>  CONFIG_ROOT_NFS=3Dy
+> diff --git a/arch/mips/configs/maltaup_xpa_defconfig b/arch/mips/configs/=
+maltaup_xpa_defconfig
 > index 338bb6544a93..40283171af68 100644
 > --- a/arch/mips/configs/maltaup_xpa_defconfig
 > +++ b/arch/mips/configs/maltaup_xpa_defconfig
-> @@ -353,7 +353,6 @@ CONFIG_CRAMFS=m
->  CONFIG_VXFS_FS=m
->  CONFIG_MINIX_FS=m
->  CONFIG_ROMFS_FS=m
-> -CONFIG_SYSV_FS=m
->  CONFIG_UFS_FS=m
->  CONFIG_NFS_FS=y
->  CONFIG_ROOT_NFS=y
-> diff --git a/arch/mips/configs/rm200_defconfig b/arch/mips/configs/rm200_defconfig
+> @@ -353,7 +353,6 @@ CONFIG_CRAMFS=3Dm
+>  CONFIG_VXFS_FS=3Dm
+>  CONFIG_MINIX_FS=3Dm
+>  CONFIG_ROMFS_FS=3Dm
+> -CONFIG_SYSV_FS=3Dm
+>  CONFIG_UFS_FS=3Dm
+>  CONFIG_NFS_FS=3Dy
+>  CONFIG_ROOT_NFS=3Dy
+> diff --git a/arch/mips/configs/rm200_defconfig b/arch/mips/configs/rm200_=
+defconfig
 > index 08e1c1f2f4de..3a6d0384b774 100644
 > --- a/arch/mips/configs/rm200_defconfig
 > +++ b/arch/mips/configs/rm200_defconfig
-> @@ -336,7 +336,6 @@ CONFIG_MINIX_FS=m
->  CONFIG_HPFS_FS=m
->  CONFIG_QNX4FS_FS=m
->  CONFIG_ROMFS_FS=m
-> -CONFIG_SYSV_FS=m
->  CONFIG_UFS_FS=m
->  CONFIG_NFS_FS=m
->  CONFIG_NFSD=m
-> diff --git a/arch/parisc/configs/generic-64bit_defconfig b/arch/parisc/configs/generic-64bit_defconfig
+> @@ -336,7 +336,6 @@ CONFIG_MINIX_FS=3Dm
+>  CONFIG_HPFS_FS=3Dm
+>  CONFIG_QNX4FS_FS=3Dm
+>  CONFIG_ROMFS_FS=3Dm
+> -CONFIG_SYSV_FS=3Dm
+>  CONFIG_UFS_FS=3Dm
+>  CONFIG_NFS_FS=3Dm
+>  CONFIG_NFSD=3Dm
+> diff --git a/arch/parisc/configs/generic-64bit_defconfig b/arch/parisc/co=
+nfigs/generic-64bit_defconfig
 > index 19a804860ed5..ea623f910748 100644
 > --- a/arch/parisc/configs/generic-64bit_defconfig
 > +++ b/arch/parisc/configs/generic-64bit_defconfig
-> @@ -268,7 +268,6 @@ CONFIG_PROC_KCORE=y
->  CONFIG_TMPFS=y
->  CONFIG_TMPFS_XATTR=y
->  CONFIG_CONFIGFS_FS=y
-> -CONFIG_SYSV_FS=y
->  CONFIG_NFS_FS=m
->  CONFIG_NFS_V4=m
->  CONFIG_NFS_V4_1=y
-> diff --git a/arch/powerpc/configs/fsl-emb-nonhw.config b/arch/powerpc/configs/fsl-emb-nonhw.config
+> @@ -268,7 +268,6 @@ CONFIG_PROC_KCORE=3Dy
+>  CONFIG_TMPFS=3Dy
+>  CONFIG_TMPFS_XATTR=3Dy
+>  CONFIG_CONFIGFS_FS=3Dy
+> -CONFIG_SYSV_FS=3Dy
+>  CONFIG_NFS_FS=3Dm
+>  CONFIG_NFS_V4=3Dm
+>  CONFIG_NFS_V4_1=3Dy
+> diff --git a/arch/powerpc/configs/fsl-emb-nonhw.config b/arch/powerpc/con=
+figs/fsl-emb-nonhw.config
 > index 3009b0efaf34..d6d2a458847b 100644
 > --- a/arch/powerpc/configs/fsl-emb-nonhw.config
 > +++ b/arch/powerpc/configs/fsl-emb-nonhw.config
-> @@ -112,7 +112,6 @@ CONFIG_QNX4FS_FS=m
->  CONFIG_RCU_TRACE=y
->  CONFIG_RESET_CONTROLLER=y
->  CONFIG_ROOT_NFS=y
-> -CONFIG_SYSV_FS=m
->  CONFIG_SYSVIPC=y
->  CONFIG_TMPFS=y
->  CONFIG_UBIFS_FS=y
-> diff --git a/arch/powerpc/configs/ppc6xx_defconfig b/arch/powerpc/configs/ppc6xx_defconfig
+> @@ -112,7 +112,6 @@ CONFIG_QNX4FS_FS=3Dm
+>  CONFIG_RCU_TRACE=3Dy
+>  CONFIG_RESET_CONTROLLER=3Dy
+>  CONFIG_ROOT_NFS=3Dy
+> -CONFIG_SYSV_FS=3Dm
+>  CONFIG_SYSVIPC=3Dy
+>  CONFIG_TMPFS=3Dy
+>  CONFIG_UBIFS_FS=3Dy
+> diff --git a/arch/powerpc/configs/ppc6xx_defconfig b/arch/powerpc/configs=
+/ppc6xx_defconfig
 > index ca0c90e95837..364d1a78bc12 100644
 > --- a/arch/powerpc/configs/ppc6xx_defconfig
 > +++ b/arch/powerpc/configs/ppc6xx_defconfig
-> @@ -986,7 +986,6 @@ CONFIG_MINIX_FS=m
->  CONFIG_OMFS_FS=m
->  CONFIG_QNX4FS_FS=m
->  CONFIG_ROMFS_FS=m
-> -CONFIG_SYSV_FS=m
->  CONFIG_UFS_FS=m
->  CONFIG_NFS_FS=m
->  CONFIG_NFS_V3_ACL=y
+> @@ -986,7 +986,6 @@ CONFIG_MINIX_FS=3Dm
+>  CONFIG_OMFS_FS=3Dm
+>  CONFIG_QNX4FS_FS=3Dm
+>  CONFIG_ROMFS_FS=3Dm
+> -CONFIG_SYSV_FS=3Dm
+>  CONFIG_UFS_FS=3Dm
+>  CONFIG_NFS_FS=3Dm
+>  CONFIG_NFS_V3_ACL=3Dy
 > diff --git a/fs/Kconfig b/fs/Kconfig
 > index 64d420e3c475..afe21866d6b4 100644
 > --- a/fs/Kconfig
@@ -689,14 +815,14 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > index 15df0a923d3a..77fd7f7b5d02 100644
 > --- a/fs/Makefile
 > +++ b/fs/Makefile
-> @@ -87,7 +87,6 @@ obj-$(CONFIG_NFSD)		+= nfsd/
->  obj-$(CONFIG_LOCKD)		+= lockd/
->  obj-$(CONFIG_NLS)		+= nls/
->  obj-y				+= unicode/
-> -obj-$(CONFIG_SYSV_FS)		+= sysv/
->  obj-$(CONFIG_SMBFS)		+= smb/
->  obj-$(CONFIG_HPFS_FS)		+= hpfs/
->  obj-$(CONFIG_NTFS3_FS)		+= ntfs3/
+> @@ -87,7 +87,6 @@ obj-$(CONFIG_NFSD)		+=3D nfsd/
+>  obj-$(CONFIG_LOCKD)		+=3D lockd/
+>  obj-$(CONFIG_NLS)		+=3D nls/
+>  obj-y				+=3D unicode/
+> -obj-$(CONFIG_SYSV_FS)		+=3D sysv/
+>  obj-$(CONFIG_SMBFS)		+=3D smb/
+>  obj-$(CONFIG_HPFS_FS)		+=3D hpfs/
+>  obj-$(CONFIG_NTFS3_FS)		+=3D ntfs3/
 > diff --git a/fs/sysv/Kconfig b/fs/sysv/Kconfig
 > deleted file mode 100644
 > index 67b3f90afbfd..000000000000
@@ -752,9 +878,9 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -# Makefile for the Linux SystemV/Coherent filesystem routines.
 > -#
 > -
-> -obj-$(CONFIG_SYSV_FS) += sysv.o
+> -obj-$(CONFIG_SYSV_FS) +=3D sysv.o
 > -
-> -sysv-objs := ialloc.o balloc.o inode.o itree.o file.o dir.o \
+> -sysv-objs :=3D ialloc.o balloc.o inode.o itree.o file.o dir.o \
 > -	     namei.o super.o
 > diff --git a/fs/sysv/balloc.c b/fs/sysv/balloc.c
 > deleted file mode 100644
@@ -789,14 +915,15 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -#include "sysv.h"
 > -
 > -/* We don't trust the value of
-> -   sb->sv_sbd2->s_tfree = *sb->sv_free_blocks
+> -   sb->sv_sbd2->s_tfree =3D *sb->sv_free_blocks
 > -   but we nevertheless keep it up to date. */
 > -
-> -static inline sysv_zone_t *get_chunk(struct super_block *sb, struct buffer_head *bh)
+> -static inline sysv_zone_t *get_chunk(struct super_block *sb, struct buff=
+er_head *bh)
 > -{
-> -	char *bh_data = bh->b_data;
+> -	char *bh_data =3D bh->b_data;
 > -
-> -	if (SYSV_SB(sb)->s_type == FSTYPE_SYSV4)
+> -	if (SYSV_SB(sb)->s_type =3D=3D FSTYPE_SYSV4)
 > -		return (sysv_zone_t*)(bh_data+4);
 > -	else
 > -		return (sysv_zone_t*)(bh_data+2);
@@ -806,27 +933,27 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -void sysv_free_block(struct super_block * sb, sysv_zone_t nr)
 > -{
-> -	struct sysv_sb_info * sbi = SYSV_SB(sb);
+> -	struct sysv_sb_info * sbi =3D SYSV_SB(sb);
 > -	struct buffer_head * bh;
-> -	sysv_zone_t *blocks = sbi->s_bcache;
+> -	sysv_zone_t *blocks =3D sbi->s_bcache;
 > -	unsigned count;
-> -	unsigned block = fs32_to_cpu(sbi, nr);
+> -	unsigned block =3D fs32_to_cpu(sbi, nr);
 > -
 > -	/*
 > -	 * This code does not work at all for AFS (it has a bitmap
 > -	 * free list).  As AFS is supposed to be read-only no one
 > -	 * should call this for an AFS filesystem anyway...
 > -	 */
-> -	if (sbi->s_type == FSTYPE_AFS)
+> -	if (sbi->s_type =3D=3D FSTYPE_AFS)
 > -		return;
 > -
-> -	if (block < sbi->s_firstdatazone || block >= sbi->s_nzones) {
+> -	if (block < sbi->s_firstdatazone || block >=3D sbi->s_nzones) {
 > -		printk("sysv_free_block: trying to free block not in datazone\n");
 > -		return;
 > -	}
 > -
 > -	mutex_lock(&sbi->s_lock);
-> -	count = fs16_to_cpu(sbi, *sbi->s_bcache_count);
+> -	count =3D fs16_to_cpu(sbi, *sbi->s_bcache_count);
 > -
 > -	if (count > sbi->s_flc_size) {
 > -		printk("sysv_free_block: flc_count > flc_size\n");
@@ -837,25 +964,25 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	 * into this block being freed, ditto if it's completely empty
 > -	 * (applies only on Coherent).
 > -	 */
-> -	if (count == sbi->s_flc_size || count == 0) {
-> -		block += sbi->s_block_base;
-> -		bh = sb_getblk(sb, block);
+> -	if (count =3D=3D sbi->s_flc_size || count =3D=3D 0) {
+> -		block +=3D sbi->s_block_base;
+> -		bh =3D sb_getblk(sb, block);
 > -		if (!bh) {
 > -			printk("sysv_free_block: getblk() failed\n");
 > -			mutex_unlock(&sbi->s_lock);
 > -			return;
 > -		}
 > -		memset(bh->b_data, 0, sb->s_blocksize);
-> -		*(__fs16*)bh->b_data = cpu_to_fs16(sbi, count);
+> -		*(__fs16*)bh->b_data =3D cpu_to_fs16(sbi, count);
 > -		memcpy(get_chunk(sb,bh), blocks, count * sizeof(sysv_zone_t));
 > -		mark_buffer_dirty(bh);
 > -		set_buffer_uptodate(bh);
 > -		brelse(bh);
-> -		count = 0;
+> -		count =3D 0;
 > -	}
-> -	sbi->s_bcache[count++] = nr;
+> -	sbi->s_bcache[count++] =3D nr;
 > -
-> -	*sbi->s_bcache_count = cpu_to_fs16(sbi, count);
+> -	*sbi->s_bcache_count =3D cpu_to_fs16(sbi, count);
 > -	fs32_add(sbi, sbi->s_free_blocks, 1);
 > -	dirty_sb(sb);
 > -	mutex_unlock(&sbi->s_lock);
@@ -863,48 +990,48 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -sysv_zone_t sysv_new_block(struct super_block * sb)
 > -{
-> -	struct sysv_sb_info *sbi = SYSV_SB(sb);
+> -	struct sysv_sb_info *sbi =3D SYSV_SB(sb);
 > -	unsigned int block;
 > -	sysv_zone_t nr;
 > -	struct buffer_head * bh;
 > -	unsigned count;
 > -
 > -	mutex_lock(&sbi->s_lock);
-> -	count = fs16_to_cpu(sbi, *sbi->s_bcache_count);
+> -	count =3D fs16_to_cpu(sbi, *sbi->s_bcache_count);
 > -
-> -	if (count == 0) /* Applies only to Coherent FS */
+> -	if (count =3D=3D 0) /* Applies only to Coherent FS */
 > -		goto Enospc;
-> -	nr = sbi->s_bcache[--count];
-> -	if (nr == 0)  /* Applies only to Xenix FS, SystemV FS */
+> -	nr =3D sbi->s_bcache[--count];
+> -	if (nr =3D=3D 0)  /* Applies only to Xenix FS, SystemV FS */
 > -		goto Enospc;
 > -
-> -	block = fs32_to_cpu(sbi, nr);
+> -	block =3D fs32_to_cpu(sbi, nr);
 > -
-> -	*sbi->s_bcache_count = cpu_to_fs16(sbi, count);
+> -	*sbi->s_bcache_count =3D cpu_to_fs16(sbi, count);
 > -
-> -	if (block < sbi->s_firstdatazone || block >= sbi->s_nzones) {
+> -	if (block < sbi->s_firstdatazone || block >=3D sbi->s_nzones) {
 > -		printk("sysv_new_block: new block %d is not in data zone\n",
 > -			block);
 > -		goto Enospc;
 > -	}
 > -
-> -	if (count == 0) { /* the last block continues the free list */
+> -	if (count =3D=3D 0) { /* the last block continues the free list */
 > -		unsigned count;
 > -
-> -		block += sbi->s_block_base;
-> -		if (!(bh = sb_bread(sb, block))) {
+> -		block +=3D sbi->s_block_base;
+> -		if (!(bh =3D sb_bread(sb, block))) {
 > -			printk("sysv_new_block: cannot read free-list block\n");
 > -			/* retry this same block next time */
-> -			*sbi->s_bcache_count = cpu_to_fs16(sbi, 1);
+> -			*sbi->s_bcache_count =3D cpu_to_fs16(sbi, 1);
 > -			goto Enospc;
 > -		}
-> -		count = fs16_to_cpu(sbi, *(__fs16*)bh->b_data);
+> -		count =3D fs16_to_cpu(sbi, *(__fs16*)bh->b_data);
 > -		if (count > sbi->s_flc_size) {
 > -			printk("sysv_new_block: free-list block with >flc_size entries\n");
 > -			brelse(bh);
 > -			goto Enospc;
 > -		}
-> -		*sbi->s_bcache_count = cpu_to_fs16(sbi, count);
+> -		*sbi->s_bcache_count =3D cpu_to_fs16(sbi, count);
 > -		memcpy(sbi->s_bcache, get_chunk(sb, bh),
 > -				count * sizeof(sysv_zone_t));
 > -		brelse(bh);
@@ -922,10 +1049,10 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -unsigned long sysv_count_free_blocks(struct super_block * sb)
 > -{
-> -	struct sysv_sb_info * sbi = SYSV_SB(sb);
+> -	struct sysv_sb_info * sbi =3D SYSV_SB(sb);
 > -	int sb_count;
 > -	int count;
-> -	struct buffer_head * bh = NULL;
+> -	struct buffer_head * bh =3D NULL;
 > -	sysv_zone_t *blocks;
 > -	unsigned block;
 > -	int n;
@@ -935,45 +1062,45 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	 * free list).  As AFS is supposed to be read-only we just
 > -	 * lie and say it has no free block at all.
 > -	 */
-> -	if (sbi->s_type == FSTYPE_AFS)
+> -	if (sbi->s_type =3D=3D FSTYPE_AFS)
 > -		return 0;
 > -
 > -	mutex_lock(&sbi->s_lock);
-> -	sb_count = fs32_to_cpu(sbi, *sbi->s_free_blocks);
+> -	sb_count =3D fs32_to_cpu(sbi, *sbi->s_free_blocks);
 > -
 > -	if (0)
 > -		goto trust_sb;
 > -
 > -	/* this causes a lot of disk traffic ... */
-> -	count = 0;
-> -	n = fs16_to_cpu(sbi, *sbi->s_bcache_count);
-> -	blocks = sbi->s_bcache;
+> -	count =3D 0;
+> -	n =3D fs16_to_cpu(sbi, *sbi->s_bcache_count);
+> -	blocks =3D sbi->s_bcache;
 > -	while (1) {
 > -		sysv_zone_t zone;
 > -		if (n > sbi->s_flc_size)
 > -			goto E2big;
-> -		zone = 0;
-> -		while (n && (zone = blocks[--n]) != 0)
+> -		zone =3D 0;
+> -		while (n && (zone =3D blocks[--n]) !=3D 0)
 > -			count++;
-> -		if (zone == 0)
+> -		if (zone =3D=3D 0)
 > -			break;
 > -
-> -		block = fs32_to_cpu(sbi, zone);
+> -		block =3D fs32_to_cpu(sbi, zone);
 > -		if (bh)
 > -			brelse(bh);
 > -
-> -		if (block < sbi->s_firstdatazone || block >= sbi->s_nzones)
+> -		if (block < sbi->s_firstdatazone || block >=3D sbi->s_nzones)
 > -			goto Einval;
-> -		block += sbi->s_block_base;
-> -		bh = sb_bread(sb, block);
+> -		block +=3D sbi->s_block_base;
+> -		bh =3D sb_bread(sb, block);
 > -		if (!bh)
 > -			goto Eio;
-> -		n = fs16_to_cpu(sbi, *(__fs16*)bh->b_data);
-> -		blocks = get_chunk(sb, bh);
+> -		n =3D fs16_to_cpu(sbi, *(__fs16*)bh->b_data);
+> -		blocks =3D get_chunk(sb, bh);
 > -	}
 > -	if (bh)
 > -		brelse(bh);
-> -	if (count != sb_count)
+> -	if (count !=3D sb_count)
 > -		goto Ecount;
 > -done:
 > -	mutex_unlock(&sbi->s_lock);
@@ -987,17 +1114,18 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	printk("sysv_count_free_blocks: cannot read free-list block\n");
 > -	goto trust_sb;
 > -E2big:
-> -	printk("sysv_count_free_blocks: >flc_size entries in free-list block\n");
+> -	printk("sysv_count_free_blocks: >flc_size entries in free-list block\n"=
+);
 > -	if (bh)
 > -		brelse(bh);
 > -trust_sb:
-> -	count = sb_count;
+> -	count =3D sb_count;
 > -	goto done;
 > -Ecount:
 > -	printk("sysv_count_free_blocks: free block count was %d, "
 > -		"correcting to %d\n", sb_count, count);
 > -	if (!sb_rdonly(sb)) {
-> -		*sbi->s_free_blocks = cpu_to_fs32(sbi, count);
+> -		*sbi->s_free_blocks =3D cpu_to_fs32(sbi, count);
 > -		dirty_sb(sb);
 > -	}
 > -	goto done;
@@ -1031,17 +1159,18 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -static int sysv_readdir(struct file *, struct dir_context *);
 > -
-> -const struct file_operations sysv_dir_operations = {
-> -	.llseek		= generic_file_llseek,
-> -	.read		= generic_read_dir,
-> -	.iterate_shared	= sysv_readdir,
-> -	.fsync		= generic_file_fsync,
+> -const struct file_operations sysv_dir_operations =3D {
+> -	.llseek		=3D generic_file_llseek,
+> -	.read		=3D generic_read_dir,
+> -	.iterate_shared	=3D sysv_readdir,
+> -	.fsync		=3D generic_file_fsync,
 > -};
 > -
-> -static void dir_commit_chunk(struct folio *folio, loff_t pos, unsigned len)
+> -static void dir_commit_chunk(struct folio *folio, loff_t pos, unsigned l=
+en)
 > -{
-> -	struct address_space *mapping = folio->mapping;
-> -	struct inode *dir = mapping->host;
+> -	struct address_space *mapping =3D folio->mapping;
+> -	struct inode *dir =3D mapping->host;
 > -
 > -	block_write_end(NULL, mapping, pos, len, len, folio, NULL);
 > -	if (pos+len > dir->i_size) {
@@ -1055,58 +1184,60 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -{
 > -	int err;
 > -
-> -	err = filemap_write_and_wait(dir->i_mapping);
+> -	err =3D filemap_write_and_wait(dir->i_mapping);
 > -	if (!err)
-> -		err = sync_inode_metadata(dir, 1);
+> -		err =3D sync_inode_metadata(dir, 1);
 > -	return err;
 > -}
 > -
 > -/*
-> - * Calls to dir_get_folio()/folio_release_kmap() must be nested according to the
+> - * Calls to dir_get_folio()/folio_release_kmap() must be nested accordin=
+g to the
 > - * rules documented in mm/highmem.rst.
 > - *
-> - * NOTE: sysv_find_entry() and sysv_dotdot() act as calls to dir_get_folio()
+> - * NOTE: sysv_find_entry() and sysv_dotdot() act as calls to dir_get_fol=
+io()
 > - * and must be treated accordingly for nesting purposes.
 > - */
 > -static void *dir_get_folio(struct inode *dir, unsigned long n,
 > -		struct folio **foliop)
 > -{
-> -	struct folio *folio = read_mapping_folio(dir->i_mapping, n, NULL);
+> -	struct folio *folio =3D read_mapping_folio(dir->i_mapping, n, NULL);
 > -
 > -	if (IS_ERR(folio))
 > -		return ERR_CAST(folio);
-> -	*foliop = folio;
+> -	*foliop =3D folio;
 > -	return kmap_local_folio(folio, 0);
 > -}
 > -
 > -static int sysv_readdir(struct file *file, struct dir_context *ctx)
 > -{
-> -	unsigned long pos = ctx->pos;
-> -	struct inode *inode = file_inode(file);
-> -	struct super_block *sb = inode->i_sb;
-> -	unsigned long npages = dir_pages(inode);
+> -	unsigned long pos =3D ctx->pos;
+> -	struct inode *inode =3D file_inode(file);
+> -	struct super_block *sb =3D inode->i_sb;
+> -	unsigned long npages =3D dir_pages(inode);
 > -	unsigned offset;
 > -	unsigned long n;
 > -
-> -	ctx->pos = pos = (pos + SYSV_DIRSIZE-1) & ~(SYSV_DIRSIZE-1);
-> -	if (pos >= inode->i_size)
+> -	ctx->pos =3D pos =3D (pos + SYSV_DIRSIZE-1) & ~(SYSV_DIRSIZE-1);
+> -	if (pos >=3D inode->i_size)
 > -		return 0;
 > -
-> -	offset = pos & ~PAGE_MASK;
-> -	n = pos >> PAGE_SHIFT;
+> -	offset =3D pos & ~PAGE_MASK;
+> -	n =3D pos >> PAGE_SHIFT;
 > -
-> -	for ( ; n < npages; n++, offset = 0) {
+> -	for ( ; n < npages; n++, offset =3D 0) {
 > -		char *kaddr, *limit;
 > -		struct sysv_dir_entry *de;
 > -		struct folio *folio;
 > -
-> -		kaddr = dir_get_folio(inode, n, &folio);
+> -		kaddr =3D dir_get_folio(inode, n, &folio);
 > -		if (IS_ERR(kaddr))
 > -			continue;
-> -		de = (struct sysv_dir_entry *)(kaddr+offset);
-> -		limit = kaddr + PAGE_SIZE - SYSV_DIRSIZE;
-> -		for ( ;(char*)de <= limit; de++, ctx->pos += sizeof(*de)) {
-> -			char *name = de->name;
+> -		de =3D (struct sysv_dir_entry *)(kaddr+offset);
+> -		limit =3D kaddr + PAGE_SIZE - SYSV_DIRSIZE;
+> -		for ( ;(char*)de <=3D limit; de++, ctx->pos +=3D sizeof(*de)) {
+> -			char *name =3D de->name;
 > -
 > -			if (!de->inode)
 > -				continue;
@@ -1143,30 +1274,32 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > - *
 > - * On Success folio_release_kmap() should be called on *foliop.
 > - *
-> - * sysv_find_entry() acts as a call to dir_get_folio() and must be treated
+> - * sysv_find_entry() acts as a call to dir_get_folio() and must be treat=
+ed
 > - * accordingly for nesting purposes.
 > - */
-> -struct sysv_dir_entry *sysv_find_entry(struct dentry *dentry, struct folio **foliop)
+> -struct sysv_dir_entry *sysv_find_entry(struct dentry *dentry, struct fol=
+io **foliop)
 > -{
-> -	const char * name = dentry->d_name.name;
-> -	int namelen = dentry->d_name.len;
-> -	struct inode * dir = d_inode(dentry->d_parent);
+> -	const char * name =3D dentry->d_name.name;
+> -	int namelen =3D dentry->d_name.len;
+> -	struct inode * dir =3D d_inode(dentry->d_parent);
 > -	unsigned long start, n;
-> -	unsigned long npages = dir_pages(dir);
+> -	unsigned long npages =3D dir_pages(dir);
 > -	struct sysv_dir_entry *de;
 > -
-> -	start = SYSV_I(dir)->i_dir_start_lookup;
-> -	if (start >= npages)
-> -		start = 0;
-> -	n = start;
+> -	start =3D SYSV_I(dir)->i_dir_start_lookup;
+> -	if (start >=3D npages)
+> -		start =3D 0;
+> -	n =3D start;
 > -
 > -	do {
-> -		char *kaddr = dir_get_folio(dir, n, foliop);
+> -		char *kaddr =3D dir_get_folio(dir, n, foliop);
 > -
 > -		if (!IS_ERR(kaddr)) {
-> -			de = (struct sysv_dir_entry *)kaddr;
-> -			kaddr += folio_size(*foliop) - SYSV_DIRSIZE;
-> -			for ( ; (char *) de <= kaddr ; de++) {
+> -			de =3D (struct sysv_dir_entry *)kaddr;
+> -			kaddr +=3D folio_size(*foliop) - SYSV_DIRSIZE;
+> -			for ( ; (char *) de <=3D kaddr ; de++) {
 > -				if (!de->inode)
 > -					continue;
 > -				if (namecompare(namelen, SYSV_NAMELEN,
@@ -1176,42 +1309,42 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -			folio_release_kmap(*foliop, kaddr);
 > -		}
 > -
-> -		if (++n >= npages)
-> -			n = 0;
-> -	} while (n != start);
+> -		if (++n >=3D npages)
+> -			n =3D 0;
+> -	} while (n !=3D start);
 > -
 > -	return NULL;
 > -
 > -found:
-> -	SYSV_I(dir)->i_dir_start_lookup = n;
+> -	SYSV_I(dir)->i_dir_start_lookup =3D n;
 > -	return de;
 > -}
 > -
 > -int sysv_add_link(struct dentry *dentry, struct inode *inode)
 > -{
-> -	struct inode *dir = d_inode(dentry->d_parent);
-> -	const char * name = dentry->d_name.name;
-> -	int namelen = dentry->d_name.len;
-> -	struct folio *folio = NULL;
+> -	struct inode *dir =3D d_inode(dentry->d_parent);
+> -	const char * name =3D dentry->d_name.name;
+> -	int namelen =3D dentry->d_name.len;
+> -	struct folio *folio =3D NULL;
 > -	struct sysv_dir_entry * de;
-> -	unsigned long npages = dir_pages(dir);
+> -	unsigned long npages =3D dir_pages(dir);
 > -	unsigned long n;
 > -	char *kaddr;
 > -	loff_t pos;
 > -	int err;
 > -
 > -	/* We take care of directory expansion in the same loop */
-> -	for (n = 0; n <= npages; n++) {
-> -		kaddr = dir_get_folio(dir, n, &folio);
+> -	for (n =3D 0; n <=3D npages; n++) {
+> -		kaddr =3D dir_get_folio(dir, n, &folio);
 > -		if (IS_ERR(kaddr))
 > -			return PTR_ERR(kaddr);
-> -		de = (struct sysv_dir_entry *)kaddr;
-> -		kaddr += PAGE_SIZE - SYSV_DIRSIZE;
-> -		while ((char *)de <= kaddr) {
+> -		de =3D (struct sysv_dir_entry *)kaddr;
+> -		kaddr +=3D PAGE_SIZE - SYSV_DIRSIZE;
+> -		while ((char *)de <=3D kaddr) {
 > -			if (!de->inode)
 > -				goto got_it;
-> -			err = -EEXIST;
-> -			if (namecompare(namelen, SYSV_NAMELEN, name, de->name)) 
+> -			err =3D -EEXIST;
+> -			if (namecompare(namelen, SYSV_NAMELEN, name, de->name))=20
 > -				goto out_folio;
 > -			de++;
 > -		}
@@ -1221,18 +1354,18 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	return -EINVAL;
 > -
 > -got_it:
-> -	pos = folio_pos(folio) + offset_in_folio(folio, de);
+> -	pos =3D folio_pos(folio) + offset_in_folio(folio, de);
 > -	folio_lock(folio);
-> -	err = sysv_prepare_chunk(folio, pos, SYSV_DIRSIZE);
+> -	err =3D sysv_prepare_chunk(folio, pos, SYSV_DIRSIZE);
 > -	if (err)
 > -		goto out_unlock;
 > -	memcpy (de->name, name, namelen);
 > -	memset (de->name + namelen, 0, SYSV_DIRSIZE - namelen - 2);
-> -	de->inode = cpu_to_fs16(SYSV_SB(inode->i_sb), inode->i_ino);
+> -	de->inode =3D cpu_to_fs16(SYSV_SB(inode->i_sb), inode->i_ino);
 > -	dir_commit_chunk(folio, pos, SYSV_DIRSIZE);
 > -	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
 > -	mark_inode_dirty(dir);
-> -	err = sysv_handle_dirsync(dir);
+> -	err =3D sysv_handle_dirsync(dir);
 > -out_folio:
 > -	folio_release_kmap(folio, kaddr);
 > -	return err;
@@ -1243,17 +1376,17 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -int sysv_delete_entry(struct sysv_dir_entry *de, struct folio *folio)
 > -{
-> -	struct inode *inode = folio->mapping->host;
-> -	loff_t pos = folio_pos(folio) + offset_in_folio(folio, de);
+> -	struct inode *inode =3D folio->mapping->host;
+> -	loff_t pos =3D folio_pos(folio) + offset_in_folio(folio, de);
 > -	int err;
 > -
 > -	folio_lock(folio);
-> -	err = sysv_prepare_chunk(folio, pos, SYSV_DIRSIZE);
+> -	err =3D sysv_prepare_chunk(folio, pos, SYSV_DIRSIZE);
 > -	if (err) {
 > -		folio_unlock(folio);
 > -		return err;
 > -	}
-> -	de->inode = 0;
+> -	de->inode =3D 0;
 > -	dir_commit_chunk(folio, pos, SYSV_DIRSIZE);
 > -	inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
 > -	mark_inode_dirty(inode);
@@ -1262,31 +1395,31 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -int sysv_make_empty(struct inode *inode, struct inode *dir)
 > -{
-> -	struct folio *folio = filemap_grab_folio(inode->i_mapping, 0);
+> -	struct folio *folio =3D filemap_grab_folio(inode->i_mapping, 0);
 > -	struct sysv_dir_entry * de;
 > -	char *kaddr;
 > -	int err;
 > -
 > -	if (IS_ERR(folio))
 > -		return PTR_ERR(folio);
-> -	err = sysv_prepare_chunk(folio, 0, 2 * SYSV_DIRSIZE);
+> -	err =3D sysv_prepare_chunk(folio, 0, 2 * SYSV_DIRSIZE);
 > -	if (err) {
 > -		folio_unlock(folio);
 > -		goto fail;
 > -	}
-> -	kaddr = kmap_local_folio(folio, 0);
+> -	kaddr =3D kmap_local_folio(folio, 0);
 > -	memset(kaddr, 0, folio_size(folio));
 > -
-> -	de = (struct sysv_dir_entry *)kaddr;
-> -	de->inode = cpu_to_fs16(SYSV_SB(inode->i_sb), inode->i_ino);
+> -	de =3D (struct sysv_dir_entry *)kaddr;
+> -	de->inode =3D cpu_to_fs16(SYSV_SB(inode->i_sb), inode->i_ino);
 > -	strcpy(de->name,".");
 > -	de++;
-> -	de->inode = cpu_to_fs16(SYSV_SB(inode->i_sb), dir->i_ino);
+> -	de->inode =3D cpu_to_fs16(SYSV_SB(inode->i_sb), dir->i_ino);
 > -	strcpy(de->name,"..");
 > -
 > -	kunmap_local(kaddr);
 > -	dir_commit_chunk(folio, 0, 2 * SYSV_DIRSIZE);
-> -	err = sysv_handle_dirsync(inode);
+> -	err =3D sysv_handle_dirsync(inode);
 > -fail:
 > -	folio_put(folio);
 > -	return err;
@@ -1297,34 +1430,34 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > - */
 > -int sysv_empty_dir(struct inode * inode)
 > -{
-> -	struct super_block *sb = inode->i_sb;
-> -	struct folio *folio = NULL;
-> -	unsigned long i, npages = dir_pages(inode);
+> -	struct super_block *sb =3D inode->i_sb;
+> -	struct folio *folio =3D NULL;
+> -	unsigned long i, npages =3D dir_pages(inode);
 > -	char *kaddr;
 > -
-> -	for (i = 0; i < npages; i++) {
+> -	for (i =3D 0; i < npages; i++) {
 > -		struct sysv_dir_entry *de;
 > -
-> -		kaddr = dir_get_folio(inode, i, &folio);
+> -		kaddr =3D dir_get_folio(inode, i, &folio);
 > -		if (IS_ERR(kaddr))
 > -			continue;
 > -
-> -		de = (struct sysv_dir_entry *)kaddr;
-> -		kaddr += folio_size(folio) - SYSV_DIRSIZE;
+> -		de =3D (struct sysv_dir_entry *)kaddr;
+> -		kaddr +=3D folio_size(folio) - SYSV_DIRSIZE;
 > -
-> -		for ( ;(char *)de <= kaddr; de++) {
+> -		for ( ;(char *)de <=3D kaddr; de++) {
 > -			if (!de->inode)
 > -				continue;
 > -			/* check for . and .. */
-> -			if (de->name[0] != '.')
+> -			if (de->name[0] !=3D '.')
 > -				goto not_empty;
 > -			if (!de->name[1]) {
-> -				if (de->inode == cpu_to_fs16(SYSV_SB(sb),
+> -				if (de->inode =3D=3D cpu_to_fs16(SYSV_SB(sb),
 > -							inode->i_ino))
 > -					continue;
 > -				goto not_empty;
 > -			}
-> -			if (de->name[1] != '.' || de->name[2])
+> -			if (de->name[1] !=3D '.' || de->name[2])
 > -				goto not_empty;
 > -		}
 > -		folio_release_kmap(folio, kaddr);
@@ -1340,17 +1473,17 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -int sysv_set_link(struct sysv_dir_entry *de, struct folio *folio,
 > -		struct inode *inode)
 > -{
-> -	struct inode *dir = folio->mapping->host;
-> -	loff_t pos = folio_pos(folio) + offset_in_folio(folio, de);
+> -	struct inode *dir =3D folio->mapping->host;
+> -	loff_t pos =3D folio_pos(folio) + offset_in_folio(folio, de);
 > -	int err;
 > -
 > -	folio_lock(folio);
-> -	err = sysv_prepare_chunk(folio, pos, SYSV_DIRSIZE);
+> -	err =3D sysv_prepare_chunk(folio, pos, SYSV_DIRSIZE);
 > -	if (err) {
 > -		folio_unlock(folio);
 > -		return err;
 > -	}
-> -	de->inode = cpu_to_fs16(SYSV_SB(inode->i_sb), inode->i_ino);
+> -	de->inode =3D cpu_to_fs16(SYSV_SB(inode->i_sb), inode->i_ino);
 > -	dir_commit_chunk(folio, pos, SYSV_DIRSIZE);
 > -	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
 > -	mark_inode_dirty(dir);
@@ -1358,15 +1491,17 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -}
 > -
 > -/*
-> - * Calls to dir_get_folio()/folio_release_kmap() must be nested according to the
+> - * Calls to dir_get_folio()/folio_release_kmap() must be nested accordin=
+g to the
 > - * rules documented in mm/highmem.rst.
 > - *
 > - * sysv_dotdot() acts as a call to dir_get_folio() and must be treated
 > - * accordingly for nesting purposes.
 > - */
-> -struct sysv_dir_entry *sysv_dotdot(struct inode *dir, struct folio **foliop)
+> -struct sysv_dir_entry *sysv_dotdot(struct inode *dir, struct folio **fol=
+iop)
 > -{
-> -	struct sysv_dir_entry *de = dir_get_folio(dir, 0, foliop);
+> -	struct sysv_dir_entry *de =3D dir_get_folio(dir, 0, foliop);
 > -
 > -	if (IS_ERR(de))
 > -		return NULL;
@@ -1377,11 +1512,11 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -ino_t sysv_inode_by_name(struct dentry *dentry)
 > -{
 > -	struct folio *folio;
-> -	struct sysv_dir_entry *de = sysv_find_entry (dentry, &folio);
-> -	ino_t res = 0;
-> -	
+> -	struct sysv_dir_entry *de =3D sysv_find_entry (dentry, &folio);
+> -	ino_t res =3D 0;
+> -=09
 > -	if (de) {
-> -		res = fs16_to_cpu(SYSV_SB(dentry->d_sb), de->inode);
+> -		res =3D fs16_to_cpu(SYSV_SB(dentry->d_sb), de->inode);
 > -		folio_release_kmap(folio, de);
 > -	}
 > -	return res;
@@ -1414,28 +1549,28 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > - * We have mostly NULLs here: the current defaults are OK for
 > - * the coh filesystem.
 > - */
-> -const struct file_operations sysv_file_operations = {
-> -	.llseek		= generic_file_llseek,
-> -	.read_iter	= generic_file_read_iter,
-> -	.write_iter	= generic_file_write_iter,
-> -	.mmap		= generic_file_mmap,
-> -	.fsync		= generic_file_fsync,
-> -	.splice_read	= filemap_splice_read,
+> -const struct file_operations sysv_file_operations =3D {
+> -	.llseek		=3D generic_file_llseek,
+> -	.read_iter	=3D generic_file_read_iter,
+> -	.write_iter	=3D generic_file_write_iter,
+> -	.mmap		=3D generic_file_mmap,
+> -	.fsync		=3D generic_file_fsync,
+> -	.splice_read	=3D filemap_splice_read,
 > -};
 > -
 > -static int sysv_setattr(struct mnt_idmap *idmap,
 > -			struct dentry *dentry, struct iattr *attr)
 > -{
-> -	struct inode *inode = d_inode(dentry);
+> -	struct inode *inode =3D d_inode(dentry);
 > -	int error;
 > -
-> -	error = setattr_prepare(&nop_mnt_idmap, dentry, attr);
+> -	error =3D setattr_prepare(&nop_mnt_idmap, dentry, attr);
 > -	if (error)
 > -		return error;
 > -
 > -	if ((attr->ia_valid & ATTR_SIZE) &&
-> -	    attr->ia_size != i_size_read(inode)) {
-> -		error = inode_newsize_ok(inode, attr->ia_size);
+> -	    attr->ia_size !=3D i_size_read(inode)) {
+> -		error =3D inode_newsize_ok(inode, attr->ia_size);
 > -		if (error)
 > -			return error;
 > -		truncate_setsize(inode, attr->ia_size);
@@ -1447,9 +1582,9 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	return 0;
 > -}
 > -
-> -const struct inode_operations sysv_file_inode_operations = {
-> -	.setattr	= sysv_setattr,
-> -	.getattr	= sysv_getattr,
+> -const struct inode_operations sysv_file_inode_operations =3D {
+> -	.setattr	=3D sysv_setattr,
+> -	.getattr	=3D sysv_getattr,
 > -};
 > diff --git a/fs/sysv/ialloc.c b/fs/sysv/ialloc.c
 > deleted file mode 100644
@@ -1489,22 +1624,24 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -#include "sysv.h"
 > -
 > -/* We don't trust the value of
-> -   sb->sv_sbd2->s_tinode = *sb->sv_sb_total_free_inodes
+> -   sb->sv_sbd2->s_tinode =3D *sb->sv_sb_total_free_inodes
 > -   but we nevertheless keep it up to date. */
 > -
-> -/* An inode on disk is considered free if both i_mode == 0 and i_nlink == 0. */
+> -/* An inode on disk is considered free if both i_mode =3D=3D 0 and i_nli=
+nk =3D=3D 0. */
 > -
-> -/* return &sb->sv_sb_fic_inodes[i] = &sbd->s_inode[i]; */
+> -/* return &sb->sv_sb_fic_inodes[i] =3D &sbd->s_inode[i]; */
 > -static inline sysv_ino_t *
 > -sv_sb_fic_inode(struct super_block * sb, unsigned int i)
 > -{
-> -	struct sysv_sb_info *sbi = SYSV_SB(sb);
+> -	struct sysv_sb_info *sbi =3D SYSV_SB(sb);
 > -
-> -	if (sbi->s_bh1 == sbi->s_bh2)
+> -	if (sbi->s_bh1 =3D=3D sbi->s_bh2)
 > -		return &sbi->s_sb_fic_inodes[i];
 > -	else {
 > -		/* 512 byte Xenix FS */
-> -		unsigned int offset = offsetof(struct xenix_super_block, s_inode[i]);
+> -		unsigned int offset =3D offsetof(struct xenix_super_block, s_inode[i])=
+;
 > -		if (offset < 512)
 > -			return (sysv_ino_t*)(sbi->s_sbd1 + offset);
 > -		else
@@ -1513,40 +1650,41 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -}
 > -
 > -struct sysv_inode *
-> -sysv_raw_inode(struct super_block *sb, unsigned ino, struct buffer_head **bh)
+> -sysv_raw_inode(struct super_block *sb, unsigned ino, struct buffer_head =
+**bh)
 > -{
-> -	struct sysv_sb_info *sbi = SYSV_SB(sb);
+> -	struct sysv_sb_info *sbi =3D SYSV_SB(sb);
 > -	struct sysv_inode *res;
-> -	int block = sbi->s_firstinodezone + sbi->s_block_base;
+> -	int block =3D sbi->s_firstinodezone + sbi->s_block_base;
 > -
-> -	block += (ino-1) >> sbi->s_inodes_per_block_bits;
-> -	*bh = sb_bread(sb, block);
+> -	block +=3D (ino-1) >> sbi->s_inodes_per_block_bits;
+> -	*bh =3D sb_bread(sb, block);
 > -	if (!*bh)
 > -		return NULL;
-> -	res = (struct sysv_inode *)(*bh)->b_data;
+> -	res =3D (struct sysv_inode *)(*bh)->b_data;
 > -	return res + ((ino-1) & sbi->s_inodes_per_block_1);
 > -}
 > -
 > -static int refill_free_cache(struct super_block *sb)
 > -{
-> -	struct sysv_sb_info *sbi = SYSV_SB(sb);
+> -	struct sysv_sb_info *sbi =3D SYSV_SB(sb);
 > -	struct buffer_head * bh;
 > -	struct sysv_inode * raw_inode;
-> -	int i = 0, ino;
+> -	int i =3D 0, ino;
 > -
-> -	ino = SYSV_ROOT_INO+1;
-> -	raw_inode = sysv_raw_inode(sb, ino, &bh);
+> -	ino =3D SYSV_ROOT_INO+1;
+> -	raw_inode =3D sysv_raw_inode(sb, ino, &bh);
 > -	if (!raw_inode)
 > -		goto out;
-> -	while (ino <= sbi->s_ninodes) {
-> -		if (raw_inode->i_mode == 0 && raw_inode->i_nlink == 0) {
-> -			*sv_sb_fic_inode(sb,i++) = cpu_to_fs16(SYSV_SB(sb), ino);
-> -			if (i == sbi->s_fic_size)
+> -	while (ino <=3D sbi->s_ninodes) {
+> -		if (raw_inode->i_mode =3D=3D 0 && raw_inode->i_nlink =3D=3D 0) {
+> -			*sv_sb_fic_inode(sb,i++) =3D cpu_to_fs16(SYSV_SB(sb), ino);
+> -			if (i =3D=3D sbi->s_fic_size)
 > -				break;
 > -		}
-> -		if ((ino++ & sbi->s_inodes_per_block_1) == 0) {
+> -		if ((ino++ & sbi->s_inodes_per_block_1) =3D=3D 0) {
 > -			brelse(bh);
-> -			raw_inode = sysv_raw_inode(sb, ino, &bh);
+> -			raw_inode =3D sysv_raw_inode(sb, ino, &bh);
 > -			if (!raw_inode)
 > -				goto out;
 > -		} else
@@ -1559,30 +1697,30 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -void sysv_free_inode(struct inode * inode)
 > -{
-> -	struct super_block *sb = inode->i_sb;
-> -	struct sysv_sb_info *sbi = SYSV_SB(sb);
+> -	struct super_block *sb =3D inode->i_sb;
+> -	struct sysv_sb_info *sbi =3D SYSV_SB(sb);
 > -	unsigned int ino;
 > -	struct buffer_head * bh;
 > -	struct sysv_inode * raw_inode;
 > -	unsigned count;
 > -
-> -	sb = inode->i_sb;
-> -	ino = inode->i_ino;
-> -	if (ino <= SYSV_ROOT_INO || ino > sbi->s_ninodes) {
+> -	sb =3D inode->i_sb;
+> -	ino =3D inode->i_ino;
+> -	if (ino <=3D SYSV_ROOT_INO || ino > sbi->s_ninodes) {
 > -		printk("sysv_free_inode: inode 0,1,2 or nonexistent inode\n");
 > -		return;
 > -	}
-> -	raw_inode = sysv_raw_inode(sb, ino, &bh);
+> -	raw_inode =3D sysv_raw_inode(sb, ino, &bh);
 > -	if (!raw_inode) {
 > -		printk("sysv_free_inode: unable to read inode block on device "
 > -		       "%s\n", inode->i_sb->s_id);
 > -		return;
 > -	}
 > -	mutex_lock(&sbi->s_lock);
-> -	count = fs16_to_cpu(sbi, *sbi->s_sb_fic_count);
+> -	count =3D fs16_to_cpu(sbi, *sbi->s_sb_fic_count);
 > -	if (count < sbi->s_fic_size) {
-> -		*sv_sb_fic_inode(sb,count++) = cpu_to_fs16(sbi, ino);
-> -		*sbi->s_sb_fic_count = cpu_to_fs16(sbi, count);
+> -		*sv_sb_fic_inode(sb,count++) =3D cpu_to_fs16(sbi, ino);
+> -		*sbi->s_sb_fic_count =3D cpu_to_fs16(sbi, count);
 > -	}
 > -	fs16_add(sbi, sbi->s_sb_total_free_inodes, 1);
 > -	dirty_sb(sb);
@@ -1594,40 +1732,40 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -struct inode * sysv_new_inode(const struct inode * dir, umode_t mode)
 > -{
-> -	struct super_block *sb = dir->i_sb;
-> -	struct sysv_sb_info *sbi = SYSV_SB(sb);
+> -	struct super_block *sb =3D dir->i_sb;
+> -	struct sysv_sb_info *sbi =3D SYSV_SB(sb);
 > -	struct inode *inode;
 > -	sysv_ino_t ino;
 > -	unsigned count;
-> -	struct writeback_control wbc = {
-> -		.sync_mode = WB_SYNC_NONE
+> -	struct writeback_control wbc =3D {
+> -		.sync_mode =3D WB_SYNC_NONE
 > -	};
 > -
-> -	inode = new_inode(sb);
+> -	inode =3D new_inode(sb);
 > -	if (!inode)
 > -		return ERR_PTR(-ENOMEM);
 > -
 > -	mutex_lock(&sbi->s_lock);
-> -	count = fs16_to_cpu(sbi, *sbi->s_sb_fic_count);
-> -	if (count == 0 || (*sv_sb_fic_inode(sb,count-1) == 0)) {
-> -		count = refill_free_cache(sb);
-> -		if (count == 0) {
+> -	count =3D fs16_to_cpu(sbi, *sbi->s_sb_fic_count);
+> -	if (count =3D=3D 0 || (*sv_sb_fic_inode(sb,count-1) =3D=3D 0)) {
+> -		count =3D refill_free_cache(sb);
+> -		if (count =3D=3D 0) {
 > -			iput(inode);
 > -			mutex_unlock(&sbi->s_lock);
 > -			return ERR_PTR(-ENOSPC);
 > -		}
 > -	}
 > -	/* Now count > 0. */
-> -	ino = *sv_sb_fic_inode(sb,--count);
-> -	*sbi->s_sb_fic_count = cpu_to_fs16(sbi, count);
+> -	ino =3D *sv_sb_fic_inode(sb,--count);
+> -	*sbi->s_sb_fic_count =3D cpu_to_fs16(sbi, count);
 > -	fs16_add(sbi, sbi->s_sb_total_free_inodes, -1);
 > -	dirty_sb(sb);
 > -	inode_init_owner(&nop_mnt_idmap, inode, dir, mode);
-> -	inode->i_ino = fs16_to_cpu(sbi, ino);
+> -	inode->i_ino =3D fs16_to_cpu(sbi, ino);
 > -	simple_inode_init_ts(inode);
-> -	inode->i_blocks = 0;
+> -	inode->i_blocks =3D 0;
 > -	memset(SYSV_I(inode)->i_data, 0, sizeof(SYSV_I(inode)->i_data));
-> -	SYSV_I(inode)->i_dir_start_lookup = 0;
+> -	SYSV_I(inode)->i_dir_start_lookup =3D 0;
 > -	insert_inode_hash(inode);
 > -	mark_inode_dirty(inode);
 > -
@@ -1640,37 +1778,37 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -unsigned long sysv_count_free_inodes(struct super_block * sb)
 > -{
-> -	struct sysv_sb_info *sbi = SYSV_SB(sb);
+> -	struct sysv_sb_info *sbi =3D SYSV_SB(sb);
 > -	struct buffer_head * bh;
 > -	struct sysv_inode * raw_inode;
 > -	int ino, count, sb_count;
 > -
 > -	mutex_lock(&sbi->s_lock);
 > -
-> -	sb_count = fs16_to_cpu(sbi, *sbi->s_sb_total_free_inodes);
+> -	sb_count =3D fs16_to_cpu(sbi, *sbi->s_sb_total_free_inodes);
 > -
 > -	if (0)
 > -		goto trust_sb;
 > -
 > -	/* this causes a lot of disk traffic ... */
-> -	count = 0;
-> -	ino = SYSV_ROOT_INO+1;
-> -	raw_inode = sysv_raw_inode(sb, ino, &bh);
+> -	count =3D 0;
+> -	ino =3D SYSV_ROOT_INO+1;
+> -	raw_inode =3D sysv_raw_inode(sb, ino, &bh);
 > -	if (!raw_inode)
 > -		goto Eio;
-> -	while (ino <= sbi->s_ninodes) {
-> -		if (raw_inode->i_mode == 0 && raw_inode->i_nlink == 0)
+> -	while (ino <=3D sbi->s_ninodes) {
+> -		if (raw_inode->i_mode =3D=3D 0 && raw_inode->i_nlink =3D=3D 0)
 > -			count++;
-> -		if ((ino++ & sbi->s_inodes_per_block_1) == 0) {
+> -		if ((ino++ & sbi->s_inodes_per_block_1) =3D=3D 0) {
 > -			brelse(bh);
-> -			raw_inode = sysv_raw_inode(sb, ino, &bh);
+> -			raw_inode =3D sysv_raw_inode(sb, ino, &bh);
 > -			if (!raw_inode)
 > -				goto Eio;
 > -		} else
 > -			raw_inode++;
 > -	}
 > -	brelse(bh);
-> -	if (count != sb_count)
+> -	if (count !=3D sb_count)
 > -		goto Einval;
 > -out:
 > -	mutex_unlock(&sbi->s_lock);
@@ -1681,7 +1819,7 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -		"free inode count was %d, correcting to %d\n",
 > -		sb_count, count);
 > -	if (!sb_rdonly(sb)) {
-> -		*sbi->s_sb_total_free_inodes = cpu_to_fs16(SYSV_SB(sb), count);
+> -		*sbi->s_sb_total_free_inodes =3D cpu_to_fs16(SYSV_SB(sb), count);
 > -		dirty_sb(sb);
 > -	}
 > -	goto out;
@@ -1689,7 +1827,7 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -Eio:
 > -	printk("sysv_count_free_inodes: unable to read inode table\n");
 > -trust_sb:
-> -	count = sb_count;
+> -	count =3D sb_count;
 > -	goto out;
 > -}
 > diff --git a/fs/sysv/inode.c b/fs/sysv/inode.c
@@ -1718,7 +1856,8 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > - *  Copyright (C) 1993  Bruno Haible
 > - *  Copyright (C) 1997, 1998  Krzysztof G. Baranowski
 > - *
-> - *  This file contains code for allocating/freeing inodes and for read/writing
+> - *  This file contains code for allocating/freeing inodes and for read/w=
+riting
 > - *  the superblock.
 > - */
 > -
@@ -1734,8 +1873,8 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -static int sysv_sync_fs(struct super_block *sb, int wait)
 > -{
-> -	struct sysv_sb_info *sbi = SYSV_SB(sb);
-> -	u32 time = (u32)ktime_get_real_seconds(), old_time;
+> -	struct sysv_sb_info *sbi =3D SYSV_SB(sb);
+> -	u32 time =3D (u32)ktime_get_real_seconds(), old_time;
 > -
 > -	mutex_lock(&sbi->s_lock);
 > -
@@ -1744,11 +1883,11 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	 * then attach current time stamp.
 > -	 * But if the filesystem was marked clean, keep it clean.
 > -	 */
-> -	old_time = fs32_to_cpu(sbi, *sbi->s_sb_time);
-> -	if (sbi->s_type == FSTYPE_SYSV4) {
-> -		if (*sbi->s_sb_state == cpu_to_fs32(sbi, 0x7c269d38u - old_time))
-> -			*sbi->s_sb_state = cpu_to_fs32(sbi, 0x7c269d38u - time);
-> -		*sbi->s_sb_time = cpu_to_fs32(sbi, time);
+> -	old_time =3D fs32_to_cpu(sbi, *sbi->s_sb_time);
+> -	if (sbi->s_type =3D=3D FSTYPE_SYSV4) {
+> -		if (*sbi->s_sb_state =3D=3D cpu_to_fs32(sbi, 0x7c269d38u - old_time))
+> -			*sbi->s_sb_state =3D cpu_to_fs32(sbi, 0x7c269d38u - time);
+> -		*sbi->s_sb_time =3D cpu_to_fs32(sbi, time);
 > -		mark_buffer_dirty(sbi->s_bh2);
 > -	}
 > -
@@ -1759,27 +1898,27 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -static int sysv_remount(struct super_block *sb, int *flags, char *data)
 > -{
-> -	struct sysv_sb_info *sbi = SYSV_SB(sb);
+> -	struct sysv_sb_info *sbi =3D SYSV_SB(sb);
 > -
 > -	sync_filesystem(sb);
 > -	if (sbi->s_forced_ro)
-> -		*flags |= SB_RDONLY;
+> -		*flags |=3D SB_RDONLY;
 > -	return 0;
 > -}
 > -
 > -static void sysv_put_super(struct super_block *sb)
 > -{
-> -	struct sysv_sb_info *sbi = SYSV_SB(sb);
+> -	struct sysv_sb_info *sbi =3D SYSV_SB(sb);
 > -
 > -	if (!sb_rdonly(sb)) {
 > -		/* XXX ext2 also updates the state here */
 > -		mark_buffer_dirty(sbi->s_bh1);
-> -		if (sbi->s_bh1 != sbi->s_bh2)
+> -		if (sbi->s_bh1 !=3D sbi->s_bh2)
 > -			mark_buffer_dirty(sbi->s_bh2);
 > -	}
 > -
 > -	brelse(sbi->s_bh1);
-> -	if (sbi->s_bh1 != sbi->s_bh2)
+> -	if (sbi->s_bh1 !=3D sbi->s_bh2)
 > -		brelse(sbi->s_bh2);
 > -
 > -	kfree(sbi);
@@ -1787,89 +1926,89 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -static int sysv_statfs(struct dentry *dentry, struct kstatfs *buf)
 > -{
-> -	struct super_block *sb = dentry->d_sb;
-> -	struct sysv_sb_info *sbi = SYSV_SB(sb);
-> -	u64 id = huge_encode_dev(sb->s_bdev->bd_dev);
+> -	struct super_block *sb =3D dentry->d_sb;
+> -	struct sysv_sb_info *sbi =3D SYSV_SB(sb);
+> -	u64 id =3D huge_encode_dev(sb->s_bdev->bd_dev);
 > -
-> -	buf->f_type = sb->s_magic;
-> -	buf->f_bsize = sb->s_blocksize;
-> -	buf->f_blocks = sbi->s_ndatazones;
-> -	buf->f_bavail = buf->f_bfree = sysv_count_free_blocks(sb);
-> -	buf->f_files = sbi->s_ninodes;
-> -	buf->f_ffree = sysv_count_free_inodes(sb);
-> -	buf->f_namelen = SYSV_NAMELEN;
-> -	buf->f_fsid = u64_to_fsid(id);
+> -	buf->f_type =3D sb->s_magic;
+> -	buf->f_bsize =3D sb->s_blocksize;
+> -	buf->f_blocks =3D sbi->s_ndatazones;
+> -	buf->f_bavail =3D buf->f_bfree =3D sysv_count_free_blocks(sb);
+> -	buf->f_files =3D sbi->s_ninodes;
+> -	buf->f_ffree =3D sysv_count_free_inodes(sb);
+> -	buf->f_namelen =3D SYSV_NAMELEN;
+> -	buf->f_fsid =3D u64_to_fsid(id);
 > -	return 0;
 > -}
 > -
-> -/* 
+> -/*=20
 > - * NXI <-> N0XI for PDP, XIN <-> XIN0 for le32, NIX <-> 0NIX for be32
 > - */
 > -static inline void read3byte(struct sysv_sb_info *sbi,
 > -	unsigned char * from, unsigned char * to)
 > -{
-> -	if (sbi->s_bytesex == BYTESEX_PDP) {
-> -		to[0] = from[0];
-> -		to[1] = 0;
-> -		to[2] = from[1];
-> -		to[3] = from[2];
-> -	} else if (sbi->s_bytesex == BYTESEX_LE) {
-> -		to[0] = from[0];
-> -		to[1] = from[1];
-> -		to[2] = from[2];
-> -		to[3] = 0;
+> -	if (sbi->s_bytesex =3D=3D BYTESEX_PDP) {
+> -		to[0] =3D from[0];
+> -		to[1] =3D 0;
+> -		to[2] =3D from[1];
+> -		to[3] =3D from[2];
+> -	} else if (sbi->s_bytesex =3D=3D BYTESEX_LE) {
+> -		to[0] =3D from[0];
+> -		to[1] =3D from[1];
+> -		to[2] =3D from[2];
+> -		to[3] =3D 0;
 > -	} else {
-> -		to[0] = 0;
-> -		to[1] = from[0];
-> -		to[2] = from[1];
-> -		to[3] = from[2];
+> -		to[0] =3D 0;
+> -		to[1] =3D from[0];
+> -		to[2] =3D from[1];
+> -		to[3] =3D from[2];
 > -	}
 > -}
 > -
 > -static inline void write3byte(struct sysv_sb_info *sbi,
 > -	unsigned char * from, unsigned char * to)
 > -{
-> -	if (sbi->s_bytesex == BYTESEX_PDP) {
-> -		to[0] = from[0];
-> -		to[1] = from[2];
-> -		to[2] = from[3];
-> -	} else if (sbi->s_bytesex == BYTESEX_LE) {
-> -		to[0] = from[0];
-> -		to[1] = from[1];
-> -		to[2] = from[2];
+> -	if (sbi->s_bytesex =3D=3D BYTESEX_PDP) {
+> -		to[0] =3D from[0];
+> -		to[1] =3D from[2];
+> -		to[2] =3D from[3];
+> -	} else if (sbi->s_bytesex =3D=3D BYTESEX_LE) {
+> -		to[0] =3D from[0];
+> -		to[1] =3D from[1];
+> -		to[2] =3D from[2];
 > -	} else {
-> -		to[0] = from[1];
-> -		to[1] = from[2];
-> -		to[2] = from[3];
+> -		to[0] =3D from[1];
+> -		to[1] =3D from[2];
+> -		to[2] =3D from[3];
 > -	}
 > -}
 > -
-> -static const struct inode_operations sysv_symlink_inode_operations = {
-> -	.get_link	= page_get_link,
-> -	.getattr	= sysv_getattr,
+> -static const struct inode_operations sysv_symlink_inode_operations =3D {
+> -	.get_link	=3D page_get_link,
+> -	.getattr	=3D sysv_getattr,
 > -};
 > -
 > -void sysv_set_inode(struct inode *inode, dev_t rdev)
 > -{
 > -	if (S_ISREG(inode->i_mode)) {
-> -		inode->i_op = &sysv_file_inode_operations;
-> -		inode->i_fop = &sysv_file_operations;
-> -		inode->i_mapping->a_ops = &sysv_aops;
+> -		inode->i_op =3D &sysv_file_inode_operations;
+> -		inode->i_fop =3D &sysv_file_operations;
+> -		inode->i_mapping->a_ops =3D &sysv_aops;
 > -	} else if (S_ISDIR(inode->i_mode)) {
-> -		inode->i_op = &sysv_dir_inode_operations;
-> -		inode->i_fop = &sysv_dir_operations;
-> -		inode->i_mapping->a_ops = &sysv_aops;
+> -		inode->i_op =3D &sysv_dir_inode_operations;
+> -		inode->i_fop =3D &sysv_dir_operations;
+> -		inode->i_mapping->a_ops =3D &sysv_aops;
 > -	} else if (S_ISLNK(inode->i_mode)) {
-> -		inode->i_op = &sysv_symlink_inode_operations;
+> -		inode->i_op =3D &sysv_symlink_inode_operations;
 > -		inode_nohighmem(inode);
-> -		inode->i_mapping->a_ops = &sysv_aops;
+> -		inode->i_mapping->a_ops =3D &sysv_aops;
 > -	} else
 > -		init_special_inode(inode, inode->i_mode, rdev);
 > -}
 > -
 > -struct inode *sysv_iget(struct super_block *sb, unsigned int ino)
 > -{
-> -	struct sysv_sb_info * sbi = SYSV_SB(sb);
+> -	struct sysv_sb_info * sbi =3D SYSV_SB(sb);
 > -	struct buffer_head * bh;
 > -	struct sysv_inode * raw_inode;
 > -	struct sysv_inode_info * si;
@@ -1882,35 +2021,35 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -		return ERR_PTR(-EIO);
 > -	}
 > -
-> -	inode = iget_locked(sb, ino);
+> -	inode =3D iget_locked(sb, ino);
 > -	if (!inode)
 > -		return ERR_PTR(-ENOMEM);
 > -	if (!(inode->i_state & I_NEW))
 > -		return inode;
 > -
-> -	raw_inode = sysv_raw_inode(sb, ino, &bh);
+> -	raw_inode =3D sysv_raw_inode(sb, ino, &bh);
 > -	if (!raw_inode) {
 > -		printk("Major problem: unable to read inode from dev %s\n",
 > -		       inode->i_sb->s_id);
 > -		goto bad_inode;
 > -	}
-> -	/* SystemV FS: kludge permissions if ino==SYSV_ROOT_INO ?? */
-> -	inode->i_mode = fs16_to_cpu(sbi, raw_inode->i_mode);
+> -	/* SystemV FS: kludge permissions if ino=3D=3DSYSV_ROOT_INO ?? */
+> -	inode->i_mode =3D fs16_to_cpu(sbi, raw_inode->i_mode);
 > -	i_uid_write(inode, (uid_t)fs16_to_cpu(sbi, raw_inode->i_uid));
 > -	i_gid_write(inode, (gid_t)fs16_to_cpu(sbi, raw_inode->i_gid));
 > -	set_nlink(inode, fs16_to_cpu(sbi, raw_inode->i_nlink));
-> -	inode->i_size = fs32_to_cpu(sbi, raw_inode->i_size);
+> -	inode->i_size =3D fs32_to_cpu(sbi, raw_inode->i_size);
 > -	inode_set_atime(inode, fs32_to_cpu(sbi, raw_inode->i_atime), 0);
 > -	inode_set_mtime(inode, fs32_to_cpu(sbi, raw_inode->i_mtime), 0);
 > -	inode_set_ctime(inode, fs32_to_cpu(sbi, raw_inode->i_ctime), 0);
-> -	inode->i_blocks = 0;
+> -	inode->i_blocks =3D 0;
 > -
-> -	si = SYSV_I(inode);
-> -	for (block = 0; block < 10+1+1+1; block++)
+> -	si =3D SYSV_I(inode);
+> -	for (block =3D 0; block < 10+1+1+1; block++)
 > -		read3byte(sbi, &raw_inode->i_data[3*block],
 > -				(u8 *)&si->i_data[block]);
 > -	brelse(bh);
-> -	si->i_dir_start_lookup = 0;
+> -	si->i_dir_start_lookup =3D 0;
 > -	if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode))
 > -		sysv_set_inode(inode,
 > -			       old_decode_dev(fs32_to_cpu(sbi, si->i_data[0])));
@@ -1926,48 +2065,51 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -static int __sysv_write_inode(struct inode *inode, int wait)
 > -{
-> -	struct super_block * sb = inode->i_sb;
-> -	struct sysv_sb_info * sbi = SYSV_SB(sb);
+> -	struct super_block * sb =3D inode->i_sb;
+> -	struct sysv_sb_info * sbi =3D SYSV_SB(sb);
 > -	struct buffer_head * bh;
 > -	struct sysv_inode * raw_inode;
 > -	struct sysv_inode_info * si;
 > -	unsigned int ino, block;
-> -	int err = 0;
+> -	int err =3D 0;
 > -
-> -	ino = inode->i_ino;
+> -	ino =3D inode->i_ino;
 > -	if (!ino || ino > sbi->s_ninodes) {
 > -		printk("Bad inode number on dev %s: %d is out of range\n",
 > -		       inode->i_sb->s_id, ino);
 > -		return -EIO;
 > -	}
-> -	raw_inode = sysv_raw_inode(sb, ino, &bh);
+> -	raw_inode =3D sysv_raw_inode(sb, ino, &bh);
 > -	if (!raw_inode) {
 > -		printk("unable to read i-node block\n");
 > -		return -EIO;
 > -	}
 > -
-> -	raw_inode->i_mode = cpu_to_fs16(sbi, inode->i_mode);
-> -	raw_inode->i_uid = cpu_to_fs16(sbi, fs_high2lowuid(i_uid_read(inode)));
-> -	raw_inode->i_gid = cpu_to_fs16(sbi, fs_high2lowgid(i_gid_read(inode)));
-> -	raw_inode->i_nlink = cpu_to_fs16(sbi, inode->i_nlink);
-> -	raw_inode->i_size = cpu_to_fs32(sbi, inode->i_size);
-> -	raw_inode->i_atime = cpu_to_fs32(sbi, inode_get_atime_sec(inode));
-> -	raw_inode->i_mtime = cpu_to_fs32(sbi, inode_get_mtime_sec(inode));
-> -	raw_inode->i_ctime = cpu_to_fs32(sbi, inode_get_ctime_sec(inode));
+> -	raw_inode->i_mode =3D cpu_to_fs16(sbi, inode->i_mode);
+> -	raw_inode->i_uid =3D cpu_to_fs16(sbi, fs_high2lowuid(i_uid_read(inode))=
+);
+> -	raw_inode->i_gid =3D cpu_to_fs16(sbi, fs_high2lowgid(i_gid_read(inode))=
+);
+> -	raw_inode->i_nlink =3D cpu_to_fs16(sbi, inode->i_nlink);
+> -	raw_inode->i_size =3D cpu_to_fs32(sbi, inode->i_size);
+> -	raw_inode->i_atime =3D cpu_to_fs32(sbi, inode_get_atime_sec(inode));
+> -	raw_inode->i_mtime =3D cpu_to_fs32(sbi, inode_get_mtime_sec(inode));
+> -	raw_inode->i_ctime =3D cpu_to_fs32(sbi, inode_get_ctime_sec(inode));
 > -
-> -	si = SYSV_I(inode);
+> -	si =3D SYSV_I(inode);
 > -	if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode))
-> -		si->i_data[0] = cpu_to_fs32(sbi, old_encode_dev(inode->i_rdev));
-> -	for (block = 0; block < 10+1+1+1; block++)
+> -		si->i_data[0] =3D cpu_to_fs32(sbi, old_encode_dev(inode->i_rdev));
+> -	for (block =3D 0; block < 10+1+1+1; block++)
 > -		write3byte(sbi, (u8 *)&si->i_data[block],
 > -			&raw_inode->i_data[3*block]);
 > -	mark_buffer_dirty(bh);
 > -	if (wait) {
 > -                sync_dirty_buffer(bh);
 > -                if (buffer_req(bh) && !buffer_uptodate(bh)) {
-> -                        printk ("IO error syncing sysv inode [%s:%08x]\n",
+> -                        printk ("IO error syncing sysv inode [%s:%08x]\n=
+",
 > -                                sb->s_id, ino);
-> -                        err = -EIO;
+> -                        err =3D -EIO;
 > -                }
 > -        }
 > -	brelse(bh);
@@ -1976,7 +2118,7 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -int sysv_write_inode(struct inode *inode, struct writeback_control *wbc)
 > -{
-> -	return __sysv_write_inode(inode, wbc->sync_mode == WB_SYNC_ALL);
+> -	return __sysv_write_inode(inode, wbc->sync_mode =3D=3D WB_SYNC_ALL);
 > -}
 > -
 > -int sysv_sync_inode(struct inode *inode)
@@ -1988,7 +2130,7 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -{
 > -	truncate_inode_pages_final(&inode->i_data);
 > -	if (!inode->i_nlink) {
-> -		inode->i_size = 0;
+> -		inode->i_size =3D 0;
 > -		sysv_truncate(inode);
 > -	}
 > -	invalidate_inode_buffers(inode);
@@ -2003,7 +2145,7 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -{
 > -	struct sysv_inode_info *si;
 > -
-> -	si = alloc_inode_sb(sb, sysv_inode_cachep, GFP_KERNEL);
+> -	si =3D alloc_inode_sb(sb, sysv_inode_cachep, GFP_KERNEL);
 > -	if (!si)
 > -		return NULL;
 > -	return &si->vfs_inode;
@@ -2016,25 +2158,25 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -static void init_once(void *p)
 > -{
-> -	struct sysv_inode_info *si = (struct sysv_inode_info *)p;
+> -	struct sysv_inode_info *si =3D (struct sysv_inode_info *)p;
 > -
 > -	inode_init_once(&si->vfs_inode);
 > -}
 > -
-> -const struct super_operations sysv_sops = {
-> -	.alloc_inode	= sysv_alloc_inode,
-> -	.free_inode	= sysv_free_in_core_inode,
-> -	.write_inode	= sysv_write_inode,
-> -	.evict_inode	= sysv_evict_inode,
-> -	.put_super	= sysv_put_super,
-> -	.sync_fs	= sysv_sync_fs,
-> -	.remount_fs	= sysv_remount,
-> -	.statfs		= sysv_statfs,
+> -const struct super_operations sysv_sops =3D {
+> -	.alloc_inode	=3D sysv_alloc_inode,
+> -	.free_inode	=3D sysv_free_in_core_inode,
+> -	.write_inode	=3D sysv_write_inode,
+> -	.evict_inode	=3D sysv_evict_inode,
+> -	.put_super	=3D sysv_put_super,
+> -	.sync_fs	=3D sysv_sync_fs,
+> -	.remount_fs	=3D sysv_remount,
+> -	.statfs		=3D sysv_statfs,
 > -};
 > -
 > -int __init sysv_init_icache(void)
 > -{
-> -	sysv_inode_cachep = kmem_cache_create("sysv_inode_cache",
+> -	sysv_inode_cachep =3D kmem_cache_create("sysv_inode_cache",
 > -			sizeof(struct sysv_inode_info), 0,
 > -			SLAB_RECLAIM_ACCOUNT|SLAB_ACCOUNT,
 > -			init_once);
@@ -2072,40 +2214,43 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -#include <linux/string.h>
 > -#include "sysv.h"
 > -
-> -enum {DIRECT = 10, DEPTH = 4};	/* Have triple indirect */
+> -enum {DIRECT =3D 10, DEPTH =3D 4};	/* Have triple indirect */
 > -
-> -static inline void dirty_indirect(struct buffer_head *bh, struct inode *inode)
+> -static inline void dirty_indirect(struct buffer_head *bh, struct inode *=
+inode)
 > -{
 > -	mark_buffer_dirty_inode(bh, inode);
 > -	if (IS_SYNC(inode))
 > -		sync_dirty_buffer(bh);
 > -}
 > -
-> -static int block_to_path(struct inode *inode, long block, int offsets[DEPTH])
+> -static int block_to_path(struct inode *inode, long block, int offsets[DE=
+PTH])
 > -{
-> -	struct super_block *sb = inode->i_sb;
-> -	struct sysv_sb_info *sbi = SYSV_SB(sb);
-> -	int ptrs_bits = sbi->s_ind_per_block_bits;
-> -	unsigned long	indirect_blocks = sbi->s_ind_per_block,
-> -			double_blocks = sbi->s_ind_per_block_2;
-> -	int n = 0;
+> -	struct super_block *sb =3D inode->i_sb;
+> -	struct sysv_sb_info *sbi =3D SYSV_SB(sb);
+> -	int ptrs_bits =3D sbi->s_ind_per_block_bits;
+> -	unsigned long	indirect_blocks =3D sbi->s_ind_per_block,
+> -			double_blocks =3D sbi->s_ind_per_block_2;
+> -	int n =3D 0;
 > -
 > -	if (block < 0) {
 > -		printk("sysv_block_map: block < 0\n");
 > -	} else if (block < DIRECT) {
-> -		offsets[n++] = block;
-> -	} else if ( (block -= DIRECT) < indirect_blocks) {
-> -		offsets[n++] = DIRECT;
-> -		offsets[n++] = block;
-> -	} else if ((block -= indirect_blocks) < double_blocks) {
-> -		offsets[n++] = DIRECT+1;
-> -		offsets[n++] = block >> ptrs_bits;
-> -		offsets[n++] = block & (indirect_blocks - 1);
-> -	} else if (((block -= double_blocks) >> (ptrs_bits * 2)) < indirect_blocks) {
-> -		offsets[n++] = DIRECT+2;
-> -		offsets[n++] = block >> (ptrs_bits * 2);
-> -		offsets[n++] = (block >> ptrs_bits) & (indirect_blocks - 1);
-> -		offsets[n++] = block & (indirect_blocks - 1);
+> -		offsets[n++] =3D block;
+> -	} else if ( (block -=3D DIRECT) < indirect_blocks) {
+> -		offsets[n++] =3D DIRECT;
+> -		offsets[n++] =3D block;
+> -	} else if ((block -=3D indirect_blocks) < double_blocks) {
+> -		offsets[n++] =3D DIRECT+1;
+> -		offsets[n++] =3D block >> ptrs_bits;
+> -		offsets[n++] =3D block & (indirect_blocks - 1);
+> -	} else if (((block -=3D double_blocks) >> (ptrs_bits * 2)) < indirect_b=
+locks) {
+> -		offsets[n++] =3D DIRECT+2;
+> -		offsets[n++] =3D block >> (ptrs_bits * 2);
+> -		offsets[n++] =3D (block >> ptrs_bits) & (indirect_blocks - 1);
+> -		offsets[n++] =3D block & (indirect_blocks - 1);
 > -	} else {
 > -		/* nothing */;
 > -	}
@@ -2125,15 +2270,16 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -static DEFINE_RWLOCK(pointers_lock);
 > -
-> -static inline void add_chain(Indirect *p, struct buffer_head *bh, sysv_zone_t *v)
+> -static inline void add_chain(Indirect *p, struct buffer_head *bh, sysv_z=
+one_t *v)
 > -{
-> -	p->key = *(p->p = v);
-> -	p->bh = bh;
+> -	p->key =3D *(p->p =3D v);
+> -	p->bh =3D bh;
 > -}
 > -
 > -static inline int verify_chain(Indirect *from, Indirect *to)
 > -{
-> -	while (from <= to && from->key == *from->p)
+> -	while (from <=3D to && from->key =3D=3D *from->p)
 > -		from++;
 > -	return (from > to);
 > -}
@@ -2149,17 +2295,17 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -			    Indirect chain[],
 > -			    int *err)
 > -{
-> -	struct super_block *sb = inode->i_sb;
-> -	Indirect *p = chain;
+> -	struct super_block *sb =3D inode->i_sb;
+> -	Indirect *p =3D chain;
 > -	struct buffer_head *bh;
 > -
-> -	*err = 0;
+> -	*err =3D 0;
 > -	add_chain(chain, NULL, SYSV_I(inode)->i_data + *offsets);
 > -	if (!p->key)
 > -		goto no_block;
 > -	while (--depth) {
-> -		int block = block_to_cpu(SYSV_SB(sb), p->key);
-> -		bh = sb_bread(sb, block);
+> -		int block =3D block_to_cpu(SYSV_SB(sb), p->key);
+> -		bh =3D sb_bread(sb, block);
 > -		if (!bh)
 > -			goto failure;
 > -		read_lock(&pointers_lock);
@@ -2175,10 +2321,10 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -changed:
 > -	read_unlock(&pointers_lock);
 > -	brelse(bh);
-> -	*err = -EAGAIN;
+> -	*err =3D -EAGAIN;
 > -	goto no_block;
 > -failure:
-> -	*err = -EIO;
+> -	*err =3D -EIO;
 > -no_block:
 > -	return p;
 > -}
@@ -2188,44 +2334,44 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -			int *offsets,
 > -			Indirect *branch)
 > -{
-> -	int blocksize = inode->i_sb->s_blocksize;
-> -	int n = 0;
+> -	int blocksize =3D inode->i_sb->s_blocksize;
+> -	int n =3D 0;
 > -	int i;
 > -
-> -	branch[0].key = sysv_new_block(inode->i_sb);
-> -	if (branch[0].key) for (n = 1; n < num; n++) {
+> -	branch[0].key =3D sysv_new_block(inode->i_sb);
+> -	if (branch[0].key) for (n =3D 1; n < num; n++) {
 > -		struct buffer_head *bh;
 > -		int parent;
 > -		/* Allocate the next block */
-> -		branch[n].key = sysv_new_block(inode->i_sb);
+> -		branch[n].key =3D sysv_new_block(inode->i_sb);
 > -		if (!branch[n].key)
 > -			break;
 > -		/*
-> -		 * Get buffer_head for parent block, zero it out and set 
+> -		 * Get buffer_head for parent block, zero it out and set=20
 > -		 * the pointer to new one, then send parent to disk.
 > -		 */
-> -		parent = block_to_cpu(SYSV_SB(inode->i_sb), branch[n-1].key);
-> -		bh = sb_getblk(inode->i_sb, parent);
+> -		parent =3D block_to_cpu(SYSV_SB(inode->i_sb), branch[n-1].key);
+> -		bh =3D sb_getblk(inode->i_sb, parent);
 > -		if (!bh) {
 > -			sysv_free_block(inode->i_sb, branch[n].key);
 > -			break;
 > -		}
 > -		lock_buffer(bh);
 > -		memset(bh->b_data, 0, blocksize);
-> -		branch[n].bh = bh;
-> -		branch[n].p = (sysv_zone_t*) bh->b_data + offsets[n];
-> -		*branch[n].p = branch[n].key;
+> -		branch[n].bh =3D bh;
+> -		branch[n].p =3D (sysv_zone_t*) bh->b_data + offsets[n];
+> -		*branch[n].p =3D branch[n].key;
 > -		set_buffer_uptodate(bh);
 > -		unlock_buffer(bh);
 > -		dirty_indirect(bh, inode);
 > -	}
-> -	if (n == num)
+> -	if (n =3D=3D num)
 > -		return 0;
 > -
 > -	/* Allocation failed, free what we already allocated */
-> -	for (i = 1; i < n; i++)
+> -	for (i =3D 1; i < n; i++)
 > -		bforget(branch[i].bh);
-> -	for (i = 0; i < n; i++)
+> -	for (i =3D 0; i < n; i++)
 > -		sysv_free_block(inode->i_sb, branch[i].key);
 > -	return -ENOSPC;
 > -}
@@ -2241,7 +2387,7 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	write_lock(&pointers_lock);
 > -	if (!verify_chain(chain, where-1) || *where->p)
 > -		goto changed;
-> -	*where->p = where->key;
+> -	*where->p =3D where->key;
 > -	write_unlock(&pointers_lock);
 > -
 > -	inode_set_ctime_current(inode);
@@ -2258,28 +2404,29 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -changed:
 > -	write_unlock(&pointers_lock);
-> -	for (i = 1; i < num; i++)
+> -	for (i =3D 1; i < num; i++)
 > -		bforget(where[i].bh);
-> -	for (i = 0; i < num; i++)
+> -	for (i =3D 0; i < num; i++)
 > -		sysv_free_block(inode->i_sb, where[i].key);
 > -	return -EAGAIN;
 > -}
 > -
-> -static int get_block(struct inode *inode, sector_t iblock, struct buffer_head *bh_result, int create)
+> -static int get_block(struct inode *inode, sector_t iblock, struct buffer=
+_head *bh_result, int create)
 > -{
-> -	int err = -EIO;
+> -	int err =3D -EIO;
 > -	int offsets[DEPTH];
 > -	Indirect chain[DEPTH];
-> -	struct super_block *sb = inode->i_sb;
+> -	struct super_block *sb =3D inode->i_sb;
 > -	Indirect *partial;
 > -	int left;
-> -	int depth = block_to_path(inode, iblock, offsets);
+> -	int depth =3D block_to_path(inode, iblock, offsets);
 > -
-> -	if (depth == 0)
+> -	if (depth =3D=3D 0)
 > -		goto out;
 > -
 > -reread:
-> -	partial = get_branch(inode, depth, offsets, chain, &err);
+> -	partial =3D get_branch(inode, depth, offsets, chain, &err);
 > -
 > -	/* Simplest case - block found, no allocation needed */
 > -	if (!partial) {
@@ -2287,12 +2434,12 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -		map_bh(bh_result, sb, block_to_cpu(SYSV_SB(sb),
 > -					chain[depth-1].key));
 > -		/* Clean up and exit */
-> -		partial = chain+depth-1; /* the whole chain */
+> -		partial =3D chain+depth-1; /* the whole chain */
 > -		goto cleanup;
 > -	}
 > -
 > -	/* Next simple case - plain lookup or failed read of indirect block */
-> -	if (!create || err == -EIO) {
+> -	if (!create || err =3D=3D -EIO) {
 > -cleanup:
 > -		while (partial > chain) {
 > -			brelse(partial->bh);
@@ -2307,11 +2454,11 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	 * reading it. Handling of that case (forget what we've got and
 > -	 * reread) is taken out of the main path.
 > -	 */
-> -	if (err == -EAGAIN)
+> -	if (err =3D=3D -EAGAIN)
 > -		goto changed;
 > -
-> -	left = (chain + depth) - partial;
-> -	err = alloc_branch(inode, left, offsets+(partial-chain), partial);
+> -	left =3D (chain + depth) - partial;
+> -	err =3D alloc_branch(inode, left, offsets+(partial-chain), partial);
 > -	if (err)
 > -		goto cleanup;
 > -
@@ -2346,14 +2493,14 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	Indirect *partial, *p;
 > -	int k, err;
 > -
-> -	*top = 0;
-> -	for (k = depth; k > 1 && !offsets[k-1]; k--)
+> -	*top =3D 0;
+> -	for (k =3D depth; k > 1 && !offsets[k-1]; k--)
 > -		;
-> -	partial = get_branch(inode, k, offsets, chain, &err);
+> -	partial =3D get_branch(inode, k, offsets, chain, &err);
 > -
 > -	write_lock(&pointers_lock);
 > -	if (!partial)
-> -		partial = chain + k-1;
+> -		partial =3D chain + k-1;
 > -	/*
 > -	 * If the branch acquired continuation since we've looked at it -
 > -	 * fine, it should all survive and (new) top doesn't belong to us.
@@ -2362,7 +2509,8 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -		write_unlock(&pointers_lock);
 > -		goto no_top;
 > -	}
-> -	for (p=partial; p>chain && all_zeroes((sysv_zone_t*)p->bh->b_data,p->p); p--)
+> -	for (p=3Dpartial; p>chain && all_zeroes((sysv_zone_t*)p->bh->b_data,p->=
+p); p--)
 > -		;
 > -	/*
 > -	 * OK, we've found the last block that must survive. The rest of our
@@ -2370,11 +2518,11 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	 * of branch is all ours and does not grow immediately from the inode
 > -	 * it's easier to cheat and just decrement partial->p.
 > -	 */
-> -	if (p == chain + k - 1 && p > chain) {
+> -	if (p =3D=3D chain + k - 1 && p > chain) {
 > -		p->p--;
 > -	} else {
-> -		*top = *p->p;
-> -		*p->p = 0;
+> -		*top =3D *p->p;
+> -		*p->p =3D 0;
 > -	}
 > -	write_unlock(&pointers_lock);
 > -
@@ -2386,32 +2534,34 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	return partial;
 > -}
 > -
-> -static inline void free_data(struct inode *inode, sysv_zone_t *p, sysv_zone_t *q)
+> -static inline void free_data(struct inode *inode, sysv_zone_t *p, sysv_z=
+one_t *q)
 > -{
 > -	for ( ; p < q ; p++) {
-> -		sysv_zone_t nr = *p;
+> -		sysv_zone_t nr =3D *p;
 > -		if (nr) {
-> -			*p = 0;
+> -			*p =3D 0;
 > -			sysv_free_block(inode->i_sb, nr);
 > -			mark_inode_dirty(inode);
 > -		}
 > -	}
 > -}
 > -
-> -static void free_branches(struct inode *inode, sysv_zone_t *p, sysv_zone_t *q, int depth)
+> -static void free_branches(struct inode *inode, sysv_zone_t *p, sysv_zone=
+_t *q, int depth)
 > -{
 > -	struct buffer_head * bh;
-> -	struct super_block *sb = inode->i_sb;
+> -	struct super_block *sb =3D inode->i_sb;
 > -
 > -	if (depth--) {
 > -		for ( ; p < q ; p++) {
 > -			int block;
-> -			sysv_zone_t nr = *p;
+> -			sysv_zone_t nr =3D *p;
 > -			if (!nr)
 > -				continue;
-> -			*p = 0;
-> -			block = block_to_cpu(SYSV_SB(sb), nr);
-> -			bh = sb_bread(sb, block);
+> -			*p =3D 0;
+> -			block =3D block_to_cpu(SYSV_SB(sb), nr);
+> -			bh =3D sb_bread(sb, block);
 > -			if (!bh)
 > -				continue;
 > -			free_branches(inode, (sysv_zone_t*)bh->b_data,
@@ -2426,11 +2576,11 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -void sysv_truncate (struct inode * inode)
 > -{
-> -	sysv_zone_t *i_data = SYSV_I(inode)->i_data;
+> -	sysv_zone_t *i_data =3D SYSV_I(inode)->i_data;
 > -	int offsets[DEPTH];
 > -	Indirect chain[DEPTH];
 > -	Indirect *partial;
-> -	sysv_zone_t nr = 0;
+> -	sysv_zone_t nr =3D 0;
 > -	int n;
 > -	long iblock;
 > -	unsigned blocksize;
@@ -2439,25 +2589,25 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	    S_ISLNK(inode->i_mode)))
 > -		return;
 > -
-> -	blocksize = inode->i_sb->s_blocksize;
-> -	iblock = (inode->i_size + blocksize-1)
+> -	blocksize =3D inode->i_sb->s_blocksize;
+> -	iblock =3D (inode->i_size + blocksize-1)
 > -					>> inode->i_sb->s_blocksize_bits;
 > -
 > -	block_truncate_page(inode->i_mapping, inode->i_size, get_block);
 > -
-> -	n = block_to_path(inode, iblock, offsets);
-> -	if (n == 0)
+> -	n =3D block_to_path(inode, iblock, offsets);
+> -	if (n =3D=3D 0)
 > -		return;
 > -
-> -	if (n == 1) {
+> -	if (n =3D=3D 1) {
 > -		free_data(inode, i_data+offsets[0], i_data + DIRECT);
 > -		goto do_indirects;
 > -	}
 > -
-> -	partial = find_shared(inode, n, offsets, chain, &nr);
+> -	partial =3D find_shared(inode, n, offsets, chain, &nr);
 > -	/* Kill the top of shared branch (already detached) */
 > -	if (nr) {
-> -		if (partial == chain)
+> -		if (partial =3D=3D chain)
 > -			mark_inode_dirty(inode);
 > -		else
 > -			dirty_indirect(partial->bh, inode);
@@ -2472,11 +2622,12 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -		partial--;
 > -	}
 > -do_indirects:
-> -	/* Kill the remaining (whole) subtrees (== subtrees deeper than...) */
+> -	/* Kill the remaining (whole) subtrees (=3D=3D subtrees deeper than...)=
+ */
 > -	while (n < DEPTH) {
-> -		nr = i_data[DIRECT + n - 1];
+> -		nr =3D i_data[DIRECT + n - 1];
 > -		if (nr) {
-> -			i_data[DIRECT + n - 1] = 0;
+> -			i_data[DIRECT + n - 1] =3D 0;
 > -			mark_inode_dirty(inode);
 > -			free_branches(inode, &nr, &nr+1, n);
 > -		}
@@ -2491,15 +2642,15 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -static unsigned sysv_nblocks(struct super_block *s, loff_t size)
 > -{
-> -	struct sysv_sb_info *sbi = SYSV_SB(s);
-> -	int ptrs_bits = sbi->s_ind_per_block_bits;
-> -	unsigned blocks, res, direct = DIRECT, i = DEPTH;
-> -	blocks = (size + s->s_blocksize - 1) >> s->s_blocksize_bits;
-> -	res = blocks;
+> -	struct sysv_sb_info *sbi =3D SYSV_SB(s);
+> -	int ptrs_bits =3D sbi->s_ind_per_block_bits;
+> -	unsigned blocks, res, direct =3D DIRECT, i =3D DEPTH;
+> -	blocks =3D (size + s->s_blocksize - 1) >> s->s_blocksize_bits;
+> -	res =3D blocks;
 > -	while (--i && blocks > direct) {
-> -		blocks = ((blocks - direct - 1) >> ptrs_bits) + 1;
-> -		res += blocks;
-> -		direct = 1;
+> -		blocks =3D ((blocks - direct - 1) >> ptrs_bits) + 1;
+> -		res +=3D blocks;
+> -		direct =3D 1;
 > -	}
 > -	return res;
 > -}
@@ -2507,11 +2658,11 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -int sysv_getattr(struct mnt_idmap *idmap, const struct path *path,
 > -		 struct kstat *stat, u32 request_mask, unsigned int flags)
 > -{
-> -	struct super_block *s = path->dentry->d_sb;
+> -	struct super_block *s =3D path->dentry->d_sb;
 > -	generic_fillattr(&nop_mnt_idmap, request_mask, d_inode(path->dentry),
 > -			 stat);
-> -	stat->blocks = (s->s_blocksize / 512) * sysv_nblocks(s, stat->size);
-> -	stat->blksize = s->s_blocksize;
+> -	stat->blocks =3D (s->s_blocksize / 512) * sysv_nblocks(s, stat->size);
+> -	stat->blksize =3D s->s_blocksize;
 > -	return 0;
 > -}
 > -
@@ -2533,7 +2684,7 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -static void sysv_write_failed(struct address_space *mapping, loff_t to)
 > -{
-> -	struct inode *inode = mapping->host;
+> -	struct inode *inode =3D mapping->host;
 > -
 > -	if (to > inode->i_size) {
 > -		truncate_pagecache(inode, inode->i_size);
@@ -2541,13 +2692,14 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	}
 > -}
 > -
-> -static int sysv_write_begin(struct file *file, struct address_space *mapping,
+> -static int sysv_write_begin(struct file *file, struct address_space *map=
+ping,
 > -			loff_t pos, unsigned len,
 > -			struct folio **foliop, void **fsdata)
 > -{
 > -	int ret;
 > -
-> -	ret = block_write_begin(mapping, pos, len, foliop, get_block);
+> -	ret =3D block_write_begin(mapping, pos, len, foliop, get_block);
 > -	if (unlikely(ret))
 > -		sysv_write_failed(mapping, pos + len);
 > -
@@ -2559,15 +2711,15 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	return generic_block_bmap(mapping,block,get_block);
 > -}
 > -
-> -const struct address_space_operations sysv_aops = {
-> -	.dirty_folio = block_dirty_folio,
-> -	.invalidate_folio = block_invalidate_folio,
-> -	.read_folio = sysv_read_folio,
-> -	.writepages = sysv_writepages,
-> -	.write_begin = sysv_write_begin,
-> -	.write_end = generic_write_end,
-> -	.migrate_folio = buffer_migrate_folio,
-> -	.bmap = sysv_bmap
+> -const struct address_space_operations sysv_aops =3D {
+> -	.dirty_folio =3D block_dirty_folio,
+> -	.invalidate_folio =3D block_invalidate_folio,
+> -	.read_folio =3D sysv_read_folio,
+> -	.writepages =3D sysv_writepages,
+> -	.write_begin =3D sysv_write_begin,
+> -	.write_end =3D generic_write_end,
+> -	.migrate_folio =3D buffer_migrate_folio,
+> -	.bmap =3D sysv_bmap
 > -};
 > diff --git a/fs/sysv/namei.c b/fs/sysv/namei.c
 > deleted file mode 100644
@@ -2595,7 +2747,7 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -static int add_nondir(struct dentry *dentry, struct inode *inode)
 > -{
-> -	int err = sysv_add_link(dentry, inode);
+> -	int err =3D sysv_add_link(dentry, inode);
 > -	if (!err) {
 > -		d_instantiate(dentry, inode);
 > -		return 0;
@@ -2605,16 +2757,17 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	return err;
 > -}
 > -
-> -static struct dentry *sysv_lookup(struct inode * dir, struct dentry * dentry, unsigned int flags)
+> -static struct dentry *sysv_lookup(struct inode * dir, struct dentry * de=
+ntry, unsigned int flags)
 > -{
-> -	struct inode * inode = NULL;
+> -	struct inode * inode =3D NULL;
 > -	ino_t ino;
 > -
 > -	if (dentry->d_name.len > SYSV_NAMELEN)
 > -		return ERR_PTR(-ENAMETOOLONG);
-> -	ino = sysv_inode_by_name(dentry);
+> -	ino =3D sysv_inode_by_name(dentry);
 > -	if (ino)
-> -		inode = sysv_iget(dir->i_sb, ino);
+> -		inode =3D sysv_iget(dir->i_sb, ino);
 > -	return d_splice_alias(inode, dentry);
 > -}
 > -
@@ -2627,13 +2780,13 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	if (!old_valid_dev(rdev))
 > -		return -EINVAL;
 > -
-> -	inode = sysv_new_inode(dir, mode);
-> -	err = PTR_ERR(inode);
+> -	inode =3D sysv_new_inode(dir, mode);
+> -	err =3D PTR_ERR(inode);
 > -
 > -	if (!IS_ERR(inode)) {
 > -		sysv_set_inode(inode, rdev);
 > -		mark_inode_dirty(inode);
-> -		err = add_nondir(dentry, inode);
+> -		err =3D add_nondir(dentry, inode);
 > -	}
 > -	return err;
 > -}
@@ -2647,25 +2800,25 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -static int sysv_symlink(struct mnt_idmap *idmap, struct inode *dir,
 > -			struct dentry *dentry, const char *symname)
 > -{
-> -	int err = -ENAMETOOLONG;
-> -	int l = strlen(symname)+1;
+> -	int err =3D -ENAMETOOLONG;
+> -	int l =3D strlen(symname)+1;
 > -	struct inode * inode;
 > -
 > -	if (l > dir->i_sb->s_blocksize)
 > -		goto out;
 > -
-> -	inode = sysv_new_inode(dir, S_IFLNK|0777);
-> -	err = PTR_ERR(inode);
+> -	inode =3D sysv_new_inode(dir, S_IFLNK|0777);
+> -	err =3D PTR_ERR(inode);
 > -	if (IS_ERR(inode))
 > -		goto out;
-> -	
+> -=09
 > -	sysv_set_inode(inode, 0);
-> -	err = page_symlink(inode, symname, l);
+> -	err =3D page_symlink(inode, symname, l);
 > -	if (err)
 > -		goto out_fail;
 > -
 > -	mark_inode_dirty(inode);
-> -	err = add_nondir(dentry, inode);
+> -	err =3D add_nondir(dentry, inode);
 > -out:
 > -	return err;
 > -
@@ -2675,10 +2828,10 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	goto out;
 > -}
 > -
-> -static int sysv_link(struct dentry * old_dentry, struct inode * dir, 
+> -static int sysv_link(struct dentry * old_dentry, struct inode * dir,=20
 > -	struct dentry * dentry)
 > -{
-> -	struct inode *inode = d_inode(old_dentry);
+> -	struct inode *inode =3D d_inode(old_dentry);
 > -
 > -	inode_set_ctime_current(inode);
 > -	inode_inc_link_count(inode);
@@ -2695,8 +2848,8 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -	inode_inc_link_count(dir);
 > -
-> -	inode = sysv_new_inode(dir, S_IFDIR|mode);
-> -	err = PTR_ERR(inode);
+> -	inode =3D sysv_new_inode(dir, S_IFDIR|mode);
+> -	err =3D PTR_ERR(inode);
 > -	if (IS_ERR(inode))
 > -		goto out_dir;
 > -
@@ -2704,11 +2857,11 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -	inode_inc_link_count(inode);
 > -
-> -	err = sysv_make_empty(inode, dir);
+> -	err =3D sysv_make_empty(inode, dir);
 > -	if (err)
 > -		goto out_fail;
 > -
-> -	err = sysv_add_link(dentry, inode);
+> -	err =3D sysv_add_link(dentry, inode);
 > -	if (err)
 > -		goto out_fail;
 > -
@@ -2727,16 +2880,16 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -static int sysv_unlink(struct inode * dir, struct dentry * dentry)
 > -{
-> -	struct inode * inode = d_inode(dentry);
+> -	struct inode * inode =3D d_inode(dentry);
 > -	struct folio *folio;
 > -	struct sysv_dir_entry * de;
 > -	int err;
 > -
-> -	de = sysv_find_entry(dentry, &folio);
+> -	de =3D sysv_find_entry(dentry, &folio);
 > -	if (!de)
 > -		return -ENOENT;
 > -
-> -	err = sysv_delete_entry(de, folio);
+> -	err =3D sysv_delete_entry(de, folio);
 > -	if (!err) {
 > -		inode_set_ctime_to_ts(inode, inode_get_ctime(dir));
 > -		inode_dec_link_count(inode);
@@ -2747,13 +2900,13 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -static int sysv_rmdir(struct inode * dir, struct dentry * dentry)
 > -{
-> -	struct inode *inode = d_inode(dentry);
-> -	int err = -ENOTEMPTY;
+> -	struct inode *inode =3D d_inode(dentry);
+> -	int err =3D -ENOTEMPTY;
 > -
 > -	if (sysv_empty_dir(inode)) {
-> -		err = sysv_unlink(dir, dentry);
+> -		err =3D sysv_unlink(dir, dentry);
 > -		if (!err) {
-> -			inode->i_size = 0;
+> -			inode->i_size =3D 0;
 > -			inode_dec_link_count(inode);
 > -			inode_dec_link_count(dir);
 > -		}
@@ -2762,31 +2915,32 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -}
 > -
 > -/*
-> - * Anybody can rename anything with this: the permission checks are left to the
+> - * Anybody can rename anything with this: the permission checks are left=
+ to the
 > - * higher-level routines.
 > - */
 > -static int sysv_rename(struct mnt_idmap *idmap, struct inode *old_dir,
 > -		       struct dentry *old_dentry, struct inode *new_dir,
 > -		       struct dentry *new_dentry, unsigned int flags)
 > -{
-> -	struct inode * old_inode = d_inode(old_dentry);
-> -	struct inode * new_inode = d_inode(new_dentry);
+> -	struct inode * old_inode =3D d_inode(old_dentry);
+> -	struct inode * new_inode =3D d_inode(new_dentry);
 > -	struct folio *dir_folio;
-> -	struct sysv_dir_entry * dir_de = NULL;
+> -	struct sysv_dir_entry * dir_de =3D NULL;
 > -	struct folio *old_folio;
 > -	struct sysv_dir_entry * old_de;
-> -	int err = -ENOENT;
+> -	int err =3D -ENOENT;
 > -
 > -	if (flags & ~RENAME_NOREPLACE)
 > -		return -EINVAL;
 > -
-> -	old_de = sysv_find_entry(old_dentry, &old_folio);
+> -	old_de =3D sysv_find_entry(old_dentry, &old_folio);
 > -	if (!old_de)
 > -		goto out;
 > -
 > -	if (S_ISDIR(old_inode->i_mode)) {
-> -		err = -EIO;
-> -		dir_de = sysv_dotdot(old_inode, &dir_folio);
+> -		err =3D -EIO;
+> -		dir_de =3D sysv_dotdot(old_inode, &dir_folio);
 > -		if (!dir_de)
 > -			goto out_old;
 > -	}
@@ -2795,15 +2949,15 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -		struct folio *new_folio;
 > -		struct sysv_dir_entry * new_de;
 > -
-> -		err = -ENOTEMPTY;
+> -		err =3D -ENOTEMPTY;
 > -		if (dir_de && !sysv_empty_dir(new_inode))
 > -			goto out_dir;
 > -
-> -		err = -ENOENT;
-> -		new_de = sysv_find_entry(new_dentry, &new_folio);
+> -		err =3D -ENOENT;
+> -		new_de =3D sysv_find_entry(new_dentry, &new_folio);
 > -		if (!new_de)
 > -			goto out_dir;
-> -		err = sysv_set_link(new_de, new_folio, old_inode);
+> -		err =3D sysv_set_link(new_de, new_folio, old_inode);
 > -		folio_release_kmap(new_folio, new_de);
 > -		if (err)
 > -			goto out_dir;
@@ -2812,21 +2966,21 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -			drop_nlink(new_inode);
 > -		inode_dec_link_count(new_inode);
 > -	} else {
-> -		err = sysv_add_link(new_dentry, old_inode);
+> -		err =3D sysv_add_link(new_dentry, old_inode);
 > -		if (err)
 > -			goto out_dir;
 > -		if (dir_de)
 > -			inode_inc_link_count(new_dir);
 > -	}
 > -
-> -	err = sysv_delete_entry(old_de, old_folio);
+> -	err =3D sysv_delete_entry(old_de, old_folio);
 > -	if (err)
 > -		goto out_dir;
 > -
 > -	mark_inode_dirty(old_inode);
 > -
 > -	if (dir_de) {
-> -		err = sysv_set_link(dir_de, dir_folio, new_dir);
+> -		err =3D sysv_set_link(dir_de, dir_folio, new_dir);
 > -		if (!err)
 > -			inode_dec_link_count(old_dir);
 > -	}
@@ -2843,17 +2997,17 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -/*
 > - * directories can handle most operations...
 > - */
-> -const struct inode_operations sysv_dir_inode_operations = {
-> -	.create		= sysv_create,
-> -	.lookup		= sysv_lookup,
-> -	.link		= sysv_link,
-> -	.unlink		= sysv_unlink,
-> -	.symlink	= sysv_symlink,
-> -	.mkdir		= sysv_mkdir,
-> -	.rmdir		= sysv_rmdir,
-> -	.mknod		= sysv_mknod,
-> -	.rename		= sysv_rename,
-> -	.getattr	= sysv_getattr,
+> -const struct inode_operations sysv_dir_inode_operations =3D {
+> -	.create		=3D sysv_create,
+> -	.lookup		=3D sysv_lookup,
+> -	.link		=3D sysv_link,
+> -	.unlink		=3D sysv_unlink,
+> -	.symlink	=3D sysv_symlink,
+> -	.mkdir		=3D sysv_mkdir,
+> -	.rmdir		=3D sysv_rmdir,
+> -	.mknod		=3D sysv_mknod,
+> -	.rename		=3D sysv_rename,
+> -	.getattr	=3D sysv_getattr,
 > -};
 > diff --git a/fs/sysv/super.c b/fs/sysv/super.c
 > deleted file mode 100644
@@ -2898,7 +3052,7 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > - * - Xenix FS by its magic number.
 > - * - SystemV FS by its magic number.
 > - * - Coherent FS by its funny fname/fpack field.
-> - * - SCO AFS by s_nfree == 0xffff
+> - * - SCO AFS by s_nfree =3D=3D 0xffff
 > - * - V7 FS has no distinguishing features.
 > - *
 > - * We discriminate among SystemV4 and SystemV2 FS by the assumption that
@@ -2906,155 +3060,161 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > - */
 > -
 > -enum {
-> -	JAN_1_1980 = (10*365 + 2) * 24 * 60 * 60
+> -	JAN_1_1980 =3D (10*365 + 2) * 24 * 60 * 60
 > -};
 > -
-> -static void detected_xenix(struct sysv_sb_info *sbi, unsigned *max_links)
+> -static void detected_xenix(struct sysv_sb_info *sbi, unsigned *max_links=
+)
 > -{
-> -	struct buffer_head *bh1 = sbi->s_bh1;
-> -	struct buffer_head *bh2 = sbi->s_bh2;
+> -	struct buffer_head *bh1 =3D sbi->s_bh1;
+> -	struct buffer_head *bh2 =3D sbi->s_bh2;
 > -	struct xenix_super_block * sbd1;
 > -	struct xenix_super_block * sbd2;
 > -
-> -	if (bh1 != bh2)
-> -		sbd1 = sbd2 = (struct xenix_super_block *) bh1->b_data;
+> -	if (bh1 !=3D bh2)
+> -		sbd1 =3D sbd2 =3D (struct xenix_super_block *) bh1->b_data;
 > -	else {
-> -		/* block size = 512, so bh1 != bh2 */
-> -		sbd1 = (struct xenix_super_block *) bh1->b_data;
-> -		sbd2 = (struct xenix_super_block *) (bh2->b_data - 512);
+> -		/* block size =3D 512, so bh1 !=3D bh2 */
+> -		sbd1 =3D (struct xenix_super_block *) bh1->b_data;
+> -		sbd2 =3D (struct xenix_super_block *) (bh2->b_data - 512);
 > -	}
 > -
-> -	*max_links = XENIX_LINK_MAX;
-> -	sbi->s_fic_size = XENIX_NICINOD;
-> -	sbi->s_flc_size = XENIX_NICFREE;
-> -	sbi->s_sbd1 = (char *)sbd1;
-> -	sbi->s_sbd2 = (char *)sbd2;
-> -	sbi->s_sb_fic_count = &sbd1->s_ninode;
-> -	sbi->s_sb_fic_inodes = &sbd1->s_inode[0];
-> -	sbi->s_sb_total_free_inodes = &sbd2->s_tinode;
-> -	sbi->s_bcache_count = &sbd1->s_nfree;
-> -	sbi->s_bcache = &sbd1->s_free[0];
-> -	sbi->s_free_blocks = &sbd2->s_tfree;
-> -	sbi->s_sb_time = &sbd2->s_time;
-> -	sbi->s_firstdatazone = fs16_to_cpu(sbi, sbd1->s_isize);
-> -	sbi->s_nzones = fs32_to_cpu(sbi, sbd1->s_fsize);
+> -	*max_links =3D XENIX_LINK_MAX;
+> -	sbi->s_fic_size =3D XENIX_NICINOD;
+> -	sbi->s_flc_size =3D XENIX_NICFREE;
+> -	sbi->s_sbd1 =3D (char *)sbd1;
+> -	sbi->s_sbd2 =3D (char *)sbd2;
+> -	sbi->s_sb_fic_count =3D &sbd1->s_ninode;
+> -	sbi->s_sb_fic_inodes =3D &sbd1->s_inode[0];
+> -	sbi->s_sb_total_free_inodes =3D &sbd2->s_tinode;
+> -	sbi->s_bcache_count =3D &sbd1->s_nfree;
+> -	sbi->s_bcache =3D &sbd1->s_free[0];
+> -	sbi->s_free_blocks =3D &sbd2->s_tfree;
+> -	sbi->s_sb_time =3D &sbd2->s_time;
+> -	sbi->s_firstdatazone =3D fs16_to_cpu(sbi, sbd1->s_isize);
+> -	sbi->s_nzones =3D fs32_to_cpu(sbi, sbd1->s_fsize);
 > -}
 > -
-> -static void detected_sysv4(struct sysv_sb_info *sbi, unsigned *max_links)
+> -static void detected_sysv4(struct sysv_sb_info *sbi, unsigned *max_links=
+)
 > -{
 > -	struct sysv4_super_block * sbd;
-> -	struct buffer_head *bh1 = sbi->s_bh1;
-> -	struct buffer_head *bh2 = sbi->s_bh2;
+> -	struct buffer_head *bh1 =3D sbi->s_bh1;
+> -	struct buffer_head *bh2 =3D sbi->s_bh2;
 > -
-> -	if (bh1 == bh2)
-> -		sbd = (struct sysv4_super_block *) (bh1->b_data + BLOCK_SIZE/2);
+> -	if (bh1 =3D=3D bh2)
+> -		sbd =3D (struct sysv4_super_block *) (bh1->b_data + BLOCK_SIZE/2);
 > -	else
-> -		sbd = (struct sysv4_super_block *) bh2->b_data;
+> -		sbd =3D (struct sysv4_super_block *) bh2->b_data;
 > -
-> -	*max_links = SYSV_LINK_MAX;
-> -	sbi->s_fic_size = SYSV_NICINOD;
-> -	sbi->s_flc_size = SYSV_NICFREE;
-> -	sbi->s_sbd1 = (char *)sbd;
-> -	sbi->s_sbd2 = (char *)sbd;
-> -	sbi->s_sb_fic_count = &sbd->s_ninode;
-> -	sbi->s_sb_fic_inodes = &sbd->s_inode[0];
-> -	sbi->s_sb_total_free_inodes = &sbd->s_tinode;
-> -	sbi->s_bcache_count = &sbd->s_nfree;
-> -	sbi->s_bcache = &sbd->s_free[0];
-> -	sbi->s_free_blocks = &sbd->s_tfree;
-> -	sbi->s_sb_time = &sbd->s_time;
-> -	sbi->s_sb_state = &sbd->s_state;
-> -	sbi->s_firstdatazone = fs16_to_cpu(sbi, sbd->s_isize);
-> -	sbi->s_nzones = fs32_to_cpu(sbi, sbd->s_fsize);
+> -	*max_links =3D SYSV_LINK_MAX;
+> -	sbi->s_fic_size =3D SYSV_NICINOD;
+> -	sbi->s_flc_size =3D SYSV_NICFREE;
+> -	sbi->s_sbd1 =3D (char *)sbd;
+> -	sbi->s_sbd2 =3D (char *)sbd;
+> -	sbi->s_sb_fic_count =3D &sbd->s_ninode;
+> -	sbi->s_sb_fic_inodes =3D &sbd->s_inode[0];
+> -	sbi->s_sb_total_free_inodes =3D &sbd->s_tinode;
+> -	sbi->s_bcache_count =3D &sbd->s_nfree;
+> -	sbi->s_bcache =3D &sbd->s_free[0];
+> -	sbi->s_free_blocks =3D &sbd->s_tfree;
+> -	sbi->s_sb_time =3D &sbd->s_time;
+> -	sbi->s_sb_state =3D &sbd->s_state;
+> -	sbi->s_firstdatazone =3D fs16_to_cpu(sbi, sbd->s_isize);
+> -	sbi->s_nzones =3D fs32_to_cpu(sbi, sbd->s_fsize);
 > -}
 > -
-> -static void detected_sysv2(struct sysv_sb_info *sbi, unsigned *max_links)
+> -static void detected_sysv2(struct sysv_sb_info *sbi, unsigned *max_links=
+)
 > -{
 > -	struct sysv2_super_block *sbd;
-> -	struct buffer_head *bh1 = sbi->s_bh1;
-> -	struct buffer_head *bh2 = sbi->s_bh2;
+> -	struct buffer_head *bh1 =3D sbi->s_bh1;
+> -	struct buffer_head *bh2 =3D sbi->s_bh2;
 > -
-> -	if (bh1 == bh2)
-> -		sbd = (struct sysv2_super_block *) (bh1->b_data + BLOCK_SIZE/2);
+> -	if (bh1 =3D=3D bh2)
+> -		sbd =3D (struct sysv2_super_block *) (bh1->b_data + BLOCK_SIZE/2);
 > -	else
-> -		sbd = (struct sysv2_super_block *) bh2->b_data;
+> -		sbd =3D (struct sysv2_super_block *) bh2->b_data;
 > -
-> -	*max_links = SYSV_LINK_MAX;
-> -	sbi->s_fic_size = SYSV_NICINOD;
-> -	sbi->s_flc_size = SYSV_NICFREE;
-> -	sbi->s_sbd1 = (char *)sbd;
-> -	sbi->s_sbd2 = (char *)sbd;
-> -	sbi->s_sb_fic_count = &sbd->s_ninode;
-> -	sbi->s_sb_fic_inodes = &sbd->s_inode[0];
-> -	sbi->s_sb_total_free_inodes = &sbd->s_tinode;
-> -	sbi->s_bcache_count = &sbd->s_nfree;
-> -	sbi->s_bcache = &sbd->s_free[0];
-> -	sbi->s_free_blocks = &sbd->s_tfree;
-> -	sbi->s_sb_time = &sbd->s_time;
-> -	sbi->s_sb_state = &sbd->s_state;
-> -	sbi->s_firstdatazone = fs16_to_cpu(sbi, sbd->s_isize);
-> -	sbi->s_nzones = fs32_to_cpu(sbi, sbd->s_fsize);
+> -	*max_links =3D SYSV_LINK_MAX;
+> -	sbi->s_fic_size =3D SYSV_NICINOD;
+> -	sbi->s_flc_size =3D SYSV_NICFREE;
+> -	sbi->s_sbd1 =3D (char *)sbd;
+> -	sbi->s_sbd2 =3D (char *)sbd;
+> -	sbi->s_sb_fic_count =3D &sbd->s_ninode;
+> -	sbi->s_sb_fic_inodes =3D &sbd->s_inode[0];
+> -	sbi->s_sb_total_free_inodes =3D &sbd->s_tinode;
+> -	sbi->s_bcache_count =3D &sbd->s_nfree;
+> -	sbi->s_bcache =3D &sbd->s_free[0];
+> -	sbi->s_free_blocks =3D &sbd->s_tfree;
+> -	sbi->s_sb_time =3D &sbd->s_time;
+> -	sbi->s_sb_state =3D &sbd->s_state;
+> -	sbi->s_firstdatazone =3D fs16_to_cpu(sbi, sbd->s_isize);
+> -	sbi->s_nzones =3D fs32_to_cpu(sbi, sbd->s_fsize);
 > -}
 > -
-> -static void detected_coherent(struct sysv_sb_info *sbi, unsigned *max_links)
+> -static void detected_coherent(struct sysv_sb_info *sbi, unsigned *max_li=
+nks)
 > -{
 > -	struct coh_super_block * sbd;
-> -	struct buffer_head *bh1 = sbi->s_bh1;
+> -	struct buffer_head *bh1 =3D sbi->s_bh1;
 > -
-> -	sbd = (struct coh_super_block *) bh1->b_data;
+> -	sbd =3D (struct coh_super_block *) bh1->b_data;
 > -
-> -	*max_links = COH_LINK_MAX;
-> -	sbi->s_fic_size = COH_NICINOD;
-> -	sbi->s_flc_size = COH_NICFREE;
-> -	sbi->s_sbd1 = (char *)sbd;
-> -	sbi->s_sbd2 = (char *)sbd;
-> -	sbi->s_sb_fic_count = &sbd->s_ninode;
-> -	sbi->s_sb_fic_inodes = &sbd->s_inode[0];
-> -	sbi->s_sb_total_free_inodes = &sbd->s_tinode;
-> -	sbi->s_bcache_count = &sbd->s_nfree;
-> -	sbi->s_bcache = &sbd->s_free[0];
-> -	sbi->s_free_blocks = &sbd->s_tfree;
-> -	sbi->s_sb_time = &sbd->s_time;
-> -	sbi->s_firstdatazone = fs16_to_cpu(sbi, sbd->s_isize);
-> -	sbi->s_nzones = fs32_to_cpu(sbi, sbd->s_fsize);
+> -	*max_links =3D COH_LINK_MAX;
+> -	sbi->s_fic_size =3D COH_NICINOD;
+> -	sbi->s_flc_size =3D COH_NICFREE;
+> -	sbi->s_sbd1 =3D (char *)sbd;
+> -	sbi->s_sbd2 =3D (char *)sbd;
+> -	sbi->s_sb_fic_count =3D &sbd->s_ninode;
+> -	sbi->s_sb_fic_inodes =3D &sbd->s_inode[0];
+> -	sbi->s_sb_total_free_inodes =3D &sbd->s_tinode;
+> -	sbi->s_bcache_count =3D &sbd->s_nfree;
+> -	sbi->s_bcache =3D &sbd->s_free[0];
+> -	sbi->s_free_blocks =3D &sbd->s_tfree;
+> -	sbi->s_sb_time =3D &sbd->s_time;
+> -	sbi->s_firstdatazone =3D fs16_to_cpu(sbi, sbd->s_isize);
+> -	sbi->s_nzones =3D fs32_to_cpu(sbi, sbd->s_fsize);
 > -}
 > -
 > -static void detected_v7(struct sysv_sb_info *sbi, unsigned *max_links)
 > -{
-> -	struct buffer_head *bh2 = sbi->s_bh2;
-> -	struct v7_super_block *sbd = (struct v7_super_block *)bh2->b_data;
+> -	struct buffer_head *bh2 =3D sbi->s_bh2;
+> -	struct v7_super_block *sbd =3D (struct v7_super_block *)bh2->b_data;
 > -
-> -	*max_links = V7_LINK_MAX;
-> -	sbi->s_fic_size = V7_NICINOD;
-> -	sbi->s_flc_size = V7_NICFREE;
-> -	sbi->s_sbd1 = (char *)sbd;
-> -	sbi->s_sbd2 = (char *)sbd;
-> -	sbi->s_sb_fic_count = &sbd->s_ninode;
-> -	sbi->s_sb_fic_inodes = &sbd->s_inode[0];
-> -	sbi->s_sb_total_free_inodes = &sbd->s_tinode;
-> -	sbi->s_bcache_count = &sbd->s_nfree;
-> -	sbi->s_bcache = &sbd->s_free[0];
-> -	sbi->s_free_blocks = &sbd->s_tfree;
-> -	sbi->s_sb_time = &sbd->s_time;
-> -	sbi->s_firstdatazone = fs16_to_cpu(sbi, sbd->s_isize);
-> -	sbi->s_nzones = fs32_to_cpu(sbi, sbd->s_fsize);
+> -	*max_links =3D V7_LINK_MAX;
+> -	sbi->s_fic_size =3D V7_NICINOD;
+> -	sbi->s_flc_size =3D V7_NICFREE;
+> -	sbi->s_sbd1 =3D (char *)sbd;
+> -	sbi->s_sbd2 =3D (char *)sbd;
+> -	sbi->s_sb_fic_count =3D &sbd->s_ninode;
+> -	sbi->s_sb_fic_inodes =3D &sbd->s_inode[0];
+> -	sbi->s_sb_total_free_inodes =3D &sbd->s_tinode;
+> -	sbi->s_bcache_count =3D &sbd->s_nfree;
+> -	sbi->s_bcache =3D &sbd->s_free[0];
+> -	sbi->s_free_blocks =3D &sbd->s_tfree;
+> -	sbi->s_sb_time =3D &sbd->s_time;
+> -	sbi->s_firstdatazone =3D fs16_to_cpu(sbi, sbd->s_isize);
+> -	sbi->s_nzones =3D fs32_to_cpu(sbi, sbd->s_fsize);
 > -}
 > -
-> -static int detect_xenix(struct sysv_sb_info *sbi, struct buffer_head *bh)
+> -static int detect_xenix(struct sysv_sb_info *sbi, struct buffer_head *bh=
+)
 > -{
-> -	struct xenix_super_block *sbd = (struct xenix_super_block *)bh->b_data;
-> -	if (*(__le32 *)&sbd->s_magic == cpu_to_le32(0x2b5544))
-> -		sbi->s_bytesex = BYTESEX_LE;
-> -	else if (*(__be32 *)&sbd->s_magic == cpu_to_be32(0x2b5544))
-> -		sbi->s_bytesex = BYTESEX_BE;
+> -	struct xenix_super_block *sbd =3D (struct xenix_super_block *)bh->b_dat=
+a;
+> -	if (*(__le32 *)&sbd->s_magic =3D=3D cpu_to_le32(0x2b5544))
+> -		sbi->s_bytesex =3D BYTESEX_LE;
+> -	else if (*(__be32 *)&sbd->s_magic =3D=3D cpu_to_be32(0x2b5544))
+> -		sbi->s_bytesex =3D BYTESEX_BE;
 > -	else
 > -		return 0;
 > -	switch (fs32_to_cpu(sbi, sbd->s_type)) {
 > -	case 1:
-> -		sbi->s_type = FSTYPE_XENIX;
+> -		sbi->s_type =3D FSTYPE_XENIX;
 > -		return 1;
 > -	case 2:
-> -		sbi->s_type = FSTYPE_XENIX;
+> -		sbi->s_type =3D FSTYPE_XENIX;
 > -		return 2;
 > -	default:
 > -		return 0;
@@ -3063,73 +3223,78 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -static int detect_sysv(struct sysv_sb_info *sbi, struct buffer_head *bh)
 > -{
-> -	struct super_block *sb = sbi->s_sb;
+> -	struct super_block *sb =3D sbi->s_sb;
 > -	/* All relevant fields are at the same offsets in R2 and R4 */
 > -	struct sysv4_super_block * sbd;
 > -	u32 type;
 > -
-> -	sbd = (struct sysv4_super_block *) (bh->b_data + BLOCK_SIZE/2);
-> -	if (*(__le32 *)&sbd->s_magic == cpu_to_le32(0xfd187e20))
-> -		sbi->s_bytesex = BYTESEX_LE;
-> -	else if (*(__be32 *)&sbd->s_magic == cpu_to_be32(0xfd187e20))
-> -		sbi->s_bytesex = BYTESEX_BE;
+> -	sbd =3D (struct sysv4_super_block *) (bh->b_data + BLOCK_SIZE/2);
+> -	if (*(__le32 *)&sbd->s_magic =3D=3D cpu_to_le32(0xfd187e20))
+> -		sbi->s_bytesex =3D BYTESEX_LE;
+> -	else if (*(__be32 *)&sbd->s_magic =3D=3D cpu_to_be32(0xfd187e20))
+> -		sbi->s_bytesex =3D BYTESEX_BE;
 > -	else
 > -		return 0;
 > -
-> -	type = fs32_to_cpu(sbi, sbd->s_type);
-> - 
-> - 	if (fs16_to_cpu(sbi, sbd->s_nfree) == 0xffff) {
-> - 		sbi->s_type = FSTYPE_AFS;
-> -		sbi->s_forced_ro = 1;
+> -	type =3D fs32_to_cpu(sbi, sbd->s_type);
+> -=20
+> - 	if (fs16_to_cpu(sbi, sbd->s_nfree) =3D=3D 0xffff) {
+> - 		sbi->s_type =3D FSTYPE_AFS;
+> -		sbi->s_forced_ro =3D 1;
 > - 		if (!sb_rdonly(sb)) {
-> - 			printk("SysV FS: SCO EAFS on %s detected, " 
-> - 				"forcing read-only mode.\n", 
+> - 			printk("SysV FS: SCO EAFS on %s detected, "=20
+> - 				"forcing read-only mode.\n",=20
 > - 				sb->s_id);
 > - 		}
 > - 		return type;
 > - 	}
-> - 
+> -=20
 > -	if (fs32_to_cpu(sbi, sbd->s_time) < JAN_1_1980) {
 > -		/* this is likely to happen on SystemV2 FS */
 > -		if (type > 3 || type < 1)
 > -			return 0;
-> -		sbi->s_type = FSTYPE_SYSV2;
+> -		sbi->s_type =3D FSTYPE_SYSV2;
 > -		return type;
 > -	}
 > -	if ((type > 3 || type < 1) && (type > 0x30 || type < 0x10))
 > -		return 0;
 > -
-> -	/* On Interactive Unix (ISC) Version 4.0/3.x s_type field = 0x10,
+> -	/* On Interactive Unix (ISC) Version 4.0/3.x s_type field =3D 0x10,
 > -	   0x20 or 0x30 indicates that symbolic links and the 14-character
 > -	   filename limit is gone. Due to lack of information about this
-> -           feature read-only mode seems to be a reasonable approach... -KGB */
+> -           feature read-only mode seems to be a reasonable approach... -=
+KGB */
 > -
-> -	if (type >= 0x10) {
+> -	if (type >=3D 0x10) {
 > -		printk("SysV FS: can't handle long file names on %s, "
 > -		       "forcing read-only mode.\n", sb->s_id);
-> -		sbi->s_forced_ro = 1;
+> -		sbi->s_forced_ro =3D 1;
 > -	}
 > -
-> -	sbi->s_type = FSTYPE_SYSV4;
-> -	return type >= 0x10 ? type >> 4 : type;
+> -	sbi->s_type =3D FSTYPE_SYSV4;
+> -	return type >=3D 0x10 ? type >> 4 : type;
 > -}
 > -
-> -static int detect_coherent(struct sysv_sb_info *sbi, struct buffer_head *bh)
+> -static int detect_coherent(struct sysv_sb_info *sbi, struct buffer_head =
+*bh)
 > -{
 > -	struct coh_super_block * sbd;
 > -
-> -	sbd = (struct coh_super_block *) (bh->b_data + BLOCK_SIZE/2);
-> -	if ((memcmp(sbd->s_fname,"noname",6) && memcmp(sbd->s_fname,"xxxxx ",6))
-> -	    || (memcmp(sbd->s_fpack,"nopack",6) && memcmp(sbd->s_fpack,"xxxxx\n",6)))
+> -	sbd =3D (struct coh_super_block *) (bh->b_data + BLOCK_SIZE/2);
+> -	if ((memcmp(sbd->s_fname,"noname",6) && memcmp(sbd->s_fname,"xxxxx ",6)=
+)
+> -	    || (memcmp(sbd->s_fpack,"nopack",6) && memcmp(sbd->s_fpack,"xxxxx\n=
+",6)))
 > -		return 0;
-> -	sbi->s_bytesex = BYTESEX_PDP;
-> -	sbi->s_type = FSTYPE_COH;
+> -	sbi->s_bytesex =3D BYTESEX_PDP;
+> -	sbi->s_type =3D FSTYPE_COH;
 > -	return 1;
 > -}
 > -
-> -static int detect_sysv_odd(struct sysv_sb_info *sbi, struct buffer_head *bh)
+> -static int detect_sysv_odd(struct sysv_sb_info *sbi, struct buffer_head =
+*bh)
 > -{
-> -	int size = detect_sysv(sbi, bh);
+> -	int size =3D detect_sysv(sbi, bh);
 > -
 > -	return size>2 ? 0 : size;
 > -}
@@ -3137,7 +3302,7 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -static struct {
 > -	int block;
 > -	int (*test)(struct sysv_sb_info *, struct buffer_head *);
-> -} flavours[] = {
+> -} flavours[] =3D {
 > -	{1, detect_xenix},
 > -	{0, detect_sysv},
 > -	{0, detect_coherent},
@@ -3146,66 +3311,67 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	{18,detect_sysv},
 > -};
 > -
-> -static char *flavour_names[] = {
-> -	[FSTYPE_XENIX]	= "Xenix",
-> -	[FSTYPE_SYSV4]	= "SystemV",
-> -	[FSTYPE_SYSV2]	= "SystemV Release 2",
-> -	[FSTYPE_COH]	= "Coherent",
-> -	[FSTYPE_V7]	= "V7",
-> -	[FSTYPE_AFS]	= "AFS",
+> -static char *flavour_names[] =3D {
+> -	[FSTYPE_XENIX]	=3D "Xenix",
+> -	[FSTYPE_SYSV4]	=3D "SystemV",
+> -	[FSTYPE_SYSV2]	=3D "SystemV Release 2",
+> -	[FSTYPE_COH]	=3D "Coherent",
+> -	[FSTYPE_V7]	=3D "V7",
+> -	[FSTYPE_AFS]	=3D "AFS",
 > -};
 > -
-> -static void (*flavour_setup[])(struct sysv_sb_info *, unsigned *) = {
-> -	[FSTYPE_XENIX]	= detected_xenix,
-> -	[FSTYPE_SYSV4]	= detected_sysv4,
-> -	[FSTYPE_SYSV2]	= detected_sysv2,
-> -	[FSTYPE_COH]	= detected_coherent,
-> -	[FSTYPE_V7]	= detected_v7,
-> -	[FSTYPE_AFS]	= detected_sysv4,
+> -static void (*flavour_setup[])(struct sysv_sb_info *, unsigned *) =3D {
+> -	[FSTYPE_XENIX]	=3D detected_xenix,
+> -	[FSTYPE_SYSV4]	=3D detected_sysv4,
+> -	[FSTYPE_SYSV2]	=3D detected_sysv2,
+> -	[FSTYPE_COH]	=3D detected_coherent,
+> -	[FSTYPE_V7]	=3D detected_v7,
+> -	[FSTYPE_AFS]	=3D detected_sysv4,
 > -};
 > -
-> -static int complete_read_super(struct super_block *sb, int silent, int size)
+> -static int complete_read_super(struct super_block *sb, int silent, int s=
+ize)
 > -{
-> -	struct sysv_sb_info *sbi = SYSV_SB(sb);
+> -	struct sysv_sb_info *sbi =3D SYSV_SB(sb);
 > -	struct inode *root_inode;
-> -	char *found = flavour_names[sbi->s_type];
-> -	u_char n_bits = size+8;
-> -	int bsize = 1 << n_bits;
-> -	int bsize_4 = bsize >> 2;
+> -	char *found =3D flavour_names[sbi->s_type];
+> -	u_char n_bits =3D size+8;
+> -	int bsize =3D 1 << n_bits;
+> -	int bsize_4 =3D bsize >> 2;
 > -
-> -	sbi->s_firstinodezone = 2;
+> -	sbi->s_firstinodezone =3D 2;
 > -
 > -	flavour_setup[sbi->s_type](sbi, &sb->s_max_links);
 > -	if (sbi->s_firstdatazone < sbi->s_firstinodezone)
 > -		return 0;
 > -
-> -	sbi->s_ndatazones = sbi->s_nzones - sbi->s_firstdatazone;
-> -	sbi->s_inodes_per_block = bsize >> 6;
-> -	sbi->s_inodes_per_block_1 = (bsize >> 6)-1;
-> -	sbi->s_inodes_per_block_bits = n_bits-6;
-> -	sbi->s_ind_per_block = bsize_4;
-> -	sbi->s_ind_per_block_2 = bsize_4*bsize_4;
-> -	sbi->s_toobig_block = 10 + bsize_4 * (1 + bsize_4 * (1 + bsize_4));
-> -	sbi->s_ind_per_block_bits = n_bits-2;
+> -	sbi->s_ndatazones =3D sbi->s_nzones - sbi->s_firstdatazone;
+> -	sbi->s_inodes_per_block =3D bsize >> 6;
+> -	sbi->s_inodes_per_block_1 =3D (bsize >> 6)-1;
+> -	sbi->s_inodes_per_block_bits =3D n_bits-6;
+> -	sbi->s_ind_per_block =3D bsize_4;
+> -	sbi->s_ind_per_block_2 =3D bsize_4*bsize_4;
+> -	sbi->s_toobig_block =3D 10 + bsize_4 * (1 + bsize_4 * (1 + bsize_4));
+> -	sbi->s_ind_per_block_bits =3D n_bits-2;
 > -
-> -	sbi->s_ninodes = (sbi->s_firstdatazone - sbi->s_firstinodezone)
+> -	sbi->s_ninodes =3D (sbi->s_firstdatazone - sbi->s_firstinodezone)
 > -		<< sbi->s_inodes_per_block_bits;
 > -
 > -	if (!silent)
-> -		printk("VFS: Found a %s FS (block size = %ld) on device %s\n",
+> -		printk("VFS: Found a %s FS (block size =3D %ld) on device %s\n",
 > -		       found, sb->s_blocksize, sb->s_id);
 > -
-> -	sb->s_magic = SYSV_MAGIC_BASE + sbi->s_type;
+> -	sb->s_magic =3D SYSV_MAGIC_BASE + sbi->s_type;
 > -	/* set up enough so that it can read an inode */
-> -	sb->s_op = &sysv_sops;
+> -	sb->s_op =3D &sysv_sops;
 > -	if (sbi->s_forced_ro)
-> -		sb->s_flags |= SB_RDONLY;
-> -	root_inode = sysv_iget(sb, SYSV_ROOT_INO);
+> -		sb->s_flags |=3D SB_RDONLY;
+> -	root_inode =3D sysv_iget(sb, SYSV_ROOT_INO);
 > -	if (IS_ERR(root_inode)) {
 > -		printk("SysV FS: get root inode failed\n");
 > -		return 0;
 > -	}
-> -	sb->s_root = d_make_root(root_inode);
+> -	sb->s_root =3D d_make_root(root_inode);
 > -	if (!sb->s_root) {
 > -		printk("SysV FS: get root dentry failed\n");
 > -		return 0;
@@ -3213,38 +3379,39 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	return 1;
 > -}
 > -
-> -static int sysv_fill_super(struct super_block *sb, struct fs_context *fc)
+> -static int sysv_fill_super(struct super_block *sb, struct fs_context *fc=
+)
 > -{
-> -	struct buffer_head *bh1, *bh = NULL;
+> -	struct buffer_head *bh1, *bh =3D NULL;
 > -	struct sysv_sb_info *sbi;
 > -	unsigned long blocknr;
-> -	int size = 0, i;
-> -	int silent = fc->sb_flags & SB_SILENT;
-> -	
-> -	BUILD_BUG_ON(1024 != sizeof (struct xenix_super_block));
-> -	BUILD_BUG_ON(512 != sizeof (struct sysv4_super_block));
-> -	BUILD_BUG_ON(512 != sizeof (struct sysv2_super_block));
-> -	BUILD_BUG_ON(500 != sizeof (struct coh_super_block));
-> -	BUILD_BUG_ON(64 != sizeof (struct sysv_inode));
+> -	int size =3D 0, i;
+> -	int silent =3D fc->sb_flags & SB_SILENT;
+> -=09
+> -	BUILD_BUG_ON(1024 !=3D sizeof (struct xenix_super_block));
+> -	BUILD_BUG_ON(512 !=3D sizeof (struct sysv4_super_block));
+> -	BUILD_BUG_ON(512 !=3D sizeof (struct sysv2_super_block));
+> -	BUILD_BUG_ON(500 !=3D sizeof (struct coh_super_block));
+> -	BUILD_BUG_ON(64 !=3D sizeof (struct sysv_inode));
 > -
-> -	sbi = kzalloc(sizeof(struct sysv_sb_info), GFP_KERNEL);
+> -	sbi =3D kzalloc(sizeof(struct sysv_sb_info), GFP_KERNEL);
 > -	if (!sbi)
 > -		return -ENOMEM;
 > -
-> -	sbi->s_sb = sb;
-> -	sbi->s_block_base = 0;
+> -	sbi->s_sb =3D sb;
+> -	sbi->s_block_base =3D 0;
 > -	mutex_init(&sbi->s_lock);
-> -	sb->s_fs_info = sbi;
-> -	sb->s_time_min = 0;
-> -	sb->s_time_max = U32_MAX;
+> -	sb->s_fs_info =3D sbi;
+> -	sb->s_time_min =3D 0;
+> -	sb->s_time_max =3D U32_MAX;
 > -	sb_set_blocksize(sb, BLOCK_SIZE);
 > -
-> -	for (i = 0; i < ARRAY_SIZE(flavours) && !size; i++) {
+> -	for (i =3D 0; i < ARRAY_SIZE(flavours) && !size; i++) {
 > -		brelse(bh);
-> -		bh = sb_bread(sb, flavours[i].block);
+> -		bh =3D sb_bread(sb, flavours[i].block);
 > -		if (!bh)
 > -			continue;
-> -		size = flavours[i].test(SYSV_SB(sb), bh);
+> -		size =3D flavours[i].test(SYSV_SB(sb), bh);
 > -	}
 > -
 > -	if (!size)
@@ -3252,28 +3419,28 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -	switch (size) {
 > -		case 1:
-> -			blocknr = bh->b_blocknr << 1;
+> -			blocknr =3D bh->b_blocknr << 1;
 > -			brelse(bh);
 > -			sb_set_blocksize(sb, 512);
-> -			bh1 = sb_bread(sb, blocknr);
-> -			bh = sb_bread(sb, blocknr + 1);
+> -			bh1 =3D sb_bread(sb, blocknr);
+> -			bh =3D sb_bread(sb, blocknr + 1);
 > -			break;
 > -		case 2:
-> -			bh1 = bh;
+> -			bh1 =3D bh;
 > -			break;
 > -		case 3:
-> -			blocknr = bh->b_blocknr >> 1;
+> -			blocknr =3D bh->b_blocknr >> 1;
 > -			brelse(bh);
 > -			sb_set_blocksize(sb, 2048);
-> -			bh1 = bh = sb_bread(sb, blocknr);
+> -			bh1 =3D bh =3D sb_bread(sb, blocknr);
 > -			break;
 > -		default:
 > -			goto Ebadsize;
 > -	}
 > -
 > -	if (bh && bh1) {
-> -		sbi->s_bh1 = bh1;
-> -		sbi->s_bh2 = bh;
+> -		sbi->s_bh1 =3D bh1;
+> -		sbi->s_bh2 =3D bh;
 > -		if (complete_read_super(sb, silent, size))
 > -			return 0;
 > -	}
@@ -3300,17 +3467,18 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	goto failed;
 > -}
 > -
-> -static int v7_sanity_check(struct super_block *sb, struct buffer_head *bh)
+> -static int v7_sanity_check(struct super_block *sb, struct buffer_head *b=
+h)
 > -{
 > -	struct v7_super_block *v7sb;
 > -	struct sysv_inode *v7i;
 > -	struct buffer_head *bh2;
 > -	struct sysv_sb_info *sbi;
 > -
-> -	sbi = sb->s_fs_info;
+> -	sbi =3D sb->s_fs_info;
 > -
 > -	/* plausibility check on superblock */
-> -	v7sb = (struct v7_super_block *) bh->b_data;
+> -	v7sb =3D (struct v7_super_block *) bh->b_data;
 > -	if (fs16_to_cpu(sbi, v7sb->s_nfree) > V7_NICFREE ||
 > -	    fs16_to_cpu(sbi, v7sb->s_ninode) > V7_NICINOD ||
 > -	    fs32_to_cpu(sbi, v7sb->s_fsize) > V7_MAXSIZE)
@@ -3318,13 +3486,13 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -	/* plausibility check on root inode: it is a directory,
 > -	   with a nonzero size that is a multiple of 16 */
-> -	bh2 = sb_bread(sb, 2);
-> -	if (bh2 == NULL)
+> -	bh2 =3D sb_bread(sb, 2);
+> -	if (bh2 =3D=3D NULL)
 > -		return 0;
 > -
-> -	v7i = (struct sysv_inode *)(bh2->b_data + 64);
-> -	if ((fs16_to_cpu(sbi, v7i->i_mode) & ~0777) != S_IFDIR ||
-> -	    (fs32_to_cpu(sbi, v7i->i_size) == 0) ||
+> -	v7i =3D (struct sysv_inode *)(bh2->b_data + 64);
+> -	if ((fs16_to_cpu(sbi, v7i->i_mode) & ~0777) !=3D S_IFDIR ||
+> -	    (fs32_to_cpu(sbi, v7i->i_size) =3D=3D 0) ||
 > -	    (fs32_to_cpu(sbi, v7i->i_size) & 017) ||
 > -	    (fs32_to_cpu(sbi, v7i->i_size) > V7_NFILES *
 > -	     sizeof(struct sysv_dir_entry))) {
@@ -3340,26 +3508,26 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -{
 > -	struct sysv_sb_info *sbi;
 > -	struct buffer_head *bh;
-> -	int silent = fc->sb_flags & SB_SILENT;
+> -	int silent =3D fc->sb_flags & SB_SILENT;
 > -
-> -	BUILD_BUG_ON(sizeof(struct v7_super_block) != 440);
-> -	BUILD_BUG_ON(sizeof(struct sysv_inode) != 64);
+> -	BUILD_BUG_ON(sizeof(struct v7_super_block) !=3D 440);
+> -	BUILD_BUG_ON(sizeof(struct sysv_inode) !=3D 64);
 > -
-> -	sbi = kzalloc(sizeof(struct sysv_sb_info), GFP_KERNEL);
+> -	sbi =3D kzalloc(sizeof(struct sysv_sb_info), GFP_KERNEL);
 > -	if (!sbi)
 > -		return -ENOMEM;
 > -
-> -	sbi->s_sb = sb;
-> -	sbi->s_block_base = 0;
-> -	sbi->s_type = FSTYPE_V7;
+> -	sbi->s_sb =3D sb;
+> -	sbi->s_block_base =3D 0;
+> -	sbi->s_type =3D FSTYPE_V7;
 > -	mutex_init(&sbi->s_lock);
-> -	sb->s_fs_info = sbi;
-> -	sb->s_time_min = 0;
-> -	sb->s_time_max = U32_MAX;
-> -	
+> -	sb->s_fs_info =3D sbi;
+> -	sb->s_time_min =3D 0;
+> -	sb->s_time_max =3D U32_MAX;
+> -=09
 > -	sb_set_blocksize(sb, 512);
 > -
-> -	if ((bh = sb_bread(sb, 1)) == NULL) {
+> -	if ((bh =3D sb_bread(sb, 1)) =3D=3D NULL) {
 > -		if (!silent)
 > -			printk("VFS: unable to read V7 FS superblock on "
 > -			       "device %s.\n", sb->s_id);
@@ -3367,20 +3535,20 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	}
 > -
 > -	/* Try PDP-11 UNIX */
-> -	sbi->s_bytesex = BYTESEX_PDP;
+> -	sbi->s_bytesex =3D BYTESEX_PDP;
 > -	if (v7_sanity_check(sb, bh))
 > -		goto detected;
 > -
 > -	/* Try PC/IX, v7/x86 */
-> -	sbi->s_bytesex = BYTESEX_LE;
+> -	sbi->s_bytesex =3D BYTESEX_LE;
 > -	if (v7_sanity_check(sb, bh))
 > -		goto detected;
 > -
 > -	goto failed;
 > -
 > -detected:
-> -	sbi->s_bh1 = bh;
-> -	sbi->s_bh2 = bh;
+> -	sbi->s_bh1 =3D bh;
+> -	sbi->s_bh2 =3D bh;
 > -	if (complete_read_super(sb, silent, 1))
 > -		return 0;
 > -
@@ -3404,41 +3572,41 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	return get_tree_bdev(fc, v7_fill_super);
 > -}
 > -
-> -static const struct fs_context_operations sysv_context_ops = {
-> -	.get_tree	= sysv_get_tree,
+> -static const struct fs_context_operations sysv_context_ops =3D {
+> -	.get_tree	=3D sysv_get_tree,
 > -};
 > -
-> -static const struct fs_context_operations v7_context_ops = {
-> -	.get_tree	= v7_get_tree,
+> -static const struct fs_context_operations v7_context_ops =3D {
+> -	.get_tree	=3D v7_get_tree,
 > -};
 > -
 > -static int sysv_init_fs_context(struct fs_context *fc)
 > -{
-> -	fc->ops = &sysv_context_ops;
+> -	fc->ops =3D &sysv_context_ops;
 > -	return 0;
 > -}
 > -
 > -static int v7_init_fs_context(struct fs_context *fc)
 > -{
-> -	fc->ops = &v7_context_ops;
+> -	fc->ops =3D &v7_context_ops;
 > -	return 0;
 > -}
 > -
-> -static struct file_system_type sysv_fs_type = {
-> -	.owner			= THIS_MODULE,
-> -	.name			= "sysv",
-> -	.kill_sb		= kill_block_super,
-> -	.fs_flags		= FS_REQUIRES_DEV,
-> -	.init_fs_context	= sysv_init_fs_context,
+> -static struct file_system_type sysv_fs_type =3D {
+> -	.owner			=3D THIS_MODULE,
+> -	.name			=3D "sysv",
+> -	.kill_sb		=3D kill_block_super,
+> -	.fs_flags		=3D FS_REQUIRES_DEV,
+> -	.init_fs_context	=3D sysv_init_fs_context,
 > -};
 > -MODULE_ALIAS_FS("sysv");
 > -
-> -static struct file_system_type v7_fs_type = {
-> -	.owner			= THIS_MODULE,
-> -	.name			= "v7",
-> -	.kill_sb		= kill_block_super,
-> -	.fs_flags		= FS_REQUIRES_DEV,
-> -	.init_fs_context	= v7_init_fs_context,
+> -static struct file_system_type v7_fs_type =3D {
+> -	.owner			=3D THIS_MODULE,
+> -	.name			=3D "v7",
+> -	.kill_sb		=3D kill_block_super,
+> -	.fs_flags		=3D FS_REQUIRES_DEV,
+> -	.init_fs_context	=3D v7_init_fs_context,
 > -};
 > -MODULE_ALIAS_FS("v7");
 > -MODULE_ALIAS("v7");
@@ -3447,13 +3615,13 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -{
 > -	int error;
 > -
-> -	error = sysv_init_icache();
+> -	error =3D sysv_init_icache();
 > -	if (error)
 > -		goto out;
-> -	error = register_filesystem(&sysv_fs_type);
+> -	error =3D register_filesystem(&sysv_fs_type);
 > -	if (error)
 > -		goto destroy_icache;
-> -	error = register_filesystem(&v7_fs_type);
+> -	error =3D register_filesystem(&v7_fs_type);
 > -	if (error)
 > -		goto unregister;
 > -	return 0;
@@ -3497,10 +3665,14 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -/*
 > - * SystemV/V7/Coherent super-block data in memory
 > - *
-> - * The SystemV/V7/Coherent superblock contains dynamic data (it gets modified
-> - * while the system is running). This is in contrast to the Minix and Berkeley
-> - * filesystems (where the superblock is never modified). This affects the
-> - * sync() operation: we must keep the superblock in a disk buffer and use this
+> - * The SystemV/V7/Coherent superblock contains dynamic data (it gets mod=
+ified
+> - * while the system is running). This is in contrast to the Minix and Be=
+rkeley
+> - * filesystems (where the superblock is never modified). This affects th=
+e
+> - * sync() operation: we must keep the superblock in a disk buffer and us=
+e this
 > - * one as our "working copy".
 > - */
 > -
@@ -3527,12 +3699,14 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	char *         s_sbd2;		/* entire superblock data, for part 2 */
 > -	__fs16         *s_sb_fic_count;	/* pointer to s_sbd->s_ninode */
 > -        sysv_ino_t     *s_sb_fic_inodes; /* pointer to s_sbd->s_inode */
-> -	__fs16         *s_sb_total_free_inodes; /* pointer to s_sbd->s_tinode */
+> -	__fs16         *s_sb_total_free_inodes; /* pointer to s_sbd->s_tinode *=
+/
 > -	__fs16         *s_bcache_count;	/* pointer to s_sbd->s_nfree */
 > -	sysv_zone_t    *s_bcache;	/* pointer to s_sbd->s_free */
 > -	__fs32         *s_free_blocks;	/* pointer to s_sbd->s_tfree */
 > -	__fs32         *s_sb_time;	/* pointer to s_sbd->s_time */
-> -	__fs32         *s_sb_state;	/* pointer to s_sbd->s_state, only FSTYPE_SYSV */
+> -	__fs32         *s_sb_state;	/* pointer to s_sbd->s_state, only FSTYPE_S=
+YSV */
 > -	/* We keep those superblock entities that don't change here;
 > -	   this saves us an indirection and perhaps a conversion. */
 > -	u32            s_firstinodezone; /* index of first inode zone */
@@ -3568,7 +3742,7 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -/* identify the FS in memory */
 > -enum {
-> -	FSTYPE_NONE = 0,
+> -	FSTYPE_NONE =3D 0,
 > -	FSTYPE_XENIX,
 > -	FSTYPE_SYSV4,
 > -	FSTYPE_SYSV2,
@@ -3588,19 +3762,19 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -/* Admissible values for i_nlink: 0.._LINK_MAX */
 > -enum {
-> -	XENIX_LINK_MAX	=	126,	/* ?? */
-> -	SYSV_LINK_MAX	=	126,	/* 127? 251? */
-> -	V7_LINK_MAX     =	126,	/* ?? */
-> -	COH_LINK_MAX	=	10000,
+> -	XENIX_LINK_MAX	=3D	126,	/* ?? */
+> -	SYSV_LINK_MAX	=3D	126,	/* 127? 251? */
+> -	V7_LINK_MAX     =3D	126,	/* ?? */
+> -	COH_LINK_MAX	=3D	10000,
 > -};
 > -
 > -
 > -static inline void dirty_sb(struct super_block *sb)
 > -{
-> -	struct sysv_sb_info *sbi = SYSV_SB(sb);
+> -	struct sysv_sb_info *sbi =3D SYSV_SB(sb);
 > -
 > -	mark_buffer_dirty(sbi->s_bh1);
-> -	if (sbi->s_bh1 != sbi->s_bh2)
+> -	if (sbi->s_bh1 !=3D sbi->s_bh2)
 > -		mark_buffer_dirty(sbi->s_bh2);
 > -}
 > -
@@ -3623,7 +3797,8 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -/* inode.c */
 > -extern struct inode *sysv_iget(struct super_block *, unsigned int);
-> -extern int sysv_write_inode(struct inode *, struct writeback_control *wbc);
+> -extern int sysv_write_inode(struct inode *, struct writeback_control *wb=
+c);
 > -extern int sysv_sync_inode(struct inode *);
 > -extern void sysv_set_inode(struct inode *, dev_t);
 > -extern int sysv_getattr(struct mnt_idmap *, const struct path *,
@@ -3633,7 +3808,8 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -
 > -/* dir.c */
-> -struct sysv_dir_entry *sysv_find_entry(struct dentry *, struct folio **);
+> -struct sysv_dir_entry *sysv_find_entry(struct dentry *, struct folio **)=
+;
 > -int sysv_add_link(struct dentry *, struct inode *);
 > -int sysv_delete_entry(struct sysv_dir_entry *, struct folio *);
 > -int sysv_make_empty(struct inode *, struct inode *);
@@ -3673,9 +3849,9 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -static inline __u32 fs32_to_cpu(struct sysv_sb_info *sbi, __fs32 n)
 > -{
-> -	if (sbi->s_bytesex == BYTESEX_PDP)
+> -	if (sbi->s_bytesex =3D=3D BYTESEX_PDP)
 > -		return PDP_swab((__force __u32)n);
-> -	else if (sbi->s_bytesex == BYTESEX_LE)
+> -	else if (sbi->s_bytesex =3D=3D BYTESEX_LE)
 > -		return le32_to_cpu((__force __le32)n);
 > -	else
 > -		return be32_to_cpu((__force __be32)n);
@@ -3683,19 +3859,20 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -static inline __fs32 cpu_to_fs32(struct sysv_sb_info *sbi, __u32 n)
 > -{
-> -	if (sbi->s_bytesex == BYTESEX_PDP)
+> -	if (sbi->s_bytesex =3D=3D BYTESEX_PDP)
 > -		return (__force __fs32)PDP_swab(n);
-> -	else if (sbi->s_bytesex == BYTESEX_LE)
+> -	else if (sbi->s_bytesex =3D=3D BYTESEX_LE)
 > -		return (__force __fs32)cpu_to_le32(n);
 > -	else
 > -		return (__force __fs32)cpu_to_be32(n);
 > -}
 > -
-> -static inline __fs32 fs32_add(struct sysv_sb_info *sbi, __fs32 *n, int d)
+> -static inline __fs32 fs32_add(struct sysv_sb_info *sbi, __fs32 *n, int d=
+)
 > -{
-> -	if (sbi->s_bytesex == BYTESEX_PDP)
-> -		*(__u32*)n = PDP_swab(PDP_swab(*(__u32*)n)+d);
-> -	else if (sbi->s_bytesex == BYTESEX_LE)
+> -	if (sbi->s_bytesex =3D=3D BYTESEX_PDP)
+> -		*(__u32*)n =3D PDP_swab(PDP_swab(*(__u32*)n)+d);
+> -	else if (sbi->s_bytesex =3D=3D BYTESEX_LE)
 > -		le32_add_cpu((__le32 *)n, d);
 > -	else
 > -		be32_add_cpu((__be32 *)n, d);
@@ -3704,7 +3881,7 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -static inline __u16 fs16_to_cpu(struct sysv_sb_info *sbi, __fs16 n)
 > -{
-> -	if (sbi->s_bytesex != BYTESEX_BE)
+> -	if (sbi->s_bytesex !=3D BYTESEX_BE)
 > -		return le16_to_cpu((__force __le16)n);
 > -	else
 > -		return be16_to_cpu((__force __be16)n);
@@ -3712,15 +3889,16 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -static inline __fs16 cpu_to_fs16(struct sysv_sb_info *sbi, __u16 n)
 > -{
-> -	if (sbi->s_bytesex != BYTESEX_BE)
+> -	if (sbi->s_bytesex !=3D BYTESEX_BE)
 > -		return (__force __fs16)cpu_to_le16(n);
 > -	else
 > -		return (__force __fs16)cpu_to_be16(n);
 > -}
 > -
-> -static inline __fs16 fs16_add(struct sysv_sb_info *sbi, __fs16 *n, int d)
+> -static inline __fs16 fs16_add(struct sysv_sb_info *sbi, __fs16 *n, int d=
+)
 > -{
-> -	if (sbi->s_bytesex != BYTESEX_BE)
+> -	if (sbi->s_bytesex !=3D BYTESEX_BE)
 > -		le16_add_cpu((__le16 *)n, d);
 > -	else
 > -		be16_add_cpu((__be16 *)n, d);
@@ -3766,10 +3944,12 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	__fs16		s_isize; /* index of first data zone */
 > -	__fs32		s_fsize __packed2__; /* total number of zones of this fs */
 > -	/* the start of the free block list: */
-> -	__fs16		s_nfree;	/* number of free blocks in s_free, <= XENIX_NICFREE */
+> -	__fs16		s_nfree;	/* number of free blocks in s_free, <=3D XENIX_NICFREE=
+ */
 > -	sysv_zone_t	s_free[XENIX_NICFREE]; /* first free block list chunk */
 > -	/* the cache of free inodes: */
-> -	__fs16		s_ninode; /* number of free inodes in s_inode, <= XENIX_NICINOD */
+> -	__fs16		s_ninode; /* number of free inodes in s_inode, <=3D XENIX_NICIN=
+OD */
 > -	sysv_ino_t	s_inode[XENIX_NICINOD]; /* some free inodes */
 > -	/* locks, not used by Linux: */
 > -	char		s_flock;	/* lock during free block list manipulation */
@@ -3788,13 +3968,15 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	__fs32		s_type;		/* type of file system: 1 for 512 byte blocks
 > -								2 for 1024 byte blocks
 > -								3 for 2048 byte blocks */
-> -								
+> -							=09
 > -};
 > -
 > -/*
 > - * SystemV FS comes in two variants:
-> - * sysv2: System V Release 2 (e.g. Microport), structure elements aligned(2).
-> - * sysv4: System V Release 4 (e.g. Consensys), structure elements aligned(4).
+> - * sysv2: System V Release 2 (e.g. Microport), structure elements aligne=
+d(2).
+> - * sysv4: System V Release 4 (e.g. Consensys), structure elements aligne=
+d(4).
 > - */
 > -#define SYSV_NICINOD	100	/* number of inode cache entries */
 > -#define SYSV_NICFREE	50	/* number of free block list chunk entries */
@@ -3805,11 +3987,13 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	u16	s_pad0;
 > -	__fs32	s_fsize;	/* total number of zones of this fs */
 > -	/* the start of the free block list: */
-> -	__fs16	s_nfree;	/* number of free blocks in s_free, <= SYSV_NICFREE */
+> -	__fs16	s_nfree;	/* number of free blocks in s_free, <=3D SYSV_NICFREE *=
+/
 > -	u16	s_pad1;
 > -	sysv_zone_t	s_free[SYSV_NICFREE]; /* first free block list chunk */
 > -	/* the cache of free inodes: */
-> -	__fs16	s_ninode;	/* number of free inodes in s_inode, <= SYSV_NICINOD */
+> -	__fs16	s_ninode;	/* number of free inodes in s_inode, <=3D SYSV_NICINOD=
+ */
 > -	u16	s_pad2;
 > -	sysv_ino_t     s_inode[SYSV_NICINOD]; /* some free inodes */
 > -	/* locks, not used by Linux: */
@@ -3836,10 +4020,12 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	__fs16	s_isize; 		/* index of first data zone */
 > -	__fs32	s_fsize __packed2__;	/* total number of zones of this fs */
 > -	/* the start of the free block list: */
-> -	__fs16	s_nfree;		/* number of free blocks in s_free, <= SYSV_NICFREE */
+> -	__fs16	s_nfree;		/* number of free blocks in s_free, <=3D SYSV_NICFREE =
+*/
 > -	sysv_zone_t s_free[SYSV_NICFREE];	/* first free block list chunk */
 > -	/* the cache of free inodes: */
-> -	__fs16	s_ninode;		/* number of free inodes in s_inode, <= SYSV_NICINOD */
+> -	__fs16	s_ninode;		/* number of free inodes in s_inode, <=3D SYSV_NICINO=
+D */
 > -	sysv_ino_t     s_inode[SYSV_NICINOD]; /* some free inodes */
 > -	/* locks, not used by Linux: */
 > -	char	s_flock;		/* lock during free block list manipulation */
@@ -3861,15 +4047,18 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -
 > -/* V7 super-block data on disk */
 > -#define V7_NICINOD     100     /* number of inode cache entries */
-> -#define V7_NICFREE     50      /* number of free block list chunk entries */
+> -#define V7_NICFREE     50      /* number of free block list chunk entrie=
+s */
 > -struct v7_super_block {
 > -	__fs16 s_isize;        /* index of first data zone */
 > -	__fs32 s_fsize __packed2__; /* total number of zones of this fs */
 > -	/* the start of the free block list: */
-> -	__fs16 s_nfree;        /* number of free blocks in s_free, <= V7_NICFREE */
+> -	__fs16 s_nfree;        /* number of free blocks in s_free, <=3D V7_NICF=
+REE */
 > -	sysv_zone_t s_free[V7_NICFREE]; /* first free block list chunk */
 > -	/* the cache of free inodes: */
-> -	__fs16 s_ninode;       /* number of free inodes in s_inode, <= V7_NICINOD */
+> -	__fs16 s_ninode;       /* number of free inodes in s_inode, <=3D V7_NIC=
+INOD */
 > -	sysv_ino_t      s_inode[V7_NICINOD]; /* some free inodes */
 > -	/* locks, not used by Linux or V7: */
 > -	char    s_flock;        /* lock during free block list manipulation */
@@ -3886,14 +4075,18 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	char    s_fpack[6];     /* file system pack name */
 > -};
 > -/* Constants to aid sanity checking */
-> -/* This is not a hard limit, nor enforced by v7 kernel. It's actually just
-> - * the limit used by Seventh Edition's ls, though is high enough to assume
+> -/* This is not a hard limit, nor enforced by v7 kernel. It's actually ju=
+st
+> - * the limit used by Seventh Edition's ls, though is high enough to assu=
+me
 > - * that no reasonable file system would have that much entries in root
 > - * directory. Thus, if we see anything higher, we just probably got the
 > - * endiannes wrong. */
 > -#define V7_NFILES	1024
-> -/* The disk addresses are three-byte (despite direct block addresses being
-> - * aligned word-wise in inode). If the most significant byte is non-zero,
+> -/* The disk addresses are three-byte (despite direct block addresses bei=
+ng
+> - * aligned word-wise in inode). If the most significant byte is non-zero=
+,
 > - * something is most likely wrong (not a filesystem, bad bytesex). */
 > -#define V7_MAXSIZE	0x00ffffff
 > -
@@ -3904,10 +4097,12 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	__fs16		s_isize;	/* index of first data zone */
 > -	__fs32		s_fsize __packed2__; /* total number of zones of this fs */
 > -	/* the start of the free block list: */
-> -	__fs16 s_nfree;	/* number of free blocks in s_free, <= COH_NICFREE */
-> -	sysv_zone_t	s_free[COH_NICFREE] __packed2__; /* first free block list chunk */
+> -	__fs16 s_nfree;	/* number of free blocks in s_free, <=3D COH_NICFREE */
+> -	sysv_zone_t	s_free[COH_NICFREE] __packed2__; /* first free block list c=
+hunk */
 > -	/* the cache of free inodes: */
-> -	__fs16		s_ninode;	/* number of free inodes in s_inode, <= COH_NICINOD */
+> -	__fs16		s_ninode;	/* number of free inodes in s_inode, <=3D COH_NICINOD=
+ */
 > -	sysv_ino_t	s_inode[COH_NICINOD]; /* some free inodes */
 > -	/* locks, not used by Linux: */
 > -	char		s_flock;	/* lock during free block list manipulation */
@@ -3945,11 +4140,10 @@ Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > -	char name[SYSV_NAMELEN]; /* up to 14 characters, the rest are zeroes */
 > -};
 > -
-> -#define SYSV_DIRSIZE	sizeof(struct sysv_dir_entry)	/* size of every directory entry */
+> -#define SYSV_DIRSIZE	sizeof(struct sysv_dir_entry)	/* size of every dire=
+ctory entry */
 > -
 > -#endif /* _LINUX_SYSV_FS_H */
-> -- 
-> 2.43.0
-> 
-> 
+
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
