@@ -1,205 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-42159-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1468EA3D5EE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 11:06:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFCA6A3D6A6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 11:29:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17A8E3B3275
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 10:04:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B03B83A9403
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2025 10:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3BD1F0E36;
-	Thu, 20 Feb 2025 10:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C901F460E;
+	Thu, 20 Feb 2025 10:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YVWLK81k"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="e4iYBKC3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52DF1DF992
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2025 10:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129B61F4179
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2025 10:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740045786; cv=none; b=jSAFSI0S6xRc+m6JpuTZ2hQE2ZYIDAQT2ru+Whj4DDE6SUMKctAVizj4kYQ75fyxLM2lT5H8E+9mkRDpm/DxHTwxyZgNWF34X8/Vh5KeibRkt0nEQtY+CkpYJkLdgfZYeEyArkra1bkXEWph7pbrDe4FAQbPFw4RXoeGpKeKPic=
+	t=1740047200; cv=none; b=A4SgyUbUnr/P2wY3Dl2jjW+x8YpVH5ZfbOfDFoVES9Zx+bic27M6K44g+FocrcfO8Nrp2WPtOrKo1BdziiafPoHzq66mKoduqbaZytn1Sw16GdIgEgOm5QVvv1j5hEwe5SvdUuvX2Iy8r6v5Im06SYYQeLaPsEHKlx1jcZ30/BY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740045786; c=relaxed/simple;
-	bh=7Aa6YbpJV/pKr4kxG/ZXxIrbU1omEZhw54M+CwpbMlg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UkoiTO/J4iOsspxjeW128Uwr1NKo3I6/AEQU+n5RVah/EZiJYkba1I5PJWWfVOPJDTpGVbSApFlJE/AbYbd4au4a1GBhaCkdc96lVFM2SlzadhqQsJKsIbrC4qUxlSYULFbrEyKcIgeypNrpgnOeUk/ahT1Kng8cwF2bvaPq0Aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YVWLK81k; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740045783;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Tq0hZ4lEIrdvA6GwChX28vUIODXEG+xntzHlIRKfzUc=;
-	b=YVWLK81kCXUD8nLIXtDCs4Ztq6MKCgA+ILSZjuxgE7URpDC7RvgyX0EbDAsQ93sL7+p5JS
-	g5sEv5FMz5fGIay7ApYJXKLFxc3T68WUimx8WwThlL6ZdY7JX0gLbBC5sFqyyuZQOFzATb
-	IByfaSfWCShr//q8QlpwhJzefK7xljQ=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-172-gGU0YgxbPsiR7w5cQScryQ-1; Thu, 20 Feb 2025 05:03:02 -0500
-X-MC-Unique: gGU0YgxbPsiR7w5cQScryQ-1
-X-Mimecast-MFC-AGG-ID: gGU0YgxbPsiR7w5cQScryQ_1740045781
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-abbaa560224so78891766b.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2025 02:03:02 -0800 (PST)
+	s=arc-20240116; t=1740047200; c=relaxed/simple;
+	bh=V6Edk5zgRNMwf0KPujPbDopnlgY19hikcQGsos6MIjs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XJpy/AijRNMs/pUuvrav9/0UoGbV2iG7zrxEpVUKdDdYbDCL3TkPhgG+krYAYqJtNvWHDFfBiQRWcCZGZGLbg1Q472Pxwc6gWpbSYcPBovdvJOghwqL+iL50ldoxiVDFnElgWnloxLBLJzjC4dxsoP+MvW/WWqaF0qm3HYmhPYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=e4iYBKC3; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-471fabc5bf5so4207741cf.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2025 02:26:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1740047197; x=1740651997; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dQN0odTWLISUqAvDr2uAPDyL9eSldyN/znrIQtakkls=;
+        b=e4iYBKC3OnhKqaB7cN20LrITrFWXV52bE45XqnUx4rIjHrRv9RX9aeYH8Vkn5LRSmv
+         wZ8jLBtC2O75RXoA+Qsw31mCQkBz1bnDFuFdd5SgUJQ31ku0F4A/I6eRAHFJiEVPq+vU
+         WwW1bsmkogjPXRwN5Kh57rJ3twpFmoq1ok/8s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740045781; x=1740650581;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1740047197; x=1740651997;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Tq0hZ4lEIrdvA6GwChX28vUIODXEG+xntzHlIRKfzUc=;
-        b=E+Qorzo225oTuj+MzI289NnObbwWxe32MsN0joMYbbWAWiBy18E99YN4Y9ftNqDnxc
-         uLKbFFU/mBVIoVcy7DWXiFb2XgczzFMemS9wmR1AqgrO2G2mVjhUf6FlX+zJNg25btl5
-         ipclQrNVB6TGn1P7WnpoTJgh9S28Ui35KgH3Uidg0g1U4NQ+/hLvwyeGAsgxOuqsic8B
-         PGJgBMHS2g0Y/bTpGnf4x0Rz3+M2Zp28utffsMDV521616Kxt6Usz25vHyYlurFFyH5r
-         6aAD7kPGoGatuOvjLwP/8qO3TbkqTI2YQo8hz76dyTyoIkAUCd1DAHWEVfUvDu+PCoV+
-         OE7w==
-X-Gm-Message-State: AOJu0YxQjQ+OBizqMpjNxXgvcIA5AX7lTqJ/o94dxyEKI/BX3Y59KMoZ
-	X0pnNw3qhVxCQWxV/XeWABezg4Uzb0p8Bgx5n8q3VIg+rtoLtKVxYsi3v7BtawE398WN3G2GY7h
-	qe3aB8nCRmTCOzkG9D2H/Wy0wGS9q3oajFZvQE5d13K2ztzmnBlRl0Tbogrno9tWe1/DYJgn921
-	is1sLxx5lZB/3W2zd0Y2B4ibSEv/V6BJYsOrz/FQfLaRzH6/4few==
-X-Gm-Gg: ASbGnct6t0Cn3xehr9c7pRbvVFJo9vTvxhQ6tezjbSgspy7atzhXKHSicvqwg4CUXTK
-	CWJ2Ww1pmiL38kSAgyIn8y+Xps/dXlLT/g4WBo9dHcZa1kaAQHVzNBqGS1YwBILg6Ft889p24rO
-	gos7zH78e1kwErlKtc0Ejgd1ZRhgzdlAMcMMiFtUdt4PMdp6DYIipikv5+TWWrJn7qQya/2Soia
-	wSimyW2z4ZqB4mhsT2LvJh2I/UmiyQzeJYkzCiMEYZsYzP2y9ViFUYl2tdyO/OWnovSCZ2l83V/
-	zUbfucbsNtxnT5GfU5SJMYspGMiMLSN5rgqUgD1TtzzJePvm+LkB1t0N
-X-Received: by 2002:a17:906:adce:b0:abb:b422:a487 with SMTP id a640c23a62f3a-abbb422a5a5mr819899166b.19.1740045780701;
-        Thu, 20 Feb 2025 02:03:00 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEThA6I6Fle1ztM2p7nj++dOpIO5TOZL+Riutbyg1szwRyIvsnL33P6Ta7bXAadO6aAnWuJhg==
-X-Received: by 2002:a17:906:adce:b0:abb:b422:a487 with SMTP id a640c23a62f3a-abbb422a5a5mr819896966b.19.1740045780225;
-        Thu, 20 Feb 2025 02:03:00 -0800 (PST)
-Received: from maszat.piliscsaba.szeredi.hu (84-236-99-89.pool.digikabel.hu. [84.236.99.89])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb7200144fsm1034570166b.184.2025.02.20.02.02.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 02:02:59 -0800 (PST)
-From: Miklos Szeredi <mszeredi@redhat.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Bernd Schubert <bernd.schubert@fastmail.fm>,
-	Laura Promberger <laura.promberger@cern.ch>,
-	Sam Lewis <samclewis@google.com>
-Subject: [PATCH] fuse: don't truncate cached, mutated symlink
-Date: Thu, 20 Feb 2025 11:02:58 +0100
-Message-ID: <20250220100258.793363-1-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.48.1
+        bh=dQN0odTWLISUqAvDr2uAPDyL9eSldyN/znrIQtakkls=;
+        b=bwy0Tfdr4+IkyOR/uVu+XT4r6yCrWl5q1jhgr+g99hNdO2KHVqZtwVqmoIa1KB2K2C
+         RE6VBs828TawroX8UwbUsWoNU7SRLrseiPdwhGT2RlN8yar/y19++BMMMj9MoZWUy/BV
+         Nefzcik3FEhjYLneCHam4lsntXInwGaBzPZJdmnmJRzQmDPsu9UDYkLsc0i4w1X99LoS
+         c5aQOq1DMvQLpMm63YEFi+OTk0WCVsIIN2rhNdYUoNJWjGIU/i1Gk/oIjZqhEvtoJZSL
+         0tGWBLxSP7sYDO0Jn/TcSyQhuzddIDutm2XPPvEtGQ/d/K/qsomQ89DQ3inK3o9WEhSg
+         rTWA==
+X-Forwarded-Encrypted: i=1; AJvYcCVw2gNIRD/T7qT5i4hllKBOSTjm7D8qucm2DmHCilYb5ThmPPNZhW64YNaex1BucYqfHkHSKm6Rb33qXSYO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+7UHHwTduJZmQd9BRp2ZtRrGhNSxbQnNgcKJQcMRWW1JBMIR8
+	O8s8B2v0IBzwviRPlNMTk9+X4BdthLujoeplK0JpkXemY2/1hqRwMjZWpNnCbXWi8N0qNIVFJ7m
+	93XM0LmDPlJAyzrjV7VtBcnlp1JFcj7cfaPB6+g==
+X-Gm-Gg: ASbGncsQ3zdmy5OrWURDKYREAaY7y4ta779nB5AztiHFWKHYxvu3qW7GPDT9oUQT8ok
+	sW1x0eItNQ2UjlaSEPsHMu89ZgPrE9UJz/OIesRDGTvfqMDd0lcUKdSVWP+rLM0PrI4r/m+Y=
+X-Google-Smtp-Source: AGHT+IGRJPZMq9+Zsh04s2Bfc6SWMbuE4boAj+L9wxLBUA+rIxj2TODkRKrofCJjtslUaLNUdm768xTw5oFKjTnOaDs=
+X-Received: by 2002:ac8:7c54:0:b0:471:f754:db41 with SMTP id
+ d75a77b69052e-472082b9d93mr100755021cf.34.1740047196816; Thu, 20 Feb 2025
+ 02:26:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <a8828676-210a-99e8-30d7-6076f334ed71@virtuozzo.com>
+ <CAOQ4uxgZ08ePA5WFOYFoLZaq_-Kjr-haNzBN5Aj3MfF=f9pjdg@mail.gmail.com>
+ <1bb71cbf-0a10-34c7-409d-914058e102f6@virtuozzo.com> <CAOQ4uxieqnKENV_kJYwfcnPjNdVuqH3BnKVx_zLz=N_PdAguNg@mail.gmail.com>
+ <dc696835-bbb5-ed4e-8708-bc828d415a2b@virtuozzo.com> <CAOQ4uxg0XVEEzc+HyyC63WWZuA2AsRjJmbZBuNimtj=t+quVyg@mail.gmail.com>
+ <20200922210445.GG57620@redhat.com> <CAOQ4uxg_FV8U833qVkgPaAWJ4MNcnGoy9Gci41bmak4_ROSc3g@mail.gmail.com>
+ <CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com>
+ <CAOQ4uxiJ3qxb_XNWdmQPZ3omT3fjEhoMfG=3CSKucvoJbj6JSg@mail.gmail.com> <CAOQ4uxi2w+S4yy3yiBvGpJYSqC6GOTAZQzzjygaH3TjH7Uc4+Q@mail.gmail.com>
+In-Reply-To: <CAOQ4uxi2w+S4yy3yiBvGpJYSqC6GOTAZQzzjygaH3TjH7Uc4+Q@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 20 Feb 2025 11:26:25 +0100
+X-Gm-Features: AWEUYZkhiAj_8eHp38HnBlmuSiVR3xJYCPcNMjDk-xRXxKLPfZQW0XQJDNdCBM4
+Message-ID: <CAJfpegv3ndPNZOLP2rPrVSMiomOiSJBjsBFwwrCcmfZT08PjpQ@mail.gmail.com>
+Subject: Re: LOOKUP_HANDLE and FUSE passthrough (was: Persistent FUSE file handles)
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	Hanna Reitz <hreitz@redhat.com>, Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Type: text/plain; charset="UTF-8"
 
-Fuse allows the value of a symlink to change and this property is exploited
-by some filesystems (e.g. CVMFS).
+On Wed, 19 Feb 2025 at 18:58, Amir Goldstein <amir73il@gmail.com> wrote:
 
-It has been observed, that sometimes after changing the symlink contents,
-the value is truncated to the old size.
+> I circled back to this. I don't suppose you know of any patches
+> in the works?
 
-This is caused by fuse_getattr() racing with fuse_reverse_inval_inode().
-fuse_reverse_inval_inode() updates the fuse_inode's attr_version, which
-results in fuse_change_attributes() exiting before updating the cached
-attributes
+I'm not aware of any.
 
-This is okay, as the cached attributes remain invalid and the next call to
-fuse_change_attributes() will likely update the inode with the correct
-values.
 
-The reason this causes problems is that cached symlinks will be
-returned through page_get_link(), which truncates the symlink to
-inode->i_size.  This is correct for filesystems that don't mutate
-symlinks, but in this case it causes bad behavior.
+> I was thinking about LOOKUP_HANDLE in the context of our
+> discussion at Plumbers on readdirplus passthrough.
+>
+> What we discussed is that kernel could instantiate some FUSE inodes
+> (populated during readdirplus passthrough) and at some later time,
+> kernel will notify server about those inodes via FUSE_INSTANTIATE
+> or similar command, which will instantiate a fuse server inode with
+> pre-defined nodeid.
+>
+> My thinking was to simplify a bit and require a 1-to-1 mapping
+> of kernel-server inode numbers to enable the feature of
+> FUSE_PASSTHOUGH_INODE (operations), meaning that
+> every FUSE inode has at least a potential backing inode which
+> reserves its inode number.
+>
+> But I think that 1-to-1 mapping of ino is not enough and to avoid
+> races it is better to have 1-to-1 mapping of file handles so
+> FUSE_INSTANTIATE would look a bit like LOOKUP_HANDLE
+> but "found" server inode must match the kernel's file handle.
+>
+> Is any of this making any sense to you?
 
-The solution is to just remove this truncation.  This can cause a
-regression in a filesystem that relies on supplying a symlink larger than
-the file size, but this is unlikely.  If that happens we'd need to make
-this behavior conditional.
+Not yet.  I remember you explaining why FUSE_INSTANTIATE is needed,
+but I don't really remember.
 
-Reported-by: Laura Promberger <laura.promberger@cern.ch>
-Tested-by: Sam Lewis <samclewis@google.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/fuse/dir.c      |  2 +-
- fs/namei.c         | 24 +++++++++++++++++++-----
- include/linux/fs.h |  2 ++
- 3 files changed, 22 insertions(+), 6 deletions(-)
+Can you please remind me how exactly you envision readdir/lookup passthrough?
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 589e88822368..83c56ce6ad20 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1645,7 +1645,7 @@ static const char *fuse_get_link(struct dentry *dentry, struct inode *inode,
- 		goto out_err;
- 
- 	if (fc->cache_symlinks)
--		return page_get_link(dentry, inode, callback);
-+		return page_get_link_raw(dentry, inode, callback);
- 
- 	err = -ECHILD;
- 	if (!dentry)
-diff --git a/fs/namei.c b/fs/namei.c
-index 3ab9440c5b93..ecb7b95c2ca3 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -5356,10 +5356,9 @@ const char *vfs_get_link(struct dentry *dentry, struct delayed_call *done)
- EXPORT_SYMBOL(vfs_get_link);
- 
- /* get the link contents into pagecache */
--const char *page_get_link(struct dentry *dentry, struct inode *inode,
--			  struct delayed_call *callback)
-+static char *__page_get_link(struct dentry *dentry, struct inode *inode,
-+			     struct delayed_call *callback)
- {
--	char *kaddr;
- 	struct page *page;
- 	struct address_space *mapping = inode->i_mapping;
- 
-@@ -5378,8 +5377,23 @@ const char *page_get_link(struct dentry *dentry, struct inode *inode,
- 	}
- 	set_delayed_call(callback, page_put_link, page);
- 	BUG_ON(mapping_gfp_mask(mapping) & __GFP_HIGHMEM);
--	kaddr = page_address(page);
--	nd_terminate_link(kaddr, inode->i_size, PAGE_SIZE - 1);
-+	return page_address(page);
-+}
-+
-+const char *page_get_link_raw(struct dentry *dentry, struct inode *inode,
-+			      struct delayed_call *callback)
-+{
-+	return __page_get_link(dentry, inode, callback);
-+}
-+EXPORT_SYMBOL_GPL(page_get_link_raw);
-+
-+const char *page_get_link(struct dentry *dentry, struct inode *inode,
-+					struct delayed_call *callback)
-+{
-+	char *kaddr = __page_get_link(dentry, inode, callback);
-+
-+	if (!IS_ERR(kaddr))
-+		nd_terminate_link(kaddr, inode->i_size, PAGE_SIZE - 1);
- 	return kaddr;
- }
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 2c3b2f8a621f..9346adf28f7b 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3452,6 +3452,8 @@ extern const struct file_operations generic_ro_fops;
- 
- extern int readlink_copy(char __user *, int, const char *, int);
- extern int page_readlink(struct dentry *, char __user *, int);
-+extern const char *page_get_link_raw(struct dentry *, struct inode *,
-+				     struct delayed_call *);
- extern const char *page_get_link(struct dentry *, struct inode *,
- 				 struct delayed_call *);
- extern void page_put_link(void *);
--- 
-2.48.1
-
+Thanks,
+Miklos
 
