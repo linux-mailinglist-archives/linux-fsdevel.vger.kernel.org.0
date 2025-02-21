@@ -1,69 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-42265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42266-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94134A3FB40
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 17:29:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE0A9A3FADA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 17:21:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8126E866F18
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 16:15:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A537188DFEC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 16:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AACE2206AC;
-	Fri, 21 Feb 2025 16:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEDC222563;
+	Fri, 21 Feb 2025 16:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="rd+Jqww4"
+	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="qF6YWADD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
+Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E451D79B4;
-	Fri, 21 Feb 2025 16:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B001F1535;
+	Fri, 21 Feb 2025 16:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740154240; cv=none; b=B+P+/PldU1kEY1OhHSkE6AkbbgptckHyEhYr+Qmsxi3keCPR8SXvwEDkWPULFK9ZPWoHoilnDY443vXPnhU66YWRjVNM9EvLOoVYGL0qrGddVswno+2C7R5ReYeGNfJLTHF3QWOQ19c5OZOXojIT7LrG8tTKPteV8q7EZKY00Rw=
+	t=1740154246; cv=none; b=vDvve1Vt0+iB4DhpWCO93w6K79w3EB+cKrh6HUl67hbcYJO5CiPzeM/78rhua/EoeMRUTyEkoZr8ybexO9YgPTxxIjIfTw54FqlwyK7zC9QkgLF6KAIOIgq1ok3UfC9G2yBQYsdukbag49OYxurk0ie5b+6BcXBhqZEIu5+rhRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740154240; c=relaxed/simple;
-	bh=KKe0DJ8IaCvUGP3A2reEUBMv3+LU6Z5Y42CoH8pCrDQ=;
+	s=arc-20240116; t=1740154246; c=relaxed/simple;
+	bh=haXYXj2KNnNM53EccSTxVj7puXHBh3hhQL/qUprzXn8=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P+TXwkl/KzkAEniVMA8wcskLC5ZR1Yu5lWD8Zr5OLAqfZjtptIOmA83ZEEYVvvmW7F3/icRXGtmSjbvtCw9K05+hQyct1GImT2YQle8pqSKUHCk/i5ZMUAXJUtLSORyQqgAs6cMEKJz6pVAcTk0YyVNS4vEsKsbT1oz9Q5TzsBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=rd+Jqww4; arc=none smtp.client-ip=52.119.213.154
+	 MIME-Version:Content-Type; b=UH1159z2m5bm3jqoqO+me+rjLoGt7Cr8SNr9tVdnPAs6ge9NQXALwjLMdU2Jo3pbCMQRdeqfYCae900u4osMfN+FjO7AxKl/MIy1nPx2e8kWCbuqGIHTNlFESEIo2I6ogpkXafJYOu5PkVpucFZMJ0XHHLY3TkpCuWDJAuYMxf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=qF6YWADD; arc=none smtp.client-ip=52.119.213.150
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1740154239; x=1771690239;
+  s=amazon201209; t=1740154246; x=1771690246;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=5Ov1AvdkmE8RFNxbKfIF7ZP8moMSsOr7uZcMJB7/AEA=;
-  b=rd+Jqww4Nyn/aVBZJX/U2f7bpYslaWY0Pu5ACLdAVVzC0sWXC0gklX3I
-   LD0KhEVcuACMQOINkIem5JVu0TelLiH2jXnlR9ovBTaqZfHybYIDqmVvb
-   ZZ+LbOU0CJY6ZapTUcbxdGeUqBDHxeZkEGv9vCLZKZVrcJS2H5eMT9/zI
-   Q=;
+  bh=GG+iBbH6CBZj8qfdCgUkXoIISA49vkr1DaWwQ2vmohw=;
+  b=qF6YWADDZdWUrPA7tPGh21okWh2I1shkMlVwVhFo4oUfsCeeZYK7TNHk
+   TbLyjzwV4iYvkfIMbef/9Z76add7g7V42zzlM1st5k8siUKnFV4CWCLQo
+   WD4pZkKi4QNdHWS2HqXFRQFlIsjOCx6eC4WGhh9XZp5ijAb/15PCTgjgj
+   M=;
 X-IronPort-AV: E=Sophos;i="6.13,305,1732579200"; 
-   d="scan'208";a="273295679"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 16:10:34 +0000
-Received: from EX19MTAUWB001.ant.amazon.com [10.0.7.35:36548]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.29.24:2525] with esmtp (Farcaster)
- id e2af6afa-729d-4911-8577-61bddf574a96; Fri, 21 Feb 2025 16:10:32 +0000 (UTC)
-X-Farcaster-Flow-ID: e2af6afa-729d-4911-8577-61bddf574a96
-Received: from EX19D003UWC004.ant.amazon.com (10.13.138.150) by
- EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
+   d="scan'208";a="699167651"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 16:10:41 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:6686]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.48.97:2525] with esmtp (Farcaster)
+ id 69e45197-d4c5-4ea5-a690-28fa854e89d7; Fri, 21 Feb 2025 16:10:40 +0000 (UTC)
+X-Farcaster-Flow-ID: 69e45197-d4c5-4ea5-a690-28fa854e89d7
+Received: from EX19D003UWB004.ant.amazon.com (10.13.138.24) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Fri, 21 Feb 2025 16:10:32 +0000
-Received: from EX19MTAUWA002.ant.amazon.com (10.250.64.202) by
- EX19D003UWC004.ant.amazon.com (10.13.138.150) with Microsoft SMTP Server
+ Fri, 21 Feb 2025 16:10:40 +0000
+Received: from EX19MTAUWC002.ant.amazon.com (10.250.64.143) by
+ EX19D003UWB004.ant.amazon.com (10.13.138.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 21 Feb 2025 16:10:32 +0000
+ Fri, 21 Feb 2025 16:10:39 +0000
 Received: from email-imr-corp-prod-pdx-all-2b-c1559d0e.us-west-2.amazon.com
- (10.25.36.210) by mail-relay.amazon.com (10.250.64.203) with Microsoft SMTP
+ (10.25.36.210) by mail-relay.amazon.com (10.250.64.149) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1258.39 via Frontend Transport; Fri, 21 Feb 2025 16:10:32 +0000
+ 15.2.1258.39 via Frontend Transport; Fri, 21 Feb 2025 16:10:39 +0000
 Received: from ua2d7e1a6107c5b.ant.amazon.com (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
-	by email-imr-corp-prod-pdx-all-2b-c1559d0e.us-west-2.amazon.com (Postfix) with ESMTPS id BB555404D5;
-	Fri, 21 Feb 2025 16:10:24 +0000 (UTC)
+	by email-imr-corp-prod-pdx-all-2b-c1559d0e.us-west-2.amazon.com (Postfix) with ESMTPS id B70BB404C9;
+	Fri, 21 Feb 2025 16:10:32 +0000 (UTC)
 From: Patrick Roy <roypat@amazon.co.uk>
 To: <rppt@kernel.org>, <david@redhat.com>, <seanjc@google.com>
 CC: Patrick Roy <roypat@amazon.co.uk>, <pbonzini@redhat.com>,
@@ -79,9 +79,9 @@ CC: Patrick Roy <roypat@amazon.co.uk>, <pbonzini@redhat.com>,
 	<linux-kselftest@vger.kernel.org>, <tabba@google.com>, <jgowans@amazon.com>,
 	<graf@amazon.com>, <kalyazin@amazon.com>, <xmarcalx@amazon.com>,
 	<derekmn@amazon.com>, <jthoughton@google.com>
-Subject: [PATCH v4 11/12] KVM: selftests: set KVM_GMEM_NO_DIRECT_MAP in mem conversion tests
-Date: Fri, 21 Feb 2025 16:07:24 +0000
-Message-ID: <20250221160728.1584559-12-roypat@amazon.co.uk>
+Subject: [PATCH v4 12/12] KVM: selftests: Test guest execution from direct map removed gmem
+Date: Fri, 21 Feb 2025 16:07:25 +0000
+Message-ID: <20250221160728.1584559-13-roypat@amazon.co.uk>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250221160728.1584559-1-roypat@amazon.co.uk>
 References: <20250221160728.1584559-1-roypat@amazon.co.uk>
@@ -94,46 +94,78 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain
 
-Cover the scenario that the guest can fault in and write gmem-backed
-guest memory even if its direct map removed.
+Add a selftest that loads itself into guest_memfd (via
+KVM_GMEM_SHARED_MEM) and triggers an MMIO exit when executed. This
+exercises x86 MMIO emulation code inside KVM for guest_memfd-backed
+memslots where the guest_memfd folios are direct map removed.
+Particularly, it validates that x86 MMIO emulation code (guest page
+table walks + instruction fetch) correctly accesses gmem through the VMA
+that's been reflected into the memslot's userspace_addr field (instead
+of trying to do direct map accesses).
 
 Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
 ---
- .../selftests/kvm/x86/private_mem_conversions_test.c       | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ .../selftests/kvm/set_memory_region_test.c    | 40 +++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/tools/testing/selftests/kvm/x86/private_mem_conversions_test.c b/tools/testing/selftests/kvm/x86/private_mem_conversions_test.c
-index 82a8d88b5338..dfc78781e93b 100644
---- a/tools/testing/selftests/kvm/x86/private_mem_conversions_test.c
-+++ b/tools/testing/selftests/kvm/x86/private_mem_conversions_test.c
-@@ -367,7 +367,7 @@ static void *__test_mem_conversions(void *__vcpu)
+diff --git a/tools/testing/selftests/kvm/set_memory_region_test.c b/tools/testing/selftests/kvm/set_memory_region_test.c
+index bc440d5aba57..16bbfe117a17 100644
+--- a/tools/testing/selftests/kvm/set_memory_region_test.c
++++ b/tools/testing/selftests/kvm/set_memory_region_test.c
+@@ -603,6 +603,42 @@ static void test_mmio_during_vectoring(void)
+ 
+ 	kvm_vm_free(vm);
  }
++
++static void guest_code_trigger_mmio(void)
++{
++	/*
++	 * Read some GPA that is not backed by a memslot. KVM consider this
++	 * as MMIO and tell userspace to emulate the read.
++	 */
++	READ_ONCE(*((uint64_t *)MEM_REGION_GPA));
++
++	GUEST_DONE();
++}
++
++static void test_guest_memfd_mmio(void)
++{
++	struct kvm_vm *vm;
++	struct kvm_vcpu *vcpu;
++	struct vm_shape shape = {
++		.mode = VM_MODE_DEFAULT,
++		.type = KVM_X86_SW_PROTECTED_VM,
++		.src_type = VM_MEM_SRC_GUEST_MEMFD_NO_DIRECT_MAP,
++	};
++	pthread_t vcpu_thread;
++
++	pr_info("Testing MMIO emulation for instructions in gmem\n");
++
++	vm = __vm_create_shape_with_one_vcpu(shape, &vcpu, 0, guest_code_trigger_mmio);
++
++	virt_map(vm, MEM_REGION_GPA, MEM_REGION_GPA, 1);
++
++	pthread_create(&vcpu_thread, NULL, vcpu_worker, vcpu);
++
++	/* If the MMIO read was successfully emulated, the vcpu thread will exit */
++	pthread_join(vcpu_thread, NULL);
++
++	kvm_vm_free(vm);
++}
+ #endif
  
- static void test_mem_conversions(enum vm_mem_backing_src_type src_type, uint32_t nr_vcpus,
--				 uint32_t nr_memslots)
-+				 uint32_t nr_memslots, uint64_t gmem_flags)
- {
- 	/*
- 	 * Allocate enough memory so that each vCPU's chunk of memory can be
-@@ -394,7 +394,7 @@ static void test_mem_conversions(enum vm_mem_backing_src_type src_type, uint32_t
- 
- 	vm_enable_cap(vm, KVM_CAP_EXIT_HYPERCALL, (1 << KVM_HC_MAP_GPA_RANGE));
- 
--	memfd = vm_create_guest_memfd(vm, memfd_size, 0);
-+	memfd = vm_create_guest_memfd(vm, memfd_size, gmem_flags);
- 
- 	for (i = 0; i < nr_memslots; i++)
- 		vm_mem_add(vm, src_type, BASE_DATA_GPA + slot_size * i,
-@@ -477,7 +477,8 @@ int main(int argc, char *argv[])
- 		}
+ int main(int argc, char *argv[])
+@@ -630,6 +666,10 @@ int main(int argc, char *argv[])
+ 	    (kvm_check_cap(KVM_CAP_VM_TYPES) & BIT(KVM_X86_SW_PROTECTED_VM))) {
+ 		test_add_private_memory_region();
+ 		test_add_overlapping_private_memory_regions();
++		if (kvm_has_cap(KVM_CAP_GMEM_SHARED_MEM) && kvm_has_cap(KVM_CAP_GMEM_NO_DIRECT_MAP))
++			test_guest_memfd_mmio();
++		else
++			pr_info("Skipping tests requiring KVM_CAP_GMEM_SHARED_MEM | KVM_CAP_GMEM_NO_DIRECT_MAP");
+ 	} else {
+ 		pr_info("Skipping tests for KVM_MEM_GUEST_MEMFD memory regions\n");
  	}
- 
--	test_mem_conversions(src_type, nr_vcpus, nr_memslots);
-+	test_mem_conversions(src_type, nr_vcpus, nr_memslots, 0);
-+	test_mem_conversions(src_type, nr_vcpus, nr_memslots, KVM_GMEM_NO_DIRECT_MAP);
- 
- 	return 0;
- }
 -- 
 2.48.1
 
