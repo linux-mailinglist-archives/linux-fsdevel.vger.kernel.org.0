@@ -1,317 +1,371 @@
-Return-Path: <linux-fsdevel+bounces-42286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA5EBA3FDCD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 18:48:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13861A3FE77
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 19:13:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F29283BEF66
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 17:46:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3AD93B7D49
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 18:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F3D250BF0;
-	Fri, 21 Feb 2025 17:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA242528FB;
+	Fri, 21 Feb 2025 18:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cvvtgPCA";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="hQtP2rWP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="twbwQNrI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A100036AF5;
-	Fri, 21 Feb 2025 17:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740159981; cv=fail; b=si0EkJP+NvxjHhaWBQqMi9IkFLCxc/bvrGZD+ar56+eNpTqj3by5JrARunaQQDQuYMugjZ+oRkmuXwe781/vq11tGU0dlCsEfmYqDet/KGwxvDlwuqUnLwTTr537mfEeueKFVPZWL6MspI7xnuEEXNOXp9peoPCwwqoIntoXJP0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740159981; c=relaxed/simple;
-	bh=BlbD1PsQ4Xz4DKJVeNaJTzKbr7Oy8HlbaFvU5lo7dFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=PF7BpFOq8cSZ061Uk0vt3xntokNmHb0XyVAPH3+HxYglSNA8sf9qh+O11wXajIvHV+DGEB7/KIALV9fC5OXI/yE4KdXhHSJg+F+uuH0SuND+2YRfbUTe7Vz08X87AeCbEI0X5QCW6eQwMIe8ADnN0o/a8IFCOM7bXQVWFAzmr3k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cvvtgPCA; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=hQtP2rWP; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51L8fd8Q018610;
-	Fri, 21 Feb 2025 17:45:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=/bYokIJgFdyGamRovcTes7n+88Qha7ncZZKKNV1eMgE=; b=
-	cvvtgPCAUctoZ/QleEmMp+KcTy1rVyS+u7lexc3+CR2uxFSBP6yYRhu5p1/5sLH9
-	wFhenXbH+7SC5xOR71YoVOOYgcBVwsUouOuWgooWw6ssoNqUx+3rSqOmtVG6ABLk
-	fzcdyOcvl11z5eJNzTK70//kh7OqgfP9/TrmXCpyunHL5xZSSCwrLVv9Li4ojwts
-	6wGDxau1qtysx8EazCxxo3tWcWmKS4OGF8oG7Q4soQJ0+Zrl8tcKYbX6UXPH9Ysj
-	ljdiB8yIKicWFCvkcZvp47LP/EkRBA66r3zKRAnvEWimg+d415vAOzfJppZxxYs8
-	M5+j4G1mO9d4HUJGVNWTAg==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44w00npuua-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Feb 2025 17:45:58 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51LHGph6002180;
-	Fri, 21 Feb 2025 17:45:56 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2049.outbound.protection.outlook.com [104.47.58.49])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 44w0tq96q8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Feb 2025 17:45:56 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ndg8eK0/M1IZGITwCKK4HqjDPceuOxL7zcH5pktl2pyeDpk1tPw+ISYKcWCLRtpkxTTTSTB+HeOwkAw9zcv69XxHz6W+so+xbjZtgJuYFjl28fjn8qQph/hu1Pre4xch+9A/k/dYZGLCR832jzoSomFMMe5mpPBMbE7A+CBejI7nvyas/dWKTWs86vba5MrlxRlcUKmlNU2zwccr4tEbIp7LNyyHjtiN/SPCrXoNllSoCAb43d7uEEEHZRbMPNNhG+bedk1Brywa9GlMHE16/WU/PwKQA3Q6+047Nq/hTL291HwiFwzpzVgJsOf5RESkPu5uafkOuW4nw2kA4ZbGRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/bYokIJgFdyGamRovcTes7n+88Qha7ncZZKKNV1eMgE=;
- b=gK7y7sfyQ3XJWP9zXXBcNsY+JNfCNMx5d+/aFBsH3ZrBFnFuIcZk0VhSUHL08NhxL8eiOd4Es6fLEfiNLkZ5l6n3W65tR8sA42FMZhRCBPqyHOQ9tt/OQW4QMREOwl5n0/B2DSc7+96GJZnKLBknvi453Hqjx3ZdxNFL8oNwLasQvEA+6HR65e/D1ICsUvnNQTAh31/73JC7//87FPHN3le5K5j9ARGYDF7qs6Ivz7zxZoGUNAQ6HcJ4Nnm7RgrUPnIiL0j5ksAwwTtQ2h5Ac7gqpP9fi/N4CJtYZDELZ+Eiz5L/bpNP6bv1fLOLzYN1go3S6T11XWYm/i5dNYyx0Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/bYokIJgFdyGamRovcTes7n+88Qha7ncZZKKNV1eMgE=;
- b=hQtP2rWPeGSjzxfJV25RFGISpbaLVx5ywN5L4+f2+dXZSWZ9KjVmopzlnlCxBdHT34gkOsykV4FuGEzt9OI1w/vycWgJmVLNQAxqskhtFK8hw0TuW6yDb4J3qhsh7bCHIJ7TiGeWuk49Nzae5RJ+NqMV4oEtB0UlvIH8C+EA810=
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
- by IA0PR10MB6721.namprd10.prod.outlook.com (2603:10b6:208:441::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Fri, 21 Feb
- 2025 17:45:54 +0000
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9%5]) with mapi id 15.20.8466.015; Fri, 21 Feb 2025
- 17:45:54 +0000
-Date: Fri, 21 Feb 2025 17:45:51 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Kalesh Singh <kaleshsingh@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
-        "Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>,
-        Juan Yescas <jyescas@google.com>, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH 1/2] fs/proc/task_mmu: add guard region bit to pagemap
-Message-ID: <f5a896b9-039b-464a-b2d1-eac0ddfcce65@lucifer.local>
-References: <cover.1740139449.git.lorenzo.stoakes@oracle.com>
- <521d99c08b975fb06a1e7201e971cc24d68196d1.1740139449.git.lorenzo.stoakes@oracle.com>
- <CAC_TJvf-R6MuSS9e0b4orhxLrFwXTnvZV-vf3sB+BnSbEqsprw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAC_TJvf-R6MuSS9e0b4orhxLrFwXTnvZV-vf3sB+BnSbEqsprw@mail.gmail.com>
-X-ClientProxiedBy: LO4P265CA0072.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2af::21) To BYAPR10MB3366.namprd10.prod.outlook.com
- (2603:10b6:a03:14f::25)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0FB2500B1;
+	Fri, 21 Feb 2025 18:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740161496; cv=none; b=MXe6sclauTiz0DhBvYDN/aL5wgR4V5PG0enLXO9CDM1u9Z2uQcJmocdK1EA8Tbrg4lZ7H3R3pHLB0PYcRVoe9GvnerdLMUqKO9cPvqTRkZyEOrdd5qOXAudzV+Qj9krpOxXwMhYjdxlnfQuYaO1VfqrnMW5r8N48b5rp+tx6FDI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740161496; c=relaxed/simple;
+	bh=Q5rq+xEARHuJUUCQ4+qMB09sJq9Ogw0gx0NFBabFv8Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RLPvbKtdaiTXDuWDwHt4p4eT98Z+Evn/PWOY7aHqeTDDB+tZQCHq94wqKQl+LbXYgFkYz1xlaNes1oUA5TPZcgBEGWjwSXod+uc9HsuzuntbSkiFcGf81jH5LHQt81lU2RAJTTHb+CUI3+SYxyvgvk9Kqj/vvk0UR5VB5aCZneo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=twbwQNrI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C591C4CED6;
+	Fri, 21 Feb 2025 18:11:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740161496;
+	bh=Q5rq+xEARHuJUUCQ4+qMB09sJq9Ogw0gx0NFBabFv8Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=twbwQNrI8NBky7gxEQz1Sp9afJgdr6HMvf9vBHDGlKfl2W61C+ajw5DQvd0yARdzx
+	 6IqK6Dta/AzKAOg+oZCOuzfhqfYJNoM1PU06w/jz41Vt+iBFPeOZsr7WDKfEcVHOd+
+	 wRMx0kuj0pmY5GVmHB8Ln/wHSn266MnENVFcYyj0SE7LpvoYjMypvZIjvBoa2Y2F1d
+	 Z2mJvJVKolFfz0xIV4hpOeFKvnRi0A/C5cUbEnjCP6XeNE5iQtLrSknKeA8Tv16I4/
+	 DoBR2WPKBAsUg1Z5A45KC7jb6AS2qE8O2CvXsjhXKHa8ui8jr+NLK37hsdDvyP+y5Q
+	 ajxDXXxKA16RQ==
+Date: Fri, 21 Feb 2025 10:11:35 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: Richard Henderson <richard.henderson@linaro.org>,
+	Matt Turner <mattst88@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Michal Simek <monstr@monstr.eu>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Arnd Bergmann <arnd@arndb.de>, linux-alpha@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v3] fs: introduce getfsxattrat and setfsxattrat syscalls
+Message-ID: <20250221181135.GW21808@frogsfrogsfrogs>
+References: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|IA0PR10MB6721:EE_
-X-MS-Office365-Filtering-Correlation-Id: 13c53943-377d-43db-8c6f-08dd529f96cf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QlczOWZUa2g5QklUVUdCMjBRUVBQZUttZExsWlpvSGNLY1F0Uy9uLy81eUFt?=
- =?utf-8?B?bzlRTllNYVpFWjZPSm5EeE9Dbjcyb2QvTktzMnpKVEwxUzMvZHJvaEhpOFp5?=
- =?utf-8?B?WlVDZWdLSU1aQWZjY0dJS05CcU1MelkzaXE1TE9vRkgxWVZmN2VkM3NvOFVC?=
- =?utf-8?B?czJmcHF0UkZWdzluRGgzb3FyT3VuNUE1bktHKy9IWWZzTEVRSUZ5VFh1NndO?=
- =?utf-8?B?dXZ5RmJuRjRrQlAwQWQ0eEdpOG1RYmI1SC9tTUh5WnlYMkYrWWs5NmFCUHQz?=
- =?utf-8?B?SVNaYW92ZDgraU15VS9IZ0tsaitQb0hJVDQ5aTlBMW1lVEtRSEUycW9qTUZh?=
- =?utf-8?B?TWVRKzVwbzBpWi92eGUxSURQeFlvZEFDZWh4cGxmK2JmYTZLVzdmOXNEWXcz?=
- =?utf-8?B?b3RTUHdaVCtEK2dOY2ZWT3l5ZGpoak55eHJtYUpHcGFabzNtTFA5eWp5Q2xa?=
- =?utf-8?B?K0dKNWEySUxSejBLcFlmTGNFL3ZjUHltbUJ4NFl4N05JMDZMU1F4VUtPcUM3?=
- =?utf-8?B?ekVHcFFTTW0rSi9NTHVKWkNmN21jYlZZZzJhblplQURDNTNNakN0Z2pMbTY5?=
- =?utf-8?B?UWhjTXZxQ21iRUJSY0Zvczk5NVkrZmxuR3I3L1VzWThmZ0JSMDBGbGh5ZDlx?=
- =?utf-8?B?ZExjd1lwY3cyWEhZK3N0RnBLTmFEeXgvSkd3RkJvSDJTSEVSTEJ3MmxOUUl6?=
- =?utf-8?B?VHJIWlltVVR4QUxWcjZKWUFJVkFUaTd1Z2ZEbFg5TXo3V084d2x5SHhITEJh?=
- =?utf-8?B?QU5FU3d2djhWVExtWStUM3ZEUGgrQ1F5a1FZek1xUGVTa3hkaWJSRlBtb2pk?=
- =?utf-8?B?cVdMcnJtbDJ2MUl3OWVzNTlBVWpqaXhhY2g2Ni9RSE9kL3oxRG1vQlRqUEps?=
- =?utf-8?B?SjhvSi9RWFpuM2R0TXoycG5JSDk5UUs5TWFtSTNzZUQrNlN0aHpCQmhvUHNB?=
- =?utf-8?B?dGcvUUZRSlZjYmNwcktZVW8yV1RyWFpxcEI2WHBhalZ4UzN3dmdvUXRhR2VD?=
- =?utf-8?B?RU81UnczWEYvNWlYMnV4OTF2U1N6WFhrRzRpdGZXbXJ1UnUxVjU3eUJlUnpn?=
- =?utf-8?B?SU5HT2dCVmtoWEJNUVZocFF4d1JlQnpEb2ZXZVp4RHkzK21wZlZSRm1Wa29p?=
- =?utf-8?B?dmpudUhuL05BVGM2b2xzQmV4VkNIaDNhdjRqREczaTN0K3krUlBId0JXMktN?=
- =?utf-8?B?dlVKRDR4RVZhaEl2UVZIdExEYUZXUVJneWhkYms1UjlDR1c1VlpyMzd6eUIy?=
- =?utf-8?B?by9WNHlGU2hwTUhVNHR4MXFKdUdjei9yMG1XNHI5eUdOMUtRTEh2Rnp2UUhh?=
- =?utf-8?B?VC85MEQ0aWxhQndXTmtDYWxEQ3BsUkVKSk5pVExpTHJHbmhxakw2WEVwc0pn?=
- =?utf-8?B?OXVVSThQWTJRSGR0NStzVUxMY3J4b25Jb1d3b0hxNXIrUEdDbDlnd25xd3Bj?=
- =?utf-8?B?RXVPdzh0RVJaanBhNkg1UjkzYlNHVGgzSHRoQUZQNUY2UDhjUG9ra25YZSty?=
- =?utf-8?B?MVhGbis1N1YrbnR3RDgwSG9JR1RQZGxvU0pJSDRmc2RRWEdVb1pLTFVlMktk?=
- =?utf-8?B?ZHRYZ2ZTak9QWkhSUEx0TUgvRzN0alQ3cTFjRFJJWHRxdmo3TFRQcFVnTUUy?=
- =?utf-8?B?QVlhYTk2SExHNzdlT2JTWXJJQ083WlIxb25Rc2JLdFVoeExwWUp4R09VWmo4?=
- =?utf-8?B?ZEdENDF6N3RIa2NtQWsvaWJnK0sxMDZPNTVzMm9TM0I1RUk4NkdQSFRvSDRK?=
- =?utf-8?B?MTJvQU5aUytTcVV1RjRkQ2R3b2tJRWJBSVoycXhGK3piZm4vYTdGQTNxVmZh?=
- =?utf-8?B?UmRxdlJFNjR4TXBjZFo2LzNmL1FMVVkwelJPVGF5bEozYkI2T0g0SDRFUi9R?=
- =?utf-8?Q?YEz092s+7DPTU?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MS92Q0VhZnhjZ1BhKzRXNWlkSTF6amVLdVJ6WE51R24zaFJ6VkpmUDdpOEJW?=
- =?utf-8?B?RUU4eW1jZVBNSmRWOFBrNVlMOVdrazYwYk5xVFoxOFBRT0p1cThmaXhsWjNi?=
- =?utf-8?B?NkxEUXFBSVkzS1ZrYiswajE1bm9TL0pycUhHVnBtam1JVmZXN1FGaFRER0Fh?=
- =?utf-8?B?S2JwSDYzRHV4QmZrb3BkcmZJVnFvUVp0eVQ3NmZEcGNXbHNlZjJxK2ZFU0dM?=
- =?utf-8?B?QlI3K3NwSW5CdThLUGhaZWE5MHRZRnJKTXlaVzhBUHlMSVNtSlU5L3RLVWx2?=
- =?utf-8?B?NkJwVk5DMlVRSTVORG1BRC9JdGpQUVR0WUYzK0pxTXVmVjFJMHhVK3JCa1Zk?=
- =?utf-8?B?NzNVdUFPdGpwSFhGL2pIbTVRL0N5ZUhSOHI0OXhmNzBrVHkxc0Y2S3Fsd1pk?=
- =?utf-8?B?RmNhTHNZcXd6eW9Id2RSL0xGbEs4UWQycDlkSDNtVFZMMUFYeWYxbkRvNjhZ?=
- =?utf-8?B?bFVvVmovUnVRNnhMODRPb09JY2lVTWZMVkg2MEVJbDFqQjV3K2YzRVBBUmRh?=
- =?utf-8?B?UXJWVFlOSUxkNlRadjYzRW9nNEd2dGdRTW5jSm9IU09mYnl1V1p6a2VRdFlh?=
- =?utf-8?B?RTRCamt6empaa1ZudzZqUHNrVExmRHlhdVhEQmNmL1RKTS9rRm1jMTFOVkgy?=
- =?utf-8?B?NGlrdWJOKzNsL21Ma1FpbVEycnNnY0s0QUhHWXlaMnpidVVGRUFhNkpUcEE2?=
- =?utf-8?B?M240T245dExvN0dEd28wcnQ4bkhRVlk2OVoyRGhYWks0b0U1STlCMzFCaHFC?=
- =?utf-8?B?bDFRZ3M5NFVLa25jTnJKMHNKQjBTVVpvRDNWYnl1b29GRVR3SUYzMTQ1cWdR?=
- =?utf-8?B?UTEvamVoNk1FSGYvN2QvUkd3dFE0ZnBvREN0MWlNY2d6MVd4TDFrK0p2M21E?=
- =?utf-8?B?UDlaUzd3UngzM2xOUmxHY2drVEhFQlZZN0t4ak10U0c0bFBYUDNmQTBwMmVp?=
- =?utf-8?B?UFE5ZmlKRTZWbWhTRzlLZ0UxMWtqdlR3M3l2RmR6c1M4cmRna0xnMFptTmp1?=
- =?utf-8?B?UEtSWHNndWs1U2xYWEYvb1ZrVHlvMkVNeVJmVDB4b1NGZFFrY0hBcFZ2YXBq?=
- =?utf-8?B?ckF6eS9kTy8rVTdqRWtkc3Q5c3NyclhCUTJyZWwxa0MveEhDb0Y4TnYwM3VN?=
- =?utf-8?B?bnkza2xyeGxJM09DR0xDZ29ENmZ4TzEyNFJ4L3RaVk1mQnBXdkNnMEZidmVK?=
- =?utf-8?B?R2FlbE41dW56R2kvZ3lmdElsRzU0R2VwbHBVTG52MUwwSzFnNW83b0VmaHkw?=
- =?utf-8?B?UUVUSzhqVXVESHRtUCtSZEgvMURpcldEYVJQUkpGVDBYK0JzZkhYNHlUVEpT?=
- =?utf-8?B?OUIvaHMvd0NOOXVmWDI3dEhkRlN1TURCUDliRGV1dXQvckY2Y21UZm1ycGx4?=
- =?utf-8?B?Z0x5QzVjYUtsMHB6SUI2VG96VG1IVWFId1VtRk13UjZOUjBJa0t4eFZGQkwr?=
- =?utf-8?B?bjdSUjBTbXZ6TkkyNnBXWjl5M1hlYUFPMXM4SVRHcFRyRnEwS3pvaFRaOUll?=
- =?utf-8?B?L0RISmNWVllGUCtTMG0wdTlGdDdvQ2VYOWtKSXhYcW5IcThIVjM3S3M4aFdp?=
- =?utf-8?B?bE45K2JlMWpvcml2cjVtUjdSYlc3eExBY2x0WUxsbW5CY1Ixd0kxbXdiNEtx?=
- =?utf-8?B?ZFF4YzA1eHVWYjJ2b2gzWnpBMVM3eFU5ZjdLMHk4YWpSZ1U2NytjZHZBbTFl?=
- =?utf-8?B?L2VBUjhmUGsrZkpoZmcxaHBhdHVZdGFqZHp5N0M5YU9ndWI0T1M0anlwNG1F?=
- =?utf-8?B?RVovUHJDZEdxMkE4MS85bVdyWGRsa2VFc1NSd0ZhT291ZnIxZGxDNkVzN1Zx?=
- =?utf-8?B?bUcvTWVDaUNERmJrQUMxZUYzNnl0QnRzdW1WQmJiTjVRSlc5OW5WbGdicXEv?=
- =?utf-8?B?UmZBMWN2Y004YTFWOUlIWmkxUC9JeXlTRVdQRDZmSnJueXV2YWNDZkVDbEJB?=
- =?utf-8?B?U0d4Yjh5RkNKRzFnYWZoWTNZOXovTlZQR3B4UkpzS0RxMkZjV3JMd3AzcFFH?=
- =?utf-8?B?YmoxdXNZK2RTUk1MZmJjYWJUY29TdDhqd2FwNUFSbVN2cklLSUtpZEszcENs?=
- =?utf-8?B?UHp5Wmh3SWhRd1Nxc1N3TmNQdUhUNCtFN1hod1JGMzU3Q1hENDNiNzhRTHhx?=
- =?utf-8?B?L2JSR0IxS0NEcTVDRWJLUkhiR0Iyb0hLNHJIbjZpcEcwOHorUW1NYTVkRkEz?=
- =?utf-8?B?R0E9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	CEPaUBiYuPUt5PFcjkH1c5avdAUrRnujFEd5pnVHZ9gAa6VoT6jbANHNJapHyeQJ9pGNqkthCVxvpKwrFPj/H/CYzLpT8mTmKH3w9cOojxaaOuhYPHtK3MUa0ThJN4P57i74XfUChQqd5KTNqJvc8j1F3QEAdr/vWgeUp7RKqrZ0uhKFQuXYy9MDkrp9YhuSXTJe0vPMRfKEK8pH4OScHI8/RI8LBmVyHiIIJx4T1k1pzBHR/Qw2Ih3qg7CLMSkYoGq7xlaiiLV0famCeGYlP9yT7xP3g/PTXXrHktMPwE5IM1O8+ZoKiAdpMGc9YOaHkbib1DjA6Hyx9Ei9F4GT7R6OfP1zbzTdbiCGBt3S4WbM902VWrwegbHWAt+5mgFfEAx8I5RseuEqePiXI1huJZ8A9Z98p/rPtvgLJGeXhQ0Kv0/MuUFntuPsLH3UvF6cb6Xqv6iwB8h1VNEcwoyZk/YRm9O5cbwpfhvDfvknsl5g/sDbNTFss00t46IASZRb4lFouh5+GS9C1scbW9caZ9/YEUylqfc04dZbZAjhQheCgWt1JNLC0jxjJhbsoxAKzZgpXAJtLtcP2+QeYoV+d4aKv53vm7mWCKvpzQ+XjVM=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 13c53943-377d-43db-8c6f-08dd529f96cf
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2025 17:45:54.0958
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AgWWZZClVGT3MknHHWRWoJUaHqLe8DrEUeskVLVjhkNvCrkjuIOpcBTAFr+mERx26vqiFyU3mQwfOy4oY8EA/+N0tQ5pBL532GclmUOiveA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB6721
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_05,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 malwarescore=0
- mlxscore=0 spamscore=0 phishscore=0 suspectscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
- definitions=main-2502210123
-X-Proofpoint-GUID: ieXQxoqA1Q_GaSQckGg3zLzPLuxe5OEw
-X-Proofpoint-ORIG-GUID: ieXQxoqA1Q_GaSQckGg3zLzPLuxe5OEw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org>
 
-On Fri, Feb 21, 2025 at 09:10:42AM -0800, Kalesh Singh wrote:
-> On Fri, Feb 21, 2025 at 4:05 AM Lorenzo Stoakes
-> <lorenzo.stoakes@oracle.com> wrote:
-> >
-> > Currently there is no means by which users can determine whether a given
-> > page in memory is in fact a guard region, that is having had the
-> > MADV_GUARD_INSTALL madvise() flag applied to it.
-> >
-> > This is intentional, as to provide this information in VMA metadata would
-> > contradict the intent of the feature (providing a means to change fault
-> > behaviour at a page table level rather than a VMA level), and would require
-> > VMA metadata operations to scan page tables, which is unacceptable.
-> >
-> > In many cases, users have no need to reflect and determine what regions
-> > have been designated guard regions, as it is the user who has established
-> > them in the first place.
-> >
-> > But in some instances, such as monitoring software, or software that relies
-> > upon being able to ascertain the nature of mappings within a remote process
-> > for instance, it becomes useful to be able to determine which pages have
-> > the guard region marker applied.
-> >
-> > This patch makes use of an unused pagemap bit (58) to provide this
-> > information.
-> >
-> > This patch updates the documentation at the same time as making the change
-> > such that the implementation of the feature and the documentation of it are
-> > tied together.
-> >
-> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > ---
-> >  Documentation/admin-guide/mm/pagemap.rst | 3 ++-
-> >  fs/proc/task_mmu.c                       | 6 +++++-
-> >  2 files changed, 7 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
-> > index caba0f52dd36..a297e824f990 100644
-> > --- a/Documentation/admin-guide/mm/pagemap.rst
-> > +++ b/Documentation/admin-guide/mm/pagemap.rst
-> > @@ -21,7 +21,8 @@ There are four components to pagemap:
-> >      * Bit  56    page exclusively mapped (since 4.2)
-> >      * Bit  57    pte is uffd-wp write-protected (since 5.13) (see
-> >        Documentation/admin-guide/mm/userfaultfd.rst)
-> > -    * Bits 58-60 zero
-> > +    * Bit  58    pte is a guard region (since 6.15) (see madvise (2) man page)
->
-> Should this be 6.14 ?
+On Tue, Feb 11, 2025 at 06:22:47PM +0100, Andrey Albershteyn wrote:
+> From: Andrey Albershteyn <aalbersh@redhat.com>
+> 
+> Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
+> extended attributes/flags. The syscalls take parent directory fd and
+> path to the child together with struct fsxattr.
+> 
+> This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
+> that file don't need to be open as we can reference it with a path
+> instead of fd. By having this we can manipulated inode extended
+> attributes not only on regular files but also on special ones. This
+> is not possible with FS_IOC_FSSETXATTR ioctl as with special files
+> we can not call ioctl() directly on the filesystem inode using fd.
+> 
+> This patch adds two new syscalls which allows userspace to get/set
+> extended inode attributes on special files by using parent directory
+> and a path - *at() like syscall.
+> 
+> Also, as vfs_fileattr_set() is now will be called on special files
+> too, let's forbid any other attributes except projid and nextents
+> (symlink can have an extent).
+> 
+> CC: linux-api@vger.kernel.org
+> CC: linux-fsdevel@vger.kernel.org
+> CC: linux-xfs@vger.kernel.org
+> Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+> ---
+> v1:
+> https://lore.kernel.org/linuxppc-dev/20250109174540.893098-1-aalbersh@kernel.org/
+> 
+> Previous discussion:
+> https://lore.kernel.org/linux-xfs/20240520164624.665269-2-aalbersh@redhat.com/
+> 
+> XFS has project quotas which could be attached to a directory. All
+> new inodes in these directories inherit project ID set on parent
+> directory.
+> 
+> The project is created from userspace by opening and calling
+> FS_IOC_FSSETXATTR on each inode. This is not possible for special
+> files such as FIFO, SOCK, BLK etc. Therefore, some inodes are left
+> with empty project ID. Those inodes then are not shown in the quota
+> accounting but still exist in the directory. Moreover, in the case
+> when special files are created in the directory with already
+> existing project quota, these inode inherit extended attributes.
+> This than leaves them with these attributes without the possibility
+> to clear them out. This, in turn, prevents userspace from
+> re-creating quota project on these existing files.
+> ---
+> Changes in v3:
+> - Remove unnecessary "dfd is dir" check as it checked in user_path_at()
+> - Remove unnecessary "same filesystem" check
+> - Use CLASS() instead of directly calling fdget/fdput
+> - Link to v2: https://lore.kernel.org/r/20250122-xattrat-syscall-v2-1-5b360d4fbcb2@kernel.org
+> ---
+>  arch/alpha/kernel/syscalls/syscall.tbl      |  2 +
+>  arch/arm/tools/syscall.tbl                  |  2 +
+>  arch/arm64/tools/syscall_32.tbl             |  2 +
+>  arch/m68k/kernel/syscalls/syscall.tbl       |  2 +
+>  arch/microblaze/kernel/syscalls/syscall.tbl |  2 +
+>  arch/mips/kernel/syscalls/syscall_n32.tbl   |  2 +
+>  arch/mips/kernel/syscalls/syscall_n64.tbl   |  2 +
+>  arch/mips/kernel/syscalls/syscall_o32.tbl   |  2 +
+>  arch/parisc/kernel/syscalls/syscall.tbl     |  2 +
+>  arch/powerpc/kernel/syscalls/syscall.tbl    |  2 +
+>  arch/s390/kernel/syscalls/syscall.tbl       |  2 +
+>  arch/sh/kernel/syscalls/syscall.tbl         |  2 +
+>  arch/sparc/kernel/syscalls/syscall.tbl      |  2 +
+>  arch/x86/entry/syscalls/syscall_32.tbl      |  2 +
+>  arch/x86/entry/syscalls/syscall_64.tbl      |  2 +
+>  arch/xtensa/kernel/syscalls/syscall.tbl     |  2 +
+>  fs/inode.c                                  | 75 +++++++++++++++++++++++++++++
+>  fs/ioctl.c                                  | 16 +++++-
+>  include/linux/fileattr.h                    |  1 +
+>  include/linux/syscalls.h                    |  4 ++
+>  include/uapi/asm-generic/unistd.h           |  8 ++-
+>  21 files changed, 133 insertions(+), 3 deletions(-)
+> 
 
-We're aiming for the 6.15 merge window so this is correct :>) I don't think
-this could be considered a hotfix haha!
+<cut to the syscall definitions>
 
->
-> Other than that: Reviewed-by: Kalesh Singh <kaleshsingh@google.com>
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 6b4c77268fc0ecace4ac78a9ca777fbffc277f4a..b2dddd9db4fabaf67a6cbf541a86978b290411ec 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -23,6 +23,9 @@
+>  #include <linux/rw_hint.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/debugfs.h>
+> +#include <linux/syscalls.h>
+> +#include <linux/fileattr.h>
+> +#include <linux/namei.h>
+>  #include <trace/events/writeback.h>
+>  #define CREATE_TRACE_POINTS
+>  #include <trace/events/timestamp.h>
+> @@ -2953,3 +2956,75 @@ umode_t mode_strip_sgid(struct mnt_idmap *idmap,
+>  	return mode & ~S_ISGID;
+>  }
+>  EXPORT_SYMBOL(mode_strip_sgid);
+> +
+> +SYSCALL_DEFINE4(getfsxattrat, int, dfd, const char __user *, filename,
+> +		struct fsxattr __user *, fsx, unsigned int, at_flags)
 
-Thanks! And thanks for review on the other patch also! Appreciated.
+Should the kernel require userspace to pass the size of the fsx buffer?
+That way we avoid needing to rev the interface when we decide to grow
+the structure.
 
->
-> Thanks,
-> Kalesh
->
-> > +    * Bits 59-60 zero
-> >      * Bit  61    page is file-page or shared-anon (since 3.5)
-> >      * Bit  62    page swapped
-> >      * Bit  63    page present
-> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> > index f02cd362309a..c17615e21a5d 100644
-> > --- a/fs/proc/task_mmu.c
-> > +++ b/fs/proc/task_mmu.c
-> > @@ -1632,6 +1632,7 @@ struct pagemapread {
-> >  #define PM_SOFT_DIRTY          BIT_ULL(55)
-> >  #define PM_MMAP_EXCLUSIVE      BIT_ULL(56)
-> >  #define PM_UFFD_WP             BIT_ULL(57)
-> > +#define PM_GUARD_REGION                BIT_ULL(58)
-> >  #define PM_FILE                        BIT_ULL(61)
-> >  #define PM_SWAP                        BIT_ULL(62)
-> >  #define PM_PRESENT             BIT_ULL(63)
-> > @@ -1732,6 +1733,8 @@ static pagemap_entry_t pte_to_pagemap_entry(struct pagemapread *pm,
-> >                         page = pfn_swap_entry_to_page(entry);
-> >                 if (pte_marker_entry_uffd_wp(entry))
-> >                         flags |= PM_UFFD_WP;
-> > +               if (is_guard_swp_entry(entry))
-> > +                       flags |=  PM_GUARD_REGION;
-> >         }
-> >
-> >         if (page) {
-> > @@ -1931,7 +1934,8 @@ static const struct mm_walk_ops pagemap_ops = {
-> >   * Bit  55    pte is soft-dirty (see Documentation/admin-guide/mm/soft-dirty.rst)
-> >   * Bit  56    page exclusively mapped
-> >   * Bit  57    pte is uffd-wp write-protected
-> > - * Bits 58-60 zero
-> > + * Bit  58    pte is a guard region
-> > + * Bits 59-60 zero
-> >   * Bit  61    page is file-page or shared-anon
-> >   * Bit  62    page swapped
-> >   * Bit  63    page present
-> > --
-> > 2.48.1
-> >
+--D
+
+> +{
+> +	CLASS(fd, dir)(dfd);
+> +	struct fileattr fa;
+> +	struct path filepath;
+> +	int error;
+> +	unsigned int lookup_flags = 0;
+> +
+> +	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
+> +		return -EINVAL;
+> +
+> +	if (at_flags & AT_SYMLINK_FOLLOW)
+> +		lookup_flags |= LOOKUP_FOLLOW;
+> +
+> +	if (at_flags & AT_EMPTY_PATH)
+> +		lookup_flags |= LOOKUP_EMPTY;
+> +
+> +	if (fd_empty(dir))
+> +		return -EBADF;
+> +
+> +	error = user_path_at(dfd, filename, lookup_flags, &filepath);
+> +	if (error)
+> +		return error;
+> +
+> +	error = vfs_fileattr_get(filepath.dentry, &fa);
+> +	if (!error)
+> +		error = copy_fsxattr_to_user(&fa, fsx);
+> +
+> +	path_put(&filepath);
+> +	return error;
+> +}
+> +
+> +SYSCALL_DEFINE4(setfsxattrat, int, dfd, const char __user *, filename,
+> +		struct fsxattr __user *, fsx, unsigned int, at_flags)
+> +{
+> +	CLASS(fd, dir)(dfd);
+> +	struct fileattr fa;
+> +	struct path filepath;
+> +	int error;
+> +	unsigned int lookup_flags = 0;
+> +
+> +	if ((at_flags & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH)) != 0)
+> +		return -EINVAL;
+> +
+> +	if (at_flags & AT_SYMLINK_FOLLOW)
+> +		lookup_flags |= LOOKUP_FOLLOW;
+> +
+> +	if (at_flags & AT_EMPTY_PATH)
+> +		lookup_flags |= LOOKUP_EMPTY;
+> +
+> +	if (fd_empty(dir))
+> +		return -EBADF;
+> +
+> +	if (copy_fsxattr_from_user(&fa, fsx))
+> +		return -EFAULT;
+> +
+> +	error = user_path_at(dfd, filename, lookup_flags, &filepath);
+> +	if (error)
+> +		return error;
+> +
+> +	error = mnt_want_write(filepath.mnt);
+> +	if (!error) {
+> +		error = vfs_fileattr_set(file_mnt_idmap(fd_file(dir)),
+> +					 filepath.dentry, &fa);
+> +		mnt_drop_write(filepath.mnt);
+> +	}
+> +
+> +	path_put(&filepath);
+> +	return error;
+> +}
+> diff --git a/fs/ioctl.c b/fs/ioctl.c
+> index 638a36be31c14afc66a7fd6eb237d9545e8ad997..dc160c2ef145e4931d625f1f93c2a8ae7f87abf3 100644
+> --- a/fs/ioctl.c
+> +++ b/fs/ioctl.c
+> @@ -558,8 +558,7 @@ int copy_fsxattr_to_user(const struct fileattr *fa, struct fsxattr __user *ufa)
+>  }
+>  EXPORT_SYMBOL(copy_fsxattr_to_user);
+>  
+> -static int copy_fsxattr_from_user(struct fileattr *fa,
+> -				  struct fsxattr __user *ufa)
+> +int copy_fsxattr_from_user(struct fileattr *fa, struct fsxattr __user *ufa)
+>  {
+>  	struct fsxattr xfa;
+>  
+> @@ -646,6 +645,19 @@ static int fileattr_set_prepare(struct inode *inode,
+>  	if (fa->fsx_cowextsize == 0)
+>  		fa->fsx_xflags &= ~FS_XFLAG_COWEXTSIZE;
+>  
+> +	/*
+> +	 * The only use case for special files is to set project ID, forbid any
+> +	 * other attributes
+> +	 */
+> +	if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode))) {
+> +		if (fa->fsx_xflags & ~FS_XFLAG_PROJINHERIT)
+> +			return -EINVAL;
+> +		if (!S_ISLNK(inode->i_mode) && fa->fsx_nextents)
+> +			return -EINVAL;
+> +		if (fa->fsx_extsize || fa->fsx_cowextsize)
+> +			return -EINVAL;
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> diff --git a/include/linux/fileattr.h b/include/linux/fileattr.h
+> index 47c05a9851d0600964b644c9c7218faacfd865f8..8598e94b530b8b280a2697eaf918dd60f573d6ee 100644
+> --- a/include/linux/fileattr.h
+> +++ b/include/linux/fileattr.h
+> @@ -34,6 +34,7 @@ struct fileattr {
+>  };
+>  
+>  int copy_fsxattr_to_user(const struct fileattr *fa, struct fsxattr __user *ufa);
+> +int copy_fsxattr_from_user(struct fileattr *fa, struct fsxattr __user *ufa);
+>  
+>  void fileattr_fill_xflags(struct fileattr *fa, u32 xflags);
+>  void fileattr_fill_flags(struct fileattr *fa, u32 flags);
+> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> index c6333204d45130eb022f6db460eea34a1f6e91db..3134d463d9af64c6e78adb37bff4b91f77b5305f 100644
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+> @@ -371,6 +371,10 @@ asmlinkage long sys_removexattrat(int dfd, const char __user *path,
+>  asmlinkage long sys_lremovexattr(const char __user *path,
+>  				 const char __user *name);
+>  asmlinkage long sys_fremovexattr(int fd, const char __user *name);
+> +asmlinkage long sys_getfsxattrat(int dfd, const char __user *filename,
+> +				 struct fsxattr *fsx, unsigned int at_flags);
+> +asmlinkage long sys_setfsxattrat(int dfd, const char __user *filename,
+> +				 struct fsxattr *fsx, unsigned int at_flags);
+>  asmlinkage long sys_getcwd(char __user *buf, unsigned long size);
+>  asmlinkage long sys_eventfd2(unsigned int count, int flags);
+>  asmlinkage long sys_epoll_create1(int flags);
+> diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+> index 88dc393c2bca38c0fa1b3fae579f7cfe4931223c..50be2e1007bc2779120d05c6e9512a689f86779c 100644
+> --- a/include/uapi/asm-generic/unistd.h
+> +++ b/include/uapi/asm-generic/unistd.h
+> @@ -850,8 +850,14 @@ __SYSCALL(__NR_listxattrat, sys_listxattrat)
+>  #define __NR_removexattrat 466
+>  __SYSCALL(__NR_removexattrat, sys_removexattrat)
+>  
+> +/* fs/inode.c */
+> +#define __NR_getfsxattrat 467
+> +__SYSCALL(__NR_getfsxattrat, sys_getfsxattrat)
+> +#define __NR_setfsxattrat 468
+> +__SYSCALL(__NR_setfsxattrat, sys_setfsxattrat)
+> +
+>  #undef __NR_syscalls
+> -#define __NR_syscalls 467
+> +#define __NR_syscalls 469
+>  
+>  /*
+>   * 32 bit systems traditionally used different
+> 
+> ---
+> base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
+> change-id: 20250114-xattrat-syscall-6a1136d2db59
+> 
+> Best regards,
+> -- 
+> Andrey Albershteyn <aalbersh@kernel.org>
+> 
+> 
 
