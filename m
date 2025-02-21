@@ -1,148 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-42291-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42292-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 412DFA3FEAD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 19:24:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A451A3FEB5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 19:25:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA00B17CDEE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 18:23:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFAD619C0B6C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 18:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1812512DE;
-	Fri, 21 Feb 2025 18:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="tzBzq42O";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fqnsLf6w"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9AA2252907;
+	Fri, 21 Feb 2025 18:24:53 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520782512FE;
-	Fri, 21 Feb 2025 18:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A28F2512F6
+	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2025 18:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740162207; cv=none; b=h80FdWRGxxrlfgZL+PybEsOEP+75Qyoze789mN/PuKfljG6jS3Q17Bc9U9zBKqdnkoBbOXB7uwkNr9Hb8JhLuIBUBXQnbP4fRnzCmAhyn4FnpeWMjz8v7O4zF3NeaYALQsoeCPWQhV0j4bCfnCf4CKe5OHlv11FDLNfc3zE1IVY=
+	t=1740162293; cv=none; b=ZRtBQMeVqzraTsOTvZv0GzpkGHWjO712lMRgCFRkwcatsRHnatoIF87wzdiXKSM7ZycykPgsw9vdMyqs9cuNMuYrcWf4U5csTAtlvwWhvR58Pm7i9q5zxXPeb2gIzY7wRxW5ga0eAgyg2m6J7B/uT8DucU3NTmT7s1wyjvYT0yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740162207; c=relaxed/simple;
-	bh=5gNbIVO1Q0xR4f8kWNwQWFznZAlXNb5Y9bHWdVu03TU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F76ntsf0ImSxr9PVXbXwNVkWWEV8GCPyWFskR0jVbfmw4lPBIpEC183tvgVYY71zPGgoot3/NiWYg72exkESHhpt/rRIjXWy1KSgmgVyxxWD0UaXMnQTBfhHpXQfNiQ0ZKDznxE0uVPx3tnYLfmIzSEW72MUYiwfKXWsRSSEkcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=tzBzq42O; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fqnsLf6w; arc=none smtp.client-ip=202.12.124.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 3F83225400F6;
-	Fri, 21 Feb 2025 13:23:24 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Fri, 21 Feb 2025 13:23:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1740162204;
-	 x=1740248604; bh=5gNbIVO1Q0xR4f8kWNwQWFznZAlXNb5Y9bHWdVu03TU=; b=
-	tzBzq42Oli72eTRBX45hbRNgB4qTPHs1Bg3N7eNjhHJAAAeBJcW4WqOkoJmUzKbD
-	+gBwfoZu4/U7BqqTUahOsc+sXaoT02erTuxmUpMHEXW4Y1329E6575Of3SC2UGt2
-	H23Uqmh18EFn9i+r15uRlMz59fbN1XRkClbvVWV0AVeB0+wgTX/ue2w+9K8aa1Oc
-	f+REIMANuOVSRssk6Z3DfpsQVSWWH8CS1Shl+KnyvCMkjc1xmiwo/5Xcrb1R1vfG
-	9I9qLGTFomwB550sTtxN9aTReyLjfpagKXW/u2CHNAIIMNmxgwtPomEwmfq4ZBKD
-	BGin7ETrIPKp/Qn+yA1Fig==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740162204; x=
-	1740248604; bh=5gNbIVO1Q0xR4f8kWNwQWFznZAlXNb5Y9bHWdVu03TU=; b=f
-	qnsLf6w7WXGMKKdL0ZpMz/I0LVBPdTHFzaKOvXBxK0X5QCts1nFj9LrHHRgJluB/
-	bEADp57Jf4wBcPDErKeA//lvcdRE8+m86YN9kIXjNARru/Noqvr9yB4NfsOZG4RJ
-	rCIQSL09kjAZoo9hWaQEhKpdBG+XJJn23FXsk0zh0+wKNOQUcZpgPEpRgL/0nCyh
-	JDn25I+vIMvQtIQRIAX0+UN+xbo5HbV2gh30KXfpGL8uqagcWhTnxwQ8Dj9K6qX/
-	yZHDABlHKpyPcSphJTcm6gIvUByVhQpqIR3pzYXQeAJTF3+VKRQ2Mb9v73Z92He2
-	RfdIrAeS1OAGmqzR1aeLg==
-X-ME-Sender: <xms:m8S4Z30Ub33g3S7Y5qqudg77FAVa-hJk_xkoQ1MSDUc6_67LM4p_Pg>
-    <xme:m8S4Z2Ej5sW9oxr0dZATgHi5S4TdUMPaPG2q74ZmgyVMZle7y_jOA2Y2e9eKcYZiG
-    VzIsNamy28I2zpo>
-X-ME-Received: <xmr:m8S4Z36OkrlwQFrKtw8JfhgZkqs2ZSlVGaQxOZJ4WcpEKrUgvGDJnk9ONC_xzA8iQAHUUKN4QPugmqjTx__IyqdBlQ2vjf0d026xDpWAJ-hcbuVqCG9t>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejtdejfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddv
-    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugessghssggvrh
-    hnugdrtghomheqnecuggftrfgrthhtvghrnhepleeuleetffekhfeitdffieffvddthfek
-    ieeihfetleelfeehjefhueeifeffhedunecuffhomhgrihhnpehgihhthhhusgdrtghomh
-    dpudejrdhithenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
-    ohhmpegsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthhopeeipdhmoh
-    guvgepshhmthhpohhuthdprhgtphhtthhopehmohhinhgrkhgstddtudesghhmrghilhdr
-    tghomhdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomhdprhgtphhtth
-    hopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheplhhinhhugidqfhhs
-    uggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehiohdquhhr
-    ihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:m8S4Z81Ld5R94sPqqXnyPjGDlvmq2554gWGp_gOBeWc3D2kLzHRDtg>
-    <xmx:m8S4Z6E4JUiBBiRcFs0GhbY5b6bv6nPUyKGFx7eP_xYmlK1AJhIyjw>
-    <xmx:m8S4Z99eDHyhZwDZg3SnZ7sEkVYgKjC30PwFVIcQvLQzkj-vetMPFA>
-    <xmx:m8S4Z3lQsjiDJO77pPlIghuE8cKFDQ3XgwmJzBATuogT0vyGsk6ZdA>
-    <xmx:nMS4Z_6SbovzPlwHTosv4wQTPx53Bnc9dYq3FVbyykRcMVQcsVui2_Iw>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 21 Feb 2025 13:23:22 -0500 (EST)
-Message-ID: <7af8193e-0761-415f-9940-6c4d1c8073cf@bsbernd.com>
-Date: Fri, 21 Feb 2025 19:23:21 +0100
+	s=arc-20240116; t=1740162293; c=relaxed/simple;
+	bh=ydmGVURAeTjRhlYXuCLvdNQzmLGiLTBlaszgnc/fihs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CBR4XdJStGOHfaKVgNSUa7cG0ZFR34pcot6577p3mSO4MYSFvS5HQb+OXkOHJbX4u1xF/Nx4kGhQCx9YKCsEhvxAQyyYsMgl1173SoOt7oTvgI9uXALziPy35gQ5lRBBJTSwnNzAr3gv485zuAITof8TbSa4p0+6GTmzHGJ4eHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-114-12.bstnma.fios.verizon.net [173.48.114.12])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 51LIOGib007540
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 13:24:17 -0500
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 73B972E011A; Fri, 21 Feb 2025 13:24:16 -0500 (EST)
+Date: Fri, 21 Feb 2025 13:24:16 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
+Cc: Amir Goldstein <amir73il@gmail.com>, "Darrick J. Wong" <djwong@kernel.org>,
+        ronnie sahlberg <ronniesahlberg@gmail.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Steve French <sfrench@samba.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 3/4] fs: Implement support for fsx_xflags_mask,
+ fsx_xflags2 and fsx_xflags2_mask into vfs
+Message-ID: <20250221182416.GA2252164@mit.edu>
+References: <20250216164029.20673-1-pali@kernel.org>
+ <20250216164029.20673-4-pali@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Fuse: Add backing file support for uring_cmd
-To: Moinak Bhattacharyya <moinakb001@gmail.com>,
- Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-References: <CAKXrOwbkMUo9KJd7wHjcFzJieTFj6NPWPp0vD_SgdS3h33Wdsg@mail.gmail.com>
- <db432e5b-fc90-487e-b261-7771766c56cb@bsbernd.com>
- <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
- <CAOQ4uxiVvc6i+5bV1PDMcvS8bALFdp86i==+ZQAAfxKY6AjGiQ@mail.gmail.com>
- <a8af0bfc-d739-49aa-ac3f-4f928741fb7a@bsbernd.com>
- <CAOQ4uxiSkLwPL3YLqmYHMqBStGFm7xxVLjD2+NwyyyzFpj3hFQ@mail.gmail.com>
- <2d9f56ae-7344-4f82-b5da-61522543ef4f@bsbernd.com>
- <72ac0bc2-ff75-4efe-987e-5002b7687729@gmail.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <72ac0bc2-ff75-4efe-987e-5002b7687729@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250216164029.20673-4-pali@kernel.org>
 
+On Sun, Feb 16, 2025 at 05:40:28PM +0100, Pali Rohár wrote:
+> This change adds support for new struct fileattr fields fsx_xflags_mask,
+> fsx_xflags2 and fsx_xflags2_mask into FS_IOC_FSGETXATTR and
+> FS_IOC_FSSETXATTR ioctls.
 
+I don't think I saw an answer to this question (but the discussions of
+the mail thread have really sprawled a bit and so it's hard to review
+all of the messages in the thread) --- so.... what's your reason for
+creating this new fsx_xflags2 field as opposed to just defining new
+flags bits for fsx_xflags field?  There are plenty of unused bits in
+the FS_XFLAG_* space.
 
-On 2/21/25 19:13, Moinak Bhattacharyya wrote:
-> I don't have the modifications to libfuse. What tree are you using for
-> the uring modifications? I dont see any uring patches on the latest
-> master liburing.
+Cheers,
 
-https://github.com/bsbernd/libfuse/tree/uring
-
-This is a development branch, goint to create a new branch out
-of that during the next days (now that I'm eventually almost through
-with libfuse-3.17).
-
->>> It is possible, for example set FOPEN_PASSTHROUGH_FD to
->>> interpret backing_id as backing_fd, but note that in the current
->>> implementation of passthrough_hp, not every open does
->>> fuse_passthrough_open().
->>> The non-first open of an inode uses a backing_id stashed in inode,
->>> from the first open so we'd need different server logic depending on
->>> the commands channel, which is not nice.
-> I wonder if we can just require URING registered FDs (using
-> IORING_REGISTER_FILES). I think io_uring does checks on the file
-> permissions when the FD is registered.
-
-Could you explain how fd registration into the ring would help here?
-
-
-Thanks,
-Bernd
+					- Ted
+					
 
