@@ -1,195 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-42276-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEA5FA3FD0E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 18:12:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 425F0A3FD13
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 18:13:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B54224258BB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 17:11:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD98E175B15
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 17:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A1324E4B0;
-	Fri, 21 Feb 2025 17:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8472624CEC4;
+	Fri, 21 Feb 2025 17:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZWCwY+GT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SuvSmPgK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B8024C699
-	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2025 17:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6421D5AA1;
+	Fri, 21 Feb 2025 17:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740157857; cv=none; b=E9HEBXgYA6LXgoUiim9lVCQwoVCRLAsSZlwirQA17FlU2s3Kjv0UBl0xK0EIMoYzNXdq1zzzbPOPOSb548q0bzS5Vf4ga6DnSr+ag/uM8l4urxlCVP+ElmEpYI1aPeNE0+hgLVdR/JkztjwqrotiWAn/OYQLLBaMGGBCkfKeZ9A=
+	t=1740157920; cv=none; b=S1qH0gGt/vwmIlU82coZNmfrn3fsr6ruV/rAfdojc942/RspAbY2+naL0+6UTznfir8Vs0OE4JTIJ58giEVdHnXgiQNjnGGJ81gM29Zo8FAPCa2GzOKxaJlGJlrgRM4hvEAZuUODzTm6fBGC+hpO3A1zxzNjVdnGoLnUFx7b+Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740157857; c=relaxed/simple;
-	bh=zLivjvSwcKhzlo3svCNKQUA1a6rIcuwqxFgzLbvteDo=;
+	s=arc-20240116; t=1740157920; c=relaxed/simple;
+	bh=nwN6myzfeyIu2xvXyDF1QCWzIO4vL9sS/N1DnP0YTS8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=miKDELnxUg/n0n43UObFXhRR/QNxKauB8vu0rwbVXkIkigOC5Ykw5Yg/LzbOjsn4Aqg1JyhpfqL6H4idvAFR/ymBeFl41HzkRf5b5yLw3NLnDYVLtUxYCBAOt+fqbx32jP6ZXX4XnQRuAspCRw1XoCD9eXpgbkeXfuZ8qZNRvZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZWCwY+GT; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22117c396baso183265ad.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2025 09:10:54 -0800 (PST)
+	 To:Cc:Content-Type; b=MogKtYQT0yiHm1LWsSC9PHL+qFiLS1qy1eivCT88HaFaBZ7hcZzvmRqn+t1Aa1ui8khTfbFTSaoWkQuiuzGCpsfbLwJLnIuVbXviE9kEuD6Na3dlItrfy3o9UQrk8PnfcvFgOjqObqBuCDDgauMs1PTYLBq9o6lb0STlbMX3YUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SuvSmPgK; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e058ca6806so4311103a12.3;
+        Fri, 21 Feb 2025 09:11:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740157854; x=1740762654; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740157916; x=1740762716; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=v/06cutobvSL148SHg+rXF1/EKMBeC15diJi2NLvYxY=;
-        b=ZWCwY+GTFO1iI+FQVPsHIwyBpRTmBQ7AxQKENZYhr1JVm/AArUyEyHaZatbtEJ4ZJk
-         XaGGpLFyLhmmClseqZACnUYcxfghU/pK4dxF96CuHC7xVNQF5rBmM6hKmIJe+f0uYh0z
-         VG8kiDRAiYyikaVcQpYy4OwWw4JoescXotRxPKgdqdb8rO6wcyF9IhiiW8Uer2iFripx
-         aR6a+rRCu33U7ThjgnX6ri1cMtgiW4qDoLwcigOe9X58ywAq+XUfyvyBeLHEzYVr0EeB
-         iwV3SIBdjEobm53uMmoG188zeGM5U0585Rrfm5qOQbcwz0Sj9VBDAde5c5CkJ++dy7sT
-         +1bA==
+        bh=6VvZjEAicGEAu2V/A+Vr/ZR3hBpruFRXAWv6NQYbDAw=;
+        b=SuvSmPgKwds9g3lO8FxDYmg5PiIXE6Gs6zTVCb+uyHmvU3gkmvE8IuBkSe3fDHnZ/F
+         E5xlMIu6FOwPYmo7i4vH6hlUFiYkEXBDP2b2ABN6iazYFYheUCJUU45sLx76aPCPokIT
+         1K62JY882WzQ15I3zxE9PJdq0fuWgLJiJBL50QWmocyqeB75Ifd5VjtIE4VdjwczDRAo
+         ASkWjQNN+V1MaxeVoVrOofTwRreMbdRA+j+q9CPS7Mv3DWtRfSXhPi+uGtr9CaiyXj4g
+         yzDJ1ym8XUhcly/dP9eQ7ZBeURiDjpYMRUpIDOOI2NiFe/MwOwTaCjBkZt8GAPWUJ0Yi
+         lxRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740157854; x=1740762654;
+        d=1e100.net; s=20230601; t=1740157916; x=1740762716;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=v/06cutobvSL148SHg+rXF1/EKMBeC15diJi2NLvYxY=;
-        b=NOG5rjdd/8+hGD0LQaXk2P1/HmWPNDqrqh2rTZYKBex2LGVkXiHPgawxt1Q7ofYp4/
-         4QIVOgauH+nfQUH6yZ6iigZuhBAcWkNhDqUWLlMOqJLdRVMGo/B/tKA1iKZJCznUOJBJ
-         kZpWWNXkfo6irr2Iz4m77cb6SA0otFdPtPU7QuLcZcq+d1vykMOzPAcO4+l3QUp6Zm3J
-         dFNBL6QJ8gw2jFWKf7kr/F/d+GTnI83NhP/M1juNa8dhO6bjXoPbTRr6j8zq63HeeAOU
-         DD2bR6b0/2WOlILIFtYlQ+dKKrkVcWbhsivDxlpM1yE+BrZFZ3O00n4uzywSkvT291Sx
-         MM8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXzBb9SQrT8kd3eH0T0JvPfGhxIWPqmm82nnAF66buGYbDg+5/qYOtonyKoOmso0lizdyjG+CBgb5S+8tHL@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfTtN2uGQWSAdMJrPZhZo1P9gYekBCKX85qA6Ei7uL2VGVSQ5G
-	ON63D2sHYX1kOvu0doNg1NLFbw0AFA2eOKZMM7tHV+Zj8ShQG5rb1iq8MRPMTTht8V3MtbUMo+V
-	PtpGAIAWzrXoL3ukrhcAxmrslqPVdgEpUnsK4
-X-Gm-Gg: ASbGncvLnV0B6+D0KC9ATqSCSvO269+oKdWkHdAXaykCSY9WRD4F034l0svwLyZwbEj
-	ufkHX3OUxZ6p6hz8FcP7GHth+NCH+VJlf8Y1mf5Agfx9qTEfQwD1SFcbLJ62xrlzmSNEOJfuyId
-	9+gJbFObLcLeU4tOHHOiPUyQOo8p2gIx3+2WSLclvI
-X-Google-Smtp-Source: AGHT+IGldTX8YPxNiHq5GCgGriPX+2NeZhhwxRgXaqAzM2MGUPniBZmpaA4CLGFWvvlR3adETlTMpcRMFGLlc6gV27Q=
-X-Received: by 2002:a17:902:e5c6:b0:215:8723:42d1 with SMTP id
- d9443c01a7336-221a0417e96mr2978475ad.10.1740157854187; Fri, 21 Feb 2025
- 09:10:54 -0800 (PST)
+        bh=6VvZjEAicGEAu2V/A+Vr/ZR3hBpruFRXAWv6NQYbDAw=;
+        b=goKz2789eBzj+TGRJoDQZT2E5/VsYBORQJU2MnOMTz+YSITab6DSO3h+5AzQfA06m8
+         6ifPRRYqgQU2mx/ZmnBfaGdnQuBR799WPCkW8iYEEIrIPkgAl1XTlkyi9Q0eRpmoyLJ6
+         LoGZrf7aClpwpeQCBNAvYORRPzVizuc7btIgzJOMLX9IdWEHlDSB5qzyf3y3XzwHQ9+U
+         7+Smq1iTflgt9XiKoZlVj2CAGNwozxY9R+QBGEQEFbyc1Ud2QQCkwmocuXw6baY5cJzp
+         CJIFHza3UaQ23fVa1lq+KhiVjZX/r7sOWnpoEkE9If5FxVPU7S22L7H7n7OFpRtybsix
+         YJ3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVOrZWOfvpBSpnR1AXYTx8zZWplwvzni1Gfbe+95/gx/q0rK7VoeGpulXe/HrxzSmgnMGmxm0xLzcspa8ILWg==@vger.kernel.org, AJvYcCXBuADTMqF0gkJAYJTvOSU1uyEwX7XfXQMGEyWXgI6gmNOWs7pFirzrUL9rxm54pueXuhfBAHM79m4AoKt9@vger.kernel.org, AJvYcCXudhtCvEig1aKhP4ibu2QEctbct1HiTSOiihbO4799aVwuWkvAQ/7yW9i169W4Iwe6C90ub90uz/m/@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBX95Be+rwpwik9i7Gs/J1eZKtc2XiD9eGF+CeXe8T4VOzcgYy
+	3A0cSbF/nRhvx9xH3iEPBcl6MXGDXv366yK0kquvYcZ/oszkjeFZlpAYrXp0NNlDWSxaKH8kRWo
+	GRPfd5kkyWtR7+T4iN21b86ymffk=
+X-Gm-Gg: ASbGncuBZKuvQgfCqgjyrucDIc0+wdXGbr/RBAg7ZqetyE8zTg7pg2aMt9cRNRESSmd
+	wSmijuG6bdJ4c680PuWUr8ksj1FmOrkNLi90uoPGIXSIQL/f/q9QmLz5BfJQTYLQlgzIUuzMGvm
+	3nMYKBzw4=
+X-Google-Smtp-Source: AGHT+IFWIDr9r3hSZMmkqGn1WnTi6P53MVW1MS+O28ff7DJk8k15sH3EeM0ny5DKuivC72nAqqnR7Z0bXLshzgHIgjY=
+X-Received: by 2002:a17:907:6e91:b0:abb:eaf3:a815 with SMTP id
+ a640c23a62f3a-abc0d9e8682mr366028966b.22.1740157915841; Fri, 21 Feb 2025
+ 09:11:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1740139449.git.lorenzo.stoakes@oracle.com> <521d99c08b975fb06a1e7201e971cc24d68196d1.1740139449.git.lorenzo.stoakes@oracle.com>
-In-Reply-To: <521d99c08b975fb06a1e7201e971cc24d68196d1.1740139449.git.lorenzo.stoakes@oracle.com>
-From: Kalesh Singh <kaleshsingh@google.com>
-Date: Fri, 21 Feb 2025 09:10:42 -0800
-X-Gm-Features: AWEUYZnbM5nA9kkqZnhzwGTEHPz7kvvIuks0mem2iJOt7iRv8etO859ySZMIHY4
-Message-ID: <CAC_TJvf-R6MuSS9e0b4orhxLrFwXTnvZV-vf3sB+BnSbEqsprw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fs/proc/task_mmu: add guard region bit to pagemap
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <shuah@kernel.org>, David Hildenbrand <david@redhat.com>, 
-	Suren Baghdasaryan <surenb@google.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	"Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>, Juan Yescas <jyescas@google.com>, 
-	linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-api@vger.kernel.org
+References: <20250216183432.GA2404@sol.localdomain> <CAOQ4uxigYpzpttfaRc=xAxJc=f2bz89_eCideuftf3egTiE+3A@mail.gmail.com>
+ <20250216202441.d3re7lfky6bcozkv@pali> <CAOQ4uxj4urR70FmLB_4Qwbp1O5TwvHWSW6QPTCuq7uXp033B7Q@mail.gmail.com>
+ <Z7Pjb5tI6jJDlFZn@dread.disaster.area> <CAOQ4uxh6aWO7Emygi=dXCE3auDcZZCmDP+jmjhgdffuz1Vx6uQ@mail.gmail.com>
+ <20250218192701.4q22uaqdyjxfp4p3@pali> <Z7UQHL5odYOBqAvo@dread.disaster.area>
+ <20250218230643.fuc546ntkq3nnnom@pali> <CAOQ4uxiAU7UorH1FLcPgoWMXMGRsOt77yRQ12Xkmzcxe8qYuVw@mail.gmail.com>
+ <20250221163443.GA2128534@mit.edu>
+In-Reply-To: <20250221163443.GA2128534@mit.edu>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 21 Feb 2025 18:11:43 +0100
+X-Gm-Features: AWEUYZlLQE04n-q8OHJUG8ZupYGW8TujYyP8PV2Kh7KAz62EJ87h72ZaT7vwdHU
+Message-ID: <CAOQ4uxjwQJiKAqyjEmKUnq-VihyeSsxyEy2F+J38NXwrAXurFQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/4] fs: Add FS_XFLAG_COMPRESSED & FS_XFLAG_ENCRYPTED
+ for FS_IOC_FS[GS]ETXATTR API
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+	Dave Chinner <david@fromorbit.com>, Eric Biggers <ebiggers@kernel.org>, 
+	"Darrick J. Wong" <djwong@kernel.org>, ronnie sahlberg <ronniesahlberg@gmail.com>, 
+	Chuck Lever <chuck.lever@oracle.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Steve French <sfrench@samba.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 21, 2025 at 4:05=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
+On Fri, Feb 21, 2025 at 5:34=E2=80=AFPM Theodore Ts'o <tytso@mit.edu> wrote=
+:
 >
-> Currently there is no means by which users can determine whether a given
-> page in memory is in fact a guard region, that is having had the
-> MADV_GUARD_INSTALL madvise() flag applied to it.
+> I think a few people were talking past each other, because there are two
+> fileds in struct fileattr --- flags, and fsx_xflags.  The flags field
+> is what was originally used by FS_IOC_EXT2_[GS]ETFLAGS, which later
+> started getting used by many other file systems, starting with
+> resierfs and btrfs, and so it became FS_IOC_[GS]ETFLAGS.  The bits in
+> that flags word were both the ioctl ABI and the on-disk encoding, and
+> because we were now allowing multiple file systems to allocate bits,
+> and we needed to avoid stepping on each other (for example since btrfs
+> started using FS_NOCOW_FL, that bit position wouldn't be used by ext4,
+> at least not for a publically exported flag).
 >
-> This is intentional, as to provide this information in VMA metadata would
-> contradict the intent of the feature (providing a means to change fault
-> behaviour at a page table level rather than a VMA level), and would requi=
-re
-> VMA metadata operations to scan page tables, which is unacceptable.
+> So we started running out of space in the FS_FLAG_*_FL namespace, and
+> that's why we created FS_IOC_[GS]ETXATTR and the struct fsxattr.  The
+> FS_XFLAG_*_FL space has plenty of space; there are 14 unassigned bit
+> positions, by my count.
 >
-> In many cases, users have no need to reflect and determine what regions
-> have been designated guard regions, as it is the user who has established
-> them in the first place.
+> As far as the arguments about "proper interface design", as far as
+> Linux is concerned, backwards compatibility trumps "we should have
+> done if it differently".  The one and only guarantee that we have that
+> FS_IOC_GETXATTR followed by FS_IOC_SETXATTR will work.  Nothing else.
 >
-> But in some instances, such as monitoring software, or software that reli=
-es
-> upon being able to ascertain the nature of mappings within a remote proce=
-ss
-> for instance, it becomes useful to be able to determine which pages have
-> the guard region marker applied.
+> The use case of "what if a backup program wants to backup the flags
+> and restore on a different file system" is one that hasn't been
+> considered, and I don't think any backup programs do it today.  For
+> that matter, some of the flags, such as the NODUMP flag, are designed
+> to be instructions to a dump/restore system, and not really one that
+> *should* be backed up.  Again, the only semantic that was guaranteed
+> is GETXATTR or GETXATTR followed by SETXATTR.
 >
-> This patch makes use of an unused pagemap bit (58) to provide this
-> information.
->
-> This patch updates the documentation at the same time as making the chang=
-e
-> such that the implementation of the feature and the documentation of it a=
-re
-> tied together.
->
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  Documentation/admin-guide/mm/pagemap.rst | 3 ++-
->  fs/proc/task_mmu.c                       | 6 +++++-
->  2 files changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/adm=
-in-guide/mm/pagemap.rst
-> index caba0f52dd36..a297e824f990 100644
-> --- a/Documentation/admin-guide/mm/pagemap.rst
-> +++ b/Documentation/admin-guide/mm/pagemap.rst
-> @@ -21,7 +21,8 @@ There are four components to pagemap:
->      * Bit  56    page exclusively mapped (since 4.2)
->      * Bit  57    pte is uffd-wp write-protected (since 5.13) (see
->        Documentation/admin-guide/mm/userfaultfd.rst)
-> -    * Bits 58-60 zero
-> +    * Bit  58    pte is a guard region (since 6.15) (see madvise (2) man=
- page)
 
-Should this be 6.14 ?
+Thanks for chiming in, Ted!
+Notes from the original author of FS_IOC_EXT2_[GS]ETFLAGS
+are valuable.
 
-Other than that: Reviewed-by: Kalesh Singh <kaleshsingh@google.com>
+> We can define some new interface for return what xflags are supported
+> by a particular file system.  This could either be the long-debated,
+> but never implemented statfsx() system call.  Or it could be extending
+> what gets returned by FS_IOC_GETXATTR by using one of the fs_pad
+> fields in struct fsxattr.  This is arguably the simplest way of
+> dealing with the problem.
+>
+
+That is also what I think.
+fsx_xflags_mask semantics for GET are pretty clear
+and follows the established pattern of  stx_attributes_mask
+Even if it is not mandatory for userspace, it can be useful.
+
+I asked Dave if he objects to fsx_xflags_mask and got silence,
+so IMO, if Pali wants to implement fsx_xflags_mask for the API
+I see no reason to resist it.
+
+> I suppose the field could double as the bitmask field when
+> FS_IOC_SETXATTR is called, but that just seems to be an overly complex
+> set of semantics.  If someone really wants to do that, I wouldn't
+> really complain, but then what we would actually call the field
+> "flags_supported_on_get_bitmask_on_set" would seem a bit wordy.  :-)
+
+If we follow the old rule of SET after GET should always work
+then fsx_xflags_mask will always be a superset of fsx_xflags,
+so I think it would be sane to return -EINVAL in the case
+of (fsx_xflags_mask && fsx_xflags & ~fsx_xflags_mask),
+which is anyway the correct behavior for filesystems when the
+user is trying to set flags that the filesystem does not support.
+
+As far as I could see, all in-tree filesystems behave this way
+when the user is trying to set unsupported flags either via
+FS_IOC_SETFLAGS or via FS_IOC_SETXATTR
+except xfs, which ignores unsupported fsx_xflags from
+FS_IOC_SETXATTR.
+
+Changing the behavior of xfs to return -EINVAL for unsupported
+fsx_xflags if fsx_xflags_mask is non zero is NOT going to break UAPI,
+because as everyone keeps saying, the only guarantee from
+FS_IOC_SETXATTR was that FS_IOC_SETXATTR after
+FS_IOC_GETXATTR works and that guarantee will not be broken.
 
 Thanks,
-Kalesh
-
-> +    * Bits 59-60 zero
->      * Bit  61    page is file-page or shared-anon (since 3.5)
->      * Bit  62    page swapped
->      * Bit  63    page present
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index f02cd362309a..c17615e21a5d 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -1632,6 +1632,7 @@ struct pagemapread {
->  #define PM_SOFT_DIRTY          BIT_ULL(55)
->  #define PM_MMAP_EXCLUSIVE      BIT_ULL(56)
->  #define PM_UFFD_WP             BIT_ULL(57)
-> +#define PM_GUARD_REGION                BIT_ULL(58)
->  #define PM_FILE                        BIT_ULL(61)
->  #define PM_SWAP                        BIT_ULL(62)
->  #define PM_PRESENT             BIT_ULL(63)
-> @@ -1732,6 +1733,8 @@ static pagemap_entry_t pte_to_pagemap_entry(struct =
-pagemapread *pm,
->                         page =3D pfn_swap_entry_to_page(entry);
->                 if (pte_marker_entry_uffd_wp(entry))
->                         flags |=3D PM_UFFD_WP;
-> +               if (is_guard_swp_entry(entry))
-> +                       flags |=3D  PM_GUARD_REGION;
->         }
->
->         if (page) {
-> @@ -1931,7 +1934,8 @@ static const struct mm_walk_ops pagemap_ops =3D {
->   * Bit  55    pte is soft-dirty (see Documentation/admin-guide/mm/soft-d=
-irty.rst)
->   * Bit  56    page exclusively mapped
->   * Bit  57    pte is uffd-wp write-protected
-> - * Bits 58-60 zero
-> + * Bit  58    pte is a guard region
-> + * Bits 59-60 zero
->   * Bit  61    page is file-page or shared-anon
->   * Bit  62    page swapped
->   * Bit  63    page present
-> --
-> 2.48.1
->
+Amir.
 
