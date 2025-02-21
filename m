@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-42244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC6D9A3F616
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 14:35:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E39A3F639
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 14:40:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15D6B861F8E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 13:32:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEA681897F48
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 13:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06D6210186;
-	Fri, 21 Feb 2025 13:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2687720E001;
+	Fri, 21 Feb 2025 13:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pKQ+CUNI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PkhOsIiC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068D7208AD;
-	Fri, 21 Feb 2025 13:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6461FF7C2;
+	Fri, 21 Feb 2025 13:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740144678; cv=none; b=VfsIol8N/anEQ/1fXNlYteAbNvr02wgZ8Y8j1Vzu8oSMgwFMKwe1VVfJcEgIeRnmcz+ZWBDdLyXgX4BoHwDJ2EY59sw/dUvSUK7cStPeli1YyhBV9zaik3SrT+KyFr5Jj5n7XhRRJ7IUvDTHwW/YdAA16/SEj2weTgL2VPZbmJM=
+	t=1740145173; cv=none; b=tgtLT1HmaQjN88Ei8fRA/Kie46UoLsw+4ZjX7Q3Zqb4FYVcYij2xvzBKWR7xuaGl2UwVYUfq8HL9TPY5qJFjyktMcLYamnYTIe6estqw/GiHzYJm5vDKHyg4N6602aoTaGUwMHofLgrjrx2/WU3szYmKfhPgNpVlrJTFhizWFKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740144678; c=relaxed/simple;
-	bh=kyjVU15nTzpcXtCWhYxICHUjLRMJawW3kP28nGspfgg=;
+	s=arc-20240116; t=1740145173; c=relaxed/simple;
+	bh=z1Z9OZJropC063FqC/Jwhzp+2Ycqe4yTzD/qrq/ji6g=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iSNjaDAxlrVV+eeWOJ3VRUb9h8+HhpuVCQCtHBNE7Ztm9RKPDbNfnOeJYAVui3el9wu24V7H27vMY+I11At3V19IvjZIxidadVpWz/6VSCeC/LhDgEHraqCMVXPit9B2YVxZASsASDQ1px8/FHU1xPpvFYepsMgryRtT98jeScs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pKQ+CUNI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBDC9C4CED6;
-	Fri, 21 Feb 2025 13:31:15 +0000 (UTC)
+	 Content-Type:MIME-Version; b=aG01RG48Xu9+tR4MFTaxCNffd8o2gdY5px93Jtzxy81AEo3jjFteI09fZoNTUoEp4TcSvCTKMGZXlsyYGxcDXs0vDISfT30MmzLTxiXNLv83H+RBXN2rL9aznUzXU70ASqYq32wBzj0ypXxjPjwppQHNCmH11fBerN6JW2KoGSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PkhOsIiC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCF15C4CED6;
+	Fri, 21 Feb 2025 13:39:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740144677;
-	bh=kyjVU15nTzpcXtCWhYxICHUjLRMJawW3kP28nGspfgg=;
+	s=k20201202; t=1740145172;
+	bh=z1Z9OZJropC063FqC/Jwhzp+2Ycqe4yTzD/qrq/ji6g=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=pKQ+CUNIxD9BBLKushQCjIsoWp8zgp5Pl4Q37KFUYsfKQaVJcwbew5jmsnNhAFqTP
-	 6amjyQyDte0lhlu6JSXTcjEilF8RDe3WrJbcfsLAGn8fr+0Xexa7ItSZDHWy1qDX2v
-	 xsJVsCKcWjSIFmxapm1yGl3uREQ9ycpi9Ork5+LMhNRFipNsEz8y+oxT6x+UhrQOhV
-	 nXynmAIfyltx2BI4Lyc9u+KdHVaHEYJTSLSz5XS+V7ScSnAbeQYl9bkjO3/d2Dssbm
-	 gh4Ou8N4JsYgw1mwBJ9ncwoJk+rh3nAnQf4qfalw02OLW/GGkK3FLDYOF4kA9lKucJ
-	 6K2Y2wwSfrTPw==
-Message-ID: <64248546def6697c52169b5255da5745753eeab0.camel@kernel.org>
-Subject: Re: [PATCH 3/6] ceph: return the correct dentry on mkdir
+	b=PkhOsIiCVeijgpnNW6hVcuKSkWAtwH1WzHmk6fqj+DfI9WZMhYutNI0YwFdFBNQhG
+	 i1QqErkQW/+EIfLaD4Zu8FtDfgYKSvN/0DsZHZ28D1gyD/UI6RWdHdzC1AhwEqrv2v
+	 OEfkNfDmQRCbw0/p94Us/X5Qf2RoQtuXeGLlF+8qs575HEYeJ7/bbeO+W9+ZbcN99/
+	 kVhhSAsV4ZTiP7mose44i95+KXcHEOAXszVcMfrUMqeDDZFvwfKwUMuEOoQpJiUv7b
+	 COaYwsZAcBMgD8r8bNEsPcdUGqU+gPZD8/qJ2Q7mvu9Q2YzTsFMIEyARUjg1rmDg7/
+	 aqjKJf3s9qH1g==
+Message-ID: <0542f4a777bb3fc1ef49fc879ac5f12030aa788a.camel@kernel.org>
+Subject: Re: [PATCH 4/6] fuse: return correct dentry for ->mkdir
 From: Jeff Layton <jlayton@kernel.org>
 To: NeilBrown <neilb@suse.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner	 <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Miklos
@@ -57,10 +57,10 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, 
 	linux-um@lists.infradead.org, ceph-devel@vger.kernel.org,
  netfs@lists.linux.dev
-Date: Fri, 21 Feb 2025 08:31:14 -0500
-In-Reply-To: <20250220234630.983190-4-neilb@suse.de>
+Date: Fri, 21 Feb 2025 08:39:29 -0500
+In-Reply-To: <20250220234630.983190-5-neilb@suse.de>
 References: <20250220234630.983190-1-neilb@suse.de>
-	 <20250220234630.983190-4-neilb@suse.de>
+	 <20250220234630.983190-5-neilb@suse.de>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -146,57 +146,185 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Fri, 2025-02-21 at 10:36 +1100, NeilBrown wrote:
-> ceph already splices the correct dentry (in splice_dentry()) from the
-> result of mkdir but does nothing more with it.
+> fuse already uses d_splice_alias() to ensure an appropriate dentry is
+> found for a newly created dentry.  Now that ->mkdir can return that
+> dentry we do so.
 >=20
-> Now that ->mkdir can return a dentry, return the correct dentry.
+> This requires changing create_new_entry() to return a dentry and
+> handling that change in all callers.
 >=20
 > Signed-off-by: NeilBrown <neilb@suse.de>
 > ---
->  fs/ceph/dir.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
+>  fs/fuse/dir.c | 55 +++++++++++++++++++++++++++++++--------------------
+>  1 file changed, 34 insertions(+), 21 deletions(-)
 >=20
-> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> index 39e0f240de06..c1a1c168bb27 100644
-> --- a/fs/ceph/dir.c
-> +++ b/fs/ceph/dir.c
-> @@ -1099,6 +1099,7 @@ static struct dentry *ceph_mkdir(struct mnt_idmap *=
-idmap, struct inode *dir,
->  	struct ceph_client *cl =3D mdsc->fsc->client;
->  	struct ceph_mds_request *req;
->  	struct ceph_acl_sec_ctx as_ctx =3D {};
-> +	struct dentry *ret =3D NULL;
->  	int err;
->  	int op;
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index 5bb65f38bfb8..8c44c9c73c38 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -781,9 +781,9 @@ static int fuse_atomic_open(struct inode *dir, struct=
+ dentry *entry,
+>  /*
+>   * Code shared between mknod, mkdir, symlink and link
+>   */
+> -static int create_new_entry(struct mnt_idmap *idmap, struct fuse_mount *=
+fm,
+> -			    struct fuse_args *args, struct inode *dir,
+> -			    struct dentry *entry, umode_t mode)
+> +static struct dentry *create_new_entry(struct mnt_idmap *idmap, struct f=
+use_mount *fm,
+> +				       struct fuse_args *args, struct inode *dir,
+> +				       struct dentry *entry, umode_t mode)
+>  {
+>  	struct fuse_entry_out outarg;
+>  	struct inode *inode;
+> @@ -792,11 +792,11 @@ static int create_new_entry(struct mnt_idmap *idmap=
+, struct fuse_mount *fm,
+>  	struct fuse_forget_link *forget;
 > =20
-> @@ -1166,14 +1167,20 @@ static struct dentry *ceph_mkdir(struct mnt_idmap=
- *idmap, struct inode *dir,
->  	    !req->r_reply_info.head->is_dentry)
->  		err =3D ceph_handle_notrace_create(dir, dentry);
->  out_req:
-> +	if (!err && req->r_dentry !=3D dentry)
-> +		/* Some other dentry was spliced in */
-> +		ret =3D dget(req->r_dentry);
->  	ceph_mdsc_put_request(req);
->  out:
->  	if (!err)
-> +		/* Should this use 'ret' ?? */
-
-Probably? Is there a guarantee that "dentry" will even have an inode
-attached if it got replaced by an disconnected one in the dcache?
-
->  		ceph_init_inode_acls(d_inode(dentry), &as_ctx);
->  	else
->  		d_drop(dentry);
->  	ceph_release_acl_sec_ctx(&as_ctx);
-> -	return ERR_PTR(err);
-> +	if (err)
-> +		return ERR_PTR(err);
-> +	return ret;
+>  	if (fuse_is_bad(dir))
+> -		return -EIO;
+> +		return ERR_PTR(-EIO);
+> =20
+>  	forget =3D fuse_alloc_forget();
+>  	if (!forget)
+> -		return -ENOMEM;
+> +		return ERR_PTR(-ENOMEM);
+> =20
+>  	memset(&outarg, 0, sizeof(outarg));
+>  	args->nodeid =3D get_node_id(dir);
+> @@ -826,29 +826,27 @@ static int create_new_entry(struct mnt_idmap *idmap=
+, struct fuse_mount *fm,
+>  			  &outarg.attr, ATTR_TIMEOUT(&outarg), 0, 0);
+>  	if (!inode) {
+>  		fuse_queue_forget(fm->fc, forget, outarg.nodeid, 1);
+> -		return -ENOMEM;
+> +		return ERR_PTR(-ENOMEM);
+>  	}
+>  	kfree(forget);
+> =20
+>  	d_drop(entry);
+>  	d =3D d_splice_alias(inode, entry);
+>  	if (IS_ERR(d))
+> -		return PTR_ERR(d);
+> +		return d;
+> =20
+> -	if (d) {
+> +	if (d)
+>  		fuse_change_entry_timeout(d, &outarg);
+> -		dput(d);
+> -	} else {
+> +	else
+>  		fuse_change_entry_timeout(entry, &outarg);
+> -	}
+>  	fuse_dir_changed(dir);
+> -	return 0;
+> +	return d;
+> =20
+>   out_put_forget_req:
+>  	if (err =3D=3D -EEXIST)
+>  		fuse_invalidate_entry(entry);
+>  	kfree(forget);
+> -	return err;
+> +	return ERR_PTR(err);
 >  }
 > =20
->  static int ceph_link(struct dentry *old_dentry, struct inode *dir,
+>  static int fuse_mknod(struct mnt_idmap *idmap, struct inode *dir,
+> @@ -856,6 +854,7 @@ static int fuse_mknod(struct mnt_idmap *idmap, struct=
+ inode *dir,
+>  {
+>  	struct fuse_mknod_in inarg;
+>  	struct fuse_mount *fm =3D get_fuse_mount(dir);
+> +	struct dentry *de;
+>  	FUSE_ARGS(args);
+> =20
+>  	if (!fm->fc->dont_mask)
+> @@ -871,7 +870,12 @@ static int fuse_mknod(struct mnt_idmap *idmap, struc=
+t inode *dir,
+>  	args.in_args[0].value =3D &inarg;
+>  	args.in_args[1].size =3D entry->d_name.len + 1;
+>  	args.in_args[1].value =3D entry->d_name.name;
+> -	return create_new_entry(idmap, fm, &args, dir, entry, mode);
+> +	de =3D create_new_entry(idmap, fm, &args, dir, entry, mode);
+> +	if (IS_ERR(de))
+> +		return PTR_ERR(de);
+> +	if (de)
+> +		dput(de);
+> +	return 0;
+>  }
+> =20
+>  static int fuse_create(struct mnt_idmap *idmap, struct inode *dir,
+> @@ -917,7 +921,7 @@ static struct dentry *fuse_mkdir(struct mnt_idmap *id=
+map, struct inode *dir,
+>  	args.in_args[0].value =3D &inarg;
+>  	args.in_args[1].size =3D entry->d_name.len + 1;
+>  	args.in_args[1].value =3D entry->d_name.name;
+> -	return ERR_PTR(create_new_entry(idmap, fm, &args, dir, entry, S_IFDIR))=
+;
+> +	return create_new_entry(idmap, fm, &args, dir, entry, S_IFDIR);
+>  }
+> =20
+>  static int fuse_symlink(struct mnt_idmap *idmap, struct inode *dir,
+> @@ -925,6 +929,7 @@ static int fuse_symlink(struct mnt_idmap *idmap, stru=
+ct inode *dir,
+>  {
+>  	struct fuse_mount *fm =3D get_fuse_mount(dir);
+>  	unsigned len =3D strlen(link) + 1;
+> +	struct dentry *de;
+>  	FUSE_ARGS(args);
+> =20
+>  	args.opcode =3D FUSE_SYMLINK;
+> @@ -934,7 +939,12 @@ static int fuse_symlink(struct mnt_idmap *idmap, str=
+uct inode *dir,
+>  	args.in_args[1].value =3D entry->d_name.name;
+>  	args.in_args[2].size =3D len;
+>  	args.in_args[2].value =3D link;
+> -	return create_new_entry(idmap, fm, &args, dir, entry, S_IFLNK);
+> +	de =3D create_new_entry(idmap, fm, &args, dir, entry, S_IFLNK);
+> +	if (IS_ERR(de))
+> +		return PTR_ERR(de);
+> +	if (de)
+> +		dput(de);
+> +	return 0;
+>  }
+> =20
+>  void fuse_flush_time_update(struct inode *inode)
+> @@ -1117,7 +1127,7 @@ static int fuse_rename2(struct mnt_idmap *idmap, st=
+ruct inode *olddir,
+>  static int fuse_link(struct dentry *entry, struct inode *newdir,
+>  		     struct dentry *newent)
+>  {
+> -	int err;
+> +	struct dentry *de;
+>  	struct fuse_link_in inarg;
+>  	struct inode *inode =3D d_inode(entry);
+>  	struct fuse_mount *fm =3D get_fuse_mount(inode);
+> @@ -1131,13 +1141,16 @@ static int fuse_link(struct dentry *entry, struct=
+ inode *newdir,
+>  	args.in_args[0].value =3D &inarg;
+>  	args.in_args[1].size =3D newent->d_name.len + 1;
+>  	args.in_args[1].value =3D newent->d_name.name;
+> -	err =3D create_new_entry(&invalid_mnt_idmap, fm, &args, newdir, newent,=
+ inode->i_mode);
+> -	if (!err)
+> +	de =3D create_new_entry(&invalid_mnt_idmap, fm, &args, newdir, newent, =
+inode->i_mode);
+> +	if (!IS_ERR(de)) {
+> +		if (de)
+> +			dput(de);
+> +		de =3D NULL;
+>  		fuse_update_ctime_in_cache(inode);
+> -	else if (err =3D=3D -EINTR)
+> +	} else if (PTR_ERR(de) =3D=3D -EINTR)
+>  		fuse_invalidate_attr(inode);
+> =20
+> -	return err;
+> +	return PTR_ERR(de);
+>  }
+> =20
+>  static void fuse_fillattr(struct mnt_idmap *idmap, struct inode *inode,
 
---=20
-Jeff Layton <jlayton@kernel.org>
+Pretty straightforward.
+
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
