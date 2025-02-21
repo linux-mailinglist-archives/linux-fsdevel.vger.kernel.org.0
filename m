@@ -1,221 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-42270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42271-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B21AA3FB4D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 17:31:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A98EFA3FBA4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 17:41:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4E637AF9AC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 16:24:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 117281891EA0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 16:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDBF1E7C1E;
-	Fri, 21 Feb 2025 16:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="knyxOZ3I"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00D3210F49;
+	Fri, 21 Feb 2025 16:35:27 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18DC286298;
-	Fri, 21 Feb 2025 16:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE3420012D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2025 16:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740155086; cv=none; b=ULhRWceNWUs+kCQFT7CdnZ1uXL0qhxybSBwJz+QMNey0TFTibPD+ftwD7GiBAIxRG1ugfxorMO0WFW5v1LIfry7jauqaiU1u0l4COwEhG54xIzhZHaDZ+bh+1IF3LF8TZZXNNMrvETQqcWgV0eT9Ps4jZFFrUOcYrQdi9eYvlug=
+	t=1740155727; cv=none; b=Uk0dv2kLP3uWa6KcMPEelSOZgoE8lUbeAruBRqymlaz9on8VWrVu/oGUNaiTeOdRdOWB0lu5itqZP6mMKxr3Egfc+05U1rOXNlwVVZri4elqs4lTayu1gdL9lOTI7+9wCKpW9oL1jfK0ENzooolILm2oxfTWoYGM4ng944lThtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740155086; c=relaxed/simple;
-	bh=Dp/fcJLtdSGhXa9dQRAR9mBpDX7HBvUKXgBwaJ+JQqk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lSrD6bQb+lP097IZa7FF9GNVPCz1Ol/6UJetCTIPUFjYuRFkg+w+Rw567RR+0yIZSAz+yy6uY529SGq4IVg2cv2lSZvG8mdbBZlFjTteFdEx02TjSFv/gobaDx6t+3XwaFWILhQ9pz5hBPQkyoIIZaunQnvjeiao+qJZlD0AYnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=knyxOZ3I; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso390489066b.1;
-        Fri, 21 Feb 2025 08:24:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740155083; x=1740759883; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qPzDaZzpRQ7/HMYQGXfpHxcDpofOX3IFsTztgdcSTss=;
-        b=knyxOZ3IXgaFdAzN3S9hmBoQNvVPg0LPdHejrhOuK6H3J4/l/HReGfPEWr7IxdcgLq
-         OyVPrfaMugGJV0YbI6iGvbIi00mjqIWhMlDyejekOVICGQYTITLAWgVswdXso9xVHJOI
-         OU97V5yUWH8tdnSdEuKwo1s4AIH1yf1tNNz2YXvLRlvX+C7Y8C0Fkk7RpAMSVXoppDcS
-         5X5go+dfjmBY2uB9qjhYeTIlWZ1QiYUNRHJJZHdQ76iIT4rXu21QOljidF98zht4P3tA
-         nsQEiwrd6BAngQ9dT9+vhx8EAcXwi2L7weZ5bZSqXLHK0aNGU6Bkty22V2rXEhOTtWmK
-         7QZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740155083; x=1740759883;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qPzDaZzpRQ7/HMYQGXfpHxcDpofOX3IFsTztgdcSTss=;
-        b=uNLAhTOCW8iskqu5Xy1IOM5uQwhRpSzXDVHXdXj0HDxdDxYkYDNSg9gtQIGhmq8wxu
-         il+Fl91zphdKni5/jxJoH4RHzPzqm8ke+UkxaTZQ2HXMyBZkBQOb3NkNTsPZPLpn329E
-         J/4uNCR0RakGDOBzqjd2grc5jBDKlRqRbkr9DD2V1Uab0sLJGgd+VeTkXRUZOoHju90j
-         z40mTuuTmFRg+KW/u+f7zVIvPRKkY5myXSwwB2MiycCoN3D9miR+TI7aHzYMRuoe+LLf
-         fBydEluHzCCr/dgHuV1NRreYs8rFIK9aP0bYsxVoZcuRJfLGXAcs+6YOE4CpgEoR3hhn
-         upxg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyqPbWdNVBMzC1HciEKEIE4LMf7/0Dm/W55rZwvL8GvbSxs2WSeQhwvU930xhtstZw8DmQH6aB9R+nmhOQvg==@vger.kernel.org, AJvYcCV3N1HTdOy2HkcnQPfaEuOcKuwWvfGQgzb0WKt62CZntGNxcViFABAVdzK/eubSWOkcxLPtoOEBxw==@vger.kernel.org, AJvYcCV5GYZN3hk4849JYO+Gzus+3zcXd1suo/4kNzDOOTamlicIuM8+r1Hs6EbJr5lf4/SjCn0B6gTCaryAOm3b@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM1bkoc6lxgZKhsGl/nRQxMmeFnXCsvabDvCXClra9RZ/+xGOg
-	WUQirhGS9AlRfFZrx/QUfVPzsJr5AnIy29rb9r398NA8huL3b+zG26EyT78/bySGcdpXW0iZ1md
-	gCtpOdJC6l7IBB61rvIbG5+OSDNc=
-X-Gm-Gg: ASbGncuODO7yTAIRGn0WKKEeYa8M/Av2R/lzo/Og7RXVKdAsk6McxmuvywXLYqr5XJM
-	yp4Guxv/L/LBT5o40x40vvfVF0/KaXXWkrVtLaSUBJtOk0Xou8T9VvUHklGdJgogvGrk3mPY8QP
-	+cQ4ISA50=
-X-Google-Smtp-Source: AGHT+IHxAHmA0/IYbZFCwi6GGkFhZ5TUvIRv/rb38RgOtgzfDvS3PRkeWkd6r4LMJhqTOiZEf2/QI9fR0l+bjFUyEMw=
-X-Received: by 2002:a17:907:96a0:b0:aba:5f44:8822 with SMTP id
- a640c23a62f3a-abc099b838amr436759166b.11.1740155082787; Fri, 21 Feb 2025
- 08:24:42 -0800 (PST)
+	s=arc-20240116; t=1740155727; c=relaxed/simple;
+	bh=XUjICYhOnWMpHEXd6+Gzp0FAN67Q7nD2DhYPj12yrII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oNMdirWYgYMcWg9Y4wtLdG6OiRIUAOZFHp8cggMrqziJ/pW3QawmY6BV9qrXin2fEZemNlyTRkWNWnNnK3SamnS65grTmt8yFd7RgUTpdIa2AGcmIHGOP6/unRG1QSKMnPSFqEJJoemtUt1LIkIrc6U68EXxwxv6LdCgb3GrWHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-114-12.bstnma.fios.verizon.net [173.48.114.12])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 51LGYhLV006504
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 11:34:44 -0500
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id AA2FB2E011A; Fri, 21 Feb 2025 11:34:43 -0500 (EST)
+Date: Fri, 21 Feb 2025 11:34:43 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+        Dave Chinner <david@fromorbit.com>, Eric Biggers <ebiggers@kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        ronnie sahlberg <ronniesahlberg@gmail.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Steve French <sfrench@samba.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/4] fs: Add FS_XFLAG_COMPRESSED & FS_XFLAG_ENCRYPTED
+ for FS_IOC_FS[GS]ETXATTR API
+Message-ID: <20250221163443.GA2128534@mit.edu>
+References: <20250216183432.GA2404@sol.localdomain>
+ <CAOQ4uxigYpzpttfaRc=xAxJc=f2bz89_eCideuftf3egTiE+3A@mail.gmail.com>
+ <20250216202441.d3re7lfky6bcozkv@pali>
+ <CAOQ4uxj4urR70FmLB_4Qwbp1O5TwvHWSW6QPTCuq7uXp033B7Q@mail.gmail.com>
+ <Z7Pjb5tI6jJDlFZn@dread.disaster.area>
+ <CAOQ4uxh6aWO7Emygi=dXCE3auDcZZCmDP+jmjhgdffuz1Vx6uQ@mail.gmail.com>
+ <20250218192701.4q22uaqdyjxfp4p3@pali>
+ <Z7UQHL5odYOBqAvo@dread.disaster.area>
+ <20250218230643.fuc546ntkq3nnnom@pali>
+ <CAOQ4uxiAU7UorH1FLcPgoWMXMGRsOt77yRQ12Xkmzcxe8qYuVw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKXrOwbkMUo9KJd7wHjcFzJieTFj6NPWPp0vD_SgdS3h33Wdsg@mail.gmail.com>
- <db432e5b-fc90-487e-b261-7771766c56cb@bsbernd.com> <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
-In-Reply-To: <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 21 Feb 2025 17:24:31 +0100
-X-Gm-Features: AWEUYZk82-E1nugiwOLCFv6a1lThbUGEVFbwWR8Sh8-INRRVV2JSoQLZ-iiaOvI
-Message-ID: <CAOQ4uxiVvc6i+5bV1PDMcvS8bALFdp86i==+ZQAAfxKY6AjGiQ@mail.gmail.com>
-Subject: Re: [PATCH] Fuse: Add backing file support for uring_cmd
-To: Moinak Bhattacharyya <moinakb001@gmail.com>
-Cc: Bernd Schubert <bernd@bsbernd.com>, Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxiAU7UorH1FLcPgoWMXMGRsOt77yRQ12Xkmzcxe8qYuVw@mail.gmail.com>
 
-On Fri, Feb 21, 2025 at 4:36=E2=80=AFPM Moinak Bhattacharyya
-<moinakb001@gmail.com> wrote:
->
-> Sorry about that. Correctly-formatted patch follows. Should I send out a
-> V2 instead?
->
-> Add support for opening and closing backing files in the fuse_uring_cmd
-> callback. Store backing_map (for open) and backing_id (for close) in the
-> uring_cmd data.
-> ---
->   fs/fuse/dev_uring.c       | 50 +++++++++++++++++++++++++++++++++++++++
->   include/uapi/linux/fuse.h |  6 +++++
->   2 files changed, 56 insertions(+)
->
-> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> index ebd2931b4f2a..df73d9d7e686 100644
-> --- a/fs/fuse/dev_uring.c
-> +++ b/fs/fuse/dev_uring.c
-> @@ -1033,6 +1033,40 @@ fuse_uring_create_ring_ent(struct io_uring_cmd *cm=
-d,
->       return ent;
->   }
->
-> +/*
-> + * Register new backing file for passthrough, getting backing map from
-> URING_CMD data
-> + */
-> +static int fuse_uring_backing_open(struct io_uring_cmd *cmd,
-> +    unsigned int issue_flags, struct fuse_conn *fc)
-> +{
-> +    const struct fuse_backing_map *map =3D io_uring_sqe_cmd(cmd->sqe);
-> +    int ret =3D fuse_backing_open(fc, map);
-> +
+I think a few people were talking past each other, because there are two
+fileds in struct fileattr --- flags, and fsx_xflags.  The flags field
+is what was originally used by FS_IOC_EXT2_[GS]ETFLAGS, which later
+started getting used by many other file systems, starting with
+resierfs and btrfs, and so it became FS_IOC_[GS]ETFLAGS.  The bits in
+that flags word were both the ioctl ABI and the on-disk encoding, and
+because we were now allowing multiple file systems to allocate bits,
+and we needed to avoid stepping on each other (for example since btrfs
+started using FS_NOCOW_FL, that bit position wouldn't be used by ext4,
+at least not for a publically exported flag).
 
-I am not that familiar with io_uring, so I need to ask -
-fuse_backing_open() does
-fb->cred =3D prepare_creds();
-to record server credentials
-what are the credentials that will be recorded in the context of this
-io_uring command?
+So we started running out of space in the FS_FLAG_*_FL namespace, and
+that's why we created FS_IOC_[GS]ETXATTR and the struct fsxattr.  The
+FS_XFLAG_*_FL space has plenty of space; there are 14 unassigned bit
+positions, by my count.
 
+As far as the arguments about "proper interface design", as far as
+Linux is concerned, backwards compatibility trumps "we should have
+done if it differently".  The one and only guarantee that we have that
+FS_IOC_GETXATTR followed by FS_IOC_SETXATTR will work.  Nothing else.
 
-> +    if (ret < 0) {
-> +        return ret;
-> +    }
-> +
-> +    io_uring_cmd_done(cmd, ret, 0, issue_flags);
-> +    return 0;
-> +}
-> +
-> +/*
-> + * Remove file from passthrough tracking, getting backing_id from
-> URING_CMD data
-> + */
-> +static int fuse_uring_backing_close(struct io_uring_cmd *cmd,
-> +    unsigned int issue_flags, struct fuse_conn *fc)
-> +{
-> +    const int *backing_id =3D io_uring_sqe_cmd(cmd->sqe);
-> +    int ret =3D fuse_backing_close(fc, *backing_id);
-> +
-> +    if (ret < 0) {
-> +        return ret;
-> +    }
-> +
-> +    io_uring_cmd_done(cmd, ret, 0, issue_flags);
-> +    return 0;
-> +}
-> +
->   /*
->    * Register header and payload buffer with the kernel and puts the
->    * entry as "ready to get fuse requests" on the queue
-> @@ -1144,6 +1178,22 @@ int fuse_uring_cmd(struct io_uring_cmd *cmd,
-> unsigned int issue_flags)
->               return err;
->           }
->           break;
-> +    case FUSE_IO_URING_CMD_BACKING_OPEN:
-> +        err =3D fuse_uring_backing_open(cmd, issue_flags, fc);
-> +        if (err) {
-> +            pr_info_once("FUSE_IO_URING_CMD_BACKING_OPEN failed err=3D%d=
-\n",
-> +                    err);
-> +            return err;
-> +        }
-> +        break;
-> +    case FUSE_IO_URING_CMD_BACKING_CLOSE:
-> +        err =3D fuse_uring_backing_close(cmd, issue_flags, fc);
-> +        if (err) {
-> +            pr_info_once("FUSE_IO_URING_CMD_BACKING_CLOSE failed err=3D%=
-d\n",
-> +                    err);
-> +            return err;
-> +        }
-> +        break;
->       default:
->           return -EINVAL;
->       }
-> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> index 5e0eb41d967e..634265da1328 100644
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -1264,6 +1264,12 @@ enum fuse_uring_cmd {
->
->       /* commit fuse request result and fetch next request */
->       FUSE_IO_URING_CMD_COMMIT_AND_FETCH =3D 2,
-> +
-> +    /* add new backing file for passthrough */
-> +    FUSE_IO_URING_CMD_BACKING_OPEN =3D 3,
-> +
-> +    /* remove passthrough file by backing_id */
-> +    FUSE_IO_URING_CMD_BACKING_CLOSE =3D 4,
->   };
->
+The use case of "what if a backup program wants to backup the flags
+and restore on a different file system" is one that hasn't been
+considered, and I don't think any backup programs do it today.  For
+that matter, some of the flags, such as the NODUMP flag, are designed
+to be instructions to a dump/restore system, and not really one that
+*should* be backed up.  Again, the only semantic that was guaranteed
+is GETXATTR or GETXATTR followed by SETXATTR.
 
-An anecdote:
-Why are we using FUSE_DEV_IOC_BACKING_OPEN
-and not passing the backing fd directly in OPEN response?
+We can define some new interface for return what xflags are supported
+by a particular file system.  This could either be the long-debated,
+but never implemented statfsx() system call.  Or it could be extending
+what gets returned by FS_IOC_GETXATTR by using one of the fs_pad
+fields in struct fsxattr.  This is arguably the simplest way of
+dealing with the problem.
 
-The reason for that was security related - there was a concern that
-an adversary would be able to trick some process into writing some fd
-to /dev/fuse, whereas tricking some proces into doing an ioctl is not
-so realistic.
+I suppose the field could double as the bitmask field when
+FS_IOC_SETXATTR is called, but that just seems to be an overly complex
+set of semantics.  If someone really wants to do that, I wouldn't
+really complain, but then what we would actually call the field
+"flags_supported_on_get_bitmask_on_set" would seem a bit wordy.  :-)
 
-AFAICT this concern does not exist when OPEN response is via
-io_uring(?), so the backing_id indirection is not strictly needed,
-but for the sake of uniformity with standard fuse protocol,
-I guess we should maintain those commands in io_uring as well.
-
-Thanks,
-Amir.
+				      	     - Ted
 
