@@ -1,109 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-42203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 168A1A3EA81
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 03:04:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D761CA3EAC1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 03:27:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3D2E189DBE9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 02:03:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E07AF3A825A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 02:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520941D47AD;
-	Fri, 21 Feb 2025 02:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CF81BD9DD;
+	Fri, 21 Feb 2025 02:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="FBxZhjDi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LBZNAmwT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E4B339A1;
-	Fri, 21 Feb 2025 02:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA7B286298
+	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2025 02:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740103419; cv=none; b=fIYraP61HjKTZl7AvG5MSh7BojvP3KqMOS3TFqIseLgPiZZ0fGPU9op6F/wZENImBgNY5sonXedORTOWw9qaCJ9YhRCRFHkBKX95d3AP2t3KMYKQIfQJ/slOuT8hzRKc0UyJQ0AOIJG0luju/3/Q58itUPIrbEa+jkrCZqKUK1o=
+	t=1740104841; cv=none; b=VDMpIZ/sCAP+GMlzxqPnyI5mo95FafUiHC865HT0axlsMQnGJISS+YrmZEsJRW9b4660QHVMkTIRHRFyJwUVEwzM80P1/Rm4MEvA39nPLoj6y7R//ZUbSGrMLDtUUy5Sl2qz9kWWyp7EDQeawKYJtFHuKsOgpMfpaBk0lH69ZJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740103419; c=relaxed/simple;
-	bh=xgUKmB5vq2YP9FDOVVqsqudMWRIqV09YtHQN0uX6tfI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YJ5Xwqy0gFKUMEEHW0Q9d9j+0RYvv0Lwa2w1qh3Dmdo6NTKYrJaAG2WIqKgFm2wmUTvJ5qE5w+QBCBOAX2sESwrRyhqXLfe5m6hE8gR2MT5N7Rfrcx4XNIVL0F9UptXedmrXt84fo2im1m+KMT01BkrKvXSrmalIfAdGyVH4pGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=FBxZhjDi; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 0b8a1062eff811efaae1fd9735fae912-20250221
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=tkF2DYghDX+VQfWwEAkZ56brYwDEfPo9ZbyXaVQNw8w=;
-	b=FBxZhjDiDZyq/yDBZGhpyPxqy5M8N54Xb4drAPN2gfruuTrtwWP2d4C3lczIACSL1qEQW81oZZGv7WNR9XDxkfR7hQd31o97hrISOPYADPm0vrjM2/pe79FxHRvNkgeys+vkoIoMnK8OBJeqEn037cUblvdnUNYD15p7v8cq+w0=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.46,REQID:e137adfd-7b98-41fa-8fe0-090a096dd830,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:60aa074,CLOUDID:c4bc1129-e0f8-414e-b8c3-b75c08217be8,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 0b8a1062eff811efaae1fd9735fae912-20250221
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
-	(envelope-from <xiangsheng.hou@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 96780445; Fri, 21 Feb 2025 10:03:29 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Fri, 21 Feb 2025 10:03:28 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.28 via Frontend Transport; Fri, 21 Feb 2025 10:03:27 +0800
-From: Xiangsheng Hou <xiangsheng.hou@mediatek.com>
-To: Vivek Goyal <vgoyal@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
-	Miklos Szeredi <miklos@szeredi.hu>, <eperezma@redhat.com>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <virtualization@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <xiangsheng.hou@mediatek.com>,
-	<benliang.zhao@mediatek.com>, <bin.zhang@mediatek.com>
-Subject: [PATCH] virtiofs: add filesystem context source name check
-Date: Fri, 21 Feb 2025 10:03:19 +0800
-Message-ID: <20250221020325.7184-1-xiangsheng.hou@mediatek.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1740104841; c=relaxed/simple;
+	bh=YACJFCQZcpbzU7cY+eClXPHJMTR8U233naDrGuxcIww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TkysMNYafo7vhER8Id+48qF9UUW+afPwyZDjP39JPCQ7oupxM/6wILZ7aY2luXGZ/Y+Bkjn71Q4OYTm+yWPV/nDNNn8wIROOXpO356j6ce/pSmfAWuFSLwljoA9szMlMJYZxI+Qs4CFtp2fmPUeximoutSlx44mUYkKzzG68tl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LBZNAmwT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D407DC4CED1;
+	Fri, 21 Feb 2025 02:27:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740104841;
+	bh=YACJFCQZcpbzU7cY+eClXPHJMTR8U233naDrGuxcIww=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LBZNAmwTWUTUIkYpaXujOlwaXCM8ed/w6KpkLIaRR2YoPNKMMpzC8Umuf2k1/UjR/
+	 g1sD7XWQcy/BeEKWe2bym/+SpOrVFrN2Nio0WNEN+0wXnpStXLiSDzZ0shvYNfHxtl
+	 u3q0MYJ2JNDbfXBAu2Z+qm8BV4TnQLHb32uHHQPHDPNCfYH48LPMw/bCP7ni6mkWIB
+	 UXzr4QmlCByPWW8Vi1e29EsfH/FOgr2QftiWzX/Nvw1tIXk8jLVbFOs9NjgtxFEtQ5
+	 98ibbyAUs/lM9tAcc1MdI0fjY6jTzFzu+p232QxonOuXIEsPDH0ToLAz8TdZVWQ2M9
+	 UTzExxA6vgyZw==
+Date: Fri, 21 Feb 2025 02:27:19 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 00/27] f2fs folio conversions for v6.15
+Message-ID: <Z7fkhzKO_Upxyy0w@google.com>
+References: <20250218055203.591403-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218055203.591403-1-willy@infradead.org>
 
-In certain scenarios, for example, during fuzz testing, the source
-name may be NULL, which could lead to a kernel panic. Therefore, an
-extra check for the source name should be added.
+Thank you for the patches. I queued them in dev-test and kicked off all my
+tests.
 
-Signed-off-by: Xiangsheng Hou <xiangsheng.hou@mediatek.com>
----
- fs/fuse/virtio_fs.c | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks,
 
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 2c7b24cb67ad..53c2626e90e7 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -1669,6 +1669,9 @@ static int virtio_fs_get_tree(struct fs_context *fsc)
- 	unsigned int virtqueue_size;
- 	int err = -EIO;
- 
-+	if (!fsc->source)
-+		return invalf(fsc, "No source specified");
-+
- 	/* This gets a reference on virtio_fs object. This ptr gets installed
- 	 * in fc->iq->priv. Once fuse_conn is going away, it calls ->put()
- 	 * to drop the reference to this object.
--- 
-2.46.0
-
+On 02/18, Matthew Wilcox (Oracle) wrote:
+> More f2fs folio conversions.  This time I'm focusing on removing
+> accesses to page->mapping as well as getting rid of accesses to
+> old APIs.  f2fs was the last user of wait_for_stable_page(),
+> grab_cache_page_write_begin() and wait_on_page_locked(), so
+> I've included those removals in this series too.
+> 
+> Matthew Wilcox (Oracle) (27):
+>   f2fs: Add f2fs_folio_wait_writeback()
+>   mm: Remove wait_for_stable_page()
+>   f2fs: Add f2fs_folio_put()
+>   f2fs: Convert f2fs_flush_inline_data() to use a folio
+>   f2fs: Convert f2fs_sync_node_pages() to use a folio
+>   f2fs: Pass a folio to flush_dirty_inode()
+>   f2fs: Convert f2fs_fsync_node_pages() to use a folio
+>   f2fs: Convert last_fsync_dnode() to use a folio
+>   f2fs: Return a folio from last_fsync_dnode()
+>   f2fs: Add f2fs_grab_cache_folio()
+>   mm: Remove grab_cache_page_write_begin()
+>   f2fs: Use a folio in __get_node_page()
+>   f2fs: Use a folio in do_write_page()
+>   f2fs: Convert f2fs_write_end_io() to use a folio_iter
+>   f2fs: Mark some functions as taking a const page pointer
+>   f2fs: Convert f2fs_in_warm_node_list() to take a folio
+>   f2fs: Add f2fs_get_node_folio()
+>   f2fs: Use a folio throughout f2fs_truncate_inode_blocks()
+>   f2fs: Use a folio throughout __get_meta_page()
+>   f2fs: Hoist the page_folio() call to the start of
+>     f2fs_merge_page_bio()
+>   f2fs: Add f2fs_get_read_data_folio()
+>   f2fs: Add f2fs_get_lock_data_folio()
+>   f2fs: Convert move_data_page() to use a folio
+>   f2fs: Convert truncate_partial_data_page() to use a folio
+>   f2fs: Convert gc_data_segment() to use a folio
+>   f2fs: Add f2fs_find_data_folio()
+>   mm: Remove wait_on_page_locked()
+> 
+>  fs/f2fs/checkpoint.c    |  26 ++--
+>  fs/f2fs/data.c          | 130 ++++++++++---------
+>  fs/f2fs/f2fs.h          |  90 +++++++++----
+>  fs/f2fs/file.c          |  24 ++--
+>  fs/f2fs/gc.c            |  42 +++---
+>  fs/f2fs/node.c          | 279 ++++++++++++++++++++--------------------
+>  fs/f2fs/node.h          |   6 +-
+>  fs/f2fs/segment.c       |  26 ++--
+>  include/linux/pagemap.h |   9 --
+>  mm/filemap.c            |   2 +-
+>  mm/folio-compat.c       |  14 --
+>  11 files changed, 338 insertions(+), 310 deletions(-)
+> 
+> -- 
+> 2.47.2
 
