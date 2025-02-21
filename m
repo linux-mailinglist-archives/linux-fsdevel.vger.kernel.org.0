@@ -1,182 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-42294-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42295-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2024A3FF1C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 19:55:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7938BA3FF2F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 19:59:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8902A702B33
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 18:55:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 804B97AE780
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 18:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98272512FA;
-	Fri, 21 Feb 2025 18:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C842512FA;
+	Fri, 21 Feb 2025 18:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b="nZfDONwA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pNuPejVA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6179B1F7561
-	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2025 18:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5327F2512F9;
+	Fri, 21 Feb 2025 18:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740164116; cv=none; b=RTjwz+vkTVjpZk8Yozimjy5YEYJ8Vbb6WCFumLFy5LI/OzDRoDYGLsLwS04/NY5mOMQOGtNwv+E9KJGZ/6CY8FeE8sCvX0MK/WPwArjZ+JUyU7VbvstyhWN9liC90D5uUAghjO73WWECpD14NIVuBM8wCqMbHtH4ii8QeSuFaRs=
+	t=1740164341; cv=none; b=OSRyT+yNiXqzkTUxhystuBGuMdPFwcTWDY1gj9TYENbJ/rRXiZvRns5Cb5ZAbE7BM4OMIRPpLetI/yGUXXKemhNGeP3Bu+Aps4avQfSI+CFNJuO4QDgYZPCnSt4KBegUCVtWF3FsWKYyIEWOourewr6FQeFh65zeXzcV1j2bYnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740164116; c=relaxed/simple;
-	bh=zTNRvaXssq/gJT25Wr9fqcI96nvvXb5oYejMTSf24vM=;
-	h=From:Message-Id:Content-Type:Mime-Version:Subject:Date:
-	 In-Reply-To:Cc:To:References; b=cb5A6Nng6YfqvsFKUX4loZ+yTtPeCpD9Pe8BccAuGvKWRr4GQLUoZo3FSc6IqQhiW5jtzyxD1KDl0VDCTC09Vjj4V7G7DUPosTGezMX6JPuumhlSBv0aQOelvVwGp1UxhSydo1JvBZPmpbjvtAXYlRXWlITDUB19KF07vCbraww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca; spf=pass smtp.mailfrom=dilger.ca; dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b=nZfDONwA; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dilger.ca
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2fc32756139so3983391a91.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2025 10:55:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20230601.gappssmtp.com; s=20230601; t=1740164113; x=1740768913; darn=vger.kernel.org;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4d6uQVUeeZgznwA3p1q8tL13Il1lBkBvDJFuqttDEGc=;
-        b=nZfDONwAialxovWGSYQaIEzkR3OAbKU2ihUqC6ZPgNNHIyUQ20IhZJTj0SWwLrf3zc
-         HMl4/p8H8hwOCmfYQOh8sJG8BuHWh4Bb1lDD3nfcxtj8FRIkeJ6/czMsRd0OJ3jWlUFI
-         zYj+WVmObQNoluAKgZKPxeqE1JgncqZSq/Kf/w/VOiHyRmTLgA1Z06HV0CE3qCnke72o
-         iD+3QrSuP1LqaijiJeBAhMEYlYCVD1z2Ee5UU4eKVMmQLC+CeJm7qMHtD0iLrtgaqaog
-         4CdfN0s4czBxfL9mRxbn0NDpobjiN7UIjnIdLRiWpW1ADrjWf7co+NFEMj2JiFfSPVeb
-         AC9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740164113; x=1740768913;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4d6uQVUeeZgznwA3p1q8tL13Il1lBkBvDJFuqttDEGc=;
-        b=pEUMIr1eYLQ7wtADCoLkbtk1BqJUX7Ex5LVBXlnZydlCUqe+n5d9B1zOsP8cCSU5C5
-         Xhjsnbh87fjUXCKMvMsGK5e7Pp7p+/PHh4JPbnjqQhq6zW8Kq8qqo4bbFX/gDwWn1LFC
-         FHSYyadLye+ZOJcKFzivDM16eAJYSsEJx5CH2YFTnhbFSQ5OSqYXDKk2djRGPG8YkfqI
-         7iRTzAVrjMQwFx/6oTIT9MUdqcGH8AKYnxErjeEObnB5//QPYHvmSwLHXqyFWROqK9fM
-         juV3U0Z22ArDv25WoScJNQ67qpcJ+NmEtk/9yMgCHqMBZBhrMHpyKyYlOt7oq5E26cO4
-         BwGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyMsmF/axCgKkJcRmgNTZG5WboiyhGHaEhyJA90juTL7T2cpjeSiXuGb8E8ID1jo0SSGtoHVy6QDAMbGvb@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT2d5Cx9k5GVlIa1lqPJUkWKItKL8ZlMj8nGgIXenzZsRayyTI
-	Yk7LNje787MuE8OJIwEF0+nyNFP6Tsjij/J9l9iJXkCzGcH90+2oQAssWIblOx4=
-X-Gm-Gg: ASbGnctk0qasmsyommP3D7yOVHlkpoOId3c/tjnL9zCaeicxEYABj/DMex52aJsyXnB
-	VmOjmM0c28C2MJ4p+E7Y/Zv5w9u/tJGDZ7rj+W6VpGdLbpDlWJ85+cXjFvIq2RmSxEQSmE/oqtx
-	SVKO6pXLjcvZ5Es8I6AmmUMyReiC69z+pWXIkEW4W4HVaZzL/Rpf2FT/h7d4M8QT92AL8Mh7tCZ
-	GFTim8wwp4lSXQz68a7fK60u4lUdQkc5FFKb0QnKwMMsmCEWmQKhgUQu5eXaBphBBaSkW3VV0y+
-	zqKGGlY5j7iA0hgDgYrRxpSF5dF0d09OMuqL6521YFQ6yWVscHYymOlSQee3tzQBifAVRN2bCig
-	=
-X-Google-Smtp-Source: AGHT+IGIjUyLPQ2s1c3R37+ZrPel+kYybizImuQCQ0nwg9t2lK52jt/j411nr/IJFmgSVcm1Fa3+Ng==
-X-Received: by 2002:a17:90b:3e8a:b0:2f1:4715:5987 with SMTP id 98e67ed59e1d1-2fce86ae503mr6974270a91.9.1740164112605;
-        Fri, 21 Feb 2025 10:55:12 -0800 (PST)
-Received: from cabot.adilger.int (S01068c763f81ca4b.cg.shawcable.net. [70.77.200.158])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fceb02d82csm1918425a91.10.2025.02.21.10.55.10
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Feb 2025 10:55:11 -0800 (PST)
-From: Andreas Dilger <adilger@dilger.ca>
-Message-Id: <216AB14C-D182-4179-A5A9-327FADCD7D41@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_345505F9-8A2C-4EAD-B7F6-99D3EECB5259";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+	s=arc-20240116; t=1740164341; c=relaxed/simple;
+	bh=D1gndCuNHXnXWR+5KjZLuhUrgN/6gjce6B2PXKEtvJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EmTdYVazS/Ti2dOgAjQFYEjmqmm+txNzW+BHXsvTqJaucCyFfRD1YDTH1IdD77UHyF1rtIqW04GiMUnJlG4h2GSB8sm95GXZvMYdPt1LhaeanRinLmMLutjolHfvcDW1/yNiqFs2djG6eJ3rPiphoyU/YmS4O2oHPqcpkyMAgoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pNuPejVA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52E0CC4CED6;
+	Fri, 21 Feb 2025 18:59:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740164340;
+	bh=D1gndCuNHXnXWR+5KjZLuhUrgN/6gjce6B2PXKEtvJc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pNuPejVA8VhXg7mw02ryLSNiBIcvpQV48LtkfBDqGeg9IP/S8FDcIKl29JlXQPvvI
+	 3i4e3mveISKcofvf4+fqwGBKOTwXPw11yGMfNkkFwGO4w0EANJPg+LocjTt76vAkJF
+	 qtbWYFpBFNXI4oNjBalh0O/OcmHrCdXnjDz/tjz1VxHUV4ZUP4ORNH3t4e2QQVwYxD
+	 70HC1j/43KbjRK3DBh4xCcvkpN6JL817QUmba+A2MnskvoVrwUuoXqnSgisJ/9a9kl
+	 nPAOgnPPC2W6arLJAs1ly2MSuBTv/qY7/274FMQFx8qutbw1w+rNzZL5eb5k5a4JFa
+	 2F1wx1fBfZI+w==
+Date: Fri, 21 Feb 2025 10:58:58 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Hannes Reinecke <hare@suse.de>
+Cc: Matthew Wilcox <willy@infradead.org>, dave@stgolabs.net,
+	david@fromorbit.com, djwong@kernel.org, kbusch@kernel.org,
+	john.g.garry@oracle.com, hch@lst.de, ritesh.list@gmail.com,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-block@vger.kernel.org,
+	gost.dev@samsung.com, p.raghav@samsung.com, da.gomez@samsung.com,
+	kernel@pankajraghav.com
+Subject: Re: [PATCH v2 4/8] fs/mpage: use blocks_per_folio instead of
+ blocks_per_page
+Message-ID: <Z7jM8p5boAOOxz_j@bombadil.infradead.org>
+References: <20250204231209.429356-1-mcgrof@kernel.org>
+ <20250204231209.429356-5-mcgrof@kernel.org>
+ <Z7Ow_ib2GDobCXdP@casper.infradead.org>
+ <a4ba2d82-1f42-4d70-bf66-56ef9c037cca@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [RFC PATCH 1/4] fs: Add FS_XFLAG_COMPRESSED & FS_XFLAG_ENCRYPTED
- for FS_IOC_FS[GS]ETXATTR API
-Date: Fri, 21 Feb 2025 11:55:03 -0700
-In-Reply-To: <20250221163443.GA2128534@mit.edu>
-Cc: Amir Goldstein <amir73il@gmail.com>,
- =?utf-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
- Dave Chinner <david@fromorbit.com>,
- Eric Biggers <ebiggers@kernel.org>,
- "Darrick J. Wong" <djwong@kernel.org>,
- ronnie sahlberg <ronniesahlberg@gmail.com>,
- Chuck Lever <chuck.lever@oracle.com>,
- Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>,
- Steve French <sfrench@samba.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- linux-fsdevel@vger.kernel.org,
- linux-cifs@vger.kernel.org,
- linux-kernel@vger.kernel.org
-To: Theodore Ts'o <tytso@mit.edu>
-References: <20250216183432.GA2404@sol.localdomain>
- <CAOQ4uxigYpzpttfaRc=xAxJc=f2bz89_eCideuftf3egTiE+3A@mail.gmail.com>
- <20250216202441.d3re7lfky6bcozkv@pali>
- <CAOQ4uxj4urR70FmLB_4Qwbp1O5TwvHWSW6QPTCuq7uXp033B7Q@mail.gmail.com>
- <Z7Pjb5tI6jJDlFZn@dread.disaster.area>
- <CAOQ4uxh6aWO7Emygi=dXCE3auDcZZCmDP+jmjhgdffuz1Vx6uQ@mail.gmail.com>
- <20250218192701.4q22uaqdyjxfp4p3@pali> <Z7UQHL5odYOBqAvo@dread.disaster.area>
- <20250218230643.fuc546ntkq3nnnom@pali>
- <CAOQ4uxiAU7UorH1FLcPgoWMXMGRsOt77yRQ12Xkmzcxe8qYuVw@mail.gmail.com>
- <20250221163443.GA2128534@mit.edu>
-X-Mailer: Apple Mail (2.3273)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a4ba2d82-1f42-4d70-bf66-56ef9c037cca@suse.de>
 
-
---Apple-Mail=_345505F9-8A2C-4EAD-B7F6-99D3EECB5259
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii
-
-On Feb 21, 2025, at 9:34 AM, Theodore Ts'o <tytso@mit.edu> wrote:
+On Tue, Feb 18, 2025 at 04:02:43PM +0100, Hannes Reinecke wrote:
+> On 2/17/25 22:58, Matthew Wilcox wrote:
+> > On Tue, Feb 04, 2025 at 03:12:05PM -0800, Luis Chamberlain wrote:
+> > > @@ -182,7 +182,7 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
+> > >   		goto confused;
+> > >   	block_in_file = folio_pos(folio) >> blkbits;
+> > > -	last_block = block_in_file + args->nr_pages * blocks_per_page;
+> > > +	last_block = block_in_file + args->nr_pages * blocks_per_folio;
+> > 
+> > In mpage_readahead(), we set args->nr_pages to the nunber of pages (not
+> > folios) being requested.  In mpage_read_folio() we currently set it to
+> > 1.  So this is going to read too far ahead for readahead if using large
+> > folios.
+> > 
+> > I think we need to make nr_pages continue to mean nr_pages.  Or we pass
+> > in nr_bytes or nr_blocks.
+> > 
+> I had been pondering this, too, while developing the patch.
+> The idea I had here was to change counting by pages over to counting by
+> folios, as then the logic is essentially unchanged.
 > 
-> We can define some new interface for return what xflags are supported
-> by a particular file system.  This could either be the long-debated,
-> but never implemented statfsx() system call.  Or it could be extending
-> what gets returned by FS_IOC_GETXATTR by using one of the fs_pad
-> fields in struct fsxattr.  This is arguably the simplest way of
-> dealing with the problem.
-> 
-> I suppose the field could double as the bitmask field when
-> FS_IOC_SETXATTR is called, but that just seems to be an overly complex
-> set of semantics.  If someone really wants to do that, I wouldn't
-> really complain, but then what we would actually call the field
-> "flags_supported_on_get_bitmask_on_set" would seem a bit wordy.  :-)
+> Not a big fan of 'nr_pages', as then the question really is how much
+> data we should read at the end of the day. So I'd rather go with 'nr_blocks'
+> to avoid any confusion.
 
-The nice thing about allowing the bitmask on SET to mean "only set/clear
-the specified fields" is that this allows a race-free mechanism to change
-the flags, whereas GET+SET could be racy between two callers.
+I think the easier answer is to adjust nr_pages in terms of min-order
+requirements and fix last_block computation so we don't lie for large
+folios as follows. While at it, I noticed a folio_zero_segment() was
+missing folio_size().
 
-I don't think the two uses are incompatible.  If called as GET+SET, where
-the GET will return the flags+mask, then any flag bits set/cleared should
-also be in mask when SET, and all of the other bits are reset to the same
-value.  If called as "SET flags+mask" with a limited number of bits, only
-those bits in mask would be set/cleared, and the other bits would be left
-as-is.
-
-Cheers, Andreas
-
-
-
-
-
-
---Apple-Mail=_345505F9-8A2C-4EAD-B7F6-99D3EECB5259
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAme4zAgACgkQcqXauRfM
-H+CdJg//dBRx+db5qUwq2Yw3g7IQY3oad5rMJH7yBoZbJP5hKD/Wltc0MPDd/27T
-V/er82Zr/fFpsIrgLTDFe12sDxY5GtPJcAWFgq1+a03pVpaVCY8cCXbmRy/fqh+O
-6FFDbgT8IDlNOm347SCV0GNkUa78orDoAGRrt2XcEIoD372hwaaXtPrcug2Nd++O
-hiNl3rm3ZNQ81xEYTAYjLy4YZCkdITcar9XwZMxB6lapSTKA/TW43L8MTNivXdKs
-Sq3aSXWQiD1L632Eryn5TjEiBIs9tms5/s22UPL955kClEchZCe914Uo3Z2l/1Wn
-ksWn1Af/FDezp+sqKIFmkhPBYLFiqgkABKRq0WctsrfgfJOnnUzFO6gk6cxUnVo0
-EhNg+1bjNppus7opDnhqRH8Jas+SBvdiIFvEhTGi9kvK4AhW4jmbarpywg43PQ3O
-4f9v7UoKs3xV4uc4GQOu+EndOKphLMrz1tyh+rvmix4YqB95rXmdCFfUM+0BvtU6
-SEEuUIDCytbASKgOaCeia9Ln9q6uF6lBoIMVIgfPVgxS6B3kFMfmSHgy91FBHL2j
-Ma0IZkoOuOdnXSjZEMsoWT62HEBTuS5r7bfnlCaVfUk3ns2C2QjLdsg3ST0JcTUK
-8ttgMxUzbin/ndOP1sy6Og4tz0ezJ/WgNsZsG+mKXZBbiml+unE=
-=7F0J
------END PGP SIGNATURE-----
-
---Apple-Mail=_345505F9-8A2C-4EAD-B7F6-99D3EECB5259--
+diff --git a/fs/mpage.c b/fs/mpage.c
+index c17d7a724e4b..624bf30f0b2e 100644
+--- a/fs/mpage.c
++++ b/fs/mpage.c
+@@ -152,6 +152,7 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
+ {
+ 	struct folio *folio = args->folio;
+ 	struct inode *inode = folio->mapping->host;
++	const unsigned min_nrpages = mapping_min_folio_nrpages(folio->mapping);
+ 	const unsigned blkbits = inode->i_blkbits;
+ 	const unsigned blocks_per_folio = folio_size(folio) >> blkbits;
+ 	const unsigned blocksize = 1 << blkbits;
+@@ -172,6 +173,8 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
+ 
+ 	/* MAX_BUF_PER_PAGE, for example */
+ 	VM_BUG_ON_FOLIO(folio_test_large(folio), folio);
++	VM_BUG_ON_FOLIO(args->nr_pages < min_nrpages, folio);
++	VM_BUG_ON_FOLIO(!IS_ALIGNED(args->nr_pages, min_nrpages), folio);
+ 
+ 	if (args->is_readahead) {
+ 		opf |= REQ_RAHEAD;
+@@ -182,7 +185,7 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
+ 		goto confused;
+ 
+ 	block_in_file = folio_pos(folio) >> blkbits;
+-	last_block = block_in_file + args->nr_pages * blocks_per_folio;
++	last_block = block_in_file + ((args->nr_pages * PAGE_SIZE) >> blkbits);
+ 	last_block_in_file = (i_size_read(inode) + blocksize - 1) >> blkbits;
+ 	if (last_block > last_block_in_file)
+ 		last_block = last_block_in_file;
+@@ -269,7 +272,7 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
+ 	}
+ 
+ 	if (first_hole != blocks_per_folio) {
+-		folio_zero_segment(folio, first_hole << blkbits, PAGE_SIZE);
++		folio_zero_segment(folio, first_hole << blkbits, folio_size(folio));
+ 		if (first_hole == 0) {
+ 			folio_mark_uptodate(folio);
+ 			folio_unlock(folio);
+@@ -385,7 +388,7 @@ int mpage_read_folio(struct folio *folio, get_block_t get_block)
+ {
+ 	struct mpage_readpage_args args = {
+ 		.folio = folio,
+-		.nr_pages = 1,
++		.nr_pages = mapping_min_folio_nrpages(folio->mapping),
+ 		.get_block = get_block,
+ 	};
+ 
 
