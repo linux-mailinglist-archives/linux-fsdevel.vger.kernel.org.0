@@ -1,77 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-42275-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E1FA3FCCF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 18:06:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA120A3FCF8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 18:10:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 687E37ACDF7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 17:02:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79825864864
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 17:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7FB24BD01;
-	Fri, 21 Feb 2025 17:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096E42475FB;
+	Fri, 21 Feb 2025 17:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="f7m7PSE7"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QwFh39Je"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f66.google.com (mail-ed1-f66.google.com [209.85.208.66])
+Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D6B244E96
-	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2025 17:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC9E244EA1
+	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2025 17:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740157379; cv=none; b=mjSvNtW8joYwth6XV31Ii5Onu9kf5c7dxCMsUtp6Yz6YndFJgE8q1WTocAyuJK16fWsZ6H8w4CuRk6y0d68Dnq1YHOYLQz0yG1f3m05xsdtLETb92YdAvYIf0eUDtV5sBCUuV/ZAMcwBP9B3leTQSbOjUo9FprbwvsHFQA++lfM=
+	t=1740157378; cv=none; b=qGHpHFYa92/mt8a2qvXUNkOQeOM07MqgQFym1iVMy9lC8Pd7K6znHdJI917Ib9QV/IdsCqHEr16ocpXSRMA3CDti+TpPnAYRm31Amnkpj9/JC57NxjwvgmVX/qlZFFfRSYdcPWqWItyAT9k0rl7VeDzKgrG8o5sMfBPhtOG1b5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740157379; c=relaxed/simple;
-	bh=p26yxnUhbdMRoiqj6XHxuH9YLkbrUj4rKzuTeUEX3o0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CuFhd4FOsUmioO8cUPkPXCQwKICrArYObBHEBcE4SSxOt8vXLlulLo3//Ex5IDJD5T7h7ihnMDEHw2cEYmqtfHftNfrf+7nnuvxrjp5wgrh0HfEQ+nkAY+kyfVF84oRyZgG1kV+bFQZduMeazwPTo72ifH03cPM7THOVLYnw7DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=f7m7PSE7; arc=none smtp.client-ip=209.85.208.66
+	s=arc-20240116; t=1740157378; c=relaxed/simple;
+	bh=CSW10IqiNdAkspr2IgyTQkreJmoj1lkd5Vs5Tjhn4Lk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pjFtzd30SSK9UNtkyCNIKjUaYsgBDHf+lXZb5wqsXMlp041rO5B+IwApuz78odOfTEBir1kiDK17xIHaM3hq9uYscv7mS2bQwsrUV6vtnOE7JHaEBsFTJKBFc4+WSd4rtmvN7L6AUXyXs8VVdVdURmRQThWehEJJPN5N2PwLwg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QwFh39Je; arc=none smtp.client-ip=209.85.218.66
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f66.google.com with SMTP id 4fb4d7f45d1cf-5dedae49c63so4332800a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2025 09:02:57 -0800 (PST)
+Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-aaeec07b705so373564066b.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2025 09:02:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1740157376; x=1740762176; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wWszliNKbmL8VUqL0WBW3MKacH8rbha5eqW1pX7oPq8=;
-        b=f7m7PSE7CbLc5EfFMwi5bGPy2nHJYOCJBaGL6ffvkTB9gNxh8RPdvhw6SoImkvRQRN
-         ppTnnJB3oEsFvS/iontAf7ZowZOBsuduoBpYirzmGlq9EuoSFS54zH0M9862jk0kZQ1M
-         gV5wLfKv4HKCQFP6bCkB5DKdcl0AHCjHnhrC81t1CSHw3q1lwzQsmlhmsvC8FWL0XBSh
-         6pfT6EMt6cuFMoWo/0GNS+oQIQ9GWL+fkN1eKOTinNeq/6olFn/Ilr8m31DoFOMhd54k
-         2z7Re/sfPj4BMsnNebyo3I5IhbPdlLoXVqYKHK9lik+dj/Ryv+huwsAKr7OvwfTobhQr
-         DlkQ==
+        d=suse.com; s=google; t=1740157373; x=1740762173; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wDByaDv2MeIoDkWDRCtDD68r/JuubevBl9+EY++FX5Y=;
+        b=QwFh39JeqOC/L5XL2f66VTxmJj5cJEme7AAXfK7OIAhcQzpFmYaqe3QFX4KX9mGDFh
+         qbNHWeHSYk6JhstjFSsNC7K6aM04+ogSFIoYYv2WfyvLDN3R0y7RKg46xtpVKtFm3Xue
+         YhexQFdNPaYEasZdUdakA6iFKkyIbOPLzG0JY/pZnB2aD+buf4yRG0IidRVF42tm24Dw
+         TUtZe0CkwRjyZnMzSgxJy2EBRcxkF+V9W/cZoYDVJGAytYxVEMG9s74v/+mUwPc2dXKg
+         TIXRy3MEu+voy5q4afxEUFUvSf8dtozHP/qkecmN7AQigSGElxDfXk444p+C5Dn8zw7O
+         iFGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740157376; x=1740762176;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wWszliNKbmL8VUqL0WBW3MKacH8rbha5eqW1pX7oPq8=;
-        b=GqHLClM5gj8NBiSO54qki+w0ruVSbzCE46irdfEkeqgLLBmWd7gZbSod7u4A8rbLl1
-         GwWo1dU5EBdVu42T75vv2/ULufIx9uTY1riU7ql8IKIfik/7GjTBSwgMT0L2rKL6R/+d
-         kLtaPABrzj3GS0UIu7Z2rSf+BWnEJQ5zEdNa51SKLk/97f8PGO5WR8ORvTd1NmjKKlDp
-         TTfqDX8BqvtTk+yiX4RxAbGjd3++3hPgXTzlpsU02mjGCPWPOmBo9mfXnyFuAsRJT5+l
-         KIm0M6BsNvHwwNISucYg4W6n+vW7xigdVxZNuuIiYgb98UDMsihX6fdKc9UdLEpVDvyz
-         q06g==
-X-Forwarded-Encrypted: i=1; AJvYcCUQfWIsdooazg6jKkKonr5w5bOvDMNhppyN8cRmI+FqRGFRBnnGCdvUMlxEblW0LTzLddcx7JwGsuLDdd+w@vger.kernel.org
-X-Gm-Message-State: AOJu0YwooC12OugNKyRxsOH4YVNJf/HQK3sp1aN3y8JEBAmBw057jPz7
-	I9XWhg3UhYvviJxlREt4kaqw8yJ1xDd24D6x/0d1PlsGrYPUHyBHjQtdSGmu/oQ=
-X-Gm-Gg: ASbGncv4jYl+KfPht4hOzPgcPqT5GUrbbH+qUykeCJ79TQOwN60EALWXgsjAcsWtdPt
-	u1Nq/C26I6mUiZ6SHr1r3asIXhbDXPe2Z99dgBG85OjUGbcetbIsB0++ShS+KPVuswRnNUQUPQ7
-	aVIOv7OswXSZRH6MLkU03pyhRhP+ZD+VFxg2/MDP3ElmxqDVL6YmX6oJVYcpU0aujjqkPl4B+oD
-	y0vyrRBhNuKrvsGVrZU7jAbnA4Sp8BIA7ObYkByUUgd2eatJohTvLw5U23ieYCCmNIfU3TyUfR7
-	b/GrYAtPiK/YPnbV2W15cneKkNgG
-X-Google-Smtp-Source: AGHT+IEwCTRlvyl71solhDgWaKxLp5oopUTcMtwHu3YJJA/SVMpLmQ33tXa83ctCiJhFUIO1Qd60bg==
-X-Received: by 2002:a17:906:314d:b0:ab7:9df1:e562 with SMTP id a640c23a62f3a-abc0de55dbcmr343145666b.48.1740157375725;
-        Fri, 21 Feb 2025 09:02:55 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740157373; x=1740762173;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wDByaDv2MeIoDkWDRCtDD68r/JuubevBl9+EY++FX5Y=;
+        b=X9PGrd6EtGvaNTPHYxNjVXv2quY83qgOuuWp+2+rPW9h4hOU0W6GnZRTJO0jZ9P0NC
+         RewtXeEh/1Iag1cBAxobu46hqeHdyQj+zczgTT6uP5RDrmMm69cTrfKx1FOZ99eqS42s
+         ZSRkLPdsEUBEDlcnLt1ibUBJgpK6zET6oiHpCNhKJaEyB5uSI9GM6P1zTLA5QoML+92S
+         VTPQuABcRaFm6/7SJWJHCY4sdOBo0PDO+cHuOulrkj5fl2xGVybiYf35h40yKgiAiS0C
+         r1kbmh3JKtuDgPVnD4ugSuacEkhUbLr55nFnTQRehr306jRxD4OzKpfDvnedIbKZIkT6
+         AxmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBRq9/Jqrm//HfrwhQqocsv3W1nToJuOylUoL9SwuDGBN1FaYQUgveL098yZk7oqNEVcrb8vX6+t97vywZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOO/bpiUAV+ygSSkYuVMoJ18oJA9MiFjOURMWfoKzRWm7XqxuP
+	98lI4+fqAV3z2LHuLKWEZ1jZwADsMGtXM+sd65xiEV4W4dAmD6lJHgHPrd9Xmy5sM2EMDrcRUhD
+	N4XXJFA==
+X-Gm-Gg: ASbGncuFC5pVcxJlqeaTeypcrFNFWbG9Bm1KlH72mIhV2tAn8M46mYPGXndQhU5fP3p
+	ea2/MVeyHCR+FCWg2qDrYw2R4FnrduOF4DM/FQvEE3A1hftrzgYpL5/eQWcyfoYUS3lKSoZLur2
+	y/jerWtuLunWqoLCvrG1BJNyn8/YNgVS3ITzEu4TKALYLCOYi0q91NiGTM6igXx7zBtyjzQu/WV
+	q+yCE6UvSHeKAA9GhuiWWN6V/CpEhx4S7ljlwXpQWB2rw0PyopMTR//lpvhLC9tzoNGcr0xXHPh
+	RUB8FqoerLlDA2zN+go2zsdd8hhc
+X-Google-Smtp-Source: AGHT+IGfcJwK8DsLRDynNMYZTxbIxb0l+jqrdkXEpzFnvtKSRwocRJ46u22XwIA9pSi82Z9VX3nCQA==
+X-Received: by 2002:a17:907:7855:b0:abb:b092:dade with SMTP id a640c23a62f3a-abc0de0de6dmr329918266b.38.1740157373377;
+        Fri, 21 Feb 2025 09:02:53 -0800 (PST)
 Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb8eea4d65sm1105668766b.161.2025.02.21.09.02.54
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb8eea4d65sm1105668766b.161.2025.02.21.09.02.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 09:02:55 -0800 (PST)
+        Fri, 21 Feb 2025 09:02:52 -0800 (PST)
 From: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
 To: Christian Brauner <brauner@kernel.org>,
 	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
@@ -85,12 +84,10 @@ Cc: Jonathan Corbet <corbet@lwn.net>,
 	"Eric W . Biederman" <ebiederm@xmission.com>,
 	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
 	Oleg Nesterov <oleg@redhat.com>
-Subject: [PATCH 2/2] pid: Optional first-fit pid allocation
-Date: Fri, 21 Feb 2025 18:02:49 +0100
-Message-ID: <20250221170249.890014-3-mkoutny@suse.com>
+Subject: [PATCH 0/2] Alternative "pid_max" for 32-bit userspace
+Date: Fri, 21 Feb 2025 18:02:47 +0100
+Message-ID: <20250221170249.890014-1-mkoutny@suse.com>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250221170249.890014-1-mkoutny@suse.com>
-References: <20250221170249.890014-1-mkoutny@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -100,151 +97,50 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Noone would need to use this allocation strategy (it's slower, pid
-numbers collide sooner). Its primary purpose are pid namespaces in
-conjunction with pids.max cgroup limit which keeps (virtual) pid numbers
-below the given limit. This is for 32-bit userspace programs that may
-not work well with pid numbers above 65536.
+pid_max is sort of a legacy limit (its value and partially the concept
+too, given the existence of pids cgroup controller).
+It is tempting to make the pid_max value part of a pid namespace to
+provide compat environment for 32-bit applications [1].  On the other
+hand, it provides yet another mechanism for limitation of task count.
+Even without namespacing of pid_max value, the configuration of
+conscious limit is confusing for users [2].
 
-Link: https://lore.kernel.org/r/20241122132459.135120-1-aleksandr.mikhalitsyn@canonical.com/
-Signed-off-by: Michal Koutný <mkoutny@suse.com>
----
- Documentation/admin-guide/sysctl/kernel.rst |  2 ++
- include/linux/pid_namespace.h               |  3 +++
- kernel/pid.c                                | 12 +++++++--
- kernel/pid_namespace.c                      | 28 +++++++++++++++------
- 4 files changed, 36 insertions(+), 9 deletions(-)
+This series builds upon the idea of restricting the number (amount) of
+tasks by pids controller and ensuring that number (pid) never exceeds
+the amount of tasks. This would not currently work out of the box
+because next-fit pid allocation would continue to assign numbers (pids)
+higher than the actual amount (there would be gaps in the lower range of
+the interval). The patch 2/2 implements this idea by extending semantics
+of ns_last_pid knob to allow first-fit numbering. (The implementation
+has clumsy ifdefery, which can might be dropped since it's too
+x86-centric.)
 
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index a43b78b4b6464..f5e68d1c8849f 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -1043,6 +1043,8 @@ The last pid allocated in the current (the one task using this sysctl
- lives in) pid namespace. When selecting a pid for a next task on fork
- kernel tries to allocate a number starting from this one.
- 
-+When set to -1, first-fit pid numbering is used instead of the next-fit.
-+
- 
- powersave-nap (PPC only)
- ========================
-diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
-index f9f9931e02d6a..10bf66ca78590 100644
---- a/include/linux/pid_namespace.h
-+++ b/include/linux/pid_namespace.h
-@@ -41,6 +41,9 @@ struct pid_namespace {
- #if defined(CONFIG_SYSCTL) && defined(CONFIG_MEMFD_CREATE)
- 	int memfd_noexec_scope;
- #endif
-+#ifdef CONFIG_IA32_EMULATION
-+	bool pid_noncyclic;
-+#endif
- } __randomize_layout;
- 
- extern struct pid_namespace init_pid_ns;
-diff --git a/kernel/pid.c b/kernel/pid.c
-index aa2a7d4da4555..e9da1662b8821 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -191,6 +191,10 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
- 
- 	for (i = ns->level; i >= 0; i--) {
- 		int tid = 0;
-+		bool pid_noncyclic = 0;
-+#ifdef CONFIG_IA32_EMULATION
-+		pid_noncyclic = READ_ONCE(tmp->pid_noncyclic);
-+#endif
- 
- 		if (set_tid_size) {
- 			tid = set_tid[ns->level - i];
-@@ -235,8 +239,12 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
- 			 * Store a null pointer so find_pid_ns does not find
- 			 * a partially initialized PID (see below).
- 			 */
--			nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
--					      pid_max, GFP_ATOMIC);
-+			if (likely(!pid_noncyclic))
-+				nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
-+						      pid_max, GFP_ATOMIC);
-+			else
-+				nr = idr_alloc(&tmp->idr, NULL, pid_min,
-+						      pid_max, GFP_ATOMIC);
- 		}
- 		spin_unlock_irq(&pidmap_lock);
- 		idr_preload_end();
-diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-index 0f23285be4f92..ceda94a064294 100644
---- a/kernel/pid_namespace.c
-+++ b/kernel/pid_namespace.c
-@@ -113,6 +113,9 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
- 	ns->pid_allocated = PIDNS_ADDING;
- #if defined(CONFIG_SYSCTL) && defined(CONFIG_MEMFD_CREATE)
- 	ns->memfd_noexec_scope = pidns_memfd_noexec_scope(parent_pid_ns);
-+#endif
-+#ifdef CONFIG_IA32_EMULATION
-+	ns->pid_noncyclic = READ_ONCE(parent_pid_ns->pid_noncyclic);
- #endif
- 	return ns;
- 
-@@ -260,7 +263,7 @@ void zap_pid_ns_processes(struct pid_namespace *pid_ns)
- 	return;
- }
- 
--#ifdef CONFIG_CHECKPOINT_RESTORE
-+#if defined(CONFIG_CHECKPOINT_RESTORE) || defined(CONFIG_IA32_EMULATION)
- static int pid_ns_ctl_handler(const struct ctl_table *table, int write,
- 		void *buffer, size_t *lenp, loff_t *ppos)
- {
-@@ -271,12 +274,23 @@ static int pid_ns_ctl_handler(const struct ctl_table *table, int write,
- 	if (write && !checkpoint_restore_ns_capable(pid_ns->user_ns))
- 		return -EPERM;
- 
--	next = idr_get_cursor(&pid_ns->idr) - 1;
-+	next = -1;
-+#ifdef CONFIG_IA32_EMULATION
-+	if (!pid_ns->pid_noncyclic)
-+#endif
-+		next += idr_get_cursor(&pid_ns->idr);
- 
- 	tmp.data = &next;
- 	ret = proc_dointvec_minmax(&tmp, write, buffer, lenp, ppos);
--	if (!ret && write)
--		idr_set_cursor(&pid_ns->idr, next + 1);
-+	if (!ret && write) {
-+		if (next > -1)
-+			idr_set_cursor(&pid_ns->idr, next + 1);
-+		else if (!IS_ENABLED(CONFIG_IA32_EMULATION))
-+			ret = -EINVAL;
-+#ifdef CONFIG_IA32_EMULATION
-+		WRITE_ONCE(pid_ns->pid_noncyclic, next == -1);
-+#endif
-+	}
- 
- 	return ret;
- }
-@@ -288,11 +302,11 @@ static const struct ctl_table pid_ns_ctl_table[] = {
- 		.maxlen = sizeof(int),
- 		.mode = 0666, /* permissions are checked in the handler */
- 		.proc_handler = pid_ns_ctl_handler,
--		.extra1 = SYSCTL_ZERO,
-+		.extra1 = SYSCTL_NEG_ONE,
- 		.extra2 = &pid_max,
- 	},
- };
--#endif	/* CONFIG_CHECKPOINT_RESTORE */
-+#endif	/* CONFIG_CHECKPOINT_RESTORE || CONFIG_IA32_EMULATION */
- 
- int reboot_pid_ns(struct pid_namespace *pid_ns, int cmd)
- {
-@@ -449,7 +463,7 @@ static __init int pid_namespaces_init(void)
- {
- 	pid_ns_cachep = KMEM_CACHE(pid_namespace, SLAB_PANIC | SLAB_ACCOUNT);
- 
--#ifdef CONFIG_CHECKPOINT_RESTORE
-+#if defined(CONFIG_CHECKPOINT_RESTORE) || defined(CONFIG_IA32_EMULATION)
- 	register_sysctl_init("kernel", pid_ns_ctl_table);
- #endif
- 
+The patch 1/2 is a mere revert to simplify pid_max to one global limit
+only.
+
+(I pruned Cc: list from scripts/get_maintainer.pl for better focus, feel
+free to bounce as necessary.)
+
+[1] https://lore.kernel.org/r/20241122132459.135120-1-aleksandr.mikhalitsyn@canonical.com/
+[2] https://lore.kernel.org/r/bnxhqrq7tip6jl2hu6jsvxxogdfii7ugmafbhgsogovrchxfyp@kagotkztqurt/
+
+Michal Koutný (2):
+  Revert "pid: allow pid_max to be set per pid namespace"
+  pid: Optional first-fit pid allocation
+
+ Documentation/admin-guide/sysctl/kernel.rst |   2 +
+ include/linux/pid.h                         |   3 +
+ include/linux/pid_namespace.h               |  11 +-
+ kernel/pid.c                                | 137 +++-----------------
+ kernel/pid_namespace.c                      |  71 +++++-----
+ kernel/sysctl.c                             |   9 ++
+ kernel/trace/pid_list.c                     |   2 +-
+ kernel/trace/trace.h                        |   2 +
+ kernel/trace/trace_sched_switch.c           |   2 +-
+ 9 files changed, 70 insertions(+), 169 deletions(-)
+
+
+base-commit: 334426094588f8179fe175a09ecc887ff0c75758
 -- 
 2.48.1
 
