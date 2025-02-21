@@ -1,270 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-42278-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42279-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B127BA3FD23
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 18:15:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF4D0A3FD3E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 18:19:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E673118839B5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 17:13:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B6D33ADD58
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 17:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6FC24CECB;
-	Fri, 21 Feb 2025 17:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2822E24CEFA;
+	Fri, 21 Feb 2025 17:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="XBkGXS4n";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="4X3evge6"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CyQLCDoF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1BC24CEC7;
-	Fri, 21 Feb 2025 17:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16BB624CEE5
+	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2025 17:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740158021; cv=none; b=b4JjrXWT7l5ZvoXfjyhOjYmiluv7qcQ+GEW1VfK1Chv3ot1NDegCmjx364SkCoKBEwNNC2lIR1tL/alWvxwaFTceeqYK37Ns6v1hsXTSGCbs/hwK8OR4BihV0f37mDp+pPmF3fECM9+ePHhp7EqTwGyRKze/5T+h6RHB2ZZEYuE=
+	t=1740158072; cv=none; b=BuUjSDSNyFT9taBBRUBx2h1if5KiJ4Z4GYuQJxLOVWn+eQeqrrJDhfMIOfcDFSOAEcMkxhdv6/yIK/38Q0pK4MTR29rUgKir785TY0zDspttRfXpA2cIDBk7k8Qq1mqpIbTbHqmGSPbixB/y4S1bODkAXJm7bABQd0xQN6fivOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740158021; c=relaxed/simple;
-	bh=1F5mlHXQZZrYDrp6UqAGIJwR2JDZK61FTp0FQeeIozc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V8yILJvP8tfAhzPy/3XokurMKafiANUPDf/qDNliyTop0cVjOxvZz9qOSsUsKCMQ/TzxDChpDrSwE+B2WsHgr7hMe/hRn44+7OGLLe4xNQu65vHI6ASq61L64ghq9nf/axSqNWpe7NrPGZFpt4w8tASLKZAzgip6h1bJ1NEIJuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=XBkGXS4n; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=4X3evge6; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id AB73C1380240;
-	Fri, 21 Feb 2025 12:13:37 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Fri, 21 Feb 2025 12:13:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1740158017;
-	 x=1740244417; bh=Hj8yvRUdCkKlgpdB4aDV4tAoK6YrJiQ71szFV7Fsgjo=; b=
-	XBkGXS4nZOlHKuwChjETUIl0kyADZweV4HP4jHduzQvJUqCy2r0zss01QoYhBQ0F
-	L1cPkywuFJzq6ACdhbliRAutm2Ve4fD0SfMDAGW3ClISrTabAojLGt/zifbL6Cf2
-	YaQjzXZESSQq4svmay+jzxUGTStBdE6cqnpA3xKPkgz5CSylQMGsQWMVIuNiW963
-	Mdi3DCYsTWlk2oJPBequJFMexYuSvBcKBoevhMra1PqH6uGX0gJlj+fVzzu1euo1
-	DxvuuFMHrJJQphFBd0Zg5VbFhycD7TMOFt/B54xTHYXZSdf1y0Xj5or7cQ9Vz7y6
-	LWUb/ydnvEB1x/jj0s1Qhg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740158017; x=
-	1740244417; bh=Hj8yvRUdCkKlgpdB4aDV4tAoK6YrJiQ71szFV7Fsgjo=; b=4
-	X3evge6FVDFndolWM2H7XZJNyFBeuzjha3eoEx5zG6DkQr3aQwwgtpAsbNK656kN
-	8WRH1UqQkJYxrwMj0RRDgnyVQ5vw4K9Af+HO/YbbcAM/yxAcokzLivCcxrm0jrb4
-	T0QtHBcNuOsmuOqaSCprw9bi0DKooL+XYLhTA78Mo3tJ8pI+stkDwofVJObfebmg
-	mLoUI6+FReQy56T4Ug9R65blB3migyqsiPsfl5KiwWxv1qKb1H2cGq5MUDhXa6SK
-	nBGvkDLdIzsau5jTc7iXv5f3LF++duUV5tx/xdhUpC1W81JC+T/SsoBd9C4BW3wN
-	vTvy4Hrw3mOfV7z6aBF5A==
-X-ME-Sender: <xms:QbS4Z30_l_L-7g8PdzgUb-8CONaSe4imbt8tc1o2CvdS7R1HGlLVMw>
-    <xme:QbS4Z2FyomIQVVPRJDOawZxJ2XLoU00oyz7mGXPrNSCnR4z7VD4O-GNewxi_n_xMp
-    8zJAmwKyOEG2MSb>
-X-ME-Received: <xmr:QbS4Z34xunhABdy0Mtsie2dPhDiGBpV5Zs9A9DYCfmIKnM7lfCxx_RKFHGrLN-gS4FajsXZ_voDtk7HKjXP4f3fxJiSLnN6gNan-MWgfIELs1RUKO7Qp>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejtdehlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddv
-    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugessghssggvrh
-    hnugdrtghomheqnecuggftrfgrthhtvghrnhepfeeggeefffekudduleefheelleehgfff
-    hedujedvgfetvedvtdefieehfeelgfdvnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtghomhdpnhgspghr
-    tghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghmihhrjeefih
-    hlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhhoihhnrghksgdttddusehgmhgrihhl
-    rdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtth
-    hopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:QbS4Z82yydjdBaKgwRUjVYbJwUc2aifHCriXysdNL4t_m5J8lW_zyA>
-    <xmx:QbS4Z6ETxVsppf77fYrAkViS2dB6SkO7JKDBbzmI9kyN9L68wnJnSQ>
-    <xmx:QbS4Z9-d3lmuNFY8RELDCyPtKGN2V0cJMNz4fx5jCvZmvkU45LIGpg>
-    <xmx:QbS4Z3kj0aNTq-JFdzT0h1HZMxQned1qQxQNf_DUt6XuOGPblWEWhg>
-    <xmx:QbS4Z_599xajn7iMqBS-f1KzxeLckzKwqe3eo7g7WTlnsrb-sCpL9vyF>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 21 Feb 2025 12:13:36 -0500 (EST)
-Message-ID: <a8af0bfc-d739-49aa-ac3f-4f928741fb7a@bsbernd.com>
-Date: Fri, 21 Feb 2025 18:13:35 +0100
+	s=arc-20240116; t=1740158072; c=relaxed/simple;
+	bh=SQM2Zd24+tc9RM6wK1jpTq8xKmBYq+FC7GVRlyvHJjc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BUKInrzAimF/Zt7DdbKAGSTdIXDTjCXa2ud7AP0jOpbTG5og1gFzdKDzrofloERN00MrXXiKqGglZ/ATnZsewRZeRynNoWQGXYFXXCvhDYiFLegq/g/SVD/LFffk3lMQ2DYxixd94YUEDukEaR6ik7SUZhqBmAoXLtN2QaUTjQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CyQLCDoF; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-220e0575f5bso193535ad.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2025 09:14:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740158070; x=1740762870; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F0gSK2FCxaWmxefntBhNlF54L7D98cEEXS9T8Pg40TY=;
+        b=CyQLCDoFa/zE6++mlqw9/KsI+uUGEGGE1NRLnxsbsEGAZC6RhYFjZXA3qJJcSpLmU7
+         JghpZK4heJD18Z+PAHMtfB0E1Hri1POFz1uD05r2Gt3ounIcJ4zKvR7FLYrwONOXpWPY
+         e2/h6bq6r8nOU9f0I7cjMlQnhUs8Y1X3RLPt2tV4Vaz58P3SaDfty1pa0mo47BoENgtE
+         X1ynuZpOypslOQmy4zCIQghlOy2dEpKDWr8mEr1M2k4vPtbVw0IWbeIdtck2opYFcEc1
+         ushJd9BtfkYwi8h+C+4PVsw/Lv5XumyEZoGilEY0LM8BazUAzT4+z7PHUbpexjUn/Ccm
+         ge+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740158070; x=1740762870;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F0gSK2FCxaWmxefntBhNlF54L7D98cEEXS9T8Pg40TY=;
+        b=nDhjMzL0W/nK/gH/j95X12UE6nKSgiixS47Zv38s//iXRQ2+4q/tOLnDooLa5MV1Ca
+         3GJcifHr3MzZM4D1yBH0kpYtwP7nnASkHyBqbGMrADuqkPDhlIirm0OrCCEKm1qO1K/5
+         Gz37wmpfPdVmfYZBmcgUVwvY2dhu3JsVnsFTVfM5nRXN24PVZBmAzvAqLztVDIzaroiq
+         feAr8g2dyLskU3pke7jR/KqYLYmv1T3T/T8R2lKntrnPeSBjawL3Cga4q3aUES5j4OMQ
+         vEVbmSnWUOk51tNfo+gAzAqDkFFCAcIqOeHxi79rQicrhc4/FUcVj9IGOxrtiP0at306
+         G6sw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJmTy5y1gZySsSoeIx1SeY7RwrYqWWlfb2q/qcXhE1qPMQk5QkcbaFDdqJR/MwRD95XWpaHITWqN6XNCVq@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjI+6iaN23WtJe+UumiOltpc0NlJPdOYsM8Ky2x5CzroX95xra
+	r6rMp/C3D3Y0KGM+YGozx4DjYSyc0WjWMQlSHNaA+QaFJDuocUBzNKhpMfnUgFlormLPUM9qisC
+	RXRBb1i+0QMIiw3W/l/k6kQBjUUg9NSTe0q02
+X-Gm-Gg: ASbGncsbTn3PDYJn0XJWBaWvUkdX3jk6erED+hTtkdraeoB/l6MA2ecs7OfsnMK+liX
+	uSXBtIT0HI2GbRqjVlSx40Nn5QETh0XvP9dqU3bcTONidWQATbxFAX01I0v3IXSu8/C8RvPiTnZ
+	V4hawmvy2T26oxF202RixUasM1MR4+420hY+ITu/3j
+X-Google-Smtp-Source: AGHT+IFNyUGqlslXX37x4LbVQZRrq75tIiNhK2lhe/pPGYWt/2yXJVlCueghSa7c76ItC22g78yrCg/UqJB9sy8R4qo=
+X-Received: by 2002:a17:903:2bcb:b0:21f:44eb:80f4 with SMTP id
+ d9443c01a7336-221a045943dmr2994765ad.4.1740158070005; Fri, 21 Feb 2025
+ 09:14:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Fuse: Add backing file support for uring_cmd
-To: Amir Goldstein <amir73il@gmail.com>,
- Moinak Bhattacharyya <moinakb001@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-References: <CAKXrOwbkMUo9KJd7wHjcFzJieTFj6NPWPp0vD_SgdS3h33Wdsg@mail.gmail.com>
- <db432e5b-fc90-487e-b261-7771766c56cb@bsbernd.com>
- <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
- <CAOQ4uxiVvc6i+5bV1PDMcvS8bALFdp86i==+ZQAAfxKY6AjGiQ@mail.gmail.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAOQ4uxiVvc6i+5bV1PDMcvS8bALFdp86i==+ZQAAfxKY6AjGiQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <cover.1740139449.git.lorenzo.stoakes@oracle.com>
+ <164feb0a43ae72650e6b20c3910213f469566311.1740139449.git.lorenzo.stoakes@oracle.com>
+ <32e83941-e6f5-42ee-9292-a44c16463cf1@lucifer.local>
+In-Reply-To: <32e83941-e6f5-42ee-9292-a44c16463cf1@lucifer.local>
+From: Kalesh Singh <kaleshsingh@google.com>
+Date: Fri, 21 Feb 2025 09:14:18 -0800
+X-Gm-Features: AWEUYZk3mhTNh_WBC5ffotM6wthK5i4atwZUkga3FHvQ0eq4dodOkvuYfjsE_F0
+Message-ID: <CAC_TJvf8kqnAKAfHyTAz_c4-cGrjNYyLBUTWzYrJZGmanOvRGA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] tools/selftests: add guard region test for /proc/$pid/pagemap
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <shuah@kernel.org>, David Hildenbrand <david@redhat.com>, 
+	Suren Baghdasaryan <surenb@google.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	"Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>, Juan Yescas <jyescas@google.com>, 
+	linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-api@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Feb 21, 2025 at 5:51=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Fri, Feb 21, 2025 at 12:05:23PM +0000, Lorenzo Stoakes wrote:
+> > Add a test to the guard region self tests to assert that the
+> > /proc/$pid/pagemap information now made availabile to the user correctl=
+y
+> > identifies and reports guard regions.
+> >
+> > As a part of this change, update vm_util.h to add the new bit (note the=
+re
+> > is no header file in the kernel where this is exposed, the user is expe=
+cted
+> > to provide their own mask) and utilise the helper functions there for
+> > pagemap functionality.
+> >
+> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
+Reviewed-by: Kalesh Singh <kaleshsingh@google.com>
 
-On 2/21/25 17:24, Amir Goldstein wrote:
-> On Fri, Feb 21, 2025 at 4:36 PM Moinak Bhattacharyya
-> <moinakb001@gmail.com> wrote:
->>
->> Sorry about that. Correctly-formatted patch follows. Should I send out a
->> V2 instead?
->>
->> Add support for opening and closing backing files in the fuse_uring_cmd
->> callback. Store backing_map (for open) and backing_id (for close) in the
->> uring_cmd data.
->> ---
->>   fs/fuse/dev_uring.c       | 50 +++++++++++++++++++++++++++++++++++++++
->>   include/uapi/linux/fuse.h |  6 +++++
->>   2 files changed, 56 insertions(+)
->>
->> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
->> index ebd2931b4f2a..df73d9d7e686 100644
->> --- a/fs/fuse/dev_uring.c
->> +++ b/fs/fuse/dev_uring.c
->> @@ -1033,6 +1033,40 @@ fuse_uring_create_ring_ent(struct io_uring_cmd *cmd,
->>       return ent;
->>   }
->>
->> +/*
->> + * Register new backing file for passthrough, getting backing map from
->> URING_CMD data
->> + */
->> +static int fuse_uring_backing_open(struct io_uring_cmd *cmd,
->> +    unsigned int issue_flags, struct fuse_conn *fc)
->> +{
->> +    const struct fuse_backing_map *map = io_uring_sqe_cmd(cmd->sqe);
->> +    int ret = fuse_backing_open(fc, map);
->> +
-> 
-> I am not that familiar with io_uring, so I need to ask -
-> fuse_backing_open() does
-> fb->cred = prepare_creds();
-> to record server credentials
-> what are the credentials that will be recorded in the context of this
-> io_uring command?
-
-This is run from the io_uring_enter() syscall - it should not make
-a difference to an ioctl, AFAIK. Someone from @io-uring please
-correct me if I'm wrong.
-
-> 
-> 
->> +    if (ret < 0) {
->> +        return ret;
->> +    }
->> +
->> +    io_uring_cmd_done(cmd, ret, 0, issue_flags);
->> +    return 0;
->> +}
->> +
->> +/*
->> + * Remove file from passthrough tracking, getting backing_id from
->> URING_CMD data
->> + */
->> +static int fuse_uring_backing_close(struct io_uring_cmd *cmd,
->> +    unsigned int issue_flags, struct fuse_conn *fc)
->> +{
->> +    const int *backing_id = io_uring_sqe_cmd(cmd->sqe);
->> +    int ret = fuse_backing_close(fc, *backing_id);
->> +
->> +    if (ret < 0) {
->> +        return ret;
->> +    }
->> +
->> +    io_uring_cmd_done(cmd, ret, 0, issue_flags);
->> +    return 0;
->> +}
->> +
->>   /*
->>    * Register header and payload buffer with the kernel and puts the
->>    * entry as "ready to get fuse requests" on the queue
->> @@ -1144,6 +1178,22 @@ int fuse_uring_cmd(struct io_uring_cmd *cmd,
->> unsigned int issue_flags)
->>               return err;
->>           }
->>           break;
->> +    case FUSE_IO_URING_CMD_BACKING_OPEN:
->> +        err = fuse_uring_backing_open(cmd, issue_flags, fc);
->> +        if (err) {
->> +            pr_info_once("FUSE_IO_URING_CMD_BACKING_OPEN failed err=%d\n",
->> +                    err);
->> +            return err;
->> +        }
->> +        break;
->> +    case FUSE_IO_URING_CMD_BACKING_CLOSE:
->> +        err = fuse_uring_backing_close(cmd, issue_flags, fc);
->> +        if (err) {
->> +            pr_info_once("FUSE_IO_URING_CMD_BACKING_CLOSE failed err=%d\n",
->> +                    err);
->> +            return err;
->> +        }
->> +        break;
->>       default:
->>           return -EINVAL;
->>       }
->> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
->> index 5e0eb41d967e..634265da1328 100644
->> --- a/include/uapi/linux/fuse.h
->> +++ b/include/uapi/linux/fuse.h
->> @@ -1264,6 +1264,12 @@ enum fuse_uring_cmd {
->>
->>       /* commit fuse request result and fetch next request */
->>       FUSE_IO_URING_CMD_COMMIT_AND_FETCH = 2,
->> +
->> +    /* add new backing file for passthrough */
->> +    FUSE_IO_URING_CMD_BACKING_OPEN = 3,
->> +
->> +    /* remove passthrough file by backing_id */
->> +    FUSE_IO_URING_CMD_BACKING_CLOSE = 4,
->>   };
->>
-> 
-> An anecdote:
-> Why are we using FUSE_DEV_IOC_BACKING_OPEN
-> and not passing the backing fd directly in OPEN response?
-> 
-> The reason for that was security related - there was a concern that
-> an adversary would be able to trick some process into writing some fd
-> to /dev/fuse, whereas tricking some proces into doing an ioctl is not
-> so realistic.
-> 
-> AFAICT this concern does not exist when OPEN response is via
-> io_uring(?), so the backing_id indirection is not strictly needed,
-> but for the sake of uniformity with standard fuse protocol,
-> I guess we should maintain those commands in io_uring as well.
-
-Yeah, the way it is done is not ideal
-
-fi->backing_id = do_passthrough_open(); /* blocking */
-fuse_reply_create()
-    fill_open()
-      arg->backing_id = f->backing_id; /* f is fi */
-
-
-I.e. there are still two operations that depend on each other.
-Maybe we could find a way to link the SQEs.
-Or maybe easier, if the security concern is gone with IO-URING,
-just set FOPEN_PASSTHROUGH for requests over io-uring and then
-let the client/kernel side do the passthrough open internally?
-
-
-Thanks,
-Bernd
-
-
-
-
-
-
+>
+> Andrew - Apologies,
+>
+> I managed to not commit a change I quickly made before sending this out
+> (I'm ill, seems it is having an impact...)
+>
+> If the series is ok would you mind tacking on this fix-patch? It's simply
+> to rename a clumsily named define here.
+>
+> No functional changes...
+>
+> Thanks!
+>
+> ----8<----
+> From 60be19e88b3bfe9a6ec459115f0027721c494b30 Mon Sep 17 00:00:00 2001
+> From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Date: Fri, 21 Feb 2025 13:45:48 +0000
+> Subject: [PATCH] fixup define name
+>
+> Fix badly named define so it's consistent with the others.
+>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>  tools/testing/selftests/mm/guard-regions.c | 6 +++---
+>  tools/testing/selftests/mm/vm_util.h       | 2 +-
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/tools/testing/selftests/mm/guard-regions.c b/tools/testing/s=
+elftests/mm/guard-regions.c
+> index 0c7183e8b661..280d1831bf73 100644
+> --- a/tools/testing/selftests/mm/guard-regions.c
+> +++ b/tools/testing/selftests/mm/guard-regions.c
+> @@ -2054,7 +2054,7 @@ TEST_F(guard_regions, pagemap)
+>         for (i =3D 0; i < 10; i++) {
+>                 char *ptr_p =3D &ptr[i * page_size];
+>                 unsigned long entry =3D pagemap_get_entry(proc_fd, ptr_p)=
+;
+> -               unsigned long masked =3D entry & PM_GUARD_REGION_MASK;
+> +               unsigned long masked =3D entry & PM_GUARD_REGION;
+>
+>                 ASSERT_EQ(masked, 0);
+>         }
+> @@ -2070,9 +2070,9 @@ TEST_F(guard_regions, pagemap)
+>         for (i =3D 0; i < 10; i++) {
+>                 char *ptr_p =3D &ptr[i * page_size];
+>                 unsigned long entry =3D pagemap_get_entry(proc_fd, ptr_p)=
+;
+> -               unsigned long masked =3D entry & PM_GUARD_REGION_MASK;
+> +               unsigned long masked =3D entry & PM_GUARD_REGION;
+>
+> -               ASSERT_EQ(masked, i % 2 =3D=3D 0 ? PM_GUARD_REGION_MASK :=
+ 0);
+> +               ASSERT_EQ(masked, i % 2 =3D=3D 0 ? PM_GUARD_REGION : 0);
+>         }
+>
+>         ASSERT_EQ(close(proc_fd), 0);
+> diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftes=
+ts/mm/vm_util.h
+> index 73a11443b7f6..0e629586556b 100644
+> --- a/tools/testing/selftests/mm/vm_util.h
+> +++ b/tools/testing/selftests/mm/vm_util.h
+> @@ -10,7 +10,7 @@
+>  #define PM_SOFT_DIRTY                 BIT_ULL(55)
+>  #define PM_MMAP_EXCLUSIVE             BIT_ULL(56)
+>  #define PM_UFFD_WP                    BIT_ULL(57)
+> -#define PM_GUARD_REGION_MASK          BIT_ULL(58)
+> +#define PM_GUARD_REGION               BIT_ULL(58)
+>  #define PM_FILE                       BIT_ULL(61)
+>  #define PM_SWAP                       BIT_ULL(62)
+>  #define PM_PRESENT                    BIT_ULL(63)
+> --
+> 2.48.1
 
