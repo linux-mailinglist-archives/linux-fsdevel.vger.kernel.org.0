@@ -1,190 +1,207 @@
-Return-Path: <linux-fsdevel+bounces-42279-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42280-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF4D0A3FD3E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 18:19:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E17DBA3FD5D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 18:25:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B6D33ADD58
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 17:14:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 355B27AD750
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 17:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2822E24CEFA;
-	Fri, 21 Feb 2025 17:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F172505A3;
+	Fri, 21 Feb 2025 17:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CyQLCDoF"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="CyRGG1FM";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="deSMK300"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16BB624CEE5
-	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2025 17:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0251C5D76;
+	Fri, 21 Feb 2025 17:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740158072; cv=none; b=BuUjSDSNyFT9taBBRUBx2h1if5KiJ4Z4GYuQJxLOVWn+eQeqrrJDhfMIOfcDFSOAEcMkxhdv6/yIK/38Q0pK4MTR29rUgKir785TY0zDspttRfXpA2cIDBk7k8Qq1mqpIbTbHqmGSPbixB/y4S1bODkAXJm7bABQd0xQN6fivOc=
+	t=1740158700; cv=none; b=XiEW2IIgXHEONe4XildoJyLL2aESdINQ26nWcJ4E2QhGYxyljYP6D1t9FboaJFsTGb7U1z6rvfaAHjTG2jX/TGJwqMAtd17U6j35a3l3zzG6RwXyToNfFxQxzxVo0R02ivaqingX5z9P6PkOPNMXFm1hC2ySmdt9HPTjF3rb7xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740158072; c=relaxed/simple;
-	bh=SQM2Zd24+tc9RM6wK1jpTq8xKmBYq+FC7GVRlyvHJjc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BUKInrzAimF/Zt7DdbKAGSTdIXDTjCXa2ud7AP0jOpbTG5og1gFzdKDzrofloERN00MrXXiKqGglZ/ATnZsewRZeRynNoWQGXYFXXCvhDYiFLegq/g/SVD/LFffk3lMQ2DYxixd94YUEDukEaR6ik7SUZhqBmAoXLtN2QaUTjQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CyQLCDoF; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-220e0575f5bso193535ad.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2025 09:14:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740158070; x=1740762870; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F0gSK2FCxaWmxefntBhNlF54L7D98cEEXS9T8Pg40TY=;
-        b=CyQLCDoFa/zE6++mlqw9/KsI+uUGEGGE1NRLnxsbsEGAZC6RhYFjZXA3qJJcSpLmU7
-         JghpZK4heJD18Z+PAHMtfB0E1Hri1POFz1uD05r2Gt3ounIcJ4zKvR7FLYrwONOXpWPY
-         e2/h6bq6r8nOU9f0I7cjMlQnhUs8Y1X3RLPt2tV4Vaz58P3SaDfty1pa0mo47BoENgtE
-         X1ynuZpOypslOQmy4zCIQghlOy2dEpKDWr8mEr1M2k4vPtbVw0IWbeIdtck2opYFcEc1
-         ushJd9BtfkYwi8h+C+4PVsw/Lv5XumyEZoGilEY0LM8BazUAzT4+z7PHUbpexjUn/Ccm
-         ge+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740158070; x=1740762870;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F0gSK2FCxaWmxefntBhNlF54L7D98cEEXS9T8Pg40TY=;
-        b=nDhjMzL0W/nK/gH/j95X12UE6nKSgiixS47Zv38s//iXRQ2+4q/tOLnDooLa5MV1Ca
-         3GJcifHr3MzZM4D1yBH0kpYtwP7nnASkHyBqbGMrADuqkPDhlIirm0OrCCEKm1qO1K/5
-         Gz37wmpfPdVmfYZBmcgUVwvY2dhu3JsVnsFTVfM5nRXN24PVZBmAzvAqLztVDIzaroiq
-         feAr8g2dyLskU3pke7jR/KqYLYmv1T3T/T8R2lKntrnPeSBjawL3Cga4q3aUES5j4OMQ
-         vEVbmSnWUOk51tNfo+gAzAqDkFFCAcIqOeHxi79rQicrhc4/FUcVj9IGOxrtiP0at306
-         G6sw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJmTy5y1gZySsSoeIx1SeY7RwrYqWWlfb2q/qcXhE1qPMQk5QkcbaFDdqJR/MwRD95XWpaHITWqN6XNCVq@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjI+6iaN23WtJe+UumiOltpc0NlJPdOYsM8Ky2x5CzroX95xra
-	r6rMp/C3D3Y0KGM+YGozx4DjYSyc0WjWMQlSHNaA+QaFJDuocUBzNKhpMfnUgFlormLPUM9qisC
-	RXRBb1i+0QMIiw3W/l/k6kQBjUUg9NSTe0q02
-X-Gm-Gg: ASbGncsbTn3PDYJn0XJWBaWvUkdX3jk6erED+hTtkdraeoB/l6MA2ecs7OfsnMK+liX
-	uSXBtIT0HI2GbRqjVlSx40Nn5QETh0XvP9dqU3bcTONidWQATbxFAX01I0v3IXSu8/C8RvPiTnZ
-	V4hawmvy2T26oxF202RixUasM1MR4+420hY+ITu/3j
-X-Google-Smtp-Source: AGHT+IFNyUGqlslXX37x4LbVQZRrq75tIiNhK2lhe/pPGYWt/2yXJVlCueghSa7c76ItC22g78yrCg/UqJB9sy8R4qo=
-X-Received: by 2002:a17:903:2bcb:b0:21f:44eb:80f4 with SMTP id
- d9443c01a7336-221a045943dmr2994765ad.4.1740158070005; Fri, 21 Feb 2025
- 09:14:30 -0800 (PST)
+	s=arc-20240116; t=1740158700; c=relaxed/simple;
+	bh=rfubqgBuPW8KQbFK87+EDiG0WO+8APWfsNEw6wqzRKM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GvtW1U+fqqFNC0d7/uzNG9m0XH1qIcLeWejgxjY7HnHZEYsMC40kM4KviR0e6BsP52s+GV32J6x0UqLE2hmerlpcutg/LgeE8nZChpWTRhUKHfqdannqUJJhJ6WBgkbY9D0fMvlkijZ6U9Ew+44ZU0VR1k+pcbibflQBt3vGId4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=CyRGG1FM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=deSMK300; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id ECF9111400D2;
+	Fri, 21 Feb 2025 12:24:56 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-11.internal (MEProxy); Fri, 21 Feb 2025 12:24:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1740158696;
+	 x=1740245096; bh=4o+rkkplJeo1rAJGhR37KNClaWXDBzpxHAPyuwIpKbI=; b=
+	CyRGG1FM7p0QG2WUKqeLiPmPEhjq9CehRdJqlUvARcEI/htgryirwDLM1101U0zS
+	NxzT/uB7r4lIVAYp4jEOTT1vDdm7McclV4sdkk2YTCuLgsn1CAp83e46iYLznOI9
+	EKCfEpJyCTa846nB3iBcSetNIQEyasGhPCxrHnJ1pyXmC9Ru2gkCwiKS8uuSSiS1
+	r+DjfK4VNx0XceD3xfbYqrVRLE0cFup4YjLhS0jykRjcZD+dHfRGne3HqxCnfaRR
+	b9wzyIWqf+4xtAqlKC6cWIOMM3YdIDrUa4ysid8uLtfK2S090FX6SyaF2Io3VMSF
+	SMyFHmeDWZCzyaF0ZQ6YeA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740158696; x=
+	1740245096; bh=4o+rkkplJeo1rAJGhR37KNClaWXDBzpxHAPyuwIpKbI=; b=d
+	eSMK300RoIhqo9WDh4S7TN2sfXyI4GibP3ENkQJ7wLWZkclbMmXlYCroY/LgXIZV
+	sbNIytjtyRdWxEncBUC2CjJepZYbTFNAKd6pjddfHWTdKHULJIDYEPRV1oFLI65F
+	oqF95hI+ifAFWJBGpEJ1nwJBiQnbHtlRGLuK8z3xCs2tJomJWeexIhzrKXrrSEv0
+	COBOigqTQ3+gykALwhjJ2pm3NZIzyTtHkrhkhpsg/oqWKmGw4Ga3g9t6+gkxbU5q
+	B+aZLGgB0GasybSp/wMtnj3w5dgdIDq4BD8x2RAu8pgnRxCGhTIhbUkcI78xm5zF
+	a9ROPUD1I4gw/NPE4I1xw==
+X-ME-Sender: <xms:6La4Z1kEjU_mg0GpA8ouqwzYtw8AMePVAARc_s_6FJz7ZY3R3eDOnQ>
+    <xme:6La4Zw3s9Ah6ft0LdhPPFesS4dyktEnc9BmVhpu1bUbTZ1dV_rypYmRj3ATBP8rM3
+    3muXuHVnKiqrJIW>
+X-ME-Received: <xmr:6La4Z7qHuLVnPniH6QIh8_o2bMngeHbSC3CA51CMckQen4yd1x9PWkjwjzeZNYt1wkTdmmQlefQqCofZMoIT-lKQuEKdTPLEeRChKft-OWkHRcJDQSCm>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejtdeiudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddv
+    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugessghssggvrh
+    hnugdrtghomheqnecuggftrfgrthhtvghrnhepfeeggeefffekudduleefheelleehgfff
+    hedujedvgfetvedvtdefieehfeelgfdvnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtghomhdpnhgspghr
+    tghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghmihhrjeefih
+    hlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhhoihhnrghksgdttddusehgmhgrihhl
+    rdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtth
+    hopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:6La4Z1lS3tmjBX1lSox8EF70A-TSFUaerKx6gebAVlQy9o5T1nON0A>
+    <xmx:6La4Zz3K9NXFiiL2DcwXO0hYnyeUddHsG0fFSM_bbuyHd2ck1KQ5Sg>
+    <xmx:6La4Z0uGD96VtXxIhgP1qXwyf8oUPmsQnwDhINlr7sLbB3sTFASDeg>
+    <xmx:6La4Z3UhBclFbZiEk9onkw2JiDOWAnm5yvyMMjdYuZEebmRM9R16Rg>
+    <xmx:6La4Z9oxmFBEq7lhMpoR8-WN1KD9YSLyIa3YbYvSYFyGsHbl-TLQqRLY>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 21 Feb 2025 12:24:55 -0500 (EST)
+Message-ID: <154fff04-a00a-4039-990f-af94b3562776@bsbernd.com>
+Date: Fri, 21 Feb 2025 18:24:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1740139449.git.lorenzo.stoakes@oracle.com>
- <164feb0a43ae72650e6b20c3910213f469566311.1740139449.git.lorenzo.stoakes@oracle.com>
- <32e83941-e6f5-42ee-9292-a44c16463cf1@lucifer.local>
-In-Reply-To: <32e83941-e6f5-42ee-9292-a44c16463cf1@lucifer.local>
-From: Kalesh Singh <kaleshsingh@google.com>
-Date: Fri, 21 Feb 2025 09:14:18 -0800
-X-Gm-Features: AWEUYZk3mhTNh_WBC5ffotM6wthK5i4atwZUkga3FHvQ0eq4dodOkvuYfjsE_F0
-Message-ID: <CAC_TJvf8kqnAKAfHyTAz_c4-cGrjNYyLBUTWzYrJZGmanOvRGA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] tools/selftests: add guard region test for /proc/$pid/pagemap
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <shuah@kernel.org>, David Hildenbrand <david@redhat.com>, 
-	Suren Baghdasaryan <surenb@google.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	"Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>, Juan Yescas <jyescas@google.com>, 
-	linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-api@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Fuse: Add backing file support for uring_cmd
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Moinak Bhattacharyya <moinakb001@gmail.com>,
+ Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <CAKXrOwbkMUo9KJd7wHjcFzJieTFj6NPWPp0vD_SgdS3h33Wdsg@mail.gmail.com>
+ <db432e5b-fc90-487e-b261-7771766c56cb@bsbernd.com>
+ <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
+ <9a930d23-25e5-4d36-9233-bf34eb377f9b@bsbernd.com>
+ <216baa7e-2a97-4f12-b30a-4e21b4696ddd@bsbernd.com>
+ <CAOQ4uxgNyKL9-PqDPjZsXum-1+YNwOcj=jhGCYmhrhr2JcCjNw@mail.gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAOQ4uxgNyKL9-PqDPjZsXum-1+YNwOcj=jhGCYmhrhr2JcCjNw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 21, 2025 at 5:51=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Fri, Feb 21, 2025 at 12:05:23PM +0000, Lorenzo Stoakes wrote:
-> > Add a test to the guard region self tests to assert that the
-> > /proc/$pid/pagemap information now made availabile to the user correctl=
-y
-> > identifies and reports guard regions.
-> >
-> > As a part of this change, update vm_util.h to add the new bit (note the=
-re
-> > is no header file in the kernel where this is exposed, the user is expe=
-cted
-> > to provide their own mask) and utilise the helper functions there for
-> > pagemap functionality.
-> >
-> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Reviewed-by: Kalesh Singh <kaleshsingh@google.com>
 
->
-> Andrew - Apologies,
->
-> I managed to not commit a change I quickly made before sending this out
-> (I'm ill, seems it is having an impact...)
->
-> If the series is ok would you mind tacking on this fix-patch? It's simply
-> to rename a clumsily named define here.
->
-> No functional changes...
->
-> Thanks!
->
-> ----8<----
-> From 60be19e88b3bfe9a6ec459115f0027721c494b30 Mon Sep 17 00:00:00 2001
-> From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Date: Fri, 21 Feb 2025 13:45:48 +0000
-> Subject: [PATCH] fixup define name
->
-> Fix badly named define so it's consistent with the others.
->
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  tools/testing/selftests/mm/guard-regions.c | 6 +++---
->  tools/testing/selftests/mm/vm_util.h       | 2 +-
->  2 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/tools/testing/selftests/mm/guard-regions.c b/tools/testing/s=
-elftests/mm/guard-regions.c
-> index 0c7183e8b661..280d1831bf73 100644
-> --- a/tools/testing/selftests/mm/guard-regions.c
-> +++ b/tools/testing/selftests/mm/guard-regions.c
-> @@ -2054,7 +2054,7 @@ TEST_F(guard_regions, pagemap)
->         for (i =3D 0; i < 10; i++) {
->                 char *ptr_p =3D &ptr[i * page_size];
->                 unsigned long entry =3D pagemap_get_entry(proc_fd, ptr_p)=
-;
-> -               unsigned long masked =3D entry & PM_GUARD_REGION_MASK;
-> +               unsigned long masked =3D entry & PM_GUARD_REGION;
->
->                 ASSERT_EQ(masked, 0);
->         }
-> @@ -2070,9 +2070,9 @@ TEST_F(guard_regions, pagemap)
->         for (i =3D 0; i < 10; i++) {
->                 char *ptr_p =3D &ptr[i * page_size];
->                 unsigned long entry =3D pagemap_get_entry(proc_fd, ptr_p)=
-;
-> -               unsigned long masked =3D entry & PM_GUARD_REGION_MASK;
-> +               unsigned long masked =3D entry & PM_GUARD_REGION;
->
-> -               ASSERT_EQ(masked, i % 2 =3D=3D 0 ? PM_GUARD_REGION_MASK :=
- 0);
-> +               ASSERT_EQ(masked, i % 2 =3D=3D 0 ? PM_GUARD_REGION : 0);
->         }
->
->         ASSERT_EQ(close(proc_fd), 0);
-> diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftes=
-ts/mm/vm_util.h
-> index 73a11443b7f6..0e629586556b 100644
-> --- a/tools/testing/selftests/mm/vm_util.h
-> +++ b/tools/testing/selftests/mm/vm_util.h
-> @@ -10,7 +10,7 @@
->  #define PM_SOFT_DIRTY                 BIT_ULL(55)
->  #define PM_MMAP_EXCLUSIVE             BIT_ULL(56)
->  #define PM_UFFD_WP                    BIT_ULL(57)
-> -#define PM_GUARD_REGION_MASK          BIT_ULL(58)
-> +#define PM_GUARD_REGION               BIT_ULL(58)
->  #define PM_FILE                       BIT_ULL(61)
->  #define PM_SWAP                       BIT_ULL(62)
->  #define PM_PRESENT                    BIT_ULL(63)
-> --
-> 2.48.1
+On 2/21/25 17:35, Amir Goldstein wrote:
+> On Fri, Feb 21, 2025 at 5:17 PM Bernd Schubert <bernd@bsbernd.com> wrote:
+>>
+>>
+>>
+>> On 2/21/25 17:14, Bernd Schubert wrote:
+>>>
+>>>
+>>> On 2/21/25 16:36, Moinak Bhattacharyya wrote:
+>>>> Sorry about that. Correctly-formatted patch follows. Should I send out a
+>>>> V2 instead?
+>>>>
+>>>> Add support for opening and closing backing files in the fuse_uring_cmd
+>>>> callback. Store backing_map (for open) and backing_id (for close) in the
+>>>> uring_cmd data.
+>>>> ---
+>>>>  fs/fuse/dev_uring.c       | 50 +++++++++++++++++++++++++++++++++++++++
+>>>>  include/uapi/linux/fuse.h |  6 +++++
+>>>>  2 files changed, 56 insertions(+)
+>>>>
+>>>> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+>>>> index ebd2931b4f2a..df73d9d7e686 100644
+>>>> --- a/fs/fuse/dev_uring.c
+>>>> +++ b/fs/fuse/dev_uring.c
+>>>> @@ -1033,6 +1033,40 @@ fuse_uring_create_ring_ent(struct io_uring_cmd *cmd,
+>>>>      return ent;
+>>>>  }
+>>>>
+>>>> +/*
+>>>> + * Register new backing file for passthrough, getting backing map from
+>>>> URING_CMD data
+>>>> + */
+>>>> +static int fuse_uring_backing_open(struct io_uring_cmd *cmd,
+>>>> +    unsigned int issue_flags, struct fuse_conn *fc)
+>>>> +{
+>>>> +    const struct fuse_backing_map *map = io_uring_sqe_cmd(cmd->sqe);
+>>>> +    int ret = fuse_backing_open(fc, map);
+>>>
+>>> Do you have the libfuse part somewhere? I need to hurry up to split and
+>>> clean up my uring branch. Not promised, but maybe this weekend.
+>>> What we need to be careful here about is that in my current 'uring'
+>>> libfuse always expects to get a CQE - here you introduce a 2nd user
+>>> for CQEs - it needs credit management.
+>>>
+>>>
+>>>> +
+>>>> +    if (ret < 0) {
+>>>> +        return ret;
+>>>> +    }
+>>>> +
+>>>> +    io_uring_cmd_done(cmd, ret, 0, issue_flags);
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +/*
+>>>> + * Remove file from passthrough tracking, getting backing_id from
+>>>> URING_CMD data
+>>>> + */
+>>>> +static int fuse_uring_backing_close(struct io_uring_cmd *cmd,
+>>>> +    unsigned int issue_flags, struct fuse_conn *fc)
+>>>> +{
+>>>> +    const int *backing_id = io_uring_sqe_cmd(cmd->sqe);
+>>>> +    int ret = fuse_backing_close(fc, *backing_id);
+>>>> +
+>>>> +    if (ret < 0) {
+>>>> +        return ret;
+>>>> +    }
+>>>
+>>>
+>>> Both functions don't have the check for
+>>>
+>>>       if (!IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+>>>               return -EOPNOTSUPP;
+>>>
+>>> but their ioctl counter parts have that.
+>>>
+>>
+>> In order to avoid code dup, maybe that check could be moved
+>> into fuse_backing_open() / fuse_backing_close() as preparation
+>> patch? Amir?
+> 
+> Without CONFIG_FUSE_PASSTHROUGH, fuse/passthrough.c
+> is compiled out, so the check cannot be moved into fuse_backing_*
+> we'd need inline helpers that return -EOPNOTSUPP when
+> CONFIG_FUSE_PASSTHROUGH is not defined.
+> I don't mind, but I am not sure this is justified (yet).
+> 
+
+Ah right, then let's duplicate the check.
 
