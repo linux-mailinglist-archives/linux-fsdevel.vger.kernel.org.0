@@ -1,115 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-42311-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42312-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 083FFA401E3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 22:14:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 316BBA40294
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 23:23:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A87C47A26A8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 21:13:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B25D519C4044
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 22:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8774253F21;
-	Fri, 21 Feb 2025 21:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF802252909;
+	Fri, 21 Feb 2025 22:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="DggnDjAl"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rsV8JbKX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A67253B73
-	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2025 21:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1267518DB0B;
+	Fri, 21 Feb 2025 22:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740172463; cv=none; b=PnA6t94snvTK/9VYGGr39UIMlVphlU9Wzhjo3bYH1HedHgFq2rU3ZVnthCWWdO9tJ4IvfEc7wU6rG8zK8DoUYNPwt/4PAg1Iw4ALG+iEs4pjO4BWX2JrpspFeGuzzVjZXlJZ5GuKsIW1yfTJ1q1Z6zMlnBaVOU2vOzv6EckKXWQ=
+	t=1740176579; cv=none; b=XHrBi152JZ3/avSvoQdWJWb8Wa7wsKG/V5gsXPn2w3yELTkKntjjC1GTxyPr3Bi+qJM4uveo7RQOAeQptzm7uQuMErwrO/N2Z+NiUvCbSsbrRo/ZMVyVckZBIwu5o+a3c1xWfOazNVzieRajmT0BVL0myUImAPXKArESxe6oJys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740172463; c=relaxed/simple;
-	bh=LUST0WfY2YYH8MixRvQVt0HfCogiQFfD5LD4HDRjTGs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nMPbP0CBAk7KO8vpy6T8d4pfLrFRVhMqaskh5w/g9oN9Ngn+rzfylQEzO3TBc8pCqthTpldkafdSWJz3zwi9c/3bDKJF2c9g6Sv114zur+WtvToEtMbWDEc+ustM/LYrUIzK9xlNCyVdBk9tPkOjEKOT5b+XR+6Lip400S4wFgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=DggnDjAl; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3cf8e017abcso8252085ab.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2025 13:14:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740172460; x=1740777260; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cl2P2JOYJNBx1mtaYBayROisqQOMPgvFm8FiItSAUM8=;
-        b=DggnDjAl6GpDqoVT7yu5rvRJunyrlidW2SMS+sWDipW3UsaZSHTJ/VA+o82jx0dK3u
-         gU4JLW2db0a5ooygz1bMYEJ7WKhEmi5PEOlRKNwLKp6j+nJa3+Pz0oGNV27FKH9AZOtP
-         nXho8bWRQl8P8FG5iNYjLW77Vrp2LSWcw+Eria77FOmCCS02P7AxYAP9d87QNiFrGyR1
-         AB3gIxiMB81VaXP7WbpAV8CNuipxbWupn9U6PcWVJUS1oPb4b3FYHl0YAT1NxssRkJy3
-         cxa8AmfPxvKq2mVx4C8eo5oCV1u+WyCpnoDmFivCXMbfyeDqSPk1lyh7syNre35pubeo
-         hnNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740172460; x=1740777260;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cl2P2JOYJNBx1mtaYBayROisqQOMPgvFm8FiItSAUM8=;
-        b=iXcsNhy8K/vNYWX5Cb3A0DBxyLWM3vCo2Dqe2HU1sfhsAY15vXja9tpepQEymFma4E
-         cPOL1rVT+IHCtgeP6DZ7HHB6kLb38iKvxPLR6pCrLHqvc+cvNX0ZzE7SN6uxECgmnERK
-         AT0AKmGygYZklnHARI61D1DmKMR66OnDb5yVXQJetrSm6y9cAn/j0cC7rXlHvB41mmLT
-         uYT4/C83Tw90Rujmi5sTVBaeC9dipI7LUStfJ8Fc/0wpqES8eyr6BXaA6IEQsW9Sb9FK
-         LmeDubiMjuNSgsZdLq04IHkBejEK7UkhgSYSYy2wxnA6w3lCZrz8e9XnKcOObLabhSKJ
-         TLGw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+6TcUqd9K6F6k6Ca4h8W9MXYKABXx/hBE87I0LQNtzvWKscWlVZsiP2I7ub7UElgaJ9WsfFYUB44IkErg@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGkcZEy4F0LTCUsz4dzIZS39Kz1LkTW0n6gfAyTFHF9G85PGf7
-	ROn3ttv/ai7A3f7aH4g675tN57b3K7Z2iOSUZQ+epkzI2dr17WHP9qFsJyhypDQ=
-X-Gm-Gg: ASbGnctPVeYa6a6LwdQk0Qz88G2PEczIJelCMMUpm5rM4xkPs5UF/44nfksaRaa8AAM
-	RAa0/KlMDJLTWypEy/vcrgwyckhXGqH2HInOZrvxhr3KREQNqo59c+fuzNL42m4KqxDA6UDaQNU
-	qDxC9nNiFxhlGx4PRe2J5wIOiJ82MI6cM96D+F8v/8wvdiRcLot58aBz/K23vix1HcZAfQA+DdJ
-	DDD8oxbSKsFmJB/fAhyUSBOoIYHmi2uq+ICUJy7vgYZvj3pIZTW8kyOrrbe0hzDf8F3k1r2AzoD
-	uYOkCZ3fiK0td2LXpleC/xY=
-X-Google-Smtp-Source: AGHT+IHGUx3T72p6QUiwnKjXxwo0LmjfmkSlf2+w+lCN8J9EyU2JybXz1K2UEwewJnnNAq4zeENvnA==
-X-Received: by 2002:a05:6e02:156e:b0:3d0:4ba1:adf1 with SMTP id e9e14a558f8ab-3d2caf1a20emr50626825ab.22.1740172460685;
-        Fri, 21 Feb 2025 13:14:20 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d18f9c5a21sm40521905ab.21.2025.02.21.13.14.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 13:14:20 -0800 (PST)
-Message-ID: <3a3644d2-1762-4504-938a-6776c137aab8@kernel.dk>
-Date: Fri, 21 Feb 2025 14:14:18 -0700
+	s=arc-20240116; t=1740176579; c=relaxed/simple;
+	bh=vogGsnv55uPHQgIuM9YQyIS0OwRHfzJwGgMrTYh8490=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iGBx8RLf3Iw/gf6ki/ErjoLwtNcIu9oAGKEgXLN6v4KPSjSmGpi472o3DxwSUYX2zlo6u4DYRV0tp1egDFbXZ5X41/dRv622dMgvQHOSaciudvWi9/sxrwhqM+1ifc7Ppt6azB1UkPthRG+qP7hchHSA9kXrOS71EVudQf7BNcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rsV8JbKX; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=cu0ycN1zgsGIJYg8IwODAFYvM5bJa0u25BKaWpdZrnQ=; b=rsV8JbKX3LPPcSem3IAxG+eyov
+	XJxV1PedtChSkPNzc1hTQQ8KtAMbW005NVRipAMYC0Hmvs/sqk5DL+UJoVM7WUrJkJett7zApeZkA
+	5ToKYvpzpsL9O1KV9eEleYazpxbehiIC8vZTwkt8fdAsMSLYLDXq2tAb2aLBBnHE9G0/iQAvYXHPc
+	f2Cg89oTeSpXCaE++rxmRexAFBlTzSam8K9QJaxjMK61Tfa4t5Qn96S4Juhk9pEfN8SqD8HPRkwx4
+	0uPrXsTfHL17koZE8le5IDlzc4Xsf94ft0zbzWBpNU7y04YqdZsOjjjP0to1E3Ei+kfHF0gkNWmnD
+	gj2675GQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tlbQ6-0000000FIt0-0zq3;
+	Fri, 21 Feb 2025 22:22:54 +0000
+Date: Fri, 21 Feb 2025 22:22:54 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>,
+	linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fscrypt: Change fscrypt_encrypt_pagecache_blocks() to
+ take a folio
+Message-ID: <Z7j8vuxjI9E64iw4@casper.infradead.org>
+References: <20250221051004.2951759-1-willy@infradead.org>
+ <20250221051607.GA1259@sol.localdomain>
+ <Z7gQjS34D_Xg_uVo@casper.infradead.org>
+ <20250221210938.GB3790599@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v18 0/3] rust: xarray: Add a minimal abstraction for
- XArray
-To: Tamir Duberstein <tamird@gmail.com>, Danilo Krummrich <dakr@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Matthew Wilcox <willy@infradead.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- FUJITA Tomonori <fujita.tomonori@gmail.com>,
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org
-References: <20250221-rust-xarray-bindings-v18-0-cbabe5ddfc32@gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <20250221-rust-xarray-bindings-v18-0-cbabe5ddfc32@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250221210938.GB3790599@google.com>
 
-Please have (at least) a 24h cool down between versions, spamming
-versions within hours of the last one is not productive for (or
-conducive to) review.
+On Fri, Feb 21, 2025 at 09:09:38PM +0000, Eric Biggers wrote:
+> > Yup, I haven't figured out how to do large folio support, so any
+> > filesystem using fscrypt can't support large folios for now.  I'm
+> > working on "separate folio and page" at the moment rather than "enable
+> > large folios everywhere".  
+> 
+> It might be a good idea to make the limitation to small folios clear in the
+> function's kerneldoc and/or in a WARN_ON_ONCE().
 
--- 
-Jens Axboe
+I can add a VM_BUG_ON like the other
+this-is-not-yet-ready-for-large-folios tests.
+
+> > Maybe someone else will figure out how to
+> > support large folios in fscrypt and I won't have to ;-)
+> 
+> Decryption is easy and already done, but encryption is harder.  We have to
+> encrypt into bounce pages, since we can't overwrite the plaintext in the page
+> cache.  And when encrypting a large folio, I don't think we can rely on being
+> able to allocate a large bounce folio of the same size; it may just not be
+> available at the time.  So we'd still need bounce pages, and the filesystem
+> would have to keep track of potentially multiple bounce pages per folio.
+> 
+> However, this is all specific to the original fs-layer file contents encryption
+> path.  The newer inline crypto one should just work, even without hardware
+> support since block/blk-crypto-fallback.c would be used.  (blk-crypto-fallback
+> operates at the bio level, handles en/decryption, and manages bounce pages
+> itself.)  It actually might be time to remove the fs-layer file contents
+> encryption path and just support the inline crypto one.
+
+That should be fine for f2fs and ext4, but ceph might be unhappy since
+it doesn't use bios.  Would we need an analagous function for network
+filesystems?
 
