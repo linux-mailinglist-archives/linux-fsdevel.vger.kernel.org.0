@@ -1,172 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-42266-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42267-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE0A9A3FADA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 17:21:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 668BDA3FB24
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 17:26:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A537188DFEC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 16:16:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85974865481
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2025 16:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEDC222563;
-	Fri, 21 Feb 2025 16:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA9920E6FE;
+	Fri, 21 Feb 2025 16:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="qF6YWADD"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="qfYKGQbL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="zt3q76WR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B001F1535;
-	Fri, 21 Feb 2025 16:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E506D1EE00F;
+	Fri, 21 Feb 2025 16:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740154246; cv=none; b=vDvve1Vt0+iB4DhpWCO93w6K79w3EB+cKrh6HUl67hbcYJO5CiPzeM/78rhua/EoeMRUTyEkoZr8ybexO9YgPTxxIjIfTw54FqlwyK7zC9QkgLF6KAIOIgq1ok3UfC9G2yBQYsdukbag49OYxurk0ie5b+6BcXBhqZEIu5+rhRc=
+	t=1740154463; cv=none; b=So5tZp9Ib4j1kZO9issSmxmzWQIXReCI2JSCucT7AV31a6y9aAkbDzwbgqtPhZwxrCzPYU8tu2L2Dyu9lKPwNLByYmICodAcBW+qI34ODuGzjM+Bn1CrCAts283Rmh2vL8/QETIHrbafGXLAewnuT669hVJ/rmMhCFGp8E+BIT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740154246; c=relaxed/simple;
-	bh=haXYXj2KNnNM53EccSTxVj7puXHBh3hhQL/qUprzXn8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UH1159z2m5bm3jqoqO+me+rjLoGt7Cr8SNr9tVdnPAs6ge9NQXALwjLMdU2Jo3pbCMQRdeqfYCae900u4osMfN+FjO7AxKl/MIy1nPx2e8kWCbuqGIHTNlFESEIo2I6ogpkXafJYOu5PkVpucFZMJ0XHHLY3TkpCuWDJAuYMxf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=qF6YWADD; arc=none smtp.client-ip=52.119.213.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1740154246; x=1771690246;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=GG+iBbH6CBZj8qfdCgUkXoIISA49vkr1DaWwQ2vmohw=;
-  b=qF6YWADDZdWUrPA7tPGh21okWh2I1shkMlVwVhFo4oUfsCeeZYK7TNHk
-   TbLyjzwV4iYvkfIMbef/9Z76add7g7V42zzlM1st5k8siUKnFV4CWCLQo
-   WD4pZkKi4QNdHWS2HqXFRQFlIsjOCx6eC4WGhh9XZp5ijAb/15PCTgjgj
-   M=;
-X-IronPort-AV: E=Sophos;i="6.13,305,1732579200"; 
-   d="scan'208";a="699167651"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 16:10:41 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:6686]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.48.97:2525] with esmtp (Farcaster)
- id 69e45197-d4c5-4ea5-a690-28fa854e89d7; Fri, 21 Feb 2025 16:10:40 +0000 (UTC)
-X-Farcaster-Flow-ID: 69e45197-d4c5-4ea5-a690-28fa854e89d7
-Received: from EX19D003UWB004.ant.amazon.com (10.13.138.24) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Fri, 21 Feb 2025 16:10:40 +0000
-Received: from EX19MTAUWC002.ant.amazon.com (10.250.64.143) by
- EX19D003UWB004.ant.amazon.com (10.13.138.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 21 Feb 2025 16:10:39 +0000
-Received: from email-imr-corp-prod-pdx-all-2b-c1559d0e.us-west-2.amazon.com
- (10.25.36.210) by mail-relay.amazon.com (10.250.64.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1258.39 via Frontend Transport; Fri, 21 Feb 2025 16:10:39 +0000
-Received: from ua2d7e1a6107c5b.ant.amazon.com (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
-	by email-imr-corp-prod-pdx-all-2b-c1559d0e.us-west-2.amazon.com (Postfix) with ESMTPS id B70BB404C9;
-	Fri, 21 Feb 2025 16:10:32 +0000 (UTC)
-From: Patrick Roy <roypat@amazon.co.uk>
-To: <rppt@kernel.org>, <david@redhat.com>, <seanjc@google.com>
-CC: Patrick Roy <roypat@amazon.co.uk>, <pbonzini@redhat.com>,
-	<corbet@lwn.net>, <willy@infradead.org>, <akpm@linux-foundation.org>,
-	<song@kernel.org>, <jolsa@kernel.org>, <ast@kernel.org>,
-	<daniel@iogearbox.net>, <andrii@kernel.org>, <martin.lau@linux.dev>,
-	<eddyz87@gmail.com>, <yonghong.song@linux.dev>, <john.fastabend@gmail.com>,
-	<kpsingh@kernel.org>, <sdf@fomichev.me>, <haoluo@google.com>,
-	<Liam.Howlett@oracle.com>, <lorenzo.stoakes@oracle.com>, <vbabka@suse.cz>,
-	<jannh@google.com>, <shuah@kernel.org>, <kvm@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>, <bpf@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <tabba@google.com>, <jgowans@amazon.com>,
-	<graf@amazon.com>, <kalyazin@amazon.com>, <xmarcalx@amazon.com>,
-	<derekmn@amazon.com>, <jthoughton@google.com>
-Subject: [PATCH v4 12/12] KVM: selftests: Test guest execution from direct map removed gmem
-Date: Fri, 21 Feb 2025 16:07:25 +0000
-Message-ID: <20250221160728.1584559-13-roypat@amazon.co.uk>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250221160728.1584559-1-roypat@amazon.co.uk>
-References: <20250221160728.1584559-1-roypat@amazon.co.uk>
+	s=arc-20240116; t=1740154463; c=relaxed/simple;
+	bh=ExfyjFqkKI0iCNjaghRASOzNdKzkRxb04wUYq0WAAVg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=KavE1xcwUKUTNRZzKxm2gb12qb93tqiSWxWWGR4I/o1ZqrjhBIdfkjcR8Cp4eKpnQCI8NCPpp6PvKeQwlZTOuvzaDU0K1TgRXZ2TrX02PNAjEyTumb3+lIV0hCWllrg+y/7dvtx9kVt2QaC3XPQimefMRdEv7NqjnccpcmkEv8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=qfYKGQbL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=zt3q76WR; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id EEE1111400FE;
+	Fri, 21 Feb 2025 11:14:19 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Fri, 21 Feb 2025 11:14:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:content-transfer-encoding:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1740154459;
+	 x=1740240859; bh=8OHWiU5idwpL5IoFlDcAWyDfv4A+id7994s56hsNyac=; b=
+	qfYKGQbLBalNAwkwJu1VjCOAO14/jKmlk4GQhyYOoEvzlReCt8Zmlvj5r8mko6Qe
+	FZSDJ/VxUhnx3eZN9obz8shmjO5lHq6+TIXQd8pHXmmBZ849hK9FdNqihQnyM+Ox
+	GfPPCESj7TYEbYNYqRzRTUCVflqOW4rBGujYPu7lfnVVyu3XwhD//ew5C/VTeNSO
+	I3Hd6e+o/mE9qBRrQHKxE6q0WONIWo9gx74kdBAiCWt4EqImTkhoU50uFFNuyz/a
+	jW5TcxrJBsFM2+Wu44Ht33+PgSTjOcJuOGs7nVnV7KooP76KBut/Z3v8eNNGjerm
+	Lw2zdJOdvfbJQLCNSJHPiw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:content-transfer-encoding:content-type
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm1; t=1740154459; x=1740240859; bh=8
+	OHWiU5idwpL5IoFlDcAWyDfv4A+id7994s56hsNyac=; b=zt3q76WRAOY8JdP0C
+	27fFFqMUNXYLkuHIpfppNmEF9F6UHUwFp75YG/QMOwRz4OIAEw3sQYQyA4jEyFk5
+	iweLvFyhrL6JEf3OWNhmd7x0I4txxflwSfuX7fZkcG4kJlTqFebWjb6Zy3ga5u4W
+	tLdGqY1CcXfiJZ/nZ+bWe6W3V9rsLCm6ITOXM5z4JBJIeA7gQnYajEPZKCBmM04C
+	cxiC+JBdMr/yExugCYOFYpLopB4pPMsA2E0qQD7SkhJzcOojzSt8knM48d1l8a5I
+	T4p5R9tk689d8RvdpMc9y4wP8xUyCkDUxRTEXghAaLDtJyBJZKDgwOPY2148JLPt
+	jpSKA==
+X-ME-Sender: <xms:W6a4Z7VEynJIOd9uc1dYagoolpxJ5GqqtBAfJ3i7hYI2qHwhm2qMag>
+    <xme:W6a4Zzn7qy7Te6OgcHjRqryNtH9nlEn393s28BNhG2TPYA_N5R0qVBUcXC_buDHFP
+    YjDNr44D-n5egLg>
+X-ME-Received: <xmr:W6a4Z3aF22Df3Ul4XCwpigtJuOD6Is752oTEE34xapaMiZCc4amV9Jou9dcinUxq4eJaev25CvKQGoWVlKcsGFx4TwLC-CVeeQCnz9SR_2_PnUvoDIc2>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejtdegiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfhfhfgjtgfgsehtkeertddtvdej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnh
+    gurdgtohhmqeenucggtffrrghtthgvrhhnpeeuhfevveegudegkefftdfhueettdeiueek
+    jeeljefhkeduffeifeekiedtveegffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgt
+    phhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmohhinhgrkhgstd
+    dtudesghhmrghilhdrtghomhdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdr
+    hhhupdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:W6a4Z2VDCxm-m7Gf7FajTvmgZwnGLmDOeh2THGpqZLAr4xl-m9Zgsw>
+    <xmx:W6a4Z1k0uLueyN2dyrs03x0fhduN-zVkrWthm2LV0SlkY0YNd8cUtA>
+    <xmx:W6a4ZzfcaF2s4bgCKPsu3hcxucnoDMoeEEyAzsgWaSbrFuPkn3dSaA>
+    <xmx:W6a4Z_G-0CJAbgnFaTgMvLfC31PZ2jyzyPawRWL9_F1U8jYP2och5A>
+    <xmx:W6a4ZzZBVmfdizaT4sCYHF0FTen-PIQTb2TvZtP76GMPaPtrV2zOlpmS>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 21 Feb 2025 11:14:18 -0500 (EST)
+Message-ID: <9a930d23-25e5-4d36-9233-bf34eb377f9b@bsbernd.com>
+Date: Fri, 21 Feb 2025 17:14:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Fuse: Add backing file support for uring_cmd
+To: Moinak Bhattacharyya <moinakb001@gmail.com>,
+ Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+ Amir Goldstein <amir73il@gmail.com>
+References: <CAKXrOwbkMUo9KJd7wHjcFzJieTFj6NPWPp0vD_SgdS3h33Wdsg@mail.gmail.com>
+ <db432e5b-fc90-487e-b261-7771766c56cb@bsbernd.com>
+ <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Add a selftest that loads itself into guest_memfd (via
-KVM_GMEM_SHARED_MEM) and triggers an MMIO exit when executed. This
-exercises x86 MMIO emulation code inside KVM for guest_memfd-backed
-memslots where the guest_memfd folios are direct map removed.
-Particularly, it validates that x86 MMIO emulation code (guest page
-table walks + instruction fetch) correctly accesses gmem through the VMA
-that's been reflected into the memslot's userspace_addr field (instead
-of trying to do direct map accesses).
 
-Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
----
- .../selftests/kvm/set_memory_region_test.c    | 40 +++++++++++++++++++
- 1 file changed, 40 insertions(+)
 
-diff --git a/tools/testing/selftests/kvm/set_memory_region_test.c b/tools/testing/selftests/kvm/set_memory_region_test.c
-index bc440d5aba57..16bbfe117a17 100644
---- a/tools/testing/selftests/kvm/set_memory_region_test.c
-+++ b/tools/testing/selftests/kvm/set_memory_region_test.c
-@@ -603,6 +603,42 @@ static void test_mmio_during_vectoring(void)
- 
- 	kvm_vm_free(vm);
- }
-+
-+static void guest_code_trigger_mmio(void)
-+{
-+	/*
-+	 * Read some GPA that is not backed by a memslot. KVM consider this
-+	 * as MMIO and tell userspace to emulate the read.
-+	 */
-+	READ_ONCE(*((uint64_t *)MEM_REGION_GPA));
-+
-+	GUEST_DONE();
-+}
-+
-+static void test_guest_memfd_mmio(void)
-+{
-+	struct kvm_vm *vm;
-+	struct kvm_vcpu *vcpu;
-+	struct vm_shape shape = {
-+		.mode = VM_MODE_DEFAULT,
-+		.type = KVM_X86_SW_PROTECTED_VM,
-+		.src_type = VM_MEM_SRC_GUEST_MEMFD_NO_DIRECT_MAP,
-+	};
-+	pthread_t vcpu_thread;
-+
-+	pr_info("Testing MMIO emulation for instructions in gmem\n");
-+
-+	vm = __vm_create_shape_with_one_vcpu(shape, &vcpu, 0, guest_code_trigger_mmio);
-+
-+	virt_map(vm, MEM_REGION_GPA, MEM_REGION_GPA, 1);
-+
-+	pthread_create(&vcpu_thread, NULL, vcpu_worker, vcpu);
-+
-+	/* If the MMIO read was successfully emulated, the vcpu thread will exit */
-+	pthread_join(vcpu_thread, NULL);
-+
-+	kvm_vm_free(vm);
-+}
- #endif
- 
- int main(int argc, char *argv[])
-@@ -630,6 +666,10 @@ int main(int argc, char *argv[])
- 	    (kvm_check_cap(KVM_CAP_VM_TYPES) & BIT(KVM_X86_SW_PROTECTED_VM))) {
- 		test_add_private_memory_region();
- 		test_add_overlapping_private_memory_regions();
-+		if (kvm_has_cap(KVM_CAP_GMEM_SHARED_MEM) && kvm_has_cap(KVM_CAP_GMEM_NO_DIRECT_MAP))
-+			test_guest_memfd_mmio();
-+		else
-+			pr_info("Skipping tests requiring KVM_CAP_GMEM_SHARED_MEM | KVM_CAP_GMEM_NO_DIRECT_MAP");
- 	} else {
- 		pr_info("Skipping tests for KVM_MEM_GUEST_MEMFD memory regions\n");
- 	}
--- 
-2.48.1
+On 2/21/25 16:36, Moinak Bhattacharyya wrote:
+> Sorry about that. Correctly-formatted patch follows. Should I send out a
+> V2 instead?
+> 
+> Add support for opening and closing backing files in the fuse_uring_cmd
+> callback. Store backing_map (for open) and backing_id (for close) in the
+> uring_cmd data.
+> ---
+>  fs/fuse/dev_uring.c       | 50 +++++++++++++++++++++++++++++++++++++++
+>  include/uapi/linux/fuse.h |  6 +++++
+>  2 files changed, 56 insertions(+)
+> 
+> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> index ebd2931b4f2a..df73d9d7e686 100644
+> --- a/fs/fuse/dev_uring.c
+> +++ b/fs/fuse/dev_uring.c
+> @@ -1033,6 +1033,40 @@ fuse_uring_create_ring_ent(struct io_uring_cmd *cmd,
+>      return ent;
+>  }
+> 
+> +/*
+> + * Register new backing file for passthrough, getting backing map from
+> URING_CMD data
+> + */
+> +static int fuse_uring_backing_open(struct io_uring_cmd *cmd,
+> +    unsigned int issue_flags, struct fuse_conn *fc)
+> +{
+> +    const struct fuse_backing_map *map = io_uring_sqe_cmd(cmd->sqe);
+> +    int ret = fuse_backing_open(fc, map);
 
+Do you have the libfuse part somewhere? I need to hurry up to split and
+clean up my uring branch. Not promised, but maybe this weekend. 
+What we need to be careful here about is that in my current 'uring'
+libfuse always expects to get a CQE - here you introduce a 2nd user
+for CQEs - it needs credit management.
+
+
+> +
+> +    if (ret < 0) {
+> +        return ret;
+> +    }
+> +
+> +    io_uring_cmd_done(cmd, ret, 0, issue_flags);
+> +    return 0;
+> +}
+> +
+> +/*
+> + * Remove file from passthrough tracking, getting backing_id from
+> URING_CMD data
+> + */
+> +static int fuse_uring_backing_close(struct io_uring_cmd *cmd,
+> +    unsigned int issue_flags, struct fuse_conn *fc)
+> +{
+> +    const int *backing_id = io_uring_sqe_cmd(cmd->sqe);
+> +    int ret = fuse_backing_close(fc, *backing_id);
+> +
+> +    if (ret < 0) {
+> +        return ret;
+> +    }
+
+
+Both functions don't have the check for 
+
+	if (!IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+		return -EOPNOTSUPP;
+
+but their ioctl counter parts have that.
+
+
+Thanks,
+Bernd
 
