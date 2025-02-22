@@ -1,136 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-42333-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42334-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EDD9A40684
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2025 10:02:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D278EA4082D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2025 13:05:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5949619C6924
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2025 09:02:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B245E19C6490
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2025 12:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30972066FE;
-	Sat, 22 Feb 2025 09:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E6F20AF71;
+	Sat, 22 Feb 2025 12:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h9y8gvgU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="INii8xYY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00441FF7BE;
-	Sat, 22 Feb 2025 09:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0FD19D8AC;
+	Sat, 22 Feb 2025 12:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740214934; cv=none; b=JOdek9+ihbcdiRozghY0KLSg8dbmmBu/D4V1ZxJzz9yOng1ehP2qBZde+hiVVT/umMLGUMTn10Yw7cpzRooDKOYMl4KXDx83Z+sr6EZcetbcieA/tGW3iEFEKa4+zbtLCcpCdmlW+u4fOCpKj6W5kp2kHz7VmUT4asfcRE0d2Uw=
+	t=1740225927; cv=none; b=PuTAXXRMhI3dte9xGNsbvRU5ia8c3pBxl3FGNvof0a+mO50tmCABZy99BpCUjZuxS7cvUBFM4Ma91sirKr/2rMIreC1SXIWotJlHNePusQzQumHwCmpmhjCO/zRQXwQzq78BqImD0b8w/BWYmrac1JZTVeVvRWHxPa3Zh9zg86Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740214934; c=relaxed/simple;
-	bh=U1Y3QCiccIy2Bc3YWo1Ckf9aCUTnMXxllH24aDN4AeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SZaIlbiENF4pduC2QMaYLlpX5soNZqAicmhw4TlXCYnduu+kKr5ljhX9I3ee8UQmuYVBaryVIn/OVofNKtcdEVTmxLS9g/Tcqi2uQ+2/eTaN3cj+KQcicRwWqoboI9kp4zEAClCSVOtKO9tLV+Ra1MgTemmSu0bo56XcKOSrW5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h9y8gvgU; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43989226283so19596695e9.1;
-        Sat, 22 Feb 2025 01:02:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740214931; x=1740819731; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cc4Exa6FAddDAbtlvd2fqBlbQffGYT9nB3xGilwSryg=;
-        b=h9y8gvgUf9rCExtFzbsT4oCOQzLS11DhZRC5NjgFaaj/pkdGgBBPpLnvAJhBqE0hyF
-         aCJTtq1fqfTLsFhL/tCN3I/+tTHkwdMCLj8FngqWsZihka8xkn+9fxxQgasydMLPA8Za
-         1HsDwuUTQ397twuBN0iv9M6UOrGatUMVKAXYqJNn0EE3zYxpdXAaXlNiSMBjUhwU8U2h
-         p3/ZlCvxPKpdCK/iTpHC6ihAu9XhRVjxYjf4c3+3JJkalpnn7iaE8T8K/SSAf6RH6v1U
-         OuN+HRhnsU65mZRLF9+4E4vC5Wg0rrF3Ae9seXvDcr6QB63wnDWt7ntCnNHSUTU4178D
-         XWYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740214931; x=1740819731;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cc4Exa6FAddDAbtlvd2fqBlbQffGYT9nB3xGilwSryg=;
-        b=aJn/UacoeKU4q/knOeKaybU4dkC/GUDfDgo1ZQcFNqKda4Yyz/y4OHmi+g91JVSGLp
-         PVoOyBaqez2GCv8OzfDolLHcUSMuqKufkWHOdcT2yl47SNQr29Wp8JRrJBTkRMtSE8mS
-         wCzxuM/pP+T+aNfMpK7nLvFKArr5jWLBjWm4frpeXje2egHU4e+LxS9qlX4J0Lo+ActU
-         1SETn+Et+MKDh6XUJariyrElT4s+9pI6Zjh6/JTmLA131MSB1qjrqrWfjWlufrMXffIo
-         gcZwfc8HjoSAFQuvH66TmuVdPOxzTH/rFxhiBUyzLNDD053z8CpgR/z3YmW56HhQG56k
-         /Y7A==
-X-Forwarded-Encrypted: i=1; AJvYcCV7DhCtYi2Z+yejK/ZXRZsBvbwaObCpYxs9Of1mLwm3noDP53Ag0Vec67P8NA/Bs/kVmtQu4DzohRnrF9+zOJccf8PB@vger.kernel.org, AJvYcCVYGer2JM2iREc8ZOHKWbU8bxiQlX+QVZTVbKAAh/NVbIwRcpK2WWl01fOD+iEY1eBBFn6SRBu2e5tg6X/V@vger.kernel.org, AJvYcCWm1qRl+8DXhbDGkOGfb6WG/IlrIXDXgbpModUFOnV2nRUaU7ikSQp+BimwL3MhrMW4oVRXf8Y3NtXj6ugsvw==@vger.kernel.org, AJvYcCXDkCBK2EqTF3vCWyEHDKSVCNOJ294RxUGQuh8LpQktc/qWQPkLD8eAPRyQu5ZRUoW4UmV/0O8+wac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrczsJFnXZNQEsXhS5zo+AN8ZwmRIHJRahaR6QCnAxiHwr3U8e
-	/+PfEU1Xgch88KrGVwME+/95g8099fq24uY9NU2fwvReVWCa3MZA
-X-Gm-Gg: ASbGnctw4jPd5iSkHx//pbeSOtw5iO0T80+A2uOQz7tCFCMNWmci8CJV49GcMN0l9FN
-	Yrs7GxI/kBngyfsSo43YZZ/2K8AcRxDngkH0i/vLWJBJe7iDqtD75Tyq658AFGhn9re8mH0bBld
-	jGDy+nl8gt5nbgz+HaRhWhN/CNJu5eEohtNFNVBCbI/4wf19Kdz5dC9vb3CaTAtbqT5v3/HxpVb
-	IMwYALrZAiypXSS+m1Y8zmQr2q+BSmEPVdTHrpX9bRsZSq75apHXiI0KqPX0bBrCGsxMPkVZGF4
-	azC2YtJ6sMOhAHIldPNCALAv1yLBW6BDiBQxzInFc90c+O7208cXxPzs00EmVQFB
-X-Google-Smtp-Source: AGHT+IGgwQsHaCz1wE9iK2C5QOgZJkgw5pU/qb/Udfdou4Zdzj7nBzMomCJ1PT4g6dRXg8sa3K1YLg==
-X-Received: by 2002:a05:600c:4fd3:b0:439:8c80:6af4 with SMTP id 5b1f17b1804b1-439ae21cdfcmr52749815e9.19.1740214930566;
-        Sat, 22 Feb 2025 01:02:10 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02d6837sm40159295e9.13.2025.02.22.01.02.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 01:02:09 -0800 (PST)
-Date: Sat, 22 Feb 2025 09:02:08 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal =?UTF-8?B?S291dG7DvQ==?= <mkoutny@suse.com>, Christian Brauner
- <brauner@kernel.org>, Alexander Mikhalitsyn <alexander@mihalicyn.com>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Jonathan
- Corbet <corbet@lwn.net>, Kees Cook <kees@kernel.org>, "Eric W . Biederman"
- <ebiederm@xmission.com>, Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH 2/2] pid: Optional first-fit pid allocation
-Message-ID: <20250222090208.2b7aa864@pumpkin>
-In-Reply-To: <20250221161854.8ea0dd0b2da05d38574cefc4@linux-foundation.org>
-References: <20250221170249.890014-1-mkoutny@suse.com>
-	<20250221170249.890014-3-mkoutny@suse.com>
-	<20250221161854.8ea0dd0b2da05d38574cefc4@linux-foundation.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1740225927; c=relaxed/simple;
+	bh=AvbO5/5GTYZnYvRAUft9DyG/18ymXgC3kPeuTPaKuI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MizViB+9kRJ5w0ZocXsXe7FToOzW0OFCC7o3YrDiYlttjxv97a7bBrMjkwUxje3pLGwh6bOYzb+20QtMTYe5/4J5zmp2WjBfjkfVMAzt6yCoareTtmCksRUoj3LKa7Gw+QjqSp7oszxOToWI1WFLbksflIiNS2ZvnDsWYdclemM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=INii8xYY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AEE9C4CED1;
+	Sat, 22 Feb 2025 12:05:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740225926;
+	bh=AvbO5/5GTYZnYvRAUft9DyG/18ymXgC3kPeuTPaKuI0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=INii8xYY+1RfV8oNF/8uhHfZOeG2G+2beEP208/OrWyKS6Vu9JRlM5R1f0jTyU8wF
+	 FPB9LDo153HAZF0AOVY7/G1jpIlGe8237KK/wKxbTnAJskL03zN6pyp5HefBud4Wwm
+	 CsThjQmHppffyFTLW9hzoMcLzDSas+gBh+wUK44azftJtitB4X1tlTmObHz1CWBF1d
+	 Ms6zv6+jFon5I9xbeYIl81D2daPLr1+5GOLR37QuOSNvVAhZBaU6Yd19puPoeHY0oj
+	 tcAY8lgtJqUz8/CS5EsrVVZgXtqRPXWUaIcRixha5OhH3YM86J+EBASUKNrvnQhOPc
+	 krP+CEjNctZRA==
+Date: Sat, 22 Feb 2025 13:05:15 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org,
+	linux-fsdevel@vger.kernel.org, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org,
+	peterz@infradead.org, linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, shakeel.butt@linux.dev,
+	rppt@kernel.org, liam.howlett@oracle.com, surenb@google.com,
+	kees@kernel.org, jannh@google.com
+Subject: Re: [PATCH v2] mm,procfs: allow read-only remote mm access under
+ CAP_PERFMON
+Message-ID: <Z7m9e-oR4rLIiDGm@gmail.com>
+References: <20250127222114.1132392-1-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250127222114.1132392-1-andrii@kernel.org>
 
-On Fri, 21 Feb 2025 16:18:54 -0800
-Andrew Morton <akpm@linux-foundation.org> wrote:
 
-> On Fri, 21 Feb 2025 18:02:49 +0100 Michal Koutn=C3=BD <mkoutny@suse.com> =
-wrote:
->=20
-> > --- a/Documentation/admin-guide/sysctl/kernel.rst
-> > +++ b/Documentation/admin-guide/sysctl/kernel.rst
-> > @@ -1043,6 +1043,8 @@ The last pid allocated in the current (the one ta=
-sk using this sysctl
-> >  lives in) pid namespace. When selecting a pid for a next task on fork
-> >  kernel tries to allocate a number starting from this one.
-> > =20
-> > +When set to -1, first-fit pid numbering is used instead of the next-fi=
-t.
-> > + =20
->=20
-> This seems thin.  Is there more we can tell our users?  What are the
-> visible effects of this?  What are the benefits?  Why would they want
-> to turn it on?
->=20
-> I mean, there are veritable paragraphs in the changelogs, but just a
-> single line in the user-facing docs.  Seems there could be more...
+* Andrii Nakryiko <andrii@kernel.org> wrote:
 
-It also seems a good way of being able to predict the next pid and
-doing all the 'nasty' things that allows because there is no guard
-time on pid reuse.
+> It's very common for various tracing and profiling toolis to need to
+> access /proc/PID/maps contents for stack symbolization needs to learn
+> which shared libraries are mapped in memory, at which file offset, etc.
+> Currently, access to /proc/PID/maps requires CAP_SYS_PTRACE (unless we
+> are looking at data for our own process, which is a trivial case not too
+> relevant for profilers use cases).
+> 
+> Unfortunately, CAP_SYS_PTRACE implies way more than just ability to
+> discover memory layout of another process: it allows to fully control
+> arbitrary other processes. This is problematic from security POV for
+> applications that only need read-only /proc/PID/maps (and other similar
+> read-only data) access, and in large production settings CAP_SYS_PTRACE
+> is frowned upon even for the system-wide profilers.
+> 
+> On the other hand, it's already possible to access similar kind of
+> information (and more) with just CAP_PERFMON capability. E.g., setting
+> up PERF_RECORD_MMAP collection through perf_event_open() would give one
+> similar information to what /proc/PID/maps provides.
+> 
+> CAP_PERFMON, together with CAP_BPF, is already a very common combination
+> for system-wide profiling and observability application. As such, it's
+> reasonable and convenient to be able to access /proc/PID/maps with
+> CAP_PERFMON capabilities instead of CAP_SYS_PTRACE.
+> 
+> For procfs, these permissions are checked through common mm_access()
+> helper, and so we augment that with cap_perfmon() check *only* if
+> requested mode is PTRACE_MODE_READ. I.e., PTRACE_MODE_ATTACH wouldn't be
+> permitted by CAP_PERFMON. So /proc/PID/mem, which uses
+> PTRACE_MODE_ATTACH, won't be permitted by CAP_PERFMON, but
+> /proc/PID/maps, /proc/PID/environ, and a bunch of other read-only
+> contents will be allowable under CAP_PERFMON.
+> 
+> Besides procfs itself, mm_access() is used by process_madvise() and
+> process_vm_{readv,writev}() syscalls. The former one uses
+> PTRACE_MODE_READ to avoid leaking ASLR metadata, and as such CAP_PERFMON
+> seems like a meaningful allowable capability as well.
+> 
+> process_vm_{readv,writev} currently assume PTRACE_MODE_ATTACH level of
+> permissions (though for readv PTRACE_MODE_READ seems more reasonable,
+> but that's outside the scope of this change), and as such won't be
+> affected by this patch.
+> 
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 
-Both first-fit and next-fit have the same issue.
-Picking a random pid is better.
+Acked-by: Ingo Molnar <mingo@kernel.org>
 
-Or pick the pid after finding an empty slot in the 'hash' table.
-Then you guarantee O(1) lookup and can easily stop pids being reused
-quickly.
+Thanks,
 
-	David
+	Ingo
 
