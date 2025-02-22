@@ -1,175 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-42332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42333-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC092A40676
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2025 09:45:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EDD9A40684
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2025 10:02:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CACA19C370E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2025 08:45:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5949619C6924
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2025 09:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935DB2066E5;
-	Sat, 22 Feb 2025 08:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30972066FE;
+	Sat, 22 Feb 2025 09:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nrhDTwlp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h9y8gvgU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f65.google.com (mail-pj1-f65.google.com [209.85.216.65])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93ABA20011F;
-	Sat, 22 Feb 2025 08:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00441FF7BE;
+	Sat, 22 Feb 2025 09:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740213944; cv=none; b=B9SplqtyuaMPjUW7tf/sCnbG+En720nCh5kvblGkB7cODcXdfo6/LNTh5lR+CoWxY5dyGNrLBUiaePu0mUMB05j1SCxvKye7h99kp+kN7LZeG80GB/bgL3hwXKhpaLqsIu64Cy2cLNupjcVVgwt99LAlEnBF4143gCkcxQ7HuCE=
+	t=1740214934; cv=none; b=JOdek9+ihbcdiRozghY0KLSg8dbmmBu/D4V1ZxJzz9yOng1ehP2qBZde+hiVVT/umMLGUMTn10Yw7cpzRooDKOYMl4KXDx83Z+sr6EZcetbcieA/tGW3iEFEKa4+zbtLCcpCdmlW+u4fOCpKj6W5kp2kHz7VmUT4asfcRE0d2Uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740213944; c=relaxed/simple;
-	bh=x3IFcmUoUMMOpJ0B8j70hwoxBrXAvL5JzktmNavcH3Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=YhPg6EDl1223cwJTU2QmEbAi5KkWHzt0pJQNuYO/aHwb/gx/MVPBH4XxOQANXUHiR1qdFHm84pMF+uoXRrzVOiRep7rPGwO6FipVPzNCixU9wrHFXvJtEn83fHciuIqjtXRGVsqhvO+kFLqMVdKyPPP29KZ3UQNU8eZj45bOAmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nrhDTwlp; arc=none smtp.client-ip=209.85.216.65
+	s=arc-20240116; t=1740214934; c=relaxed/simple;
+	bh=U1Y3QCiccIy2Bc3YWo1Ckf9aCUTnMXxllH24aDN4AeI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SZaIlbiENF4pduC2QMaYLlpX5soNZqAicmhw4TlXCYnduu+kKr5ljhX9I3ee8UQmuYVBaryVIn/OVofNKtcdEVTmxLS9g/Tcqi2uQ+2/eTaN3cj+KQcicRwWqoboI9kp4zEAClCSVOtKO9tLV+Ra1MgTemmSu0bo56XcKOSrW5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h9y8gvgU; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f65.google.com with SMTP id 98e67ed59e1d1-2fa8ac56891so4733813a91.2;
-        Sat, 22 Feb 2025 00:45:42 -0800 (PST)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43989226283so19596695e9.1;
+        Sat, 22 Feb 2025 01:02:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740213942; x=1740818742; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EUCyDvVDqz1r39is3ixWn/47Q4kmfyjZJP4iPVKQKto=;
-        b=nrhDTwlpF/ia3QpPvRm/9oglaGR8Nk7a5ML9GbkOWMwlmBk4U0lpNJCdvuCF1bKOjg
-         SiQA91byz1idthyTw0X9Q+6eoB3+jMmRsYooKmbcPtV/Pty6wyXLoFFu+wBlAzwqrUgd
-         elpB+iRfzY+Kq+Ep5iNCjaKJfhquRpRfMuyFmFUuSXu3p2zSMavFWU4pZc0xlJEcxTfj
-         XyfTSPxuvkkxOeKcZPokCvsgW9UGxmApvuD6DRPrKglz3D8wbhYl1d1uO2rRDT4O2Zyj
-         lsWAGju4nxObPf+v9MoXI0Q/Kq6vtLLsLmqDKtoWgmKQsthpBKMFwaB1UJ0OBbosOcHR
-         oEDQ==
+        d=gmail.com; s=20230601; t=1740214931; x=1740819731; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cc4Exa6FAddDAbtlvd2fqBlbQffGYT9nB3xGilwSryg=;
+        b=h9y8gvgUf9rCExtFzbsT4oCOQzLS11DhZRC5NjgFaaj/pkdGgBBPpLnvAJhBqE0hyF
+         aCJTtq1fqfTLsFhL/tCN3I/+tTHkwdMCLj8FngqWsZihka8xkn+9fxxQgasydMLPA8Za
+         1HsDwuUTQ397twuBN0iv9M6UOrGatUMVKAXYqJNn0EE3zYxpdXAaXlNiSMBjUhwU8U2h
+         p3/ZlCvxPKpdCK/iTpHC6ihAu9XhRVjxYjf4c3+3JJkalpnn7iaE8T8K/SSAf6RH6v1U
+         OuN+HRhnsU65mZRLF9+4E4vC5Wg0rrF3Ae9seXvDcr6QB63wnDWt7ntCnNHSUTU4178D
+         XWYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740213942; x=1740818742;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EUCyDvVDqz1r39is3ixWn/47Q4kmfyjZJP4iPVKQKto=;
-        b=dEzsNQ99+3YsahrXOZjsv6lPq2zJUxnhY/4H7q9eXy15HURQW99M0j/aJzYaVneX+V
-         h1gLS9bAfsYI8RvxvnlcZ1PEwG+ag339xYzYl+68VT17kq5cIY4eCLWX0WoJIkkt1Xmv
-         CRmatEucE93ydEb3e80JF0MSporKQuUze/Q8eI67/zkiDbJoBRWAwRKvBYSQn2XWyYq3
-         d4MNxZE4JcJdZFpKLvVqbj/L4T9pDQAECotn4fEkTR+VCNQd8r2zjjVTnqbekh66i7jR
-         PfKp/q0WoP16e8/galxNJyzpvCmg47jLgbH6lcm7AS1fGtF2c6THujfifuLKJ+3e+fsn
-         GfUA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKYNa4KPLKUKaMWwbdWZz2GFwv5tOVIZDuZwexr4bQl3DG4Wc3wwM2AIURTXdwRb1NrwaURCKH5rToB9Er0g==@vger.kernel.org, AJvYcCXQ3+Er3Z5nFDGblchInPXu3uIbMKKk6//26Kib0OdNxH9n3Ut+p4ZfkGpdB/b0T5q+A8ikBgjsxQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4XUyi12Rcd91eOzXTBeWt+KaxcbQ2ByU/GAL0ZEftnHnP6qKn
-	7rupOsZHQDTVyE4GT/a0z6xBQUqVSeGjHgkVmDrEbm/GS0pr3Qm627l3mlILkdQnKiyb
-X-Gm-Gg: ASbGncuQHlYZp/Edf5oSTLK6PPm/LvhWrrVf6XpugtOe24Y/2/wVcmTvu0IeYYsX6B6
-	Y5GsMrQl8mwDc/Em6LD2x4LwUFakYOEVyHihwfhrbNXn4VI/I8IW0BWi/QyMvHXm8FJG6EZNcHy
-	ZUuawY2myUHXCSnrNaQyZFyi9iP8KUywUEh4gu4xojlyJc8LVNaqTBGyYpN/l/ahXf/CCNjzkrq
-	Imtsbk9066rPezlr5qqCMmbstzghk75uyAfeQQZQeJE+3lxkr67Xf6x0nDh7Q1QFiWWOVqFHAo4
-	o3mdnXAjr7P/Dr4J0fR8yjesOSoxO9EE3mQ/IwxeOoSLwaNt1g==
-X-Google-Smtp-Source: AGHT+IH0oaJdTfRKXSJDhoZRAjswW5hGltdPhAalmnHKCcj8OE5j1Aqgi64LvPMhsMewSPaNNDR29Q==
-X-Received: by 2002:a05:6a00:1892:b0:730:8386:6078 with SMTP id d2e1a72fcca58-73426af0e93mr9623095b3a.0.1740213941663;
-        Sat, 22 Feb 2025 00:45:41 -0800 (PST)
-Received: from localhost.localdomain ([103.49.135.232])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324277f388sm17582793b3a.174.2025.02.22.00.45.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 22 Feb 2025 00:45:41 -0800 (PST)
-From: Ruiwu Chen <rwchen404@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Cc: corbet@lwn.net,
-	viro@zeniv.linux.org.uk,
-	mcgrof@kernel.org,
-	keescook@chromium.org,
-	zachwade.k@gmail.com,
-	Ruiwu Chen <rwchen404@gmail.com>
-Subject: [PATCH v2] drop_caches: re-enable message after disabling
-Date: Sat, 22 Feb 2025 16:45:13 +0800
-Message-Id: <20250222084513.15832-1-rwchen404@gmail.com>
-X-Mailer: git-send-email 2.18.0.windows.1
-In-Reply-To: <virvi6vh663p5ypdjr2v2fr3o77w5st3cagr4fe6z7nhhqehc6@xb7nqlop6nct>
-References: <virvi6vh663p5ypdjr2v2fr3o77w5st3cagr4fe6z7nhhqehc6@xb7nqlop6nct>
+        d=1e100.net; s=20230601; t=1740214931; x=1740819731;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cc4Exa6FAddDAbtlvd2fqBlbQffGYT9nB3xGilwSryg=;
+        b=aJn/UacoeKU4q/knOeKaybU4dkC/GUDfDgo1ZQcFNqKda4Yyz/y4OHmi+g91JVSGLp
+         PVoOyBaqez2GCv8OzfDolLHcUSMuqKufkWHOdcT2yl47SNQr29Wp8JRrJBTkRMtSE8mS
+         wCzxuM/pP+T+aNfMpK7nLvFKArr5jWLBjWm4frpeXje2egHU4e+LxS9qlX4J0Lo+ActU
+         1SETn+Et+MKDh6XUJariyrElT4s+9pI6Zjh6/JTmLA131MSB1qjrqrWfjWlufrMXffIo
+         gcZwfc8HjoSAFQuvH66TmuVdPOxzTH/rFxhiBUyzLNDD053z8CpgR/z3YmW56HhQG56k
+         /Y7A==
+X-Forwarded-Encrypted: i=1; AJvYcCV7DhCtYi2Z+yejK/ZXRZsBvbwaObCpYxs9Of1mLwm3noDP53Ag0Vec67P8NA/Bs/kVmtQu4DzohRnrF9+zOJccf8PB@vger.kernel.org, AJvYcCVYGer2JM2iREc8ZOHKWbU8bxiQlX+QVZTVbKAAh/NVbIwRcpK2WWl01fOD+iEY1eBBFn6SRBu2e5tg6X/V@vger.kernel.org, AJvYcCWm1qRl+8DXhbDGkOGfb6WG/IlrIXDXgbpModUFOnV2nRUaU7ikSQp+BimwL3MhrMW4oVRXf8Y3NtXj6ugsvw==@vger.kernel.org, AJvYcCXDkCBK2EqTF3vCWyEHDKSVCNOJ294RxUGQuh8LpQktc/qWQPkLD8eAPRyQu5ZRUoW4UmV/0O8+wac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrczsJFnXZNQEsXhS5zo+AN8ZwmRIHJRahaR6QCnAxiHwr3U8e
+	/+PfEU1Xgch88KrGVwME+/95g8099fq24uY9NU2fwvReVWCa3MZA
+X-Gm-Gg: ASbGnctw4jPd5iSkHx//pbeSOtw5iO0T80+A2uOQz7tCFCMNWmci8CJV49GcMN0l9FN
+	Yrs7GxI/kBngyfsSo43YZZ/2K8AcRxDngkH0i/vLWJBJe7iDqtD75Tyq658AFGhn9re8mH0bBld
+	jGDy+nl8gt5nbgz+HaRhWhN/CNJu5eEohtNFNVBCbI/4wf19Kdz5dC9vb3CaTAtbqT5v3/HxpVb
+	IMwYALrZAiypXSS+m1Y8zmQr2q+BSmEPVdTHrpX9bRsZSq75apHXiI0KqPX0bBrCGsxMPkVZGF4
+	azC2YtJ6sMOhAHIldPNCALAv1yLBW6BDiBQxzInFc90c+O7208cXxPzs00EmVQFB
+X-Google-Smtp-Source: AGHT+IGgwQsHaCz1wE9iK2C5QOgZJkgw5pU/qb/Udfdou4Zdzj7nBzMomCJ1PT4g6dRXg8sa3K1YLg==
+X-Received: by 2002:a05:600c:4fd3:b0:439:8c80:6af4 with SMTP id 5b1f17b1804b1-439ae21cdfcmr52749815e9.19.1740214930566;
+        Sat, 22 Feb 2025 01:02:10 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02d6837sm40159295e9.13.2025.02.22.01.02.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Feb 2025 01:02:09 -0800 (PST)
+Date: Sat, 22 Feb 2025 09:02:08 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal =?UTF-8?B?S291dG7DvQ==?= <mkoutny@suse.com>, Christian Brauner
+ <brauner@kernel.org>, Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Jonathan
+ Corbet <corbet@lwn.net>, Kees Cook <kees@kernel.org>, "Eric W . Biederman"
+ <ebiederm@xmission.com>, Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH 2/2] pid: Optional first-fit pid allocation
+Message-ID: <20250222090208.2b7aa864@pumpkin>
+In-Reply-To: <20250221161854.8ea0dd0b2da05d38574cefc4@linux-foundation.org>
+References: <20250221170249.890014-1-mkoutny@suse.com>
+	<20250221170249.890014-3-mkoutny@suse.com>
+	<20250221161854.8ea0dd0b2da05d38574cefc4@linux-foundation.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-When 'echo 4 > /proc/sys/vm/drop_caches' the message is disabled,
-but there is no interface to enable the message, only by restarting
-the way, so add the 'echo 0 > /proc/sys/vm/drop_caches' way to
-enabled the message again.
+On Fri, 21 Feb 2025 16:18:54 -0800
+Andrew Morton <akpm@linux-foundation.org> wrote:
 
-Signed-off-by: Ruiwu Chen <rwchen404@gmail.com>
----
-v2: - updated Documentation/ to note this new API.
-    - renamed the variable.
-    - rebase this on top of sysctl-next [1].
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/log/?h=sysctl-next
+> On Fri, 21 Feb 2025 18:02:49 +0100 Michal Koutn=C3=BD <mkoutny@suse.com> =
+wrote:
+>=20
+> > --- a/Documentation/admin-guide/sysctl/kernel.rst
+> > +++ b/Documentation/admin-guide/sysctl/kernel.rst
+> > @@ -1043,6 +1043,8 @@ The last pid allocated in the current (the one ta=
+sk using this sysctl
+> >  lives in) pid namespace. When selecting a pid for a next task on fork
+> >  kernel tries to allocate a number starting from this one.
+> > =20
+> > +When set to -1, first-fit pid numbering is used instead of the next-fi=
+t.
+> > + =20
+>=20
+> This seems thin.  Is there more we can tell our users?  What are the
+> visible effects of this?  What are the benefits?  Why would they want
+> to turn it on?
+>=20
+> I mean, there are veritable paragraphs in the changelogs, but just a
+> single line in the user-facing docs.  Seems there could be more...
 
- Documentation/admin-guide/sysctl/vm.rst | 11 ++++++++++-
- fs/drop_caches.c                        | 11 +++++++----
- 2 files changed, 17 insertions(+), 5 deletions(-)
+It also seems a good way of being able to predict the next pid and
+doing all the 'nasty' things that allows because there is no guard
+time on pid reuse.
 
-diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
-index f48eaa98d22d..ef73d36e8b84 100644
---- a/Documentation/admin-guide/sysctl/vm.rst
-+++ b/Documentation/admin-guide/sysctl/vm.rst
-@@ -266,7 +266,16 @@ used::
- 	cat (1234): drop_caches: 3
- 
- These are informational only.  They do not mean that anything is wrong
--with your system.  To disable them, echo 4 (bit 2) into drop_caches.
-+with your system.
-+
-+To disable informational::
-+
-+	echo 4 > /proc/sys/vm/drop_caches
-+
-+To enable informational::
-+
-+	echo 0 > /proc/sys/vm/drop_caches
-+
- 
- enable_soft_offline
- ===================
-diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-index 019a8b4eaaf9..a49af7023886 100644
---- a/fs/drop_caches.c
-+++ b/fs/drop_caches.c
-@@ -57,7 +57,7 @@ static int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
- 	if (ret)
- 		return ret;
- 	if (write) {
--		static int stfu;
-+		static bool silent;
- 
- 		if (sysctl_drop_caches & 1) {
- 			lru_add_drain_all();
-@@ -68,12 +68,15 @@ static int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
- 			drop_slab();
- 			count_vm_event(DROP_SLAB);
- 		}
--		if (!stfu) {
-+		if (!silent) {
- 			pr_info("%s (%d): drop_caches: %d\n",
- 				current->comm, task_pid_nr(current),
- 				sysctl_drop_caches);
- 		}
--		stfu |= sysctl_drop_caches & 4;
-+		if (sysctl_drop_caches == 0)
-+			silent = true;
-+		else if (sysctl_drop_caches == 4)
-+			silent = false;
- 	}
- 	return 0;
- }
-@@ -85,7 +88,7 @@ static const struct ctl_table drop_caches_table[] = {
- 		.maxlen		= sizeof(int),
- 		.mode		= 0200,
- 		.proc_handler	= drop_caches_sysctl_handler,
--		.extra1		= SYSCTL_ONE,
-+		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_FOUR,
- 	},
- };
--- 
-2.27.0
+Both first-fit and next-fit have the same issue.
+Picking a random pid is better.
 
+Or pick the pid after finding an empty slot in the 'hash' table.
+Then you guarantee O(1) lookup and can easily stop pids being reused
+quickly.
+
+	David
 
