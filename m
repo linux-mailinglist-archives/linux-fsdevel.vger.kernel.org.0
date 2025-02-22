@@ -1,54 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-42336-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95994A40926
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2025 15:37:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C41D9A4093A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2025 15:51:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80FD417B606
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2025 14:37:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B184E17EEEE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2025 14:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBFDF156653;
-	Sat, 22 Feb 2025 14:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71D5199FA8;
+	Sat, 22 Feb 2025 14:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qYT7lIe7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+Y6vDpu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E477914AD20
-	for <linux-fsdevel@vger.kernel.org>; Sat, 22 Feb 2025 14:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8FC1386B4;
+	Sat, 22 Feb 2025 14:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740235040; cv=none; b=DEIYV/ojGyACyBvprSZs2lwfwARxY+WqtG95hNhz48VSY2YyzotYwPS4n5kTYDfhQhfz01XIbAy2Zp7n4/h51/CoGXtyvi0rg5PtAr8x8eouJEmquxi8S0KDzyTqDcvBemuIcw8LKAm0VZzqMYOkq4bD9vIrzSDQJooMpJwsezI=
+	t=1740235867; cv=none; b=WNjwIFRLbhL96gYkJa0/t/n7sMkSb34bEOtcmaWs3+2On1d0eQczFeHi9CBygqCssRQXFi3tQinKZdcjAr5VHqueiKzOvzgl/LuTpcAxf+arZEcRS+M6BjN99X53QDHfgublXJL5vZZgDNKO06oyYsE+HGr7W2YE9lb8izv1+/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740235040; c=relaxed/simple;
-	bh=S8LSxqUUTwWiuPn3a+qfxjZHcpdf2HtJGWhn5NU/Ih4=;
+	s=arc-20240116; t=1740235867; c=relaxed/simple;
+	bh=gBxM8tvdfd2PMBLv7RTxItVJfVROKTcaFuwa68QoYUY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qqGwEeApHIzYcabAMhPLaYeY/EVlb+hhwf2CV6KmEHcV7kVVmxSWcfdW7KM1LlibhnhGOtyrepBCSHFy87odseEWqeYT5BMTWo6kJxDaFTfvMAelUykFxHmK+IrAr1soXdUDNsBSF6Q0vrdlpLGz6V/UEv6wsnwUQimgxk4ISng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qYT7lIe7; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 22 Feb 2025 09:37:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740235029;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uaH8O8KfoK/B3DyCyjI1TzhSOYWx8ED7uQ8V9Ti0pZo=;
-	b=qYT7lIe7l6jK8nGkaXrqMmoqLflq70a3FECesesN6mHGx4rY59f4SX0Cbn3QWi3NEdQpqZ
-	wiViO6LWehJvoy3Pyh0ummLLRTmWDWT44Z8m27g9nDvXiN7J/wNdY1UUBY13mgV99NHujq
-	LcmGGDb3pIbZY0WkDsCuGp2XqHODETc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] filemap: check for folio order < mapping min order
-Message-ID: <wma6tb6spzainc63yrgyc2efvve4vt2smza5yqtbva64a6vfrx@xxswn6whnnxy>
-References: <20250220204033.284730-1-kent.overstreet@linux.dev>
- <Z7e5qkGm7Wt0C3Vp@casper.infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ayEiVbM/FxrG6nxKanhE49eZVFhHLsrnZg8T2lbCCkjlLwXdtTpBpX2yyNgObwJmwq+pbgQ3zb3w3RSjKBURs3DYElmGeevsfFRw5eo6geUyZCYhV2XetbAum4aqBxYMf8knp1adX+dFd0Wwx8+upqcXPhe1D1uBqtjs6tAv6uY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+Y6vDpu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94563C4CED1;
+	Sat, 22 Feb 2025 14:51:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740235866;
+	bh=gBxM8tvdfd2PMBLv7RTxItVJfVROKTcaFuwa68QoYUY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D+Y6vDpupTWoBky9TbcnGqpd1BFqsqxaFaPUT4ZLMBR326vrKF5hqeKx6p3nncKjS
+	 4DGOd1oU9IUXPq1eibU+/G3Y8YhvN27bHwhV7/scSLbBTPhHHx8peSlLD/yra3NL6f
+	 Z2/b44zGOLA/bVi4MtAPheZxsxgF6yNAK9ntam/VE2nwsJ9XbHub3dpQKiRMW/qXI7
+	 SCa3Vpn+kSq/M9QKaXC6ekT3CZgV15k3vCUxO50LIsN//bJvqrJLwEB1Qc5VzJfkYj
+	 d92PVci5XVX05UqaGPeeVC13LglHPJKARKRhhsDwI+ag4eXEm9h02fNmYEKRmEFT7K
+	 qZsw6q/60AyTw==
+Date: Sat, 22 Feb 2025 06:51:02 -0800
+From: Kees Cook <kees@kernel.org>
+To: Brian Mak <makb@juniper.net>
+Cc: Jan Kara <jack@suse.cz>, Michael Stapelberg <michael@stapelberg.ch>,
+	Christian Brauner <brauner@kernel.org>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v3] binfmt_elf: Dump smaller VMAs first in ELF cores
+Message-ID: <202502220647.861603A725@keescook>
+References: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net>
+ <20250218085407.61126-1-michael@stapelberg.de>
+ <39FC2866-DFF3-43C9-9D40-E8FF30A218BD@juniper.net>
+ <a3owf3zywbnntq4h4eytraeb6x7f77lpajszzmsy5d7zumg3tk@utzxmomx6iri>
+ <202502191134.CC80931AC9@keescook>
+ <F859FAC0-294F-4FA7-BAA1-6EBC373F035A@juniper.net>
+ <F9EA3BEC-4E23-4DBB-8CBC-08EEBB39D28F@juniper.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,31 +70,32 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z7e5qkGm7Wt0C3Vp@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <F9EA3BEC-4E23-4DBB-8CBC-08EEBB39D28F@juniper.net>
 
-On Thu, Feb 20, 2025 at 11:24:26PM +0000, Matthew Wilcox wrote:
-> On Thu, Feb 20, 2025 at 03:40:33PM -0500, Kent Overstreet wrote:
-> > accidentally inserting a folio < mapping min order causes the readahead
-> > code to go into an infinite loop, which is unpleasant.
+On Sat, Feb 22, 2025 at 02:13:06AM +0000, Brian Mak wrote:
+> On Feb 19, 2025, at 12:38 PM, Brian Mak <makb@juniper.net> wrote
 > 
-> We already have:
+> > I will also scratch up a patch to bring us back into compliance with the
+> > ELF specifications, and see if that fixes the userspace breakage with
+> > elfutils, while not breaking gdb or rr.
 > 
->         VM_BUG_ON_FOLIO(folio_order(folio) < mapping_min_folio_order(mapping),
->                         folio);
+> I did scratch up something for this to fix up the program header
+> ordering, but it seems eu-stack is still broken, even with the fix. GDB
+> continues to work fine with the fix.
 
-WARN_ON() and returning an error is a bit more appropriate here, don't
-you think?
+Okay, thanks for testing this!
 
-> If you're not enabling CONFIG_DEBUG_VM in your testing, I think that's
-> an oversight on your part.
+> Given that there's no known utilities that get fixed as a result of the
+> program header sorting, I'm not sure if it's worth taking the patch.
+> Maybe we can just proceed with the sysctl + sorting if the core dump
+> size limit is hit, and leave it at that. Thoughts?
 
-Fastpath and expensive asserts should certainly be behind a config
-option, but I don't think this one should be.
+Yeah, I like that this will automatically kick on under the condition
+where the coredump will already be unreadable by some tools. And having
+the sysctl means it can be enabled for testing, etc.
 
-There's too many subsystem specific debug modes to test the full matrix
-of all of them, which means there are things that make it past our
-testing and we need to be able to catch them in the wild or on realistic
-test configurations. In practice, subsystems need to have a subset of
-judiciously chosen asserts that are always on.
+-Kees
+
+-- 
+Kees Cook
 
