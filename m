@@ -1,111 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-42368-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42369-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D8FCA41143
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2025 20:12:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8BDAA4114C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2025 20:41:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0A167A486D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2025 19:11:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 943101712C4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2025 19:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E034156677;
-	Sun, 23 Feb 2025 19:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A895189BAF;
+	Sun, 23 Feb 2025 19:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="dYvtW6Rt"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="t/K/WyJf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9838615D1
-	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Feb 2025 19:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0353A8F7
+	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Feb 2025 19:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740337956; cv=none; b=SrbVWsfTBMY7gNdp1bVotymo4KWxD2JwudSPQIgLZ2KNupjfkHcJ0iLZ4Le1O8hmxRDgltabnGFu8YOoc70TrhWgPsrOvHnXSxUKFN10qQjlBlVNfSwaFRw7xccxuqXkgtTBvuY6y5wv41M2Pc/tWzxsaW5XSsrl1KvxceiyNVU=
+	t=1740339683; cv=none; b=Zxx7aY2wpuV2Uw4BCBWXSUZkAU9aMMPlJy2UC4OuXQfTGqRrE7pva7pwAUfFAuOY8Ml9LVVbyCScDQJ8vwFA1dfI4JqDmjvL78RQoYzr3adHXLeoE08D1vDKIt40Ur9sh63D9AMl54+xhLoPmmkAr92aDo8KbpX+Mj0uPHSZA/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740337956; c=relaxed/simple;
-	bh=pL62aCTroa2tKEwU1uZgf77b7T7rJBU0loou86z00bg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dz6E69GMLZkCyyKHDC8fiF8OqB32alyRZvrCBMQmQ8Xgk/ZwzL16yGGw3IGr0cwkuQN9mzKcqku+zHh3hoNd+k3Svb4X8lFg4WN38MCeaczqTTL35TmC1WxVqukwDpMR+IqrTsz6f1TqM5eLuH2SGDe9rxkjzepmbAhs5MFqZL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=dYvtW6Rt; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-471f9d11176so43797291cf.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Feb 2025 11:12:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1740337952; x=1740942752; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bHDAUoZjjRE7OQp3ihjIBs7r8OEcOjf2aaDxUVThfoU=;
-        b=dYvtW6Rtw9VTkpbTFTbnkfbRwm014/BicAoXVQL2o/WhfLChrj1ZZ1JgQY3oemf5rc
-         eFXegJqf4yiOttPECkIvCs8dbJI/eCAtUhquqa/W5ErTGHj/LKpjsj81dFHt/SDaulyg
-         ENfU4Qj0GpoyoMWLt+Tn39tm2dT7EKA/mxEn4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740337952; x=1740942752;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bHDAUoZjjRE7OQp3ihjIBs7r8OEcOjf2aaDxUVThfoU=;
-        b=seN5Q5/93f2zfYT0BehOnFevg3cZwpjZPQSf1EjP1tu2jMdDuYKEhzjGX4meIu9LSR
-         oHEfc+LI4XIMtEjfm1VV6AXlLnth9SLkCec2xkoh++Tw7e3RCgBQOMf6aG7MklaSVdQ5
-         kTHc6E/fENeZ3PcPPhLlHM6ib3cF56fwZqw3eW6MfsPENot96XzUFSsDj5iNwsh4GvVu
-         ng3NLH9HZ0IBgt0DV/YyLI3+PZwj/sY/oebUfxsAHM+V/napjwwqX1FLbo10nYsQjH1g
-         KBr+M1rtnIObOf/VWkZscpCA0l6QPCLU49mFFll9LzqNgnGOc03oaOBFI62YyqaX1noI
-         /m7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWu7yzAh1DEXHtcVQoIQm0X+Na+d3USkJiTIu8CDgGxWjcqBoAfIYkplfioxncvxqUHv9aHJU/uyVKnhwtV@vger.kernel.org
-X-Gm-Message-State: AOJu0YxA3l1jnrC3nTA8lU4ohpT6ECw8aaXW2gdP4VwOAntuz0PgaD4y
-	SnetKSBz5eVTrm1yjZPeMnoiz16nFC/lo1dkYrbbEx85Fg6SpYYVg66WPU8cdqXeIbU92YWgj2f
-	8g5whNdXbHh6m7/DFRfRbw3dc8AowubcaUz19Qg==
-X-Gm-Gg: ASbGncvZixsTSLg/BHigyglzAQ8a73I5ZXHeF3p9/XNpK6zVCFqTj0CY7YQpsqEC0+C
-	oTEw3WBKBYNv7JM0JuyiLDWixd8zCXEEkfkC3egcsf0Gm9GwaNK+w+D1oMDcpEyPnNjLb+gkgPR
-	XN2vU0lXlM
-X-Google-Smtp-Source: AGHT+IGOKnHttScWBNOivPLsHLk1fWRCcw1L45+gYFIYGMZYlAwyxGTDyOFIabkMjSNQZARcE9bigLLdO99AF7ryW6M=
-X-Received: by 2002:a05:622a:1a0e:b0:471:ef69:ad8f with SMTP id
- d75a77b69052e-4722491e984mr162334981cf.43.1740337952272; Sun, 23 Feb 2025
- 11:12:32 -0800 (PST)
+	s=arc-20240116; t=1740339683; c=relaxed/simple;
+	bh=TV4qfoQgglwTaOZ9vWbc8gynyeB/TZ7WLDBpmEREgw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S7cQsnRcRdEjFbQjgaUK+9u/T1Wp6lLE9keXTJtjqRUvJsLyOz2zEU2NwWDb/ahrYT0yO8VfnDBRc+wgJ9b4zziNXLsd27TqILXw+bp6YcJLLSF0celQ5fu7ggrsWiWjZT+vqZqxmC7I45Fn1hEJOyjyoGUHHICL0lSAR2Wlfio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=t/K/WyJf; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ID1OBnk4I9q6p5b08I+FmPh34QFMaD4CF3RsCWwYURc=; b=t/K/WyJfYC4Y25h4REDvDFgC1n
+	LnokkaJLMLeWm9uuGfDSC4PoDbdrRG3/rpfjUCS8gdcAhKYJF+G0kCElPYWamJwJfZ7VXh9WCmAEh
+	QHyIPV0G6JpKqLWhsl1K3Gd7Xns2IkzwAod81XMAze0YdlEaRrwZ4CJGNjKloYYuQW0Ur9FfQFsOO
+	2HaDJ292Y0VBJZZmoJjMJkK2NBOdgA0Xoh5zBTqAukelLbAHxvrwpwcHwyTGAB+6D94qpI06/TRh/
+	uYJSrWnRgpSAt6TuukhmHqTohL+x4eMEnjXBbIgH63Vj1IYoxPlsxivh9t3C1oRFguqFRzBO2U+oZ
+	7lNH5s3g==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tmHqn-00000006MIG-3Oqr;
+	Sun, 23 Feb 2025 19:41:17 +0000
+Date: Sun, 23 Feb 2025 19:41:17 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>,
+	Bernd Schubert <bernd.schubert@fastmail.fm>,
+	Laura Promberger <laura.promberger@cern.ch>,
+	Sam Lewis <samclewis@google.com>
+Subject: Re: [PATCH] fuse: don't truncate cached, mutated symlink
+Message-ID: <20250223194117.GS1977892@ZenIV>
+References: <20250220100258.793363-1-mszeredi@redhat.com>
+ <20250223002821.GR1977892@ZenIV>
+ <CAJfpegv24BN_g3C0uNPZu_gM7GEy_3eSYyFSaeJZ7mLsfcNqJw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220100258.793363-1-mszeredi@redhat.com> <20250223002821.GR1977892@ZenIV>
-In-Reply-To: <20250223002821.GR1977892@ZenIV>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Sun, 23 Feb 2025 20:12:21 +0100
-X-Gm-Features: AWEUYZnXJiKYAih1XiIRfb-ZVbTlEOU59aKDaWl_vNrsOI0JK_X2czR73CKUi9w
-Message-ID: <CAJfpegv24BN_g3C0uNPZu_gM7GEy_3eSYyFSaeJZ7mLsfcNqJw@mail.gmail.com>
-Subject: Re: [PATCH] fuse: don't truncate cached, mutated symlink
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
-	Laura Promberger <laura.promberger@cern.ch>, Sam Lewis <samclewis@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegv24BN_g3C0uNPZu_gM7GEy_3eSYyFSaeJZ7mLsfcNqJw@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sun, 23 Feb 2025 at 01:28, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Thu, Feb 20, 2025 at 11:02:58AM +0100, Miklos Szeredi wrote:
->
-> > The solution is to just remove this truncation.  This can cause a
-> > regression in a filesystem that relies on supplying a symlink larger than
-> > the file size, but this is unlikely.  If that happens we'd need to make
-> > this behavior conditional.
->
-> Note, BTW, that page *contents* must not change at all, so truncation is
-> only safe if we have ->i_size guaranteed to be stable.
->
-> Core pathwalk really counts upon the string remaining immutable, and that
-> does include the string returned by ->get_link().
+On Sun, Feb 23, 2025 at 08:12:21PM +0100, Miklos Szeredi wrote:
+> On Sun, 23 Feb 2025 at 01:28, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > On Thu, Feb 20, 2025 at 11:02:58AM +0100, Miklos Szeredi wrote:
+> >
+> > > The solution is to just remove this truncation.  This can cause a
+> > > regression in a filesystem that relies on supplying a symlink larger than
+> > > the file size, but this is unlikely.  If that happens we'd need to make
+> > > this behavior conditional.
+> >
+> > Note, BTW, that page *contents* must not change at all, so truncation is
+> > only safe if we have ->i_size guaranteed to be stable.
+> >
+> > Core pathwalk really counts upon the string remaining immutable, and that
+> > does include the string returned by ->get_link().
+> 
+> Page contents will not change after initial readlink, but page could
+> get invalidated and a fresh page filled with new value for the same
+> object.
 
-Page contents will not change after initial readlink, but page could
-get invalidated and a fresh page filled with new value for the same
-object.
+*nod*
 
-It's weird behavior all right, but seems to be useful in a couple of
-cases where invalidating the dentry wouldn't work (I don't remember
-the details, cvmfs folks can help with that).
-
-Thanks,
-Miklos
+My point is that truncation of something that might be traversed by another
+pathwalk is a hard bug - we only get away with doing that in page_get_link()
+because it's idempotent.  If ->i_size can change, we are not allowed to
+do that.
 
