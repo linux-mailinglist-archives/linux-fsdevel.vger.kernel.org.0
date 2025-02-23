@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-42363-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDECFA40F98
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2025 16:45:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2C2A40F9C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2025 16:53:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58C3618938C1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2025 15:45:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F195F18968EA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2025 15:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5B35BAF0;
-	Sun, 23 Feb 2025 15:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A7F6F099;
+	Sun, 23 Feb 2025 15:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gCtnGQRB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AWEi1yhG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0990717D2;
-	Sun, 23 Feb 2025 15:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2F4347CC;
+	Sun, 23 Feb 2025 15:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740325532; cv=none; b=JYqOW10R8KH7mJXhItBkjETtBKqHGYzQHYXwtdnNCCtYk1I2AfFrkN8ltAs5gBjtH+jN+Zn7I9MssQglgu+hp8K/SYr7SNY5YvwdeyoLCJ9/OGc5NXjW8IAogHtVrMF0wwY0Q7PfS7bmkZHhCwxpVEdvYyLZJnguA4lJU1vRFDc=
+	t=1740325978; cv=none; b=kXCQYCzgOD4e9TUgNz6KMmdH4MQWZzT8XvevVU1uIb6TzjG/OKsY4I7rmOP7kAnhnOW13lSI3vKWmRtRpO0sV07CvND+qaGlPeZmbms8vsBGZlZYlxcumiTf6ix7Ml1eOqRp4LPSkbOZKKcwPkPw8FeyME3J6gjPI/2Pit+R+bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740325532; c=relaxed/simple;
-	bh=QFi71j3t7L8FalzRGOLODni9crxX2Z9gNtF3Bz8Bfls=;
+	s=arc-20240116; t=1740325978; c=relaxed/simple;
+	bh=7dpqHMcMeTsL2q7Rl+cTZimMbcWp6Y6BwW0768EVC9w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UdP7tViDO6fg3eCPb6b0HE5/hbGS+wxcucxmcss0RUbcuuC6vygrjT1moSEWqUTS8/Hf6G2RNsk6GIU8iKMHcNbADUTSD+wp5V5XkuJWKOZBCESr7xSYeUYyn0i9FU7CNUgWH5tT/Kd0xEAgdIM1UYV5udh52DgzBQs3g/ALzkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gCtnGQRB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B128C4CEDD;
-	Sun, 23 Feb 2025 15:45:30 +0000 (UTC)
+	 To:Cc:Content-Type; b=u+K5CgKVE1DaS82+Lb4CvCQf5MmhhqI2fwm4YAw1YzKzmKoaytivkV7eGuFHuK5D4uAepCscVYNFcWfFN9Dv8QoWK79I1XlSJrdf8q+m24JHD/+Dtq5EXNg6EUuduJeA3qmMTfFdHyOfucUfYl69ImByFSsqZDGjrJ+bnJX2xcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AWEi1yhG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E190C4CEDD;
+	Sun, 23 Feb 2025 15:52:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740325530;
-	bh=QFi71j3t7L8FalzRGOLODni9crxX2Z9gNtF3Bz8Bfls=;
+	s=k20201202; t=1740325977;
+	bh=7dpqHMcMeTsL2q7Rl+cTZimMbcWp6Y6BwW0768EVC9w=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=gCtnGQRB93IVr5xoC+Y9aqkyT2Da66sbYPg5tlOexCaL+X66C5hrOLKP8Uh4AlyUg
-	 CEvFRlD4xgqZkvteDGw70NVG48LK/Ao1R1Ho/YQOeiQvzc7MRq76Bh+2EAxpIEzSjh
-	 ZmlDxgOdRYhagWgVMpzdRfqbNxMkZFh5Ga7bDv9qD/dxjn20UkZBe6SjTHdXeFxfmZ
-	 FjLvjJtjKVR0F+6A6bkSE/LHdW+yokJoU29olVgqiBIQk10+eBQU2Mb/QkSrSBjLJw
-	 m6Dkt6Nu2UDLl8JizT071BmQ2bqMpmNzx+CDRk8GMN8whmPctyid+VN8Nh/aRupdHY
-	 j6aokvNpOsntg==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-307bc125e2eso33914741fa.3;
-        Sun, 23 Feb 2025 07:45:30 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW6Pi4CYrYDgE6wgqIwEyPZxB1t438pDFKXrZu99uVTy/iCsVgQ/JENS7HFSzIkI68EMA+msk3tyirYoqwf@vger.kernel.org, AJvYcCX86skN5vD5Oifa3afzAj7owJC7+jXds6ROpYVcscI/n3Yx1g4sQAV+8kmgT7VI9vMOwEpIAX3GCblHAxdVEQ==@vger.kernel.org, AJvYcCXZa5ixDkM+QmlHt3Kef+gbHA2IiWcnWAQKEwRrosBw7fQjzx7bm1Q8Na0P+lFFrZq80wuT04lLygc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCktxkdx03BJOP0UUnXa9Gmd1Hn7fSgoQ060oe9OxoR2olFMjk
-	25hzTz+1l79kr8rKLgjou+4Hk74OUsBjsIGc22uAUyABMMsxGK5HJNB6zcL8NqbxcVQZUq0TRsY
-	irJB/zp/hD1HIa9lEhixRD+jXAfo=
-X-Google-Smtp-Source: AGHT+IFPMG1zOPXS0E5ESbB2FCi44a1GD+soKxuNdFM7CWZAbww6yk48RaVa8jHEiiIG+yMbKGz+XJIMUJAv4H6qa4s=
-X-Received: by 2002:a05:6512:ba5:b0:543:9a61:a2e5 with SMTP id
- 2adb3069b0e04-54838ef78cemr4226110e87.23.1740325528840; Sun, 23 Feb 2025
- 07:45:28 -0800 (PST)
+	b=AWEi1yhG9vhfVbIY5s769Qwx7+gWVkXovI6BDFPQxUVsGau0oRRXtkeluCpk8EKcu
+	 dCW4jUf79fjk61wBlR9GPPSLhz/7ShfnhkM2JB1Sc0tOPAaTzpwcnyRLqNtLNoEMC2
+	 i2VmOD4rWmo21oEpaM9ItnjoxeGkebdDnPH4Ru/1CaLxtSB/YEXj8U2+TOeVLch/Uv
+	 lMt370kyte5jgedm51R087aPi8lhxCpwW4X/dvwDhLnqf26jph+ZTYZn/vhAPH3atg
+	 +AquUzv/YHs8w8GdZicJ9OriG/aC9pQqDHGrLZJxEtOmulF4s5dCvSWMLiHgMpPPgT
+	 M/0CumGVwZMkw==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-3072f8dc069so38542311fa.3;
+        Sun, 23 Feb 2025 07:52:57 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUWA3qPwAmzK9pMBPK0FGB/jfEDU/fUksp0xVzZDrf38+1azDWl5mLl00fa3v1iyM7iSC2R7d7zs36uREFp@vger.kernel.org, AJvYcCWrJRIKbfFapPF51700Aa/Z0Mqve8AnfRCeGCzQu3K1jaAoC1ZH1SiXBrv4TtVTYoT/uch0fd1lOSY=@vger.kernel.org, AJvYcCXzMHfRqCCbJjTI90WGlC22z9IepNRzLNN3y/W7wR/IV1Zchz26CmnlzoqKw/RjoMOjax7BMowPnVsK7kSncA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2V7s1h89LBwGDSG86x4kBYFLB1QCtcWnNtVSUMLpJIRcp3IbW
+	sNrYn9IXvbSHjHcQEf5jfMmsDiBnURbJwoBx92skWd8LuQ3U0x9crUV0ax9KsNXPUpWaO8bslS6
+	O2kvKTY8vcArfTms0HjpZRl/eiDU=
+X-Google-Smtp-Source: AGHT+IEztx4T44NxOSzK0I6ch4xU+d8tI+kffMKnDy0SEaxkKrWVD5dRqWYbG9m9TcAokK0yGvqYffGSXg4pGgGQmA8=
+X-Received: by 2002:a05:6512:1282:b0:546:2ea4:8e71 with SMTP id
+ 2adb3069b0e04-54838f7ad50mr4017153e87.52.1740325975810; Sun, 23 Feb 2025
+ 07:52:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,10 +60,10 @@ MIME-Version: 1.0
 References: <67bafe23.050a0220.bbfd1.0017.GAE@google.com>
 In-Reply-To: <67bafe23.050a0220.bbfd1.0017.GAE@google.com>
 From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sun, 23 Feb 2025 16:45:17 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXG1mhe1_eB0oeWukpA_FMTzH5F6zFFszpDTr_x2smvzig@mail.gmail.com>
-X-Gm-Features: AWEUYZlq56gSuDcK4AMca3N4fpNm-cMsBQvbloeKgU8qj87zK9lNdlTlqURLZ-8
-Message-ID: <CAMj1kXG1mhe1_eB0oeWukpA_FMTzH5F6zFFszpDTr_x2smvzig@mail.gmail.com>
+Date: Sun, 23 Feb 2025 16:52:44 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXE1WgFkP5RG-VhC_P-gMDtyipW7nvE+i+JBSWXW1bqbhg@mail.gmail.com>
+X-Gm-Features: AWEUYZn-X-lGRyLRTZRSnIwkrekSUGCsYVnDrqKDr5iJhvy-O6osSycIE9XKv00
+Message-ID: <CAMj1kXE1WgFkP5RG-VhC_P-gMDtyipW7nvE+i+JBSWXW1bqbhg@mail.gmail.com>
 Subject: Re: [syzbot] [efi?] [fs?] BUG: unable to handle kernel paging request
  in efivarfs_pm_notify
 To: syzbot <syzbot+00d13e505ef530a45100@syzkaller.appspotmail.com>
@@ -72,26 +72,5 @@ Cc: jk@ozlabs.org, linux-efi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 Content-Type: text/plain; charset="UTF-8"
 
 #syz test:
-git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-
---- a/fs/efivarfs/super.c
-+++ b/fs/efivarfs/super.c
-@@ -367,6 +367,8 @@ static int efivarfs_fill_super(struct super_block
-*sb, struct fs_context *fc)
-        if (err)
-                return err;
-
-+       register_pm_notifier(&sfi->pm_nb);
-+
-        return efivar_init(efivarfs_callback, sb, true);
- }
-
-@@ -552,7 +554,6 @@ static int efivarfs_init_fs_context(struct fs_context *fc)
-
-        sfi->pm_nb.notifier_call = efivarfs_pm_notify;
-        sfi->pm_nb.priority = 0;
--       register_pm_notifier(&sfi->pm_nb);
-
-        return 0;
- }
+git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git urgent
 
