@@ -1,96 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-42389-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42390-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 577EEA416DD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 09:05:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A827A41712
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 09:16:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C46E7A2DDB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 08:04:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BC131896DE0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 08:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDBA19E97C;
-	Mon, 24 Feb 2025 08:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728C724166E;
+	Mon, 24 Feb 2025 08:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=scylladb.com header.i=@scylladb.com header.b="U2/ocwjT"
+	dkim=pass (2048-bit key) header.d=scylladb.com header.i=@scylladb.com header.b="lByyWHai"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA26188704
-	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 08:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E38624168E
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 08:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740384324; cv=none; b=UHrRpjVWjAH/x0KK69hINStZWZ/7DIIAfe80vczNB4U37wta8fliRiL1Pfh3Re590gxWOmLDTlKWWtvKHiu30zxctjczU+WNhekjaQ/altfshJmEFPmls2hCVRAyW14z0RZkwDe0VRNAYujIGIYxvimZZK5hq9YDgv9ox1aMn+c=
+	t=1740384882; cv=none; b=Q3snvr2rrXZbYaVSP+gLPxUdlibN0pvDkGB/iipVKn8FuuN+flOuw2HzV8mWAqzVN2Zjgk5Ez4adl255tW8rIz13qbRSdpF/rnUa3y3pVO+RO2nZFhDDSvdJclti631a7IqIoXBZe3G8EOpUHtP8/TtApltkjcrhIj5E/yYuctU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740384324; c=relaxed/simple;
-	bh=DSSp61QUIymzYrWYGlGupfHXP31daiD2lgNbLtACtSI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UYQxvV+lgejEFn5mSbPM+gCrV+cGHqFZA9kFHDBm5ZqC0h3wV02O/5Q9khTDl9EUDLeuYixD6VmQs+sUW9VZwyHEzxW2z/1gCfhJO0Q2Rzf3kGQRjkf5XGks8VmX/kxiCa4ZrLwtmebxRpiOh88Ol1bK7Y/r9kUfxubEFxRHr8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=scylladb.com; spf=pass smtp.mailfrom=scylladb.com; dkim=pass (2048-bit key) header.d=scylladb.com header.i=@scylladb.com header.b=U2/ocwjT; arc=none smtp.client-ip=209.85.216.43
+	s=arc-20240116; t=1740384882; c=relaxed/simple;
+	bh=oe2FyQpDi+XexZe/0gZrbR4F62iNxsAIMF/U5rlF8BM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DEmixxZwncDdm58nrLtNbVuEshlAoUoSDYzFXdcbMtA48YHguAPiLI/dAg9iUMqPXmdGtiRnpkooncM3S1vI9T5NwhEnl6yz2dxjn+mGLyWaqet8gVgppD9ZDOevasI1RDnZsHA9Baqa53NQm2qC8F7WBszV6mFVP+G7LW8r/wM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=scylladb.com; spf=pass smtp.mailfrom=scylladb.com; dkim=pass (2048-bit key) header.d=scylladb.com header.i=@scylladb.com header.b=lByyWHai; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=scylladb.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=scylladb.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2fc0bd358ccso8334043a91.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 00:05:23 -0800 (PST)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-221050f3f00so89041425ad.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 00:14:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=scylladb.com; s=google; t=1740384322; x=1740989122; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SVoA3KBTslaxKUJAlPiAwxSQFPk6ze1iD/cIE02/gTk=;
-        b=U2/ocwjTO2UseaaNS6wNKjot/uPGEg0JVS1OZzS3FBiUnfLlB1aZ/rxhUFkxgaZrRr
-         sVTYIFurtAOyiXU9vD8ve+9/y+PKzyPk15m9MprtD9UdqCwS2Dfjt6hwnhmWWa5uZNHM
-         7U5lJMwCgNTcye80ru7FKPJNnaY2FgW9llabh6CCZCRb6vpEJEZIclgI4DEi/N7S4Xkz
-         SPUbltreHAJ4RsCKAZ64mtA5hjVgz6ZhaY0qgdzWx/Q+IDD1vnqTbUvCkdBfU2BVXRnd
-         c4my4dglAjH1B15FdRAErgH9mDc8Ek5YLp5FGGEgpScQIfJT29ISZU1Z+Ll1BP3kvZDH
-         u1sA==
+        d=scylladb.com; s=google; t=1740384880; x=1740989680; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=n59C1mxnlqsVZDv+OXEoyoWE/LCHOE1N8E2Z0O569dM=;
+        b=lByyWHaiC+WiEErxkPqA0M74SH9tASd9NyfWsYUjzIW3LkBcvIvQ9YNU4DI9Y/D9nU
+         uZMKgmGPDKmdkFhr/eQ2lwWZAcc3QnXEi+LGVrlEBIQG22pK7/EljwlDAp7b11FyA7FO
+         S3uQCVxRCJ9Khpesug7glVI5morIO/PFaw2XFX46LUbhOR7LwfuEmAp3WbH1XmDdeQP1
+         kK0BBWKO7QFWc88Kvc7e1J7GHww50mU5ISjiGz2vlzu6rgfNp610OC9xwHUxQGPX2Q9k
+         mrf3Sgb9W1Ij1VCpOJAq6T9uEXk/XCHMd1MlHXgH8kfhDtkUTGQmbLoSZNmEc2Wu5ufE
+         j22w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740384322; x=1740989122;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SVoA3KBTslaxKUJAlPiAwxSQFPk6ze1iD/cIE02/gTk=;
-        b=R8mAXJC/cPqud5yhgnxnrRwiWV5rZCNs3K1FyRD51hcfKa9dXt4/YrtpxpRCr59TDT
-         PzubjsQKDBiPxdUTysOmQFbdcxRa5WKab88cb39J0xGSb5jF8DiL70TSpVff/5Oy+ps3
-         AyxVwUPFW+ImtE2wdkaQ49jVVK3W4C3uRvbZm+zHtY0AFLTMVkL4evBk29PEX9rAqPF2
-         cModni0OST9TfwZCLDlu24gS1ZhJi3MYvHsH9CDWVELcfPWWTBxnYTA+P3/RltaX55A3
-         UJCIrjif62mMlFfQq8sBjqNCgRcYN8FJoX8Mnjjkim33JNNSy6bzEf+FPczKEhN31uNe
-         gCtA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYJp0eBYeXmEmwHEduHi9pQhl/cvIJcOXxaYeF1iVGi6nabbw5Ug/CAbfnCq70FA4l8brH5amip8DG9W0g@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5KfWW222MXh5ODScdKzTSRKm1bgJXiGFhdptK49wtTvaLJt8r
-	TMrnb69lMXIQM/JsQYg5jLYzv8M88mP++TvWaDIVC87l/5DM1nPwNPQLbQjjgC2mt+cK8GIDlW9
-	sqLJU9wpC3hmG97hymu4U5pqrW7QIMu0NCj/0iJ5cnkJ1HjTaHrs+k8yI1b46+cpnWUtWXa58D/
-	g0Wz6KFg03bBcko3KXpp/XZUAV0GH/qHa3ZBgcFTC7PnQnZlyCDRAnibdftuctMx62Miocf7JbK
-	uFR6FhcpdZqohgDEFcDRr45fqW/3/PCGPKLrdpkwPXYM0TOU0yYjrfTluZuMQNi2tOhteSrAGjI
-	OFCWpKuiJEh37DCNK0QPehB13+RLxhlaTDOtboTMYnuFHUBQUj7O15+HiYq581MT6o8X//Dvr6D
-	ZVlJLsG4BWigJm/MJLia+T+dBSBuVxeGV2dZG7J15
-X-Gm-Gg: ASbGncurM5XxFQRDsPF4uakMWUPnuE6QSw8wpiNjcSF90vyIlUdLKeLEjSrm/LKfKyW
-	G0YKcInS5XMtMGaP9KHRQLl1K3054t5AgdTM/xsp6MnrLfVqney8Do/YLViAZA09lQN9sPDMMAf
-	KdXX2WbuPWt7xPJWWNDJ625x2U
-X-Google-Smtp-Source: AGHT+IFtdbQ6U/YKuWHB7yqDwwuNE/bSc7IlcjqeG5sANxT1TCSNg1dNn8Tz99FJjQDWn5yBteVeobg3lGuJU2hNAM0=
-X-Received: by 2002:a17:90b:4ec6:b0:2ee:ad18:b309 with SMTP id
- 98e67ed59e1d1-2fce779bc1fmr18989604a91.3.1740384005725; Mon, 24 Feb 2025
- 00:00:05 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740384880; x=1740989680;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n59C1mxnlqsVZDv+OXEoyoWE/LCHOE1N8E2Z0O569dM=;
+        b=ZoPas2hvAxdgm/Dp1Fk4ybDIZb6rkGufEzJfv7SjIXzwjB39+qr6sAkA+b6Mmceycy
+         C9FS4WYWRG5JtVg4NC8ugdwvdCWW4k10MXkb09QtSnloA3azCqpuaHKg9o+v3ocmI32K
+         ovgxzJaDQJu2YqIZaNaH0kbR8RHmYXXFKEVAL61kPDfKM/CzAOQSCZHrxHcxP15GMJhI
+         KDSaD2zoQX6peEXH8yClzF/qWVNbTlRirQgJKMmSRGcCfM54kwtLHyV/6UHq+pSimvPl
+         zUzQDJNMbWbSak99yq9/R7pUdGe6yclzeeCvIjo8XxJhSV//bwUx7oljBU8n54mKzDl2
+         gw2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXb0PxpFfAztPFlmgPATvu7OZryxXpxV8EFKiiA+OFxJL12CMDxeJ4RCltt54jj4D8yaad1wwInCZTXpH0m@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNHmtX4/70U4v61Nbl0QdvnzsNnyTLry7keGMs5YRaMV6c/8uZ
+	pPKbhQIoKrePS9w7E+zSzOpxJF524dUIhiBG30bt8DNXFhyUeE6FljoARY5T8ZBVKyKHVZSpBqA
+	DW0lJGx+Xfx7PK5d7QEXYk5yQOqmah8oWmnoVfzTNWuuzicr4eTDNJogKIyjF6xWSrScr9utZX4
+	KA7O/PC/UkFxuBhg5KGAuM0zoI4JQ01aXMOP5Xyi/lIYptBatfrirZ7SCknLn6eUaN2awCgEBLM
+	xbhhKkGudQKzaImsaZ8VvrrU91k6Ble4TtzZK4xxIxYbuPgg1eex1dWMnhYOPS/L68DqEbMQQpR
+	KwlSWmKV+CGfx5ZrVmk8YmQKFvUq2sOohGuSwqmdwlrYesfgpw==
+X-Gm-Gg: ASbGncvqI0ZNEaZUWJpa+JhMd5d9kAkv2aRJszlphc5Fjg9IewPli+IubSO90lZZqjL
+	905CnCRo/4y38ppjEXYbhwP4qHqsysGh/mQo/Zg2XCJ+WT+lAHa79La0Pp90YozBHOoTJAQ/8Ok
+	AfKXDabC26vqLPSOGbFqLG01n+gX0k1vW6pgKXGdfJ4wZ8bUQWBFROPKbvS1o7wOtwtC1vQLc1Y
+	EZyafeSIa53ab7ikJ+Fwtg6rgyemEq1ibIRfsj61sr5/9qxoFNwWSszWyeIZ7tNaDyYR/5sqqZ8
+	e+E57l5H8VB8wDUEUjueNOP3WK3eFg==
+X-Google-Smtp-Source: AGHT+IGZML+QeMBAJSjHG5iq0A0nDtnil2LVDOPQzKcK170nIopsu8yPUqb4/J1ur3vn2QrKyGEe6w==
+X-Received: by 2002:a05:6a20:7f85:b0:1ee:d6ff:5acd with SMTP id adf61e73a8af0-1eef3c568e9mr25167734637.6.1740384880406;
+        Mon, 24 Feb 2025 00:14:40 -0800 (PST)
+Received: from localhost.localdomain ([2a09:bac5:7a2:24be::3a9:82])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ae1ee4febb2sm10280324a12.51.2025.02.24.00.14.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 00:14:39 -0800 (PST)
+From: "Raphael S. Carvalho" <raphaelsc@scylladb.com>
+To: linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Cc: djwong@kernel.org,
+	Dave Chinner <david@fromorbit.com>,
+	hch@lst.de,
+	willy@infradead.org,
+	"Raphael S. Carvalho" <raphaelsc@scylladb.com>
+Subject: [PATCH v2] mm: Fix error handling in __filemap_get_folio() with FGP_NOWAIT
+Date: Mon, 24 Feb 2025 05:13:28 -0300
+Message-ID: <20250224081328.18090-1-raphaelsc@scylladb.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250223235719.66576-1-raphaelsc@scylladb.com> <Z7vyEdJ3SqjFkE9q@casper.infradead.org>
-In-Reply-To: <Z7vyEdJ3SqjFkE9q@casper.infradead.org>
-From: "Raphael S. Carvalho" <raphaelsc@scylladb.com>
-Date: Mon, 24 Feb 2025 04:59:48 -0300
-X-Gm-Features: AWEUYZkvHapCZa_nWwzLdLpvhKFl_jgkyrG-YnMTBsTUmmQGjHUIcJRbVqK-hSE
-Message-ID: <CAKhLTr0UA42AC2yCyFtDbFoS34vvg05EVnf5J4MSit_Sr7JETw@mail.gmail.com>
-Subject: Re: [PATCH] mm: Fix error handling in __filemap_get_folio() with FGP_NOWAIT
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, djwong@kernel.org, 
-	Dave Chinner <david@fromorbit.com>, hch@lst.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-CLOUD-SEC-AV-Sent: true
 X-CLOUD-SEC-AV-Info: scylladb,google_mail,monitor
 X-Gm-Spam: 0
@@ -100,95 +105,72 @@ X-CLOUD-SEC-AV-Info: scylla,google_mail,monitor
 X-Gm-Spam: 0
 X-Gm-Phishy: 0
 
-On Mon, Feb 24, 2025 at 1:14=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Sun, Feb 23, 2025 at 08:57:19PM -0300, Raphael S. Carvalho wrote:
-> > This is likely a regression caused by 66dabbb65d67 ("mm: return an ERR_=
-PTR
-> > from __filemap_get_folio"), which performed the following changes:
-> >     --- a/fs/iomap/buffered-io.c
-> >     +++ b/fs/iomap/buffered-io.c
-> >     @@ -468,19 +468,12 @@ EXPORT_SYMBOL_GPL(iomap_is_partially_uptodate=
-);
-> >     struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos)
-> >     {
-> >             unsigned fgp =3D FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STA=
-BLE | FGP_NOFS;
-> >     -       struct folio *folio;
-> >
-> >             if (iter->flags & IOMAP_NOWAIT)
-> >                     fgp |=3D FGP_NOWAIT;
-> >
-> >     -       folio =3D __filemap_get_folio(iter->inode->i_mapping, pos >=
-> PAGE_SHIFT,
-> >     +       return __filemap_get_folio(iter->inode->i_mapping, pos >> P=
-AGE_SHIFT,
-> >                             fgp, mapping_gfp_mask(iter->inode->i_mappin=
-g));
-> >     -       if (folio)
-> >     -               return folio;
-> >     -
-> >     -       if (iter->flags & IOMAP_NOWAIT)
-> >     -               return ERR_PTR(-EAGAIN);
-> >     -       return ERR_PTR(-ENOMEM);
-> >     }
->
-> We don't usually put this in the changelog ...
->
-> > Essentially, that patch is moving error picking decision to
-> > __filemap_get_folio, but it missed proper FGP_NOWAIT handling, so ENOME=
-M
-> > is being escaped to user space. Had it correctly returned -EAGAIN with =
-NOWAIT,
-> > either io_uring or user space itself would be able to retry the request=
-.
-> > It's not enough to patch io_uring since the iomap interface is the one
-> > responsible for it, and pwritev2(RWF_NOWAIT) and AIO interfaces must re=
-turn
-> > the proper error too.
-> >
-> > The patch was tested with scylladb test suite (its original reproducer)=
-, and
-> > the tests all pass now when memory is pressured.
-> >
-> > Signed-off-by: Raphael S. Carvalho <raphaelsc@scylladb.com>
->
-> Instead, we add:
->
-> Fixes: 66dabbb65d67 (mm: return an ERR_PTR from __filemap_get_folio)
+original report:
+https://lore.kernel.org/all/CAKhLTr1UL3ePTpYjXOx2AJfNk8Ku2EdcEfu+CH1sf3Asr=B-Dw@mail.gmail.com/T/
 
-Thanks, will fix it in v2.
+When doing buffered writes with FGP_NOWAIT, under memory pressure, the system
+returned ENOMEM despite there being plenty of available memory, to be reclaimed
+from page cache. The user space used io_uring interface, which in turn submits
+I/O with FGP_NOWAIT (the fast path).
 
->
-> > ---
-> >  mm/filemap.c | 9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/mm/filemap.c b/mm/filemap.c
-> > index 804d7365680c..b06bd6eedaf7 100644
-> > --- a/mm/filemap.c
-> > +++ b/mm/filemap.c
-> > @@ -1986,8 +1986,15 @@ struct folio *__filemap_get_folio(struct address=
-_space *mapping, pgoff_t index,
-> >
-> >               if (err =3D=3D -EEXIST)
-> >                       goto repeat;
-> > -             if (err)
-> > +             if (err) {
-> > +                     /*
-> > +                      * Presumably ENOMEM, either from when allocating=
- or
-> > +                      * adding folio (this one for xarray node)
-> > +                      */
->
-> I don't like the comment.  Better to do that in code:
->
+retsnoop pointed to iomap_get_folio:
 
-Initially I was doing exactly what you proposed above, but after
-reading do_read_cache_folio() and the patch the introduces the
-regression, which transforms failure to get a folio (a NULL) with
-FGP_NOWAIT into NOAGAIN, I decided to do this, but it's indeed better
-to remove assumptions. Not ideal for the long run. Will change in v2.
-thanks.
+00:34:16.180612 -> 00:34:16.180651 TID/PID 253786/253721
+(reactor-1/combined_tests):
+
+                    entry_SYSCALL_64_after_hwframe+0x76
+                    do_syscall_64+0x82
+                    __do_sys_io_uring_enter+0x265
+                    io_submit_sqes+0x209
+                    io_issue_sqe+0x5b
+                    io_write+0xdd
+                    xfs_file_buffered_write+0x84
+                    iomap_file_buffered_write+0x1a6
+    32us [-ENOMEM]  iomap_write_begin+0x408
+iter=&{.inode=0xffff8c67aa031138,.len=4096,.flags=33,.iomap={.addr=0xffffffffffffffff,.length=4096,.type=1,.flags=3,.bdev=0x…
+pos=0 len=4096 foliop=0xffffb32c296b7b80
+!    4us [-ENOMEM]  iomap_get_folio
+iter=&{.inode=0xffff8c67aa031138,.len=4096,.flags=33,.iomap={.addr=0xffffffffffffffff,.length=4096,.type=1,.flags=3,.bdev=0x…
+pos=0 len=4096
+
+This is likely a regression caused by 66dabbb65d67 ("mm: return an ERR_PTR
+from __filemap_get_folio"), which moved error handling from
+io_map_get_folio() to __filemap_get_folio(), but broke FGP_NOWAIT handling, so
+ENOMEM is being escaped to user space. Had it correctly returned -EAGAIN with
+NOWAIT, either io_uring or user space itself would be able to retry the
+request.
+It's not enough to patch io_uring since the iomap interface is the one
+responsible for it, and pwritev2(RWF_NOWAIT) and AIO interfaces must return
+the proper error too.
+
+The patch was tested with scylladb test suite (its original reproducer), and
+the tests all pass now when memory is pressured.
+
+Fixes: 66dabbb65d67 ("mm: return an ERR_PTR from __filemap_get_folio")
+Signed-off-by: Raphael S. Carvalho <raphaelsc@scylladb.com>
+---
+ mm/filemap.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 804d7365680c..d7646e73f481 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1986,8 +1986,12 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+ 
+ 		if (err == -EEXIST)
+ 			goto repeat;
+-		if (err)
++		if (err) {
++			/* Prevents -ENOMEM from escaping to user space with FGP_NOWAIT */
++			if ((fgp_flags & FGP_NOWAIT) && err == -ENOMEM)
++				err = -EAGAIN;
+ 			return ERR_PTR(err);
++		}
+ 		/*
+ 		 * filemap_add_folio locks the page, and for mmap
+ 		 * we expect an unlocked page.
+-- 
+2.48.1
+
 
