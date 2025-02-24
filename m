@@ -1,203 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-42489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42490-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F386FA42B9C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 19:36:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13950A42D3C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 20:59:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41F9F7A1BFA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 18:35:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C853617A616
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 19:59:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A66266568;
-	Mon, 24 Feb 2025 18:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D205215F45;
+	Mon, 24 Feb 2025 19:59:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DNmokDhn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/pUZjY/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E712826618C
-	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 18:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6030E136327;
+	Mon, 24 Feb 2025 19:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740422197; cv=none; b=l8nF/AoLy6/NSFwjgLLztzW5XRb2nE7/8mdONK/Ya244Gv1HpcBlYyu0pa13smONaVstuUmTBDIQPuOzHBW/4YIdELKwnMbcI3UvmPUMKdqEEScofEl2V/Pf++2B2DjcJ4IDdrFO+p77lbM/XAtsx1HUVEsx1arL1w1oI+yYgzE=
+	t=1740427153; cv=none; b=P2u/ygedKdWh+YjD+Q/tewG/VLJT2dOk5wYu+m9coAIRQzxegXNsf1JxkBMOSAB3OOONol+E2n6h1K5X8nLJAZGVG1U3zgp6F8Pm4KPB5i/Hxx4JQY+ecv3D3KTe5ZtJNPEJ/uZbp0pC594Hj505zd2n0U4nsXBywHGC137XREc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740422197; c=relaxed/simple;
-	bh=ZYpSCXidyUjMJOFUCDvYrtypRcnz0voN/kvAQYiPTZw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u3/umd+Xdz+YkImqDs6CMWK7qCk4BonFMWl5pjXgPag8l7cIpc5tF14zhr8w2DbxGGtl2T2u/UwQsjf/RNql3nTjrh6Qgf65wX758o3EqYg7PU+fl++OOBzEaUp3f2UpVgwvy76QwQ0Bd25JE03HUczYWbl1bHqXvVTj1Lkthog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DNmokDhn; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e08064b4ddso6377541a12.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 10:36:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1740422192; x=1741026992; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bjxCPCmnXeGeJyPZ9rvFlcH8jgmw1PsMh4lSp0OiRPk=;
-        b=DNmokDhnBUXaLcGJSK7v3bfcqN0DqSjX5WwX5JFWj4qGtvwdU8Vjixri5TjoochpTB
-         8eVg7TUA4QsMd/0KvlaL2cUBBILn/rNC2+WCFokyv1RJUl1AsEWYI4rWsW0XDTFYlGdz
-         ubSgnUzEAYT9cfRfj5jAmwfj4j63dTcY5Ph2Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740422192; x=1741026992;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bjxCPCmnXeGeJyPZ9rvFlcH8jgmw1PsMh4lSp0OiRPk=;
-        b=XQZtuJjJcjOu5u2mGgLS/JGlgfj+eCFf4rrxhf1/NlJRWhOTqb3cRKtAvE8X7UJtaw
-         RY00oGfXQU1CoEXFfgyH0Og7xcTdtq/7418L7JYCYszLDM3lIcP9XTFQK1DXKpL/Tb9D
-         upexdXzBJLliuH3MD+i6i93She9QOtIxq1S7h016HvayUVY6K4TbZdH1dm2pntymOwzo
-         v2PbQFVYNKF1ZZ6JPsr5c7bAyOK2qXnK4FJ0lYYEpjbA0uLml1gj86iEMYS26FyAEmdI
-         PqjSeJPrGoKqCcQuy/BzGYVwgFiRvMKylT8B7u9xdN8dvUdMo/PYlGlGu4cTj/4AezjW
-         CSXg==
-X-Forwarded-Encrypted: i=1; AJvYcCWkOe9Rs63b2CrLHaOAB6HKbGRi3bHi1Qin2SE0ldSPIi6os2c3GDITlFrUT9xmsH/8KAUMSnlE+NXO2B9r@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze1bGwvBpb2EwAa7A0L2iXJJKipUNOCO1rOmJDL2GMo4pLkhtM
-	6huDZqyg5knBRfjRen/KzOD4HpfFA/DOIrAa7Yf1JKbLzi5DAyHhIRPok1MOH8Uo/rWqFVIKYOt
-	Gvgg=
-X-Gm-Gg: ASbGncuUTtTFtATQcPojumMQwRsJPbwvJZhF0l8BB6+Ds6jbYAca5vrp6XsJXbWXgi3
-	RWd960gAZ5y8eC4LsGxUpMKfAnlto1o35Qmmhds2vEU9agVrngFTw0ugBBz3BMTUhdArsdx+pVS
-	RHN7ODTb72HwTAbxPWiKxaF6KQR3TWRMXONJ4AZ1JjAqNR2/J8BgflR430Jn8p+zte7XoahAw4Q
-	rs2nzXCqxB73hORvq3iPvAjKYeX+Zf0SoBa97PdnnTAyaCM8WaWf9OsJp6g5pPSK+rBYThhwZBW
-	lDYLXhQhhheNuI/ykdWzkmrraw1dQ8fVHQXN4BHtOWskB2Zd4jFKdOZwJDj+MUvOjpWAUPVLVRz
-	J
-X-Google-Smtp-Source: AGHT+IHQ4S8LvNOeqzuYVOQcHCEiGNOzPfyVfsx0l+lQVsfEXaP07UQUiCXqr+GBdOM5IeH9VO9zKg==
-X-Received: by 2002:a05:6402:26d1:b0:5d4:4143:c06c with SMTP id 4fb4d7f45d1cf-5e0b7222d3amr13707561a12.23.1740422191904;
-        Mon, 24 Feb 2025 10:36:31 -0800 (PST)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece28808fsm18604874a12.75.2025.02.24.10.36.30
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 10:36:30 -0800 (PST)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso737554466b.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 10:36:30 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU7GVjVenEFKl1G3a09EYbxeJZniFFdabO65hRrAFxmVVqQxaYwBLr79zDcJoqJXcT7kwRahzJitsoNElQG@vger.kernel.org
-X-Received: by 2002:a17:907:3da0:b0:abb:83b9:4dbe with SMTP id
- a640c23a62f3a-abc0de4a335mr1505840766b.47.1740422190407; Mon, 24 Feb 2025
- 10:36:30 -0800 (PST)
+	s=arc-20240116; t=1740427153; c=relaxed/simple;
+	bh=W6g23xuIssALMbH2xgrfWTmhUTBR2YOv3qZN/bNUQ44=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=biH86SJrimCvjEwlOlq4/sEsYLFRNFr5qDGBDK54UQ64/X8HdKKpmj2WePV4Pg2CDX8CmslWDoaZx5MLqaLTjg8GpMMPztFPXGe47na+RCD8ZmFQwKS3hnIlGCPfRlVqcXiOadkmgv5PzsoFGZ4yMsccEjM5Gfd7Fmr86cTCbR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/pUZjY/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF325C4CED6;
+	Mon, 24 Feb 2025 19:59:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740427152;
+	bh=W6g23xuIssALMbH2xgrfWTmhUTBR2YOv3qZN/bNUQ44=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J/pUZjY/fzMZiEQTtv7utDJgkg28SOgJfShAk1J4ilhBAoA7I1UIR5FdXUHIco9yJ
+	 9UL46T9QaTxKTMpdug43NR1GqXyEiim3snnXMCgqobTH6O6BvBa1MGxfBlHfs7yUnC
+	 FZf7Eg6o0/eAcKX3H/xosl41oIfM4y9qdVpD5m3ZwoZKHKWMOmWBBniZqPonAPGWuY
+	 yZKnzZ3juTC90xzqW59LITd31omUCzhfU8AlA1y1U9Ab+F1U3qp2HShcLKhsVYkztV
+	 /ENS/AXQOnDaILwsCfHK0R+arIkWu4IEJ7x0A2bKkr7UDNUcEcFQaQjpSWQxXhANeJ
+	 UgwX/WfqxqpIA==
+Date: Mon, 24 Feb 2025 11:59:12 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v2 04/11] iomap: Support CoW-based atomic writes
+Message-ID: <20250224195912.GC21808@frogsfrogsfrogs>
+References: <20250213135619.1148432-1-john.g.garry@oracle.com>
+ <20250213135619.1148432-5-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250102140715.GA7091@redhat.com> <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
- <20250224142329.GA19016@redhat.com>
-In-Reply-To: <20250224142329.GA19016@redhat.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 24 Feb 2025 10:36:13 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wi+P5__7LfbTX66shvYC1X11G2ZdKcg4psi+k_pD3sO+w@mail.gmail.com>
-X-Gm-Features: AWEUYZlNu7bWtzV6VF8g9lWbkb0aBzMmKrKcCBQur_JXZyZHklFDpxcYe_w5ic0
-Message-ID: <CAHk-=wi+P5__7LfbTX66shvYC1X11G2ZdKcg4psi+k_pD3sO+w@mail.gmail.com>
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>, Manfred Spraul <manfred@colorfullife.com>, 
-	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>, 
-	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>, Neeraj.Upadhyay@amd.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213135619.1148432-5-john.g.garry@oracle.com>
 
-On Mon, 24 Feb 2025 at 06:25, Oleg Nesterov <oleg@redhat.com> wrote:
->
-> OK, I gave up ;) I'll send the revert patch tomorrow (can't do this today)
-> even if I still don't see how this patch can be wrong.
+On Thu, Feb 13, 2025 at 01:56:12PM +0000, John Garry wrote:
+> Currently atomic write support requires dedicated HW support. This imposes
+> a restriction on the filesystem that disk blocks need to be aligned and
+> contiguously mapped to FS blocks to issue atomic writes.
+> 
+> XFS has no method to guarantee FS block alignment for regular non-RT files.
+> As such, atomic writes are currently limited to 1x FS block there.
+> 
+> To allow deal with the scenario that we are issuing an atomic write over
+> misaligned or discontiguous data blocks larger atomic writes - and raise
+> the atomic write limit - support a CoW-based software emulated atomic
+> write mode.
+> 
+> For this special mode, the FS will reserve blocks for that data to be
+> written and then atomically map that data in once the data has been
+> committed to disk.
+> 
+> It is the responsibility of the FS to detect discontiguous atomic writes
+> and switch to IOMAP_DIO_ATOMIC_COW mode and retry the write.
+> 
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  Documentation/filesystems/iomap/operations.rst | 15 +++++++++++++--
+>  fs/iomap/direct-io.c                           |  4 +++-
+>  include/linux/iomap.h                          |  6 ++++++
+>  3 files changed, 22 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
+> index 82bfe0e8c08e..d30dddc94ef7 100644
+> --- a/Documentation/filesystems/iomap/operations.rst
+> +++ b/Documentation/filesystems/iomap/operations.rst
+> @@ -525,8 +525,19 @@ IOMAP_WRITE`` with any combination of the following enhancements:
+>     conversion or copy on write), all updates for the entire file range
+>     must be committed atomically as well.
+>     Only one space mapping is allowed per untorn write.
+> -   Untorn writes must be aligned to, and must not be longer than, a
+> -   single file block.
+> +   Untorn writes may be longer than a single file block. In all cases,
+> +   the mapping start disk block must have at least the same alignment as
+> +   the write offset.
+> +
+> + * ``IOMAP_ATOMIC_COW``: This write is being issued with torn-write
+> +   protection based on CoW support.
 
-Let's think about this a bit before reverting.
+I think using "COW" here results in a misnamed flag.  Consider:
 
-Because I think I see at least one possible issue..
+"IOMAP_ATOMIC_SW: This write is being issued with torn-write protection
+via a software fallback provided by the filesystem."
 
-With that commit aaec5a95d596 ("pipe_read: don't wake up the writer if
-the pipe is still full"), the rule for waking writers is pretty
-simple: we only wake a writer if we update the tail pointer (so that
-we made a new slot available) _and_ the pipe was full before we did
-that.
+iomap itself doesn't care *how* the filesystem guarantees that the
+direct write isn't torn, right?  The fs' io completion handler has to
+ensure that the mapping update(s) are either applied fully or discarded
+fully.
 
-And we do so while holding the pipe mutex, so we're guaranteed to be
-serialized with writers that are testing whether they can write (using
-the same pipe_full() logic).
+In theory if you had a bunch of physical space mapped to the same
+file but with different unwritten states, you could gang together all
+the unwritten extent conversions in a single transaction, which would
+provide the necessary tearing prevention without the out of place write.
+Nobody does that right now, but I think that's the only option for ext4.
 
-Finally - we delay the actual wakeup until we actually sleep or are
-done with the read(), and we don't hold the mutex at that point any
-more, but we have updated the tail pointer and released the mutex, so
-the writer is guaranteed to have either seen the updates, or will see
-our wakeup.
+--D
 
-All pretty simple and seems fool-proof, and the reader side logic
-would seem solid.
-
-But I think I see a potential problem.
-
-Because there's an additional subtlety: the pipe wakeup code not only
-wakes writers up only if it has freed an entry, it also does an
-EXCLUSIVE wakeup.
-
-Which means that the reader will only wake up *one* writer on the wait queue.
-
-And the *WRITER* side then will wake up any others when it has
-written, but *that* logic is
-
- (a) wake up the next writer only if we were on the wait-queue (and
-could thus have been the sole recipient of a wakeup)
- (b) wake up the next writer only if the pipe isn't full
-
-which also seems entirely sane. We must wake the next writer if we've
-"used up" the wakeup, but only when it makes sense.
-
-However, I see at least one case where this exclusive wakeup seems broken:
-
-                /*
-                 * But because we didn't read anything, at this point we can
-                 * just return directly with -ERESTARTSYS if we're interrupted,
-                 * since we've done any required wakeups and there's no need
-                 * to mark anything accessed. And we've dropped the lock.
-                 */
-                if (wait_event_interruptible_exclusive(pipe->rd_wait,
-pipe_readable(pipe)) < 0)
-                        return -ERESTARTSYS;
-
-and I'm wondering if the issue is that the *readers* got stuck,
-Because that "return -ERESTARTSYS" path now basically will by-pass the
-logic to wake up the next exclusive waiter.
-
-Because that "return -ERESTARTSYS" is *after* the reader has been on
-the rd_wait queue - and possibly gotten the only wakeup that any of
-the readers will ever get - and now it returns without waking up any
-other reader.
-
-So then the pipe stays full, because no readers are reading, even
-though there's potentially tons of them.
-
-And maybe the "we had tons of extra write wakeups" meant that this was
-a pre-existing bug, but it was basically hidden by all the extra
-writers being woken up, and in turn waking up the readers that got
-missed.
-
-I dunno. This feels wrong. And looking at the hackbench code, I don't
-see how it could actually be a problem on *that* load, because I don't
-see any signals that could cause that ERESTARTSYS case to happen, and
-if it did, the actual system call restart should get it all going
-again.
-
-So I think that early return is actually buggy, and I think that
-comment is wrong (because "we didn't read anything" doesn't mean that
-we might not need to finish up), but I don't see how this could really
-cause the reported problems.
-
-But maybe somebody sees some other subtle issue here.
-
-The writer side does *not* have that early return case.  It also does
-that wait_event_interruptible_exclusive() thing, but it will always
-end up doing the "wake_next_writer" logic if it got to that point.
-
-The bug would have made more sense on the writer side.
-
-But I basically do wonder if there's some bad interaction with the
-whole "exclusive wait" logic and the "we now only wake up one single
-time". The fact that I found *one* thing that smells bad to me makes
-me think maybe there's another that I didn't see.
-
-               Linus
+> +   All the length, alignment, and single bio restrictions which apply
+> +   to IOMAP_ATOMIC_HW do not apply here.
+> +   CoW-based atomic writes are intended as a fallback for when
+> +   HW-based atomic writes may not be issued, e.g. the range covered in
+> +   the atomic write covers multiple extents.
+> +   All filesystem metadata updates for the entire file range must be
+> +   committed atomically as well.
+>  
+>  Callers commonly hold ``i_rwsem`` in shared or exclusive mode before
+>  calling this function.
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index f87c4277e738..076338397daa 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -644,7 +644,9 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  			iomi.flags |= IOMAP_OVERWRITE_ONLY;
+>  		}
+>  
+> -		if (iocb->ki_flags & IOCB_ATOMIC)
+> +		if (dio_flags & IOMAP_DIO_ATOMIC_COW)
+> +			iomi.flags |= IOMAP_ATOMIC_COW;
+> +		else if (iocb->ki_flags & IOCB_ATOMIC)
+>  			iomi.flags |= IOMAP_ATOMIC_HW;
+>  
+>  		/* for data sync or sync, we need sync completion processing */
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index e7aa05503763..1b961895678a 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -183,6 +183,7 @@ struct iomap_folio_ops {
+>  #define IOMAP_DAX		0
+>  #endif /* CONFIG_FS_DAX */
+>  #define IOMAP_ATOMIC_HW		(1 << 9) /* HW-based torn-write protection */
+> +#define IOMAP_ATOMIC_COW	(1 << 10)/* CoW-based torn-write protection */
+>  
+>  struct iomap_ops {
+>  	/*
+> @@ -434,6 +435,11 @@ struct iomap_dio_ops {
+>   */
+>  #define IOMAP_DIO_PARTIAL		(1 << 2)
+>  
+> +/*
+> + * Use CoW-based software emulated torn-write protection.
+> + */
+> +#define IOMAP_DIO_ATOMIC_COW		(1 << 3)
+> +
+>  ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+>  		unsigned int dio_flags, void *private, size_t done_before);
+> -- 
+> 2.31.1
+> 
+> 
 
