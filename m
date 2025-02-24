@@ -1,98 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-42372-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42373-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 898E3A41299
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 02:25:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 991E6A412A9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 02:34:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B887F172821
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 01:24:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76BA116FAD6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 01:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C6038DE0;
-	Mon, 24 Feb 2025 01:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B1A15A848;
+	Mon, 24 Feb 2025 01:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rzonImDk";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wKHL00mL";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qCjqXg8K";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NnMPKFp7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2723081732;
-	Mon, 24 Feb 2025 01:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5785C156669
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 01:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740360254; cv=none; b=qHvijBCKJq0N7HUyI3428OE0q2M8XcglNc5B1PmIBLyjd+kg0Dfyh9GZ5B92FkdxaY9tFmVH6KqQ4euueSVOJMw+BCSwX3t7Z5Pl081J3Nnx0U7gv8UrCZ16QL4yM24YlpWLICCoMm1g0MB0UsjFqR7QLjXE8hiU6Q6+Gb63X18=
+	t=1740360862; cv=none; b=fVJK5pAbMndPP7cGbTAchKqbCF2GDm2Eeep7O81M0dWm8hG19hj9ObX8BUGonB8Gukezpi9KuC5V+fGsFV2zqQRwTWEozjxwqWzz9pbkfjWTcXpda2HSICxJ2YiXLIJ947dVofB1nYQgVZr9iMgBe54/GQjwJk30lWPv4MBx7aE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740360254; c=relaxed/simple;
-	bh=muEyjcQX89HxkIdlTEjavVGhd848csPb2p7ljgYJI1k=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bztTaNndBXN32/nwqMeK5/DuixYmhUKQfFaixU0PXMoc70SQgOJYkBguxkwrIht2ft0nUCw/196Z0+aXsLBcKrkuWd0UtWBsghUfM/+uy9k21GaI+dz/1p4NLkKxll9EnCVG4EeD1aFWnXvFm3WlDfHQJpcIBzVeVvdJRNwkSyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Z1NGb72j9z21p0d;
-	Mon, 24 Feb 2025 09:20:55 +0800 (CST)
-Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id 85E4C140368;
-	Mon, 24 Feb 2025 09:23:59 +0800 (CST)
-Received: from huawei.com (10.175.104.67) by kwepemf100017.china.huawei.com
- (7.202.181.16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 24 Feb
- 2025 09:23:58 +0800
-From: Zizhi Wo <wozizhi@huawei.com>
-To: <linux-ext4@vger.kernel.org>, <jack@suse.com>, <tytso@mit.edu>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<wozizhi@huawei.com>, <yangerkun@huawei.com>
-Subject: [PATCH] ext4: Modify the comment about mb_optimize_scan
-Date: Mon, 24 Feb 2025 09:20:05 +0800
-Message-ID: <20250224012005.689549-1-wozizhi@huawei.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1740360862; c=relaxed/simple;
+	bh=Al6jKkOiVhexQTQI4Zbtqw8ZvF2LAQnFfueXusXBnhk=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=TgCosaNdmUN717Kj7gODHOG/c01UiNVNV5K5VMPH7zXr7mMOppUuhj4dLZTBPzs4HlrSJZSrD+LK89EH5waJCpScH5n053Wzr1ewL0AHn/Xtd+OUfgfadhc1zxDhVK8N+GcOsMAmGyyCTewkPd4PJL5LhHrgTTg4ntFYjwaUu2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rzonImDk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wKHL00mL; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qCjqXg8K; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NnMPKFp7; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8CC902116D;
+	Mon, 24 Feb 2025 01:34:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740360858; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N6DmzFO4HIzWBxdCLLN4FbtoKwoidbgVbtC5hcg04Dc=;
+	b=rzonImDkwJoVgWfKV5OP1Ih17Ix4H0Uj8cYlPZ+aY6Hdv0gpMIjIyh0ZkQKVgVT/FndPIi
+	sZMx93YtVbo91VfBLYw5Sd6QCpfSxUdFevY2NXEwZL0R6VVTI4hCqHByOBkOvB43Ien6pD
+	P/6G9UJwoNlFoBYkRddy4ZWrLNokImU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740360858;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N6DmzFO4HIzWBxdCLLN4FbtoKwoidbgVbtC5hcg04Dc=;
+	b=wKHL00mL1XwcnqReM3IXJ5QvOzvSSWlBJfXq7VRTKaOqqQlFbKoDoTYOYWQwP6zgNjjEty
+	3hVZKYyoFwDy9BDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740360857; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N6DmzFO4HIzWBxdCLLN4FbtoKwoidbgVbtC5hcg04Dc=;
+	b=qCjqXg8KOIWeT3woveYRbx7VhkwuOymOoulEdAyAbzEyKPU1njqvzcfJPElrVedFsxBHIA
+	hxTuG7Yu2Md3OY4EmdKk88M7EAXGOkBVk431FVrQCkAV3L5EonJ6odzCnm3MPhvA4Tkm0C
+	xCoR6Ww2x6WwPLM+/hg9l/iLduL29nU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740360857;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N6DmzFO4HIzWBxdCLLN4FbtoKwoidbgVbtC5hcg04Dc=;
+	b=NnMPKFp7uSRVRE7AKEKm5nzIqIWLBtvgf0+qLo3xf1arIZxW9yW/A3b6APtVdlgfYPoB/h
+	GnKso9DG+FqdTyDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 903E0136B3;
+	Mon, 24 Feb 2025 01:34:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 2AUiCpHMu2dQagAAD6G6ig
+	(envelope-from <neilb@suse.de>); Mon, 24 Feb 2025 01:34:09 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemf100017.china.huawei.com (7.202.181.16)
+From: "NeilBrown" <neilb@suse.de>
+To: "Al Viro" <viro@zeniv.linux.org.uk>
+Cc: "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Miklos Szeredi" <miklos@szeredi.hu>, "Xiubo Li" <xiubli@redhat.com>,
+ "Ilya Dryomov" <idryomov@gmail.com>, "Richard Weinberger" <richard@nod.at>,
+ "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
+ "Johannes Berg" <johannes@sipsolutions.net>,
+ "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
+ "Tom Talpey" <tom@talpey.com>,
+ "Sergey Senozhatsky" <senozhatsky@chromium.org>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+ linux-um@lists.infradead.org, ceph-devel@vger.kernel.org,
+ netfs@lists.linux.dev
+Subject:
+ Re: [PATCH 1/6] Change inode_operations.mkdir to return struct dentry *
+In-reply-to: <20250222041937.GM1977892@ZenIV>
+References: <>, <20250222041937.GM1977892@ZenIV>
+Date: Mon, 24 Feb 2025 12:34:06 +1100
+Message-id: <174036084630.74271.16513912864596248299@noble.neil.brown.name>
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_TWELVE(0.00)[24];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,suse.cz,szeredi.hu,redhat.com,gmail.com,nod.at,cambridgegreys.com,sipsolutions.net,oracle.com,talpey.com,chromium.org,vger.kernel.org,lists.infradead.org,lists.linux.dev];
+	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Commit 196e402adf2e ("ext4: improve cr 0 / cr 1 group scanning") introduces
-the sysfs control interface "mb_max_linear_groups" to address the problem
-that rotational devices performance degrades when the "mb_optimize_scan"
-feature is enabled, which may result in distant block group allocation.
+On Sat, 22 Feb 2025, Al Viro wrote:
+> On Fri, Feb 21, 2025 at 10:36:30AM +1100, NeilBrown wrote:
+>=20
+> > +In general, filesystems which use d_instantiate_new() to install the new
+> > +inode can safely return NULL.  Filesystems which may not have an I_NEW i=
+node
+> > +should use d_drop();d_splice_alias() and return the result of the latter.
+>=20
+> IMO that's a bad pattern, _especially_ if you want to go for "in-update"
+> kind of stuff later.
 
-However, the name of the interface was incorrect in the comment to the
-ext4/mballoc.c file, and this patch fixes it, without further changes.
+Agreed.  I have a draft patch to change d_splice_alias() and
+d_exact_alias() to work on hashed dentrys.  I thought it should go after
+these mkdir patches rather than before.
 
-Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
----
- fs/ext4/mballoc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks,
+NeilBrown
 
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index b25a27c86696..68b54afc78c7 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -187,7 +187,7 @@
-  * /sys/fs/ext4/<partition>/mb_min_to_scan
-  * /sys/fs/ext4/<partition>/mb_max_to_scan
-  * /sys/fs/ext4/<partition>/mb_order2_req
-- * /sys/fs/ext4/<partition>/mb_linear_limit
-+ * /sys/fs/ext4/<partition>/mb_max_linear_groups
-  *
-  * The regular allocator uses buddy scan only if the request len is power of
-  * 2 blocks and the order of allocation is >= sbi->s_mb_order2_reqs. The
-@@ -209,7 +209,7 @@
-  * get traversed linearly. That may result in subsequent allocations being not
-  * close to each other. And so, the underlying device may get filled up in a
-  * non-linear fashion. While that may not matter on non-rotational devices, for
-- * rotational devices that may result in higher seek times. "mb_linear_limit"
-+ * rotational devices that may result in higher seek times. "mb_max_linear_groups"
-  * tells mballoc how many groups mballoc should search linearly before
-  * performing consulting above data structures for more efficient lookups. For
-  * non rotational devices, this value defaults to 0 and for rotational devices
--- 
-2.39.2
+
+>=20
+> That's pretty much the same thing as d_drop()/d_rehash() window.
+>=20
+> We'd be better off dropping that BUG_ON() in d_splice_alias() and teaching
+> __d_add() to handle the "it's a hashed negative" case.
+>=20
 
 
