@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-42520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B28E5A42EE7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 22:21:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A37AA42EE4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 22:21:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 039293A7914
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 21:21:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C46ED163A34
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 21:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36D71EEA29;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D0A1DC9B1;
 	Mon, 24 Feb 2025 21:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="I7K6wl5s"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="qT56IP/q"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2561D86E8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3B61DAC81
 	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 21:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740432057; cv=none; b=hgeUbjJYDorV4b25xyzaAPTkHbL9b5I5twuPgkOpMqZ1Nb5zkttlemucFRYrLP9mkFXvb2K/h3TvQu8/uLi8IdW8why8wpa6A9zUqJCW/+sxJn08HlFGIxdQURjfeBlVezUB55IWoYIwKZXipmpl4ijjlqga3dveSyttsEOmMkw=
+	t=1740432056; cv=none; b=HdjSo1iKQzk6uaa32cWEbj0n6ms84oGs9maI2QKne2c4ASoB57m4EHSXl7r1Cukot0it0fzoMJa8htUsS35EWxhl5A5XozO6mZW7Kv4G9qO+hnRhHld81Og+V6w7mwsv8aUotXiOYTyfSS4+W5ItqQ8o1791ztgRQJxzhbEIu+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740432057; c=relaxed/simple;
-	bh=RYmn5R972EMoW46FoCrbjfqIQ2d6weOOnxiTtGpUrjk=;
+	s=arc-20240116; t=1740432056; c=relaxed/simple;
+	bh=5Y27ygzRBqQnBaUtl5iTCJpqzpGDuKFwnZMhhF0CCqg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Oqin1nvqM8gs5oenOpryeetwBThkxFY7PW7y4fBhLsYyVdp1a5YJMdNXsghdZ5aztwEy2kcz4zXAYQPb66xZjo/uVg9RSA7kADndUeb34itPPs6sinfZBGj/gVxf/z6QNmDSXANC1o+AKbDmiFjATikH0TIAU5gFK/rW6l4zrZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=I7K6wl5s; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=U9+RM98um9QwRC6xZVEWV293kvRS0frmhSff1yPipQv8VHmlihOQK11ETEWmiLfywB2HYunl+kIfR+YVkBb4PCbXoN4m/lSIA4h+5RoXevYolxnv/o/DdDqSWk0OrDM0NiFPXG8O3RVQaaO5GE20EuUvmjHHJqwrUj3RM37bqq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=qT56IP/q; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=dEwkjcQG/jmQpvWMbyrZsz6eAoqgmglkp0CU+P/pvLg=; b=I7K6wl5sXuqW8GGSg3njyN4GNA
-	rIx8iFHv8gP1MFreDv0rcXYxrVBpIFzdzgSGqwJM2llDnM54hBbM2rQrINDFS8SF36OiI7QPIOrPf
-	77tkUBOKf5dxywpUYEsjPuhvlYKG9wH5+DZNCv8sNc58uLnmwxS4CdOKodEspZM2QZSeZUdL/RSJr
-	SntwvU23ruJYw2QeEXeXvrnvRn8dtWjzeBO3qrTSvY+JVaSlUIEXle4ex/tRSqYNtCUdlzNoOQweT
-	hk7uoyos/Ep4XpNTai2NZ1xKMQx58DtJt/646K5CmbJPBcu9S0Z7C0Bwv2uY3lbHLPt7SHr/Uc9a8
-	FuZklaXg==;
+	bh=yN12Av02FX9my/OflwXc2GQXN8NvziMZsYZ+87a45qE=; b=qT56IP/qgsTTmbZFcWmE8dQMXM
+	HXVoenpVd8lci3Xv3ehtN7cn0D/43qbSODWpvVxgi6GQ/xMWrniRxAmi5RcVqpCJh5zYkufPdnci6
+	UJ7E6JPCxPLgobgYaS4gHzPxMX1Jb54UPA29gAHG+2buesJ+xGNt6ccl4AW8ZtwYEbV6Y0e6h3zP6
+	ZnEUijtvY8e9yryOFF3VRrwXqSV4zsbR1jv0qUKWT9QakC2ECnKpSrOTlpOTsrOZyEKDnw+jDhxWI
+	R38QNJbguvzx/CNbf7QdnuSpR1OXr4gXX4trAHvq/qGz9/XL5Hfy1jdhiTpM4b3Tl1pMJ1R8Ejdq3
+	A1HBFfOg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tmfsh-00000007Mx2-3tKN;
-	Mon, 24 Feb 2025 21:20:51 +0000
+	id 1tmfsi-00000007Mx4-03HY;
+	Mon, 24 Feb 2025 21:20:52 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
@@ -51,12 +51,13 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	Neil Brown <neilb@suse.de>,
 	Miklos Szeredi <miklos@szeredi.hu>,
 	Jan Kara <jack@suse.cz>
-Subject: [PATCH 01/21] procfs: kill ->proc_dops
-Date: Mon, 24 Feb 2025 21:20:31 +0000
-Message-ID: <20250224212051.1756517-1-viro@zeniv.linux.org.uk>
+Subject: [PATCH 02/21] new helper: d_splice_alias_ops()
+Date: Mon, 24 Feb 2025 21:20:32 +0000
+Message-ID: <20250224212051.1756517-2-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250224141444.GX1977892@ZenIV>
+In-Reply-To: <20250224212051.1756517-1-viro@zeniv.linux.org.uk>
 References: <20250224141444.GX1977892@ZenIV>
+ <20250224212051.1756517-1-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,74 +67,157 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-It has two possible values - one for "forced lookup" entries, another
-for the normal ones.  We'd be better off with that as an explicit
-flag anyway and in addition to that it opens some fun possibilities
-with ->d_op and ->d_flags handling.
+Uses of d_set_d_op() on live dentry can be very dangerous; it is going
+to be withdrawn and replaced with saner things.
+
+The best way for a filesystem is to have the default dentry_operations
+set at mount time and be done with that - __d_alloc() will use that.
+
+Currently there are two cases when d_set_d_op() is used on a live dentry -
+one is procfs, which has several genuinely different dentry_operations
+instances (different ->d_revalidate(), etc.) and another is
+simple_lookup(), where we would be better off without overriding ->d_op.
+
+For procfs we have d_set_d_op() calls followed by d_splice_alias();
+provide a new helper (d_splice_alias_ops(inode, dentry, d_ops)) that would
+combine those two, and do the d_set_d_op() part while under ->d_lock.
+That eliminates one of the places where ->d_flags had been modified
+without holding ->d_lock; current behaviour is not racy, but the reasons
+for that are far too brittle.  Better move to uniform locking rules and
+simpler proof of correctness...
+
+The next commit will convert procfs to use of that helper; it is not
+exported and won't be until somebody comes up with convincing modular
+user for it.
+
+Again, the best approach is to have default ->d_op and let __d_alloc()
+do the right thing; filesystem _may_ need non-uniform ->d_op (procfs
+does), but there'd better be good reasons for that.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/proc/generic.c  | 8 +++++---
- fs/proc/internal.h | 5 +++--
- 2 files changed, 8 insertions(+), 5 deletions(-)
+ fs/dcache.c            | 63 ++++++++++++++++++++++++------------------
+ include/linux/dcache.h |  3 ++
+ 2 files changed, 39 insertions(+), 27 deletions(-)
 
-diff --git a/fs/proc/generic.c b/fs/proc/generic.c
-index 8ec90826a49e..499c2bf67488 100644
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -254,7 +254,10 @@ struct dentry *proc_lookup_de(struct inode *dir, struct dentry *dentry,
- 		inode = proc_get_inode(dir->i_sb, de);
- 		if (!inode)
- 			return ERR_PTR(-ENOMEM);
--		d_set_d_op(dentry, de->proc_dops);
-+		if (de->flags & PROC_ENTRY_FORCE_LOOKUP)
-+			d_set_d_op(dentry, &proc_net_dentry_ops);
-+		else
-+			d_set_d_op(dentry, &proc_misc_dentry_ops);
- 		return d_splice_alias(inode, dentry);
- 	}
- 	read_unlock(&proc_subdir_lock);
-@@ -448,9 +451,8 @@ static struct proc_dir_entry *__proc_create(struct proc_dir_entry **parent,
- 	INIT_LIST_HEAD(&ent->pde_openers);
- 	proc_set_user(ent, (*parent)->uid, (*parent)->gid);
+diff --git a/fs/dcache.c b/fs/dcache.c
+index e3634916ffb9..c85efbda133a 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -2641,7 +2641,8 @@ EXPORT_SYMBOL(__d_lookup_unhash_wake);
  
--	ent->proc_dops = &proc_misc_dentry_ops;
- 	/* Revalidate everything under /proc/${pid}/net */
--	if ((*parent)->proc_dops == &proc_net_dentry_ops)
-+	if ((*parent)->flags & PROC_ENTRY_FORCE_LOOKUP)
- 		pde_force_lookup(ent);
+ /* inode->i_lock held if inode is non-NULL */
  
- out:
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index 1695509370b8..07f75c959173 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -44,7 +44,6 @@ struct proc_dir_entry {
- 		const struct proc_ops *proc_ops;
- 		const struct file_operations *proc_dir_ops;
- 	};
--	const struct dentry_operations *proc_dops;
- 	union {
- 		const struct seq_operations *seq_ops;
- 		int (*single_show)(struct seq_file *, void *);
-@@ -67,6 +66,8 @@ struct proc_dir_entry {
- 	char inline_name[];
- } __randomize_layout;
- 
-+#define PROC_ENTRY_FORCE_LOOKUP 2 /* same space as PROC_ENTRY_PERMANENT */
-+
- #define SIZEOF_PDE	(				\
- 	sizeof(struct proc_dir_entry) < 128 ? 128 :	\
- 	sizeof(struct proc_dir_entry) < 192 ? 192 :	\
-@@ -346,7 +347,7 @@ extern const struct dentry_operations proc_net_dentry_ops;
- static inline void pde_force_lookup(struct proc_dir_entry *pde)
+-static inline void __d_add(struct dentry *dentry, struct inode *inode)
++static inline void __d_add(struct dentry *dentry, struct inode *inode,
++			   const struct dentry_operations *ops)
  {
- 	/* /proc/net/ entries can be changed under us by setns(CLONE_NEWNET) */
--	pde->proc_dops = &proc_net_dentry_ops;
-+	pde->flags |= PROC_ENTRY_FORCE_LOOKUP;
+ 	wait_queue_head_t *d_wait;
+ 	struct inode *dir = NULL;
+@@ -2652,6 +2653,8 @@ static inline void __d_add(struct dentry *dentry, struct inode *inode)
+ 		n = start_dir_add(dir);
+ 		d_wait = __d_lookup_unhash(dentry);
+ 	}
++	if (unlikely(ops))
++		d_set_d_op(dentry, ops);
+ 	if (inode) {
+ 		unsigned add_flags = d_flags_for_inode(inode);
+ 		hlist_add_head(&dentry->d_u.d_alias, &inode->i_dentry);
+@@ -2683,7 +2686,7 @@ void d_add(struct dentry *entry, struct inode *inode)
+ 		security_d_instantiate(entry, inode);
+ 		spin_lock(&inode->i_lock);
+ 	}
+-	__d_add(entry, inode);
++	__d_add(entry, inode, NULL);
+ }
+ EXPORT_SYMBOL(d_add);
+ 
+@@ -2981,30 +2984,8 @@ static int __d_unalias(struct dentry *dentry, struct dentry *alias)
+ 	return ret;
  }
  
+-/**
+- * d_splice_alias - splice a disconnected dentry into the tree if one exists
+- * @inode:  the inode which may have a disconnected dentry
+- * @dentry: a negative dentry which we want to point to the inode.
+- *
+- * If inode is a directory and has an IS_ROOT alias, then d_move that in
+- * place of the given dentry and return it, else simply d_add the inode
+- * to the dentry and return NULL.
+- *
+- * If a non-IS_ROOT directory is found, the filesystem is corrupt, and
+- * we should error out: directories can't have multiple aliases.
+- *
+- * This is needed in the lookup routine of any filesystem that is exportable
+- * (via knfsd) so that we can build dcache paths to directories effectively.
+- *
+- * If a dentry was found and moved, then it is returned.  Otherwise NULL
+- * is returned.  This matches the expected return value of ->lookup.
+- *
+- * Cluster filesystems may call this function with a negative, hashed dentry.
+- * In that case, we know that the inode will be a regular file, and also this
+- * will only occur during atomic_open. So we need to check for the dentry
+- * being already hashed only in the final case.
+- */
+-struct dentry *d_splice_alias(struct inode *inode, struct dentry *dentry)
++struct dentry *d_splice_alias_ops(struct inode *inode, struct dentry *dentry,
++				  const struct dentry_operations *ops)
+ {
+ 	if (IS_ERR(inode))
+ 		return ERR_CAST(inode);
+@@ -3050,9 +3031,37 @@ struct dentry *d_splice_alias(struct inode *inode, struct dentry *dentry)
+ 		}
+ 	}
+ out:
+-	__d_add(dentry, inode);
++	__d_add(dentry, inode, ops);
+ 	return NULL;
+ }
++
++/**
++ * d_splice_alias - splice a disconnected dentry into the tree if one exists
++ * @inode:  the inode which may have a disconnected dentry
++ * @dentry: a negative dentry which we want to point to the inode.
++ *
++ * If inode is a directory and has an IS_ROOT alias, then d_move that in
++ * place of the given dentry and return it, else simply d_add the inode
++ * to the dentry and return NULL.
++ *
++ * If a non-IS_ROOT directory is found, the filesystem is corrupt, and
++ * we should error out: directories can't have multiple aliases.
++ *
++ * This is needed in the lookup routine of any filesystem that is exportable
++ * (via knfsd) so that we can build dcache paths to directories effectively.
++ *
++ * If a dentry was found and moved, then it is returned.  Otherwise NULL
++ * is returned.  This matches the expected return value of ->lookup.
++ *
++ * Cluster filesystems may call this function with a negative, hashed dentry.
++ * In that case, we know that the inode will be a regular file, and also this
++ * will only occur during atomic_open. So we need to check for the dentry
++ * being already hashed only in the final case.
++ */
++struct dentry *d_splice_alias(struct inode *inode, struct dentry *dentry)
++{
++	return d_splice_alias_ops(inode, dentry, NULL);
++}
+ EXPORT_SYMBOL(d_splice_alias);
+ 
  /*
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index 4afb60365675..f47f3a47d97b 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -250,6 +250,9 @@ extern struct dentry * d_alloc_anon(struct super_block *);
+ extern struct dentry * d_alloc_parallel(struct dentry *, const struct qstr *,
+ 					wait_queue_head_t *);
+ extern struct dentry * d_splice_alias(struct inode *, struct dentry *);
++/* weird procfs mess; *NOT* exported */
++extern struct dentry * d_splice_alias_ops(struct inode *, struct dentry *,
++					  const struct dentry_operations *);
+ extern struct dentry * d_add_ci(struct dentry *, struct inode *, struct qstr *);
+ extern bool d_same_name(const struct dentry *dentry, const struct dentry *parent,
+ 			const struct qstr *name);
 -- 
 2.39.5
 
