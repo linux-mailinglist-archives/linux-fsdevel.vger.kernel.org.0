@@ -1,330 +1,342 @@
-Return-Path: <linux-fsdevel+bounces-42399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36301A41B9A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 11:49:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 342D5A41BC5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 11:56:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2D591891BA6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 10:49:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44EA21896D49
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 10:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A666E257AE1;
-	Mon, 24 Feb 2025 10:49:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421BC257AE0;
+	Mon, 24 Feb 2025 10:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gf+ow+kh";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Tb2fCR0p"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pLCojCI6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mI6wHxTt";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pLCojCI6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mI6wHxTt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B69724502C;
-	Mon, 24 Feb 2025 10:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740394169; cv=fail; b=t4CzRw6kZPNXWBD6gtKjS+IdQh8TTRfkt+OnWb1tNp14uSGl+9fGu4Tk86ai6Sw3vwr/QIYw3ckCh+DU/rNIg2PasIW02gxf28GJFgxOUAmE1R2EDhX1GdoOr7Q7XrXVJtnCIRsi8PmHmSvp8RGocXoMHo8IWg/ILrdzTvPIFD8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740394169; c=relaxed/simple;
-	bh=RO+64geS9SjN85brslW06TcYy0wjBHmeCchaOAT8Zww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bukkbF7kWIqV9fLEdEY4u5qcbUyR7epjRah3iEjPNslAefhL2pOQ99BRoa/8pqZMBkHCYEbwfP9A5aRv5KvBs09ver1oGu09E1+LD9imKLf6EH+/5wHljToijy5akcRDgPF7svXjwSlgNgq72I+Lf38QwE46yUjdcQnluhhqnic=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=gf+ow+kh; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Tb2fCR0p; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O7fROV013302;
-	Mon, 24 Feb 2025 10:49:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=+TOovHBy3ziS1x56E6
-	m00UzJ3SQ5GB+YU6YAedA2W4o=; b=gf+ow+kh+3qjyj+dJb9CIF9nlOuvwyIWdc
-	0x+efNZz9C0O6MyZHctuaPddeBebvGR5g3txuTJc9yfAvj3LzQrqqpVuwePRcz21
-	fLpZeoUPhr57QbxV/fl0DERyUEqI7F4TMGAfn9tk7yFpuoas/Kg2e+R+SzAH8S1y
-	GsR1pVPrTF1pz8AWreKTG6JwBelYOnfc6Jk7dChDKn9Q8gqsFoALFCr4fk9Sau47
-	+OnqatGOfHi028O6SdbKnNAJlkKIwz4a5gfqQdiZ0CDN16AWg/It2mjn7wpSMEWA
-	uzwSfFi3h0ITRgrQt5MUuvKijpaNChFfW50wqxRS+g68xLCodslA==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44y6mbj9ne-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 24 Feb 2025 10:49:11 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51OAb2TJ002741;
-	Mon, 24 Feb 2025 10:49:10 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2177.outbound.protection.outlook.com [104.47.59.177])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 44y517qyn1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 24 Feb 2025 10:49:10 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QqjpxjvTKCEObQZxgVtRbDcRiMLEFE/T1HFUMQNzlvPkm2U0kIh4Bi9rMikM2+OTVbbPVQ0eJX8Hsb5Doz7msiRQvr6GexfM8CLg6ls0DWKmtzLF+q86HiX9vmaGNWxc62iEZb1TvNoohKeTQ0YHuB3XJmHlqf1wNzMXXzskJGjPVhpPWb6IqLhFyN7Pc9q9Pfczf8qYtOfMAO71rnMQ+6m33wu2lzHocFENbi2LPxLRXGtrYPG718Ne7uMyeZwc+RxUrJDNsRwGecoC8h+HgGlnZBmiU81WfPYcnvoSDB8KAf2PTei9c9PdeLeshbqJYMo4e+sThUWHioUjYE8C3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+TOovHBy3ziS1x56E6m00UzJ3SQ5GB+YU6YAedA2W4o=;
- b=po/RzilCr3PmtkqwBbGL6ZxL5Jz3KFIkDdOo86gWRDKKF2EGXUQO+ER3pylv8ATglFNrE65W/1ECT3l9e2t3JVBwCjDhX0KAUOMhBPBrn7T3IrVMUJPsZ3FIYW0Zxr+PTPesjB0/lXWoCSZKQ1lsUqthxCkSCQeABgMkD6uy370DT8G2SAvQQqV7Og9RaF9yyoZ7coqs3ho7QxMw30jfYzbiUDcyabjLZJhOVanFsFwp4tALG0vi1dHEaz5aObgsurQKTIIYxNXCZYwHKpuNhU8UGTBEOiXma+Dm9L1Ap9ZCR/FA+zAhf5gXRcJludrO5MzJWq2WVtQhngFF+cQYSA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+TOovHBy3ziS1x56E6m00UzJ3SQ5GB+YU6YAedA2W4o=;
- b=Tb2fCR0p5Oe6E3QbaE4vAv/tEOD/c9EEi//r32MaHnuQufGJXTvJDIgzHclNL/I5F+7WbDx6Nlf953G4xcbqoPONLiR6G6ElqLgmpegvE62PQiArO2OREdEZg6F+5idYWn/Ra6AKRvz3GGkVqoNjwmM8trmcuokvRtBV+jpERY8=
-Received: from MN2PR10MB4112.namprd10.prod.outlook.com (2603:10b6:208:11e::33)
- by SJ0PR10MB5632.namprd10.prod.outlook.com (2603:10b6:a03:3df::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Mon, 24 Feb
- 2025 10:49:07 +0000
-Received: from MN2PR10MB4112.namprd10.prod.outlook.com
- ([fe80::3256:3c8c:73a9:5b9c]) by MN2PR10MB4112.namprd10.prod.outlook.com
- ([fe80::3256:3c8c:73a9:5b9c%7]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
- 10:49:06 +0000
-Date: Mon, 24 Feb 2025 10:49:04 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
-        "Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>,
-        Juan Yescas <jyescas@google.com>, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH 1/2] fs/proc/task_mmu: add guard region bit to pagemap
-Message-ID: <e687dd75-b76f-4eab-805d-7b1bb18b1365@lucifer.local>
-References: <cover.1740139449.git.lorenzo.stoakes@oracle.com>
- <521d99c08b975fb06a1e7201e971cc24d68196d1.1740139449.git.lorenzo.stoakes@oracle.com>
- <857b2c3f-7be7-44e8-a825-82a7353665fb@redhat.com>
- <cd57ed04-c6b1-4df3-a5cb-a33078a08e74@lucifer.local>
- <09d7ca19-e6cc-4aa9-8474-8975373bdebd@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <09d7ca19-e6cc-4aa9-8474-8975373bdebd@redhat.com>
-X-ClientProxiedBy: LO2P123CA0035.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600::23)
- To MN2PR10MB4112.namprd10.prod.outlook.com (2603:10b6:208:11e::33)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E8625744C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 10:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740394480; cv=none; b=p78nACNxO1maMC9PstNrMBaoaKU+XBArHz3KdrjEpeah6oPklNahEL8BehOn9a63FCWnt9yrmzfLjbDzsow7idHow9chebhlaEed+E2GX8bEdpbI+BW32No3a7A606mFmM5RE/ue6o1vCKOcjo3pG4Mx1A8VUGqk8SmtguLWDIk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740394480; c=relaxed/simple;
+	bh=167yThDNvGov9fjYCXY74PYz0T9DVf+w6k4ikUM5BsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CEwpRUml1UNzoSLuOlB3xR76so34sq4+fv22Akam2rM6qTkHNnFAQafzK7/dDvNCspNIm4MG+baIygC0+vU2bh0Oc9aIrApD8lXPbbEfpo28YYbDDkB9/SNtTNhOxXrmHwh+ACwXMY6+7x9ITB7L6sUjHED0IXs87oYtJiFY8IM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pLCojCI6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mI6wHxTt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pLCojCI6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mI6wHxTt; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8BA3E21181;
+	Mon, 24 Feb 2025 10:54:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740394474; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gIYv0/Q/Zeq48EvvOMQm6hO5YrgVHHe1Ef648QzRuwU=;
+	b=pLCojCI6Ndh8FwupTNlbbixAqjYHuxtVBB/wAhSI2CLqc5jJkopVnCJxSWHzaCKQwe2dH4
+	3x617lQVv51ilS4EsCYxVNEOhnsZqBjQfoVAZgBN29x/s5kbOz/dlsanhZegKzfgyXT5VC
+	cRDnBMZ9oK3wXeYa4tXtE7DdF72F96o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740394474;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gIYv0/Q/Zeq48EvvOMQm6hO5YrgVHHe1Ef648QzRuwU=;
+	b=mI6wHxTt5f/7/t2PAluzL2HfiTQQw6hI/kg92M+8rMU6W15iP4rnG9oxLReHFFId8HEKpr
+	LHlaPGLupEhmG0Aw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740394474; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gIYv0/Q/Zeq48EvvOMQm6hO5YrgVHHe1Ef648QzRuwU=;
+	b=pLCojCI6Ndh8FwupTNlbbixAqjYHuxtVBB/wAhSI2CLqc5jJkopVnCJxSWHzaCKQwe2dH4
+	3x617lQVv51ilS4EsCYxVNEOhnsZqBjQfoVAZgBN29x/s5kbOz/dlsanhZegKzfgyXT5VC
+	cRDnBMZ9oK3wXeYa4tXtE7DdF72F96o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740394474;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gIYv0/Q/Zeq48EvvOMQm6hO5YrgVHHe1Ef648QzRuwU=;
+	b=mI6wHxTt5f/7/t2PAluzL2HfiTQQw6hI/kg92M+8rMU6W15iP4rnG9oxLReHFFId8HEKpr
+	LHlaPGLupEhmG0Aw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7247113929;
+	Mon, 24 Feb 2025 10:54:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cgroG+pPvGddfwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 24 Feb 2025 10:54:34 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 202B0A090D; Mon, 24 Feb 2025 11:54:34 +0100 (CET)
+Date: Mon, 24 Feb 2025 11:54:34 +0100
+From: Jan Kara <jack@suse.cz>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: Richard Henderson <richard.henderson@linaro.org>, 
+	Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	Helge Deller <deller@gmx.de>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v3] fs: introduce getfsxattrat and setfsxattrat syscalls
+Message-ID: <fyp7gcbeo3xlrh7zi7k6m5aa6h5otbufxq3kh5zvgr3sjdbxl3@4nkuwx46yajk>
+References: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR10MB4112:EE_|SJ0PR10MB5632:EE_
-X-MS-Office365-Filtering-Correlation-Id: c0a47a6d-05ca-4acc-2c1e-08dd54c0dc6b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cOR3CLVy9fV07X80XJ1mpKH4KoLoD29nOs/gIjIIHmhM7XBBAJZlLtx06GVk?=
- =?us-ascii?Q?JJA8FZaVg7KG0pwQ6uTVrrEfWetrhrfLouOdqVUbPIXiPK+GpJ6frk2JM9mw?=
- =?us-ascii?Q?13O+feHtpFeY++JWqYImGMBqoVI1t2MInI3RnoHis3aTOYC+4aSrRCQYyE+3?=
- =?us-ascii?Q?bMhXEP0mzCJhJpUI4a/y7GNPG2k280Doho6UW1Aov0jcrZJb79jZs597dFA2?=
- =?us-ascii?Q?UsF91baEHglTaJbzMgyrMKKqY6ZgcfDD3SU0EpdoZD6ork40kWCxoEJNScaB?=
- =?us-ascii?Q?GLHlCGs+cpkk/n67zqFEnz4HQ+0L0/fxhO/b6uTM0bImLhKF5SY/yaaRJL34?=
- =?us-ascii?Q?FttrVajKSFpXK8oyT9vGMmkCUZA8/p6+S1WIKKTz6pX8K1MApPYNCzk9ImxD?=
- =?us-ascii?Q?i24qJU1mNiTSAhyrpA59k6Cyiv0tDkjEtmM3rxrtVALckauX/2laQCiEXXeV?=
- =?us-ascii?Q?0UzVybGQM7Atmy2NuKythnZu9lC9koDtZfJl6ikOvLrwF/FdFdWsI5u0bV5H?=
- =?us-ascii?Q?NzGYQFmA38kTrsCZW5H31njrwI6+uxZ64u0WpWXJpYOvhLz+lS9C++/VNYlx?=
- =?us-ascii?Q?7Ek12p1dmeMkw1bMBmYc9tAahriZVtxxi4YPc48J6IAsTdGaBU+FhoSK3QvD?=
- =?us-ascii?Q?RO+kUyn82HM+5x9Yb35JeCoOgor5vEb5LOJYvrrfmvKPqRIxtOr84hum0D3K?=
- =?us-ascii?Q?8W8APgH1rfDmo+CRw/mkDASMyBWBJ56f7xpWtiYSIrkilbCrYJaVRuMLTQ2H?=
- =?us-ascii?Q?5MOihMVQoQ28+eaKNyIE+PbLq37YfGK9klWQKPv2mcnaNo2SHTGOT0iiUqOU?=
- =?us-ascii?Q?/QQDeOosyt1NROJiZp0E+qsxMf0qXeU55ePPz3CbSfvXFAE7x3976ikkDTFb?=
- =?us-ascii?Q?3V0UNaMrX8IowkqrTwQ3tRrAnSNy3M33t1HsqiuUaC8+6jZQjoHBPud7GYIu?=
- =?us-ascii?Q?raxsoKWCQWRhoWQUdBbyxkhResfA1pkKy0D23m2JzB2TmiRjf7aR4C8Niyn3?=
- =?us-ascii?Q?eWxiBNrz20FZ6WwGbZFmePUA8ED22mO7RjlGFTuuEn26iB3q9tJIKHx1DoAe?=
- =?us-ascii?Q?iDf5XZXu1w8VURa+CnGA0dJv775Tkrj8xI0XhpbvqGr4YfHbWV5y+F2jS1At?=
- =?us-ascii?Q?GDpiq4PXdrLlDvidHGk24e52YSHGv0njH8DKiCpHZpw9fQioBuvJM6LK+mYb?=
- =?us-ascii?Q?MLcf3XiAPLwxsRnn1V4IYM8TXra1pwVf5A8c3ejBHbVcB+9zq2kLLSWVSY1M?=
- =?us-ascii?Q?G4lD/VqrniQ31b54dsO+Z6yqBnwVBV+DyP1kWbT2lklKojQVN0TDbuUm83nJ?=
- =?us-ascii?Q?dK17P/w5iMU4RyE4DAyQEOIPs7EcnUz9zgthT2C3P9yeas23DBz3ah0/U5W3?=
- =?us-ascii?Q?hA+eRLgHznvpCc/K5SFvMT27q15v?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4112.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ZppXIlwrhXtwIrhM4YyDQD/wa+8hcSs3hBXozg4njyn8Y4KioHkO05268WcM?=
- =?us-ascii?Q?YoctYDwgAb3IT5TK+Uhytpn10g0doNLHDCKPKgacXxJISLzgZ20Yuu8vrsZ8?=
- =?us-ascii?Q?FH9dka57TGPEH7sfkC4L5y1ghgnDw05JdviTwP749+LZ5OzejXNJlEiDjPnW?=
- =?us-ascii?Q?kjdbeqBWb1brcGSQabuEEGnGVzH1opMZrt0VtjjKE1T4e982p3OfgSWCq0a2?=
- =?us-ascii?Q?LPvMN+tTcSFqXBtG/ILpgGiZCb/Xgl9EY4yTSe/y5Lvc5gy2wAbc7xem5GQ2?=
- =?us-ascii?Q?X450+shITu78LvJOlAkKuQbjUF3/4OGYkZiz+FMNmJNAThggYdjKh72sBv8d?=
- =?us-ascii?Q?jY7uMMMPY0Tl3QsnUsLfdhasAQpM584uo8ZL9CeivSiGhp3RE8gjar9pDGDf?=
- =?us-ascii?Q?bnL3V8WBAQ4gqsk23OHCnNAU9WIcM18hw99v7EFI72nA2TYpwKgktx25t95T?=
- =?us-ascii?Q?ECVjwUn+xN0psvaJ9+EFmu5n5bhhuMknFZzGaCwjiGqiXl5b5VAidtJXXp5f?=
- =?us-ascii?Q?NDXGNg4t/C0BshtiA1vm7ZTuliJxQqx7ype8N0t3+GHtj79wD7OmvdFU25X9?=
- =?us-ascii?Q?vjA62C0GsIBwY97Mh/ED09SGRXZqjBfvJcYfpTssVQ6V5lnszTFge2m2PbxY?=
- =?us-ascii?Q?Ijjts+Fk/Xu4OkpgH6yjDiQkOk0zV+mZONfvlB3z9A8KffnqIT3SVO+dXH2U?=
- =?us-ascii?Q?bH4/X0FkkClWCYfGe5QZay4zt6yLGcl0P8B6y0wksABdEXGSZCpKBIr8OuQE?=
- =?us-ascii?Q?/p8EVlOVij4RW/Qbx4Vs6rZrOlQeB13sHyB2lfQhThYtI6G36LG+lXb2L6JT?=
- =?us-ascii?Q?+G53AdrUpzSh7UhoJZxUzchIwWcSrlSC0FyVbdsHZOYk0NHsg++iadf0M+rk?=
- =?us-ascii?Q?BiRXMXx91aht0S2He+JroB3YCqtV2xCg3HeAFgceFEgMvLIQttehhaPlgFb2?=
- =?us-ascii?Q?WpN4OAsJY4FiRSP5MqrNdmbisF4qY5eFWmwx2yQvWq9x2Jf6F3XNwy2n/5p3?=
- =?us-ascii?Q?Tu1oisFdlvDHhE6LBe2+aAR0rnXuwFfr7uFV5c/h4jr3Z9BwizGHbmhE/PtO?=
- =?us-ascii?Q?4tsWhmOPwe+ToOGEaZNad/2QJgDWZwArM3mmEcDlHiSzHrRoh+U8ZhzujDxN?=
- =?us-ascii?Q?I7uhR/uZgoAcyAH9lEa5Emt/hwen2OqmX2SktJ3IzIAZPa9adw+svNX5r/uB?=
- =?us-ascii?Q?vwa20pv5Af77E1GtL+he7VMVgOK8E2dBr3apokui4agwdhZSMzHxg/C1aqg5?=
- =?us-ascii?Q?UeJKHUu0QafC3Lv6Ban5Q29JHKEgyVYawJM8B/yjDexQaozLg/UdrH+URE8b?=
- =?us-ascii?Q?FHi5JU7cGS8KnftNswN6nTVHwd9+0Cv5YeQeiaPsxZAscCDc03/KxTH8dftb?=
- =?us-ascii?Q?T5XJnwx5tFI10+hm1IYGZtCb38mYSEAvRKpYDV7OJPKO50BtltaEHqHtL4C1?=
- =?us-ascii?Q?PdYJbZYZ53md6EEHbf3IF7b5LNUyBd/ww/CTsMeaPtkj0Xq7o715hsVKTPkI?=
- =?us-ascii?Q?zZuQGd/JY1CtfK8nLTImW2aeTIG29UrwwirvgRO5LLnLRkHPJ96KZfTDfn+e?=
- =?us-ascii?Q?MLMYnxOmAefulFNM9qALqjWCpHFN43dDdNIMDjxNC3Y4AfQ5d1Eo6tRz9iFT?=
- =?us-ascii?Q?VQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	DGUCq4ZQn8dSKK07wpeI6C6/Dd2dDg7yaQoPaaJINt2lYehq9MfqhzHr/wqJ5nf5GpfSkIUbjewV/isQNkIaZOTJxmYhHJR6BnW2YQp2oky44IfDJNvYyu4g9Cfbw0MDhwulx6LJ9D64fM+yra/bLe293LclB5MoQWw/C5I9u70b1Dzc22L3uplDOhkSc4RmhF2Ft10E//hOgpfWyZjCyVGzzaCzYBm4FIHMPUP4s0pYTO59R8YaWKC/d3q0859UDzusYx2fQaSNdHuVsF7F5jK6+1a3cx+ViDJsDOgaLOUfVF03YEY8xJnl/AnQp3jJVWf1NyZ5TKQw7a+NCCuD+BBasXJbM30JPfDh9iIbcjddBj3YCAZTRRkzmyXSBeKQdFPbqGcfMq3soN1XZo2Vm3uZ2tAaOYapAjbjTfXgCF0zRWKDfX7WW8XK/UZkkX2PVVY3ykfWrSgzRM0RCgGCkg4cINmlJoUkWgsvo+lq40us533E1Ay1ShQvevsNZI7aRvwz6lEVYCq//ZJt++EfavtJjjJDfG4OT3pQaDHLRocM1YONuC4+VPIKY9nBo+1+jzYBqIsgOl93XtXpdJ56Jsc64isLXOaazdNEKQpx5oI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0a47a6d-05ca-4acc-2c1e-08dd54c0dc6b
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4112.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 10:49:06.6215
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QzowDUJgt5bqzK6hanOfClsmREENlucVfE0P5h1nY9rCAjkTPvueXZ9s+Au5MY7ds8M+cBGLMVSr4conf0x78eoCzgdFMjw5+aI2mNQRwSc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5632
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-24_04,2025-02-24_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- mlxscore=0 adultscore=0 bulkscore=0 phishscore=0 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2502100000 definitions=main-2502240079
-X-Proofpoint-ORIG-GUID: -6AEAD4hDut7T0jI_HJL7i3ZVx08bcSL
-X-Proofpoint-GUID: -6AEAD4hDut7T0jI_HJL7i3ZVx08bcSL
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linaro.org,gmail.com,armlinux.org.uk,arm.com,kernel.org,linux-m68k.org,monstr.eu,alpha.franken.de,hansenpartnership.com,gmx.de,linux.ibm.com,ellerman.id.au,csgroup.eu,users.sourceforge.jp,libc.org,physik.fu-berlin.de,davemloft.net,gaisler.com,linutronix.de,redhat.com,alien8.de,linux.intel.com,zytor.com,zankel.net,zeniv.linux.org.uk,suse.cz,digikod.net,google.com,arndb.de,vger.kernel.org,lists.infradead.org,lists.linux-m68k.org,lists.ozlabs.org];
+	R_RATELIMIT(0.00)[to_ip_from(RLyerg7kx5bdf6cnfzf33td54o)];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[56];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On Mon, Feb 24, 2025 at 11:37:24AM +0100, David Hildenbrand wrote:
-> On 24.02.25 11:18, Lorenzo Stoakes wrote:
-> > On Mon, Feb 24, 2025 at 10:27:28AM +0100, David Hildenbrand wrote:
-> > > On 21.02.25 13:05, Lorenzo Stoakes wrote:
-> > > > Currently there is no means by which users can determine whether a given
-> > > > page in memory is in fact a guard region, that is having had the
-> > > > MADV_GUARD_INSTALL madvise() flag applied to it.
-> > > >
-> > > > This is intentional, as to provide this information in VMA metadata would
-> > > > contradict the intent of the feature (providing a means to change fault
-> > > > behaviour at a page table level rather than a VMA level), and would require
-> > > > VMA metadata operations to scan page tables, which is unacceptable.
-> > > >
-> > > > In many cases, users have no need to reflect and determine what regions
-> > > > have been designated guard regions, as it is the user who has established
-> > > > them in the first place.
-> > > >
-> > > > But in some instances, such as monitoring software, or software that relies
-> > > > upon being able to ascertain the nature of mappings within a remote process
-> > > > for instance, it becomes useful to be able to determine which pages have
-> > > > the guard region marker applied.
-> > > >
-> > > > This patch makes use of an unused pagemap bit (58) to provide this
-> > > > information.
-> > > >
-> > > > This patch updates the documentation at the same time as making the change
-> > > > such that the implementation of the feature and the documentation of it are
-> > > > tied together.
-> > > >
-> > > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > > > ---
-> > >
-> > >
-> > > Acked-by: David Hildenbrand <david@redhat.com>
-> >
-> > Thanks! :)
-> > >
-> > > Something that might be interesting is also extending the PAGEMAP_SCAN
-> > > ioctl.
-> >
-> > Yeah, funny you should mention that, I did see that, but on reading the man
-> > page it struck me that it requires the region to be uffd afaict? All the
-> > tests seem to establish uffd, and the man page implies it:
-> >
-> >         To start tracking the written state (flag) of a page or range of
-> >         memory, the UFFD_FEATURE_WP_ASYNC must be enabled by UFFDIO_API
-> >         ioctl(2) on userfaultfd and memory range must be registered with
-> >         UFFDIO_REGISTER ioctl(2) in UFFDIO_REGISTER_MODE_WP mode.
-> >
-> > It would be a bit of a weird edge case to add support there. I was excited
-> > when I first saw this ioctl, then disappointed afterwards... but maybe I
-> > got it wrong?
-> >
->
-> I never managed to review that fully, but I thing that UFFD_FEATURE_WP_ASYNC
-> thingy is only required for PM_SCAN_CHECK_WPASYNC and PM_SCAN_WP_MATCHING.
->
-> See pagemap_scan_test_walk().
->
-> I do recall that it works on any VMA.
+On Tue 11-02-25 18:22:47, Andrey Albershteyn wrote:
+> From: Andrey Albershteyn <aalbersh@redhat.com>
+> 
+> Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
+> extended attributes/flags. The syscalls take parent directory fd and
+> path to the child together with struct fsxattr.
+> 
+> This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
+> that file don't need to be open as we can reference it with a path
+> instead of fd. By having this we can manipulated inode extended
+> attributes not only on regular files but also on special ones. This
+> is not possible with FS_IOC_FSSETXATTR ioctl as with special files
+> we can not call ioctl() directly on the filesystem inode using fd.
+> 
+> This patch adds two new syscalls which allows userspace to get/set
+> extended inode attributes on special files by using parent directory
+> and a path - *at() like syscall.
+> 
+> Also, as vfs_fileattr_set() is now will be called on special files
+> too, let's forbid any other attributes except projid and nextents
+> (symlink can have an extent).
+> 
+> CC: linux-api@vger.kernel.org
+> CC: linux-fsdevel@vger.kernel.org
+> CC: linux-xfs@vger.kernel.org
+> Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
 
-Oh ok well that's handy then!
+Some comments below:
 
->
-> Ah yes, tools/testing/selftests/mm/vm_util.c ends up using it for
-> pagemap_is_swapped() and friends via page_entry_is() to sanity check that
-> what pagemap gives us is consistent with what pagemap_scan gives us.
->
-> So it should work independent of the uffd magic.
-> I might be wrong, though ...
+> +SYSCALL_DEFINE4(getfsxattrat, int, dfd, const char __user *, filename,
+> +		struct fsxattr __user *, fsx, unsigned int, at_flags)
+> +{
+> +	CLASS(fd, dir)(dfd);
+> +	struct fileattr fa;
+> +	struct path filepath;
+> +	int error;
+> +	unsigned int lookup_flags = 0;
+> +
+> +	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
+> +		return -EINVAL;
+> +
+> +	if (at_flags & AT_SYMLINK_FOLLOW)
+	    ^^ This should be !(at_flags & AT_SYMLINK_NOFOLLOW)?
 
-No a quick glance makes me think you're right actually.
+In the check above you verify for AT_SYMLINK_NOFOLLOW and that also matches
+what setxattrat() does...
 
->
-> > >
-> > >
-> > > See do_pagemap_scan().
-> > >
-> > > The benefit here might be that one could effectively search/filter for guard
-> > > regions without copying 64bit per base-page to user space.
-> > >
-> > > But the idea would be to indicate something like PAGE_IS_GUARD_REGION as a
-> > > category when we hit a guard region entry in pagemap_page_category().
-> > >
-> > > (the code is a bit complicated, and I am not sure why we indicate
-> > > PAGE_IS_SWAPPED for non-swap entries, likely wrong ...)
-> >
-> > Yeah, I could go on here about how much I hate how uffd does a 'parallel
-> > implementation' of a ton of stuff and then chucks in if (uffd) { go do
-> > something weird + wonderful } but I'll resist the urge :P :))
-> >
-> > Do you think, if it were uffd-specific, this would be useful?
->
-> If it really is completely uffd-specific for now, I agree that we should
-> rather leave it alone.
 
-Yeah agreed.
+> +		lookup_flags |= LOOKUP_FOLLOW;
+> +
+> +	if (at_flags & AT_EMPTY_PATH)
+> +		lookup_flags |= LOOKUP_EMPTY;
+> +
+> +	if (fd_empty(dir))
+> +		return -EBADF;
 
->
-> >
-> > At any rate, I'm not sure it's _hugely_ beneficial in this form as pagemap
-> > is binary in any case so you're not having to deal with overhead of parsing
-> > a text file at least!
->
-> My thinking was, that if you have a large VMA, with ordinary pagemap you
-> have to copy 8byte per entry (and have room for that somewhere in user
-> space). In theory, with the scanning feature, you can leave that ...
-> scanning to the kernel and don't have to do any copying/allocate space for
-> it in user space etc.
+This check is wrong and in fact the whole dfd handling looks buggy.
+openat(2) manpage describes the expected behavior:
 
-That makes perfect sense!
+       The dirfd argument is used in conjunction with the pathname argument as
+       follows:
 
-I think this one will go a little lower on priorities + I'll come back to it but
-I"ll put it on the one reliable todo list I have, the whiteboard in my home
-office :) everything on that list at least eventually gets looked at, majority
-get done.
+       •  If the pathname given in pathname is absolute,  then  dirfd  is  ig-
+          nored.
+	  ^^^^ This is what you break. If the pathname is absolute, you're
+not expected to touch dirfd.
 
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+       •  If  the pathname given in pathname is relative and dirfd is the spe-
+          cial value AT_FDCWD, then pathname is interpreted  relative  to  the
+          current working directory of the calling process (like open()).
+          ^^^ Also AT_FDCWD handling would be broken by the above check.
 
-Great minds think alike though ;) as soon as I saw this I did think about
-extending it, but seems I mistakenly dismissed for uffd reasons.
+       •  If  the  pathname  given  in pathname is relative, then it is inter-
+          preted relative to the directory referred to by the file  descriptor
+          dirfd  (rather than relative to the current working directory of the
+          calling process, as is done by open() for a relative pathname).   In
+          this  case,  dirfd  must  be a directory that was opened for reading
+          (O_RDONLY) or using the O_PATH flag.
 
-Cheers, Lorenzo
+       If the pathname given in pathname is relative, and dirfd is not a valid
+       file descriptor, an error (EBADF) results.  (Specifying an invalid file
+       descriptor number in dirfd can be used as a means to ensure that  path-
+       name is absolute.)
+
+> +
+> +	error = user_path_at(dfd, filename, lookup_flags, &filepath);
+		^^^ And user_path_at() isn't quite what you need either
+because with AT_EMPTY_PATH we also want to allow for filename to be NULL
+(not just empty string) and user_path_at() does not support that. That's
+why I in my previous replies suggested you should follow what setxattrat()
+does and that sadly it is more painful than it should be. You need
+something like:
+
+	name = getname_maybe_null(filename, at_flags);
+	if (!name) {
+		CLASS(fd, f)(dfd);
+
+		if (fd_empty(f))
+			return -EBADF;
+		error = vfs_fileattr_get(file_dentry(fd_file(f)), &fa);
+	} else {
+		error = filename_lookup(dfd, filename, lookup_flags, &filepath,
+					NULL);
+		if (error)
+			goto out;
+		error = vfs_fileattr_get(filepath.dentry, &fa);
+		path_put(&filepath);
+	}
+	if (!error)
+		error = copy_fsxattr_to_user(&fa, fsx);
+out:
+	putname(name);
+	return error;
+
+Longer term, we need to provide user_path_maybe_null_at() for this but I
+don't want to drag you into this cleanup :)
+
+> +	if (error)
+> +		return error;
+> +
+> +	error = vfs_fileattr_get(filepath.dentry, &fa);
+> +	if (!error)
+> +		error = copy_fsxattr_to_user(&fa, fsx);
+> +
+> +	path_put(&filepath);
+> +	return error;
+> +}
+> +
+> +SYSCALL_DEFINE4(setfsxattrat, int, dfd, const char __user *, filename,
+> +		struct fsxattr __user *, fsx, unsigned int, at_flags)
+> +{
+> +	CLASS(fd, dir)(dfd);
+> +	struct fileattr fa;
+> +	struct path filepath;
+> +	int error;
+> +	unsigned int lookup_flags = 0;
+> +
+> +	if ((at_flags & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH)) != 0)
+> +		return -EINVAL;
+> +
+> +	if (at_flags & AT_SYMLINK_FOLLOW)
+> +		lookup_flags |= LOOKUP_FOLLOW;
+
+I think using AT_SYMLINK_NOFOLLOW is actually more traditional and thus
+less surprising to users so I'd prefer that. Definitely this needs to be
+consistent with getfsxattrat().
+
+> +
+> +	if (at_flags & AT_EMPTY_PATH)
+> +		lookup_flags |= LOOKUP_EMPTY;
+> +
+> +	if (fd_empty(dir))
+> +		return -EBADF;
+
+Same comment regarding dfd handling as above.
+
+> +
+> +	if (copy_fsxattr_from_user(&fa, fsx))
+> +		return -EFAULT;
+> +
+> +	error = user_path_at(dfd, filename, lookup_flags, &filepath);
+> +	if (error)
+> +		return error;
+> +
+> +	error = mnt_want_write(filepath.mnt);
+> +	if (!error) {
+> +		error = vfs_fileattr_set(file_mnt_idmap(fd_file(dir)),
+> +					 filepath.dentry, &fa);
+> +		mnt_drop_write(filepath.mnt);
+> +	}
+> +
+> +	path_put(&filepath);
+> +	return error;
+> +}
+
+Otherwise the patch looks good to me.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
