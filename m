@@ -1,80 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-42402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA811A41DF5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 12:59:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AE30A41E18
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 13:01:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F8167A15CA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 11:51:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87F9D188CE1F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 11:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAEB25EF8C;
-	Mon, 24 Feb 2025 11:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFE323C8C9;
+	Mon, 24 Feb 2025 11:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVWfNpja"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nedADxEE"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B702571CD;
-	Mon, 24 Feb 2025 11:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6A323BCE0
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 11:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740396753; cv=none; b=rIqZm3bDhtcSqC3ejtbSylHWLgD9q3h1z92vCdFjXSpSZ1rtHebJDQrPCcxeDg0dIwXFMAmHWLOdPNG0zJMOF7DofwxhYwYfIM/La4O8Gs4gT1v3xWBov6VEt0fu9Ne7IyGg79G3Gb4zCwyE8T6xKstj//jhYbl+LwHvlXC+WOg=
+	t=1740397554; cv=none; b=BKQ8ocWrJ6S+6uk9laBd8SFRa/aPei0XK/5xvg/JdX+QXbt+V4zTNASAwJpu6hrCrZ8LMi747aAgFtEqsZ5QILhp2KhkGijqOr2+YdCo2qKMYHM7GezW/O8RHFr7YBbBekwP0I6+DoMHX7vPS5XTb3fAw3GmRQ2dbCCZeStNS3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740396753; c=relaxed/simple;
-	bh=/3Mh6pug+713M2/VDC4hgpIDh9F4ngYOQu3zb5WfebM=;
-	h=Date:From:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dzFa8ZWVTTNg9FDNjHZziOf8hyQ/0KJKM66aJHKfbPIbCKf9CioQQ0/rgU85S74MLBObKdbV5mBx75lCNf4DAFCtzmxrvCOQGE7Sz1gdXffWSIAXNjwZZCLgzGfJ6VFke4N9GETRLCdGcf2IathFt16b1a6GaHnZGoknJlLFuf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hVWfNpja; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E138C4CED6;
-	Mon, 24 Feb 2025 11:32:19 +0000 (UTC)
+	s=arc-20240116; t=1740397554; c=relaxed/simple;
+	bh=c25mZHH4hauYBmgnyNCNtVgw4CnRktlj43MxpkjnCcs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cWZcCfBgwUe9hkINLSXHLMBydRj9wnOi3MHyaFAjQxMtgERIK4MZuJ/M1k/tm48pL4vuXFsKdiQFJK7dCyfonUEKW/qjUF/8V7OATGFSusTF8rPDzFIEPlglGHNeKH5Rv07ZRKg0hGS73B/bVIhfeuHQwkQuINk+xnM+WTnS44o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nedADxEE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7647C4CED6;
+	Mon, 24 Feb 2025 11:45:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740396752;
-	bh=/3Mh6pug+713M2/VDC4hgpIDh9F4ngYOQu3zb5WfebM=;
-	h=Date:From:Cc:Subject:References:In-Reply-To:From;
-	b=hVWfNpjapTs9Gzqso9NB1m1ULW6zQPSObcIfIOnmoo3UgEOo4r/dmDmSaSI9IfwTP
-	 Ar8P2zDogME/kiUPhwy10R9KxLU//uhD6zuPOnNL0o/8YC/3Xlkw+2iGAx7Bv2r0JI
-	 BRT5sV8wVLMC9dcbIUVu95Kd0KhrHyroW35DBtfhLb2axglzIrroUkqae91AxOZwtp
-	 6t0UHwqaSbVkll8v4gtSgLaV36jXEMXEJBOJStRzYCLO239Fvq6RByGaH9nO9bwvFd
-	 vytICMqj4HwAT3wRKsBcKZpqc8CSaDQOQWo5JwkzT3mWostsHNatJX17ydAshLFWah
-	 mqN8YB3Ihk8MQ==
-Date: Mon, 24 Feb 2025 12:32:17 +0100
+	s=k20201202; t=1740397553;
+	bh=c25mZHH4hauYBmgnyNCNtVgw4CnRktlj43MxpkjnCcs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nedADxEEgOSWC84eu925WEEPupVOxpZu+by7ppXsZL20BkYCNoGPmkIEUFhSRiSOA
+	 9hDC5q4ln1G1ccUKt6w+opld/e9CrcObaKsmUCZL13iqYOqiJ7YNNAiKQdKqrV2bln
+	 WZsMaxBPLmRiTxrvncqtSH4ANpq7PvecjDlq5bOkjlBXASytYkOQHy1L4W1AOOZIfV
+	 q/oo3OBive+b7+boyEiGwCkP8VEYAz+yKgvZWtGVxTNN5PRxp71EEK11EpmmXTsXIk
+	 RvZrqqpPhqiUlrXXpy1qg6an6hraZaQS1pM05GO6Pu50qsbYU6kC5sjdTPd4oxxJ1o
+	 1cgfclbNWN+XA==
+Date: Mon, 24 Feb 2025 12:45:49 +0100
 From: Christian Brauner <brauner@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, 
-	Andrey Albershteyn <aalbersh@redhat.com>, "Darrick J. Wong" <djwong@kernel.org>, 
-	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Michal Simek <monstr@monstr.eu>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
-	Theodore Tso <tytso@mit.edu>
-Subject: Re: [PATCH v3] fs: introduce getfsxattrat and setfsxattrat syscalls
-Message-ID: <20250224-klinke-hochdekoriert-3f6be89005a8@brauner>
-References: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org>
- <20250221181135.GW21808@frogsfrogsfrogs>
- <CAOQ4uxgyYBFqkq6cQsso4LxJsPJ4uECOdskXmz-nmGhhV5BQWg@mail.gmail.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Neil Brown <neilb@suse.de>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Jan Kara <jack@suse.cz>
+Subject: Re: [RFC] dentry->d_flags locking
+Message-ID: <20250224-anrief-schwester-33e6ca8774de@brauner>
+References: <20250224010624.GT1977892@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,124 +58,184 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxgyYBFqkq6cQsso4LxJsPJ4uECOdskXmz-nmGhhV5BQWg@mail.gmail.com>
+In-Reply-To: <20250224010624.GT1977892@ZenIV>
 
-On Fri, Feb 21, 2025 at 08:15:24PM +0100, Amir Goldstein wrote:
-> On Fri, Feb 21, 2025 at 7:13 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> >
-> > On Tue, Feb 11, 2025 at 06:22:47PM +0100, Andrey Albershteyn wrote:
-> > > From: Andrey Albershteyn <aalbersh@redhat.com>
-> > >
-> > > Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
-> > > extended attributes/flags. The syscalls take parent directory fd and
-> > > path to the child together with struct fsxattr.
-> > >
-> > > This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
-> > > that file don't need to be open as we can reference it with a path
-> > > instead of fd. By having this we can manipulated inode extended
-> > > attributes not only on regular files but also on special ones. This
-> > > is not possible with FS_IOC_FSSETXATTR ioctl as with special files
-> > > we can not call ioctl() directly on the filesystem inode using fd.
-> > >
-> > > This patch adds two new syscalls which allows userspace to get/set
-> > > extended inode attributes on special files by using parent directory
-> > > and a path - *at() like syscall.
-> > >
-> > > Also, as vfs_fileattr_set() is now will be called on special files
-> > > too, let's forbid any other attributes except projid and nextents
-> > > (symlink can have an extent).
-> > >
-> > > CC: linux-api@vger.kernel.org
-> > > CC: linux-fsdevel@vger.kernel.org
-> > > CC: linux-xfs@vger.kernel.org
-> > > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> > > ---
-> > > v1:
-> > > https://lore.kernel.org/linuxppc-dev/20250109174540.893098-1-aalbersh@kernel.org/
-> > >
-> > > Previous discussion:
-> > > https://lore.kernel.org/linux-xfs/20240520164624.665269-2-aalbersh@redhat.com/
-> > >
-> > > XFS has project quotas which could be attached to a directory. All
-> > > new inodes in these directories inherit project ID set on parent
-> > > directory.
-> > >
-> > > The project is created from userspace by opening and calling
-> > > FS_IOC_FSSETXATTR on each inode. This is not possible for special
-> > > files such as FIFO, SOCK, BLK etc. Therefore, some inodes are left
-> > > with empty project ID. Those inodes then are not shown in the quota
-> > > accounting but still exist in the directory. Moreover, in the case
-> > > when special files are created in the directory with already
-> > > existing project quota, these inode inherit extended attributes.
-> > > This than leaves them with these attributes without the possibility
-> > > to clear them out. This, in turn, prevents userspace from
-> > > re-creating quota project on these existing files.
-> > > ---
-> > > Changes in v3:
-> > > - Remove unnecessary "dfd is dir" check as it checked in user_path_at()
-> > > - Remove unnecessary "same filesystem" check
-> > > - Use CLASS() instead of directly calling fdget/fdput
-> > > - Link to v2: https://lore.kernel.org/r/20250122-xattrat-syscall-v2-1-5b360d4fbcb2@kernel.org
-> > > ---
-> > >  arch/alpha/kernel/syscalls/syscall.tbl      |  2 +
-> > >  arch/arm/tools/syscall.tbl                  |  2 +
-> > >  arch/arm64/tools/syscall_32.tbl             |  2 +
-> > >  arch/m68k/kernel/syscalls/syscall.tbl       |  2 +
-> > >  arch/microblaze/kernel/syscalls/syscall.tbl |  2 +
-> > >  arch/mips/kernel/syscalls/syscall_n32.tbl   |  2 +
-> > >  arch/mips/kernel/syscalls/syscall_n64.tbl   |  2 +
-> > >  arch/mips/kernel/syscalls/syscall_o32.tbl   |  2 +
-> > >  arch/parisc/kernel/syscalls/syscall.tbl     |  2 +
-> > >  arch/powerpc/kernel/syscalls/syscall.tbl    |  2 +
-> > >  arch/s390/kernel/syscalls/syscall.tbl       |  2 +
-> > >  arch/sh/kernel/syscalls/syscall.tbl         |  2 +
-> > >  arch/sparc/kernel/syscalls/syscall.tbl      |  2 +
-> > >  arch/x86/entry/syscalls/syscall_32.tbl      |  2 +
-> > >  arch/x86/entry/syscalls/syscall_64.tbl      |  2 +
-> > >  arch/xtensa/kernel/syscalls/syscall.tbl     |  2 +
-> > >  fs/inode.c                                  | 75 +++++++++++++++++++++++++++++
-> > >  fs/ioctl.c                                  | 16 +++++-
-> > >  include/linux/fileattr.h                    |  1 +
-> > >  include/linux/syscalls.h                    |  4 ++
-> > >  include/uapi/asm-generic/unistd.h           |  8 ++-
-> > >  21 files changed, 133 insertions(+), 3 deletions(-)
-> > >
-> >
-> > <cut to the syscall definitions>
-> >
-> > > diff --git a/fs/inode.c b/fs/inode.c
-> > > index 6b4c77268fc0ecace4ac78a9ca777fbffc277f4a..b2dddd9db4fabaf67a6cbf541a86978b290411ec 100644
-> > > --- a/fs/inode.c
-> > > +++ b/fs/inode.c
-> > > @@ -23,6 +23,9 @@
-> > >  #include <linux/rw_hint.h>
-> > >  #include <linux/seq_file.h>
-> > >  #include <linux/debugfs.h>
-> > > +#include <linux/syscalls.h>
-> > > +#include <linux/fileattr.h>
-> > > +#include <linux/namei.h>
-> > >  #include <trace/events/writeback.h>
-> > >  #define CREATE_TRACE_POINTS
-> > >  #include <trace/events/timestamp.h>
-> > > @@ -2953,3 +2956,75 @@ umode_t mode_strip_sgid(struct mnt_idmap *idmap,
-> > >       return mode & ~S_ISGID;
-> > >  }
-> > >  EXPORT_SYMBOL(mode_strip_sgid);
-> > > +
-> > > +SYSCALL_DEFINE4(getfsxattrat, int, dfd, const char __user *, filename,
-> > > +             struct fsxattr __user *, fsx, unsigned int, at_flags)
-> >
-> > Should the kernel require userspace to pass the size of the fsx buffer?
-> > That way we avoid needing to rev the interface when we decide to grow
-> > the structure.
+On Mon, Feb 24, 2025 at 01:06:24AM +0000, Al Viro wrote:
+> 	Recently I went looking through the ->d_flags locking (long
+> story, that was a side branch in digging through the issues with
+> Neil's locking scheme); results are interesting.
+> 
+> 	All stores to dentry->d_flags are done by somebody who
+> * holds a counting reference to dentry or
+> * has found a counting reference in shared data structures, in
+> conditions that guarantee that this reference won't go away or
+> * has found dentry in alias list of some inode (under ->i_lock)
+> * [fs/dcache.c only] is an LRU walker callback running into that dentry
+> in LRU list or
+> * [fs/dcache.c only] is owner of a shrink list running into dentry in that
+> list or
+> * [fs/dcache.c only] is a d_walk() callback running into that dentry with zero
+> refcount (and moving it to shrink list) or
+> * [fs/dcache.c only] is a d_walk() called by kill_litter_super() running into
+> that dentry when unpinning theretofore persistent dentries; that can happen
+> only during filesystem shutdown, when nobody else could be accessing it.
+> 
+> 	The above guarantees that dentry won't disappear under us;
+> another interesting thing is exclusion, and that's where the things
+> get nasty.  Most of the stores to dentry->d_flags are under
+> dentry->d_lock.  There are obvious exceptions on the allocation side
+> (stores done to dentry that is not visible to anybody else), but aside
+> of those there are two exceptions.
+> 
+> 	One is d_set_d_op(), another - setting DCACHE_PAR_LOOKUP in
+> d_alloc_parallel().
+> 
+> 	The former sets ->d_op and marks the presense of several methods
+> (->d_hash(), ->d_compare(), ->d_revalidate(), ->d_weak_revalidate(),
+> ->d_delete(), ->d_prune() and ->d_real()) in ->d_flags.
+> 
+> 	It can't be done more than once and, if the filesystem
+> has ->s_d_op set in its superblock, it is done by the constructor
+> (__d_alloc()).	That, obviously, falls under the "on allocation side";
+> so does another common case - d_alloc_pseudo() setting ->d_op to &anon_ops
+> if __d_alloc() hadn't set it to ->s_d_op.
+> 
+> 	Note that there's no barriers between the stores to ->d_op and
+> ->d_flags in d_set_d_op(); for allocation time uses that's not a problem -
+> fetches on another CPU would have to be preceded by finding the dentry
+> in the first place, and barriers on the insertion into wherever it
+> had been found would suffice.
+> 
+> 	There are other callers of d_set_d_op(), though - one in
+> simple_lookup() (again, if ->s_d_op is NULL) and the rest are all in
+> procfs.  Those are done with no locking whatsoever and dentry is *not*
+> entirely invisible.
+> 
+> 	It's mostly invisible, though - in all those cases dentry is
+> * negative, and thus unreachable via the alias list of any inode
+> * unhashed, and thus can't be found via dcache lookup
+> * has the only direct reference held by the caller who has been holding
+> it since it got allocated (i.e. it couldn't have been put into LRU or
+> shrink lists either).
+> 
+> 	That is enough to guarantee that nobody else will be doing stores
+> to ->d_flags, so our store is safe even without ->d_lock.  It is also
+> fucking ugly and brittle...
+> 
+> 	Moreover, the question about ->d_op vs ->d_flags ordering also
+> needs to be dealt with - unlike the calls at allocation time, insertion
+> into wherever it had been found does *not* order fetches past both
+> stores - not if it had been inserted into that wherever before the
+> call of d_set_d_op().
+> 
+> 	Thankfully, the set of methods present in dentry_operations
+> ever fed to those late calls of d_set_d_op() is limited: ->d_revalidate,
+> ->d_delete and, in one case, ->d_compare.
+> 
+> 	->d_delete() is easy - it's called only from one place (retain_dentry())
+> and there we have just dropped the last reference to dentry in question.
+> Since the caller of d_set_d_op() is holding a reference, the usual barriers
+> on ->d_reflock use are enough.
+> 
+> 	->d_compare() is a bit confusing - dentry it's getting as argument
+> is not the one whose method it is.  We have the parent (already observed
+> to be positive) and we are checking if this child (with ->d_parent pointing
+> to parent) matches the name we want to look up.  We take parent's
+> ->d_compare() and give it child dentry, snapshot of child's name and the
+> name we want to match it against.
+> 	We *CAN* get a dentry in the middle of d_set_d_op() passed to
+> someone's ->d_compare() - d_alloc_parent() does that to check if there's
+> an in-lookup dentry matching the name we want.  But ->d_compare() comes
+> from parent, and that had been already observed to be positive.  Which means
+> that barriers in __d_set_inode_and_type() (from d_splice_alias()) suffice.
+> 
+> 	->d_revalidate() is only called for dentries that had been found
+> in dcache hash chains at some point, so there the barrier on insertion into
+> hash (in __d_add() from d_splice_alias()) is enough.
+> 
+> 	That covers d_set_d_op() callers; another exception is
+> d_alloc_parallel() when it decides to insert a new dentry into in-lookup
+> hash and marks it with DCACHE_PAR_LOOKUP.  Also safe, since dentry is
+> only visible in the parent's list of children, has positive refcount and
+> had it all along, so nobody else would try to do a store to ->d_flags
+> at the same time.
+> 
+> 	In case it's not obvious from the above, I'm less than happy with
+> the entire thing - it may be provably correct, but it's much too brittle.
+> 
+> 	If nothing else, d_set_d_op() should be unexported.  Do it to
 
-Please version the struct by size as we do for clone3(),
-mount_setattr(), listmount()'s struct mnt_id_req, sched_setattr(), all
-the new xattrat*() system calls and a host of others. So laying out the
-struct 64bit and passing a size alongside it.
+Agreed.
 
-This is all handled by copy_struct_from_user() and copy_struct_to_user()
-so nothing to reinvent. And it's easy to copy from existing system
-calls.
+> a hashed or, worse, a positive dentry and you are asking for serious
+> trouble.  Leaving it as a public API is a really bad idea.
+> 
+> 	Something along the lines of d_splice_alias_ops(inode, dentry, ops)
+> (not exported, until we get a convincing modular user) is worth doing;
+> all procfs callers of d_set_d_op() follow it with d_splice_alias() pretty
+> much immediately.  And yes, that could be done under ->d_lock, eliminating
+> that special case from the proof.
+
+That sounds great.
+
+> 
+> 	As for the allocation-time uses...  We could bloody well calculate
+> the ->d_flags bits to go along with ->s_d_op and just use that; it's not
+> just about getting rid of recalculating them for each dentry ever allocated
+> on the filesystem in question, we could get rid of quite a few always_delete_dentry
+> users while we are at it.
+
+See my reply to your other mail: I'll kill it for pidfs and nsfs.
+
+> 
+> 	Look: ->d_delete == always_delete_dentry (and DCACHE_OP_DELETE to
+> go with it) is equivalent to DCACHE_DONTCACHE; the only place where we
+
+Also mentioned in my other reply: Can you please make the unhashed case
+really explicit ideally at dentry allocation time. IOW, that there's a
+flag or some other way of simply identifying a dentry as belonging to an
+fs that will never hash them?
+
+> look at either is retain_dentry(), where we have this:
+>         // ->d_delete() might tell us not to bother, but that requires
+>         // ->d_lock; can't decide without it
+>         if (unlikely(d_flags & DCACHE_OP_DELETE)) {
+>                 if (!locked || dentry->d_op->d_delete(dentry))
+>                         return false;
+>         }
+> 
+>         // Explicitly told not to bother
+>         if (unlikely(d_flags & DCACHE_DONTCACHE))
+>                 return false;
+> The inner if turns into
+> 		if (!locked || 1)
+> 			return false;
+> so for those DCACHE_DONTCACHE would be equivalent.  And it could be
+> put into the same "set those bits in all ->d_flags on that fs";
+> what's more, simple_lookup() doesn't need to set ->d_op at all -
+> it can just set DCACHE_DONTCACHE in the unlikely case when it's
+> not been already set.
+> 
+> 	How about something along the lines of
+> 0) add d_splice_alias_ops(inode, dentry, dops), have procfs switch
+> to that.
+> 1) provide set_default_d_op(superblock, dops), use it in place of
+> assignments to ->s_d_op.  Rename ->s_d_op to catch unconverted
+> filesystems.  Tree-wide, entirely mechanical.
+> 2) split the calculation of d_flags bits into a separate helper,
+> add ->s_d_flags, have set_default_d_op() calculate and set
+> that, have __d_alloc() pick ->s_d_op and ->s_d_flags directly.
+> 3) convert those who wish to move from use of always_delete_dentry
+> to adding DCACHE_DONTCACHE into ->s_d_flags.  For devpts, for
+> example, that avoids the need of non-NULL ->d_op.
+> 4) replace d_set_d_op() in simple_lookup() with
+> 	if (unlikely(!(dentry->d_flags & DCACHE_DONTCACHE))) {
+> 		spin_lock(&dentry->d_lock);
+> 		dentry->d_flags |= DCACHE_DONTCACHE;
+> 		spin_unlock(&dentry->d_lock);
+> 	}
+> 5) Kill simple_dentry_operations - no users would be left
+> 6) make d_set_d_op() static in fs/dcache.c
+
+Sounds good.
 
