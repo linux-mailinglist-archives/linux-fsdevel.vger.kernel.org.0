@@ -1,204 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-42376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AB6DA41322
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 03:03:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7745A4132E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 03:10:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DFA93AAD67
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 02:03:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DE9B1892C91
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 02:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C50D19ABC6;
-	Mon, 24 Feb 2025 02:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0100919DF4B;
+	Mon, 24 Feb 2025 02:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="J92B4XFh";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wVqIq0t/";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="J92B4XFh";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wVqIq0t/"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="KmAN0t4A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AF01F5FA
-	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 02:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA700EED6;
+	Mon, 24 Feb 2025 02:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740362584; cv=none; b=ocZh9926XD1eS6Zyc3cfc4chRwLA9TfwlJLMAz2cu7jNayyU7aZQiMw1J8Jjuk/cGYmNsN5D1uBSMEZUrNycAfPEL80YwwZTlMHOcrjdR1RwTff8n/XQv1mlVvjHmZI//uW0+vIzJe0i/VafaTkR5HijH+I/af9GwJ4wbgAWaQw=
+	t=1740362989; cv=none; b=uw+E0NWa2ZezYCG2gZs916E0obtAgSaPTEgpkzbHx7b1Ai09HvhAcZQB/rloL7g9JVdxWx9nj8US6gq+xbc1DY5zQM+vpdsv7DWZIKXu3mwBXkauTQwk2sSPTDvo34hy3Yl0PvCYw3nWZNl4rvb0VHsOBaT3b0cRGI6zpjDphow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740362584; c=relaxed/simple;
-	bh=r23F23VtBxZmCeOjMmfsF5qOa7i3vXvCJf+NmyNRN1I=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=I5+UeJ/6lcg/l6bG9r14Cl6jrF5miBs+PTwoVHBLtk4wF6vZBDKqMByewvF8bEvCMHkoP3zqSVY0gy25QAUeBREHzNKeLK5bsgFVkaLigWzcZ52UiLoI8SA43LPv55ajJsXQByTU/KW06yoPpzs1WWCd/PeYp7A/8oMI/AyL9n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=J92B4XFh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wVqIq0t/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=J92B4XFh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wVqIq0t/; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B2FF71F383;
-	Mon, 24 Feb 2025 02:03:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740362580; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PDbNe/EHhaK9CaRzSNencM5JCMpX3p/DG2ccrHCzlR8=;
-	b=J92B4XFhtoq0Cp3lIzYk7//ZGYHufF+SyuVtwRGcn4J0eBpoDQefUL8U8Rq/0Lobu9PFqy
-	glg8vpl1CuFvBGfnRBJO/b4dzOzo4fJcS9PCkxUPSeCbWKoKn+Cu2Tf3LHqaY52BgGfxEs
-	urjLY84mEkeIfjZJyAjNSiLGS644/PE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740362580;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PDbNe/EHhaK9CaRzSNencM5JCMpX3p/DG2ccrHCzlR8=;
-	b=wVqIq0t/jYZYXg2qq8CvOF9h8iG2LHyoGMtrXTmh/CgXzu55j3A2M8n9EwVgidPmcUI4yG
-	L3eCOnKnBXei3nDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740362580; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PDbNe/EHhaK9CaRzSNencM5JCMpX3p/DG2ccrHCzlR8=;
-	b=J92B4XFhtoq0Cp3lIzYk7//ZGYHufF+SyuVtwRGcn4J0eBpoDQefUL8U8Rq/0Lobu9PFqy
-	glg8vpl1CuFvBGfnRBJO/b4dzOzo4fJcS9PCkxUPSeCbWKoKn+Cu2Tf3LHqaY52BgGfxEs
-	urjLY84mEkeIfjZJyAjNSiLGS644/PE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740362580;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PDbNe/EHhaK9CaRzSNencM5JCMpX3p/DG2ccrHCzlR8=;
-	b=wVqIq0t/jYZYXg2qq8CvOF9h8iG2LHyoGMtrXTmh/CgXzu55j3A2M8n9EwVgidPmcUI4yG
-	L3eCOnKnBXei3nDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1627D136B3;
-	Mon, 24 Feb 2025 02:02:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id HEMWJ07Tu2ddcQAAD6G6ig
-	(envelope-from <neilb@suse.de>); Mon, 24 Feb 2025 02:02:54 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1740362989; c=relaxed/simple;
+	bh=FF6Wei/l8K8RDtEnTdw3476hC+kiKAOirTyFs73Q0t4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bbL1L0zlJZ70Zsj3jwDEsfP9wGOzi/jJ+rvgc9mtA1Tw/nyml1MOP8+fEJfK+Hq/zvOz4o65Cxq2y5NOQZMGGI0X2I48no9PO5kjGqhh74UGNFv1gl3+uqy2ELs68aP++bvxiTP2xdNiHc6mYvGXLt970Nn4e/+Xnhk8CKLHvRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=KmAN0t4A; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=k0z3ryzhlvwNnSY3M6NnkZyLrFw5ndXGZMxfWSNU7WE=; b=KmAN0t4ASfNyIO+14Tkdl6eWeS
+	3h5f4U0OMObgauHsGHOggSvN3IH3kD9JEbHZkJw8V7XjINOSuY8bQ0KCoigDzT86A7uoqZ8sniL8p
+	GcMQqi6DKiE0f287Qex4A3N4QmCmQiSYYLGz5ify3Xc26tT4EoicFpfO1qAhQP8TCUmj+lTLm91ic
+	p1+A7yprmhsdpoGC58opaV8NVRBjyRTc7YzzcwHbbSaTkaZZ44ZfWX0NRBdhOCU2Fy+oer18kF+Wi
+	oPMB34w48UifiegznLm57ZSPgJCDuN5xgqsbQ+u/CKZtTWDFRL0Q6LujN5ezl+BCpZiZrLvR0P0TD
+	TAL7/hQA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tmNuX-00000006aXB-3Rl4;
+	Mon, 24 Feb 2025 02:09:33 +0000
+Date: Mon, 24 Feb 2025 02:09:33 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neilb@suse.de>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Miklos Szeredi <miklos@szeredi.hu>, Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-um@lists.infradead.org, ceph-devel@vger.kernel.org,
+	netfs@lists.linux.dev
+Subject: Re: [PATCH 1/6] Change inode_operations.mkdir to return struct
+ dentry *
+Message-ID: <20250224020933.GV1977892@ZenIV>
+References: <>
+ <20250222041937.GM1977892@ZenIV>
+ <174036084630.74271.16513912864596248299@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Steve French" <smfrench@gmail.com>
-Cc: "Al Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "Miklos Szeredi" <miklos@szeredi.hu>, "Xiubo Li" <xiubli@redhat.com>,
- "Ilya Dryomov" <idryomov@gmail.com>, "Richard Weinberger" <richard@nod.at>,
- "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
- "Johannes Berg" <johannes@sipsolutions.net>,
- "Jeff Layton" <jlayton@kernel.org>, "Olga Kornievskaia" <okorniev@redhat.com>,
- "Dai Ngo" <Dai.Ngo@oracle.com>, "Tom Talpey" <tom@talpey.com>,
- "Sergey Senozhatsky" <senozhatsky@chromium.org>,
- "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
- "CIFS" <linux-cifs@vger.kernel.org>
-Subject:
- Re: [PATCH 1/6] Change inode_operations.mkdir to return struct dentry *
-In-reply-to:
- <CAH2r5mvXVc4=ZwvfwZtVaVM88+3cvUtjz-71af_Q+Jmbdst2_g@mail.gmail.com>
-References:
- <>, <CAH2r5mvXVc4=ZwvfwZtVaVM88+3cvUtjz-71af_Q+Jmbdst2_g@mail.gmail.com>
-Date: Mon, 24 Feb 2025 13:02:43 +1100
-Message-id: <174036256374.74271.7577867606646159750@noble.neil.brown.name>
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_DN_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_TO(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,szeredi.hu,redhat.com,gmail.com,nod.at,cambridgegreys.com,sipsolutions.net,oracle.com,talpey.com,chromium.org,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <174036084630.74271.16513912864596248299@noble.neil.brown.name>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sat, 22 Feb 2025, Steve French wrote:
-> I didn't see the cifs part of this series either. Did I miss it?
->=20
-> On Fri, Feb 21, 2025, 10:56=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
->=20
->     On Fri, Feb 21, 2025 at 10:36:30AM +1100, NeilBrown wrote:
->   =20
->     > Not all filesystems reliably result in a positive hashed dentry:
->     >
->     > - NFS, cifs, hostfs will sometimes need to perform a lookup of
->     >=C2=A0 =C2=A0the name to get inode information.=C2=A0 Races could resu=
-lt in this
->     >=C2=A0 =C2=A0returning something different. Note that this lookup is
->     >=C2=A0 =C2=A0non-atomic which is what we are trying to avoid.=C2=A0 Pl=
-acing the
->     >=C2=A0 =C2=A0lookup in filesystem code means it only happens when the
->     filesystem
->     >=C2=A0 =C2=A0has no other option.
->   =20
->     At least in case of cifs I don't see that lookup anywhere in your
->     series.=C2=A0 Have I missed it, or...?
+On Mon, Feb 24, 2025 at 12:34:06PM +1100, NeilBrown wrote:
+> On Sat, 22 Feb 2025, Al Viro wrote:
+> > On Fri, Feb 21, 2025 at 10:36:30AM +1100, NeilBrown wrote:
+> > 
+> > > +In general, filesystems which use d_instantiate_new() to install the new
+> > > +inode can safely return NULL.  Filesystems which may not have an I_NEW inode
+> > > +should use d_drop();d_splice_alias() and return the result of the latter.
+> > 
+> > IMO that's a bad pattern, _especially_ if you want to go for "in-update"
+> > kind of stuff later.
+> 
+> Agreed.  I have a draft patch to change d_splice_alias() and
+> d_exact_alias() to work on hashed dentrys.  I thought it should go after
+> these mkdir patches rather than before.
 
-I didn't make any interesting changes to cifs.  I wasn't sure that I
-needed to...
+Could you give a braindump on the things d_exact_alias() is needed for?
+It's a recurring headache when doing ->d_name/->d_parent audits; see e.g.
+https://lore.kernel.org/all/20241213080023.GI3387508@ZenIV/ for related
+mini-rant from the latest iteration.
 
-cifs already does the lookup - sometimes.
-cifs_get_unix_fattr() (I think) does a lookup based on the full path
-name.  Though now I see that is only enabled with CONFIG_CIFS_ALLOW_INSECURE_=
-LEGACY.
-
-This is sometimes called by cifs_mkdir_qinfo() which is called after
-success in cifs_mkdir().  This creates the inode and called
-d_instantiate().  As that isn't d_instantiate_new() it maybe needs to be=20
-d_splice_alias().
-
-However cifs doesn't provide open_by_handle_at() functionality so one
-race that can sometimes cause a problem cannot happen.
-
-Also of the three clients of vfs_mkdir which care about the dentry,
-- cachefiles will still repeat the lookup
-- nfsd cannot export cifs, so its behaviour isn't relevant
-- smb/server - even if it can re-export cifs the only down-side is that
-   the uid won't be written by ksmbd_vfs_inherit_owner() but I wonder
-   of persistent of i_uid_write() without a notify_change() could be=20
-   on a network filesystem...
-
-I should probably change the d_instantiate() to
-d_drop();d_splice_alias().
-
-I'm not able to review all the paths to determine if a lookup might be
-needed somewhere or to add any lookup.
-
-Should d_instantiate() WARN_ON when the inode->i_dentry list isn't empty
-for a directory??
-
-Thanks,
-NeilBrown
+Proof of correctness is bloody awful; it feels like the primitive itself
+is wrong, but I'd never been able to write anything concise regarding
+the things we really want there ;-/
 
