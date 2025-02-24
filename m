@@ -1,77 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-42392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC466A41929
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 10:32:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E751BA41931
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 10:33:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D81C07A4BB9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 09:26:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5AEC3AD6D6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 09:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9340624A04E;
-	Mon, 24 Feb 2025 09:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCCC5242933;
+	Mon, 24 Feb 2025 09:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="VfSdBJaU"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SJxGMmQx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2053.outbound.protection.outlook.com [40.107.92.53])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187031A0BCD;
-	Mon, 24 Feb 2025 09:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740389212; cv=fail; b=JEc7bgTTKdVds1JRlGvsISmNjUgNajfSOvbng0OCNDuGgyoydhFAeMkE7/WCFFRXeWnTPEXWZRoMsb9D6JrA1b1yOdFmpMBOmfXbQDYAG+udEg9LjTT5Jl49HUUDVAzLN5olZ5cEUv47kug0TNnYhBbsoiUg4JEjjBj04aO4908=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740389212; c=relaxed/simple;
-	bh=5UPZVMyGT9kTlopkoDAI+TYe5ZC/ATL4BYNYhXM/RTA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EiGLPZyX2Cml2qg+urRGd5r2t0Kq96osxfjzdqTQvLpZB1B52Zd3nFc435fRHIhc2TcvCxgFjjis3dkM3u05A95XQMCOL+ZdlT/HSVgFSUR0c98/ug6pdgUNZc6MZN1jkZ/QqPpIR3nROMjS5y4czTTBozd0sn5Uj7drAFVoH/Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=VfSdBJaU; arc=fail smtp.client-ip=40.107.92.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SwOAtiSyEQ2SYVNzs87AwrYbG9Zzw0jnHihP3+EBF1prh1JlnikyfEazLLHuLnGcJR50sNB+ekTsDUAc3p0WE+Iai94OKSxVDNi/Wa698q4lisf2UUcrpw3LNBOabvgHGdJ+y1d4eHmfesyFtpFvxwbRFOi062M70yulS5TTp9k3djCNZwyanpf4syBIUvuflxzzl7Frxr3QzeFEb08jfZ7g0XSJuB3GmS+ma4wo0ywtkr5agKTyny4SBXEwaSWyBHFZupzWXHlnlC1AImAXoHcy5c5lOEoe/9bLe899dLnL3IdMc0RVNBxVxsVJU4ttrka8/apL4xUjKcR6eOSiZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FOoAqzKsVnOEeyaT/kvnMOt+FLUw6hA5Uh1vpf6vUTM=;
- b=Vy+QblMq6pJLNV//3XpmD0kzh4rU9AAE+h1vSgLvtZsgDx7JzxFjbWRHGOY0ApyhGiQkdjZMXzi+npNLGljBEdFIY0qElnTrGDbaUFLM4ZlVCBdxNXIIEzZwwKmphmQ5eBVbCYly83e2/gY0gO1uM/tHpWzdkYKcO1gBdjBmkPABatitOuLxZvOnGQKwlN01p8HYL1/vks0J4iTp/c/NmRZrVJgwFktN6GSju1cHcUyHarO+edMjd4D1g0SNtpSC/mXU0XbybtaR273Lrlp23ufV8JWn0oVB++rD/McmmStOv+x7hjCbtobXn+lobNd5wGLxClEwYYdVrq/X9lkJ/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FOoAqzKsVnOEeyaT/kvnMOt+FLUw6hA5Uh1vpf6vUTM=;
- b=VfSdBJaUBQgaAks5McUB3e3eQsCxj2o7obPxRixivbD1xowrwDMFqIolA4xT/DuYwpmG7eNqc01FEPqAhcrwbFMm40/nmELPeIi+TnxmR2YaEJDcs8CFpGc6lpl99msD5+uaUOwj6X3DXYdDKgxkCoFIQOVy0Ppi3XcXtw9evv8=
-Received: from MW4PR03CA0215.namprd03.prod.outlook.com (2603:10b6:303:b9::10)
- by SA1PR12MB6823.namprd12.prod.outlook.com (2603:10b6:806:25e::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Mon, 24 Feb
- 2025 09:26:42 +0000
-Received: from BY1PEPF0001AE16.namprd04.prod.outlook.com
- (2603:10b6:303:b9:cafe::d) by MW4PR03CA0215.outlook.office365.com
- (2603:10b6:303:b9::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.20 via Frontend Transport; Mon,
- 24 Feb 2025 09:26:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BY1PEPF0001AE16.mail.protection.outlook.com (10.167.242.104) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8466.11 via Frontend Transport; Mon, 24 Feb 2025 09:26:41 +0000
-Received: from [10.252.195.191] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Feb
- 2025 03:26:32 -0600
-Message-ID: <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
-Date: Mon, 24 Feb 2025 14:56:09 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1122629D
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 09:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740389257; cv=none; b=psqs8rkNV7sGgjpIre6Q+kvIt5RWx/PDGItz4lH/7DYlrP9ctvOn+XRT8LL3DnuC2YFH7IuvjanN3SeFnD8FuIG/owAG/Xvnam+/IkQMBRlv2gkuUY0hOienfLLZz722gpFO6hbVEaoScpGAqDUvGpq3U/OKLCkMu+1654O8QSM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740389257; c=relaxed/simple;
+	bh=I8ik0VnxEst77sjXmH68GWfeYOl9b9AYZW0gqNH3qq0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SHy/aA+6yATJdUxIXKix30LkC/cAZb0MoyCB8XBYnt7+6tA3htrumjZbQhze4QNtAoiClC8HiDaZgXw3A6gr13eTqDboJdjZHDYR1EqoxkZ4ehWk9tPOFKy8j2e8UJSSJD1q1AYzGOcyP/5LShBB3wIhcIN3OR76cQqV0rKkJc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SJxGMmQx; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740389254;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7Zn6SZZblvU2KN6afeUfX6cSk2JfetNjQceFn+mshcA=;
+	b=SJxGMmQxPEZqkSp8d52n1bsCEjk6aWGXiL8xOaVmVwd50eHBT1UqVAOt0IpRSqGwhwTUJo
+	SEoq5xLuGWdPO5D9VuhNV5faP4g2ua3dq+yGWHFrpWKeoBZ9TFvoUcH1BVgzkF9M+Vx6N3
+	zoSt3Of++JSGeBAqd/ZZWWgFaypBL3I=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-286-j5d1h3mQMcSY8HMEQpZQbg-1; Mon, 24 Feb 2025 04:27:32 -0500
+X-MC-Unique: j5d1h3mQMcSY8HMEQpZQbg-1
+X-Mimecast-MFC-AGG-ID: j5d1h3mQMcSY8HMEQpZQbg_1740389251
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38f42f21f54so1575376f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 01:27:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740389251; x=1740994051;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7Zn6SZZblvU2KN6afeUfX6cSk2JfetNjQceFn+mshcA=;
+        b=fFaHesaNYLDnJSGtg4DMtMu61mSlJCjC//C+GfBX0YG8aHFOzoA2UgXTUogDh0MwEV
+         MGcdQFNbAzxpEvZhL8ELhmGqWV7UxFKrfUGDOkm0xgNo0ES7sr6Y5kg7JsvsE3GrcQ4F
+         4WTP2JH2F5LSPkoRTEcSrOoSu6MgMMdP5Z+oYzt41yBC5vWrHUnzWUypBJ9MmDZE1yUK
+         W6blL3W2wL+LcrtAoza67GjUyjsobYdJF5ZCnVxFR0+/I69ntzcCbKjH/fW78PmTfd/6
+         yppqP4UjU8e/bK7dQX1i4MfkdIIVgnBNbdAsiwr7CLsRo5/UImh7j/EZXJDBowdNcpVk
+         pleQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUhoH+c9MquVXfH0Zm3uOW+cftJArwsfO/rfdHE8HLsNztAdOINv83JgbC+TzP0vvrsU/4Crtcf4FyTD8y@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx5gWXd83lv9hK8naAMPutuoBvVeEjLUG/HnZ4CQlSW6J8cdvU
+	gsn1aKWCAs/h+qhWlfJlHvNi8zr9qdGJM9I9SBN2gSh4ycDqCgC6GiavfjdrWpIdmx3PQd5WQm7
+	QCJIFuxe52e53utINmPh+DCXxWWM0JK2zn32Jl0//r7tSDoiqi7LHLlRoYShdqB0=
+X-Gm-Gg: ASbGnctIZFPlpnKKL3mt4Y9NWyaqBX+YhhjSiSd9WcggTH6CW439zkWtvSGpAlCVQ+0
+	PmTsD6dTFUYgR0NcrnrL9TBtpeYDg1EeJTBJ+SiL/ZdH34bW9nuKl54HuFSmxv6WUXpj26i2SDl
+	hqZJEh4+tWzqI1mtWdScHdr2EYIdxYsqPVwc3DXM1GRi3fxYO4B3e1oYH1eTe6OjdiCYye5r91L
+	3YGki3Y38bHP6SnuQV1aUa03YfckzKxkgcb0JcV3Y/XDs3hNZt+Q0JOpIo9yw76J7XfZ2856klu
+	JkL0kQZgqZCJ/4vnpSsKVFef2E8Cxguyrn7ksHqb/mVBTL+F8tgnVG3SLr+3b5bFX7ILvwNv3PI
+	pRa/ICUAsAqZDpeIvY8lrZKmZ//vwVOHQBoxPaosZMPA=
+X-Received: by 2002:a5d:59a7:0:b0:38d:e304:7478 with SMTP id ffacd0b85a97d-38f7082b185mr12874179f8f.38.1740389251243;
+        Mon, 24 Feb 2025 01:27:31 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE5HbPThRylS4ilKU1oY0b9sapnTNZTmqh2oQkysSGqBLm2fMAB+eMOTjT2FNPL02czMER6nQ==
+X-Received: by 2002:a5d:59a7:0:b0:38d:e304:7478 with SMTP id ffacd0b85a97d-38f7082b185mr12874144f8f.38.1740389250835;
+        Mon, 24 Feb 2025 01:27:30 -0800 (PST)
+Received: from ?IPV6:2003:cb:c735:1900:ac8b:7ae5:991f:54fc? (p200300cbc7351900ac8b7ae5991f54fc.dip0.t-ipconnect.de. [2003:cb:c735:1900:ac8b:7ae5:991f:54fc])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f25a0fa38sm31629174f8f.98.2025.02.24.01.27.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2025 01:27:30 -0800 (PST)
+Message-ID: <857b2c3f-7be7-44e8-a825-82a7353665fb@redhat.com>
+Date: Mon, 24 Feb 2025 10:27:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -79,198 +90,121 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
- full
-To: Oleg Nesterov <oleg@redhat.com>, Manfred Spraul
-	<manfred@colorfullife.com>, Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>
-CC: WangYuli <wangyuli@uniontech.com>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>, <Neeraj.Upadhyay@amd.com>
-References: <20250102140715.GA7091@redhat.com>
+Subject: Re: [PATCH 1/2] fs/proc/task_mmu: add guard region bit to pagemap
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Kalesh Singh
+ <kaleshsingh@google.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
+ "Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>,
+ Juan Yescas <jyescas@google.com>, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-api@vger.kernel.org
+References: <cover.1740139449.git.lorenzo.stoakes@oracle.com>
+ <521d99c08b975fb06a1e7201e971cc24d68196d1.1740139449.git.lorenzo.stoakes@oracle.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
-In-Reply-To: <20250102140715.GA7091@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <521d99c08b975fb06a1e7201e971cc24d68196d1.1740139449.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE16:EE_|SA1PR12MB6823:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4734e8f0-8b3a-407e-b484-08dd54b5590d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|13003099007|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TDU2VWZCSTlwRkJHdHduRFQ5dnRSRGVCRE9SaG1weEhSVjZqNzdrY2hDbXU1?=
- =?utf-8?B?VDVIWjBQdUVRUUVwVFlsNTFtVHVUbVZZVmxud0pHZkVHNEFXSlJYaHNoYVJK?=
- =?utf-8?B?OUFyVFIrZGJxUmFwRm1oeTc3OUxia0xXTlZ4TDdVaHhWTld6RGRSa2VKRHR2?=
- =?utf-8?B?QUs5TEVoWS92YURxWXN5WkhWVU9oeVJYN2x6am9BbGFJUHp6dXpKQ0tXbGQ0?=
- =?utf-8?B?NGVxS2tCemZSZFE5aXI3QXI0bnNFZzY0V2JSRGhydzgrRExCWWpnTWJ2cHlB?=
- =?utf-8?B?Q2s1MzhMMjBEdms3dlZxZ2cwR0xNWXBPNWRuSnQvZGViU0FONDR6cndqVG1t?=
- =?utf-8?B?ZVpvL1EvK3ZZSEpYbkxhRXo2S2VDd1UwNXdSTUpuWW9rczVmc0NINDZvV1ZP?=
- =?utf-8?B?ZmRURVovRjArRERtVCtJR2gxdGFuMDE2bHdPcWkxb05pbURYemtPUGl6dmk4?=
- =?utf-8?B?RDg2a29pbXhUYklLanBKWG4zWGFnYXpGaXdmTHVwNE50cnBJYmY2ak50bWYr?=
- =?utf-8?B?ZWdjak5xWGVtTjBIZ1AzMW9Edm1udmJKckpuQzZtTWd1Y2Q0M3cwaVEvZkVO?=
- =?utf-8?B?Q1FxendGUFgxSkl0SGt1NVFHSkYxN3J3Smk0bTVoV054bEFGNUg3KzBpNXIr?=
- =?utf-8?B?U0JZSFo2Tys4L0xaZHhoUHpJY25NNWt6SUlISUw2Wm5CY1Nqc1AvZS9DTmhw?=
- =?utf-8?B?Zy9wZXFjTjF0ektPaVdJRU43aTM3eUo0clNyNVlNWmYrNjBuUGtZcVRDRDFk?=
- =?utf-8?B?V2lXNEt1YnR3ZFRoT0JqZFZzekY1YnNWTnZSMHlPdk5GQ2dvZkNWT1hqUzNy?=
- =?utf-8?B?RVIra0NBQzN3aGlFTGlLWWJqeFRyUjFBKzNoYmRaa0gwampEY0FPVlNoZFFl?=
- =?utf-8?B?V0Vwby9oUFNMZVFvam1vMFo3WXpLcGVMLzlkalVKc3ZRR0FtWDRKVXB4Rmw0?=
- =?utf-8?B?a0hWZmxNWndneTF6eEZTOExBT0QvcFdaU1RtdTZpdU1yTCt1MkJHSU5mZmNz?=
- =?utf-8?B?T1REdHIwRktXbjhaOHBVSm95QjBMQTYveVVBVXloalNXTjEvaFRxaGtTR0hC?=
- =?utf-8?B?MUVsUS9zRTJmay8wNU1yQXUwRFkrUVNPWGRPZDJBZXZqQmNiZkNQZm5IZlZM?=
- =?utf-8?B?MnR4ZG1Uam1GaDh6UWYwdEE3UFh2U25KanEzNks3cEpBV0tvWEZ6U240OCtC?=
- =?utf-8?B?ZUEvNTB3blp2T2FWRWoxbVhoZTRrZDNoYTRiRG1tbFh0d3Fna2JKNEFTWWZr?=
- =?utf-8?B?Uk5XekI0dkxiVXZRNS96L1lBeXFqczdVcjA5N0Myd2JDODBVT3JsdXk0Szgr?=
- =?utf-8?B?VS9iOVlrZEh3ZGlTR1NIWnQxd2c4Q3U2ZnZZdTR4L0VXZCt3MjB2RkRBbVFP?=
- =?utf-8?B?NGwxVThXeGRMRStSV0xJc3d4VFpmTGtSQldvNjdBZ0h2M3NlWE44amRuMGM2?=
- =?utf-8?B?SG1iVllXZ25pUGg4aEhReTVYa3RyNEpoek9mbFppcEpDQi9sUkQxZmtpOWIr?=
- =?utf-8?B?SkdZODFmSndGTlBoR3ovR1BzcW00UU5BK1AycVVOdngzV2FJZis5T3U5Q2ZV?=
- =?utf-8?B?Q1FIcmd0YUZyNFRnRTdJTjArbllLR0JoNDBKYm05UTVWblVTR2ZacEVvOXJJ?=
- =?utf-8?B?dGlRQ3g2UUtmNnlJV3kvMlBBOEhyYWhHeGZBZEh6aWE5OVZpcVQwZkk2OUxt?=
- =?utf-8?B?YmZJdDBPbHM1ZVJtWG9tMWhzWTdBMUt0Q0MrUGxzT2hxMzZRTDZsekdqT1U1?=
- =?utf-8?B?cUNOYUNPRkl6dDBBdi9QOTZYb0Fid0VBTWdjOE44MjJ6U1ppYVEwWmtwaFFO?=
- =?utf-8?B?QnNqZDMxTllYZzFzb3RMcjZXd1BBZ3RPNThGTkorSkhtdCtSZGtJVllWYnQ0?=
- =?utf-8?B?TXF0Q2dwQmRxQ1cyUElZc2xwNGJkNDFNVHJBSlV6Zzl6aWc3Y1FoTW1HS1NJ?=
- =?utf-8?B?WFVHSDRsL0xOYjZESE1zRDh0ZFNhdGIwRVZLZTNNVW1TRWRHY0V0SWd0K1pN?=
- =?utf-8?Q?qNrncORf+rcw95s79LJ9v+1qZYMT1o=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(13003099007)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 09:26:41.4799
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4734e8f0-8b3a-407e-b484-08dd54b5590d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BY1PEPF0001AE16.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6823
 
-Hello Oleg,
-
-On 1/2/2025 7:37 PM, Oleg Nesterov wrote:
-> wake_up(pipe->wr_wait) makes no sense if pipe_full() is still true after
-> the reading, the writer sleeping in wait_event(wr_wait, pipe_writable())
-> will check the pipe_writable() == !pipe_full() condition and sleep again.
+On 21.02.25 13:05, Lorenzo Stoakes wrote:
+> Currently there is no means by which users can determine whether a given
+> page in memory is in fact a guard region, that is having had the
+> MADV_GUARD_INSTALL madvise() flag applied to it.
 > 
-> Only wake the writer if we actually released a pipe buf, and the pipe was
-> full before we did so.
+> This is intentional, as to provide this information in VMA metadata would
+> contradict the intent of the feature (providing a means to change fault
+> behaviour at a page table level rather than a VMA level), and would require
+> VMA metadata operations to scan page tables, which is unacceptable.
 > 
-
-We saw hang in hackbench in our weekly regression testing on mainline 
-kernel. The bisect pointed to this commit.
-
-This patch avoids the unnecessary writer wakeup but I think there may be 
-a subtle race due to which the writer is never woken up in certain cases.
-
-On zen5 system with 2 sockets with 192C/384T each, I ran hackbench with 
-16 groups or 32 groups. In 1 out of 20 runs, the race condition is 
-occurring where the writer is not getting woken up and the benchmarks 
-hangs. I tried reverting this commit and it again started working fine.
-
-I also tried with
-https://lore.kernel.org/all/20250210114039.GA3588@redhat.com/. After 
-applying this patch, the frequency of hang is reduced to 1 in 100 times, 
-but hang still
-exists.
-
-Whenever I compare the case where was_full would have been set but 
-wake_writer was not set, I see the following pattern:
-
-ret = 100 (Read was successful)
-pipe_full() = 1
-total_len = 0
-buf->len != 0
-
-total_len is computed using iov_iter_count() while the buf->len is the 
-length of the buffer corresponding to tail(pipe->bufs[tail & mask].len).
-Looking at pipe_write(), there seems to be a case where the writer can 
-make progress when (chars && !was_empty) which only looks at 
-iov_iter_count(). Could it be the case that there is still room in the 
-buffer but we are not waking up the writer?
-
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> In many cases, users have no need to reflect and determine what regions
+> have been designated guard regions, as it is the user who has established
+> them in the first place.
+> 
+> But in some instances, such as monitoring software, or software that relies
+> upon being able to ascertain the nature of mappings within a remote process
+> for instance, it becomes useful to be able to determine which pages have
+> the guard region marker applied.
+> 
+> This patch makes use of an unused pagemap bit (58) to provide this
+> information.
+> 
+> This patch updates the documentation at the same time as making the change
+> such that the implementation of the feature and the documentation of it are
+> tied together.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > ---
->   fs/pipe.c | 19 ++++++++++---------
->   1 file changed, 10 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/pipe.c b/fs/pipe.c
-> index 12b22c2723b7..82fede0f2111 100644
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -253,7 +253,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
->   	size_t total_len = iov_iter_count(to);
->   	struct file *filp = iocb->ki_filp;
->   	struct pipe_inode_info *pipe = filp->private_data;
-> -	bool was_full, wake_next_reader = false;
-> +	bool wake_writer = false, wake_next_reader = false;
->   	ssize_t ret;
->   
->   	/* Null read succeeds. */
-> @@ -264,14 +264,13 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
->   	mutex_lock(&pipe->mutex);
->   
->   	/*
-> -	 * We only wake up writers if the pipe was full when we started
-> -	 * reading in order to avoid unnecessary wakeups.
-> +	 * We only wake up writers if the pipe was full when we started reading
-> +	 * and it is no longer full after reading to avoid unnecessary wakeups.
->   	 *
->   	 * But when we do wake up writers, we do so using a sync wakeup
->   	 * (WF_SYNC), because we want them to get going and generate more
->   	 * data for us.
->   	 */
-> -	was_full = pipe_full(pipe->head, pipe->tail, pipe->max_usage);
->   	for (;;) {
->   		/* Read ->head with a barrier vs post_one_notification() */
->   		unsigned int head = smp_load_acquire(&pipe->head);
-> @@ -340,8 +339,10 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
->   				buf->len = 0;
->   			}
->   
-> -			if (!buf->len)
-> +			if (!buf->len) {
-> +				wake_writer |= pipe_full(head, tail, pipe->max_usage);
->   				tail = pipe_update_tail(pipe, buf, tail);
-> +			}
->   			total_len -= chars;
->   			if (!total_len)
->   				break;	/* common path: read succeeded */
-> @@ -377,7 +378,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
->   		 * _very_ unlikely case that the pipe was full, but we got
->   		 * no data.
->   		 */
-> -		if (unlikely(was_full))
-> +		if (unlikely(wake_writer))
->   			wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
->   		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
->   
-> @@ -390,15 +391,15 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
->   		if (wait_event_interruptible_exclusive(pipe->rd_wait, pipe_readable(pipe)) < 0)
->   			return -ERESTARTSYS;
->   
-> -		mutex_lock(&pipe->mutex);
-> -		was_full = pipe_full(pipe->head, pipe->tail, pipe->max_usage);
-> +		wake_writer = false;
->   		wake_next_reader = true;
-> +		mutex_lock(&pipe->mutex);
->   	}
->   	if (pipe_empty(pipe->head, pipe->tail))
->   		wake_next_reader = false;
->   	mutex_unlock(&pipe->mutex);
->   
-> -	if (was_full)
-> +	if (wake_writer)
->   		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
->   	if (wake_next_reader)
->   		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
---
-Thanks and Regards,
-Swapnil
+
+
+Acked-by: David Hildenbrand <david@redhat.com>
+
+Something that might be interesting is also extending the PAGEMAP_SCAN 
+ioctl.
+
+
+See do_pagemap_scan().
+
+The benefit here might be that one could effectively search/filter for 
+guard regions without copying 64bit per base-page to user space.
+
+But the idea would be to indicate something like PAGE_IS_GUARD_REGION as 
+a category when we hit a guard region entry in pagemap_page_category().
+
+(the code is a bit complicated, and I am not sure why we indicate 
+PAGE_IS_SWAPPED for non-swap entries, likely wrong ...)
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
