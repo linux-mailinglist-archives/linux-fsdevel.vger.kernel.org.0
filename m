@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-42424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47B7AA42432
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 15:54:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0664A4242D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 15:54:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC8A5189E972
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 14:46:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DD9E19C4E14
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 14:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100A9243369;
-	Mon, 24 Feb 2025 14:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1A924888F;
+	Mon, 24 Feb 2025 14:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZZxPuaNM"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DgfomhVj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4101191F66
-	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 14:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C0614D28C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 14:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740408331; cv=none; b=KlV7VhRgZz3uB4KLMqiYuslHRkKGZhIzchslM4mP7WduMb1igTyuyRkguY6o2l/3JU9NHOEC9JJEkl1+HR6dPj4nY1V4jfclXys3aDUXvbR1jroPdGvjnK3UmG8pqUZdSPqoKUFLlgz7p/I9RBVugAJDmFw5nuFztQZA0xDyQIo=
+	t=1740408333; cv=none; b=r78p4FDIWFQJh6xh7nqY7ebTNFLE8E0mvPTgp1MNgQdcmJeyq4/c09JvurxUMenohv/0aMeC+zD32SAknPIg29AlSB2GQ2bCd8Hw9rHS0PIrnsxe2yxW3Kd1yrYSip2yHsjgfSnF1AQUL4jKFLVFmRPCCZR1+fX3vgjI+dSslew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740408331; c=relaxed/simple;
-	bh=PROhPnIzQMJFqmNFjK0sNFWDIjbfYPOtjDgLA7V9PE0=;
+	s=arc-20240116; t=1740408333; c=relaxed/simple;
+	bh=TjLIkrzGgl/0/62RN6hWTWdS7vW/fwO9j9xfxyBwmB0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MnnN3t6swEHZCDBbqh5nIabciYKoCwV86s3enAW+sO7gr4OYFOu5DpWlYkKZzD7c/VJymNi16/UxoW0FL5U9Rwfm4g3FqWo5crqkxKjrkJxGJJCfARnj0cojyWC1jV9mcwRYB92LT/PMkx9JwfknkEsEanZ2HRR9GL4Bl59bBrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZZxPuaNM; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version:Content-Type; b=N/srs4gjomxO9Dt7dRF9e7221ZfCnigxSQ10nAN/vXliPnmk7K1O9+RKR/9WmBgCXN+8USeIFsAeFqKxaJ3X2QFpIkF93Z5SQaIJ+TKvlvhgOUpmowrxzxmCuGPHSh2lrnGfcwaTTgm4EqqLxfjK82ZgBQRafP1macang6HC9Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DgfomhVj; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740408328;
+	s=mimecast20190719; t=1740408330;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TzCgolIWiZEdJPRh3DJF9n+Dqf7Es/Iw3w2U07g14Ds=;
-	b=ZZxPuaNMfsJlj9xMjg5Ahn3krXiI71tEwWtr4Oy63p98bU5w1Xc1ptsdlooqGXUoHfIVoG
-	b4HLchVBVyTvzMMFtd4ZyPGpnNsbwZn+2OFQ5BjHXi9Oaa8HZv3DBUPGcaT+hhsY5J1Xpb
-	d57U22k8Iz9hyDRCjhFF73erYZ/tMDQ=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+	bh=o2bReV6/ZeCYB/MaQPmUx4sc1Uo2LiXqFAQf9hbKffM=;
+	b=DgfomhVjvHva04mjoqEA99OvQ+mGj8jbNj3j9veYAxWv1DFHkdJ6pTeDFaYFdBu1LM8vAn
+	/vlus/0fm1xyFxiFA1/GN4hGZEBlh6N511rpaM9Kj7cL5UxSB8atXrwW347VGhkPMn+yzu
+	Jp8IZBBRsYzewKh3Q3JjKcB6dHfs9n0=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-613-ue_4UbO7PU6o9k-IJDEezg-1; Mon,
- 24 Feb 2025 09:45:24 -0500
-X-MC-Unique: ue_4UbO7PU6o9k-IJDEezg-1
-X-Mimecast-MFC-AGG-ID: ue_4UbO7PU6o9k-IJDEezg_1740408324
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-663-qq-YPSYLPXO6X8Rqb6UzGw-1; Mon,
+ 24 Feb 2025 09:45:27 -0500
+X-MC-Unique: qq-YPSYLPXO6X8Rqb6UzGw-1
+X-Mimecast-MFC-AGG-ID: qq-YPSYLPXO6X8Rqb6UzGw_1740408325
 Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DA60819039C6;
-	Mon, 24 Feb 2025 14:45:23 +0000 (UTC)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1DE98190F9FC;
+	Mon, 24 Feb 2025 14:45:25 +0000 (UTC)
 Received: from bfoster.redhat.com (unknown [10.22.88.79])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id ED25C19560AD;
-	Mon, 24 Feb 2025 14:45:22 +0000 (UTC)
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2917F19560AB;
+	Mon, 24 Feb 2025 14:45:24 +0000 (UTC)
 From: Brian Foster <bfoster@redhat.com>
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-xfs@vger.kernel.org,
 	Christoph Hellwig <hch@infradead.org>,
 	"Darrick J . Wong" <djwong@kernel.org>
-Subject: [PATCH v3 03/12] iomap: convert misc simple ops to incremental advance
-Date: Mon, 24 Feb 2025 09:47:48 -0500
-Message-ID: <20250224144757.237706-4-bfoster@redhat.com>
+Subject: [PATCH v3 04/12] dax: advance the iomap_iter in the read/write path
+Date: Mon, 24 Feb 2025 09:47:49 -0500
+Message-ID: <20250224144757.237706-5-bfoster@redhat.com>
 In-Reply-To: <20250224144757.237706-1-bfoster@redhat.com>
 References: <20250224144757.237706-1-bfoster@redhat.com>
 Precedence: bulk
@@ -77,149 +77,38 @@ Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Update several of the remaining iomap operations to advance the iter
-directly rather than via return value. This includes page faults,
-fiemap, seek data/hole and swapfile activation.
+DAX reads and writes flow through dax_iomap_iter(), which has one or
+more subtleties in terms of how it processes a range vs. what is
+specified in the iomap_iter. To keep things simple and remove the
+dependency on iomap_iter() advances, convert a positive return from
+dax_iomap_iter() to the new advance and status return semantics. The
+advance can be pushed further down in future patches.
 
 Signed-off-by: Brian Foster <bfoster@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/iomap/buffered-io.c |  2 +-
- fs/iomap/fiemap.c      | 18 +++++++++---------
- fs/iomap/seek.c        | 12 ++++++------
- fs/iomap/swapfile.c    |  7 +++++--
- 4 files changed, 21 insertions(+), 18 deletions(-)
+ fs/dax.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 582a64f565e6..1518acbf8b09 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1478,7 +1478,7 @@ static loff_t iomap_folio_mkwrite_iter(struct iomap_iter *iter,
- 		folio_mark_dirty(folio);
- 	}
+diff --git a/fs/dax.c b/fs/dax.c
+index 21b47402b3dc..296f5aa18640 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -1585,8 +1585,12 @@ dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 	if (iocb->ki_flags & IOCB_NOWAIT)
+ 		iomi.flags |= IOMAP_NOWAIT;
  
--	return length;
-+	return iomap_iter_advance(iter, &length);
- }
+-	while ((ret = iomap_iter(&iomi, ops)) > 0)
++	while ((ret = iomap_iter(&iomi, ops)) > 0) {
+ 		iomi.processed = dax_iomap_iter(&iomi, iter);
++		if (iomi.processed > 0)
++			iomi.processed = iomap_iter_advance(&iomi,
++							    &iomi.processed);
++	}
  
- vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops,
-diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
-index 610ca6f1ec9b..8a0d8b034218 100644
---- a/fs/iomap/fiemap.c
-+++ b/fs/iomap/fiemap.c
-@@ -39,24 +39,24 @@ static int iomap_to_fiemap(struct fiemap_extent_info *fi,
- 			iomap->length, flags);
- }
- 
--static loff_t iomap_fiemap_iter(const struct iomap_iter *iter,
-+static loff_t iomap_fiemap_iter(struct iomap_iter *iter,
- 		struct fiemap_extent_info *fi, struct iomap *prev)
- {
-+	u64 length = iomap_length(iter);
- 	int ret;
- 
- 	if (iter->iomap.type == IOMAP_HOLE)
--		return iomap_length(iter);
-+		goto advance;
- 
- 	ret = iomap_to_fiemap(fi, prev, 0);
- 	*prev = iter->iomap;
--	switch (ret) {
--	case 0:		/* success */
--		return iomap_length(iter);
--	case 1:		/* extent array full */
--		return 0;
--	default:	/* error */
-+	if (ret < 0)
- 		return ret;
--	}
-+	if (ret == 1)	/* extent array full */
-+		return 0;
-+
-+advance:
-+	return iomap_iter_advance(iter, &length);
- }
- 
- int iomap_fiemap(struct inode *inode, struct fiemap_extent_info *fi,
-diff --git a/fs/iomap/seek.c b/fs/iomap/seek.c
-index a845c012b50c..83c687d6ccc0 100644
---- a/fs/iomap/seek.c
-+++ b/fs/iomap/seek.c
-@@ -10,7 +10,7 @@
- #include <linux/pagemap.h>
- #include <linux/pagevec.h>
- 
--static loff_t iomap_seek_hole_iter(const struct iomap_iter *iter,
-+static loff_t iomap_seek_hole_iter(struct iomap_iter *iter,
- 		loff_t *hole_pos)
- {
- 	loff_t length = iomap_length(iter);
-@@ -20,13 +20,13 @@ static loff_t iomap_seek_hole_iter(const struct iomap_iter *iter,
- 		*hole_pos = mapping_seek_hole_data(iter->inode->i_mapping,
- 				iter->pos, iter->pos + length, SEEK_HOLE);
- 		if (*hole_pos == iter->pos + length)
--			return length;
-+			return iomap_iter_advance(iter, &length);
- 		return 0;
- 	case IOMAP_HOLE:
- 		*hole_pos = iter->pos;
- 		return 0;
- 	default:
--		return length;
-+		return iomap_iter_advance(iter, &length);
- 	}
- }
- 
-@@ -56,19 +56,19 @@ iomap_seek_hole(struct inode *inode, loff_t pos, const struct iomap_ops *ops)
- }
- EXPORT_SYMBOL_GPL(iomap_seek_hole);
- 
--static loff_t iomap_seek_data_iter(const struct iomap_iter *iter,
-+static loff_t iomap_seek_data_iter(struct iomap_iter *iter,
- 		loff_t *hole_pos)
- {
- 	loff_t length = iomap_length(iter);
- 
- 	switch (iter->iomap.type) {
- 	case IOMAP_HOLE:
--		return length;
-+		return iomap_iter_advance(iter, &length);
- 	case IOMAP_UNWRITTEN:
- 		*hole_pos = mapping_seek_hole_data(iter->inode->i_mapping,
- 				iter->pos, iter->pos + length, SEEK_DATA);
- 		if (*hole_pos < 0)
--			return length;
-+			return iomap_iter_advance(iter, &length);
- 		return 0;
- 	default:
- 		*hole_pos = iter->pos;
-diff --git a/fs/iomap/swapfile.c b/fs/iomap/swapfile.c
-index b90d0eda9e51..4395e46a4dc7 100644
---- a/fs/iomap/swapfile.c
-+++ b/fs/iomap/swapfile.c
-@@ -94,9 +94,11 @@ static int iomap_swapfile_fail(struct iomap_swapfile_info *isi, const char *str)
-  * swap only cares about contiguous page-aligned physical extents and makes no
-  * distinction between written and unwritten extents.
-  */
--static loff_t iomap_swapfile_iter(const struct iomap_iter *iter,
-+static loff_t iomap_swapfile_iter(struct iomap_iter *iter,
- 		struct iomap *iomap, struct iomap_swapfile_info *isi)
- {
-+	u64 length = iomap_length(iter);
-+
- 	switch (iomap->type) {
- 	case IOMAP_MAPPED:
- 	case IOMAP_UNWRITTEN:
-@@ -132,7 +134,8 @@ static loff_t iomap_swapfile_iter(const struct iomap_iter *iter,
- 			return error;
- 		memcpy(&isi->iomap, iomap, sizeof(isi->iomap));
- 	}
--	return iomap_length(iter);
-+
-+	return iomap_iter_advance(iter, &length);
- }
- 
- /*
+ 	done = iomi.pos - iocb->ki_pos;
+ 	iocb->ki_pos = iomi.pos;
 -- 
 2.48.1
 
