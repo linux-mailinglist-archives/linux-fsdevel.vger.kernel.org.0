@@ -1,214 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-42433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE13CA42444
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 15:54:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3BCBA42640
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 16:29:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6206217ADAA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 14:47:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E565B16BFDD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 15:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B6A25486D;
-	Mon, 24 Feb 2025 14:45:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0381F1A83E7;
+	Mon, 24 Feb 2025 15:25:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H+wf0VCQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="haadp9GU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6619425484C
-	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 14:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4352D2571DA;
+	Mon, 24 Feb 2025 15:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740408343; cv=none; b=KDAMg0vAqeVXvcdj9WQwxrdvj6Gy50UZhCHgYVmq/En7vHLAJmI5TJ0aBS1KW9FfkBlUZB2IKjkU/I0jNVyXx8w1vSRqrvucMZCvjWEILSk3t1s5PS2MWOPOI3Dv1BID5elMM+7OE17y1yMiUMcdPbJ/Em1Z0Rc3pnuSWJs268U=
+	t=1740410745; cv=none; b=EzCfQyCZjb+X2E21B4HFzvBepL8p/z8qc2HJ19h4XCe8y0b56JyMPTIA/XmyB8humJYFazb+gYgFgugnWCnAm08e16oj587KgrQboRnlDWqsi3R0PHuItpOyfXZlo9X+EMWrYzjsjiyhTPIZTXb/R+4VUW1m+WVAon1jMzSomhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740408343; c=relaxed/simple;
-	bh=L73mRpWHqMSyB9GEczD7CvzvTfezi+RcmahwCU1s3MA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ctsnVoiw2sOjT6Rll0RQQukc/kUxD7uQsyHBM1/nvIDac9/vWZT1cIMzCaswYtJMqbPeVw7IKT6vDBnYBasfIk3Y+04aW8+TSftDgesfA1t1BE5zjFZ+h8k3LOGVBNkqzLnN2TTk4J0Y39lS/dhm5DqmbJMD1aiCUtc61gABLqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H+wf0VCQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740408340;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y6/xarkGOoBrKOmHvORNPFjWX6n9qs5bfEQTc6yOzvs=;
-	b=H+wf0VCQ/kMyYY5Ec0i/553P9FuBSuY86XxRd54wIqlyHqY3mMCRFZgibQ8RPt9g/60P9l
-	QbeNMPIGsAXCGt3S/qByvIyPJQk+0bdVyh9hmxXK0Rcm+LgOgByt9aXE4cUcXkxm9pjCPD
-	cSlf0tpR/uShPI8hNdMG4Bw8dB6YD0U=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-639-lkNVqxKrM7OKnAJ5TUnVtQ-1; Mon,
- 24 Feb 2025 09:45:36 -0500
-X-MC-Unique: lkNVqxKrM7OKnAJ5TUnVtQ-1
-X-Mimecast-MFC-AGG-ID: lkNVqxKrM7OKnAJ5TUnVtQ_1740408334
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D4A31180087B;
-	Mon, 24 Feb 2025 14:45:34 +0000 (UTC)
-Received: from bfoster.redhat.com (unknown [10.22.88.79])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EC0E419560AB;
-	Mon, 24 Feb 2025 14:45:33 +0000 (UTC)
-From: Brian Foster <bfoster@redhat.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-xfs@vger.kernel.org,
-	Christoph Hellwig <hch@infradead.org>,
-	"Darrick J . Wong" <djwong@kernel.org>
-Subject: [PATCH v3 12/12] iomap: introduce a full map advance helper
-Date: Mon, 24 Feb 2025 09:47:57 -0500
-Message-ID: <20250224144757.237706-13-bfoster@redhat.com>
-In-Reply-To: <20250224144757.237706-1-bfoster@redhat.com>
-References: <20250224144757.237706-1-bfoster@redhat.com>
+	s=arc-20240116; t=1740410745; c=relaxed/simple;
+	bh=krAMUD2jS9jCEEz+rn7iQ1DYd+ZjNcJ2ciQY4ybjJ18=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RQ2rxW6mJ7D7YhFHYshN6xntDhhVnVaeNg6cSmKPevD9J6vGFC6izgOtrEhoU3G/puSMVWYzr2XNFbAtU3euYN0HPLTKfaZY3B/DNq/HgWpzJ5QEC3bIugOJYfdijctOL1oLo0xnrxYvz+blbJKLYe3gCO17rOCfHMRYIWewPQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=haadp9GU; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-2bcdf5ea8faso2307120fac.2;
+        Mon, 24 Feb 2025 07:25:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740410742; x=1741015542; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=LK6RdHoQKdH3EpiJb5QWP6V4egccM/Y0BpmitxzGnEE=;
+        b=haadp9GUtQfkX47B38IILNfyNEGSgvBkf1T/CQ4INMimvm98FL3+/6DXcvJ4gapWck
+         TjzCASozH74fcIhU5LC37v0Debx6UFKfOc/RXzjONlmYG4CZB/KzDE/i5klRmeUJ/WXF
+         vpJByKD21MQz/q25F/utc9mSMTJMbyD2eXtH4AvLyoye4dzxz4CGlh5i0OKwCToPtnRw
+         +AIncYKLDSv50SPX1k5QFzxv4rbOu80a+tR8dzBu5faOazW07c7zqiV2rcmvhSgprpYR
+         IpoclF8VXeN1NNhyRkLUVGxGmCUm+GksIMF1FKb+8hvr8wqSVN6FG1WIQyGw3Pjul3K1
+         IaTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740410742; x=1741015542;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LK6RdHoQKdH3EpiJb5QWP6V4egccM/Y0BpmitxzGnEE=;
+        b=xHFUkEZFXqCuudxvrMMxcOhviJhUowJwDw/rlR3H/vtYZOCQrGq/9wR7SNYl8JyO/g
+         7UCuc+kzSknV3V87QFvdWenFmGWGdyTq4yaEArhw5AbQ5FCNGuZQzWDtzymkuKhE0Pn9
+         aa1XCQRaKP8MhNUEDdybvaJNfMHbP3afUmynmJLYluQv2wm2pbZ3hGSRYQeMU+6gfNC1
+         xMwYENfrpIO/8yWdRJR0IfRi/TzAV8aX2JPjKwlPAMQgmcCMxMZ3SlE/WD14TjZCxIcq
+         9VQYIQtUBHlNiewuFxJndDxbM5c8UP8vdofoRZXlPpN30zsTlTOX5mkAbHsYetj5qcSf
+         l8IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWuBzOGiTrwNZ1e6L6DHQ8d81qHxOw62w9fNo7HnZMadiXrLF19cq3Ay0QVvMD0bVLHxWq37mn6qn8yLeb+XA==@vger.kernel.org, AJvYcCX4AFR3SDi065DUQKRGPkrj2mnvfDE8JPQJ0R31pWnyEJ0JaiKMtfqS9bYN9KEHmNi1Bg7DlZ5nkJQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+sSQ9mhPh9Qz9vPlU+zHJ3l/snLBI6v92yeG2oMRMdjzC33q9
+	eN7SnJzxiGU+4MfOznQo4bs4WVk6fUmYWoQpOdHRTGLWa7jfnjmf
+X-Gm-Gg: ASbGncvMl59bJbzN081rDh8cf9sKYozdD3kSKMguoQQSYUsvGrASHHIo2Bl14uK6GXd
+	ArTcl0h7zW5nwUVrYieNjgGeG6NN2/TBcyOf1RbppX/22fHVd3C9zRHxwy5x0gDg2U///VCWYVL
+	FxW7Ee2+sMZ8yK8kwMkP35HUmH8F3VaAbHinF0OAi455yixQ/BznHT4VjepQ6WE5783KQrLpcu+
+	lsI4mxteeOsxBp3Ikdm1/BeYnmfuc8B13Idzi419ILWLCJNeM9gA4uwdxxBtqKUOT9NUOBW4dI5
+	4hidCh7UWss6Y7YnLhjFropbBbOcCceM003SsHQMszVF9pT5fxJgyg==
+X-Google-Smtp-Source: AGHT+IHXTOWEqzcqrYmLmNHEWXjIANdS7SkI/VxCGwV2UXbOVtO6m5FKOoKlzuZIjamVm9SrU/GhxQ==
+X-Received: by 2002:a05:6871:6a5:b0:2bc:9915:aeaa with SMTP id 586e51a60fabf-2bd514e6553mr10820583fac.5.1740410742051;
+        Mon, 24 Feb 2025 07:25:42 -0800 (PST)
+Received: from localhost.localdomain ([2603:8080:1500:3d89:9bc:7b3d:b287:e40a])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2b9548878b9sm8265355fac.20.2025.02.24.07.25.39
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 24 Feb 2025 07:25:41 -0800 (PST)
+Sender: John Groves <grovesaustin@gmail.com>
+From: John Groves <John@Groves.net>
+X-Google-Original-From: John Groves <john@groves.net>
+To: Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Bernd Schubert <bernd.schubert@fastmail.fm>,
+	Stefan Hajnoczi <shajnocz@redhat.com>
+Cc: Josef Bacik <josef@toxicpanda.com>,
+	Joanne Koong <joannelkoong@gmail.com>,
+	John Groves <John@Groves.net>,
+	John Groves <jgroves@micron.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	Aravind Ramesh <arramesh@micron.com>,
+	Ajay Joshi <ajayjoshi@micron.com>,
+	Eishan Mirakhur <emirakhur@micron.com>
+Subject: famfs port to fuse - questions
+Date: Mon, 24 Feb 2025 09:25:35 -0600
+Message-Id: <20250224152535.42380-1-john@groves.net>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Various iomap_iter_advance() calls advance by the full mapping
-length and thus have no need for the current length input or
-post-advance remaining length output from the standard advance
-function. Add an iomap_iter_advance_full() helper to clean up these
-cases.
+Miklos et. al.:
 
-Signed-off-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
----
- fs/dax.c               | 10 ++++------
- fs/iomap/buffered-io.c |  3 +--
- fs/iomap/fiemap.c      |  3 +--
- fs/iomap/swapfile.c    |  4 +---
- include/linux/iomap.h  | 10 ++++++++++
- 5 files changed, 17 insertions(+), 13 deletions(-)
+Here are some specific questions related to the famfs port into fuse [1][2]
+that I hope Miklos (and others) can give me feedback on soonish.
 
-diff --git a/fs/dax.c b/fs/dax.c
-index cab3c5abe5cb..7fd4cd9a51f2 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -1266,11 +1266,11 @@ static int dax_unshare_iter(struct iomap_iter *iter)
- 	u64 copy_len = iomap_length(iter);
- 	u32 mod;
- 	int id = 0;
--	s64 ret = iomap_length(iter);
-+	s64 ret;
- 	void *daddr = NULL, *saddr = NULL;
- 
- 	if (!iomap_want_unshare_iter(iter))
--		return iomap_iter_advance(iter, &ret);
-+		return iomap_iter_advance_full(iter);
- 
- 	/*
- 	 * Extend the file range to be aligned to fsblock/pagesize, because
-@@ -1300,16 +1300,14 @@ static int dax_unshare_iter(struct iomap_iter *iter)
- 	if (ret < 0)
- 		goto out_unlock;
- 
--	if (copy_mc_to_kernel(daddr, saddr, copy_len) == 0)
--		ret = iomap_length(iter);
--	else
-+	if (copy_mc_to_kernel(daddr, saddr, copy_len) != 0)
- 		ret = -EIO;
- 
- out_unlock:
- 	dax_read_unlock(id);
- 	if (ret < 0)
- 		return dax_mem2blk_err(ret);
--	return iomap_iter_advance(iter, &ret);
-+	return iomap_iter_advance_full(iter);
- }
- 
- int dax_file_unshare(struct inode *inode, loff_t pos, loff_t len,
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index cdb0fedcf3d2..ea5e32d810d5 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1433,8 +1433,7 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
- 				range_dirty = false;
- 				status = iomap_zero_iter_flush_and_stale(&iter);
- 			} else {
--				u64 length = iomap_length(&iter);
--				status = iomap_iter_advance(&iter, &length);
-+				status = iomap_iter_advance_full(&iter);
- 			}
- 			iter.status = status;
- 			continue;
-diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
-index 6776b800bde7..80675c42e94e 100644
---- a/fs/iomap/fiemap.c
-+++ b/fs/iomap/fiemap.c
-@@ -42,7 +42,6 @@ static int iomap_to_fiemap(struct fiemap_extent_info *fi,
- static int iomap_fiemap_iter(struct iomap_iter *iter,
- 		struct fiemap_extent_info *fi, struct iomap *prev)
- {
--	u64 length = iomap_length(iter);
- 	int ret;
- 
- 	if (iter->iomap.type == IOMAP_HOLE)
-@@ -56,7 +55,7 @@ static int iomap_fiemap_iter(struct iomap_iter *iter,
- 		return 0;
- 
- advance:
--	return iomap_iter_advance(iter, &length);
-+	return iomap_iter_advance_full(iter);
- }
- 
- int iomap_fiemap(struct inode *inode, struct fiemap_extent_info *fi,
-diff --git a/fs/iomap/swapfile.c b/fs/iomap/swapfile.c
-index 9ea185e58ca7..c1a762c10ce4 100644
---- a/fs/iomap/swapfile.c
-+++ b/fs/iomap/swapfile.c
-@@ -97,8 +97,6 @@ static int iomap_swapfile_fail(struct iomap_swapfile_info *isi, const char *str)
- static int iomap_swapfile_iter(struct iomap_iter *iter,
- 		struct iomap *iomap, struct iomap_swapfile_info *isi)
- {
--	u64 length = iomap_length(iter);
--
- 	switch (iomap->type) {
- 	case IOMAP_MAPPED:
- 	case IOMAP_UNWRITTEN:
-@@ -135,7 +133,7 @@ static int iomap_swapfile_iter(struct iomap_iter *iter,
- 		memcpy(&isi->iomap, iomap, sizeof(isi->iomap));
- 	}
- 
--	return iomap_iter_advance(iter, &length);
-+	return iomap_iter_advance_full(iter);
- }
- 
- /*
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index af9e51fba5f0..1fd66bc29cc1 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -271,6 +271,16 @@ static inline u64 iomap_length(const struct iomap_iter *iter)
- 	return iomap_length_trim(iter, iter->pos, iter->len);
- }
- 
-+/**
-+ * iomap_iter_advance_full - advance by the full length of current map
-+ */
-+static inline int iomap_iter_advance_full(struct iomap_iter *iter)
-+{
-+	u64 length = iomap_length(iter);
-+
-+	return iomap_iter_advance(iter, &length);
-+}
-+
- /**
-  * iomap_iter_srcmap - return the source map for the current iomap iteration
-  * @i: iteration structure
--- 
-2.48.1
+This work is active and serious, although you haven't heard much from me
+recently. I'm showing a famfs poster at Usenix FAST '25 this week [3].
 
+I'm generally following the approach in [1] - in a famfs file system,
+LOOKUP is followed by GET_FMAP to retrieve the famfs file/dax metadata.
+It's tempting to merge the fmap into the LOOKUP reply, but this seems like
+an optimization to consider once basic function is established.
+
+Q: Do you think it makes sense to make the famfs fmap an optional,
+   variable sized addition to the LOOKUP response?
+
+Whenever an fmap references a dax device that isn't already known to the
+famfs/fuse kernel code, a GET_DAXDEV message is sent, with the reply
+providing the info required to open teh daxdev. A file becomes available
+when the fmap is complete and all referenced daxdevs are "opened".
+
+Q: Any heartburn here?
+
+When GET_FMAP is separate from LOOKUP, READDIRPLUS won't add value unless it
+receives fmaps as part of the attributes (i.e. lookups) that come back in
+its response - since a READDIRPLUS that gets 12 files will still need 12
+GET_FMAP messages/responses to be complete. Merging fmaps as optional,
+variable-length components of the READDIRPLUS response buffers could
+eventualy make sense, but a cleaner solution intially would seem to be
+to disable READDIRPLUS in famfs. But...
+
+* The libfuse/kernel ABI appears to allow low-level fuse servers that don't
+  support READDIRPLUS...
+* But libfuse doesn't look at conn->want for the READDIRPLUS related
+  capabilities
+* I have overridden that, but the kernel still sends the READDIRPLUS
+  messages. It's possible I'm doing something hinky, and I'll keep looking
+  for it.
+* When I just return -ENOSYS to READDIRPLUS, things don't work well. Still
+  looking into this.
+
+Q: Do you know whether the current fuse kernel mod can handle a low-level
+   fuse server that doesn't support READDIRPLUS? This may be broken.
+
+Q: If READDIRPLUS isn't actually optional, do you think the same attribute
+   reply merge (attr + famfs fmap) is viable for READDIRPLUS? I'd very much
+   like to do this part "later".
+
+Q: Are fuse lowlevel file systems like famfs expected to use libfuse and its
+   message handling (particularly init), or is it preferred that they not
+   do so? Seems a shame to throw away all that api version checking, but
+   turning off READDIRPLUS would require changes that might affect other
+   libfuse clients. Please advise...
+
+Note that the intended use cases for famfs generally involve large files
+rather than *many* files, so giving up READDIRPLUS may not matter very much,
+at least in the early going.
+
+I'm hoping to get an initial RFC patch set out in a few weeks, but these
+questions address [some of] the open issues that need to be [at least
+initially] resolved first.
+
+
+Regards,
+John
+
+[1] https://lore.kernel.org/linux-fsdevel/20241029011308.24890-1-john@groves.net/
+[2] https://lwn.net/Articles/983105/
+[3] https://www.usenix.org/conference/fast25/poster-session
 
