@@ -1,350 +1,246 @@
-Return-Path: <linux-fsdevel+bounces-42543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C9BEA430DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 00:30:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50226A4310F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 00:41:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66BBE3A353F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 23:29:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CC8F16B733
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 23:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA0320C463;
-	Mon, 24 Feb 2025 23:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78ADC20C008;
+	Mon, 24 Feb 2025 23:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="loBfTiR6";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="J3mvHyzY";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="loBfTiR6";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="J3mvHyzY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="auF9L8i6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0638320B213
-	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 23:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260CB2571AD;
+	Mon, 24 Feb 2025 23:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740439794; cv=none; b=ZfQgKNmbZk0HSsw4xaSkAoL0XsigLg1JsIywnCdqQYwYFW1Dw1wxqkPp+wR37cSnW9kwLgG/QZ+Sf1CWYJnGR2YstDgNXVhIwCVul4xtEjFn8tyJrNpj8E2Y2ZKDEXRfXuXdoDbGmq5b198iih2OUXKWvRkMKfjIwKRugUu6Ebw=
+	t=1740440469; cv=none; b=pEh8nLWRrMvgSzQpZX5KR+Se/9Yh5E7EIQC2KahXzBw65wo17pig3OEaI1lYTC1EX2ffZgYsCsaUfZ5ZSpg2zXiUZ9iodytg52qgHWdBCtmVsQ2Yz/E1eU0iSEA5IizHKOQtCvZDkR/CpAqC3UCJOLjnOmyLNJjsq6KDhLxV+Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740439794; c=relaxed/simple;
-	bh=vt/y9E4/DcaZ9NV1EBDUcDNYGDvwjv/mQRtyYJZcYqk=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=N6pwwqkeWU5piX4QoVAAY88snhpDT5X05DS98EyaY4f3AvVjS8EIDWhnWD4Zzlf7OCsb+wSF18LW0mFGEPLKliImgar1FVaytMUHRUZZq35w/kEfdszm3C2iyHQ0FKkaGtwHkvJA7flXswWH61YE8EKQ37J8qFBFd8zBA8q/nNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=loBfTiR6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=J3mvHyzY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=loBfTiR6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=J3mvHyzY; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1769F1F44E;
-	Mon, 24 Feb 2025 23:29:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740439789; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2oj990YaLGkPA4ae4sIKmdEX5RxKU3jTg87RjSWSYeg=;
-	b=loBfTiR6kAlC/sS0ot1CDtcKEiKmB6GXrsHNK+SsrbeZzGdV6O2ZrsmO8jw3wvJPHK58Kj
-	glzLsVFTkUpcycBhzhfiLzoYOAwECgg5wubkGZIw8GCF2DWKEIFm9faiQIbZ45b9stImh9
-	J9FQoxLwzfFLcLMM4Nzxcdvxtbe/i94=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740439789;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2oj990YaLGkPA4ae4sIKmdEX5RxKU3jTg87RjSWSYeg=;
-	b=J3mvHyzY65SyoNedSF0MYSEG2w3R6giaas15VW09Vb9TUfaAv1RMGveIpiZI1/xnVIoKU6
-	p9GIZjyHOh0bImAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740439789; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2oj990YaLGkPA4ae4sIKmdEX5RxKU3jTg87RjSWSYeg=;
-	b=loBfTiR6kAlC/sS0ot1CDtcKEiKmB6GXrsHNK+SsrbeZzGdV6O2ZrsmO8jw3wvJPHK58Kj
-	glzLsVFTkUpcycBhzhfiLzoYOAwECgg5wubkGZIw8GCF2DWKEIFm9faiQIbZ45b9stImh9
-	J9FQoxLwzfFLcLMM4Nzxcdvxtbe/i94=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740439789;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2oj990YaLGkPA4ae4sIKmdEX5RxKU3jTg87RjSWSYeg=;
-	b=J3mvHyzY65SyoNedSF0MYSEG2w3R6giaas15VW09Vb9TUfaAv1RMGveIpiZI1/xnVIoKU6
-	p9GIZjyHOh0bImAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A647613332;
-	Mon, 24 Feb 2025 23:29:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5OlzEuQAvWc2awAAD6G6ig
-	(envelope-from <neilb@suse.de>); Mon, 24 Feb 2025 23:29:40 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1740440469; c=relaxed/simple;
+	bh=HuwPjSd+Ieq420aTOaET9+4Zo8XlqBvhJjzTKzAEEIM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gdq8LjhlNAxYqVHNaAmRrgr+d54TChnvqalaoOz9rdmSJ5N2wp9D1T9/RnYwJFAYovGDCrl/6NkzIELqGsJerIsUGIwkGz/GhADp/DTocR7AHAVwlWMlgwaXcM25jGFf1/gLKMDEtcNkQ7nXzDPD4oX3yX9DYC3xvSFoTGoEbuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=auF9L8i6; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-46fd4bf03cbso80165851cf.0;
+        Mon, 24 Feb 2025 15:41:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740440467; x=1741045267; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IyC9yWt0ihuJwz9KECLNyHPrySoIePQO8WmxTvAC7oo=;
+        b=auF9L8i6mTz/js6qMByaTK0dVfe3yfDK+HAp2ukes/WBRL29AFdmMygnQFxzAUiiv5
+         /jOZ77eq//Ff3tOfPbF1bVtBpVVEXtuvGFuHFfpY4OsmIi8qSw9WJ80imbs0j+R34Mtv
+         3FPDJGCZFIlVltrr6bCRW0Zxn6SVw7F/4KfGC7tucbfSuu1hQhivGpAHyztTC0HxEgyf
+         q/e0+ACosFZXvgRpZCOGS15J9X5Cmm7bp3+zwLckZQdsCZJuBuYRvZc6hTLEVziirCx3
+         R37X7owUGMj8Sp7Uiap8lUfHF20GgcaE9v446SmlU39/+oPj3HldytvoLMXn9CPPpRwh
+         lTyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740440467; x=1741045267;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IyC9yWt0ihuJwz9KECLNyHPrySoIePQO8WmxTvAC7oo=;
+        b=OVeNjAq5gDci7g8ephWjwWO85Fryku9z8Dedva2iTWi5qk4/gH6ZPz4Iu9dqkRwucp
+         tjSlBzkcUEUxULscOP2rtGU8lFdQlVjYQ84els6hChzklDSYj/FNaZZriBvKLSnAA5JQ
+         pjRW1WY80OMDQrIcU89OpSq878WLvXQ1wAyIf98NAGT3ktqY/8Cf283Ldx8rVf8vPYIo
+         Xo2Qi4h3zHHU1b8OzuzLl2SvYac0Ywc/RJ6JQq1JmxGM/HSiApytXue3Ly59h+rWu9sW
+         ogcDwFco9ZBlSk+x6aV/qoXaaADLFrMl4t6R8iPwKYEx6FmLIIS+aBxtCNWas1LnzmlG
+         34kw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOx8K6Z1XKlu6KQqNvskDuSWclnuWY0wWer2+hSlHRauSDqB32xo9yUFu63Ykm3D+dglo0zQcwnv0z2ZLe8A==@vger.kernel.org, AJvYcCWNaYgqutlLFhIa4dTLPn/z8G++J3Fiuzr/uNoZ0GXgmiaWTbrjZTdpSkE7PWZdL0U3n7eT/rZNPk0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt6hLfBAjJbfpwTfCf91BR9sa+w9kFpmMYQqO9bGdpF2AEKK92
+	uucZnPGuDoC0CH3JDjpo2oulR9wF+ajCsQuzIEVr4agrykM7hKZQt90O+BDDaZbMIsMU7przWdq
+	CHoeIo+SiJybOpGJATv3JtuxCYiw=
+X-Gm-Gg: ASbGncu56cYn4etA8KMZvsHgcFV2a7Us+YbrAwHij4x90bIcBeuNPDkGtOj+TPcbXIB
+	11bDniXRKXlyXT9PUuPc6nS9UModDtjSwKs4Vm8jNHRpM8u+gLp4muNmsFwuBgUveTQndN1URYI
+	2Swy5vuyia
+X-Google-Smtp-Source: AGHT+IEos+Te3LWAJ6vPcdvAntGUnPzNwwKMe1HnRxzFBeYkq54gslMy1TycuqYBfPz1yhq3Ksv4VBS2buWCI3XlaoY=
+X-Received: by 2002:ac8:7d8a:0:b0:472:116f:94ec with SMTP id
+ d75a77b69052e-4737725cda1mr19583941cf.32.1740440466849; Mon, 24 Feb 2025
+ 15:41:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Viacheslav Dubeyko" <Slava.Dubeyko@ibm.com>
-Cc: "brauner@kernel.org" <brauner@kernel.org>, "Xiubo Li" <xiubli@redhat.com>,
- "idryomov@gmail.com" <idryomov@gmail.com>,
- "Olga Kornievskaia" <okorniev@redhat.com>,
- "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
- "Dai.Ngo@oracle.com" <Dai.Ngo@oracle.com>,
- "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "johannes@sipsolutions.net" <johannes@sipsolutions.net>,
- "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
- "jlayton@kernel.org" <jlayton@kernel.org>,
- "anna@kernel.org" <anna@kernel.org>, "miklos@szeredi.hu" <miklos@szeredi.hu>,
- "trondmy@kernel.org" <trondmy@kernel.org>,
- "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
- "jack@suse.cz" <jack@suse.cz>, "tom@talpey.com" <tom@talpey.com>,
- "richard@nod.at" <richard@nod.at>,
- "anton.ivanov@cambridgegreys.com" <anton.ivanov@cambridgegreys.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "netfs@lists.linux.dev" <netfs@lists.linux.dev>,
- "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
- "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
- "senozhatsky@chromium.org" <senozhatsky@chromium.org>
-Subject: RE:  [PATCH 3/6] ceph: return the correct dentry on mkdir
-In-reply-to: <f7d3e39f5ced7832d451de172004172b59a994eb.camel@ibm.com>
-References: <>, <f7d3e39f5ced7832d451de172004172b59a994eb.camel@ibm.com>
-Date: Tue, 25 Feb 2025 10:29:37 +1100
-Message-id: <174043977707.74271.6498110571534472585@noble.neil.brown.name>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,redhat.com,gmail.com,vger.kernel.org,oracle.com,lists.infradead.org,sipsolutions.net,szeredi.hu,zeniv.linux.org.uk,suse.cz,talpey.com,nod.at,cambridgegreys.com,lists.linux.dev,chromium.org];
-	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+References: <20250224152535.42380-1-john@groves.net>
+In-Reply-To: <20250224152535.42380-1-john@groves.net>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 24 Feb 2025 15:40:55 -0800
+X-Gm-Features: AWEUYZnQfkFnxoExaZjo3T7N6gKii1d37AJEki2fWBvtbmPjhXc_57Tso91H6Ug
+Message-ID: <CAJnrk1bJ5jE5qWdRju6xz+DipYHUrj8w4PdL80J1M6ujMxXJ1g@mail.gmail.com>
+Subject: Re: famfs port to fuse - questions
+To: John Groves <John@groves.net>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+	Bernd Schubert <bernd.schubert@fastmail.fm>, Stefan Hajnoczi <shajnocz@redhat.com>, 
+	Josef Bacik <josef@toxicpanda.com>, John Groves <jgroves@micron.com>, linux-fsdevel@vger.kernel.org, 
+	linux-cxl@vger.kernel.org, Aravind Ramesh <arramesh@micron.com>, 
+	Ajay Joshi <ajayjoshi@micron.com>, Eishan Mirakhur <emirakhur@micron.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 25 Feb 2025, Viacheslav Dubeyko wrote:
-> On Mon, 2025-02-24 at 13:15 +1100, NeilBrown wrote:
-> > On Fri, 21 Feb 2025, Viacheslav Dubeyko wrote:
-> > > On Fri, 2025-02-21 at 10:36 +1100, NeilBrown wrote:
-> > > > ceph already splices the correct dentry (in splice_dentry()) from the
-> > > > result of mkdir but does nothing more with it.
-> > > >=20
-> > > > Now that ->mkdir can return a dentry, return the correct dentry.
-> > > >=20
-> > > > Signed-off-by: NeilBrown <neilb@suse.de>
-> > > > ---
-> > > >  fs/ceph/dir.c | 9 ++++++++-
-> > > >  1 file changed, 8 insertions(+), 1 deletion(-)
-> > > >=20
-> > > > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> > > > index 39e0f240de06..c1a1c168bb27 100644
-> > > > --- a/fs/ceph/dir.c
-> > > > +++ b/fs/ceph/dir.c
-> > > > @@ -1099,6 +1099,7 @@ static struct dentry *ceph_mkdir(struct mnt_idm=
-ap *idmap, struct inode *dir,
-> > > >  	struct ceph_client *cl =3D mdsc->fsc->client;
-> > > >  	struct ceph_mds_request *req;
-> > > >  	struct ceph_acl_sec_ctx as_ctx =3D {};
-> > > > +	struct dentry *ret =3D NULL;
-> > >=20
-> > > I believe that it makes sense to initialize pointer by error here and a=
-lways
-> > > return ret as output. If something goes wrong in the logic, then we alr=
-eady have
-> > > error.
-> >=20
-> > I'm not certain that I understand, but I have made a change which seems
-> > to be consistent with the above and included it below.  Please let me
-> > know if it is what you intended.
-> >=20
-> > >=20
-> > > >  	int err;
-> > > >  	int op;
-> > > > =20
-> > > > @@ -1166,14 +1167,20 @@ static struct dentry *ceph_mkdir(struct mnt_i=
-dmap *idmap, struct inode *dir,
-> > > >  	    !req->r_reply_info.head->is_dentry)
-> > > >  		err =3D ceph_handle_notrace_create(dir, dentry);
-> > > >  out_req:
-> > > > +	if (!err && req->r_dentry !=3D dentry)
-> > > > +		/* Some other dentry was spliced in */
-> > > > +		ret =3D dget(req->r_dentry);
-> > > >  	ceph_mdsc_put_request(req);
-> > > >  out:
-> > > >  	if (!err)
-> > > > +		/* Should this use 'ret' ?? */
-> > >=20
-> > > Could we make a decision should or shouldn't? :)
-> > > It looks not good to leave this comment instead of proper implementatio=
-n. Do we
-> > > have some obstacles to make this decision?
-> >=20
-> > I suspect we should use ret, but I didn't want to make a change which
-> > wasn't directly required by my needed.  So I highlighted this which
-> > looks to me like a possible bug, hoping that someone more familiar with
-> > the code would give an opinion.  Do you agree that 'ret' (i.e.
-> > ->r_dentry) should be used when ret is not NULL?
-> >=20
->=20
-> I think if we are going to return ret as a dentry, then it makes sense to c=
-all
-> the ceph_init_inode_acls() for d_inode(ret). I don't see the point to call
-> ceph_init_inode_acls() for d_inode(dentry) then.
+On Mon, Feb 24, 2025 at 7:25=E2=80=AFAM John Groves <John@groves.net> wrote=
+:
+>
+> Miklos et. al.:
+>
+> Here are some specific questions related to the famfs port into fuse [1][=
+2]
+> that I hope Miklos (and others) can give me feedback on soonish.
+>
+> This work is active and serious, although you haven't heard much from me
+> recently. I'm showing a famfs poster at Usenix FAST '25 this week [3].
+>
+> I'm generally following the approach in [1] - in a famfs file system,
+> LOOKUP is followed by GET_FMAP to retrieve the famfs file/dax metadata.
+> It's tempting to merge the fmap into the LOOKUP reply, but this seems lik=
+e
+> an optimization to consider once basic function is established.
+>
+> Q: Do you think it makes sense to make the famfs fmap an optional,
+>    variable sized addition to the LOOKUP response?
+>
+> Whenever an fmap references a dax device that isn't already known to the
+> famfs/fuse kernel code, a GET_DAXDEV message is sent, with the reply
+> providing the info required to open teh daxdev. A file becomes available
+> when the fmap is complete and all referenced daxdevs are "opened".
+>
+> Q: Any heartburn here?
+>
+> When GET_FMAP is separate from LOOKUP, READDIRPLUS won't add value unless=
+ it
+> receives fmaps as part of the attributes (i.e. lookups) that come back in
+> its response - since a READDIRPLUS that gets 12 files will still need 12
+> GET_FMAP messages/responses to be complete. Merging fmaps as optional,
+> variable-length components of the READDIRPLUS response buffers could
+> eventualy make sense, but a cleaner solution intially would seem to be
+> to disable READDIRPLUS in famfs. But...
+>
 
-If the mkdir used the original dentry, then ->mkdir returns NULL so ret
-is NULL.  If the mkdir used a different dentry it returns that, so ret
-is not NULL.
+Hi John,
 
-I'll try to re-organise the code so that "dentry" is the correct dentry
-on success, and "ret" is the returned dentry, which might be NULL.
+> * The libfuse/kernel ABI appears to allow low-level fuse servers that don=
+'t
+>   support READDIRPLUS...
+> * But libfuse doesn't look at conn->want for the READDIRPLUS related
+>   capabilities
+> * I have overridden that, but the kernel still sends the READDIRPLUS
+>   messages. It's possible I'm doing something hinky, and I'll keep lookin=
+g
+>   for it.
+
+On the kernel side, FUSE_READDIR / FUSE_READDIRPLUS requests are sent
+in fuse_readdir_uncached(). I don't see anything there that skips
+sending readdir / readdirplus requests if the server doesn't have
+.readdir / .readdirplus implemented. For some request types (eg
+FUSE_RENAME2, FUSE_LINK, FUSE_FSYNCDIR, FUSE_CREATE, ...), we do track
+if a request type isn't implemented by the server and then skip
+sending that request in the future (for example, see fuse_tmpfile()).
+If we wanted to do this skipping for readdir as well, it'd probably
+look something like
+
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -870,6 +870,9 @@ struct fuse_conn {
+        /* Is link not implemented by fs? */
+        unsigned int no_link:1;
+
++       /* Is readdir/readdirplus not implemented by fs? */
++       unsigned int no_readdir:1;
++
+        /* Use io_uring for communication */
+        unsigned int io_uring;
+
+diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
+index 17ce9636a2b1..176d6ce953e5 100644
+--- a/fs/fuse/readdir.c
++++ b/fs/fuse/readdir.c
+@@ -341,6 +341,9 @@ static int fuse_readdir_uncached(struct file
+*file, struct dir_context *ctx)
+        u64 attr_version =3D 0, evict_ctr =3D 0;
+        bool locked;
+
++       if (fm->fc->no_readdir)
++               return -ENOSYS;
++
+        folio =3D folio_alloc(GFP_KERNEL, 0);
+        if (!folio)
+                return -ENOMEM;
+@@ -376,6 +379,8 @@ static int fuse_readdir_uncached(struct file
+*file, struct dir_context *ctx)
+                        res =3D parse_dirfile(folio_address(folio), res, fi=
+le,
+                                            ctx);
+                }
++       } else if (res =3D=3D -ENOSYS) {
++               fm->fc->no_readdir =3D 1;
+        }
+
+        folio_put(folio);
+
+> * When I just return -ENOSYS to READDIRPLUS, things don't work well. Stil=
+l
+>   looking into this.
+>
+> Q: Do you know whether the current fuse kernel mod can handle a low-level
+>    fuse server that doesn't support READDIRPLUS? This may be broken.
+
+From what I see, the fuse kernel code can handle servers that don't
+support readdir/readdirplus. The fuse readdir path gets invoked from
+file_operations->iterate_shared callback, which from what i see, the
+only ramification of this always returning an error is that the
+syscalls calling into this (eg getdents(), readdir()) fail.
+
+>
+> Q: If READDIRPLUS isn't actually optional, do you think the same attribut=
+e
+>    reply merge (attr + famfs fmap) is viable for READDIRPLUS? I'd very mu=
+ch
+>    like to do this part "later".
+>
+> Q: Are fuse lowlevel file systems like famfs expected to use libfuse and =
+its
+>    message handling (particularly init), or is it preferred that they not
+>    do so? Seems a shame to throw away all that api version checking, but
+>    turning off READDIRPLUS would require changes that might affect other
+>    libfuse clients. Please advise...
+>
+
+imo, I don't see any benefits from using a custom-written library
+instead of libfuse. I think there'd end up being a lot of overlap
+between the two and wouldn't be worth the hassle.
+
+> Note that the intended use cases for famfs generally involve large files
+> rather than *many* files, so giving up READDIRPLUS may not matter very mu=
+ch,
+> at least in the early going.
+>
+> I'm hoping to get an initial RFC patch set out in a few weeks, but these
+> questions address [some of] the open issues that need to be [at least
+> initially] resolved first.
+>
+
+Looking forward to reading your RFC patch.
 
 Thanks,
-NeilBrown
-
-
->=20
-> > >=20
-> > > >  		ceph_init_inode_acls(d_inode(dentry), &as_ctx);
-> > > >  	else
-> > > >  		d_drop(dentry);
-> > > >  	ceph_release_acl_sec_ctx(&as_ctx);
-> > > > -	return ERR_PTR(err);
-> > > > +	if (err)
-> > > > +		return ERR_PTR(err);
-> > > > +	return ret;
-> > >=20
-> > > What's about this?
-> > >=20
-> > > return err ? ERR_PTR(err) : ret;
-> >=20
-> > We could do that, but you said above that you thought we should always
-> > return 'ret' - which does make some sense.
-> >=20
-> > What do you think of the following alternate patch?
-> >=20
->=20
-> Patch looks good to me. Thanks.
->=20
-> Reviewed-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
->=20
-> > Thanks,
-> > NeilBrown
-> >=20
-> > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> > index 39e0f240de06..d2e5c557df83 100644
-> > --- a/fs/ceph/dir.c
-> > +++ b/fs/ceph/dir.c
-> > @@ -1099,6 +1099,7 @@ static struct dentry *ceph_mkdir(struct mnt_idmap *=
-idmap, struct inode *dir,
-> >  	struct ceph_client *cl =3D mdsc->fsc->client;
-> >  	struct ceph_mds_request *req;
-> >  	struct ceph_acl_sec_ctx as_ctx =3D {};
-> > +	struct dentry *ret;
-> >  	int err;
-> >  	int op;
-> > =20
-> > @@ -1116,32 +1117,32 @@ static struct dentry *ceph_mkdir(struct mnt_idmap=
- *idmap, struct inode *dir,
-> >  		      ceph_vinop(dir), dentry, dentry, mode);
-> >  		op =3D CEPH_MDS_OP_MKDIR;
-> >  	} else {
-> > -		err =3D -EROFS;
-> > +		ret =3D ERR_PTR(-EROFS);
-> >  		goto out;
-> >  	}
-> > =20
-> >  	if (op =3D=3D CEPH_MDS_OP_MKDIR &&
-> >  	    ceph_quota_is_max_files_exceeded(dir)) {
-> > -		err =3D -EDQUOT;
-> > +		ret =3D ERR_PTR(-EDQUOT);
-> >  		goto out;
-> >  	}
-> >  	if ((op =3D=3D CEPH_MDS_OP_MKSNAP) && IS_ENCRYPTED(dir) &&
-> >  	    !fscrypt_has_encryption_key(dir)) {
-> > -		err =3D -ENOKEY;
-> > +		ret =3D ERR_PTR(-ENOKEY);
-> >  		goto out;
-> >  	}
-> > =20
-> > =20
-> >  	req =3D ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
-> >  	if (IS_ERR(req)) {
-> > -		err =3D PTR_ERR(req);
-> > +		ret =3D ERR_CAST(req);
-> >  		goto out;
-> >  	}
-> > =20
-> >  	mode |=3D S_IFDIR;
-> >  	req->r_new_inode =3D ceph_new_inode(dir, dentry, &mode, &as_ctx);
-> >  	if (IS_ERR(req->r_new_inode)) {
-> > -		err =3D PTR_ERR(req->r_new_inode);
-> > +		ret =3D ERR_CAST(req->r_new_inode);
-> >  		req->r_new_inode =3D NULL;
-> >  		goto out_req;
-> >  	}
-> > @@ -1165,15 +1166,23 @@ static struct dentry *ceph_mkdir(struct mnt_idmap=
- *idmap, struct inode *dir,
-> >  	    !req->r_reply_info.head->is_target &&
-> >  	    !req->r_reply_info.head->is_dentry)
-> >  		err =3D ceph_handle_notrace_create(dir, dentry);
-> > +	ret =3D ERR_PTR(err);
-> >  out_req:
-> > +	if (!IS_ERR(ret) && req->r_dentry !=3D dentry)
-> > +		/* Some other dentry was spliced in */
-> > +		ret =3D dget(req->r_dentry);
-> >  	ceph_mdsc_put_request(req);
-> >  out:
-> > -	if (!err)
-> > -		ceph_init_inode_acls(d_inode(dentry), &as_ctx);
-> > -	else
-> > +	if (!IS_ERR(ret)) {
-> > +		if (ret)
-> > +			ceph_init_inode_acls(d_inode(ret), &as_ctx);
-> > +		else
-> > +			ceph_init_inode_acls(d_inode(dentry), &as_ctx);
-> > +	} else {
-> >  		d_drop(dentry);
-> > +	}
-> >  	ceph_release_acl_sec_ctx(&as_ctx);
-> > -	return ERR_PTR(err);
-> > +	return ret;
-> >  }
-> > =20
-> >  static int ceph_link(struct dentry *old_dentry, struct inode *dir,
-> >=20
->=20
-> Thanks,
-> Slava.
->=20
->=20
-
+Joanne
+>
+> Regards,
+> John
+>
+> [1] https://lore.kernel.org/linux-fsdevel/20241029011308.24890-1-john@gro=
+ves.net/
+> [2] https://lwn.net/Articles/983105/
+> [3] https://www.usenix.org/conference/fast25/poster-session
 
