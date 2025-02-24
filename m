@@ -1,430 +1,333 @@
-Return-Path: <linux-fsdevel+bounces-42535-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69829A42F47
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 22:37:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6469A42F5B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 22:43:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5575B173B51
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 21:37:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3294C7A890D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 21:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1146D1DE3D1;
-	Mon, 24 Feb 2025 21:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768CC1E5B98;
+	Mon, 24 Feb 2025 21:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uZti58RT"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IPFEea1Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A648C469D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 21:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DAF1D6DD4
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 21:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740433024; cv=none; b=YUN/pF8QSrlNOMaXFuZQ13x1HvrkEbshEL3Fa5MYWp9VAA2DlauHiulpVk5eMOmLSQzG7hqYTCk0KYeK2xcNoaX/ZlOS/WbwjPAgSgnHzw96teKMF8NG8fRH6QGSWeWhz0alrdIccGQkqeGpyWtxtAPNInpXv8djCLQrw++LWcw=
+	t=1740433376; cv=none; b=BYOVZGR+rK8MdZdwZl7KJjT/I2ohF+xfj1OX9v2FMeeOoh6nqqPBzRT3G/+dEE9t/Sct2eXVEBzRoTrJAjj0VFhPQ+HEuuT9Feyl6jk3hJee1vTKmap0x1RW0ohDDD87H61AQxgP/IDWgMNufu9DPk2rdwVGpxf514F/kpvQqYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740433024; c=relaxed/simple;
-	bh=o8Zjb6OXMmSq+kbQzgXMUlUqhAnN74G5e+mktGVC0Zs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bm8gLcMOah1HcqIPTrse1V41F29vT37qxjdtBqOwVLGTSBElx63WrSdBbxGE4S2KZQnrYwXWZLlFOROXA40VY4UmUlEaRKB9tkIALcWEeKQb9Nx5SXYb1HAV6cnAfGkz/SZIIJcM6X+iURbuUCZ/3sySpWwgrjNnmkYCKse+eXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uZti58RT; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22117c396baso12845ad.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 13:37:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740433022; x=1741037822; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5ovUBpG7aXXwkDBC/a6KtafoC5cGlW0QFjL4aakiGwk=;
-        b=uZti58RThwwHwkYksZ0aTkUaENTXPuY5754LcK9NsLE66XK23TkO7tqojUaZhXlByz
-         +HyGwrWWCQnqle7h4Nd+nXGXaXejeI36OD2Uq+PtjRH8iu3J3+zKDFswUTxAKfk8V6PT
-         xDhwt2J/4YekwZAsVr1Z7qwf4CImYiFpqvmX3hHjcT4nhVQW+1aab3Bhx+gzjXSgGPFp
-         /tJF9e11TwHjr0LXeAJcQyvnRysutHjs+HMoKyO6YNwJ4o2AhdurRfet4AR9w+2jcXMp
-         DPkA9VU8IbVTOHcgvQg7eAJJyw8MxBs2W41Fozj+hsH9cwpDX8Wojjp1Tj11JSNpZCPd
-         UO7Q==
+	s=arc-20240116; t=1740433376; c=relaxed/simple;
+	bh=ekkAEapecpumjjiwkGzpz44LQrXMuL5VpfcbknyWX6M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OpGHl+LCu28rz50vwAMp+eEbXcsrwXFkxZK3PeRTuySuunIZpUQRU2Rs5jdLcWpysXoxKAEQtZye1mCLoa/Pz8mJz4wBewVhOnlIvoLP/IZZQ1nXuSIqkEwxZxsoaN+7wLgrruVYrFYa+7pljM5udiYs1SBSRbGwnQW2q+cuaMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IPFEea1Y; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740433372;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rJdaIppcAF+FxsFQkO0OqCCOm0uBPZoLqjFlhCs6lzk=;
+	b=IPFEea1YA1qy2BW5NbgN7NQHNrXFygYVK9DAsqvdC5rF9s/7f6ETEZUqq2axa0s7T4QKho
+	opuZl62z2F9ytP+mfH1ctuwzJ1RLoKD5ZIUrY7Mm4PK6mgi/MYv/j/vazVxUSwTMun/lJu
+	dq8bNSjkta9jw8TijCkIzsfsv0KGtVU=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-249-PvH6LUBiMDaoyZ_2B5MleA-1; Mon, 24 Feb 2025 16:42:51 -0500
+X-MC-Unique: PvH6LUBiMDaoyZ_2B5MleA-1
+X-Mimecast-MFC-AGG-ID: PvH6LUBiMDaoyZ_2B5MleA_1740433370
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4394c0a58e7so40645185e9.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 13:42:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740433022; x=1741037822;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5ovUBpG7aXXwkDBC/a6KtafoC5cGlW0QFjL4aakiGwk=;
-        b=iYiRJukUANM7vGJWV/rNJ/Nk/OSaTnEXWaz4ezkoOYqGJeUNRcAam2SSKU8yJYQyiv
-         62P8/kXQv8p5xLYYLPgXmn9+XNTBBB7I4inavk3AcoCT9vJ8jnB9shXhqWfGti2QE6n4
-         3hAXwI99B8O9e4bhgpUm3IXTHgElMx5sLXTPGT62KIXuW9JmtzvVH7xir9oeX1VrtoY1
-         8IdGNOnp1R3zK+sJ4pKAwKWKChvTHZIzKTHmwBLt6u1GcIjDwIKWLmMAud55wWGjixDD
-         JbuaoqhIJefdrNpc1krbGt0bk3oSoXASqqdOPTEFTT/RS2AXkOtRt87dBqdz0f/bzJsn
-         3U9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUyHmPrlAjIzX1aSMwmlWr/kq6wfeWN0ScSYrGgWk1ioW5wlKS05hcQGNnk0TN9KaheUPTVEKV/hWC94w1V@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5qtb/s6MZEVsp3/vaRPLtQIL1I2CRqeqrS40Z4v/JzP1LG4nn
-	jGMkh0EjlfPugOC0NBlwduqposc9GWSZwFEYpfGnaFSszVbK1kRizW31JCS0J/lCHkbYAzdBCe+
-	lZ9XYagLFqObcNPAqe+NLgFC4SIkIBLBaXoqp
-X-Gm-Gg: ASbGncswvq3YrsGwpWmZuB4NwBEDwUxbOQXI+ivKUiaYfuKHXma5kyWwCUq3cIpKpo2
-	WYsHY/dRxhIZVeWbx5kl8kkCbTCABH2EnK5b0shT7ud02cb47vFecMkU2VWp24jO/Tq3DyWvsVz
-	Zss2NnI/YftBgalJn0m/+X/j2MNv/3lafYpF4zXA==
-X-Google-Smtp-Source: AGHT+IGs5iHY+9ry+lEEOEo9o06dXO9jofNUW39apTX33QTSxPUBgPykVHcd3XP0qaM7FxNdwyTyzGgqf0AOSYenyqw=
-X-Received: by 2002:a17:903:2350:b0:215:f0c6:4dbf with SMTP id
- d9443c01a7336-22307a60dc8mr1132485ad.14.1740433021713; Mon, 24 Feb 2025
- 13:37:01 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740433370; x=1741038170;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rJdaIppcAF+FxsFQkO0OqCCOm0uBPZoLqjFlhCs6lzk=;
+        b=E0sPkyxBrocIdMBMVDm7/OSp5NOfhLglqR9D/L8lrTB7/w8ylJLNvH15ppYBzy6hpQ
+         3JlQu2kqF6rUT5Ki/USiwL2XszleqTwDSmU0V0XKIwJ2LNBuwzLk5UAXDpgFoeeuSm1B
+         Akvce+uK6G3fT4zilnDWadystxqflYSlmzw8T2GWjW/z0EcJfmJ4iuvPVJXXNPDVPvDI
+         BLukSy5PdqUGpdRfNNkgFbNVCGVYt7mFBDq6GXoeg2MstI/Qj6ugUCJg4KoHEhf+It2Q
+         9XnOQl9BZLzwH1ZQexom8C0PqxBj9NVRLKFxRenEa+Dh0fDKaBKuU2V9KCe52cJ8XbyN
+         hc8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVPqlp2km/E/GkTUvZzznxy5xoUs8rEycG2NiuAS9KvjIr/x2Rt9G6Mqfpu0m9tyfo1hsD9mHBQ+ddSyrtJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3JOIxu5oNu+kQmQlDi2Jl4FiaBd5Dg2NYnvDcOPxQEYnzEZwj
+	jK0RNOVjjnnmGuPBAAAvD1JVb8EL9H/kyyLrucSejps+Fzz1D2y9bY9VMtxy0bXuyov0jiALVPk
+	qvflCgLnU/6w1uEAH2+yKGoO3ClOnUoPTcybeLlJOe+ZmaHGxzkuduvuOVSjAo0A=
+X-Gm-Gg: ASbGncvE1sZU6vlQC3ZtkH345y2AA77cUOQNWxwnEX0k4Py96DUBEz41560r/Iuq5x3
+	/+4AoDRVrNJutGVWe3LmvFEFpTRo5x65DtsJ8Lx3JZfZm78S1OngYtqjhAXtNnRpBIpCzMRk9vJ
+	zBrRUn/0aOsM+4KGfgdlJHt5SZO4etMvo1jDN/JEAnEiPS4mrU+ifrY3+fVDD3/gDTnmSGVKBOA
+	36+HZEHujasUp/0zSjC9qPLyjUY/Trnd4JBCAvm3KRV6T7DyDlNAOuuuNsnxaCWjUd3UqJQqyJb
+	iuY9YdF5BlVOdWHHe8JELHfkNVweUKUYHP8ZdUq55gExqJGyACVx08C0OpAT8Qoxr+b3S+wbkYI
+	3VFc3dKyBuwUMqQoT7uERpoTJ4zY/rZXFDMmlIia/zLo=
+X-Received: by 2002:a05:600c:3b91:b0:439:9e13:2dd7 with SMTP id 5b1f17b1804b1-43aa7a63c45mr41135055e9.2.1740433369805;
+        Mon, 24 Feb 2025 13:42:49 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGoC4d2j9rOE4cUzpqqA+7hSEc5qzv5dgNmeVhVNJED4tEkT5V3b2VPb/OWSe0Z/WHiHe1vcw==
+X-Received: by 2002:a05:600c:3b91:b0:439:9e13:2dd7 with SMTP id 5b1f17b1804b1-43aa7a63c45mr41134845e9.2.1740433369369;
+        Mon, 24 Feb 2025 13:42:49 -0800 (PST)
+Received: from ?IPV6:2003:cb:c735:1900:ac8b:7ae5:991f:54fc? (p200300cbc7351900ac8b7ae5991f54fc.dip0.t-ipconnect.de. [2003:cb:c735:1900:ac8b:7ae5:991f:54fc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab155eb61sm3615755e9.29.2025.02.24.13.42.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2025 13:42:48 -0800 (PST)
+Message-ID: <3f6b7e66-3412-4af2-97d9-6d31d6373079@redhat.com>
+Date: Mon, 24 Feb 2025 22:42:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAC_TJvfG8GcwG_2w1o6GOTZS8tfEx2h9A91qsenYfYsX8Te=Bg@mail.gmail.com>
- <hep2a5d6k2kwth5klatzhl3ejbc6g2opqu6tyxyiohbpdyhvwp@lkg2wbb4zhy3>
- <3bd275ed-7951-4a55-9331-560981770d30@lucifer.local> <ivnv2crd3et76p2nx7oszuqhzzah756oecn5yuykzqfkqzoygw@yvnlkhjjssoz>
- <82fbe53b-98c4-4e55-9eeb-5a013596c4c6@lucifer.local>
-In-Reply-To: <82fbe53b-98c4-4e55-9eeb-5a013596c4c6@lucifer.local>
-From: Kalesh Singh <kaleshsingh@google.com>
-Date: Mon, 24 Feb 2025 13:36:50 -0800
-X-Gm-Features: AWEUYZlbolcbx1VrCX_xO5f3h30r1v1r_coxBnQqXW6iT4NYdoUMUja41NjS_Do
-Message-ID: <CAC_TJvcnD731xyudgapjHx=dvVHY+cxoO1--2us7oo9TqA9-_g@mail.gmail.com>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Optimizing Page Cache Readahead Behavior
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Jan Kara <jack@suse.cz>, lsf-pc@lists.linux-foundation.org, 
-	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, David Hildenbrand <david@redhat.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Juan Yescas <jyescas@google.com>, 
-	android-mm <android-mm@google.com>, Matthew Wilcox <willy@infradead.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>, 
-	"Cc: Android Kernel" <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 16/20] fs/proc/page: remove per-page mapcount
+ dependency for /proc/kpagecount (CONFIG_NO_PAGE_MAPCOUNT)
+To: Zi Yan <ziy@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-api@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>, Tejun Heo <tj@kernel.org>,
+ Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Muchun Song <muchun.song@linux.dev>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>
+References: <20250224165603.1434404-1-david@redhat.com>
+ <20250224165603.1434404-17-david@redhat.com>
+ <D80YSXJPTL7M.2GZLUFXVP2ZCC@nvidia.com>
+ <8a5e94a2-8cd7-45f5-a2be-525242c0cd16@redhat.com>
+ <9010E213-9FC5-4900-B971-D032CB879F2E@nvidia.com>
+ <567b02b0-3e39-4e3c-ba41-1bc59217a421@redhat.com>
+ <30C2A030-7438-4298-87D8-287BED1EA473@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <30C2A030-7438-4298-87D8-287BED1EA473@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 24, 2025 at 8:52=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Mon, Feb 24, 2025 at 05:31:16PM +0100, Jan Kara wrote:
-> > On Mon 24-02-25 14:21:37, Lorenzo Stoakes wrote:
-> > > On Mon, Feb 24, 2025 at 03:14:04PM +0100, Jan Kara wrote:
-> > > > Hello!
-> > > >
-> > > > On Fri 21-02-25 13:13:15, Kalesh Singh via Lsf-pc wrote:
-> > > > > Problem Statement
-> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > >
-> > > > > Readahead can result in unnecessary page cache pollution for mapp=
-ed
-> > > > > regions that are never accessed. Current mechanisms to disable
-> > > > > readahead lack granularity and rather operate at the file or VMA
-> > > > > level. This proposal seeks to initiate discussion at LSFMM to exp=
-lore
-> > > > > potential solutions for optimizing page cache/readahead behavior.
-> > > > >
-> > > > >
-> > > > > Background
-> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > >
-> > > > > The read-ahead heuristics on file-backed memory mappings can
-> > > > > inadvertently populate the page cache with pages corresponding to
-> > > > > regions that user-space processes are known never to access e.g E=
-LF
-> > > > > LOAD segment padding regions. While these pages are ultimately
-> > > > > reclaimable, their presence precipitates unnecessary I/O operatio=
-ns,
-> > > > > particularly when a substantial quantity of such regions exists.
-> > > > >
-> > > > > Although the underlying file can be made sparse in these regions =
-to
-> > > > > mitigate I/O, readahead will still allocate discrete zero pages w=
-hen
-> > > > > populating the page cache within these ranges. These pages, while
-> > > > > subject to reclaim, introduce additional churn to the LRU. This
-> > > > > reclaim overhead is further exacerbated in filesystems that suppo=
-rt
-> > > > > "fault-around" semantics, that can populate the surrounding pages=
-=E2=80=99
-> > > > > PTEs if found present in the page cache.
-> > > > >
-> > > > > While the memory impact may be negligible for large files contain=
-ing a
-> > > > > limited number of sparse regions, it becomes appreciable for many
-> > > > > small mappings characterized by numerous holes. This scenario can
-> > > > > arise from efforts to minimize vm_area_struct slab memory footpri=
-nt.
-> > > >
+On 24.02.25 22:23, Zi Yan wrote:
+> On 24 Feb 2025, at 16:15, David Hildenbrand wrote:
+> 
+>> On 24.02.25 22:10, Zi Yan wrote:
+>>> On 24 Feb 2025, at 16:02, David Hildenbrand wrote:
+>>>
+>>>> On 24.02.25 21:40, Zi Yan wrote:
+>>>>> On Mon Feb 24, 2025 at 11:55 AM EST, David Hildenbrand wrote:
+>>>>>> Let's implement an alternative when per-page mapcounts in large folios
+>>>>>> are no longer maintained -- soon with CONFIG_NO_PAGE_MAPCOUNT.
+>>>>>>
+>>>>>> For large folios, we'll return the per-page average mapcount within the
+>>>>>> folio, except when the average is 0 but the folio is mapped: then we
+>>>>>> return 1.
+>>>>>>
+>>>>>> For hugetlb folios and for large folios that are fully mapped
+>>>>>> into all address spaces, there is no change.
+>>>>>>
+>>>>>> As an alternative, we could simply return 0 for non-hugetlb large folios,
+>>>>>> or disable this legacy interface with CONFIG_NO_PAGE_MAPCOUNT.
+>>>>>>
+>>>>>> But the information exposed by this interface can still be valuable, and
+>>>>>> frequently we deal with fully-mapped large folios where the average
+>>>>>> corresponds to the actual page mapcount. So we'll leave it like this for
+>>>>>> now and document the new behavior.
+>>>>>>
+>>>>>> Note: this interface is likely not very relevant for performance. If
+>>>>>> ever required, we could try doing a rather expensive rmap walk to collect
+>>>>>> precisely how often this folio page is mapped.
+>>>>>>
+>>>>>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>>>>>> ---
+>>>>>>     Documentation/admin-guide/mm/pagemap.rst |  7 +++++-
+>>>>>>     fs/proc/internal.h                       | 31 ++++++++++++++++++++++++
+>>>>>>     fs/proc/page.c                           | 19 ++++++++++++---
+>>>>>>     3 files changed, 53 insertions(+), 4 deletions(-)
+>>>>>>
+>>>>>> diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
+>>>>>> index caba0f52dd36c..49590306c61a0 100644
+>>>>>> --- a/Documentation/admin-guide/mm/pagemap.rst
+>>>>>> +++ b/Documentation/admin-guide/mm/pagemap.rst
+>>>>>> @@ -42,7 +42,12 @@ There are four components to pagemap:
+>>>>>>        skip over unmapped regions.
+>>>>>>       * ``/proc/kpagecount``.  This file contains a 64-bit count of the number of
+>>>>>> -   times each page is mapped, indexed by PFN.
+>>>>>> +   times each page is mapped, indexed by PFN. Some kernel configurations do
+>>>>>> +   not track the precise number of times a page part of a larger allocation
+>>>>>> +   (e.g., THP) is mapped. In these configurations, the average number of
+>>>>>> +   mappings per page in this larger allocation is returned instead. However,
+>>>>>> +   if any page of the large allocation is mapped, the returned value will
+>>>>>> +   be at least 1.
+>>>>>>      The page-types tool in the tools/mm directory can be used to query the
+>>>>>>     number of times a page is mapped.
+>>>>>> diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+>>>>>> index 1695509370b88..16aa1fd260771 100644
+>>>>>> --- a/fs/proc/internal.h
+>>>>>> +++ b/fs/proc/internal.h
+>>>>>> @@ -174,6 +174,37 @@ static inline int folio_precise_page_mapcount(struct folio *folio,
+>>>>>>     	return mapcount;
+>>>>>>     }
+>>>>>>    +/**
+>>>>>> + * folio_average_page_mapcount() - Average number of mappings per page in this
+>>>>>> + *				   folio
+>>>>>> + * @folio: The folio.
+>>>>>> + *
+>>>>>> + * The average number of present user page table entries that reference each
+>>>>>> + * page in this folio as tracked via the RMAP: either referenced directly
+>>>>>> + * (PTE) or as part of a larger area that covers this page (e.g., PMD).
+>>>>>> + *
+>>>>>> + * Returns: The average number of mappings per page in this folio. 0 for
+>>>>>> + * folios that are not mapped to user space or are not tracked via the RMAP
+>>>>>> + * (e.g., shared zeropage).
+>>>>>> + */
+>>>>>> +static inline int folio_average_page_mapcount(struct folio *folio)
+>>>>>> +{
+>>>>>> +	int mapcount, entire_mapcount;
+>>>>>> +	unsigned int adjust;
+>>>>>> +
+>>>>>> +	if (!folio_test_large(folio))
+>>>>>> +		return atomic_read(&folio->_mapcount) + 1;
+>>>>>> +
+>>>>>> +	mapcount = folio_large_mapcount(folio);
+>>>>>> +	entire_mapcount = folio_entire_mapcount(folio);
+>>>>>> +	if (mapcount <= entire_mapcount)
+>>>>>> +		return entire_mapcount;
+>>>>>> +	mapcount -= entire_mapcount;
+>>>>>> +
+>>>>>> +	adjust = folio_large_nr_pages(folio) / 2;
+>>>>
+>>>> Thanks for the review!
+>>>>
+>>>>>
+>>>>> Is there any reason for choosing this adjust number? A comment might be
+>>>>> helpful in case people want to change it later, either with some reasoning
+>>>>> or just saying it is chosen empirically.
+>>>>
+>>>> We're dividing by folio_large_nr_pages(folio) (shifting by folio_large_order(folio)), so this is not a magic number at all.
+>>>>
+>>>> So this should be "ordinary" rounding.
+>>>
+>>> I thought the rounding would be (mapcount + 511) / 512.
+>>
+>> Yes, that's "rounding up".
+>>
+>>> But
+>>> that means if one subpage is mapped, the average will be 1.
+>>> Your rounding means if at least half of the subpages is mapped,
+>>> the average will be 1. Others might think 1/3 is mapped,
+>>> the average will be 1. That is why I think adjust looks like
+>>> a magic number.
+>>
+>> I think all callers could tolerate (or benefit) from folio_average_page_mapcount() returning at least 1 in case any page is mapped.
+>>
+>> There was a reason why I decided to round to the nearest integer instead.
+>>
+>> Let me think about this once more, I went back and forth a couple of times on this.
+> 
+> Sure. Your current choice might be good enough for now. My intend of
+> adding a comment here is just to let people know the adjust can be
+> changed in the future. :)
 
-Hi Jan, Lorenzo, thanks for the comments.
+The following will make the callers easier to read, while keeping
+the rounding to the next integer for the other cases untouched.
 
-> > > > OK, I agree the behavior you describe exists. But do you have some
-> > > > real-world numbers showing its extent? I'm not looking for some art=
-ificial
-> > > > numbers - sure bad cases can be constructed - but how big practical=
- problem
-> > > > is this? If you can show that average Android phone has 10% of thes=
-e
-> > > > useless pages in memory than that's one thing and we should be look=
-ing for
-> > > > some general solution. If it is more like 0.1%, then why bother?
-> > > >
++/**
++ * folio_average_page_mapcount() - Average number of mappings per page in this
++ *                                folio
++ * @folio: The folio.
++ *
++ * The average number of present user page table entries that reference each
++ * page in this folio as tracked via the RMAP: either referenced directly
++ * (PTE) or as part of a larger area that covers this page (e.g., PMD).
++ *
++ * The average is calculated by rounding to the nearest integer; however,
++ * if at least a single page is mapped, the average will be at least 1.
++ *
++ * Returns: The average number of mappings per page in this folio.
++ */
++static inline int folio_average_page_mapcount(struct folio *folio)
++{
++       int mapcount, entire_mapcount, avg;
++
++       if (!folio_test_large(folio))
++               return atomic_read(&folio->_mapcount) + 1;
++
++       mapcount = folio_large_mapcount(folio);
++       if (unlikely(mapcount <= 0))
++               return 0;
++       entire_mapcount = folio_entire_mapcount(folio);
++       if (mapcount <= entire_mapcount)
++               return entire_mapcount;
++       mapcount -= entire_mapcount;
++
++       /* Round to closest integer ... */
++       avg = (mapcount + folio_large_nr_pages(folio) / 2) >> folio_large_order(folio);
++       avg += entire_mapcount;
++       /* ... but return at least 1. */
++       return max_t(int, avg, 1);
++}
 
-Once I revert a workaround that we currently have to avoid
-fault-around for these regions (we don't have an out of tree solution
-to prevent the page cache population); our CI which checks memory
-usage after performing some common app user-journeys; reports
-regressions as shown in the snippet below. Note, that the increases
-here are only for the populated PTEs (bounded by VMA) so the actual
-pollution is theoretically larger.
 
-Metric: perfetto_media.extractor#file-rss-avg
-Increased by 7.495 MB (32.7%)
+-- 
+Cheers,
 
-Metric: perfetto_/system/bin/audioserver#file-rss-avg
-Increased by 6.262 MB (29.8%)
+David / dhildenb
 
-Metric: perfetto_/system/bin/mediaserver#file-rss-max
-Increased by 8.325 MB (28.0%)
-
-Metric: perfetto_/system/bin/mediaserver#file-rss-avg
-Increased by 8.198 MB (28.4%)
-
-Metric: perfetto_media.extractor#file-rss-max
-Increased by 7.95 MB (33.6%)
-
-Metric: perfetto_/system/bin/incidentd#file-rss-avg
-Increased by 0.896 MB (20.4%)
-
-Metric: perfetto_/system/bin/audioserver#file-rss-max
-Increased by 6.883 MB (31.9%)
-
-Metric: perfetto_media.swcodec#file-rss-max
-Increased by 7.236 MB (34.9%)
-
-Metric: perfetto_/system/bin/incidentd#file-rss-max
-Increased by 1.003 MB (22.7%)
-
-Metric: perfetto_/system/bin/cameraserver#file-rss-avg
-Increased by 6.946 MB (34.2%)
-
-Metric: perfetto_/system/bin/cameraserver#file-rss-max
-Increased by 7.205 MB (33.8%)
-
-Metric: perfetto_com.android.nfc#file-rss-max
-Increased by 8.525 MB (9.8%)
-
-Metric: perfetto_/system/bin/surfaceflinger#file-rss-avg
-Increased by 3.715 MB (3.6%)
-
-Metric: perfetto_media.swcodec#file-rss-avg
-Increased by 5.096 MB (27.1%)
-
-[...]
-
-The issue is widespread across processes because in order to support
-larger page sizes Android has a requirement that the ELF segments are
-at-least 16KB aligned, which lead to the padding regions (never
-accessed).
-
-> > > > > Limitations of Existing Mechanisms
-> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-> > > > >
-> > > > > fadvise(..., POSIX_FADV_RANDOM, ...): disables read-ahead for the
-> > > > > entire file, rather than specific sub-regions. The offset and len=
-gth
-> > > > > parameters primarily serve the POSIX_FADV_WILLNEED [1] and
-> > > > > POSIX_FADV_DONTNEED [2] cases.
-> > > > >
-> > > > > madvise(..., MADV_RANDOM, ...): Similarly, this applies on the en=
-tire
-> > > > > VMA, rather than specific sub-regions. [3]
-> > > > > Guard Regions: While guard regions for file-backed VMAs circumven=
-t
-> > > > > fault-around concerns, the fundamental issue of unnecessary page =
-cache
-> > > > > population persists. [4]
-> > > >
-> > > > Somewhere else in the thread you complain about readahead extending=
- past
-> > > > the VMA. That's relatively easy to avoid at least for readahead tri=
-ggered
-> > > > from filemap_fault() (i.e., do_async_mmap_readahead() and
-> > > > do_sync_mmap_readahead()). I agree we could do that and that seems =
-as a
-> > > > relatively uncontroversial change. Note that if someone accesses th=
-e file
-> > > > through standard read(2) or write(2) syscall or through different m=
-emory
-> > > > mapping, the limits won't apply but such combinations of access are=
- not
-> > > > that common anyway.
-> > >
-> > > Hm I'm not sure sure, map elf files with different mprotect(), or mpr=
-otect()
-> > > different portions of a file and suddenly you lose all the readahead =
-for the
-> > > rest even though you're reading sequentially?
-> >
-> > Well, you wouldn't loose all readahead for the rest. Just readahead won=
-'t
-> > preread data underlying the next VMA so yes, you get a cache miss and h=
-ave
-> > to wait for a page to get loaded into cache when transitioning to the n=
-ext
-> > VMA but once you get there, you'll have readahead running at full speed
-> > again.
->
-> I'm aware of how readahead works (I _believe_ there's currently a
-> pre-release of a book with a very extensive section on readahead written =
-by
-> somebody :P).
->
-> Also been looking at it for file-backed guard regions recently, which is
-> why I've been commenting here specifically as it's been on my mind lately=
-,
-> and also Kalesh's interest in this stems from a guard region 'scenario'
-> (hence my cc).
->
-> Anyway perhaps I didn't phrase this well - my concern is whether this mig=
-ht
-> impact performance in real world scenarios, such as one where a VMA is
-> mapped then mprotect()'d or mmap()'d in parts causing _separate VMAs_ of
-> the same file, in sequential order.
->
-> From Kalesh's LPC talk, unless I misinterpreted what he said, this is
-> precisely what he's doing? I mean we'd not be talking here about mmap()
-> behaviour with readahead otherwise.
->
-> Granted, perhaps you'd only _ever_ be reading sequentially within a
-> specific VMA's boundaries, rather than going from one to another (excludi=
-ng
-> PROT_NONE guards obviously) and that's very possible, if that's what you
-> mean.
->
-> But otherwise, surely this is a thing? And might we therefore be imposing
-> unnecessary cache misses?
->
-> Which is why I suggest...
->
-> >
-> > So yes, sequential read of a memory mapping of a file fragmented into m=
-any
-> > VMAs will be somewhat slower. My impression is such use is rare (sequen=
-tial
-> > readers tend to use read(2) rather than mmap) but I could be wrong.
-> >
-> > > What about shared libraries with r/o parts and exec parts?
-> > >
-> > > I think we'd really need to do some pretty careful checking to ensure=
- this
-> > > wouldn't break some real world use cases esp. if we really do mostly
-> > > readahead data from page cache.
-> >
-> > So I'm not sure if you are not conflating two things here because the a=
-bove
-> > sentence doesn't make sense to me :). Readahead is the mechanism that
-> > brings data from underlying filesystem into the page cache. Fault-aroun=
-d is
-> > the mechanism that maps into page tables pages present in the page cach=
-e
-> > although they were not possibly requested by the page fault. By "do mos=
-tly
-> > readahead data from page cache" are you speaking about fault-around? Th=
-at
-> > currently does not cross VMA boundaries anyway as far as I'm reading
-> > do_fault_around()...
->
-> ...that we test this and see how it behaves :) Which is literally all I
-> am saying in the above. Ideally with representative workloads.
->
-> I mean, I think this shouldn't be a controversial point right? Perhaps
-> again I didn't communicate this well. But this is all I mean here.
->
-> BTW, I understand the difference between readahead and fault-around, you =
-can
-> run git blame on do_fault_around() if you have doubts about that ;)
->
-> And yes fault around is constrained to the VMA (and actually avoids
-> crossing PTE boundaries).
->
-> >
-> > > > Regarding controlling readahead for various portions of the file - =
-I'm
-> > > > skeptical. In my opinion it would require too much bookeeping on th=
-e kernel
-> > > > side for such a niche usecache (but maybe your numbers will show it=
- isn't
-> > > > such a niche as I think :)). I can imagine you could just completel=
-y
-> > > > turn off kernel readahead for the file and do your special readahea=
-d from
-> > > > userspace - I think you could use either userfaultfd for triggering=
- it or
-> > > > new fanotify FAN_PREACCESS events.
-> > >
-
-Something like this would be ideal for the use case where uncompressed
-ELF files are mapped directly from zipped APKs without extracting
-them. (I don't have any real world number for this case atm). I also
-don't know if the cache miss on the subsequent VMAs has significant
-overhead in practice ... I'll try to collect some data for this.
-
-> > > I'm opposed to anything that'll proliferate VMAs (and from what Kales=
-h
-> > > says, he is too!) I don't really see how we could avoid having to do =
-that
-> > > for this kind of case, but I may be missing something...
-> >
-> > I don't see why we would need to be increasing number of VMAs here at a=
-ll.
-> > With FAN_PREACCESS you get notification with file & offset when it's
-> > accessed, you can issue readahead(2) calls based on that however you li=
-ke.
-> > Similarly you can ask for userfaults for the whole mapped range and han=
-dle
-> > those. Now thinking more about this, this approach has the downside tha=
-t
-> > you cannot implement async readahead with it (once PTE is mapped to som=
-e
-> > page it won't trigger notifications either with FAN_PREACCESS or with
-> > UFFD). But with UFFD you could at least trigger readahead on minor faul=
-ts.
->
-> Yeah we're talking past each other on this, sorry I missed your point abo=
-ut
-> fanotify there!
->
-> uffd is probably not reasonably workable given overhead I would have
-> thought.
->
-> I am really unaware of how fanotify works so I mean cool if you can find =
-a
-> solution this way, awesome :)
->
-> I'm just saying, if we need to somehow retain state about regions which
-> should have adjusted readahead behaviour at a VMA level, I can't see how
-> this could be done without VMA fragmentation and I'd rather we didn't.
->
-> If we can avoid that great!
-
-Another possible way we can look at this: in the regressions shared
-above by the ELF padding regions, we are able to make these regions
-sparse (for *almost* all cases) -- solving the shared-zero page
-problem for file mappings, would also eliminate much of this overhead.
-So perhaps we should tackle this angle? If that's a more tangible
-solution ?
-
-From the previous discussions that Matthew shared [7], it seems like
-Dave proposed an alternative to moving the extents to the VFS layer to
-invert the IO read path operations [8]. Maybe this is a move
-approachable solution since there is precedence for the same in the
-write path?
-
-[7] https://lore.kernel.org/linux-fsdevel/Zs97qHI-wA1a53Mm@casper.infradead=
-.org/
-[8] https://lore.kernel.org/linux-fsdevel/ZtAPsMcc3IC1VaAF@dread.disaster.a=
-rea/
-
-Thanks,
-Kalesh
->
-> >
-> >                                                               Honza
-> > --
-> > Jan Kara <jack@suse.com>
-> > SUSE Labs, CR
 
