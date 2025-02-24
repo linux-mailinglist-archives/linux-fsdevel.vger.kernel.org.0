@@ -1,253 +1,400 @@
-Return-Path: <linux-fsdevel+bounces-42455-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42456-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0802CA42816
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 17:39:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32DA0A42851
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 17:53:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82B3C18882E3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 16:38:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25502168CB1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2025 16:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE266263C6C;
-	Mon, 24 Feb 2025 16:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2435C263C72;
+	Mon, 24 Feb 2025 16:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R3qiJTAK"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TKxXMHGt";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="u2Ya3q1D"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834B5A32
-	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 16:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740415118; cv=none; b=tEey7MsjItNyzWhjwfVURAIpuizFcacIPcAsR6E1DuANfEEiX5cYF2ltHbp1FFqRBw1yPUIhdxIgxx0N9On241ivoqFLodO5a0bp7Lfffv9GtBSkQIcKwtaRsEs/qsQ6+FyeTXN//WUSLzYTrKO++r6yCthPU4s83AJsIYBkqmk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740415118; c=relaxed/simple;
-	bh=MMSWJuJU5qsromQVdUd6ChbKWags0ip1ne8PGz+pULU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JddYFb1XbcgF0D00FHuYSz5SHnykT26to5g7AWCHSrFQre9pz06bWQVkiJg2zNFDJfPp0We/AXbnje9BlCNkawHZB0c6J0pypJDNys1Tn7U2KWqOT/pUULRgh0OmkA9lSolGs26JUYYCZkgtmlISLngnQ3g1Bs3W3mOCL+fKo9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R3qiJTAK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740415115;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8HQ3dWVPqC2Dw8ff2CbnjKgP3N74oCRMEtHC7r2pq7E=;
-	b=R3qiJTAKaF+/O93hmXhiIRB0DmQrwbxuhbpBJv24AGKznQem6F0vd/ppx9ZJuTrmLUq79o
-	g/dJjqStRzVUZ4QU1k5l6CKToUAw0RFyS7KYBALIuEqYnmfHsKSq7/FnwD0M9CQFetAzFK
-	IO47crP9B8idfDXAFl16V4kenqxW0Gs=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-623-OxZuplRGNbyVBeQJ9MU8SQ-1; Mon, 24 Feb 2025 11:38:34 -0500
-X-MC-Unique: OxZuplRGNbyVBeQJ9MU8SQ-1
-X-Mimecast-MFC-AGG-ID: OxZuplRGNbyVBeQJ9MU8SQ_1740415113
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5da15447991so4182880a12.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 08:38:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740415113; x=1741019913;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8HQ3dWVPqC2Dw8ff2CbnjKgP3N74oCRMEtHC7r2pq7E=;
-        b=cuNR6ukMX2NWOUnG0JHrsybOL92Sr9rPKrkzjYza3ElRpS6XJ16/29durnU6Xv0ZFz
-         HD6WoABJ7o/AJ/UsGEF6dBDNlQ1UMoal4lh29Mc/CZsh/dAF76Ax2FG1zh4Q/AvGZ9S/
-         27OSY12NjWcieyGEIyzxJYsQJSOokO8lZK1dGJMFr0YxYSIhN9QUtBdRE4ZAjOHuQTaQ
-         VsW5HL5eEnc5U3zVoyIs0r1UktAEXTutfy/WBMNOnACjsTVsc1ntoFYNC/bOvk6rX7g7
-         EejGUNt1bsRN2Ctz/mBEC1cvV2bYR28Sio0rm8qcn3WdcXWuX8xKEALFK6317YQGPzBJ
-         dpBg==
-X-Forwarded-Encrypted: i=1; AJvYcCW8jPFT8nLqR/6pl5k1Nv8HBptrnyInQBsvuo3Bc7/2G+GNE5qmdOl1TM69zjoUYR69uhiVgpIcK19J28v0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY4iHXVi2+vVajTV41AR0g5QwCTZljcE6ITNF87WF5g26gHWZ0
-	pbCOB/w/uvko1ffB6Um5g7V2keGn9qb/ypg8WqHPR/bkLd2ypNP8f3IpS4sGrMqSHCxITWRv1xC
-	Y4vaMlTGjBYN34tIJDI8IgGry9mOAdW9e/oDwiUONYQgCesq750R0XE87Z0GNWA==
-X-Gm-Gg: ASbGncuyk1Cq7Zad2/90iFYAmu4Kk3o51RLqj3jDZrYPnMtVbnQpLIhV6cj9R9PQmwK
-	qUyGOmcT7SiM2NRl/QeGfBn0QT16PtHaW44Mqja5M5WoGce9K8bXksFblGr/5wMyw1J+0azaCUF
-	wxqk/2fFlrG6/GbFqt3IEd+QtqNG1Sp0GKdoR2HiqZ4P961ENnjfUXMxJ5OjiKvkD/M2j1SJ71w
-	2ayE5pcuMQRafcIFDa2yw+FfQLSLsNXK5C3rD15wOzxN3du1mTvGxdhEUXvoUKcNsTHsctTL+jy
-	VfdGrP/jyc0OJ7WkJooe0LFz8B9zu1vM77g=
-X-Received: by 2002:a05:6402:2808:b0:5e0:2d53:b2a with SMTP id 4fb4d7f45d1cf-5e0b70c0d82mr36930905a12.3.1740415111910;
-        Mon, 24 Feb 2025 08:38:31 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFz+s0ONL8ejkTU1UmPgTYUJUij0Y+jBU/pmIRhrfprGz1EGlR/3qJKoYKtVNj3n95rvN+FPg==
-X-Received: by 2002:a05:6402:2808:b0:5e0:2d53:b2a with SMTP id 4fb4d7f45d1cf-5e0b70c0d82mr36930832a12.3.1740415111286;
-        Mon, 24 Feb 2025 08:38:31 -0800 (PST)
-Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb4d3ef3c0sm1913191666b.41.2025.02.24.08.38.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 08:38:30 -0800 (PST)
-Date: Mon, 24 Feb 2025 17:38:29 +0100
-From: Andrey Albershteyn <aalbersh@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B4F2627F2
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 16:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740415974; cv=fail; b=L3xu9DABzNqMjXv8AbC2x5LJT5ML8RWRaiCI7MAuwPluZBrBEF1oNaxtDuu9ZkZc74gihTYizj7QI48cyJFnQIIomQYJQfu4MXmA5xVVcScxK1qvTVSkSNuKBLFm6pYUgR0NjKykkvSksGVi1Pseg3PO+iqHYmPPU0BwOD5gnNA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740415974; c=relaxed/simple;
+	bh=npi7EoI79UxSs+pu238Qh/YFI90K1dy3KAKgbKoBYkQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=NSLZBJfETdU+TanPSlvQCtbsaWNPFviEgXtS5DZSWlxBhNBpyRefKW9FKenoKo3/UA3IKC6ggo8I737AoMT8kvq6KhNs6K4rUNxfvZXVQCndVtQAySufNILhdqZ5SVJslG9x3L6Ol/iAHFiGEr7146Dcx8QpLvbxb48vu2Op5lc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=TKxXMHGt; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=u2Ya3q1D; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51OGXahq014016;
+	Mon, 24 Feb 2025 16:52:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=el/ZL7CdncRVvOBH1xXyqJX20IgYltYs/cwwCy/z90g=; b=
+	TKxXMHGtp+FsGIyIOBRLqXpqv20mR0GZKrFj46j7URYbjK1G6mBRHF2fZhopKrsj
+	u4bssWjl38WNGjoOGT4plxhZXTATUburmGAcjJ5vcgZc//ark62OWWGhDSzQgYyd
+	r3jZGI4XgA4GpFYBUxEr/jymqHlLRqWw9GJ7mG409uY61dGQEZopW1zRcZ4/Q9wk
+	6IEspwM98wIZStzGJlpGKYiPzFatCh/5yGf2iIWhVgH4huWLuprUTwEj/NLJcCSC
+	kuDSkt0fkxXGsZbDZkSRfnjdQTAV5dqhKzXmDjajiQA8chuVTgTJCVPn1E58hHC0
+	stmOQ2bY4TwKQyjtBw4TjA==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44y560334n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Feb 2025 16:52:37 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51OGQLwW012602;
+	Mon, 24 Feb 2025 16:52:37 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2172.outbound.protection.outlook.com [104.47.58.172])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 44y5196c3m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Feb 2025 16:52:37 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lO1jbyNYidzhmF8ZdaMMvw+u/1avdnvqiMej4XJY1UOU11z2MvwzLjIoajkoEukQTJfTeh74Y4SfQl1xQ54Vpp5Rv2eGoEjShkrO616eUd7ujJU9eAp4df6XY5I6ptyv1t7qNVFHteBZopalLT5HPbyIcE6xeDsq8zQMpMFHpITYtoK+Xz7BLOztwH0YyihBfQzdj2wv1Zw/hX7sQQyIXUKL7GSapRjLjSFD9hU3ZzqqCjjlwCjUB9lau1yu85dRJmIYkMItseWBBABljrP1cfvENOtaVelgWqIgWxx1RXTf1B9mas6MS7ZtF4rdNT3/m35/DMCj7ZIggKR5ztdvww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=el/ZL7CdncRVvOBH1xXyqJX20IgYltYs/cwwCy/z90g=;
+ b=kwunfONOxcs0AKK0XRNnjmZn5o9iZhnWDEUipo+np2La1SGlGxhBTwX1Q2bp7L+Aas7ixyNsgXCaEbmLFVEu3EG6fozBDPwjLy3HsJu3soodiQSTF0YCHqO1bTCB3jrkOqcIUGoykemJ9Kdd2d+JnX0dk4zRNflviWGiHP95uvlh/wt/1vJ1yds5j1sL3Bnex7su5oB2f5xEpkz6lfgCSnwlW2ZFsnz1jFCZT4wiEOWpvBFDxFAgxt5GmpDXEEQ5Tak2oRqcS+2ieI70Df+uyCHc+zj84gzq0dZo7KHbWihp1Rmst6uDd6SwjAfer53VAMkxfhdRoXTL5eqSRKpW0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=el/ZL7CdncRVvOBH1xXyqJX20IgYltYs/cwwCy/z90g=;
+ b=u2Ya3q1D0Jq/SD9/IyVCWVEuBpOSi6IJqagyVEwA2o9Du8g5X53ptWY3rb8t9p0Ja/jesoD/m0uvp9GuTGAaNI82XdPFvm0gOppwpqBvjyX6NqdvELiqCBXi21psqNr15Sa/z2E/jjcmxjrhoL8RzDxxtIzsY/G51l+njrMqFZs=
+Received: from MN2PR10MB4112.namprd10.prod.outlook.com (2603:10b6:208:11e::33)
+ by CH3PR10MB7140.namprd10.prod.outlook.com (2603:10b6:610:123::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Mon, 24 Feb
+ 2025 16:52:27 +0000
+Received: from MN2PR10MB4112.namprd10.prod.outlook.com
+ ([fe80::3256:3c8c:73a9:5b9c]) by MN2PR10MB4112.namprd10.prod.outlook.com
+ ([fe80::3256:3c8c:73a9:5b9c%7]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
+ 16:52:27 +0000
+Date: Mon, 24 Feb 2025 16:52:24 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 To: Jan Kara <jack@suse.cz>
-Cc: Richard Henderson <richard.henderson@linaro.org>, 
-	Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	Helge Deller <deller@gmx.de>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v3] fs: introduce getfsxattrat and setfsxattrat syscalls
-Message-ID: <pze5ejdkh5hr6qz75xbn65vmjyaw2iauseqdi52sjt3tzc6sk4@wi7vy4af5vof>
-References: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org>
- <fyp7gcbeo3xlrh7zi7k6m5aa6h5otbufxq3kh5zvgr3sjdbxl3@4nkuwx46yajk>
+Cc: Kalesh Singh <kaleshsingh@google.com>, lsf-pc@lists.linux-foundation.org,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        David Hildenbrand <david@redhat.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Juan Yescas <jyescas@google.com>, android-mm <android-mm@google.com>,
+        Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Optimizing Page Cache Readahead
+ Behavior
+Message-ID: <82fbe53b-98c4-4e55-9eeb-5a013596c4c6@lucifer.local>
+References: <CAC_TJvfG8GcwG_2w1o6GOTZS8tfEx2h9A91qsenYfYsX8Te=Bg@mail.gmail.com>
+ <hep2a5d6k2kwth5klatzhl3ejbc6g2opqu6tyxyiohbpdyhvwp@lkg2wbb4zhy3>
+ <3bd275ed-7951-4a55-9331-560981770d30@lucifer.local>
+ <ivnv2crd3et76p2nx7oszuqhzzah756oecn5yuykzqfkqzoygw@yvnlkhjjssoz>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ivnv2crd3et76p2nx7oszuqhzzah756oecn5yuykzqfkqzoygw@yvnlkhjjssoz>
+X-ClientProxiedBy: LO4P265CA0052.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2ac::15) To MN2PR10MB4112.namprd10.prod.outlook.com
+ (2603:10b6:208:11e::33)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fyp7gcbeo3xlrh7zi7k6m5aa6h5otbufxq3kh5zvgr3sjdbxl3@4nkuwx46yajk>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR10MB4112:EE_|CH3PR10MB7140:EE_
+X-MS-Office365-Filtering-Correlation-Id: b8aff8b3-9d25-401b-7ef2-08dd54f39ec3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZjVPTUQrMXhDMFNiRjhQdFMrbFA2eXE0dTlFTlN1cUtIK0l6c0Y4ZjlHRHBS?=
+ =?utf-8?B?dktFc3ljNFpWai9SbDJCVXdVUlpHUG9ZQ25mUzl0T281VnFENzFSYVZxdGdp?=
+ =?utf-8?B?UTJmcEVnMWpZWTBpNEFWN3B3ZkxaeDlxUjIrSmlzMzNvRWhReVRXbk9USW1L?=
+ =?utf-8?B?M2pHQXQ1eXNjUFI2SVAzSTBHTDhKRm1DcnpVbTNLN1ZicUhITWRPM1ZVYnJa?=
+ =?utf-8?B?QS8xbloxdlgvRU1kNG1UeFkwYjJMeDF1cjFLWmU0dWxFZkpqR2lKWFU1blIz?=
+ =?utf-8?B?RjVSMC9UZFkweTRwS1Y5dkV1dWZtTitWbWVIem0xRnJ5ejRQTjVvOVAxWWox?=
+ =?utf-8?B?cm5TV0R6bDdKalo4aWs1OXcyeVFWNjlmcUEyRmhNZ1NJSEJXNjYzTDlqVkZj?=
+ =?utf-8?B?bkZHNnV0R3ZzZ0p3YS9DU3l4RUVpV2p0blNrMWdVbmxwM1c0bjZzYVN4VUVm?=
+ =?utf-8?B?WXJoQk9aUC9uNkdUb1RBWjJzT210OUViVUhqWlpLZVVUdWVSeGhaUDdhTy8y?=
+ =?utf-8?B?TmdZdkU2KzVTSFViOE9xZml6aGVGbDUyTXpORVpLR0NXc3Y3S3cwYno1bkhu?=
+ =?utf-8?B?QnR2RktoWlVsU1dNdXYxVEcyM0ZRNThXQS9rNW1TcFhMTExYSlRMelJhOU40?=
+ =?utf-8?B?RlJkWmJRR1NoZnp5VThrYytHR05NWS9XVzhHUlJmN1JmYlFKcmZhZ0tNK2R6?=
+ =?utf-8?B?OUNwVFREV1dBQkdlWDhPUHFhdHZHYmdwNzZZTnZBSXZlSlZDczJQWVl3RVBs?=
+ =?utf-8?B?S1hoeWkyNmROaUIzU2xEVlJzVnN2Y3JZd2kvbWpnclJ4YjAyV2MyVkNZd2NF?=
+ =?utf-8?B?TjB1TVBIV2VObEN5YmNFMTJNNkI2S2k3SFFEQ21yNytxeWdxb2dxZ21pZHlU?=
+ =?utf-8?B?WjZjM1BGcThrR2ZUZFVoOXkzSjFFVndFbmlsUWUvTGtnWHVoMlFyMkJ4K2c5?=
+ =?utf-8?B?blNUL2JUSTlQTHB2M1Jkb1dnSWFwQTJ0a2ZTYTJIRkc5NFVSZ29XbXVEZ1Vu?=
+ =?utf-8?B?M1ZWRTVqRFBNOFhSc2gvenBET3JQRlF3T3pMOGQvMVdVNTZGOUxsNzdXZHVJ?=
+ =?utf-8?B?dDJQRGtEYWlUTCthL0FkZWhtQjk0VGg0KytXZW9kV3JLR0J4R2lKclRKK2dR?=
+ =?utf-8?B?RHY2elZ0cHdKVFpyQyt2ODFlWHBmZTNDdG9qOTBid3ZRN2dxUHBYV2JMaFlP?=
+ =?utf-8?B?ZFFCVlBJU0RqckxsYlUrZkh1QkorR0FHNWpzdDJuWGI3SmNlWWxNcktXYmxF?=
+ =?utf-8?B?dURoMlNnckplQVJRa28wRjJ4Vlg5UVJMM3RZVjFBZnZWU3RTaXZxUmVKQkt4?=
+ =?utf-8?B?SEtQL2g2NnZ3Q1Rna25PbXpEWjNvMitBRnNWQUx3U2c5TlhkRXJHSmN2SmQv?=
+ =?utf-8?B?SFhEdDhqZlpXMFdsbVRQckgyTjlhRjk1N2p3RU1zSmxqMktjb1d0c3pBT0RZ?=
+ =?utf-8?B?VzdkdGtxTmZqaFVuZlJXanhJdGl5Y29mUE5IenhLRDkwcWlKcmNJRkhhWXEz?=
+ =?utf-8?B?VUthY0ROMDhIaytYRVNvYjYzK1Rndk1ySFRSOWh2Z0tpUnBFRFFxbTVJWWUy?=
+ =?utf-8?B?cTB1MjlzSERiQkZaL21RWkN4Z3Z1cERpYmZBRCtjM25UUGIyNmcxRzNzOEtr?=
+ =?utf-8?B?czF2ZFJsUnFGM0hVOGVSQnppQ1VWUDhFWS9vbk5FT0VLQVJyTVJDSGs4Q1o4?=
+ =?utf-8?B?M2hDSWZjbmtFczEvSTdlRW5Bb2xtczZVUnZFQ0lBTmtrZHdhUENJNHgyT2Mv?=
+ =?utf-8?B?dDYyLy9rbC9xL05WS28vTmorbHJ4blpmVVY5eDdDdElxdVFYOGNuSXBIOTNH?=
+ =?utf-8?B?VTQrTDdPTnNQc2NMbjVLQVovVTd0QWI0NVFQTVhjQjhPV3plUGk4Mndra3BJ?=
+ =?utf-8?Q?cQ5U2SLA5or4f?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4112.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UDhsQ2dscW5BMDRCZUtiVTNZUlJzU1U0enk5NUQyS2UzZ01EdEtua1ZwdTlk?=
+ =?utf-8?B?c3RqZHE0MFNsTnA5aDdxZ2NqMEU3MzFOVFB0eHllTkV4UW0xRFUwdGxnYk9D?=
+ =?utf-8?B?R2Jlb3MvSnFBdVkxZ3pHa294OUtYaUVLZkcxaDdldHd6bnR0amJvL2dLNGlP?=
+ =?utf-8?B?MFBHbVluNTlDT28xbUo4dWNINlVZc1pHZXBDRXRudG5ORzN5a2NGTlc5cmVs?=
+ =?utf-8?B?MjZsQ3lMRXdGbHhNVVowVVBXdGFVRUdJMjUvWk1Qcnd4NlpqMGhJRXh1ZExO?=
+ =?utf-8?B?b29MNGhEd000d0RlWGtLVGh0dWVaZy96RVBPcWlLYmRMM29Sd1dweXZWaFY2?=
+ =?utf-8?B?a000R2tIczJ2RXJhZlpiNGMwRnBydWFnbnlidUJwa09zVWVBb1hSTnZtSjBj?=
+ =?utf-8?B?NTJwUHNuSS9ETWo0bENVMFRCZmxUbStsQklUTThEU0drNjVPZGZrT3dhZTlm?=
+ =?utf-8?B?eGhmUmEySXRnWlk2aTR2Qk9JVHNCMkJBZEhXU0RNUFJWQmdwTmFzT3lGR1Bz?=
+ =?utf-8?B?ZUxvbng0WE40SFpYOG1YL3RVSjB3TmJDOHFna1l3SVBWbVpMci9ObEtzUThX?=
+ =?utf-8?B?Vnh0bFRLdWs4cXFNckUyd1BndFhMZWM0Uk51dWg1WnFKQVNCOHpwa0tCQWRu?=
+ =?utf-8?B?SW1uV2QxRVJoY1NxWktFWlV5eGtBRGpJcUR6a2lVSzVOQVR5bytZRWsySFB4?=
+ =?utf-8?B?QVRocUlEbUV0b1V6RDJBbE85S2hma2FoT1hKMHRSSVpscUFzejV6UXlwdW5h?=
+ =?utf-8?B?VndwYktLQkc0S3JkSVVpVlp1U3hrRVJxK0NaRzVkU0U4elFLTHRXWnJrQ29k?=
+ =?utf-8?B?ejl3dmRSdGdMcExubGRZUmdSQld3TjZqUUJOYjNraFpiTFZjUkJ2eWVaVjhC?=
+ =?utf-8?B?S3pzZ29BejR3ODNrSjVjQTJsclRiWXZ6bFdHQmVxa0YwaHRXcHcrd0pJSjVs?=
+ =?utf-8?B?WXZTcUFUN1pUeVB2ZzNOWXdwOG9RMFJMNlN2emFVek45OFYvdXFZcXRRUndM?=
+ =?utf-8?B?YUNoOVhEVGYyZ2pZbzdxY3A4d1JGNDNoUVVETmlTaDlJVGxBNWlNM0xZdkpX?=
+ =?utf-8?B?aDkybmNsMTRtTlNacUROQ0RySXFvR2JFVnpCS0s1NlN1bzdlUnVKUUV4eURh?=
+ =?utf-8?B?Zk5JQUIyMTUrUis3d0orQUFTVlBweHBjdlM5WTlDVEMwZzNjZlVrRmIvTHh2?=
+ =?utf-8?B?VTFqS0ZpWjdpNDh6VEhMRTdyQkc3SVpMTCtvOHA0S1g5ejV1YktuSENzY0sz?=
+ =?utf-8?B?aVNybS9iRzR0S3NHTXBHU2Q5Rk5UMUxzK3E5dDNqaUFHdStRMmlOb3p5Sklp?=
+ =?utf-8?B?cGR0YWtrSnBpcG4yeDJWajd5dmhLQml2SFh6Z0E4bDRBR2V5a1B0YmRvQ3pl?=
+ =?utf-8?B?WllYMHJkU2svK0ZDTS9BRVRXNk1hZVErbkIwb2JnS01wQllSVGRSSWVUSmZR?=
+ =?utf-8?B?RnVJL0ZKcVVyWnBMRFJmcDVYdC9UaFRkR1ZieGdieEVBQVRhVFhXeFBKendj?=
+ =?utf-8?B?bk1zaVJ0RG9lbTRLTkkxTnBWR0xHcXVMMHVRN2hjSjJ3NlQxTU9vWHFML0FB?=
+ =?utf-8?B?RzduclJZd25iMmIrL3pvRlcwblRGdVdEcVUzRXBBaGc2dTh1VnJzbkFhdys0?=
+ =?utf-8?B?Y1J6MWZXQlEyNHBnSjZ2L3dVOEw1L2VCTDNXZjhQWGg3VmtnSkRGY2NJNWJL?=
+ =?utf-8?B?c3Z4MXNmRXE1L0M5QnJCZmJvTkRIcis5MUZZNXNsR0ZoWCtaY0w4bE1wYjA0?=
+ =?utf-8?B?NHV5S1MwSlpPRlplZUF4STBHZ0RKM0ZMWjVsMlVRU25KTExEUGpCY1MrQm01?=
+ =?utf-8?B?MXoyTFE3MEZXR0plVkk0RmtHQkhDcFByRnQvZ0NVZFRCYmtJVjZabnRadlNO?=
+ =?utf-8?B?RnQ5Qk9DbVorajNqeU1TU2ppbjVqSXJsdFhBbi8rMUxIODBOMmZmUHJFVVZ2?=
+ =?utf-8?B?UXJKNTY1a0JhUG1iejZ0eUswWWtxSWNZK1pISjhlcVZSdlFYamNvWDZrejdP?=
+ =?utf-8?B?MVZmZkRWNjBnNktxelNwKzhic3VUdUcwa3BrREdYbyt0NCtGWjh2TUdZMWJi?=
+ =?utf-8?B?ZCtFdDlLK1hKZWdjTFhaYWNsMlNRK09EbnlBaWJUQ24yeXN0VS9qZlA0ZjVv?=
+ =?utf-8?B?NWI5Q05PSk5tNUdRNnp6bXcwNXBCVW94THU5Zmt6S3Bic1UzME10MzUwZkNC?=
+ =?utf-8?B?RFE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	EpoyFeYIQkey9JhVzFsVtUCBniYrU81PWQQsxgGkLgl3HmvfuPvuhk0ZIWB19uxjWlLK4SBPdSwDYRu8aQwcKV2tEevqvQp0NjoJX1PrZN90mgbDCiLniLCu2nMZrTFkVbnVaurT+cLPPe/5voQibNgmD495n9REYmovS1uJFf4uehqp53gHpEb/8hWlz0A3Flnt3InOo7LVDAk7mWwCjd6k4XT9IvM25It/lTtCn2uPwYarF6cpQSsoC2c7qNgllC9HhS1OJzmsumVrKwnebYKg+epxkdnxdOKCgHW6kPS36XIcHW1Z6lJ4OzZjPGVwy0Eey7R/kn8R7nL5A5EYd+1w+hHmVjX4gTGJAToUUSgvTOeDtgCYOlB8i9oQPA2c87pVgf1GlsnR2/cLgx6SlQu5viTVvHQnuA7O23NaAyUw3OBLhlf2SDDUaM2kZP5QLamefoAfQzJA1j0BgD0dv9NGuLo4Z9FUHdji0OCUct6e+37qA+OCZO/wK9OTkFFFwx43k9X+IFUJ1Wxy+XozXau8qdgJ3dMAgvePZh92Lb7DMHujgSGreW9Bbl012yRZi5DNZzFv/KOIH9e+FB9P3atGH+GZXSgdiAVbKjuJihk=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8aff8b3-9d25-401b-7ef2-08dd54f39ec3
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4112.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 16:52:27.4851
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wT/5op/Ta4lJ+BwUPzeGwMUjQRN+BOMeI5FxvPD7cv8oA2hI9ddjCSNgEdXZM1wASlvRtVMFmZJh/dcBqE733LlP9m6XPSyOFbwoRVbNL0Y=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7140
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-24_08,2025-02-24_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 mlxscore=0
+ adultscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
+ definitions=main-2502240115
+X-Proofpoint-GUID: 8ggskvKkCb20frNNPC111lOHus8cGG8_
+X-Proofpoint-ORIG-GUID: 8ggskvKkCb20frNNPC111lOHus8cGG8_
 
-On 2025-02-24 11:54:34, Jan Kara wrote:
-> On Tue 11-02-25 18:22:47, Andrey Albershteyn wrote:
-> > From: Andrey Albershteyn <aalbersh@redhat.com>
-> > 
-> > Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
-> > extended attributes/flags. The syscalls take parent directory fd and
-> > path to the child together with struct fsxattr.
-> > 
-> > This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
-> > that file don't need to be open as we can reference it with a path
-> > instead of fd. By having this we can manipulated inode extended
-> > attributes not only on regular files but also on special ones. This
-> > is not possible with FS_IOC_FSSETXATTR ioctl as with special files
-> > we can not call ioctl() directly on the filesystem inode using fd.
-> > 
-> > This patch adds two new syscalls which allows userspace to get/set
-> > extended inode attributes on special files by using parent directory
-> > and a path - *at() like syscall.
-> > 
-> > Also, as vfs_fileattr_set() is now will be called on special files
-> > too, let's forbid any other attributes except projid and nextents
-> > (symlink can have an extent).
-> > 
-> > CC: linux-api@vger.kernel.org
-> > CC: linux-fsdevel@vger.kernel.org
-> > CC: linux-xfs@vger.kernel.org
-> > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> 
-> Some comments below:
-> 
-> > +SYSCALL_DEFINE4(getfsxattrat, int, dfd, const char __user *, filename,
-> > +		struct fsxattr __user *, fsx, unsigned int, at_flags)
-> > +{
-> > +	CLASS(fd, dir)(dfd);
-> > +	struct fileattr fa;
-> > +	struct path filepath;
-> > +	int error;
-> > +	unsigned int lookup_flags = 0;
-> > +
-> > +	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
-> > +		return -EINVAL;
-> > +
-> > +	if (at_flags & AT_SYMLINK_FOLLOW)
-> 	    ^^ This should be !(at_flags & AT_SYMLINK_NOFOLLOW)?
-> 
-> In the check above you verify for AT_SYMLINK_NOFOLLOW and that also matches
-> what setxattrat() does...
+On Mon, Feb 24, 2025 at 05:31:16PM +0100, Jan Kara wrote:
+> On Mon 24-02-25 14:21:37, Lorenzo Stoakes wrote:
+> > On Mon, Feb 24, 2025 at 03:14:04PM +0100, Jan Kara wrote:
+> > > Hello!
+> > >
+> > > On Fri 21-02-25 13:13:15, Kalesh Singh via Lsf-pc wrote:
+> > > > Problem Statement
+> > > > ===============
+> > > >
+> > > > Readahead can result in unnecessary page cache pollution for mapped
+> > > > regions that are never accessed. Current mechanisms to disable
+> > > > readahead lack granularity and rather operate at the file or VMA
+> > > > level. This proposal seeks to initiate discussion at LSFMM to explore
+> > > > potential solutions for optimizing page cache/readahead behavior.
+> > > >
+> > > >
+> > > > Background
+> > > > =========
+> > > >
+> > > > The read-ahead heuristics on file-backed memory mappings can
+> > > > inadvertently populate the page cache with pages corresponding to
+> > > > regions that user-space processes are known never to access e.g ELF
+> > > > LOAD segment padding regions. While these pages are ultimately
+> > > > reclaimable, their presence precipitates unnecessary I/O operations,
+> > > > particularly when a substantial quantity of such regions exists.
+> > > >
+> > > > Although the underlying file can be made sparse in these regions to
+> > > > mitigate I/O, readahead will still allocate discrete zero pages when
+> > > > populating the page cache within these ranges. These pages, while
+> > > > subject to reclaim, introduce additional churn to the LRU. This
+> > > > reclaim overhead is further exacerbated in filesystems that support
+> > > > "fault-around" semantics, that can populate the surrounding pages’
+> > > > PTEs if found present in the page cache.
+> > > >
+> > > > While the memory impact may be negligible for large files containing a
+> > > > limited number of sparse regions, it becomes appreciable for many
+> > > > small mappings characterized by numerous holes. This scenario can
+> > > > arise from efforts to minimize vm_area_struct slab memory footprint.
+> > >
+> > > OK, I agree the behavior you describe exists. But do you have some
+> > > real-world numbers showing its extent? I'm not looking for some artificial
+> > > numbers - sure bad cases can be constructed - but how big practical problem
+> > > is this? If you can show that average Android phone has 10% of these
+> > > useless pages in memory than that's one thing and we should be looking for
+> > > some general solution. If it is more like 0.1%, then why bother?
+> > >
+> > > > Limitations of Existing Mechanisms
+> > > > ===========================
+> > > >
+> > > > fadvise(..., POSIX_FADV_RANDOM, ...): disables read-ahead for the
+> > > > entire file, rather than specific sub-regions. The offset and length
+> > > > parameters primarily serve the POSIX_FADV_WILLNEED [1] and
+> > > > POSIX_FADV_DONTNEED [2] cases.
+> > > >
+> > > > madvise(..., MADV_RANDOM, ...): Similarly, this applies on the entire
+> > > > VMA, rather than specific sub-regions. [3]
+> > > > Guard Regions: While guard regions for file-backed VMAs circumvent
+> > > > fault-around concerns, the fundamental issue of unnecessary page cache
+> > > > population persists. [4]
+> > >
+> > > Somewhere else in the thread you complain about readahead extending past
+> > > the VMA. That's relatively easy to avoid at least for readahead triggered
+> > > from filemap_fault() (i.e., do_async_mmap_readahead() and
+> > > do_sync_mmap_readahead()). I agree we could do that and that seems as a
+> > > relatively uncontroversial change. Note that if someone accesses the file
+> > > through standard read(2) or write(2) syscall or through different memory
+> > > mapping, the limits won't apply but such combinations of access are not
+> > > that common anyway.
+> >
+> > Hm I'm not sure sure, map elf files with different mprotect(), or mprotect()
+> > different portions of a file and suddenly you lose all the readahead for the
+> > rest even though you're reading sequentially?
+>
+> Well, you wouldn't loose all readahead for the rest. Just readahead won't
+> preread data underlying the next VMA so yes, you get a cache miss and have
+> to wait for a page to get loaded into cache when transitioning to the next
+> VMA but once you get there, you'll have readahead running at full speed
+> again.
 
-Right, didn't notice that this is actually opposite to setxattrat(),
-will change that.
+I'm aware of how readahead works (I _believe_ there's currently a
+pre-release of a book with a very extensive section on readahead written by
+somebody :P).
 
-> 
-> 
-> > +		lookup_flags |= LOOKUP_FOLLOW;
-> > +
-> > +	if (at_flags & AT_EMPTY_PATH)
-> > +		lookup_flags |= LOOKUP_EMPTY;
-> > +
-> > +	if (fd_empty(dir))
-> > +		return -EBADF;
-> 
-> This check is wrong and in fact the whole dfd handling looks buggy.
-> openat(2) manpage describes the expected behavior:
-> 
->        The dirfd argument is used in conjunction with the pathname argument as
->        follows:
-> 
->        •  If the pathname given in pathname is absolute,  then  dirfd  is  ig-
->           nored.
-> 	  ^^^^ This is what you break. If the pathname is absolute, you're
-> not expected to touch dirfd.
-> 
->        •  If  the pathname given in pathname is relative and dirfd is the spe-
->           cial value AT_FDCWD, then pathname is interpreted  relative  to  the
->           current working directory of the calling process (like open()).
->           ^^^ Also AT_FDCWD handling would be broken by the above check.
-> 
->        •  If  the  pathname  given  in pathname is relative, then it is inter-
->           preted relative to the directory referred to by the file  descriptor
->           dirfd  (rather than relative to the current working directory of the
->           calling process, as is done by open() for a relative pathname).   In
->           this  case,  dirfd  must  be a directory that was opened for reading
->           (O_RDONLY) or using the O_PATH flag.
-> 
->        If the pathname given in pathname is relative, and dirfd is not a valid
->        file descriptor, an error (EBADF) results.  (Specifying an invalid file
->        descriptor number in dirfd can be used as a means to ensure that  path-
->        name is absolute.)
-> 
-> > +
-> > +	error = user_path_at(dfd, filename, lookup_flags, &filepath);
-> 		^^^ And user_path_at() isn't quite what you need either
-> because with AT_EMPTY_PATH we also want to allow for filename to be NULL
-> (not just empty string) and user_path_at() does not support that. That's
-> why I in my previous replies suggested you should follow what setxattrat()
-> does and that sadly it is more painful than it should be. You need
-> something like:
-> 
-> 	name = getname_maybe_null(filename, at_flags);
-> 	if (!name) {
-> 		CLASS(fd, f)(dfd);
-> 
-> 		if (fd_empty(f))
-> 			return -EBADF;
-> 		error = vfs_fileattr_get(file_dentry(fd_file(f)), &fa);
-> 	} else {
-> 		error = filename_lookup(dfd, filename, lookup_flags, &filepath,
-> 					NULL);
-> 		if (error)
-> 			goto out;
-> 		error = vfs_fileattr_get(filepath.dentry, &fa);
-> 		path_put(&filepath);
-> 	}
-> 	if (!error)
-> 		error = copy_fsxattr_to_user(&fa, fsx);
-> out:
-> 	putname(name);
-> 	return error;
-> 
-> Longer term, we need to provide user_path_maybe_null_at() for this but I
-> don't want to drag you into this cleanup :)
+Also been looking at it for file-backed guard regions recently, which is
+why I've been commenting here specifically as it's been on my mind lately,
+and also Kalesh's interest in this stems from a guard region 'scenario'
+(hence my cc).
 
-Oh, I missed that, thanks for pointing this out, I will change it as
-suggested.
+Anyway perhaps I didn't phrase this well - my concern is whether this might
+impact performance in real world scenarios, such as one where a VMA is
+mapped then mprotect()'d or mmap()'d in parts causing _separate VMAs_ of
+the same file, in sequential order.
 
--- 
-- Andrey
+From Kalesh's LPC talk, unless I misinterpreted what he said, this is
+precisely what he's doing? I mean we'd not be talking here about mmap()
+behaviour with readahead otherwise.
 
+Granted, perhaps you'd only _ever_ be reading sequentially within a
+specific VMA's boundaries, rather than going from one to another (excluding
+PROT_NONE guards obviously) and that's very possible, if that's what you
+mean.
+
+But otherwise, surely this is a thing? And might we therefore be imposing
+unnecessary cache misses?
+
+Which is why I suggest...
+
+>
+> So yes, sequential read of a memory mapping of a file fragmented into many
+> VMAs will be somewhat slower. My impression is such use is rare (sequential
+> readers tend to use read(2) rather than mmap) but I could be wrong.
+>
+> > What about shared libraries with r/o parts and exec parts?
+> >
+> > I think we'd really need to do some pretty careful checking to ensure this
+> > wouldn't break some real world use cases esp. if we really do mostly
+> > readahead data from page cache.
+>
+> So I'm not sure if you are not conflating two things here because the above
+> sentence doesn't make sense to me :). Readahead is the mechanism that
+> brings data from underlying filesystem into the page cache. Fault-around is
+> the mechanism that maps into page tables pages present in the page cache
+> although they were not possibly requested by the page fault. By "do mostly
+> readahead data from page cache" are you speaking about fault-around? That
+> currently does not cross VMA boundaries anyway as far as I'm reading
+> do_fault_around()...
+
+...that we test this and see how it behaves :) Which is literally all I
+am saying in the above. Ideally with representative workloads.
+
+I mean, I think this shouldn't be a controversial point right? Perhaps
+again I didn't communicate this well. But this is all I mean here.
+
+BTW, I understand the difference between readahead and fault-around, you can
+run git blame on do_fault_around() if you have doubts about that ;)
+
+And yes fault around is constrained to the VMA (and actually avoids
+crossing PTE boundaries).
+
+>
+> > > Regarding controlling readahead for various portions of the file - I'm
+> > > skeptical. In my opinion it would require too much bookeeping on the kernel
+> > > side for such a niche usecache (but maybe your numbers will show it isn't
+> > > such a niche as I think :)). I can imagine you could just completely
+> > > turn off kernel readahead for the file and do your special readahead from
+> > > userspace - I think you could use either userfaultfd for triggering it or
+> > > new fanotify FAN_PREACCESS events.
+> >
+> > I'm opposed to anything that'll proliferate VMAs (and from what Kalesh
+> > says, he is too!) I don't really see how we could avoid having to do that
+> > for this kind of case, but I may be missing something...
+>
+> I don't see why we would need to be increasing number of VMAs here at all.
+> With FAN_PREACCESS you get notification with file & offset when it's
+> accessed, you can issue readahead(2) calls based on that however you like.
+> Similarly you can ask for userfaults for the whole mapped range and handle
+> those. Now thinking more about this, this approach has the downside that
+> you cannot implement async readahead with it (once PTE is mapped to some
+> page it won't trigger notifications either with FAN_PREACCESS or with
+> UFFD). But with UFFD you could at least trigger readahead on minor faults.
+
+Yeah we're talking past each other on this, sorry I missed your point about
+fanotify there!
+
+uffd is probably not reasonably workable given overhead I would have
+thought.
+
+I am really unaware of how fanotify works so I mean cool if you can find a
+solution this way, awesome :)
+
+I'm just saying, if we need to somehow retain state about regions which
+should have adjusted readahead behaviour at a VMA level, I can't see how
+this could be done without VMA fragmentation and I'd rather we didn't.
+
+If we can avoid that great!
+
+>
+> 								Honza
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
