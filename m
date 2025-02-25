@@ -1,221 +1,284 @@
-Return-Path: <linux-fsdevel+bounces-42554-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42555-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8918A436E6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 09:04:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94F60A43958
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 10:25:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 261C83B7D51
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 08:02:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60044188854F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 09:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A527F25C6E2;
-	Tue, 25 Feb 2025 08:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE6C25A2BE;
+	Tue, 25 Feb 2025 09:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="nuB/bCA9";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YPoIMkvS"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="GzcOzCoR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from flow-b6-smtp.messagingengine.com (flow-b6-smtp.messagingengine.com [202.12.124.141])
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378FB192B8F;
-	Tue, 25 Feb 2025 08:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9BF214203;
+	Tue, 25 Feb 2025 09:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740470553; cv=none; b=uCWBc33p7U3TpiWi/mH5p2IidpH+BOrpZ/uAoLuxVcdGPeMXLs8I0H41f8b0Ei5jjuXj12gicaQqhPXnJIwKVx9LaZzu3U0J9Zffvb4ff7Jzy3PxXkinF/DjTg/nWT5z0YGBovBgVPCN4eX9wHxwbr4OZtfUkBdsLBsS/Ar1vXU=
+	t=1740475224; cv=none; b=IakdsGPCfbl0+SzX7UL5HRVN00i4Sp4yAXrxPuRsozANYtWeKABilbFToriXuvvoGdtiQkiq0CPjCpHNgZ7YSZ++ZObOVZIGhIOY3dsUQFwh5uOXrcJ81qpThVZe4Tujtf8Tq3Fs2sql84Ob7xTsELmHg5xAtWq03D/6+hTQRe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740470553; c=relaxed/simple;
-	bh=k1leRad2ojzsetmQP/1iyqy9qsl2R22cOQijt9+MijA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=ZIO+a0t8+4dHXOU7mjcv7QyHPdgtZKX1FpkrkNC0LBzUVhawRnYcTR0ukxKvazFjY6YmyefvQg4FtdH+rtcZjcgtirMGOhaDYAbtXJ03XcdPM+/5QAck6tahL/q5HHE/ipStWgfuZ9b+AfPNN++j3296gDXza+a3QrMa6MHkPmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=nuB/bCA9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YPoIMkvS; arc=none smtp.client-ip=202.12.124.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailflow.stl.internal (Postfix) with ESMTP id BC32C1D40DC7;
-	Tue, 25 Feb 2025 03:02:28 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-11.internal (MEProxy); Tue, 25 Feb 2025 03:02:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1740470548;
-	 x=1740477748; bh=QLBFywS7XyTxwPOejQif6z/28yCPC+NOlxqp7jJivgU=; b=
-	nuB/bCA9S1ItHoQccv5Gpf2mwvDce7RRcNcpwlxjDxO1holF+tGByrAapeP7OrFr
-	HAk3aSlywo6BQ3aIq3YD97bpYimQZCmCJzQVQ4J7/FjQNoffpOdztKN3jNMkLAsm
-	9VGEaeHYbe7aA1pwEwTc5Ly3uUaA5trnjhjeblm3R3qCmYh5gobnjqpCGnSMaJxH
-	Q4rT9xQzPWGhTDWs9MOLPKEFr4nLKLYdEEplecb0+f886EV6VW5atz2MXrJXfgSa
-	8nO2s+I0QTs8G0bnVObE2Z5vC+C/ADHfqNq9PLbtRtoWaqB9bL1p64n0kbx/qUFh
-	GI6t/ArRTPIDtTrox5TXCQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740470548; x=
-	1740477748; bh=QLBFywS7XyTxwPOejQif6z/28yCPC+NOlxqp7jJivgU=; b=Y
-	PoIMkvS6Pmv9DRNik2ZIAlOAGJxA128xi+2AFbN1p4mZSMpWJvjWRKHZs4PLFfc6
-	1+aHv049YnYKEfVZEN+sir1Y3b3y0M5hJe6zr9DGoS6Mofb56X+snvlPvlUK0F+4
-	mXCUv/SVSH9ziGwDTAMYmz7Q5CpBKdy6teD7hFBcWYrwRSOU7VayJcaFf2MNpoPY
-	RwMyBak80wphhNQM/ZbdE2tRPYWKp2xSTpvayyVo+xrq2jkqVAoOaz4M/GmpQhDQ
-	GoohNCukP3A1YcdSedH7Ka31l79hVrCqcvm9Qig3waOu8sHkFMFBcxErO5OHkgJx
-	1CybiPzK73IGpPLVmfvxA==
-X-ME-Sender: <xms:EHm9Z5ksovKix4IxAYOa6NPEsSLcphOoyOjz8HC-1Dt-R6Vx9U_HmQ>
-    <xme:EHm9Z02PIBag6kVjBAxYukVUJEdGe04NJq4rDChWSx6WsgtBg87p-_V2omgoWP2jZ
-    _7Dx_WXLOJSuAYYKgM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekuddujecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
-    jeenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpedvhfdvkeeuudevfffftefgvdevfedvleehvddv
-    geejvdefhedtgeegveehfeeljeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeeh
-    tddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpd
-    hrtghpthhtohepthhssghoghgvnhgusegrlhhphhgrrdhfrhgrnhhkvghnrdguvgdprhgt
-    phhtthhopegtrghtrghlihhnrdhmrghrihhnrghssegrrhhmrdgtohhmpdhrtghpthhtoh
-    eplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegthhhrihhs
-    thhophhhvgdrlhgvrhhohiestghsghhrohhuphdrvghupdhrtghpthhtohepuggrvhgvmh
-    esuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehmihgtseguihhgihhkohgurdhn
-    vghtpdhrtghpthhtohepmhhpvgesvghllhgvrhhmrghnrdhiugdrrghupdhrtghpthhtoh
-    eprghnughrvggrshesghgrihhslhgvrhdrtghomh
-X-ME-Proxy: <xmx:EHm9Z_qJ-ITA7HBjaqdXvk3f-nqGrbsu3fDpFPFh2RmK-q6S1Rh3pg>
-    <xmx:EHm9Z5nHJC0k8dToMBJ4l8OzwQT8BBLHg391079G2HLzyfUZiOWn0A>
-    <xmx:EHm9Z302TC_YPcv_Alc8uVIbhcs_m4NaqklpywGUw6d3uwcpJgO6qQ>
-    <xmx:EHm9Z4sdir4sphaNBGTPw7csAyqyoGjyjpv2MyJVBqSCdS8S2iGxGQ>
-    <xmx:FHm9Z9FhQ4LWTtKGSN8SQ9W8XolOVrCxrHfKpOz3hrDt-C_9ux6zE9sc>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id A3F4B2220072; Tue, 25 Feb 2025 03:02:24 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740475224; c=relaxed/simple;
+	bh=7ZG22BNc2QXkfk05oKYDUHOhxJRgeTa/U7Fyfb6Cgf4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jrTkczbMpzS8GYaY48vi3N/LZu0zaz/YoqNELDRiJvRCweDiXdIofP1ml0tVIPfCgAVkR4KX9Vblfld6g7K1+flMPY8tkod62WY5ls27V7HO6YkQJIWOpnjkM6XA/B2M7NLTCdcRsenc12/F/M85pjQZYzGpJEi+PHZf6C0RMa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=GzcOzCoR; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740475217; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=p41PXiy621mvHbTwxjgNE5Get64HPOSU10V/f0sqEEI=;
+	b=GzcOzCoR9RwCXfjwUy7+7c749BgrMH+va4IcFrcYIRQ/Tlb6WzbiipMEKipF0M7Bzbhjf89MnynX/p0GWGChclE0Dj7gY//38oCKf3t8Dbs4CMXYsxgHp58I7OvRQUSR7hJXfSFYeP0rXGNq1drBUPMOYsdsevG74ZHSPxPVbnA=
+Received: from 30.74.144.116(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WQEGUCr_1740475216 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 25 Feb 2025 17:20:16 +0800
+Message-ID: <bd30dc5e-880c-4daf-a86b-b814a1533931@linux.alibaba.com>
+Date: Tue, 25 Feb 2025 17:20:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 25 Feb 2025 09:02:04 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Christian Brauner" <brauner@kernel.org>
-Cc: "Amir Goldstein" <amir73il@gmail.com>,
- "Andrey Albershteyn" <aalbersh@redhat.com>,
- "Darrick J. Wong" <djwong@kernel.org>,
- "Richard Henderson" <richard.henderson@linaro.org>,
- "Matt Turner" <mattst88@gmail.com>,
- "Russell King" <linux@armlinux.org.uk>,
- "Catalin Marinas" <catalin.marinas@arm.com>,
- "Will Deacon" <will@kernel.org>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Michal Simek" <monstr@monstr.eu>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
- "Helge Deller" <deller@gmx.de>,
- "Madhavan Srinivasan" <maddy@linux.ibm.com>,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nicholas Piggin" <npiggin@gmail.com>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Naveen N Rao" <naveen@kernel.org>, "Heiko Carstens" <hca@linux.ibm.com>,
- "Vasily Gorbik" <gor@linux.ibm.com>,
- "Alexander Gordeev" <agordeev@linux.ibm.com>,
- "Christian Borntraeger" <borntraeger@linux.ibm.com>,
- "Sven Schnelle" <svens@linux.ibm.com>,
- "Yoshinori Sato" <ysato@users.sourceforge.jp>,
- "Rich Felker" <dalias@libc.org>,
- "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- "David S . Miller" <davem@davemloft.net>,
- "Andreas Larsson" <andreas@gaisler.com>,
- "Andy Lutomirski" <luto@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, "Chris Zankel" <chris@zankel.net>,
- "Max Filippov" <jcmvbkbc@gmail.com>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-api@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-xfs@vger.kernel.org, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
- "Theodore Ts'o" <tytso@mit.edu>
-Message-Id: <6b51ffa2-9d67-4466-865e-e703c1243352@app.fastmail.com>
-In-Reply-To: <20250224-klinke-hochdekoriert-3f6be89005a8@brauner>
-References: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org>
- <20250221181135.GW21808@frogsfrogsfrogs>
- <CAOQ4uxgyYBFqkq6cQsso4LxJsPJ4uECOdskXmz-nmGhhV5BQWg@mail.gmail.com>
- <20250224-klinke-hochdekoriert-3f6be89005a8@brauner>
-Subject: Re: [PATCH v3] fs: introduce getfsxattrat and setfsxattrat syscalls
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] mm/shmem: use xas_try_split() in
+ shmem_split_large_entry()
+To: Zi Yan <ziy@nvidia.com>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
+ Kairui Song <kasong@tencent.com>, Miaohe Lin <linmiaohe@huawei.com>,
+ linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+References: <20250218235444.1543173-1-ziy@nvidia.com>
+ <20250218235444.1543173-3-ziy@nvidia.com>
+ <f899d6b3-e607-480b-9acc-d64dfbc755b5@linux.alibaba.com>
+ <AD348832-5A6A-48F1-9735-924F144330F7@nvidia.com>
+ <47d189c7-3143-4b59-a3af-477d4c46a8a0@linux.alibaba.com>
+ <2e4b9927-562d-4cfa-9362-f23e3bcfc454@linux.alibaba.com>
+ <42440332-96FF-4ECB-8553-9472125EB33F@nvidia.com>
+ <37C4B6AC-0757-4B92-88F3-75F1B4DEFFC5@nvidia.com>
+ <655589D4-7E13-4F5B-8968-3FCB71DCE0FC@nvidia.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <655589D4-7E13-4F5B-8968-3FCB71DCE0FC@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 24, 2025, at 12:32, Christian Brauner wrote:
-> On Fri, Feb 21, 2025 at 08:15:24PM +0100, Amir Goldstein wrote:
->> On Fri, Feb 21, 2025 at 7:13=E2=80=AFPM Darrick J. Wong <djwong@kerne=
-l.org> wrote:
 
->> > > @@ -23,6 +23,9 @@
->> > >  #include <linux/rw_hint.h>
->> > >  #include <linux/seq_file.h>
->> > >  #include <linux/debugfs.h>
->> > > +#include <linux/syscalls.h>
->> > > +#include <linux/fileattr.h>
->> > > +#include <linux/namei.h>
->> > >  #include <trace/events/writeback.h>
->> > >  #define CREATE_TRACE_POINTS
->> > >  #include <trace/events/timestamp.h>
->> > > @@ -2953,3 +2956,75 @@ umode_t mode_strip_sgid(struct mnt_idmap *=
-idmap,
->> > >       return mode & ~S_ISGID;
->> > >  }
->> > >  EXPORT_SYMBOL(mode_strip_sgid);
->> > > +
->> > > +SYSCALL_DEFINE4(getfsxattrat, int, dfd, const char __user *, fil=
-ename,
->> > > +             struct fsxattr __user *, fsx, unsigned int, at_flag=
-s)
->> >
->> > Should the kernel require userspace to pass the size of the fsx buf=
-fer?
->> > That way we avoid needing to rev the interface when we decide to gr=
-ow
->> > the structure.
->
-> Please version the struct by size as we do for clone3(),
-> mount_setattr(), listmount()'s struct mnt_id_req, sched_setattr(), all
-> the new xattrat*() system calls and a host of others. So laying out the
-> struct 64bit and passing a size alongside it.
->
-> This is all handled by copy_struct_from_user() and copy_struct_to_user=
-()
-> so nothing to reinvent. And it's easy to copy from existing system
-> calls.
 
-I don't think that works in this case, because 'struct fsxattr'
-is an existing structure that is defined with a fixed size of
-28 bytes. If we ever need more than 8 extra bytes, then the
-existing ioctl commands are also broken.
+On 2025/2/21 10:38, Zi Yan wrote:
+> On 20 Feb 2025, at 21:33, Zi Yan wrote:
+> 
+>> On 20 Feb 2025, at 8:06, Zi Yan wrote:
+>>
+>>> On 20 Feb 2025, at 4:27, Baolin Wang wrote:
+>>>
+>>>> On 2025/2/20 17:07, Baolin Wang wrote:
+>>>>>
+>>>>>
+>>>>> On 2025/2/20 00:10, Zi Yan wrote:
+>>>>>> On 19 Feb 2025, at 5:04, Baolin Wang wrote:
+>>>>>>
+>>>>>>> Hi Zi,
+>>>>>>>
+>>>>>>> Sorry for the late reply due to being busy with other things:)
+>>>>>>
+>>>>>> Thank you for taking a look at the patches. :)
+>>>>>>
+>>>>>>>
+>>>>>>> On 2025/2/19 07:54, Zi Yan wrote:
+>>>>>>>> During shmem_split_large_entry(), large swap entries are covering n slots
+>>>>>>>> and an order-0 folio needs to be inserted.
+>>>>>>>>
+>>>>>>>> Instead of splitting all n slots, only the 1 slot covered by the folio
+>>>>>>>> need to be split and the remaining n-1 shadow entries can be retained with
+>>>>>>>> orders ranging from 0 to n-1.  This method only requires
+>>>>>>>> (n/XA_CHUNK_SHIFT) new xa_nodes instead of (n % XA_CHUNK_SHIFT) *
+>>>>>>>> (n/XA_CHUNK_SHIFT) new xa_nodes, compared to the original
+>>>>>>>> xas_split_alloc() + xas_split() one.
+>>>>>>>>
+>>>>>>>> For example, to split an order-9 large swap entry (assuming XA_CHUNK_SHIFT
+>>>>>>>> is 6), 1 xa_node is needed instead of 8.
+>>>>>>>>
+>>>>>>>> xas_try_split_min_order() is used to reduce the number of calls to
+>>>>>>>> xas_try_split() during split.
+>>>>>>>
+>>>>>>> For shmem swapin, if we cannot swap in the whole large folio by skipping the swap cache, we will split the large swap entry stored in the shmem mapping into order-0 swap entries, rather than splitting it into other orders of swap entries. This is because the next time we swap in a shmem folio through shmem_swapin_cluster(), it will still be an order 0 folio.
+>>>>>>
+>>>>>> Right. But the swapin is one folio at a time, right? shmem_split_large_entry()
+>>>>>
+>>>>> Yes, now we always swapin an order-0 folio from the async swap device at a time. However, for sync swap device, we will skip the swapcache and swapin the whole large folio by commit 1dd44c0af4fa, so it will not call shmem_split_large_entry() in this case.
+>>>
+>>> Got it. I will check the commit.
+>>>
+>>>>>
+>>>>>> should split the large swap entry and give you a slot to store the order-0 folio.
+>>>>>> For example, with an order-9 large swap entry, to swap in first order-0 folio,
+>>>>>> the large swap entry will become order-0, order-0, order-1, order-2,… order-8,
+>>>>>> after the split. Then the first order-0 swap entry can be used.
+>>>>>> Then, when a second order-0 is swapped in, the second order-0 can be used.
+>>>>>> When the last order-0 is swapped in, the order-8 would be split to
+>>>>>> order-7,order-6,…,order-1,order-0, order-0, and the last order-0 will be used.
+>>>>>
+>>>>> Yes, understood. However, for the sequential swapin scenarios, where originally only one split operation is needed. However, your approach increases the number of split operations. Of course, I understand that in non-sequential swapin scenarios, your patch will save some xarray memory. It might be necessary to evaluate whether the increased split operations will have a significant impact on the performance of sequential swapin?
+>>>
+>>> Is there a shmem swapin test I can run to measure this? xas_try_split() should
+>>> performance similar operations as existing xas_split_alloc()+xas_split().
+>>>
+>>>>>
+>>>>>> Maybe the swapin assumes after shmem_split_large_entry(), all swap entries
+>>>>>> are order-0, which can lead to issues. There should be some check like
+>>>>>> if the swap entry order > folio_order, shmem_split_large_entry() should
+>>>>>> be used.
+>>>>>>>
+>>>>>>> Moreover I did a quick test with swapping in order 6 shmem folios, however, my test hung, and the console was continuously filled with the following information. It seems there are some issues with shmem swapin handling. Anyway, I need more time to debug and test.
+>>>>>> To swap in order-6 folios, shmem_split_large_entry() does not allocate
+>>>>>> any new xa_node, since XA_CHUNK_SHIFT is 6. It is weird to see OOM
+>>>>>> error below. Let me know if there is anything I can help.
+>>>>>
+>>>>> I encountered some issues while testing order 4 and order 6 swapin with your patches. And I roughly reviewed the patch, and it seems that the new swap entry stored in the shmem mapping was not correctly updated after the split.
+>>>>>
+>>>>> The following logic is to reset the swap entry after split, and I assume that the large swap entry is always split to order 0 before. As your patch suggests, if a non-uniform split is used, then the logic for resetting the swap entry needs to be changed? Please correct me if I missed something.
+>>>>>
+>>>>> /*
+>>>>>    * Re-set the swap entry after splitting, and the swap
+>>>>>    * offset of the original large entry must be continuous.
+>>>>>    */
+>>>>> for (i = 0; i < 1 << order; i++) {
+>>>>>       pgoff_t aligned_index = round_down(index, 1 << order);
+>>>>>       swp_entry_t tmp;
+>>>>>
+>>>>>       tmp = swp_entry(swp_type(swap), swp_offset(swap) + i);
+>>>>>       __xa_store(&mapping->i_pages, aligned_index + i,
+>>>>>              swp_to_radix_entry(tmp), 0);
+>>>>> }
+>>>
+>>> Right. I will need to adjust swp_entry_t. Thanks for pointing this out.
+>>>
+>>>>
+>>>> In addition, after your patch, the shmem_split_large_entry() seems always return 0 even though it splits a large swap entry, but we still need re-calculate the swap entry value after splitting, otherwise it may return errors due to shmem_confirm_swap() validation failure.
+>>>>
+>>>> /*
+>>>>   * If the large swap entry has already been split, it is
+>>>>   * necessary to recalculate the new swap entry based on
+>>>>   * the old order alignment.
+>>>>   */
+>>>>   if (split_order > 0) {
+>>>> 	pgoff_t offset = index - round_down(index, 1 << split_order);
+>>>>
+>>>> 	swap = swp_entry(swp_type(swap), swp_offset(swap) + offset);
+>>>> }
+>>>
+>>> Got it. I will fix it.
+>>>
+>>> BTW, do you mind sharing your swapin tests so that I can test my new version
+>>> properly?
+>>
+>> The diff below adjusts the swp_entry_t and returns the right order after
+>> shmem_split_large_entry(). Let me know if it fixes your issue.
+> 
+> Fixed the compilation error. It will be great if you can share a swapin test, so that
+> I can test locally. Thanks.
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index b35ba250c53d..bfc4ef511391 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2162,7 +2162,7 @@ static int shmem_split_large_entry(struct inode *inode, pgoff_t index,
+>   {
+>   	struct address_space *mapping = inode->i_mapping;
+>   	XA_STATE_ORDER(xas, &mapping->i_pages, index, 0);
+> -	int split_order = 0;
+> +	int split_order = 0, entry_order = 0;
+>   	int i;
+> 
+>   	/* Convert user data gfp flags to xarray node gfp flags */
+> @@ -2180,6 +2180,7 @@ static int shmem_split_large_entry(struct inode *inode, pgoff_t index,
+>   		}
+> 
+>   		order = xas_get_order(&xas);
+> +		entry_order = order;
+> 
+>   		/* Try to split large swap entry in pagecache */
+>   		if (order > 0) {
+> @@ -2192,23 +2193,23 @@ static int shmem_split_large_entry(struct inode *inode, pgoff_t index,
+>   				xas_try_split(&xas, old, cur_order, GFP_NOWAIT);
+>   				if (xas_error(&xas))
+>   					goto unlock;
+> +
+> +				/*
+> +				 * Re-set the swap entry after splitting, and the swap
+> +				 * offset of the original large entry must be continuous.
+> +				 */
+> +				for (i = 0; i < 1 << cur_order; i += (1 << split_order)) {
+> +					pgoff_t aligned_index = round_down(index, 1 << cur_order);
+> +					swp_entry_t tmp;
+> +
+> +					tmp = swp_entry(swp_type(swap), swp_offset(swap) + i);
+> +					__xa_store(&mapping->i_pages, aligned_index + i,
+> +						   swp_to_radix_entry(tmp), 0);
+> +				}
+>   				cur_order = split_order;
+>   				split_order =
+>   					xas_try_split_min_order(split_order);
+>   			}
 
-Replacing fsxattr with an extensible structure of the same contents
-would work, but I feel that just adds more complication for little
-gain.
+This looks incorrect to me. Suppose we are splitting an order-9 swap 
+entry, in the first iteration of the loop, it splits the order-9 swap 
+entry into 8 order-6 swap entries. At this point, the order-6 swap 
+entries are reset, and everything seems fine.
 
-On the other hand, there is an open question about how unknown
-flags and fields in this structure. FS_IOC_FSSETXATTR/FS_IOC_FSGETXATTR
-treats them as optional and just ignores anything it doesn't
-understand, while copy_struct_from_user() would treat any unknown
-but set bytes as -E2BIG.
+However, in the second iteration, where an order-6 swap entry is split 
+into 63 order-0 swap entries, the split operation itself is correct. But 
+when resetting the order-0 swap entry, it seems incorrect. Now the 
+'cur_order' = 6 and 'split_order' = 0, which means the range for the 
+reset index is always between 0 and 63 (see __xa_store()).
 
-The ioctl interface relies on the existing behavior, see
-0a6eab8bd4e0 ("vfs: support FS_XFLAG_COWEXTSIZE and get/set of
-CoW extent size hint") for how it was previously extended
-with an optional flag/word. I think that is fine for the syscall
-as well, but should be properly documented since it is different
-from how most syscalls work.
+ > +for (i = 0; i < 1 << cur_order; i += (1 << split_order)) {
+ > +	pgoff_t aligned_index = round_down(index, 1 << cur_order);
+ > +	swp_entry_t tmp;
+ > +
+ > +	tmp = swp_entry(swp_type(swap), swp_offset(swap) + i);
+ > +	__xa_store(&mapping->i_pages, aligned_index + i,
+ > +		swp_to_radix_entry(tmp), 0);
+ > +}
 
-    Arnd
+However, if the index is greater than 63, it appears that it is not set 
+to the correct new swap entry after splitting. Please corect me if I 
+missed anyting.
+
+> -
+> -			/*
+> -			 * Re-set the swap entry after splitting, and the swap
+> -			 * offset of the original large entry must be continuous.
+> -			 */
+> -			for (i = 0; i < 1 << order; i++) {
+> -				pgoff_t aligned_index = round_down(index, 1 << order);
+> -				swp_entry_t tmp;
+> -
+> -				tmp = swp_entry(swp_type(swap), swp_offset(swap) + i);
+> -				__xa_store(&mapping->i_pages, aligned_index + i,
+> -					   swp_to_radix_entry(tmp), 0);
+> -			}
+>   		}
+> 
+>   unlock:
+> @@ -2221,7 +2222,7 @@ static int shmem_split_large_entry(struct inode *inode, pgoff_t index,
+>   	if (xas_error(&xas))
+>   		return xas_error(&xas);
+> 
+> -	return split_order;
+> +	return entry_order;
+>   }
+> 
+>   /*
+> 
+> 
+> Best Regards,
+> Yan, Zi
 
