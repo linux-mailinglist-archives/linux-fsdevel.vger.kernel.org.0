@@ -1,154 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-42576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83F07A43E4F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 12:53:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ECA6A43EB6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 13:05:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79A6917F778
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 11:51:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F53316B4BB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 11:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A49267B8C;
-	Tue, 25 Feb 2025 11:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB53267F4E;
+	Tue, 25 Feb 2025 11:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TXlo5udt"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="deO5mD1n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846BF267738;
-	Tue, 25 Feb 2025 11:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AEB267B1A
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2025 11:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740484279; cv=none; b=esUZ0xfY0jIbzmoi1SnzuFXTYMb+bEVmmXN0WeNs78IHrdxs/d7v+BD/jD0vOeZRNYCq2OeNK1T9rZHb7OjC0mTyiVTcz3kKHETMC8NnFVHmEm/juVss1UoPK4Hsb0TFojz9tqde1FMXSgeN/ovTCrHlR86tEVrZGsDWNzlsFxk=
+	t=1740484703; cv=none; b=Bp1vHGqh/8JZNUAz3mDmNR7nbDAMMbxrFCCPni8T+HlormZBtDMvFbhJNqui8zYOacNnsWhCbab+S/HlmnugomqE0BvPVjJZAAfHAMWgHlrQuiCoOm0GOykmWAZaw2WE7xhSWwIAs0nhef8UaqHa6FTi4fzDq1ZKGhDw5sgKwg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740484279; c=relaxed/simple;
-	bh=g33eaFZnoadwACcszmozS/7LipM5zDwNdIwqoe6EOpE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LUxv4e6LM1a/uUpyBXCaOVbckZEmKV/JRvNaFI2Zj/HiDwBkGb6ou5uG5xUIfqeAhgHsncQqc9kNjqV3GypvvJgdcEVbXi2w1Bn/uzb2eWlpWeWC5DNXeOr+nNVaOWbhJhSpe3i0NcEVnysaerwcxORuZaSA5Wxs3blBd71X9QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TXlo5udt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B740BC4CEE8;
-	Tue, 25 Feb 2025 11:51:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740484278;
-	bh=g33eaFZnoadwACcszmozS/7LipM5zDwNdIwqoe6EOpE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=TXlo5udtTLn0TMoIg/jFOS87YAgyBIcG/GPS7bi3VURLodA7AYYtcoi1g/AWv2gam
-	 8ij02sqNOSu1hdNl8QmHGjwYlbkFCzqht3WW0lh6e7dnT4yx6xaVgliGMLhcs2NEzJ
-	 pI7Du/JUMevaEp+Cr+Zuy9TZU+/u4mCdWE/osiQKnxDXA1J8IfpPTq0IBGBFPUpilw
-	 xcodaj6/Ic0wr25AAqZkmrSrsk3J1ssabHh/hnbnDWznvRgen5B2si6uaLs1wvRYHE
-	 IlSXd6PPEpIE7Vbvnkw/eX8E3zjHxgfDB5cYRGBe7hzT3XdPyZVghgwIGb13a2DJtd
-	 AJwR9Ly/YRcew==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Tue, 25 Feb 2025 12:51:12 +0100
-Message-ID: <20250225-vfs-fixes-093d8cb2fe3b@brauner>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1740484703; c=relaxed/simple;
+	bh=ZML+M6SNb254B3okUsOvmT/4Q3X+djWXrWToFKbLH/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IQZoqkioHS9DOg1o9c7+tQrOnzDnh7WFZRAg0zjHDN7lOB5DBTdMzx8HYaOeDcFe0CH6BK09hK4rgpI58mrGPF7047JJ+9RHA8zznHYoErfoefTfsUYtB59if/eg4/4yAKLcMvOyfrTfjuBlMYjtUV6yxWoQpgzJakknEY7qH3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=deO5mD1n; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740484700;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MCyJOCDY4s4V1OSV5l5wvh4COV+tZP6Tfm0smlf+8X4=;
+	b=deO5mD1ne3YXzOTAXRJTevVLpdydrfbuBRYXHg5fIAN2vW3q92xDahbTu4tPcrqEVmXObJ
+	dc+4LqR2tW5gzhPyvnOZt0FyTcEWGaV2MrLdSVPEiUyj1arCbL3B2wYGPNcEx3DJrUpdQG
+	YIusBAhuJZjrQT16esoSvgEQ3EU2s50=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-550-LiOX7p_OP_qs-CkJIUfpJQ-1; Tue,
+ 25 Feb 2025 06:58:15 -0500
+X-MC-Unique: LiOX7p_OP_qs-CkJIUfpJQ-1
+X-Mimecast-MFC-AGG-ID: LiOX7p_OP_qs-CkJIUfpJQ_1740484693
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 49A9A1800879;
+	Tue, 25 Feb 2025 11:58:13 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.211])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id EE376180035E;
+	Tue, 25 Feb 2025 11:58:08 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 25 Feb 2025 12:57:43 +0100 (CET)
+Date: Tue, 25 Feb 2025 12:57:37 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
+Cc: Manfred Spraul <manfred@colorfullife.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>,
+	Neeraj.Upadhyay@amd.com
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+Message-ID: <20250225115736.GA18523@redhat.com>
+References: <20250102140715.GA7091@redhat.com>
+ <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
+ <20250224142329.GA19016@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2769; i=brauner@kernel.org; h=from:subject:message-id; bh=g33eaFZnoadwACcszmozS/7LipM5zDwNdIwqoe6EOpE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTvXbfxdufHnwVZ8dVBq5bZfe589VZZqWj/JtUjZ/SLd v5YcVnsUEcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBETv9l+J8pNSXz/OTZPx+d S5jRtD71dfMUhelp4Vwif6T3nZZdF1TOyNDx+fynxHVCxu5cZ9kUDzaV7Dv6ODxz75n3SqoyFyZ M6uIGAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224142329.GA19016@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-/* Summary */
+On 02/24, Oleg Nesterov wrote:
+>
+> Just in case, did you use
+>
+> 	https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git/tree/src/hackbench/hackbench.c
+>
+> ?
 
-This contains various fixes for this cycle:
+Or did you use another version?
 
-- Use __readahead_folio() in fuse again to fix a UAF issue when using splice.
+Exactly what parameters did you use?
 
-- Remove d_op->d_delete method from pidfs.
+If possible, please reproduce the hang again. How many threads/processes
+sleeping in pipe_read() or pipe_write() do you see? (you can look at
+/proc/$pid/stack).
 
-- Remove d_op->d_delete method from nsfs.
+Please pick one sleeping writer, and do
 
-- Simplify iomap_dio_bio_iter().
+	$ strace -p pidof_that_write
 
-- Fix a UAF in ovl_dentry_update_reval.
+this should wake this writer up. If a missed wakeup is the only problem,
+hackbench should continue.
 
-- Fix a miscalulated file range for filemap_fdatawrite_range_kick()
+The more info you can provide the better ;)
 
-- Don't skip skip dirty page in folio_unmap_invalidate().
+Oleg.
 
-/* Testing */
-
-gcc version (Debian 14.2.0-8) 14.2.0
-Debian clang version 19.1.4 (1)
-
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-No known conflicts.
-
-The following changes since commit 2408a807bfc3f738850ef5ad5e3fd59d66168996:
-
-  Merge tag 'vfs-6.14-rc4.fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs (2025-02-17 10:38:25 -0800)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.14-rc5.fixes
-
-for you to fetch changes up to b5799106b44e1df594f4696500dbbc3b326bba18:
-
-  iomap: Minor code simplification in iomap_dio_bio_iter() (2025-02-25 11:55:26 +0100)
-
-Please consider pulling these changes from the signed vfs-6.14-rc5.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.14-rc5.fixes
-
-----------------------------------------------------------------
-Christian Brauner (4):
-      Merge tag 'fuse-fixes-6.14-rc4' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse
-      Merge patch series "fixes for uncached IO"
-      pidfs: remove d_op->d_delete
-      nsfs: remove d_op->d_delete
-
-Jingbo Xu (2):
-      mm/filemap: fix miscalculated file range for filemap_fdatawrite_range_kick()
-      mm/truncate: don't skip dirty page in folio_unmap_invalidate()
-
-Joanne Koong (1):
-      fuse: revert back to __readahead_folio() for readahead
-
-John Garry (1):
-      iomap: Minor code simplification in iomap_dio_bio_iter()
-
-Miklos Szeredi (1):
-      fuse: don't truncate cached, mutated symlink
-
-Vasiliy Kovalev (1):
-      ovl: fix UAF in ovl_dentry_update_reval by moving dput() in ovl_link_up
-
- fs/fuse/dev.c          |  6 ++++++
- fs/fuse/dir.c          |  2 +-
- fs/fuse/file.c         | 13 +++++++++++--
- fs/iomap/direct-io.c   |  8 +++-----
- fs/namei.c             | 24 +++++++++++++++++++-----
- fs/nsfs.c              |  1 -
- fs/overlayfs/copy_up.c |  2 +-
- fs/pidfs.c             |  1 -
- include/linux/fs.h     |  6 ++++--
- mm/filemap.c           |  2 +-
- mm/truncate.c          |  2 --
- 11 files changed, 46 insertions(+), 21 deletions(-)
 
