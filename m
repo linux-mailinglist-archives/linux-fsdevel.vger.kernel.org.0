@@ -1,192 +1,260 @@
-Return-Path: <linux-fsdevel+bounces-42547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42548-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4828A43334
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 03:39:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0466EA433BE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 04:42:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E71B9176070
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 02:38:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 542C918942DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 03:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707961448E0;
-	Tue, 25 Feb 2025 02:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83ED22505B7;
+	Tue, 25 Feb 2025 03:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="PXiJB1RM"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="sVCQfkiw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86702149C6F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2025 02:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E6E24C689
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2025 03:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740451090; cv=none; b=YRT3avSX0ujBpTIMgry/9CAwbjnJt8s3NRa0J/zJm2xIRQzWUlGaARwN7ciIbKTadnHHzWpNSzkvkBEU0xEPIjAdliahM3TM0JUc0OaxMB2ot2FW9PjvhZcq7jdy6omq5VgI+H4HvwzZ85tUuKEmvsCPXP/lm6MZ6xveBlym/8Q=
+	t=1740454941; cv=none; b=FKBHeZLtVu7SFE18+dpt3FJnqXoWZN6/YvBLjUxOrBknMaL3UcgSZBHb7CMku/7qYi2IEvx5QVTuegQ59VK0dErARrf5Z1mEq9v2ema8SF26AjQuYscSFENByHBilXcejKb4hsoO6DyY1y6zehrgVpx91X7w64+ZCmqz2QFMqmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740451090; c=relaxed/simple;
-	bh=oNdZT9w7aQq5QrNlfacj7MIC7lBCM1O2Jgg5tGeZrlc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jnzPdMFW2XGN75dltoRlfflCQnmfmCIAf8T9i8EyjBYNi0Z+qZ9HK7SPXKPrfdMyYJ2w9+tKV4Vw+CAzxJeSuuQFEhUBZBt7GRS5wtvaXvIDdzOo282KidGum9rs3PM4amPcMDzS+hW9z37mHIjuCKnvO/xtoOGT8t9TArwVGRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=PXiJB1RM; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e5dd697475dso3916407276.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 18:38:08 -0800 (PST)
+	s=arc-20240116; t=1740454941; c=relaxed/simple;
+	bh=9jj19+NzLuiuNb0sAf3HxNj5pndd5pUpK7+tsjaRNrk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hZMw+rsw/N6BvpnNHpkO7F8kGqtn66+YCuz51OSYdg5XSXPpvcKpT5t6xF42zrGNCcUaUwNXppQGT5QihztgPPNJKuN//JpMic8CCUgzyv5S2dFucuyD02tzYSaIHp2nnHQxheFjHax9K8YeNLa2KXUbG99gD+pkbR4Dh1gokgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=sVCQfkiw; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-221050f3f00so115883615ad.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2025 19:42:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1740451087; x=1741055887; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UqK9lSPHR3oAe986F8iXqkMz9AYMYHr6QgwL+NcZdiU=;
-        b=PXiJB1RMf5Ayu1sFntsMseLpkqRBTF4jtusBDoA7lIOaD1hImCEuB98mD7KjihjNEm
-         7fNp/VQCbbklqF+swIeJh6BIUl9R6sM56jyD/ZUgddfOcMyDbhG0GWHimbes3enZW4n8
-         Wi7PKbQqFBPZTQJdcyI+bDt9As46rQkJqFlX+E7f/Y87mPkomV50RT15HLVnOd7+Dzod
-         UlIJsLAfTVYHytm4RjU4qTTJy3MwaGeTBQ6ZBPrM511unJ82cS99ozdSy1CBi1B4kogB
-         ALgwG9OqEUfL4LwlVxlOdSdaUm56MIbb/abk01HTkCEn7e/qAaJBTSsuE4gOyYwdQc5l
-         V4cw==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1740454938; x=1741059738; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=heiclrdqjdt9ptSQvJcywwubX1oHcT/mg99JdqMdOJc=;
+        b=sVCQfkiwm7U/0MXbJuF2xus/d6Nt0iYqQ4AXqiTcTVk22l6gG6ccQrniqq4yBWi6zN
+         c/VHLu+mOFR/+k1kxlWTpDqnqU9HZxIBoN+Fpz7zxBHrkGFud5AZRF0aEqQclkzMQLjw
+         NK0QHfRn8nGn17GAZTIZjy7wHJ7jOTtsHOa1e6beg6Mcluf/2Ml0DIQHaVx8qLenLfBB
+         17taZWkhNGgMqIYnNNTx1Ngdbg2Tm4dsS0ca8ocbh6sOxPpj0MZhbmhZC6KiPhu2hynv
+         vTFBKbX3J88WXdaW2MTNbQhwiC9v/TUryX1AzJFN5fxqR2FHohszZEEc7PuxORRM/IHA
+         L9TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740451087; x=1741055887;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UqK9lSPHR3oAe986F8iXqkMz9AYMYHr6QgwL+NcZdiU=;
-        b=tneyoDuIEFxkH1TAFzImR9+1+zH+s83dxgSPle/qLOaL8BL7gt59Kp0pRUMxbV+zaz
-         dRL6eefOI6pjVJ1exYW5KErNZOPikTBFj1mi/BY8VA/kEPhIYbHflAwXoa7SfHLTz58B
-         uGHxDWxH5j9v1Iig4b1DGu1Twx+zekcgQdckFQurGtXvSWM/5krbGORRVKj5n495lsid
-         RqcQxvDtzo5pSwDMWCyKiqqdn3mUP0rkwVaFieiQt1nO/caeV6jhQwZzfh+mRfB0rGrL
-         oQSUaYTCVbVPUHNAMZB7JAsuiKWb2TD9L4lXUU2Wwb0JySlViiTXA1mjINX9HDjyDXZy
-         298Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW92Q3xdDdIgDpHUt4cqxLOG1LfWHRpPOpvl4K/40rqtAy/kHs4o3UvVXLOUlQCwSFuaCkQ7GBsVqMlA8B8@vger.kernel.org
-X-Gm-Message-State: AOJu0YySJS8GLQ26RVmVBvE1RoekqRdRNOp7J5tvZLHODZz+jyPkWGfQ
-	TvTxlQlFop+vrO1b83ymzdqhYEobSb/hz/fIippaeyeVoBMTPHqbqOnci6iLIgx77vlp6fOuFfw
-	hyZZggUyJulFp4Yr8nZYPfYBvBUl5176RzGso
-X-Gm-Gg: ASbGncsk6mU9X3IdDaOGZt1eC92tYp1ABmy/D5YY8VXjDZCFnzNLE9wB9f3URl+6pXY
-	MDuo+k/jwk1l9/tyUcO3ofUOrYwQ3Qqq06bw4bh0hYPIyEhaiH2GAuRq9U70oVfHQjaOF3b5qiZ
-	6qhZLb1rw=
-X-Google-Smtp-Source: AGHT+IFEtqZjFjUUtEoV6clplX0tg01lvFBOsWs6wVdmIF0VuIZ0SAwc4zHx33tyK9MjmhuD5ygseR4l9mjGvJrZ59E=
-X-Received: by 2002:a05:6902:270a:b0:e57:3c46:fc86 with SMTP id
- 3f1490d57ef6-e607a56713bmr1172129276.48.1740451087319; Mon, 24 Feb 2025
- 18:38:07 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740454938; x=1741059738;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=heiclrdqjdt9ptSQvJcywwubX1oHcT/mg99JdqMdOJc=;
+        b=BKw3m3lHI4RP4sJ+lsjqlJf07034F74YI21Z+BO4cn9OJLZWU6TyCzHLjtM+1c29Qx
+         MhRlMZR5b4zRYLauiENlg39F6eEMVKhjvvlg4tgMTGiCTPLAYFQCpFAmVCDTRZdDayG/
+         5DxoymIxNfsRbXGkehR0N877bhptm0P1U5BIaHMcH9WUZmh2nvtz3gk33a9FGuMdL0hP
+         cb/mzTEHSKTGndPNCsvKWlxLNXkv4FbOnNXt3YDKA6C6kZlcAWw3D4pPPGuxXjBZyC6I
+         PhFUw8aCTyMfKcY4M1BM/XpSf6Q340eYAkn40dFpfoRqh05l7o99bEg9Ke/6h8nBIHTH
+         X7/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWeT00QygZ3b/DCAhZ5H6DMhJbUhOhAKAh8zS6MGDTkPNGpwL4PSDlQKBse+84i3wkQrv7r5kVQESh54NcP@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrLGMKhH4vIusRrTbuTLPL4jXF1/B12lNZCHg2dmH1uQG5ewt1
+	dEfSKd+vumU3L0a8hzVBQTU5DUuBC2zObCb8JDY4uoiwHBFgSlYtrpPOUWPq6x8=
+X-Gm-Gg: ASbGncsfxozieuLbr1LutgDLAuVafEKFRhTX7/SpQ/CKwdV2KxsaMI52UMZRgmrwPWE
+	Tvp09BSY2+GD1soZWFYOgX2YEQW3GFmh+GjNpZZyJDRg6htNYkhFnKAoXT1dLiVwOLDiDE8WaGj
+	OY2Ib7/+tytpTE8tvmLJs+OJoo007xSjwXhnaxj06K9AkYteXjp1WbEuH3VHwi4CSkPs1cbMRmm
+	giEqa6xYV2mZg/T00I9kBzuMwnNHfl/n8F6bt0x0faVtmF2rp/1oHwNofO24DwyTC/s1u7C8shn
+	5xJED3aCMWYxqaU731Ape0728iSAqBR6gHEVOPEeGdbqx5BpxHJ2JgASUIXVte/jkmV2F8TyGYm
+	pTw==
+X-Google-Smtp-Source: AGHT+IFu9ZTqMmFmKgq2BwNevmgyVHSAbFB+fe6KcaqwYov8nGeJ6zB/x+emYSs02kt5foE3WTELdQ==
+X-Received: by 2002:a05:6a00:1310:b0:730:9567:c3d5 with SMTP id d2e1a72fcca58-7347909fee5mr2844300b3a.4.1740454938499;
+        Mon, 24 Feb 2025 19:42:18 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aedaa643b1asm285306a12.49.2025.02.24.19.42.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 19:42:17 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1tmlpm-00000005cIf-1lpb;
+	Tue, 25 Feb 2025 14:42:14 +1100
+Date: Tue, 25 Feb 2025 14:42:14 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Amir Goldstein <amir73il@gmail.com>,
+	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	ronnie sahlberg <ronniesahlberg@gmail.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Steve French <sfrench@samba.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/4] fs: Add FS_XFLAG_COMPRESSED & FS_XFLAG_ENCRYPTED
+ for FS_IOC_FS[GS]ETXATTR API
+Message-ID: <Z708FirwXbRFBqGj@dread.disaster.area>
+References: <CAOQ4uxigYpzpttfaRc=xAxJc=f2bz89_eCideuftf3egTiE+3A@mail.gmail.com>
+ <20250216202441.d3re7lfky6bcozkv@pali>
+ <CAOQ4uxj4urR70FmLB_4Qwbp1O5TwvHWSW6QPTCuq7uXp033B7Q@mail.gmail.com>
+ <Z7Pjb5tI6jJDlFZn@dread.disaster.area>
+ <CAOQ4uxh6aWO7Emygi=dXCE3auDcZZCmDP+jmjhgdffuz1Vx6uQ@mail.gmail.com>
+ <20250218192701.4q22uaqdyjxfp4p3@pali>
+ <Z7UQHL5odYOBqAvo@dread.disaster.area>
+ <20250218230643.fuc546ntkq3nnnom@pali>
+ <CAOQ4uxiAU7UorH1FLcPgoWMXMGRsOt77yRQ12Xkmzcxe8qYuVw@mail.gmail.com>
+ <20250221163443.GA2128534@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org>
- <20250221.ahB8jei2Chie@digikod.net> <jvo6uj7ro5czlo5ukw3vtf5mpqgrbuksqq4j63s2i6gwrjpz4m@kghpcqyi7gwb>
-In-Reply-To: <jvo6uj7ro5czlo5ukw3vtf5mpqgrbuksqq4j63s2i6gwrjpz4m@kghpcqyi7gwb>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 24 Feb 2025 21:37:56 -0500
-X-Gm-Features: AQ5f1JrNItPBrIagfKvZGb3Z7zpj-znT5mFIJQvEadvcpFUdxtbR_1MPSlEQmag
-Message-ID: <CAHC9VhRrs=W4JtuphkADPVG9MX8jxQLfmC9=2taj+cfZgNOt3Q@mail.gmail.com>
-Subject: Re: [PATCH v3] fs: introduce getfsxattrat and setfsxattrat syscalls
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-xfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250221163443.GA2128534@mit.edu>
 
-On Mon, Feb 24, 2025 at 11:00=E2=80=AFAM Andrey Albershteyn <aalbersh@redha=
-t.com> wrote:
-> On 2025-02-21 16:08:33, Micka=C3=ABl Sala=C3=BCn wrote:
-> > It looks security checks are missing.  With IOCTL commands, file
-> > permissions are checked at open time, but with these syscalls the path
-> > is only resolved but no specific access seems to be checked (except
-> > inode_owner_or_capable via vfs_fileattr_set).
+On Fri, Feb 21, 2025 at 11:34:43AM -0500, Theodore Ts'o wrote:
+> I think a few people were talking past each other, because there are two
+> fileds in struct fileattr --- flags, and fsx_xflags.  The flags field
+> is what was originally used by FS_IOC_EXT2_[GS]ETFLAGS, which later
 
-...
+I don't think anyone has been confusing the two - the entire
+discussion has been about fsx_xflags and the struct fsxattr...
 
-> > On Tue, Feb 11, 2025 at 06:22:47PM +0100, Andrey Albershteyn wrote:
+> started getting used by many other file systems, starting with
+> resierfs and btrfs, and so it became FS_IOC_[GS]ETFLAGS.  The bits in
+> that flags word were both the ioctl ABI and the on-disk encoding, and
+> because we were now allowing multiple file systems to allocate bits,
+> and we needed to avoid stepping on each other (for example since btrfs
+> started using FS_NOCOW_FL, that bit position wouldn't be used by ext4,
+> at least not for a publically exported flag).
+> 
+> So we started running out of space in the FS_FLAG_*_FL namespace, and
+> that's why we created FS_IOC_[GS]ETXATTR and the struct fsxattr.  The
 
-...
+No, that is most certainly not how this API came about. 
 
-> > > +SYSCALL_DEFINE4(setfsxattrat, int, dfd, const char __user *, filenam=
-e,
-> > > +           struct fsxattr __user *, fsx, unsigned int, at_flags)
-> > > +{
-> > > +   CLASS(fd, dir)(dfd);
-> > > +   struct fileattr fa;
-> > > +   struct path filepath;
-> > > +   int error;
-> > > +   unsigned int lookup_flags =3D 0;
-> > > +
-> > > +   if ((at_flags & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH)) !=3D 0)
-> > > +           return -EINVAL;
-> > > +
-> > > +   if (at_flags & AT_SYMLINK_FOLLOW)
-> > > +           lookup_flags |=3D LOOKUP_FOLLOW;
-> > > +
-> > > +   if (at_flags & AT_EMPTY_PATH)
-> > > +           lookup_flags |=3D LOOKUP_EMPTY;
-> > > +
-> > > +   if (fd_empty(dir))
-> > > +           return -EBADF;
-> > > +
-> > > +   if (copy_fsxattr_from_user(&fa, fsx))
-> > > +           return -EFAULT;
-> > > +
-> > > +   error =3D user_path_at(dfd, filename, lookup_flags, &filepath);
-> > > +   if (error)
-> > > +           return error;
-> > > +
-> > > +   error =3D mnt_want_write(filepath.mnt);
-> > > +   if (!error) {
-> >
-> > security_inode_setattr() should probably be called too.
->
-> Aren't those checks for something different - inode attributes
-> ATTR_*?
-> (sorry, the naming can't be more confusing)
->
-> Looking into security_inode_setattr() it seems to expect struct
-> iattr, which works with inode attributes (mode, time, uid/gid...).
-> These new syscalls work with filesystem inode extended flags/attributes
-> FS_XFLAG_* in fsxattr->fsx_xflags. Let me know if I missing
-> something here
+The FS_IOC_[GS]ETXATTR ioctls were first implement on IRIX close on
+30 years ago. They were ported to Linux with the XFS linux port over
+2 decades ago. Indeed, we've been using them for xfsdump/xfs_restore
+since before XFS was ported to linux.
 
-A valid point.  While these are two different operations, with
-different structs/types, I suspect that most LSMs will consider them
-to be roughly equivalent from an access control perspective, which is
-why I felt the existing security_inode_{set,get}attr() hooks seemed
-appropriate.  However, there likely is value in keeping the ATTR and
-FSX operations separate; those LSMs that wish to treat them the same
-can easily do so in their respective LSM callbacks.
+They got lifted to the VFS back in 2016 so that ext4 could use the
+interface for getting/setting project IDs on files. This was done so
+that existing userspace functionality for setting up
+project/directory quotas on XFS could also be used on ext4.
 
-With all this in mind, I think it probably makes sense to create two
-new LSM hooks, security_inode_{get,set}fsxattr().  The get hook should
-probably be placed inside vfs_fileattr_get() just before the call to
-the inode's fileattr_get() method, and the set hook should probably be
-placed inside vfs_fileattr_set(), inside the inode lock and after a
-successful call to fileattr_set_prepare().
+> FS_XFLAG_*_FL space has plenty of space; there are 14 unassigned bit
+> positions, by my count.
+> 
+> As far as the arguments about "proper interface design", as far as
+> Linux is concerned, backwards compatibility trumps "we should have
+> done if it differently".  The one and only guarantee that we have that
+> FS_IOC_GETXATTR followed by FS_IOC_SETXATTR will work.  Nothing else.
 
-Does that sound better to everyone?
+That's a somewhat naive understanding of the overall API. The struct
+fsxattr information is also directly exported to userspace via the
+XFS blukstat ioctls. i.e. extent size hints, fsx_xflags, project
+IDs, etc are all exported to userspace via multiple ioctl
+interfaces.
 
---=20
-paul-moore.com
+This is all used by xfsdump/xfs_restore to be able to back up and
+restore the inode state that is exposed/controlled by the
+GET/SETXATTR interfaces.
+
+> The use case of "what if a backup program wants to backup the flags
+> and restore on a different file system" is one that hasn't been
+> considered, and I don't think any backup programs do it today.
+
+Wrong. As I've already said: we have been doing exactly this for 20+
+years with xfsdump/restore.
+
+xfsdump uses the bulkstat version of the GET interface, whilst
+restore uses the FS_IOC_SETXATTR interface.
+
+> For
+> that matter, some of the flags, such as the NODUMP flag, are designed
+> to be instructions to a dump/restore system, and not really one that
+> *should* be backed up.
+
+Yes. xfsdump sees this in the bulkstat flags field for the inode and
+then omits the inode from the dump.
+
+Further, xfs_fsr (the online file defragmenter for XFS) uses
+bulkstat and looks at the FS_XFLAGS returned from bulkstat for each
+inode it scans.
+
+> Again, the only semantic that was guaranteed
+> is GETXATTR or GETXATTR followed by SETXATTR.
+
+For making a single delta state change, yes.
+
+For the dump/restore case, calling SETXATTR on a newly created file
+with a preconstructed struct fsxattr state retreived at dump time is
+also supported.
+
+This is not a general use case - it will destroy any existing state
+that file was created with (e.g. override admin inheritence
+settings) by overwriting it with the state from the backup.
+
+It should also be noted that xfs_restore does this in two SETXATTR
+calls, not one. i.e. it splits the set operation into a
+pre-data restore SETXATTR, and one post-data restore SETXATTR.
+
+Why?
+
+Because stuff like extent size hints and realtime state needs to be
+restored before any data is written whilst others can only be set
+after the data has been written because they would otherwise prevent
+data restoration:
+
+/* extended inode flags that can only be set after all data
+ * has been restored to a file.
+ */
+#define POST_DATA_XFLAGS        (XFS_XFLAG_IMMUTABLE |          \
+                                  XFS_XFLAG_APPEND |            \
+                                  XFS_XFLAG_SYNC)
+
+Yup, you can't restore data to the file if it has already been
+marked as immutable....
+
+IOWs, any changes to the flag space also needs to be compatible with
+the XFS bulkstat shadowing of the fsxattr fields+flags and the
+existing usage of these APIs by xfsdump, xfs_restore and xfs_fsr.
+
+> We can define some new interface for return what xflags are supported
+> by a particular file system.
+
+Why do we even care?
+
+On the get side, it just doesn't matter - if the flag isn't set, it
+either is not active or not supported. Either way, it doesn't
+matter if there's a "this is supported mask".
+
+On the set side, adding a mask isn't going to change historic
+behaviour: existing applications will ignore the new mask because
+they haven't been coded to understand it. And vice versa, an old
+kernel will ignore the feature mask if the app uses it because it
+ignores unknown flags/fields.
+
+IOWs, adding a feature mask doesn't solve any of the problems
+related to forwards/backwards compatibility of new features, and so
+we are back to needing to use the API as a GET/SET pair where the
+GET sets all the known state correctly such that a SET operation
+will either do nothing, change the state or return an error because
+an invalid combination of known parameters was passed.
+
+> I suppose the field could double as the bitmask field when
+> FS_IOC_SETXATTR is called, but that just seems to be an overly complex
+> set of semantics.  If someone really wants to do that, I wouldn't
+> really complain, but then what we would actually call the field
+> "flags_supported_on_get_bitmask_on_set" would seem a bit wordy.  :-)
+
+That effectively prevents the existing dump/restore usage of the
+API.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
