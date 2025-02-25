@@ -1,152 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-42564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 200DFA43BA3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 11:30:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FF17A43BEE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 11:40:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F2DF174407
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 10:25:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 209D3188ECD5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 10:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C830268683;
-	Tue, 25 Feb 2025 10:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QLdVe9QX"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2908433981;
+	Tue, 25 Feb 2025 10:36:33 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B46E267F6E;
-	Tue, 25 Feb 2025 10:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39786260A3D
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2025 10:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740478953; cv=none; b=gU0X2jbBotf4O+UZXRoLT3r+wW2ChV/PIDX5L1bsgNUqHh9pS0FBb2fdQm1Ut+IcH/g9KdZ1Ojpp5M27TJEDAqeefjKjUVx8OILKnhCfNQmpsNte42effAhP+ajLNQ9CHSlpGmYHbSM74GDaE85ZDCeGSCc7DHVk5XgRDgvj2qI=
+	t=1740479792; cv=none; b=OkHjIBcTU7raqrLajnQIcfXhpB5P1BZ0WmM6MMng1aGMhDWprw3AXZNgQLyArEXavaE2Sy84uIY3KHiYbyQXAbvHU8O79H8VzqC2dStDBBIzyJxtMKzVytoFmIIC+wDvPqKZ0M19O5BpW97bqcfi4qcb6MRO1WFoaZN1hQ8EuNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740478953; c=relaxed/simple;
-	bh=5HOkE2YqQG0nj7GKm31VM9cru6617nBuKvCY1GMnDrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EUneP6Ybxe55qtdPa+mxyT/qeIJfev0wzLKS9rqATdj9W+JG282UM7GCxIofyR1HmFgu3qpQSpjQRN48RCvnpdqe6D6knpmjC7M/BXFgB+B1N22pu7iZr1sVfbAvhhNNvV5qnuAWUrAw7MZti12Vuzt0946DiVhtyPiKb99hkYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QLdVe9QX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F22EC4CEDD;
-	Tue, 25 Feb 2025 10:22:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740478952;
-	bh=5HOkE2YqQG0nj7GKm31VM9cru6617nBuKvCY1GMnDrc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QLdVe9QX36ZATBZopGaFS7xncV75FrVifGUmO8YFcq0fsqRsaJ22u5r4/RZQOJ3Sp
-	 yMEl/oKfTZihFmWVtEKikhl/HfJsgdlkCrNq55W9eyV/njTytIaMD9k7zFgv1x4TaI
-	 I2IADYz/CQiWBy3kUYdqd4/6a+d9wa1OJ63tEswPaPSmhJ9mvyvjSLPOfrMnC+lJSK
-	 LaosnjwljP1fU1QllOJcPmhDfG/AbY9BKKl5qhnGon0GvGM+IMN1WKFPOeumOwG/Tb
-	 8wfL7+oJ4DopnrX8olKXaLI8joRoQgVk7Ykgfi+0FSJvIaTDPVShiCTVbRLd3HNrPp
-	 6XmUqt0gTmi9g==
-Date: Tue, 25 Feb 2025 11:22:17 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Amir Goldstein <amir73il@gmail.com>, 
-	Andrey Albershteyn <aalbersh@redhat.com>, "Darrick J. Wong" <djwong@kernel.org>, 
-	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Michal Simek <monstr@monstr.eu>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S . Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, 
-	Linux-Arch <linux-arch@vger.kernel.org>, linux-xfs@vger.kernel.org, 
-	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v3] fs: introduce getfsxattrat and setfsxattrat syscalls
-Message-ID: <20250225-strom-kopflos-32062347cd13@brauner>
-References: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org>
- <20250221181135.GW21808@frogsfrogsfrogs>
- <CAOQ4uxgyYBFqkq6cQsso4LxJsPJ4uECOdskXmz-nmGhhV5BQWg@mail.gmail.com>
- <20250224-klinke-hochdekoriert-3f6be89005a8@brauner>
- <6b51ffa2-9d67-4466-865e-e703c1243352@app.fastmail.com>
+	s=arc-20240116; t=1740479792; c=relaxed/simple;
+	bh=XjsAgpsN0j5oRHDKfW6dWsYs0oKQaUu98fmWODDFbQs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Ck/FbSPtC+pXnicm1tLimUXN+ZrGg7X6Evm0A0PDJ+6b5z2csm+FLfWLKboxLx3SYvjVnvVyglPY3HC+uUoInv7CLsyKWMlQLDOMfTjZ8QUbdVC/bIfSb38j6etiv910Zt8I9tbezy0IpWkzu4JLTJgwVuJPwDJRc8r+afY/ibA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d2b6d933a5so41509595ab.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2025 02:36:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740479790; x=1741084590;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=itkP3+EqX5jDHrJ5nqo1dq9K7WbkKJPEFcpMjPBhsv4=;
+        b=k9z6xKxKLSBcvxiFGLXIYQAYwDAePvdFAuaN1sBsENQqNGkhwdkWDMQT72RSRJr9Qb
+         6IPpoSoDv5tq7xgyusYSwNa8nlrwidUia9Zbi9wXIl6yoOYXMrUcxDzKzOGD3aF55CND
+         qU4ub7VJ0fFCVv9neYGtaFcWk5zdJmPS+rODE0naQz3aqEzireYeKWlJBgwu6b5fJ1bf
+         i/AmOvK4hh1XcGlk0AtGHH1SUr5/Oik6rYaEcmE42FBRRdzTUovXUPykegx896sA32Si
+         rPvsuynBhdGy7jiNJm1CLDsqsqVRa/UgscsgF8ikH8tn1F0B2UnanI8n0dVHOCC2Pb5V
+         58Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCXUVpLqclru079PusQ8Y3Wbl6kIYNvM+zkoufgJysFpFfi3xPaypzKN3/NSqJt4SO8DKSBlVl5GA0nahMsI@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeOAy2k7YMflCtOTFu8yphjCvoMedOfqbIzfALoYnueGz4awUD
+	CQsAS6SWs5axyP1wgzfYIF8cIJIbaU4afjHntEiUHTzuP1xVv2OTWhteV99RXCpCzypOoLRstCq
+	SHeZkHbm1CcwVzJpZU/IMN5SoRJDbMEdfxkv7tEmafrH+ZWTh4p4g5hs=
+X-Google-Smtp-Source: AGHT+IFbCtGYN61vjgMvuKY9FqO2iFg0X/7ZT3gxl6WR+kyIz5LfL7pn902vPL7OLDRZM32Vw31ljX1b8mS3lYQ1iGrVPm6ofRIE
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6b51ffa2-9d67-4466-865e-e703c1243352@app.fastmail.com>
+X-Received: by 2002:a05:6e02:1f04:b0:3cf:b87b:8fde with SMTP id
+ e9e14a558f8ab-3d2caefdc5cmr154864735ab.17.1740479790345; Tue, 25 Feb 2025
+ 02:36:30 -0800 (PST)
+Date: Tue, 25 Feb 2025 02:36:30 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67bd9d2e.050a0220.bbfd1.00a5.GAE@google.com>
+Subject: [syzbot] [netfs?] KCSAN: data-race in netfs_advance_write / netfs_write_collection_worker
+From: syzbot <syzbot+912f708269025e337cba@syzkaller.appspotmail.com>
+To: dhowells@redhat.com, jlayton@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Feb 25, 2025 at 09:02:04AM +0100, Arnd Bergmann wrote:
-> On Mon, Feb 24, 2025, at 12:32, Christian Brauner wrote:
-> > On Fri, Feb 21, 2025 at 08:15:24PM +0100, Amir Goldstein wrote:
-> >> On Fri, Feb 21, 2025 at 7:13 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> 
-> >> > > @@ -23,6 +23,9 @@
-> >> > >  #include <linux/rw_hint.h>
-> >> > >  #include <linux/seq_file.h>
-> >> > >  #include <linux/debugfs.h>
-> >> > > +#include <linux/syscalls.h>
-> >> > > +#include <linux/fileattr.h>
-> >> > > +#include <linux/namei.h>
-> >> > >  #include <trace/events/writeback.h>
-> >> > >  #define CREATE_TRACE_POINTS
-> >> > >  #include <trace/events/timestamp.h>
-> >> > > @@ -2953,3 +2956,75 @@ umode_t mode_strip_sgid(struct mnt_idmap *idmap,
-> >> > >       return mode & ~S_ISGID;
-> >> > >  }
-> >> > >  EXPORT_SYMBOL(mode_strip_sgid);
-> >> > > +
-> >> > > +SYSCALL_DEFINE4(getfsxattrat, int, dfd, const char __user *, filename,
-> >> > > +             struct fsxattr __user *, fsx, unsigned int, at_flags)
-> >> >
-> >> > Should the kernel require userspace to pass the size of the fsx buffer?
-> >> > That way we avoid needing to rev the interface when we decide to grow
-> >> > the structure.
-> >
-> > Please version the struct by size as we do for clone3(),
-> > mount_setattr(), listmount()'s struct mnt_id_req, sched_setattr(), all
-> > the new xattrat*() system calls and a host of others. So laying out the
-> > struct 64bit and passing a size alongside it.
-> >
-> > This is all handled by copy_struct_from_user() and copy_struct_to_user()
-> > so nothing to reinvent. And it's easy to copy from existing system
-> > calls.
-> 
-> I don't think that works in this case, because 'struct fsxattr'
-> is an existing structure that is defined with a fixed size of
-> 28 bytes. If we ever need more than 8 extra bytes, then the
-> existing ioctl commands are also broken.
-> 
-> Replacing fsxattr with an extensible structure of the same contents
-> would work, but I feel that just adds more complication for little
-> gain.
-> 
-> On the other hand, there is an open question about how unknown
-> flags and fields in this structure. FS_IOC_FSSETXATTR/FS_IOC_FSGETXATTR
-> treats them as optional and just ignores anything it doesn't
-> understand, while copy_struct_from_user() would treat any unknown
-> but set bytes as -E2BIG.
-> 
-> The ioctl interface relies on the existing behavior, see
-> 0a6eab8bd4e0 ("vfs: support FS_XFLAG_COWEXTSIZE and get/set of
-> CoW extent size hint") for how it was previously extended
-> with an optional flag/word. I think that is fine for the syscall
-> as well, but should be properly documented since it is different
-> from how most syscalls work.
+Hello,
 
-If we're doing a new system call I see no reason to limit us to a
-pre-existing structure or structure layout.
+syzbot found the following issue on:
+
+HEAD commit:    d082ecbc71e9 Linux 6.14-rc4
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=130277f8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e9dd6c7eeba2114e
+dashboard link: https://syzkaller.appspot.com/bug?extid=912f708269025e337cba
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2b352c2abb77/disk-d082ecbc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c5f4a062a264/vmlinux-d082ecbc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c3a86625df5a/bzImage-d082ecbc.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+912f708269025e337cba@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KCSAN: data-race in netfs_advance_write / netfs_write_collection_worker
+
+write to 0xffff8881188765b8 of 8 bytes by task 3523 on cpu 0:
+ netfs_prepare_write fs/netfs/write_issue.c:210 [inline]
+ netfs_advance_write+0x36f/0x610 fs/netfs/write_issue.c:298
+ netfs_unbuffered_write+0xde/0x330 fs/netfs/write_issue.c:721
+ netfs_unbuffered_write_iter_locked+0x2b7/0x570 fs/netfs/direct_write.c:100
+ netfs_unbuffered_write_iter+0x2b7/0x3b0 fs/netfs/direct_write.c:195
+ v9fs_file_write_iter+0x60/0x80 fs/9p/vfs_file.c:404
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write+0x77b/0x920 fs/read_write.c:679
+ ksys_write+0xe8/0x1b0 fs/read_write.c:731
+ __do_sys_write fs/read_write.c:742 [inline]
+ __se_sys_write fs/read_write.c:739 [inline]
+ __x64_sys_write+0x42/0x50 fs/read_write.c:739
+ x64_sys_call+0x287e/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:2
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+read to 0xffff8881188765b8 of 8 bytes by task 50 on cpu 1:
+ netfs_collect_write_results fs/netfs/write_collect.c:231 [inline]
+ netfs_write_collection_worker+0x3ee/0x2530 fs/netfs/write_collect.c:374
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0x4db/0xa20 kernel/workqueue.c:3317
+ worker_thread+0x51d/0x6f0 kernel/workqueue.c:3398
+ kthread+0x4ae/0x520 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+value changed: 0x0000000000000000 -> 0xffff888103259900
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 UID: 0 PID: 50 Comm: kworker/u8:3 Not tainted 6.14.0-rc4-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Workqueue: events_unbound netfs_write_collection_worker
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
