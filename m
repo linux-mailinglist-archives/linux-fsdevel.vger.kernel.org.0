@@ -1,82 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-42580-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42581-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A0DBA442D1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 15:32:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6795A44516
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 16:56:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E26041882CD4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 14:27:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25A2A19C5CBD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 15:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A191D26AA98;
-	Tue, 25 Feb 2025 14:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B161624E7;
+	Tue, 25 Feb 2025 15:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D+bt/1zR"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vwOuaQdC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FiMIUyyz";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vwOuaQdC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FiMIUyyz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68318126C18
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2025 14:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4EC15E5A6
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2025 15:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740493641; cv=none; b=DUHT2ys3d0QgMnz+awcKITsfhB/MMQiXYwoAU+cn7l1P7mNY7B01OyvI29/C2EeQR5LLwJBVODq84tfibBADgIdCs+gZlkDlibC6tOi/3dejd5/ryCGzuTkwZFKITWNiVh5vTFWXLjcbcdNIiZsNxTqFsximUlqi3iMNxOei5qQ=
+	t=1740498959; cv=none; b=NukF1zxRBhahP7elKmlL9CBA6fbRpQpH8Syc7kSyl5zbo0qlS57ncBXS1uTRmq5oFK6sxmU6IMNh1VWjum8XEYgM7mtc6j9O2VUlHgccHs2tk5EBz/TiLaicWxaS5qvBaSlT4UAN57IQcWgUuuR+VsuaCyVgMsK3+FnhWzClHuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740493641; c=relaxed/simple;
-	bh=s3CzAGQ9fUPMQrxptT1MpknPbszwu1n+Vjd/Wk9sOQE=;
+	s=arc-20240116; t=1740498959; c=relaxed/simple;
+	bh=Yy3jM36iTMsdO5AIUcVFx0m9QG4KupJ1fy9wsrWOgWM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cpck8gaTReu64UbnbZYs/jW/+cigrAVSECI0O7abTOs4LLlwMRrxlVGiZbxCfeklQ1Gz1Sz/tgGbQLnr3MliMn95ch0UwnjRdVxoiJhQCiOnp1kCeojU0qcaHGtyxIKyBxk9lWlVQhmukiw4Bhf0cvfaatcg9XQ4/s8UW6SB1Qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D+bt/1zR; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740493638;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G4fu2PpV3y/MvTpLFuGZiqVh37Wll4MVy1MUpDTWvbQ=;
-	b=D+bt/1zRFC0ZOT+xeoMOSUAAxQHdhe0+xRsR067RnnHcdAYT4qHH8BKoIdrV5d/ck6sYyF
-	Ayiveoq3kn1AGURcli3GlYmmPEa2RQrAgMvNLt7Aa3LYQj+L6UiGMpEnV6Fdw3/d2H4CMi
-	jYclCAX45Uo894ekAPTbd4CcmFHXjm8=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-81-tITzaPO9OMK2Znf-2BEB0w-1; Tue,
- 25 Feb 2025 09:27:15 -0500
-X-MC-Unique: tITzaPO9OMK2Znf-2BEB0w-1
-X-Mimecast-MFC-AGG-ID: tITzaPO9OMK2Znf-2BEB0w_1740493633
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	 Content-Type:Content-Disposition:In-Reply-To; b=UMSxFQNbz6ChB1DxqJZwcRhWdBONeEtDXKphy9yqcAlV2ylWMYdePLCzHtWY0DlJtXSo+TKwScrRhH027CChoTQmNASNApwOgLDntfsG34JjzunKespNXkqrI270AVDFCygw+V55HpRm7QVySBj1bYV5fg+8QmjKHqFcaYuyXTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vwOuaQdC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FiMIUyyz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vwOuaQdC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FiMIUyyz; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0AF2118D95DC;
-	Tue, 25 Feb 2025 14:27:13 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.211])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id C6C1F1800352;
-	Tue, 25 Feb 2025 14:27:04 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 25 Feb 2025 15:26:42 +0100 (CET)
-Date: Tue, 25 Feb 2025 15:26:33 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
-	Manfred Spraul <manfred@colorfullife.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>,
-	Neeraj.Upadhyay@amd.com
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
- full
-Message-ID: <20250225142632.GA29585@redhat.com>
-References: <20250102140715.GA7091@redhat.com>
- <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
- <20250224142329.GA19016@redhat.com>
- <CAHk-=wi+P5__7LfbTX66shvYC1X11G2ZdKcg4psi+k_pD3sO+w@mail.gmail.com>
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 12F2621179;
+	Tue, 25 Feb 2025 15:55:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740498956; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KJGZclTLaBJ33Xe3VASnfQhQNoIstlz3AioMbNOAxrM=;
+	b=vwOuaQdCnhkZ/NEPlN1HwfQpGf3EMHTLXKBy2BynZ+issixOfxUrztszC+yKr2rDiwzBaI
+	ebIT76DPQZl0Kd5RRWFG25Wb+lh1o9xQdug1o5OkExLJnh8fG+jQd4zXomMrQZW5LCU3if
+	evNsOVtmcQGACFUwYO5s7qiFVfW4BKI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740498956;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KJGZclTLaBJ33Xe3VASnfQhQNoIstlz3AioMbNOAxrM=;
+	b=FiMIUyyzvboUwIpGRBLF/AL7DUA35FbS+Mesnh4QImt1KWI4gKshbkZ5nJWBGISii7xdJV
+	WPd4IcoREffFN7Dw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740498956; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KJGZclTLaBJ33Xe3VASnfQhQNoIstlz3AioMbNOAxrM=;
+	b=vwOuaQdCnhkZ/NEPlN1HwfQpGf3EMHTLXKBy2BynZ+issixOfxUrztszC+yKr2rDiwzBaI
+	ebIT76DPQZl0Kd5RRWFG25Wb+lh1o9xQdug1o5OkExLJnh8fG+jQd4zXomMrQZW5LCU3if
+	evNsOVtmcQGACFUwYO5s7qiFVfW4BKI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740498956;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KJGZclTLaBJ33Xe3VASnfQhQNoIstlz3AioMbNOAxrM=;
+	b=FiMIUyyzvboUwIpGRBLF/AL7DUA35FbS+Mesnh4QImt1KWI4gKshbkZ5nJWBGISii7xdJV
+	WPd4IcoREffFN7Dw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 07A9813332;
+	Tue, 25 Feb 2025 15:55:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VsnVAQzovWeGMwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 25 Feb 2025 15:55:56 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B6B15A0851; Tue, 25 Feb 2025 16:55:51 +0100 (CET)
+Date: Tue, 25 Feb 2025 16:55:51 +0100
+From: Jan Kara <jack@suse.cz>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
+	Neil Brown <neilb@suse.de>, Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 01/21] procfs: kill ->proc_dops
+Message-ID: <7xagwr27m3ygguz7nv53u5up2jnzjbuhqcadzwjz7jzmafp4ct@rgkubaqwpwah>
+References: <20250224141444.GX1977892@ZenIV>
+ <20250224212051.1756517-1-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -85,78 +104,110 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wi+P5__7LfbTX66shvYC1X11G2ZdKcg4psi+k_pD3sO+w@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+In-Reply-To: <20250224212051.1756517-1-viro@zeniv.linux.org.uk>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 02/24, Linus Torvalds wrote:
->
-> However, I see at least one case where this exclusive wakeup seems broken:
->
->                 /*
->                  * But because we didn't read anything, at this point we can
->                  * just return directly with -ERESTARTSYS if we're interrupted,
->                  * since we've done any required wakeups and there's no need
->                  * to mark anything accessed. And we've dropped the lock.
->                  */
->                 if (wait_event_interruptible_exclusive(pipe->rd_wait,
-> pipe_readable(pipe)) < 0)
->                         return -ERESTARTSYS;
->
-> and I'm wondering if the issue is that the *readers* got stuck,
-> Because that "return -ERESTARTSYS" path now basically will by-pass the
-> logic to wake up the next exclusive waiter.
+On Mon 24-02-25 21:20:31, Al Viro wrote:
+> It has two possible values - one for "forced lookup" entries, another
+> for the normal ones.  We'd be better off with that as an explicit
+> flag anyway and in addition to that it opens some fun possibilities
+> with ->d_op and ->d_flags handling.
+> 
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-I think this is fine... lets denote this reader as R.
+FWIW I went through the patches and I like them. They look mostly
+straightforward enough to me and as good simplifications.
 
-> Because that "return -ERESTARTSYS" is *after* the reader has been on
-> the rd_wait queue - and possibly gotten the only wakeup that any of
-> the readers will ever get - and now it returns without waking up any
-> other reader.
+								Honza
 
-I think this can't happen. ___wait_event() does
-
-	init_wait_entry(&__wq_entry, exclusive ? WQ_FLAG_EXCLUSIVE : 0);	\
-	for (;;) {								\
-		long __int = prepare_to_wait_event(&wq_head, &__wq_entry, state);\
-										\
-		if (condition)							\
-			break;							\
-										\
-		if (___wait_is_interruptible(state) && __int) {			\
-			__ret = __int;						\
-			goto __out;						\
-		}								\
-										\
-		cmd;								\
-	}									\
-
-and in this case condition == pipe_readable(pipe), cmd == schedule().
-
-Suppose that R got that only wakeup, and wake_up() races with some signal
-so that signal_pending(R) is true.
-
-In this case prepare_to_wait_event() will return -ERESTARTSYS, but
-___wait_event() won't return this error code, it will check pipe_readable()
-and return 0.
-
-After that R will restart the main loop with wake_next_reader = true,
-and whatever it does it should do wake_up(pipe->rd_wait) before return.
-
-Note also that prepare_to_wait_event() removes the waiter from the
-wait_queue_head->head list, so another wake_up() can't pick this task.
-
-Can ___wait_event() miss the pipe_readable() event in this case? No,
-both wake_up() and prepare_to_wait_event() take the same wq_head->lock.
-
-What if pipe_readable() is actually false? Say, a spurios wakeup or, say,
-pipe_write() does wake_up(rd_wait) when another reader has already made
-the pipe_readable() condition false? This case looks "obviously fine" too.
-
-So I am still confused.
-
-I will wait for reply from Sapkal, then I'll try to make a debugging patch.
-
-Oleg.
-
+> ---
+>  fs/proc/generic.c  | 8 +++++---
+>  fs/proc/internal.h | 5 +++--
+>  2 files changed, 8 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/proc/generic.c b/fs/proc/generic.c
+> index 8ec90826a49e..499c2bf67488 100644
+> --- a/fs/proc/generic.c
+> +++ b/fs/proc/generic.c
+> @@ -254,7 +254,10 @@ struct dentry *proc_lookup_de(struct inode *dir, struct dentry *dentry,
+>  		inode = proc_get_inode(dir->i_sb, de);
+>  		if (!inode)
+>  			return ERR_PTR(-ENOMEM);
+> -		d_set_d_op(dentry, de->proc_dops);
+> +		if (de->flags & PROC_ENTRY_FORCE_LOOKUP)
+> +			d_set_d_op(dentry, &proc_net_dentry_ops);
+> +		else
+> +			d_set_d_op(dentry, &proc_misc_dentry_ops);
+>  		return d_splice_alias(inode, dentry);
+>  	}
+>  	read_unlock(&proc_subdir_lock);
+> @@ -448,9 +451,8 @@ static struct proc_dir_entry *__proc_create(struct proc_dir_entry **parent,
+>  	INIT_LIST_HEAD(&ent->pde_openers);
+>  	proc_set_user(ent, (*parent)->uid, (*parent)->gid);
+>  
+> -	ent->proc_dops = &proc_misc_dentry_ops;
+>  	/* Revalidate everything under /proc/${pid}/net */
+> -	if ((*parent)->proc_dops == &proc_net_dentry_ops)
+> +	if ((*parent)->flags & PROC_ENTRY_FORCE_LOOKUP)
+>  		pde_force_lookup(ent);
+>  
+>  out:
+> diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+> index 1695509370b8..07f75c959173 100644
+> --- a/fs/proc/internal.h
+> +++ b/fs/proc/internal.h
+> @@ -44,7 +44,6 @@ struct proc_dir_entry {
+>  		const struct proc_ops *proc_ops;
+>  		const struct file_operations *proc_dir_ops;
+>  	};
+> -	const struct dentry_operations *proc_dops;
+>  	union {
+>  		const struct seq_operations *seq_ops;
+>  		int (*single_show)(struct seq_file *, void *);
+> @@ -67,6 +66,8 @@ struct proc_dir_entry {
+>  	char inline_name[];
+>  } __randomize_layout;
+>  
+> +#define PROC_ENTRY_FORCE_LOOKUP 2 /* same space as PROC_ENTRY_PERMANENT */
+> +
+>  #define SIZEOF_PDE	(				\
+>  	sizeof(struct proc_dir_entry) < 128 ? 128 :	\
+>  	sizeof(struct proc_dir_entry) < 192 ? 192 :	\
+> @@ -346,7 +347,7 @@ extern const struct dentry_operations proc_net_dentry_ops;
+>  static inline void pde_force_lookup(struct proc_dir_entry *pde)
+>  {
+>  	/* /proc/net/ entries can be changed under us by setns(CLONE_NEWNET) */
+> -	pde->proc_dops = &proc_net_dentry_ops;
+> +	pde->flags |= PROC_ENTRY_FORCE_LOOKUP;
+>  }
+>  
+>  /*
+> -- 
+> 2.39.5
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
