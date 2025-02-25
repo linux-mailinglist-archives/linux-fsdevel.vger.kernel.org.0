@@ -1,151 +1,229 @@
-Return-Path: <linux-fsdevel+bounces-42615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42616-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51B49A45090
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 23:56:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79F0EA450D3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 00:09:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E869F189C28F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 22:56:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7D7718929C5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 23:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB1E23370D;
-	Tue, 25 Feb 2025 22:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739E52356CB;
+	Tue, 25 Feb 2025 23:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q5kIXR3v"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pUGf76oi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JkKYjJTe";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pUGf76oi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JkKYjJTe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5678F204F9B;
-	Tue, 25 Feb 2025 22:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373332054F1
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2025 23:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740524171; cv=none; b=mDIUILxAtSHeyqKEkOM72MuZSAXhPooit//w317o/fpCgOrT7XTwi6Vdz5Lmwv2VdZxVGVvvfzkI2U2sPgAyghCdfIBkkeZKYFEfHbV9tWVnkW29lWpgtVfvgR10sk2D/n2eg0zu/tNyKrjtBjOBJ83E80QBmgdbGHgMOL65jj4=
+	t=1740524991; cv=none; b=enzHxrbs0p2lM1vS1o9DZT3+BvnSbCPBXb8i4Fgi9KlWRxHvUQedA0mg5EiJT7PZPDiIo9sIAg27v7sInf/GNrKYO0nMDljj8e2zBtarB/k6uhyrLw1Z4CLQuoXO7wZmsduwTubmeJh9zpcVFlEcbFh8L0fZrw4ng5MpG8Gw1F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740524171; c=relaxed/simple;
-	bh=WP5ICD/fUvspwcDOC+vCPGstk3m2lObTd1WmHN0cTTg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Go+a/21rPPQd0dPwZd5fTn/R8eXPcEWspVfa70bwpII30YGRcZWpwHAvsmxbBccXvxn0Yi2Q6wE0FNUyJq2UUjqI/y06BIdSlmlM6+M8o9ufoEKModPkbiKb1Bt/NEVEFzaqh46R8TYSdqoF+vEaPiHLw0zzjHTqZWrDUjTkNqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q5kIXR3v; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30a2594435dso2993491fa.1;
-        Tue, 25 Feb 2025 14:56:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740524167; x=1741128967; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HgEgO8Ju/firUMwZDW4ea1qs6sMMAvv6pWGk9qZ2srE=;
-        b=Q5kIXR3vNlZPwuOh8yaGs+Dv0XMT4ecnpzNL97taumi3QJQvM3GpWd+4CQ0DbRAmv0
-         lmsJ3o5wXMLdgwDtqJT+eHkpyIPbn/m5ckwl5nfMjVc1F+3jjU5S0N3mF4wAFe94bmbq
-         Yr9Azcmp7dEfSavusOBf0jzZUxvT87C8tNgSRG2+DJf436igi7yAts5vxZ3Ez2HnZDrY
-         t/Q6ODyzUqWadwBGfpfVfre+Vz3xcoKNEp4Aoc+/UZCZLrzBJxImib67ZOQETNARVFrG
-         gWP6zmTmA1K2nxwtKGYeBVJJWVxEYmI5ER0657xEFliaAL2YRXvycXhFXBa3mnlS9G+e
-         RI/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740524167; x=1741128967;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HgEgO8Ju/firUMwZDW4ea1qs6sMMAvv6pWGk9qZ2srE=;
-        b=qN0IMBgObkmrZDnG0R1s/ZpX0P3ipX/Qp5h6wazVOl2MMxbtCZ5GuKfxmPkS6lLP2f
-         7XSwJ1aNhR4+ZGtGdQlhJTDqwAgu0+0YoDQKW+D3PA2G6RfY1d+JsRoB3NGjiARdRu9Y
-         9g6v8DDfN1hmnTQE2pLWyYsER0TNAPHZtnbryXeqO2ZYGOlw1GiVeFvOOO9L15mcjHz9
-         PxTqYAl5pjx25flqvJOXcG6+s6FANemYskvBbm6gdPrXXgNvTqPEkYKqCCgF+wZNUAZl
-         WNjj94n+6wIXtZIGqM0BikBz9Uj2+DECSkiO42NOcDooIvwR0tSQeCDgcUCynsSyKPMZ
-         PxFw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrelgw74ZxewTeNa6i4Oz52nhpiPceJRWuXlpsUHqX1k7WY4QF2GBzxsc5CHizvecAAYR/IeZxD015@vger.kernel.org, AJvYcCX3sbaBOpuAhIddJLmfWCsP6pFSV9AYgD39QFehI7JRkKtzA78rsOAB4fD92O+6CSgUSjrLhrDH3iPnvw/f@vger.kernel.org, AJvYcCXSj4qe3IdDZYArXLkdmCzt+heOvVxz+BTApjhhZcPuk4Tilr7kEY2JbC46egVWdfIs/iMEeaQzKjm0OZAWqw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIKQMGdmXo4W6nvvAisD73/FRrH2KMaKXovzMvFxz2YKkxkFWj
-	lyaZucLwVziNqVADfh6zmaJu8ioaQxeTXw5AgBXZjLrJ18CKzVt/dDuDWJ82fWR4pjbR0yOdKb2
-	oSvBCUx6Ke1P+n49/QkFo59u39H0=
-X-Gm-Gg: ASbGncuOefNfUS4+ec/R7DOsmQf3DpZ1D2k5UpZSNWiBnXh1274RJOD8hMxPEntbDzY
-	tED0BxbkJnYxSFdG6/iqZgUl6YrtvYXKz6g/cRVPAWPII/91h70l3ILkw3J12+h+k7XxU7Uld8y
-	JZjnjDcMo=
-X-Google-Smtp-Source: AGHT+IHwSWJ7XNj4Mb9xUjz4kISutQjQS5qgcJOweA9fncToSusgnMBoMCQnx1ZOHcc9hRULT9kO2A2WM5J2rYS4I5k=
-X-Received: by 2002:a19:4317:0:b0:549:39b1:65d4 with SMTP id
- 2adb3069b0e04-54939b16edbmr1848816e87.0.1740524167158; Tue, 25 Feb 2025
- 14:56:07 -0800 (PST)
+	s=arc-20240116; t=1740524991; c=relaxed/simple;
+	bh=FraLCERrpqkMdV8b8FoiVo9StO8B66Jw2WqFKYg+NPU=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=IiUczCRd3rtMfRJDDU/xl1yNL2CYJpqceIgnht624+CWAQpWzjkdfA+QL4MnpnMhw2OC3ePa0t6GiCDnew7HgWLtwfA1JkcZjOxo7Pt2+CXEn5W6qJhxyBfXyjfZd5gZ86+jn7MhTQ1whVW0U650bRjBcbkzEcpSdv8TlnxmrU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pUGf76oi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JkKYjJTe; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pUGf76oi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JkKYjJTe; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4ED4C1F38D;
+	Tue, 25 Feb 2025 23:09:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740524988; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jekEtcgApMeslkidU5vi9OfsEx3cNd5zvOn8LVAOeOw=;
+	b=pUGf76oiuBFAIvs6UTBG+StHeXtyYm6P5POApZewJ73bO9Q0R9cqjoITCPhrpr85ripqJ0
+	qzujJvmNLmngQw6A7/iEh2Md8xYOIloaN74KTXdOxBLoNw2E8+N7NoE9FN/st/ajM3DhYy
+	f9HO+Wz2ZtkiwxNhrSBMCOhGL9itOZU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740524988;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jekEtcgApMeslkidU5vi9OfsEx3cNd5zvOn8LVAOeOw=;
+	b=JkKYjJTeTfUFPo69gnmYOiyGnXjj+dG/FwkrT7fW1RuYsPFHOcSUwohO27WUY5y2BySVHS
+	v8sp2jsmIheiA8AA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740524988; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jekEtcgApMeslkidU5vi9OfsEx3cNd5zvOn8LVAOeOw=;
+	b=pUGf76oiuBFAIvs6UTBG+StHeXtyYm6P5POApZewJ73bO9Q0R9cqjoITCPhrpr85ripqJ0
+	qzujJvmNLmngQw6A7/iEh2Md8xYOIloaN74KTXdOxBLoNw2E8+N7NoE9FN/st/ajM3DhYy
+	f9HO+Wz2ZtkiwxNhrSBMCOhGL9itOZU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740524988;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jekEtcgApMeslkidU5vi9OfsEx3cNd5zvOn8LVAOeOw=;
+	b=JkKYjJTeTfUFPo69gnmYOiyGnXjj+dG/FwkrT7fW1RuYsPFHOcSUwohO27WUY5y2BySVHS
+	v8sp2jsmIheiA8AA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0718813332;
+	Tue, 25 Feb 2025 23:09:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jFNjJLlNvmffLAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Tue, 25 Feb 2025 23:09:45 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2433838.1740522300@warthog.procyon.org.uk> <20250225223826.sm4445vrc56mfuwh@pali>
-In-Reply-To: <20250225223826.sm4445vrc56mfuwh@pali>
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 25 Feb 2025 16:55:55 -0600
-X-Gm-Features: AQ5f1Jo6XXLVbjx1gBz329g2rRAPrhuHDOb-nfzLQJUf_2H9sBrfoXnqj9dxnNE
-Message-ID: <CAH2r5muYgfd-GmwQKt-ZHgt7Up57j1OEJy-6e9OdN--aiQHDGQ@mail.gmail.com>
-Subject: Re: [PATCH] cifs: Fix the smb1 readv callback to correctly call netfs
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, Steve French <stfrench@microsoft.com>, 
-	Jean-Christophe Guillain <jean-christophe@guillain.net>, Paulo Alcantara <pc@manguebit.com>, 
-	Jeff Layton <jlayton@kernel.org>, Christian Brauner <brauner@kernel.org>, linux-cifs@vger.kernel.org, 
-	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "NeilBrown" <neilb@suse.de>
+To: "Al Viro" <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Christian Brauner" <brauner@kernel.org>,
+ "Miklos Szeredi" <miklos@szeredi.hu>, "Jan Kara" <jack@suse.cz>
+Subject: Re: [PATCH 09/21] make d_set_d_op() static
+In-reply-to: <20250224212051.1756517-9-viro@zeniv.linux.org.uk>
+References: <>, <20250224212051.1756517-9-viro@zeniv.linux.org.uk>
+Date: Wed, 26 Feb 2025 10:09:42 +1100
+Message-id: <174052498256.102979.671849437813888877@noble.neil.brown.name>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-Thanks for the quick fix and reviews/testing.  Merged into
-cifs-2.6.git for-next.  Will run some additional tests on it tonight
+On Tue, 25 Feb 2025, Al Viro wrote:
+> Convert the last user (d_alloc_pseudo()) and be done with that.
+> Any out-of-tree filesystem using it should switch to d_splice_alias_ops()
+> or, better yet, check whether it really needs to have ->d_op vary among
+> its dentries.
+>=20
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+>  Documentation/filesystems/porting.rst | 11 +++++++++++
+>  fs/dcache.c                           |  5 ++---
+>  include/linux/dcache.h                |  1 -
+>  3 files changed, 13 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesyst=
+ems/porting.rst
+> index 004cd69617a2..61b5771dde53 100644
+> --- a/Documentation/filesystems/porting.rst
+> +++ b/Documentation/filesystems/porting.rst
+> @@ -1164,3 +1164,14 @@ magic.
+> =20
+>  If your filesystem sets the default dentry_operations, use set_default_d_o=
+p()
+>  rather than manually setting sb->s_d_op.
+> +
+> +---
+> +
+> +**mandatory**
+> +
+> +d_set_d_op() is no longer exported (or public, for that matter); _if_
+> +your filesystem really needed that, make use of d_splice_alias_ops()
+> +to have them set.  Better yet, think hard whether you need different
+> +->d_op for different dentries - if not, just use set_default_d_op()
+> +at mount time and be done with that.  Currently procfs is the only
+> +thing that really needs ->d_op varying between dentries.
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index a4795617c3db..29db27228d97 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -1796,7 +1796,7 @@ struct dentry *d_alloc_pseudo(struct super_block *sb,=
+ const struct qstr *name)
+>  	if (likely(dentry)) {
+>  		dentry->d_flags |=3D DCACHE_NORCU;
+>  		if (!dentry->d_op)
+> -			d_set_d_op(dentry, &anon_ops);
+> +			dentry->d_op =3D &anon_ops;
 
-On Tue, Feb 25, 2025 at 4:38=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org> w=
-rote:
->
-> On Tuesday 25 February 2025 22:25:00 David Howells wrote:
-> >
-> > Fix cifs_readv_callback() to call netfs_read_subreq_terminated() rather
-> > than queuing the subrequest work item (which is unset).  Also call the
-> > I/O progress tracepoint.
-> >
-> > Fixes: e2d46f2ec332 ("netfs: Change the read result collector to only u=
-se one work item")
-> > Reported-by: Jean-Christophe Guillain <jean-christophe@guillain.net>
-> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219793
-> > Signed-off-by: David Howells <dhowells@redhat.com>
-> > cc: Steve French <stfrench@microsoft.com>
-> > cc: Pali Roh=C3=A1r <pali@kernel.org>
-> > cc: Paulo Alcantara <pc@manguebit.com>
-> > cc: Jeff Layton <jlayton@kernel.org>
-> > cc: linux-cifs@vger.kernel.org
-> > cc: netfs@lists.linux.dev
-> > cc: linux-fsdevel@vger.kernel.org
->
-> Thanks! With this change, I cannot reproduce crash anymore.
->
-> Tested-by: Pali Roh=C3=A1r <pali@kernel.org>
->
-> Steve, could you please include this fix into some queue? This should be
-> merged into next -rc.
->
-> > ---
-> >  fs/smb/client/cifssmb.c |    3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
-> > index 6a3e287eabfa..bf9acea53ccb 100644
-> > --- a/fs/smb/client/cifssmb.c
-> > +++ b/fs/smb/client/cifssmb.c
-> > @@ -1338,7 +1338,8 @@ cifs_readv_callback(struct mid_q_entry *mid)
-> >       rdata->credits.value =3D 0;
-> >       rdata->subreq.error =3D rdata->result;
-> >       rdata->subreq.transferred +=3D rdata->got_bytes;
-> > -     queue_work(cifsiod_wq, &rdata->subreq.work);
-> > +     trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_progress);
-> > +     netfs_read_subreq_terminated(&rdata->subreq);
-> >       release_mid(mid);
-> >       add_credits(server, &credits, 0);
-> >  }
-> >
->
+This is safe because d_op_flags(anon_ops) is zero so there is no need to
+update dentry->d_flags.  I wonder if that deserves a comment.
 
-
---=20
 Thanks,
+NeilBrown
 
-Steve
+
+>  	}
+>  	return dentry;
+>  }
+> @@ -1837,7 +1837,7 @@ static unsigned int d_op_flags(const struct dentry_op=
+erations *op)
+>  	return flags;
+>  }
+> =20
+> -void d_set_d_op(struct dentry *dentry, const struct dentry_operations *op)
+> +static void d_set_d_op(struct dentry *dentry, const struct dentry_operatio=
+ns *op)
+>  {
+>  	unsigned int flags =3D d_op_flags(op);
+>  	WARN_ON_ONCE(dentry->d_op);
+> @@ -1846,7 +1846,6 @@ void d_set_d_op(struct dentry *dentry, const struct d=
+entry_operations *op)
+>  	if (flags)
+>  		dentry->d_flags |=3D flags;
+>  }
+> -EXPORT_SYMBOL(d_set_d_op);
+> =20
+>  void set_default_d_op(struct super_block *s, const struct dentry_operation=
+s *ops)
+>  {
+> diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+> index e8cf1d0fdd08..5a03e85f92a4 100644
+> --- a/include/linux/dcache.h
+> +++ b/include/linux/dcache.h
+> @@ -242,7 +242,6 @@ extern void d_instantiate_new(struct dentry *, struct i=
+node *);
+>  extern void __d_drop(struct dentry *dentry);
+>  extern void d_drop(struct dentry *dentry);
+>  extern void d_delete(struct dentry *);
+> -extern void d_set_d_op(struct dentry *dentry, const struct dentry_operatio=
+ns *op);
+> =20
+>  /* allocate/de-allocate */
+>  extern struct dentry * d_alloc(struct dentry *, const struct qstr *);
+> --=20
+> 2.39.5
+>=20
+>=20
+
 
