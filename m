@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-42589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46D1AA4473A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 18:02:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B474A4473F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 18:03:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03A67880D0C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 16:56:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ADA48638F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 16:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA784195808;
-	Tue, 25 Feb 2025 16:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62745199E88;
+	Tue, 25 Feb 2025 16:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BYErTKnm"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TRV4ZQYc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F1919048D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2025 16:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD89197552
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2025 16:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740502506; cv=none; b=tWYLg0v5+rPGYNZ8weL0OwoCbGHMdqli8UTubAgZW+VPBV1eN0jOE/+vvUzN6kBuoAs8aXoW0eVuCP0tUTB3JfM2Hd2tNYbQqd5wLUyJr2ADD/DgygdljDMjKWLaq0O45wzIpNeJfJY0354gK4QlsaFfGs7lSvfLl7umpfH6XHc=
+	t=1740502561; cv=none; b=hvyobP6FF2kGLYn990kOA0LWmX1DbtZ4OqqOjj1GxA5R5bIqroBLukrwyJiKlTpy+zNYJ5h0nv6ZMolfaQ/Z8ij/C6t+hr5OTQ2hvZAk4/JDYgXHfjpf2r/KMR4v1eumJOQxjEg2oHVvEOkcFXMT4E+w4ZzJgsq94beyrYlo9Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740502506; c=relaxed/simple;
-	bh=x4rVCQ/NGKY3lY+wOYrwPqaoT+vCb2bZCJg7lvJQpkY=;
+	s=arc-20240116; t=1740502561; c=relaxed/simple;
+	bh=nQ44Bzpza4hhTa9otIjinjm0k/20MprTjt+HR8ATJQU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JEvzmA1iaPKt2pGTtVSpuZxH8sxUUVHsUmMGkgCKUg0m0MBY0pqgff8N23J2I/I5YwCK16bkIyfrp6PCSTDDxToryfGUV4msRb0sV4zaeBJoNxiG4K+UrkeVRoREx1yxrcc4y1P8dozFb3rdnwV5dRMQ5iEOagneAAsX9iP/wME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BYErTKnm; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=uWVav7N88au3ni0K1MPy84VYPMGaJNTJm2/SUA5u+LsI4CDrqC4IhIOrLR0rVU9gKXKoprtOuEkWv5w9qRF9XJ42uvQJQahNSBQy6gjylQdiOSCUZ81K5ZN2OQxVLuu+fhurbzT76xgC4CB64bXi2Ey8A2AgcYo+3xmQ219bVyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TRV4ZQYc; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740502503;
+	s=mimecast20190719; t=1740502559;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=S5yJPGVdx65L5scmtHTZpd1NndI/d9z8+AShgb9e8MI=;
-	b=BYErTKnmrbs0OLVBmXyO3kilFuVPi3i0kCqCN5nBTaCnOvXBV7Nycz/VJ4FWHTSn2810ZF
-	wkKn4a5EsO0mh6KDStfEFpzpcHOI077lcfNDynZ430wa9lN5kuXtCeNC4yVsTZnAo0rX0x
-	ac1NtevtA2mJ9rOv0fvHWptwJ3GbGtg=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=gc6nQtNUWZYE/MaGMWTUUIeNQ1kSqCMg8WjpiOLHoso=;
+	b=TRV4ZQYcrNaRTgolF/UExLUgXwKYGtaGIe620OzT0Ph1weMaAZSQPiW6urDm3E/oBi3wk+
+	SDh7k1Ex70MzOCL7o0g/Ya0+PbaWYoFWpKXhBmNub0eugf1N8hblTksB65ZGLdWRXSSVIy
+	WjJwNqdFLvDcAJHWv3asyspPRKL+isE=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-48-sQCSTuGqMQS141DFNrnglQ-1; Tue, 25 Feb 2025 11:55:01 -0500
-X-MC-Unique: sQCSTuGqMQS141DFNrnglQ-1
-X-Mimecast-MFC-AGG-ID: sQCSTuGqMQS141DFNrnglQ_1740502501
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-38f4c0c1738so4667404f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2025 08:55:01 -0800 (PST)
+ us-mta-621-F5SG2A3qPTiE39lIPaCgcg-1; Tue, 25 Feb 2025 11:55:58 -0500
+X-MC-Unique: F5SG2A3qPTiE39lIPaCgcg-1
+X-Mimecast-MFC-AGG-ID: F5SG2A3qPTiE39lIPaCgcg_1740502557
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4393b6763a3so25428725e9.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2025 08:55:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740502500; x=1741107300;
+        d=1e100.net; s=20230601; t=1740502557; x=1741107357;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=S5yJPGVdx65L5scmtHTZpd1NndI/d9z8+AShgb9e8MI=;
-        b=IaLjLJ/Y4NehAcANB9T0HOJb6CzvtfThpIyfhkgTEBb2Wwo0eYBCmESPXUDGJYih6B
-         YwRxoos1wgSdNpLX7922XlNycZomTcJT2ixechB534PGL9whesM+5wJ8c6MMhkH4KpO8
-         MCfxwDYGI2jIrKuACEN8+ELT9nqhXoywnJ+bc+AjFPm8/YrAwc3odwmL/v/ASKPyO/u1
-         jOJ6WTck6jBoLVc8ZiLfFsl1hCs0bFLEwRLJFSv7TBHDTlBU1wa81DYcTGKPnbOPo26v
-         WK33Ui+RK1qXr0KXl/EbTlXgSm5F/aqzlSXbL3473zmtA2ZCojeO0s1K8EeLKgVTNsub
-         CCzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKXQDPLDunw0MTIdsB6fukvUz+oRQ4I5FKAsO0kNBuOf7b5HKhKmMea4JYVhzfo3LzzMzMwG7ZpToSQej0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/j0sH0lCByvRoXxYNrxJFH/Ne1vJnASgJDKcZ/82lZYQ0pR6t
-	/BtYnocvJN0mOfMG8TI0m6W5Y/YHeQ+dU4zOgOyMMAuhEEEWIzqXBRQjq3oM+Bn2H28lp4aIwTw
-	ZHpKJ9dNPEMG61qKU9p3/SEvoVuwxse85/1lMUajPGS1BZ7qvOpgG4MX5nU01GQw=
-X-Gm-Gg: ASbGncuWrpqISGzvhmJex+dy7M2sdvO28WryZZ+n8tIGDjWovd3v4Nym5bV0gN3RE7S
-	oNZyb+sNjg1nEigcio1mxxQjP+H2pqCZB2rnQYbXn/+NQYPa0HznhcjUXtztIX1CRQYh391bNcL
-	AJpfKpNYWSxTt+3V2lIEvYEwMQwXUgjmJmz7t9zs+ycEID6dU23ItfVdTOHePujvR90QTaFBteG
-	6Rwdmqaz1Vvj/fWvEDt2PvA29r5SHtlvXeRVqSuXvH41kI32wI+xKk95VbEvPBJmts3AbPsoYa5
-	68j1AwH1gJxV3Piei0KYoCzjN3JKZh51aZ63BIa3NLPwZ8cPO0F+HX6uBPBW//5RUZSx9YLBKu0
-	ZBp3l/D5/vgAjYpXwEXuCZSX4W0orcmC6gNmCHhBdPrs=
-X-Received: by 2002:a05:6000:1448:b0:38d:da11:df19 with SMTP id ffacd0b85a97d-38f6f0b0c1cmr14635692f8f.41.1740502500578;
-        Tue, 25 Feb 2025 08:55:00 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFlmp7luRAOfWO8ZbFTMmYO9AWAJKLijTHwIR0d02WtfI3388fc2maD1UF8IAM7tzFvSQS1WQ==
-X-Received: by 2002:a05:6000:1448:b0:38d:da11:df19 with SMTP id ffacd0b85a97d-38f6f0b0c1cmr14635636f8f.41.1740502500067;
-        Tue, 25 Feb 2025 08:55:00 -0800 (PST)
+        bh=gc6nQtNUWZYE/MaGMWTUUIeNQ1kSqCMg8WjpiOLHoso=;
+        b=mN1J8tCf6L54Uoc3vLQFaCI/ctBOprHBKXIgpe4AdM7A86OwKqTUzW2s/+BlMK6H/F
+         0gU77CyU8Ya6URzqmEXxGAx/8LS0+mGHABK4pQd6lP11O881Qslvc2kWyFsil6IjYJOh
+         Q91drnBbZjEuqeRQKMJSPxn6MDEZ+ohfeD+sCwp6naUBxy/rt7d3lzEW4H7ESCXIZGng
+         NTelTS7vwtGve3sQEXef7w3lhh2A1eP9cwwc1eNbemS/iyqCXQGJ9weefIBNczcMzQez
+         VHi5dnl/LAzSiZIoQ+RktHvVsBl0yUM2/DYGcQv/88tpEk0lEMvMNUDXvwJBibAYQesV
+         cVqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRgV4/XRMPMay3DxGMHqeifkPhj2R5hKHEhnkEpWzRGTyh1PbCs/o8aeY5WthugnW/DWPpOsL9Mqewx0GT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSh5oCP7QAdCm4vqSyHgu++WJ09rTJWKsVtBdxMX6+qOGRfWjv
+	X8V7oKlJN5MH+2b5ME8HL/nRF4RIhly78Z0uDymOlFQOPPcjvI+BZj4HnPg7gMjPl6beL+e4CkK
+	CBZ+seZEsKIdG/3RlsuR0klfqH7UgMXyNmfemDqjqvNbDiI/HbNo6/iV07rf/UsQ=
+X-Gm-Gg: ASbGncvqjer8L4jmyc0Ea6cuPxDkLRK0ZdY5twuFD/gsLkgkf3pEFt51gnofx6VEJmb
+	j44O/w2RXhfO2C+Jp6oyFUSQAuTRxzvz8HD9UoIjGnwiW6SJnu+zK/mnZMMzvGXEAeH9McgSI2d
+	hf/onuU97zF6+ZgqcO8Gqy7JOOjznk5wqJpt+VrLrrd0v4pfcApkKBWEtLTdYCYEs8Qlw9LBZCa
+	F15WW/hmrr4szLJmJhJh0yVoDi3/hPH4s+kpe+oOXR2DjZyMWkTdYUPxQNCm4cPWkWhH8lLBnM1
+	r78BsEUj8ewUJMapUV2wN7HssinrFVZIFK8BfnKMS5nqfEmVP0yfmxrPOhFQFbEGMuM2Vg8ECvh
+	M3MkUxx3OwpDG1lgB8BZqqK/KUMo621x9dh/xr5vo9CM=
+X-Received: by 2002:a05:600c:1396:b0:439:88bb:d02d with SMTP id 5b1f17b1804b1-439ae1d9a2dmr164242455e9.2.1740502556768;
+        Tue, 25 Feb 2025 08:55:56 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEzE/g/wzyX4nO+TszgBSun1B7uE43oREDnV0UH0oQHkzl3BhbsKqcoCLgqarg7oHx6lgcPEw==
+X-Received: by 2002:a05:600c:1396:b0:439:88bb:d02d with SMTP id 5b1f17b1804b1-439ae1d9a2dmr164242175e9.2.1740502556358;
+        Tue, 25 Feb 2025 08:55:56 -0800 (PST)
 Received: from ?IPV6:2003:cb:c73e:aa00:c9db:441d:a65e:6999? (p200300cbc73eaa00c9db441da65e6999.dip0.t-ipconnect.de. [2003:cb:c73e:aa00:c9db:441d:a65e:6999])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02ce685sm146345305e9.2.2025.02.25.08.54.57
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02ce60asm149821775e9.7.2025.02.25.08.55.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 08:54:59 -0800 (PST)
-Message-ID: <a3178c50-2e76-4743-8008-9a33bd0af93f@redhat.com>
-Date: Tue, 25 Feb 2025 17:54:57 +0100
+        Tue, 25 Feb 2025 08:55:55 -0800 (PST)
+Message-ID: <ce3ce109-f38a-4053-808b-5cc75257f3f7@redhat.com>
+Date: Tue, 25 Feb 2025 17:55:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,8 +90,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/12] KVM: guest_memfd: Add flag to remove from direct
- map
+Subject: Re: [PATCH v4 04/12] KVM: Add capability to discover
+ KVM_GMEM_NO_DIRECT_MAP support
 To: Patrick Roy <roypat@amazon.co.uk>, rppt@kernel.org, seanjc@google.com
 Cc: pbonzini@redhat.com, corbet@lwn.net, willy@infradead.org,
  akpm@linux-foundation.org, song@kernel.org, jolsa@kernel.org,
@@ -106,7 +106,7 @@ Cc: pbonzini@redhat.com, corbet@lwn.net, willy@infradead.org,
  graf@amazon.com, kalyazin@amazon.com, xmarcalx@amazon.com,
  derekmn@amazon.com, jthoughton@google.com
 References: <20250221160728.1584559-1-roypat@amazon.co.uk>
- <20250221160728.1584559-4-roypat@amazon.co.uk>
+ <20250221160728.1584559-5-roypat@amazon.co.uk>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -154,73 +154,24 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20250221160728.1584559-4-roypat@amazon.co.uk>
+In-Reply-To: <20250221160728.1584559-5-roypat@amazon.co.uk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 21.02.25 17:07, Patrick Roy wrote:
-> Add KVM_GMEM_NO_DIRECT_MAP flag for KVM_CREATE_GUEST_MEMFD() ioctl. When
-> set, guest_memfd folios will be removed from the direct map after
-> preparation, with direct map entries only restored when the folios are
-> freed.
-> 
-> To ensure these folios do not end up in places where the kernel cannot
-> deal with them, set AS_NO_DIRECT_MAP on the guest_memfd's struct
-> address_space if KVM_GMEM_NO_DIRECT_MAP is requested.
-> 
-> Note that this flag causes removal of direct map entries for all
-> guest_memfd folios independent of whether they are "shared" or "private"
-> (although current guest_memfd only supports either all folios in the
-> "shared" state, or all folios in the "private" state if
-> !IS_ENABLED(CONFIG_KVM_GMEM_SHARED_MEM)). The usecase for removing
-> direct map entries of also the shared parts of guest_memfd are a special
-> type of non-CoCo VM where, host userspace is trusted to have access to
-> all of guest memory, but where Spectre-style transient execution attacks
-> through the host kernel's direct map should still be mitigated.
-> 
-> Note that KVM retains access to guest memory via userspace
-> mappings of guest_memfd, which are reflected back into KVM's memslots
-> via userspace_addr. This is needed for things like MMIO emulation on
-> x86_64 to work. Previous iterations attempted to instead have KVM
-> temporarily restore direct map entries whenever such an access to guest
-> memory was needed, but this turned out to have a significant performance
-> impact, as well as additional complexity due to needing to refcount
-> direct map reinsertion operations and making them play nicely with gmem
-> truncations.
-> 
-> This iteration also doesn't have KVM perform TLB flushes after direct
-> map manipulations. This is because TLB flushes resulted in a up to 40x
-> elongation of page faults in guest_memfd (scaling with the number of CPU
-> cores), or a 5x elongation of memory population. On the one hand, TLB
-> flushes are not needed for functional correctness (the virt->phys
-> mapping technically stays "correct",  the kernel should simply to not it
-> for a while), so this is a correct optimization to make. On the other
-> hand, it means that the desired protection from Spectre-style attacks is
-> not perfect, as an attacker could try to prevent a stale TLB entry from
-> getting evicted, keeping it alive until the page it refers to is used by
-> the guest for some sensitive data, and then targeting it using a
-> spectre-gadget.
+> Add a capability to let userspace discover whether guest_memfd supports
+> removing its folios from the direct map. Support depends on guest_memfd
+> itself being supported, but also on whether KVM can manipulate the
+> direct map at page granularity at all (possible most of the time, just
+> arm64 is a notable outlier where its impossible if the direct map has
+> been setup using hugepages, as arm64 cannot break these apart due to
+> break-before-make semantics).
 > 
 > Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
+> ---
 
-...
-
->   
-> +static bool kvm_gmem_test_no_direct_map(struct inode *inode)
-> +{
-> +	return ((unsigned long) inode->i_private) & KVM_GMEM_NO_DIRECT_MAP;
-> +}
-> +
->   static inline void kvm_gmem_mark_prepared(struct folio *folio)
->   {
-> +	struct inode *inode = folio_inode(folio);
-> +
-> +	if (kvm_gmem_test_no_direct_map(inode)) {
-> +		int r = set_direct_map_valid_noflush(folio_page(folio, 0), folio_nr_pages(folio),
-> +						     false);
-
-Will this work if KVM is built as a module, or is this another good 
-reason why we might want guest_memfd core part of core-mm?
+Not sure how KVM folks handle that, but I suspect we would just want to 
+squash that into the previous commit,
 
 -- 
 Cheers,
