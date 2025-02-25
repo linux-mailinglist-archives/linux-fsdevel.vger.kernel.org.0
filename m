@@ -1,114 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-42550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87FB2A434CA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 06:45:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B74BA43528
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 07:24:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A100168046
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 05:45:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAA45189EE3D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 06:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5F52505A5;
-	Tue, 25 Feb 2025 05:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408A625A2A4;
+	Tue, 25 Feb 2025 06:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="imQYkzEZ";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="nQ5Z5Oex"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YGSkuknc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2063.outbound.protection.outlook.com [40.107.96.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9F23D984
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2025 05:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECF5256C9F;
+	Tue, 25 Feb 2025 06:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.63
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740462320; cv=fail; b=K3QjJNKoqwlInyrxh1lyFrGCbCrZkGN5CbRypKr41rvn21KMfQIkj6JRgOL7/7hfzylukTwfnUdYyb3kMVO8i9XhHIVH3q0EO0CBGf3iKYvQWtt6JuvmWLsaeeW2CwCS3B2GXtgCaXzzxzrU1S3Kt7Aj+Kmk+K7HEBOi8I/jqPY=
+	t=1740464624; cv=fail; b=eMjEPcFiVSFUvDUCzWVs8zW3B2Mdh6TIj9eN5H2GhP4c994DvPM9JfWCDCx9VhjK0TtniJMk+rQA5PHmvQo/RybsHLlI97UPWlsBv8Etq2S1Fyk3eLtJDdMDsZowrNIsZILi+GbuVaQfqckMmX4dXLvaP5rTowxGlszgeg4CnKs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740462320; c=relaxed/simple;
-	bh=7H2wltRyC8wzSoV36qTJoc6W0TpKA60jJCyPJUl7XBw=;
+	s=arc-20240116; t=1740464624; c=relaxed/simple;
+	bh=y4TsAWAMgfQO+snjM0LpSbZuIZoIfgvONZY0qHsuXMs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=gUTbkgXc/oYtkkbkCcrLybqQl7f2ZnBYX9PQ86m3XFiCVuvWvSie4mntcqlFAL5A14oBfdmYCyJ7K/xd/Y9DdOr9p5fDhSzbccEo89m8oDuh9MlIcod7RJ19z1pYbtHwLCmzVLkyOwZ4/KNsYzhbDJ6Q5yCxPugvw+nUOLdr1g4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=imQYkzEZ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=nQ5Z5Oex; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P1BbpX010151;
-	Tue, 25 Feb 2025 05:45:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=rH6jzs8tBExpKZIIHV81sC2+M/2Ya3h7Fp1lkueM3dM=; b=
-	imQYkzEZPFlAMgal3kLgo8WCDzsKt+eAPubOUBX+3ejUyfa3xzuQLRiANr6x5NkD
-	nAzCcEya47symC8lYt5eJNscWdWnMv4WSVpixT271p8rQEBmSahlTc6HEVOavDY3
-	LRCRlo8z4Mpe7Bn45+c6tEub5Jcx59S+kqRCy3feFGX+iLzTqaNUmMKlgoV6ryNB
-	cN6WlqgcuR2XVIwXCslAaiiHJhmjw3/B4YggwUnaKtDL4tpF1l1bYS022+xduR2U
-	ZwN5r7iQe/wz9L7tp+s8pRvVwCOA7sRDHEp7OUfKR34aH4mT8u2GnKFHeO5ZkoBo
-	9VTJ5/i+kZOYpWyZSL8oTA==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44y6mbm8sx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 25 Feb 2025 05:45:01 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51P2YBrf002886;
-	Tue, 25 Feb 2025 05:45:00 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2044.outbound.protection.outlook.com [104.47.66.44])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 44y518x5q5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 25 Feb 2025 05:45:00 +0000
+	 Content-Disposition:In-Reply-To:MIME-Version; b=DziLIBHtXHjq1LpFrU+aI7WhwvCM9D++usXaTbJOrbQAKPce8/32JpVKGRUc62iWsKu/hP3NZVWPrOXFfvfBo1/i8URCSMOaZMhFAWzoDYdZOEHysFfSLZEM4sE/4hsWmpIOST3Q2YqvQRgCeyy1csB9YyvgLj/dLK7NP6GD4VM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YGSkuknc; arc=fail smtp.client-ip=40.107.96.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cv4qhrv6smO1QCnTKxljaM9esTLHUV2rBfvzj4agaaG5Jngrs5EqxU9ZIJLdspX2kXOBVfIjgWg9HXz1iUE/qxvpPy//HjuDBYtpf4eSk7d33nfmrmSP9vuATVOK7pAY+fgtKKsTVxyzddeomgTY+UpzjKgw4zLId64fMDmVhLT/n8tTPdKGh6Bad+q+uAWw9Ak43L98WSEM4KXpRZTHZY2HBvkLERlo5MJn8tG6csLsTGCZP9hU/UDgGNgImcyeZ+9HpddCTFk/v0BipzcstcV6DWgmwNigGz9+8yTkMmJNiyMrHu5cMaXw4qRfDqSREWwMj4w5rJEoLsjYHTOQVQ==
+ b=s1yLYXOtg5B4M6A1Lp5qqMIZkEZxe6utMO3hX7MI9rQw4d14hekNyjcNRr/Rz/qSx5biWJEJpHv8/lY4k6qGpG4aeJFY7hczDb4b2dUrzukjeSBzT7yfquTB1W9C5RetR8BWkK3MQsldyLvmq5fferYIlasGIrwGFFlC6PyK3Km3TWD+zGcINfG/pJKwDqLmgYFhf2NCAk2VgXhGg9uBleLQ7kfOdFpMReiaIqAxPqr66jQyhs4LqLqsWWfr2e4ZI2pzyGarVVTm+K09kosH5c6YRWYy7+VRANslAedCkFIe19TC5py9YnSn2NHsQDAlA1dTtsZZ373ryCr6hEnkpw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rH6jzs8tBExpKZIIHV81sC2+M/2Ya3h7Fp1lkueM3dM=;
- b=aU1WbhirFAnri9mz9d9lc344Z/c21EtY5bpP+fFLqtpm7pSxjLE/imn6AzAvCcqy2L08FIT/goZdeM/W4kZbAF/bR/Ejn3YIm+iYGNNH8kegrNvPtdY5unqh2tgMSGvxHQBlAv0zRYduNhXAHNFEtCeOueGM2abjnV59cpNH4ewvqqMFQhXuwDWnF4ZhjxeA/tAKt99UYI4yCCHXrbedunV95iGO1EiseNVAZ1RAfjLIr1Osx4pZ71OnoriXV5lZgirmFOhPCouxxvNDANecLEWIOrfl0eU87v/k3DMeLEFLHOIuqmBQRXPzTmX6zolxm3iIgHHrUlO1t7a8LqhorQ==
+ bh=PAQDT6oY5OcgdSN1C7jHGCMlq8FGau1ZD6szWSbL8XY=;
+ b=WpynXwWUEz9McvmL48J+3VPSvVuRmZ8VRMPLzfGOEtj8n5q9YxCAJ7vueOtyD2y/RLS/lXrAiSRE5VaCsnIgIsGtdsTOQka/MZHFP6SPKaNbzOBtxmqR5pLHiDM6oye8rUc4bxu2RymMVkRQq3978+a4iyAUv3KoSzbYwA6oBM98/NGQM+yoGxi1l3yPT/4W8iQCTwtEB2ck3ZL4YGPYKjNzRJq78zOIq1pTscBuRcswsXXjyhOwtXnHHzC0BfWRgR9rBOD75gTkt6CfX9WK8R34H2tx2VIQ4XnVVJBWzGAL53vG1soCCebi+/pLyU8sR1ea5G/fa9g3FcwWCRKajw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rH6jzs8tBExpKZIIHV81sC2+M/2Ya3h7Fp1lkueM3dM=;
- b=nQ5Z5Oex+a6ZmmlpAidYgVB+GmNq8ZPHaol5syH9GY6Yv7fWrq9eZxRLvecDbRNQwETm3F6TMfbU34fzEZ8GA3KcVGxnW2yn6ZX8ioi8RjqNO4Owdr/uHHN7pYJLvimE5jaT5TaGle0e7dml4iooVgTWiYY582pYYx6JWsKd65A=
-Received: from MN2PR10MB4112.namprd10.prod.outlook.com (2603:10b6:208:11e::33)
- by IA1PR10MB6832.namprd10.prod.outlook.com (2603:10b6:208:424::11) with
+ bh=PAQDT6oY5OcgdSN1C7jHGCMlq8FGau1ZD6szWSbL8XY=;
+ b=YGSkukncqxbaaCWA1UlkVkYpVnXJGY2F0ZQEYHeLRwAmFP9h1O6nUuoUvcjifwgRpEhY3QwqbZgBF3hBqz1KKhWYfrlOdDCf1lU41OIMRhBOO+YUqiGJzeqDNHNhp35Ljdi2yOwyu0G+BsSr7/O0a506AjaRjpvZNjhvsfdxd4AK2AXK8UgJwvTrvreFPmttrFFvSNiVJ2keZ8YeC2V8fayFG1rb7DbB8aN4TG3KLvAuEHEvVGD3835mYQbOhUcMlgCvOHsyRVBoEPEHw2G4qjItUKcU1feKFl4RwFn2IBS1NEDe3ronfq8Wp0Hkxt+BrWZuyaMSNWNL6xbEv7y53g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ SA0PR12MB7076.namprd12.prod.outlook.com (2603:10b6:806:2d5::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Tue, 25 Feb
- 2025 05:44:58 +0000
-Received: from MN2PR10MB4112.namprd10.prod.outlook.com
- ([fe80::3256:3c8c:73a9:5b9c]) by MN2PR10MB4112.namprd10.prod.outlook.com
- ([fe80::3256:3c8c:73a9:5b9c%7]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
- 05:44:55 +0000
-Date: Tue, 25 Feb 2025 05:44:50 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Kalesh Singh <kaleshsingh@google.com>
-Cc: Jan Kara <jack@suse.cz>, lsf-pc@lists.linux-foundation.org,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        David Hildenbrand <david@redhat.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Juan Yescas <jyescas@google.com>, android-mm <android-mm@google.com>,
-        Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Optimizing Page Cache Readahead
- Behavior
-Message-ID: <4f0e3d28-008f-416a-9900-75b2355f1f66@lucifer.local>
-References: <CAC_TJvfG8GcwG_2w1o6GOTZS8tfEx2h9A91qsenYfYsX8Te=Bg@mail.gmail.com>
- <hep2a5d6k2kwth5klatzhl3ejbc6g2opqu6tyxyiohbpdyhvwp@lkg2wbb4zhy3>
- <3bd275ed-7951-4a55-9331-560981770d30@lucifer.local>
- <ivnv2crd3et76p2nx7oszuqhzzah756oecn5yuykzqfkqzoygw@yvnlkhjjssoz>
- <82fbe53b-98c4-4e55-9eeb-5a013596c4c6@lucifer.local>
- <CAC_TJvcnD731xyudgapjHx=dvVHY+cxoO1--2us7oo9TqA9-_g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Tue, 25 Feb
+ 2025 06:23:40 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%7]) with mapi id 15.20.8489.018; Tue, 25 Feb 2025
+ 06:23:40 +0000
+Date: Tue, 25 Feb 2025 17:23:35 +1100
+From: Alistair Popple <apopple@nvidia.com>
+To: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+Cc: akpm@linux-foundation.org, dan.j.williams@intel.com, 
+	linux-mm@kvack.org, Alison Schofield <alison.schofield@intel.com>, 
+	lina@asahilina.net, zhang.lyra@gmail.com, vishal.l.verma@intel.com, 
+	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com, jack@suse.cz, 
+	jgg@ziepe.ca, catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au, 
+	npiggin@gmail.com, dave.hansen@linux.intel.com, ira.weiny@intel.com, 
+	willy@infradead.org, djwong@kernel.org, tytso@mit.edu, linmiaohe@huawei.com, 
+	david@redhat.com, peterx@redhat.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com, chenhuacai@kernel.org, 
+	kernel@xen0n.name, loongarch@lists.linux.dev, vgoyal@redhat.com, 
+	stefanha@redhat.com
+Subject: Re: [PATCH v8 20/20] device/dax: Properly refcount device dax pages
+ when mapping
+Message-ID: <asvyejblo43qscvoqv5wpbpdhrjyf6o2tmj2qait2dmqpj7jnw@eqihgijwrkf5>
+References: <cover.a782e309b1328f961da88abddbbc48e5b4579021.1739850794.git-series.apopple@nvidia.com>
+ <9d9d33b418dd1aab9323203488305085389f62c1.1739850794.git-series.apopple@nvidia.com>
+ <20250220193334.0f7f4071@thinkpad-T15>
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAC_TJvcnD731xyudgapjHx=dvVHY+cxoO1--2us7oo9TqA9-_g@mail.gmail.com>
-X-ClientProxiedBy: LO4P123CA0094.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:191::9) To MN2PR10MB4112.namprd10.prod.outlook.com
- (2603:10b6:208:11e::33)
+In-Reply-To: <20250220193334.0f7f4071@thinkpad-T15>
+X-ClientProxiedBy: SYCPR01CA0011.ausprd01.prod.outlook.com
+ (2603:10c6:10:31::23) To CY8PR12MB7705.namprd12.prod.outlook.com
+ (2603:10b6:930:84::9)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -116,400 +93,233 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR10MB4112:EE_|IA1PR10MB6832:EE_
-X-MS-Office365-Filtering-Correlation-Id: 31254bd3-7c76-473f-637e-08dd555f8864
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|SA0PR12MB7076:EE_
+X-MS-Office365-Filtering-Correlation-Id: 48137162-3acb-403f-f57b-08dd5564f17a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MytkcnE2cEhrSFRzcE14MVV4U2pHaDBQSmtXb09rMVBUdGluM0t4MjhuWjMv?=
- =?utf-8?B?c1VDc1EwdjIwdkg5MFRGNE9WQ1owK01oWUhKM1FtTnM1aDNTRWFESkplQ0gw?=
- =?utf-8?B?djJMKy9VaTc5aFRHY0k5YThJVDlkSkJUVzRYK0lFcnprL0x2bW81SVB0cUx3?=
- =?utf-8?B?eXNXSkNyWXFEY0NJc2NHRUY5cUpjMzJvZ3d2cU4wenAydDBuc3dlczNOSi9V?=
- =?utf-8?B?R25GMExtcnNNWDRqaVZMTVl4UnUrcllHekltbE1vK2xsakxiZDlHM05ZN05X?=
- =?utf-8?B?R2paMERzdzR0bXhtbWJSdUtVUkhHbmxXRnlGSjVwcDhtMmZwaTAxWXBHNlNz?=
- =?utf-8?B?S2s5SW5VNllMREVMNUtoYWJHc2RRT1ZPU0h4T3U4eWI3ZmNTc1k1cUh2cllD?=
- =?utf-8?B?TTBtano1dmNHNnhDampWRGdka2RDWTV3cjZiQjc0NHhmREx2bzJrTWdmU2dN?=
- =?utf-8?B?MldWM1JoUzVCVDhaQmdGZWQ1S1B1OGZvMjZRdjlURDF1dElrMFJ3NjQ2WmtY?=
- =?utf-8?B?NG1RcDVlbm5nbHZpbFJoZ2hIMHgvN3M3bERvZDFROWVOVUFNOG9lSC84TFYy?=
- =?utf-8?B?dVMvZmdLMHZ2a2J1MHlZT2hURXY0N0RnYWIxQnQ3V3BxdHN0Wk4wZjBVcWNz?=
- =?utf-8?B?TlBHQWhlbWZtOHh4YkJjN3NzZDRVL3lhWUQwZkpHU2dWNm82Q0FCWkFoY1lJ?=
- =?utf-8?B?QXlXbkI1cmdlREFqOFFsRkdhS1pDNkZld3h0TDVzZkxjYmFrcWI2NXRzTlVx?=
- =?utf-8?B?cm9mRHFVeEwraVZPUGpaKzI3NEFudDhFNmVSZ2c0clArN2VhTFU0RFdmRlc2?=
- =?utf-8?B?UW9xeWZaWXVObUI5V3ZBaTBOZEVWOExHMmtCSHhCRVRrVFM1MzhMSTBvVGY5?=
- =?utf-8?B?alZmdGVNV21YeFZDTC9xYkRLb0Qzc05mOC9qWHlSbStHc2VpYVNDVlN2QXNt?=
- =?utf-8?B?dHlzL2RrY29lenVWWCtjMjloV1FaVjQxODIwbGJLOXpPWEV1RHRyWnFLbE9m?=
- =?utf-8?B?MEVSOExGSWxYaENDSG9CUGY1V2hzZFh5bUx3eHN4SkRwTkFZeEZZdS9sNEl1?=
- =?utf-8?B?WlVEL0NFT0NiQjd1SDhldjJTQU1pN3Y2ckZrdEFsMWZrL1FxcG44ckZ1QzRo?=
- =?utf-8?B?azVPZDVJclc1QXdTK3p2VWhRZlNZVkRaSmlLK25Zek1HamJvTVNhazEvZ3lD?=
- =?utf-8?B?TWczektYcWxWUFdUMXZ6SzU2dGdtZWh5K0JrV2h4L0ZhZCszVlczKzNlWkwx?=
- =?utf-8?B?cHJRRnNNSWs4d0xkMmdWRFlEamVtUDA4YW5qckMxQ25scmRiQWpqekw5bmo1?=
- =?utf-8?B?UFIvUUp2NlA1S3FLamtudFZ3V2F3d1kwVXJSdldhdU9GRlVmRGJMU0h5SHI1?=
- =?utf-8?B?U0V5SFNmTzdtVVVTd1FKNVRlbTlKb1E4UmM1dUROYUJGTlZKN1FGNHZMRmw0?=
- =?utf-8?B?RHVmQ20vOStYWUlqdkY1WDVKWCtBNkw4V1lvNDlCWS85ZmtadnBkMy83UURE?=
- =?utf-8?B?NkNYMU93Q0ltNEl3ckJvVCs2TUtSSDlpZmFOQlVkbVBpVDIxNkNjaEZJTk9h?=
- =?utf-8?B?cVVuUjlJRmluU1JvK01EcFNJYStsbE5kcGRzanc1VDFXUGFZc2VFc21BbUQ0?=
- =?utf-8?B?ZERxRGRZN3U3Um9MZVMzbER3Y01FZXNUSnBId01UYVd1SWpvQTZVeXZuRWw0?=
- =?utf-8?B?NTIyM2srbHpjTktsWFRjNGt1OUFxamRtdk8vcGhlOUpaaFMwb2c4b3BWS1RH?=
- =?utf-8?B?Uk9TeXZTRnlBUXBYVGU4blV6WlhYTUxJNnhWMjJlRUVMWDB3elVWSUFzcDE1?=
- =?utf-8?B?RWlzOVRNQXBKUWp3eThQT0ZJTDZFaWZDNTFoT01pdGZpcmtXUUo3SEZwZ1VX?=
- =?utf-8?B?bFkyZ1RteDhJUHJPRzFLSTdrcVUyU0hhUnZuQUlRaUc1WUE9PQ==?=
+	=?us-ascii?Q?kDiscbIc/TMogWEkacpAxOKtdhbNbYxh96mc6yJp19O4KnLokDdHidMTCtnT?=
+ =?us-ascii?Q?w3f+p7hyBvExy1BfviNNWCL+CzaU6AFYWImW/wiVjAvBDW8Bp5ET5jzsU6EA?=
+ =?us-ascii?Q?pYTIFC9AONL8E0YuBROYP4+N4RsWGugbzCXH0ih4Q1dOhC8Mz6Fz0+cHN4mW?=
+ =?us-ascii?Q?B4Vz/KVFO4Ye/9YDykiLQ01YCrBKwHLGQug3GLngTgKTJcVssLuUpHZ05AeE?=
+ =?us-ascii?Q?pXULbQEO68LnEPDaqnyP2uKb6deLvKVpErbMff81wqWmKR6jip2LCXESAiQ0?=
+ =?us-ascii?Q?Uy+pFePe4u+4UEqKFUykeWokvNfpAHI9aJyg+faFnympp4Xy4KN3N6oozcrG?=
+ =?us-ascii?Q?Ku82SjiqqDJVWNzgZ0q8GmmYTuzcI2qsvWiPckfQjLNpIz0NP85iaEOAsDlp?=
+ =?us-ascii?Q?nOabidojdPfvgKZG3VaNptzI3ix+133QYaVlNsFeN5YaLdf+FJfqewCnX94e?=
+ =?us-ascii?Q?CgYM6ups/SClDbXzsGLbYKUGQx6TCnpVBNzYEcgNi9E2i4pIs82LqxhPdmyy?=
+ =?us-ascii?Q?5rTXnNuuVSafoyNsVNeiGU8w/JK+yS/XsvtJrg62DC1VH7xTDFDOanF6iW0/?=
+ =?us-ascii?Q?h6IxN3k6/4NVoivIBkho0eDmKhKIzoVmoqMRyVpOPfchFTshTl48mFwICvOW?=
+ =?us-ascii?Q?l/ahe5mfTUstzFjtwkgiqL9CyCMstSaaIghRgCXCd6ASCLVP8ae+rel1yb+P?=
+ =?us-ascii?Q?pCFT8vSpmdOEgOnO0pRXishocoCBZO6eX1f6eKyQ5OPPY62Txqt+gSN1xExj?=
+ =?us-ascii?Q?tcRm0M2vxvUX62oyKND4axY8RkEMLPZ4fRj9VmWsjR9Ohuw6DlJSwzQrLc98?=
+ =?us-ascii?Q?JBd7CzqW/+Y7DYbGAEHrzktpjBI9FGI+m/JxePjKDUCfh2aWbpUzB7V6Eif8?=
+ =?us-ascii?Q?yDoPdvbYCNCJPYbzALHHeauItW5E1co+kw1ljnzJ4qSoZ/wbB6+rcZTTEiL0?=
+ =?us-ascii?Q?xbcCdi9CmV5h5LxDZbnnj4WC44nT6Vve2iTgJNQkfl9YmNmeX3ovY2KFij57?=
+ =?us-ascii?Q?CIi+OqCczgUJvIQY1I9LQyAj1FYT58DfLTHAai6Chmjf9+8c74jEoKrSnnvl?=
+ =?us-ascii?Q?M7ppF2P/l6hGNS4lErzTAdlPM9RdbHZfcRBcm4w1/sGvb6gXUndTtdREgyLt?=
+ =?us-ascii?Q?KQ0kX77kTfgG1Lu63Pr1fyuItxPW5/Rm4i5iVbLysSEaiBuul2fTlUae1fei?=
+ =?us-ascii?Q?ae0+7aMbibEsSpt6Hqwyw3NBfxG4qj9huDteHiuti6amvmj7zqtFkSC5du49?=
+ =?us-ascii?Q?XZKQbWi/nJqkhASkJpjGYx3sxL22uEyutWtWXhUQoh6XH2n2NEIJ7KTQ53Kz?=
+ =?us-ascii?Q?MdrrlGTqx7RF82N9qL1NuAdNEhX3XNoXJaNyzCmV6dL0ZOfldvhOqnTyYz78?=
+ =?us-ascii?Q?LREjKyhaOv/tcpCRJ9fkWEcprx10?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4112.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TGxwa0hpWjZvZUdMQldVQnZ3OGNnZFFMZDNJK1hzSUxmSXlKdUVJTlVtOXBv?=
- =?utf-8?B?WkcveHpqdVA0WU1iNFZGNDJ2VDBQN0g3MmhOdnZzU1pOQkQ2aDI0RGV6MzRu?=
- =?utf-8?B?QUloQ0t2WTIwVTdCV1gybStRSk5qem5QSld6SFIzS1ByWkgxYmpIZExPUUdS?=
- =?utf-8?B?YUVhTVBEVm4rSGJCeVdFWGVMWHFYd3lOd080cDJuQWNabWpScGx5b21BNjgr?=
- =?utf-8?B?T3c1VWFCa2lLRjNaVmpyVzVNTnFvZlpXR01NdnRybGtJLzNUSWl4TVh3Rm1y?=
- =?utf-8?B?bjVZN1p4S0hka0ZjNFBpRzI5WFh4YWtCVFN6SUtXYjRPWDRFSFpoVDgvVGNR?=
- =?utf-8?B?a3JsaE9QSkxZUVpaZ0tKbk9JN0hDUi9Cdyt6Qzl6OG5XeGZOSEg2S0VhdGZT?=
- =?utf-8?B?MndMcUQwWTc0SkIxTUU5UG9lUjJTL3BlVFZtR0syNlNkWjZVcEo4aVF5aHJz?=
- =?utf-8?B?dHVMSWthMXZLckRQZ01KblJYZXBuREN0OGd3Q3dYbmpJNzNIMDNsSHNFM0J5?=
- =?utf-8?B?YnRhQkZkMHVlQXJVeWpPUFRLWjByeWRMVWRoNWRKbkZQYnlqM3JKbFIzN0lL?=
- =?utf-8?B?MCswbW0wOVNhZUhOSGw3UC9Fbi8yamNTUm52VFJqSFAzS2xmdmNuUDBXTENB?=
- =?utf-8?B?UCtqeHQ4WllFNTVYaHc5UVdXSlgzdE44cnQyTTVZQnc3VmUvTDhWNGFCdGJ1?=
- =?utf-8?B?WkgyZlJuOUtJZUZiNGdrTlVIMVMrZTAvSmR3aUQ2K2xnWHdNL2lsMGIxNm9W?=
- =?utf-8?B?WWdML0dLdTgwRVdjZlh1eVR4VTcrM0huL2pwQWpsWitqZ2NaV2FtSURNTjVL?=
- =?utf-8?B?VzBhVUUwLzk4WjZwNndqNDN4NHQyVXdDVzB5TytLMGU1djJObXkzZVVrQ01u?=
- =?utf-8?B?NG5XZTZFbWFRV2dCK1Z4VFZKMVJwTzVadm1TVGxEOE9vbW13MWlOTUFocWlV?=
- =?utf-8?B?NWswL0hTUmp3NE5KU3FxcUpkNUNvbExCY0FpVUJ0dFdCS3p0OXlXUUYzQ05r?=
- =?utf-8?B?WkZ2RFdkRHYvOFZjcm12YVZQRDdLb2xoZzRtemRQNUpFWVZOcGd6L1BiakpT?=
- =?utf-8?B?cDlOV0MyU1Nib3ExS25GY2NRQVFyRnhqbkhqM1dlZmovaEwwT0l3SlRkYUQ1?=
- =?utf-8?B?a3hoM3dtMU5EeHVVVndPV0dlYVhYd1FSSTYyL3V0aEZJakpGTjlRKzFkK1pm?=
- =?utf-8?B?ckhWa0c4bnc4UzlmdEJUdnIwVjNnREgyUGRtWXlDcXE0ZUxlZFUrUGFNaGxs?=
- =?utf-8?B?VFdzWUd3OHRMWDNjY3lFSitOYzJKTXQ3Q3hzT2NFK3RiTHdLWm82R1MxUVAv?=
- =?utf-8?B?bER1c3BUM0NwRHJBZCtscE5qSnRnT1BVb3NXK1BjV0Yrb05ablU4MUljaUJk?=
- =?utf-8?B?SlY5c0p4U0h2cGJnZVdFcmdyR3VBajJoT2s3ZE9sb1ZGdVVVc1JTQ1FCS2xR?=
- =?utf-8?B?a3o2eWNDWkpMWGw2RElFZGNzL2MzMUxxN2M4TkxJYXlVZnBDZFF0MHArSVVG?=
- =?utf-8?B?alBxRWs4U014MjZGWkJacE8ySWVnZ1VhOXB6ajZzdHlENVVLb3o3Um55Rzcy?=
- =?utf-8?B?MjkyUDh0WW1oMzVncFFLRGdacXR6SndMWlA1VjhwN1RXbHlybHdRZXdjM3Ri?=
- =?utf-8?B?OUJBUmxFS09BVFY1S0lZSjBYdGR4VFJJdElKVHBUYnd5OVFlS3R1M29XRmRL?=
- =?utf-8?B?akVsNEdnR1VVbGNub0JvT1h2aklNUUNBU1pwbVdFWFN6dWptNHNneWVpK05x?=
- =?utf-8?B?cW83Q2ZzL0xDTlB0anI3K2VJT2VpMmY2OXlBOTkzUWE4dEJMLys1aEdIZmUw?=
- =?utf-8?B?MzJKUXhDNnBuSHNYenNJM0lxOEl5djBKaFFDVHJvc2cyLzBFS281Y2cwTFlM?=
- =?utf-8?B?RlNqVkJoeEs0R2VnNDBQbnM2eEhsOTltNi84VTc2OEdSem1OUkM5ekwxeGNa?=
- =?utf-8?B?a0tvWGRKenJKUXhQQUlqdmQ5K1hMTVlGcG5Rejc1Unh4eFBQcVdGS3JieUpa?=
- =?utf-8?B?aUh6NkpjT01WdTBJL0ZWcWttZGVhVGxhNmN6dmZKYTAwL3ZVR0FVUy9udXRj?=
- =?utf-8?B?dkl3UVhuTmtuRGpQTkVRUmt1U2tZZjJ1UWdlQmwxRzRwTUs1Z2dZYXRDTlVR?=
- =?utf-8?B?RUdHOE50SC9UU3h1Tno1RlBYMW8zRDQ0WkptSkFoUVlWSjVoVG1TYkRVN3Rr?=
- =?utf-8?B?REE9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	3orMCjXNDZsVRqw5D1d95se3oUti4RVIqZhgEI0EJ45MOa51G7ViLgN6JaJ0NyY/HxV7IlYB79UJwIAdaIc8LGxxsBx3I4OJlDm+1IUI1ugo/s04tSgMALlo79yXEwAlM4SJZKQUFzhgK0BkamDjKoJ0Xps/P8Y8ELsMbtidnLMmvuEXcnmaGfpqpoIoP5Aee0eTT8LxuTY//eB9Oafc0DAWV2E+5aGNRW06Ia7e6Ivz0mKey88UMN/I0cNm8HllrAl9cTmMauPz8Y2wEkxfl/6P2+TQnFXtgTCuswl/RpyKXKOc6kGzKP2vEos0S/hnj0sdftZb+MFmAQhQl6k3PPQOJB1y493HtyLpUa78tLdfj8mhXNgmvPj2VBN3uWKZr+qi+vECaYIadw3I6MfuPt6ZNVxUTF3gDCPtyAvzRodcj50Ag0KDJ9XiZ8oZv5i0aRW0suTV6M/LT6XCDIU68hZbNN/x1eI3pWv+aO2vqNtSpGn0gV1MmYCkXczYC1v/o7AExoJG9Yd87X4IlZo+aKQaCCH2t/P+2+Wwi9VuZPLSwOUwGguexXsgqsbYOhtxLKM019tCT2IrVXt3PvccJ3c3iXyWx9iItuFQWMBjd1o=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31254bd3-7c76-473f-637e-08dd555f8864
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4112.namprd10.prod.outlook.com
+	=?us-ascii?Q?K0BHBbo7rHv2DIee0rRFwnef7NRpc+gqFBM57jl9TQ89zJCnPpAvx4fmcMe7?=
+ =?us-ascii?Q?w3QpklRHkdk5UuNemsco0/OQ19W35o4FVN26YycpRoXkrhq62KFIcymEgjfa?=
+ =?us-ascii?Q?cOGEY/5Qi0tBwXkamKABLYPFFDxNBjWfTAr2DySPiLjlml8kK65ukFrR1c92?=
+ =?us-ascii?Q?5YcoqdgUWQO06xnm7j2P2+T5odXDt4Awp7UPm7+xN6yxY2+EIW9N8KhmX0pS?=
+ =?us-ascii?Q?MEULP7gKZ5LvL0DIZegK6ABIccYQZG1vGJCpPvFnASDmzcnWHoVv2RCMJNMJ?=
+ =?us-ascii?Q?t5S7tybhejJFETpnSaCyELqFWCkeAsJP6i2hW/xhXuQEU2vTR/JfaImnJGya?=
+ =?us-ascii?Q?YhSUYArrsvg4VdWEHbY5QMgmnx7NGMz5gG8Aw7ZkL34bjPoCccaLVuO59EzW?=
+ =?us-ascii?Q?d2CmVOgnFH11LzAE7dXH0x+cDafGQl5b9HUruBa6Qf0MWD8vMi3B6onfk04P?=
+ =?us-ascii?Q?3+zCIlHkViklwinjgcMfE7fEyHAzJo1tb3OtBhcs9F19k65m5aSviqyOSfcw?=
+ =?us-ascii?Q?kSI982tQ5Pn80jGCM/Wswe1Jquxe/577+5k7hn5pIhsiTp53/qR3xyimeCnP?=
+ =?us-ascii?Q?OWNvlmLLOY2ZuvhPdUCNSK3fG1NWY48ju3Wrx+PuuZB1VJKTOeKqPwB85znU?=
+ =?us-ascii?Q?CbqdTZ7s4wLc7aJ/VH1hNRbfwhb9Ib558iZ65O/IBkfO8xiwmo/Jc0cLhY05?=
+ =?us-ascii?Q?W6ZJEkyuLqN10zdcKzAkph4EcPWtb3sufX3SkO0zK3ZcPIMTUtTJldxOICVC?=
+ =?us-ascii?Q?UhuIEUJHY9mjyIQsnmnnMncrQ25xMEydBZNDtXyaXW/zQTA/wbb8Ar+1vhIr?=
+ =?us-ascii?Q?BwldMrt/y3GdLiMyx5pOP+qxhvWMnPx3obfurtF3f6sLyiZ4VJuHz/yru1Ey?=
+ =?us-ascii?Q?oWrtlZIpU46KBzjSG6LXDrgvI2feP3T1uhvJM5oYtp3NOo84+9lvxz+DWbhC?=
+ =?us-ascii?Q?9tlH9HjzoqruEWIMv2rSEfEkVRXOoBYn+IQQ7h83wN9Xo1Q5TbEsLLloeSbs?=
+ =?us-ascii?Q?8kLOlMyT5FwVRWdx9Hj3pK3puG2a8ZiratQealwVUZuQtkvsT3dpO7GBVTTw?=
+ =?us-ascii?Q?Jyw7KcUszKm2dz++WnLegKlhl/uxjg21gBAJQG994va7lViCqLa5ZACj7gS9?=
+ =?us-ascii?Q?T3k5HI/0TmSSpGOO/Mxc50hXBGCifh96aYRUsk6E+oANJpAtGo90cUbMs1WW?=
+ =?us-ascii?Q?ZE2uKkyHMKYURjx5kXEkCBWqF4hjR81VLnKzcDLSwOq5I7ar0Kr6VyOlhI9X?=
+ =?us-ascii?Q?INx+mY3EcIR8LTVMdpXufYOZX8Kqmv1mIBJUFlvzqtbIjYi2fEYqpwU6AiYA?=
+ =?us-ascii?Q?rl4xW4RqGFjtZ/cpDNXLGJ0O3w9JpHDOnxlVMEgHtllo754ZOSvkXDwT4WAo?=
+ =?us-ascii?Q?60kkYbxrM6cxwzLV7sKUBt13czLVbECpbQ7Jt2k8eE+/2dw6+Hl0BZ5WXpPl?=
+ =?us-ascii?Q?UsWfWR/6HYQfpzKGFjsjqiO+/NDROEYZSsoVG69DZOkJE2SXEkknvXe2UfV+?=
+ =?us-ascii?Q?F4HSlCvys0StzVVnbDPX1mQvrszaajCLWoJOs1hFW7OW+uex3rKWqivj0HUa?=
+ =?us-ascii?Q?4iTa1iFsx/QBZRwAuOm8bllr990DP9ahSYWNIZow?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 48137162-3acb-403f-f57b-08dd5564f17a
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB7705.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 05:44:55.7943
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 06:23:39.9737
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /AHHv32mXRHsATV/QFanFO0wpbt+KJMSEwc/fLhsZElIg0G4aBYSMVhWv11M7pgqWub3lh14T3IrkWxN/aTGD3vQgq2xprBxH33k5sp7XFw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB6832
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_02,2025-02-24_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- mlxscore=0 adultscore=0 bulkscore=0 phishscore=0 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2502100000 definitions=main-2502250035
-X-Proofpoint-ORIG-GUID: 4pg0IJbnBgPCPVmagz8IgISIlkdAYluR
-X-Proofpoint-GUID: 4pg0IJbnBgPCPVmagz8IgISIlkdAYluR
+X-MS-Exchange-CrossTenant-UserPrincipalName: /PvPd10RDT7xwb8wqf3VkLsOrCUbeBkIIS0HqmXND10Eu9MB6pPYaQ8vaTHqBQJyVuZClzFdhbVUurl2uMrCZw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB7076
 
-On Mon, Feb 24, 2025 at 01:36:50PM -0800, Kalesh Singh wrote:
-> On Mon, Feb 24, 2025 at 8:52 AM Lorenzo Stoakes
-> <lorenzo.stoakes@oracle.com> wrote:
-> >
-> > On Mon, Feb 24, 2025 at 05:31:16PM +0100, Jan Kara wrote:
-> > > On Mon 24-02-25 14:21:37, Lorenzo Stoakes wrote:
-> > > > On Mon, Feb 24, 2025 at 03:14:04PM +0100, Jan Kara wrote:
-> > > > > Hello!
-> > > > >
-> > > > > On Fri 21-02-25 13:13:15, Kalesh Singh via Lsf-pc wrote:
-> > > > > > Problem Statement
-> > > > > > ===============
-> > > > > >
-> > > > > > Readahead can result in unnecessary page cache pollution for mapped
-> > > > > > regions that are never accessed. Current mechanisms to disable
-> > > > > > readahead lack granularity and rather operate at the file or VMA
-> > > > > > level. This proposal seeks to initiate discussion at LSFMM to explore
-> > > > > > potential solutions for optimizing page cache/readahead behavior.
-> > > > > >
-> > > > > >
-> > > > > > Background
-> > > > > > =========
-> > > > > >
-> > > > > > The read-ahead heuristics on file-backed memory mappings can
-> > > > > > inadvertently populate the page cache with pages corresponding to
-> > > > > > regions that user-space processes are known never to access e.g ELF
-> > > > > > LOAD segment padding regions. While these pages are ultimately
-> > > > > > reclaimable, their presence precipitates unnecessary I/O operations,
-> > > > > > particularly when a substantial quantity of such regions exists.
-> > > > > >
-> > > > > > Although the underlying file can be made sparse in these regions to
-> > > > > > mitigate I/O, readahead will still allocate discrete zero pages when
-> > > > > > populating the page cache within these ranges. These pages, while
-> > > > > > subject to reclaim, introduce additional churn to the LRU. This
-> > > > > > reclaim overhead is further exacerbated in filesystems that support
-> > > > > > "fault-around" semantics, that can populate the surrounding pages’
-> > > > > > PTEs if found present in the page cache.
-> > > > > >
-> > > > > > While the memory impact may be negligible for large files containing a
-> > > > > > limited number of sparse regions, it becomes appreciable for many
-> > > > > > small mappings characterized by numerous holes. This scenario can
-> > > > > > arise from efforts to minimize vm_area_struct slab memory footprint.
-> > > > >
->
-> Hi Jan, Lorenzo, thanks for the comments.
->
-> > > > > OK, I agree the behavior you describe exists. But do you have some
-> > > > > real-world numbers showing its extent? I'm not looking for some artificial
-> > > > > numbers - sure bad cases can be constructed - but how big practical problem
-> > > > > is this? If you can show that average Android phone has 10% of these
-> > > > > useless pages in memory than that's one thing and we should be looking for
-> > > > > some general solution. If it is more like 0.1%, then why bother?
-> > > > >
->
-> Once I revert a workaround that we currently have to avoid
-> fault-around for these regions (we don't have an out of tree solution
-> to prevent the page cache population); our CI which checks memory
-> usage after performing some common app user-journeys; reports
-> regressions as shown in the snippet below. Note, that the increases
-> here are only for the populated PTEs (bounded by VMA) so the actual
-> pollution is theoretically larger.
-
-Hm fault-around populates these duplicate zero pages? I guess it would
-actually. I'd be curious to hear about this out-of-tree patch, and I wonder how
-upstreamable it might be? :)
-
->
-> Metric: perfetto_media.extractor#file-rss-avg
-> Increased by 7.495 MB (32.7%)
->
-> Metric: perfetto_/system/bin/audioserver#file-rss-avg
-> Increased by 6.262 MB (29.8%)
->
-> Metric: perfetto_/system/bin/mediaserver#file-rss-max
-> Increased by 8.325 MB (28.0%)
->
-> Metric: perfetto_/system/bin/mediaserver#file-rss-avg
-> Increased by 8.198 MB (28.4%)
->
-> Metric: perfetto_media.extractor#file-rss-max
-> Increased by 7.95 MB (33.6%)
->
-> Metric: perfetto_/system/bin/incidentd#file-rss-avg
-> Increased by 0.896 MB (20.4%)
->
-> Metric: perfetto_/system/bin/audioserver#file-rss-max
-> Increased by 6.883 MB (31.9%)
->
-> Metric: perfetto_media.swcodec#file-rss-max
-> Increased by 7.236 MB (34.9%)
->
-> Metric: perfetto_/system/bin/incidentd#file-rss-max
-> Increased by 1.003 MB (22.7%)
->
-> Metric: perfetto_/system/bin/cameraserver#file-rss-avg
-> Increased by 6.946 MB (34.2%)
->
-> Metric: perfetto_/system/bin/cameraserver#file-rss-max
-> Increased by 7.205 MB (33.8%)
->
-> Metric: perfetto_com.android.nfc#file-rss-max
-> Increased by 8.525 MB (9.8%)
->
-> Metric: perfetto_/system/bin/surfaceflinger#file-rss-avg
-> Increased by 3.715 MB (3.6%)
->
-> Metric: perfetto_media.swcodec#file-rss-avg
-> Increased by 5.096 MB (27.1%)
-
-Yikes yeah.
-
->
+On Thu, Feb 20, 2025 at 07:33:34PM +0100, Gerald Schaefer wrote:
+> On Tue, 18 Feb 2025 14:55:36 +1100
+> Alistair Popple <apopple@nvidia.com> wrote:
+> 
 > [...]
->
-> The issue is widespread across processes because in order to support
-> larger page sizes Android has a requirement that the ELF segments are
-> at-least 16KB aligned, which lead to the padding regions (never
-> accessed).
+> > diff --git a/mm/memremap.c b/mm/memremap.c
+> > index 9a8879b..532a52a 100644
+> > --- a/mm/memremap.c
+> > +++ b/mm/memremap.c
+> > @@ -460,11 +460,10 @@ void free_zone_device_folio(struct folio *folio)
+> >  {
+> >  	struct dev_pagemap *pgmap = folio->pgmap;
+> >  
+> > -	if (WARN_ON_ONCE(!pgmap->ops))
+> > -		return;
+> > -
+> > -	if (WARN_ON_ONCE(pgmap->type != MEMORY_DEVICE_FS_DAX &&
+> > -			 !pgmap->ops->page_free))
+> > +	if (WARN_ON_ONCE((!pgmap->ops &&
+> > +			  pgmap->type != MEMORY_DEVICE_GENERIC) ||
+> > +			 (pgmap->ops && !pgmap->ops->page_free &&
+> > +			  pgmap->type != MEMORY_DEVICE_FS_DAX)))
+> 
+> Playing around with dcssblk, adding devm_memremap_pages() and
+> pgmap.type = MEMORY_DEVICE_FS_DAX, similar to the other two existing
+> FS_DAX drivers drivers/nvdimm/pmem.c and fs/fuse/virtio_fs.c, I hit
+> this warning when executing binaries from DAX-mounted fs.
+> 
+> I do not set up pgmap->ops, similar to fs/fuse/virtio_fs.c, and I don't see
+> why they would be needed here anyway, at least for MEMORY_DEVICE_FS_DAX.
+> drivers/nvdimm/pmem.c does set up pgmap->ops, but only ->memory_failure,
+> which is still good enough to not trigger the warning here, probably just
+> by chance.
 
-Again I wonder if the _really_ important problem here is this duplicate zero
-page proliferation?
+Yes, I think so. And you can guess which driver I've done all my testing
+with.
 
-As Matthew points out, fixing this might be quite involved, but this isn't
-pushing back on doing so, it's good to fix things even if it's hard :>)
+> Now I wonder:
+> 1) What is this check / warning good for, when this function only ever
+>    calls pgmap->ops->page_free(), but not for MEMORY_DEVICE_FS_DAX and
+>    not for MEMORY_DEVICE_GENERIC (the latter only after this patch)?
+> 2) Is the warning also seen for virtio DAX mappings (added Vivek and
+>    Stefan on CC)? No pgmap->ops set up there, so I would guess "yes",
+>    and already before this series, with the old check / warning.
 
->
-> > > > > > Limitations of Existing Mechanisms
-> > > > > > ===========================
-> > > > > >
-> > > > > > fadvise(..., POSIX_FADV_RANDOM, ...): disables read-ahead for the
-> > > > > > entire file, rather than specific sub-regions. The offset and length
-> > > > > > parameters primarily serve the POSIX_FADV_WILLNEED [1] and
-> > > > > > POSIX_FADV_DONTNEED [2] cases.
-> > > > > >
-> > > > > > madvise(..., MADV_RANDOM, ...): Similarly, this applies on the entire
-> > > > > > VMA, rather than specific sub-regions. [3]
-> > > > > > Guard Regions: While guard regions for file-backed VMAs circumvent
-> > > > > > fault-around concerns, the fundamental issue of unnecessary page cache
-> > > > > > population persists. [4]
-> > > > >
-> > > > > Somewhere else in the thread you complain about readahead extending past
-> > > > > the VMA. That's relatively easy to avoid at least for readahead triggered
-> > > > > from filemap_fault() (i.e., do_async_mmap_readahead() and
-> > > > > do_sync_mmap_readahead()). I agree we could do that and that seems as a
-> > > > > relatively uncontroversial change. Note that if someone accesses the file
-> > > > > through standard read(2) or write(2) syscall or through different memory
-> > > > > mapping, the limits won't apply but such combinations of access are not
-> > > > > that common anyway.
-> > > >
-> > > > Hm I'm not sure sure, map elf files with different mprotect(), or mprotect()
-> > > > different portions of a file and suddenly you lose all the readahead for the
-> > > > rest even though you're reading sequentially?
-> > >
-> > > Well, you wouldn't loose all readahead for the rest. Just readahead won't
-> > > preread data underlying the next VMA so yes, you get a cache miss and have
-> > > to wait for a page to get loaded into cache when transitioning to the next
-> > > VMA but once you get there, you'll have readahead running at full speed
-> > > again.
-> >
-> > I'm aware of how readahead works (I _believe_ there's currently a
-> > pre-release of a book with a very extensive section on readahead written by
-> > somebody :P).
-> >
-> > Also been looking at it for file-backed guard regions recently, which is
-> > why I've been commenting here specifically as it's been on my mind lately,
-> > and also Kalesh's interest in this stems from a guard region 'scenario'
-> > (hence my cc).
-> >
-> > Anyway perhaps I didn't phrase this well - my concern is whether this might
-> > impact performance in real world scenarios, such as one where a VMA is
-> > mapped then mprotect()'d or mmap()'d in parts causing _separate VMAs_ of
-> > the same file, in sequential order.
-> >
-> > From Kalesh's LPC talk, unless I misinterpreted what he said, this is
-> > precisely what he's doing? I mean we'd not be talking here about mmap()
-> > behaviour with readahead otherwise.
-> >
-> > Granted, perhaps you'd only _ever_ be reading sequentially within a
-> > specific VMA's boundaries, rather than going from one to another (excluding
-> > PROT_NONE guards obviously) and that's very possible, if that's what you
-> > mean.
-> >
-> > But otherwise, surely this is a thing? And might we therefore be imposing
-> > unnecessary cache misses?
-> >
-> > Which is why I suggest...
-> >
-> > >
-> > > So yes, sequential read of a memory mapping of a file fragmented into many
-> > > VMAs will be somewhat slower. My impression is such use is rare (sequential
-> > > readers tend to use read(2) rather than mmap) but I could be wrong.
-> > >
-> > > > What about shared libraries with r/o parts and exec parts?
-> > > >
-> > > > I think we'd really need to do some pretty careful checking to ensure this
-> > > > wouldn't break some real world use cases esp. if we really do mostly
-> > > > readahead data from page cache.
-> > >
-> > > So I'm not sure if you are not conflating two things here because the above
-> > > sentence doesn't make sense to me :). Readahead is the mechanism that
-> > > brings data from underlying filesystem into the page cache. Fault-around is
-> > > the mechanism that maps into page tables pages present in the page cache
-> > > although they were not possibly requested by the page fault. By "do mostly
-> > > readahead data from page cache" are you speaking about fault-around? That
-> > > currently does not cross VMA boundaries anyway as far as I'm reading
-> > > do_fault_around()...
-> >
-> > ...that we test this and see how it behaves :) Which is literally all I
-> > am saying in the above. Ideally with representative workloads.
-> >
-> > I mean, I think this shouldn't be a controversial point right? Perhaps
-> > again I didn't communicate this well. But this is all I mean here.
-> >
-> > BTW, I understand the difference between readahead and fault-around, you can
-> > run git blame on do_fault_around() if you have doubts about that ;)
-> >
-> > And yes fault around is constrained to the VMA (and actually avoids
-> > crossing PTE boundaries).
-> >
-> > >
-> > > > > Regarding controlling readahead for various portions of the file - I'm
-> > > > > skeptical. In my opinion it would require too much bookeeping on the kernel
-> > > > > side for such a niche usecache (but maybe your numbers will show it isn't
-> > > > > such a niche as I think :)). I can imagine you could just completely
-> > > > > turn off kernel readahead for the file and do your special readahead from
-> > > > > userspace - I think you could use either userfaultfd for triggering it or
-> > > > > new fanotify FAN_PREACCESS events.
-> > > >
->
-> Something like this would be ideal for the use case where uncompressed
-> ELF files are mapped directly from zipped APKs without extracting
-> them. (I don't have any real world number for this case atm). I also
-> don't know if the cache miss on the subsequent VMAs has significant
-> overhead in practice ... I'll try to collect some data for this.
->
-> > > > I'm opposed to anything that'll proliferate VMAs (and from what Kalesh
-> > > > says, he is too!) I don't really see how we could avoid having to do that
-> > > > for this kind of case, but I may be missing something...
-> > >
-> > > I don't see why we would need to be increasing number of VMAs here at all.
-> > > With FAN_PREACCESS you get notification with file & offset when it's
-> > > accessed, you can issue readahead(2) calls based on that however you like.
-> > > Similarly you can ask for userfaults for the whole mapped range and handle
-> > > those. Now thinking more about this, this approach has the downside that
-> > > you cannot implement async readahead with it (once PTE is mapped to some
-> > > page it won't trigger notifications either with FAN_PREACCESS or with
-> > > UFFD). But with UFFD you could at least trigger readahead on minor faults.
-> >
-> > Yeah we're talking past each other on this, sorry I missed your point about
-> > fanotify there!
-> >
-> > uffd is probably not reasonably workable given overhead I would have
-> > thought.
-> >
-> > I am really unaware of how fanotify works so I mean cool if you can find a
-> > solution this way, awesome :)
-> >
-> > I'm just saying, if we need to somehow retain state about regions which
-> > should have adjusted readahead behaviour at a VMA level, I can't see how
-> > this could be done without VMA fragmentation and I'd rather we didn't.
-> >
-> > If we can avoid that great!
->
-> Another possible way we can look at this: in the regressions shared
-> above by the ELF padding regions, we are able to make these regions
-> sparse (for *almost* all cases) -- solving the shared-zero page
-> problem for file mappings, would also eliminate much of this overhead.
-> So perhaps we should tackle this angle? If that's a more tangible
-> solution ?
+Right, I simply updated the warning to reflect what should have been
+happening prior to this change. However looking again I don't think
+free_zone_device_folio() is ever called for MEMORY_DEVICE_FS_DAX pages. Instead
+put_devmap_managed_folio_refs() would have returned false and cause most paths
+to skip calling free_zone_device_folio().
 
-To me it seems we are converging on this as at least part of the solution.
+The only path that doesn't do that appears to be `folio_put()`. That probably
+should also be calling put_devmap_managed_folio_refs(), I'm not sure why it
+doesn't.
 
->
-> From the previous discussions that Matthew shared [7], it seems like
-> Dave proposed an alternative to moving the extents to the VFS layer to
-> invert the IO read path operations [8]. Maybe this is a move
-> approachable solution since there is precedence for the same in the
-> write path?
->
-> [7] https://lore.kernel.org/linux-fsdevel/Zs97qHI-wA1a53Mm@casper.infradead.org/
-> [8] https://lore.kernel.org/linux-fsdevel/ZtAPsMcc3IC1VaAF@dread.disaster.area/
->
-> Thanks,
-> Kalesh
-> >
-> > >
-> > >                                                               Honza
-> > > --
-> > > Jan Kara <jack@suse.com>
-> > > SUSE Labs, CR
+> 3) Could this be changed to only check / warn if pgmap->ops (or maybe
+>    rather pgmap->ops->page_free) is not set up, but not for
+>    MEMORY_DEVICE_GENERIC and MEMORY_DEVICE_FS_DAX where this is not
+>    being called?
 
-Overall I think we can conclude - this is a topic of interest to people for
-LSF :)
+Oh I think I know what actually happened. Earlier versions of my patch series
+did define a pgmap->ops->page_free() callback for MEMORY_DEVICE_FS_DAX but
+review comments suggested I just do all the was required directly in the switch
+statement. Obviously I forgot to update the check when I removed the need
+for pgmap->ops->page_free and having pgmap->ops->memory_failure defined was
+sufficient to (accidentally) get past the check.
+
+So yeah, the check is wrong. It shouldn't require pgmap->ops to be defined for
+MEMORY_DEVICE_FS_DAX or MEMORY_DEVICE_GENERIC.
+
+> 4) Or is there any reason why pgmap->ops would be required for
+>    MEMORY_DEVICE_FS_DAX?
+
+Nope.
+
+> Apart from the warning, we would also miss out on the
+> wake_up_var(&folio->page) in the MEMORY_DEVICE_FS_DAX case, when no
+> pgmap->ops was set up. IIUC, even before this change / series (i.e.
+> for virtio DAX only, since dcssblk was not using ZONE_DEVICE before,
+> and pmem seems to work by chance because they have ops->memory_failure).
+
+See __put_devmap_managed_folio_refs() - the wake_up_var() was there to intercept
+the 2->1 refcount transition. Now the wake_up_var() needs to happen on 1->0,
+hence why it got moved to free_zone_device_page().
+
+> >  		return;
+> >  
+> >  	mem_cgroup_uncharge(folio);
+> > @@ -494,7 +493,8 @@ void free_zone_device_folio(struct folio *folio)
+> >  	 * zero which indicating the page has been removed from the file
+> >  	 * system mapping.
+> >  	 */
+> > -	if (pgmap->type != MEMORY_DEVICE_FS_DAX)
+> > +	if (pgmap->type != MEMORY_DEVICE_FS_DAX &&
+> > +	    pgmap->type != MEMORY_DEVICE_GENERIC)
+> >  		folio->mapping = NULL;
+> >  
+> >  	switch (pgmap->type) {
+> > @@ -509,7 +509,6 @@ void free_zone_device_folio(struct folio *folio)
+> >  		 * Reset the refcount to 1 to prepare for handing out the page
+> >  		 * again.
+> >  		 */
+> > -		pgmap->ops->page_free(folio_page(folio, 0));
+> 
+> Ok, this is probably the reason why you adjusted the check above, since
+> no more pgmap->ops needed for MEMORY_DEVICE_GENERIC.
+> Still, the MEMORY_DEVICE_FS_DAX case also does not seem to need
+> pgmap->ops, and at least the existing virtio DAX should already be
+> affected, and of course future dcssblk DAX.
+> 
+> But maybe that should be addressed in a separate patch, since your changes
+> here seem consistent, and not change or worsen anything wrt !pgmap->ops
+> and MEMORY_DEVICE_FS_DAX.
+
+Nah, I think the check is wrong and needs fixing here.
+
+> >  		folio_set_count(folio, 1);
+> >  		break;
+> >  
+> 
+> For reference, this is call trace I see when I hit the warning:
+
+Well thanks for testing this and for posting these results.
+
+> [  283.567945] ------------[ cut here ]------------
+> [  283.567947] WARNING: CPU: 12 PID: 878 at mm/memremap.c:436 free_zone_device_folio+0x6e/0x140
+> [  283.567959] Modules linked in:
+> [  283.567963] CPU: 12 UID: 0 PID: 878 Comm: ls Not tainted 6.14.0-rc3-next-20250220-00012-gd072dabf62e8-dirty #44
+> [  283.567968] Hardware name: IBM 3931 A01 704 (z/VM 7.4.0)
+> [  283.567971] Krnl PSW : 0704d00180000000 000001ec0548b44a (free_zone_device_folio+0x72/0x140)
+> [  283.567978]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:1 PM:0 RI:0 EA:3
+> [  283.567982] Krnl GPRS: 0000000000000038 0000000000000000 0000000000000003 000001ec06cc42e8
+> [  283.567986]            00000004cc38e400 0000000000000000 0000000000000003 0000000093eacd00
+> [  283.567990]            000000009a68413f 0000016614010940 000000009553a640 0000016614010940
+> [  283.567994]            0000000000000000 0000000000000000 000001ec0548b416 0000016c05da3bf8
+> [  283.568004] Krnl Code: 000001ec0548b43e: a70e0003		chi	%r0,3
+>                           000001ec0548b442: a7840006		brc	8,000001ec0548b44e
+>                          #000001ec0548b446: af000000		mc	0,0
+>                          >000001ec0548b44a: a7f4005f		brc	15,000001ec0548b508
+>                           000001ec0548b44e: c00400000008	brcl	0,000001ec0548b45e
+>                           000001ec0548b454: b904002b		lgr	%r2,%r11
+>                           000001ec0548b458: c0e5001dcd84	brasl	%r14,000001ec05844f60
+>                           000001ec0548b45e: 9101b01f		tm	31(%r11),1
+> [  283.568035] Call Trace:
+> [  283.568038]  [<000001ec0548b44a>] free_zone_device_folio+0x72/0x140 
+> [  283.568042] ([<000001ec0548b416>] free_zone_device_folio+0x3e/0x140)
+> [  283.568045]  [<000001ec057a4c1c>] wp_page_copy+0x34c/0x6e0 
+> [  283.568050]  [<000001ec057ac640>] __handle_mm_fault+0x220/0x4d0 
+> [  283.568054]  [<000001ec057ac97e>] handle_mm_fault+0x8e/0x160 
+> [  283.568057]  [<000001ec054ca006>] do_exception+0x1a6/0x450 
+> [  283.568061]  [<000001ec06264992>] __do_pgm_check+0x132/0x1e0 
+> [  283.568065]  [<000001ec0627057e>] pgm_check_handler+0x11e/0x170 
+> [  283.568069] Last Breaking-Event-Address:
+> [  283.568070]  [<000001ec0548b428>] free_zone_device_folio+0x50/0x140
+> [  283.568074] ---[ end trace 0000000000000000 ]---
+> 
 
