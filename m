@@ -1,155 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-42618-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42619-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F4227A450EC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 00:30:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7201A450F9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 00:36:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DADEB16BC19
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 23:30:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C06363B06AC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 23:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5B7213235;
-	Tue, 25 Feb 2025 23:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23424235374;
+	Tue, 25 Feb 2025 23:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="e5vm9Dko";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="euO0chB4";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="e5vm9Dko";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="euO0chB4"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="YNR3E5vq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA5F25771
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2025 23:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBDE19DF8B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2025 23:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740526230; cv=none; b=ghwbhvdlPwvV4G/8cowejb5+MZjdsE3JwdYIUTIPc0q8m57ptrkK3ZZmFux2jnvu+2NrH3sE+BSw46zVNfGYOlQHWJw+xBjtfJJpcYujp+CYXKkDC1AGA94etocS/1NqFDkWE0fqlKDzW315xuuNvrT90FI9gOJ6ZpIbLOfBfM8=
+	t=1740526565; cv=none; b=ksOS+GH/8pKNrPazrRjL9FS87VscOiuaLGzfRM10xSh0xRLZvJzI5yS4IrTjGdNqOr4+F4lFC6h1km2QcYNpwdf6FyiDqBJ3/MmGds1a5UNmtPM2hnK79siTJ6H1LDjpnQWkuDuORi9z1o6PKqKWyc0B0bOOa4w5CeEKGGLjQx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740526230; c=relaxed/simple;
-	bh=AMrqC0THAFLHIU+pxD/2/XkJSiuy36KPBkMdSEE8l04=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=a6aydeVxvzDg8KyHzXBJ2PnJ2huhOdLvxW1fnWoQPQHCRKrEqt/7qEIYEc0/18t/WZFQaeoQu6TNrUo/COCD+I0SQRTcsNAS8Wh0fQbMwMq7/jXulDGDzfvJ/hHomq0IwfQGExe7Fdvwka5AISVDXUC4lJ2/eGQwepjDNgZuWv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=e5vm9Dko; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=euO0chB4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=e5vm9Dko; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=euO0chB4; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 566A91F38A;
-	Tue, 25 Feb 2025 23:30:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740526227; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qx6Xlh4p5B0JkmRtt6n/AY0Q0QARqfII7RujOLQp900=;
-	b=e5vm9Dko/3uUSm3pMg+//bSwy2quBmH83fnGxyn8r7BsB+D8zuP5A+eyf4AuB+DkRr9fJ3
-	XM8Q0A2NrLP7HitTTjDEiz+z91UfQfNxEmllCXdbKwauSph86/Erpj7V8ILHq5/OB5r3gT
-	skf8FiBVChXVGLR9SrAAhG2ZYb45dCY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740526227;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qx6Xlh4p5B0JkmRtt6n/AY0Q0QARqfII7RujOLQp900=;
-	b=euO0chB4GUBqWApMXfGgh1oY59O1oS9NkPjhHJ7YkPpbF2/kxCkLjwcu3VhsUHVG6DJjp2
-	Zl6rIQl1NlBtJdAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740526227; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qx6Xlh4p5B0JkmRtt6n/AY0Q0QARqfII7RujOLQp900=;
-	b=e5vm9Dko/3uUSm3pMg+//bSwy2quBmH83fnGxyn8r7BsB+D8zuP5A+eyf4AuB+DkRr9fJ3
-	XM8Q0A2NrLP7HitTTjDEiz+z91UfQfNxEmllCXdbKwauSph86/Erpj7V8ILHq5/OB5r3gT
-	skf8FiBVChXVGLR9SrAAhG2ZYb45dCY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740526227;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qx6Xlh4p5B0JkmRtt6n/AY0Q0QARqfII7RujOLQp900=;
-	b=euO0chB4GUBqWApMXfGgh1oY59O1oS9NkPjhHJ7YkPpbF2/kxCkLjwcu3VhsUHVG6DJjp2
-	Zl6rIQl1NlBtJdAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 13AA813332;
-	Tue, 25 Feb 2025 23:30:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id tZl0K5BSvmc+MgAAD6G6ig
-	(envelope-from <neilb@suse.de>); Tue, 25 Feb 2025 23:30:24 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1740526565; c=relaxed/simple;
+	bh=jpxbFuUPQiib2nVxFth+toV+ziNp6p4WEMlYe8UnJHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=amWFbZTzhPmF4+efpbEg7ZmTsgnEbHGn6nEZ1TgsRWoKJpdwfsnA0HXI+eu+RCfJiIv9nANOxLlCE45KE/zb5dQxmtIUaUM25nxjQtF+Q7x8coK3ARSUeZxLB/kH1bcsbDfPRtzqiXm8w8lV6GAR/hF+guHvh1BWQxL2qWBi+DA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=YNR3E5vq; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Y1SEhEh6l9+kAgM4M0tqdN8Nj7XjEpup3DZmmssdGSE=; b=YNR3E5vq7mj06kbha5UgKxs+UL
+	6M/lotLqd5vCkLD+ATIwmMXvWRMusuNK5CqoIZjfw21dxdv4vZ9E1JZCPKZClN21zBBHkTFVKOkW+
+	ASAKBGemgbVVwKCDS9DjNsmq7xbt+UDwCkiBv9UuQjLm5ho4LqeiGEgRBYgatULH/LifxosuK07OK
+	oQ8Zywznbw7ckIt5kaZfn8VfmqKdLherBXojnJW8pBheujjwlhsF3n4grYlo4Z8neNnFp+DYUbdOn
+	bepTH4hJqtbwDrjoggkt+sY6Y7Td2K5oosP5V0vNHJVoJmk7bNbJJnznOO3zGwmsvEqKI6aRczEnL
+	qaE+Ldcw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tn4T2-00000008a9K-1RbT;
+	Tue, 25 Feb 2025 23:36:00 +0000
+Date: Tue, 25 Feb 2025 23:36:00 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neilb@suse.de>
+Cc: linux-fsdevel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 16/21] ramfs, hugetlbfs, mqueue: set DCACHE_DONTCACHE
+Message-ID: <20250225233600.GB2023217@ZenIV>
+References: <>
+ <20250224212051.1756517-16-viro@zeniv.linux.org.uk>
+ <174052591233.102979.4456239839821136530@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Jan Kara" <jack@suse.cz>
-Cc: "Al Viro" <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Christian Brauner" <brauner@kernel.org>,
- "Miklos Szeredi" <miklos@szeredi.hu>, "Jan Kara" <jack@suse.cz>
-Subject: Re: [PATCH 01/21] procfs: kill ->proc_dops
-In-reply-to: <7xagwr27m3ygguz7nv53u5up2jnzjbuhqcadzwjz7jzmafp4ct@rgkubaqwpwah>
-References:
- <>, <7xagwr27m3ygguz7nv53u5up2jnzjbuhqcadzwjz7jzmafp4ct@rgkubaqwpwah>
-Date: Wed, 26 Feb 2025 10:30:21 +1100
-Message-id: <174052622191.102979.9523419116370013917@noble.neil.brown.name>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-8.30 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Spam-Score: -8.30
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <174052591233.102979.4456239839821136530@noble.neil.brown.name>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, 26 Feb 2025, Jan Kara wrote:
-> On Mon 24-02-25 21:20:31, Al Viro wrote:
-> > It has two possible values - one for "forced lookup" entries, another
-> > for the normal ones.  We'd be better off with that as an explicit
-> > flag anyway and in addition to that it opens some fun possibilities
-> > with ->d_op and ->d_flags handling.
-> > 
-> > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+On Wed, Feb 26, 2025 at 10:25:12AM +1100, NeilBrown wrote:
+> On Tue, 25 Feb 2025, Al Viro wrote:
+> > makes simple_lookup() slightly cheaper there.
 > 
-> FWIW I went through the patches and I like them. They look mostly
-> straightforward enough to me and as good simplifications.
+> I think the patch make sense because there is no point keeping negative
+> dentries for these filesystems - and positive dentries get an extra
+> refcount so DCACHE_DONTCACHE doesn't apply.
 > 
+> But I don't see how this makes simple_lookup() cheaper.  It means that
+> if someone repeatedly looks up the same non-existent name then
+> simple_lookup() will be called more often (because we didn't cache the
+> result of the previous time) but otherwise I don't see the relevance to
+> simple_lookup().  Am I missing something?
 
-Ditto.  Nice clean-up
-It might be good to document s_d_flags and particularly the value of
-setting DCACHE_DONTCACHE.  That flag is documented in the list of
-DCACHE_ flags, but making the connection that it can usefully be put in
-s_d_flags might be a step to far for many.
+This:
+        if (!(dentry->d_flags & DCACHE_DONTCACHE)) {
+		spin_lock(&dentry->d_lock);
+		dentry->d_flags |= DCACHE_DONTCACHE;
+		spin_unlock(&dentry->d_lock);
+	}
 
-Thanks,
-NeilBrown
+IOW, no need to mark that sucker as "don't retain past the moment when
+its refcount drops to zero" - they'll all be marked that way since
+they'd been created.
+
+Note that we used to switch then to ->d_op that had ->d_delete always
+returning true.  That had been replaced with setting DCACHE_DONTCACHE;
+that was an equivalent transformation.  So retention rules have not changed;
+the only change here is that this flag doesn't need to be set.
 
