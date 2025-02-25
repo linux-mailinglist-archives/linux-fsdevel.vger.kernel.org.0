@@ -1,139 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-42579-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42580-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C62A4424E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 15:18:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A0DBA442D1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 15:32:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59D8F19E1121
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 14:13:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E26041882CD4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 14:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1695B26B2B0;
-	Tue, 25 Feb 2025 14:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A191D26AA98;
+	Tue, 25 Feb 2025 14:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="hIYTk2hM"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D+bt/1zR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F7B2676C8;
-	Tue, 25 Feb 2025 14:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68318126C18
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2025 14:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740492765; cv=none; b=qVpADza0rSbZNo+oCiyS3SxEWm7BFguINSlwyybDjXAJpY/PbogaW8WZb9Z67oQMxWfPhRYt21KXtRNIob4mzK+BaEVPqmhCHluqAeV+gnIXS3ztweF2ZkZTT4hMLYmI83HKeHcvGlkwPxS4xuDAspJLa0lcQQkL/Cq6ilGLmcM=
+	t=1740493641; cv=none; b=DUHT2ys3d0QgMnz+awcKITsfhB/MMQiXYwoAU+cn7l1P7mNY7B01OyvI29/C2EeQR5LLwJBVODq84tfibBADgIdCs+gZlkDlibC6tOi/3dejd5/ryCGzuTkwZFKITWNiVh5vTFWXLjcbcdNIiZsNxTqFsximUlqi3iMNxOei5qQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740492765; c=relaxed/simple;
-	bh=VKH1ouIyBgpV+yjjzpH1YAmVGB47UmPki1d/30Utxk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=E/VhelkOWyTWc9L4yDJOPo5YHNvRCRj6RF/FqhSyZPJ0y7I3kkIC5CW267Ece9SffhXiOcJ5bCrNK/0VtxifeuhEmnN1HeCjPACCHymVqI70nLZ7JChW2sG7zzkw4l1+OM5DmPfmU3kXhxvgTnIf3Kb0SBLYl4wuiVIyYEO9gLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=hIYTk2hM; arc=none smtp.client-ip=52.119.213.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1740492764; x=1772028764;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=wCe9wqGieGFyiUCexYspDQYCKCk1CfumNTmeDIsPvqY=;
-  b=hIYTk2hMUm5BIsJKCZdhucPQ7TRjAUJIW05dqhA7W6wxw2FgA+s1grGV
-   DO1J58NycpW+tCR2VtjaCU1SH/mmNEkq0eh0Wd591J6WTYbIFbfRV+F2g
-   H340M/nQgAqNwvFQqGOIS1iApTVKQKVov1pbjZPMSOFxTWYJbtg54LZFp
-   g=;
-X-IronPort-AV: E=Sophos;i="6.13,314,1732579200"; 
-   d="scan'208";a="274174113"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 14:12:38 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:33203]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.11.69:2525] with esmtp (Farcaster)
- id 1760cb76-f2c7-41ad-bce5-bd5d082ea92a; Tue, 25 Feb 2025 14:12:37 +0000 (UTC)
-X-Farcaster-Flow-ID: 1760cb76-f2c7-41ad-bce5-bd5d082ea92a
-Received: from EX19D020UWA003.ant.amazon.com (10.13.138.254) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 25 Feb 2025 14:12:37 +0000
-Received: from EX19MTAUWA002.ant.amazon.com (10.250.64.202) by
- EX19D020UWA003.ant.amazon.com (10.13.138.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 25 Feb 2025 14:12:36 +0000
-Received: from email-imr-corp-prod-pdx-all-2b-f5cd2367.us-west-2.amazon.com
- (10.25.36.210) by mail-relay.amazon.com (10.250.64.203) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1544.14 via Frontend Transport; Tue, 25 Feb 2025 14:12:36 +0000
-Received: from [127.0.0.1] (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
-	by email-imr-corp-prod-pdx-all-2b-f5cd2367.us-west-2.amazon.com (Postfix) with ESMTPS id 46E31C7D57;
-	Tue, 25 Feb 2025 14:12:29 +0000 (UTC)
-Message-ID: <9e60449b-0d2f-43ef-a0b0-3cc999fa9d99@amazon.co.uk>
-Date: Tue, 25 Feb 2025 14:12:27 +0000
+	s=arc-20240116; t=1740493641; c=relaxed/simple;
+	bh=s3CzAGQ9fUPMQrxptT1MpknPbszwu1n+Vjd/Wk9sOQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cpck8gaTReu64UbnbZYs/jW/+cigrAVSECI0O7abTOs4LLlwMRrxlVGiZbxCfeklQ1Gz1Sz/tgGbQLnr3MliMn95ch0UwnjRdVxoiJhQCiOnp1kCeojU0qcaHGtyxIKyBxk9lWlVQhmukiw4Bhf0cvfaatcg9XQ4/s8UW6SB1Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D+bt/1zR; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740493638;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G4fu2PpV3y/MvTpLFuGZiqVh37Wll4MVy1MUpDTWvbQ=;
+	b=D+bt/1zRFC0ZOT+xeoMOSUAAxQHdhe0+xRsR067RnnHcdAYT4qHH8BKoIdrV5d/ck6sYyF
+	Ayiveoq3kn1AGURcli3GlYmmPEa2RQrAgMvNLt7Aa3LYQj+L6UiGMpEnV6Fdw3/d2H4CMi
+	jYclCAX45Uo894ekAPTbd4CcmFHXjm8=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-81-tITzaPO9OMK2Znf-2BEB0w-1; Tue,
+ 25 Feb 2025 09:27:15 -0500
+X-MC-Unique: tITzaPO9OMK2Znf-2BEB0w-1
+X-Mimecast-MFC-AGG-ID: tITzaPO9OMK2Znf-2BEB0w_1740493633
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0AF2118D95DC;
+	Tue, 25 Feb 2025 14:27:13 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.211])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id C6C1F1800352;
+	Tue, 25 Feb 2025 14:27:04 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 25 Feb 2025 15:26:42 +0100 (CET)
+Date: Tue, 25 Feb 2025 15:26:33 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	Manfred Spraul <manfred@colorfullife.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>,
+	Neeraj.Upadhyay@amd.com
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+Message-ID: <20250225142632.GA29585@redhat.com>
+References: <20250102140715.GA7091@redhat.com>
+ <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
+ <20250224142329.GA19016@redhat.com>
+ <CAHk-=wi+P5__7LfbTX66shvYC1X11G2ZdKcg4psi+k_pD3sO+w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 08/12] KVM: selftests: Add guest_memfd based
- vm_mem_backing_src_types
-To: <rppt@kernel.org>, <david@redhat.com>, <seanjc@google.com>
-CC: <pbonzini@redhat.com>, <corbet@lwn.net>, <willy@infradead.org>,
-	<akpm@linux-foundation.org>, <song@kernel.org>, <jolsa@kernel.org>,
-	<ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
-	<martin.lau@linux.dev>, <eddyz87@gmail.com>, <yonghong.song@linux.dev>,
-	<john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@fomichev.me>,
-	<haoluo@google.com>, <Liam.Howlett@oracle.com>, <lorenzo.stoakes@oracle.com>,
-	<vbabka@suse.cz>, <jannh@google.com>, <shuah@kernel.org>,
-	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <bpf@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <tabba@google.com>, <jgowans@amazon.com>,
-	<graf@amazon.com>, <kalyazin@amazon.com>, <xmarcalx@amazon.com>,
-	<derekmn@amazon.com>, <jthoughton@google.com>
-References: <20250221160728.1584559-1-roypat@amazon.co.uk>
- <20250221160728.1584559-9-roypat@amazon.co.uk>
-From: Patrick Roy <roypat@amazon.co.uk>
-Content-Language: en-US
-Autocrypt: addr=roypat@amazon.co.uk; keydata=
- xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
- NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
- wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
- CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
- AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
- AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
- IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
- 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
- 8hlxFQM=
-In-Reply-To: <20250221160728.1584559-9-roypat@amazon.co.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wi+P5__7LfbTX66shvYC1X11G2ZdKcg4psi+k_pD3sO+w@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Fri, 2025-02-21 at 16:07 +0000, Patrick Roy wrote:
+On 02/24, Linus Torvalds wrote:
+>
+> However, I see at least one case where this exclusive wakeup seems broken:
+>
+>                 /*
+>                  * But because we didn't read anything, at this point we can
+>                  * just return directly with -ERESTARTSYS if we're interrupted,
+>                  * since we've done any required wakeups and there's no need
+>                  * to mark anything accessed. And we've dropped the lock.
+>                  */
+>                 if (wait_event_interruptible_exclusive(pipe->rd_wait,
+> pipe_readable(pipe)) < 0)
+>                         return -ERESTARTSYS;
+>
+> and I'm wondering if the issue is that the *readers* got stuck,
+> Because that "return -ERESTARTSYS" path now basically will by-pass the
+> logic to wake up the next exclusive waiter.
 
-...
+I think this is fine... lets denote this reader as R.
 
-> @@ -985,10 +1013,13 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
->  	if (alignment > 1)
->  		region->mmap_size += alignment;
->  
-> -	region->fd = -1;
-> -	if (backing_src_is_shared(src_type))
-> +	if (backing_src_is_guest_memfd(src_type))
-> +		region->fd = guest_memfd;
-> +	else if (backing_src_is_guest_memfd(src_type))
+> Because that "return -ERESTARTSYS" is *after* the reader has been on
+> the rd_wait queue - and possibly gotten the only wakeup that any of
+> the readers will ever get - and now it returns without waking up any
+> other reader.
 
-Argh, this is nonsense. Should be 
+I think this can't happen. ___wait_event() does
 
-+	else if (backing_src_is_shared(src_type))
+	init_wait_entry(&__wq_entry, exclusive ? WQ_FLAG_EXCLUSIVE : 0);	\
+	for (;;) {								\
+		long __int = prepare_to_wait_event(&wq_head, &__wq_entry, state);\
+										\
+		if (condition)							\
+			break;							\
+										\
+		if (___wait_is_interruptible(state) && __int) {			\
+			__ret = __int;						\
+			goto __out;						\
+		}								\
+										\
+		cmd;								\
+	}									\
 
-instead.
+and in this case condition == pipe_readable(pipe), cmd == schedule().
 
->  		region->fd = kvm_memfd_alloc(region->mmap_size,
->  					     src_type == VM_MEM_SRC_SHARED_HUGETLB);
-> +	else
-> +		region->fd = -1;
->  
->  	region->mmap_start = mmap(NULL, region->mmap_size,
->  				  PROT_READ | PROT_WRITE,
+Suppose that R got that only wakeup, and wake_up() races with some signal
+so that signal_pending(R) is true.
 
-...
+In this case prepare_to_wait_event() will return -ERESTARTSYS, but
+___wait_event() won't return this error code, it will check pipe_readable()
+and return 0.
+
+After that R will restart the main loop with wake_next_reader = true,
+and whatever it does it should do wake_up(pipe->rd_wait) before return.
+
+Note also that prepare_to_wait_event() removes the waiter from the
+wait_queue_head->head list, so another wake_up() can't pick this task.
+
+Can ___wait_event() miss the pipe_readable() event in this case? No,
+both wake_up() and prepare_to_wait_event() take the same wq_head->lock.
+
+What if pipe_readable() is actually false? Say, a spurios wakeup or, say,
+pipe_write() does wake_up(rd_wait) when another reader has already made
+the pipe_readable() condition false? This case looks "obviously fine" too.
+
+So I am still confused.
+
+I will wait for reply from Sapkal, then I'll try to make a debugging patch.
+
+Oleg.
+
 
