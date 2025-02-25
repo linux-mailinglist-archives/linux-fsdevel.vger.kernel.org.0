@@ -1,528 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-42586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A81DA44696
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 17:44:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC8DFA4470A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 17:56:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2B627AC321
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 16:42:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87DEF188D567
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2025 16:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD6C19DF4D;
-	Tue, 25 Feb 2025 16:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614E319DF7D;
+	Tue, 25 Feb 2025 16:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rz0CVkNX"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ThED2jY7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2066.outbound.protection.outlook.com [40.107.102.66])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405BB194C9E;
-	Tue, 25 Feb 2025 16:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740501686; cv=fail; b=px0VUf0W6Umt0TE+uRhNWHNqPTFb2s1uNTxyo13zLoNtxVtVBxi0sOTo/Fuk0hStOlWZ/mqnKTTlJyQ6xo3gtDK2FPbMef/XIaK5Ermrhn2H4eKeQX+46iLdyFh37oeldQOj+kYakuonmv0zRdzPl18/LYignTl8HiCDeERMQkU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740501686; c=relaxed/simple;
-	bh=zny2H2JkmneDOEtAdzTzXEkCGtSExc7fdjA8bFFcw8U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=N3bxroBpMKN8oItFgSIEIMPjpTuviCTTgweLO6KfQC6askSYneHUDQC7QRTGFYQQxSxXEKiEA1qZQ4i4MZlH9yMk4ZJjKb/K8DUl1e2bC2Z0eyTLfjvb9CO8rQWI5sax7SC9AcGI93xIfxh9BFFcJBpCMXgGrj2E/KvQ/H3alAs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rz0CVkNX; arc=fail smtp.client-ip=40.107.102.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ntndbm8ALjjY3npGbrw+6tBdQBrY0EBHwmvbcBgiTDc7WLuuEpq7Gk312MsVyF10sYIPhM/J4T5BVBJaivi2zR/Eqgug4RQnAyiZzs0xm4WWIN2ydfsBMWCXiRepS3WItmQSIizChsXEsuqZvxBqVXj8Kpt/stSXRNcmpJiW7gb7MxgeVIH/OcLVajsYA4yqU3723mznq7GpaSHxZezBCiWgCexyUXnGP3MEXjKys6QDailNAlIYLD+67W1OI+Pmi2JIi7m5cU9Fv2Ubd23M8ybOmI24AZaCZdAlg79Dd+0ytMcJCJc+p0loJCrHoDsIFi9N2hqIQ38eed0gMKSY0w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zny2H2JkmneDOEtAdzTzXEkCGtSExc7fdjA8bFFcw8U=;
- b=rKIRsz30VoUbaMxrezYfr4ONXPs8wefT6Cvu4/Xk9SMn1805C6k/GhjcytpQu4COyTw/TIhvTf+Qs3UQgKLqpzLG10gYe+0Dgsj58UasPW2rAp6ORx/10JAm5wsBJiywysqBV1u+c4errNypbFEzZVv5hXTzB3hG0f3HXxHg3TqtcTrH4Ibxd81N5Qwth2CfCe/5MPiBGnjL2FbMKqb82rE1Zv/3iHG0OMc6cXMPByesTa6ZGZ+8Y0MMHY+YxnKn4gTLl7B1MW+eUzW6w4E/aFGKSruq/SfugijHroKR/J1gDtbjWEdSw7jes7uNu3DioZae6H2DuLM1KQi8Fl+1VA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zny2H2JkmneDOEtAdzTzXEkCGtSExc7fdjA8bFFcw8U=;
- b=rz0CVkNXGNTGEZ2Z7r/zR96bkDG/OE0whG4kvzjkqN3DhT895voie1brdsBOp6ssyyGHTfYO2rcItw8EhhRG8OGEsXgS+168uea9nN9IGikIHIx97kd/jZMXZi781RzI0D66Wv/xi58Yjow6LWUXeR5XXg5IEG28MliBenNWmm+GUpI2ak5ByUy3xmsshcGBGHukgCMZ4Fqw+hY/yTTxMXOoOnkxsdGYAlTujpNlYVmgli9xqD4fUqg/UWbjBmtA56zU7luzrvSfiA1PMlBMQ61IdPCfzkVOf1QnLOIn7+m3961+BtmuemjJGG9sBBXlKu2DC+UapNfrqNKATljxXg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- BL3PR12MB6569.namprd12.prod.outlook.com (2603:10b6:208:38c::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.20; Tue, 25 Feb 2025 16:41:21 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
- 16:41:20 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
- Kairui Song <kasong@tencent.com>, Miaohe Lin <linmiaohe@huawei.com>,
- linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2 2/2] mm/shmem: use xas_try_split() in
- shmem_split_large_entry()
-Date: Tue, 25 Feb 2025 11:41:16 -0500
-X-Mailer: MailMate (2.0r6222)
-Message-ID: <C643A2FC-316F-4AA2-8788-84E5D92793F2@nvidia.com>
-In-Reply-To: <af6122b4-2324-418b-b925-becf6036d9ab@linux.alibaba.com>
-References: <20250218235444.1543173-1-ziy@nvidia.com>
- <20250218235444.1543173-3-ziy@nvidia.com>
- <f899d6b3-e607-480b-9acc-d64dfbc755b5@linux.alibaba.com>
- <AD348832-5A6A-48F1-9735-924F144330F7@nvidia.com>
- <47d189c7-3143-4b59-a3af-477d4c46a8a0@linux.alibaba.com>
- <2e4b9927-562d-4cfa-9362-f23e3bcfc454@linux.alibaba.com>
- <42440332-96FF-4ECB-8553-9472125EB33F@nvidia.com>
- <37C4B6AC-0757-4B92-88F3-75F1B4DEFFC5@nvidia.com>
- <655589D4-7E13-4F5B-8968-3FCB71DCE0FC@nvidia.com>
- <bd30dc5e-880c-4daf-a86b-b814a1533931@linux.alibaba.com>
- <af6122b4-2324-418b-b925-becf6036d9ab@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: SJ0PR13CA0149.namprd13.prod.outlook.com
- (2603:10b6:a03:2c6::34) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F9719CD0B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2025 16:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740502373; cv=none; b=rAZrvf3e1barnrlcfgWP21OUNDhm/LMgpVk37hK6I7MFGaIK9hiijlwQsLE2jnat4eRWvZqe1dcH9JeavOP4AFCe/rXJZYjiHISBitM15aX9ko5NN9BVWDgMwvnyeRwlLoEeBlPhTFTlg+klMSw9n/mArm6FAVugoo4wOhWPsM0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740502373; c=relaxed/simple;
+	bh=C+tFZN9mWiR7ZHbPkAa5+JvBoxMYFnFbyHOCCfPiQTU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aQw78gbOXQEZUvNZgbzujRsiGafxAKZS5i7GO51mRCBpzHG95MNO7la7nOpMZ0eYWGcCOVQvtQJQwaL8EwEqQrTAH3ITLDMT08oF5PaM2QMlx06yFOdVvjruWS801o6LblJpVdTsqkyLixEnDR2dp07ahTT06QoVOdPgqqu7d7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ThED2jY7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740502371;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ybxboWusnqyTjKvs03gdfQgRYiuSjJraiMkFJv9TEnw=;
+	b=ThED2jY7JlBBfm2lTZmRHZoeUIAzn8xbMdgMLUyaGZLNUO1HaniGhUN3DFC9EAZzkYoeUW
+	vvsdaU8mzkvl/urf++VV3pddEu3fRPkomSsoxumAjLyp5PJR6sxlV+DXgcmW8FHmVMWQoz
+	xFpEMkpRGquLNoZFlfls4jNEpYu6aDo=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-62-GsTl7OoMOwC6LysIxdaHpw-1; Tue, 25 Feb 2025 11:52:49 -0500
+X-MC-Unique: GsTl7OoMOwC6LysIxdaHpw-1
+X-Mimecast-MFC-AGG-ID: GsTl7OoMOwC6LysIxdaHpw_1740502367
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38f455a8e43so2238990f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2025 08:52:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740502367; x=1741107167;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ybxboWusnqyTjKvs03gdfQgRYiuSjJraiMkFJv9TEnw=;
+        b=u+p3vP+s+xTemLXLbr3YRdgzw6CfrU1Sj4uMspDx3ktyVvyroSdUekNZsdzkiQEdvd
+         4wjD6joqsvLSJIqqB3adszHt74lhbJsjadJQ8CvCgGXm72Qj8fAoXavak9lrGcgvAZGG
+         pMdLk1/XkQ+TZIT7o+UXev/4gppXFZWSEd3xHOZ3vBzUp3dJbRcv3LEWb+up5dkJBVO5
+         5JbR0p0FyAyjiXnDEkNXPMzZUsVGpd0uNAyiu3a54s8YxlVurotUy7HTvqajAFHGYR6p
+         mM3jMyLFNN3CNm8no05dvDchbkPYmETdEf1JgTq4g8VPRqB26+efO2ktp6Ho+9pJ60mG
+         r4NA==
+X-Forwarded-Encrypted: i=1; AJvYcCX3iwSga47AIqDDP6N51P4qFWWncYuTwtDMKvrhONJUNL6uXoOkX9LuOIBhBLyeRPxm7AgdzewDkqLNjDrg@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS6/6n94mxCoXDHBGMDKwrki9zEdRoZdu0BC3dAyPjvFqPLCF6
+	oyPlgeE74iN2eYC0y7HkQdO16saPQAaZHAzsz/7GOVRbuZupm5iL+3A60DxT7uaELrxlLoxoT/q
+	KAN5BfcHurbwlx67TBTLSWzMEH4mekkwb8F7XadMrXhD89GL357jYFZ2436t7Di0=
+X-Gm-Gg: ASbGncvv3UC5ep6taaO4gCWIubAxefpilRbiYi6Dcon7EEf4BeJhUdOuLhjva6smrfP
+	Xwl2X/bnADhyyd6ZN8f4YC2uO8XSqyteqT03jSp43A5mWOo6uKVT7eTu8akvArJLSw+yumh9b93
+	iVOsp6UGrxx0QpLEIFGcUNZ/utSpbovxdWVBgWxAvkUqTbeRptf9Lf7y6Og0u6ILUElNqD6wsLg
+	R99AwA7AlUUbfF+pE1+avi9ZpnDMAWZmTI4IqVXlaE3zwCqAwLyglpfvjchUlB2MtZbB/ek1y/C
+	dNxbZy5R5ai/XMoOxpaYs8jICyiQ7lzr+PJEPplfBPUsBNMk7e018jo4hhP3VaaRNIdVr/XDqbw
+	KqOYsfKh0zRu5ZbpIOlD1c05mMRlMrBNH5gta3JiM7qc=
+X-Received: by 2002:a05:6000:1a8a:b0:38d:d0ca:fbd5 with SMTP id ffacd0b85a97d-390cc605518mr3098307f8f.22.1740502366849;
+        Tue, 25 Feb 2025 08:52:46 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHkp5nTxzC3mH+QfPQ2OcYNGz6wgylsGdXkNqE7sPvdo2LKF2uZNL9mmhTxt1LgwuC8gCNgdw==
+X-Received: by 2002:a05:6000:1a8a:b0:38d:d0ca:fbd5 with SMTP id ffacd0b85a97d-390cc605518mr3098250f8f.22.1740502366450;
+        Tue, 25 Feb 2025 08:52:46 -0800 (PST)
+Received: from ?IPV6:2003:cb:c73e:aa00:c9db:441d:a65e:6999? (p200300cbc73eaa00c9db441da65e6999.dip0.t-ipconnect.de. [2003:cb:c73e:aa00:c9db:441d:a65e:6999])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd866ec7sm2868347f8f.3.2025.02.25.08.52.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 08:52:45 -0800 (PST)
+Message-ID: <d686092d-bc86-4a65-b580-04f0e42e96dc@redhat.com>
+Date: Tue, 25 Feb 2025 17:52:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|BL3PR12MB6569:EE_
-X-MS-Office365-Filtering-Correlation-Id: ada58dfa-9350-4237-4f28-08dd55bb3b80
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NnNLTWc2WE5CcUMwa3Z2dTVCb2VEVTh6c0dxVG9xRFFHakNudFBDcTVQcVdt?=
- =?utf-8?B?RjF5OUh1NDFpNm1EOFh1R3IrUDhKbmVFcUx4Mkw4dWIyU1dTRVI5QUs3VU40?=
- =?utf-8?B?Z0dwc2FxdlpQM2ZFV1hXNk8wc1NvNjlQbCs2OXRXU0pWd1ZzYTh6MjNVb252?=
- =?utf-8?B?Vm1OaEJpSHBaS090UWIvWVVPLzN0U3p1c0RieDVvc1UxSEhDWkQ5NUpBOUx4?=
- =?utf-8?B?NElCQVloWW13S3dQNFhlWWM5cDg0cnU5OUF0SGdYQklDejEzYlJjTE80bFlz?=
- =?utf-8?B?NHRDNjFsUUxpQUZZc2Vkdm5vRDlNOHdoZjRaRmc3S1gvQlBCZEN4bGYxa3VD?=
- =?utf-8?B?alh0VElnbzhCdC9sM0gwVUloT0JaeU9wNEhQWW0rUkgrNS9oL3YyS3gwTG9K?=
- =?utf-8?B?RkY1MFVERE0zdE94TkJ0SGc0eUdzckxBRHVaRnk4YndqTkd3cXNOZjFNVDRh?=
- =?utf-8?B?TVMySCtjdHRyUmYzVnMzRzNsZ2JUQ0JGaWRzQitEWURNMG8ya2cxeW1DN0Rx?=
- =?utf-8?B?NnplZTg2V1pNQ1crNm5WSXVzaUQ3ckdQY1ZHaXpQU1R6bHl2RGg3ODBxaVRh?=
- =?utf-8?B?Yk1EZ21Gb29ETUhxYmk4WHc3RE9QaEZoRkV0em9kOVdDZ0JvWVpQdG83WTc0?=
- =?utf-8?B?UHZaUmVBVDQwTDVqZHRLVldFRzlhWE9kS0RONk9OTDUrdEhOS0N6NzBxbStH?=
- =?utf-8?B?UURwWG04Q092dTZVVWhMZmJLV3JFNUFoRU82QUl6dllQNXVMTDFZVEU3S0dY?=
- =?utf-8?B?WkhXTDNaOW9wdTFwb004YWx0KzF1VVN5N0t3bDFld1RkSmdpbXVxSTA0OTMx?=
- =?utf-8?B?TENpTFJJQzczN1gxMEVRTEwrYlJSOXkwUDJSRVdkeGdlZzVidjRrNEZ2Q0RD?=
- =?utf-8?B?YkFSOWQ4bjZ2ZThHdzMvTllldnBDM2prYnVpWS84QXQ1aG0rTmZsQUw2NVNP?=
- =?utf-8?B?MldxdEhPTndKK0o5ZzZXTDlpSDY1R0IyR3VqVE5YSzdYODlKQW0yTC9QcDEw?=
- =?utf-8?B?YmtLSExCSHZZSkNCaDN3N2hQMGI5d2dvT2k1MUpLSzh0b2hscUpTNjNNeGly?=
- =?utf-8?B?MlM0ZDhUYmFNWUlQLytrUVViRVo2REVCZUZxQWZNcWRxM3RRbmE3dXA3Q1FF?=
- =?utf-8?B?OVRSbG9ac0lpQmMrOTFFbWFsTTNaWDlHRmVXZnpTZmtRKyt1RFFlVFVJbEN2?=
- =?utf-8?B?OHE2cnJtc0o5NVNneFM2QkxVbkU4cCswck50ckI5RHNTNG9BSm5nbmlXSnJv?=
- =?utf-8?B?VTc2UHZEWldFWSt6cFlPZElYUGlSblk0d0ZHN1Q5TmY1NERUeUFuL3IwbnRa?=
- =?utf-8?B?TmdwQlpObGMzN2U5elpUUlVpaThyMWpOUElkMnh6OCtNVXU4RFp0TjdyZE9j?=
- =?utf-8?B?RnlQUzZsejhmc0NnTHZKSDVCMDhZcWo1MjZKREI0amVUbFVDMmFEUVZjNkVM?=
- =?utf-8?B?VzN2QWhzRnczMVROdnIzNUxpUWNyR0lrQlBIc0d4Q09wbGNPRVM5OGpUTHZO?=
- =?utf-8?B?eUt2Z1JOdG80TzkwWWJPb0dvV1dGaE0xMlNwSGNuQkdpaENjUnl6QlpKb2dY?=
- =?utf-8?B?WEwwdWtMb1gxRFgvVlUvSjZUdDFoektTRi9MUlpxRGFva2EwNnREc1o0eG51?=
- =?utf-8?B?VHdlUEl2Q1gwaHNvQ2YrUWtmMk1YRy9IUEtIRmlrbndPckVLbWdHTlNaTHBx?=
- =?utf-8?B?N3NxVk1xbmxtRy9wV2RnQXdkYUJ0NnFLOThMeWc0aGFVV3JKTkxjdDFiNTd5?=
- =?utf-8?B?ZU9UZ1VGWWlIRllVdTE3bFQ1T3djSmM2d0lpQUVFUkZYb3FJQVdhT0dyWUVS?=
- =?utf-8?B?RGwzYnVPMitqc293UkcvRXRyZEgrZktMSGl5MVlYdUlScE5lakVQeVJ6aUI2?=
- =?utf-8?Q?z/2PiPBTJpJWO?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VHZIMTF1bi81S0Rhc3AxZzdoMU84Y2UrOWkwZERHclFydk5SWktPeTJxRUow?=
- =?utf-8?B?RFFMR1FPV2tjS3hwb08wL3dTM2VCU1ZqSTljMVpFODRCaWZOT05YemdmeWdz?=
- =?utf-8?B?anJSb1BKQ1pDZnpQM3RjdE1jODhsWVVjS1VUMXVpRWdjQWpiRnJNTVo4QUZr?=
- =?utf-8?B?WlNzVk9BbmRCdTRDb0FMbHBqRG5CeVFodW1uYXdhY21PYXdISkc1RW10SzVL?=
- =?utf-8?B?dFAxN0xJcVpsYmExUThnbmJMSnFUMTI5WUhmMzRvbU93cUx0eG00R01ZN2ZW?=
- =?utf-8?B?OURweEJGWG1FTzVXeEhHVmFGTWorNmdXR0dVQ0pnZm9DRG9mdVVpTktIK1d5?=
- =?utf-8?B?UVNJSzByODZOalJyZ211TktMc2Z2TUI1Zkd3UjNhWkVUTGhPOUVUcGY4TzFk?=
- =?utf-8?B?Q0xpVDdRRDc0eFlTN09FMUs5dFJQQkRoOU1PZFZxYkNyWWtETTArM0hmQVRF?=
- =?utf-8?B?VDd4MnBja0Q1bm1RTktZUDN4dkRCWkhXNWx1UjVEd0hlU2VqbVlWaU5rZW9q?=
- =?utf-8?B?eFN6SldFS2VPMUlaY1A1TDdkWWNNRGdZWEFDaU42OUgxZVc4K0NmOUgyMFh1?=
- =?utf-8?B?RDRTVExjUjJBa2pldjcrRCt0SWg2YjFPQ3BDcjl5b2JjNENrSmNoZTZBVXRs?=
- =?utf-8?B?Vm5NT1JRSk80V1IrYTRBTDRKZFVVTGo0VFNESE5oSDlCQm1xeXY5LzlWa1o1?=
- =?utf-8?B?dW5TRjVjbnM3czNNRitLbHBRNHkydFdGZktCUER1ZzVIcDRZRzlNOER2UWNR?=
- =?utf-8?B?SUR0SGFTTFRleXVMckw1VjJtbFpidUJObmRSSjFGMGNMVG55NitVSVAxemxn?=
- =?utf-8?B?WmxKOWEvQmh3VGRqbUtuTnFJYUtscDIyTU5nd3VjTkdjSkRUb1NjMkw2ZnBF?=
- =?utf-8?B?dkVmUHl3ektsQlg5TEVZSWp6dmk0Vk9mVTFhV1lSUUk1RTA3MG9TUXZRU2FS?=
- =?utf-8?B?MnBlL1BzNCs1Q1VFWTJpMGdPcU5FQitZSStIRXdCUk9DalducEEyZmVuMERH?=
- =?utf-8?B?eHBuOHJqaTFid25uWmNTSjBOUHlxWUg3bmFWYmpsSUxKL0NyNEgzbzZDbDRF?=
- =?utf-8?B?U2lsNXRQZDBhR05yZzZoUE5wbytYZ1ZPKy82ZENLN2xEWERQalAyVGZFT1lv?=
- =?utf-8?B?NWV5cXVka1RkeFZxNFZ3SjV5QkNmWWFHcjVNdDZFV3V4d3dnZllPYTliQ0JV?=
- =?utf-8?B?S0tBWUpXUTJYTFFUMkhEKzVSemE3aGF5MjhReUFXbzNRSlRvdXRJMTVrM2J5?=
- =?utf-8?B?Q2wwVFMvSkhWZWtVYkVmbCtqN0xDdktkbTVGSDV6czJuSDM4MmVLMEg3TEsv?=
- =?utf-8?B?ZzZTcXdaTnFIN2RsQ2RKc29BWnhPamhzTXBnWm1aQTFUQ1pQT0p0cjdXVG82?=
- =?utf-8?B?RDlYMXEvajg5dWxtc2xpSDVXYTFZcmNDWmhuclF5ejJDOVpPaTdXMmZpbXgz?=
- =?utf-8?B?QUpBZjF3K0k0L08zeFBhL0taYVBqR1FaeDUvZEZLWE1QNVpDelZZQUkwMWFR?=
- =?utf-8?B?cEIzYWRZanBDeHhHOTh6ckMwOHVhb2RSa2pZTjkzTkhMVHpETkx1ejVuWlhS?=
- =?utf-8?B?MmtyRjM3VU5MQ0E5VFZ5M2RscWorV3R0bkVPZmJXb1U1NC9HVE9lQkhxVm0w?=
- =?utf-8?B?MEhpSithT3AyRHE0VVJad2NuM1EzUXgvei9hOE9MZjV3b29TNkpadWRmdlQ3?=
- =?utf-8?B?M2t1b1lMZ0FySXJYdEJaWSs5UWpURWQzcy9rZHREWklDYmhQRk1vUG5xWUp1?=
- =?utf-8?B?NWMzbm1NenZFM1NCRHBOUDNVRnViOTF4YkU2MVRha3hkTGRzckhyQ3MzOFpi?=
- =?utf-8?B?QjVYUEM2di8wL1FoK2pTcTIyQUs2S1NoL1UwUmxhQkw5S0hxcS9JNnpiUE5y?=
- =?utf-8?B?SE9zbUR0b29CS2VmMlFiV2Y5Q3VtUVZlcUhDSEl4MTNneEdRQW1xa05YMDYy?=
- =?utf-8?B?NVkrdTE4cTIxdlNLeElXVWdiQmZ6Zlh5ZmFuK0h5L0hDUmhuR2loS3YvM3Na?=
- =?utf-8?B?SHp0VHZTVHF5bHpzKzBSMmZ3K25tdEg2WWtqMXQvOE80NXhqQVQxOWJBK0p4?=
- =?utf-8?B?a3ozOHN5QjdoNWRUemR1YkdCVXpjYlVleTRKbG5KOW9YZklyek9DZXROSDhS?=
- =?utf-8?Q?v3H/W2wePOwYLF8C8eJrAFHRt?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ada58dfa-9350-4237-4f28-08dd55bb3b80
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 16:41:20.2839
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: w4JQ2Z4xyoJZZHenh4shSp347PfGz/O3YurOFYzmFix01iMeTD1ZoNmu1QLigfHB
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6569
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 02/12] mm/secretmem: set AS_NO_DIRECT_MAP instead of
+ special-casing
+To: Patrick Roy <roypat@amazon.co.uk>, rppt@kernel.org, seanjc@google.com
+Cc: pbonzini@redhat.com, corbet@lwn.net, willy@infradead.org,
+ akpm@linux-foundation.org, song@kernel.org, jolsa@kernel.org,
+ ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, yonghong.song@linux.dev,
+ john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com,
+ vbabka@suse.cz, jannh@google.com, shuah@kernel.org, kvm@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, tabba@google.com, jgowans@amazon.com,
+ graf@amazon.com, kalyazin@amazon.com, xmarcalx@amazon.com,
+ derekmn@amazon.com, jthoughton@google.com
+References: <20250221160728.1584559-1-roypat@amazon.co.uk>
+ <20250221160728.1584559-3-roypat@amazon.co.uk>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250221160728.1584559-3-roypat@amazon.co.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 25 Feb 2025, at 5:15, Baolin Wang wrote:
+On 21.02.25 17:07, Patrick Roy wrote:
+> Make secretmem set AS_NO_DIRECT_MAP on its struct address_space, to drop
+> all the vma_is_secretmem()/secretmem_mapping() checks that are based on
+> checking explicitly for the secretmem ops structures.
+> 
+> This drops a optimization in gup_fast_folio_allowed() where
+> secretmem_mapping() was only called if CONFIG_SECRETMEM=y. secretmem is
+> enabled by default since commit b758fe6df50d ("mm/secretmem: make it on
+> by default"), so the secretmem check did not actually end up elided in
+> most cases anymore anyway.
+> 
+> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
+> ---
 
-> On 2025/2/25 17:20, Baolin Wang wrote:
->>
->>
->> On 2025/2/21 10:38, Zi Yan wrote:
->>> On 20 Feb 2025, at 21:33, Zi Yan wrote:
->>>
->>>> On 20 Feb 2025, at 8:06, Zi Yan wrote:
->>>>
->>>>> On 20 Feb 2025, at 4:27, Baolin Wang wrote:
->>>>>
->>>>>> On 2025/2/20 17:07, Baolin Wang wrote:
->>>>>>>
->>>>>>>
->>>>>>> On 2025/2/20 00:10, Zi Yan wrote:
->>>>>>>> On 19 Feb 2025, at 5:04, Baolin Wang wrote:
->>>>>>>>
->>>>>>>>> Hi Zi,
->>>>>>>>>
->>>>>>>>> Sorry for the late reply due to being busy with other things:)
->>>>>>>>
->>>>>>>> Thank you for taking a look at the patches. :)
->>>>>>>>
->>>>>>>>>
->>>>>>>>> On 2025/2/19 07:54, Zi Yan wrote:
->>>>>>>>>> During shmem_split_large_entry(), large swap entries are coverin=
-g n slots
->>>>>>>>>> and an order-0 folio needs to be inserted.
->>>>>>>>>>
->>>>>>>>>> Instead of splitting all n slots, only the 1 slot covered by the=
- folio
->>>>>>>>>> need to be split and the remaining n-1 shadow entries can be ret=
-ained with
->>>>>>>>>> orders ranging from 0 to n-1.=C2=A0 This method only requires
->>>>>>>>>> (n/XA_CHUNK_SHIFT) new xa_nodes instead of (n % XA_CHUNK_SHIFT) =
-*
->>>>>>>>>> (n/XA_CHUNK_SHIFT) new xa_nodes, compared to the original
->>>>>>>>>> xas_split_alloc() + xas_split() one.
->>>>>>>>>>
->>>>>>>>>> For example, to split an order-9 large swap entry (assuming XA_C=
-HUNK_SHIFT
->>>>>>>>>> is 6), 1 xa_node is needed instead of 8.
->>>>>>>>>>
->>>>>>>>>> xas_try_split_min_order() is used to reduce the number of calls =
-to
->>>>>>>>>> xas_try_split() during split.
->>>>>>>>>
->>>>>>>>> For shmem swapin, if we cannot swap in the whole large folio by s=
-kipping the swap cache, we will split the large swap entry stored in the sh=
-mem mapping into order-0 swap entries, rather than splitting it into other =
-orders of swap entries. This is because the next time we swap in a shmem fo=
-lio through shmem_swapin_cluster(), it will still be an order 0 folio.
->>>>>>>>
->>>>>>>> Right. But the swapin is one folio at a time, right? shmem_split_l=
-arge_entry()
->>>>>>>
->>>>>>> Yes, now we always swapin an order-0 folio from the async swap devi=
-ce at a time. However, for sync swap device, we will skip the swapcache and=
- swapin the whole large folio by commit 1dd44c0af4fa, so it will not call s=
-hmem_split_large_entry() in this case.
->>>>>
->>>>> Got it. I will check the commit.
->>>>>
->>>>>>>
->>>>>>>> should split the large swap entry and give you a slot to store the=
- order-0 folio.
->>>>>>>> For example, with an order-9 large swap entry, to swap in first or=
-der-0 folio,
->>>>>>>> the large swap entry will become order-0, order-0, order-1, order-=
-2,=E2=80=A6 order-8,
->>>>>>>> after the split. Then the first order-0 swap entry can be used.
->>>>>>>> Then, when a second order-0 is swapped in, the second order-0 can =
-be used.
->>>>>>>> When the last order-0 is swapped in, the order-8 would be split to
->>>>>>>> order-7,order-6,=E2=80=A6,order-1,order-0, order-0, and the last o=
-rder-0 will be used.
->>>>>>>
->>>>>>> Yes, understood. However, for the sequential swapin scenarios, wher=
-e originally only one split operation is needed. However, your approach inc=
-reases the number of split operations. Of course, I understand that in non-=
-sequential swapin scenarios, your patch will save some xarray memory. It mi=
-ght be necessary to evaluate whether the increased split operations will ha=
-ve a significant impact on the performance of sequential swapin?
->>>>>
->>>>> Is there a shmem swapin test I can run to measure this? xas_try_split=
-() should
->>>>> performance similar operations as existing xas_split_alloc()+xas_spli=
-t().
->>>>>
->>>>>>>
->>>>>>>> Maybe the swapin assumes after shmem_split_large_entry(), all swap=
- entries
->>>>>>>> are order-0, which can lead to issues. There should be some check =
-like
->>>>>>>> if the swap entry order > folio_order, shmem_split_large_entry() s=
-hould
->>>>>>>> be used.
->>>>>>>>>
->>>>>>>>> Moreover I did a quick test with swapping in order 6 shmem folios=
-, however, my test hung, and the console was continuously filled with the f=
-ollowing information. It seems there are some issues with shmem swapin hand=
-ling. Anyway, I need more time to debug and test.
->>>>>>>> To swap in order-6 folios, shmem_split_large_entry() does not allo=
-cate
->>>>>>>> any new xa_node, since XA_CHUNK_SHIFT is 6. It is weird to see OOM
->>>>>>>> error below. Let me know if there is anything I can help.
->>>>>>>
->>>>>>> I encountered some issues while testing order 4 and order 6 swapin =
-with your patches. And I roughly reviewed the patch, and it seems that the =
-new swap entry stored in the shmem mapping was not correctly updated after =
-the split.
->>>>>>>
->>>>>>> The following logic is to reset the swap entry after split, and I a=
-ssume that the large swap entry is always split to order 0 before. As your =
-patch suggests, if a non-uniform split is used, then the logic for resettin=
-g the swap entry needs to be changed? Please correct me if I missed somethi=
-ng.
->>>>>>>
->>>>>>> /*
->>>>>>> =C2=A0 =C2=A0* Re-set the swap entry after splitting, and the swap
->>>>>>> =C2=A0 =C2=A0* offset of the original large entry must be continuou=
-s.
->>>>>>> =C2=A0 =C2=A0*/
->>>>>>> for (i =3D 0; i < 1 << order; i++) {
->>>>>>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0pgoff_t aligned_index =3D round_down=
-(index, 1 << order);
->>>>>>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0swp_entry_t tmp;
->>>>>>>
->>>>>>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0tmp =3D swp_entry(swp_type(swap), sw=
-p_offset(swap) + i);
->>>>>>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0__xa_store(&mapping->i_pages, aligne=
-d_index + i,
->>>>>>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- swp_to_radix_entry(tmp), 0);
->>>>>>> }
->>>>>
->>>>> Right. I will need to adjust swp_entry_t. Thanks for pointing this ou=
-t.
->>>>>
->>>>>>
->>>>>> In addition, after your patch, the shmem_split_large_entry() seems a=
-lways return 0 even though it splits a large swap entry, but we still need =
-re-calculate the swap entry value after splitting, otherwise it may return =
-errors due to shmem_confirm_swap() validation failure.
->>>>>>
->>>>>> /*
->>>>>> =C2=A0 * If the large swap entry has already been split, it is
->>>>>> =C2=A0 * necessary to recalculate the new swap entry based on
->>>>>> =C2=A0 * the old order alignment.
->>>>>> =C2=A0 */
->>>>>> =C2=A0 if (split_order > 0) {
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0pgoff_t offset =3D index - round_down(index,=
- 1 << split_order);
->>>>>>
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0swap =3D swp_entry(swp_type(swap), swp_offse=
-t(swap) + offset);
->>>>>> }
->>>>>
->>>>> Got it. I will fix it.
->>>>>
->>>>> BTW, do you mind sharing your swapin tests so that I can test my new =
-version
->>>>> properly?
->>>>
->>>> The diff below adjusts the swp_entry_t and returns the right order aft=
-er
->>>> shmem_split_large_entry(). Let me know if it fixes your issue.
->>>
->>> Fixed the compilation error. It will be great if you can share a swapin=
- test, so that
->>> I can test locally. Thanks.
->>>
->>> diff --git a/mm/shmem.c b/mm/shmem.c
->>> index b35ba250c53d..bfc4ef511391 100644
->>> --- a/mm/shmem.c
->>> +++ b/mm/shmem.c
->>> @@ -2162,7 +2162,7 @@ static int shmem_split_large_entry(struct inode *=
-inode, pgoff_t index,
->>> =C2=A0 {
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct address_space *mapping =3D inode-=
->i_mapping;
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 XA_STATE_ORDER(xas, &mapping->i_pages, i=
-ndex, 0);
->>> -=C2=A0=C2=A0=C2=A0 int split_order =3D 0;
->>> +=C2=A0=C2=A0=C2=A0 int split_order =3D 0, entry_order =3D 0;
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int i;
->>>
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Convert user data gfp flags to xarray=
- node gfp flags */
->>> @@ -2180,6 +2180,7 @@ static int shmem_split_large_entry(struct inode *=
-inode, pgoff_t index,
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>>
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 order =3D xas_ge=
-t_order(&xas);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 entry_order =3D order;
->>>
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Try to split =
-large swap entry in pagecache */
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (order > 0) {
->>> @@ -2192,23 +2193,23 @@ static int shmem_split_large_entry(struct inode=
- *inode, pgoff_t index,
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 xas_try_split(&xas, old, cur_order, GFP_N=
-OWAIT);
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (xas_error(&xas))
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto unlock;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 /*
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Re-set the swap entry after splitting, and th=
-e swap
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 * offset of the original large entry must be co=
-ntinuous.
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < 1 << cur_order; i +=3D (1 << split_=
-order)) {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pgoff_t aligned_index =3D rou=
-nd_down(index, 1 << cur_order);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 swp_entry_t tmp;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tmp =3D swp_entry(swp_type(sw=
-ap), swp_offset(swap) + i);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __xa_store(&mapping->i_pages,=
- aligned_index + i,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 swp_to_radix_entry(tmp), 0);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 }
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cur_order =3D split_order;
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 split_order =3D
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 xas_try_split_min=
-_order(split_order);
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 }
->>
->> This looks incorrect to me. Suppose we are splitting an order-9 swap ent=
-ry, in the first iteration of the loop, it splits the order-9 swap entry in=
-to 8 order-6 swap entries. At this point, the order-6 swap entries are rese=
-t, and everything seems fine.
->>
->> However, in the second iteration, where an order-6 swap entry is split i=
-nto 63 order-0 swap entries, the split operation itself is correct. But
->
-> typo: 64
->
->> when resetting the order-0 swap entry, it seems incorrect. Now the 'cur_=
-order' =3D 6 and 'split_order' =3D 0, which means the range for the reset i=
-ndex is always between 0 and 63 (see __xa_store()).
->
-> Sorry for confusing. The 'aligned_index' will be rounded down by 'cur_ord=
-er' (which is 6), so the index is correct. But the swap offset calculated b=
-y 'swp_offset(swap) + i' looks incorrect, cause the 'i' is always between 0=
- and 63.
+Ah, there it is. Can both patches somehow be squashed?
 
-Right. I think I need to recalculate swap=E2=80=99s swp_offset for each ite=
-ration
-by adding the difference of round_down(index, 1 << cur_order) and
-round_down(index, 1 << split_order) and use the new swap in this iteration.
-Thank you a lot for walking me through the details. I really appreciate it.=
- :)
+-- 
+Cheers,
 
-My tests did not fail probably because I was using linear access pattern
-to swap in folios.
+David / dhildenb
 
->
->>> +for (i =3D 0; i < 1 << cur_order; i +=3D (1 << split_order)) {
->>> +=C2=A0=C2=A0=C2=A0 pgoff_t aligned_index =3D round_down(index, 1 << cu=
-r_order);
->>> +=C2=A0=C2=A0=C2=A0 swp_entry_t tmp;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 tmp =3D swp_entry(swp_type(swap), swp_offset(swap) =
-+ i);
->>> +=C2=A0=C2=A0=C2=A0 __xa_store(&mapping->i_pages, aligned_index + i,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 swp_to_radix_entry(tmp), 0)=
-;
->>> +}
->>
->> However, if the index is greater than 63, it appears that it is not set =
-to the correct new swap entry after splitting. Please corect me if I missed=
- anyting.
->>
->>> -
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 * Re-set the swap entry after splitting, and the swap
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 * offset of the original large entry must be continuous.
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 */
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for=
- (i =3D 0; i < 1 << order; i++) {
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 pgoff_t aligned_index =3D round_down(index, 1 << orde=
-r);
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 swp_entry_t tmp;
->>> -
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 tmp =3D swp_entry(swp_type(swap), swp_offset(swap) + =
-i);
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 __xa_store(&mapping->i_pages, aligned_index + i,
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 swp_to_radi=
-x_entry(tmp), 0);
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>>
->>> =C2=A0 unlock:
->>> @@ -2221,7 +2222,7 @@ static int shmem_split_large_entry(struct inode *=
-inode, pgoff_t index,
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (xas_error(&xas))
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return xas_error=
-(&xas);
->>>
->>> -=C2=A0=C2=A0=C2=A0 return split_order;
->>> +=C2=A0=C2=A0=C2=A0 return entry_order;
->>> =C2=A0 }
->>>
->>> =C2=A0 /*
->>>
->>>
->>> Best Regards,
->>> Yan, Zi
-
-
-Best Regards,
-Yan, Zi
 
