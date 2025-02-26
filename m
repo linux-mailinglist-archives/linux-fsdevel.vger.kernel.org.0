@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-42653-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42654-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AB72A45874
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 09:35:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C800A4587D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 09:37:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92FF63A1E00
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 08:35:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B59293A4FE7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 08:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA5D1E1DF6;
-	Wed, 26 Feb 2025 08:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835051E1DF6;
+	Wed, 26 Feb 2025 08:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CnV7nmQc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmN5y6cE"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E77A258CEF
-	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Feb 2025 08:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61C7258CEF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Feb 2025 08:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740558908; cv=none; b=ftzvSi4KHuG8j/SojHGS2CKDuz3+ETSxxRv/+BA+YVKwdW6grIQv9MK4z8hvOc/Lvf7DeeunJhaDGDfuTjP71Yfbj6NwwsuDJthoLNLDrNFBdNs1zceEdNWKT+73QiYUI69gIvhbVBa85ZsKprF2QJexS/nYgKjUk/O7eOqVzhM=
+	t=1740559019; cv=none; b=EV672EJkP50ZlBCmjnU5kLwW7Ii9KeFHhBR1MnLqqip0tBl38y+yjZfnG8w1hd/Xx/3HK4B7bKUD7teE7Ouk1LQnWJUzSRz4KYabUKtoPis9Ly9IF0N01m7CzPqVYAmvEVjH8YpRmZwUh9QQ1UA/BC/OpP7B9ep9s7OOPY/yEUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740558908; c=relaxed/simple;
-	bh=OBTrItW98NcceoDDsVBm/FLj1cpeJZWXEyMwZn+0w8s=;
+	s=arc-20240116; t=1740559019; c=relaxed/simple;
+	bh=e7EV4qiBTi/LdnvSl61Ond6t4HI5GKrI2L+IwDs1cH4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kx6ZMIISDbQV7nLhTFpvlwGbsT5859KlXSb+z9KzqkyTukO+hqp3Wph5/9+0mh0n/pWBmGGZEgRnBkFn9zKPmanLeW/FRhqdbf/1T+cCNgkAdbV+W+NLdRwrJ+6hYGreUHBc8RAtLPwQdx0ScEJe4CTBrwyHiwQVFMPE6ReKT6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CnV7nmQc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0977C4CED6;
-	Wed, 26 Feb 2025 08:35:05 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=SpHKxPU4PK8IxzAwqRGq6hes0zrGvz09Z2EBmtosmOE6HVJwf+RrtrITiEm2l+l2H8r9hm61VAxi1B+FEXK/a0HKKwXsY1yc8l3uP7U1dwK4BGqQMsB0aSG9xSa4MyzJYUhncMSo9xWhSgzOF/uCs8pCyRBNhlahaUjqVqrPS5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dmN5y6cE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C39EDC4CED6;
+	Wed, 26 Feb 2025 08:36:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740558907;
-	bh=OBTrItW98NcceoDDsVBm/FLj1cpeJZWXEyMwZn+0w8s=;
+	s=k20201202; t=1740559018;
+	bh=e7EV4qiBTi/LdnvSl61Ond6t4HI5GKrI2L+IwDs1cH4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CnV7nmQcONazW3zzi2ZhjA3rlIdH/HG3MCdkWczH1JuT61AsU8riz/dOsDt/Fjdjv
-	 Z1O0K2cCq9SSbM7nRKIAMiuGlf7NEf4TxhbON2dfTD+gBPEgDJosZlZlWkpWqmib7e
-	 ATsof7jXZyDz/iktqTd3L9828UrHCWk4QrZnUTwBJc6deBmyAacSAfs/0mfvm8zbye
-	 TnfBcWwaB3IIpGOhDEtWnqSFyDI2RSqrH70nAUi8aq2KB96NmPMhgBAfIdADThf3cp
-	 jguH0kXGZH7OCt4GZ3aHwidfqDs9aZScXhlG65Qcy4q+gG4YUEBR5omnEZK3FuJ8pq
-	 cttz6eY27hjzw==
-Date: Wed, 26 Feb 2025 09:35:03 +0100
+	b=dmN5y6cEat91Dusab+PDNQ4YmcmFWzDkbDH9IZcBZAaFYbSKiNz1XEMv9aZdJroDx
+	 X7xppMIjyhz7yNyBYUYAYOWAYJ4Mt7LAK/QxTGOsf/watHTYJJjF67eF6KHY2cdGXz
+	 CL0SrnisqkdQBMo2vqLkGj5+t57cM6ySL4mgnu+WtorTS6oYi0Ic4a7Dx2vkRXtzSQ
+	 08jktzdYC+BHSpO3O406LXlPkhJ/H0+ouiUXI3vfSHf2d7OB07I/TplSgo53GYV6Fp
+	 nq9gZ9l0S+yZMaH1OkbjWeLfFDrh1V/IPYMJ4lKFY6CJ9Jmdp/plVIWRXXKpyEYMI2
+	 F2ctLfFvhtHrA==
+Date: Wed, 26 Feb 2025 09:36:54 +0100
 From: Christian Brauner <brauner@kernel.org>
 To: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org, 
 	Linus Torvalds <torvalds@linux-foundation.org>, Neil Brown <neilb@suse.de>, Miklos Szeredi <miklos@szeredi.hu>, 
 	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 09/21] make d_set_d_op() static
-Message-ID: <20250226-praxen-wolle-a8863193923d@brauner>
+Subject: Re: [PATCH 10/21] d_alloc_parallel(): set DCACHE_PAR_LOOKUP earlier
+Message-ID: <20250226-argument-silbentrennung-9bba44830c11@brauner>
 References: <20250224141444.GX1977892@ZenIV>
  <20250224212051.1756517-1-viro@zeniv.linux.org.uk>
- <20250224212051.1756517-9-viro@zeniv.linux.org.uk>
+ <20250224212051.1756517-10-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,85 +60,72 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250224212051.1756517-9-viro@zeniv.linux.org.uk>
+In-Reply-To: <20250224212051.1756517-10-viro@zeniv.linux.org.uk>
 
-On Mon, Feb 24, 2025 at 09:20:39PM +0000, Al Viro wrote:
-> Convert the last user (d_alloc_pseudo()) and be done with that.
-> Any out-of-tree filesystem using it should switch to d_splice_alias_ops()
-> or, better yet, check whether it really needs to have ->d_op vary among
-> its dentries.
+On Mon, Feb 24, 2025 at 09:20:40PM +0000, Al Viro wrote:
+> Do that before new dentry is visible anywhere.  It does create
+> a new possible state for dentries present in ->d_children/->d_sib -
+> DCACHE_PAR_LOOKUP present, negative, unhashed, not in in-lookup
+> hash chains, refcount positive.  Those are going to be skipped
+> by all tree-walkers (both d_walk() callbacks in fs/dcache.c and
+> explicit loops over children/sibling lists elsewhere) and
+> dput() is fine with those.
+> 
+> NOTE: dropping the final reference to a "normal" in-lookup dentry
+> (in in-lookup hash) is a bug - somebody must've forgotten to
+> call d_lookup_done() on it and bad things will happen.  With those
+> it's OK; if/when we get around to making __dentry_kill() complain
+> about such breakage, remember that predicate to check should
+> *not* be just d_in_lookup(victim) but rather a combination of that
+> with hlist_bl_unhashed(&victim->d_u.d_in_lookup_hash).  Might
+> be worth to consider later...
 > 
 > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
 
 Reviewed-by: Christian Brauner <brauner@kernel.org>
 
->  Documentation/filesystems/porting.rst | 11 +++++++++++
->  fs/dcache.c                           |  5 ++---
->  include/linux/dcache.h                |  1 -
->  3 files changed, 13 insertions(+), 4 deletions(-)
+>  fs/dcache.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
 > 
-> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-> index 004cd69617a2..61b5771dde53 100644
-> --- a/Documentation/filesystems/porting.rst
-> +++ b/Documentation/filesystems/porting.rst
-> @@ -1164,3 +1164,14 @@ magic.
->  
->  If your filesystem sets the default dentry_operations, use set_default_d_op()
->  rather than manually setting sb->s_d_op.
-> +
-> +---
-> +
-> +**mandatory**
-> +
-> +d_set_d_op() is no longer exported (or public, for that matter); _if_
-> +your filesystem really needed that, make use of d_splice_alias_ops()
-> +to have them set.  Better yet, think hard whether you need different
-> +->d_op for different dentries - if not, just use set_default_d_op()
-> +at mount time and be done with that.  Currently procfs is the only
-> +thing that really needs ->d_op varying between dentries.
 > diff --git a/fs/dcache.c b/fs/dcache.c
-> index a4795617c3db..29db27228d97 100644
+> index 29db27228d97..9ad7cbb5a6b0 100644
 > --- a/fs/dcache.c
 > +++ b/fs/dcache.c
-> @@ -1796,7 +1796,7 @@ struct dentry *d_alloc_pseudo(struct super_block *sb, const struct qstr *name)
->  	if (likely(dentry)) {
->  		dentry->d_flags |= DCACHE_NORCU;
->  		if (!dentry->d_op)
-> -			d_set_d_op(dentry, &anon_ops);
-> +			dentry->d_op = &anon_ops;
+> @@ -2518,13 +2518,19 @@ struct dentry *d_alloc_parallel(struct dentry *parent,
+>  	unsigned int hash = name->hash;
+>  	struct hlist_bl_head *b = in_lookup_hash(parent, hash);
+>  	struct hlist_bl_node *node;
+> -	struct dentry *new = d_alloc(parent, name);
+> +	struct dentry *new = __d_alloc(parent->d_sb, name);
+>  	struct dentry *dentry;
+>  	unsigned seq, r_seq, d_seq;
+>  
+>  	if (unlikely(!new))
+>  		return ERR_PTR(-ENOMEM);
+
+This is minor but it would be clearer if the __d_alloc() call was placed
+directly above the error handling.
+
+>  
+> +	new->d_flags |= DCACHE_PAR_LOOKUP;
+> +	spin_lock(&parent->d_lock);
+> +	new->d_parent = dget_dlock(parent);
+> +	hlist_add_head(&new->d_sib, &parent->d_children);
+> +	spin_unlock(&parent->d_lock);
+> +
+>  retry:
+>  	rcu_read_lock();
+>  	seq = smp_load_acquire(&parent->d_inode->i_dir_seq);
+> @@ -2608,8 +2614,6 @@ struct dentry *d_alloc_parallel(struct dentry *parent,
+>  		return dentry;
 >  	}
->  	return dentry;
->  }
-> @@ -1837,7 +1837,7 @@ static unsigned int d_op_flags(const struct dentry_operations *op)
->  	return flags;
->  }
->  
-> -void d_set_d_op(struct dentry *dentry, const struct dentry_operations *op)
-> +static void d_set_d_op(struct dentry *dentry, const struct dentry_operations *op)
->  {
->  	unsigned int flags = d_op_flags(op);
->  	WARN_ON_ONCE(dentry->d_op);
-> @@ -1846,7 +1846,6 @@ void d_set_d_op(struct dentry *dentry, const struct dentry_operations *op)
->  	if (flags)
->  		dentry->d_flags |= flags;
->  }
-> -EXPORT_SYMBOL(d_set_d_op);
->  
->  void set_default_d_op(struct super_block *s, const struct dentry_operations *ops)
->  {
-> diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-> index e8cf1d0fdd08..5a03e85f92a4 100644
-> --- a/include/linux/dcache.h
-> +++ b/include/linux/dcache.h
-> @@ -242,7 +242,6 @@ extern void d_instantiate_new(struct dentry *, struct inode *);
->  extern void __d_drop(struct dentry *dentry);
->  extern void d_drop(struct dentry *dentry);
->  extern void d_delete(struct dentry *);
-> -extern void d_set_d_op(struct dentry *dentry, const struct dentry_operations *op);
->  
->  /* allocate/de-allocate */
->  extern struct dentry * d_alloc(struct dentry *, const struct qstr *);
+>  	rcu_read_unlock();
+> -	/* we can't take ->d_lock here; it's OK, though. */
+> -	new->d_flags |= DCACHE_PAR_LOOKUP;
+>  	new->d_wait = wq;
+>  	hlist_bl_add_head(&new->d_u.d_in_lookup_hash, b);
+>  	hlist_bl_unlock(b);
 > -- 
 > 2.39.5
 > 
