@@ -1,107 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-42676-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42677-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25BB6A45D59
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 12:39:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C061A45F26
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 13:32:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C774F1886156
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 11:39:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE558166687
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 12:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F42E2153D3;
-	Wed, 26 Feb 2025 11:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A5B21B1BE;
+	Wed, 26 Feb 2025 12:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vp5LzxRl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XHOZ+uud"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B0419C54E
-	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Feb 2025 11:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2508C2192FF;
+	Wed, 26 Feb 2025 12:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740569967; cv=none; b=lQCnzgJLniszaMZm/gexsCMyscsYi3U6r7Flw4wnyDqVi1Pr7OXWxW+6P9zbWA24I8m1K9Ya8cCpnpUapCM1H5kp9i3HU8fiqzvNQBjuR6KyKZEpZeJDwPygP8lu9kxpbIINtN3nBkocdE74pkSt7CKeNHWLOzZaQ/QEo5GDC8U=
+	t=1740573148; cv=none; b=TUPSpsn0/6hVoZgjPSdTYu77qnEPjfa0djsvAdCiO1O008ZbapYxxK5lEeiNUvfQI9p50N8QkOYnvvzBunkStlyqV4qtil1vINMpZ7NQG66YdCIQpuPEVgM/GQQJFIKWfkoH0zO6vcpC6inY2nI8GgLcn5JGBt/oDXjokgAJ6ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740569967; c=relaxed/simple;
-	bh=91HyT0xAPvt5kzPtlkf3c0T76XPdPOpKrD6w5BJb1OQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WFacmMS7/kpmLGPD/gtuVXGQ8O6+FGoUA6ALhi72Y5eJZfJ68YKn7KhtB56n6q3M9xVFdkRFXqYUyA/sPfy0PKpetK9eb6l71RP5GWjQwBX9IbAzA8U+1pQiIw5/XkZukf8UOhv45t5BWQVRWdXbHnKXaJV0Ou13c0uKtDaiI4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vp5LzxRl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740569964;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yrReGGAl/vB7YRDV5AmH0LImtmenH6zPTsYUBs/1CmQ=;
-	b=Vp5LzxRl46Gk/l5caRMo8cr3zF9+QgFmDImVR22QQ6g6cOnBqblLU9KxnFIBjUpuMA4NvZ
-	Ic2dxEMp5lPQCTqvrUsLeZ+v6rW0p4t5DwZ15iVIGjTdmRTNBNlK7REF7G6caLwp90Jy4V
-	cpGdBwreo05I/cIUXcHlMQ903+i+d/Q=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-437-zm6XF-TgPMuFUWQr_L91gQ-1; Wed,
- 26 Feb 2025 06:39:23 -0500
-X-MC-Unique: zm6XF-TgPMuFUWQr_L91gQ-1
-X-Mimecast-MFC-AGG-ID: zm6XF-TgPMuFUWQr_L91gQ_1740569961
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 28D3F1801A18;
-	Wed, 26 Feb 2025 11:39:21 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.247])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0A1F2300018D;
-	Wed, 26 Feb 2025 11:39:16 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 26 Feb 2025 12:38:51 +0100 (CET)
-Date: Wed, 26 Feb 2025 12:38:45 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
-Cc: Manfred Spraul <manfred@colorfullife.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>,
-	Neeraj.Upadhyay@amd.com
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
- full
-Message-ID: <20250226113845.GB8995@redhat.com>
-References: <20250102140715.GA7091@redhat.com>
- <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
- <20250224142329.GA19016@redhat.com>
- <20250225115736.GA18523@redhat.com>
- <2a0a8e1e-1c37-4655-8a82-54681b2a83ae@amd.com>
+	s=arc-20240116; t=1740573148; c=relaxed/simple;
+	bh=+19bA/k+yDxHE7L7igYi0u9cuiES9RzhOod9ze8yMjQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f3Eaksj8s/V+QcdK/ykxi/tEsYv2i+D/EYbjKyOhP3CTC6YqWiqazcGmgp0FVa049NYXxJJDdPCND+ZHEvgW1bOcNIB9brmuksr1mhWGNvRw0UDWeP1NVBmlMKfre8bG6k/G6ehbu9q+faGlvQKsT3jYZ9sSwGiC/HzZ9wSNJeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XHOZ+uud; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-abb9709b5b5so1226191466b.2;
+        Wed, 26 Feb 2025 04:32:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740573144; x=1741177944; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RCR+RwatVKn87ok7pB6TBCSxW6auxGHtyVpuY7aiEe4=;
+        b=XHOZ+uudReT7sPBgFGcTozDM4vkiah77sYzF8sqWRA1cmpgphT6IP+MbQGDAgo0h/O
+         kw0q02PA97uLzL41+z6Um3H2TfUMLdb8wvMoDw+CH2meeZ1YWpmkzVH3Wcv5eyiSFQ2o
+         VN47Dri21dsR9OxfULTw0yrtGqJyCclsF4kmx8UaH5VoLHF87b8E+AAXLVYpiaF8JvLP
+         cKnRW6b48irBF52q9A1BAGykqZucNUUAAPQz/fieIkykLm6cpuImMV3srO/JW5haPr4r
+         +ey0J4DOif7mvstHtQnHO2Wkf/3m6OFqidEZtNbTycRaWlD+xDCX3dsWcShvcZoQ/7kA
+         HaOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740573144; x=1741177944;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RCR+RwatVKn87ok7pB6TBCSxW6auxGHtyVpuY7aiEe4=;
+        b=L+oUrECC7iAIpUsdTjsgJMpSTcZPEe/0ODoPkJUQTDrhN459Kj4D/IDlrk1zTDr7ZN
+         um7uveW1iFLMG8IweKhCa2pr4z2pQVbFbLLrugV7jlf+Q8ZhynT4PmlrbkD7FNaKgIfL
+         fO+Mj7kEF5EJYTWYBXZsl8W3807Pa3MOC/vFZ01XSBiPd3VMnHApf+/uX63O2pZfvofy
+         VYPXrqmB9KtZzwmQQ6mfvrEKzWJJbC59mXpEGY3Z+gbNHqVWFpQvX2cfxjRwRs30REOp
+         KIYEAMpZ1cQu8U0jQjKkyIqaHTPKHGgqkn9BSOoSaWDGTYVylAPeNCF/cOyk3WZR9lpr
+         n18g==
+X-Forwarded-Encrypted: i=1; AJvYcCUjLfWJpRGRh/oOSlcC9Ka5WHqpiOFyfDM5b0sJB/3XsiOxxbYRAF6EpOTCEP3xW2qQXwBKQKEl8Kj2@vger.kernel.org, AJvYcCVpt7X2/LgfCGjWOTVEkWMF726NHyQtkiM+H1+HHm5yOlEgR4y85yLSYx5FVF8T8HjH0kpRwlU0uXbDLIYQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyxaIyfrVLwxt9DQh8jFMM/hE/xwybemaSDwtk2ThE67W2EZzm
+	nrV7H8QBZLlFzsGs+9p9WBByknAVZlyH5NbvxZcg8Bxaj9kAKpCB
+X-Gm-Gg: ASbGncv73B85wM4CarAe1eJ+yZ1rRNf+Yxiye227mntsyQYrmBEbPWiZiVD4imI4ZqB
+	46le+C0FVmwUev+AS/TglICtBHYogHmFqph1sBUbthGFrwez7w/T+/FvPZb5M6wjlLwvo89MVy1
+	Vkag2iSgWxguzso6dc5300Zr6ankp8OgUbsPb5XQvJsQefxIADYgwxclp3UUM2ZwCheAL0XR0Tn
+	YTLKPLtnZfSQJSeTcy33Im4K1egwOquY4CoE6KJ4w3TmbXCZRdOnd1k9QIFIGpLPKn/7+VP2fZ5
+	rrRKg7BxoFYZXn7P+H1WLafypSCqSR83JmNUySEPE228zSVH04BzaWSf9g0=
+X-Google-Smtp-Source: AGHT+IE2GLV5GfCIbE+t6XuZP/5xXdzaXqzsF1704wtdqZOizRzM+e1C7CRQYvBdT3FvqQCIpBjRbA==
+X-Received: by 2002:a17:907:3f1c:b0:abe:c811:455c with SMTP id a640c23a62f3a-abed0c67b51mr908046966b.12.1740573144097;
+        Wed, 26 Feb 2025 04:32:24 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:7b07])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed204625dsm315773266b.125.2025.02.26.04.32.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 04:32:23 -0800 (PST)
+Message-ID: <7b440d54-b519-4995-9f5f-f3e636c6d477@gmail.com>
+Date: Wed, 26 Feb 2025 12:33:21 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2a0a8e1e-1c37-4655-8a82-54681b2a83ae@amd.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] iomap: propagate nowait to block layer
+To: Dave Chinner <david@fromorbit.com>
+Cc: io-uring@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+ linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
+ linux-xfs@vger.kernel.org, wu lei <uwydoc@gmail.com>
+References: <ca8f7e4efb902ee6500ab5b1fafd67acb3224c45.1740533564.git.asml.silence@gmail.com>
+ <Z76eEu4vxwFIWKj7@dread.disaster.area>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <Z76eEu4vxwFIWKj7@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Thanks Sapkal!
+On 2/26/25 04:52, Dave Chinner wrote:
+> On Wed, Feb 26, 2025 at 01:33:58AM +0000, Pavel Begunkov wrote:
+>> There are reports of high io_uring submission latency for ext4 and xfs,
+>> which is due to iomap not propagating nowait flag to the block layer
+>> resulting in waiting for IO during tag allocation.
+>>
+>> Cc: stable@vger.kernel.org
+>> Link: https://github.com/axboe/liburing/issues/826#issuecomment-2674131870
+>> Reported-by: wu lei <uwydoc@gmail.com>
+>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>> ---
+>>   fs/iomap/direct-io.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+>> index b521eb15759e..25c5e87dbd94 100644
+>> --- a/fs/iomap/direct-io.c
+>> +++ b/fs/iomap/direct-io.c
+>> @@ -81,6 +81,9 @@ static void iomap_dio_submit_bio(const struct iomap_iter *iter,
+>>   		WRITE_ONCE(iocb->private, bio);
+>>   	}
+>>   
+>> +	if (iocb->ki_flags & IOCB_NOWAIT)
+>> +		bio->bi_opf |= REQ_NOWAIT;
+> 
+> ISTR that this was omitted on purpose because REQ_NOWAIT doesn't
+> work in the way iomap filesystems expect IO to behave.
+> 
+> I think it has to do with large direct IOs that require multiple
+> calls to submit_bio(). Each bio that is allocated and submitted
+> takes a reference to the iomap_dio object, and the iomap_dio is not
+> completed until that reference count goes to zero.
+> 
+> hence if we have submitted a series of bios in a IOCB_NOWAIT DIO
+> and then the next bio submission in the DIO triggers a REQ_NOWAIT
+> condition, that bio is marked with a BLK_STS_AGAIN and completed.
+> This error is then caught by the iomap dio bio completion function,
+> recorded in the iomap_dio structure, but because there is still
+> bios in flight, the iomap_dio ref count does not fall to zero and so
+> the DIO itself is not completed.
+> 
+> Then submission loops again, sees dio->error is set and aborts
+> submission. Because this is AIO, and the iomap_dio refcount is
+> non-zero at this point, __iomap_dio_rw() returns -EIOCBQUEUED.
+> It does not return the -EAGAIN state that was reported to bio
+> completion because the overall DIO has not yet been completed
+> and all the IO completion status gathered.
+> 
+> Hence when the in flight async bios actually complete, they drop the
+> iomap dio reference count to zero, iomap_dio_complete() is called,
+> and the BLK_STS_AGAIN error is gathered from the previous submission
+> failure. This then calls AIO completion, and reports a -EAGAIN error
+> to the AIO/io_uring completion code.
+> 
+> IOWs, -EAGAIN is *not reported to the IO submitter* that needs
+> this information to defer and resubmit the IO - it is reported to IO
+> completion where it is completely useless and, most likely, not in a
+> context that can resubmit the IO.
+> 
+> Put simply: any code that submits multiple bios (either individually
+> or as a bio chain) for a single high level IO can not use REQ_NOWAIT
+> reliably for async IO submission.
 
-I'll try to think. Meanwhile,
+I know the issue, but admittedly forgot about it here, thanks for
+reminding! Considering that attempts to change the situation failed
+some years ago and I haven't heard about it after, I don't think
+it'll going to change any time soon.
 
-On 02/26, Sapkal, Swapnil wrote:
->
-> Exact command with parameters is
->
-> 	/usr/bin/hackbench -g 16 -f 20 --threads --pipe -l 100000 -s 100
+So how about to follow what the block layer does and disable multi
+bio nowait submissions for async IO?
 
-Can you reproduce with "--process" rather than "--threads" ?
+if (!iocb_is_sync(iocb)) {
+	if (multi_bio)
+		return -EAGAIN;
+	bio_opf |= REQ_NOWAIT;
+}
 
-Oleg.
+Is there anything else but io_uring and AIO that can issue async
+IO though this path?
+
+> We have similar limitations on IO polling (IOCB_HIPRI) in iomap, but
+> I'm not sure if REQ_NOWAIT can be handled the same way. i.e. only
+> setting REQ_NOWAIT on the first bio means that the second+ bio can
+> still block and cause latency issues.
+> 
+> So, yeah, fixing this source of latency is not as simple as just
+> setting REQ_NOWAIT. I don't know if there is a better solution that
+> what we currently have, but causing large AIO DIOs to
+> randomly fail with EAGAIN reported at IO completion (with the likely
+> result of unexpected data corruption) is far worse behaviour that
+> occasionally having to deal with a long IO submission latency.
+
+By the end of the day, it's waiting for IO, the first and very thing
+the user don't want to see for async IO, and that's pretty much what
+makes AIO borderline unusable. We just can't have it for an asynchronous
+interface. If we can't fix it up here, the only other option I see
+is to push all such io_uring requests to a slow path where we can
+block, and that'd be quite a large regression.
+
+-- 
+Pavel Begunkov
 
 
