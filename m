@@ -1,147 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-42712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98390A46734
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 17:59:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A467DA467C5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 18:17:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 833DC188B0CD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 16:51:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 100B33AE1EC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 17:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD4C221D80;
-	Wed, 26 Feb 2025 16:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6892253EC;
+	Wed, 26 Feb 2025 17:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kWx2vqNr";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="q3CoRUW3";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kWx2vqNr";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="q3CoRUW3"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T0prwXY7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460AE19005F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Feb 2025 16:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF59821CC79
+	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Feb 2025 17:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740588684; cv=none; b=VxZh39VJlRxY/GvwXYNEmWK82hkm5Bo34degnqENuZ0bMFi2S9kc/niWptCHSFk81W+oTv+5gQA/rlWy8ShCkfOrWg7UM28qk8HC+8dRT7DgVeNxk2sc/pF44U4VZq2HeMTw8VRsb8CZfApXeK+IQi60vGCRFePpMXwzGH15avg=
+	t=1740590250; cv=none; b=YczPKy8X3DCP5ftFAEC8BY8hkx/4qLn/DSxGGxQInGXicLVCdMuQiJJ2cVOJ1TMw7aOdnncV4kP/IloorPTt3O/Pivi6KBvRUCL0e09xZLh4YrMaPz8qqW4gq/p/xLr5U2knWszF+nEbH6U4FhIff+e4oU2KXd7hgA/rk/sW5Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740588684; c=relaxed/simple;
-	bh=5jWJt3ElwBSSlxHT3NPsO0/q1f37q8MaoI6ZKsnGtW0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=giivQmbEYCylTAPR/6ClY1QEim0cFp7ye8m8mEZOngxj3kimvL2jMA7QiV+R37Q7jH2KXuU/xmKZlH3uv0T5qI++RJ/T+OJJbSKmDKlmZEMcNk2EdzxThxKleBRGEYf2Tum79bxOE1CS9x1wt6YzpSGLJN194ymBnygByqytM3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kWx2vqNr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=q3CoRUW3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kWx2vqNr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=q3CoRUW3; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1740590250; c=relaxed/simple;
+	bh=4IWTO+yFXZQLpfb06fmYIIE+muqxQRpsizmPObyVJUU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o5LU4X+DH3fFzb3c7n5Ka7bCBTKFsuiOze+tHcGZy1h8ektFwXpBwq6qeZmTIp01a/aJ9Jqm0x8uPJR0Gmx9BDvFqpkFKaUMkSaMuUFY4spg1lgTQWTf/z3km2Jnwsmmlj1cJwkwZYDdI1Vw6+KBqGzvt0E0veGuuPM38hebCWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T0prwXY7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740590247;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nSXYs0Ypm9+hDMpFhNpxbn65/XRpk3PYQsylAaaaDb0=;
+	b=T0prwXY72RjcUXTM4raZ47+Ir524PwiTpYEv0YnkzdwjG6v+OX304hKQW9wXXKSgyy9bha
+	FJqiaxWAG2sT1EjkMs/pmPxmFRrFIGMbdGZVfg+a7I4ibflTSib/hUm8B5l6BH6MrJiSLR
+	aw/SUBKHFYct+S4P/jzy+2g9aOwW5/M=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-342-PbARJ24iO0udAZCO0VAnUw-1; Wed,
+ 26 Feb 2025 12:17:24 -0500
+X-MC-Unique: PbARJ24iO0udAZCO0VAnUw-1
+X-Mimecast-MFC-AGG-ID: PbARJ24iO0udAZCO0VAnUw_1740590242
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5A03B1F749;
-	Wed, 26 Feb 2025 16:51:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740588681; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=8yyGtTaR7N11F7GCU59T57WH0cFUEXFUtFmmmXpX2zw=;
-	b=kWx2vqNr6TSLqLMcGc+BDVbkrk1l2WCF32XjGvIG6V9kIv6G7DRp2yIokbiQ+SiEWOh806
-	nCQMHVAfmu5lVuRRh2AdW7IQmzNT+R0R1q6WoKIFJJ8UmPfYTF+SVAKgrISt/Zk2/x3qpf
-	tMMD6lM+MDFdULdg1UeeBCM/D+C8LXQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740588681;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=8yyGtTaR7N11F7GCU59T57WH0cFUEXFUtFmmmXpX2zw=;
-	b=q3CoRUW3fLPxWz9JETDuf7O1sTfWjsFJCxuktR3HmbAkjXKBtTdFH9TZYBg4aRe6H6/yLu
-	+X1PmpXu5d8xJ7DA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740588681; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=8yyGtTaR7N11F7GCU59T57WH0cFUEXFUtFmmmXpX2zw=;
-	b=kWx2vqNr6TSLqLMcGc+BDVbkrk1l2WCF32XjGvIG6V9kIv6G7DRp2yIokbiQ+SiEWOh806
-	nCQMHVAfmu5lVuRRh2AdW7IQmzNT+R0R1q6WoKIFJJ8UmPfYTF+SVAKgrISt/Zk2/x3qpf
-	tMMD6lM+MDFdULdg1UeeBCM/D+C8LXQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740588681;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=8yyGtTaR7N11F7GCU59T57WH0cFUEXFUtFmmmXpX2zw=;
-	b=q3CoRUW3fLPxWz9JETDuf7O1sTfWjsFJCxuktR3HmbAkjXKBtTdFH9TZYBg4aRe6H6/yLu
-	+X1PmpXu5d8xJ7DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 20F5F1377F;
-	Wed, 26 Feb 2025 16:51:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id AkHLAYlGv2dqdgAAD6G6ig
-	(envelope-from <rgoldwyn@suse.de>); Wed, 26 Feb 2025 16:51:21 +0000
-Date: Wed, 26 Feb 2025 11:51:19 -0500
-From: Goldwyn Rodrigues <rgoldwyn@suse.de>
-To: linux-fsdevel@vger.kernel.org
-Cc: hch@lst.de
-Subject: [PATCH] make sure IOMAP_F_BOUNDARY does not merge with next IO
-Message-ID: <hgvgztw7ip3purcsaxxozt3qmxskgzadifahxxaj3nzilqqzcz@3h7bcaeoy6gl>
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 415711955F28;
+	Wed, 26 Feb 2025 17:17:22 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.247])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id E6600180035E;
+	Wed, 26 Feb 2025 17:17:17 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 26 Feb 2025 18:16:52 +0100 (CET)
+Date: Wed, 26 Feb 2025 18:16:46 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	Manfred Spraul <manfred@colorfullife.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>,
+	Neeraj.Upadhyay@amd.com
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+Message-ID: <20250226171645.GH8995@redhat.com>
+References: <20250102140715.GA7091@redhat.com>
+ <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
+ <20250224142329.GA19016@redhat.com>
+ <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt>
+ <CAGudoHGaJyipGfvsXVKrVaMBNk8d35o66VUoQ3W-NDa1=+HPOA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHGaJyipGfvsXVKrVaMBNk8d35o66VUoQ3W-NDa1=+HPOA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-If the current ioend is built for iomap with flags set to
-IOMAP_F_BOUNDARY and the next iomap does not have IOMAP_F_BOUNDARY set,
-IOMAP_F_BOUNDARY will not be respected because the iomap structure has
-been overwritten during the map_blocks call for the next iomap. Fix this
-by checking both iomap.flags and ioend->io_flags for IOMAP_F_BOUNDARY.
+On 02/26, Mateusz Guzik wrote:
+>
+> On Wed, Feb 26, 2025 at 2:19 PM Mateusz Guzik <mjguzik@gmail.com> wrote:
+> >
+> Now that I sent the e-mail, I realized the page would have unread data
+> after some offset, so there is no room to *append* to it, unless one
+> wants to memmove everythiing back.
 
-Fixes: 64c58d7c9934 ("iomap: add a merge boundary flag")
-Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+Yes, but... even "memmove everything back" won't help if
+pipe->ring_size > 1 (PIPE_DEF_BUFFERS == 16 by default).
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index d303e6c8900c..0e2d24581bd3 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1739,7 +1739,8 @@ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writepage_ctx *wpc,
- 
- static bool iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t pos)
- {
--	if (wpc->iomap.offset == pos && (wpc->iomap.flags & IOMAP_F_BOUNDARY))
-+	if (wpc->iomap.offset == pos &&
-+	    ((wpc->iomap.flags | wpc->ioend->io_flags) & IOMAP_F_BOUNDARY))
- 		return false;
- 	if ((wpc->iomap.flags & IOMAP_F_SHARED) !=
- 	    (wpc->ioend->io_flags & IOMAP_F_SHARED))
+> However, the suggestion below stands:
 
--- 
-Goldwyn
+Agreed, any additional info can help.
+
+Oleg.
+
+> > As for the bug, I don't see anything obvious myself.
+> >
+> > However, I think there are 2 avenues which warrant checking.
+> >
+> > Sapkal, if you have time, can you please boot up the kernel which is
+> > more likely to run into the problem and then run hackbench as follows:
+> >
+> > 1. with 1 fd instead of 20:
+> >
+> > /usr/bin/hackbench -g 16 -f 1 --threads --pipe -l 100000 -s 100
+> >
+> > 2. with a size which divides 4096 evenly (e.g., 128):
+> >
+> > /usr/bin/hackbench -g 1 -f 20 --threads --pipe -l 100000 -s 128
+> 
+> 
+> 
+> -- 
+> Mateusz Guzik <mjguzik gmail.com>
+> 
+
 
