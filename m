@@ -1,123 +1,389 @@
-Return-Path: <linux-fsdevel+bounces-42716-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42717-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B645A46947
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 19:16:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B08C4A46A98
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 20:05:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C5057A99FD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 18:13:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A38F916D9F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 19:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED85235C0F;
-	Wed, 26 Feb 2025 18:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D61237718;
+	Wed, 26 Feb 2025 19:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eD8qygok"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="j0vkeuR7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB3323535E
-	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Feb 2025 18:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6FC220680
+	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Feb 2025 19:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740593618; cv=none; b=YOIWlR96z/PGDEkTvxxgcHHDWqAgEmF3l5+BUvljuwfNRzB5ITadRM/uVSZYp61xyJVk+guIORmZxD5lptPQav6rS9dRhtSQ7+qDNI4yLc/0pkyC3IXg0Cpek65BZEn2LVUGPaBzWBvoPWCHuyBQoO+7wFlHKJzG5HiObIVJ9d8=
+	t=1740596726; cv=none; b=mw917nXFkGrkdqYeLY0/uUHA5RZtnFuJjWB4y4FdvbbTX5BwROVIAzz/kHJI0+EFhpnM/YkNkAUy0hXsNCwXt8kVIrt0yozxlHjNP/xpCnkQg5K7aEf5uheqCBhtGeO6Omth+sB7hQb9U0ZTT9w5sdo0qZm8d/RRVgI9xpOA/2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740593618; c=relaxed/simple;
-	bh=XLAtlLUXwKK8ny06xKZ7zYu8j6udBGfXLlBXiJ9RE3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=asPTkgVOp5PEt159MCE5X/Ewz241qdpZMDjNLObJZYbnoOr5b7sOh/mTjhxrBmWLXJ5YMA0StpAcxTkYC71QEM8JxC7KgIPnU+AImHIEENJYiEObBMpPnFm72wdWioQu5UClo71Ck0oUiePKTWbfEAxFcC1zdGDxx+LlwCcyqHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eD8qygok; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740593615;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XLAtlLUXwKK8ny06xKZ7zYu8j6udBGfXLlBXiJ9RE3k=;
-	b=eD8qygoknIa7TJ0Zmr7MuhWW9sVuOJxynya61fb5gAir+aCCcjyZ7Zk+kyLSQB8kf2yWix
-	SIZtKwbL+8TatpFu/bM8bZ4iQ6Blt1ccjX87c6Vm1DaTehaIrT/L7Aij508WT5fQLFPB2v
-	IN4kpwPWFdTHX/1QeVaI1o6tV0TgRV4=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-57-2kt4h1ThNnaDv1YG9PAUkg-1; Wed,
- 26 Feb 2025 13:13:22 -0500
-X-MC-Unique: 2kt4h1ThNnaDv1YG9PAUkg-1
-X-Mimecast-MFC-AGG-ID: 2kt4h1ThNnaDv1YG9PAUkg_1740593600
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5EFC71800876;
-	Wed, 26 Feb 2025 18:13:20 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.247])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 9F3EF19560B9;
-	Wed, 26 Feb 2025 18:13:15 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 26 Feb 2025 19:12:50 +0100 (CET)
-Date: Wed, 26 Feb 2025 19:12:20 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
-Cc: Manfred Spraul <manfred@colorfullife.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>,
-	Neeraj.Upadhyay@amd.com, mjguzik@gmail.com
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
- full
-Message-ID: <20250226181220.GJ8995@redhat.com>
-References: <20250102140715.GA7091@redhat.com>
- <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
- <20250224142329.GA19016@redhat.com>
- <20250225115736.GA18523@redhat.com>
- <2a0a8e1e-1c37-4655-8a82-54681b2a83ae@amd.com>
- <20250226113845.GB8995@redhat.com>
- <b8f0fc4c-7b54-4bec-b3cf-9e0b542832f4@amd.com>
+	s=arc-20240116; t=1740596726; c=relaxed/simple;
+	bh=RnQ9g/Wy6E1VJwrUr9oq9ZQgA54OsfI9toc9NsBjMRI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mqPr6zZ9ug/4E/IFtqqsF3hrTuqmy9iIK+U1n/AmkvFfhwX1NVcoaPJmY4V4QFDo4DXx1dpQdgNxTXp6Z/WqbmxB4lnA3BnscpdUUljTY77tjel2a9eSiV0qRlrivNZKdVbTuTk7AEBvaHsI8ZxNu02GzfwlFqdWMdKCcsdGURo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=j0vkeuR7; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2f9d3d0f55dso314969a91.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Feb 2025 11:05:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1740596723; x=1741201523; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4INREAWwgjraVq6E3VB47jHRo/ztU1ZT9LDQgJ3arv0=;
+        b=j0vkeuR7bmBPTMdmoH6617H4ZAEJuoC17Wsm5u7ofwg8A57w052dk5kfMwiKYAs0x5
+         vEOA6xNHgXN4uFGhEbt/rG+6oiUa0VeRNRBEdh8IQ+EI/OQLhrf5yTLqRCQ9BG2iiDl8
+         cJbm5U7yt07EDFm37LjW0xMxRkJSY7d61WV1dYmmSkduMGkI5F+AXJMrngmth+dN96EQ
+         oNd4IJesb0UaX8BE8HDKlpQ4x5/E/WixcwzMrk5tjHvgc3vQ1quwEV3r02GlZ1ngUcwA
+         9qwcdYnNfgGM5Wi+Wt3xdfL5+5kpdZaWmZGdZZPFgByL5Cjz3A/4hwkm8M3op56Oj0Te
+         d1Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740596723; x=1741201523;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4INREAWwgjraVq6E3VB47jHRo/ztU1ZT9LDQgJ3arv0=;
+        b=XfR3VdPNzmF5n3bVcHEI9kf8tjB1f0VZb/h7lMRjpweQFu908SAeDAWIJcFcCeu1Se
+         6PavfREcs65GbLwGqMjnGslt22vkNf+ed1JkOXXfPHgq3PxaEh1puKtPcgTEjHxWu+2l
+         TjmsCvkZJZW2BrkoOUD4azxHpG0ywyyiUYlaf3QmrP5lrbMyemY6bIx12NXiinXjKcYu
+         ZGtiv7dATdgsI8qwLSKomvEE165L55FVm/brkpls8la6uiqu4mPTjMF4Tz4ZSCASt90F
+         +OC0xtQgkwBlnNSAOQppfbht5dlRHA/nXdlj+Tqvwr5urJJEEtCxB6XT/azxcbJnqtyG
+         PJfw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOSFbPXCG4ZAJSHhnNszjUVVpv1KeDkOMd5PBsWuw/TXCW8pR8r+etL0DG9qQchRuYSOgeEgpFkB12Ye6z@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywkx1kMIc8G9Rh+KWcT3ihwxsUlkzbBXZo7WHeErYvk14Z98aRt
+	+bf0/M7igNBykvyOs0ySHh/BndOAM2PQoUg6Sgkv9+KY7XvQb5Ml6HCm+uLEe6A=
+X-Gm-Gg: ASbGncuNc7rlIyibyDABvg62NU06HGwYXQs3aSVj1Yc89YGxCDqhuaweDLsq2heaw37
+	MSzF7Qp/vxOzUMK+fKWalY/teeNTkhhdsi2GFYYlTduBpkkh5OwirLt3hMmiDArcEIaJzNe6r4P
+	YHPuT0mVWjOHQ8VwOB66+NdIr07x3BqOTiwskGnce8VUkRMxmi8i2ctLoKIOmyex9/EnIEDX4jA
+	KxrAjOIsN8J5WZZjLHjTz5sJKt3gt7Iq3yQ6l/AX5NhHw/tXRjAafx8gFAl9oBZiG9EwwVoVn3j
+	ydNMK7RTtnzXf7XoialOwrweGmTF+q1zbr4L1FIdpAJR
+X-Google-Smtp-Source: AGHT+IHZGUYqPanSW+m+4MRsCZLuQOIZDadvIgL1ssW63dHVgkBN7ttr8xTfW5SZuocq/WMre3H8WA==
+X-Received: by 2002:a17:90b:384b:b0:2ee:a04b:92ce with SMTP id 98e67ed59e1d1-2fe7e3b2e96mr6131652a91.32.1740596723149;
+        Wed, 26 Feb 2025 11:05:23 -0800 (PST)
+Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:c0d9:dcd1:ac55:69e5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aeda7f7f39bsm3643639a12.27.2025.02.26.11.05.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 11:05:22 -0800 (PST)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: ceph-devel@vger.kernel.org,
+	dhowells@redhat.com,
+	amarkuze@redhat.com
+Cc: idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com
+Subject: [PATCH v2] ceph: fix slab-use-after-free in have_mon_and_osd_map()
+Date: Wed, 26 Feb 2025 11:05:15 -0800
+Message-ID: <20250226190515.314845-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b8f0fc4c-7b54-4bec-b3cf-9e0b542832f4@amd.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Transfer-Encoding: 8bit
 
-On 02/26, Sapkal, Swapnil wrote:
->
-> >Can you reproduce with "--process" rather than "--threads" ?
-> >
-> I was able to reproduce the issue with processes also. Total 33 processes
-> were sleeping out of which 20 were readers and 13 were writers.
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-Thanks a lot. I am wondering what makes your machine (or .config?)
-special ;) A lot of people and robots tested this patch with these
-options.
+The generic/395 and generic/397 is capable of generating
+the oops is on line net/ceph/ceph_common.c:794 with
+KASAN enabled.
 
-> The stack trace for main hackbench process is as follows:
->
-> [<0>] do_wait+0xb5/0x110
+BUG: KASAN: slab-use-after-free in have_mon_and_osd_map+0x56/0x70
+Read of size 4 at addr ffff88811012d810 by task mount.ceph/13305
 
-Yes, this is clear, the main thread/process is not interesting.
+CPU: 2 UID: 0 PID: 13305 Comm: mount.ceph Not tainted 6.14.0-rc2-build2+ #1266
+Hardware name: ASUS All Series/H97-PLUS, BIOS 2306 10/09/2014
+Call Trace:
+<TASK>
+dump_stack_lvl+0x57/0x80
+? have_mon_and_osd_map+0x56/0x70
+print_address_description.constprop.0+0x84/0x330
+? have_mon_and_osd_map+0x56/0x70
+print_report+0xe2/0x1e0
+? rcu_read_unlock_sched+0x60/0x80
+? kmem_cache_debug_flags+0xc/0x20
+? fixup_red_left+0x17/0x30
+? have_mon_and_osd_map+0x56/0x70
+kasan_report+0x8d/0xc0
+? have_mon_and_osd_map+0x56/0x70
+have_mon_and_osd_map+0x56/0x70
+ceph_open_session+0x182/0x290
+? __pfx_ceph_open_session+0x10/0x10
+? __init_swait_queue_head+0x8d/0xa0
+? __pfx_autoremove_wake_function+0x10/0x10
+? shrinker_register+0xdd/0xf0
+ceph_get_tree+0x333/0x680
+vfs_get_tree+0x49/0x180
+do_new_mount+0x1a3/0x2d0
+? __pfx_do_new_mount+0x10/0x10
+? security_capable+0x39/0x70
+path_mount+0x6dd/0x730
+? __pfx_path_mount+0x10/0x10
+? kmem_cache_free+0x1e5/0x270
+? user_path_at+0x48/0x60
+do_mount+0x99/0xe0
+? __pfx_do_mount+0x10/0x10
+? lock_release+0x155/0x190
+__do_sys_mount+0x141/0x180
+do_syscall_64+0x9f/0x100
+entry_SYSCALL_64_after_hwframe+0x76/0x7e
+RIP: 0033:0x7f01b1b14f3e
+Code: 48 8b 0d d5 3e 0f 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a2 3e 0f 00 f7 d8 64 89 01 48
+RSP: 002b:00007fffd129fa08 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000564ec01a7850 RCX: 00007f01b1b14f3e
+RDX: 0000564ec00f2225 RSI: 00007fffd12a1964 RDI: 0000564ec0147a20
+RBP: 00007fffd129fbd0 R08: 0000564ec014da90 R09: 0000000000000080
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fffd12a194e
+R13: 0000000000000000 R14: 00007fffd129fa50 R15: 00007fffd129fa40
+</TASK>
 
-> I am trying to reproduce the issue with suggestions by Mateusz.
+Allocated by task 13305:
+stack_trace_save+0x8c/0xc0
+kasan_save_stack+0x1e/0x40
+kasan_save_track+0x10/0x30
+__kasan_kmalloc+0x3a/0x50
+__kmalloc_noprof+0x247/0x290
+ceph_osdmap_alloc+0x16/0x130
+ceph_osdc_init+0x27a/0x4c0
+ceph_create_client+0x153/0x190
+create_fs_client+0x50/0x2a0
+ceph_get_tree+0xff/0x680
+vfs_get_tree+0x49/0x180
+do_new_mount+0x1a3/0x2d0
+path_mount+0x6dd/0x730
+do_mount+0x99/0xe0
+__do_sys_mount+0x141/0x180
+do_syscall_64+0x9f/0x100
+entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-Great.
+Freed by task 9475:
+stack_trace_save+0x8c/0xc0
+kasan_save_stack+0x1e/0x40
+kasan_save_track+0x10/0x30
+kasan_save_free_info+0x3b/0x50
+__kasan_slab_free+0x18/0x30
+kfree+0x212/0x290
+handle_one_map+0x23c/0x3b0
+ceph_osdc_handle_map+0x3c9/0x590
+mon_dispatch+0x655/0x6f0
+ceph_con_process_message+0xc3/0xe0
+ceph_con_v1_try_read+0x614/0x760
+ceph_con_workfn+0x2de/0x650
+process_one_work+0x486/0x7c0
+process_scheduled_works+0x73/0x90
+worker_thread+0x1c8/0x2a0
+kthread+0x2ec/0x300
+ret_from_fork+0x24/0x40
+ret_from_fork_asm+0x1a/0x30
 
-So far I still have no clue. Most probably I will ask you to do
-more testing after that, perhaps with some debugging patches.
+The buggy address belongs to the object at ffff88811012d800
+which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 16 bytes inside of
+freed 512-byte region [ffff88811012d800, ffff88811012da00)
 
-Thanks again for your help,
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x11012c
+head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0x200000000000040(head|node=0|zone=2)
+page_type: f5(slab)
+raw: 0200000000000040 ffff888100042c80 dead000000000100 dead000000000122
+raw: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
+head: 0200000000000040 ffff888100042c80 dead000000000100 dead000000000122
+head: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
+head: 0200000000000002 ffffea0004404b01 ffffffffffffffff 0000000000000000
+head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
 
-Oleg.
+Memory state around the buggy address:
+ffff88811012d700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ffff88811012d780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+
+    ffff88811012d800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+
+^
+ffff88811012d880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ffff88811012d900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb ==================================================================
+Disabling lock debugging due to kernel taint
+libceph: client274326 fsid 8598140e-35c2-11ee-b97c-001517c545cc
+libceph: mon0 (1)90.155.74.19:6789 session established
+libceph: client274327 fsid 8598140e-35c2-11ee-b97c-001517c545cc
+
+We have such scenario:
+
+Thread 1:
+void ceph_osdmap_destroy(...) {
+    <skipped>
+    kfree(map);
+}
+Thread 1 sleep...
+
+Thread 2:
+static bool have_mon_and_osd_map(struct ceph_client *client) {
+    return client->monc.monmap && client->monc.monmap->epoch &&
+        client->osdc.osdmap && client->osdc.osdmap->epoch;
+}
+Thread 2 has oops...
+
+Thread 1 wake up:
+static int handle_one_map(...) {
+    <skipped>
+    osdc->osdmap = newmap;
+    <skipped>
+}
+
+This patch fixes the issue by means of locking
+client->osdc.lock and client->monc.mutex before
+the checking client->osdc.osdmap and
+client->monc.monmap.
+
+Reported-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+---
+ net/ceph/ceph_common.c | 14 ++++++++++++--
+ net/ceph/debugfs.c     | 33 +++++++++++++++++++--------------
+ net/ceph/mon_client.c  |  2 ++
+ net/ceph/osd_client.c  |  3 +++
+ 4 files changed, 36 insertions(+), 16 deletions(-)
+
+diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+index 4c6441536d55..5c8fd78d6bd5 100644
+--- a/net/ceph/ceph_common.c
++++ b/net/ceph/ceph_common.c
+@@ -790,8 +790,18 @@ EXPORT_SYMBOL(ceph_reset_client_addr);
+  */
+ static bool have_mon_and_osd_map(struct ceph_client *client)
+ {
+-	return client->monc.monmap && client->monc.monmap->epoch &&
+-	       client->osdc.osdmap && client->osdc.osdmap->epoch;
++	bool have_mon_map = false;
++	bool have_osd_map = false;
++
++	mutex_lock(&client->monc.mutex);
++	have_mon_map = client->monc.monmap && client->monc.monmap->epoch;
++	mutex_unlock(&client->monc.mutex);
++
++	down_read(&client->osdc.lock);
++	have_osd_map = client->osdc.osdmap && client->osdc.osdmap->epoch;
++	up_read(&client->osdc.lock);
++
++	return have_mon_map && have_osd_map;
+ }
+ 
+ /*
+diff --git a/net/ceph/debugfs.c b/net/ceph/debugfs.c
+index 2110439f8a24..6e2014c813ca 100644
+--- a/net/ceph/debugfs.c
++++ b/net/ceph/debugfs.c
+@@ -36,18 +36,20 @@ static int monmap_show(struct seq_file *s, void *p)
+ 	int i;
+ 	struct ceph_client *client = s->private;
+ 
+-	if (client->monc.monmap == NULL)
+-		return 0;
+-
+-	seq_printf(s, "epoch %d\n", client->monc.monmap->epoch);
+-	for (i = 0; i < client->monc.monmap->num_mon; i++) {
+-		struct ceph_entity_inst *inst =
+-			&client->monc.monmap->mon_inst[i];
+-
+-		seq_printf(s, "\t%s%lld\t%s\n",
+-			   ENTITY_NAME(inst->name),
+-			   ceph_pr_addr(&inst->addr));
++	mutex_lock(&client->monc.mutex);
++	if (client->monc.monmap) {
++		seq_printf(s, "epoch %d\n", client->monc.monmap->epoch);
++		for (i = 0; i < client->monc.monmap->num_mon; i++) {
++			struct ceph_entity_inst *inst =
++				&client->monc.monmap->mon_inst[i];
++
++			seq_printf(s, "\t%s%lld\t%s\n",
++				   ENTITY_NAME(inst->name),
++				   ceph_pr_addr(&inst->addr));
++		}
+ 	}
++	mutex_unlock(&client->monc.mutex);
++
+ 	return 0;
+ }
+ 
+@@ -56,13 +58,15 @@ static int osdmap_show(struct seq_file *s, void *p)
+ 	int i;
+ 	struct ceph_client *client = s->private;
+ 	struct ceph_osd_client *osdc = &client->osdc;
+-	struct ceph_osdmap *map = osdc->osdmap;
++	struct ceph_osdmap *map = NULL;
+ 	struct rb_node *n;
+ 
++	down_read(&osdc->lock);
++
++	map = osdc->osdmap;
+ 	if (map == NULL)
+-		return 0;
++		goto finish_osdmap_show;
+ 
+-	down_read(&osdc->lock);
+ 	seq_printf(s, "epoch %u barrier %u flags 0x%x\n", map->epoch,
+ 			osdc->epoch_barrier, map->flags);
+ 
+@@ -131,6 +135,7 @@ static int osdmap_show(struct seq_file *s, void *p)
+ 		seq_printf(s, "]\n");
+ 	}
+ 
++finish_osdmap_show:
+ 	up_read(&osdc->lock);
+ 	return 0;
+ }
+diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
+index ab66b599ac47..2d67ed4aec8b 100644
+--- a/net/ceph/mon_client.c
++++ b/net/ceph/mon_client.c
+@@ -1232,6 +1232,7 @@ int ceph_monc_init(struct ceph_mon_client *monc, struct ceph_client *cl)
+ 	ceph_auth_destroy(monc->auth);
+ out_monmap:
+ 	kfree(monc->monmap);
++	monc->monmap = NULL;
+ out:
+ 	return err;
+ }
+@@ -1267,6 +1268,7 @@ void ceph_monc_stop(struct ceph_mon_client *monc)
+ 	ceph_msg_put(monc->m_subscribe_ack);
+ 
+ 	kfree(monc->monmap);
++	monc->monmap = NULL;
+ }
+ EXPORT_SYMBOL(ceph_monc_stop);
+ 
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index b24afec24138..3262ea7e5f56 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -5278,6 +5278,7 @@ int ceph_osdc_init(struct ceph_osd_client *osdc, struct ceph_client *client)
+ 	mempool_destroy(osdc->req_mempool);
+ out_map:
+ 	ceph_osdmap_destroy(osdc->osdmap);
++	osdc->osdmap = NULL;
+ out:
+ 	return err;
+ }
+@@ -5307,6 +5308,8 @@ void ceph_osdc_stop(struct ceph_osd_client *osdc)
+ 	WARN_ON(atomic_read(&osdc->num_homeless));
+ 
+ 	ceph_osdmap_destroy(osdc->osdmap);
++	osdc->osdmap = NULL;
++
+ 	mempool_destroy(osdc->req_mempool);
+ 	ceph_msgpool_destroy(&osdc->msgpool_op);
+ 	ceph_msgpool_destroy(&osdc->msgpool_op_reply);
+-- 
+2.48.0
 
 
