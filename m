@@ -1,132 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-42654-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42663-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C800A4587D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 09:37:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3EECA45898
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 09:40:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B59293A4FE7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 08:36:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 771C31885CE7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 08:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835051E1DF6;
-	Wed, 26 Feb 2025 08:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5858224235;
+	Wed, 26 Feb 2025 08:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmN5y6cE"
+	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="aWRf0kSG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61C7258CEF
-	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Feb 2025 08:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D89B1E1DEC;
+	Wed, 26 Feb 2025 08:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740559019; cv=none; b=EV672EJkP50ZlBCmjnU5kLwW7Ii9KeFHhBR1MnLqqip0tBl38y+yjZfnG8w1hd/Xx/3HK4B7bKUD7teE7Ouk1LQnWJUzSRz4KYabUKtoPis9Ly9IF0N01m7CzPqVYAmvEVjH8YpRmZwUh9QQ1UA/BC/OpP7B9ep9s7OOPY/yEUU=
+	t=1740559224; cv=none; b=pX+Z4XQnH9TBWXoSChLI5mEtG4RbDaNxsbvG8LuJR/EgP0AC3324Yu/4TiaQsZpL9TpV9f7hrwVp3hj1VQnOTClJHiAd/svqBaYHpM5o0niGwLQsiRICfwTs0D5zyhlt2VEsruhyQQFOUyY0PsQnBFz/5zv4buuw/iOzY1TPyCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740559019; c=relaxed/simple;
-	bh=e7EV4qiBTi/LdnvSl61Ond6t4HI5GKrI2L+IwDs1cH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SpHKxPU4PK8IxzAwqRGq6hes0zrGvz09Z2EBmtosmOE6HVJwf+RrtrITiEm2l+l2H8r9hm61VAxi1B+FEXK/a0HKKwXsY1yc8l3uP7U1dwK4BGqQMsB0aSG9xSa4MyzJYUhncMSo9xWhSgzOF/uCs8pCyRBNhlahaUjqVqrPS5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dmN5y6cE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C39EDC4CED6;
-	Wed, 26 Feb 2025 08:36:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740559018;
-	bh=e7EV4qiBTi/LdnvSl61Ond6t4HI5GKrI2L+IwDs1cH4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dmN5y6cEat91Dusab+PDNQ4YmcmFWzDkbDH9IZcBZAaFYbSKiNz1XEMv9aZdJroDx
-	 X7xppMIjyhz7yNyBYUYAYOWAYJ4Mt7LAK/QxTGOsf/watHTYJJjF67eF6KHY2cdGXz
-	 CL0SrnisqkdQBMo2vqLkGj5+t57cM6ySL4mgnu+WtorTS6oYi0Ic4a7Dx2vkRXtzSQ
-	 08jktzdYC+BHSpO3O406LXlPkhJ/H0+ouiUXI3vfSHf2d7OB07I/TplSgo53GYV6Fp
-	 nq9gZ9l0S+yZMaH1OkbjWeLfFDrh1V/IPYMJ4lKFY6CJ9Jmdp/plVIWRXXKpyEYMI2
-	 F2ctLfFvhtHrA==
-Date: Wed, 26 Feb 2025 09:36:54 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Neil Brown <neilb@suse.de>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 10/21] d_alloc_parallel(): set DCACHE_PAR_LOOKUP earlier
-Message-ID: <20250226-argument-silbentrennung-9bba44830c11@brauner>
-References: <20250224141444.GX1977892@ZenIV>
- <20250224212051.1756517-1-viro@zeniv.linux.org.uk>
- <20250224212051.1756517-10-viro@zeniv.linux.org.uk>
+	s=arc-20240116; t=1740559224; c=relaxed/simple;
+	bh=Td9kPv+4aEqMiRvo8WQdVA0t/ydWeEaHLWoB0s8TtIQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bos2YejeAhYRM96hRScfzRFzgK8ZTmeQEjsjgT/kN9Dqg4RcuypQPJIOh1o9pQZJmrURw0lEdRpVXvD8WCP50P018vap5kYAsadJArkr8Xlg5OkXysx/uHrriVyFwFGggH/7ao5omsQMFBKb0rRMIDZ7rFW4H7vSS/z8nM9SCmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=aWRf0kSG; arc=none smtp.client-ip=99.78.197.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
+  s=amazon201209; t=1740559223; x=1772095223;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=lh1Ns51OurirFGbJo73DhgVZ1PCIKOIciohAAfR5Ylc=;
+  b=aWRf0kSGnpEGu4t32qelUQtQNbYnCm32H+dvThMUwDBY+L1jAlVfQNSt
+   9lFxuHl220cLybMoYUEsQL7UzWIucSmw1NaFyMdG+Ul9CEStZ7jGvOuqS
+   8MRcJScF2EkIYSaMyyGBi5pdwhiBjwlrAnFpW0nxewxQCm07/aZ7W/YH3
+   o=;
+X-IronPort-AV: E=Sophos;i="6.13,316,1732579200"; 
+   d="scan'208";a="26144342"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 08:37:51 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [10.0.10.100:52267]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.30.133:2525] with esmtp (Farcaster)
+ id 287ec09d-dd1c-4342-a920-a9f616a17912; Wed, 26 Feb 2025 08:37:47 +0000 (UTC)
+X-Farcaster-Flow-ID: 287ec09d-dd1c-4342-a920-a9f616a17912
+Received: from EX19D030EUC003.ant.amazon.com (10.252.61.173) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 26 Feb 2025 08:37:41 +0000
+Received: from EX19MTAUEB002.ant.amazon.com (10.252.135.47) by
+ EX19D030EUC003.ant.amazon.com (10.252.61.173) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 26 Feb 2025 08:37:41 +0000
+Received: from email-imr-corp-prod-iad-all-1b-a03c1db8.us-east-1.amazon.com
+ (10.43.8.2) by mail-relay.amazon.com (10.252.135.97) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1544.14 via Frontend Transport; Wed, 26 Feb 2025 08:37:40 +0000
+Received: from [127.0.0.1] (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
+	by email-imr-corp-prod-iad-all-1b-a03c1db8.us-east-1.amazon.com (Postfix) with ESMTPS id D3830805C1;
+	Wed, 26 Feb 2025 08:37:36 +0000 (UTC)
+Message-ID: <086e02c8-6408-4b15-9384-42313254f041@amazon.co.uk>
+Date: Wed, 26 Feb 2025 08:37:35 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250224212051.1756517-10-viro@zeniv.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 04/12] KVM: Add capability to discover
+ KVM_GMEM_NO_DIRECT_MAP support
+To: David Hildenbrand <david@redhat.com>, <rppt@kernel.org>,
+	<seanjc@google.com>
+CC: <pbonzini@redhat.com>, <corbet@lwn.net>, <willy@infradead.org>,
+	<akpm@linux-foundation.org>, <song@kernel.org>, <jolsa@kernel.org>,
+	<ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
+	<martin.lau@linux.dev>, <eddyz87@gmail.com>, <yonghong.song@linux.dev>,
+	<john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@fomichev.me>,
+	<haoluo@google.com>, <Liam.Howlett@oracle.com>, <lorenzo.stoakes@oracle.com>,
+	<vbabka@suse.cz>, <jannh@google.com>, <shuah@kernel.org>,
+	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <bpf@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <tabba@google.com>, <jgowans@amazon.com>,
+	<graf@amazon.com>, <kalyazin@amazon.com>, <xmarcalx@amazon.com>,
+	<derekmn@amazon.com>, <jthoughton@google.com>
+References: <20250221160728.1584559-1-roypat@amazon.co.uk>
+ <20250221160728.1584559-5-roypat@amazon.co.uk>
+ <ce3ce109-f38a-4053-808b-5cc75257f3f7@redhat.com>
+From: Patrick Roy <roypat@amazon.co.uk>
+Content-Language: en-US
+Autocrypt: addr=roypat@amazon.co.uk; keydata=
+ xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
+ NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
+ wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
+ CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
+ AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
+ AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
+ IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
+ 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
+ 8hlxFQM=
+In-Reply-To: <ce3ce109-f38a-4053-808b-5cc75257f3f7@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 24, 2025 at 09:20:40PM +0000, Al Viro wrote:
-> Do that before new dentry is visible anywhere.  It does create
-> a new possible state for dentries present in ->d_children/->d_sib -
-> DCACHE_PAR_LOOKUP present, negative, unhashed, not in in-lookup
-> hash chains, refcount positive.  Those are going to be skipped
-> by all tree-walkers (both d_walk() callbacks in fs/dcache.c and
-> explicit loops over children/sibling lists elsewhere) and
-> dput() is fine with those.
+
+
+On Tue, 2025-02-25 at 16:55 +0000, David Hildenbrand wrote:
+> On 21.02.25 17:07, Patrick Roy wrote:
+>> Add a capability to let userspace discover whether guest_memfd supports
+>> removing its folios from the direct map. Support depends on guest_memfd
+>> itself being supported, but also on whether KVM can manipulate the
+>> direct map at page granularity at all (possible most of the time, just
+>> arm64 is a notable outlier where its impossible if the direct map has
+>> been setup using hugepages, as arm64 cannot break these apart due to
+>> break-before-make semantics).
+>>
+>> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
+>> ---
 > 
-> NOTE: dropping the final reference to a "normal" in-lookup dentry
-> (in in-lookup hash) is a bug - somebody must've forgotten to
-> call d_lookup_done() on it and bad things will happen.  With those
-> it's OK; if/when we get around to making __dentry_kill() complain
-> about such breakage, remember that predicate to check should
-> *not* be just d_in_lookup(victim) but rather a combination of that
-> with hlist_bl_unhashed(&victim->d_u.d_in_lookup_hash).  Might
-> be worth to consider later...
+> Not sure how KVM folks handle that, but I suspect we would just want to
+> squash that into the previous commit,
 > 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
-
-Reviewed-by: Christian Brauner <brauner@kernel.org>
-
->  fs/dcache.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index 29db27228d97..9ad7cbb5a6b0 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -2518,13 +2518,19 @@ struct dentry *d_alloc_parallel(struct dentry *parent,
->  	unsigned int hash = name->hash;
->  	struct hlist_bl_head *b = in_lookup_hash(parent, hash);
->  	struct hlist_bl_node *node;
-> -	struct dentry *new = d_alloc(parent, name);
-> +	struct dentry *new = __d_alloc(parent->d_sb, name);
->  	struct dentry *dentry;
->  	unsigned seq, r_seq, d_seq;
->  
->  	if (unlikely(!new))
->  		return ERR_PTR(-ENOMEM);
-
-This is minor but it would be clearer if the __d_alloc() call was placed
-directly above the error handling.
-
->  
-> +	new->d_flags |= DCACHE_PAR_LOOKUP;
-> +	spin_lock(&parent->d_lock);
-> +	new->d_parent = dget_dlock(parent);
-> +	hlist_add_head(&new->d_sib, &parent->d_children);
-> +	spin_unlock(&parent->d_lock);
-> +
->  retry:
->  	rcu_read_lock();
->  	seq = smp_load_acquire(&parent->d_inode->i_dir_seq);
-> @@ -2608,8 +2614,6 @@ struct dentry *d_alloc_parallel(struct dentry *parent,
->  		return dentry;
->  	}
->  	rcu_read_unlock();
-> -	/* we can't take ->d_lock here; it's OK, though. */
-> -	new->d_flags |= DCACHE_PAR_LOOKUP;
->  	new->d_wait = wq;
->  	hlist_bl_add_head(&new->d_u.d_in_lookup_hash, b);
->  	hlist_bl_unlock(b);
 > -- 
-> 2.39.5
+> Cheers,
 > 
+> David / dhildenb
+> 
+
+Ah, yeah, I just had a look at the commit history in this file and
+indeed these have seem to usually be squashed. Will do so too, thanks!
+
+Best, 
+Patrick
 
