@@ -1,100 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-42689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CA2A462F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 15:34:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA65DA4630C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 15:37:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79FA77A592E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 14:31:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2E5416A24D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 14:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E14E221DA0;
-	Wed, 26 Feb 2025 14:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C8C2222C5;
+	Wed, 26 Feb 2025 14:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jeHEbhOA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RMzxU6tW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jeHEbhOA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RMzxU6tW"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lstsQ5sM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679A51A238B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Feb 2025 14:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA3922154E;
+	Wed, 26 Feb 2025 14:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740580317; cv=none; b=rn5fTX6Jj9sNstPuT7OQ7vw9oM0Os2eOBL+O8B6IlNy0bxhEZdaRDAKFoqHHuUPDAvA1VoNuWApDjIciWhAJzkNhmS39rv5Y7TFZd+dQfnopCd2BLP16fXzGP2mMsjpkJKIH+LrZgBsP/vs8sprkavbkB3WG4PdPgVF2bH6/z3k=
+	t=1740580604; cv=none; b=HFY9GJJty23zIHnShwGsrHiess+nzwH9VUj9VGEjMf/LOq2qdAEt7P16PP3cfwAYMYtPKrkSWtlr3g/AHivBlY9Yzhylvg3vmF7GALXl+pbBOdtrTL7AlSb002qhnZAUpERdkKZZejHPMDNQqSPRpXsgFi2yeXQ+ErLFVaPvLdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740580317; c=relaxed/simple;
-	bh=h6wwG6GSEljrhPjukMtz9RNIqQTST7OvilmbN7/DWNQ=;
+	s=arc-20240116; t=1740580604; c=relaxed/simple;
+	bh=e/RvFSeK3mvDDNrCtjDF+JKRspPdp9Qhr7cGfqkAXgk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kFeqSBVFBuYCYqPwp+6faI0NNiuno/c0+RFOsVHOJdLyn6cB7rcv5LLQ7aPViUnwtKz2d9KQ1A0FbliH5ozaN1IOTMn1Ux1frbTHG+sn4NN9HvK/Q2YMngRqaHWDL9bjdX7UDSSCXg9MZNBAWpsNnGU/sQds0Urzf1C/p5Xo/pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jeHEbhOA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RMzxU6tW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jeHEbhOA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RMzxU6tW; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8AD5D2116B;
-	Wed, 26 Feb 2025 14:31:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740580314;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p0GJWkQqiG58Mx7MIdGhMtpBZe86zPEQoq1/4+3yfEg=;
-	b=jeHEbhOAwrVAZk/xajjkysJlmAsjlaV7Q/7JCPrUfjeeJoy3Z+EPGtf9qZDUnkTuS4HE+z
-	KjEOEsyE8AsbVYKKt+LUrz97q24w4N1Ne4LGhJUZ2T+g5VG9Qgn6xX5klaB5gG1PVsu7N5
-	pcIBZiyFADOxOEARuY8nJfMjEXCCJfY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740580314;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p0GJWkQqiG58Mx7MIdGhMtpBZe86zPEQoq1/4+3yfEg=;
-	b=RMzxU6tWi+82GAn68kLlDDVb6be02boRgoIN9Q00snCpqIgW835qpC8I7ZB9RzNamhwyY3
-	4eQQxaF311pAm+Ag==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740580314;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p0GJWkQqiG58Mx7MIdGhMtpBZe86zPEQoq1/4+3yfEg=;
-	b=jeHEbhOAwrVAZk/xajjkysJlmAsjlaV7Q/7JCPrUfjeeJoy3Z+EPGtf9qZDUnkTuS4HE+z
-	KjEOEsyE8AsbVYKKt+LUrz97q24w4N1Ne4LGhJUZ2T+g5VG9Qgn6xX5klaB5gG1PVsu7N5
-	pcIBZiyFADOxOEARuY8nJfMjEXCCJfY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740580314;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p0GJWkQqiG58Mx7MIdGhMtpBZe86zPEQoq1/4+3yfEg=;
-	b=RMzxU6tWi+82GAn68kLlDDVb6be02boRgoIN9Q00snCpqIgW835qpC8I7ZB9RzNamhwyY3
-	4eQQxaF311pAm+Ag==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6FE701377F;
-	Wed, 26 Feb 2025 14:31:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id UUcWG9olv2fURQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Wed, 26 Feb 2025 14:31:54 +0000
-Date: Wed, 26 Feb 2025 15:31:48 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Simon Tatham <anakin@pobox.com>
-Cc: David Sterba <dsterba@suse.com>, linux-fsdevel@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=WQF3ppIXlcafydjX8BkJzzgEmCVCK2Ktfxq6AgfzJUJD1t8JHH9QotaEM1s5ptELcOefe0POdD9yoWZR+yEFlZOPGWiZq39TDGs0vQJ4/cYdWzb4E5wKOWNRnMjLJFg8n/xXya5/raoDrdMqdY0a53+OtrE6EIGAH0RH0F8gu4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lstsQ5sM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2200C4CED6;
+	Wed, 26 Feb 2025 14:36:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740580603;
+	bh=e/RvFSeK3mvDDNrCtjDF+JKRspPdp9Qhr7cGfqkAXgk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lstsQ5sMAv5GyXkm1iIjjXxNC9d6KKe3dqnWBZ5+3kKGHsYHgeFsQxuaU2MbjaD18
+	 yqilNJPVKU4V87oJ9pZuO9FlCuapIdXogUGuvE20lY9ONfDbUjBczIXfui0YbS4z5c
+	 RV9HikhXvszKKyGF8njsfUnXc9fUyEGoMzW+MsiM=
+Date: Wed, 26 Feb 2025 15:35:34 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Takashi Iwai <tiwai@suse.de>, regressions@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] affs: generate OFS sequence numbers starting at 1
-Message-ID: <20250226143148.GT5777@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20250220081444.3625446-1-anakin@pobox.com>
+Subject: Re: [REGRESSION] Chrome and VSCode breakage with the commit
+ b9b588f22a0c
+Message-ID: <2025022626-octane-rickety-304a@gregkh>
+References: <874j0lvy89.wl-tiwai@suse.de>
+ <dede396a-4424-4e0f-a223-c1008d87a6a8@oracle.com>
+ <87jz9d5cdp.wl-tiwai@suse.de>
+ <263acb8f-2864-4165-90f7-6166e68180be@oracle.com>
+ <87h64g4wr1.wl-tiwai@suse.de>
+ <7a4072d6-3e66-4896-8f66-5871e817d285@oracle.com>
+ <2025022657-credit-undrilled-81f1@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -103,55 +62,89 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250220081444.3625446-1-anakin@pobox.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-0.993];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:replyto,suse.cz:mid];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Score: -4.00
-X-Spam-Flag: NO
+In-Reply-To: <2025022657-credit-undrilled-81f1@gregkh>
 
-On Thu, Feb 20, 2025 at 08:14:43AM +0000, Simon Tatham wrote:
-> If I write a file to an OFS floppy image, and try to read it back on
-> an emulated Amiga running Workbench 1.3, the Amiga reports a disk
-> error trying to read the file. (That is, it's unable to read it _at
-> all_, even to copy it to the NIL: device. It isn't a matter of getting
-> the wrong data and being unable to parse the file format.)
+On Wed, Feb 26, 2025 at 03:26:44PM +0100, Greg KH wrote:
+> On Wed, Feb 26, 2025 at 09:20:20AM -0500, Chuck Lever wrote:
+> > On 2/26/25 9:16 AM, Takashi Iwai wrote:
+> > > On Wed, 26 Feb 2025 15:11:04 +0100,
+> > > Chuck Lever wrote:
+> > >>
+> > >> On 2/26/25 3:38 AM, Takashi Iwai wrote:
+> > >>> On Sun, 23 Feb 2025 16:18:41 +0100,
+> > >>> Chuck Lever wrote:
+> > >>>>
+> > >>>> On 2/23/25 3:53 AM, Takashi Iwai wrote:
+> > >>>>> [ resent due to a wrong address for regression reporting, sorry! ]
+> > >>>>>
+> > >>>>> Hi,
+> > >>>>>
+> > >>>>> we received a bug report showing the regression on 6.13.1 kernel
+> > >>>>> against 6.13.0.  The symptom is that Chrome and VSCode stopped working
+> > >>>>> with Gnome Scaling, as reported on openSUSE Tumbleweed bug tracker
+> > >>>>>   https://bugzilla.suse.com/show_bug.cgi?id=1236943
+> > >>>>>
+> > >>>>> Quoting from there:
+> > >>>>> """
+> > >>>>> I use the latest TW on Gnome with a 4K display and 150%
+> > >>>>> scaling. Everything has been working fine, but recently both Chrome
+> > >>>>> and VSCode (installed from official non-openSUSE channels) stopped
+> > >>>>> working with Scaling.
+> > >>>>> ....
+> > >>>>> I am using VSCode with:
+> > >>>>> `--enable-features=UseOzonePlatform --enable-features=WaylandWindowDecorations --ozone-platform-hint=auto` and for Chrome, I select `Preferred Ozone platform` == `Wayland`.
+> > >>>>> """
+> > >>>>>
+> > >>>>> Surprisingly, the bisection pointed to the backport of the commit
+> > >>>>> b9b588f22a0c049a14885399e27625635ae6ef91 ("libfs: Use d_children list
+> > >>>>> to iterate simple_offset directories").
+> > >>>>>
+> > >>>>> Indeed, the revert of this patch on the latest 6.13.4 was confirmed to
+> > >>>>> fix the issue.  Also, the reporter verified that the latest 6.14-rc
+> > >>>>> release is still affected, too.
+> > >>>>>
+> > >>>>> For now I have no concrete idea how the patch could break the behavior
+> > >>>>> of a graphical application like the above.  Let us know if you need
+> > >>>>> something for debugging.  (Or at easiest, join to the bugzilla entry
+> > >>>>> and ask there; or open another bug report at whatever you like.)
+> > >>>>>
+> > >>>>> BTW, I'll be traveling tomorrow, so my reply will be delayed.
+> > >>>>>
+> > >>>>>
+> > >>>>> thanks,
+> > >>>>>
+> > >>>>> Takashi
+> > >>>>>
+> > >>>>> #regzbot introduced: b9b588f22a0c049a14885399e27625635ae6ef91
+> > >>>>> #regzbot monitor: https://bugzilla.suse.com/show_bug.cgi?id=1236943
+> > >>>>
+> > >>>> We received a similar report a few days ago, and are likewise puzzled at
+> > >>>> the commit result. Please report this issue to the Chrome development
+> > >>>> team and have them come up with a simple reproducer that I can try in my
+> > >>>> own lab. I'm sure they can quickly get to the bottom of the application
+> > >>>> stack to identify the misbehaving interaction between OS and app.
+> > >>>
+> > >>> Do you know where to report to?
+> > >>
+> > >> You'll need to drive this, since you currently have a working
+> > >> reproducer.
+> > > 
+> > > No, I don't have, I'm merely a messenger.
+> > 
+> > Whoever was the original reporter has the ability to reproduce this and
+> > answer any questions the Chrome team might have. Please have them drive
+> > this. I'm already two steps removed, so it doesn't make sense for me to
+> > report a problem for which I have no standing.
 > 
-> This is because the 'sequence number' field in the OFS data block
-> header is supposed to be based at 1, but affs writes it based at 0.
-> All three locations changed by this patch were setting the sequence
-> number to a variable 'bidx' which was previously obtained by dividing
-> a file position by bsize, so bidx will naturally use 0 for the first
-> block. Therefore all three should add 1 to that value before writing
-> it into the sequence number field.
+> Ugh, no.  The bug was explictly bisected to the offending commit.  We
+> should just revert that commit for now and it can come back in the
+> future if the root-cause is found.
 > 
-> With this change, the Amiga successfully reads the file.
+> As the revert seems to be simple, and builds here for me, I guess I'll
+> have to send it in. {sigh}
 > 
-> Signed-off-by: Simon Tatham <anakin@pobox.com>
+> Takashi, thanks for the report and the bisection, much appreciated.
 
-Thanks for the fixes, I'll send them for merge soon and to stable as
-well as they're both real fixes. I found the sequence documented at
-https://wiki.osdev.org/FFS_(Amiga) so I added the reference to the
-changelog.
+Now sent:
+	https://lore.kernel.org/r/2025022644-blinked-broadness-c810@gregkh
 
