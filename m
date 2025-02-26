@@ -1,261 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-42697-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15ACCA4644F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 16:15:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 155BBA46473
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 16:21:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3C233AE2AA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 15:15:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 157FF1759E5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 15:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA7A2248BF;
-	Wed, 26 Feb 2025 15:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFE0226887;
+	Wed, 26 Feb 2025 15:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TG8E7+GN"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DXTNR5Rs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6354D224884;
-	Wed, 26 Feb 2025 15:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2AB224B04
+	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Feb 2025 15:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740582879; cv=none; b=o6H+oFCFS1MkwrVRC55AsrkbRlxBUNx3haHw1ZyNKXKfnrFyxA5X1+6tKHnvoX902ehqaYRIPkWnCB6YpN1sio2CHov9cl0E74DskBMKdWv3cPOZm6wJJDvCnkVSvFqFOVdHUjfuOfVFRPxGdgyWyq8oO5QPopO1vIMitZe2p+c=
+	t=1740583292; cv=none; b=JWOHaCeQqJcmXcoYLoYVYUJRkDYB2cYkbb7WvxRUajalhLKnm+1UIvDckTmmCHjLtPQV0czglXWqVDSXtK8Jlc5m3V8AphIXyZoZ6HR6Hstiev+iB+1kCsjj7HyV1YG1XeEzW4IxZfNVBRO7BfNe6VMf39mB7OIAFSv8WAF4GBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740582879; c=relaxed/simple;
-	bh=yyRE6mh4Xnw6o929p+0BwjDI3r6fmKQ8r+qGIXYy/c0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NcsqLEKdpwOricXZ6l96MtNYwdCZWaPZbhKDaXWoC0jgiyHC9u0em8jEsBHmieGkIiFYKk4sZlRiBuxia9it+7u8owwjr+pgg1lFMdomYqKp+D0XsUdQ1qyqXiaRtigMiu3UIUkUVunJfTAy9hato9zvifj4gxb93IAbHThyKQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TG8E7+GN; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7272f9b4132so4599674a34.0;
-        Wed, 26 Feb 2025 07:14:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740582876; x=1741187676; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YTaqEjHKJlm5xW0aHmbRjCVb26Fl7uOxN3rlFjPKc5g=;
-        b=TG8E7+GNUK+uiiNhEYKIxdgrsjgZzyLC/IbGKqxS65xNs2GmXcO2n1J34bKRdcpImV
-         Rjn/c+lNfxTWdAaUT692pVZEi+IKWOb74ydpaTwxrcRBeaLJ5QbKvAfDpZTrKvOXzydk
-         4a9pteby1sDtRFIYLjxmNLZ4nE4MKU03rIlPYEYgiUYPCcqIxRGIdns/pl9lyGg1YfJ/
-         zgTWzst7vDjsxo4T0M9zDHiXx4mTUJDIQOcQvCFitYGC3XS7jVTXvMkCGiFzV+E6eKGs
-         8La7lgGLunRmuOuLeEG48he563NgtzwoBZ1Y91HUv2CIv7ZsjBjJe8HctwSwOt+lmE1H
-         0E9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740582876; x=1741187676;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YTaqEjHKJlm5xW0aHmbRjCVb26Fl7uOxN3rlFjPKc5g=;
-        b=iA39TCnrCiACwCL7bJcS0hXCwImiBv0HADz8F74S77CmguMaRdh0gnQeTRxtzthpVw
-         D/nf9MR7PjGmKI9Rw70u6i+KzvvvHzB8DIC1E/F5jXY0VFlOfXAveDHd1FOKnTXwzENx
-         pyDTc9cREUnbTb2/+p4iRqUXd4bPPH+VLUbEadwoWcD7eZ4M+PNaP4075SBqElVy+pUY
-         0FCaO6ynH7vfEDsxENpZcj+XeelypkupNk0CKqIH0DsX6yV9ChJu9tvpGhMKtv2eshvv
-         vuaDE7vl2mKFWjHmwHt3JIYA9GVrh+yOSHcWDcFh/JGu+QLsqHUcVSwk+xnMw9YZJr9V
-         qyUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbVZhekUcabyoKcEeqSIaib9RqttzCaqJfZpltjRnlTIfU29IR1YuzkrurZsSSp/Jv33yW/iDcnvQ=@vger.kernel.org, AJvYcCViU2O1wrCfA82o9jE01FwLT4Ss2St8nuceuD0ucsh6NyZDn0PjvWcvdIZzFQIWcoUc7wAiXESVZuDjA+79rg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyT4Qk7SfnX7JRvggKaf8NfdTj6wKK4g/R9bFwZ7x1R2VFSBjM
-	jAFbJib7Lt7CZvynB3IuJP4D3puQimp54IF5fqLhCSMcFescOypK
-X-Gm-Gg: ASbGncvbme28y3hWByUzMgX2Cs7lAjeSEVJpd2abfjo+0H3pyz3W2s7/PNiWCYPhAv7
-	g0D1KL9bB1ZY1coWecMMbUn5ZZx5lKKe43HtgJ8aMSlTtmxe8gaWFfgI4msGfGKIqZrqfsDfz/L
-	Dfj7C7sbBxUnFyquzBGgo91zqvRbU4lgv+8UkeBxuK/BG9Wq6A15L7oaGtg9GC3tD3Du7gdzZmI
-	lgs1u095cHy3CD8A7+SBBJPrguHBtq1wZeE/Yi+ONtRMetfIKBfHg3x/eb7cmYmUxzOOlUQrP9V
-	D1dGMt67w0jyzQNqlUrhWA45w5Bdsy0MQOKvUH4kNPhlUjRJThU=
-X-Google-Smtp-Source: AGHT+IFXvQvNF6xGlaCntn82YWM+O67cZSUzPNRpQyiDPwpgs4JUvvnvml+EYrg7Nml54IB99R+kcw==
-X-Received: by 2002:a05:6830:909:b0:71d:f97a:7b with SMTP id 46e09a7af769-728a522897amr2171041a34.20.1740582876222;
-        Wed, 26 Feb 2025 07:14:36 -0800 (PST)
-Received: from Borg-518.local ([2603:8080:1500:3d89:75cd:812f:f5ed:53af])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c111286232sm885024fac.13.2025.02.26.07.14.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 07:14:35 -0800 (PST)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Wed, 26 Feb 2025 09:14:34 -0600
-From: John Groves <John@groves.net>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, 
-	Bernd Schubert <bernd.schubert@fastmail.fm>, Stefan Hajnoczi <shajnocz@redhat.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Joanne Koong <joannelkoong@gmail.com>, 
-	John Groves <jgroves@micron.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	linux-cxl@vger.kernel.org, Aravind Ramesh <arramesh@micron.com>, 
-	Ajay Joshi <ajayjoshi@micron.com>, Eishan Mirakhur <emirakhur@micron.com>
-Subject: Re: famfs port to fuse - questions
-Message-ID: <o4pw7dvbqq34dn7ui22b6vfyno6xmwxc7cisbt4w5z4bhpfqvd@tsijcoyue2ky>
-References: <20250224152535.42380-1-john@groves.net>
- <CAOQ4uxjwn+PacrG1kWf7uki+cigDo9cWXNkg5e987r8hfKiDQw@mail.gmail.com>
+	s=arc-20240116; t=1740583292; c=relaxed/simple;
+	bh=kGuDluKlBGVXw7uhB+/9lut/CvhX3J7r0WIB6MvbzaM=;
+	h=In-Reply-To:References:To:Cc:Subject:MIME-Version:Content-Type:
+	 From:Date:Message-ID; b=bfmhFTbnf/6sysAgWMjZFIIygJ95nT9djn0k0nMjrxEgYXCTg9x9EPJOPMQ0MtH4yMs+rKfxJ4QmWoWuhnNj1/M8EX4kidGqYMphp0Z1oGOBE8dOzmC8JPBKVwYMVoPGc8X5noQTuSE3aTBVB/1ihzKekMPtv15C6eX0UQVgyqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DXTNR5Rs; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740583290;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NXbyCdmoziShPeJAChKxNKhUqohQ4PH+KJxEBCv0dis=;
+	b=DXTNR5RsVAidg7RAGlraB8yoTS6CTZ7fM886a9addn76PPUE0+lHT0V8SGfw4LAvuKuoPD
+	ThdMFaCW+3NRjXecAOtgLJliK3w5eLga/ckg754UYgVNbnF2/p+YvvmJb29Ik7OrWnldt9
+	YJ+CkaTlK2G+eoSQFnCECeyjC2Adc7A=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-637-iwyn0p17N66pFYe-_2Gb-g-1; Wed,
+ 26 Feb 2025 10:21:25 -0500
+X-MC-Unique: iwyn0p17N66pFYe-_2Gb-g-1
+X-Mimecast-MFC-AGG-ID: iwyn0p17N66pFYe-_2Gb-g_1740583283
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 48D2E1800264;
+	Wed, 26 Feb 2025 15:21:23 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.44.32.200])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 66FA3180035F;
+	Wed, 26 Feb 2025 15:21:18 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+In-Reply-To: <2602345.1740576046@warthog.procyon.org.uk>
+References: <2602345.1740576046@warthog.procyon.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: dhowells@redhat.com, Steve French <stfrench@microsoft.com>,
+    Dominique Martinet <asmadeus@codewreck.org>,
+    Ihor Solodrai <ihor.solodrai@pm.me>,
+    Eric Van Hensbergen <ericvh@kernel.org>,
+    Latchesar Ionkov <lucho@ionkov.net>,
+    Christian Schoenebeck <linux_oss@crudebyte.com>,
+    Paulo Alcantara <pc@manguebit.com>, Jeff Layton <jlayton@kernel.org>,
+    v9fs@lists.linux.dev, linux-cifs@vger.kernel.org,
+    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfs: Fix unbuffered writes
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxjwn+PacrG1kWf7uki+cigDo9cWXNkg5e987r8hfKiDQw@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2616590.1740580941.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+From: David Howells <dhowells@redhat.com>
+Date: Wed, 26 Feb 2025 15:21:17 +0000
+Message-ID: <2635841.1740583277@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On 25/02/25 05:59AM, Amir Goldstein wrote:
-> Sorry for html reply... Writing from mobile
-> But wanted you to have the feedback pre RFC patch
-> 
-> On Mon, Feb 24, 2025, 4:25 PM John Groves <John@groves.net> wrote:
-> 
-> > Miklos et. al.:
-> >
-> > Here are some specific questions related to the famfs port into fuse [1][2]
-> > that I hope Miklos (and others) can give me feedback on soonish.
-> >
-> > This work is active and serious, although you haven't heard much from me
-> > recently. I'm showing a famfs poster at Usenix FAST '25 this week [3].
-> >
-> > I'm generally following the approach in [1] - in a famfs file system,
-> > LOOKUP is followed by GET_FMAP to retrieve the famfs file/dax metadata.
-> > It's tempting to merge the fmap into the LOOKUP reply, but this seems like
-> > an optimization to consider once basic function is established.
-> >
-> > Q: Do you think it makes sense to make the famfs fmap an optional,
-> >    variable sized addition to the LOOKUP response?
-> >
-> 
-> Please see two other email threads from last few days about extending
-> LOOKUP response for PASSTHROUGH to backing inode and related question on
-> io_uring and PASSTHROUGH
-> 
-> I think the answer to you question, how to best extend LOOKUP response,
-> should be bundled with the answer to the questions on those other threads.
+David Howells <dhowells@redhat.com> wrote:
 
-Thanks for the quick reply, Amir. I'm traveling this week with a hectic
-schedule (Usenix FAST++), so I won't get much actual work done.
+> Fixes: 9dc06eff2097 ("netfs: Fix wait/wake to be consistent about the wa=
+itqueue used")
 
-I'll stipulate that my list-participation skills need improvement, but
-I haven't figured out which threads those are. If somebody can point me
-directly to them, you will have my gratitude.
+Actually, you can ignore this.  It's for a patch that's not upstream and c=
+an
+be folded in.
 
-Time frame for my initial RFC is probably still a few weeks out.
-
-> 
-> 
-> > Whenever an fmap references a dax device that isn't already known to the
-> > famfs/fuse kernel code, a GET_DAXDEV message is sent, with the reply
-> > providing the info required to open teh daxdev. A file becomes available
-> > when the fmap is complete and all referenced daxdevs are "opened".
-> >
-> > Q: Any heartburn here?
-> >
-> 
-> See also similar discussions on those other email threads about alternative
-> and more efficient APIs for mapping backing files.
-
-Same, see above about my questionable list-searching skills
-
-> 
-> As Miklos said before mapping file ranges to backing file also makes sense
-> for passthrough use cases so if there are similarities with GET_FMAP maybe
-> there is room for sharing design goals, but I am not sure if this is the
-> case?
-
-I hope so...
-
-> 
-> 
-> > When GET_FMAP is separate from LOOKUP, READDIRPLUS won't add value unless
-> > it
-> > receives fmaps as part of the attributes (i.e. lookups) that come back in
-> > its response - since a READDIRPLUS that gets 12 files will still need 12
-> > GET_FMAP messages/responses to be complete. Merging fmaps as optional,
-> > variable-length components of the READDIRPLUS response buffers could
-> > eventualy make sense, but a cleaner solution intially would seem to be
-> > to disable READDIRPLUS in famfs. But...
-> >
-> > * The libfuse/kernel ABI appears to allow low-level fuse servers that don't
-> >   support READDIRPLUS...
-> > * But libfuse doesn't look at conn->want for the READDIRPLUS related
-> >   capabilities
-> > * I have overridden that, but the kernel still sends the READDIRPLUS
-> >   messages. It's possible I'm doing something hinky, and I'll keep looking
-> >   for it.
-> > * When I just return -ENOSYS to READDIRPLUS, things don't work well. Still
-> >   looking into this.
-> >
-> > Q: Do you know whether the current fuse kernel mod can handle a low-level
-> >    fuse server that doesn't support READDIRPLUS? This may be broken.
-> >
-> 
-> Did you try returning zero d_ino from readdirplus? I thinks that's the
-> server way of saying I do not know how to reply as readdirplus.
-
-No, but I'll try that when I get back home. I found documentation somewhere
-that said ENOSYS was the answer.
-
-> 
-> I would have liked it if there was an FOPEN_NOREADDIRPLUS per opendir.
-> This could be more efficient than having to get the first readdirplus
-> request.
-
-I don't know enough to have an opinion here (yet), but I'll start thinking
-it through.
-
-> 
-> 
-> > Q: If READDIRPLUS isn't actually optional, do you think the same attribute
-> >    reply merge (attr + famfs fmap) is viable for READDIRPLUS? I'd very much
-> >    like to do this part "later".
-> 
-> 
-> > Q: Are fuse lowlevel file systems like famfs expected to use libfuse and
-> > its
-> >    message handling (particularly init), or is it preferred that they not
-> >    do so? Seems a shame to throw away all that api version checking, but
-> >    turning off READDIRPLUS would require changes that might affect other
-> >    libfuse clients. Please advise...
-> >
-> > Note that the intended use cases for famfs generally involve large files
-> > rather than *many* files, so giving up READDIRPLUS may not matter very
-> > much,
-> > at least in the early going.
-> >
-> 
-> If famfs does not need readdirplus you should not have to deal with it.
-
-Technically it's not that readdirplus can't be helpful for famfs - it's just
-that readdirplus is not much help if the response doesn't include famfs
-fmaps. 
-
-But I do think the nicest bringup path would be to disable readdirplus, 
-so what I should see is a bunch of READDIRs followed by (or alternating 
-with?) a bunch of LOOKUPs. That route should aid bringup by avoiding 
-new variable payloads on existing commands in the immediate term.
-
-But if said payloads are being designed or considered, I should definitely
-get the famfs requirements into that discussion, so we can do something that
-works for all of us!
-
-> 
-> I don't see a problem with adding noreaddirplus config to libfuse, but not
-> sure you even need this to be in init. I would prefer it per opendir.
-> 
-> Thanks,
-> Amir.
-> 
-> 
-> > I'm hoping to get an initial RFC patch set out in a few weeks, but these
-> > questions address [some of] the open issues that need to be [at least
-> > initially] resolved first.
-> >
-> >
-> > Regards,
-> > John
-> >
-> > [1]
-> > https://lore.kernel.org/linux-fsdevel/20241029011308.24890-1-john@groves.net/
-> > [2] https://lwn.net/Articles/983105/
-> > [3] https://www.usenix.org/conference/fast25/poster-session
-> >
-
-Thanks,
-John
+David
 
 
