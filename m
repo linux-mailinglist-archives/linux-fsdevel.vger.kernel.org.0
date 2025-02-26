@@ -1,213 +1,261 @@
-Return-Path: <linux-fsdevel+bounces-42696-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42697-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E4B0A4644D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 16:15:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15ACCA4644F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 16:15:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76D43189BDB6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 15:15:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3C233AE2AA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 15:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4461226898;
-	Wed, 26 Feb 2025 15:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA7A2248BF;
+	Wed, 26 Feb 2025 15:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="nbvbDyKG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TG8E7+GN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CADE2236E8;
-	Wed, 26 Feb 2025 15:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6354D224884;
+	Wed, 26 Feb 2025 15:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740582871; cv=none; b=W3Bf+GGNuFvO90GvRi8VtkTiR8ujodMRu+G6drkGj7p+m3Gloq/suaINKZzDDJPQEvj7nGOOIppZV6c/432j+gCVR+C+6bZtNUSVTFW/PTjSwtDFzA0B3KlXDRQbD/C+UOdp/H77M0AtNZLIyeb1jccNTgexQRvcrWvU89obyK8=
+	t=1740582879; cv=none; b=o6H+oFCFS1MkwrVRC55AsrkbRlxBUNx3haHw1ZyNKXKfnrFyxA5X1+6tKHnvoX902ehqaYRIPkWnCB6YpN1sio2CHov9cl0E74DskBMKdWv3cPOZm6wJJDvCnkVSvFqFOVdHUjfuOfVFRPxGdgyWyq8oO5QPopO1vIMitZe2p+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740582871; c=relaxed/simple;
-	bh=aGGzSgO2NRNWrx289Woi8O0FtwiAqqUo2nQCCgLrNAU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=neMpYXAoG4mUC/7ip6uYUl5b/NVqIEPIyx110GNwY8+QslGDNEZuesoNiuYSO3aY1FuWvE1UGwu5CKXyhsRF4pnusOIW1xpuDskWt5P7D4elaUlcdNRQHnqWGcAJd0SVvwd+gBSCX+3OB3cd4/37YYWZCvCbaq1yWv4i+K4oheE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=nbvbDyKG; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+	s=arc-20240116; t=1740582879; c=relaxed/simple;
+	bh=yyRE6mh4Xnw6o929p+0BwjDI3r6fmKQ8r+qGIXYy/c0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NcsqLEKdpwOricXZ6l96MtNYwdCZWaPZbhKDaXWoC0jgiyHC9u0em8jEsBHmieGkIiFYKk4sZlRiBuxia9it+7u8owwjr+pgg1lFMdomYqKp+D0XsUdQ1qyqXiaRtigMiu3UIUkUVunJfTAy9hato9zvifj4gxb93IAbHThyKQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TG8E7+GN; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7272f9b4132so4599674a34.0;
+        Wed, 26 Feb 2025 07:14:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1740582870; x=1772118870;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=wolJGYzNbXbPiDgE8dqL6KYG3P554mNNvwNzwm6iLVM=;
-  b=nbvbDyKGH2NJldnoV0K2VVFCusRUWNpFv7ImhdMcs7dYewEo7VvtLZbL
-   PbCThuJ1gy7rZ9IApuPosfIhQAHofLEjlYv90C8Fjv2tdjhxdsF3Q+PzV
-   R0XMF1poYDJWfX9GtUClR8FxHRvHBG+e4ykvAGgeHi+mjr/opnOGGib5f
-   o=;
-X-IronPort-AV: E=Sophos;i="6.13,317,1732579200"; 
-   d="scan'208";a="381035687"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 15:14:24 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.7.35:11919]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.35.58:2525] with esmtp (Farcaster)
- id 044ff674-0f38-4827-8439-56d357ec9ac7; Wed, 26 Feb 2025 15:14:23 +0000 (UTC)
-X-Farcaster-Flow-ID: 044ff674-0f38-4827-8439-56d357ec9ac7
-Received: from EX19D003UWB002.ant.amazon.com (10.13.138.11) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 26 Feb 2025 15:14:22 +0000
-Received: from EX19MTAUWC001.ant.amazon.com (10.250.64.145) by
- EX19D003UWB002.ant.amazon.com (10.13.138.11) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 26 Feb 2025 15:14:22 +0000
-Received: from email-imr-corp-prod-pdx-all-2b-c1559d0e.us-west-2.amazon.com
- (10.25.36.210) by mail-relay.amazon.com (10.250.64.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1544.14 via Frontend Transport; Wed, 26 Feb 2025 15:14:22 +0000
-Received: from [127.0.0.1] (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
-	by email-imr-corp-prod-pdx-all-2b-c1559d0e.us-west-2.amazon.com (Postfix) with ESMTPS id 589A640496;
-	Wed, 26 Feb 2025 15:14:15 +0000 (UTC)
-Message-ID: <7f38018b-dc89-4d79-a309-149557796121@amazon.co.uk>
-Date: Wed, 26 Feb 2025 15:14:14 +0000
+        d=gmail.com; s=20230601; t=1740582876; x=1741187676; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YTaqEjHKJlm5xW0aHmbRjCVb26Fl7uOxN3rlFjPKc5g=;
+        b=TG8E7+GNUK+uiiNhEYKIxdgrsjgZzyLC/IbGKqxS65xNs2GmXcO2n1J34bKRdcpImV
+         Rjn/c+lNfxTWdAaUT692pVZEi+IKWOb74ydpaTwxrcRBeaLJ5QbKvAfDpZTrKvOXzydk
+         4a9pteby1sDtRFIYLjxmNLZ4nE4MKU03rIlPYEYgiUYPCcqIxRGIdns/pl9lyGg1YfJ/
+         zgTWzst7vDjsxo4T0M9zDHiXx4mTUJDIQOcQvCFitYGC3XS7jVTXvMkCGiFzV+E6eKGs
+         8La7lgGLunRmuOuLeEG48he563NgtzwoBZ1Y91HUv2CIv7ZsjBjJe8HctwSwOt+lmE1H
+         0E9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740582876; x=1741187676;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YTaqEjHKJlm5xW0aHmbRjCVb26Fl7uOxN3rlFjPKc5g=;
+        b=iA39TCnrCiACwCL7bJcS0hXCwImiBv0HADz8F74S77CmguMaRdh0gnQeTRxtzthpVw
+         D/nf9MR7PjGmKI9Rw70u6i+KzvvvHzB8DIC1E/F5jXY0VFlOfXAveDHd1FOKnTXwzENx
+         pyDTc9cREUnbTb2/+p4iRqUXd4bPPH+VLUbEadwoWcD7eZ4M+PNaP4075SBqElVy+pUY
+         0FCaO6ynH7vfEDsxENpZcj+XeelypkupNk0CKqIH0DsX6yV9ChJu9tvpGhMKtv2eshvv
+         vuaDE7vl2mKFWjHmwHt3JIYA9GVrh+yOSHcWDcFh/JGu+QLsqHUcVSwk+xnMw9YZJr9V
+         qyUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVbVZhekUcabyoKcEeqSIaib9RqttzCaqJfZpltjRnlTIfU29IR1YuzkrurZsSSp/Jv33yW/iDcnvQ=@vger.kernel.org, AJvYcCViU2O1wrCfA82o9jE01FwLT4Ss2St8nuceuD0ucsh6NyZDn0PjvWcvdIZzFQIWcoUc7wAiXESVZuDjA+79rg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyT4Qk7SfnX7JRvggKaf8NfdTj6wKK4g/R9bFwZ7x1R2VFSBjM
+	jAFbJib7Lt7CZvynB3IuJP4D3puQimp54IF5fqLhCSMcFescOypK
+X-Gm-Gg: ASbGncvbme28y3hWByUzMgX2Cs7lAjeSEVJpd2abfjo+0H3pyz3W2s7/PNiWCYPhAv7
+	g0D1KL9bB1ZY1coWecMMbUn5ZZx5lKKe43HtgJ8aMSlTtmxe8gaWFfgI4msGfGKIqZrqfsDfz/L
+	Dfj7C7sbBxUnFyquzBGgo91zqvRbU4lgv+8UkeBxuK/BG9Wq6A15L7oaGtg9GC3tD3Du7gdzZmI
+	lgs1u095cHy3CD8A7+SBBJPrguHBtq1wZeE/Yi+ONtRMetfIKBfHg3x/eb7cmYmUxzOOlUQrP9V
+	D1dGMt67w0jyzQNqlUrhWA45w5Bdsy0MQOKvUH4kNPhlUjRJThU=
+X-Google-Smtp-Source: AGHT+IFXvQvNF6xGlaCntn82YWM+O67cZSUzPNRpQyiDPwpgs4JUvvnvml+EYrg7Nml54IB99R+kcw==
+X-Received: by 2002:a05:6830:909:b0:71d:f97a:7b with SMTP id 46e09a7af769-728a522897amr2171041a34.20.1740582876222;
+        Wed, 26 Feb 2025 07:14:36 -0800 (PST)
+Received: from Borg-518.local ([2603:8080:1500:3d89:75cd:812f:f5ed:53af])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c111286232sm885024fac.13.2025.02.26.07.14.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 07:14:35 -0800 (PST)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Wed, 26 Feb 2025 09:14:34 -0600
+From: John Groves <John@groves.net>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	Bernd Schubert <bernd.schubert@fastmail.fm>, Stefan Hajnoczi <shajnocz@redhat.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	John Groves <jgroves@micron.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	linux-cxl@vger.kernel.org, Aravind Ramesh <arramesh@micron.com>, 
+	Ajay Joshi <ajayjoshi@micron.com>, Eishan Mirakhur <emirakhur@micron.com>
+Subject: Re: famfs port to fuse - questions
+Message-ID: <o4pw7dvbqq34dn7ui22b6vfyno6xmwxc7cisbt4w5z4bhpfqvd@tsijcoyue2ky>
+References: <20250224152535.42380-1-john@groves.net>
+ <CAOQ4uxjwn+PacrG1kWf7uki+cigDo9cWXNkg5e987r8hfKiDQw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/12] KVM: guest_memfd: Add flag to remove from direct
- map
-To: David Hildenbrand <david@redhat.com>, <rppt@kernel.org>,
-	<seanjc@google.com>
-CC: <pbonzini@redhat.com>, <corbet@lwn.net>, <willy@infradead.org>,
-	<akpm@linux-foundation.org>, <song@kernel.org>, <jolsa@kernel.org>,
-	<ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
-	<martin.lau@linux.dev>, <eddyz87@gmail.com>, <yonghong.song@linux.dev>,
-	<john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@fomichev.me>,
-	<haoluo@google.com>, <Liam.Howlett@oracle.com>, <lorenzo.stoakes@oracle.com>,
-	<vbabka@suse.cz>, <jannh@google.com>, <shuah@kernel.org>,
-	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <bpf@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <tabba@google.com>, <jgowans@amazon.com>,
-	<graf@amazon.com>, <kalyazin@amazon.com>, <xmarcalx@amazon.com>,
-	<derekmn@amazon.com>, <jthoughton@google.com>
-References: <20250221160728.1584559-1-roypat@amazon.co.uk>
- <20250221160728.1584559-4-roypat@amazon.co.uk>
- <a3178c50-2e76-4743-8008-9a33bd0af93f@redhat.com>
- <8642de57-553a-47ec-81af-803280a360ec@amazon.co.uk>
- <bfe43591-66b6-4fb9-bf6c-df79ddeffb17@redhat.com>
-From: Patrick Roy <roypat@amazon.co.uk>
-Content-Language: en-US
-Autocrypt: addr=roypat@amazon.co.uk; keydata=
- xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
- NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
- wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
- CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
- AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
- AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
- IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
- 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
- 8hlxFQM=
-In-Reply-To: <bfe43591-66b6-4fb9-bf6c-df79ddeffb17@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxjwn+PacrG1kWf7uki+cigDo9cWXNkg5e987r8hfKiDQw@mail.gmail.com>
 
-
-
-On Wed, 2025-02-26 at 09:08 +0000, David Hildenbrand wrote:
-> On 26.02.25 09:48, Patrick Roy wrote:
->>
->>
->> On Tue, 2025-02-25 at 16:54 +0000, David Hildenbrand wrote:> On 21.02.25 17:07, Patrick Roy wrote:
->>>> Add KVM_GMEM_NO_DIRECT_MAP flag for KVM_CREATE_GUEST_MEMFD() ioctl. When
->>>> set, guest_memfd folios will be removed from the direct map after
->>>> preparation, with direct map entries only restored when the folios are
->>>> freed.
->>>>
->>>> To ensure these folios do not end up in places where the kernel cannot
->>>> deal with them, set AS_NO_DIRECT_MAP on the guest_memfd's struct
->>>> address_space if KVM_GMEM_NO_DIRECT_MAP is requested.
->>>>
->>>> Note that this flag causes removal of direct map entries for all
->>>> guest_memfd folios independent of whether they are "shared" or "private"
->>>> (although current guest_memfd only supports either all folios in the
->>>> "shared" state, or all folios in the "private" state if
->>>> !IS_ENABLED(CONFIG_KVM_GMEM_SHARED_MEM)). The usecase for removing
->>>> direct map entries of also the shared parts of guest_memfd are a special
->>>> type of non-CoCo VM where, host userspace is trusted to have access to
->>>> all of guest memory, but where Spectre-style transient execution attacks
->>>> through the host kernel's direct map should still be mitigated.
->>>>
->>>> Note that KVM retains access to guest memory via userspace
->>>> mappings of guest_memfd, which are reflected back into KVM's memslots
->>>> via userspace_addr. This is needed for things like MMIO emulation on
->>>> x86_64 to work. Previous iterations attempted to instead have KVM
->>>> temporarily restore direct map entries whenever such an access to guest
->>>> memory was needed, but this turned out to have a significant performance
->>>> impact, as well as additional complexity due to needing to refcount
->>>> direct map reinsertion operations and making them play nicely with gmem
->>>> truncations.
->>>>
->>>> This iteration also doesn't have KVM perform TLB flushes after direct
->>>> map manipulations. This is because TLB flushes resulted in a up to 40x
->>>> elongation of page faults in guest_memfd (scaling with the number of CPU
->>>> cores), or a 5x elongation of memory population. On the one hand, TLB
->>>> flushes are not needed for functional correctness (the virt->phys
->>>> mapping technically stays "correct",  the kernel should simply to not it
->>>> for a while), so this is a correct optimization to make. On the other
->>>> hand, it means that the desired protection from Spectre-style attacks is
->>>> not perfect, as an attacker could try to prevent a stale TLB entry from
->>>> getting evicted, keeping it alive until the page it refers to is used by
->>>> the guest for some sensitive data, and then targeting it using a
->>>> spectre-gadget.
->>>>
->>>> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
->>>
->>> ...
->>>
->>>>
->>>> +static bool kvm_gmem_test_no_direct_map(struct inode *inode)
->>>> +{
->>>> +     return ((unsigned long) inode->i_private) & KVM_GMEM_NO_DIRECT_MAP;
->>>> +}
->>>> +
->>>>    static inline void kvm_gmem_mark_prepared(struct folio *folio)
->>>>    {
->>>> +     struct inode *inode = folio_inode(folio);
->>>> +
->>>> +     if (kvm_gmem_test_no_direct_map(inode)) {
->>>> +             int r = set_direct_map_valid_noflush(folio_page(folio, 0), folio_nr_pages(folio),
->>>> +                                                  false);
->>>
->>> Will this work if KVM is built as a module, or is this another good
->>> reason why we might want guest_memfd core part of core-mm?
->>
->> mh, I'm admittedly not too familiar with the differences that would come
->> from building KVM as a module vs not. I do remember something about the
->> direct map accessors not being available for modules, so this would
->> indeed not work. Does that mean moving gmem into core-mm will be a
->> pre-requisite for the direct map removal stuff?
+On 25/02/25 05:59AM, Amir Goldstein wrote:
+> Sorry for html reply... Writing from mobile
+> But wanted you to have the feedback pre RFC patch
 > 
-> Likely, we'd need some shim.
+> On Mon, Feb 24, 2025, 4:25 PM John Groves <John@groves.net> wrote:
 > 
-> Maybe for the time being it could be fenced using #if IS_BUILTIN() ...
-> but that sure won't win in a beauty contest.
-
-Is anyone working on such a shim at the moment? Otherwise, would it make
-sense for me to look into it? (although I'll probably need a pointer or
-two for what is actually needed)
-
-I saw your comment on Fuad's series [1] indicating that he'll also need
-some shim, so probably makes sense to tackle it anyway instead of
-hacking around it with #if-ery.
-
-[1]: https://lore.kernel.org/kvm/8ddab670-8416-47f2-a5a6-94fb3444f328@redhat.com/
-
-> -- 
-> Cheers,
+> > Miklos et. al.:
+> >
+> > Here are some specific questions related to the famfs port into fuse [1][2]
+> > that I hope Miklos (and others) can give me feedback on soonish.
+> >
+> > This work is active and serious, although you haven't heard much from me
+> > recently. I'm showing a famfs poster at Usenix FAST '25 this week [3].
+> >
+> > I'm generally following the approach in [1] - in a famfs file system,
+> > LOOKUP is followed by GET_FMAP to retrieve the famfs file/dax metadata.
+> > It's tempting to merge the fmap into the LOOKUP reply, but this seems like
+> > an optimization to consider once basic function is established.
+> >
+> > Q: Do you think it makes sense to make the famfs fmap an optional,
+> >    variable sized addition to the LOOKUP response?
+> >
 > 
-> David / dhildenb
->
+> Please see two other email threads from last few days about extending
+> LOOKUP response for PASSTHROUGH to backing inode and related question on
+> io_uring and PASSTHROUGH
+> 
+> I think the answer to you question, how to best extend LOOKUP response,
+> should be bundled with the answer to the questions on those other threads.
 
-Best,
-Patrick
+Thanks for the quick reply, Amir. I'm traveling this week with a hectic
+schedule (Usenix FAST++), so I won't get much actual work done.
+
+I'll stipulate that my list-participation skills need improvement, but
+I haven't figured out which threads those are. If somebody can point me
+directly to them, you will have my gratitude.
+
+Time frame for my initial RFC is probably still a few weeks out.
+
+> 
+> 
+> > Whenever an fmap references a dax device that isn't already known to the
+> > famfs/fuse kernel code, a GET_DAXDEV message is sent, with the reply
+> > providing the info required to open teh daxdev. A file becomes available
+> > when the fmap is complete and all referenced daxdevs are "opened".
+> >
+> > Q: Any heartburn here?
+> >
+> 
+> See also similar discussions on those other email threads about alternative
+> and more efficient APIs for mapping backing files.
+
+Same, see above about my questionable list-searching skills
+
+> 
+> As Miklos said before mapping file ranges to backing file also makes sense
+> for passthrough use cases so if there are similarities with GET_FMAP maybe
+> there is room for sharing design goals, but I am not sure if this is the
+> case?
+
+I hope so...
+
+> 
+> 
+> > When GET_FMAP is separate from LOOKUP, READDIRPLUS won't add value unless
+> > it
+> > receives fmaps as part of the attributes (i.e. lookups) that come back in
+> > its response - since a READDIRPLUS that gets 12 files will still need 12
+> > GET_FMAP messages/responses to be complete. Merging fmaps as optional,
+> > variable-length components of the READDIRPLUS response buffers could
+> > eventualy make sense, but a cleaner solution intially would seem to be
+> > to disable READDIRPLUS in famfs. But...
+> >
+> > * The libfuse/kernel ABI appears to allow low-level fuse servers that don't
+> >   support READDIRPLUS...
+> > * But libfuse doesn't look at conn->want for the READDIRPLUS related
+> >   capabilities
+> > * I have overridden that, but the kernel still sends the READDIRPLUS
+> >   messages. It's possible I'm doing something hinky, and I'll keep looking
+> >   for it.
+> > * When I just return -ENOSYS to READDIRPLUS, things don't work well. Still
+> >   looking into this.
+> >
+> > Q: Do you know whether the current fuse kernel mod can handle a low-level
+> >    fuse server that doesn't support READDIRPLUS? This may be broken.
+> >
+> 
+> Did you try returning zero d_ino from readdirplus? I thinks that's the
+> server way of saying I do not know how to reply as readdirplus.
+
+No, but I'll try that when I get back home. I found documentation somewhere
+that said ENOSYS was the answer.
+
+> 
+> I would have liked it if there was an FOPEN_NOREADDIRPLUS per opendir.
+> This could be more efficient than having to get the first readdirplus
+> request.
+
+I don't know enough to have an opinion here (yet), but I'll start thinking
+it through.
+
+> 
+> 
+> > Q: If READDIRPLUS isn't actually optional, do you think the same attribute
+> >    reply merge (attr + famfs fmap) is viable for READDIRPLUS? I'd very much
+> >    like to do this part "later".
+> 
+> 
+> > Q: Are fuse lowlevel file systems like famfs expected to use libfuse and
+> > its
+> >    message handling (particularly init), or is it preferred that they not
+> >    do so? Seems a shame to throw away all that api version checking, but
+> >    turning off READDIRPLUS would require changes that might affect other
+> >    libfuse clients. Please advise...
+> >
+> > Note that the intended use cases for famfs generally involve large files
+> > rather than *many* files, so giving up READDIRPLUS may not matter very
+> > much,
+> > at least in the early going.
+> >
+> 
+> If famfs does not need readdirplus you should not have to deal with it.
+
+Technically it's not that readdirplus can't be helpful for famfs - it's just
+that readdirplus is not much help if the response doesn't include famfs
+fmaps. 
+
+But I do think the nicest bringup path would be to disable readdirplus, 
+so what I should see is a bunch of READDIRs followed by (or alternating 
+with?) a bunch of LOOKUPs. That route should aid bringup by avoiding 
+new variable payloads on existing commands in the immediate term.
+
+But if said payloads are being designed or considered, I should definitely
+get the famfs requirements into that discussion, so we can do something that
+works for all of us!
+
+> 
+> I don't see a problem with adding noreaddirplus config to libfuse, but not
+> sure you even need this to be in init. I would prefer it per opendir.
+> 
+> Thanks,
+> Amir.
+> 
+> 
+> > I'm hoping to get an initial RFC patch set out in a few weeks, but these
+> > questions address [some of] the open issues that need to be [at least
+> > initially] resolved first.
+> >
+> >
+> > Regards,
+> > John
+> >
+> > [1]
+> > https://lore.kernel.org/linux-fsdevel/20241029011308.24890-1-john@groves.net/
+> > [2] https://lwn.net/Articles/983105/
+> > [3] https://www.usenix.org/conference/fast25/poster-session
+> >
+
+Thanks,
+John
+
 
