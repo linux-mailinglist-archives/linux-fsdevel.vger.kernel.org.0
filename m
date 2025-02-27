@@ -1,119 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-42732-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42733-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A211CA46EAB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 23:39:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EF54A4705A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2025 01:37:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A672416D932
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2025 22:39:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D78BA16EB53
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2025 00:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3EA25D1F4;
-	Wed, 26 Feb 2025 22:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0299917C77;
+	Thu, 27 Feb 2025 00:37:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsihiHmF"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VhCSHvPU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6128625D1E1;
-	Wed, 26 Feb 2025 22:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4091D528
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Feb 2025 00:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740609591; cv=none; b=ouffO2HfIjk8pckipqXkeJJxhYuftX+3Mo8exE8WtMSoQ18LDKaEF6C8N19T4K2/itHCLYa7VAqclxmW0SaZCYnmoLlgsUG+qlD+/TVCS3TYy7cYHztaOoVDUIBG9pKHjX91NDMD54NMNdxJSh4tA8Z4ee5X6T5duRzWeGFOG8k=
+	t=1740616664; cv=none; b=Jtcc2sTj1TfaLLzj4e4LS4Az9xd9Ly1LCGJQWX/N2is9gX9XPC+Frs9+5d19gSwksoBVgyVnR6SSyk0WdbE7hqGr81BGIrv0F1hp+6iDcwaBrmm+m7etsBggb1pzti9gI4/YHLDSG3fE3yNFEUytP2glRUjY39zCECuGZzLNYvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740609591; c=relaxed/simple;
-	bh=u2A9qCjDWZkzV/a5G2DIvQAlNnCeoYE8Rtqwv4VilKI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LrvYq9hWcT4GhnHe7XsJ0ej4etF6j4fFFScD39AR+PyTOVMgBMPu/1Wp5ncn99OCuinhJ5vK+ZlNTyX2X3ynU8s/sjnsrWD19HTsfqQDcse/86ikMuC4GqqeDauShamHie4dGwvtL0209iBb4lpEIg0krK3yoMw8oybhabjVOnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bsihiHmF; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4397e5d5d99so2107645e9.1;
-        Wed, 26 Feb 2025 14:39:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740609587; x=1741214387; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EsxB3niZhDLQXKscUY4SNZGf3lUEcngVn+r/WMhCyzY=;
-        b=bsihiHmF0kFmwEfaX3UNF0Vjwvpu2pblgDX78du3Vx7XK6E6o/669sKgf+MUpW9bZK
-         Idk7hIVqQRhNMS7zWkAXrvAQrsGBO7QohCsTjQ76gzjCXAE099KjwVUarj24Yd76FNZ6
-         fTGRb+wx45uwhhtC32r2PTZEH/zn+ElIK/J0MovUwT8VjdUpmiIxCDFV89P9+dotV91T
-         PtJuKjWFatpEv0NsHoGU9EPzp6b0FEnqSSv2PqyVMZgAB58/xTFP3Q6BYw2UHsRm20OA
-         6PuUM8P3sAbIISePjIySSt+LtXV2PAWFs5YuD9oL2//5WJvQF+Ls+VAQXyD009NOfEeJ
-         jStA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740609587; x=1741214387;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EsxB3niZhDLQXKscUY4SNZGf3lUEcngVn+r/WMhCyzY=;
-        b=v2dXJbqSdA563B+GwYxoNr4RVaQo9GeSHi1G8EgULao6gZUUV7bJvMAvUmlKOZXBoy
-         j2XY1NzjW5HU2qb2+Clwp0k89C52i8QtBsEsEjB2AwyL9F1PJIuwCZ/o3QQDtaaDGiSK
-         0yiX/Ab04PlymeS+H5v6cfMyD3qgLBrIu8upihwuAJjL/Sv0UgaAFZ0TrPfFe7hulepm
-         shevge/t5wmQp5+q3YG955p5Ug82qk0eM+ZZIsDcuC77Sf+w5i0ifwEwO3Xt2jvahMUL
-         wjojLLQy1JAjC7C9n7FGgJAKc07kFAJ3x8iYsoPgslFJd2hWEObkW7iCDtgPy0GhQOuu
-         1WlA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQsabP8gRNG1SSZascGH/jC1h16MtlJ3sWJw2w4Z3EkcO8iaUDUUh9LWml/pymrlwL4OBQTLsgid4LhlCW@vger.kernel.org, AJvYcCXPli9OHVhWKogwldLN40GZf5w47m6bO34B9QLknX9rvD73tfNH90TXOO7U6fIFS25b2ei+GEw3AsSu8UmD@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxHWCV9pJW5b+fGyHaheDHyhZZB6+m8rngDfU3j+IaF7IpCeam
-	lxchFkMfUiBg1ANXMl1lRG4UUp2DiDFwR1CW+Tc3abUui94jJNLh
-X-Gm-Gg: ASbGncvlOjonMASt+S6xjWWUMXMfIKQMnooATnQI+APgwPfB05XBHfeHgxGVS1f6Oc4
-	Vs9awGmnUzuohCcOahZRbPBIAQkoEh9QkoFz8w5mEmEvNXSbHaPegpJhmFuo1+QNnS4IVgj5o7B
-	1DYtnJgxgSYfzvM1NKsc9bNk9UPyukAobDMlFhggdL/JExkMt/Q0F1oMf0SOp+8iuda2Z09y2SB
-	4Pc97dg0XAkXHY0zyXvJvIaqlMw8LGjWV76Gm7LHhFHf7UwRNS67PJLMezSFNJFvef0ZCq/6fx1
-	Nyxg9EchZr01lQSYjkG2S4jhXU4=
-X-Google-Smtp-Source: AGHT+IEKmoN/1Etv0GnYfbieq7HiOjjWHpmIeqo/u0VjHW2My8Y0pb14MM+VqaWPvkUE+4XaiIxTew==
-X-Received: by 2002:a05:6000:1fa1:b0:387:8752:5691 with SMTP id ffacd0b85a97d-390cc63ce07mr8391029f8f.47.1740609587301;
-        Wed, 26 Feb 2025 14:39:47 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e485d6dbsm155058f8f.82.2025.02.26.14.39.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 14:39:47 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
+	s=arc-20240116; t=1740616664; c=relaxed/simple;
+	bh=4oR8/akrv9h99E5/0q46DrQwOgYl3Aj5OIoGH8fu7ZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UwcwMK/UxwfAofZPhbPG92PDRzZn8SeDry1sJBfnYeBndo9SgqW9+/ZfGYTMNAG8/dsZLncq3Gkfr3+kds6TBoMH/Z0ByOlbxE2KWX8yeSLO+MSDwUiZMlbyS50zWEIKz3pjbOQWQTesF/2A/aMLPprmw/kWVMdZw/AvnSRUApM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VhCSHvPU; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 26 Feb 2025 19:37:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740616649;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=8r7ZBWen2aHvNkU/gKusFsPhdVjQwKX/sY5JWKex0t8=;
+	b=VhCSHvPUyGXE3MdpKB5c2Wm5RiQWHTmE85ttyz//taG++KnRsGN/TTAyQggL5DJoUVx87W
+	LgaRXcxfZ9KDmZ1Qv6U/07Hdxw7lEjVHo/pAIfUimRyXscDgroNlW2b4klFRfw2wCLLeJh
+	zYUh1/Dk2/smbftEOOHpMkqE38CwaWE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] fs: Fix uninitialized variable uflags
-Date: Wed, 26 Feb 2025 22:39:12 +0000
-Message-ID: <20250226223913.591371-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+Subject: [GIT PULL] bcachefs fixes for 6.14-rc5
+Message-ID: <6xhke7esvj47xpl6ylxtcz5b2ol2ckwup2q3yunjo6zudthrtm@emmsdk3bpusy>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-The variable uflags is only being initialized in the if statement that
-checks if flags & MOVE_MOUNT_F_EMPTY_PATH is non-zero.  Fix this by
-initializing uflags at the start of the system call move_mount.
 
-Fixes: b1e9423d65e3 ("fs: support getname_maybe_null() in move_mount()")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/namespace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The following changes since commit b04974f759ac7574d8556deb7c602a8d01a0dcc6:
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 663bacefddfa..c19e919a9108 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -4599,7 +4599,7 @@ SYSCALL_DEFINE5(move_mount,
- 	struct path from_path __free(path_put) = {};
- 	struct filename *to_name __free(putname) = NULL;
- 	struct filename *from_name __free(putname) = NULL;
--	unsigned int lflags, uflags;
-+	unsigned int lflags, uflags = 0;
- 	enum mnt_tree_flags_t mflags = 0;
- 	int ret = 0;
- 
--- 
-2.47.2
+  bcachefs: Fix srcu lock warning in btree_update_nodes_written() (2025-02-19 18:52:42 -0500)
 
+are available in the Git repository at:
+
+  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-02-26
+
+for you to fetch changes up to eb54d2695b57426638fed0ec066ae17a18c4426c:
+
+  bcachefs: Fix truncate sometimes failing and returning 1 (2025-02-26 19:31:05 -0500)
+
+----------------------------------------------------------------
+bcachefs fixes for 6.14-rc5
+
+Couple small ones, the main user visible changes/fixes are:
+
+- Fix a bug where truncate would rarely fail and return 1
+
+- Revert the directory i_size code: this turned out to have a number of
+  issues that weren't noticed because the fsck code wasn't correctly
+  reporting errors (ouch), and we're late enough in the cycle that it
+  can just wait until 6.15.
+
+----------------------------------------------------------------
+Alan Huang (2):
+      bcachefs: Fix memmove when move keys down
+      bcachefs: Fix deadlock
+
+Kent Overstreet (5):
+      bcachefs: print op->nonce on data update inconsistency
+      bcachefs: fix bch2_extent_ptr_eq()
+      bcachefs: Revert directory i_size
+      bcachefs: Check for -BCH_ERR_open_buckets_empty in journal resize
+      bcachefs: Fix truncate sometimes failing and returning 1
+
+ fs/bcachefs/btree_cache.c     |  9 +++++----
+ fs/bcachefs/btree_io.c        |  2 +-
+ fs/bcachefs/btree_key_cache.c |  2 +-
+ fs/bcachefs/btree_locking.c   |  5 +++--
+ fs/bcachefs/btree_locking.h   |  2 +-
+ fs/bcachefs/data_update.c     |  1 +
+ fs/bcachefs/dirent.h          |  5 -----
+ fs/bcachefs/extents.h         |  2 +-
+ fs/bcachefs/fs-common.c       | 11 -----------
+ fs/bcachefs/fs-io.c           |  1 +
+ fs/bcachefs/fsck.c            | 21 ---------------------
+ fs/bcachefs/journal.c         |  4 +++-
+ fs/bcachefs/sb-downgrade.c    |  5 +----
+ fs/bcachefs/six.c             |  5 +++--
+ fs/bcachefs/six.h             |  7 ++++---
+ 15 files changed, 25 insertions(+), 57 deletions(-)
 
