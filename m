@@ -1,138 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-42764-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42765-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF115A4855D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2025 17:41:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D40B2A485A6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2025 17:49:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0E9E18897FB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2025 16:35:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C992E3AA798
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2025 16:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13BB1C3C14;
-	Thu, 27 Feb 2025 16:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526EC1C8FB4;
+	Thu, 27 Feb 2025 16:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JkinSEJ/"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="aFGm/P6E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD471B3957;
-	Thu, 27 Feb 2025 16:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECAA1B4151
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Feb 2025 16:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740674100; cv=none; b=BZBZdDlZ+UMeWdWBo3cUMyimdZ4CE1cF7UJdhGp5HyDAORWHe0vQwfkQuwb9w/YRCPDScnZhnJbqggr9xsM2lH5TqRtg52dP4SpxRSBsx/NsVWRrhuCWkqck5Pi3nGrXaNBRMKn3EVChziwfpiFf6mDqEOvnAptE9xVfTRknvyw=
+	t=1740674903; cv=none; b=Ua1Pqe+0MPM9JXhHw7eyOaBmc+QvH1ey8ng3R/m4KZXD6MH3vCLxkIh4dvbah4CAZTk+T0HyhKPlM3DXnQtKHHCfz+Az3eN4f9jOsEAzNmLowPxdrrxLh7LhQywplvomqC9md8iOFuOlZj3dSB8TFPg0iA4ocQc2hBV/Wwk0J74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740674100; c=relaxed/simple;
-	bh=EGEx+qSgNbIjemQu1AK11Jy/RH7gU+sLNaplsoeAgAE=;
+	s=arc-20240116; t=1740674903; c=relaxed/simple;
+	bh=kjNwow5X4ZZ01USyEwmrs9aAMem57HqtvhZwTRgcBNo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=svkrOT/2whqHayA7NeFE4dBfjA7ssgm9ccFOttSldx3FBjGgQ5UxNte3YoH/v7sjy8mnwT5MEkgctsizF4MsflvLiBHwhGd/tG6wDuXyF2XSCqfB4wFgTOsWEyF1t++XpI7wIqu7KHK5FTJimsvcvAdD8htwx9sbFDuLfp8UQbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JkinSEJ/; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e095d47a25so1762574a12.0;
-        Thu, 27 Feb 2025 08:34:58 -0800 (PST)
+	 To:Cc:Content-Type; b=hBkn21D3gRxmiV19PN33m9W/Yy35Maon5Kvs9znv5igfYApbe6scFQc1XDu7UhrouL7JCqaZi5ZxfswPSV9gzR2JiyDdy8amOD48STcgc6IxAMGNPftFmlPW37IEVkDiO9fWSQnFlFiL1nyKor/781gYW6QMu8B83X3Dth7d0Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=aFGm/P6E; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e60a35eb84fso693503276.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Feb 2025 08:48:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740674097; x=1741278897; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1740674900; x=1741279700; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EGEx+qSgNbIjemQu1AK11Jy/RH7gU+sLNaplsoeAgAE=;
-        b=JkinSEJ/dmE9gGI6RYjvg1n/VdT+bpLucH6eztJHcoKUVu5v+oQGLndvus7QucEQhH
-         SrzviJ1wvUWIUfslGEVAdpoWb0mDgXyBnbDZ1xBg/qkaXKM844wjTWvWYf7bP7mFdTOA
-         AgopkaU2+SUfOs+wQJ8AJ3PrBvYnPJFKNCHTrT4dOwTcLcoSBotej8rhb76930XFHcnA
-         d29xWD5klym8jASQU6eV72g/z+rRIbIvHr1pdiC8WUx/yvsIeNycsYKlj32af589Tmaz
-         hZBwdRLTv6ovjx9wTxfx+RFpqE4QU1UUpZABlrZvp6Nc98MU8lkwEymWE/rHnPo6lB3R
-         s6FQ==
+        bh=3+CwlNOwz6cX/UtBgNuuvuqtR0CZarS1LGfkpgdEQ4w=;
+        b=aFGm/P6EA+fOrqfeuLBh8ZkU2FSqNU5NoCwbJjTQDRL/RTELoynFTZxgrNc5IgVccC
+         uiODXHU85IT/fsY9H1nVeXJ/9xVnZ5wlBFGSaZoKGLGcI02CqfIGLoF/3Slw0W/99xdG
+         ma1IOm9fn6p0hxaAiaV0NLnhYTN+FxZXi4PdMva+leh6+bRooqh3/lME7jeane7CZK7E
+         LJuqf/KaqKBoVuJz/HrVfyF1UT8UwZ6hYwaLD00wTbz8nGIb6BiFauqKJMF1cXShsShf
+         J59OenIJ/umBY/K6bMURTRnu6AVZG8d+2+m2kTVks93Sf7Li51OF7rnoO3Eu0LmAo2yx
+         SoAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740674097; x=1741278897;
+        d=1e100.net; s=20230601; t=1740674900; x=1741279700;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EGEx+qSgNbIjemQu1AK11Jy/RH7gU+sLNaplsoeAgAE=;
-        b=As7Hgs+nHT+Qn/MMWL24SYLpRiErLoTAvf4sqZ/sld/eFBQyKs4cclp25eYjHqB+Vq
-         Qr7CuGn+AFSSLXN45DMKfvIC8PEgZsNvS5E8Nm/lbKYefIFvf9qs3yfWsxOa9R+g7FaK
-         S1uueLX1yHSEv6/5hJECoaKul5keHeH2pg6sbWkbo7B+Oe9R2DerhFqkY/9d6HXIwfYb
-         g3JkHgnnSwD7kA5UknnqXFYK/CNw4QViQ0Wt4Xlf3jjP76ytV30GjlMnVbhoYSZMWf/+
-         BnoIv8PWwV5324FDXR3/4k/IWVoIng7PRDBBdwkg9xAPgUZmR/9VunEx4niknoTMFVyI
-         cgTw==
-X-Forwarded-Encrypted: i=1; AJvYcCWShSsaWrMw3I8E9SJeyeFm5xv15hY8eIxRR8xZ8VREzS9Ghvh+Kr0sHQ0djsht9+ELO47hG8AEerzcAkHO@vger.kernel.org, AJvYcCX81PrMUskocqp/ad1A9qmzMRGt32ADv0IQckY1J8KGE+A+XmRZ7AwPjJubAlJPheKdnQMSZ6XEKz3PoTl+@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI2KM1XMZQPCnRbWtwjeeOu+fvwAuZf+vKa6dUAxl8e+oIU1Xj
-	q4MbgGhDgdXM2rbTaGaUqHi7qeMX4mrLWrC3wlduxmd+PPq7Z79FuiwxSlhKeAX2k1pZGw81Jmx
-	Wd2Q4bzsSl9OSPtyNky60Jxi3t3A0c55c
-X-Gm-Gg: ASbGncstA7HSgXA0a8PVc5XzAncLKFSLS7vYRbpFmnh5AP6jzSJ7lcSMwezK21BYcb8
-	n5dFo9M1g7uPDrg5qu7W11DkDMaH34KagLqdsiN88UEpJMNe17yJShKMhKJK8c7KVV3dZTLbXG3
-	AowwAbwBM=
-X-Google-Smtp-Source: AGHT+IFhwVZ111475mJm6DaLSMZ9gw2d46Eb85IFRZSPUaXWAt78hPFLL7a1jQlWJzYM4Fv7ozom5m4bq1ZRpjR20zA=
-X-Received: by 2002:a17:907:dac:b0:ab9:63bd:91be with SMTP id
- a640c23a62f3a-abf25f8fe96mr12030666b.3.1740674096614; Thu, 27 Feb 2025
- 08:34:56 -0800 (PST)
+        bh=3+CwlNOwz6cX/UtBgNuuvuqtR0CZarS1LGfkpgdEQ4w=;
+        b=SrEg3k6CeCW59Ii7L3HpP28mvYmqnE46Kr41ym+10GDOmHtA6yxntu5Z05x0r6x3AO
+         PXq1e8qVzVHhGNtOgm7lJhXLEgJGHhdehoRhqTMW2SQxFQMGF323S3ZKCzmXhE0QTxHQ
+         nQ1MJocQQ88oqH/EH3nVkst/BJGbLHSgrKEiSi1CAY4p+bEffv6HYi25Yvpwh61mz9hc
+         WfkzwTABsoh60AlfGkxuCx95ruAIGom+Y8OhLJ3j81cIm/aBgmo6uUc/6yzOVWZZfHae
+         TGfBUyYZQlEySVi0gWWHlaccobM8yM8dYXXUot5OswIpqkZ7KbXlPrAwmvMUO1Z+LHkf
+         AueA==
+X-Forwarded-Encrypted: i=1; AJvYcCWO6Hl8NiahvMk9QsP0Za3IZ7G3a83/Egn0k88yQQplQqmeykAmByCF81rPUHQvovrBlWehpGwlHVDA9JcY@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuI2MdhHaLxa4HAhPJtVq1nUadghl1fYaDB3h27gOjux4HzKnf
+	8OyLmFP3Qb6UFtZ6iBWdsDbmCKQ4HzW2ceEbS15nQZ8UA8sihBSfc7cQSeu7O8XCSjOQMGCUDSR
+	x/D7C5uCeKt8SV2WIfREHwrTPaVSkgsZJ5KIV
+X-Gm-Gg: ASbGncvZEYUB6EOraRwd77IJXUDn5BPIFh50Q9XiOIWIoJs44gEY46M7lmI+npFO5n9
+	ihvy+AocytIfoYzKzJhlH5IhB158xbUzDDTBEGdAyP0jf5MqDFVMU7JyhHr9Ao8Yyf6rkpx6NxY
+	KbsSCjtdI=
+X-Google-Smtp-Source: AGHT+IFYI+8SraAdigQGx7lYdH5LUnt1/UBb+qYVnBDFc3+wD7MPjfWvDbf4Mkowsvjayh1/wuUuat9GLQUM9I01TCE=
+X-Received: by 2002:a05:6902:2e0b:b0:e58:aa00:ffe0 with SMTP id
+ 3f1490d57ef6-e5e8359551emr21182111276.5.1740674900254; Thu, 27 Feb 2025
+ 08:48:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250102140715.GA7091@redhat.com> <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
- <20250224142329.GA19016@redhat.com> <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt>
- <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com>
-In-Reply-To: <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 27 Feb 2025 17:34:43 +0100
-X-Gm-Features: AQ5f1JqQcpINTG9HHBc_x7lQCNL3TbSACZXkwjeiTyGjjppBVCI8xi8zy05zmBM
-Message-ID: <CAGudoHHWP2o+sqih1Ra4WVAW4Fvoq9VSufRA6j7Ex4F1RJ66sw@mail.gmail.com>
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
-To: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Manfred Spraul <manfred@colorfullife.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
-	David Howells <dhowells@redhat.com>, WangYuli <wangyuli@uniontech.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	K Prateek Nayak <kprateek.nayak@amd.com>, "Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>, Neeraj.Upadhyay@amd.com
+References: <20250224154836.958915-1-mszeredi@redhat.com> <4a98d88878a18dd02b3df5822030617a@paul-moore.com>
+ <CAEjxPJ5V9z87c6pHVRemKxENoNq9TvqpQ3tJpLEbP4QEViZTHQ@mail.gmail.com>
+In-Reply-To: <CAEjxPJ5V9z87c6pHVRemKxENoNq9TvqpQ3tJpLEbP4QEViZTHQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 27 Feb 2025 11:48:09 -0500
+X-Gm-Features: AQ5f1JqX1rQ6m62bB5eNpWIdO0cQOPLAxtXa7BRO08xtGHgf2ADpYVSS1Bp8tTM
+Message-ID: <CAHC9VhTVBY7qkNQ-_vUWm_Y5bQ7OREp2hOWmfLizAXJs0f6Rtg@mail.gmail.com>
+Subject: Re: [PATCH] selinux: add FILE__WATCH_MOUNTNS
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, selinux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 27, 2025 at 5:20=E2=80=AFPM Sapkal, Swapnil <swapnil.sapkal@amd=
-.com> wrote:
-> I tried reproducing the issue with both the scenarios mentioned below.
->
-> > 1. with 1 fd instead of 20:
+On Thu, Feb 27, 2025 at 10:22=E2=80=AFAM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+> On Wed, Feb 26, 2025 at 3:19=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> > On Feb 24, 2025 Miklos Szeredi <mszeredi@redhat.com> wrote:
+> > >
+> > > Watching mount namespaces for changes (mount, umount, move mount) was=
+ added
+> > > by previous patches.
+> > >
+> > > This patch adds the file/watch_mountns permission that can be applied=
+ to
+> > > nsfs files (/proc/$$/ns/mnt), making it possible to allow or deny wat=
+ching
+> > > a particular namespace for changes.
+> > >
+> > > Suggested-by: Paul Moore <paul@paul-moore.com>
+> > > Link: https://lore.kernel.org/all/CAHC9VhTOmCjCSE2H0zwPOmpFopheexVb6j=
+yovz92ZtpKtoVv6A@mail.gmail.com/
+> > > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> > > ---
+> > >  security/selinux/hooks.c            | 3 +++
+> > >  security/selinux/include/classmap.h | 2 +-
+> > >  2 files changed, 4 insertions(+), 1 deletion(-)
 > >
-> > /usr/bin/hackbench -g 16 -f 1 --threads --pipe -l 100000 -s 100
+> > Thanks Miklos, this looks good to me.  VFS folks / Christian, can you
+> > merge this into the associated FSNOTIFY_OBJ_TYPE_MNTNS branch you are
+> > targeting for linux-next?
 > >
+> > Acked-by: Paul Moore <paul@paul-moore.com>
 >
-> With this I was not able to reproduce the issue. I tried almost 5000
-> iterations.
->
+> I'm not objecting to this patch, but just for awareness, this adds the
+> permission for all file-related classes, including dir(ectory), and we
+> are almost out of space in the access vector at which point we'll need
+> to introduce a file2 class or similar (as with process2).
 
-Ok, noted.
-
-> > 2. with a size which divides 4096 evenly (e.g., 128):
-> >
-> > /usr/bin/hackbench -g 1 -f 20 --threads --pipe -l 100000 -s 128
->
-> I was not able to reproduce the issue with 1 group. But I thought you
-> wanted to change only the message size to 128 bytes.
-
-Yes indeed, thanks for catching the problem.
-
-> When I retain the number of groups to 16 and change the message size to
-> 128, it took me around 150 iterations to reproduce this issue (with 100
-> bytes it was 20 iterations). The exact command was
->
-> /usr/bin/hackbench -g 16 -f 20 --threads --pipe -l 100000 -s 128
->
-> I will try to sprinkle some trace_printk's in the code where the state
-> of the pipe changes. I will report here if I find something.
->
-
-Thanks.
-
-So to be clear, this is Oleg's bug, I am only looking from the side
-out of curiosity what's up. As it usually goes with these, after the
-dust settles I very much expect the fix will be roughly a one liner.
-:)
+Yes, I've been paying closer attention to this over the past several
+years as we start to nudge the permission count limits.  However, as
+you mentioned, this isn't a new concern and we've successfully dealt
+with it in the past.
 
 --=20
-Mateusz Guzik <mjguzik gmail.com>
+paul-moore.com
 
