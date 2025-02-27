@@ -1,140 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-42790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB471A48B1A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2025 23:08:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79264A48B26
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2025 23:13:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4943D7A5915
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2025 22:07:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AE383B6FC2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2025 22:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A659F271824;
-	Thu, 27 Feb 2025 22:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6E2271827;
+	Thu, 27 Feb 2025 22:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nhpYy57d"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lJ7b1qSI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8D626E968;
-	Thu, 27 Feb 2025 22:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D951E51E0
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Feb 2025 22:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740694082; cv=none; b=GTcIg0cWF+uFCZOKm9zDlDTWARsGa8PxbllhHWEkjQH2MR29dHciBtLoZ8qp57vsSVN4RS4HQC/LZ2mxnjxSq2ILeLA5utjksznk+z06gn1xN/j4J6SMKBwU8bSkMv4anudl9FrrMDWPegcFjQVq2Dqi0AyEAvv45aluF5HfIGA=
+	t=1740694390; cv=none; b=UMSqGhi6FGgA9W9Mwxux90HwaeNbQ6XJzz2c9uCqmilLrTirLwlBmknzky/wEdFFSLl5gbut5dEUbAhodan0bbXpmazzl0lq8ggOPeKe5x92voU4YFsQdAXdL0XT71jNqtvtdxvFov+PdFcqVim6xrdG6MKFeXvsPanT7nZrJW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740694082; c=relaxed/simple;
-	bh=UN+Ru2yjqJrkcSVGik6SXxWdueMW66UZG8XnISR/UP0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U5r0ePeealrT7vE7fpanMSYFkHnhX+NP3tI1J3uaQSJp0A1FtNYFQmssrf4MI/C8m4/I9LoW+nticZz//o8dGKNsFR7oijzW64hBOTRwNGUVw/5EtChyM8gsGw+AN7YnPcVVbalRzOH9657rt6p1DJizM3mD5dncxFlGqNAlE5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nhpYy57d; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-abb892fe379so206176066b.0;
-        Thu, 27 Feb 2025 14:08:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740694079; x=1741298879; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ADjzqVu0rQMGccp4tlner6D96WtUA+UNr/2jIh2K1oc=;
-        b=nhpYy57dLJH1uPapQI7VnXH1HZpEkA4pWhCcg8ejbk5k7VSzfZokdbiZ5OA9YC10cE
-         L8WWibF6EYYyjJZSygxVWd5GUXsaITlN85fJtjgJFO/i9y4AhklroffS2bcHtAgckpGh
-         p6uZ2vDixkuJDv7q57KIIk+JfHG/X11fZFAKObCab8rx45rAPSZbY8h2bSquqBt6KPF0
-         Nam3Jb1s/FGOK+FFNJGfaffIxT6AjrhAQ9jaCuyTpZHBfoQkEEQxYj53XnINu9eNuXHX
-         ScVKgSgQ4OHHtnbNqlVGd7Aw3pXlefhif269O8U8pzcxGIiji8VwQ7nP6Fum2N9IC1hq
-         Lo0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740694079; x=1741298879;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ADjzqVu0rQMGccp4tlner6D96WtUA+UNr/2jIh2K1oc=;
-        b=LI8CsWzJ7kvh3ezXpDM2d/iuwSwPp7MmADVHgPQq/Pvt0DABfgJRagEKoqy6WEn8yB
-         hLzKMwPtENFvsGI1nGqKGjCYzt2t3qjk9HPDravQx55Vt+/WTKZr/qRg+xkEXMZ+2mKh
-         uAroUeiGXxNX1/IxVGj0G3Lgg+nqYq1nrR2oaYla9A47IdVxVujaOfPLXittmTwdZrwI
-         S+QVw98a3xZ6pydw9shAWJQ9KdXOs7hDBtgdNj9LaYO6iGnxnPdyz2rwpPNnOhs2qU3i
-         ohsIwJBmHhrqUf0iXgalFOYLIq+r+pllL8RV9jjsOhEhaqEuCiBx2+m2iSvx6nfRn2EL
-         gtIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVVhv9IOZbwmXAFCXnx3SnIp2NVENVXjbks7cWg+/I6vXQk+AsTOpHmYu8OSl++z2yUBMeZx5DDLMsttNS@vger.kernel.org, AJvYcCWnS0zVR4l7O7YQJ+wBadtQxvw20ijwv8OpdIFGDK2GZKpLkKHaMZQkDJMIg7CLkMc/RQPSUyIMylzH6ixp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv8nBQt+chqmVS1Vk7Hy4QBCAtjmBZZUAXN8Je7sz/7JX395gN
-	mk59Hi7KFd8Q5Jc7vcOMNXpN/6VwEkvDvXva0s8OJHydd/VXgy1QId7aG2MyDJ1A9ZMBmKE67W8
-	MtNA2dLBYT9DigMQ5KKnRqoiH+1c=
-X-Gm-Gg: ASbGncsleKffVWeH/iO0hATIaYzRNrTzcCW1WS9QF1uz1gN5nwnLqAwG9ITmB8KZya3
-	yTFwbaVHXUv5CyDDH441qMP+HYxjKy1+lj/iurCeT89v3gIaw7H6StJNVISZjHRPJSDn22SKTa1
-	nRGSz6c7A=
-X-Google-Smtp-Source: AGHT+IEBd5l3TXoINUYoCqfpZdrHIWch7LPPU/DVCUKfuAbX+iDCrpluTBxuviWEJtgjZj47tQXm4fxrqHTF+kGUQeE=
-X-Received: by 2002:a05:6402:34c6:b0:5de:4a8b:4c9c with SMTP id
- 4fb4d7f45d1cf-5e4d6b62f6emr1432015a12.32.1740694078277; Thu, 27 Feb 2025
- 14:07:58 -0800 (PST)
+	s=arc-20240116; t=1740694390; c=relaxed/simple;
+	bh=5UvuhxZ0KkH9bLFtzdL5uKUf/WhVtuA2yhkgzU4wNSk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BFfAZDxkSgEhXaNjIy+2kvFh2TfkDrq37QDMasTP9xatyjLJogAq/lRLP4wYR0bzoy37loDefNQoTOh9v615HswthEfyASNQdg9DoVjYMzgWQkvjPWJXgZIfEaCCEM0JTQuzd9wcYOL8ePEc5QX3Id5py7UwvlxtmUNpz5W4Om0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lJ7b1qSI; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=IjcRWZ8Lvb7WvhvvISj1HcODhsYVUVcOolxyu3/O/yE=; b=lJ7b1qSIXp1DVOSBXCe0B3oUyY
+	Gmo5TZ8v186AroD4PLQoD+OS0mnPGDN7aIOL7KPrSF7UmrdnvLnB0SBzF7m7EIU9sAydMTeGXSo8p
+	0x5bc73K4lznrghzD32VpU6XmhFZ6zJGA6dP6yt5CcALUbq9ziDb64d4ZKriTnNL/yESl2nFydzx3
+	90tSi5/0M8u4Z10QHpKVRZ9gmN1YtbobPYgr2rDPKYKY79Px3qqCd2stFPhU8kLhwpuLPkzgI4idx
+	9NTv+NPGSOUKN3L9d0zm/4pcJXqbkfncO1CIN47TZiTRc2E6076AAriMfLmKAK+hYOWMPLRx2Vw2r
+	pXTXxdvw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tnm7f-00000000hhB-0KpP;
+	Thu, 27 Feb 2025 22:12:51 +0000
+Date: Thu, 27 Feb 2025 22:12:50 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Kalesh Singh <kaleshsingh@google.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Jan Kara <jack@suse.cz>, lsf-pc@lists.linux-foundation.org,
+	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	David Hildenbrand <david@redhat.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Juan Yescas <jyescas@google.com>,
+	android-mm <android-mm@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>,
+	"Cc: Android Kernel" <kernel-team@android.com>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Optimizing Page Cache Readahead
+ Behavior
+Message-ID: <Z8DjYmYPRDArpsqx@casper.infradead.org>
+References: <CAC_TJvfG8GcwG_2w1o6GOTZS8tfEx2h9A91qsenYfYsX8Te=Bg@mail.gmail.com>
+ <hep2a5d6k2kwth5klatzhl3ejbc6g2opqu6tyxyiohbpdyhvwp@lkg2wbb4zhy3>
+ <3bd275ed-7951-4a55-9331-560981770d30@lucifer.local>
+ <ivnv2crd3et76p2nx7oszuqhzzah756oecn5yuykzqfkqzoygw@yvnlkhjjssoz>
+ <82fbe53b-98c4-4e55-9eeb-5a013596c4c6@lucifer.local>
+ <CAC_TJvcnD731xyudgapjHx=dvVHY+cxoO1--2us7oo9TqA9-_g@mail.gmail.com>
+ <Z70HJWliB4wXE-DD@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227180407.111787-1-mjguzik@gmail.com> <20250227215834.GE25639@redhat.com>
-In-Reply-To: <20250227215834.GE25639@redhat.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 27 Feb 2025 23:07:45 +0100
-X-Gm-Features: AQ5f1JpvudCDW09pKlncHJMvLXGsrmhmZGJuFrf5IBX_27iIWhHqMRNvU_zS9vU
-Message-ID: <CAGudoHG7EF5_wnNhsyFoiRtU-qW1b=vUaVaFk7TKnqeSjC6sOg@mail.gmail.com>
-Subject: Re: [PATCH] pipe: cache 2 pages instead of 1
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z70HJWliB4wXE-DD@dread.disaster.area>
 
-On Thu, Feb 27, 2025 at 10:59=E2=80=AFPM Oleg Nesterov <oleg@redhat.com> wr=
-ote:
-> > +static struct page *anon_pipe_get_page(struct pipe_inode_info *pipe)
-> > +{
-> > +     struct page *page;
-> > +
-> > +     if (pipe->tmp_page[0]) {
-> > +             page =3D pipe->tmp_page[0];
-> > +             pipe->tmp_page[0] =3D NULL;
-> > +     } else if (pipe->tmp_page[1]) {
-> > +             page =3D pipe->tmp_page[1];
-> > +             pipe->tmp_page[1] =3D NULL;
-> > +     } else {
-> > +             page =3D alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
-> > +     }
-> > +
-> > +     return page;
-> > +}
->
-> Perhaps something like
->
->         for (i =3D 0; i < ARRAY_SIZE(pipe->tmp_page); i++) {
->                 if (pipe->tmp_page[i]) {
->                         struct page *page =3D pipe->tmp_page[i];
->                         pipe->tmp_page[i] =3D NULL;
->                         return page;
->                 }
->         }
->
->         return alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
-> ?
->
-> Same for anon_pipe_put_page() and free_pipe_info().
->
-> This avoids the code duplication and allows to change the size of
-> pipe->tmp_page[] array without other changes.
->
+On Tue, Feb 25, 2025 at 10:56:21AM +1100, Dave Chinner wrote:
+> > From the previous discussions that Matthew shared [7], it seems like
+> > Dave proposed an alternative to moving the extents to the VFS layer to
+> > invert the IO read path operations [8]. Maybe this is a move
+> > approachable solution since there is precedence for the same in the
+> > write path?
+> > 
+> > [7] https://lore.kernel.org/linux-fsdevel/Zs97qHI-wA1a53Mm@casper.infradead.org/
+> > [8] https://lore.kernel.org/linux-fsdevel/ZtAPsMcc3IC1VaAF@dread.disaster.area/
+> 
+> Yes, if we are going to optimise away redundant zeros being stored
+> in the page cache over holes, we need to know where the holes in the
+> file are before the page cache is populated.
 
-I have almost no opinion one way or the other and I'm not going to
-argue about this bit. I only note I don't expect there is a legit
-reason to go beyond 2 pages here. As in if more is warranted, the
-approach to baking the area should probably change.
+Well, you shot that down when I started trying to flesh it out:
+https://lore.kernel.org/linux-fsdevel/Zs+2u3%2FUsoaUHuid@dread.disaster.area/
 
-I started with this being spelled out so that I have easier time
-toggling the extra slot for testing.
+> As for efficient hole tracking in the mapping tree, I suspect that
+> we should be looking at using exceptional entries in the mapping
+> tree for holes, not inserting mulitple references to the zero folio.
+> i.e. the important information for data storage optimisation is that
+> the region covers a hole, not that it contains zeros.
 
-That said, I don't know who counts as the pipe man today. I can do the
-needful(tm) no problem.
---=20
-Mateusz Guzik <mjguzik gmail.com>
+The xarray is very much optimised for storing power-of-two sized &
+aligned objects.  It makes no sense to try to track extents using the
+mapping tree.  Now, if we abandon the radix tree for the maple tree, we
+could talk about storing zero extents in the same data structure.
+But that's a big change with potentially significant downsides.
+It's something I want to play with, but I'm a little busy right now.
+
+> For buffered reads, all that is required when such an exceptional
+> entry is returned is a memset of the user buffer. For buffered
+> writes, we simply treat it like a normal folio allocating write and
+> replace the exceptional entry with the allocated (and zeroed) folio.
+
+... and unmap the zero page from any mappings.
+
+> For read page faults, the zero page gets mapped (and maybe
+> accounted) via the vma rather than the mapping tree entry. For write
+> faults, a folio gets allocated and the exception entry replaced
+> before we call into ->page_mkwrite().
+> 
+> Invalidation simply removes the exceptional entries.
+
+... and unmap the zero page from any mappings.
+
 
