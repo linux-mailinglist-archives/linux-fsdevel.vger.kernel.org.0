@@ -1,179 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-42785-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F2A6A48960
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2025 21:05:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA2CFA489AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2025 21:18:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 882FA16DB0C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2025 20:05:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2EFD3A718E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2025 20:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FE826FA4E;
-	Thu, 27 Feb 2025 20:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076EB26A0FD;
+	Thu, 27 Feb 2025 20:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sWXcTkPJ"
+	dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b="2/qv77Hc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760B926F47C;
-	Thu, 27 Feb 2025 20:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65D71AB6D8
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Feb 2025 20:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740686717; cv=none; b=Vmg+9VeUA0brhQOYzHRXESydAvqoGdXweyPPpPX92ADyKLbMS49RDbJA5y19Fvz7S7DHV5RvpFCU+8vXiOs94HxgtFhTavH7nIHDvN8uDLk82YdHNaMHY3q5+HYr2rHu7htd4d9CR8HMus+LL7Q+5Ldgy5nXc+ee1kMGK4wDsfI=
+	t=1740687524; cv=none; b=Ie0DW08kWYNgh1zCQ6zc3rERSweuqFFdTTjoX/TsdaPXGDX228AuACQTsPKY8mF2tHnDYBIRfDykzMAyU/rnP/c4kymCG4Q5vL21RBGG1X8CiCz+HxOBae38EMtXjQ126Dly8womm4iRuakIc+cZuPQvv6HsWQFGtQra9eBNclg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740686717; c=relaxed/simple;
-	bh=cKyiFi3SZsXOOEUVfU1WBhvUnONEWzPDCgQb2dLAIRA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qGn7RAB6hUk6sbJV8ZuiMkd8Nq/IJOZDts+54V92W/RDDgxCEuHeI4YudMceM7Dwk8Zu26IjD3JWcLCzHwxuFMev6Cl9PeW9pxLC9JuFYqKvAcfubPCToNsLWVq37bL4tdgmOiK6HMJaEryVMS6BMXbCwExICo6ZVY/154JkTng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sWXcTkPJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DAE9C4CEDD;
-	Thu, 27 Feb 2025 20:05:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740686717;
-	bh=cKyiFi3SZsXOOEUVfU1WBhvUnONEWzPDCgQb2dLAIRA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=sWXcTkPJ2HTXK1CfdPxUOJMMwCq+SLAdiSvrFPjFVPGvizQ4MapMHE1QL7IL532Cb
-	 yqhOPv+8o05VaBY2vMjIH9AHfRFf72BWwrekv4nRCkIAgSDs9xescGnuaW5sSDLPga
-	 3+tUctsevxD4zr+XHYuMuB2uY3KKJU/kTbzRz6/buUXdn2IgCk9ZpNyzKGmxIdBD5v
-	 eSkdIH0t67B8DrQk46//Oti+hRmHOKfW/VQEGZlQjev/kcJ3nK/FOeRYtzF96Crch7
-	 rVQR3WTfJwrtMFTf3dbtX3x1hLF/cg+JMi6OlQn8Hb6YcimBP686kpxNRdcyv+JODm
-	 9hEc6kr+1QkTA==
-From: Zorro Lang <zlang@kernel.org>
-To: fstests@vger.kernel.org
-Cc: David Sterba <dsterba@suse.com>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] README: add supported fs list
-Date: Fri, 28 Feb 2025 04:05:14 +0800
-Message-ID: <20250227200514.4085734-1-zlang@kernel.org>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1740687524; c=relaxed/simple;
+	bh=00JAUNRBO82Jpj6i/1z3tlutIj2CrE3y5m0nLjmSaZs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kcPFyu9CzWrbjErx0SSfDWy5jk8laMA9s4POLJK2XHF0mh0bSXyf5KjhjzSu/WqMiyx7+Rl5R6Bke0wmKqZTfpOos1GSW/8LhmHRANcXEy2mm7C8y7f9+T773fdVHrJRsvjuo7NCcofUQ9ww8qsJgDjLPkH93VkN/RtTRfiN//c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com; spf=pass smtp.mailfrom=omnibond.com; dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b=2/qv77Hc; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omnibond.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-219f8263ae0so26197985ad.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Feb 2025 12:18:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=omnibond-com.20230601.gappssmtp.com; s=20230601; t=1740687521; x=1741292321; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tav4xqr1XQO33V7brGh1x4z4ojxCyIzenuMBnymkdj0=;
+        b=2/qv77HctFNnDRGEE65YYJ+FiL40u8gxOYdCD1sNMtwQWMQKXMtMVllMBbd4EODeh+
+         Ix0oeiltrQ+DXbMQX7ISI1jOV1iDvM1+N/yZ5uqdC2xRf0IsUEocQsK7wckHmoA1juLY
+         5JU+tAd/rhqkJPXKPkOaO4KV+EqG8oJOly3YCbf1mB9JD02YAb3T0wRo62N0Un4BbeyN
+         lgO8fpo/W6oepmT+K/5uRIq5OkFP/IVvNUhNEHQfS3qwghS9/l25kuqtcS5cdrfTg4X9
+         PTV/tbgmVUpphMz3m5ZgueHb8M3IJZZuLK5Z0MYsmgwyqw0qxp8MG3i0RCSIR1Dedg1z
+         WoWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740687521; x=1741292321;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Tav4xqr1XQO33V7brGh1x4z4ojxCyIzenuMBnymkdj0=;
+        b=td9YMFQIzHFsnUX85Vxd0lHqOfhkywufRW8wXEZwZc5hnStIcHHmRBEOGyNOgjasv6
+         HoL8YHvcELtEC4Quq74UDhrDLEvmLi7oRJpbLWQD+ZVXvD3RnoAci/XthZpzV2HlMyRp
+         V3RlvYvJ5W5BXVlO9wM+VeAKMcUKNcfbz/oZJd1YjXP22SVnYM8xs8ej52NODtEzScUG
+         YrhEq7NCjvJ9XzQBG+kZ8g94XJCNk/eWY7+ROYOtNEIO8GLqCgI3qXdO+PdPGnx7fiD/
+         5e1S9hm6/ICDFwvcn7nNrJn5ewy4rUxYN6lazLLBgOj3OF+jr6kOHWnGxn2Paxf0mzpq
+         2RMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVT20I5pSLUXZ+a/8ChSq5mcDPQdm5ilDZpROxSqOnLj5MCDd8HR3vQSCCpZztix/XmeyM9Iwq6olWFnj9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz75rJUN6hMLe4/OlD4SFmm0sOX9GKWw7Ven/q64UpWXErNwqHu
+	9W6r566QFlqg+1rt0YxcQWZohvL3T+IcL2Wi1m55RDFC2LgGpXTv6qbgxf5b147iu03aBjCR+Vu
+	sP8SN2piOyTd5UvuccSFRjU1U8wGo9/D3XNwZMC2mbyT5Xb3FUQ==
+X-Gm-Gg: ASbGncuvwJXY+EK2DmoTCLUyIon8Q9whoh1pZaYXHsCTOxAOZVnQQULekXpy4hv3ZC3
+	F05Dk/s7HIS+yUeP1gzXuH7jTBQHt2N08Pa0cE/J46J1PJFcqNkQV6iSqB9qa9mJEP3Rh2S0tnO
+	0EIC727Em9YjX6XO3hCHQ=
+X-Google-Smtp-Source: AGHT+IEwPeSZd+nviOPAGSCL8vdQ/b8GSfSOVyaWhXhLX4EBlFjIM1euIMkWJiJ4yw1/u/ogtDQea2xftPItkEUVjDw=
+X-Received: by 2002:a05:6a20:4326:b0:1ee:e6a5:e9ba with SMTP id
+ adf61e73a8af0-1f2f4c98541mr704801637.9.1740687520989; Thu, 27 Feb 2025
+ 12:18:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250224180529.1916812-1-willy@infradead.org>
+In-Reply-To: <20250224180529.1916812-1-willy@infradead.org>
+From: Mike Marshall <hubcap@omnibond.com>
+Date: Thu, 27 Feb 2025 15:18:30 -0500
+X-Gm-Features: AQ5f1JrVpdhsBtW-z-FEoj6BWJVTUi2KV6HsBGiyAgHXFunOdlVyR66RkDE49jQ
+Message-ID: <CAOg9mSQ2o0zaBhY37bBfR9CDKv=-EY3SzxEh0mFYiNvEjZaZKQ@mail.gmail.com>
+Subject: Re: [PATCH 0/9] Orangefs fixes for 6.15
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Martin Brandenburg <martin@omnibond.com>, devel@lists.orangefs.org, 
+	linux-fsdevel@vger.kernel.org, Mike Marshall <hubcap@omnibond.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-To clarify the supported filesystems by fstests, add a fs list to
-README file.
+Howdy Matthew... I got your patch and deciphered the note
+about leaving out the include files. It is compiling on top of
+ Linux 6.14-rc4 now, and I'll let you know how testing goes...
 
-Signed-off-by: Zorro Lang <zlang@kernel.org>
----
+-Mike
 
-Hi,
-
-David Sterba suggests to have a supported fs list in fstests:
-
-https://lore.kernel.org/fstests/20250227073535.7gt7mj5gunp67axr@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com/T/#m742e4f1f6668d39c1a48450e7176a366e0a2f6f9
-
-I think that's a good suggestion, so I send this patch now. But tell the truth,
-it's hard to find all filesystems which are supported by fstests. Especially
-some filesystems might use fstests, but never be metioned in fstests code.
-So please review this patch or send another patch to tell fstests@ list, if
-you know any other filesystem is suppported.
-
-And if anyone has review point about the support "level" and "comment" part,
-please feel free to tell me :)
-
-Thanks,
-Zorro
-
- README | 82 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
-
-diff --git a/README b/README
-index 024d39531..055935917 100644
---- a/README
-+++ b/README
-@@ -1,3 +1,85 @@
-+_______________________
-+SUPPORTED FS LIST
-+_______________________
-+
-+History
-+-------
-+
-+Firstly, xfstests is the old name of this project, due to it was originally
-+developed for testing the XFS file system on the SGI's Irix operating system.
-+With xfs was ported to Linux, so was xfstests, now it only supports Linux.
-+
-+As xfstests has some test cases are good to run on some other filesystems,
-+we call them "generic" (and "shared", but it has been removed) cases, you
-+can find them in tests/generic/ directory. Then more and more filesystems
-+started to use xfstests, and contribute patches. Today xfstests is used
-+as a file system regression test suite for lots of Linux's major file systems.
-+So it's not "xfs"tests only, we tend to call it "fstests" now.
-+
-+Supported fs
-+------------
-+
-+Firstly, there's not hard restriction about which filesystem can use fstests.
-+Any filesystem can give fstests a try.
-+
-+Although fstests supports many filesystems, they have different support level
-+by fstests. So mark it with 4 levels as below:
-+
-+L1: Fstests can be run on the specified fs basically.
-+L2: Rare support from the specified fs list to fix some generic test failures.
-+L3: Normal support from the specified fs list, has some own cases.
-+L4: Active support from the fs list, has lots of own cases.
-+
-++------------+-------+---------------------------------------------------------+
-+| Filesystem | Level |                       Comment                           |
-++------------+-------+---------------------------------------------------------+
-+| AFS        |  L1   | N/A                                                     |
-++------------+-------+---------------------------------------------------------+
-+| Bcachefs   |  L1+  | N/A                                                     |
-++------------+-------+---------------------------------------------------------+
-+| Btrfs      |  L4   | N/A                                                     |
-++------------+-------+---------------------------------------------------------+
-+| Ceph       |  L2   | N/A                                                     |
-++------------+-------+---------------------------------------------------------+
-+| CIFS       |  L2-  | https://wiki.samba.org/index.php/Xfstesting-cifs        |
-++------------+-------+---------------------------------------------------------+
-+| Ext2/3/4   |  L3+  | N/A                                                     |
-++------------+-------+---------------------------------------------------------+
-+| Exfat      |  L1+  | N/A                                                     |
-++------------+-------+---------------------------------------------------------+
-+| f2fs       |  L3-  | N/A                                                     |
-++------------+-------+---------------------------------------------------------+
-+| FUSE       |  L1   | N/A                                                     |
-++------------+-------+---------------------------------------------------------+
-+| GFS2       |  L1   | N/A                                                     |
-++------------+-------+---------------------------------------------------------+
-+| Glusterfs  |  L1   | N/A                                                     |
-++------------+-------+---------------------------------------------------------+
-+| JFS        |  L1   | N/A                                                     |
-++------------+-------+---------------------------------------------------------+
-+| NFS        |  L2+  | https://linux-nfs.org/wiki/index.php/Xfstests           |
-++------------+-------+---------------------------------------------------------+
-+| ocfs2      |  L2-  | N/A                                                     |
-++------------+-------+---------------------------------------------------------+
-+| overlay    |  L3   | N/A                                                     |
-++------------+-------+---------------------------------------------------------+
-+| pvfs2      |  L1   | N/A                                                     |
-++------------+-------+---------------------------------------------------------+
-+| Reiser4    |  L1   | Reiserfs has been removed, only left reiser4            |
-++------------+-------+---------------------------------------------------------+
-+| tmpfs      |  L3-  | N/A                                                     |
-++------------+-------+---------------------------------------------------------+
-+| ubifs      |  L1   | N/A                                                     |
-++------------+-------+---------------------------------------------------------+
-+| udf        |  L1+  | N/A                                                     |
-++------------+-------+---------------------------------------------------------+
-+| Virtiofs   |  L1   | N/A                                                     |
-++------------+-------+---------------------------------------------------------+
-+| XFS        |  L4+  | N/A                                                     |
-++------------+-------+---------------------------------------------------------+
-+| 9p         |  L1   | N/A                                                     |
-++------------+-------+---------------------------------------------------------+
-+
- _______________________
- BUILDING THE FSQA SUITE
- _______________________
--- 
-2.47.1
-
+On Mon, Feb 24, 2025 at 1:05=E2=80=AFPM Matthew Wilcox (Oracle)
+<willy@infradead.org> wrote:
+>
+> The start of this was the removal of orangefs_writepage(), but it
+> quickly spiralled out of hand.  The first patch is an actual bug fix.
+> I haven't tagged it for backport, as I don't think we really care about
+> 32-bit systems any more, but feel free to add a cc to stable.
+>
+> Patches 2 and 3 are compilation fixes for warnings which aren't enabled
+> by default.
+>
+> Patches 4-9 are improvements which simplify orangefs or convert it
+> from pages to folios.  There is still a little use of 'struct page'
+> in orangefs, but it's not in the areas that deal with the page cache.
+>
+> Matthew Wilcox (Oracle) (9):
+>   orangefs: Do not truncate file size
+>   orangefs: Move s_kmod_keyword_mask_map to orangefs-debugfs.c
+>   orangefs: make open_for_read and open_for_write boolean
+>   orangefs: Remove orangefs_writepage()
+>   orangefs: Convert orangefs_writepage_locked() to take a folio
+>   orangefs: Pass mapping to orangefs_writepages_work()
+>   orangefs: Unify error & success paths in orangefs_writepages_work()
+>   orangefs: Simplify bvec setup in orangefs_writepages_work()
+>   orangefs: Convert orangefs_writepages to contain an array of folios
+>
+>  fs/orangefs/file.c             |   4 +-
+>  fs/orangefs/inode.c            | 149 ++++++++++++++-------------------
+>  fs/orangefs/orangefs-debug.h   |  43 ----------
+>  fs/orangefs/orangefs-debugfs.c |  43 ++++++++++
+>  include/linux/mm_types.h       |   6 +-
+>  include/linux/nfs_page.h       |   2 +-
+>  include/linux/page-flags.h     |   6 +-
+>  7 files changed, 116 insertions(+), 137 deletions(-)
+>
+> --
+> 2.47.2
+>
 
