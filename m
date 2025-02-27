@@ -1,106 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-42743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B0ACA473B3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2025 04:43:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB707A47757
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2025 09:10:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49EF67A4F11
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2025 03:42:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5A473AD9B2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2025 08:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE0F1E51E7;
-	Thu, 27 Feb 2025 03:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D62224893;
+	Thu, 27 Feb 2025 08:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="tXqaFK2o"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VaKzYk7J"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA1E1CAA79;
-	Thu, 27 Feb 2025 03:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153CF219A68;
+	Thu, 27 Feb 2025 08:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740627814; cv=none; b=Bn0pMcxztKD86DAHxFbw5B80diP+DB6KOdr2vS4t80gYDJwe//FmTJZQtXR7+CzudGBIi6sqyJJXO/Lpk276XRl07xRviFOppOBI4EHe4QkozNQ11TxYqxA4UgltUam2hemdX0VNXE8pCKlo8jOTuGGSFVFLRkEfdH7CSxDRkCw=
+	t=1740643803; cv=none; b=CnPr2jeNv0aZU/QQ8a2EKCcA6FGZNrNfropAE2vfZTEghCPhOKNfvS2PdV8laIm0lQZq1FffUPf/pD3PQkrXqTwOTjJaM5oDbteYPIKSCGjgKD5/NXVQMpKPlADhsfdd112IYpZjDhJHvzX6wLUAnZnyWjsK3gDhWV7gKT+921g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740627814; c=relaxed/simple;
-	bh=9GlsjQr2QhDcFn03r9Qw1k4bhpLAnS5b82yQXLTd5ag=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FiZdPVjHHLpAZEdqtBvsRZzZ9+TI9ifPQjR7mdEfeb0sI9KrNUBeUYxe6qF1f0D6n1ZM9Y0EixRCJi4YDfFxUaePsP3zA1HnHpOdam0T4Pct6NVC0f7Cgl3Y53iHFxERSm3kjiZKdr8teiFcjV5xmCvQBPDami5Vgq1VvxIw3O8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=tXqaFK2o; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740627807; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=TMLk+pH9DL7fAhjLGVm//3iZnCFaZVw+B1tXOrFpX0U=;
-	b=tXqaFK2ohYXbA31KmAjB7uVDIBxreqJIfcxx0sc4VoRsMkfnGFfLHrBIUon2ve+9Vr3QhvbEc91RAjXr0lh2AqE14pcofjIw5eseVG5NTfgJX2hpybh0GJLVXLyKeGgWJeKY5zFqTVRtVlykZmawznFR9gTPtGZYfqGiL2f19kE=
-Received: from 30.74.144.117(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WQKuZaU_1740627805 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 27 Feb 2025 11:43:26 +0800
-Message-ID: <250ce8a5-8f2c-4d29-b73b-ea9a117598f0@linux.alibaba.com>
-Date: Thu, 27 Feb 2025 11:43:24 +0800
+	s=arc-20240116; t=1740643803; c=relaxed/simple;
+	bh=sT9FoMjjZ+j9C9C1Tm3d5T9KzPPeaRXmtqMNkoYoUj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LkVpSOutrmpOSbXNeuUJc3h7XOhq49mXxOWj294sK+w4+xPDI+V36UZ6sm8R9q2FtICwkBhgJgOhTAie1pClaSzl3j/ODRd67ceNbC+N9j02pnF5rGpiuYglXWwQSbl+A4SAHneLguIPYF/yzgEQp2orYG6ZwJ1u7MI2SOfJDTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VaKzYk7J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17308C4CEDD;
+	Thu, 27 Feb 2025 08:10:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740643802;
+	bh=sT9FoMjjZ+j9C9C1Tm3d5T9KzPPeaRXmtqMNkoYoUj8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VaKzYk7JrOG0sraUOyAup/ViOy/o8eEZ32GYqu3gr5iu8ZGfEsIHa2JHLB11P1S9+
+	 /lnCU021TKUxBz0vqrFJE1gkin5JXTB0a6QmEVGT/Rhg2Atq2K5zjLfk9YxwUfR65N
+	 zwUJd3Kxxxy3ssBkp5uL1P1mSZCSvydJqGn74osNhQeR9lE/fNPcsRrILhs6fk40ds
+	 8JPbHg9niTHwetppsWcXEyl1J19T48xlqPenNYLl+1BrdJP714R9WFZ2rt5zIKvVaT
+	 euk0varEjqsfJzb2tCtznKeR2nUhjf2ursYTWD7c8h2b2M+RUyJJgfqxrkOpMOKF2W
+	 Xi4kAP39Jen4A==
+Date: Thu, 27 Feb 2025 09:09:58 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] fs: Fix uninitialized variable uflags
+Message-ID: <20250227-boxhandschuhe-gesichert-908c190a9634@brauner>
+References: <20250226223913.591371-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] mm/shmem: use xas_try_split() in
- shmem_split_large_entry()
-To: Zi Yan <ziy@nvidia.com>, Matthew Wilcox <willy@infradead.org>,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
- <hughd@google.com>, Kairui Song <kasong@tencent.com>,
- Miaohe Lin <linmiaohe@huawei.com>, linux-kernel@vger.kernel.org,
- David Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>,
- "Kirill A. Shuemov" <kirill.shutemov@linux.intel.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Yang Shi <yang@os.amperecomputing.com>,
- Yu Zhao <yuzhao@google.com>
-References: <20250226210854.2045816-1-ziy@nvidia.com>
- <20250226210854.2045816-3-ziy@nvidia.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250226210854.2045816-3-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250226223913.591371-1-colin.i.king@gmail.com>
 
+On Wed, Feb 26, 2025 at 10:39:12PM +0000, Colin Ian King wrote:
+> The variable uflags is only being initialized in the if statement that
+> checks if flags & MOVE_MOUNT_F_EMPTY_PATH is non-zero.  Fix this by
+> initializing uflags at the start of the system call move_mount.
+> 
+> Fixes: b1e9423d65e3 ("fs: support getname_maybe_null() in move_mount()")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
 
+Thanks, Colin. I've already taken in a patch from Arnd Bergmann
+yesterday. So this should already be fixed.
 
-On 2025/2/27 05:08, Zi Yan wrote:
-> During shmem_split_large_entry(), large swap entries are covering n slots
-> and an order-0 folio needs to be inserted.
+>  fs/namespace.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Instead of splitting all n slots, only the 1 slot covered by the folio
-> need to be split and the remaining n-1 shadow entries can be retained with
-> orders ranging from 0 to n-1.  This method only requires
-> (n/XA_CHUNK_SHIFT) new xa_nodes instead of (n % XA_CHUNK_SHIFT) *
-> (n/XA_CHUNK_SHIFT) new xa_nodes, compared to the original
-> xas_split_alloc() + xas_split() one.
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 663bacefddfa..c19e919a9108 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -4599,7 +4599,7 @@ SYSCALL_DEFINE5(move_mount,
+>  	struct path from_path __free(path_put) = {};
+>  	struct filename *to_name __free(putname) = NULL;
+>  	struct filename *from_name __free(putname) = NULL;
+> -	unsigned int lflags, uflags;
+> +	unsigned int lflags, uflags = 0;
+>  	enum mnt_tree_flags_t mflags = 0;
+>  	int ret = 0;
+>  
+> -- 
+> 2.47.2
 > 
-> For example, to split an order-9 large swap entry (assuming XA_CHUNK_SHIFT
-> is 6), 1 xa_node is needed instead of 8.
-> 
-> xas_try_split_min_order() is used to reduce the number of calls to
-> xas_try_split() during split.
-> 
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: Kairui Song <kasong@tencent.com>
-> Cc: Mattew Wilcox <willy@infradead.org>
-> Cc: Miaohe Lin <linmiaohe@huawei.com>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: John Hubbard <jhubbard@nvidia.com>
-> Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
-> Cc: Kirill A. Shuemov <kirill.shutemov@linux.intel.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Yang Shi <yang@os.amperecomputing.com>
-> Cc: Yu Zhao <yuzhao@google.com> > ---
-
-LGTM. Feel free to add:
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-Tested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
