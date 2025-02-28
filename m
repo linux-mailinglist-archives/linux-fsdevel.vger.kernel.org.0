@@ -1,133 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-42860-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42861-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A609EA49E3A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 17:03:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74279A49EF5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 17:36:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27B5B172B0F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 16:03:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 166D01780D0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 16:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E74A16F265;
-	Fri, 28 Feb 2025 16:03:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FF0276025;
+	Fri, 28 Feb 2025 16:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P0Ff8vg2"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SnHFi/3X"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A42142A87
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2025 16:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B30925DD0F
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2025 16:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740758611; cv=none; b=IWNnRqqDsCj3EI7dJvbGBuwM0LVqezUIdEXd0qjZDG+O9ujzeft4juCL6KSLKZDOZS0cCm6Qc5v1yzWzLuZKNcxq7EmImJ9sqaQOGIPp7bjdthWVaXduTphOg3aaUa3BAJWkqjHY+F1fo8Sag+hsGPV35hk49CDFOBG2eIaPid4=
+	t=1740760475; cv=none; b=UXw1UxvITku5yR/enQ05/u6kYbiJDIfb898pcV2fwWV0qeNaFN6/JOZsEayqXCMKh41zSuvSzCip2VVhSVZD6n9TJuJaHnVBovNa/8n8YHwQuSJD9JSE6mZYHqELfwJrxpmPIPlOFldJOpoLAenL4AKGhxQarastsYUlJ4ym10g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740758611; c=relaxed/simple;
-	bh=IDViRo7SmtVvok33drhxP6pbxgGH1H+DadIIZvpwEGg=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=AlrCorW4yzFltXKhIYS9ALQvXsaZscngnlcKt+ssPH8Zm+9wBcfFkdHrsuUckFMfE6js9PiuG0wWe+hvj6gP5NHrAphUSot67+kkfUQmkXGKt3AsqZDB5/qRzm7qlKisM+I1+1BUNrCZHKiyPzSglzgnCe/QtiRxCYVdy/oOm10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P0Ff8vg2; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2fec3176ef3so1096906a91.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2025 08:03:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740758609; x=1741363409; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:reply-to:user-agent:mime-version:date:message-id:from
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uTLIhGW0Z0WiRcdJUnoUYsp35SmKdJ8rK4znAPbB6Z0=;
-        b=P0Ff8vg2TGxUPr+tOmoh/gdgCk2ovLv0yVtKsjJxIp7vb5N291SKOPuy78UqiSBk5p
-         VyQtrvJ6lmN0bfxNSKazFaDmR1rdee1UJ3OkbvAu7l1kvAFw4PvH20nYz8a2YruuPp+V
-         GPVxIZZaqdmG0Hfiz1VcnhpU9eZNsrT8aBfYPl5MFgjmtJn5eTZ5/8N6e1lxh07341XN
-         aI2p3Ov26uUur2tJ5uzJH/IT7HLqhL7Ab5TeCLZCYcARfmhcdxUTrs7Z/oDNUagieu07
-         w+kWwHXvVYyU+Cd393OAqId2bdQQsQd2S2d0gjydtEw0opkGDSB8ZbBsj24fjDDK7FwH
-         yalg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740758609; x=1741363409;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:reply-to:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uTLIhGW0Z0WiRcdJUnoUYsp35SmKdJ8rK4znAPbB6Z0=;
-        b=WOCcfCDcjKMVQeaUWl11FepoAw+b7U72lCpoZJFzyGUdrvkKU82whxxnOIjLgxW5eG
-         H3erespgnceQVHNFXCEuHsYRf4ujEueB9JLdOkcumQf5bgxLUy78rwAuGAnIKGKkl71r
-         W/feoeBerflPiuFuEOXxYyXL7zBa1i4dokMMoeUCbTx10SqQUzFcURF0tWs5uBl0D9cy
-         9ZPV6G9D/8PknPJ8bDauZ07lPkRd+aM8ajj5MYdDQWKTwlRyOJ3444h4+lNcKHgyZlEm
-         ZZqIAU2+Gqo3vB+/lSvbwUa4mW/26SNPGa5y9Kr6jHGO/VcSD1+yVJ746PLh6jzBuXi+
-         pvrQ==
-X-Gm-Message-State: AOJu0YyKlw57JJebEbC6XLjIJUS9I82cIv/hjbPk+NQH7qFUW6YfXffN
-	bdKMUJl1Hrdhcr89zvjnaWjZfXTfPmNsWEl5NFAfcpnYei5LB+IhYJ5tVg==
-X-Gm-Gg: ASbGncsEUHzlr+jWARLvf9oq373LgetvYn6C4nIBPSiDb2HV1x+ByGGbmKIY3riCZdv
-	NeGhdrvmIWJtyYGFnyUYse1SC1QFCcnLFEKVlpaRj3THD2BVnigSyqDfLs1Ca8H4236KxfZwuEt
-	3VYMGWP5D7NpYlWBY6vA0OGeMZVzDvMscL5mtga4hkiOJrImJ/ocMAjlniVxgS1V+ToaeN11epT
-	2cNnVh21PujJRq6BsAa9PM7sGyE2n/U2r2lvvAlAWUzUzK9D5NUIIGu6kOIEqN3R/AseA7LJtLQ
-	GwK+BRSg7YgjQFRmuueQ0ABh8/DEGBa1dQ==
-X-Google-Smtp-Source: AGHT+IEhNEw/AxZwA9/yYeVUhkTn6+Bbt5RCB0x2+tMMrNxXn3LSUmii6n5rC6Ig/izBpjSx79vygA==
-X-Received: by 2002:a17:90b:1805:b0:2ee:f550:3848 with SMTP id 98e67ed59e1d1-2febab2ee96mr5843554a91.5.1740758609241;
-        Fri, 28 Feb 2025 08:03:29 -0800 (PST)
-Received: from [172.26.235.44] ([223.39.179.67])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe6ded68ebsm6113871a91.1.2025.02.28.08.03.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Feb 2025 08:03:28 -0800 (PST)
-From: Sungjong Seo <sjdev.seo@gmail.com>
-X-Google-Original-From: Sungjong Seo <sj1557.seo@samsung.com>
-Message-ID: <394ca686-a45a-e71c-bc45-33794463b5fc@samsung.com>
-Date: Sat, 1 Mar 2025 01:03:23 +0900
+	s=arc-20240116; t=1740760475; c=relaxed/simple;
+	bh=cbAmjOkxGzlGB0vnl36OuBNhdg/uCF4jhOBU7jnRtC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fpdXQiDR/hLwCZDNbyBUp/akF7GXSiYgGhYPZXxITuqhctFWDfFrOyhTSoLXFCrkLthRMrVSLcs9aXA10VG5wfl4Q88rGq08RxCTIst24XZDHNsnIR9gwndsi8P1FiBnXBDRaZVkhRhmVaGrbheKazHF7BZHTImQMdoPQlRPn0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SnHFi/3X; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740760472;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YNodNjyB5BMBDPR8Ne5FHZKK2te4oF7OXWhGp5jO3xs=;
+	b=SnHFi/3X2dOV2npdIhEtjjCiVQs8EyFHf6PoJwppn5qZaKAHLetXt4WDBZ+L6W1DwTGBvJ
+	5q3W0kHxbl0dHSaixxiVkH7y+AFLxuHiwcVJsnJi7sCWbVL6vJ4y/AvFKKoGFT58lUplgs
+	dJwjjNbWev72kW2TLWL+8D7PeGSNqvs=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-248-3iXaHjlXNrOzj55e-F4uSA-1; Fri,
+ 28 Feb 2025 11:34:26 -0500
+X-MC-Unique: 3iXaHjlXNrOzj55e-F4uSA-1
+X-Mimecast-MFC-AGG-ID: 3iXaHjlXNrOzj55e-F4uSA_1740760464
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5E198180087C;
+	Fri, 28 Feb 2025 16:34:24 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.184])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8495F1944D2A;
+	Fri, 28 Feb 2025 16:34:19 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 28 Feb 2025 17:33:54 +0100 (CET)
+Date: Fri, 28 Feb 2025 17:33:48 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
+Cc: Mateusz Guzik <mjguzik@gmail.com>,
+	Manfred Spraul <manfred@colorfullife.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>,
+	Neeraj.Upadhyay@amd.com
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+Message-ID: <20250228163347.GB17761@redhat.com>
+References: <20250102140715.GA7091@redhat.com>
+ <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
+ <20250224142329.GA19016@redhat.com>
+ <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt>
+ <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com>
+ <20250227211229.GD25639@redhat.com>
+ <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com>
+ <20250228143049.GA17761@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Reply-To: sj1557.seo@samsung.com
-Subject: Re: [RFC] weird stuff in exfat_lookup()
-To: Namjae Jeon <linkinjeon@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-References: <20250227224826.GG2023217@ZenIV>
- <CAKYAXd_-v601SX44WZ970LyZjsCH3L3HFjJXxZH960r1PXo+Bw@mail.gmail.com>
-Content-Language: en-US
-In-Reply-To: <CAKYAXd_-v601SX44WZ970LyZjsCH3L3HFjJXxZH960r1PXo+Bw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250228143049.GA17761@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hello? This is Sungjong. Currently, I am unable to reply using my
-samsung.com email, so I am responding with my other Gmail account.
+And... I know, I know you already hate me ;)
 
-On 2/28/25 14:44, Namjae Jeon wrote:
-> On Fri, Feb 28, 2025 at 7:48 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
->>
->>         There's a really odd comment in that thing:
->>                 /*
->>                  * Unhashed alias is able to exist because of revalidate()
->>                  * called by lookup_fast. You can easily make this status
->>                  * by calling create and lookup concurrently
->>                  * In such case, we reuse an alias instead of new dentry
->>                  */
->> and AFAICS it had been there since the original merge.  What I don't
->> understand is how the hell could revalidate result in that -
->> exfat_d_revalidate() always returns 1 on any positive dentry and alias is
->> obviously positive (it has the same inode as the one we are about to use).
->>
->> It mentions a way to reproduce that, but I don't understand what does
->> that refer to; could you give details?
-> We need to find out the history of it.
-> Sungjong, Could you please check the history of how this code came in?
-I believe this code is intended to address issues that could arise from
-the stacked FS nested mount structure used in older versions of Android,
-which are unlikely to occur in the general Linux VFS. However, I will
-need to look into the modification history to confirm this, and it might
-take some time.
+but if you have time, could you check if this patch (with or without the
+previous debugging patch) makes any difference? Just to be sure.
 
-Additionally, there is unnecessary code remaining in `exfat_lookup`.
-This is because linux-exfat is based on Samsung's fat/exfat integrated
-implementation, sdfat. We need to address these legacy issues one by one.
+Oleg.
+---
 
-Thank you.
-> 
-> Thanks.
-> 
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 4336b8cccf84..524b8845523e 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -445,7 +445,7 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 		return 0;
+ 
+ 	mutex_lock(&pipe->mutex);
+-
++again:
+ 	if (!pipe->readers) {
+ 		send_sig(SIGPIPE, current, 0);
+ 		ret = -EPIPE;
+@@ -467,20 +467,24 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 		unsigned int mask = pipe->ring_size - 1;
+ 		struct pipe_buffer *buf = &pipe->bufs[(head - 1) & mask];
+ 		int offset = buf->offset + buf->len;
++		int xxx;
+ 
+ 		if ((buf->flags & PIPE_BUF_FLAG_CAN_MERGE) &&
+ 		    offset + chars <= PAGE_SIZE) {
+-			ret = pipe_buf_confirm(pipe, buf);
+-			if (ret)
++			xxx = pipe_buf_confirm(pipe, buf);
++			if (xxx) {
++				if (!ret) ret = xxx;
+ 				goto out;
++			}
+ 
+-			ret = copy_page_from_iter(buf->page, offset, chars, from);
+-			if (unlikely(ret < chars)) {
+-				ret = -EFAULT;
++			xxx = copy_page_from_iter(buf->page, offset, chars, from);
++			if (unlikely(xxx < chars)) {
++				if (!ret) ret = -EFAULT;
+ 				goto out;
+ 			}
+ 
+-			buf->len += ret;
++			ret += xxx;
++			buf->len += xxx;
+ 			if (!iov_iter_count(from))
+ 				goto out;
+ 		}
+@@ -567,6 +571,7 @@ atomic_inc(&WR_SLEEP);
+ 		mutex_lock(&pipe->mutex);
+ 		was_empty = pipe_empty(pipe->head, pipe->tail);
+ 		wake_next_writer = true;
++		goto again;
+ 	}
+ out:
+ 	if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
+
 
