@@ -1,283 +1,264 @@
-Return-Path: <linux-fsdevel+bounces-42833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD457A4938D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 09:31:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 154B3A49466
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 10:07:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FB0C7A6B75
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 08:30:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 121C0170543
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 09:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F1B2528F8;
-	Fri, 28 Feb 2025 08:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A9324C689;
+	Fri, 28 Feb 2025 09:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dui1sz6N"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C7Vf1FsR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4934A2500C6
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2025 08:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8480F276D3B
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2025 09:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740731448; cv=none; b=Zp3kIGGP3xfUYl2Ch4WWmduXXLyQeIHr8bnxH04KEnZ5+u7qCuZqMnUgHGd7lEDDZjCozxi6+T3DM/L7jBICudAe5tzjJqw53s++KkpTzPenpH1IUXfa+QI+k+NaXP5t0O7ZRip1WzLqJgznA33rLlu2Dk6p/ZSvMDa0pIjmAYQ=
+	t=1740733672; cv=none; b=uNgRNiZvEofe0o36/ehUb8s2Zk5ve7WOfwpZONTqhkOIojN2n/UUiw+Gl6nr9B5MYrZghxXVnV6Iia6gCwKRqFlLSYdUIoEzh8MBtIKWAUk5YRoMT5xR8nQjMAkfs5gf/mHfv5ddqeuklVzohohMDLaQRVYKgIlVApfQekww+3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740731448; c=relaxed/simple;
-	bh=9JRh0vQu00gcGDgHvqANg3ZiBZ1ZNLJx8nUj+BWm9B0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pUdy80sMQgQ+bsAxtbcuu2QBPMSPGRnCTpJGHR3h/slVgvpqZ8pps8cnE9OugMADQZ00knKEuUmsOk6iU6NtVcldj4pm5masd5udTRkgaDjwmOiIbd+9uHmDk1cg8EBD/Qobcz6T5gDa0a0PqhS9xF0BgePDy5fI5ov2ekIGrWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dui1sz6N; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1740733672; c=relaxed/simple;
+	bh=lOn4aRELu/gRxyVpLDamQS+gdcdBSgcn0FwNKUIKyAM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BmAuQDF0xwQ2Tf/o8a87nh7rruSjqMKS7IlET+3DdG/s8g+h49P72WDGFGxC1bHWbyh45OcbSwOnO7yqt8qkJ/UUIgqoekqX7BiRHiLHK+93SmEYO/oDcU1gEeCDa3iyUu5ybfweflRIgfBOZf5m8Uh99vzst4t3Wm6Xvac2/hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C7Vf1FsR; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740731445;
+	s=mimecast20190719; t=1740733669;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IAk7T/agbjQFnKEBQSUNnzMrHpjZ/FADtSxLOMcXTqc=;
-	b=Dui1sz6NBA52u2gWpD/Jv+g8u440V4PvsD6EoEGuq/Ll7p0AYhpNTwHGVZ96KDS+MCI+BG
-	nmnAyQoBXTSDiRxAIUUEvXikd9FOA3L2GXJvbWFiKg9SGqjwySmg1KmYFUCquaqftV+Poi
-	qhHzNfOdmnFIGCJUrXcO88GNm+YxEdg=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=CLpDI5xGE6mXb+IR67XG43Kov2MdpYGXuo5ipHK4BBc=;
+	b=C7Vf1FsRLWXGewCJ3rNtx7YOsbgHfWOfXlwXGpWqz5V1QS1IMy3t03huQPmb/u3VO/4F7n
+	tyXCU4HSxRTLssQpQloZM9BGfizo5HuzrahC15GRfvGe4gPb8d1t8x7cu3M/N5NjCOrYXK
+	v7Fa88pzew0yr8lTCmiB3fikDfuFZss=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-426-zHVc-eceM2yKr8soEQxPCA-1; Fri, 28 Feb 2025 03:30:43 -0500
-X-MC-Unique: zHVc-eceM2yKr8soEQxPCA-1
-X-Mimecast-MFC-AGG-ID: zHVc-eceM2yKr8soEQxPCA_1740731442
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-abbae81829fso205036566b.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2025 00:30:43 -0800 (PST)
+ us-mta-648-g61lmQIwP0C1MZJ16DDtSA-1; Fri, 28 Feb 2025 04:07:47 -0500
+X-MC-Unique: g61lmQIwP0C1MZJ16DDtSA-1
+X-Mimecast-MFC-AGG-ID: g61lmQIwP0C1MZJ16DDtSA_1740733666
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43941ad86d4so9808255e9.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2025 01:07:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740731442; x=1741336242;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IAk7T/agbjQFnKEBQSUNnzMrHpjZ/FADtSxLOMcXTqc=;
-        b=XQVT49cNBQ8gXk6nCyrSeRUGC8O9T1s5ujAtuSuiGRr4eBT079x5QWknmGHg6QpfV3
-         0SHrZ/oglgEG+GKcIZD8zZJO8LjQSB8D+Wrdr17mT42AicnR+6yDUKb+Je5yek5kFvMO
-         cbq8UHqfkzOSnISZRzOh0H02gJXDjtrZ4YpugiIe9Ao7FFp1MWIOxQRHjFHhwhxEZl4e
-         BKSMAst5lAktTnn3sXur5Vj/nWssbWdAwEMdAVOarYG9tm3VF/EfA2NeqFOVAgE7Z1F/
-         3QUWCpQASXNyrUTnkWMS8/iaTvHZhX3lcxGnOVpJJnvTEoFReZEgq/vj6NRVvuL/Rami
-         4Y3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWSm2Vaz3oUdv1fQ4hlVOjrcwSkwEebsxLYg7sp/k0LSAYcL0dIHCKk4+5EdPuC0C/w8+R5bw4YENnKOzMW@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrSzGEtTsFsUFHB/D7d37qXggzKvhZnh++JCI35odrOjp4OeV5
-	2C2nTQH+paMOSUSgthOTJSGjMkXyFaF+mbO0g11aZZHQmaLakV4UebOiy4d/T8YsACMhcKitWvl
-	1X72CtZvMikgI/O/omyo+L16HqUmAt9a87z5iEwfYF7hxKm6P18s2y5n0P0h2OQ==
-X-Gm-Gg: ASbGncvz8DdCZkeZmsgOD84ohMeoR3KDOh46oWHKzZFlg+vHaDJ2Kl0BS3Owz4gXa6d
-	y9w/RcQ5B0keeIGd+5Nj6CA85YUS1WLY+51wVY/8/ZQXWoSXzpXzpl8VVEQJrX2VMHg3r6dqBC7
-	354kiK+se6PtpGEfzMEaWYZZnIS8Pjp3wgyxotuPBnAlE7UmKQ9pF9rYeFznUpVBEmzEFkW98xc
-	Ji7Ecm2uUPTG2wa8JoxtGJbaLDzefuceBrtUxAEVpzgI4q6gkBsEXnTAzdJslSTYAheNtsoFDCl
-	MJGbIOFi/BS/qYgcxw7kc8OAAdOCKJLagRA=
-X-Received: by 2002:a17:907:2d08:b0:abf:22cd:9a7e with SMTP id a640c23a62f3a-abf261f5471mr234891466b.30.1740731441897;
-        Fri, 28 Feb 2025 00:30:41 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGZIWf4Mi/ez8uccBE3ejxNf0ox83n9Aynget7e7VbyIxs4sY20lz/2ANqi9H9OCRURVdUpFw==
-X-Received: by 2002:a17:907:2d08:b0:abf:22cd:9a7e with SMTP id a640c23a62f3a-abf261f5471mr234884766b.30.1740731441289;
-        Fri, 28 Feb 2025 00:30:41 -0800 (PST)
-Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c74c714sm254400566b.124.2025.02.28.00.30.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 00:30:40 -0800 (PST)
-Date: Fri, 28 Feb 2025 09:30:38 +0100
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, 
-	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Michal Simek <monstr@monstr.eu>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
-	Theodore Tso <tytso@mit.edu>
-Subject: Re: [PATCH v3] fs: introduce getfsxattrat and setfsxattrat syscalls
-Message-ID: <ihkez5xfcuocis7cmipvts2vxnfan2ub5kcpvsrnzm37glwnax@nxp72byvetye>
-References: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org>
- <20250221181135.GW21808@frogsfrogsfrogs>
- <CAOQ4uxgyYBFqkq6cQsso4LxJsPJ4uECOdskXmz-nmGhhV5BQWg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1740733666; x=1741338466;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=CLpDI5xGE6mXb+IR67XG43Kov2MdpYGXuo5ipHK4BBc=;
+        b=RNciN38YBDfrZz/PIw7pa5LbgouDiduSfUY9t8tLjAuKGwVS0KiyWZxvhtHnpe4Mnb
+         TJWwVn2vEgDvKrco1F+y9eNJC/jylt/Te/klUebYAKfhGfDcTR2AqhWc8zUr+N6ngkYw
+         99jhk4xgK6Rktkyi9INwydc8+cRvtLd1NZJPIERVZEE3wtQPWjNALDI26V3kbIJIQx1a
+         ApXLrpN/R16x5QQqD6rcxJ5HlkDXEZM45S/4oBiAfbiIP9UK6sml3G062gsyT5RTalPX
+         7lNT1KWvJBG+WcMD5qZWNtqk//FUsTQsyrOUJxU8a5NbgVHd3Z+4NzZzZOlpvp1fB/nC
+         eCpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOIxR4xLDoYibEEOCb5uAJCkYwjEQWJC4TXn6ITOfkVRyO/x3sKgMqZenjvdeARRsJaBJ8jLV8a5MX9hts@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywjw3epbdaNNRzUL6SjYkbZCFeQQEnROIbhWtLQJ+IIrQwJfADa
+	seOCVNfXwKSEoE/dWCpamk8AqWYfjUm5boji4yKqY5TJLK+WQw42HW7ujEBNqGq31uKElLaYD9V
+	hPOcssd1cJWzN4jwDAOWTzsXed6ZfyJIYmhve8zu3muUAj10v2tTHnOvnf0uyof0=
+X-Gm-Gg: ASbGncuApoZOciiCNctIzc9JFUMBMWNR18TAhzsC+7Guu06c0tAPU/SMadTJ6+e755Q
+	mWB4PgwpuylK0p27bKcp2zIh5kLY8IVItDTSe6rvdMH47THc2n2QwsecjqF7lnlYANWhWXNSOJ+
+	xN2MnQvk4hAx1PRg2fo2I4vBCjfws0aPHS+e6osp5+g7tEQOhUzlzwQqfSP4gPJ1KJuHsbJb8Hv
+	YBWC77NdCnjLJW5SbE0d8LIcXzhKc/ZyNArwdRFG1tTSr/3ez5KT5QqRtnwRU1MeKQsSLgRV0D7
+	36GyNKdFMvT5SkD7CN8GeOI6WiwAq1fqATLhMvsdbK16odM2s1F44e9UAbg4prGSZDROOYJotny
+	zBW9HLv2DBfSPi1TZn84YD7CGZ7wxybxAhbQlVF9v1Qw=
+X-Received: by 2002:a05:600c:5494:b0:439:9274:8203 with SMTP id 5b1f17b1804b1-43ba66da2c6mr18843435e9.6.1740733666018;
+        Fri, 28 Feb 2025 01:07:46 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHcowIRN1si6B/2EEwD1Z6PD6dmMdXxwC9HncOy9CKvmoKbafJCK/yvPTC25F2J3LGP00Ca1w==
+X-Received: by 2002:a05:600c:5494:b0:439:9274:8203 with SMTP id 5b1f17b1804b1-43ba66da2c6mr18843165e9.6.1740733665603;
+        Fri, 28 Feb 2025 01:07:45 -0800 (PST)
+Received: from ?IPV6:2003:cb:c701:e300:af53:3949:eced:246d? (p200300cbc701e300af533949eced246d.dip0.t-ipconnect.de. [2003:cb:c701:e300:af53:3949:eced:246d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab2c4051bsm84198565e9.0.2025.02.28.01.07.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2025 01:07:45 -0800 (PST)
+Message-ID: <2dcaa0a6-c20d-4e57-80df-b288d2faa58d@redhat.com>
+Date: Fri, 28 Feb 2025 10:07:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxgyYBFqkq6cQsso4LxJsPJ4uECOdskXmz-nmGhhV5BQWg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Optimizing Page Cache Readahead
+ Behavior
+To: Matthew Wilcox <willy@infradead.org>, Dave Chinner <david@fromorbit.com>
+Cc: Kalesh Singh <kaleshsingh@google.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Jan Kara <jack@suse.cz>,
+ lsf-pc@lists.linux-foundation.org,
+ "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Juan Yescas
+ <jyescas@google.com>, android-mm <android-mm@google.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>,
+ "Cc: Android Kernel" <kernel-team@android.com>
+References: <CAC_TJvfG8GcwG_2w1o6GOTZS8tfEx2h9A91qsenYfYsX8Te=Bg@mail.gmail.com>
+ <hep2a5d6k2kwth5klatzhl3ejbc6g2opqu6tyxyiohbpdyhvwp@lkg2wbb4zhy3>
+ <3bd275ed-7951-4a55-9331-560981770d30@lucifer.local>
+ <ivnv2crd3et76p2nx7oszuqhzzah756oecn5yuykzqfkqzoygw@yvnlkhjjssoz>
+ <82fbe53b-98c4-4e55-9eeb-5a013596c4c6@lucifer.local>
+ <CAC_TJvcnD731xyudgapjHx=dvVHY+cxoO1--2us7oo9TqA9-_g@mail.gmail.com>
+ <Z70HJWliB4wXE-DD@dread.disaster.area>
+ <Z8DjYmYPRDArpsqx@casper.infradead.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Z8DjYmYPRDArpsqx@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2025-02-21 20:15:24, Amir Goldstein wrote:
-> On Fri, Feb 21, 2025 at 7:13 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> >
-> > On Tue, Feb 11, 2025 at 06:22:47PM +0100, Andrey Albershteyn wrote:
-> > > From: Andrey Albershteyn <aalbersh@redhat.com>
-> > >
-> > > Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
-> > > extended attributes/flags. The syscalls take parent directory fd and
-> > > path to the child together with struct fsxattr.
-> > >
-> > > This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
-> > > that file don't need to be open as we can reference it with a path
-> > > instead of fd. By having this we can manipulated inode extended
-> > > attributes not only on regular files but also on special ones. This
-> > > is not possible with FS_IOC_FSSETXATTR ioctl as with special files
-> > > we can not call ioctl() directly on the filesystem inode using fd.
-> > >
-> > > This patch adds two new syscalls which allows userspace to get/set
-> > > extended inode attributes on special files by using parent directory
-> > > and a path - *at() like syscall.
-> > >
-> > > Also, as vfs_fileattr_set() is now will be called on special files
-> > > too, let's forbid any other attributes except projid and nextents
-> > > (symlink can have an extent).
-> > >
-> > > CC: linux-api@vger.kernel.org
-> > > CC: linux-fsdevel@vger.kernel.org
-> > > CC: linux-xfs@vger.kernel.org
-> > > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> > > ---
-> > > v1:
-> > > https://lore.kernel.org/linuxppc-dev/20250109174540.893098-1-aalbersh@kernel.org/
-> > >
-> > > Previous discussion:
-> > > https://lore.kernel.org/linux-xfs/20240520164624.665269-2-aalbersh@redhat.com/
-> > >
-> > > XFS has project quotas which could be attached to a directory. All
-> > > new inodes in these directories inherit project ID set on parent
-> > > directory.
-> > >
-> > > The project is created from userspace by opening and calling
-> > > FS_IOC_FSSETXATTR on each inode. This is not possible for special
-> > > files such as FIFO, SOCK, BLK etc. Therefore, some inodes are left
-> > > with empty project ID. Those inodes then are not shown in the quota
-> > > accounting but still exist in the directory. Moreover, in the case
-> > > when special files are created in the directory with already
-> > > existing project quota, these inode inherit extended attributes.
-> > > This than leaves them with these attributes without the possibility
-> > > to clear them out. This, in turn, prevents userspace from
-> > > re-creating quota project on these existing files.
-> > > ---
-> > > Changes in v3:
-> > > - Remove unnecessary "dfd is dir" check as it checked in user_path_at()
-> > > - Remove unnecessary "same filesystem" check
-> > > - Use CLASS() instead of directly calling fdget/fdput
-> > > - Link to v2: https://lore.kernel.org/r/20250122-xattrat-syscall-v2-1-5b360d4fbcb2@kernel.org
-> > > ---
-> > >  arch/alpha/kernel/syscalls/syscall.tbl      |  2 +
-> > >  arch/arm/tools/syscall.tbl                  |  2 +
-> > >  arch/arm64/tools/syscall_32.tbl             |  2 +
-> > >  arch/m68k/kernel/syscalls/syscall.tbl       |  2 +
-> > >  arch/microblaze/kernel/syscalls/syscall.tbl |  2 +
-> > >  arch/mips/kernel/syscalls/syscall_n32.tbl   |  2 +
-> > >  arch/mips/kernel/syscalls/syscall_n64.tbl   |  2 +
-> > >  arch/mips/kernel/syscalls/syscall_o32.tbl   |  2 +
-> > >  arch/parisc/kernel/syscalls/syscall.tbl     |  2 +
-> > >  arch/powerpc/kernel/syscalls/syscall.tbl    |  2 +
-> > >  arch/s390/kernel/syscalls/syscall.tbl       |  2 +
-> > >  arch/sh/kernel/syscalls/syscall.tbl         |  2 +
-> > >  arch/sparc/kernel/syscalls/syscall.tbl      |  2 +
-> > >  arch/x86/entry/syscalls/syscall_32.tbl      |  2 +
-> > >  arch/x86/entry/syscalls/syscall_64.tbl      |  2 +
-> > >  arch/xtensa/kernel/syscalls/syscall.tbl     |  2 +
-> > >  fs/inode.c                                  | 75 +++++++++++++++++++++++++++++
-> > >  fs/ioctl.c                                  | 16 +++++-
-> > >  include/linux/fileattr.h                    |  1 +
-> > >  include/linux/syscalls.h                    |  4 ++
-> > >  include/uapi/asm-generic/unistd.h           |  8 ++-
-> > >  21 files changed, 133 insertions(+), 3 deletions(-)
-> > >
-> >
-> > <cut to the syscall definitions>
-> >
-> > > diff --git a/fs/inode.c b/fs/inode.c
-> > > index 6b4c77268fc0ecace4ac78a9ca777fbffc277f4a..b2dddd9db4fabaf67a6cbf541a86978b290411ec 100644
-> > > --- a/fs/inode.c
-> > > +++ b/fs/inode.c
-> > > @@ -23,6 +23,9 @@
-> > >  #include <linux/rw_hint.h>
-> > >  #include <linux/seq_file.h>
-> > >  #include <linux/debugfs.h>
-> > > +#include <linux/syscalls.h>
-> > > +#include <linux/fileattr.h>
-> > > +#include <linux/namei.h>
-> > >  #include <trace/events/writeback.h>
-> > >  #define CREATE_TRACE_POINTS
-> > >  #include <trace/events/timestamp.h>
-> > > @@ -2953,3 +2956,75 @@ umode_t mode_strip_sgid(struct mnt_idmap *idmap,
-> > >       return mode & ~S_ISGID;
-> > >  }
-> > >  EXPORT_SYMBOL(mode_strip_sgid);
-> > > +
-> > > +SYSCALL_DEFINE4(getfsxattrat, int, dfd, const char __user *, filename,
-> > > +             struct fsxattr __user *, fsx, unsigned int, at_flags)
-> >
-> > Should the kernel require userspace to pass the size of the fsx buffer?
-> > That way we avoid needing to rev the interface when we decide to grow
-> > the structure.
-> >
+On 27.02.25 23:12, Matthew Wilcox wrote:
+> On Tue, Feb 25, 2025 at 10:56:21AM +1100, Dave Chinner wrote:
+>>>  From the previous discussions that Matthew shared [7], it seems like
+>>> Dave proposed an alternative to moving the extents to the VFS layer to
+>>> invert the IO read path operations [8]. Maybe this is a move
+>>> approachable solution since there is precedence for the same in the
+>>> write path?
+>>>
+>>> [7] https://lore.kernel.org/linux-fsdevel/Zs97qHI-wA1a53Mm@casper.infradead.org/
+>>> [8] https://lore.kernel.org/linux-fsdevel/ZtAPsMcc3IC1VaAF@dread.disaster.area/
+>>
+>> Yes, if we are going to optimise away redundant zeros being stored
+>> in the page cache over holes, we need to know where the holes in the
+>> file are before the page cache is populated.
 > 
-> This makes sense to me, but I see that Andreas proposed other ways,
-> as long as we have a plan on how to extend the struct if we need more space.
+> Well, you shot that down when I started trying to flesh it out:
+> https://lore.kernel.org/linux-fsdevel/Zs+2u3%2FUsoaUHuid@dread.disaster.area/
 > 
-> Andrey, I am sorry to bring this up in v3, but I would like to request
-> two small changes before merging this API.
+>> As for efficient hole tracking in the mapping tree, I suspect that
+>> we should be looking at using exceptional entries in the mapping
+>> tree for holes, not inserting mulitple references to the zero folio.
+>> i.e. the important information for data storage optimisation is that
+>> the region covers a hole, not that it contains zeros.
 > 
-> This patch by Pali [1] adds fsx_xflags_mask for the filesystem to
-> report the supported set of xflags.
+> The xarray is very much optimised for storing power-of-two sized &
+> aligned objects.  It makes no sense to try to track extents using the
+> mapping tree.  Now, if we abandon the radix tree for the maple tree, we
+> could talk about storing zero extents in the same data structure.
+> But that's a big change with potentially significant downsides.
+> It's something I want to play with, but I'm a little busy right now.
 > 
-> It was argued that we can make this change with the existing ioctl,
-> because it is not going to break xfs_io -c lsattr/chattr, which is fine,
-> but I think that we should merge the fsx_xflags_mask change along
-> with getfsxattrat() which is a new UAPI.
+>> For buffered reads, all that is required when such an exceptional
+>> entry is returned is a memset of the user buffer. For buffered
+>> writes, we simply treat it like a normal folio allocating write and
+>> replace the exceptional entry with the allocated (and zeroed) folio.
 > 
-> The second request is related to setfsxattrat().
-> With current FS_IOC_FSSETXATTR, IIUC, xfs ignores unsupported
-> fsx_xflags. I think this needs to be fixed before merging setfsxattrat().
-> It's ok that a program calling FS_IOC_FSSETXATTR will not know
-> if unsupported flags will be ignored, because that's the way it is,
-> but I think that setfsxattrat() must return -EINVAL for trying to
-> set unsupported xflags.
+> ... and unmap the zero page from any mappings.
 > 
-> As I explained in [2] I think it is fine if FS_IOC_FSSETXATTR
-> will also start returning -EINVAL for unsupported flags, but I would
-> like setfsxattrat() to make that a guarantee.
+>> For read page faults, the zero page gets mapped (and maybe
+>> accounted) via the vma rather than the mapping tree entry. For write
+>> faults, a folio gets allocated and the exception entry replaced
+>> before we call into ->page_mkwrite().
+>>
+>> Invalidation simply removes the exceptional entries.
 > 
-> There was an open question, what does fsx_xflags_mask mean
-> for setfsxattrat() - it is a mask like in inode_set_flags() as Andreas
-> suggested? I think that would be a good idea.
-> 
-> Thanks,
-> Amir.
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/20250216164029.20673-4-pali@kernel.org/
-> [2] https://lore.kernel.org/linux-fsdevel/CAOQ4uxjwQJiKAqyjEmKUnq-VihyeSsxyEy2F+J38NXwrAXurFQ@mail.gmail.com/
+> ... and unmap the zero page from any mappings.
 > 
 
-I'm fine with making Pali's patchset a dependency for this syscall,
-as if vfs_fileattr_set() will start returning EINVAL on unsupported
-flags this syscall will pass it through (ioctls will need to ignore
-it). And as these syscalls use fsxattr anyway the fsx_xflags_mask
-field will be here.
+I'll add one detail for future reference; not sure about the priority 
+this should have, but it's one of these nasty corner cases that are not 
+the obvious to spot when having the shared zeropage in MAP_SHARED mappings:
+
+Currently, only FS-DAX makes use of the shared zeropage in "ordinary 
+MAP_SHARED" mappings. It doesn't use it for "holes" but for "logically 
+zero" pages, to avoid allocating disk blocks (-> translating to actual 
+DAX memory) on read-only access.
+
+There is one issue between gup(FOLL_LONGTERM | FOLL_PIN) and the shared 
+zeropage in MAP_SHARED mappings. It so far does not apply to fsdax,
+because ... we don't support FOLL_LONGTERM for fsdax at all.
+
+I spelled out part of the issue in fce831c92092 ("mm/memory: cleanly 
+support zeropage in vm_insert_page*(), vm_map_pages*() and 
+vmf_insert_mixed()").
+
+In general, the problem is that gup(FOLL_LONGTERM | FOLL_PIN) will have 
+to decide if it is okay to longterm-pin the shared zeropage in a 
+MAP_SHARED mapping (which might just be fine with a R/O file in some 
+cases?), and if not, it would have to trigger FAULT_FLAG_UNSHARE similar 
+to how we break COW in MAP_PRIVATE mappings (shared zeropage -> 
+anonymous folio).
+
+If gup(FOLL_LONGTERM | FOLL_PIN) would just always longterm-pin the 
+shared zeropage, and somebody else would end up triggering replacement 
+of the shared zeropage in the pagecache (e.g., write() to the file 
+offset, write access to the VMA that triggers a write fault etc.), you'd 
+get a disconnect between what the GUP user sees and what the pagecache 
+actually contains.
+
+The file system fault logic will have to be taught about 
+FAULT_FLAG_UNSHARE and handle it accordingly (e.g., allocate fill file 
+hole, allocate disk space, allocate an actual folio ...).
+
+Things like memfd_pin_folios() might require similar care -- that one in 
+particular should likely never return the shared zeropage.
+
+Likely gup(FOLL_LONGTERM | FOLL_PIN) users like RDMA or VFIO will be 
+able to trigger it.
+
+
+Not using the shared zeropage but instead some "hole" PTE marker could 
+avoid this problem. Of course, not allowing for reading the shared 
+zeropage there, but maybe that's not strictly required?
 
 -- 
-- Andrey
+Cheers,
+
+David / dhildenb
 
 
