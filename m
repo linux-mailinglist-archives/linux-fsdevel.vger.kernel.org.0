@@ -1,285 +1,302 @@
-Return-Path: <linux-fsdevel+bounces-42855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65AA5A49B0E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 14:56:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83FC3A49BB3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 15:17:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FFC43AD961
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 13:55:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81D7B173FAB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 14:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5548526D5D3;
-	Fri, 28 Feb 2025 13:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EC326E63D;
+	Fri, 28 Feb 2025 14:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HZja0rt1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EKbEXUzQ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="v6hT9j83";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4OCbwd70"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LYAKBT+g";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4GvZ/zPh";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LYAKBT+g";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4GvZ/zPh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09BAD25F984
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2025 13:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E582620C9
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2025 14:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740750955; cv=none; b=QC8lF69nCW4JYvch0wbtgS6hmJLL/23c7+sM27SdksOh75vbIobSiwvGPpul3T5fvnSAVTAO0ILQuflZq7qM9+eB4RVBxxH6Oyy0+sWQWl0Tkm1SB+8+PPca13E79Ykmcz2bcispzisaMantHX4mpuJTJ8MGvzixjgpstaQV8/Y=
+	t=1740752236; cv=none; b=AtDk+K9NG2Au3fXERXGAiTBe0qAydEtmoNDknzw/fMSOK/ZiIHvgUrSL/QHxYLLkTMe4Mu5/jLpjc8aVtrdxyFLnIq+qeDGsKzmScEPKbsk3oAyRI+5PeenXP7hw3qaISMNzylwTYm0UkYFZLTPrTxgPNpG95BmGfwu5TS6uBfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740750955; c=relaxed/simple;
-	bh=+WqeiIJb4j75GPAXrEevIo+zv8XKGSOUbD+/cXz7EqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LDubNFA9oEPfFZ4q/hzcDmuPVXd3zGnxjuUZA3pAq3zUQ9S5FP/3+qxs2twsOJsGSRhum9bqwPL/+Zi1t1TPDOWLGL5T5pH63mR4e6ME+EGxe6BDpjfqR98NlEscPpenYdxs35Lp7/4VraP4GWnAOyiMXeIlbAxg/a3qMVWNDZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HZja0rt1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EKbEXUzQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=v6hT9j83; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4OCbwd70; arc=none smtp.client-ip=195.135.223.131
+	s=arc-20240116; t=1740752236; c=relaxed/simple;
+	bh=F8zm6YQaiTa2XSTUkduNae4RXOCv5ivV4wzwzDD4rUc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MyZqZc3FhiyXbDPx3naOnHoZHJtcgdkcUx0WeiPxSq0T+yj0E26KkbqAGJ8DSn5CqbhUPE3+9nwj8bHgU6w0/fcB1UQRleDe1i3QTILOXK8N0HlswTx/Vd3K+a33Rfrb+rx3BDDlCKuoP/cpYbuOW6QkLkVcnCcHFcEpyGRMaj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LYAKBT+g; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4GvZ/zPh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LYAKBT+g; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4GvZ/zPh; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E31A01F38F;
-	Fri, 28 Feb 2025 13:55:51 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BD1A21F37E;
+	Fri, 28 Feb 2025 14:17:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740750952;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LPt5sHGWmn/KstzopdmY0CQ8/tw2Eh65XhRod/YG23A=;
-	b=HZja0rt1TfCPVgLYCtj8ee1OjbBCVykoWxJnfRZ1jTQT1RAzEKErmlD8ECNJ+OQvbeV+HU
-	BdjIRzwP5QkTfMFT8T/R/tuRIo6rXyONPlrZ7jO5/qWrxKSJy9LxzMYirsY70a4z+zpYlZ
-	LVLD9fTibMox/FP6eAB9mqqiIwpv+gg=
+	t=1740752231; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hIseiRro5ZDlr43rKJfqqqfDFAsRrvZFt1JC6oL9YnE=;
+	b=LYAKBT+gywT+qOSiQz8ecqjdOm74+q98gaYP+YDKnR/F87TfZ49MUFJCNNaCOcWKbmgQLS
+	WT4Is2KV6rpun1S5H7p1LknkSJMhoBqEGr1nrDGqP/ECkfZ7DWHQ1sXauPaq50BhqIO5Us
+	BRaoMBbN8QL0GNoficVjRfl/n42qetI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740750952;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LPt5sHGWmn/KstzopdmY0CQ8/tw2Eh65XhRod/YG23A=;
-	b=EKbEXUzQYhi6oNCSEnv24vxTUVo20BFGzKjeNfO7uS47m3S5zNUxjgJ9ZOklpQHBsVZT6J
-	zcdBVbuPZh/Gl/AQ==
+	s=susede2_ed25519; t=1740752231;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hIseiRro5ZDlr43rKJfqqqfDFAsRrvZFt1JC6oL9YnE=;
+	b=4GvZ/zPhVrNKc8AKw7Z3I51uT11w12XQImbuBKgAD8dbx0C4zOwPocieku2c1mKwRj+N2H
+	3nfHK40ttQG74GAw==
 Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=v6hT9j83;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=4OCbwd70
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=LYAKBT+g;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="4GvZ/zPh"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740750951;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LPt5sHGWmn/KstzopdmY0CQ8/tw2Eh65XhRod/YG23A=;
-	b=v6hT9j83xDzKSN8+gXif6WdMp7s2ZHmf9zRiWdfkI6nxyxCiyOjeBaVbmcNlaVbmQwN5Ir
-	5Quc1MC0DoJVbOySxQqdoqewBF0H8P1ryJzBeT/iZVY7yy0OsgRHPoE68Bf9CyHafcB3oW
-	G/JHTwnzu/9R1lLJBbRQ8gh9vRCeTyg=
+	t=1740752231; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hIseiRro5ZDlr43rKJfqqqfDFAsRrvZFt1JC6oL9YnE=;
+	b=LYAKBT+gywT+qOSiQz8ecqjdOm74+q98gaYP+YDKnR/F87TfZ49MUFJCNNaCOcWKbmgQLS
+	WT4Is2KV6rpun1S5H7p1LknkSJMhoBqEGr1nrDGqP/ECkfZ7DWHQ1sXauPaq50BhqIO5Us
+	BRaoMBbN8QL0GNoficVjRfl/n42qetI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740750951;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LPt5sHGWmn/KstzopdmY0CQ8/tw2Eh65XhRod/YG23A=;
-	b=4OCbwd70ekNH4FF6YUfl2NAlPDq/k3tW3BFXMpDuFuiZAqyPYLmjXn1C9kRihIgWnIRbbl
-	S7cDpKREdphzt7CA==
+	s=susede2_ed25519; t=1740752231;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hIseiRro5ZDlr43rKJfqqqfDFAsRrvZFt1JC6oL9YnE=;
+	b=4GvZ/zPhVrNKc8AKw7Z3I51uT11w12XQImbuBKgAD8dbx0C4zOwPocieku2c1mKwRj+N2H
+	3nfHK40ttQG74GAw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B662C1344A;
-	Fri, 28 Feb 2025 13:55:51 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8E45C137AC;
+	Fri, 28 Feb 2025 14:17:11 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id V0lWLGfAwWdQKgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Fri, 28 Feb 2025 13:55:51 +0000
-Date: Fri, 28 Feb 2025 14:55:50 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Zorro Lang <zlang@kernel.org>
-Cc: fstests@vger.kernel.org, David Sterba <dsterba@suse.com>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] README: add supported fs list
-Message-ID: <20250228135550.GH5777@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20250227200514.4085734-1-zlang@kernel.org>
+	id AtGOIGfFwWerMQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 28 Feb 2025 14:17:11 +0000
+Message-ID: <503c4ba7-c667-444a-b396-e85c46469f0a@suse.cz>
+Date: Fri, 28 Feb 2025 15:17:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227200514.4085734-1-zlang@kernel.org>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: E31A01F38F
-X-Spam-Score: -4.21
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/5] mm/filemap: add mempolicy support to the filemap
+ layer
+Content-Language: en-US
+To: Shivank Garg <shivankg@amd.com>, akpm@linux-foundation.org,
+ willy@infradead.org, pbonzini@redhat.com
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ linux-coco@lists.linux.dev, chao.gao@intel.com, seanjc@google.com,
+ ackerleytng@google.com, david@redhat.com, bharata@amd.com, nikunj@amd.com,
+ michael.day@amd.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com,
+ michael.roth@amd.com, tabba@google.com
+References: <20250226082549.6034-1-shivankg@amd.com>
+ <20250226082549.6034-2-shivankg@amd.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20250226082549.6034-2-shivankg@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: BD1A21F37E
+X-Spam-Score: -4.51
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.21 / 50.00];
+X-Spamd-Result: default: False [-4.51 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
 	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
 	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_TLS_ALL(0.00)[];
 	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_THREE(0.00)[4];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	DKIM_TRACE(0.00)[suse.cz:+]
 X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Flag: NO
 X-Spam-Level: 
 
-On Fri, Feb 28, 2025 at 04:05:14AM +0800, Zorro Lang wrote:
-> To clarify the supported filesystems by fstests, add a fs list to
-> README file.
+On 2/26/25 09:25, Shivank Garg wrote:
+> From: Shivansh Dhiman <shivansh.dhiman@amd.com>
 > 
-> Signed-off-by: Zorro Lang <zlang@kernel.org>
-> ---
+> Add NUMA mempolicy support to the filemap allocation path by introducing
+> new APIs that take a mempolicy argument:
+> - filemap_grab_folio_mpol()
+> - filemap_alloc_folio_mpol()
+> - __filemap_get_folio_mpol()
 > 
-> Hi,
+> These APIs allow callers to specify a NUMA policy during page cache
+> allocations, enabling fine-grained control over memory placement. This is
+> particularly needed by KVM when using guest-memfd memory backends, where
+> the guest memory needs to be allocated according to the NUMA policy
+> specified by VMM.
 > 
-> David Sterba suggests to have a supported fs list in fstests:
+> The existing non-mempolicy APIs remain unchanged and continue to use the
+> default allocation behavior.
 > 
-> https://lore.kernel.org/fstests/20250227073535.7gt7mj5gunp67axr@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com/T/#m742e4f1f6668d39c1a48450e7176a366e0a2f6f9
-> 
-> I think that's a good suggestion, so I send this patch now. But tell the truth,
-> it's hard to find all filesystems which are supported by fstests. Especially
-> some filesystems might use fstests, but never be metioned in fstests code.
-> So please review this patch or send another patch to tell fstests@ list, if
-> you know any other filesystem is suppported.
+> Signed-off-by: Shivansh Dhiman <shivansh.dhiman@amd.com>
+> Signed-off-by: Shivank Garg <shivankg@amd.com>
 
-The idea is to make the list best-effort, we don't know which of the L1
-and L2 are tested. It would be interesting to try them to see the actual
-level of support. I kind of doubt that anybody has run e.g. pvfs2 recently.
+<snip>
 
-
-> And if anyone has review point about the support "level" and "comment" part,
-> please feel free to tell me :)
-> 
-> Thanks,
-> Zorro
-> 
->  README | 82 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 82 insertions(+)
-> 
-> diff --git a/README b/README
-> index 024d39531..055935917 100644
-> --- a/README
-> +++ b/README
-> @@ -1,3 +1,85 @@
-> +_______________________
-> +SUPPORTED FS LIST
-> +_______________________
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -1001,11 +1001,17 @@ int filemap_add_folio(struct address_space *mapping, struct folio *folio,
+>  EXPORT_SYMBOL_GPL(filemap_add_folio);
+>  
+>  #ifdef CONFIG_NUMA
+> -struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
+> +struct folio *filemap_alloc_folio_mpol_noprof(gfp_t gfp, unsigned int order,
+> +		struct mempolicy *mpol)
+>  {
+>  	int n;
+>  	struct folio *folio;
+>  
+> +	if (mpol)
+> +		return folio_alloc_mpol_noprof(gfp, order, mpol,
+> +					       NO_INTERLEAVE_INDEX,
+> +					       numa_node_id());
 > +
-> +History
-> +-------
+>  	if (cpuset_do_page_mem_spread()) {
+>  		unsigned int cpuset_mems_cookie;
+>  		do {
+> @@ -1018,6 +1024,12 @@ struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
+>  	}
+>  	return folio_alloc_noprof(gfp, order);
+>  }
+> +EXPORT_SYMBOL(filemap_alloc_folio_mpol_noprof);
 > +
-> +Firstly, xfstests is the old name of this project, due to it was originally
-> +developed for testing the XFS file system on the SGI's Irix operating system.
-> +With xfs was ported to Linux, so was xfstests, now it only supports Linux.
+> +struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
+> +{
+> +	return filemap_alloc_folio_mpol_noprof(gfp, order, NULL);
+> +}
+>  EXPORT_SYMBOL(filemap_alloc_folio_noprof);
+>  #endif
+
+Here it seems to me:
+
+- filemap_alloc_folio_noprof() could stay unchanged
+- filemap_alloc_folio_mpol_noprof() would
+  - call folio_alloc_mpol_noprof() if (mpol)
+  - call filemap_alloc_folio_noprof() otherwise
+
+The code would be a bit more clearly structured that way?
+
+> @@ -1881,11 +1893,12 @@ void *filemap_get_entry(struct address_space *mapping, pgoff_t index)
+>  }
+>  
+>  /**
+> - * __filemap_get_folio - Find and get a reference to a folio.
+> + * __filemap_get_folio_mpol - Find and get a reference to a folio.
+>   * @mapping: The address_space to search.
+>   * @index: The page index.
+>   * @fgp_flags: %FGP flags modify how the folio is returned.
+>   * @gfp: Memory allocation flags to use if %FGP_CREAT is specified.
+> + * @mpol: The mempolicy to apply when allocating a new folio.
+>   *
+>   * Looks up the page cache entry at @mapping & @index.
+>   *
+> @@ -1896,8 +1909,8 @@ void *filemap_get_entry(struct address_space *mapping, pgoff_t index)
+>   *
+>   * Return: The found folio or an ERR_PTR() otherwise.
+>   */
+> -struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+> -		fgf_t fgp_flags, gfp_t gfp)
+> +struct folio *__filemap_get_folio_mpol(struct address_space *mapping, pgoff_t index,
+> +		fgf_t fgp_flags, gfp_t gfp, struct mempolicy *mpol)
+>  {
+>  	struct folio *folio;
+>  
+> @@ -1967,7 +1980,7 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+>  			err = -ENOMEM;
+>  			if (order > min_order)
+>  				alloc_gfp |= __GFP_NORETRY | __GFP_NOWARN;
+> -			folio = filemap_alloc_folio(alloc_gfp, order);
+> +			folio = filemap_alloc_folio_mpol(alloc_gfp, order, mpol);
+>  			if (!folio)
+>  				continue;
+>  
+> @@ -2003,6 +2016,13 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+>  		folio_clear_dropbehind(folio);
+>  	return folio;
+>  }
+> +EXPORT_SYMBOL(__filemap_get_folio_mpol);
 > +
-> +As xfstests has some test cases are good to run on some other filesystems,
-> +we call them "generic" (and "shared", but it has been removed) cases, you
-> +can find them in tests/generic/ directory. Then more and more filesystems
-> +started to use xfstests, and contribute patches. Today xfstests is used
-> +as a file system regression test suite for lots of Linux's major file systems.
-> +So it's not "xfs"tests only, we tend to call it "fstests" now.
-> +
-> +Supported fs
-> +------------
-> +
-> +Firstly, there's not hard restriction about which filesystem can use fstests.
-> +Any filesystem can give fstests a try.
+> +struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+> +		fgf_t fgp_flags, gfp_t gfp)
+> +{
+> +	return __filemap_get_folio_mpol(mapping, index, fgp_flags, gfp, NULL);
+> +}
+>  EXPORT_SYMBOL(__filemap_get_folio);
+>  
+>  static inline struct folio *find_get_entry(struct xa_state *xas, pgoff_t max,
 
-This could list what are the assumptions of a generic filesystem. For
-example the mkfs.$FSTYP and fsck.$FSTYP should exist as the generic
-fallback applies (other filesystems have the exceptions that skip eg.
-fsck if it's known not to exist).
-
-> +Although fstests supports many filesystems, they have different support level
-> +by fstests. So mark it with 4 levels as below:
-> +
-> +L1: Fstests can be run on the specified fs basically.
-> +L2: Rare support from the specified fs list to fix some generic test failures.
-> +L3: Normal support from the specified fs list, has some own cases.
-> +L4: Active support from the fs list, has lots of own cases.
-> +
-> ++------------+-------+---------------------------------------------------------+
-> +| Filesystem | Level |                       Comment                           |
-> ++------------+-------+---------------------------------------------------------+
-> +| AFS        |  L1   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| Bcachefs   |  L1+  | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| Btrfs      |  L4   | N/A                                                     |
-
-https://btrfs.readthedocs.io/en/latest/dev/Development-notes.html#fstests-setup
-
-some additional information about required packages, kernel configs and
-devices. This could be in fstests/README too.
-
-> ++------------+-------+---------------------------------------------------------+
-> +| Ceph       |  L2   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| CIFS       |  L2-  | https://wiki.samba.org/index.php/Xfstesting-cifs        |
-> ++------------+-------+---------------------------------------------------------+
-> +| Ext2/3/4   |  L3+  | N/A                                                     |
-
-I'd suggest to split ext4 from that and give it L4, not sure if ext2 is
-still being tested maybe it's worth L3. The standalone Ext3 module does
-not exist and is covered by ext4, so it probably works with fstests but
-is interesting maybe only for historical reasons.
-
-> ++------------+-------+---------------------------------------------------------+
-> +| Exfat      |  L1+  | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| f2fs       |  L3-  | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| FUSE       |  L1   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| GFS2       |  L1   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| Glusterfs  |  L1   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| JFS        |  L1   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| NFS        |  L2+  | https://linux-nfs.org/wiki/index.php/Xfstests           |
-> ++------------+-------+---------------------------------------------------------+
-> +| ocfs2      |  L2-  | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| overlay    |  L3   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| pvfs2      |  L1   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| Reiser4    |  L1   | Reiserfs has been removed, only left reiser4            |
-> ++------------+-------+---------------------------------------------------------+
-> +| tmpfs      |  L3-  | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| ubifs      |  L1   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| udf        |  L1+  | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| Virtiofs   |  L1   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| XFS        |  L4+  | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| 9p         |  L1   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-
-The table works as the way to present it but with so few links/comments
-writing it as a simple list could give a better idea what filesystems
-are in each category. Sorted alphabetically, like:
-
-L4: Btrfs, Ext4, XFS
-L3: ...
-etc
 
