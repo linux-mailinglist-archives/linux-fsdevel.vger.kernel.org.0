@@ -1,238 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-42828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23831A49198
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 07:31:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02BF9A49223
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 08:25:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24A6B16E6FC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 06:31:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4EB516C195
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 07:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F0A1A4F22;
-	Fri, 28 Feb 2025 06:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39631CAA9E;
+	Fri, 28 Feb 2025 07:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s17ML4n4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DH+wtRL0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6171023DE;
-	Fri, 28 Feb 2025 06:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123D3276D12
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2025 07:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740724286; cv=none; b=BB1+WjfoP53Sb6LAftX8osLTlBQSPu+Ox1mTFyfxbyjGPafZcaaGpo3Z7BxohgI8Cd/CEb1nJWg0hCNKcuVhzCvesMrCrQaglhWw3qA60ApGhmxeaqWgHneoqTpXAtz5eSX8IVtugHJ2F7jt0p+SeiTT5+OeTELcTFGKbHlvetk=
+	t=1740727535; cv=none; b=XehD03aNoXk9Y7wKLZ1C8LyTHAt22l1S907TXOULKDTFfWAAhNVaK1Xbb9WJW9+cLVchNLMj+0pDw4MaFwmYQBAX1LEjD3SQZZfROc/WlYhdXr+j/M9R0oSWDOenjm4zAboqzPxylQ6lQtvbuNvpW3E9gn5oF7Bj6Ja/dy6CYt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740724286; c=relaxed/simple;
-	bh=JPRSZ8i+a3rWyFTiARKx3DmJ8eTqChd52fJZMuS27wg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CQBn/py6sqFojCN0HmE5TnYz2UTc5QO+ZvgtWrfAb9BrhUcDhvMYeCUYh/a+/N2Fqr/JLCEh4ttTJumXffvcr9dnng0lKMF7B+teu+NgX08uEbj4BD00Y2hECE9yRCEU8pSk4AKAyYQ5sKSsMkd045KgCX7yNb7A9HjjT+FC+Yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s17ML4n4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC7CEC4CED6;
-	Fri, 28 Feb 2025 06:31:25 +0000 (UTC)
+	s=arc-20240116; t=1740727535; c=relaxed/simple;
+	bh=DaNz3vrr0AWCklzsrYQFRMH1Wufb+iyNrR9fYKDr2+A=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=LxwA/iRKPj7i7rHtIHkmYqkuSaKdrW1HJvF9EwSSnOSgIBKT5yrfCO1nmzIIEAq/bsb1sS3bhp2L0BgoOtKSBLmC26GBbFSwzn+Z44rvjmx/S9FaBDcwWIYNNj4olwLvqG6CQsolrdUYDajPEl5EzS/XRqt4/ObPUQF5RB7mHUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DH+wtRL0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC57BC4CED6;
+	Fri, 28 Feb 2025 07:25:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740724285;
-	bh=JPRSZ8i+a3rWyFTiARKx3DmJ8eTqChd52fJZMuS27wg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s17ML4n4PJT3QCtwRIJuZpdSvEQMMQeC1hsJ9F5B7AHhnhUkRzK2n0wQRgBncMm+M
-	 dZ+JZBpW9KNYdocXZczxN2ScsTdSKPhDwHMbh7t+jNhqh2Yg8cAMX1Bw93U+lge4WY
-	 S1H8VbRUwa8YYvNjqQiwwscnv8asfGyVj1LSc4/ye6I8dXLN123Y23Wcd4ZGdEqBzz
-	 1nyKa830m3whcqiSqX4o+MkoM1leyj6klkL8XiZUvC5trPTm2+hF0q8YPyjxSJT0Rt
-	 p4kW3ICEHHa8dmuoPL4Qingv0MTFJlR/1svJ65NHXkmFz0+JPM/t0YovBB4SfXTTdG
-	 ykE+OqdGgHyiA==
-Date: Thu, 27 Feb 2025 22:31:25 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zorro Lang <zlang@redhat.com>
-Cc: Zorro Lang <zlang@kernel.org>, fstests@vger.kernel.org,
-	David Sterba <dsterba@suse.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] README: add supported fs list
-Message-ID: <20250228063125.GC6225@frogsfrogsfrogs>
-References: <20250227200514.4085734-1-zlang@kernel.org>
- <20250228022045.GA6229@frogsfrogsfrogs>
- <20250228051600.b44dmfimqqbrom22@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+	s=k20201202; t=1740727534;
+	bh=DaNz3vrr0AWCklzsrYQFRMH1Wufb+iyNrR9fYKDr2+A=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=DH+wtRL0CYx9RZkzaz6UBbWRN89a+0zzp27pGJjl6Z+Es4L5VCxrXOzbCsVJf+3Q+
+	 LrDYsaCmdczNtmhO4/UcSq5iP9rSB6adVaFnsRCVniXLxDP0nS6/lTgyjm4YkGKqVB
+	 QJwbrT8r6s647xvvabLZ1gH0ZQfSgepNsk5ZhBUIpuJ0Q1GDwfnYnDmY6t6qzzIneu
+	 wfGfG+P66dmezcnTA44H7b4/TDgBgf1XWBG3430+2HSaxCE5sPTJhaZnLsJJOOhZqj
+	 1Bg9bVRQZHLYcA0QyuZZtshbFIqE5IZwBDitUnhpw7TV8yH5j1d0D2IcfPUImxjVwd
+	 1em2Noyw1llYA==
+Message-ID: <4dd3fbe6-9a39-4911-9ab1-72f20c83c02c@kernel.org>
+Date: Fri, 28 Feb 2025 15:25:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228051600.b44dmfimqqbrom22@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 20/27] f2fs: Hoist the page_folio() call to the start of
+ f2fs_merge_page_bio()
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20250218055203.591403-1-willy@infradead.org>
+ <20250218055203.591403-21-willy@infradead.org>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250218055203.591403-21-willy@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 28, 2025 at 01:16:00PM +0800, Zorro Lang wrote:
-> On Thu, Feb 27, 2025 at 06:20:45PM -0800, Darrick J. Wong wrote:
-> > On Fri, Feb 28, 2025 at 04:05:14AM +0800, Zorro Lang wrote:
-> > > To clarify the supported filesystems by fstests, add a fs list to
-> > > README file.
-> > > 
-> > > Signed-off-by: Zorro Lang <zlang@kernel.org>
-> > > ---
-> > > 
-> > > Hi,
-> > > 
-> > > David Sterba suggests to have a supported fs list in fstests:
-> > > 
-> > > https://lore.kernel.org/fstests/20250227073535.7gt7mj5gunp67axr@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com/T/#m742e4f1f6668d39c1a48450e7176a366e0a2f6f9
-> > > 
-> > > I think that's a good suggestion, so I send this patch now. But tell the truth,
-> > > it's hard to find all filesystems which are supported by fstests. Especially
-> > > some filesystems might use fstests, but never be metioned in fstests code.
-> > > So please review this patch or send another patch to tell fstests@ list, if
-> > > you know any other filesystem is suppported.
-> > > 
-> > > And if anyone has review point about the support "level" and "comment" part,
-> > > please feel free to tell me :)
-> > > 
-> > > Thanks,
-> > > Zorro
-> > > 
-> > >  README | 82 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 82 insertions(+)
-> > > 
-> > > diff --git a/README b/README
-> > > index 024d39531..055935917 100644
-> > > --- a/README
-> > > +++ b/README
-> > > @@ -1,3 +1,85 @@
-> > > +_______________________
-> > > +SUPPORTED FS LIST
-> > > +_______________________
-> > > +
-> > > +History
-> > > +-------
-> > > +
-> > > +Firstly, xfstests is the old name of this project, due to it was originally
-> > > +developed for testing the XFS file system on the SGI's Irix operating system.
-> > > +With xfs was ported to Linux, so was xfstests, now it only supports Linux.
-> > 
-> >    When
-> > 
-> > > +
-> > > +As xfstests has some test cases are good to run on some other filesystems,
-> > 
-> >                    many test cases that can be run
+On 2025/2/18 13:51, Matthew Wilcox (Oracle) wrote:
+> Remove one call to compound_head() and a reference to page->mapping
+> by calling page_folio() early on.
 > 
-> Sure, will change these.
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>   fs/f2fs/data.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> > 
-> > > +we call them "generic" (and "shared", but it has been removed) cases, you
-> > > +can find them in tests/generic/ directory. Then more and more filesystems
-> > > +started to use xfstests, and contribute patches. Today xfstests is used
-> > > +as a file system regression test suite for lots of Linux's major file systems.
-> > > +So it's not "xfs"tests only, we tend to call it "fstests" now.
-> > > +
-> > > +Supported fs
-> > > +------------
-> > > +
-> > > +Firstly, there's not hard restriction about which filesystem can use fstests.
-> > > +Any filesystem can give fstests a try.
-> > > +
-> > > +Although fstests supports many filesystems, they have different support level
-> > > +by fstests. So mark it with 4 levels as below:
-> > > +
-> > > +L1: Fstests can be run on the specified fs basically.
-> > > +L2: Rare support from the specified fs list to fix some generic test failures.
-> > > +L3: Normal support from the specified fs list, has some own cases.
-> > > +L4: Active support from the fs list, has lots of own cases.
-> > > +
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| Filesystem | Level |                       Comment                           |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| AFS        |  L1   | N/A                                                     |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| Bcachefs   |  L1+  | N/A                                                     |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| Btrfs      |  L4   | N/A                                                     |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| Ceph       |  L2   | N/A                                                     |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| CIFS       |  L2-  | https://wiki.samba.org/index.php/Xfstesting-cifs        |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| Ext2/3/4   |  L3+  | N/A                                                     |
-> > 
-> > What do the plus and minus mean?
-> 
-> Oh, I didn't explain them.
-> 
-> ("+" means a slightly higher than the current level, but not reach to the next.
->  "-" is opposite, means a little bit lower than the current level.)
-> 
-> Is that good to you?
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index d297e9ae6391..fe7fa08b20c7 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -888,6 +888,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+>   	struct bio *bio = *fio->bio;
+>   	struct page *page = fio->encrypted_page ?
+>   			fio->encrypted_page : fio->page;
+> +	struct folio *folio = page_folio(fio->page);
+>   
+>   	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
+>   			__is_meta_io(fio) ? META_GENERIC : DATA_GENERIC))
 
-<shrug> Insofar as those ratings are ongoing and fluid anyway, ok. :)
+Minor thing, missed to change below line:
 
-> > 
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| Exfat      |  L1+  | N/A                                                     |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| f2fs       |  L3-  | N/A                                                     |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| FUSE       |  L1   | N/A                                                     |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| GFS2       |  L1   | N/A                                                     |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| Glusterfs  |  L1   | N/A                                                     |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| JFS        |  L1   | N/A                                                     |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| NFS        |  L2+  | https://linux-nfs.org/wiki/index.php/Xfstests           |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| ocfs2      |  L2-  | N/A                                                     |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| overlay    |  L3   | N/A                                                     |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| pvfs2      |  L1   | N/A                                                     |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| Reiser4    |  L1   | Reiserfs has been removed, only left reiser4            |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| tmpfs      |  L3-  | N/A                                                     |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| ubifs      |  L1   | N/A                                                     |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| udf        |  L1+  | N/A                                                     |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| Virtiofs   |  L1   | N/A                                                     |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| XFS        |  L4+  | N/A                                                     |
-> > > ++------------+-------+---------------------------------------------------------+
-> > > +| 9p         |  L1   | N/A                                                     |
-> > > ++------------+-------+---------------------------------------------------------+
-> > 
-> > This roughly tracks with my observations over the years.
-> 
-> Some filesystems I never tried, likes "9p" and "ubifs" etc, I just found these names
-> from common/rc.
+	trace_f2fs_submit_folio_bio(page_folio(page), fio);
 
-Wasn't sandeen trying to make fstests work with fat at some point?
-Well, it's not hard to add more to the table.
+can be cleaned up to:
 
-Looks good to me,
-Acked-by: "Darrick J. Wong" <djwong@kernel.org>
+	trace_f2fs_submit_folio_bio(folio, fio);
 
---D
+Thanks,
 
-> If any fs list has any supplement to the fs name or the "comment", or would like to
-> modify the "level", please feel free to tell me.
-> 
-> Thanks,
-> Zorro
-> 
-> 
-> 
-> > 
-> > --D
-> > 
-> > > +
-> > >  _______________________
-> > >  BUILDING THE FSQA SUITE
-> > >  _______________________
-> > > -- 
-> > > 2.47.1
-> > > 
-> > > 
-> > 
-> 
-> 
+> @@ -901,8 +902,8 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+>   alloc_new:
+>   	if (!bio) {
+>   		bio = __bio_alloc(fio, BIO_MAX_VECS);
+> -		f2fs_set_bio_crypt_ctx(bio, fio->page->mapping->host,
+> -				page_folio(fio->page)->index, fio, GFP_NOIO);
+> +		f2fs_set_bio_crypt_ctx(bio, folio->mapping->host,
+> +				folio->index, fio, GFP_NOIO);
+>   
+>   		add_bio_entry(fio->sbi, bio, page, fio->temp);
+>   	} else {
+> @@ -911,8 +912,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+>   	}
+>   
+>   	if (fio->io_wbc)
+> -		wbc_account_cgroup_owner(fio->io_wbc, page_folio(fio->page),
+> -					 PAGE_SIZE);
+> +		wbc_account_cgroup_owner(fio->io_wbc, folio, folio_size(folio));
+>   
+>   	inc_page_count(fio->sbi, WB_DATA_TYPE(page, false));
+>   
+
 
