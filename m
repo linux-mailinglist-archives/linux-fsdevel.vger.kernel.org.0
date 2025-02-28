@@ -1,158 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-42842-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42843-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA1D9A49854
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 12:31:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C100A499AC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 13:44:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91BB17AA8D9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 11:30:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40D9A188FA3F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 12:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0B923E333;
-	Fri, 28 Feb 2025 11:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC68526B2DD;
+	Fri, 28 Feb 2025 12:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JG46NTIR";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lGcBQ3u8";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JG46NTIR";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lGcBQ3u8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FseFj5NG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243011C3BE3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2025 11:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349A426B2B3
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2025 12:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740742264; cv=none; b=k3poyJnvbNl3PfkrmbTzcteqtzZkUZS55ldYutVCtCZ4MXTeDYvzbrmWt0XwKfwPTmjUn3t/fZNslCGRBMedABHPHhUBuVdr69TFPYAsKvyJna9LZ4Q4mVLG9tuyBbAVkB3QQv73rOypmtXApnuOa/+Xn8MHeLRuLmr0Zo1eLkQ=
+	t=1740746661; cv=none; b=nEqD6fZ3DSgBFyCQUrSY3TTF1rivr9vaJvCv5pvVlKIWTJccKyPMQzGo5MfIqfnp3UadYFyCRE4pp/H7LwRg3H3xklwVhpPXyLPiOi9LVLS90274czyo163FJ+Ssa72oMPzgtwzjPDzbD25uKMaidkU7O+hTLSbqu5p1kTfbN6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740742264; c=relaxed/simple;
-	bh=DwVlJ9j2Ziw99oqXwK4yyGMxKERwK5j/LpKtyTsEojc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mebdxnNJLqXiroYQ+Mt65j1k+uZOI/EK/unX2TAhfFBHmYiNXkxZH7FOyTG3UvciBIbcqIfyjvLT2v4IfHuYGADSxHpRGTLayZ933ce7JSYy3cqwcw4MJ331O/uRHnnUKBOlvjRyasezgYWCkBdLg6CVRA4pVXTMVrTqqlCua7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JG46NTIR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lGcBQ3u8; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JG46NTIR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lGcBQ3u8; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0F51D1F37E;
-	Fri, 28 Feb 2025 11:30:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740742259; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JFOAyPs8KJsMgBeOv5FpvM0b6wG7d3Dwofmw3MNakFs=;
-	b=JG46NTIR2ip0Ac0NvGc1rshBtmqmIfz0UAjnzJyxVy5pjo+TMWtUbteBcVR+ynwgxcIfCD
-	fz8e2W66fh9EuyqPBCE9maj2b3mFnyTHxNC5unmPS0GBDE7KVswFaVkEwnMoLp934VeHQI
-	v+OqPGkvOqP7kKq7rt+cEBKT6axK9/s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740742259;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JFOAyPs8KJsMgBeOv5FpvM0b6wG7d3Dwofmw3MNakFs=;
-	b=lGcBQ3u8G/QkZf+705VGpcgLJl4/8vjcrmnT9uWXXjOV+mUhjHLq88VMj9ryab0kWGESfU
-	By7Dfozq3TYIB/Bg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=JG46NTIR;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=lGcBQ3u8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740742259; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JFOAyPs8KJsMgBeOv5FpvM0b6wG7d3Dwofmw3MNakFs=;
-	b=JG46NTIR2ip0Ac0NvGc1rshBtmqmIfz0UAjnzJyxVy5pjo+TMWtUbteBcVR+ynwgxcIfCD
-	fz8e2W66fh9EuyqPBCE9maj2b3mFnyTHxNC5unmPS0GBDE7KVswFaVkEwnMoLp934VeHQI
-	v+OqPGkvOqP7kKq7rt+cEBKT6axK9/s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740742259;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JFOAyPs8KJsMgBeOv5FpvM0b6wG7d3Dwofmw3MNakFs=;
-	b=lGcBQ3u8G/QkZf+705VGpcgLJl4/8vjcrmnT9uWXXjOV+mUhjHLq88VMj9ryab0kWGESfU
-	By7Dfozq3TYIB/Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C9FA31344A;
-	Fri, 28 Feb 2025 11:30:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id PA0rK3KewWeUdwAAD6G6ig
-	(envelope-from <rgoldwyn@suse.de>); Fri, 28 Feb 2025 11:30:58 +0000
-Date: Fri, 28 Feb 2025 06:30:49 -0500
-From: Goldwyn Rodrigues <rgoldwyn@suse.de>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, hch@lst.de
-Subject: Re: [PATCH] make sure IOMAP_F_BOUNDARY does not merge with next IO
-Message-ID: <y6q34seo5spob2fc2swqtb4lfkasvnh6ku4hjjhxc5jxvsl4lp@k57svzmxmxb5>
-References: <hgvgztw7ip3purcsaxxozt3qmxskgzadifahxxaj3nzilqqzcz@3h7bcaeoy6gl>
- <20250226181032.GB6225@frogsfrogsfrogs>
+	s=arc-20240116; t=1740746661; c=relaxed/simple;
+	bh=PiIBLCoq5FZemb3BQZK9kmPEWW5OpN78CSDK/ZgyRYo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uCSh+jy2A/InQGqmbhEWeYrJgpAihtk5lZ68a5/7GzBmirDTaOnWhIHVzhsgyEFs/7mPQbLjZgFg8Cdiz0gxSrWzBKgXf0PcmGMsy6KS67Ncz4uoo8DBdTXi4ynGAw6LR7VjndGxpN0ela2y7xeJD/F4VTveIidKEQu0pjf0EEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FseFj5NG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14D29C4CED6;
+	Fri, 28 Feb 2025 12:44:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740746660;
+	bh=PiIBLCoq5FZemb3BQZK9kmPEWW5OpN78CSDK/ZgyRYo=;
+	h=From:Subject:Date:To:Cc:From;
+	b=FseFj5NGEsIXEGPIKG+gQBNG/Lm4eL4+16e2vq3/HABc+bxdcu8IqptNQ2FkA/acy
+	 CTolX+HQwBWzHbwfat9wcSfH0wV9fe5l9i9meDnfcZsqCiig86BwlL6Xm5ncy9xmis
+	 QMxd9qfiKMXWup03SxruI4Ns11sfXCXKnIumcMoSWR9Kah9NQGeV6Kl+Pkyjz6rN9M
+	 etim3wfyFR5ZV16cJEWungsW5Xg68BOA5ezS0S9c5M5oXAEKmBEbnRCmPs+BAJn0P2
+	 qA9W/BdSB+cqjxoAJC4sCBWkR4IPnOO9ALrfZaes/tc10Zaj/PgXukQG1bi11BiWbb
+	 /tgXJiqqlGOow==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH RFC 00/10] pidfs: provide information after task has been
+ reaped
+Date: Fri, 28 Feb 2025 13:44:00 +0100
+Message-Id: <20250228-work-pidfs-kill_on_last_close-v1-0-5bd7e6bb428e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226181032.GB6225@frogsfrogsfrogs>
-X-Rspamd-Queue-Id: 0F51D1F37E
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCPT_COUNT_THREE(0.00)[3];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJCvwWcC/x3MywrCMBCF4VcpszalGa0Ft4IP4FYk5GqHhqQkU
+ oXSd3fs8j8cvhWqL+QrXJoVil+oUk4c8tCAHXV6eUGOG7DDvkMcxCeXSczkQhUTxahyUlHXt7I
+ xVy80Hp0LKJ05DcDGXHyg7+4/4H67wpNHo/lpik52/NMLU+dW9u2uwrb9AO7VeP2VAAAA
+X-Change-ID: 20250227-work-pidfs-kill_on_last_close-a23ddf21db47
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+ Lennart Poettering <lennart@poettering.net>, 
+ Daan De Meyer <daan.j.demeyer@gmail.com>, Mike Yuan <me@yhndnzj.com>, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-42535
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2325; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=PiIBLCoq5FZemb3BQZK9kmPEWW5OpN78CSDK/ZgyRYo=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQfXL+oJVV41uq7L47Y7jz+LimgMIrL+8EiV2MZuRe8D
+ QsrU6/P6yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIP12G/4UXE62Vcv+Xhd6+
+ MXEFe7DwCn1XFq8/CgLln+zz3M4dn87I8L+7IHMX/++bXrJN9X9/v/95fKr/6ooZd+Zk/J/p/2a
+ 2MzMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On 10:10 26/02, Darrick J. Wong wrote:
-> On Wed, Feb 26, 2025 at 11:51:19AM -0500, Goldwyn Rodrigues wrote:
-> > If the current ioend is built for iomap with flags set to
-> > IOMAP_F_BOUNDARY and the next iomap does not have IOMAP_F_BOUNDARY set,
-> > IOMAP_F_BOUNDARY will not be respected because the iomap structure has
-> > been overwritten during the map_blocks call for the next iomap. Fix this
-> > by checking both iomap.flags and ioend->io_flags for IOMAP_F_BOUNDARY.
-> 
-> Why is it necessary to avoid merging with an IOMAP_F_BOUNDARY ioend if
-> this new mapping isn't IOMAP_F_BOUNDARY?  If the filesystem needs that,
-> it can set BOUNDARY on both mappings, right?
+Hey,
 
-Yes, you are right. Just that when filesystem wants to merge it would
-have to keep a track. 
+Various tools need access to information about a process/task even after
+it has already been reaped. For example, systemd's journal logs
+and uses such information as the cgroup id and exit status to deal with
+processes that have been sent via SCM_PIDFD or SCM_PEERPIDFD. By the
+time the pidfd is received the process might've already exited or even
+been reaped.
 
-But that's fine. I have figured out to solve my problem another way.
+This series aims to provide information by extending the PIDFD_GET_INFO
+ioctl to retrieve the exit code and cgroup id. There might be other
+stuff that we would want in the future.
 
--- 
-Goldwyn
+Note, this is and RFC and it has a bunch of TODOs/questions in comments.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Christian Brauner (10):
+      pidfs: switch to copy_struct_to_user()
+      pidfd: rely on automatic cleanup in __pidfd_prepare()
+      pidfs: move setting flags into pidfs_alloc_file()
+      pidfs: add inode allocation
+      pidfs: record exit code and cgroupid at exit
+      pidfs: allow to retrieve exit information
+      selftests/pidfd: fix header inclusion
+      pidfs/selftests: ensure correct headers for ioctl handling
+      selftests/pidfd: move more defines to common header
+      selftests/pidfd: add PIDFD_INFO_EXIT tests
+
+ fs/internal.h                                     |   1 +
+ fs/libfs.c                                        |   4 +-
+ fs/pidfs.c                                        | 170 ++++++++++++++++++--
+ include/linux/pidfs.h                             |   1 +
+ include/uapi/linux/pidfd.h                        |   3 +-
+ kernel/exit.c                                     |   2 +
+ kernel/fork.c                                     |  15 +-
+ tools/testing/selftests/pidfd/.gitignore          |   1 +
+ tools/testing/selftests/pidfd/Makefile            |   2 +-
+ tools/testing/selftests/pidfd/pidfd.h             |  82 ++++++++++
+ tools/testing/selftests/pidfd/pidfd_fdinfo_test.c |   1 +
+ tools/testing/selftests/pidfd/pidfd_info_test.c   | 185 ++++++++++++++++++++++
+ tools/testing/selftests/pidfd/pidfd_open_test.c   |  26 ---
+ tools/testing/selftests/pidfd/pidfd_setns_test.c  |  45 ------
+ 14 files changed, 439 insertions(+), 99 deletions(-)
+---
+base-commit: b1e809e7f64ad47dd232ff072d8ef59c1fe414c5
+change-id: 20250227-work-pidfs-kill_on_last_close-a23ddf21db47
+
 
