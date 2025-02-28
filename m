@@ -1,194 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-42869-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42870-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E3CBA4A44E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 21:37:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4510A4A679
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Mar 2025 00:05:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 084053B0652
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 20:37:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2847A7ABC62
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 23:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53738192B6D;
-	Fri, 28 Feb 2025 20:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B374D1DEFF5;
+	Fri, 28 Feb 2025 23:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qqg3pjYy"
+	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="tvR27nhR";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="d03nxS+H"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B579B23F36A;
-	Fri, 28 Feb 2025 20:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9451DED6B;
+	Fri, 28 Feb 2025 23:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740775045; cv=none; b=gmLLrtaUcTFEapabMr+7urJ5fTlEp12sidwmjZtjW2JB9tll4H0nukm66BVWzX2Si8axGZMvtlxiWsJIUWLHk2jcU4K2zcYhyzeFl30A4q42cCaTIvenN9+Xncwi/vrFXI3DcF7jcbbnU0o0u4wlxD8tZfyyPkDwI+AQfKIdxjk=
+	t=1740783892; cv=none; b=R8kN6svJSTKSUYOdAtd6xdBhDi/fhDopakMaTiXtRd7mwqfV1+G04izqqKlN+MkoNutofsYiw9+J9hYsCChwjchG01U5KddsJkQ1f0ybgZzWxndwRD/j1dXv8YTc/072pUW1Xcm1z/tvZyD7b4iw8VaQPOVqDHApTtFrBReeojc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740775045; c=relaxed/simple;
-	bh=LU6nLh2usNHKmkKlFSqRf+GcH1uMNDVm77IaYsplmyk=;
-	h=Subject:To:Cc:From:Date:Message-Id; b=OonF1VtgprYQFiLDxNkmiBlApFcqFj1FycKGY0Npn9pzSEceVjZLIW2U3IM2ep6g9GWEivqrJ+Rb3wbAOflt0U3UmTQHjpLGTkANCJ0I5kdZYne0LX1o1Y4x/avi+SCbPLmApWZlvYWAR+d+oupFs+GeUhJbOc1H6bo1SWOTdgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qqg3pjYy; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740775044; x=1772311044;
-  h=subject:to:cc:from:date:message-id;
-  bh=LU6nLh2usNHKmkKlFSqRf+GcH1uMNDVm77IaYsplmyk=;
-  b=Qqg3pjYyRDkjNkVX4O8E6NA4qmkIcNM8aa8oJlfJqAVmd6Jbad+3ZkW7
-   W53Qzpkh9KcLZXbcuum7D8yJ5pV6RNQvx7NSjUrHZBu/BmkXOd0JBqm36
-   t/cF3a8av3IngcR0XJqizAWACiriUF0TPszQyRISbleipvn59RV7kNNJo
-   Cq7YH0Al3NLsbn/H+hsaguIgyqUY+jo8knKKdN7vj0yL3laWpOXwQeNS8
-   64VIl4HR8tfqIcFu/44dIDYnFiRCxFFZTwoYC3IUIzw+SuPT3OCTNVCmt
-   7Pl2m3bOrr9yFTrLG+GrkavCk4nIV3b2QlRO8wn+ZlqSzACMFqfirLhuZ
-   g==;
-X-CSE-ConnectionGUID: VeSKilD7Qx+NRN+PAUFUSg==
-X-CSE-MsgGUID: 778lG40JRiC6NwBffS+Uvw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="45367465"
-X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
-   d="scan'208";a="45367465"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 12:37:23 -0800
-X-CSE-ConnectionGUID: ZGrelpB5SC2QF9vxwxb42g==
-X-CSE-MsgGUID: SPSF5J2lSVKySLWgCerUYA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
-   d="scan'208";a="122393832"
-Received: from davehans-spike.ostc.intel.com (HELO localhost.localdomain) ([10.165.164.11])
-  by orviesa003.jf.intel.com with ESMTP; 28 Feb 2025 12:37:23 -0800
-Subject: [PATCH] [v2] filemap: Move prefaulting out of hot write path
-To: linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,Dave Hansen <dave.hansen@linux.intel.com>,tytso@mit.edu,willy@infradead.org,akpm@linux-foundation.org,mjguzik@gmail.com,david@fromorbit.com
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Fri, 28 Feb 2025 12:37:22 -0800
-Message-Id: <20250228203722.CAEB63AC@davehans-spike.ostc.intel.com>
+	s=arc-20240116; t=1740783892; c=relaxed/simple;
+	bh=jhwqS+8UgHrU+nFfkhLgpKb37PyoJnMpRYl+nlaOack=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=VocAgsvnJ8eiCcfeETA1lDWu7MCdD3cKIi5F3t0XrXwdRj7UqpXL352G5dBRZDOjzZZr+5WZr51ZLd7ikVjkJGtCExGHPzny+IHNVOEr8EL3E9HcLpZIVQo1z+KeGAyyJrJTSJla6DpLKjvtTsADZffpWt63uAth4F9gA8s9AeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=tvR27nhR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=d03nxS+H; arc=none smtp.client-ip=202.12.124.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfout.stl.internal (Postfix) with ESMTP id 2D8281140142;
+	Fri, 28 Feb 2025 18:04:49 -0500 (EST)
+Received: from phl-imap-07 ([10.202.2.97])
+  by phl-compute-03.internal (MEProxy); Fri, 28 Feb 2025 18:04:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
+	 t=1740783889; x=1740870289; bh=1wPPLlxLV8AoIw8qmI9GdCQUordZNsKK
+	ATsbb1y5JqA=; b=tvR27nhRRPzWtgJ/xWx0rUYDqXK2P5r499BJ3UPpXhEoTLCS
+	UAUT2yCihs2A39iMOJKFxAfNZcqtpE+0HC6DcQ/LUoloRqepQEtoXC8VN2Ga/xR5
+	jcHepNyyXmtE/tCOY3UrODH5baP8rZBgETUSbmRjYACygmqx9dnZEOYchQXgF+NS
+	g1eRjIa55uRacBdLyFvyGH5+ESo3eXpMu2LzCN7cN5cSGeYV+D4EX2CwDNCylRvs
+	w9A4Q+T2fG1K+/8s3uu2q0yUjBR9URpqnxujattCddYQ7+pSMqlNOzzTNV/4ZaZF
+	OGOyF7Wf+qQJyEn1VELKeTOXR++B8re09d7EUw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740783889; x=
+	1740870289; bh=1wPPLlxLV8AoIw8qmI9GdCQUordZNsKKATsbb1y5JqA=; b=d
+	03nxS+HIq65zT1rBDtqLq7XLN7yQ8qo23nO5ERm+u90QYIFEXfBCN+H+p+AMxldi
+	P+WyO7EaNHWAZsfnIfUMLgTDECFxdpgd2shMCoX0SdwlHzaZT0hW6SPQ5JGjrm2v
+	RXahm8U6D4s1fom7zQNvxvWFbaeR2CxtZn1FJv19VyH8PyCfzaero4RRZMWKLICC
+	yPBPHbpCZNjp/KWVXBtSh9p2M4Bt3WbculMQHuCkFeQpQi7Qt8rKs8hbw+qPGiG6
+	NP0qknnCtHiHBgFHeo5PwVT6tACxITmA9WQGm/vPkzx+MYldp3o6888DHLdU4iJb
+	uGuw/qmCfk3by9dAe0e6g==
+X-ME-Sender: <xms:EEHCZ-wOlwM-6n0gLPYG04iVmFtBS6SrUmJskghJfDcp3-LwM4hC4A>
+    <xme:EEHCZ6R-P_C5dOLyjOIDngOMxmiBUGVJFR-ZKJxSk1aA9F7vxvU7pW29j_YCIzUe2
+    6bsElLVhUxFt1KFEhI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeludeiiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdfuvhgvnhcurfgvthgvrhdfuceoshhvvghnsehsvhgvnhhpvghtvg
+    hrrdguvghvqeenucggtffrrghtthgvrhhnpeelfeetueegudduueduuefhfeehgeevkeeu
+    feffvdffkedtffffleevffdvvdeuffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehsvhgvnhesshhvvghnphgvthgvrhdruggvvhdpnhgspghr
+    tghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepvghthhgrnhesvg
+    hthhgrnhgtvggufigrrhgushdrtghomhdprhgtphhtthhopegrshgrhhhisehlihhsthhs
+    rdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqshhtrghgihhngheslhhish
+    htshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehv
+    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:EEHCZwWcYEV3dQxBmnNhsnIxeWJKZvlIfdUF0o0IU0e_z3bQrYKFKw>
+    <xmx:EEHCZ0hYzsWqnJGalWq-8DVI0_He2rWZPFYcz4VI00XuyUjoqNM-sQ>
+    <xmx:EEHCZwAL0KqJNQO50a-NulLpX0_QuXMcmXpOuSvKAp3108F3nejdBg>
+    <xmx:EEHCZ1JLXUm7ljlFcJ2GVJK6uDF4ReVdpVHaJSB123HVu38_hgkiIQ>
+    <xmx:EUHCZz9cXNdOIDaEcHPaqEYkeSK9NmG4EMJcoCdmmDnbz52h0BL_V2gF>
+Feedback-ID: i51094778:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id A471EBA0070; Fri, 28 Feb 2025 18:04:48 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Date: Sat, 01 Mar 2025 00:04:27 +0100
+From: "Sven Peter" <sven@svenpeter.dev>
+To: "Ethan Carter Edwards" <ethan@ethancedwards.com>,
+ linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-staging@lists.linux.dev,
+ asahi@lists.linux.dev
+Message-Id: <d0be518b-3abf-497a-b342-ff862dd985a7@app.fastmail.com>
+In-Reply-To: 
+ <rxefeexzo2lol3qph7xo5tgnykp5c6wcepqewrze6cqfk22leu@wwkiu7yzkpvp>
+References: <rxefeexzo2lol3qph7xo5tgnykp5c6wcepqewrze6cqfk22leu@wwkiu7yzkpvp>
+Subject: Re: [RFC] apfs: thoughts on upstreaming an out-of-tree module
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+
+Hi,
 
 
-There is a generic anti-pattern that shows up in the VFS and several
-filesystems where the hot write paths touch userspace twice when they
-could get away with doing it once.
+On Fri, Feb 28, 2025, at 02:53, Ethan Carter Edwards wrote:
+> Lately, I have been thinking a lot about the lack of APFS support on
+> Linux. I was wondering what I could do about that. APFS support is not 
+> in-tree, but there is a proprietary module sold by Paragon software [0].
+> Obviously, this could not be used in-tree. However, there is also an 
+> open source driver that, from what I can tell, was once planned to be 
+> upstreamed [1] with associated filesystem progs [2]. I think I would 
+> base most of my work off of the existing FOSS tree.
+>
+> The biggest barrier I see currently is the driver's use of bufferheads.
+> I realize that there has been a lot of work to move existing filesystem
+> implementations to iomap/folios, and adding a filesystem that uses
+> bufferheads would be antithetical to the purpose of that effort.
+> Additionally, there is a lot of ifndefs/C preprocessor magic littered
+> throughout the codebase that fixes functionality with various different
+> versions of Linux. 
+>
+> The first step would be to move away from bufferheads and the
+> versioning. I plan to start my work in the next few weeks, and hope to
+> have a working driver to submit to staging by the end of June. From
+> there, I will work to have it meet more kernel standards and hopefully
+> move into fs/ by the end of the year.
+>
+> Before I started, I was wondering if anyone had any thoughts. I am open
+> to feedback. If you think this is a bad idea, let me know. I am very
+> passionate about the Asahi Linux project. I think this would be a good
+> way to indirectly give back and contribute to the project. While I
+> recognize that it is not one of Asahi's project goals (those being
+> mostly hardware support), I am confident many users would find it
+> helpful. I sure would.
 
-Dave Chinner suggested that they should all be fixed up[1]. I agree[2].
-But, the series to do that fixup spans a bunch of filesystems and a lot
-of people. This patch fixes common code that absolutely everyone uses.
-It has measurable performance benefits[3].
+Agreed, I think it would be helpful for many people (especially those
+who still regularly dual boot between macOS and Linux) to have a working
+APFS driver upstream.
+This may also be useful once we fully bring up the Secure Enclave and need
+to read/write to at least a single file on the xART partition which has
+to be APFS because it's shared between all operating systems running on
+a single machine.
 
-I think this patch can go in and not be held up by the others.
 
-I will post them separately to their separate maintainers for
-consideration. But, honestly, I'm not going to lose any sleep if
-the maintainers don't pick those up.
+It looks like there's still recent activity on that linux-apfs github
+repository. Have you reached out to the people working on it to see
+what their plans for upstreaming and/or future work are?
 
-1. https://lore.kernel.org/all/Z5f-x278Z3wTIugL@dread.disaster.area/
-2. https://lore.kernel.org/all/20250129181749.C229F6F3@davehans-spike.ostc.intel.com/
-3. https://lore.kernel.org/all/202502121529.d62a409e-lkp@intel.com/
 
---
 
-Changesfrom v1:
- * Update comment to talk more about how filesystem locking and
-   atomic usercopies avoid deadlocks.
+Best,
 
---
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+Sven
 
-There is a bit of a sordid history here. I originally wrote
-998ef75ddb57 ("fs: do not prefault sys_write() user buffer pages")
-to fix a performance issue that showed up on early SMAP hardware.
-But that was reverted with 00a3d660cbac because it exposed an
-underlying filesystem bug.
-
-This is a reimplementation of the original commit along with some
-simplification and comment improvements.
-
-The basic problem is that the generic write path has two userspace
-accesses: one to prefault the write source buffer and then another to
-perform the actual write. On x86, this means an extra STAC/CLAC pair.
-These are relatively expensive instructions because they function as
-barriers.
-
-Keep the prefaulting behavior but move it into the slow path that gets
-run when the write did not make any progress. This avoids livelocks
-that can happen when the write's source and destination target the
-same folio. Contrary to the existing comments, the fault-in does not
-prevent deadlocks. That's accomplished by using an "atomic" usercopy
-that disables page faults.
-
-The end result is that the generic write fast path now touches
-userspace once instead of twice.
-
-0day has shown some improvements on a couple of microbenchmarks:
-
-	https://lore.kernel.org/all/202502121529.d62a409e-lkp@intel.com/
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Link: https://lore.kernel.org/all/yxyuijjfd6yknryji2q64j3keq2ygw6ca6fs5jwyolklzvo45s@4u63qqqyosy2/
-Cc: Ted Ts'o <tytso@mit.edu>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Dave Chinner <david@fromorbit.com>
----
-
- b/mm/filemap.c |   27 ++++++++++++++++-----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
-
-diff -puN mm/filemap.c~generic_perform_write-1 mm/filemap.c
---- a/mm/filemap.c~generic_perform_write-1	2025-02-28 11:58:36.499615962 -0800
-+++ b/mm/filemap.c	2025-02-28 12:13:27.845549365 -0800
-@@ -4170,17 +4170,6 @@ retry:
- 		bytes = min(chunk - offset, bytes);
- 		balance_dirty_pages_ratelimited(mapping);
- 
--		/*
--		 * Bring in the user page that we will copy from _first_.
--		 * Otherwise there's a nasty deadlock on copying from the
--		 * same page as we're writing to, without it being marked
--		 * up-to-date.
--		 */
--		if (unlikely(fault_in_iov_iter_readable(i, bytes) == bytes)) {
--			status = -EFAULT;
--			break;
--		}
--
- 		if (fatal_signal_pending(current)) {
- 			status = -EINTR;
- 			break;
-@@ -4198,6 +4187,12 @@ retry:
- 		if (mapping_writably_mapped(mapping))
- 			flush_dcache_folio(folio);
- 
-+		/*
-+		 * Faults here on mmap()s can recurse into arbitrary
-+		 * filesystem code. Lots of locks are held that can
-+		 * deadlock. Use an atomic copy to avoid deadlocking
-+		 * in page fault handling.
-+		 */
- 		copied = copy_folio_from_iter_atomic(folio, offset, bytes, i);
- 		flush_dcache_folio(folio);
- 
-@@ -4223,6 +4218,16 @@ retry:
- 				bytes = copied;
- 				goto retry;
- 			}
-+
-+			/*
-+			 * 'folio' is now unlocked and faults on it can be
-+			 * handled. Ensure forward progress by trying to
-+			 * fault it in now.
-+			 */
-+			if (fault_in_iov_iter_readable(i, bytes) == bytes) {
-+				status = -EFAULT;
-+				break;
-+			}
- 		} else {
- 			pos += status;
- 			written += status;
-_
 
