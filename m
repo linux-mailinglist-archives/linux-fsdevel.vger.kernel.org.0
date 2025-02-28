@@ -1,116 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-42838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75148A496DC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 11:18:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBCA9A496EF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 11:20:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9994E174C61
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 10:18:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8ACC1884DFA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 10:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C27C25C6EF;
-	Fri, 28 Feb 2025 10:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C697425F963;
+	Fri, 28 Feb 2025 10:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mLqOEgup"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GPqw8h1p"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B0C1957FF;
-	Fri, 28 Feb 2025 10:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F02256C74
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2025 10:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740737806; cv=none; b=TIz9TwY4VeWCDpT7dMbgJC3cGNGXWUZH0UbmONOvdFdJtbsVKrF2ggcEK499EUgwuAcov8++ieNhBhUp4DuAuwoybsUq7atuxvVkr6O1tJ6H6BAlvVilPe93ECrY+k7h0arUGtIf7h9TmGbtGf0yn/qT8+E6OGa7T0Nv4uhnfTQ=
+	t=1740737881; cv=none; b=nE6KAzqAHEYrqCOwst192tYaLyzgPSpE/aia200ikDayVTrb/uMhG9yodivftBKzh2NjrREnLdS65X1Bo93cGCxoGMH3xmCh5vFAjou3y0tiz/DkDFik1ylYlHiGoWVQWrvMW/s4RJ1J0+JRtJlB2J1GJ5pjYJiV8/Ml6Du0DDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740737806; c=relaxed/simple;
-	bh=xplsmJGPsBQ8UanuLRWY/+EKejwxGRiN7g/vc4yJnxQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jazxPyFBIyvUP+UuJcj6pJXlgyNAcFJmLoxGJtznOaCCuOTwaPfpzQ+thcEJRESfHrblP5XEJLTfF87v2aJFrLQz4z7HxtXnFttPfvpuRCdRbULyx/WEAF0x9exU1J3ghMCX+h7EdlLswPC0WvahuIAIAu5bYGKd8OuhAOlC6o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mLqOEgup; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59CFCC4CED6;
-	Fri, 28 Feb 2025 10:16:44 +0000 (UTC)
+	s=arc-20240116; t=1740737881; c=relaxed/simple;
+	bh=9sE022UpymRPMJeH7GmXqvdiwZeXsCZS9lw3Cxxohog=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Rf1TUONweRNjlsHxDOLwkuhcmg6Znhiq8cFaNttz0u7ZW5pTUWPld2CbctXokckMuGcRlXrz+7ukDDauZ3ZCGUAQ6+wPMzs0UlPwbHVkjY4AprIRQBDmnExuf2I8drtNapzGp/h6NBOHEZZ+wgou+qtOZk727PDKi2z5uVVaYZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GPqw8h1p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECB9AC4CED6;
+	Fri, 28 Feb 2025 10:17:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740737805;
-	bh=xplsmJGPsBQ8UanuLRWY/+EKejwxGRiN7g/vc4yJnxQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mLqOEgup9S6oObZnrpTVaZE5xrUyII39jc+rjP75/4oia/+Kmf6Fra4hrIXrUbOen
-	 EkMNBr70KbgQ32p31sTHi0/UoZ7Jz9X5N47fcCUxJNPpl0j1QBt3WETym582eWo55v
-	 KPkiES/mlU7EbYNkvjCotS8nlMX6bdf52MHeaSqC/I5veSJ2qO3ktOkCkFUMMb5T+l
-	 fzJYji+2Vc+HcKRdVxaMv5fbSZ3KCTozoR1arVO46wJXhCP60pxvkvNby6JmH/m4CO
-	 ZhX72VaF6k9G/bZEKcBrnfYLfGbUegG8D5S9FrFszcV93YlXZm6RrtARLnIRydaQyc
-	 oRjbCaKP58fUg==
-Date: Fri, 28 Feb 2025 11:16:41 +0100
+	s=k20201202; t=1740737880;
+	bh=9sE022UpymRPMJeH7GmXqvdiwZeXsCZS9lw3Cxxohog=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=GPqw8h1ps532FBv20+KmuQTxvEjUHBfPkMY+W9mFFzNkTeCuraAPzO9w5VbzExl6H
+	 2pg0R21mX3KoArOZWY0hyZNYhhjQvcukslHoD+SGl+//a2uY3Xp7n4aQuD5U06eRzK
+	 Y7NlRUH/rjnkXfvV5po1hoxlGLcat7hVU5xfankk99j/cUvswUJC37FIB3hOPGcrW8
+	 r8M3rqCK1ghYiG/+cSapY7A68M+LSU8uc9g2vbuaJH1R8cbdtp3rojTibhRsnSgGQx
+	 ji96Hwz6aBBUp5JAPn1WW9cjHE32qLgor0lv5tW9j2Z8zTn26W2BiOL1pCXgtv8Bjs
+	 M9BiRiioq1k1w==
 From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] pipe: cache 2 pages instead of 1
-Message-ID: <20250228-neuverfilmung-teeservice-076e89999806@brauner>
-References: <20250227180407.111787-1-mjguzik@gmail.com>
- <20250227215834.GE25639@redhat.com>
- <CAGudoHG7EF5_wnNhsyFoiRtU-qW1b=vUaVaFk7TKnqeSjC6sOg@mail.gmail.com>
+To: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	Eric Sandeen <sandeen@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Lukas Schauer <lukas@schauer.dev>,
+	Ian Kent <raven@themaw.net>
+Subject: Re: [PATCH] watch_queue: fix pipe accounting mismatch
+Date: Fri, 28 Feb 2025 11:17:53 +0100
+Message-ID: <20250228-marginal-sektkorken-eb11c52a7792@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <206682a8-0604-49e5-8224-fdbe0c12b460@redhat.com>
+References: <206682a8-0604-49e5-8224-fdbe0c12b460@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1337; i=brauner@kernel.org; h=from:subject:message-id; bh=9sE022UpymRPMJeH7GmXqvdiwZeXsCZS9lw3Cxxohog=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQf7A1e6n4h9Ghs/bEQdW2GZQ13FD3zIz8mb1JaN+WAc kCWkmNGRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEQs8xj+F7yqYvxhct37qsVD Dj6dJeUP1xd8XZnYvq9yT5LE4Q/f9jEyPJW7193/RHXx/JtBwQcTT4bVLQ/dv1LvZ9sn3/LXOoz POAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHG7EF5_wnNhsyFoiRtU-qW1b=vUaVaFk7TKnqeSjC6sOg@mail.gmail.com>
 
-On Thu, Feb 27, 2025 at 11:07:45PM +0100, Mateusz Guzik wrote:
-> On Thu, Feb 27, 2025 at 10:59 PM Oleg Nesterov <oleg@redhat.com> wrote:
-> > > +static struct page *anon_pipe_get_page(struct pipe_inode_info *pipe)
-> > > +{
-> > > +     struct page *page;
-> > > +
-> > > +     if (pipe->tmp_page[0]) {
-> > > +             page = pipe->tmp_page[0];
-> > > +             pipe->tmp_page[0] = NULL;
-> > > +     } else if (pipe->tmp_page[1]) {
-> > > +             page = pipe->tmp_page[1];
-> > > +             pipe->tmp_page[1] = NULL;
-> > > +     } else {
-> > > +             page = alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
-> > > +     }
-> > > +
-> > > +     return page;
-> > > +}
-> >
-> > Perhaps something like
-> >
-> >         for (i = 0; i < ARRAY_SIZE(pipe->tmp_page); i++) {
-> >                 if (pipe->tmp_page[i]) {
-> >                         struct page *page = pipe->tmp_page[i];
-> >                         pipe->tmp_page[i] = NULL;
-> >                         return page;
-> >                 }
-> >         }
-> >
-> >         return alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
-> > ?
-> >
-> > Same for anon_pipe_put_page() and free_pipe_info().
-> >
-> > This avoids the code duplication and allows to change the size of
-> > pipe->tmp_page[] array without other changes.
-> >
+On Thu, 27 Feb 2025 11:41:08 -0600, Eric Sandeen wrote:
+> Currently, watch_queue_set_size() modifies the pipe buffers charged to
+> user->pipe_bufs without updating the pipe->nr_accounted on the pipe
+> itself, due to the if (!pipe_has_watch_queue()) test in
+> pipe_resize_ring(). This means that when the pipe is ultimately freed,
+> we decrement user->pipe_bufs by something other than what than we had
+> charged to it, potentially leading to an underflow. This in turn can
+> cause subsequent too_many_pipe_buffers_soft() tests to fail with -EPERM.
 > 
-> I have almost no opinion one way or the other and I'm not going to
-> argue about this bit. I only note I don't expect there is a legit
-> reason to go beyond 2 pages here. As in if more is warranted, the
-> approach to baking the area should probably change.
-> 
-> I started with this being spelled out so that I have easier time
-> toggling the extra slot for testing.
-> 
-> That said, I don't know who counts as the pipe man today. I can do the
+> [...]
 
-Linus or David should have the most detailed knowledge.
+Applied to the vfs-6.15.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.15.misc branch should appear in linux-next soon.
 
-> needful(tm) no problem.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.15.misc
+
+[1/1] watch_queue: fix pipe accounting mismatch
+      https://git.kernel.org/vfs/vfs/c/483b7214f602
 
