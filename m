@@ -1,99 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-42837-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B48BA496D4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 11:17:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75148A496DC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 11:18:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D559E3ACAE8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 10:17:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9994E174C61
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 10:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFD925D216;
-	Fri, 28 Feb 2025 10:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C27C25C6EF;
+	Fri, 28 Feb 2025 10:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W9s8i4hz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mLqOEgup"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A307A25F977
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2025 10:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B0C1957FF;
+	Fri, 28 Feb 2025 10:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740737720; cv=none; b=jXTd4wVZSxrqju+AlBe3v5LjsNtp4s/qrXGpoDCVK+HXlorHBBaAIeHZ+PKR5KYI/6eiDGVJLYdbbtampSZJR/mLGdUDsskqqKDR4rOZt1xIOG3OCT4FEKgKaSJa6baygi5U+5faTFd6H6kNUlSsGOEkK7tEt2/yaoavBifhBMM=
+	t=1740737806; cv=none; b=TIz9TwY4VeWCDpT7dMbgJC3cGNGXWUZH0UbmONOvdFdJtbsVKrF2ggcEK499EUgwuAcov8++ieNhBhUp4DuAuwoybsUq7atuxvVkr6O1tJ6H6BAlvVilPe93ECrY+k7h0arUGtIf7h9TmGbtGf0yn/qT8+E6OGa7T0Nv4uhnfTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740737720; c=relaxed/simple;
-	bh=bRd0yX/+Lpqhn1Yd4wfzNI5gcDQ5bk5OZl9PgCV6Vmo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dhB+VKKavMJ8Hb0E+Bk1uK81H5l/Dzkx6YD1zZvYVDLmOO6bzkc9x9c3d/JaEVGlSAx5uK9uhzmsULcXg8dQvJZna62xVftxo/HIMVg4asrTxIVDvqQpLGoN0lWGykFj5TIo3vawfdb41ArlGfvzEGT42GVcRlRicTNCa842oJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W9s8i4hz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28414C4CEE4;
-	Fri, 28 Feb 2025 10:15:17 +0000 (UTC)
+	s=arc-20240116; t=1740737806; c=relaxed/simple;
+	bh=xplsmJGPsBQ8UanuLRWY/+EKejwxGRiN7g/vc4yJnxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jazxPyFBIyvUP+UuJcj6pJXlgyNAcFJmLoxGJtznOaCCuOTwaPfpzQ+thcEJRESfHrblP5XEJLTfF87v2aJFrLQz4z7HxtXnFttPfvpuRCdRbULyx/WEAF0x9exU1J3ghMCX+h7EdlLswPC0WvahuIAIAu5bYGKd8OuhAOlC6o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mLqOEgup; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59CFCC4CED6;
+	Fri, 28 Feb 2025 10:16:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740737720;
-	bh=bRd0yX/+Lpqhn1Yd4wfzNI5gcDQ5bk5OZl9PgCV6Vmo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=W9s8i4hzYtWx+I130q468X8iZ1BniKDhTDSDGPm/26vGFKl69e/JiQRfi38yc2GXo
-	 MHOCEULcleiW11crwmNcQ/7F/pzxD+5p4KZIUlwmRQAuyF7dcN7nAF4w41rrBPZhah
-	 DXR+6g9KEAoDzj5ygkZiCSdipU/y/uaJ8kWGL7GkHYRUL76TRD+dumsCperuGm0NrS
-	 SPKjWfzr7PTzwTRtcntSvpVK7QC2Z7NeLSooA4CRIEetAyd6S4dS7wC9ohaLHVxlRH
-	 H/QIGSUCtVUySsQHCpXlCdS/KwxqG53kXcLy/hos8iRJdO42WfYf9YO4M22XOqHo+L
-	 tMBTSN0MKQrUw==
+	s=k20201202; t=1740737805;
+	bh=xplsmJGPsBQ8UanuLRWY/+EKejwxGRiN7g/vc4yJnxQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mLqOEgup9S6oObZnrpTVaZE5xrUyII39jc+rjP75/4oia/+Kmf6Fra4hrIXrUbOen
+	 EkMNBr70KbgQ32p31sTHi0/UoZ7Jz9X5N47fcCUxJNPpl0j1QBt3WETym582eWo55v
+	 KPkiES/mlU7EbYNkvjCotS8nlMX6bdf52MHeaSqC/I5veSJ2qO3ktOkCkFUMMb5T+l
+	 fzJYji+2Vc+HcKRdVxaMv5fbSZ3KCTozoR1arVO46wJXhCP60pxvkvNby6JmH/m4CO
+	 ZhX72VaF6k9G/bZEKcBrnfYLfGbUegG8D5S9FrFszcV93YlXZm6RrtARLnIRydaQyc
+	 oRjbCaKP58fUg==
+Date: Fri, 28 Feb 2025 11:16:41 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Pan Deng <pan.deng@intel.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	tianyou.li@intel.com,
-	tim.c.chen@linux.intel.com,
-	lipeng.zhu@intel.com,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: place f_ref to 3rd cache line in struct file to resolve false sharing
-Date: Fri, 28 Feb 2025 11:15:03 +0100
-Message-ID: <20250228-bestzeit-sondieren-0fc0d185fa4d@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250228020059.3023375-1-pan.deng@intel.com>
-References: <20250228020059.3023375-1-pan.deng@intel.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] pipe: cache 2 pages instead of 1
+Message-ID: <20250228-neuverfilmung-teeservice-076e89999806@brauner>
+References: <20250227180407.111787-1-mjguzik@gmail.com>
+ <20250227215834.GE25639@redhat.com>
+ <CAGudoHG7EF5_wnNhsyFoiRtU-qW1b=vUaVaFk7TKnqeSjC6sOg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1281; i=brauner@kernel.org; h=from:subject:message-id; bh=bRd0yX/+Lpqhn1Yd4wfzNI5gcDQ5bk5OZl9PgCV6Vmo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQf7Nmw9rKvr/I2hh3Zuxtzr0sVtG5K5PHxS315uejmn V0xy36yd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzE7AIjw/R9E4OT6mqZ7F7l RMZMzgmdwB1R5OT9oTXkpVNlzflV0owMTxfY/RGQsJnG9e5dRqpj6gT9opYVP7oyaie8eP/3xb+ TnAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHG7EF5_wnNhsyFoiRtU-qW1b=vUaVaFk7TKnqeSjC6sOg@mail.gmail.com>
 
-On Fri, 28 Feb 2025 10:00:59 +0800, Pan Deng wrote:
-> When running syscall pread in a high core count system, f_ref contends
-> with the reading of f_mode, f_op, f_mapping, f_inode, f_flags in the
-> same cache line.
+On Thu, Feb 27, 2025 at 11:07:45PM +0100, Mateusz Guzik wrote:
+> On Thu, Feb 27, 2025 at 10:59 PM Oleg Nesterov <oleg@redhat.com> wrote:
+> > > +static struct page *anon_pipe_get_page(struct pipe_inode_info *pipe)
+> > > +{
+> > > +     struct page *page;
+> > > +
+> > > +     if (pipe->tmp_page[0]) {
+> > > +             page = pipe->tmp_page[0];
+> > > +             pipe->tmp_page[0] = NULL;
+> > > +     } else if (pipe->tmp_page[1]) {
+> > > +             page = pipe->tmp_page[1];
+> > > +             pipe->tmp_page[1] = NULL;
+> > > +     } else {
+> > > +             page = alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
+> > > +     }
+> > > +
+> > > +     return page;
+> > > +}
+> >
+> > Perhaps something like
+> >
+> >         for (i = 0; i < ARRAY_SIZE(pipe->tmp_page); i++) {
+> >                 if (pipe->tmp_page[i]) {
+> >                         struct page *page = pipe->tmp_page[i];
+> >                         pipe->tmp_page[i] = NULL;
+> >                         return page;
+> >                 }
+> >         }
+> >
+> >         return alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
+> > ?
+> >
+> > Same for anon_pipe_put_page() and free_pipe_info().
+> >
+> > This avoids the code duplication and allows to change the size of
+> > pipe->tmp_page[] array without other changes.
+> >
 > 
-> This change places f_ref to the 3rd cache line where fields are not
-> updated as frequently as the 1st cache line, and the contention is
-> grealy reduced according to tests. In addition, the size of file
-> object is kept in 3 cache lines.
+> I have almost no opinion one way or the other and I'm not going to
+> argue about this bit. I only note I don't expect there is a legit
+> reason to go beyond 2 pages here. As in if more is warranted, the
+> approach to baking the area should probably change.
 > 
-> [...]
+> I started with this being spelled out so that I have easier time
+> toggling the extra slot for testing.
+> 
+> That said, I don't know who counts as the pipe man today. I can do the
 
-Applied to the vfs-6.15.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.15.misc branch should appear in linux-next soon.
+Linus or David should have the most detailed knowledge.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.15.misc
-
-[1/1] fs: place f_ref to 3rd cache line in struct file to resolve false sharing
-      https://git.kernel.org/vfs/vfs/c/6a9ebf00c3be
+> needful(tm) no problem.
 
