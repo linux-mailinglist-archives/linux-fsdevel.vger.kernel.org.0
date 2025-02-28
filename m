@@ -1,227 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-42793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42794-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39534A48C72
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 00:11:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C867FA48DAA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 02:08:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C13481890780
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2025 23:11:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5904C16E74A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 01:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4E0272914;
-	Thu, 27 Feb 2025 23:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375361E4B2;
+	Fri, 28 Feb 2025 01:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HllX7fUh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RHJdtDvm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A2C2309A3;
-	Thu, 27 Feb 2025 23:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831E917741;
+	Fri, 28 Feb 2025 01:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740697886; cv=none; b=c0qVc4NwCfVh6BkfGDmHVqHSXmQ/eWlaO5feLakgSLuXu3JU5kMnln+MpXNNl2YuAH4p4AjqBfldiM5xlZWCsFbx8vB7fVq/6nCF5grGpakCAj71xahEfHuxMqwRYl28NJPmBuUQgmCd6i/Gi+KDBNJVL8+/x9BJmFsg0npmf30=
+	t=1740704901; cv=none; b=tVeSYvH0F5LT9hu9R20L16Bt6Rhak/eEoDP5KG59C7i1rwPFwa69mAdS/asTRxavSoSsYVnKmXwIJtGcim4VwmA9irn3aGMAYAe5tSQ6fhI75mK/f5V6Fz/H+woYj/jWIlNBGD1AMQXxt/J2YKIjOnlGj/qOFzyCvdcyt32zaNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740697886; c=relaxed/simple;
-	bh=nf1/dckcnomNKWFNl7Mj3elVZpIUPC9x6D/lkkXmlTw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dTXP/uAv7bChhYd0jtv24+mLrL70Jz6XGn9b3IFCZKFfpqVZ/3xLeOuuNlRI40EoiRjnDIYEMGAMQs5xWghxciQKDCGM8bCPwtGCkgUK3tGrIeVi1+km0bMto/I3UdMGbmlwcUxUnZjResN4cyALFMG5oFiFWqXBGhEaOc+B+iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HllX7fUh; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5dec817f453so2133526a12.2;
-        Thu, 27 Feb 2025 15:11:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740697883; x=1741302683; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AY8ndVYJ7XgqaUiDvauHMj3rzJsfZgflXLJt38pHW0c=;
-        b=HllX7fUhB2pTRmlySPaHA66Lw5chXVGZNGaiLPOOGYx8KNtNJxH3205BmbUK3QUFYf
-         TUySLKxjIp5ZRhF8dR6Lp8/k2I2Cl3yJSMDY5aVWNxyHdSDNehXnVoTGm17jTkF/0Jbm
-         kVSK1/uDGXos1lK32M06nppeGAiYE3tAlf8sXpC99ln2nfMLBJW0vyk45ZTTdfHArNHl
-         S58rDsRkbV6+8z2zzOP5BX/wYEMgVNd0yIkhVtzk6so9F/PMgNlmWnISZFoKry1cbr/o
-         aUakx3moE6SPZXMYYNiQxkEWH7/0xzoWMFOf75YEfaIHL7lT2xduzuH9lqfWgyUJ4Suf
-         hmRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740697883; x=1741302683;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AY8ndVYJ7XgqaUiDvauHMj3rzJsfZgflXLJt38pHW0c=;
-        b=AFpPXUT2B7BhS430CyvjOk1rJW42bm3PMgK2U0M4+ZZYx7gxQUUCeGeWYUS2jUtSgE
-         pdkxRVvns8YsD+DenBsYGylCp1mEOZz9vnQbA+3Ss+pMVWh3FA1Tjn7HmomqUG9FhOKU
-         gOqnJKWiA4KL1iFqa3H/S7cLJA9VdNn2S2giT96HDjbYKbdzTS6bbtVr6sk75AO6DY0G
-         CW+NId1AKOUYQqEJVbpcMQjmJqixLXnqySvVxc3G82fOtkyAHD6qbKRQEfiB8Ge3FLPZ
-         GKI1wdatXn8htOl4KFw9Nk1JppfXsJuOhvi/TXR3weFe1M/bceXGVf3eY23Acg2fQZva
-         ngPA==
-X-Forwarded-Encrypted: i=1; AJvYcCVolypfRDzqjLsVbpk7hPtMEoF21O8lriE8J5ua6Sfp1fhTOVCbaosY4NjTwpbJ6u320ZSEdqLKDXrhJa1u@vger.kernel.org, AJvYcCX2k70xJJ3yZqz/3EuGH3A+ZAZ9YlGiett6h+GYoTTRLsAaw7uk6cGbzfRIBwObpm3n8YeJqqHIkAXMdiGu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa0gpd8JFJhCFSHvdS7R0lkXeAYIDibe58eD7jD8MisY1Phx/b
-	YwEnuad9yHzWWdXvwezkgDmd4WytM9IMPC2mt/ewpOBURPUeoEga
-X-Gm-Gg: ASbGncu5bSAN2qb/u1njr0CH6v1MzF3ZvaJpV4B/zAGOuNvJfBH53jgNF7e2pfhucvI
-	lTGfEK54naMC88LieEZVk/8a/PkWilULoiQw441Cs9hCZFIeQpA5RZYtuLfp30zFomjMDBIbo+K
-	TKY+8vWYQ7eu1LPGzwuSFhYkMIILtoWodKu5ZkOfp6GGNPlqPeJckqHXtDmsSU2R5gbdH1JVfEN
-	3d427E1zYibQtFXAIBRrjMMygXnTYtpvopUXgTxCg8SC904n++7ZJVOmlYXY8fWzzMgfmkqRR2L
-	o8kx+mueRWyHJ17SxT5oG80EEZizuug4zvjYQSEoIG6O
-X-Google-Smtp-Source: AGHT+IH1s6mwS8zayyWG+J0RZb18tEFC5xGqBkXi4CaMktxg/7/kRZoW/5g2fKi/89vA6+bnOCcD2Q==
-X-Received: by 2002:a17:907:6d25:b0:ab7:ec7c:89e4 with SMTP id a640c23a62f3a-abf26542879mr109995066b.21.1740697883212;
-        Thu, 27 Feb 2025 15:11:23 -0800 (PST)
-Received: from f.. (cst-prg-72-140.cust.vodafone.cz. [46.135.72.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c756f6csm194377866b.141.2025.02.27.15.11.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 15:11:22 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	oleg@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v2] pipe: cache 2 pages instead of 1
-Date: Fri, 28 Feb 2025 00:11:16 +0100
-Message-ID: <20250227231116.140640-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1740704901; c=relaxed/simple;
+	bh=r204P3/o5tj0rdMt2fYtelvoijFFzJ47ze5idBCOS9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pad3YVKRT1uOuDIolKbd0RXVrxmaiBZZjDj8jFalb3wmewOriGZX+QjJPPORq+GGXyNiNm5F7RRb4PVyrxMIzgJgdIbEGGkh3rlr7YvIQ5WfCdl3fqjv/w2TCYyZ/H7fIRMc0SseqNEKkuQSpadiTbpBXVXV/Duvfx9vC84anTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RHJdtDvm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D46B3C4CEDD;
+	Fri, 28 Feb 2025 01:08:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740704900;
+	bh=r204P3/o5tj0rdMt2fYtelvoijFFzJ47ze5idBCOS9U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RHJdtDvmzOr7jxlj+heg4PLyT24i+BDwsC1VHcEYHWDKQnK4ahjgWkduJe0Abp8dT
+	 LZO722W1Ks8lWVZbWua5cGKv9b9D3hq7pe9RBHoPRM+hCDAVmyoYJG2Pg8dFUuM48i
+	 Lk4aOPH3tXcSWn2mzbhtsbCl7GBhpcNwMaae0b0r2kuLOuYWy6aYjP+T+VHwKEMV1R
+	 H8zSJjAfRVEYKfm1ly1rizwIV2z9x7jf6QAyyzjxqLNjj7tS8iFRn1Ei3vbMWju5oq
+	 shIpwAIEyfTUuj3Zug4VpzjQliSNAhckxSfSZqWc+yZOL070XsnvvAmiaWWnYuSzmj
+	 sVjqD0W1RDaHg==
+Date: Thu, 27 Feb 2025 17:08:20 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, cem@kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com, tytso@mit.edu,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 05/12] iomap: Support SW-based atomic writes
+Message-ID: <20250228010820.GB1124788@frogsfrogsfrogs>
+References: <20250227180813.1553404-1-john.g.garry@oracle.com>
+ <20250227180813.1553404-6-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227180813.1553404-6-john.g.garry@oracle.com>
 
-User data is kept in a circular buffer backed by pages allocated as
-needed. Only having space for one spare is still prone to having to
-resort to allocation / freeing.
+On Thu, Feb 27, 2025 at 06:08:06PM +0000, John Garry wrote:
+> Currently atomic write support requires dedicated HW support. This imposes
+> a restriction on the filesystem that disk blocks need to be aligned and
+> contiguously mapped to FS blocks to issue atomic writes.
+> 
+> XFS has no method to guarantee FS block alignment for regular,
+> non-RT files. As such, atomic writes are currently limited to 1x FS block
+> there.
+> 
+> To deal with the scenario that we are issuing an atomic write over
+> misaligned or discontiguous data blocks - and raise the atomic write size
+> limit - support a SW-based software emulated atomic write mode. For XFS,
+> this SW-based atomic writes would use CoW support to issue emulated untorn
+> writes.
+> 
+> It is the responsibility of the FS to detect discontiguous atomic writes
+> and switch to IOMAP_DIO_ATOMIC_SW mode and retry the write. Indeed,
+> SW-based atomic writes could be used always when the mounted bdev does
+> not support HW offload, but this strategy is not initially expected to be
+> used.
+> 
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
 
-In my testing this decreases page allocs by 60% during a kernel build.
+Looks good now, thank you.
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
+--D
 
-v2:
-- iterate over an array
-
- fs/pipe.c                 | 60 ++++++++++++++++++++++++++-------------
- include/linux/pipe_fs_i.h |  2 +-
- 2 files changed, 41 insertions(+), 21 deletions(-)
-
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 19a7948ab234..b5b40d5e2a17 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -112,20 +112,40 @@ void pipe_double_lock(struct pipe_inode_info *pipe1,
- 	pipe_lock(pipe2);
- }
- 
-+static struct page *anon_pipe_get_page(struct pipe_inode_info *pipe)
-+{
-+	for (int i = 0; i < ARRAY_SIZE(pipe->tmp_page); i++) {
-+		if (pipe->tmp_page[i]) {
-+			struct page *page = pipe->tmp_page[i];
-+			pipe->tmp_page[i] = NULL;
-+			return page;
-+		}
-+	}
-+
-+	return alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
-+}
-+
-+static void anon_pipe_put_page(struct pipe_inode_info *pipe,
-+			       struct page *page)
-+{
-+	if (page_count(page) == 1) {
-+		for (int i = 0; i < ARRAY_SIZE(pipe->tmp_page); i++) {
-+			if (!pipe->tmp_page[i]) {
-+				pipe->tmp_page[i] = page;
-+				return;
-+			}
-+		}
-+	}
-+
-+	put_page(page);
-+}
-+
- static void anon_pipe_buf_release(struct pipe_inode_info *pipe,
- 				  struct pipe_buffer *buf)
- {
- 	struct page *page = buf->page;
- 
--	/*
--	 * If nobody else uses this page, and we don't already have a
--	 * temporary page, let's keep track of it as a one-deep
--	 * allocation cache. (Otherwise just release our reference to it)
--	 */
--	if (page_count(page) == 1 && !pipe->tmp_page)
--		pipe->tmp_page = page;
--	else
--		put_page(page);
-+	anon_pipe_put_page(pipe, page);
- }
- 
- static bool anon_pipe_buf_try_steal(struct pipe_inode_info *pipe,
-@@ -493,27 +513,25 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 		if (!pipe_full(head, pipe->tail, pipe->max_usage)) {
- 			unsigned int mask = pipe->ring_size - 1;
- 			struct pipe_buffer *buf;
--			struct page *page = pipe->tmp_page;
-+			struct page *page;
- 			int copied;
- 
--			if (!page) {
--				page = alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
--				if (unlikely(!page)) {
--					ret = ret ? : -ENOMEM;
--					break;
--				}
--				pipe->tmp_page = page;
-+			page = anon_pipe_get_page(pipe);
-+			if (unlikely(!page)) {
-+				if (!ret)
-+					ret = -ENOMEM;
-+				break;
- 			}
- 
- 			copied = copy_page_from_iter(page, 0, PAGE_SIZE, from);
- 			if (unlikely(copied < PAGE_SIZE && iov_iter_count(from))) {
-+				anon_pipe_put_page(pipe, page);
- 				if (!ret)
- 					ret = -EFAULT;
- 				break;
- 			}
- 
- 			pipe->head = head + 1;
--			pipe->tmp_page = NULL;
- 			/* Insert it into the buffer array */
- 			buf = &pipe->bufs[head & mask];
- 			buf->page = page;
-@@ -847,8 +865,10 @@ void free_pipe_info(struct pipe_inode_info *pipe)
- 	if (pipe->watch_queue)
- 		put_watch_queue(pipe->watch_queue);
- #endif
--	if (pipe->tmp_page)
--		__free_page(pipe->tmp_page);
-+	for (i = 0; i < ARRAY_SIZE(pipe->tmp_page); i++) {
-+		if (pipe->tmp_page[i])
-+			__free_page(pipe->tmp_page[i]);
-+	}
- 	kfree(pipe->bufs);
- 	kfree(pipe);
- }
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index 8ff23bf5a819..eb7994a1ff93 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -72,7 +72,7 @@ struct pipe_inode_info {
- #ifdef CONFIG_WATCH_QUEUE
- 	bool note_loss;
- #endif
--	struct page *tmp_page;
-+	struct page *tmp_page[2];
- 	struct fasync_struct *fasync_readers;
- 	struct fasync_struct *fasync_writers;
- 	struct pipe_buffer *bufs;
--- 
-2.43.0
-
+> ---
+>  Documentation/filesystems/iomap/operations.rst | 16 ++++++++++++++--
+>  fs/iomap/direct-io.c                           |  4 +++-
+>  include/linux/iomap.h                          |  6 ++++++
+>  3 files changed, 23 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
+> index 82bfe0e8c08e..b9757fe46641 100644
+> --- a/Documentation/filesystems/iomap/operations.rst
+> +++ b/Documentation/filesystems/iomap/operations.rst
+> @@ -525,8 +525,20 @@ IOMAP_WRITE`` with any combination of the following enhancements:
+>     conversion or copy on write), all updates for the entire file range
+>     must be committed atomically as well.
+>     Only one space mapping is allowed per untorn write.
+> -   Untorn writes must be aligned to, and must not be longer than, a
+> -   single file block.
+> +   Untorn writes may be longer than a single file block. In all cases,
+> +   the mapping start disk block must have at least the same alignment as
+> +   the write offset.
+> +
+> + * ``IOMAP_ATOMIC_SW``: This write is being issued with torn-write
+> +   protection via a software mechanism provided by the filesystem.
+> +   All the disk block alignment and single bio restrictions which apply
+> +   to IOMAP_ATOMIC_HW do not apply here.
+> +   SW-based untorn writes would typically be used as a fallback when
+> +   HW-based untorn writes may not be issued, e.g. the range of the write
+> +   covers multiple extents, meaning that it is not possible to issue
+> +   a single bio.
+> +   All filesystem metadata updates for the entire file range must be
+> +   committed atomically as well.
+>  
+>  Callers commonly hold ``i_rwsem`` in shared or exclusive mode before
+>  calling this function.
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index f87c4277e738..575bb69db00e 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -644,7 +644,9 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  			iomi.flags |= IOMAP_OVERWRITE_ONLY;
+>  		}
+>  
+> -		if (iocb->ki_flags & IOCB_ATOMIC)
+> +		if (dio_flags & IOMAP_DIO_ATOMIC_SW)
+> +			iomi.flags |= IOMAP_ATOMIC_SW;
+> +		else if (iocb->ki_flags & IOCB_ATOMIC)
+>  			iomi.flags |= IOMAP_ATOMIC_HW;
+>  
+>  		/* for data sync or sync, we need sync completion processing */
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index e7aa05503763..4fa716241c46 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -183,6 +183,7 @@ struct iomap_folio_ops {
+>  #define IOMAP_DAX		0
+>  #endif /* CONFIG_FS_DAX */
+>  #define IOMAP_ATOMIC_HW		(1 << 9) /* HW-based torn-write protection */
+> +#define IOMAP_ATOMIC_SW		(1 << 10)/* SW-based torn-write protection */
+>  
+>  struct iomap_ops {
+>  	/*
+> @@ -434,6 +435,11 @@ struct iomap_dio_ops {
+>   */
+>  #define IOMAP_DIO_PARTIAL		(1 << 2)
+>  
+> +/*
+> + * Use software-based torn-write protection.
+> + */
+> +#define IOMAP_DIO_ATOMIC_SW		(1 << 3)
+> +
+>  ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+>  		unsigned int dio_flags, void *private, size_t done_before);
+> -- 
+> 2.31.1
+> 
 
