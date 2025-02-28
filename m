@@ -1,264 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-42834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 154B3A49466
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 10:07:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAFFDA495AC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 10:46:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 121C0170543
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 09:07:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94D743B09EF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 09:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A9324C689;
-	Fri, 28 Feb 2025 09:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B74E24BC0F;
+	Fri, 28 Feb 2025 09:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C7Vf1FsR"
+	dkim=pass (2048-bit key) header.d=tuxera.com header.i=@tuxera.com header.b="jJrS9eON"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11022138.outbound.protection.outlook.com [52.101.71.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8480F276D3B
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2025 09:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740733672; cv=none; b=uNgRNiZvEofe0o36/ehUb8s2Zk5ve7WOfwpZONTqhkOIojN2n/UUiw+Gl6nr9B5MYrZghxXVnV6Iia6gCwKRqFlLSYdUIoEzh8MBtIKWAUk5YRoMT5xR8nQjMAkfs5gf/mHfv5ddqeuklVzohohMDLaQRVYKgIlVApfQekww+3o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740733672; c=relaxed/simple;
-	bh=lOn4aRELu/gRxyVpLDamQS+gdcdBSgcn0FwNKUIKyAM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BmAuQDF0xwQ2Tf/o8a87nh7rruSjqMKS7IlET+3DdG/s8g+h49P72WDGFGxC1bHWbyh45OcbSwOnO7yqt8qkJ/UUIgqoekqX7BiRHiLHK+93SmEYO/oDcU1gEeCDa3iyUu5ybfweflRIgfBOZf5m8Uh99vzst4t3Wm6Xvac2/hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C7Vf1FsR; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740733669;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=CLpDI5xGE6mXb+IR67XG43Kov2MdpYGXuo5ipHK4BBc=;
-	b=C7Vf1FsRLWXGewCJ3rNtx7YOsbgHfWOfXlwXGpWqz5V1QS1IMy3t03huQPmb/u3VO/4F7n
-	tyXCU4HSxRTLssQpQloZM9BGfizo5HuzrahC15GRfvGe4gPb8d1t8x7cu3M/N5NjCOrYXK
-	v7Fa88pzew0yr8lTCmiB3fikDfuFZss=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-648-g61lmQIwP0C1MZJ16DDtSA-1; Fri, 28 Feb 2025 04:07:47 -0500
-X-MC-Unique: g61lmQIwP0C1MZJ16DDtSA-1
-X-Mimecast-MFC-AGG-ID: g61lmQIwP0C1MZJ16DDtSA_1740733666
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43941ad86d4so9808255e9.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2025 01:07:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740733666; x=1741338466;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=CLpDI5xGE6mXb+IR67XG43Kov2MdpYGXuo5ipHK4BBc=;
-        b=RNciN38YBDfrZz/PIw7pa5LbgouDiduSfUY9t8tLjAuKGwVS0KiyWZxvhtHnpe4Mnb
-         TJWwVn2vEgDvKrco1F+y9eNJC/jylt/Te/klUebYAKfhGfDcTR2AqhWc8zUr+N6ngkYw
-         99jhk4xgK6Rktkyi9INwydc8+cRvtLd1NZJPIERVZEE3wtQPWjNALDI26V3kbIJIQx1a
-         ApXLrpN/R16x5QQqD6rcxJ5HlkDXEZM45S/4oBiAfbiIP9UK6sml3G062gsyT5RTalPX
-         7lNT1KWvJBG+WcMD5qZWNtqk//FUsTQsyrOUJxU8a5NbgVHd3Z+4NzZzZOlpvp1fB/nC
-         eCpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOIxR4xLDoYibEEOCb5uAJCkYwjEQWJC4TXn6ITOfkVRyO/x3sKgMqZenjvdeARRsJaBJ8jLV8a5MX9hts@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywjw3epbdaNNRzUL6SjYkbZCFeQQEnROIbhWtLQJ+IIrQwJfADa
-	seOCVNfXwKSEoE/dWCpamk8AqWYfjUm5boji4yKqY5TJLK+WQw42HW7ujEBNqGq31uKElLaYD9V
-	hPOcssd1cJWzN4jwDAOWTzsXed6ZfyJIYmhve8zu3muUAj10v2tTHnOvnf0uyof0=
-X-Gm-Gg: ASbGncuApoZOciiCNctIzc9JFUMBMWNR18TAhzsC+7Guu06c0tAPU/SMadTJ6+e755Q
-	mWB4PgwpuylK0p27bKcp2zIh5kLY8IVItDTSe6rvdMH47THc2n2QwsecjqF7lnlYANWhWXNSOJ+
-	xN2MnQvk4hAx1PRg2fo2I4vBCjfws0aPHS+e6osp5+g7tEQOhUzlzwQqfSP4gPJ1KJuHsbJb8Hv
-	YBWC77NdCnjLJW5SbE0d8LIcXzhKc/ZyNArwdRFG1tTSr/3ez5KT5QqRtnwRU1MeKQsSLgRV0D7
-	36GyNKdFMvT5SkD7CN8GeOI6WiwAq1fqATLhMvsdbK16odM2s1F44e9UAbg4prGSZDROOYJotny
-	zBW9HLv2DBfSPi1TZn84YD7CGZ7wxybxAhbQlVF9v1Qw=
-X-Received: by 2002:a05:600c:5494:b0:439:9274:8203 with SMTP id 5b1f17b1804b1-43ba66da2c6mr18843435e9.6.1740733666018;
-        Fri, 28 Feb 2025 01:07:46 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHcowIRN1si6B/2EEwD1Z6PD6dmMdXxwC9HncOy9CKvmoKbafJCK/yvPTC25F2J3LGP00Ca1w==
-X-Received: by 2002:a05:600c:5494:b0:439:9274:8203 with SMTP id 5b1f17b1804b1-43ba66da2c6mr18843165e9.6.1740733665603;
-        Fri, 28 Feb 2025 01:07:45 -0800 (PST)
-Received: from ?IPV6:2003:cb:c701:e300:af53:3949:eced:246d? (p200300cbc701e300af533949eced246d.dip0.t-ipconnect.de. [2003:cb:c701:e300:af53:3949:eced:246d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab2c4051bsm84198565e9.0.2025.02.28.01.07.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Feb 2025 01:07:45 -0800 (PST)
-Message-ID: <2dcaa0a6-c20d-4e57-80df-b288d2faa58d@redhat.com>
-Date: Fri, 28 Feb 2025 10:07:43 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332181FDA8B;
+	Fri, 28 Feb 2025 09:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740735804; cv=fail; b=pL3qZ2VO/JpAtikuP+vaEWm5eSlTjWXGWITL8vuOPudEyERuzqA8WFo1+HAS5UrvoRXiD3JXnFhH6LMb3cKRn0vGU+mbovnpUg2jeRsbZYeY+kIvA5Z+raEaBIaT7QOr5c8rDdaBHoYSt12jK2AXvNEJYwaRE6HppDhW7rJvvIg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740735804; c=relaxed/simple;
+	bh=FwOiP0OvhHuDVEcyA/poFIbk7LCQjN6wPfXTkqBOVoc=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=IYlcwVoolk7ZrXxyFf76btCqI/A+v+6IsWe6XLR3PxLNIsOfgk7zbpN4vjeAb0T65Eah3lyY082MgvCXymrzmf6WiB0QATDyLUPvirz1MjJvlACdMb4uA3cWp6rYBWJs7Eqj8KuaYNb33BM7N2Vvid5ECVIlIo5VtKKYC9q/lJg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxera.com; spf=pass smtp.mailfrom=tuxera.com; dkim=pass (2048-bit key) header.d=tuxera.com header.i=@tuxera.com header.b=jJrS9eON; arc=fail smtp.client-ip=52.101.71.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hs+Galjy16/sFBqwkIvV6+wecktWg/BlQjqcZ6I1NxV7+UyD5dusrEcfaab0uh0meWhcFuya6XXJgWffzNiMjmInOURj3/VIlEaWfYvYbYi3MSwP+7SGkyYPILjNL304J+mvCzADmobZCndJe+cNxn5oec/AAdNs2QQFKuRV0aPnCPd7P0+TaYzTD6TY0SrNOATkah7akAVdhadF5/pYPJhUwDINQVaSBbk6eRvphUaQFtlmQ7D7FXZiVNaYd3H6K+3kJRSw7duawsm+SkQLDKiR0oL+XMrJKs4ipLBUlDkfPHB8Kk9lOYu3ZOwp1TCOQHwFprVGM6q8fH0cwWhHww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WT7PrC0x2uGx5KzH9n8I5aHcm7KqSEmVwfSZAAg+PPE=;
+ b=v2Mmus+BP5y/GnZVoliFw5FZNiSOlWwdNKjLoyw2WK99jxqaeyAD1S+p7oZCxHhR7crT+Gw9C8MUVbkq7C76WEKB45ufD40tRDpSdsCU3baNjjMKF8pIk0Ibhp8FoOVyKW+x7+ckrl+4NdccvsUtgl/We8hBhD+CjN92ETJYQihA9ohF/NxcI8kjM96P7DSevBC1fkF21Qa9353iM+g4cVPdXgxHwT4QZkngdLEaRT3L7wG259LAjsYiw4aMXGRH7kBvauRpd7jjVhJJe8Nm2OCE0W4YfQ2xXZPqJAyWWPhdYqLRAejpYWK3EEzdL1zP2zqRm+1Aus6blBZsVnU4KQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=tuxera.com; dmarc=pass action=none header.from=tuxera.com;
+ dkim=pass header.d=tuxera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WT7PrC0x2uGx5KzH9n8I5aHcm7KqSEmVwfSZAAg+PPE=;
+ b=jJrS9eONpSBFfbYzFg/OEH3UkttFTRb9SpB75ihzJZPcQ1j9e/D1JV2zpS427/YvMtcHYYpqdt5/93kehUHJOvQul5CRBMf3Wr54GSPRO5oz7jhnDLWPz/RmyHd2mTZ9gRpQbajLoNqwWKCb3SpS9RtbB1cYARSN+LFdMKFaDqlORCjq4irppf2DNWOUKDKRNGRV2tp6L53yI9WymZnRk6IaeFRwWLOq2XJy9LoM3b+9cLqeOLgRxGoqV0T3UgvHpLIsH3v7BoihStjj4lJWW2lp9L59yu+uE2OznyQz5q73WbiLecdSH6GrPFJpbfh5g1y2ka7D9Q1DgY7FgqI9Lg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=tuxera.com;
+Received: from DUZPR06MB8963.eurprd06.prod.outlook.com (2603:10a6:10:4d3::7)
+ by PR3PR06MB6652.eurprd06.prod.outlook.com (2603:10a6:102:6c::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.20; Fri, 28 Feb
+ 2025 09:43:18 +0000
+Received: from DUZPR06MB8963.eurprd06.prod.outlook.com
+ ([fe80::3cf7:3656:c165:844b]) by DUZPR06MB8963.eurprd06.prod.outlook.com
+ ([fe80::3cf7:3656:c165:844b%7]) with mapi id 15.20.8489.021; Fri, 28 Feb 2025
+ 09:43:18 +0000
+From: Mikael Heino <mikael@tuxera.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	stable@vger.kernel.org
+Cc: Anton Altaparmakov <anton@tuxera.com>,
+	linux-fsdevel@vger.kernel.org,
+	Mikael Heino <mikael@tuxera.com>
+Subject: [PATCH] hfsplus: fix 32-bit integer overflow in statfs()
+Date: Fri, 28 Feb 2025 11:41:33 +0200
+Message-Id: <20250228094133.4755-1-mikael@tuxera.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: GV2PEPF00003854.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:144:1:0:9:0:a) To DUZPR06MB8963.eurprd06.prod.outlook.com
+ (2603:10a6:10:4d3::7)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Optimizing Page Cache Readahead
- Behavior
-To: Matthew Wilcox <willy@infradead.org>, Dave Chinner <david@fromorbit.com>
-Cc: Kalesh Singh <kaleshsingh@google.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Jan Kara <jack@suse.cz>,
- lsf-pc@lists.linux-foundation.org,
- "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- Suren Baghdasaryan <surenb@google.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Juan Yescas
- <jyescas@google.com>, android-mm <android-mm@google.com>,
- Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>,
- "Cc: Android Kernel" <kernel-team@android.com>
-References: <CAC_TJvfG8GcwG_2w1o6GOTZS8tfEx2h9A91qsenYfYsX8Te=Bg@mail.gmail.com>
- <hep2a5d6k2kwth5klatzhl3ejbc6g2opqu6tyxyiohbpdyhvwp@lkg2wbb4zhy3>
- <3bd275ed-7951-4a55-9331-560981770d30@lucifer.local>
- <ivnv2crd3et76p2nx7oszuqhzzah756oecn5yuykzqfkqzoygw@yvnlkhjjssoz>
- <82fbe53b-98c4-4e55-9eeb-5a013596c4c6@lucifer.local>
- <CAC_TJvcnD731xyudgapjHx=dvVHY+cxoO1--2us7oo9TqA9-_g@mail.gmail.com>
- <Z70HJWliB4wXE-DD@dread.disaster.area>
- <Z8DjYmYPRDArpsqx@casper.infradead.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Z8DjYmYPRDArpsqx@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DUZPR06MB8963:EE_|PR3PR06MB6652:EE_
+X-MS-Office365-Filtering-Correlation-Id: 18b6516d-9019-4e3e-5cae-08dd57dc54bd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?F2dlUWVUr70DWFFNRarRH+gZyOrYSEefjsEBiyRxPkqQL7eG4gN5wV8Ip5pz?=
+ =?us-ascii?Q?7ZBvbxpaNeRTRZp902lXGqWa5TR0wyyGYogZRmmC90/Jbzw7mjgpVvr+qURZ?=
+ =?us-ascii?Q?zH/1vTUJgPRxIteCGuHLpaSvJoAb8B2pwWoK1kbQ0hAP9psuqvSRxetCWBsy?=
+ =?us-ascii?Q?/zSbq88CqifZNV2VowESCqJSjRZcYtYWC8Sd1vOqMHykyWfjy2hhAHixY3AW?=
+ =?us-ascii?Q?GufsFFDnGP4njwaMxGh9d/BUQ4G1qGMddAvotyNnxdAML0xW/L5RxP+j5Xuv?=
+ =?us-ascii?Q?HQfxe5WeepHdkumrBjF4NYvBHbMmUEh5kjmSg89ryJaVHWz1DcMNAcCN7l9a?=
+ =?us-ascii?Q?vHiqFIjplMUiO8AHVQIeMsCh43FMrxhr286r6EfGua1mMDs56bp7n7+st4Ss?=
+ =?us-ascii?Q?55lZl89qYxXPBARuGSIxYG3DYiuZ5RsoqJh7Ii7UGdeSLKcXHRoSdD0bn2eC?=
+ =?us-ascii?Q?8oQfLTaKBM/Q1u8p+DCdQGtaF9beXbmT3l2VxanddmZe3lQlDFmDAxl0QKgV?=
+ =?us-ascii?Q?pc5lWZSI2/Xm8yWYMFrvlkcWEccnDKS9vY3sB2swG29tZCDv1p6lAfxulv6M?=
+ =?us-ascii?Q?MHB14t+iFcuFvgEZnpddAh3OKgIY+0CJL8gQPQvmz1iWujFanhlhmisrOtAe?=
+ =?us-ascii?Q?zPe+UwhE8vp23wUjKe55a+MnTvKqCS094W+6Ps8kwqWBE/I3nHRGOGvHjzKd?=
+ =?us-ascii?Q?ov0IY6MgDtS7bOhIVXci+J7Fe/7TH4Hvy4OVfd529gwYcteuU3ofbrT9l99r?=
+ =?us-ascii?Q?GyCHSQkmx76TMui3CJA/kltV3Wcu35Jy/gRMpXO04yDd9mXQAR7GvWHatrte?=
+ =?us-ascii?Q?Lccb64ZHKWFPmHk7uYBmdAAVtRNe6YZZCMUYTcT19aaooaQ/ZWNyVSw2EdUx?=
+ =?us-ascii?Q?VXqk4hviAEf2YNSYRY9+Wxua8rA/m+/7APMzSA/TkcHygHVJlCLaV+DJy0Yj?=
+ =?us-ascii?Q?/mn8Mup4lcxZhazLLhFCAJWy1nFFcA9Tys9d5jHUR4mXv3y2n/OU68ym6LO5?=
+ =?us-ascii?Q?YgkTITBFIIjhJe43aFlFNUDcKZmFHDn9TEve7efb3mDFVTNfH4Q0MoyqqKsC?=
+ =?us-ascii?Q?tH8QBJCbDbEVbIWM/uaImBnWjI3cs5k858Th6rozNzmdsSZsg2OrLYGxOYe3?=
+ =?us-ascii?Q?y4/0zCAiO2TMOvLb3SoJcQj0PPYXmOv9G+PaDLKLZaz5PrsmmpXLqSGw9f1N?=
+ =?us-ascii?Q?EU3py9Ogc5yT6gEOtbJh/nf+ll2ZLeRw0Fx49542tQlvElNLJnDU6myQQ+7D?=
+ =?us-ascii?Q?GdifiPJrVbcU6WwZU20+xyDxwxPVHgwdSZQCJS/0E+V8FukEx65bvPZLxY2b?=
+ =?us-ascii?Q?RoYlj1XC/LrNrjqji91A/8EHnLfTuA3LCugRz1Gzn73G20k7ntS3u7/K4L+u?=
+ =?us-ascii?Q?AwWdT+Y8m1sEaeedSeY/+PS4qHVfEU3vWYWFoqW40fmAmJI6j1pEIK+Z9v8a?=
+ =?us-ascii?Q?yUPpLuG7GD04ZG61ixmSoqI1e5DpIpo3?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DUZPR06MB8963.eurprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?1ri0WP7G+vh2vMhyEr1hUsMGHF5Jeraxn7KUFGEwcPT02qW8mulybOP7jMzP?=
+ =?us-ascii?Q?iOViZRJd0AmF9A9W7N+rsPgqenVrb52whqZD254G6k/WbdjTQrD+cApmvy2g?=
+ =?us-ascii?Q?ziguB7fp3eQFwYn++dp/q8uhujcXhPwxFsHAbrtf4C57WpbTbPRaT56SmiwN?=
+ =?us-ascii?Q?/373+HK6IchCJo9ceq5O9AGbrtxgitSYtPZqnrlAdDO+H7BBd2O/M++FK0xQ?=
+ =?us-ascii?Q?oh5SJlluOKl2MS8sSJALM9z9NtyYiDExljk+w8hHZnu6p/aVzD9fQsLA79HL?=
+ =?us-ascii?Q?kPqHybbvaEwv3djky2bkILFa1K0GeC1+RvLTR3H8amY9vmprp+H8g2CsaQ/J?=
+ =?us-ascii?Q?h8YBxZTcjxdYp3POkH+/c4L/VJcf5V3Kl71MBk33sLtBDDj/Ql163mQYCZK6?=
+ =?us-ascii?Q?seAmD7BHISdhjq95A7M3U/xmgkcxGmKOH8UsjKhm6XVGH74kY3+VAty0agVh?=
+ =?us-ascii?Q?b19xxzICWVTTG2jROPjn6wHaSwGczho/frNeFbXyByQLQzRY17cM644jpael?=
+ =?us-ascii?Q?epCdUi7dNMlCT5RwLbm08uEPHFyRDV7C7rSUZJZOAbH4pLkZJ+Krqqj5aogh?=
+ =?us-ascii?Q?KXVu/RO0poQOjLA+CdYHnu430w705MgY9sbk55y4WC2iFPSLWcLksP66mNTX?=
+ =?us-ascii?Q?p0Z/dvOq6P8KHXzwiaUzPFBI9Fm3dnIztpIdEMsagkkECKKmmFwoExA0eE6k?=
+ =?us-ascii?Q?eS3P4Mcqj4Yyz5oHKI5eawLMb9C+Ubqz/ksuQBJE0QOdaIGySOYlxzSQ5pDm?=
+ =?us-ascii?Q?UUhDTJtrMO/tclu9fWsmNBY2MmOmS1PTb0sfvAvegaeCu1Q4frxYjh+/rpNn?=
+ =?us-ascii?Q?VB9pHxKtLd5Y1owwsH9IN3Ad1KOMB2eJZfRaXpZdMcVxqGZuBczipZzU8WmH?=
+ =?us-ascii?Q?XHc2Wef9uh4B7i1f3C4dqbSjQzSX2FjzHEFqGzZFivCdHYgtGzLXcySlsagJ?=
+ =?us-ascii?Q?SAsqg0HoruX7zmjLDTUEcumb9YgTnpx4sOP2X9vlmKld9a8Zin8N9Duweul+?=
+ =?us-ascii?Q?FrMyeCbr+SHq2nSvJCJFIsi2+LNu/WqMhPkNVf8B/44WS1K4gaTj+3MCgcu8?=
+ =?us-ascii?Q?zoawGuzzs4+J4zbcZ7265fWoZO3Swn0BV7dt0/koGpaqADcHHp/WuYeHBitF?=
+ =?us-ascii?Q?fQY4+TpM1MUH6uLTM8GTjdpJpSq9HCnF68+ZK7Y2ATKs2M9QJMoy8kzjicXM?=
+ =?us-ascii?Q?e983mltLTgxeGRDQs16tMrA6M0Ff31n7Ye2FCZNAspHrmj0TVF6irzcU0vX/?=
+ =?us-ascii?Q?day//0llxaYK+lQGd0Wx2GfM0LCV34QLjeILgIH1Ce6XQZ5IYruD/DOrQ9UU?=
+ =?us-ascii?Q?efAIyaf8nOPSmuZ+sXSlRIgJd4gOLoDNj+dFYmaoQuwkLwLy7XkB4hN1WXt+?=
+ =?us-ascii?Q?Vcui4g+RFltBKeGniAgxLVFcgvw3m+HdR/lQjapFfYbIGwTcXozqBriurT2N?=
+ =?us-ascii?Q?wFCMYyyYbwjELWbYjxWzxs5Y7SUrn10E6a9tnl54dy8DZ0ZRHLaG4E3ljO9P?=
+ =?us-ascii?Q?ybSQwSWeX1teiScezS3Lok1K6ngsO4zqKqX5j6Oks74rqekl7DdfxW7xgc7N?=
+ =?us-ascii?Q?PaVoGXz3ss/1X692mbHq4JJYILMMNn3pj44m+X4x?=
+X-OriginatorOrg: tuxera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 18b6516d-9019-4e3e-5cae-08dd57dc54bd
+X-MS-Exchange-CrossTenant-AuthSource: DUZPR06MB8963.eurprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 09:43:18.4233
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: e7fd1de3-6111-47e9-bf5d-4c1ca2ed0b84
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NTSafY46ZyrNz5WbXP1N0DJHYUPdZc0yUGbLvdAoAtIebZO5JrPdbtowpOe7ycgo1H7BQw+PLSBlMYSxvTdZZw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR06MB6652
 
-On 27.02.25 23:12, Matthew Wilcox wrote:
-> On Tue, Feb 25, 2025 at 10:56:21AM +1100, Dave Chinner wrote:
->>>  From the previous discussions that Matthew shared [7], it seems like
->>> Dave proposed an alternative to moving the extents to the VFS layer to
->>> invert the IO read path operations [8]. Maybe this is a move
->>> approachable solution since there is precedence for the same in the
->>> write path?
->>>
->>> [7] https://lore.kernel.org/linux-fsdevel/Zs97qHI-wA1a53Mm@casper.infradead.org/
->>> [8] https://lore.kernel.org/linux-fsdevel/ZtAPsMcc3IC1VaAF@dread.disaster.area/
->>
->> Yes, if we are going to optimise away redundant zeros being stored
->> in the page cache over holes, we need to know where the holes in the
->> file are before the page cache is populated.
-> 
-> Well, you shot that down when I started trying to flesh it out:
-> https://lore.kernel.org/linux-fsdevel/Zs+2u3%2FUsoaUHuid@dread.disaster.area/
-> 
->> As for efficient hole tracking in the mapping tree, I suspect that
->> we should be looking at using exceptional entries in the mapping
->> tree for holes, not inserting mulitple references to the zero folio.
->> i.e. the important information for data storage optimisation is that
->> the region covers a hole, not that it contains zeros.
-> 
-> The xarray is very much optimised for storing power-of-two sized &
-> aligned objects.  It makes no sense to try to track extents using the
-> mapping tree.  Now, if we abandon the radix tree for the maple tree, we
-> could talk about storing zero extents in the same data structure.
-> But that's a big change with potentially significant downsides.
-> It's something I want to play with, but I'm a little busy right now.
-> 
->> For buffered reads, all that is required when such an exceptional
->> entry is returned is a memset of the user buffer. For buffered
->> writes, we simply treat it like a normal folio allocating write and
->> replace the exceptional entry with the allocated (and zeroed) folio.
-> 
-> ... and unmap the zero page from any mappings.
-> 
->> For read page faults, the zero page gets mapped (and maybe
->> accounted) via the vma rather than the mapping tree entry. For write
->> faults, a folio gets allocated and the exception entry replaced
->> before we call into ->page_mkwrite().
->>
->> Invalidation simply removes the exceptional entries.
-> 
-> ... and unmap the zero page from any mappings.
-> 
+Very large volumes (20TB) would cause an integer overflow in statfs()
+and display incorrect block counts.
 
-I'll add one detail for future reference; not sure about the priority 
-this should have, but it's one of these nasty corner cases that are not 
-the obvious to spot when having the shared zeropage in MAP_SHARED mappings:
+Statfs structure's f_blocks, f_bfree and f_bavail are stored as a u64,
+but the promotion to 64-bit happens after the shift has been done.
+Fix this issue by promoting the value before shifting.
 
-Currently, only FS-DAX makes use of the shared zeropage in "ordinary 
-MAP_SHARED" mappings. It doesn't use it for "holes" but for "logically 
-zero" pages, to avoid allocating disk blocks (-> translating to actual 
-DAX memory) on read-only access.
+The problem can be reproduced by creating a 20TB volume for HFS+,
+mounting and running statfs() on the mounted volume.
 
-There is one issue between gup(FOLL_LONGTERM | FOLL_PIN) and the shared 
-zeropage in MAP_SHARED mappings. It so far does not apply to fsdax,
-because ... we don't support FOLL_LONGTERM for fsdax at all.
+Cc: stable@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Reviewed-by: Anton Altaparmakov <anton@tuxera.com>
+Signed-off-by: Mikael Heino <mikael@tuxera.com>
+---
+ fs/hfsplus/super.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I spelled out part of the issue in fce831c92092 ("mm/memory: cleanly 
-support zeropage in vm_insert_page*(), vm_map_pages*() and 
-vmf_insert_mixed()").
-
-In general, the problem is that gup(FOLL_LONGTERM | FOLL_PIN) will have 
-to decide if it is okay to longterm-pin the shared zeropage in a 
-MAP_SHARED mapping (which might just be fine with a R/O file in some 
-cases?), and if not, it would have to trigger FAULT_FLAG_UNSHARE similar 
-to how we break COW in MAP_PRIVATE mappings (shared zeropage -> 
-anonymous folio).
-
-If gup(FOLL_LONGTERM | FOLL_PIN) would just always longterm-pin the 
-shared zeropage, and somebody else would end up triggering replacement 
-of the shared zeropage in the pagecache (e.g., write() to the file 
-offset, write access to the VMA that triggers a write fault etc.), you'd 
-get a disconnect between what the GUP user sees and what the pagecache 
-actually contains.
-
-The file system fault logic will have to be taught about 
-FAULT_FLAG_UNSHARE and handle it accordingly (e.g., allocate fill file 
-hole, allocate disk space, allocate an actual folio ...).
-
-Things like memfd_pin_folios() might require similar care -- that one in 
-particular should likely never return the shared zeropage.
-
-Likely gup(FOLL_LONGTERM | FOLL_PIN) users like RDMA or VFIO will be 
-able to trigger it.
-
-
-Not using the shared zeropage but instead some "hole" PTE marker could 
-avoid this problem. Of course, not allowing for reading the shared 
-zeropage there, but maybe that's not strictly required?
-
+diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
+index 948b8aaee33e..00bb23b0ff7d 100644
+--- a/fs/hfsplus/super.c
++++ b/fs/hfsplus/super.c
+@@ -322,8 +322,8 @@ static int hfsplus_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 
+ 	buf->f_type = HFSPLUS_SUPER_MAGIC;
+ 	buf->f_bsize = sb->s_blocksize;
+-	buf->f_blocks = sbi->total_blocks << sbi->fs_shift;
+-	buf->f_bfree = sbi->free_blocks << sbi->fs_shift;
++	buf->f_blocks = (u64)sbi->total_blocks << sbi->fs_shift;
++	buf->f_bfree = (u64)sbi->free_blocks << sbi->fs_shift;
+ 	buf->f_bavail = buf->f_bfree;
+ 	buf->f_files = 0xFFFFFFFF;
+ 	buf->f_ffree = 0xFFFFFFFF - sbi->next_cnid;
 -- 
-Cheers,
-
-David / dhildenb
+2.25.1
 
 
