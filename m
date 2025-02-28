@@ -1,118 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-42857-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42859-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E41F2A49C0A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 15:31:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED9DA49DAD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 16:39:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B305C1895246
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 14:31:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16993171472
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 15:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192BB26D5D1;
-	Fri, 28 Feb 2025 14:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D863425DD1D;
+	Fri, 28 Feb 2025 15:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TvFcAwYV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oqsGOGVy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D391C331E
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2025 14:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17EAC16EB7C;
+	Fri, 28 Feb 2025 15:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740753084; cv=none; b=sELLUVKKIHJzkIgWk7pYTvQL0f/vZIKRUEmkZmq7bxe1uKiSNDuefH8FmcTAizB9LYX45VyZfYOtxiODQ1v2rF1HnBIk7puvegqpsA2YTcDC2mb72nrPks3clq85wxsajc92uE2ZOakzekmuIB4BlbGv+TmbDqbjHk7gNaYWWD0=
+	t=1740757163; cv=none; b=G0uTRySy4K+Ilnwlvch7HRijpKZe+Y3zZHmHdau7jZ+bcWwZkgIisVCuGT0HcEecB842/t/WLbLiChkVMdmjyUcXX1vV7ZPf/Paeu7L8l2haV/n711Bo3lZaFP8w6F8dGxbT6I/L8t55pSM2RakYf2CM0M1u2muRb2rseK71OLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740753084; c=relaxed/simple;
-	bh=+7CzGnDBIDd4BqGhIvbnloxe7L8DcX+khk2Kak149s4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=sN7goU1hjGUZoohLnL9vavNgpnyOwHogwUYDWi2jokHf4AmKf4oLNQJbqhi5/z/I6Bv11UlVlzKLt6ERlzAOuONVePsV8EPRodZFPLVmvC2wR7zg81HF4H/Y9JK5PPOPwAGrIbXMdusPj+H2K3EUWpmF1X9WyIAfcqpB95+iqn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TvFcAwYV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740753081;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=OQjxfFAHtgfGWCK0MAJP0NkVI8s6GG7w+i6oug7RcL4=;
-	b=TvFcAwYVaqUswyciGmQldfdd8Iw+MFWcWJ29SQyL+L4R+KZWvLU1rxWIhclL9coxZRkiju
-	M1IdvucEAb/7SafUz1UmRarxQQxQ60OOYh3eAFW7tj/+UKXiv44VgsAIC9wXeawU5Sfl8j
-	bI6u+tb36ZHqLUxC7LkNKjMUE8a/Ijk=
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
- [209.85.166.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-36-8G0oYIWPPpu-XSscvHl9hw-1; Fri, 28 Feb 2025 09:31:20 -0500
-X-MC-Unique: 8G0oYIWPPpu-XSscvHl9hw-1
-X-Mimecast-MFC-AGG-ID: 8G0oYIWPPpu-XSscvHl9hw_1740753079
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d2b6d933acso20910405ab.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2025 06:31:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740753079; x=1741357879;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OQjxfFAHtgfGWCK0MAJP0NkVI8s6GG7w+i6oug7RcL4=;
-        b=gDGe+0jgurB/AlWiK3WnQYSGQPrc/JFjFgTZF5/9nLSlDUBXTg+dBwJZb3OdbKk286
-         NA4LeF6eW4J4t6eKTyOVzBKtR5CeVhD5eqZ7j03AZnxAT5f4qgQ4f09pbA9XS7cmivuK
-         hx+72S2hrWftD01tCWi7MvyWu35B/EO0ivoU1EOEfZuxxCYCs6tUM+XmtTzKn++8Q8Ir
-         wCqb86j5HkOm7IzhPmjQS8vc8GipQd8TXYkSBBtqZSukgoxDIpLJh8ncJJkeeTJmtx10
-         K9FklNnSYxrGvHKsN61s2541lIsgS6Pcke3V5qEkwr8kt9Jfk/YHyBNZvzcs5/fR1bij
-         WyEQ==
-X-Gm-Message-State: AOJu0YwowdykLt7QIPYA8pUIKZoBkzwFywHwcUdTr6f1R9UIFz7RmABO
-	JEBViT2nFKmOR2nmtHU6l5t3p+FOa548WRt1t3auum8HVT5uGDCY/cl038ezgjuAcvLNGWT5g1E
-	LoQFjLyDneab68Bb2c1M8JTTwsERq2hsiMlDqkIn52zEXiEUNElgOW0ulqaoOAe3gKbJNVJQ96X
-	qcbqcUqWRbSWaTThgDpCc8JJFL9KpzD5wvEh+CdrmXt6LUaxZM
-X-Gm-Gg: ASbGncu+rFjNhWq4xckUArEgdV+v1kMsZ0M/5fd+0HT5NMtiw2yaPjkffWW+FEakTmh
-	GF0t2zx8fLJFa3Qu8h81Qw6wnHv84eMUL/OKCiXbYtkuLNnOGu7VhXHshrMiQ8aMf0tQcxGnywL
-	+LU6QY3by8pIKvOX7kp2FJpUgUGlzTCDeBfKGPfHUaBFtyWZ/7/c6XyG7ndX+5cozAv/rqoW462
-	zhoy9KgISeXlusb09EdLnf+M87OSAzFddlRX6MMXS47Z1spIToOBN/LlJEITlWGhnXN5/NQ6iLT
-	K9V3eS1ffh5u7a5OmLpOEXHCtr0JGSZcyPwvI5LAAl7SdyKbDkxOwA==
-X-Received: by 2002:a05:6e02:1fe5:b0:3d1:97e1:cbac with SMTP id e9e14a558f8ab-3d3e6e91255mr33113365ab.11.1740753079250;
-        Fri, 28 Feb 2025 06:31:19 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGe71g3vIBaAdMPA6frGtvFAqE2VzwqwgnDOFRdcV5EPWqFoZijUB9e5167y0dYRZyZ9W3C1g==
-X-Received: by 2002:a05:6e02:1fe5:b0:3d1:97e1:cbac with SMTP id e9e14a558f8ab-3d3e6e91255mr33112965ab.11.1740753078860;
-        Fri, 28 Feb 2025 06:31:18 -0800 (PST)
-Received: from [10.0.1.24] (nwtn-09-2828.dsl.iowatelecom.net. [67.224.43.12])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f061f77783sm932446173.110.2025.02.28.06.31.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Feb 2025 06:31:18 -0800 (PST)
-Message-ID: <5dc2eb45-7126-4777-a7f9-29d02dff443f@redhat.com>
-Date: Fri, 28 Feb 2025 08:31:17 -0600
+	s=arc-20240116; t=1740757163; c=relaxed/simple;
+	bh=B8f9YoA217D5MfhZBuAP3T/3FZZ+EJYwQ1Da0jiEJVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H3HCNfByGuyWVf+LD/Sbltvl20cG6z3d8hBNQJw7ZqloKMIy/n54+a2nDpwhiAnXhnKNoEqnmD4BMJfD3Pn/jN9V82pq0/rAUesVmM6MqI2E7EIfVBWoeGA1zNlXwkIt5L1bEG69G/NYBkEFYNlUOlXAikOxo4Y2itW/7MAJnS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oqsGOGVy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 850A9C4CED6;
+	Fri, 28 Feb 2025 15:39:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740757162;
+	bh=B8f9YoA217D5MfhZBuAP3T/3FZZ+EJYwQ1Da0jiEJVw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oqsGOGVyOu9yYSdB2GX0A4lXGa3nLORJjJrhnVDHUg9fMvH5+bNb6fAjKnFGEY+kD
+	 JrilKnDRUC9PpZvl1kHG4Az4lbPkMn04JxMpwaeF+2XZxHo2aNXHCTfUoAKt+lOPPG
+	 x+oUWMiTV7/or3OkvMl5jg3XYKk1myk4iI/eqwiFqpeHhcPnA/EYFHuarZB1XFglSs
+	 aNGJ0fRG/q6jghFyjEPeMH3K/8b6Xjam4rC2IMtq2b+sC5l4r3taDPWysMXQE6Z4tl
+	 Ik4bKy9B+qQ8sdjD0NdYMLuZ9EOrMq+lIWd9EaHhq8SrhYJTW5hcpTYTnobweKp7mG
+	 iwWLmLwE1SE/g==
+Date: Fri, 28 Feb 2025 07:39:22 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, cem@kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com, tytso@mit.edu,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 09/12] xfs: Add xfs_file_dio_write_atomic()
+Message-ID: <20250228153922.GY6242@frogsfrogsfrogs>
+References: <20250227180813.1553404-1-john.g.garry@oracle.com>
+ <20250227180813.1553404-10-john.g.garry@oracle.com>
+ <20250228011913.GD1124788@frogsfrogsfrogs>
+ <903c3d2d-8f31-457c-b29d-45cc14a2b851@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc: Tyler Hicks <code@tyhicks.com>, Christian Brauner <brauner@kernel.org>
-From: Eric Sandeen <sandeen@redhat.com>
-Subject: [PATCH] ecryptfs: remove NULL remount_fs from super_operations
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <903c3d2d-8f31-457c-b29d-45cc14a2b851@oracle.com>
 
-This got missed during the mount API conversion. This makes no functional
-difference, but after we convert the last filesystem, we'll want to remove
-the remount_fs op from super_operations altogether. So let's just get this
-out of the way now.
+On Fri, Feb 28, 2025 at 07:45:59AM +0000, John Garry wrote:
+> On 28/02/2025 01:19, Darrick J. Wong wrote:
+> > > +	if (ret == -EAGAIN && !(iocb->ki_flags & IOCB_NOWAIT) &&
+> > > +	    !(dio_flags & IOMAP_DIO_ATOMIC_SW)) {
+> > > +		xfs_iunlock(ip, iolock);
+> > > +		dio_flags = IOMAP_DIO_ATOMIC_SW | IOMAP_DIO_FORCE_WAIT;
+> > One last little nit here: if the filesystem doesn't have reflink, you
+> > can't use copy on write as a fallback.
+> > 
+> > 		/*
+> > 		 * The atomic write fallback uses out of place writes
+> > 		 * implemented with the COW code, so we must fail the
+> > 		 * atomic write if that is not supported.
+> > 		 */
+> > 		if (!xfs_has_reflink(ip->i_mount))
+> > 			return -EOPNOTSUPP;
+> > 		dio_flags = IOMAP_DIO_ATOMIC_SW | IOMAP_DIO_FORCE_WAIT;
+> > 
+> 
+> Currently the awu max is limited to 1x FS block if no reflink, and then we
+> check the write length against awu max in xfs_file_write_iter() for
+> IOCB_ATOMIC. And the xfs iomap would not request a SW-based atomic write for
+> 1x FS block. So in a around-about way we are checking it.
+> 
+> So let me know if you would still like that additional check - it seems
+> sensible to add it.
 
-Signed-off-by: Eric Sandeen <sandeen@redhat.com>
----
+Yes, please.  The more guardrails the better, particularly when someone
+gets around to enabling software-only RWF_ATOMIC.
 
-diff --git a/fs/ecryptfs/super.c b/fs/ecryptfs/super.c
-index 0b1c878317ab..e7b7f426fecf 100644
---- a/fs/ecryptfs/super.c
-+++ b/fs/ecryptfs/super.c
-@@ -172,7 +172,6 @@ const struct super_operations ecryptfs_sops = {
- 	.destroy_inode = ecryptfs_destroy_inode,
- 	.free_inode = ecryptfs_free_inode,
- 	.statfs = ecryptfs_statfs,
--	.remount_fs = NULL,
- 	.evict_inode = ecryptfs_evict_inode,
- 	.show_options = ecryptfs_show_options
- };
+--D
 
+> Cheers,
+> John
+> 
+> 
 
