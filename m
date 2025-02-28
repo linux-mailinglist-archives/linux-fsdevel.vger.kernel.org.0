@@ -1,199 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-42868-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42869-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 474A7A4A315
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 20:51:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E3CBA4A44E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 21:37:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D3DE3AC7A6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 19:51:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 084053B0652
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2025 20:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C20F230BFA;
-	Fri, 28 Feb 2025 19:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53738192B6D;
+	Fri, 28 Feb 2025 20:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JfGBd38B";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/j1LrXZu";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JfGBd38B";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/j1LrXZu"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qqg3pjYy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20DA1C7018
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2025 19:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B579B23F36A;
+	Fri, 28 Feb 2025 20:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740772295; cv=none; b=HOIb7gENtWq/05ID8dyAo/8dgGSSMfJmAKRBlf4YtJnLKAka1wqVwNvU53Hz9LM96viRkUoGX0ru/QSUIYJ+qEORqxY3aoq9+nRMgMKILD5d5LtLoJe2lB12WmyvoMVzyD4F8SdhVv5kFI9/Y4sEaMguDFhu5GR28q3FJX9baVc=
+	t=1740775045; cv=none; b=gmLLrtaUcTFEapabMr+7urJ5fTlEp12sidwmjZtjW2JB9tll4H0nukm66BVWzX2Si8axGZMvtlxiWsJIUWLHk2jcU4K2zcYhyzeFl30A4q42cCaTIvenN9+Xncwi/vrFXI3DcF7jcbbnU0o0u4wlxD8tZfyyPkDwI+AQfKIdxjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740772295; c=relaxed/simple;
-	bh=xCewYbvoKMW9bARiBc2fT1zRkI8HOS/0DOe5TwwaEBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g5pJxFIbfklTfbVW1bwFeppwhPiQW8YGOL8HV3FuBm36KYCk2LSvV0M9654X0sjw3JDIKuoS8XAdnqh4lz9y4KEmVXve5om1kb2ZzUbkdujh5uYmYcW1Jv1U3+zHTQXyuUcxhM3E7FGsHzyWoHxRMBontpr9gon3YqesMV6nGxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JfGBd38B; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/j1LrXZu; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JfGBd38B; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/j1LrXZu; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 01A5E1F45A;
-	Fri, 28 Feb 2025 19:51:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740772292; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mTVuubfeWwlqm7bf6np02n/e7UREnnWqdTUGXrlHKYQ=;
-	b=JfGBd38Bm7FvgqjKfuyVNmuaRDvahWd36tyPJNKcDKavXB9ujy2koLzG5oAfGt7h+nzMB+
-	70oLzpPsyqFavZC2yQ1cx5v4xy8Aix+qI2UG11sHW+Y5v5ANNzniBFXCBi5fDQiHZRl0qq
-	ixY+BJgquee+LqY5Uc4p8y/AoIwdDIs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740772292;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mTVuubfeWwlqm7bf6np02n/e7UREnnWqdTUGXrlHKYQ=;
-	b=/j1LrXZuQ1b0GZJ+OqiYp4AL3K/zQfKdpYv2ufMeqILiJvTJfAyn2pJIhaTj1XdV140RQJ
-	mgBak6Sj/MtsZ4Ag==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740772292; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mTVuubfeWwlqm7bf6np02n/e7UREnnWqdTUGXrlHKYQ=;
-	b=JfGBd38Bm7FvgqjKfuyVNmuaRDvahWd36tyPJNKcDKavXB9ujy2koLzG5oAfGt7h+nzMB+
-	70oLzpPsyqFavZC2yQ1cx5v4xy8Aix+qI2UG11sHW+Y5v5ANNzniBFXCBi5fDQiHZRl0qq
-	ixY+BJgquee+LqY5Uc4p8y/AoIwdDIs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740772292;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mTVuubfeWwlqm7bf6np02n/e7UREnnWqdTUGXrlHKYQ=;
-	b=/j1LrXZuQ1b0GZJ+OqiYp4AL3K/zQfKdpYv2ufMeqILiJvTJfAyn2pJIhaTj1XdV140RQJ
-	mgBak6Sj/MtsZ4Ag==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E871D1344A;
-	Fri, 28 Feb 2025 19:51:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4FVtOMMTwmdQHQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 28 Feb 2025 19:51:31 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 98A2DA07C1; Fri, 28 Feb 2025 20:51:27 +0100 (CET)
-Date: Fri, 28 Feb 2025 20:51:27 +0100
-From: Jan Kara <jack@suse.cz>
-To: Pan Deng <pan.deng@intel.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, tianyou.li@intel.com, tim.c.chen@linux.intel.com, 
-	lipeng.zhu@intel.com
-Subject: Re: [PATCH] fs: place f_ref to 3rd cache line in struct file to
- resolve false sharing
-Message-ID: <uyqqemnrf46xdht3mr4okv6zw7asfhjabz3fu5fl5yan52ntoh@nflmsbxz6meb>
-References: <20250228020059.3023375-1-pan.deng@intel.com>
+	s=arc-20240116; t=1740775045; c=relaxed/simple;
+	bh=LU6nLh2usNHKmkKlFSqRf+GcH1uMNDVm77IaYsplmyk=;
+	h=Subject:To:Cc:From:Date:Message-Id; b=OonF1VtgprYQFiLDxNkmiBlApFcqFj1FycKGY0Npn9pzSEceVjZLIW2U3IM2ep6g9GWEivqrJ+Rb3wbAOflt0U3UmTQHjpLGTkANCJ0I5kdZYne0LX1o1Y4x/avi+SCbPLmApWZlvYWAR+d+oupFs+GeUhJbOc1H6bo1SWOTdgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qqg3pjYy; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740775044; x=1772311044;
+  h=subject:to:cc:from:date:message-id;
+  bh=LU6nLh2usNHKmkKlFSqRf+GcH1uMNDVm77IaYsplmyk=;
+  b=Qqg3pjYyRDkjNkVX4O8E6NA4qmkIcNM8aa8oJlfJqAVmd6Jbad+3ZkW7
+   W53Qzpkh9KcLZXbcuum7D8yJ5pV6RNQvx7NSjUrHZBu/BmkXOd0JBqm36
+   t/cF3a8av3IngcR0XJqizAWACiriUF0TPszQyRISbleipvn59RV7kNNJo
+   Cq7YH0Al3NLsbn/H+hsaguIgyqUY+jo8knKKdN7vj0yL3laWpOXwQeNS8
+   64VIl4HR8tfqIcFu/44dIDYnFiRCxFFZTwoYC3IUIzw+SuPT3OCTNVCmt
+   7Pl2m3bOrr9yFTrLG+GrkavCk4nIV3b2QlRO8wn+ZlqSzACMFqfirLhuZ
+   g==;
+X-CSE-ConnectionGUID: VeSKilD7Qx+NRN+PAUFUSg==
+X-CSE-MsgGUID: 778lG40JRiC6NwBffS+Uvw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11359"; a="45367465"
+X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
+   d="scan'208";a="45367465"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2025 12:37:23 -0800
+X-CSE-ConnectionGUID: ZGrelpB5SC2QF9vxwxb42g==
+X-CSE-MsgGUID: SPSF5J2lSVKySLWgCerUYA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,323,1732608000"; 
+   d="scan'208";a="122393832"
+Received: from davehans-spike.ostc.intel.com (HELO localhost.localdomain) ([10.165.164.11])
+  by orviesa003.jf.intel.com with ESMTP; 28 Feb 2025 12:37:23 -0800
+Subject: [PATCH] [v2] filemap: Move prefaulting out of hot write path
+To: linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,Dave Hansen <dave.hansen@linux.intel.com>,tytso@mit.edu,willy@infradead.org,akpm@linux-foundation.org,mjguzik@gmail.com,david@fromorbit.com
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Date: Fri, 28 Feb 2025 12:37:22 -0800
+Message-Id: <20250228203722.CAEB63AC@davehans-spike.ostc.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228020059.3023375-1-pan.deng@intel.com>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-On Fri 28-02-25 10:00:59, Pan Deng wrote:
-> When running syscall pread in a high core count system, f_ref contends
-> with the reading of f_mode, f_op, f_mapping, f_inode, f_flags in the
-> same cache line.
 
-Well, but you have to have mulithreaded process using the same struct file
-for the IO, don't you? Otherwise f_ref is not touched...
+There is a generic anti-pattern that shows up in the VFS and several
+filesystems where the hot write paths touch userspace twice when they
+could get away with doing it once.
 
-> This change places f_ref to the 3rd cache line where fields are not
-> updated as frequently as the 1st cache line, and the contention is
-> grealy reduced according to tests. In addition, the size of file
-> object is kept in 3 cache lines.
-> 
-> This change has been tested with rocksdb benchmark readwhilewriting case
-> in 1 socket 64 physical core 128 logical core baremetal machine, with
-> build config CONFIG_RANDSTRUCT_NONE=y
-> Command:
-> ./db_bench --benchmarks="readwhilewriting" --threads $cnt --duration 60
-> The throughput(ops/s) is improved up to ~21%.
-> =====
-> thread		baseline	compare
-> 16		 100%		 +1.3%
-> 32		 100%		 +2.2%
-> 64		 100%		 +7.2%
-> 128		 100%		 +20.9%
-> 
-> It was also tested with UnixBench: syscall, fsbuffer, fstime,
-> fsdisk cases that has been used for file struct layout tuning, no
-> regression was observed.
+Dave Chinner suggested that they should all be fixed up[1]. I agree[2].
+But, the series to do that fixup spans a bunch of filesystems and a lot
+of people. This patch fixes common code that absolutely everyone uses.
+It has measurable performance benefits[3].
 
-So overall keeping the first cacheline read mostly with important stuff
-makes sense to limit cache traffic. But:
+I think this patch can go in and not be held up by the others.
 
->  struct file {
-> -	file_ref_t			f_ref;
->  	spinlock_t			f_lock;
->  	fmode_t				f_mode;
->  	const struct file_operations	*f_op;
-> @@ -1102,6 +1101,7 @@ struct file {
->  	unsigned int			f_flags;
->  	unsigned int			f_iocb_flags;
->  	const struct cred		*f_cred;
-> +	u8				padding[8];
->  	/* --- cacheline 1 boundary (64 bytes) --- */
->  	struct path			f_path;
->  	union {
-> @@ -1127,6 +1127,7 @@ struct file {
->  		struct file_ra_state	f_ra;
->  		freeptr_t		f_freeptr;
->  	};
-> +	file_ref_t			f_ref;
->  	/* --- cacheline 3 boundary (192 bytes) --- */
->  } __randomize_layout
+I will post them separately to their separate maintainers for
+consideration. But, honestly, I'm not going to lose any sleep if
+the maintainers don't pick those up.
 
-This keeps struct file within 3 cachelines but it actually grows it from
-184 to 192 bytes (and yes, that changes how many file structs we can fit in
-a slab). So instead of adding 8 bytes of padding, just pick some
-read-mostly element and move it into the hole - f_owner looks like one
-possible candidate.
+1. https://lore.kernel.org/all/Z5f-x278Z3wTIugL@dread.disaster.area/
+2. https://lore.kernel.org/all/20250129181749.C229F6F3@davehans-spike.ostc.intel.com/
+3. https://lore.kernel.org/all/202502121529.d62a409e-lkp@intel.com/
 
-Also did you test how moving f_ref to the second cache line instead of the
-third one behaves?
+--
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Changesfrom v1:
+ * Update comment to talk more about how filesystem locking and
+   atomic usercopies avoid deadlocks.
+
+--
+
+From: Dave Hansen <dave.hansen@linux.intel.com>
+
+There is a bit of a sordid history here. I originally wrote
+998ef75ddb57 ("fs: do not prefault sys_write() user buffer pages")
+to fix a performance issue that showed up on early SMAP hardware.
+But that was reverted with 00a3d660cbac because it exposed an
+underlying filesystem bug.
+
+This is a reimplementation of the original commit along with some
+simplification and comment improvements.
+
+The basic problem is that the generic write path has two userspace
+accesses: one to prefault the write source buffer and then another to
+perform the actual write. On x86, this means an extra STAC/CLAC pair.
+These are relatively expensive instructions because they function as
+barriers.
+
+Keep the prefaulting behavior but move it into the slow path that gets
+run when the write did not make any progress. This avoids livelocks
+that can happen when the write's source and destination target the
+same folio. Contrary to the existing comments, the fault-in does not
+prevent deadlocks. That's accomplished by using an "atomic" usercopy
+that disables page faults.
+
+The end result is that the generic write fast path now touches
+userspace once instead of twice.
+
+0day has shown some improvements on a couple of microbenchmarks:
+
+	https://lore.kernel.org/all/202502121529.d62a409e-lkp@intel.com/
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Link: https://lore.kernel.org/all/yxyuijjfd6yknryji2q64j3keq2ygw6ca6fs5jwyolklzvo45s@4u63qqqyosy2/
+Cc: Ted Ts'o <tytso@mit.edu>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Dave Chinner <david@fromorbit.com>
+---
+
+ b/mm/filemap.c |   27 ++++++++++++++++-----------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
+
+diff -puN mm/filemap.c~generic_perform_write-1 mm/filemap.c
+--- a/mm/filemap.c~generic_perform_write-1	2025-02-28 11:58:36.499615962 -0800
++++ b/mm/filemap.c	2025-02-28 12:13:27.845549365 -0800
+@@ -4170,17 +4170,6 @@ retry:
+ 		bytes = min(chunk - offset, bytes);
+ 		balance_dirty_pages_ratelimited(mapping);
+ 
+-		/*
+-		 * Bring in the user page that we will copy from _first_.
+-		 * Otherwise there's a nasty deadlock on copying from the
+-		 * same page as we're writing to, without it being marked
+-		 * up-to-date.
+-		 */
+-		if (unlikely(fault_in_iov_iter_readable(i, bytes) == bytes)) {
+-			status = -EFAULT;
+-			break;
+-		}
+-
+ 		if (fatal_signal_pending(current)) {
+ 			status = -EINTR;
+ 			break;
+@@ -4198,6 +4187,12 @@ retry:
+ 		if (mapping_writably_mapped(mapping))
+ 			flush_dcache_folio(folio);
+ 
++		/*
++		 * Faults here on mmap()s can recurse into arbitrary
++		 * filesystem code. Lots of locks are held that can
++		 * deadlock. Use an atomic copy to avoid deadlocking
++		 * in page fault handling.
++		 */
+ 		copied = copy_folio_from_iter_atomic(folio, offset, bytes, i);
+ 		flush_dcache_folio(folio);
+ 
+@@ -4223,6 +4218,16 @@ retry:
+ 				bytes = copied;
+ 				goto retry;
+ 			}
++
++			/*
++			 * 'folio' is now unlocked and faults on it can be
++			 * handled. Ensure forward progress by trying to
++			 * fault it in now.
++			 */
++			if (fault_in_iov_iter_readable(i, bytes) == bytes) {
++				status = -EFAULT;
++				break;
++			}
+ 		} else {
+ 			pos += status;
+ 			written += status;
+_
 
