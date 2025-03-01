@@ -1,139 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-42878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42879-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B14A4AA2E
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Mar 2025 11:07:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7810FA4AA56
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Mar 2025 11:44:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88EF2189822B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Mar 2025 10:07:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AA5C1733CB
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Mar 2025 10:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE2F1D61BB;
-	Sat,  1 Mar 2025 10:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B221D8A0B;
+	Sat,  1 Mar 2025 10:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D36LrVgn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nWTRgNR0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D474C1D5CC1
-	for <linux-fsdevel@vger.kernel.org>; Sat,  1 Mar 2025 10:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6A71ADC6C;
+	Sat,  1 Mar 2025 10:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740823639; cv=none; b=OaXKu+gONKiF4+bqmm0xEnVAwPRt97ZOi3fZVR8qQjs4cuaQ+MovCUVUPvkM8lPMszw0uDLNriOg1I7AfDWqi1RzbRx/NxzHWG0HsrxPvcsEOiIMZV4aIlPHmY9ei35UUjr13ZHcHNU0aEGoEgq/ubjS7Yuf5+tMoEk9qgiAcV4=
+	t=1740825869; cv=none; b=s43P1NweiXi4nw2PykqRQEpPejgrDRPFTwtY5G9LTTSROxlK/ZPswVZFeNNj0XEsvSR0DxjvzcwfmWhHvwwOJ1KuCyFCEgZf5QPL39cxN1oBaFaaye7sg5wyIufesqO5MlLonE7u66qwnlcKX+eEMGAccSXn7SABKtaCxA7sCXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740823639; c=relaxed/simple;
-	bh=2SX+ULxgxauhI9VP3grOu+SWN7IzY/3ifoaH4+FD4h4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JYtDCFQFd6+2KuUxg6r15cIf/hj4LtsAGeKmJwTeokw0Oc4Ey2k1FdPalngoGPunKw2HA8M3UlF9Av10FNpoxoLyYlUJGKk2jVGfsYVDSUgSQBnhxbSRunScKu+oUaPSBe25ItoGWCt5a6Sepnz50KFOPdjc5vgH7GbmX1mutYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D36LrVgn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A04AC4CEDD;
-	Sat,  1 Mar 2025 10:07:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740823638;
-	bh=2SX+ULxgxauhI9VP3grOu+SWN7IzY/3ifoaH4+FD4h4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D36LrVgnP15PgGq7UOfauCuDspxwG0VzvvfRK0mJStCvShVRcwbgZyUSP8wd/cueB
-	 4/PpSNiJyW5B92jxv9BpSeQ0X3vVhWDqkIfyN8iNDSouX4oWK0YhBmGDU3AZRRKMlv
-	 5hb3Ypb3b3JhqbR70rxXvv/hEeu7t1qfzoo+AHLnCNtnZipiLWQs5BEEo7r/vRlViM
-	 gYBsopHECCNBVabIwwcHpjS71JC7bwsaLxJ54s88u3dk3SNN7wkt5c5U2CX4ORgnuS
-	 9xG6hb7r4usRbunbgkbPd6CvaxOABY8thQmYLOvtNKOwJU67tcho1MSArd8Zqfgewz
-	 dsJAnXNPkqpJA==
-Date: Sat, 1 Mar 2025 11:07:12 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Pan Deng <pan.deng@intel.com>, viro@zeniv.linux.org.uk, 
-	linux-fsdevel@vger.kernel.org, tianyou.li@intel.com, tim.c.chen@linux.intel.com, 
-	lipeng.zhu@intel.com
-Subject: Re: [PATCH] fs: place f_ref to 3rd cache line in struct file to
- resolve false sharing
-Message-ID: <20250301-ermahnen-kramen-b6e90ea5b50d@brauner>
-References: <20250228020059.3023375-1-pan.deng@intel.com>
- <uyqqemnrf46xdht3mr4okv6zw7asfhjabz3fu5fl5yan52ntoh@nflmsbxz6meb>
+	s=arc-20240116; t=1740825869; c=relaxed/simple;
+	bh=CvQ3k67w7tuULWkrhVMJXumCUTtaIWC6dm3j8RSHHXo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vt96bKgSmun9Qu/uDbraTJCCdODUWHlEm6pMxY9DTnESgC0B6f1R8DOuzjaeZh9VU7G88GJOkIG5OwrXWtvrnbWgLm47hNoknOUNmVYgREk6kUIsQ4Qo8t0dUQTyPycG3BqjIF+yOa4S2UTo/3Gbnnvu8aSBjkeL5IpIs9Fn6as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nWTRgNR0; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4397e5d5d99so18834445e9.1;
+        Sat, 01 Mar 2025 02:44:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740825866; x=1741430666; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LY/g5u1A0VA3lw6pSEa2VfIXvvWB4lz7NHrbOXPgD9Y=;
+        b=nWTRgNR0o+rd/c/9913KOHy0Ey9TOOyl+vX1LGf4kbaGQMkpAkEzClZ8ULu/IWaoyw
+         mfJiVQqnSjFEQun/gsmLfaL+6HmJSC+ApBZXUb8eyDaGFfEYPYZgbq2KJ0ah6kFnHnET
+         1sRcUegp7MylGtlgHTyzJP6eLdFvrZomxDweGbzT0Bzfq8YEv2FKWo9mU3KFGpT39+aN
+         wh2BnauiJHLRJqWV4pspTBDTPNfLOzbcHuRvCiZpQPlYVGASuwqnklmiU1oBY6ATFyou
+         WQ6XZZOa1i7oRDvPPqvjnWj7WO3rLo3HUg7TJuIoEBLCv2v7NOKoEomRMGrlMRSb5ZlX
+         0Wag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740825866; x=1741430666;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LY/g5u1A0VA3lw6pSEa2VfIXvvWB4lz7NHrbOXPgD9Y=;
+        b=X7/kGNucBbuI577wVF0Ds/vrkU9mEarZOgr9BrlQByveV/vjAY/QPtNHxZd6t2B2I1
+         zaiBbMCoP0LqcbNqQySfSaAmOUWsz+U/9CZ1OgBLMmZ82srm8ONsYuhRbXQXVZYzNUV8
+         nkegH4nQArxX/B7nHKa0B9b++e9WvqmS8q9Q6sH/oA/KJxa9pWBf42P8ZdH0ozRgT//t
+         qBpZzNUrtna1/IWS0EVutXMpq/uuRjFmv7UJ8QLiiyRqW6jRjQ9CXxdVLtE/9QOE7lv/
+         JxQLwlhYVWfkEzxoGGfmMlY0Kq128YGKL4AsbA+85IYAmcffO+ChC8nRz/irCZS5NtmU
+         a+qg==
+X-Forwarded-Encrypted: i=1; AJvYcCXMCNJNiiOiRFgIVR/MMqFGmRYCer+HJ/1kKA6KhyovW/Nd1492J2syGsevuL8Bt/4SS3TiDl0A4ek9vm9L@vger.kernel.org, AJvYcCXw4Wbvowo5lsqfQZGIU3t77sBSgRaMH/IVQRnEi6jheOJ6Svd/8bC8dtHURqBSzKB5BL7ve7Ywb0RVGawP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf5EPjQ195KiKz34liKrL18pGP+rFrOHdfZg8KveS6qVbxYCL8
+	lEmiQ/3IUgCys9n8yRs9bvZnpKjONAnSlovbNp1lmlfRLgO8Jj+xnh2/vA==
+X-Gm-Gg: ASbGncvqP8Fljbw9kGdgj5DIAo9nkWcKcHKKTU0pimIABQtqgsvrZDHK6trIp9Thf1k
+	jtMFvR3UMI0vG2MXVFs+2rzkKVaH2CAfff23d94Pobuc02s4/iBtI9RXpZvuTFc0J2chu3li6Qp
+	w5JMolh87NRDyrfldeYtsvMxDVpSHwRgpOJLHzs0y/B8T5jSgHGEt9FVloRLApy3RzBPGdiFBsR
+	ORXZnHNmOx2ybwqq5y2fdxQwUVQzpkmQE2Zc/S7S3UAv8BJLVqls8RZYVOYwhT4LLG2UPPwMF50
+	Htcpa1JmU/pRA5bGFbhwkeNEGElNypL6IAbuv0RiNo7GigAvmpK8Ok2kDe4vuWM=
+X-Google-Smtp-Source: AGHT+IG89+MHRzO8hrfvoS8BM+5zLHNqN52NuLSpsDE+GkqPCfIeSP1aGOaPTvoqsNSMo80weBCqLQ==
+X-Received: by 2002:a05:600c:1da8:b0:439:9b3f:2de1 with SMTP id 5b1f17b1804b1-43ba6702c10mr60227805e9.15.1740825865580;
+        Sat, 01 Mar 2025 02:44:25 -0800 (PST)
+Received: from f.. (cst-prg-72-140.cust.vodafone.cz. [46.135.72.140])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b7a28bf64sm85335595e9.39.2025.03.01.02.44.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Mar 2025 02:44:24 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: predict no error in close()
+Date: Sat,  1 Mar 2025 11:43:56 +0100
+Message-ID: <20250301104356.246031-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <uyqqemnrf46xdht3mr4okv6zw7asfhjabz3fu5fl5yan52ntoh@nflmsbxz6meb>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 28, 2025 at 08:51:27PM +0100, Jan Kara wrote:
-> On Fri 28-02-25 10:00:59, Pan Deng wrote:
-> > When running syscall pread in a high core count system, f_ref contends
-> > with the reading of f_mode, f_op, f_mapping, f_inode, f_flags in the
-> > same cache line.
-> 
-> Well, but you have to have mulithreaded process using the same struct file
-> for the IO, don't you? Otherwise f_ref is not touched...
+Vast majority of the time the system call returns 0.
 
-Yes, it's specifically designed to scale better under high contention.
+Letting the compiler know shortens the routine (119 -> 116) and the fast
+path.
 
-> 
-> > This change places f_ref to the 3rd cache line where fields are not
-> > updated as frequently as the 1st cache line, and the contention is
-> > grealy reduced according to tests. In addition, the size of file
-> > object is kept in 3 cache lines.
-> > 
-> > This change has been tested with rocksdb benchmark readwhilewriting case
-> > in 1 socket 64 physical core 128 logical core baremetal machine, with
-> > build config CONFIG_RANDSTRUCT_NONE=y
-> > Command:
-> > ./db_bench --benchmarks="readwhilewriting" --threads $cnt --duration 60
-> > The throughput(ops/s) is improved up to ~21%.
-> > =====
-> > thread		baseline	compare
-> > 16		 100%		 +1.3%
-> > 32		 100%		 +2.2%
-> > 64		 100%		 +7.2%
-> > 128		 100%		 +20.9%
-> > 
-> > It was also tested with UnixBench: syscall, fsbuffer, fstime,
-> > fsdisk cases that has been used for file struct layout tuning, no
-> > regression was observed.
-> 
-> So overall keeping the first cacheline read mostly with important stuff
-> makes sense to limit cache traffic. But:
-> 
-> >  struct file {
-> > -	file_ref_t			f_ref;
-> >  	spinlock_t			f_lock;
-> >  	fmode_t				f_mode;
-> >  	const struct file_operations	*f_op;
-> > @@ -1102,6 +1101,7 @@ struct file {
-> >  	unsigned int			f_flags;
-> >  	unsigned int			f_iocb_flags;
-> >  	const struct cred		*f_cred;
-> > +	u8				padding[8];
-> >  	/* --- cacheline 1 boundary (64 bytes) --- */
-> >  	struct path			f_path;
-> >  	union {
-> > @@ -1127,6 +1127,7 @@ struct file {
-> >  		struct file_ra_state	f_ra;
-> >  		freeptr_t		f_freeptr;
-> >  	};
-> > +	file_ref_t			f_ref;
-> >  	/* --- cacheline 3 boundary (192 bytes) --- */
-> >  } __randomize_layout
-> 
-> This keeps struct file within 3 cachelines but it actually grows it from
-> 184 to 192 bytes (and yes, that changes how many file structs we can fit in
-> a slab). So instead of adding 8 bytes of padding, just pick some
-> read-mostly element and move it into the hole - f_owner looks like one
-> possible candidate.
+Disasm starting at the call to __fput_sync():
 
-This is what I did. See vfs-6.15.misc! Thanks!
+before:
+<+55>:    call   0xffffffff816b0da0 <__fput_sync>
+<+60>:    lea    0x201(%rbx),%eax
+<+66>:    cmp    $0x1,%eax
+<+69>:    jbe    0xffffffff816ab707 <__x64_sys_close+103>
+<+71>:    mov    %ebx,%edx
+<+73>:    movslq %ebx,%rax
+<+76>:    and    $0xfffffffd,%edx
+<+79>:    cmp    $0xfffffdfc,%edx
+<+85>:    mov    $0xfffffffffffffffc,%rdx
+<+92>:    cmove  %rdx,%rax
+<+96>:    pop    %rbx
+<+97>:    pop    %rbp
+<+98>:    jmp    0xffffffff82242fa0 <__x86_return_thunk>
+<+103>:   mov    $0xfffffffffffffffc,%rax
+<+110>:   jmp    0xffffffff816ab700 <__x64_sys_close+96>
+<+112>:   mov    $0xfffffffffffffff7,%rax
+<+119>:   jmp    0xffffffff816ab700 <__x64_sys_close+96>
 
-> 
-> Also did you test how moving f_ref to the second cache line instead of the
-> third one behaves?
-> 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+after:
+<+56>:    call   0xffffffff816b0da0 <__fput_sync>
+<+61>:    xor    %eax,%eax
+<+63>:    test   %ebp,%ebp
+<+65>:    jne    0xffffffff816ab6ea <__x64_sys_close+74>
+<+67>:    pop    %rbx
+<+68>:    pop    %rbp
+<+69>:    jmp    0xffffffff82242fa0 <__x86_return_thunk> # the jmp out
+<+74>:    lea    0x201(%rbp),%edx
+<+80>:    mov    $0xfffffffffffffffc,%rax
+<+87>:    cmp    $0x1,%edx
+<+90>:    jbe    0xffffffff816ab6e3 <__x64_sys_close+67>
+<+92>:    mov    %ebp,%edx
+<+94>:    and    $0xfffffffd,%edx
+<+97>:    cmp    $0xfffffdfc,%edx
+<+103>:   cmovne %rbp,%rax
+<+107>:   jmp    0xffffffff816ab6e3 <__x64_sys_close+67>
+<+109>:   mov    $0xfffffffffffffff7,%rax
+<+116>:   jmp    0xffffffff816ab6e3 <__x64_sys_close+67>
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+
+I'm looking at whacking some of the overhead the open+close cycle, this
+is a side nit which popped up. I'm not going to argue about *this* patch.
+
+ fs/open.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/fs/open.c b/fs/open.c
+index 3285d146b0e6..a5def5611b2f 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1579,11 +1579,14 @@ SYSCALL_DEFINE1(close, unsigned int, fd)
+ 	 */
+ 	__fput_sync(file);
+ 
++	if (likely(retval == 0))
++		return 0;
++
+ 	/* can't restart close syscall because file table entry was cleared */
+-	if (unlikely(retval == -ERESTARTSYS ||
+-		     retval == -ERESTARTNOINTR ||
+-		     retval == -ERESTARTNOHAND ||
+-		     retval == -ERESTART_RESTARTBLOCK))
++	if (retval == -ERESTARTSYS ||
++	    retval == -ERESTARTNOINTR ||
++	    retval == -ERESTARTNOHAND ||
++	    retval == -ERESTART_RESTARTBLOCK)
+ 		retval = -EINTR;
+ 
+ 	return retval;
+-- 
+2.43.0
+
 
