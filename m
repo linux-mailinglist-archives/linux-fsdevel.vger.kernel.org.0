@@ -1,62 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-42888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42889-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD62A4ACE3
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Mar 2025 17:40:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 297D3A4AD8C
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Mar 2025 20:46:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08F8B1893281
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Mar 2025 16:40:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD67D189648C
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Mar 2025 19:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFE11E47DD;
-	Sat,  1 Mar 2025 16:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B62F1E8329;
+	Sat,  1 Mar 2025 19:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="A2jA9XJy"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LD1Tu4N6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19EC19007D;
-	Sat,  1 Mar 2025 16:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8FB1BD01F;
+	Sat,  1 Mar 2025 19:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740847202; cv=none; b=Em5xLUa5XcqAUMb2bAdP4297Jf81vAF0ZZZ3AD9Ww3sVR7GGtW+eo0lQYTimDkR3HF9cDyTUAmjhGv3WaHuHD2lL66YkF/fbHFRD+R+loGnyOaucVMpoJ8hUZJBSyXNONRcK72LQUSWba0HKsNB+DtMMhemgnN4z+7Svp5cUVIQ=
+	t=1740858355; cv=none; b=hVYuRWvJ9rbnrmxFyu2CvzkfvTTmycopxIUmwQct4Uqanu+B5AWXjSJAgocwcev7lJWLGQxH+3eHutCQzcTyJD3cr9ZN5kCjylowSIOsd+ums/M34XPdzI+BNRWpr9/ncDKQQaFIL7mSFwwCzhyH/YNZzHz4Cw78dZ/AW19+c24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740847202; c=relaxed/simple;
-	bh=FVQpJz2NQLO72Ywv6QilmFahoejCINbXoE91tlE00/U=;
+	s=arc-20240116; t=1740858355; c=relaxed/simple;
+	bh=7RHZLlYISYOOa3uduTet2ow5tjmMF06rhNmws47c1BA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oYWa/fPup72lcGYZU9oVTcXF8z3Lm0Cx/yqR5Qd3+V7M53/fUZHPUU6oYghydqmCa+aXBXycBgy7R7c0P3A+3FvEEeYRJl/2s3OZj08RfiYF6B9EksQb5+7YDpPLR83hbc+w4xFWB+zN0WQwhF386oWefkkBDfIKcmQEJ/GfhWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=A2jA9XJy; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Z4rQY4q0Hz9sl3;
-	Sat,  1 Mar 2025 17:39:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
-	s=MBO0001; t=1740847190;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2U/JC9Mkv2iTVLlyM6LmZFkoV9o6Q7G7toYDxFnoFrQ=;
-	b=A2jA9XJyjbGcbS47afkSTerq1syUKrXRObXYBL1JQNZrC9B/DDbXSdIryAkOlqWo0Z+CcU
-	8xZueFTRziHzn+JQQ0mHIpCtSJXI0td/jKn3u90tZ7HqG+fZgVPlsxZBKAn87ZE/KKtebY
-	r7oRypgas1aMscsLfRYmh/WFKhBS9tTaHTy0scPDsIhvCwYxaqpQT+cCnFpjhWG/B8FS7b
-	vJPZ7P9b1wG05AucfmNpakKsu+PjzD/S1R0I5kvbxXXxm8rH9PyZvaG61An3Os2yZmS42d
-	B/L5dzwYMUAmDdPDG+BJBjib0x8E2vfhJ8uh7yNeNTOY+97c95p1r7oZjDC0gg==
-Date: Sat, 1 Mar 2025 11:39:46 -0500
-From: Ethan Carter Edwards <ethan@ethancedwards.com>
-To: Sven Peter <sven@svenpeter.dev>, Theodore Ts'o <tytso@mit.edu>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-staging@lists.linux.dev, asahi@lists.linux.dev
-Subject: Re: [RFC] apfs: thoughts on upstreaming an out-of-tree module
-Message-ID: <upqd7zp2cwg2nzfuc7spttzf44yr3ylkmti46d5udutme4cpgv@nbi3tpjsbx5e>
-References: <rxefeexzo2lol3qph7xo5tgnykp5c6wcepqewrze6cqfk22leu@wwkiu7yzkpvp>
- <d0be518b-3abf-497a-b342-ff862dd985a7@app.fastmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QXtptTX+ScuU9ZIUPhlsl2+ngCpPLo9TUD/yaIVywqeTmMVNhEMW0gF4QVM1S2Z2dzbX8x1ws54MG65YxcsTbGENK50OV/lYmt/iVxaQFdWkWJAJLQZt1guLdYvXeXJZZ1A/jliXwKuWyTwZZ92T5W4hh01cLKk70EOAFbCg2M0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LD1Tu4N6; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740858353; x=1772394353;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7RHZLlYISYOOa3uduTet2ow5tjmMF06rhNmws47c1BA=;
+  b=LD1Tu4N6P9GKcX+uwaRHoW2/FLc4MX7zs0thsEVBtMr9i69PuwP6zC8Z
+   SC1OjyGMe6RtXp6z73ZrUK3sNZbXY+DgE7LnUXu6lzx2e3lCBMRNuUqGi
+   mP4M9QeLKFqc4iLeAqDmfrcDzM/MJZzmDLTWsBCgsASyqBHgF9yyYcGdt
+   aLqX+b05OGgW0Hg+WWw6KSK5PEeRIsZ4+jqHQpEC0WSRtF10LRndSNHGP
+   S9wbnDeIjG1GOCfUFkEVjUXQFwwrmRU2//0RodovI18wcgktLCt7T9SDj
+   DAcebzo0iUBbKjAFuGjOuo0uFahq5O0+8sWTQdmpp/PARb8+nt9ulBeW1
+   Q==;
+X-CSE-ConnectionGUID: 73fVMWznTBqZ8aKW7vU9AA==
+X-CSE-MsgGUID: /dfF785cQKOU6UzEhrR9dw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="41795675"
+X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
+   d="scan'208";a="41795675"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 11:45:52 -0800
+X-CSE-ConnectionGUID: DPGE4HeRQOum/28skPyxlQ==
+X-CSE-MsgGUID: 0B5sZDrTRqCYBgUdNpzkhQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
+   d="scan'208";a="117415055"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 01 Mar 2025 11:45:48 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1toSmL-000GdC-0S;
+	Sat, 01 Mar 2025 19:45:41 +0000
+Date: Sun, 2 Mar 2025 03:44:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
+	djwong@kernel.org, cem@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
+	linux-ext4@vger.kernel.org, John Garry <john.g.garry@oracle.com>
+Subject: Re: [PATCH v3 08/12] xfs: Iomap SW-based atomic write support
+Message-ID: <202503020355.fr9QWxQJ-lkp@intel.com>
+References: <20250227180813.1553404-9-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,83 +82,115 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d0be518b-3abf-497a-b342-ff862dd985a7@app.fastmail.com>
+In-Reply-To: <20250227180813.1553404-9-john.g.garry@oracle.com>
 
-On 25/03/01 12:04AM, Sven Peter wrote:
-> Hi,
-> 
-> 
-> On Fri, Feb 28, 2025, at 02:53, Ethan Carter Edwards wrote:
-> > Lately, I have been thinking a lot about the lack of APFS support on
-> > Linux. I was wondering what I could do about that. APFS support is not 
-> > in-tree, but there is a proprietary module sold by Paragon software [0].
-> > Obviously, this could not be used in-tree. However, there is also an 
-> > open source driver that, from what I can tell, was once planned to be 
-> > upstreamed [1] with associated filesystem progs [2]. I think I would 
-> > base most of my work off of the existing FOSS tree.
-> >
-> > The biggest barrier I see currently is the driver's use of bufferheads.
-> > I realize that there has been a lot of work to move existing filesystem
-> > implementations to iomap/folios, and adding a filesystem that uses
-> > bufferheads would be antithetical to the purpose of that effort.
-> > Additionally, there is a lot of ifndefs/C preprocessor magic littered
-> > throughout the codebase that fixes functionality with various different
-> > versions of Linux. 
-> >
-> > The first step would be to move away from bufferheads and the
-> > versioning. I plan to start my work in the next few weeks, and hope to
-> > have a working driver to submit to staging by the end of June. From
-> > there, I will work to have it meet more kernel standards and hopefully
-> > move into fs/ by the end of the year.
-> >
-> > Before I started, I was wondering if anyone had any thoughts. I am open
-> > to feedback. If you think this is a bad idea, let me know. I am very
-> > passionate about the Asahi Linux project. I think this would be a good
-> > way to indirectly give back and contribute to the project. While I
-> > recognize that it is not one of Asahi's project goals (those being
-> > mostly hardware support), I am confident many users would find it
-> > helpful. I sure would.
-> 
-> Agreed, I think it would be helpful for many people (especially those
-> who still regularly dual boot between macOS and Linux) to have a working
-> APFS driver upstream.
-> This may also be useful once we fully bring up the Secure Enclave and need
-> to read/write to at least a single file on the xART partition which has
-> to be APFS because it's shared between all operating systems running on
-> a single machine.
-> 
-> 
-> It looks like there's still recent activity on that linux-apfs github
-> repository. Have you reached out to the people working on it to see
-> what their plans for upstreaming and/or future work are?
+Hi John,
 
-I did ask the upstream maintainer and he said he did not see it
-happening. He specifically mentioned the use of bufferheads as a barrier
-to mainline merging, but I get the sense that he does not have the
-time/desire to commit to upstreaming it. [0]
+kernel test robot noticed the following build warnings:
 
-I did have a question/concern over the inclusion of the LZFSE/LZVN [1]
-compression library included in the module. It is BSD3 licensed, which,
-as far as I know is GPL-compatible, but what is the kernel's policy on
-external algorithms being included? It was originally developed by Apple
-and as far as I can tell is pretty necessary to read (and write)
-compressed files on APFS. Also, the library does produce an objtool
-warning.
+[auto build test WARNING on xfs-linux/for-next]
+[also build test WARNING on tytso-ext4/dev linus/master v6.14-rc4]
+[cannot apply to brauner-vfs/vfs.all next-20250228]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Ted, looping you in here, your thoughts?
+url:    https://github.com/intel-lab-lkp/linux/commits/John-Garry/xfs-Pass-flags-to-xfs_reflink_allocate_cow/20250228-021818
+base:   https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git for-next
+patch link:    https://lore.kernel.org/r/20250227180813.1553404-9-john.g.garry%40oracle.com
+patch subject: [PATCH v3 08/12] xfs: Iomap SW-based atomic write support
+config: hexagon-randconfig-001-20250302 (https://download.01.org/0day-ci/archive/20250302/202503020355.fr9QWxQJ-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 14170b16028c087ca154878f5ed93d3089a965c6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250302/202503020355.fr9QWxQJ-lkp@intel.com/reproduce)
 
-> 
-> 
-> 
-> Best,
-> 
-> 
-> Sven
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503020355.fr9QWxQJ-lkp@intel.com/
 
-Thanks,
-Ethan
+All warnings (new ones prefixed by >>):
 
-[0]: https://github.com/linux-apfs/linux-apfs-rw/issues/68
-[1]: https://github.com/linux-apfs/linux-apfs-rw/tree/master/lzfse
+>> fs/xfs/xfs_iomap.c:1029:8: warning: variable 'iomap_flags' set but not used [-Wunused-but-set-variable]
+    1029 |         u16                     iomap_flags = 0;
+         |                                 ^
+   1 warning generated.
+
+
+vim +/iomap_flags +1029 fs/xfs/xfs_iomap.c
+
+  1011	
+  1012	static int
+  1013	xfs_atomic_write_sw_iomap_begin(
+  1014		struct inode		*inode,
+  1015		loff_t			offset,
+  1016		loff_t			length,
+  1017		unsigned		flags,
+  1018		struct iomap		*iomap,
+  1019		struct iomap		*srcmap)
+  1020	{
+  1021		struct xfs_inode	*ip = XFS_I(inode);
+  1022		struct xfs_mount	*mp = ip->i_mount;
+  1023		struct xfs_bmbt_irec	imap, cmap;
+  1024		xfs_fileoff_t		offset_fsb = XFS_B_TO_FSBT(mp, offset);
+  1025		xfs_fileoff_t		end_fsb = xfs_iomap_end_fsb(mp, offset, length);
+  1026		int			nimaps = 1, error;
+  1027		unsigned int		reflink_flags;
+  1028		bool			shared = false;
+> 1029		u16			iomap_flags = 0;
+  1030		unsigned int		lockmode = XFS_ILOCK_EXCL;
+  1031		u64			seq;
+  1032	
+  1033		if (xfs_is_shutdown(mp))
+  1034			return -EIO;
+  1035	
+  1036		reflink_flags = XFS_REFLINK_CONVERT | XFS_REFLINK_ATOMIC_SW;
+  1037	
+  1038		/*
+  1039		 * Set IOMAP_F_DIRTY similar to xfs_atomic_write_iomap_begin()
+  1040		 */
+  1041		if (offset + length > i_size_read(inode))
+  1042			iomap_flags |= IOMAP_F_DIRTY;
+  1043	
+  1044		error = xfs_ilock_for_iomap(ip, flags, &lockmode);
+  1045		if (error)
+  1046			return error;
+  1047	
+  1048		error = xfs_bmapi_read(ip, offset_fsb, end_fsb - offset_fsb, &imap,
+  1049				&nimaps, 0);
+  1050		if (error)
+  1051			goto out_unlock;
+  1052	
+  1053		error = xfs_reflink_allocate_cow(ip, &imap, &cmap, &shared,
+  1054				&lockmode, reflink_flags);
+  1055		/*
+  1056		 * Don't check @shared. For atomic writes, we should error when
+  1057		 * we don't get a COW mapping
+  1058		 */
+  1059		if (error)
+  1060			goto out_unlock;
+  1061	
+  1062		end_fsb = imap.br_startoff + imap.br_blockcount;
+  1063	
+  1064		length = XFS_FSB_TO_B(mp, cmap.br_startoff + cmap.br_blockcount);
+  1065		trace_xfs_iomap_found(ip, offset, length - offset, XFS_COW_FORK, &cmap);
+  1066		if (imap.br_startblock != HOLESTARTBLOCK) {
+  1067			seq = xfs_iomap_inode_sequence(ip, 0);
+  1068			error = xfs_bmbt_to_iomap(ip, srcmap, &imap, flags, 0, seq);
+  1069			if (error)
+  1070				goto out_unlock;
+  1071		}
+  1072		seq = xfs_iomap_inode_sequence(ip, IOMAP_F_SHARED);
+  1073		xfs_iunlock(ip, lockmode);
+  1074		return xfs_bmbt_to_iomap(ip, iomap, &cmap, flags, IOMAP_F_SHARED, seq);
+  1075	
+  1076	out_unlock:
+  1077		if (lockmode)
+  1078			xfs_iunlock(ip, lockmode);
+  1079		return error;
+  1080	}
+  1081	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
