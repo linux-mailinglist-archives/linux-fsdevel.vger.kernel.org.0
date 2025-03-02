@@ -1,63 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-42892-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E3EA4B047
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Mar 2025 08:27:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9A6DA4B103
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Mar 2025 11:55:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 477221753F9
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Mar 2025 07:22:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF5DE1687F5
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Mar 2025 10:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB07A1E570D;
-	Sun,  2 Mar 2025 07:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34F11DE2BD;
+	Sun,  2 Mar 2025 10:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="a3fcY/iO"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R6N7zKvZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1641E492D;
-	Sun,  2 Mar 2025 07:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757E61D5141
+	for <linux-fsdevel@vger.kernel.org>; Sun,  2 Mar 2025 10:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740899916; cv=none; b=Y5TA8FznzDOA+Ru6bobyl9/8WDArEg6DKCcl2vRT/1QYpiRziJALEIbrjmWMaDr0Gs22t2t1I1i0zVllHXOng6PBjeVGrEVhSi6AVXN9Z0MtrotivSF3JMz4eewC0bJSjaBNhgOT4Lh0d9+DCZ3zbxuaJYMvAscK8HhmlVZTmJM=
+	t=1740912925; cv=none; b=skZGJ6QqYKmOUmlXZlHC6+MD4d6friKvhLjPCm6+k8AtHRsBaXHsx88nsvKpdlhoL6vtiiJEa+oNISfPNt25yu1vAYZmsX4n6FdoELI6JCeY/71BdBvutL3xdHlQYkMjfDShxnrGheY7uIPOxNZ0lsdXWKZzFpAHA++l0KqzmZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740899916; c=relaxed/simple;
-	bh=Q00tCGFagJqhJIqtMW6Th3WlIVSLLIlf2Ut0vWjxY0E=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SFv1quyue5b1sQNkFi14OXGlDg0XSFFjMX5daWw8ehoeBpwe+mVnE2wXKMbWnOV33SIdK9wwdYp3sFKdxqlbmk8Yx+MAXjZs19eBmoWwAK/THXvl9YvehX5Xcx9VbgR3/90skQSCu9TeV/QV/b8Yj/KIXS6UUb1PcVD73FhcomY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=a3fcY/iO; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=Content-Type:MIME-Version:Message-ID:Subject:To:From:Date:
-	Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=f3DdERWXQrNySF6gvU6vinSO8q+qr1NUAtHdetDqJf4=; b=a3fcY/iONa33Ud5dQN0oQ3c0gf
-	yDD75wEvhxl2aTZ2rDvDseIJ5EyhCdCJ+C0m8eIFf3NlZP28u5SHk7RtaW/UOBQbDdu+PuiO4evfo
-	TPoBXIvZD5tF6i2j0JFtMlF9elpGl3C+YsBI7wvjpbFnHPyHikNt15dBNiHX5bI/nxZejVEBAYLNE
-	zohytRJ+9SRo3ksFsXB596vLCJcm+O0IMfoXuQO7vIDuYz2MowNxrQLmRJXpNSAFgM45ay030+HNo
-	gdz4qGRAYKsToUUV2206CDJHVlnXtfcwXlK3TMEPM3T7AnU4gW6JHVXPZwruE32bh3o6CpT5E1azX
-	iJNcInUw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1todai-0030I5-0I;
-	Sun, 02 Mar 2025 15:18:25 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 02 Mar 2025 15:18:24 +0800
-Date: Sun, 2 Mar 2025 15:18:24 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Christian Brauner <brauner@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] cred: Fix RCU warnings in override/revert_creds
-Message-ID: <Z8QGQGW0IaSklKG7@gondor.apana.org.au>
+	s=arc-20240116; t=1740912925; c=relaxed/simple;
+	bh=YP9vFesE7FOkWTsjQeuOzqlZhTxpNdth3TwzKIctpts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YBGtFXpqpcH2BM+JOc/143GBMDMikPbSFSs4d/CPyyhRf89XT2OuvmnYzg3kVxgNxH2ejRb576JATyb0O4rnN/yxY3YiK0x/jW5Ara96X+r9oEHkmeXI7wVTjo5NWZb6aNQ+41QJDANv4CYlUlI5doN8HRe5Xm8rdhmjeexYp2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R6N7zKvZ; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e058ca6806so5619505a12.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 02 Mar 2025 02:55:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740912922; x=1741517722; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yVNL0sPyTN/JB4JKueVcudW2dTNqPhTdzuxyAD7JqBI=;
+        b=R6N7zKvZlE4/rgMWk99r/RYVwzFGfaGvUj77eiGcWjZoOzFAuueP2cfE5xY1IG7z0R
+         gYlZJS/HNggi0AxfmCxDIZ3yGHszRp/hCiQiqYNTL8GqLOOADzP9MI95+8dqUJphUuzO
+         wHEAoxz8IVEHv/MCzXNdqsDagD+yYlfKjfHzGSZ3o8TcPdIzscqzmJKssuVt/xO7mC7J
+         qUAWz+BvqMiQuaM1tTag/JcOmTrX1ZEkSjoweaQ+BGW/mOwVMrDWbxAjsQzj7ePn64t4
+         6oTfZqh4hiy5e79XN5QQJmQsX0a6Xc5yu1Ae05zzvx7CzEzDAJ5O4HqBsHsXAQpfLhI9
+         lv8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740912922; x=1741517722;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yVNL0sPyTN/JB4JKueVcudW2dTNqPhTdzuxyAD7JqBI=;
+        b=Dy/eY2AEutbB9O6JpNn+giCTk1sLHKmCXCR+F8mtYj7roBsJz1YcuF6i21poD5BYe2
+         6E8Ar98vkHuZ4z8Wqh9/SdsbmoFTAsBPv+37JbGCLdiB0TMVf1+4l8v4IECUIzx0vg16
+         QJTjj9oIsyGD1jEMnHJjsN2W30r69zVz2WV9LQG3vR3pyW68JQPIUZFFhzhkuVhft1o2
+         5JX4FVcEyt9fZe2swypdfLQH1YIqEd9RcQ7adT7/KF3uM0fn6sOvqMmd31T/jwCjoPAt
+         daIp/5kje/SHOfWiGa9Yb1UrtkBR4Fd/WAjj423/YnHqvgOekpFOjem4a6dlJZ/EU4+y
+         rnzA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1lCZoqRRSI8I5T9E8aTy4bPjNa3M9TGCcc8VkLtbbvgiBPVtHAxfraN3jwAphsltQqKmgY3zN06807JFV@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd6XGyuUp68eRt+xoguDl/rufzzY1Jb9QwbBKx//wITEaqnn3X
+	NYbEsgDsDgCn6ifeWkNwH8d6h6qaS+RiSP3ZTXwAzkJBtMcU1oovR1S3BWp6AZeAR6fyh+KwgkQ
+	J
+X-Gm-Gg: ASbGncsVaT1539bNTVcBil1gmYi5voxnfhcKAfhUcZLYDg4OZc//3+Z94N49OboD6zc
+	dCC+CoOaaK3X9oY9OWi0wPT/6WBK5SUF3ZPFQwicp9HUYAOVrIq3DVQSUOf8fi3KzqZjURwzTrb
+	6jIdfwIo+5GqYPAsOg9siIQNSkaM3PZ8ShK2ebeyLf9CJRGow4DOv5LowqyOxiYkT3PFAP2wQaE
+	GL1WqV0xraIudfDRyKW9strt7DoQEdRrsCCpBRWw4a4u2/aEIlT7nmDGafOl3V7rl4RQidd+Xib
+	JTkIpDyR9wGIH6wIovroYHspsMfDf3H6K2NVry4nhbUpu+32Kw==
+X-Google-Smtp-Source: AGHT+IF5u6hOznuueVO45DvOr3tnpJV+3iyHP7nKiHIBEz75iKNJU9mKeQvZWjwJzKMqMC7qM6j60Q==
+X-Received: by 2002:a05:6402:3512:b0:5e4:d13b:e65 with SMTP id 4fb4d7f45d1cf-5e4d6af15damr10563438a12.9.1740912921716;
+        Sun, 02 Mar 2025 02:55:21 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5e4c3b4aa46sm5309846a12.1.2025.03.02.02.55.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Mar 2025 02:55:21 -0800 (PST)
+Date: Sun, 2 Mar 2025 13:55:17 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ethan Carter Edwards <ethan@ethancedwards.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-staging@lists.linux.dev, asahi@lists.linux.dev
+Subject: Re: [RFC] apfs: thoughts on upstreaming an out-of-tree module
+Message-ID: <b9c2ce02-dab6-4b4d-b8ca-ac1e7769e0c3@stanley.mountain>
+References: <rxefeexzo2lol3qph7xo5tgnykp5c6wcepqewrze6cqfk22leu@wwkiu7yzkpvp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,44 +88,15 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <rxefeexzo2lol3qph7xo5tgnykp5c6wcepqewrze6cqfk22leu@wwkiu7yzkpvp>
 
-Fix RCU warnings in override_creds and revert_creds by turning
-the RCU pointer into a normal pointer using rcu_replace_pointer.
+If you're going to do a major re-work it might be easier to do that first
+before you upstream it.  Once it's in the kernel then you have to follow
+all the rules like breaking your commits up into reviewable patches and
+not breaking git bisect.  The rules are good for quality control but they
+can be burdensome for people who want to move fast and break things.
 
-These warnings were previously private to the cred code, but due
-to the move into the header file they are now polluting unrelated
-subsystems.
+regards,
+dan carpenter
 
-Fixes: 49dffdfde462 ("cred: Add a light version of override/revert_creds()")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 0c3c4b16b469..5658a3bfe803 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -172,18 +172,12 @@ static inline bool cap_ambient_invariant_ok(const struct cred *cred)
- 
- static inline const struct cred *override_creds(const struct cred *override_cred)
- {
--	const struct cred *old = current->cred;
--
--	rcu_assign_pointer(current->cred, override_cred);
--	return old;
-+	return rcu_replace_pointer(current->cred, override_cred, 1);
- }
- 
- static inline const struct cred *revert_creds(const struct cred *revert_cred)
- {
--	const struct cred *override_cred = current->cred;
--
--	rcu_assign_pointer(current->cred, revert_cred);
--	return override_cred;
-+	return rcu_replace_pointer(current->cred, revert_cred, 1);
- }
- 
- /**
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
