@@ -1,123 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-42904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C42AA4B2E4
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Mar 2025 17:08:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E4A3A4B323
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Mar 2025 17:29:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BA03188D901
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Mar 2025 16:08:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 494AF3B0F47
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Mar 2025 16:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1321E9B21;
-	Sun,  2 Mar 2025 16:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B5D1E9B23;
+	Sun,  2 Mar 2025 16:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="msLWUylx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQ4Rt4gl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05AE41EB9EF;
-	Sun,  2 Mar 2025 16:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C3C339A8
+	for <linux-fsdevel@vger.kernel.org>; Sun,  2 Mar 2025 16:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740931637; cv=none; b=KaXgUIPxQfASbcfyemA3BxwmtNrXi6NV1cLE3qM15jBCY6wL8V1ADOMcE6Av130tWxxdBpIEz9h0sp5fkzvy1mDGcNxKdJjyy39EwmyEvIhBHCxVR/zx/Pdi7BN0XYWFV0WQF5WonhQnaSdFbgcp5DxVIA7aIp9Vz+7xqYpKl8o=
+	t=1740932959; cv=none; b=ZPvfrvaenepwkrKHjeYaBvLKR6JJJwCxieK+hdKVV0PmkPo1AF9lH8fKze+K1hfwcqGR8+4OP62nAlZ4LFTiGXMzMIQvdrUdWkZQJRfP+9qRun1AJ72IvoSetLMS/nhXjeAYo8nVJXbCk47nxHqzgZlR4is+mw6EFHz2Fd17oBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740931637; c=relaxed/simple;
-	bh=MRV1BzXFzVKuXXCzfT8MZMYwjH+JUp8WlpwQIsq6O88=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lxkUli/Z6yaa0S36/EjBivt5qVvYP73bOPuDORUaNbXuAyOPdqycJboSxIHm8OwdxEYOmpxcbr6gejanJDX5MP6Dk8WcQ4ukaWmA/OYUmmwsLsNxEzZDqQP50UeMMjs4jgS7KrRZyTRg/RVaHj30UvaHDxwPAo08viMPRBgyjWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=msLWUylx; arc=none smtp.client-ip=168.119.48.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
-From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1740931634;
-	h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KRfdkDgvTkBq7bn29Gpn8MyAqWDeCH+tjzpw5UYm82I=;
-	b=msLWUylxKZrkZloeSFN5bZFcbLSbFE1cttvSkO/sbcFYzOZMJ7QrfX7q/KeJKDTCCqgTwE
-	Cmy7gxyKITqqPUSpsCS7G1MqMRTPEE0rGESChTm4bdOm11qcFfU19VdeWkGdCDRk2erDxx
-	kDdrSiGJC8bqVFfFWelDM4gaS0EX1FJAHjToIV4v7qro8N7Udd/eU2b50vvHw4+nCCyDVp
-	iMV4JdyinVFOmyN1MzYoME93xKcoQ8EPz6PyS8U/d1Bw/PaS5g5Ib0iiqfD+QrZDeUyCFv
-	aH0d4JvaWftIryzqqBPR8zUxtU31fm2LuQe5b2oX22cLwFz/FOLen82uN8NLOQ==
-To: 
-Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	Serge Hallyn <serge@hallyn.com>,
-	Jan Kara <jack@suse.com>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	cocci@inria.fr,
-	Christian Brauner <brauner@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: [PATCH v2 09/11] fs: reorder capability check last
-Date: Sun,  2 Mar 2025 17:06:45 +0100
-Message-ID: <20250302160657.127253-8-cgoettsche@seltendoof.de>
-In-Reply-To: <20250302160657.127253-1-cgoettsche@seltendoof.de>
-References: <20250302160657.127253-1-cgoettsche@seltendoof.de>
-Reply-To: cgzones@googlemail.com
+	s=arc-20240116; t=1740932959; c=relaxed/simple;
+	bh=/uMduYgRGJZbeZuj2qN3/8ZZ+jWRpBrqoZyAaJTMt6c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WdNK8tQN0aOqwnDsLXf6XCOZHwGOMu6sHoNvhsxEdqZjgw/pGsIWyACfXxAatK4RUAlEwg+lHf0BZo14aQ6SJuAzxvITiz/hU0xkevuu810fnWX7mbepwF/zCQKGtzNL3PCY6QhFo1B/QoWpmIPBHodcmTe8bA23QscULJjzAxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sQ4Rt4gl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47801C4CED6;
+	Sun,  2 Mar 2025 16:29:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740932957;
+	bh=/uMduYgRGJZbeZuj2qN3/8ZZ+jWRpBrqoZyAaJTMt6c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sQ4Rt4glRjtMlG3qxHyEfwNn/bBZnjY7cG8xDcMl+HTEMZbK6+rMlMAOlvlpcfM+0
+	 Mhkmz+poSn4kR2S49NgqVtUCowvwdH+CkkfJnRFWaNd2mdjP61MBTSiWNf6LmjfIUS
+	 TUkcicsC2l7nQKDHokhqlvP62tb/7AviJarHgwaRWeNLchaL0XoqZZKoiG5QTFWA9j
+	 Mh/QLaTe6i8mNUt/5b/hMtvu8fPpoDBeVFtDpVHKtUIIqRfbFcQ1nA+ydz14b52hXG
+	 AxHtjg+HEWv6wZ4+me4MtYM6okerzml+LYgEJhbEgm+qYgorXDIO4PmqJxQmLALERN
+	 pPJGNrtFq5Y6Q==
+Date: Sun, 2 Mar 2025 17:29:13 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	Lennart Poettering <lennart@poettering.net>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
+	Mike Yuan <me@yhndnzj.com>
+Subject: Re: [PATCH RFC 06/10] pidfs: allow to retrieve exit information
+Message-ID: <20250302-sperling-tagebuch-49c1b4996c5f@brauner>
+References: <20250228-work-pidfs-kill_on_last_close-v1-0-5bd7e6bb428e@kernel.org>
+ <20250228-work-pidfs-kill_on_last_close-v1-6-5bd7e6bb428e@kernel.org>
+ <20250302155346.GD2664@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250302155346.GD2664@redhat.com>
 
-From: Christian Göttsche <cgzones@googlemail.com>
+On Sun, Mar 02, 2025 at 04:53:46PM +0100, Oleg Nesterov wrote:
+> On 02/28, Christian Brauner wrote:
+> >
+> > Some tools like systemd's jounral need to retrieve the exit and cgroup
+> > information after a process has already been reaped.
+>               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 
+> But unless I am totally confused do_exit() calls pidfd_exit() even
+> before exit_notify(), the exiting task is not even zombie yet. It
+> will reaped only when it passes exit_notify() and its parent does
+> wait().
 
-capable() calls refer to enabled LSMs whether to permit or deny the
-request.  This is relevant in connection with SELinux, where a
-capability check results in a policy decision and by default a denial
-message on insufficient permission is issued.
-It can lead to three undesired cases:
-  1. A denial message is generated, even in case the operation was an
-     unprivileged one and thus the syscall succeeded, creating noise.
-  2. To avoid the noise from 1. the policy writer adds a rule to ignore
-     those denial messages, hiding future syscalls, where the task
-     performs an actual privileged operation, leading to hidden limited
-     functionality of that task.
-  3. To avoid the noise from 1. the policy writer adds a rule to permit
-     the task the requested capability, while it does not need it,
-     violating the principle of least privilege.
+The overall goal is that it's possible to retrieve exit status and
+cgroupid even if the task has already been reaped.
 
-Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
-Reviewed-by: Christian Brauner <brauner@kernel.org>
----
- fs/fhandle.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+It's intentionally placed before exit_notify(), i.e., before the task is
+a zombie because exit_notify() wakes pidfd-pollers. Ideally, pidfd
+pollers would be woken and then could use the PIDFD_GET_INFO ioctl to
+retrieve the exit status.
 
-diff --git a/fs/fhandle.c b/fs/fhandle.c
-index 3e092ae6d142..5b77b38f0510 100644
---- a/fs/fhandle.c
-+++ b/fs/fhandle.c
-@@ -303,9 +303,9 @@ static inline int may_decode_fh(struct handle_to_path_ctx *ctx,
- 	if (ns_capable(root->mnt->mnt_sb->s_user_ns, CAP_SYS_ADMIN))
- 		ctx->flags = HANDLE_CHECK_PERMS;
- 	else if (is_mounted(root->mnt) &&
-+		 !has_locked_children(real_mount(root->mnt), root->dentry) &&
- 		 ns_capable(real_mount(root->mnt)->mnt_ns->user_ns,
--			    CAP_SYS_ADMIN) &&
--		 !has_locked_children(real_mount(root->mnt), root->dentry))
-+			    CAP_SYS_ADMIN))
- 		ctx->flags = HANDLE_CHECK_PERMS | HANDLE_CHECK_SUBTREE;
- 	else
- 		return -EPERM;
--- 
-2.47.2
+It would however be fine to place it into exit_notify() if it's a better
+fit there. If you have a preference let me know.
 
+I don't see a reason why seeing the exit status before that would be an
+issue. The only downside would be that some other task that just keeps
+ioctl()ing in a loop would possible see the exit status before the
+parent does. But I didn't think this would be a big issue.
+
+> And what about the multi-threaded case? Suppose the main thread
+> does sys_exit(0) and it has alive sub-threads.
+> 
+> In this case pidfd_info() will report kinfo.exit_code = 0.
+> And this is probably fine if (file->f_flags & PIDFD_THREAD) != 0.
+
+Yes.
+
+> But what if this file was created without PIDFD_THREAD? If another
+> thread does exit_group(1) after that, the process's exit code is
+> 1 << 8, but it can't be retrieved.
+
+Yes, I had raised that in an off-list discussion about this as well and
+was unsure what the cleanest way of dealing with this would be.
+
+My initial approach had been to not just have:
+
+struct pidfs_exit_info {
+        __u64 cgroupid;
+        __s32 exit_code;
+};
+
+
+but to have:
+
+struct pidfs_exit_info {
+        __u64 cgroupid;
+        __s32 exit_code;
+	__u64 tg_cgroupid;
+	__s32 tg_exit_code;
+};
+
+so that it would be possible to retrieve either depending on the type of
+pidfd. Is that feasible?
+
+> Finally, sys_execve(). Suppose we have a main thread L and a
+> sub-thread T.
+> 
+> T execs and kill the leader L. L exits and populates
+> pidfs_i(inode)->exit_info.
+> 
+> T calls exchange_tids() in de_thread() and becomes the new leader
+> with the same (old) pid.
+> 
+> Now, T is very much alive, but pidfs_i(inode)->exit_info != NULL.
+
+Yes, de_thread() is a good point. That nasty wrinkly I had really
+ignored^wforgotten. We should not report an exit status in this case. I
+think that's what you're agreeing with as well?
+
+> Or I am totally confused?
+
+No, you're right!
+
+What's the best way of handling the de_thread() case? Would moving this
+into exit_notify() be enough where we also handle
+PIDFD_THREAD/~PIDFD_THREAD waking?
+
+Thanks for the review!
+
+> 
+> 
+> 
+> > +	exit_info = READ_ONCE(pidfs_i(inode)->exit_info);
+> > +	if (exit_info) {
+> > +		/*
+> > +		 * TODO: Oleg, I didn't see a reason for putting
+> > +		 * retrieval of the exit status of a task behind some
+> > +		 * form of permission check.
+> 
+> Neither me.
+> 
+> Oleg.
+> 
 
