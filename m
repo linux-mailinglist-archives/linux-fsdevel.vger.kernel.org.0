@@ -1,135 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-42901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C91AAA4B2BC
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Mar 2025 16:54:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 452FBA4B2C1
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Mar 2025 16:59:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB1A3188B21A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Mar 2025 15:55:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCD223B063B
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Mar 2025 15:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553F01E8847;
-	Sun,  2 Mar 2025 15:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7864D1E98F4;
+	Sun,  2 Mar 2025 15:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GFqaWXVd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="leUV2vxt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FBC1DDC11
-	for <linux-fsdevel@vger.kernel.org>; Sun,  2 Mar 2025 15:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63241D799D
+	for <linux-fsdevel@vger.kernel.org>; Sun,  2 Mar 2025 15:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740930887; cv=none; b=D7FLyLGFqV+uOyi0y53IZVLzSq+41NX/SBfnkYZ+xxlf+zXJ7Crxdh3YYk/yL0IDK7wgVUIQMaHsdBXiwVh44WXhRermeoEBYWTxNEMRdaNumwGXAMx7WiflH6pBRQvl9ovWPNXP8+VjFGT3CJzYoJ0jt7KYvqquGs3P18PfWPM=
+	t=1740931185; cv=none; b=EVuJBTDBj1Szk+D9u8xwHRJEMZjErj3VqMqBu0qrJovxcwpcfRHrZYvNZNqypFkN+uzwNTAbt+9we62TklR6LRkR7RrYVSlF2/FFxs4/uOp2YnONOYv8ZM06OSKd2QzqqW/A9O7ASoKE3ktZsDPVWNLCTrpKcC3L5tcezhTarRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740930887; c=relaxed/simple;
-	bh=wPkgr59moO50aTmau/41oJYnQBKD65/FJ4HJuNe842c=;
+	s=arc-20240116; t=1740931185; c=relaxed/simple;
+	bh=GNKdp/XfG977D//T2G7VfPctI1BlolI2HjqvmlfyAko=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rB6AOf8h51ezP6k3uALqyHeId3eJdMZHwQ/+2IOUsLPDvlYscz/+4ZZIoxhppEc1hwyBkWMbAtCDkksDZdsPniupRlViF9A3rUblV4khzU5NJ3rGAVEHo9k0gmNd1XtkgEets7QJs+zzvbfmVY5LsrYZbbpobV+tp36sCwV908k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GFqaWXVd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740930880;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h4aKvK0NPt1IOXpGarOfpjayuqatUQZB6BXhMsXpI9o=;
-	b=GFqaWXVd/QEwI+OEGAxuPnWBxiHooC+yljWwcVUEcC5sKS8CpC6YAWeK4YaKZjSOkUolP9
-	scmT/1Ljr5893RrI3ae8a4S4kIdAW+djQzvdzoTJL8oZXU9LAtBBQFmmMM22SqemMq6jQF
-	CrA4JQkAR/+wyPrljaYnCaJKB2zCp5s=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-621-u7mmTaBfNg6KFTgS5ioBmg-1; Sun,
- 02 Mar 2025 10:54:26 -0500
-X-MC-Unique: u7mmTaBfNg6KFTgS5ioBmg-1
-X-Mimecast-MFC-AGG-ID: u7mmTaBfNg6KFTgS5ioBmg_1740930861
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6A70D19560AF;
-	Sun,  2 Mar 2025 15:54:21 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.18])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 9139D19560AD;
-	Sun,  2 Mar 2025 15:54:18 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun,  2 Mar 2025 16:53:50 +0100 (CET)
-Date: Sun, 2 Mar 2025 16:53:46 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-	Lennart Poettering <lennart@poettering.net>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=NLC2eyb/wLervqmyBLcnDS/c+psqNl9gnL11cnXu9pkuPzLUWqPXIbn+AC+QTZWPlHoj39pPQQDvZSnaOYkAYplhbtrE3/+cEpTgH/ob1KNnRvrlGUoJFzrpk8gyYDMKl8mtrp08djYSiJHDMi2bFltIvLpfZiRg0Mmaj5n4c2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=leUV2vxt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4B69C4CED6;
+	Sun,  2 Mar 2025 15:59:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740931184;
+	bh=GNKdp/XfG977D//T2G7VfPctI1BlolI2HjqvmlfyAko=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=leUV2vxtfy+xj4WlOHoGDa0CzHMum8ZB9TodXGLSH6LAUHN4moE3GDmPD81pxwhDc
+	 FXz3YT9Nxi/H56317+s3zfc6J/YthdOvNtV4xZSBZLcnnZD0A0CvmSxKUp+iN9tACf
+	 HQcPqd0y/jDQ+oZ/eHphPx4PgPXDhzphsvuPDEKGhKByW32JHPxtpXiaiT92PFCkrJ
+	 U/QVnVIVPx8I4FdYbb843XcrdY5ljDR4NfLssBW9nTVgJBzUUjhKsMzAdHz4TzMP43
+	 vRWpqJoqqI5l7IXS+nzsKzIO+7hr+kwuqL63pp/jTNWcXi+6ijVERPBjPlhhxSeIKs
+	 KY68A93fV/Kiw==
+Date: Sun, 2 Mar 2025 16:59:40 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	Lennart Poettering <lennart@poettering.net>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
 	Mike Yuan <me@yhndnzj.com>
-Subject: Re: [PATCH RFC 06/10] pidfs: allow to retrieve exit information
-Message-ID: <20250302155346.GD2664@redhat.com>
+Subject: Re: [PATCH RFC 03/10] pidfs: move setting flags into
+ pidfs_alloc_file()
+Message-ID: <20250302-erbsen-leihen-e30d8feff54e@brauner>
 References: <20250228-work-pidfs-kill_on_last_close-v1-0-5bd7e6bb428e@kernel.org>
- <20250228-work-pidfs-kill_on_last_close-v1-6-5bd7e6bb428e@kernel.org>
+ <20250228-work-pidfs-kill_on_last_close-v1-3-5bd7e6bb428e@kernel.org>
+ <20250302130936.GB2664@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250228-work-pidfs-kill_on_last_close-v1-6-5bd7e6bb428e@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+In-Reply-To: <20250302130936.GB2664@redhat.com>
 
-On 02/28, Christian Brauner wrote:
->
-> Some tools like systemd's jounral need to retrieve the exit and cgroup
-> information after a process has already been reaped.
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+On Sun, Mar 02, 2025 at 02:09:36PM +0100, Oleg Nesterov wrote:
+> On 02/28, Christian Brauner wrote:
+> >
+> > @@ -696,6 +696,10 @@ struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags)
+> >  		return ERR_PTR(ret);
+> >
+> >  	pidfd_file = dentry_open(&path, flags, current_cred());
+> > +	/* Raise PIDFD_THREAD explicitly as dentry_open() strips it. */
+>                                             ^^^^^^^^^^^^^^^^^^^^^^^
+> Hmm, does it?
+> 
+> dentry_open(flags) just passes "flags" to alloc_empty_file()->init_file(),
+> and init_file(flags) does
+> 
+> 	f->f_flags      = flags;
+> 
+> so it seems that
 
-But unless I am totally confused do_exit() calls pidfd_exit() even
-before exit_notify(), the exiting task is not even zombie yet. It
-will reaped only when it passes exit_notify() and its parent does
-wait().
+dentry_open()
+-> do_dentry_open()
+   {
+           f->f_flags &= ~(O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC);
+	           f->f_iocb_flags = iocb_flags(f);
+   }
 
+> 
+> > @@ -2042,11 +2042,6 @@ static int __pidfd_prepare(struct pid *pid, unsigned int flags, struct file **re
+> >  	if (IS_ERR(pidfd_file))
+> >  		return PTR_ERR(pidfd_file);
+> >
+> > -	/*
+> > -	 * anon_inode_getfile() ignores everything outside of the
+> > -	 * O_ACCMODE | O_NONBLOCK mask, set PIDFD_THREAD manually.
+> > -	 */
+> > -	pidfd_file->f_flags |= (flags & PIDFD_THREAD);
+> 
+> we can just kill this outdated code?
 
-
-And what about the multi-threaded case? Suppose the main thread
-does sys_exit(0) and it has alive sub-threads.
-
-In this case pidfd_info() will report kinfo.exit_code = 0.
-And this is probably fine if (file->f_flags & PIDFD_THREAD) != 0.
-
-But what if this file was created without PIDFD_THREAD? If another
-thread does exit_group(1) after that, the process's exit code is
-1 << 8, but it can't be retrieved.
-
-
-
-Finally, sys_execve(). Suppose we have a main thread L and a
-sub-thread T.
-
-T execs and kill the leader L. L exits and populates
-pidfs_i(inode)->exit_info.
-
-T calls exchange_tids() in de_thread() and becomes the new leader
-with the same (old) pid.
-
-Now, T is very much alive, but pidfs_i(inode)->exit_info != NULL.
-
-Or I am totally confused?
-
-
-
-> +	exit_info = READ_ONCE(pidfs_i(inode)->exit_info);
-> +	if (exit_info) {
-> +		/*
-> +		 * TODO: Oleg, I didn't see a reason for putting
-> +		 * retrieval of the exit status of a task behind some
-> +		 * form of permission check.
-
-Neither me.
-
-Oleg.
-
+Unfortunately not.
 
