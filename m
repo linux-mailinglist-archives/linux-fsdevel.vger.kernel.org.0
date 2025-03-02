@@ -1,196 +1,281 @@
-Return-Path: <linux-fsdevel+bounces-42889-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 297D3A4AD8C
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Mar 2025 20:46:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CEC6A4AEC1
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Mar 2025 03:40:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD67D189648C
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Mar 2025 19:46:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3AB23B2EE0
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Mar 2025 02:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B62F1E8329;
-	Sat,  1 Mar 2025 19:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5B335973;
+	Sun,  2 Mar 2025 02:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LD1Tu4N6"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b="vAuoFMv2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+Received: from mail-4317.protonmail.ch (mail-4317.protonmail.ch [185.70.43.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8FB1BD01F;
-	Sat,  1 Mar 2025 19:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015E712B93
+	for <linux-fsdevel@vger.kernel.org>; Sun,  2 Mar 2025 02:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740858355; cv=none; b=hVYuRWvJ9rbnrmxFyu2CvzkfvTTmycopxIUmwQct4Uqanu+B5AWXjSJAgocwcev7lJWLGQxH+3eHutCQzcTyJD3cr9ZN5kCjylowSIOsd+ums/M34XPdzI+BNRWpr9/ncDKQQaFIL7mSFwwCzhyH/YNZzHz4Cw78dZ/AW19+c24=
+	t=1740883224; cv=none; b=YC75E2PGilZAK91W47/TDrB86QS3DNUhnh4SIOS14PcIkppVH35xjDJdrNgZ733U9x2Lily+kdi/BOFKl8PwVgBbDvnVt1jwqC8fkJr3s9N/yDJ74dwD3mRViCIkolCGqLGNnUTWWSdHiW8EN12v18+mK+O/jktqidaug9iCyro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740858355; c=relaxed/simple;
-	bh=7RHZLlYISYOOa3uduTet2ow5tjmMF06rhNmws47c1BA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QXtptTX+ScuU9ZIUPhlsl2+ngCpPLo9TUD/yaIVywqeTmMVNhEMW0gF4QVM1S2Z2dzbX8x1ws54MG65YxcsTbGENK50OV/lYmt/iVxaQFdWkWJAJLQZt1guLdYvXeXJZZ1A/jliXwKuWyTwZZ92T5W4hh01cLKk70EOAFbCg2M0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LD1Tu4N6; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740858353; x=1772394353;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7RHZLlYISYOOa3uduTet2ow5tjmMF06rhNmws47c1BA=;
-  b=LD1Tu4N6P9GKcX+uwaRHoW2/FLc4MX7zs0thsEVBtMr9i69PuwP6zC8Z
-   SC1OjyGMe6RtXp6z73ZrUK3sNZbXY+DgE7LnUXu6lzx2e3lCBMRNuUqGi
-   mP4M9QeLKFqc4iLeAqDmfrcDzM/MJZzmDLTWsBCgsASyqBHgF9yyYcGdt
-   aLqX+b05OGgW0Hg+WWw6KSK5PEeRIsZ4+jqHQpEC0WSRtF10LRndSNHGP
-   S9wbnDeIjG1GOCfUFkEVjUXQFwwrmRU2//0RodovI18wcgktLCt7T9SDj
-   DAcebzo0iUBbKjAFuGjOuo0uFahq5O0+8sWTQdmpp/PARb8+nt9ulBeW1
-   Q==;
-X-CSE-ConnectionGUID: 73fVMWznTBqZ8aKW7vU9AA==
-X-CSE-MsgGUID: /dfF785cQKOU6UzEhrR9dw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11360"; a="41795675"
-X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="41795675"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2025 11:45:52 -0800
-X-CSE-ConnectionGUID: DPGE4HeRQOum/28skPyxlQ==
-X-CSE-MsgGUID: 0B5sZDrTRqCYBgUdNpzkhQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,326,1732608000"; 
-   d="scan'208";a="117415055"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 01 Mar 2025 11:45:48 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1toSmL-000GdC-0S;
-	Sat, 01 Mar 2025 19:45:41 +0000
-Date: Sun, 2 Mar 2025 03:44:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
-	djwong@kernel.org, cem@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org, John Garry <john.g.garry@oracle.com>
-Subject: Re: [PATCH v3 08/12] xfs: Iomap SW-based atomic write support
-Message-ID: <202503020355.fr9QWxQJ-lkp@intel.com>
-References: <20250227180813.1553404-9-john.g.garry@oracle.com>
+	s=arc-20240116; t=1740883224; c=relaxed/simple;
+	bh=MQhnNjTeIbu+3BMZhAd37MWDWu3EPymlZlYsWmrlawA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jhzKIhL+0p4Q3ijoiaDimrns6paK2ul2DDCvLA3zQj7wZ2NkJ5CPt1DflPy8lMn+GUI3NFVVfZMyVJeff63egB6uazeorMylH1WcdU0gJAwPVbXo/woVzY6WN4IuBvKW7bVWHA2jnmQHFkd4Dx8BoAgQ0iM1rlAk82gECwudfko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com; spf=pass smtp.mailfrom=yhndnzj.com; dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b=vAuoFMv2; arc=none smtp.client-ip=185.70.43.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yhndnzj.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yhndnzj.com;
+	s=protonmail3; t=1740883219; x=1741142419;
+	bh=9iyBgrATsqQFYNmaQ5d0l9EhehIob+BaG2CUADLPDYo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=vAuoFMv21Y1lwQqrVAx+NB7dqUIsJnvKWxxrEgoiTDC26Vnldl6W/xjLdkEC6/gJr
+	 O20z7hBjoTQPvpeV6shlkXhs32yTpQFuaEGhpKGrUgyy4Bt6XiKgsBpg5C4bWtNZeR
+	 Ov8HMzBlVCtbAN35nYabh2aySPRIORJuXxVdlClEHNhGUHswD8+cTv07d6D986v2ug
+	 +C5DFKMM79Y5BxlNXzx2wYZ8gCnIBjHYJ6pEgl+GAUEEhxXLyaBKp+6JNaG2VWmpMs
+	 kWhWkAVTbLK9Wl936MaI/ibZsZrSOO8uytpYXl7RXUjEdUrzEAejYMaJi45OeWhB3d
+	 eJsCr+cl/zD9Q==
+Date: Sun, 02 Mar 2025 02:40:16 +0000
+To: "brauner@kernel.org" <brauner@kernel.org>
+From: Mike Yuan <me@yhndnzj.com>
+Cc: "oleg@redhat.com" <oleg@redhat.com>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "jlayton@kernel.org" <jlayton@kernel.org>, "lennart@poettering.net" <lennart@poettering.net>, "daan.j.demeyer@gmail.com" <daan.j.demeyer@gmail.com>
+Subject: Re: [PATCH RFC 06/10] pidfs: allow to retrieve exit information
+Message-ID: <PigydyZoBgz1RFKczs1bdoqAZ_78rpjO1GBZLInZupvPRSLnqu3T9HxUdOrskXFBKCf3tXaIO9f9t2n13Pxf8Nu9Gq8JEl1WaxFwgJpdQb4=@yhndnzj.com>
+In-Reply-To: <20250228-work-pidfs-kill_on_last_close-v1-6-5bd7e6bb428e@kernel.org>
+References: <20250228-work-pidfs-kill_on_last_close-v1-0-5bd7e6bb428e@kernel.org> <20250228-work-pidfs-kill_on_last_close-v1-6-5bd7e6bb428e@kernel.org>
+Feedback-ID: 102487535:user:proton
+X-Pm-Message-ID: 60cbb5f67683811d9852a301870625612b057ab0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227180813.1553404-9-john.g.garry@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+On 2/28/25 13:44, Christian Brauner <brauner@kernel.org> wrote:
 
-kernel test robot noticed the following build warnings:
+>  Some tools like systemd's jounral need to retrieve the exit and cgroup
+>  information after a process has already been reaped. This can e.g.,
+>  happen when retrieving a pidfd via SCM_PIDFD or SCM_PEERPIDFD.
+> =20
+>  Signed-off-by: Christian Brauner <brauner@kernel.org>
+>  ---
+>   fs/pidfs.c                 | 70 +++++++++++++++++++++++++++++++++++++--=
+-------
+>   include/uapi/linux/pidfd.h |  3 +-
+>   2 files changed, 59 insertions(+), 14 deletions(-)
+> =20
+>  diff --git a/fs/pidfs.c b/fs/pidfs.c
+>  index 433f676c066c..e500bc4c5af2 100644
+>  --- a/fs/pidfs.c
+>  +++ b/fs/pidfs.c
+>  @@ -32,11 +32,12 @@ static struct kmem_cache *pidfs_cachep __ro_after_in=
+it;
+>    */
+>   struct pidfs_exit_info {
+>   =09__u64 cgroupid;
+>  -=09__u64 exit_code;
+>  +=09__s32 exit_code;
+>   };
+> =20
+>   struct pidfs_inode {
+>  -=09struct pidfs_exit_info exit_info;
+>  +=09struct pidfs_exit_info __pei;
+>  +=09struct pidfs_exit_info *exit_info;
+>   =09struct inode vfs_inode;
+>   };
+> =20
+>  @@ -228,11 +229,14 @@ static __poll_t pidfd_poll(struct file *file, stru=
+ct poll_table_struct *pts)
+>   =09return poll_flags;
+>   }
+> =20
+>  -static long pidfd_info(struct task_struct *task, unsigned int cmd, unsi=
+gned long arg)
+>  +static long pidfd_info(struct file *file, struct task_struct *task,
+>  +=09=09       unsigned int cmd, unsigned long arg)
+>   {
+>   =09struct pidfd_info __user *uinfo =3D (struct pidfd_info __user *)arg;
+>   =09size_t usize =3D _IOC_SIZE(cmd);
+>   =09struct pidfd_info kinfo =3D {};
+>  +=09struct pidfs_exit_info *exit_info;
+>  +=09struct inode *inode =3D file_inode(file);
+>   =09struct user_namespace *user_ns;
+>   =09const struct cred *c;
+>   =09__u64 mask;
+>  @@ -248,6 +252,39 @@ static long pidfd_info(struct task_struct *task, un=
+signed int cmd, unsigned long
+>   =09if (copy_from_user(&mask, &uinfo->mask, sizeof(mask)))
+>   =09=09return -EFAULT;
+> =20
+>  +=09exit_info =3D READ_ONCE(pidfs_i(inode)->exit_info);
+>  +=09if (exit_info) {
+>  +=09=09/*
+>  +=09=09 * TODO: Oleg, I didn't see a reason for putting
+>  +=09=09 * retrieval of the exit status of a task behind some
+>  +=09=09 * form of permission check. Maybe there's some
+>  +=09=09 * potential concerns with seeing the exit status of a
+>  +=09=09 * SIGKILLed suid binary or something but even then I'm
+>  +=09=09 * not sure that's a problem.
+>  +=09=09 *
+>  +=09=09 * If we want this we could put this behind some *uid
+>  +=09=09 * check similar to what ptrace access does by recording
+>  +=09=09 * parts of the creds we'd need for checking this. But
+>  +=09=09 * only if we really need it.
+>  +=09=09 */
+>  +=09=09kinfo.exit_code =3D exit_info->exit_code;
+>  +#ifdef CONFIG_CGROUPS
+>  +=09=09kinfo.cgroupid =3D exit_info->cgroupid;
+>  +=09=09kinfo.mask |=3D PIDFD_INFO_EXIT | PIDFD_INFO_CGROUPID;
+>  +#endif
+>  +=09}
+>  +
+>  +=09/*
+>  +=09 * If the task has already been reaped only exit information
+>  +=09 * can be provided. It's entirely possible that the task has
+>  +=09 * already been reaped but we managed to grab a reference to it
+>  +=09 * before that. So a full set of information about @task doesn't
+>  +=09 * mean it hasn't been waited upon. Similarly, a full set of
+>  +=09 * information doesn't mean that the task hasn't already exited.
+>  +=09 */
+>  +=09if (!task)
+>  +=09=09goto copy_out;
+>  +
+>   =09c =3D get_task_cred(task);
+>   =09if (!c)
+>   =09=09return -ESRCH;
+>  @@ -267,11 +304,13 @@ static long pidfd_info(struct task_struct *task, u=
+nsigned int cmd, unsigned long
+>   =09put_cred(c);
+> =20
+>   #ifdef CONFIG_CGROUPS
+>  -=09rcu_read_lock();
+>  -=09cgrp =3D task_dfl_cgroup(task);
+>  -=09kinfo.cgroupid =3D cgroup_id(cgrp);
+>  -=09kinfo.mask |=3D PIDFD_INFO_CGROUPID;
+>  -=09rcu_read_unlock();
+>  +=09if (!kinfo.cgroupid) {
+>  +=09=09rcu_read_lock();
+>  +=09=09cgrp =3D task_dfl_cgroup(task);
+>  +=09=09kinfo.cgroupid =3D cgroup_id(cgrp);
+>  +=09=09kinfo.mask |=3D PIDFD_INFO_CGROUPID;
+>  +=09=09rcu_read_unlock();
+>  +=09}
+>   #endif
+> =20
+>   =09/*
+>  @@ -291,6 +330,7 @@ static long pidfd_info(struct task_struct *task, uns=
+igned int cmd, unsigned long
+>   =09if (kinfo.pid =3D=3D 0 || kinfo.tgid =3D=3D 0 || (kinfo.ppid =3D=3D =
+0 && kinfo.pid !=3D 1))
+>   =09=09return -ESRCH;
+> =20
+>  +copy_out:
+>   =09/*
+>   =09 * If userspace and the kernel have the same struct size it can just
+>   =09 * be copied. If userspace provides an older struct, only the bits t=
+hat
+>  @@ -341,12 +381,13 @@ static long pidfd_ioctl(struct file *file, unsigne=
+d int cmd, unsigned long arg)
+>   =09}
+> =20
+>   =09task =3D get_pid_task(pid, PIDTYPE_PID);
+>  -=09if (!task)
+>  -=09=09return -ESRCH;
 
-[auto build test WARNING on xfs-linux/for-next]
-[also build test WARNING on tytso-ext4/dev linus/master v6.14-rc4]
-[cannot apply to brauner-vfs/vfs.all next-20250228]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Hmm, this breaks our current assumption/assertion on the API in systemd (se=
+e pidfd_get_pid_ioctl() in basic/pidfd-util.c).
+Moreover, it now imposes an inconsistency: if the pidfd refers to a process=
+ from foreign pidns, the current impl treats it as if the process didn't ex=
+ist, and returns -ESRCH. Now a truly exited task deviates from that...
 
-url:    https://github.com/intel-lab-lkp/linux/commits/John-Garry/xfs-Pass-flags-to-xfs_reflink_allocate_cow/20250228-021818
-base:   https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git for-next
-patch link:    https://lore.kernel.org/r/20250227180813.1553404-9-john.g.garry%40oracle.com
-patch subject: [PATCH v3 08/12] xfs: Iomap SW-based atomic write support
-config: hexagon-randconfig-001-20250302 (https://download.01.org/0day-ci/archive/20250302/202503020355.fr9QWxQJ-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 14170b16028c087ca154878f5ed93d3089a965c6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250302/202503020355.fr9QWxQJ-lkp@intel.com/reproduce)
+I'd prefer to retain the current behavior of returning -ESRCH unless PIDFD_=
+INFO_EXIT is specified in mask, in which case it's then guaranteed that -ES=
+RCH would never be seen. IOW the caller should be explicit on what they wan=
+t, which feels semantically more reasonable to me and probably even simpler=
+?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503020355.fr9QWxQJ-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> fs/xfs/xfs_iomap.c:1029:8: warning: variable 'iomap_flags' set but not used [-Wunused-but-set-variable]
-    1029 |         u16                     iomap_flags = 0;
-         |                                 ^
-   1 warning generated.
-
-
-vim +/iomap_flags +1029 fs/xfs/xfs_iomap.c
-
-  1011	
-  1012	static int
-  1013	xfs_atomic_write_sw_iomap_begin(
-  1014		struct inode		*inode,
-  1015		loff_t			offset,
-  1016		loff_t			length,
-  1017		unsigned		flags,
-  1018		struct iomap		*iomap,
-  1019		struct iomap		*srcmap)
-  1020	{
-  1021		struct xfs_inode	*ip = XFS_I(inode);
-  1022		struct xfs_mount	*mp = ip->i_mount;
-  1023		struct xfs_bmbt_irec	imap, cmap;
-  1024		xfs_fileoff_t		offset_fsb = XFS_B_TO_FSBT(mp, offset);
-  1025		xfs_fileoff_t		end_fsb = xfs_iomap_end_fsb(mp, offset, length);
-  1026		int			nimaps = 1, error;
-  1027		unsigned int		reflink_flags;
-  1028		bool			shared = false;
-> 1029		u16			iomap_flags = 0;
-  1030		unsigned int		lockmode = XFS_ILOCK_EXCL;
-  1031		u64			seq;
-  1032	
-  1033		if (xfs_is_shutdown(mp))
-  1034			return -EIO;
-  1035	
-  1036		reflink_flags = XFS_REFLINK_CONVERT | XFS_REFLINK_ATOMIC_SW;
-  1037	
-  1038		/*
-  1039		 * Set IOMAP_F_DIRTY similar to xfs_atomic_write_iomap_begin()
-  1040		 */
-  1041		if (offset + length > i_size_read(inode))
-  1042			iomap_flags |= IOMAP_F_DIRTY;
-  1043	
-  1044		error = xfs_ilock_for_iomap(ip, flags, &lockmode);
-  1045		if (error)
-  1046			return error;
-  1047	
-  1048		error = xfs_bmapi_read(ip, offset_fsb, end_fsb - offset_fsb, &imap,
-  1049				&nimaps, 0);
-  1050		if (error)
-  1051			goto out_unlock;
-  1052	
-  1053		error = xfs_reflink_allocate_cow(ip, &imap, &cmap, &shared,
-  1054				&lockmode, reflink_flags);
-  1055		/*
-  1056		 * Don't check @shared. For atomic writes, we should error when
-  1057		 * we don't get a COW mapping
-  1058		 */
-  1059		if (error)
-  1060			goto out_unlock;
-  1061	
-  1062		end_fsb = imap.br_startoff + imap.br_blockcount;
-  1063	
-  1064		length = XFS_FSB_TO_B(mp, cmap.br_startoff + cmap.br_blockcount);
-  1065		trace_xfs_iomap_found(ip, offset, length - offset, XFS_COW_FORK, &cmap);
-  1066		if (imap.br_startblock != HOLESTARTBLOCK) {
-  1067			seq = xfs_iomap_inode_sequence(ip, 0);
-  1068			error = xfs_bmbt_to_iomap(ip, srcmap, &imap, flags, 0, seq);
-  1069			if (error)
-  1070				goto out_unlock;
-  1071		}
-  1072		seq = xfs_iomap_inode_sequence(ip, IOMAP_F_SHARED);
-  1073		xfs_iunlock(ip, lockmode);
-  1074		return xfs_bmbt_to_iomap(ip, iomap, &cmap, flags, IOMAP_F_SHARED, seq);
-  1075	
-  1076	out_unlock:
-  1077		if (lockmode)
-  1078			xfs_iunlock(ip, lockmode);
-  1079		return error;
-  1080	}
-  1081	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> =20
+>   =09/* Extensible IOCTL that does not open namespace FDs, take a shortcu=
+t */
+>   =09if (_IOC_NR(cmd) =3D=3D _IOC_NR(PIDFD_GET_INFO))
+>  -=09=09return pidfd_info(task, cmd, arg);
+>  +=09=09return pidfd_info(file, task, cmd, arg);
+>  +
+>  +=09if (!task)
+>  +=09=09return -ESRCH;
+> =20
+>   =09if (arg)
+>   =09=09return -EINVAL;
+>  @@ -486,7 +527,7 @@ void pidfs_exit(struct task_struct *tsk)
+>   =09=09struct cgroup *cgrp;
+>   #endif
+>   =09=09inode =3D d_inode(dentry);
+>  -=09=09exit_info =3D &pidfs_i(inode)->exit_info;
+>  +=09=09exit_info =3D &pidfs_i(inode)->__pei;
+> =20
+>   =09=09/* TODO: Annoy Oleg to tell me how to do this correctly. */
+>   =09=09if (tsk->signal->flags & SIGNAL_GROUP_EXIT)
+>  @@ -501,6 +542,8 @@ void pidfs_exit(struct task_struct *tsk)
+>   =09=09rcu_read_unlock();
+>   #endif
+> =20
+>  +=09=09/* Ensure that PIDFD_GET_INFO sees either all or nothing. */
+>  +=09=09smp_store_release(&pidfs_i(inode)->exit_info, &pidfs_i(inode)->__=
+pei);
+>   =09=09dput(dentry);
+>   =09}
+>   }
+>  @@ -568,7 +611,8 @@ static struct inode *pidfs_alloc_inode(struct super_=
+block *sb)
+>   =09if (!pi)
+>   =09=09return NULL;
+> =20
+>  -=09memset(&pi->exit_info, 0, sizeof(pi->exit_info));
+>  +=09memset(&pi->__pei, 0, sizeof(pi->__pei));
+>  +=09pi->exit_info =3D NULL;
+> =20
+>   =09return &pi->vfs_inode;
+>   }
+>  diff --git a/include/uapi/linux/pidfd.h b/include/uapi/linux/pidfd.h
+>  index e0abd0b18841..e5966f1a7743 100644
+>  --- a/include/uapi/linux/pidfd.h
+>  +++ b/include/uapi/linux/pidfd.h
+>  @@ -20,6 +20,7 @@
+>   #define PIDFD_INFO_PID=09=09=09(1UL << 0) /* Always returned, even if n=
+ot requested */
+>   #define PIDFD_INFO_CREDS=09=09(1UL << 1) /* Always returned, even if no=
+t requested */
+>   #define PIDFD_INFO_CGROUPID=09=09(1UL << 2) /* Always returned if avail=
+able, even if not requested */
+>  +#define PIDFD_INFO_EXIT=09=09=09(1UL << 3) /* Always returned if availa=
+ble, even if not requested */
+> =20
+>   #define PIDFD_INFO_SIZE_VER0=09=0964 /* sizeof first published struct *=
+/
+> =20
+>  @@ -86,7 +87,7 @@ struct pidfd_info {
+>   =09__u32 sgid;
+>   =09__u32 fsuid;
+>   =09__u32 fsgid;
+>  -=09__u32 spare0[1];
+>  +=09__s32 exit_code;
+>   };
+> =20
+>   #define PIDFS_IOCTL_MAGIC 0xFF
+> =20
+>  --
+>  2.47.2
+> =20
+>  
 
