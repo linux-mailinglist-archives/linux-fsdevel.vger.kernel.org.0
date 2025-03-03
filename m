@@ -1,121 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-43009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B7EA4CEA5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 23:44:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E874CA4CF08
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 00:04:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EFCB16FB61
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 22:44:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 430C0189299E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 23:04:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F4623816E;
-	Mon,  3 Mar 2025 22:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B01D2356DD;
+	Mon,  3 Mar 2025 23:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="abkEn8sp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WWAefU4H"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1E5217F29
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Mar 2025 22:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D241EEA2A;
+	Mon,  3 Mar 2025 23:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741041840; cv=none; b=cMJ9vE7rztSicyKZgbZ9OADhkGJikSLLI7CqmfliMZT49gj81MS9IXVa3AwWo4/2rSHT2yMwEr5yQgk8KEFMchumF3EXmSRLDknjYZYHtFBe5RAhZ++8eqhf1DOY9jfJyP6sMAhXABXwhOV/KxFBZwT4OGSYm7s4PyPcAHQe0Fw=
+	t=1741043067; cv=none; b=XOdueCCgFVacnN4rzVHclYZRm9QHwpo3ahvXKyV0AQtKQWA/Okj3NPCRQ2l/AE3VoPGMwZ7mycrXbjDK4LCjThX+S62o+BSzyUtcyJW7MSRxNt3hTxg+VN6eh6DxC46AXplq0o4GMfv7e01yygWjLdkZz+JOxInoFLjP+1T9b5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741041840; c=relaxed/simple;
-	bh=cl1dM8kVDtiWOD8XJq+j2ArSIn//Ln/QcLEBW9sGHYA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a8TtnTXKWznPgwG08jCVoTk2v5mEnkZeLtUJPpLoP76r3V66mr0Ec8sln9uinMp8XM+/SJNMclWkWQyNDPF3Vbs7ifFoUVoQoEli/hsB2eViksUi70Dck9b+dwZaeQAXOOQyIexMtvWN3F/F5gAw0VPiVXGc2zYRMX8Ws5PuxyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=abkEn8sp; arc=none smtp.client-ip=209.85.160.182
+	s=arc-20240116; t=1741043067; c=relaxed/simple;
+	bh=1dga3ZyGa56Srd27YrzgJM4YBMG+svOtEN9xbmvulUM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TzCz50quY2Vd4HQzbiaggnjz4Yr0qu69N/dWstx2EXqsjhZQxyaOl1WSUiu8z4or9TnJ1ZnBtiu4RHng8YlX5MEK3IVBUDirp8aBMYmxX+aD/BEWIRIEbGX2laR+lR/HjlsusjIgU1aLbRQmibSfZXZZRm9bHaBw3MwfAie1Lj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WWAefU4H; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-47201625705so58096121cf.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Mar 2025 14:43:59 -0800 (PST)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4399ee18a57so31498985e9.1;
+        Mon, 03 Mar 2025 15:04:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741041838; x=1741646638; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cl1dM8kVDtiWOD8XJq+j2ArSIn//Ln/QcLEBW9sGHYA=;
-        b=abkEn8spamvGfr8nG/CvEO6hwdTpICrFfoMV0Gzkgu1Nmm2Zf0kTCkUaHzcgzWWBdY
-         6AXwjlVsNNzXNshy5EboYVWO+fdfC7gpkGDqsn4/TOsh/wmT9qmm9IPc6aL550kF5SpG
-         g/kiLs8WhROK4SEgkgoMZSbPN71wQs2Rt4JkwAZEUqNQt460JKwCKyt4mgZ3PN9b2lN3
-         CgOkl0TZavadvQjoSSmz7FuIiYbmBql3ZGnUQuh4GjzqyoRei/1WQgFw9xc+Lfqub6L4
-         CxJ9JOrr38VvFx/mE64meTAsjEHOc58QbpNY/r7HRk8h5gtM8++vmzCKSuAVlCv8WiXV
-         UCWA==
+        d=gmail.com; s=20230601; t=1741043064; x=1741647864; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sPrC46dARN0LjaxKxSWkkaHdPArQam0Dkp/wu01ntBs=;
+        b=WWAefU4HxUUndEwiNbpaT2jiZF+jY/j+hcn3uUbflte/eRQPmI5/ZV5FHIs2pr0iH1
+         6aF4iM2HHydvT0Bz2VNbWdR8jIEKbT4wdzh99FTIRmfQZJK+BSsPMwuBd+EJRa/9mQLI
+         Q7VnC6tSyFJFp5NUUWtGwyI7ha5GmGXRmnq/iUYX5mtM60Reoyc5PxFNZ+4xL2VuhelT
+         W7lqIZcrj3w3i+AVzRU0rWq5vUfpadGexyklfJE1mMBaWyJ+T2Vf8l0KRdgmSQdf5dnG
+         mdhkkcDEb3lyFMDc/a65by8dcYGVQGUtGr5wEC9EN4sK0LA9cp2VtLXRNcczcnsD9bKk
+         y/fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741041838; x=1741646638;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cl1dM8kVDtiWOD8XJq+j2ArSIn//Ln/QcLEBW9sGHYA=;
-        b=jS+xdKYijbwGssgeH4JSej6eD07jffc2Rquex4ECB8y7ZS7zCTQI55ZPPXxgb5eBPf
-         XFXmGQbGrtkAnFJbp0gesGE2BCTkKPyoz4d+DU4BLsCzF5lsXbroTStSmrcQvSVof0RK
-         I6h18Tlxp6U185Y+5vPk254RX6L8T+akvPD8bhSH0Wv0ji9RWF+jASQp/wPbLKImG6ih
-         0aQgqzzYQJ7gjV30l+7dM9bJzwtX0D0bRVvl/uSWac8SSfZ2dL0NKadv6DucxRyVPsuU
-         nAD4Y4WSESeGzFJrFetoV7Z5etNObYu1UfN8KjJrj5P7RBFNSkYTpjVDvonlASAUzNXV
-         72Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCXoNvXp2gN8ml3wZQiWj5ms7rWR7G7Czzf9ywuvtJXgdp5ojWgXBhy3wXseLRL1L11f6XKAI+MoTR0Zs0e8@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKr3u7W0B2P1vFgdExOJHq4KehOvvdfZmyOQQiCRtH3tFqXEeT
-	wsKftIGGcDreVH01fw3BQnFngvmekI9C9LQFbyRvJd06j6vJDgDbdip7+3LTWhfN33RAA+MXO3H
-	dWM4KMmOtftoI15p8YNZ1wYLd/+4=
-X-Gm-Gg: ASbGncv0FjnEYbkW+ug1Rz/mp6Nh+TXOVsTYH0+JCGTTR3eQ3RIlfLcvY5bG92w4PXB
-	nrXhgfNHPLmvmyrLnJnIMf/QjglZ+4a6VxLHZVHGUiy1N4TbY1SnD4VrULNz1ZZ+Rtu/BDgSAdj
-	as6X+mMDDQVlQLZi4aJF5/nu6wSJE=
-X-Google-Smtp-Source: AGHT+IFrjDNbdoj9UBQDR95rV/iIFxTQ42imdcTYOv7lPCfYwIjHEoTbsGD/zzp1JpullP1m6EIBmCJM5n3dQicTEV4=
-X-Received: by 2002:a05:622a:24f:b0:474:fa6b:c402 with SMTP id
- d75a77b69052e-474fbd3debemr15189051cf.18.1741041838177; Mon, 03 Mar 2025
- 14:43:58 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741043064; x=1741647864;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sPrC46dARN0LjaxKxSWkkaHdPArQam0Dkp/wu01ntBs=;
+        b=O6oq2vjlz9h5LxhrrMFElTeqUwqZW7bDSjxlk0/uDnuWKrKq9J6vmgbBhN+3EOGQum
+         DKEaHr1KRTDyXGi7tW4h+A4Ze2jFptL5mkQdlqnpe1YeYxHeSmC56IP00FCcCduO/CEu
+         aoHBA6KSDPbbZ57UCiouHbzVOFQUctkRxaxINHWr1sZIWZ1gFuBUTSsCHKjB+CmEk72u
+         scyva41gmPlg+tItJsKiA8AY1fxkKz0bMjTbAoGUJ3/pDfXOUMjd6guUoiCrwuoxv7Jc
+         Vlyz5ea6gHeuT/4jlo53PZejLE9n816AeAWes/gdA1z4SqndkTpHdcfZAa1Dfi6Jo/FU
+         0TYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUiRHInI4gzax0byXNHUEWOpO3tAaoCSZEX0rvEv2S/jnrc4mWUNQOLVd/G4RJNVyYxCLPOo4obWt1YCDD3@vger.kernel.org, AJvYcCXimrRYyf4P+JI9XHtQ2aSPwRSQLVuugEdyWkn29NF2+c9UCHylgsedco8FsYZ0bDMKurj2vLmppA33N3Pt@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI7Cfu6WDy34jizTwOXGmyMoEHG5YRv+wY7ExTpMp5jVrhj71M
+	TA+r2OIn6sQaZLU0ysVry7lWo5PMzUmtkYNmJIXgFLMc25ai6cx4
+X-Gm-Gg: ASbGncuFH7ZoYH/rMkEBEQZlLmli0JrWQvYkDjesGPClhsjJIyXgEMWjWvjzQOa8jPA
+	4I2yewDqLNTYQlHeDHj6NWdzfm9JsgHeF15Ud42KBcXwmwxOd+3i8v1NSOkEqPB89XtrDWjxBcc
+	v9paxVIBUEj7Pr3fhXnhCWhJQpx3cI/44RXnxDL1+TuvVXowKHhLStGLKSb7gaTkVnjvdGwIXMy
+	zwPykobjAPdgF/A/PZwlbNwdi3gzjqBIBpOSkz5L/JsCtHH6KHTsJmViCYJro4jBExUvusj2NY9
+	sP2M4cqrzEhKRH1yL9lfIanhPLLiqDh4bLgXBFMiwfxcDJJYHRd9e49xz5Eu
+X-Google-Smtp-Source: AGHT+IGOBC6hxzmLOdi3PDf1ZBbud9og/t0k9D2kRRsbPqkFlx3ttchAE9Qq0/Z35uubnFaAHwXeMA==
+X-Received: by 2002:a05:600c:5252:b0:439:5f04:4f8d with SMTP id 5b1f17b1804b1-43bcb03c512mr7222235e9.12.1741043063825;
+        Mon, 03 Mar 2025 15:04:23 -0800 (PST)
+Received: from f.. (cst-prg-71-44.cust.vodafone.cz. [46.135.71.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bc57529fasm37679255e9.31.2025.03.03.15.04.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 15:04:22 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: torvalds@linux-foundation.org
+Cc: oleg@redhat.com,
+	brauner@kernel.org,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	rostedt@goodmis.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH 0/3] some pipe + wait stuff
+Date: Tue,  4 Mar 2025 00:04:06 +0100
+Message-ID: <20250303230409.452687-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250122215528.1270478-1-joannelkoong@gmail.com>
- <4hwzfe4b377vabaiu342u44ryigkkyhka3nr2kuvfsbozxcrpt@li62aw6jkp7s>
- <CAJnrk1YnKH2Dh2eSHXd7G64h++Z0PnHW0GFb=C60qN8N1=k+aQ@mail.gmail.com> <CAJfpegsKpHgyKMMjuzm=sQ0sAj+Fg1ZLvvqMTuVWWVvKEOXiFQ@mail.gmail.com>
-In-Reply-To: <CAJfpegsKpHgyKMMjuzm=sQ0sAj+Fg1ZLvvqMTuVWWVvKEOXiFQ@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 3 Mar 2025 14:43:47 -0800
-X-Gm-Features: AQ5f1JqIFhS6c0vuV2fj6f-4uOmzqUa4QE_0OAnovt9vvJXiKeTUHqHqs14WHn4
-Message-ID: <CAJnrk1YoA2QcuxvTdW=2P3ZRHGhWOYMOfXC=+i5fOY-71mBO6g@mail.gmail.com>
-Subject: Re: [PATCH v12 0/2] fuse: add kernel-enforced request timeout option
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, linux-fsdevel@vger.kernel.org, 
-	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, laoar.shao@gmail.com, 
-	jlayton@kernel.org, tfiga@chromium.org, bgeffon@google.com, 
-	etmartin4313@gmail.com, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 3, 2025 at 3:39=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu> w=
-rote:
->
-> On Tue, 25 Feb 2025 at 18:35, Joanne Koong <joannelkoong@gmail.com> wrote=
-:
->
-> > but I no longer see these commits in his tree anymore.
-> >
-> > Miklos, why were these patches taken out?
->
-> Sorry, forgot to re-apply with the io-uring interaction fixed.
->
-> Done now.
+As a side effect of looking at the pipe hang I came up with 3 changes to
+consider for -next.
 
-Hi Miklos,
+The first one is a trivial clean up which I wont mind if it merely gets
+folded into someone else's change for pipes.
 
-Will the 2nd patch ("fuse: add default_request_timeout and
-max_request_timeout sysctls") also be re-applied? I'm only seeing the
-1st patch (" fuse: add kernel-enforced timeout option for requests")
-in the for-next tree right now.
+The second one reduces page alloc/free calls for the backing area (60%
+less during a kernel build in my testing). I already posted this, but
+the cc list was not proper.
 
-Thanks,
-Joanne
+The last one concerns the wait/wakeup mechanism and drops one lock trip
+in the common case after waking up. That too was posted some days ago,
+but nobody was biting. Perhaps you will be interested (but again, maybe
+I got the wrong people from get_maintainer.pl).
 
->
-> Thanks,
-> Miklos
+Mateusz Guzik (3):
+  pipe: drop an always true check in anon_pipe_write()
+  pipe: cache 2 pages instead of 1
+  wait: avoid spurious calls to prepare_to_wait_event() in
+    ___wait_event()
+
+ fs/pipe.c                 | 63 +++++++++++++++++++++++++--------------
+ include/linux/pipe_fs_i.h |  2 +-
+ include/linux/wait.h      |  3 ++
+ 3 files changed, 45 insertions(+), 23 deletions(-)
+
+-- 
+2.43.0
+
 
