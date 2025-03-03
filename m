@@ -1,77 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-43012-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E9DA4CF0B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 00:05:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 564D5A4CF0D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 00:05:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5D32189282B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 23:05:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0FC53AB6E6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 23:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCBF23C8C7;
-	Mon,  3 Mar 2025 23:04:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB2223E23C;
+	Mon,  3 Mar 2025 23:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fFBRbagu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ABBAO9bT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1082423C8B5;
-	Mon,  3 Mar 2025 23:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB39123C8D4;
+	Mon,  3 Mar 2025 23:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741043073; cv=none; b=RBfbc9vx3/9dlER+iqb+GshPf6htaY5WW+4t+OcOcGgiHy3HhFhNplZ5b6Pkj0wovxV6nElQeq/8siB5OpLndBIy3phJSwmqm6+6pqP806MeT05PBzUIVcYhzg3g3eFUwGGMVXBnAx2/FMmOp7KHZ995lsiNcE0zFpYFcslR2kU=
+	t=1741043076; cv=none; b=C+Qo1REO5xI9GIwCzraNKeGJwnQGzbcsEoPixgtMlqJuSWsVPUnPaPGfnXsdx58ruOBU3x7zBbC0lv5BU9YdTQ3MYqJmezdulfMbM404QZrzDQvYTfFtdy9X4hOrAHKVdp89CljdSMxokakvk9LCU3KPnSTKmJ1u0E/uDtY/qOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741043073; c=relaxed/simple;
-	bh=QOzhI2b6ctkjNKifd+G7Xj7Wz464uYGuCUhIT6YriC4=;
+	s=arc-20240116; t=1741043076; c=relaxed/simple;
+	bh=+k7c1OL2y3P9gA3cCz8Ikn8HZr5bgnLQ7OHuC/VOVEw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eFSMT1oCeq1mr7z6YCb2y8tvlgwrgzJEzhf2a0hnUZSKGDSKZfJ3w2o98lUxlORUxA5Q8mMNuMJuKE9cN06hwKAYnVzUh0gGHydLMdfUCg+vaxpngNsq2sDROMdauGxH+ZCvrPmFWPAcjbVciHZ8eQK7nKguZKCNwsfZmPa14bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fFBRbagu; arc=none smtp.client-ip=209.85.128.41
+	 MIME-Version; b=SNBCGterLZXkNDC/+APqhhdu1v8EiV5lWBMJLeSDTgMJtjukE7GeGszUiBXByV2PKmR3B769VMoxLh9tIN6PttWtg3h2C+yzj1Uxzwro3qGR1ucPCuCrUGQJ1LLJPXQY715pfArhbQQghjzVxX74aHs8vE4FbgwB+mU9R8dyHC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ABBAO9bT; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43996e95114so34172045e9.3;
-        Mon, 03 Mar 2025 15:04:31 -0800 (PST)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4394036c0efso32127365e9.2;
+        Mon, 03 Mar 2025 15:04:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741043070; x=1741647870; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741043073; x=1741647873; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2F/qQHvwhGWsalkeXNzBKPitDr0lKPU47I7B3LbQaPw=;
-        b=fFBRbaguDVHqC8M9r31pnYVjqy4my6B0NLAZ0HMbCJwcZv82Dm/bBJ7JUvmo2veTA2
-         aVBEHaAyHSbYBJUqVXNjGPaID4L95LXOzGyd1VxyXBeK1ByCEXe4VQOliLFEFpbEOOuI
-         wRZ8RCZOFOWV6WtJX6C6aS1p/TGNigRczBDRKH1J4ITv/RcKwB+1g2H7y+rspYACxOOh
-         depSdCoHyvvcPuu713CStRe3t7yOOaIYx7jatU45IRT7aaylUzazx0v6qOkk3lo1gcM/
-         6iKV8mBMPBOG1E2sgpli9ypN0zXJBkrArrYIZTWOvQW4q+jywdbhgh6Unk3WEUnnD0hf
-         DGqg==
+        bh=YWqmfQVrYo21Wc2s9mCGBxeqvQkF9gz0ryHa7/Ih4L0=;
+        b=ABBAO9bTLXiimUwqGhzWarVTqwi/WgfaYlKjI3Vsi7Tf2olDaG6c3lDavhcvqqoUoy
+         uMDjS1lBNvNtDFRWSP+e2nuet9OZlBUw1flgR0twmrM/i580CLrLWEVhh3pHrU4E3Zin
+         vP5s2sJZpRLdizwfDtZJy/S91DfwvST1FlPyaWRMbPphiGmgQLKKsJNMZqJl0IGlMb3Z
+         AImJt2EcaVX2L5RnJ6Ne+GTdM3HHxtPS8yMTWwfHRfRGIc4JKEJCgUp3Ce60ZQv0v2cZ
+         6qvlNDgCEuDpgd2ShmGlMSsx/h5/mGpMdjHZKOuibYtGf4TSmfow9HOfzvRz8NCEojlM
+         vKOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741043070; x=1741647870;
+        d=1e100.net; s=20230601; t=1741043073; x=1741647873;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2F/qQHvwhGWsalkeXNzBKPitDr0lKPU47I7B3LbQaPw=;
-        b=EtgVr6DoH1zpacLDwEFWj8m6hLEEnpXQEVr5vl0wrcpI/mpvQZicR6oY6Dh7Wmrmz2
-         biiWqJhGmwZQ9TqvCF+gpfTPdYS2DQcj9nfo/98xL0W8foJVwL3PgqaGfm5a2BlaI+Yc
-         +LmXCIuiHiGSheCearrqjCq2ZMatbBYZk56vKca/5gtLNcPY/VaOcXLjZjPL0qGl5sUi
-         ZnoR8OBolTunvJB39QNmlkpBB/jR0O2WPDK1GnkEM55dN6OnBJU7Cm+4E4/KATM4/ehR
-         ODLTsQiaa4cJ8rWSTDqNBuNJxO2h6a4vauMf4pZVqzrhiRlQFInXSnmXnUJmIuAKgGNK
-         qHqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUeVqqRXgfOvKcG/xEflBB8ZwAxCB3tnYMqJw2VQQBbYVRHv9MZXKq69yPqNDWTVB6lU0TLL8ma42lZzr4A@vger.kernel.org, AJvYcCX54XjQXpC072UGP0Shlkti6GDd7MlfMk8IW5cMQOPaZkGzCL7Vc0YrPYuLIzAbJjoWsfggw4OGaIrzRPeO@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAeDivFTKgsdNLQxwNL6fzHQfxce37ZeB6NJhG5lAJcwThmOxu
-	89QoZW/8RZYxtylqKwRY7cGBU8kpSsjS0u7cQXttWCo5NjRmPr7a
-X-Gm-Gg: ASbGnct8Q/uKxD9X5IeVkjK87avT7LGe8uXC/l9yOHO1686ziMfFMTK3wM3n2Relc0x
-	ZGtta/aYcFKtgbDPGMG/LomDmty83Kab/yDvVjXgIfdBBAcwpPE5CE3xc7MqwRYHnzy6t8BgxsF
-	X4A5AyMj+0K8Pud00q2ObVgACvnQxugBx6wPNdoGzno16X4aBHmi6f0SR8JZxHB19g87FH3DBqj
-	DHJ1+WObwI6sx0GPQ42KjRs45QDeJmbU2nNxM5OI6H2iVDHg9LJYpqTUMtkx9dGyaYV0dfCYA5/
-	m5Wp97eXoBe35BXuNpz4o5o2Y9iRvIFpA5b9Z0KaobGH+I1F7BrJ8j69nsgQ
-X-Google-Smtp-Source: AGHT+IG7w2Xeex5WgCFf5PvhDfd2xd6ae3PCC2vkZQaUZkOO6mM1HJ32jp4rud1z8WkIoCSIdH+ihg==
-X-Received: by 2002:a05:600c:1c25:b0:439:5a37:8157 with SMTP id 5b1f17b1804b1-43ba6774a03mr136746665e9.30.1741043070208;
-        Mon, 03 Mar 2025 15:04:30 -0800 (PST)
+        bh=YWqmfQVrYo21Wc2s9mCGBxeqvQkF9gz0ryHa7/Ih4L0=;
+        b=EYc9blF7+IlRtMz94z4FeApd/wlrYUicy+fFWVtJ6s/kfbCOEoBheH2PZaWy6foozx
+         k0aCeVDdtVT7ouQcf4FsSzn1bIMX9geyrbMpHkyDOYMDvBzJZx/dTj2KmORLZm0vltFD
+         l648G+1icIAjI9xUE48Q+JHuCR3ZrDk6PHA4olLh+FH9tOvW5bUEtLomMNNpK1VkdStd
+         yD/38vXZAyo4V/+iovXFowfSK9xmiX2rD/zPEKEmVhfcxY58eBD7kLkebpXbZI+XU3DW
+         fe53jlJxqJbqcRnMaYA3SfsKnPHz8EtSUYELuxCFaj2ImUxWAObCNdtulFBV2AefXVzI
+         6HGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUAjFWcgBzsbQzHFjC2lmSChbjP/W4egj4UDOChR2auDkJgFT9Bek17Gxk88a/x5uIX6SumsNxOixbqVemB@vger.kernel.org, AJvYcCUsGzdgbSgjbzpEjpS8bxTWMVQbAV5VsBOVISot2bWtYv16S6cDUA0pVT9ivxfZBcZgeso/op23mN2HhL3L@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLIP3jf9UGCtFyCBGxV1LbIlL9/sv/RRlFlVWyWR2KBptQFrXn
+	J0+5paEK3Yaeop28TdjRrTMOWbjUAWYvhPgCMfwn1JI+a98j/mx8
+X-Gm-Gg: ASbGncsMnArdLDNMQKo4DRqxm0hLg3iY6y0+lJQliWkYx1c6z85tN+CzPSx92LAd4Mu
+	6fKz8OVvYuYekikra/y7NxxMhssz29bFOor3lMSmOSPPViyc1KXQPcyJLOI6zyt5olEek/GgBQb
+	LOPvN4RfOOjudlfKO6A4g61OoCI2dZLx+Vr+cfLltFapEe1wzuaKWJurgcjFeBp50vErm4/xbpC
+	w/ksoIfeYR42jKHpwo05gTrPTjFWQ2D1oka2F3Xor4CU1oaqhleK4wHtTpJimbmPSFyJNrV0dcD
+	LWXOcbvSKrb9Xc671AzIHqIftubqrUxKCQyDEkXl4OP0RBu+mayIlHKixwmU
+X-Google-Smtp-Source: AGHT+IFPUSSQabR3lRr5osHSSuASrvSwn9HcZny0KkX3Vwfz3cvKINUYU1ME4WSxnwhA6KiSnzOubg==
+X-Received: by 2002:a05:600c:1e27:b0:439:9828:c422 with SMTP id 5b1f17b1804b1-43ba7493dd7mr122039365e9.18.1741043072844;
+        Mon, 03 Mar 2025 15:04:32 -0800 (PST)
 Received: from f.. (cst-prg-71-44.cust.vodafone.cz. [46.135.71.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bc57529fasm37679255e9.31.2025.03.03.15.04.26
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bc57529fasm37679255e9.31.2025.03.03.15.04.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 15:04:29 -0800 (PST)
+        Mon, 03 Mar 2025 15:04:31 -0800 (PST)
 From: Mateusz Guzik <mjguzik@gmail.com>
 To: torvalds@linux-foundation.org
 Cc: oleg@redhat.com,
@@ -82,9 +82,9 @@ Cc: oleg@redhat.com,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH 2/3] pipe: cache 2 pages instead of 1
-Date: Tue,  4 Mar 2025 00:04:08 +0100
-Message-ID: <20250303230409.452687-3-mjguzik@gmail.com>
+Subject: [PATCH 3/3] wait: avoid spurious calls to prepare_to_wait_event() in ___wait_event()
+Date: Tue,  4 Mar 2025 00:04:09 +0100
+Message-ID: <20250303230409.452687-4-mjguzik@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250303230409.452687-1-mjguzik@gmail.com>
 References: <20250303230409.452687-1-mjguzik@gmail.com>
@@ -96,133 +96,56 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-User data is kept in a circular buffer backed by pages allocated as
-needed. Only having space for one spare is still prone to having to
-resort to allocation / freeing.
+In vast majority of cases the condition determining whether the thread
+can proceed is true after the first wake up.
 
-In my testing this decreases page allocs by 60% during a kernel build.
+However, even in that case the thread ends up calling into
+prepare_to_wait_event() again, suffering a spurious irq + lock trip.
+
+Then it calls into finish_wait() to unlink itself.
+
+Note that in case of a pending signal the work done by
+prepare_to_wait_event() gets ignored even without the change.
+
+pre-check the condition after waking up instead.
+
+Stats gathared during a kernel build:
+bpftrace -e 'kprobe:prepare_to_wait_event,kprobe:finish_wait \
+		 { @[probe] = count(); }'
+
+@[kprobe:finish_wait]: 392483
+@[kprobe:prepare_to_wait_event]: 778690
+
+As in calls to prepare_to_wait_event() almost double calls to
+finish_wait(). This evens out with the patch.
 
 Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
- fs/pipe.c                 | 60 ++++++++++++++++++++++++++-------------
- include/linux/pipe_fs_i.h |  2 +-
- 2 files changed, 41 insertions(+), 21 deletions(-)
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index d5238f6e0f08..f5a316d4da95 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -112,20 +112,40 @@ void pipe_double_lock(struct pipe_inode_info *pipe1,
- 	pipe_lock(pipe2);
- }
- 
-+static struct page *anon_pipe_get_page(struct pipe_inode_info *pipe)
-+{
-+	for (int i = 0; i < ARRAY_SIZE(pipe->tmp_page); i++) {
-+		if (pipe->tmp_page[i]) {
-+			struct page *page = pipe->tmp_page[i];
-+			pipe->tmp_page[i] = NULL;
-+			return page;
-+		}
-+	}
-+
-+	return alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
-+}
-+
-+static void anon_pipe_put_page(struct pipe_inode_info *pipe,
-+			       struct page *page)
-+{
-+	if (page_count(page) == 1) {
-+		for (int i = 0; i < ARRAY_SIZE(pipe->tmp_page); i++) {
-+			if (!pipe->tmp_page[i]) {
-+				pipe->tmp_page[i] = page;
-+				return;
-+			}
-+		}
-+	}
-+
-+	put_page(page);
-+}
-+
- static void anon_pipe_buf_release(struct pipe_inode_info *pipe,
- 				  struct pipe_buffer *buf)
- {
- 	struct page *page = buf->page;
- 
--	/*
--	 * If nobody else uses this page, and we don't already have a
--	 * temporary page, let's keep track of it as a one-deep
--	 * allocation cache. (Otherwise just release our reference to it)
--	 */
--	if (page_count(page) == 1 && !pipe->tmp_page)
--		pipe->tmp_page = page;
--	else
--		put_page(page);
-+	anon_pipe_put_page(pipe, page);
- }
- 
- static bool anon_pipe_buf_try_steal(struct pipe_inode_info *pipe,
-@@ -493,27 +513,25 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 		if (!pipe_full(head, pipe->tail, pipe->max_usage)) {
- 			unsigned int mask = pipe->ring_size - 1;
- 			struct pipe_buffer *buf;
--			struct page *page = pipe->tmp_page;
-+			struct page *page;
- 			int copied;
- 
--			if (!page) {
--				page = alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
--				if (unlikely(!page)) {
--					ret = ret ? : -ENOMEM;
--					break;
--				}
--				pipe->tmp_page = page;
-+			page = anon_pipe_get_page(pipe);
-+			if (unlikely(!page)) {
-+				if (!ret)
-+					ret = -ENOMEM;
-+				break;
- 			}
- 
- 			copied = copy_page_from_iter(page, 0, PAGE_SIZE, from);
- 			if (unlikely(copied < PAGE_SIZE && iov_iter_count(from))) {
-+				anon_pipe_put_page(pipe, page);
- 				if (!ret)
- 					ret = -EFAULT;
- 				break;
- 			}
- 
- 			pipe->head = head + 1;
--			pipe->tmp_page = NULL;
- 			/* Insert it into the buffer array */
- 			buf = &pipe->bufs[head & mask];
- 			buf->page = page;
-@@ -846,8 +864,10 @@ void free_pipe_info(struct pipe_inode_info *pipe)
- 	if (pipe->watch_queue)
- 		put_watch_queue(pipe->watch_queue);
- #endif
--	if (pipe->tmp_page)
--		__free_page(pipe->tmp_page);
-+	for (i = 0; i < ARRAY_SIZE(pipe->tmp_page); i++) {
-+		if (pipe->tmp_page[i])
-+			__free_page(pipe->tmp_page[i]);
-+	}
- 	kfree(pipe->bufs);
- 	kfree(pipe);
- }
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index 8ff23bf5a819..eb7994a1ff93 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -72,7 +72,7 @@ struct pipe_inode_info {
- #ifdef CONFIG_WATCH_QUEUE
- 	bool note_loss;
- #endif
--	struct page *tmp_page;
-+	struct page *tmp_page[2];
- 	struct fasync_struct *fasync_readers;
- 	struct fasync_struct *fasync_writers;
- 	struct pipe_buffer *bufs;
+One may worry about using "condition" twice. However, macros leading up
+to this one already do it, so it should be fine.
+
+Also one may wonder about fences -- to my understanding going off and on
+CPU guarantees a full fence, so the now avoided lock trip changes
+nothing.
+
+ include/linux/wait.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/include/linux/wait.h b/include/linux/wait.h
+index 2bdc8f47963b..965a19809c7e 100644
+--- a/include/linux/wait.h
++++ b/include/linux/wait.h
+@@ -316,6 +316,9 @@ extern void init_wait_entry(struct wait_queue_entry *wq_entry, int flags);
+ 		}								\
+ 										\
+ 		cmd;								\
++										\
++		if (condition)							\
++			break;							\
+ 	}									\
+ 	finish_wait(&wq_head, &__wq_entry);					\
+ __out:	__ret;									\
 -- 
 2.43.0
 
