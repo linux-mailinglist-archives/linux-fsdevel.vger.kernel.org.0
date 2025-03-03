@@ -1,90 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-42972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06C65A4C8FB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 18:15:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F41ECA4C95B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 18:26:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 551F7167D87
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 17:08:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 982F21696A4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 17:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39A922CBFA;
-	Mon,  3 Mar 2025 16:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0594C2144B8;
+	Mon,  3 Mar 2025 17:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BJgZhaWc"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="cPOdA0kf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C32825BAAB
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Mar 2025 16:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F84323A988
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Mar 2025 17:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741020604; cv=none; b=b4I/w88xsvmEwQ4/2NsInE0MolibJZm8ZbmB0puK1IqgXKeffut/vSCEqINN1OduzBkCHWt+S3ABMbDNZKwg1WiatWFoN3cvdX3BKG6aVuZ1ku70f31o7OVyPzWpOSmRz0uXpBqxtfpnh0dEz/UipZh2IG4yCgf0Z+ZHtnIUy5Y=
+	t=1741021237; cv=none; b=NRMSAxv28Cb5d7+hlJYZxzY0yoRy0bjnKjFLP5CXCSgy7WoL5AhGkbo0VOYwJD4IQSbTpG0UYINPLk1mv1yEKV2+67Bx0gqzkbHJsqwK/rlv3DvqIt63IU6NAQaQxveq8mSTFQ5Tmqn2o+tIM5683p7MfKfa7WFpOFspoqgXu8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741020604; c=relaxed/simple;
-	bh=d8/WZ74KpxSBBuf8SBqXQmQCVS+FqdR4GegQqBBnNVc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iqYL9AxBVCiX3IvWbd4/A2Ap3DtkCL4sA/VIsUWCSdPXidtmvcuq6nlZDK3sIsWDhxy8zDQilTn/svg/tdxUgEsn/P9OogX9RI21C6RnJmeJyCmI/HHAV92TpKtarYtJ3iALgiZ2VQmdr38Wimk1ey7nZJ1Eo/avvRo3aCFZlF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BJgZhaWc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741020601;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CRFDMhYCdzohXSQPdHzmNODZ58R1W+2Bk5NhU9gOXmU=;
-	b=BJgZhaWc9kmE6LNUolbX2WMY6f/MBfqV0eu7kLdUb+30Kwxlsoj469H5Mh5DNPLIrP9YeU
-	AMRT/13Ux18kjzDr249U4T+8gOEFl4TBIzn0jfYrZyNtgjaKh6hZHo23JAJ7fcpn4GrnSD
-	3h0wR3I+YDcyhTxt5dT8/uRQqeZHpVQ=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-131-c6G75LhJOnyN0hUAVZFQOg-1; Mon,
- 03 Mar 2025 11:49:58 -0500
-X-MC-Unique: c6G75LhJOnyN0hUAVZFQOg-1
-X-Mimecast-MFC-AGG-ID: c6G75LhJOnyN0hUAVZFQOg_1741020596
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E33781800877;
-	Mon,  3 Mar 2025 16:49:55 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.16])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 06A651955F0F;
-	Mon,  3 Mar 2025 16:49:50 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon,  3 Mar 2025 17:49:25 +0100 (CET)
-Date: Mon, 3 Mar 2025 17:49:19 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Manfred Spraul <manfred@colorfullife.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>,
-	Neeraj.Upadhyay@amd.com, Ananth.narayan@amd.com,
-	Alexey Gladkov <legion@kernel.org>
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
- full
-Message-ID: <20250303164918.GA9870@redhat.com>
-References: <20250102140715.GA7091@redhat.com>
- <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
- <20250224142329.GA19016@redhat.com>
- <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt>
- <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com>
- <20250227211229.GD25639@redhat.com>
- <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com>
- <20250228143049.GA17761@redhat.com>
- <20250228163347.GB17761@redhat.com>
- <03a1f4af-47e0-459d-b2bf-9f65536fc2ab@amd.com>
+	s=arc-20240116; t=1741021237; c=relaxed/simple;
+	bh=lisTh2Yrr/QIZ5rzfbtjUQZ8mFxTjgdH+MqB93VLoGQ=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lvEPoNen4kOaA4rv0WT7ZEy3K4Q/7er4HSEzHzzgpzBaZ4y3+aIeuch2cpOO1Gjp5yVVa8IaPrSCWKewACQwjUf/tgIOfznpiptT7WyVB6Z0TI9+H6Wie5osaz+naM4Fx8srEcf23enc+qswf+OpMzpv21rMjIrJHlM3cuKhvU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=cPOdA0kf; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-471f7261f65so45944551cf.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Mar 2025 09:00:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1741021233; x=1741626033; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=65AS1TurM0DuZqajOs3Fp2VtWioENosiSkc7EjrvsLs=;
+        b=cPOdA0kf5h7IB50EtKv3JMaVS2VWR3fM8/YPcP70Mgco48AdQhI67N4PUhBjlSGhtE
+         BLNvuzRx08UslplhtH3r6yz5TwglJgmM+Q4XMNbjq9voJkDBtSBbKlcZRV/SOY8zjzwX
+         fyOySvXISYpHXOttobWQBwjVA26eH9JSWhY1HrjObOfVhPZWnX5qE++rAcSJ/jE9jAtp
+         Gz3EtztPinIn0Go8teT1izLyWjg9UEUli2GI+DDgVBNa59CYQo4aGtj8DrsRaJYZKFJV
+         tjuR8ryPut7j82nJdJtBWFcAOGa/lxlP5R/bFdydmgijXdG32JVgLAXjnO4lAuu4X65K
+         t2fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741021233; x=1741626033;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=65AS1TurM0DuZqajOs3Fp2VtWioENosiSkc7EjrvsLs=;
+        b=VMXj1vmDE2o/QdeIW2HA93+gsTeE0ZAxMopiwPrTuA/K4Y3RCwMZAI0dPm9Ote1BcQ
+         8/JWlSypFdAtOKmLEAoQVt6CPo3mdhensEX56Yg3Ak3vdlVyhXdP4+jY3bZtPGr1v273
+         Oh6qUA0HGvHblvH5rm1kIZRG8YQqFTIewlGi+lv2DSduTeRYei529yKS8etcD7pJUvV8
+         fJzsTUvDfVGwXYixp3dkvFrST9942OVse+oO4t+GeMjbJjR794AtH6MAw+KNPVW3E3yx
+         bwR0D8JajcGvagxziFG4AQArDTIetWrGQI2+yNJU8DCO0t0by/qudzGRil3wM9jNgEFE
+         HVkA==
+X-Gm-Message-State: AOJu0YxWfvOM3U2sxnmNNl+5i/9Q+lHQv7YLkwF3HJmdWX6xY9+BrYIx
+	+2X9x5t0B7ThoyT/Y16DjoPzhG2nj8DH+u6p61bYtX9yN1WxMvNvPMjzYZ0SJj8VGOBQ1PXomzn
+	c
+X-Gm-Gg: ASbGncvJ13sMLRrF4dNzzjC2h9Lbnwpzlu9gnFld6cUFRp3NXszTQASKNAiMge+eL9W
+	ZM3vurL9vG943Ans+BUYbeoD3mIwsi0AzC5U2AFfmvXwq66K9H4NmdQ/34FLIhDa0MXSPeV5sFi
+	TsgjtuPUGwqbhxuGqbbEGJEp8WDYgK3S67CDA9Ly/ybkd0YM+ajKrPInMRurcqUB9HAhmxw4ROM
+	dCRQnIJsLQpbYrnBtH3cc7zBpgKjNyIAg+JOPwDfJVhqvTPpQm2r8EC2KjUj/BxVDI5cFRhBpfW
+	Atxa1rZ56iy0tVdRzwTtr2qqYqgNYCoAr7RyS5Y6z1pcpdjTbCCmwdZshShkN1blbB/Lz4sb6lO
+	QBZUk1w==
+X-Google-Smtp-Source: AGHT+IGZpPZlqBEy5+CEdp0dB2xrLm830YpnD3SLs9+GNyVePcT8hr7qcHK8/TE9xyQEkxKP/Ds85w==
+X-Received: by 2002:a05:622a:6103:b0:474:bc32:41e7 with SMTP id d75a77b69052e-474bc324255mr180704261cf.1.1741021231810;
+        Mon, 03 Mar 2025 09:00:31 -0800 (PST)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4746b5edf1asm61143641cf.28.2025.03.03.09.00.30
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 09:00:30 -0800 (PST)
+Date: Mon, 3 Mar 2025 12:00:29 -0500
+From: Josef Bacik <josef@toxicpanda.com>
+To: linux-fsdevel@vger.kernel.org
+Subject: [LSF/MM/BPF TOPIC] Changing reference counting rules for inodes
+Message-ID: <20250303170029.GA3964340@perftesting>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,56 +85,103 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <03a1f4af-47e0-459d-b2bf-9f65536fc2ab@amd.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Hi!
+Hello,
 
-On 03/03, Sapkal, Swapnil wrote:
->
-> >but if you have time, could you check if this patch (with or without the
-> >previous debugging patch) makes any difference? Just to be sure.
->
-> Sure, I will give this a try.
+I've recently gotten annoyed with the current reference counting rules that
+exist in the file system arena, specifically this pattern of having 0 referenced
+objects that indicate that they're ready to be reclaimed.
 
-Forget ;)
+This pattern consistently bites us in the ass, is error prone, gives us a lot of
+complicated logic around when an object is actually allowed to be touched versus
+when it is not.
 
-[...snip...]
+We do this everywhere, with inodes, dentries, and folios, but I specifically
+went to change inodes recently thinking it would be the easiest, and I've run
+into a few big questions.  Currently I've got about ~30 patches, and that is
+mostly just modifying the existing file systems for a new inode_operation.
+Before I devote more time to this silly path, I figured it'd be good to bring it
+up to the group to get some input on what possible better solutions there would
+be.
 
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -417,9 +417,19 @@ static inline int is_packetized(struct file *file)
->  /* Done while waiting without holding the pipe lock - thus the READ_ONCE() */
->  static inline bool pipe_writable(const struct pipe_inode_info *pipe)
->  {
-> -	unsigned int head = READ_ONCE(pipe->head);
-> -	unsigned int tail = READ_ONCE(pipe->tail);
->  	unsigned int max_usage = READ_ONCE(pipe->max_usage);
-> +	unsigned int head, tail;
-> +
-> +	tail = READ_ONCE(pipe->tail);
-> +	/*
-> +	 * Since the unsigned arithmetic in this lockless preemptible context
-> +	 * relies on the fact that the tail can never be ahead of head, read
-> +	 * the head after the tail to ensure we've not missed any updates to
-> +	 * the head. Reordering the reads can cause wraparounds and give the
-> +	 * illusion that the pipe is full.
-> +	 */
-> +	smp_rmb();
-> +	head = READ_ONCE(pipe->head);
->  	return !pipe_full(head, tail, max_usage) ||
->  		!READ_ONCE(pipe->readers);
+I'll try to make this as easy to follow as possible, but I spent a full day and
+a half writing code and thinking about this and it's kind of complicated.  I'll
+break this up into sections to try and make it easier to digest.
 
-Ooh, thanks!!!
+WHAT DO I WANT
 
-And sorry, can't work today. To be honest, I have some concerns, but probably
-I am wrong... I'll return tomorrow.
+I want to have refcount 0 == we're freeing the object.  This will give us clear
+"I'm using this object, thus I have a reference count on it" rules, and we can
+(hopefully) eliminate a lot of the complicated freeing logic (I_FREEING |
+I_WILL_FREE).
 
-In any case, finally we have a hint. Thank you both!
+HOW DO I WANT TO DO THIS
 
-(btw, please look at pipe_poll).
+Well obviously we keep a reference count always whenever we are using the inode,
+and we hold a reference when it is on a list.  This means the i_io_list holds a
+reference to the inode, that means the LRU list holds a reference to the inode.
 
-Oleg.
+This makes LRU handling easier, we just walk the objects and drop our reference
+to the object.  If it was truly the last reference then we free it, otherwise it
+will get added back onto the LRU list when the next guy does an iput().
 
+POTENTIAL PROBLEM #1
+
+Now we're actively checking to see if this inode is on the LRU list and
+potentially taking the lru list lock more often.  I don't think this will be the
+case, as we would check the inode flags before we take the lock, so we would
+martinally increase the lock contention on the LRU lock.  We could mitigate this
+by doing the LRU list add at lookup time, where we already have to grab some of
+these locks, but I don't want to get into premature optimization territory here.
+I'm just surfacing it as a potential problem.
+
+POTENTIAL PROBLEM #2
+
+We have a fair bit of logic in writeback around when we can just skip writeback,
+which amounts to we're currently doing the final truncate on an inode with
+->i_nlink set.  This is kind of a big problem actually, as we could no
+potentially end up with a large dirty inode that has an nlink of 0, and no
+current users, but would now be written back because it has a reference on it
+from writeback.  Before we could get into the iput() and clean everything up
+before writeback would occur.  Now writeback would occur, and then we'd clean up
+the inode.
+
+SOLUTION FOR POTENTIAL PROBLEM #1
+
+I think we ignore this for now, get the patches written, do some benchmarking
+and see if this actually shows up in benchmarks.  If it does then we come up
+with strategies to resolve this at that point.
+
+SOLUTION FOR POTENTIAL PROBLEM #2 <--- I would like input here
+
+My initial thought was to just move the final unlink logic outside of evict, and
+create a new reference count that represents the actual use of the inode.  Then
+when the actual use went to 0 we would do the final unlink, de-coupling the
+cleanup of the on-disk inode (in the case of local file systems) from the
+freeing of the memory.
+
+This is a nice to have because the other thing that bites us occasionally is an
+iput() in a place where we don't necessarily want to be/is safe to do the final
+truncate on the inode.  This would allow us to do the final truncate at a time
+when it is safe to do so.
+
+However this means adding a different reference count to the inode.  I started
+to do this work, but it runs into some ugliness around ->tmpfile and file
+systems that don't use the normal inode caching things (bcachefs, xfs).  I do
+like this solution, but I'm not sure if it's worth the complexity.
+
+The other solution here is to just say screw it, we'll just always writeback
+dirty inodes, and if they were unlinked then they get unlinked like always.  I
+think this is also a fine solution, because generally speaking if you've got
+memory pressure on the system and the file is dirty and still open, you'll be
+writing it back normally anyway.  But I don't know how people feel about this.
+
+CONCLUSION
+
+I'd love some feedback on my potential problems and solutions, as well as any
+other problems people may see.  If we can get some discussion beforehand I can
+finish up these patches and get some testing in before LSFMMBPF and we can have
+a proper in-person discussion about the realities of the patchset.  Thanks,
+
+Josef
 
