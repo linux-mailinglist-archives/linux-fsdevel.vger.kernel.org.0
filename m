@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-42997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82125A4CA9D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 19:01:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2610BA4CAC2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 19:08:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5EF81886FC9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 18:01:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FEF43AE6CB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 18:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A85F21B9DB;
-	Mon,  3 Mar 2025 18:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29962222597;
+	Mon,  3 Mar 2025 18:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EC642/Q+"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vFudsMSq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8BD1F2B88
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Mar 2025 18:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424A3216395
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Mar 2025 18:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741024882; cv=none; b=bdxAQkLu58P8jvx35bRWL/9YDCtJBgQksg5BmjmRHNPICRFYF5Ei8w+2cznOtrsfgf7xL4y/U9T2FFs4T4aPk969Tbrn77nV/wK3p0qfi4I768622m0r9JmstN8+jvFUrnJaBu9IFR2HsQ/WH8BEl5DXNjl57bnBeW/1O3xP6sQ=
+	t=1741024894; cv=none; b=nuYA8q0aYOF3zjaShiaVyVogu+KCJQohzGBOTboenHckT/pnPu1wctLNR/kzOVARDjc4dOdcEMgelNISybwwoaxn21oE6jXs8NKThcIi2QwKYNyldv0aV0dEPOUwN4losE6F03dZrWOVJ6fOw8SKsIWiDcaEEjL75SDrzyB1Q/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741024882; c=relaxed/simple;
-	bh=lA8N5oit7EGNRH5aGIVw8AazWSQAhu3XE0YioIePRIw=;
+	s=arc-20240116; t=1741024894; c=relaxed/simple;
+	bh=ltd+CzroaAgVHUZwP56MGRkdxKI2UpUX7WD0wrPjEsk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W20mj7a02JEijUNUijRVE9flJI2XwK+Yb9gZUBfLfFdX503/tesk4N7yV84yppbbQgTvjl96IyBTLxIUlYDktiONwZd94TDGJmGbzFsY8/om3fhyBxPZeAHczmGgcUWItxdwkq8oHKthHdChS6uGZmvSVXkcX8ZYDf5RrJas9+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EC642/Q+; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=p7wCsKvSgb8jThU35Poky/XysKYU9zWAKc8J3YV24FpVWWwdt2oS3Op4tdi+Fx5AUUqEpY+e7xOX46Do+6p9BH3koPOAJfXeHUJj6x7E1RY02mHTu5b4DgRIaqSPSu0t4cXmtmjzIsswDAkfMpbMZMls6sQXyWsxmeN9ZmSDW/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vFudsMSq; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=NPQLhzTyEMzPLgCXVEdgocc34iqkc/85plAdXTJVcFA=; b=EC642/Q+e1n8Jte66sDcf2YMpk
-	ik8RpSlGYjW30isIt1q9YXZgZK4A707jQZLUxBboa0n6M4VbZAlqa7ir9f6p1Z0O2GKux1uqtGS6V
-	tkjojKOWm/hOmI5B6UdsrLdeLLX03J9W74sQCd+WxdJHXGNI7QOvmhFWLaUdfU59UXMkj7LY8ebHG
-	OtsfLp79FfZN2RkOR/dkh7+JZAoDqzwXcePI8uNmnv1HaYcZ0yy4Cord9IV4yq2NK5P9iob8CVa7X
-	DTgQ+BEVXZ55F7RWsiT/Le4rccCBbS7zoVCoPyKrSafs9RCuxYxDpSUmxcWTpFfofe9wpO7DEq/Zl
-	9fkBYBkg==;
+	bh=RcgDT1xygmH/LT/R5zLj021l+cmpyVBR/9bFD0Q5VpM=; b=vFudsMSqkBn0xDDBiohbJEXHLa
+	QLa7rHLnHAHYbpGTgBHCdeLaPxR/eDwkZ9Ogx8VBR6L5XhLgy+lJNRMNSca75E710QSEbHUOoNo1M
+	L76wf7Jq9JAkMW/BsypioJ8w34UKNJyybD/t+CBF7TLwnFVUNaz96fEJQWnsaG+po5ISvbAvxc4iU
+	JcmcWMhhFoStOofzLSG+0JY492ZJt5un3fqPpi16J3scE+Sm8eBrk6riOtX1CLMEIus+QkBd6sEIb
+	Sl4ikXfWkJxHzG4hlFdcWc/5wgjBhQezQMrW5xk/ccwDsgPgRlM2KqdndnyrSmYcLgcVY5WSDE1pZ
+	47MKkj2g==;
 Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tpA6G-0000000Dqcg-2VVL;
-	Mon, 03 Mar 2025 18:01:10 +0000
+	id 1tpA6P-0000000DqhH-09Od;
+	Mon, 03 Mar 2025 18:01:17 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: David Howells <dhowells@redhat.com>
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 5/6] pagemap: Remove readahead_page_batch()
-Date: Mon,  3 Mar 2025 17:53:15 +0000
-Message-ID: <20250303175317.3277891-6-willy@infradead.org>
+Subject: [PATCH 6/6] mm: Delete thp_nr_pages()
+Date: Mon,  3 Mar 2025 17:53:16 +0000
+Message-ID: <20250303175317.3277891-7-willy@infradead.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250303175317.3277891-1-willy@infradead.org>
 References: <20250303175317.3277891-1-willy@infradead.org>
@@ -63,38 +63,33 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This function has no more callers; delete it.
+All callers now use folio_nr_pages().  Delete this wrapper.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/pagemap.h | 14 --------------
- 1 file changed, 14 deletions(-)
+ include/linux/mm.h | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index f4b875b561e5..4a1c9dc92d82 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -1472,20 +1472,6 @@ static inline unsigned int __readahead_batch(struct readahead_control *rac,
- 	return i;
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index d5844ade822c..39eef633d725 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2129,15 +2129,6 @@ static inline unsigned long compound_nr(struct page *page)
+ #endif
  }
  
 -/**
-- * readahead_page_batch - Get a batch of pages to read.
-- * @rac: The current readahead request.
-- * @array: An array of pointers to struct page.
-- *
-- * Context: The pages are locked and have an elevated refcount.  The caller
-- * should decreases the refcount once the page has been submitted for I/O
-- * and unlock the page once all I/O to that page has completed.
-- * Return: The number of pages placed in the array.  0 indicates the request
-- * is complete.
+- * thp_nr_pages - The number of regular pages in this huge page.
+- * @page: The head page of a huge page.
 - */
--#define readahead_page_batch(rac, array)				\
--	__readahead_batch(rac, array, ARRAY_SIZE(array))
+-static inline int thp_nr_pages(struct page *page)
+-{
+-	return folio_nr_pages((struct folio *)page);
+-}
 -
  /**
-  * readahead_pos - The byte offset into the file of this readahead request.
-  * @rac: The readahead request.
+  * folio_next - Move to the next physical folio.
+  * @folio: The folio we're currently operating on.
 -- 
 2.47.2
 
