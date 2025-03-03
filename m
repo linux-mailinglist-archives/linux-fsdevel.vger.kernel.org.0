@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-42968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33498A4C82A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 17:51:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E08DAA4C842
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 17:54:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13DBD18969F8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 16:50:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C373116703D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 16:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD52D263F36;
-	Mon,  3 Mar 2025 16:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF23268C44;
+	Mon,  3 Mar 2025 16:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ezydahbp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KHDJzjg/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1794E2638B5;
-	Mon,  3 Mar 2025 16:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A771A267B74;
+	Mon,  3 Mar 2025 16:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741019503; cv=none; b=fHtRnmK9aHxn03XHRhoS2qEbD7xKFqoAmVhmkCLWeUWKL2EQbkBGNtUfSsIMQmPzEHc6QInDxN4qF+rmSEZ9pNkI72DwroI9PkSUDv2KB6x2q3HMQFOF3b78sIAUBFwFpDm5L1/dMxPbqluOD6XGTW1Ymrb59fwiQRN8bEHygm8=
+	t=1741019521; cv=none; b=T88DPDbUlvUXFNS04Vu3hi3YFED1LKmC8ODQiFCrdZ77mHXChbOp1VjLCCPv9NrW5UHY4l/ZIS+5D1O4fPtaXvWkxQYGZ+ZEdGDE63+f8XmFi/vvo7fKDIvhaoeJQj9S36tbFMabCQpuihWhCu6ThKBw9MwcHnJGBakOUXcjP6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741019503; c=relaxed/simple;
-	bh=YkB+E3Q0eljYQymts/mr+hzK5f5pNYgPM7cDoGEGgIQ=;
+	s=arc-20240116; t=1741019521; c=relaxed/simple;
+	bh=f1V7op0xIRERuX3tWiIstO0EoRwFqe1+i8JIql6Ja3s=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aKnH9zAA4sh4i8Kk+EZvil2D/NLIICWD9kWAACIVbFeOtCJXPVq9LuG+4HN9tbNInTb0f19yCDVosVm0gsJ45YqbIPxoQ1nA8iLLMaUerBSa2DiLAK+hKCCff3jQXP9EZ0JU84/Mrr0DuLWnYcpQHOnzwkMa5ppvEfxr/FX7jgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ezydahbp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49B30C4CEE9;
-	Mon,  3 Mar 2025 16:31:41 +0000 (UTC)
+	 MIME-Version; b=GkXVYpVOkpp2YwI9Bux7WODEV+QOi3uceozIf+snnOrr7bUBzBAQAvlIcKf8qJAZWgC/ve+WEm4zewRy98oat8bcBzblNbxSW2nx5hRcDWioUsECnPbNu5qM//LgjLzhIHD1rDVpztoIa57rSMSW/Zuy4TQUlF+qEttbjb/a2ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KHDJzjg/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B915C4CED6;
+	Mon,  3 Mar 2025 16:31:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741019502;
-	bh=YkB+E3Q0eljYQymts/mr+hzK5f5pNYgPM7cDoGEGgIQ=;
+	s=k20201202; t=1741019521;
+	bh=f1V7op0xIRERuX3tWiIstO0EoRwFqe1+i8JIql6Ja3s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EzydahbpxjE7zfPuhyOoiO7sOFE+SJzrB4H5yFyefg5pY4ED6+mG4hQ0DLv3/j9jl
-	 0Z2LYso1/GYhM8h/tilHpm7MO/bBYfPSMCp/NhQSDQTSyxOduYFPZRhxW4JqeuIJRE
-	 mGJCf6ZEyrNZJj9cDfg3LhmIKjfyFlj43RtASXS6yOS3cMAs+sl5X6yvQXgkIGEFli
-	 3jgdkhebOegb/lZcx19N8iYmepN5DazACy/FUcm3IXJDf7oPDh2uDUYeHBwIz0j9Me
-	 5ey3ax7Mny3LlsZdIJffaJGj9SGjpx66o/mped7o3qPSnS9tb6y7jmo2/6mmdUQO4t
-	 5ZC9Xgmcw5Jjg==
+	b=KHDJzjg/U1wv5WTn4+WCH8HrhTDnBaPlLfhuDOvAUmBkV1ZWR56ms546/+9AF/opZ
+	 YY0cLHqSVn/BGSLYnaGt+CLFCcYMbaFj4yr+1K+684yMQBVcNeUWvknM/+o0a3Y9e2
+	 cQtSUr2HZU2wDgvq6GUeEbrZRIOL8VFgUyrEGWFGpvZmtFzWEv/bHlrZGlJqkRYGQP
+	 PGx33kVyW7jX8ER3LZU0cenPshmtIXzWClCnOO80bZ+ud3KjCmsXy6kZ5xcf8GssHI
+	 pjIQC2544VJCMdXTLwo9ccHMlhd08NRhK56kuyJqtV3Scf3VPeEFIVT8m8B9zdp1re
+	 HXQ/5GrL3KzwA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -53,12 +53,12 @@ Cc: Miklos Szeredi <mszeredi@redhat.com>,
 	miklos@szeredi.hu,
 	viro@zeniv.linux.org.uk,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 4/9] fuse: don't truncate cached, mutated symlink
-Date: Mon,  3 Mar 2025 11:31:28 -0500
-Message-Id: <20250303163133.3764032-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 4/9] fuse: don't truncate cached, mutated symlink
+Date: Mon,  3 Mar 2025 11:31:47 -0500
+Message-Id: <20250303163152.3764156-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250303163133.3764032-1-sashal@kernel.org>
-References: <20250303163133.3764032-1-sashal@kernel.org>
+In-Reply-To: <20250303163152.3764156-1-sashal@kernel.org>
+References: <20250303163152.3764156-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,7 +67,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.129
+X-stable-base: Linux 5.15.178
 Content-Transfer-Encoding: 8bit
 
 From: Miklos Szeredi <mszeredi@redhat.com>
@@ -113,10 +113,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  3 files changed, 22 insertions(+), 6 deletions(-)
 
 diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index aa2be4c1ea8f2..de31cb8eb7201 100644
+index 44d1c8cc58a42..03dadc44e9b1c 100644
 --- a/fs/fuse/dir.c
 +++ b/fs/fuse/dir.c
-@@ -1445,7 +1445,7 @@ static const char *fuse_get_link(struct dentry *dentry, struct inode *inode,
+@@ -1333,7 +1333,7 @@ static const char *fuse_get_link(struct dentry *dentry, struct inode *inode,
  		goto out_err;
  
  	if (fc->cache_symlinks)
@@ -126,10 +126,10 @@ index aa2be4c1ea8f2..de31cb8eb7201 100644
  	err = -ECHILD;
  	if (!dentry)
 diff --git a/fs/namei.c b/fs/namei.c
-index 166d71c82d7ac..6ce07cde1c277 100644
+index 05d45b9b59cb4..c188d525300d1 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -5156,10 +5156,9 @@ const char *vfs_get_link(struct dentry *dentry, struct delayed_call *done)
+@@ -5114,10 +5114,9 @@ const char *vfs_get_link(struct dentry *dentry, struct delayed_call *done)
  EXPORT_SYMBOL(vfs_get_link);
  
  /* get the link contents into pagecache */
@@ -142,7 +142,7 @@ index 166d71c82d7ac..6ce07cde1c277 100644
  	struct page *page;
  	struct address_space *mapping = inode->i_mapping;
  
-@@ -5178,8 +5177,23 @@ const char *page_get_link(struct dentry *dentry, struct inode *inode,
+@@ -5136,8 +5135,23 @@ const char *page_get_link(struct dentry *dentry, struct inode *inode,
  	}
  	set_delayed_call(callback, page_put_link, page);
  	BUG_ON(mapping_gfp_mask(mapping) & __GFP_HIGHMEM);
@@ -169,10 +169,10 @@ index 166d71c82d7ac..6ce07cde1c277 100644
  }
  
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 0d32634c5cf0d..08fba309ddc78 100644
+index 2ef0e48c89ec4..c690155118c19 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -3385,6 +3385,8 @@ extern const struct file_operations generic_ro_fops;
+@@ -3389,6 +3389,8 @@ extern const struct file_operations generic_ro_fops;
  
  extern int readlink_copy(char __user *, int, const char *);
  extern int page_readlink(struct dentry *, char __user *, int);
