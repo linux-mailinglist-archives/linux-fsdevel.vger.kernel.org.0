@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-42993-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 405C0A4CA9E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 19:01:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 780B9A4CAA5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 19:03:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B0CA169D0A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 17:58:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E585F165B3A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 18:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE08217F40;
-	Mon,  3 Mar 2025 17:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB16219A90;
+	Mon,  3 Mar 2025 18:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MN/zpEt8"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WI4+Su5w"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92B82153C4
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Mar 2025 17:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A9E21B9CF
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Mar 2025 18:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741024702; cv=none; b=lixyilr+TcJ97jJtVPBSJT2yIjbqhxRGoGbXFtnSAXrVK02SNj+brQO1ib7rNd8B81n8v/pK3lAEqBjbfN6Q+WEopUKFX2xnkblzOjvdo/fb7RJfFsuzGd1RLdtaGM/UI4jG5m3RR7Ywm0E1nmIO8tWlB6go2M2zi/IRxyacfeA=
+	t=1741024812; cv=none; b=ijLBz5MheZbANxqN0czgem+wJLeBxBMQCDmU0+onkt/ToPENSbWogSRbsHdrk2lk/De3XZled0qRUtOofHXSOK9wy8LoV0SleGZLDG1ZMk7ZoDSrA5ASHZZ1XCaSs+nORRhB2BHwLiKHE27KkHIu/c+ij29CoWr5aWzBMK+peVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741024702; c=relaxed/simple;
-	bh=NoqP4mZ/ulC73L6aQP6VwJZDLqV+gHGVcMEKjG+Z7RU=;
+	s=arc-20240116; t=1741024812; c=relaxed/simple;
+	bh=ppWqVpLWY1FoF2mV9uTvYTME8yEGySTdGXXclKMhMOg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lIauRVp2GZPq62AW132DmKZzRx/zvYc/AfEe/R8Zf+TPbB5zmPB43lfwXCKps5SjI+flTbuxV+dlUqFDWM7I168oXskGhyyhsiIZMrnYM18JV4HiM4/sjBgJSPQ4AvSoLuaIg9Hw23hgluQP5leDO4l47S1nQj2ZZz1gTstU1JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MN/zpEt8; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=lnZDFFI+Q0ypfyMj0KC15y1ulV2VWS6HxbZdappuKOEpqaMW2B1mizc6nF4np6uvbvKOApixYYuS3RPsBdT1MW4/Mvp4jiLRz9fwCYjPdmEdsu2d9OEVTeCl2LPrWtAn2nMwfG8Nh6x5AJWG1be9ZNwqe/ByPrxqkMBmNjQlQJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WI4+Su5w; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=oH16NlP8xxrt4wivtUXbkuoeB6TY0U2c9UggzJlO6Zg=; b=MN/zpEt80N0N2X5802zEZW1Gzc
-	PSjSmw+iD24oea5D/lUoixIMhX9FS9A25h0R6T5x84JqkY/qyjiI7fKCc8jdDoZz8bp6HcP7UyAMk
-	XIE/yCy4eXRICMs96FZZxnzRGWxRlG/3J+GX9VoIfOcl48LAi9XuqVMNYec07cZ4XjXCS5QgMdMC9
-	feuDrqtpQhtHf/tFw+ZWMS36RARhb1g/ITtw3M+oRWf+K3F5uGXg0K5vWl8SR01bfEwp0Puq6zK38
-	uRqmXA0DYDuAzSqwnaS5oFXFiHk2OlgMhXk9bRCPyQ06yGYq5UxCUlknVropgc/MF7VigJ3Mg9Txm
-	JLpoKnmA==;
+	bh=ac55yYGUrmgmfjDkZd7lZLD1cRecm/nrYCkJ9H/XhoA=; b=WI4+Su5wNeZh6dg7wStk7EFkqj
+	sVln2SyYzf3X9frXhnAGuaK37AeqGdQrklihxMtovIrrzuAaPjGH218lObXI50mw0+WAdneVO/ijD
+	ioTMwR8e7r7n0JiIRsR9gVA3TfZJ1Q9DsawKaE0G2pEHdkD4k0u85oDFhLM8Zy7awvITp9rPetKl5
+	NymWaqf7b5RNdPhqSm9w61VMBqg2+Ty3gOxunACx0ACwNb9tpxP4OaDK6RBk0asjaN2WpyWQwSQ3W
+	PW8N5sLByxgueb5/70Lmrf9Oc2x01DVxA7TpyFUU5qAUD46/AodcgzjzxdHjJ4rpKQNBfOEVc1Iw8
+	iEeRRbgQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tp9zg-0000000DlCl-0Xql;
-	Mon, 03 Mar 2025 17:54:35 +0000
+	id 1tpA20-0000000DnEk-1nep;
+	Mon, 03 Mar 2025 17:56:49 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: David Howells <dhowells@redhat.com>
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 1/6] iov_iter: Convert iter_xarray_populate_pages() to use folios
-Date: Mon,  3 Mar 2025 17:53:11 +0000
-Message-ID: <20250303175317.3277891-2-willy@infradead.org>
+Subject: [PATCH 2/6] iov_iter: Convert iov_iter_extract_xarray_pages() to use folios
+Date: Mon,  3 Mar 2025 17:53:12 +0000
+Message-ID: <20250303175317.3277891-3-willy@infradead.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250303175317.3277891-1-willy@infradead.org>
 References: <20250303175317.3277891-1-willy@infradead.org>
@@ -65,24 +65,34 @@ Content-Transfer-Encoding: 8bit
 
 ITER_XARRAY is exclusively used with xarrays that contain folios,
 not pages, so extract folio pointers from it, not page pointers.
-Removes a hidden call to compound_head() and a use of find_subpage().
+Removes a use of find_subpage().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- lib/iov_iter.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ lib/iov_iter.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 65f550cb5081..92642f517999 100644
+index 92642f517999..c85ae372bc05 100644
 --- a/lib/iov_iter.c
 +++ b/lib/iov_iter.c
-@@ -1059,22 +1059,22 @@ static ssize_t iter_xarray_populate_pages(struct page **pages, struct xarray *xa
- 					  pgoff_t index, unsigned int nr_pages)
+@@ -1646,11 +1646,11 @@ static ssize_t iov_iter_extract_xarray_pages(struct iov_iter *i,
+ 					     iov_iter_extraction_t extraction_flags,
+ 					     size_t *offset0)
  {
- 	XA_STATE(xas, xa, index);
--	struct page *page;
+-	struct page *page, **p;
++	struct page **p;
 +	struct folio *folio;
- 	unsigned int ret = 0;
+ 	unsigned int nr = 0, offset;
+ 	loff_t pos = i->xarray_start + i->iov_offset;
+-	pgoff_t index = pos >> PAGE_SHIFT;
+-	XA_STATE(xas, i->xarray, index);
++	XA_STATE(xas, i->xarray, pos >> PAGE_SHIFT);
+ 
+ 	offset = pos & ~PAGE_MASK;
+ 	*offset0 = offset;
+@@ -1661,17 +1661,17 @@ static ssize_t iov_iter_extract_xarray_pages(struct iov_iter *i,
+ 	p = *pages;
  
  	rcu_read_lock();
 -	for (page = xas_load(&xas); page; page = xas_next(&xas)) {
@@ -99,11 +109,9 @@ index 65f550cb5081..92642f517999 100644
  			continue;
  		}
  
--		pages[ret] = find_subpage(page, xas.xa_index);
--		get_page(pages[ret]);
-+		pages[ret] = folio_file_page(folio, xas.xa_index);
-+		folio_get(folio);
- 		if (++ret == nr_pages)
+-		p[nr++] = find_subpage(page, xas.xa_index);
++		p[nr++] = folio_file_page(folio, xas.xa_index);
+ 		if (nr == maxpages)
  			break;
  	}
 -- 
