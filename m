@@ -1,413 +1,245 @@
-Return-Path: <linux-fsdevel+bounces-42912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42913-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DFB4A4B5FE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 03:12:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27BBBA4B64D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 03:54:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E0801890A54
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 02:13:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F14C188E274
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 02:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0C5159596;
-	Mon,  3 Mar 2025 02:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B9A1CDA3F;
+	Mon,  3 Mar 2025 02:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UbeUBuOJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A651547D2
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Mar 2025 02:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960571C5F37;
+	Mon,  3 Mar 2025 02:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740967961; cv=none; b=k9j8ZAxmx/SvuWXtqE0Up9jIewV7Whg4eJeW51ZSzypG1K2p9BA7SD27OwucbUdEZddDVVXYTO+QweG3qx/y+1ZS/zPG61zm9neZBrhTj+Z7aNvqCFTeyNR5hwX/Wg4bvhCB5UyTBLzab6Eg5/3JdJySrZCtYg3AGHFEIb52cvc=
+	t=1740970476; cv=none; b=uK40NeuC1WYX91iosJ5ISE+DC+apRjgDE0peCpWq08sC747Oyy5lY2oFimaGJomUZunEr0FyjtTC4WYOUHQVzTrJfxC43OJ2NSgRRofIgyDzvpiczDa8qYPLeFqmfVeiOVl1W0uuyKRUFzEGm0nvcOAf2wTs8SYO9AkF2AFYeoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740967961; c=relaxed/simple;
-	bh=0hsOxouyNsxQerX6uPPUr8edfjNKk3M4E1+UE5j9BVA=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=MsW7Xxab6UHKkoMw/gYRV//EbXjeI3MYUXEREv7+LUdLDye9GO8Rildwy+XTjR60jOcj1anMKBBSAM0reCPKVZww3LJZs1ppHqOlSBT/Aql8M0VfqLRWBkACC6QnEEB8lrr/Kf032NUeKJG0WUQJ6fJ2pVGC1EEK6CcBPc0jHY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Z5j4Q4TrPz4f3mJR
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Mar 2025 10:12:06 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 9CEF41A14CC
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Mar 2025 10:12:28 +0800 (CST)
-Received: from [10.174.178.185] (unknown [10.174.178.185])
-	by APP4 (Coremail) with SMTP id gCh0CgBHq18KEMVnpPyKFQ--.22048S3;
-	Mon, 03 Mar 2025 10:12:28 +0800 (CST)
-Subject: Re: [PATCH] proc: fix use-after-free in proc_get_inode()
-To: Alexey Dobriyan <adobriyan@gmail.com>
-References: <20250301034024.277290-1-yebin@huaweicloud.com>
- <2cdf3fb7-1b83-4484-b1e6-6508ddb8ed13@p183>
- <9760f1ae-7aec-4e17-b277-ea6aca13b382@p183>
-Cc: akpm@linux-foundation.org, rick.p.edgecombe@intel.com, ast@kernel.org,
- kirill.shutemov@linux.intel.com, linux-fsdevel@vger.kernel.org,
- yebin10@huawei.com
-From: yebin <yebin@huaweicloud.com>
-Message-ID: <67C5100A.6090100@huaweicloud.com>
-Date: Mon, 3 Mar 2025 10:12:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.1.0
+	s=arc-20240116; t=1740970476; c=relaxed/simple;
+	bh=PyCetO3EHw/3dFJwl5n7SBBWq4UFc0+uUm5jN0DoxvM=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=cHgySjsYK0CMrgqLHWG98+71Dm2ZTjqHU2/qWo0nBdhnw7w9Aotq/tP83e3XacvbtAU1X97uR7l1uCTK7gyj+nnf2Xlc0oAhqSTv5iHBNr7FMFTK754p+Y1Gqe1wNGMYXW8NyrC/g3lhOfLSYM8BZ0bTAoic3BquoyNcOkZlxzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UbeUBuOJ; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2bd2218ba4fso1024468fac.1;
+        Sun, 02 Mar 2025 18:54:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740970473; x=1741575273; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=r7Y8ANM7bjvUQEgoZS4HLxWYZ32I+TT4YbK4g45/Wuc=;
+        b=UbeUBuOJYdBwx3wtjI/SqTE5Eb/TB9wsxaMBKzpmEM9qqVdx4yzbFY4okKiOMhcLUP
+         Hq1Lit9U85HqkimTaZMIi37hT4TeMpuqiHjb9CgkBe9mk5lSKiE696+HBCYA2BmP6vOC
+         ztKdu5LnZLe7FRe6mBElwKtd1Y0wo2GkIwTjKoyUxiPkb5zuaV6U9LvEmFMSUnlEloz3
+         PKEyI4rsK/LII3ta27vBH/jnDgZd5+Tl1+KfZlOgTIUs29uEgDVaZJtS37Ol2bVr5iBz
+         9Q5k4mVhfUDcXuUHXicp29MA1nQpY4zsnBRCEoPQn4mhRlmex6t6v5p+ciZegxsKtFZS
+         dDkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740970473; x=1741575273;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=r7Y8ANM7bjvUQEgoZS4HLxWYZ32I+TT4YbK4g45/Wuc=;
+        b=XYMl8eh0T80iA0sPKKkCJd79R0v+LMSYUeNbzw5gjKRsybnz9MwMI8Tv2Ll/g9tJaY
+         xHub752ZfyOj+lrPayf4OtdBZ3CbyNpcJF9gC+kvV6yiisCvlhXGI9gcOni5wcxeCOeo
+         YUSESpRNFeM7BEmhAEIC8rdhSLB/SHDEvfCmvur85Qr3F/8nlQKb8Lv2anOnzv0m21Px
+         3XADk4bh2MjAGSCnoWV3kk7BG54EM1f8UgviZRy1Tsk2+9RK1yVE8Iq1EvZKPSX5Cnsf
+         Jee0FwuK30nX4v4PUr2dZcJQcpvQGkTku8BL9FIpqqO1GGO5LgbTW4IZknylbHbIXTNq
+         8gOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNTlLbqpCD0NotzbADFtNAx1Tfq0koIdTH0vYu+SKRpRI7SA/xM2FZcCK11GhCDmPty+0e5JlCrgIcimw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaiTF7sbm9KEHGjNb+VuurZ3Yv7QJDSldN3J4sna4Ya+DACeDt
+	u63qn7ZIwgOlVsD1oWzRPT1SVEltMxcwSSy1Ts5LqCR6xW0aMpf0bC7D8ZCWPAMcJhKXW9Y8YPx
+	zByoIFqkfQJ19p/m21atLkkh9HsqnjLjaSPU9a6cm
+X-Gm-Gg: ASbGncsttqRTy891NXrv8JzCtkhUq3YH0hUCgoSlp/maoEZSNkiQTZqd+P//7DyP3Lu
+	9SGu6ebzjo0RnBvxlWuSL+9hrsHKTpyYhIYZmhcdvnE7Nx03E2I9V2rkDeWOfUYs581vdLiBlIo
+	0fBY4wJaVXwAzo3auUS/TLgmz5OQ==
+X-Google-Smtp-Source: AGHT+IHt4QX+U3W09fOKLCq2O594dVXwOzl0bzEuIYfRvIYV5wxIFCWRBumPY5rHwsEvMnqxt38PkkgTgZiLZZTXPW4=
+X-Received: by 2002:a05:6870:5b81:b0:2bc:9116:8856 with SMTP id
+ 586e51a60fabf-2c1787be53cmr7159117fac.36.1740970473239; Sun, 02 Mar 2025
+ 18:54:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <9760f1ae-7aec-4e17-b277-ea6aca13b382@p183>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHq18KEMVnpPyKFQ--.22048S3
-X-Coremail-Antispam: 1UD129KBjvAXoW3uw43Xw1xCr47KryxWw43Awb_yoW8Jr13Co
-	WfG34xXr48GrZ8tr47G3WUAF18Xw4fJF97JF1jkrWfZF17tay5K342grn7Xa42vFs5Xr98
-	Zrn2qr1Iya1rG3s3n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UjIYCTnIWjp_UUUYz7kC6x804xWl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK
-	8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4
-	AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF
-	7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7
-	CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8C
-	rVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4
-	IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS
-	14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWU
-	twCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwx
-	hLUUUUU
-X-CM-SenderInfo: p1hex046kxt4xhlfz01xgou0bp/
+From: Strforexc yn <strforexc@gmail.com>
+Date: Mon, 3 Mar 2025 10:54:22 +0800
+X-Gm-Features: AQ5f1Jo5Cbm62tUkcpRh91P4lTA7nPMBDcawpHX8QiMCv6S6ymvc0BI6xtjo_-8
+Message-ID: <CA+HokZp0ZrvS_Xcue0wx48jmgmfXodEk6Qy2SeN3Bz6XPvQW=Q@mail.gmail.com>
+Subject: KASAN: slab-out-of-bounds Write in hfs_bnode_read
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Kernel commit: v6.14-rc4 (Commits on Feb 24, 2025)
+Kernel Config : https://github.com/Strforexc/LinuxKernelbug/blob/main/.config
+Kernel Log:  https://github.com/Strforexc/LinuxKernelbug/blob/main/KASAN_slab-out-of-bounds_Write_in_hfs_bnode_read/log0
+Reproduce:  https://github.com/Strforexc/LinuxKernelbug/blob/main/KASAN_slab-out-of-bounds_Write_in_hfs_bnode_read/repro.cprog
 
+This bug seems to have been reported and fixed in the old kernel,
+which seems to be a regression issue? If you fix this issue, please
+add the following tag to the commit:
+Reported-by: Zhizhuo Tang strforexctzzchange@foxmail.com, Jianzhou
+Zhao xnxc22xnxc22@qq.com, Haoran Liu <cherest_san@163.com>
 
-On 2025/3/1 19:51, Alexey Dobriyan wrote:
-> On Sat, Mar 01, 2025 at 07:46:13AM +0300, Alexey Dobriyan wrote:
->> On Sat, Mar 01, 2025 at 11:40:24AM +0800, Ye Bin wrote:
->>> There's a issue as follows:
->>> BUG: unable to handle page fault for address: fffffbfff80a702b
->>
->>> Above issue may happen as follows:
->>>        rmmod                         lookup
->>> sys_delete_module
->>>                           proc_lookup_de
->>>                             read_lock(&proc_subdir_lock);
->>> 			   pde_get(de);
->>> 			   read_unlock(&proc_subdir_lock);
->>> 			   proc_get_inode(dir->i_sb, de);
->>>    mod->exit()
->>>      proc_remove
->>>        remove_proc_subtree
->>>         write_lock(&proc_subdir_lock);
->>>         write_unlock(&proc_subdir_lock);
->>>         proc_entry_rundown(de);
->>>    free_module(mod);
->>>
->>>                                 if (S_ISREG(inode->i_mode))
->>> 	                         if (de->proc_ops->proc_read_iter)
->>>                             --> As module is already freed, will trigger UAF
->>
->> Hey look, vintage 17.5 year old /proc bug.
->> This just shows how long I didn't ran rmmod test. :-(
->>
->>> To solve above issue there's need to get 'in_use' before use proc_dir_entry
->>> in proc_get_inode().
->>>
->>> Fixes: fd5a13f4893c ("proc: add a read_iter method to proc proc_ops")
->>
->> OK, this is copy of the original sin below.
->>
->>> Fixes: 778f3dd5a13c ("Fix procfs compat_ioctl regression")
->>
->> This one is.
->>
->> Let me think a little.
->>
->>> --- a/fs/proc/inode.c
->>> +++ b/fs/proc/inode.c
->>> @@ -644,6 +644,11 @@ struct inode *proc_get_inode(struct super_block *sb, struct proc_dir_entry *de)
->>>   		return inode;
->>>   	}
->>>
->>> +	if (!pde_is_permanent(de) && !use_pde(de)) {
->>> +		pde_put(de);
->>> +		return NULL;
->>> +	}
->>> +
->>>   	if (de->mode) {
->>>   		inode->i_mode = de->mode;
->>>   		inode->i_uid = de->uid;
->>> @@ -677,5 +682,9 @@ struct inode *proc_get_inode(struct super_block *sb, struct proc_dir_entry *de)
->>>   	} else {
->>>   		BUG();
->>>   	}
->>> +
->>> +	if (!pde_is_permanent(de))
->>> +		unuse_pde(de);
->>> +
->
-> I can't reproduce. Can you test new patch -- it avoid 2 atomic ops on
-> common path.
->
-I can provide specific reproduction methods and test results of new fixes.
-Reproduction method as follows：
-1. Kernel modification adding delay：
-diff --git a/fs/proc/generic.c b/fs/proc/generic.c
-index a3e22803cddf..31a5d8171259 100644
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -27,6 +27,7 @@
-  #include <linux/completion.h>
-  #include <linux/uaccess.h>
-  #include <linux/seq_file.h>
-+#include <linux/delay.h>
+==================================================================
+BUG: KASAN: slab-out-of-bounds in memcpy_from_page
+include/linux/highmem.h:423 [inline]
+BUG: KASAN: slab-out-of-bounds in hfs_bnode_read+0xc5/0x230 fs/hfs/bnode.c:35
+Write of size 256 at addr ffff8880512bab80 by task syz.3.4/11486
 
-  #include "internal.h"
+CPU: 1 UID: 0 PID: 11486 Comm: syz.3.4 Not tainted 6.14.0-rc4 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1b0 lib/dump_stack.c:120
+ print_address_description.constprop.0+0x2c/0x420 mm/kasan/report.c:408
+ print_report+0xaa/0x270 mm/kasan/report.c:521
+ kasan_report+0xbd/0x100 mm/kasan/report.c:634
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0x108/0x1e0 mm/kasan/generic.c:189
+ __asan_memcpy+0x3d/0x70 mm/kasan/shadow.c:106
+ memcpy_from_page include/linux/highmem.h:423 [inline]
+ hfs_bnode_read+0xc5/0x230 fs/hfs/bnode.c:35
+ hfs_bnode_read_key+0x149/0x1f0 fs/hfs/bnode.c:70
+ hfs_brec_insert+0x822/0xbd0 fs/hfs/brec.c:141
+ hfs_cat_create+0x6a5/0x840 fs/hfs/catalog.c:131
+ hfs_create+0x6b/0x100 fs/hfs/dir.c:202
+ lookup_open.isra.0+0x1145/0x1540 fs/namei.c:3651
+ open_last_lookups+0x82c/0x13b0 fs/namei.c:3750
+ path_openat+0x182/0x6b0 fs/namei.c:3986
+ do_filp_open+0x1f8/0x460 fs/namei.c:4016
+ do_sys_openat2+0x16a/0x1d0 fs/open.c:1428
+ do_sys_open fs/open.c:1443 [inline]
+ __do_sys_openat fs/open.c:1459 [inline]
+ __se_sys_openat fs/open.c:1454 [inline]
+ __x64_sys_openat+0x140/0x200 fs/open.c:1454
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcb/0x260 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f651abb85ad
+Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48
+89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
+01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f651b9acf98 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007f651ae45fa0 RCX: 00007f651abb85ad
+RDX: 0000000000141842 RSI: 0000400000000380 RDI: ffffffffffffff9c
+RBP: 00007f651ac6a8d6 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f651ae45fa0 R15: 00007f651b98d000
+ </TASK>
 
-@@ -251,6 +252,13 @@ struct dentry *proc_lookup_de(struct inode *dir, 
-struct dentry *dentry,
-         if (de) {
-                 pde_get(de);
-                 read_unlock(&proc_subdir_lock);
-+               if (!strcmp("ls", current->comm)) {
-+                       printk("%s: %s %d will wait de=0x%px name=%pd 
-remove....\n",
-+                              __func__, current->comm, current->pid, 
-de, dentry);
-+                       mdelay(5 * 1000);
-+                       printk("%s: %s %d end delay  de=0x%px name=%pd 
-remove....\n",
-+                              __func__, current->comm, current->pid, 
-de, dentry);
-+               }
-                 inode = proc_get_inode(dir->i_sb, de);
-                 if (!inode)
-                         return ERR_PTR(-ENOMEM);
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 3dbe23098433..0b2488c4bdab 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -60,6 +60,7 @@
-  #include <linux/debugfs.h>
-  #include <linux/execmem.h>
-  #include <uapi/linux/module.h>
-+#include <linux/delay.h>
-  #include "internal.h"
+Allocated by task 11486:
+ kasan_save_stack+0x24/0x50 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x40 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0xba/0xc0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __do_kmalloc_node mm/slub.c:4294 [inline]
+ __kmalloc_noprof+0x212/0x580 mm/slub.c:4306
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ hfs_find_init+0x95/0x260 fs/hfs/bfind.c:21
+ hfs_cat_create+0x155/0x840 fs/hfs/catalog.c:96
+ hfs_create+0x6b/0x100 fs/hfs/dir.c:202
+ lookup_open.isra.0+0x1145/0x1540 fs/namei.c:3651
+ open_last_lookups+0x82c/0x13b0 fs/namei.c:3750
+ path_openat+0x182/0x6b0 fs/namei.c:3986
+ do_filp_open+0x1f8/0x460 fs/namei.c:4016
+ do_sys_openat2+0x16a/0x1d0 fs/open.c:1428
+ do_sys_open fs/open.c:1443 [inline]
+ __do_sys_openat fs/open.c:1459 [inline]
+ __se_sys_openat fs/open.c:1454 [inline]
+ __x64_sys_openat+0x140/0x200 fs/open.c:1454
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcb/0x260 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-  #define CREATE_TRACE_POINTS
-@@ -776,6 +777,9 @@ SYSCALL_DEFINE2(delete_module, const char __user *, 
-name_user,
-                 goto out;
+The buggy address belongs to the object at ffff8880512bab80
+ which belongs to the cache kmalloc-96 of size 96
+The buggy address is located 0 bytes inside of
+ allocated 78-byte region [ffff8880512bab80, ffff8880512babce)
 
-         mutex_unlock(&module_mutex);
-+       printk("%s: will wait for ls procfs 2s....\n", __func__);
-+       mdelay(2 * 1000);
-+       printk("%s: end wait for ls procfs\n", __func__);
-         /* Final destruction now no one is using it. */
-         if (mod->exit != NULL)
-                 mod->exit();
-@@ -791,6 +795,7 @@ SYSCALL_DEFINE2(delete_module, const char __user *, 
-name_user,
-         strscpy(last_unloaded_module.taints, module_flags(mod, buf, 
-false), sizeof(last_unloaded_module.taints));
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x512ba
+ksm flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 04fff00000000000 ffff88801b441280 ffffea000136d8c0 dead000000000003
+raw: 0000000000000000 0000000080200020 00000000f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask
+0x52820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 9758,
+tgid 9758 (kworker/u8:3), ts 68385688828, free_ts 68344511646
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1a3/0x1d0 mm/page_alloc.c:1551
+ prep_new_page mm/page_alloc.c:1559 [inline]
+ get_page_from_freelist+0x8a5/0xfa0 mm/page_alloc.c:3477
+ __alloc_frozen_pages_noprof+0x1d8/0x3b0 mm/page_alloc.c:4739
+ alloc_pages_mpol+0x1f2/0x550 mm/mempolicy.c:2270
+ alloc_slab_page mm/slub.c:2423 [inline]
+ allocate_slab+0x229/0x310 mm/slub.c:2587
+ ___slab_alloc+0x7f3/0x12b0 mm/slub.c:3826
+ __slab_alloc.constprop.0+0x56/0xc0 mm/slub.c:3916
+ __slab_alloc_node mm/slub.c:3991 [inline]
+ slab_alloc_node mm/slub.c:4152 [inline]
+ __kmalloc_cache_noprof+0x280/0x450 mm/slub.c:4320
+ kmalloc_noprof include/linux/slab.h:901 [inline]
+ kzalloc_noprof include/linux/slab.h:1037 [inline]
+ nsim_fib_event_schedule_work+0xb3/0x8d0 drivers/net/netdevsim/fib.c:990
+ nsim_fib_event_nb+0x14e/0x190 drivers/net/netdevsim/fib.c:1043
+ notifier_call_chain+0xd7/0x250 kernel/notifier.c:85
+ atomic_notifier_call_chain+0x71/0x1d0 kernel/notifier.c:223
+ call_fib_notifiers+0x34/0x70 net/core/fib_notifier.c:35
+ call_fib6_entry_notifiers net/ipv6/ip6_fib.c:397 [inline]
+ fib6_add_rt2node+0x19fa/0x3160 net/ipv6/ip6_fib.c:1231
+ fib6_add+0x4b2/0x1720 net/ipv6/ip6_fib.c:1488
+ __ip6_ins_rt net/ipv6/route.c:1317 [inline]
+ ip6_ins_rt+0xb6/0x120 net/ipv6/route.c:1327
+page last free pid 9550 tgid 9550 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ free_frozen_pages+0x71f/0xff0 mm/page_alloc.c:2660
+ __put_partials+0x13b/0x190 mm/slub.c:3153
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x50/0x130 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x1a5/0x1f0 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x6f/0xa0 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4115 [inline]
+ slab_alloc_node mm/slub.c:4164 [inline]
+ __do_kmalloc_node mm/slub.c:4293 [inline]
+ __kmalloc_noprof+0x1c3/0x580 mm/slub.c:4306
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ kzalloc_noprof include/linux/slab.h:1037 [inline]
+ fib6_info_alloc+0x40/0x170 net/ipv6/ip6_fib.c:155
+ ip6_route_info_create+0x341/0x1930 net/ipv6/route.c:3766
+ ip6_route_add+0x28/0x180 net/ipv6/route.c:3858
+ addrconf_add_mroute+0x1de/0x360 net/ipv6/addrconf.c:2549
+ addrconf_add_dev+0x154/0x1d0 net/ipv6/addrconf.c:2567
+ inet6_addr_add+0x100/0x980 net/ipv6/addrconf.c:3029
+ inet6_rtm_newaddr+0x93c/0xaa0 net/ipv6/addrconf.c:5054
+ rtnetlink_rcv_msg+0x9f4/0xfc0 net/core/rtnetlink.c:6912
+ netlink_rcv_skb+0x168/0x450 net/netlink/af_netlink.c:2543
+ netlink_unicast_kernel net/netlink/af_netlink.c:1322 [inline]
+ netlink_unicast+0x552/0x800 net/netlink/af_netlink.c:1348
 
-         free_module(mod);
-+       printk("%s: freed module\n", __func__);
-         /* someone could wait for the module in add_unformed_module() */
-         wake_up_all(&module_wq);
-         return 0;
-
-2. Preparing module
-test_procfs.c：
-#include <linux/file.h>
-#include <linux/proc_fs.h>
-#include <linux/module.h>
-#include <linux/version.h>
-
-struct proc_dir_entry *g_proc_test;
-static const struct proc_ops g_proc_test_operations = {};
-
-static int __init test_init(void)
-{
-         g_proc_test = proc_create("test_procfs", 0400, NULL,
-                                   &g_proc_test_operations);
-
-         return 0;
-}
-
-static void __exit test_exit(void)
-{
-         printk("test: will exit\n");
-         proc_remove(g_proc_test);
-         printk("test: test proc remove\n");
-}
-
-module_init(test_init);
-module_exit(test_exit);
-MODULE_DESCRIPTION("Test module");
-MODULE_LICENSE("GPL");
-
-3. Reproduction procedure：
-     insmod test_procfs.ko
-     rmmod test_procfs &
-     sleep 1
-     ls /proc/test_procfs
-
-4. Reproduction result：
-[root@localhost ~]#     insmod test_procfs.ko
-[  106.816730][ T2550] test_procfs: loading out-of-tree module taints 
-kernel.
-[root@localhost ~]#     rmmod test_procfs &
-[1] 2553
-[root@localhost ~]#     sleep 1
-[  106.871589][ T2553] __do_sys_delete_module: will wait for ls procfs 
-2s....
-[root@localhost ~]#     ls /proc/test_procfs
-[  107.898489][ T2556] proc_lookup_de: ls 2556 will wait 
-de=0xffff8881136bb900 name=test_procfs remove....
-[  108.876730][ T2553] __do_sys_delete_module: end wait for ls procfs
-[  108.877177][ T2553] test: will exit
-[  108.877430][ T2553] test: test proc remove
-[  108.897238][ T2553] __do_sys_delete_module: freed module
-[  112.903812][ T2556] proc_lookup_de: ls 2556 end delay 
-de=0xffff8881136bb900 name=test_procfs remove....
-[  112.904967][ T2556] BUG: unable to handle page fault for address: 
-fffffbfff80bb01b
-[  112.906801][ T2556] #PF: supervisor read access in kernel mode
-[  112.908180][ T2556] #PF: error_code(0x0000) - not-present page
-[  112.909534][ T2556] PGD 817fc4067 P4D 817fc4067 PUD 817fc0067 PMD 
-102ebb067 PTE 0
-[  112.911272][ T2556] Oops: Oops: 0000 [#1] PREEMPT SMP KASAN PTI
-[  112.912648][ T2556] CPU: 28 UID: 0 PID: 2556 Comm: ls Tainted: G 
-       OE 
-6.14.0-rc4-next-20250228-862.14.0.6.x86_64-00030-gd76eeb7f22fa #110
-[  112.915724][ T2556] Tainted: [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
-[  112.917124][ T2556] Hardware name: QEMU Standard PC (i440FX + PIIX, 
-1996), BIOS 1.15.0-1 04/01/2014
-[  112.919182][ T2556] RIP: 0010:proc_get_inode+0x302/0x6e0
-[  112.920475][ T2556] Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 cf 
-03 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b 5d 30 48 8d 7b 18 48 89 fa 
-48 c1 ea 03 <808
-[  112.924874][ T2556] RSP: 0018:ffff88812c157998 EFLAGS: 00010a06
-[  112.926288][ T2556] RAX: dffffc0000000000 RBX: ffffffffc05d80c0 RCX: 
-0000000000000007
-[  112.928094][ T2556] RDX: 1ffffffff80bb01b RSI: 0000000000000001 RDI: 
-ffffffffc05d80d8
-[  112.929908][ T2556] RBP: ffff8881136bb900 R08: 0000000067c50d9b R09: 
-1ffff1102582af20
-[  112.931755][ T2556] R10: ffffffffa160da07 R11: ffffffff9eb42bb8 R12: 
-ffff888105bacda0
-[  112.933572][ T2556] R13: ffff888105b38048 R14: ffff8881136bb904 R15: 
-0000000000000001
-[  112.935372][ T2556] FS:  00007fc41042e840(0000) 
-GS:ffff88840c1b4000(0000) knlGS:0000000000000000
-[  112.937396][ T2556] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  112.938895][ T2556] CR2: fffffbfff80bb01b CR3: 000000010353c000 CR4: 
-00000000000006f0
-[  112.940732][ T2556] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 
-0000000000000000
-[  112.942555][ T2556] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 
-0000000000000400
-[  112.944372][ T2556] Call Trace:
-[  112.945140][ T2556]  <TASK>
-[  112.945822][ T2556]  ? __die+0x24/0x70
-[  112.946742][ T2556]  ? page_fault_oops+0xce/0x120
-[  112.947870][ T2556]  ? exc_page_fault+0xb2/0xc0
-[  112.948967][ T2556]  ? asm_exc_page_fault+0x26/0x30
-[  112.950055][ T2556]  ? inode_init_always_gfp+0x948/0xba0
-[  112.951199][ T2556]  ? proc_get_inode+0x302/0x6e0
-[  112.952232][ T2556]  ? proc_get_inode+0x3c6/0x6e0
-[  112.953280][ T2556]  proc_lookup_de+0x11f/0x2e0
-[  112.954177][ T2556]  __lookup_slow+0x187/0x350
-[  112.955065][ T2556]  ? __pfx___lookup_slow+0x10/0x10
-[  112.956070][ T2556]  ? try_to_unlazy+0x1c4/0x480
-[  112.956984][ T2556]  ? lookup_fast+0x230/0x4e0
-[  112.957850][ T2556]  ? __pfx_link_path_walk.part.0.constprop.0+0x10/0x10
-[  112.959058][ T2556]  walk_component+0x2ab/0x4f0
-[  112.959891][ T2556]  path_lookupat+0x120/0x660
-[  112.960711][ T2556]  ? __pfx_stack_trace_consume_entry+0x10/0x10
-[  112.961780][ T2556]  filename_lookup+0x1cd/0x560
-[  112.962578][ T2556]  ? __pfx_filename_lookup+0x10/0x10
-[  112.963458][ T2556]  ? set_track_prepare+0x49/0x70
-[  112.964282][ T2556]  ? kmem_cache_alloc_noprof+0x2d7/0x360
-[  112.965223][ T2556]  ? getname_flags.part.0+0x4b/0x490
-[  112.966075][ T2556]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-[  112.967003][ T2556]  ? __link_object+0x10c/0x1b0
-[  112.967754][ T2556]  vfs_statx+0xab/0x150
-[  112.968401][ T2556]  ? __pfx_vfs_statx+0x10/0x10
-[  112.969148][ T2556]  ? getname_flags.part.0+0xaf/0x490
-[  112.969942][ T2556]  __do_sys_newstat+0x95/0x100
-[  112.970648][ T2556]  ? __pfx___do_sys_newstat+0x10/0x10
-[  112.971435][ T2556]  ? handle_mm_fault+0x172/0x430
-[  112.972160][ T2556]  do_syscall_64+0x5f/0x170
-[  112.972831][ T2556]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[  112.973693][ T2556] RIP: 0033:0x7fc40f2ee895
-[  112.974280][ T2556] Code: e8 60 01 00 00 48 83 c4 18 c3 66 2e 0f 1f 
-84 00 00 00 00 00 90 83 ff 01 48 89 f0 77 18 48 89 c7 48 89 d6 b8 04 00 
-00 00 0f 05 <486
-[  112.976839][ T2556] RSP: 002b:00007ffd0107d9f8 EFLAGS: 00000246 
-ORIG_RAX: 0000000000000004
-[  112.977920][ T2556] RAX: ffffffffffffffda RBX: 00007ffd0107ecb3 RCX: 
-00007fc40f2ee895
-[  112.978919][ T2556] RDX: 0000000016022110 RSI: 0000000016022110 RDI: 
-00007ffd0107ecb3
-[  112.979928][ T2556] RBP: 00007ffd0107dda0 R08: 0000000000000000 R09: 
-0000000016022100
-[  112.980937][ T2556] R10: 00007ffd0107d5c0 R11: 0000000000000246 R12: 
-00007ffd0107ecb3
-[  112.981932][ T2556] R13: 000000000000000a R14: 0000000016022100 R15: 
-0000000000000000
-[  112.982887][ T2556]  </TASK>
-...
-[  112.999566][ T2556] ---[ end Kernel panic - not syncing: Fatal 
-exception ]---
-
-5. Test results for new patch：
---round 1
-[root@localhost ~]# insmod test_procfs.ko
-[  300.997847][ T2641] test_procfs: loading out-of-tree module taints 
-kernel.
-[root@localhost ~]# rmmod test_procfs &
-[1] 2644
-[root@localhost ~]# sleep 1
-[  301.062858][ T2644] __do_sys_delete_module: will wait for ls procfs 
-2s....
-[root@localhost ~]# ls /proc/test_procfs
-[  302.084609][ T2647] proc_lookup_de: ls 2647 will wait 
-de=0xffff888122a74000 name=test_procfs remove....
-[  303.066879][ T2644] __do_sys_delete_module: end wait for ls procfs
-[  303.067351][ T2644] test: will exit
-[  303.067624][ T2644] test: test proc remove
-[  303.087512][ T2644] __do_sys_delete_module: freed module
-
-[  307.088773][ T2647] proc_lookup_de: ls 2647 end delay 
-de=0xffff888122a74000 name=test_procfs remove....
-ls: cannot access /proc/test_procfs: No such file or directory
-[1]+  Done                    rmmod test_procfs
-
---round 2
-[root@localhost ~]#
-[root@localhost ~]# insmod test_procfs.ko
-[root@localhost ~]# rmmod test_procfs &
-[1] 2651
-[root@localhost ~]# sleep 1
-[  315.614603][ T2651] __do_sys_delete_module: will wait for ls procfs 
-2s....
-[root@localhost ~]# ls /proc/test_procfs
-[  316.638267][ T2654] proc_lookup_de: ls 2654 will wait 
-de=0xffff888117ade000 name=test_procfs remove....
-[  317.617933][ T2651] __do_sys_delete_module: end wait for ls procfs
-[  317.618504][ T2651] test: will exit
-[  317.618758][ T2651] test: test proc remove
-[  317.638900][ T2651] __do_sys_delete_module: freed module
-[  321.642678][ T2654] proc_lookup_de: ls 2654 end delay 
-de=0xffff888117ade000 name=test_procfs remove....
-ls: cannot access /proc/test_procfs: No such file or directory
-[1]+  Done                    rmmod test_procfs
-
-
-> If the bug is looking into pde->proc_ops, then don't do it.
-   Yes. It's a really good idea.
->
-
+Memory state around the buggy address:
+ ffff8880512baa80: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
+ ffff8880512bab00: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
+>ffff8880512bab80: 00 00 00 00 00 00 00 00 00 06 fc fc fc fc fc fc
+                                              ^
+ ffff8880512bac00: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+ ffff8880512bac80: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+==================================================================
+Thanks,
+Zhizhuo Tang
 
