@@ -1,73 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-43001-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43002-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 424F7A4CB09
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 19:33:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21621A4CB70
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 19:56:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BBB61757F2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 18:33:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1745A3ADAAB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 18:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3FAE21638E;
-	Mon,  3 Mar 2025 18:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4329822E3FF;
+	Mon,  3 Mar 2025 18:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aKN62jzq"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="M1LVSZkD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5EC1E7C03;
-	Mon,  3 Mar 2025 18:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5FF1E7C25
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Mar 2025 18:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741026817; cv=none; b=sjAW+su6kAa3ObldD6P1B/Feh1wyAo/MzUQkjlP9FerE01vAOn5Udw5tj4TzKUtcsj1chKlSxgMVcxvoIYVJ6DWl1rFAizQezsL5aLAV4H3E/fJ/UpfJl2WwG9Wkyfy/oayY0BBSyUod64IMW9zXyIwGG/3RjhsWGfSW1NbMp44=
+	t=1741028167; cv=none; b=VB6MxkKPxklwiagpYyAoVE4nv90RQ00oouNVChP56oo3P5KHJNxAEF89YkTNOtKQiH7TPRL5kIE1lBdh3aFvyK+33fAJs8bs74QePL3qo//o+hnbdTVvqviuXGKlFkv3uGy1aPiaQViTPew8YofYLN3igsD1DwCIqJgZeawi+Kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741026817; c=relaxed/simple;
-	bh=X7t0CacmHUpcpJhGItcuM8Xnn6Mn1r21B9z4Wx+RLZY=;
+	s=arc-20240116; t=1741028167; c=relaxed/simple;
+	bh=40lZ1B3I0WpagjJJY3c7pknBCiXUw+PnTGKE9/WolFE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hXfjFvuTjuDrJh/e1+2naQTtdj6I6xb3P7E2u1+DB+81U9e4VuLRXtnh9DqHnZsfkujwIwS5GwffMIqTOMNuuJhfXE0ESiGYso/5obcCyyXufmbs2fpcKufcB4iexdllpeVzsI9dE99x37IodP0Od5l4D7BTYBVb80SAjYiKt+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aKN62jzq; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-abbd96bef64so758378966b.3;
-        Mon, 03 Mar 2025 10:33:35 -0800 (PST)
+	 To:Cc:Content-Type; b=Gjmuy6qyqcQy/2YESOPWCT6I34+JHEFBYd3sg+9fAlrQNDF4J1KV0XReYR6seiE/qv0XwzVLw1fhXsZmKro7yY5XvT+FQuUihKbsZjMsQ/8QwE95v4VF9ZwNEWijZ0K2FkXYy+rq12DTsY0uUahHpnrzvLn73blmLi7tdb7//+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=M1LVSZkD; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aaf0f1adef8so934144666b.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Mar 2025 10:56:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741026814; x=1741631614; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X7t0CacmHUpcpJhGItcuM8Xnn6Mn1r21B9z4Wx+RLZY=;
-        b=aKN62jzq2nrgAQFcAphKd2aWWPO9tc0T7FrvB+yeoMwZAMhybGwDIttMfl36UbDB9X
-         LNj53B3oDFSRHLrtE6wLVl3piEDihvhDl2AFSfQqhh9YHpYspeWYD4H268gA06fBwx1+
-         d1PjzZBEm2AzCeKcB10qpvU1n/9r2x0sUK0cJ3qaMF1Sf5CcZHNfkYbmy39G2WMlOgaC
-         c9O03bkbJYxJ4Wqh3FxHSaoiiM9QlR1lfQCYbpJXPhZBVfpcRVTcAexaigSADNugk2n+
-         v/77MSY2AGuelix6pwb8cgg9DJLGNuFZG9goxbd+hzKPRDC98AOY5NvPyFvkLpUX4HPa
-         IP8g==
+        d=linux-foundation.org; s=google; t=1741028162; x=1741632962; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fSfhJwWsj+zXdSemjGaY4k9oeyz7B20wLL/Ct0QzSTI=;
+        b=M1LVSZkDldcz9I4LJA5X3gQprKLSrcONjSFUo36f3NJbn33ZccfEagbWcekmF3keEq
+         OzAprCqaQGLCQSISRvXNEmvydUq1eolauvf+EBwpiwtIv3V2tiQF5CP8VRxO+K6caEIq
+         bmAmgtHlFzvxH9rzPpwzaWbK3gsCPtLM7Z68c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741026814; x=1741631614;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X7t0CacmHUpcpJhGItcuM8Xnn6Mn1r21B9z4Wx+RLZY=;
-        b=IdkFALaLgLXc0Yx/+1Yr8dBYOE+7iutIpEqRz68lavobqhTzkCpA1LcrmGYyH3Ytc8
-         pr1pQ1VSOFa3rAbZEZefQFb77iic9bW9KplxF2Qgrxdiaf45NpXKlEpBT6MX4sMXxh1W
-         Jv9h0gkHb5vCqS+gG4yIYSNKIFtc0MpfJw4we7CLu/1j7wZwGbjP2adiT5/bzm4AxedH
-         mZVuL2J0p2cfwn48u4ZabOfC2WiADrFCpxihc2TFFHI/zmT9Wi67LrLYADmkDXV5R2Nm
-         hXPkEHsjc7/uaKMXfqcn0JvinsZyOJpsn3jBMdTMulumvaoospD/F65WtasJhtpE0QyJ
-         OGBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0mBS006O35I8OBx/9tu+VOcpbiCFs8ABJx++4CGMkriB4x+pgvTpHswGTIC6QKOeQmziumabeMjDgfTxE@vger.kernel.org, AJvYcCXm6igdPIi+BqZS7djAmx+5PiUwJJ6BLBm3Xjo0tI2NOMiItZp2V+wUREdSVsgidNvtRNqBRk4mUHNY10e5@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNh8zO0TycRwOt8dkYlhqwujpgWoIu8eRksdlhCg2WUGGw1nSj
-	IB5Ol+VzqwQEGl0h1ZrVw0gv6mBuiR5togmswdW3HOlyEPfqTcNqmtqMU6s5ihpwd59PlxrIrme
-	lYisnsNy3pXZ14u/iMLf8NqND46x2KEV6ayI=
-X-Gm-Gg: ASbGnctkMTwo/jPZ/midtQVPh+STo+XxjDWr4weMpymZxLKKqXapt4ZpWFXAvWKrFoL
-	t/R0bpj2M0nIBtNh8GMW+f+Vf+KMtI3oABMVrXRtoLuZA1pfngyHeKl24A2pF45fUjIwwFAAr+c
-	uxKqPbqW+JVRSndB+XlFAEY8Wa
-X-Google-Smtp-Source: AGHT+IEM5mh0zNC9LcJPthDBH8OtjUn9hOrzsAtZn9C2/MmE4wA9PPmrl3l+s6WJD5vVHHM3HoiTsAdh/3kjR7WGsu4=
-X-Received: by 2002:a17:907:1b22:b0:abf:215b:4ac6 with SMTP id
- a640c23a62f3a-abf26859335mr1942194366b.53.1741026813516; Mon, 03 Mar 2025
- 10:33:33 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741028162; x=1741632962;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fSfhJwWsj+zXdSemjGaY4k9oeyz7B20wLL/Ct0QzSTI=;
+        b=RsgiKt2kNIms1KHYTikHQhS/L0n1My4LcC4O9h4T+OsZc4tiOE9v7X7N5JTxCJZQBU
+         qMXBKLkHgbkUS/mBxbitNeF6PdkKRyItFaPTsljUeuCszKzPdKNd+0YG/8W0E/s/VpUM
+         NQAqoXL0faVh2p+Xifn4Gw7F2r0+2p4A/lRnfOHB6DlgBKW6CSMY98dI5auvr0jvkAhX
+         uNRiwnAWLRAuKPpYYLfKr6FRAhkvK2eGfT5MiBuDdNgmcl+d07CWLVlPp/IHVoH3hV9D
+         8B7G9Pg8TUrFNvCkjS6/bEnzLzlfuj0x69BOiBn8kXsQRaPHQfPO6vv8FalfEvytFlzx
+         FRKw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+QTEa4nUSIO9/U7U9AN//xOBdLTx6rJBqST1nhVUfjMGqZpPQUEVIgy+yUSpJho3DUBhHQHYlZIGHSafx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1RxyqAqfzk41fPe4Wg3Ty3bNQ6iWJqYqdQSoU4drviqyEfU/X
+	D3pIUz+kZq21Hgk508McdW25KwgBeW8VWu7g70Cwl0I3TZfnagvKju0rJ4suHcZR49+ssBlQkPW
+	AEjk=
+X-Gm-Gg: ASbGnctEV8CU500rWoi3vMK84ESV/A8hLvCCgio/KeWQbEN8i1BGDZLAD1r8HJul4pA
+	mFWTDNyWqXdKlcuOLnMZQdhmvb9N1A3P782dBH8hbRNCjHNh/ydfHeU3FFyvdc5XUOhBvh18UXr
+	dTVF3Jmo94M39KS2Ijw4BaboXENj/joyLcC0NYfSgyLckIqCCxG/ZFoK5FrVPEdOmEG+BRDur80
+	oGWb/oBfj2wNp5sbW5rm/yKppRo+/lLh+gT2mmedL6wWj7ljIFrR6X4zhtURvQ0xhYQyR0RJNWl
+	RKp6DouShWwXpZz7FVBcIGf5Zr8sA261vE40Ysu4vte5owfngocs3ysBPHnQZ/UsK0MmVzN+rmI
+	C5/C0EQ1di7C/m1NnM0o=
+X-Google-Smtp-Source: AGHT+IHsvFy/W+tdirBvB76TPh9f/U0gKww2GlvreqeYoTz+U/fMEEoKkdClbqPuRPvzQV5F6MMDGA==
+X-Received: by 2002:a17:906:1990:b0:abf:3e68:6583 with SMTP id a640c23a62f3a-abf3e6866f5mr1446380766b.41.1741028162193;
+        Mon, 03 Mar 2025 10:56:02 -0800 (PST)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c6ee4c9sm845032866b.97.2025.03.03.10.56.00
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Mar 2025 10:56:00 -0800 (PST)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abf64aa2a80so350983866b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Mar 2025 10:56:00 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVeYKnd9TZPSPDAKNRra0Jey8Yfmt3+vhHxVc+SheSMYLMLIgiwMTesXKT//r0vSm+2Pad7lFNkgsc4YD52@vger.kernel.org
+X-Received: by 2002:a17:907:6090:b0:abe:fa1a:4eab with SMTP id
+ a640c23a62f3a-abf260d496dmr1907190066b.25.1741028160310; Mon, 03 Mar 2025
+ 10:56:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,14 +90,15 @@ References: <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt>
  <CAGudoHHA7uAVUmBWMy4L50DXb4uhi72iU+nHad=Soy17Xvf8yw@mail.gmail.com>
  <CAGudoHE_M2MUOpqhYXHtGvvWAL4Z7=u36dcs0jh3PxCDwqMf+w@mail.gmail.com>
  <741fe214-d534-4484-9cf3-122aabe6281e@amd.com> <3jnnhipk2at3f7r23qb7fvznqg6dqw4rfrhajc7h6j2nu7twi2@wc3g5sdlfewt>
- <CAHk-=whuLzj37umjCN9CEgOrZkOL=bQPFWA36cpb24Mnm3mgBw@mail.gmail.com>
-In-Reply-To: <CAHk-=whuLzj37umjCN9CEgOrZkOL=bQPFWA36cpb24Mnm3mgBw@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 3 Mar 2025 19:33:20 +0100
-X-Gm-Features: AQ5f1Jp3WPGBTVafA5aGFgB3i5XGo3XKvFMo6SCtl6TJl7LgydPyRLVBfSK-ltE
-Message-ID: <CAGudoHG2PuhHte91BqrnZi0VbhLBfZVsrFYmYDVrmx4gaLUX3A@mail.gmail.com>
+ <CAHk-=whuLzj37umjCN9CEgOrZkOL=bQPFWA36cpb24Mnm3mgBw@mail.gmail.com> <CAGudoHG2PuhHte91BqrnZi0VbhLBfZVsrFYmYDVrmx4gaLUX3A@mail.gmail.com>
+In-Reply-To: <CAGudoHG2PuhHte91BqrnZi0VbhLBfZVsrFYmYDVrmx4gaLUX3A@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 3 Mar 2025 08:55:42 -1000
+X-Gmail-Original-Message-ID: <CAHk-=whVfFhEq=Hw4boXXqpnKxPz96TguTU5OfnKtCXo0hWgVw@mail.gmail.com>
+X-Gm-Features: AQ5f1JooMQOhgpSZJUgMFpU_jRsla4fjvec84mqVPfIW7QyBHFNNtlSgyObw66Y
+Message-ID: <CAHk-=whVfFhEq=Hw4boXXqpnKxPz96TguTU5OfnKtCXo0hWgVw@mail.gmail.com>
 Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
 Cc: K Prateek Nayak <kprateek.nayak@amd.com>, "Sapkal, Swapnil" <swapnil.sapkal@amd.com>, 
 	Oleg Nesterov <oleg@redhat.com>, Manfred Spraul <manfred@colorfullife.com>, 
 	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>, 
@@ -96,51 +106,29 @@ Cc: K Prateek Nayak <kprateek.nayak@amd.com>, "Sapkal, Swapnil" <swapnil.sapkal@
 	linux-kernel@vger.kernel.org, 
 	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>, Neeraj.Upadhyay@amd.com, Ananth.narayan@amd.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 3, 2025 at 7:11=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> But I don't like the "add separate full/empty fields that duplicate
-> things", just to have those written always under the lock, and then
-> loaded as one op.
+On Mon, 3 Mar 2025 at 08:33, Mateusz Guzik <mjguzik@gmail.com> wrote:
 >
-> I think there are better models.
->
-> So I think I'd prefer the "add the barrier" model.
->
+> The stock code already has a dedicated routine to advance the tail,
+> adding one for head (instead of an ad-hoc increment) is borderline
+> just clean up.
 
-I was trying to avoid having to reason about the fences, I would argue
-not having to worry about this makes future changes easier to make.
+There's currently a fair number of open-coded assignments:
 
-> We could also possibly just make head/tail be 16-bit fields, and then
-> read things atomically by reading them as a single 32-bit word. That
-> would expose the (existing) alpha issues more, since alpha doesn't
-> have atomic 16-bit writes, but I can't find it in myself to care. I
-> guess we could make it be two aligned 32-bit fields on alpha, and just
-> use 64-bit reads.
+    git grep -E 'pipe->((tail)|(head)).*=' fs/
 
-I admit I did not think of this, pretty obvious now that you mention it.
+and some of those are under specific locking rules together with other
+updates (ie the watch-queue 'note_loss' thing.
 
-Perhaps either Prateek or Swapnil would be interested in coding this up?
+But hey, if some explicit empty/full flag is simpler, then it
+certainly does fit with our current model too, since we already do
+have those other flags (exactly like 'note_loss')
 
-Ultimately the crux of the issue is their finding.
+I do particularly hate seeing 'bool' in structures like this. On alpha
+it is either fundamentally racy, or it's 32-bit. On other
+architectures, it's typically 8 bits for a 1-bit value.
 
->
-> I just generally dislike redundant information in data structures.
-> Then you get into nasty cases where some path forgets to update the
-> redundant fields correctly. So I'd really just prefer the existing
-> model, just with being careful about this case.
->
+But we do have holes in that structure where it slots.
 
-The stock code already has a dedicated routine to advance the tail,
-adding one for head (instead of an ad-hoc increment) is borderline
-just clean up.
-
-Then having both recalc the state imo does not add any bug-pronness [I
-did ignore the CONFIG_WATCH_QUEUE case though] afaics.
-
-Even so, per the above, that's a side note.
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
+             Linus
 
