@@ -1,46 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-42970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-42971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54DFBA4C85A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 17:57:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BEEAA4C867
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 17:58:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78C73161642
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 16:54:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23F1B177A80
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 16:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DC42702B3;
-	Mon,  3 Mar 2025 16:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83C5279335;
+	Mon,  3 Mar 2025 16:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWgL3kcx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OhtG21ZK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1FC2702D8;
-	Mon,  3 Mar 2025 16:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094A6230278;
+	Mon,  3 Mar 2025 16:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741019540; cv=none; b=WLT3Z3lW71DCIrG3377/o2gMRYq6ESylfH55vxlvl3rU4BRR1Jtrtx0seaG+apBp6QSmH2K+JGLh2XrBARDm5GQGNRQU0iyeLgBZOpB7HyE4j4Lbtmn7dK8h0myihHC7QA1uDafzVxXWx5TauUbWVMHd8n7QWuBGJJOdsACmjBg=
+	t=1741019551; cv=none; b=Jl5vam00CG78Cu+JFIHNAnGAytQYhBhGDG8Nx3HXIExpIhrU4veho69/v02OGPgSszPKnGITUfhzJMLA6gzCj1azmmEoR8YI+YjXwutcTN3ih0QEpnyoHdp0dzaol7tQyjgGXjuHIJ5KvdkzL/GyojN/w+3f3LUNFe7KQ63rPj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741019540; c=relaxed/simple;
-	bh=1bHc5qmoopObw4cmvTlemjLVF9uh0LB94w7N97BMYOE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JjiQ66ASMp81jGg0QDAFUmEb2ybK23weAZ/kvI+cGd+OgozvYlCsrchwdZrcpbliKpF1WqhPNqc6h3VCyv9oIDgocFL6av0He54NEIW9Wz8wN8ft8oo7gpY5ZPpXGWkFXMfaRljbJcAzgmkp1sl5YpkdxS6YXsRkjuivN/33/lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWgL3kcx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C88B5C4CEE4;
-	Mon,  3 Mar 2025 16:32:18 +0000 (UTC)
+	s=arc-20240116; t=1741019551; c=relaxed/simple;
+	bh=CKGgPnObEQ/sUBzTH8zUPzELW24dOG+27003va38hjU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qKM7/gNTeOOL7zzi/HHox4yoquyoKjMEmI/KIB4IwNwSaXbeYm7OtUfF/rVIAcNY6hgiXLu429nycTfvmSxbu/Y4QfCpXLPm3iTGNK0PxZlQ0zYhj+SypdXjwKNEgMtMhH7eB9UDW315b3tYGz95xSP2BkTKoIqxOvp6uLfzT8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OhtG21ZK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 968D1C4CEE4;
+	Mon,  3 Mar 2025 16:32:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741019540;
-	bh=1bHc5qmoopObw4cmvTlemjLVF9uh0LB94w7N97BMYOE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oWgL3kcx/3NqKKdfz0flGQbDkcmh2tPKiXSqh5jG3SYAoekN5Sr0hDxP4ODAOsVxC
-	 OO9Zdh5YCgRuzWzQvKGyq9vKYnK65yeyHAinNefsx4CWqEMTgI3w/iP0yWqni7Ypov
-	 hwd1NVLlj70YGKj5YPAfOTMRGTibFLPNZGlRvJvlW70SF7lotg5VfK3CcaJQZvD+aW
-	 TtZWtyyyp3hfMf0vWSx+AsPZNSswFHK69oj3lWN5PLoF/4Szg1g/YGIlszJXCapBCS
-	 WA9c+UnzwKUw0Z8+aOT112ZfaMiQWN7CPx0jbLxN/SX5BcsjNtWCq2fxSvsLEEA4Ay
-	 xKibkSB23fRxw==
+	s=k20201202; t=1741019550;
+	bh=CKGgPnObEQ/sUBzTH8zUPzELW24dOG+27003va38hjU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OhtG21ZK2CWZMtPcjE/4gNGL8X9GcNOqcBmaDuEBVN7P0U5oskD4YWyxCTnZel1Sk
+	 qzBtKy8WUzT5VZebYDxYDhfK2AAFzEimiZw1lGLgT6qnoQYDQHDIhJflIjU1D/Mi5m
+	 +gGE7yJysGQ61BEeVdvH//b0QKgTWipCxKK42kErKfLI8QC6oZbu0548VJUhFH9bas
+	 IHOwCcK7mo4l/bB+oTn2khYjeA2ahfW899Px0gYw0KQwlbRuol/tkiXy8u2BXA1eYl
+	 3BAbmQXCF6mSOfKmx9KFfwkvbzxC1AJKhkXUSRmwUx+NZJdAiKlqUj9kckTgBeua8D
+	 zDcUDacx4J91w==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -53,12 +52,10 @@ Cc: Miklos Szeredi <mszeredi@redhat.com>,
 	miklos@szeredi.hu,
 	viro@zeniv.linux.org.uk,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 4/8] fuse: don't truncate cached, mutated symlink
-Date: Mon,  3 Mar 2025 11:32:07 -0500
-Message-Id: <20250303163211.3764282-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 1/4] fuse: don't truncate cached, mutated symlink
+Date: Mon,  3 Mar 2025 11:32:24 -0500
+Message-Id: <20250303163228.3764394-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250303163211.3764282-1-sashal@kernel.org>
-References: <20250303163211.3764282-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,7 +64,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.234
+X-stable-base: Linux 5.4.290
 Content-Transfer-Encoding: 8bit
 
 From: Miklos Szeredi <mszeredi@redhat.com>
@@ -113,10 +110,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  3 files changed, 22 insertions(+), 6 deletions(-)
 
 diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index d131f34cd3e13..4488a53a192dc 100644
+index b2f37809fa9bd..6b4bf30b0247e 100644
 --- a/fs/fuse/dir.c
 +++ b/fs/fuse/dir.c
-@@ -1384,7 +1384,7 @@ static const char *fuse_get_link(struct dentry *dentry, struct inode *inode,
+@@ -1275,7 +1275,7 @@ static const char *fuse_get_link(struct dentry *dentry, struct inode *inode,
  		goto out_err;
  
  	if (fc->cache_symlinks)
@@ -126,10 +123,10 @@ index d131f34cd3e13..4488a53a192dc 100644
  	err = -ECHILD;
  	if (!dentry)
 diff --git a/fs/namei.c b/fs/namei.c
-index 72521a614514b..3eb0130f0c3f7 100644
+index a4cba6991a4d1..038a9a4b99270 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -4678,10 +4678,9 @@ const char *vfs_get_link(struct dentry *dentry, struct delayed_call *done)
+@@ -4859,10 +4859,9 @@ const char *vfs_get_link(struct dentry *dentry, struct delayed_call *done)
  EXPORT_SYMBOL(vfs_get_link);
  
  /* get the link contents into pagecache */
@@ -142,7 +139,7 @@ index 72521a614514b..3eb0130f0c3f7 100644
  	struct page *page;
  	struct address_space *mapping = inode->i_mapping;
  
-@@ -4700,8 +4699,23 @@ const char *page_get_link(struct dentry *dentry, struct inode *inode,
+@@ -4881,8 +4880,23 @@ const char *page_get_link(struct dentry *dentry, struct inode *inode,
  	}
  	set_delayed_call(callback, page_put_link, page);
  	BUG_ON(mapping_gfp_mask(mapping) & __GFP_HIGHMEM);
@@ -169,10 +166,10 @@ index 72521a614514b..3eb0130f0c3f7 100644
  }
  
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 4e475ded5cf58..9463dddce6bf7 100644
+index c0967df137152..d3648a55590ca 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -3242,6 +3242,8 @@ extern const struct file_operations generic_ro_fops;
+@@ -3234,6 +3234,8 @@ extern const struct file_operations generic_ro_fops;
  
  extern int readlink_copy(char __user *, int, const char *);
  extern int page_readlink(struct dentry *, char __user *, int);
