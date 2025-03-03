@@ -1,404 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-43005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17906A4CCC7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 21:32:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39523A4CCE4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 21:48:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 284323AB0F7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 20:32:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D8417A896C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 20:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F7623535E;
-	Mon,  3 Mar 2025 20:32:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9AB236435;
+	Mon,  3 Mar 2025 20:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="ohLsTREY"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="e0Rpdl0S"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65DF22FAC3
-	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Mar 2025 20:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED86511CA9
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Mar 2025 20:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741033925; cv=none; b=NZg73ZOn7N1NOpq/k50iztWM1YD1jNERM3q83ldSJbmIPgsB+1A4ZYZ7F9SUPti9T9sz65jElQFYevwwZUWe4Fj9a5BabnyIX3BXD2mcOZNGdtSdiLixPonfVqw38G5c1NlU844cTy1PIvkzumh/9mGP1BXM6FOHSUETXUVT+KM=
+	t=1741034795; cv=none; b=V//ghMNoVYae3nEG6NBZhxCdIWsBqaa4p7xDtM1pnidd/qXRhZwx8GAH2kzFo/T1PydyzQdBmFWyEa80uSgkST5YFKKjU6Q9yNs4DhYeX8aWFI2ZBKx8JmrGrRmnoK2LQH5/u7aG8Dn62NWu5YL9oVYLcMfSf9LYLPQpdA+wuJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741033925; c=relaxed/simple;
-	bh=Ky/v4Jq4mLBuC0uMMiNDLX+QN9JsPMRdDqksb0TXMWg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OEQekebimgH7KV38YnqqdyoWiY/IGf5GKgJGbEwerFY6W4Lp9B/t/WPIXToGlVmTxycLMMBFkyQW5C2VZd1qozsWikwXVg8Q+GOo5WWaZQsIdMSVRRk375gm3C6EAStQlNIF5o2JQAlv6ZUhqvxpcKa1sQJcORiUBlzZHc70MMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=ohLsTREY; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-223594b3c6dso83888015ad.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Mar 2025 12:32:02 -0800 (PST)
+	s=arc-20240116; t=1741034795; c=relaxed/simple;
+	bh=/TSvSx+n/7h75HAByI0XmaklVwSreC1/YD2z85/rnbY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VwpMhC4i5sYrzuRTllaiXB2EVN1/iZ/q5P+w5nf4RyS1sXbNglgIGlZEfAnNQ9dlgvLa3NObZwtBUPVk3Z5l/7Odx25ezKP2xDQ/4oYJTgk2Ihi926IpB+t+GEoc+7/5w2W3aWjECpSuQL9JjH9qZM7P5rQJ6cnyeTMleyLso1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=e0Rpdl0S; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aaecf50578eso929679966b.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Mar 2025 12:46:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1741033922; x=1741638722; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hxJv2w2JyRi4anhbOoHNOqd8NhqQPocQn4CUgj7E56c=;
-        b=ohLsTREYNqCQRsBcH75PQr0iWs3+3d4cGolGep0hP8FP7nwKdoZaKt3viLhRN6hw8d
-         vbJ/jwecBpc+oSV/+6mrcxR2qFJDGWF87JkyWl/B3TPA7GdMwc52zyGXGviJsiWOMkL6
-         o12q9jcsymDCpn74CM7kE2RXnf2ljHAVCq91qsMqjTTvfk1K8W7mtqA0t8lGzxKc8WaM
-         spBLX4WrZIb8uTjq9nY2DE0TiKV+CaYAxGsGc7slT+nFGelXU7rJSFn2CFkHbLX0xy2i
-         +a0PEaphvbdcqQnj/YRvXzNZeXfR6HgwK3LcrQRU4fAiNZ6lijfm7qBu/f31Bmkd8Q2D
-         bmzQ==
+        d=linux-foundation.org; s=google; t=1741034791; x=1741639591; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=N8giJnezX3CtMdKV60CgQxT4SKIJQ9hhEThxu7GG34A=;
+        b=e0Rpdl0S6MiX10ElYBR0Qw+FgqAZnaICzmql0ZDrZcIEe9wffXA5Ji9IrFuoc5E9ff
+         nVIvkhQncvjCNn5vrBg2tJnsJXruwitiy2gSIudVdTFn0fRvjmnJujiG2X33x4017V+t
+         XiIgSC4pFivc3IZ22VjuMV7uwkGbBzy1XrOX0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741033922; x=1741638722;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1741034791; x=1741639591;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hxJv2w2JyRi4anhbOoHNOqd8NhqQPocQn4CUgj7E56c=;
-        b=jFslKzDJhYLv2RV9KX5IXt9ICjSO0MIHh+lKzK72fyDTXKzC1RqYnf1oUo1aq+4TDX
-         OyHoPdb38P+5d4EPTiM38KoQGRLai2swN4NHbbVV6smT0DoRT+kL1mazotoZvnDJNmGn
-         ZZk7Y23CSKkykkdsqSnwQaoUZc0FSfKtIbKdoVfdh1P1S+scsd+KpcjKpVo+keG0D91k
-         Uom+eknjYIQONuQZ3sFKpIXV1gpO1IcJ4EBKTv1ylaurZEm4fMjFV9TPwo6a2calr6fP
-         0qqVqR+smnT6JvvG03xOVpfNA8GJmY0Hitfq0+A6dpKKZFPcosS7WZFN7DgqTGrOoCgl
-         jo+g==
-X-Forwarded-Encrypted: i=1; AJvYcCX3cjlFD/fdkmz0Ypcy4Bk4NHGROwnx8zFD0oL64+SlTFhQIGbRiAITtV4LEoFa7diZVk4kEyzOKLx/G9m6@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuVFIzZguqexgNubiLpAOkj80X4eJrObOZngE/MyoOcSX4LTt+
-	GKiLq9BsnpOiiSf0rA6orUb3soSY93plNjtUN0R6+xp6jQj5dl9qoj0qVrRa4k4=
-X-Gm-Gg: ASbGncuRh6F9pgAnSYzjN2aW4RpAQyCBvvHejvhw3/10t9dxTMqCBwrzyu9s0nObUgp
-	AYfLB5oy+/bOkb/FJrQdVkdMu/lU6yOKJydd0Ul9iYZyK3bGnuKjCEN5xWEiMFaO/C4cnB9jFRc
-	GxrD1OOtdZLzZV7MZ8zhTpDFaYJ/MmIAiH1j6LdkZAPB9tjdXxZLSeqIoT0DXxYRqhaunOITUle
-	9Vca9EYHnJt2NokWwuohKLZqr1o95sHWPDdMhocv8TN8vJ3Dlw/UMd3/qVoTfvq63n6hBKSRxkj
-	hxjOv58O5DLm/KME2XQzKBXsY7fS3/kJhZV6uwlJ9NdHWiblMbJNqgTwCv8PLg==
-X-Google-Smtp-Source: AGHT+IEqSzW8DQiA+/nstNjr8XMBeiVtlMUtvUOdIOGYvdx61lEdjTAxvPcKqGPEK4SDDT7WLcQRwg==
-X-Received: by 2002:a17:903:2ca:b0:223:619e:71e9 with SMTP id d9443c01a7336-22368f6dc5emr243922285ad.11.1741033921695;
-        Mon, 03 Mar 2025 12:32:01 -0800 (PST)
-Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:c99d:79f9:4c0:6f8e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223504c8665sm82322235ad.156.2025.03.03.12.32.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 12:32:00 -0800 (PST)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: ceph-devel@vger.kernel.org,
-	dhowells@redhat.com,
-	amarkuze@redhat.com
-Cc: idryomov@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	pdonnell@redhat.com,
-	Slava.Dubeyko@ibm.com,
-	slava@dubeyko.com
-Subject: [PATCH v3] ceph: fix slab-use-after-free in have_mon_and_osd_map()
-Date: Mon,  3 Mar 2025 12:31:37 -0800
-Message-ID: <20250303203137.42636-1-slava@dubeyko.com>
-X-Mailer: git-send-email 2.43.0
+        bh=N8giJnezX3CtMdKV60CgQxT4SKIJQ9hhEThxu7GG34A=;
+        b=lCGCJBeXVeArPJkqQlD4ZUHXljfVVxWpof+BX/q6on9TsOZ/uX7zj4bI2qEQMamcID
+         g9NcR0D9zkyoqFFzrrsr49bgk3sWOmdVk6AWGhLSSE3LHJ/+24kCZqrEFPQCMnOfUWYi
+         Fn/so8hOZ+iDSc2DYun/Wl+lxZVPZ1civ0LaRnaFdjXR6Vdwtgmb2uTJQpANfBwSPvEk
+         H2rTKRwVeoA5U9d/wd+T6EFFMYSb9f/OYUYLdjhZ3smMfHzAJ1y6gOf2l4RgRAGPn7/V
+         oBKdLe/Bz36q33sSmi5DNtYHCDxsrlXLAj9zs6jeEINs/i5xjueWF6MRFoHQCeFnMsPz
+         K0SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWeUzW2C9s74OOhM0D65dLHA/wNou2491ahd5Xomc5fBRPQ1O1tfyKD5D06FiMknj0l1QFAMpCkGzDbbibd@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT/rRX1KeUv6bMWLK3854AmXFimCNcPQmGgr6HKCeLUS0F9E/Q
+	oOnb+mHvBub+gYZHVB+tQ33xVYiuwcgyoQxt41BA/AjaaksV/lV2La0b99tKx74A7i0CE8lgfgn
+	Ta/g=
+X-Gm-Gg: ASbGncuoPYSZIDSOnPcZGJQgrhf92Gs9FYlgbwygxq4z8mweyfrvCd3O9UV25FM3NcA
+	Dt0zxFnNeD2MVQtRLcgp/ZpAwqyqgyMPxiBIIWsFrow9bnHjqkDyVarmqiQ573MxtzQQOlOda/S
+	KDcEdY5AlqeeHLCWgQS5Cj2Qt5DI6WUxAqeaEJTjxsgjYE52vzt9Nb1xh+gPk4mR7EimHn98wsg
+	xfMijT7WgHw/e6LgQ3tb9ISO4RVep7FCXTRCfRvUHRkKb5mmEzXhV9pXAJBAVy0MQRrnDxaa16+
+	ZdH331koPsCHwRmp+s+1wwgOaliiVdIbvzdYzaaicbk+8cqWy3gXp/yhESNUHsHHLGQ1GM88DJT
+	MyzxaoNuFqlIwp9g23ts=
+X-Google-Smtp-Source: AGHT+IEKCIB5hYalWFaZ6FGXcIlyuKISDgRoUCkCpF9VWJpjH/E0If47FwiW3tXLdXxj/Hsg4QRq8A==
+X-Received: by 2002:a17:907:6ea6:b0:abf:6e88:3a65 with SMTP id a640c23a62f3a-abf6e883e60mr638981966b.19.1741034791002;
+        Mon, 03 Mar 2025 12:46:31 -0800 (PST)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1daea1cd2sm157440866b.181.2025.03.03.12.46.27
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Mar 2025 12:46:27 -0800 (PST)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e058ca6806so7948023a12.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Mar 2025 12:46:27 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXJrot7TPmLfEHJ+3xt8Yccfx5LNFIsfc71Km5WsqfrnbY0TDfjx71rOPBi9NNZiRszqB36AQIzEMDnGdsV@vger.kernel.org
+X-Received: by 2002:a17:907:3fa9:b0:ac1:eec4:91f7 with SMTP id
+ a640c23a62f3a-ac1eec4925fmr117255866b.27.1741034787283; Mon, 03 Mar 2025
+ 12:46:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250228143049.GA17761@redhat.com> <20250228163347.GB17761@redhat.com>
+ <03a1f4af-47e0-459d-b2bf-9f65536fc2ab@amd.com> <CAGudoHHA7uAVUmBWMy4L50DXb4uhi72iU+nHad=Soy17Xvf8yw@mail.gmail.com>
+ <CAGudoHE_M2MUOpqhYXHtGvvWAL4Z7=u36dcs0jh3PxCDwqMf+w@mail.gmail.com>
+ <741fe214-d534-4484-9cf3-122aabe6281e@amd.com> <3jnnhipk2at3f7r23qb7fvznqg6dqw4rfrhajc7h6j2nu7twi2@wc3g5sdlfewt>
+ <CAHk-=whuLzj37umjCN9CEgOrZkOL=bQPFWA36cpb24Mnm3mgBw@mail.gmail.com>
+ <CAGudoHG2PuhHte91BqrnZi0VbhLBfZVsrFYmYDVrmx4gaLUX3A@mail.gmail.com>
+ <CAHk-=whVfFhEq=Hw4boXXqpnKxPz96TguTU5OfnKtCXo0hWgVw@mail.gmail.com> <20250303202735.GD9870@redhat.com>
+In-Reply-To: <20250303202735.GD9870@redhat.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 3 Mar 2025 10:46:10 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wiA-7pdaQm2nV0iv-fihyhWX-=KjZwQTHNKoDqid46F0w@mail.gmail.com>
+X-Gm-Features: AQ5f1JqBdfS3OsjWtvaQ1iJbyRmzh1AYJAvBekLXzynzy8xNvLqN0Ww6oCUKFIc
+Message-ID: <CAHk-=wiA-7pdaQm2nV0iv-fihyhWX-=KjZwQTHNKoDqid46F0w@mail.gmail.com>
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>, Manfred Spraul <manfred@colorfullife.com>, 
+	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>, 
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>, Neeraj.Upadhyay@amd.com, Ananth.narayan@amd.com
+Content-Type: multipart/mixed; boundary="0000000000000a0263062f764049"
 
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+--0000000000000a0263062f764049
+Content-Type: text/plain; charset="UTF-8"
 
-The generic/395 and generic/397 is capable of generating
-the oops is on line net/ceph/ceph_common.c:794 with
-KASAN enabled.
+On Mon, 3 Mar 2025 at 10:28, Oleg Nesterov <oleg@redhat.com> wrote:
+>
+> Stupid question... but do we really need to change the code which update
+> tail/head if we pack them into a single word?
 
-BUG: KASAN: slab-use-after-free in have_mon_and_osd_map+0x56/0x70
-Read of size 4 at addr ffff88811012d810 by task mount.ceph/13305
+No. It's only the READ_ONCE() parts that need changing.
 
-CPU: 2 UID: 0 PID: 13305 Comm: mount.ceph Not tainted 6.14.0-rc2-build2+ #1266
-Hardware name: ASUS All Series/H97-PLUS, BIOS 2306 10/09/2014
-Call Trace:
-<TASK>
-dump_stack_lvl+0x57/0x80
-? have_mon_and_osd_map+0x56/0x70
-print_address_description.constprop.0+0x84/0x330
-? have_mon_and_osd_map+0x56/0x70
-print_report+0xe2/0x1e0
-? rcu_read_unlock_sched+0x60/0x80
-? kmem_cache_debug_flags+0xc/0x20
-? fixup_red_left+0x17/0x30
-? have_mon_and_osd_map+0x56/0x70
-kasan_report+0x8d/0xc0
-? have_mon_and_osd_map+0x56/0x70
-have_mon_and_osd_map+0x56/0x70
-ceph_open_session+0x182/0x290
-? __pfx_ceph_open_session+0x10/0x10
-? __init_swait_queue_head+0x8d/0xa0
-? __pfx_autoremove_wake_function+0x10/0x10
-? shrinker_register+0xdd/0xf0
-ceph_get_tree+0x333/0x680
-vfs_get_tree+0x49/0x180
-do_new_mount+0x1a3/0x2d0
-? __pfx_do_new_mount+0x10/0x10
-? security_capable+0x39/0x70
-path_mount+0x6dd/0x730
-? __pfx_path_mount+0x10/0x10
-? kmem_cache_free+0x1e5/0x270
-? user_path_at+0x48/0x60
-do_mount+0x99/0xe0
-? __pfx_do_mount+0x10/0x10
-? lock_release+0x155/0x190
-__do_sys_mount+0x141/0x180
-do_syscall_64+0x9f/0x100
-entry_SYSCALL_64_after_hwframe+0x76/0x7e
-RIP: 0033:0x7f01b1b14f3e
-Code: 48 8b 0d d5 3e 0f 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a2 3e 0f 00 f7 d8 64 89 01 48
-RSP: 002b:00007fffd129fa08 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000564ec01a7850 RCX: 00007f01b1b14f3e
-RDX: 0000564ec00f2225 RSI: 00007fffd12a1964 RDI: 0000564ec0147a20
-RBP: 00007fffd129fbd0 R08: 0000564ec014da90 R09: 0000000000000080
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fffd12a194e
-R13: 0000000000000000 R14: 00007fffd129fa50 R15: 00007fffd129fa40
-</TASK>
+See this suggested patch, which does something very similar to what
+you were thinking of.
 
-Allocated by task 13305:
-stack_trace_save+0x8c/0xc0
-kasan_save_stack+0x1e/0x40
-kasan_save_track+0x10/0x30
-__kasan_kmalloc+0x3a/0x50
-__kmalloc_noprof+0x247/0x290
-ceph_osdmap_alloc+0x16/0x130
-ceph_osdc_init+0x27a/0x4c0
-ceph_create_client+0x153/0x190
-create_fs_client+0x50/0x2a0
-ceph_get_tree+0xff/0x680
-vfs_get_tree+0x49/0x180
-do_new_mount+0x1a3/0x2d0
-path_mount+0x6dd/0x730
-do_mount+0x99/0xe0
-__do_sys_mount+0x141/0x180
-do_syscall_64+0x9f/0x100
-entry_SYSCALL_64_after_hwframe+0x76/0x7e
+ENTIRELY UNTESTED, but it seems to generate ok code. It might even
+generate better code than what we have now.
 
-Freed by task 9475:
-stack_trace_save+0x8c/0xc0
-kasan_save_stack+0x1e/0x40
-kasan_save_track+0x10/0x30
-kasan_save_free_info+0x3b/0x50
-__kasan_slab_free+0x18/0x30
-kfree+0x212/0x290
-handle_one_map+0x23c/0x3b0
-ceph_osdc_handle_map+0x3c9/0x590
-mon_dispatch+0x655/0x6f0
-ceph_con_process_message+0xc3/0xe0
-ceph_con_v1_try_read+0x614/0x760
-ceph_con_workfn+0x2de/0x650
-process_one_work+0x486/0x7c0
-process_scheduled_works+0x73/0x90
-worker_thread+0x1c8/0x2a0
-kthread+0x2ec/0x300
-ret_from_fork+0x24/0x40
-ret_from_fork_asm+0x1a/0x30
+               Linus
 
-The buggy address belongs to the object at ffff88811012d800
-which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 16 bytes inside of
-freed 512-byte region [ffff88811012d800, ffff88811012da00)
+--0000000000000a0263062f764049
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m7tj52z80>
+X-Attachment-Id: f_m7tj52z80
 
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x11012c
-head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0x200000000000040(head|node=0|zone=2)
-page_type: f5(slab)
-raw: 0200000000000040 ffff888100042c80 dead000000000100 dead000000000122
-raw: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
-head: 0200000000000040 ffff888100042c80 dead000000000100 dead000000000122
-head: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
-head: 0200000000000002 ffffea0004404b01 ffffffffffffffff 0000000000000000
-head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-ffff88811012d700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-ffff88811012d780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-
-    ffff88811012d800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-
-^
-ffff88811012d880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-ffff88811012d900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb ==================================================================
-Disabling lock debugging due to kernel taint
-libceph: client274326 fsid 8598140e-35c2-11ee-b97c-001517c545cc
-libceph: mon0 (1)90.155.74.19:6789 session established
-libceph: client274327 fsid 8598140e-35c2-11ee-b97c-001517c545cc
-
-We have such scenario:
-
-Thread 1:
-void ceph_osdmap_destroy(...) {
-    <skipped>
-    kfree(map);
-}
-Thread 1 sleep...
-
-Thread 2:
-static bool have_mon_and_osd_map(struct ceph_client *client) {
-    return client->monc.monmap && client->monc.monmap->epoch &&
-        client->osdc.osdmap && client->osdc.osdmap->epoch;
-}
-Thread 2 has oops...
-
-Thread 1 wake up:
-static int handle_one_map(...) {
-    <skipped>
-    osdc->osdmap = newmap;
-    <skipped>
-}
-
-This patch fixes the issue by means of locking
-client->osdc.lock and client->monc.mutex before
-the checking client->osdc.osdmap and
-client->monc.monmap in have_mon_and_osd_map() function.
-Patch adds locking in the ceph_osdc_stop()
-method during the destructruction of osdc->osdmap and
-assigning of NULL to the pointer. The lock is used
-in the ceph_monc_stop() during the freeing of monc->monmap
-and assigning NULL to the pointer too. The monmap_show()
-and osdmap_show() methods were reworked to prevent
-the potential race condition during the methods call.
-
-Reported-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
----
- net/ceph/ceph_common.c | 14 ++++++++++++--
- net/ceph/debugfs.c     | 33 +++++++++++++++++++--------------
- net/ceph/mon_client.c  |  4 ++++
- net/ceph/osd_client.c  |  4 ++++
- 4 files changed, 39 insertions(+), 16 deletions(-)
-
-diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
-index 4c6441536d55..5c8fd78d6bd5 100644
---- a/net/ceph/ceph_common.c
-+++ b/net/ceph/ceph_common.c
-@@ -790,8 +790,18 @@ EXPORT_SYMBOL(ceph_reset_client_addr);
-  */
- static bool have_mon_and_osd_map(struct ceph_client *client)
- {
--	return client->monc.monmap && client->monc.monmap->epoch &&
--	       client->osdc.osdmap && client->osdc.osdmap->epoch;
-+	bool have_mon_map = false;
-+	bool have_osd_map = false;
-+
-+	mutex_lock(&client->monc.mutex);
-+	have_mon_map = client->monc.monmap && client->monc.monmap->epoch;
-+	mutex_unlock(&client->monc.mutex);
-+
-+	down_read(&client->osdc.lock);
-+	have_osd_map = client->osdc.osdmap && client->osdc.osdmap->epoch;
-+	up_read(&client->osdc.lock);
-+
-+	return have_mon_map && have_osd_map;
- }
- 
- /*
-diff --git a/net/ceph/debugfs.c b/net/ceph/debugfs.c
-index 2110439f8a24..6e2014c813ca 100644
---- a/net/ceph/debugfs.c
-+++ b/net/ceph/debugfs.c
-@@ -36,18 +36,20 @@ static int monmap_show(struct seq_file *s, void *p)
- 	int i;
- 	struct ceph_client *client = s->private;
- 
--	if (client->monc.monmap == NULL)
--		return 0;
--
--	seq_printf(s, "epoch %d\n", client->monc.monmap->epoch);
--	for (i = 0; i < client->monc.monmap->num_mon; i++) {
--		struct ceph_entity_inst *inst =
--			&client->monc.monmap->mon_inst[i];
--
--		seq_printf(s, "\t%s%lld\t%s\n",
--			   ENTITY_NAME(inst->name),
--			   ceph_pr_addr(&inst->addr));
-+	mutex_lock(&client->monc.mutex);
-+	if (client->monc.monmap) {
-+		seq_printf(s, "epoch %d\n", client->monc.monmap->epoch);
-+		for (i = 0; i < client->monc.monmap->num_mon; i++) {
-+			struct ceph_entity_inst *inst =
-+				&client->monc.monmap->mon_inst[i];
-+
-+			seq_printf(s, "\t%s%lld\t%s\n",
-+				   ENTITY_NAME(inst->name),
-+				   ceph_pr_addr(&inst->addr));
-+		}
- 	}
-+	mutex_unlock(&client->monc.mutex);
-+
- 	return 0;
- }
- 
-@@ -56,13 +58,15 @@ static int osdmap_show(struct seq_file *s, void *p)
- 	int i;
- 	struct ceph_client *client = s->private;
- 	struct ceph_osd_client *osdc = &client->osdc;
--	struct ceph_osdmap *map = osdc->osdmap;
-+	struct ceph_osdmap *map = NULL;
- 	struct rb_node *n;
- 
-+	down_read(&osdc->lock);
-+
-+	map = osdc->osdmap;
- 	if (map == NULL)
--		return 0;
-+		goto finish_osdmap_show;
- 
--	down_read(&osdc->lock);
- 	seq_printf(s, "epoch %u barrier %u flags 0x%x\n", map->epoch,
- 			osdc->epoch_barrier, map->flags);
- 
-@@ -131,6 +135,7 @@ static int osdmap_show(struct seq_file *s, void *p)
- 		seq_printf(s, "]\n");
- 	}
- 
-+finish_osdmap_show:
- 	up_read(&osdc->lock);
- 	return 0;
- }
-diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
-index ab66b599ac47..5013bddb52ba 100644
---- a/net/ceph/mon_client.c
-+++ b/net/ceph/mon_client.c
-@@ -1232,6 +1232,7 @@ int ceph_monc_init(struct ceph_mon_client *monc, struct ceph_client *cl)
- 	ceph_auth_destroy(monc->auth);
- out_monmap:
- 	kfree(monc->monmap);
-+	monc->monmap = NULL;
- out:
- 	return err;
- }
-@@ -1266,7 +1267,10 @@ void ceph_monc_stop(struct ceph_mon_client *monc)
- 	ceph_msg_put(monc->m_subscribe);
- 	ceph_msg_put(monc->m_subscribe_ack);
- 
-+	mutex_lock(&monc->mutex);
- 	kfree(monc->monmap);
-+	monc->monmap = NULL;
-+	mutex_unlock(&monc->mutex);
- }
- EXPORT_SYMBOL(ceph_monc_stop);
- 
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index b24afec24138..762f4df5763b 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -5278,6 +5278,7 @@ int ceph_osdc_init(struct ceph_osd_client *osdc, struct ceph_client *client)
- 	mempool_destroy(osdc->req_mempool);
- out_map:
- 	ceph_osdmap_destroy(osdc->osdmap);
-+	osdc->osdmap = NULL;
- out:
- 	return err;
- }
-@@ -5306,10 +5307,13 @@ void ceph_osdc_stop(struct ceph_osd_client *osdc)
- 	WARN_ON(atomic_read(&osdc->num_requests));
- 	WARN_ON(atomic_read(&osdc->num_homeless));
- 
-+	down_write(&osdc->lock);
- 	ceph_osdmap_destroy(osdc->osdmap);
-+	osdc->osdmap = NULL;
- 	mempool_destroy(osdc->req_mempool);
- 	ceph_msgpool_destroy(&osdc->msgpool_op);
- 	ceph_msgpool_destroy(&osdc->msgpool_op_reply);
-+	up_write(&osdc->lock);
- }
- 
- int osd_req_op_copy_from_init(struct ceph_osd_request *req,
--- 
-2.48.0
-
+IGZzL3BpcGUuYyAgICAgICAgICAgICAgICAgfCAxOSArKysrKysrKy0tLS0tLS0tLS0tCiBpbmNs
+dWRlL2xpbnV4L3BpcGVfZnNfaS5oIHwgMzkgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKy0tCiAyIGZpbGVzIGNoYW5nZWQsIDQ1IGluc2VydGlvbnMoKyksIDEzIGRlbGV0aW9u
+cygtKQoKZGlmZiAtLWdpdCBhL2ZzL3BpcGUuYyBiL2ZzL3BpcGUuYwppbmRleCBjZTFhZjc1OTI3
+ODAuLjk3Y2M3MDU3MjYwNiAxMDA2NDQKLS0tIGEvZnMvcGlwZS5jCisrKyBiL2ZzL3BpcGUuYwpA
+QCAtMjEwLDExICsyMTAsMTAgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBwaXBlX2J1Zl9vcGVyYXRp
+b25zIGFub25fcGlwZV9idWZfb3BzID0gewogLyogRG9uZSB3aGlsZSB3YWl0aW5nIHdpdGhvdXQg
+aG9sZGluZyB0aGUgcGlwZSBsb2NrIC0gdGh1cyB0aGUgUkVBRF9PTkNFKCkgKi8KIHN0YXRpYyBp
+bmxpbmUgYm9vbCBwaXBlX3JlYWRhYmxlKGNvbnN0IHN0cnVjdCBwaXBlX2lub2RlX2luZm8gKnBp
+cGUpCiB7Ci0JdW5zaWduZWQgaW50IGhlYWQgPSBSRUFEX09OQ0UocGlwZS0+aGVhZCk7Ci0JdW5z
+aWduZWQgaW50IHRhaWwgPSBSRUFEX09OQ0UocGlwZS0+dGFpbCk7CisJdW5pb24gcGlwZV9pbmRl
+eCBpZHggPSB7IFJFQURfT05DRShwaXBlLT5oZWFkX3RhaWwpIH07CiAJdW5zaWduZWQgaW50IHdy
+aXRlcnMgPSBSRUFEX09OQ0UocGlwZS0+d3JpdGVycyk7CiAKLQlyZXR1cm4gIXBpcGVfZW1wdHko
+aGVhZCwgdGFpbCkgfHwgIXdyaXRlcnM7CisJcmV0dXJuICFwaXBlX2VtcHR5KGlkeC5oZWFkLCBp
+ZHgudGFpbCkgfHwgIXdyaXRlcnM7CiB9CiAKIHN0YXRpYyBpbmxpbmUgdW5zaWduZWQgaW50IHBp
+cGVfdXBkYXRlX3RhaWwoc3RydWN0IHBpcGVfaW5vZGVfaW5mbyAqcGlwZSwKQEAgLTQxNywxMSAr
+NDE2LDEwIEBAIHN0YXRpYyBpbmxpbmUgaW50IGlzX3BhY2tldGl6ZWQoc3RydWN0IGZpbGUgKmZp
+bGUpCiAvKiBEb25lIHdoaWxlIHdhaXRpbmcgd2l0aG91dCBob2xkaW5nIHRoZSBwaXBlIGxvY2sg
+LSB0aHVzIHRoZSBSRUFEX09OQ0UoKSAqLwogc3RhdGljIGlubGluZSBib29sIHBpcGVfd3JpdGFi
+bGUoY29uc3Qgc3RydWN0IHBpcGVfaW5vZGVfaW5mbyAqcGlwZSkKIHsKLQl1bnNpZ25lZCBpbnQg
+aGVhZCA9IFJFQURfT05DRShwaXBlLT5oZWFkKTsKLQl1bnNpZ25lZCBpbnQgdGFpbCA9IFJFQURf
+T05DRShwaXBlLT50YWlsKTsKKwl1bmlvbiBwaXBlX2luZGV4IGlkeCA9IHsgUkVBRF9PTkNFKHBp
+cGUtPmhlYWRfdGFpbCkgfTsKIAl1bnNpZ25lZCBpbnQgbWF4X3VzYWdlID0gUkVBRF9PTkNFKHBp
+cGUtPm1heF91c2FnZSk7CiAKLQlyZXR1cm4gIXBpcGVfZnVsbChoZWFkLCB0YWlsLCBtYXhfdXNh
+Z2UpIHx8CisJcmV0dXJuICFwaXBlX2Z1bGwoaWR4LmhlYWQsIGlkeC50YWlsLCBtYXhfdXNhZ2Up
+IHx8CiAJCSFSRUFEX09OQ0UocGlwZS0+cmVhZGVycyk7CiB9CiAKQEAgLTY1OSw3ICs2NTcsNyBA
+QCBwaXBlX3BvbGwoc3RydWN0IGZpbGUgKmZpbHAsIHBvbGxfdGFibGUgKndhaXQpCiB7CiAJX19w
+b2xsX3QgbWFzazsKIAlzdHJ1Y3QgcGlwZV9pbm9kZV9pbmZvICpwaXBlID0gZmlscC0+cHJpdmF0
+ZV9kYXRhOwotCXVuc2lnbmVkIGludCBoZWFkLCB0YWlsOworCXVuaW9uIHBpcGVfaW5kZXggaWR4
+OwogCiAJLyogRXBvbGwgaGFzIHNvbWUgaGlzdG9yaWNhbCBuYXN0eSBzZW1hbnRpY3MsIHRoaXMg
+ZW5hYmxlcyB0aGVtICovCiAJV1JJVEVfT05DRShwaXBlLT5wb2xsX3VzYWdlLCB0cnVlKTsKQEAg
+LTY4MCwxOSArNjc4LDE4IEBAIHBpcGVfcG9sbChzdHJ1Y3QgZmlsZSAqZmlscCwgcG9sbF90YWJs
+ZSAqd2FpdCkKIAkgKiBpZiBzb21ldGhpbmcgY2hhbmdlcyBhbmQgeW91IGdvdCBpdCB3cm9uZywg
+dGhlIHBvbGwKIAkgKiB0YWJsZSBlbnRyeSB3aWxsIHdha2UgeW91IHVwIGFuZCBmaXggaXQuCiAJ
+ICovCi0JaGVhZCA9IFJFQURfT05DRShwaXBlLT5oZWFkKTsKLQl0YWlsID0gUkVBRF9PTkNFKHBp
+cGUtPnRhaWwpOworCWlkeC5oZWFkX3RhaWwgPSBSRUFEX09OQ0UocGlwZS0+aGVhZF90YWlsKTsK
+IAogCW1hc2sgPSAwOwogCWlmIChmaWxwLT5mX21vZGUgJiBGTU9ERV9SRUFEKSB7Ci0JCWlmICgh
+cGlwZV9lbXB0eShoZWFkLCB0YWlsKSkKKwkJaWYgKCFwaXBlX2VtcHR5KGlkeC5oZWFkLCBpZHgu
+dGFpbCkpCiAJCQltYXNrIHw9IEVQT0xMSU4gfCBFUE9MTFJETk9STTsKIAkJaWYgKCFwaXBlLT53
+cml0ZXJzICYmIGZpbHAtPmZfcGlwZSAhPSBwaXBlLT53X2NvdW50ZXIpCiAJCQltYXNrIHw9IEVQ
+T0xMSFVQOwogCX0KIAogCWlmIChmaWxwLT5mX21vZGUgJiBGTU9ERV9XUklURSkgewotCQlpZiAo
+IXBpcGVfZnVsbChoZWFkLCB0YWlsLCBwaXBlLT5tYXhfdXNhZ2UpKQorCQlpZiAoIXBpcGVfZnVs
+bChpZHguaGVhZCwgaWR4LnRhaWwsIHBpcGUtPm1heF91c2FnZSkpCiAJCQltYXNrIHw9IEVQT0xM
+T1VUIHwgRVBPTExXUk5PUk07CiAJCS8qCiAJCSAqIE1vc3QgVW5pY2VzIGRvIG5vdCBzZXQgRVBP
+TExFUlIgZm9yIEZJRk9zIGJ1dCBvbiBMaW51eCB0aGV5CmRpZmYgLS1naXQgYS9pbmNsdWRlL2xp
+bnV4L3BpcGVfZnNfaS5oIGIvaW5jbHVkZS9saW51eC9waXBlX2ZzX2kuaAppbmRleCA4ZmYyM2Jm
+NWE4MTkuLmIxYTNiOTlmOWZmOCAxMDA2NDQKLS0tIGEvaW5jbHVkZS9saW51eC9waXBlX2ZzX2ku
+aAorKysgYi9pbmNsdWRlL2xpbnV4L3BpcGVfZnNfaS5oCkBAIC0zMSw2ICszMSwzMyBAQCBzdHJ1
+Y3QgcGlwZV9idWZmZXIgewogCXVuc2lnbmVkIGxvbmcgcHJpdmF0ZTsKIH07CiAKKy8qCisgKiBS
+ZWFsbHkgb25seSBhbHBoYSBuZWVkcyAzMi1iaXQgZmllbGRzLCBidXQKKyAqIG1pZ2h0IGFzIHdl
+bGwgZG8gaXQgZm9yIDY0LWJpdCBhcmNoaXRlY3R1cmVzCisgKiBzaW5jZSB0aGF0J3Mgd2hhdCB3
+ZSd2ZSBoaXN0b3JpY2FsbHkgZG9uZSwKKyAqIGFuZCBpdCBtYWtlcyAnaGVhZF90YWlsJyBhbHdh
+eXMgYmUgYSBzaW1wbGUKKyAqICd1bnNpZ25lZCBsb25nJy4KKyAqLworI2lmZGVmIENPTkZJR182
+NEJJVAorICB0eXBlZGVmIHVuc2lnbmVkIGludCBwaXBlX2luZGV4X3Q7CisjZWxzZQorICB0eXBl
+ZGVmIHVuc2lnbmVkIHNob3J0IHBpcGVfaW5kZXhfdDsKKyNlbmRpZgorCisvKgorICogV2UgaGF2
+ZSB0byBkZWNsYXJlIHRoaXMgb3V0c2lkZSAnc3RydWN0IHBpcGVfaW5vZGVfaW5mbycsCisgKiBi
+dXQgdGhlbiB3ZSBjYW4ndCB1c2UgJ3VuaW9uIHBpcGVfaW5kZXgnIGZvciBhbiBhbm9ueW1vdXMK
+KyAqIHVuaW9uLCBzbyB3ZSBlbmQgdXAgaGF2aW5nIHRvIGR1cGxpY2F0ZSB0aGlzIGRlY2xhcmF0
+aW9uCisgKiBiZWxvdy4gQW5ub3lpbmcuCisgKi8KK3VuaW9uIHBpcGVfaW5kZXggeworCXVuc2ln
+bmVkIGxvbmcgaGVhZF90YWlsOworCXN0cnVjdCB7CisJCXBpcGVfaW5kZXhfdCBoZWFkOworCQlw
+aXBlX2luZGV4X3QgdGFpbDsKKwl9OworfTsKKwogLyoqCiAgKglzdHJ1Y3QgcGlwZV9pbm9kZV9p
+bmZvIC0gYSBsaW51eCBrZXJuZWwgcGlwZQogICoJQG11dGV4OiBtdXRleCBwcm90ZWN0aW5nIHRo
+ZSB3aG9sZSB0aGluZwpAQCAtNTgsOCArODUsMTYgQEAgc3RydWN0IHBpcGVfYnVmZmVyIHsKIHN0
+cnVjdCBwaXBlX2lub2RlX2luZm8gewogCXN0cnVjdCBtdXRleCBtdXRleDsKIAl3YWl0X3F1ZXVl
+X2hlYWRfdCByZF93YWl0LCB3cl93YWl0OwotCXVuc2lnbmVkIGludCBoZWFkOwotCXVuc2lnbmVk
+IGludCB0YWlsOworCisJLyogVGhpcyBoYXMgdG8gbWF0Y2ggdGhlICd1bmlvbiBwaXBlX2luZGV4
+JyBhYm92ZSAqLworCXVuaW9uIHsKKwkJdW5zaWduZWQgbG9uZyBoZWFkX3RhaWw7CisJCXN0cnVj
+dCB7CisJCQlwaXBlX2luZGV4X3QgaGVhZDsKKwkJCXBpcGVfaW5kZXhfdCB0YWlsOworCQl9Owor
+CX07CisKIAl1bnNpZ25lZCBpbnQgbWF4X3VzYWdlOwogCXVuc2lnbmVkIGludCByaW5nX3NpemU7
+CiAJdW5zaWduZWQgaW50IG5yX2FjY291bnRlZDsK
+--0000000000000a0263062f764049--
 
