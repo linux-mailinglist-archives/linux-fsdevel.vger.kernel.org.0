@@ -1,103 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-43008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D5EA4CEA3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 23:43:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77B7EA4CEA5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 23:44:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 548FC18897F0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 22:43:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EFCB16FB61
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Mar 2025 22:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D595223907E;
-	Mon,  3 Mar 2025 22:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F4623816E;
+	Mon,  3 Mar 2025 22:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="sCxrpcyQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="abkEn8sp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132D51F03C7;
-	Mon,  3 Mar 2025 22:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1E5217F29
+	for <linux-fsdevel@vger.kernel.org>; Mon,  3 Mar 2025 22:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741041814; cv=none; b=RXr1vd/U1dpWr7u1WmLQ/Khdbx/GgK8owh4iqHw/X3zZIOAa5q3D/1H5x4FjvbRVxbVLMuuNfppO97FhLTzfkFcGVfYEtjKCt109V0gjQY/DC3d5MJKw0jji6js6FG/XZ7l1T7nvSAOygQVvj67y9wZrlndi0y2/zp7SDdnosto=
+	t=1741041840; cv=none; b=cMJ9vE7rztSicyKZgbZ9OADhkGJikSLLI7CqmfliMZT49gj81MS9IXVa3AwWo4/2rSHT2yMwEr5yQgk8KEFMchumF3EXmSRLDknjYZYHtFBe5RAhZ++8eqhf1DOY9jfJyP6sMAhXABXwhOV/KxFBZwT4OGSYm7s4PyPcAHQe0Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741041814; c=relaxed/simple;
-	bh=Ye4xOllgSwhjXuDnyBuAKIEjHgB7tBT2sx0Mlr/Fn7g=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=AKk5Hnm3NKwRqF27fGpH3tW4rQkl6m2QpYd4ZvXsGuhZiWsevcGH+93apDMkJarFkQr8s+UhHjgW49Esxo6YVQvuiA/OTugyXxQtZRFBwXWobOsdLp5COpzLFXtdkPEFivbcXMI7uz/5mD/KN5ChrUU2A3uOV0sO+kv3n2dXedQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=sCxrpcyQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2066C4CED6;
-	Mon,  3 Mar 2025 22:43:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1741041813;
-	bh=Ye4xOllgSwhjXuDnyBuAKIEjHgB7tBT2sx0Mlr/Fn7g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sCxrpcyQEg5yYBT2gW7pbCgt0yG3N/wlf3mWDI4OGJqicQA+KFPrU8gmIwdRlmZrE
-	 Vhrdglv/yHorwkHx/4JsNBgWrl1E0iQkC9p/QSt42U6PomymhGBg6FCQ8eRXM/ovjp
-	 aWQwvj44KHZCQUuPyIcdXIrEvPMbBDKjvUujtAhM=
-Date: Mon, 3 Mar 2025 14:43:32 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- cgroups@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-api@vger.kernel.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, Johannes
- Weiner <hannes@cmpxchg.org>, Michal =?ISO-8859-1?Q?Koutn=FD?=
- <mkoutny@suse.com>, Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski
- <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, Muchun Song <muchun.song@linux.dev>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn
- <jannh@google.com>
-Subject: Re: [PATCH v3 00/20] mm: MM owner tracking for large folios
- (!hugetlb) + CONFIG_NO_PAGE_MAPCOUNT
-Message-Id: <20250303144332.4cb51677966b515ee0c89a44@linux-foundation.org>
-In-Reply-To: <20250303163014.1128035-1-david@redhat.com>
-References: <20250303163014.1128035-1-david@redhat.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741041840; c=relaxed/simple;
+	bh=cl1dM8kVDtiWOD8XJq+j2ArSIn//Ln/QcLEBW9sGHYA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a8TtnTXKWznPgwG08jCVoTk2v5mEnkZeLtUJPpLoP76r3V66mr0Ec8sln9uinMp8XM+/SJNMclWkWQyNDPF3Vbs7ifFoUVoQoEli/hsB2eViksUi70Dck9b+dwZaeQAXOOQyIexMtvWN3F/F5gAw0VPiVXGc2zYRMX8Ws5PuxyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=abkEn8sp; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-47201625705so58096121cf.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Mar 2025 14:43:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741041838; x=1741646638; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cl1dM8kVDtiWOD8XJq+j2ArSIn//Ln/QcLEBW9sGHYA=;
+        b=abkEn8spamvGfr8nG/CvEO6hwdTpICrFfoMV0Gzkgu1Nmm2Zf0kTCkUaHzcgzWWBdY
+         6AXwjlVsNNzXNshy5EboYVWO+fdfC7gpkGDqsn4/TOsh/wmT9qmm9IPc6aL550kF5SpG
+         g/kiLs8WhROK4SEgkgoMZSbPN71wQs2Rt4JkwAZEUqNQt460JKwCKyt4mgZ3PN9b2lN3
+         CgOkl0TZavadvQjoSSmz7FuIiYbmBql3ZGnUQuh4GjzqyoRei/1WQgFw9xc+Lfqub6L4
+         CxJ9JOrr38VvFx/mE64meTAsjEHOc58QbpNY/r7HRk8h5gtM8++vmzCKSuAVlCv8WiXV
+         UCWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741041838; x=1741646638;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cl1dM8kVDtiWOD8XJq+j2ArSIn//Ln/QcLEBW9sGHYA=;
+        b=jS+xdKYijbwGssgeH4JSej6eD07jffc2Rquex4ECB8y7ZS7zCTQI55ZPPXxgb5eBPf
+         XFXmGQbGrtkAnFJbp0gesGE2BCTkKPyoz4d+DU4BLsCzF5lsXbroTStSmrcQvSVof0RK
+         I6h18Tlxp6U185Y+5vPk254RX6L8T+akvPD8bhSH0Wv0ji9RWF+jASQp/wPbLKImG6ih
+         0aQgqzzYQJ7gjV30l+7dM9bJzwtX0D0bRVvl/uSWac8SSfZ2dL0NKadv6DucxRyVPsuU
+         nAD4Y4WSESeGzFJrFetoV7Z5etNObYu1UfN8KjJrj5P7RBFNSkYTpjVDvonlASAUzNXV
+         72Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCXoNvXp2gN8ml3wZQiWj5ms7rWR7G7Czzf9ywuvtJXgdp5ojWgXBhy3wXseLRL1L11f6XKAI+MoTR0Zs0e8@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKr3u7W0B2P1vFgdExOJHq4KehOvvdfZmyOQQiCRtH3tFqXEeT
+	wsKftIGGcDreVH01fw3BQnFngvmekI9C9LQFbyRvJd06j6vJDgDbdip7+3LTWhfN33RAA+MXO3H
+	dWM4KMmOtftoI15p8YNZ1wYLd/+4=
+X-Gm-Gg: ASbGncv0FjnEYbkW+ug1Rz/mp6Nh+TXOVsTYH0+JCGTTR3eQ3RIlfLcvY5bG92w4PXB
+	nrXhgfNHPLmvmyrLnJnIMf/QjglZ+4a6VxLHZVHGUiy1N4TbY1SnD4VrULNz1ZZ+Rtu/BDgSAdj
+	as6X+mMDDQVlQLZi4aJF5/nu6wSJE=
+X-Google-Smtp-Source: AGHT+IFrjDNbdoj9UBQDR95rV/iIFxTQ42imdcTYOv7lPCfYwIjHEoTbsGD/zzp1JpullP1m6EIBmCJM5n3dQicTEV4=
+X-Received: by 2002:a05:622a:24f:b0:474:fa6b:c402 with SMTP id
+ d75a77b69052e-474fbd3debemr15189051cf.18.1741041838177; Mon, 03 Mar 2025
+ 14:43:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20250122215528.1270478-1-joannelkoong@gmail.com>
+ <4hwzfe4b377vabaiu342u44ryigkkyhka3nr2kuvfsbozxcrpt@li62aw6jkp7s>
+ <CAJnrk1YnKH2Dh2eSHXd7G64h++Z0PnHW0GFb=C60qN8N1=k+aQ@mail.gmail.com> <CAJfpegsKpHgyKMMjuzm=sQ0sAj+Fg1ZLvvqMTuVWWVvKEOXiFQ@mail.gmail.com>
+In-Reply-To: <CAJfpegsKpHgyKMMjuzm=sQ0sAj+Fg1ZLvvqMTuVWWVvKEOXiFQ@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 3 Mar 2025 14:43:47 -0800
+X-Gm-Features: AQ5f1JqIFhS6c0vuV2fj6f-4uOmzqUa4QE_0OAnovt9vvJXiKeTUHqHqs14WHn4
+Message-ID: <CAJnrk1YoA2QcuxvTdW=2P3ZRHGhWOYMOfXC=+i5fOY-71mBO6g@mail.gmail.com>
+Subject: Re: [PATCH v12 0/2] fuse: add kernel-enforced request timeout option
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, linux-fsdevel@vger.kernel.org, 
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, laoar.shao@gmail.com, 
+	jlayton@kernel.org, tfiga@chromium.org, bgeffon@google.com, 
+	etmartin4313@gmail.com, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon,  3 Mar 2025 17:29:53 +0100 David Hildenbrand <david@redhat.com> wrote:
-
-> Some smaller change based on Zi Yan's feedback (thanks!).
-> 
-> 
-> Let's add an "easy" way to decide -- without false positives, without
-> page-mapcounts and without page table/rmap scanning -- whether a large
-> folio is "certainly mapped exclusively" into a single MM, or whether it
-> "maybe mapped shared" into multiple MMs.
-> 
-> Use that information to implement Copy-on-Write reuse, to convert
-> folio_likely_mapped_shared() to folio_maybe_mapped_share(), and to
-> introduce a kernel config option that let's us not use+maintain
-> per-page mapcounts in large folios anymore.
-> 
-> ...
+On Mon, Mar 3, 2025 at 3:39=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu> w=
+rote:
 >
-> The goal is to make CONFIG_NO_PAGE_MAPCOUNT the default at some point,
-> to then slowly make it the only option, as we learn about real-life
-> impacts and possible ways to mitigate them.
+> On Tue, 25 Feb 2025 at 18:35, Joanne Koong <joannelkoong@gmail.com> wrote=
+:
+>
+> > but I no longer see these commits in his tree anymore.
+> >
+> > Miklos, why were these patches taken out?
+>
+> Sorry, forgot to re-apply with the io-uring interaction fixed.
+>
+> Done now.
 
-I expect that we'll get very little runtime testing this way, and we
-won't hear about that testing unless there's a failure.
+Hi Miklos,
 
-Part of me wants to make it default on right now, but that's perhaps a
-bit mean to linux-next testers.
+Will the 2nd patch ("fuse: add default_request_timeout and
+max_request_timeout sysctls") also be re-applied? I'm only seeing the
+1st patch (" fuse: add kernel-enforced timeout option for requests")
+in the for-next tree right now.
 
-Or perhaps default-off for now and switch to default-y for 6.15-rcX?
+Thanks,
+Joanne
 
-I suggest this just to push things along more aggressively - we may
-choose to return to default-off after a few weeks of -rcX.
-
+>
+> Thanks,
+> Miklos
 
