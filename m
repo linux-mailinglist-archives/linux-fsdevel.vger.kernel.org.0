@@ -1,246 +1,293 @@
-Return-Path: <linux-fsdevel+bounces-43109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43099-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78AE3A4E08D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 15:19:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18042A4DEA2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 14:05:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B48D189EA81
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 14:17:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E26D7A641E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 13:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A2F20550D;
-	Tue,  4 Mar 2025 14:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6769E202F7E;
+	Tue,  4 Mar 2025 13:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FlLTRNph"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="msKcv5gH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ACDD204F73
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 14:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741097837; cv=pass; b=mHzsCdTJQv0uLYyceoz6K71L5RgA3E6StOInP3wvBq3QSgRuZZ7PvMxBa/TP8aMSp0zBHqJGO1gBm92C2mOUdGEcrSSdvXf3VNmnQk6ylWv4ku4hR7e2xreZriI60Dk8JSknLzDkwPTQq8bFkBd+Us7z6OUuIy4BJO9/DWi6deQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741097837; c=relaxed/simple;
-	bh=eXllzOnoRt5/aqD3OK5q+LXzVWXzKgBZPq0p3jULFrA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oDLQDkd1bVxlxv4Oojx9fe4pff9nhmMmkJnpMn57ZhA9Mhkhzr4Ffo+Uaw1iGEbKgRO/pnF8jzig3VdgoKcauBU4VQRoetU/o0UUL6z2DHffuCTMQKU+yt2EA97raV+NRKJJX/ZffPo43o4Js8iCE/zLCWvHqmU6LJhxAAgOOig=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FlLTRNph; arc=none smtp.client-ip=170.10.133.124; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; arc=pass smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 1FA9340D91BF
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 17:17:14 +0300 (+03)
-X-Envelope-From: <root@cc.itu.edu.tr>
-Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=FlLTRNph
-Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6d5G5nwJzFw9D
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 17:16:02 +0300 (+03)
-Received: by le1 (Postfix, from userid 0)
-	id 1F7C742731; Tue,  4 Mar 2025 17:15:27 +0300 (+03)
-Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FlLTRNph
-X-Envelope-From: <linux-kernel+bounces-541214-bozkiru=itu.edu.tr@vger.kernel.org>
-Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FlLTRNph
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 0131C41B5C
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:59:08 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id CC39C2DCDE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:59:08 +0300 (+03)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCA8D18826F6
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:58:59 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F0D1F03EA;
-	Mon,  3 Mar 2025 08:58:29 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC011EFFAD
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70A7200BBC
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 13:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740992305; cv=none; b=PQMOAC3IhJYGcI2Ttid0xJ0IqEYEf0FWqe2tk63K6w4XF+w2OuWNoxngpfj5ahunG/54/aIteNv0kMjhSedGud03UjpCEG79+60J8c/IR6+QVSwe1cOPsr++A5zJ0gbnrwCOchzEnSZWX4pby7hHyi5eq1M/4vFd4n5mh8iNw9k=
+	t=1741093537; cv=none; b=B+p/3eUvuvSTB7WK34aGKcGt2d4y1jPrM0FK0XumKY3xTZ1WnKe0mgOGNR/2pVLGVu+iGWZDbsLWJ136PpAMcyQX0rJkwOgiv+1ohoPN4yDiKShQFuT98PRqp8QT6E/ecJrhdv1K4VOqFt12jvRLk0TfYEhpo5dU19yGyQHyWik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740992305; c=relaxed/simple;
-	bh=eXllzOnoRt5/aqD3OK5q+LXzVWXzKgBZPq0p3jULFrA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a3FeNi6wkrpDwY09BzQPomiypp59S3L0reebJXfUnJ5PRZyY6AM7eXNdhfkUqFMCnqBh7Sf5/5ILo2VyRVlu1fCfgFxYCpKDRlpwW3AnJXgtb9bXqmtS67qm7irAvv0SD9r8qzWbW61zfuP1BT4uwxltkUWxTkIacv/JZV6A6co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FlLTRNph; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740992301;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=yhKA0PWZzkHsCkSvRw6WIRSjH0fQoXRBt2BANeFnGaI=;
-	b=FlLTRNphcbOuuY9Lk+b+bJ3bQi0912o4Xn3MpyCyRB2nHnJSy8lH/5o+MnVUXN4l8gEXN8
-	zG+HB87chsKAO4Rzy2BRyu//4Fo1oEVSfXmopwGYxnmWSUYpafB8U9Th3dlj1BgpcjgGED
-	Dt8lli1sskf9ONOHdFPu/eu+JD0DBu8=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-176-jM3ml-n-Px6345P5nMgzsQ-1; Mon, 03 Mar 2025 03:58:19 -0500
-X-MC-Unique: jM3ml-n-Px6345P5nMgzsQ-1
-X-Mimecast-MFC-AGG-ID: jM3ml-n-Px6345P5nMgzsQ_1740992299
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3910876fce0so600185f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 00:58:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740992298; x=1741597098;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yhKA0PWZzkHsCkSvRw6WIRSjH0fQoXRBt2BANeFnGaI=;
-        b=DEctHM9I6xH3kj5wl554u/MKq7lfV8lx7N2Hw+WGjxJ09mbrz8PAQU3xCy4goyAQLr
-         t9KzW7YI/kuXkDbW03IXmKLCdllGRVsamohW9/53zRrqp0oUm8eXRKmqoo7442d6i05r
-         21ceBIJAHQzEGu7M9dBR1LXB7aDoUZ5A2BE0cdsAKhej/b7J2hhk6TWGXHDxIIzd3B12
-         KJHDBRBn7O6C3JyWppQGYTDdEsUpRMVU2LtRuP0H9d20SUdmWhoZpkU5yGgnadUvq/Ug
-         AAYUml0so2m6P0jP7NjPj8/sOX6p2iJVP8JDaDhY8mkUxfD7jIVOuRMOip3oHBIoFE6r
-         XQqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVW5v1QWDGsA/4dql6f6rDFc/DJLpNpS9cDXqed0sc+EG8uVodC69i4NVMarQlN/TYmdql28LQ1CdSQ/v4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf/bHIsfhlQPdqQlr/04wQ2xWBDga0FJhcaZymkFNH+k9/8SGG
-	YFDBIVclOlp+FP6kzRsWufRB4jnVhiucOpfwxPZDLdmi09BAhtsHsLGQvBwVskMODjeqftduHjE
-	+0Cn8bcFWxKDI0gMuw07ZcHY8f/+JLkOqfT06qIZZGTWNjzhWrBfE0MF3bDDgMg==
-X-Gm-Gg: ASbGncvW/lAJko1F7g7pECBJeKdLC9AVVh+Y+sNS7YZ4RUuZBAoElWDyZcZb+EsC/kW
-	jUX2OSbS3zq2Wp/TX/FzynYYcdvayHgDSbtM4DkKd0mEonauRJN4DaCcVXU38s/TdSVEfx8RfEy
-	i+pBVEM3XU7p7ouz6Y59L0ujCsMkFFBJyF7fuaOoRkb4D5IdOIJq4wWolAfcS6DHPIb6QkYnak4
-	fQ8z65/V8hXhom4y8FAMwQgi2J6hwtwTHhtzfKNHkXRjR0rLZjXY7EeDAvGUh0H/u3QN0uSujwY
-	0Mtd28tv+9wX4ondYBefAJw16n4srVuynlCg8tbdETCXzRuPFoDWD4b4x1A5FT0uhU+nE+b5xLb
-	OOWz6bypzbAM7VRjipTyMGjDj4uwexzbCotBydm4ODA8=
-X-Received: by 2002:a5d:59ae:0:b0:391:10f9:f3a1 with SMTP id ffacd0b85a97d-39110f9f4ffmr1082156f8f.35.1740992298664;
-        Mon, 03 Mar 2025 00:58:18 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHrOB8TUQnl8FpqKRAFyy2zHk+Etq0hy84HKx7V6iLK+hyXpCu8bZkk/epZdl6ibKYIEl0N0g==
-X-Received: by 2002:a5d:59ae:0:b0:391:10f9:f3a1 with SMTP id ffacd0b85a97d-39110f9f4ffmr1082091f8f.35.1740992298255;
-        Mon, 03 Mar 2025 00:58:18 -0800 (PST)
-Received: from ?IPV6:2003:cb:c734:9600:af27:4326:a216:2bfb? (p200300cbc7349600af274326a2162bfb.dip0.t-ipconnect.de. [2003:cb:c734:9600:af27:4326:a216:2bfb])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485e61csm13948947f8f.98.2025.03.03.00.58.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 00:58:17 -0800 (PST)
-Message-ID: <964e8991-44c0-4ff7-91cc-033ed7c09835@redhat.com>
-Date: Mon, 3 Mar 2025 09:58:15 +0100
-Precedence: bulk
+	s=arc-20240116; t=1741093537; c=relaxed/simple;
+	bh=TBoYwdmhVU3A7bZEtzR43pdugSQUMpT+SDJo1xqadbs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MhcUlYIlJnjhJf0zwzGsDtZAqierOMCqnQQKxSMB62RwE9pKTfOe4joUpZKH2ALUxQd1tJwEDZRx/dCpgeRUcPfD0kfHNHYE3kDBW32Puq3L5M+5Rldv4iW6wa+oskdSfeEJZ7Fas6aHFvUsx9nFAamEnxXXjYMzDNujtdKdHYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=msKcv5gH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0D2AC4CEE7;
+	Tue,  4 Mar 2025 13:05:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741093537;
+	bh=TBoYwdmhVU3A7bZEtzR43pdugSQUMpT+SDJo1xqadbs=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=msKcv5gHkX3M3kEwWqwu150mMDzRZLvM2vb2CJ/vnzfTVzokax0eJG2L+yCCu4Y8t
+	 AJvpJBoNv0V0AOhkEzOyLr5Iv/S/vON+FSkf0Zzhz8y75H0F/G9P0/zb4IT/EVz4DE
+	 wgHPAqhboY6LJidAk8NaeydzFWk3V/LZ0tZf3Vz6SWVw5DGmRZ3zjpm/h3c4ggemIq
+	 SEKLQxz5N5xMxVdEyUK2RcPj3SW88bqihQF7wVeZFlhOgOpbWWhl6tjZfs9dzPkGzS
+	 m7rd89Kd8nYBzeEf24tE+JZLmQVjVwp13oDjiqVNjjvQii5IW10tM001CqED7me8yp
+	 2T93v7G+d8GVQ==
+Message-ID: <800082efb3b2537e80427eb9d3b0e20b10ac866c.camel@kernel.org>
+Subject: Re: [PATCH v2 05/15] pidfs: record exit code and cgroupid at exit
+From: Jeff Layton <jlayton@kernel.org>
+To: Christian Brauner <brauner@kernel.org>, Oleg Nesterov <oleg@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Lennart Poettering
+ <lennart@poettering.net>,  Daan De Meyer <daan.j.demeyer@gmail.com>, Mike
+ Yuan <me@yhndnzj.com>
+Date: Tue, 04 Mar 2025 08:05:35 -0500
+In-Reply-To: <20250304-work-pidfs-kill_on_last_close-v2-5-44fdacfaa7b7@kernel.org>
+References: 
+	<20250304-work-pidfs-kill_on_last_close-v2-0-44fdacfaa7b7@kernel.org>
+	 <20250304-work-pidfs-kill_on_last_close-v2-5-44fdacfaa7b7@kernel.org>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 19/20] fs/dax: Properly refcount fs dax pages
-To: Alistair Popple <apopple@nvidia.com>, akpm@linux-foundation.org,
- dan.j.williams@intel.com, linux-mm@kvack.org
-Cc: Alison Schofield <alison.schofield@intel.com>, lina@asahilina.net,
- zhang.lyra@gmail.com, gerald.schaefer@linux.ibm.com,
- vishal.l.verma@intel.com, dave.jiang@intel.com, logang@deltatee.com,
- bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
- will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
- dave.hansen@linux.intel.com, ira.weiny@intel.com, willy@infradead.org,
- djwong@kernel.org, tytso@mit.edu, linmiaohe@huawei.com, peterx@redhat.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
- david@fromorbit.com, chenhuacai@kernel.org, kernel@xen0n.name,
- loongarch@lists.linux.dev
-References: <cover.8068ad144a7eea4a813670301f4d2a86a8e68ec4.1740713401.git-series.apopple@nvidia.com>
- <c7d886ad7468a20452ef6e0ddab6cfe220874e7c.1740713401.git-series.apopple@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <c7d886ad7468a20452ef6e0ddab6cfe220874e7c.1740713401.git-series.apopple@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6d5G5nwJzFw9D
-X-ITU-Libra-ESVA: No virus found
-X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741702579.40398@6qdeO9SA67PfwkvoUL9KQA
-X-ITU-MailScanner-SpamCheck: not spam
 
+On Tue, 2025-03-04 at 10:41 +0100, Christian Brauner wrote:
+> Record the exit code and cgroupid in do_exit() and stash in struct
+> pidfs_exit_info so it can be retrieved even after the task has been
+> reaped.
+>=20
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>  fs/internal.h         |  1 +
+>  fs/libfs.c            |  4 ++--
+>  fs/pidfs.c            | 41 ++++++++++++++++++++++++++++++++++++++++-
+>  include/linux/pidfs.h |  1 +
+>  kernel/exit.c         |  2 ++
+>  5 files changed, 46 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/fs/internal.h b/fs/internal.h
+> index e7f02ae1e098..c1e6d8b294cb 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -325,6 +325,7 @@ struct stashed_operations {
+>  int path_from_stashed(struct dentry **stashed, struct vfsmount *mnt, voi=
+d *data,
+>  		      struct path *path);
+>  void stashed_dentry_prune(struct dentry *dentry);
+> +struct dentry *stashed_dentry_get(struct dentry **stashed);
+>  /**
+>   * path_mounted - check whether path is mounted
+>   * @path: path to check
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index 8444f5cc4064..cf5a267aafe4 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -2113,7 +2113,7 @@ struct timespec64 simple_inode_init_ts(struct inode=
+ *inode)
+>  }
+>  EXPORT_SYMBOL(simple_inode_init_ts);
+> =20
+> -static inline struct dentry *get_stashed_dentry(struct dentry **stashed)
+> +struct dentry *stashed_dentry_get(struct dentry **stashed)
+>  {
+>  	struct dentry *dentry;
+> =20
+> @@ -2215,7 +2215,7 @@ int path_from_stashed(struct dentry **stashed, stru=
+ct vfsmount *mnt, void *data,
+>  	const struct stashed_operations *sops =3D mnt->mnt_sb->s_fs_info;
+> =20
+>  	/* See if dentry can be reused. */
+> -	path->dentry =3D get_stashed_dentry(stashed);
+> +	path->dentry =3D stashed_dentry_get(stashed);
+>  	if (path->dentry) {
+>  		sops->put_data(data);
+>  		goto out_path;
+> diff --git a/fs/pidfs.c b/fs/pidfs.c
+> index eaecb0a947f0..258e1c13ee56 100644
+> --- a/fs/pidfs.c
+> +++ b/fs/pidfs.c
+> @@ -32,7 +32,7 @@ static struct kmem_cache *pidfs_cachep __ro_after_init;
+>   */
+>  struct pidfs_exit_info {
+>  	__u64 cgroupid;
+> -	__u64 exit_code;
+> +	__s32 exit_code;
 
-> -static inline unsigned long dax_folio_share_put(struct folio *folio)
-> +static inline unsigned long dax_folio_put(struct folio *folio)
->   {
-> -	return --folio->page.share;
-> +	unsigned long ref;
-> +	int order, i;
+^^^
+The above delta should be folded into the previous patch.
+
+>  };
+> =20
+>  struct pidfs_inode {
+> @@ -458,6 +458,45 @@ struct pid *pidfd_pid(const struct file *file)
+>  	return file_inode(file)->i_private;
+>  }
+> =20
+> +/*
+> + * We're called from release_task(). We know there's at least one
+> + * reference to struct pid being held that won't be released until the
+> + * task has been reaped which cannot happen until we're out of
+> + * release_task().
+> + *
+> + * If this struct pid is refered to by a pidfd then stashed_dentry_get()
+> + * will return the dentry and inode for that struct pid. Since we've
+> + * taken a reference on it there's now an additional reference from the
+> + * exit path on it. Which is fine. We're going to put it again in a
+> + * second and we know that the pid is kept alive anyway.
+> + *
+> + * Worst case is that we've filled in the info and immediately free the
+> + * dentry and inode afterwards since the pidfd has been closed. Since
+> + * pidfs_exit() currently is placed after exit_task_work() we know that
+> + * it cannot be us aka the exiting task holding a pidfd to ourselves.
+> + */
+
+That is a subtle interaction. Thanks for the comment!
+
+> +void pidfs_exit(struct task_struct *tsk)
+> +{
+> +	struct dentry *dentry;
 > +
-> +	if (!dax_folio_is_shared(folio))
-> +		ref = 0;
-> +	else
-> +		ref = --folio->share;
+> +	dentry =3D stashed_dentry_get(&task_pid(tsk)->stashed);
+> +	if (dentry) {
+> +		struct inode *inode =3D d_inode(dentry);
+> +		struct pidfs_exit_info *exit_info =3D &pidfs_i(inode)->exit_info;
+> +#ifdef CONFIG_CGROUPS
+> +		struct cgroup *cgrp;
 > +
+> +		rcu_read_lock();
+> +		cgrp =3D task_dfl_cgroup(tsk);
+> +		exit_info->cgroupid =3D cgroup_id(cgrp);
+> +		rcu_read_unlock();
+> +#endif
+> +		exit_info->exit_code =3D tsk->exit_code;
+> +
+> +		dput(dentry);
+> +	}
+> +}
+> +
+>  static struct vfsmount *pidfs_mnt __ro_after_init;
+> =20
+>  /*
+> diff --git a/include/linux/pidfs.h b/include/linux/pidfs.h
+> index 7c830d0dec9a..05e6f8f4a026 100644
+> --- a/include/linux/pidfs.h
+> +++ b/include/linux/pidfs.h
+> @@ -6,6 +6,7 @@ struct file *pidfs_alloc_file(struct pid *pid, unsigned i=
+nt flags);
+>  void __init pidfs_init(void);
+>  void pidfs_add_pid(struct pid *pid);
+>  void pidfs_remove_pid(struct pid *pid);
+> +void pidfs_exit(struct task_struct *tsk);
+>  extern const struct dentry_operations pidfs_dentry_operations;
+> =20
+>  #endif /* _LINUX_PID_FS_H */
+> diff --git a/kernel/exit.c b/kernel/exit.c
+> index 3485e5fc499e..98d292120296 100644
+> --- a/kernel/exit.c
+> +++ b/kernel/exit.c
+> @@ -69,6 +69,7 @@
+>  #include <linux/sysfs.h>
+>  #include <linux/user_events.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/pidfs.h>
+> =20
+>  #include <uapi/linux/wait.h>
+> =20
+> @@ -254,6 +255,7 @@ void release_task(struct task_struct *p)
+>  	write_lock_irq(&tasklist_lock);
+>  	ptrace_release_task(p);
+>  	thread_pid =3D get_pid(p->thread_pid);
+> +	pidfs_exit(p);
+>  	__exit_signal(p);
+> =20
+>  	/*
+>=20
 
-It would still be good to learn how this non-atomic update here is safe 
-(@Dan?), but that's independent of this series.
-
-Staring at it, I would have thought we have to us an atomic_t here.
-
-Acked-by: David Hildenbrand <david@redhat.com>
-
--- 
-Cheers,
-
-David / dhildenb
-
-
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
