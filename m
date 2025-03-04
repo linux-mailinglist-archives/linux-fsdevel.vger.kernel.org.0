@@ -1,103 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-43111-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43112-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 936F8A4E0CD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 15:27:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B8BA4E175
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 15:44:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 120177A4B24
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 14:26:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3EC81881F80
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 14:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45382080C6;
-	Tue,  4 Mar 2025 14:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1176B276D3C;
+	Tue,  4 Mar 2025 14:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NsyYfudN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PWxEua8/";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NsyYfudN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PWxEua8/"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EIrBXdyf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4lu1rqgU";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2620yZ3G";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WGQfANsK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2038F2063FA
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 14:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74BB25DCFC
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 14:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098331; cv=none; b=HxtkzLxwB4uNzOFzGuUFRLkNAe0iEEWb+0f7msDdP6H8qV8SqL3jBjJmuqBllv0I3VWf2IttHbRarQ5Tbycy6phMglDdxaRRhJiBnC6VrviH8QbmId+lQ2fYaaROcHxEJRK8a8IC8bHFXCJEij+5fNevq9Jc9wM6L3dos9gKJdw=
+	t=1741098957; cv=none; b=tshSj6fDprRXdx8zIac7zRiFAfrLWj20Wf0aRDu/TnPw7CTRo2bIexVVr0wGSWxwt910XlojKembXhMhJ/wlh+nmPosunMgE5DzPjdOzydOS2p6QvQvQ+QCrPibuYiuyr+vIcK/Q36Ydw9pi0EOcHYDijk2oAK8xM6xQQsnZJ30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098331; c=relaxed/simple;
-	bh=GHvYhF6mhNS8Xc5SlOXHmfIdiVTGU7d1If0qxTFNczU=;
+	s=arc-20240116; t=1741098957; c=relaxed/simple;
+	bh=h/Jv2Bg+zwrMEi6UloOZSsQCVI0CghmSdrAIUKv2TCY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k7q8QPCI/Ed/si9Six9E8F2UH3GGSHwz6I/iYYJUqzu0N0AIcVSSmU82ae64gyLQxvH5O0aO7cbe5zgBBTnP7q8iSCcYCAWZUpQJyHZggkUU+2ARJ2QHyojDQqSC8jmkmn4p5oJqjTC8DO/X+DQWoWBFOkks2BvjbBfeIB09+UQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NsyYfudN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PWxEua8/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NsyYfudN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PWxEua8/; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=tXb8INyuMOAQJF5yd/uAr9gEOSNkiwN5VwHxHiIK6abQQeMKG+epSt1u/r+bmXvj0fT+DLVSsRGTCrx9znLv2ltkOelv4YjZk1EY969vFb1FsttzDyk0NpXj1H5JhasBlFIw54zfryUXvGtaGcTTbIMvBtrz5KD0gX7cUbyLTH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EIrBXdyf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4lu1rqgU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2620yZ3G; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WGQfANsK; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2357A21170;
-	Tue,  4 Mar 2025 14:25:27 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E44781F74C;
+	Tue,  4 Mar 2025 14:35:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741098327; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1741098954; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=21R63puFBhLrbr9hO90cmJ3hCPSZdL7Adv8+v03JTpA=;
-	b=NsyYfudNY9FvF1DL3njfH8UJz/mC7PaFYt4sJHkItzjHknJ/lyBc//bIUhmBTwymukq0SC
-	wej+vQVwkTB1AnPXJYsidSrKE1YmqNjSIc0h8/qvuapxRtn6ulH//Lu+c59sUQOePJn4F+
-	xhPTrRt2AOOV+lD++9nc9oNZCeUHsyQ=
+	bh=r2GzlZuQCiYZqEHklmJ416V+7zdr1A6iSNiLyZDc1R4=;
+	b=EIrBXdyf89Ms32ytqK+GRB1D2FNW/to7N3h1EtaSrJ8JtZx0yjutbmmJIR+e8FfBw0HJWc
+	2kQH+M0yMIaS/kPpaJErTQb6luO3kGdJ+dbFKcpsEdqg4D28dcY0JaIdKdYuKQ/dhNykNF
+	p04cL0UAovvoHlfxnTz64dbTwo20Bi0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741098327;
+	s=susede2_ed25519; t=1741098954;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=21R63puFBhLrbr9hO90cmJ3hCPSZdL7Adv8+v03JTpA=;
-	b=PWxEua8/DYaf0TaSvOdTf1d0fUsUZls/1sdlh/pe7g8t/wlQL17tO9K9WBtZv+2B07Rp4s
-	Q49fLmhD94CZglDA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=NsyYfudN;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="PWxEua8/"
+	bh=r2GzlZuQCiYZqEHklmJ416V+7zdr1A6iSNiLyZDc1R4=;
+	b=4lu1rqgUjx/Ps5rhwIOlXVbwKBg0UkZCpxYVdl1VwSD/C5enCLx8ENca5cKYRtY4LaK3N3
+	wP9uJCXhJK0WXmCw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=2620yZ3G;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=WGQfANsK
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741098327; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1741098952; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=21R63puFBhLrbr9hO90cmJ3hCPSZdL7Adv8+v03JTpA=;
-	b=NsyYfudNY9FvF1DL3njfH8UJz/mC7PaFYt4sJHkItzjHknJ/lyBc//bIUhmBTwymukq0SC
-	wej+vQVwkTB1AnPXJYsidSrKE1YmqNjSIc0h8/qvuapxRtn6ulH//Lu+c59sUQOePJn4F+
-	xhPTrRt2AOOV+lD++9nc9oNZCeUHsyQ=
+	bh=r2GzlZuQCiYZqEHklmJ416V+7zdr1A6iSNiLyZDc1R4=;
+	b=2620yZ3G8GnJHwTkWcB34dTQH4Cn3ILl1dsqDMjSTFBdOVK6s+Ky0nyzvchnu5mQ1pXzjH
+	KKVBCL8nLxXfP9ydGcEAZwRd0gR8BevdijPZc5THTwgM67nir2/Zc8TI9ZOESAbiN9IvhA
+	XhvuN6qi1ExaHgqV5Pxq6j4UHz5iZQE=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741098327;
+	s=susede2_ed25519; t=1741098952;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=21R63puFBhLrbr9hO90cmJ3hCPSZdL7Adv8+v03JTpA=;
-	b=PWxEua8/DYaf0TaSvOdTf1d0fUsUZls/1sdlh/pe7g8t/wlQL17tO9K9WBtZv+2B07Rp4s
-	Q49fLmhD94CZglDA==
+	bh=r2GzlZuQCiYZqEHklmJ416V+7zdr1A6iSNiLyZDc1R4=;
+	b=WGQfANsKGzo4/axnvGNqT/KTsfNZooEIlTrzVRkUAQCDd9gEhxSgdEhgALtAWm+v1qyh1c
+	hNWeuEtZAVJc0qDw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 17F521393C;
-	Tue,  4 Mar 2025 14:25:27 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CE2AE1393C;
+	Tue,  4 Mar 2025 14:35:52 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3evSBVcNx2ejMAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 04 Mar 2025 14:25:27 +0000
+	id FvhPMsgPx2fqMwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 04 Mar 2025 14:35:52 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id CD815A0912; Tue,  4 Mar 2025 15:25:26 +0100 (CET)
-Date: Tue, 4 Mar 2025 15:25:26 +0100
+	id 879BFA087F; Tue,  4 Mar 2025 15:35:52 +0100 (CET)
+Date: Tue, 4 Mar 2025 15:35:52 +0100
 From: Jan Kara <jack@suse.cz>
 To: Tang Yizhou <yizhou.tang@shopee.com>
 Cc: tj@kernel.org, jack@suse.cz, brauner@kernel.org, willy@infradead.org, 
 	akpm@linux-foundation.org, rostedt@goodmis.org, mhiramat@kernel.org, ast@kernel.org, 
 	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND 1/2] writeback: Let trace_balance_dirty_pages()
- take struct dtc as parameter
-Message-ID: <tko35tkqszdwi5ibkzjnt5cxyuoppkfymnrotaqte2lbo5of26@4vo44czqtirp>
+Subject: Re: [PATCH RESEND 2/2] writeback: Fix calculations in
+ trace_balance_dirty_pages() for cgwb
+Message-ID: <rcfl3znyagtikvvzobic4hfuwzdjtrzwh3cuy4f6vbuq3emehl@2zx2bs75mszo>
 References: <20250303100617.223677-1-yizhou.tang@shopee.com>
- <20250303100617.223677-2-yizhou.tang@shopee.com>
+ <20250303100617.223677-3-yizhou.tang@shopee.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -106,246 +106,82 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250303100617.223677-2-yizhou.tang@shopee.com>
-X-Rspamd-Queue-Id: 2357A21170
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
+In-Reply-To: <20250303100617.223677-3-yizhou.tang@shopee.com>
+X-Rspamd-Queue-Id: E44781F74C
+X-Spam-Level: 
 X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
+	BAYES_HAM(-3.00)[99.99%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
 	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
+	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	ARC_NA(0.00)[];
 	RCPT_COUNT_TWELVE(0.00)[12];
-	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	RCVD_TLS_LAST(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	FROM_EQ_ENVFROM(0.00)[];
 	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
 	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,shopee.com:email]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
 X-Spam-Flag: NO
-X-Spam-Level: 
 
-On Mon 03-03-25 18:06:16, Tang Yizhou wrote:
+On Mon 03-03-25 18:06:17, Tang Yizhou wrote:
 > From: Tang Yizhou <yizhou.tang@shopee.com>
 > 
-> Currently, trace_balance_dirty_pages() already has 12 parameters. In the
-> next patch, I initially attempted to introduce an additional parameter.
-> However, in include/linux/trace_events.h, bpf_trace_run12() only supports
-> up to 12 parameters and bpf_trace_run13() does not exist.
+> In the commit dcc25ae76eb7 ("writeback: move global_dirty_limit into
+> wb_domain") of the cgroup writeback backpressure propagation patchset,
+> Tejun made some adaptations to trace_balance_dirty_pages() for cgroup
+> writeback. However, this adaptation was incomplete and Tejun missed
+> further adaptation in the subsequent patches.
 > 
-> To reduce the number of parameters in trace_balance_dirty_pages(), we can
-> make it accept a pointer to struct dirty_throttle_control as a parameter.
-> To achieve this, we need to move the definition of struct
-> dirty_throttle_control from mm/page-writeback.c to
-> include/linux/writeback.h.
+> In the cgroup writeback scenario, if sdtc in balance_dirty_pages() is
+> assigned to mdtc, then upon entering trace_balance_dirty_pages(),
+> __entry->limit should be assigned based on the dirty_limit of the
+> corresponding memcg's wb_domain, rather than global_wb_domain.
 > 
-> By the way, rename bdi_setpoint and bdi_dirty in the tracepoint to
-> wb_setpoint and wb_dirty, respectively. These changes were omitted by
-> Tejun in the cgroup writeback patchset.
+> To address this issue and simplify the implementation, introduce a 'limit'
+> field in struct dirty_throttle_control to store the hard_limit value
+> computed in wb_position_ratio() by calling hard_dirty_limit(). This field
+> will then be used in trace_balance_dirty_pages() to assign the value to
+> __entry->limit.
 > 
+> Fixes: dcc25ae76eb7 ("writeback: move global_dirty_limit into wb_domain")
 > Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
 
-Looks good. Feel free to add:
+In principle this looks fine but one nit below:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  include/linux/writeback.h        | 23 +++++++++++++++++++++
->  include/trace/events/writeback.h | 28 +++++++++++--------------
->  mm/page-writeback.c              | 35 ++------------------------------
->  3 files changed, 37 insertions(+), 49 deletions(-)
-> 
 > diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-> index d11b903c2edb..32095928365c 100644
+> index 32095928365c..58bda3347914 100644
 > --- a/include/linux/writeback.h
 > +++ b/include/linux/writeback.h
-> @@ -313,6 +313,29 @@ static inline void cgroup_writeback_umount(struct super_block *sb)
->  /*
->   * mm/page-writeback.c
->   */
-> +/* consolidated parameters for balance_dirty_pages() and its subroutines */
-> +struct dirty_throttle_control {
-> +#ifdef CONFIG_CGROUP_WRITEBACK
-> +	struct wb_domain	*dom;
-> +	struct dirty_throttle_control *gdtc;	/* only set in memcg dtc's */
-> +#endif
-> +	struct bdi_writeback	*wb;
-> +	struct fprop_local_percpu *wb_completions;
-> +
-> +	unsigned long		avail;		/* dirtyable */
-> +	unsigned long		dirty;		/* file_dirty + write + nfs */
-> +	unsigned long		thresh;		/* dirty threshold */
-> +	unsigned long		bg_thresh;	/* dirty background threshold */
-> +
-> +	unsigned long		wb_dirty;	/* per-wb counterparts */
-> +	unsigned long		wb_thresh;
-> +	unsigned long		wb_bg_thresh;
-> +
-> +	unsigned long		pos_ratio;
-> +	bool			freerun;
-> +	bool			dirty_exceeded;
-> +};
-> +
->  void laptop_io_completion(struct backing_dev_info *info);
->  void laptop_sync_completion(void);
->  void laptop_mode_timer_fn(struct timer_list *t);
-> diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
-> index a261e86e61fa..3046ca6b08ea 100644
-> --- a/include/trace/events/writeback.h
-> +++ b/include/trace/events/writeback.h
-> @@ -629,11 +629,7 @@ TRACE_EVENT(bdi_dirty_ratelimit,
->  TRACE_EVENT(balance_dirty_pages,
->  
->  	TP_PROTO(struct bdi_writeback *wb,
-> -		 unsigned long thresh,
-> -		 unsigned long bg_thresh,
-> -		 unsigned long dirty,
-> -		 unsigned long bdi_thresh,
-> -		 unsigned long bdi_dirty,
-> +		 struct dirty_throttle_control *dtc,
->  		 unsigned long dirty_ratelimit,
->  		 unsigned long task_ratelimit,
->  		 unsigned long dirtied,
-> @@ -641,7 +637,7 @@ TRACE_EVENT(balance_dirty_pages,
->  		 long pause,
->  		 unsigned long start_time),
->  
-> -	TP_ARGS(wb, thresh, bg_thresh, dirty, bdi_thresh, bdi_dirty,
-> +	TP_ARGS(wb, dtc,
->  		dirty_ratelimit, task_ratelimit,
->  		dirtied, period, pause, start_time),
->  
-> @@ -650,8 +646,8 @@ TRACE_EVENT(balance_dirty_pages,
->  		__field(unsigned long,	limit)
->  		__field(unsigned long,	setpoint)
->  		__field(unsigned long,	dirty)
-> -		__field(unsigned long,	bdi_setpoint)
-> -		__field(unsigned long,	bdi_dirty)
-> +		__field(unsigned long,	wb_setpoint)
-> +		__field(unsigned long,	wb_dirty)
->  		__field(unsigned long,	dirty_ratelimit)
->  		__field(unsigned long,	task_ratelimit)
->  		__field(unsigned int,	dirtied)
-> @@ -664,16 +660,16 @@ TRACE_EVENT(balance_dirty_pages,
->  	),
->  
->  	TP_fast_assign(
-> -		unsigned long freerun = (thresh + bg_thresh) / 2;
-> +		unsigned long freerun = (dtc->thresh + dtc->bg_thresh) / 2;
->  		strscpy_pad(__entry->bdi, bdi_dev_name(wb->bdi), 32);
->  
->  		__entry->limit		= global_wb_domain.dirty_limit;
->  		__entry->setpoint	= (global_wb_domain.dirty_limit +
->  						freerun) / 2;
-> -		__entry->dirty		= dirty;
-> -		__entry->bdi_setpoint	= __entry->setpoint *
-> -						bdi_thresh / (thresh + 1);
-> -		__entry->bdi_dirty	= bdi_dirty;
-> +		__entry->dirty		= dtc->dirty;
-> +		__entry->wb_setpoint	= __entry->setpoint *
-> +						dtc->wb_thresh / (dtc->thresh + 1);
-> +		__entry->wb_dirty	= dtc->wb_dirty;
->  		__entry->dirty_ratelimit = KBps(dirty_ratelimit);
->  		__entry->task_ratelimit	= KBps(task_ratelimit);
->  		__entry->dirtied	= dirtied;
-> @@ -689,7 +685,7 @@ TRACE_EVENT(balance_dirty_pages,
->  
->  	TP_printk("bdi %s: "
->  		  "limit=%lu setpoint=%lu dirty=%lu "
-> -		  "bdi_setpoint=%lu bdi_dirty=%lu "
-> +		  "wb_setpoint=%lu wb_dirty=%lu "
->  		  "dirty_ratelimit=%lu task_ratelimit=%lu "
->  		  "dirtied=%u dirtied_pause=%u "
->  		  "paused=%lu pause=%ld period=%lu think=%ld cgroup_ino=%lu",
-> @@ -697,8 +693,8 @@ TRACE_EVENT(balance_dirty_pages,
->  		  __entry->limit,
->  		  __entry->setpoint,
->  		  __entry->dirty,
-> -		  __entry->bdi_setpoint,
-> -		  __entry->bdi_dirty,
-> +		  __entry->wb_setpoint,
-> +		  __entry->wb_dirty,
->  		  __entry->dirty_ratelimit,
->  		  __entry->task_ratelimit,
->  		  __entry->dirtied,
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index eb55ece39c56..e980b2aec352 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -120,29 +120,6 @@ EXPORT_SYMBOL(laptop_mode);
->  
->  struct wb_domain global_wb_domain;
->  
-> -/* consolidated parameters for balance_dirty_pages() and its subroutines */
-> -struct dirty_throttle_control {
-> -#ifdef CONFIG_CGROUP_WRITEBACK
-> -	struct wb_domain	*dom;
-> -	struct dirty_throttle_control *gdtc;	/* only set in memcg dtc's */
-> -#endif
-> -	struct bdi_writeback	*wb;
-> -	struct fprop_local_percpu *wb_completions;
-> -
-> -	unsigned long		avail;		/* dirtyable */
-> -	unsigned long		dirty;		/* file_dirty + write + nfs */
-> -	unsigned long		thresh;		/* dirty threshold */
-> -	unsigned long		bg_thresh;	/* dirty background threshold */
-> -
-> -	unsigned long		wb_dirty;	/* per-wb counterparts */
-> -	unsigned long		wb_thresh;
-> -	unsigned long		wb_bg_thresh;
-> -
-> -	unsigned long		pos_ratio;
-> -	bool			freerun;
-> -	bool			dirty_exceeded;
-> -};
-> -
->  /*
->   * Length of period for aging writeout fractions of bdis. This is an
->   * arbitrarily chosen number. The longer the period, the slower fractions will
-> @@ -1962,11 +1939,7 @@ static int balance_dirty_pages(struct bdi_writeback *wb,
->  		 */
->  		if (pause < min_pause) {
->  			trace_balance_dirty_pages(wb,
-> -						  sdtc->thresh,
-> -						  sdtc->bg_thresh,
-> -						  sdtc->dirty,
-> -						  sdtc->wb_thresh,
-> -						  sdtc->wb_dirty,
-> +						  sdtc,
->  						  dirty_ratelimit,
->  						  task_ratelimit,
->  						  pages_dirtied,
-> @@ -1991,11 +1964,7 @@ static int balance_dirty_pages(struct bdi_writeback *wb,
->  
->  pause:
->  		trace_balance_dirty_pages(wb,
-> -					  sdtc->thresh,
-> -					  sdtc->bg_thresh,
-> -					  sdtc->dirty,
-> -					  sdtc->wb_thresh,
-> -					  sdtc->wb_dirty,
-> +					  sdtc,
->  					  dirty_ratelimit,
->  					  task_ratelimit,
->  					  pages_dirtied,
-> -- 
-> 2.25.1
-> 
+> @@ -326,6 +326,7 @@ struct dirty_throttle_control {
+>  	unsigned long		dirty;		/* file_dirty + write + nfs */
+>  	unsigned long		thresh;		/* dirty threshold */
+>  	unsigned long		bg_thresh;	/* dirty background threshold */
+> +	unsigned long		limit;		/* hard dirty limit */
+				^^^ I'd call this dirty_limit to not invent
+a new name for the same thing. I've noticed the tracepoint has 'limit' as
+well but that is the outlier that should be modified if anything. Also I'd
+modify the comment to /* smoothed dirty limit */ to better explain what
+this is about.
+
+								Honza
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
