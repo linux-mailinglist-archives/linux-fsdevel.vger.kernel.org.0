@@ -1,151 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-43121-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF39FA4E515
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 17:10:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EF0EA4E565
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 17:18:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A859E19C73DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 16:03:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70EA019C3CD7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 16:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320FD299B5A;
-	Tue,  4 Mar 2025 15:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA2C27817E;
+	Tue,  4 Mar 2025 15:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="erV+BR4g"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sTQjuy6Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980D2201256
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 15:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC140278167;
+	Tue,  4 Mar 2025 15:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741103095; cv=none; b=LB1EYXkrXCUtR7W/WcKwX+Z5JppfcSRcRouQMlYGse5sqAv6NPjyeKVPSGQGt2mg8/HHk+eKUDnmq4JYo+7wA/WBQokY92KtSfZmVREpT3ki75DyDSKS9T2W1M5oyrw1QIIsuF+JmXVKc2tcwS42UUZxP6uHhh+BIeZQtzMeg1o=
+	t=1741103307; cv=none; b=rYqNf2nobNTv+59KPhPwkP3W0f16NZHdqs9pGL1q4wDQGBIDxI7zYEVUYPAod7ckWAvLJbmFrO3THiZxSx+oV2o3ABGzVGyhC8F43hJwScnsA4dASyNGCWItXY6IbQT2NamdLCqmNGEED0vGADPHDOjCPddugrZlKODGf4yMbzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741103095; c=relaxed/simple;
-	bh=P7zlqxS73dBlTunRicBMxfpsw7GvNiWmDWbC7VkkOnA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AcmwVUK2cB8KXQLjAtaiEAwYHNCj8dOnlq+kA/4uqrFbcZtShfhVGo7zHgcMqMdTy58YwnAj3eij+/yupiY+gUXUTNqrbIiXese+ejPl87dIwOQRVLkbU/+Cd3A9M7LTGcKs2EMiSSVVXyAMKsWGuLgWCL5abt8v4lKZ4L8L/Lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=erV+BR4g; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741103092;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xl83TUzrsDMAxwdtPBM+T12tQFrYoJHVzO8Es+0i5IA=;
-	b=erV+BR4gf4MEBu0clhWMtxNsg9c8JMSYUMF37RGWy5m7xfhvitJVZlWgDMkmIOvN4bYhMO
-	/chPqWMKER1imAqumLKCWRx3kO/JmuOasCmPrgJg8xyQF2eqYJXYQhg1ptYaA6h0AjkGDx
-	7imhScyEqIkQzl7OePqpGsohewHkgYU=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-302-_D6eKitbNrSWX_du191Xww-1; Tue,
- 04 Mar 2025 10:44:49 -0500
-X-MC-Unique: _D6eKitbNrSWX_du191Xww-1
-X-Mimecast-MFC-AGG-ID: _D6eKitbNrSWX_du191Xww_1741103087
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CA0CF18EB2D3;
-	Tue,  4 Mar 2025 15:44:46 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.246])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id B562E1800947;
-	Tue,  4 Mar 2025 15:44:43 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue,  4 Mar 2025 16:44:16 +0100 (CET)
-Date: Tue, 4 Mar 2025 16:44:11 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, mingo@redhat.com, peterz@infradead.org,
-	rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: pipes && EPOLLET, again
-Message-ID: <20250304154410.GB5756@redhat.com>
-References: <20250303230409.452687-1-mjguzik@gmail.com>
- <20250303230409.452687-2-mjguzik@gmail.com>
- <20250304140726.GD26141@redhat.com>
+	s=arc-20240116; t=1741103307; c=relaxed/simple;
+	bh=1DdOz3KEhsMs3Dr0+9/DkNpFMUaE0gQzUnXsIOdvhAc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u6+GUv2T/9pO3WJ7pFxSW/wjNXq805n+Rf9TAyUw7CEEEBd7fHFfzkQlIZ3pvwYcwbi7WrM4klZBfQNhWKFi+xU7cbiMbshg9ISYkfiwcbf/ns7l5LjxrT24PEbk+6P6h6zmsscCW36FPNpgv8Ak5XrRnXrLoy8+XJl+WUn5OQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sTQjuy6Y; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=zOrlIceVWWSS603ADg2BUPx7j6TlefnAA/TeC7h1QEs=; b=sTQjuy6YA0NPe5jlzg5HickG58
+	fgj6dLc9DN53z3U/dqVY5PiAMAPvRoW9L1pTrAkKj25ZJPtvK23GstVapnWK7COFi9iynxfG8WkWy
+	GGNYvTwpWzokVkvYK+JOaO7s+b/KRffXl8lXXqdVeNX3X1g5dMgtNorpjsSIxFl3P+BS6ykI9OWfK
+	JdnkJkSu8pElazIxQ2Wnm/WliPkYBhW4Bk4DX7MdIJlwApZS4tmh4BUV90jqekXxxOh8gSZI0mgKD
+	SCjYlGODWFtozg5t4A9zIUKbGwzVVHTuJVJ/+7pqxYCO0q41d/yGJonZrUGxNQ9foORsZm2UHho0L
+	zDGz0+Cw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tpUVK-000000013Es-1XRM;
+	Tue, 04 Mar 2025 15:48:22 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-fsdevel@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Subject: [PATCH] ceph: Fix error handling in fill_readdir_cache()
+Date: Tue,  4 Mar 2025 15:48:16 +0000
+Message-ID: <20250304154818.250757-1-willy@infradead.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304140726.GD26141@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Transfer-Encoding: 8bit
 
-Linus,
+__filemap_get_folio() returns an ERR_PTR, not NULL.  There are extensive
+assumptions that ctl->folio is NULL, not an error pointer, so it seems
+better to fix this one place rather than change all the places which
+check ctl->folio.
 
-On 03/04, Oleg Nesterov wrote:
->
-> and we need to cleanup the poll_usage
-> logic first.
-
-We have already discussed this before, I'll probably do this later,
-but lets forget it for now.
-
-Don't we need the trivial one-liner below anyway?
-
-I am not saying this is a bug, but please consider
-
-	#include <stdio.h>
-	#include <stdbool.h>
-	#include <stdlib.h>
-	#include <unistd.h>
-	#include <sys/epoll.h>
-	#include <assert.h>
-
-	static char buf[16 * 4096];
-
-	int main(void)
-	{
-		int pfd[2], efd;
-		struct epoll_event evt = { .events = EPOLLIN | EPOLLET };
-
-		pipe(pfd);
-		efd = epoll_create1(0);
-		epoll_ctl(efd, EPOLL_CTL_ADD, pfd[0], &evt);
-
-		write(pfd[1], buf, 4096);
-		assert(epoll_wait(efd, &evt, 1, 0) == 1);
-
-		if (!fork()) {
-			write(pfd[1], buf, sizeof(buf));
-			assert(0);
-		}
-
-		sleep(1);
-		assert(epoll_wait(efd, &evt, 1, 0) == 1);
-
-		return 0;
-	}
-
-the 2nd epoll_wait() fails, despite the fact that the child has already
-written 15 * PAGE_SIZE bytes. This doesn't look consistent to me...
-
-Oleg.
+Fixes: baff9740bc8f ("ceph: Convert ceph_readdir_cache_control to store a folio")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 ---
+ fs/ceph/inode.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index b0641f75b1ba..8a32257cc74f 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -554,7 +554,7 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 		 * become empty while we dropped the lock.
- 		 */
- 		mutex_unlock(&pipe->mutex);
--		if (was_empty)
-+		if (was_empty || pipe->poll_usage)
- 			wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 		wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe));
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index c15970fa240f..6ac2bd555e86 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -1870,9 +1870,12 @@ static int fill_readdir_cache(struct inode *dir, struct dentry *dn,
+ 
+ 		ctl->folio = __filemap_get_folio(&dir->i_data, pgoff,
+ 				fgf, mapping_gfp_mask(&dir->i_data));
+-		if (!ctl->folio) {
++		if (IS_ERR(ctl->folio)) {
++			int err = PTR_ERR(ctl->folio);
++
++			ctl->folio = NULL;
+ 			ctl->index = -1;
+-			return idx == 0 ? -ENOMEM : 0;
++			return idx == 0 ? err : 0;
+ 		}
+ 		/* reading/filling the cache are serialized by
+ 		 * i_rwsem, no need to use folio lock */
+-- 
+2.47.2
 
 
