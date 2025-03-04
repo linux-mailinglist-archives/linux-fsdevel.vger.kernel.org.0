@@ -1,152 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-43174-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE0AFA4EE7A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 21:35:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47F09A4EE80
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 21:37:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63E097A24F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 20:33:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E2501894949
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 20:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCEB259C83;
-	Tue,  4 Mar 2025 20:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B371C84D7;
+	Tue,  4 Mar 2025 20:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MKNm3Z+w"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="AsYxnkhc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72231C84D7;
-	Tue,  4 Mar 2025 20:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A511F7561
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 20:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741120489; cv=none; b=I94HSsMu7BvgHty7Q60hoeglkBTiHZNZvBy4Ee/r3sm6cADIBYOkYZAn2VpZLMiYwO8w7pcBS0C61Pm3F0v4zmJrmxbgjo6fQUE3TUdV5VfU4kWt1QxHnk4Pi3oegvbzvSXkl9ePbjxgOIqP+KIJreozgyqtUJOVPdAnVLvoXF8=
+	t=1741120621; cv=none; b=jN9Z+IhdTwGmHwTP8+z0/OLzddSSMoeCwBRd9DlfReDM7NxDuXP7lZ8B7vfl1B79X6zCMP+OS9K67LY16Xt/TSkl0nZcnKuKbQ+Cm9CbUfzNexI/JeuDXYu4q+3nWaqTCJAjOjmYRnOpM2CJQho/Fy4wzw6qIABuuSSgocegeUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741120489; c=relaxed/simple;
-	bh=WG40JMgu7qnNOGjeYbRiWyT7jf1vKrTHwIBXxd2W62Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P+a2lRjec5vpjYWx8lzZLHdSiodx4jFmYAChJIRYq1l5saCA0cnyHZ/AnfJaxoWkkPpUNVIS5jkJsyWYGlX+C6j2SpLIsOscp9kBQi9m16N2Y1dnVrshFfsN6jSlmZC0vAM5urGV0r2D4ouihgTSJVXbyEEof52gYJ4BnhlvwiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MKNm3Z+w; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43bcc02ca41so10528985e9.0;
-        Tue, 04 Mar 2025 12:34:47 -0800 (PST)
+	s=arc-20240116; t=1741120621; c=relaxed/simple;
+	bh=ylXDHcGiq+tE3l7CgMapVO+d5BX9Tj4+B0gqa3m5mCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AvY65p1IfU9vSAtDiVo5/KWUfE7l45q6wwKBMA1N2GavHfoKQc/CItuypU/Z4fSinLaQvl2UenDU2M0coVPhmczdRcv9t37oEOrg4xOIDAIm8iR/nFe1lKfP8pgKD9JcNKdYfEHZ0qgH2SXVviYOMgpu4I5D5U2hTpWZvLHg+U0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=AsYxnkhc; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7c3d1664ed5so115520085a.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Mar 2025 12:37:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741120486; x=1741725286; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9ytSAFB7r08STnGv+xSQjPPK03KcMs1RuQclhSrmGN4=;
-        b=MKNm3Z+wRE/IrV2LXBxkp9NAMhUoGIijm0LMKfTCmkw1tl8VK+bJt3OQhF0knxwsaI
-         AyEGcerffUPufov5jVdShwO6uxMqb3Wv5BDCZ5vYEniy5RRjp5kuZg2h3SL5hJF7E8lQ
-         0OlONzLU/ZncDNkZCYwydr4ApIMLHPsJ9KgAhXzErOolIx1GrANsB2RnfrNI747SB5Y7
-         xCOx4tD0iCJ6GrfAZxLInKl7Pf/1jTkSc8UL2fdb49nzRTYpJg9mokCNKRcp6I3rUV4s
-         9EKxH0C35rGgHewxAzbR9IMtRa9UJuOsxfSijoClz6M0FzHuZGrN3UaP8iWhbuVidq33
-         4sOQ==
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1741120619; x=1741725419; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ajQNjB8mdedYx2LlwHnzClYRQdUqzI1pUD1k+HxZ7oQ=;
+        b=AsYxnkhcLSWOq5KKB+3imrFbu7bS1VcTH1z2Us1LICT4JALeDoU90IY4NytcVaBGOj
+         n7bVZ0q0HaOnoU/P3gEdNXDCSHUnV8HEOvFB4/kIL2PfYxRifBdLfYni4llIH58c1dA6
+         ii4oGqF73gCdYLXDD/JTD4nd8lzSEH4gpzY+ijy0vos7oC9i+phlGmD3q7QQfe0555O7
+         xduT6W7zi3vqL1xFNl+trZnuusDnqT58cW+EIzzFew7pLnA2HMCsjLIAPVsbcrHOxScJ
+         5yhikHTW357BjiCelu2ABCrIRYaVDGW7xB3Cpru1D8WlYtC2po+Qx3RbZjaVZIkJUHeW
+         YpGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741120486; x=1741725286;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1741120619; x=1741725419;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9ytSAFB7r08STnGv+xSQjPPK03KcMs1RuQclhSrmGN4=;
-        b=QKlb5jL7waGeFZoFh3Uq9z7lfrZpYgQuyFxXw3/lgmqYa83fz3EvOXDcynqsvmQx0B
-         1fhBK92Ep2aj785wBJ9nXUp1h488yhHfHkcWuJYRTj6NkI/5NCnVK9FTLl/g7bSLujt+
-         IHdk6K/TAkXZCKQbOIMgBMLCv+hBlOqP9j14OBZb61V2P2l9nSMm0XyHf8/0xySRamQu
-         lxHIt8P/cbEojFXjwKfWGbEznM0ZsXWUwHMWjgi5LIkRnlUqUecYbc8Sd+SCJJH7duLX
-         eilswQk0C/KcInMSLl8nQ0TDrtvUmLGWFCamkPBIKz+bXzMiuhgshfm0EIVjYrjQnnvZ
-         MTpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUviyHcTjDiQ7AxI+pVsprB+Z8QL8lRLO9cPcIE+wKYbuZ8q1SmstM4HVZ9dzqIuddqMPD2ao0RJxAl@vger.kernel.org, AJvYcCVekx61bIr4iuvdw/Oy4LbC/emAZGKhWTPF3Bd+LsDammkHFn9uytCpUJS/Wwfe4ITZPCcENIXQZg==@vger.kernel.org, AJvYcCVj7OGV6I/CjkNNIE8M+oRyJ3IMFXzm+PNbfqS+JzfQsKMYJmzkludLmMGYw4wP/+Iy1nC/HO+ROkuyMygXUw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyco586kH6l3Nz4sz3HoH0PJbDIEw3h1JGEpOhOd4NoRCrZa1zR
-	+/f02zolpqxzVp5VCJphRF+cbyKE5y3Y08Kd49+Y+0O7ZkWE4q5y
-X-Gm-Gg: ASbGncuztFpWYrMnkfgwEL6UTzDD+gZaMbgE9w2FRD5Cs9068bCJBu6apWcFnfACj12
-	LK8jkq6iH2sSgiJWIENdEaZF7UCq9lgaxeTxa86FNo3Oc0rOT3eLs30oiLG/c8r6GLJZ1I7nB42
-	QI6zqNuwvRUovzGIoWQk2KcLg8OYLXxzqP4fHdmZu5uuTKEjT93bF2OhgvL5AEthT8P5QoFS7N6
-	qHuHbCs9C7kESaihn//d0rRlb7xmj1mb5eTpVo1sEmvrdlDUKCyvUJ0Vq9KEczGZN/UlAIG0WVj
-	09qxfG/6FAERy6CmHpJqaLveElizP86HE4sCEupMPGLF+QNwQvzWCw==
-X-Google-Smtp-Source: AGHT+IFnvdHnyWlh3F7RwpvlXkZj4P1PRoUsZ0nd3YffzH6SKeXU6m7JfPdCNnphnPjV8lHCtPksOg==
-X-Received: by 2002:a05:6000:1fac:b0:391:1473:336a with SMTP id ffacd0b85a97d-3911f7a8508mr196747f8f.36.1741120485769;
-        Tue, 04 Mar 2025 12:34:45 -0800 (PST)
-Received: from [192.168.8.100] ([185.69.144.147])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b6ce3sm18374445f8f.43.2025.03.04.12.34.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 12:34:45 -0800 (PST)
-Message-ID: <6374c617-e9a3-4e1c-86ee-502356c46557@gmail.com>
-Date: Tue, 4 Mar 2025 20:35:52 +0000
+        bh=ajQNjB8mdedYx2LlwHnzClYRQdUqzI1pUD1k+HxZ7oQ=;
+        b=K08US62UFM8Ct4BT14iE8z4mBqLV0x9qusG03vLP7/b3u/27rZ6lzljFGNvWjp7J/Q
+         RnGUKA02k1cC8e0pP+zu/S+vRAFRlhyrqR959iVz+JgMb1chnCIyE02AeBpBLbisVsWn
+         l9gR8mkPibZbvKcCNfelBCzNlr3sw0dVe/YDUVmbuyZYpLu+sKyqB9ZGkuuP41XRVv1S
+         Z59aOOgLrwJIP2tEZWJmgqPPYnE4rxdrbH+OjKnnr+W2rcjjZxrzecNfzmrdEl/EWNs7
+         l5lQ02pIRPR2pcai+XEK4WmPO31IdPO71QkQ95mVTem+ersJPtSU+L0OWIvejYg9r6Tr
+         Pqgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUP8o3U4Zc9dUnCxffqCr8jDpd5c0NMq1B+2S0Qr5vwxBi9H9415VGKBZ+ROLaFwx7/A3JCpz+xDc+CqdD/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9TCNz3koWGeIvZs26vbLwe2kL6ZAuZ5EN4E4fEAyEKUeG8t6N
+	A88lCiRceqB5mZa/XcnnpqN6gp12V2u7KmfVmo3x+gzJgocTtX8OsFJWwKGKE3g=
+X-Gm-Gg: ASbGncuMPsObTh7FAncnMUauKegh/cQUJeXtxhrofHJyPzAS2EWTiNvQ9JDIUQEbf+X
+	iYcohFVx+RNrJ+MjKpAt/o9x3SOoTMq3bk+dIYLVuGJDb9s14pyB/g8thSuwK18hoieaaTjajwu
+	DPwcxHR3oysK8BskkL7kg0QVhrZQnkwM6UkkmEm5+Y36IMKNtpaCUaqJZSTL7Md9ynuMMAztw5V
+	oXWSGqN37PaShjqw0pzerBKVpIhJf434MYzydXUMF2RCZbbIoar7X5EULTKUZL27QZcpom1vIFc
+	eRdiueWmumsYJQ6MRL8/aspJpPgPtY5AIwQLZk7wB/dhzgwMXxH/8XDZxeya1wDimrXYNLBLcyW
+	enIkERw==
+X-Google-Smtp-Source: AGHT+IGN8GLNVXAgiOiVnkab7Lf8kpIiyiCI+E2wOU2Xu9jt2bq8RbpAyG8danZh0oP6vJsQHUFI8w==
+X-Received: by 2002:a05:620a:8908:b0:7c0:b103:f252 with SMTP id af79cd13be357-7c3d8e15ea4mr142233885a.8.1741120619086;
+        Tue, 04 Mar 2025 12:36:59 -0800 (PST)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3cd20e6bdsm155346885a.23.2025.03.04.12.36.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 12:36:58 -0800 (PST)
+Date: Tue, 4 Mar 2025 15:36:57 -0500
+From: Josef Bacik <josef@toxicpanda.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>,
+	syzbot <syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com>,
+	akpm@linux-foundation.org, axboe@kernel.dk, brauner@kernel.org,
+	cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [xfs?] WARNING in fsnotify_file_area_perm
+Message-ID: <20250304203657.GA4063187@perftesting>
+References: <67a487f7.050a0220.19061f.05fc.GAE@google.com>
+ <67c4881e.050a0220.1dee4d.0054.GAE@google.com>
+ <7ehxrhbvehlrjwvrduoxsao5k3x4aw275patsb3krkwuq573yv@o2hskrfawbnc>
+ <CAOQ4uxjf5H_vj-swF7wEvUkPobEuxs2q6jfO9jFsx4pqxtJMMg@mail.gmail.com>
+ <20250304161509.GA4047943@perftesting>
+ <CAOQ4uxj0cN-sUN=EE0+9tRhMFFrWLQ0T_i0fprwNRr92Hire6Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] iomap: propagate nowait to block layer
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
- Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- Dave Chinner <david@fromorbit.com>, io-uring@vger.kernel.org,
- linux-xfs@vger.kernel.org, wu lei <uwydoc@gmail.com>
-References: <f287a7882a4c4576e90e55ecc5ab8bf634579afd.1741090631.git.asml.silence@gmail.com>
- <Z8clJ2XSaQhLeIo0@infradead.org>
- <83af597f-e599-41d2-a17b-273d6d877dad@gmail.com>
- <20250304192205.GD2803749@frogsfrogsfrogs>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250304192205.GD2803749@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxj0cN-sUN=EE0+9tRhMFFrWLQ0T_i0fprwNRr92Hire6Q@mail.gmail.com>
 
-On 3/4/25 19:22, Darrick J. Wong wrote:
-...
->> Assuming you're suggesting to implement that, I can't say I'm excited by
->> the idea of reworking a non trivial chunk of block layer to fix a problem
->> and then porting it up to some 5.x, especially since it was already
->> attempted before by someone and ultimately got reverted.
-
-Clarification: the mentioned work was reverted or pulled out _upstream_,
-it wasn't about back porting.
-
-> [I'm going to ignore the sarcasm downthread because I don't like it and
-> will not participate in prolonging that.]
+On Tue, Mar 04, 2025 at 09:27:20PM +0100, Amir Goldstein wrote:
+> On Tue, Mar 4, 2025 at 5:15 PM Josef Bacik <josef@toxicpanda.com> wrote:
+> >
+> > On Tue, Mar 04, 2025 at 04:09:16PM +0100, Amir Goldstein wrote:
+> > > On Tue, Mar 4, 2025 at 12:06 PM Jan Kara <jack@suse.cz> wrote:
+> > > >
+> > > > Josef, Amir,
+> > > >
+> > > > this is indeed an interesting case:
+> > > >
+> > > > On Sun 02-03-25 08:32:30, syzbot wrote:
+> > > > > syzbot has found a reproducer for the following issue on:
+> > > > ...
+> > > > > ------------[ cut here ]------------
+> > > > > WARNING: CPU: 1 PID: 6440 at ./include/linux/fsnotify.h:145 fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145
+> > > > > Modules linked in:
+> > > > > CPU: 1 UID: 0 PID: 6440 Comm: syz-executor370 Not tainted 6.14.0-rc4-syzkaller-ge056da87c780 #0
+> > > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+> > > > > pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> > > > > pc : fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145
+> > > > > lr : fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145
+> > > > > sp : ffff8000a42569d0
+> > > > > x29: ffff8000a42569d0 x28: ffff0000dcec1b48 x27: ffff0000d68a1708
+> > > > > x26: ffff0000d68a16c0 x25: dfff800000000000 x24: 0000000000008000
+> > > > > x23: 0000000000000001 x22: ffff8000a4256b00 x21: 0000000000001000
+> > > > > x20: 0000000000000010 x19: ffff0000d68a16c0 x18: ffff8000a42566e0
+> > > > > x17: 000000000000e388 x16: ffff800080466c24 x15: 0000000000000001
+> > > > > x14: 1fffe0001b31513c x13: 0000000000000000 x12: 0000000000000000
+> > > > > x11: 0000000000000001 x10: 0000000000ff0100 x9 : 0000000000000000
+> > > > > x8 : ffff0000c6d98000 x7 : 0000000000000000 x6 : 0000000000000000
+> > > > > x5 : 0000000000000020 x4 : 0000000000000000 x3 : 0000000000001000
+> > > > > x2 : ffff8000a4256b00 x1 : 0000000000000001 x0 : 0000000000000000
+> > > > > Call trace:
+> > > > >  fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145 (P)
+> > > > >  filemap_fault+0x12b0/0x1518 mm/filemap.c:3509
+> > > > >  xfs_filemap_fault+0xc4/0x194 fs/xfs/xfs_file.c:1543
+> > > > >  __do_fault+0xf8/0x498 mm/memory.c:4988
+> > > > >  do_read_fault mm/memory.c:5403 [inline]
+> > > > >  do_fault mm/memory.c:5537 [inline]
+> > > > >  do_pte_missing mm/memory.c:4058 [inline]
+> > > > >  handle_pte_fault+0x3504/0x57b0 mm/memory.c:5900
+> > > > >  __handle_mm_fault mm/memory.c:6043 [inline]
+> > > > >  handle_mm_fault+0xfa8/0x188c mm/memory.c:6212
+> > > > >  do_page_fault+0x570/0x10a8 arch/arm64/mm/fault.c:690
+> > > > >  do_translation_fault+0xc4/0x114 arch/arm64/mm/fault.c:783
+> > > > >  do_mem_abort+0x74/0x200 arch/arm64/mm/fault.c:919
+> > > > >  el1_abort+0x3c/0x5c arch/arm64/kernel/entry-common.c:432
+> > > > >  el1h_64_sync_handler+0x60/0xcc arch/arm64/kernel/entry-common.c:510
+> > > > >  el1h_64_sync+0x6c/0x70 arch/arm64/kernel/entry.S:595
+> > > > >  __uaccess_mask_ptr arch/arm64/include/asm/uaccess.h:169 [inline] (P)
+> > > > >  fault_in_readable+0x168/0x310 mm/gup.c:2234 (P)
+> > > > >  fault_in_iov_iter_readable+0x1dc/0x22c lib/iov_iter.c:94
+> > > > >  iomap_write_iter fs/iomap/buffered-io.c:950 [inline]
+> > > > >  iomap_file_buffered_write+0x490/0xd54 fs/iomap/buffered-io.c:1039
+> > > > >  xfs_file_buffered_write+0x2dc/0xac8 fs/xfs/xfs_file.c:792
+> > > > >  xfs_file_write_iter+0x2c4/0x6ac fs/xfs/xfs_file.c:881
+> > > > >  new_sync_write fs/read_write.c:586 [inline]
+> > > > >  vfs_write+0x704/0xa9c fs/read_write.c:679
+> > > >
+> > > > The backtrace actually explains it all. We had a buffered write whose
+> > > > buffer was mmapped file on a filesystem with an HSM mark. Now the prefaulting
+> > > > of the buffer happens already (quite deep) under the filesystem freeze
+> > > > protection (obtained in vfs_write()) which breaks assumptions of HSM code
+> > > > and introduces potential deadlock of HSM handler in userspace with filesystem
+> > > > freezing. So we need to think how to deal with this case...
+> > >
+> > > Ouch. It's like the splice mess all over again.
+> > > Except we do not really care to make this use case work with HSM
+> > > in the sense that we do not care to have to fill in the mmaped file content
+> > > in this corner case - we just need to let HSM fail the access if content is
+> > > not available.
+> > >
+> > > If you remember, in one of my very early version of pre-content events,
+> > > the pre-content event (or maybe it was FAN_ACCESS_PERM itself)
+> > > carried a flag (I think it was called FAN_PRE_VFS) to communicate to
+> > > HSM service if it was safe to write to fs in the context of event handling.
+> > >
+> > > At the moment, I cannot think of any elegant way out of this use case
+> > > except annotating the event from fault_in_readable() as "unsafe-for-write".
+> > > This will relax the debugging code assertion and notify the HSM service
+> > > (via an event flag) that it can ALLOW/DENY, but it cannot fill the file.
+> > > Maybe we can reuse the FAN_ACCESS_PERM event to communicate
+> > > this case to HSM service.
+> > >
+> > > WDYT?
+> >
+> > I think that mmap was a mistake.
 > 
-> So don't.  XFS LTS generally doesn't pull large chunks of new code into
+> What do you mean?
+> Isn't the fault hook required for your large executables use case?
 
-I agree, and that's why I'm trying to have a small fix. I think
-this patch is concise if you disregard comments taking some
-lines. And Christoph even of confirmed that the main check in the patch
-does what's intended, i.e. disallowing setups where multiple bios
-would be generated from the iterator.
+I mean the mmap syscall was a mistake ;).
 
-> old kernels, we just tell people they need to keep moving forward if
-> they want new code, or even bug fixes that get really involved.  You
-
-It's still a broken io_uring uapi promise though, and I'd still need
-to address it in older kernels somehow. For example we can have a
-patch like this, and IMHO it'd be the ideal option.
-
-Another option is to push all io_uring filesystem / iomap requests
-to the slow path (where blocking is possible) and have a meaningful
-perf regression for those who still use fs+io_uring direct IO. And
-I don't put any dramaticism into it, it's essentially what users
-who detect the problem already do, either that but from the user
-space or disabling io_uring all together.
-
-Even then it'd leave the question how to fix it upstream, I don't see
-the full scope, but it has non trivial nuances and might likely turn
-out to be a very involving project and take a lot of time I don't have
-at the moment.
-
-Darrick, any thoughts on the patch? Is there any problem why
-it wouldn't work?
-
-> want an XFS that doesn't allocate xfs_bufs from reclaim?  Well, you have
-> to move to 6.12, we're not going to backport a ton of super invasive
-> changes to 6.6, let alone 5.x.
 > 
-> We don't let old kernel source dictate changes to new kernels.
+> >
+> > Is there a way to tell if we're currently in a path that is under fsfreeze
+> > protection?
+> 
+> Not at the moment.
+> At the moment, file_write_not_started() is not a reliable check
+> (has false positives) without CONFIG_LOCKDEP.
+> 
+> > Just denying this case would be a simpler short term solution while
+> > we come up with a long term solution. I think your solution is fine, but I'd be
+> > just as happy with a simpler "this isn't allowed" solution. Thanks,
+> 
+> Yeh, I don't mind that, but it's a bit of an overkill considering that
+> file with no content may in fact be rare.
 
--- 
-Pavel Begunkov
+Agreed, I'm fine with your solution.  Thanks,
 
+Josef
 
