@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-43096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF4F6A4DE2C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 13:44:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A349A4DE63
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 13:54:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE2B31884BEB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 12:44:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB6657A96E8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 12:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD07202C32;
-	Tue,  4 Mar 2025 12:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF962040A6;
+	Tue,  4 Mar 2025 12:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6gfh4F9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6VCxoVR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE15F8472
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 12:44:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C59B204090
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 12:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741092271; cv=none; b=O4fb/R3BmYp68RMQspG7NQO9ZSaS04LAMqwMtIVFTMjibMX8ne75hJS2gaesF61sbDbl1uQ3HxcQqJ93nu6qXfj2onArYo3AyiSugxnQ+aI7qC5mGwtoCm29VPer0NuL78wgv4ZukHD49xbknNVJzoS68ICiDFv17NXIODZsWGA=
+	t=1741092829; cv=none; b=V+QTkC8HVLPmup4BepqO+ilNC3a++grfZmbFAKlO5q/uhenDGQdddFnxU4HK37by/ukyNGR5lcRUfVUAyJM3XUAA+YqUvSIETCEbjXH623raObfpB0c86nHCHtbzHwI0qVSb6SNDf+W0M62aHZtbu4/FrEDbAI5bo1LvkzZkwbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741092271; c=relaxed/simple;
-	bh=iFExoMz4ooLHdnr0b8ECf+zHQCcyqvY0MCsOvqjeCzk=;
+	s=arc-20240116; t=1741092829; c=relaxed/simple;
+	bh=mLxi9PdcOsQt2j4cLsz7Ni5exuQnFF/iDFYgOBthZIM=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ToMGLbVrcm6yawIhB35UXlX919FimxLxuRKzEeaidfngMFY+zEhwCZYgEaUr44iXF3KyT5HHcB/La2flFTFv6dq1JCrkVSWLM0KzFZBW7MdKH1308CdrgSoFBFhZ/fFTUOvaieKVDrclSFEpFrYkV/ELSiNO78bHW769GNAp3wE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6gfh4F9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C82ACC4CEE5;
-	Tue,  4 Mar 2025 12:44:30 +0000 (UTC)
+	 Content-Type:MIME-Version; b=W0b896bQzWRx0DhnGg1ngf1K9RRV110dgf8s7F1Ya7OmqiY/mBb4I+OgOsaKOiznNH950NHJihuIBT/Le5pNWF4vjyE1JnPeWwxH7mtlkhLE1M7AhSaCLeWRcBq0TMDpxXxVaAjfVPEe6lCLrvNWT3uc+T/9KDvndH/wfn6++GQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6VCxoVR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A2C7C4CEE5;
+	Tue,  4 Mar 2025 12:53:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741092271;
-	bh=iFExoMz4ooLHdnr0b8ECf+zHQCcyqvY0MCsOvqjeCzk=;
+	s=k20201202; t=1741092828;
+	bh=mLxi9PdcOsQt2j4cLsz7Ni5exuQnFF/iDFYgOBthZIM=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=U6gfh4F9mMkLdY+zTEI5I6Px/sb0qHNdrnvWOHjKFWkKVN/kz9gTZu+QRLuTbQsEa
-	 7f4W1/CODD7YLNPynAL8umT6lw/yt0w0rbZ6sOp+dmELLO2bEXls/oDXanzac/X+f4
-	 lb9cheyynkoSb2tw9kYH1ZgeuFlAHPOa2u9YLFZNEGWcr2/WvPGVhzSBE1Qw+dqC6N
-	 XtfLn53wJLBFIPM7omB9pzkET+zoHuROPC9YN/5nBBMIcK/K1WqlooQ1XS1LY1wwlY
-	 k8IsB0e4eDNEMBUlzx7FefV4Lyemp9+ggih6JwNQAZnvMddI+3uv9eb+gy1xNGsEl/
-	 uCguqFhFFoXDg==
-Message-ID: <1a890668d631b127e3b58d096cee62edb5a27176.camel@kernel.org>
-Subject: Re: [PATCH v2 02/15] pidfd: rely on automatic cleanup in
- __pidfd_prepare()
+	b=b6VCxoVRwPGCx/ra2nyOzCVOG5qotQfDkqSGZJdKKb++PHW8viDhpCHQ48VMaQ1l0
+	 Ny5JsaN2hg56XCmSLIJNt15ECeYN/TUJ0Zmnxvqh4UCO3AxR88aTcL6p2Q6J+LhxCM
+	 cSO3q6VYzYU8MIHfTgc4UDBPj9VuKuG9ssQNJymDM1EW3eJHikKdVV8q1NDRxXJtjE
+	 8Q6FA6Fz842ye+7b4IShAZcEDt3tV+1uWQlT2krutic66eHrTlHe4fn7TQUS6/Rpfp
+	 J9yg7uUGMnl0v0mHa6MNjnD2GmobZ8fodfFS56Fig/llY9LsWbQ33hkwxJq1zO1bTJ
+	 UZdqafJD45XAQ==
+Message-ID: <c0044ac7a72cf572c24be515d7a1c6e6ed4c87e2.camel@kernel.org>
+Subject: Re: [PATCH v2 03/15] pidfs: move setting flags into
+ pidfs_alloc_file()
 From: Jeff Layton <jlayton@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, Oleg Nesterov <oleg@redhat.com>
 Cc: linux-fsdevel@vger.kernel.org, Lennart Poettering
  <lennart@poettering.net>,  Daan De Meyer <daan.j.demeyer@gmail.com>, Mike
  Yuan <me@yhndnzj.com>
-Date: Tue, 04 Mar 2025 07:44:29 -0500
-In-Reply-To: <20250304-work-pidfs-kill_on_last_close-v2-2-44fdacfaa7b7@kernel.org>
+Date: Tue, 04 Mar 2025 07:53:46 -0500
+In-Reply-To: <20250304-work-pidfs-kill_on_last_close-v2-3-44fdacfaa7b7@kernel.org>
 References: 
 	<20250304-work-pidfs-kill_on_last_close-v2-0-44fdacfaa7b7@kernel.org>
-	 <20250304-work-pidfs-kill_on_last_close-v2-2-44fdacfaa7b7@kernel.org>
+	 <20250304-work-pidfs-kill_on_last_close-v2-3-44fdacfaa7b7@kernel.org>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -139,53 +139,49 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Tue, 2025-03-04 at 10:41 +0100, Christian Brauner wrote:
-> Rely on scope-based cleanup for the allocated file descriptor.
+> Instead od adding it into __pidfd_prepare() place it where the actual
+> file allocation happens and update the outdated comment.
 >=20
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > ---
->  kernel/fork.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
+>  fs/pidfs.c    | 4 ++++
+>  kernel/fork.c | 5 -----
+>  2 files changed, 4 insertions(+), 5 deletions(-)
 >=20
+> diff --git a/fs/pidfs.c b/fs/pidfs.c
+> index aa8c8bda8c8f..ecc0dd886714 100644
+> --- a/fs/pidfs.c
+> +++ b/fs/pidfs.c
+> @@ -696,6 +696,10 @@ struct file *pidfs_alloc_file(struct pid *pid, unsig=
+ned int flags)
+>  		return ERR_PTR(ret);
+> =20
+>  	pidfd_file =3D dentry_open(&path, flags, current_cred());
+> +	/* Raise PIDFD_THREAD explicitly as do_dentry_open() strips it. */
+> +	if (!IS_ERR(pidfd_file))
+> +		pidfd_file->f_flags |=3D (flags & PIDFD_THREAD);
+> +
+>  	path_put(&path);
+>  	return pidfd_file;
+>  }
 > diff --git a/kernel/fork.c b/kernel/fork.c
-> index 735405a9c5f3..6230f5256bc5 100644
+> index 6230f5256bc5..8eac9cd3385b 100644
 > --- a/kernel/fork.c
 > +++ b/kernel/fork.c
-> @@ -2032,25 +2032,23 @@ static inline void rcu_copy_process(struct task_s=
-truct *p)
->   */
->  static int __pidfd_prepare(struct pid *pid, unsigned int flags, struct f=
-ile **ret)
->  {
-> -	int pidfd;
->  	struct file *pidfd_file;
-> =20
-> -	pidfd =3D get_unused_fd_flags(O_CLOEXEC);
-> +	CLASS(get_unused_fd, pidfd)(O_CLOEXEC);
->  	if (pidfd < 0)
->  		return pidfd;
-> =20
->  	pidfd_file =3D pidfs_alloc_file(pid, flags | O_RDWR);
-> -	if (IS_ERR(pidfd_file)) {
-> -		put_unused_fd(pidfd);
-> +	if (IS_ERR(pidfd_file))
+> @@ -2042,11 +2042,6 @@ static int __pidfd_prepare(struct pid *pid, unsign=
+ed int flags, struct file **re
+>  	if (IS_ERR(pidfd_file))
 >  		return PTR_ERR(pidfd_file);
-> -	}
-> +
->  	/*
->  	 * anon_inode_getfile() ignores everything outside of the
->  	 * O_ACCMODE | O_NONBLOCK mask, set PIDFD_THREAD manually.
->  	 */
->  	pidfd_file->f_flags |=3D (flags & PIDFD_THREAD);
->  	*ret =3D pidfd_file;
-> -	return pidfd;
-> +	return take_fd(pidfd);
->  }
 > =20
->  /**
+> -	/*
+> -	 * anon_inode_getfile() ignores everything outside of the
+> -	 * O_ACCMODE | O_NONBLOCK mask, set PIDFD_THREAD manually.
+> -	 */
+> -	pidfd_file->f_flags |=3D (flags & PIDFD_THREAD);
+>  	*ret =3D pidfd_file;
+>  	return take_fd(pidfd);
+>  }
 >=20
 
-I'll Ack this, but I will say that I find the result to be less
-readable than what was there before.
-
-Acked-by: Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
