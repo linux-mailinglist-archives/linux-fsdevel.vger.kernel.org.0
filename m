@@ -1,60 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-43138-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43139-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E120EA4EAAC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 19:09:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC770A4E94A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 18:38:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABD118A5712
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 17:27:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2B797A1713
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 17:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41C1293472;
-	Tue,  4 Mar 2025 17:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8D3259CAF;
+	Tue,  4 Mar 2025 17:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vs4c1nsX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nBM2iqAQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4ED29346C;
-	Tue,  4 Mar 2025 17:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1803224C065
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 17:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741107751; cv=none; b=gvXKIzTHeI/QqDTJTK6bA8x9NAkLK9pWdDv6c0JXPzNP6jar6ShAIsv1NtlXoQ+wUzRmbe3E8hNwGfc6kjN/yR+XmbtLr7fyXVKxEBTCmD5lY3u4GQJ58y2KLbZQfD2rvFENRLroDG9Fue4n8jAWLICR7OGJI0YqqGGlBhkB9sY=
+	t=1741108212; cv=none; b=OYkctfwUHhtXaO/2eJ7FHzwY6t0FTSRbU+nJq19tjin5eOmBF9KsGKXy/2IqkwE4FU/2Igv9rgwrD0/lMVoHGd5R5pT3B3qTJLH95lGwOeNaUOIYJ/2WPJ5pPFz+sm5utVRZ4v+yqmK0pHzSpF8R2vFIigVra8yC+FOdPBmDbiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741107751; c=relaxed/simple;
-	bh=QEGYT3oEPSWK/gzSnZ5umTJrSLpFOClRCjFjJRkaAkE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hJx9oVh7iSscKm6FHREl3DjhDzWzR+ZHcci1wGfarpXK9jK/B/m2u0BwHnrdmN4RPc474Rlv/kINiI9aXhP9hHJpmTwn77TZmVH8HtHWzsRlLMzUeZ0HNl8EEbwTdeYYAJC00QAyY1mfJDhWgmpF2LFHMpKsmpLHCm8ZWYKr4T8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vs4c1nsX; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=I5dHz7muZ11EtLiWeuXe33HAmZFxJA24pI2czt0tl1U=; b=vs4c1nsXcYO/4YlNmyzGpWf172
-	95RQvvfVJwDdljGo8NoRJT1spo0Vh9Pe5Il3N7mv8Lf+MeEsgSFasZBXdOtGWjg7Jqah0KSubyDLI
-	0C5Q0ERzWZP2SWcL94q0kbFPdtEnZwOb4onPROlp6cBqR8dyNW+eO9u508/5tXMhfuQQ8khlbqVnY
-	Eywj+SB8+thP09Q/Mt0svlMbABhK9IKHg75fhaQZomt4XCDhloCCkQNv6FVqSnCVhjoPr0UcMnAYs
-	kpFf4UEbchxzECBH4bfeL16T9eKM4W64bKhnaN9qiMQaJT7cP2MyOT+t5OUi6RYniu6ejA4R6JYDP
-	yDB1v7PQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tpVf0-00000002C7p-4C4m;
-	Tue, 04 Mar 2025 17:02:27 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	"Theodore Y. Ts'o" <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fscrypt@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2] fscrypt: Change fscrypt_encrypt_pagecache_blocks() to take a folio
-Date: Tue,  4 Mar 2025 17:02:23 +0000
-Message-ID: <20250304170224.523141-1-willy@infradead.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741108212; c=relaxed/simple;
+	bh=CXHGF5JE2IKfcCUn9rR5K/yFn0hXIzYaGLStVBBPqrg=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=rrr8JCXgvTVPp5hjkBetS86lBCBle6p47bYwgb/GUzf7SUEdeua7CcWBg2SQAZN72677/o6ip6CGbHYGN/MX4D7z6Npoart11lREsU3ORl/F264tnBH6PVy8IrpGY9tmx3q043XEpFg4jZDcBRy7K7GPUyASeW2BGM2ES7iVCbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nBM2iqAQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 917C0C4CEE5;
+	Tue,  4 Mar 2025 17:10:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741108211;
+	bh=CXHGF5JE2IKfcCUn9rR5K/yFn0hXIzYaGLStVBBPqrg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=nBM2iqAQwQlUhfxsD72F0/ft3h7w9FID3z/SRIwyS3T1CROHKkUnpP1Yxiw2DGPsn
+	 Jb9Z3t2FaKI3wpnfFaxekphyvgbJCe2gF9ubIFjfGuKd7SzY9Snw2IkjSOOqts6BE9
+	 A3g7HpUWdOdAfetMoRWpz0TmNWVnjLmiUJFcfngYYLS1TJ82BcIDHHcOK8TLbFM1PS
+	 0lt9bLxNy09XVIPZeI/W7qZp+B2ipp8927EPekoFhvyBBAcurwnvC+f+Ac2RtEpScN
+	 9qtyd45zAybQ707jRJZ78TrJk1UuR2HWhyfcZYxjIWUE8DkJMnsP1FW4V/YlGgpFqn
+	 w90zhzwzuvImg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE027380AA7F;
+	Tue,  4 Mar 2025 17:10:45 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,166 +52,121 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [f2fs-dev] [PATCH 00/27] f2fs folio conversions for v6.15
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: 
+ <174110824448.224349.9741584954553856935.git-patchwork-notify@kernel.org>
+Date: Tue, 04 Mar 2025 17:10:44 +0000
+References: <20250218055203.591403-1-willy@infradead.org>
+In-Reply-To: <20250218055203.591403-1-willy@infradead.org>
+To: Matthew Wilcox (Oracle) <willy@infradead.org>
+Cc: jaegeuk@kernel.org, chao@kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 
-ext4 and ceph already have a folio to pass; f2fs needs to be properly
-converted but this will do for now.  This removes a reference
-to page->index and page->mapping as well as removing a call to
-compound_head().
+Hello:
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
-This is against next-20250304 and will have conflicts with the ceph tree
-if applied to mainline.  It might be easiest for Christian to carry it?
+This series was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
- fs/ceph/addr.c          |  4 ++--
- fs/crypto/crypto.c      | 22 ++++++++++------------
- fs/ext4/page-io.c       |  2 +-
- fs/f2fs/data.c          |  2 +-
- include/linux/fscrypt.h | 12 ++++--------
- 5 files changed, 18 insertions(+), 24 deletions(-)
+On Tue, 18 Feb 2025 05:51:34 +0000 you wrote:
+> More f2fs folio conversions.  This time I'm focusing on removing
+> accesses to page->mapping as well as getting rid of accesses to
+> old APIs.  f2fs was the last user of wait_for_stable_page(),
+> grab_cache_page_write_begin() and wait_on_page_locked(), so
+> I've included those removals in this series too.
+> 
+> Matthew Wilcox (Oracle) (27):
+>   f2fs: Add f2fs_folio_wait_writeback()
+>   mm: Remove wait_for_stable_page()
+>   f2fs: Add f2fs_folio_put()
+>   f2fs: Convert f2fs_flush_inline_data() to use a folio
+>   f2fs: Convert f2fs_sync_node_pages() to use a folio
+>   f2fs: Pass a folio to flush_dirty_inode()
+>   f2fs: Convert f2fs_fsync_node_pages() to use a folio
+>   f2fs: Convert last_fsync_dnode() to use a folio
+>   f2fs: Return a folio from last_fsync_dnode()
+>   f2fs: Add f2fs_grab_cache_folio()
+>   mm: Remove grab_cache_page_write_begin()
+>   f2fs: Use a folio in __get_node_page()
+>   f2fs: Use a folio in do_write_page()
+>   f2fs: Convert f2fs_write_end_io() to use a folio_iter
+>   f2fs: Mark some functions as taking a const page pointer
+>   f2fs: Convert f2fs_in_warm_node_list() to take a folio
+>   f2fs: Add f2fs_get_node_folio()
+>   f2fs: Use a folio throughout f2fs_truncate_inode_blocks()
+>   f2fs: Use a folio throughout __get_meta_page()
+>   f2fs: Hoist the page_folio() call to the start of
+>     f2fs_merge_page_bio()
+>   f2fs: Add f2fs_get_read_data_folio()
+>   f2fs: Add f2fs_get_lock_data_folio()
+>   f2fs: Convert move_data_page() to use a folio
+>   f2fs: Convert truncate_partial_data_page() to use a folio
+>   f2fs: Convert gc_data_segment() to use a folio
+>   f2fs: Add f2fs_find_data_folio()
+>   mm: Remove wait_on_page_locked()
+> 
+> [...]
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 19efba28e461..29be367905a1 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -786,7 +786,7 @@ static int write_folio_nounlock(struct folio *folio,
- 	ceph_fscache_write_to_cache(inode, page_off, len, caching);
- 
- 	if (IS_ENCRYPTED(inode)) {
--		bounce_page = fscrypt_encrypt_pagecache_blocks(&folio->page,
-+		bounce_page = fscrypt_encrypt_pagecache_blocks(folio,
- 						    CEPH_FSCRYPT_BLOCK_SIZE, 0,
- 						    GFP_NOFS);
- 		if (IS_ERR(bounce_page)) {
-@@ -1248,7 +1248,7 @@ static inline int move_dirty_folio_in_page_array(struct address_space *mapping,
- 	gfp_t gfp_flags = ceph_wbc->locked_pages ? GFP_NOWAIT : GFP_NOFS;
- 
- 	if (IS_ENCRYPTED(inode)) {
--		pages[index] = fscrypt_encrypt_pagecache_blocks(&folio->page,
-+		pages[index] = fscrypt_encrypt_pagecache_blocks(folio,
- 								PAGE_SIZE,
- 								0,
- 								gfp_flags);
-diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
-index 328470d40dec..b74b5937e695 100644
---- a/fs/crypto/crypto.c
-+++ b/fs/crypto/crypto.c
-@@ -153,8 +153,8 @@ int fscrypt_crypt_data_unit(const struct fscrypt_inode_info *ci,
- }
- 
- /**
-- * fscrypt_encrypt_pagecache_blocks() - Encrypt data from a pagecache page
-- * @page: the locked pagecache page containing the data to encrypt
-+ * fscrypt_encrypt_pagecache_blocks() - Encrypt data from a pagecache folio
-+ * @folio: the locked pagecache folio containing the data to encrypt
-  * @len: size of the data to encrypt, in bytes
-  * @offs: offset within @page of the data to encrypt, in bytes
-  * @gfp_flags: memory allocation flags; see details below
-@@ -177,23 +177,21 @@ int fscrypt_crypt_data_unit(const struct fscrypt_inode_info *ci,
-  *
-  * Return: the new encrypted bounce page on success; an ERR_PTR() on failure
-  */
--struct page *fscrypt_encrypt_pagecache_blocks(struct page *page,
--					      unsigned int len,
--					      unsigned int offs,
--					      gfp_t gfp_flags)
--
-+struct page *fscrypt_encrypt_pagecache_blocks(struct folio *folio,
-+		size_t len, size_t offs, gfp_t gfp_flags)
- {
--	const struct inode *inode = page->mapping->host;
-+	const struct inode *inode = folio->mapping->host;
- 	const struct fscrypt_inode_info *ci = inode->i_crypt_info;
- 	const unsigned int du_bits = ci->ci_data_unit_bits;
- 	const unsigned int du_size = 1U << du_bits;
- 	struct page *ciphertext_page;
--	u64 index = ((u64)page->index << (PAGE_SHIFT - du_bits)) +
-+	u64 index = ((u64)folio->index << (PAGE_SHIFT - du_bits)) +
- 		    (offs >> du_bits);
- 	unsigned int i;
- 	int err;
- 
--	if (WARN_ON_ONCE(!PageLocked(page)))
-+	VM_BUG_ON_FOLIO(folio_test_large(folio), folio);
-+	if (WARN_ON_ONCE(!folio_test_locked(folio)))
- 		return ERR_PTR(-EINVAL);
- 
- 	if (WARN_ON_ONCE(len <= 0 || !IS_ALIGNED(len | offs, du_size)))
-@@ -205,7 +203,7 @@ struct page *fscrypt_encrypt_pagecache_blocks(struct page *page,
- 
- 	for (i = offs; i < offs + len; i += du_size, index++) {
- 		err = fscrypt_crypt_data_unit(ci, FS_ENCRYPT, index,
--					      page, ciphertext_page,
-+					      &folio->page, ciphertext_page,
- 					      du_size, i, gfp_flags);
- 		if (err) {
- 			fscrypt_free_bounce_page(ciphertext_page);
-@@ -213,7 +211,7 @@ struct page *fscrypt_encrypt_pagecache_blocks(struct page *page,
- 		}
- 	}
- 	SetPagePrivate(ciphertext_page);
--	set_page_private(ciphertext_page, (unsigned long)page);
-+	set_page_private(ciphertext_page, (unsigned long)folio);
- 	return ciphertext_page;
- }
- EXPORT_SYMBOL(fscrypt_encrypt_pagecache_blocks);
-diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-index 69b8a7221a2b..37abee5016c3 100644
---- a/fs/ext4/page-io.c
-+++ b/fs/ext4/page-io.c
-@@ -522,7 +522,7 @@ int ext4_bio_write_folio(struct ext4_io_submit *io, struct folio *folio,
- 		if (io->io_bio)
- 			gfp_flags = GFP_NOWAIT | __GFP_NOWARN;
- 	retry_encrypt:
--		bounce_page = fscrypt_encrypt_pagecache_blocks(&folio->page,
-+		bounce_page = fscrypt_encrypt_pagecache_blocks(folio,
- 					enc_bytes, 0, gfp_flags);
- 		if (IS_ERR(bounce_page)) {
- 			ret = PTR_ERR(bounce_page);
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 24c5cb1f5ada..b6857b4a9787 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2504,7 +2504,7 @@ int f2fs_encrypt_one_page(struct f2fs_io_info *fio)
- 		return 0;
- 
- retry_encrypt:
--	fio->encrypted_page = fscrypt_encrypt_pagecache_blocks(page,
-+	fio->encrypted_page = fscrypt_encrypt_pagecache_blocks(page_folio(page),
- 					PAGE_SIZE, 0, gfp_flags);
- 	if (IS_ERR(fio->encrypted_page)) {
- 		/* flush pending IOs and wait for a while in the ENOMEM case */
-diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index 18855cb44b1c..56fad33043d5 100644
---- a/include/linux/fscrypt.h
-+++ b/include/linux/fscrypt.h
-@@ -310,10 +310,8 @@ static inline void fscrypt_prepare_dentry(struct dentry *dentry,
- /* crypto.c */
- void fscrypt_enqueue_decrypt_work(struct work_struct *);
- 
--struct page *fscrypt_encrypt_pagecache_blocks(struct page *page,
--					      unsigned int len,
--					      unsigned int offs,
--					      gfp_t gfp_flags);
-+struct page *fscrypt_encrypt_pagecache_blocks(struct folio *folio,
-+		size_t len, size_t offs, gfp_t gfp_flags);
- int fscrypt_encrypt_block_inplace(const struct inode *inode, struct page *page,
- 				  unsigned int len, unsigned int offs,
- 				  u64 lblk_num, gfp_t gfp_flags);
-@@ -480,10 +478,8 @@ static inline void fscrypt_enqueue_decrypt_work(struct work_struct *work)
- {
- }
- 
--static inline struct page *fscrypt_encrypt_pagecache_blocks(struct page *page,
--							    unsigned int len,
--							    unsigned int offs,
--							    gfp_t gfp_flags)
-+static inline struct page *fscrypt_encrypt_pagecache_blocks(struct folio *folio,
-+		size_t len, size_t offs, gfp_t gfp_flags)
- {
- 	return ERR_PTR(-EOPNOTSUPP);
- }
+Here is the summary with links:
+  - [f2fs-dev,01/27] f2fs: Add f2fs_folio_wait_writeback()
+    https://git.kernel.org/jaegeuk/f2fs/c/17683927d078
+  - [f2fs-dev,02/27] mm: Remove wait_for_stable_page()
+    https://git.kernel.org/jaegeuk/f2fs/c/36e1d6344aca
+  - [f2fs-dev,03/27] f2fs: Add f2fs_folio_put()
+    (no matching commit)
+  - [f2fs-dev,04/27] f2fs: Convert f2fs_flush_inline_data() to use a folio
+    https://git.kernel.org/jaegeuk/f2fs/c/015d9c56bd5e
+  - [f2fs-dev,05/27] f2fs: Convert f2fs_sync_node_pages() to use a folio
+    https://git.kernel.org/jaegeuk/f2fs/c/5d0a91284853
+  - [f2fs-dev,06/27] f2fs: Pass a folio to flush_dirty_inode()
+    https://git.kernel.org/jaegeuk/f2fs/c/de90f7614424
+  - [f2fs-dev,07/27] f2fs: Convert f2fs_fsync_node_pages() to use a folio
+    https://git.kernel.org/jaegeuk/f2fs/c/e23bebc3c0d2
+  - [f2fs-dev,08/27] f2fs: Convert last_fsync_dnode() to use a folio
+    https://git.kernel.org/jaegeuk/f2fs/c/18f3814fa6a8
+  - [f2fs-dev,09/27] f2fs: Return a folio from last_fsync_dnode()
+    https://git.kernel.org/jaegeuk/f2fs/c/e11a31139517
+  - [f2fs-dev,10/27] f2fs: Add f2fs_grab_cache_folio()
+    https://git.kernel.org/jaegeuk/f2fs/c/8d77f68daeb1
+  - [f2fs-dev,11/27] mm: Remove grab_cache_page_write_begin()
+    https://git.kernel.org/jaegeuk/f2fs/c/e33ce6bd4ea2
+  - [f2fs-dev,12/27] f2fs: Use a folio in __get_node_page()
+    https://git.kernel.org/jaegeuk/f2fs/c/48a34c598103
+  - [f2fs-dev,13/27] f2fs: Use a folio in do_write_page()
+    https://git.kernel.org/jaegeuk/f2fs/c/cd8f95718c89
+  - [f2fs-dev,14/27] f2fs: Convert f2fs_write_end_io() to use a folio_iter
+    https://git.kernel.org/jaegeuk/f2fs/c/fb9660481e3c
+  - [f2fs-dev,15/27] f2fs: Mark some functions as taking a const page pointer
+    https://git.kernel.org/jaegeuk/f2fs/c/521a46848690
+  - [f2fs-dev,16/27] f2fs: Convert f2fs_in_warm_node_list() to take a folio
+    https://git.kernel.org/jaegeuk/f2fs/c/1a58a41ccce6
+  - [f2fs-dev,17/27] f2fs: Add f2fs_get_node_folio()
+    https://git.kernel.org/jaegeuk/f2fs/c/4d417ae2bfce
+  - [f2fs-dev,18/27] f2fs: Use a folio throughout f2fs_truncate_inode_blocks()
+    https://git.kernel.org/jaegeuk/f2fs/c/520b17e093f4
+  - [f2fs-dev,19/27] f2fs: Use a folio throughout __get_meta_page()
+    https://git.kernel.org/jaegeuk/f2fs/c/922e24acb49e
+  - [f2fs-dev,20/27] f2fs: Hoist the page_folio() call to the start of f2fs_merge_page_bio()
+    https://git.kernel.org/jaegeuk/f2fs/c/b8fcb8423053
+  - [f2fs-dev,21/27] f2fs: Add f2fs_get_read_data_folio()
+    https://git.kernel.org/jaegeuk/f2fs/c/4ae71b1996ef
+  - [f2fs-dev,22/27] f2fs: Add f2fs_get_lock_data_folio()
+    https://git.kernel.org/jaegeuk/f2fs/c/20f974cd2124
+  - [f2fs-dev,23/27] f2fs: Convert move_data_page() to use a folio
+    https://git.kernel.org/jaegeuk/f2fs/c/6d1ba45c8db0
+  - [f2fs-dev,24/27] f2fs: Convert truncate_partial_data_page() to use a folio
+    https://git.kernel.org/jaegeuk/f2fs/c/ab907aa2a2f3
+  - [f2fs-dev,25/27] f2fs: Convert gc_data_segment() to use a folio
+    https://git.kernel.org/jaegeuk/f2fs/c/a86e109ee2c6
+  - [f2fs-dev,26/27] f2fs: Add f2fs_find_data_folio()
+    https://git.kernel.org/jaegeuk/f2fs/c/0cd402baa03b
+  - [f2fs-dev,27/27] mm: Remove wait_on_page_locked()
+    https://git.kernel.org/jaegeuk/f2fs/c/d96e2802a802
+
+You are awesome, thank you!
 -- 
-2.47.2
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
