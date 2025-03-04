@@ -1,144 +1,287 @@
-Return-Path: <linux-fsdevel+bounces-43132-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43135-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B34A2A4E787
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 18:05:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7981A4E88C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 18:25:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76B317A719A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 17:01:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 138A3425A28
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 17:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B807F2857E1;
-	Tue,  4 Mar 2025 16:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9CF2C3745;
+	Tue,  4 Mar 2025 16:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fJ6KMhuP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CiFcMxms"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB8F20A5CB;
-	Tue,  4 Mar 2025 16:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7553A2D4B7E;
+	Tue,  4 Mar 2025 16:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741106435; cv=none; b=kyzMyP1plp3A7c+/6wlu7VbSZhXilASY6mrFqnQyM4rAcGwFAGZC/TFfRBbjYs/5iM4r2i89+mXioVB4Soqjdt/nggRjs5xYkV8cNNa8sGQKqSo6il5zoOEA/4/yVLdY+ZnJtCgKXtVW2Ygb8j+oRNhXKWDA9KKqdUQFaXppLa0=
+	t=1741107460; cv=none; b=P0FfW2DMt1Ji6t8Pv8lH9iIPpDl4dZAfmJM+bl5it7SIDKHkFNXB+DzidTlO7pNKMiD+B4JvUkk9WN0gQ084sj4Ft7Cy10WgrmpTIKnjsc3t7YOJ7Z0l/FZ/Pao8bBZaBzKmrAY+t/1kx5xfcC5qfGjJcW2oLvDoVXjKaXPbGAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741106435; c=relaxed/simple;
-	bh=2VDiqVcWiJkATlvJCckba4T5+jgOb0RQXaMZPFZlXZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qXiS7bxcZefgJ5ldgW2TiRl4U2Dy6t/3DBL6HDxepvG3EqfdCM2b76LPjPlIPsiWhgTacdXGOhfnG31DTn+YKALuaMZ0lB7Jmc0XoTJ1f20ONe5nZx7O7zn6B6Irt4u42OIEya08Xbd5rFfYVaZKq/l8yYzdrkjtPXUkMo17tJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fJ6KMhuP; arc=none smtp.client-ip=209.85.218.42
+	s=arc-20240116; t=1741107460; c=relaxed/simple;
+	bh=+l/EjeUA+5d8VX49RYgy4dN7slpwKi8CoheUYsJ1Qpw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=db5nA1o3uSW8thhHJCe9/QOAa8UQ+LFBJRBgTJaT8sJvwPSIaS8V32Y5IzmAF/fV49qObtgldgSso9od8cpZlpX1BZpO39ak+M9RWZqaC+Vs9nv9SrfXM/gqYko3EnmaK8Wla5iJv1n78kBQVj4aRRdDblJhBi5vHdTY8XAR83w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CiFcMxms; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-abf5f4e82caso559960366b.1;
-        Tue, 04 Mar 2025 08:40:32 -0800 (PST)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac202264f9cso94311066b.0;
+        Tue, 04 Mar 2025 08:57:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741106431; x=1741711231; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LSsDnF4kIyj9adBSMmkWoIZqOQRbV5XA37b63dv1tgk=;
-        b=fJ6KMhuPTgGH6InY57GvD+mTP01fZG39tho8k0HZC/Bg2fdsNiCk7SAG7Zoqct7ROU
-         ZRb2r0kyzpTBOmVhqrJKOjbuJf9rc/rADbr+m0HJXr9e3HQoOpmitJGLUP3ZEoi9xZfB
-         5oG1y/AWSwb8B47IIYy7oRjPV7kB/BLz6/qAPPWIr4ZVOf+1AeFjzvf9Jtvm62P56fRv
-         /XeG4kSL0JXlY+QcCBsGo7SGzI3xsiPb4pfgsz8s7OcLMN0P1HvIPFJ9VujNRppz4zsQ
-         HeRpD5TKhP48iFHgW2NiYKZJGNN5UdNvW82JD5zJ+u2V1meFRlguhBPubsOD1HbWnv9F
-         rohQ==
+        d=gmail.com; s=20230601; t=1741107456; x=1741712256; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kLsMU/gpYkwvzpJkBRFq1iYDiFQreX0pirlkWTeGy6Q=;
+        b=CiFcMxmsMcJP8i1axX8iivkDCe80nIjR3jta5RDI/Z/6Ysg0BX/BcH702E0ZueF2oD
+         Q2jYratk0mmtdWvUjs3hVC24wEoimxl6b3bbeu3jEl8eJsnuK4s/2oTDsBVwYrFPS9eM
+         Mj9NiyF0mOQUc7U6RuKfkEHgBUXRBXDFQX90WX94LRbjiggLErQ2Mg6sf/F52hT79wiy
+         mwUxvcMza85I0SbesQLY29lNxKfA9eSyh9BNA1QiFkWHEWUdLmlQxyiMgaZ/HJtI9j/U
+         llHlncX23HbqCfUAd2125RHU3VroDS3qfwuA9k+fkoMsjJvtP1sSHAt4PX7oiygHkrJY
+         WwBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741106431; x=1741711231;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LSsDnF4kIyj9adBSMmkWoIZqOQRbV5XA37b63dv1tgk=;
-        b=CLuxhLMBlxdYhI3yVWnN3RbjwFh9sAGR7iKazzfNtNI13SazuT6rLp3jw0L37TIWxF
-         bgPVCFI420/rbOg2UFlL9UE8lgjzPwvhyOHWOpwk2RFH3feHfKe+rQ9M3LcGoQh53NJp
-         OGRrGY8hC0CC32QMY1x2AG8fVJjtdqPdu+0qgxFbPkUWsLlHbWDV5StCVxoYR+tZnDlx
-         QpMyq5VcFZ3Z76sEUYp+8owBpS++Z6DpUAbIh6JLIy01O0gIJUxtC3p8RIOIY8Z6PeIr
-         NFj1jG4MkzLejxxe8W4tmrL7qAdBelC2eQ72fLTo1+Fje2JZ16OuB4KTfeAqmEVMV44P
-         Ei6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVqijgfx8XkXgx5Qjzy+3pvYOsuAKqx6OUDyOVLttmsGHohwl9EKENODkx9e/Y0xZ542sLSHsjRfZTGPmv3kA==@vger.kernel.org, AJvYcCWHr9eDHDJIgJnZLk0qWYQLWMAOuXtWkEJIHuoTG8Nv0ySmWEbTo7RXTHwMvL6m5utK2l13kgKp4yoI@vger.kernel.org, AJvYcCX3UVMS+ATik1U9rlvTLjN4SsMYoE+0ew0sSF8zoa8KR5481FX1Ec3hZARa9/rGJn8iIRTKggE+KA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIS4DjyZoNEU4Kb7aXQmR8T9Xk9vnPmyWooA2vP8uukamQYLGs
-	qbhHQX1Ir8AH6zhmgXYhWHijoGGoGr6jdOzOS+HavJ6kGPbDA6SQ
-X-Gm-Gg: ASbGnctfxztJMspL2RRIjyyBSm+imEIov21PqV53gcq7jLlAcihEJwyoUBz+4v25G+R
-	tYx0S+nCNabRObIHmO+yEI5JiP0fQQd//C9mfkFYxXM2UM3cCTwhRNYbpZF6GYCmKQzD6GIKEza
-	pnTzWwzyTc+BvFnCvY7KQL08dXSZuoTxb+anxSLjxSV4h4qefMw7VYewIQZ9kVkHg9R2YMHX3DJ
-	qDq2FK8MrkO8c1P553xfloobgxhSXm6JFHr2saSw5VJMgPhxNOGsiC6ty2O2xp61lAS4zv5/xIR
-	E52qAqn5cO1DIcc62Jx8kGDbCZQvt0BvbMfD/ek84Yl/9hAowpQLp9IM7LOf/gVEV1cS1Wg6SZW
-	sNg==
-X-Google-Smtp-Source: AGHT+IEktvZVcrMLh6ypH/pDXZ8sSYq0tzUgSoxCiTC958uSo6KFBvRojG2eK8//s1waGVxdqzvbhA==
-X-Received: by 2002:a17:906:c14c:b0:abf:6225:c91d with SMTP id a640c23a62f3a-abf6225d03emr1383476366b.34.1741106431128;
-        Tue, 04 Mar 2025 08:40:31 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:3bd7])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1e917b70asm199237566b.151.2025.03.04.08.40.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 08:40:30 -0800 (PST)
-Message-ID: <83af597f-e599-41d2-a17b-273d6d877dad@gmail.com>
-Date: Tue, 4 Mar 2025 16:41:40 +0000
+        d=1e100.net; s=20230601; t=1741107456; x=1741712256;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kLsMU/gpYkwvzpJkBRFq1iYDiFQreX0pirlkWTeGy6Q=;
+        b=hkR4ojkVmEWbfALbwi0kHTWuyjlc7YJI6vGfzq754uuxCxlKhqnBRmaC+J6GvyyZXH
+         V9MRhicp9ZBmWT/WAMenq21qj9mmTmYNqwWF2LVlGkVt+cU+PcP92rgg0zd4EkKYMczx
+         OBYeYet7b5mdoIxMkEbZL7Wub7aezqSied78OFP6JdYRVdbLzhpOEPRdzu1wNlrp8eMF
+         B7j8P9yCDbYuUvI3vdnsUJ6fV4iLQS+gvct0SKYSoraWFkBrDwNW6GbkaM0PRpBG4pm3
+         qLlPpkZAF+BMGTHCdTVwZOs6Bqyc2gb6PVzCEd5els0KdNTZ4toLQTTrnePZE85CpifA
+         osfw==
+X-Forwarded-Encrypted: i=1; AJvYcCXBB4/KF+91DkqUhlT0itiAv7lsLR3vx2ypEt0aeASyOJL2smT4CFn7H3TkSZtw1HRUPMUDhsCc0hINR/rK@vger.kernel.org, AJvYcCXruLWBjbI2Fw287aWQnmaKKDxKDph7Jt/O4ng0DAUgIBSYJdCY8argSson5jRv4cO3UTlY+IYpkInQ/ER+@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcX4ajUCp3/Z8L9rUyy4nUf9wRsQQJVGhVgr4acxG4LoVkiOFn
+	4QkKyeHlWQqzW7QI+tCJm5gf7n/LCd05DqfvLW+WDtqv+XRJ69af7Kz4nUJ9
+X-Gm-Gg: ASbGncu18mvOakECDockP2Qip0selWpszNUWxY8Some4NsS4fvmRg7gcD6/XFc0Udnb
+	JgPBlQqhp1OYVziGh6zVKfMeI8p80wCN86nRZUD4ctXAWWlYBmkGkNOuq0hyLHHIAhvqGmv9N6B
+	zMA3pHCHzneXa3vVs0LnBmfw30RF9vowVhcuMtCtTqDEUDimqXKBGATrRmIYfOAWK79GiB8rLYJ
+	u3RXKXX50FjHc3iC/47kueqMllVXMCMX/mI/A6Yrs/llL86oTr+Zain+eKBxMtrT5FTJlZVaMsE
+	LJF3qyOwZTnfOJJkRkfMv7ztNTLRRxGHXw4kX4zt6nc2MfqBYn8vWCufnjDv
+X-Google-Smtp-Source: AGHT+IFB5SKAGTk8wLYqM+NjVxEA74LITSloKjBgOg8Ti4DHHLqqSx64hUByZV2SsEp0QhlodEzhAw==
+X-Received: by 2002:a17:907:9690:b0:ac1:e30e:bf5a with SMTP id a640c23a62f3a-ac1e30ec2c1mr673779166b.35.1741107455828;
+        Tue, 04 Mar 2025 08:57:35 -0800 (PST)
+Received: from f.. (cst-prg-71-44.cust.vodafone.cz. [46.135.71.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1e5aff06esm231360266b.130.2025.03.04.08.57.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 08:57:35 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org,
+	viro@zeniv.linux.org.uk
+Cc: jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v3] vfs: avoid spurious dentry ref/unref cycle on open
+Date: Tue,  4 Mar 2025 17:57:28 +0100
+Message-ID: <20250304165728.491785-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] iomap: propagate nowait to block layer
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- Dave Chinner <david@fromorbit.com>, io-uring@vger.kernel.org,
- "Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
- wu lei <uwydoc@gmail.com>
-References: <f287a7882a4c4576e90e55ecc5ab8bf634579afd.1741090631.git.asml.silence@gmail.com>
- <Z8clJ2XSaQhLeIo0@infradead.org>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <Z8clJ2XSaQhLeIo0@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/4/25 16:07, Christoph Hellwig wrote:
-> On Tue, Mar 04, 2025 at 12:18:07PM +0000, Pavel Begunkov wrote:
->>   	    ((dio->flags & IOMAP_DIO_NEED_SYNC) && !use_fua) ||
->> -	    ((dio->flags & IOMAP_DIO_WRITE) && pos >= i_size_read(inode)))
->> +	    ((dio->flags & IOMAP_DIO_WRITE) && pos >= i_size_read(inode))) {
->>   		dio->flags &= ~IOMAP_DIO_CALLER_COMP;
->>   
->> +		if (!is_sync_kiocb(dio->iocb) &&
->> +		    (dio->iocb->ki_flags & IOCB_NOWAIT))
->> +			return -EAGAIN;
-> 
-> Black magic without comments explaining it.
+Opening a file grabs a reference on the terminal dentry in
+__legitimize_path(), then another one in do_dentry_open() and finally
+drops the initial reference in terminate_walk().
 
-I can copy the comment from below if you wish.
+That's 2 modifications which don't need to be there -- do_dentry_open()
+can consume the already held reference instead.
 
->> +	if (!is_sync_kiocb(dio->iocb) && (dio->iocb->ki_flags & IOCB_NOWAIT)) {
->> +		/*
->> +		 * This is nonblocking IO, and we might need to allocate
->> +		 * multiple bios. In this case, as we cannot guarantee that
->> +		 * one of the sub bios will not fail getting issued FOR NOWAIT
->> +		 * and as error results are coalesced across all of them, ask
->> +		 * for a retry of this from blocking context.
->> +		 */
->> +		if (bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS + 1) >
->> +					  BIO_MAX_VECS)
-> 
-> This is not very accurate in times of multi-page bvecs and large order
-> folios all over.
+When benchmarking on a 20-core vm using will-it-scale's open3_processes
+("Same file open/close"), the results are (ops/s):
+before: 3087010
+after:  4173977 (+35%)
 
-bio_iov_vecs_to_alloc() can overestimate, i.e. the check might return
--EAGAIN in more cases than required but not the other way around,
-that should be enough for a fix such as this patch. Or did I maybe
-misunderstood you?
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-> I think you really need to byte the bullet and support for early returns
-> from the non-blocking bio submission path.
+Al, while I originally brought this up you objected to my patch, which I
+then rewrote to the form below. You wrote your own more invovled
+variant, but the effort to get this in seem stalled:
+https://lore.kernel.org/linux-fsdevel/20240822003359.GO504335@ZenIV/
 
-Assuming you're suggesting to implement that, I can't say I'm excited by
-the idea of reworking a non trivial chunk of block layer to fix a problem
-and then porting it up to some 5.x, especially since it was already
-attempted before by someone and ultimately got reverted.
+(I think there was a bigger git branch somewhere, but now I can't find
+it.)
 
+The lockref thing is increasingly getting in the way of some other stuff
+and is just overhead which is not need to be there.
+
+If you don't have time to finish your patches, how about the variant
+below? This is rebased v2 I sent a while back and which got no feedback.
+
+I am indifferent as to what lands, as long as the extra ref cycle is
+eliminated.
+
+ fs/internal.h |  3 ++-
+ fs/namei.c    | 15 ++++++++++++---
+ fs/open.c     | 44 +++++++++++++++++++++++++++++++++++++++++---
+ 3 files changed, 55 insertions(+), 7 deletions(-)
+
+diff --git a/fs/internal.h b/fs/internal.h
+index 3d05a989e4fa..1d0eb25a7598 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -193,7 +193,8 @@ int chmod_common(const struct path *path, umode_t mode);
+ int do_fchownat(int dfd, const char __user *filename, uid_t user, gid_t group,
+ 		int flag);
+ int chown_common(const struct path *path, uid_t user, gid_t group);
+-extern int vfs_open(const struct path *, struct file *);
++int vfs_open_consume(struct path *, struct file *);
++int vfs_open(const struct path *, struct file *);
+ 
+ /*
+  * inode.c
+diff --git a/fs/namei.c b/fs/namei.c
+index d00443e38d3a..8ce8e6038346 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3796,6 +3796,7 @@ static const char *open_last_lookups(struct nameidata *nd,
+ static int do_open(struct nameidata *nd,
+ 		   struct file *file, const struct open_flags *op)
+ {
++	struct vfsmount *mnt;
+ 	struct mnt_idmap *idmap;
+ 	int open_flag = op->open_flag;
+ 	bool do_truncate;
+@@ -3833,11 +3834,17 @@ static int do_open(struct nameidata *nd,
+ 		error = mnt_want_write(nd->path.mnt);
+ 		if (error)
+ 			return error;
++		/*
++		 * We grab an additional reference here because after the call to
++		 * vfs_open_consume() we no longer own the reference in nd->path.mnt
++		 * while we need to undo write access below.
++		 */
++		mnt = mntget(nd->path.mnt);
+ 		do_truncate = true;
+ 	}
+ 	error = may_open(idmap, &nd->path, acc_mode, open_flag);
+ 	if (!error && !(file->f_mode & FMODE_OPENED))
+-		error = vfs_open(&nd->path, file);
++		error = vfs_open_consume(&nd->path, file);
+ 	if (!error)
+ 		error = security_file_post_open(file, op->acc_mode);
+ 	if (!error && do_truncate)
+@@ -3846,8 +3853,10 @@ static int do_open(struct nameidata *nd,
+ 		WARN_ON(1);
+ 		error = -EINVAL;
+ 	}
+-	if (do_truncate)
+-		mnt_drop_write(nd->path.mnt);
++	if (do_truncate) {
++		mnt_drop_write(mnt);
++		mntput(mnt);
++	}
+ 	return error;
+ }
+ 
+diff --git a/fs/open.c b/fs/open.c
+index f2fcfaeb2232..fc1c6118eb30 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -891,6 +891,15 @@ static inline int file_get_write_access(struct file *f)
+ 	return error;
+ }
+ 
++/*
++ * Populate struct file
++ *
++ * NOTE: it assumes f_path is populated and consumes the caller's reference.
++ *
++ * The caller must not path_put on it regardless of the error code -- the
++ * routine will either clean it up on its own or rely on fput, which must
++ * be issued anyway.
++ */
+ static int do_dentry_open(struct file *f,
+ 			  int (*open)(struct inode *, struct file *))
+ {
+@@ -898,7 +907,6 @@ static int do_dentry_open(struct file *f,
+ 	struct inode *inode = f->f_path.dentry->d_inode;
+ 	int error;
+ 
+-	path_get(&f->f_path);
+ 	f->f_inode = inode;
+ 	f->f_mapping = inode->i_mapping;
+ 	f->f_wb_err = filemap_sample_wb_err(f->f_mapping);
+@@ -1042,6 +1050,7 @@ int finish_open(struct file *file, struct dentry *dentry,
+ 	BUG_ON(file->f_mode & FMODE_OPENED); /* once it's opened, it's opened */
+ 
+ 	file->f_path.dentry = dentry;
++	path_get(&file->f_path);
+ 	return do_dentry_open(file, open);
+ }
+ EXPORT_SYMBOL(finish_open);
+@@ -1074,15 +1083,22 @@ char *file_path(struct file *filp, char *buf, int buflen)
+ EXPORT_SYMBOL(file_path);
+ 
+ /**
+- * vfs_open - open the file at the given path
++ * vfs_open_consume - open the file at the given path and consume the reference
+  * @path: path to open
+  * @file: newly allocated file with f_flag initialized
+  */
+-int vfs_open(const struct path *path, struct file *file)
++int vfs_open_consume(struct path *path, struct file *file)
+ {
+ 	int ret;
+ 
+ 	file->f_path = *path;
++	path->mnt = NULL;
++	path->dentry = NULL;
++
++	/*
++	 * do_dentry_open() consumes the reference regardless of its
++	 * return value
++	 */
+ 	ret = do_dentry_open(file, NULL);
+ 	if (!ret) {
+ 		/*
+@@ -1095,6 +1111,27 @@ int vfs_open(const struct path *path, struct file *file)
+ 	return ret;
+ }
+ 
++/**
++ * vfs_open - open the file at the given path
++ * @path: path to open
++ * @file: newly allocated file with f_flag initialized
++ *
++ * See commentary in vfs_open_consume. The difference here is that this routine
++ * grabs its own reference and does not clean up the passed path.
++ */
++int vfs_open(const struct path *path, struct file *file)
++{
++	int ret;
++
++	file->f_path = *path;
++	path_get(&file->f_path);
++	ret = do_dentry_open(file, NULL);
++	if (!ret) {
++		fsnotify_open(file);
++	}
++	return ret;
++}
++
+ struct file *dentry_open(const struct path *path, int flags,
+ 			 const struct cred *cred)
+ {
+@@ -1197,6 +1234,7 @@ struct file *kernel_file_open(const struct path *path, int flags,
+ 		return f;
+ 
+ 	f->f_path = *path;
++	path_get(&f->f_path);
+ 	error = do_dentry_open(f, NULL);
+ 	if (error) {
+ 		fput(f);
 -- 
-Pavel Begunkov
+2.43.0
 
 
