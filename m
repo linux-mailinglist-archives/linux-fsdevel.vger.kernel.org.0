@@ -1,259 +1,246 @@
-Return-Path: <linux-fsdevel+bounces-43124-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7113A4E5D4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 17:28:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF9CAA4E295
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 16:14:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F363A421B4A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 16:22:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 596B13BAEBD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 14:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E4A293B60;
-	Tue,  4 Mar 2025 16:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F2923957E;
+	Tue,  4 Mar 2025 14:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hNwH16HX"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="r44fN8oo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD9C293B61
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 16:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741104199; cv=pass; b=ovz7DWAfRWvhS6kiCtGiLvd3FIOvnR6j8drZ0VPy80MF7VZo5+1aMuIXrXAIxAJBseYQWiF9+UT+/kJHF0cSonzOhe0VdDgz6KriIgxxP8mL0LedbISGqBqG/Ck347L4m9D8BBDd+gIaD4XrgTz4WQymoMwkg6flsXU+0uqLW64=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741104199; c=relaxed/simple;
-	bh=bUWqoIF0RSWTyZWSv8LwMFKJPtmJiM+TMfHwuR+g940=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=e08a+2YC8jOVcyNSxsgqYMeK9Np2KdHKS8akAbqI1QNJ9InyvJzhKFxkdmKb9xdT1CtaIum0eaOSwn8QT/pth9ybuAk5dUG5QGc9hObf1LRZrRiDYsDmX17reuLuHHq3LTu23nQtrHOTnlSy7Sx+53TMdzJi0+9TOSxA/HBKx+g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hNwH16HX; arc=none smtp.client-ip=170.10.133.124; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; arc=pass smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id C7A1D40D51D7
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 19:03:15 +0300 (+03)
-X-Envelope-From: <root@cc.itu.edu.tr>
-Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=hNwH16HX
-Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6g4Q2D0GzG0wt
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 18:45:26 +0300 (+03)
-Received: by le1 (Postfix, from userid 0)
-	id 8F9AF42740; Tue,  4 Mar 2025 18:45:18 +0300 (+03)
-Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hNwH16HX
-X-Envelope-From: <linux-kernel+bounces-541176-bozkiru=itu.edu.tr@vger.kernel.org>
-Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hNwH16HX
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 9042B41C5D
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:45:42 +0300 (+03)
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id D13B73063EFF
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:45:41 +0300 (+03)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6549D7A4DCF
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:44:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E6B1EFFB7;
-	Mon,  3 Mar 2025 08:45:19 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFD5B667
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E7E26657B
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 14:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740991516; cv=none; b=VqGQiqXGAC+TGq4DzMStUb02Iowr4vlSDLMqRKgFVJmwmJuaOxcScnouJzU4kNloxxrnfMVIA7MlLIPQoOAXnLBnI8S4/ubmcklf6Yq93FIneVjHShupZGgvRgi6uCFtPt+43n68+7q9gKjD8LDw+yeJAfhfDBAmt2N0dou3nh4=
+	t=1741100180; cv=none; b=OY+cvnAkpi4Pp/GX3QJWI0X7Sxm3xu1z4zlxdvd58RMvCb3ZAwdv9mXPt5s+8DBcQMkRJiPVX8DyOwpPRqxCUwVlv4Ej19zCJ/BFHCyDVdpfzhVUBkrb/Eca8H15naFmkwTrYWrZFELvJt3BcY83oZc542L42ir16GIQBTF/M4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740991516; c=relaxed/simple;
-	bh=bUWqoIF0RSWTyZWSv8LwMFKJPtmJiM+TMfHwuR+g940=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=tX7N8yrf/hjm+iESJf6r5ZFoVAp9J8ThgMA71ARicV90sF2Oelfx6SViy18RC4nP0lOhZcPYth6urIKGyn+U/1KxnGozZ4Wyz8P8+oh/dDU9X6J94QuF0WdYuo7SOrnavFBaosSJZXGQ/6NZuZHp6ZNn9ODzcMKSoJgwJoW7oME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hNwH16HX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740991513;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Mzc0zyxynm1zLc8lCgBdxcnpn7S2dpYemCwQOpKEfuk=;
-	b=hNwH16HX0osTPn/vOpYMc/EhnVJdpc8E1U+FeQUwz8fIiZ14cUZYMJfMW4CVRyt/rq4yde
-	HGeTvQ4QFRjRtr1z6kAj93rZCm1XNV2As+x4z1muHEGJWadGxP24aWbVBvp0AFMgk6WvTg
-	aopWuSjQGuDoynrrrDR/KfpRnKwqiHU=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-306-7wrT26BSMJ6P7gbEEUKlQA-1; Mon,
- 03 Mar 2025 03:45:00 -0500
-X-MC-Unique: 7wrT26BSMJ6P7gbEEUKlQA-1
-X-Mimecast-MFC-AGG-ID: 7wrT26BSMJ6P7gbEEUKlQA_1740991498
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1D019180087C;
-	Mon,  3 Mar 2025 08:44:57 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.44.32.200])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E569819560AA;
-	Mon,  3 Mar 2025 08:44:50 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-cc: David Howells <dhowells@redhat.com>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Jakub Kicinski <kuba@kernel.org>,
-    "David S.
- Miller" <davem@davemloft.net>,
-    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-    Simon Horman <horms@kernel.org>,
-    Trond Myklebust <trond.myklebust@hammerspace.com>,
-    Chuck Lever <chuck.lever@oracle.com>,
-    Eric Biggers <ebiggers@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-    linux-crypto@vger.kernel.org, linux-afs@lists.infradead.org,
-    linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL v2] crypto: Add Kerberos crypto lib
-Precedence: bulk
+	s=arc-20240116; t=1741100180; c=relaxed/simple;
+	bh=olPy4TFGven851f7JIzuda2J795yql395yGWoBUVj9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fp0qWNcOApGwMJZtW/gcFoJoNv1O0pot2BStY/s03MVpTbrHn2RHVf7pNVwTQzDADZ8N9H+oKhTtmWFHsDXSNKmo/pZEBDiqE+9yjX0HmsG6gCuO0d75VibpdqkV2rxfAWSc+J/ZpJOwSYKrAVVMRSqKGcdG0pIov6Wn+0ylPB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=r44fN8oo; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6e89959f631so44689576d6.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Mar 2025 06:56:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1741100177; x=1741704977; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BKjhbMRpVxhLWoVmqLkt5oUi5zCGDbWxG+lFjOhMw8E=;
+        b=r44fN8oo9SNEtOBZISIUGnnDf/Wz0nbyZugNmrcjHTmlFMNE7kuJN+2pic9qXHYq3c
+         7lCaCnTcqB0PWGQN2Ubi3rmEmu0PadVIC/yWF8r+FSM8tgoIG/USOqcBBpK1NFLxbxJe
+         Ag5XIvWwqRIQ3fSyXvgIVIBuLZsYTm+H5LJdkjoJxPo7CwD4OwMKHtu9LMeLefybCORp
+         YS4OmWIPhLz1cwnvdYdqz9aNGxB5JOm1pV9jhtBcXWbpzI4AaP84Nv749fk9Ym1s46+4
+         ZHwLIYd1YUp2tud4SaHvfHznpKhpEhRt/E4YaE+ihE44VEjuNQO7WdLPQV6IyU73czy4
+         JOxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741100177; x=1741704977;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BKjhbMRpVxhLWoVmqLkt5oUi5zCGDbWxG+lFjOhMw8E=;
+        b=aQbA/mYlVDqakptt8hCT+5kP8aycMUQrp+1dlY+qM2eT1digP77eRuMGSle167Spx+
+         vIcR3cAzFCeGynvA4As0uk1Q2QV01SnN5EmVj6Guq1aeNjkVA2JiCwyLIAtEwjEXyCwR
+         sTbErlU7MscMp8OExzZLB4hNHL/EIszAEus/DEjRn4j1jfnnqRfflrhBfiz9emglaqWR
+         M04rn9zBLr80GWJ9KHu1H7WPksfeJtzNittKoNYP5EPDVn0ZjfRLLHC30fOoL3KINqRM
+         Ug/VVlgkJF3kRKNjHqVto6fn+TTSS93kIEHllg/2tVR39JMPsJeYqipVOw5U6vsc3afk
+         sY/g==
+X-Gm-Message-State: AOJu0YxUmVGemWnU1Fx84lZlv20BFW01MhVp8YbDa4LAxBrabkBn3yP/
+	yllkX8ubKoQ2+3+R7Fzjc4kLrDDHMG5GnNyJ1T3s8AX1TccIo+1wUVrvkcKGr+c=
+X-Gm-Gg: ASbGncvv+kgSDJAKNKhG1NUN+WZ2A9NhkThXtjpcd0ttsdaPFtMNTduKb5D5swKHn8t
+	8pmFDoKZ0QOub1MUvfrKMpH8RSkmrfzxb/P7ELjBwtMwVHMFqvl7o2D+TbuTR1mI1IqtKc+rXag
+	gLxc1Vg3Qu+LMdHLkUvVgkqY5Fb6rUO+7xg+5wk5jh2oJd5V+HH2aRJyboI6MLhpX6SUv9VVZFU
+	1vV2Zc8HmjTv20O3bY3dTdPibmAKfkaAMeuiCOfiyFJ2HVi1TIAieve0swHdGIOHRTUGgXmmgWE
+	mRmXiIP87hRszE2cgPOwmsWXqwPgnCSdQu4EO6AAJuW1VHqi5CXdaYi/xyGmlJ9c39NM9oqf7WM
+	g8QYplg==
+X-Google-Smtp-Source: AGHT+IEj2NqEXqk7+r+28I6vp2NfPMRWGpvxopnpfya0kRmweaNncxvtvwj+CpdL3RYzMk9xUFTHOw==
+X-Received: by 2002:a05:6214:2586:b0:6e8:9fdf:5923 with SMTP id 6a1803df08f44-6e8a0c7d07amr256811046d6.5.1741100176627;
+        Tue, 04 Mar 2025 06:56:16 -0800 (PST)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e89766087dsm67480656d6.52.2025.03.04.06.56.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 06:56:16 -0800 (PST)
+Date: Tue, 4 Mar 2025 09:56:14 -0500
+From: Josef Bacik <josef@toxicpanda.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: [LSF/MM/BPF TOPIC] Changing reference counting rules for inodes
+Message-ID: <20250304145614.GA4043425@perftesting>
+References: <20250303170029.GA3964340@perftesting>
+ <20250304-flexibel-glimmen-ccb3a5a71cc6@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3709377.1740991489.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 03 Mar 2025 08:44:49 +0000
-Message-ID: <3709378.1740991489@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
-X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6g4Q2D0GzG0wt
-X-ITU-Libra-ESVA: No virus found
-X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741707951.75304@3nbNV1TxLAVyTEpoB2K+NQ
-X-ITU-MailScanner-SpamCheck: not spam
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304-flexibel-glimmen-ccb3a5a71cc6@brauner>
 
-Hi Herbert,
+On Tue, Mar 04, 2025 at 11:19:34AM +0100, Christian Brauner wrote:
+> On Mon, Mar 03, 2025 at 12:00:29PM -0500, Josef Bacik wrote:
+> > Hello,
+> > 
+> > I've recently gotten annoyed with the current reference counting rules that
+> > exist in the file system arena, specifically this pattern of having 0 referenced
+> > objects that indicate that they're ready to be reclaimed.
+> > 
+> > This pattern consistently bites us in the ass, is error prone, gives us a lot of
+> > complicated logic around when an object is actually allowed to be touched versus
+> > when it is not.
+> > 
+> > We do this everywhere, with inodes, dentries, and folios, but I specifically
+> > went to change inodes recently thinking it would be the easiest, and I've run
+> > into a few big questions.  Currently I've got about ~30 patches, and that is
+> > mostly just modifying the existing file systems for a new inode_operation.
+> > Before I devote more time to this silly path, I figured it'd be good to bring it
+> > up to the group to get some input on what possible better solutions there would
+> > be.
+> > 
+> > I'll try to make this as easy to follow as possible, but I spent a full day and
+> > a half writing code and thinking about this and it's kind of complicated.  I'll
+> > break this up into sections to try and make it easier to digest.
+> > 
+> > WHAT DO I WANT
+> > 
+> > I want to have refcount 0 == we're freeing the object.  This will give us clear
+> > "I'm using this object, thus I have a reference count on it" rules, and we can
+> > (hopefully) eliminate a lot of the complicated freeing logic (I_FREEING |
+> > I_WILL_FREE).
+> 
+> Yeah, I want to see I_FREEING and I_WILL_FREE stuff to go away. This bit
+> fiddling and waiting is terribly opaque for anyone who hasn't worked on
+> this since the dawn of time. So I'm all for it.
+> 
+> > 
+> > HOW DO I WANT TO DO THIS
+> > 
+> > Well obviously we keep a reference count always whenever we are using the inode,
+> > and we hold a reference when it is on a list.  This means the i_io_list holds a
+> > reference to the inode, that means the LRU list holds a reference to the inode.
+> > 
+> > This makes LRU handling easier, we just walk the objects and drop our reference
+> > to the object.  If it was truly the last reference then we free it, otherwise it
+> > will get added back onto the LRU list when the next guy does an iput().
+> > 
+> > POTENTIAL PROBLEM #1
+> > 
+> > Now we're actively checking to see if this inode is on the LRU list and
+> > potentially taking the lru list lock more often.  I don't think this will be the
+> > case, as we would check the inode flags before we take the lock, so we would
+> > martinally increase the lock contention on the LRU lock.  We could mitigate this
+> > by doing the LRU list add at lookup time, where we already have to grab some of
+> > these locks, but I don't want to get into premature optimization territory here.
+> > I'm just surfacing it as a potential problem.
+> 
+> Yes, ignore it for now.
+> 
+> So I agree that if we can try and remove the inode cache altogether that
+> would be pretty awesome and we know that we have support for attempting
+> that from Linus. But I'm not sure what regression potential that has.
+> There might just be enough implicit behavior that workloads depend on
+> that will bite us in the ass.
+> 
+> But I don't think you need to address this in this series. Your changes
+> might end up making it easier to experiemnt with the inode cache removal
+> though.
+> 
+> > POTENTIAL PROBLEM #2
+> > 
+> > We have a fair bit of logic in writeback around when we can just skip writeback,
+> > which amounts to we're currently doing the final truncate on an inode with
+> > ->i_nlink set.  This is kind of a big problem actually, as we could no
+> > potentially end up with a large dirty inode that has an nlink of 0, and no
+> > current users, but would now be written back because it has a reference on it
+> > from writeback.  Before we could get into the iput() and clean everything up
+> > before writeback would occur.  Now writeback would occur, and then we'd clean up
+> > the inode.
+> 
+> So in the old pattern you'd call iput_final() and then do writeback.
+> Whereas in the new pattern you'd do writeback before iput_final().
+> And this is a problem because it potentially delays freeing of the inode
+> for a long time?
 
-Could you pull this into the crypto tree please?  v2 is just a rebase onto
-your cryptodev/master branch.  It does a couple of things:
+Well we don't do the writeback in iput_final() if we've unlinked the inode.
 
- (1) Provide an AEAD crypto driver, krb5enc, that mirrors the authenc
-     driver, but that hashes the plaintext, not the ciphertext.  This was
-     made a separate module rather than just being a part of the authenc
-     driver because it has to do all of the constituent operations in the
-     opposite order - which impacts the async op handling.
+Currently, you can have the following sequence of events
 
-     Testmgr data is provided for AES+SHA2 and Camellia combinations of
-     authenc and krb5enc used by the krb5 library.  AES+SHA1 is not
-     provided as the RFCs don't contain usable test vectors.
+Open file
+Write to file
+Unlink file
+Close file
+  iput_final()
+    remove the inode from the io_list
+    wait on current writeback that may have started before the iput_final()
+    truncate the inode
+    truncate the page cache
 
- (2) Provide a Kerberos 5 crypto library.  This is an extract from the
-     sunrpc driver as that code can be shared between sunrpc/nfs and
-     rxrpc/afs.  This provides encryption, decryption, get MIC and verify
-     MIC routines that use and wrap the crypto functions, along with some
-     functions to provide layout management.
+In this case we avoid the writeout completely, because once we've entered
+iput_final() and set I_FREEING the writeback threads will skip that inode if
+they try to write it back, so we skip a whole writeback cycle.
 
-     This supports AES+SHA1, AES+SHA2 and Camellia encryption types.
+With my naive implementation of just holding reference counts for everything,
+writeback now holds its reference, so what would happen now is
 
-     Self-testing is provided that goes further than is possible with
-     testmgr, doing subkey derivation as well.
+Open file
+Write to file
+Unlink file
+Close file
+<some time passes>
+Writeback occurs on the file
+  iput_final()
+    truncate the inode
 
-The patches were previously posted here:
+So now we've written back the inode, and then we truncate it. Is this bad? Not
+really, unless you're workload does this and you're on SSD's, now you've got
+more write cycles than you had before.  The slightly bigger problem is now
+you've got the final iput happening in the writeback threads, which will induce
+latency in the whole system.
 
-    https://lore.kernel.org/r/20250203142343.248839-1-dhowells@redhat.com/
+> 
+> > 
+> > SOLUTION FOR POTENTIAL PROBLEM #1
+> > 
+> > I think we ignore this for now, get the patches written, do some benchmarking
+> > and see if this actually shows up in benchmarks.  If it does then we come up
+> > with strategies to resolve this at that point.
+> > 
+> > SOLUTION FOR POTENTIAL PROBLEM #2 <--- I would like input here
+> > 
+> > My initial thought was to just move the final unlink logic outside of evict, and
+> > create a new reference count that represents the actual use of the inode.  Then
+> > when the actual use went to 0 we would do the final unlink, de-coupling the
+> > cleanup of the on-disk inode (in the case of local file systems) from the
+> > freeing of the memory.
+> 
+> I really do like active/passive reference counts. I've used that pattern
+> for mount namespaces, seccomp filters and some other stuff quite
+> successfully. So I'm somewhat inclined to prefer that solution.
+> 
+> Imho, when active/reference patterns are needed or useful then it's
+> almost always because the original single reference counting mechanism
+> was semantically vague because it mixed two different meanings of the
+> reference count. So switching to an active/passive pattern will end up
+> clarifying things.
+> 
 
-as part of a larger series, but the networking guys would prefer these to
-go through the crypto tree.  If you want them reposting independently, I
-can do that.
+Ok cool, that's the path I wandered down and then wanted to make sure everybody
+else was cool with it.  I'll finish up these patches and get some testing in and
+get them out so we can have something concrete to look at.  I'm limiting my
+kernel development time to Fridays so it'll be either end of the week or next
+week when the patches show up.  Thanks,
 
-David
----
-The following changes since commit 17ec3e71ba797cdb62164fea9532c81b60f4716=
-7:
-
-  crypto: lib/Kconfig - Hide arch options from user (2025-03-02 15:21:47 +=
-0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
-/crypto-krb5-20250303
-
-for you to fetch changes up to fc0cf10c04f49ddba1925b630467f49ea993569e:
-
-  crypto/krb5: Implement crypto self-testing (2025-03-02 21:56:47 +0000)
-
-----------------------------------------------------------------
-crypto: Add Kerberos crypto lib
-
-----------------------------------------------------------------
-David Howells (17):
-      crypto/krb5: Add API Documentation
-      crypto/krb5: Add some constants out of sunrpc headers
-      crypto: Add 'krb5enc' hash and cipher AEAD algorithm
-      crypto/krb5: Test manager data
-      crypto/krb5: Implement Kerberos crypto core
-      crypto/krb5: Add an API to query the layout of the crypto section
-      crypto/krb5: Add an API to alloc and prepare a crypto object
-      crypto/krb5: Add an API to perform requests
-      crypto/krb5: Provide infrastructure and key derivation
-      crypto/krb5: Implement the Kerberos5 rfc3961 key derivation
-      crypto/krb5: Provide RFC3961 setkey packaging functions
-      crypto/krb5: Implement the Kerberos5 rfc3961 encrypt and decrypt fun=
-ctions
-      crypto/krb5: Implement the Kerberos5 rfc3961 get_mic and verify_mic
-      crypto/krb5: Implement the AES enctypes from rfc3962
-      crypto/krb5: Implement the AES enctypes from rfc8009
-      crypto/krb5: Implement the Camellia enctypes from rfc6803
-      crypto/krb5: Implement crypto self-testing
-
- Documentation/crypto/index.rst   |   1 +
- Documentation/crypto/krb5.rst    | 262 +++++++++++++
- crypto/Kconfig                   |  13 +
- crypto/Makefile                  |   3 +
- crypto/krb5/Kconfig              |  26 ++
- crypto/krb5/Makefile             |  18 +
- crypto/krb5/internal.h           | 247 ++++++++++++
- crypto/krb5/krb5_api.c           | 452 ++++++++++++++++++++++
- crypto/krb5/krb5_kdf.c           | 145 +++++++
- crypto/krb5/rfc3961_simplified.c | 797 ++++++++++++++++++++++++++++++++++=
-+++++
- crypto/krb5/rfc3962_aes.c        | 115 ++++++
- crypto/krb5/rfc6803_camellia.c   | 237 ++++++++++++
- crypto/krb5/rfc8009_aes2.c       | 362 ++++++++++++++++++
- crypto/krb5/selftest.c           | 544 ++++++++++++++++++++++++++
- crypto/krb5/selftest_data.c      | 291 ++++++++++++++
- crypto/krb5enc.c                 | 504 +++++++++++++++++++++++++
- crypto/testmgr.c                 |  16 +
- crypto/testmgr.h                 | 351 +++++++++++++++++
- include/crypto/authenc.h         |   2 +
- include/crypto/krb5.h            | 160 ++++++++
- 20 files changed, 4546 insertions(+)
- create mode 100644 Documentation/crypto/krb5.rst
- create mode 100644 crypto/krb5/Kconfig
- create mode 100644 crypto/krb5/Makefile
- create mode 100644 crypto/krb5/internal.h
- create mode 100644 crypto/krb5/krb5_api.c
- create mode 100644 crypto/krb5/krb5_kdf.c
- create mode 100644 crypto/krb5/rfc3961_simplified.c
- create mode 100644 crypto/krb5/rfc3962_aes.c
- create mode 100644 crypto/krb5/rfc6803_camellia.c
- create mode 100644 crypto/krb5/rfc8009_aes2.c
- create mode 100644 crypto/krb5/selftest.c
- create mode 100644 crypto/krb5/selftest_data.c
- create mode 100644 crypto/krb5enc.c
- create mode 100644 include/crypto/krb5.h
-
-
+Josef
 
