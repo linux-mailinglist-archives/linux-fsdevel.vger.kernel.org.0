@@ -1,249 +1,224 @@
-Return-Path: <linux-fsdevel+bounces-43172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43173-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3421DA4EE3C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 21:19:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0672CA4EE51
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 21:27:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A3FF174D71
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 20:19:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FB3E3A97F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 20:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35ACD1F8BBF;
-	Tue,  4 Mar 2025 20:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046FE24EAB7;
+	Tue,  4 Mar 2025 20:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L0QcAk1Q"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I165j7Rx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2B02E3377
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 20:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6317DA93;
+	Tue,  4 Mar 2025 20:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741119548; cv=none; b=VzU76VZ+WP5SZ1yDoGaMy9/Cu++8gNzZKocy/apGHMDtdMehzF7/dp1tlgBIjGHFYEQh5gqeRxRCMEQ0IScZUxvzy3v5/QPc+rnsRpgzkYoRdvCI7qzkYMndI8p7u8O+Ayequ0h9w59esEWAaWqeVgnMnBEYE/KurFC3xwYxdz8=
+	t=1741120055; cv=none; b=nalgSY/GOqyqxlGY6mydqBjvpCyA6F/yg/Dz1oAXfKsm3oY5JZBC3drerzVZZLfQWulgdnScE7sf1NCUy/a1y/hQny4MPOY/rzPnOhmjTEu3TTspHNmWIfEimrl4SR6ok7fhQOEYn7AqbPINblFmkxeVYSqFtBpwGcK8tcyTHqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741119548; c=relaxed/simple;
-	bh=VJcYo/O1WWxGodiRQPXRxCWmdrBiYbVH3cZrz9umSrw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NZit4ud3xnocj6J0r16tHWVJyGSvuZdyUo2QaktVsltJeJzvHVyiigsQ6b8fhCF/LSNPGJaHXUJzG+LR1cMKV2/E12aRMf/bFuUeBGZUWePwYvdLJXpuZgswkdL4jCoek2mC6XSWyEBkSZbBDQkAJ7ZOfo70TUYKKuYrpQHc+fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L0QcAk1Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31271C4CEE5;
-	Tue,  4 Mar 2025 20:19:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741119548;
-	bh=VJcYo/O1WWxGodiRQPXRxCWmdrBiYbVH3cZrz9umSrw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=L0QcAk1Q6/HFnxEemwS3GFE98MvwxtKxlHRJ53HI7E/UpEDSFLUqt/xiRTfV4y414
-	 I7dE4x7MdMWc0SV11EwlhkxeY1jTq4u98HrUHmQ9sIqyVQWZywWpyzG+9JNHaVoLiM
-	 +bMY103MCUBPQfvwUcVU6Lw5rpZoqj0a1PnICfzWuRMi9NBJmiG+uFtT29qZcdWLs/
-	 fMB5+yiDwhs1bV6fbddOkd0KQ+Vkxjg55Z0itz3w2RdnhU1Ws3g72P6vycAcMu2jsx
-	 ftUyCaQTGjJTHnNpxxZT6okTlkUCTgAU85Wd1ayOtntq7T4glFm5zX1b4a3WHnvKLq
-	 k/NB9h6zvaYEQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	Jeff Layton <jlayton@kernel.org>,
-	Lennart Poettering <lennart@poettering.net>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>,
-	Mike Yuan <me@yhndnzj.com>
-Subject: [PATCH v2 17/16] selftests/pidfd: test multi-threaded exec with PPIDFD_INFO_EXIT
-Date: Tue,  4 Mar 2025 21:18:49 +0100
-Message-ID: <20250304-paarweise-erlesen-be86ad628af7@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250304-work-pidfs-kill_on_last_close-v2-15-44fdacfaa7b7@kernel.org>
-References: <20250304-work-pidfs-kill_on_last_close-v2-15-44fdacfaa7b7@kernel.org>
+	s=arc-20240116; t=1741120055; c=relaxed/simple;
+	bh=xV8tlncvGMfnMX1OhOGvNarO9Z++GXkiwPoaztl/MZQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bLa3btysXPXcMoVmvU3q1boemyJCiFICkbXOdrbNLkqJJE8k7xc7S4gyiTPoWx9LM0S1CiG971r+QmmsDliUecTT8RbPhTpHmGQExJxT6VsZ/rQN5vaN5R8xAwB0zUn5FjCqg3TDAdYgJOIzNNoAmxezWByxe9Ww+PXtFsFXINU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I165j7Rx; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e549af4927so4547631a12.2;
+        Tue, 04 Mar 2025 12:27:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741120052; x=1741724852; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gn9ky4z5dMSLl5RskSlFZc3RtSEkfN0OwnmLO2V6eds=;
+        b=I165j7RxBPOXSycVb911JsunVyuKggsZjwPU5UY50FMr1tSKxEfnefr6HbzdCNM/uN
+         ZoatLunc814HlbbmTQm+GCqxoYPiN2kjszEWTkOOfHDEfEDZuX/G/Jn3QjlAVCb0jeZX
+         H4eqodxSt4c3XtyQumlCnCmxceYTrLkKziE9kZBVYWFAn2oGoMf0ENDbSkeIqqkJX2rm
+         qH4PphgRnh7trAo9d/YwNZAAbiGouAmyhSyWnxd9gJd4uhj1HXnrqIGdUZtqqIcGyROI
+         a/YU7AdQd2Ba7of34mrsP70uI39nTp3ozc7irAKb1jSm+KL5yWxKRMSrYKDko3PIyOe/
+         d0Cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741120052; x=1741724852;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gn9ky4z5dMSLl5RskSlFZc3RtSEkfN0OwnmLO2V6eds=;
+        b=M1jdXT0wZxvHPwiVLV/ty6wwKcWStDZxavflIfhscCaObqD6GQRDXIrtCsgApaBK4p
+         lfQ5iGG/wmB4da241fhjZzEyUDbGmomiJM898Qg7uk579ZzNNVTZB8Z1+1VdzDSwUdaW
+         0Ky3S9NR65fvLhMasQUNiCqNDtaNhFu/jG6FSLNSuwf8DxH4YFTreSziQu89MVmlGhkD
+         e3bTi6jArCDxDYC71cbvqP9pVQXKGBmEqbmdQOd7e+voHtkr8NmbDItyp6+ry6mEW/Sc
+         nBnJAKBFPWTq0H40KDcgpBJ/WHEq71QaZya0cZ5Q0Wbo8CbxvLD5K8eKKDg1z37Dd23s
+         LCXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgTzPbB8CSTJgkiD4W1Q9iWGXpuJ/4uHhOAoU7GfIcdA4zRwFecQdQJPYdrvOJt6RUsLQPpavHK3fV@vger.kernel.org, AJvYcCX9VKFm/kEF+G1aFoDto0QTqRCPMJp7WMkIM+B1D/MJUGpwFBS6gytR/hMkhTMJ9K3bw5UHlh/JCDaISJhk@vger.kernel.org, AJvYcCXVyuDArF68BhX1TkFZzGMwKL11NwkvzhkPXkIn7+J3jc2IvRlRj9NZuEjFM8/nWDdAaQMghp33r6dTVANG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8hFEup7J2VHXiethCCkOwTZu0EBN4btSKUu+ehtlvjc+u7y4J
+	DXMQwxl7fS+0khXs6qYD37/w4sYbODnZXrTIY2cMDGCApwzDP4P+3h6qt998+atA9tCUTnyqF64
+	nOeAb3/q/J3RJp9c7/toU6580mDA=
+X-Gm-Gg: ASbGncsuuqALamkQHqHyxED/6x0jWsGURhg83F26TdhwgIsopek5yGTZ1v9iUOLjGZC
+	7dtyXI5gMRMsNt5tcn7UJSFK3D5hLhQ/tq4xAnyiqszIEWfnFqRFFHp1t0SvnFcbKS+IwtFEcbb
+	KC9Bv371Srwhdrx1tcPw2O8YYXoQ==
+X-Google-Smtp-Source: AGHT+IHAIoJ0E+pxrzOSe5eeebBWS9Dt9S9yaMu+lz0dKVZefv8M1z2h5EJXZXlzDsPBXuOKAWHb5+UGNnCVo3QTjv8=
+X-Received: by 2002:a17:906:4fc7:b0:ac2:551:4a38 with SMTP id
+ a640c23a62f3a-ac20d925104mr50035866b.26.1741120051525; Tue, 04 Mar 2025
+ 12:27:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6352; i=brauner@kernel.org; h=from:subject:message-id; bh=VJcYo/O1WWxGodiRQPXRxCWmdrBiYbVH3cZrz9umSrw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQfT9DZc43pDePulRsPTz8Z+oO1eKW3T66np3DBr5UC7 x6djigz6ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIfG1Ghv4XV9Jev2uxXX9n MZe++joeNQtLV5YYuWanti6ttC9a9gx/ZYznuV6ofbvzbY9f4I/+XS9Nf3wrnj1x9XQfZZXzi9s XMQMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <67a487f7.050a0220.19061f.05fc.GAE@google.com> <67c4881e.050a0220.1dee4d.0054.GAE@google.com>
+ <7ehxrhbvehlrjwvrduoxsao5k3x4aw275patsb3krkwuq573yv@o2hskrfawbnc>
+ <CAOQ4uxjf5H_vj-swF7wEvUkPobEuxs2q6jfO9jFsx4pqxtJMMg@mail.gmail.com> <20250304161509.GA4047943@perftesting>
+In-Reply-To: <20250304161509.GA4047943@perftesting>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 4 Mar 2025 21:27:20 +0100
+X-Gm-Features: AQ5f1Jo62ERWo7QAFZgtTJaHo7SsHhqhpis6fOJNRGSu3Cz1rXE-1Ym7ZbVDGEM
+Message-ID: <CAOQ4uxj0cN-sUN=EE0+9tRhMFFrWLQ0T_i0fprwNRr92Hire6Q@mail.gmail.com>
+Subject: Re: [syzbot] [xfs?] WARNING in fsnotify_file_area_perm
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: Jan Kara <jack@suse.cz>, 
+	syzbot <syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com>, 
+	akpm@linux-foundation.org, axboe@kernel.dk, brauner@kernel.org, 
+	cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-xfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a selftest for PIDFD_INFO_EXIT behavior.
+On Tue, Mar 4, 2025 at 5:15=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> w=
+rote:
+>
+> On Tue, Mar 04, 2025 at 04:09:16PM +0100, Amir Goldstein wrote:
+> > On Tue, Mar 4, 2025 at 12:06=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > Josef, Amir,
+> > >
+> > > this is indeed an interesting case:
+> > >
+> > > On Sun 02-03-25 08:32:30, syzbot wrote:
+> > > > syzbot has found a reproducer for the following issue on:
+> > > ...
+> > > > ------------[ cut here ]------------
+> > > > WARNING: CPU: 1 PID: 6440 at ./include/linux/fsnotify.h:145 fsnotif=
+y_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145
+> > > > Modules linked in:
+> > > > CPU: 1 UID: 0 PID: 6440 Comm: syz-executor370 Not tainted 6.14.0-rc=
+4-syzkaller-ge056da87c780 #0
+> > > > Hardware name: Google Google Compute Engine/Google Compute Engine, =
+BIOS Google 12/27/2024
+> > > > pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
+> > > > pc : fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:1=
+45
+> > > > lr : fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:1=
+45
+> > > > sp : ffff8000a42569d0
+> > > > x29: ffff8000a42569d0 x28: ffff0000dcec1b48 x27: ffff0000d68a1708
+> > > > x26: ffff0000d68a16c0 x25: dfff800000000000 x24: 0000000000008000
+> > > > x23: 0000000000000001 x22: ffff8000a4256b00 x21: 0000000000001000
+> > > > x20: 0000000000000010 x19: ffff0000d68a16c0 x18: ffff8000a42566e0
+> > > > x17: 000000000000e388 x16: ffff800080466c24 x15: 0000000000000001
+> > > > x14: 1fffe0001b31513c x13: 0000000000000000 x12: 0000000000000000
+> > > > x11: 0000000000000001 x10: 0000000000ff0100 x9 : 0000000000000000
+> > > > x8 : ffff0000c6d98000 x7 : 0000000000000000 x6 : 0000000000000000
+> > > > x5 : 0000000000000020 x4 : 0000000000000000 x3 : 0000000000001000
+> > > > x2 : ffff8000a4256b00 x1 : 0000000000000001 x0 : 0000000000000000
+> > > > Call trace:
+> > > >  fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145 (=
+P)
+> > > >  filemap_fault+0x12b0/0x1518 mm/filemap.c:3509
+> > > >  xfs_filemap_fault+0xc4/0x194 fs/xfs/xfs_file.c:1543
+> > > >  __do_fault+0xf8/0x498 mm/memory.c:4988
+> > > >  do_read_fault mm/memory.c:5403 [inline]
+> > > >  do_fault mm/memory.c:5537 [inline]
+> > > >  do_pte_missing mm/memory.c:4058 [inline]
+> > > >  handle_pte_fault+0x3504/0x57b0 mm/memory.c:5900
+> > > >  __handle_mm_fault mm/memory.c:6043 [inline]
+> > > >  handle_mm_fault+0xfa8/0x188c mm/memory.c:6212
+> > > >  do_page_fault+0x570/0x10a8 arch/arm64/mm/fault.c:690
+> > > >  do_translation_fault+0xc4/0x114 arch/arm64/mm/fault.c:783
+> > > >  do_mem_abort+0x74/0x200 arch/arm64/mm/fault.c:919
+> > > >  el1_abort+0x3c/0x5c arch/arm64/kernel/entry-common.c:432
+> > > >  el1h_64_sync_handler+0x60/0xcc arch/arm64/kernel/entry-common.c:51=
+0
+> > > >  el1h_64_sync+0x6c/0x70 arch/arm64/kernel/entry.S:595
+> > > >  __uaccess_mask_ptr arch/arm64/include/asm/uaccess.h:169 [inline] (=
+P)
+> > > >  fault_in_readable+0x168/0x310 mm/gup.c:2234 (P)
+> > > >  fault_in_iov_iter_readable+0x1dc/0x22c lib/iov_iter.c:94
+> > > >  iomap_write_iter fs/iomap/buffered-io.c:950 [inline]
+> > > >  iomap_file_buffered_write+0x490/0xd54 fs/iomap/buffered-io.c:1039
+> > > >  xfs_file_buffered_write+0x2dc/0xac8 fs/xfs/xfs_file.c:792
+> > > >  xfs_file_write_iter+0x2c4/0x6ac fs/xfs/xfs_file.c:881
+> > > >  new_sync_write fs/read_write.c:586 [inline]
+> > > >  vfs_write+0x704/0xa9c fs/read_write.c:679
+> > >
+> > > The backtrace actually explains it all. We had a buffered write whose
+> > > buffer was mmapped file on a filesystem with an HSM mark. Now the pre=
+faulting
+> > > of the buffer happens already (quite deep) under the filesystem freez=
+e
+> > > protection (obtained in vfs_write()) which breaks assumptions of HSM =
+code
+> > > and introduces potential deadlock of HSM handler in userspace with fi=
+lesystem
+> > > freezing. So we need to think how to deal with this case...
+> >
+> > Ouch. It's like the splice mess all over again.
+> > Except we do not really care to make this use case work with HSM
+> > in the sense that we do not care to have to fill in the mmaped file con=
+tent
+> > in this corner case - we just need to let HSM fail the access if conten=
+t is
+> > not available.
+> >
+> > If you remember, in one of my very early version of pre-content events,
+> > the pre-content event (or maybe it was FAN_ACCESS_PERM itself)
+> > carried a flag (I think it was called FAN_PRE_VFS) to communicate to
+> > HSM service if it was safe to write to fs in the context of event handl=
+ing.
+> >
+> > At the moment, I cannot think of any elegant way out of this use case
+> > except annotating the event from fault_in_readable() as "unsafe-for-wri=
+te".
+> > This will relax the debugging code assertion and notify the HSM service
+> > (via an event flag) that it can ALLOW/DENY, but it cannot fill the file=
+.
+> > Maybe we can reuse the FAN_ACCESS_PERM event to communicate
+> > this case to HSM service.
+> >
+> > WDYT?
+>
+> I think that mmap was a mistake.
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- tools/testing/selftests/pidfd/.gitignore      |   1 +
- tools/testing/selftests/pidfd/Makefile        |   2 +
- tools/testing/selftests/pidfd/pidfd.h         |   7 ++
- .../selftests/pidfd/pidfd_exec_helper.c       |  12 +++
- .../testing/selftests/pidfd/pidfd_info_test.c | 102 ++++++++++++++++++
- 5 files changed, 124 insertions(+)
- create mode 100644 tools/testing/selftests/pidfd/pidfd_exec_helper.c
+What do you mean?
+Isn't the fault hook required for your large executables use case?
 
-diff --git a/tools/testing/selftests/pidfd/.gitignore b/tools/testing/selftests/pidfd/.gitignore
-index bddae1d4d7e4..0406a065deb4 100644
---- a/tools/testing/selftests/pidfd/.gitignore
-+++ b/tools/testing/selftests/pidfd/.gitignore
-@@ -9,3 +9,4 @@ pidfd_setns_test
- pidfd_file_handle_test
- pidfd_bind_mount
- pidfd_info_test
-+pidfd_exec_helper
-diff --git a/tools/testing/selftests/pidfd/Makefile b/tools/testing/selftests/pidfd/Makefile
-index a94c2bc8d594..fcbefc0d77f6 100644
---- a/tools/testing/selftests/pidfd/Makefile
-+++ b/tools/testing/selftests/pidfd/Makefile
-@@ -5,5 +5,7 @@ TEST_GEN_PROGS := pidfd_test pidfd_fdinfo_test pidfd_open_test \
- 	pidfd_poll_test pidfd_wait pidfd_getfd_test pidfd_setns_test \
- 	pidfd_file_handle_test pidfd_bind_mount pidfd_info_test
- 
-+TEST_GEN_PROGS_EXTENDED := pidfd_exec_helper
-+
- include ../lib.mk
- 
-diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selftests/pidfd/pidfd.h
-index fee6fd3e67dd..cec22aa11cdf 100644
---- a/tools/testing/selftests/pidfd/pidfd.h
-+++ b/tools/testing/selftests/pidfd/pidfd.h
-@@ -254,4 +254,11 @@ static inline ssize_t write_nointr(int fd, const void *buf, size_t count)
- 	return ret;
- }
- 
-+static inline int sys_execveat(int dirfd, const char *pathname,
-+			       char *const argv[], char *const envp[],
-+			       int flags)
-+{
-+        return syscall(__NR_execveat, dirfd, pathname, argv, envp, flags);
-+}
-+
- #endif /* __PIDFD_H */
-diff --git a/tools/testing/selftests/pidfd/pidfd_exec_helper.c b/tools/testing/selftests/pidfd/pidfd_exec_helper.c
-new file mode 100644
-index 000000000000..5516808c95f2
---- /dev/null
-+++ b/tools/testing/selftests/pidfd/pidfd_exec_helper.c
-@@ -0,0 +1,12 @@
-+#define _GNU_SOURCE
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+
-+int main(int argc, char *argv[])
-+{
-+	if (pause())
-+		_exit(EXIT_FAILURE);
-+
-+	_exit(EXIT_SUCCESS);
-+}
-diff --git a/tools/testing/selftests/pidfd/pidfd_info_test.c b/tools/testing/selftests/pidfd/pidfd_info_test.c
-index 5e86e3df323b..f159a6705a07 100644
---- a/tools/testing/selftests/pidfd/pidfd_info_test.c
-+++ b/tools/testing/selftests/pidfd/pidfd_info_test.c
-@@ -369,4 +369,106 @@ TEST_F(pidfd_info, thread_group)
- 	EXPECT_EQ(close(pidfd_thread), 0);
- }
- 
-+static void *pidfd_info_thread_exec(void *arg)
-+{
-+	pid_t pid_thread = gettid();
-+	int ipc_socket = *(int *)arg;
-+
-+	/* Inform the grand-parent what the tid of this thread is. */
-+	if (write_nointr(ipc_socket, &pid_thread, sizeof(pid_thread)) != sizeof(pid_thread))
-+		return NULL;
-+
-+	if (read_nointr(ipc_socket, &pid_thread, sizeof(pid_thread)) != sizeof(pid_thread))
-+		return NULL;
-+
-+	close(ipc_socket);
-+
-+	sys_execveat(AT_FDCWD, "pidfd_exec_helper", NULL, NULL, 0);
-+	return NULL;
-+}
-+
-+TEST_F(pidfd_info, thread_group_exec)
-+{
-+	pid_t pid_leader, pid_thread;
-+	pthread_t thread;
-+	int nevents, pidfd_leader, pidfd_thread, ret;
-+	int ipc_sockets[2];
-+	struct pollfd fds = {};
-+	struct pidfd_info info = {
-+		.mask = PIDFD_INFO_CGROUPID | PIDFD_INFO_EXIT,
-+	};
-+
-+	ret = socketpair(AF_LOCAL, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets);
-+	EXPECT_EQ(ret, 0);
-+
-+	pid_leader = create_child(&pidfd_leader, 0);
-+	EXPECT_GE(pid_leader, 0);
-+
-+	if (pid_leader == 0) {
-+		close(ipc_sockets[0]);
-+
-+		/* The thread will outlive the thread-group leader. */
-+		if (pthread_create(&thread, NULL, pidfd_info_thread_exec, &ipc_sockets[1]))
-+			syscall(__NR_exit, EXIT_FAILURE);
-+
-+		/* Make the thread-group leader exit prematurely. */
-+		syscall(__NR_exit, EXIT_SUCCESS);
-+	}
-+
-+	/* Retrieve the tid of the thread. */
-+	EXPECT_EQ(close(ipc_sockets[1]), 0);
-+	ASSERT_EQ(read_nointr(ipc_sockets[0], &pid_thread, sizeof(pid_thread)), sizeof(pid_thread));
-+
-+	/* Opening a thread as a PIDFD_THREAD must succeed. */
-+	pidfd_thread = sys_pidfd_open(pid_thread, PIDFD_THREAD);
-+	ASSERT_GE(pidfd_thread, 0);
-+
-+	/* Now that we've opened a thread-specific pidfd the thread can exec. */
-+	ASSERT_EQ(write_nointr(ipc_sockets[0], &pid_thread, sizeof(pid_thread)), sizeof(pid_thread));
-+	EXPECT_EQ(close(ipc_sockets[0]), 0);
-+
-+	/* Wait until the kernel has SIGKILLed the thread. */
-+	fds.events = POLLHUP;
-+	fds.fd = pidfd_thread;
-+	nevents = poll(&fds, 1, -1);
-+	ASSERT_EQ(nevents, 1);
-+	/* The thread has been reaped. */
-+	ASSERT_TRUE(!!(fds.revents & POLLHUP));
-+
-+	/* Retrieve thread-specific exit info from pidfd. */
-+	ASSERT_EQ(ioctl(pidfd_thread, PIDFD_GET_INFO, &info), 0);
-+	ASSERT_FALSE(!!(info.mask & PIDFD_INFO_CREDS));
-+	ASSERT_TRUE(!!(info.mask & PIDFD_INFO_EXIT));
-+	/*
-+	 * While the kernel will have SIGKILLed the whole thread-group
-+	 * during exec it will cause the individual threads to exit
-+	 * cleanly.
-+	 */
-+	ASSERT_TRUE(WIFEXITED(info.exit_code));
-+	ASSERT_EQ(WEXITSTATUS(info.exit_code), 0);
-+
-+	/*
-+	 * The thread-group leader is still alive, the thread has taken
-+	 * over its struct pid and thus its pid number.
-+	 */
-+	info.mask = PIDFD_INFO_CGROUPID | PIDFD_INFO_EXIT;
-+	ASSERT_EQ(ioctl(pidfd_leader, PIDFD_GET_INFO, &info), 0);
-+	ASSERT_TRUE(!!(info.mask & PIDFD_INFO_CREDS));
-+	ASSERT_FALSE(!!(info.mask & PIDFD_INFO_EXIT));
-+	ASSERT_EQ(info.pid, pid_leader);
-+
-+	/* Take down the thread-group leader. */
-+	EXPECT_EQ(sys_pidfd_send_signal(pidfd_leader, SIGKILL, NULL, 0), 0);
-+	EXPECT_EQ(sys_waitid(P_PIDFD, pidfd_leader, NULL, WEXITED), 0);
-+
-+	/* Retrieve exit information for the thread-group leader. */
-+	info.mask = PIDFD_INFO_CGROUPID | PIDFD_INFO_EXIT;
-+	ASSERT_EQ(ioctl(pidfd_leader, PIDFD_GET_INFO, &info), 0);
-+	ASSERT_FALSE(!!(info.mask & PIDFD_INFO_CREDS));
-+	ASSERT_TRUE(!!(info.mask & PIDFD_INFO_EXIT));
-+
-+	EXPECT_EQ(close(pidfd_leader), 0);
-+	EXPECT_EQ(close(pidfd_thread), 0);
-+}
-+
- TEST_HARNESS_MAIN
--- 
-2.47.2
+>
+> Is there a way to tell if we're currently in a path that is under fsfreez=
+e
+> protection?
 
+Not at the moment.
+At the moment, file_write_not_started() is not a reliable check
+(has false positives) without CONFIG_LOCKDEP.
+
+> Just denying this case would be a simpler short term solution while
+> we come up with a long term solution. I think your solution is fine, but =
+I'd be
+> just as happy with a simpler "this isn't allowed" solution. Thanks,
+
+Yeh, I don't mind that, but it's a bit of an overkill considering that
+file with no content may in fact be rare.
+
+Thanks,
+Amir.
 
