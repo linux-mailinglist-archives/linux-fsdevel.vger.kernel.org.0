@@ -1,122 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-43191-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77673A4F1B3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 00:43:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD45AA4F1CC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 00:50:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE7AC188C583
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 23:43:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82FA87A3340
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 23:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0A91FF7BF;
-	Tue,  4 Mar 2025 23:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE36327C14C;
+	Tue,  4 Mar 2025 23:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="PeO2Qd9z"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RouAyXT2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1ED624DFE1
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 23:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BFE1EBA1C
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 23:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741131814; cv=none; b=GlpTva0Hq3tYfBdnulDZVr2JyjavvmhyhPNcOOLOjGI4qW1N2Ox/7KbqXoMc1/gNwWfcLkeZDO7kdHHCfu/nAcfOjFPD6Dzd/hMyvzNmRXkGhDQF83mTEFPkdpbL2hETD7kBWtnsAw9JOMpXRaTllaMnh7FosMSpvO6nBfdYFEo=
+	t=1741132193; cv=none; b=lPOJ1miB22Veo/DIstfBK69yCarKeUiv29F9sFTlVEtl4NqKPFZvzr2/5KUO98OtDyhZgiwRxZSsi/z0IGtu2iL7AfGsej79ZHpJQto+WFDneF2+uvwHovEb8LwdozVvif2Zcebmn7kVYdac5vpoiSPyd/vjdJ1hoRhbXvh4IZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741131814; c=relaxed/simple;
-	bh=LQ2dObE9xnjHqX4o4VZ6lldO1Qoq22S95Oe8bf3ZaRM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lc5onniD3Rg2JAza/iITMOalgfNokrxotrlvBiIGHfHI3JZHBlXkyb56q/DL25Bqyu3/GubFnQX43s0tSe2uhD8EogGFmDY/OEUUBTSG49A2GcFnfk16pPeGqfAz23NEV63ilC62aNygMzPenGXaY5a7x/jWiT/+ZJf5zHBoDhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=PeO2Qd9z; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3d2b6ed8128so1097565ab.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Mar 2025 15:43:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1741131811; x=1741736611; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=adL3a2anGdh9vo2wHq8fefFVpNlV6pB2upjJtDZhv9U=;
-        b=PeO2Qd9zxnVs3UcbSfhqR6qottgXEhCLXw476JOVPf6U2G3JjzElJ0ij8NCpPVzOA7
-         emwRXD6wjFsG1xNFFgSGtn8aAYs+SBSvdTx7T0EAmRseNYrXDG920KGKyVQeixdyup5w
-         8Wuoiv1iKaM/MeWQhUTjKhu4El+LUelxkaj7ubJhJIWM5qeIENpo7KmoQnHmbIL0RMej
-         2KTV5Gtjm0Sjpgq2Ap6Onga9ZAzic1gHgVSzzsGp1D6klhprqFxyGKy+vJzQ53ezB8sV
-         2nUMvXwVXXEuQCDKoR2V1hJ0KfNndt3MmCSPp1Nlt0FWTE6m5p9rEx9OWNNCrPiI2iKl
-         4G7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741131811; x=1741736611;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=adL3a2anGdh9vo2wHq8fefFVpNlV6pB2upjJtDZhv9U=;
-        b=UsSpm3urbgJ/2NfzE80Z9XhlXObO2YgFmKCHdkuBv6jP4iyxhkhMRaL7dJe0wLw4Jk
-         ZBsw0c7cAggG4bqKU+qvodyeC2MmWRRU8zX1xTSQbIFRE7JVpmHaE0WB+KxkPY/5sHI5
-         QvXmpr4lyU/I6V38uUSKRw4//scAObVTwFYpKYyzpH4fSZaEFub9N/8NwjxZ6Fuvj6DB
-         TiB4adzEVyM+COFs08ohoxA3QKvBA8+HvwhtmxgfOj57GpvhGPYQJ33jLP2E/YLiabwO
-         8MTdGGE+ZBaGWOmDeatzJS5phvX0p2Mx8AXmp3ApNGSqulxOJu29kEq26zFEm6XfI1cn
-         /A8w==
-X-Forwarded-Encrypted: i=1; AJvYcCW9QexVWnbq/63jDpP/5YxdcjUyoGuisb55MayjdFrUBDiTy+1wuCafGkBwL5RXlV5aP1iMkDbbd5/BZvI9@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOy8bjV8q+A+D3go/gDOGKlVSrlNylpIuRYvbsY9lcsSiw4wDl
-	KMePFtMnlNTbjSRnezGmFLDVkhmz3Vhm+cNPjyz7D8u2n96R9aFnKBd4oWp0SYs=
-X-Gm-Gg: ASbGnct2fo0+bC0O/nssl/4nhm+h5NBbFzIzYHgFQlxrPZ8oPeR45OOiFjQLSufYCbr
-	yYhxgGv1KbU8EF8jk9mZxl0SXBCTKIS58Kg9dmY8whKq29R5CxfrebsTNx3EN5qKnuV2PHEihOe
-	ADE+igejODBppar+OOrThI7HqeumEonzXK+DlvqESZiHA+ii7O1z+6HwrWS6AfqMfDt+z3eS9ts
-	8tkyAsL244s+vu9Ca8bc1X6/BwvumFcNeJmF+kaBKodcwgISGU9jJLwCGcmk8jaRnvVcAiirmQu
-	icsQC2a5UpDnCGoaBy2DrMC5aanomJ+jAtg6xDfuLA==
-X-Google-Smtp-Source: AGHT+IHRIfVPTO2H+vhGXg2gihyT9kT8cJpre62fDKYP0upABmDl9eg4B1dQhkHIWNRySymN6Tqkfg==
-X-Received: by 2002:a05:6e02:12e6:b0:3d3:fa69:6755 with SMTP id e9e14a558f8ab-3d42b96c243mr11906105ab.5.1741131811472;
-        Tue, 04 Mar 2025 15:43:31 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d428e8749asm3788845ab.43.2025.03.04.15.43.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 15:43:30 -0800 (PST)
-Message-ID: <876fa989-ee26-41b3-9cd4-2663343d21f7@kernel.dk>
-Date: Tue, 4 Mar 2025 16:43:29 -0700
+	s=arc-20240116; t=1741132193; c=relaxed/simple;
+	bh=iEtB+gCyt8I6YiLzpl4Y3N3BrPvrl3nxkNTaQR2VtHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hTK/VomhB91QkWLvygzmzg8xJNDZEM8rj/x1xdcWMrDXmbeSg5ct+taVScnDMgW4ozAZJq2DJv+ajcDHO5FU4IdVSD9I415Ah4i0FIjBzShlRFJfmDLCaZQKaFfXnTF9xNSsJ6z6gbVuOx2/o/hbO+MHsg1wQyYghErq16GHg1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RouAyXT2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741132190;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zsLjsgiwz48CWElDV+44qdETBMYv+pYUPW3rLAb2CoA=;
+	b=RouAyXT2h/oZq52eIPQGFNReaVTg338reQenbj/2eHfTuet3ggtYFu4NR4qtciFIU36Nom
+	fY62J8H/kznv5svWAleQdVjDpPYMjOwqtJ4Zw2Kv2M+NxzshmwMw0AuXyOcVC3BDu9eW0+
+	uqSwRfhFSLh1WVelonZbJR5KQvNVwgY=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-245-85hpojrxOUGcCCaFuSHlqQ-1; Tue,
+ 04 Mar 2025 18:49:45 -0500
+X-MC-Unique: 85hpojrxOUGcCCaFuSHlqQ-1
+X-Mimecast-MFC-AGG-ID: 85hpojrxOUGcCCaFuSHlqQ_1741132184
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1A4071800872;
+	Tue,  4 Mar 2025 23:49:44 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.41])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 35DDE180035F;
+	Tue,  4 Mar 2025 23:49:40 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed,  5 Mar 2025 00:49:13 +0100 (CET)
+Date: Wed, 5 Mar 2025 00:49:09 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+Message-ID: <20250304234908.GH5756@redhat.com>
+References: <20250224142329.GA19016@redhat.com>
+ <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt>
+ <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com>
+ <20250227211229.GD25639@redhat.com>
+ <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com>
+ <20250228143049.GA17761@redhat.com>
+ <20250228163347.GB17761@redhat.com>
+ <20250304050644.2983-1-hdanton@sina.com>
+ <20250304102934.2999-1-hdanton@sina.com>
+ <20250304233501.3019-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] iomap: propagate nowait to block layer
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Pavel Begunkov <asml.silence@gmail.com>,
- Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- Dave Chinner <david@fromorbit.com>, io-uring@vger.kernel.org,
- "Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
- wu lei <uwydoc@gmail.com>
-References: <f287a7882a4c4576e90e55ecc5ab8bf634579afd.1741090631.git.asml.silence@gmail.com>
- <Z8clJ2XSaQhLeIo0@infradead.org>
- <83af597f-e599-41d2-a17b-273d6d877dad@gmail.com>
- <Z8cxVLEEEwmUigjz@infradead.org>
- <1e7bbcdf-f677-43e4-b888-7a4614515c62@kernel.dk>
- <Z8eMPU7Tvduo0IVw@infradead.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Z8eMPU7Tvduo0IVw@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304233501.3019-1-hdanton@sina.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On 3/4/25 4:26 PM, Christoph Hellwig wrote:
-> On Tue, Mar 04, 2025 at 10:36:16AM -0700, Jens Axboe wrote:
->> stable and actual production certainly do. Not that this should drive
->> upstream development in any way, it's entirely unrelated to the problem
->> at hand.
-> 
-> And that's exactly what I'm saying.  Do the right thing instead of
-> whining about backports to old kernels.
+On 03/05, Hillf Danton wrote:
+>
+> On Tue, 4 Mar 2025 13:34:57 +0100 Oleg Nesterov <oleg@redhat.com>
+> > > >
+> > > Note wakeup can occur even if pipe is full,
+> >
+> > Perhaps I misunderstood you, but I don't think pipe_read() can ever do
+> > wake_up(pipe->wr_wait) if pipe is full...
+> >
+> > > 		 * So we still need to wake up any pending writers in the
+> > > 		 * _very_ unlikely case that the pipe was full, but we got
+> > > 		 * no data.
+> > > 		 */
+> >
+> > Only if wake_writer is true,
+> >
+> > 		if (unlikely(wake_writer))
+> > 			wake_up_interruptible_sync_poll(...);
+> >
+> > and in this case the pipe is no longer full. A zero-sized buffer was
+> > removed.
+> >
+> > Of course this pipe can be full again when the woken writer checks the
+> > condition, but this is another story. And in this case, with your
+> > proposed change, the woken writer will take pipe->mutex for no reason.
+> >
+> See the following sequence,
+>
+> 	1) waker makes full false
+> 	2) waker makes full true
+> 	3) waiter checks full
+> 	4) waker makes full false
 
-Yep we agree on that, that's obvious. What I'm objecting to is your
-delivery, which was personal rather than factual, which you should imho
-apologize for. It's not that hard to stay on topic and avoid random
-statements like that, which are entirely useless, counterproductive, and
-just bullshit to be honest.
+I don't really understand this sequence, but
 
-And honestly pretty tiring that this needs to be said, still. Really.
+> waiter has no real idea of full without lock held, perhaps regardless
+> the code cut below.
 
--- 
-Jens Axboe
+Of course! Again, whatever the woken writer checks in pipe_writable()
+lockless, another writer can make pipe_full() true again.
+
+But why do we care? Why do you think that the change you propose makes
+more sense than the fix from Prateek or the (already merged) Linus's fix?
+
+Oleg.
+
 
