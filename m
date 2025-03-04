@@ -1,88 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-43136-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43137-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6A89A4E8A0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 18:27:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6038EA4E8A4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 18:27:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 346B74232A9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 17:22:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14C7B19C4D4E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 17:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6D62C1531;
-	Tue,  4 Mar 2025 16:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283892C155C;
+	Tue,  4 Mar 2025 16:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Tj9QDfef"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xVzpIv8w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D23E285407;
-	Tue,  4 Mar 2025 16:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5282C154E
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 16:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741107542; cv=none; b=NNQy6YcEXugptqnVFR6ujHAByWbWESB7yGr/5TP3Q8MVsx0cKgi1+hf3u4GZKRQP8/rQO5sruYIkKsfjqMAFFjpis1Y+7QBx6I4U/M0sT6kDjq4GMGX2yfqV9eDd5aNFVrD0pe9o6hTGUhsAsEHzkqx6ppV6BCteYLOrQzYbIvA=
+	t=1741107564; cv=none; b=ohs0BQa4wAxisDCHMR2OEAGdhMwKiYLlDwojQu7LePUSNdS0uE09Rox9zVCay5Ci8bMuTzigCGvNheEQKOmUdDLUAFudnV7qCpaCBdSk4JdF+0zR508P/ej1hNWJIMcfi41lLcyu7vwkC/XGdipZf1CfYYws9K+PfLhq3hh5voA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741107542; c=relaxed/simple;
-	bh=hlSefFu+T7kPa6zdQpbEdDrC5eBetGFjNBr7skzkaaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gR22jFxf8VR5zLZ6pLwEKzwTf10aln1puWknoYqxsZzTvftfVG3ULsO0mgYGt/FcgOqvyQJoSeWyEAW3ZAO8szXj8npdTTKVggr3DM4t2fDVVy4U2cwnWFen4z0mzAW/D7HzyxhCknvQGLMfcDQzFje/GUaQIPzdTctW7hxI3QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Tj9QDfef; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=dlSiTVCdYd8giigSRHqNV9RsrG2BwpE0SZCO+G9sIIg=; b=Tj9QDfef4hMq6tE5HVXKhhyleC
-	uQ7gv0I2FYY6fUKM4gD1slplJXl4HU6zcvkiTxrssR6MNmIoCth7ztwtAil+QoKtuDETXLK845pFw
-	7PP5WfNauQI2/ATlcR6KAWBZPkGG3dRqmbvAQ2RrW2gSGlu+UKewcjNzbVZsRQY35p0tAYONms9Jt
-	qOvrK04k+5euTUYa2ho8j6ajMafUOgkbuSgu8jTabEhgUblq4J4FP6Lvr1uu36XMzgcnkLg3rEbdp
-	X9Rb68Br2AusvK4ZcsBDDTBB1DP1XaWR9dxV0bBGnVhui7Fc2xgb40F55r5F3WO5bBJnstGwncxmo
-	qR41luxw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tpVbg-00000005WTd-0ZRN;
-	Tue, 04 Mar 2025 16:59:00 +0000
-Date: Tue, 4 Mar 2025 08:59:00 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-	io-uring@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
-	linux-xfs@vger.kernel.org, wu lei <uwydoc@gmail.com>
-Subject: Re: [PATCH v2 1/1] iomap: propagate nowait to block layer
-Message-ID: <Z8cxVLEEEwmUigjz@infradead.org>
-References: <f287a7882a4c4576e90e55ecc5ab8bf634579afd.1741090631.git.asml.silence@gmail.com>
- <Z8clJ2XSaQhLeIo0@infradead.org>
- <83af597f-e599-41d2-a17b-273d6d877dad@gmail.com>
+	s=arc-20240116; t=1741107564; c=relaxed/simple;
+	bh=NMceGXU1AayKIvYDDDytTT9zM6ePfplkGhj1Gwrp0Tc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=mccJJ5+GmU3r6fM6budCpTtTPyQUGks42AB2K1oK7AQVKZCSXHPT+A24vSOgk53LP4ITxQsL+ea/eLkJMmk8581yrhoROTDxiZS+IwBRtJF8mW+Qe/xhL8zxsIKQKjy2C2YJQ+TDNmo4BzO9aptHrLPXg+A/LhRVmSoPej7LwSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xVzpIv8w; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2236b6fb4a6so146402315ad.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Mar 2025 08:59:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741107562; x=1741712362; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=V7W7yQmf61Pq53pMS2vzrgU7eZq7ZkAtUnxQ4fLwZP8=;
+        b=xVzpIv8wKPzZufylkWP08Zk3L6PpAtcFJZqbK5fZWTOv6yzWtCz1OLqybZApjy6ZQ2
+         k2GZ1UrEtB9Rs8bxEXpyClDuHvAbnZIALZWxGlH9mV2iVrCW57deaINSsPlABGY0yJWQ
+         YHaMrxkB50e9C5nK/ZJ8zrPJxBSGQcp0jC7rsHotKUNBJ6YseLws9+xoJrCx9H2hLjZN
+         fbY6pA2XmiwM/36ztyZTla9TPDMyzTECE5ZXmnenjgYn3gP9CoXz/Z6SPnoxHSx/3PsA
+         Lv9rhuKNQX1xrJdYjNT9rHstlHTTsTcQAScduyhRfLJ4P3lJDu1w9D7dlh0w450BP9n9
+         10fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741107562; x=1741712362;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V7W7yQmf61Pq53pMS2vzrgU7eZq7ZkAtUnxQ4fLwZP8=;
+        b=F5Tt6C2kswDxRYyznfjWtF5S9W6TTlLSrpjMJxtstZpXkZO/ESK69WCQ5/010nTng7
+         /ItY+fmo+USgcqHEcMlUnDShMtMjF+1Cewiaivzr3p1YgFUHmhYD6ZhDfQu8v6kwt7Ok
+         5hk1rQ1QLEJiBPzOGltLB1O5WDUp7qy6DLoXNQUFCD1ePrkW8TfBlvkeaoIQyKcXMzfJ
+         0EuvMwQ0uLxbO+yaY7Xyc6bl3SrzPrS9X1oVGuRRU0MDdpyX+KX0U2nBz5fwSxrjp2Cr
+         JJxvr0rAF3yz+v9gITSwfgC27425aDowaY5COTUiKuOOSeHxQDk8wriJkWUy4kaJPHcd
+         EK2w==
+X-Forwarded-Encrypted: i=1; AJvYcCW05Cq+4fBgWjT2zx8ZM3mHX7wzX0+7tryDhDAHtfcGA+Ohlf32Hkw2syvXHbJaelP9ruxCq/XaZ9Eeqm32@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ0s3poxr0UJkWRkCdQtUa8CC1+EKWdPdriOi6dbE9pjnIKnax
+	kfBKWEKXolJfVjBPLsSD/hHZUyGw0+E6x9a0yLRqvGcsYarhNnbc/jPw+49ambs//7evD7e6cUj
+	NsA==
+X-Google-Smtp-Source: AGHT+IHAFrEgPQdnRru2RpcA9ojFQVDAwMfLY/u9ofYMqa8EKlltfiiKVsKJDm4SpBm3Hx0wphR2ehXHeKw=
+X-Received: from plbju14.prod.google.com ([2002:a17:903:428e:b0:220:e84e:350c])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:3b83:b0:221:7955:64c3
+ with SMTP id d9443c01a7336-22368f9d123mr262199705ad.23.1741107562128; Tue, 04
+ Mar 2025 08:59:22 -0800 (PST)
+Date: Tue, 4 Mar 2025 08:59:20 -0800
+In-Reply-To: <9d04c204-cb9a-4109-977b-3d39b992c521@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <83af597f-e599-41d2-a17b-273d6d877dad@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Mime-Version: 1.0
+References: <b494af0e-3441-48d4-abc8-df3d5c006935@suse.cz> <diqz8qplabre.fsf@ackerleytng-ctop.c.googlers.com>
+ <Z8cci0nNtwja8gyR@google.com> <9d04c204-cb9a-4109-977b-3d39b992c521@redhat.com>
+Message-ID: <Z8cxaGGoQ2163-R6@google.com>
+Subject: Re: [PATCH v6 4/5] KVM: guest_memfd: Enforce NUMA mempolicy using
+ shared policy
+From: Sean Christopherson <seanjc@google.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Ackerley Tng <ackerleytng@google.com>, Vlastimil Babka <vbabka@suse.cz>, shivankg@amd.com, 
+	akpm@linux-foundation.org, willy@infradead.org, pbonzini@redhat.com, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-coco@lists.linux.dev, 
+	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com, 
+	Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com, 
+	tabba@google.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Mar 04, 2025 at 04:41:40PM +0000, Pavel Begunkov wrote:
-> bio_iov_vecs_to_alloc() can overestimate, i.e. the check might return
-> -EAGAIN in more cases than required but not the other way around,
-> that should be enough for a fix such as this patch. Or did I maybe
-> misunderstood you?
+On Tue, Mar 04, 2025, David Hildenbrand wrote:
+> On 04.03.25 16:30, Sean Christopherson wrote:
+> > On Tue, Mar 04, 2025, Ackerley Tng wrote:
+> > > Vlastimil Babka <vbabka@suse.cz> writes:
+> > > > > struct shared_policy should be stored on the inode rather than the file,
+> > > > > since the memory policy is a property of the memory (struct inode),
+> > > > > rather than a property of how the memory is used for a given VM (struct
+> > > > > file).
+> > > > 
+> > > > That makes sense. AFAICS shmem also uses inodes to store policy.
+> > > > 
+> > > > > When the shared_policy is stored on the inode, intra-host migration [1]
+> > > > > will work correctly, since the while the inode will be transferred from
+> > > > > one VM (struct kvm) to another, the file (a VM's view/bindings of the
+> > > > > memory) will be recreated for the new VM.
+> > > > > 
+> > > > > I'm thinking of having a patch like this [2] to introduce inodes.
+> > > > 
+> > > > shmem has it easier by already having inodes
+> > > > 
+> > > > > With this, we shouldn't need to pass file pointers instead of inode
+> > > > > pointers.
+> > > > 
+> > > > Any downsides, besides more work needed? Or is it feasible to do it using
+> > > > files now and convert to inodes later?
+> > > > 
+> > > > Feels like something that must have been discussed already, but I don't
+> > > > recall specifics.
+> > > 
+> > > Here's where Sean described file vs inode: "The inode is effectively the
+> > > raw underlying physical storage, while the file is the VM's view of that
+> > > storage." [1].
+> > > 
+> > > I guess you're right that for now there is little distinction between
+> > > file and inode and using file should be feasible, but I feel that this
+> > > dilutes the original intent.
+> > 
+> > Hmm, and using the file would be actively problematic at some point.  One could
+> > argue that NUMA policy is property of the VM accessing the memory, i.e. that two
+> > VMs mapping the same guest_memfd could want different policies.  But in practice,
+> > that would allow for conflicting requirements, e.g. different policies in each
+> > VM for the same chunk of memory, and would likely lead to surprising behavior due
+> > to having to manually do mbind() for every VM/file view.
+> 
+> I think that's the same behavior with shmem? I mean, if you have two people
+> asking for different things for the same MAP_SHARE file range, surprises are
+> unavoidable.
 
-No you didn;t but we need to do this properly.
-
-> Assuming you're suggesting to implement that, I can't say I'm excited by
-> the idea of reworking a non trivial chunk of block layer to fix a problem
-> and then porting it up to some 5.x, especially since it was already
-> attempted before by someone and ultimately got reverted.
-
-Stop whining.  Backporting does not matter for upstream development,
-and I'm pretty sure you'd qualify for a job where you don't have to do
-this if you actually care and don't just like to complain.
-
+Yeah, I was specifically thinking of the case where a secondary mapping doesn't
+do mbind() at all, e.g. could end up effectively polluting guest_memfd with "bad"
+allocations.
 
