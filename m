@@ -1,65 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-43104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43105-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528E3A4DFAA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 14:50:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A3DA4DFB2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 14:51:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F076D189951A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 13:50:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 593173B2CA8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 13:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B692046BD;
-	Tue,  4 Mar 2025 13:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48A6204874;
+	Tue,  4 Mar 2025 13:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GZ2pKHpZ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zDJPPi/N"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3BF2045A6;
-	Tue,  4 Mar 2025 13:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B131C54AA;
+	Tue,  4 Mar 2025 13:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741096195; cv=none; b=K1Sdmy24JGF1y31u/7uJ7r7yk7+JbfU1aJtbSIfpD1c4B5+GUUA66b8cakaS+9a/H4RIasouH5aYX7/25xOP33uqKM5IK/6N7PUDjCJZFSl+PWQeqlczvS04vKGtfclsWC1lMzvHflMuBWSbsVR/uzGGsZkPQvBlaF5EHtAp+EU=
+	t=1741096249; cv=none; b=sMLsVpPsoO8d6J24iQwiNZOio1P3JXFmfOmgR+1SxllqUg+S0Bajd/xg+mPdjMYcGZPNspSDb4ezDf1TOpRjUAY9aC71U/KDCzbBZhramlC0D1BJffKdHwAcQ3ulY4bXjK7WDDZaEPTX+lfL3334BHMFrxq6MFnXYutv3UyCkwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741096195; c=relaxed/simple;
-	bh=KHHcDaudjfP4u0p/+Ih+DTSAdyY6lXkDxSOUsZ7Ewew=;
+	s=arc-20240116; t=1741096249; c=relaxed/simple;
+	bh=VyUykeqet9JSwQ2KV4Nw7ZT9QByZkDNd9HSOsHXr3g0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oWF0CMP1C6FETL4XE/EwMbBgTMsgNkFCzS9F9yeu4o1+F27gqImMzfVVs9iUGIzZgHSihQcdMwKyI6ceaSkC2bPlnYVvYli7Ebybj0iRCjUbkVlnK/ksEoDMcgZxEe+oPANX2VCkThUJxrdMFWTa5IpOhXAkDPYwa189NG2yndQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GZ2pKHpZ; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=WmpzkXpiZPMRRZORFLWt78LCEKOUT0Yk1JfS9aPZnMzTXFnSj7KO6+rr2lxMbc9mbjZ8lZgxb1UDlVkh1hX6qbP4Z5C8+IVWEV9Oqkco6iibd9L5I6+GuJ41kLZfq30gHkI0O8Q0rIlbjjehAo6RvWTaeotVyfUr1E9ohTrXhEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=zDJPPi/N; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=pDnPDI97a7aET7imOLMNEqHsZIh7T+bfAPBqUaDDehI=; b=GZ2pKHpZSS5hKapeMQF+nRfLGH
-	abN6Dctk9OeIScyIH1Pm2F5OJffxhFY+mx1cL7MG/eL9Upx3bKjYvglZLjNKtCyiI2tlZEjcucnVl
-	ofWCt0dTk3rzrDnPvMq1a7xEpKREYrpM30r3E0e94uSiIf8f3fPGKlNHDhMWxL3xOzkAIcPUA4jAQ
-	B5pdnC7+gvdeTBnp9n7vMEjwVa0jGwbtOaqFkzSwOUwZaswq2tVoWEi/yn4F6nWgFHwarDBlIXpOd
-	/TKajq34mS6+BcTKlF6X4/Lr3zwOZpAg3+p9oBn5/QPSk/uUMMKiZmjBxg6y2tH3gX3xnu8r1NsGy
-	uGpaInew==;
+	bh=QHF7za52Pu8bMm2/1OlRR3fhMMqh4Nd+PvYp0UdoXMk=; b=zDJPPi/N8Kr9pI+bcXAf2ZO4Io
+	5ocf+UZidcYhssKGr4q0v4vIO47+fltH0FFgBz0zlnZSKIornJ09NA4iJ1BUU+c1LZdtMXjQkdR2b
+	OqIUvdo0vqUGc6cHgwSYEKM6ewB2wFHZfN3abktWHTR5ZF+/Zt8U5XU7JMbMbNDsnWSy99KMtzoJF
+	f2f79QD/FmSdvNtNBbrQMW1iqAqCzi/86TvJ3gMYAcikeCABZnWCLL2yJn64ng/6ZNpfNnUdQpBek
+	CEw7fNteP5Qrc/tu+++ZVDKC9L8ihDpXEPFmnm1NXZZWiUlk0rBcd9hWAwutta9i0xI5s5ErqKhDK
+	wBTd4EuA==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tpSed-00000004qEw-1OIP;
-	Tue, 04 Mar 2025 13:49:51 +0000
-Date: Tue, 4 Mar 2025 05:49:51 -0800
+	id 1tpSfW-00000004qUo-1svf;
+	Tue, 04 Mar 2025 13:50:46 +0000
+Date: Tue, 4 Mar 2025 05:50:46 -0800
 From: Christoph Hellwig <hch@infradead.org>
 To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+Cc: Dave Chinner <david@fromorbit.com>,
+	Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>,
 	Jooyung Han <jooyung@google.com>, Alasdair Kergon <agk@redhat.com>,
 	Mike Snitzer <snitzer@kernel.org>,
 	Heinz Mauelshagen <heinzm@redhat.com>, zkabelac@redhat.com,
 	dm-devel@lists.linux.dev, linux-block@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH] the dm-loop target
-Message-ID: <Z8cE_4KSKHe5-J3e@infradead.org>
+Message-ID: <Z8cFNp1kd-vN8aTW@infradead.org>
 References: <7d6ae2c9-df8e-50d0-7ad6-b787cb3cfab4@redhat.com>
  <Z8W1q6OYKIgnfauA@infradead.org>
  <b3caee06-c798-420e-f39f-f500b3ea68ca@redhat.com>
  <Z8XlvU0o3C5hAAaM@infradead.org>
  <8adb8df2-0c75-592d-bc3e-5609bb8de8d8@redhat.com>
+ <Z8Zh5T9ZtPOQlDzX@dread.disaster.area>
+ <1fde6ab6-bfba-3dc4-d7fb-67074036deb0@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,36 +71,20 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8adb8df2-0c75-592d-bc3e-5609bb8de8d8@redhat.com>
+In-Reply-To: <1fde6ab6-bfba-3dc4-d7fb-67074036deb0@redhat.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, Mar 03, 2025 at 10:03:42PM +0100, Mikulas Patocka wrote:
-> Swapfile does ahead of time mapping.
+On Tue, Mar 04, 2025 at 12:18:04PM +0100, Mikulas Patocka wrote:
+> I'm not trying to break existing loop.
 
-It does.  But it is:
+You are f***cking breaking file system semantics.  Stop it now.
 
- a) protected against modification by the S_SWAPFILE flag and checked
-    for full allocation first
- b) something we want to get rid of because even with the above it is
-    rather problematic
+> The Android people concluded that loop is too slow and rather than using 
+> loop they want to map a file using a table with dm-linear targets over the 
+> image of the host filesystem. So, they are already doing what dm-loop is 
+> doing.
 
-> And I just looked at what swapfile 
-> does and copied the logic into dm-loop. If swapfile is not broken, how 
-> could dm-loop be broken?
-
-As said above, swapfile works around the brokenness in ways that you
-can't.  And just blindly copying old code without understanding it is
-never a good idea.
-
-> 
-> > > Would Jens Axboe agree to merge the dm-loop logic into the existing loop 
-> > > driver?
-> > 
-> > What logic?
-> 
-> The ahead-of-time mapping.
-
-As said multiple times you can't do that.  The block mapping is
-file system private information.
+I've never seen bug reports from " The Android people".  But maybe they
+just need to stop pointlessly using loop devices?
 
 
