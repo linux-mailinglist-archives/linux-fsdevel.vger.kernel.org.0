@@ -1,83 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-43188-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43189-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBF70A4F186
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 00:34:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 890C5A4F18D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 00:35:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8FCA163500
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 23:34:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79A4F3AB1E3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 23:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3C61FECB8;
-	Tue,  4 Mar 2025 23:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jXg4CK0b"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C1B24DFE1;
+	Tue,  4 Mar 2025 23:35:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from mail114-240.sinamail.sina.com.cn (mail114-240.sinamail.sina.com.cn [218.30.114.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B09279323
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 23:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D9D1FECB8
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 23:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.114.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741131241; cv=none; b=jBS42uyylXW8aeT22Gli5r+v/0If0Kj4rY372V1CJLj+UZSqe2h+i7xgyXTGSh/gkYllx1n6Sxs+YMT4CEpVVQP9QwA5vtM2oG9wEWzzQSj8TP0yZG9jFxjxRKNSQwkV3PM+3DWlnzLhQjev/xF/i5Zof2Vc9V/6GapCTbhO4BQ=
+	t=1741131327; cv=none; b=CjjUeAF6V8hkjHfYdziiAesbiHnlm6Ldy5CHhF8WgK5b0IGhrEwgpH2HrzyirdLPQF7NlAyskSpx/ON5h7RpTz7nArqdNnV/peI1f72AuMgu1UvFskQS2VT85tQl40mSuwX0lnQsqemkOouHnn1a3VgmP5bspo/HVReSeLZC7Ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741131241; c=relaxed/simple;
-	bh=V/YoStQ3/xbCkUXOS7/+yWRWr3s8j+10DNeiBXO3GNo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mk+anUSpkKWonYAsBb14nrsbi6itF0ZWAWv5q6pt/VbLqm4tSQM9d/ZuuK8iFQxmyZDyJZow4ZNjxl9Dd3I+l23RxThKlyvWa/lBUAmVX7A48OushFLNDFAHem/piA7MOdf+tsPaNuCENqzEFcpDHNXhk1WAhMf1E+JpNjshRXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jXg4CK0b; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3Qaca/vWJRDE0W37UsBW/xAUI1NqmwtDJ04dpELM1kg=; b=jXg4CK0batN5Li4i7dSvtjWpgI
-	x7mTYzgEpsQWU1fhqZYbeHAEZLAa3LRQX1XA9l3FPeD/uv3k1TEtc2zNEFyNW9v6SMz0VGlA8lkg+
-	XEj2Nn4SGzrlmQ89yA3NZp1xT0/O42WoUJ13nraJuMjMkdFTMR/g2NSV7NinNF0CssZHQagwOzT4X
-	bEC9j5sTvZ9Pmbe7oSRnXD7JeRxSUc8GGenWJtqDqn10i6Tgao67MfuyH9uVnzzyoXZnIcMEAiiu5
-	vLpyjXPet5XJwCHmgJzosd3eCwpamdP73HZA7mS94K895FHgpHznVvlpm/RLt/qcJdGGp9cyCxFSz
-	RACtGqHw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tpblw-00000006XQd-0e7Y;
-	Tue, 04 Mar 2025 23:34:00 +0000
-Date: Tue, 4 Mar 2025 15:34:00 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: Re: [LSF/MM/BPF TOPIC] Changing reference counting rules for inodes
-Message-ID: <Z8eN6Nd1iuQC2noS@infradead.org>
-References: <20250303170029.GA3964340@perftesting>
+	s=arc-20240116; t=1741131327; c=relaxed/simple;
+	bh=d/7vgs/C5rwes4Txtu4q0m9uILsnhLNub4HC3E8ykmE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=J1CgXPsy/q77TsOvD/UZtmDyZTVMqZ43UXkCQ1M6RL9pwFSp1zhNWJUA9SCm39EuhZMquKDuT7mWYp1KeRiXtfKEoBYcLllwi4vF2mC0azh+62437kj8muYaAWafxsiA7q1pPE3uNHm2NiFQrvNxEKwRD20BUDcPx29uZBofPoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.114.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.69.118])
+	by sina.com (10.185.250.23) with ESMTP
+	id 67C78E2E00002C0E; Tue, 5 Mar 2025 07:35:13 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 2523278913411
+X-SMAIL-UIID: A9E38C04C32D46F99DE422E1BD7AAFB2-20250305-073513-1
+From: Hillf Danton <hdanton@sina.com>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
+Date: Wed,  5 Mar 2025 07:35:00 +0800
+Message-ID: <20250304233501.3019-1-hdanton@sina.com>
+In-Reply-To: <20250304123457.GA25281@redhat.com>
+References: <e813814e-7094-4673-bc69-731af065a0eb@amd.com> <20250224142329.GA19016@redhat.com> <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt> <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com> <20250227211229.GD25639@redhat.com> <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com> <20250228143049.GA17761@redhat.com> <20250228163347.GB17761@redhat.com> <20250304050644.2983-1-hdanton@sina.com> <20250304102934.2999-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303170029.GA3964340@perftesting>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 03, 2025 at 12:00:29PM -0500, Josef Bacik wrote:
-> Hello,
+On Tue, 4 Mar 2025 13:34:57 +0100 Oleg Nesterov <oleg@redhat.com>
+> On 03/04, Hillf Danton wrote:
+> > On Tue, 4 Mar 2025 11:05:57 +0530 K Prateek Nayak <kprateek.nayak@amd.com>
+> > >> @@ -573,11 +573,13 @@ pipe_write(struct kiocb *iocb, struct io
+> > >>   		 * after waiting we need to re-check whether the pipe
+> > >>   		 * become empty while we dropped the lock.
+> > >>   		 */
+> > >> +		tail = pipe->tail;
+> > >>   		mutex_unlock(&pipe->mutex);
+> > >>   		if (was_empty)
+> > >>   			wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
+> > >>   		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
+> > >> -		wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe));
+> > >> +		wait_event_interruptible_exclusive(pipe->wr_wait,
+> > >> +				!READ_ONCE(pipe->readers) || tail != READ_ONCE(pipe->tail));
+> > >
+> > >That could work too for the case highlighted but in case the head too
+> > >has moved by the time the writer wakes up, it'll lead to an extra
+> > >wakeup.
+> > >
+> > Note wakeup can occur even if pipe is full,
 > 
-> I've recently gotten annoyed with the current reference counting rules that
-> exist in the file system arena, specifically this pattern of having 0
-> referenced objects that indicate that they're ready to be reclaimed.
+> Perhaps I misunderstood you, but I don't think pipe_read() can ever do
+> wake_up(pipe->wr_wait) if pipe is full...
+> 
+> > 		 * So we still need to wake up any pending writers in the
+> > 		 * _very_ unlikely case that the pipe was full, but we got
+> > 		 * no data.
+> > 		 */
+> 
+> Only if wake_writer is true,
+> 
+> 		if (unlikely(wake_writer))
+> 			wake_up_interruptible_sync_poll(...);
+> 
+> and in this case the pipe is no longer full. A zero-sized buffer was
+> removed.
+> 
+> Of course this pipe can be full again when the woken writer checks the
+> condition, but this is another story. And in this case, with your
+> proposed change, the woken writer will take pipe->mutex for no reason.
+> 
+See the following sequence,
 
-The other way around is worse.  E.g. the xfs_buf currently holds a
-reference of 1 for buffers on the LRU, which makes a complete mess of
-the buf rele and related code.  And it prevents us from using the
-lockref primitive.  Switching it to have a refcount of zero greatly
-cleans this up:
+	1) waker makes full false
+	2) waker makes full true
+	3) waiter checks full
+	4) waker makes full false
 
-http://git.infradead.org/?p=users/hch/xfs.git;a=commitdiff;h=8b46634dd6199f332f09e6f730a7a8801547c8b5
+waiter has no real idea of full without lock held, perhaps regardless
+the code cut below.
 
-I suspect the inode just needs more clear rules about what state an
-inode can be in.
-
+> Note also that the comment and code above was already removed by
+> https://lore.kernel.org/all/20250210114039.GA3588@redhat.com/
+> 
+> Oleg.
 
