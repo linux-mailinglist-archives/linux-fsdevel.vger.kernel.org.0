@@ -1,93 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-43162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6C50A4ECDC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 20:11:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38EF0A4ED2D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 20:22:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BFA57A57F8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 19:10:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 061877A31AC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 19:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9C4254844;
-	Tue,  4 Mar 2025 19:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726AD259CB5;
+	Tue,  4 Mar 2025 19:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GLfKkKFh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="moeQmHQZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8111E505
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 19:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC199204874;
+	Tue,  4 Mar 2025 19:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741115459; cv=none; b=CKiWCfpKwpGNJf/Vbp+UWiRsn4mD0i5hdG7B28l0sZYqaE51v80IpIBVwWeBX9gIuKlHOT/1oz/lRNLNtkj11pk0XVnRb7AunPxBolZlsNYFa0Nf5/zsGc6Sck+oQcnM2rUGSFXhtIoFKUvfLIbFDBt3QAdQXqFU3JBQGi4medY=
+	t=1741116126; cv=none; b=qM3gp17H+bwCziMLFJokNsh9B/NGqpOeWVjHNyK7wIu/A7SUQNsrxD/WI21GEjMidMXwCofbXL5hiA0dCUa9md10wJhjSorpNoO+lwu6PPytvU34w0NeU+x7+XIkQ9KvREnQ9gmJk4Jtk50PqF0lD0stA2OPKyJsJ4Jb5o5W7kY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741115459; c=relaxed/simple;
-	bh=ECLz5lZeV4Nx+5HaPm7JjXyPpqEWXDf9OVBphY4cL30=;
+	s=arc-20240116; t=1741116126; c=relaxed/simple;
+	bh=LWKGyUQ/VIvtyY8+wP/e6ebURMy+Laxrg66Z+DZYuwE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aSeZmvhqy/CISUHgEI2ZQBgG6PqB8ibCi7LCV9NTrBmNVqY5dtVSLyrkv/l00KkGkrAcFBx+jjDkuPR0UcrLChMrB5wFoQoG6gvdgP9zhU3WggtEq7ezYH9seZrDP6BP61Cdg33z91oly/kCLI4FeKmsLawGMhB2xvazOyrx+0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GLfKkKFh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA182C4CEE5;
-	Tue,  4 Mar 2025 19:10:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=BdNMlHuyJslxWHPKnOIOHeJBEZTM8KPeueDlrBTYiBfQYgxXetSKH2nYpA2scUQT62Sq4J381KKZPhr3/zGp1rqyrOSp4FYzkUvJReN5hyqrdC/9FeiTkv986doyLwl23XOUP3GziSlZnoh4bQ0NOm8nsGiwGxK/8zfSFpbWLd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=moeQmHQZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 319B8C4CEE5;
+	Tue,  4 Mar 2025 19:22:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741115459;
-	bh=ECLz5lZeV4Nx+5HaPm7JjXyPpqEWXDf9OVBphY4cL30=;
+	s=k20201202; t=1741116126;
+	bh=LWKGyUQ/VIvtyY8+wP/e6ebURMy+Laxrg66Z+DZYuwE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GLfKkKFhC1VKaFZV4RSNTMJRJnOBM2igmMBXO1HxYflHzLNk98z9CVDW2cJCw4pLH
-	 h7aaaQBFko8QCzCgjoWTxhOTbAayxqRzfvQiBuIHSdOuyUseI8WJ0+uO1ksu6zaAJa
-	 leh5vRKUx0luhs2jz4tSYBlUF33nuXoprFO6WSOT11RG53bVqeNWdgFjPwYPjL8aZG
-	 lxUEVo+iYvCi/xGWzrbP4CgzmOrdCYKLFdn90UXOgdeeNsax695Gn4v7hkpooTEtEo
-	 SrxVWgStvF80tkq/aWGEDcfTSb9e1F/In4/DkB1Alg9TNp55H1ns6Tig4Kf0PMHpg6
-	 8OzVBUopa8W2w==
-Date: Tue, 4 Mar 2025 20:10:55 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
-	Lennart Poettering <lennart@poettering.net>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
-	Mike Yuan <me@yhndnzj.com>
-Subject: Re: [PATCH v2 05/15] pidfs: record exit code and cgroupid at exit
-Message-ID: <20250304-rentner-luftkammer-be6e9472281e@brauner>
-References: <20250304-work-pidfs-kill_on_last_close-v2-0-44fdacfaa7b7@kernel.org>
- <20250304-work-pidfs-kill_on_last_close-v2-5-44fdacfaa7b7@kernel.org>
- <20250304131017.GB26141@redhat.com>
+	b=moeQmHQZmLuhcOjj57HUsZ2K/jXDjPgMl5/mjZzuKQGQ9bx/CqADxKNf1BKPcn+FN
+	 NfhtvpDHP0NiYmuU7dgqnZS6SrzvDZGXNzQONKRxgKvyEAykLx7PqUZtaQboCGGjmY
+	 g8sVbS6T7KZAX26N+8se3CBj3PWM0yuPqQkMn7IwCQz3vrCKNpsGWPeiG5lvRvoncb
+	 /N53PoWEczrohykK0wMEsaCeWwxsPanJ9wTOD3ggLY80Z3COFxVEq5U6vLok1hiJt4
+	 u8PuDddoH+EIGX+UXPY6lrS1QN0XnJT+9KCA+vcWvjynOAjt2Ee7mHUwmMgDgZ1blf
+	 L3fv4NzKqVkMQ==
+Date: Tue, 4 Mar 2025 11:22:05 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
+	io-uring@vger.kernel.org, linux-xfs@vger.kernel.org,
+	wu lei <uwydoc@gmail.com>
+Subject: Re: [PATCH v2 1/1] iomap: propagate nowait to block layer
+Message-ID: <20250304192205.GD2803749@frogsfrogsfrogs>
+References: <f287a7882a4c4576e90e55ecc5ab8bf634579afd.1741090631.git.asml.silence@gmail.com>
+ <Z8clJ2XSaQhLeIo0@infradead.org>
+ <83af597f-e599-41d2-a17b-273d6d877dad@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250304131017.GB26141@redhat.com>
+In-Reply-To: <83af597f-e599-41d2-a17b-273d6d877dad@gmail.com>
 
-On Tue, Mar 04, 2025 at 02:10:18PM +0100, Oleg Nesterov wrote:
-> I will read this series later, but I see nothing wrong after a quick glance.
+On Tue, Mar 04, 2025 at 04:41:40PM +0000, Pavel Begunkov wrote:
+> On 3/4/25 16:07, Christoph Hellwig wrote:
+> > On Tue, Mar 04, 2025 at 12:18:07PM +0000, Pavel Begunkov wrote:
+> > >   	    ((dio->flags & IOMAP_DIO_NEED_SYNC) && !use_fua) ||
+> > > -	    ((dio->flags & IOMAP_DIO_WRITE) && pos >= i_size_read(inode)))
+> > > +	    ((dio->flags & IOMAP_DIO_WRITE) && pos >= i_size_read(inode))) {
+> > >   		dio->flags &= ~IOMAP_DIO_CALLER_COMP;
+> > > +		if (!is_sync_kiocb(dio->iocb) &&
+> > > +		    (dio->iocb->ki_flags & IOCB_NOWAIT))
+> > > +			return -EAGAIN;
+> > 
+> > Black magic without comments explaining it.
 > 
-> Minor nit below...
+> I can copy the comment from below if you wish.
 > 
-> On 03/04, Christian Brauner wrote:
-> >
-> > Record the exit code and cgroupid in do_exit()
->                                     ^^^^^^^^^^^^
-> this is no longer true. In release_task().
+> > > +	if (!is_sync_kiocb(dio->iocb) && (dio->iocb->ki_flags & IOCB_NOWAIT)) {
+> > > +		/*
+> > > +		 * This is nonblocking IO, and we might need to allocate
+> > > +		 * multiple bios. In this case, as we cannot guarantee that
+> > > +		 * one of the sub bios will not fail getting issued FOR NOWAIT
+> > > +		 * and as error results are coalesced across all of them, ask
+> > > +		 * for a retry of this from blocking context.
+> > > +		 */
+> > > +		if (bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS + 1) >
+> > > +					  BIO_MAX_VECS)
+> > 
+> > This is not very accurate in times of multi-page bvecs and large order
+> > folios all over.
+> 
+> bio_iov_vecs_to_alloc() can overestimate, i.e. the check might return
+> -EAGAIN in more cases than required but not the other way around,
+> that should be enough for a fix such as this patch. Or did I maybe
+> misunderstood you?
+> 
+> > I think you really need to byte the bullet and support for early returns
+> > from the non-blocking bio submission path.
+> 
+> Assuming you're suggesting to implement that, I can't say I'm excited by
+> the idea of reworking a non trivial chunk of block layer to fix a problem
+> and then porting it up to some 5.x, especially since it was already
+> attempted before by someone and ultimately got reverted.
 
-Yes, thanks for catching this!
+[I'm going to ignore the sarcasm downthread because I don't like it and
+will not participate in prolonging that.]
 
-> 
-> > @@ -254,6 +255,7 @@ void release_task(struct task_struct *p)
-> >  	write_lock_irq(&tasklist_lock);
-> >  	ptrace_release_task(p);
-> >  	thread_pid = get_pid(p->thread_pid);
-> > +	pidfs_exit(p);
-> >  	__exit_signal(p);
-> 
-> And the next patch rightly moves pidfs_exit() up outside of tasklist.
-> 
-> Why not call it before write_lock_irq(&tasklist_lock) from the very
-> beginning?
+So don't.  XFS LTS generally doesn't pull large chunks of new code into
+old kernels, we just tell people they need to keep moving forward if
+they want new code, or even bug fixes that get really involved.  You
+want an XFS that doesn't allocate xfs_bufs from reclaim?  Well, you have
+to move to 6.12, we're not going to backport a ton of super invasive
+changes to 6.6, let alone 5.x.
 
-Yes, sorry that was my intention. pidfs_exit() can sleep due to dput().
-Thanks!
+We don't let old kernel source dictate changes to new kernels.
+
+--D
+
+> -- 
+> Pavel Begunkov
+> 
+> 
 
