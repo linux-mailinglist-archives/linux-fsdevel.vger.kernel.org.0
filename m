@@ -1,85 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-43087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A715A4DD38
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 12:58:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EDA9A4DD2F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 12:57:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F287189AA22
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 11:57:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AE377A4D31
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 11:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EAC202C56;
-	Tue,  4 Mar 2025 11:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84AD202F67;
+	Tue,  4 Mar 2025 11:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hr3NQ6GC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zmf8xNNA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AADFA201110;
-	Tue,  4 Mar 2025 11:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD706202C53;
+	Tue,  4 Mar 2025 11:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741089363; cv=none; b=btmTFPnALG8ZvI84HapslQADk2p+1KfaZH8IpmLTN1tL5TcuOqZ2tnBgMbXgPS3U8F/W9jjrMee7mRQremhCFZfgVBs9MAegjVtJVoZ1r1+na6y2U+hjuBpO2nT2Wii0Vz8b32cxZd92XjwBElhUtmaaXWYXYv77ZkribTIRgFw=
+	t=1741089365; cv=none; b=kuhGAWLOuyELwLXi3hjbtPF5TnepWxIq4Akr1pOVKpKe1Jo/l+wLod47xYdznJtiWTxH5UMjawyFEGAibSB5iTYWsK3h5duFmumy2ocP6xsNSzhrxOJ+28mTBgnw3m5Fa06S1i8wQHd5YSMjuE4qM0JV5eFXDCocuAfeXW+q2Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741089363; c=relaxed/simple;
-	bh=7aOUIblDy3EQ+wgKEIG5+gEPd8j16BZ4NmPwz7jf/MI=;
+	s=arc-20240116; t=1741089365; c=relaxed/simple;
+	bh=covBOvnp9U2GZTtmioJd31CmPfKsqA23Z8qUeQ8Rsuc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iAc5YRUzpyUWhZKGC3xdzTNr83D5XnRwboyufRGddyF81jNDdr9/Q35aM3TJyVSS0Y9TkRoFM6lhACPVOjh2ArwvB8LK1NhWMdMV23F/vDlWPl0GscNZVibhYXc4WM065PJPmEQOW1WWMt+XNdwPr9A37NszAY53HjsOQc5DCY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hr3NQ6GC; arc=none smtp.client-ip=209.85.214.178
+	 MIME-Version; b=MJgDU7PYV9zMF92vgR0LskdlxVbJAPJCzWGenL5VCpU+25+g+XPI9KlRVWVAglpKU7tNIwm8++fqZjiVcTtghRhM1p40zG8GNzMzSwNHTt+TSwtoxs1Qigh39HKr/GCp8MUxwtzm7Vgst0Btl4k4wX9U/+1N1DIcZ1DH1UjMltk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zmf8xNNA; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-223785beedfso64567945ad.1;
-        Tue, 04 Mar 2025 03:56:01 -0800 (PST)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2232aead377so106734725ad.0;
+        Tue, 04 Mar 2025 03:56:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741089360; x=1741694160; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741089363; x=1741694163; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9cv71YHNNhKhc40mgKTnst9iKziRjeyxRfR1hT7At/o=;
-        b=Hr3NQ6GCsbRCoyQeJC1Zz30N7ky0LFdOWmGhaeOW09/mLBNrStDZ5h1rwTcUh7/j8d
-         /nWZTQXQH2eGiSUPfRzd5khPPdHXC9YjrjFbC10r4X/giiUmoEZRje317YHoDKKyZiU8
-         dRQ/DvfFUsdOxeGgubIGO0ZxC39CSgk3+gFcze5DF9kYIE1ItslNu1xqfCfg+BAGGtTF
-         w+Qapk5W2reKu/38+4VpbvGTCKOWD2PaeXv8vvYnP95e8BreY0isPzrY6KztwGARbNJE
-         V+MxSg1unugnmLZrk/4wduwQuQxGxW2vf2MDTjQGN1AwgcN96mSwB7DadB2lwbLtQrZ2
-         U9xw==
+        bh=xxAqpP0ovEprhHiBJr2y/st3WpGGcsBAKP5Mc83hkVA=;
+        b=Zmf8xNNA8taTDvjaevJIDsriEba1VjY/xL69/Mp59lSyrUFKD50AhYAL4N0u9oVuJC
+         WPQMR904yqNjq8/dQDXjOEK63hob8FGTtmGPVDStSwsYtmCASa2LSey0X8C7q1vPfzdh
+         rgPesUsKD9+8ZDj8NBBzgNyOc528OQP13l7oOG3AM/LyzEQoLNL/g8JTQ7S4AIOSTFaq
+         EUApQHJrd34OkTrtna70W4wtgkphoz8ZnVPKZ3n2myO5akto+oE56LeH6gemMj1EeW9D
+         uCC8YIZt+sWoAZ2pvVUja9on8ByDpbSkr0gtdUiwdtNQaoeKvR4MOdDSw7/83QGhSvgJ
+         pdXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741089360; x=1741694160;
+        d=1e100.net; s=20230601; t=1741089363; x=1741694163;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9cv71YHNNhKhc40mgKTnst9iKziRjeyxRfR1hT7At/o=;
-        b=ehinw4dhaRzdfZYkMRu6DvhNQGmVDmZo1eEibLgEns2Q4NLm342/dtdWi6b+VQYyG/
-         OYC6i2RasIhldL5R1Ht4AqGWXgNh5S+gs5wV2Ip6xNzy2nwjjs8jmMF06uRePC0e6up4
-         nE4z712p8u/a1WmmbmmccLJPNy74HKdfa/f6QyXBfFaW7Z9LkLlvQEFEAKW3BBuMG59d
-         jesyMYMKzJTzeAkXHOaHDqgkjr8QrQEXbYCZ8Viae6L7uMxtspU/QzA8kmvvY2wBh5sa
-         zr5ZIKlGJaibvTTeoDsTEYQvcPjd5bR/pztbzdXz0myNe42nQpL6MkEV3vyr/MeANz0V
-         KJkw==
-X-Gm-Message-State: AOJu0YxGid65RTrRKsQVKZ3piJ1vQOB4qKJl5+gj8KA8WutvhaTlcyGo
-	+cmgMBJzgVJCmi8B8spvLWrLkvG/Hwi6YusNEBCLQ0+FXag3e6H2EdYQeQLj
-X-Gm-Gg: ASbGncsQ8otjYeX4myjZB3mFGnSONZsN5byeUf+3/4KVGQzwkXFv5ZFLt3YyNJpinkx
-	BVkbl6nPC4gwyVtlIbO3flhFJWLUFF6EOdmt32n61FK9wpoY6CN0CwVHiL303eroWHpjnads1dm
-	VaBrlinp5ntt6/GOLmrQwbJS2p1e5Z+UCyK939V8wlVgBmLY9CLjRGg4w/Bf9OoAurLbnn3Ct4U
-	NEYx92EZ555EB6VwE+rsTI1X3N4UPviezy/JT9+VyDJmUYu09tMFrzIXhVmQ6HIphwZiIut6MPK
-	HnOD16PqSsAu9dqlbQg+FT2APqKntV3liA+ui0nOenIa5VIcY+Q=
-X-Google-Smtp-Source: AGHT+IG0v9Em5q6fJm2+I3Im4mwSTz2sL14sbt3KodeqzY457uFvksauY6/DfVQg7+Z189LyZtysiw==
-X-Received: by 2002:a17:903:2ca:b0:223:44c5:4eb8 with SMTP id d9443c01a7336-2236924e3d8mr311730945ad.32.1741089360008;
-        Tue, 04 Mar 2025 03:56:00 -0800 (PST)
+        bh=xxAqpP0ovEprhHiBJr2y/st3WpGGcsBAKP5Mc83hkVA=;
+        b=YQcqDrHTJoBqQf7nKDG11Ui8MaYU1ff4S2Lr0QGdGU53YSZZRYnd03IQyWbHGIuojk
+         CkHjO74guWRAp9FlY/86WsVoWAHSupN/n2Bgrrxxc5NdNK6uZhSiY5ciODRYFkDKjrME
+         K3WItMd1HXyN5A4ODklkASayZQymdoOFxe6TI12dxGLyubC2/b19XC0UjHWbmjT9dNTf
+         whnNtL6KDFrc0HduOm+57Ly6C7R5genIqH/DI14WsnxqJlJJG7lp3viJbNxcBXEZYfyE
+         oCuiO1tdHDDomdqmLwNeeFtCAcYYuZcHEF3kLD3hN8bnw+3vexNgQlw02HlD5ywLZu4H
+         0Kxg==
+X-Gm-Message-State: AOJu0YxCYRajezQgxqzlN3+l//gsI7O+Jk6fum9vPEAGsnBzhu91e0Ab
+	1J72f5xKOikvVW/3i1bhSAQXv4CvBge0388Z8OoSZH1xv6QMGBPbXXi9+R5Y
+X-Gm-Gg: ASbGncsu04faYr44hCPne9EvjHHZbWvJ/PzHc14ZlaE00g+nys8DQ0KFTLaZ+K4GDhr
+	YjyUBJch6gENx9ekgLZ4E0TdbZUbLQ1QfRYeBlNvodhWjS4JsM2zwWgsKManjUUGVsjPBQQ3Y6h
+	fJorku9t9FXhhsk9PnEj45+Nznb5s16qeTVAVn59bV6hm+urnlyVJfAyL923a7gTsvbjKvGxSiv
+	WXFjPgVPInJPwSmyetUfb57exwTKpZDJ1DcZnzDb4/MZNkh8z2wegeFTyjxMfSkfDBhGIp1/pzf
+	h8fqdOWc2JtOvYgz+YBZIgGnSli22dyJ2SQAkpL6Aiud4t5bXp0=
+X-Google-Smtp-Source: AGHT+IHHPBr9NiMrYgPGqpuLs7kZQV8wWHCZfDlZqK6ST2PH67P8g2Z4Ep+ZjOJ1VoBQ0Nvk8G9Dcg==
+X-Received: by 2002:a17:902:f68f:b0:223:3253:2812 with SMTP id d9443c01a7336-22368fa557amr232106565ad.27.1741089362602;
+        Tue, 04 Mar 2025 03:56:02 -0800 (PST)
 Received: from dw-tp.ibmuc.com ([171.76.80.250])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501d28desm94154565ad.16.2025.03.04.03.55.57
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501d28desm94154565ad.16.2025.03.04.03.56.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 03:55:59 -0800 (PST)
+        Tue, 04 Mar 2025 03:56:02 -0800 (PST)
 From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To: linux-xfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
 	Jens Axboe <axboe@kernel.dk>,
 	"Darrick J . Wong" <djwong@kernel.org>,
 	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [PATCH v1 2/3] xfs_io: Add RWF_DONTCACHE support to pwritev2
-Date: Tue,  4 Mar 2025 17:25:36 +0530
-Message-ID: <1827774b8d5912ec6eb953f15e2319780f9cfa58.1741087191.git.ritesh.list@gmail.com>
+Subject: [PATCH v1 3/3] xfs_io: Add RWF_DONTCACHE support to preadv2
+Date: Tue,  4 Mar 2025 17:25:37 +0530
+Message-ID: <19402a5e05c2d1c55e794119facffaec3204a48d.1741087191.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1741087191.git.ritesh.list@gmail.com>
 References: <cover.1741087191.git.ritesh.list@gmail.com>
@@ -91,101 +91,88 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add per-io RWF_DONTCACHE support flag to pwritev2().
-This enables xfs_io to perform buffered-io which can drop the page
-cache folios after writing.
+Add per-io RWF_DONTCACHE support flag to preadv2()
+This enables xfs_io to perform buffered-io read which can drop the page
+cache folios after reading.
 
-e.g. xfs_io -fc "pwrite -U -V 1 0 16K" /mnt/f1
+	e.g. xfs_io -c "pread -U -V 1 0 16K" /mnt/f1
 
 Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 ---
- include/linux.h   | 5 +++++
- io/pwrite.c       | 8 ++++++--
- man/man8/xfs_io.8 | 8 +++++++-
- 3 files changed, 18 insertions(+), 3 deletions(-)
+ io/pread.c        | 12 ++++++++++--
+ man/man8/xfs_io.8 |  8 +++++++-
+ 2 files changed, 17 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux.h b/include/linux.h
-index b3516d54..6e83e073 100644
---- a/include/linux.h
-+++ b/include/linux.h
-@@ -237,6 +237,11 @@ struct fsxattr {
- #define RWF_ATOMIC	((__kernel_rwf_t)0x00000040)
- #endif
- 
-+/* buffered IO that drops the cache after reading or writing data */
-+#ifndef RWF_DONTCACHE
-+#define RWF_DONTCACHE	((__kernel_rwf_t)0x00000080)
+diff --git a/io/pread.c b/io/pread.c
+index 782f2a36..64c28784 100644
+--- a/io/pread.c
++++ b/io/pread.c
+@@ -38,6 +38,9 @@ pread_help(void)
+ " -Z N -- zeed the random number generator (used when reading randomly)\n"
+ "         (heh, zorry, the -s/-S arguments were already in use in pwrite)\n"
+ " -V N -- use vectored IO with N iovecs of blocksize each (preadv)\n"
++#ifdef HAVE_PWRITEV2
++" -U   -- Perform the preadv2() with Uncached/RWF_DONTCACHE\n"
 +#endif
-+
- /*
-  * Reminder: anything added to this file will be compiled into downstream
-  * userspace projects!
-diff --git a/io/pwrite.c b/io/pwrite.c
-index fab59be4..db335e91 100644
---- a/io/pwrite.c
-+++ b/io/pwrite.c
-@@ -45,6 +45,7 @@ pwrite_help(void)
- " -N   -- Perform the pwritev2() with RWF_NOWAIT\n"
- " -D   -- Perform the pwritev2() with RWF_DSYNC\n"
- " -A   -- Perform the pwritev2() with RWF_ATOMIC\n"
-+" -U   -- Perform the pwritev2() with Uncached/RWF_DONTCACHE\n"
- #endif
- "\n"));
- }
-@@ -285,7 +286,7 @@ pwrite_f(
+ "\n"
+ " When in \"random\" mode, the number of read operations will equal the\n"
+ " number required to do a complete forward/backward scan of the range.\n"
+@@ -388,7 +391,7 @@ pread_f(
  	init_cvtnum(&fsblocksize, &fssectsize);
  	bsize = fsblocksize;
  
--	while ((c = getopt(argc, argv, "Ab:BCdDf:Fi:NqRs:OS:uV:wWZ:")) != EOF) {
-+	while ((c = getopt(argc, argv, "Ab:BCdDf:Fi:NqRs:OS:uUV:wWZ:")) != EOF) {
+-	while ((c = getopt(argc, argv, "b:BCFRquvV:Z:")) != EOF) {
++	while ((c = getopt(argc, argv, "b:BCFRquUvV:Z:")) != EOF) {
  		switch (c) {
  		case 'b':
  			tmp = cvtnum(fsblocksize, fssectsize, optarg);
-@@ -328,6 +329,9 @@ pwrite_f(
- 		case 'A':
- 			pwritev2_flags |= RWF_ATOMIC;
+@@ -417,6 +420,11 @@ pread_f(
+ 		case 'u':
+ 			uflag = 1;
  			break;
++#ifdef HAVE_PREADV2
 +		case 'U':
-+			pwritev2_flags |= RWF_DONTCACHE;
++			preadv2_flags |= RWF_DONTCACHE;
 +			break;
- #endif
- 		case 's':
- 			skip = cvtnum(fsblocksize, fssectsize, optarg);
-@@ -480,7 +484,7 @@ pwrite_init(void)
- 	pwrite_cmd.argmax = -1;
- 	pwrite_cmd.flags = CMD_NOMAP_OK | CMD_FOREIGN_OK;
- 	pwrite_cmd.args =
--_("[-i infile [-qAdDwNOW] [-s skip]] [-b bs] [-S seed] [-FBR [-Z N]] [-V N] off len");
-+_("[-i infile [-qAdDwNOUW] [-s skip]] [-b bs] [-S seed] [-FBR [-Z N]] [-V N] off len");
- 	pwrite_cmd.oneline =
- 		_("writes a number of bytes at a specified offset");
- 	pwrite_cmd.help = pwrite_help;
++#endif
+ 		case 'v':
+ 			vflag = 1;
+ 			break;
+@@ -514,7 +522,7 @@ pread_init(void)
+ 	pread_cmd.argmin = 2;
+ 	pread_cmd.argmax = -1;
+ 	pread_cmd.flags = CMD_NOMAP_OK | CMD_FOREIGN_OK;
+-	pread_cmd.args = _("[-b bs] [-qv] [-i N] [-FBR [-Z N]] off len");
++	pread_cmd.args = _("[-b bs] [-qUv] [-i N] [-FBR [-Z N]] off len");
+ 	pread_cmd.oneline = _("reads a number of bytes at a specified offset");
+ 	pread_cmd.help = pread_help;
+ 
 diff --git a/man/man8/xfs_io.8 b/man/man8/xfs_io.8
-index 59d5ddc5..47af5232 100644
+index 47af5232..df508054 100644
 --- a/man/man8/xfs_io.8
 +++ b/man/man8/xfs_io.8
-@@ -244,7 +244,7 @@ See the
- .B pread
- command.
+@@ -200,7 +200,7 @@ option will set the file permissions to read-write (0644). This allows xfs_io to
+ set up mismatches between the file permissions and the open file descriptor
+ read/write mode to exercise permission checks inside various syscalls.
  .TP
--.BI "pwrite [ \-i " file " ] [ \-qAdDwNOW ] [ \-s " skip " ] [ \-b " size " ] [ \-S " seed " ] [ \-FBR [ \-Z " zeed " ] ] [ \-V " vectors " ] " "offset length"
-+.BI "pwrite [ \-i " file " ] [ \-qAdDwNOUW ] [ \-s " skip " ] [ \-b " size " ] [ \-S " seed " ] [ \-FBR [ \-Z " zeed " ] ] [ \-V " vectors " ] " "offset length"
- Writes a range of bytes in a specified blocksize from the given
+-.BI "pread [ \-b " bsize " ] [ \-qv ] [ \-FBR [ \-Z " seed " ] ] [ \-V " vectors " ] " "offset length"
++.BI "pread [ \-b " bsize " ] [ \-qUv ] [ \-FBR [ \-Z " seed " ] ] [ \-V " vectors " ] " "offset length"
+ Reads a range of bytes in a specified blocksize from the given
  .IR offset .
- The bytes written can be either a set pattern or read in from another
-@@ -287,6 +287,12 @@ Perform the
- call with
- .IR RWF_ATOMIC .
+ .RS 1.0i
+@@ -214,6 +214,12 @@ requests will be split. The default blocksize is 4096 bytes.
+ .B \-q
+ quiet mode, do not write anything to standard output.
  .TP
 +.B \-U
 +Perform the
-+.BR pwritev2 (2)
++.BR preadv2 (2)
 +call with
 +.IR RWF_DONTCACHE .
 +.TP
- .B \-O
- perform pwrite once and return the (maybe partial) bytes written.
- .TP
+ .B \-v
+ dump the contents of the buffer after reading,
+ by default only the count of bytes actually read is dumped.
 -- 
 2.48.1
 
