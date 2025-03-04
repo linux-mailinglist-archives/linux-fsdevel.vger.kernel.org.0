@@ -1,133 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-43147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E5A0A4EBF0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 19:39:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B337CA4EBDD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 19:37:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3C238E410D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 18:12:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A49E23B5A09
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 18:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828F22620E9;
-	Tue,  4 Mar 2025 17:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317642512C8;
+	Tue,  4 Mar 2025 18:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VfQewOIg"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Caj+FQkl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4710324EA86;
-	Tue,  4 Mar 2025 17:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19B4205AC7
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 18:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741110832; cv=none; b=OaOIJ56Vfrhcdr0AFGGbss1wzFjOsdgwVi0+gzO8v4TD+Bmf6QXr7z8k5c55yMUGinrBr6be4i99kHp/pG04y5+Kh4k9cNEmkEQwDK6LmP+VlfowJWZnP9tI+ibZqkxld1+tRdkr0SsroOYgTdDlijEoM+n+eckd4QXN2Vt8aoc=
+	t=1741111958; cv=none; b=ejIDJyZqxAyHwVOTqEzB9lT8oBaiUN3LlSE8LL4gZICLCuusvqUrhbBBwFKPEQlb6ZkN0CxWeZ56QwYb8CaTFbCGd7hP3I2/v/WnuZt0/a6ppqJ/gV3zC3MigOjwA3FaxEqrJC2ZnV8E3FjtYGrXsFiOauZMyobYGTuA6Q63lMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741110832; c=relaxed/simple;
-	bh=0LDmePTln+u4axdJ0aOPepEv01zoP0TaGJ87bXJkb8c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bazQoQeOwL9kFw6RKsGcJTMPw7FKMKy/A0FAV6XOhKjhwiGkQZSDu9mWwO9oy5QKYykgmF+B7z+Ah0/b5/gyEmLW98V2DV/1km7dOXm7mayqwePMZTF+aY+3aXmW5d2W+V+1HozYlhKQMCzs32Xm7E/iePQmE4FfET4XGCEgGlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VfQewOIg; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-390d98ae34dso4796877f8f.3;
-        Tue, 04 Mar 2025 09:53:49 -0800 (PST)
+	s=arc-20240116; t=1741111958; c=relaxed/simple;
+	bh=ZKEiViHx4lfhXN2b+U2kj8U/5qjRqfhrRty0Xi1nIUY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CfrJMHQ4IGGy1HeHG2TDTdl+81J28q5vUqOmXBB+0rVVmKBODoIct81CcZ8Jy1/UYjxY7+KGMPhXj6alleny50Bu631jiBbS87AZSYNzLOtYc5VQjootzgvyhwT0VkVETrVySituzwhTJqnXnZZcSrpAmmElJVWX3Cgc74Pw6B8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Caj+FQkl; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aaecf50578eso1132881466b.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Mar 2025 10:12:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741110828; x=1741715628; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=I/0aj31QshGP4T78wXyPNtHRWjMSC7Sxol6fL65EPGE=;
-        b=VfQewOIglCqMcm+l9/X1Dzt9NUe+hf/I7lfEws71nET6ys8S4p27xpnUkicXKjAJxy
-         67h6B/QAWK81O5bP+8woeocHGzn51c3Y2ntP10+l4wWAv8SiIWf1Lc++WLxxtviFwdHF
-         zSoy+iHX29lY+3CWPnMAab+ewvwh3V8ja/I/1iHFg5gIkgUlsNYwea+lfVm8gdf8H2xJ
-         OgWsaJN3FwN5q/1LnFMP1uqCqVDPtazlCHcYVZs7pGjbMQY06/0D2ts+mPwoTEDyLRwE
-         zpuHDphzWZ7DoVRy1S8rjwV0SOF6II/craVezgV1Ptqwg+Zf+i9xseW/N84poJoBnb0g
-         LKhg==
+        d=linux-foundation.org; s=google; t=1741111954; x=1741716754; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cotFSgUM+8LCa2jd4lHJ3XLun7qyfRX9tXHNjJu7zBA=;
+        b=Caj+FQklwmk5xmk839iDNtRVa5uOH5xA520GMqIwryVMc+FZgsG2XB+WqFC02GNCmJ
+         WzUtK+br0vZXS4tezm7uuTcrVgAvcbqM0WkY5+y8BkUFqI9VeGyzHmW1lPjVpXo/27sz
+         YDnkvU2hm3YS8SlitycfBM81jR3Ix62RBGYI4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741110828; x=1741715628;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I/0aj31QshGP4T78wXyPNtHRWjMSC7Sxol6fL65EPGE=;
-        b=e2HkDFn2hWyTOszwamde835F0bJ6CwSSZ/oRKqV+T8GcPW53UdESeZ00B6LA0B5gPs
-         4lJBlirYLkxwwmFi5bWzz+PFwS5YW2Ui5wsPrB1mLw84pRHjg/hFzolLLsNj52eTXzCn
-         2G8tGV7PzKrLHlYKRTnEdU5kvlJupMvVDNIhNzIoa+iU/Riu5zwehaTtBhIHVPjp5OJ4
-         EQwEsL6fvM76jrp3VAMhTXQyw1P/kaxIdJwdoqQiO5Zvgmhi6r2743xiRrc05FeCA3DN
-         riI7mvpraLb50uU8/5Ugk4fKribJyG8kb4fDmDTo3PafA1eBdyIWr5lXkyMMqurO87uA
-         vkgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXG9MdnnyKW0yO1lmy5aMD3FU3i13ZYKUzXR7iElVq1ClH+DCMp/Q+pD9yYoGgd3OxLxlJRLFbs4sQK@vger.kernel.org, AJvYcCXM910wH2kusQiRI665Sn1B7qrK13oZmpRz8hYPd+Y4zUF5vhLNm+uqf2fAqJxRJ2qIiA4OrSo7pg==@vger.kernel.org, AJvYcCXtw1/lrMQk/0VOa80vA8oSz4egBk/Ltz/9/2bML6nOw4MBd2hiCu7+bv7MQE5Cn9f87SKSrqgaWQFxFS9ntA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIhYyFWggJvr5G3wtVEVGWDekr1mLeB2nTmUqELcg8QWIEhiMX
-	SGHdYJXopZboEghLBEyf6Ni2mazvZmW1mzRv2h0zKWzHLcgmou/p
-X-Gm-Gg: ASbGncvkIgYwJVuTa57CWwUjApozaO22MikHWzsM4Mu8oXvLNA4mzz8RdYoUF6BcQNH
-	R/iDju/C1bSkmahk6iVh9oPb4SwNShX6lH5/qZAz9wO3uK1fT9/TrgXTzvLPKL+2Fh0RJgIpBg5
-	PTJT1JLOPLKKlJUrOxMug22J3sHatVta07mOc1WRht+PQ9IqMmVK8cDG+lj/dk5nJ69FH+KVEJ4
-	VfooG+HP1Atm2qrOoMaDu7Mz7/xERvZHCXl+UZJ3MdYQGpvzkNZLRSaEeJWu+B8WET9iAhEGKfA
-	bqEQzMwnLIiYYzjHybiB7DdGe3Ukaj9UR/1Os7DHfc/wyVcF0bOIqg==
-X-Google-Smtp-Source: AGHT+IFX0oebidS7NUhxe0FgEu8LE8CRLLFgT2QQN91OazOCqVX9imk0OrJ2ME3eMMHyHKzUCto+nQ==
-X-Received: by 2002:a5d:59ae:0:b0:391:10f9:f3a1 with SMTP id ffacd0b85a97d-39110f9f4ffmr8167306f8f.35.1741110828240;
-        Tue, 04 Mar 2025 09:53:48 -0800 (PST)
-Received: from [192.168.8.100] ([185.69.144.147])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485e045sm18521029f8f.99.2025.03.04.09.53.45
+        d=1e100.net; s=20230601; t=1741111954; x=1741716754;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cotFSgUM+8LCa2jd4lHJ3XLun7qyfRX9tXHNjJu7zBA=;
+        b=cXP7uo+tOhSorkYbWlBPNBq5Pil6UEW1c+hXw3i+mCrmbleqj9W3Cim7TUgkOAaXyU
+         2JGlmNbHYGYeOdTn/RLDAEWu9L0ZBG2X9fwC7zquLo60Wdn2yLDQxyI6Aez7TMqGXY/C
+         EuGPhXU2e5ESC91n69fIf/ehwAa675/apYqOIpJpKRrPnEU5YHmUYA8Zs6fzGN4iCEex
+         /EQNhSnln0VP26eILX+WtSEGrDaIByp2nVVtPtPcReWpiI+ga+jObcZmUwLv33figIpc
+         W92F3P5fBK+YZWXRXEzcV3w+PzLT6Vgtj4G9ZQpmNXnF1FzFpYsoFuS7eGHQpLBGkl3z
+         5hDg==
+X-Forwarded-Encrypted: i=1; AJvYcCX5q05Ob65wr9XH/iSytlv+kJA0bdL4RZOV+F2Tl6Bzj2PwU1K2dJgg9M8kIfGMS6QsoDNx39X67lvrGT3q@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6mieCVG+dYzDOwyVHEadXMXm/tSGuXF+gjEk/7uqKIomkXXMi
+	k9xNMp+F/TwKcc4jfDdHAOhgrPA5u5LwhMnuco8OzlzxqqavmwdZRbMDkkHxfHFCvYDOR05wm9/
+	NoTSRcw==
+X-Gm-Gg: ASbGncsmXE6CLsH8dqpnUm2IAsJE5Pnevgp5KYN46mdRNZj8Wt/ZOnxxuY9IrEJ2kma
+	+gxBuCs8RXyC7i5oWr62+g7ElJKQbpMKnPlBZx70prFI2PUXhQNA4kYhQnExuXbWiNZbJHQmhIP
+	SqZXONoBnh9oIVaBe1L8gjhSj2YvSs9rUZ7845Edh4NtirJtHF73PZFII8UVuD285dcivyL1ae+
+	hHE+I1Nt+y1OacMad747Q3EMJjOft5m5IwQ/48HOsq2OQ78L1Zg4Junnh2EmyUXa5NQgKdm80US
+	9PkHQ/0W8TrQ/vSp1oam4v2pe40EY2Qlv5ivDTHCSjGy6HaJwyRE9qMf85PD1bsDTRoio+YiX05
+	9V79H6A63KKjDdwhK/Yc=
+X-Google-Smtp-Source: AGHT+IF9tce3jDkmDWWsrAD6Fm+5S5CZSF31XNWZQR2eqqnKheZEDk3ZHceORJ8iMcRTnyYTv/06rA==
+X-Received: by 2002:a17:906:c14f:b0:ab7:cb84:ecd6 with SMTP id a640c23a62f3a-ac20e468fe8mr15580766b.56.1741111953877;
+        Tue, 04 Mar 2025 10:12:33 -0800 (PST)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf74e85fbfsm425053366b.15.2025.03.04.10.12.31
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 09:53:46 -0800 (PST)
-Message-ID: <8295d4e5-dff7-4e20-80b5-0a8019498257@gmail.com>
-Date: Tue, 4 Mar 2025 17:54:51 +0000
+        Tue, 04 Mar 2025 10:12:32 -0800 (PST)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-abf5f4e82caso577480066b.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Mar 2025 10:12:31 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVR1xld7ogqzredLHMy0b5d50QyPpQIFUFIpohnvCc3qQiJ1JBW4Gz5bRegEQyeDoxSJ0feacycsiIF4Fol@vger.kernel.org
+X-Received: by 2002:a17:907:96aa:b0:abf:40ac:4395 with SMTP id
+ a640c23a62f3a-ac20db4ce56mr17933166b.31.1741111951498; Tue, 04 Mar 2025
+ 10:12:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] iomap: propagate nowait to block layer
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- Dave Chinner <david@fromorbit.com>, io-uring@vger.kernel.org,
- "Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
- wu lei <uwydoc@gmail.com>
-References: <f287a7882a4c4576e90e55ecc5ab8bf634579afd.1741090631.git.asml.silence@gmail.com>
- <Z8clJ2XSaQhLeIo0@infradead.org>
- <83af597f-e599-41d2-a17b-273d6d877dad@gmail.com>
- <Z8cxVLEEEwmUigjz@infradead.org>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <Z8cxVLEEEwmUigjz@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250303230409.452687-1-mjguzik@gmail.com> <20250303230409.452687-2-mjguzik@gmail.com>
+ <20250304140726.GD26141@redhat.com> <20250304154410.GB5756@redhat.com>
+In-Reply-To: <20250304154410.GB5756@redhat.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 4 Mar 2025 08:12:14 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wj1V4wQBPUuhWRwmQ7Nfp2WJrH=yAv-v0sP-jXBKGoPdw@mail.gmail.com>
+X-Gm-Features: AQ5f1JqjSP27LVMyo09ZwIOqft6imz235TbU_7WRePdslf_UMXdRbBjWU8irOdU
+Message-ID: <CAHk-=wj1V4wQBPUuhWRwmQ7Nfp2WJrH=yAv-v0sP-jXBKGoPdw@mail.gmail.com>
+Subject: Re: pipes && EPOLLET, again
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org, mingo@redhat.com, 
+	peterz@infradead.org, rostedt@goodmis.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 3/4/25 16:59, Christoph Hellwig wrote:
-> On Tue, Mar 04, 2025 at 04:41:40PM +0000, Pavel Begunkov wrote:
->> bio_iov_vecs_to_alloc() can overestimate, i.e. the check might return
->> -EAGAIN in more cases than required but not the other way around,
->> that should be enough for a fix such as this patch. Or did I maybe
->> misunderstood you?
-> 
-> No you didn;t but we need to do this properly.
-> 
->> Assuming you're suggesting to implement that, I can't say I'm excited by
->> the idea of reworking a non trivial chunk of block layer to fix a problem
->> and then porting it up to some 5.x, especially since it was already
->> attempted before by someone and ultimately got reverted.
-> 
-> Stop whining.  Backporting does not matter for upstream development,
-> and I'm pretty sure you'd qualify for a job where you don't have to do
-> this if you actually care and don't just like to complain.
+On Tue, 4 Mar 2025 at 05:45, Oleg Nesterov <oleg@redhat.com> wrote:
+>
+> Linus,
+>
+> On 03/04, Oleg Nesterov wrote:
+> >
+> > and we need to cleanup the poll_usage
+> > logic first.
+>
+> We have already discussed this before, I'll probably do this later,
+> but lets forget it for now.
+>
+> Don't we need the trivial one-liner below anyway?
 
-That's an interesting choice of words. Dear Christoph, I'm afraid you
-don't realise that you're the one whining at a person who actually tries
-to fix it. I'd appreciate if you stop this bullshit, especially if you're
-not willing to fix it yourself. If you do, please, be my guest and prove
-me wrong.
+See this email of mine:
 
-Stable does exist, and people do care about it, and people do care about
-problems being fixed and not delayed because your desire for someone else
-to do some random grand rework for you. If there are _actual_ problems
-with the patch, please let me know. Some of more rare cases being not
-as efficient is not a problem.
+  https://lore.kernel.org/all/CAHk-=wiCRwRFi0kGwd_Uv+Xv4HOB-ivHyUp9it6CNSmrKT4gOA@mail.gmail.com/
 
--- 
-Pavel Begunkov
+and the last paragraph in particular.
 
+The whole "poll_usage" thing is a kernel *hack* to deal with broken
+user space that expected garbage semantics that aren't real, and were
+never real.
+
+They were a random implementation detail, and they were *wrong*.
+
+But because we have a strict "we don't break user space", we
+introduced that completely bogus hack to say "ok, we'll send these
+completely wrong extraneous events despite the fact that nothing has
+changed, because some broken user space program was written to expect
+them".
+
+> I am not saying this is a bug, but please consider
+
+That program is buggy, and we're not adding new hacks for new bugs.
+
+If you ask for an edge-triggered EPOLL event, you get an *edge*
+triggered EPOLL event. And there is no edge - the pipe was already
+readable, no edge anywhere in sight.
+
+So to clarify: we added the hack to work around *existing* user space
+bugs that happened to work before.
+
+If anything, we might consider removing the crazy "poll_usage" hack in
+the (probably futile) hope that user space has been fixed.
+
+But we're not encouraging *new* bugs.
+
+               Linus
 
