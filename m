@@ -1,114 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-43160-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22BE1A4ECBA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 20:06:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18BBCA4ECC6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 20:07:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 488C6169B1E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 19:06:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3581C169DC3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 19:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF22259C88;
-	Tue,  4 Mar 2025 19:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FA5255244;
+	Tue,  4 Mar 2025 19:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cXdq4LAA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cEzlNw1l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F237D253352
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 19:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49145158524;
+	Tue,  4 Mar 2025 19:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741115059; cv=none; b=sU0aL+cKWgN+RhkH9WP/2CK1l+Z3cyJPG/wkNwnMsk/9YMwmiC3EeUs5ojZvfff2h+oYnfsIwBmZ7+fGL04hUXJm8x9oBf9onb2Og/klpMmQHDbMtP20mS+ak6vGDiNDo291Q73SGs+C6pLNCTYwqw/Vgpcow3Dujnfhoa8Bbys=
+	t=1741115200; cv=none; b=IFKIFHLKu0xu6u0wrDStP1Db62/6wZqxcegACLtkzM5s6dx4o4BCywe6iD3JxmgTfHsoMtNIwTFAtGqX+SFockfOxqjWmjOKjPaI33X6iEDJT7K4YU//A9GXo98YQy4DKPBmpRDQ13FhxP3fkcz9HGr1qkz0kdPhBL6VWZj88kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741115059; c=relaxed/simple;
-	bh=AxRo0zwXpsaIo65pvoetfqMIqPPXFYbyNGJ0gjZ0tk8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N/d09geDibDqhbSdHZGRW6OPKti9ddDo/Ej47jdGfgIjF4IJeGQx7+A2fEq0Krt5KmGsbMbTIzXtYoRCcCkeOD3tHBjbZWcFtJK6ITc8iBguYI0vcculOoyBcT9sFLqM1RP2tHgsXtGAuYGo3uebOzwlIIfHy2nSu/zfhz4OS9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cXdq4LAA; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-abf5e1a6cd3so564116966b.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Mar 2025 11:04:16 -0800 (PST)
+	s=arc-20240116; t=1741115200; c=relaxed/simple;
+	bh=qgBjp+ydpJlBw52x0uUkgJn409XwUZVGlumTnsWJ3m0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CvvJj59b0UmDtx7W0zoAYMahjxJ4CGoCJPPCvudXmJmvRyo0678gh8v48Pm3HMg9pwk5pEx1Vj921vyq3YnAXCVGsbQp+Yt2sGpx3P0UhxyAX89e5v7M5ZMoPd7fQZuzeAoa6W7yiC6hfoEKcsQSRQd8b5RZHjQxJkIGRKS5omo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cEzlNw1l; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-471f686642cso54965921cf.2;
+        Tue, 04 Mar 2025 11:06:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1741115055; x=1741719855; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=dkh2pb5EhGcPf5n6D2I0IyHjDxbdm1W1H8kQF4e+QHw=;
-        b=cXdq4LAA2hWCNedsuqgPV38x2B7dpbxGRRuv0ex8X1l/CiNoMwFZTu0EWD65oXuVbf
-         aGKi/1T3BFMYqQQHidLlEbuK+mWTeZYjmT4RrfZ/hk+FTnxnENfNIok4ejrdjUyPDmiU
-         PkAfea82tjZKvFXdaLXgt6vPl9lDg3KunlW/4=
+        d=gmail.com; s=20230601; t=1741115198; x=1741719998; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tA27Lf3iJciKnB0JvEl1MO3LlYSglnQEOYlC6Hgx3eQ=;
+        b=cEzlNw1lynEIgIZFQISmLeHtfKUbOmIuju6y6l3dss/GqCAgbIO77rfOVjoL7hfpfY
+         f8nziJ66ODFCa8tl0eEYdoovU/IXeU3Yqf8b3o4zwsHVW8fjOFVguTU1NJAN2fRSg7mf
+         Z1Fqw0vTADT3xlSPomFUllleXbhRL6cjqZh1unnNQGPCjKSn4eKYBIQMagBSg15tAXn3
+         +N0JHa6nDPDsX44C1gVwiITo+3BbEsq/24X7R0zm2ZePkRKUyt8CNynmXz0HZxI7H1dC
+         mKI7J6Dpu5hCUv12ND2ZygLONFJgHP8cQdII6nAELf6RLYdbQVpmSW6yrgR76khXVg/N
+         q1Pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741115055; x=1741719855;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dkh2pb5EhGcPf5n6D2I0IyHjDxbdm1W1H8kQF4e+QHw=;
-        b=u/5FXpEp8PrUhzGLvyptmW5dfD1fnSBBxu+URVx7ggL3Ocwi84bQKEs7wuoM1/cj6w
-         1FgfcBAZWE0CoeOmeVcO0Pq8WPD8KkuUz0Mr2MlbWnj8fvbw5s84jMvD3KsAhB15LOPa
-         Z3lwiiAIONE/Nw0Ofz4e8HISQi6ZefxgZsmIrAWpezrxJnKyIvnNEl46VEeYojUFA5OV
-         PcigN0JslQDfhpi/ctjp1//PiFG1qJWJYyUFuI9FGMJ3e2BPEK3OkwhyuIURecDUgndE
-         /+XBpUkktW9LTuJEL2uVACThOKSL++FbOd7GaOmu9IA9lys4ajQL40y2mRHH5F271yUl
-         ltnA==
-X-Forwarded-Encrypted: i=1; AJvYcCXVBWRg/fRIabI/8C3GkBDZsWmX4trnIy1QIcP31AAg+V1NVLu5QE28mks1Wv9G1J9Nt4mX0tpyHCXsrlMd@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwYbELtKPS9WhsYeYPMYLhIFvqtriaCyQrUB1pUCTle6qupZpX
-	hWE6GijsUagwlq2qztK/fQuTGeHiGqEP3IK2dLTkLaIKltShmvBfBN40rKRtUEjxoy5rDdMUBw1
-	ue8cJ4Q==
-X-Gm-Gg: ASbGncsyoKu7d94n5I+m0QqMdMwPtaK6rwmqFWN5bxPc6IpPgMz8tTNtNK0K2wElXV/
-	9qWGNJKI+WDz4kAa17oGI9x4lKJPFJlSHZaHmvQmQB3zzbuzP9LmILBdgb1YQUgFspNHvVmkJcz
-	Uycs+hOWIi6zZXGw8kINFRq+3wh9XDPZhpctuffOxJD8OmmfMsEHsI/Xrub2Ntj4hC4MtRjNqGZ
-	BUYlMibhtYdY3aXMJ6IEPS6ZxrGMRz6IKO3RUuvXsuVa8Vlo3ofsG3DgCGkgS2KoMgWry3B/IOz
-	7oKWJb4FyfgopQnXYqFIyltVtvrTAXTYt27XiHaoJo0AU1I2mzc0uztMAdF10jWindFBhbQZ2aZ
-	ssnPWE5W7xb8Ns3PffeU=
-X-Google-Smtp-Source: AGHT+IExU4dfX2rSkN36gco4mLVF7KrhTtTw+JMNPGbD+aoA4MzfOmsdhXQYed0VnL+BDGFpANxXrQ==
-X-Received: by 2002:a17:907:6d15:b0:abf:7832:bf5 with SMTP id a640c23a62f3a-ac20dc7f9e3mr33418666b.34.1741115054938;
-        Tue, 04 Mar 2025 11:04:14 -0800 (PST)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1acfe9a5asm317593966b.119.2025.03.04.11.04.13
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 11:04:13 -0800 (PST)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e04cb346eeso10355469a12.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Mar 2025 11:04:13 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWBQsQbUrUNgwTlyvETZ40kZooEzP7YomvwPTyJUKrkK+HE6m+dZ/8gK1y9nqOka7UnzirRSoAtZN/Tq2im@vger.kernel.org
-X-Received: by 2002:a17:907:970c:b0:abc:b8c:7b2d with SMTP id
- a640c23a62f3a-ac20dc6f379mr42747466b.32.1741115053374; Tue, 04 Mar 2025
- 11:04:13 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741115198; x=1741719998;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tA27Lf3iJciKnB0JvEl1MO3LlYSglnQEOYlC6Hgx3eQ=;
+        b=fcynWkVpr0APv5mxOymmoyYit6uzMkvbJ4SNrHDBAFgkW0U8EZLKujdET+ENm6IYS7
+         Z5da7Nq9Zy+sbNZFHjyajM0xQbiiX075IN+c0t+EFqp0M7ml6Iz02PV4o634DvCYtJ07
+         u5VQGyhzKT+EXs1qYU2+8oocOa1GR3qjCBACI7uS7p65PCXvT61Lv8oNe3sJ6eclisM/
+         9kp13MKqepvar2YuwDHqm/44gBsNIbZl2zfj8PdWra2LMAWdDZZTGn3xuIzUnS1Apx3G
+         OTN19P0utH398beMkQIdlRZqtxSowzgfOJDgsiDibkyPXhB8/qU9mzazJF8j5rO+Fd8Q
+         1bZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMy8vxVusF2SJPwDg4W/CzS7zKAM21z78/+ThW3D+8gBskwumSCcthWlVsJJBkdeKYMHxQ643FDx6ANmK+@vger.kernel.org, AJvYcCWVcVGcgtL1H0o6rsq3UkBtYBJL1r+vS9k6VJ5N2UNkGvCxoNlRONXom3RW5JSZq2/gSzrckXWjY8ev2IPJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTsyh65K6EJjIZ9q/0Y/eC3Z1I4hbVCXvhnYn9/oBX+PzA1DYQ
+	JHrkH9G5vmRpWOzVNFYWR51MfLWWPwbHlCsbYAppTMUxp/Uad73F
+X-Gm-Gg: ASbGncvwuQrD1KXc7qXxJArTEps7wL2TCUWJx/3OsT0kx/9/JzVU7m2j9OhT0kOGMoF
+	oS+ZAImPKkzjtlSc9F2K9AOPDWw57sFy1QoVu/SLiuAaDefVNgxRbRy2smiPthWRdHbgK/vgmVZ
+	5OGiNiVYzAUJtUkGSu+3/TFhKIvK9k7TNAUfpvGHFAjSI81DxkZFqcQGl1+Kt16k7vA52qquF5S
+	7hxIzoXqZQDS4ZoTUbQzcukY0PHPGarRyXa9IyhnP6h7QggotaV+ziP1SdN90rLtKPH0HbKogIS
+	1f55ZAd7azFiira1LkxThxLUk2x+O9pxaz1Sv88VzztLic6FnCx7slgtqGPVMvzYa5/2wOtMiyn
+	8
+X-Google-Smtp-Source: AGHT+IEHMACm3UtM3g8IwgX8ccOiICa/jh1pmKFAIbjW7DNmAGnXI/0lrR7EO3ZtAv/HzcyoRr3unw==
+X-Received: by 2002:a05:622a:198f:b0:472:13f8:a974 with SMTP id d75a77b69052e-4750b4c51d2mr2585531cf.41.1741115198077;
+        Tue, 04 Mar 2025 11:06:38 -0800 (PST)
+Received: from localhost (pat-199-212-65-16.resnet.yorku.ca. [199.212.65.16])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4746b5eed4fsm76428501cf.31.2025.03.04.11.06.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 11:06:37 -0800 (PST)
+Date: Tue, 4 Mar 2025 14:07:39 -0500
+From: Seyediman Seyedarab <imandevel@gmail.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH] inotify: disallow watches on unsupported filesystems
+Message-ID: <hg55e37tvfjnb76lvffuhnvozdwm4k6xuqq6nmvjgjaryjqmee@ppujm6t5y7ju>
+References: <20250304080044.7623-1-ImanDevel@gmail.com>
+ <CAOQ4uxiaY9cZFpj4m65SrAVXm7MqB2OFSfyH5D03hEwmdtiBVQ@mail.gmail.com>
+ <5tq33ajgtu62tvaiymf3st74ctkurgskq6xpx2ax53vdbayoce@jffpxkthro3u>
+ <CAOQ4uxiZfJYHrYmE2k0vWrgbLLbDQ2LTrVggYwL3pv4FUyjctQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wiA-7pdaQm2nV0iv-fihyhWX-=KjZwQTHNKoDqid46F0w@mail.gmail.com>
- <20250304135138.1278-1-kprateek.nayak@amd.com>
-In-Reply-To: <20250304135138.1278-1-kprateek.nayak@amd.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 4 Mar 2025 09:03:57 -1000
-X-Gmail-Original-Message-ID: <CAHk-=whfrgndT5Y8PJtHtFwhuef2eCEr46NUdsMD9MVEom_HXw@mail.gmail.com>
-X-Gm-Features: AQ5f1JoQsXqnCtGHgj_JQVYfx3eeBRZjtvg4HR-JParHdoIQOMiLW8mY8t0w6ig
-Message-ID: <CAHk-=whfrgndT5Y8PJtHtFwhuef2eCEr46NUdsMD9MVEom_HXw@mail.gmail.com>
-Subject: Re: [PATCH] fs/pipe: Read pipe->{head,tail} atomically outside pipe->mutex
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Swapnil Sapkal <swapnil.sapkal@amd.com>, 
-	Alexey Gladkov <legion@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Manfred Spraul <manfred@colorfullife.com>, 
-	David Howells <dhowells@redhat.com>, WangYuli <wangyuli@uniontech.com>, 
-	Hillf Danton <hdanton@sina.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, Neeraj.Upadhyay@amd.com, 
-	Ananth.narayan@amd.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxiZfJYHrYmE2k0vWrgbLLbDQ2LTrVggYwL3pv4FUyjctQ@mail.gmail.com>
 
-On Tue, 4 Mar 2025 at 03:52, K Prateek Nayak <kprateek.nayak@amd.com> wrote:
->
-> pipe_readable(), pipe_writable(), and pipe_poll() can read "pipe->head"
-> and "pipe->tail" outside of "pipe->mutex" critical section.  [...]
+On 25/03/04 05:41PM, Amir Goldstein wrote:
+> On Tue, Mar 4, 2025 at 5:05 PM Seyediman Seyedarab <imandevel@gmail.com> wrote:
+> >
+> > On 25/03/04 12:57PM, Amir Goldstein wrote:
+> > > On Tue, Mar 4, 2025 at 8:59 AM Seyediman Seyedarab <imandevel@gmail.com> wrote:
 
-Thanks, applied.
+> > I understand why it might seem like disallowing users from monitoring
+> > these filesystems could break userspace in some way. BUT, programs
+> > work incorrectly precisely because they do not receive any information
+> > from the kernel, so in other words they are already broken. There is no
+> > way for them to know if the fs is supported or not. I mean, even we are
+> > not sure at the moment, then how would they know.
+> 
+> Programs not knowing is a problem that could be fixed with a new API
+> or new init flag to fanotify/inotify.
+> 
+> Existing programs that would break due to this change is unacceptable.
+> 
 
-                Linus
+Maybe something like IN_DISALLOW_REMOTE could work for now, at least
+until remote change notifications are properly implemented for those
+specific filesystems? Later, if needed, it could evolve into a new API,
+and the flag could become the default behavior when passed to that API.
+
+> > As an example, 'Waybar' is a userspace program affected by this patch.
+> > Since it relies on monitoring sysfs, it isn't working properly anyway.
+> > This is also due to the issue mentioned earlier... inotify_add_watch()
+> > returns without an error, so the developers haven't realized that
+> > inotify isn't actually supported on sysfs. There are over five
+> > discussions regarding this issue that you can find them here:
+> > https://github.com/Alexays/Waybar/pull/3474
+> >
+> 
+> You need to distinguish "inotify does not work"
+> from "inotify does not notify on 'remote' changes"
+> that is changes that happen on the network fs server or inside the
+> kernel (in sysfs case) vs. changes that happen via vfs syscalls
+> on the mounted fs, be it p9, cifs, sysfs.
+> 
+> There are several discussions about supporting "remote change"
+> notifications for network filesystems - this is a more complex problem.
+> 
+> In any case, I believe performing operations on the mounted fs
+> generated inotify events for all the fs that you listed and without
+> a claim that nobody is using this facility we cannot regress this
+> behavior without an opt-in from the application.
+
+Understood. So this is what I should work on (correct me if anything
+seems off):
+1. Carefully list all filesystems where "remote" changes occur.
+2. Introduce a flag like FS_DISALLOW_INOTIFY_REMOTE in fs_flags
+   for these filesystems.
+3. Provide an option for userspace, such as IN_DISALLOW_REMOTE,
+   so applications can explicitly handle this behavior.
+4. (Possibly later, if it makes sense) Introduce a new syscall where
+   FS_DISALLOW_INOTIFY_REMOTE is the default behavior.
+
+Regards,
+Seyediman
 
