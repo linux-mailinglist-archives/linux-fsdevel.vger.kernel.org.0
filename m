@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-43099-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18042A4DEA2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 14:05:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58119A4DEAC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 14:07:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E26D7A641E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 13:04:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 504CA7ABB41
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 13:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6769E202F7E;
-	Tue,  4 Mar 2025 13:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760CB204582;
+	Tue,  4 Mar 2025 13:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="msKcv5gH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kjSZtOWe"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70A7200BBC
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 13:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D455B2040A9
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 13:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741093537; cv=none; b=B+p/3eUvuvSTB7WK34aGKcGt2d4y1jPrM0FK0XumKY3xTZ1WnKe0mgOGNR/2pVLGVu+iGWZDbsLWJ136PpAMcyQX0rJkwOgiv+1ohoPN4yDiKShQFuT98PRqp8QT6E/ecJrhdv1K4VOqFt12jvRLk0TfYEhpo5dU19yGyQHyWik=
+	t=1741093585; cv=none; b=NCJvPBUkgyw7C2sGntE7qroDB/IpOGCKV0zumzKDoy+ILf1ptFJqdJ0nhKaThYSlyTrwFGe3owH/G324v0vk4YTzokhFxh4YY73PNtUZyTTddaEaOilabKSPZZMB+20KwhELdyX6UXXhdZjAgqzYvbxlusnqPVPfKWAyAiFbFiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741093537; c=relaxed/simple;
-	bh=TBoYwdmhVU3A7bZEtzR43pdugSQUMpT+SDJo1xqadbs=;
+	s=arc-20240116; t=1741093585; c=relaxed/simple;
+	bh=18uFT/YDKZurxGeH4PAL/MS8l5fsl/TsASOsfxnTUjk=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MhcUlYIlJnjhJf0zwzGsDtZAqierOMCqnQQKxSMB62RwE9pKTfOe4joUpZKH2ALUxQd1tJwEDZRx/dCpgeRUcPfD0kfHNHYE3kDBW32Puq3L5M+5Rldv4iW6wa+oskdSfeEJZ7Fas6aHFvUsx9nFAamEnxXXjYMzDNujtdKdHYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=msKcv5gH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0D2AC4CEE7;
-	Tue,  4 Mar 2025 13:05:36 +0000 (UTC)
+	 Content-Type:MIME-Version; b=VRFv8SJCvOyQh7vtq7NXGAha76WSWx2boXV6OsSaBGa9V9/oJLRe1vjikW4Kf4p6ZEkcNWTjYinKK9uLCB9URljY6wCiJHUOtC4K7kcdbVQMfMglm2Rsg5Bs5kHHVYUw+pjLqb2iqsTtuKVZpW7VSSsNcbFD22jB8jcKfzQ5QNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kjSZtOWe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 351EEC4CEE5;
+	Tue,  4 Mar 2025 13:06:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741093537;
-	bh=TBoYwdmhVU3A7bZEtzR43pdugSQUMpT+SDJo1xqadbs=;
+	s=k20201202; t=1741093585;
+	bh=18uFT/YDKZurxGeH4PAL/MS8l5fsl/TsASOsfxnTUjk=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=msKcv5gHkX3M3kEwWqwu150mMDzRZLvM2vb2CJ/vnzfTVzokax0eJG2L+yCCu4Y8t
-	 AJvpJBoNv0V0AOhkEzOyLr5Iv/S/vON+FSkf0Zzhz8y75H0F/G9P0/zb4IT/EVz4DE
-	 wgHPAqhboY6LJidAk8NaeydzFWk3V/LZ0tZf3Vz6SWVw5DGmRZ3zjpm/h3c4ggemIq
-	 SEKLQxz5N5xMxVdEyUK2RcPj3SW88bqihQF7wVeZFlhOgOpbWWhl6tjZfs9dzPkGzS
-	 m7rd89Kd8nYBzeEf24tE+JZLmQVjVwp13oDjiqVNjjvQii5IW10tM001CqED7me8yp
-	 2T93v7G+d8GVQ==
-Message-ID: <800082efb3b2537e80427eb9d3b0e20b10ac866c.camel@kernel.org>
-Subject: Re: [PATCH v2 05/15] pidfs: record exit code and cgroupid at exit
+	b=kjSZtOWe2Qb5nfsbsvzIgmS5IRVPhjpaJ5sHncyXthqVwwuq5nPku1QfWETsur3wG
+	 pVXBmCokDDEDzegUvEvObEQiPs15vbgo+kqnQWwROKmM8vng0ibqmFcJ7sjBHrM7Pv
+	 wNj7kFlzALlWtonmRfws1RTQYyFEThHtLAEzdVwlIJIyn9esCPa1yXW7loOBAT0Gmv
+	 Uma4JWUqnVg2dpMr1VCWsjXuHvt6GNVQ0Ap9YnIlhq9sc++R9XZ5kiauyOkM0q2aUo
+	 TU5bcZFEP+UQfWzeIzRbmZihnXQOBi1iuNt90nI+aLKN9ugrnZ/rTObxSH8BZ8/eek
+	 1D7aYTD4mZ3sw==
+Message-ID: <af8ced761b57914dc1f584ceb97bb4d9b5214d6e.camel@kernel.org>
+Subject: Re: [PATCH v2 04/15] pidfs: add inode allocation
 From: Jeff Layton <jlayton@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, Oleg Nesterov <oleg@redhat.com>
 Cc: linux-fsdevel@vger.kernel.org, Lennart Poettering
  <lennart@poettering.net>,  Daan De Meyer <daan.j.demeyer@gmail.com>, Mike
  Yuan <me@yhndnzj.com>
-Date: Tue, 04 Mar 2025 08:05:35 -0500
-In-Reply-To: <20250304-work-pidfs-kill_on_last_close-v2-5-44fdacfaa7b7@kernel.org>
+Date: Tue, 04 Mar 2025 08:06:24 -0500
+In-Reply-To: <20250304-work-pidfs-kill_on_last_close-v2-4-44fdacfaa7b7@kernel.org>
 References: 
 	<20250304-work-pidfs-kill_on_last_close-v2-0-44fdacfaa7b7@kernel.org>
-	 <20250304-work-pidfs-kill_on_last_close-v2-5-44fdacfaa7b7@kernel.org>
+	 <20250304-work-pidfs-kill_on_last_close-v2-4-44fdacfaa7b7@kernel.org>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -138,155 +138,98 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Tue, 2025-03-04 at 10:41 +0100, Christian Brauner wrote:
-> Record the exit code and cgroupid in do_exit() and stash in struct
-> pidfs_exit_info so it can be retrieved even after the task has been
-> reaped.
->=20
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > ---
->  fs/internal.h         |  1 +
->  fs/libfs.c            |  4 ++--
->  fs/pidfs.c            | 41 ++++++++++++++++++++++++++++++++++++++++-
->  include/linux/pidfs.h |  1 +
->  kernel/exit.c         |  2 ++
->  5 files changed, 46 insertions(+), 3 deletions(-)
+>  fs/pidfs.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 52 insertions(+)
 >=20
-> diff --git a/fs/internal.h b/fs/internal.h
-> index e7f02ae1e098..c1e6d8b294cb 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -325,6 +325,7 @@ struct stashed_operations {
->  int path_from_stashed(struct dentry **stashed, struct vfsmount *mnt, voi=
-d *data,
->  		      struct path *path);
->  void stashed_dentry_prune(struct dentry *dentry);
-> +struct dentry *stashed_dentry_get(struct dentry **stashed);
->  /**
->   * path_mounted - check whether path is mounted
->   * @path: path to check
-> diff --git a/fs/libfs.c b/fs/libfs.c
-> index 8444f5cc4064..cf5a267aafe4 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -2113,7 +2113,7 @@ struct timespec64 simple_inode_init_ts(struct inode=
- *inode)
->  }
->  EXPORT_SYMBOL(simple_inode_init_ts);
-> =20
-> -static inline struct dentry *get_stashed_dentry(struct dentry **stashed)
-> +struct dentry *stashed_dentry_get(struct dentry **stashed)
->  {
->  	struct dentry *dentry;
-> =20
-> @@ -2215,7 +2215,7 @@ int path_from_stashed(struct dentry **stashed, stru=
-ct vfsmount *mnt, void *data,
->  	const struct stashed_operations *sops =3D mnt->mnt_sb->s_fs_info;
-> =20
->  	/* See if dentry can be reused. */
-> -	path->dentry =3D get_stashed_dentry(stashed);
-> +	path->dentry =3D stashed_dentry_get(stashed);
->  	if (path->dentry) {
->  		sops->put_data(data);
->  		goto out_path;
 > diff --git a/fs/pidfs.c b/fs/pidfs.c
-> index eaecb0a947f0..258e1c13ee56 100644
+> index ecc0dd886714..eaecb0a947f0 100644
 > --- a/fs/pidfs.c
 > +++ b/fs/pidfs.c
-> @@ -32,7 +32,7 @@ static struct kmem_cache *pidfs_cachep __ro_after_init;
->   */
->  struct pidfs_exit_info {
->  	__u64 cgroupid;
-> -	__u64 exit_code;
-> +	__s32 exit_code;
-
-^^^
-The above delta should be folded into the previous patch.
-
->  };
+> @@ -24,6 +24,27 @@
+>  #include "internal.h"
+>  #include "mount.h"
 > =20
->  struct pidfs_inode {
-> @@ -458,6 +458,45 @@ struct pid *pidfd_pid(const struct file *file)
->  	return file_inode(file)->i_private;
->  }
-> =20
+> +static struct kmem_cache *pidfs_cachep __ro_after_init;
+> +
 > +/*
-> + * We're called from release_task(). We know there's at least one
-> + * reference to struct pid being held that won't be released until the
-> + * task has been reaped which cannot happen until we're out of
-> + * release_task().
-> + *
-> + * If this struct pid is refered to by a pidfd then stashed_dentry_get()
-> + * will return the dentry and inode for that struct pid. Since we've
-> + * taken a reference on it there's now an additional reference from the
-> + * exit path on it. Which is fine. We're going to put it again in a
-> + * second and we know that the pid is kept alive anyway.
-> + *
-> + * Worst case is that we've filled in the info and immediately free the
-> + * dentry and inode afterwards since the pidfd has been closed. Since
-> + * pidfs_exit() currently is placed after exit_task_work() we know that
-> + * it cannot be us aka the exiting task holding a pidfd to ourselves.
+> + * Stashes information that userspace needs to access even after the
+> + * process has been reaped.
 > + */
+> +struct pidfs_exit_info {
+> +	__u64 cgroupid;
+> +	__u64 exit_code;
 
-That is a subtle interaction. Thanks for the comment!
+This is changed to __s32 in the next patch. Might as well do that here.
 
-> +void pidfs_exit(struct task_struct *tsk)
+> +};
+> +
+> +struct pidfs_inode {
+> +	struct pidfs_exit_info exit_info;
+> +	struct inode vfs_inode;
+> +};
+> +
+> +static inline struct pidfs_inode *pidfs_i(struct inode *inode)
 > +{
-> +	struct dentry *dentry;
-> +
-> +	dentry =3D stashed_dentry_get(&task_pid(tsk)->stashed);
-> +	if (dentry) {
-> +		struct inode *inode =3D d_inode(dentry);
-> +		struct pidfs_exit_info *exit_info =3D &pidfs_i(inode)->exit_info;
-> +#ifdef CONFIG_CGROUPS
-> +		struct cgroup *cgrp;
-> +
-> +		rcu_read_lock();
-> +		cgrp =3D task_dfl_cgroup(tsk);
-> +		exit_info->cgroupid =3D cgroup_id(cgrp);
-> +		rcu_read_unlock();
-> +#endif
-> +		exit_info->exit_code =3D tsk->exit_code;
-> +
-> +		dput(dentry);
-> +	}
+> +	return container_of(inode, struct pidfs_inode, vfs_inode);
 > +}
 > +
->  static struct vfsmount *pidfs_mnt __ro_after_init;
+>  static struct rb_root pidfs_ino_tree =3D RB_ROOT;
 > =20
->  /*
-> diff --git a/include/linux/pidfs.h b/include/linux/pidfs.h
-> index 7c830d0dec9a..05e6f8f4a026 100644
-> --- a/include/linux/pidfs.h
-> +++ b/include/linux/pidfs.h
-> @@ -6,6 +6,7 @@ struct file *pidfs_alloc_file(struct pid *pid, unsigned i=
-nt flags);
->  void __init pidfs_init(void);
->  void pidfs_add_pid(struct pid *pid);
->  void pidfs_remove_pid(struct pid *pid);
-> +void pidfs_exit(struct task_struct *tsk);
->  extern const struct dentry_operations pidfs_dentry_operations;
+>  #if BITS_PER_LONG =3D=3D 32
+> @@ -492,9 +513,29 @@ static void pidfs_evict_inode(struct inode *inode)
+>  	put_pid(pid);
+>  }
 > =20
->  #endif /* _LINUX_PID_FS_H */
-> diff --git a/kernel/exit.c b/kernel/exit.c
-> index 3485e5fc499e..98d292120296 100644
-> --- a/kernel/exit.c
-> +++ b/kernel/exit.c
-> @@ -69,6 +69,7 @@
->  #include <linux/sysfs.h>
->  #include <linux/user_events.h>
->  #include <linux/uaccess.h>
-> +#include <linux/pidfs.h>
+> +static struct inode *pidfs_alloc_inode(struct super_block *sb)
+> +{
+> +	struct pidfs_inode *pi;
+> +
+> +	pi =3D alloc_inode_sb(sb, pidfs_cachep, GFP_KERNEL);
+> +	if (!pi)
+> +		return NULL;
+> +
+> +	memset(&pi->exit_info, 0, sizeof(pi->exit_info));
+> +
+> +	return &pi->vfs_inode;
+> +}
+> +
+> +static void pidfs_free_inode(struct inode *inode)
+> +{
+> +	kmem_cache_free(pidfs_cachep, pidfs_i(inode));
+> +}
+> +
+>  static const struct super_operations pidfs_sops =3D {
+> +	.alloc_inode	=3D pidfs_alloc_inode,
+>  	.drop_inode	=3D generic_delete_inode,
+>  	.evict_inode	=3D pidfs_evict_inode,
+> +	.free_inode	=3D pidfs_free_inode,
+>  	.statfs		=3D simple_statfs,
+>  };
 > =20
->  #include <uapi/linux/wait.h>
+> @@ -704,8 +745,19 @@ struct file *pidfs_alloc_file(struct pid *pid, unsig=
+ned int flags)
+>  	return pidfd_file;
+>  }
 > =20
-> @@ -254,6 +255,7 @@ void release_task(struct task_struct *p)
->  	write_lock_irq(&tasklist_lock);
->  	ptrace_release_task(p);
->  	thread_pid =3D get_pid(p->thread_pid);
-> +	pidfs_exit(p);
->  	__exit_signal(p);
-> =20
->  	/*
+> +static void pidfs_inode_init_once(void *data)
+> +{
+> +	struct pidfs_inode *pi =3D data;
+> +
+> +	inode_init_once(&pi->vfs_inode);
+> +}
+> +
+>  void __init pidfs_init(void)
+>  {
+> +	pidfs_cachep =3D kmem_cache_create("pidfs_cache", sizeof(struct pidfs_i=
+node), 0,
+> +					 (SLAB_HWCACHE_ALIGN | SLAB_RECLAIM_ACCOUNT |
+> +					  SLAB_ACCOUNT | SLAB_PANIC),
+> +					 pidfs_inode_init_once);
+>  	pidfs_mnt =3D kern_mount(&pidfs_type);
+>  	if (IS_ERR(pidfs_mnt))
+>  		panic("Failed to mount pidfs pseudo filesystem");
 >=20
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
