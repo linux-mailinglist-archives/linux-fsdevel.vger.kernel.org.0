@@ -1,179 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-43088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EDA9A4DD2F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 12:57:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 020D4A4DD3B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 12:58:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AE377A4D31
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 11:56:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B3CD3A5B1E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 11:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84AD202F67;
-	Tue,  4 Mar 2025 11:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196EA201004;
+	Tue,  4 Mar 2025 11:57:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zmf8xNNA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GYZ0d05B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD706202C53;
-	Tue,  4 Mar 2025 11:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2B93D561;
+	Tue,  4 Mar 2025 11:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741089365; cv=none; b=kuhGAWLOuyELwLXi3hjbtPF5TnepWxIq4Akr1pOVKpKe1Jo/l+wLod47xYdznJtiWTxH5UMjawyFEGAibSB5iTYWsK3h5duFmumy2ocP6xsNSzhrxOJ+28mTBgnw3m5Fa06S1i8wQHd5YSMjuE4qM0JV5eFXDCocuAfeXW+q2Zw=
+	t=1741089472; cv=none; b=H9LmrjhykNwZVlhn9wsy3/Ncxr2wZiXBJ4r5rOdau2x2hc7uiFoy4SYzmOzjkuPJsS8BJ3N4DkYUt7l9WoFtD7iHWQpH4R+Ylwd83Xzub0sJMcJlLZik/2PTGxaoiEv59alnRqjk25S8d5O0AlaEHT287gHvpZb8dQnkpSw6fv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741089365; c=relaxed/simple;
-	bh=covBOvnp9U2GZTtmioJd31CmPfKsqA23Z8qUeQ8Rsuc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MJgDU7PYV9zMF92vgR0LskdlxVbJAPJCzWGenL5VCpU+25+g+XPI9KlRVWVAglpKU7tNIwm8++fqZjiVcTtghRhM1p40zG8GNzMzSwNHTt+TSwtoxs1Qigh39HKr/GCp8MUxwtzm7Vgst0Btl4k4wX9U/+1N1DIcZ1DH1UjMltk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zmf8xNNA; arc=none smtp.client-ip=209.85.214.181
+	s=arc-20240116; t=1741089472; c=relaxed/simple;
+	bh=7ypZWnjPrV7w6TeeTckAB6eHJ6/xsg2qkTe/LybKhEs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NcTxkiiS3kUsuCCTOqAK2UZOLK2WyZ27apyPE2Za+XEjVZW2eWLNMnYStNEovkaGcuRANxaufqjeWyhsUioYFkihUFJltrPvjv/7nop44x7G7+3f7zJcmXpqDrIVZztunfDSZmuKDrjeB2AEe5JqcZp4ktSuR1apwReFk/PrRis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GYZ0d05B; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2232aead377so106734725ad.0;
-        Tue, 04 Mar 2025 03:56:03 -0800 (PST)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e538388dd1so3094210a12.1;
+        Tue, 04 Mar 2025 03:57:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741089363; x=1741694163; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741089469; x=1741694269; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xxAqpP0ovEprhHiBJr2y/st3WpGGcsBAKP5Mc83hkVA=;
-        b=Zmf8xNNA8taTDvjaevJIDsriEba1VjY/xL69/Mp59lSyrUFKD50AhYAL4N0u9oVuJC
-         WPQMR904yqNjq8/dQDXjOEK63hob8FGTtmGPVDStSwsYtmCASa2LSey0X8C7q1vPfzdh
-         rgPesUsKD9+8ZDj8NBBzgNyOc528OQP13l7oOG3AM/LyzEQoLNL/g8JTQ7S4AIOSTFaq
-         EUApQHJrd34OkTrtna70W4wtgkphoz8ZnVPKZ3n2myO5akto+oE56LeH6gemMj1EeW9D
-         uCC8YIZt+sWoAZ2pvVUja9on8ByDpbSkr0gtdUiwdtNQaoeKvR4MOdDSw7/83QGhSvgJ
-         pdXQ==
+        bh=oFfYVSo4B+UXub+GZI2qGn4jwqa9bMIxNlJj7fXOijE=;
+        b=GYZ0d05BQ7Rbm6godUG0RiCglK0lqr2pH6CgfQB7n+pPKa44BD3SUo6pDDt/aLqdfE
+         BPkMqQfTOT2cqoyfMwBP4eelEEqhKX3LMQRL7oTR1ipjZrtJ2sY/m3dR1/qjoB8h+Eqv
+         hsqnZZ6VFLRw+SzbL/kDuAN/dIy+xeSjZ+R/4QPssPWU/5CcJeDJKk3N1p5/ygPFdCh+
+         5FgnVyY0z7zLuXxLRWNtXh8k03DT0R/C7o8VvZrCLnLB59hCYDBp69I871VWFzi2tpTj
+         AT214sOk005Tq+Zl0luOqOTnbrLUcy75m8k3EzwKVCLFNuBR43g3NPUureJ1fiH1q7pZ
+         5YFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741089363; x=1741694163;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1741089469; x=1741694269;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xxAqpP0ovEprhHiBJr2y/st3WpGGcsBAKP5Mc83hkVA=;
-        b=YQcqDrHTJoBqQf7nKDG11Ui8MaYU1ff4S2Lr0QGdGU53YSZZRYnd03IQyWbHGIuojk
-         CkHjO74guWRAp9FlY/86WsVoWAHSupN/n2Bgrrxxc5NdNK6uZhSiY5ciODRYFkDKjrME
-         K3WItMd1HXyN5A4ODklkASayZQymdoOFxe6TI12dxGLyubC2/b19XC0UjHWbmjT9dNTf
-         whnNtL6KDFrc0HduOm+57Ly6C7R5genIqH/DI14WsnxqJlJJG7lp3viJbNxcBXEZYfyE
-         oCuiO1tdHDDomdqmLwNeeFtCAcYYuZcHEF3kLD3hN8bnw+3vexNgQlw02HlD5ywLZu4H
-         0Kxg==
-X-Gm-Message-State: AOJu0YxCYRajezQgxqzlN3+l//gsI7O+Jk6fum9vPEAGsnBzhu91e0Ab
-	1J72f5xKOikvVW/3i1bhSAQXv4CvBge0388Z8OoSZH1xv6QMGBPbXXi9+R5Y
-X-Gm-Gg: ASbGncsu04faYr44hCPne9EvjHHZbWvJ/PzHc14ZlaE00g+nys8DQ0KFTLaZ+K4GDhr
-	YjyUBJch6gENx9ekgLZ4E0TdbZUbLQ1QfRYeBlNvodhWjS4JsM2zwWgsKManjUUGVsjPBQQ3Y6h
-	fJorku9t9FXhhsk9PnEj45+Nznb5s16qeTVAVn59bV6hm+urnlyVJfAyL923a7gTsvbjKvGxSiv
-	WXFjPgVPInJPwSmyetUfb57exwTKpZDJ1DcZnzDb4/MZNkh8z2wegeFTyjxMfSkfDBhGIp1/pzf
-	h8fqdOWc2JtOvYgz+YBZIgGnSli22dyJ2SQAkpL6Aiud4t5bXp0=
-X-Google-Smtp-Source: AGHT+IHHPBr9NiMrYgPGqpuLs7kZQV8wWHCZfDlZqK6ST2PH67P8g2Z4Ep+ZjOJ1VoBQ0Nvk8G9Dcg==
-X-Received: by 2002:a17:902:f68f:b0:223:3253:2812 with SMTP id d9443c01a7336-22368fa557amr232106565ad.27.1741089362602;
-        Tue, 04 Mar 2025 03:56:02 -0800 (PST)
-Received: from dw-tp.ibmuc.com ([171.76.80.250])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501d28desm94154565ad.16.2025.03.04.03.56.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 03:56:02 -0800 (PST)
-From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To: linux-xfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [PATCH v1 3/3] xfs_io: Add RWF_DONTCACHE support to preadv2
-Date: Tue,  4 Mar 2025 17:25:37 +0530
-Message-ID: <19402a5e05c2d1c55e794119facffaec3204a48d.1741087191.git.ritesh.list@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <cover.1741087191.git.ritesh.list@gmail.com>
-References: <cover.1741087191.git.ritesh.list@gmail.com>
+        bh=oFfYVSo4B+UXub+GZI2qGn4jwqa9bMIxNlJj7fXOijE=;
+        b=FDM6rszPoNsk95OQwtu6moaWDehM3s+pvEkakuRimy4OmpB+9f4Kky3vfOCQlLhgKa
+         Rx222q/kCPM7J3aD0/yBZ9h524JfSh0eRtkVWEjkDGaXMEYYX30cbVuTt92ceIE+y5Gp
+         tAFekGefj3pvFTqckC998yYHiAWj2SCOOqJWhQ1Kuba6rHRPBkCLivvwavwUXCYNImWK
+         EHyuy9nB8DqfcEKKt9VwUowUy2e5B/TWZhOGFkTlGMwW1D0izW1BuQzLqZDnxZxoGWbN
+         PIKoDAt03z6/TEb+SfhTkq8bf2lNvnQ7L30QgeJ5k11PJA2Ggqijhtklk/0nPMnIObd1
+         /eGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBldQktjgO8kLyCIjolGrazeeof9aCyoJUR1viBMYw5CLP2siAd54g5KfTBIhCfXS15uacg/dsQ3CpcFYh@vger.kernel.org, AJvYcCXXIZ44Un0U0+rSDvJenAW4qlq0qb5CC1odQXiefUzDF5cMs80IE+SrK6kt33P57iecOT0wBeLs8qH76+KU@vger.kernel.org
+X-Gm-Message-State: AOJu0YygcgT0bMUi4t17hu3zkG7mG93O8lKm25BFFGULI34dzUzFDcpF
+	ryc3q4zzL47dAW0yZidoRtQS3cXSu78OFVtRw3RjIN9acS/XFqNIZpDzpP76T4HThuppKyz/XUN
+	Se7I1N+Npqf1j0QhH7yjhh8BTJp8=
+X-Gm-Gg: ASbGncsLZNdQgy0bvXnAixFGwLEXQvAz8yQenIiA+UUQyHrQauOXrniQ311TlSQir0K
+	419lGL9B339iBI2axJY8h1q8L+UJPp8UV1/FqeMWXRzGXaHYvj1wQtGKVCKjca06KliU6KAX0cO
+	OJU5iIyXIzysR2eki6t84TnvpMsg==
+X-Google-Smtp-Source: AGHT+IG/gH8xF2QSpMAqKv1eZxLbdC2fhOMhNMkCv6JUkbQ36wboE4Ypr1n30rVoJmN+b7m089jSauZwbUd5xsRhN3g=
+X-Received: by 2002:a17:907:7fa6:b0:abf:615d:58c2 with SMTP id
+ a640c23a62f3a-abf615d6016mr1192362066b.34.1741089468592; Tue, 04 Mar 2025
+ 03:57:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250304080044.7623-1-ImanDevel@gmail.com>
+In-Reply-To: <20250304080044.7623-1-ImanDevel@gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 4 Mar 2025 12:57:36 +0100
+X-Gm-Features: AQ5f1JoU6Vvq5Hm7n116SaG8VrOOy_nKyTWmNXwcxfBElDzY3PzC1Sz2EnC7Mxc
+Message-ID: <CAOQ4uxiaY9cZFpj4m65SrAVXm7MqB2OFSfyH5D03hEwmdtiBVQ@mail.gmail.com>
+Subject: Re: [PATCH] inotify: disallow watches on unsupported filesystems
+To: Seyediman Seyedarab <imandevel@gmail.com>
+Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kernel-mentees@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add per-io RWF_DONTCACHE support flag to preadv2()
-This enables xfs_io to perform buffered-io read which can drop the page
-cache folios after reading.
+On Tue, Mar 4, 2025 at 8:59=E2=80=AFAM Seyediman Seyedarab <imandevel@gmail=
+.com> wrote:
+>
+> currently, inotify_add_watch() allows adding watches on filesystems
+> where inotify does not work correctly, without returning an explicit
+> error. This behavior is misleading and can cause confusion for users
+> expecting inotify to work on a certain filesystem.
 
-	e.g. xfs_io -c "pread -U -V 1 0 16K" /mnt/f1
+That maybe so, but it's not that inotify does not work at all,
+in fact it probably works most of the time for those fs,
+so there may be users setting inotify watches on those fs,
+so it is not right to regress those users.
 
-Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
----
- io/pread.c        | 12 ++++++++++--
- man/man8/xfs_io.8 |  8 +++++++-
- 2 files changed, 17 insertions(+), 3 deletions(-)
+>
+> This patch explicitly rejects inotify usage on filesystems where it
+> is known to be unreliable, such as sysfs, procfs, overlayfs, 9p, fuse,
+> and others.
 
-diff --git a/io/pread.c b/io/pread.c
-index 782f2a36..64c28784 100644
---- a/io/pread.c
-+++ b/io/pread.c
-@@ -38,6 +38,9 @@ pread_help(void)
- " -Z N -- zeed the random number generator (used when reading randomly)\n"
- "         (heh, zorry, the -s/-S arguments were already in use in pwrite)\n"
- " -V N -- use vectored IO with N iovecs of blocksize each (preadv)\n"
-+#ifdef HAVE_PWRITEV2
-+" -U   -- Perform the preadv2() with Uncached/RWF_DONTCACHE\n"
-+#endif
- "\n"
- " When in \"random\" mode, the number of read operations will equal the\n"
- " number required to do a complete forward/backward scan of the range.\n"
-@@ -388,7 +391,7 @@ pread_f(
- 	init_cvtnum(&fsblocksize, &fssectsize);
- 	bsize = fsblocksize;
- 
--	while ((c = getopt(argc, argv, "b:BCFRquvV:Z:")) != EOF) {
-+	while ((c = getopt(argc, argv, "b:BCFRquUvV:Z:")) != EOF) {
- 		switch (c) {
- 		case 'b':
- 			tmp = cvtnum(fsblocksize, fssectsize, optarg);
-@@ -417,6 +420,11 @@ pread_f(
- 		case 'u':
- 			uflag = 1;
- 			break;
-+#ifdef HAVE_PREADV2
-+		case 'U':
-+			preadv2_flags |= RWF_DONTCACHE;
-+			break;
-+#endif
- 		case 'v':
- 			vflag = 1;
- 			break;
-@@ -514,7 +522,7 @@ pread_init(void)
- 	pread_cmd.argmin = 2;
- 	pread_cmd.argmax = -1;
- 	pread_cmd.flags = CMD_NOMAP_OK | CMD_FOREIGN_OK;
--	pread_cmd.args = _("[-b bs] [-qv] [-i N] [-FBR [-Z N]] off len");
-+	pread_cmd.args = _("[-b bs] [-qUv] [-i N] [-FBR [-Z N]] off len");
- 	pread_cmd.oneline = _("reads a number of bytes at a specified offset");
- 	pread_cmd.help = pread_help;
- 
-diff --git a/man/man8/xfs_io.8 b/man/man8/xfs_io.8
-index 47af5232..df508054 100644
---- a/man/man8/xfs_io.8
-+++ b/man/man8/xfs_io.8
-@@ -200,7 +200,7 @@ option will set the file permissions to read-write (0644). This allows xfs_io to
- set up mismatches between the file permissions and the open file descriptor
- read/write mode to exercise permission checks inside various syscalls.
- .TP
--.BI "pread [ \-b " bsize " ] [ \-qv ] [ \-FBR [ \-Z " seed " ] ] [ \-V " vectors " ] " "offset length"
-+.BI "pread [ \-b " bsize " ] [ \-qUv ] [ \-FBR [ \-Z " seed " ] ] [ \-V " vectors " ] " "offset length"
- Reads a range of bytes in a specified blocksize from the given
- .IR offset .
- .RS 1.0i
-@@ -214,6 +214,12 @@ requests will be split. The default blocksize is 4096 bytes.
- .B \-q
- quiet mode, do not write anything to standard output.
- .TP
-+.B \-U
-+Perform the
-+.BR preadv2 (2)
-+call with
-+.IR RWF_DONTCACHE .
-+.TP
- .B \-v
- dump the contents of the buffer after reading,
- by default only the count of bytes actually read is dumped.
--- 
-2.48.1
+Where did you get this list of fs from?
+Why do you claim that inotify does not work on overlayfs?
+Specifically, there are two LTP tests inotify07 and inotify08
+that test inotify over overlayfs.
 
+This makes me question other fs on your list.
+
+>
+> By returning -EOPNOTSUPP, the limitation is made explicit, preventing
+> users from making incorrect assumptions about inotify behavior.
+>
+> Signed-off-by: Seyediman Seyedarab <ImanDevel@gmail.com>
+> ---
+>  fs/notify/inotify/inotify_user.c | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>
+> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify=
+_user.c
+> index b372fb2c56bd..9b96438f4d46 100644
+> --- a/fs/notify/inotify/inotify_user.c
+> +++ b/fs/notify/inotify/inotify_user.c
+> @@ -87,6 +87,13 @@ static const struct ctl_table inotify_table[] =3D {
+>         },
+>  };
+>
+> +static const unsigned long unwatchable_fs[] =3D {
+> +       PROC_SUPER_MAGIC,      SYSFS_MAGIC,       TRACEFS_MAGIC,
+> +       DEBUGFS_MAGIC,        CGROUP_SUPER_MAGIC, SECURITYFS_MAGIC,
+> +       RAMFS_MAGIC,          DEVPTS_SUPER_MAGIC, BPF_FS_MAGIC,
+> +       OVERLAYFS_SUPER_MAGIC, FUSE_SUPER_MAGIC,   NFS_SUPER_MAGIC
+> +};
+> +
+>  static void __init inotify_sysctls_init(void)
+>  {
+>         register_sysctl("fs/inotify", inotify_table);
+> @@ -690,6 +697,14 @@ static struct fsnotify_group *inotify_new_group(unsi=
+gned int max_events)
+>  }
+>
+>
+> +static inline bool is_unwatchable_fs(struct inode *inode)
+> +{
+> +       for (int i =3D 0; i < ARRAY_SIZE(unwatchable_fs); i++)
+> +               if (inode->i_sb->s_magic =3D=3D unwatchable_fs[i])
+> +                       return true;
+> +       return false;
+> +}
+
+This is not a good practice for black listing fs.
+
+See commit 0b3b094ac9a7b ("fanotify: Disallow permission events
+for proc filesystem") for a better practice, but again, we cannot just
+stop supporting inotify on fs where it was supported.
+
+The assumption with the commit above was that setting permission
+events on procfs is possible, but nobody (except for fuzzers) really does t=
+hat
+and if we have found out that there were actual users that do it, we
+would have needed to revert that commit.
+
+Thanks,
+Amir.
 
