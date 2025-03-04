@@ -1,85 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-43086-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D053A4DD2B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 12:57:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A715A4DD38
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 12:58:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E52B1770F0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 11:57:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F287189AA22
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 11:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016B1202C32;
-	Tue,  4 Mar 2025 11:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EAC202C56;
+	Tue,  4 Mar 2025 11:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O9KgcA7U"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hr3NQ6GC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F07201110;
-	Tue,  4 Mar 2025 11:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AADFA201110;
+	Tue,  4 Mar 2025 11:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741089360; cv=none; b=qHjO5k2lBy0dnb3C8UldZRqR0c8VO1FUerrp8ex0CL1RZ8Ov3NWPDaE7ZrPelaf/0aIJhKOhMoKpCVw/RP5540Idjl2K2sH/FY2N4lhTEtVxAtZmlZJ1WGmuWd2Mj0f5tI05TS0b5wR96RjZn36qyk7r5Iy1lOc2PJNmVeOSuek=
+	t=1741089363; cv=none; b=btmTFPnALG8ZvI84HapslQADk2p+1KfaZH8IpmLTN1tL5TcuOqZ2tnBgMbXgPS3U8F/W9jjrMee7mRQremhCFZfgVBs9MAegjVtJVoZ1r1+na6y2U+hjuBpO2nT2Wii0Vz8b32cxZd92XjwBElhUtmaaXWYXYv77ZkribTIRgFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741089360; c=relaxed/simple;
-	bh=VZ3+ZbDgThIHSCchnwlHCHEhjpPFqWfXiipHyF93qF8=;
+	s=arc-20240116; t=1741089363; c=relaxed/simple;
+	bh=7aOUIblDy3EQ+wgKEIG5+gEPd8j16BZ4NmPwz7jf/MI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EIvyeWP4CX1DA3Ism+S24UZNMIAE7E0yEplz20aM2BhrybZpiCnVYk+MM8BjmKks1xg631WCmREn79jDX81bOHrge2lnEhkoYuTw3+VbGyJoiq4FpyD/gjByyNuodFlgzHl55do8kJdvTjiS7HrcySbv4MMmWtAnYA7JCYoy6kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O9KgcA7U; arc=none smtp.client-ip=209.85.214.175
+	 MIME-Version; b=iAc5YRUzpyUWhZKGC3xdzTNr83D5XnRwboyufRGddyF81jNDdr9/Q35aM3TJyVSS0Y9TkRoFM6lhACPVOjh2ArwvB8LK1NhWMdMV23F/vDlWPl0GscNZVibhYXc4WM065PJPmEQOW1WWMt+XNdwPr9A37NszAY53HjsOQc5DCY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hr3NQ6GC; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22328dca22fso81993315ad.1;
-        Tue, 04 Mar 2025 03:55:58 -0800 (PST)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-223785beedfso64567945ad.1;
+        Tue, 04 Mar 2025 03:56:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741089357; x=1741694157; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741089360; x=1741694160; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PEfB7F71LO87zIRah2z680gief8fAZP73FNyLtIpjko=;
-        b=O9KgcA7UTHWklBo5/MC//h1XAfykWG9y4ZnYe3qH4U6BIkEUgYWCVUxjxeFN3g9xwi
-         FdNu9HH4EUn6GnJVgjLV/XdXrnzsyYxDUwnhVfk9KXHw1YAKAa9N2RvMyKEdka64+Up/
-         qgvcOZOHgEzi6yzqCGhPzKso1QedTL/+g9iumxf6yDZW6k87WBxx9keDWYFpt4txfTH5
-         x8VKUaQVxd1tv51KYsMXIeiyNcW62kZcjiF8ozRWwAiV0E3yuM4r8to1TCJ+9h55pzD7
-         2kR4NA/ADq/CTrtlpIdbs0cdKgOlbkUKDvabUXK0+fKzaKB6iYaRkLFTxyDOoko1Q9er
-         50Qw==
+        bh=9cv71YHNNhKhc40mgKTnst9iKziRjeyxRfR1hT7At/o=;
+        b=Hr3NQ6GCsbRCoyQeJC1Zz30N7ky0LFdOWmGhaeOW09/mLBNrStDZ5h1rwTcUh7/j8d
+         /nWZTQXQH2eGiSUPfRzd5khPPdHXC9YjrjFbC10r4X/giiUmoEZRje317YHoDKKyZiU8
+         dRQ/DvfFUsdOxeGgubIGO0ZxC39CSgk3+gFcze5DF9kYIE1ItslNu1xqfCfg+BAGGtTF
+         w+Qapk5W2reKu/38+4VpbvGTCKOWD2PaeXv8vvYnP95e8BreY0isPzrY6KztwGARbNJE
+         V+MxSg1unugnmLZrk/4wduwQuQxGxW2vf2MDTjQGN1AwgcN96mSwB7DadB2lwbLtQrZ2
+         U9xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741089357; x=1741694157;
+        d=1e100.net; s=20230601; t=1741089360; x=1741694160;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PEfB7F71LO87zIRah2z680gief8fAZP73FNyLtIpjko=;
-        b=Zf1f4hus7CkUKeg+SbR8Cv6rEPOhpdJ4sfE0Wt/2DRQWb7YPtWm2GwcLEI3L1JjRyj
-         WIamfc9dgy1ROGxo9OkTTaASDuGbXbRk3gEu75LEc7WrGg8uNw0kWqdOhxNotPi5xboM
-         BStGiWB0iPzoBY8beS0HpQ8awbFZcBz6A6i/c/ZfovIbJTnq2LdUclUv4WslNPHkBWkd
-         6sP3ZvTrLQS+6qcsHbD8h/7AGRuUhFjRULE0ATclDSi7TnMkPzUsP3vcWvqBBgpFSxWh
-         wRgCXTS0klN7MODJKxqURdVwf+SnDrWtVOxYC9gzStFgUVlyxEsJKZGL3A+VCyB/wH9i
-         wrRA==
-X-Gm-Message-State: AOJu0YxMWcLCXxGdh3lgSa8bG79HqPZKvEgWAbDDnL+l6j1bzpqxdBxQ
-	qAt4yInagKjHEWniigyI8OfDbafXSCz//oh8F4Zfg2Ide33dA5TfsMJhZeBT
-X-Gm-Gg: ASbGnctwXN8bKdbjxQGXNsmKNzJjMvQAZ3HLaGw/hQWwD2abSbdr1rp+4882xqSHnMB
-	smTMyInz83oU5FoTXag/ZMW/o2At6RLKYlsSeP+PxQo33jCSjb+10yxb8GGoJvo41W9aXjvHEeI
-	e0D/3jbzrv92U72vVDDG2Z2egoCZ+pkI4NAG6KypS6e9pC+69i3niZgGVEFL9jwe3qKx5az6SQz
-	EwAar2Xo3Um59+iMUrMzgeiZFd3NXY9q9eKoDuMAE47Kg35zmj3gIUOTiNwKkUo0S6xaVAv1+7L
-	wiYHuc9YPmBfFkJT9qjWKopdsRgaGPwDdhygrctOJzvAd5BDw7A=
-X-Google-Smtp-Source: AGHT+IHc+uF11+v6/Wpuwk7DcUMdr5Ck3osaF5psv3FuOk9JpZ8IsD26ymZ4RzQ+SIOAh5yd97zbPg==
-X-Received: by 2002:a17:903:41d2:b0:216:2dc5:233c with SMTP id d9443c01a7336-223692517f4mr275646965ad.41.1741089357032;
-        Tue, 04 Mar 2025 03:55:57 -0800 (PST)
+        bh=9cv71YHNNhKhc40mgKTnst9iKziRjeyxRfR1hT7At/o=;
+        b=ehinw4dhaRzdfZYkMRu6DvhNQGmVDmZo1eEibLgEns2Q4NLm342/dtdWi6b+VQYyG/
+         OYC6i2RasIhldL5R1Ht4AqGWXgNh5S+gs5wV2Ip6xNzy2nwjjs8jmMF06uRePC0e6up4
+         nE4z712p8u/a1WmmbmmccLJPNy74HKdfa/f6QyXBfFaW7Z9LkLlvQEFEAKW3BBuMG59d
+         jesyMYMKzJTzeAkXHOaHDqgkjr8QrQEXbYCZ8Viae6L7uMxtspU/QzA8kmvvY2wBh5sa
+         zr5ZIKlGJaibvTTeoDsTEYQvcPjd5bR/pztbzdXz0myNe42nQpL6MkEV3vyr/MeANz0V
+         KJkw==
+X-Gm-Message-State: AOJu0YxGid65RTrRKsQVKZ3piJ1vQOB4qKJl5+gj8KA8WutvhaTlcyGo
+	+cmgMBJzgVJCmi8B8spvLWrLkvG/Hwi6YusNEBCLQ0+FXag3e6H2EdYQeQLj
+X-Gm-Gg: ASbGncsQ8otjYeX4myjZB3mFGnSONZsN5byeUf+3/4KVGQzwkXFv5ZFLt3YyNJpinkx
+	BVkbl6nPC4gwyVtlIbO3flhFJWLUFF6EOdmt32n61FK9wpoY6CN0CwVHiL303eroWHpjnads1dm
+	VaBrlinp5ntt6/GOLmrQwbJS2p1e5Z+UCyK939V8wlVgBmLY9CLjRGg4w/Bf9OoAurLbnn3Ct4U
+	NEYx92EZ555EB6VwE+rsTI1X3N4UPviezy/JT9+VyDJmUYu09tMFrzIXhVmQ6HIphwZiIut6MPK
+	HnOD16PqSsAu9dqlbQg+FT2APqKntV3liA+ui0nOenIa5VIcY+Q=
+X-Google-Smtp-Source: AGHT+IG0v9Em5q6fJm2+I3Im4mwSTz2sL14sbt3KodeqzY457uFvksauY6/DfVQg7+Z189LyZtysiw==
+X-Received: by 2002:a17:903:2ca:b0:223:44c5:4eb8 with SMTP id d9443c01a7336-2236924e3d8mr311730945ad.32.1741089360008;
+        Tue, 04 Mar 2025 03:56:00 -0800 (PST)
 Received: from dw-tp.ibmuc.com ([171.76.80.250])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501d28desm94154565ad.16.2025.03.04.03.55.54
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501d28desm94154565ad.16.2025.03.04.03.55.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 03:55:56 -0800 (PST)
+        Tue, 04 Mar 2025 03:55:59 -0800 (PST)
 From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To: linux-xfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
 	Jens Axboe <axboe@kernel.dk>,
 	"Darrick J . Wong" <djwong@kernel.org>,
 	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [PATCH v1 1/3] configure: xfs_io: Add support for preadv2
-Date: Tue,  4 Mar 2025 17:25:35 +0530
-Message-ID: <046cc1b4dc00f8fb8997ec6ebedc9b3625f34c1c.1741087191.git.ritesh.list@gmail.com>
+Subject: [PATCH v1 2/3] xfs_io: Add RWF_DONTCACHE support to pwritev2
+Date: Tue,  4 Mar 2025 17:25:36 +0530
+Message-ID: <1827774b8d5912ec6eb953f15e2319780f9cfa58.1741087191.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1741087191.git.ritesh.list@gmail.com>
 References: <cover.1741087191.git.ritesh.list@gmail.com>
@@ -91,236 +91,101 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-preadv2() was introduced in Linux 4.6. This patch adds support for
-preadv2() to xfs_io.
+Add per-io RWF_DONTCACHE support flag to pwritev2().
+This enables xfs_io to perform buffered-io which can drop the page
+cache folios after writing.
+
+e.g. xfs_io -fc "pwrite -U -V 1 0 16K" /mnt/f1
 
 Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 ---
- configure.ac          |  1 +
- include/builddefs.in  |  1 +
- io/Makefile           |  4 ++++
- io/pread.c            | 45 ++++++++++++++++++++++++++++---------------
- m4/package_libcdev.m4 | 18 +++++++++++++++++
- 5 files changed, 54 insertions(+), 15 deletions(-)
+ include/linux.h   | 5 +++++
+ io/pwrite.c       | 8 ++++++--
+ man/man8/xfs_io.8 | 8 +++++++-
+ 3 files changed, 18 insertions(+), 3 deletions(-)
 
-diff --git a/configure.ac b/configure.ac
-index 8c76f398..658117ad 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -153,6 +153,7 @@ AC_PACKAGE_NEED_URCU_H
- AC_PACKAGE_NEED_RCU_INIT
+diff --git a/include/linux.h b/include/linux.h
+index b3516d54..6e83e073 100644
+--- a/include/linux.h
++++ b/include/linux.h
+@@ -237,6 +237,11 @@ struct fsxattr {
+ #define RWF_ATOMIC	((__kernel_rwf_t)0x00000040)
+ #endif
  
- AC_HAVE_PWRITEV2
-+AC_HAVE_PREADV2
- AC_HAVE_COPY_FILE_RANGE
- AC_NEED_INTERNAL_FSXATTR
- AC_NEED_INTERNAL_FSCRYPT_ADD_KEY_ARG
-diff --git a/include/builddefs.in b/include/builddefs.in
-index 82840ec7..a11d201c 100644
---- a/include/builddefs.in
-+++ b/include/builddefs.in
-@@ -94,6 +94,7 @@ ENABLE_SCRUB	= @enable_scrub@
- HAVE_ZIPPED_MANPAGES = @have_zipped_manpages@
- 
- HAVE_PWRITEV2 = @have_pwritev2@
-+HAVE_PREADV2 = @have_preadv2@
- HAVE_COPY_FILE_RANGE = @have_copy_file_range@
- NEED_INTERNAL_FSXATTR = @need_internal_fsxattr@
- NEED_INTERNAL_FSCRYPT_ADD_KEY_ARG = @need_internal_fscrypt_add_key_arg@
-diff --git a/io/Makefile b/io/Makefile
-index 8f835ec7..f8b19ac5 100644
---- a/io/Makefile
-+++ b/io/Makefile
-@@ -69,6 +69,10 @@ ifeq ($(HAVE_PWRITEV2),yes)
- LCFLAGS += -DHAVE_PWRITEV2
- endif
- 
-+ifeq ($(HAVE_PREADV2),yes)
-+LCFLAGS += -DHAVE_PREADV2
-+endif
-+
- ifeq ($(HAVE_MAP_SYNC),yes)
- LCFLAGS += -DHAVE_MAP_SYNC
- endif
-diff --git a/io/pread.c b/io/pread.c
-index 62c771fb..782f2a36 100644
---- a/io/pread.c
-+++ b/io/pread.c
-@@ -162,7 +162,8 @@ static ssize_t
- do_preadv(
- 	int		fd,
- 	off_t		offset,
--	long long	count)
-+	long long	count,
-+	int 		preadv2_flags)
- {
- 	int		vecs = 0;
- 	ssize_t		oldlen = 0;
-@@ -181,8 +182,14 @@ do_preadv(
- 	} else {
- 		vecs = vectors;
- 	}
-+#ifdef HAVE_PREADV2
-+	if (preadv2_flags)
-+		bytes = preadv2(fd, iov, vectors, offset, preadv2_flags);
-+	else
-+		bytes = preadv(fd, iov, vectors, offset);
-+#else
- 	bytes = preadv(fd, iov, vectors, offset);
--
++/* buffered IO that drops the cache after reading or writing data */
++#ifndef RWF_DONTCACHE
++#define RWF_DONTCACHE	((__kernel_rwf_t)0x00000080)
 +#endif
- 	/* restore trimmed iov */
- 	if (oldlen)
- 		iov[vecs - 1].iov_len = oldlen;
-@@ -195,12 +202,13 @@ do_pread(
- 	int		fd,
- 	off_t		offset,
- 	long long	count,
--	size_t		buffer_size)
-+	size_t		buffer_size,
-+	int 		preadv2_flags)
- {
- 	if (!vectors)
- 		return pread(fd, io_buffer, min(count, buffer_size), offset);
- 
--	return do_preadv(fd, offset, count);
-+	return do_preadv(fd, offset, count, preadv2_flags);
- }
- 
- static int
-@@ -210,7 +218,8 @@ read_random(
- 	long long	count,
- 	long long	*total,
- 	unsigned int	seed,
--	int		eof)
-+	int		eof,
-+	int 	preadv2_flags)
- {
- 	off_t		end, off, range;
- 	ssize_t		bytes;
-@@ -234,7 +243,7 @@ read_random(
- 				io_buffersize;
- 		else
- 			off = offset;
--		bytes = do_pread(fd, off, io_buffersize, io_buffersize);
-+		bytes = do_pread(fd, off, io_buffersize, io_buffersize, preadv2_flags);
- 		if (bytes == 0)
- 			break;
- 		if (bytes < 0) {
-@@ -256,7 +265,8 @@ read_backward(
- 	off_t		*offset,
- 	long long	*count,
- 	long long	*total,
--	int		eof)
-+	int		eof,
-+	int 	preadv2_flags)
- {
- 	off_t		end, off = *offset;
- 	ssize_t		bytes = 0, bytes_requested;
-@@ -276,7 +286,7 @@ read_backward(
- 	/* Do initial unaligned read if needed */
- 	if ((bytes_requested = (off % io_buffersize))) {
- 		off -= bytes_requested;
--		bytes = do_pread(fd, off, bytes_requested, io_buffersize);
-+		bytes = do_pread(fd, off, bytes_requested, io_buffersize, preadv2_flags);
- 		if (bytes == 0)
- 			return ops;
- 		if (bytes < 0) {
-@@ -294,7 +304,7 @@ read_backward(
- 	while (cnt > end) {
- 		bytes_requested = min(cnt, io_buffersize);
- 		off -= bytes_requested;
--		bytes = do_pread(fd, off, cnt, io_buffersize);
-+		bytes = do_pread(fd, off, cnt, io_buffersize, preadv2_flags);
- 		if (bytes == 0)
- 			break;
- 		if (bytes < 0) {
-@@ -318,14 +328,15 @@ read_forward(
- 	long long	*total,
- 	int		verbose,
- 	int		onlyone,
--	int		eof)
-+	int		eof,
-+	int 	preadv2_flags)
- {
- 	ssize_t		bytes;
- 	int		ops = 0;
- 
- 	*total = 0;
- 	while (count > 0 || eof) {
--		bytes = do_pread(fd, offset, count, io_buffersize);
-+		bytes = do_pread(fd, offset, count, io_buffersize, preadv2_flags);
- 		if (bytes == 0)
- 			break;
- 		if (bytes < 0) {
-@@ -353,7 +364,7 @@ read_buffer(
- 	int		verbose,
- 	int		onlyone)
- {
--	return read_forward(fd, offset, count, total, verbose, onlyone, 0);
-+	return read_forward(fd, offset, count, total, verbose, onlyone, 0, 0);
- }
- 
- static int
-@@ -371,6 +382,7 @@ pread_f(
- 	int		Cflag, qflag, uflag, vflag;
- 	int		eof = 0, direction = IO_FORWARD;
- 	int		c;
-+	int 	preadv2_flags = 0;
- 
- 	Cflag = qflag = uflag = vflag = 0;
- 	init_cvtnum(&fsblocksize, &fssectsize);
-@@ -463,15 +475,18 @@ pread_f(
- 	case IO_RANDOM:
- 		if (!zeed)	/* srandom seed */
- 			zeed = time(NULL);
--		c = read_random(file->fd, offset, count, &total, zeed, eof);
-+		c = read_random(file->fd, offset, count, &total, zeed, eof,
-+						preadv2_flags);
- 		break;
- 	case IO_FORWARD:
--		c = read_forward(file->fd, offset, count, &total, vflag, 0, eof);
-+		c = read_forward(file->fd, offset, count, &total, vflag, 0, eof,
-+						 preadv2_flags);
- 		if (eof)
- 			count = total;
- 		break;
- 	case IO_BACKWARD:
--		c = read_backward(file->fd, &offset, &count, &total, eof);
-+		c = read_backward(file->fd, &offset, &count, &total, eof,
-+						  preadv2_flags);
- 		break;
- 	default:
- 		ASSERT(0);
-diff --git a/m4/package_libcdev.m4 b/m4/package_libcdev.m4
-index 4ef7e8f6..5a1f748a 100644
---- a/m4/package_libcdev.m4
-+++ b/m4/package_libcdev.m4
-@@ -16,6 +16,24 @@ pwritev2(0, 0, 0, 0, 0);
-     AC_SUBST(have_pwritev2)
-   ])
- 
-+#
-+# Check if we have a preadv2 libc call (Linux)
-+#
-+AC_DEFUN([AC_HAVE_PREADV2],
-+  [ AC_MSG_CHECKING([for preadv2])
-+    AC_LINK_IFELSE(
-+    [	AC_LANG_PROGRAM([[
-+#define _GNU_SOURCE
-+#include <sys/uio.h>
-+	]], [[
-+preadv2(0, 0, 0, 0, 0);
-+	]])
-+    ], have_preadv2=yes
-+       AC_MSG_RESULT(yes),
-+       AC_MSG_RESULT(no))
-+    AC_SUBST(have_preadv2)
-+  ])
 +
- #
- # Check if we have a copy_file_range system call (Linux)
- #
+ /*
+  * Reminder: anything added to this file will be compiled into downstream
+  * userspace projects!
+diff --git a/io/pwrite.c b/io/pwrite.c
+index fab59be4..db335e91 100644
+--- a/io/pwrite.c
++++ b/io/pwrite.c
+@@ -45,6 +45,7 @@ pwrite_help(void)
+ " -N   -- Perform the pwritev2() with RWF_NOWAIT\n"
+ " -D   -- Perform the pwritev2() with RWF_DSYNC\n"
+ " -A   -- Perform the pwritev2() with RWF_ATOMIC\n"
++" -U   -- Perform the pwritev2() with Uncached/RWF_DONTCACHE\n"
+ #endif
+ "\n"));
+ }
+@@ -285,7 +286,7 @@ pwrite_f(
+ 	init_cvtnum(&fsblocksize, &fssectsize);
+ 	bsize = fsblocksize;
+ 
+-	while ((c = getopt(argc, argv, "Ab:BCdDf:Fi:NqRs:OS:uV:wWZ:")) != EOF) {
++	while ((c = getopt(argc, argv, "Ab:BCdDf:Fi:NqRs:OS:uUV:wWZ:")) != EOF) {
+ 		switch (c) {
+ 		case 'b':
+ 			tmp = cvtnum(fsblocksize, fssectsize, optarg);
+@@ -328,6 +329,9 @@ pwrite_f(
+ 		case 'A':
+ 			pwritev2_flags |= RWF_ATOMIC;
+ 			break;
++		case 'U':
++			pwritev2_flags |= RWF_DONTCACHE;
++			break;
+ #endif
+ 		case 's':
+ 			skip = cvtnum(fsblocksize, fssectsize, optarg);
+@@ -480,7 +484,7 @@ pwrite_init(void)
+ 	pwrite_cmd.argmax = -1;
+ 	pwrite_cmd.flags = CMD_NOMAP_OK | CMD_FOREIGN_OK;
+ 	pwrite_cmd.args =
+-_("[-i infile [-qAdDwNOW] [-s skip]] [-b bs] [-S seed] [-FBR [-Z N]] [-V N] off len");
++_("[-i infile [-qAdDwNOUW] [-s skip]] [-b bs] [-S seed] [-FBR [-Z N]] [-V N] off len");
+ 	pwrite_cmd.oneline =
+ 		_("writes a number of bytes at a specified offset");
+ 	pwrite_cmd.help = pwrite_help;
+diff --git a/man/man8/xfs_io.8 b/man/man8/xfs_io.8
+index 59d5ddc5..47af5232 100644
+--- a/man/man8/xfs_io.8
++++ b/man/man8/xfs_io.8
+@@ -244,7 +244,7 @@ See the
+ .B pread
+ command.
+ .TP
+-.BI "pwrite [ \-i " file " ] [ \-qAdDwNOW ] [ \-s " skip " ] [ \-b " size " ] [ \-S " seed " ] [ \-FBR [ \-Z " zeed " ] ] [ \-V " vectors " ] " "offset length"
++.BI "pwrite [ \-i " file " ] [ \-qAdDwNOUW ] [ \-s " skip " ] [ \-b " size " ] [ \-S " seed " ] [ \-FBR [ \-Z " zeed " ] ] [ \-V " vectors " ] " "offset length"
+ Writes a range of bytes in a specified blocksize from the given
+ .IR offset .
+ The bytes written can be either a set pattern or read in from another
+@@ -287,6 +287,12 @@ Perform the
+ call with
+ .IR RWF_ATOMIC .
+ .TP
++.B \-U
++Perform the
++.BR pwritev2 (2)
++call with
++.IR RWF_DONTCACHE .
++.TP
+ .B \-O
+ perform pwrite once and return the (maybe partial) bytes written.
+ .TP
 -- 
 2.48.1
 
