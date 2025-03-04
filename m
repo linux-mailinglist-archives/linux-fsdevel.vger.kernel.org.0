@@ -1,337 +1,233 @@
-Return-Path: <linux-fsdevel+bounces-43157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43158-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A759CA4EC3B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 19:46:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1C3A4EC5B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 19:49:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7507188E70E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 18:42:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EF721889FB9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 18:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217AD207E09;
-	Tue,  4 Mar 2025 18:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A948723643E;
+	Tue,  4 Mar 2025 18:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aRm8FIc4"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sPUuh+IY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793402E3397;
-	Tue,  4 Mar 2025 18:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741113391; cv=none; b=baY+DpEef6wVf5YM6pGSQU+IRAoRD2Fehg5GadX30AGqGEJ2+K45u0ywZHQBikPD4ogbyjI1uWN+z8ZMbNi7wtnAD1gWhderEsyFc2ALKREe8WMLGr8deUXfFrxLn5w64YBewJZSYRtuc4PU8SQEPt2ZLbt6RCmKAbn2Tt6D6Ao=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741113391; c=relaxed/simple;
-	bh=YFAjSFcxHKSK09jHDmexez6pBBSG3imyFyu/hbpWRug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DlF5QJdIoQqTHB2Yq/MJmc7IrCIoS+1Cb8oyEX783NC9Zc6s5FDPP8uJiY8ZtXrQT+1QezrjknZZGQo7yh+hOABCC6QvMPo65I/ZPc4a6yIKsDP8kW4PvMxqo/8qs0+aN0TxisF9bWJI3HFxwFMrfQWycFa+pPuNltZ6k2wU/QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aRm8FIc4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59030C4CEE5;
-	Tue,  4 Mar 2025 18:36:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741113390;
-	bh=YFAjSFcxHKSK09jHDmexez6pBBSG3imyFyu/hbpWRug=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aRm8FIc4TyTPTOmROjMxwIazcNLGryQbJy956hAtFn5WpaZp33cYXDGERv3Lsn4Wo
-	 Sjz9KlvFz5gXvWXRFnwClIFTVZFSb62lNfxadIb2RgjVHuaHaPznG3BwbeDUoP9Pxs
-	 2OfddvgJyb/aDwIvLoLXiwPuue95k9vToweJJp+YBZX2FbgpAlHmmq5/0FWRBSFjeu
-	 eIJajbB7vTZ30GvBQYr4y0rN4hvvFYfUiRMR6FhNC9LJdeFT13dfIVx5+BdontJbgh
-	 GjXtVr7CDIDTWSrMnr46zNF6AhuKDWBKdx1Cjp6HFnGryMRFoBiW1Zh6ImNVC2UMTM
-	 HJVUi1wuqX2OA==
-Date: Tue, 4 Mar 2025 19:36:24 +0100
-From: Alexey Gladkov <legion@kernel.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jan Kara <jack@suse.cz>, Mateusz Guzik <mjguzik@gmail.com>,
-	Manfred Spraul <manfred@colorfullife.com>,
-	David Howells <dhowells@redhat.com>,
-	WangYuli <wangyuli@uniontech.com>, Hillf Danton <hdanton@sina.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Neeraj.Upadhyay@amd.com, Ananth.narayan@amd.com
-Subject: Re: [PATCH] fs/pipe: Read pipe->{head,tail} atomically outside
- pipe->mutex
-Message-ID: <Z8dIKGCSRWqUqAEI@example.org>
-References: <CAHk-=wiA-7pdaQm2nV0iv-fihyhWX-=KjZwQTHNKoDqid46F0w@mail.gmail.com>
- <20250304135138.1278-1-kprateek.nayak@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FA32E337C;
+	Tue,  4 Mar 2025 18:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.158.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741113725; cv=fail; b=ZR8Rw8Sy5wjFAn3kuSaOMlbKnbtWIYVNMZpArM5CLUQdDbZ4GuIEolz279B2sLgpzZlSmgTN3IMI/TXX+HiW2Ix8xSFRAD4GPgmN+MdxuRlMYDpO14DoutNNPsJGGC5YPKcLqPqk77Oq97RwXjyn4da6FyfJ8MTRzLNx5NJogtE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741113725; c=relaxed/simple;
+	bh=0je7Nmr/5rUuDBOfjpPYbHNLtyIgRPJXYf+ABxtkZ1I=;
+	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
+	 MIME-Version:Subject; b=Q4suIVInOmIKQ2iGmgwbUFDhxWSgIdGdmKkNHzvCOS/Eo23sMhbDPtqrhhZmqEvNLb+xD5NL9YLsyKxPuXSaFHxcYtBLAbbPvKpP3s5lKiQQ99H0Sv8BDmk7mLj9ta6KWdzSo1+cWVeiB8c31nf7Y1+1DkjfZJHKzRN0PZrAt+0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sPUuh+IY; arc=fail smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524GkEJG022808;
+	Tue, 4 Mar 2025 18:41:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-id:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	pp1; bh=0je7Nmr/5rUuDBOfjpPYbHNLtyIgRPJXYf+ABxtkZ1I=; b=sPUuh+IY
+	w+NyPgxNj2uNVRq1s9clqohUlYr/u6XdGNYpeW0gdbZVAVffy/EqjpEQg4tGQ68S
+	VqXx6Rl4bJX1++XwMcvQEqV3jRPfHoZtAFvU1W+kxi59DGVcQNBC185e3fGaoC5n
+	MFCAd90HIrRHAm2gxlPNemra169g53vMgVq25LhMjhS8uveJMPGE4hrjiVNm2iQy
+	QSEJq+A5eg4gPIeb/57jVehKUADqyxyAMUr1vKae4yi9og0lrs1QimrgxBfLodqk
+	b2lL00dTIsnZe/hx2jZrOjS+sfucEMhBilp/CsilGX2Zx+oiomyBuimJLYN57ofl
+	WZW2+YacK8efnA==
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2048.outbound.protection.outlook.com [104.47.55.48])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455ku55pds-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 18:41:49 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=j27TASxVMpUcZZvAuGYdxS/7vuTsnPMFKuVmtHaWvMXGoMjs3rQR5rDe3sVPiMWjB4zvdsA1LRBQydK4S7UjTTdwtmmVYQu7SoIftP0L3jt6SkpfIwgGnYkVwTe+o8wGbg5ON6tZgvNOfx9BYVE8VGORP/j6eShQhF1kO/RDMmoKP3B5ZWvVhlmB/O2afP18iq4qpk/ANIcI5a3gydkrONKiPkBxoUvizqyz41uIsz+kAIIXPmEXe2dm1/gZNOEhS7iY4nVuyUrgk/r/FESU29UOVGVROK2kgfBznDZfQNH2wUnZQSWEPvpsv1ByW4BL9Q9POrfBzlgp/LfMhWJh4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0je7Nmr/5rUuDBOfjpPYbHNLtyIgRPJXYf+ABxtkZ1I=;
+ b=BRkPbvTM7BC/kLG+lBKv3Ge1Ouv8ERlCD8AJpITrbD4irDEw4NddltK9Qi2/92OwllN4PLH2Flf1KUZDUoI5LndxwpfdKPmuIw+K6b6Lam0mVRpKkSju97dz/Tkh3RqXqsTfuzVLdS/7KJNWcE287MUuRLT1YZ6nV2+RLQKGEAEfsit9PSSArOafJIBzwvfbkTsvPZiLsvgkH5f9slbHU38jCLkpRExunpViHTwfytro/xEsuzQ6weHnM6Nu8sSbJag0BVu+2eucc+z+YnP3JmLBO6ZHuCo5CqQWvWHWWiDRawut9l+aFuAZ4lMI886rxhmDX3NAh8NATGGCAeQ/Gg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
+ header.d=ibm.com; arc=none
+Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
+ by SA1PR15MB5818.namprd15.prod.outlook.com (2603:10b6:806:332::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Tue, 4 Mar
+ 2025 18:41:46 +0000
+Received: from SA1PR15MB5819.namprd15.prod.outlook.com
+ ([fe80::6fd6:67be:7178:d89b]) by SA1PR15MB5819.namprd15.prod.outlook.com
+ ([fe80::6fd6:67be:7178:d89b%4]) with mapi id 15.20.8489.028; Tue, 4 Mar 2025
+ 18:41:46 +0000
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+To: "willy@infradead.org" <willy@infradead.org>,
+        "brauner@kernel.org"
+	<brauner@kernel.org>
+CC: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "dan.carpenter@linaro.org" <dan.carpenter@linaro.org>
+Thread-Topic: [EXTERNAL] [PATCH] ceph: Fix error handling in
+ fill_readdir_cache()
+Thread-Index: AQHbjRzg20LzYdXmI0qqDoF49NeS8bNjT+8A
+Date: Tue, 4 Mar 2025 18:41:46 +0000
+Message-ID: <7f2e7a8938775916fd926f9e7ff073d42f89108b.camel@ibm.com>
+References: <20250304154818.250757-1-willy@infradead.org>
+In-Reply-To: <20250304154818.250757-1-willy@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|SA1PR15MB5818:EE_
+x-ms-office365-filtering-correlation-id: 7a311858-30fe-45ae-2325-08dd5b4c37a6
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|366016|10070799003|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?RFFvZVpOL2hPSXVBUmFiTDN1emtaYmFPRkJ5K0E1Z0xLYWhXME9KcVZ5UXlL?=
+ =?utf-8?B?MmZPQlJDdU1PRi95QWpycENCR2dMdWl1bXFFRTRwUVVYWlVMMlJzRGhKdDhE?=
+ =?utf-8?B?ZTV1S2VxV1lBQXBxNDNyMGVWbkNRU1YrRWRaSkU2V05mUnUxNXNmK2ZtakNU?=
+ =?utf-8?B?TE5CRmg4TFBBeEk4d0VqbEhnM2cwcThkQjRVZkFQaGNjUEFhWHNNRkZGMWVD?=
+ =?utf-8?B?YVlQNjYvSVFkRmtWM2hlcDl3R0hmdG1sZWNMTDBhWG8xeUtCcjZ1UGVJcndQ?=
+ =?utf-8?B?cnVCOTNacElMYldobkdVQlhvdTdQYW53QmZBVzhqZTUwTWd3OExndmVucUxI?=
+ =?utf-8?B?eWhkWUY4VEdwTFNlK2Qxcmh4dkNIVlRLN0ZVcksrNUdsNWQzSjRWY1QzSlFR?=
+ =?utf-8?B?ZGd3T1o4bEdVZlI3c1VoZ2ZhQWpPOHFRVUpVN3g4NGZkb3NTU2VQeERMZUhW?=
+ =?utf-8?B?VjhXVnJnekNtZlkwRzZkUFg0UzROaHJrSWNlcnpoWEVnVzNGdGEraDlISE52?=
+ =?utf-8?B?VGdCbjVpZis3VWRDQ1pvck5MbHY2UGV2QjgzTFhYOEs0dlA5enIzQm9ia3pH?=
+ =?utf-8?B?LzE0dVI1VVZGN3ZBTjVPVjU5Z0drK05TQndKWThZU2JoMWNya3ZoaVVDL2FR?=
+ =?utf-8?B?NmplTkZMZ3RNN1NJeGI0U2RKUmNCMDNTMWxVbmRTNURYeHloQlhoUDBEa0dV?=
+ =?utf-8?B?SE1oMkVPUHNid0UrVWpuRHhZN0hNcCtIVjE1bExXc2tBRHdBL0VJQWM3TXY0?=
+ =?utf-8?B?eHBLQVhHb2trcXJ5cjdKQzR1R1hVV29WWjBsWjlmRFF5N2JhNEpIV2dlSTU4?=
+ =?utf-8?B?OFdJV0dRZE85dXVXZGNCYk1rY3VvRkVIOG12dURyckNuUm92Q3JUdXlBQW5v?=
+ =?utf-8?B?SGdSVUtPYm0wYXlzKzQrY0duOGp3anlRNitLcjhjS1lKSTBvR2M3bXFUVE9k?=
+ =?utf-8?B?M2dxWExYdDlDZGlpNEhoZ05IZi93UnpwTUxPVURtcHhCSzFQb1NSbTJRaVdj?=
+ =?utf-8?B?cFlmUFcwYytpSVpSNElwN0hZdGt6QWc1d29mQ0pHaWJURGx6N2tZbFM5YkIx?=
+ =?utf-8?B?eVI2RVVDcjdpc2RlOUJXVDVEYk1hbDMzeTJvOCt1MzNXdjgvNHRWeTNWVkVp?=
+ =?utf-8?B?Q3N3bFRhVmI5U0poVUlZcUtVRFNQQXlGRS9HWkllallLaGZyVVVMU2Q4ZW55?=
+ =?utf-8?B?SkVhTFphcmVQZ2FmUXhJa3lteUdCRm11YXlTTy9sZG8za3BVTUhvN0R3QW1y?=
+ =?utf-8?B?cnQwYzRxSmc1QXZlMm9iNzZtNm1XdDlGSjExR0hHdUEzNGNma3lzVzlQR3Q3?=
+ =?utf-8?B?YTFsVmdRQ1JURTRRUmZZYWl5QXFLRC82czJCNmpFS3pKbFZyZjgvWmwvbE91?=
+ =?utf-8?B?bXJQYWNWaVdoZVpOVUFZK2VneVR6cUUxdVp5VHF6Ri9vVkxVN1VWeEs4eHgy?=
+ =?utf-8?B?VG5oT0grMHd3eDcvaDVSQkdYbkVwdW1UVlJLbUZZdUU4ZzlnYlNXcmEwRE9h?=
+ =?utf-8?B?TUF1OFp1Y3ByaTg5elFxR1grbHpvbjQvWE51ZVU0endKWGF3SlgrV1NJWkxX?=
+ =?utf-8?B?azN5ZnJqbWJzNXlhYmdzcCt2V1VycktpTk1sWDhwc0prQnpMNU1nY0xKK085?=
+ =?utf-8?B?Z0FGZXZ5ZXJma2FJa1F0Q2VLUzBrWHpYTWNhZ0EvN3hzbFdCRzZiVUk5Ry94?=
+ =?utf-8?B?cy9maW0rczZsS0tvbXJHdUZoNXVuN1gzRDVNQ1N1RSt5cEh0Z3FIamYrdDVW?=
+ =?utf-8?B?MGwwQlcrV24zaFgrOGZ3WE9UWDhFaTNSZWJaZjNaam1FTFM5dDdFbktTTDVq?=
+ =?utf-8?B?Y2FmR0ppN0txWHVvY1ludWZxSm9LWjhpUnZ4eVd5SlB6cUJ6Zi81d0ZqTjk4?=
+ =?utf-8?B?TXZxNWhQQkpHQXdzRnIzTkdTUExPbGIzT3F3ak9vZitqeWc1b2VPdXRBRnl0?=
+ =?utf-8?Q?iTx4dF6ECZmBqeycfnuM85+1MRS4E6Rx?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(10070799003)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?NHJqYjFaYm1oNjhodCtIVGRLWXczb2R2TFdvZG56V0J0ZENrR1kxV25JWGcx?=
+ =?utf-8?B?TkxBVU1acUdnR1p2clFJN2xkUE9vbHV2UTJKUUMyY1MyT29ucktmTVp1MTBp?=
+ =?utf-8?B?N0NOR3ozOHI0WUNPRk9SRFBQbjlpdmVOZVNoZTJQejhwY2JRL1R1YUU2WVNu?=
+ =?utf-8?B?MFRnOVBqZFlDNTJvanF3ckJpUUt0RzFLcDFoNGxIREFGamRLdzlaK3V6RENR?=
+ =?utf-8?B?STJmbWlFNmpzNmh4N1JteUJzRXV0dXF3Njd6WXNGdXFoaDNEb0ZlcWNZZzdE?=
+ =?utf-8?B?WERsYndBQ2FHNE5nYk00V3FSbkErYWVWRjhkdU1ZVmd2eWJhRW0ycSszZGsy?=
+ =?utf-8?B?TUwyNGltNC8rVVZjd29Kckg5MnlLS0x0OW9nanpMSGcwK2N5STkrajQvL2R5?=
+ =?utf-8?B?Nks1d3lUcUZ6amtWOUo0YWpSZWE0NXY5MVMzNytsbWVNZVNOUVVnbHEvd3M5?=
+ =?utf-8?B?V1RNUTJTRHM5NFNEczltQ0hZZTlpakRNaXhoUEhRY2ExVUhsUUU1L1kzWkRB?=
+ =?utf-8?B?eTltakRBa2x4LzhGSmxUdVUvT0M5d2lQcnV3U21mVXVzdTZHdVVzQTVITHQ1?=
+ =?utf-8?B?T1dLeEZvekhqUUVPdEg4MXdURWxRL0ZEMVdFSlduM3BtMjlXUU5UVUhXTm03?=
+ =?utf-8?B?Lzl6QU52cDE4WnlreDl0UzZrTGRRRS9uNmRwcGxlZ3VPaDA4N2o4ZVh2MlhF?=
+ =?utf-8?B?cVl0azhjWmRnQVZBYmhtYmlXUVluMU1lcjFrNWx1TTlIM1NIS3BkbXlYeU5K?=
+ =?utf-8?B?MUpLVVkyVzhibmhTMVltSWM2NmZKNCs4SUhxck1oZ2cvMHNEZGs1TzdWcDgr?=
+ =?utf-8?B?N1JSYS9CeFdNTFBoZitkRGJ4YmZ4dGtGUnFib2tvdENQa3BYWUh5VjRoWlF0?=
+ =?utf-8?B?QTI0WjAyOXVLT0FmcmlqbS9rbDVMWGlOT3RoL0pQVExSY3pKNnhwYWJCR0gv?=
+ =?utf-8?B?Z2ptRVErMUs1WDhqOEVxWllLYW9zclNueU9weFY3N29jMjBuZHh3WUlqbm8z?=
+ =?utf-8?B?TVZGcE1QSjFXM3FDOCtQNnpESkJ3SGJxQlV1MmhPODlRRytSbWI5U1EzSlhM?=
+ =?utf-8?B?YXZuUTJTSGdYTTdKZ1JNUDB4L2RDMHlwYjNYQittY1N6dnpYSTVaSlRxS3dS?=
+ =?utf-8?B?bW1hcW9NOWcwNGQrOElCSDAxTXdJbG9mWGNpSE9JUDliaFlpYWVhRHRhME9V?=
+ =?utf-8?B?emw1bnVPbCtYcHJUQUFabGZsQk5UTFdMcktodlo4S0lrSDRVcjdqVG1yd01h?=
+ =?utf-8?B?d2EyNEZrdmF0OWUwY3gwanVPbXBhOHp6eThzNHBIejlMUkRVUkxLVnVuN05H?=
+ =?utf-8?B?NmlyWGJNMy9Cc2xMWWI3WER5UTBrRThOOVZaVkJOUzZNUmZVTERJWnA5ejVM?=
+ =?utf-8?B?b1V4ZzNUdFh4T2xOSjJtaFZSVDQzTlNXVnhFelVXazRRM3VFTitvY1dMVzUr?=
+ =?utf-8?B?cXQ0Y1Bmc2dpVE1raDZnS25VRDZnY3ZpM0Q5OTNZSmUwcmttSExRWmxENEF4?=
+ =?utf-8?B?Sjl0N1VvenNtOHMySS95KytrQzFVbFpxK0ZUMmh3a0tuWXYvcS9BU3gydkRn?=
+ =?utf-8?B?QTRPZUdQRFphYTlzL0JyMlM4d21HZVJmSklXNXpUNTVYQWxCSEQ5bVhxYlJO?=
+ =?utf-8?B?Sy92U0hmT0h4bHhZR3hRRUt5MytqWEZzam1VcVZsZ2x0MjJ2ZEdtVzMrSmhW?=
+ =?utf-8?B?TlhWUDllT2lKeDZUYnlXSjhrMGlTdGUrS2F0RHlJNGdtbnhvTFhoVkk5c1FM?=
+ =?utf-8?B?Z0c3b2o3bGhQMFNMVVhENStYVmxLMm54U2V2Z1RzbFNFbFl2dUJvdTBSdkdF?=
+ =?utf-8?B?bE1LNXFFblMvQmNOcFloVGs5clNDOXBZaG1YWFNUZndLMVEwbHBxOWt3bkxN?=
+ =?utf-8?B?MDVRWnd1UlZNZnhscGlIUlpVVkNHdFJ1VkE4Q2hNSC9wMXZCTHhEbHI0eUUr?=
+ =?utf-8?B?U3RPM1EyYnhHQnlScHh0YTNGOENHNDdrWWo5MVFSVVkwUUJsSUt3L3ptTVda?=
+ =?utf-8?B?MjhEVmZ1SExrT2ZiS3BNSkNJMEM3QzdJOXBSa3VnQ0t6dFB3bGc5bmtpVFVP?=
+ =?utf-8?B?NkdHVkhJRFVNUzBEOFl4RVlaVkIxZzRLc0xXbldZZHFvdGhZTDBvcjZkMTFs?=
+ =?utf-8?B?YTlRM2JNellMSFdyK1dRN3NHYnVzek1RUlYxNjMraDhHd2Jyenh2Z3ZSVTE2?=
+ =?utf-8?Q?iWSDcFofgWz5cuMkeZPhFEk=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <3B52D706B806E741AD97F584A626A7C4@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304135138.1278-1-kprateek.nayak@amd.com>
+X-OriginatorOrg: ibm.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7a311858-30fe-45ae-2325-08dd5b4c37a6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Mar 2025 18:41:46.5291
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: aFHNwGlq3KW2WbmWPUiKAodofhl2KSqnpyXGvmwWX3q0kCqpy42RAGdgJhsv8zKah5Jztv532IcaApXHgeXzTQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR15MB5818
+X-Proofpoint-ORIG-GUID: dyL5maY07ot4DgmQxBIUt07jYkIQjXEV
+X-Proofpoint-GUID: dyL5maY07ot4DgmQxBIUt07jYkIQjXEV
+Subject: Re:  [PATCH] ceph: Fix error handling in fill_readdir_cache()
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-04_08,2025-03-03_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ clxscore=1011 mlxscore=0 suspectscore=0 impostorscore=0 bulkscore=0
+ mlxlogscore=999 lowpriorityscore=0 spamscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503040148
 
-On Tue, Mar 04, 2025 at 01:51:38PM +0000, K Prateek Nayak wrote:
-> From: Linus Torvalds <torvalds@linux-foundation.org>
-> 
-> pipe_readable(), pipe_writable(), and pipe_poll() can read "pipe->head"
-> and "pipe->tail" outside of "pipe->mutex" critical section. When the
-> head and the tail are read individually in that order, there is a window
-> for interruption between the two reads in which both the head and the
-> tail can be updated by concurrent readers and writers.
-> 
-> One of the problematic scenarios observed with hackbench running
-> multiple groups on a large server on a particular pipe inode is as
-> follows:
-> 
->     pipe->head = 36
->     pipe->tail = 36
-> 
->     hackbench-118762  [057] .....  1029.550548: pipe_write: *wakes up: pipe not full*
->     hackbench-118762  [057] .....  1029.550548: pipe_write: head: 36 -> 37 [tail: 36]
->     hackbench-118762  [057] .....  1029.550548: pipe_write: *wake up next reader 118740*
->     hackbench-118762  [057] .....  1029.550548: pipe_write: *wake up next writer 118768*
-> 
->     hackbench-118768  [206] .....  1029.55055X: pipe_write: *writer wakes up*
->     hackbench-118768  [206] .....  1029.55055X: pipe_write: head = READ_ONCE(pipe->head) [37]
->     ... CPU 206 interrupted (exact wakeup was not traced but 118768 did read head at 37 in traces)
-> 
->     hackbench-118740  [057] .....  1029.550558: pipe_read:  *reader wakes up: pipe is not empty*
->     hackbench-118740  [057] .....  1029.550558: pipe_read:  tail: 36 -> 37 [head = 37]
->     hackbench-118740  [057] .....  1029.550559: pipe_read:  *pipe is empty; wakeup writer 118768*
->     hackbench-118740  [057] .....  1029.550559: pipe_read:  *sleeps*
-> 
->     hackbench-118766  [185] .....  1029.550592: pipe_write: *New writer comes in*
->     hackbench-118766  [185] .....  1029.550592: pipe_write: head: 37 -> 38 [tail: 37]
->     hackbench-118766  [185] .....  1029.550592: pipe_write: *wakes up reader 118766*
-> 
->     hackbench-118740  [185] .....  1029.550598: pipe_read:  *reader wakes up; pipe not empty*
->     hackbench-118740  [185] .....  1029.550599: pipe_read:  tail: 37 -> 38 [head: 38]
->     hackbench-118740  [185] .....  1029.550599: pipe_read:  *pipe is empty*
->     hackbench-118740  [185] .....  1029.550599: pipe_read:  *reader sleeps; wakeup writer 118768*
-> 
->     ... CPU 206 switches back to writer
->     hackbench-118768  [206] .....  1029.550601: pipe_write: tail = READ_ONCE(pipe->tail) [38]
->     hackbench-118768  [206] .....  1029.550601: pipe_write: pipe_full()? (u32)(37 - 38) >= 16? Yes
->     hackbench-118768  [206] .....  1029.550601: pipe_write: *writer goes back to sleep*
-> 
->     [ Tasks 118740 and 118768 can then indefinitely wait on each other. ]
-> 
-> The unsigned arithmetic in pipe_occupancy() wraps around when
-> "pipe->tail > pipe->head" leading to pipe_full() returning true despite
-> the pipe being empty.
-> 
-> The case of genuine wraparound of "pipe->head" is handled since pipe
-> buffer has data allowing readers to make progress until the pipe->tail
-> wraps too after which the reader will wakeup a sleeping writer, however,
-> mistaking the pipe to be full when it is in fact empty can lead to
-> readers and writers waiting on each other indefinitely.
-> 
-> This issue became more problematic and surfaced as a hang in hackbench
-> after the optimization in commit aaec5a95d596 ("pipe_read: don't wake up
-> the writer if the pipe is still full") significantly reduced the number
-> of spurious wakeups of writers that had previously helped mask the
-> issue.
-> 
-> To avoid missing any updates between the reads of "pipe->head" and
-> "pipe->write", unionize the two with a single unsigned long
-> "pipe->head_tail" member that can be loaded atomically.
-> 
-> Using "pipe->head_tail" to read the head and the tail ensures the
-> lockless checks do not miss any updates to the head or the tail and
-> since those two are only updated under "pipe->mutex", it ensures that
-> the head is always ahead of, or equal to the tail resulting in correct
-> calculations.
-> 
->   [ prateek: commit log, testing on x86 platforms. ]
-> 
-> Reported-and-debugged-by: Swapnil Sapkal <swapnil.sapkal@amd.com>
-> Closes: https://lore.kernel.org/lkml/e813814e-7094-4673-bc69-731af065a0eb@amd.com/
-> Reported-by: Alexey Gladkov <legion@kernel.org>
-> Closes: https://lore.kernel.org/all/Z8Wn0nTvevLRG_4m@example.org/
-> Fixes: 8cefc107ca54 ("pipe: Use head and tail pointers for the ring, not cursor and length")
-> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Tested-by: Swapnil Sapkal <swapnil.sapkal@amd.com>
-> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
-
-With this patch, I'm also not reproducing the problem. Thanks!
-
-> ---
-> Changes are based on:
-> 
->   git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs-6.15.pipe
-> 
-> at commit commit ee5eda8ea595 ("pipe: change pipe_write() to never add a
-> zero-sized buffer") but also applies cleanly on top of v6.14-rc5.
-> 
-> The diff from Linus is kept as is except for removing the whitespaces in
-> front of the typedef that checkpatch complained about (the warning on
-> usage of typedef itself has been ignored since I could not think of a
-> better alternative other than #ifdef hackery in pipe_inode_info and the
-> newly introduced pipe_index union.) and the suggestion from Oleg to
-> explicitly initialize the "head_tail" with:
-> 
->     union pipe_index idx = { .head_tail = READ_ONCE(pipe->head_tail) }
-> 
-> I went with commit 8cefc107ca54 ("pipe: Use head and tail pointers for
-> the ring, not cursor and length") for the "Fixes:" tag since pipe_poll()
-> added:
-> 
->     unsigned int head = READ_ONCE(pipe->head);
->     unsigned int tail = READ_ONCE(pipe->tail);
-> 
->     poll_wait(filp, &pipe->wait, wait);
-> 
->     BUG_ON(pipe_occupancy(head, tail) > pipe->ring_size);
-> 
-> and the race described can trigger that BUG_ON() but as Linus pointed
-> out in [1] the commit 85190d15f4ea ("pipe: don't use 'pipe_wait() for
-> basic pipe IO") is probably the one that can cause the writers to
-> sleep on empty pipe since the pipe_wait() used prior did not drop the
-> pipe lock until it called schedule() and prepare_to_wait() was called
-> before pipe_unlock() ensuring no races.
-> 
-> [1] https://lore.kernel.org/all/CAHk-=wh804HX8H86VRUSKoJGVG0eBe8sPz8=E3d8LHftOCSqwQ@mail.gmail.com/
-> 
-> Please let me know if the patch requires any modifications and I'll jump
-> right on it. The changes have been tested on both a 5th Generation AMD
-> EPYC system and on a dual socket Intel Emerald Rapids system with
-> multiple thousand iterations of hackbench for small and large loop
-> counts. Thanks a ton to Swapnil for all the help.
-> ---
->  fs/pipe.c                 | 19 ++++++++-----------
->  include/linux/pipe_fs_i.h | 39 +++++++++++++++++++++++++++++++++++++--
->  2 files changed, 45 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/pipe.c b/fs/pipe.c
-> index b0641f75b1ba..780990f307ab 100644
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -210,11 +210,10 @@ static const struct pipe_buf_operations anon_pipe_buf_ops = {
->  /* Done while waiting without holding the pipe lock - thus the READ_ONCE() */
->  static inline bool pipe_readable(const struct pipe_inode_info *pipe)
->  {
-> -	unsigned int head = READ_ONCE(pipe->head);
-> -	unsigned int tail = READ_ONCE(pipe->tail);
-> +	union pipe_index idx = { .head_tail = READ_ONCE(pipe->head_tail) };
->  	unsigned int writers = READ_ONCE(pipe->writers);
->  
-> -	return !pipe_empty(head, tail) || !writers;
-> +	return !pipe_empty(idx.head, idx.tail) || !writers;
->  }
->  
->  static inline unsigned int pipe_update_tail(struct pipe_inode_info *pipe,
-> @@ -403,11 +402,10 @@ static inline int is_packetized(struct file *file)
->  /* Done while waiting without holding the pipe lock - thus the READ_ONCE() */
->  static inline bool pipe_writable(const struct pipe_inode_info *pipe)
->  {
-> -	unsigned int head = READ_ONCE(pipe->head);
-> -	unsigned int tail = READ_ONCE(pipe->tail);
-> +	union pipe_index idx = { .head_tail = READ_ONCE(pipe->head_tail) };
->  	unsigned int max_usage = READ_ONCE(pipe->max_usage);
->  
-> -	return !pipe_full(head, tail, max_usage) ||
-> +	return !pipe_full(idx.head, idx.tail, max_usage) ||
->  		!READ_ONCE(pipe->readers);
->  }
->  
-> @@ -649,7 +647,7 @@ pipe_poll(struct file *filp, poll_table *wait)
->  {
->  	__poll_t mask;
->  	struct pipe_inode_info *pipe = filp->private_data;
-> -	unsigned int head, tail;
-> +	union pipe_index idx;
->  
->  	/* Epoll has some historical nasty semantics, this enables them */
->  	WRITE_ONCE(pipe->poll_usage, true);
-> @@ -670,19 +668,18 @@ pipe_poll(struct file *filp, poll_table *wait)
->  	 * if something changes and you got it wrong, the poll
->  	 * table entry will wake you up and fix it.
->  	 */
-> -	head = READ_ONCE(pipe->head);
-> -	tail = READ_ONCE(pipe->tail);
-> +	idx.head_tail = READ_ONCE(pipe->head_tail);
->  
->  	mask = 0;
->  	if (filp->f_mode & FMODE_READ) {
-> -		if (!pipe_empty(head, tail))
-> +		if (!pipe_empty(idx.head, idx.tail))
->  			mask |= EPOLLIN | EPOLLRDNORM;
->  		if (!pipe->writers && filp->f_pipe != pipe->w_counter)
->  			mask |= EPOLLHUP;
->  	}
->  
->  	if (filp->f_mode & FMODE_WRITE) {
-> -		if (!pipe_full(head, tail, pipe->max_usage))
-> +		if (!pipe_full(idx.head, idx.tail, pipe->max_usage))
->  			mask |= EPOLLOUT | EPOLLWRNORM;
->  		/*
->  		 * Most Unices do not set EPOLLERR for FIFOs but on Linux they
-> diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-> index 8ff23bf5a819..3cc4f8eab853 100644
-> --- a/include/linux/pipe_fs_i.h
-> +++ b/include/linux/pipe_fs_i.h
-> @@ -31,6 +31,33 @@ struct pipe_buffer {
->  	unsigned long private;
->  };
->  
-> +/*
-> + * Really only alpha needs 32-bit fields, but
-> + * might as well do it for 64-bit architectures
-> + * since that's what we've historically done,
-> + * and it makes 'head_tail' always be a simple
-> + * 'unsigned long'.
-> + */
-> +#ifdef CONFIG_64BIT
-> +typedef unsigned int pipe_index_t;
-> +#else
-> +typedef unsigned short pipe_index_t;
-> +#endif
-> +
-> +/*
-> + * We have to declare this outside 'struct pipe_inode_info',
-> + * but then we can't use 'union pipe_index' for an anonymous
-> + * union, so we end up having to duplicate this declaration
-> + * below. Annoying.
-> + */
-> +union pipe_index {
-> +	unsigned long head_tail;
-> +	struct {
-> +		pipe_index_t head;
-> +		pipe_index_t tail;
-> +	};
-> +};
-> +
->  /**
->   *	struct pipe_inode_info - a linux kernel pipe
->   *	@mutex: mutex protecting the whole thing
-> @@ -58,8 +85,16 @@ struct pipe_buffer {
->  struct pipe_inode_info {
->  	struct mutex mutex;
->  	wait_queue_head_t rd_wait, wr_wait;
-> -	unsigned int head;
-> -	unsigned int tail;
-> +
-> +	/* This has to match the 'union pipe_index' above */
-> +	union {
-> +		unsigned long head_tail;
-> +		struct {
-> +			pipe_index_t head;
-> +			pipe_index_t tail;
-> +		};
-> +	};
-> +
->  	unsigned int max_usage;
->  	unsigned int ring_size;
->  	unsigned int nr_accounted;
-> 
-> base-commit: ee5eda8ea59546af2e8f192c060fbf29862d7cbd
-> -- 
-> 2.34.1
-> 
-
--- 
-Rgrds, legion
-
+T24gVHVlLCAyMDI1LTAzLTA0IGF0IDE1OjQ4ICswMDAwLCBNYXR0aGV3IFdpbGNveCAoT3JhY2xl
+KSB3cm90ZToNCj4gX19maWxlbWFwX2dldF9mb2xpbygpIHJldHVybnMgYW4gRVJSX1BUUiwgbm90
+IE5VTEwuICBUaGVyZSBhcmUgZXh0ZW5zaXZlDQo+IGFzc3VtcHRpb25zIHRoYXQgY3RsLT5mb2xp
+byBpcyBOVUxMLCBub3QgYW4gZXJyb3IgcG9pbnRlciwgc28gaXQgc2VlbXMNCj4gYmV0dGVyIHRv
+IGZpeCB0aGlzIG9uZSBwbGFjZSByYXRoZXIgdGhhbiBjaGFuZ2UgYWxsIHRoZSBwbGFjZXMgd2hp
+Y2gNCj4gY2hlY2sgY3RsLT5mb2xpby4NCj4gDQo+IEZpeGVzOiBiYWZmOTc0MGJjOGYgKCJjZXBo
+OiBDb252ZXJ0IGNlcGhfcmVhZGRpcl9jYWNoZV9jb250cm9sIHRvIHN0b3JlIGEgZm9saW8iKQ0K
+PiBSZXBvcnRlZC1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBsaW5hcm8ub3JnPg0K
+PiBTaWduZWQtb2ZmLWJ5OiBNYXR0aGV3IFdpbGNveCAoT3JhY2xlKSA8d2lsbHlAaW5mcmFkZWFk
+Lm9yZz4NCj4gQ2M6IFZpYWNoZXNsYXYgRHViZXlrbyA8U2xhdmEuRHViZXlrb0BpYm0uY29tPg0K
+PiAtLS0NCj4gIGZzL2NlcGgvaW5vZGUuYyB8IDcgKysrKystLQ0KPiAgMSBmaWxlIGNoYW5nZWQs
+IDUgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9mcy9j
+ZXBoL2lub2RlLmMgYi9mcy9jZXBoL2lub2RlLmMNCj4gaW5kZXggYzE1OTcwZmEyNDBmLi42YWMy
+YmQ1NTVlODYgMTAwNjQ0DQo+IC0tLSBhL2ZzL2NlcGgvaW5vZGUuYw0KPiArKysgYi9mcy9jZXBo
+L2lub2RlLmMNCj4gQEAgLTE4NzAsOSArMTg3MCwxMiBAQCBzdGF0aWMgaW50IGZpbGxfcmVhZGRp
+cl9jYWNoZShzdHJ1Y3QgaW5vZGUgKmRpciwgc3RydWN0IGRlbnRyeSAqZG4sDQo+ICANCj4gIAkJ
+Y3RsLT5mb2xpbyA9IF9fZmlsZW1hcF9nZXRfZm9saW8oJmRpci0+aV9kYXRhLCBwZ29mZiwNCj4g
+IAkJCQlmZ2YsIG1hcHBpbmdfZ2ZwX21hc2soJmRpci0+aV9kYXRhKSk7DQoNCkNvdWxkIHdlIGV4
+cGVjdCB0byByZWNlaXZlIE5VTEwgaGVyZSBzb21laG93PyBJIGFzc3VtZSB3ZSBzaG91bGQgcmVj
+ZWl2ZSB2YWxpZA0KcG9pbnRlciBvciBFUlJfUFRSIGFsd2F5cyBoZXJlLg0KDQo+IC0JCWlmICgh
+Y3RsLT5mb2xpbykgew0KPiArCQlpZiAoSVNfRVJSKGN0bC0+Zm9saW8pKSB7DQo+ICsJCQlpbnQg
+ZXJyID0gUFRSX0VSUihjdGwtPmZvbGlvKTsNCj4gKw0KPiArCQkJY3RsLT5mb2xpbyA9IE5VTEw7
+DQo+ICAJCQljdGwtPmluZGV4ID0gLTE7DQo+IC0JCQlyZXR1cm4gaWR4ID09IDAgPyAtRU5PTUVN
+IDogMDsNCj4gKwkJCXJldHVybiBpZHggPT0gMCA/IGVyciA6IDA7DQo+ICAJCX0NCj4gIAkJLyog
+cmVhZGluZy9maWxsaW5nIHRoZSBjYWNoZSBhcmUgc2VyaWFsaXplZCBieQ0KPiAgCQkgKiBpX3J3
+c2VtLCBubyBuZWVkIHRvIHVzZSBmb2xpbyBsb2NrICovDQoNCkJ1dCBJIHByZWZlciB0byBjaGVj
+ayBvbiBOVUxMIGFueXdheSwgYmVjYXVzZSB3ZSB0cnkgdG8gdW5sb2NrIHRoZSBmb2xpbyBoZXJl
+Og0KDQoJCS8qIHJlYWRpbmcvZmlsbGluZyB0aGUgY2FjaGUgYXJlIHNlcmlhbGl6ZWQgYnkNCgkJ
+ICogaV9yd3NlbSwgbm8gbmVlZCB0byB1c2UgZm9saW8gbG9jayAqLw0KCQlmb2xpb191bmxvY2so
+Y3RsLT5mb2xpbyk7DQoNCkFuZCBhYnNlbmNlIG9mIGNoZWNrIG9uIE5VTEwgbWFrZXMgbWUgc2xp
+Z2h0bHkgbmVydm91cy4gOikNCg0KVGhhbmtzLA0KU2xhdmEuDQoNCg==
 
