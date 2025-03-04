@@ -1,100 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-43054-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E3C8A4D742
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 10:03:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01D60A4D8E2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 10:42:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A87C33AF822
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 09:02:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03C93173519
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 09:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D381FF5F4;
-	Tue,  4 Mar 2025 08:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA0D1FCFCB;
+	Tue,  4 Mar 2025 09:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="agXECyeq"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="G8HhgLla"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D871FF1D6
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 08:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FE91FCF44
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 09:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741078628; cv=none; b=XSKhZU7RUo8dHqHaWKyKXolo5y3yHwx3dZw5ISO0MvxLJzbl7CidVOtYMB87Ocl4vNETxbFay94lDDpJKZCFhaX+uN8XeTawaHNEk/AJjt5CwxovPuWg3vJdT0nQf8ZC6dgViUs1wTK5JASvk4BkTsqV5yl1bSevtZR/HILNDUw=
+	t=1741081061; cv=none; b=D3WwsMNkfCRMybhnh2SX8sEopLRn/szFbRfneQR+TxM+PJAFoLA835TVPGMfIukZEiRfc97+UQOMf8GirPmZ0/AjeGv7vrtDvgqP55stdPR0dQ9p87j2JerNhtbZP9s5HimtbuWFKbnItbOFLvq272MQaX5tE2tKZjBWYwQ+wnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741078628; c=relaxed/simple;
-	bh=iIdv6eNzgkagVbJqygA4QNukH04qGBrDmzJ2SlgWYfA=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=m9nCbYJvi6PpCCQLIS7H/kGAZEDjrfOxLqbgAcufRaNFjvFRWu2MDmuSqelnHlPjDlGtKgc0LgQZt7aM4QHlZ9tumHI/vKIua0ASZ65QrynoiNoz8wXjvBC3dNZprMUWhadMyB9xrPjvZrWfj3mYVnzIhuzcQVaMh9/wS1WLMbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=agXECyeq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741078625;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CRWtDAlRoZ9ktZzzbYRiu+U+owxQoQLPZFPHwWfX9HM=;
-	b=agXECyeqJzv24YcZ3yj9zoOXmopIWt3QEeUST3jjD9lJOz90IJJ77/aS682IxboF/2VoHf
-	W+e73DtcH0RZx5By6ATsUi1MIcD4Ox4Wh6A8zlFAVp2Ai+UzXdU+efVF1yasDfBZKZXv45
-	EIB5CjQ+yA64PeCdXMwEMMzwUckBM8Q=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-503-aWNY7MbwNASREKHFaVu91w-1; Tue,
- 04 Mar 2025 03:57:03 -0500
-X-MC-Unique: aWNY7MbwNASREKHFaVu91w-1
-X-Mimecast-MFC-AGG-ID: aWNY7MbwNASREKHFaVu91w_1741078622
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CB2051944D33;
-	Tue,  4 Mar 2025 08:57:01 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.44.32.200])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 42A6D180035F;
-	Tue,  4 Mar 2025 08:56:58 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250303203137.42636-1-slava@dubeyko.com>
-References: <20250303203137.42636-1-slava@dubeyko.com>
-To: Viacheslav Dubeyko <slava@dubeyko.com>
-Cc: dhowells@redhat.com, ceph-devel@vger.kernel.org, amarkuze@redhat.com,
-    idryomov@gmail.com, linux-fsdevel@vger.kernel.org,
-    pdonnell@redhat.com, Slava.Dubeyko@ibm.com
-Subject: Re: [PATCH v3] ceph: fix slab-use-after-free in have_mon_and_osd_map()
+	s=arc-20240116; t=1741081061; c=relaxed/simple;
+	bh=0Jdyw28ag/EkV/tyAMAxy1kQwRiQcwaztWAcRlzaG9w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uT5fHRzw1hvYyXBmRddqSTTm94JCeE/XsMeEu/nPtPq5KIIITuu8g1teYGorTIUm5RMes+uzLziZK1SyFGDtPkWQpv8Y2SoJtCBmRaIfAyXAzfdRUAXnpjdqypa8L6Poh5uopTYZRs3FINFoXES/JrC/5lYoNEHdUUOiy9p9qjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=G8HhgLla; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-46fcbb96ba9so68374271cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Mar 2025 01:37:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1741081056; x=1741685856; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0Jdyw28ag/EkV/tyAMAxy1kQwRiQcwaztWAcRlzaG9w=;
+        b=G8HhgLlaSPWUHmw3hSxq+VSkLzGnkNuHayeaSLIG2SW4AHvQNsuJFihyiX8WRy5EZb
+         P+iH2OKnLsKDk/9Tl9rsQSjjOKF+YikeTEm1Ii3wkEV8AcgGwzTr7RCQ9KKM0kyrGKzs
+         LBuuPnAmAFPran1ewdsoIqKqXNzX12wTVDnrw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741081056; x=1741685856;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0Jdyw28ag/EkV/tyAMAxy1kQwRiQcwaztWAcRlzaG9w=;
+        b=aNwSIQfL0QS+3+y6KK5oK2OjgBywLe+CYTR6nlAFgdqAd7x3Myx6o66CkkekmhlvOx
+         C/lpqHVdfWo+BoqSPbYXqNbzCelN4JCJBDZUN5OYKemzWW+UjHlcCfEZknneFen4VwYG
+         S3XAHCNWsYlUsBCAMqOX0J90MBT3NC/O+TnMgQWWDR2Bn8smFszLn9SAX3mXbLaqePNI
+         8UnBhdZCghpiCoiLGrAIjkiM63BdWg5Okl6PM5iw8YN9RdKzIFJbSkROx7H7tHNE7QQG
+         JLZstYmO/c/ftrsk6tB8vn4LScbvnZtK02UxM9LmYA7cgGhmACZ/MUbmFaueOnxTcuXf
+         YelA==
+X-Forwarded-Encrypted: i=1; AJvYcCX4nb+ph2m8bkdQkVEuMuy5E9rZ4mneZ5jpzXYAaTWymFC5LHs4SXRKSdXg2+JkeCky2+rxA8Wt/1RbQgh8@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVANiSoIiDQDWOG0rKl5HUmKz3iSFzhFMz6lYvp4C5dCDzh3qs
+	gUZVJ2nDPjUc5r1tOzvqofTFmtYkS2RCHvOwNlPX8xUG5JADL3s7uoylBi5eIYP3Oxf88t1UNJ+
+	BoHYCehVw26KxsddBYzLlddBMSP8W5fxKWDS+yw==
+X-Gm-Gg: ASbGnctYgJilRrEbbM9JloT9dd8X7rQodHOuF36yZ/dIGoAZYgoqFIayjvB4c6JAFtO
+	acLy4ZXd6c3Ps3r/0wnzAwmhn7djmKgTa2wxV4B4nC14HidDVBeMJJQbwsIciMI6F6CtK0lrnh9
+	AN++tUXeshfUq3gt7v7A4zXoox
+X-Google-Smtp-Source: AGHT+IHIYI42ASXlKXn2mmxOw/03JnEW9+rqcxBqvi2TDt+NB6hH1Wv965XXlNzrFcUgu8eQu7pdXt0eB4W5SaetY0E=
+X-Received: by 2002:a05:622a:189e:b0:475:5bd:e9a7 with SMTP id
+ d75a77b69052e-47505bdf0aamr3135661cf.38.1741081056165; Tue, 04 Mar 2025
+ 01:37:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3896160.1741078617.1@warthog.procyon.org.uk>
-Date: Tue, 04 Mar 2025 08:56:57 +0000
-Message-ID: <3896161.1741078617@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+References: <20250122215528.1270478-1-joannelkoong@gmail.com>
+ <4hwzfe4b377vabaiu342u44ryigkkyhka3nr2kuvfsbozxcrpt@li62aw6jkp7s>
+ <CAJnrk1YnKH2Dh2eSHXd7G64h++Z0PnHW0GFb=C60qN8N1=k+aQ@mail.gmail.com>
+ <CAJfpegsKpHgyKMMjuzm=sQ0sAj+Fg1ZLvvqMTuVWWVvKEOXiFQ@mail.gmail.com> <CAJnrk1YoA2QcuxvTdW=2P3ZRHGhWOYMOfXC=+i5fOY-71mBO6g@mail.gmail.com>
+In-Reply-To: <CAJnrk1YoA2QcuxvTdW=2P3ZRHGhWOYMOfXC=+i5fOY-71mBO6g@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 4 Mar 2025 10:37:25 +0100
+X-Gm-Features: AQ5f1JoXTW4GfDgby1jpRIsxTQ1PsYz2JWfkjyj9la7DwTkdH_Ud6Q6l4YK5B08
+Message-ID: <CAJfpegsnSEtFVGnWjpM7pTMdCubuzenZqFRStteZBi3Q3+PWaA@mail.gmail.com>
+Subject: Re: [PATCH v12 0/2] fuse: add kernel-enforced request timeout option
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, linux-fsdevel@vger.kernel.org, 
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, laoar.shao@gmail.com, 
+	jlayton@kernel.org, tfiga@chromium.org, bgeffon@google.com, 
+	etmartin4313@gmail.com, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
 
-Viacheslav Dubeyko <slava@dubeyko.com> wrote:
+On Mon, 3 Mar 2025 at 23:43, Joanne Koong <joannelkoong@gmail.com> wrote:
 
-> +	mutex_lock(&monc->mutex);
->  	kfree(monc->monmap);
-> +	monc->monmap = NULL;
-> +	mutex_unlock(&monc->mutex);
+> Will the 2nd patch ("fuse: add default_request_timeout and
+> max_request_timeout sysctls") also be re-applied? I'm only seeing the
+> 1st patch (" fuse: add kernel-enforced timeout option for requests")
+> in the for-next tree right now.
 
-I would do the kfree after the locked region:
+I wasn't paying proper attention, sorry.
 
-	mutex_lock(&monc->mutex);
-	old_monmap = monc->monmap;
-	monc->monmap = NULL;
-	mutex_unlock(&monc->mutex);
-	kfree(old_monmap);
+Re-applied the second (modified) patch.
 
-David
-
+Thanks,
+Miklos
 
