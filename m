@@ -1,155 +1,313 @@
-Return-Path: <linux-fsdevel+bounces-43180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B61F6A4EF87
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 22:48:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EF46A4EF89
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 22:48:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3034173009
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 21:48:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABB3C3AA28E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 21:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC47C27780E;
-	Tue,  4 Mar 2025 21:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791D0264F8C;
+	Tue,  4 Mar 2025 21:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J36OZAtJ"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zBR//K0H";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Sfyy+Wm5";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vIA7yxbp";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KS5YkmFr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3FE71EE7B1
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 21:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022CC24C085
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 21:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741124873; cv=none; b=YUnpc0qKtqZpWoZI6iVMfE9YcEwQgnuo3msb2G6aVawt3emh/G9fWe+GD36gbVsEYrMhueEDHulyRquwY/9nl4zgND5YRS3uRX6nMNU8P39AyLf0JubS042tlMBezaf0yS1j5wXyFGUkLBPLUYBPLtW7owErSNDHIunXkoQFBaI=
+	t=1741124918; cv=none; b=HgIT5GINm/SR0GD8HE92vPpUcxap18fKDvJ7++v7StT7QIrTi+i7BrD/luq7IzXTMcEJda3hh3nYv0GrMp+kAf0I/pGzQVhEZXp/dZhFF9gqxkEP7viwcqraWTL1ThSxBdu4qm+nyxMRZSWGxmY8pWNoAK/YQJ6Tjd45rSLIlgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741124873; c=relaxed/simple;
-	bh=9+No9qlg0OPJqoysAdh1uqVF+QBg4Q1vdrLvre9+vU0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W0jIBaXcfn10UikjVP6Q5XJZg2+ctNbJbQzNzn2Au3VRmX1QtUyF94odAwicWg9x3Vgw//3A/keqBYJE9BbI/r6cv7LmLWoooZ2XutRtEGprHGNjEXTFcAK0tXtfFqix45tH0ZCscLe/kY6Zi/IvPz4xc4D3+/nNsHCRw87IWOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J36OZAtJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741124870;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m9Y6+IRWMSvTUT49laDAVAKLSnNJ5JV6vNN5Xfx40rc=;
-	b=J36OZAtJSyANVBr9Dw/NbuDeZVKUlZynElvEV1VkRHc7L2dGiuNkI7FOoPjVg0666Abjoi
-	Jg0/QecnSbb7Qn5mmP/gizR/po6xMpOOD065L/6cv8YpvE7yH/2vAh/R8b5UUSIIKLACbK
-	e/CyuIZwIfLTAiTMIsPAQ/m4A1X5Gs8=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-632-nUGYj0AKN4ie5ldY4H4l5A-1; Tue,
- 04 Mar 2025 16:47:47 -0500
-X-MC-Unique: nUGYj0AKN4ie5ldY4H4l5A-1
-X-Mimecast-MFC-AGG-ID: nUGYj0AKN4ie5ldY4H4l5A_1741124866
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	s=arc-20240116; t=1741124918; c=relaxed/simple;
+	bh=pCVLLuxek3bUk5qBpkIjOZF+Xauo1myEVPouhTYzhsE=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=pyVdGcNiZbmBE1jgyvnzHQvO9aE/fdEF+a6r+CkUsZuTKKH6NTdhNqtaNl+Hpp9CTn6Et7zj2rRymgIlpD9h3tjBiBsG6e1BjJINHiDtyPSedksvqykCsA5hKpwxvQ9nb4GYMjvTpzYIjlD2m6Sto9KAnh0k2E1k6Xo2buzuax4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zBR//K0H; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Sfyy+Wm5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vIA7yxbp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KS5YkmFr; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9C39E1800874;
-	Tue,  4 Mar 2025 21:47:45 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.32])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id E93BC1954B00;
-	Tue,  4 Mar 2025 21:47:42 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue,  4 Mar 2025 22:47:14 +0100 (CET)
-Date: Tue, 4 Mar 2025 22:47:11 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-	Lennart Poettering <lennart@poettering.net>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>,
-	Mike Yuan <me@yhndnzj.com>
-Subject: Re: [PATCH v2 06/15] pidfs: allow to retrieve exit information
-Message-ID: <20250304214710.GF5756@redhat.com>
-References: <20250304-work-pidfs-kill_on_last_close-v2-0-44fdacfaa7b7@kernel.org>
- <20250304-work-pidfs-kill_on_last_close-v2-6-44fdacfaa7b7@kernel.org>
- <20250304173456.GD5756@redhat.com>
- <20250304-wochen-gutgesinnt-53c0765c5e81@brauner>
+	by smtp-out1.suse.de (Postfix) with ESMTPS id EDD9F21168;
+	Tue,  4 Mar 2025 21:48:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741124915; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bX4IMw/eYOxOFV044cg6lar1/3a+2fllXZS9auhZXXM=;
+	b=zBR//K0HMoJ/YhGdJs58LuvYxmik1loF9eqalRjgpnJv8HnmR8ytsQmTHP3UWKoNPZiQMZ
+	2ORendZN21tcpon13z4Nw6sXEtvKYosVaEwfghSUHUGRsQ4QOFJxb2Tz0oMhIivQFP/yp+
+	fOxuhVk4J5BL843lvhBp6ac8SrmG0pA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741124915;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bX4IMw/eYOxOFV044cg6lar1/3a+2fllXZS9auhZXXM=;
+	b=Sfyy+Wm52mc4tH5U7Qxjvw21CisT0gLAxP5cEnqXwIqSf0YlTZTOC0/YA+myxaLMX9h7Gp
+	1pdJQQxOfBpa4FDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=vIA7yxbp;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=KS5YkmFr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741124913; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bX4IMw/eYOxOFV044cg6lar1/3a+2fllXZS9auhZXXM=;
+	b=vIA7yxbppBkUlNdlpIn5WyrLJDzCa6sxDiG1pXXbTq7svkbo0aXQ62E5ZP8PNO6qf5oxv8
+	XDxnR3rhV3lROd1nWOpovdoadE7hdtn6uElKC9cqgvGxOxBz8wXYoNoelmOkxs6xoLopka
+	cuJDkAj6A1eQyY/t68ibgShBYnHCxnM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741124913;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bX4IMw/eYOxOFV044cg6lar1/3a+2fllXZS9auhZXXM=;
+	b=KS5YkmFrakP+hBPlX/OaaPOX6hS9p9VCFeSjsg4IbH5tSBzgRDfB6wast/hKDJzXRKFveo
+	Nuf1PaTESxQDBnCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1E31C13967;
+	Tue,  4 Mar 2025 21:48:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id /FE8MCt1x2cGNAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Tue, 04 Mar 2025 21:48:27 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304-wochen-gutgesinnt-53c0765c5e81@brauner>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+From: "NeilBrown" <neilb@suse.de>
+To: "Miklos Szeredi" <miklos@szeredi.hu>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
+ linux-nfs@vger.kernel.org, "Ilya Dryomov" <idryomov@gmail.com>,
+ "Xiubo Li" <xiubli@redhat.com>, ceph-devel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, "Richard Weinberger" <richard@nod.at>,
+ "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
+ "Johannes Berg" <johannes@sipsolutions.net>, linux-um@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: [PATCH 4/6 - REVISED] fuse: return correct dentry for ->mkdir
+In-reply-to:
+ <CAJfpegtu1xs-FifNfc2VpQuhBjbniTqUcE+H=uNpdYW=cOSGkw@mail.gmail.com>
+References:
+ <>, <CAJfpegtu1xs-FifNfc2VpQuhBjbniTqUcE+H=uNpdYW=cOSGkw@mail.gmail.com>
+Date: Wed, 05 Mar 2025 08:48:20 +1100
+Message-id: <174112490070.33508.15852253149143067890@noble.neil.brown.name>
+X-Rspamd-Queue-Id: EDD9F21168
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,vger.kernel.org,gmail.com,redhat.com,nod.at,cambridgegreys.com,sipsolutions.net,lists.infradead.org];
+	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 03/04, Christian Brauner wrote:
->
-> On Tue, Mar 04, 2025 at 06:34:56PM +0100, Oleg Nesterov wrote:
-> > On 03/04, Christian Brauner wrote:
-> > >
-> > > +	task = get_pid_task(pid, PIDTYPE_PID);
-> > > +	if (!task) {
-> > > +		if (!(mask & PIDFD_INFO_EXIT))
-> > > +			return -ESRCH;
-> > > +
-> > > +		if (!current_in_pidns(pid))
-> > > +			return -ESRCH;
-> >
-> > Damn ;) could you explain the current_in_pidns() check to me ?
-> > I am puzzled...
->
-> So we currently restrict interactions with pidfd by pid namespace
-> hierarchy. Meaning that we ensure that the pidfd is part of the caller's
-> pid namespace hierarchy.
 
-Well this is clear... but sorry I still can't understand.
+Subject: [PATCH] fuse: return correct dentry for ->mkdir
 
-Why do we check current_in_pidns() only if get_pid_task(PIDTYPE_PID)
-returns NULL?
+fuse already uses d_splice_alias() to ensure an appropriate dentry is
+found for a newly created dentry.  Now that ->mkdir can return that
+dentry we do so.
 
-And, unless (quite possibly) I am totally confused, if task != NULL
-but current_in_pidns() would return false, then
+This requires changing create_new_entry() to return a dentry and
+handling that change in all callers.
 
-	kinfo.pid = task_pid_vnr(task);
+Note that when create_new_entry() is asked to create anything other than
+a directory we can be sure it will NOT return an alternate dentry as
+d_splice_alias() only returns an alternate dentry for directories.
+So we don't need to check for that case when passing one the result.
 
-below will set kinfo.pid = 0, and pidfd_info() will return -ESRCH anyway?
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: NeilBrown <neilb@suse.de>
+---
+ fs/fuse/dir.c | 48 +++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 31 insertions(+), 17 deletions(-)
 
-> So this check is similar to:
->
-> pid_t pid_nr_ns(struct pid *pid, struct pid_namespace *ns)
-> {
->         struct upid *upid;
->         pid_t nr = 0;
->
->         if (pid && ns->level <= pid->level) {
->                 upid = &pid->numbers[ns->level];
->                 if (upid->ns == ns)
->                         nr = upid->nr;
->         }
->         return nr;
-> }
->
-> Only that by the time we perform this check the pid numbers have already
-> been freed so we can't use that function directly.
+Thanks for the suggestion Miklos - this looks much better.
 
-Confused again... Yes, the [u]pid numbers can be already "freed" in that
-upid->nr can be already idr_remove()'ed, but
+Christian: could you please replace the fuse patch in your tree
+with this version?  Thanks.
 
-> But the pid namespace
-> hierarchy is still alive as that won't be released until the pidfd has
-> put the reference on struct @pid.
+NeilBrown
 
-Yes, so I still don't undestand, sorry :/
 
-IOW. Why not check current_in_pidns() at the start? and do
-task = get_pid_task() later, right before
-
-	if (!task)
-		goto copy_out;
-
-?
-
-Oleg.
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index d0289ce068ba..fa8f1141ea74 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -781,9 +781,9 @@ static int fuse_atomic_open(struct inode *dir, struct den=
+try *entry,
+ /*
+  * Code shared between mknod, mkdir, symlink and link
+  */
+-static int create_new_entry(struct mnt_idmap *idmap, struct fuse_mount *fm,
+-			    struct fuse_args *args, struct inode *dir,
+-			    struct dentry *entry, umode_t mode)
++static struct dentry *create_new_entry(struct mnt_idmap *idmap, struct fuse_=
+mount *fm,
++				       struct fuse_args *args, struct inode *dir,
++				       struct dentry *entry, umode_t mode)
+ {
+ 	struct fuse_entry_out outarg;
+ 	struct inode *inode;
+@@ -792,11 +792,11 @@ static int create_new_entry(struct mnt_idmap *idmap, st=
+ruct fuse_mount *fm,
+ 	struct fuse_forget_link *forget;
+=20
+ 	if (fuse_is_bad(dir))
+-		return -EIO;
++		return ERR_PTR(-EIO);
+=20
+ 	forget =3D fuse_alloc_forget();
+ 	if (!forget)
+-		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
+=20
+ 	memset(&outarg, 0, sizeof(outarg));
+ 	args->nodeid =3D get_node_id(dir);
+@@ -826,29 +826,43 @@ static int create_new_entry(struct mnt_idmap *idmap, st=
+ruct fuse_mount *fm,
+ 			  &outarg.attr, ATTR_TIMEOUT(&outarg), 0, 0);
+ 	if (!inode) {
+ 		fuse_queue_forget(fm->fc, forget, outarg.nodeid, 1);
+-		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
+ 	}
+ 	kfree(forget);
+=20
+ 	d_drop(entry);
+ 	d =3D d_splice_alias(inode, entry);
+ 	if (IS_ERR(d))
+-		return PTR_ERR(d);
++		return d;
+=20
+-	if (d) {
++	if (d)
+ 		fuse_change_entry_timeout(d, &outarg);
+-		dput(d);
+-	} else {
++	else
+ 		fuse_change_entry_timeout(entry, &outarg);
+-	}
+ 	fuse_dir_changed(dir);
+-	return 0;
++	return d;
+=20
+  out_put_forget_req:
+ 	if (err =3D=3D -EEXIST)
+ 		fuse_invalidate_entry(entry);
+ 	kfree(forget);
+-	return err;
++	return ERR_PTR(err);
++}
++
++static int create_new_nondir(struct mnt_idmap *idmap, struct fuse_mount *fm,
++			     struct fuse_args *args, struct inode *dir,
++			     struct dentry *entry, umode_t mode)
++{
++	/*
++	 * Note that when creating anything other than a directory we
++	 * can be sure create_new_entry() will NOT return an alternate
++	 * dentry as d_splice_alias() only returns an alternate dentry
++	 * for directories.  So we don't need to check for that case
++	 * when passing back the result.
++	 */
++	WARN_ON_ONCE(S_ISDIR(mode));
++
++	return PTR_ERR(create_new_entry(idmap, fm, args, dir, entry, mode));
+ }
+=20
+ static int fuse_mknod(struct mnt_idmap *idmap, struct inode *dir,
+@@ -871,7 +885,7 @@ static int fuse_mknod(struct mnt_idmap *idmap, struct ino=
+de *dir,
+ 	args.in_args[0].value =3D &inarg;
+ 	args.in_args[1].size =3D entry->d_name.len + 1;
+ 	args.in_args[1].value =3D entry->d_name.name;
+-	return create_new_entry(idmap, fm, &args, dir, entry, mode);
++	return create_new_nondir(idmap, fm, &args, dir, entry, mode);
+ }
+=20
+ static int fuse_create(struct mnt_idmap *idmap, struct inode *dir,
+@@ -917,7 +931,7 @@ static struct dentry *fuse_mkdir(struct mnt_idmap *idmap,=
+ struct inode *dir,
+ 	args.in_args[0].value =3D &inarg;
+ 	args.in_args[1].size =3D entry->d_name.len + 1;
+ 	args.in_args[1].value =3D entry->d_name.name;
+-	return ERR_PTR(create_new_entry(idmap, fm, &args, dir, entry, S_IFDIR));
++	return create_new_entry(idmap, fm, &args, dir, entry, S_IFDIR);
+ }
+=20
+ static int fuse_symlink(struct mnt_idmap *idmap, struct inode *dir,
+@@ -934,7 +948,7 @@ static int fuse_symlink(struct mnt_idmap *idmap, struct i=
+node *dir,
+ 	args.in_args[1].value =3D entry->d_name.name;
+ 	args.in_args[2].size =3D len;
+ 	args.in_args[2].value =3D link;
+-	return create_new_entry(idmap, fm, &args, dir, entry, S_IFLNK);
++	return create_new_nondir(idmap, fm, &args, dir, entry, S_IFLNK);
+ }
+=20
+ void fuse_flush_time_update(struct inode *inode)
+@@ -1131,7 +1145,7 @@ static int fuse_link(struct dentry *entry, struct inode=
+ *newdir,
+ 	args.in_args[0].value =3D &inarg;
+ 	args.in_args[1].size =3D newent->d_name.len + 1;
+ 	args.in_args[1].value =3D newent->d_name.name;
+-	err =3D create_new_entry(&invalid_mnt_idmap, fm, &args, newdir, newent, ino=
+de->i_mode);
++	err =3D create_new_nondir(&invalid_mnt_idmap, fm, &args, newdir, newent, in=
+ode->i_mode);
+ 	if (!err)
+ 		fuse_update_ctime_in_cache(inode);
+ 	else if (err =3D=3D -EINTR)
+--=20
+2.48.1
 
 
