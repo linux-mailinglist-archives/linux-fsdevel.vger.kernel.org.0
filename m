@@ -1,221 +1,264 @@
-Return-Path: <linux-fsdevel+bounces-43176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E88FAA4EF30
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 22:11:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F0AA4EF3B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 22:14:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A4EC3A445A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 21:11:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA51516563E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 21:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB0726B09A;
-	Tue,  4 Mar 2025 21:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B882777F4;
+	Tue,  4 Mar 2025 21:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="dZSR7gXk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jSXl3qck"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD07C260384
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 21:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074CD1FDA9D;
+	Tue,  4 Mar 2025 21:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741122693; cv=none; b=Iy3y4qjp5k8jKraS8vuh4zDACJnESKSft9GXBMF+HoITxPWLACniJO5JV3qMcWQSPV8lXWxb73VknLZvV4doD7siGKVcMWMqoVXGvhgQx2kYpI/H5ChFdxSSR3XsRT9gAvgFr/cAzxYUopCOqGybbI/38141vz+9uzFiVupDMsI=
+	t=1741122834; cv=none; b=PW6PkIswR6lhpntIe1lpyQklnmV0CryhS2eMXeQdVstebC4NsMnylAT2nUh/MvSbmjyOR6NAbfthJutyk0z4yTOMO0aOQTvAwTEEfYNbZqYIac9MbzXWBk0PILa+uTp4n2igjp6kdkMEXw0dkxRf4zYpDkpSovq+AnkPYYQt9IU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741122693; c=relaxed/simple;
-	bh=0E3T5Hp+sMKQhmdLWvSGxflpCJKf0yCp4IKXvTlchuw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wrd3AVkca5gI6PdaTmOuMcve5A6vRA7HLhNWmV/OfwUzuv9/ohLi6GGuh94Mg6rv00k0JhL6XJ2zEpXLnQbOQrngWSGuafSG6gYDqzVnVixNJoTqeGw4u0WYoBoU8ZpO1oYR6Db+OG60BZN63bAdNtrLg7nQ8jPFehw6co6xbAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=dZSR7gXk; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2235908a30aso105134055ad.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Mar 2025 13:11:31 -0800 (PST)
+	s=arc-20240116; t=1741122834; c=relaxed/simple;
+	bh=JMe/qcspcoiZchvQQU0hMSSgEZILtqwU9OoakxbHb9I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RlB7k8OxMx+0GpJvXUgwHzqvzLpZmcnzoRZUu2vKc4L8jLxJ6gC6mC3/yty5NNmqfriD9yA+4AdV4mSlBKaHWIcQtchpmyV3U+UNmCxG4BNye/wajvuPadQImQn8dYpSfpszpv23etiEzndLgCgIMNqCqYtUCOMZLFb6HZRzFoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jSXl3qck; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abf45d8db04so598258766b.1;
+        Tue, 04 Mar 2025 13:13:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1741122691; x=1741727491; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z5u9T8buzgB1g+ZB8WQvIpl66rBv5TutDiyFxRCUgI8=;
-        b=dZSR7gXk6u+cXjL/+VDSQJ/3d3D1YhruJ+MjOdxLCY78uREgwD8ftmVXg4RZOAn9j1
-         E22X97OiO5WPFTvxDqkTh29FipsFoiYyu+s7YivY7bXKM6ghRfqCbD2piUW7oLW2Y58O
-         H7XHYX4L0LSoF2Vdx0s9cZzO6Dsy0zeg80gi777L1pmhgmgylxzl4dA54oS0AobCW8re
-         sU74TNbJd3suUFhvURlpjCqgt+Hy5Mefo8lK4r8pG4iftRfXtqz+VbDhJGMzUqY6Rj1H
-         FUMAkGulpM1bHHuUA8Fai4twX6zWmx4+jOSCsr/LrS4J4oMEYo+WhpK0JaRcCx+Czw1D
-         zqeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741122691; x=1741727491;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741122831; x=1741727631; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Z5u9T8buzgB1g+ZB8WQvIpl66rBv5TutDiyFxRCUgI8=;
-        b=quf1/dtA0nPERkzIw8u8REn71H0fC7d8HVixjmxYg7t24z29IzVTU3TsKRCziAkHJ9
-         T6QGTxIA4bn+uPm3zUlwy+FkW7nwaPEUYaFzyy0jF/L8HQEPD4Bz7bKok+0Sj/0pwGjS
-         21TNmGy/7FIqWLWkcvO6oYZs8wSYDw9OMwISHt/04R10p3uJKxL2VPdWdRIVVPyGk3pl
-         0ppbzWjza/AlkRVAbRTnQpcHryRsSjAXN5K7mjwqADGL+VOgKd99KyIPxt9zlp6Xlm9Z
-         /EX0iY233vaI/b/YgIZS70U+OsiYJxCatu3z1NHRIGVECgCKuySJU3j+UrCAb7B0AOQ7
-         x1LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9w0/D6KDZ74bpu05xhIeR/MO5gXYDAwupetzHB4Gp2vWsTAGpdlwZPvMLk9rm2oX1t6GJAOTMXmIuCgI/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxyRQEWJN+kalPYgGvcvpVkixban8du7W+rM9NclA6zmDYO3Ex
-	m0VMO3ZCup3G5UTSDAOouGkwmsPTn70SlUGzRUv+rE3F4gpoq6/2sxIpmuJz2zo=
-X-Gm-Gg: ASbGncstRq2dFcH+mcI/HGeZzchoHI1W7zzyjr/S+9/Rh4XcwG8vrO6KxTIWf7TQpmW
-	8v8os0Bn/avykAqu8DkPQlvIMyRgSYksBQWRB4kSPOtnqqaKw5xNXjUOltHLORpPMFBt7C1Pff0
-	pJOMoKRHTqIK84O5okuxi9CGvLYjP4c2vTs/i3/QI7rvPVsKfgTQEqcM1+hETCub1o6EgYTZ8G+
-	6dLxU6Xhb9uMMPWNeVykzdqdCDwcqNnCLc1ZYr41HD+h+APHfkWD47DB2Zbac1I7ZpcSoZTgJJ3
-	N1X/jYxzPZKDLiwF2zy+JIL7aPDVcfTxn0U2Hv/keudlIG+Lb4LjIDZ4yhpKiYmQ7l5H+dBlW/U
-	R2F1A79yRH9mkmgjTdrur
-X-Google-Smtp-Source: AGHT+IFYVR//RHCOvcKfA/QF6rtFm/idAwEGSxepnoQAdAXiRGfBac/SE2HTdXKT4z1YO6U91gNlbA==
-X-Received: by 2002:a17:902:ec92:b0:220:d272:534d with SMTP id d9443c01a7336-223f1c81ee0mr11592985ad.22.1741122691015;
-        Tue, 04 Mar 2025 13:11:31 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2235053e41asm99610285ad.255.2025.03.04.13.11.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 13:11:30 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tpZXz-00000008ttX-3vyR;
-	Wed, 05 Mar 2025 08:11:27 +1100
-Date: Wed, 5 Mar 2025 08:11:27 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
-	linux-xfs@vger.kernel.org, wu lei <uwydoc@gmail.com>
-Subject: Re: [PATCH v2 1/1] iomap: propagate nowait to block layer
-Message-ID: <Z8dsfxVqpv-kqeZy@dread.disaster.area>
-References: <f287a7882a4c4576e90e55ecc5ab8bf634579afd.1741090631.git.asml.silence@gmail.com>
+        bh=7J8YOwIEEVHyNCl0YcJAroXcURAnRLfse6R4+fdppn4=;
+        b=jSXl3qck2y4BaU9frgxaTQd/+HVtJWTsKlBLdCiSTWoRXC47WEbtZ2zBVcPKy/vBGp
+         RUSIeV70hlJQZGWidFKIN5siaxTr46FNKYgng87fpdaAWJsiyfeqetjc6XrKMhxZQ/yi
+         1dvyUbrMsvVZMbJseRiZYI34q1PM+XvaKdL04yDlfMCavxgDeLuHnYcs9lbcc3ObK6E4
+         gDjlII/h+9fX5BgzKN5ve4wN11r+rtzhVrqP8t9KnGPwV6qC3YSi+NrMwvtmO4yft3gU
+         wrh9QtnzvJhLYyFo6m5ho/lzcHpGZ/G9xGOUIJvtRGex2pkyEB9AQBbbArbDA5uSika+
+         DwRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741122831; x=1741727631;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7J8YOwIEEVHyNCl0YcJAroXcURAnRLfse6R4+fdppn4=;
+        b=J96rnif+7JTqL+3jW5iIwASlwjXtW4I90kGheLVfk6RqVd96fDyEzRiWZ8TVyFvvKf
+         trIupfDNbcw/nr/LEnlFwH4KnmemBzghZilC8RFiZ8mEwuACTY9hoWNbjI770gzcMP9H
+         IiFgyxfd45Gm6n1QP0+mD5QwHY5iymVkZTmxeQki8YLdsm6iRMRLk+vGKL2Q1YQyhIR3
+         lxea5qpZOSAcDDTZZZCSp7hti3I7sUmQBpiUsbbnDbj59au/j9CcSDC9YU1H8TAUViR0
+         sox6XH2NQ8boVZJob+rPnqAE+u4ZIkwLJFeZNtFOX9uSb+i+Ec2T/E4BW7e2yi4UTgzb
+         pTAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUEp+kg8fRfbodvO2cQavJYJI4s48Z18JcfCEaoWCVAmM4SxdHtDEzjqD/M1GMvCcyH8T3RBG5IKdl6AlRT@vger.kernel.org, AJvYcCUlXkItj6R9UmSmXxZ5SUHyhBgVnM078MyX+0WCPJvfmZ+FofGIkQjYeG8XY8PsTSyjh1NI8xwiQW37@vger.kernel.org, AJvYcCXFr8ZlgQy1VJsca8bFAj3nYjj8akmDE2k8ItyhBf1IOPT2Mpi83xYiaQqENCf6qgExUXvJNudTC/culN9L@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+XSY/FUD7heDCZtd8DsbJo5pOccLdmZ45yd2gKSUoD4iNLqX/
+	n5gdDZu+q2t+6DL6Ie6xAgqlLyqkRqo9wS/zWrUR3x7SSg0s8c8342tUMTWFR9tI63pi95OdtZ4
+	7mN+6HPVME/LGFIVnE2fMlbXnqyQ=
+X-Gm-Gg: ASbGnctTd5PqX1pBwhFXjqULAPm92FFDJAYSrSNx5KvguBOoDOP0D1LCHIygYBTKgNH
+	a9bSx2MaLqkS42WzZ55Tq8wd3t7upjB5dGcoTR9tr/4fRGibLejlrUg6I+rvF72TtK3ZUeTyG7i
+	cro9lWFPeM8q+WZWlU2gSOLYNrqQ==
+X-Google-Smtp-Source: AGHT+IFZrWlJPjDY/K1dKn6KwlpO6FY0o5jmsajcaXfdxae8w/3rlNFD6nvU8jAFvHJ57tKEXe9DLGo3vFHWtTW1S+E=
+X-Received: by 2002:a17:907:7f8a:b0:ac1:ec42:6cb6 with SMTP id
+ a640c23a62f3a-ac20db006a5mr74629566b.52.1741122830557; Tue, 04 Mar 2025
+ 13:13:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f287a7882a4c4576e90e55ecc5ab8bf634579afd.1741090631.git.asml.silence@gmail.com>
+References: <67a487f7.050a0220.19061f.05fc.GAE@google.com> <67c4881e.050a0220.1dee4d.0054.GAE@google.com>
+ <7ehxrhbvehlrjwvrduoxsao5k3x4aw275patsb3krkwuq573yv@o2hskrfawbnc>
+ <CAOQ4uxjf5H_vj-swF7wEvUkPobEuxs2q6jfO9jFsx4pqxtJMMg@mail.gmail.com>
+ <20250304161509.GA4047943@perftesting> <CAOQ4uxj0cN-sUN=EE0+9tRhMFFrWLQ0T_i0fprwNRr92Hire6Q@mail.gmail.com>
+ <20250304203657.GA4063187@perftesting>
+In-Reply-To: <20250304203657.GA4063187@perftesting>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 4 Mar 2025 22:13:39 +0100
+X-Gm-Features: AQ5f1JqNtzknjQuSpiU1bx2jheCURHcVXVhGUHYQJGqWgiCdDvdg1aIGdH7j2m0
+Message-ID: <CAOQ4uxihyR8u5c0T8q85ySNgp4U1T0MMSR=+vv3HWNFcvezRPQ@mail.gmail.com>
+Subject: Re: [syzbot] [xfs?] WARNING in fsnotify_file_area_perm
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: Jan Kara <jack@suse.cz>, 
+	syzbot <syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com>, 
+	akpm@linux-foundation.org, axboe@kernel.dk, brauner@kernel.org, 
+	cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-xfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 04, 2025 at 12:18:07PM +0000, Pavel Begunkov wrote:
-> There are reports of high io_uring submission latency for ext4 and xfs,
-> which is due to iomap not propagating nowait flag to the block layer
-> resulting in waiting for IO during tag allocation.
-> 
-> Because of how errors are propagated back, we can't set REQ_NOWAIT
-> for multi bio IO, in this case return -EAGAIN and let the caller to
-> handle it, for example, it can reissue it from a blocking context.
-> It's aligned with how raw bdev direct IO handles it.
-> 
-> Cc: stable@vger.kernel.org
-> Link: https://github.com/axboe/liburing/issues/826#issuecomment-2674131870
-> Reported-by: wu lei <uwydoc@gmail.com>
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
-> 
-> v2:
-> 	Fail multi-bio nowait submissions
-> 
->  fs/iomap/direct-io.c | 26 +++++++++++++++++++++++---
->  1 file changed, 23 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index b521eb15759e..07c336fdf4f0 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -363,9 +363,14 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->  	 */
->  	if (need_zeroout ||
->  	    ((dio->flags & IOMAP_DIO_NEED_SYNC) && !use_fua) ||
-> -	    ((dio->flags & IOMAP_DIO_WRITE) && pos >= i_size_read(inode)))
-> +	    ((dio->flags & IOMAP_DIO_WRITE) && pos >= i_size_read(inode))) {
->  		dio->flags &= ~IOMAP_DIO_CALLER_COMP;
->  
-> +		if (!is_sync_kiocb(dio->iocb) &&
-> +		    (dio->iocb->ki_flags & IOCB_NOWAIT))
-> +			return -EAGAIN;
-> +	}
+On Tue, Mar 4, 2025 at 9:37=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> w=
+rote:
+>
+> On Tue, Mar 04, 2025 at 09:27:20PM +0100, Amir Goldstein wrote:
+> > On Tue, Mar 4, 2025 at 5:15=E2=80=AFPM Josef Bacik <josef@toxicpanda.co=
+m> wrote:
+> > >
+> > > On Tue, Mar 04, 2025 at 04:09:16PM +0100, Amir Goldstein wrote:
+> > > > On Tue, Mar 4, 2025 at 12:06=E2=80=AFPM Jan Kara <jack@suse.cz> wro=
+te:
+> > > > >
+> > > > > Josef, Amir,
+> > > > >
+> > > > > this is indeed an interesting case:
+> > > > >
+> > > > > On Sun 02-03-25 08:32:30, syzbot wrote:
+> > > > > > syzbot has found a reproducer for the following issue on:
+> > > > > ...
+> > > > > > ------------[ cut here ]------------
+> > > > > > WARNING: CPU: 1 PID: 6440 at ./include/linux/fsnotify.h:145 fsn=
+otify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145
+> > > > > > Modules linked in:
+> > > > > > CPU: 1 UID: 0 PID: 6440 Comm: syz-executor370 Not tainted 6.14.=
+0-rc4-syzkaller-ge056da87c780 #0
+> > > > > > Hardware name: Google Google Compute Engine/Google Compute Engi=
+ne, BIOS Google 12/27/2024
+> > > > > > pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=3D-=
+-)
+> > > > > > pc : fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify=
+.h:145
+> > > > > > lr : fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify=
+.h:145
+> > > > > > sp : ffff8000a42569d0
+> > > > > > x29: ffff8000a42569d0 x28: ffff0000dcec1b48 x27: ffff0000d68a17=
+08
+> > > > > > x26: ffff0000d68a16c0 x25: dfff800000000000 x24: 00000000000080=
+00
+> > > > > > x23: 0000000000000001 x22: ffff8000a4256b00 x21: 00000000000010=
+00
+> > > > > > x20: 0000000000000010 x19: ffff0000d68a16c0 x18: ffff8000a42566=
+e0
+> > > > > > x17: 000000000000e388 x16: ffff800080466c24 x15: 00000000000000=
+01
+> > > > > > x14: 1fffe0001b31513c x13: 0000000000000000 x12: 00000000000000=
+00
+> > > > > > x11: 0000000000000001 x10: 0000000000ff0100 x9 : 00000000000000=
+00
+> > > > > > x8 : ffff0000c6d98000 x7 : 0000000000000000 x6 : 00000000000000=
+00
+> > > > > > x5 : 0000000000000020 x4 : 0000000000000000 x3 : 00000000000010=
+00
+> > > > > > x2 : ffff8000a4256b00 x1 : 0000000000000001 x0 : 00000000000000=
+00
+> > > > > > Call trace:
+> > > > > >  fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:1=
+45 (P)
+> > > > > >  filemap_fault+0x12b0/0x1518 mm/filemap.c:3509
+> > > > > >  xfs_filemap_fault+0xc4/0x194 fs/xfs/xfs_file.c:1543
+> > > > > >  __do_fault+0xf8/0x498 mm/memory.c:4988
+> > > > > >  do_read_fault mm/memory.c:5403 [inline]
+> > > > > >  do_fault mm/memory.c:5537 [inline]
+> > > > > >  do_pte_missing mm/memory.c:4058 [inline]
+> > > > > >  handle_pte_fault+0x3504/0x57b0 mm/memory.c:5900
+> > > > > >  __handle_mm_fault mm/memory.c:6043 [inline]
+> > > > > >  handle_mm_fault+0xfa8/0x188c mm/memory.c:6212
+> > > > > >  do_page_fault+0x570/0x10a8 arch/arm64/mm/fault.c:690
+> > > > > >  do_translation_fault+0xc4/0x114 arch/arm64/mm/fault.c:783
+> > > > > >  do_mem_abort+0x74/0x200 arch/arm64/mm/fault.c:919
+> > > > > >  el1_abort+0x3c/0x5c arch/arm64/kernel/entry-common.c:432
+> > > > > >  el1h_64_sync_handler+0x60/0xcc arch/arm64/kernel/entry-common.=
+c:510
+> > > > > >  el1h_64_sync+0x6c/0x70 arch/arm64/kernel/entry.S:595
+> > > > > >  __uaccess_mask_ptr arch/arm64/include/asm/uaccess.h:169 [inlin=
+e] (P)
+> > > > > >  fault_in_readable+0x168/0x310 mm/gup.c:2234 (P)
+> > > > > >  fault_in_iov_iter_readable+0x1dc/0x22c lib/iov_iter.c:94
+> > > > > >  iomap_write_iter fs/iomap/buffered-io.c:950 [inline]
+> > > > > >  iomap_file_buffered_write+0x490/0xd54 fs/iomap/buffered-io.c:1=
+039
+> > > > > >  xfs_file_buffered_write+0x2dc/0xac8 fs/xfs/xfs_file.c:792
+> > > > > >  xfs_file_write_iter+0x2c4/0x6ac fs/xfs/xfs_file.c:881
+> > > > > >  new_sync_write fs/read_write.c:586 [inline]
+> > > > > >  vfs_write+0x704/0xa9c fs/read_write.c:679
+> > > > >
+> > > > > The backtrace actually explains it all. We had a buffered write w=
+hose
+> > > > > buffer was mmapped file on a filesystem with an HSM mark. Now the=
+ prefaulting
+> > > > > of the buffer happens already (quite deep) under the filesystem f=
+reeze
+> > > > > protection (obtained in vfs_write()) which breaks assumptions of =
+HSM code
+> > > > > and introduces potential deadlock of HSM handler in userspace wit=
+h filesystem
+> > > > > freezing. So we need to think how to deal with this case...
+> > > >
+> > > > Ouch. It's like the splice mess all over again.
+> > > > Except we do not really care to make this use case work with HSM
+> > > > in the sense that we do not care to have to fill in the mmaped file=
+ content
+> > > > in this corner case - we just need to let HSM fail the access if co=
+ntent is
+> > > > not available.
+> > > >
+> > > > If you remember, in one of my very early version of pre-content eve=
+nts,
+> > > > the pre-content event (or maybe it was FAN_ACCESS_PERM itself)
+> > > > carried a flag (I think it was called FAN_PRE_VFS) to communicate t=
+o
+> > > > HSM service if it was safe to write to fs in the context of event h=
+andling.
+> > > >
+> > > > At the moment, I cannot think of any elegant way out of this use ca=
+se
+> > > > except annotating the event from fault_in_readable() as "unsafe-for=
+-write".
+> > > > This will relax the debugging code assertion and notify the HSM ser=
+vice
+> > > > (via an event flag) that it can ALLOW/DENY, but it cannot fill the =
+file.
+> > > > Maybe we can reuse the FAN_ACCESS_PERM event to communicate
+> > > > this case to HSM service.
+> > > >
+> > > > WDYT?
+> > >
+> > > I think that mmap was a mistake.
+> >
+> > What do you mean?
+> > Isn't the fault hook required for your large executables use case?
+>
+> I mean the mmap syscall was a mistake ;).
+>
 
-How are we getting here with IOCB_NOWAIT IO? This is either
-sub-block unaligned write IO, it is a write IO that requires
-allocation (i.e. write beyond EOF), or we are doing a O_DSYNC write
-on hardware that doesn't support REQ_FUA. 
+ah :)
 
-The first 2 cases should have already been filtered out by the
-filesystem before we ever get here. The latter doesn't require
-multiple IOs in IO submission - the O_DSYNC IO submission (if any is
-required) occurs from data IO completion context, and so it will not
-block IO submission at all.
+> >
+> > >
+> > > Is there a way to tell if we're currently in a path that is under fsf=
+reeze
+> > > protection?
+> >
+> > Not at the moment.
+> > At the moment, file_write_not_started() is not a reliable check
+> > (has false positives) without CONFIG_LOCKDEP.
+> >
 
-So what type of IO in what mapping condition is triggering the need
-to return EAGAIN here?
+One very ugly solution is to require CONFIG_LOCKDEP for
+pre-content events.
 
-> +
->  	/*
->  	 * The rules for polled IO completions follow the guidelines as the
->  	 * ones we set for inline and deferred completions. If none of those
-> @@ -374,6 +379,23 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->  	if (!(dio->flags & (IOMAP_DIO_INLINE_COMP|IOMAP_DIO_CALLER_COMP)))
->  		dio->iocb->ki_flags &= ~IOCB_HIPRI;
->  
-> +	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua, atomic);
-> +
-> +	if (!is_sync_kiocb(dio->iocb) && (dio->iocb->ki_flags & IOCB_NOWAIT)) {
-> +		/*
-> +		 * This is nonblocking IO, and we might need to allocate
-> +		 * multiple bios. In this case, as we cannot guarantee that
-> +		 * one of the sub bios will not fail getting issued FOR NOWAIT
-> +		 * and as error results are coalesced across all of them, ask
-> +		 * for a retry of this from blocking context.
-> +		 */
-> +		if (bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS + 1) >
-> +					  BIO_MAX_VECS)
-> +			return -EAGAIN;
-> +
-> +		bio_opf |= REQ_NOWAIT;
-> +	}
+> > > Just denying this case would be a simpler short term solution while
+> > > we come up with a long term solution. I think your solution is fine, =
+but I'd be
+> > > just as happy with a simpler "this isn't allowed" solution. Thanks,
+> >
+> > Yeh, I don't mind that, but it's a bit of an overkill considering that
+> > file with no content may in fact be rare.
+>
+> Agreed, I'm fine with your solution.
 
-Ok, so this allows a max sized bio to be used. So, what, 1MB on 4kB
-page size is the maximum IO size for IOCB_NOWAIT now? I bet that's
-not documented anywhere....
+Well, my "solution" was quite hand-wavy - it did not really say how to
+propagate the fact that faults initiated from fault_in_readable().
+Do you guys have any ideas for a simple solution?
 
-Ah. This doesn't fix the problem at all.
-
-Say, for exmaple, I have a hardware storage device with a max
-hardware IO size of 128kB. This is from the workstation I'm typing
-this email on:
-
-$ cat /sys/block/nvme0n1/queue/max_hw_sectors_kb
-128
-$  cat /sys/block/nvme0n1/queue/max_segments
-33
-$
-
-We build a 1MB bio above, set REQ_NOWAIT, then:
-
-submit_bio
-  ....
-  blk_mq_submit_bio
-    __bio_split_to_limits(bio, &q->limits, &nr_segs);
-      bio_split_rw()
-        .....
-        split:
-	.....
-        /*                                                                       
-         * We can't sanely support splitting for a REQ_NOWAIT bio. End it        
-         * with EAGAIN if splitting is required and return an error pointer.     
-         */                                                                      
-        if (bio->bi_opf & REQ_NOWAIT)                                            
-                return -EAGAIN;                                                  
-
-
-So, REQ_NOWAIT effectively limits bio submission to the maximum
-single IO size of the underlying storage. So, we can't use
-REQ_NOWAIT without actually looking at request queue limits before
-we start building the IO - yuk.
-
-REQ_NOWAIT still feels completely unusable to me....
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+Amir.
 
