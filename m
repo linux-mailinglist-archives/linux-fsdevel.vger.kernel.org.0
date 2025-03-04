@@ -1,115 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-43053-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43054-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DF28A4D72C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 10:01:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E3C8A4D742
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 10:03:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9101F17598B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 09:01:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A87C33AF822
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 09:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DA71FCD03;
-	Tue,  4 Mar 2025 08:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D381FF5F4;
+	Tue,  4 Mar 2025 08:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSapsl0W"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="agXECyeq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731DF1FBCBF;
-	Tue,  4 Mar 2025 08:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D871FF1D6
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 08:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741078504; cv=none; b=D1Qq5goS8uam+nvgoSUycK1mYHzD6jtOaca4x51JYaUNspr10ByF/Y/oAU3bj8YhhoYkL9nFxHJhEjtx/Tq/u7ybDvaKOZTNbtIM3x5oehgRqECfi+Aeb07VKY5vywOVWEqi9Wgmihve+7eAWkKLTo9XFUcf6/GH75MyLIb/zZU=
+	t=1741078628; cv=none; b=XSKhZU7RUo8dHqHaWKyKXolo5y3yHwx3dZw5ISO0MvxLJzbl7CidVOtYMB87Ocl4vNETxbFay94lDDpJKZCFhaX+uN8XeTawaHNEk/AJjt5CwxovPuWg3vJdT0nQf8ZC6dgViUs1wTK5JASvk4BkTsqV5yl1bSevtZR/HILNDUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741078504; c=relaxed/simple;
-	bh=I3Z7U0rZDw2GL5WC6oWxd1hjvPK2mzzVTMT3qctHGWw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=unUWkn3J5WvrfB6fEcIk0XCGmnlLj43TbErlgGqGpbOHnIAPBEfNt2eN1pMwdgV+4U+SaJiAgGVgrNP75U1RZg7eBEvZBrI0UksDgialxAg1sY1QNujl45E8CgoGp/wG7nEQBGUwFuiGz7W2DaeAunR0mXih7+q2Lt9MA3Eg0+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSapsl0W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88BA0C4CEE5;
-	Tue,  4 Mar 2025 08:55:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741078503;
-	bh=I3Z7U0rZDw2GL5WC6oWxd1hjvPK2mzzVTMT3qctHGWw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nSapsl0WH6XtmgzbrmtYmeKYIcrX4V1siLMfVgeNZqn9KAR4TV9toVN0AnJxsbMUr
-	 li8AQ6myS6kkIRTRSNqhePm3k4YphnJE1w7FhZ/R3UwOc7HxGM8tBAGlN3nTwBHZHQ
-	 fzm322MM+ZoP6Zo35O7V4+DkSJrAFUoWXsNa4xZnALCgLFwgYQjauTP77CJ/7DAA/h
-	 Y1Sw255zrYLDYtaIBCg2TmxzAz2klhgRAHroOxVlRdOrngm169Fp4W8FWAhCaNKweQ
-	 zk/B8mExAkWrT9a2s1a8crS+ny2WL32gb+fom/5jSZgwgg/+Oy3sbMNcUb+kZxI3PM
-	 FTEI2j3h8aSCg==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	David Disseldorp <ddiss@suse.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-kselftest@vger.kernel.org,
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v4 0/8] initramfs: kunit tests and cleanups
-Date: Tue,  4 Mar 2025 09:54:37 +0100
-Message-ID: <20250304-anfingen-kondor-c7f9cc352472@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250304061020.9815-1-ddiss@suse.de>
-References: <20250304061020.9815-1-ddiss@suse.de>
+	s=arc-20240116; t=1741078628; c=relaxed/simple;
+	bh=iIdv6eNzgkagVbJqygA4QNukH04qGBrDmzJ2SlgWYfA=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=m9nCbYJvi6PpCCQLIS7H/kGAZEDjrfOxLqbgAcufRaNFjvFRWu2MDmuSqelnHlPjDlGtKgc0LgQZt7aM4QHlZ9tumHI/vKIua0ASZ65QrynoiNoz8wXjvBC3dNZprMUWhadMyB9xrPjvZrWfj3mYVnzIhuzcQVaMh9/wS1WLMbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=agXECyeq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741078625;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CRWtDAlRoZ9ktZzzbYRiu+U+owxQoQLPZFPHwWfX9HM=;
+	b=agXECyeqJzv24YcZ3yj9zoOXmopIWt3QEeUST3jjD9lJOz90IJJ77/aS682IxboF/2VoHf
+	W+e73DtcH0RZx5By6ATsUi1MIcD4Ox4Wh6A8zlFAVp2Ai+UzXdU+efVF1yasDfBZKZXv45
+	EIB5CjQ+yA64PeCdXMwEMMzwUckBM8Q=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-503-aWNY7MbwNASREKHFaVu91w-1; Tue,
+ 04 Mar 2025 03:57:03 -0500
+X-MC-Unique: aWNY7MbwNASREKHFaVu91w-1
+X-Mimecast-MFC-AGG-ID: aWNY7MbwNASREKHFaVu91w_1741078622
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CB2051944D33;
+	Tue,  4 Mar 2025 08:57:01 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.44.32.200])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 42A6D180035F;
+	Tue,  4 Mar 2025 08:56:58 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20250303203137.42636-1-slava@dubeyko.com>
+References: <20250303203137.42636-1-slava@dubeyko.com>
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: dhowells@redhat.com, ceph-devel@vger.kernel.org, amarkuze@redhat.com,
+    idryomov@gmail.com, linux-fsdevel@vger.kernel.org,
+    pdonnell@redhat.com, Slava.Dubeyko@ibm.com
+Subject: Re: [PATCH v3] ceph: fix slab-use-after-free in have_mon_and_osd_map()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2133; i=brauner@kernel.org; h=from:subject:message-id; bh=I3Z7U0rZDw2GL5WC6oWxd1hjvPK2mzzVTMT3qctHGWw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQf2/9o6qZTh+KKGWKiuMynuop0XTwoczP+Wlm/mb9QW JqXuXNSRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwER+tjH8FW7VNJ3ZnSgfN2vh J887S1ofzJvUk7r4/9O38SGdXOuPbmRk2HCmbHrLzk3mVTHfDpb9qV7rNkNBuYPHce1crVLm9Qn sTAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3896160.1741078617.1@warthog.procyon.org.uk>
+Date: Tue, 04 Mar 2025 08:56:57 +0000
+Message-ID: <3896161.1741078617@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Tue, 04 Mar 2025 16:57:43 +1100, David Disseldorp wrote:
-> This patchset adds basic kunit test coverage for initramfs unpacking
-> and cleans up some minor buffer handling issues / inefficiencies.
-> 
-> Changes since v3:
-> - Drop shared unpack buffer changes
->   + rework into initramfs: allocate heap buffers together (patch 5/8)
->   + extra review complexity wasn't worth the tiny boot-time heap saving
-> - move hardlink hash leak repro into first initramfs_test patch
-> - add note regarding kunit section=.data -> section=.init.text warning
-> 
-> [...]
+Viacheslav Dubeyko <slava@dubeyko.com> wrote:
 
-Ok, let's see if this breaks any testsuites.
+> +	mutex_lock(&monc->mutex);
+>  	kfree(monc->monmap);
+> +	monc->monmap = NULL;
+> +	mutex_unlock(&monc->mutex);
 
----
+I would do the kfree after the locked region:
 
-Applied to the vfs-6.15.initramfs branch of the vfs/vfs.git tree.
-Patches in the vfs-6.15.initramfs branch should appear in linux-next soon.
+	mutex_lock(&monc->mutex);
+	old_monmap = monc->monmap;
+	monc->monmap = NULL;
+	mutex_unlock(&monc->mutex);
+	kfree(old_monmap);
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+David
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.15.initramfs
-
-[1/8] init: add initramfs_internal.h
-      https://git.kernel.org/vfs/vfs/c/5f469c4f7167
-[2/8] initramfs_test: kunit tests for initramfs unpacking
-      https://git.kernel.org/vfs/vfs/c/b6736cfccb58
-[3/8] vsprintf: add simple_strntoul
-      https://git.kernel.org/vfs/vfs/c/dfa63602367a
-[4/8] initramfs: avoid memcpy for hex header fields
-      https://git.kernel.org/vfs/vfs/c/2c4babf8d182
-[5/8] initramfs: allocate heap buffers together
-      https://git.kernel.org/vfs/vfs/c/b40c5e61f940
-[6/8] initramfs: reuse name_len for dir mtime tracking
-      https://git.kernel.org/vfs/vfs/c/aeff5090a5ea
-[7/8] initramfs: fix hardlink hash leak without TRAILER
-      https://git.kernel.org/vfs/vfs/c/15e2de59de08
-[8/8] initramfs: avoid static buffer for error message
-      https://git.kernel.org/vfs/vfs/c/154c1e422ffe
 
