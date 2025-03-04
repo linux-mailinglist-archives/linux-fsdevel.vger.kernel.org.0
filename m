@@ -1,160 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-43048-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43049-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 674AAA4D58E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 09:00:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E33A9A4D5AD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 09:04:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95CDE1734B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 08:00:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB08C7AA136
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 08:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BA81F9A83;
-	Tue,  4 Mar 2025 07:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D181F8BC6;
+	Tue,  4 Mar 2025 08:04:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GR29q8ge"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NeErzgGe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3581F9413;
-	Tue,  4 Mar 2025 07:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674861F55ED
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 08:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741075188; cv=none; b=E+co3fLwwlH2NNjgpS7YUJ8Oj5DIge4EbhVZu5M4YjQVCC9B+2e6nYGAgmIRoDpIIIgO1RFtBTGRdt9fMHIqHFgkf78hVrxDT2uJvZD2KDWmn1CXmjYSw4S9X0WdSFxsf47FWbgj8rMsoj80+xVrAhi68A96hNn0azUZWfq96Ao=
+	t=1741075489; cv=none; b=f/gAmqT0C4muun2b6QJ8yDpHHFWBwoUyXnLM/A/vVodCsK+PqeUoiU0w8ip3PvJ572qH1YuwT5iEuO8aReYJnsMMJTpnA1Hw/yd0p0AH7s7+R4Ixvvt4bvuCG93W4xom6ZVnuflRVVNjKE1d/yW9LP200LeUTXeN65DmAfllqD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741075188; c=relaxed/simple;
-	bh=Cu4z4tJcKQnioK5oBCWV59p1bBfRBmR9sh8lkmQoAZs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DUXD0bUgAHKLqrFuL3bNAQRhDim0BisXWinHgAcAZdg9ok2ZtvfJUXIlT8hgL9W53ZJYDlCKeMBqmjORrkPn9q0ltfQ2THvSkzotuJQzPP8XAupaxqhyUqobnkTWSW5zY8JO/ol/UnKoJiWNC2w+WgrlcWOzCwEyYgJVBjEqM4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GR29q8ge; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-471fabc5bf5so24870121cf.3;
-        Mon, 03 Mar 2025 23:59:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741075186; x=1741679986; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1aV334ikN5dUEF1FAOBcx+MylSK4OZXxof9bYGpg/Ok=;
-        b=GR29q8geLWfOns2hVVJFCjQhI+FGIS/xgwPnzFTau9ayJqdwf1QBlmkwYTCjI3h8Xt
-         zNJ8GgcuzsOC6qrQnjirzcSdsRaSbk6eTcPGB2rPQRE1sHIc3EKNPin76iuCQKwN+AUj
-         gzDdoU/khCWlPeRc5qTU3viPU1rr5tkOZFkISSTLq7saV605DemEM3fgxj+gVd8iXAPW
-         OM06NZG++BRUBVyDAFJTinoC39qHA7+bLeK28URXL0o1OosQwwN4O0s96tdRhLSaY9Q6
-         B7GZQbJk1V7m3fQXUPFM43tHR5B/L+3EyJYPIKA8lKdAP/dqhV6V2RgqRY0UcxZ8os8n
-         rl5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741075186; x=1741679986;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1aV334ikN5dUEF1FAOBcx+MylSK4OZXxof9bYGpg/Ok=;
-        b=pigatJrUAYkino9Yw00ATm8iFDQabdz+kvDu7WiAeM9fCMNtlMcgKjgipIYW2U8OWN
-         GM8+N4C8FviTQTHLDEVqh+Y5iRiF1Y1Gp9FAEI5wkxB3grvi3m+6PO8xLWDEfKCJLGeD
-         CpvxknG0yWFzAtcy10nAG8zw4zq2KuR6DW+PqPjcA262HiY0Kte8SRNXXVBis+aZPtuB
-         C6E9dcWvAFTWrEg6JIsHPRLA+YT119eg+7A9ftCvxnnHK6eQZ23FRGTI9vFpkMJNp1mK
-         I38800AfsT/BnVzjydGs9EqwXS9BsN8R7dypgMmv6KHMHqBBGdY4VxRIcWWhKo51qlH2
-         OPPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXirjT1TonsEkxm7Z+wY7+EpTTU6c2mipFZlkzQSBCl5YeunLDw8bggeq9BRab6S133hdMe2BJJFwZgVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYEh+aAJqi+Av3TcmA4J+Amc3uKjvo9UV/z9hkilBBpSzwjI4d
-	7nFcPYsqY8ayRDHT2Nf9mGTFdqMZQ8If7sDOmMC3pgnu0CFK9Kf5
-X-Gm-Gg: ASbGnctbBBlLK9AC7aaN6/CN58FeZeTSsu56/IM0X5KyY5Ow2fQ1yqPDRLdhghJVqpA
-	6kgUEMyk4RbgQrNwlOq/NH5CmTrsAueMa0rHCREtm7YuqFEtxS3nC2n7pRrAxqk8GRJNHXY3I18
-	WNz54YWp3o4dXE6LmxKQv4S2/7zOvHYROFOwhIlscRogUr4r/EaZ2XUhEVpkpgRoIwxFt4BGo8d
-	VI/qHQfUqeuAV5ESy1taCt8OXBYLnvSn8F/flq3AyHHuJGEdhyA6gzrTFV78ArqAXi8lrOxnve3
-	/+GlSFHkfWAvuYrPhthhuHoDx+NKVeC4+x52PPoDMBMpqg==
-X-Google-Smtp-Source: AGHT+IHIYoa+cieyOOJgxd5EL3wyq699sPw+C+GlH+7h85SoD+RTkabVF3VG6HjUXFBPykg/6gEcuA==
-X-Received: by 2002:a05:622a:20a:b0:471:8d66:cd68 with SMTP id d75a77b69052e-474bc0554ddmr212901451cf.3.1741075185773;
-        Mon, 03 Mar 2025 23:59:45 -0800 (PST)
-Received: from iman-pc.home ([184.148.73.125])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-474691a1f02sm70183901cf.11.2025.03.03.23.59.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 23:59:45 -0800 (PST)
-From: Seyediman Seyedarab <imandevel@gmail.com>
-X-Google-Original-From: Seyediman Seyedarab <ImanDevel@gmail.com>
-To: jack@suse.cz,
-	amir73il@gmail.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Seyediman Seyedarab <ImanDevel@gmail.com>
-Subject: [PATCH] inotify: disallow watches on unsupported filesystems
-Date: Tue,  4 Mar 2025 03:00:44 -0500
-Message-ID: <20250304080044.7623-1-ImanDevel@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741075489; c=relaxed/simple;
+	bh=jxzf9EMu80D/xw6wMny6zC+ffLHTA+eDbzGVqYf9o7E=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=iwJG+2Ur2UMJ+AvzV04h7zyWyfiL478RYTkhYE1IXd5OHciKWbtnXzlgrN2J81WNGXevcZcBYzNVoo3YAxMIp55ofbxy1eNAOlbEkTEQp4IKlP49LBIZZFJE1598STushvtQ5RV5V94x5udz1eDEJNw5S9EqRHcODkWkdYrWlT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NeErzgGe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5078C4CEE5;
+	Tue,  4 Mar 2025 08:04:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741075488;
+	bh=jxzf9EMu80D/xw6wMny6zC+ffLHTA+eDbzGVqYf9o7E=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=NeErzgGelshQwygHqkAEWZ1D16syUHsOm2+EQfSFYYRSrprvFZ2GrIzxDp/V1weHf
+	 4luPhTxsNb3FPr0J3AUX6Nj6G+WWSFkX1hSKIxPHzV7BHWEnbvZOW2nUTjKeUO/YEi
+	 nm1wrK6DLDLRGpxSBB9Ne6uWjZ+Q9rXsQAIqNSmcx4IouWvg0M6mMgG/9g7XUa5qO6
+	 aftzda6renm4px4yuhhltl2uQrV765hAxOHkN9JFANw014Zp2IqWPr6tCrqsPY6NjV
+	 QoD9EXEtXkRdFhs9VkejsWEvUcrghvPKu5Jq/fij60Jqwy9wEifcJwTsDdzDv/ZK/w
+	 RoCUeePKFXt/Q==
+Message-ID: <57e98b92-56db-4217-b11c-b9b716f54de1@kernel.org>
+Date: Tue, 4 Mar 2025 16:04:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 00/27] f2fs folio conversions for v6.15
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20250218055203.591403-1-willy@infradead.org>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250218055203.591403-1-willy@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-currently, inotify_add_watch() allows adding watches on filesystems
-where inotify does not work correctly, without returning an explicit
-error. This behavior is misleading and can cause confusion for users
-expecting inotify to work on a certain filesystem.
+On 2/18/25 13:51, Matthew Wilcox (Oracle) wrote:
+> More f2fs folio conversions.  This time I'm focusing on removing
+> accesses to page->mapping as well as getting rid of accesses to
+> old APIs.  f2fs was the last user of wait_for_stable_page(),
+> grab_cache_page_write_begin() and wait_on_page_locked(), so
+> I've included those removals in this series too.
 
-This patch explicitly rejects inotify usage on filesystems where it
-is known to be unreliable, such as sysfs, procfs, overlayfs, 9p, fuse,
-and others.
+After fixing f2fs_put_page(), whole patchset looks good to me.
 
-By returning -EOPNOTSUPP, the limitation is made explicit, preventing
-users from making incorrect assumptions about inotify behavior.
+Jaegeuk, feel free to add:
 
-Signed-off-by: Seyediman Seyedarab <ImanDevel@gmail.com>
----
- fs/notify/inotify/inotify_user.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-index b372fb2c56bd..9b96438f4d46 100644
---- a/fs/notify/inotify/inotify_user.c
-+++ b/fs/notify/inotify/inotify_user.c
-@@ -87,6 +87,13 @@ static const struct ctl_table inotify_table[] = {
- 	},
- };
- 
-+static const unsigned long unwatchable_fs[] = {
-+	PROC_SUPER_MAGIC,      SYSFS_MAGIC,	  TRACEFS_MAGIC,
-+	DEBUGFS_MAGIC,	      CGROUP_SUPER_MAGIC, SECURITYFS_MAGIC,
-+	RAMFS_MAGIC,	      DEVPTS_SUPER_MAGIC, BPF_FS_MAGIC,
-+	OVERLAYFS_SUPER_MAGIC, FUSE_SUPER_MAGIC,   NFS_SUPER_MAGIC
-+};
-+
- static void __init inotify_sysctls_init(void)
- {
- 	register_sysctl("fs/inotify", inotify_table);
-@@ -690,6 +697,14 @@ static struct fsnotify_group *inotify_new_group(unsigned int max_events)
- }
- 
- 
-+static inline bool is_unwatchable_fs(struct inode *inode)
-+{
-+	for (int i = 0; i < ARRAY_SIZE(unwatchable_fs); i++)
-+		if (inode->i_sb->s_magic == unwatchable_fs[i])
-+			return true;
-+	return false;
-+}
-+
- /* inotify syscalls */
- static int do_inotify_init(int flags)
- {
-@@ -777,6 +792,13 @@ SYSCALL_DEFINE3(inotify_add_watch, int, fd, const char __user *, pathname,
- 	inode = path.dentry->d_inode;
- 	group = fd_file(f)->private_data;
- 
-+	/* ensure that inotify is only used on supported filesystems */
-+	if (is_unwatchable_fs(inode)) {
-+		pr_debug("%s: inotify is not supported on filesystem with s_magic=0x%lx\n",
-+				__func__, inode->i_sb->s_magic);
-+		return -EOPNOTSUPP;
-+	}
-+
- 	/* create/update an inode mark */
- 	ret = inotify_update_watch(group, inode, mask);
- 	path_put(&path);
--- 
-2.48.1
+Thanks,
+
+> 
+> Matthew Wilcox (Oracle) (27):
+>   f2fs: Add f2fs_folio_wait_writeback()
+>   mm: Remove wait_for_stable_page()
+>   f2fs: Add f2fs_folio_put()
+>   f2fs: Convert f2fs_flush_inline_data() to use a folio
+>   f2fs: Convert f2fs_sync_node_pages() to use a folio
+>   f2fs: Pass a folio to flush_dirty_inode()
+>   f2fs: Convert f2fs_fsync_node_pages() to use a folio
+>   f2fs: Convert last_fsync_dnode() to use a folio
+>   f2fs: Return a folio from last_fsync_dnode()
+>   f2fs: Add f2fs_grab_cache_folio()
+>   mm: Remove grab_cache_page_write_begin()
+>   f2fs: Use a folio in __get_node_page()
+>   f2fs: Use a folio in do_write_page()
+>   f2fs: Convert f2fs_write_end_io() to use a folio_iter
+>   f2fs: Mark some functions as taking a const page pointer
+>   f2fs: Convert f2fs_in_warm_node_list() to take a folio
+>   f2fs: Add f2fs_get_node_folio()
+>   f2fs: Use a folio throughout f2fs_truncate_inode_blocks()
+>   f2fs: Use a folio throughout __get_meta_page()
+>   f2fs: Hoist the page_folio() call to the start of
+>     f2fs_merge_page_bio()
+>   f2fs: Add f2fs_get_read_data_folio()
+>   f2fs: Add f2fs_get_lock_data_folio()
+>   f2fs: Convert move_data_page() to use a folio
+>   f2fs: Convert truncate_partial_data_page() to use a folio
+>   f2fs: Convert gc_data_segment() to use a folio
+>   f2fs: Add f2fs_find_data_folio()
+>   mm: Remove wait_on_page_locked()
+> 
+>  fs/f2fs/checkpoint.c    |  26 ++--
+>  fs/f2fs/data.c          | 130 ++++++++++---------
+>  fs/f2fs/f2fs.h          |  90 +++++++++----
+>  fs/f2fs/file.c          |  24 ++--
+>  fs/f2fs/gc.c            |  42 +++---
+>  fs/f2fs/node.c          | 279 ++++++++++++++++++++--------------------
+>  fs/f2fs/node.h          |   6 +-
+>  fs/f2fs/segment.c       |  26 ++--
+>  include/linux/pagemap.h |   9 --
+>  mm/filemap.c            |   2 +-
+>  mm/folio-compat.c       |  14 --
+>  11 files changed, 338 insertions(+), 310 deletions(-)
+> 
 
 
