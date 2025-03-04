@@ -1,103 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-43055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D60A4D8E2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 10:42:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81853A4D8E4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 10:42:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03C93173519
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 09:40:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 891FE7A89A1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 09:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA0D1FCFCB;
-	Tue,  4 Mar 2025 09:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BFC51FDE03;
+	Tue,  4 Mar 2025 09:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="G8HhgLla"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Te7kvjWz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FE91FCF44
-	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 09:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEC21FDA9D
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 09:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741081061; cv=none; b=D3WwsMNkfCRMybhnh2SX8sEopLRn/szFbRfneQR+TxM+PJAFoLA835TVPGMfIukZEiRfc97+UQOMf8GirPmZ0/AjeGv7vrtDvgqP55stdPR0dQ9p87j2JerNhtbZP9s5HimtbuWFKbnItbOFLvq272MQaX5tE2tKZjBWYwQ+wnk=
+	t=1741081279; cv=none; b=Fv+yk/OJZdLQyyA/uzZjEqBwjO+PWwlOMkUcklnyJeu2qEU1LaJJyHS6jmw/qYJa9E8gsdMmiSceNslTS0XiYGnmIHgj5cL1GaYpc4s37/ThOUQnyr5TMEqjEcve6AlSpp9jr0Bw2/BeJqg2ZHpkThPAlJxIo5LnIGSexjU6+j8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741081061; c=relaxed/simple;
-	bh=0Jdyw28ag/EkV/tyAMAxy1kQwRiQcwaztWAcRlzaG9w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uT5fHRzw1hvYyXBmRddqSTTm94JCeE/XsMeEu/nPtPq5KIIITuu8g1teYGorTIUm5RMes+uzLziZK1SyFGDtPkWQpv8Y2SoJtCBmRaIfAyXAzfdRUAXnpjdqypa8L6Poh5uopTYZRs3FINFoXES/JrC/5lYoNEHdUUOiy9p9qjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=G8HhgLla; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-46fcbb96ba9so68374271cf.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Mar 2025 01:37:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1741081056; x=1741685856; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Jdyw28ag/EkV/tyAMAxy1kQwRiQcwaztWAcRlzaG9w=;
-        b=G8HhgLlaSPWUHmw3hSxq+VSkLzGnkNuHayeaSLIG2SW4AHvQNsuJFihyiX8WRy5EZb
-         P+iH2OKnLsKDk/9Tl9rsQSjjOKF+YikeTEm1Ii3wkEV8AcgGwzTr7RCQ9KKM0kyrGKzs
-         LBuuPnAmAFPran1ewdsoIqKqXNzX12wTVDnrw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741081056; x=1741685856;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0Jdyw28ag/EkV/tyAMAxy1kQwRiQcwaztWAcRlzaG9w=;
-        b=aNwSIQfL0QS+3+y6KK5oK2OjgBywLe+CYTR6nlAFgdqAd7x3Myx6o66CkkekmhlvOx
-         C/lpqHVdfWo+BoqSPbYXqNbzCelN4JCJBDZUN5OYKemzWW+UjHlcCfEZknneFen4VwYG
-         S3XAHCNWsYlUsBCAMqOX0J90MBT3NC/O+TnMgQWWDR2Bn8smFszLn9SAX3mXbLaqePNI
-         8UnBhdZCghpiCoiLGrAIjkiM63BdWg5Okl6PM5iw8YN9RdKzIFJbSkROx7H7tHNE7QQG
-         JLZstYmO/c/ftrsk6tB8vn4LScbvnZtK02UxM9LmYA7cgGhmACZ/MUbmFaueOnxTcuXf
-         YelA==
-X-Forwarded-Encrypted: i=1; AJvYcCX4nb+ph2m8bkdQkVEuMuy5E9rZ4mneZ5jpzXYAaTWymFC5LHs4SXRKSdXg2+JkeCky2+rxA8Wt/1RbQgh8@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVANiSoIiDQDWOG0rKl5HUmKz3iSFzhFMz6lYvp4C5dCDzh3qs
-	gUZVJ2nDPjUc5r1tOzvqofTFmtYkS2RCHvOwNlPX8xUG5JADL3s7uoylBi5eIYP3Oxf88t1UNJ+
-	BoHYCehVw26KxsddBYzLlddBMSP8W5fxKWDS+yw==
-X-Gm-Gg: ASbGnctYgJilRrEbbM9JloT9dd8X7rQodHOuF36yZ/dIGoAZYgoqFIayjvB4c6JAFtO
-	acLy4ZXd6c3Ps3r/0wnzAwmhn7djmKgTa2wxV4B4nC14HidDVBeMJJQbwsIciMI6F6CtK0lrnh9
-	AN++tUXeshfUq3gt7v7A4zXoox
-X-Google-Smtp-Source: AGHT+IHIYI42ASXlKXn2mmxOw/03JnEW9+rqcxBqvi2TDt+NB6hH1Wv965XXlNzrFcUgu8eQu7pdXt0eB4W5SaetY0E=
-X-Received: by 2002:a05:622a:189e:b0:475:5bd:e9a7 with SMTP id
- d75a77b69052e-47505bdf0aamr3135661cf.38.1741081056165; Tue, 04 Mar 2025
- 01:37:36 -0800 (PST)
+	s=arc-20240116; t=1741081279; c=relaxed/simple;
+	bh=+VgV9nECdZYpwMtw1XRy1qAEgzF6xYEi+wEeDAC/cx8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TZePU9JVZtobk/CVYOGb36KdCzYeKjvcB6SB4lO1xxwJTzrV/HXLscY796lSN1dJfLpVpuV7Wc0tJYzv2ZQaxzWysME/fEcMmNjUM2vg5jJnOdV1+mqB9q8VcC2GTr+ZVIHkI8/yIAgiu6nYzE4ceUbRQIaZLkm1jb6BmjYOoOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Te7kvjWz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9BE6C4CEE9;
+	Tue,  4 Mar 2025 09:41:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741081277;
+	bh=+VgV9nECdZYpwMtw1XRy1qAEgzF6xYEi+wEeDAC/cx8=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Te7kvjWzohLPH7EdBqaPg2tX+CEikvuTXIOAsGshRMt00HkuzwHQGpngWwlTtqGxB
+	 5kf018Gp8uxCI2dA2A1Ufi9BchJgYcgf8en1AAPQDpkyXal1XW7wRty9SljMoQqykH
+	 AbNNVKa+6gTqqzA1exh5gQNAJMVtDIuzt9ejPDRACoOMpZD+RyJk881MXBMgTLLj6q
+	 eWHfQfFTtRvMusAlW78ZZvTFrWywkgyjQ4tetvnnHMNJIroQSuZbIktKBLy8Sik/7U
+	 TezwYvN2hELo675EAknDhArTl/s/48Uzo9s6q/+5kf++Yc4C5urTqrekbEO+aNR+Qz
+	 E+tq3PWPuL1gQ==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v2 00/15] pidfs: provide information after task has been
+ reaped
+Date: Tue, 04 Mar 2025 10:41:00 +0100
+Message-Id: <20250304-work-pidfs-kill_on_last_close-v2-0-44fdacfaa7b7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250122215528.1270478-1-joannelkoong@gmail.com>
- <4hwzfe4b377vabaiu342u44ryigkkyhka3nr2kuvfsbozxcrpt@li62aw6jkp7s>
- <CAJnrk1YnKH2Dh2eSHXd7G64h++Z0PnHW0GFb=C60qN8N1=k+aQ@mail.gmail.com>
- <CAJfpegsKpHgyKMMjuzm=sQ0sAj+Fg1ZLvvqMTuVWWVvKEOXiFQ@mail.gmail.com> <CAJnrk1YoA2QcuxvTdW=2P3ZRHGhWOYMOfXC=+i5fOY-71mBO6g@mail.gmail.com>
-In-Reply-To: <CAJnrk1YoA2QcuxvTdW=2P3ZRHGhWOYMOfXC=+i5fOY-71mBO6g@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 4 Mar 2025 10:37:25 +0100
-X-Gm-Features: AQ5f1JoXTW4GfDgby1jpRIsxTQ1PsYz2JWfkjyj9la7DwTkdH_Ud6Q6l4YK5B08
-Message-ID: <CAJfpegsnSEtFVGnWjpM7pTMdCubuzenZqFRStteZBi3Q3+PWaA@mail.gmail.com>
-Subject: Re: [PATCH v12 0/2] fuse: add kernel-enforced request timeout option
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, linux-fsdevel@vger.kernel.org, 
-	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, laoar.shao@gmail.com, 
-	jlayton@kernel.org, tfiga@chromium.org, bgeffon@google.com, 
-	etmartin4313@gmail.com, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKzKxmcC/4WOywqDMBREf6Vk3Yi59UVX/Y8ikpirXgyJJJK2i
+ P/eKHTd5YGZM7OxgJ4wsPtlYx4jBXI2AVwvrJ+kHZGTTswghzIHqPnL+ZkvpIfAZzKmc7YzMqx
+ db1xALuGm9QBCq6JmybF4HOh9+p9tYiVTSHlp++mwxmSpMlFmp/AoTBRW5z/nnyiO2m+6+TMdB
+ c95qXSNlVIFNPiY0Vs0mfMja/d9/wLxtM2D7AAAAA==
+X-Change-ID: 20250227-work-pidfs-kill_on_last_close-a23ddf21db47
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+ Lennart Poettering <lennart@poettering.net>, 
+ Daan De Meyer <daan.j.demeyer@gmail.com>, Mike Yuan <me@yhndnzj.com>, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-42535
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3775; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=+VgV9nECdZYpwMtw1XRy1qAEgzF6xYEi+wEeDAC/cx8=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQfO7Vrj1qvowenyNfCbv2ZYc6ZBh80eYSN95anZZnGH
+ DsudnFKRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETynjEyzP98dw1vQdqZQznt
+ C1x+Xdq+6XfOrAMWV7R/Fv9NSN5WG8DI0D0rS23PiTfq+lERAgn12+a93XFrZv7+s6E7vNiquO8
+ U8gIA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Mon, 3 Mar 2025 at 23:43, Joanne Koong <joannelkoong@gmail.com> wrote:
+Hey,
 
-> Will the 2nd patch ("fuse: add default_request_timeout and
-> max_request_timeout sysctls") also be re-applied? I'm only seeing the
-> 1st patch (" fuse: add kernel-enforced timeout option for requests")
-> in the for-next tree right now.
+Various tools need access to information about a process/task even after
+it has already been reaped. For example, systemd's journal logs
+and uses such information as the cgroup id and exit status to deal with
+processes that have been sent via SCM_PIDFD or SCM_PEERPIDFD. By the
+time the pidfd is received the process might have already been reaped.
 
-I wasn't paying proper attention, sorry.
+This series aims to provide information by extending the PIDFD_GET_INFO
+ioctl to retrieve the exit code and cgroup id. There might be other
+stuff that we would want in the future.
 
-Re-applied the second (modified) patch.
+Pidfd
+polling allows waiting on either task exit or for a task to have been
+reaped. The contract for PIDFD_INFO_EXIT is simply that EPOLLHUP must
+be observed before exit information can be retrieved, i.e., exit
+information is only provided once the task has been reaped. 
 
-Thanks,
-Miklos
+Note, that if a thread-group leader exits before other threads in the
+thread-group then exit information will only be available once the
+thread-group is empty. This aligns with wait() as well, where reaping of
+a thread-group leader that exited before the thread-group was empty is
+delayed until the thread-group is empty.
+
+With PIDFD_INFO_EXIT autoreaping might actually become usable because it
+means a parent can ignore SIGCHLD or set SA_NOCLDWAIT and simply use
+pidfd polling and PIDFD_INFO_EXIT to get get status information for its
+children. The kernel will autocleanup right away instead of delaying.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Changes in v2:
+- Call pidfs_exit() from release_task().
+- Don't provide exit information once the task has exited but once the
+  task has been reaped. This makes for simpler semantics. Thus, call
+  pidfs_exit() from release_task().
+- Link to v1: https://lore.kernel.org/r/20250228-work-pidfs-kill_on_last_close-v1-0-5bd7e6bb428e@kernel.org
+
+---
+Christian Brauner (15):
+      pidfs: switch to copy_struct_to_user()
+      pidfd: rely on automatic cleanup in __pidfd_prepare()
+      pidfs: move setting flags into pidfs_alloc_file()
+      pidfs: add inode allocation
+      pidfs: record exit code and cgroupid at exit
+      pidfs: allow to retrieve exit information
+      selftests/pidfd: fix header inclusion
+      pidfs/selftests: ensure correct headers for ioctl handling
+      selftests/pidfd: move more defines to common header
+      selftests/pidfd: add first PIDFD_INFO_EXIT selftest
+      selftests/pidfd: add second PIDFD_INFO_EXIT selftest
+      selftests/pidfd: add third PIDFD_INFO_EXIT selftest
+      selftests/pidfd: add fourth PIDFD_INFO_EXIT selftest
+      selftests/pidfd: add fifth PIDFD_INFO_EXIT selftest
+      selftests/pidfd: add sixth PIDFD_INFO_EXIT selftest
+
+ fs/internal.h                                     |   1 +
+ fs/libfs.c                                        |   4 +-
+ fs/pidfs.c                                        | 182 +++++++++--
+ include/linux/pidfs.h                             |   1 +
+ include/uapi/linux/pidfd.h                        |   3 +-
+ kernel/exit.c                                     |   2 +
+ kernel/fork.c                                     |  15 +-
+ tools/testing/selftests/pidfd/.gitignore          |   1 +
+ tools/testing/selftests/pidfd/Makefile            |   2 +-
+ tools/testing/selftests/pidfd/pidfd.h             |  86 +++++
+ tools/testing/selftests/pidfd/pidfd_fdinfo_test.c |   1 +
+ tools/testing/selftests/pidfd/pidfd_info_test.c   | 372 ++++++++++++++++++++++
+ tools/testing/selftests/pidfd/pidfd_open_test.c   |  26 --
+ tools/testing/selftests/pidfd/pidfd_setns_test.c  |  45 ---
+ 14 files changed, 636 insertions(+), 105 deletions(-)
+---
+base-commit: b1e809e7f64ad47dd232ff072d8ef59c1fe414c5
+change-id: 20250227-work-pidfs-kill_on_last_close-a23ddf21db47
+
 
