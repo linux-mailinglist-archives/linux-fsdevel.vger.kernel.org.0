@@ -1,69 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-43140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D21C2A4EA52
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 19:01:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68E21A4E9F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 18:52:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E09C98E6541
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 17:41:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B716319C0BEE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Mar 2025 17:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6142BE7CB;
-	Tue,  4 Mar 2025 17:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565C429C34A;
+	Tue,  4 Mar 2025 17:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JFrjF+sp"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CfUFMIpY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB44D2980AA;
-	Tue,  4 Mar 2025 17:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F212C2CBE
+	for <linux-fsdevel@vger.kernel.org>; Tue,  4 Mar 2025 17:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741108635; cv=none; b=ujBCBQ8ZeFtLQlt+loMuvqhfh0CqDN2PgGsKe9oe3Hl3uu2qJnfatz2V1fFv8RbKIaWvZumoTeJPn0UzulEX5rqAU2OBKppxg40T/ifenAnA+qjA9275U6Mbeg4zinBLB4kSZjWR50QWykfjCEdrNhpNBNLoJPeA2BZSlP3bBAQ=
+	t=1741109015; cv=none; b=XXi96Fky1ZIMkpP2pcNoQ5fl+f//MA3nfLpszgZBYICzaqYUsPDyb8RB1cYZjmDUszm+jwNi/tXlw3Q0Mw8DLGROzB7sp+3LwFTbf441I+W+C6/tTHh3RPs3eb7vrWgxwSgJjupbsXcUjQwv8oHywMjBm3GmpK/q3yygENY667E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741108635; c=relaxed/simple;
-	bh=3j+Qz7hT1f8OqjlZi9V6ZuZnjswQjZpLuYZfWeHW7K0=;
+	s=arc-20240116; t=1741109015; c=relaxed/simple;
+	bh=NGuNOA+dOUWPnA/uOLmFOg1ZdSd2qtUEZjZLEWXf9Cg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m/4yRG67kmhqTCvzfpmwGhglmLr36cdlkXDDrXnZ/G1zzwXzVz5cdh3IMr4V2aDXkzPpuZGlNqYZYsxlK0RDyChdnxDyFkhCLiTOhaRqzhgWkHag4mwpnmXIWQ/AAETwzhsvsNzZrmGLsUd1wWwykiWi4D3fMON2+kzp+9rZG9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JFrjF+sp; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/Uoeevh/Cjq7NLA2NMtRTv1MiqPIpGJ85FyoLQLLraE=; b=JFrjF+spdHGmhMsTnV97EVwxcB
-	gjRe0ezJfT9DhgQSvu6I6A0PLsl1Or6kFvAcoqmV++vCFw8QSzX5HfwYf4BRNzlGzd8K7QhYvoguP
-	S3EV7klTjp15oLbLbgFQ+kMoTwBbDCt0FXmIJPAtI9TrYx2DKRiT5uFxyAo/ex95NPXiArHu1KkGJ
-	cT3EcJzKvfkr3mtqYCpWUtjNOUN/s2moR7tD1xvTZzHzHkr4I6sk8K1TSTdwH6NVKPoBMM4KJ27zV
-	h12RaE3NFg3pSkoYDJV4J3uk3K43b50EXrqTlvmOmcV6QBhoNYmm4NrWtHzBfdwBw2VpdgRnUH7a0
-	/YQfRolQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tpVtH-00000005ahU-2jq2;
-	Tue, 04 Mar 2025 17:17:11 +0000
-Date: Tue, 4 Mar 2025 09:17:11 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Heinz Mauelshagen <heinzm@redhat.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Mikulas Patocka <mpatocka@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-	Jooyung Han <jooyung@google.com>, Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>, zkabelac@redhat.com,
-	dm-devel@lists.linux.dev, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] the dm-loop target
-Message-ID: <Z8c1l_MjG4youGNO@infradead.org>
-References: <7d6ae2c9-df8e-50d0-7ad6-b787cb3cfab4@redhat.com>
- <Z8W1q6OYKIgnfauA@infradead.org>
- <b3caee06-c798-420e-f39f-f500b3ea68ca@redhat.com>
- <Z8XlvU0o3C5hAAaM@infradead.org>
- <8adb8df2-0c75-592d-bc3e-5609bb8de8d8@redhat.com>
- <Z8cE_4KSKHe5-J3e@infradead.org>
- <CAM23Vxr=fKy-0L1R5P-5h6A95acKT_d=CC1E+TAzAs8v6q9gHw@mail.gmail.com>
- <Z8cki-inrku8QIhB@infradead.org>
- <CAM23VxqJX46DCpCiH5qxPpDLtMVg87Ba8sx55aQ4hvt-XaHzuQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hoNW47X6cHYFUmkh9Risn4av8TEqizU3mvZzNU7Bs6abRVWCdAswiCWalL26zQQGAcNY/oooZYW/ct+To67GAcw8/nKAaiv/0dBefkXZV/vlzDB57WscZWY956vQiZIwweNjrKxVHE3fX7yoblOJz5ewb8sun5sE7n0km8Ebn+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CfUFMIpY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741109012;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MFNLRK8HOOeHp4byVOx0A3cGM3GmhIMPPGYScJHlHww=;
+	b=CfUFMIpY+kfWW3hYwtGkK2N0MsbwB++l9QUwubSmlACN/qgenSLaN1eeyTCfXAl3Y5VH/7
+	mtr1/uX7QqgVmhLpGL9oNudK2pSBB9oH2XV/VU2ZOQ+SzGCb1TM062ld0lyvqxLo9oRVS7
+	zMtAxG/1AbtvQifcNrLZZscakmielXA=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-148-SBCCIG39NO-fncSNwP7BXw-1; Tue,
+ 04 Mar 2025 12:23:31 -0500
+X-MC-Unique: SBCCIG39NO-fncSNwP7BXw-1
+X-Mimecast-MFC-AGG-ID: SBCCIG39NO-fncSNwP7BXw_1741109009
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7E9BA18EB2D3;
+	Tue,  4 Mar 2025 17:23:29 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.246])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id EFE2319560A3;
+	Tue,  4 Mar 2025 17:23:26 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue,  4 Mar 2025 18:22:59 +0100 (CET)
+Date: Tue, 4 Mar 2025 18:22:55 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+	Lennart Poettering <lennart@poettering.net>,
+	Daan De Meyer <daan.j.demeyer@gmail.com>,
+	Mike Yuan <me@yhndnzj.com>
+Subject: Re: [PATCH v2 06/15] pidfs: allow to retrieve exit information
+Message-ID: <20250304172255.GC5756@redhat.com>
+References: <20250304-work-pidfs-kill_on_last_close-v2-0-44fdacfaa7b7@kernel.org>
+ <20250304-work-pidfs-kill_on_last_close-v2-6-44fdacfaa7b7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,20 +77,49 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAM23VxqJX46DCpCiH5qxPpDLtMVg87Ba8sx55aQ4hvt-XaHzuQ@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20250304-work-pidfs-kill_on_last_close-v2-6-44fdacfaa7b7@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Tue, Mar 04, 2025 at 06:01:04PM +0100, Heinz Mauelshagen wrote:
-> > As Mikulas shared earlier:
->  > The Android people concluded that loop is too slow and rather than using
-> > loop they want to map a file using a table with dm-linear targets over the
-> > image of the host filesystem. So, they are already doing what dm-loop is
-> > doing.
+On 03/04, Christian Brauner wrote:
+>
+> @@ -248,6 +260,37 @@ static long pidfd_info(struct task_struct *task, unsigned int cmd, unsigned long
+>  	if (copy_from_user(&mask, &uinfo->mask, sizeof(mask)))
+>  		return -EFAULT;
+>
+> +	task = get_pid_task(pid, PIDTYPE_PID);
+> +	if (!task) {
+> +		if (!(mask & PIDFD_INFO_EXIT))
+> +			return -ESRCH;
+> +
+> +		if (!current_in_pidns(pid))
+> +			return -ESRCH;
+> +	}
+> +
+> +	if (mask & PIDFD_INFO_EXIT) {
+> +		exit_info = READ_ONCE(pidfs_i(inode)->exit_info);
+> +		if (exit_info) {
+> +#ifdef CONFIG_CGROUPS
+> +			kinfo.cgroupid = exit_info->cgroupid;
+> +			kinfo.mask |= PIDFD_INFO_EXIT | PIDFD_INFO_CGROUPID;
+> +#endif
+> +			kinfo.exit_code = exit_info->exit_code;
+> +		}
 
-Which again is completely handwavy.  What is the workload.  What are the
-issues with the workload?  Where is the time spent making it slower.
-e.g. the extent mapping code in this patch is a lot less efficient than
-the btree based extent lookup in XFS.  If it is faster it is not looking
-up the extents but something else, and you need to figure out what it
-is.
+Confused... so, without CONFIG_CGROUPS pidfd_info() will never report
+PIDFD_INFO_EXIT in kinfo.mask ?
+
+> --- a/include/uapi/linux/pidfd.h
+> +++ b/include/uapi/linux/pidfd.h
+> @@ -20,6 +20,7 @@
+>  #define PIDFD_INFO_PID			(1UL << 0) /* Always returned, even if not requested */
+>  #define PIDFD_INFO_CREDS		(1UL << 1) /* Always returned, even if not requested */
+>  #define PIDFD_INFO_CGROUPID		(1UL << 2) /* Always returned if available, even if not requested */
+> +#define PIDFD_INFO_EXIT			(1UL << 3) /* Always returned if available, even if not requested */
+                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The comment doesn't match the "if (mask & PIDFD_INFO_EXIT)" check above...
+
+Oleg.
+
 
