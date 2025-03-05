@@ -1,220 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-43300-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43306-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1E15A50CC8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 21:48:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9A29A50D89
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 22:34:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 374643AD743
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 20:47:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F29D3AF05B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 21:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B75352571D9;
-	Wed,  5 Mar 2025 20:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFB6201034;
+	Wed,  5 Mar 2025 21:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IZVHKWev"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e4yZdoVc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974DB254B08
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Mar 2025 20:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF94A1FC7C5
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Mar 2025 21:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741207661; cv=none; b=eZhDRvbvqUdDysNtZ4znsKDx2jjKpptgtZWErdRZT7c2M+KZ6LDHcxk6s/FyRJVEo86F+pGMaLUMVJCrGVA5H9XO9vdsKFr82mymYEs0I0PFSRD2IAin+GTkkNIkTUcMHKc+CdvqmNxvhoql/vdpy65fsmjGDqPWEMrJdhnl7G0=
+	t=1741210454; cv=none; b=hJXfaVYEY01mtgqXDO+4TDSRdS2+8Pc5XDbL8qmj9ztgDWROSDfXSpxXPmJs6khlf+UOfkqDaTNk1bIV4XlS/1NlfSoeG62Www9ZViqxIyIYKEvN5ozMUmT1znrs2auvrVpF5I6snFetGcft4xbejt1zyNavH4Q9MYKm6o+iTlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741207661; c=relaxed/simple;
-	bh=ll5oxveZrMva2kz+1PiK2eJnVmd2XRWg56X+X3pf8Xw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WbAyemEC6e6oMyAHw0OIN5QmSkRQiUoiYjcWLzPadYhJ3AkeamHnuUmoxbrcjuejyB/R0dO3SrzL2Aa5bYyLjeNEwhWwDStf7t6D9/u414M1l94VVdCHQuMnwHeu+pETnJDB5u+6nYeXscC500GTSAa8u4zgnrb01idKyk2OjzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IZVHKWev; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-Type:Content-ID:Content-Description;
-	bh=tXo+ZuPAyts6XBMuIz5tH6es//GYM0Tf/xZ9OJ1H5bg=; b=IZVHKWevsCGdlRe4oAFMK0V4F9
-	u+S93gzLSYL+uXYm2OzaUiOC2dAgRmhmKpAsnf1uZiZakxUhU09/aodwaaBgAzeBx75xTwQEEVyLF
-	Dk8hrSNoUrZVLy6g6L1dvsm4IO6yiwdZZqrQof8178w6hGx/Ta3G49e/7YgDgE18uDR/ISIyI77y2
-	qWsoRon3YgD0eFrrld+iCNGvhdutiFrazOJdngKuJzJAIypahV1JU+R3Un0u4ooImGlhFlwugFb+R
-	PIQYcRWwfK1soAFppHINw0VcHvkUFebPs3pumVy4WawmoaAX7EXa3uBrhcPUPw/0JyVzsZnQDsH2W
-	wiKgcG1g==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tpveU-00000006Bnn-0KcC;
-	Wed, 05 Mar 2025 20:47:38 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	devel@lists.orangefs.org,
+	s=arc-20240116; t=1741210454; c=relaxed/simple;
+	bh=ep9ww7LolssnGrtk6cTUs2Y9NDSnty65KAVNmKS6Rqs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-type; b=NUwsXFHjzJ+FCZWWx7wBaG98uSn3mofBFoQXMxL/clL19yY8O8r0Ut6m4ka+DSoAXNQZkNoUAiHosi4mxqKqPWcw7I5qIkj32pIG+i9rjRKb30jj08qquAsd4PAysxcE4aFU/rYNAcCwZKDFR9WfOQhihxCR6McQ0ewbJqgyxE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e4yZdoVc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741210450;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1M1bYpA0gjyisxYKCSOVGnnYCvJ6RZJmMdkBmiQCKBg=;
+	b=e4yZdoVcZDgKRAGZd0R0CXH1vSxnUoYS2Vle4OmFo+6YrwfxraNmySYMW0bDIIHtXtBf7u
+	1GQATWASGI75zilSDeukvPOpWEGi3EkvD6wWIqgjiDH7bALZBX4PoWJrShYtKpmeu3fB9/
+	MXTWoU/JOOYChmSg64VkOtV6iFMzg/A=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-263-VDluHIHzPYaz5WoNUJnVBg-1; Wed,
+ 05 Mar 2025 16:34:07 -0500
+X-MC-Unique: VDluHIHzPYaz5WoNUJnVBg-1
+X-Mimecast-MFC-AGG-ID: VDluHIHzPYaz5WoNUJnVBg_1741210446
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6BF921800257;
+	Wed,  5 Mar 2025 21:34:05 +0000 (UTC)
+Received: from madcap2.tricolour.com (unknown [10.22.76.19])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5F91B1955DCE;
+	Wed,  5 Mar 2025 21:34:02 +0000 (UTC)
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>,
+	LKML <linux-kernel@vger.kernel.org>,
 	linux-fsdevel@vger.kernel.org,
-	Mike Marshall <hubcap@omnibond.com>
-Subject: [PATCH v2 9/9] orangefs: Convert orangefs_writepages to contain an array of folios
-Date: Wed,  5 Mar 2025 20:47:33 +0000
-Message-ID: <20250305204734.1475264-10-willy@infradead.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250305204734.1475264-1-willy@infradead.org>
-References: <20250305204734.1475264-1-willy@infradead.org>
+	Linux Kernel Audit Mailing List <audit@vger.kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>,
+	Eric Paris <eparis@parisplace.org>,
+	Steve Grubb <sgrubb@redhat.com>,
+	Richard Guy Briggs <rgb@redhat.com>,
+	Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>
+Subject: [PATCH v1 0/2] override audit silence norule for fs cases
+Date: Wed,  5 Mar 2025 16:33:18 -0500
+Message-ID: <cover.1741210251.git.rgb@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-type: text/plain
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-The pages being passed in are always folios (since they come from the
-page cache).  This eliminates several hidden calls to compound_head(),
-and uses of legacy APIs.
+The audit subsystem normally suppresses output when there are no rules
+present to avoid overwhelming the user with unwanted messages.  It could
+be argued that another security subsystem would generally want to
+override that default.  Allow them through for fsnotify and filesystem
+security violations.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Tested-by: Mike Marshall <hubcap@omnibond.com>
----
- fs/orangefs/inode.c | 57 +++++++++++++++++++++------------------------
- 1 file changed, 26 insertions(+), 31 deletions(-)
+Richard Guy Briggs (2):
+  audit: record fanotify event regardless of presence of rules
+  audit: record AUDIT_ANOM_* events regardless of presence of rules
 
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index 7b5272931e3b..5ac743c6bc2e 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -70,9 +70,9 @@ struct orangefs_writepages {
- 	kuid_t uid;
- 	kgid_t gid;
- 	int maxpages;
--	int npages;
-+	int nfolios;
- 	struct address_space *mapping;
--	struct page **pages;
-+	struct folio **folios;
- 	struct bio_vec *bv;
- };
- 
-@@ -89,14 +89,14 @@ static int orangefs_writepages_work(struct orangefs_writepages *ow,
- 
- 	len = i_size_read(inode);
- 
--	start = offset_in_page(ow->off);
--	for (i = 0; i < ow->npages; i++) {
--		set_page_writeback(ow->pages[i]);
--		bvec_set_page(&ow->bv[i], ow->pages[i], PAGE_SIZE - start,
--			      start);
-+	start = offset_in_folio(ow->folios[0], ow->off);
-+	for (i = 0; i < ow->nfolios; i++) {
-+		folio_start_writeback(ow->folios[i]);
-+		bvec_set_folio(&ow->bv[i], ow->folios[i],
-+				folio_size(ow->folios[i]) - start, start);
- 		start = 0;
- 	}
--	iov_iter_bvec(&iter, ITER_SOURCE, ow->bv, ow->npages, ow->len);
-+	iov_iter_bvec(&iter, ITER_SOURCE, ow->bv, ow->nfolios, ow->len);
- 
- 	WARN_ON(ow->off >= len);
- 	if (ow->off + ow->len > len)
-@@ -112,16 +112,11 @@ static int orangefs_writepages_work(struct orangefs_writepages *ow,
- 	else
- 		ret = 0;
- 
--	for (i = 0; i < ow->npages; i++) {
--		if (PagePrivate(ow->pages[i])) {
--			wrp = (struct orangefs_write_range *)
--			    page_private(ow->pages[i]);
--			ClearPagePrivate(ow->pages[i]);
--			put_page(ow->pages[i]);
--			kfree(wrp);
--		}
--		end_page_writeback(ow->pages[i]);
--		unlock_page(ow->pages[i]);
-+	for (i = 0; i < ow->nfolios; i++) {
-+		wrp = folio_detach_private(ow->folios[i]);
-+		kfree(wrp);
-+		folio_end_writeback(ow->folios[i]);
-+		folio_unlock(ow->folios[i]);
- 	}
- 
- 	return ret;
-@@ -142,41 +137,41 @@ static int orangefs_writepages_callback(struct folio *folio,
- 	}
- 
- 	ret = -1;
--	if (ow->npages == 0) {
-+	if (ow->nfolios == 0) {
- 		ow->off = wr->pos;
- 		ow->len = wr->len;
- 		ow->uid = wr->uid;
- 		ow->gid = wr->gid;
--		ow->pages[ow->npages++] = &folio->page;
-+		ow->folios[ow->nfolios++] = folio;
- 		ret = 0;
- 		goto done;
- 	}
- 	if (!uid_eq(ow->uid, wr->uid) || !gid_eq(ow->gid, wr->gid)) {
- 		orangefs_writepages_work(ow, wbc);
--		ow->npages = 0;
-+		ow->nfolios = 0;
- 		ret = -1;
- 		goto done;
- 	}
- 	if (ow->off + ow->len == wr->pos) {
- 		ow->len += wr->len;
--		ow->pages[ow->npages++] = &folio->page;
-+		ow->folios[ow->nfolios++] = folio;
- 		ret = 0;
- 		goto done;
- 	}
- done:
- 	if (ret == -1) {
--		if (ow->npages) {
-+		if (ow->nfolios) {
- 			orangefs_writepages_work(ow, wbc);
--			ow->npages = 0;
-+			ow->nfolios = 0;
- 		}
- 		ret = orangefs_writepage_locked(folio, wbc);
- 		mapping_set_error(folio->mapping, ret);
- 		folio_unlock(folio);
- 		folio_end_writeback(folio);
- 	} else {
--		if (ow->npages == ow->maxpages) {
-+		if (ow->nfolios == ow->maxpages) {
- 			orangefs_writepages_work(ow, wbc);
--			ow->npages = 0;
-+			ow->nfolios = 0;
- 		}
- 	}
- 	return ret;
-@@ -194,14 +189,14 @@ static int orangefs_writepages(struct address_space *mapping,
- 	if (!ow)
- 		return -ENOMEM;
- 	ow->maxpages = orangefs_bufmap_size_query()/PAGE_SIZE;
--	ow->pages = kcalloc(ow->maxpages, sizeof(struct page *), GFP_KERNEL);
--	if (!ow->pages) {
-+	ow->folios = kcalloc(ow->maxpages, sizeof(struct folio *), GFP_KERNEL);
-+	if (!ow->folios) {
- 		kfree(ow);
- 		return -ENOMEM;
- 	}
- 	ow->bv = kcalloc(ow->maxpages, sizeof(struct bio_vec), GFP_KERNEL);
- 	if (!ow->bv) {
--		kfree(ow->pages);
-+		kfree(ow->folios);
- 		kfree(ow);
- 		return -ENOMEM;
- 	}
-@@ -209,10 +204,10 @@ static int orangefs_writepages(struct address_space *mapping,
- 	blk_start_plug(&plug);
- 	while ((folio = writeback_iter(mapping, wbc, folio, &error)))
- 		error = orangefs_writepages_callback(folio, wbc, ow);
--	if (ow->npages)
-+	if (ow->nfolios)
- 		error = orangefs_writepages_work(ow, wbc);
- 	blk_finish_plug(&plug);
--	kfree(ow->pages);
-+	kfree(ow->folios);
- 	kfree(ow->bv);
- 	kfree(ow);
- 	return error;
+ include/linux/audit.h | 8 +-------
+ kernel/audit.c        | 2 +-
+ kernel/auditsc.c      | 2 +-
+ 3 files changed, 3 insertions(+), 9 deletions(-)
+
 -- 
-2.47.2
+2.43.5
 
 
