@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-43223-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF332A4FB41
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 11:08:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2C9DA4FB42
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 11:08:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4169F165E3E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 10:08:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AFF716B462
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 10:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2A22063C6;
-	Wed,  5 Mar 2025 10:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EACF205ABE;
+	Wed,  5 Mar 2025 10:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+D8tmmX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NbfxsPcT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEB3205E3F
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Mar 2025 10:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5EE1C8612
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Mar 2025 10:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741169313; cv=none; b=cpb0wuHzh40Zq75aFsNH6Rm5rYO4kCgLnvfCAQLvCmiJsRqHw6vADz47gBhZfaN4zhNu84wD1FqO1kv6Ej7kBpkSUZzEIMD9az1yzSZA8BbPgOgGGcmmoOnTvHBnUTPNdBF6CtllD9Y8UC8DRP+un5X+ZnrPKChVM+5kUgQdyrw=
+	t=1741169315; cv=none; b=Q/JAOyTgixI2CS/6IPmeJ3vhCPnJjjWuQxaCjYLIIpAUDO5Aq6V3cAXwkoYwNhaVCtYoK2z9+j3oSpyxfQiecsk6PouDI9Kb2t5G4u4HRl+2U14Oob+boe5ufMpCSdvdlMnxLJVQljX/tO8h3xCpPvqWczRVUUFWgxkqWwZyvj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741169313; c=relaxed/simple;
-	bh=U6mTq7uPSmFsVQwB9kIWePLPFLU1GJaGShIt5xcso9w=;
+	s=arc-20240116; t=1741169315; c=relaxed/simple;
+	bh=Qfnm8KKT/aeuFxG41rmiJmNnuIF6+nm0BOWV0KvIDHE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JfWWx+5K4Tr55QncT7v+FaZcp4yXSCvgAZeH+5DXHkU+gyqiE09IYRWHFn5aHP+SP0BC41SUq0A52R77uP4ATq2TCkvgUWMcCSvhzMNNT/aDA33ky9xs2b3DUcjgU+afQ0cbeecWVn7TaRSiZIRphCPUMUWjA7MvKJEnvydMhwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+D8tmmX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FEC0C4CEE9;
-	Wed,  5 Mar 2025 10:08:31 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Hpir7tClRgVbTxZScd7k3lmupwQhoDzFPrW1P2T3gaG0rjS6f7ydfo7IqKF1Njbja7UCtXhakjWk/qkSmcFFned6cGgrypiKdiksIBhfHZvtZg6PAo6eUcJL6HZK4QfaSthC6HN+/+dl/FAKlPN5q2PJ5vnbIOR3vyR8F9RjYdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NbfxsPcT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78087C4CEEB;
+	Wed,  5 Mar 2025 10:08:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741169313;
-	bh=U6mTq7uPSmFsVQwB9kIWePLPFLU1GJaGShIt5xcso9w=;
+	s=k20201202; t=1741169315;
+	bh=Qfnm8KKT/aeuFxG41rmiJmNnuIF6+nm0BOWV0KvIDHE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=W+D8tmmXXETUewamUdv4GS5e1crakTOVLSCSvieJZol6PW1OUOR9yfavAv2t9oOL6
-	 2j0KIfvacSQasyfLG5cW8WwniAZsOXxpYdKezxMw9KeHPShaTC+CBHaMfn0zuI01G/
-	 IDjL2Tb4/sTYZUezRpuy++eUBvb0K2f1RjBTVTHhhcRIJ5NHP/KS7Vn0CiTW/Y2YlG
-	 i2HNSY/FwbpQFqyJXE1KY5WzOYAoXLkm8m2M3S/1bhW4ER9884lHubHZWfqZ8P/SFA
-	 8cunfcP6631NFjeyw1NovE3lDazbvIxy9P8mtfxmMj4lM6klaTrtTtuYIfhKrWcDze
-	 PtWSOX9ccal2Q==
+	b=NbfxsPcTgTUTrdpZ8cBPWDmixmNYMNdlpIiWGpsPLBbi0rByu2YGGFKX+Qt3w3Mve
+	 Y8HpHFLXafweLDalr2FpOrse5uS57dm3PEDQLqFsrOCnSKL9VMBSF4rRIsEsSmxFNy
+	 yj/T45jmeeBgwuaUpTX2Io2GzUSLjBNAKXCgbhj5BUqV4vBbsQdLk8FuHEufuM31xW
+	 MR3kiypP+yE5BIBjldodzd17BWmvVqbrWD+gOAZtq/1GhuQeqp7nxqeCHq9uoIPnWP
+	 Frdats2F717U1i5abpg3KHM776QC6I2HEUSTB/ypmdT8LOAdcm1kmQjWE54hSG8Khm
+	 C3y7qB/YKa5rw==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 05 Mar 2025 11:08:13 +0100
-Subject: [PATCH v3 03/16] pidfs: move setting flags into pidfs_alloc_file()
+Date: Wed, 05 Mar 2025 11:08:14 +0100
+Subject: [PATCH v3 04/16] pidfs: use private inode slab cache
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250305-work-pidfs-kill_on_last_close-v3-3-c8c3d8361705@kernel.org>
+Message-Id: <20250305-work-pidfs-kill_on_last_close-v3-4-c8c3d8361705@kernel.org>
 References: <20250305-work-pidfs-kill_on_last_close-v3-0-c8c3d8361705@kernel.org>
 In-Reply-To: <20250305-work-pidfs-kill_on_last_close-v3-0-c8c3d8361705@kernel.org>
 To: Oleg Nesterov <oleg@redhat.com>
@@ -61,57 +61,110 @@ Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
  Daan De Meyer <daan.j.demeyer@gmail.com>, Mike Yuan <me@yhndnzj.com>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1479; i=brauner@kernel.org;
- h=from:subject:message-id; bh=U6mTq7uPSmFsVQwB9kIWePLPFLU1GJaGShIt5xcso9w=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSfUJqxfB6r5o0rwS7GLlddDCy5N9Y/28+d8MwiXffas
- iVN4szTOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZSKs7wz84h2HX+rh2PXzQ/
- yTgoM7X/YcKs+x9maki+LZjtdGO3djQjw4fpHA8/Z9t8L5px8kvRLp95PLnbGNS9hOL9tSZl+s2
- +xg8A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2747; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=Qfnm8KKT/aeuFxG41rmiJmNnuIF6+nm0BOWV0KvIDHE=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSfUJrB/KB9o8p7keN14tdSbj4/mCgbmz0z4vaHP02hf
+ +a9rdnH2VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjARbQ+G/6VqASJXd0TFBmtz
+ /r34PWhz5fP/PGwZDPrLZ/xuyT05sZzhn41L8opnHxmU7j2ayPbhKcOsE0+cZSs81D50XUz9sXa
+ FByMA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Instead od adding it into __pidfd_prepare() place it where the actual
-file allocation happens and update the outdated comment.
+Introduce a private inode slab cache for pidfs. In follow-up patches
+pidfs will gain the ability to provide exit information to userspace
+after the task has been reaped. This means storing exit information even
+after the task has already been released and struct pid's task linkage
+is gone. Store that information alongside the inode.
 
-Link: https://lore.kernel.org/r/20250304-work-pidfs-kill_on_last_close-v2-3-44fdacfaa7b7@kernel.org
+Link: https://lore.kernel.org/r/20250304-work-pidfs-kill_on_last_close-v2-4-44fdacfaa7b7@kernel.org
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/pidfs.c    | 4 ++++
- kernel/fork.c | 5 -----
- 2 files changed, 4 insertions(+), 5 deletions(-)
+ fs/pidfs.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
 diff --git a/fs/pidfs.c b/fs/pidfs.c
-index aa8c8bda8c8f..ecc0dd886714 100644
+index ecc0dd886714..282511a36fd9 100644
 --- a/fs/pidfs.c
 +++ b/fs/pidfs.c
-@@ -696,6 +696,10 @@ struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags)
- 		return ERR_PTR(ret);
+@@ -24,6 +24,27 @@
+ #include "internal.h"
+ #include "mount.h"
  
- 	pidfd_file = dentry_open(&path, flags, current_cred());
-+	/* Raise PIDFD_THREAD explicitly as do_dentry_open() strips it. */
-+	if (!IS_ERR(pidfd_file))
-+		pidfd_file->f_flags |= (flags & PIDFD_THREAD);
++static struct kmem_cache *pidfs_cachep __ro_after_init;
 +
- 	path_put(&path);
++/*
++ * Stashes information that userspace needs to access even after the
++ * process has been reaped.
++ */
++struct pidfs_exit_info {
++	__u64 cgroupid;
++	__s32 exit_code;
++};
++
++struct pidfs_inode {
++	struct pidfs_exit_info exit_info;
++	struct inode vfs_inode;
++};
++
++static inline struct pidfs_inode *pidfs_i(struct inode *inode)
++{
++	return container_of(inode, struct pidfs_inode, vfs_inode);
++}
++
+ static struct rb_root pidfs_ino_tree = RB_ROOT;
+ 
+ #if BITS_PER_LONG == 32
+@@ -492,9 +513,29 @@ static void pidfs_evict_inode(struct inode *inode)
+ 	put_pid(pid);
+ }
+ 
++static struct inode *pidfs_alloc_inode(struct super_block *sb)
++{
++	struct pidfs_inode *pi;
++
++	pi = alloc_inode_sb(sb, pidfs_cachep, GFP_KERNEL);
++	if (!pi)
++		return NULL;
++
++	memset(&pi->exit_info, 0, sizeof(pi->exit_info));
++
++	return &pi->vfs_inode;
++}
++
++static void pidfs_free_inode(struct inode *inode)
++{
++	kmem_cache_free(pidfs_cachep, pidfs_i(inode));
++}
++
+ static const struct super_operations pidfs_sops = {
++	.alloc_inode	= pidfs_alloc_inode,
+ 	.drop_inode	= generic_delete_inode,
+ 	.evict_inode	= pidfs_evict_inode,
++	.free_inode	= pidfs_free_inode,
+ 	.statfs		= simple_statfs,
+ };
+ 
+@@ -704,8 +745,19 @@ struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags)
  	return pidfd_file;
  }
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 6230f5256bc5..8eac9cd3385b 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2042,11 +2042,6 @@ static int __pidfd_prepare(struct pid *pid, unsigned int flags, struct file **re
- 	if (IS_ERR(pidfd_file))
- 		return PTR_ERR(pidfd_file);
  
--	/*
--	 * anon_inode_getfile() ignores everything outside of the
--	 * O_ACCMODE | O_NONBLOCK mask, set PIDFD_THREAD manually.
--	 */
--	pidfd_file->f_flags |= (flags & PIDFD_THREAD);
- 	*ret = pidfd_file;
- 	return take_fd(pidfd);
- }
++static void pidfs_inode_init_once(void *data)
++{
++	struct pidfs_inode *pi = data;
++
++	inode_init_once(&pi->vfs_inode);
++}
++
+ void __init pidfs_init(void)
+ {
++	pidfs_cachep = kmem_cache_create("pidfs_cache", sizeof(struct pidfs_inode), 0,
++					 (SLAB_HWCACHE_ALIGN | SLAB_RECLAIM_ACCOUNT |
++					  SLAB_ACCOUNT | SLAB_PANIC),
++					 pidfs_inode_init_once);
+ 	pidfs_mnt = kern_mount(&pidfs_type);
+ 	if (IS_ERR(pidfs_mnt))
+ 		panic("Failed to mount pidfs pseudo filesystem");
 
 -- 
 2.47.2
