@@ -1,120 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-43205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9156BA4F498
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 03:19:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39054A4F613
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 05:29:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD81B3AB705
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 02:19:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 641FB16CA37
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 04:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFCE156669;
-	Wed,  5 Mar 2025 02:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445281C6FF2;
+	Wed,  5 Mar 2025 04:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLgcHO0p"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JVsdTwxD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B3F3B2A0;
-	Wed,  5 Mar 2025 02:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EA41C5F13;
+	Wed,  5 Mar 2025 04:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741141182; cv=none; b=qGWGs+NBlIVU7XbHC3WgK3njkREBfePlWjBlyWHEigEIxD5bSqZAnCpwp2CgquT4BW8IN1lYQv6BB8UnqPvnva/JVdt+C8GBtVBtOYIxqz1AQFdv10eWHtSD7qBpWbpiNUm4ZCYZMSRuRYMpnxFHEVNv6dgb7QA5nAibMOepWwM=
+	t=1741148988; cv=none; b=lnt11ocqwnxXxdzRKLYp9z86AjamD5lEnicrqXqh5GR+xDLzYUyNkyHgSfhnwvucyev5+sDq+GeT42AFHuhna4ZEM3KK+VSrQxAkY6pnfzmAia2uWJmdwsvVFSJKjCA18TPPQTJwRypN7L7MsGxaNVWtaWJhoAu+56fi2b9Ke5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741141182; c=relaxed/simple;
-	bh=ibK40PcEpmzUvqnYdKsqui/jkg9lXZGNK2hBdoX8hb4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PtHzp5FVNoU6kh5WgbIs7tuuYqhCiQw4sn1TQs7/otL0qBSBzUzBZXkHu9OrVDdj3q6VaIcNIS2DWHvkaM88dxPzvCYjsaN7qh9WZ6aGjleo76vhWiUbW8XDpAy8jfJ5YN3E+lBymiFEQdnscQou2AhL47ZhkXy/rO06yJdIImM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLgcHO0p; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43bd45e4d91so335845e9.1;
-        Tue, 04 Mar 2025 18:19:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741141179; x=1741745979; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SKNB1E4cQrYl4R1CMichtnXi9wxxGJnigveKHD0cBTM=;
-        b=kLgcHO0pYRhBK9Baj8oO7Sp6FJC0/rcFQ+obwzK5DK9iqvIDfiT1kCf2lretDZ+d8G
-         BGb/CwvpqrNkUprGa7aDbdI3Ht2eMkubo2nK7LgSolIBHGnV2xyTXSqwwWt0LK8pp0MC
-         oMCnTYP9/aWRP6vpOwZHRUxXzpqGvLXd3qnb18ydGv6i/2Nc10w8awIMLPl1kTccXhrE
-         d6ExPzookktI6rpTXaEB8/pOMKHb3e78xtuAyQzmRyyDMfh6Ts5AtMHsrt+jAOSkDuKr
-         c1/yX2eLnV7cSuTtVfo26QAtSat4+/ul4ccMUCaexgiowItcBc1fte33g+oK6Df9X3Bb
-         3jDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741141179; x=1741745979;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SKNB1E4cQrYl4R1CMichtnXi9wxxGJnigveKHD0cBTM=;
-        b=FRv1mQaQ6+Qh+O24eZ6zFwlbq5b8ZQ+O0uv7iLyWJn31z+AzoVOBoRlv3wRTXYgOXI
-         u3JrbJODuvI/ADI9fxiVg89UQjUJ3JwiTYyqLtnJcAjWS3gr3948+5NvyiCgv+9kdoXS
-         g/Jb/XelbKYlnaAv1uHZzvSaBD4BogzJhHU3Bz4+/L7OU92UWqUnHJe9U6AmlQeQNa3I
-         3GGgLiW8vNhXg7WtRoPBlqdJMHL5UpMeQ+q+t2SQT4RxM1tQlru0Bz4E3Jpr8jkdPq25
-         z3ZsB1KZ763Kgn4DLRL1uQCGjfcaHhb7TrO8UMqp608u1Dqpikhtwft/U4j77LeR4XGu
-         cMDw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKS1SsvsCKD01ySuiB6Up83oXrWI1p/lBm6JK9PDfVRgZhVXf+TTcGMmnYsbrVyZnfhmMPH/0UmI2WFLEO@vger.kernel.org, AJvYcCXo+jd2VSdI/hFjNQUznIAqzJss/tq5zJ+Q3yFmXcRCv3l0Q3slbwVKdVDRhzjIqugHis9Qj8500BOrRQcs@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzzj3yfi8Rnk7BMLTEDY0CJZ7PnrJQzEjDgHZ+I79O9kpPsFwYZ
-	aRCtYFSyFnl/9t0cBhgZ7pAMbsYkxWEsXStaPNrL4l/rRXM7nje/
-X-Gm-Gg: ASbGncuPKU1HdHHYtZCEa7FealoOzh8tTGYoyQGWPIptE13DHicSL3KT3FmaUwyyNcj
-	rfY5BEhW/64Db3F9Sy2PsgT3uD9bfoIFK+4BaqkL2UmDrZHVCu6WtNqn2Id1ZoRMVKwIY4plPV7
-	1Y7LKw+G3WjfJRY6EVh1vFFBNguVPhWIhzwEiEcVjqyCs8myVqHlCBWuZu71XOlYy7Z2u5xteCC
-	OzzocgsVtiWqwK7/2+/1NzqjM8FrizWtRGtKJZrRaNm1eiX4/orSFq4EmSeGvsXqk8FzKY5nGfP
-	mOl9ShZVWtMce2ujna7Ud60uBJ7mf2W3f9bzPc0vXfeFHcAL01yL6PDsAXR16AY9MeCEzhnHPhB
-	hCCj9e1E=
-X-Google-Smtp-Source: AGHT+IFXKjCab26OVx0Vm+3kBHlh/OY7oJY7zyZ04P1TMtOomnH59wZNzFQgfGRggh/lQtyQSI8TfA==
-X-Received: by 2002:a05:600c:468f:b0:439:4b23:9e8e with SMTP id 5b1f17b1804b1-43bd208782fmr9886755e9.3.1741141178530;
-        Tue, 04 Mar 2025 18:19:38 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7a73sm19805051f8f.50.2025.03.04.18.19.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 18:19:38 -0800 (PST)
-Date: Wed, 5 Mar 2025 02:19:36 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v v2 0/4] avoid the extra atomic on a ref when
- closing a fd
-Message-ID: <20250305021936.71e837ea@pumpkin>
-In-Reply-To: <20250304183506.498724-1-mjguzik@gmail.com>
-References: <20250304183506.498724-1-mjguzik@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1741148988; c=relaxed/simple;
+	bh=KnWK4WBKusULKXh8rt/olNtibFsLjys9ZkCcpHBAKF0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L29fkZBskXIydeKSFKULX7dXj4qeEoALveFg/tje5/kgFiRfF4r3tIthLBT+IDu1fa3JC3KtCtTUGdcrs0nHRr8D9HCP/mUs/loPIXmI54pZKpEcViYcPf8ppdXmxdwsnQ53ZDkKqYGAh6yUflS7sA3Em2hPpc+LgUArnDvuR3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JVsdTwxD; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=r1eE+ff6D+t8LqacPATEDZTgYb5IuWoyzJOni46S3RU=; b=JVsdTwxDF3TrDOiibQ9AxJWPYc
+	7S2xMAbht8HZrOHtJ58/lyn7wvY7UAe9Cri3cEgf5lSD7PRJBHDQvE6dYUXhrNHqWIN2Ms36T8YxY
+	ajfRxA4Pfr6Px8SeQhU4Z35kN9MdquLBcmU8GrXWVt/4EUx97KejAlQGCouVcgZrb0eL2vgIe9NF4
+	h++ZTnPmK0fqQOru4gDwPr43HeTDptIcOhBF+32j+XgzGkNjpY+pwg9XjiAKbTAgLVBvRvvG7XJF9
+	nqczg/BEMBU+1kuz6NTY1hBP/FK+i3R+Iq9k8LbgDzCN3BBML7S6uXn/tZIhEOyU+TL6oA7oA9qV1
+	lSTztJLQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tpgO8-00000004hYD-3cGK;
+	Wed, 05 Mar 2025 04:29:44 +0000
+Date: Wed, 5 Mar 2025 04:29:44 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "brauner@kernel.org" <brauner@kernel.org>,
+	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"dan.carpenter@linaro.org" <dan.carpenter@linaro.org>
+Subject: Re: [PATCH] ceph: Fix error handling in fill_readdir_cache()
+Message-ID: <Z8fTOEerurzqKybx@casper.infradead.org>
+References: <20250304154818.250757-1-willy@infradead.org>
+ <7f2e7a8938775916fd926f9e7ff073d42f89108b.camel@ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7f2e7a8938775916fd926f9e7ff073d42f89108b.camel@ibm.com>
 
-On Tue,  4 Mar 2025 19:35:02 +0100
-Mateusz Guzik <mjguzik@gmail.com> wrote:
-
-> The stock kernel transitioning the file to no refs held penalizes the
-> caller with an extra atomic to block any increments.
+On Tue, Mar 04, 2025 at 06:41:46PM +0000, Viacheslav Dubeyko wrote:
+> On Tue, 2025-03-04 at 15:48 +0000, Matthew Wilcox (Oracle) wrote:
+> > __filemap_get_folio() returns an ERR_PTR, not NULL.  There are extensive
+> > assumptions that ctl->folio is NULL, not an error pointer, so it seems
+> > better to fix this one place rather than change all the places which
+> > check ctl->folio.
+> > 
+> > Fixes: baff9740bc8f ("ceph: Convert ceph_readdir_cache_control to store a folio")
+> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> > ---
+> >  fs/ceph/inode.c | 7 +++++--
+> >  1 file changed, 5 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> > index c15970fa240f..6ac2bd555e86 100644
+> > --- a/fs/ceph/inode.c
+> > +++ b/fs/ceph/inode.c
+> > @@ -1870,9 +1870,12 @@ static int fill_readdir_cache(struct inode *dir, struct dentry *dn,
+> >  
+> >  		ctl->folio = __filemap_get_folio(&dir->i_data, pgoff,
+> >  				fgf, mapping_gfp_mask(&dir->i_data));
 > 
-> For cases where the file is highly likely to be going away this is
-> easily avoidable.
+> Could we expect to receive NULL here somehow? I assume we should receive valid
+> pointer or ERR_PTR always here.
 
-Have you looked at the problem caused by epoll() ?
-The epoll code has a 'hidden' extra reference to the fd.
-This doesn't usualy matter, but some of the driver callbacks add and
-remove an extra reference - which doesn't work well if fput() has
-just decremented it to zero.
+There's no way to get a NULL pointer here.  __filemap_get_folio() always
+returns a valid folio or an ERR_PTR.
 
-The fput code might need to do a 'decrement not one' so that the
-epoll tidyup can be done while the refcount is still one.
+> > -		if (!ctl->folio) {
+> > +		if (IS_ERR(ctl->folio)) {
+> > +			int err = PTR_ERR(ctl->folio);
+> > +
+> > +			ctl->folio = NULL;
+> >  			ctl->index = -1;
+> > -			return idx == 0 ? -ENOMEM : 0;
+> > +			return idx == 0 ? err : 0;
+> >  		}
+> >  		/* reading/filling the cache are serialized by
+> >  		 * i_rwsem, no need to use folio lock */
+> 
+> But I prefer to check on NULL anyway, because we try to unlock the folio here:
+> 
+> 		/* reading/filling the cache are serialized by
+> 		 * i_rwsem, no need to use folio lock */
+> 		folio_unlock(ctl->folio);
+> 
+> And absence of check on NULL makes me slightly nervous. :)
 
-That would save the extra atomic pair that (IIRC) got added into
-the epoll callback code.
-
-Thoughts?
-
-	David
+We'd get a very visible and obvious splat if we did!  But we make this
+assumption all over the VFS and in other filesystems.  There's no need
+to be more cautious in ceph than in other places.
 
