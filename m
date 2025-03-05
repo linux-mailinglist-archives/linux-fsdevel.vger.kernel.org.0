@@ -1,62 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-43280-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43281-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA845A505EB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 18:05:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3349EA505F2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 18:05:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD796188B248
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 17:05:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82A60188B1C0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 17:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30661A5B8B;
-	Wed,  5 Mar 2025 17:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D58B24CEDF;
+	Wed,  5 Mar 2025 17:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dkh+KxzZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eYUpmr5T"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D68419C542;
-	Wed,  5 Mar 2025 17:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB9B567D;
+	Wed,  5 Mar 2025 17:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741194293; cv=none; b=CVSCuIxh44D7ewTXwUc/EeT4sNDxFyAbj35lEu18uU2m+8Buz4N48NnWJQCpMJcdcUEv7bUTA4XqlWqqshV6F7ah6fn67+t3j9NyJ3Hw5JvCFgR/erjL3vA53/3lPo9WClKDyz28WUMNWf5J8IltBN9Rjrf8vN5a3mGeRNILRbM=
+	t=1741194317; cv=none; b=rHTxIyKGTSxFmC6Gz6irCUGS6TzE5Lw6o/c3xtqZ8pVWB6ib3izt5QbpZeWeChZ1oeLR18WZgPZZ5IblxOrQXacos7YkbWyFGRYycEGYnq3PzZw+dHODS15bSCsZHzfA5wUUuEGpnCwCh8SElOX8G6Og14uxBcLypAGyPNtFWA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741194293; c=relaxed/simple;
-	bh=EL1Vu99K/ODV+OWIVt+0gXt+qPvS+NdYS8IAfh9nEB0=;
+	s=arc-20240116; t=1741194317; c=relaxed/simple;
+	bh=OvawHCs/kJE9TlRrbjmfJfFS35i27Yx8W9F4l+uWkGs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ond7gO3Pwd0V9lkejnCHMdrX8v0KmAmbkxrDiMGo+7Yprpj3w2i1m/7qkv9MmMnEyv4BmgLjD7ryEyM2t0w898wVr1lvZBwP1Gi5JM2AwFKXEfOR0X8vzyVVy8B/fY5+9xWEabUW+rvLX/56kPd9TR61ez1/VrigfwOJBLPpk30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dkh+KxzZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44D97C4CED1;
-	Wed,  5 Mar 2025 17:04:52 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=BIT+OROTTQrqV1L8CEsRz4dmvLrs9Z18/Pr7L6dYqn03eRUCaqAE+8GtucP9/qB78f4Ug1WBF3zyZA4YJTDhXevWRnPiIhpxCZHF8l2Szn2tsV4+6AZpVr3wlnUWZzfiUVYh2pgH1EDCNMid/ijR5970NRlKnsMm51V6963ACDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eYUpmr5T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C455C4CED1;
+	Wed,  5 Mar 2025 17:05:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741194292;
-	bh=EL1Vu99K/ODV+OWIVt+0gXt+qPvS+NdYS8IAfh9nEB0=;
+	s=k20201202; t=1741194317;
+	bh=OvawHCs/kJE9TlRrbjmfJfFS35i27Yx8W9F4l+uWkGs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dkh+KxzZSxgm3l9QG6sFZdXrDb+9XLrhbLdT7vo39JLUjcmOwfsRxGEVwqnmMyiJ5
-	 UHb6dmuDSeq+PxN2VluzBpzC9UPYpFaKvV+qBJEjx5E1IjYRCGa5toWDeJdW82QXIb
-	 H31qTecQIvXIr7VRvfblPfoYOPnoN1pLJFyR2A/nMZgt4uVwIBP+H8o2VXv/36Kj95
-	 WMBkVHnwKek3uwroWeWiSjRhVEeXh23qeaUC6vKemnKr9IySvx+wX5mgIBkBYIpSwb
-	 PorETCSTyGSv/FXxiM4+cME3S8mfPOs8LDUX2P37aI19PoZ9e2jv3bsDdesIGZmcSo
-	 2PTZ5XHx1Tu9w==
-Date: Wed, 5 Mar 2025 09:04:50 -0800
+	b=eYUpmr5TcXkJt0Lk9VwxOQZ+8WbHe00EfZYh/FurgDEHjCGM6eLAahnlwPasqqeIo
+	 5wraWII+1xA9C0PLHLVcxXcES2gBtVwcyqLpbeHZjUtGD4nPlbRrzP7DEfKdQKgcag
+	 0z7hGlB1e+qX496vQd/W8agYZOoeyyhpqeNwVEhpPe7leNqDfFlrP/ZqFkpayrtSk/
+	 6znx76bYSsBP4iPSl1Y/gVjPT9Rgsnxzrh3IN1ulrchaiodjDeuLoWYfRx9cCTN7NP
+	 rOBup8sme9RMF/HuEJ6X2AHw6PUO1n88YqzaC+HbuRgwJ3jIfQctPaV8s9BrmgalnB
+	 CEIqMRMiYR6xw==
+Date: Wed, 5 Mar 2025 09:05:15 -0800
 From: Luis Chamberlain <mcgrof@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, brauner@kernel.org, hare@suse.de,
-	david@fromorbit.com, kbusch@kernel.org, john.g.garry@oracle.com,
+To: Hannes Reinecke <hare@suse.de>
+Cc: brauner@kernel.org, willy@infradead.org, david@fromorbit.com,
+	djwong@kernel.org, kbusch@kernel.org, john.g.garry@oracle.com,
 	hch@lst.de, ritesh.list@gmail.com, linux-fsdevel@vger.kernel.org,
 	linux-block@vger.kernel.org, gost.dev@samsung.com,
 	p.raghav@samsung.com, da.gomez@samsung.com, kernel@pankajraghav.com,
 	Kent Overstreet <kent.overstreet@linux.dev>
 Subject: Re: [PATCH] bdev: add back PAGE_SIZE block size validation for
- sb_set_blocksize()'
-Message-ID: <Z8iEMv354ThMRr0b@bombadil.infradead.org>
+ sb_set_blocksize()
+Message-ID: <Z8iESw0-f8diPGp8@bombadil.infradead.org>
 References: <20250305015301.1610092-1-mcgrof@kernel.org>
- <Z8fpZWHNs8eI5g38@casper.infradead.org>
- <20250305063330.GA2803730@frogsfrogsfrogs>
- <Z8hck6aKEopiezug@casper.infradead.org>
+ <828e529d-3e42-4b9e-a0ce-a05516a7274d@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,36 +63,62 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z8hck6aKEopiezug@casper.infradead.org>
+In-Reply-To: <828e529d-3e42-4b9e-a0ce-a05516a7274d@suse.de>
 
-On Wed, Mar 05, 2025 at 02:15:47PM +0000, Matthew Wilcox wrote:
-> On Tue, Mar 04, 2025 at 10:33:30PM -0800, Darrick J. Wong wrote:
-> > > So this is expedient because XFS happens to not call sb_set_blocksize()?
-> > > What is the path forward for filesystems which call sb_set_blocksize()
-> > > today and want to support LBS in future?
+On Wed, Mar 05, 2025 at 08:18:29AM +0100, Hannes Reinecke wrote:
+> On 3/5/25 02:53, Luis Chamberlain wrote:
+> > The commit titled "block/bdev: lift block size restrictions to 64k"
+> > lifted the block layer's max supported block size to 64k inside the
+> > helper blk_validate_block_size() now that we support large folios.
+> > However in lifting the block size we also removed the silly use
+> > cases many filesystems have to use sb_set_blocksize() to *verify*
+> > that the block size < PAGE_SIZE. The call to sb_set_blocksize() can
+> > happen in-kernel given mkfs utilities *can* create for example an
+> > ext4 32k block size filesystem on x86_64, the issue we want to prevent
+> > is mounting it on x86_64 unless the filesystem supports LBS.
 > > 
-> > Well they /could/ set sb_blocksize/sb_blocksize_bits themselves, like
-> > XFS does.
+> > While, we could argue that such checks should be filesystem specific,
+> > there are much more users of sb_set_blocksize() than LBS enabled
+> > filesystem on linux-next, so just do the easier thing and bring back
+> > the PAGE_SIZE check for sb_set_blocksize() users.
+> > 
+> > This will ensure that tests such as generic/466 when run in a loop
+> > against say, ext4, won't try to try to actually mount a filesystem with
+> > a block size larger than your filesystem supports given your PAGE_SIZE
+> > and in the worst case crash.
+> > 
+> > Cc: Kent Overstreet <kent.overstreet@linux.dev>
+> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> > ---
+> > 
+> > Christian, a small fixup for a crash when running generic/466 on ext4
+> > in a loop. The issue is obvious, and we just need to ensure we don't
+> > break old filesystem expectations of sb_set_blocksize().
+> > 
+> > This still allows XFS with 32k block size and I even tested with XFS
+> > with 32k block size and a 32k sector size set.
+> > 
+> >   block/bdev.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/block/bdev.c b/block/bdev.c
+> > index 3bd948e6438d..de9ebc3e5d15 100644
+> > --- a/block/bdev.c
+> > +++ b/block/bdev.c
+> > @@ -181,7 +181,7 @@ EXPORT_SYMBOL(set_blocksize);
+> >   int sb_set_blocksize(struct super_block *sb, int size)
+> >   {
+> > -	if (set_blocksize(sb->s_bdev_file, size))
+> > +	if (size > PAGE_SIZE || set_blocksize(sb->s_bdev_file, size))
+> >   		return 0;
+> >   	/* If we get here, we know size is validated */
+> >   	sb->s_blocksize = size;
 > 
-> I'm kind of hoping that isn't the answer.
+> Can you add a comment stating why it's needed, even with LBS?
+> It's kinda non-obious, and we don't want to repeat the mistake
+> in the future.
 
-set_blocksize() can be used. The only extra steps the filesystem needs
-to in addition is:
+Sure.
 
-	sb->s_blocksize = size;
-	sb->s_blocksize_bits = blksize_bits(size);
-
-Which is what both XFS and bcachefs do.
-
-We could modify sb to add an LBS flag but that alone would not suffice
-either as the upper limit is still a filesystem specific limit. Additionally
-it also does not suffice for filesystems that support a different device
-for metadata writes, for instance XFS supports this and uses the sector
-size for set_blocksize().
-
-So I think that if ext4 for example wants to use LBS then simply it
-would open code the above two lines and use set_blocksize(). Let me know
-if you have any other recommendations.
-
-  Luis
+ Luis
 
