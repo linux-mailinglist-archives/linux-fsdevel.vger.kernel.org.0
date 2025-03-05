@@ -1,134 +1,219 @@
-Return-Path: <linux-fsdevel+bounces-43270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43271-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 500B9A50321
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 16:06:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA87A5032F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 16:09:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3981B3A424B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 15:04:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B27B3A7166
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 15:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE8524F5A5;
-	Wed,  5 Mar 2025 15:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1875D24F5A9;
+	Wed,  5 Mar 2025 15:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="E0fyhTpI"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gzU8d31u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AB224EF99
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Mar 2025 15:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A1124E014;
+	Wed,  5 Mar 2025 15:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741187055; cv=none; b=lnFYvdGgzQyQuNnjr/h10Aq38Ng2624T1nL1KnlwwJ+sll/KWxNCQW5EFVTA808yDTbEXP8ujNubh9IKyIi5jXPxT5gW5OEaviNBd760LAB/P2ntFD96OBuOsmMagl1igackn/H4wH5ShEBeNezcwViwHizvKVLIDUU72v1POxA=
+	t=1741187335; cv=none; b=KbH++NGijC9uo16jDdrUHUjfBXavcskwyWm031J9Plw8r7R3wopJVOFUpbu819ZU6JWq/0HcMZsBB3RygLOkqSQ9P2iX+B9x/GnRgUDkEw4HRXXpJGJ/3lCSloXAlfs1gMBeLhOOPxZb2wtmPQ3qNaw7muhOkCD1qFRpbhcQl+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741187055; c=relaxed/simple;
-	bh=t5eNaNrX2l+tZef9ZgJzRD8AjzR4E3n2CK9UhuofW3g=;
+	s=arc-20240116; t=1741187335; c=relaxed/simple;
+	bh=e3oBTYdyUXsbOwDIkrX87IO9OyOkNlF6VSWAGvwLoCU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n1SsSE8s96M7DYCKAG0aKoOMnyyp1e8zfaEcnqInrrnubhGe3hbXdgY3jGrMaIsqo/3dMnKzSRf3Ym94VacM5FIoFeWaSbOEQwMKDHCNZ3xpgDktgQtywHdiDXCxzgkuWNgKr/lLUc/I+5qf4p0l3dm423rIEWR+3cAqhDdK3Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=E0fyhTpI; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-390fb1b987fso4957354f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Mar 2025 07:04:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741187051; x=1741791851; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NLmgp+4BNcFGyEe+zA1DNg0CWSPx2N1T/nc5ywlKYT8=;
-        b=E0fyhTpId/xgNl4mabkCJHJlzGzPtK4E5BvoAhvo19Y0up2Rdhafm/wcZoHuPEKFQx
-         thcCC4Mief+uWfCxeVps+muFMU2CrE+XNW7ZbIQOJEjt0eWJxROgfS1uL/CeDzKK+4Op
-         0aSHbmv2iKKppZ60uvwgMNpbi8NEn21B2+VKGKWGFOdKqDEnt5eBlRNrD7Sxn/uwuKWL
-         a+oX1rIJw4Gz7ur+HjoVXgdkHz2P58fagKBc3B4Wq1vgaBclSwWjSJCugyhFCTLUP3lW
-         T8agu8SD68LHPYdh6kXkb4EI0waExr0BWcscMWRCgRNbzbqMHrIU9OyfMSEPNPZ6wtiz
-         i1Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741187051; x=1741791851;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NLmgp+4BNcFGyEe+zA1DNg0CWSPx2N1T/nc5ywlKYT8=;
-        b=eqvG4Zabmrh2R/zUrT3JRxbEvzbaEsv8Fh4SCPg96o7lnVuUKZenusc1wRVhczJQi0
-         iwKU6P1MRucW18UwFAdxOPgdHbd6DFU5OkMga3zBBKeEO6NT7uKhx1nimmteMYVbsh0a
-         /aJUkzuQK+UldwJM8GkoVV8RHucMyV+rcMZ2Wx5Bl/QA1XECIrBF15iSVwQEDtaXQWBt
-         f+OrsYlJVHYI2Puj2nEpu5fKB+Ylx/vkPU62khOS2hqrMcpovgcVLfH84Npgr8+L1P6Z
-         guwUnLVe2SCagu2QwFP5FEeil9iJkXlU9yFHfu8YWuipyYkqt0T/qbcKwxJw5uS95Fvk
-         i39Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU/hNXQzXw8amJ2OW3yd+njKntFq9FlYmwOyci1YL0GqZz3H2QiKSL/tmUEdsrYjcMytrvfP+TssSH5kp9k@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2xjdxt+LnkUWMYFZ1kxjxeuqeXKLfPem0AK85PyY8JOMCJkbC
-	SM9Hozq1GP4imZb/LG43CkwijdQCfxOvPNCbhe5f//VPauycPuYD3jWj5BVUmoU=
-X-Gm-Gg: ASbGncuCTZpQ57tfNQStI5YlfrSgwt/JJkCof9itzdTdOvTmbwHTbPJ6BNhrDsA/Bfy
-	A9BZ8L33sRK4IIKDnVjdB+XJTccEOGYgS12K76JtjwFh4VzKmEg0r2xOvd92LGkqtFhkVcMzmrr
-	RV4APVvqSYGhxgLGaomhTEuNIQUZLK2uTz0LhP7crF0qHdolgPKKCs9z0vDJZJnNfonaQZHqfiN
-	ABfTRLZcHa91a5MUQEyPIUf9Zsc9h0WKUIYudyhq/GbsgJr2ufRk24t6b2vuOO+Z9IJ4A3CifSo
-	Kg7E41Jx0KtyZ9YpRaHfCc7t5j1G5IuRmkvlUaocQGH3m6k=
-X-Google-Smtp-Source: AGHT+IGlWpXBw5ri3FaDBssVibQSzlL8JZY/24FSPaE5MWfcweC0DmUsA0HmZ1zjcuQDZS2k9Zzqjw==
-X-Received: by 2002:a5d:59a5:0:b0:390:f1c1:d399 with SMTP id ffacd0b85a97d-3911f7bb9b8mr2998938f8f.41.1741187051174;
-        Wed, 05 Mar 2025 07:04:11 -0800 (PST)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485d8e4sm20907920f8f.85.2025.03.05.07.04.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 07:04:10 -0800 (PST)
-Date: Wed, 5 Mar 2025 16:04:08 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Jonathan Corbet <corbet@lwn.net>, Kees Cook <kees@kernel.org>, 
-	"Eric W . Biederman" <ebiederm@xmission.com>, Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH 2/2] pid: Optional first-fit pid allocation
-Message-ID: <glmbovmv7ahln6omzoas5lrktaafbmxdkbs4mfoummhrlayl7u@s2nv66r7yx43>
-References: <20250221170249.890014-1-mkoutny@suse.com>
- <20250221170249.890014-3-mkoutny@suse.com>
- <20250221161854.8ea0dd0b2da05d38574cefc4@linux-foundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rJhU55Vfy6+j3al1kURF+zS7I/lF1bCGXRCrQbfak2BwCLI6Ekb2zDPgG8lzF3hTzFuDlJdbrjcAlnH39wnoZ/tV79fGAyPEmZlXyki5rSC150j3hQcfX5Ds2mbQAWPsDjYnGaC8oPy65aLrzVxoLBdE4Zn3r/NiYN9YaGYEFRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gzU8d31u; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741187334; x=1772723334;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=e3oBTYdyUXsbOwDIkrX87IO9OyOkNlF6VSWAGvwLoCU=;
+  b=gzU8d31uRG1P1I1EkKxY0atxBlyneFkG6BH56nlJs2PRggLKWLoPbT36
+   PTpch0OuxfLmyKtsLQlXAGoTbptU6RwBj8fn9fmarwrCc2UMJmZBVJCHa
+   MzfiGaQCOiQ44IrX34XSFifwXlXCfs6BZ/ggoJMHacIldLrBydGlmLg7S
+   IO1KjK2Z8rf7jB/uXJy4Ab1qXgtgQZXlCdEGFaccf/zfb+y9a0Y8ytoQk
+   DFRPA9i5FVSPZPZXFHMEfaesjqhF18Ecqqc0InvtALelLoNzf3gTceeF2
+   rc4q4zWb+fTQsfNLm4CiG8lvMZgRh75QU2PfSYJrAc2JLyJU9Hrp9B6G9
+   Q==;
+X-CSE-ConnectionGUID: ekp3QyvCSJ+QmThPjx/gIw==
+X-CSE-MsgGUID: Rpxn+t2gSd2/JPY1Du5Bjw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="42293617"
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="42293617"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 07:08:53 -0800
+X-CSE-ConnectionGUID: Bhr/kYI6SFu0ljZczH300g==
+X-CSE-MsgGUID: yT8QzywsSYGjsQgMiXKFBw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="149658320"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 05 Mar 2025 07:08:50 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tpqMa-000L7m-1d;
+	Wed, 05 Mar 2025 15:08:48 +0000
+Date: Wed, 5 Mar 2025 23:08:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Seyediman Seyedarab <imandevel@gmail.com>, jack@suse.cz,
+	amir73il@gmail.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Seyediman Seyedarab <ImanDevel@gmail.com>
+Subject: Re: [PATCH] inotify: disallow watches on unsupported filesystems
+Message-ID: <202503052203.vK0McbRm-lkp@intel.com>
+References: <20250304080044.7623-1-ImanDevel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yphetxzk2ql5urd5"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250221161854.8ea0dd0b2da05d38574cefc4@linux-foundation.org>
+In-Reply-To: <20250304080044.7623-1-ImanDevel@gmail.com>
+
+Hi Seyediman,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on jack-fs/fsnotify]
+[also build test ERROR on linus/master v6.14-rc5 next-20250305]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Seyediman-Seyedarab/inotify-disallow-watches-on-unsupported-filesystems/20250304-160213
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify
+patch link:    https://lore.kernel.org/r/20250304080044.7623-1-ImanDevel%40gmail.com
+patch subject: [PATCH] inotify: disallow watches on unsupported filesystems
+config: powerpc-randconfig-001-20250305 (https://download.01.org/0day-ci/archive/20250305/202503052203.vK0McbRm-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250305/202503052203.vK0McbRm-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503052203.vK0McbRm-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> fs/notify/inotify/inotify_user.c:702:33: error: use of undeclared identifier 'unwatchable_fs'; did you mean 'is_unwatchable_fs'?
+     702 |         for (int i = 0; i < ARRAY_SIZE(unwatchable_fs); i++)
+         |                                        ^~~~~~~~~~~~~~
+         |                                        is_unwatchable_fs
+   include/linux/array_size.h:11:33: note: expanded from macro 'ARRAY_SIZE'
+      11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+         |                                 ^
+   fs/notify/inotify/inotify_user.c:700:20: note: 'is_unwatchable_fs' declared here
+     700 | static inline bool is_unwatchable_fs(struct inode *inode)
+         |                    ^
+>> fs/notify/inotify/inotify_user.c:702:33: error: use of undeclared identifier 'unwatchable_fs'; did you mean 'is_unwatchable_fs'?
+     702 |         for (int i = 0; i < ARRAY_SIZE(unwatchable_fs); i++)
+         |                                        ^~~~~~~~~~~~~~
+         |                                        is_unwatchable_fs
+   include/linux/array_size.h:11:48: note: expanded from macro 'ARRAY_SIZE'
+      11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+         |                                                ^
+   fs/notify/inotify/inotify_user.c:700:20: note: 'is_unwatchable_fs' declared here
+     700 | static inline bool is_unwatchable_fs(struct inode *inode)
+         |                    ^
+>> fs/notify/inotify/inotify_user.c:702:22: error: subscript of pointer to function type 'bool (struct inode *)' (aka '_Bool (struct inode *)')
+     702 |         for (int i = 0; i < ARRAY_SIZE(unwatchable_fs); i++)
+         |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/array_size.h:11:47: note: expanded from macro 'ARRAY_SIZE'
+      11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+         |                                               ^~~~~
+>> fs/notify/inotify/inotify_user.c:702:33: error: use of undeclared identifier 'unwatchable_fs'; did you mean 'is_unwatchable_fs'?
+     702 |         for (int i = 0; i < ARRAY_SIZE(unwatchable_fs); i++)
+         |                                        ^~~~~~~~~~~~~~
+         |                                        is_unwatchable_fs
+   include/linux/array_size.h:11:75: note: expanded from macro 'ARRAY_SIZE'
+      11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+         |                                                                           ^
+   include/linux/compiler.h:249:65: note: expanded from macro '__must_be_array'
+     249 | #define __must_be_array(a)      __BUILD_BUG_ON_ZERO_MSG(__same_type((a), &(a)[0]), "must be array")
+         |                                                                      ^
+   include/linux/compiler_types.h:483:63: note: expanded from macro '__same_type'
+     483 | #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
+         |                                                               ^
+   include/linux/compiler.h:245:79: note: expanded from macro '__BUILD_BUG_ON_ZERO_MSG'
+     245 | #define __BUILD_BUG_ON_ZERO_MSG(e, msg) ((int)sizeof(struct {_Static_assert(!(e), msg);}))
+         |                                                                               ^
+   fs/notify/inotify/inotify_user.c:700:20: note: 'is_unwatchable_fs' declared here
+     700 | static inline bool is_unwatchable_fs(struct inode *inode)
+         |                    ^
+>> fs/notify/inotify/inotify_user.c:702:33: error: use of undeclared identifier 'unwatchable_fs'; did you mean 'is_unwatchable_fs'?
+     702 |         for (int i = 0; i < ARRAY_SIZE(unwatchable_fs); i++)
+         |                                        ^~~~~~~~~~~~~~
+         |                                        is_unwatchable_fs
+   include/linux/array_size.h:11:75: note: expanded from macro 'ARRAY_SIZE'
+      11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+         |                                                                           ^
+   include/linux/compiler.h:249:71: note: expanded from macro '__must_be_array'
+     249 | #define __must_be_array(a)      __BUILD_BUG_ON_ZERO_MSG(__same_type((a), &(a)[0]), "must be array")
+         |                                                                            ^
+   include/linux/compiler_types.h:483:74: note: expanded from macro '__same_type'
+     483 | #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
+         |                                                                          ^
+   include/linux/compiler.h:245:79: note: expanded from macro '__BUILD_BUG_ON_ZERO_MSG'
+     245 | #define __BUILD_BUG_ON_ZERO_MSG(e, msg) ((int)sizeof(struct {_Static_assert(!(e), msg);}))
+         |                                                                               ^
+   fs/notify/inotify/inotify_user.c:700:20: note: 'is_unwatchable_fs' declared here
+     700 | static inline bool is_unwatchable_fs(struct inode *inode)
+         |                    ^
+>> fs/notify/inotify/inotify_user.c:702:22: error: subscript of pointer to function type 'bool (struct inode *)' (aka '_Bool (struct inode *)')
+     702 |         for (int i = 0; i < ARRAY_SIZE(unwatchable_fs); i++)
+         |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/array_size.h:11:59: note: expanded from macro 'ARRAY_SIZE'
+      11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+         |                                                           ^~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler.h:249:70: note: expanded from macro '__must_be_array'
+     249 | #define __must_be_array(a)      __BUILD_BUG_ON_ZERO_MSG(__same_type((a), &(a)[0]), "must be array")
+         |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:483:74: note: expanded from macro '__same_type'
+     483 | #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
+         |                                                                          ^
+   include/linux/compiler.h:245:79: note: expanded from macro '__BUILD_BUG_ON_ZERO_MSG'
+     245 | #define __BUILD_BUG_ON_ZERO_MSG(e, msg) ((int)sizeof(struct {_Static_assert(!(e), msg);}))
+         |                                                                               ^
+   fs/notify/inotify/inotify_user.c:703:31: error: use of undeclared identifier 'unwatchable_fs'; did you mean 'is_unwatchable_fs'?
+     703 |                 if (inode->i_sb->s_magic == unwatchable_fs[i])
+         |                                             ^~~~~~~~~~~~~~
+         |                                             is_unwatchable_fs
+   fs/notify/inotify/inotify_user.c:700:20: note: 'is_unwatchable_fs' declared here
+     700 | static inline bool is_unwatchable_fs(struct inode *inode)
+         |                    ^
+   fs/notify/inotify/inotify_user.c:703:31: error: subscript of pointer to function type 'bool (struct inode *)' (aka '_Bool (struct inode *)')
+     703 |                 if (inode->i_sb->s_magic == unwatchable_fs[i])
+         |                                             ^~~~~~~~~~~~~~
+   8 errors generated.
 
 
---yphetxzk2ql5urd5
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH 2/2] pid: Optional first-fit pid allocation
-MIME-Version: 1.0
+vim +702 fs/notify/inotify/inotify_user.c
 
-Hi.
+   698	
+   699	
+   700	static inline bool is_unwatchable_fs(struct inode *inode)
+   701	{
+ > 702		for (int i = 0; i < ARRAY_SIZE(unwatchable_fs); i++)
+   703			if (inode->i_sb->s_magic == unwatchable_fs[i])
+   704				return true;
+   705		return false;
+   706	}
+   707	
 
-On Fri, Feb 21, 2025 at 04:18:54PM -0800, Andrew Morton <akpm@linux-foundation.org> wrote:
-> This seems thin.  Is there more we can tell our users?  What are the
-> visible effects of this?  What are the benefits?  Why would they want
-> to turn it on?
-
-Thanks for review and comments (also Alexander).
-
-> I mean, there are veritable paragraphs in the changelogs, but just a
-> single line in the user-facing docs.  Seems there could be more...
-
-I decided not to fiddle with allocation strategies and disable pid_max
-in namespaces by default.
-
-Michal
-
---yphetxzk2ql5urd5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ8hn5QAKCRAt3Wney77B
-SeH/AQCl7M3g6jWcHR92iwej1BFLEym+t1kmSZ8IyoLg8iToxwEAolDqAbNbU2Vi
-T/noTfl//D4KGYDllskbpZOuGNvu2gQ=
-=t4Hk
------END PGP SIGNATURE-----
-
---yphetxzk2ql5urd5--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
