@@ -1,125 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-43308-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43309-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B717A50DB3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 22:38:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D45A50F07
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 23:48:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02434189474B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 21:38:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 551693AF1C0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 22:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EFF52571B8;
-	Wed,  5 Mar 2025 21:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tn34gj7i"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B746205ABE;
+	Wed,  5 Mar 2025 22:47:46 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mail114-240.sinamail.sina.com.cn (mail114-240.sinamail.sina.com.cn [218.30.114.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526D3253330
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Mar 2025 21:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5118413AC1
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Mar 2025 22:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.114.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741210557; cv=none; b=tqF6hOI9OCOCp9feLSOE2dMVVpvsHI5Q9Xc46NRU4NnHnDpXpPtkJqlRaYaBXZx1BPwrVcPicAJkl00hZwTkLd5/Xv+BLk/upkoSIqrkWAAsuX1ZZc22XOKw5JzHlFqiHNKFipEliCdNxnE/e3t3HvhPiE3eEes1m4tVPsOgCDs=
+	t=1741214866; cv=none; b=dgLfBgCcBuJRXtqSSHRbvZhLb6kNBzo5ik0PD3i3/1ld0/kxlp+X9F4OJ9MxXZ7r6wb4LNKskF/N757BLsrYjsixHNX9dbGob2Md7/Fjz/2K+ysjRPkOsjWaHZivMi1cTcAWkEKqxaQ8JtBh7O+4dmL1oggqppEDPKdcCdJMPTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741210557; c=relaxed/simple;
-	bh=SflZSNxyKqwjQwi6drHuYZoUmeT0qxe50tPNwOzBgE8=;
+	s=arc-20240116; t=1741214866; c=relaxed/simple;
+	bh=Giysu/tjLy7TiFQnaV1VHgDDO4OdNnanXoD5UIaaXJ4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-type; b=XY34O3L98xwQFQPt7Mc4AAwf2XqHRZ3ZLqOVy8e8+k/eSA4MOGgjnkk4MKYv/DwrcbONYZGNuZV78Jba32JwzG4NbN2/2lUZsG0gz++brdH0nRXefrxjMValxskXuPj4QpdprUyo2yKK08rLZcjY/w13KQ66TKEwjVYAj2OoWF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tn34gj7i; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741210555;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WVP1rCTer6eijl5cxS3xeMFf/yShnPi0yCI1aksLWSE=;
-	b=Tn34gj7i8QuTsnVg8OLsEujR0h4lEvtwrgfFKqbzfwLpn55Zlvktr05gdo+DD7iQBVX9HG
-	UxfhWY/XN/Sw6Ig2vpdunjf/J7B6PNkf3tC22c3z+m6nNIN+gQ++Ci3G2dPj+oV4DGxftR
-	mPg80ehA5xZ8wpnT4Hm64om0FLnqokY=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-396-KOXsgrFtORipS_8F9f4k0A-1; Wed,
- 05 Mar 2025 16:35:49 -0500
-X-MC-Unique: KOXsgrFtORipS_8F9f4k0A-1
-X-Mimecast-MFC-AGG-ID: KOXsgrFtORipS_8F9f4k0A_1741210547
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6714D1955D7A;
-	Wed,  5 Mar 2025 21:35:47 +0000 (UTC)
-Received: from madcap2.tricolour.com (unknown [10.22.76.19])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id ED8161955DCE;
-	Wed,  5 Mar 2025 21:35:44 +0000 (UTC)
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>,
-	LKML <linux-kernel@vger.kernel.org>,
+	 MIME-Version; b=OkrOmDgTiH+k7vcf22riO4inLiMc87IiCwu32Ri85izFsbvNC32jTGehudSZzt8uba1o6YKrLRFU0rEf7SyWlkBwmTaDEJvyPS83v+a4VB0N1uYGZDJHPSyYHL1ZGR8Fs2n9vqF1Um4LlOqVbKjZcv1Rv2H4Utn5h+JFqZMvwmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.114.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([116.24.8.13])
+	by sina.com (10.185.250.23) with ESMTP
+	id 67C8D4620000619E; Wed, 6 Mar 2025 06:47:00 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 6462088913194
+X-SMAIL-UIID: 8718048AE1954DBFBAC9D1D84D431635-20250306-064700-1
+From: Hillf Danton <hdanton@sina.com>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
 	linux-fsdevel@vger.kernel.org,
-	Linux Kernel Audit Mailing List <audit@vger.kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>,
-	Eric Paris <eparis@parisplace.org>,
-	Steve Grubb <sgrubb@redhat.com>,
-	Richard Guy Briggs <rgb@redhat.com>,
-	Jan Kara <jack@suse.cz>,
-	Amir Goldstein <amir73il@gmail.com>
-Subject: [PATCH v1 2/2] audit: record AUDIT_ANOM_* events regardless of presence of rules
-Date: Wed,  5 Mar 2025 16:33:20 -0500
-Message-ID: <0b569667efde7c91992bf3ea35b40c3a8f10e384.1741210251.git.rgb@redhat.com>
-In-Reply-To: <cover.1741210251.git.rgb@redhat.com>
-References: <cover.1741210251.git.rgb@redhat.com>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
+Date: Thu,  6 Mar 2025 06:46:45 +0800
+Message-ID: <20250305224648.3058-1-hdanton@sina.com>
+In-Reply-To: <20250305114433.GA28112@redhat.com>
+References: <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt> <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com> <20250227211229.GD25639@redhat.com> <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com> <20250228143049.GA17761@redhat.com> <20250228163347.GB17761@redhat.com> <20250304050644.2983-1-hdanton@sina.com> <20250304102934.2999-1-hdanton@sina.com> <20250304233501.3019-1-hdanton@sina.com> <20250305045617.3038-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-type: text/plain
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-When no audit rules are in place, AUDIT_ANOM_{LINK,CREAT} events
-reported in audit_log_path_denied() are unconditionally dropped due to
-an explicit check for the existence of any audit rules.  Given this is a
-report of a security violation, allow it to be recorded regardless of
-the existence of any audit rules.
-
-To test,
-	mkdir -p /root/tmp
-	chmod 1777 /root/tmp
-	touch /root/tmp/test.txt
-	useradd test
-	chown test /root/tmp/test.txt
-	{echo C0644 12 test.txt; printf 'hello\ntest1\n'; printf \\000;} | \
-		scp -t /root/tmp
-Check with
-	ausearch -m ANOM_CREAT -ts recent
-
-Link: https://issues.redhat.com/browse/RHEL-9065
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- kernel/audit.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/audit.c b/kernel/audit.c
-index 53e3bddcc327..0cf2827882fc 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -2285,7 +2285,7 @@ void audit_log_path_denied(int type, const char *operation)
- {
- 	struct audit_buffer *ab;
- 
--	if (!audit_enabled || audit_dummy_context())
-+	if (!audit_enabled)
- 		return;
- 
- 	/* Generate log with subject, operation, outcome. */
--- 
-2.43.5
-
+On Wed, 5 Mar 2025 12:44:34 +0100 Oleg Nesterov <oleg@redhat.com>
+> On 03/05, Hillf Danton wrote:
+> > See the loop in  ___wait_event(),
+> >
+> > 	for (;;) {
+> > 		prepare_to_wait_event();
+> >
+> > 		// flip
+> > 		if (condition)
+> > 			break;
+> >
+> > 		schedule();
+> > 	}
+> >
+> > After wakeup, waiter will sleep again if condition flips false on the waker
+> > side before waiter checks condition, even if condition is atomic, no?
+> 
+> Yes, but in this case pipe_full() == true is correct, this writer can
+> safely sleep.
+> 
+No, because no reader is woken up before sleep to make pipe not full.
 
