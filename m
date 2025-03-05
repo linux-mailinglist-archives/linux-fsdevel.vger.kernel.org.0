@@ -1,96 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-43247-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43248-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBF3FA4FCE4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 11:55:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE1FA4FDEF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 12:45:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D5A27A34F8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 10:54:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 478B0189131F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 11:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7FB822ACF2;
-	Wed,  5 Mar 2025 10:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7F1241CA3;
+	Wed,  5 Mar 2025 11:45:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B9DVaemP"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UZb4gewF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E60622154B;
-	Wed,  5 Mar 2025 10:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C9A241662
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Mar 2025 11:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741172127; cv=none; b=NAaQtCJJls/oCF19Xbn7UjiR5swsxlNQ5qIcHmabz9vU80U+eJMu6buRFTNWcLuvboYh/WmMxa7fFDj82Mz8Z3BS+Aeqyq1rhhDUDPiw7OkD0t4MQGBEahovVvGPg4PHw6RSU0a0j9vOg1D2VlX1pFzCC/FIpluxhZYTS1Estsk=
+	t=1741175128; cv=none; b=Pe2moefLrHxFf1t31ZzpXMzAt3Bw9jYbymt/q96PzQDsDcb4kjee05kGW/CRPtJ8RYhzb+k3NmrTwEiK4ABI2TjOucv9wdO3U81/RKpdw2IIQspqpSEy038YmJwXgFOkcjnCpZCr5dVHqS8PQJMJcpSj9ME4fZpwDiGBExe4B20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741172127; c=relaxed/simple;
-	bh=Wlhyf0USg/tu1XOgzH5NxGUkooy3w2wOgrCLVWvycyI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nJA/o5Vlk4WZ0/BDX+IAQtCi7yPSxz+U74J3ptTEF0Sb5Q6K9Td4tUJv/s9VbE4V6Dfy1R8O2vxI5azIjpgyqmovWCYZdDetwxiGGgn2/bTfM2iZxspx93+NUt5SF22WK2ADstQTFSrgkV0wBcNI0+WqgNl9K5EwrFUHi+55W3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B9DVaemP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C56D6C4CEE2;
-	Wed,  5 Mar 2025 10:55:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741172126;
-	bh=Wlhyf0USg/tu1XOgzH5NxGUkooy3w2wOgrCLVWvycyI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=B9DVaemP3felO8/LqxjBzCuCdtwi88e9jfFVqqu5z5z/LITUlrfnKL3D9R5jvjbOE
-	 cpD2IAbgb343QaDENfsx52Wz1Kp5mY/EuD8giZvGuaDtHH6cGVyh784KqZ20GXpiy+
-	 TdxX8/+Vdt5T+A9JOjhLofig9gtkGZ4aWpba/3ynIV0YX4n3wMMEe0x8YXuxgdoTDd
-	 8zXbN81NOCp5r3iOTtLDGOxYI3ZgwdvXZdn390w4Ze/gzVBIbaSasqEz5+p+2eVe88
-	 Mrhgb7v43oWUb3voCogUGRpVqTWxvlrsp6zpyDIXxf5HMS7ZEvuURanuaLvphaQ3q1
-	 Hdqq3Bu1hzbOA==
-From: Christian Brauner <brauner@kernel.org>
-To: Aiden Ma <jiaheng.ma@foxmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	sforshee@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	corbet@lwn.net
-Subject: Re: [RESEND] doc: correcting two prefix errors in idmappings.rst
-Date: Wed,  5 Mar 2025 11:54:55 +0100
-Message-ID: <20250305-wacht-lauwarm-77a350b8a936@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <tencent_4E7B1F143E8051530C21FCADF4E014DCBB06@qq.com>
-References: <tencent_4E7B1F143E8051530C21FCADF4E014DCBB06@qq.com>
+	s=arc-20240116; t=1741175128; c=relaxed/simple;
+	bh=u0hEknQ9hTFAii0HS8u3f4nOxaeXPEum4fUgkLc5fxM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JY/4AkNsBb4qYqY+g3a4u9AHvGjWj+pk8LxHIAZcFpjH2OUE1UeCni39INVWUPHqlRg/tFVDoZMBm91USjhKcY6NCOa1g89vGsEyQndL890pZ0/+LuT6VZl1Uep1LPeVed4HbCJwbIz4buYdFd0351xN5vki88i5gINu+pBSwOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UZb4gewF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741175126;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h0XedY1oOf4u81I2FwEXBwOLP3sf5v1jn3pZdidv6lk=;
+	b=UZb4gewFl89X7K9DtxxKWhugPVA41PQCNMWCbUqnpAORp+S40fiVzzOQE5mIKDBHVrypdA
+	LnvaJpFYzsxuKGBbk55Ij9gxRBUyDvhdHKakF6ybSnSvHgR/HnsCbcLxXH0TGNRcbOjm3O
+	1+mAL6w/Tm2Z5PRyLkelXVCg81n2eNc=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-185--VGzdjFAOl2lxVGVcRp2zA-1; Wed,
+ 05 Mar 2025 06:45:11 -0500
+X-MC-Unique: -VGzdjFAOl2lxVGVcRp2zA-1
+X-Mimecast-MFC-AGG-ID: -VGzdjFAOl2lxVGVcRp2zA_1741175110
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 092F11954B1C;
+	Wed,  5 Mar 2025 11:45:09 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.34.66])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 828E11800265;
+	Wed,  5 Mar 2025 11:45:06 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed,  5 Mar 2025 12:44:38 +0100 (CET)
+Date: Wed, 5 Mar 2025 12:44:34 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+Message-ID: <20250305114433.GA28112@redhat.com>
+References: <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt>
+ <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com>
+ <20250227211229.GD25639@redhat.com>
+ <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com>
+ <20250228143049.GA17761@redhat.com>
+ <20250228163347.GB17761@redhat.com>
+ <20250304050644.2983-1-hdanton@sina.com>
+ <20250304102934.2999-1-hdanton@sina.com>
+ <20250304233501.3019-1-hdanton@sina.com>
+ <20250305045617.3038-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1037; i=brauner@kernel.org; h=from:subject:message-id; bh=Wlhyf0USg/tu1XOgzH5NxGUkooy3w2wOgrCLVWvycyI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSf0J35sGx5Z9ndKsezinx3WLvf1rW2zFp7ZPthL+8v+ hLb2rbLdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzEw5qR4XmKsmf2f52fB/QF wxmzT9ndj2lfq8jW42qr21Tcnc8izfA/4p5Pa8U7gW6DxwW9pnIzv9bK3N09JfX0+sKNb8W/q37 lAAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305045617.3038-1-hdanton@sina.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Tue, 04 Mar 2025 19:54:01 +0800, Aiden Ma wrote:
-> Add the 'k' prefix to id 21000. And id `u1000` in the third
-> idmapping should be mapped to `k31000`, not `u31000`.
-> 
-> 
+Hi Hillf,
 
-It's good to know that there's at least some people that read this document. :)
+again, I am not sure we understand each other, at least me...
 
----
+On 03/05, Hillf Danton wrote:
+>
+> On Wed, 5 Mar 2025 00:49:09 +0100 Oleg Nesterov <oleg@redhat.com>
+> >
+> > Of course! Again, whatever the woken writer checks in pipe_writable()
+> > lockless, another writer can make pipe_full() true again.
+> >
+> > But why do we care? Why do you think that the change you propose makes
+>
+> Because of the hang reported.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+The hang happened because pipe_writable() could wrongly return false
+when the buffer is not full.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Afaics, the Prateek's or Linus's fix solve this problem, and this is
+all we need.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+> > more sense than the fix from Prateek or the (already merged) Linus's fix?
+> >
+> See the loop in  ___wait_event(),
+>
+> 	for (;;) {
+> 		prepare_to_wait_event();
+>
+> 		// flip
+> 		if (condition)
+> 			break;
+>
+> 		schedule();
+> 	}
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+I will assume that this "// flip" means the case I described above:
+before this writer checks the condition, another writer comes and
+increments pipe->head.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
+> After wakeup, waiter will sleep again if condition flips false on the waker
+> side before waiter checks condition, even if condition is atomic, no?
 
-[1/1] doc: correcting two prefix errors in idmappings.rst
-      https://git.kernel.org/vfs/vfs/c/50dc696c3a48
+Yes, but in this case pipe_full() == true is correct, this writer can
+safely sleep.
+
+Even if flips again and becomes false right after the writer called
+pipe_writable().
+
+Note that it checks the condition after set_current_state(INTERRUPTIBLE)
+and it is still on the pipe->wr_wait->head list.
+
+The 2nd "flip" is only possible if some reader flushes another buffer
+and updates pipe->tail, and in this case it will wake this writer again.
+
+So I still can't understand your concerns, sorry.
+
+Oleg.
+
 
