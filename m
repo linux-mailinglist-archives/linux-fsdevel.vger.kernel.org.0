@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-43230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87FE6A4FB48
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 11:09:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79C8CA4FB4A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 11:09:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B60C7A8B72
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 10:08:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0294C18832AC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 10:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72BC52066F7;
-	Wed,  5 Mar 2025 10:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92402063CA;
+	Wed,  5 Mar 2025 10:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rXpwtsFP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DtNt2sXy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE84205AA3
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Mar 2025 10:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492CE86340
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Mar 2025 10:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741169327; cv=none; b=Ja0LE/qONi1FFIa1yIkiqB77JwPCJaUeysrFcpZrxr1vmBTvUco9SfhgtVkWm57AVJCdrzSk2AalH35VANereAqscacbonlatWxpWUl+0TDzk7+bia7gDB8pipwg/DTJS4eupmKmWzNIV8NcasuYD5V5KyqshQ3gr8iAttvxcvo=
+	t=1741169330; cv=none; b=mcBy+VFxRULUf2U6I6C/NKXwXAZvxGg4jjj24zRVD9xRwwWS0RxTIvRRgdKkJu/0trnLJvO81EXr4T7VF6N93kMSfnHf0DzRKLrre6RYjcGZ7PDl6gi3aGgLt4e+R6Dy3BN0bPAAvUyPzhE14cr5RwZrK1Q64bVXZ67waJic3Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741169327; c=relaxed/simple;
-	bh=P0GuDYk1qbYdo5vda3ZW6kjjrFAWoRzsB1VvsLwVEHI=;
+	s=arc-20240116; t=1741169330; c=relaxed/simple;
+	bh=uwTb2pvynGcEgNzKA2n7t8TdmNS33iMLyCP94yRdyUo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bxN6m3cQPI0yH+/SOhbKNPkQO6qBCFLDHnqbLGTO1WN6npx2H7j8o2oej1UuCwmIW7xCPIFu/sX4T5d1nuNwAQf9E+/fS7X4LEjcDTJXJbOp56d1wj0sUPs7dunhyoF+TBV/Ehh2gwoxwKFGe+8JIgEg08Z9ySSZw0Q6ZJsBSIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rXpwtsFP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D2FCC4CEEA;
-	Wed,  5 Mar 2025 10:08:45 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=u4Lc8MlRfqVni95WZqIB7itFa2UvSFe6fpr+KQAwuJqyGyysd5slWzHuLQOMvgu77h936MakkAO5Ha6T4v5MVBBDAEl1TOY8bJ7g0w1kYd+5+TaKlibC8DIJ/UKskvdbsT16y2qxYpDRuKeQD/EUj/QDLDHmrUJfnu1C5ufTVsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DtNt2sXy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D224C4CEEC;
+	Wed,  5 Mar 2025 10:08:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741169327;
-	bh=P0GuDYk1qbYdo5vda3ZW6kjjrFAWoRzsB1VvsLwVEHI=;
+	s=k20201202; t=1741169329;
+	bh=uwTb2pvynGcEgNzKA2n7t8TdmNS33iMLyCP94yRdyUo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=rXpwtsFPJGhGl/S6lRXYJUIc9axll7WJdK+oepw9WJtjTfqem9bxD4aghsKMVxThO
-	 fVrwfBXQvnA+/F/hdr/kNLjEgpbPD/84saMYmHi8Kx1yi7LzBVrkYBypuIPXzwmsuU
-	 TpqerzbNYUh7LX4maTqkOgZ9zv8a0+yIo8GniRVoIzLVUN+cLwHfXtX45TJFSfnMRu
-	 wh05qjTJajuEPRJOSaBaJFuDVdzFfDhTwlaZNEWOoJwXZzGhhvkGy3UtZWt1k/0y4O
-	 1eFoTVuJ5yXeBUbW1LFUElOqsyLCKdJLBHpB7Iv3c8rdpRPowXVDbgFc5wFXdkSakT
-	 LdaMj6d8MJH7g==
+	b=DtNt2sXyLOBOh7XfDsBrSr5C9neJThwBY9xcVLyq/QV218UjV5q8E8YDoz9AzTCMU
+	 qBtnLYMrdkOWxHGLyH0YQPGS42jytRpRzAD1vpQwLgu1oO5JUobfc8MmwuMND5de4u
+	 zYepzVbnz/ko0CVJRSwqOQ1uB6REn2+6XAt8qn1GQ+JPfHW+QmHTDhIeQ9lxMuLR7e
+	 3zb67M9/v3AwEUW3eo37O8wTy82Ew69mekIuGlTLw+NxOhmUGCW2+kH0n4sxH7wrIy
+	 PdoL0ymnKGjEuCYrdjLyOd6LYfygf1e9OqIHlxXRSk2w2OUgePw91ms57UZIAxTSql
+	 pOpcGoLB9PiLA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 05 Mar 2025 11:08:20 +0100
-Subject: [PATCH v3 10/16] selftests/pidfd: add first PIDFD_INFO_EXIT
+Date: Wed, 05 Mar 2025 11:08:21 +0100
+Subject: [PATCH v3 11/16] selftests/pidfd: add second PIDFD_INFO_EXIT
  selftest
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250305-work-pidfs-kill_on_last_close-v3-10-c8c3d8361705@kernel.org>
+Message-Id: <20250305-work-pidfs-kill_on_last_close-v3-11-c8c3d8361705@kernel.org>
 References: <20250305-work-pidfs-kill_on_last_close-v3-0-c8c3d8361705@kernel.org>
 In-Reply-To: <20250305-work-pidfs-kill_on_last_close-v3-0-c8c3d8361705@kernel.org>
 To: Oleg Nesterov <oleg@redhat.com>
@@ -62,224 +62,50 @@ Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
  Daan De Meyer <daan.j.demeyer@gmail.com>, Mike Yuan <me@yhndnzj.com>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6188; i=brauner@kernel.org;
- h=from:subject:message-id; bh=P0GuDYk1qbYdo5vda3ZW6kjjrFAWoRzsB1VvsLwVEHI=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSfUJpR9YT9TNisTS/zvXaamjlP+LnsQPXED7dP6PbKR
- 7Zd/Fjh3FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCR8oOMDE9c15+RqRTcX3k8
- 6Ut7c0bSFpXFB00LNppx5dnm3mwpP8bIcMXqwIVlW5VCue8lOpc+9GAKe/Ls4JTtEx4trtSZmZf
- MxQcA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1342; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=uwTb2pvynGcEgNzKA2n7t8TdmNS33iMLyCP94yRdyUo=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSfUJqh27L3aINRrPZNuwlPNy7svDY3S7TxP9+EU5Py5
+ LJ3Zbje6ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiIXRsjw7qj0+4KFL7cY9Ia
+ y3m2q2ymf1UYR3fVuujvpSIc075uNmH4n59vbnGVoUtAL/Ewk9O9T2bS2t02/qzXG1zFDor/PhX
+ KBQA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
 Add a selftest for PIDFD_INFO_EXIT behavior.
 
-Link: https://lore.kernel.org/r/20250304-work-pidfs-kill_on_last_close-v2-10-44fdacfaa7b7@kernel.org
+Link: https://lore.kernel.org/r/20250304-work-pidfs-kill_on_last_close-v2-11-44fdacfaa7b7@kernel.org
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- tools/testing/selftests/pidfd/.gitignore        |   1 +
- tools/testing/selftests/pidfd/Makefile          |   2 +-
- tools/testing/selftests/pidfd/pidfd.h           |   6 +-
- tools/testing/selftests/pidfd/pidfd_info_test.c | 146 ++++++++++++++++++++++++
- 4 files changed, 153 insertions(+), 2 deletions(-)
+ tools/testing/selftests/pidfd/pidfd_info_test.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/tools/testing/selftests/pidfd/.gitignore b/tools/testing/selftests/pidfd/.gitignore
-index bf92481f925c..bddae1d4d7e4 100644
---- a/tools/testing/selftests/pidfd/.gitignore
-+++ b/tools/testing/selftests/pidfd/.gitignore
-@@ -8,3 +8,4 @@ pidfd_getfd_test
- pidfd_setns_test
- pidfd_file_handle_test
- pidfd_bind_mount
-+pidfd_info_test
-diff --git a/tools/testing/selftests/pidfd/Makefile b/tools/testing/selftests/pidfd/Makefile
-index 301343a11b62..a94c2bc8d594 100644
---- a/tools/testing/selftests/pidfd/Makefile
-+++ b/tools/testing/selftests/pidfd/Makefile
-@@ -3,7 +3,7 @@ CFLAGS += -g $(KHDR_INCLUDES) -pthread -Wall
- 
- TEST_GEN_PROGS := pidfd_test pidfd_fdinfo_test pidfd_open_test \
- 	pidfd_poll_test pidfd_wait pidfd_getfd_test pidfd_setns_test \
--	pidfd_file_handle_test pidfd_bind_mount
-+	pidfd_file_handle_test pidfd_bind_mount pidfd_info_test
- 
- include ../lib.mk
- 
-diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selftests/pidfd/pidfd.h
-index bad518766aa5..cc8e381978df 100644
---- a/tools/testing/selftests/pidfd/pidfd.h
-+++ b/tools/testing/selftests/pidfd/pidfd.h
-@@ -127,6 +127,10 @@
- #define PIDFD_INFO_CGROUPID		(1UL << 2) /* Always returned if available, even if not requested */
- #endif
- 
-+#ifndef PIDFD_INFO_EXIT
-+#define PIDFD_INFO_EXIT			(1UL << 3) /* Always returned if available, even if not requested */
-+#endif
-+
- struct pidfd_info {
- 	__u64 mask;
- 	__u64 cgroupid;
-@@ -141,7 +145,7 @@ struct pidfd_info {
- 	__u32 sgid;
- 	__u32 fsuid;
- 	__u32 fsgid;
--	__u32 spare0[1];
-+	__s32 exit_code;
- };
- 
- /*
 diff --git a/tools/testing/selftests/pidfd/pidfd_info_test.c b/tools/testing/selftests/pidfd/pidfd_info_test.c
-new file mode 100644
-index 000000000000..cc1d3d5eba59
---- /dev/null
+index cc1d3d5eba59..2a5742a2a55f 100644
+--- a/tools/testing/selftests/pidfd/pidfd_info_test.c
 +++ b/tools/testing/selftests/pidfd/pidfd_info_test.c
-@@ -0,0 +1,146 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <limits.h>
-+#include <linux/types.h>
-+#include <poll.h>
-+#include <pthread.h>
-+#include <sched.h>
-+#include <signal.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <syscall.h>
-+#include <sys/prctl.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+#include <sys/socket.h>
-+#include <linux/kcmp.h>
-+#include <sys/stat.h>
-+
-+#include "pidfd.h"
-+#include "../kselftest_harness.h"
-+
-+FIXTURE(pidfd_info)
-+{
-+	pid_t child_pid1;
-+	int child_pidfd1;
-+
-+	pid_t child_pid2;
-+	int child_pidfd2;
-+
-+	pid_t child_pid3;
-+	int child_pidfd3;
-+
-+	pid_t child_pid4;
-+	int child_pidfd4;
-+};
-+
-+FIXTURE_SETUP(pidfd_info)
-+{
-+	int ret;
-+	int ipc_sockets[2];
-+	char c;
-+
-+	ret = socketpair(AF_LOCAL, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets);
-+	EXPECT_EQ(ret, 0);
-+
-+	self->child_pid1 = create_child(&self->child_pidfd1, 0);
-+	EXPECT_GE(self->child_pid1, 0);
-+
-+	if (self->child_pid1 == 0) {
-+		close(ipc_sockets[0]);
-+
-+		if (write_nointr(ipc_sockets[1], "1", 1) < 0)
-+			_exit(EXIT_FAILURE);
-+
-+		close(ipc_sockets[1]);
-+
-+		pause();
-+		_exit(EXIT_SUCCESS);
-+	}
-+
-+	EXPECT_EQ(close(ipc_sockets[1]), 0);
-+	ASSERT_EQ(read_nointr(ipc_sockets[0], &c, 1), 1);
-+	EXPECT_EQ(close(ipc_sockets[0]), 0);
-+
-+	/* SIGKILL but don't reap. */
-+	EXPECT_EQ(sys_pidfd_send_signal(self->child_pidfd1, SIGKILL, NULL, 0), 0);
-+
-+	ret = socketpair(AF_LOCAL, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets);
-+	EXPECT_EQ(ret, 0);
-+
-+	self->child_pid2 = create_child(&self->child_pidfd2, 0);
-+	EXPECT_GE(self->child_pid2, 0);
-+
-+	if (self->child_pid2 == 0) {
-+		close(ipc_sockets[0]);
-+
-+		if (write_nointr(ipc_sockets[1], "1", 1) < 0)
-+			_exit(EXIT_FAILURE);
-+
-+		close(ipc_sockets[1]);
-+
-+		pause();
-+		_exit(EXIT_SUCCESS);
-+	}
-+
-+	EXPECT_EQ(close(ipc_sockets[1]), 0);
-+	ASSERT_EQ(read_nointr(ipc_sockets[0], &c, 1), 1);
-+	EXPECT_EQ(close(ipc_sockets[0]), 0);
-+
-+	/* SIGKILL and reap. */
-+	EXPECT_EQ(sys_pidfd_send_signal(self->child_pidfd2, SIGKILL, NULL, 0), 0);
-+	EXPECT_EQ(sys_waitid(P_PID, self->child_pid2, NULL, WEXITED), 0);
-+
-+	self->child_pid3 = create_child(&self->child_pidfd3, CLONE_NEWUSER | CLONE_NEWPID);
-+	EXPECT_GE(self->child_pid3, 0);
-+
-+	if (self->child_pid3 == 0)
-+		_exit(EXIT_SUCCESS);
-+
-+	self->child_pid4 = create_child(&self->child_pidfd4, CLONE_NEWUSER | CLONE_NEWPID);
-+	EXPECT_GE(self->child_pid4, 0);
-+
-+	if (self->child_pid4 == 0)
-+		_exit(EXIT_SUCCESS);
-+
-+	EXPECT_EQ(sys_waitid(P_PID, self->child_pid4, NULL, WEXITED), 0);
-+}
-+
-+FIXTURE_TEARDOWN(pidfd_info)
-+{
-+	sys_pidfd_send_signal(self->child_pidfd1, SIGKILL, NULL, 0);
-+	if (self->child_pidfd1 >= 0)
-+		EXPECT_EQ(0, close(self->child_pidfd1));
-+
-+	sys_waitid(P_PID, self->child_pid1, NULL, WEXITED);
-+
-+	sys_pidfd_send_signal(self->child_pidfd2, SIGKILL, NULL, 0);
-+	if (self->child_pidfd2 >= 0)
-+		EXPECT_EQ(0, close(self->child_pidfd2));
-+
-+	sys_waitid(P_PID, self->child_pid2, NULL, WEXITED);
-+	sys_waitid(P_PID, self->child_pid3, NULL, WEXITED);
-+	sys_waitid(P_PID, self->child_pid4, NULL, WEXITED);
-+}
-+
-+TEST_F(pidfd_info, sigkill_exit)
+@@ -143,4 +143,22 @@ TEST_F(pidfd_info, sigkill_exit)
+ 	ASSERT_FALSE(!!(info.mask & PIDFD_INFO_EXIT));
+ }
+ 
++TEST_F(pidfd_info, sigkill_reaped)
 +{
 +	struct pidfd_info info = {
 +		.mask = PIDFD_INFO_CGROUPID,
 +	};
 +
-+	/* Process has exited but not been reaped so this must work. */
-+	ASSERT_EQ(ioctl(self->child_pidfd1, PIDFD_GET_INFO, &info), 0);
++	/* Process has already been reaped and PIDFD_INFO_EXIT hasn't been set. */
++	ASSERT_NE(ioctl(self->child_pidfd2, PIDFD_GET_INFO, &info), 0);
++	ASSERT_EQ(errno, ESRCH);
 +
 +	info.mask = PIDFD_INFO_CGROUPID | PIDFD_INFO_EXIT;
-+	ASSERT_EQ(ioctl(self->child_pidfd1, PIDFD_GET_INFO, &info), 0);
-+	ASSERT_TRUE(!!(info.mask & PIDFD_INFO_CREDS));
-+	/* Process has exited but not been reaped, so no PIDFD_INFO_EXIT information yet. */
-+	ASSERT_FALSE(!!(info.mask & PIDFD_INFO_EXIT));
++	ASSERT_EQ(ioctl(self->child_pidfd2, PIDFD_GET_INFO, &info), 0);
++	ASSERT_FALSE(!!(info.mask & PIDFD_INFO_CREDS));
++	ASSERT_TRUE(!!(info.mask & PIDFD_INFO_EXIT));
++	ASSERT_TRUE(WIFSIGNALED(info.exit_code));
++	ASSERT_EQ(WTERMSIG(info.exit_code), SIGKILL);
 +}
 +
-+TEST_HARNESS_MAIN
+ TEST_HARNESS_MAIN
 
 -- 
 2.47.2
