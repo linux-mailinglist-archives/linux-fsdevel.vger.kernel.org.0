@@ -1,259 +1,212 @@
-Return-Path: <linux-fsdevel+bounces-43217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43218-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D484DA4F893
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 09:19:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85038A4F8B8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 09:24:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53B203A12A0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 08:18:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9300188A9D5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 08:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F398E1DE89E;
-	Wed,  5 Mar 2025 08:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78D41F866B;
+	Wed,  5 Mar 2025 08:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eo8uCk0u"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZVtwLqt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7D11F419A
-	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Mar 2025 08:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094151C8FBA;
+	Wed,  5 Mar 2025 08:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741162728; cv=none; b=hjtiqRUQTkVia+l6+3jSIbzHZkbgRt8ge0G9oaOcecnqqu6dNHhDGHiHLKMFXmSH7scN5lERKtG5YOfx/F6sKz9KzUEZvlRjt7HuPqM/EcomsJtfMxAtRFtWN0NDOZzb4/BXqemnRz6CnZ/PgQ1IIrSuXex93qEEnEz9s+fnItw=
+	t=1741163088; cv=none; b=BzTSm/och4uuWLpmcXfS6l2nxe6ht1issaklrTmDcPeiFZu4NuOM3tO4XhduAJoMqgvMoIaZfL5q4qxp6qz499uGaC3J9i9MFmLQ2iYagbG7pCb7PtHGkvgF7tzhT4+13EN9LQEIPAoI06mNlKajwtexv7kQpw/C4B9EXqKgjew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741162728; c=relaxed/simple;
-	bh=jn8/K2RnXixu8tyA1bxEEO6Dsz4gHGm9QWDyM+Os6hk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oYtAzINL1JPkmnmrxMO8zAMlyjMo8qhX5QSVSLnwWamsJOlvqB90pogXJVLffbOKQtni4/zBOjgCkV9eWR7SjRTS/7JmV1oDaOqJ4VxJVsHpcTohPljeehwlYiYMbAyUnMpXAQ2zp4t8bJLNda5ZoY6BVwzYgcN2tkjuxaN2Dow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eo8uCk0u; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4394a823036so59904225e9.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Mar 2025 00:18:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741162725; x=1741767525; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=W1Pfl+u2ap1W8Srn9iwmkKsR9Z81zakasExptX6WpvA=;
-        b=eo8uCk0u1ZCET6Gh5UVi+PCl9qT6bywDWQ2f/7asgpePHX/E21rsqnZmap7zY9d8c4
-         6Mokg7xFWNBcdT8ujXMth6t0Io6VaAXjnnlsKLJL764ZM79I/NTeKpYbGYd+8scVDgjn
-         loml/MTpkFLBwKL7yoEkw0DxZoogYKX+SNJdTQHsSZyDUmOaEwOKvIhiyEfd+QIQz1iW
-         lBSKEj+Oncj6JuETxYnwm+aJrkc/4x2KvSZ3v/Mbrl9LUiQvTrlqbTM7xC6WsZ9eNP2r
-         6z3BvCZy+rw2mnyrBL91GHrJEgQem1e+4fxJUKcWWhkEyhXRmrBR+SxwfZzqQcuRHPnF
-         EkFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741162725; x=1741767525;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W1Pfl+u2ap1W8Srn9iwmkKsR9Z81zakasExptX6WpvA=;
-        b=WnyqdD0CDWLRcXykdIjBfySNuFCnSVIanz8LygfXj7KPunPzUxKjw7ZdWzm9SBD1sQ
-         CiLvXSrDC4k03WhuXb+Lyahx9OkWlJA6ociLUE5AqbhplYwNSqseqSOW0p6+8xpE63gp
-         MYoQy2UsPlnx2qem0QF2zjqWYXP73bABfuMcdOFvopCLgZqFNXDwCevwqr6hB389evNe
-         7eF+9y/8Cls5qtljzfK9eV+JwG8lgmT/bA4xv+YTVbZBmiAngingykjOx5WDf9rfYSxP
-         L8YdDjQ1Eq+D/eujrMS4sZqOxW9vgS1bJA07vrHMZokfE1ADMWRh1nMj3CJ3kB6+qKbw
-         w7TQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOGhvYhq7RrrAkcZkLhflr9UztwiKPY6/JMqDewdt9In0dbbHkiaPekTKuSyzt8q2Id0+k1CZf00w09ZAn@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIHqEC154yniOP0Th//qwFlcFfYDigBZwD0qcQw1ix2ObuVhkO
-	JZHO4D9f90lQRl74pnR1UzbOnFfIdlTBjOEs7vZ4t33yQGOGaqfgwNd5hkYgYy6I7LJOke3TUlQ
-	l
-X-Gm-Gg: ASbGnctpNY6xaqGhfaQKBx3YTRjkMiWqHyxlctyJ8lji4wz5DKiBZBE2vgeXNTINkIG
-	qWkNjHD+PkV+firI8/s09jNg/lFKOst8dicy735KkwEdrNJgj87q1V83YZpmtp8lAm4j4ZBUp8R
-	Gitm4C3uEquozQNtK9W07ipkSwvy6ps4iLpKWZbk+JUaEXfOCEN7I/isV/4fszUJRC48f91LOsC
-	pjoFj9+1/pTS5XJIGq93GGtiD8ZKSLVv9AcdJ9PcyIZhSVds/GmUpOS4G05uqjK8/WsSpGqkssx
-	ygJ4bfnsqyGj1Pe6dRDWtqsjJom7iW9sRapIzAxEv4j2zuK/Xw==
-X-Google-Smtp-Source: AGHT+IHDuYxClcLocB8e9QcfuMaSWcwaSkRa35ZYikZGOgO4Oa+9XPsX/vrhDnizXQJD3HykkPAlEw==
-X-Received: by 2002:a05:600c:511c:b0:43b:c0fa:f9cd with SMTP id 5b1f17b1804b1-43bd2972e1dmr13991125e9.7.1741162724670;
-        Wed, 05 Mar 2025 00:18:44 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43bd42920a5sm9999785e9.11.2025.03.05.00.18.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 00:18:44 -0800 (PST)
-Date: Wed, 5 Mar 2025 11:18:40 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] ceph: Fix error handling in fill_readdir_cache()
-Message-ID: <df103360-56b2-40f8-bc3e-d7b8a77be854@stanley.mountain>
-References: <20250304154818.250757-1-willy@infradead.org>
- <7f2e7a8938775916fd926f9e7ff073d42f89108b.camel@ibm.com>
- <Z8fTOEerurzqKybx@casper.infradead.org>
+	s=arc-20240116; t=1741163088; c=relaxed/simple;
+	bh=PW3JaKtoCnCno27xMt0CxSjDwQZd35hm3I+KQGOj6nM=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=oWYjS/U0uiVMtWv5VD3JaBMi7fxoSVEpHNeS9vU6HZ5cc3EmnIAJ5eXNuR7oIBe6BLVN+ieP9dwsvDFHlECOXAr9fN0MH4KsAylE40fiHEL8Z7VNCM2HyhAKJg2yb/hZPpmqbsJaUzkPOkkLuwFuqMznm5tZ/rr4eWReeViUjsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZVtwLqt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06913C4CEE2;
+	Wed,  5 Mar 2025 08:24:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741163087;
+	bh=PW3JaKtoCnCno27xMt0CxSjDwQZd35hm3I+KQGOj6nM=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=ZZVtwLqtAUqKGkPwf5T8kYsPFSfE22uLdgVP/rVjmmoFSjcQR7R2Te/vrDvfZ7noG
+	 D5wqGFMMslK/3p9DMbnf+zE9/X5PO9ocFGx4kEr7LpB2641QelQm4f4+t2z9UIeNO6
+	 uE9YsU0JzLenNyMCypJ4wEZwpqp0bi9SPBHiupMVpyPGK5jxX1c54Sw2KtpTDeyTzS
+	 GJN+yJ+gBF0ckJbdQhNP2d6FWw7PzMPjAW0fynH2LdjrhTQmqZqV6ucGXxwtsw3AQh
+	 9yyxar38tM3VjnO0WaKpqwDEjdsL7N5dAHYSnC+EjUC2+Rr5hJLE7qsbOp/FqsNNrp
+	 6EbFndHcPUOZA==
+Message-ID: <1ed6cd1b-4165-4a87-a2eb-a8278c944922@kernel.org>
+Date: Wed, 5 Mar 2025 16:24:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="vqIsNXnQDFvGGJQM"
-Content-Disposition: inline
-In-Reply-To: <Z8fTOEerurzqKybx@casper.infradead.org>
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] f2fs: support F2FS_NOLINEAR_LOOKUP_FL
+To: Eric Biggers <ebiggers@kernel.org>
+References: <20250303034606.1355224-1-chao@kernel.org>
+ <20250303230644.GA3695685@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250303230644.GA3695685@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
---vqIsNXnQDFvGGJQM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Mar 05, 2025 at 04:29:44AM +0000, Matthew Wilcox wrote:
-> > > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> > > index c15970fa240f..6ac2bd555e86 100644
-> > > --- a/fs/ceph/inode.c
-> > > +++ b/fs/ceph/inode.c
-> > > @@ -1870,9 +1870,12 @@ static int fill_readdir_cache(struct inode *dir, struct dentry *dn,
-> > >  
-> > >  		ctl->folio = __filemap_get_folio(&dir->i_data, pgoff,
-> > >  				fgf, mapping_gfp_mask(&dir->i_data));
-> > 
-> > Could we expect to receive NULL here somehow? I assume we should receive valid
-> > pointer or ERR_PTR always here.
+On 3/4/25 07:06, Eric Biggers wrote:
+> On Mon, Mar 03, 2025 at 11:46:06AM +0800, Chao Yu via Linux-f2fs-devel wrote:
+>> This patch introduces a new flag F2FS_NOLINEAR_LOOKUP_FL, so that we can
+>> tag casefolded directory w/ it to disable linear lookup functionality,
+>> it can be used for QA.
+>>
+>> Signed-off-by: Chao Yu <chao@kernel.org>
+>> ---
+>>  fs/f2fs/dir.c             |  3 ++-
+>>  fs/f2fs/f2fs.h            |  2 ++
+>>  fs/f2fs/file.c            | 36 +++++++++++++++++++++++-------------
+>>  include/uapi/linux/f2fs.h |  5 +++++
+>>  4 files changed, 32 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+>> index 54dd52de7269..4c74f29a2c73 100644
+>> --- a/fs/f2fs/dir.c
+>> +++ b/fs/f2fs/dir.c
+>> @@ -366,7 +366,8 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
+>>  
+>>  out:
+>>  #if IS_ENABLED(CONFIG_UNICODE)
+>> -	if (IS_CASEFOLDED(dir) && !de && use_hash) {
+>> +	if (IS_CASEFOLDED(dir) && !de && use_hash &&
+>> +				!IS_NOLINEAR_LOOKUP(dir)) {
+>>  		use_hash = false;
+>>  		goto start_find_entry;
+>>  	}
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 05879c6dc4d6..787f1e5a52d7 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -3047,6 +3047,7 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
+>>  #define F2FS_NOCOMP_FL			0x00000400 /* Don't compress */
+>>  #define F2FS_INDEX_FL			0x00001000 /* hash-indexed directory */
+>>  #define F2FS_DIRSYNC_FL			0x00010000 /* dirsync behaviour (directories only) */
+>> +#define F2FS_NOLINEAR_LOOKUP_FL		0x08000000 /* do not use linear lookup */
+>>  #define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
+>>  #define F2FS_CASEFOLD_FL		0x40000000 /* Casefolded file */
+>>  #define F2FS_DEVICE_ALIAS_FL		0x80000000 /* File for aliasing a device */
+>> @@ -3066,6 +3067,7 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
+>>  #define F2FS_OTHER_FLMASK	(F2FS_NODUMP_FL | F2FS_NOATIME_FL)
+>>  
+>>  #define IS_DEVICE_ALIASING(inode)	(F2FS_I(inode)->i_flags & F2FS_DEVICE_ALIAS_FL)
+>> +#define IS_NOLINEAR_LOOKUP(inode)	(F2FS_I(inode)->i_flags & F2FS_NOLINEAR_LOOKUP_FL)
+>>  
+>>  static inline __u32 f2fs_mask_flags(umode_t mode, __u32 flags)
+>>  {
+>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>> index 014cb7660a9a..1acddc4d11e4 100644
+>> --- a/fs/f2fs/file.c
+>> +++ b/fs/f2fs/file.c
+>> @@ -2062,6 +2062,11 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
+>>  		}
+>>  	}
+>>  
+>> +	if ((iflags ^ masked_flags) & F2FS_NOLINEAR_LOOKUP_FLAG) {
+>> +		if (!S_ISDIR(inode->i_mode) || !IS_CASEFOLDED(inode))
+>> +			return -EINVAL;
+>> +	}
+>> +
+>>  	fi->i_flags = iflags | (fi->i_flags & ~mask);
+>>  	f2fs_bug_on(F2FS_I_SB(inode), (fi->i_flags & F2FS_COMPR_FL) &&
+>>  					(fi->i_flags & F2FS_NOCOMP_FL));
+>> @@ -2093,17 +2098,18 @@ static const struct {
+>>  	u32 iflag;
+>>  	u32 fsflag;
+>>  } f2fs_fsflags_map[] = {
+>> -	{ F2FS_COMPR_FL,	FS_COMPR_FL },
+>> -	{ F2FS_SYNC_FL,		FS_SYNC_FL },
+>> -	{ F2FS_IMMUTABLE_FL,	FS_IMMUTABLE_FL },
+>> -	{ F2FS_APPEND_FL,	FS_APPEND_FL },
+>> -	{ F2FS_NODUMP_FL,	FS_NODUMP_FL },
+>> -	{ F2FS_NOATIME_FL,	FS_NOATIME_FL },
+>> -	{ F2FS_NOCOMP_FL,	FS_NOCOMP_FL },
+>> -	{ F2FS_INDEX_FL,	FS_INDEX_FL },
+>> -	{ F2FS_DIRSYNC_FL,	FS_DIRSYNC_FL },
+>> -	{ F2FS_PROJINHERIT_FL,	FS_PROJINHERIT_FL },
+>> -	{ F2FS_CASEFOLD_FL,	FS_CASEFOLD_FL },
+>> +	{ F2FS_COMPR_FL,		FS_COMPR_FL },
+>> +	{ F2FS_SYNC_FL,			FS_SYNC_FL },
+>> +	{ F2FS_IMMUTABLE_FL,		FS_IMMUTABLE_FL },
+>> +	{ F2FS_APPEND_FL,		FS_APPEND_FL },
+>> +	{ F2FS_NODUMP_FL,		FS_NODUMP_FL },
+>> +	{ F2FS_NOATIME_FL,		FS_NOATIME_FL },
+>> +	{ F2FS_NOCOMP_FL,		FS_NOCOMP_FL },
+>> +	{ F2FS_INDEX_FL,		FS_INDEX_FL },
+>> +	{ F2FS_DIRSYNC_FL,		FS_DIRSYNC_FL },
+>> +	{ F2FS_PROJINHERIT_FL,		FS_PROJINHERIT_FL },
+>> +	{ F2FS_CASEFOLD_FL,		FS_CASEFOLD_FL },
+>> +	{ F2FS_NOLINEAR_LOOKUP_FL,	F2FS_NOLINEAR_LOOKUP_FL },
+>>  };
+>>  
+>>  #define F2FS_GETTABLE_FS_FL (		\
+>> @@ -2121,7 +2127,8 @@ static const struct {
+>>  		FS_INLINE_DATA_FL |	\
+>>  		FS_NOCOW_FL |		\
+>>  		FS_VERITY_FL |		\
+>> -		FS_CASEFOLD_FL)
+>> +		FS_CASEFOLD_FL |	\
+>> +		F2FS_NOLINEAR_LOOKUP_FL)
+>>  
+>>  #define F2FS_SETTABLE_FS_FL (		\
+>>  		FS_COMPR_FL |		\
+>> @@ -2133,7 +2140,8 @@ static const struct {
+>>  		FS_NOCOMP_FL |		\
+>>  		FS_DIRSYNC_FL |		\
+>>  		FS_PROJINHERIT_FL |	\
+>> -		FS_CASEFOLD_FL)
+>> +		FS_CASEFOLD_FL |	\
+>> +		F2FS_NOLINEAR_LOOKUP_FL)
+>>  
+>>  /* Convert f2fs on-disk i_flags to FS_IOC_{GET,SET}FLAGS flags */
+>>  static inline u32 f2fs_iflags_to_fsflags(u32 iflags)
+>> @@ -3344,6 +3352,8 @@ int f2fs_fileattr_get(struct dentry *dentry, struct fileattr *fa)
+>>  		fsflags |= FS_INLINE_DATA_FL;
+>>  	if (is_inode_flag_set(inode, FI_PIN_FILE))
+>>  		fsflags |= FS_NOCOW_FL;
+>> +	if (IS_NOLINEAR_LOOKUP(inode))
+>> +		fsflags |= F2FS_NOLINEAR_LOOKUP_FL;
+>>  
+>>  	fileattr_fill_flags(fa, fsflags & F2FS_GETTABLE_FS_FL);
+>>  
+>> diff --git a/include/uapi/linux/f2fs.h b/include/uapi/linux/f2fs.h
+>> index 795e26258355..a03626fdcf35 100644
+>> --- a/include/uapi/linux/f2fs.h
+>> +++ b/include/uapi/linux/f2fs.h
+>> @@ -104,4 +104,9 @@ struct f2fs_comp_option {
+>>  	__u8 log_cluster_size;
+>>  };
+>>  
+>> +/* used for FS_IOC_GETFLAGS and FS_IOC_SETFLAGS */
+>> +enum {
+>> +	F2FS_NOLINEAR_LOOKUP_FLAG = 0x08000000,
+>> +};
 > 
-> There's no way to get a NULL pointer here.  __filemap_get_folio() always
-> returns a valid folio or an ERR_PTR.
+> FS_IOC_GETFLAGS and FS_IOC_SETFLAGS are not filesystem-specific, and the
+> supported flags are declared in include/uapi/linux/fs.h.  You can't just
+> randomly give an unused bit a filesystem specific meaning.
+
+Yeah, let me have a try to propose it into vfs.
+
+Thanks,
+
 > 
-> > > -		if (!ctl->folio) {
-> > > +		if (IS_ERR(ctl->folio)) {
-> > > +			int err = PTR_ERR(ctl->folio);
-> > > +
-> > > +			ctl->folio = NULL;
-> > >  			ctl->index = -1;
-> > > -			return idx == 0 ? -ENOMEM : 0;
-> > > +			return idx == 0 ? err : 0;
-> > >  		}
-> > >  		/* reading/filling the cache are serialized by
-> > >  		 * i_rwsem, no need to use folio lock */
-> > 
-> > But I prefer to check on NULL anyway, because we try to unlock the folio here:
-> > 
-> > 		/* reading/filling the cache are serialized by
-> > 		 * i_rwsem, no need to use folio lock */
-> > 		folio_unlock(ctl->folio);
-> > 
-> > And absence of check on NULL makes me slightly nervous. :)
-> 
-> We'd get a very visible and obvious splat if we did!  But we make this
-> assumption all over the VFS and in other filesystems.  There's no need
-> to be more cautious in ceph than in other places.
+> - Eric
 
-Yeah.  When a function returns both error pointers and NULL that is
-a specific thing.
-
-https://staticthinking.wordpress.com/2022/08/01/mixing-error-pointers-and-null/
-
-Adding pointless NULL checks is confusing and only leads to philosophical
-debates about whether the future code which adds a NULL is more likely to
-be a success path or a failure path.  There is no good answer.
-
-I have a static checker warning for when people accidentally check for
-IS_ERR() instead of NULL or when a function can return both but we
-only check for error pointers.  But it turns out that I needed to update
-it and also I hadn't published it.  I'll test the updated version
-tonight and publish it later this week.  Attached.
-
-regards,
-dan carpenter
-
-
---vqIsNXnQDFvGGJQM
-Content-Type: text/x-csrc; charset=us-ascii
-Content-Disposition: attachment; filename="check_no_null_check_on_mixed.c"
-
-/*
- * Copyright (C) 2018 Oracle.
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, see http://www.gnu.org/copyleft/gpl.txt
- */
-
-#include "smatch.h"
-#include "smatch_slist.h"
-#include "smatch_extra.h"
-
-static int my_id;
-
-STATE(null);
-
-static void deref_hook(struct expression *expr)
-{
-	struct smatch_state *estate;
-	struct sm_state *sm;
-	char *name;
-
-	sm = get_sm_state_expr(my_id, expr);
-	if (!sm || !slist_has_state(sm->possible, &null))
-		return;
-	if (implied_not_equal(expr, 0))
-		return;
-	estate = get_state_expr(SMATCH_EXTRA, expr);
-	if (estate_is_empty(estate))
-		return;
-
-	name = expr_to_str(expr);
-	sm_msg("warn: '%s' can also be NULL", name);
-	free_string(name);
-}
-
-static void match_condition(struct expression *expr)
-{
-	struct data_range *drange;
-	struct expression *arg;
-	struct sm_state *sm, *tmp;
-
-	expr = strip_expr(expr);
-	if (expr->type != EXPR_CALL)
-		return;
-	if (!sym_name_is("IS_ERR", expr->fn))
-		return;
-
-	arg = get_argument_from_call_expr(expr->args, 0);
-	arg = strip_expr(arg);
-
-	if (!arg || implied_not_equal(arg, 0))
-		return;
-
-	sm = get_sm_state_expr(SMATCH_EXTRA, arg);
-	if (!sm)
-		return;
-
-	FOR_EACH_PTR(sm->possible, tmp) {
-		if (!estate_rl(tmp->state))
-			continue;
-		drange = first_ptr_list((struct ptr_list *)estate_rl(tmp->state));
-		if (drange->min.value == 0 && drange->max.value == 0)
-			goto has_null;
-	} END_FOR_EACH_PTR(tmp);
-
-	return;
-
-has_null:
-	set_true_false_states_expr(my_id, arg, NULL, &null);
-}
-
-void check_no_null_check_on_mixed(int id)
-{
-	my_id = id;
-
-	if (option_project != PROJ_KERNEL)
-		return;
-
-	add_hook(&match_condition, CONDITION_HOOK);
-	add_modification_hook(my_id, &set_undefined);
-	add_dereference_hook(&deref_hook);
-}
-
---vqIsNXnQDFvGGJQM--
 
