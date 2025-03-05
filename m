@@ -1,60 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-43264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC633A502B5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 15:52:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1EC6A502DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 15:56:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6900D3A2293
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 14:47:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B0763B674D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 14:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A4A24E4AD;
-	Wed,  5 Mar 2025 14:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789E224EAB6;
+	Wed,  5 Mar 2025 14:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MU/UkorE"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O+YSP4rZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4940A248885;
-	Wed,  5 Mar 2025 14:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4916424EA91
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Mar 2025 14:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741186012; cv=none; b=GDFQ679KkzR9aUgr4gSis44LlWohnFr3VuXFLBHWriLJM+8Mh1e2oIWsQxondPriMCyJ5oI7/CKkVGvNqTTOtbKhyjecMD14GyoFp8I0QlronXYec2hOdVjmG0xPwzg1vLlmChxjmkaxfP4TTbBxYByqkGk5aFf69B8dH3FL7zo=
+	t=1741186286; cv=none; b=Mi2ZEdbYIv/nvx3qACrTAETxgjNiBdKfEv9osQPe1RfWBkBLDjQWU04A+bYNcJnPPt6/zjM51H73QFZ5avHVNnK3Ayj7ZRZM647D360es5Jp4F1+kxTj2ezmWm9lVXzcxdbWEB2ZuMKcTanZGnuQIrjvglGoGkWvIr9E7XqX4xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741186012; c=relaxed/simple;
-	bh=td9GWGpZCmiEAG4NRmj3Vt6e3H57F2nliCpx9zjtguE=;
+	s=arc-20240116; t=1741186286; c=relaxed/simple;
+	bh=Td9UtRdDdBJMDr3/TUZzeFtouuzekWef9iswoDm/rc8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s5H7Pbv4TMGZdayLO+UdTdtuuZSykns3bFcVUGHfWdoSXGM6BG2yOGrFsU1xr1bf7fRBVEvNZGAMemm0RLTmDwN0mlFs0rAymKNdTzQNEJSy4Sd5JT6v0HPJVTImZEGZrhBPmn1TRccFI4t0Y7ky08dKOJXSTlPAOJx8Dh+BmyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MU/UkorE; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=TKY6qKqA2yGCzNJ9liwAcigL+CenaBpzoTbM5bvNBY6cy5+GglVt2zVNtRAb+kZrVxMuE3wsanKfUnq+TH+01NdN0tGErydwe3BDSvRBsXtBXNpOGshdqk34XRrrWkagPJij4Jg8tZCg5lAKafgb+53SssMN4w3YLRo96kzFSXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O+YSP4rZ; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=NQiHiWBYuLEjIBCwbtDawYA0OWXgtE0nlWIHtE9qJ/A=; b=MU/UkorEJtYCTL/69PWWpAlTQS
-	lJT1aQCWoVw57XnjyZJ0/P/XqTFLRedcJCU/f1ph8GVU+cS34ocBKwUyk7YDkboGQ1zN1L0hJ23+n
-	AxGrg6p5FVoU6pKjYlwxPQAqU8cSdK/N1A1JnJouGIYJEhw7/qa2ds+gGhv59Fhkvr986eXOI8CWU
-	ckgI4iliDeVkHKL8ZTJeK4hKJDMx+Mq6QwYwIgHV3WVVEc8Mol+cUeB9v+P+iolg18BqA7S/Qp5Zk
-	58aBWO3aRzO0sinW0PiM/q/9BZMU+1+jCAH0mR6wOp6E01O9xWbHa3+jkcMaB1A2bKkjezmhmQ1/h
-	CboY8POA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tpq1K-00000008Or0-3uVK;
-	Wed, 05 Mar 2025 14:46:50 +0000
-Date: Wed, 5 Mar 2025 06:46:50 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] f2fs: support F2FS_NOLINEAR_LOOKUP_FL
-Message-ID: <Z8hj2g_fj1zH1t_m@infradead.org>
-References: <20250303034606.1355224-1-chao@kernel.org>
- <20250303230644.GA3695685@google.com>
+	bh=ynGVQb1Gab/NZSFdpaegZt9vxG/19uFuTJm2C48LoMY=; b=O+YSP4rZHZyabtn+/U/Ee4CQNF
+	n2SQViwg4wpDx49cfrrKr9kB7XZ5rNEGFC/OAB+YfAU6Am7aAH55+ejwfGmu6WrjyI5FL2cKZgEMV
+	OZsOIypDRRMKg+i2dJe0bqMNNXTJLsC7dsD1BnFr3pbZXEPqoYkBR7+zYnPZVeCBv6w0SSlnc+cgl
+	oopafz282Rx6pdUjlPOQ6b1BzZYjctrbOaIJAvigyfUTWLgj3QepslLa5PpcbsU8mElWpjVqYFpjz
+	UBkGOtxKjOTCP2L1XCs7u8CCR6qmySzhS/VKW+SRBaA+1uLvd4JkpKpDlrVMXW/gVWCdyDHDCfTl8
+	rukoUh4A==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tpq5i-00000005hS0-1fzR;
+	Wed, 05 Mar 2025 14:51:23 +0000
+Date: Wed, 5 Mar 2025 14:51:22 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH] vboxsf: Convert to writepages
+Message-ID: <Z8hk6qw1KTQQp_s8@casper.infradead.org>
+References: <20241219225748.1436156-1-willy@infradead.org>
+ <Z780TsepBGDVZOKL@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,23 +60,17 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250303230644.GA3695685@google.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <Z780TsepBGDVZOKL@casper.infradead.org>
 
-On Mon, Mar 03, 2025 at 11:06:44PM +0000, Eric Biggers wrote:
-> > +/* used for FS_IOC_GETFLAGS and FS_IOC_SETFLAGS */
-> > +enum {
-> > +	F2FS_NOLINEAR_LOOKUP_FLAG = 0x08000000,
-> > +};
+On Wed, Feb 26, 2025 at 03:33:34PM +0000, Matthew Wilcox wrote:
+> On Thu, Dec 19, 2024 at 10:57:46PM +0000, Matthew Wilcox (Oracle) wrote:
+> > If we add a migrate_folio operation, we can convert the writepage
+> > operation to writepages.  Further, this lets us optimise by using
+> > the same write handle for multiple folios.  The large folio support here
+> > is illusory; we would need to kmap each page in turn for proper support.
+> > But we do remove a few hidden calls to compound_head().
 > 
-> FS_IOC_GETFLAGS and FS_IOC_SETFLAGS are not filesystem-specific, and the
-> supported flags are declared in include/uapi/linux/fs.h.  You can't just
-> randomly give an unused bit a filesystem specific meaning.
+> ping
 
-Eww, yes.  This needs to be reverted ASAP.
-
-And I'd like to repeat my reminder that we need to stop file systems
-(and f2fs is particularly bad for this) to stop just adding random
-uapis without review from linux-fsdevel and linux-api.
-
+ping
 
