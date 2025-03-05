@@ -1,358 +1,218 @@
-Return-Path: <linux-fsdevel+bounces-43200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43199-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D82FA4F3BC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 02:30:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A6AA4F362
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 02:20:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3286116F6F4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 01:30:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAD583A693C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Mar 2025 01:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F85502B1;
-	Wed,  5 Mar 2025 01:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076DD13D279;
+	Wed,  5 Mar 2025 01:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mKhta9J5"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Mu4oTEKE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31C81E871;
-	Wed,  5 Mar 2025 01:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B856136327
+	for <linux-fsdevel@vger.kernel.org>; Wed,  5 Mar 2025 01:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741138214; cv=none; b=G/TSGLV0b6dDQCwMtDESqmf1xf4w1DEgfuQSpSmwdRe4prPBP19iIBXpnTjKt8J6BOmmbJtXLB7BZ9T8jahLpKwQ7eRDTnMeb4jExwF8gg3twMUNCKhVc4nsAeX/zNL7cGsQ/9/P4iVCodvvA3n5GsSmamCDnCZ2q7F+1nr8v+w=
+	t=1741137592; cv=none; b=T/jjKOKcz7VcpUp12LJucDGWArSNmVDixuNKpY0MwJ2cuz3c5/uc+cjy2CZl8/STD324GuNfLzwLl3y6wwmbRW7/hOPjhdaZaxlvTLOQCkkr4/1z1hCExPZdUwn4d0AWgb9giHkJGqppZOODl0BzkUJLdjxW1tZiN5b9+Y8O3Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741138214; c=relaxed/simple;
-	bh=BAZpksIfudZLfG278fDh6U6XbgN0uYXIeEZSEL46VAk=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=m2JHRIqmatFM45IhslqHMkRmILVddxZpUY255rBT+vtMjjaN8GwESYd9jDegzQNDvOv/ibWNofgoPp1pMTCw1qrdt/v3Qi/EEwVF0aCl2f1aBsHe32z3GfIzhvg37M+pLgEhE+DOaM2KyAuVxN9+wVwq/nQYXHo7wqZY90OLLbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mKhta9J5; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22356471820so101435435ad.0;
-        Tue, 04 Mar 2025 17:30:12 -0800 (PST)
+	s=arc-20240116; t=1741137592; c=relaxed/simple;
+	bh=T1D0UqlZtbjIAEcYeH3bL+9/Rhwt5iKWzyArHVZ2rd0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ab4PXGzdcNvB4qqAJuJxICoVb0Q3TilM145+zWxwh0nWqu6FYdv+K04/9s7dOswMTpZfzsq6JDk8/dK6F8MB/nmxbLj7WNAEYMIazmz6EzMu1Zne5mRhRqo5CG4cBgYoQlbYzPDvVSbLalQUjDUZ5A2TLxN/BYK74sM3vBe/oO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Mu4oTEKE; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2239aa5da08so54306935ad.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Mar 2025 17:19:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741138212; x=1741743012; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=B4k85nBDmp9f5UqLIxemhwGOtFjz2nfNoZ338sAhLj4=;
-        b=mKhta9J53yWJkaYjGhPFA6/XZPbIVwCnKy/+vMp2QDZkHfkSm/6t0wly+nq89RnpW3
-         V+R8e/o1p0DZQX676DlCKUUxcPM4XGNS0f2kt4gP/kNjzSkOkI3x+hhNDngG6iITMVZl
-         OATJStn4MvbfmEGeUjFDBYfjPmh3WeKahbpQhfBydGsu/kXQmT+l49GBPEZI5VaW7hFd
-         h8Jj8QtvAPH4hX0yErTWG5MHbwgWlyzGxMUeNoloCXdi1OjHLsOxfxgFQUzJ4h293Iw1
-         LHJV+zj8S1973SSx6y5BfZZAJQ+rsqsL78xjpdoP1yQanPMwz+adIqxV8z9gggKQdW3/
-         Rx4Q==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1741137590; x=1741742390; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HDeGX06pM1RLaKTpFDMieK0IZgiOy+R0dUCo59PMS84=;
+        b=Mu4oTEKEXkk/fncXQPj12qTM7R0MliQhgEb20vxLu6lYkAlaEWQ2MFKejbygJKu0U6
+         dbtp4LpP9WNgpCPZQdAJemWdC5kZRwoIpVlpfnPZafESdgrfKcLsJrxWK8fkZ/58bcor
+         H7g1Dy444aKcCjzPi18DJSrLbdwRxeni5uGWR+/dVWZmOG7gDFMIItGJhMSsSRQdXi+o
+         M/UvGXgMqujoGKY2hA3TojI6cg5n2REwTqTngHZa2xwEoxcJZxLCb/PLY+cH2UabF34T
+         NYZO+Xim+icyfRce8F0B+TJh90q/zhN6YLK+FroyxkyItV5CLYv7U1Tw9bisWo7Fe6ml
+         SY5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741138212; x=1741743012;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B4k85nBDmp9f5UqLIxemhwGOtFjz2nfNoZ338sAhLj4=;
-        b=fBElnpby3cpyBMYq2pOVNT1kadXlrT6LTBoLb44VNTGrJ0vv4pYfwehwLvbkYJZ6pI
-         JDs1gxtMsfDPDwWjCofP9qRWStqhK2qoTpUq7etCUK1PQUo6EZnajmKuslk0FFI2RjM7
-         OaBUyQVAFVB6ErYN3tPSlePTlt/PuTI5+RsytoYATJuqZP2CKT71cAeuoP2WpeLVOP1g
-         86vYuYLs8i8kisrcRD1l05gVJ5dw18lfTTPtp/bSSMGHwArybFXv9cUTfSf/b1FEJ1rN
-         rlcSoRz8YJTR1lVR0vPQrt8T9lsyhyPgqS+gs6D2oezo+CDV6wB9EQefVzCi5hT+CCnk
-         UcHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWrn9vch0GM3D2Aim04Yeabc+v9I1eXjVCXU2AwfJUr2u1FNKXGOGgrB1Xt9DmulVbEd9paOvzBU7AH1clU@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvjFKo7GGARgztQcr1bvCT5K7WwYKiLWyJlP7iNqielWsRJKUe
-	vOyNFW1SlInnqeymEQ9lp4nKNmMv/2uAjtXRn3Pbdya0OJNu54o8
-X-Gm-Gg: ASbGncttwEkUMZtIc35+1UhD3cjdcRTRlE6ytbhLoszg7tzlIxfhkPnzvVsoMdlD6u/
-	UphP4Ju48jL6/m0mm/OVVdci0F1E9TMfnwdSAD4jlQurqAqJUMTae43tyzJQmSPPlMKYg6AiFI6
-	F8wEGUa6cGVPw9k43NoTl4j10Kd5WtPxT0UWGxs6iVcHb9+6L/7eHLM0bwPL60Dudxd/TLnXitw
-	mo2FmAJ5uMTMlDKR7vmtg18H80RDRJ9rr4z+zUz7jdiH7mfyBSJUPspEPmzF/hDboe6EYsMGmx0
-	Fx7YF1JWHgqDj1T/lNsxvRp+tHHA+o9XpUFqTg==
-X-Google-Smtp-Source: AGHT+IHd/xOJDKzMszmmJY8R65iDjlKcj/8EOOvgOxl+O6/QSou8JF83rpuUp+diePpRmx/NTiZytg==
-X-Received: by 2002:a05:6a00:3e04:b0:730:4c55:4fdf with SMTP id d2e1a72fcca58-73682bb37bemr1794349b3a.7.1741138211807;
-        Tue, 04 Mar 2025 17:30:11 -0800 (PST)
-Received: from dw-tp ([171.76.80.250])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734a003dcedsm11642378b3a.125.2025.03.04.17.30.09
+        d=1e100.net; s=20230601; t=1741137590; x=1741742390;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HDeGX06pM1RLaKTpFDMieK0IZgiOy+R0dUCo59PMS84=;
+        b=uLvF8zYOu+jpE9k5qdFGygRAQ7TYUnv+hhkG8iRvBp2f9dbduAHH+2xZhS74qNpJ0v
+         nAsXTUWnNO7eR6ZDxAvdAEzIOA8FyqZ5NdITLTogcTetarObhLxFFfg1F3Inc9cSPd5a
+         ThfNHALa1OZO1euRNgnyWPDYaWLqF0qe4oZiq5+y4IihRrDepLh1XHHbPHw/D9BnsanK
+         +6HueZJgWg9FKT96I2wZKOkX9QmsC+71NMvf3+MZiUL/uMpjo6VR5Tftk4uw9cz4/Bht
+         teovzca/6PK3GeO5linuJdbhf25G7bBfMGrOvWyl9qSGX/JAD1JmHn+K4wOuO22a4gxu
+         qYbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWRRj/jxWjIuMS+xsOPdIzGwWwCN+4+U4LIYn1y9eKhaMSUmNX6l1EL8oVBqTnZZxiaIhEcn0tedDybhlre@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz56nGGhvRyo3ghOKOGXpgtJXqCJjEySE4pxAZSowQB8vQ0TpZx
+	x4jJSvwVGatsBzvxXfyEwM2csH3Dy1vfcFiwYFpMaZHf+wvg7nRG36rj9wQ73bf0DD/l7wjYqur
+	g
+X-Gm-Gg: ASbGncuYsrKUXT+qyWE39QkvmTDjCTlV5aPNU25oy47Y3YC5rEpSHvEgaSkKQfMoNGX
+	7s04KUwpN9sOEMuqoiUb8YxzPTkVd9iI21uU5WnebzE0jkzF0yt05kj903/ZY/CevlIlkOdUDOg
+	wx7UhPrF4HAvaBBSLzGrbx1iEqToCEpsS7t9uHoUClVdiXTY5H/A9urNFoq/PQEMm5FbXD1/Cf3
+	NZLyu+kRji6GaS46w8fpjXdd6jZMRdA22uE4gKNGfL1pfAfoKvDLVIToK3tH4VKiZ8PIfT70QPk
+	dzE09hJPQYDXgQd6zgoe6h5eJrnfuAvmaCZ4JIE+4wWdBxXdoZBY+GfKZcxsUdNL4ZHC105BP28
+	LH6PAZC/BKA==
+X-Google-Smtp-Source: AGHT+IEYSEaRJWNjHT1mSMe9OLAaH/XQ2Im1sJS6hHV/lUkLx/BJl5WN3GSomkJPz7v2Wa1bAfkxZg==
+X-Received: by 2002:a05:6a20:9185:b0:1f3:2c55:8d95 with SMTP id adf61e73a8af0-1f349449752mr2066270637.8.1741137589615;
+        Tue, 04 Mar 2025 17:19:49 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7ddf242bsm10725070a12.13.2025.03.04.17.19.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 17:30:11 -0800 (PST)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v1 1/3] configure: xfs_io: Add support for preadv2
-In-Reply-To: <20250304175232.GB2803749@frogsfrogsfrogs>
-Date: Wed, 05 Mar 2025 06:36:05 +0530
-Message-ID: <87ikoo70ci.fsf@gmail.com>
-References: <cover.1741087191.git.ritesh.list@gmail.com> <046cc1b4dc00f8fb8997ec6ebedc9b3625f34c1c.1741087191.git.ritesh.list@gmail.com> <20250304175232.GB2803749@frogsfrogsfrogs>
+        Tue, 04 Mar 2025 17:19:49 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1tpdQI-00000008yUp-0BsL;
+	Wed, 05 Mar 2025 12:19:46 +1100
+Date: Wed, 5 Mar 2025 12:19:46 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
+	linux-xfs@vger.kernel.org, wu lei <uwydoc@gmail.com>
+Subject: Re: [PATCH v2 1/1] iomap: propagate nowait to block layer
+Message-ID: <Z8emslEolstG76A7@dread.disaster.area>
+References: <f287a7882a4c4576e90e55ecc5ab8bf634579afd.1741090631.git.asml.silence@gmail.com>
+ <Z8dsfxVqpv-kqeZy@dread.disaster.area>
+ <970ec89d-4161-41f4-b66f-c65ebd4bd583@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <970ec89d-4161-41f4-b66f-c65ebd4bd583@gmail.com>
 
-"Darrick J. Wong" <djwong@kernel.org> writes:
+On Tue, Mar 04, 2025 at 10:47:48PM +0000, Pavel Begunkov wrote:
+> On 3/4/25 21:11, Dave Chinner wrote:
+> > > @@ -374,6 +379,23 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+> > >   	if (!(dio->flags & (IOMAP_DIO_INLINE_COMP|IOMAP_DIO_CALLER_COMP)))
+> > >   		dio->iocb->ki_flags &= ~IOCB_HIPRI;
+> > > +	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua, atomic);
+> > > +
+> > > +	if (!is_sync_kiocb(dio->iocb) && (dio->iocb->ki_flags & IOCB_NOWAIT)) {
+> > > +		/*
+> > > +		 * This is nonblocking IO, and we might need to allocate
+> > > +		 * multiple bios. In this case, as we cannot guarantee that
+> > > +		 * one of the sub bios will not fail getting issued FOR NOWAIT
+> > > +		 * and as error results are coalesced across all of them, ask
+> > > +		 * for a retry of this from blocking context.
+> > > +		 */
+> > > +		if (bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS + 1) >
+> > > +					  BIO_MAX_VECS)
+> > > +			return -EAGAIN;
+> > > +
+> > > +		bio_opf |= REQ_NOWAIT;
+> > > +	}
+> > 
+> > Ok, so this allows a max sized bio to be used. So, what, 1MB on 4kB
+> > page size is the maximum IO size for IOCB_NOWAIT now? I bet that's
+> > not documented anywhere....
+> > 
+> > Ah. This doesn't fix the problem at all.
+> > 
+> > Say, for exmaple, I have a hardware storage device with a max
+> > hardware IO size of 128kB. This is from the workstation I'm typing
+> > this email on:
+> > 
+> > $ cat /sys/block/nvme0n1/queue/max_hw_sectors_kb
+> > 128
+> > $  cat /sys/block/nvme0n1/queue/max_segments
+> > 33
+> > $
+> > 
+> > We build a 1MB bio above, set REQ_NOWAIT, then:
+> > 
+> > submit_bio
+> >    ....
+> >    blk_mq_submit_bio
+> >      __bio_split_to_limits(bio, &q->limits, &nr_segs);
+> >        bio_split_rw()
+> >          .....
+> >          split:
+> > 	.....
+> >          /*
+> >           * We can't sanely support splitting for a REQ_NOWAIT bio. End it
+> >           * with EAGAIN if splitting is required and return an error pointer.
+> >           */
+> >          if (bio->bi_opf & REQ_NOWAIT)
+> >                  return -EAGAIN;
+> > 
+> > 
+> > So, REQ_NOWAIT effectively limits bio submission to the maximum
+> > single IO size of the underlying storage. So, we can't use
+> > REQ_NOWAIT without actually looking at request queue limits before
+> > we start building the IO - yuk.
+> > 
+> > REQ_NOWAIT still feels completely unusable to me....
+> 
+> Not great but better than not using the async path at all (i.e. executing
+> by a kernel worker) as far as io_uring concerned.
 
-> On Tue, Mar 04, 2025 at 05:25:35PM +0530, Ritesh Harjani (IBM) wrote:
->> preadv2() was introduced in Linux 4.6. This patch adds support for
->> preadv2() to xfs_io.
->> 
->> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
->> ---
->>  configure.ac          |  1 +
->>  include/builddefs.in  |  1 +
->>  io/Makefile           |  4 ++++
->>  io/pread.c            | 45 ++++++++++++++++++++++++++++---------------
->>  m4/package_libcdev.m4 | 18 +++++++++++++++++
->>  5 files changed, 54 insertions(+), 15 deletions(-)
->> 
->> diff --git a/configure.ac b/configure.ac
->> index 8c76f398..658117ad 100644
->> --- a/configure.ac
->> +++ b/configure.ac
->> @@ -153,6 +153,7 @@ AC_PACKAGE_NEED_URCU_H
->>  AC_PACKAGE_NEED_RCU_INIT
->>  
->>  AC_HAVE_PWRITEV2
->> +AC_HAVE_PREADV2
->
-> I wonder, will we ever encounter a C library that has pwritev2 and /not/
-> preadv2?
->
+I really don't care about what io_uring thinks or does. If the block
+layer REQ_NOWAIT semantics are unusable for non-blocking IO
+submission, then that's the problem that needs fixing. This isn't a
+problem we can (or should) try to work around in the iomap layer.
 
-Sure make sense. I will use Makefile to detect if we have support of
-HAVE_PWRITEV2 to also define HAVE_PREADV2 (instead of using autoconf).
+> It should cover a good
+> share of users, and io_uring has a fallback path, so userspace won't even
+> know about the error. The overhead per byte is less biting for 128K as well.
 
+That 128kb limit I demonstrated is not a fixed number. Stacking
+block devices (e.g. software RAID devices) can split bios at any
+sector offset within the submitted bio.
 
->>  AC_HAVE_COPY_FILE_RANGE
->>  AC_NEED_INTERNAL_FSXATTR
->>  AC_NEED_INTERNAL_FSCRYPT_ADD_KEY_ARG
->> diff --git a/include/builddefs.in b/include/builddefs.in
->> index 82840ec7..a11d201c 100644
->> --- a/include/builddefs.in
->> +++ b/include/builddefs.in
->> @@ -94,6 +94,7 @@ ENABLE_SCRUB	= @enable_scrub@
->>  HAVE_ZIPPED_MANPAGES = @have_zipped_manpages@
->>  
->>  HAVE_PWRITEV2 = @have_pwritev2@
->> +HAVE_PREADV2 = @have_preadv2@
->>  HAVE_COPY_FILE_RANGE = @have_copy_file_range@
->>  NEED_INTERNAL_FSXATTR = @need_internal_fsxattr@
->>  NEED_INTERNAL_FSCRYPT_ADD_KEY_ARG = @need_internal_fscrypt_add_key_arg@
->> diff --git a/io/Makefile b/io/Makefile
->> index 8f835ec7..f8b19ac5 100644
->> --- a/io/Makefile
->> +++ b/io/Makefile
->> @@ -69,6 +69,10 @@ ifeq ($(HAVE_PWRITEV2),yes)
->>  LCFLAGS += -DHAVE_PWRITEV2
->>  endif
->>  
->> +ifeq ($(HAVE_PREADV2),yes)
->> +LCFLAGS += -DHAVE_PREADV2
->> +endif
->> +
->>  ifeq ($(HAVE_MAP_SYNC),yes)
->>  LCFLAGS += -DHAVE_MAP_SYNC
->>  endif
->> diff --git a/io/pread.c b/io/pread.c
->> index 62c771fb..782f2a36 100644
->> --- a/io/pread.c
->> +++ b/io/pread.c
->> @@ -162,7 +162,8 @@ static ssize_t
->>  do_preadv(
->>  	int		fd,
->>  	off_t		offset,
->> -	long long	count)
->> +	long long	count,
->> +	int 		preadv2_flags)
->
-> Nit:       ^ space before tab.  There's a bunch more of thense, every
-> time a "preadv2_flags" variable or parameter are declared.
->
+For example: we have RAID5 witha 64kB chunk size, so max REQ_NOWAIT
+io size is 64kB according to the queue limits. However, if we do a
+64kB IO at a 60kB chunk offset, that bio is going to be split into a
+4kB bio and a 60kB bio because they are issued to different physical
+devices.....
 
-Ohk, sorry about that. Let me fix these in v2.
+There is no way the bio submitter can know that this behaviour will
+occur, nor should they even be attempting to predict when/if such
+splitting may occur.
 
->>  {
->>  	int		vecs = 0;
->>  	ssize_t		oldlen = 0;
->> @@ -181,8 +182,14 @@ do_preadv(
->>  	} else {
->>  		vecs = vectors;
->>  	}
->> +#ifdef HAVE_PREADV2
->> +	if (preadv2_flags)
->> +		bytes = preadv2(fd, iov, vectors, offset, preadv2_flags);
->> +	else
->> +		bytes = preadv(fd, iov, vectors, offset);
->> +#else
->>  	bytes = preadv(fd, iov, vectors, offset);
->> -
->> +#endif
->
-> Can we have the case that preadv2_flags!=0 and HAVE_PREADV2 isn't
-> defined?  If so, then there ought to be a warning about that.
->
+> The patch already limits the change to async users only, but if you're
+> concerned about non-io_uring users, I can try to narrow it to io_uring
+> requests only, even though I don't think it's a good way.
 
-That won't happen. Since case 'U' to take input flags is defined under
-#ifdef HAVE_PREADV2. So if someone tries to set preadv2_flags using -U
-when HAVE_PREADV2 is not true, it will go into default case where we
-will use exitcode 1 and print command_usage()
+I'm concerned about any calling context that sets IOCB_NOWAIT. I
+don't care if it's io_uring, AIO or a synchronous
+preadv2(RWF_NOWAIT) call: we still have the same issue that
+REQ_NOWAIT submission side -EAGAIN is only reported through IO
+completion callbacks.
 
+> Are you only concerned about the size being too restrictive or do you
+> see any other problems?
 
-> --D
->
+I'm concerned abou the fact that REQ_NOWAIT is not usable as it
+stands. We've identified bio chaining as an issue, now bio splitting
+is an issue, and I'm sure if we look further there will be other
+cases that are issues (e.g. bounce buffers).
 
-Thanks for the quick review. 
+The underlying problem here is that bio submission errors are
+reported through bio completion mechanisms, not directly back to the
+submitting context. Fix that problem in the block layer API, and
+then iomap can use REQ_NOWAIT without having to care about what the
+block layer is doing under the covers.
 
--ritesh
-
-
->>  	/* restore trimmed iov */
->>  	if (oldlen)
->>  		iov[vecs - 1].iov_len = oldlen;
->> @@ -195,12 +202,13 @@ do_pread(
->>  	int		fd,
->>  	off_t		offset,
->>  	long long	count,
->> -	size_t		buffer_size)
->> +	size_t		buffer_size,
->> +	int 		preadv2_flags)
->>  {
->>  	if (!vectors)
->>  		return pread(fd, io_buffer, min(count, buffer_size), offset);
->>  
->> -	return do_preadv(fd, offset, count);
->> +	return do_preadv(fd, offset, count, preadv2_flags);
->>  }
->>  
->>  static int
->> @@ -210,7 +218,8 @@ read_random(
->>  	long long	count,
->>  	long long	*total,
->>  	unsigned int	seed,
->> -	int		eof)
->> +	int		eof,
->> +	int 	preadv2_flags)
->>  {
->>  	off_t		end, off, range;
->>  	ssize_t		bytes;
->> @@ -234,7 +243,7 @@ read_random(
->>  				io_buffersize;
->>  		else
->>  			off = offset;
->> -		bytes = do_pread(fd, off, io_buffersize, io_buffersize);
->> +		bytes = do_pread(fd, off, io_buffersize, io_buffersize, preadv2_flags);
->>  		if (bytes == 0)
->>  			break;
->>  		if (bytes < 0) {
->> @@ -256,7 +265,8 @@ read_backward(
->>  	off_t		*offset,
->>  	long long	*count,
->>  	long long	*total,
->> -	int		eof)
->> +	int		eof,
->> +	int 	preadv2_flags)
->>  {
->>  	off_t		end, off = *offset;
->>  	ssize_t		bytes = 0, bytes_requested;
->> @@ -276,7 +286,7 @@ read_backward(
->>  	/* Do initial unaligned read if needed */
->>  	if ((bytes_requested = (off % io_buffersize))) {
->>  		off -= bytes_requested;
->> -		bytes = do_pread(fd, off, bytes_requested, io_buffersize);
->> +		bytes = do_pread(fd, off, bytes_requested, io_buffersize, preadv2_flags);
->>  		if (bytes == 0)
->>  			return ops;
->>  		if (bytes < 0) {
->> @@ -294,7 +304,7 @@ read_backward(
->>  	while (cnt > end) {
->>  		bytes_requested = min(cnt, io_buffersize);
->>  		off -= bytes_requested;
->> -		bytes = do_pread(fd, off, cnt, io_buffersize);
->> +		bytes = do_pread(fd, off, cnt, io_buffersize, preadv2_flags);
->>  		if (bytes == 0)
->>  			break;
->>  		if (bytes < 0) {
->> @@ -318,14 +328,15 @@ read_forward(
->>  	long long	*total,
->>  	int		verbose,
->>  	int		onlyone,
->> -	int		eof)
->> +	int		eof,
->> +	int 	preadv2_flags)
->>  {
->>  	ssize_t		bytes;
->>  	int		ops = 0;
->>  
->>  	*total = 0;
->>  	while (count > 0 || eof) {
->> -		bytes = do_pread(fd, offset, count, io_buffersize);
->> +		bytes = do_pread(fd, offset, count, io_buffersize, preadv2_flags);
->>  		if (bytes == 0)
->>  			break;
->>  		if (bytes < 0) {
->> @@ -353,7 +364,7 @@ read_buffer(
->>  	int		verbose,
->>  	int		onlyone)
->>  {
->> -	return read_forward(fd, offset, count, total, verbose, onlyone, 0);
->> +	return read_forward(fd, offset, count, total, verbose, onlyone, 0, 0);
->>  }
->>  
->>  static int
->> @@ -371,6 +382,7 @@ pread_f(
->>  	int		Cflag, qflag, uflag, vflag;
->>  	int		eof = 0, direction = IO_FORWARD;
->>  	int		c;
->> +	int 	preadv2_flags = 0;
->>  
->>  	Cflag = qflag = uflag = vflag = 0;
->>  	init_cvtnum(&fsblocksize, &fssectsize);
->> @@ -463,15 +475,18 @@ pread_f(
->>  	case IO_RANDOM:
->>  		if (!zeed)	/* srandom seed */
->>  			zeed = time(NULL);
->> -		c = read_random(file->fd, offset, count, &total, zeed, eof);
->> +		c = read_random(file->fd, offset, count, &total, zeed, eof,
->> +						preadv2_flags);
->>  		break;
->>  	case IO_FORWARD:
->> -		c = read_forward(file->fd, offset, count, &total, vflag, 0, eof);
->> +		c = read_forward(file->fd, offset, count, &total, vflag, 0, eof,
->> +						 preadv2_flags);
->>  		if (eof)
->>  			count = total;
->>  		break;
->>  	case IO_BACKWARD:
->> -		c = read_backward(file->fd, &offset, &count, &total, eof);
->> +		c = read_backward(file->fd, &offset, &count, &total, eof,
->> +						  preadv2_flags);
->>  		break;
->>  	default:
->>  		ASSERT(0);
->> diff --git a/m4/package_libcdev.m4 b/m4/package_libcdev.m4
->> index 4ef7e8f6..5a1f748a 100644
->> --- a/m4/package_libcdev.m4
->> +++ b/m4/package_libcdev.m4
->> @@ -16,6 +16,24 @@ pwritev2(0, 0, 0, 0, 0);
->>      AC_SUBST(have_pwritev2)
->>    ])
->>  
->> +#
->> +# Check if we have a preadv2 libc call (Linux)
->> +#
->> +AC_DEFUN([AC_HAVE_PREADV2],
->> +  [ AC_MSG_CHECKING([for preadv2])
->> +    AC_LINK_IFELSE(
->> +    [	AC_LANG_PROGRAM([[
->> +#define _GNU_SOURCE
->> +#include <sys/uio.h>
->> +	]], [[
->> +preadv2(0, 0, 0, 0, 0);
->> +	]])
->> +    ], have_preadv2=yes
->> +       AC_MSG_RESULT(yes),
->> +       AC_MSG_RESULT(no))
->> +    AC_SUBST(have_preadv2)
->> +  ])
->> +
->>  #
->>  # Check if we have a copy_file_range system call (Linux)
->>  #
->> -- 
->> 2.48.1
->> 
->> 
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
