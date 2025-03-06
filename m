@@ -1,94 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-43378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD89A55427
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 19:09:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 195BAA554D8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 19:24:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACCE117AF19
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 18:07:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85CAB3B6D12
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 18:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B3526B08B;
-	Thu,  6 Mar 2025 18:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE5327003C;
+	Thu,  6 Mar 2025 18:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l56sak6R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281DC26AA92
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Mar 2025 18:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACC526FDB8;
+	Thu,  6 Mar 2025 18:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741284306; cv=none; b=WzZtFUdQ/lT6hJ6gbH0VS/ku8rS9TlBYWrRCI/Xkyy4WVXqFlALPnWWg76l+kolGt34WkoQRMMwrnIbWNlJS+8dMDCS2Uaoz6rultkyK7OCX1ULnwyLGgR3J0ZIeIjuf9Xvk+vpR5OpDRozSLqdWFv+3t6DH2IuyTpTgejzFQMU=
+	t=1741285173; cv=none; b=rbyzKOUWf/cjWYE/ALX+KV7rM57SFgrVD0f4AsZ2nT9ob/OgsZu+CJ/jKx30M4RYuo1tiJ6laTWTh4H2PbykoaWxtsZHUd+bDh//fYuj4n1bAbqoog0+0wgokasdZ/F06hZhzdE6MdWUR6F5BfDKTqpCEp6IEE4GnkgBRPfmjGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741284306; c=relaxed/simple;
-	bh=HnOiXdIEGgi0ajA46Ao4q0OHXUgw4cbdKL3Zt6BVsoQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UupQXXjDoIVvTm/7Emr6236ZA9GsqaBP1OmmN42qr4Dq4QeDDVsSfZ+ioZ64RFbiQHjZByZ0mGeCQkEsNe2ONpD0MI57dDhT6gtE0j2IFHjnV9LRMq5fqkB5mxfEh55S91+2wVF6W4zAk4ocsTNCaOZFhF8iUoGROuGrdVlmdxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-112-92.bstnma.fios.verizon.net [173.48.112.92])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 526I4Rql015568
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 6 Mar 2025 13:04:27 -0500
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 419262E010B; Thu, 06 Mar 2025 13:04:27 -0500 (EST)
-Date: Thu, 6 Mar 2025 13:04:27 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: Ethan Carter Edwards <ethan@ethancedwards.com>,
-        Sven Peter <sven@svenpeter.dev>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
-        "asahi@lists.linux.dev" <asahi@lists.linux.dev>,
-        "ernesto@corellium.com" <ernesto@corellium.com>
-Subject: Re: [RFC] apfs: thoughts on upstreaming an out-of-tree module
-Message-ID: <20250306180427.GB279274@mit.edu>
-References: <rxefeexzo2lol3qph7xo5tgnykp5c6wcepqewrze6cqfk22leu@wwkiu7yzkpvp>
- <d0be518b-3abf-497a-b342-ff862dd985a7@app.fastmail.com>
- <upqd7zp2cwg2nzfuc7spttzf44yr3ylkmti46d5udutme4cpgv@nbi3tpjsbx5e>
- <795A00D4-503C-4DCB-A84F-FACFB28FA159@live.com>
+	s=arc-20240116; t=1741285173; c=relaxed/simple;
+	bh=fXtogJSChtDb1rz81OzDvFP7wp6LsIf9MgM1XgXZkH0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=YEzlggj51UkJKQTLLscT9j7TgmGHFCtQFexsKN41S62NcRjniB7l/H2WFYFK6zFBdoVPkdo8JV7k9ki7jYkqvWQ8Lj+w8svGaJ4ryXiWzt9IBN/q2P6YglLbSBS4lzu59Kg02KlK2mxKSdE/+276zOmB3eCJJOwqQj3iZRfeuls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l56sak6R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A653EC4CEE0;
+	Thu,  6 Mar 2025 18:19:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741285173;
+	bh=fXtogJSChtDb1rz81OzDvFP7wp6LsIf9MgM1XgXZkH0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=l56sak6RgS725gNApT5nBp4QNMBzkeqYL0+ERapl/Y0GS5T6RzJ1zCJjYAX8SBJnX
+	 0s4tMXPljT3Ozit8U/IsPvI+ake+xQM0AV+I2+dwEyxQpkmr1F8F0m9ySf+21wATp/
+	 bUzn1nN1XKZptpf1/5EjGG/NVkCykpKBJU9B+Ei/R/Mfi9TjlwIydvIFBjKAn9mm3d
+	 S0oMr4T3boppCedNXuv7XX0LnO3eM8175SSgbVNmk6yo6j8GlA/mE1DoGfuJigYt8Z
+	 OF/x0RPYtmf6CoEOWcX/pCs5E+GoRAeHKAdVCRjpd5z2ZSDzvFmHOuS/UkKs0FEiH2
+	 MP1CgkAsKS1fA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 344DE380CEE6;
+	Thu,  6 Mar 2025 18:20:08 +0000 (UTC)
+Subject: Re: [GIT PULL] vfs fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250306-vfs-fixes-290b2e462d9c@brauner>
+References: <20250306-vfs-fixes-290b2e462d9c@brauner>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250306-vfs-fixes-290b2e462d9c@brauner>
+X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.14-rc6.fixes
+X-PR-Tracked-Commit-Id: d385c8bceb14665e935419334aa3d3fac2f10456
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 7f0e9ee5e44887272627d0fcde0b19a675daf597
+Message-Id: <174128520675.1698438.1406642121034950213.pr-tracker-bot@kernel.org>
+Date: Thu, 06 Mar 2025 18:20:06 +0000
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <795A00D4-503C-4DCB-A84F-FACFB28FA159@live.com>
 
-On Wed, Mar 05, 2025 at 07:23:55AM +0000, Aditya Garg wrote:
-> 
-> This driver tbh will not ‘really’ be helpful as far as T2 Macs are
-> concerned.
-> 
-> On these Macs, the T2 Security Chip encrypts all the APFS partitions
-> on the internal SSD, and the key is in the T2 Chip. Even proprietary
-> APFS drivers cannot read these partitions.  I dunno how it works in
-> Apple Silicon Macs.
+The pull request you sent on Thu,  6 Mar 2025 11:13:28 +0100:
 
-How this workings on Apple Silicon Macs is described in this article:
+> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.14-rc6.fixes
 
-   https://eclecticlight.co/2022/04/23/explainer-filevault/
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/7f0e9ee5e44887272627d0fcde0b19a675daf597
 
-It appears such a driver will also be useful if there are external
-SSD's using APFS.  (Although I suspect many external SSD's would end
-up using some other file system that might be more portable like VFS.)
+Thank you!
 
-In terms of making it work with the internal SSD, it sounds like Linux
-would need to talk to the secure enclave on the T2 Security Chip and
-convince it to upload the encryption key into the hardware in-line
-encryption engine.  I don't know if presenting the user's password is
-sufficient, or if there is a requirement that the OS prove that it is
-"approved" software that was loaded via a certified boot chain, which
-various secure enclaves (such as TPM) are wont to do.
-
-	       		      	      - Ted
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
