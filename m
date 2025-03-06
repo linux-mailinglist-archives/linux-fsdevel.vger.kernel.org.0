@@ -1,93 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-43369-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B35AEA54FBF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 16:56:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60649A55021
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 17:05:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E91D188FD6F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 15:56:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 897A03A7902
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 16:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C747C21129A;
-	Thu,  6 Mar 2025 15:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IXg6ZxML"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5A8212FAA;
+	Thu,  6 Mar 2025 16:05:02 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95867210F4D
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Mar 2025 15:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595E6211A02
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Mar 2025 16:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741276559; cv=none; b=ECf2vEXQmRDOKzBSquOR0BEuNVMTOVpWrRwtn0RKRJTZzKfc6wABBcKnlne01NYPZqfnbPHdkKKXty39DjgBklLiEztl+I8m+m6xEpBGzupf1SeY6Q7w72T09Om2jtH0t4u+4ubR3F1GcPoDoUuvqTuaIDDoWWzDCg7+9xc1BuI=
+	t=1741277102; cv=none; b=nZkO2TSHM8e47CPCCgubXPle3rXFINB9FXXKvGHome7hNLTlAZjxOA6bboB4okrg1HXzYcGgv+Lf06j51B6Wn2WwOqF89VlqKcb0W2RDF4K42MH70JbWGhNKptwvPTIw4S58/AxsGEv4XNN6V5dAme/9GKEsBoJNMpq8NcA863g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741276559; c=relaxed/simple;
-	bh=kObqhbINUHnq58Ts0ynAFMe+oPoTJu0RezAjeLWYy8g=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=f3pJhn1nwTQxnVkRdzcC/1VTYTrRj/kQfnVbKtCbQfrcm8tbLXIJu2kC39MAWU5rQA30o6PSo715zMrt6R6sgsE1ClD6ds6qKTa89FhbIg9Q1HCs+W7k6OtGcxuzXsakYT8PPitYIFrN9je0xtaoQG/lFw4sDPj71eTnQK14ppY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IXg6ZxML; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741276556;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8NHhi27aZByFhZvPPNchTEignqTE3P+TbomjiQklZyg=;
-	b=IXg6ZxMLGYYQ1tXJckhB4cTSaI1bKZvb9ZSc10s8lxkUj2O9gvnR4wLBv1afgcUTgNxiZN
-	bafbJsDVrFxVR/GUWl0pwVn/7WyJkYYqnjelTcid1omOOqaK+TKOoq+dwmT+3PCtpXAcsF
-	+bnS3UoM3o8igiYTTR5COt4J7XKhC/Y=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-683-VLCruU2AOeutzI0ShvquKw-1; Thu,
- 06 Mar 2025 10:55:43 -0500
-X-MC-Unique: VLCruU2AOeutzI0ShvquKw-1
-X-Mimecast-MFC-AGG-ID: VLCruU2AOeutzI0ShvquKw_1741276542
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 737BF1956083;
-	Thu,  6 Mar 2025 15:55:42 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.44.32.200])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 563571955DCE;
-	Thu,  6 Mar 2025 15:55:38 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CAO8a2Sg2b2nW6S3ctS+H0F1Owt=rAkKCyjnFW3WoRSKYD-sSDQ@mail.gmail.com>
-References: <CAO8a2Sg2b2nW6S3ctS+H0F1Owt=rAkKCyjnFW3WoRSKYD-sSDQ@mail.gmail.com> <3989572.1734546794@warthog.procyon.org.uk> <4170997.1741192445@warthog.procyon.org.uk>
-To: Alex Markuze <amarkuze@redhat.com>
-Cc: dhowells@redhat.com, Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-    Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
-    Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    Gregory Farnum <gfarnum@redhat.com>,
-    Venky Shankar <vshankar@redhat.com>,
-    Patrick Donnelly <pdonnell@redhat.com>
-Subject: Re: Ceph and Netfslib
+	s=arc-20240116; t=1741277102; c=relaxed/simple;
+	bh=cOoGxtcebT3u8VgggsX55aYM+nUJo9Wlfp8eesUGY+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R0fe85EoyTSwsDVzWzG0AZn4hIxvHX/CgZz3YxZWLtcIx3AdYFyKKWc4HZZ8bRIQJcD+jj8lygORGkXYuZwgf+rnEVvNswzVWWqxm/cdw3t5ABC13gwvlIGO2M0f7yv9VMkfgesS77QQokEM4Kr8g8fbN9NzC8Ik6133JR3S72M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-112-92.bstnma.fios.verizon.net [173.48.112.92])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 526FxGlE006357
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 6 Mar 2025 10:59:16 -0500
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 3D1372E010B; Thu, 06 Mar 2025 10:59:16 -0500 (EST)
+Date: Thu, 6 Mar 2025 10:59:16 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.com>,
+        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v2 2/2] ext4: protect ext4_release_dquot against freezing
+Message-ID: <20250306155916.GA279274@mit.edu>
+References: <20241121123855.645335-1-ojaswin@linux.ibm.com>
+ <20241121123855.645335-3-ojaswin@linux.ibm.com>
+ <Z8lBGaJGnM3SZZ-g@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <132457.1741276536.1@warthog.procyon.org.uk>
-Date: Thu, 06 Mar 2025 15:55:36 +0000
-Message-ID: <132458.1741276536@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8lBGaJGnM3SZZ-g@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 
-Does ceph_write_iter() actually need to drop the inode I/O lock in order to
-handle EOLDSNAPC?  I'm wondering if I can deal with it in the netfs request
-retry code - but that means dealing with it whilst the I/O lock is held.
+On Thu, Mar 06, 2025 at 12:00:49PM +0530, Ojaswin Mujoo wrote:
+> On Thu, Nov 21, 2024 at 06:08:55PM +0530, Ojaswin Mujoo wrote:
+> > Protect ext4_release_dquot against freezing so that we
+> > don't try to start a transaction when FS is frozen, leading
+> > to warnings.
+> > 
+> > Further, avoid taking the freeze protection if a transaction
+> > is already running so that we don't need end up in a deadlock
+> > as described in
+> > 
+> >   46e294efc355 ext4: fix deadlock with fs freezing and EA inodes
+> > 
+> > Suggested-by: Jan Kara <jack@suse.cz>
+> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> 
+> Hey Ted,
+> 
+> Just a ping, I think you might have missed this patch. Let me know if
+> anything else is needed from my side.
 
-David
+Yes, I did miss this patch; thanks for the reminder. It looks good
+and I've added it to my tree.
 
+				- Ted
 
