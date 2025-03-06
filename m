@@ -1,125 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-43355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A755FA54C35
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 14:30:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FB72A54C8D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 14:49:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DA9A1897563
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 13:30:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7187617521F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 13:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139BD20F097;
-	Thu,  6 Mar 2025 13:29:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA24B140E3C;
+	Thu,  6 Mar 2025 13:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aM6z2hVK"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jKi0mvBo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAD820E6FD;
-	Thu,  6 Mar 2025 13:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60D433FD
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Mar 2025 13:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741267777; cv=none; b=Un+X/q1ZqyZOUBje1BfB68Ic0jldWmy1VNjAIzeQ8RCn7vQIXjplOiPxgQN5UaHT0Hbc/m00zJcel1c8Fty4LHY+b+AvVW0ub9xP84Amogt4R/s975pYnnhqzUTF9j9AE5fcKrTqKjbc48ukQNEHbgTMFvp9TRm9m7AK5KuuJ8s=
+	t=1741268929; cv=none; b=lU0Z+wK5I1XXnMqj1zyT1h5vRSDbel89YRJzifltgRle4Kf8WMOkUsD3rUIDrhZ4pzg/iLNXzEAzLjdihH8fLBhkDEdRkQ7AsFVHzZ8LE5ktB2rf3bV5ICCl3dDCeo6tRsWI6Wq3AccVVl6JQ0mkR4b1S8aYiFxinbsQmb/9+D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741267777; c=relaxed/simple;
-	bh=tUjGMr2PNjVqFTHi5r1KwQNDuGEFlQEAFC+BFKW+nzQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jnabF0qHtan2wHsZQV3iOo4yUtE3NXOLHXSNdtHFmfXjrKgrqPaWmdgLbPK78hJeCDJiI7BIR5J6u4uHQvIOZ5wW6YVljoJ4cNiNFTnbgV1sL+KltQZDstu4u7x+D4Kijhmoois9hGodcBCwadHvcJmyPzv/Fouc5BiVWfNCfdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aM6z2hVK; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-223378e2b0dso8410725ad.0;
-        Thu, 06 Mar 2025 05:29:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741267775; x=1741872575; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pLwkTL/PfTbIkV/GSELW9k3O0aYAoOxcDfSxjEQxtSI=;
-        b=aM6z2hVKrpRag7OqQoPNqrALc43gMp5PSkE75u8eC/p8tnEK8TkjnnM+OkyXQzq5FT
-         M/3UGVqQaD4/x05J+mxNSDGwPNaWOPKQV7FeRAWjRzXK6XcW9gy4oepOeKIpxR3oSX80
-         BriEWNlvqk+VAxyOtL29O+TM7D4/dHOIXeVO8LKMxR6gJdUkMkRtrvmW1rLzYugLHIp2
-         Mimw8yN5a08l3U39QkFyY6DwabUN33Ij2G6NZOp+PVkFimEQSlvPb4sSVzoXPpKOXpWR
-         p4zHmmLwDmoeUqVUZzBmOEc78ibZy+6L93P14jtwbTZJqQUCMP78Rqi7sqR93IejOVaF
-         tGZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741267775; x=1741872575;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pLwkTL/PfTbIkV/GSELW9k3O0aYAoOxcDfSxjEQxtSI=;
-        b=wr9Bn9LFdfdyd4dDGDHUggkDIszVlW8MNp2uSiVmNlp294sdtKJlSQJh+7FhzGVarh
-         906CD730NLIkBkY2+hB7KTrP4a/TEpFC2roMjdS5LbhldaXSeFoGbjYdHwC7YGZSc7JO
-         CjwciHE8tOmYTQ9M+tHV4saRHWrCvcOXsY3zc0rvU7wEUqgzjaMKSt7Jva3SDpBiku0J
-         ge7xG27nzVcME72l3efnpjhrRGG+mxs0WhxT95jDpXUP3ggb+4aTLwNjIuItOARExJgb
-         VeRdVSvL2DBTChP0JYSlPiOFJQGY3qb5lM+i/qsok19hXYvXEaKkfmrPBlPnAg28LWUN
-         atcw==
-X-Forwarded-Encrypted: i=1; AJvYcCXB3w10qj2x2xc5gBcKsUt9ouHWaMRVtI4Wlzi7uW1YEmnTJTONNNNsbRGd6yf1QA1eMvM011YLwb1u9ms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTPipwJWRSV4KbWLFGHIm6VHjmGjPnyIQUra0U3tb0l4rO04nJ
-	HnuWyDvbZN9USi7AgXjJBgvblteaUi9EX81GeqFqGBjentWVRANq
-X-Gm-Gg: ASbGncsTbRVj0qGl7B1Ua7LN0aduLQxXzoiWZvaQqkPPB2dgF25N/vbqRXUDdOJqmNk
-	IxaOYVPqfLxthrnXZfhTlezA5nOnHJ+DbZKY87r/bi6BkIZAwLmkebat8X6p1sUs39tj9Tm5vSN
-	0a2gy5teDQLTWfamLDq9o8bAAMKjEe8VJQHQV/AyDB/zY88pxgToiRdjEcbmixGLHy49hau11Pb
-	Vkg4GnyYtmQwJqYLkftvK9jHf8L9ZXy315S+eIz0GuZE2gNo97ytkqq+A0Zxozruy/owU5QsRWG
-	anMhtKqyhchv85DerGGRo0zo981JanQ2uQT7k5toUI+VXINLDJAk3CS4K5uF0H0ye424Ja8B5az
-	HEOWbt+QUa00BC1CmI3LWWxL2
-X-Google-Smtp-Source: AGHT+IG5wdj3cx1mmSazMo2hkXpLtYe62gqdLlh0v/Gd5mh3lnljdLXxXUoIT5mERWJy2vY8nYRVaw==
-X-Received: by 2002:a17:902:ec89:b0:224:76f:9e59 with SMTP id d9443c01a7336-224076fa0damr65766745ad.10.1741267775079;
-        Thu, 06 Mar 2025 05:29:35 -0800 (PST)
-Received: from localhost.localdomain ([159.226.94.129])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a91985sm11881705ad.194.2025.03.06.05.29.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 05:29:34 -0800 (PST)
-From: Zhiyu Zhang <zhiyuzhang999@gmail.com>
-To: phillip@squashfs.org.uk,
-	akpm@linux-foundation.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zhiyu Zhang <zhiyuzhang999@gmail.com>
-Subject: [PATCH] squashfs: Fix invalid pointer dereference in squashfs_cache_delete
-Date: Thu,  6 Mar 2025 21:28:55 +0800
-Message-Id: <20250306132855.2030-1-zhiyuzhang999@gmail.com>
-X-Mailer: git-send-email 2.39.1.windows.1
+	s=arc-20240116; t=1741268929; c=relaxed/simple;
+	bh=+o6WkqIB49XPWTR3gth0aOKsZCX8yZfrhX1MeQVcCuI=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=HluMFgBMkyLsbf8eZLAw2J+HpUcXOsfAmTUfLj408ZZ+ZhBO37yqHsFQUFtq3pgfffmMw6NiPHhj3lD0p3MLZz1rWcq96LgU4tn8sdPsxqnwzGUhUCkWE26TnM/mBJWo3AnrN0p0Wqfi10MJW/PL9D9hr+DvcNWstevs2irBIyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jKi0mvBo; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741268926;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UOJn3sLvhIcVBzGvoXPLfCNWG4W5Sr8ulGI85ofafqY=;
+	b=jKi0mvBoTDRqHek1IiwWgdREao/WOFyy6U363uuehv8LaB+q2i+yMkN8MT/4wC93jPgTSc
+	8nXm6C9ZK3ItQ439rkaPkBWm9od6maPqlS9khsmN2XbRHU4WrSIx1Ke54M6fWk5XS3y1ik
+	WhvggFu4bRTeQGCtugw9RcDXxGafQfo=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-303-wRgdpZh3OQWfdXVYjM5HZg-1; Thu,
+ 06 Mar 2025 08:48:37 -0500
+X-MC-Unique: wRgdpZh3OQWfdXVYjM5HZg-1
+X-Mimecast-MFC-AGG-ID: wRgdpZh3OQWfdXVYjM5HZg_1741268916
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3C1921956053;
+	Thu,  6 Mar 2025 13:48:36 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.44.32.200])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 50DE11955DCE;
+	Thu,  6 Mar 2025 13:48:31 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CAO8a2SjC7EVW5VWCwVHMepXfYFtv9EqQhOuqDSLt9iuYzj7qEg@mail.gmail.com>
+References: <CAO8a2SjC7EVW5VWCwVHMepXfYFtv9EqQhOuqDSLt9iuYzj7qEg@mail.gmail.com> <3989572.1734546794@warthog.procyon.org.uk> <4170997.1741192445@warthog.procyon.org.uk> <CAO8a2Sg2b2nW6S3ctS+H0F1Owt=rAkKCyjnFW3WoRSKYD-sSDQ@mail.gmail.com> <4177847.1741206158@warthog.procyon.org.uk>
+To: Alex Markuze <amarkuze@redhat.com>
+Cc: dhowells@redhat.com, Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+    Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
+    Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    Gregory Farnum <gfarnum@redhat.com>,
+    Venky Shankar <vshankar@redhat.com>,
+    Patrick Donnelly <pdonnell@redhat.com>
+Subject: Re: Is EOLDSNAPC actually generated? -- Re: Ceph and Netfslib
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <127229.1741268910.1@warthog.procyon.org.uk>
+Date: Thu, 06 Mar 2025 13:48:30 +0000
+Message-ID: <127230.1741268910@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-When mounting a squashfs fails, squashfs_cache_init() may return an error
-pointer (e.g., -ENOMEM) instead of NULL. However, squashfs_cache_delete()
-only checks for a NULL cache, and attempts to dereference the invalid
-pointer. This leads to a kernel crash (BUG: unable to handle kernel paging
-request in squashfs_cache_delete).
+Alex Markuze <amarkuze@redhat.com> wrote:
 
-This patch fixes the issue by checking IS_ERR(cache) before accessing it.
+> Yes, that won't work on sparc/parsic/alpha and mips.
+> Both the Block device server and the meta data server may return a
+> code 85 to a client's request.
+> Notice in this example that the rc value is taken from the request
+> struct which in turn was serialised from the network.
+> 
+> static void ceph_aio_complete_req(struct ceph_osd_request *req)
+> {
+> int rc = req->r_result;
 
-Fixes: 49ff29240ebb ("squashfs: make squashfs_cache_init() return ERR_PTR(-ENOMEM)")
-Reported-by: Zhiyu Zhang <zhiyuzhang999@gmail.com>
-Closes: https://lore.kernel.org/linux-fsdevel/CALf2hKvaq8B4u5yfrE+BYt7aNguao99mfWxHngA+=o5hwzjdOg@mail.gmail.com/
-Tested-by: Zhiyu Zhang <zhiyuzhang999@gmail.com>
-Signed-off-by: Zhiyu Zhang <zhiyuzhang999@gmail.com>
----
- fs/squashfs/cache.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The term "ewww" springs to mind :-)
 
-diff --git a/fs/squashfs/cache.c b/fs/squashfs/cache.c
-index 4db0d2b0aab8..181260e72680 100644
---- a/fs/squashfs/cache.c
-+++ b/fs/squashfs/cache.c
-@@ -198,7 +198,7 @@ void squashfs_cache_delete(struct squashfs_cache *cache)
- {
- 	int i, j;
- 
--	if (cache == NULL)
-+	if (IS_ERR(cache) || cache == NULL)
- 		return;
- 
- 	for (i = 0; i < cache->entries; i++) {
--- 
-2.34.1
+Does that mean that EOLDSNAPC can arrive by this function?
+
+David
 
 
