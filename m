@@ -1,116 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-43389-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 376B4A55C25
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 01:46:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0363A55AE4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 00:25:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7099F16FBCF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 00:46:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35621177680
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 23:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1A639ACC;
-	Fri,  7 Mar 2025 00:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5DC27CCED;
+	Thu,  6 Mar 2025 23:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=delugo.co.za header.i=@delugo.co.za header.b="fdszT5lU"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="h6Qjbsm4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing42.cpt4.host-h.net (outgoing42.cpt4.host-h.net [196.40.103.37])
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECC61E868
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 00:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=196.40.103.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B745259C9F
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Mar 2025 23:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741308338; cv=none; b=NSvEA9bSAu4DffllajzCw8hsBAICU9lWAI763e4JUfAbB/yTCb6uqb47PK5tR/bqj9fgMfeUMLTplbPePgKu0NCs4KwtHIy5j0lu8V6ljyqk8enE6qs819gK3rKNqo1NANa5Wd7eKUjd7+DzoczAAq3be9Lezn7vLD1lzvbIQF4=
+	t=1741303549; cv=none; b=iYpNT8wTABpecL5nzE7fg68OGl2ja+O2RWYDpgP79SWE/OSjLZ57X77NP+nPUxRH0clUEa96Zu5hnixTkwnYQlOXOpwcrYTCp6/ogFxDDDy6O7LKzT66gdMHm3e1U+2Rgcimm47AzrCzRgxfjHeqzhHsjgFj6tS+23h08bv9CrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741308338; c=relaxed/simple;
-	bh=UOdy1uc1Ja6Ouzx9Gp3orqw2OLpxN4Hd+lHG4CKFzvE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TyZ3OGkJSI91LGzJZ2BqamnST2YQ0KDElNdEwa4pCMcAGVTD8API8Im4hJNH09YrYu56kbzHWF0U1ktLRziBT8AnuE/flWt8MgHmJTVV4kxBIkcg7x8GqJzKrDLTNO5DWZZ4P60IBU4cLYJpiU5BxUjeIvav7DkDzkGln8XusBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=delugo.co.za; spf=pass smtp.mailfrom=delugo.co.za; dkim=pass (2048-bit key) header.d=delugo.co.za header.i=@delugo.co.za header.b=fdszT5lU; arc=none smtp.client-ip=196.40.103.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=delugo.co.za
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=delugo.co.za
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=delugo.co.za; s=xneelo; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-ID:Date:Subject:To:From:Reply-To:sender:cc:bcc:
-	in-reply-to:references; bh=UOdy1uc1Ja6Ouzx9Gp3orqw2OLpxN4Hd+lHG4CKFzvE=; b=fd
-	szT5lUJSy7DxtACUwRmO8H23azA77vhHtGA6WHrXfUgGWdnXSTUKUkd39vfxQeZtNG8j8/vpxI1Tt
-	95QSmT24qm7gXtuE/ut6nJn6cAqfHERn86oEdGZqyhq0kLXRmKPyDCHQOB4izuP6o62Ma5/26dpQj
-	zjX0c/H+eIu8mMub0TvZxjQKv7F15pjV/RiI5SkACMcCU3tRnQXCwx4lkXv8V5TTQwL+JnAEBg4el
-	lNe5u66MQFGmc1Na34UBc7auUStArax+SgcQTbmx6Z3n3PeIx9vK9SEAcbEncdhcCPwHObuEVfKuN
-	z8nM8zdbbPN3i6y0maBhWAeWAyWFOlbw==;
-Received: from www46.cpt3.host-h.net ([197.221.14.46])
-	by antispam7-cpt4.host-h.net with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <orders@delugo.co.za>)
-	id 1tqK5n-003lTM-08
-	for linux-fsdevel@vger.kernel.org; Fri, 07 Mar 2025 00:53:28 +0200
-Received: from [104.192.5.240] (helo=delugo.co.za)
-	by www46.cpt3.host-h.net with esmtpsa (TLS1.2:ECDHE_SECP521R1__RSA_SHA512__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <orders@delugo.co.za>)
-	id 1tqK5m-0000000DoEu-1M5b
-	for linux-fsdevel@vger.kernel.org;
-	Fri, 07 Mar 2025 00:53:26 +0200
-Reply-To: barry@investorstrustco.net
-From: Barry <orders@delugo.co.za>
-To: linux-fsdevel@vger.kernel.org
-Subject: Re: The Business Loan/financing.1
-Date: 06 Mar 2025 22:53:25 +0000
-Message-ID: <20250306223012.7D27E715C4A0FABD@delugo.co.za>
+	s=arc-20240116; t=1741303549; c=relaxed/simple;
+	bh=pdN6FrzsJA5IzqA1/486ZuvCyc3XEYEHvWiUVKeLFiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mEwlEz4c+uBvocGnxTs6ka5pI1mBvGisKR+yPrFRoscDslVBJGN5BH9Z3htXgdQI9+v405B/qI+JJjWkGaQDFgZ8wnktJOmRCqSi5lC27nLsmCsRtTo4YYozr37O8JccDQnhqOvDpiCaCTpr+/3b9I1JEpE+mQFHqDjlGPtPIfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=h6Qjbsm4; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 6 Mar 2025 18:25:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741303534;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=ngSD2sW6trZI0t+VBXHdmR5g+7y+JC2jU9Hbm6ucJZE=;
+	b=h6Qjbsm4Vm0+xwEjGGaEtk74NOtLl3FaaUSTW14GpdmTXGW5mdRI+IIoNxV8K3C1ERY4Mq
+	ST77wGs+OLx/69btU/alzJ4iI8GxR2zWjNJ0W2W5u58upPHeqcScB9Pm4Msq9W7q6W96li
+	Ce2b3trjW7AvdRbOwWvu9Cix4KzmplI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs fixes for 6.14-rc6
+Message-ID: <ww7iqi2mto3fvyhrgpyxcdzcndcr527evvzktb5xp56o32lwg4@zlvkrwuiki6i>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Authenticated-Sender: orders@delugo.co.za
-X-Virus-Scanned: Clear
-X-SpamExperts-Domain: delugo.co.za
-X-SpamExperts-Username: 
-Authentication-Results: host-h.net; auth=pass (login) smtp.auth=@delugo.co.za
-X-SpamExperts-Outgoing-Class: unsure
-X-SpamExperts-Outgoing-Evidence: Combined (0.75)
-X-Recommended-Action: accept
-X-Filter-ID: Pt3MvcO5N4iKaDQ5O6lkdGlMVN6RH8bjRMzItlySaT+5DhM0jw86KsbkaGfFMuQCPUtbdvnXkggZ
- 3YnVId/Y5jcf0yeVQAvfjHznO7+bT5zyE0bo4oPct+bDQVYek+zXGWfva1JMizjpICfXk17zgio/
- xMM0hxORRmMMI7DUTwhVA9SPcL/W0vcwYrsq7FSl5g+sHZmT3CLVmxntdIVybTJYNmSEo5h4A8mB
- EQGQFHTOfdaDOdBDzkNFcw6wiPPKjdSdKcvSgkth/gRtMjdr8nTrWHnISf4pBNVoEYOHEuhQjgNL
- hnE6LCVa09fPSMLwzYS69kWBtyjohdIfAyfx0Iq36YELusVp6zmtkp3fm8ndx5QS1wGtE3dw5kR1
- xA9P5kbV9R37OxW/QKNPRzlK0m7EdPKvbRAIxZtm8n/jc7R4UKCObeQdNllr+FgloJnxjjF8n6wp
- WHihaGjoqMVQpDEi7ZakWkzmXGSGRv47yoeuqr0aikOvJA+DuzeF4b+ym3AhG426mliYkCHBZpOg
- oqc4uCQ1hIibn+MrIDYy2WBZvd1k7AMVUvw4r/dmrv4vMEE6KEyh19rc7LZU5nlp0w2QEetkvH00
- /xmn6oF5z8skuB4fLNdsm49znGEOwW1RyaT+fhnmPmZ+OUuV5BM6eyy5Vo6xOiF9lxkCbdmQZuQe
- XtwnM4mcbWysr2YMYYoYDEzAcTQ+ZJgH1Z1+3b83AfWsQEEhDkKSc2GS9e4VPWvxpEs8sWmhpCJq
- IKaaP6UNsV+DkDiP1EOo5xXzAYM8DnoUCRtiibNtRcSkfQsV9kzYkCTxc1wWpG5TMsRZ+NKh3yVA
- kqJMXGMZ5q3RC4mcsR9BkbZwFIR9qzhTBqH6CZcLPO/oW5PPS0V7f+hYV6Kp7bMVBkO4mg45odS6
- 9JVpMf4DRJlNLZJ8G17BPcd8PXxtALl6tE9e8KCaN2ryngAy/NgUZ8j9YaZpO3ZlH0zrBe37qhsk
- voQoNmsEmMLwFvJD+mcRIVLlniKBCxlkw4KsNsj0ZNx9ROADUXTdQZTyOc+Zhifch8RvCUcoN2t+
- NpJ8Q8WvagIl5rtD2DDRik+5
-X-Report-Abuse-To: spam@antispamquarantine.host-h.net
-X-Complaints-To: abuse@antispammaster.host-h.net
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
+The following changes since commit eb54d2695b57426638fed0ec066ae17a18c4426c:
 
-My name is Barry at Investment Consult, we are a consultancy and
-brokerage Firm specializing in Growth Financial Loan and joint
-partnership venture. We specialize in investments in all Private
-and public sectors in a broad range of areas within our Financial
-Investment Services.
+  bcachefs: Fix truncate sometimes failing and returning 1 (2025-02-26 19:31:05 -0500)
 
- We are experts in financial and operational management, due
-diligence and capital planning in all markets and industries. Our
-Investors wish to invest in any viable Project presented by your
-Management after reviews on your Business Project Presentation
-Plan.
+are available in the Git repository at:
 
- We look forward to your Swift response. We also offer commission
-to consultants and brokers for any partnership referrals.
+  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-03-06
 
- Regards,
-Barry
-Senior Broker
+for you to fetch changes up to 8ba73f53dc5b7545776e09e6982115dcbcbabec4:
+
+  bcachefs: copygc now skips non-rw devices (2025-03-06 18:15:01 -0500)
+
+----------------------------------------------------------------
+bcachefs fixes for 6.14-rc6
+
+- Fix a compatibility issue: we shouldn't be setting incompat feature
+  bits unless explicitly requested
+- Fix another bug where the journal alloc/resize path could spuriously
+  fail with -BCH_ERR_open_buckets_empty
+- Copygc shouldn't run on read-only devices: fragmentation isn't an
+  issue if we're not currently writing to a given device, and it may not
+  have anywhere to move the data to.
+
+----------------------------------------------------------------
+Kent Overstreet (3):
+      bcachefs: Don't set BCH_FEATURE_incompat_version_field unless requested
+      bcachefs: Fix bch2_dev_journal_alloc() spuriously failing
+      bcachefs: copygc now skips non-rw devices
+
+ fs/bcachefs/journal.c  | 59 +++++++++++++++++++++++++++-----------------------
+ fs/bcachefs/movinggc.c | 25 ++++++++++-----------
+ fs/bcachefs/super-io.c | 24 +++++++++++++-------
+ fs/bcachefs/super-io.h | 11 ++++------
+ 4 files changed, 64 insertions(+), 55 deletions(-)
 
