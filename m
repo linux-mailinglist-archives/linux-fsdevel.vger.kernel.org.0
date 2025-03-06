@@ -1,112 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-43345-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43346-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E43BEA549E2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 12:47:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71485A549E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 12:47:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74F2D3B4A77
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 11:43:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 043FB1674AD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 11:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E378320AF71;
-	Thu,  6 Mar 2025 11:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3508020A5D5;
+	Thu,  6 Mar 2025 11:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZehCEko"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="e0cWLcGf";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="4eGzXEAi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB8720F066
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Mar 2025 11:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039B3204C28;
+	Thu,  6 Mar 2025 11:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741261291; cv=none; b=P30ZIjH3faORTUmWBO+5ADzrKd/0oaqP8ev++YfXaNskc4zD/4xrWRA2WO/yY0Z4aLpQ9EukYo3QVigP3wfD0s6BNTW9CFeG2KKSuJoYkpCzCuA/Ubml0Yr3bOBGL35QISHck3x9U6e6oNOSdZiBeSSMxDWHngVsgxeR1blV4IQ=
+	t=1741261569; cv=none; b=l/j6tPvqIFZ2O7IylI5sDJpZuJuDMYwGGGy2R+vajXnDNI7XokeDuBflOpga+FSwpOEXcTR6mGjoKuSczAMe8CYqllGA6Gs+HgfRb8LU4+1A4Xpd6XUaLW2QtsmMY2pJ4L8dH3Z9aOltUdC1ePt6V8gBcF/K0w+c04jMgxIu1FI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741261291; c=relaxed/simple;
-	bh=3yKKVrsqzuaFgFZH8A7Xj9mBAHLg2AHkJR+xzYZ5iJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BAhMCQBk20q0vvnlr93KqmkrGP4nE4xlLwMsCNAIswCJXBnUdE7+xd1FJ69q9jwvTRv4ZwG7NjW1gj1qHxxJjJ/maTGPoGd7IpQWCdv+LtA9UFm/tdEdwoaZOAfHLIwE/tq5AXsdqymq1iELkVdZA8WgWssS1h/Y+zEH5t5Z2k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZehCEko; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DD4EC4CEE0;
-	Thu,  6 Mar 2025 11:41:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741261290;
-	bh=3yKKVrsqzuaFgFZH8A7Xj9mBAHLg2AHkJR+xzYZ5iJA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ZZehCEko5KSOgA8mU1foySGSNEpwocj6uJ0ira6T5Qj1dFz705qNFLWeMha33w65G
-	 gsPORD94J7qwhQOAqjlwjk0/jKM92MYzc5ajE+Dv8S6XDgO6v/ePX0LfwmcYiu4SVU
-	 pZQS+8keENRc+HFUIHnKUXXkzevh8HqNga2fzK9CiXuKp3Exip3fJqjDXGje7Jg+nO
-	 IXsd36NZ5uYi2Xl7yal/DKTlMqAhEwfGhx8ZOf+QGgQVcsbDLQiDZIgL4QBni1kHXc
-	 Caa6cxYHp0cFgzdutkjHN+WCM8ZkyiOI5gAnxL7gJmauc6qhMKBS4HoRizEPh6j2+5
-	 10ZoeSBzgLc+A==
-Date: Thu, 6 Mar 2025 12:41:26 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
-	Lennart Poettering <lennart@poettering.net>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
-	Mike Yuan <me@yhndnzj.com>
-Subject: PIDFD_THREAD behavior for thread-group leaders
-Message-ID: <nhoaiykqnoid3df3ckmqqgycbjqtd2rutrpeat25j4bbm7tbjl@tpncnt7cp26n>
+	s=arc-20240116; t=1741261569; c=relaxed/simple;
+	bh=fikk4OfJh8Re4s/tiwifNRI4+LYO1cbB0cZq/iJcH98=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mzpAs9wql3DGJHHs2cYOxYbIU4FoV8bI08Jd94U14CeypoO1MkoT5w06kD21dlYBUl3zzEJuI4r/lg+KSy879BAF7+H09lDZiRNnfcWFXVdol0sgZlj8KppTElyvEQ2Yx6P1EQ2hy9FX94JG26kaXccfy+gh5ysn8VNJSGK2+kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=e0cWLcGf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=4eGzXEAi; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id D0FDE11400A5;
+	Thu,  6 Mar 2025 06:46:02 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-12.internal (MEProxy); Thu, 06 Mar 2025 06:46:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1741261562;
+	 x=1741347962; bh=AwuIB9uYaByewoRdOFYSOUa6qNsebM75Udoj90U9UyE=; b=
+	e0cWLcGfap7y1aixSDuw1NCqvGLFJT9Id3/NrZ7ZuLecWwvgpzLtQrtTyw2oGW05
+	yqFnR06UE5EKxO5Khxsfu+qPznruujwwa5Jyx9RQkb77G2TZ/3ni8UlY52voqJmN
+	ByC9D03rLcx0aPCZ/CZ7VERAZNNiFIqqiozKz4kXv2G95Z+xB0v0Iwc0YRHvjzTG
+	oG6RS3g9svr+9VJ66TFCj8gqIuwqilojaKnUFp40bCiDErMvx5ZOiJOTLIBsfhzX
+	GTRkm086GYzcPRnKCI4uM9u9lhHvFHN37UDburonqHMTBePEJkefOGB72C2dIpnu
+	YpX2p6L1j7vDY6cezT3/sQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741261562; x=
+	1741347962; bh=AwuIB9uYaByewoRdOFYSOUa6qNsebM75Udoj90U9UyE=; b=4
+	eGzXEAiw0n4QhXiU6jmXG0x/u/ZgJbZ3z0avKgnLb2I2X+keTSbg0P27TgGfKV8E
+	7MlJnT9RBZvCXDWBEfKOIIemps+Rv3prtB05N3Psa07Gof/2TRhLocIHaPJRV/wu
+	kcX5dT9FUhzIN3TWGPMlqGsczeNZPEu7EFhh+t+eknjfFwPCQcDCHNAVWZn1bEDq
+	4dcYR/WszSYSGYYw6e+kvZjR40JhDOp9axG7ZP3lhCoqYGlgScWVvruStYidQmIM
+	neTvzaDYnV4A2fTOtxIuO0R4LuxHwv5LK/3u4iZF6M+lijSO4p5GFmi5hiT3dqVq
+	FK5ZqS/Uob4Hl37YmM45w==
+X-ME-Sender: <xms:-YrJZz5AhsFappgCSBYCXMBBZuwcIWDLo_Q_kba0MDaHKeNWg4LnfA>
+    <xme:-YrJZ44q_0hzv1qj8UrEELtCP5yyR5Bc7tCfGQpyNn0Aya91ucDLDr8NJ6ztJgLgJ
+    2syOXCjc-BwofQt>
+X-ME-Received: <xmr:-YrJZ6cKKatnvNzXvUvAAV13Ljn5tP69MUckZR-eGaiuGv0jfrD0mr1qxuTDAStZM4mzQviWZBHBJE4TvSb8hqvg2kjkDwOV2QOaWpp_iXTOPgpWMbCk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdejieekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
+    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvg
+    hrnhgurdgtohhmqeenucggtffrrghtthgvrhhnpeehhfejueejleehtdehteefvdfgtdel
+    ffeuudejhfehgedufedvhfehueevudeugeenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggp
+    rhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehluhhishesih
+    hgrghlihgrrdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdp
+    rhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtohepkhgvrhhnvghlqdguvghvsehighgrlhhirgdrtghomh
+X-ME-Proxy: <xmx:-YrJZ0L_4qgQkerP7KX4a9c0aUEct_rHS5Mao0EONqjlkrpi0vDeEw>
+    <xmx:-YrJZ3K_F6NR7NND4DsTVChHwNsRBE9NtZvZNVbJBJUi1PH0kDQvYQ>
+    <xmx:-YrJZ9yLG6Fcuv2QuYtmvzu_ZYzPp0f-mfM0_nEeEp25MPzS3llgUg>
+    <xmx:-YrJZzLGz4HDHNdv05Xg_HGDsSb9N4N2qL8LHkdKPAV7of-fg0IsWw>
+    <xmx:-orJZ9js3wKYjuBuf_d4rpqXb9KrEIkMGbtFPDQk3W4OAWPKej06NqRS>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 6 Mar 2025 06:46:00 -0500 (EST)
+Message-ID: <1dc28f9d-c453-42f4-8edb-1d5c8084d576@bsbernd.com>
+Date: Thu, 6 Mar 2025 12:45:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fuse: fix possible deadlock if rings are never
+ initialized
+To: Luis Henriques <luis@igalia.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-dev@igalia.com
+References: <20250306111218.13734-1-luis@igalia.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <20250306111218.13734-1-luis@igalia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Oleg,
 
-I've been thinking about the multi-threaded exec case where a
-non-thread-group leader task execs and assumes the thread-group leaders
-struct pid.
 
-Back when we implemented support for PIDFD_THREAD we ended up with the
-decision that if userspace holds:
+On 3/6/25 12:12, Luis Henriques wrote:
+> When mounting a user-space filesystem using io_uring, the initialization
+> of the rings is done separately in the server side.  If for some reason
+> (e.g. a server bug) this step is not performed it will be impossible to
+> unmount the filesystem if there are already requests waiting.
+> 
+> This issue is easily reproduced with the libfuse passthrough_ll example,
+> if the queue depth is set to '0' and a request is queued before trying to
+> unmount the filesystem.  When trying to force the unmount, fuse_abort_conn()
+> will try to wake up all tasks waiting in fc->blocked_waitq, but because the
+> rings were never initialized, fuse_uring_ready() will never return 'true'.
+> 
+> Fixes: 3393ff964e0f ("fuse: block request allocation until io-uring init is complete")
+> Signed-off-by: Luis Henriques <luis@igalia.com>
+> ---
+>  fs/fuse/dev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 7edceecedfa5..2fe565e9b403 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -77,7 +77,7 @@ void fuse_set_initialized(struct fuse_conn *fc)
+>  static bool fuse_block_alloc(struct fuse_conn *fc, bool for_background)
+>  {
+>  	return !fc->initialized || (for_background && fc->blocked) ||
+> -	       (fc->io_uring && !fuse_uring_ready(fc));
+> +	       (fc->io_uring && fc->connected && !fuse_uring_ready(fc));
+>  }
+>  
+>  static void fuse_drop_waiting(struct fuse_conn *fc)
+> 
 
-pidfd_leader_thread = pidfd_open(<thread-group-leader-pid>, PIDFD_THREAD)
+Oh yes, I had missed that.
 
-that exit notification is not strictly defined if a non-thread-group
-leader thread execs: If poll is called before the exec happened, then an
-exit notification may be observed and if aftewards no exit notification
-is generated for the old thread-group leader. Of if exit for the old
-thread-group leader was observed but poll is called again then it would
-block again.
+Reviewed-by: Bernd Schubert <bschubert@ddn.com>
 
-I was wondering why the following snippet wouldn't work to ensure that
-PIDFD_THREAD pidfds for thread-group leaders wouldn't be woken with
-spurious exits:
-
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 9916305e34d3..b79ded1b3bf5 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -745,8 +745,11 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
-        /*
-         * sub-thread or delay_group_leader(), wake up the
-         * PIDFD_THREAD waiters.
-+        *
-+        * The thread-group leader will be taken over by the execing
-+        * task so don't cause spurious wakeups.
-         */
--       if (!thread_group_empty(tsk))
-+       if (!thread_group_empty(tsk) && (tsk->signal->notify_count >= 0))
-                do_notify_pidfd(tsk);
-
-        if (unlikely(tsk->ptrace)) {
-
-Because that would seem more consistent to me. The downside would be
-that if userspace performed a series of multi-threaded exec for
-non-thread-group leader threads then waiters wouldn't get woken. But I
-think that's probably ok.
-
-To handle this case we could later think about whether we can instead
-start generating a separate poll (POLLPRI?) event when exec happens.
-
-I'm probably missing something very obvious why that won't work.
-
-Christian
 
