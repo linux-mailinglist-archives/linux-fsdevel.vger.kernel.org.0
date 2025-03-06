@@ -1,252 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-43313-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43314-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69ABFA540FA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 04:05:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C3B8A541F0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 06:11:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93E0016AC6D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 03:05:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E6E0169D79
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 05:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD12D18DF89;
-	Thu,  6 Mar 2025 03:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A9719D891;
+	Thu,  6 Mar 2025 05:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="RhWqiidL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="b2JHio1A"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i88gzM5F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from flow-a5-smtp.messagingengine.com (flow-a5-smtp.messagingengine.com [103.168.172.140])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3718E71750;
-	Thu,  6 Mar 2025 03:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080C37E9;
+	Thu,  6 Mar 2025 05:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741230317; cv=none; b=lbm/XMVzYJjh2WDld8Sob93vo9pliQFxh+kf8onv1w7cOAaCBp/gyP86Fd+iPSyw4+bc7UXeeHS+UVTUzo/AXQtTd6Xv9dhmICpD/AQrVBWaWOc1dNugS1+PqaLT7nJ8+N+pzcbE8sQ+tg94Qv7lpCc3TNNNxqHX1vhfnz8ypF4=
+	t=1741237858; cv=none; b=iVpJoiOgnjG4NLVZTo14ylNTDguCxn2Esjx4PRR0PLpzzBq4aOHAeQkuFXdU3ZdjWtMTi4hr10IIki66SZsfzdoW8WKKG0f6j/B7X7jS77Zxe6tiJVbmPcGmXF2GJ4q8dJguM3FZrp+9V9ZXpTXdrlhJWj6id9QWrZHcslQwz0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741230317; c=relaxed/simple;
-	bh=Pxwyzri2GM2yUHUgbYv3Xp1eV72YcYuVv2N42169ACM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S7b9C6dRQKvpr7mmqle6JNbbmS1CtAGTivX2f7tGjw9KVGBqb9ra0wm/NP/e1stuP/fDY9HctPUmJXc1LqA5ot7PbR9J3Zmx4ZBhfBD5q3krjwkBtd2+pD7+YjuWskYtk3QhsNcwGBv4yGdKZOJCai7zfQ9YhfJpuArv287lVOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=RhWqiidL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=b2JHio1A; arc=none smtp.client-ip=103.168.172.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailflow.phl.internal (Postfix) with ESMTP id 282FC201CA0;
-	Wed,  5 Mar 2025 22:05:14 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Wed, 05 Mar 2025 22:05:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1741230314;
-	 x=1741233914; bh=RV6FGVU5EOhEOsaf3C+TNkQPc3d03MQkNh9/s6KmRAE=; b=
-	RhWqiidLc3gF08m6v3BILp4u0ieOBjpHpxoWQimzo7ohCj2HVHm0znYzZlbsug8H
-	doXU8xcrfnxWr1GNvmEgz5ZVryMEt90JyhUY97sV0cb7c8HWXccPXB/cYAt2gToZ
-	MM8SlJFcCHcR4u5Keculyek8yDyNq3Aj3Vkd4xKBlZzpOCiQvcO46btRQRDMQTCT
-	9D+u9Fs9EN5son27tLFc9Rt0rKPFFEqG5gGUni8M7J9Jc6Z5z7mVeLng3DptFFhf
-	vLMhjKyn9rX8SzGZ2rb+1s33Vqf36bX8brtpgBUkBhauScdKc1kuMFdPbYN5Xf8Y
-	fRhX4T2t82L7epNcvFsNsw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741230314; x=
-	1741233914; bh=RV6FGVU5EOhEOsaf3C+TNkQPc3d03MQkNh9/s6KmRAE=; b=b
-	2JHio1AFI0Z4nKJFT1VgUB4eEFjssulSQqbSnOnNPk3O6JjBe70ty8B8YRTYbd4V
-	dyjSRAJGu9+uIc2nVRVHyAHFKP0trwV3AlNPFrgFeTqW2IvInMC688YMKaSEk12h
-	+WPBJJzdhhIykkdvmlHjz8qhFJAc+FYVDJx1zTcgl/UrOlbUp9qENeDGD1207Uoa
-	hc4QItHNRqCcaL0Z6b7PMlun1YFHvyh9KRSvDSLbUxWalnpEY6x/FreSFr0TJOTp
-	/r9NaJLIVZ3bHU0xZyuucZmI0S/UChVsX1hpKCWhzE/aKPr2iZ6hK3rxQcf7lJO6
-	AIYcoFOhgeGEpfG+NsixQ==
-X-ME-Sender: <xms:6RDJZ7hJZlsyOa6wwd9nkpdYsGPL9MNCeCQo44ZvYgla1ik1Uj_nig>
-    <xme:6RDJZ4DPXp4FeiKsnyvtCm1z3LgugFMXoaLPxK6DKs02q6hrlH9YKbZZexfZFivix
-    89fMcKnUDz_iIPZlMQ>
-X-ME-Received: <xmr:6RDJZ7GxK949goqpO6J9jdQji878udN7ed-oxYBdZzKb7yhFkGuodys9GDh48BHUWzmyr9FtVzOpZAhMfx3deNX4UVJfPrw8oaLDGq5K-Tdr3pfp5WTy9WHQ9eI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdeiiedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddt
-    vdejnecuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhrgh
-    eqnecuggftrfgrthhtvghrnhepudekvefhgeevvdevieehvddvgefhgeelgfdugeeftedv
-    keeigfeltdehgeeghffgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopeekpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopehmihgtseguihhgihhkohgurdhnvghtpdhrtg
-    hpthhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdprhgtphhtthhopehjrggtkhes
-    shhushgvrdgtiidprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulh
-    gvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghmihhrjeefihhlsehg
-    mhgrihhlrdgtohhmpdhrtghpthhtoheprhgvphhnohhpsehgohhoghhlvgdrtghomhdprh
-    gtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtohepthihtghhohesthihtghhohdrphhiiiiirg
-X-ME-Proxy: <xmx:6RDJZ4QaT2xkkR60vUK8Kdq3pR5VQmPsjDR8j25tClMSL4CxkSOMcQ>
-    <xmx:6RDJZ4ymdFUY6kfOm6uQoNqKO2FaYvt-dID7GN1MRqPquvbcqrIKow>
-    <xmx:6RDJZ-5NQ6KyJ-Bc3NeO65x5OgGibVrtuIHZnAfOd2PCxmg0xAIqqw>
-    <xmx:6RDJZ9yTsTx2x79eUf52Yhj4zckIXaU799LKuWnkBQUK6iEU55YPJQ>
-    <xmx:6hDJZ3rEJqf_ld5PzwHfRRBIpnYOMcAD0edfJUv97Qh43LXUAHPt_rBL>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 5 Mar 2025 22:05:11 -0500 (EST)
-Message-ID: <fbb8e557-0b63-4bbe-b8ac-3f7ba2983146@maowtm.org>
-Date: Thu, 6 Mar 2025 03:05:10 +0000
+	s=arc-20240116; t=1741237858; c=relaxed/simple;
+	bh=4DbueHlttFV8uEm6cha8MpMRQjUVM93gk8BRNUSWEk4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zit/9ZMNVgrhT4LuFeJsY/ShgvmtRlorT0AUzBlom/ts9YrgZnsT6xZmMgxsJexWL4aM9P5vrrzRCtqFlDW2XEZyYCKl6Do7aj7Ai2oCxiBL8BAk5iEcd84V3HbU1Z9dDu+tQP2ySdH6SBzTWZmxEWuCkCvXEQZl0Q4+mbpqB6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=i88gzM5F; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=XST+jheb705ZIJsJQQajySkT5tEWK7OqP/Yr2rYjQZc=; b=i88gzM5F9CHlNSXhYSF3Tg+OBk
+	gP3SH4qseRy7Hnw+Uoix0oDZSbCOeYKzIuADYKD/p+muY6mZaDl+0V8DTj8TepAyIryfbzMj/VkQD
+	+myqIK1SG80bEr6iQmWG01YFOR1U0nbvT+80auQANjWrt9uz1+9Ni0OCe6aCLxqRAu8faM7hGyLu2
+	Om2zOqTPVCleHOs8qoVcvXBfH0D5J/NZmagFYMLMo9v9ht5Y+d+hJ4uOVpCrwYZ8qV837G/TQo07b
+	LOmps4qOHTvGwKi1cmzyjr8V8FLLm1U0WEe1vrq3vkcHi7bK+KHjAPd0gApTGslYGkf9kGwBu8Bv5
+	eiE5X8fw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tq3VT-00000006qKX-1UEm;
+	Thu, 06 Mar 2025 05:10:51 +0000
+Date: Thu, 6 Mar 2025 05:10:51 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Luka <luka.2016.cs@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	linux-fsdevel@vger.kernel.org
+Subject: Potential Linux Crash: WARNING in __getblk_slow in Linux kernel
+ v6.13-rc5
+Message-ID: <Z8kuWyqj8cS-stKA@casper.infradead.org>
+References: <CALm_T+3j+dyK02UgPiv9z0f1oj-HM63oxhsB0JF9gVAjeVfm1Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 5/9] Define user structure for events and responses.
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Jan Kara <jack@suse.cz>, linux-security-module@vger.kernel.org,
- Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>,
- linux-fsdevel@vger.kernel.org, Tycho Andersen <tycho@tycho.pizza>
-References: <cover.1741047969.git.m@maowtm.org>
- <cde6bbf0b52710b33170f2787fdcb11538e40813.1741047969.git.m@maowtm.org>
- <20250304.eichiDu9iu4r@digikod.net>
-Content-Language: en-US, en-GB
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <20250304.eichiDu9iu4r@digikod.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALm_T+3j+dyK02UgPiv9z0f1oj-HM63oxhsB0JF9gVAjeVfm1Q@mail.gmail.com>
 
-On 3/4/25 19:49, Mickaël Salaün wrote:
-> On Tue, Mar 04, 2025 at 01:13:01AM +0000, Tingmao Wang wrote:
-[...]
->> +	/**
->> +	 * @cookie: Opaque identifier to be included in the response.
->> +	 */
->> +	__u32 cookie;
+On Thu, Mar 06, 2025 at 10:54:13AM +0800, Luka wrote:
+> Dear Linux Kernel Experts,
 > 
-> I guess we could use a __u64 index counter per layer instead.  That
-> would also help to order requests if they are treated by different
-> supervisor threads.
-
-I don't immediately see a use for ordering requests (if we get more than 
-one event at once, they are coming from different threads anyway so 
-there can't be any dependencies between them, and the supervisor threads 
-can use timestamps), but I think making it a __u64 is probably a good 
-idea regardless, as it means we don't have to do some sort of ID 
-allocation, and can just increment an atomic.
-
->> +};
->> +
->> +struct landlock_supervise_event {
->> +	struct landlock_supervise_event_hdr hdr;
->> +	__u64 access_request;
->> +	__kernel_pid_t accessor;
->> +	union {
->> +		struct {
->> +			/**
->> +			 * @fd1: An open file descriptor for the file (open,
->> +			 * delete, execute, link, readdir, rename, truncate),
->> +			 * or the parent directory (for create operations
->> +			 * targeting its child) being accessed.  Must be
->> +			 * closed by the reader.
->> +			 *
->> +			 * If this points to a parent directory, @destname
->> +			 * will contain the target filename. If @destname is
->> +			 * empty, this points to the target file.
->> +			 */
->> +			int fd1;
->> +			/**
->> +			 * @fd2: For link or rename requests, a second file
->> +			 * descriptor for the target parent directory.  Must
->> +			 * be closed by the reader.  @destname contains the
->> +			 * destination filename.  This field is -1 if not
->> +			 * used.
->> +			 */
->> +			int fd2;
+> Hello!
 > 
-> Can we just use one FD but identify the requested access instead and
-> send one event for each, like for the audit patch series?
-
-I haven't managed to read or test out the audit patch yet (I will do), 
-but I think having the ability to specifically tell whether the child is 
-trying to move / rename / create a hard link of an existing file, and 
-what it's trying to use as destination, might be useful (either for 
-security, or purely for UX)?
-
-For example, imagine something trying to link or move ~/.ssh/id_ecdsa to 
-/tmp/innocent-tmp-file then read the latter. The supervisor can warn the 
-user on the initial link attempt, and the shenanigan will probably be 
-stopped there (although still, being able to say "[program] wants to 
-link ~/.ssh/id_ecdsa to /tmp/innocent-tmp-file" seems better than just 
-"[program] wants to create a link for ~/.ssh/id_ecdsa"), but even if 
-somehow this ends up allowed, later on for the read request it could say 
-something like
-
-	[program] wants to read /tmp/innocent-tmp-file
-	    (previously moved from ~/.ssh/id_ecdsa)
-
-Maybe this is a bit silly, but there might be other use cases for 
-knowing the exact details of a rename/link request, either for 
-at-the-time decision making, or tracking stuff for future requests?
-
-I will try out the audit patch to see how things like these appears in 
-the log before commenting further on this. Maybe there is a way to 
-achieve this while still simplifying the event structure?
-
+> I am a security researcher focused on testing Linux kernel
+> vulnerabilities. Recently, while testing the v6.13-rc5 Linux kernel,
+> we encountered a crash related to the mm kernel module. We have
+> successfully captured the call trace information for this crash.
 > 
->> +			/**
->> +			 * @destname: A filename for a file creation target.
->> +			 *
->> +			 * If either of fd1 or fd2 points to a parent
->> +			 * directory rather than the target file, this is the
->> +			 * NULL-terminated name of the file that will be
->> +			 * newly created.
->> +			 *
->> +			 * Counting the NULL terminator, this field will
->> +			 * contain one or more NULL padding at the end so
->> +			 * that the length of the whole struct
->> +			 * landlock_supervise_event is a multiple of 8 bytes.
->> +			 *
->> +			 * This is a variable length member, and the length
->> +			 * including the terminating NULL(s) can be derived
->> +			 * from hdr.length - offsetof(struct
->> +			 * landlock_supervise_event, destname).
->> +			 */
->> +			char destname[];
+> Unfortunately, we have not been able to reproduce the issue in our
+> local environment, so we are unable to provide a PoC (Proof of
+> Concept) at this time.
 > 
-> I'd prefer to avoid sending file names for now.  I don't think it's
-> necessary, and that could encourage supervisors to filter access
-> according to names.
->
+> We fully understand the complexity and importance of Linux kernel
+> maintenance, and we would like to share this finding with you for
+> further analysis and confirmation of the root cause. Below is a
+> summary of the relevant information:
 
-This is also motivated by the potential UX I'm thinking of. For example, 
-if a newly installed application tries to create ~/.app-name, it will be 
-much more reassuring and convenient to the user if we can show something 
-like
+You're a "security researcher" ... but you're not even going to do a
+cursory look at the code to figure out what's going on?
 
-	[program] wants to mkdir ~/.app-name. Allow this and future
-	access to the new directory?
+        if (unlikely(nofail)) {
+...
+                WARN_ON_ONCE(current->flags & PF_MEMALLOC);
+^^^ that's the line which triggered the warning.  So it's not a
+problem in the memory allocator at all, it's the memory allocator
+reporting that someone's asked it to satisfy some impossible
+constraints.
 
-rather than just "[program] wants to mkdir under ~". (The "Allow this 
-and future access to the new directory" bit is made possible by the 
-supervisor knowing the name of the file/directory being created, and can 
-remember them / write them out to a persistent profile etc)
+>  alloc_pages_mpol_noprof+0xda/0x300 mm/mempolicy.c:2269
+>  folio_alloc_noprof+0x1e/0x70 mm/mempolicy.c:2355
+>  filemap_alloc_folio_noprof+0x2b2/0x2f0 mm/filemap.c:1009
+>  __filemap_get_folio+0x16d/0x3d0 mm/filemap.c:1951
+>  grow_dev_folio fs/buffer.c:1039 [inline]
+>  grow_buffers fs/buffer.c:1105 [inline]
+>  __getblk_slow+0x138/0x430 fs/buffer.c:1131
+>  bdev_getblk fs/buffer.c:1431 [inline]
+>  __bread_gfp+0xea/0x2c0 fs/buffer.c:1485
 
-Note that this is just the filename under the dir represented by fd - 
-this isn't a path or anything that can be subject to symlink-related 
-attacks, etc.  If a program calls e.g.
-mkdirat or openat (dfd -> "/some/", pathname="dir/stuff", O_CREAT)
-my understanding is that fd1 will point to /some/dir, and destname would 
-be "stuff"
+__bread_gfp is who sets GFP_NOFAIL.
 
-Actually, in case your question is "why not send a fd to represent the 
-newly created file, instead of sending the name" -- I'm not sure whether 
-you can open even an O_PATH fd to a non-existent file.
+>  sb_bread include/linux/buffer_head.h:346 [inline]
+>  fat12_ent_bread+0x231/0x3f0 fs/fat/fatent.c:86
+>  fat_ent_read+0x624/0xaa0 fs/fat/fatent.c:368
+>  fat_free_clusters+0x19c/0x860 fs/fat/fatent.c:568
+>  fat_free.isra.0+0x377/0x850 fs/fat/file.c:376
+>  fat_truncate_blocks+0x10d/0x190 fs/fat/file.c:394
+>  fat_free_eofblocks fs/fat/inode.c:633 [inline]
+>  fat_evict_inode+0x1b1/0x260 fs/fat/inode.c:658
+>  evict+0x337/0x7c0 fs/inode.c:796
+>  dispose_list fs/inode.c:845 [inline]
+>  prune_icache_sb+0x189/0x290 fs/inode.c:1033
+>  super_cache_scan+0x33d/0x510 fs/super.c:223
+>  do_shrink_slab mm/shrinker.c:437 [inline]
+>  shrink_slab+0x43e/0x930 mm/shrinker.c:664
+>  shrink_node_memcgs mm/vmscan.c:5931 [inline]
+>  shrink_node+0x4dd/0x15c0 mm/vmscan.c:5970
+>  shrink_zones mm/vmscan.c:6215 [inline]
+>  do_try_to_free_pages+0x284/0x1160 mm/vmscan.c:6277
+>  try_to_free_pages+0x1ee/0x3e0 mm/vmscan.c:6527
+>  __perform_reclaim mm/page_alloc.c:3929 [inline]
 
->> +		};
->> +		struct {
->> +			__u16 port;
->> +		};
->> +	};
->> +};
->> +
-> 
-> [...]
+And __perform_reclaim() is where PF_MEMALLOC gets set.
 
+>  __alloc_pages_direct_reclaim mm/page_alloc.c:3951 [inline]
+>  __alloc_pages_slowpath mm/page_alloc.c:4382 [inline]
+>  __alloc_pages_noprof+0xa48/0x2040 mm/page_alloc.c:4766
+>  alloc_pages_mpol_noprof+0xda/0x300 mm/mempolicy.c:2269
+>  pagetable_alloc_noprof include/linux/mm.h:2899 [inline]
+>  __pte_alloc_one_noprof include/asm-generic/pgalloc.h:70 [inline]
+>  pte_alloc_one+0x20/0x1b0 arch/x86/mm/pgtable.c:33
+>  do_fault_around mm/memory.c:5274 [inline]
+>  do_read_fault mm/memory.c:5313 [inline]
+>  do_fault mm/memory.c:5456 [inline]
+>  do_pte_missing mm/memory.c:3979 [inline]
+>  handle_pte_fault mm/memory.c:5801 [inline]
+>  __handle_mm_fault+0x15b9/0x2380 mm/memory.c:5944
+>  handle_mm_fault+0x1c6/0x4c0 mm/memory.c:6112
+>  faultin_page mm/gup.c:1196 [inline]
+>  __get_user_pages+0x421/0x2550 mm/gup.c:1494
+>  populate_vma_page_range+0x16b/0x200 mm/gup.c:1932
+>  __mm_populate+0x1c2/0x360 mm/gup.c:2035
+>  mm_populate include/linux/mm.h:3396 [inline]
+>  vm_mmap_pgoff+0x25d/0x2f0 mm/util.c:585
+>  ksys_mmap_pgoff+0x5a/0x480 mm/mmap.c:542
+
+Now, I'm not sure how best to solve this.  Should FAT decline to read
+entries if it's called from reclaim?  I know XFS goes to some trouble to
+not do that kind of thing.  Or should buffer head allocation do
+something to access the emergency reserves?
 
