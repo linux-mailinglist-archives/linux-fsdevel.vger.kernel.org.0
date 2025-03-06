@@ -1,97 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-43374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE0BA55286
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 18:11:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CA08A552C4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 18:19:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B54A188A4E1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 17:09:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7DBE7A3782
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 17:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D614C25C6F3;
-	Thu,  6 Mar 2025 17:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196452561C5;
+	Thu,  6 Mar 2025 17:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z6BlRLLn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C978E2586EA
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Mar 2025 17:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F45946C
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Mar 2025 17:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741280944; cv=none; b=QnkPE38uPsFDhBeNYXchPRfgC4qGvxk+0dAPuAeJYjSAyGUbC/fFkf6FyblQjQHmlRzANeHEjX0dK361YAjpwVhpDUytHHYtYGs3d9T8ykcbSaaQ1F9WvZqL0MA27ZNS6cZ0v7zglm1xHXXH6OIKH3Wxoy2dU7v8KgDZ6mCKYDU=
+	t=1741281560; cv=none; b=rFE0l5cEFLuLLU0WzuDH+LeNGnBVleKUngnUhjbTOu4Zsl1LyRVmrDjLiT+O3tQv0Zo3ueA+WjhaPwjSm9uxQO8HYAcrRqTPq+I90B7GFecnsSGhRHcsXJKomC127pl2BPQKCrD4qMngL5TwIUl1YfsQf5AZ0YEAqSoYX6Az2QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741280944; c=relaxed/simple;
-	bh=0S+1lCQx1kTZA4bG5Gj5ODnY9L3DS+L6keI8KNBTmSg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QnzRzYYnB5L7mkx8LoZX+AWMPhlkFj0BoerKEUhL2X09hPtEHvLniuzyq/0IvpBNYfGFOYhPcMYfjVwQ5xhPhwf8Z/NMdGoodTkzb8S2vatQAXD2ZqHjFqQlhPD4TAUL3MPlK/FAbFr2BSmSoNwbbQPIEMuEe5q69tUlIcphzUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d2b6d933c1so16431165ab.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Mar 2025 09:09:02 -0800 (PST)
+	s=arc-20240116; t=1741281560; c=relaxed/simple;
+	bh=1zk/Wf5UBNnW+CYKHKRvUx81qFWSHkXU/Q2Txv1Mg1M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RCSoJF2CXZfqJWgHrSkr1jTrHe92FarO7/C7FL1MjCL18Ru4azxXtpV6me136mvBtPby3KUOjjbj3WPuhlAwuLOfUsRzCmCJAhEZODF6U6WGcKSJsGUE+seC7NuUUwr+Mdq1T4h1TfBQetcWj2faPymwz7Y8BVxl5LqJCiSbna8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z6BlRLLn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741281558;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VUWoEwD1QtHX1NkxE737fq82KwPX2Nk79R3EEcVwNlY=;
+	b=Z6BlRLLnx2ZuvfUZlls4ql44b+P4vFVbOGvX4Y9h+Lw2Rh7L1oCErYGb/PJbEzNer4m9LE
+	exacOxjfA2OgGf2nxqhKF4pBgQEX2U+Ou5Pw0Ors11/DAQreZwJYI51Wn+Aaz6e5TbhPoi
+	NeWvJtM+a/5j6YcboqpRoLdb1WUSFnQ=
+Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com
+ [209.85.222.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-330-wnZIkqgvOc69aRY8m1DUmw-1; Thu, 06 Mar 2025 12:19:02 -0500
+X-MC-Unique: wnZIkqgvOc69aRY8m1DUmw-1
+X-Mimecast-MFC-AGG-ID: wnZIkqgvOc69aRY8m1DUmw_1741281542
+Received: by mail-ua1-f71.google.com with SMTP id a1e0cc1a2514c-86bbd798b3cso1044329241.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Mar 2025 09:19:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741280942; x=1741885742;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X4nLQSw420ybtW2kRIdx22c3Jume3TqtRHI8enXJf+U=;
-        b=v0+IG+X93JqhNPTHBwdjZNg81VrQJw8bGIiraPHO6TzkCedyhXaRefCWqDsAldl8iF
-         g27gI3xucia0hO2u9lmKXnXXouPKhL7qMZ4HK5YPo1PJe9JXZcjHo+7Qnjkj3s2OYheq
-         TlqJWRUxQisW1akZmZX6W0NV/IqhH1zyq3tUS397TaAYj6O4olY5h+68FBXEBCf+IwMe
-         aWOU/NoCupyjQ5BFwtvO1USE6pGLbbg4pTAPxdSnpy9uRh2oWWai4LewX4jedWrPDBK9
-         J3LAzbM/LmFJ4N++n3Bloyuux7+U+IKu0AWF/K4FMwcbTuQm+tZCz6D9LFM4u/CSjTvv
-         BMbw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEoGHVpgdqW+xqYLjiccB2KXOXrW2oQbrjYIPeRDdNz7az7ECvZKf64ILB0j5X3SRrfPretXuoTMMc6s5R@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuoubZgatVsLa5bevTWzTLCtlUItqHSTyZoNJ0H3folh262p72
-	gGla1hH0QUEn3V0uXjOyfC6ZvfHA5F8keleEqm+fzt3fNZ4PFGs66/mnFNG4qaXxlioBfVJzQ/Z
-	Ud35dZ+i0082DTCzrkaPo3qkIWnW2tgmDMYJAjjqfRb/VtoaDLbteuzQ=
-X-Google-Smtp-Source: AGHT+IFSlWmY7RBkXfYTHzez26gr6XDSYt6SfsTmGP6W7py0kz6AjDNq7sw0S4nAJBjatKuGiYVt1jXM0SDBO0SDA13G1X6sS3jC
+        d=1e100.net; s=20230601; t=1741281542; x=1741886342;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VUWoEwD1QtHX1NkxE737fq82KwPX2Nk79R3EEcVwNlY=;
+        b=HrAHd7YBLHTz/HcDkp/GJ6R9DnceH3KqIz9XZ8OzNF9tTK4nQFolarv6lDQNifCAqb
+         NRlzAGFTttRsy4vu5JOUUkFpsG6cwF4DZnU2JXzT/CwIXswLvFmpOGy64BG/h4D5gFIn
+         XMamsc+cKLJxpxp5jT5p7C25nNlv5s2nJOfhN9G66oUbgxatOSeS1CiaB+dTA76MsAVp
+         FROxLudZixkpq3PRyKSHo6V2yO7YVsv4YBSrbSqYvs3c0N/J8v03TYYK+seKvFmJkzPn
+         /HqMg5lRSMp9iVPpBYp2S92u7egxy0I4+3sw9WI3CefXDZJq/2aHpcVDh0nqFgo+3T4u
+         gaXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUiyDYbQIie2U1YsvQmFb8noPmoThVUdZIlUHIVA/tsnLpNILcAnVSsaM/HY9WC1kSvLiw0tl0PT44or69Z@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7OCRGLhHoREuUOGQQYeem/rVDqyA6qACbyflbh2L38HEfq4KQ
+	lO5GfAkNrIN/BrjJFFXCEfenzSejqve4RZD7BaUjstWGcnT3lZK08UcYGNOPswxNk9+b9wb9JXn
+	gYSkII7T6pnceYBcpS4a3RCw9lLDepJrQ/iYriykTKw/jVh4N+hzopHAFF1VELvqGdq66hJmRYG
+	t3Wn5vU6j7cw2r7CmUzXgHtthADU2tTU4khId7Sw==
+X-Gm-Gg: ASbGncs5nk1CRjMXEG7e/ql9Nx4AyPpOkUBsYF+HOW6fyS6/cTiAy/PX7h42noimJUY
+	05aU4aoiXjHe/KkQFZDFJDrJLZwLnKaxfJ8HmbNO8QWaEai7V+Bh1Uf6/KKDKsCsP6JHVwx3T
+X-Received: by 2002:a05:6102:5490:b0:4c1:9b88:5c30 with SMTP id ada2fe7eead31-4c2e292962emr5979451137.19.1741281542266;
+        Thu, 06 Mar 2025 09:19:02 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE7spgLqpPQaIcIR+gCiOtfl1Cc6hZYDhCnOcThE+Z2s7vNWkkQetRZiUqTe+9qs6bZrerq/C7urJCzh9HnSNo=
+X-Received: by 2002:a05:6102:5490:b0:4c1:9b88:5c30 with SMTP id
+ ada2fe7eead31-4c2e292962emr5979396137.19.1741281541943; Thu, 06 Mar 2025
+ 09:19:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:219c:b0:3d0:4c9c:965f with SMTP id
- e9e14a558f8ab-3d441a13ademr3387865ab.20.1741280941982; Thu, 06 Mar 2025
- 09:09:01 -0800 (PST)
-Date: Thu, 06 Mar 2025 09:09:01 -0800
-In-Reply-To: <674db1c7.050a0220.ad585.0051.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67c9d6ad.050a0220.15b4b9.0039.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] INFO: task hung in vfs_unlink (5)
-From: syzbot <syzbot+6983c03a6a28616e362f@syzkaller.appspotmail.com>
-To: Yuezhang.Mo@sony.com, andy.wu@sony.com, bp@alien8.de, brauner@kernel.org, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, jack@suse.cz, 
-	kent.overstreet@linux.dev, linkinjeon@kernel.org, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mingo@redhat.com, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, viro@zeniv.linux.org.uk, 
-	wataru.aoyama@sony.com, x86@kernel.org, yuezhang.mo@sony.com
+References: <3989572.1734546794@warthog.procyon.org.uk> <4170997.1741192445@warthog.procyon.org.uk>
+ <CAO8a2Sg2b2nW6S3ctS+H0F1Owt=rAkKCyjnFW3WoRSKYD-sSDQ@mail.gmail.com>
+ <CACPzV1mpUUnxpKQFtDzd25NzwooQLyyzdRhxEsHKtt3qfh35mA@mail.gmail.com>
+ <128444.1741270391@warthog.procyon.org.uk> <CAJ4mKGZP2a8acd3Z7OT4UxJo-eygz30_V4Ouh05daMQ=pQv4aw@mail.gmail.com>
+In-Reply-To: <CAJ4mKGZP2a8acd3Z7OT4UxJo-eygz30_V4Ouh05daMQ=pQv4aw@mail.gmail.com>
+From: Alex Markuze <amarkuze@redhat.com>
+Date: Thu, 6 Mar 2025 19:18:51 +0200
+X-Gm-Features: AQ5f1JpQcoMH0pu_ANh7Fi3mDGR-c82TH6fAs4PV2crn8yOt0NZj2cZVfepYRdc
+Message-ID: <CAO8a2ShjbUuk9_+9P9oVcgTU87ZASNpa735xOyC+tMetL13bdA@mail.gmail.com>
+Subject: Re: Is EOLDSNAPC actually generated? -- Re: Ceph and Netfslib
+To: Gregory Farnum <gfarnum@redhat.com>
+Cc: David Howells <dhowells@redhat.com>, Venky Shankar <vshankar@redhat.com>, 
+	Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>, 
+	Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org, netfs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, Patrick Donnelly <pdonnell@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has bisected this issue to:
+It's not about endians. It's just about the fact that some linux
+arches define the error code of EOLDSNAPC/ERETRY to a different
+number.
 
-commit f55c096f62f100aa9f5f48d86e1b6846ecbd67e7
-Author: Yuezhang Mo <Yuezhang.Mo@sony.com>
-Date:   Tue May 30 09:35:00 2023 +0000
+On Thu, Mar 6, 2025 at 6:22=E2=80=AFPM Gregory Farnum <gfarnum@redhat.com> =
+wrote:
+>
+> On Thu, Mar 6, 2025 at 6:13=E2=80=AFAM David Howells <dhowells@redhat.com=
+> wrote:
+> >
+> > Venky Shankar <vshankar@redhat.com> wrote:
+> >
+> > > > That's a good point, though there is no code on the client that can
+> > > > generate this error, I'm not convinced that this error can't be
+> > > > received from the OSD or the MDS. I would rather some MDS experts
+> > > > chime in, before taking any drastic measures.
+> > >
+> > > The OSDs could possibly return this to the client, so I don't think i=
+t
+> > > can be done away with.
+> >
+> > Okay... but then I think ceph has a bug in that you're assuming that th=
+e error
+> > codes on the wire are consistent between arches as mentioned with Alex.=
+  I
+> > think you need to interject a mapping table.
+>
+> Without looking at the kernel code, Ceph in general wraps all error
+> codes to a defined arch-neutral endianness for the wire protocol and
+> unwraps them into the architecture-native format when decoding. Is
+> that not happening here? It should happen transparently as part of the
+> network decoding, so when I look in fs/ceph/file.c the usage seems
+> fine to me, and I see include/linux/ceph/decode.h is full of functions
+> that specify "le" and translating that to the cpu, so it seems fine.
+> And yes, the OSD can return EOLDSNAPC if the client is out of date
+> (and certain other conditions are true).
+> -Greg
+>
 
-    exfat: do not zero the extended part
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1356fda8580000
-start commit:   bb2281fb05e5 Merge tag 'x86_microcode_for_v6.14_rc6' of gi..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=10d6fda8580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1756fda8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=523d3ff8e053340a
-dashboard link: https://syzkaller.appspot.com/bug?extid=6983c03a6a28616e362f
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12cf7078580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10197da8580000
-
-Reported-by: syzbot+6983c03a6a28616e362f@syzkaller.appspotmail.com
-Fixes: f55c096f62f1 ("exfat: do not zero the extended part")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
