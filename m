@@ -1,164 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-43332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43333-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50E59A547F3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 11:38:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 915B4A548D4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 12:12:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDAF41712B4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 10:37:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E591F7A6BE3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 11:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D444207E12;
-	Thu,  6 Mar 2025 10:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3982204F7A;
+	Thu,  6 Mar 2025 11:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FE270KjJ"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="BluvcIg/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F39320468E;
-	Thu,  6 Mar 2025 10:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD321946A2;
+	Thu,  6 Mar 2025 11:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741257450; cv=none; b=DQ1NACpCpyJyWP2BRXHRgEUEz++/R2YURV0cIKzGIsYK4i8oZm94jg1Dv1ZXCYA2QPL0QfsdCDJXA/4yvYISkdLf6d7/hptWMMjWo5IyATCoS1kAFUo25cuylD2Z6y52EtPodpgis2ikCvCYCVxupRFD7KjUdAtWaTVCAvlXUMg=
+	t=1741259555; cv=none; b=jqhJb1rOX5t1ps4wZTprUJRqdyStCN+aDNbB2NlhQ14szuoMj2/Jc0UOa6c47vEa1Vdpkq4uDW7SFyOfnE9b/Ub2fqHXSeqgE4Y3eF5xTNmLesfr2odZZxVOKCI4VuLHbuT0dx7qORiWJetGTNfNuBTd/Nobtv5REukT4jHWmzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741257450; c=relaxed/simple;
-	bh=qevjN5tUatdD4sRyacUuX0cpfWvxaopsOVfxeABNgSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GqPLSzCOKjBD4JTJL5hEbnej1a76DX7LTs+nij/uO2m6oIOoyx2Qv++zL+2MzEc8pXsNDq8MdS7SFmHFgybAwLJPsProQYpIpasE8tZ+R4DYPgJLVMOFNCROMVnCgLTCeqqTh7IH+2s6+ITF2Go2r0h3IaFBlLwYgU9UMjLt4qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FE270KjJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BB1CC4CEE0;
-	Thu,  6 Mar 2025 10:37:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741257450;
-	bh=qevjN5tUatdD4sRyacUuX0cpfWvxaopsOVfxeABNgSI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FE270KjJC49vsjvPwANMviQ4xzGVAwPXLtdLVrLcnC/xBC0D/nSnefHiAKdLduxHX
-	 v08BqHo2rdOAZwy0krwrM3GdzgFV4NDZ/I89Xa0Srcs38toyi5DyWr4OEGSFO+Y/mr
-	 w/KwAFMXqAzH4TqXwZ+W+ejJGinyIsVQh4Gk7NYpf+YbJg4gY0bYE9s/uTVb/3xxVA
-	 7+td4U/iJCL8RcjO9UyBSdlG/e1RcfrZfx27TEdHOdR/uyAyVZfLyBle7dKIFjFmJy
-	 H9QeBGuGwpzfhC5ei9Zi7O0bzykpAIF8kR5Sh0bwe0rTpJUsP+7xdF0kIN6W0VjrY4
-	 4ITbFAf0Y62yQ==
-Date: Thu, 6 Mar 2025 11:37:24 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Kees Cook <kees@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, sparclinux@vger.kernel.org, linux-s390@vger.kernel.org, 
-	linux-acpi@vger.kernel.org
-Subject: Re: [PATCH 4/8] stack_tracer: move sysctl registration to
- kernel/trace/trace.c
-Message-ID: <f574knvwbip2hvyvorxcxfjrojd2bblmewvfsv6utivydljrpj@h2cryrh7cojq>
-References: <20250218-jag-mv_ctltables-v1-0-cd3698ab8d29@kernel.org>
- <20250218-jag-mv_ctltables-v1-4-cd3698ab8d29@kernel.org>
- <20250303204732.1f5af40d@gandalf.local.home>
+	s=arc-20240116; t=1741259555; c=relaxed/simple;
+	bh=llx+qzXZXIbgvEbZc6XpBiGoD8V5i+4dnvn08Y7XHDI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l8YWn5Od5hVy5RcShif8CafvAud022xTfOgKL1qnF4ZqVwHPUfFCT3hYIbEm+wnLSpEpAwEjuHJpxiKK9HvPNdRsZSop06NvSLqM98hPwY3gW98GFmA1jmzyWDfTn/8DZ96sxFfVEjR/FkxuXrWtJ7KIbuU1S0YjTgWiYnz1BBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=BluvcIg/; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=5nPBCqkr0XAmWw9QrM4XamZwYpikIpvAzafOHS2cuu0=; b=BluvcIg/kDwEAXqW0J6fa+rg6Q
+	Hksvc5mxcXbXQPm0kNa1P9I/uGNpjQNGquDstSOhtEmxcHFbwztw5AjgvL9kkKT4P2NWwY8qQ5O7J
+	OLcQlXQ9KAiQ8fHVmveEVnOjh4M76GSI0832mgbNHMfNXuyNBuSIHp5mavORDQqaaXAYHNzRN8k6N
+	IQDFAM58JQEpWUwxFzYP9lxYaxVquF1NIP8I+U8DtbWaiZ+Ub5XHv+0xTb/nLfbl6nN8Mu59HbtXV
+	sdWGyTFcqG9kqRySWCtuRyRvLoAzthUooOpM2UrTF0ovmyKXfuaAaG/oF1RYnytcTj6R8Gb6fXfnO
+	tQcgE5/g==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tq99I-004ht7-Ga; Thu, 06 Mar 2025 12:12:26 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>,
+	Bernd Schubert <bernd@bsbernd.com>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com,
+	Luis Henriques <luis@igalia.com>
+Subject: [PATCH] fuse: fix possible deadlock if rings are never initialized
+Date: Thu,  6 Mar 2025 11:12:18 +0000
+Message-ID: <20250306111218.13734-1-luis@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303204732.1f5af40d@gandalf.local.home>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 03, 2025 at 08:47:32PM -0500, Steven Rostedt wrote:
-> On Tue, 18 Feb 2025 10:56:20 +0100
-> Joel Granados <joel.granados@kernel.org> wrote:
-> 
-> > Squash with ftrace:
-I'll also fix this little marker that I missed. And I'll not squash it,
-as it is now going into trace_stack.c
+When mounting a user-space filesystem using io_uring, the initialization
+of the rings is done separately in the server side.  If for some reason
+(e.g. a server bug) this step is not performed it will be impossible to
+unmount the filesystem if there are already requests waiting.
 
-> > Move stac_tracer_enabled into trace_sysctl_table while keeping the
-> > CONFIG_STACK_TRACER ifdef. This is part of a greater effort to move ctl
-I'll remove these comments from the commit message
+This issue is easily reproduced with the libfuse passthrough_ll example,
+if the queue depth is set to '0' and a request is queued before trying to
+unmount the filesystem.  When trying to force the unmount, fuse_abort_conn()
+will try to wake up all tasks waiting in fc->blocked_waitq, but because the
+rings were never initialized, fuse_uring_ready() will never return 'true'.
 
-> > tables into their respective subsystems which will reduce the merge
-> > conflicts in kerenel/sysctl.c.
-> > 
-> > Signed-off-by: Joel Granados <joel.granados@kernel.org>
-> > ---
-> >  kernel/sysctl.c      | 10 ----------
-> >  kernel/trace/trace.c |  9 +++++++++
-> >  2 files changed, 9 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> > index baa250e223a2..dc3747cc72d4 100644
-> > --- a/kernel/sysctl.c
-> > +++ b/kernel/sysctl.c
-> > @@ -68,7 +68,6 @@
-> >  
-> >  #ifdef CONFIG_X86
-> >  #include <asm/nmi.h>
-> > -#include <asm/stacktrace.h>
-> >  #include <asm/io.h>
-> >  #endif
-> >  #ifdef CONFIG_SPARC
-> > @@ -1674,15 +1673,6 @@ static const struct ctl_table kern_table[] = {
-> >  		.proc_handler	= proc_dointvec,
-> >  	},
-> >  #endif
-> > -#ifdef CONFIG_STACK_TRACER
-> > -	{
-> > -		.procname	= "stack_tracer_enabled",
-> > -		.data		= &stack_tracer_enabled,
-> > -		.maxlen		= sizeof(int),
-> > -		.mode		= 0644,
-> > -		.proc_handler	= stack_trace_sysctl,
-> > -	},
-> > -#endif
-> >  #ifdef CONFIG_MODULES
-> >  	{
-> >  		.procname	= "modprobe",
-> > diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> > index abfc0e56173b..17b449f9e330 100644
-> > --- a/kernel/trace/trace.c
-> > +++ b/kernel/trace/trace.c
-> 
-> This should go into kernel/trace/trace_stack.c, and remove the #ifdef.
-Will send my V2 shortly with this modification.
-> 
-> -- Steve
-> 
-> > @@ -166,6 +166,15 @@ static const struct ctl_table trace_sysctl_table[] = {
-> >  		.mode		= 0644,
-> >  		.proc_handler	= tracepoint_printk_sysctl,
-> >  	},
-> > +#ifdef CONFIG_STACK_TRACER
-> > +	{
-> > +		.procname	= "stack_tracer_enabled",
-> > +		.data		= &stack_tracer_enabled,
-> > +		.maxlen		= sizeof(int),
-> > +		.mode		= 0644,
-> > +		.proc_handler	= stack_trace_sysctl,
-> > +	},
-> > +#endif
-> >  };
-> >  
-> >  static int __init init_trace_sysctls(void)
-> > 
-> 
+Fixes: 3393ff964e0f ("fuse: block request allocation until io-uring init is complete")
+Signed-off-by: Luis Henriques <luis@igalia.com>
+---
+ fs/fuse/dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thx for the review
-
-Best
-
--- 
-
-Joel Granados
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 7edceecedfa5..2fe565e9b403 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -77,7 +77,7 @@ void fuse_set_initialized(struct fuse_conn *fc)
+ static bool fuse_block_alloc(struct fuse_conn *fc, bool for_background)
+ {
+ 	return !fc->initialized || (for_background && fc->blocked) ||
+-	       (fc->io_uring && !fuse_uring_ready(fc));
++	       (fc->io_uring && fc->connected && !fuse_uring_ready(fc));
+ }
+ 
+ static void fuse_drop_waiting(struct fuse_conn *fc)
 
