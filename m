@@ -1,131 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-43371-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43372-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39BD4A55072
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 17:22:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF8D1A55199
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 17:44:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3313171CB2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 16:22:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76DC33B06CC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 16:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4744A21325B;
-	Thu,  6 Mar 2025 16:22:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECB6221F28;
+	Thu,  6 Mar 2025 16:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XjRaxjEN"
+	dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="3I3REgZz";
+	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="Y855LaK6";
+	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="D7/s3vFY";
+	dkim=neutral (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="kPWL8Ju1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mail.tnxip.de (mail.tnxip.de [49.12.77.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C90212D82
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Mar 2025 16:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FFEC221F34
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Mar 2025 16:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.77.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741278125; cv=none; b=VXA3fk0MzI7b3ndRy4t8FxjImivvl32PtQKu+5T0O2eLg1SVNTxVobqdaPla5/xotTyC5H0hGRhr2RZMpFDFRWgdmF9m8h1zEy7r8O1goOXHrKxXXboNvp7tKxK1uXFxvcqIegkUvs/O5skglZBlX2Z8F9Mc5ZaqUOv+3XKVbkU=
+	t=1741279068; cv=none; b=pkW94AJTveu+yvp93lpCCFgMg+Pd0OBtX7k8v5Aj4DZq+SzLmxswQNjWhKSKWGiaZ7EXaxs6c/bxMeem5vVss6ERkndn2/JCkKqYaozwQ14uee5tsAEjbe9UZW5MB+/rGavzkZ9UnQFzquZZdx+PYVhpEJA9luR3cd1Laiiayuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741278125; c=relaxed/simple;
-	bh=6JEQjmrMba8qZUKzmUxEKp4TUW/usegCC4+9HVUbFao=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SPj28ArKyJRHDuFdObE++XBabNeW5mwHkH5ji8lw3C3el6ql5EN6BkLrEhKG4H7LFbzOz65u7mwT4Z43E4SuM0oM0k9/fLlP7yvHSbgYnyZdfYYHbnaXBy1Tj/r5WSH+DAtpumuDJjUCm1b5bQjSepDxc1u+nAjhVF6oE//WOdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XjRaxjEN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741278122;
+	s=arc-20240116; t=1741279068; c=relaxed/simple;
+	bh=BGB05qvKbaiCq8J+3PGwzjEAYEKDFadO+ywijlcM4c0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=RhCT4FJHY36gawJhNL6g5G+xB8ZrRdPe1DjLly9l3fFqabiQFt27On8RVZpeQeIgBflYmHc1s9F68mDFyi73Iue8CmnXBd048dn2S9eV9RAYNlh+ie7o8yasVlJJmCy4JEpG6z1CB+IO/LoVmNPdBxXeORkTsGRk/vUhK8KER2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de; spf=pass smtp.mailfrom=tnxip.de; dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=3I3REgZz; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=Y855LaK6; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=D7/s3vFY; dkim=neutral (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=kPWL8Ju1; arc=none smtp.client-ip=49.12.77.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tnxip.de
+Received: from gw.tnxip.de (unknown [IPv6:fdc7:1cc3:ec03:1:810f:171e:3cc4:af3c])
+	by mail.tnxip.de (Postfix) with ESMTPS id 11A56208AD;
+	Thu,  6 Mar 2025 17:37:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-vps;
+	t=1741279058;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tqC+Llm1WJYyckYsZ/+upOpOsuMKvlE5dwDUUY8Zj7g=;
-	b=XjRaxjENachI0bTbFsGudAXN9b9DzOfDCTbjgabTvGqFruyC/dzKWZIQZ+i1G4Zwl8O2Cw
-	cYfrKzPtLe+rhYGxSWBxi53UzGLiZst61yFNPU+hMHF4Eyk4aP/1Yjl/3YvgfuCuTBOUEV
-	fD6rwqeKcTHT362S1xuV0AMSbcx2h1Y=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-668-RMVd3pBAMF2LTi2Hh0wwYg-1; Thu, 06 Mar 2025 11:22:01 -0500
-X-MC-Unique: RMVd3pBAMF2LTi2Hh0wwYg-1
-X-Mimecast-MFC-AGG-ID: RMVd3pBAMF2LTi2Hh0wwYg_1741278121
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-223f63b450eso16179745ad.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Mar 2025 08:22:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741278121; x=1741882921;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tqC+Llm1WJYyckYsZ/+upOpOsuMKvlE5dwDUUY8Zj7g=;
-        b=hIx1RheaUsHC0/kSqkt0LyIcATCAXSIA2hBdwqiMwNAgxekbcGzN5mpLUrG6Y9QzhN
-         90xKcBnpwRzSRCDAemnStbZHPXsRMK09E3iWGzrguDBolmUIvD/HJSeJ6DYpTeNq0K64
-         w7B2i0a0XYjznNlldH/L00uZAK0tlDPPXDQdCwawAuPIMOm4jl7WmdssJdhwOKzgnEx/
-         +cAZi6B3bcTLMFgJmAIr78awNkEQDTf3zSCysXPu3Skrtej0PB5EM1WDAb99TA+CYzTL
-         0X5HpQZSIU2wPmWPqP9F4lHcTf3/9aEBlWGfiZzagsQ/9W0BjYeH5vS6eb2UhGM8Wb6R
-         3WeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWs3vYcls+fNo/99MLNl5ir2Bg0XpdACZ6NRHkh8vY+0MMSEwv8rnvy9GWQyAmkh87r0VfF4dOT1UcMgKPa@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQatAO1R19GzE7DcULpUzeMotHLq4GjV+y+/Rb6DfCYRWAJcQ8
-	iKngT8xbJoZeoyJrSa6s5sBNXv0WoPqPUJUNKgoTyMo4LOMhO4DunJvHiaImBgSbwqDEkTVbtOO
-	bQ+PlUVPywqXexANyzv6KVG2h2qvk3YRqqJBPxC9Cm7ZE7Zn7Esoxug9cHlpPy90ynpYv7UtrwR
-	1L3gy0bVlYJ7q4CmB1wrowS7dlTDaI14sTMK0oyA==
-X-Gm-Gg: ASbGncuNtD7SqiXSP7gvdviZ6/NtXzP1H9xsEdOdvejBXiVLi8YGPZG0r8QgpaCwSp8
-	C/bcZBdKzO0bhg31YKzPqobCAN0mgQoHaywEjPTTgz9o9wICw4p7cncb09S4HDxQDdAl2Z6eoeF
-	H9MFjN95gV8US/2T6idxhAwDFHi9UTrCM=
-X-Received: by 2002:a05:6a20:6a26:b0:1f0:e3cd:ffc0 with SMTP id adf61e73a8af0-1f544cad6dbmr117475637.38.1741278120571;
-        Thu, 06 Mar 2025 08:22:00 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEBnNiZHiJ9P1cHLuxoqkZ0Gke5p5+vnyphXWaW76LGKMfyxbwfovLX3oXnrDS2K4RsAwjCEgRVZZSj048G2+4=
-X-Received: by 2002:a05:6a20:6a26:b0:1f0:e3cd:ffc0 with SMTP id
- adf61e73a8af0-1f544cad6dbmr117431637.38.1741278120028; Thu, 06 Mar 2025
- 08:22:00 -0800 (PST)
+	bh=SgBfP6Y/pEeb+6JdklamR6B2Lm2YkFY9Qo56fx3D3E0=;
+	b=3I3REgZzRd4yasV8nI3tgVsXUwmREfaj3v7ZxLzrhHWoQo/WT7cP7GXTuH0zdE+/q8Mn8q
+	s8qLc3QjrHEMaxj/Y97tguxef87+TMlpbEk/IegTIqfUOx6Ku3+LW7UJrHeWpZJ7GWVqqL
+	Z34+Ttff4xUCWTCPxrFpT3KIK4KCacc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
+	s=mail-vps-ed; t=1741279059;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SgBfP6Y/pEeb+6JdklamR6B2Lm2YkFY9Qo56fx3D3E0=;
+	b=Y855LaK6BN6FLtGKzv3yRtZ91wGpiMyk1HBfQTea9LcEgWSZxQfWiaNuGmuRQDBkrRa/kk
+	mEJ+hX4yz2fpX2AQ==
+Received: from [IPV6:2a04:4540:8c08:100:138b:b7d5:e167:9bf0] (unknown [IPv6:2a04:4540:8c08:100:138b:b7d5:e167:9bf0])
+	by gw.tnxip.de (Postfix) with ESMTPSA id C9DB340000000003C6855;
+	Thu, 06 Mar 2025 17:37:37 +0100 (CET)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
+	s=mail-gw-ed; t=1741279057;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SgBfP6Y/pEeb+6JdklamR6B2Lm2YkFY9Qo56fx3D3E0=;
+	b=D7/s3vFYqAi2xAMKzI3Q+UdxQBMC7hXipUx/GmUwnEh63LqVy8taYr/CoRFxtTaIi+IHU5
+	hk3m2Lqkxe0hURAw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-gw;
+	t=1741279057;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SgBfP6Y/pEeb+6JdklamR6B2Lm2YkFY9Qo56fx3D3E0=;
+	b=kPWL8Ju1u5SpVoQzdO7mgxWCSoHj5tuRWsHgNVCTswd38OetEY6cOBng/GIvAZZ2NG8zID
+	rWAltOkC4ieLlhOsToOuOVFenpEqlXVgjcHH2lT1PwqInLHt6KZagPgpUtRc8NuyIr3aa/
+	UhbDTwHn3DjZGzc+q6XDGqriLCLwys0=
+Message-ID: <d61dd288-cd7c-4adc-a025-21715311704b@tnxip.de>
+Date: Thu, 6 Mar 2025 17:37:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3989572.1734546794@warthog.procyon.org.uk> <4170997.1741192445@warthog.procyon.org.uk>
- <CAO8a2Sg2b2nW6S3ctS+H0F1Owt=rAkKCyjnFW3WoRSKYD-sSDQ@mail.gmail.com>
- <CACPzV1mpUUnxpKQFtDzd25NzwooQLyyzdRhxEsHKtt3qfh35mA@mail.gmail.com> <128444.1741270391@warthog.procyon.org.uk>
-In-Reply-To: <128444.1741270391@warthog.procyon.org.uk>
-From: Gregory Farnum <gfarnum@redhat.com>
-Date: Thu, 6 Mar 2025 08:21:49 -0800
-X-Gm-Features: AQ5f1JrunyMYAkh4fezKqE6Zg5EpuX-iNcyahs73zEQzWdI8lPNSFb7vn1fVr8Q
-Message-ID: <CAJ4mKGZP2a8acd3Z7OT4UxJo-eygz30_V4Ouh05daMQ=pQv4aw@mail.gmail.com>
-Subject: Re: Is EOLDSNAPC actually generated? -- Re: Ceph and Netfslib
-To: David Howells <dhowells@redhat.com>
-Cc: Venky Shankar <vshankar@redhat.com>, Alex Markuze <amarkuze@redhat.com>, 
-	Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>, 
-	Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, Patrick Donnelly <pdonnell@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Betterbird (Linux)
+Subject: Re: Random desktop freezes since 6.14-rc. Seems VFS related
+From: =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <39cc7426-3967-45de-b1a1-526c803b9a84@tnxip.de>
+ <Z7DKs3dSPdDLRRmF@casper.infradead.org>
+ <87e7e4e9-b87b-4333-9a2a-fcf590271744@tnxip.de>
+ <Z7Hj3pzwylskq4Fd@casper.infradead.org>
+ <0e5236de-93b9-466a-aba0-2cc8351eb2b5@tnxip.de>
+Content-Language: en-US, de-DE
+In-Reply-To: <0e5236de-93b9-466a-aba0-2cc8351eb2b5@tnxip.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 6, 2025 at 6:13=E2=80=AFAM David Howells <dhowells@redhat.com> =
-wrote:
->
-> Venky Shankar <vshankar@redhat.com> wrote:
->
-> > > That's a good point, though there is no code on the client that can
-> > > generate this error, I'm not convinced that this error can't be
-> > > received from the OSD or the MDS. I would rather some MDS experts
-> > > chime in, before taking any drastic measures.
-> >
-> > The OSDs could possibly return this to the client, so I don't think it
-> > can be done away with.
->
-> Okay... but then I think ceph has a bug in that you're assuming that the =
-error
-> codes on the wire are consistent between arches as mentioned with Alex.  =
-I
-> think you need to interject a mapping table.
+On 16/02/2025 17:12, Malte Schröder wrote:
+> On 16/02/2025 14:10, Matthew Wilcox wrote:
+>> On Sun, Feb 16, 2025 at 12:26:06AM +0100, Malte Schröder wrote:
+>>> On 15/02/2025 18:11, Matthew Wilcox wrote:
+>>>> On Sat, Feb 15, 2025 at 01:34:33PM +0100, Malte Schröder wrote:
+>>>>> Hi,
+>>>>> I am getting stuff freezing randomly since 6.14-rc. I do not have a clear way to 
+>>>> When you say "since 6.14-rc", what exactly do you mean?  6.13 is fine
+>>>> and 6.14-rc2 is broken?  Or some other version?
+>>> 6.13 and 6.13 + bcachefs-master was fine. Issue started with 6.14-rc1.
+>> That's interesting.
+>>
+>>>> This seems very similar to all of these syzbot reports:
+>>>> https://lore.kernel.org/linux-bcachefs/Z6-o5A4Y-rf7Hq8j@casper.infradead.org/
+>>>>
+>>>> Fortunately, syzbot thinks it's bisected one of them:
+>>>> https://lore.kernel.org/linux-bcachefs/67b0bf29.050a0220.6f0b7.0010.GAE@google.com/
+>>>>
+>>>> Can you confirm?
+>>> >From my limited understanding of how bcachefs works I do not think this
+>>> commit is the root cause of this issue. That commit just changes the
+>>> autofix flags, so it might just uncover some other issue in fsck code.
+>>> Also I've been running that code before the 6.14 merge without issues.
+>> If you have time to investigate this, seeing if you can reproduce this on
+>> commit 141526548052 and then (if it does reproduce) bisecting between that
+>> and v6.13-rc3 might lead us to the real commit that's causing the problem.
+>>
+> I will try. But I will need to find a way to reliably reproduce my issue
+> first.
 
-Without looking at the kernel code, Ceph in general wraps all error
-codes to a defined arch-neutral endianness for the wire protocol and
-unwraps them into the architecture-native format when decoding. Is
-that not happening here? It should happen transparently as part of the
-network decoding, so when I look in fs/ceph/file.c the usage seems
-fine to me, and I see include/linux/ceph/decode.h is full of functions
-that specify "le" and translating that to the cpu, so it seems fine.
-And yes, the OSD can return EOLDSNAPC if the client is out of date
-(and certain other conditions are true).
--Greg
+I did not find a reliable way to reproduce this issue. It happens like
+every few weeks, so bisecting is not an option for me. Sorry.
+
+
+It is also is hard to distinguish, which kind of freeze I just
+encountered. I also found issues with apparmor vs. resume (just
+reported) and I have a feeling something is going on in amdgpu-land but
+can't quite pinpoint it, yet.
+
+
+/Malte
 
 
