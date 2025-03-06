@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-43337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43339-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74AFAA5497A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 12:34:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26111A54983
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 12:35:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4B3B165026
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 11:33:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 933CE174628
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 11:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C629212D82;
-	Thu,  6 Mar 2025 11:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBFA213E9E;
+	Thu,  6 Mar 2025 11:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="myq4Htet"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ler7t8+S"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A531210F5B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D68211497;
 	Thu,  6 Mar 2025 11:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741260651; cv=none; b=Qko91uAMUg7tDl1xILdULH2QbDBAgbtMxOHiCk5U6QpbwlEIqu1OWmf+fP81XXm5+Ltu2O0B3KxovlzexYiW2P+VJDSun7RwdLdhgcaUqU9ojcY73mbs5rvBww1ZM3qDAI4SUv0DtLNXuumusJzivIiQdVqifeM+T6dylMR/kek=
+	t=1741260651; cv=none; b=XOr9H12UPUZrWg9NCyl/rtuXJEnFfdjTN7hXvl2PJUTyLtZbYJUbR31/cVklFcwB5eoqYbHI15Vb5sAiUn3eA40Ovd6lrEK/Dhw7FH1r5YRRzLjJKg/3AjC4MDguWVlw6g4wBr3XES3TyaNgQYeS4FwSwkgW25rPxjWGEdNueHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741260651; c=relaxed/simple;
-	bh=hkSbq8mw9Uv98PWKXr8NFUOiogiYljqa0LH7OwMpcTY=;
+	bh=r81yvisX8P4UQm9F7N7hhZ732PaheqwD7Ks9SFpA+WU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LursgZUi2SMKQz6PmoUjgJEYufHa3mpwAPu3DTzEl+mdnb8KmzQAkhc8OTZ6sxhKTtOhglW2sUfmGRxJgpYv2q98IdAtcrRH0MIPHaG22PAJztYZRhNBdzcNHrwVkt+3Vh9hry+klCMYcxiDJkInYS0ESQF4vpywuLVuIDH152c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=myq4Htet; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CDDBCC4CEF1;
+	 In-Reply-To:To:Cc; b=WGZ/YGQe5rWNkInhN+Y5sTGVtrenmmk5yA6Nhk0uFtWnKce9uIp4qFQ6xw8QshZAqVoaCApkefPNVKcRYA7XlcXcqGbIJ33m+BbL2wwElrFi6c8qt1sOhVv3kmpOsGpLUZW/XGilVEViY4lBosn4SidnZkxwfUOOc6DQpw4Uk9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ler7t8+S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 04DD3C4AF0C;
 	Thu,  6 Mar 2025 11:30:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741260650;
-	bh=hkSbq8mw9Uv98PWKXr8NFUOiogiYljqa0LH7OwMpcTY=;
+	s=k20201202; t=1741260651;
+	bh=r81yvisX8P4UQm9F7N7hhZ732PaheqwD7Ks9SFpA+WU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=myq4HtetG1EbrMJ87O4rWmeBcu5kUIx4XylZ/xmWrGGZ1fPGQF/+BwtcH8P3Mp286
-	 jQQAV5IrRIASQCC8BEsCXrhRMIjEyEj4fnBYfuGeUMMCXRZc6lyt52r7u5T3f+c6WR
-	 gAneFxdHRlZUYwk2D9ynBo3m3VoQjOUo+AP5Voh/AzaCBZVm7V93ZgX9QXB0gOnZK6
-	 g2OuCefvljFU1iL1TvZvC98va7FZlqmLMYdqZ04xpHXzyPHV2K1iWoZBU16Z2qnM1P
-	 avA/tRmsQkv/La/9nYsjYOCOOeFhqobWQxNAGyk4vqBD4PLqr94wOMXNzHPXwjT1qr
-	 dseMkulbHQ8YQ==
+	b=ler7t8+SANzyxeocUaVFF0itfXjdU/AePkZgfwecSb9/3uHn9EJLYdOl7yEWWt26X
+	 gfbgXEaTJbubb6zSFxiE3MJRKjpQXwfLp+1G9BSGiWCqMOTvaKavbo8xZt0/BrR1yQ
+	 xn/1Ptu59MizrbpA03exoCIx/1pM/xhK+vQSaXF1DemvPMQ4BB+ko4e3aWSoWZmJSo
+	 h+loNjGifVudVHzlXFeQCHsKVqs/vwkDcO70Zfm/Qg1PgQ/lR7aNYQu7I7CYExK744
+	 r8T5gba64BoDYPfa2j0BfACWYY/s14KBueIuTPUCOSNxF9bxT0pNglBNMAlCWu/Ipr
+	 eqkJb6AowxlqA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FBFCC28B28;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 968BAC282D1;
 	Thu,  6 Mar 2025 11:30:50 +0000 (UTC)
-From: Joel Granados <joel.granados@kernel.org>
-Date: Thu, 06 Mar 2025 12:29:45 +0100
-Subject: [PATCH v2 5/6] sparc: mv sparc sysctls into their own file under
- arch/sparc/kernel
+From: joel granados <joel.granados@kernel.org>
+Date: Thu, 06 Mar 2025 12:29:46 +0100
+Subject: [PATCH v2 6/6] s390: mv s390 sysctls into their own file under
+ arch/s390 dir
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250306-jag-mv_ctltables-v2-5-71b243c8d3f8@kernel.org>
+Message-Id: <20250306-jag-mv_ctltables-v2-6-71b243c8d3f8@kernel.org>
 References: <20250306-jag-mv_ctltables-v2-0-71b243c8d3f8@kernel.org>
 In-Reply-To: <20250306-jag-mv_ctltables-v2-0-71b243c8d3f8@kernel.org>
 To: Kees Cook <kees@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
@@ -73,158 +73,140 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
  linux-s390@vger.kernel.org, Joel Granados <joel.granados@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3848;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3591;
  i=joel.granados@kernel.org; h=from:subject:message-id;
- bh=hkSbq8mw9Uv98PWKXr8NFUOiogiYljqa0LH7OwMpcTY=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGfJh2eO5lVLjXgiAsNO3sdOE+S7/E9nKWo7e
- cYViU1dn+HE/YkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJnyYdnAAoJELqXzVK3
- lkFPIuUL/10CdnnBV2W5FxoLqEWelLIC1A1/yV64PD3YPmjJFsd9eAM5+J+87QWxopqYtrtshB+
- E3Y+u2y6+visLWI7nDh4tUI62vSt8g/jsuA7othOvYgtVrYDnYEzKVOiZObE3emwUs3D2jezcma
- kv1FqagAWhOwh7XGDXY6CkrNow7Zaj1dNC18hb2WCSoDrXKsqtJCvkDyH1reS9KvHYdJkCl/cGt
- ka792gzt6+ZHOiO6YUpOAMHCIRjeCDHOlin+jvbW0hd1TQqbrVbOsMPaZVfmHZysEx1dV+6YFVo
- bWPLjzmBPErrIzyCvDJYbLrusG4a9Y3S9C/oFsBMBB52nDiRTjTbDUUkz85AheJrJZTi7+XlmCc
- OBMUXhjBopF9pDN1dq4+3du2oJNlXZhCuQRZDAo+zNeJtakVPGhRMssFI+xCCtfGX0IiM8ptoWV
- 4LNaP0sFNc5lBTRjsLo8ZIdq6e86sTHoFlDn+Lddp2l6sWUWr2RLhm9v93mOVMRoIGLlw+++g75
- 8g=
+ bh=r81yvisX8P4UQm9F7N7hhZ732PaheqwD7Ks9SFpA+WU=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGfJh2hk9Sl4d4/rt7M4Iv2CUUdgG9l340yBQ
+ 6BGtdUWhlaPu4kBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJnyYdoAAoJELqXzVK3
+ lkFPr9cL/joKGCY8wwMfNbIM/wGecy7g3xyX2KarUDFaSjpCcTGPnu4HHo8U403Jd27W/skMAG9
+ oVpxYveO27v7tBMjjMuxmOZ2oslc37sV8r1ghd2AHHxFE5PgLHtp7EfmYoySst59SKwIxWndwjd
+ pVILJ97rkV8dNy4VuIkf7vRkIY8TpezV37Bg3nOiStdEeBer8CwF8/YNWojUb6oF0liBQjLvBRm
+ /n81HLHBv64bVKMcW/82pwTrAvtP4Skk4na6AF25lC0iSWmP3k6iPhLrV4XCy+EbJnQx4XYhmOd
+ 8/AZE8B8v7esZrpw0FYYg3004UQ6mS9KpGFBjcNCE/pxhBPfeC+MRj24JINqy1oT/bZpXK3fr8H
+ AMu//ZLi/gEZ7QS6vGYkolT5M0Bvq6tqF3sOhc9tEp5zdaTOCasIU05PpbNWFzq0JbHpFvox1Lh
+ 3bc6S5+/kikkHL42qGx9Ze7F2QAn/4jFnKdY7QjIHiCbAv/SWJhKXtDQLxZ6maCcIhK1UKBDPI7
+ W4=
 X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
  fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
 X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
  auth_id=239
 
-Move sparc sysctls (reboot-cmd, stop-a, scons-poweroff and tsb-ratio)
-into a new file (arch/sparc/kernel/setup.c). This file will be included
-for both 32 and 64 bit sparc. Leave "tsb-ratio" under SPARC64 ifdef as
-it was in kernel/sysctl.c. The sysctl table register is called with
-arch_initcall placing it after its original place in proc_root_init.
+Move s390 sysctls (spin_retry and userprocess_debug) into their own
+files under arch/s390. We create two new sysctl tables
+(2390_{fault,spin}_sysctl_table) which will be initialized with
+arch_initcall placing them after their original place in proc_root_init.
 
 This is part of a greater effort to move ctl tables into their
 respective subsystems which will reduce the merge conflicts in
-kerenel/sysctl.c.
+kernel/sysctl.c.
 
-Signed-off-by: Joel Granados <joel.granados@kernel.org>
+Signed-off-by: joel granados <joel.granados@kernel.org>
 ---
- arch/sparc/kernel/Makefile |  1 +
- arch/sparc/kernel/setup.c  | 46 ++++++++++++++++++++++++++++++++++++++++++++++
- kernel/sysctl.c            | 35 -----------------------------------
- 3 files changed, 47 insertions(+), 35 deletions(-)
+ arch/s390/lib/spinlock.c | 18 ++++++++++++++++++
+ arch/s390/mm/fault.c     | 17 +++++++++++++++++
+ kernel/sysctl.c          | 18 ------------------
+ 3 files changed, 35 insertions(+), 18 deletions(-)
 
-diff --git a/arch/sparc/kernel/Makefile b/arch/sparc/kernel/Makefile
-index 58ea4ef9b622bd18f2160b34762c69b48f3de8c6..3453f330e363cffe430806cd00a32b06202088b3 100644
---- a/arch/sparc/kernel/Makefile
-+++ b/arch/sparc/kernel/Makefile
-@@ -35,6 +35,7 @@ obj-y                   += process.o
- obj-y                   += signal_$(BITS).o
- obj-y                   += sigutil_$(BITS).o
- obj-$(CONFIG_SPARC32)   += ioport.o
-+obj-y                   += setup.o
- obj-y                   += setup_$(BITS).o
- obj-y                   += idprom.o
- obj-y                   += sys_sparc_$(BITS).o
-diff --git a/arch/sparc/kernel/setup.c b/arch/sparc/kernel/setup.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..4975867d9001b63b25770334116f2038a561c28c
---- /dev/null
-+++ b/arch/sparc/kernel/setup.c
-@@ -0,0 +1,46 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <asm/setup.h>
+diff --git a/arch/s390/lib/spinlock.c b/arch/s390/lib/spinlock.c
+index a81a01c449272ebad77cb031992078ac8e255eb8..6870b9e03456c34a1dc5c0c706f8e8bf1c4140e8 100644
+--- a/arch/s390/lib/spinlock.c
++++ b/arch/s390/lib/spinlock.c
+@@ -16,6 +16,7 @@
+ #include <linux/io.h>
+ #include <asm/alternative.h>
+ #include <asm/asm.h>
 +#include <linux/sysctl.h>
-+
-+static const struct ctl_table sparc_sysctl_table[] = {
+ 
+ int spin_retry = -1;
+ 
+@@ -37,6 +38,23 @@ static int __init spin_retry_setup(char *str)
+ }
+ __setup("spin_retry=", spin_retry_setup);
+ 
++static const struct ctl_table s390_spin_sysctl_table[] = {
 +	{
-+		.procname	= "reboot-cmd",
-+		.data		= reboot_command,
-+		.maxlen		= 256,
-+		.mode		= 0644,
-+		.proc_handler	= proc_dostring,
-+	},
-+	{
-+		.procname	= "stop-a",
-+		.data		= &stop_a_enabled,
++		.procname	= "spin_retry",
++		.data		= &spin_retry,
 +		.maxlen		= sizeof(int),
 +		.mode		= 0644,
 +		.proc_handler	= proc_dointvec,
 +	},
-+	{
-+		.procname	= "scons-poweroff",
-+		.data		= &scons_pwroff,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+#ifdef CONFIG_SPARC64
-+	{
-+		.procname	= "tsb-ratio",
-+		.data		= &sysctl_tsb_ratio,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+#endif
 +};
 +
-+
-+static int __init init_sparc_sysctls(void)
++static int __init init_s390_spin_sysctls(void)
 +{
-+	register_sysctl_init("kernel", sparc_sysctl_table);
++	register_sysctl_init("kernel", s390_spin_sysctl_table);
 +	return 0;
 +}
++arch_initcall(init_s390_spin_sysctls);
 +
-+arch_initcall(init_sparc_sysctls);
+ struct spin_wait {
+ 	struct spin_wait *next, *prev;
+ 	int node_id;
+diff --git a/arch/s390/mm/fault.c b/arch/s390/mm/fault.c
+index 9b681f74dccc1f525bafe150acf91e666a60d2bd..507da355bf68271c30115a797368f950707a2d8e 100644
+--- a/arch/s390/mm/fault.c
++++ b/arch/s390/mm/fault.c
+@@ -175,6 +175,23 @@ static void dump_fault_info(struct pt_regs *regs)
+ 
+ int show_unhandled_signals = 1;
+ 
++static const struct ctl_table s390_fault_sysctl_table[] = {
++	{
++		.procname	= "userprocess_debug",
++		.data		= &show_unhandled_signals,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec,
++	},
++};
++
++static int __init init_s390_fault_sysctls(void)
++{
++	register_sysctl_init("kernel", s390_fault_sysctl_table);
++	return 0;
++}
++arch_initcall(init_s390_fault_sysctls);
++
+ void report_user_fault(struct pt_regs *regs, long signr, int is_mm_fault)
+ {
+ 	static DEFINE_RATELIMIT_STATE(rs, DEFAULT_RATELIMIT_INTERVAL, DEFAULT_RATELIMIT_BURST);
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index dc3747cc72d470662879e4f2b7f2651505b7ca90..0dc41eea1dbd34396c323118cfd0e3133c6993a1 100644
+index 0dc41eea1dbd34396c323118cfd0e3133c6993a1..34c525ad0e0e0fe3b64c2ec730e443a75b55f3a3 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -70,9 +70,6 @@
- #include <asm/nmi.h>
- #include <asm/io.h>
- #endif
--#ifdef CONFIG_SPARC
--#include <asm/setup.h>
+@@ -1709,15 +1709,6 @@ static const struct ctl_table kern_table[] = {
+ 		.extra1		= SYSCTL_ZERO,
+ 		.extra2		= SYSCTL_MAXOLDUID,
+ 	},
+-#ifdef CONFIG_S390
+-	{
+-		.procname	= "userprocess_debug",
+-		.data		= &show_unhandled_signals,
+-		.maxlen		= sizeof(int),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
+-	},
 -#endif
- #ifdef CONFIG_RT_MUTEXES
- #include <linux/rtmutex.h>
- #endif
-@@ -1623,38 +1620,6 @@ static const struct ctl_table kern_table[] = {
- 		.extra2		= SYSCTL_ONE,
+ 	{
+ 		.procname	= "ngroups_max",
+ 		.data		= (void *)&ngroups_max,
+@@ -1798,15 +1789,6 @@ static const struct ctl_table kern_table[] = {
+ 		.proc_handler	= proc_dointvec,
  	},
  #endif
--#ifdef CONFIG_SPARC
+-#if defined(CONFIG_S390) && defined(CONFIG_SMP)
 -	{
--		.procname	= "reboot-cmd",
--		.data		= reboot_command,
--		.maxlen		= 256,
--		.mode		= 0644,
--		.proc_handler	= proc_dostring,
--	},
--	{
--		.procname	= "stop-a",
--		.data		= &stop_a_enabled,
--		.maxlen		= sizeof (int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
--	{
--		.procname	= "scons-poweroff",
--		.data		= &scons_pwroff,
+-		.procname	= "spin_retry",
+-		.data		= &spin_retry,
 -		.maxlen		= sizeof (int),
 -		.mode		= 0644,
 -		.proc_handler	= proc_dointvec,
 -	},
 -#endif
--#ifdef CONFIG_SPARC64
--	{
--		.procname	= "tsb-ratio",
--		.data		= &sysctl_tsb_ratio,
--		.maxlen		= sizeof (int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
--#endif
- #ifdef CONFIG_PARISC
+ #if	defined(CONFIG_ACPI_SLEEP) && defined(CONFIG_X86)
  	{
- 		.procname	= "soft-power",
+ 		.procname	= "acpi_video_flags",
 
 -- 
 2.47.2
