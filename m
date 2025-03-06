@@ -1,215 +1,209 @@
-Return-Path: <linux-fsdevel+bounces-43339-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26111A54983
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 12:35:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 249F1A549D0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 12:45:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 933CE174628
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 11:34:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9A471896905
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 11:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBFA213E9E;
-	Thu,  6 Mar 2025 11:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDA720C46C;
+	Thu,  6 Mar 2025 11:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ler7t8+S"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UVyywfKM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2070.outbound.protection.outlook.com [40.107.244.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D68211497;
-	Thu,  6 Mar 2025 11:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741260651; cv=none; b=XOr9H12UPUZrWg9NCyl/rtuXJEnFfdjTN7hXvl2PJUTyLtZbYJUbR31/cVklFcwB5eoqYbHI15Vb5sAiUn3eA40Ovd6lrEK/Dhw7FH1r5YRRzLjJKg/3AjC4MDguWVlw6g4wBr3XES3TyaNgQYeS4FwSwkgW25rPxjWGEdNueHc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741260651; c=relaxed/simple;
-	bh=r81yvisX8P4UQm9F7N7hhZ732PaheqwD7Ks9SFpA+WU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WGZ/YGQe5rWNkInhN+Y5sTGVtrenmmk5yA6Nhk0uFtWnKce9uIp4qFQ6xw8QshZAqVoaCApkefPNVKcRYA7XlcXcqGbIJ33m+BbL2wwElrFi6c8qt1sOhVv3kmpOsGpLUZW/XGilVEViY4lBosn4SidnZkxwfUOOc6DQpw4Uk9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ler7t8+S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 04DD3C4AF0C;
-	Thu,  6 Mar 2025 11:30:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741260651;
-	bh=r81yvisX8P4UQm9F7N7hhZ732PaheqwD7Ks9SFpA+WU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ler7t8+SANzyxeocUaVFF0itfXjdU/AePkZgfwecSb9/3uHn9EJLYdOl7yEWWt26X
-	 gfbgXEaTJbubb6zSFxiE3MJRKjpQXwfLp+1G9BSGiWCqMOTvaKavbo8xZt0/BrR1yQ
-	 xn/1Ptu59MizrbpA03exoCIx/1pM/xhK+vQSaXF1DemvPMQ4BB+ko4e3aWSoWZmJSo
-	 h+loNjGifVudVHzlXFeQCHsKVqs/vwkDcO70Zfm/Qg1PgQ/lR7aNYQu7I7CYExK744
-	 r8T5gba64BoDYPfa2j0BfACWYY/s14KBueIuTPUCOSNxF9bxT0pNglBNMAlCWu/Ipr
-	 eqkJb6AowxlqA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 968BAC282D1;
-	Thu,  6 Mar 2025 11:30:50 +0000 (UTC)
-From: joel granados <joel.granados@kernel.org>
-Date: Thu, 06 Mar 2025 12:29:46 +0100
-Subject: [PATCH v2 6/6] s390: mv s390 sysctls into their own file under
- arch/s390 dir
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EF820C460;
+	Thu,  6 Mar 2025 11:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741261192; cv=fail; b=AKwSaSsMMWHjL7R/72qhxiMmcKJJdZ5ILvK0llJs0cCWMCCE69CzlUQLstbem7aixhN/WrruNNneh197xCxvTopAtc5sD7PBuPDGVvlyVYFSOhqf+JtgqVUAeNeY607WrMxOZiHdouYAO86wyZhSyC/NjcQsDMU626zqH93eN3U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741261192; c=relaxed/simple;
+	bh=QhDI9x9ZkYzaaG5JxaLtg3l/rXukZE96D7hAlM/Czhw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V03Ux9ZC7iVMBA/Brefqz15OvEIPTb0UON958vR6wMXFf72mtyxRuN2ESFgt14qOyvHpY/qAsm64BIKp0vcTBQTPHKNA4NvPhBU4XKV1YhCfZW5Tjif9GLTPHnhCS8o0N6sInGyhfi0mDESjjgcXo7RLlgoFiAUbbjIE2lyrCcw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UVyywfKM; arc=fail smtp.client-ip=40.107.244.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=I8etNqU6FG00FQwR58BTy7hBPkPSb17xE2AZFO/i3OLgTElEPiKE8zGwm3UJNiLSNqxZf3UAzidZTbgwadVJbGUnVKrqKe+lzCvIan+7bQ3VU1HF3rZ2Y5F+zApSgU2xv+TjK0k/VWjy0BXTrKtljITQ1z/6PB25s/fSd8fFwSXZIrmaRdGuTEvIywH46mlqn0zdodez0NTFJQ9gW1ERZaWwvudxCeKmL+SADd/0AbgbaLw4TL7xGv5kX6Pf/+IcVQPQgWbc1mMPNLQI1ttkd4DM6Cm/TojWd8aj/k4TjBTXMhZJOMNr576f7buxAnxmplTAjzy3ozkYHAgwfWbqHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nGJo8b/IVO4Vpp/wFK/cKL4EIBmnd/uSe/g9Q/PEGGg=;
+ b=QQY4ZW5Ke3HwL6DbOwSg9d14s1/mSo11FycmdSnEHuM4MLn5LbGjPzbfRruQa3V8Tk6ZoS8XwxYEvqQ7lvfMYWr5RX8aw2Ztw0O6qsW+av8XjqCXIGFNIf+RHnh69xF+NbTjDXr40foSxqM3Fr7qHbR/f/Yvn02Vm0NUvw1D85Oi9mWUJiwxtxJRCy7/iacHmB22lAHvnONDWc7SmdkIvjQK9vrUQY8MmGj/c2wKjwva/CcBMfbSdqyR2wQpUmTzD5ONukMbiIE77fUEhdugdU8MZyo8pTUbrAYRXzYfL9bUEXmH84cm4+OD/FZ8TeLNprVnllESwkGMjN8kpM6Opw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nGJo8b/IVO4Vpp/wFK/cKL4EIBmnd/uSe/g9Q/PEGGg=;
+ b=UVyywfKMRCFSHy6+Yln7BdvUbal7vBfGfX7wcckQIts9NjyYH2u54QC3jkWRGaOUt9iEnTBrwVGfb9GPv6BMTOD6gf6RWSBnqoosK3g8JClrPAJhdkPSx4mFB4yVlbMELS/SsuRDIv3wY7qDqcbXZ88SfeVKczs8XhOWgnZti6g=
+Received: from DS0PR17CA0012.namprd17.prod.outlook.com (2603:10b6:8:191::20)
+ by BL4PR12MB9482.namprd12.prod.outlook.com (2603:10b6:208:58d::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.16; Thu, 6 Mar
+ 2025 11:39:47 +0000
+Received: from CY4PEPF0000E9DC.namprd05.prod.outlook.com
+ (2603:10b6:8:191:cafe::73) by DS0PR17CA0012.outlook.office365.com
+ (2603:10b6:8:191::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.18 via Frontend Transport; Thu,
+ 6 Mar 2025 11:39:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000E9DC.mail.protection.outlook.com (10.167.241.75) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8511.15 via Frontend Transport; Thu, 6 Mar 2025 11:39:47 +0000
+Received: from BLRKPRNAYAK.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 6 Mar
+ 2025 05:39:40 -0600
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Oleg Nesterov
+	<oleg@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>
+CC: Jan Kara <jack@suse.cz>, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Mateusz Guzik <mjguzik@gmail.com>, "Gautham R. Shenoy"
+	<gautham.shenoy@amd.com>, Rasmus Villemoes <ravi@prevas.dk>,
+	<Neeraj.Upadhyay@amd.com>, <Ananth.narayan@amd.com>, Swapnil Sapkal
+	<swapnil.sapkal@amd.com>, K Prateek Nayak <kprateek.nayak@amd.com>
+Subject: [RFC PATCH 0/3] pipe: Convert pipe->{head,tail} to unsigned short
+Date: Thu, 6 Mar 2025 11:39:21 +0000
+Message-ID: <20250306113924.20004-1-kprateek.nayak@amd.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CAHk-=wjyHsGLx=rxg6PKYBNkPYAejgo7=CbyL3=HGLZLsAaJFQ@mail.gmail.com>
+References: <CAHk-=wjyHsGLx=rxg6PKYBNkPYAejgo7=CbyL3=HGLZLsAaJFQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250306-jag-mv_ctltables-v2-6-71b243c8d3f8@kernel.org>
-References: <20250306-jag-mv_ctltables-v2-0-71b243c8d3f8@kernel.org>
-In-Reply-To: <20250306-jag-mv_ctltables-v2-0-71b243c8d3f8@kernel.org>
-To: Kees Cook <kees@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- Andreas Larsson <andreas@gaisler.com>, Heiko Carstens <hca@linux.ibm.com>, 
- Vasily Gorbik <gor@linux.ibm.com>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>, 
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-trace-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
- linux-s390@vger.kernel.org, Joel Granados <joel.granados@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3591;
- i=joel.granados@kernel.org; h=from:subject:message-id;
- bh=r81yvisX8P4UQm9F7N7hhZ732PaheqwD7Ks9SFpA+WU=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGfJh2hk9Sl4d4/rt7M4Iv2CUUdgG9l340yBQ
- 6BGtdUWhlaPu4kBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJnyYdoAAoJELqXzVK3
- lkFPr9cL/joKGCY8wwMfNbIM/wGecy7g3xyX2KarUDFaSjpCcTGPnu4HHo8U403Jd27W/skMAG9
- oVpxYveO27v7tBMjjMuxmOZ2oslc37sV8r1ghd2AHHxFE5PgLHtp7EfmYoySst59SKwIxWndwjd
- pVILJ97rkV8dNy4VuIkf7vRkIY8TpezV37Bg3nOiStdEeBer8CwF8/YNWojUb6oF0liBQjLvBRm
- /n81HLHBv64bVKMcW/82pwTrAvtP4Skk4na6AF25lC0iSWmP3k6iPhLrV4XCy+EbJnQx4XYhmOd
- 8/AZE8B8v7esZrpw0FYYg3004UQ6mS9KpGFBjcNCE/pxhBPfeC+MRj24JINqy1oT/bZpXK3fr8H
- AMu//ZLi/gEZ7QS6vGYkolT5M0Bvq6tqF3sOhc9tEp5zdaTOCasIU05PpbNWFzq0JbHpFvox1Lh
- 3bc6S5+/kikkHL42qGx9Ze7F2QAn/4jFnKdY7QjIHiCbAv/SWJhKXtDQLxZ6maCcIhK1UKBDPI7
- W4=
-X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
- fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
-X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
- auth_id=239
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9DC:EE_|BL4PR12MB9482:EE_
+X-MS-Office365-Filtering-Correlation-Id: f015c1c0-0590-472f-e312-08dd5ca39910
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014|921020|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?JMP8JP1mrOJ80elsX8BWvnWl2I24GCz7BhxhqBYTejiuIq7FGT3zFwyapcwZ?=
+ =?us-ascii?Q?ci/4GkgTBBz89srqWeqeZFxJayZUO1d+SltPvLJs4Gzk5kjj9aZ9XmuCvYUf?=
+ =?us-ascii?Q?68UBJn2sEEkdQwR6R1nJyV/PdWYz7ZKPqqO9n0mbItivOWix+vfA/XW/6Bgq?=
+ =?us-ascii?Q?BuoLdbEzDdrp4UgH3y6ed8MGRo/jEnh2lwORtev5QKK64XL9NPcLz8PvRTDY?=
+ =?us-ascii?Q?HekqcXeCJY31Q/lbySeNM3OV0Ld0lYWGzCnUX9FMQkNht593EqooXS8+AxTe?=
+ =?us-ascii?Q?cjExMrEm7wTuienCYweDHD6JK1rY4im5zB5h1B/AVmfNv9mB1i2UdpR6Vbdh?=
+ =?us-ascii?Q?WzlvUIUTqirigL2vBSdXQhl232ra3Ohe/m3Nyh3RKtpiz9lzvnCdxxsficaX?=
+ =?us-ascii?Q?F98nmZm0RpAtKCwtekVas2TPmQKewVIMSOyx/aMmLowoTSmlsirxSvCXm0+C?=
+ =?us-ascii?Q?mXaqv/XzazIDCGe9niklu5i4a7a5EXoSaQBAzYPkgCMhtqicfjSVeTvHMWMS?=
+ =?us-ascii?Q?SiUe/Z2Iv7nrabVJrB8dw+YIk+Vbw5JhHQBOmYzlo3DUIsfxm1nDlFGQRy6h?=
+ =?us-ascii?Q?3+yZ+MFHEOaQ2jSHR4P/R3MrDQ/0Vuc6BAHU5XkIE7o3pGxEdyWGFvwW+WvS?=
+ =?us-ascii?Q?U8M4q/50VzbkZC6nYUuWwA8qshIZvSEhjnWVTKkOV7wgwE6xPVRB207cLHLC?=
+ =?us-ascii?Q?IsI8KbBlQx+KImAtq0/7KEWveV7FvRDeLzLUEoO2OiiAhlWGKcqDN2VFIKT4?=
+ =?us-ascii?Q?tm0jWRbliqG4+xM0TFkzIKgp9TqgiDbYHhJQny+Aidf3GW6O3Y13lYyo160U?=
+ =?us-ascii?Q?gdHNXyDXvoALIxTuwAxkk1N4V8SqqmRGuph88GWzY04N/w/L2vzKurtCHLUt?=
+ =?us-ascii?Q?KWwgo/wllvVbmHzzOHLlB7+/r3b+kMbXQ2sDV2oq5hZZtBAWKbQkiZd+TvZr?=
+ =?us-ascii?Q?0cZ8rzg3Ehf2KZusvNZbklriS1KSdD7I3KKBM9STqYnynV3BI8rcTgs45lya?=
+ =?us-ascii?Q?CDRvsl9IjdeRchxOfQrrz+hnj489CymasFIZsYoGV9hszi+9qtwR2KM2Y4dA?=
+ =?us-ascii?Q?ibKj2TqI/w/p9nhjB2tA4au02S5xR3PnUT8ltmLVCKjcQ/cHrvx0C9RCl+z/?=
+ =?us-ascii?Q?t71XhHZLp9coy/6euSft4xIzUFMkkekcvV2MqM2pBPj/vOiNGT5xEV1x3gI3?=
+ =?us-ascii?Q?g1C0PLkLp0srqY15yzvRJaLV+rokdPJd1hR8irabDSSUGnZ9uHfa2IcYsi3V?=
+ =?us-ascii?Q?hwFnOy4/tO2eWW5PKutERw41+edHh6v6nSKIJtkI7TKtXFstgSG+c94Ua9ys?=
+ =?us-ascii?Q?+1iBpEqX1+euusogDNymG2XhLB9pblyXAJO9HqeMmwniS0zA706yLB+Xgcst?=
+ =?us-ascii?Q?8G3rQWPUyACx41ieC0pi12eDt7O/e0BqmtwWHu28ku76Jhi8IHpAZQDGciIl?=
+ =?us-ascii?Q?6t3cwQOYroOer6dlTnjxlOP3RLBHeANOKKpuxChMRIgP5tAwgDmYsPaO7p3F?=
+ =?us-ascii?Q?mZA9AfJtX0HbWCgMMjhuLYGwoS/P9Vb54ZVY?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014)(921020)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 11:39:47.2048
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f015c1c0-0590-472f-e312-08dd5ca39910
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9DC.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL4PR12MB9482
 
-Move s390 sysctls (spin_retry and userprocess_debug) into their own
-files under arch/s390. We create two new sysctl tables
-(2390_{fault,spin}_sysctl_table) which will be initialized with
-arch_initcall placing them after their original place in proc_root_init.
+Here is an attempt at converting pipe->{head,tail} to unsigned short
+members. All local variables storing the head and the tail have been
+modified to unsigned short too the best of my knowledge)
 
-This is part of a greater effort to move ctl tables into their
-respective subsystems which will reduce the merge conflicts in
-kernel/sysctl.c.
+pipe_resize_ring() has added a check to make sure nr_slots can be
+contained within the limits of the pipe->{head,tail}. Building on that,
+pipe->{max_usage,ring_size} were also converted to unsigned short to
+catch any cases of incorrect unsigned arithmetic.
 
-Signed-off-by: joel granados <joel.granados@kernel.org>
----
- arch/s390/lib/spinlock.c | 18 ++++++++++++++++++
- arch/s390/mm/fault.c     | 17 +++++++++++++++++
- kernel/sysctl.c          | 18 ------------------
- 3 files changed, 35 insertions(+), 18 deletions(-)
+This has been tested for a few hours with anon pipes on a 5th Generation
+AMD EPYC System and on a dual socket Intel Granite Rapids system without
+experiencing any obvious issues.
 
-diff --git a/arch/s390/lib/spinlock.c b/arch/s390/lib/spinlock.c
-index a81a01c449272ebad77cb031992078ac8e255eb8..6870b9e03456c34a1dc5c0c706f8e8bf1c4140e8 100644
---- a/arch/s390/lib/spinlock.c
-+++ b/arch/s390/lib/spinlock.c
-@@ -16,6 +16,7 @@
- #include <linux/io.h>
- #include <asm/alternative.h>
- #include <asm/asm.h>
-+#include <linux/sysctl.h>
- 
- int spin_retry = -1;
- 
-@@ -37,6 +38,23 @@ static int __init spin_retry_setup(char *str)
- }
- __setup("spin_retry=", spin_retry_setup);
- 
-+static const struct ctl_table s390_spin_sysctl_table[] = {
-+	{
-+		.procname	= "spin_retry",
-+		.data		= &spin_retry,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+};
-+
-+static int __init init_s390_spin_sysctls(void)
-+{
-+	register_sysctl_init("kernel", s390_spin_sysctl_table);
-+	return 0;
-+}
-+arch_initcall(init_s390_spin_sysctls);
-+
- struct spin_wait {
- 	struct spin_wait *next, *prev;
- 	int node_id;
-diff --git a/arch/s390/mm/fault.c b/arch/s390/mm/fault.c
-index 9b681f74dccc1f525bafe150acf91e666a60d2bd..507da355bf68271c30115a797368f950707a2d8e 100644
---- a/arch/s390/mm/fault.c
-+++ b/arch/s390/mm/fault.c
-@@ -175,6 +175,23 @@ static void dump_fault_info(struct pt_regs *regs)
- 
- int show_unhandled_signals = 1;
- 
-+static const struct ctl_table s390_fault_sysctl_table[] = {
-+	{
-+		.procname	= "userprocess_debug",
-+		.data		= &show_unhandled_signals,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+};
-+
-+static int __init init_s390_fault_sysctls(void)
-+{
-+	register_sysctl_init("kernel", s390_fault_sysctl_table);
-+	return 0;
-+}
-+arch_initcall(init_s390_fault_sysctls);
-+
- void report_user_fault(struct pt_regs *regs, long signr, int is_mm_fault)
- {
- 	static DEFINE_RATELIMIT_STATE(rs, DEFAULT_RATELIMIT_INTERVAL, DEFAULT_RATELIMIT_BURST);
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 0dc41eea1dbd34396c323118cfd0e3133c6993a1..34c525ad0e0e0fe3b64c2ec730e443a75b55f3a3 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -1709,15 +1709,6 @@ static const struct ctl_table kern_table[] = {
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_MAXOLDUID,
- 	},
--#ifdef CONFIG_S390
--	{
--		.procname	= "userprocess_debug",
--		.data		= &show_unhandled_signals,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
--#endif
- 	{
- 		.procname	= "ngroups_max",
- 		.data		= (void *)&ngroups_max,
-@@ -1798,15 +1789,6 @@ static const struct ctl_table kern_table[] = {
- 		.proc_handler	= proc_dointvec,
- 	},
- #endif
--#if defined(CONFIG_S390) && defined(CONFIG_SMP)
--	{
--		.procname	= "spin_retry",
--		.data		= &spin_retry,
--		.maxlen		= sizeof (int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
--#endif
- #if	defined(CONFIG_ACPI_SLEEP) && defined(CONFIG_X86)
- 	{
- 		.procname	= "acpi_video_flags",
+pipe_write() was tagged with a debug trace_printk() on one of the test
+machines to make sure the head has indeed wrapped around behind the tail
+to ensure the wraparound scenarios are indeed happening.
 
+Few pipe_occupancy() and pipe->max_usage based checks have been
+converted to use unsigned short based arithmetic in fs/fuse/dev.c,
+fs/splice.c, mm/filemap.c, and mm/filemap.c. Few of the observations
+from Rasmus on a parallel thread [1] has been folded into Patch 3
+(thanks a ton for chasing them).
+
+More eyes and testing is greatly appreciated. If my tests run into any
+issues, I'll report back on this thread. Series was tested with:
+
+  hackbench -g 16 -f 20 --threads --pipe -l 10000000 -s 100 # Warp around
+  stress-ng --oom-pipe 128 --oom-pipe-ops 100000 -t 600s # pipe resize
+  stress-ng --splice 128 --splice-ops 100000000 -t 600s # splice
+  stress-ng --vm-splice 128 --vm-splice-ops 100000000 -t 600s # splice
+
+  stress-ng --tee 128 --tee-ops 100000000 -t 600s
+  stress-ng --zlib 128 --zlib-ops 1000000 -t 600s
+  stress-ng --sigpipe 128 -t 60s
+
+stress-ng did not report any failure in my testing.
+
+[1] https://lore.kernel.org/all/87cyeu5zgk.fsf@prevas.dk/
+--
+K Prateek Nayak (3):
+  fs/pipe: Limit the slots in pipe_resize_ring()
+  fs/splice: Atomically read pipe->{head,tail} in opipe_prep()
+  treewide: pipe: Convert all references to
+    pipe->{head,tail,max_usage,ring_size} to unsigned short
+
+ fs/fuse/dev.c             |  4 +++-
+ fs/pipe.c                 | 33 +++++++++++++++-----------
+ fs/splice.c               | 50 ++++++++++++++++++++-------------------
+ include/linux/pipe_fs_i.h | 39 ++++++++++--------------------
+ kernel/watch_queue.c      |  3 ++-
+ mm/filemap.c              |  5 ++--
+ mm/shmem.c                |  5 ++--
+ 7 files changed, 69 insertions(+), 70 deletions(-)
+
+
+base-commit: 848e076317446f9c663771ddec142d7c2eb4cb43
 -- 
-2.47.2
-
+2.43.0
 
 
