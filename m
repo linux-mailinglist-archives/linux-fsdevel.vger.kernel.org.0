@@ -1,171 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-43357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D94ABA54C8F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 14:49:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9081AA54CAC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 14:55:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65E98188E1BB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 13:49:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC33B3AE8FB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 13:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277D813AD18;
-	Thu,  6 Mar 2025 13:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF0D13957E;
+	Thu,  6 Mar 2025 13:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="W27ujb1n";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="n7Q2zuFY"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NO+hsroC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835DB1304BA;
-	Thu,  6 Mar 2025 13:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A3E74059
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Mar 2025 13:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741268935; cv=none; b=VaRIOKjhmTN+KP6frFR7AdwlbtNYR5mdU+CFi51V3KMedApY+8xnLXD4DIflBby+6X0GwOQhTds8ZOSaDMnqlWJ8n5Q+4T4B10nmVb0i53+T7EnVVI1mPaF3DJKDu0JN97Dp1MpFYGSJrr2eZDB/L6Jl+v8v0zoKuY7O2Rx/ajY=
+	t=1741269331; cv=none; b=gr8FqLvLCd9itj75dm9jjI5+YPouPsFfeQyIYBc27agP0mETwXa0J6xRVuKnbjdQ2W9No49YU0CH6ENKLbvN6ysVpXOq1ZP+4k+aC5qskTzSGmVYkWcifZDNdN5FCPDR87W7NrpE6EruSrERPk8MXKXBEb1lfuLY75YcQo3Ee4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741268935; c=relaxed/simple;
-	bh=CSvJV5TZVr/Tdkwu9yG8y5g87lFrXmWjch0HkszAPHo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oMbyuVEGUG8L2VbjKOzqZL2zLOrhtKkokBW4QH+iRlizpV+Ti0Z7sZrQeAUKhjNqDwAcSR9I86gcM9YLNmh6ZnWv1jZo05VT52BZGh4vjPKpCbi6jYmPfrEtLqEvrNo5FLjL03ThQes3uWwObGGvIEJYSN33dj9D1ok/WoL5YKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=W27ujb1n; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=n7Q2zuFY; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id 744E6138025C;
-	Thu,  6 Mar 2025 08:48:51 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Thu, 06 Mar 2025 08:48:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1741268931;
-	 x=1741355331; bh=qHnoVwhDofD/+pHzdeYi8+pUZrNJoMBOM0bt/JqQaGY=; b=
-	W27ujb1nP0GhTrMG6Xcwva/eaHJ80Fkm5z2HxDCoI0TS2vFU9Gh/gXlaDy1nyrAo
-	bPYezGd8X/eOr5LZUejGeBhM93g5hOmDfGKG91KfZk1ZE3+YbkPbMgNxnHNRWf0O
-	ParlRqKhasRGPcFM08NklZA1qsrwRd1a8LguorHBtuzR5DKhf+YpSwxwkEivNJW+
-	aAfSdY7WZVeXuzjq+5O2Ue4sV4y8PVkf7xIbwk3YY0qAiYZVsfS/T9ntcAeLDQEy
-	IGudHGflEnv4LjX0kJmbO1qvSDMDUji2ymhPB8C5lZ6d7idlPLZx5//M4FAYyQZY
-	UydNYFnx/wtjgWzIRMR8mA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741268931; x=
-	1741355331; bh=qHnoVwhDofD/+pHzdeYi8+pUZrNJoMBOM0bt/JqQaGY=; b=n
-	7Q2zuFYFmVxyqsiG2AGNMkAoyAXmxCrej/YF3vDb4p7FcCRLwIFqZ9CmRSXwCVwv
-	ShDiAkxOjXhAHeFpUXaM7CpBgAqaEuUMxFV0AajZFpMcjFj1QO7sB8Ju1jI0u8J/
-	Pe3izz7VAbK/H4AO93uUipDnB87jGCOuJSGRjypwakZ4c49SJgq2Oxz01unP/Wqg
-	RFqHmhv98t18yHKBnd9B2pNR4b9kEyYVjNKKI868Cv4PmAo+wpuK6Vi41YWvxgO2
-	sC1fGEUaAKD6gSnVZCI44qdMWr2hVp94LD3RLlJkAbroXCbN/V0fankV4P7Ogm94
-	YKzadrAWZEOXUhF1bvkmg==
-X-ME-Sender: <xms:wqfJZ-Gb2C7NC0REXpgeI2WTPWKOvqnTtEFAu-h6dPErWdwWFS2EBg>
-    <xme:wqfJZ_WgqKcMSowOQiqGEv_URmSihLVWYcVIADHGMkc1o-JqeEoYXsEBDVlspcRC8
-    Siw61SZyPPfvPJY>
-X-ME-Received: <xmr:wqfJZ4L-pLJt2T6ho5_eTbagd54ejqFohUXX8cTj1qMSnkf2xWBFww7sDLObp9m4aw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdejleefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
-    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvg
-    hrnhgurdgtohhmqeenucggtffrrghtthgvrhhnpeehhfejueejleehtdehteefvdfgtdel
-    ffeuudejhfehgedufedvhfehueevudeugeenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggp
-    rhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehluhhishesih
-    hgrghlihgrrdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdp
-    rhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtohepkhgvrhhnvghlqdguvghvsehighgrlhhirgdrtghomh
-X-ME-Proxy: <xmx:wqfJZ4GVpO0ydRhvWGj2riORkw_lIgS1z-CmpACDT_3C8DdcWlCS7w>
-    <xmx:wqfJZ0VSlfqGuEMUh09K6ce69DD-ABQvpLMG27X6tsZZzyJK4m9-yQ>
-    <xmx:wqfJZ7OhAAiz471IDfReuxnlHTeTel_Go7VF-rEaVcMMAdpfGACB9Q>
-    <xmx:wqfJZ708Lbd_1eZBHgffP224KEjwKhprDClx8cjx3mqZ22OA4ZOhTQ>
-    <xmx:w6fJZ-feyBtwDmq3OwOPEis2uKMUsQeZho1tvE1Xlg5EFarNvQs3QckK>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 6 Mar 2025 08:48:49 -0500 (EST)
-Message-ID: <e3ccbd42-4178-4bc4-ba13-477d1f121868@bsbernd.com>
-Date: Thu, 6 Mar 2025 14:48:47 +0100
+	s=arc-20240116; t=1741269331; c=relaxed/simple;
+	bh=e4dIS6uRGrNz4cNFNpjtZYbdKDDxOseAZRayz8xAZGs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c0lt117EHVrX2daQGYB0W1tpoWFDahCuwPRAoF4Q6pcnctjdluWtyuNEZmyvmVRbfLt06tW5gwsbdGTzSOM00fKy3emJSP7m1SwXiXcyLwjy9EhdrgN0luoVVnUx5fCJxaVEXnIgoseN/kI67O/E/0sVWzFhz0MgbTlM9x6yLVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NO+hsroC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741269328;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e4dIS6uRGrNz4cNFNpjtZYbdKDDxOseAZRayz8xAZGs=;
+	b=NO+hsroCrhi3oUP9khpGT8dg4BmP+Fvtx1M/UN6xY2HTnjS/E7bJenM4CZsWjfdn3/BRF9
+	Eh22DP+9y471VxiWIMdvVhLr488mRr+ZL4s99ZPXEPvxnuXxoU1DpFgIK9T/QDqQmarjOW
+	/6m/DYm+XWmvQlq4BUUv/8f0QmLLND8=
+Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com
+ [209.85.221.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-549-bwsL3GQJOfS1LvettHZ6fQ-1; Thu, 06 Mar 2025 08:55:25 -0500
+X-MC-Unique: bwsL3GQJOfS1LvettHZ6fQ-1
+X-Mimecast-MFC-AGG-ID: bwsL3GQJOfS1LvettHZ6fQ_1741269324
+Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-523c33cfea8so827008e0c.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Mar 2025 05:55:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741269324; x=1741874124;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e4dIS6uRGrNz4cNFNpjtZYbdKDDxOseAZRayz8xAZGs=;
+        b=D/h+z0KeX7+MTybYRGPqPW0Qvw+qMAqODjo9IwvsppjnpZOcYjaYMXaoIQBiIiZBkX
+         CZ8CcRx3TVNgbff9bpYd3QuUNnAHxlPnis/CcSNcDhA+Fc4gAQbQzE1ky25JU4I4tvwe
+         VCpbt4GTMcY5/DCMcikDCjia4M48cs30R6kuv3UHy8OdlJnsZX404apkRDcJfzTjlad9
+         HT/FcECCiXRQxr1F8VrjOpATEX4WCAjh159GSppmRkPH8JoGXXXeFgjq296ofl+qyAwT
+         aflw40lUsGSqZDOeLHziaWa6vdirkCtxQAdBiAQtlYsSAV/FVutBbvEIpIm9Gai2+4rb
+         Donw==
+X-Forwarded-Encrypted: i=1; AJvYcCViicsr7V3UmoYw+fC7mDPduJaX/W918u2Q1C/L/+9stVLMidWNWYLmoQPY1wDT20PK3HYxRzmXd9DzDkQg@vger.kernel.org
+X-Gm-Message-State: AOJu0YweMpXtk3QoSJ/vbVzb+M1bo9sxlPNOmBDT8AujCky/GVRYvX6f
+	V+k2jNPijDBdQGxo8nnjNt/HkNS/3f7NVZeSolxHFYLhxxwaxULqigzJ7Q4GENK6A6yRIuaTdeS
+	PFEZn7uMn1QeTStNAKpHPo3Zdyp/NBODgSObdV2DrqIPj4FKy52CH/BGkeukxqmnX8LGem3DprO
+	w2XUjb/hSmllyWz4rzE6XMpAUosBtQ4YMO7UW9qA==
+X-Gm-Gg: ASbGncsb4U2exXyJnjnl93yIq5xQRpxcy/GMsW8cFD8rGsc/MWxezkTbmy/RGhaMmA3
+	L3qhXLa1md3irhzZJdTAhgPeBOO9+6o1evUDpkuTACIC+DfqwYEDvlmHVkqz20d50GwIRDuT0
+X-Received: by 2002:a05:6122:311d:b0:520:8a22:8ea5 with SMTP id 71dfb90a1353d-523c62d0b59mr4131939e0c.11.1741269324524;
+        Thu, 06 Mar 2025 05:55:24 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFTTtFaQhbGWpFrtu91D+m0udH4MOo8rOp9CuZE6mF/YlW49JAX1pbPGdZ/JS2Fbm94bLdqsM0Q1gDbgqI9T6Q=
+X-Received: by 2002:a05:6122:311d:b0:520:8a22:8ea5 with SMTP id
+ 71dfb90a1353d-523c62d0b59mr4131927e0c.11.1741269324263; Thu, 06 Mar 2025
+ 05:55:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fuse: fix possible deadlock if rings are never
- initialized
-To: Luis Henriques <luis@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-dev@igalia.com
-References: <20250306111218.13734-1-luis@igalia.com>
- <1dc28f9d-c453-42f4-8edb-1d5c8084d576@bsbernd.com>
- <87bjue2tbh.fsf@igalia.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US
-In-Reply-To: <87bjue2tbh.fsf@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <3989572.1734546794@warthog.procyon.org.uk> <4170997.1741192445@warthog.procyon.org.uk>
+ <CAO8a2Sg2b2nW6S3ctS+H0F1Owt=rAkKCyjnFW3WoRSKYD-sSDQ@mail.gmail.com>
+ <4177847.1741206158@warthog.procyon.org.uk> <CAO8a2SjC7EVW5VWCwVHMepXfYFtv9EqQhOuqDSLt9iuYzj7qEg@mail.gmail.com>
+ <127230.1741268910@warthog.procyon.org.uk>
+In-Reply-To: <127230.1741268910@warthog.procyon.org.uk>
+From: Alex Markuze <amarkuze@redhat.com>
+Date: Thu, 6 Mar 2025 15:55:13 +0200
+X-Gm-Features: AQ5f1JpnxGdeKrhKSz9blMqZa5LrOlpVW18iGxm4IojQwEugdRw4hShfJAhqRKI
+Message-ID: <CAO8a2SiCLxrLMFx94Au2X47fiTwBhW=6YZrfC8O4D5G0x+VRjQ@mail.gmail.com>
+Subject: Re: Is EOLDSNAPC actually generated? -- Re: Ceph and Netfslib
+To: David Howells <dhowells@redhat.com>
+Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, Ilya Dryomov <idryomov@gmail.com>, 
+	Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org, 
+	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	Gregory Farnum <gfarnum@redhat.com>, Venky Shankar <vshankar@redhat.com>, 
+	Patrick Donnelly <pdonnell@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+That's just one example, presumably any request that is serailsed from
+the network may contain this error code.
+Specifically the ser/des of the messages happens in net/ceph
+(libcephfs) code and fs/ceph handles the fs logic.
 
+On Thu, Mar 6, 2025 at 3:48=E2=80=AFPM David Howells <dhowells@redhat.com> =
+wrote:
+>
+> Alex Markuze <amarkuze@redhat.com> wrote:
+>
+> > Yes, that won't work on sparc/parsic/alpha and mips.
+> > Both the Block device server and the meta data server may return a
+> > code 85 to a client's request.
+> > Notice in this example that the rc value is taken from the request
+> > struct which in turn was serialised from the network.
+> >
+> > static void ceph_aio_complete_req(struct ceph_osd_request *req)
+> > {
+> > int rc =3D req->r_result;
+>
+> The term "ewww" springs to mind :-)
+>
+> Does that mean that EOLDSNAPC can arrive by this function?
+>
+> David
+>
 
-On 3/6/25 14:16, Luis Henriques wrote:
-> On Thu, Mar 06 2025, Bernd Schubert wrote:
-> 
->> On 3/6/25 12:12, Luis Henriques wrote:
->>> When mounting a user-space filesystem using io_uring, the initialization
->>> of the rings is done separately in the server side.  If for some reason
->>> (e.g. a server bug) this step is not performed it will be impossible to
->>> unmount the filesystem if there are already requests waiting.
->>>
->>> This issue is easily reproduced with the libfuse passthrough_ll example,
->>> if the queue depth is set to '0' and a request is queued before trying to
->>> unmount the filesystem.  When trying to force the unmount, fuse_abort_conn()
->>> will try to wake up all tasks waiting in fc->blocked_waitq, but because the
->>> rings were never initialized, fuse_uring_ready() will never return 'true'.
->>>
->>> Fixes: 3393ff964e0f ("fuse: block request allocation until io-uring init is complete")
->>> Signed-off-by: Luis Henriques <luis@igalia.com>
->>> ---
->>>   fs/fuse/dev.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
->>> index 7edceecedfa5..2fe565e9b403 100644
->>> --- a/fs/fuse/dev.c
->>> +++ b/fs/fuse/dev.c
->>> @@ -77,7 +77,7 @@ void fuse_set_initialized(struct fuse_conn *fc)
->>>   static bool fuse_block_alloc(struct fuse_conn *fc, bool for_background)
->>>   {
->>>   	return !fc->initialized || (for_background && fc->blocked) ||
->>> -	       (fc->io_uring && !fuse_uring_ready(fc));
->>> +	       (fc->io_uring && fc->connected && !fuse_uring_ready(fc));
->>>   }
->>>   
->>>   static void fuse_drop_waiting(struct fuse_conn *fc)
->>>
->>
->> Oh yes, I had missed that.
->>
->> Reviewed-by: Bernd Schubert <bschubert@ddn.com>
-> 
-> Thanks!  And... by the way, Bernd:
-> 
-> I know io_uring support in libfuse isn't ready yet, but I think there's
-> some error handling missing in your uring branch.  In particular, the
-> return of fuse_uring_start() is never checked, and thus if the rings
-> initialization fails, the server will not get any error.
-> 
-> I found that out because I blindly tried the patch below, and I was
-> surprised that the server was started just fine.
-
-Thank you! I will work a bit on splitting the uring branch into 
-merge-able patches later today, but probably won't finish today (too 
-many other things to do).
-
-
-Thanks,
-Bernd
 
