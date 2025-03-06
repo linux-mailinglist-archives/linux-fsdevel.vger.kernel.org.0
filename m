@@ -1,140 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-43375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CA08A552C4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 18:19:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E6DFA553D6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 19:01:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7DBE7A3782
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 17:18:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E5A8189AD5E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 18:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196452561C5;
-	Thu,  6 Mar 2025 17:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAF55276D3B;
+	Thu,  6 Mar 2025 17:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z6BlRLLn"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="N6nHPydl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F45946C
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Mar 2025 17:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC11627182B
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Mar 2025 17:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741281560; cv=none; b=rFE0l5cEFLuLLU0WzuDH+LeNGnBVleKUngnUhjbTOu4Zsl1LyRVmrDjLiT+O3tQv0Zo3ueA+WjhaPwjSm9uxQO8HYAcrRqTPq+I90B7GFecnsSGhRHcsXJKomC127pl2BPQKCrD4qMngL5TwIUl1YfsQf5AZ0YEAqSoYX6Az2QI=
+	t=1741283967; cv=none; b=JZYQOueewRc4fbktB3bESrUulgzZn8BIsCdxFpo8deixY3v3ZD341yIC3ZKdVAVYKnr+8EFOtmc3HPR9uldSgG6hdl0+3n0UltoJNp79vCJ0cJduMHNYJ14Snw7CrxxKfSOdwhoHxDtxjaQ/2ab1CtDWn1HMigm9PECCN57Ad+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741281560; c=relaxed/simple;
-	bh=1zk/Wf5UBNnW+CYKHKRvUx81qFWSHkXU/Q2Txv1Mg1M=;
+	s=arc-20240116; t=1741283967; c=relaxed/simple;
+	bh=NWT0F/KJlYO1vT3bElv/lrz4CjmK9qNstQ1RSsLhO5s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RCSoJF2CXZfqJWgHrSkr1jTrHe92FarO7/C7FL1MjCL18Ru4azxXtpV6me136mvBtPby3KUOjjbj3WPuhlAwuLOfUsRzCmCJAhEZODF6U6WGcKSJsGUE+seC7NuUUwr+Mdq1T4h1TfBQetcWj2faPymwz7Y8BVxl5LqJCiSbna8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z6BlRLLn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741281558;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VUWoEwD1QtHX1NkxE737fq82KwPX2Nk79R3EEcVwNlY=;
-	b=Z6BlRLLnx2ZuvfUZlls4ql44b+P4vFVbOGvX4Y9h+Lw2Rh7L1oCErYGb/PJbEzNer4m9LE
-	exacOxjfA2OgGf2nxqhKF4pBgQEX2U+Ou5Pw0Ors11/DAQreZwJYI51Wn+Aaz6e5TbhPoi
-	NeWvJtM+a/5j6YcboqpRoLdb1WUSFnQ=
-Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com
- [209.85.222.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-330-wnZIkqgvOc69aRY8m1DUmw-1; Thu, 06 Mar 2025 12:19:02 -0500
-X-MC-Unique: wnZIkqgvOc69aRY8m1DUmw-1
-X-Mimecast-MFC-AGG-ID: wnZIkqgvOc69aRY8m1DUmw_1741281542
-Received: by mail-ua1-f71.google.com with SMTP id a1e0cc1a2514c-86bbd798b3cso1044329241.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Mar 2025 09:19:02 -0800 (PST)
+	 To:Cc:Content-Type; b=R6mr7IgUutLEyQh8nY623K1M1y3uJkUv1ZMHELuP+7q7Thp0z6g5CQzQmEWUUIKX3M8dM29z3xbd1KLVfNA8acHkzmhPoGbMSPUoA9BbmvlHgpoAXw83xunb44vVz0U+kUz/PEkISB6I3JkZWM0OTtKJdq15UW8hoTO2BadBVMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=N6nHPydl; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ab78e6edb99so153518166b.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Mar 2025 09:59:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1741283963; x=1741888763; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bSYRkarb+7IJw2j2ISIxVnW8mglX4UBJdNIvXLsVq6k=;
+        b=N6nHPydlZWCkpeTREh8vGnL9mIU5wSVBonj+s+sjyYGwuXCmaWzn0AY0ILBun37+lG
+         dNVeJ4/iLniiBvuxS9i7vzYYUNdUnigaB2X15jjpxFJwfQMil/iSDc2vYuv7tDa3WaRb
+         bQ+5kkn/4IQ5V08ieBcf7+6WJIzbLCRFV2Clo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741281542; x=1741886342;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VUWoEwD1QtHX1NkxE737fq82KwPX2Nk79R3EEcVwNlY=;
-        b=HrAHd7YBLHTz/HcDkp/GJ6R9DnceH3KqIz9XZ8OzNF9tTK4nQFolarv6lDQNifCAqb
-         NRlzAGFTttRsy4vu5JOUUkFpsG6cwF4DZnU2JXzT/CwIXswLvFmpOGy64BG/h4D5gFIn
-         XMamsc+cKLJxpxp5jT5p7C25nNlv5s2nJOfhN9G66oUbgxatOSeS1CiaB+dTA76MsAVp
-         FROxLudZixkpq3PRyKSHo6V2yO7YVsv4YBSrbSqYvs3c0N/J8v03TYYK+seKvFmJkzPn
-         /HqMg5lRSMp9iVPpBYp2S92u7egxy0I4+3sw9WI3CefXDZJq/2aHpcVDh0nqFgo+3T4u
-         gaXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUiyDYbQIie2U1YsvQmFb8noPmoThVUdZIlUHIVA/tsnLpNILcAnVSsaM/HY9WC1kSvLiw0tl0PT44or69Z@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7OCRGLhHoREuUOGQQYeem/rVDqyA6qACbyflbh2L38HEfq4KQ
-	lO5GfAkNrIN/BrjJFFXCEfenzSejqve4RZD7BaUjstWGcnT3lZK08UcYGNOPswxNk9+b9wb9JXn
-	gYSkII7T6pnceYBcpS4a3RCw9lLDepJrQ/iYriykTKw/jVh4N+hzopHAFF1VELvqGdq66hJmRYG
-	t3Wn5vU6j7cw2r7CmUzXgHtthADU2tTU4khId7Sw==
-X-Gm-Gg: ASbGncs5nk1CRjMXEG7e/ql9Nx4AyPpOkUBsYF+HOW6fyS6/cTiAy/PX7h42noimJUY
-	05aU4aoiXjHe/KkQFZDFJDrJLZwLnKaxfJ8HmbNO8QWaEai7V+Bh1Uf6/KKDKsCsP6JHVwx3T
-X-Received: by 2002:a05:6102:5490:b0:4c1:9b88:5c30 with SMTP id ada2fe7eead31-4c2e292962emr5979451137.19.1741281542266;
-        Thu, 06 Mar 2025 09:19:02 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE7spgLqpPQaIcIR+gCiOtfl1Cc6hZYDhCnOcThE+Z2s7vNWkkQetRZiUqTe+9qs6bZrerq/C7urJCzh9HnSNo=
-X-Received: by 2002:a05:6102:5490:b0:4c1:9b88:5c30 with SMTP id
- ada2fe7eead31-4c2e292962emr5979396137.19.1741281541943; Thu, 06 Mar 2025
- 09:19:01 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741283963; x=1741888763;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bSYRkarb+7IJw2j2ISIxVnW8mglX4UBJdNIvXLsVq6k=;
+        b=vLJw/WsgvwzP7/k3wvEaByxZzAiK+imN7ufVH3xtf186elzh7ydAYKYAOxLYJI9HQ0
+         Pv44cnp/HpSNH1HnmKzG1zE0TCf1mALozndqHhobO3WCNs2cudi3af/ZAKcAAmTBWJtu
+         Z9Vcw3nmmR2QXlVC9LSMv57ULj7hfRkxgvaXHcXivLi0f2vYFSdVvPmZM8MLdcinykZt
+         c9yQVC9nibw8beoxN+EUaZMj7ZNJcdf68wPdtV1e0i2gAL8hKxSoYEgIgEr7ABzXB7kO
+         wcB5Q3/pEKiT5HzCdSCJ8PcDn//uk9wmsU/Wli77+GbWH26lkYx+NEocJML+ur4+rx9r
+         BOQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMWzyDXI8L80bZZaGlYHEPUkuvE3kfWXicEbv35tb8g7jITSE5jkGuj48AaltBD3a+bQE9G+m/O7kO7I+2@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLKmqQDFs0ak5WloZDirQrdDdQ960csPgXLlgK9cAcjw1q48+c
+	Hsl2DtGaoH3wr+7wK4pnzP8Agfzg6e8j0Pw7epWLniKcGEfOHlZ89GZ/aqMpeJiTjQkHP9Xxdf1
+	yw5g=
+X-Gm-Gg: ASbGncs+XRUviFeLewdW06566qia1yFTxdqwMl4Bp3nr3CMCYx4Ef/qOl0z7bKHU+SC
+	s88UIJgvSugs14fw3v7c0xuLkIAOi1Eb4jMXyATnxtn8Y/Ykc5G2VFO9EX0I/Uu6EoeZeUfhxVU
+	lCvmR5infV9Arx9Cr/1QAxEwt+jI2ty6oE0UM+ou8TP0mtQe4AhxT7ZSbJ7/0UR2AHYQ4j46LhD
+	ng/xC/Ze/JSzB2TiqoU3eBnUbBqOPc+hdGVV/nucix8FaMdqeSij/JBKoY9fp1qD+0eUilK941l
+	rSAHotTQmIExy3VUKgUmbh/ORg6h4bUwiP056ELZeZqppVR4oposxE6VMVnk/3FfKtHDPT3oDQO
+	AZrI6oIyAlv/8go33ri4=
+X-Google-Smtp-Source: AGHT+IEtQidwH6INzF8gJ57Ui35Fe3MOQrxm0ZxaY4FufZh9YkttByRdX/u24vzZ5OUljuRXDjTSqA==
+X-Received: by 2002:a17:906:4fce:b0:abe:fdfc:47d6 with SMTP id a640c23a62f3a-ac20d8ccc35mr772306166b.23.1741283962773;
+        Thu, 06 Mar 2025 09:59:22 -0800 (PST)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2394389a7sm129133466b.5.2025.03.06.09.59.20
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 09:59:20 -0800 (PST)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ab78e6edb99so153508366b.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Mar 2025 09:59:20 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUDvesShVC5KgLFSj7RLgO9LRS/yO49xLqp97s1yzLZS0wvKQzJWpmjVTkBdCmvOCnabLL1+TtR7/mlHjbG@vger.kernel.org
+X-Received: by 2002:a17:907:3d86:b0:ac1:e6b9:57ce with SMTP id
+ a640c23a62f3a-ac20d852d1dmr848759766b.7.1741283960242; Thu, 06 Mar 2025
+ 09:59:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3989572.1734546794@warthog.procyon.org.uk> <4170997.1741192445@warthog.procyon.org.uk>
- <CAO8a2Sg2b2nW6S3ctS+H0F1Owt=rAkKCyjnFW3WoRSKYD-sSDQ@mail.gmail.com>
- <CACPzV1mpUUnxpKQFtDzd25NzwooQLyyzdRhxEsHKtt3qfh35mA@mail.gmail.com>
- <128444.1741270391@warthog.procyon.org.uk> <CAJ4mKGZP2a8acd3Z7OT4UxJo-eygz30_V4Ouh05daMQ=pQv4aw@mail.gmail.com>
-In-Reply-To: <CAJ4mKGZP2a8acd3Z7OT4UxJo-eygz30_V4Ouh05daMQ=pQv4aw@mail.gmail.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Thu, 6 Mar 2025 19:18:51 +0200
-X-Gm-Features: AQ5f1JpQcoMH0pu_ANh7Fi3mDGR-c82TH6fAs4PV2crn8yOt0NZj2cZVfepYRdc
-Message-ID: <CAO8a2ShjbUuk9_+9P9oVcgTU87ZASNpa735xOyC+tMetL13bdA@mail.gmail.com>
-Subject: Re: Is EOLDSNAPC actually generated? -- Re: Ceph and Netfslib
-To: Gregory Farnum <gfarnum@redhat.com>
-Cc: David Howells <dhowells@redhat.com>, Venky Shankar <vshankar@redhat.com>, 
-	Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>, 
-	Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, Patrick Donnelly <pdonnell@redhat.com>
+References: <20250228143049.GA17761@redhat.com> <20250228163347.GB17761@redhat.com>
+ <03a1f4af-47e0-459d-b2bf-9f65536fc2ab@amd.com> <CAGudoHHA7uAVUmBWMy4L50DXb4uhi72iU+nHad=Soy17Xvf8yw@mail.gmail.com>
+ <CAGudoHE_M2MUOpqhYXHtGvvWAL4Z7=u36dcs0jh3PxCDwqMf+w@mail.gmail.com>
+ <741fe214-d534-4484-9cf3-122aabe6281e@amd.com> <3jnnhipk2at3f7r23qb7fvznqg6dqw4rfrhajc7h6j2nu7twi2@wc3g5sdlfewt>
+ <CAHk-=whuLzj37umjCN9CEgOrZkOL=bQPFWA36cpb24Mnm3mgBw@mail.gmail.com>
+ <CAGudoHG2PuhHte91BqrnZi0VbhLBfZVsrFYmYDVrmx4gaLUX3A@mail.gmail.com>
+ <CAHk-=whVfFhEq=Hw4boXXqpnKxPz96TguTU5OfnKtCXo0hWgVw@mail.gmail.com>
+ <20250303202735.GD9870@redhat.com> <CAHk-=wiA-7pdaQm2nV0iv-fihyhWX-=KjZwQTHNKoDqid46F0w@mail.gmail.com>
+ <CAHk-=wjyHsGLx=rxg6PKYBNkPYAejgo7=CbyL3=HGLZLsAaJFQ@mail.gmail.com> <87cyeu5zgk.fsf@prevas.dk>
+In-Reply-To: <87cyeu5zgk.fsf@prevas.dk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 6 Mar 2025 07:59:03 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wg8e77mmVWZrSjhDe3+3MfF_h1op7VjTJv570zrE2s9Jw@mail.gmail.com>
+X-Gm-Features: AQ5f1Jq3Yhgvw2xjomqRUNpCHfEfMY6rND9DoGhv3ZSJetivAGgMEt8CTPE_-Kw
+Message-ID: <CAHk-=wg8e77mmVWZrSjhDe3+3MfF_h1op7VjTJv570zrE2s9Jw@mail.gmail.com>
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
+To: Rasmus Villemoes <ravi@prevas.dk>
+Cc: Oleg Nesterov <oleg@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>, 
+	K Prateek Nayak <kprateek.nayak@amd.com>, "Sapkal, Swapnil" <swapnil.sapkal@amd.com>, 
+	Manfred Spraul <manfred@colorfullife.com>, Christian Brauner <brauner@kernel.org>, 
+	David Howells <dhowells@redhat.com>, WangYuli <wangyuli@uniontech.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>, Neeraj.Upadhyay@amd.com, Ananth.narayan@amd.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-It's not about endians. It's just about the fact that some linux
-arches define the error code of EOLDSNAPC/ERETRY to a different
-number.
+On Wed, 5 Mar 2025 at 22:35, Rasmus Villemoes <ravi@prevas.dk> wrote:
+>
+> On Wed, Mar 05 2025, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> >
+> > and there might be other cases where the pipe_index_t size might matter.
+>
+> Yeah, for example
+>
+>       unsigned int count, head, tail, mask;
+>
+>       case FIONREAD:
 
-On Thu, Mar 6, 2025 at 6:22=E2=80=AFPM Gregory Farnum <gfarnum@redhat.com> =
-wrote:
->
-> On Thu, Mar 6, 2025 at 6:13=E2=80=AFAM David Howells <dhowells@redhat.com=
-> wrote:
-> >
-> > Venky Shankar <vshankar@redhat.com> wrote:
-> >
-> > > > That's a good point, though there is no code on the client that can
-> > > > generate this error, I'm not convinced that this error can't be
-> > > > received from the OSD or the MDS. I would rather some MDS experts
-> > > > chime in, before taking any drastic measures.
-> > >
-> > > The OSDs could possibly return this to the client, so I don't think i=
-t
-> > > can be done away with.
-> >
-> > Okay... but then I think ceph has a bug in that you're assuming that th=
-e error
-> > codes on the wire are consistent between arches as mentioned with Alex.=
-  I
-> > think you need to interject a mapping table.
->
-> Without looking at the kernel code, Ceph in general wraps all error
-> codes to a defined arch-neutral endianness for the wire protocol and
-> unwraps them into the architecture-native format when decoding. Is
-> that not happening here? It should happen transparently as part of the
-> network decoding, so when I look in fs/ceph/file.c the usage seems
-> fine to me, and I see include/linux/ceph/decode.h is full of functions
-> that specify "le" and translating that to the cpu, so it seems fine.
-> And yes, the OSD can return EOLDSNAPC if the client is out of date
-> (and certain other conditions are true).
-> -Greg
->
+Thanks. I've hopefully fixed this (and the FUSE issue you also
+reported), and those should work correctly no on 32-bit. Knock wood.
 
+Mind taking a look and double-checking the fixes?
+
+                Linus
 
