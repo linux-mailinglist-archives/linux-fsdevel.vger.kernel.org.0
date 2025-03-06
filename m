@@ -1,127 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-43330-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43331-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94468A5476B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 11:13:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C226A54784
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 11:16:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB93A16DD7D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 10:13:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD0FF189281C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 10:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2011FFC73;
-	Thu,  6 Mar 2025 10:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A37120011D;
+	Thu,  6 Mar 2025 10:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K4uA7Gb5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QAwOtLHa"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081E741C92;
-	Thu,  6 Mar 2025 10:13:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839C717B50B;
+	Thu,  6 Mar 2025 10:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741256024; cv=none; b=P8OPMqLLnkCz5nmro/4USD6mz/yz3cf9BpTdMFqB1FD7tXmuaNb5ltrEO29TQSaawys90a3xO4o/2uYYgvp2+fCMsNFQdbvJATy51xryw1kTIOno4eNKYmjOgLd+B+kuFnhNNM8ayp39vXaa377XYpDibaWGPGWQfil4yKHkNLo=
+	t=1741256159; cv=none; b=f9qyFQSJFGv6EMAVMFUt9anvh/boqo2b9nehgchV817+E2i4dDD7ZSmU1TDzT768YRAaE8TPNy9yKDZ2b7f3k4r+eHngog1qdFDrY+SbN6i2t27dGsVLXQR9ju8Fz81H/unmYXr1+sncu+JaSVGWNbOJsfNVIDMKB285/tT3zu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741256024; c=relaxed/simple;
-	bh=lDR+NcZh6r7M5vLbNyksGzmR5l3ZCpRBHAlvAU3OEqk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b2vL/Qq99vZS+9V6S/rjpmH22MET4jG6QpK3p30Qchn1y5N6nfrO2cTHdIjqabYklClBWkL8MpVbLxRwhMm+02+P7WPV/PwQe27B9BgLdDgA0qMkN0xXfukJWin7kdXxTM94vPskML6bS89wuIukMm4FLHudsjJgYwnXKtYH91E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K4uA7Gb5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4350AC4CEE0;
-	Thu,  6 Mar 2025 10:13:42 +0000 (UTC)
+	s=arc-20240116; t=1741256159; c=relaxed/simple;
+	bh=GyD5rv2egr2dMdLAzHO0FeBEFkCMJ1OAl97tzWJuVcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AALKbeI6voHNJtWx/Ps7MWW06ssQXuoy0PBWPLXxSv09MlbfCV6xr8mj+glcxnmP3C6IJBSda7r0UMwwzNrCDKIfnDZMfBEFhOLZUGDybq2fMr3tlouLFFyRf7Gi3uPr/keakXcbag2j4KQv8OGbVNEvioACD5VXUteUaZPEiL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QAwOtLHa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73FC0C4CEE0;
+	Thu,  6 Mar 2025 10:15:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741256023;
-	bh=lDR+NcZh6r7M5vLbNyksGzmR5l3ZCpRBHAlvAU3OEqk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=K4uA7Gb5jmsZ4S3BOsidaEosFt2citthca0bmi5U2y9l5jmEct49VE89iA4w061a1
-	 1E8yZ+SAo4+l9WXpzoUJ8TS6rMkgVOGFZVqsWPhcWqsXeXtczXfKsD21ynaGOCZjq1
-	 iKzxUU5D4CoNLpgVIxfcOgb7HroWc/0CaaGs+no67t1vnKKd/B4A0y+mi7chiGSA58
-	 2h5FC/bAiJVn/6fVW8hU5+sBTgw4Bl+VZr6e7t0vVPyvo7Lz/SFlQ2guSXiw/CGPdw
-	 yMKULPf9Nqixy1UG9py1vwY7FYGF4SasqsqbdEV6fuYKvIJbC/D0Tx/dlt4J2MOj5/
-	 sfoq8Xbg2WFJA==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Thu,  6 Mar 2025 11:13:28 +0100
-Message-ID: <20250306-vfs-fixes-290b2e462d9c@brauner>
-X-Mailer: git-send-email 2.47.2
+	s=k20201202; t=1741256159;
+	bh=GyD5rv2egr2dMdLAzHO0FeBEFkCMJ1OAl97tzWJuVcE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QAwOtLHaszWKb2z40qTZfmkWj0elqbFbgDTWAWlnnJmPwsE83GHvKS39FnQV7SPYR
+	 T2zNPUk/TXzzSyelENHgIPOHOtQJlwZ0sfnqoDPq0EHzH0t8BmfHfDntuhK5UxsiaF
+	 amwC8JcF/NU+7jisf7pDtdeqOHlGmP/YTZk+h+qQYwxAzi3WJgkOxdr5rNGjUc7OfO
+	 eGcciFwbQDCh8fAlo5Jja8gYTso8yrFqO4UPHA+SP8rhSoml84JkH3JbJS/DBYnzFg
+	 1uEeH+9418DNDOK+0O0gSvKi+G10D6q6Q0cSDfQ/aaUIg9eNn4z6rWdB1vaBKl27FZ
+	 annRwzXDVmOLA==
+Date: Thu, 6 Mar 2025 11:15:38 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Kees Cook <kees@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, sparclinux@vger.kernel.org, linux-s390@vger.kernel.org, 
+	linux-acpi@vger.kernel.org
+Subject: Re: [PATCH 3/8] ftrace: Move trace sysctls into trace.c
+Message-ID: <dekaemtglzq5el2omrusxyqntdqbzyllcalzor4jrindici25g@x2bdsiblw6iw>
+References: <20250218-jag-mv_ctltables-v1-0-cd3698ab8d29@kernel.org>
+ <20250218-jag-mv_ctltables-v1-3-cd3698ab8d29@kernel.org>
+ <20250303204455.69723c20@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1699; i=brauner@kernel.org; h=from:subject:message-id; bh=lDR+NcZh6r7M5vLbNyksGzmR5l3ZCpRBHAlvAU3OEqk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSfLA1wnuOT8H6+Y8obs16Jq3GV21nmdRhemeLHd/SVb mDSBzH9jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIkc+8vwT+9vzK6LGgvCWd3e mumkFweGBujzBOtcOHj5fcSjs6ucpzMyfH5lcOfjQaUg1/8m0j9iNBQqDQrO+jkFWldGd+qpHwz kBQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303204455.69723c20@gandalf.local.home>
 
-/* Summary */
+On Mon, Mar 03, 2025 at 08:44:55PM -0500, Steven Rostedt wrote:
+> On Tue, 18 Feb 2025 10:56:19 +0100
+> Joel Granados <joel.granados@kernel.org> wrote:
+> 
+> Nit, change the subject to:
+> 
+>   tracing: Move trace sysctls into trace.c
+Done. Thx for the feedback 
 
-This contains various fixes for this cycle:
+Best
+> 
+> as I try to only have the "ftrace:" label for modifications that affect
+> attaching to functions, and "tracing:" for everything else.
+> 
+> Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> 
+> -- Steve
+> 
+> 
+> > Move trace ctl tables into their own const array in
+> > kernel/trace/trace.c. The sysctl table register is called with
+> > subsys_initcall placing if after its original place in proc_root_init.
+> > This is part of a greater effort to move ctl tables into their
+> > respective subsystems which will reduce the merge conflicts in
+> > kerenel/sysctl.c.
+> > 
+> > Signed-off-by: Joel Granados <joel.granados@kernel.org>
+> > ---
+...
+> > +	},
+> > +};
+> > +
+> > +static int __init init_trace_sysctls(void)
+> > +{
+> > +	register_sysctl_init("kernel", trace_sysctl_table);
+> > +	return 0;
+> > +}
+> > +subsys_initcall(init_trace_sysctls);
+> >  
+> >  #ifdef CONFIG_TRACE_EVAL_MAP_FILE
+> >  /* Map of enums to their values, for "eval_map" file */
+> > 
+> 
 
-- Fix spelling mistakes in idmappings.rst.
+-- 
 
-- Fix RCU warnings in override_creds()/revert_creds().
-
-- Create new pid namespaces with default limit now that pid_max is namespaced.
-
-/* Testing */
-
-gcc version (Debian 14.2.0-8) 14.2.0
-Debian clang version 19.1.4 (1)
-
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-No known conflicts.
-
-
-The following changes since commit d082ecbc71e9e0bf49883ee4afd435a77a5101b6:
-
-  Linux 6.14-rc4 (2025-02-23 12:32:57 -0800)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.14-rc6.fixes
-
-for you to fetch changes up to d385c8bceb14665e935419334aa3d3fac2f10456:
-
-  pid: Do not set pid_max in new pid namespaces (2025-03-06 10:18:36 +0100)
-
-Please consider pulling these changes from the signed vfs-6.14-rc6.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.14-rc6.fixes
-
-----------------------------------------------------------------
-Aiden Ma (1):
-      doc: correcting two prefix errors in idmappings.rst
-
-Herbert Xu (1):
-      cred: Fix RCU warnings in override/revert_creds
-
-Michal Koutný (1):
-      pid: Do not set pid_max in new pid namespaces
-
- Documentation/filesystems/idmappings.rst |  4 ++--
- include/linux/cred.h                     | 10 ++--------
- kernel/pid_namespace.c                   |  2 +-
- 3 files changed, 5 insertions(+), 11 deletions(-)
+Joel Granados
 
