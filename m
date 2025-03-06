@@ -1,225 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-43323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37271A545AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 09:59:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CEDDA545CA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 10:04:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BED61883DB5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 08:59:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E87E41888FCC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 09:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74F02080FB;
-	Thu,  6 Mar 2025 08:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tdOqRN92"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B9C2080EB;
+	Thu,  6 Mar 2025 09:04:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B622063F8;
-	Thu,  6 Mar 2025 08:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB93319D071
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Mar 2025 09:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741251560; cv=none; b=umSo49/D3jdiwndlUqgKfnDPlua4sIhkPqPyKriruYTQip2/6m4pXqqNv5qStP4PCdElqF6cju8WhfspKREHe/3t17d50ORwGGo47oZKwCVJx8uN3+rPsCUzJSxlcyxO9yPs0CwTuamJFfQunRGbG8b4MVqKlzaU6zXbamp+V9o=
+	t=1741251846; cv=none; b=bb2GWJvwtb3l4Zey3AtNjcx5H8hxEMS4khEog2newBiv3YQvQ3ObodTZVKN9mkTJQpBCbwPY04729Bcs63XCo02qVSRzgRTpQ0J5oF2t44KRt0QAI+mkF8csWtmNPShCA2VwD7nv61uoZi4KcpdVVBAWlervxgj3gCyqjQuS6oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741251560; c=relaxed/simple;
-	bh=w6Dn2/qTCu57870nK+uZAVm2dN+cuocLCxSK1mHE6HE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qy9OZ7lFylztRk5Z0gOxfp4M4y9DjH3+okZvGS8SYU3+Jzy+FtJfFN4V9E3Fph2tJ0OEyIFvcMzh8mG6PcFECeYz6I9rqtDczpIaa4OtYg4y853iACNC9dwH9rSOCUc71zIAi/q+XWPTgoYJKZOJuON9nc15+8h+yAINgSzwQm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tdOqRN92; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5052C4CEE0;
-	Thu,  6 Mar 2025 08:59:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741251559;
-	bh=w6Dn2/qTCu57870nK+uZAVm2dN+cuocLCxSK1mHE6HE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tdOqRN92Ep0AQ/tPCJAzKM2hSvhWkyywYZZYaTNEDfO45ZtcBL7tBA8R/LEccME2y
-	 KJHqApA4Am1WOSr9l6TMbMcyexBCVhLtuKB05WS7PvMGUPWIIX2Gkpm95X/hZMQHCc
-	 57/Rel6d5bVGQxu10DNNnvfJsdkLQtyykmup5RrxpHV/zZJ41eia4UT6hZvkiLVTMn
-	 qJMfjq/m48Ni2ZL5h/N1WwAZLAX5ZvI/w3E1mrSLiwTfvdBCj7Jpuy3U/0KvYsdFut
-	 OBMd4zkRmnvjQOZx1I6UfbmI96hKZbu/uc6/apC4HEYeWgfUl+bvp9zPR7TMOQyaXJ
-	 nOCRCB7WRCoew==
-Date: Thu, 6 Mar 2025 09:59:13 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: Alexander Mikhalitsyn <alexander@mihalicyn.com>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Kees Cook <kees@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, "Eric W . Biederman" <ebiederm@xmission.com>, 
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH 2/2] pid: Optional first-fit pid allocation
-Message-ID: <20250306-esskultur-sitzheizung-d482c4a35f80@brauner>
-References: <20250221170249.890014-1-mkoutny@suse.com>
- <20250221170249.890014-3-mkoutny@suse.com>
+	s=arc-20240116; t=1741251846; c=relaxed/simple;
+	bh=ruAfKKuJv4D//haITjZ4loefKlVdbyEM29MI7QA1oWg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=oViZGK1HNcOx33YVyw/bZKWBoBopg92SGXVIDWZPo+sQUdAu8fZDBLgmoxZ5rM6KoLKQA970nZ9mDvBoC3ZbXCUOFgIHGRgSf+9t+FULDN/BiIzMflpWsRJ0GkdpG70ydA2HDIc9uJQZzQDdpnWKr3eqGj3h8XOuL2eVl3ybrKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d054d79dacso8483205ab.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Mar 2025 01:04:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741251844; x=1741856644;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6PlUf2EDtc8+GWdOxIDmfUU+aGd5sbW4hhN7UakkYqw=;
+        b=kYk48PuNxWqOn+hSsyxNrYhC9jFCY6PpHWcpNhhAkRMpwBw4cShFqhCJVYtL10BEYI
+         IJN8RONtV9OmufnLuuZrEhVdZx/Kfn0VodeIbgA/TIyrEOIcvitPC0N7TZ8pL05DT7Dn
+         NgtXoYgleGGi1l19dEACtMwiaqOEHA6tqH1G/ihKzae4GxVjKC5hXDuY/d1C/bGeOtIr
+         qWsNh0H1kMSMZEEvsvu4f9K/MUzV91rihDNpm/PCaZiK6y9Ku9XBrHPmbCSt6Q8NIhVE
+         u6bH0dM9Psp7aIDuAq+4tMkFwciq2lYsWPhr5Bodjlld9GTz5YQGAz1WioiLnjFAVZz1
+         XRiw==
+X-Forwarded-Encrypted: i=1; AJvYcCWP+GeqGVeybCFWOpzX8Fn8vWaHKJwTZtTYEvmmMbISepZ3z8s5YA4foWKx1kD7uA6+mZehqBVg03evYEKc@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXb2DTasqxWiMT6htolXTbsq6KYAKbzRJ4qel5jUeHt37//O9S
+	TkO4+NU1KNIqTCzyZuLvTdrTrWPp4X8cxd7SCj90FHufUvtFvUMWAp6Ks/A5SsZ6zlEyN4jYuka
+	SDsi1GuLZL5vb9e4Z58ku49lXmJ0GdaStjjBNv3cKZ6dxD4kMwr9cfko=
+X-Google-Smtp-Source: AGHT+IGTBLARltXQf7oengpyI6p3Xjnj/feG2ACDCutrMgIXebFL36ZwMXTWYi4jeppRR1zG6cu4U/sqPkb1QpRrtRzIkxgmvrIo
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250221170249.890014-3-mkoutny@suse.com>
+X-Received: by 2002:a05:6e02:190e:b0:3d3:e09d:2a9f with SMTP id
+ e9e14a558f8ab-3d42b891005mr83529435ab.8.1741251843985; Thu, 06 Mar 2025
+ 01:04:03 -0800 (PST)
+Date: Thu, 06 Mar 2025 01:04:03 -0800
+In-Reply-To: <67a11d8a.050a0220.163cdc.0051.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67c96503.050a0220.15b4b9.0030.GAE@google.com>
+Subject: Re: [syzbot] [udf?] general protection fault in d_splice_alias
+From: syzbot <syzbot+a9c0867e4d1dd0c7ab19@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, asmadeus@codewreck.org, brauner@kernel.org, 
+	corbet@lwn.net, eadavis@qq.com, ericvh@kernel.org, jack@suse.com, 
+	jack@suse.cz, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net, 
+	mjguzik@gmail.com, syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev, 
+	viro@zeniv.linux.org.uk, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Feb 21, 2025 at 06:02:49PM +0100, Michal Koutný wrote:
-> Noone would need to use this allocation strategy (it's slower, pid
-> numbers collide sooner). Its primary purpose are pid namespaces in
-> conjunction with pids.max cgroup limit which keeps (virtual) pid numbers
-> below the given limit. This is for 32-bit userspace programs that may
-> not work well with pid numbers above 65536.
-> 
-> Link: https://lore.kernel.org/r/20241122132459.135120-1-aleksandr.mikhalitsyn@canonical.com/
-> Signed-off-by: Michal Koutný <mkoutny@suse.com>
-> ---
->  Documentation/admin-guide/sysctl/kernel.rst |  2 ++
->  include/linux/pid_namespace.h               |  3 +++
->  kernel/pid.c                                | 12 +++++++--
->  kernel/pid_namespace.c                      | 28 +++++++++++++++------
->  4 files changed, 36 insertions(+), 9 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-> index a43b78b4b6464..f5e68d1c8849f 100644
-> --- a/Documentation/admin-guide/sysctl/kernel.rst
-> +++ b/Documentation/admin-guide/sysctl/kernel.rst
-> @@ -1043,6 +1043,8 @@ The last pid allocated in the current (the one task using this sysctl
->  lives in) pid namespace. When selecting a pid for a next task on fork
->  kernel tries to allocate a number starting from this one.
->  
-> +When set to -1, first-fit pid numbering is used instead of the next-fit.
+syzbot suspects this issue was fixed by commit:
 
-I strongly disagree with this approach. This is way worse then making
-pid_max per pid namespace.
+commit 902e09c8acde117b00369521f54df817a983d4ab
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Mon Feb 3 21:16:09 2025 +0000
 
-I'm fine if you come up with something else that's purely based on
-cgroups somehow and is uniform across 64-bit and 32-bit. Allowing to
-change the pid allocation strategy just for 32-bit is not the solution
-and not mergable.
+    fix braino in "9p: fix ->rename_sem exclusion"
 
-> +
->  
->  powersave-nap (PPC only)
->  ========================
-> diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
-> index f9f9931e02d6a..10bf66ca78590 100644
-> --- a/include/linux/pid_namespace.h
-> +++ b/include/linux/pid_namespace.h
-> @@ -41,6 +41,9 @@ struct pid_namespace {
->  #if defined(CONFIG_SYSCTL) && defined(CONFIG_MEMFD_CREATE)
->  	int memfd_noexec_scope;
->  #endif
-> +#ifdef CONFIG_IA32_EMULATION
-> +	bool pid_noncyclic;
-> +#endif
->  } __randomize_layout;
->  
->  extern struct pid_namespace init_pid_ns;
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index aa2a7d4da4555..e9da1662b8821 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -191,6 +191,10 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
->  
->  	for (i = ns->level; i >= 0; i--) {
->  		int tid = 0;
-> +		bool pid_noncyclic = 0;
-> +#ifdef CONFIG_IA32_EMULATION
-> +		pid_noncyclic = READ_ONCE(tmp->pid_noncyclic);
-> +#endif
->  
->  		if (set_tid_size) {
->  			tid = set_tid[ns->level - i];
-> @@ -235,8 +239,12 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
->  			 * Store a null pointer so find_pid_ns does not find
->  			 * a partially initialized PID (see below).
->  			 */
-> -			nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
-> -					      pid_max, GFP_ATOMIC);
-> +			if (likely(!pid_noncyclic))
-> +				nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
-> +						      pid_max, GFP_ATOMIC);
-> +			else
-> +				nr = idr_alloc(&tmp->idr, NULL, pid_min,
-> +						      pid_max, GFP_ATOMIC);
->  		}
->  		spin_unlock_irq(&pidmap_lock);
->  		idr_preload_end();
-> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-> index 0f23285be4f92..ceda94a064294 100644
-> --- a/kernel/pid_namespace.c
-> +++ b/kernel/pid_namespace.c
-> @@ -113,6 +113,9 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
->  	ns->pid_allocated = PIDNS_ADDING;
->  #if defined(CONFIG_SYSCTL) && defined(CONFIG_MEMFD_CREATE)
->  	ns->memfd_noexec_scope = pidns_memfd_noexec_scope(parent_pid_ns);
-> +#endif
-> +#ifdef CONFIG_IA32_EMULATION
-> +	ns->pid_noncyclic = READ_ONCE(parent_pid_ns->pid_noncyclic);
->  #endif
->  	return ns;
->  
-> @@ -260,7 +263,7 @@ void zap_pid_ns_processes(struct pid_namespace *pid_ns)
->  	return;
->  }
->  
-> -#ifdef CONFIG_CHECKPOINT_RESTORE
-> +#if defined(CONFIG_CHECKPOINT_RESTORE) || defined(CONFIG_IA32_EMULATION)
->  static int pid_ns_ctl_handler(const struct ctl_table *table, int write,
->  		void *buffer, size_t *lenp, loff_t *ppos)
->  {
-> @@ -271,12 +274,23 @@ static int pid_ns_ctl_handler(const struct ctl_table *table, int write,
->  	if (write && !checkpoint_restore_ns_capable(pid_ns->user_ns))
->  		return -EPERM;
->  
-> -	next = idr_get_cursor(&pid_ns->idr) - 1;
-> +	next = -1;
-> +#ifdef CONFIG_IA32_EMULATION
-> +	if (!pid_ns->pid_noncyclic)
-> +#endif
-> +		next += idr_get_cursor(&pid_ns->idr);
->  
->  	tmp.data = &next;
->  	ret = proc_dointvec_minmax(&tmp, write, buffer, lenp, ppos);
-> -	if (!ret && write)
-> -		idr_set_cursor(&pid_ns->idr, next + 1);
-> +	if (!ret && write) {
-> +		if (next > -1)
-> +			idr_set_cursor(&pid_ns->idr, next + 1);
-> +		else if (!IS_ENABLED(CONFIG_IA32_EMULATION))
-> +			ret = -EINVAL;
-> +#ifdef CONFIG_IA32_EMULATION
-> +		WRITE_ONCE(pid_ns->pid_noncyclic, next == -1);
-> +#endif
-> +	}
->  
->  	return ret;
->  }
-> @@ -288,11 +302,11 @@ static const struct ctl_table pid_ns_ctl_table[] = {
->  		.maxlen = sizeof(int),
->  		.mode = 0666, /* permissions are checked in the handler */
->  		.proc_handler = pid_ns_ctl_handler,
-> -		.extra1 = SYSCTL_ZERO,
-> +		.extra1 = SYSCTL_NEG_ONE,
->  		.extra2 = &pid_max,
->  	},
->  };
-> -#endif	/* CONFIG_CHECKPOINT_RESTORE */
-> +#endif	/* CONFIG_CHECKPOINT_RESTORE || CONFIG_IA32_EMULATION */
->  
->  int reboot_pid_ns(struct pid_namespace *pid_ns, int cmd)
->  {
-> @@ -449,7 +463,7 @@ static __init int pid_namespaces_init(void)
->  {
->  	pid_ns_cachep = KMEM_CACHE(pid_namespace, SLAB_PANIC | SLAB_ACCOUNT);
->  
-> -#ifdef CONFIG_CHECKPOINT_RESTORE
-> +#if defined(CONFIG_CHECKPOINT_RESTORE) || defined(CONFIG_IA32_EMULATION)
->  	register_sysctl_init("kernel", pid_ns_ctl_table);
->  #endif
->  
-> -- 
-> 2.48.1
-> 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11d77078580000
+start commit:   69e858e0b8b2 Merge tag 'uml-for-linus-6.14-rc1' of git://g..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d1a6d4df5fcc342f
+dashboard link: https://syzkaller.appspot.com/bug?extid=a9c0867e4d1dd0c7ab19
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=125d0eb0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13a595f8580000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fix braino in "9p: fix ->rename_sem exclusion"
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
