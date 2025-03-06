@@ -1,95 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-43324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43325-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CEDDA545CA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 10:04:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D86BAA545EE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 10:09:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E87E41888FCC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 09:04:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EC2B188DE01
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 09:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B9C2080EB;
-	Thu,  6 Mar 2025 09:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7B92080FB;
+	Thu,  6 Mar 2025 09:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RyiFEy7n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com [209.85.128.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB93319D071
-	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Mar 2025 09:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3040A2080C5
+	for <linux-fsdevel@vger.kernel.org>; Thu,  6 Mar 2025 09:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741251846; cv=none; b=bb2GWJvwtb3l4Zey3AtNjcx5H8hxEMS4khEog2newBiv3YQvQ3ObodTZVKN9mkTJQpBCbwPY04729Bcs63XCo02qVSRzgRTpQ0J5oF2t44KRt0QAI+mkF8csWtmNPShCA2VwD7nv61uoZi4KcpdVVBAWlervxgj3gCyqjQuS6oQ=
+	t=1741252188; cv=none; b=JrZ7b05icGH7cgeql6PNRPLsrF5C0IJ4sT42EmCv8RxHthxX3vtqBg7KXey+PSw6liZqeL4UmDx7zdWpOskmPuqIJh3lwEXmirelIKF84YDSwbJBTM4gBn+QdmQNjbXuZSe5cwFEH54M4JJ9xkIC8MCiZ35ivS3eOIkAEfCdtZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741251846; c=relaxed/simple;
-	bh=ruAfKKuJv4D//haITjZ4loefKlVdbyEM29MI7QA1oWg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=oViZGK1HNcOx33YVyw/bZKWBoBopg92SGXVIDWZPo+sQUdAu8fZDBLgmoxZ5rM6KoLKQA970nZ9mDvBoC3ZbXCUOFgIHGRgSf+9t+FULDN/BiIzMflpWsRJ0GkdpG70ydA2HDIc9uJQZzQDdpnWKr3eqGj3h8XOuL2eVl3ybrKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d054d79dacso8483205ab.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Mar 2025 01:04:04 -0800 (PST)
+	s=arc-20240116; t=1741252188; c=relaxed/simple;
+	bh=x6I7LCwo+Avhb00YGNpsl7OnqLaXiIjRV7k9qsBtZn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lKY4Jxl+8Q45S00MF6Pn40OYFSBxVIrjq+bet5sWu8Oh8782+QM95iyA0cil0aU2oxKXSHFX56Xj0Bs/HL/j2KwdDM9pfjpl7qyhWHi1hAKI0eaIOGadYcczsJcJUWtYpqAabsNOmEALFpmOhUa+MqstMwiOulOakdJqauquQBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RyiFEy7n; arc=none smtp.client-ip=209.85.128.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f66.google.com with SMTP id 5b1f17b1804b1-43bd87f7c2eso2074485e9.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Mar 2025 01:09:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1741252184; x=1741856984; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=x6I7LCwo+Avhb00YGNpsl7OnqLaXiIjRV7k9qsBtZn0=;
+        b=RyiFEy7nRr/HTwiO/5ZTGuYoE+i/fh/1bDIFrTWy3YOPTA/QDGkx4dUWpeGBRKvkSd
+         GdSHtAfIYsZZ9J+m5I2D+D6TmrhhORxeap/n6ItbH5d9z4K1F4PnEoqnLtJR8i11dQ0o
+         /Pu7UUA73RJGQ44Z3IjfUpCRU+KpExKMGdnmLnk5e8cEzxrGcNpl31bueQC6uCaqsNQ/
+         OcLE8sEClHEkRAPduOwWmAzsSjjJ4Zjk3IJM1LZPFr8D6Afzr1wZ+vpdxe3mNMIsq/v7
+         Hq7Bw2z3vO8zdlzokl4pds4wW39YmG5AZXQJsvloZl2uXm/E+JH3npJAvDtx0FP8tQOU
+         d4Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741251844; x=1741856644;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6PlUf2EDtc8+GWdOxIDmfUU+aGd5sbW4hhN7UakkYqw=;
-        b=kYk48PuNxWqOn+hSsyxNrYhC9jFCY6PpHWcpNhhAkRMpwBw4cShFqhCJVYtL10BEYI
-         IJN8RONtV9OmufnLuuZrEhVdZx/Kfn0VodeIbgA/TIyrEOIcvitPC0N7TZ8pL05DT7Dn
-         NgtXoYgleGGi1l19dEACtMwiaqOEHA6tqH1G/ihKzae4GxVjKC5hXDuY/d1C/bGeOtIr
-         qWsNh0H1kMSMZEEvsvu4f9K/MUzV91rihDNpm/PCaZiK6y9Ku9XBrHPmbCSt6Q8NIhVE
-         u6bH0dM9Psp7aIDuAq+4tMkFwciq2lYsWPhr5Bodjlld9GTz5YQGAz1WioiLnjFAVZz1
-         XRiw==
-X-Forwarded-Encrypted: i=1; AJvYcCWP+GeqGVeybCFWOpzX8Fn8vWaHKJwTZtTYEvmmMbISepZ3z8s5YA4foWKx1kD7uA6+mZehqBVg03evYEKc@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXb2DTasqxWiMT6htolXTbsq6KYAKbzRJ4qel5jUeHt37//O9S
-	TkO4+NU1KNIqTCzyZuLvTdrTrWPp4X8cxd7SCj90FHufUvtFvUMWAp6Ks/A5SsZ6zlEyN4jYuka
-	SDsi1GuLZL5vb9e4Z58ku49lXmJ0GdaStjjBNv3cKZ6dxD4kMwr9cfko=
-X-Google-Smtp-Source: AGHT+IGTBLARltXQf7oengpyI6p3Xjnj/feG2ACDCutrMgIXebFL36ZwMXTWYi4jeppRR1zG6cu4U/sqPkb1QpRrtRzIkxgmvrIo
+        d=1e100.net; s=20230601; t=1741252184; x=1741856984;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x6I7LCwo+Avhb00YGNpsl7OnqLaXiIjRV7k9qsBtZn0=;
+        b=EFSo0P5cxntd6O+FORba/91ZD3jD7N0x4CeO5aYFVpBTlafg5yi3glMcVVhHWO70af
+         UYXPsQGCM0VcIn4bdvzXb122uW7xoWEXsPMeFQz1/rvrl7g3VXnF3dM1ywgsqc2VgGkZ
+         TruDvR+8461tbXxnBkqdTygazE/CC0KQkBllQCbPQ5cU2jWTdIR4/Gkdw8CtMxJ+URKK
+         26vMkkzn90W6mZaZ7jln1qhKjpUrhpFFXWWorzP1z9gXEGhq/o6C5FrWI8L5TA/m7ihC
+         xPT05Wq+JUQLVY8hTr74dkAMULErCBwBnPCVcEmqRbzbGevp2BXO84ju+Dg7WkUvAgnk
+         6ojA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCjj8G8L7uh40+68GeMTPVSyhHRgONpOeDEV4hOsEL7Swl6mPA0DDR//qxXsGBxixV6oEWiJs8LR2974lQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/WLClPRGUUtC1L0y6EJ0Ea6OC/hdr4dXDH7xrYYxA9tjK3owo
+	P8UrUKiuHUAlZwgWVA6RYbe7RbAZG7GR0KeApNOPpCMeE+oXf/T7qkO41HGIaCc=
+X-Gm-Gg: ASbGnct0kMRXfBSDhd2IOMdqwoeQaiQ31oGLXq3EalBMS5Mff926xV2hfU3XusqNPiq
+	kCOx9b8GB7zwTmmoCOeFKVOFCiMAMKp8uFm8/o85KvkNqe1InHC/NLIk1OLVv51xKurzKaxnJQp
+	EdQqVkku3inQvTzlqRNTeH4BDRFil7K76fpy6cgVPhIdapsJ/XK5UquEWn25e60H1/kL7sqJwXU
+	BlBfGQdkV71KTtTuu4tkYoANqw4XO6Ese4NJFE+H0oWamJKxV17BVqLCR37RS/6qknIbXD3ZUU/
+	72Jv9o4XpBeqIlZiQ+0m+Cuqc2a4EDKDo1XiWxA8xwYEvIk=
+X-Google-Smtp-Source: AGHT+IE20SfeQZTIROwzNnAwSpomgWzOj7kDG/AFPKSGBYaqpQAWmZKrf9xz0kYJLQXsIi86AmqWOQ==
+X-Received: by 2002:a05:600c:1c26:b0:439:9274:81db with SMTP id 5b1f17b1804b1-43bd292a806mr64639955e9.5.1741252184269;
+        Thu, 06 Mar 2025 01:09:44 -0800 (PST)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0194f2sm1405811f8f.54.2025.03.06.01.09.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 01:09:43 -0800 (PST)
+Date: Thu, 6 Mar 2025 10:09:41 +0100
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alexander Mikhalitsyn <alexander@mihalicyn.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Kees Cook <kees@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, "Eric W . Biederman" <ebiederm@xmission.com>, 
+	Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH 2/2] pid: Optional first-fit pid allocation
+Message-ID: <ajz3vdl7yqu6a7dtl6dpqm2ea6wfac2jovbx5zl54dw2g2a4ab@tgs4gq5hyim4>
+References: <20250221170249.890014-1-mkoutny@suse.com>
+ <20250221170249.890014-3-mkoutny@suse.com>
+ <20250306-esskultur-sitzheizung-d482c4a35f80@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:190e:b0:3d3:e09d:2a9f with SMTP id
- e9e14a558f8ab-3d42b891005mr83529435ab.8.1741251843985; Thu, 06 Mar 2025
- 01:04:03 -0800 (PST)
-Date: Thu, 06 Mar 2025 01:04:03 -0800
-In-Reply-To: <67a11d8a.050a0220.163cdc.0051.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67c96503.050a0220.15b4b9.0030.GAE@google.com>
-Subject: Re: [syzbot] [udf?] general protection fault in d_splice_alias
-From: syzbot <syzbot+a9c0867e4d1dd0c7ab19@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, asmadeus@codewreck.org, brauner@kernel.org, 
-	corbet@lwn.net, eadavis@qq.com, ericvh@kernel.org, jack@suse.com, 
-	jack@suse.cz, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net, 
-	mjguzik@gmail.com, syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev, 
-	viro@zeniv.linux.org.uk, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jo3sx6jdjxyyuo56"
+Content-Disposition: inline
+In-Reply-To: <20250306-esskultur-sitzheizung-d482c4a35f80@brauner>
 
-syzbot suspects this issue was fixed by commit:
 
-commit 902e09c8acde117b00369521f54df817a983d4ab
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Mon Feb 3 21:16:09 2025 +0000
+--jo3sx6jdjxyyuo56
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH 2/2] pid: Optional first-fit pid allocation
+MIME-Version: 1.0
 
-    fix braino in "9p: fix ->rename_sem exclusion"
+On Thu, Mar 06, 2025 at 09:59:13AM +0100, Christian Brauner <brauner@kernel.org> wrote:
+> I strongly disagree with this approach. This is way worse then making
+> pid_max per pid namespace.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11d77078580000
-start commit:   69e858e0b8b2 Merge tag 'uml-for-linus-6.14-rc1' of git://g..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d1a6d4df5fcc342f
-dashboard link: https://syzkaller.appspot.com/bug?extid=a9c0867e4d1dd0c7ab19
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=125d0eb0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13a595f8580000
+Thanks for taking the look.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+> I'm fine if you come up with something else that's purely based on
+> cgroups somehow and is uniform across 64-bit and 32-bit. Allowing to
+> change the pid allocation strategy just for 32-bit is not the solution
+> and not mergable.
 
-#syz fix: fix braino in "9p: fix ->rename_sem exclusion"
+Here's a minimalist correction
+https://lore.kernel.org/r/20250305145849.55491-1-mkoutny@suse.com/
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+Michal
+
+--jo3sx6jdjxyyuo56
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ8lmRwAKCRAt3Wney77B
+SVEQAQCv1kf8EBaRDF66bApU+yr8h9OYOK0rqy+iUFrGxAXfSgD/TWrBYLDNn9YJ
+LVkBPIKqH3tjY6+xjhd+d7lU6a/0Sg4=
+=1oAV
+-----END PGP SIGNATURE-----
+
+--jo3sx6jdjxyyuo56--
 
