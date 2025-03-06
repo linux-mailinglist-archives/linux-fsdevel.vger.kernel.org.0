@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-43334-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43336-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17C64A5497C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 12:34:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCB9AA54978
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 12:34:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 645461884651
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E7CB1745F0
 	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Mar 2025 11:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2604F211A0A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778B3212B2D;
 	Thu,  6 Mar 2025 11:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MsB+83JE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSWvHOKk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C6020FAB2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4C2210F58;
 	Thu,  6 Mar 2025 11:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741260651; cv=none; b=PZaHEe0jNLn3erjYrAcM8LA0e1Qh4XWPUnmSDcFQVI4cSOE5hM6JlFPJbH4araf0M1PSgWMB08UChcbhdpawLapacPKrS6oi+BdiRJiCzMKtdD24dMoQkWNqnqvCWiXnAWggjDdaH0UYwUzNVUAGZMHccSHQK5WSg5hxh99Nk3w=
+	t=1741260651; cv=none; b=kppkVoBSZbEilROks06RuBYkTct37ZbZomhOOesLDAa+G+1MOuTvwzGX9j3nH6ElcZ7uy6xNebIannW6ns1gql9kzAHJ87iZw4SI/6EqgSWdY4UjupGYPaZuCfKIeTQBSZLILLcRGxPgWna0j7m/ddSO45ujjldhNtVCTy6+M7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741260651; c=relaxed/simple;
-	bh=99SvQXLjoPiWd0/gxkEdf3AsdJ/IenQsyJp3SptYBS0=;
+	bh=fhQlgeM7080CJWOaBZsIZyVJ5TKnwevZMcoSC2ybdZQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eIOgOKnbWDfnkY+9lyHaNBOtCzMcsn0pXG/nbYEzvZzMuHiTS3Zl1jFpTPVM27/g1LWjp8McqJLerCMQWtz6EinNmE/IAMNszuiU/C9P89Ee91Hg5tY4uIPEJ/ptwJWhfzoWydBqwpRvsTOLbgvKs0RVOIXIE4B0f6VZmeitlCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MsB+83JE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 75BF2C116D0;
+	 In-Reply-To:To:Cc; b=u9KFsWTvkGPf5+nRSSPNjQK0K/6wC3ayBoGEu7qgh2aLiwcN9IlHsEB/rZK6VRZ6aTBlhPDH3x7Nlgov8TrhIl9VQ9BI6BfTKbznU263vi2VoKrOq7xf98yLOHH1b3k03vrPAznkDEb7eEsf7cJDZucIHJkd2sGO/uyknv6AdSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSWvHOKk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9CF3CC19421;
 	Thu,  6 Mar 2025 11:30:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1741260650;
-	bh=99SvQXLjoPiWd0/gxkEdf3AsdJ/IenQsyJp3SptYBS0=;
+	bh=fhQlgeM7080CJWOaBZsIZyVJ5TKnwevZMcoSC2ybdZQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=MsB+83JENy4bW9g3bpjuwmP+kbUNdrl+d5CcB2Oh40EK1W71V2APHKE2BSu8QIY3A
-	 fF14Q3RAbdy60m9iEJEZUir2FEfkPNZeRNcE5yLyXwiy5IN4/lX49lrYTbG6O2XgXe
-	 nVQ30B1isqj0ZK+W3Kjaik7vSrdmWTS08LQ1RxjNDFKsYxSoYhy96m7uByjscoJf6m
-	 ouU9CSjVPJ75QDLiEdUjNWHj83qADURumwXwhKe91ZwMAiUskN/bdDRQD1jGJV3B6O
-	 gePzK8I/FtpK+6G4EyRCpJsD0HwTiqT6SAvtMAKpy78mazJQ0CrnnsT11c1EoNBRmB
-	 UZUITlPwwDH2A==
+	b=RSWvHOKkqbyq+edYsV7k2bVxXSHxzsUYkV91kPnuucULito4vazQHLKKwxWhq+Z8i
+	 vRsSdohj6f8tEgGR6PgBI1mr5vcZqpuzHATgtaCTLzja6B4yNQc+jCrAcPdtx/3G1s
+	 pyQx0hXRugt2/x9T6XF0ukiGs9PCE3Ng/unfsHjhCd6aiHbL5fVFLciqJQvVGA3Ntb
+	 i2KclE3tpBK/JGiltn5ZES3CWmHxnmXluJPG4p4NIHghy3DR9USYk798XJfTRJWHAR
+	 vYoYzX8YoLHVRQpO5IQEgR/XwPNOfnsCZ2ynFrXqo3G4k3dH64zcu3WWtAgQyMsHhl
+	 0sSU16wbRZd+g==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3271EC282EC;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47066C28B23;
 	Thu,  6 Mar 2025 11:30:50 +0000 (UTC)
 From: Joel Granados <joel.granados@kernel.org>
-Date: Thu, 06 Mar 2025 12:29:41 +0100
-Subject: [PATCH v2 1/6] panic: Move panic ctl tables into panic.c
+Date: Thu, 06 Mar 2025 12:29:42 +0100
+Subject: [PATCH v2 2/6] signal: Move signal ctl tables into signal.c
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250306-jag-mv_ctltables-v2-1-71b243c8d3f8@kernel.org>
+Message-Id: <20250306-jag-mv_ctltables-v2-2-71b243c8d3f8@kernel.org>
 References: <20250306-jag-mv_ctltables-v2-0-71b243c8d3f8@kernel.org>
 In-Reply-To: <20250306-jag-mv_ctltables-v2-0-71b243c8d3f8@kernel.org>
 To: Kees Cook <kees@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
@@ -72,139 +72,86 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
  linux-s390@vger.kernel.org, Joel Granados <joel.granados@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3223;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1894;
  i=joel.granados@kernel.org; h=from:subject:message-id;
- bh=99SvQXLjoPiWd0/gxkEdf3AsdJ/IenQsyJp3SptYBS0=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGfJh2UQmfyhQ+EURZAkXCrvML2DKQGqYGu4r
- aqjXVDEii6Yi4kBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJnyYdlAAoJELqXzVK3
- lkFPdYAL/j/eLPROZngY5rs5T5RaG4XQ/S80kGl9A+zpvq7RocnU8PM8Pc7vCZaCUN5AaJs86xy
- nILcjVhHH4miZlpoNJlyIAxgadB/xyzrwYGGClLFUlH5vk2KfU51blKWPkY1MURehM45fGvKmPI
- d1vCwcBkbaJoOPOu0h6HFEqxNU/fCalmQQACoIaw32o298YJ9sl1zqxIEcbOgB6S86NZaEz67V8
- 5UMaJQe7g+5y4bixa6gjKKQZ/stWF5fNu6AlcHqYZBz10aiaXRX0/ucaSrpBY54T+zox+ukxpEO
- JiPCRQCIR9IGXLX8PcTrTDe21NqX89Z3shcCI2ciUNfP//GduQsnMHiTrjUQstTYUIQTvrLwnwG
- 8kyvBiZTBR78AFImMgCQ9TpfVYnFGCYMMFIcB1OXH9zub6zyV6kFyX9vAP6uwisccl6nWBIo5RZ
- WbSO9xaefycxW8NJsDn5VPoZQfm6xb1GQM4P61CkaYmcLVVv/SMLGmRvhy0C2CKo75meAIiAFp7
- H4=
+ bh=fhQlgeM7080CJWOaBZsIZyVJ5TKnwevZMcoSC2ybdZQ=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGfJh2UTXEzu0WgygPeZiXETdqZYBW4AhI+L2
+ wex0xcjKUNMuIkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJnyYdlAAoJELqXzVK3
+ lkFPhP0L/0CjZzf6n8ONSUqEp98+SyqFfv+Rse0jy35dqF9Kk6l1XXbkVnLlCBZJAaM5tbbtAkU
+ h0NjWh+3SUDMDpUYx2Vmmh/ORpl1HKfpyqCyTCfIouOSFccDQUzaUuccHWwEpV3wEtCFpOLBaQS
+ ccuRo7oGzM5b2pqxxz/sk2WlUSavAv7N+YVmF7OKol3J0QyXmeFSAI/lrxCjHHph8NHPGYPeVuC
+ drEzm9bJ6tgCuqQZc1Or/KfQoVGdWvmNmxFddMeYcmRhzk4i6R++UZfEHQ0EIUCuzdepJhaSoqa
+ xvWc2xhhLAUm7U42cSHHTlHSQzI7MGrBZJZMiDpc+jsKvILWsLkQPAiQkWF0/G1cFJpgV32SAkg
+ a741Q8IABMDSRXB03nLZfk6dJ5G1tk3bXgdQHU8Ue2ALJupaqHBNVGCGHBalGT3Noed75KJXQjp
+ GB3dtJaX8LPD7XkDrJ/JfR+lYTIOEU9eruRs8C632wFVnrpMTPZtGtboF/oKDkPmAfkV6AhXiY4
+ W4=
 X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
  fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
 X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
  auth_id=239
 
-Move panic, panic_on_oops, panic_print, panic_on_warn into
-kerne/panic.c. This is part of a greater effort to move ctl tables into
-their respective subsystems which will reduce the merge conflicts in
-kerenel/sysctl.c.
+Move print-fatal-signals into its own const ctl table array in
+kernel/signal.c. This is part of a greater effort to move ctl tables
+into their respective subsystems which will reduce the merge conflicts
+in kerenel/sysctl.c.
 
 Signed-off-by: Joel Granados <joel.granados@kernel.org>
 ---
- kernel/panic.c  | 30 ++++++++++++++++++++++++++++++
- kernel/sysctl.c | 31 -------------------------------
- 2 files changed, 30 insertions(+), 31 deletions(-)
+ kernel/signal.c | 11 +++++++++++
+ kernel/sysctl.c |  8 --------
+ 2 files changed, 11 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/panic.c b/kernel/panic.c
-index d8635d5cecb2505da1c08a4f70814e9b87ac3b37..f9bf88f4c26216cd5a93754378a36ea1e841472a 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -96,6 +96,36 @@ static const struct ctl_table kern_panic_table[] = {
- 		.extra2         = SYSCTL_ONE,
- 	},
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 875e97f6205a2c9daecf5bece5d53ed09667f747..347b74800f927f70a1912457f96e833cd03c642d 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -4962,9 +4962,20 @@ static const struct ctl_table signal_debug_table[] = {
  #endif
+ };
+ 
++static const struct ctl_table signal_table[] = {
 +	{
-+		.procname	= "panic",
-+		.data		= &panic_timeout,
++		.procname	= "print-fatal-signals",
++		.data		= &print_fatal_signals,
 +		.maxlen		= sizeof(int),
 +		.mode		= 0644,
 +		.proc_handler	= proc_dointvec,
 +	},
-+	{
-+		.procname	= "panic_on_oops",
-+		.data		= &panic_on_oops,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+	{
-+		.procname	= "panic_print",
-+		.data		= &panic_print,
-+		.maxlen		= sizeof(unsigned long),
-+		.mode		= 0644,
-+		.proc_handler	= proc_doulongvec_minmax,
-+	},
-+	{
-+		.procname	= "panic_on_warn",
-+		.data		= &panic_on_warn,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
- 	{
- 		.procname       = "warn_limit",
- 		.data           = &warn_limit,
++};
++
+ static int __init init_signal_sysctls(void)
+ {
+ 	register_sysctl_init("debug", signal_debug_table);
++	register_sysctl_init("kernel", signal_table);
+ 	return 0;
+ }
+ early_initcall(init_signal_sysctls);
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index cb57da499ebb1216cefb3705694ab62028fee03e..7759b1ed7221f588f49ec3d81b19aeb4d2fdf2f7 100644
+index 7759b1ed7221f588f49ec3d81b19aeb4d2fdf2f7..6514c13800a453dd970ce60040ca8a791f831e17 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -26,7 +26,6 @@
+@@ -25,7 +25,6 @@
+ #include <linux/slab.h>
  #include <linux/sysctl.h>
  #include <linux/bitmap.h>
- #include <linux/signal.h>
--#include <linux/panic.h>
+-#include <linux/signal.h>
  #include <linux/printk.h>
  #include <linux/proc_fs.h>
  #include <linux/security.h>
-@@ -1610,13 +1609,6 @@ int proc_do_static_key(const struct ctl_table *table, int write,
- }
- 
- static const struct ctl_table kern_table[] = {
+@@ -1626,13 +1625,6 @@ static const struct ctl_table kern_table[] = {
+ 		.extra2		= SYSCTL_ONE,
+ 	},
+ #endif
 -	{
--		.procname	= "panic",
--		.data		= &panic_timeout,
+-		.procname	= "print-fatal-signals",
+-		.data		= &print_fatal_signals,
 -		.maxlen		= sizeof(int),
 -		.mode		= 0644,
 -		.proc_handler	= proc_dointvec,
 -	},
- #ifdef CONFIG_PROC_SYSCTL
+ #ifdef CONFIG_SPARC
  	{
- 		.procname	= "tainted",
-@@ -1803,20 +1795,6 @@ static const struct ctl_table kern_table[] = {
- 		.proc_handler	= proc_dointvec,
- 	},
- #endif
--	{
--		.procname	= "panic_on_oops",
--		.data		= &panic_on_oops,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
--	{
--		.procname	= "panic_print",
--		.data		= &panic_print,
--		.maxlen		= sizeof(unsigned long),
--		.mode		= 0644,
--		.proc_handler	= proc_doulongvec_minmax,
--	},
- 	{
- 		.procname	= "ngroups_max",
- 		.data		= (void *)&ngroups_max,
-@@ -1990,15 +1968,6 @@ static const struct ctl_table kern_table[] = {
- 		.extra2		= SYSCTL_ONE_THOUSAND,
- 	},
- #endif
--	{
--		.procname	= "panic_on_warn",
--		.data		= &panic_on_warn,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE,
--	},
- #ifdef CONFIG_TREE_RCU
- 	{
- 		.procname	= "panic_on_rcu_stall",
+ 		.procname	= "reboot-cmd",
 
 -- 
 2.47.2
