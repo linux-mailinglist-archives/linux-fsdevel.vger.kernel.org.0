@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-43432-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C123A56992
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 14:55:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77B02A5698F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 14:55:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21EDC1892EB7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 13:55:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 918D53AC18D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 13:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217E221ADC1;
-	Fri,  7 Mar 2025 13:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F163721C176;
+	Fri,  7 Mar 2025 13:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nnGr+Xt3"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P+fhR0DJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A1121A92F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F9A21ABDF
 	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 13:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741355660; cv=none; b=Rx5rjEANWDhKUGCGOdahf/ue85bclO0eNaaeC6yYp8IsnskpVV+RJ+8a5lHoRJJ788ogF6cL2rayrjzlkbDx0a+P1D9sCNJXIZf32dkOFAuia7SJAE5WxL7xKc2ojP14dXMUAatBrel3xFhPLcy2/9kSDDxn92fQjufntjtAVc4=
+	t=1741355659; cv=none; b=ctSIvZurg3dsM5h10EHqMcabCBhh7CTb7B2gOtg6jbY6rc70AwjMLtFEHSkOuPL/F9Lj1tl3hpic10ozigjykpydLrplwv/p0zBoKFqdxnDtcG0KFuENnnKw9QZp1t2IJUDkMQK590iY1RuvkOLYxOllc7zflUyT70DnRKQgjLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741355660; c=relaxed/simple;
-	bh=CEGXIWn/1l5S0j/7hNwbS5YhciyTTzqptoAUkwUhhRM=;
+	s=arc-20240116; t=1741355659; c=relaxed/simple;
+	bh=xqaO8oqNncJyRRJ4jaLixe2YEvyiUrNlle1x9vdAEW0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oRDejYWwl42hDFzapZV3UKVRGWuQUjyG1JVseihmKWj7b41Edk5KAESbv3rxgoeXPxciZ4hFnlbvNe9RHa+CSlIMLMhZWqeGMvcfvYpPtAThBGo1fgUUWZo93M5t8aZi9UqzOwwaekcJ98r7exCeplgm37pFSvqFiI5b+WVN6TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nnGr+Xt3; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=T5qPL3GBV5cK0sUCfG3tkCh5TSCKQUWglco6yS0KgAkbaxFd0J5DZSmjPyiDRWT1PCffHU8J2fWQp1sDLXscx3aynaxo5Tj/R8C5pX65XX9FsKX/D4fcfxQV5h7EZWXszWTVu3kLageL/CmloeDWZ/+N+U/zGDOWApx5mqdwKSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=P+fhR0DJ; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=T8fXRyaYOssoLEG59sUpr97PSMqTmPmVh2Clh/QPZVU=; b=nnGr+Xt3+97jZBGQECj87NaDqI
-	XK8uVQj8thhehM0zZlfDnmvlOXcBQ7SO/K8NTEb3FRquZXAarnz7wDTJEkwev+safNXqNwMRfnaif
-	+pAsjoSitQfyymKZLmoU50i4NHcwZ0cC5EuNc9jfgqDK6BdkWuzJg40ZAJJ3uBIMmknep94icuZG/
-	C6WPgd5F3oI4SCW3MO4/ii3C5CxeWkeuBT+bEHgvTn8os3y6u2ttvT+5+8RkNI7GuVwyyXf3aIW0y
-	qaE5ugvrhoXw5fNciwFpeMMJFukQfyGGRVImUAaBUB6ZgY8zt4atiw2YWormv0v03A69cDNPIGN6s
-	cML+42aA==;
+	bh=BT6OjbtDCOFHHAijJpjMRbh4BDIQM0uytaFHqbNbas4=; b=P+fhR0DJRyfUD/uNdzZFl7spFN
+	s9WEWvyhYKjqMt2ZkZIw8P2H8WA9PRUelUHbNbUHUAD74hf7doJwzbkO5RVpwh1XkHE/3eWl4EgAR
+	LByuBb7d7QakRILNQYu2zosdstSG2OVQKc8zyUTjASsG/6/FG2aKG5MZ1QnmEiNzxNlLdogOTcFpU
+	rgdT+FGNEqYgWAyLW+dRtDMkhZXF+9s+H8tMynfWyjchQ7zGjOtAB+i5XJHklJ9mPx1w8iYJ0xBRJ
+	KXvnFMlFbIF1YTpxibbA24zR/zRAq8aVvFNXIby2MHWPnxKh1O0U9YKiSqA0bIUCw55fMQWF4gEki
+	y7yrID1w==;
 Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tqY9X-0000000CXG1-3uYy;
-	Fri, 07 Mar 2025 13:54:15 +0000
+	id 1tqY9Y-0000000CXG8-0H5t;
+	Fri, 07 Mar 2025 13:54:16 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	linux-mm@kvack.org,
 	intel-gfx@lists.freedesktop.org
-Subject: [PATCH 03/11] f2fs: Remove f2fs_write_meta_page()
-Date: Fri,  7 Mar 2025 13:54:03 +0000
-Message-ID: <20250307135414.2987755-4-willy@infradead.org>
+Subject: [PATCH 04/11] f2fs: Remove f2fs_write_node_page()
+Date: Fri,  7 Mar 2025 13:54:04 +0000
+Message-ID: <20250307135414.2987755-5-willy@infradead.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250307135414.2987755-1-willy@infradead.org>
 References: <20250307135414.2987755-1-willy@infradead.org>
@@ -68,33 +68,34 @@ as it can only harm writeback patterns.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/checkpoint.c | 7 -------
- 1 file changed, 7 deletions(-)
+ fs/f2fs/node.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index a35595f8d3f5..412282f50cbb 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -381,12 +381,6 @@ static int __f2fs_write_meta_page(struct page *page,
- 	return AOP_WRITEPAGE_ACTIVATE;
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 36614a1c2590..b78c1f95bc04 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1784,13 +1784,6 @@ int f2fs_move_node_page(struct page *node_page, int gc_type)
+ 	return err;
  }
  
--static int f2fs_write_meta_page(struct page *page,
+-static int f2fs_write_node_page(struct page *page,
 -				struct writeback_control *wbc)
 -{
--	return __f2fs_write_meta_page(page, wbc, FS_META_IO);
+-	return __write_node_page(page, false, NULL, wbc, false,
+-						FS_NODE_IO, NULL);
 -}
 -
- static int f2fs_write_meta_pages(struct address_space *mapping,
- 				struct writeback_control *wbc)
- {
-@@ -507,7 +501,6 @@ static bool f2fs_dirty_meta_folio(struct address_space *mapping,
- }
- 
- const struct address_space_operations f2fs_meta_aops = {
--	.writepage	= f2fs_write_meta_page,
- 	.writepages	= f2fs_write_meta_pages,
- 	.dirty_folio	= f2fs_dirty_meta_folio,
+ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ 			struct writeback_control *wbc, bool atomic,
+ 			unsigned int *seq_id)
+@@ -2217,7 +2210,6 @@ static bool f2fs_dirty_node_folio(struct address_space *mapping,
+  * Structure of the f2fs node operations
+  */
+ const struct address_space_operations f2fs_node_aops = {
+-	.writepage	= f2fs_write_node_page,
+ 	.writepages	= f2fs_write_node_pages,
+ 	.dirty_folio	= f2fs_dirty_node_folio,
  	.invalidate_folio = f2fs_invalidate_folio,
 -- 
 2.47.2
