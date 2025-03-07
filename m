@@ -1,86 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-43485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43486-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46CA4A574CA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 23:13:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03CDEA574DB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 23:25:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B48F7A7380
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 22:12:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 636E71896556
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 22:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCBD241CA5;
-	Fri,  7 Mar 2025 22:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7A425744A;
+	Fri,  7 Mar 2025 22:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p60q3+O1"
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="VOBt5Vhb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C501A9B34
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 22:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85BA241673
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 22:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741385602; cv=none; b=YLQnEuZ4Us41v/VZEwUkuX+Q86oG6Vlvexl47qXOfiI6+WngW+WaF6zbYE+47eEtvLqZbnuDfdSgusTcFDCmFImy+rkvyB5hcGY++Mu9jnOPWoORd849jAHb/mb4OhEWvajCw+GNHKRxJu8HLKT4EUaLknLuQce7kV3fY3Nvw/U=
+	t=1741386320; cv=none; b=SsN1HybLE2HOZiJHCWhXpAvJ0CO0KSzYNTUG9spFvA3SIE7BNgofF7T3x0gbntXMkPE5L6krOeACzFQuZDF3KD0f9HQxqlJ0/uAkoCQmjjUZ7zwz/I/QZ9tthrbLlVRdBBgHE5G48sNqx2lATLjpfXC/rnYPSyaKj64ffOBKtbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741385602; c=relaxed/simple;
-	bh=KwMRxmpn3XtE8ZpVcpFAihi8HdPo5E6ucnQWdOKO/SQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cPIPKn/+FVz7/h9C/t2f1C0zHw3zKqBstArusNZPQAhhJtoNPHtagFOeBLyQHozxmdse8u82nETN30IpjZIQc021r6DDPNrFoyhzGMfsY5KJat+8eguj9mgsfHfmpqgjL3sZvcMEo7A5/gl/TEYTdZ4ph8g6jlU5kMdv3BjMOHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p60q3+O1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3532C4CED1;
-	Fri,  7 Mar 2025 22:13:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741385602;
-	bh=KwMRxmpn3XtE8ZpVcpFAihi8HdPo5E6ucnQWdOKO/SQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p60q3+O1Bw45+FzqN10htD1erTlhZIhwNiQ4LbvxJzzVssT1awvJriLLX0KH64z7Q
-	 6P1TVdWx9jOIkasX98/opa7pquMAiS5N8sidDnShnkCHvx0Yb8cNi018IZNVjGMfrH
-	 iqY8trVUTALAbw7+gv8NJchd4S3gkhWZ0CYdAnRNvqId8DkVIUSUyRACm0PkiLQhil
-	 NGT5EAr0Kyk0vDh6t4OFTYdB6lCoLAXxD6gCMDCSFeDx5jOqvCXlyMC2UF6kgGnBWc
-	 GGk8LND4rrpBmlOisEpBzeRvvGOq5XIxKPwP091lA2OIpP1ThnMrb7sDss6Uto83p4
-	 P6tiT7Ni5X8LA==
-Date: Fri, 7 Mar 2025 22:13:20 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/4] f2fs: Remove uses of writepage
-Message-ID: <Z8tvgKBYOKfYoVku@google.com>
-References: <20250307182151.3397003-1-willy@infradead.org>
- <Z8tZnN-CAS20Dpi7@google.com>
- <Z8tbrL1OKN8pqhNe@casper.infradead.org>
+	s=arc-20240116; t=1741386320; c=relaxed/simple;
+	bh=Tefjw0Zt4cnyZO02FKhjkwBKwBWG4UZLtaZPQIzucR8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R39bSblh6HSPJh84AbLLVXj/exHV3wVY04+bPiXv0aY11yoQAioWa9RPBeN1KwMDVvia/i+9TxAB1JEVEmRnpnr5VopzyqBdPpYeE0Dto4G7r0avaV146f7/E4366RRwthaHPUc8kb0jjAC3zRwTCjXqFSgSZZoqYptoHTaB2eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk; spf=pass smtp.mailfrom=rasmusvillemoes.dk; dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=VOBt5Vhb; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasmusvillemoes.dk
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso477812166b.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Mar 2025 14:25:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google; t=1741386316; x=1741991116; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x7bxGM8ehnB0CKiiNXfobN0duR+gRIWC930Rlv14dlw=;
+        b=VOBt5VhbTOia0Al5PKYxai4X+deB6jaRpfsUq7LHAjRR3qtE58dZazkmVMzcVQ/nh2
+         xlOg7a2SL44mIW2FFujDKocMJ0Q+ImKdDgX10VpDgYcOHtLNDJVdPMWx4J6ilCiqIgdA
+         QbiibculboRuexNoF2QGzv4YRvQSlo4KGVP/I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741386316; x=1741991116;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x7bxGM8ehnB0CKiiNXfobN0duR+gRIWC930Rlv14dlw=;
+        b=w7dp9P/uCzF0WGX6kDOZ3YrGlDS9vOQf7woJyvmgFEdgRuDGht+rpyjwuZ9A5uLC91
+         a/bfyhrIo1aX5ODRc6OQmhWc3OtNrCiWnIb0ABX5KQukk6T/D5yoZuoddQkqvbIoz5J6
+         L6cb78Da5okm9lJiU2VTwJmMHSa77JWjhk6iuvZ873UY+WeemgGsuoZ52jQ9COv8GtoE
+         vImS6giS+wR3CSQJJAO4aGYCa+cAtf8Joo6tMZ0BHK875l53zmXtoHzf8ty4f5hKHGf0
+         XagEJYCujXhabGL7Q4AtLGfZK7v0VYBdVIZKs78RIcSStjPs6bhwchastGmCyF3zqyZW
+         Nhiw==
+X-Forwarded-Encrypted: i=1; AJvYcCXocbaHDMJ0h9x59uCsfqpOKXgQFKx0zh5+W2nM9vuN4+JkUfXIjcb7qoH3/r4Cq2wy7riRV/DUy5CJyq+W@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6Oiq9PAaUORD5GS+sq8OeqAHrysj4q8RQwEnsmCfJPFU9Yk77
+	OC3Z1PlFIe8WzZU3DEnEUwrPYT917BY8ft06MCgo1kaPtPweHXbDBB8dPB8xALY=
+X-Gm-Gg: ASbGncudMdKR8XnHrI+/Yf5jt0yW/ssL9Mrhtp5gKgCRWcnhtI7CHjN3iLMqjf1HNSZ
+	Y8vdrRW7AvaIfZs+tmczErHt5NuOS8uPcVLNL+ZA4LB+4wOKYc8oFpCf0azSlHu+XgN8ldP66y9
+	tf3txCUBiX2ZPgMUUAWGYwHXtm7JfIQaMHj5fmQ47VfsHxh6GFKi+Dap1Fhlf3ffO/MkJkkbhTj
+	7U3QOB7IaiNgnOXNJlr8FkjvDykLaf9A+uuQJf8O+x8eWPFyJNIASC0RVrHrlwoniCm42ITlh4j
+	GOfUseOn2378Y1p3g3cMJTzPEcVfhvq2gajHrMken5PibtXfp5pTxitKsq3QWxULGkXWM896wa9
+	VCJ0=
+X-Google-Smtp-Source: AGHT+IGTO+rlQYp8L/Ng/3pTy8WwsLZtG1hOzMYWfjy73pYnHQygx5aMKEaDNsFM6tybUcd4gs8WgA==
+X-Received: by 2002:a17:906:794f:b0:abf:6b14:6cfb with SMTP id a640c23a62f3a-ac2525e314cmr594597266b.5.1741386315785;
+        Fri, 07 Mar 2025 14:25:15 -0800 (PST)
+Received: from localhost (77.33.185.121.dhcp.fibianet.dk. [77.33.185.121])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ac239438f9bsm339136066b.11.2025.03.07.14.25.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 14:25:15 -0800 (PST)
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Howells <dhowells@redhat.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] fs/pipe.c: merge if statements with identical conditions
+Date: Fri,  7 Mar 2025 23:25:00 +0100
+Message-ID: <20250307222500.1117662-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8tbrL1OKN8pqhNe@casper.infradead.org>
+Content-Transfer-Encoding: 8bit
 
-On 03/07, Matthew Wilcox wrote:
-> On Fri, Mar 07, 2025 at 08:39:56PM +0000, Jaegeuk Kim wrote:
-> > On 03/07, Matthew Wilcox (Oracle) wrote:
-> > > I was planning on sending this next cycle, but maybe there's time to
-> > > squeeze these patches into the upcoming merge window?
-> > > 
-> > > f2fs already implements writepages and migrate_folio for all three
-> > > address_space_operations, so either ->writepage will never be called (by
-> > > migration) or it will only be harmful (if called from pageout()).
-> > 
-> > My tree sitting on [1] doesn't have mm-next, which looks difficult to test this
-> > series for test alone. Matthew, can you point which patches I need to apply
-> > in mm along with this for test?
-> > 
-> > [1] f286757b644c "Merge tag 'timers-urgent-2025-02-03' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip"
-> 
-> Oh, you don't need any extra patches.  The ->writepage removal has been
-> going on since mid-2021 (commit 21b4ee7029c9 was the first removal, I
-> believe).
+As 'head' is not updated after head+1 is assigned to pipe->head, the
+condition being tested here is exactly the same as in the big if
+statement just above. Merge the two bodies.
 
-Ah, I see. Thank you for the confirmation. Let me apply them and test a quick.
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ fs/pipe.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 097400cce241..27385e3e5417 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -547,10 +547,8 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 
+ 			if (!iov_iter_count(from))
+ 				break;
+-		}
+-
+-		if (!pipe_full(head, pipe->tail, pipe->max_usage))
+ 			continue;
++		}
+ 
+ 		/* Wait for buffer space to become available. */
+ 		if ((filp->f_flags & O_NONBLOCK) ||
+-- 
+2.48.1
 
 
