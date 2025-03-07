@@ -1,104 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-43474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43477-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A70CA5705A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 19:22:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63B03A5717F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 20:21:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D3831898AFA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 18:22:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90B04166202
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 19:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7666D241698;
-	Fri,  7 Mar 2025 18:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C25254AFD;
+	Fri,  7 Mar 2025 19:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rpXKwVnb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dqi/KrB5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A9423F411
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 18:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1D425332F
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 19:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741371716; cv=none; b=Na7CMAJk3qDhc8+jfKB1GItRc78vHW9mL3oXLnYwDCtg79VXNW0wIL7j62ah0uetV7ErDyFWxkhChk+xd6IghR6vMkToA6ZeGSoQsYoK9vP24JxDAcmy/DrhQYstcaZtwxUfsa05eImnjpcZDzBrjPrzlSvuYGEKC4ONpAMODwU=
+	t=1741375191; cv=none; b=RA1EYy3FyFkUt9Az7HJgYMyZ5NWhnV19INb8zBYmujHRqFJCw2SI/0d108uCN1n+W+UMv2m4f4KzInJuyqSXnGAkfhn5SrgUaoMq8jIUQG2Mpzv4s/g+8zFGCPqtMK45GGGkmzp6Ec+wMO80CSeudJ8aCvrXkRF/R2dny+9O6h0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741371716; c=relaxed/simple;
-	bh=xqaO8oqNncJyRRJ4jaLixe2YEvyiUrNlle1x9vdAEW0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=n7R709NGwjZZtyaLhbTfSwW4yDDuGFTmteik3A2FBn5bVU8WDoq2uUS2nOYEOZ+97rgF3hYv8VUxVgUBIcAF4racW/m5uvOdmSDbM2GS2GsjwkLfH9qvEgBlziKJN0QhJnYFj6Txxgw/O02oPwJky2zq4cgzGg1RPnsLiCzaUiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rpXKwVnb; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-Type:Content-ID:Content-Description;
-	bh=BT6OjbtDCOFHHAijJpjMRbh4BDIQM0uytaFHqbNbas4=; b=rpXKwVnb0knBI4GHlLAYlc+0As
-	1r+wS9W1bNGX5vr3dqANb97Ev4egsqiYcBMrZMpcMHdxvXeOT+GlGLRqOauWrC/fOToQHAB6wAMkQ
-	LLeQ1Fe97u6BfTv3oi9qmBjI8AoQOfNQLfqex9XvOdCyeOVNb+tK/q+bcpCdIZxR+VJ1shsmlH37+
-	INDzO5AFPaDBkief51jGwTswtyDWYk3DpZMZvwkUT2HXJjk9BsvjUtFB/WaDSafbKA579GLfszW9Y
-	1szDmqnP0vNbSUSJWYWXQ55V7NBuOCrZaeSV/GcuxiEtkzA6Zsl3niMGDFb7SBL3zJYzVz2g4MDXC
-	WOMGnKQw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tqcKX-0000000EFjm-2Iim;
-	Fri, 07 Mar 2025 18:21:53 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 4/4] f2fs: Remove f2fs_write_node_page()
-Date: Fri,  7 Mar 2025 18:21:50 +0000
-Message-ID: <20250307182151.3397003-5-willy@infradead.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250307182151.3397003-1-willy@infradead.org>
-References: <20250307182151.3397003-1-willy@infradead.org>
+	s=arc-20240116; t=1741375191; c=relaxed/simple;
+	bh=g4MqkEHiB7Hh07+p3G9AYFM2M8BQsXqZ/GWxguZs4Jc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pAP/tdnH7LyXuCTIHT4+D/cX9VQxONH0dEM2zbRIXbhqYgJ5oul43p8QgUGQXOB2dsx1/0X8OX+ww1SWWEx7vWV7QxpF89a/CL5kycrIvD+voXMPyZaYuNS3BL5A743ErNzp3Me6u930wHjBZYxVC+jmzc9UwA/5bvUbdofbS2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dqi/KrB5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741375188;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nrPsYGhY2ctGgSCoMFqFX1XHzK6SWuV8/qZ7voczswo=;
+	b=dqi/KrB5ftxd8Vfdq+342YcnhdzY37LFdw/EX9BrHqdmWlIoUIB7BhenpI8W1fHBHfmb3L
+	wkOg4muZ++ZMWs1qoSO+oiSvC3203jYdc8DK86RLB+nMx2uE1F+qVXJCjcyN1kbuLlGyej
+	VwZ5PVX4rQvOBPL6k6J/2mHHRNQ+v1M=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-686-fHWpz0DVMHiW_mwF1wewHQ-1; Fri,
+ 07 Mar 2025 14:19:45 -0500
+X-MC-Unique: fHWpz0DVMHiW_mwF1wewHQ-1
+X-Mimecast-MFC-AGG-ID: fHWpz0DVMHiW_mwF1wewHQ_1741375184
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AE68B1955BC9;
+	Fri,  7 Mar 2025 19:19:43 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.22.58.19])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CF3161955DCE;
+	Fri,  7 Mar 2025 19:19:40 +0000 (UTC)
+Date: Fri, 7 Mar 2025 14:19:38 -0500
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>,
+	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+	Linux Kernel Audit Mailing List <audit@vger.kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Eric Paris <eparis@parisplace.org>, Steve Grubb <sgrubb@redhat.com>,
+	Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v1 1/2] audit: record fanotify event regardless of
+ presence of rules
+Message-ID: <Z8tGyiUzX6p+2vpp@madcap2.tricolour.ca>
+References: <cover.1741210251.git.rgb@redhat.com>
+ <3c2679cb9df8a110e1e21b7f387b77ddfaacc289.1741210251.git.rgb@redhat.com>
+ <aksoenimnsvk4jhxw663spln3pow5x6dys4lbtlfxqtwzwtvs4@yk5ef2tq26l2>
+ <Z8pH97tbwt7OGj2o@madcap2.tricolour.ca>
+ <jhvf3n4fnzsnj7opxooqblmpnuhvqhcg366y47p5u44dg4tm3i@snmc3msdcoiv>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <jhvf3n4fnzsnj7opxooqblmpnuhvqhcg366y47p5u44dg4tm3i@snmc3msdcoiv>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Mappings which implement writepages should not implement writepage
-as it can only harm writeback patterns.
+On 2025-03-07 15:52, Jan Kara wrote:
+> On Thu 06-03-25 20:12:23, Richard Guy Briggs wrote:
+> > On 2025-03-06 16:06, Jan Kara wrote:
+> > > On Wed 05-03-25 16:33:19, Richard Guy Briggs wrote:
+> > > > When no audit rules are in place, fanotify event results are
+> > > > unconditionally dropped due to an explicit check for the existence of
+> > > > any audit rules.  Given this is a report from another security
+> > > > sub-system, allow it to be recorded regardless of the existence of any
+> > > > audit rules.
+> > > > 
+> > > > To test, install and run the fapolicyd daemon with default config.  Then
+> > > > as an unprivileged user, create and run a very simple binary that should
+> > > > be denied.  Then check for an event with
+> > > > 	ausearch -m FANOTIFY -ts recent
+> > > > 
+> > > > Link: https://issues.redhat.com/browse/RHEL-1367
+> > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > 
+> > > I don't know enough about security modules to tell whether this is what
+> > > admins want or not so that's up to you but:
+> > > 
+> > > > -static inline void audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar)
+> > > > -{
+> > > > -	if (!audit_dummy_context())
+> > > > -		__audit_fanotify(response, friar);
+> > > > -}
+> > > > -
+> > > 
+> > > I think this is going to break compilation with !CONFIG_AUDITSYSCALL &&
+> > > CONFIG_FANOTIFY?
+> > 
+> > Why would that break it?  The part of the patch you (prematurely)
+> > deleted takes care of that.
+> 
+> So I'm failing to see how it takes care of that when with
+> !CONFIG_AUDITSYSCALL kernel/auditsc.c does not get compiled into the kernel.
+> So what does provide the implementation of audit_fanotify() in that case?
+> I think you need to provide empty audit_fanotify() inline wrapper for that
+> case...
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/f2fs/node.c | 8 --------
- 1 file changed, 8 deletions(-)
+I'm sorry, I responded too quickly without thinking about your question,
+my mistake.  It isn't the prototype that was changed in the
+CONFIG_SYSCALL case that is relevant in that case.
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 36614a1c2590..b78c1f95bc04 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1784,13 +1784,6 @@ int f2fs_move_node_page(struct page *node_page, int gc_type)
- 	return err;
- }
- 
--static int f2fs_write_node_page(struct page *page,
--				struct writeback_control *wbc)
--{
--	return __write_node_page(page, false, NULL, wbc, false,
--						FS_NODE_IO, NULL);
--}
--
- int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 			struct writeback_control *wbc, bool atomic,
- 			unsigned int *seq_id)
-@@ -2217,7 +2210,6 @@ static bool f2fs_dirty_node_folio(struct address_space *mapping,
-  * Structure of the f2fs node operations
-  */
- const struct address_space_operations f2fs_node_aops = {
--	.writepage	= f2fs_write_node_page,
- 	.writepages	= f2fs_write_node_pages,
- 	.dirty_folio	= f2fs_dirty_node_folio,
- 	.invalidate_folio = f2fs_invalidate_folio,
--- 
-2.47.2
+There was already in existance in the !CONFIG_AUDITSYSCALL case the
+inline wrapper to do that job:
+
+	static inline void audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar)
+	{ }
+
+Did I understand correctly this time and does this answer your question?
+
+But you do cause me to notice the case that these notifications will be
+dropped when CONFIG_AUDIT && !CONFIG_AUDITSYSCALL.
+
+Thanks for persisting.
+
+> 								Honza
+> 
+> > diff --git a/include/linux/audit.h b/include/linux/audit.h
+> > index 0050ef288ab3..d0c6f23503a1 100644
+> > --- a/include/linux/audit.h
+> > +++ b/include/linux/audit.h
+> > @@ -418,7 +418,7 @@ extern void __audit_log_capset(const struct cred *new, const struct cred *old);
+> >  extern void __audit_mmap_fd(int fd, int flags);
+> >  extern void __audit_openat2_how(struct open_how *how);
+> >  extern void __audit_log_kern_module(char *name);
+> > -extern void __audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar);
+> > +extern void audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar);
+> >  extern void __audit_tk_injoffset(struct timespec64 offset);
+> >  extern void __audit_ntp_log(const struct audit_ntp_data *ad);
+> >  extern void __audit_log_nfcfg(const char *name, u8 af, unsigned int nentries,
+> > 
+> > > -- 
+> > > Jan Kara <jack@suse.com>
+> > > SUSE Labs, CR
+> > 
+> > - RGB
+> > 
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+Upstream IRC: SunRaycer
+Voice: +1.613.860 2354 SMS: +1.613.518.6570
 
 
