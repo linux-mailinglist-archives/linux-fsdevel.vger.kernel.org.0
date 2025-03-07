@@ -1,94 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-43458-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF39CA56D75
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 17:21:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DB8A56D7F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 17:23:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FDDD3A3CDA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 16:21:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32FE0189199D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 16:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E2C23AE79;
-	Fri,  7 Mar 2025 16:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AABA23BCEE;
+	Fri,  7 Mar 2025 16:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cmPFGhPC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C73423A9AE
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 16:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E9423AE9A;
+	Fri,  7 Mar 2025 16:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741364464; cv=none; b=Tbd/nWU/5TnduF96HiMtFs8RCX59koBexKFOFsgM5MPN1um6mAIIbvqLMwnxXTB4jqwdIU+ncxu8QBR/BoDkYE3C3FX+IYlSH9u0gUdiKdOfFaH/j54BVq0i1e4PyfcAHCR7+TqGarTtlNt6EZMMxhazuhC9bGsD7EJrzldCViQ=
+	t=1741364578; cv=none; b=bONrNJstaLCaUKzRdIacn4C96ihQURUrGIUUN9nAJaIwmG0ywqoII61HVNfGUWw3OMCZ/a4bAHzZ1zKEztvju63PSb1Ol0IbCW+6rdhOtkDQe9fMNizES7tGmd5QWabBuwg4kFHb/S97PspFf834/JLjTzBbLeJWH4fspJHfhsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741364464; c=relaxed/simple;
-	bh=NtertMuEVLb4GQJzbCtunKWOV/Sy4gysXnmuTeY8Afc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Huq2Gx00UlWd6L2n3ywH+aTyBn/i6ae4t9kYB9IL1EF5h6OuyElwvC6Y9VkcZShTStiRhoOmeyzvQAqCx7On6fXpjElN9oOVLCNt2UNxNbSoKz0XEs5a0hQrV+hrFRUH6g/s9JtCA7/Kw5Lu67pE9CBc+rnb/p+tvUmPElyR6rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d054d79dacso37897085ab.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Mar 2025 08:21:02 -0800 (PST)
+	s=arc-20240116; t=1741364578; c=relaxed/simple;
+	bh=HehM6Qwewq6SkML/mBRVRIlvDs4DMNnNlMIxTT+m/W4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fBxAceu9x+FRi1WmGYSXo5nWG9w0V3HjENR91sskoF3sXNL8k4pGtqbOt107ZbBM7vvKH5GUh7WWnkLRJReX6bMZIqDxXTVqEsamNu7SSHfXR4Hd53j621ftE+zYcCzdpEGezjyBVUQRyi1W265L1ELloznVMbDH0ZQi0i0yPuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cmPFGhPC; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abf45d8db04so314179566b.1;
+        Fri, 07 Mar 2025 08:22:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741364575; x=1741969375; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oQVqDsHdw/+ZjbpyFQkR95KzV9fVxY5AcxcM0fzGq84=;
+        b=cmPFGhPCmZyhKzJKfGzzFonnvHNTTTOPemp76/B0WKwkpd6lmYUS01VvvU6f+/oDAX
+         xEn8GayQI7wFBE6mME92JxUP58abutMz5F0XwJIRNEyi/l1VlLvOGJEf7RKNh9kew3cd
+         t27bfZnjsoVKtMSEtEKRhpf6B0Lx9w4msvd7Q7Qc7IcFfSy2zU/TduKTqzaheq57Mi9C
+         EQcN54mdO7eoT7yAJNowVfpTl3Wwh1EWD8VRj/3agvYXhqnzgipicgMSWLNs9DRwRWf3
+         xglwtIdWUIbUe8XdPTmOyD8VBXBXQfXSTndpR8mQU8IQGNco0+UgqrCyjtQSpy1gaogm
+         wASA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741364462; x=1741969262;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hqoZmbhmrm3Wo0MivXF1llagCoU9e35MwSyCFLjrWUs=;
-        b=MX19Is4JQZQ7S2xM0n+X1CURUACMjH0T/4j8qveoL8W/XDbhpvTLJd6RrGau4qUfIG
-         U9MHAT/HJtvHi00rwXZ2zy0W6lWjSqse8hz0UKbntohSZXRurffgcRPsKGYNqBuZSAtK
-         RFZkAgTQA6nZo3KS/Yxfi4mQE4J5WTPcl1TDxaxjhrv/ilsifYN3JD+KthL73Y7KcgZj
-         r3dIHcFxrNy1UjVhjDb7g4a82UWyMGJfa9Xg5I1333Ns9ryaAc1cHb6wyKZ1sYnKwq1g
-         8rsxxsro18kPdg+r0cvpN15EbIGjRodPU2FW1BsJWlw2c7et1rCypBqiGwMyXraZiwlG
-         TZHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsWZdEPht78zkiAPEenhu3dWmxt0+NgNUdx0Lu8SU1jaGKwADCEzEcIbT0kVF4HaaOR+0SqH9O7xKCuyXR@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ/HuPriw16op3B9Xi3ndcW04LbQ0hYf0WvJtwLMEO6hNhr2G7
-	F+pOP786FCQdtla4ThA223+afMvRk2KNpJ92dfJMWqaU5C1R7nilRFnr3VzspkHmR8uuqJKk0pH
-	wV6bahA0xX12i6ZTU4Y8z7hPSHBXr5zpfX+UY3LXtETufqzxkYBQ/85E=
-X-Google-Smtp-Source: AGHT+IE2nPYnITDZFp2SAZViHoxjw6aguupsRSsmbyNsC89hqZr0PErp4tSqaFr1UoOWuFXn55n8KZ94RFEwvPF2I/+bF0BN3faJ
+        d=1e100.net; s=20230601; t=1741364575; x=1741969375;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oQVqDsHdw/+ZjbpyFQkR95KzV9fVxY5AcxcM0fzGq84=;
+        b=KZuijPUZCc/u5UA8OQgdp04vJTRRlHUA6jbVW4SSd3F7Dv1CNwuWxqPz7p9DFh19cV
+         Z3U4WAvGo+nsmvJ3uP+f28leud7QOpNvrcspBG1EZv/yRQlTOInGrF9n0HXlU6nM2tyT
+         /HFCL1MxF9mkGxQtlm3dRWPnHu4eW9DUrfu061WUYhI4/KgtRMEoe4sWHwHwGXP9oKad
+         joH14WbgzZA1YFzmfMjTGqPvGmH7KgNbXJXqrbsGnDlTrIabdstK31vbZN9m5mCbCswN
+         D9aLzYS+wcOJ3BjXph/KV7Rrr9GyF7u0hhaz6J/lrxrJkJWW+yadfNmO1SUAGFqiulYg
+         ufvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4sVqkvWEK1vIG5Kn8QSq2Q2s/3OnNeVqv3c6P1q4IXSJz4SHRNnhZ3ILByOt3aY+1/tqPSPsAtkicklFf@vger.kernel.org, AJvYcCU7SbwFQOdhpD4aDsn2NbR5sbYJSGVNLMChEAIACKSGXLR4tmhzUCmm9JQL6TtWnWzSCkUFIt908UxX@vger.kernel.org, AJvYcCV22tFJDGVGvnq9MrwhrZNa4r5jOXewnkjeyA8n1kOfzRP4CrSpslOrqOKm25Hrnj33CGw6eden7HZ52LgE@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTrboCB+8j3EkMHO/VvvKHdaKEcCQiFwJhO13ITAyPnjfYeJVk
+	/JlQAz2HawMIt7JFAgq380ubFM1J3/+Eexx0P7bSFLt8Dj5NOY4QOHmFvWj2P0N42ELzgWPPaZq
+	aRrVls8MW1u2/PH8fv71FcDQ3ot4=
+X-Gm-Gg: ASbGncvl+6keP6Mrtf1D4y72rd7Xin5znCb70V+RLPjuXNu2al4yA9HdqLM9b+4LPbT
+	xszHJlp/rG+tqgF4c1ihgh3rn3havLVMbkBH7McRumdyRRn9xfc+dnP6R9jPfub6pTJx7mNMsBH
+	V828lTQk2AZXTlwh/S4+4fGQl2ig==
+X-Google-Smtp-Source: AGHT+IHC1py7w2m8go5VMq6eI+Rzc42CqWn666RVrn7NRiN5dOLiuz60Rlfmwi8JlB/SJZ4s+09dscdh23QrF/ZPBeM=
+X-Received: by 2002:a17:906:4818:b0:ac2:64eb:d4e8 with SMTP id
+ a640c23a62f3a-ac264ebd527mr153832166b.0.1741364574933; Fri, 07 Mar 2025
+ 08:22:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2168:b0:3d3:d28e:eae9 with SMTP id
- e9e14a558f8ab-3d44193d992mr52659425ab.7.1741364462402; Fri, 07 Mar 2025
- 08:21:02 -0800 (PST)
-Date: Fri, 07 Mar 2025 08:21:02 -0800
-In-Reply-To: <CAOQ4uxizF1qGpC3+m47Y5C_NSMa84vbBRj6xg7_uS-BTJF0Ycw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67cb1cee.050a0220.15b4b9.0082.GAE@google.com>
+References: <CAOQ4uxizF1qGpC3+m47Y5C_NSMa84vbBRj6xg7_uS-BTJF0Ycw@mail.gmail.com>
+ <67cb1cee.050a0220.15b4b9.0082.GAE@google.com>
+In-Reply-To: <67cb1cee.050a0220.15b4b9.0082.GAE@google.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 7 Mar 2025 17:22:43 +0100
+X-Gm-Features: AQ5f1Jpm17vwPTL_SLf5SNhsDNjexpxmxQEAhre-BxYX_NNk8s0Ac-GhpzbKKAw
+Message-ID: <CAOQ4uxjxbhJPDCBnuMMmkPchFiDOwX82-35jbhbrQkbp2Rsy6g@mail.gmail.com>
 Subject: Re: [syzbot] [xfs?] WARNING in fsnotify_file_area_perm
-From: syzbot <syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, amir73il@gmail.com, axboe@kernel.dk, 
-	brauner@kernel.org, cem@kernel.org, chandan.babu@oracle.com, 
-	djwong@kernel.org, jack@suse.cz, josef@toxicpanda.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-xfs@vger.kernel.org, 
+To: syzbot <syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com>
+Cc: akpm@linux-foundation.org, axboe@kernel.dk, brauner@kernel.org, 
+	cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, jack@suse.cz, 
+	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-xfs@vger.kernel.org, 
 	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Mar 7, 2025 at 5:21=E2=80=AFPM syzbot
+<syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot tried to test the proposed patch but the build/boot failed:
+>
+> failed to apply patch:
+> checking file include/linux/fs.h
+> patch: **** unexpected end of file in patch
+>
+>
+>
+> Tested on:
+>
+> commit:         ea33db4d fsnotify: avoid possible deadlock with HSM ho..
+> git tree:       https://github.com/amir73il/linux fsnotify-fixes
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dd6b7e15dc5b5e=
+776
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D7229071b47908b1=
+9d5b7
+> compiler:
+> userspace arch: arm64
+> patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D16fe487858=
+0000
+>
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Let's try again - just the branch - no extra patch:
 
-failed to apply patch:
-checking file include/linux/fs.h
-patch: **** unexpected end of file in patch
+#syz test: https://github.com/amir73il/linux fsnotify-fixes
 
-
-
-Tested on:
-
-commit:         ea33db4d fsnotify: avoid possible deadlock with HSM ho..
-git tree:       https://github.com/amir73il/linux fsnotify-fixes
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d6b7e15dc5b5e776
-dashboard link: https://syzkaller.appspot.com/bug?extid=7229071b47908b19d5b7
-compiler:       
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16fe4878580000
-
+Thanks,
+Amir
 
