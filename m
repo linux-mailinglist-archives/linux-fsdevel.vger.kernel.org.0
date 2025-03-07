@@ -1,163 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-43494-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F65EA57587
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 23:59:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17CBFA57600
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 00:28:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9918A170AA2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 22:59:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1BE77A8047
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 23:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A61D258CDA;
-	Fri,  7 Mar 2025 22:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C26E259C89;
+	Fri,  7 Mar 2025 23:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OfOv1wsC"
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="rOprVQmb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296602580C3;
-	Fri,  7 Mar 2025 22:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217951FECB6;
+	Fri,  7 Mar 2025 23:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741388345; cv=none; b=fdJped+3+3He+nY8DNGi2RBZv/FA4gOJWVqLw5j76DxmRn1uLNUCQCtqfsVGqHF5sYNycp5eCSZyrkO+mROU7n/hSitjtvaYFN0nxbDHxOABFBkti792pu0RL7zIbh+QQ+g0iAKVQ0/BX6oPUXBnXsN08T9Eelflk7Yvk9+nid4=
+	t=1741390111; cv=none; b=EjglQvNKTgWKcPR1Yp4axvVzWRWsCd9Y9rnjGaZ1Yf0L+dkj3G2m6yhiR9YD80I9Y44ayMbKXVKWI7j7XVIpXLSHKmraFAgx9U4AMc/78oPFUZzn5zWAR1Micw8UTAMwfRpjSp4y4BxcbJcwjtXRwpPZFFXn3AiutX6kt9fY/jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741388345; c=relaxed/simple;
-	bh=HlYncOphUK+gScOpQibhtWz3I5JVYWqT9ueOhL8vm5c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eIbynoRpXmos7halIbfCmSMFtBeBu9Uh3BtnhW8Y14pIpk9q7xMooJDsNVdDS+VocsxtgvVnfVOgYpzl+1K88u5PDAcVQWLUZOno66hpFIhyP+w10OqEmdM/iuYND+ZajXpR76mkrZd5qRhv6nuulleeR4PFhskIiLGwg55hWNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OfOv1wsC; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-abf48293ad0so379043466b.0;
-        Fri, 07 Mar 2025 14:59:03 -0800 (PST)
+	s=arc-20240116; t=1741390111; c=relaxed/simple;
+	bh=UeOROIuHxrOSWLbOE95MlbOgZCV+/mmsFcLLjNmWGY4=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=G7HbZYPV7iZoJ9tJ3XLTWZ59Wg/JSCpUlNxdKFFOAr1TKOKHKS/GdKXtbEIv94tPtvfpyrNz/B7NYjTuYsNH5v/csA3f/W6SUcjcSF+xS5Mhou+8Huwtx6ipzMyHeSGDFaEpE2mOaHLpAmfDZWcLBF6x1vSv90hzQ8fBSjq/184=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=rOprVQmb; arc=none smtp.client-ip=207.171.188.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741388342; x=1741993142; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8ALyoB0KlEvFAPp+SQpsC3awxPQHvuRybFzmDW1XIvk=;
-        b=OfOv1wsChShBItToBe9pKApY08HN99LFi+spuR89yNosBKCre9DoYMuOhOcaef+yA6
-         WsDfc2l+ZQk5TwDewcCvfg/9tRMl9hnEtAZ2HL4/+iNuIwjeNEAUhP85DLrZfcmfR7H4
-         tXMmUrdxHwZY1NnExkD92D53Yiw4h3pJanRH5C5uJqrP4I6evOIbMdTKwODhSQyr9mR+
-         sLqeos2YywacKgD+/VoUrpCImHYFHl6b2gahj1DcOR20ncYUhAuzYQn+t0fvHMGjgsob
-         /D+dsVVrOhTHnQ41V4iwEva1BM0pHee2Pux3UZPetSlr2mstQsBrac28+kXxyR+GxDiU
-         5Oog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741388342; x=1741993142;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8ALyoB0KlEvFAPp+SQpsC3awxPQHvuRybFzmDW1XIvk=;
-        b=MFsv03BVsD5rtXxiDWiFxludEtRfm9DJwzZ23BNB/yCiQv8qoJQdK4APmubfPnjaJU
-         7xMq6SBGCkR+CdiGtgnlL2HjZEfIhEUhKcqZJUHZwSkj3dZCWr/OYYsk3g/1yVQCqAGo
-         C2VgJtpTaYlvdtpqkUH2pSdL67rAOHtwl1w33PuK9Bq52WybSez+K3p3o/yC1+GLv/ll
-         uWN+mFrMCIXktlVNDNAhasuzr3EcrF0rbOVBqHCd/AlH0ACeCyeJ3UCjPZXguwitfJjA
-         afPJP2lcefdwc4Tuw7nVNS9XOozvueIggXS5YCCjz1ke60hjU3DxxLodGocIT2+CplJt
-         K3Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSbdtKd/sMfdc5jZOGhiGo7aQUsL22apflQwiI8TZB9fbZKify7soC6a2+L8o+VOsrVEeymeI3Rhh7f6sV+g==@vger.kernel.org, AJvYcCV9+eJ9IZYqicnzV9tVSGTcB9fqI+pyiDMluHMcVFHvYRlQVNbbnTFDQY8+OnfnyL2WImxQYW35rKM=@vger.kernel.org, AJvYcCXEToaGQbFGpu2VXS3V55p0kEYhMo9qXqXwQrBDYt96eQQ2K/XGK6KcrvJO4Nyh5QySM/ABlw==@vger.kernel.org, AJvYcCXVnvUAw8FjH2b4cLr7BiDzLFeXiWCpJZ38l7n+LsIs0oXNl3rI8U1p9N0W+YhPoMIAQXGMmjTyDB8x3Avk@vger.kernel.org
-X-Gm-Message-State: AOJu0YytY8XYBJ9S4eS3ZIJhe2DhRwxU1Te2SA3CGe5r56XqMf+OLp1U
-	wvLB+tRMeno9CTnjb7JwjxA8pgGIigxEWPRBjQkiskIUry7QSCH8WmYs9Uct/FHVdOGKH3ugVwr
-	CLNyPgSJOd7kIdljNpdU5fZyL4bE=
-X-Gm-Gg: ASbGncsThArmVOy9TW+66P1SNZEoFzbQG6TLqCbNRC2XzebTPDoAfdryyKChP2cfC5i
-	0rOiIW2h2prU4+P7t2Fp0zErrmztNAJVZ951u6dHdUrko4A/AjYUR3DYw1zQ0/pJsw4+4K+4UE/
-	vLYAPVDgt7QRkFH2wC2XifEFnC2A==
-X-Google-Smtp-Source: AGHT+IEihscYizM8NaBKVgZobWKOR2h/cfILGw+7AJBNzL9suSvFIcK5GQAP0Jw187BKOcYel7wqCk4TsjWFtR+TmAQ=
-X-Received: by 2002:a17:906:dc8b:b0:ab7:6fa9:b0a9 with SMTP id
- a640c23a62f3a-ac2525e0417mr581474066b.11.1741388342270; Fri, 07 Mar 2025
- 14:59:02 -0800 (PST)
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1741390111; x=1772926111;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=PxKleB6Wh7ZXzq2XCt1pO6Tm9zMapmQjwJkScUHeXmc=;
+  b=rOprVQmbX4pYqWHAuAAkdjzvrYvRBvO+ZmrB4IwQSEiogtiF5hr7974P
+   Sdwb4UJ9aetXbXGVgB54FN0ZKcscr8F+EXyYmc61TMMlqBZCMFsk3fAAn
+   Eputg48XzRd20Uq3VduU26neFPpaMODq2j6ktmsd9mHSkt8LWeHe8KWOK
+   k=;
+X-IronPort-AV: E=Sophos;i="6.14,230,1736812800"; 
+   d="scan'208";a="805364181"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 23:28:24 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.38.20:22470]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.58.39:2525] with esmtp (Farcaster)
+ id fbb96d7f-d3b0-45f3-bcea-de6963836fbc; Fri, 7 Mar 2025 23:28:23 +0000 (UTC)
+X-Farcaster-Flow-ID: fbb96d7f-d3b0-45f3-bcea-de6963836fbc
+Received: from EX19D020UWA004.ant.amazon.com (10.13.138.231) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 7 Mar 2025 23:28:23 +0000
+Received: from EX19MTAUWB001.ant.amazon.com (10.250.64.248) by
+ EX19D020UWA004.ant.amazon.com (10.13.138.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 7 Mar 2025 23:28:22 +0000
+Received: from email-imr-corp-prod-iad-all-1b-1323ce6b.us-east-1.amazon.com
+ (10.25.36.214) by mail-relay.amazon.com (10.250.64.254) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1544.14 via Frontend Transport; Fri, 7 Mar 2025 23:28:22 +0000
+Received: from dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com [172.19.91.144])
+	by email-imr-corp-prod-iad-all-1b-1323ce6b.us-east-1.amazon.com (Postfix) with ESMTP id 57D4C4354C;
+	Fri,  7 Mar 2025 23:28:22 +0000 (UTC)
+Received: by dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (Postfix, from userid 23027615)
+	id 1583C4F0F; Fri,  7 Mar 2025 23:28:22 +0000 (UTC)
+From: Pratyush Yadav <ptyadav@amazon.de>
+To: Jonathan Corbet <corbet@lwn.net>
+CC: <linux-kernel@vger.kernel.org>, Eric Biederman <ebiederm@xmission.com>,
+	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, "Hugh
+ Dickins" <hughd@google.com>, Alexander Graf <graf@amazon.com>, "Benjamin
+ Herrenschmidt" <benh@kernel.crashing.org>, David Woodhouse
+	<dwmw2@infradead.org>, James Gowans <jgowans@amazon.com>, Mike Rapoport
+	<rppt@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Pasha Tatashin
+	<tatashin@google.com>, Anthony Yznaga <anthony.yznaga@oracle.com>, "Dave
+ Hansen" <dave.hansen@intel.com>, David Hildenbrand <david@redhat.com>, "Jason
+ Gunthorpe" <jgg@nvidia.com>, Matthew Wilcox <willy@infradead.org>, Wei Yang
+	<richard.weiyang@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-mm@kvack.org>, <kexec@lists.infradead.org>
+Subject: Re: [RFC PATCH 2/5] misc: add documentation for FDBox
+In-Reply-To: <87ecz87tik.fsf@trenco.lwn.net>
+References: <20250307005830.65293-1-ptyadav@amazon.de>
+	<20250307005830.65293-3-ptyadav@amazon.de> <87ikok7wf4.fsf@trenco.lwn.net>
+	<mafs0v7skj3m2.fsf@amazon.de> <87ecz87tik.fsf@trenco.lwn.net>
+Date: Fri, 7 Mar 2025 23:28:22 +0000
+Message-ID: <mafs0msdwifop.fsf@amazon.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307161155.760949-1-mjguzik@gmail.com> <20250307164216.GI2023217@ZenIV>
- <CAGudoHGwaoCMnpFyF3Zxm4BxLqyYD8TiRtpdTyfjJspVa=Re9A@mail.gmail.com>
-In-Reply-To: <CAGudoHGwaoCMnpFyF3Zxm4BxLqyYD8TiRtpdTyfjJspVa=Re9A@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Fri, 7 Mar 2025 23:58:50 +0100
-X-Gm-Features: AQ5f1JpqEqIz2mVVbaZO-Aa9fh9ukY9RzK2Rqy_i9kZ-m73UGmKAXQmsDmSY6mI
-Message-ID: <CAGudoHE+VQUtxqtc3v38XFGVojTLqiYXoBU==PFvj=A5kmMMHw@mail.gmail.com>
-Subject: Re: [PATCH] fs: support filename refcount without atomics
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
-	audit@vger.kernel.org, axboe@kernel.dk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Fri, Mar 7, 2025 at 5:44=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> wr=
-ote:
+On Fri, Mar 07 2025, Jonathan Corbet wrote:
+
+> Pratyush Yadav <ptyadav@amazon.de> writes:
 >
-> On Fri, Mar 7, 2025 at 5:42=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> =
-wrote:
-> > Not a good way to handle that, IMO.
-> >
-> > Atomics do hurt there, but they are only plastering over the real
-> > problem - names formed in one thread, inserted into audit context
-> > there and operation involving them happening in a different thread.
-> >
-> > Refcounting avoids an instant memory corruption, but the real PITA
-> > is in audit users of that stuff.
-> >
-> > IMO we should *NOT* grab an audit names slot at getname() time -
-> > that ought to be done explicitly at later points.
-> >
-
-I was looking at doing that, but the code is kind of a mess and I bailed.
-
-> > The obstacle is that currently there still are several retry loop
-> > with getname() done in it; I've most of that dealt with, need to
-> > finish that series.
-> >
-> > And yes, refcount becomes non-atomic as the result.
+>> On Fri, Mar 07 2025, Jonathan Corbet wrote:
+>>
+>>> Pratyush Yadav <ptyadav@amazon.de> writes:
+>>>
+>>>> With FDBox in place, add documentation that describes what it is and how
+>>>> it is used, along with its UAPI and in-kernel API.
+>>>>
+>>>> Since the document refers to KHO, add a reference tag in kho/index.rst.
+>>>>
+>>>> Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
+>>>> ---
+>>>>  Documentation/filesystems/locking.rst |  21 +++
+>>>>  Documentation/kho/fdbox.rst           | 224 ++++++++++++++++++++++++++
+>>>>  Documentation/kho/index.rst           |   3 +
+>>>>  MAINTAINERS                           |   1 +
+>>>>  4 files changed, 249 insertions(+)
+>>>>  create mode 100644 Documentation/kho/fdbox.rst
+>>>
+>>> Please do not create a new top-level directory under Documentation for
+>>> this; your new file belongs in userspace-api/.
+>>
+>> I did not. The top-level directory comes from the KHO patches [0] (not
+>> merged yet). This series is based on top of those. You can find the full
+>> tree here [1].
+>>
+>> Since this is closely tied to KHO I found it a good fit for putting it
+>> on KHO's directory. I don't have strong opinions about this so don't
+>> mind moving it elsewhere if you think that is better.
 >
-> Well yes, it was audit which caused the appearance of atomics in the
-> first place. I was looking for an easy way out.
+> I've not seen the KHO stuff, but I suspect I'll grumble about that too.
+> Our documentation should be organized for its audience, not for its
+> authors.  So yes, I think that your documentation of the user-space
+> interface should definitely go in the userspace-api book.
+
+Okay, fair enough. I'll move it there.
+
 >
-> If you have something which gets rid of the underlying problem and it
-> is going to land in the foreseeable future, I wont be defending this
-> approach.
+> Thanks,
 >
+> jon
+>
+> (Who now realizes he has been arguing this point of view for over ten
+> years ... eventually it will get across... :)
 
-It is unclear to me if you are NAKing the patch, or merely pointing
-out this can be done in a better way (which I agree with)
-
-Some time ago I posted a much simpler patch to merely dodge the last
-decrement [1], which already accomplishes what I was looking for.
-
-Christian did not like it and wanted something which only deals with
-atomics when audit is enabled.
-
-I should have done that patch slightly differently, but bottom line is
-the following in putname():
-
-        refcnt =3D atomic_read(&name->refcnt);
-        if (refcnt !=3D 1) {
-                if (WARN_ON_ONCE(!refcnt))
-                        return;
-
-                if (!atomic_dec_and_test(&name->refcnt))
-                        return;
-        }
-
-So if you are NAKing the regular -> atomic switch patch, how about the
-above as a quick hack until the issue gets resolved? It is trivial to
-reason about (refcnt =3D=3D 1 means nobody can do anything) and guarantees
-to dodge one atomic (which in case of no audit means all consumers). I
-can repost touched up if you are OK with it (the original posting
-issues atomic_read twice).
-
-As for the bigger patch posted here, Jens wants the io_uring bits done
-differently and offered to handle them in the upcoming week. I think a
-clear statement if the patch is a no-go would be appreciated.
-
-Link 1: https://lore.kernel.org/linux-fsdevel/20240604132448.101183-1-mjguz=
-ik@gmail.com/
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
+-- 
+Regards,
+Pratyush Yadav
 
