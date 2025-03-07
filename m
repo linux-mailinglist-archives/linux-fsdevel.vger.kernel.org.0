@@ -1,295 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-43392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B305EA55C7F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 02:01:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8DC4A55CDF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 02:14:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 393713B3416
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 01:00:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8861B3B304D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 01:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CF817D346;
-	Fri,  7 Mar 2025 00:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911CF191F98;
+	Fri,  7 Mar 2025 01:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="B6BnT2tx"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DsyOlmu/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27814156C72;
-	Fri,  7 Mar 2025 00:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FAD145323
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 01:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741309122; cv=none; b=CBbhoqnv0mQdE43aUpNRFJMkxJtPgqtLV1bgZihoKn0Od+nIZxTL2sndtxn+rILpJrV511QnPZxTQ/npAmE53v7m0cBK0UfB4cUGxfTJoVOVYo3oj4+0tkyqglzsxOqH0LnZKN3WjGoqqJbBVeW/sXiS/OjTnE/BRXUajMk3vyg=
+	t=1741309959; cv=none; b=oGzN2z/9TZkw8Z+l7k+6ktU1X1T2mW8erwBep9XIgW0M9jdgUdKd7+AVO/ObJl04SUSPNptymECsbJEh6OCoKMmSIfdSMmNWG1ZaOmmpvSLYAi3eo0c+P0u0t2UPvZH4JsbOwxvqlolUY1mk1qNdQ+qWwJsky/f/C32hczFkjAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741309122; c=relaxed/simple;
-	bh=CUemmUBXCoody8wnnAm1qD67Ji2foJlGPZcw3CxU16Y=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TQgkTtnSm0PiKt3QoVYtjQQHUlKD2h2+9Aaefx1evK+U7p+swN/m2G2yptXQ+Q7ixq82bm+dF0APL7bWvwFO5fHEgsYIyqqr1M0H+cXGQf+BXaFGkoo1oSLNI2Ux/RhyNOZ3X+n0XmOQcaPD8y/8MryxHGIA4yrSZAOgFCWkDNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=B6BnT2tx; arc=none smtp.client-ip=72.21.196.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1741309120; x=1772845120;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=sQqXLYiJ1VVGRN+jOJACYXz/EcfmdNuv7Pcm+0ImUEs=;
-  b=B6BnT2txDN5b7FwxaN0IL5vQOMpcwU63wgr2Ucfhp4AbhdEytd6dsJ43
-   GRjHZoPPwsTdbXhueWmjO/odEK9Ui9fKmll5e7yXYyI4Q4G/h472FFDmL
-   AZ9wHdJDtW1pAAu/tGxr9J+fxd0BrEJBwsG/3tzS7l7RZnCnAmzri77Qu
-   w=;
-X-IronPort-AV: E=Sophos;i="6.14,227,1736812800"; 
-   d="scan'208";a="472783393"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 00:58:35 +0000
-Received: from EX19MTAUWB001.ant.amazon.com [10.0.38.20:32828]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.40.101:2525] with esmtp (Farcaster)
- id 6f9afba4-0449-4880-b8c4-e10c02a9ebe8; Fri, 7 Mar 2025 00:58:34 +0000 (UTC)
-X-Farcaster-Flow-ID: 6f9afba4-0449-4880-b8c4-e10c02a9ebe8
-Received: from EX19D020UWA003.ant.amazon.com (10.13.138.254) by
- EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 7 Mar 2025 00:58:34 +0000
-Received: from EX19MTAUWB002.ant.amazon.com (10.250.64.231) by
- EX19D020UWA003.ant.amazon.com (10.13.138.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 7 Mar 2025 00:58:34 +0000
-Received: from email-imr-corp-prod-pdx-all-2c-475d797d.us-west-2.amazon.com
- (10.25.36.214) by mail-relay.amazon.com (10.250.64.228) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1544.14 via Frontend Transport; Fri, 7 Mar 2025 00:58:34 +0000
-Received: from dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com [172.19.91.144])
-	by email-imr-corp-prod-pdx-all-2c-475d797d.us-west-2.amazon.com (Postfix) with ESMTP id DAA12A5F81;
-	Fri,  7 Mar 2025 00:58:33 +0000 (UTC)
-Received: by dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (Postfix, from userid 23027615)
-	id 13BED4FF9; Fri,  7 Mar 2025 00:58:33 +0000 (UTC)
-From: Pratyush Yadav <ptyadav@amazon.de>
-To: <linux-kernel@vger.kernel.org>
-CC: Pratyush Yadav <ptyadav@amazon.de>, Jonathan Corbet <corbet@lwn.net>,
-	"Eric Biederman" <ebiederm@xmission.com>, Arnd Bergmann <arnd@arndb.de>,
-	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
-	<jack@suse.cz>, Hugh Dickins <hughd@google.com>, Alexander Graf
-	<graf@amazon.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, "David
- Woodhouse" <dwmw2@infradead.org>, James Gowans <jgowans@amazon.com>, "Mike
- Rapoport" <rppt@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, "Pasha
- Tatashin" <tatashin@google.com>, Anthony Yznaga <anthony.yznaga@oracle.com>,
-	Dave Hansen <dave.hansen@intel.com>, David Hildenbrand <david@redhat.com>,
-	Jason Gunthorpe <jgg@nvidia.com>, Matthew Wilcox <willy@infradead.org>, "Wei
- Yang" <richard.weiyang@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-mm@kvack.org>, <kexec@lists.infradead.org>
-Subject: [RFC PATCH 5/5] mm/memfd: allow preserving FD over FDBOX + KHO
-Date: Fri, 7 Mar 2025 00:57:39 +0000
-Message-ID: <20250307005830.65293-6-ptyadav@amazon.de>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250307005830.65293-1-ptyadav@amazon.de>
-References: <20250307005830.65293-1-ptyadav@amazon.de>
+	s=arc-20240116; t=1741309959; c=relaxed/simple;
+	bh=i4e1Wq5wULsJ+Sd1+XzXR5DjN2FAixSujA0TvULCFcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P3JN8moR9NbdYVNsG83eAI2426i4fWxHgn24EpDaV/lzMos7m3eLP0nDYBPhuR8/qVDu0vs0theH8PrzvCkKQDGCzD+Lq13ND6/UQ+rB1TV0dOC/jXMYPBYJu27H/9MBFmNtFjq/YT2Ldh/pgdgxluV5vyXdp10X6uoDOMbC5bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DsyOlmu/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741309956;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6mdzK/WXp+Lm7i4d9GJMs+rpGzUg0HU1Yazr+QOg/6E=;
+	b=DsyOlmu/cR8jyWRxyWR9IGO7nZAWtOIuy56WWP0Gytdrs3zAgsQtShTc9ecLNf5mGUALph
+	Q3NC5cit4EqoIi+Zo7wrpwQOtqG2/yvnLEEeQ5vQ4upYZLUzKV2Eqvpc3du8vieaINnYyr
+	FIRtjpUFMac8j3ZZEQZliUV7/Mey/7M=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-645-so212BznPymnaZOowrfQvw-1; Thu,
+ 06 Mar 2025 20:12:31 -0500
+X-MC-Unique: so212BznPymnaZOowrfQvw-1
+X-Mimecast-MFC-AGG-ID: so212BznPymnaZOowrfQvw_1741309949
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 75608195608F;
+	Fri,  7 Mar 2025 01:12:29 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.22.58.19])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C35C7300019E;
+	Fri,  7 Mar 2025 01:12:25 +0000 (UTC)
+Date: Thu, 6 Mar 2025 20:12:23 -0500
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>,
+	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+	Linux Kernel Audit Mailing List <audit@vger.kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Eric Paris <eparis@parisplace.org>, Steve Grubb <sgrubb@redhat.com>,
+	Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v1 1/2] audit: record fanotify event regardless of
+ presence of rules
+Message-ID: <Z8pH97tbwt7OGj2o@madcap2.tricolour.ca>
+References: <cover.1741210251.git.rgb@redhat.com>
+ <3c2679cb9df8a110e1e21b7f387b77ddfaacc289.1741210251.git.rgb@redhat.com>
+ <aksoenimnsvk4jhxw663spln3pow5x6dys4lbtlfxqtwzwtvs4@yk5ef2tq26l2>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aksoenimnsvk4jhxw663spln3pow5x6dys4lbtlfxqtwzwtvs4@yk5ef2tq26l2>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-For applications with a large amount of memory that takes time to
-rebuild, reboots to consume kernel upgrades can be very expensive. FDBox
-allows preserving file descriptors over kexec using KHO. Combining that
-with memfd gives those applications reboot-persistent memory that they
-can use to quickly save and reconstruct that state.
+On 2025-03-06 16:06, Jan Kara wrote:
+> On Wed 05-03-25 16:33:19, Richard Guy Briggs wrote:
+> > When no audit rules are in place, fanotify event results are
+> > unconditionally dropped due to an explicit check for the existence of
+> > any audit rules.  Given this is a report from another security
+> > sub-system, allow it to be recorded regardless of the existence of any
+> > audit rules.
+> > 
+> > To test, install and run the fapolicyd daemon with default config.  Then
+> > as an unprivileged user, create and run a very simple binary that should
+> > be denied.  Then check for an event with
+> > 	ausearch -m FANOTIFY -ts recent
+> > 
+> > Link: https://issues.redhat.com/browse/RHEL-1367
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> 
+> I don't know enough about security modules to tell whether this is what
+> admins want or not so that's up to you but:
+> 
+> > -static inline void audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar)
+> > -{
+> > -	if (!audit_dummy_context())
+> > -		__audit_fanotify(response, friar);
+> > -}
+> > -
+> 
+> I think this is going to break compilation with !CONFIG_AUDITSYSCALL &&
+> CONFIG_FANOTIFY?
 
-While memfd is backed by either hugetlbfs or shmem, currently only
-support on shmem is added for this. Allow saving and restoring shmem FDs
-over FDBOX + KHO.
+Why would that break it?  The part of the patch you (prematurely)
+deleted takes care of that.
 
-The memfd FDT node itself does not contain much information. It just
-creates a subnode and passes it over to shmem to do its thing. Similar
-behaviour is followed on the restore side.
+diff --git a/include/linux/audit.h b/include/linux/audit.h
+index 0050ef288ab3..d0c6f23503a1 100644
+--- a/include/linux/audit.h
++++ b/include/linux/audit.h
+@@ -418,7 +418,7 @@ extern void __audit_log_capset(const struct cred *new, const struct cred *old);
+ extern void __audit_mmap_fd(int fd, int flags);
+ extern void __audit_openat2_how(struct open_how *how);
+ extern void __audit_log_kern_module(char *name);
+-extern void __audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar);
++extern void audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar);
+ extern void __audit_tk_injoffset(struct timespec64 offset);
+ extern void __audit_ntp_log(const struct audit_ntp_data *ad);
+ extern void __audit_log_nfcfg(const char *name, u8 af, unsigned int nentries,
 
-Since there are now two paths of getting a shmem file, refactor the file
-setup into its own function called memfd_setup_file(). It sets up the
-file flags, mode, etc., and sets fdbox ops if enabled.
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
-Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
----
- mm/memfd.c | 128 ++++++++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 116 insertions(+), 12 deletions(-)
+- RGB
 
-diff --git a/mm/memfd.c b/mm/memfd.c
-index 37f7be57c2f50..1c32e66197f6d 100644
---- a/mm/memfd.c
-+++ b/mm/memfd.c
-@@ -7,6 +7,8 @@
-  * This file is released under the GPL.
-  */
- 
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
- #include <linux/fs.h>
- #include <linux/vfs.h>
- #include <linux/pagemap.h>
-@@ -19,8 +21,12 @@
- #include <linux/shmem_fs.h>
- #include <linux/memfd.h>
- #include <linux/pid_namespace.h>
-+#include <linux/fdbox.h>
-+#include <linux/libfdt.h>
- #include <uapi/linux/memfd.h>
- 
-+static const struct fdbox_file_ops memfd_fdbox_fops;
-+
- /*
-  * We need a tag: a new tag would expand every xa_node by 8 bytes,
-  * so reuse a tag which we firmly believe is never set or cleared on tmpfs
-@@ -418,21 +424,10 @@ static char *alloc_name(const char __user *uname)
- 	return ERR_PTR(error);
- }
- 
--static struct file *alloc_file(const char *name, unsigned int flags)
-+static void memfd_setup_file(struct file *file, unsigned int flags)
- {
- 	unsigned int *file_seals;
--	struct file *file;
- 
--	if (flags & MFD_HUGETLB) {
--		file = hugetlb_file_setup(name, 0, VM_NORESERVE,
--					HUGETLB_ANONHUGE_INODE,
--					(flags >> MFD_HUGE_SHIFT) &
--					MFD_HUGE_MASK);
--	} else {
--		file = shmem_file_setup(name, 0, VM_NORESERVE);
--	}
--	if (IS_ERR(file))
--		return file;
- 	file->f_mode |= FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE;
- 	file->f_flags |= O_LARGEFILE;
- 
-@@ -452,6 +447,27 @@ static struct file *alloc_file(const char *name, unsigned int flags)
- 			*file_seals &= ~F_SEAL_SEAL;
- 	}
- 
-+#if defined(CONFIG_FDBOX) && defined(CONFIG_KEXEC_HANDOVER)
-+	file->f_fdbox_op = &memfd_fdbox_fops;
-+#endif
-+}
-+
-+static struct file *alloc_file(const char *name, unsigned int flags)
-+{
-+	struct file *file;
-+
-+	if (flags & MFD_HUGETLB) {
-+		file = hugetlb_file_setup(name, 0, VM_NORESERVE,
-+					  HUGETLB_ANONHUGE_INODE,
-+					  (flags >> MFD_HUGE_SHIFT) &
-+					  MFD_HUGE_MASK);
-+	} else {
-+		file = shmem_file_setup(name, 0, VM_NORESERVE);
-+	}
-+	if (IS_ERR(file))
-+		return file;
-+
-+	memfd_setup_file(file, flags);
- 	return file;
- }
- 
-@@ -493,3 +509,91 @@ SYSCALL_DEFINE2(memfd_create,
- 	kfree(name);
- 	return error;
- }
-+
-+#if defined(CONFIG_FDBOX) && defined(CONFIG_KEXEC_HANDOVER)
-+static const char memfd_fdbox_compatible[] = "fdbox,memfd-v1";
-+
-+static struct file *memfd_fdbox_kho_recover(const void *fdt, int offset)
-+{
-+	struct file *file;
-+	int ret, subnode;
-+
-+	ret = fdt_node_check_compatible(fdt, offset, memfd_fdbox_compatible);
-+	if (ret) {
-+		pr_err("kho: invalid compatible\n");
-+		return NULL;
-+	}
-+
-+	/* Make sure there is exactly one subnode. */
-+	subnode = fdt_first_subnode(fdt, offset);
-+	if (subnode < 0) {
-+		pr_err("kho: no subnode for underlying storage found!\n");
-+		return NULL;
-+	}
-+	if (fdt_next_subnode(fdt, subnode) >= 0) {
-+		pr_err("kho: too many subnodes. Expected only 1.\n");
-+		return NULL;
-+	}
-+
-+	if (is_node_shmem(fdt, subnode)) {
-+		file = shmem_fdbox_kho_recover(fdt, subnode);
-+		if (!file)
-+			return NULL;
-+
-+		memfd_setup_file(file, 0);
-+		return file;
-+	}
-+
-+	return NULL;
-+}
-+
-+static int memfd_fdbox_kho_write(struct fdbox_fd *box_fd, void *fdt)
-+{
-+	int ret = 0;
-+
-+	ret |= fdt_property(fdt, "compatible", memfd_fdbox_compatible,
-+			    sizeof(memfd_fdbox_compatible));
-+
-+	/* TODO: Track seals on the file as well. */
-+
-+	ret |= fdt_begin_node(fdt, "");
-+	if (ret) {
-+		pr_err("kho: failed to set up memfd node\n");
-+		return -EINVAL;
-+	}
-+
-+	if (shmem_file(box_fd->file))
-+		ret = shmem_fdbox_kho_write(box_fd, fdt);
-+	else
-+		/* TODO: HugeTLB support. */
-+		ret = -EOPNOTSUPP;
-+
-+	if (ret)
-+		return ret;
-+
-+	ret = fdt_end_node(fdt);
-+	if (ret) {
-+		pr_err("kho: failed to end memfd node!\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct fdbox_file_ops memfd_fdbox_fops = {
-+	.kho_write = memfd_fdbox_kho_write,
-+};
-+
-+static int __init memfd_fdbox_init(void)
-+{
-+	int error;
-+
-+	error = fdbox_register_handler(memfd_fdbox_compatible,
-+				       memfd_fdbox_kho_recover);
-+	if (error)
-+		pr_err("Could not register fdbox handler: %d\n", error);
-+
-+	return 0;
-+}
-+late_initcall(memfd_fdbox_init);
-+#endif /* CONFIG_FDBOX && CONFIG_KEXEC_HANDOVER */
--- 
-2.47.1
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+Upstream IRC: SunRaycer
+Voice: +1.613.860 2354 SMS: +1.613.518.6570
 
 
