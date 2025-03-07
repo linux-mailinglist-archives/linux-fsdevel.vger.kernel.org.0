@@ -1,47 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-43476-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92AB4A57060
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 19:22:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1D9CA57058
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 19:22:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DD163AD6B4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 18:22:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17AD9173FA6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 18:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 763EB241C8B;
-	Fri,  7 Mar 2025 18:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46EF3241684;
+	Fri,  7 Mar 2025 18:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Pg65gzzN"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tK00Ypc7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BC523BCFA
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C8023F29C
 	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 18:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741371717; cv=none; b=cYdt/LzsWhJ4JL2wMg/qt3s+/0R3sQCTNjGSwRJMmUGFEh45aDliXGYkWID6gcD2KFhqOf0l9Hsl6hYxW5vncDFqnh8lIQy95J54sKLHZjLYL8oMYJQM09tMluSjtsygOriTuI5QUkCyCH2zXmLR94fRo6zYooNi1nm8pifqoXw=
+	t=1741371716; cv=none; b=U+fjPztWtltMGF51zwITpRDIRQoHRL2hNIvoOZDu4HV412dHj7CJwHlv1Wha4WnGZgZUiGAPVL/U0yQwXUn1u0RmDFkGlpTu1QAmUO/3kWAUL8Ii7LRanHVIEQwaRdsMYKkG2D76PGSqnuHXp8lMpOn71RUJ18Ud2u/MQWx+69M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741371717; c=relaxed/simple;
-	bh=ycJfChFASTqRmeUqi89k8vuNIJS0HjZ5PZGH9Wz2/hs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YqKuHsdevVp5whyA3UXStaF3DK789RogC1bFAmXqo8H8OQz4QC/iUPuVL5k+8vyfnqIF3X2ExzkulfC42xFzhkf1ZHa0L3y7MXX3AeIlLCo7jcRD2eZaq4K36NwiFLPp/TpCDYL5WBEyjCVTa2+EoAiwYSB4hsyHNuRozdcntQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Pg65gzzN; arc=none smtp.client-ip=90.155.50.34
+	s=arc-20240116; t=1741371716; c=relaxed/simple;
+	bh=UcA8dQ9dN/as5K6+9kix004tEHRhWOYzqw7vVV7Fjis=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nGo6SRRlKiIhVCdBo9naW5WHZ6+nBndLBftapMqG2V3/2IHB5gblbwYviAf2tNIq7hOde4sxhJCOZqmdYBnJk4aBcLtvrn4vt8U5d3pvM8xyTL9UTfx2xHk4ZDV+pkzbzXhad5kN0Y4kR5g106EeKa66jhplqPWyJgKfzTMQwN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tK00Ypc7; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=5IGKT7Tj99B1l/SXMBRRKAeDecLd+n5G67AdXVwCQts=; b=Pg65gzzN9aBRmOwclW1AkAgnvU
-	BGnIiDdL9KZvFfemV9EPXNq3r45UtEG8w06S+cyNNIjYphNcJYyrvLFdt0BNmxIDnmx27FMgPFVN/
-	pJPEEZXdxjXlQvC6mT/EC5NSO69oRGxcpljS5T8p03uhKsHzaqEItvs48Us8l7ucnXUNGcYPLclBD
-	jQH9K6x9l/4Ay0xk0zvgPqQS1yip3Z+WICEXHGIdHcCoa7XaBMSKrYRbKAOknaE8IknXR5UKDBkey
-	FGjrcgCCd4lJ19X8Ch9igo5xjKnbqaicF9wY3opr+209kgQUcyYNmMx9JuaaMhiX1NQmVVAN2irz0
-	8h19xXBQ==;
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-Type:Content-ID:Content-Description;
+	bh=nbz+BLNYgFlD4q+RSS71Ot7C9TdXZjDl9SBqkDnbsow=; b=tK00Ypc74Cni9nRFpbdkF6I0mY
+	gG1kG5+X6l9qhcDQwHtTqmS2J0+tfNsfrn2ssX2/oKLyZQiyw7Iw6uxk+7oQxNRI/PzPpaJkb4lAk
+	0URRbewYsMdOh22cFk9ZlhLZBKotdYhet0hOn8lzmMu9jK+N7PEAuesr1lgAdPTVNLHqoN8K3VeNE
+	4aruvX/RkRFpkhgzC9cP/S7dKcP5Uswc1UiUpAxWcL295+KjhRcggBgWUdST7BLJpjjTNv24ilQAY
+	MmSlvSygH15wkX7soSE5eeu7xGpU3JGf4E40i1Xqq7wKghAOK8gZZqzbRlHgdY8ED7RuOU/Dk5qAK
+	2JA28YsQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tqcKX-0000000EFie-03og;
+	id 1tqcKX-0000000EFj8-0hoo;
 	Fri, 07 Mar 2025 18:21:53 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
@@ -49,10 +50,12 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>,
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	linux-f2fs-devel@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 0/4] f2fs: Remove uses of writepage
-Date: Fri,  7 Mar 2025 18:21:46 +0000
-Message-ID: <20250307182151.3397003-1-willy@infradead.org>
+Subject: [PATCH 1/4] f2fs: Remove check for ->writepage
+Date: Fri,  7 Mar 2025 18:21:47 +0000
+Message-ID: <20250307182151.3397003-2-willy@infradead.org>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250307182151.3397003-1-willy@infradead.org>
+References: <20250307182151.3397003-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,35 +64,30 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-I was planning on sending this next cycle, but maybe there's time to
-squeeze these patches into the upcoming merge window?
+We're almost able to remove a_ops->writepage.  This check is unnecessary
+as we'll never call into __f2fs_write_data_pages() for character
+devices.
 
-f2fs already implements writepages and migrate_folio for all three
-address_space_operations, so either ->writepage will never be called (by
-migration) or it will only be harmful (if called from pageout()).
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/f2fs/data.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-The only remaining filesystem with ->writepage defined in next-20250307
-is vboxsf, so the concept of removing ->writepage is well proven.  I
-have some follow-up patches which simplify f2fs writeback afterwards,
-but I think we can postpone them to next cycle.
-
-See
-https://lore.kernel.org/linux-fsdevel/20250307135414.2987755-1-willy@infradead.org/
-for where we're going; the first four patches in that series are the
-same as the four patches in this series, and I've split them out here
-for your convenience.
-
-Matthew Wilcox (Oracle) (4):
-  f2fs: Remove check for ->writepage
-  f2fs: Remove f2fs_write_data_page()
-  f2fs: Remove f2fs_write_meta_page()
-  f2fs: Remove f2fs_write_node_page()
-
- fs/f2fs/checkpoint.c |  7 -------
- fs/f2fs/data.c       | 28 ----------------------------
- fs/f2fs/node.c       |  8 --------
- 3 files changed, 43 deletions(-)
-
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index c82d949709f4..a80d5ef9acbb 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3280,10 +3280,6 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+ 	int ret;
+ 	bool locked = false;
+ 
+-	/* deal with chardevs and other special file */
+-	if (!mapping->a_ops->writepage)
+-		return 0;
+-
+ 	/* skip writing if there is no dirty page in this inode */
+ 	if (!get_dirty_pages(inode) && wbc->sync_mode == WB_SYNC_NONE)
+ 		return 0;
 -- 
 2.47.2
 
