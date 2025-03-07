@@ -1,152 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-43388-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B85A55C20
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 01:45:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51285A55C85
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 02:02:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 292681897295
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 00:45:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B747177786
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 01:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB1E81732;
-	Fri,  7 Mar 2025 00:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428571A0BF3;
+	Fri,  7 Mar 2025 00:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQjjERBB"
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="UI9YsCAE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3110825569;
-	Fri,  7 Mar 2025 00:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C6319EED7;
+	Fri,  7 Mar 2025 00:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741308309; cv=none; b=XDBcTWabqgUxIY6bPRl2GlXrRF0qA0tqTTmCW//834qiTY1TNcENgm5Ye6W/3KK0GHiGbLa9zS2fKPF9yZoimt/FfbfpWLHLNAMat89kcs0XBaO4ghkNWDva3yyoVXhIdIJd0mDnyXZgZLiHFfzOEvB5rAxfwnWGeXl2xxmpYPs=
+	t=1741309128; cv=none; b=X3ap+VY5WU72BJBzNUk+SH63s0HCXjaAmn1XSZ03wA/7aCAnvdzcnDVLf57KzHmMktJmMA3YUh47jfJV6z6EJSf5JFJ6hbYLccfFzM6NNklrHxK9QtBbK/6AQptrzbWJWCV59QE5snaq2gQWUBoJEgMtc94+8CFxZwLeO1fKMCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741308309; c=relaxed/simple;
-	bh=kDqnrV6AT+oYvf0XVF5vafW+A8CbNZE/gfr7dugbRrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f3WMjRYQUjUjLT0RmaqDCAzJj4e1FJzUnAmPQo9Vyhkl/b8JvaJcdt86He4621GCzWizO2NWYBnEtzlYpwtR+z2neORqnFhnTMxQuJaIpYmJd7yQk+i4fbzYy5Fp1FLgcCy/85Gn8gC2oZj+Sod8aPN8TkZ3U3XWyYeZ7t8jUTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EQjjERBB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A3B4C4CEE0;
-	Fri,  7 Mar 2025 00:45:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741308308;
-	bh=kDqnrV6AT+oYvf0XVF5vafW+A8CbNZE/gfr7dugbRrE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EQjjERBBJy0UuejkV6kZAmPPLMrau9rb1AIsfQDOGILqsv/t/wCgCNhEYJZfsdh11
-	 2CL7LhjJffwOrIUblzxUVEzCuOAgvZDqF9ZdcIUVMh2STDYm5DBSdfVy3LIQITE53N
-	 Aer57sF6jscs55UvI5hkOJNXaRKJdswMEdLvV+hGgBjGlRRZf+dYHNqkbQIakZbPAy
-	 0p+aDyrfJaCgvmkew1tFCbvzytm9wbqS37pwnQBCJxXu0LLcJaOrZBZ9CM+KQovhPi
-	 rRaX1StGq9wQI9X3xaKWCWZie9k2V0aP2y0GNwJmRxoAnljx+Ok8VYSKseanHB8b7f
-	 8YlPDM+3If2dQ==
-Date: Thu, 6 Mar 2025 16:45:06 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: brauner@kernel.org, hare@suse.de, willy@infradead.org,
-	david@fromorbit.com, djwong@kernel.org, kbusch@kernel.org,
-	john.g.garry@oracle.com, hch@lst.de, ritesh.list@gmail.com,
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	gost.dev@samsung.com, p.raghav@samsung.com, da.gomez@samsung.com,
-	kernel@pankajraghav.com
-Subject: Re: [PATCH] bdev: add back PAGE_SIZE block size validation for
- sb_set_blocksize()
-Message-ID: <Z8pBkuPn3kwf1Jvm@bombadil.infradead.org>
-References: <20250305015301.1610092-1-mcgrof@kernel.org>
- <bgqqfjiumcr5csde4qzom2vs2ktnneok3gdffvu6tlyc3ih7x3@tioflbnatc5w>
+	s=arc-20240116; t=1741309128; c=relaxed/simple;
+	bh=HPgmTWKCFE9d4A+1uphM7bWka3x16UXXzEmul5rvJTI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rJBuMO1j/HRjSaVQ7eYaZ//r7ZD+YLNLS2adEzmp11mXaH5aVkxPlEJx2uTSK1RLlndtW6cGAzCrk7NCx7sw4T3LWMvkQLEtXXKscwhTuqhFiW5h+fEJE0euy6OjQxkRrxZEzEutZXt1POZI9xGTVEruZU6kWrXy6o0srbl0mNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=UI9YsCAE; arc=none smtp.client-ip=52.95.48.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1741309126; x=1772845126;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=vUnosHPz47fWK45st0LZ5YJp1oss1R9eNp+qhCVevDg=;
+  b=UI9YsCAEfu7hrGGxL06ezF5UeKGB93ZT5EWar8hU553lqC+dgjGBy+gP
+   pZ6U8KJTtAYJygom2t/4A8ZEMtLyRv/9E9yE3q5pWtyi95inMqEYVgoeU
+   XtL4LtLAS9y6N6kLKtXdBrzS6GFHYyl5rOGdxGGgzZ2nNOf8WUaSEdRKM
+   w=;
+X-IronPort-AV: E=Sophos;i="6.14,227,1736812800"; 
+   d="scan'208";a="468696731"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 00:58:34 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:51103]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.40.40:2525] with esmtp (Farcaster)
+ id 7db8d410-3306-4a9b-a196-6db5e20f1018; Fri, 7 Mar 2025 00:58:34 +0000 (UTC)
+X-Farcaster-Flow-ID: 7db8d410-3306-4a9b-a196-6db5e20f1018
+Received: from EX19D020UWC002.ant.amazon.com (10.13.138.147) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 7 Mar 2025 00:58:34 +0000
+Received: from EX19MTAUWA002.ant.amazon.com (10.250.64.202) by
+ EX19D020UWC002.ant.amazon.com (10.13.138.147) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 7 Mar 2025 00:58:33 +0000
+Received: from email-imr-corp-prod-pdx-all-2b-5ec155c2.us-west-2.amazon.com
+ (10.25.36.210) by mail-relay.amazon.com (10.250.64.203) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1544.14 via Frontend Transport; Fri, 7 Mar 2025 00:58:33 +0000
+Received: from dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com [172.19.91.144])
+	by email-imr-corp-prod-pdx-all-2b-5ec155c2.us-west-2.amazon.com (Postfix) with ESMTP id 68D5D4024E;
+	Fri,  7 Mar 2025 00:58:33 +0000 (UTC)
+Received: by dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (Postfix, from userid 23027615)
+	id F0F9B4FBC; Fri,  7 Mar 2025 00:58:32 +0000 (UTC)
+From: Pratyush Yadav <ptyadav@amazon.de>
+To: <linux-kernel@vger.kernel.org>
+CC: Pratyush Yadav <ptyadav@amazon.de>, Jonathan Corbet <corbet@lwn.net>,
+	"Eric Biederman" <ebiederm@xmission.com>, Arnd Bergmann <arnd@arndb.de>,
+	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+	<jack@suse.cz>, Hugh Dickins <hughd@google.com>, Alexander Graf
+	<graf@amazon.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, "David
+ Woodhouse" <dwmw2@infradead.org>, James Gowans <jgowans@amazon.com>, "Mike
+ Rapoport" <rppt@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, "Pasha
+ Tatashin" <tatashin@google.com>, Anthony Yznaga <anthony.yznaga@oracle.com>,
+	Dave Hansen <dave.hansen@intel.com>, David Hildenbrand <david@redhat.com>,
+	Jason Gunthorpe <jgg@nvidia.com>, Matthew Wilcox <willy@infradead.org>, "Wei
+ Yang" <richard.weiyang@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-mm@kvack.org>, <kexec@lists.infradead.org>
+Subject: [RFC PATCH 0/5] Introduce FDBox, and preserve memfd with shmem over KHO
+Date: Fri, 7 Mar 2025 00:57:34 +0000
+Message-ID: <20250307005830.65293-1-ptyadav@amazon.de>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bgqqfjiumcr5csde4qzom2vs2ktnneok3gdffvu6tlyc3ih7x3@tioflbnatc5w>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Thu, Mar 06, 2025 at 01:39:49PM -0500, Kent Overstreet wrote:
-> On Tue, Mar 04, 2025 at 05:53:01PM -0800, Luis Chamberlain wrote:
-> > The commit titled "block/bdev: lift block size restrictions to 64k"
-> > lifted the block layer's max supported block size to 64k inside the
-> > helper blk_validate_block_size() now that we support large folios.
-> > However in lifting the block size we also removed the silly use
-> > cases many filesystems have to use sb_set_blocksize() to *verify*
-> > that the block size < PAGE_SIZE. The call to sb_set_blocksize() can
-> > happen in-kernel given mkfs utilities *can* create for example an
-> > ext4 32k block size filesystem on x86_64, the issue we want to prevent
-> > is mounting it on x86_64 unless the filesystem supports LBS.
-> > 
-> > While, we could argue that such checks should be filesystem specific,
-> > there are much more users of sb_set_blocksize() than LBS enabled
-> > filesystem on linux-next, so just do the easier thing and bring back
-> > the PAGE_SIZE check for sb_set_blocksize() users.
-> > 
-> > This will ensure that tests such as generic/466 when run in a loop
-> > against say, ext4, won't try to try to actually mount a filesystem with
-> > a block size larger than your filesystem supports given your PAGE_SIZE
-> > and in the worst case crash.
-> > 
-> > Cc: Kent Overstreet <kent.overstreet@linux.dev>
-> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> 
-> bcachefs doesn't use sb_set_blocksize() - but it appears it should, and
-> it does also support bs > ps in -next.
-> 
-> Can we get a proper helper for lbs filesystems?
+This series introduces the File Descriptor Box (FDBox), along with
+support in memfd and shmem for persisting memfds over KHO using FDBox.
 
-What do you think of this last recommention I had?
+FDBox is a mechanism for userspace to name file descriptors and give
+them over to the kernel to hold. They can later be retrieved by passing
+in the same name. The primary purpose of it is to be used with Kexec
+Handover (KHO) [0]. See Documentation/kho/fdbox.rst for more details.
 
-diff --git a/block/bdev.c b/block/bdev.c
-index 3bd948e6438d..4844d1e27b6f 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -181,6 +181,8 @@ EXPORT_SYMBOL(set_blocksize);
- 
- int sb_set_blocksize(struct super_block *sb, int size)
- {
-+	if (!(sb->s_type->fs_flags & FS_LBS) && size > PAGE_SIZE)
-+		return 0;
- 	if (set_blocksize(sb->s_bdev_file, size))
- 		return 0;
- 	/* If we get here, we know size is validated */
-diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
-index 90ade8f648d9..e99e378d68ea 100644
---- a/fs/bcachefs/fs.c
-+++ b/fs/bcachefs/fs.c
-@@ -2396,7 +2396,7 @@ static struct file_system_type bcache_fs_type = {
- 	.name			= "bcachefs",
- 	.init_fs_context	= bch2_init_fs_context,
- 	.kill_sb		= bch2_kill_sb,
--	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
-+	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_LBS,
- };
- 
- MODULE_ALIAS_FS("bcachefs");
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index d92d7a07ea89..3d8b80165d48 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -2118,7 +2118,8 @@ static struct file_system_type xfs_fs_type = {
- 	.init_fs_context	= xfs_init_fs_context,
- 	.parameters		= xfs_fs_parameters,
- 	.kill_sb		= xfs_kill_sb,
--	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME,
-+	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME |
-+				  FS_LBS,
- };
- MODULE_ALIAS_FS("xfs");
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 2c3b2f8a621f..16d17bd82be0 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2616,6 +2616,7 @@ struct file_system_type {
- #define FS_DISALLOW_NOTIFY_PERM	16	/* Disable fanotify permission events */
- #define FS_ALLOW_IDMAP         32      /* FS has been updated to handle vfs idmappings. */
- #define FS_MGTIME		64	/* FS uses multigrain timestamps */
-+#define FS_LBS			128	/* FS supports LBS */
- #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
- 	int (*init_fs_context)(struct fs_context *);
- 	const struct fs_parameter_spec *parameters;
+The original idea for FDBox came from Alex Graf. The main problem it
+attempts to solve is to give a name to anonymous file descriptors like
+memfd, guest_memfd, iommufd, etc. so they can be retrieved after KHO.
+Alex wrote some initial code [1] which this series is based upon, though
+that code is quite hacky and proof-of-concept, and has been
+significantly refactored and polished with this series. Alex's code
+mainly played around with KVM, but since I am more familiar with memfd
+and shmem, I have picked those as the first users.
+
+That is not to say this series is in a top notch state already. There is
+still a lot of room for improvement, both in FDBox and in memfd and
+shmem. The aim of the patches is to present the idea to get early
+feedback, and to demonstrate KHO in action, potentially having a
+consumer of KHO ready by the time those patches are ready for prime
+time.
+
+I have written a simple userspace tool to interact with FDBox and memfd.
+It can be found here [2]. It is quite simple currently. When given the
+create command, it creates a box, and a memfd, and fills the memfd with data
+from a file called "data". It then adds the memfd to the box and seals
+it. Then one can do KHO. After KHO, the restore command gets the FD out
+of the box and writes the output to a file called "out". The original
+and new file can be compared to ensure data consistency.
+
+I have tested using the tool and a 1 GiB file, and the memfd came back
+over KHO with the same contents. The performance was fast enough to not
+be noticeable to the naked eye, though I have not done much more
+performance analysis than that.
+
+The whole process can be seen in action in this Asciinema [4].
+
+Sample instructions to use the tool:
+
+       $ make
+       $ dd if=/dev/urandom of=data bs=1G count=1
+       $ ./fdbox create
+       $ echo 1 > /sys/kernel/kho/active
+       $ kexec -s -l [...]
+       $ kexec -e
+
+After the kexec is done,
+
+      $ ./fdbox restore
+      $ cmp data out
+      $ echo $?
+
+The full tree with the patches can be found at [3]. It contains a couple
+of my patches on top of Mike's KHO patches [0] to fix some small bugs.
+
+[0] https://lore.kernel.org/lkml/20250206132754.2596694-1-rppt@kernel.org/
+[1] https://github.com/agraf/linux-2.6/blob/kvm-kho-gmem-test/drivers/misc/fdbox.c
+[2] https://github.com/prati0100/fdbox-utils/blob/main/fdbox.c
+[3] https://web.git.kernel.org/pub/scm/linux/kernel/git/pratyush/linux.git/log/?h=kho
+[4] https://asciinema.org/a/mnyVpy1w67mueIkKZzqHI0oAN
+
+Pratyush Yadav (5):
+  misc: introduce FDBox
+  misc: add documentation for FDBox
+  mm: shmem: allow callers to specify operations to shmem_undo_range
+  mm: shmem: allow preserving file over FDBOX + KHO
+  mm/memfd: allow preserving FD over FDBOX + KHO
+
+ Documentation/filesystems/locking.rst |  21 +
+ Documentation/kho/fdbox.rst           | 224 ++++++++
+ Documentation/kho/index.rst           |   3 +
+ MAINTAINERS                           |   9 +
+ drivers/misc/Kconfig                  |   7 +
+ drivers/misc/Makefile                 |   1 +
+ drivers/misc/fdbox.c                  | 758 ++++++++++++++++++++++++++
+ include/linux/fdbox.h                 | 119 ++++
+ include/linux/fs.h                    |   7 +
+ include/linux/miscdevice.h            |   1 +
+ include/linux/shmem_fs.h              |   6 +
+ include/uapi/linux/fdbox.h            |  61 +++
+ mm/memfd.c                            | 128 ++++-
+ mm/shmem.c                            | 498 +++++++++++++++--
+ 14 files changed, 1800 insertions(+), 43 deletions(-)
+ create mode 100644 Documentation/kho/fdbox.rst
+ create mode 100644 drivers/misc/fdbox.c
+ create mode 100644 include/linux/fdbox.h
+ create mode 100644 include/uapi/linux/fdbox.h
+
+-- 
+2.47.1
+
 
