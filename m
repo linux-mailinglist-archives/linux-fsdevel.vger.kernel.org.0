@@ -1,135 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-43443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43442-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8123A56ADF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 15:52:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CACFA56ADB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 15:52:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55D3A1748CB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 14:52:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6946718965F7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 14:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4043121C19D;
-	Fri,  7 Mar 2025 14:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DAD621B91D;
+	Fri,  7 Mar 2025 14:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a9mwjOrD"
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="NE959u44"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B6D16EB4C
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 14:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0330B16EB4C;
+	Fri,  7 Mar 2025 14:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741359136; cv=none; b=jHlXOT3XEAbWe7hbneeBSaFC2UemIwXvUF8fXWzEx8dSDPyHmoW254m1QK/Fc5xo9psvkdCJH8cMfqzn2Eea4DO9pxS9Uhzkb8N+DdDceVLADpHvW8JpebPP++t5s1Lr6jmvI/xWR4cK86+isEzDahvfFNwBBjZT50tEJKgGZkY=
+	t=1741359117; cv=none; b=kztu7N7BC8Ry7bQ2iDQMjzxMH75mHs07vysT/PsiEDAZz/9y9XSLAv4Ja1O3xqNnfXnbMRHDte9pYr1/zgMImOGMi/rVzSCyqvvpzrSB5aDTFL8QH52cAM8qj2ra+2Axy4rYwk6+6UAqYaUzpI128Utnvf0FthYAub3c5dxEbjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741359136; c=relaxed/simple;
-	bh=gkim01leCLkscIEVRTyqshEj98uVAAJKqAisacjpMwg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XxuegScsOznttcSX3i0pPft31fG/WY2t8DIHlzeDJ9JxZ3DHTB6EGf+5UrfuzKehMV06hix63Bk54gWccMK6E0LsAhl/IR1eqO1JYJoH6KOWTKRFeN61JYEuk8fRMyvY4wEULq85aE+n2rG7m7f4zfrVBHcm4iZ9TfADqLiIDvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a9mwjOrD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741359134;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bOV1/NR0uZQx/Nlqn4EmktpOgzyfwXnxmkg+11MiUZc=;
-	b=a9mwjOrDQ0qvxBuDSiAnZXxZxFp962eueObhM46BOFSDykKgOU4/gqjxsoYLvwh/Zx9qSf
-	F25eZ8ME3yhA280FVSQ6H3LgyR7tCzMavJwAwS4+T5E+tiOsjgdHFF/AU5RSg2V4ZIcV7e
-	tOBh7+OXZxzsgZQKXwD0RIL5guZG0Vw=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-321-h6ldjJstNZySD3fReAmTRw-1; Fri,
- 07 Mar 2025 09:52:08 -0500
-X-MC-Unique: h6ldjJstNZySD3fReAmTRw-1
-X-Mimecast-MFC-AGG-ID: h6ldjJstNZySD3fReAmTRw_1741359125
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BAD46180AF6B;
-	Fri,  7 Mar 2025 14:52:03 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.108])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id DD2F618001E9;
-	Fri,  7 Mar 2025 14:51:57 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri,  7 Mar 2025 15:51:32 +0100 (CET)
-Date: Fri, 7 Mar 2025 15:51:25 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jan Kara <jack@suse.cz>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Rasmus Villemoes <ravi@prevas.dk>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Neeraj.Upadhyay@amd.com, Ananth.narayan@amd.com,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>
-Subject: Re: [PATCH v2 1/4] fs/pipe: Limit the slots in pipe_resize_ring()
-Message-ID: <20250307145125.GE5963@redhat.com>
-References: <20250307052919.34542-1-kprateek.nayak@amd.com>
- <20250307052919.34542-2-kprateek.nayak@amd.com>
+	s=arc-20240116; t=1741359117; c=relaxed/simple;
+	bh=kwfQ2viZjcJs4DWec3iIl/eL5neUFf9mbp0VO8UcQUQ=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kowPXe8f346yJ8JvRsPqsvzF/aUmmtgj0W9aMF2a3UMSD+8pLlVGkOCrMcy+RRQ831m7A/19urlhcF1LP07lzDAF3v8DGk15ynpPECSbLgTcHADIdJcI3deANU1OWIEkX8btFoX4/CehI6xW6we/5rNeUtggbu1SHOtjTbNBuN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=NE959u44; arc=none smtp.client-ip=99.78.197.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1741359116; x=1772895116;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=YDJ9NWJiqHjkYZ5kkjUyY//2AUUucA49vpJJTDMiXuQ=;
+  b=NE959u44me11s+jPOqC7eSuIDyEOGPkABrvLqNrP6lNgoTD0IKB2Gl7W
+   UtV/EIttXWdhr3oofE+mAeJ3bvVjR2swLmxKNQR5p+aUm1pfeuRO8bZqR
+   GzolyU0uPYh9tRvO64FW/P9MNkEpCr5Tv3mi8tyhjux6YCVpCklyXx7sF
+   w=;
+X-IronPort-AV: E=Sophos;i="6.14,229,1736812800"; 
+   d="scan'208";a="29462509"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 14:51:46 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [10.0.43.254:39887]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.21.188:2525] with esmtp (Farcaster)
+ id 70f3b09f-6ea4-4e19-a874-e38a86bb3a3b; Fri, 7 Mar 2025 14:51:41 +0000 (UTC)
+X-Farcaster-Flow-ID: 70f3b09f-6ea4-4e19-a874-e38a86bb3a3b
+Received: from EX19D014EUA002.ant.amazon.com (10.252.50.103) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 7 Mar 2025 14:51:35 +0000
+Received: from EX19MTAUEB002.ant.amazon.com (10.252.135.47) by
+ EX19D014EUA002.ant.amazon.com (10.252.50.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 7 Mar 2025 14:51:35 +0000
+Received: from email-imr-corp-prod-pdx-all-2b-a57195ef.us-west-2.amazon.com
+ (10.43.8.2) by mail-relay.amazon.com (10.252.135.97) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1544.14 via Frontend Transport; Fri, 7 Mar 2025 14:51:34 +0000
+Received: from dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com [172.19.91.144])
+	by email-imr-corp-prod-pdx-all-2b-a57195ef.us-west-2.amazon.com (Postfix) with ESMTP id 28866A5C5F;
+	Fri,  7 Mar 2025 14:51:34 +0000 (UTC)
+Received: by dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (Postfix, from userid 23027615)
+	id B17484F83; Fri,  7 Mar 2025 14:51:33 +0000 (UTC)
+From: Pratyush Yadav <ptyadav@amazon.de>
+To: Jonathan Corbet <corbet@lwn.net>
+CC: <linux-kernel@vger.kernel.org>, Eric Biederman <ebiederm@xmission.com>,
+	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, "Hugh
+ Dickins" <hughd@google.com>, Alexander Graf <graf@amazon.com>, "Benjamin
+ Herrenschmidt" <benh@kernel.crashing.org>, David Woodhouse
+	<dwmw2@infradead.org>, James Gowans <jgowans@amazon.com>, Mike Rapoport
+	<rppt@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Pasha Tatashin
+	<tatashin@google.com>, Anthony Yznaga <anthony.yznaga@oracle.com>, "Dave
+ Hansen" <dave.hansen@intel.com>, David Hildenbrand <david@redhat.com>, "Jason
+ Gunthorpe" <jgg@nvidia.com>, Matthew Wilcox <willy@infradead.org>, Wei Yang
+	<richard.weiyang@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-mm@kvack.org>, <kexec@lists.infradead.org>
+Subject: Re: [RFC PATCH 2/5] misc: add documentation for FDBox
+In-Reply-To: <87ikok7wf4.fsf@trenco.lwn.net>
+References: <20250307005830.65293-1-ptyadav@amazon.de>
+	<20250307005830.65293-3-ptyadav@amazon.de> <87ikok7wf4.fsf@trenco.lwn.net>
+Date: Fri, 7 Mar 2025 14:51:33 +0000
+Message-ID: <mafs0v7skj3m2.fsf@amazon.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307052919.34542-2-kprateek.nayak@amd.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain
 
-On 03/07, K Prateek Nayak wrote:
+On Fri, Mar 07 2025, Jonathan Corbet wrote:
+
+> Pratyush Yadav <ptyadav@amazon.de> writes:
 >
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -1271,6 +1271,10 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
->  	struct pipe_buffer *bufs;
->  	unsigned int head, tail, mask, n;
+>> With FDBox in place, add documentation that describes what it is and how
+>> it is used, along with its UAPI and in-kernel API.
+>>
+>> Since the document refers to KHO, add a reference tag in kho/index.rst.
+>>
+>> Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
+>> ---
+>>  Documentation/filesystems/locking.rst |  21 +++
+>>  Documentation/kho/fdbox.rst           | 224 ++++++++++++++++++++++++++
+>>  Documentation/kho/index.rst           |   3 +
+>>  MAINTAINERS                           |   1 +
+>>  4 files changed, 249 insertions(+)
+>>  create mode 100644 Documentation/kho/fdbox.rst
 >
-> +	/* nr_slots larger than limits of pipe->{head,tail} */
-> +	if (unlikely(nr_slots > (pipe_index_t)-1u))
-> +		return -EINVAL;
+> Please do not create a new top-level directory under Documentation for
+> this; your new file belongs in userspace-api/.
 
-The whole series look "obviously" good to me,
+I did not. The top-level directory comes from the KHO patches [0] (not
+merged yet). This series is based on top of those. You can find the full
+tree here [1].
 
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Since this is closely tied to KHO I found it a good fit for putting it
+on KHO's directory. I don't have strong opinions about this so don't
+mind moving it elsewhere if you think that is better.
 
--------------------------------------------------------------------------------
-But damn ;) lets look at round_pipe_size(),
+>
+> From a quick perusal of your documentation:
+>
+> - You never say what "KHO" is
 
-	unsigned int round_pipe_size(unsigned int size)
-	{
-		if (size > (1U << 31))
-			return 0;
+fdbox.rst has a reference to Documentation/kho/index.rst which does
+explain what Kexec Handover (KHO) means. Due to the ref to the top-level
+heading, the rendered text looks like:
 
-		/* Minimum pipe size, as required by POSIX */
-		if (size < PAGE_SIZE)
-			return PAGE_SIZE;
+>     The primary purpose of FDBox is to be used with Kexec Handover Subsystem.
+                    This is a link to kho/index.rst   ^^^^^^^^^^^^^^^^^^^^^^^^
 
-		return roundup_pow_of_two(size);
-	}
+IMO that is enough explanation, and there would be little benefit in
+duplicating the explanation for KHO. Do you still think a one or two
+line explanation is warranted here?
 
-it is a bit silly to allow the maximum size == 1U << 31 in pipe_set_size()
-or (more importantly) in /proc/sys/fs/pipe-max-size, and then nack nr_slots
-in pipe_resize_ring().
+>
+> - Your boxes live in a single global namespace?
 
-So perhaps this check should go into round_pipe_size() ? Although I can't
-suggest a simple/clear check without unnecesary restrictions for the case
-when pipe_index_t is u16.
+Yes. Should they not? FWIW, the boxes are in a global namespace, but
+each box has a namespace of its own for naming FDs. All FD names in a
+single box should be unique but the same FD name can be used in two
+different boxes.
 
-pipe_resize_ring() has another caller, watch_queue_set_size(), but it has
-its own hard limits...
+>
+> - What sort of access control applies to one of these boxes?  What keeps
+>   me from mucking around inside somebody else's box?
 
-Oleg.
+For now, none. You need CAP_SYS_ADMIN to be able to muck around with a
+box. The current idea is that we only let root use it and if more a fine
+grained permission model needed it can be done in userspace, or we can
+extend our permission model later.
 
+[0] https://lore.kernel.org/lkml/20250206132754.2596694-10-rppt@kernel.org/
+[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/pratyush/linux.git/tree/Documentation/kho?h=kho
+
+-- 
+Regards,
+Pratyush Yadav
 
