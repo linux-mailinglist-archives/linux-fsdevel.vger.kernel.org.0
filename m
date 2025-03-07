@@ -1,85 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-43488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C327EA57501
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 23:41:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 002E4A5750F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 23:42:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0856E16FEC4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 22:41:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AEFA3AC017
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 22:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75422580C8;
-	Fri,  7 Mar 2025 22:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D00258CFE;
+	Fri,  7 Mar 2025 22:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eh53VptK"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cw+7BQBe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945211F94C;
-	Fri,  7 Mar 2025 22:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B26258CDA
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 22:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741387267; cv=none; b=UqhrlDGHChDB5hxhmYYV3El9ePodY3YzaORqIQTK8IpycTJTOZ0eGXZM4lsima8S+SKZei7CKG4VKLiK1iTVGUOibeTnACKWUFEFSgOZz8OLbLqWQ9DBqsGmaANPi8hAebu0d/M0QBjR3rDP5prmaDXUnV8M7TF0JB68uO8HnOw=
+	t=1741387327; cv=none; b=APm93YTkZ0vIOi8iWwsaRGVH1xJ5X+jTex0fnPPfUQWn14+sICIh1DEHlq5bLksC15PZ2TA2YI1mHPm/reKtyNAsnnNNDKwUOQ2sSmhcuebYcqDCv4WPQRANGmFdgQCgKY1IhlWbEQTaYoegx/69Z6QSvRUJ1GuNT2ReT6YeRaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741387267; c=relaxed/simple;
-	bh=x3cT5OzrNNP4NxJGS4WJPfkluOsb0nETns4u0Ojzlpo=;
+	s=arc-20240116; t=1741387327; c=relaxed/simple;
+	bh=QbJVwK7yIplBFiKYa4/igotSC0EWBBnFNF1lNEacZeU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jKG11CFMzEmneAOylCctakWcEI/uinTyP0AGp93paQoRxZAIUts8uEW1GkDTy/WhtqGksUMSUImxjoa/X4NLB6EpqigNU8E2msi+ac9D3/aeaBc1z8eaKC4/eK4YjIlruddGycfynbjZrbwHne86F6yYpH1qE/JTzMsi8gNlyo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eh53VptK; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e095d47a25so4313868a12.0;
-        Fri, 07 Mar 2025 14:41:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741387264; x=1741992064; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1ggo5IorXSw5yWeu+zzKighXyQFobt6Vs+8/ESBuOkA=;
-        b=eh53VptKVLTpj6ZMjrKy8V93Dfok2z+mDEDL27+eAhA9o11fmHQoufT8izE7JO3Jrg
-         6CueZBfTGE6a48+yhwDF4YP5jI3cS16WfYfFam/bYZym29LxjC5ydTHvLE3h0LnCSW+2
-         7n7by7fnulPdQWqp0LOtw21a2lfzUPQibNgzF2sFiFb/ITh8e732vjsPeXCa8Ohxya5q
-         1nJB8GLvhpvbg9e+ww2C59zpCGwzL/qvpmUXGMsnUsH1TmbPMz14bR6DOvwi8b7mdMZW
-         lJlhYpBFt5b2FHc5NrVFuFFwbVeWg9ky7pvi7rw5c+nKGD2Znb975Z4ZJFoh2IBLlvgB
-         mi8w==
+	 Content-Type:Content-Disposition:In-Reply-To; b=hhXoKo2VWa/qreJ4iJdhv1YTudvNmWA98ezcadRIC51leUKOIhYexXbGda5dF0rK7ScpNhyzwlhcC04BHIyaeV8easiC3+Wt4jVAF7vngL6RqXfPepSY2p+coECj0Rh+v3UYdrU+sRJHob+w/8kVgUOM8WjsTS1tuN4Agz+HfRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cw+7BQBe; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741387324;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lDGwdwGPb9qTBerw8cjE5pk2Lbp1bTzvxl+acBBp6AM=;
+	b=Cw+7BQBeIRV6hSU9SJNp3frQqIp9mToKd4KCasYHetCaBzKvLDigFzTTHXKCB1NSBWmQXR
+	qZuNJON8Ly4vHfEJfWFWkWOj2wyJXRsz1TDDUtp3tUrO7zUDyeZaxCJbiNl1WVavEMIrEe
+	K0jVHnd+3JA1DD0oBbdFr0aZA0SLDQk=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-379-nS5xtTsJNWyOTB_ukoCBSg-1; Fri, 07 Mar 2025 17:42:03 -0500
+X-MC-Unique: nS5xtTsJNWyOTB_ukoCBSg-1
+X-Mimecast-MFC-AGG-ID: nS5xtTsJNWyOTB_ukoCBSg_1741387323
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-474f1ef0b7fso47386571cf.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Mar 2025 14:42:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741387264; x=1741992064;
+        d=1e100.net; s=20230601; t=1741387323; x=1741992123;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1ggo5IorXSw5yWeu+zzKighXyQFobt6Vs+8/ESBuOkA=;
-        b=OwWfTY8Twg/PD6AucKKY1DJPlXSlRZg90Y8zJh6pUwstlcRnl1cIRSPs0FFkvOeLzz
-         UnHMOmCBEJrGEeOjK261WFYkMKFljXEMyKpbf+Z73vFsx+dqhjb1CuvD/NSEbhcLg9yU
-         NiE1ILMFy3O1mMQMrZsyeu6SFnAbyImsBix4eP4HG75HEOqKMVI7KvuES+3BPxEODvlr
-         E8GKLA29vAWqZxSpSINU8qKBlD84AkENjCrQd/GqtLPNpqIRNqlQwKMaMmt4U4UOV9i6
-         r6TvKET+bMm1sRcCIlZ0UPFIPXaG52SIZbVqZACEqiA/8RQgvEXZkoyrTiY5iutbZbjQ
-         SlyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUW4j6XFc3X70ha1TBU4dFk+xtZmFb4ZpSFnkWeER2soB5yJzZrugu/XTWE9Obhbz0rVsIhI3iS5cg6BslD@vger.kernel.org, AJvYcCV6oVj5y1k7SoEHwaH3b35jcqn4/PUQGpUQ8F2LJPxD4axwHNjnnZZlDpQc2QtSAc0u3th7heKrJNZW1czQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx56V65f8hCHmJPu1SEGK9KRTd6+nMGg5vdu37nU2ZrxQCVU0DG
-	cOSjQo8/pgC4aFC5HflBOAGLuiPzzYLWMjEh4YbggCt1EbNtg5K4
-X-Gm-Gg: ASbGncvCmIkqA58JazgTebIklkJ8hwyES8DUpBSgEK2x93xTu0nvqKZPUxvVSHMvPSn
-	sKUd4RC+/ZAWnkrQskRcEl3JITsbME8xt3pTe0DoulWgFMO37We4aVYhAYjHdKQT2JntBGWG+q7
-	M/ohlUVxd3xV90PqZOB7tuBi2+m9SRz2E6NZcWi+P/nEZCYSQDYWGRwxh6EwaFT1nINwWtobn7G
-	OXSmRgGWRUEhWuOV54Hky0geubqUy2sJ8cDpF8E9IfQvTSHwJahkyjsvUWbJ1JXaIEM0rOD3K7f
-	+DyytSz9pODtwVpo/FvoANA9sFmZH0aVwUUadZnE6KpUTBLgkFOkhjsx04Pf
-X-Google-Smtp-Source: AGHT+IEgPt0sdGguIjjOKmjAkc8jdDmho2fuLjnhwj0zTjlQi24P8aCxYbBIrezeb7UjaRYxX6sSkg==
-X-Received: by 2002:a17:907:9491:b0:abf:8f56:fe76 with SMTP id a640c23a62f3a-ac252b35ac0mr545698466b.25.1741387263600;
-        Fri, 07 Mar 2025 14:41:03 -0800 (PST)
-Received: from f (cst-prg-95-226.cust.vodafone.cz. [46.135.95.226])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac239481685sm344141366b.58.2025.03.07.14.41.00
+        bh=lDGwdwGPb9qTBerw8cjE5pk2Lbp1bTzvxl+acBBp6AM=;
+        b=qBb821KFCGnfZCAtWfJxNCMjk639evDug6sK0fmR2HOTnEUhZ/w0jOSY5qvSAxsG5k
+         5OnfS9Tgb8Vxryzzs0DZM4xXMixXgo/7EN9P5rsVeddlzti6aNt6SafLhCtNAWhM+qwN
+         Tc3z2tbt+22IMMVVnBim4+15kPLc1zTjpxo/fIaKoyzBNmp/GMsUxEM8Gq9RvXvKpJLj
+         RcSY3Yab3fzgJs4ktXUkkytkRJyEJKszBQA6FQh2ycyB8VlfF5jFTOLLUZz/Q0IAAkV4
+         HoVR7Hy+MIq70mUQJKmRMewuAo5QC/GxfyKpqQ1gh/ijMZS+B1PESQvagjdXMGQmhjQm
+         j+eA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVkL/mO7pQp9NcQBlWzlO+B/PvIrcMihSkxOyC/thrt9U1UxSTstgNf1J6cevpJhDfILw9BrIW4KJlkns2@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz030f8lkED3ehQy+EwxRtT/38q0G7Q7oxXbxHSt8bqQI3xxC+i
+	0VQ7OWltY9JjFBj+bSPQsax8GnGvtBufHACWeY5xB2YKHF+8JjOmMli11gLyjhFFzvuIaLBDKW9
+	7SWgmMr46QyL/TPbyob2ygGzclVuZVsq9ienRB2j0fO7yXrBNyZdI+iRaNtDk73uRZ+MYgWo=
+X-Gm-Gg: ASbGncsvomKsXxfJBJIORxa5nQIjsybfroePsMffswG3oxU7IozrvPWOxLdbLoQn2LC
+	pLYBG/rUK1vnIH6OPx+tBiSrKBaXJL47Rl5AeHYDVL5oBjIDZ7ae3dtvu9Vuno3hMtoQcY3yBQO
+	bt867fsS9PW/FtOO67wpNCTiEKrs7dfWC3FskDwV3p8pegwRyBSWvoYT/WFMYIlbQyCSZgW6H7s
+	Ul5nNxTMuYdQqK222t/dtocrVHiwvSzJvCDssENLKF8S8TexXETj1eMI7rQYbziCtlJXjLva/cg
+	5Cva6pc=
+X-Received: by 2002:a05:622a:5e8b:b0:476:6215:eafc with SMTP id d75a77b69052e-476621612ecmr15952171cf.22.1741387322986;
+        Fri, 07 Mar 2025 14:42:02 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGR8lVl/s+4EWWT/wvvD3qNU2PvGL5/xU3ZWoqR1iKynkdv5g8/8qA4/93Pss+bseIKro2zWw==
+X-Received: by 2002:a05:622a:5e8b:b0:476:6215:eafc with SMTP id d75a77b69052e-476621612ecmr15952001cf.22.1741387322707;
+        Fri, 07 Mar 2025 14:42:02 -0800 (PST)
+Received: from x1.local ([85.131.185.92])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4751d96f525sm25205451cf.21.2025.03.07.14.42.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 14:41:02 -0800 (PST)
-Date: Fri, 7 Mar 2025 23:40:54 +0100
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	David Howells <dhowells@redhat.com>, Oleg Nesterov <oleg@redhat.com>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/pipe.c: merge if statements with identical conditions
-Message-ID: <wkdxihiolxnzelu57llc7vealuofie3l42clbsn7tqjbvstxqp@a6d74rhrvcla>
-References: <20250307222500.1117662-1-linux@rasmusvillemoes.dk>
+        Fri, 07 Mar 2025 14:42:01 -0800 (PST)
+Date: Fri, 7 Mar 2025 17:41:58 -0500
+From: Peter Xu <peterx@redhat.com>
+To: jimsiak <jimsiak@cslab.ece.ntua.gr>
+Cc: Jinjiang Tu <tujinjiang@huawei.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+	linux-mm@kvack.org, wangkefeng.wang@huawei.com
+Subject: Re: Using userfaultfd with KVM's async page fault handling causes
+ processes to hung waiting for mmap_lock to be released
+Message-ID: <Z8t2Np8fOM9jWmuu@x1.local>
+References: <79375b71-db2e-3e66-346b-254c90d915e2@cslab.ece.ntua.gr>
+ <20250307072133.3522652-1-tujinjiang@huawei.com>
+ <46ac83f7-d3e0-b667-7352-d853938c9fc9@huawei.com>
+ <dee238e365f3727ab16d6685e186c53c@cslab.ece.ntua.gr>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -88,37 +99,39 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250307222500.1117662-1-linux@rasmusvillemoes.dk>
+In-Reply-To: <dee238e365f3727ab16d6685e186c53c@cslab.ece.ntua.gr>
 
-On Fri, Mar 07, 2025 at 11:25:00PM +0100, Rasmus Villemoes wrote:
-> As 'head' is not updated after head+1 is assigned to pipe->head, the
-> condition being tested here is exactly the same as in the big if
-> statement just above. Merge the two bodies.
+On Fri, Mar 07, 2025 at 03:11:09PM +0200, jimsiak wrote:
+> Hi,
 > 
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> ---
->  fs/pipe.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+> From my side, I managed to avoid the freezing of processes with the
+> following change in function userfaultfd_release() in file fs/userfaultfd.c
+> (https://elixir.bootlin.com/linux/v5.13/source/fs/userfaultfd.c#L842):
 > 
-> diff --git a/fs/pipe.c b/fs/pipe.c
-> index 097400cce241..27385e3e5417 100644
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -547,10 +547,8 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
->  
->  			if (!iov_iter_count(from))
->  				break;
-> -		}
-> -
-> -		if (!pipe_full(head, pipe->tail, pipe->max_usage))
->  			continue;
-> +		}
->  
->  		/* Wait for buffer space to become available. */
->  		if ((filp->f_flags & O_NONBLOCK) ||
+> I moved the following command from line 851:
+> WRITE_ONCE(ctx->released, true);
+> (https://elixir.bootlin.com/linux/v5.13/source/fs/userfaultfd.c#L851)
+> 
+> to line 905, that is exactly before the functions returns 0.
+> 
+> That simple workaround worked for my use case but I am far from sure that is
+> a correct/sufficient fix for the problem at hand.
 
-I already posted this :)
+Updating the field after userfaultfd_ctx_put() might mean UAF, afaict.
 
-It is hanging out in the vfs trees (and -next), see
-https://lore.kernel.org/linux-fsdevel/20250303230409.452687-2-mjguzik@gmail.com/
+Maybe it's possible to remove ctx->released but only rely on the mmap write
+lock.  However that'll need some closer look and more thoughts.
+
+To me, the more straightforward way to fix it is to use the patch I
+mentioned in the other email:
+
+https://lore.kernel.org/all/ZLmT3BfcmltfFvbq@x1n/
+
+Or does it mean it didn't work at all?
+
+Thanks,
+
+-- 
+Peter Xu
+
 
