@@ -1,71 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-43391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43394-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10217A55C81
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 02:01:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68628A55C8E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 02:02:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70DED18989D1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 01:01:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B05901898F35
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 01:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9B717A597;
-	Fri,  7 Mar 2025 00:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8BB149C4A;
+	Fri,  7 Mar 2025 00:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="Klrjf5ll"
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="WW75kKEV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-52003.amazon.com (smtp-fw-52003.amazon.com [52.119.213.152])
+Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD2015575C;
-	Fri,  7 Mar 2025 00:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02E018A6A6;
+	Fri,  7 Mar 2025 00:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741309121; cv=none; b=Y2DZYeJHC8iUywY2SBVRhUrclcb72+OshlGn9KE+RRbt+lc25YYdCc7ce8tXGqj+y6OSRVsMzm+QtHBqrwaI0P/SwKJOZz5Zc99016VgQ7ii8vz/RkGsc8EjeG6O7H1Aiwjxy1sXQWL7JAvSAQxOgkfu2oEk/ra3UCYE5LmLGQQ=
+	t=1741309127; cv=none; b=H2pYr94MSqlncX+d1XjhPyTMHyjrv+LNS10P7SUbhG1kncK649HSukZNgHVCb0Lxn57XRxXXCzMclrYQLP6siblHt+kJL/gaHBlJ57u7NGPE5JhunBxqP9816uq22tdDlv7yg6y6vo2it0pQdgVQsSpWNojzRR9+I4+II4gc88o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741309121; c=relaxed/simple;
-	bh=sSKw8GZ/kVfCKmy78Nbmbwe4LJmPA9c+Q0hFr078t3I=;
+	s=arc-20240116; t=1741309127; c=relaxed/simple;
+	bh=zDPtEVg/MaMKzIDcBmsu+Ksp5ZiaJWqHPkqXOcJ+wKw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cofIRfWYrx9YWs0Wvo334caoAtSYm2PFk0ztGm4Ugiolka7WZ/MNmc6IrLNgrtY8lSqVEFZmz2fufePgIfjjngwslxm8emu2lhGOLejMA5TgwkTpTS6xYBqX6V6ZT5I5xLpqsrI1W8GMHRrsI6S4a9UbFnjwZtoykw847QV2lZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=Klrjf5ll; arc=none smtp.client-ip=52.119.213.152
+	 MIME-Version:Content-Type; b=VCFIezy2Ni6W124WLLR2KB+Vner0prptMXIFl+cguYNllx6znMhc82QKhFFIFSEecmaNAFzXiJxV02YOrGINF1T3TzJVQmsHG4ocs4MVCi+lXzqSBbJJv9el34tll/8FozOsojQzKvwU2fI0dLYXQLB4B5pvrrzrR3pk3531bG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=WW75kKEV; arc=none smtp.client-ip=72.21.196.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1741309121; x=1772845121;
+  t=1741309125; x=1772845125;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=c17Kf0Er2P2sLGN5x8xcm8SJt/PbgebI9se/WEG3Bh0=;
-  b=Klrjf5llwW92xMo4+kBglbMlHheb9eEe/FW7xyP55kK/uXkXgxwLrYNk
-   qkEQfHuvytP7f/phCETXGtmHvd8wokr0nqrsGYCajSK1Itxt/ow+EB6PU
-   kTb7GZ/EUeBMLBBSou6vepAZL5hunPHx6Km5U3jnqLCf4OIlKEFmXRqJl
-   U=;
+  bh=oXAk78z0pait+Woj/pzvjhLafLsZG4rU6PcvxTGAP2w=;
+  b=WW75kKEVr19LwEX+8YZBcpldFnlHb5uQhTKuCTv46Zf1a5Z2XMZ+5bj5
+   9XJrtp2EUzIl99PeAejBf29CUIvEMg7pf+zfyzEArJ4lh7YZa4bD/CemY
+   sx1y7SH+pkfJgdIZn2otDDTEQZ6RMSKRXVNcsPSw9o3G2YVVh47+CLtnY
+   g=;
 X-IronPort-AV: E=Sophos;i="6.14,227,1736812800"; 
-   d="scan'208";a="72017059"
+   d="scan'208";a="472783411"
 Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52003.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 00:58:36 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.38.20:64899]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.58.39:2525] with esmtp (Farcaster)
- id cb54e298-4a3c-4851-97b6-2bac0b19c9ca; Fri, 7 Mar 2025 00:58:34 +0000 (UTC)
-X-Farcaster-Flow-ID: cb54e298-4a3c-4851-97b6-2bac0b19c9ca
-Received: from EX19D020UWA004.ant.amazon.com (10.13.138.231) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 00:58:43 +0000
+Received: from EX19MTAEUC001.ant.amazon.com [10.0.17.79:1261]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.26.251:2525] with esmtp (Farcaster)
+ id ed8deb03-f964-450e-8c8f-083e6f99ea68; Fri, 7 Mar 2025 00:58:41 +0000 (UTC)
+X-Farcaster-Flow-ID: ed8deb03-f964-450e-8c8f-083e6f99ea68
+Received: from EX19D014EUA003.ant.amazon.com (10.252.50.119) by
+ EX19MTAEUC001.ant.amazon.com (10.252.51.193) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
  Fri, 7 Mar 2025 00:58:34 +0000
-Received: from EX19MTAUWA001.ant.amazon.com (10.250.64.204) by
- EX19D020UWA004.ant.amazon.com (10.13.138.231) with Microsoft SMTP Server
+Received: from EX19MTAUEA002.ant.amazon.com (10.252.134.9) by
+ EX19D014EUA003.ant.amazon.com (10.252.50.119) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
  Fri, 7 Mar 2025 00:58:34 +0000
-Received: from email-imr-corp-prod-iad-all-1a-f1af3bd3.us-east-1.amazon.com
- (10.25.36.214) by mail-relay.amazon.com (10.250.64.204) with Microsoft SMTP
+Received: from email-imr-corp-prod-pdx-all-2b-c1559d0e.us-west-2.amazon.com
+ (10.43.8.2) by mail-relay.amazon.com (10.252.134.34) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1544.14 via Frontend Transport; Fri, 7 Mar 2025 00:58:33 +0000
+ 15.2.1544.14 via Frontend Transport; Fri, 7 Mar 2025 00:58:34 +0000
 Received: from dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com [172.19.91.144])
-	by email-imr-corp-prod-iad-all-1a-f1af3bd3.us-east-1.amazon.com (Postfix) with ESMTP id 463AE40235;
+	by email-imr-corp-prod-pdx-all-2b-c1559d0e.us-west-2.amazon.com (Postfix) with ESMTP id 72A2840294;
 	Fri,  7 Mar 2025 00:58:33 +0000 (UTC)
 Received: by dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (Postfix, from userid 23027615)
-	id 05EB84FDD; Fri,  7 Mar 2025 00:58:33 +0000 (UTC)
+	id 0A87A4FF0; Fri,  7 Mar 2025 00:58:33 +0000 (UTC)
 From: Pratyush Yadav <ptyadav@amazon.de>
 To: <linux-kernel@vger.kernel.org>
 CC: Pratyush Yadav <ptyadav@amazon.de>, Jonathan Corbet <corbet@lwn.net>,
@@ -82,9 +82,9 @@ CC: Pratyush Yadav <ptyadav@amazon.de>, Jonathan Corbet <corbet@lwn.net>,
  Yang" <richard.weiyang@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
 	<linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
 	<linux-mm@kvack.org>, <kexec@lists.infradead.org>
-Subject: [RFC PATCH 2/5] misc: add documentation for FDBox
-Date: Fri, 7 Mar 2025 00:57:36 +0000
-Message-ID: <20250307005830.65293-3-ptyadav@amazon.de>
+Subject: [RFC PATCH 3/5] mm: shmem: allow callers to specify operations to shmem_undo_range
+Date: Fri, 7 Mar 2025 00:57:37 +0000
+Message-ID: <20250307005830.65293-4-ptyadav@amazon.de>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250307005830.65293-1-ptyadav@amazon.de>
 References: <20250307005830.65293-1-ptyadav@amazon.de>
@@ -97,314 +97,299 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-With FDBox in place, add documentation that describes what it is and how
-it is used, along with its UAPI and in-kernel API.
+In a following patch, support for preserving a shmem file over kexec
+handover (KHO) will be added. When a shmem file is to be preserved over
+KHO, its pages must be removed from the inode's page cache and kept
+reserved. That work is very similar to what shmem_undo_range() does. The
+only extra thing that needs to be done is to track the PFN and index of
+each page and get an extra refcount on the page to make sure it does not
+get freed.
 
-Since the document refers to KHO, add a reference tag in kho/index.rst.
+Refactor shmem_undo_range() to accept the ops it should execute for each
+folio, along with a cookie to pass along. During undo, three distinct
+kinds of operations are made: truncate a folio, truncate a partial
+folio, truncate a folio in swap. Add a callback for each of the
+operations. Add shmem_default_undo_ops that maintain the old behaviour,
+and make callers use that.
+
+Since the ops for KHO might fail (needing to allocate memory, or being
+unable to bring a page back from swap for example), there needs to be a
+way for them to report errors and stop the undo. Because of this, the
+function returns an int instead of void. This has the unfortunate side
+effect of implying this function can fail, though during normal usage,
+it should never fail. Add some WARNs to ensure that if that assumption
+ever changes, it gets caught.
 
 Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
 ---
- Documentation/filesystems/locking.rst |  21 +++
- Documentation/kho/fdbox.rst           | 224 ++++++++++++++++++++++++++
- Documentation/kho/index.rst           |   3 +
- MAINTAINERS                           |   1 +
- 4 files changed, 249 insertions(+)
- create mode 100644 Documentation/kho/fdbox.rst
 
-diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-index d20a32b77b60f..5526833faf79a 100644
---- a/Documentation/filesystems/locking.rst
-+++ b/Documentation/filesystems/locking.rst
-@@ -607,6 +607,27 @@ used. To block changes to file contents via a memory mapping during the
- operation, the filesystem must take mapping->invalidate_lock to coordinate
- with ->page_mkwrite.
+Notes:
+    I did it this way since it seemed to be duplicating the least amount of
+    code. The undo logic is fairly complicated, and I was not too keen on
+    replicating it elsewhere. On thinking about this again, I am not so sure
+    if that was a good idea since the end result looks a bit complicated.
+
+ mm/shmem.c | 165 +++++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 134 insertions(+), 31 deletions(-)
+
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 4ea6109a80431..d6d9266b27b75 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1064,12 +1064,56 @@ static struct folio *shmem_get_partial_folio(struct inode *inode, pgoff_t index)
+ 	return folio;
+ }
  
-+fdbox_file_ops
-+==============
++struct shmem_undo_range_ops {
++	/* Return -ve on error, or number of entries freed. */
++	long (*undo_swap)(struct address_space *mapping, pgoff_t index,
++			  void *old, void *arg);
++	/* Return -ve on error, 0 on success. */
++	int (*undo_folio)(struct address_space *mapping, struct folio *folio,
++			  void *arg);
++	/*
++	 * Return -ve on error, 0 if splitting failed, 1 if splitting succeeded.
++	 */
++	int (*undo_partial_folio)(struct folio *folio, pgoff_t lstart,
++				  pgoff_t lend, void *arg);
++};
 +
-+prototypes::
++static long shmem_default_undo_swap(struct address_space *mapping, pgoff_t index,
++				    void *old, void *arg)
++{
++	return shmem_free_swap(mapping, index, old);
++}
 +
-+	int (*kho_write)(struct fdbox_fd *box_fd, void *fdt);
-+	int (*seal)(struct fdbox *box);
-+	int (*unseal)(struct fdbox *box);
++static int shmem_default_undo_folio(struct address_space *mapping,
++				    struct folio *folio, void *arg)
++{
++	truncate_inode_folio(mapping, folio);
++	return 0;
++}
 +
++static int shmem_default_undo_partial_folio(struct folio *folio, pgoff_t lstart,
++					    pgoff_t lend, void *arg)
++{
++	/*
++	 * Function returns bool. Convert it to int and return. No error
++	 * returns needed here.
++	 */
++	return truncate_inode_partial_folio(folio, lstart, lend);
++}
 +
-+locking rules:
-+	all may block
++static const struct shmem_undo_range_ops shmem_default_undo_ops = {
++	.undo_swap = shmem_default_undo_swap,
++	.undo_folio = shmem_default_undo_folio,
++	.undo_partial_folio = shmem_default_undo_partial_folio,
++};
 +
-+==============	==================================================
-+ops		i_rwsem(box_fd->file->f_inode)
-+==============	==================================================
-+kho_write:	exclusive
-+seal:		no
-+unseal:		no
-+==============	==================================================
-+
- dquot_operations
- ================
+ /*
+  * Remove range of pages and swap entries from page cache, and free them.
+  * If !unfalloc, truncate or punch hole; if unfalloc, undo failed fallocate.
+  */
+-static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+-								 bool unfalloc)
++static int shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
++			    bool unfalloc,
++			    const struct shmem_undo_range_ops *ops, void *arg)
+ {
+ 	struct address_space *mapping = inode->i_mapping;
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
+@@ -1081,7 +1125,7 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+ 	bool same_folio;
+ 	long nr_swaps_freed = 0;
+ 	pgoff_t index;
+-	int i;
++	int i, ret = 0;
  
-diff --git a/Documentation/kho/fdbox.rst b/Documentation/kho/fdbox.rst
-new file mode 100644
-index 0000000000000..44a3f5cdf1efb
---- /dev/null
-+++ b/Documentation/kho/fdbox.rst
-@@ -0,0 +1,224 @@
-+.. SPDX-License-Identifier: GPL-2.0-or-later
-+
-+===========================
-+File Descriptor Box (FDBox)
-+===========================
-+
-+:Author: Pratyush Yadav
-+
-+Introduction
-+============
-+
-+The File Descriptor Box (FDBox) is a mechanism for userspace to name file
-+descriptors and give them over to the kernel to hold. They can later be
-+retrieved by passing in the same name.
-+
-+The primary purpose of FDBox is to be used with :ref:`kho`. There are many kinds
-+anonymous file descriptors in the kernel like memfd, guest_memfd, iommufd, etc.
-+that would be useful to be preserved using KHO. To be able to do that, there
-+needs to be a mechanism to label FDs that allows userspace to set the label
-+before doing KHO and to use the label to map them back after KHO. FDBox achieves
-+that purpose by exposing a miscdevice which exposes ioctls to label and transfer
-+FDs between the kernel and userspace. FDBox is not intended to work with any
-+generic file descriptor. Support for each kind of FDs must be explicitly
-+enabled.
-+
-+FDBox can be enabled by setting the ``CONFIG_FDBOX`` option to ``y``. While the
-+primary purpose of FDBox is to be used with KHO, it does not explicitly require
-+``CONFIG_KEXEC_HANDOVER``, since it can be used without KHO, simply as a way to
-+preserve or transfer FDs when userspace exits.
-+
-+Concepts
-+========
-+
-+Box
-+---
-+
-+The box is a container for FDs. Boxes are identified by their name, which must
-+be unique. Userspace can put FDs in the box using the ``FDBOX_PUT_FD``
-+operation, and take them out of the box using the ``FDBOX_GET_FD`` operation.
-+Once all the required FDs are put into the box, it can be sealed to make it
-+ready for shipping. This can be done by the ``FDBOX_SEAL`` operation. The seal
-+operation notifies each FD in the box. If any of the FDs have a dependency on
-+another, this gives them an opportunity to ensure all dependencies are met, or
-+fail the seal if not. Once a box is sealed, no FDs can be added or removed from
-+the box until it is unsealed. Only sealed boxes are transported to a new kernel
-+via KHO. The box can be unsealed by the ``FDBOX_UNSEAL`` operation. This is the
-+opposite of seal. It also notifies each FD in the box to ensure all dependencies
-+are met. This can be useful in case some FDs fail to be restored after KHO.
-+
-+Box FD
-+------
-+
-+The Box FD is a FD that is currently in a box. It is identified by its name,
-+which must be unique in the box it belongs to. The Box FD is created when a FD
-+is put into a box by using the ``FDBOX_PUT_FD`` operation. This operation
-+removes the FD from the calling task. The FD can be restored by passing the
-+unique name to the ``FDBOX_GET_FD`` operation.
-+
-+FDBox control device
-+--------------------
-+
-+This is the ``/dev/fdbox/fdbox`` device. A box can be created using the
-+``FDBOX_CREATE_BOX`` operation on the device. A box can be removed using the
-+``FDBOX_DELETE_BOX`` operation.
-+
-+UAPI
-+====
-+
-+FDBOX_NAME_LEN
-+--------------
-+
-+.. code-block:: c
-+
-+    #define FDBOX_NAME_LEN			256
-+
-+Maximum length of the name of a Box or Box FD.
-+
-+Ioctls on /dev/fdbox/fdbox
-+--------------------------
-+
-+FDBOX_CREATE_BOX
-+~~~~~~~~~~~~~~~~
-+
-+.. code-block:: c
-+
-+    #define FDBOX_CREATE_BOX	_IO(FDBOX_TYPE, FDBOX_BASE + 0)
-+    struct fdbox_create_box {
-+    	__u64 flags;
-+    	__u8 name[FDBOX_NAME_LEN];
-+    };
-+
-+Create a box.
-+
-+After this returns, the box is available at ``/dev/fdbox/<name>``.
-+
-+``name``
-+    The name of the box to be created. Must be unique.
-+
-+``flags``
-+    Flags to the operation. Currently, no flags are defined.
-+
-+Returns:
-+    0 on success, -1 on error, with errno set.
-+
-+FDBOX_DELETE_BOX
-+~~~~~~~~~~~~~~~~
-+
-+.. code-block:: c
-+
-+    #define FDBOX_DELETE_BOX	_IO(FDBOX_TYPE, FDBOX_BASE + 1)
-+    struct fdbox_delete_box {
-+    	__u64 flags;
-+    	__u8 name[FDBOX_NAME_LEN];
-+    };
-+
-+Delete a box.
-+
-+After this returns, the box is no longer available at ``/dev/fdbox/<name>``.
-+
-+``name``
-+    The name of the box to be deleted.
-+
-+``flags``
-+    Flags to the operation. Currently, no flags are defined.
-+
-+Returns:
-+    0 on success, -1 on error, with errno set.
-+
-+Ioctls on /dev/fdbox/<boxname>
-+------------------------------
-+
-+These must be performed on the ``/dev/fdbox/<boxname>`` device.
-+
-+FDBX_PUT_FD
-+~~~~~~~~~~~
-+
-+.. code-block:: c
-+
-+    #define FDBOX_PUT_FD	_IO(FDBOX_TYPE, FDBOX_BASE + 2)
-+    struct fdbox_put_fd {
-+    	__u64 flags;
-+    	__u32 fd;
-+    	__u32 pad;
-+    	__u8 name[FDBOX_NAME_LEN];
-+    };
-+
-+
-+Put FD into the box.
-+
-+After this returns, ``fd`` is removed from the task and can no longer be used by
-+it.
-+
-+``name``
-+    The name of the FD.
-+
-+``fd``
-+    The file descriptor number to be
-+
-+``flags``
-+    Flags to the operation. Currently, no flags are defined.
-+
-+Returns:
-+    0 on success, -1 on error, with errno set.
-+
-+FDBX_GET_FD
-+~~~~~~~~~~~
-+
-+.. code-block:: c
-+
-+    #define FDBOX_GET_FD	_IO(FDBOX_TYPE, FDBOX_BASE + 3)
-+    struct fdbox_get_fd {
-+    	__u64 flags;
-+    	__u8 name[FDBOX_NAME_LEN];
-+    };
-+
-+Get an FD from the box.
-+
-+After this returns, the FD identified by ``name`` is mapped into the task and is
-+available for use.
-+
-+``name``
-+    The name of the FD to get.
-+
-+``flags``
-+    Flags to the operation. Currently, no flags are defined.
-+
-+Returns:
-+    FD number on success, -1 on error with errno set.
-+
-+FDBOX_SEAL
-+~~~~~~~~~~
-+
-+.. code-block:: c
-+
-+    #define FDBOX_SEAL	_IO(FDBOX_TYPE, FDBOX_BASE + 4)
-+
-+Seal the box.
-+
-+Gives the kernel an opportunity to ensure all dependencies are met in the box.
-+After this returns, the box is sealed and FDs can no longer be added or removed
-+from it. A box must be sealed for it to be transported across KHO.
-+
-+Returns:
-+    0 on success, -1 on error with errno set.
-+
-+FDBOX_UNSEAL
-+~~~~~~~~~~~~
-+
-+.. code-block:: c
-+
-+    #define FDBOX_UNSEAL	_IO(FDBOX_TYPE, FDBOX_BASE + 5)
-+
-+Unseal the box.
-+
-+Gives the kernel an opportunity to ensure all dependencies are met in the box,
-+and in case of KHO, no FDs have been lost in transit.
-+
-+Returns:
-+    0 on success, -1 on error with errno set.
-+
-+Kernel functions and structures
-+===============================
-+
-+.. kernel-doc:: include/linux/fdbox.h
-diff --git a/Documentation/kho/index.rst b/Documentation/kho/index.rst
-index 5e7eeeca8520f..051513b956075 100644
---- a/Documentation/kho/index.rst
-+++ b/Documentation/kho/index.rst
-@@ -1,5 +1,7 @@
- .. SPDX-License-Identifier: GPL-2.0-or-later
+ 	if (lend == -1)
+ 		end = -1;	/* unsigned, so actually very big */
+@@ -1099,17 +1143,31 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+ 			if (xa_is_value(folio)) {
+ 				if (unfalloc)
+ 					continue;
+-				nr_swaps_freed += shmem_free_swap(mapping,
+-							indices[i], folio);
++
++				ret = ops->undo_swap(mapping, indices[i], folio,
++						     arg);
++				if (ret < 0) {
++					folio_unlock(folio);
++					break;
++				}
++
++				nr_swaps_freed += ret;
+ 				continue;
+ 			}
  
-+.. _kho:
+-			if (!unfalloc || !folio_test_uptodate(folio))
+-				truncate_inode_folio(mapping, folio);
++			if (!unfalloc || !folio_test_uptodate(folio)) {
++				ret = ops->undo_folio(mapping, folio, arg);
++				if (ret < 0) {
++					folio_unlock(folio);
++					break;
++				}
++			}
+ 			folio_unlock(folio);
+ 		}
+ 		folio_batch_remove_exceptionals(&fbatch);
+ 		folio_batch_release(&fbatch);
++		if (ret < 0)
++			goto out;
+ 		cond_resched();
+ 	}
+ 
+@@ -1127,7 +1185,13 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+ 	if (folio) {
+ 		same_folio = lend < folio_pos(folio) + folio_size(folio);
+ 		folio_mark_dirty(folio);
+-		if (!truncate_inode_partial_folio(folio, lstart, lend)) {
++		ret = ops->undo_partial_folio(folio, lstart, lend, arg);
++		if (ret < 0) {
++			folio_unlock(folio);
++			folio_put(folio);
++			goto out;
++		}
++		if (ret == 0) {
+ 			start = folio_next_index(folio);
+ 			if (same_folio)
+ 				end = folio->index;
+@@ -1141,7 +1205,14 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+ 		folio = shmem_get_partial_folio(inode, lend >> PAGE_SHIFT);
+ 	if (folio) {
+ 		folio_mark_dirty(folio);
+-		if (!truncate_inode_partial_folio(folio, lstart, lend))
++		ret = ops->undo_partial_folio(folio, lstart, lend, arg);
++		if (ret < 0) {
++			folio_unlock(folio);
++			folio_put(folio);
++			goto out;
++		}
 +
- ========================
- Kexec Handover Subsystem
- ========================
-@@ -9,6 +11,7 @@ Kexec Handover Subsystem
++		if (ret == 0)
+ 			end = folio->index;
+ 		folio_unlock(folio);
+ 		folio_put(folio);
+@@ -1166,18 +1237,21 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+ 			folio = fbatch.folios[i];
  
-    concepts
-    usage
-+   fdbox
+ 			if (xa_is_value(folio)) {
+-				long swaps_freed;
+-
+ 				if (unfalloc)
+ 					continue;
+-				swaps_freed = shmem_free_swap(mapping, indices[i], folio);
+-				if (!swaps_freed) {
++
++				ret = ops->undo_swap(mapping, indices[i], folio,
++						     arg);
++				if (ret < 0) {
++					break;
++				} else if (ret == 0) {
+ 					/* Swap was replaced by page: retry */
+ 					index = indices[i];
+ 					break;
++				} else {
++					nr_swaps_freed += ret;
++					continue;
+ 				}
+-				nr_swaps_freed += swaps_freed;
+-				continue;
+ 			}
  
- .. only::  subproject and html
+ 			folio_lock(folio);
+@@ -1193,35 +1267,58 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+ 						folio);
  
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d329d3e5514c5..135427582e60f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8866,6 +8866,7 @@ FDBOX
- M:	Pratyush Yadav <pratyush@kernel.org>
- L:	linux-fsdevel@vger.kernel.org
- S:	Maintained
-+F:	Documentation/kho/fdbox.rst
- F:	drivers/misc/fdbox.c
- F:	include/linux/fdbox.h
- F:	include/uapi/linux/fdbox.h
+ 				if (!folio_test_large(folio)) {
+-					truncate_inode_folio(mapping, folio);
+-				} else if (truncate_inode_partial_folio(folio, lstart, lend)) {
+-					/*
+-					 * If we split a page, reset the loop so
+-					 * that we pick up the new sub pages.
+-					 * Otherwise the THP was entirely
+-					 * dropped or the target range was
+-					 * zeroed, so just continue the loop as
+-					 * is.
+-					 */
+-					if (!folio_test_large(folio)) {
++					ret = ops->undo_folio(mapping, folio,
++							      arg);
++					if (ret < 0) {
+ 						folio_unlock(folio);
+-						index = start;
+ 						break;
+ 					}
++				} else {
++					ret = ops->undo_partial_folio(folio, lstart, lend, arg);
++					if (ret < 0) {
++						folio_unlock(folio);
++						break;
++					}
++
++					if (ret) {
++						/*
++						 * If we split a page, reset the loop so
++						 * that we pick up the new sub pages.
++						 * Otherwise the THP was entirely
++						 * dropped or the target range was
++						 * zeroed, so just continue the loop as
++						 * is.
++						 */
++						if (!folio_test_large(folio)) {
++							folio_unlock(folio);
++							index = start;
++							break;
++						}
++					}
+ 				}
+ 			}
+ 			folio_unlock(folio);
+ 		}
+ 		folio_batch_remove_exceptionals(&fbatch);
+ 		folio_batch_release(&fbatch);
++		if (ret < 0)
++			goto out;
+ 	}
+ 
++	ret = 0;
++out:
+ 	shmem_recalc_inode(inode, 0, -nr_swaps_freed);
++	return ret;
+ }
+ 
+ void shmem_truncate_range(struct inode *inode, loff_t lstart, loff_t lend)
+ {
+-	shmem_undo_range(inode, lstart, lend, false);
++	int ret;
++
++	ret = shmem_undo_range(inode, lstart, lend, false,
++			       &shmem_default_undo_ops, NULL);
++
++	WARN(ret < 0, "shmem_undo_range() should never fail with default ops");
+ 	inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
+ 	inode_inc_iversion(inode);
+ }
+@@ -3740,9 +3837,15 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+ 			info->fallocend = undo_fallocend;
+ 			/* Remove the !uptodate folios we added */
+ 			if (index > start) {
+-				shmem_undo_range(inode,
+-				    (loff_t)start << PAGE_SHIFT,
+-				    ((loff_t)index << PAGE_SHIFT) - 1, true);
++				int ret;
++
++				ret = shmem_undo_range(inode,
++						       (loff_t)start << PAGE_SHIFT,
++						       ((loff_t)index << PAGE_SHIFT) - 1,
++						       true,
++						       &shmem_default_undo_ops,
++						       NULL);
++				WARN(ret < 0, "shmem_undo_range() should never fail with default ops");
+ 			}
+ 			goto undone;
+ 		}
 -- 
 2.47.1
 
