@@ -1,130 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-43447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24758A56BDB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 16:23:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D06FA56BEF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 16:25:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08A903AB2FC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 15:22:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7DBD3AA371
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 15:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8020E21D002;
-	Fri,  7 Mar 2025 15:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D58521CC69;
+	Fri,  7 Mar 2025 15:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N9Kqy4hd"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="U+c0IOxt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB8B21CC49
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 15:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401A221C9F3;
+	Fri,  7 Mar 2025 15:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741360938; cv=none; b=Jyd9ML32KqeKbktV3xWYqjB3b/3/8uBXNUE5u2nvSnjRnqtXM8xy20MI+J0PUBUr1w26rl2PS55t7clTyMaZz8gnukdDGRakNrJ8Duqnp6+EhOYYPxE+J0eo11Rw33gsatmeW+3/OLxtQj0bWM+wFjOmtRgjVvF1sOHxqoRZM74=
+	t=1741361116; cv=none; b=aRaemDe9/Wx9UOMS/FqFdWV4UL9nJIC2m/AZZLY8BQQInG/1Zgke8nvGWOZaOYJPsl0NwfXPeiY3H54DSZSiDSV5Ty9syGj5rHIf/9+hIbpte4KcHzy4+n8IFuBRL7xytKfQiH1WOFNNS6oSesliAPpi977fP8M08p4J6lnK3tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741360938; c=relaxed/simple;
-	bh=8bkm9D+A9b09Me9TsLQSLQoaTKIDYLGe1bUICWPE0eY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=t/9zUM9iEPXH26VNcFA9+1C7xSid/JgH8dkI4aGG6WjcskFGBrKGgC1x8CrhCPsStDyLFfAtybPS932HwQtDa0QZWQmPpx/sCm+YkVEKQFQTtIh+Rbhv0L+DH+4WdqZ3hpF6qBvylnbvsOkirqVB/XN3GUOStxh3s3q/bYfCGdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N9Kqy4hd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741360935;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HeDSEd/YjPeusnr10Mm42vys340e0N+uOy6aIocYd3Q=;
-	b=N9Kqy4hd3y8dwuzx2KKoe9mG7EIH0JzbakJbBIdtwnOR1qNQLBON2HWCt05OfBXqYGDQFn
-	oQrn8OhLZPqzczNJecVCn5t5l/vmW+FP2vbvV7RitpLq3niVARi98amuSguqTnxA2obPDJ
-	ZW9C2bcYAl3tLOYLuYaNloqWMR7QlNk=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-190-DViTGFTgMkuZHqgu0UVOTQ-1; Fri,
- 07 Mar 2025 10:22:10 -0500
-X-MC-Unique: DViTGFTgMkuZHqgu0UVOTQ-1
-X-Mimecast-MFC-AGG-ID: DViTGFTgMkuZHqgu0UVOTQ_1741360929
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	s=arc-20240116; t=1741361116; c=relaxed/simple;
+	bh=N2tNOHCz17NVqXk9emM1DtMNhrrP/2lfot3/2H8iUjc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CRk6fJ9UNrFE7g1KhqYEM7Txuhim+UbaMI30pKPenjHLddju0W+s9fmWCwnODAM2ynhbe++luRn1p8cLXHIBq6jW9aqruxHQwY6ohEocOizS0HFeQaDW32rmckeOmTarZWl0//ytelleDk7YmQ5w8eOPUY5bMnWsJDpIoukcs/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=U+c0IOxt; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E458441061
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1741361108; bh=6uBJ1YUDIOKuMkF8J+Ow27cEIe6pHr5CJF/jr/dLLA4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=U+c0IOxtLK/yHL6U9gVkTGNWfKeHe7Cxjetxvjp7L3+fhF0t5VqDLayHbnkOecFGu
+	 qYn3EHi24lLNRlLwjvlcLjABGf3zNwLrc8NYTpQSqMb92Gzc3qmlijh49B1IC8QrGG
+	 UGpuzlIDPTGX+TwKiLQ0xQM6aM9HjXgxRQ5961CtqRyW7hfcBlIFZrACerkGfbpFkp
+	 qu8xTV/BIFh3GFTh4pYOiZCjBYXHWrLS+X/cWVmYzCIxv2PeaasmQLVOj730bUc7dd
+	 7PzVO1c/UzvHCkp59SI9KNrfQho474Mgp4bMa0u0xA2UxewlYHUGniiP9REVJ7Voo4
+	 LlVqxpyEj6WqQ==
+Received: from localhost (unknown [IPv6:2601:280:4600:2d7f::1fe])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 19F261828A93;
-	Fri,  7 Mar 2025 15:22:06 +0000 (UTC)
-Received: from [10.45.224.44] (unknown [10.45.224.44])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0251E1955DCE;
-	Fri,  7 Mar 2025 15:22:01 +0000 (UTC)
-Date: Fri, 7 Mar 2025 16:21:58 +0100 (CET)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Dave Chinner <david@fromorbit.com>
-cc: Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>, 
-    Jooyung Han <jooyung@google.com>, Alasdair Kergon <agk@redhat.com>, 
-    Mike Snitzer <snitzer@kernel.org>, Heinz Mauelshagen <heinzm@redhat.com>, 
-    zkabelac@redhat.com, dm-devel@lists.linux.dev, linux-block@vger.kernel.org, 
-    linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] the dm-loop target
-In-Reply-To: <Z8eURG4AMbhornMf@dread.disaster.area>
-Message-ID: <81b037c8-8fea-2d4c-0baf-d9aa18835063@redhat.com>
-References: <7d6ae2c9-df8e-50d0-7ad6-b787cb3cfab4@redhat.com> <Z8W1q6OYKIgnfauA@infradead.org> <b3caee06-c798-420e-f39f-f500b3ea68ca@redhat.com> <Z8XlvU0o3C5hAAaM@infradead.org> <8adb8df2-0c75-592d-bc3e-5609bb8de8d8@redhat.com> <Z8Zh5T9ZtPOQlDzX@dread.disaster.area>
- <1fde6ab6-bfba-3dc4-d7fb-67074036deb0@redhat.com> <Z8eURG4AMbhornMf@dread.disaster.area>
+	by ms.lwn.net (Postfix) with ESMTPSA id E458441061;
+	Fri,  7 Mar 2025 15:25:07 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Pratyush Yadav <ptyadav@amazon.de>
+Cc: linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
+ Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Hugh
+ Dickins <hughd@google.com>, Alexander Graf <graf@amazon.com>, Benjamin
+ Herrenschmidt <benh@kernel.crashing.org>, David Woodhouse
+ <dwmw2@infradead.org>, James Gowans <jgowans@amazon.com>, Mike Rapoport
+ <rppt@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Pasha Tatashin
+ <tatashin@google.com>, Anthony Yznaga <anthony.yznaga@oracle.com>, Dave
+ Hansen <dave.hansen@intel.com>, David Hildenbrand <david@redhat.com>, Jason
+ Gunthorpe <jgg@nvidia.com>, Matthew Wilcox <willy@infradead.org>, Wei Yang
+ <richard.weiyang@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-mm@kvack.org, kexec@lists.infradead.org
+Subject: Re: [RFC PATCH 2/5] misc: add documentation for FDBox
+In-Reply-To: <mafs0v7skj3m2.fsf@amazon.de>
+References: <20250307005830.65293-1-ptyadav@amazon.de>
+ <20250307005830.65293-3-ptyadav@amazon.de> <87ikok7wf4.fsf@trenco.lwn.net>
+ <mafs0v7skj3m2.fsf@amazon.de>
+Date: Fri, 07 Mar 2025 08:25:07 -0700
+Message-ID: <87ecz87tik.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain
 
-> I didn't say you were. I said the concept that dm-loop is based on
-> is fundamentally flawed and that your benchmark setup does not
-> reflect real world usage of loop devices.
+Pratyush Yadav <ptyadav@amazon.de> writes:
 
-> Where are the bug reports about the loop device being slow and the
-> analysis that indicates that it is unfixable?
+> On Fri, Mar 07 2025, Jonathan Corbet wrote:
+>
+>> Pratyush Yadav <ptyadav@amazon.de> writes:
+>>
+>>> With FDBox in place, add documentation that describes what it is and how
+>>> it is used, along with its UAPI and in-kernel API.
+>>>
+>>> Since the document refers to KHO, add a reference tag in kho/index.rst.
+>>>
+>>> Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
+>>> ---
+>>>  Documentation/filesystems/locking.rst |  21 +++
+>>>  Documentation/kho/fdbox.rst           | 224 ++++++++++++++++++++++++++
+>>>  Documentation/kho/index.rst           |   3 +
+>>>  MAINTAINERS                           |   1 +
+>>>  4 files changed, 249 insertions(+)
+>>>  create mode 100644 Documentation/kho/fdbox.rst
+>>
+>> Please do not create a new top-level directory under Documentation for
+>> this; your new file belongs in userspace-api/.
+>
+> I did not. The top-level directory comes from the KHO patches [0] (not
+> merged yet). This series is based on top of those. You can find the full
+> tree here [1].
+>
+> Since this is closely tied to KHO I found it a good fit for putting it
+> on KHO's directory. I don't have strong opinions about this so don't
+> mind moving it elsewhere if you think that is better.
 
-So, I did benchmarks on an enterprise nvme drive (SAMSUNG 
-MZPLJ1T6HBJR-00007). I stacked ext4/loop/ext4, xfs/loop/xfs (using losetup 
---direct-io=on), ext4/dm-loop/ext4 and xfs/dm-loop/xfs. And loop is slow.
+I've not seen the KHO stuff, but I suspect I'll grumble about that too.
+Our documentation should be organized for its audience, not for its
+authors.  So yes, I think that your documentation of the user-space
+interface should definitely go in the userspace-api book.
 
-synchronous I/O:
-fio --direct=1 --bs=4k --runtime=10 --time_based --numjobs=12 --ioengine=psync --iodepth=1 --group_reporting=1 --filename=/mnt/test2/l -name=job --rw=rw
-raw block device:
-   READ: bw=399MiB/s (418MB/s), 399MiB/s-399MiB/s (418MB/s-418MB/s), io=3985MiB (4179MB), run=10001-10001msec
-  WRITE: bw=399MiB/s (418MB/s), 399MiB/s-399MiB/s (418MB/s-418MB/s), io=3990MiB (4184MB), run=10001-10001msec
-ext4/loop/ext4:
-   READ: bw=223MiB/s (234MB/s), 223MiB/s-223MiB/s (234MB/s-234MB/s), io=2232MiB (2341MB), run=10002-10002msec
-  WRITE: bw=223MiB/s (234MB/s), 223MiB/s-223MiB/s (234MB/s-234MB/s), io=2231MiB (2339MB), run=10002-10002msec
-xfs/loop/xfs:
-   READ: bw=220MiB/s (230MB/s), 220MiB/s-220MiB/s (230MB/s-230MB/s), io=2196MiB (2303MB), run=10001-10001msec
-  WRITE: bw=219MiB/s (230MB/s), 219MiB/s-219MiB/s (230MB/s-230MB/s), io=2193MiB (2300MB), run=10001-10001msec
-ext4/dm-loop/ext4:
-   READ: bw=338MiB/s (355MB/s), 338MiB/s-338MiB/s (355MB/s-355MB/s), io=3383MiB (3547MB), run=10002-10002msec
-  WRITE: bw=338MiB/s (355MB/s), 338MiB/s-338MiB/s (355MB/s-355MB/s), io=3385MiB (3549MB), run=10002-10002msec
-xfs/dm-loop/xfs:
-   READ: bw=375MiB/s (393MB/s), 375MiB/s-375MiB/s (393MB/s-393MB/s), io=3752MiB (3934MB), run=10002-10002msec
-  WRITE: bw=376MiB/s (394MB/s), 376MiB/s-376MiB/s (394MB/s-394MB/s), io=3756MiB (3938MB), run=10002-10002msec
+Thanks,
 
-asynchronous I/O:
-fio --direct=1 --bs=4k --runtime=10 --time_based --numjobs=12 --ioengine=libaio --iodepth=16 --group_reporting=1 --filename=/mnt/test2/l -name=job --rw=rw
-raw block device:
-   READ: bw=1246MiB/s (1306MB/s), 1246MiB/s-1246MiB/s (1306MB/s-1306MB/s), io=12.2GiB (13.1GB), run=10001-10001msec
-  WRITE: bw=1247MiB/s (1308MB/s), 1247MiB/s-1247MiB/s (1308MB/s-1308MB/s), io=12.2GiB (13.1GB), run=10001-10001msec
-ext4/loop/ext4:
-   READ: bw=274MiB/s (288MB/s), 274MiB/s-274MiB/s (288MB/s-288MB/s), io=2743MiB (2877MB), run=10001-10001msec
-  WRITE: bw=275MiB/s (288MB/s), 275MiB/s-275MiB/s (288MB/s-288MB/s), io=2747MiB (2880MB), run=10001-10001msec
-xfs/loop/xfs:
-   READ: bw=276MiB/s (289MB/s), 276MiB/s-276MiB/s (289MB/s-289MB/s), io=2761MiB (2896MB), run=10002-10002msec
-  WRITE: bw=276MiB/s (290MB/s), 276MiB/s-276MiB/s (290MB/s-290MB/s), io=2765MiB (2899MB), run=10002-10002msec
-ext4/dm-loop/ext4:
-   READ: bw=1189MiB/s (1247MB/s), 1189MiB/s-1189MiB/s (1247MB/s-1247MB/s), io=11.6GiB (12.5GB), run=10002-10002msec
-  WRITE: bw=1190MiB/s (1248MB/s), 1190MiB/s-1190MiB/s (1248MB/s-1248MB/s), io=11.6GiB (12.5GB), run=10002-10002msec
-xfs/dm-loop/xfs:
-   READ: bw=1209MiB/s (1268MB/s), 1209MiB/s-1209MiB/s (1268MB/s-1268MB/s), io=11.8GiB (12.7GB), run=10001-10001msec
-  WRITE: bw=1210MiB/s (1269MB/s), 1210MiB/s-1210MiB/s (1269MB/s-1269MB/s), io=11.8GiB (12.7GB), run=10001-10001msec
+jon
 
-Mikulas
-
+(Who now realizes he has been arguing this point of view for over ten
+years ... eventually it will get across... :)
 
