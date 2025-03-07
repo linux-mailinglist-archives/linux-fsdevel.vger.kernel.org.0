@@ -1,100 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-43425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87BBBA56900
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 14:32:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8E0DA5698D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 14:55:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3A2B188BEA0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 13:32:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AD6D189B549
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 13:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB73219A94;
-	Fri,  7 Mar 2025 13:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED71721C174;
+	Fri,  7 Mar 2025 13:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P2q4tSdD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A469F23CE
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 13:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95AF021ABB5
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 13:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741354327; cv=none; b=tpJ+S8XuZavs1/HFgfSzEi3R88kd3utcTEAb5Ok8fS4vGBBGcE/dT0VNB2HT7krHBCA3/xF6t+mE9skurkCdkEsr3PNNbIIYKyT4JNxHu8aHbfWoP9p34G7P2Iryw5eaXWvkV44dm7tAi8TlQvnswSEQZnKL/wJrfQaLvWqtLsQ=
+	t=1741355659; cv=none; b=s9yPrRcm1d9b2JkfzvgUVLK7CAPBrEZbuZygLcCJ6GTDiBZAdyU3UVlYZzAgBCUpvhPNi7cql8G3ygjOjp88Wg3FFSgOAq60dS7SGHTj5DUX1BTAtbBt8n95cT5LOYzdantNMUN1Yz/nw93GPTpzv7cRdSAnsOXZJ7kRZQtEMto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741354327; c=relaxed/simple;
-	bh=Rk3HTJSdGsZ/NrV0XqotfCYqlViFG6WGB56pcYsPR1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eiYu4b+waNSIPQIsFTY9Cc003hkusjwWJX1xXJh4o2aG+3p5mMSQ5CF2Rv4Vg3Ufr/nXwGIweD7hozWVPF+Fz4sFWtZvg3ddM24c80AV9md4atlN2famTSRCD4686n5dJ2/64bIdOmOA6C2ZpQHBiHeDkdUNWpc1Ok7kbm6Kzeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-112-49.bstnma.fios.verizon.net [173.48.112.49])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 527DVQBt029743
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 7 Mar 2025 08:31:27 -0500
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 8E4FE2E010B; Fri, 07 Mar 2025 08:31:26 -0500 (EST)
-Date: Fri, 7 Mar 2025 08:31:26 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Hector Martin <marcan@marcan.st>,
-        syzbot <syzbot+4364ec1693041cad20de@syzkaller.appspotmail.com>,
-        broonie@kernel.org, joel.granados@kernel.org, kees@kernel.org,
-        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] general protection fault in proc_sys_compare
-Message-ID: <20250307133126.GA8837@mit.edu>
-References: <67ca5dd0.050a0220.15b4b9.0076.GAE@google.com>
- <239cbc8a-9886-4ebc-865c-762bb807276c@marcan.st>
- <ph6whomevsnlsndjuewjxaxi6ngezbnlmv2hmutlygrdu37k3w@k57yfx76ptih>
+	s=arc-20240116; t=1741355659; c=relaxed/simple;
+	bh=b2aCBsRuNCnxXbfqx1KMyiXiBzciBCbR0uJx02S9RPs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XptWrcjkWUHhCHXK6W7lDcC3/bOx8c2QX+/wDURjgIlbot77mhocJRvLtpLP9kKHs1+QHAMK5rI5R/iC98i7JLN9mSyuqyjPK6HBXOMtNU33LcHpJsgnHESBBwTdLihgT4xchkfHRYxpAR0DxEOxNgo1zXHs/dArFxUi2WUxHhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=P2q4tSdD; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=+taT2QSuxL8BkaKw5rATlyAdw/O8TmblfYyY8TlzKtQ=; b=P2q4tSdDk1vTyS4yQ8UtnlEgiT
+	rTSbqcb1hggXVwczLfNokNr5lTyrPEmcEg9r2Fiddr8Ss/ztL1ISAkKwd3Xp1h1AdltBA8yHGj0zq
+	fAN0Aafq6BV5Vzl0gPlbyi25y20AX4pC76CprIgFG86Uo0cmkBkdXFm0Du0za+Tvhkb6/RPJ3uDXo
+	LtkaIPnCP5Q8dWNheEuAj2hBm+3seeDOOjbHCSXry/3tcU9f/goxuo4P7bpoQ5glrzpezR87yhSwN
+	3RxFVJGiIlAO3KufL58simBwsjQ9qquBDzYKK5vbatEuLXrmO5uy8zipnmf78uNCrh7kCDzmgrsFg
+	cGvenHsA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tqY9X-0000000CXFp-1xdu;
+	Fri, 07 Mar 2025 13:54:15 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: linux-fsdevel@vger.kernel.org
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-mm@kvack.org,
+	intel-gfx@lists.freedesktop.org
+Subject: [PATCH 00/11] Remove aops->writepage
+Date: Fri,  7 Mar 2025 13:54:00 +0000
+Message-ID: <20250307135414.2987755-1-willy@infradead.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ph6whomevsnlsndjuewjxaxi6ngezbnlmv2hmutlygrdu37k3w@k57yfx76ptih>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 07, 2025 at 06:51:23AM -0500, Kent Overstreet wrote:
-> 
-> Better bisection algorithm? Standand bisect does really badly when fed
-> noisy data, but it wouldn't be hard to fix that: after N successive
-> passes or fails, which is unlikely because bisect tests are coinflips,
-> backtrack and gather more data in the part of the commit history where
-> you don't have much.
+I was preparing for LSFMM and noticed that actually we're almost done
+with the writepage conversion.  This patchset finishes it off.
+Something changed in my test environment and now it crashes before
+even starting a run, so this is only build tested.
 
-My general approach when handling some test failure is to try running
-the reproducer 5-10 times on the original commit where the failure was
-detected, to see if the reproducer is reliable.  Once it's been
-established whether the failure reproduces 100% of the time, or some
-fraction of the time, say 25% of the time, then we can estalbish how
-times we should try running the reproducer before we can conclude the
-that a particular commit is "good" --- and the first time we detect a
-failure, we can declare the commit is "bad", even if it happens on the
-2nd out of the 25 tries that we might need to run a test if it is
-particularly flaky.
+The first five patches (f2fs and vboxsf) are uninteresting.  I'll try
+and get those into linux-next for the imminent merge window.  I think
+the migrate and writeback patches are good, but maybe I've missed
+something.  Then we come to i915 needing to tell shmem to do writeout,
+so I added a module-accessible function to do that.  I also removed
+the setting/clearing of reclaim, which would be easy to bring back if
+it's really needed.  Patch 10 is probably the exciting one where
+pageout() calls swap or shmem directly.  And then patch 11 really just
+removes the op itself and the documentation for it.  I may have
+over-trimmed here, but some of the documentation was so out of date it
+was hard to tell what was worth preserving.
 
-Maybe this is something Syzbot could implement?
+Anyway, let's see what the bots make of this.  This is against
+next-20250307.
 
-And if someone is familiar with the Go language, patches to implement
-this in gce-xfstests's ltm server would be great!  It's something I've
-wanted to do, but I haven't gotten around to implementing it yet so it
-can be fully automated.  Right now, ltm's git branch watcher reruns
-any failing test 5 times, so I get an idea of whether a failure is
-flaky or not.  I'll then manually run a potentially flaky test 30
-times, and based on how reliable or flaky the test failure happens to
-be, I then tell gce-xfstests to do a bisect running each test N times,
-without having it stop once the test fails.  It wasts a bit of test
-resources, but since it doesn't block my personal time (results land
-in my inbox when the bisect completes), it hasn't risen to the top of
-my todo list.
+Matthew Wilcox (Oracle) (11):
+  f2fs: Remove check for ->writepage
+  f2fs: Remove f2fs_write_data_page()
+  f2fs: Remove f2fs_write_meta_page()
+  f2fs: Remove f2fs_write_node_page()
+  vboxsf: Convert to writepages
+  migrate: Remove call to ->writepage
+  writeback: Remove writeback_use_writepage()
+  shmem: Add shmem_writeout()
+  i915: Use writeback_iter()
+  mm: Remove swap_writepage() and shmem_writepage()
+  fs: Remove aops->writepage
 
-Cheers,
+ Documentation/admin-guide/cgroup-v2.rst   |  2 +-
+ Documentation/filesystems/fscrypt.rst     |  2 +-
+ Documentation/filesystems/locking.rst     | 54 +--------------------
+ Documentation/filesystems/vfs.rst         | 39 ++++------------
+ block/blk-wbt.c                           |  2 +-
+ drivers/gpu/drm/i915/gem/i915_gem_shmem.c | 32 ++++---------
+ fs/buffer.c                               |  4 +-
+ fs/f2fs/checkpoint.c                      |  7 ---
+ fs/f2fs/data.c                            | 28 -----------
+ fs/f2fs/node.c                            |  8 ----
+ fs/vboxsf/file.c                          | 47 ++++++++++---------
+ include/linux/fs.h                        |  1 -
+ include/linux/shmem_fs.h                  |  7 +--
+ mm/migrate.c                              | 57 ++---------------------
+ mm/page-writeback.c                       | 28 +----------
+ mm/page_io.c                              |  3 +-
+ mm/shmem.c                                | 33 ++++++-------
+ mm/swap.h                                 |  4 +-
+ mm/swap_state.c                           |  1 -
+ mm/swapfile.c                             |  2 +-
+ mm/vmscan.c                               | 29 ++++++------
+ 21 files changed, 93 insertions(+), 297 deletions(-)
 
-					- Ted
+-- 
+2.47.2
+
 
