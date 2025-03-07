@@ -1,222 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-43444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C96B1A56AE3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 15:53:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2065A56B18
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 16:03:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 929E93AA71B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 14:52:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBB6C178D91
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 15:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34D121C9EA;
-	Fri,  7 Mar 2025 14:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C55121C182;
+	Fri,  7 Mar 2025 15:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="u2bxbasN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UPZOzrsy";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="u2bxbasN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UPZOzrsy"
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="PTaD5YiF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73147192D68
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 14:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A731F21C163;
+	Fri,  7 Mar 2025 15:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741359182; cv=none; b=ZTWkARHUd3yTFYiqkMp+SLAbw3iCD6ONMKS9q8Im63Sfm6MhtsFZ0KmWgEV9+/s1xcAw+SihyWI98qYeZxxDgfgXdgxmliA96Mm6l+eCjIQ+gs9P96S8N5UuYg5W7yTnY+2a59JiVDnVBYN97OpWmo1WRd+LCQLnx3W2Zi3SlFQ=
+	t=1741359806; cv=none; b=LB/CWGWWsrjPZwDOj1RJ4FipMhfnOt2rCcKKlIokBqHTrO7PsPfzfktqmTd8SNc/TkwziB1vZAhekAFWe/1jwMljjipxAqvZkAGPyz4GKMkaFLadPzgO+Wf3Ic9oXydyYtYUpoKS8DbePNjlc2bSdX8vZW+LIMXTWNKvEzo7HGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741359182; c=relaxed/simple;
-	bh=qU+VfyYXwmKMWMDbkLHUItkYOPu1I84ijbbgQdEIubs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M7FfMdcbT60LILsSVLH2M3+T9X6alNmxmDrYv/j6+euoAPULNU9JZw1gI2Q4QBjSWZ46CmpT5sCiUjMxgmVXajri/USTDH9zwjj8EJSH2Mz3lfTq1m/Aai3K7DbB5XBVnFRSWJR7tVeU3afu+4IV+cvcUyJBCAss3Kv7kz4bGn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=u2bxbasN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UPZOzrsy; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=u2bxbasN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UPZOzrsy; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6EC0321184;
-	Fri,  7 Mar 2025 14:52:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741359178; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jPWvXYPnJ7Y6KzwiEJ9cDFOBL04knKlm29X0NRAGEZQ=;
-	b=u2bxbasNmAxvzEVRkno+U5TtSq+Eb+8aaSlEptJ2GHxcyGQ5wQss1nq/xo36a/FMywpK2u
-	kLqYuXP3NblG0OP3DPjVlhzVj5ynDpPEJLnURtHqm+ApIj5FVKAR+BkLq0OGAK/cB0okEZ
-	A4QG28AiXsS0Ry9ZfsFyJ1anpWBBRgA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741359178;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jPWvXYPnJ7Y6KzwiEJ9cDFOBL04knKlm29X0NRAGEZQ=;
-	b=UPZOzrsyfcj/WQ+Rp80iCUI0RZjiqVLBk4iyHPcJqaddA7wbvZH4Ru01U7F9SAmZPeQO8F
-	GSjddpvjF90V0TBg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=u2bxbasN;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=UPZOzrsy
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741359178; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jPWvXYPnJ7Y6KzwiEJ9cDFOBL04knKlm29X0NRAGEZQ=;
-	b=u2bxbasNmAxvzEVRkno+U5TtSq+Eb+8aaSlEptJ2GHxcyGQ5wQss1nq/xo36a/FMywpK2u
-	kLqYuXP3NblG0OP3DPjVlhzVj5ynDpPEJLnURtHqm+ApIj5FVKAR+BkLq0OGAK/cB0okEZ
-	A4QG28AiXsS0Ry9ZfsFyJ1anpWBBRgA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741359178;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jPWvXYPnJ7Y6KzwiEJ9cDFOBL04knKlm29X0NRAGEZQ=;
-	b=UPZOzrsyfcj/WQ+Rp80iCUI0RZjiqVLBk4iyHPcJqaddA7wbvZH4Ru01U7F9SAmZPeQO8F
-	GSjddpvjF90V0TBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 66A4413939;
-	Fri,  7 Mar 2025 14:52:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 51MMGUoIy2f0MwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 07 Mar 2025 14:52:58 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 23421A089C; Fri,  7 Mar 2025 15:52:58 +0100 (CET)
-Date: Fri, 7 Mar 2025 15:52:58 +0100
-From: Jan Kara <jack@suse.cz>
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Jan Kara <jack@suse.cz>, 
-	Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-fsdevel@vger.kernel.org, Linux Kernel Audit Mailing List <audit@vger.kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@parisplace.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH v1 1/2] audit: record fanotify event regardless of
- presence of rules
-Message-ID: <jhvf3n4fnzsnj7opxooqblmpnuhvqhcg366y47p5u44dg4tm3i@snmc3msdcoiv>
-References: <cover.1741210251.git.rgb@redhat.com>
- <3c2679cb9df8a110e1e21b7f387b77ddfaacc289.1741210251.git.rgb@redhat.com>
- <aksoenimnsvk4jhxw663spln3pow5x6dys4lbtlfxqtwzwtvs4@yk5ef2tq26l2>
- <Z8pH97tbwt7OGj2o@madcap2.tricolour.ca>
+	s=arc-20240116; t=1741359806; c=relaxed/simple;
+	bh=EvP4qRjvDYAMbUjjDQRTdexQOft/Fz2pInKApi/481Y=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GFNv/CTo1NRrbxxbekb06LwefwZVUbyZtah/hhOf4xSZYfBle0AtueYRVIGGuMmIIB/XvPyEKVXFR8l1h49id/0IkYnDIbstbIkADxCxwXRQuBcvUQ1mCwmznPxA2ylE/pWc/ck0KM2ltXXzVrziOp3c8JDRO0MwHbKbjulkYmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=PTaD5YiF; arc=none smtp.client-ip=52.119.213.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1741359802; x=1772895802;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=qqZcaiLaNCbDu9YJf0F0p4Av7x9/ggfLV9yLqVI9lR8=;
+  b=PTaD5YiFFggXebRV8TEr+rFnoPNSvNRK6ICyqvYBoxx8+QLUrWlLMz0i
+   lTXkYuAM6Yf7Ocj+ToPUMEtOs6Lvsw3jYD+c0+l5KXM8SaEp3z4FfrmgM
+   LN99vluEduiNZf+ZRQReLNhk34TYBvgSsJVHW5iSGhTBIsxy1Aa8wgop6
+   E=;
+X-IronPort-AV: E=Sophos;i="6.14,229,1736812800"; 
+   d="scan'208";a="277234234"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 15:03:16 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.38.20:12889]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.40.101:2525] with esmtp (Farcaster)
+ id 581fd502-d217-44f4-a221-2819cfffdf66; Fri, 7 Mar 2025 15:03:15 +0000 (UTC)
+X-Farcaster-Flow-ID: 581fd502-d217-44f4-a221-2819cfffdf66
+Received: from EX19D020UWC004.ant.amazon.com (10.13.138.149) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 7 Mar 2025 15:03:01 +0000
+Received: from EX19MTAUWA002.ant.amazon.com (10.250.64.202) by
+ EX19D020UWC004.ant.amazon.com (10.13.138.149) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 7 Mar 2025 15:03:01 +0000
+Received: from email-imr-corp-prod-pdx-all-2c-785684ef.us-west-2.amazon.com
+ (10.25.36.210) by mail-relay.amazon.com (10.250.64.203) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1544.14 via Frontend Transport; Fri, 7 Mar 2025 15:03:01 +0000
+Received: from dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com [172.19.91.144])
+	by email-imr-corp-prod-pdx-all-2c-785684ef.us-west-2.amazon.com (Postfix) with ESMTP id 3C58BA05AE;
+	Fri,  7 Mar 2025 15:03:01 +0000 (UTC)
+Received: by dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (Postfix, from userid 23027615)
+	id C61C752B5; Fri,  7 Mar 2025 15:03:00 +0000 (UTC)
+From: Pratyush Yadav <ptyadav@amazon.de>
+To: Randy Dunlap <rdunlap@infradead.org>
+CC: <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, "Eric
+ Biederman" <ebiederm@xmission.com>, Arnd Bergmann <arnd@arndb.de>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+	<jack@suse.cz>, Hugh Dickins <hughd@google.com>, Alexander Graf
+	<graf@amazon.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, "David
+ Woodhouse" <dwmw2@infradead.org>, James Gowans <jgowans@amazon.com>, "Mike
+ Rapoport" <rppt@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, "Pasha
+ Tatashin" <tatashin@google.com>, Anthony Yznaga <anthony.yznaga@oracle.com>,
+	Dave Hansen <dave.hansen@intel.com>, David Hildenbrand <david@redhat.com>,
+	Jason Gunthorpe <jgg@nvidia.com>, Matthew Wilcox <willy@infradead.org>, "Wei
+ Yang" <richard.weiyang@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-mm@kvack.org>, <kexec@lists.infradead.org>
+Subject: Re: [RFC PATCH 2/5] misc: add documentation for FDBox
+In-Reply-To: <E41DA7C8-635C-4E6E-A2CA-5D657526BE85@infradead.org>
+References: <20250307005830.65293-1-ptyadav@amazon.de>
+	<20250307005830.65293-3-ptyadav@amazon.de>
+	<E41DA7C8-635C-4E6E-A2CA-5D657526BE85@infradead.org>
+Date: Fri, 7 Mar 2025 15:03:00 +0000
+Message-ID: <mafs0r038j32z.fsf@amazon.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8pH97tbwt7OGj2o@madcap2.tricolour.ca>
-X-Rspamd-Queue-Id: 6EC0321184
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	FREEMAIL_CC(0.00)[suse.cz,lists.linux-audit.osci.io,vger.kernel.org,paul-moore.com,parisplace.org,redhat.com,gmail.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain
 
-On Thu 06-03-25 20:12:23, Richard Guy Briggs wrote:
-> On 2025-03-06 16:06, Jan Kara wrote:
-> > On Wed 05-03-25 16:33:19, Richard Guy Briggs wrote:
-> > > When no audit rules are in place, fanotify event results are
-> > > unconditionally dropped due to an explicit check for the existence of
-> > > any audit rules.  Given this is a report from another security
-> > > sub-system, allow it to be recorded regardless of the existence of any
-> > > audit rules.
-> > > 
-> > > To test, install and run the fapolicyd daemon with default config.  Then
-> > > as an unprivileged user, create and run a very simple binary that should
-> > > be denied.  Then check for an event with
-> > > 	ausearch -m FANOTIFY -ts recent
-> > > 
-> > > Link: https://issues.redhat.com/browse/RHEL-1367
-> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > 
-> > I don't know enough about security modules to tell whether this is what
-> > admins want or not so that's up to you but:
-> > 
-> > > -static inline void audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar)
-> > > -{
-> > > -	if (!audit_dummy_context())
-> > > -		__audit_fanotify(response, friar);
-> > > -}
-> > > -
-> > 
-> > I think this is going to break compilation with !CONFIG_AUDITSYSCALL &&
-> > CONFIG_FANOTIFY?
-> 
-> Why would that break it?  The part of the patch you (prematurely)
-> deleted takes care of that.
+On Thu, Mar 06 2025, Randy Dunlap wrote:
 
-So I'm failing to see how it takes care of that when with
-!CONFIG_AUDITSYSCALL kernel/auditsc.c does not get compiled into the kernel.
-So what does provide the implementation of audit_fanotify() in that case?
-I think you need to provide empty audit_fanotify() inline wrapper for that
-case...
+> On March 6, 2025 4:57:36 PM PST, Pratyush Yadav <ptyadav@amazon.de> wrote:
+>>With FDBox in place, add documentation that describes what it is and how
+>>it is used, along with its UAPI and in-kernel API.
+>>
+>>Since the document refers to KHO, add a reference tag in kho/index.rst.
+>>
+>>Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
+>>---
+[...]
+>>+
+>>+The File Descriptor Box (FDBox) is a mechanism for userspace to name file
+>>+descriptors and give them over to the kernel to hold. They can later be
+>>+retrieved by passing in the same name.
+>>+
+>>+The primary purpose of FDBox is to be used with :ref:`kho`. There are many kinds
+>
+>     many kinds of 
+>
+>>+anonymous file descriptors in the kernel like memfd, guest_memfd, iommufd, etc.
+>
+>    etc.,
 
-								Honza
+Thanks, will fix these.
 
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index 0050ef288ab3..d0c6f23503a1 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -418,7 +418,7 @@ extern void __audit_log_capset(const struct cred *new, const struct cred *old);
->  extern void __audit_mmap_fd(int fd, int flags);
->  extern void __audit_openat2_how(struct open_how *how);
->  extern void __audit_log_kern_module(char *name);
-> -extern void __audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar);
-> +extern void audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar);
->  extern void __audit_tk_injoffset(struct timespec64 offset);
->  extern void __audit_ntp_log(const struct audit_ntp_data *ad);
->  extern void __audit_log_nfcfg(const char *name, u8 af, unsigned int nentries,
-> 
-> > 								Honza
-> > -- 
-> > Jan Kara <jack@suse.com>
-> > SUSE Labs, CR
-> 
-> - RGB
-> 
-> --
-> Richard Guy Briggs <rgb@redhat.com>
-> Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> Remote, Ottawa, Red Hat Canada
-> Upstream IRC: SunRaycer
-> Voice: +1.613.860 2354 SMS: +1.613.518.6570
-> 
+[...]
+>>+
+>>+Box
+>>+---
+>>+
+>>+The box is a container for FDs. Boxes are identified by their name, which must
+>>+be unique. Userspace can put FDs in the box using the ``FDBOX_PUT_FD``
+>>+operation, and take them out of the box using the ``FDBOX_GET_FD`` operation.
+>
+> Is this ioctl range documented is ioctl-number.rst?
+> I didn't notice a patch for that.
+
+My bad, missed that.
+
+>
+>>+Once all the required FDs are put into the box, it can be sealed to make it
+>>+ready for shipping. This can be done by the ``FDBOX_SEAL`` operation. The seal
+>>+operation notifies each FD in the box. If any of the FDs have a dependency on
+>>+another, this gives them an opportunity to ensure all dependencies are met, or
+>>+fail the seal if not. Once a box is sealed, no FDs can be added or removed from
+>>+the box until it is unsealed. Only sealed boxes are transported to a new kernel
+>
+> What if KHO is not being used?
+
+Then the FDs are lost on shutdown.
+
+>
+>>+via KHO. The box can be unsealed by the ``FDBOX_UNSEAL`` operation. This is the
+>>+opposite of seal. It also notifies each FD in the box to ensure all dependencies
+>>+are met. This can be useful in case some FDs fail to be restored after KHO.
+>>+
+>>+Box FD
+>>+------
+>
+> I can't tell in my email font, but is each underlinoat least as long as the title above it?
+
+They are. I went and double-checked as well. Maybe just something with
+your email font.
+
+[...]
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Regards,
+Pratyush Yadav
 
