@@ -1,102 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-43441-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63337A56AC4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 15:47:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8123A56ADF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 15:52:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F252189A2A3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 14:47:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55D3A1748CB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 14:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C067621C180;
-	Fri,  7 Mar 2025 14:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4043121C19D;
+	Fri,  7 Mar 2025 14:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="p89e8Vs2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lRACKNHA";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XGzuTsY6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lklopRZF"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a9mwjOrD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549C7208AD
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 14:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B6D16EB4C
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 14:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741358853; cv=none; b=IsaPBzohhjeiSsD3ZKSz8S7DZtiQwqQWJqDGFPsqNg4GSjLw5Soz5/ourYz7zwhy4rfHLAeQSbegKGEZkx0ZXyJkHW/IhQBo6RTDPxGCnJ/s13KHr1WnAyYKeIZRMYaDnRKTMVwfJ3VhCBtKjSjhpMhIDZwRPk1HKhg+MLBM0iI=
+	t=1741359136; cv=none; b=jHlXOT3XEAbWe7hbneeBSaFC2UemIwXvUF8fXWzEx8dSDPyHmoW254m1QK/Fc5xo9psvkdCJH8cMfqzn2Eea4DO9pxS9Uhzkb8N+DdDceVLADpHvW8JpebPP++t5s1Lr6jmvI/xWR4cK86+isEzDahvfFNwBBjZT50tEJKgGZkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741358853; c=relaxed/simple;
-	bh=Gcw117duv8recEN1dqJRNyL3cWrsr+wn49dHddV6FrQ=;
+	s=arc-20240116; t=1741359136; c=relaxed/simple;
+	bh=gkim01leCLkscIEVRTyqshEj98uVAAJKqAisacjpMwg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KwDkWL8TzH3gu2vep+VwGdFEXB1XLQYPgUBe9xqJyMKiMoBVlPaJFzHSeihJhbi8Bisy477ex99R94JVHZFYONIsy/Ho/qpU+sRWHRRHKmZXKa29r/LfhRS3zg/ocZ10yxU4uBiv3ld3cHjzXqgfzkfl9+CEov2z/bsOI00gW94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=p89e8Vs2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lRACKNHA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XGzuTsY6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lklopRZF; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	 Content-Type:Content-Disposition:In-Reply-To; b=XxuegScsOznttcSX3i0pPft31fG/WY2t8DIHlzeDJ9JxZ3DHTB6EGf+5UrfuzKehMV06hix63Bk54gWccMK6E0LsAhl/IR1eqO1JYJoH6KOWTKRFeN61JYEuk8fRMyvY4wEULq85aE+n2rG7m7f4zfrVBHcm4iZ9TfADqLiIDvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a9mwjOrD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741359134;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bOV1/NR0uZQx/Nlqn4EmktpOgzyfwXnxmkg+11MiUZc=;
+	b=a9mwjOrDQ0qvxBuDSiAnZXxZxFp962eueObhM46BOFSDykKgOU4/gqjxsoYLvwh/Zx9qSf
+	F25eZ8ME3yhA280FVSQ6H3LgyR7tCzMavJwAwS4+T5E+tiOsjgdHFF/AU5RSg2V4ZIcV7e
+	tOBh7+OXZxzsgZQKXwD0RIL5guZG0Vw=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-321-h6ldjJstNZySD3fReAmTRw-1; Fri,
+ 07 Mar 2025 09:52:08 -0500
+X-MC-Unique: h6ldjJstNZySD3fReAmTRw-1
+X-Mimecast-MFC-AGG-ID: h6ldjJstNZySD3fReAmTRw_1741359125
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9AC941F395;
-	Fri,  7 Mar 2025 14:47:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741358849; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V3e0QAGzyMycCbFd6B+5fqZyw6K7Uq5wm7ushJR/f5Y=;
-	b=p89e8Vs2POw8H9ao/jx5slB/pophAmIlhL0naiE+25jguenqZ1HJ7gk3Jm5u35pDoK5w8C
-	gl7VRA1BkBiJrHWBP+GxEq2Dx2ItTY7PbQo86wNzhGwsutkyjixbNImHFODVV8fii+ax9n
-	EyAuQMVPzO4VT3zQxNoCT1a3/dtekgs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741358849;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V3e0QAGzyMycCbFd6B+5fqZyw6K7Uq5wm7ushJR/f5Y=;
-	b=lRACKNHAPTpgQRNsvSrf2xEFztkZlnxGBAVAjWT8IvgJRoFRsNEsPaYGl6HktpkdaA6K0V
-	pW7PykZgAieHEKAg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741358848; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V3e0QAGzyMycCbFd6B+5fqZyw6K7Uq5wm7ushJR/f5Y=;
-	b=XGzuTsY6IWmI3NXFw1cZKSnsmuzD+QWzn7L+njmbTru81fvRqSF4eWoJxwTPBvYFz8rJhC
-	ISZbq18iXWSsGhweQz6jqL0QoKclmtmlYNDklaqaoFML/nOLDFaHqBcBecffgLZRScfJun
-	ceOrsojuttOxFr+p5OZUqaVL3iAp1Pg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741358848;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V3e0QAGzyMycCbFd6B+5fqZyw6K7Uq5wm7ushJR/f5Y=;
-	b=lklopRZFtsxRfgj0e23BtpElXr6wU5nRUP8gVcFqh1+eBoWJWgDm0UjTANTtXRDFOKWJa/
-	Dl39lJX4UoewqPBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8FEAC13939;
-	Fri,  7 Mar 2025 14:47:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /VoGIwAHy2cxMgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 07 Mar 2025 14:47:28 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 570B0A089C; Fri,  7 Mar 2025 15:47:28 +0100 (CET)
-Date: Fri, 7 Mar 2025 15:47:28 +0100
-From: Jan Kara <jack@suse.cz>
-To: sunliming@linux.dev
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	kees@kernel.org, ebiederm@xmission.com, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, sunliming@kylinos.cn, 
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] fs: binfmt_elf_efpic: fix variable set but not used
- warning
-Message-ID: <a555rynwidxdyj7s3oswpmcnkqu57jv3wsk5qwfg5zz6m55na3@n53ssiekfch4>
-References: <20250307061128.2999222-1-sunliming@linux.dev>
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BAD46180AF6B;
+	Fri,  7 Mar 2025 14:52:03 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.108])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id DD2F618001E9;
+	Fri,  7 Mar 2025 14:51:57 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri,  7 Mar 2025 15:51:32 +0100 (CET)
+Date: Fri, 7 Mar 2025 15:51:25 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jan Kara <jack@suse.cz>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Rasmus Villemoes <ravi@prevas.dk>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Neeraj.Upadhyay@amd.com, Ananth.narayan@amd.com,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>
+Subject: Re: [PATCH v2 1/4] fs/pipe: Limit the slots in pipe_resize_ring()
+Message-ID: <20250307145125.GE5963@redhat.com>
+References: <20250307052919.34542-1-kprateek.nayak@amd.com>
+ <20250307052919.34542-2-kprateek.nayak@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -105,83 +84,52 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250307061128.2999222-1-sunliming@linux.dev>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,intel.com:email,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20250307052919.34542-2-kprateek.nayak@amd.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Fri 07-03-25 14:11:28, sunliming@linux.dev wrote:
-> From: sunliming <sunliming@kylinos.cn>
-> 
-> Fix below kernel warning:
-> fs/binfmt_elf_fdpic.c:1024:52: warning: variable 'excess1' set but not
-> used [-Wunused-but-set-variable]
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: sunliming <sunliming@kylinos.cn>
+On 03/07, K Prateek Nayak wrote:
+>
+> --- a/fs/pipe.c
+> +++ b/fs/pipe.c
+> @@ -1271,6 +1271,10 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
+>  	struct pipe_buffer *bufs;
+>  	unsigned int head, tail, mask, n;
+>
+> +	/* nr_slots larger than limits of pipe->{head,tail} */
+> +	if (unlikely(nr_slots > (pipe_index_t)-1u))
+> +		return -EINVAL;
 
-The extra ifdef is not pretty but I guess it's better. Feel free to add:
+The whole series look "obviously" good to me,
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
 
-								Honza
+-------------------------------------------------------------------------------
+But damn ;) lets look at round_pipe_size(),
 
-> ---
->  fs/binfmt_elf_fdpic.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-> index e3cf2801cd64..bed13ee8bfec 100644
-> --- a/fs/binfmt_elf_fdpic.c
-> +++ b/fs/binfmt_elf_fdpic.c
-> @@ -1024,8 +1024,11 @@ static int elf_fdpic_map_file_by_direct_mmap(struct elf_fdpic_params *params,
->  	/* deal with each load segment separately */
->  	phdr = params->phdrs;
->  	for (loop = 0; loop < params->hdr.e_phnum; loop++, phdr++) {
-> -		unsigned long maddr, disp, excess, excess1;
-> +		unsigned long maddr, disp, excess;
->  		int prot = 0, flags;
-> +#ifdef CONFIG_MMU
-> +		unsigned long excess1;
-> +#endif
->  
->  		if (phdr->p_type != PT_LOAD)
->  			continue;
-> @@ -1120,9 +1123,9 @@ static int elf_fdpic_map_file_by_direct_mmap(struct elf_fdpic_params *params,
->  		 *   extant in the file
->  		 */
->  		excess = phdr->p_memsz - phdr->p_filesz;
-> -		excess1 = PAGE_SIZE - ((maddr + phdr->p_filesz) & ~PAGE_MASK);
->  
->  #ifdef CONFIG_MMU
-> +		excess1 = PAGE_SIZE - ((maddr + phdr->p_filesz) & ~PAGE_MASK);
->  		if (excess > excess1) {
->  			unsigned long xaddr = maddr + phdr->p_filesz + excess1;
->  			unsigned long xmaddr;
-> -- 
-> 2.25.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+	unsigned int round_pipe_size(unsigned int size)
+	{
+		if (size > (1U << 31))
+			return 0;
+
+		/* Minimum pipe size, as required by POSIX */
+		if (size < PAGE_SIZE)
+			return PAGE_SIZE;
+
+		return roundup_pow_of_two(size);
+	}
+
+it is a bit silly to allow the maximum size == 1U << 31 in pipe_set_size()
+or (more importantly) in /proc/sys/fs/pipe-max-size, and then nack nr_slots
+in pipe_resize_ring().
+
+So perhaps this check should go into round_pipe_size() ? Although I can't
+suggest a simple/clear check without unnecesary restrictions for the case
+when pipe_index_t is u16.
+
+pipe_resize_ring() has another caller, watch_queue_set_size(), but it has
+its own hard limits...
+
+Oleg.
+
 
