@@ -1,57 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-43420-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43421-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13B5EA56716
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 12:51:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E05AA5671B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 12:52:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D023177921
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 11:51:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 828ED7A421E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 11:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADEA5218593;
-	Fri,  7 Mar 2025 11:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8802185A6;
+	Fri,  7 Mar 2025 11:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UkNPUVLa"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Drp5yUOl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76311217F31
-	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 11:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C9D21858E
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 11:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741348302; cv=none; b=t6Nr/rKUxKTblcplcSRSgkGVQ2FnFwmMnBCLmkDDd9hQkQWD6s6SHbxOSlnpwkCD1eaWc7p66NrcYNY4uI6iVfO55YdthHMfs77bXVd2DWEDpmk9DJ1/qcIdv/KLXB9K8CU4dd+bZuTQoYzqDRbifsx+RDwlL3x85JsIzLy1Hyw=
+	t=1741348354; cv=none; b=iUUz4JtC/Ldz9RVQzll+HztimIGCepZuF54yl1UQuU1LqSG5jmRyLNrAikWXSpm9W5j9D3hsBilgE/HkNtHATDII1qgPnvrkrlXcLg3fV0B/4JqCQ85eLrOY5Qs0DYYyuo1z8HvfDn+6aJPKQvWragIGG1D0i2H+XX1WpWQyhOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741348302; c=relaxed/simple;
-	bh=qKyPVKC2zEwee1to776S3zm1h04eJR+8liDpfWgaFes=;
+	s=arc-20240116; t=1741348354; c=relaxed/simple;
+	bh=KY3XNvpIqqodv+H/0yMBf1NJV0oAgK4uZr3G2TWi0Go=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pMUGiHR9opCJI5q7W7Xg63sOSOksIbbbIhZjaXqCNhEDC23n+ylMIm+qbD8TVuk0fCp4v5Eri2L99mbBRK9Cfd6WEgTt7Nq0xD/+aAYVjyJSHMMPPhj/pmzRRvzxuHBfn2u3fOjEhS43v9c2+Ctmspijl0I9w49KNjgangNuu3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UkNPUVLa; arc=none smtp.client-ip=91.218.175.182
+	 Content-Type:Content-Disposition:In-Reply-To; b=WBvKof1MdkkDlQlaxYY5v0FSpBvD+hHuc/x/WDNBH9gPEs+Ar0qQhJP/5fuBJW3A85jNR0o7SkawmxA+TEuKEud6fujFhHCeJaUwTCPQr6x6I/HcTj30Ol+RSH4YrfL8iI5juvCpl267MKpMcRxhq4R5ttrEnKI9a8SMFp1AJQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Drp5yUOl; arc=none smtp.client-ip=95.215.58.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 7 Mar 2025 06:51:23 -0500
+Date: Fri, 7 Mar 2025 06:52:26 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741348287;
+	t=1741348350;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=QG9qoN7PF3aoYfNKP/T3PtQpq+Dbf2mURFU9HigeZQY=;
-	b=UkNPUVLaj6YwFJE9pAdohabEp76vgBi8Jnl+6IHqYRTOZDroy/BkRhK98C+H8oo6BVz94B
-	httqJMvzyvNlw+TLdo5yb0c3nJ7oSn/HEuQxX5uirXWvbOjkcjlUDtFHg6vFWX8Ar2hOYW
-	FwRRP1fME7x/7l2D6JVtEnYD9EcH8kE=
+	bh=AR8Kl6IuJYg26NfT4ABsZ98hzvEkHvnC4uDjdCNtrp0=;
+	b=Drp5yUOltMdXZePcWi3SmAhYlAin2u+vF1z2nLAQvw4UBXYff59nHFQQMd/2v/hcYcMxCA
+	y6lrluVbwQ8T5q1QY4zgxyzaNM+hcPwDblvqP4dBRoAPe1mHL8CO+1Z+f4ggL8m6DF/RIi
+	PMh69TeS6Ou6G9KtL4j76JdZ/z5RS8s=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Hector Martin <marcan@marcan.st>
-Cc: syzbot <syzbot+4364ec1693041cad20de@syzkaller.appspotmail.com>, 
-	broonie@kernel.org, joel.granados@kernel.org, kees@kernel.org, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] general protection fault in proc_sys_compare
-Message-ID: <ph6whomevsnlsndjuewjxaxi6ngezbnlmv2hmutlygrdu37k3w@k57yfx76ptih>
-References: <67ca5dd0.050a0220.15b4b9.0076.GAE@google.com>
- <239cbc8a-9886-4ebc-865c-762bb807276c@marcan.st>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: brauner@kernel.org, hare@suse.de, willy@infradead.org, 
+	david@fromorbit.com, djwong@kernel.org, kbusch@kernel.org, john.g.garry@oracle.com, 
+	hch@lst.de, ritesh.list@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-block@vger.kernel.org, gost.dev@samsung.com, p.raghav@samsung.com, da.gomez@samsung.com, 
+	kernel@pankajraghav.com
+Subject: Re: [PATCH v2] bdev: add back PAGE_SIZE block size validation for
+ sb_set_blocksize()
+Message-ID: <p2aj32dbt7dwvedsfno6nehah4fdhwweclgvin3thip4gqeezk@f7ctgb7cis3w>
+References: <20250307020403.3068567-1-mcgrof@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,48 +61,98 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <239cbc8a-9886-4ebc-865c-762bb807276c@marcan.st>
+In-Reply-To: <20250307020403.3068567-1-mcgrof@kernel.org>
 X-Migadu-Flow: FLOW_OUT
 
-On Fri, Mar 07, 2025 at 08:20:37PM +0900, Hector Martin wrote:
-> On 2025/03/07 11:45, syzbot wrote:
-> > Hello,
-> > 
-> > syzbot found the following issue on:
-> > 
-> > HEAD commit:    b91872c56940 Merge tag 'dmaengine-fix-6.14' of git://git.k..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=1485e8b7980000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=8de9cc84d5960254
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=4364ec1693041cad20de
-> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=149d55a8580000
-> > 
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/4b855669df70/disk-b91872c5.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/e44f3c546271/vmlinux-b91872c5.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/b106e670346a/bzImage-b91872c5.xz
-> > mounted in repro: https://storage.googleapis.com/syzbot-assets/68b26fa478ee/mount_0.gz
-> > 
-> > The issue was bisected to:
-> > 
-> > commit 579cd64b9df8a60284ec3422be919c362de40e41
-> > Author: Hector Martin <marcan@marcan.st>
-> > Date:   Sat Feb 8 00:54:35 2025 +0000
-> > 
-> >     ASoC: tas2770: Fix volume scale
-> > 
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14aa03a8580000
-> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=16aa03a8580000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=12aa03a8580000
-> [...]
+On Thu, Mar 06, 2025 at 06:04:03PM -0800, Luis Chamberlain wrote:
+> The commit titled "block/bdev: lift block size restrictions to 64k"
+> lifted the block layer's max supported block size to 64k inside the
+> helper blk_validate_block_size() now that we support large folios.
+> However in lifting the block size we also removed the silly use
+> cases many filesystems have to use sb_set_blocksize() to *verify*
+> that the block size <= PAGE_SIZE. The call to sb_set_blocksize() was
+> used to check the block size <= PAGE_SIZE since historically we've
+> always supported userspace to create for example 64k block size
+> filesystems even on 4k page size systems, but what we didn't allow
+> was mounting them. Older filesystems have been using the check with
+> sb_set_blocksize() for years.
 > 
-> This is a bad bisect. Not sure what the appropriate syzbot action is in
-> this case.
+> While, we could argue that such checks should be filesystem specific,
+> there are much more users of sb_set_blocksize() than LBS enabled
+> filesystem on upstream, so just do the easier thing and bring back
+> the PAGE_SIZE check for sb_set_blocksize() users and only skip it
+> for LBS enabled filesystems.
+> 
+> This will ensure that tests such as generic/466 when run in a loop
+> against say, ext4, won't try to try to actually mount a filesystem with
+> a block size larger than your filesystem supports given your PAGE_SIZE
+> and in the worst case crash.
+> 
+> Cc: Kent Overstreet <kent.overstreet@linux.dev>
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 
-Better bisection algorithm? Standand bisect does really badly when fed
-noisy data, but it wouldn't be hard to fix that: after N successive
-passes or fails, which is unlikely because bisect tests are coinflips,
-backtrack and gather more data in the part of the commit history where
-you don't have much.
+Reviewed-by: Kent Overstreet <kent.overstreet@linux.dev>
+
+> ---
+>  block/bdev.c       | 2 ++
+>  fs/bcachefs/fs.c   | 2 +-
+>  fs/xfs/xfs_super.c | 3 ++-
+>  include/linux/fs.h | 1 +
+>  4 files changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/block/bdev.c b/block/bdev.c
+> index 3bd948e6438d..4844d1e27b6f 100644
+> --- a/block/bdev.c
+> +++ b/block/bdev.c
+> @@ -181,6 +181,8 @@ EXPORT_SYMBOL(set_blocksize);
+>  
+>  int sb_set_blocksize(struct super_block *sb, int size)
+>  {
+> +	if (!(sb->s_type->fs_flags & FS_LBS) && size > PAGE_SIZE)
+> +		return 0;
+>  	if (set_blocksize(sb->s_bdev_file, size))
+>  		return 0;
+>  	/* If we get here, we know size is validated */
+> diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
+> index 8b3be33a1f7a..8624b3b1601f 100644
+> --- a/fs/bcachefs/fs.c
+> +++ b/fs/bcachefs/fs.c
+> @@ -2414,7 +2414,7 @@ static struct file_system_type bcache_fs_type = {
+>  	.name			= "bcachefs",
+>  	.init_fs_context	= bch2_init_fs_context,
+>  	.kill_sb		= bch2_kill_sb,
+> -	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
+> +	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_LBS,
+>  };
+>  
+>  MODULE_ALIAS_FS("bcachefs");
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index 37898f89b3ea..54a353f52ffb 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -2134,7 +2134,8 @@ static struct file_system_type xfs_fs_type = {
+>  	.init_fs_context	= xfs_init_fs_context,
+>  	.parameters		= xfs_fs_parameters,
+>  	.kill_sb		= xfs_kill_sb,
+> -	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME,
+> +	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME |
+> +				  FS_LBS,
+>  };
+>  MODULE_ALIAS_FS("xfs");
+>  
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 110d95d04299..62440a9383dc 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2614,6 +2614,7 @@ struct file_system_type {
+>  #define FS_DISALLOW_NOTIFY_PERM	16	/* Disable fanotify permission events */
+>  #define FS_ALLOW_IDMAP         32      /* FS has been updated to handle vfs idmappings. */
+>  #define FS_MGTIME		64	/* FS uses multigrain timestamps */
+> +#define FS_LBS			128	/* FS supports LBS */
+>  #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
+>  	int (*init_fs_context)(struct fs_context *);
+>  	const struct fs_parameter_spec *parameters;
+> -- 
+> 2.47.2
+> 
 
