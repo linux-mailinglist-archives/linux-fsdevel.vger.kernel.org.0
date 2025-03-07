@@ -1,96 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-43407-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43408-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 713F2A56096
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 07:03:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A074A5609A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 07:08:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAA5016E2D9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 06:03:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F88518957E1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 06:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9386A19CC3E;
-	Fri,  7 Mar 2025 06:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VDocaQE+"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3491990C3;
+	Fri,  7 Mar 2025 06:08:51 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail115-95.sinamail.sina.com.cn (mail115-95.sinamail.sina.com.cn [218.30.115.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE00198E91;
-	Fri,  7 Mar 2025 06:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329AA190482
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 06:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741327391; cv=none; b=o1xa13v0OcQzMyUHjgMOrMg9FVMWbBaF+H+5w5JXurEJ1Ux9hGjku7lKdgJu6A3uq5KvWzkzARR6vH74id6nxMyzfVTUQkYuFNLYl/UoIrNO5hUHVFHEyxjylbVfXav1kUOcwVB8r3xAhHlnKwjE3I515SUr32KcwCulU/4dQaI=
+	t=1741327731; cv=none; b=BVglbaOd+l6OtUY00OnQ7A8siVHXt5twNw2OiJaHyd6Xa0usack8CqIiGaHwIoaogq3sCK7PrAcs+OlQD48OT0P0XOd8hhvhYeB3wN8wfeiLiVFOh1F9aE7kot+XhwKJqQDntFHlHkWtDDihJpNGZxqIsdFS9PyBR14dqKloGWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741327391; c=relaxed/simple;
-	bh=CRAihNkGRLaidsZuzsLC506Y8MOu0f2lmWlCIxy18H0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oIUh1ApD8uIYjaG9j3onmpcZ5rmDiCSGX3hhENsaRwjYXwnng9OouRQltffgKR2lWrwJTutd9jECc/Wy4aO5jtP1sS1vcdc3C2mRol0nOpVTx7bMLcaoZ51YSKZMSH4R/lmdAJEpqK/P4VmuswL9o3GepFE411QAvYPxA/yhVSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VDocaQE+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A418CC4CEE2;
-	Fri,  7 Mar 2025 06:03:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741327390;
-	bh=CRAihNkGRLaidsZuzsLC506Y8MOu0f2lmWlCIxy18H0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VDocaQE++DVK22rJjR70kxQTmMZHHuSCR7WjyiwjfJTHNTUq7Ul09dyUSB6USROlD
-	 PmFKhruwh42vcXvtqkr1t9+HYVC57Vfcc370h8VlDwUIoKmoqVTdPJpIBz4ssbdX1U
-	 2s4q7IFjhxQudeGaTX2sDHFRIa1SeDM5gE0ebBEM=
-Date: Fri, 7 Mar 2025 07:03:06 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Pratyush Yadav <ptyadav@amazon.de>
-Cc: linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Hugh Dickins <hughd@google.com>, Alexander Graf <graf@amazon.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	David Woodhouse <dwmw2@infradead.org>,
-	James Gowans <jgowans@amazon.com>, Mike Rapoport <rppt@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Pasha Tatashin <tatashin@google.com>,
-	Anthony Yznaga <anthony.yznaga@oracle.com>,
-	Dave Hansen <dave.hansen@intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Wei Yang <richard.weiyang@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-mm@kvack.org, kexec@lists.infradead.org
-Subject: Re: [RFC PATCH 1/5] misc: introduce FDBox
-Message-ID: <2025030700-paramedic-untoasted-9cec@gregkh>
-References: <20250307005830.65293-1-ptyadav@amazon.de>
- <20250307005830.65293-2-ptyadav@amazon.de>
+	s=arc-20240116; t=1741327731; c=relaxed/simple;
+	bh=T2QkG4EZej3NuePHZ+cAjBoD70+eX/KlMVHwBiryygw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Uky4EQfXKXLkJWZSflppKw2IqGPkX7MTcyXtwBXpiKTQLRXbz+f58gnEXu/Olgh0aA5UPzumK0bExNIn/XRsknl0T+iF3PccR0n0AklZKXOFVy7pL2x+mQ5km6AwnPN/yP3b1DyBJTHgmevcpvN8pvS1ZMN6WqmtmtsSpdpJrpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.88.50.28])
+	by sina.com (10.185.250.23) with ESMTP
+	id 67CA8D64000021D4; Fri, 7 Mar 2025 14:08:38 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 4079398913364
+X-SMAIL-UIID: D44F113D61CE430ABCB960723B7B6BCE-20250307-140838-1
+From: Hillf Danton <hdanton@sina.com>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
+Date: Fri,  7 Mar 2025 14:08:26 +0800
+Message-ID: <20250307060827.3083-1-hdanton@sina.com>
+In-Reply-To: <20250306093021.GA19868@redhat.com>
+References: <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com> <20250227211229.GD25639@redhat.com> <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com> <20250228143049.GA17761@redhat.com> <20250228163347.GB17761@redhat.com> <20250304050644.2983-1-hdanton@sina.com> <20250304102934.2999-1-hdanton@sina.com> <20250304233501.3019-1-hdanton@sina.com> <20250305045617.3038-1-hdanton@sina.com> <20250305224648.3058-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307005830.65293-2-ptyadav@amazon.de>
+Content-Transfer-Encoding: 8bit
 
-One quick review note:
+On Thu, 6 Mar 2025 10:30:21 +0100 Oleg Nesterov <oleg@redhat.com>
+> On 03/06, Hillf Danton wrote:
+> > On Wed, 5 Mar 2025 12:44:34 +0100 Oleg Nesterov <oleg@redhat.com>
+> > > On 03/05, Hillf Danton wrote:
+> > > > See the loop in  ___wait_event(),
+> > > >
+> > > > 	for (;;) {
+> > > > 		prepare_to_wait_event();
+> > > >
+> > > > 		// flip
+> > > > 		if (condition)
+> > > > 			break;
+> > > >
+> > > > 		schedule();
+> > > > 	}
+> > > >
+> > > > After wakeup, waiter will sleep again if condition flips false on the waker
+> > > > side before waiter checks condition, even if condition is atomic, no?
+> > >
+> > > Yes, but in this case pipe_full() == true is correct, this writer can
+> > > safely sleep.
+> > >
+> > No, because no reader is woken up before sleep to make pipe not full.
+> 
+> Why the reader should be woken before this writer sleeps? Why the reader
+> should be woken at all in this case (when pipe is full again) ?
+> 
+"to make pipe not full" failed to prevent you asking questions like this one.
 
-On Fri, Mar 07, 2025 at 12:57:35AM +0000, Pratyush Yadav wrote:
-> +/**
-> + * struct fdbox - A box of FDs.
-> + * @name: Name of the box. Must be unique.
-> + * @rwsem: Used to ensure exclusive access to the box during SEAL/UNSEAL
-> + *         operations.
-> + * @dev: Backing device for the character device.
-> + * @cdev: Character device which accepts ioctls from userspace.
+> We certainly can't understand each other.
+> 
+> Could your picture the exact scenario/sequence which can hang?
+> 
+If you think the scenario in commit 3d252160b818 [1] is correct, check
+the following one.
 
-You now have a structure that contains 2 different reference counts,
-which is going to be impossible to handle properly.  Which one defines
-the lifetime of the object?  That's not going to work, please fix.
+step-00
+	pipe->head = 36
+	pipe->tail = 36
+	after 3d252160b818
 
-thanks,
+step-01
+	task-118762 writer
+	pipe->head++;
+	wakes up task-118740 and task-118768
 
-greg k-h
+step-02
+	task-118768 writer
+	makes pipe full;
+	sleeps without waking up any reader as
+	pipe was not empty after step-01
+
+step-03
+	task-118766 new reader
+	makes pipe empty
+	sleeps
+
+step-04
+	task-118740 reader
+	sleeps as pipe is empty
+
+[ Tasks 118740 and 118768 can then indefinitely wait on each other. ]
+
+
+[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/fs/pipe.c?id=3d252160b818045f3a152b13756f6f37ca34639d
 
