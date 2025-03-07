@@ -1,229 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-43446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43A2FA56B99
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 16:17:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24758A56BDB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 16:23:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FFEF189B775
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 15:17:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08A903AB2FC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Mar 2025 15:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F0B21D583;
-	Fri,  7 Mar 2025 15:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8020E21D002;
+	Fri,  7 Mar 2025 15:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GkS2HEE8"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N9Kqy4hd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2084.outbound.protection.outlook.com [40.107.220.84])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8512C21D596;
-	Fri,  7 Mar 2025 15:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741360464; cv=fail; b=Bna/Qy5nTo1ERe976YTxDnJ5Rl3UV6uOa1Cf6A4j6QuFhzpz/NuEqCdQKjEXKR1HKeZJody8mftQit2jFrfB7JWdK2vJaH7u0WR++r6iDi0HjOp0YwcL0RJrsuGUeePjHIzV70iteoOHncrIcYJ3hAYaJ6iKFi5wPstRAN7oYAQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741360464; c=relaxed/simple;
-	bh=jGMm6h/aoTd1CFNEWwFTqh2/U8rAphNDpBkMBGmzK7o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=niIDVCUJHUXNPsY31g2Yps7OwzgMy9UMpC5Ez4cS6pYhrEUsE6CJxUhedlAIOnyUXT1jIys5OhBwepa/+51JraSiwNXEbFf1C6qrGXk53WJmlWRjXUrLjfpRGDbVb/NAbvQAj+0sBaUmHDreQ4k5cLFg5ivShK+Lr8wrRi+49/4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GkS2HEE8; arc=fail smtp.client-ip=40.107.220.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Txu4h2fzFsU5Y4jt3MeG7aEq47IaqSSj8HZ/+sSj8/+i1Yp6uIabRHtULMMDqMKJbE0pnCDJVkGP6WwQWGdUg/i0bwd4wfT6122wz3v048hRDhQhQhOVZeMrfqAQtmGMByq/QqipfcEUoea67COKVtjbRwqUshxItgvEJBOngv4rr+1D2TzLTZL5sxTjDhyh6zeHXeZd3kwkas95653PAqPn+DP49B2XiTNA/5bs+O/EahAlQ6K4h6zLi48v/IiIBqDTD0ZxU4XGhcHW29JNxROFMoZCWVJlVymYvdSkH9U+VyufovRm/yBT50lQ0h14pGFO1I9oV0152SBhtetGJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4hxm+V7PlelwUAl+JpzMwrbVK7spdNtBOJxfwWJxcyA=;
- b=UmMuKoyiV2ytSHrYrpNkbu0NoWOBLJSFFksBSgSbcAl9JcsKKcI2e7eR5Cr93GTgD7NDvo9kCalQzwFMLFp+hwCYmhxY3JKAk6Sq68oH+N/a+7PE3O8dx6IEAGjTQ+pfzVEokPo6OL8q63svL8GL0ScTTx9XII4VnS2VZi97eCuNhgHKYA3vXf1rqgZd1pTQQDWmIoYjuMxZAG4h6ZqLxIZS+JTb6lc8qJByNNBdloC3Ry9U66hJpVzhOuju+pSZzOqrT/EovyS+2CSYv+brp+fqGX6KyhSFZbLzklrBO2AvnriDV9kWqPk8PCMbYbKR8sOzPlIALvzYMPMAQ+auvQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4hxm+V7PlelwUAl+JpzMwrbVK7spdNtBOJxfwWJxcyA=;
- b=GkS2HEE8QR32ZfjvA17jzViNG5/XG8M4HDewzMxuZKA6tuOt7ddwed8FpSgkBI39CLNcG8NFVd0xhPumBsF4YhgRbArOgRno53bSvN8nLnvtlNDfIKYZUqqI1AgTSrcH3YuqVssY19NDsjVzXmFQrmnbaIfAASRgfRPUtmHIMdp3aN8QgxnvzejyRCBtT3euGT2RgPbzQDLWp3K1j+Acb402NJeGhSogVofSIk3JGlPFlQI6qAySZR8xQHjj5a8NTQIygc05zrI9zHv943EgFZBjqVR1HMdL6TYimamsAOjZ5lV/igrgPzJsRHF+LwxgQiep+Mqgsb1uw+Fws4m05g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MW6PR12MB8663.namprd12.prod.outlook.com (2603:10b6:303:240::9)
- by PH7PR12MB6836.namprd12.prod.outlook.com (2603:10b6:510:1b6::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Fri, 7 Mar
- 2025 15:14:19 +0000
-Received: from MW6PR12MB8663.namprd12.prod.outlook.com
- ([fe80::594:5be3:34d:77f]) by MW6PR12MB8663.namprd12.prod.outlook.com
- ([fe80::594:5be3:34d:77f%2]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
- 15:14:19 +0000
-Date: Fri, 7 Mar 2025 11:14:17 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Pratyush Yadav <ptyadav@amazon.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Hugh Dickins <hughd@google.com>, Alexander Graf <graf@amazon.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	David Woodhouse <dwmw2@infradead.org>,
-	James Gowans <jgowans@amazon.com>, Mike Rapoport <rppt@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Pasha Tatashin <tatashin@google.com>,
-	Anthony Yznaga <anthony.yznaga@oracle.com>,
-	Dave Hansen <dave.hansen@intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Wei Yang <richard.weiyang@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-mm@kvack.org, kexec@lists.infradead.org
-Subject: Re: [RFC PATCH 1/5] misc: introduce FDBox
-Message-ID: <20250307151417.GQ354511@nvidia.com>
-References: <20250307005830.65293-1-ptyadav@amazon.de>
- <20250307005830.65293-2-ptyadav@amazon.de>
- <20250307-sachte-stolz-18d43ffea782@brauner>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307-sachte-stolz-18d43ffea782@brauner>
-X-ClientProxiedBy: BN9PR03CA0872.namprd03.prod.outlook.com
- (2603:10b6:408:13c::7) To MW6PR12MB8663.namprd12.prod.outlook.com
- (2603:10b6:303:240::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB8B21CC49
+	for <linux-fsdevel@vger.kernel.org>; Fri,  7 Mar 2025 15:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741360938; cv=none; b=Jyd9ML32KqeKbktV3xWYqjB3b/3/8uBXNUE5u2nvSnjRnqtXM8xy20MI+J0PUBUr1w26rl2PS55t7clTyMaZz8gnukdDGRakNrJ8Duqnp6+EhOYYPxE+J0eo11Rw33gsatmeW+3/OLxtQj0bWM+wFjOmtRgjVvF1sOHxqoRZM74=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741360938; c=relaxed/simple;
+	bh=8bkm9D+A9b09Me9TsLQSLQoaTKIDYLGe1bUICWPE0eY=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=t/9zUM9iEPXH26VNcFA9+1C7xSid/JgH8dkI4aGG6WjcskFGBrKGgC1x8CrhCPsStDyLFfAtybPS932HwQtDa0QZWQmPpx/sCm+YkVEKQFQTtIh+Rbhv0L+DH+4WdqZ3hpF6qBvylnbvsOkirqVB/XN3GUOStxh3s3q/bYfCGdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N9Kqy4hd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741360935;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HeDSEd/YjPeusnr10Mm42vys340e0N+uOy6aIocYd3Q=;
+	b=N9Kqy4hd3y8dwuzx2KKoe9mG7EIH0JzbakJbBIdtwnOR1qNQLBON2HWCt05OfBXqYGDQFn
+	oQrn8OhLZPqzczNJecVCn5t5l/vmW+FP2vbvV7RitpLq3niVARi98amuSguqTnxA2obPDJ
+	ZW9C2bcYAl3tLOYLuYaNloqWMR7QlNk=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-190-DViTGFTgMkuZHqgu0UVOTQ-1; Fri,
+ 07 Mar 2025 10:22:10 -0500
+X-MC-Unique: DViTGFTgMkuZHqgu0UVOTQ-1
+X-Mimecast-MFC-AGG-ID: DViTGFTgMkuZHqgu0UVOTQ_1741360929
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 19F261828A93;
+	Fri,  7 Mar 2025 15:22:06 +0000 (UTC)
+Received: from [10.45.224.44] (unknown [10.45.224.44])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0251E1955DCE;
+	Fri,  7 Mar 2025 15:22:01 +0000 (UTC)
+Date: Fri, 7 Mar 2025 16:21:58 +0100 (CET)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Dave Chinner <david@fromorbit.com>
+cc: Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>, 
+    Jooyung Han <jooyung@google.com>, Alasdair Kergon <agk@redhat.com>, 
+    Mike Snitzer <snitzer@kernel.org>, Heinz Mauelshagen <heinzm@redhat.com>, 
+    zkabelac@redhat.com, dm-devel@lists.linux.dev, linux-block@vger.kernel.org, 
+    linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] the dm-loop target
+In-Reply-To: <Z8eURG4AMbhornMf@dread.disaster.area>
+Message-ID: <81b037c8-8fea-2d4c-0baf-d9aa18835063@redhat.com>
+References: <7d6ae2c9-df8e-50d0-7ad6-b787cb3cfab4@redhat.com> <Z8W1q6OYKIgnfauA@infradead.org> <b3caee06-c798-420e-f39f-f500b3ea68ca@redhat.com> <Z8XlvU0o3C5hAAaM@infradead.org> <8adb8df2-0c75-592d-bc3e-5609bb8de8d8@redhat.com> <Z8Zh5T9ZtPOQlDzX@dread.disaster.area>
+ <1fde6ab6-bfba-3dc4-d7fb-67074036deb0@redhat.com> <Z8eURG4AMbhornMf@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW6PR12MB8663:EE_|PH7PR12MB6836:EE_
-X-MS-Office365-Filtering-Correlation-Id: 89a2e814-51eb-4f83-dfff-08dd5d8abb83
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?89UNm2TcdpvZIGJw3ctH91wFvXPFgHD44Gi4AQzNHLuMxYYIqTfZekcBwnnR?=
- =?us-ascii?Q?rfh2frF5BUQq5YbLaU43ubk827F3CdbE1jrpBr/tzmWqscPRz/SIgBlXjhey?=
- =?us-ascii?Q?sS6D0egv8Kr8jwq3gMgsvSksSqJp0svtp3gkS0GKu4HDsU3CZN5TLRa9wQht?=
- =?us-ascii?Q?8ovBUNzuqXd6/LUjwCt5EIQQFnx6vgmx3jVhHAbfPiurz6ZlieVwFrU8UGn5?=
- =?us-ascii?Q?+WZiF250fUjaf5Zamf0JxGigiU2tQ80bh7UCL5/LsWBmQP3E4HtXn6IhyC1H?=
- =?us-ascii?Q?ZlK6oh8uN7RLJnFdj114T1K11PTcB+WLBWSbvaotrL/qCHDR/iObjGbvM1/t?=
- =?us-ascii?Q?I1kzVuAUSUaVRkipkM/BCjbFpv7qzgS2U6d3O5chclOjh1kb47tsk182Pg9s?=
- =?us-ascii?Q?KeYR9WEZWljq6NEGrqW/rAgqxnPqLicYQ7xdne1EBp8e3bBCRzvwSDazEL2C?=
- =?us-ascii?Q?a3xeykaTJHCy027CfFnRFQkfwZMJzxk05sy678dmZMPclVelQzYceiKV1kFb?=
- =?us-ascii?Q?iRb3RLXUmmg/l3yAevWIOGPCESMCcrpts8lhkuzfdz5Z77sk3t7MHUnIibyv?=
- =?us-ascii?Q?p79s325CIWPC7UkZ5Mh02RD0Osu7YTSVEaihge1yrjPiL/KwdDVQBMnkGMmQ?=
- =?us-ascii?Q?VgNBlabjhrfVdIgbx5a5X8YWS6lfO5t7AChJJ2hqt+xsIL8DPjLW7ax2VWdd?=
- =?us-ascii?Q?AEEWUlhA5DsXgRiaUvDVffLqlBseP6Rh6aUTPcJ4lPvUM3zq4Gr3yia3YZQ2?=
- =?us-ascii?Q?SRtwrRnfz9MNBZnSy9lO6L+Tjkc13Yh9Wc6jA2cpQHO4SEfB1aO7PYBT//Ak?=
- =?us-ascii?Q?jIerqb6pzJl1axO9+VxNnRsNS+rg22gETv30+QI1HEwLQc8nbIXHJdFaiKoA?=
- =?us-ascii?Q?spVZQOVcfsBcWCLlpD5+jDthh+NhKYaRbtPE88ATxjNW48cQZkJXlCMZm2LM?=
- =?us-ascii?Q?SdqUHFy7i02uKpi2B38ZXH7mjVPRCiVeU7HhjfLPwTzS9Or1G3mX+AgGmIcZ?=
- =?us-ascii?Q?eOcxbvkf0eW+nofabgA1PndEZBaOiQRA09P/szJ8VvvOEJdbsI72M6QgMpiI?=
- =?us-ascii?Q?o/PIrXFuUxpS7WW1PSIeLYtND8aL8Bj3pUKd4yjOJWn3jIKWrgHFmvaC+NQ5?=
- =?us-ascii?Q?oAHQKa1ZlVjvxACmHEPI/dx2rFSmYj4Zzffxm/fzsFXaW1O6cFcOYZ5Oa0bJ?=
- =?us-ascii?Q?kaDOeim56iGypKwV79t1XExd+fTX44L8W+Y15erJLyvZRPwrzZNzBdAtpznc?=
- =?us-ascii?Q?BrzkYv9QroGTeJwycGt7Lui8oRR/m9O9CMFUjoFjlMwF+BT0QxZMzVxdXwSA?=
- =?us-ascii?Q?82tOjQ2A5uLvXqDSUG2feUe/dWuDf4iLvPpGIOcrdJIav+JvJTEPYxOu/L77?=
- =?us-ascii?Q?pPYmsWrotmgg8rDgy8elFZhyeHjY?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR12MB8663.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?AyiL3WkWmOWgBee2X+P3ysH7+g9yXxtuVJhCavtFosbEFyWou29DP3CJPyGB?=
- =?us-ascii?Q?CzrZM5gC/Mj/RoOcl+V+o9yNzocbZQyhiF+l9MESIiTe23/k+OPfUiLIOXxI?=
- =?us-ascii?Q?pt5AcIRqECWQV/ULTtHe1MwXjsU7WCzj5BdtNcokxrUcBEEUup8n7TLIo2iy?=
- =?us-ascii?Q?GvozsRQaAlz9OuqS/O4aTo/dApnMxQunzLn+F1BdjjVfBnUpSs8Zcu1JQb0q?=
- =?us-ascii?Q?x1uygGKv5kRksFS/W+5RZbzqNcen0bor/p2XiqhI7nCljZ5so4nUVVPerlyq?=
- =?us-ascii?Q?uutwmSC4k0EAFoR7qc/VOMyTZwPh1xESWEWS5VJOR7jErHgwnChp6v7WlFl0?=
- =?us-ascii?Q?Yqh6pyN0V8QzIVNi9D8Bv2m399AJ7PUOGw5ygXTAPp9GJ+m5f8Rg1wiflJTe?=
- =?us-ascii?Q?O+NolMV2ORGX0QIDwOASpppE4isBxMEUkesfvbowCZDSAXGB6I/NCGSMMNVF?=
- =?us-ascii?Q?tSlrnJubvb278/XboBnOB1dWP2LFk0QVgLq2NM71ByePuos6HZmKFXE7nN7V?=
- =?us-ascii?Q?TSYXXMlu54L+8EC9Bq1J8c8/cn3VjywiEiECcbKW5SL1tiEUKRs6l65zaABJ?=
- =?us-ascii?Q?Ic6g2Q+Cn9LY38LV4vIkDm3wHg2z3HZ+GlLICIkev9Xbj//x2oqe7eYUxGFp?=
- =?us-ascii?Q?wY5Rpb9bjzBcPEd+fqDPnVvz9fsmk8rWIW9969u98kpqgbXOH5ZHhcHNPq/T?=
- =?us-ascii?Q?3ZJYw2ap4OK7fMTD54mg7PSaMEKFPPmeImo1MvSvGsLEQ6ejrXfjK/hfjbXy?=
- =?us-ascii?Q?eOLYR5ZHngzB4/ButpuvneotFBmajtwGF5yjJfFGllTy666fI7GviH7SmJ03?=
- =?us-ascii?Q?FaRXN0Ho6OnX3JHsMoVr+2wnkM0332WPnclDO9YvgIjimP2UBaFTRjY169uO?=
- =?us-ascii?Q?cMqsVIpNswHbo7JwNHINVBUUih4+zmfw4R8+ymxLDxjqC1DHfTcHCphkvHcA?=
- =?us-ascii?Q?z4cxxqwXCcLBIaIEhzQYV7lbRAeKR4PZtrK1LYSnhAOEd0wN7mM6mAwdmi6d?=
- =?us-ascii?Q?Pf5OJyaN+nYO9JnLZGTl+rq9yAZ1ZVykGcSF/gDA0LTy/54mKS7OTiXClwdE?=
- =?us-ascii?Q?0DAUItm+0zOz3KTf3xUkZ7sXw8mJv3iwQT9ycxg1lMVy3u4JI6sAbBOCs8+u?=
- =?us-ascii?Q?Vn8uEtv8ZqC6W8E0ksqRWMVGlfYy59strQ7TE4RSxrvgqK5hey615g4DGMMw?=
- =?us-ascii?Q?hFGcSMeH9roYesRDIacEoGvZAJKXHTbZR98Mxb1LLulHjKkVFi62HSo/nlr2?=
- =?us-ascii?Q?l/jreDZqPzojkFkIz3D1BbQTKgB2QPyy00P1epYXq/6NnAgMJHiL75Ju+6+f?=
- =?us-ascii?Q?/fOTwPWFgKQ8ySRYaBz8w2iGN3SdqHDPujEgUBHUE4jASdE7X43Kb14rmmLk?=
- =?us-ascii?Q?3fVGT/cNf6hqI39Q14R6lDmhhGaeg/DSxPYAUiGsrx9SFkn/yqpOfJ2HUKye?=
- =?us-ascii?Q?ruG199AJkIErIWfhj9vJuXU/iNir3XBmRTUJ8lzpTeMZnh1FNAvZTz5i0LDo?=
- =?us-ascii?Q?VNQLT0B0igYlfqHxHGolb85zuzQoM4QTH09T9POO3sPWPDoAAn2JRPEttOl6?=
- =?us-ascii?Q?9svULuoJR4VV4ABaIAEvGLpHeZ397aTUUXyc0H18?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89a2e814-51eb-4f83-dfff-08dd5d8abb83
-X-MS-Exchange-CrossTenant-AuthSource: MW6PR12MB8663.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 15:14:19.1241
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Z+yGrvHgQaDk2ILmZaF/it++XhBJtDwBiFxYivQjPtKZbaoIxwnep5GlTuEJ3vPL
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6836
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Fri, Mar 07, 2025 at 10:31:39AM +0100, Christian Brauner wrote:
-> On Fri, Mar 07, 2025 at 12:57:35AM +0000, Pratyush Yadav wrote:
-> > The File Descriptor Box (FDBox) is a mechanism for userspace to name
-> > file descriptors and give them over to the kernel to hold. They can
-> > later be retrieved by passing in the same name.
-> > 
-> > The primary purpose of FDBox is to be used with Kexec Handover (KHO).
-> > There are many kinds anonymous file descriptors in the kernel like
-> > memfd, guest_memfd, iommufd, etc. that would be useful to be preserved
-> > using KHO. To be able to do that, there needs to be a mechanism to label
-> > FDs that allows userspace to set the label before doing KHO and to use
-> > the label to map them back after KHO. FDBox achieves that purpose by
-> > exposing a miscdevice which exposes ioctls to label and transfer FDs
-> > between the kernel and userspace. FDBox is not intended to work with any
-> > generic file descriptor. Support for each kind of FDs must be explicitly
-> > enabled.
-> 
-> This makes no sense as a generic concept. If you want to restore shmem
-> and possibly anonymous inodes files via KHO then tailor the solution to
-> shmem and anon inodes but don't make this generic infrastructure. This
-> has zero chances to cover generic files.
+> I didn't say you were. I said the concept that dm-loop is based on
+> is fundamentally flawed and that your benchmark setup does not
+> reflect real world usage of loop devices.
 
-We need it to cover a range of FD types in the kernel like iommufd and
-vfio.
+> Where are the bug reports about the loop device being slow and the
+> analysis that indicates that it is unfixable?
 
-It is not "generic" in the sense every FD in the kernel magicaly works
-with fdbox, but that any driver/subsystem providing a FD could be
-enlightened to support it.
+So, I did benchmarks on an enterprise nvme drive (SAMSUNG 
+MZPLJ1T6HBJR-00007). I stacked ext4/loop/ext4, xfs/loop/xfs (using losetup 
+--direct-io=on), ext4/dm-loop/ext4 and xfs/dm-loop/xfs. And loop is slow.
 
-Very much do not want the infrastructure tied to just shmem and memfd.
+synchronous I/O:
+fio --direct=1 --bs=4k --runtime=10 --time_based --numjobs=12 --ioengine=psync --iodepth=1 --group_reporting=1 --filename=/mnt/test2/l -name=job --rw=rw
+raw block device:
+   READ: bw=399MiB/s (418MB/s), 399MiB/s-399MiB/s (418MB/s-418MB/s), io=3985MiB (4179MB), run=10001-10001msec
+  WRITE: bw=399MiB/s (418MB/s), 399MiB/s-399MiB/s (418MB/s-418MB/s), io=3990MiB (4184MB), run=10001-10001msec
+ext4/loop/ext4:
+   READ: bw=223MiB/s (234MB/s), 223MiB/s-223MiB/s (234MB/s-234MB/s), io=2232MiB (2341MB), run=10002-10002msec
+  WRITE: bw=223MiB/s (234MB/s), 223MiB/s-223MiB/s (234MB/s-234MB/s), io=2231MiB (2339MB), run=10002-10002msec
+xfs/loop/xfs:
+   READ: bw=220MiB/s (230MB/s), 220MiB/s-220MiB/s (230MB/s-230MB/s), io=2196MiB (2303MB), run=10001-10001msec
+  WRITE: bw=219MiB/s (230MB/s), 219MiB/s-219MiB/s (230MB/s-230MB/s), io=2193MiB (2300MB), run=10001-10001msec
+ext4/dm-loop/ext4:
+   READ: bw=338MiB/s (355MB/s), 338MiB/s-338MiB/s (355MB/s-355MB/s), io=3383MiB (3547MB), run=10002-10002msec
+  WRITE: bw=338MiB/s (355MB/s), 338MiB/s-338MiB/s (355MB/s-355MB/s), io=3385MiB (3549MB), run=10002-10002msec
+xfs/dm-loop/xfs:
+   READ: bw=375MiB/s (393MB/s), 375MiB/s-375MiB/s (393MB/s-393MB/s), io=3752MiB (3934MB), run=10002-10002msec
+  WRITE: bw=376MiB/s (394MB/s), 376MiB/s-376MiB/s (394MB/s-394MB/s), io=3756MiB (3938MB), run=10002-10002msec
 
-> As soon as you're dealing with non-kernel internal mounts that are not
-> guaranteed to always be there or something that depends on superblock or
-> mount specific information that can change you're already screwed.
+asynchronous I/O:
+fio --direct=1 --bs=4k --runtime=10 --time_based --numjobs=12 --ioengine=libaio --iodepth=16 --group_reporting=1 --filename=/mnt/test2/l -name=job --rw=rw
+raw block device:
+   READ: bw=1246MiB/s (1306MB/s), 1246MiB/s-1246MiB/s (1306MB/s-1306MB/s), io=12.2GiB (13.1GB), run=10001-10001msec
+  WRITE: bw=1247MiB/s (1308MB/s), 1247MiB/s-1247MiB/s (1308MB/s-1308MB/s), io=12.2GiB (13.1GB), run=10001-10001msec
+ext4/loop/ext4:
+   READ: bw=274MiB/s (288MB/s), 274MiB/s-274MiB/s (288MB/s-288MB/s), io=2743MiB (2877MB), run=10001-10001msec
+  WRITE: bw=275MiB/s (288MB/s), 275MiB/s-275MiB/s (288MB/s-288MB/s), io=2747MiB (2880MB), run=10001-10001msec
+xfs/loop/xfs:
+   READ: bw=276MiB/s (289MB/s), 276MiB/s-276MiB/s (289MB/s-289MB/s), io=2761MiB (2896MB), run=10002-10002msec
+  WRITE: bw=276MiB/s (290MB/s), 276MiB/s-276MiB/s (290MB/s-290MB/s), io=2765MiB (2899MB), run=10002-10002msec
+ext4/dm-loop/ext4:
+   READ: bw=1189MiB/s (1247MB/s), 1189MiB/s-1189MiB/s (1247MB/s-1247MB/s), io=11.6GiB (12.5GB), run=10002-10002msec
+  WRITE: bw=1190MiB/s (1248MB/s), 1190MiB/s-1190MiB/s (1248MB/s-1248MB/s), io=11.6GiB (12.5GB), run=10002-10002msec
+xfs/dm-loop/xfs:
+   READ: bw=1209MiB/s (1268MB/s), 1209MiB/s-1209MiB/s (1268MB/s-1268MB/s), io=11.8GiB (12.7GB), run=10001-10001msec
+  WRITE: bw=1210MiB/s (1269MB/s), 1210MiB/s-1210MiB/s (1269MB/s-1269MB/s), io=11.8GiB (12.7GB), run=10001-10001msec
 
-This is really targetting at anonymous or character device file
-descriptors that don't have issues with mounts.
+Mikulas
 
-Same remark about inode permissions and what not. The successor
-kernel would be responsible to secure the FDBOX and when it takes
-anything out it has to relabel it if required.
-
-inode #s and things can change because this is not something like CRIU
-that would have state linked to inode numbers. The applications in the
-sucessor kernels are already very special, they will need to cope with
-inode number changes along with all the other special stuff they do.
-
-> And struct file should have zero to do with this KHO stuff. It doesn't
-> need to carry new operations and it doesn't need to waste precious space
-> for any of this.
-
-Yeah, it should go through file_operations in some way.
-
-Jason
 
