@@ -1,133 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-43504-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F215A57810
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 04:49:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AAFEA57832
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 05:02:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B23B3B65AA
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 03:49:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89E633B6772
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 04:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0197315B115;
-	Sat,  8 Mar 2025 03:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC4815DBB3;
+	Sat,  8 Mar 2025 04:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n6ETkMBV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FQHgK/4T"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581602CAB;
-	Sat,  8 Mar 2025 03:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E1F2CAB;
+	Sat,  8 Mar 2025 04:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741405786; cv=none; b=PsSMGmtfgjzEt5IiB5zIhZqaNjIaYN1qln1y2rHLSND7PeAQmNu2CsxykGB0Y3u4gpqkNLxzjtTBvTnaBZj763vWmq+Nm8B6n7rYC6e58TZLj4MD2jJ761Xx5gmRSR8/KF4Tnk9iuIewoBaIrtUuAAOR94ZlCJksb9Z/UMaPq84=
+	t=1741406524; cv=none; b=sGWY2l801ktn6mP+K4LjCmLD9/Su1SoLUtxKcJA8/+ZQ0e8FL1/rAZYgOdU40+vKAbR3nVPuA7V7NVgpJ7pfLo9RPov8mc/2Z+YGKMkf4nz98yRdUL0aw8hHLnOGhtqEV/SPCUg6k5iOU0kDTKeJ9mbn6fH9ckaIVLgy9/mEEkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741405786; c=relaxed/simple;
-	bh=2/DxdqCSAxsariLOtaoQkAGj3uF1Ebn1pZo/9k2V3PI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HwCwKlRhxNgpcrQW6+IDNMea2BJ3ERpCHVubRo9t9Y81Ka9JtdX+BByP7yrtmVSMCkSKqbb4FnvjWqg4EGYMDt/wgPG+VFWc5kqc/Ka6uGRjvIeE3geKub9k4kJh9J0Si/1NgZKKSURJQuPuZuqiAiR0vmpJChPVjGqaSQW7PPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n6ETkMBV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE90EC4CEE0;
-	Sat,  8 Mar 2025 03:49:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741405785;
-	bh=2/DxdqCSAxsariLOtaoQkAGj3uF1Ebn1pZo/9k2V3PI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n6ETkMBV3STfh2avZe1G42xUmy80Mhp4D8jdUYdrpc4gyxcAsA5im5FXjn+0ha33o
-	 y9SzamCzzFcTL0a9niw5eq+3lhKSznGkToWkPrFHVb4saIpsbqufTKG3gvfbT01jYz
-	 WxFksvGTJ7q/WhDFHBrNxOidWIo/exK67Ig497rxdFVZzbkIHDfESXzOLcl/RK7JAi
-	 paMaw1ja8Nh04BzLL4e7hta0KsgT5KyoktSZ2aNX+wwMWbEIicuvD7nZJLRdoxIdwB
-	 8MyVmJ8pWOYizVzhPA+/AlqGaXcVxQdY9dKnse5EHOfBUq8X7dHuG8irSzkY+wPJJ8
-	 OWbb/N6TeYLMQ==
-Date: Fri, 7 Mar 2025 19:49:45 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Dave Chinner <david@fromorbit.com>,
-	Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>,
-	Jooyung Han <jooyung@google.com>, Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Heinz Mauelshagen <heinzm@redhat.com>, zkabelac@redhat.com,
-	dm-devel@lists.linux.dev, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] the dm-loop target
-Message-ID: <20250308034945.GG2803740@frogsfrogsfrogs>
-References: <7d6ae2c9-df8e-50d0-7ad6-b787cb3cfab4@redhat.com>
- <Z8W1q6OYKIgnfauA@infradead.org>
- <b3caee06-c798-420e-f39f-f500b3ea68ca@redhat.com>
- <Z8XlvU0o3C5hAAaM@infradead.org>
- <8adb8df2-0c75-592d-bc3e-5609bb8de8d8@redhat.com>
- <Z8Zh5T9ZtPOQlDzX@dread.disaster.area>
- <1fde6ab6-bfba-3dc4-d7fb-67074036deb0@redhat.com>
- <Z8eURG4AMbhornMf@dread.disaster.area>
- <81b037c8-8fea-2d4c-0baf-d9aa18835063@redhat.com>
+	s=arc-20240116; t=1741406524; c=relaxed/simple;
+	bh=hfr0wyaEzKkKUizNbHZm47nBjBY3n3rm0ugk61spGZQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OMfVZ5BMP9es7TR0f6GFJeT2Jvwe/nylQk6ZjQuJtIAje3TfVHY8wYJRF5YIEXlLmIW/8wZ+MwXMNMgeYc0cOpi6eFSdyfe378SEUEoxBq5G/80y1fQnCIMvqWYKRI3SCvM+8NFuliG7eYtDfgo410loPDJV3OTLkl3HhLFVA0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FQHgK/4T; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-86d42f08135so507782241.0;
+        Fri, 07 Mar 2025 20:02:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741406521; x=1742011321; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9iKLKDs+XpuTh+JgpV5e/BN3OOcF0PeT+I5vPrC6fpg=;
+        b=FQHgK/4TvngGHFJ8tmuL+s+htS7mmSXwU/oLNbhy0BXVlb79EulF9uM+3MCNOKJ+Tf
+         0JGLxDqgyWZfwFL+8FD/uwBKkZkDkvVQUD6l6MqZP3HxgXJ+6JsU12E4OG2qQPnPsM4r
+         lIzJvfo2YiTTGe+wKuvuEsgjIVTuVqe6w3LhXJ19sxRYbrRn9pNb9o6IRjWsGO6PLJOh
+         HNDnmWn7NYaherLAAl4q78f+bUnEPw17qg0VdwyugCK9GeGfgtj90Hy6oPulww6Djqm3
+         HhOjdc9VUbezkO2Yv7roS9C6eGzN7z6X6f9a76zgB4d19PqHE6nu4Tb6SE25C+bQSRm7
+         rbxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741406521; x=1742011321;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9iKLKDs+XpuTh+JgpV5e/BN3OOcF0PeT+I5vPrC6fpg=;
+        b=PtsOaIsb8e4DoJBeEK6gHxTQNuUTljwhzhj6F2z+wE6j+fnnGRPEDKwo6QC7bo1lMb
+         n5a7Wr1BoV8AyZZOxSR+3EUS0ApsQyw8VepkMRrVSG/PwzSCEpc5mNdHVkBi0za6Q05A
+         jzpMfs2eKG/c4DQCHxsOm2guO+oFrOHNiNMSg1vEDsSkXBN+lx4LaeZ855zRnvkJNVzf
+         JKG8Rg6iMeVF+IB/0VRLSgESLvfSxcAiFb+fFIuUdGM8zZpxuA9PNK3z0rh2GBctOo96
+         sQLoMmOIQpeTo8gO6LsgLQi2wFayow4/h8dR6BjrZ56IgiqZvHspD/Zs3EzBGqTtARWi
+         wZqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWKimBPDsVdJ5Vo1jnWyH/3I2K+4DdptbOXmQ6BThMSZlcERIfdQTmEM207w4xkNmBklIV7K+B/Edu4i9P@vger.kernel.org, AJvYcCWQl9QEp5zUV38TwyKa3ovhrkVb9Y++u686k6EW/QrtaC4fTt/Xqlhtgz/00vvEOxDIRWDfYVvQm/IDtLi3@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHb2TTquwvkrY00pex6Y43kXfJ1b02nccGAJxUil4A23jjD0iv
+	j3uuIpuY1NHdfzS0iFoOH2kXYj91oEY/D4KyNRbVzA1HrTFGr1JFDbdVvGUYux5C1ujPLcRePqw
+	H52nxIhU4lB7MggkWJJYvxK1GaG4E6oss
+X-Gm-Gg: ASbGncvzQuZ7R6AuxR7NAuuddraEiren9NGKJeSo3OLFJfkxCfbR9HrAq6bQHCEQsnB
+	UwC0RPnkK561cBiMih13j4i6+HX+aclpW/HoLNe87GRIDbG75X11b1FComtuACnOmelUKayHrph
+	jvx+u7+94ZCJPB7x35qImq88JSQ/HRJvfOycjB2Op0s7EFRfwbxbGbmFVUoo7lXOWAEzfO
+X-Google-Smtp-Source: AGHT+IGaKKGjYHdm9qJTvxbsOhzY0wfi2YMgm1Hb1u4ej5s1SpkgK27wCmqULUNQ+ZRXFJuhoDX7necVXr/jpfkcw+Y=
+X-Received: by 2002:a05:6102:f0d:b0:4bb:c527:aacd with SMTP id
+ ada2fe7eead31-4c30a71a88bmr4033061137.23.1741406521409; Fri, 07 Mar 2025
+ 20:02:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <81b037c8-8fea-2d4c-0baf-d9aa18835063@redhat.com>
+References: <20250308022754.75013-1-sunliming@linux.dev> <174140535640.1476341.8645731807830133176.b4-ty@kernel.org>
+In-Reply-To: <174140535640.1476341.8645731807830133176.b4-ty@kernel.org>
+From: Pedro Falcato <pedro.falcato@gmail.com>
+Date: Sat, 8 Mar 2025 04:01:50 +0000
+X-Gm-Features: AQ5f1JoC6zLZwSj-S6sQ5ahAOKdFVqxIaOTWC65exX-gSgT0gEc8578Z-BCtIW0
+Message-ID: <CAKbZUD1ieaVVD9A9CG=5oCacud4JqnxzYgMv=fiQK=2zT_y10w@mail.gmail.com>
+Subject: Re: [PATCH V2] fs: binfmt_elf_efpic: fix variable set but not used warning
+To: Kees Cook <kees@kernel.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	ebiederm@xmission.com, sunliming@linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, sunliming@kylinos.cn, 
+	kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 07, 2025 at 04:21:58PM +0100, Mikulas Patocka wrote:
-> > I didn't say you were. I said the concept that dm-loop is based on
-> > is fundamentally flawed and that your benchmark setup does not
-> > reflect real world usage of loop devices.
-> 
-> > Where are the bug reports about the loop device being slow and the
-> > analysis that indicates that it is unfixable?
-> 
-> So, I did benchmarks on an enterprise nvme drive (SAMSUNG 
-> MZPLJ1T6HBJR-00007). I stacked ext4/loop/ext4, xfs/loop/xfs (using losetup 
-> --direct-io=on), ext4/dm-loop/ext4 and xfs/dm-loop/xfs. And loop is slow.
+On Sat, Mar 8, 2025 at 3:45=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
+>
+> On Sat, 08 Mar 2025 10:27:54 +0800, sunliming@linux.dev wrote:
+> > Fix below kernel warning:
+> > fs/binfmt_elf_fdpic.c:1024:52: warning: variable 'excess1' set but not
+> > used [-Wunused-but-set-variable]
+> >
+> >
+>
+> Adjusted Subject for typos.
+>
+> Applied to for-next/execve, thanks!
+>
+> [1/1] binfmt_elf_fdpic: fix variable set but not used warning
+>       https://git.kernel.org/kees/c/7845fe65b33d
+>
 
-Are you running the loop device in directio mode?  The default is to use
-buffered io, which wastes pagecache /and/ sometimes trips dirty limits
-throttling.  The loopdev tests in fstests get noticeably faster if I
-force directio mode.
+FYI, there's a typo so this patch won't compile
 
---D
+>+ unsiged long excess1
+>+ =3D PAGE_SIZE - ((maddr + phdr->p_filesz) & ~PAGE_MASK);
 
-> synchronous I/O:
-> fio --direct=1 --bs=4k --runtime=10 --time_based --numjobs=12 --ioengine=psync --iodepth=1 --group_reporting=1 --filename=/mnt/test2/l -name=job --rw=rw
-> raw block device:
->    READ: bw=399MiB/s (418MB/s), 399MiB/s-399MiB/s (418MB/s-418MB/s), io=3985MiB (4179MB), run=10001-10001msec
->   WRITE: bw=399MiB/s (418MB/s), 399MiB/s-399MiB/s (418MB/s-418MB/s), io=3990MiB (4184MB), run=10001-10001msec
-> ext4/loop/ext4:
->    READ: bw=223MiB/s (234MB/s), 223MiB/s-223MiB/s (234MB/s-234MB/s), io=2232MiB (2341MB), run=10002-10002msec
->   WRITE: bw=223MiB/s (234MB/s), 223MiB/s-223MiB/s (234MB/s-234MB/s), io=2231MiB (2339MB), run=10002-10002msec
-> xfs/loop/xfs:
->    READ: bw=220MiB/s (230MB/s), 220MiB/s-220MiB/s (230MB/s-230MB/s), io=2196MiB (2303MB), run=10001-10001msec
->   WRITE: bw=219MiB/s (230MB/s), 219MiB/s-219MiB/s (230MB/s-230MB/s), io=2193MiB (2300MB), run=10001-10001msec
-> ext4/dm-loop/ext4:
->    READ: bw=338MiB/s (355MB/s), 338MiB/s-338MiB/s (355MB/s-355MB/s), io=3383MiB (3547MB), run=10002-10002msec
->   WRITE: bw=338MiB/s (355MB/s), 338MiB/s-338MiB/s (355MB/s-355MB/s), io=3385MiB (3549MB), run=10002-10002msec
-> xfs/dm-loop/xfs:
->    READ: bw=375MiB/s (393MB/s), 375MiB/s-375MiB/s (393MB/s-393MB/s), io=3752MiB (3934MB), run=10002-10002msec
->   WRITE: bw=376MiB/s (394MB/s), 376MiB/s-376MiB/s (394MB/s-394MB/s), io=3756MiB (3938MB), run=10002-10002msec
-> 
-> asynchronous I/O:
-> fio --direct=1 --bs=4k --runtime=10 --time_based --numjobs=12 --ioengine=libaio --iodepth=16 --group_reporting=1 --filename=/mnt/test2/l -name=job --rw=rw
-> raw block device:
->    READ: bw=1246MiB/s (1306MB/s), 1246MiB/s-1246MiB/s (1306MB/s-1306MB/s), io=12.2GiB (13.1GB), run=10001-10001msec
->   WRITE: bw=1247MiB/s (1308MB/s), 1247MiB/s-1247MiB/s (1308MB/s-1308MB/s), io=12.2GiB (13.1GB), run=10001-10001msec
-> ext4/loop/ext4:
->    READ: bw=274MiB/s (288MB/s), 274MiB/s-274MiB/s (288MB/s-288MB/s), io=2743MiB (2877MB), run=10001-10001msec
->   WRITE: bw=275MiB/s (288MB/s), 275MiB/s-275MiB/s (288MB/s-288MB/s), io=2747MiB (2880MB), run=10001-10001msec
-> xfs/loop/xfs:
->    READ: bw=276MiB/s (289MB/s), 276MiB/s-276MiB/s (289MB/s-289MB/s), io=2761MiB (2896MB), run=10002-10002msec
->   WRITE: bw=276MiB/s (290MB/s), 276MiB/s-276MiB/s (290MB/s-290MB/s), io=2765MiB (2899MB), run=10002-10002msec
-> ext4/dm-loop/ext4:
->    READ: bw=1189MiB/s (1247MB/s), 1189MiB/s-1189MiB/s (1247MB/s-1247MB/s), io=11.6GiB (12.5GB), run=10002-10002msec
->   WRITE: bw=1190MiB/s (1248MB/s), 1190MiB/s-1190MiB/s (1248MB/s-1248MB/s), io=11.6GiB (12.5GB), run=10002-10002msec
-> xfs/dm-loop/xfs:
->    READ: bw=1209MiB/s (1268MB/s), 1209MiB/s-1209MiB/s (1268MB/s-1268MB/s), io=11.8GiB (12.7GB), run=10001-10001msec
->   WRITE: bw=1210MiB/s (1269MB/s), 1210MiB/s-1210MiB/s (1269MB/s-1269MB/s), io=11.8GiB (12.7GB), run=10001-10001msec
-> 
-> Mikulas
-> 
-> 
+s/unsiged/unsigned/
+
+:)
+
+--=20
+Pedro
 
