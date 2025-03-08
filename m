@@ -1,93 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-43519-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 889BDA57C97
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 19:05:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28B9DA57CA3
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 19:14:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C329D16D28B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 18:05:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CB991892F64
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 18:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC4C1E25F7;
-	Sat,  8 Mar 2025 18:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6321E8325;
+	Sat,  8 Mar 2025 18:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eaczmgbF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12FA2A8C1
-	for <linux-fsdevel@vger.kernel.org>; Sat,  8 Mar 2025 18:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D13C196;
+	Sat,  8 Mar 2025 18:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741457104; cv=none; b=lF+4fcaIZEozl7iKHrnCc7NkQItWZd08Wte+xiHgP/zy8SO7ge46oHniRKTR2RJ6F3Vty2lQ42kZ1puHTgsV7KcqpfVFnqkHFWwJf6IMpIZWFuKH+ipysNG8wfS+LCqum16gWDmKPwpaKq7ZPnk60Qcl4PdnSopDVXSE6zc7GAA=
+	t=1741457645; cv=none; b=QUoszMBY4DqRVALNp1/22qZGbeRCOz08Mw4SQVixQvG9MryxbLSacw32MVQSq4iD0yuG33ZPPXxdpnhinooQNEdI9LFbNeEr2GbpDzaYGNfNf0Adt39X8SsZvMgVYyrCEDCdQrpebPx8spJSXainDqjQlgzhVAhQiKf6f3d1XyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741457104; c=relaxed/simple;
-	bh=BFERkLF5tvINM5AMTT7npfSqAfHAEvcSqvUAM7QVZ3I=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=KgaUjAgTYNN/0yOD+N6N21BQMDQBTbizjo0vHwIBn5v9iKOeX6ViYUFrr9Se2g1m8VFN28HHi+1jTPy3cgWPww6+m8o8QzPgGvq8YGa98Q+ZZ4ngRpa3AP1uvsbL2FeMmiDTSfGDB8YhKrpFW3YYrRbZSgqZaLmtVYj30wMB2VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d2a379bbf0so61970655ab.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Mar 2025 10:05:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741457102; x=1742061902;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OiC+HbgW7R0gX7hV59VQWjAiqUZG5JTOlemCDNoKGj8=;
-        b=iFNZa0B6SlkC6ebd29VJZAaehyPxHkbkyMHJui4lCeuOu5rB1SfHQsyRtHAgS8m6jt
-         2bbRGUWF1mB0lWS/QuROzg4ECUGlaacE/H44SGfGEladCKvXeEX/GSXJI59O/cG36rg2
-         lbxZ4c3S8IKV4E+jLx0FsVymb/Rf3LQhhkeH8e49A+sICH+tbk5iD7tJjjsyne8veTyV
-         u22ic6wdWL9askmA6QkPH/HMIiSdq5rT8dwjDxLnxVeiBPKvfqLqRo0eOcgZMoVb3SYC
-         72CKa3Jdi0CvRUFkPsF1fTL0rbAiSOPxm4OKzjwSWkGrMYi2IIYRC10OKgxuUnKjAGtb
-         xeQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjj6YhRpndM4H5Q/2qYow8kXanp/wg2KLmPGiOXL9n+TE/x6Uwq2y58YO/I/wL5U0wW65S1ob3Fh4rS/n4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsGPeuGidcoB0JI9bGdVfcO7VxELRbEH5JArvfkKgUkXpP99PU
-	2x67/rsciEALvIqeoXgQa4RnDvOBmN5M6CiwAbKVM6esz8scN/mkbuDd/rq+PJqFt5FhXOI8onV
-	PFC4TeizqwgW1O097/wveyfR0qGrkd0/bbpRBfjdZaY4rrTKKxviaVxo=
-X-Google-Smtp-Source: AGHT+IHNb06mTcXNBo2l2kG6CG6ZgzR/xmoJHMjCzX6KgJmQOHH+vrlcKgCoFFOUfoQHb7qgCic7gpJhxxqxAoJlleYqBBCxzlUq
+	s=arc-20240116; t=1741457645; c=relaxed/simple;
+	bh=/DztjNlgTwuVOyV43hgm+/GQtxBZDAlcw654hm2YE5A=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qnQ+Gz51NsUF2TnbD+AcgJj0kXKtXJnOB7AtIHzrBGVY4d30Q8FzKN9vTrC/Ly8+kzlGUdDD5LprFzkMBRHINhffTNKBnHS5WoQFiydagyphWCPEjvBBWx83cFO+ch+p4Cr9mUp0fKjQ2Oy+nisU5f+cmuO/IZ2tJXAv9uVYkH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eaczmgbF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C789C4CEE0;
+	Sat,  8 Mar 2025 18:14:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741457644;
+	bh=/DztjNlgTwuVOyV43hgm+/GQtxBZDAlcw654hm2YE5A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=eaczmgbFwScBH4+O9vOHrmVBUaSICMoLMaXdTFJk2xBze9yDs9GB2xea5i8XLaIMi
+	 A29V4tq0rL9BL9kiXdrirtOkDhuFTSsc7k0xK0zwoJZ+6ph6r6tCwhT1LkYl/XN1Sp
+	 8Q35ZCFpIl/0O1mC1B0TMo4zA6mRhHEEfm3G26nm+nv0vhgyunR9X79lctzU9++u8Q
+	 iKlnygEq5P0y1y26dxLBDb9UDJUrUPmZUJs9vnATJ7FR88yDk6mbYYCvxmFCrP6cBl
+	 guHOicAuDTmLH8pR2DXZ9Z828qziEk3K5IrduFp6DGtO3oiDNcBNVbJ9XfsvVGF+FD
+	 2eboWApInBghg==
+From: SeongJae Park <sj@kernel.org>
+To: Zi Yan <ziy@nvidia.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Hugh Dickins <hughd@google.com>,
+	Kairui Song <kasong@tencent.com>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	linux-kernel@vger.kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	"Kirill A. Shuemov" <kirill.shutemov@linux.intel.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Yang Shi <yang@os.amperecomputing.com>,
+	Yu Zhao <yuzhao@google.com>
+Subject: Re: [PATCH v3 1/2] mm/filemap: use xas_try_split() in __filemap_add_folio()
+Date: Sat,  8 Mar 2025 10:14:02 -0800
+Message-Id: <20250308181402.95667-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250226210854.2045816-2-ziy@nvidia.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:11:b0:3d4:3c21:ba71 with SMTP id
- e9e14a558f8ab-3d4419ff144mr116769525ab.18.1741457101875; Sat, 08 Mar 2025
- 10:05:01 -0800 (PST)
-Date: Sat, 08 Mar 2025 10:05:01 -0800
-In-Reply-To: <67a310c5.050a0220.50516.0011.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67cc86cd.050a0220.14db68.0037.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] general protection fault in inode_permission (3)
-From: syzbot <syzbot+1facc65919790d188467@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-syzbot has bisected this issue to:
+Hello,
 
-commit 14152654805256d760315ec24e414363bfa19a06
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Mon Nov 25 05:21:27 2024 +0000
+On Wed, 26 Feb 2025 16:08:53 -0500 Zi Yan <ziy@nvidia.com> wrote:
 
-    bcachefs: Bad btree roots are now autofix
+> During __filemap_add_folio(), a shadow entry is covering n slots and a
+> folio covers m slots with m < n is to be added.  Instead of splitting all
+> n slots, only the m slots covered by the folio need to be split and the
+> remaining n-m shadow entries can be retained with orders ranging from m to
+> n-1.  This method only requires
+> 
+> 	(n/XA_CHUNK_SHIFT) - (m/XA_CHUNK_SHIFT)
+> 
+> new xa_nodes instead of
+> 	(n % XA_CHUNK_SHIFT) * ((n/XA_CHUNK_SHIFT) - (m/XA_CHUNK_SHIFT))
+> 
+> new xa_nodes, compared to the original xas_split_alloc() + xas_split()
+> one.  For example, to insert an order-0 folio when an order-9 shadow entry
+> is present (assuming XA_CHUNK_SHIFT is 6), 1 xa_node is needed instead of
+> 8.
+> 
+> xas_try_split_min_order() is introduced to reduce the number of calls to
+> xas_try_split() during split.
+> 
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Kairui Song <kasong@tencent.com>
+> Cc: Miaohe Lin <linmiaohe@huawei.com>
+> Cc: Mattew Wilcox <willy@infradead.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
+> Cc: Kirill A. Shuemov <kirill.shutemov@linux.intel.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Yang Shi <yang@os.amperecomputing.com>
+> Cc: Yu Zhao <yuzhao@google.com>
+> ---
+>  include/linux/xarray.h |  7 +++++++
+>  lib/xarray.c           | 25 +++++++++++++++++++++++
+>  mm/filemap.c           | 45 +++++++++++++++++-------------------------
+>  3 files changed, 50 insertions(+), 27 deletions(-)
+> 
+> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+> index 4010195201c9..78eede109b1a 100644
+> --- a/include/linux/xarray.h
+> +++ b/include/linux/xarray.h
+> @@ -1556,6 +1556,7 @@ int xas_get_order(struct xa_state *xas);
+>  void xas_split(struct xa_state *, void *entry, unsigned int order);
+>  void xas_split_alloc(struct xa_state *, void *entry, unsigned int order, gfp_t);
+>  void xas_try_split(struct xa_state *xas, void *entry, unsigned int order);
+> +unsigned int xas_try_split_min_order(unsigned int order);
+>  #else
+>  static inline int xa_get_order(struct xarray *xa, unsigned long index)
+>  {
+> @@ -1582,6 +1583,12 @@ static inline void xas_try_split(struct xa_state *xas, void *entry,
+>  		unsigned int order)
+>  {
+>  }
+> +
+> +static inline unsigned int xas_try_split_min_order(unsigned int order)
+> +{
+> +	return 0;
+> +}
+> +
+>  #endif
+>  
+>  /**
+> diff --git a/lib/xarray.c b/lib/xarray.c
+> index bc197c96d171..8067182d3e43 100644
+> --- a/lib/xarray.c
+> +++ b/lib/xarray.c
+> @@ -1133,6 +1133,28 @@ void xas_split(struct xa_state *xas, void *entry, unsigned int order)
+>  }
+>  EXPORT_SYMBOL_GPL(xas_split);
+>  
+> +/**
+> + * xas_try_split_min_order() - Minimal split order xas_try_split() can accept
+> + * @order: Current entry order.
+> + *
+> + * xas_try_split() can split a multi-index entry to smaller than @order - 1 if
+> + * no new xa_node is needed. This function provides the minimal order
+> + * xas_try_split() supports.
+> + *
+> + * Return: the minimal order xas_try_split() supports
+> + *
+> + * Context: Any context.
+> + *
+> + */
+> +unsigned int xas_try_split_min_order(unsigned int order)
+> +{
+> +	if (order % XA_CHUNK_SHIFT == 0)
+> +		return order == 0 ? 0 : order - 1;
+> +
+> +	return order - (order % XA_CHUNK_SHIFT);
+> +}
+> +EXPORT_SYMBOL_GPL(xas_try_split_min_order);
+> +
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10305878580000
-start commit:   69b8923f5003 Merge tag 'for-linus-6.14-ofs4' of git://git...
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=12305878580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=14305878580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=57ab43c279fa614d
-dashboard link: https://syzkaller.appspot.com/bug?extid=1facc65919790d188467
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=149d95f8580000
+I found this makes build fails when CONFIG_XARRAY_MULTI is unset, like below.
 
-Reported-by: syzbot+1facc65919790d188467@syzkaller.appspotmail.com
-Fixes: 141526548052 ("bcachefs: Bad btree roots are now autofix")
+    /linux/lib/xarray.c:1251:14: error: redefinition of ‘xas_try_split_min_order’
+     1251 | unsigned int xas_try_split_min_order(unsigned int order)
+          |              ^~~~~~~~~~~~~~~~~~~~~~~
+    In file included from /linux/lib/xarray.c:13:
+    /linux/include/linux/xarray.h:1587:28: note: previous definition of ‘xas_try_split_min_order’ with type ‘unsigned int(unsigned int)’
+     1587 | static inline unsigned int xas_try_split_min_order(unsigned int order)
+          |                            ^~~~~~~~~~~~~~~~~~~~~~~
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+I think we should have the definition only when CONFIG_XARRAY_MULTI?
+
+
+Thanks,
+SJ
+
+[...]
 
