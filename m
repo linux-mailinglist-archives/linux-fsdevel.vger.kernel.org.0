@@ -1,176 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-43530-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43531-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA1AEA57E94
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 22:34:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76C78A57F08
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 22:54:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E506188BCE5
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 21:34:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F4AE3AB7EB
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 21:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63ED71EFF86;
-	Sat,  8 Mar 2025 21:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lQp7L3ln"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0911E51F0;
+	Sat,  8 Mar 2025 21:53:55 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD4F15749F;
-	Sat,  8 Mar 2025 21:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82643839F4
+	for <linux-fsdevel@vger.kernel.org>; Sat,  8 Mar 2025 21:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741469643; cv=none; b=IdSMeWJHVoZQ/lx53ww67sgSxQj/B6hop9QKC34Y8CPx7icN6vM5adqJMwasMwSh0jqPJ3kY/+rqMlVc9hLVzenQPisuCn59oKvwD8i8vnmJPOFjQ98QuTgiuExCjDLhwYjpohnOf9MYyIb5q0kyviHv1EOcAMKK+3ThpVkBfxM=
+	t=1741470835; cv=none; b=qFQilYyIn2Xvae9YVpWGdZ8IwBO02dDJJjp+Zhs0zSUf+rdEk/Yy2Nf5HC/axTrWd2K74h2zEQRwDp/qXPAhf+W0TMtVsB7fbi9RrvvIPJvWXMKN/vCJI1zIrgWe5PkdL81WCW4De7kOZ2F1AyOw3EZR5GfiE3PpyZPYcI4ImLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741469643; c=relaxed/simple;
-	bh=D3enNDD6IJ9h5WbzvlwGVYrpzdUfItJAPQgFApHCcXE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eSs7NeznBROvLVYH8UOGXkvpPX30HlodoK+yItvI6Lr3tH4bcPlo02JWyX7ci5vouWwuXB+swFV7lUKjc6/DxXGD1RobkWdlNQ7CVKS+YKoWTYh7YXCGocUwVjqyaEGOepTmTXbqpUigJPDy3zWGuYLtiwaWgAsTlyk20mC31cU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lQp7L3ln; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07C26C4CEE0;
-	Sat,  8 Mar 2025 21:34:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741469643;
-	bh=D3enNDD6IJ9h5WbzvlwGVYrpzdUfItJAPQgFApHCcXE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lQp7L3lnRvKN3sS1evrXBI53w7bgUXY37xeFolN7N5OzCNV93cQeh+HkdKAllfc5P
-	 rUDnCBqOwpjubbd5si4dsVh7eG+r/JO+A85CdDpdl4f58vKwATa+NzfpjEbpGO+B4B
-	 Z5G5v6Aq/yRIqsYQ7eep/I2dosIaI+2JsGH/6F2hPZfp/Zmp2S1PCRc5P9kaN0PPe2
-	 M5CRw/z0XQ7rrZvlV2w/jsZHxZhRq3MEXhnkKhovQhP9zwdvbAL4e+D2bY3fKQLWKj
-	 Ek54OrDIoljN4906DppDy5Mesd+S2F2MHyg56+ywGVI69oZMnohV/WfmQIOesZ2dCr
-	 bqKWybEGFsCfA==
-From: SeongJae Park <sj@kernel.org>
-To: Zi Yan <ziy@nvidia.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	Hugh Dickins <hughd@google.com>,
-	Kairui Song <kasong@tencent.com>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	linux-kernel@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	"Kirill A. Shuemov" <kirill.shutemov@linux.intel.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Yang Shi <yang@os.amperecomputing.com>,
-	Yu Zhao <yuzhao@google.com>
-Subject: Re: [PATCH v3 1/2] mm/filemap: use xas_try_split() in __filemap_add_folio()
-Date: Sat,  8 Mar 2025 13:34:00 -0800
-Message-Id: <20250308213400.10220-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20A1553F-C30A-4D93-8A43-011163A22C60@nvidia.com>
-References: 
+	s=arc-20240116; t=1741470835; c=relaxed/simple;
+	bh=CYnmF9Do29+aMPutGws7tNyvaQUYvmcRni7TXMbB5dI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kHzbJGG3l+xpb0HeoYScNZHJ2piXqX0IfycsrN+oTr19/19lMayhVNkb/50BE8LtBzx7VqUaSC5huL1CdHi/jHnN/guXuDUmX8Ygdtp0Q0+KPFBPjCORMZzyYA3A75RYzUibx9pnkEduOxH5DGoTOZUcvkRPd+PkzAZ9DtFTXMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-112-49.bstnma.fios.verizon.net [173.48.112.49])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 528Lr6iT010003
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 8 Mar 2025 16:53:06 -0500
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id EE5512E010B; Sat, 08 Mar 2025 16:53:05 -0500 (EST)
+Date: Sat, 8 Mar 2025 16:53:05 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Hector Martin <marcan@marcan.st>,
+        syzbot <syzbot+4364ec1693041cad20de@syzkaller.appspotmail.com>,
+        broonie@kernel.org, joel.granados@kernel.org, kees@kernel.org,
+        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bcachefs?] general protection fault in proc_sys_compare
+Message-ID: <20250308215305.GB69932@mit.edu>
+References: <67ca5dd0.050a0220.15b4b9.0076.GAE@google.com>
+ <239cbc8a-9886-4ebc-865c-762bb807276c@marcan.st>
+ <ph6whomevsnlsndjuewjxaxi6ngezbnlmv2hmutlygrdu37k3w@k57yfx76ptih>
+ <20250307133126.GA8837@mit.edu>
+ <a5avbx7c6pilz4bnp3iv7ivuxtth7udo6ypepemhumsxvuawrw@qa7kec5sxyhp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a5avbx7c6pilz4bnp3iv7ivuxtth7udo6ypepemhumsxvuawrw@qa7kec5sxyhp>
 
-On Sat, 08 Mar 2025 13:32:02 -0500 Zi Yan <ziy@nvidia.com> wrote:
-
-> On 8 Mar 2025, at 13:14, SeongJae Park wrote:
+On Fri, Mar 07, 2025 at 09:33:11AM -0500, Kent Overstreet wrote:
+>
+> > Maybe this is something Syzbot could implement?
 > 
-> > Hello,
-> >
-> > On Wed, 26 Feb 2025 16:08:53 -0500 Zi Yan <ziy@nvidia.com> wrote:
-[...]
-> >> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-> >> index 4010195201c9..78eede109b1a 100644
-> >> --- a/include/linux/xarray.h
-> >> +++ b/include/linux/xarray.h
-> >> @@ -1556,6 +1556,7 @@ int xas_get_order(struct xa_state *xas);
-> >>  void xas_split(struct xa_state *, void *entry, unsigned int order);
-> >>  void xas_split_alloc(struct xa_state *, void *entry, unsigned int order, gfp_t);
-> >>  void xas_try_split(struct xa_state *xas, void *entry, unsigned int order);
-> >> +unsigned int xas_try_split_min_order(unsigned int order);
-> >>  #else
-> >>  static inline int xa_get_order(struct xarray *xa, unsigned long index)
-> >>  {
-> >> @@ -1582,6 +1583,12 @@ static inline void xas_try_split(struct xa_state *xas, void *entry,
-> >>  		unsigned int order)
-> >>  {
-> >>  }
-> >> +
-> >> +static inline unsigned int xas_try_split_min_order(unsigned int order)
-> >> +{
-> >> +	return 0;
-> >> +}
-> >> +
-> >>  #endif
-> >>
-> >>  /**
-> >> diff --git a/lib/xarray.c b/lib/xarray.c
-> >> index bc197c96d171..8067182d3e43 100644
-> >> --- a/lib/xarray.c
-> >> +++ b/lib/xarray.c
-> >> @@ -1133,6 +1133,28 @@ void xas_split(struct xa_state *xas, void *entry, unsigned int order)
-> >>  }
-> >>  EXPORT_SYMBOL_GPL(xas_split);
-> >>
-> >> +/**
-> >> + * xas_try_split_min_order() - Minimal split order xas_try_split() can accept
-> >> + * @order: Current entry order.
-> >> + *
-> >> + * xas_try_split() can split a multi-index entry to smaller than @order - 1 if
-> >> + * no new xa_node is needed. This function provides the minimal order
-> >> + * xas_try_split() supports.
-> >> + *
-> >> + * Return: the minimal order xas_try_split() supports
-> >> + *
-> >> + * Context: Any context.
-> >> + *
-> >> + */
-> >> +unsigned int xas_try_split_min_order(unsigned int order)
-> >> +{
-> >> +	if (order % XA_CHUNK_SHIFT = 0)
-> >> +		return order = 0 ? 0 : order - 1;
-> >> +
-> >> +	return order - (order % XA_CHUNK_SHIFT);
-> >> +}
-> >> +EXPORT_SYMBOL_GPL(xas_try_split_min_order);
-> >> +
-> >
-> > I found this makes build fails when CONFIG_XARRAY_MULTI is unset, like below.
-> >
-> >     /linux/lib/xarray.c:1251:14: error: redefinition of ‘xas_try_split_min_order’
-> >      1251 | unsigned int xas_try_split_min_order(unsigned int order)
-> >           |              ^~~~~~~~~~~~~~~~~~~~~~~
-> >     In file included from /linux/lib/xarray.c:13:
-> >     /linux/include/linux/xarray.h:1587:28: note: previous definition of ‘xas_try_split_min_order’ with type ‘unsigned int(unsigned int)’
-> >      1587 | static inline unsigned int xas_try_split_min_order(unsigned int order)
-> >           |                            ^~~~~~~~~~~~~~~~~~~~~~~
-> >
-> > I think we should have the definition only when CONFIG_XARRAY_MULTI?
-> 
-> I think it might be a merge issue, since my original patch[1] places
-> xas_try_split_min_order() above xas_try_split(), both of which are
-> in #ifdef CONFIG_XARRAY_MULTI #endif. But mm-everything-2025-03-08-00-43
-> seems to move xas_try_split_min_order() below xas_try_split() and
-> out of CONFIG_XARRAY_MULTI guard.
+> Wouldn't it be better to have it in 'git bisect'?
 
-You're right.  I was testing this on the mm-unstable tree, more specifically,
-commit 2f0c87542d97.
+"Git bisect" is the wrong layer of abstraction.  It doesn't know
+anything about (a) how build the software package (which might not be
+the kernel, remember), nor how to run a test, nor how to tell whether
+a test run was successful or a failure.
 
-I confirmed the build failure goes away after moving the definition to the
-original place.
+It's expected that those tools need to be built on top of "git
+bisect."  For example Steve Rostedt has contributed ktest.pl, which is
+in the kernel sources in tools/teseting/ktest/.  This assumes that the
+system under test is a bare metal machine where is accessible via
+ssh/scp, and that builds are done on the local machine where ktest.pl
+is run.
 
-> 
-> [1] https://lore.kernel.org/linux-mm/20250226210854.2045816-2-ziy@nvidia.com/
-> 
-> --
-> Best Regards,
-> Yan, Zi
+ktest.pl is not something I've used myself, since I do pretty much all
+of my testing using VM's, and in the case of gce-xfstests, we spin up
+a fast compile VM which does the kernel compilation and uploads the
+freshly compiled kernel to Google Cloud Storage (GCS), and then kicks
+off one or more test VM's which fetches the kernel from GCS, with the
+command of which tests to run encoded in the test VM metadata.  I also
+have a monitoring VM that detects if a test VM hangs, so it can
+automatically restart the test VM.  All of this is logic which is't
+supported by ktest.pl, and obviously *far* beyond the scope of "git
+bisect".
 
+And while Syzbot can use Google Cloud in addition to qemu, its
+infrastruture for how it compiles kernels and runs its test VM's is
+sufficiently different that it's not clear that software written for
+one infrastructure would be easily applicable to another.
 
-Thanks,
-SJ
+> If only we had interns and grad students for this sort of thing :)
+
+The lightweight test manager (ltm) for gce-xfstests was implemented by
+an intern.  And the kernel compilation service (kcs), git branch
+watcher, and git bisection engine for gce-xfstests was done by a group
+of undergraduates at a unversity in Boston as part of a software
+engineering class project.
+
+Mentoring interns and undergraduates was incredibly fulfilling, and I
+very much enjoyed the experience.  I'd like to think I helped them to
+become better software engineers.  However, mentoring students takes a
+significant amount of time, and on net, it's not clear it was a win
+from a personal time ROI perspective.
+
+We did manage to recruit the intern to become a SWE at Google after he
+graduated, so that was definitely considered a win from my company's
+perspective.  :-)
+
+						- Ted
 
