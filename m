@@ -1,202 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-43511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70B96A5791A
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 09:06:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD07A57944
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 09:30:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B220F1889477
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 08:06:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9F9E3B5488
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 08:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6DD1A2632;
-	Sat,  8 Mar 2025 08:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34C81AA1DA;
+	Sat,  8 Mar 2025 08:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CpFZJrxT"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="MHdXaqv3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3DB17583;
-	Sat,  8 Mar 2025 08:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9171AA1E0;
+	Sat,  8 Mar 2025 08:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741421167; cv=none; b=eC/nHdaYg2Vi1K45LqBWrFDeXom2fq21Yw68m/lmkYLIfOfGhkfYa88aYDjg4EZ6n3lcW2gU7kVHgjICy2sCm8LPwUwbG9p/JRctvbYs40Gdqq0mkkqnNHAplSixho1pzUqSLcwlquWBrcHOkPHja2VXYnJNtZfji5DtAPQT5IY=
+	t=1741422611; cv=none; b=Y86JFlQHcWxoI9gdQAze2/prMsbZjEV5cfhWYWq3SDNZqjM4lOxf2fEWgsPkSlj7mF2nD0o+piH/ojaM05rwnlo+b57RddopIQg9CYHa/WqZMr2ORzRju9zMHYlfrzFi38JfqjvSDv5dsxESdElU0Gb6nSwoK3lJf6EsnbuZewY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741421167; c=relaxed/simple;
-	bh=XGRxZAYguXEWQD/gjMwK8T/ARx3CsugPw3sn2U4bboE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=EuK0VFBx4H3OHs+B54mHhMLkk7+cD6rNcj2UduPjZxX0WjCOWvs2FixFXwa1a3xloDSV8vUOhbHYWgaLK8YOk7xBHQDy/IXIxojIYYW/JMrm+iI2s1IR6GtF3IBI1BrSNGqKJDBJp3+QNSCJpZrUpbG7Gdg6+bXODmqerZCwckY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CpFZJrxT; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-22337bc9ac3so54314055ad.1;
-        Sat, 08 Mar 2025 00:06:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741421165; x=1742025965; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ChhxADJR+xbJvkByK/dxsEr1PgDDMt78zzdKfiQchCo=;
-        b=CpFZJrxTWo8NSt1unJJNGf6kwCHf2blg6Z4PFACJlPyTiuEOu4YtRy+etWqjTzQIsI
-         TSzrZUfydc9dq0KRDufOe9jTxo+3jGiKHjOBNacxhw1A6lXHVbxL0jUdK/4nSC2pp0eB
-         50htEeqEVgWB896flEkZ8NXDaUoFI/KHZ3sTUdMiIdYfRSy1Y9XcH8NsEbavE1yF8mhe
-         rqwjsua82u8dZXa5ImCi9UkRvK7aTQDmby1/UX4XAsNTAKciQulwo/UGSF1eVp2HJ9Sp
-         1kPt41XHWyOiV7QbmZkRqi4OtHiWwUVEBKTl4D9mN9UKNfyi4xXhTZojAzK5Cp2j40Pl
-         eh0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741421165; x=1742025965;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ChhxADJR+xbJvkByK/dxsEr1PgDDMt78zzdKfiQchCo=;
-        b=Oz48klfTUoUOKbtWfuN5Qb4KHsY4sksEyYo+BE9riXwdx9qjfYwTH8UiX+RYXU62Hp
-         EUB5fhIU7+4tXUL8cZrr+79flFU2uAw9DeiQ8bNSk2LtoyJziBMQ4PlnnVN0bl+78FZu
-         amFkG1bcHj7Vzm96bFn63ir47Sau5/S5JCkzpPjxlwDz36UWeIUnVGJpIlFnsSthxley
-         OFMwQet92NI/MyN7EDpZxm3tebNToMHb/OyLcHJRyzqaR6E2Z1tgOkkyjHPizHloopOi
-         uPHyUjKaaUGSSKH1xJdPLUDXWeeCjd2k0b+RSgq7Msh8c8YfGxYvXY0UrDqd+EpQRr7/
-         dGpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUs6dl/Q/2EeH/2nf88L7H13SmzVPQ+Jej5+jLPg3vG8RK7Bj2AhGjO+GQW1bMyybTiPgTgJbg3aLcSY4SY@vger.kernel.org, AJvYcCWL/r808OVgUVfQjXao2NKnZXd6AQhjdqgxG8u8byU/Hcn+yExcqHXeT3cpPTO5I4y5lcuxCmNThWg=@vger.kernel.org, AJvYcCWy09PZy4wJ1sMRBtwvY5Ypa7qWzNkvaOHbaI2v5eIO4bmMn5aBQp/WTFIFtfm5s8maDv87mr6khSriQ6FiCw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRjYYqRDVrjT7u13EQAuJ7Ayd6/D3hRoDSTiWQ5NO/cG+5E32q
-	QI2lDkNZa71aiKiPjmNp2/2AjG/AL914s+IcBZ1f0HHjT9kXaWZF
-X-Gm-Gg: ASbGncuNHbp6le175uSc4cSfRKMKTnDj3PIcC5x9RHiztgpZKKAuL8IVsKl4q8EiopH
-	B3ofkNZQBKMtmDPeS4j1+X1etI7FNcQVVa8nDWnogd4+/rEQRMCY7ZGRFXOv2jTVzSnOh4MjCFb
-	ZxC1ug6nZBTAsP7ERWSkLE0r7vrT5rlqSzdBnwc23Nx5QKbbhHyQKDF+JI88Z0wjXTdZPg4FHrM
-	NOIQcHpXuHEfrBZ0MKb05//0OX9BNCXQmzpCPemLk/JXbfAx0O0T2wQV8FzM6tC8eur8SAtQX8n
-	NHbPk3q3QL8pY5IB+HZ78yVKJg9texsM6+kKJfqL/CRR1SjzMbrBcVt7gugfCBE3qqNDaj1hVQh
-	6k/o=
-X-Google-Smtp-Source: AGHT+IHTlPN6GmKz0DlzaC9MC6JKE39U4JRzI9PelS42v8C7wtfhvijef631QQXLRW/IU34dwMPy/w==
-X-Received: by 2002:a17:902:ce0f:b0:223:3396:15e8 with SMTP id d9443c01a7336-22428899f38mr129999835ad.22.1741421165055;
-        Sat, 08 Mar 2025 00:06:05 -0800 (PST)
-Received: from localhost.localdomain ([103.49.135.232])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a92699sm41859775ad.204.2025.03.08.00.06.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 08 Mar 2025 00:06:04 -0800 (PST)
-From: Ruiwu Chen <rwchen404@gmail.com>
-To: mcgrof@kernel.org
-Cc: corbet@lwn.net,
-	joel.granados@kernel.org,
-	keescook@chromium.org,
-	linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rwchen404@gmail.com,
-	viro@zeniv.linux.org.uk,
-	zachwade.k@gmail.com
-Subject: Re: [PATCH v2] drop_caches: re-enable message after disabling
-Date: Sat,  8 Mar 2025 16:05:49 +0800
-Message-Id: <20250308080549.14464-1-rwchen404@gmail.com>
-X-Mailer: git-send-email 2.18.0.windows.1
-In-Reply-To: <Z7tZTCsQop1Oxk_O@bombadil.infradead.org>
-References: <Z7tZTCsQop1Oxk_O@bombadil.infradead.org>
+	s=arc-20240116; t=1741422611; c=relaxed/simple;
+	bh=ztakW5nBpih7iAkXfJC3k9aEMbM1EWSUb87mpX7JfjI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UcYvVVszYppuVKXbD7K4TbZURXlsCEITA7Gm+T2HD5IKC9DH7/QQ/ZWC/tbHNTtNARn+CxBBcIWAcrJR2Pz/M+TvVIKSGL1KImK+7rPymv1WV5Tct1TN4o1PSvUYG3SmeRoQdKDAbHlPiywTW09H5rJy+M2pe6GI2SpCzdMythw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=MHdXaqv3; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=PM0R2H24/cyZow7Z8RgpWoqPF7f/4ZANkzPJR+Kf3go=; b=MHdXaqv3iIB/h4xkEgnIzDRGPv
+	ITgSYgd00gAYunNpiBEtly4ou5J66MJxKkFrE577M+cEaWeuVrMqUEIRBL4uGsWMs/qd2Omk/sXfn
+	NpytJ2gU/LF2CbD2nd8kNqDK1Pw0IkKFYYcZdyZ3MuGNMHHVhM8e4qhRM2c1dzbWvAsNoRDUdl9QZ
+	WyRTpP8XvqH/UO1MeCyMBRVBoWCJejPX4G3JcFGvF0B01BVE3tH3x5AufgsFlXF1L0v99fLejNx7r
+	BZU39PTdDk3Z1JOLP/jLBODnk/ionC9gDATpqf3YtWBHqqV28GPBvAvFqaIMzwuZlcvnyAodO5sd/
+	43U68Ytw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tqpYo-004odt-22;
+	Sat, 08 Mar 2025 16:29:31 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 08 Mar 2025 16:29:30 +0800
+Date: Sat, 8 Mar 2025 16:29:30 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: David Howells <dhowells@redhat.com>
+Cc: Marc Dionne <marc.dionne@auristor.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
+	linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+	netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL v2] crypto: Add Kerberos crypto lib
+Message-ID: <Z8v_6nEEHdNrYWhL@gondor.apana.org.au>
+References: <3709378.1740991489@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3709378.1740991489@warthog.procyon.org.uk>
 
->> When 'echo 4 > /proc/sys/vm/drop_caches' the message is disabled,
->> but there is no interface to enable the message, only by restarting
->> the way, so add the 'echo 0 > /proc/sys/vm/drop_caches' way to
->> enabled the message again.
->> 
->> Signed-off-by: Ruiwu Chen <rwchen404@gmail.com>
->
-> You are overcomplicating things, if you just want to re-enable messages
-> you can just use:
->
-> -		stfu |= sysctl_drop_caches & 4;
-> +		stfu = sysctl_drop_caches & 4;
->
-> The bool is there as 4 is intended as a bit flag, you can can figure
-> out what values you want and just append 4 to it to get the expected
-> result.
->
->  Luis
+On Mon, Mar 03, 2025 at 08:44:49AM +0000, David Howells wrote:
+> Hi Herbert,
+> 
+> Could you pull this into the crypto tree please?  v2 is just a rebase onto
+> your cryptodev/master branch.  It does a couple of things:
+> 
+>  (1) Provide an AEAD crypto driver, krb5enc, that mirrors the authenc
+>      driver, but that hashes the plaintext, not the ciphertext.  This was
+>      made a separate module rather than just being a part of the authenc
+>      driver because it has to do all of the constituent operations in the
+>      opposite order - which impacts the async op handling.
+> 
+>      Testmgr data is provided for AES+SHA2 and Camellia combinations of
+>      authenc and krb5enc used by the krb5 library.  AES+SHA1 is not
+>      provided as the RFCs don't contain usable test vectors.
+> 
+>  (2) Provide a Kerberos 5 crypto library.  This is an extract from the
+>      sunrpc driver as that code can be shared between sunrpc/nfs and
+>      rxrpc/afs.  This provides encryption, decryption, get MIC and verify
+>      MIC routines that use and wrap the crypto functions, along with some
+>      functions to provide layout management.
+> 
+>      This supports AES+SHA1, AES+SHA2 and Camellia encryption types.
+> 
+>      Self-testing is provided that goes further than is possible with
+>      testmgr, doing subkey derivation as well.
+> 
+> The patches were previously posted here:
+> 
+>     https://lore.kernel.org/r/20250203142343.248839-1-dhowells@redhat.com/
+> 
+> as part of a larger series, but the networking guys would prefer these to
+> go through the crypto tree.  If you want them reposting independently, I
+> can do that.
+> 
+> David
+> ---
+> The following changes since commit 17ec3e71ba797cdb62164fea9532c81b60f47167:
+> 
+>   crypto: lib/Kconfig - Hide arch options from user (2025-03-02 15:21:47 +0800)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/crypto-krb5-20250303
+> 
+> for you to fetch changes up to fc0cf10c04f49ddba1925b630467f49ea993569e:
+> 
+>   crypto/krb5: Implement crypto self-testing (2025-03-02 21:56:47 +0000)
+> 
+> ----------------------------------------------------------------
+> crypto: Add Kerberos crypto lib
+> 
+> ----------------------------------------------------------------
+> David Howells (17):
+>       crypto/krb5: Add API Documentation
+>       crypto/krb5: Add some constants out of sunrpc headers
+>       crypto: Add 'krb5enc' hash and cipher AEAD algorithm
+>       crypto/krb5: Test manager data
+>       crypto/krb5: Implement Kerberos crypto core
+>       crypto/krb5: Add an API to query the layout of the crypto section
+>       crypto/krb5: Add an API to alloc and prepare a crypto object
+>       crypto/krb5: Add an API to perform requests
+>       crypto/krb5: Provide infrastructure and key derivation
+>       crypto/krb5: Implement the Kerberos5 rfc3961 key derivation
+>       crypto/krb5: Provide RFC3961 setkey packaging functions
+>       crypto/krb5: Implement the Kerberos5 rfc3961 encrypt and decrypt functions
+>       crypto/krb5: Implement the Kerberos5 rfc3961 get_mic and verify_mic
+>       crypto/krb5: Implement the AES enctypes from rfc3962
+>       crypto/krb5: Implement the AES enctypes from rfc8009
+>       crypto/krb5: Implement the Camellia enctypes from rfc6803
+>       crypto/krb5: Implement crypto self-testing
+> 
+>  Documentation/crypto/index.rst   |   1 +
+>  Documentation/crypto/krb5.rst    | 262 +++++++++++++
+>  crypto/Kconfig                   |  13 +
+>  crypto/Makefile                  |   3 +
+>  crypto/krb5/Kconfig              |  26 ++
+>  crypto/krb5/Makefile             |  18 +
+>  crypto/krb5/internal.h           | 247 ++++++++++++
+>  crypto/krb5/krb5_api.c           | 452 ++++++++++++++++++++++
+>  crypto/krb5/krb5_kdf.c           | 145 +++++++
+>  crypto/krb5/rfc3961_simplified.c | 797 +++++++++++++++++++++++++++++++++++++++
+>  crypto/krb5/rfc3962_aes.c        | 115 ++++++
+>  crypto/krb5/rfc6803_camellia.c   | 237 ++++++++++++
+>  crypto/krb5/rfc8009_aes2.c       | 362 ++++++++++++++++++
+>  crypto/krb5/selftest.c           | 544 ++++++++++++++++++++++++++
+>  crypto/krb5/selftest_data.c      | 291 ++++++++++++++
+>  crypto/krb5enc.c                 | 504 +++++++++++++++++++++++++
+>  crypto/testmgr.c                 |  16 +
+>  crypto/testmgr.h                 | 351 +++++++++++++++++
+>  include/crypto/authenc.h         |   2 +
+>  include/crypto/krb5.h            | 160 ++++++++
+>  20 files changed, 4546 insertions(+)
+>  create mode 100644 Documentation/crypto/krb5.rst
+>  create mode 100644 crypto/krb5/Kconfig
+>  create mode 100644 crypto/krb5/Makefile
+>  create mode 100644 crypto/krb5/internal.h
+>  create mode 100644 crypto/krb5/krb5_api.c
+>  create mode 100644 crypto/krb5/krb5_kdf.c
+>  create mode 100644 crypto/krb5/rfc3961_simplified.c
+>  create mode 100644 crypto/krb5/rfc3962_aes.c
+>  create mode 100644 crypto/krb5/rfc6803_camellia.c
+>  create mode 100644 crypto/krb5/rfc8009_aes2.c
+>  create mode 100644 crypto/krb5/selftest.c
+>  create mode 100644 crypto/krb5/selftest_data.c
+>  create mode 100644 crypto/krb5enc.c
+>  create mode 100644 include/crypto/krb5.h
 
-Is that what you mean ?
-
--               stfu |= sysctl_drop_caches & 4;
-+               stfu ^= sysctl_drop_caches & 4;
-
-'echo 4 > /sys/kernel/vm/drop_caches' can disable or open messages,
-This is what I originally thought, but there is uncertainty that when different operators execute the command,
-It is not possible to determine whether this time is enabled or turned on unless you operate it twice.
-
-Ruiwu
-
->
->> ---
->> v2: - updated Documentation/ to note this new API.
->>     - renamed the variable.
->>     - rebase this on top of sysctl-next [1].
->> [1] https://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/log/?h=sysctl-next
->> 
->>  Documentation/admin-guide/sysctl/vm.rst | 11 ++++++++++-
->>  fs/drop_caches.c                        | 11 +++++++----
->>  2 files changed, 17 insertions(+), 5 deletions(-)
->> 
->> diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
->> index f48eaa98d22d..ef73d36e8b84 100644
->> --- a/Documentation/admin-guide/sysctl/vm.rst
->> +++ b/Documentation/admin-guide/sysctl/vm.rst
->> @@ -266,7 +266,16 @@ used::
->>  	cat (1234): drop_caches: 3
->>  
->>  These are informational only.  They do not mean that anything is wrong
->> -with your system.  To disable them, echo 4 (bit 2) into drop_caches.
->> +with your system.
->> +
->> +To disable informational::
->> +
->> +	echo 4 > /proc/sys/vm/drop_caches
->> +
->> +To enable informational::
->> +
->> +	echo 0 > /proc/sys/vm/drop_caches
->> +
->>  
->>  enable_soft_offline
->>  ===================
->> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
->> index 019a8b4eaaf9..a49af7023886 100644
->> --- a/fs/drop_caches.c
->> +++ b/fs/drop_caches.c
->> @@ -57,7 +57,7 @@ static int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
->>  	if (ret)
->>  		return ret;
->>  	if (write) {
->> -		static int stfu;
->> +		static bool silent;
->>  
->>  		if (sysctl_drop_caches & 1) {
->>  			lru_add_drain_all();
->> @@ -68,12 +68,15 @@ static int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
->>  			drop_slab();
->>  			count_vm_event(DROP_SLAB);
->>  		}
->> -		if (!stfu) {
->> +		if (!silent) {
->>  			pr_info("%s (%d): drop_caches: %d\n",
->>  				current->comm, task_pid_nr(current),
->>  				sysctl_drop_caches);
->>  		}
->> -		stfu |= sysctl_drop_caches & 4;
->> +		if (sysctl_drop_caches == 0)
->> +			silent = true;
->> +		else if (sysctl_drop_caches == 4)
->> +			silent = false;
->>  	}
->>  	return 0;
->>  }
->> @@ -85,7 +88,7 @@ static const struct ctl_table drop_caches_table[] = {
->>  		.maxlen		= sizeof(int),
->>  		.mode		= 0200,
->>  		.proc_handler	= drop_caches_sysctl_handler,
->> -		.extra1		= SYSCTL_ONE,
->> +		.extra1		= SYSCTL_ZERO,
->>  		.extra2		= SYSCTL_FOUR,
->>  	},
->>  };
->> -- 
->> 2.27.0
->> 
+All applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
