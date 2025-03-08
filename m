@@ -1,98 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-43507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43509-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE3EA5783A
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 05:07:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6873A5787A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 06:32:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 465CD189A0F4
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 04:07:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B63FC3B3768
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 05:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97E115B115;
-	Sat,  8 Mar 2025 04:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9927D17A2EC;
+	Sat,  8 Mar 2025 05:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/rx4imJ"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="DwDzzk3T"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420B02CAB;
-	Sat,  8 Mar 2025 04:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8979E196
+	for <linux-fsdevel@vger.kernel.org>; Sat,  8 Mar 2025 05:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741406826; cv=none; b=JW0mIm0Z1ftwPCMmc6Fk2ImQ3gENZO0rlg1DilmqBHC31C2oH6q0TRyVv/iW3AOvX3j6K/7qAtraPTz49IIbnAtlLmVKYQw6mkCxT59imtvdLERQQ49uHSnXuw49gkSlvcFYs9FodS7IIu1Q1eCJUxvmuGfM09bjxvkIgrx68Ak=
+	t=1741411922; cv=none; b=FJriqAsx8BOyzrqM3GHmPlllAtcbvzJXgf12t31TwpOXI5tvzDGEsXZ8wtnCnEL1PYLG7ryvTc8uqA1yqCOdAVddWvUxiR/l8t7bBXlfwTpu/pMiEuCEhwiQoL42kI3tcBu18YqN99yN1fLteyBwu2i1U37pmjtFvbL1wxxXtHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741406826; c=relaxed/simple;
-	bh=s41Kiihoo5v0OXthZUir9md3noNFobzwW/cnNSvrFAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cGwEoytuagl8fCvbhJK3DFUL3iPiPjko7g1sqSDnsH5gJfuAJcDLBc6yAMMboktYqXJnPd6NfUQZSvc0+kc4Ghu4cTeZm9wt1fRysGiRvWkQheC5WkDpDFQvWPQptMHu/XhdRsG5jc92AlrEZGhnGzmpynGNZEeGQZji2rsFBQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/rx4imJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93A14C4CEE0;
-	Sat,  8 Mar 2025 04:07:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741406825;
-	bh=s41Kiihoo5v0OXthZUir9md3noNFobzwW/cnNSvrFAo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R/rx4imJ1i7ZDNHYHBA7H4lp7cojqNDgPdPaS3/7MnfFNfOeQYHcBYGV/HSyRxWjw
-	 ro+iHFi8ugniPknrC0uBQEZDnulTXvtX+ii9iun8nG8+Sy0MQin7yvaYPuN1myiZpz
-	 Y3nNe3NfYaZFmtk8evlnvGI3C+FmuT0Vs8+XDGeCODll4eZ6WMPIWdcgvcSfCfrbLz
-	 wTvnmPDFxc0DQO1o5Wrh/VS7EYyT8tmLAQs6k/e1tjXM6+1p/iHpEXV2hhzOMZlShI
-	 GYnZB5UMWjcyK19Rr+ypxthdY9rXRWwWac5+f71nwFRNXfRZRyZMW617G7SDGOPPG1
-	 FGcVlNkfb+gYA==
-Date: Fri, 7 Mar 2025 20:07:01 -0800
-From: Kees Cook <kees@kernel.org>
-To: Pedro Falcato <pedro.falcato@gmail.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	ebiederm@xmission.com, sunliming@linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, sunliming@kylinos.cn,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH V2] fs: binfmt_elf_efpic: fix variable set but not used
- warning
-Message-ID: <202503072006.B920348F@keescook>
-References: <20250308022754.75013-1-sunliming@linux.dev>
- <174140535640.1476341.8645731807830133176.b4-ty@kernel.org>
- <CAKbZUD1ieaVVD9A9CG=5oCacud4JqnxzYgMv=fiQK=2zT_y10w@mail.gmail.com>
+	s=arc-20240116; t=1741411922; c=relaxed/simple;
+	bh=r3WmQzKBN5y6VbEOdWMIT8xbnZLiiBRRi1vK4WFLKIU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=It3VUyGJpughN3uF3Ao0mFkz3/uxZejr+GY/5PEeF0Kkq7RDT7apt7A6AVe+jUetildX7OIPM3l771JswkaOU2LJILXnYdrncF8hx5UwrZ2eS6d08LYaz9iQtCOdajseexVvsnvlwkZAdr0qALTEVQAwD4q5+M4AS75rfoTu1Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=DwDzzk3T; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1741411915; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=QwGokHK8MWELbszfeUznitYDMBt/G0N6Dzae0aons/k=;
+	b=DwDzzk3TsYNZrCbUqCaW5g2xtYFbyOjWMtd+tWgrkSle5SdDeFE3coeQRSRX9KaUXxpzDAh6cqDRtkJpsGL5rCnI6ks1zbMVgBSXOgw2GEGSC1/GrMx+X4Eljoj0fcNUbsus0SdWxMYLYeE0c04e8YsqF4fQv2lm6BSa87bzq/I=
+Received: from 30.221.80.100(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WQu7mhO_1741411914 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sat, 08 Mar 2025 13:31:55 +0800
+Message-ID: <88098e5c-1514-4d8d-a220-531a9b473ae3@linux.alibaba.com>
+Date: Sat, 8 Mar 2025 13:31:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKbZUD1ieaVVD9A9CG=5oCacud4JqnxzYgMv=fiQK=2zT_y10w@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/11] shmem: Add shmem_writeout()
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ linux-fsdevel@vger.kernel.org
+Cc: linux-mm@kvack.org, intel-gfx@lists.freedesktop.org
+References: <20250307135414.2987755-1-willy@infradead.org>
+ <20250307135414.2987755-9-willy@infradead.org>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20250307135414.2987755-9-willy@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Mar 08, 2025 at 04:01:50AM +0000, Pedro Falcato wrote:
-> On Sat, Mar 8, 2025 at 3:45 AM Kees Cook <kees@kernel.org> wrote:
-> >
-> > On Sat, 08 Mar 2025 10:27:54 +0800, sunliming@linux.dev wrote:
-> > > Fix below kernel warning:
-> > > fs/binfmt_elf_fdpic.c:1024:52: warning: variable 'excess1' set but not
-> > > used [-Wunused-but-set-variable]
-> > >
-> > >
-> >
-> > Adjusted Subject for typos.
-> >
-> > Applied to for-next/execve, thanks!
-> >
-> > [1/1] binfmt_elf_fdpic: fix variable set but not used warning
-> >       https://git.kernel.org/kees/c/7845fe65b33d
-> >
-> 
-> FYI, there's a typo so this patch won't compile
-> 
-> >+ unsiged long excess1
-> >+ = PAGE_SIZE - ((maddr + phdr->p_filesz) & ~PAGE_MASK);
-> 
-> s/unsiged/unsigned/
 
-D'oh. Fixing in my tree..
 
--- 
-Kees Cook
+On 2025/3/7 21:54, Matthew Wilcox (Oracle) wrote:
+> This will be the replacement for shmem_writepage().
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+
+LGTM.
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+
+> ---
+>   include/linux/shmem_fs.h |  7 ++++---
+>   mm/shmem.c               | 20 ++++++++++++++------
+>   2 files changed, 18 insertions(+), 9 deletions(-)
+> 
+> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+> index 0b273a7b9f01..5f03a39a26f7 100644
+> --- a/include/linux/shmem_fs.h
+> +++ b/include/linux/shmem_fs.h
+> @@ -104,10 +104,11 @@ static inline bool shmem_mapping(struct address_space *mapping)
+>   	return false;
+>   }
+>   #endif /* CONFIG_SHMEM */
+> -extern void shmem_unlock_mapping(struct address_space *mapping);
+> -extern struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
+> +void shmem_unlock_mapping(struct address_space *mapping);
+> +struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
+>   					pgoff_t index, gfp_t gfp_mask);
+> -extern void shmem_truncate_range(struct inode *inode, loff_t start, loff_t end);
+> +int shmem_writeout(struct folio *folio, struct writeback_control *wbc);
+> +void shmem_truncate_range(struct inode *inode, loff_t start, loff_t end);
+>   int shmem_unuse(unsigned int type);
+>   
+>   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index ba162e991285..427b7f70fffb 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1536,12 +1536,20 @@ int shmem_unuse(unsigned int type)
+>   	return error;
+>   }
+>   
+> -/*
+> - * Move the page from the page cache to the swap cache.
+> - */
+>   static int shmem_writepage(struct page *page, struct writeback_control *wbc)
+>   {
+> -	struct folio *folio = page_folio(page);
+> +	return shmem_writeout(page_folio(page), wbc);
+> +}
+> +
+> +/**
+> + * shmem_writeout - Write the folio to swap
+> + * @folio: The folio to write
+> + * @wbc: How writeback is to be done
+> + *
+> + * Move the folio from the page cache to the swap cache.
+> + */
+> +int shmem_writeout(struct folio *folio, struct writeback_control *wbc)
+> +{
+>   	struct address_space *mapping = folio->mapping;
+>   	struct inode *inode = mapping->host;
+>   	struct shmem_inode_info *info = SHMEM_I(inode);
+> @@ -1586,9 +1594,8 @@ static int shmem_writepage(struct page *page, struct writeback_control *wbc)
+>   try_split:
+>   		/* Ensure the subpages are still dirty */
+>   		folio_test_set_dirty(folio);
+> -		if (split_huge_page_to_list_to_order(page, wbc->list, 0))
+> +		if (split_folio_to_list(folio, wbc->list))
+>   			goto redirty;
+> -		folio = page_folio(page);
+>   		folio_clear_dirty(folio);
+>   	}
+>   
+> @@ -1660,6 +1667,7 @@ static int shmem_writepage(struct page *page, struct writeback_control *wbc)
+>   	folio_unlock(folio);
+>   	return 0;
+>   }
+> +EXPORT_SYMBOL_GPL(shmem_writeout);
+>   
+>   #if defined(CONFIG_NUMA) && defined(CONFIG_TMPFS)
+>   static void shmem_show_mpol(struct seq_file *seq, struct mempolicy *mpol)
 
