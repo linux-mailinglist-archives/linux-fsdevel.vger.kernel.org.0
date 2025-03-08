@@ -1,64 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-43524-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43525-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CD48A57D8D
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 19:57:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CB70A57D90
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 19:57:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EEFA3A9DB1
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 18:57:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AA4E7A8085
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Mar 2025 18:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE282197A76;
-	Sat,  8 Mar 2025 18:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA6D197A76;
+	Sat,  8 Mar 2025 18:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="k/JDseeW"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Uo+pXjYW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92596DDAD
-	for <linux-fsdevel@vger.kernel.org>; Sat,  8 Mar 2025 18:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6005315E5DC
+	for <linux-fsdevel@vger.kernel.org>; Sat,  8 Mar 2025 18:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741460226; cv=none; b=f+Xx5K95Q0/4RfDp6KjfGIjz2OS06oc+Fqa6hx2ZnVhLMXeu3OqUeiS08SgHVoWTuS5a2zgqsqPnuutBEWK7Qi4xt6FmTrh3dwgz4rlNxzINfnKgAAoWyzudrxmJcEvsV3Ze/5PEomEYYV3UnI8gcDnwx/8h/p6IGJkMs+35Zao=
+	t=1741460238; cv=none; b=P77YkXNoCgAWx5DzE/6petNVrNyESeBjqBAjhq5S2kksnIuFCEt/ZdVY5RJ4um6Bckl2KrvbtwdVCNiq5rIMtY92YyDAyWhx9ZXjAMIPCmdR1COdNbyqMRW5V4zdkH+flMcnkcNPXxWgniIunLWF/fOwfBqJt+RdUd50SGIkGKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741460226; c=relaxed/simple;
-	bh=wh7NMuVU/yeJzdTWiZ9PoAv+sFHlABIYCbgQhOV7TIo=;
+	s=arc-20240116; t=1741460238; c=relaxed/simple;
+	bh=gukEbJdIrNo8TUJiZWYqSy4aqoaDDcj8Y9luVRYS4Qs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rNINhO+Nh1f6dRAgHwGSfEgciqMXLcrkg4dSyqbsstEapKRNKarQXpVKjrBAJPT2EfSJusEaNok7dOwIq8r2LvUHv91ZqFrnv9T7zLV5UlbzAZQZFwpgFLkAG4OjPtSZ6vT35V45m+CYGqFjvrE81LN9ZsCDnC/C8gtA7mHR7LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=k/JDseeW; arc=none smtp.client-ip=83.166.143.169
+	 Content-Type:Content-Disposition:In-Reply-To; b=EvxwyMwZ5M3N1+MaV8Al8z272/tw4JpIYGYqcVFl/DJ2QP4tfjR2iyvUXU4IQUdUVyxsxFqYyl9S77Y1Tex/aujgF+fbwXBZurxaQmWczO5nOc2DD3EwA6qTBuCp9VI3Rt7sODAW3eKeOJ6c0g7a7k5ftCWtpVyxWwB5nBeJiPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Uo+pXjYW; arc=none smtp.client-ip=83.166.143.168
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:1])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z9C7f0MkyzTqY;
-	Sat,  8 Mar 2025 19:57:02 +0100 (CET)
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z9C7t3YB4zV4m;
+	Sat,  8 Mar 2025 19:57:14 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1741460221;
-	bh=XYCSheedmEb88n/QdCp4PW7LeCxkFSk6I5N6pk+GSbA=;
+	s=20191114; t=1741460234;
+	bh=wN0FXOm2E/56qbhYEzbybQfDtSOz1RXoy+kYKm4jync=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k/JDseeW1ho0TNElASkEPkR0kTvxiDpgsfffLpBay0nnxLGuphlJXAombq9a+vLt2
-	 pLE3hf492YE0Kqmdd4tt5jfw3utvXd9FCx65HxrWjx6ld5AujnNCxh7AD7nQzjIr+r
-	 MXu7+L6z55q02+v4KcFC1A4dmYETlNnmIamrzdB8=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z9C7d0JLyzk3x;
-	Sat,  8 Mar 2025 19:57:01 +0100 (CET)
-Date: Sat, 8 Mar 2025 19:57:00 +0100
+	b=Uo+pXjYWr6tOlOaB0PAeSOOHy2v15fZUvnsckilyi0e9fYG4I7LwqN/6QW5Pwc7fZ
+	 imkdgwxT3BOTE+pv4h130e+sMI1epOejqwKAEYToW5tIc5Fp0uLhaGK90/LJGyE0Rz
+	 VRj1PEwQ704HLsVQqBGZaZ3p0APyObEtBJUaPYrY=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z9C7s70lLz3Kv;
+	Sat,  8 Mar 2025 19:57:13 +0100 (CET)
+Date: Sat, 8 Mar 2025 19:57:13 +0100
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 To: Tingmao Wang <m@maowtm.org>
 Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
 	Jan Kara <jack@suse.cz>, linux-security-module@vger.kernel.org, 
 	Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, 
 	linux-fsdevel@vger.kernel.org, Tycho Andersen <tycho@tycho.pizza>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>, Jeff Xu <jeffxu@google.com>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Francis Laniel <flaniel@linux.microsoft.com>, 
-	Matthieu Buffet <matthieu@buffet.re>
-Subject: Re: [RFC PATCH 0/9] Landlock supervise: a mechanism for interactive
- permission requests
-Message-ID: <20250308.uCiaz4Thah7O@digikod.net>
+	Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>, Jann Horn <jannh@google.com>, 
+	Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [RFC PATCH 2/9] Refactor per-layer information in rulesets and
+ rules
+Message-ID: <20250306.aeth4Thaepae@digikod.net>
 References: <cover.1741047969.git.m@maowtm.org>
- <20250304.Choo7foe2eoj@digikod.net>
- <f6ef02c3-ad22-4dc6-b584-93276509dbeb@maowtm.org>
+ <6e8887f204c9fbe7470e61876bc597932a8f74d9.1741047969.git.m@maowtm.org>
+ <20250304.aiGhah9lohh5@digikod.net>
+ <4e0ed692-50e7-4665-962b-3cc1694e441a@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,62 +68,63 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <f6ef02c3-ad22-4dc6-b584-93276509dbeb@maowtm.org>
+In-Reply-To: <4e0ed692-50e7-4665-962b-3cc1694e441a@maowtm.org>
 X-Infomaniak-Routing: alpha
 
-On Thu, Mar 06, 2025 at 02:57:13AM +0000, Tingmao Wang wrote:
-> On 3/4/25 19:48, Mickaël Salaün wrote:
+On Thu, Mar 06, 2025 at 02:58:01AM +0000, Tingmao Wang wrote:
+> On 3/4/25 19:49, Mickaël Salaün wrote:
 > 
-> > Thanks for this RFC, this is very promising!
+> > We could indeed have a pointer in the  landlock_hierarchy and have a
+> > dedicated bit in each layer's access_masks to indicate that this layer
+> > is supervised.  This should simplify the whole patch series.
 > 
-> Hi Mickaël - thanks for the prompt review and for your support! I have read
-> your replies and have some thoughts already, but I kept getting distracted
-> by other stuff and so haven't had much chance to express them.  I will
-> address some first today and some more over the weekend.
-> 
-> > Another interesting use case is to trace programs and get an
-> > unprivileged "permissive" mode to quickly create sandbox policies.
-> 
-> Yes that would also be a good use. I thought of this initially but was
-> thinking "I guess you can always do that with audit" but if we have landlock
-> supervise maybe that would be an easier thing for tools to build upon...?
+> That seems sensible.  I did consider using the landlock_hierarchy, but chose
+> the current way as it initially seemed more sensible, but on second thought
+> this means that we have to carefully increment all the refcounts on domain
+> merge etc.  On the other hand storing the supervisor pointer in the
+> hierarchy, if we have an extra bit in struct access_masks then we can
+> quickly determine if supervisors are involved without effectively walking a
+> linked list, which is nice.
 
-Both approaches are valuable.  The supervisor one would be unprivileged,
-could get access to more information including O_PATH FD's, but it is
-much slower and relies on user space monitoring code.
+Right
 
 > 
-> > As discussed, I was thinking about whether or not it would be possible
-> > to use the fanotify interface (e.g. fanotify_init(), fanotify FD...),
-> > but looking at your code, I think it would mostly increase complexity.
-> > There are also the issue with the Landlock semantic (e.g. access rights)
-> > which does not map 1:1 to the fanotify one.  A last thing is that
-> > fanotify is deeply tied to the VFS.  So, unless someone has a better
-> > idea, let's continue with your approach.
-> 
-> That sounds sensible - I will keep going with the current direction of a
-> landlock-specific uapi. (happy to revisit should other people have
-> suggestions)
-> 
-> > Android's SDCardFS is another example of such use.
-> 
-> Interesting - seems like it was deprecated for reasons unrelated to security
-> though.
+> Actually, just to check, is the reason why we have the access_masks FAM in
+> the ruleset purely for performance? Initially I wasn't sure if each layer
+> correspond 1-to-1 with landlock_hierarchy, since otherwise it seemed to me
+> you could just put the access mask in the hierarchy too.
 
-Yes, Android first used FUSE, then SDCardFS, then FUSE again, but the
-goal has been the same:
-https://source.android.com/docs/core/storage/scoped
+Yes, we could put the access rights in the hierarchy, but that would
+involve walking through the hierarchy to know if Landlock should
+actually handle (i.e. allow or potentially deny) an access request.
+Landlock is designed in a way that makes legitimate/allowed access as
+fast as possible (there is still room for improvement though).  In the
+case of the supervisor feature, it should mainly be used to dynamically
+allow access which are statically denied for one layer.  And because it
+will require a round trip to user space anyway, the performance impact
+of putting the supervisor pointer in landlock_hierarchy is negligible.
 
-> 
-> > One of the main suggestion would be to align with the audit patch series
-> > semantic and the defined "blockers":
-> > https://lore.kernel.org/all/20250131163059.1139617-1-mic@digikod.net/
-> > I'll send another series soon.
-> 
-> I will have a read of the existing audit series - are you planning
-> significant changes to it in the next one?
+Initially the purpose of landlock_hierarchy was to be able to compare
+domains (for ptrace and later scope restrictions), whereas the
+landlock_ruleset is to store immutable data (without references) when
+used as a domain.  With the audit feature, the landlock_hierarchy will
+also contain domain's shared/mutable states and pointers that should
+only be rarely accessed (i.e. only for denials).  So, in a nutshell
+landlock_ruleset as a domain should stay minimal and improve data
+locality to speed up allowed access requests.
 
-Not significant changes but still some that hook changes that might
-require a rebase.  I just sent v6, you'll find it applied here:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
+We could decorrelate the current content of landlock_hierarchy from the
+shared data, but I think it would only be meaningful if this data is
+significant (see the landlock_details pointer in the audit patch series).
+
+> In other words, is it right to assume that, if a domain has 3 layers, for
+> example, then domain->hierarchy correspond to the third layer,
+> domain->hierarchy->parent correspond to the second, and
+> d->h->parent->parent would be the first layer's hierarchy?
+
+Yes, that is always the case for a domain.
+
+If we create the supervisor FD with landlock_restrict_self(2), then
+we'll not have to add a new pointer to landlock_ruleset, but only
+directly to landlock_hierarchy.
 
