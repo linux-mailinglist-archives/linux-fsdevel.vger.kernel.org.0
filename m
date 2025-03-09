@@ -1,180 +1,409 @@
-Return-Path: <linux-fsdevel+bounces-43537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2261A5805F
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Mar 2025 03:52:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67185A580E2
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Mar 2025 06:50:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F19A916AA2A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Mar 2025 02:52:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 041E77A2624
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Mar 2025 05:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE483C463;
-	Sun,  9 Mar 2025 02:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32FA13C908;
+	Sun,  9 Mar 2025 05:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tvZ6mTkF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3063D4690
-	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Mar 2025 02:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634D07E1
+	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Mar 2025 05:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741488760; cv=none; b=t35JkcVwXF1SZHY0nj+R6NUT+ZDuLy4qve9PM3iNGIdszW6KxekETt/yoab87xDPSJ1pEl+SiR3OkZtTmldWGZ4eYM1Dyh332xpmVPPQ0oaEbI0FS1fyT2680qDY8fE3AAXOt9cgCwiyNUSvGDouJ1QmAm9hCj0/RUj2AIRm7Dc=
+	t=1741499441; cv=none; b=cV9U9MB+t5fikvo+20MeEAVsN2KfUKowIh0ssp9l8uj4Um/0RVYrLoW2eTkXh/FyNKRrYw3f4OAoX/f4MqkIqQ4ZRHr8afRyEes9t+EvErWFefJJH4Yw/CScTgG4W0VRAXryoIKAXkhSki+ssMXJ67ZmKNqBj6JJxu7R7cdtX4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741488760; c=relaxed/simple;
-	bh=IAF6tIlCZ771DQ7D/fW4IofhwRm1wGqrFwMlnS/Mw5w=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dDIf8X31IxW3xnS6o5nWMEUB6vBBESCoqOYwBCIMpEX/2tQ0kseG1GN/toagvbabb2jHE6RNiiCjqvjSUvsFkmSOGWp0YLjGPhWSiq16IR4nPudSVg+6TB6TOZOMjI8QEU5NfsVODOpeKNmDQwBTyzbJ1ArHLh98fbIGj4aDarc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d2b3882febso25403375ab.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Mar 2025 18:52:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741488758; x=1742093558;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LoNwlPHGgWrJYVppCXZabpLb34WQ3gVLmP7cpmCDknI=;
-        b=IyY/lFp6789rZ2zArOU8PAIjz80UAw/ltP0QZH5+HJ8RMjEMdbY/a/LfbfYIwaqHym
-         ZJGCmYc2nvkzwDbXMcrrULpvmTICXpXxeqkLiYTf2jU2DTX88WN0J+FhhVHf5wO3sfJC
-         dm5vvQhXevolV7e7j8xm8uMgburEXA+y+kiqsaJYEmisv2XdXvpvG+lN4iC47D3Loo6K
-         lwaFrdqVSGip8dZBkiAaiZTpeChBi1GEne+jSw0QKd3LXcAqMvoPaQr1lxhjdwZacPbl
-         K3D0wwXyI5gsGx5rr3qpj+aDenWsHgoJSRCyUCo/06ynVIh1AmzJB6uOFsSyk3D/A6uT
-         R8aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVeeHgP2scrNDXxFK8KkTNrEFTN17/ZIshdJskAef67XX9sIO4FTHrtJxKn/W3YPfhjOHxrOiZsI/iQsR6@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5mVZUw8HGpYZ8C470wYj+Y9LPbi63V5RjrOcSFQdV6xoA0BrX
-	uKbl3mSymcYQ8X+I8FT5YcZ1kPi+ULwjjGNCcBK+yLzV3jQFYZLNGXdG7C4+kJ1/G238TW5Skzw
-	rae/3U6gRHWwBEzTnB9LXT6tW+l49PtrIgYCgE2xMZLlRV3ctUMwycT4=
-X-Google-Smtp-Source: AGHT+IFr9O8/YhatesoKbYIzMB5FoK9myw8WHXXuTPRkLDN4JKxY6KI/JsGeB9U353W2PzTRCca6QV81t/45BQoYLxUpP90o/vRD
+	s=arc-20240116; t=1741499441; c=relaxed/simple;
+	bh=1lY5nIB2MgyHuOjA2d63l4+aiCpFm/bmOgp7kpNGmcU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TZUWsERp+RypfuHmT4jKabZr2bjPI3q/LczQ6izww+YbaMD87bAMXscyiioHnF+TPUeJePQ4k/qNmfxe6KdT4NzXGnPW+wkNHRB4+oJP30LwlTfgEIgTeWcSlv2r+9TeSsbo7v8PoGUrwGpi88cR9MP2vlCFwBN6K8U6qyDrSKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tvZ6mTkF; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741499425;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=WPTHGH5cc2nw0Xi+BBFhxPbBypT69Y37X694zXELdgc=;
+	b=tvZ6mTkFZ+aU2f2K3I+FdHOrtDUkFZ1LZDs8lsnYbQPGmjgG2cgSFyQzykUiBfx+SdGD/j
+	4rLcmGIvyLvmq2k0J0trZQNR8SynLjcxrmSIYOisLUvh/MhMBxjPs3xZTtTh+KUdfld9Js
+	ac81LbNQLWfwtrSCJi88hJVjZS2lo4k=
+From: Wen Yang <wen.yang@linux.dev>
+To: Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Wen Yang <wen.yang@linux.dev>,
+	Jens Axboe <axboe@kernel.dk>,
+	Dylan Yudaken <dylany@fb.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Dave Young <dyoung@redhat.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] eventfd: introduce configurable maximum value for eventfd
+Date: Sun,  9 Mar 2025 13:50:03 +0800
+Message-Id: <20250309055003.32194-1-wen.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:174b:b0:3d4:4134:521a with SMTP id
- e9e14a558f8ab-3d441990392mr118888325ab.12.1741488758297; Sat, 08 Mar 2025
- 18:52:38 -0800 (PST)
-Date: Sat, 08 Mar 2025 18:52:38 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67cd0276.050a0220.14db68.006c.GAE@google.com>
-Subject: [syzbot] [efi?] [fs?] possible deadlock in efivarfs_actor
-From: syzbot <syzbot+019072ad24ab1d948228@syzkaller.appspotmail.com>
-To: ardb@kernel.org, jk@ozlabs.org, linux-efi@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
+For the NON-SEMAPHORE eventfd, a write (2) call adds the 8-byte integer
+value provided in its buffer to the counter, while a read (2) returns the
+8-byte value containing the value and resetting the counter value to 0.
+Therefore, the accumulated value of multiple writes can be retrieved by a
+single read.
 
-syzbot found the following issue on:
+Currently, the reading thread is waked up immediately after the writing
+thread writes eventfd, and the maximum value of the counter is ULLONG_MAX,
+therefore, in the ping pong scene with frequent reading and writing,
+the CPU will be exhausted.
 
-HEAD commit:    e056da87c780 Merge remote-tracking branch 'will/for-next/p..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=14ce9c64580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d6b7e15dc5b5e776
-dashboard link: https://syzkaller.appspot.com/bug?extid=019072ad24ab1d948228
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=111ed7a0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13b97c64580000
+By introducing the configurable maximum counter, we could achieve flow
+control and reduce unnecessary CPU overhead.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3d8b1b7cc4c0/disk-e056da87.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b84c04cff235/vmlinux-e056da87.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2ae4d0525881/Image-e056da87.gz.xz
+We may use the following test code:
+	#define _GNU_SOURCE
+	#include <assert.h>
+	#include <errno.h>
+	#include <getopt.h>
+	#include <pthread.h>
+	#include <poll.h>
+	#include <stdlib.h>
+	#include <stdio.h>
+	#include <unistd.h>
+	#include <string.h>
+	#include <sys/eventfd.h>
+	#include <sys/prctl.h>
+	#include <sys/ioctl.h>
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+019072ad24ab1d948228@syzkaller.appspotmail.com
+	#define EFD_IOC_SET_MAXIMUM     _IOW('E', 0, __u64)
+	#define EFD_IOC_GET_MAXIMUM     _IOR('E', 0, __u64)
 
-efivarfs: resyncing variable state
-============================================
-WARNING: possible recursive locking detected
-6.14.0-rc4-syzkaller-ge056da87c780 #0 Not tainted
---------------------------------------------
-syz-executor772/6443 is trying to acquire lock:
-ffff0000c6826558 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: inode_lock include/linux/fs.h:877 [inline]
-ffff0000c6826558 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: efivarfs_actor+0x1b8/0x2b8 fs/efivarfs/super.c:422
+	struct param {
+		int fd;
+		int cpu;
+	};
 
-but task is already holding lock:
-ffff0000c6c7a558 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: iterate_dir+0x3b4/0x5f4 fs/readdir.c:101
+	static void publish(void *data)
+	{
+		struct param * param = (struct param *)data;
+		unsigned long long value = 1;
+		cpu_set_t cpuset;
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
+		prctl(PR_SET_NAME, "publish");
+		CPU_ZERO(&cpuset);
+		CPU_SET(param->cpu, &cpuset);
+		sched_setaffinity(0, sizeof(cpuset), &cpuset);
 
-       CPU0
-       ----
-  lock(&sb->s_type->i_mutex_key#16);
-  lock(&sb->s_type->i_mutex_key#16);
+		while (1)
+			eventfd_write(param->fd, value);
+	}
 
- *** DEADLOCK ***
+	static void subscribe(void *data)
+	{
+		struct param *param = (struct param *)data;
+		unsigned long long value = 0;
+		struct pollfd pfds[1];
+		cpu_set_t cpuset;
 
- May be due to missing lock nesting notation
+		prctl(PR_SET_NAME, "subscribe");
+		CPU_ZERO(&cpuset);
+		CPU_SET(param->cpu, &cpuset);
+		sched_setaffinity(0, sizeof(cpuset), &cpuset);
 
-3 locks held by syz-executor772/6443:
- #0: ffff80008fc57208 (system_transition_mutex){+.+.}-{4:4}, at: lock_system_sleep+0x68/0xc0 kernel/power/main.c:56
- #1: ffff80008fc75d70 ((pm_chain_head).rwsem){++++}-{4:4}, at: blocking_notifier_call_chain+0x58/0xa0 kernel/notifier.c:379
- #2: ffff0000c6c7a558 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: iterate_dir+0x3b4/0x5f4 fs/readdir.c:101
+		pfds[0].fd = param->fd;
+		pfds[0].events = POLLIN;
 
-stack backtrace:
-CPU: 0 UID: 0 PID: 6443 Comm: syz-executor772 Not tainted 6.14.0-rc4-syzkaller-ge056da87c780 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-Call trace:
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
- dump_stack+0x1c/0x28 lib/dump_stack.c:129
- print_deadlock_bug+0x4e8/0x668 kernel/locking/lockdep.c:3039
- check_deadlock kernel/locking/lockdep.c:3091 [inline]
- validate_chain kernel/locking/lockdep.c:3893 [inline]
- __lock_acquire+0x6240/0x7904 kernel/locking/lockdep.c:5228
- lock_acquire+0x23c/0x724 kernel/locking/lockdep.c:5851
- down_write+0x50/0xc0 kernel/locking/rwsem.c:1577
- inode_lock include/linux/fs.h:877 [inline]
- efivarfs_actor+0x1b8/0x2b8 fs/efivarfs/super.c:422
- dir_emit include/linux/fs.h:3849 [inline]
- dcache_readdir+0x2dc/0x4e8 fs/libfs.c:209
- iterate_dir+0x46c/0x5f4 fs/readdir.c:108
- efivarfs_pm_notify+0x2f4/0x350 fs/efivarfs/super.c:517
- notifier_call_chain+0x1c4/0x550 kernel/notifier.c:85
- blocking_notifier_call_chain+0x70/0xa0 kernel/notifier.c:380
- pm_notifier_call_chain+0x2c/0x3c kernel/power/main.c:109
- snapshot_release+0x128/0x1b8 kernel/power/user.c:125
- __fput+0x340/0x760 fs/file_table.c:464
- ____fput+0x20/0x30 fs/file_table.c:492
- task_work_run+0x230/0x2e0 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- do_notify_resume+0x178/0x1f4 arch/arm64/kernel/entry-common.c:151
- exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
- exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
- el0_svc+0xac/0x168 arch/arm64/kernel/entry-common.c:745
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+		while(1) {
+			poll(pfds, 1, -1);
+			if(pfds[0].revents & POLLIN) {
+				read(param->fd, &value, sizeof(value));
+			}
+		}
+	}
 
+	static void usage(void)
+	{
+		printf("Usage: \n");
+		printf("\t");
+		printf("<-p cpuid> <-s cpuid> <-m maximum> \n");
+	}
 
+	int main(int argc, char *argv[])
+	{
+		struct param sub_param = {0};
+		struct param pub_param = {0};
+		char *optstr = "p:s:m:";
+		int opt, ret, fd;
+		__u64 maximum;
+		pid_t pid;
+
+		if (argc < 2) {
+			usage();
+			return 1;
+		}
+
+		while((opt = getopt(argc, argv, optstr)) != -1){
+			switch(opt) {
+				case 'p':
+					pub_param.cpu = atoi(optarg);
+					break;
+				case 's':
+					sub_param.cpu = atoi(optarg);
+					break;
+				case 'm':
+					maximum = atoi(optarg);
+					break;
+				case '?':
+					usage();
+					return -1;
+			}
+		}
+
+		fd = eventfd(0, EFD_CLOEXEC);
+		assert(fd);
+
+		ret = ioctl(fd, EFD_IOC_SET_MAXIMUM, &maximum);
+		if (ret) {
+			printf("error=%s\n", strerror(errno));
+			return -1;
+		}
+
+		sub_param.fd = fd;
+		pub_param.fd = fd;
+
+		pid = fork();
+		if (pid == 0)
+			subscribe(&sub_param);
+		else if (pid > 0)
+			publish(&pub_param);
+		else {
+			printf("XXX: fork error!\n");
+			return -1;
+		}
+
+		return 0;
+	}
+
+$ ./a.out  -p 2 -s 3 -m 6553500
+-----cpu2-usage----------cpu3-usage----
+usr sys idl wai stl:usr sys idl wai stl
+ 47  53   0   0   0: 46  54   0   0   0
+ 53  47   0   0   0: 45  54   1   0   0
+ 56  44   0   0   0: 48  52   0   0   0
+ 53  47   0   0   0: 45  55   0   0   0
+
+$ ./a.out  -p 2 -s 3 -m 100
+-----cpu2-usage----------cpu3-usage----
+usr sys idl wai stl:usr sys idl wai stl
+ 41  59   0   0   0: 33  65   2   0   0
+ 46  54   0   0   0: 30  67   2   0   0
+ 38  62   0   0   0: 33  65   2   0   0
+ 37  63   0   0   0: 31  66   3   0   0
+
+$ ./a.out  -p 2 -s 3 -m 10
+-----cpu2-usage----------cpu3-usage----
+usr sys idl wai stl:usr sys idl wai stl
+ 37  43  20   0   0: 21  42  37   0   0
+ 30  47  23   0   0: 20  42  38   0   0
+ 39  39  23   0   0: 24  37  39   0   0
+ 39  40  22   0   0: 23  41  36   0   0
+
+Signed-off-by: Wen Yang <wen.yang@linux.dev>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Dylan Yudaken <dylany@fb.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+v3: simply achieve flow control by configuring the maximum value of counter
+v2: fix compilation errors 
+https://lore.kernel.org/all/20240811085954.17162-1-wen.yang@linux.dev/
+v1: https://lore.kernel.org/all/20240519144124.4429-1-wen.yang@linux.dev/
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ fs/eventfd.c                 | 63 ++++++++++++++++++++++++++++++++----
+ include/uapi/linux/eventfd.h |  3 ++
+ 2 files changed, 59 insertions(+), 7 deletions(-)
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+diff --git a/fs/eventfd.c b/fs/eventfd.c
+index af42b2c7d235..cb004aded4df 100644
+--- a/fs/eventfd.c
++++ b/fs/eventfd.c
+@@ -39,6 +39,7 @@ struct eventfd_ctx {
+ 	 * also, adds to the "count" counter and issue a wakeup.
+ 	 */
+ 	__u64 count;
++	__u64 maximum;
+ 	unsigned int flags;
+ 	int id;
+ };
+@@ -49,7 +50,7 @@ struct eventfd_ctx {
+  * @mask: [in] poll mask
+  *
+  * This function is supposed to be called by the kernel in paths that do not
+- * allow sleeping. In this function we allow the counter to reach the ULLONG_MAX
++ * allow sleeping. In this function we allow the counter to reach the maximum
+  * value, and we signal this as overflow condition by returning a EPOLLERR
+  * to poll(2).
+  */
+@@ -70,7 +71,7 @@ void eventfd_signal_mask(struct eventfd_ctx *ctx, __poll_t mask)
+ 
+ 	spin_lock_irqsave(&ctx->wqh.lock, flags);
+ 	current->in_eventfd = 1;
+-	if (ctx->count < ULLONG_MAX)
++	if (ctx->count < ctx->maximum)
+ 		ctx->count++;
+ 	if (waitqueue_active(&ctx->wqh))
+ 		wake_up_locked_poll(&ctx->wqh, EPOLLIN | mask);
+@@ -119,7 +120,7 @@ static __poll_t eventfd_poll(struct file *file, poll_table *wait)
+ {
+ 	struct eventfd_ctx *ctx = file->private_data;
+ 	__poll_t events = 0;
+-	u64 count;
++	u64 count, max;
+ 
+ 	poll_wait(file, &ctx->wqh, wait);
+ 
+@@ -162,12 +163,13 @@ static __poll_t eventfd_poll(struct file *file, poll_table *wait)
+ 	 *     eventfd_poll returns 0
+ 	 */
+ 	count = READ_ONCE(ctx->count);
++	max = READ_ONCE(ctx->maximum);
+ 
+ 	if (count > 0)
+ 		events |= EPOLLIN;
+-	if (count == ULLONG_MAX)
++	if (count == max)
+ 		events |= EPOLLERR;
+-	if (ULLONG_MAX - 1 > count)
++	if (max - 1 > count)
+ 		events |= EPOLLOUT;
+ 
+ 	return events;
+@@ -244,6 +246,11 @@ static ssize_t eventfd_read(struct kiocb *iocb, struct iov_iter *to)
+ 	return sizeof(ucnt);
+ }
+ 
++static inline bool eventfd_is_writable(const struct eventfd_ctx *ctx)
++{
++	return (ctx->maximum > ctx->count) && (ctx->maximum - ctx->count > ucnt);
++}
++
+ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t count,
+ 			     loff_t *ppos)
+ {
+@@ -259,11 +266,11 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
+ 		return -EINVAL;
+ 	spin_lock_irq(&ctx->wqh.lock);
+ 	res = -EAGAIN;
+-	if (ULLONG_MAX - ctx->count > ucnt)
++	if (eventfd_is_writable(ctx))
+ 		res = sizeof(ucnt);
+ 	else if (!(file->f_flags & O_NONBLOCK)) {
+ 		res = wait_event_interruptible_locked_irq(ctx->wqh,
+-				ULLONG_MAX - ctx->count > ucnt);
++				eventfd_is_writable(ctx));
+ 		if (!res)
+ 			res = sizeof(ucnt);
+ 	}
+@@ -299,6 +306,46 @@ static void eventfd_show_fdinfo(struct seq_file *m, struct file *f)
+ }
+ #endif
+ 
++static long eventfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++{
++	struct eventfd_ctx *ctx = file->private_data;
++	void __user *argp = (void __user *)arg;
++	int ret = 0;
++	__u64 max;
++
++	if (!argp)
++		return -EINVAL;
++
++	switch (cmd) {
++	case EFD_IOC_SET_MAXIMUM: {
++		if (copy_from_user(&max, argp, sizeof(max)))
++			return -EFAULT;
++
++		spin_lock_irq(&ctx->wqh.lock);
++		if (ctx->count >= max)
++			ret = -EINVAL;
++		else
++			ctx->maximum = max;
++		spin_unlock_irq(&ctx->wqh.lock);
++		break;
++	}
++	case EFD_IOC_GET_MAXIMUM: {
++		spin_lock_irq(&ctx->wqh.lock);
++		max = ctx->maximum;
++		spin_unlock_irq(&ctx->wqh.lock);
++
++		if (copy_to_user(argp, &max, sizeof(max)))
++			ret = -EFAULT;
++		break;
++	}
++	default:
++		ret = -ENOENT;
++		break;
++	}
++
++	return ret;
++}
++
+ static const struct file_operations eventfd_fops = {
+ #ifdef CONFIG_PROC_FS
+ 	.show_fdinfo	= eventfd_show_fdinfo,
+@@ -308,6 +355,7 @@ static const struct file_operations eventfd_fops = {
+ 	.read_iter	= eventfd_read,
+ 	.write		= eventfd_write,
+ 	.llseek		= noop_llseek,
++	.unlocked_ioctl	= eventfd_ioctl,
+ };
+ 
+ /**
+@@ -398,6 +446,7 @@ static int do_eventfd(unsigned int count, int flags)
+ 	init_waitqueue_head(&ctx->wqh);
+ 	ctx->count = count;
+ 	ctx->flags = flags;
++	ctx->maximum = ULLONG_MAX;
+ 	ctx->id = ida_alloc(&eventfd_ida, GFP_KERNEL);
+ 
+ 	flags &= EFD_SHARED_FCNTL_FLAGS;
+diff --git a/include/uapi/linux/eventfd.h b/include/uapi/linux/eventfd.h
+index 2eb9ab6c32f3..96e6430a3d12 100644
+--- a/include/uapi/linux/eventfd.h
++++ b/include/uapi/linux/eventfd.h
+@@ -8,4 +8,7 @@
+ #define EFD_CLOEXEC O_CLOEXEC
+ #define EFD_NONBLOCK O_NONBLOCK
+ 
++#define EFD_IOC_SET_MAXIMUM	_IOW('E', 0, __u64)
++#define EFD_IOC_GET_MAXIMUM	_IOR('E', 0, __u64)
++
+ #endif /* _UAPI_LINUX_EVENTFD_H */
+-- 
+2.25.1
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
