@@ -1,93 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-43549-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51858A585CC
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Mar 2025 17:20:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AACCA585F6
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Mar 2025 18:03:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA81E188DB24
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Mar 2025 16:20:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E0AC16A07E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Mar 2025 17:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452B51DF99C;
-	Sun,  9 Mar 2025 16:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9541DE88C;
+	Sun,  9 Mar 2025 17:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cq6Fgv45"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F1D14A09E
-	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Mar 2025 16:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FCE2AE95
+	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Mar 2025 17:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741537204; cv=none; b=rcYlDzpD1NyWVtLw4TVIktF5n1r0Aq4R3U+8mdmBf1L3D0W2Tzn2zcNFl1/nFDtfTXMbetc+NXvUIIrg+NkXW5AgdHW+n10jIUbSmHUaL1SUVIG5hSYBKBZ4GLB+FO4jpudrZegA3dMZpijn40ytBktMozhM6mx5uiC8rjd8bSI=
+	t=1741539820; cv=none; b=ZJvPiHTuQ97SwRTOLgIEpxiGhmAwzHpOc7nAYFlGNku8ibZrvlYtaW3a0qg6zPgD8YFuZEgdnX1sqJUf7ylR1DpnEst2bAGpc1N6zw1BExskZZcZhs8s15k3ae1urrY2IjLKYM2GlnmSFATEV17LBeSVZMT1n2P5Dii+K24Xzjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741537204; c=relaxed/simple;
-	bh=UJv+3p818hAynouGODGqPemY4sdL2sg5sl1CQD4WCAY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=m7auB91+Z8lJD1k1KBtUYaVkX3QTAVFrLUu8oQCPVZ/UrZ1ay8t4LBlPJMcmUhrgTJ7q3wXQA+fr/2Uz7ETicI5CtyH+WbR4h2lZftXeUWE6d2+BEz3U0FsU7GATmeuj8VKT4UEQzt7K2sn+7vjP4cRgJvyIMqw9hkGJFZnGKeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3ce8cdf1898so27800735ab.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Mar 2025 09:20:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741537201; x=1742142001;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kvHzXY7sxLiJE9tWVn3P+7dA0tfrkLHjWoYFez7ztlI=;
-        b=eHK0SdE+iVtYAqMu6dcqHdMJExZBdewcZKXzvmQz1njvKsObrOC0tG8lgHHcVOskLo
-         dlfxkcSKPZ3rF7msyUbPzMvpEkOcEPFANPibe1CPHHUGmc/GUviE09M384GOSbqJrcO5
-         BRZ9HAfb7SsJ9N9o5OxKyEq3qF3pITvcYWENxxwu5KnqQN2X0yjVXzgdVjB7hZK4BMxb
-         CU0oeBXftnpMNJSlxKf5+O8Zr8c+hi9cEoOJUi7MTdJQzlBq4VX2/PFRHd6eCJY051iG
-         gE5ap70bo/yzx2nUYnS4rHFZ5YtP3Uli4qr6sCtdPUqJ8jQA/76bc9S9SCpCiK1bw37v
-         PIyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUsX65Zz3ISDRlsrSi1+5xEzelcBsw3oQsto2YwFygzjyW0FcEiGwF8kCoOxwytCT6rjMPnG6YcGsaIGtA@vger.kernel.org
-X-Gm-Message-State: AOJu0YyszPrNt5cJtlcPd5IG1F1TgcxQfk+t9ZTmSAl5jxLiGxcUm3ig
-	S0oC52E3TaLk4KPYmoTs+uqi1eW+b6aYhP1Lqq/pcJC8QZg2AA1ctbQl8D4y+6+MdIg612AimHS
-	T+14P46T4dZ2AASbzBnLNnqS7JVBIez/fY3pDUGCWBXX6nq4w9Oz3TtE=
-X-Google-Smtp-Source: AGHT+IGzBV6/Mmw1jYJbp4k4xeAwt6EP5l8CLTLHNIXSvmWfgnNG3Eq5hlJ73B1hltOvdNhKNoHGM4Vwa3Q3wdVte9AmRIZsV4VY
+	s=arc-20240116; t=1741539820; c=relaxed/simple;
+	bh=Xebeuqu2NCll/QxTOuP2+yDIrcMb5fDPbvy0SjDDUW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jrE+DZhNWEijcbPkT6VwLObfKrF8jwkrSzWO4nqbTlcJ8RJ19yRI3qpemDAHYbvY1ap3YZEtigR+3AJ0mcVNkJqYA9+2kVEAZmFkLR8hkIws8A4i6YH/1BNI87AGjjrC1gVRSkgauo04VlWZG25fFF7nrtDI0N6wP1JaZ7y9kew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cq6Fgv45; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741539817;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ktY/l692hvd4FyeZKYppmC3JFEBwvK+7WlKmHAB35/c=;
+	b=Cq6Fgv45TPxVAt+naRUDvYJUXVkRXmu/qCUD95UTi9R+XJtPmhjX3sOhKM4cdSWXe3/yuS
+	koRE7o08VXA/uLNWzRCGsPV+aW/gZ4+264cmgBnzZVQ6XmvMaw4vzQKRUk7aURS3OsUVkb
+	JhtlZ0uUFmkhJcNsfn0SBu5Y/SwgveY=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-21-GrQZytcxN52AONNZWmiozg-1; Sun,
+ 09 Mar 2025 13:03:34 -0400
+X-MC-Unique: GrQZytcxN52AONNZWmiozg-1
+X-Mimecast-MFC-AGG-ID: GrQZytcxN52AONNZWmiozg_1741539811
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F1C1718004A9;
+	Sun,  9 Mar 2025 17:03:30 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.34])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 167D71956095;
+	Sun,  9 Mar 2025 17:03:27 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun,  9 Mar 2025 18:02:59 +0100 (CET)
+Date: Sun, 9 Mar 2025 18:02:55 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+Message-ID: <20250309170254.GA15139@redhat.com>
+References: <20250228163347.GB17761@redhat.com>
+ <20250304050644.2983-1-hdanton@sina.com>
+ <20250304102934.2999-1-hdanton@sina.com>
+ <20250304233501.3019-1-hdanton@sina.com>
+ <20250305045617.3038-1-hdanton@sina.com>
+ <20250305224648.3058-1-hdanton@sina.com>
+ <20250307060827.3083-1-hdanton@sina.com>
+ <20250307104654.3100-1-hdanton@sina.com>
+ <20250307112920.GB5963@redhat.com>
+ <20250307235645.3117-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:240b:b0:3d3:fbae:3978 with SMTP id
- e9e14a558f8ab-3d4418ed8e7mr107345105ab.9.1741537201441; Sun, 09 Mar 2025
- 09:20:01 -0700 (PDT)
-Date: Sun, 09 Mar 2025 09:20:01 -0700
-In-Reply-To: <CAOQ4uxj49ndz2oJcQMhZcXTAJ+_atUULNLPzLAw-BLzEdFwV+A@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67cdbfb1.050a0220.3d01d1.0000.GAE@google.com>
-Subject: Re: [syzbot] [xfs?] WARNING in fsnotify_file_area_perm
-From: syzbot <syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, amir73il@gmail.com, axboe@kernel.dk, 
-	brauner@kernel.org, cem@kernel.org, chandan.babu@oracle.com, 
-	djwong@kernel.org, jack@suse.cz, josef@toxicpanda.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307235645.3117-1-hdanton@sina.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Hello,
+Well. Prateek has already provide the lengthy/thorough explanation,
+but let me add anyway...
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On 03/08, Hillf Danton wrote:
+>
+> On Fri, 7 Mar 2025 13:34:43 +0100 Oleg Nesterov <oleg@redhat.com>
+> > On 03/07, Oleg Nesterov wrote:
+> > > On 03/07, Hillf Danton wrote:
+> > > > On Fri, 7 Mar 2025 11:54:56 +0530 K Prateek Nayak <kprateek.nayak@amd.com>
+> > > > >> step-03
+> > > > >> 	task-118766 new reader
+> > > > >> 	makes pipe empty
+> > > > >
+> > > > >Reader seeing a pipe full should wake up a writer allowing 118768 to
+> > > > >wakeup again and fill the pipe. Am I missing something?
+> > > > >
+> > > > Good catch, but that wakeup was cut off [2,3]
+> >
+> > Please note that "that wakeup" was _not_ removed by the patch below.
+> >
+> After another look, you did cut it.
 
-Reported-by: syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com
-Tested-by: syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com
+I still don't think so.
 
-Tested on:
+> Link: https://lore.kernel.org/all/20250209150718.GA17013@redhat.com/
+...
+> --- a/fs/pipe.c
+> +++ b/fs/pipe.c
+> @@ -360,29 +360,9 @@ anon_pipe_read(struct kiocb *iocb, struct iov_iter *to)
+>  			break;
+>  		}
+>  		mutex_unlock(&pipe->mutex);
+> -
+>  		/*
+>  		 * We only get here if we didn't actually read anything.
+>  		 *
+> -		 * However, we could have seen (and removed) a zero-sized
+> -		 * pipe buffer, and might have made space in the buffers
+> -		 * that way.
+> -		 *
+> -		 * You can't make zero-sized pipe buffers by doing an empty
+> -		 * write (not even in packet mode), but they can happen if
+> -		 * the writer gets an EFAULT when trying to fill a buffer
+> -		 * that already got allocated and inserted in the buffer
+> -		 * array.
+> -		 *
+> -		 * So we still need to wake up any pending writers in the
+> -		 * _very_ unlikely case that the pipe was full, but we got
+> -		 * no data.
+> -		 */
+> -		if (unlikely(wake_writer))
+> -			wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
+> -		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
+> -
+> -		/*
+>  		 * But because we didn't read anything, at this point we can
+>  		 * just return directly with -ERESTARTSYS if we're interrupted,
+>  		 * since we've done any required wakeups and there's no need
+> @@ -391,7 +371,6 @@ anon_pipe_read(struct kiocb *iocb, struct iov_iter *to)
+>  		if (wait_event_interruptible_exclusive(pipe->rd_wait, pipe_readable(pipe)) < 0)
+>  			return -ERESTARTSYS;
+>
+> -		wake_writer = false;
+>  		wake_next_reader = true;
+>  		mutex_lock(&pipe->mutex);
+>  	}
 
-commit:         b63f532f fsnotify: avoid pre-content events when fault..
-git tree:       https://github.com/amir73il/linux fsnotify-mmap
-console output: https://syzkaller.appspot.com/x/log.txt?x=11fd1fa0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=afb3000d0159783f
-dashboard link: https://syzkaller.appspot.com/bug?extid=7229071b47908b19d5b7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
+Please note that in this particular case (hackbench testing)
+pipe_write() -> copy_page_from_iter() never fails. So wake_writer is
+never true before pipe_reader() calls wait_event(pipe->rd_wait).
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+So (again, in this particular case) we could apply the patch below
+on top of Linus's tree.
+
+So, with or without these changes, the writer should be woken up at
+step-03 in your scenario.
+
+Oleg.
+---
+
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -360,27 +360,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ 		}
+ 		mutex_unlock(&pipe->mutex);
+ 
+-		/*
+-		 * We only get here if we didn't actually read anything.
+-		 *
+-		 * However, we could have seen (and removed) a zero-sized
+-		 * pipe buffer, and might have made space in the buffers
+-		 * that way.
+-		 *
+-		 * You can't make zero-sized pipe buffers by doing an empty
+-		 * write (not even in packet mode), but they can happen if
+-		 * the writer gets an EFAULT when trying to fill a buffer
+-		 * that already got allocated and inserted in the buffer
+-		 * array.
+-		 *
+-		 * So we still need to wake up any pending writers in the
+-		 * _very_ unlikely case that the pipe was full, but we got
+-		 * no data.
+-		 */
+-		if (unlikely(wake_writer))
+-			wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
+-		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
+-
++		BUG_ON(wake_writer);
+ 		/*
+ 		 * But because we didn't read anything, at this point we can
+ 		 * just return directly with -ERESTARTSYS if we're interrupted,
+
 
