@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-43533-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43534-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6526A57FEE
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Mar 2025 01:06:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 213C9A57FFD
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Mar 2025 01:17:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FA573B0D35
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Mar 2025 00:06:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C93643A2A4F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Mar 2025 00:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20A5184F;
-	Sun,  9 Mar 2025 00:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E534C91;
+	Sun,  9 Mar 2025 00:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fN1giR58"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SiGOxgqa"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E58619A
-	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Mar 2025 00:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF0E19A
+	for <linux-fsdevel@vger.kernel.org>; Sun,  9 Mar 2025 00:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741478776; cv=none; b=ErX3L1rCcj5LPlXqBdSPGbyEfjkANPRH3pLyVGtnEw0KaUnZUpiGk/SZ1aPocO5fAPI7Wf3idbjF0Jmp+z9J9gjVlH/k28UKjmNoJem13jzaO7tKr6qppOkR0Of1rf9MMUuvX/YxxTN2QRtoWB+/SqD9qNguzH/Wza7VGMmc2qg=
+	t=1741479434; cv=none; b=mO1XLAbpZwd8T+0FR6a4tYIBBbGaHgl3TqGDZuGNFDJBakEyT8D9kb2zBzeJWk6D7B7cN7E/TiA12MP9qC3gSHrY+4UlS0Qgwwbi3MGxl2dJrC0Bqn0Dtk6sjwiu5k7daT9rGEFG1xO9YqqIOSUWXt5ACFlxCFIiU4GzahVx5Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741478776; c=relaxed/simple;
-	bh=IsJdLezirQBjniJmTCKLyMuVKEgaZpOifJ53Nl8gEjM=;
+	s=arc-20240116; t=1741479434; c=relaxed/simple;
+	bh=THtDhScMln822aq4Vmu3UXX6XJfr22NYp7F82DStE0o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z9pehO+QFQNhinIq+BzkAh1pDMoEuy3fVKCbsG3tvg6e5dmTZw0PTkytvlSAR7+I5q8xjjxbTbNUjg/Q5EZNPxUvxcPmBY7nAGVSQkUX9qmggX//qzQh84Xwb/eaLy8rYU3LJFnmi2z59TouiJIpuH1tIBMdCERxeVcy0HamP3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fN1giR58; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=KGVJh3X1tpMyzH71zq2yf6LNCurtSumnmaLySy+MfZj51CFnXTC8mWs7z8CNqa79+t82V9VHWX6hWvaJXLeGksi9bxfyNQ1czCdAWj5kwoVHc/Lvd6BzA5a0bnAa5wUJR6cXQeiwKafWxPB8ss7ahpGTkJxz1LILS0IF6p30fm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SiGOxgqa; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741478773;
+	s=mimecast20190719; t=1741479431;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2V7bQ4VK6TsBeGHH+0dQ7PDHfL43pm6Etkd1tSAFig4=;
-	b=fN1giR58KDjUV4NvoLsBaxJ1C8B6KHQe+6IuuSdT/VcVdTKSxmG9I+Z+IpJEorflJEA5Zv
-	9FBhgFR1LJUWKk+nx3GEroYwXMZO25AFZQKlLSYeV6X8hlV2l8/deoyX9tdc63nwOVagC9
-	qE8XZMEsAWQ/r7Dt2ex8yDyvqj3M04c=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=cDsahH8DeVAVtVpMyFzohcPlKXp1v4nXuT8Fv8DeuVM=;
+	b=SiGOxgqa1w4AZYOIfeHWvqnb0AdzcBTR7vuaa6pPW1+nmp1U1p0AZfx9xqReda0nN7Hj5m
+	piSB9UzKGSKT/TR4mf6Ki482pDsJSrP7DToo6kicrPrxgl/LvwKM7TemOSdwwxyq3LGHfT
+	/QdOHmWC9QhgpQre6TT7Z/BwNHLwwuQ=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-231-8VWtHirSMn68_xXxg8d3KA-1; Sat,
- 08 Mar 2025 19:06:10 -0500
-X-MC-Unique: 8VWtHirSMn68_xXxg8d3KA-1
-X-Mimecast-MFC-AGG-ID: 8VWtHirSMn68_xXxg8d3KA_1741478768
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-463-zCNv-e6dO1CSX27mJyXhQA-1; Sat,
+ 08 Mar 2025 19:17:08 -0500
+X-MC-Unique: zCNv-e6dO1CSX27mJyXhQA-1
+X-Mimecast-MFC-AGG-ID: zCNv-e6dO1CSX27mJyXhQA_1741479427
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6EACD1956087;
-	Sun,  9 Mar 2025 00:06:08 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0D4E618004A9;
+	Sun,  9 Mar 2025 00:17:07 +0000 (UTC)
 Received: from fedora (unknown [10.72.120.5])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8D1E7180AF7A;
-	Sun,  9 Mar 2025 00:05:58 +0000 (UTC)
-Date: Sun, 9 Mar 2025 08:05:52 +0800
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E852C300019E;
+	Sun,  9 Mar 2025 00:16:57 +0000 (UTC)
+Date: Sun, 9 Mar 2025 08:16:51 +0800
 From: Ming Lei <ming.lei@redhat.com>
 To: Mikulas Patocka <mpatocka@redhat.com>
 Cc: Dave Chinner <david@fromorbit.com>,
@@ -67,7 +67,7 @@ Cc: Dave Chinner <david@fromorbit.com>,
 	dm-devel@lists.linux.dev, linux-block@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH] the dm-loop target
-Message-ID: <Z8zbYOkwSaOJKD1z@fedora>
+Message-ID: <Z8zd85X2gosbrsc8@fedora>
 References: <7d6ae2c9-df8e-50d0-7ad6-b787cb3cfab4@redhat.com>
  <Z8W1q6OYKIgnfauA@infradead.org>
  <b3caee06-c798-420e-f39f-f500b3ea68ca@redhat.com>
@@ -86,7 +86,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <81b037c8-8fea-2d4c-0baf-d9aa18835063@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
 On Fri, Mar 07, 2025 at 04:21:58PM +0100, Mikulas Patocka wrote:
 > > I didn't say you were. I said the concept that dm-loop is based on
@@ -123,37 +123,11 @@ On Fri, Mar 07, 2025 at 04:21:58PM +0100, Mikulas Patocka wrote:
 > raw block device:
 >    READ: bw=1246MiB/s (1306MB/s), 1246MiB/s-1246MiB/s (1306MB/s-1306MB/s), io=12.2GiB (13.1GB), run=10001-10001msec
 >   WRITE: bw=1247MiB/s (1308MB/s), 1247MiB/s-1247MiB/s (1308MB/s-1308MB/s), io=12.2GiB (13.1GB), run=10001-10001msec
-> ext4/loop/ext4:
->    READ: bw=274MiB/s (288MB/s), 274MiB/s-274MiB/s (288MB/s-288MB/s), io=2743MiB (2877MB), run=10001-10001msec
->   WRITE: bw=275MiB/s (288MB/s), 275MiB/s-275MiB/s (288MB/s-288MB/s), io=2747MiB (2880MB), run=10001-10001msec
-> xfs/loop/xfs:
->    READ: bw=276MiB/s (289MB/s), 276MiB/s-276MiB/s (289MB/s-289MB/s), io=2761MiB (2896MB), run=10002-10002msec
->   WRITE: bw=276MiB/s (290MB/s), 276MiB/s-276MiB/s (290MB/s-290MB/s), io=2765MiB (2899MB), run=10002-10002msec
-> ext4/dm-loop/ext4:
->    READ: bw=1189MiB/s (1247MB/s), 1189MiB/s-1189MiB/s (1247MB/s-1247MB/s), io=11.6GiB (12.5GB), run=10002-10002msec
->   WRITE: bw=1190MiB/s (1248MB/s), 1190MiB/s-1190MiB/s (1248MB/s-1248MB/s), io=11.6GiB (12.5GB), run=10002-10002msec
-> xfs/dm-loop/xfs:
->    READ: bw=1209MiB/s (1268MB/s), 1209MiB/s-1209MiB/s (1268MB/s-1268MB/s), io=11.8GiB (12.7GB), run=10001-10001msec
->   WRITE: bw=1210MiB/s (1269MB/s), 1210MiB/s-1210MiB/s (1269MB/s-1269MB/s), io=11.8GiB (12.7GB), run=10001-10001msec
 
-Hi Mikulas,
+BTW, raw device is supposed to be xfs or ext4 over raw block device, right?
 
-Please try the following patchset:
-
-https://lore.kernel.org/linux-block/20250308162312.1640828-1-ming.lei@redhat.com/
-
-which tries to handle IO in current context directly via NOWAIT, and
-supports MQ for loop since 12 io jobs are applied in your test. With this
-change, I can observe similar perf data on raw block device and loop/xfs
-over mq-virtio-scsi & nvme in my test VM.
-
-1) try single queue first by `modprobe loop`
-
-2) then try MQ by 'modprobe loop nr_hw_queues=4'
-
-If it still doesn't work, please provide fio log for both `raw block
-device` and 'loop/xfs', which may provide some clue for the big perf
-gap.
+Otherwise, please provide test data for this case, then it becomes one fair
+comparison because there should be lock contention for FS write IOs on same file.
 
 
 
