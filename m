@@ -1,802 +1,342 @@
-Return-Path: <linux-fsdevel+bounces-43637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AF23A598F2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Mar 2025 16:03:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22013A599EA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Mar 2025 16:25:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3276E18918F2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Mar 2025 15:01:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6AA83A87B9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Mar 2025 15:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99121241668;
-	Mon, 10 Mar 2025 14:53:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5101322D7A6;
+	Mon, 10 Mar 2025 15:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="y9qvhmSa"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="izeXKr08";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="mU0Vbig3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916AA23ED60
-	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Mar 2025 14:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741618422; cv=none; b=GXhkYqTkbkKwOKCUIczWp7Z9i0/T8rP9GHqp649CRD1PK/X57bd3DIkr+VNctO3yKS/BkjPITg74T9du8frMmgfGOIF20fVL6LOW6PYfb/WGmWRglQ15NhIlJaLWAKDMfdzemFFuJIo5EhiWYQP284aP2UfZlHQofVrApAPWCgg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741618422; c=relaxed/simple;
-	bh=ALqPfs+yE9Sutp4spxrhbCTh8xfaqVKddbYQ02jvGHs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jvQv4A3hR99WRHIa4AR4NIYCM5y1tHpJ5xhqusgUf7r24COzhFfjuODYKiZdD+kuNZ2reuzPf2vfgZJAHcpOb9GWjN522ss8vEp8zgEeyqeQDVMtQjB8Yc30og24M8tiZZr1bd2VnLfxpGTStxpKxZInbAw91EsRH/oMR81Vsm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=y9qvhmSa; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22355618fd9so78454465ad.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Mar 2025 07:53:39 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5DC1B3927;
+	Mon, 10 Mar 2025 15:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741620282; cv=fail; b=P950PAXPbb/f+6ed7jD0/wjPcECk4MI11alqP+LivZrevIHC6jKfKWvGvECOxcqFGj1uNP52uVfyVtCFgUQjHrOE6aeGczE9DK8DwNOyxvu5DQmP2fCpH6gFhJKuI/AMZSeI2ZRxHJuJP4vu6UwqBgkTEyiQ9/iAagvxMBGu0cs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741620282; c=relaxed/simple;
+	bh=9SsO+3J7Boo1S0h4uG3EjtDKkv0ufZXcXVFqoEddQhk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=j3heteIhAH/dG6qjqwLSCYwHnEubXkRZlbeJw/TllZ6jUWmaFQik0JYF1fY4RPXFb0TRyJrcPyYpk3RF/4nQ5NrYltjQTvTD4kUuC81xdaOXQafqchUnfcP+FsWnoVor+PXCo7hNf6jCkAszcDPGK8YcdgsIgVnzkgqgKuficnU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=izeXKr08; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=mU0Vbig3; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52AEtg7e031300;
+	Mon, 10 Mar 2025 15:24:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=CW8iETKiUEDltei7EsJrf4m62+dxo7scP6mqSrVoH6w=; b=
+	izeXKr08KIB8eDuzndamg57n9lFukofnbbJrfq8s1X195z6p/yP8rGX64saC814W
+	3mnMchXGcWGDs/iOWB94xE5sKHgFOp7ScTGCeBo0mfMnflTIsDaE1g6aRViXb38T
+	yzktj2o9qR1jmkZFjhhGKj7X/s+HNTc3VPECflNi7XCycO81PAqKRktXK/89wNCk
+	T1zKjqGuWR1wLGt3ML3eK7sc0ZBKnPjVREpwoBj2uIpt80Rdv6JxzwE+H/DWha8L
+	8XaEc06euZ4WYmp/tEqqQH+VmlD/Q/po9/KRmE0QY1Xu0nKTqdPPNRL+jB1gCd8m
+	uW7I6Mm1wvRoITq9/18X+g==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 458cacav2b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 10 Mar 2025 15:24:32 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52AF3rHa030546;
+	Mon, 10 Mar 2025 15:24:31 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2173.outbound.protection.outlook.com [104.47.57.173])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 458gcm3s6p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 10 Mar 2025 15:24:31 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Q4/8iTr/q3o912nrLYaRLb5z0fBCpCb824y+KObw124RKstY9uzXG1t6HJLfc+twGE8c1Frv7h1IU0pWLdlCkkCLxFoJvkDlfKrvcexbC41pH+mlq9JppGkPm7hvEl31P2UYXpkl7oJKyqj1qzTaCG0eidlpc/gVrDRKcGl2SDeH8VSkTG1RG2mUMoX0gmuJugF0z6O7sqaF3yoBMSpVA+Yg99VDaMMq8isPXWG6kWfYp4w9oyBGeeXJdh9BOvttWEH+/hu9W9SgHm27VEykw01LGHvtDwika50eHdCXNRCW7rPuephvfzkSLr3I0lJ5lgYK29Pya+2nkAYBouaEqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CW8iETKiUEDltei7EsJrf4m62+dxo7scP6mqSrVoH6w=;
+ b=xkzZ7LoCM9UppmNmg6Lp2bCCOSf6uHhKA/VeVpFOHMeDFAE5PIvB7/u8eHTftiVgRnYB4DEBP+1mGz+4+Wx/ELrE5Hj1D3fdCfxTBBcZ+LAsd4GlsuiqIOUj92UvYeNIoZzoEqU6B2Pdw6ArvWpgPdZPCKm5WZEMq5mj8lowj1xARYsyym2gn2foI1J7Q7ob/aUDZmzJDbaacwzyfHS+IsAnF+4dKns4T6n9YXjhfguZXsu4Qlx9qz17AJdsReIyIGg1wd8FL2xM9beKIHRSLFoQvN/2z9/8rStngpwbfcwV6TUsyOn+HE3M1snGqjgtEg6uhhRBZaMiCvn+PwkixQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1741618419; x=1742223219; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ruj/JnwPHtkrEOpCEVLVNX7RrlNYJUu0NWWeo3U6Fsk=;
-        b=y9qvhmSacAc+g6wExBnKESRGefew1nuQXU8kY/VQ4bKMy2I8iYJZbB1PkybxKcfO+Q
-         z/JndC07blwQc7iZy9kMM8Q+rcsgl+6ss/cOBVhC/ug7+lGoXGuId7OEOBnEEgIqaq+l
-         +SJhFBFH/2hmkMnwKiPjBMgGOAAL+r6yoQEZJRcFOGB4WRopFJ0LqRNVA8UWQqkYGrKU
-         w0FaS4tx2pkPA8J/X1mGAXUEbg9ERYnC0Hwefj7jdbngBglhXXlwe5W6QBoegY5tKbSN
-         6/Vrf1RGhelD1RqmDV/CN2xQizF8Xy0wusZwMIf7w9l2a/GmMhA/tnHPTBGhPkdOZTWd
-         PLXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741618419; x=1742223219;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ruj/JnwPHtkrEOpCEVLVNX7RrlNYJUu0NWWeo3U6Fsk=;
-        b=usbNVLxDEjJ2TqgYsdIHHFgs4cPzxwWKjTjhiFqdw4p73TkO9APw1V4EybEe/ernpe
-         PeUxxEjl5VOpzoooRJQVm2GvVB2cuJIeFl//16Hmj+BFVJfnEdT5ZbUIywDW6JkpcqHJ
-         w7lNy1ehseOkfvc0NmnAL+UOsnM/uwL9L+XpVqbsibMKLyplnKErhpGSUTm/Nr2kK48O
-         g7Ygp+Z0WAZkDeZ3hfk7tcNP7mb5IX0mm1fEkNiuIHe8QQ5qKxFt9V8MGNC1+iMSJ7Qk
-         kJYvR6kCr6qsPsYQ4zxggmrZ2xhcSGWz14cu39kEOBilmzK5A6eookfLq1DennZ4Os/n
-         /Z9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWMCeHpULrS8wNVN8MvW5nz7ZL8x+rqSDjB/SCgH9b40V1bfcHOHlNrPGV6sWsG3NrNpm3mmsMbYqedCLy8@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzo4CubKmfJeWPrX4UA5Mz2LWBDHm3YGZhgG1LiXrgkZr6lQLDe
-	yLUPC8Pr6UfKL3R5OQHUECiD2gEN0PQBsAhtkRJHSlSD6VxdeKRQFg5QUX5/Gd4=
-X-Gm-Gg: ASbGncuoYBo3JtGERvelovSDjt+Li0QV6SNBOUitpeKu/0GnJn8UtyO8pH/9tGq72c2
-	00NrtiwKMcJkQyeO2SjUadgGua+CWVg34Hbdvke5rpXHweTAjsy3Nm4vrVTD8KOwhGoZ3iQrOKw
-	CU0khgoW/p71FwX8rnGz18r51xVqXTu3zvN5KWrISk17TSz8eLO3DzLPXIJ2GeJeZfR/c5q2+qH
-	rUODKd53bE9G7UdbT6dQ7MzTstup9gPPmAEDhsG+EGGtefmkOt5F5gQYu/0om1pTDiSUbNystwH
-	d3LrnMTSQR2nAB0QUuZI+5oMfFER07OGBfpVQQGe7G9qssK5kiVFaIc=
-X-Google-Smtp-Source: AGHT+IGv7tM2PHL9ys+s6t6SEB0A82+OsRTHqO1WWLNqv0N4xUl6sYQq+4x8MhxgrmcY2aWh78Ovvw==
-X-Received: by 2002:a05:6a00:1ad2:b0:730:4c55:4fdf with SMTP id d2e1a72fcca58-736eb7ca1f6mr271137b3a.7.1741618418779;
-        Mon, 10 Mar 2025 07:53:38 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736d11d4600sm2890275b3a.116.2025.03.10.07.53.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 07:53:38 -0700 (PDT)
-From: Deepak Gupta <debug@rivosinc.com>
-Date: Mon, 10 Mar 2025 07:52:49 -0700
-Subject: [PATCH v11 27/27] kselftest/riscv: kselftest for user mode cfi
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CW8iETKiUEDltei7EsJrf4m62+dxo7scP6mqSrVoH6w=;
+ b=mU0Vbig35TSSJuzdTYqthbQy4J0pee/x+sGMxqF9PDVr01JYijH2OC76mcr6Vo0mf93ePe2Ejbvo6BSXkAPFIWcZnKhAmsCImnLWHxSymjJBMm4Eqvjk9Wka7bNnpDsb+twE21ugGHfWOMXygAoh/TzDKPZtJ2zChvdC0M+jbxc=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by SA3PR10MB7094.namprd10.prod.outlook.com (2603:10b6:806:31b::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Mon, 10 Mar
+ 2025 15:24:27 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.8511.026; Mon, 10 Mar 2025
+ 15:24:26 +0000
+Message-ID: <5e6795b1-305c-40a0-84d0-43dfb4ee6cd7@oracle.com>
+Date: Mon, 10 Mar 2025 15:24:23 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 09/12] xfs: Add xfs_file_dio_write_atomic()
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, brauner@kernel.org,
+        djwong@kernel.org, cem@kernel.org
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+        martin.petersen@oracle.com, tytso@mit.edu, linux-ext4@vger.kernel.org
+References: <20250303171120.2837067-1-john.g.garry@oracle.com>
+ <20250303171120.2837067-10-john.g.garry@oracle.com>
+ <877c4x57j8.fsf@gmail.com>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <877c4x57j8.fsf@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0049.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:152::18) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250310-v5_user_cfi_series-v11-27-86b36cbfb910@rivosinc.com>
-References: <20250310-v5_user_cfi_series-v11-0-86b36cbfb910@rivosinc.com>
-In-Reply-To: <20250310-v5_user_cfi_series-v11-0-86b36cbfb910@rivosinc.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Vlastimil Babka <vbabka@suse.cz>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
- Christian Brauner <brauner@kernel.org>, 
- Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
- Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-mm@kvack.org, linux-riscv@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-arch@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com, 
- andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com, 
- atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
- alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
- rick.p.edgecombe@intel.com, Deepak Gupta <debug@rivosinc.com>
-X-Mailer: b4 0.14.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|SA3PR10MB7094:EE_
+X-MS-Office365-Filtering-Correlation-Id: 559ff7b0-7d88-4c0e-0317-08dd5fe7a4ee
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NGdBekFkWnlyajhWL3hHTmhLVE4rRkpkaUJHRHFFOExma2hGb0RBOWlOOVd1?=
+ =?utf-8?B?ZWEvemY5U2IrSklDZ3hDdlByNzBMQ05LclQ5OHJTeThxaGRkMlF2NllUQkdP?=
+ =?utf-8?B?N2xBM284ZEhrRnhJYU0xQm9ETVRlSHNpR3ptM212ZWpCZFUrOUZFaXRicUh0?=
+ =?utf-8?B?YXFLYnk0V250NVVXOFR6dVBJbng3OFNYUDBtWURqQS9WeXFKQWg0K1B3UGlM?=
+ =?utf-8?B?K3o0a0tNYWwycGZnQ0ErQVlUWnNSVjh5Y3J5OFVpYlBTamVxNDlXUVk0TE5X?=
+ =?utf-8?B?czhGOWZwUFo3K1BtZGF5S29EWGx6aFptVkZRa3ZtL0RrT0VPQzhJcTR5bXgx?=
+ =?utf-8?B?T3NiZ09tNlJ0OEx3L0xRUWd4dGdBcmszQnI0N1hXdjdFYndWcXJJTk1uQlN3?=
+ =?utf-8?B?SmRkWnNTRDZydk9QT0tuVzI1eEpFTzJFMk9XZWUzNkdLVG9KRGdnejlRQWsv?=
+ =?utf-8?B?SjRXVjc3ek5EakwrS2QzL1VzL2M3T25yQW1wbTQxZmZ4RFpmTGFJeFBNNytk?=
+ =?utf-8?B?ZUhybnpqOE1wSzRvVUtNdWU2M0MwVmZaeEVuZnNHeWxnK0NhMVJxV3B2S3N3?=
+ =?utf-8?B?RVk5TTAxakw4SER5emZUOEVWNW1CeXNRNUxGc0pydjdaWDloSXlXNFdNRkVN?=
+ =?utf-8?B?VWtGMVdqeWk0NklZVGVnWURUeTFKdXc3Umt2WHltSWNINm5kNm5jZnRBWUFN?=
+ =?utf-8?B?dUFNS1JjeENwdFI0TGtaODFXUVBSVDB2eHdaWk15YzNZdjdpQXlRajdqcWgw?=
+ =?utf-8?B?eS94L3MyNmxEWnlxVjFqb0Z0MlcyMjBKTm1BSktPNVpsQVZFdmk0Rlk0QnV4?=
+ =?utf-8?B?Y1ovR2VxaWxVY1NXblk0cCtiL0g0bGhjUXk2WmVxcnZPempDVmZacFN2T05D?=
+ =?utf-8?B?Y0xiOWdBdXd5Z1RldVU3Y1F1bC9TUVZFRVlqTElGRWpITHMzbXcyKzhaUkd4?=
+ =?utf-8?B?Z0hLVmNmdk5QM3dpWS9hZ0JnSXdDZnkvdnRrTjRDV3NrcloyRnBkMytxSmo5?=
+ =?utf-8?B?UFhDTTU5emFBR0JYSFhobDZtQ1pUK2dpZUsxWUdJN3lKZGFxSyttcThiTWY1?=
+ =?utf-8?B?dXd4M0tBT1FmYXBCaHhJbFZ4OTgxOE1KYXVmYm5qQXZyUlV5Z2JYUEpOTk1i?=
+ =?utf-8?B?RkxucjBjNTMvK3FSeS9rTTN0RmNiMVQzWHh5Q0FOK0VOV3dYRWVYQjdCRkJt?=
+ =?utf-8?B?WEpuM2xMNmZGQmVxZmt2ZFpLT1BlU3dtM3dXbHY2SDNPKzFOYVJlUXZVS2g1?=
+ =?utf-8?B?WXFpb0pRNG1DVG91NkdwNWxkUkxUemcydlhwZXMvakFjWElwVnBTaU41blhK?=
+ =?utf-8?B?ZTUrTkFTUkZGRDNlZVZZVVdYVG9Ud1liTW83MWtNK0hEeDBBVm9lelBoeVJQ?=
+ =?utf-8?B?eW93SDZGMkNmK0l6ZjBjRXJaY1E3QUJVSXllSFluT1BqOW9tS2RrMG1jY0VT?=
+ =?utf-8?B?YWlseC9obWRxRnl2emtXTFR4djIwbTVoY210Y1I1a3BqeVR6aFJ6ME12QWJN?=
+ =?utf-8?B?Z2t5ZENSUEZUd1hzL0Y5UkZYMGh2SUJXN2xRVm9zN1JiNVlaOW1LYjlkVzd3?=
+ =?utf-8?B?enArVXYyTm5WZG00bnA4Qk0zSDdIaDd6NGJNRGdUbFR3bmFIVDN6WHpBZUFB?=
+ =?utf-8?B?ZXVsSjI2RnIwSHhtOFRkWVBUQkhScndsQjBKbzZqdVJCQmM5QWk2bTc4NEhu?=
+ =?utf-8?B?eUQ0UjBCTEpvSWZwWjNtZW8yNE45Z3NsZDBCcUJ6b1lBd1Zvb0xWMmdWQ2Ey?=
+ =?utf-8?B?QVE3VmthMWFaR1BFN0wyNURqVmdrd0ZjV3JQZHJucFYzS3N0MUYxckxwZ0VT?=
+ =?utf-8?B?NGZTZ0hGeEVkMHQvOGhoa2RoMXVDZGFDbk5HOXRPcG8vNUVwc1J3eHRHRmFo?=
+ =?utf-8?Q?uFRAReO7XNkCx?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NitpSktMRmE0WU1VZ2NHNUNhOGZ3Y1VTWkxDRHRPYkFRYXMwWXV0TDhtTE5k?=
+ =?utf-8?B?Ymt2N0U2ck9ISk8zRWd2aHY2K3ZPQnV2USs3N0xKazJ5enJobGpNZ2VDWnNk?=
+ =?utf-8?B?MFVTMXB5bnUvYVpEeGVYQlJxYlZxeG9HTGQ3ZkwzY0hlYjIydmZUajVFYWls?=
+ =?utf-8?B?R2ViYUJSQWZwRWxOSDdBd0JLTmp0bDE1M0ZQR0hKNk1ieEc4cURVdE5pWXox?=
+ =?utf-8?B?UzRueFozUnVRQmpldGhKdFBUZHg3cmg4LzRvQWMvNGhFcmpROEJhQlZUMm9y?=
+ =?utf-8?B?OFlzeWgyL01xREpZdTNkN0NtU1EvZURWaTRhc3NDQ0lwWDBaclA3N2Y2RG5p?=
+ =?utf-8?B?RTQrYWRCYzQzeURTb29Xcll6d0tqT0JoV0pueUJNQjZSL0xCbDNxc2MzcGlm?=
+ =?utf-8?B?QUF3MjFyMlRGcnkyNTUrZWMzWUQxRnJ4Q3VrcDBTbXkyYXdqTUduUXFUTml1?=
+ =?utf-8?B?YjBveGl4UE5HVnBISG41cjh3K05LbzBRSWszWk45aldmOTZObWd4N1F3eGlt?=
+ =?utf-8?B?K29SNHZDMkp6aWtVT0JRTXZ6amVPY2VvSnRvUC85VzA2UVVyOTlSZ3VhTTFZ?=
+ =?utf-8?B?Yk9iVWN1RlBlTFc5c0Q2S1VvVUg1TGdjdW9naWZoTDFtUzl3MXRpaDVVeVBk?=
+ =?utf-8?B?Wld3T25JdFVqMFFRMW4wUEVRL0hXbFdkRHhobVNqQWtZdkpzcjVjR3JVR1dG?=
+ =?utf-8?B?VG9UdFR5a3EraW9URUhkVjNKeWhUZW8rc2lyRW0zMmNSeUZVYUtoRmsvakxi?=
+ =?utf-8?B?cHdYaFhoM3NERkU0bHl6OGkxTTVYbE5EeUZJK0h4MHBZUWtZamtGWk9qbjJP?=
+ =?utf-8?B?WlY2eHlFcGlCbjk3L3E0KzlGZUE3UVdaNGhQYUhwVGJJR0NYYkMzd0lpVkdU?=
+ =?utf-8?B?ellQS28wejk4V2ludDR0bktPeUU3cUxsT1ZqbG1vMHkxK2tuL0JseUhaeEhG?=
+ =?utf-8?B?ZHl0dmJ4S0lKVGdFR3h0dUVJT3FsQVlBMVZzV25jbXZPQy9ZL1cxSjgvYnZW?=
+ =?utf-8?B?dVRWNE93akptaE9vNWs0Z09PQ0h3WjZMWmJSSGt5T3pGdlFDNGNhYW4zMjNI?=
+ =?utf-8?B?bEloNFYraWpvaWZlNnV0OVYzR1poVnFremxERFpTWlo5NW1NU3h6cTByVnFS?=
+ =?utf-8?B?ZmQvdWJkajJhbDFJUTFLbktENDVBOHZVNWVqS2hCcVcvYUJkelpEN2Y0aklR?=
+ =?utf-8?B?cU9zVWJ4RXpuMjZWZ2cvWHh4czVqdkZ0c0hUeXUyNklnK2owVnhjVzZ2K1Ju?=
+ =?utf-8?B?SHlhSFErNW01NHNuVFozeGZnUlZmdnRvYTZ0ZHlkQmF3TXZIakdVcFg1YVht?=
+ =?utf-8?B?ZmszM05Hb3dSNEh2KzFvZUVCN0l3Y2prRC8yRHc0c0J5S1hQWmRJa2ZSWVBt?=
+ =?utf-8?B?WmxxRWZWMG5IZjJvZjgvSXNjc0pXQnVOWVRhVk5WcDRkZ2kySnVGNWMxNEtQ?=
+ =?utf-8?B?Z3ljdVRiWlQ5LzdKdjVJLzltY015YnBwaXdEbkxMOGFMbCtkR0ErWTNmdHRv?=
+ =?utf-8?B?SW1IQ1llYVJ1REVtM2JTbnBucitBTmxrcmpWVlNtOVpsc3dLcTNDLzYwbG0v?=
+ =?utf-8?B?Rm9sdFcxb28rS05ZKzV2RkZDSFRvUGlnUlZFclpUVVdhRDdrMkNyVkRBOEpT?=
+ =?utf-8?B?UzZYNUhLZmh5c08vZ1hJVmVRQTlvdFdvM2p1SS93ZHZ6QkhJcC9sTjJtUEl1?=
+ =?utf-8?B?WDlWTUdFYlRWZEdwOUNraEVFSy9DM3RUVXZqbmZudStWWjlmZUs4aGFYUXlZ?=
+ =?utf-8?B?cm9HK1IxZkFjQXhFSkdLeHJ4a1V6U1BMK2tPZHMwVHViaTVJNnp4Y054dGZ2?=
+ =?utf-8?B?SzF4OXgweDBMZnFGZXBsTE5JZktKTHNOK3ZyMFMzRXlSSHZ0YkMxcWU5T2Ny?=
+ =?utf-8?B?a1dxWkRrNG1RM2cvMExxMGxIcDZwUXpwMWpFUHVnUnFHbWY0OWdySEtCbDg3?=
+ =?utf-8?B?N0JUaEd2c0prTzdua0hNdFRvTDRlclphQjlyeFkrWUIwSWRHdUMxT1FKb0lF?=
+ =?utf-8?B?My9RdG12dUVma1JjdkpqcEFlVTYyd3VRRXZJT2s4a1NRKzJOTHA3bjc4d0tu?=
+ =?utf-8?B?RGFHWnEvbHBtTVY0dExDdzc4cTREb2JNQnRpYWFLWU9ZZE5UeFhqWTFmcjd5?=
+ =?utf-8?B?dG5RM0ZuclZlSERHcFN4QUhBSWJRa3oyWjRaWUxReEo2cHNCUTd3eWJVc1dB?=
+ =?utf-8?B?V3c9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	miSWcGlE+JbgD33jFvLfdqOl2PwGJACQ42sNu8+YW03rdYqnXtGvMlfoRd1RV/q7r8u2db4sEwfmF4exnj+52CRkA3olvUp40q1LLUEujzNHHd+m5MjH5Grct5rfDQP3H2PDmvHUOk4fcPvC66k91cIPK05rFRsSSRKAwqnNdVGGRZEUNLGuS8uoGWkY6BcaLbIbeZjTc7NpCqF5IGEbk/uXHcjxlYRATH2iZGhqFJcIxMfuqKgmGniCCcEn2vuf2bzncn6ZNp494bmdbeVuH+5v2Sx3lIA5uTXwrgZCDM4+RSqbnfy6VDnINnSku6NBFzCPHGPeA5oP3sUptNX9YsDRSG96cJLtmkfarHfoxiVzRBM7RJCHFUbCNuYBr/cM09Fw4cZkITKOaduss1iILI0+W83xEy9RDbE3NgwjajdE5poZ3w1tt1TY26n+pdeGDUO9sENlGw4TFet4e4azQd5V15SpGuUcOY/46F3zdnIlhOiifUGPGirPgOJcBv+7f3k6RNQ5mpn6f5irGgjh/AmFmBa7wRnEvOVi0KsS3/Uaw6P7d5NHmesOkMOzcMEiuhFJhk8yI2yruOLUR5pbbP4AH8xljn4MQFhR+5v0wOE=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 559ff7b0-7d88-4c0e-0317-08dd5fe7a4ee
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 15:24:26.8099
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Cx+StkcvJqbK9l6K4wNtDmzx2uLt36ekGQeInm1ADmLRRfAIAtd/H4sihuxBCb5eQjEuGvzU/eW+b737n83MUg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR10MB7094
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-10_06,2025-03-07_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 phishscore=0
+ adultscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
+ definitions=main-2503100121
+X-Proofpoint-ORIG-GUID: jngG5AAYFCHOG3M-MzxvvO0-nhDf-Omi
+X-Proofpoint-GUID: jngG5AAYFCHOG3M-MzxvvO0-nhDf-Omi
 
-Adds kselftest for RISC-V control flow integrity implementation for user
-mode. There is not a lot going on in kernel for enabling landing pad for
-user mode. cfi selftest are intended to be compiled with zicfilp and
-zicfiss enabled compiler. Thus kselftest simply checks if landing pad and
-shadow stack for the binary and process are enabled or not. selftest then
-register a signal handler for SIGSEGV. Any control flow violation are
-reported as SIGSEGV with si_code = SEGV_CPERR. Test will fail on receiving
-any SEGV_CPERR. Shadow stack part has more changes in kernel and thus there
-are separate tests for that
+On 10/03/2025 13:39, Ritesh Harjani (IBM) wrote:
+> John Garry <john.g.garry@oracle.com> writes:
+> 
+>> Add xfs_file_dio_write_atomic() for dedicated handling of atomic writes.
+>>
+>> In case of -EAGAIN being returned from iomap_dio_rw(), reissue the write
+>> in CoW-based atomic write mode.
+>>
+>> For CoW-based mode, ensure that we have no outstanding IOs which we
+>> may trample on.
+>>
+>> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+>> Signed-off-by: John Garry <john.g.garry@oracle.com>
+>> ---
+>>   fs/xfs/xfs_file.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 42 insertions(+)
+>>
+>> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+>> index 51b4a43d15f3..70eb6928cf63 100644
+>> --- a/fs/xfs/xfs_file.c
+>> +++ b/fs/xfs/xfs_file.c
+>> @@ -619,6 +619,46 @@ xfs_file_dio_write_aligned(
+>>   	return ret;
+>>   }
+>>   
+>> +static noinline ssize_t
+>> +xfs_file_dio_write_atomic(
+>> +	struct xfs_inode	*ip,
+>> +	struct kiocb		*iocb,
+>> +	struct iov_iter		*from)
+>> +{
+>> +	unsigned int		iolock = XFS_IOLOCK_SHARED;
+>> +	unsigned int		dio_flags = 0;
+>> +	ssize_t			ret;
+>> +
+>> +retry:
+>> +	ret = xfs_ilock_iocb_for_write(iocb, &iolock);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = xfs_file_write_checks(iocb, from, &iolock);
+>> +	if (ret)
+>> +		goto out_unlock;
+>> +
+>> +	if (dio_flags & IOMAP_DIO_FORCE_WAIT)
+>> +		inode_dio_wait(VFS_I(ip));
+>> +
+>> +	trace_xfs_file_direct_write(iocb, from);
+>> +	ret = iomap_dio_rw(iocb, from, &xfs_atomic_write_iomap_ops,
+>> +			&xfs_dio_write_ops, dio_flags, NULL, 0);
+>> +
+>> +	if (ret == -EAGAIN && !(iocb->ki_flags & IOCB_NOWAIT) &&
+>> +	    !(dio_flags & IOMAP_DIO_ATOMIC_SW)) {
+>> +		xfs_iunlock(ip, iolock);
+>> +		dio_flags = IOMAP_DIO_ATOMIC_SW | IOMAP_DIO_FORCE_WAIT;
+>> +		iolock = XFS_IOLOCK_EXCL;
+>> +		goto retry;
+>> +	}
+> 
+> IIUC typically filesystems can now implement support for IOMAP_ATOMIC_SW
+> as a fallback mechanism, by returning -EAGAIN error during
+> IOMAP_ATOMIC_HW handling from their ->iomap_begin() routine.  They can
+> then retry the entire DIO operation of iomap_dio_rw() by passing
+> IOMAP_DIO_ATOMIC_SW flag in their dio_flags argument and handle
+> IOMAP_ATOMIC_SW fallback differently in their ->iomap_begin() routine.
+> 
+> However, -EAGAIN can also be returned when there is a race with mmap
+> writes for the same range. We return the same -EAGAIN error during page
+> cache invalidation failure for IOCB_ATOMIC writes too.  However, current
+> code does not differentiate between these two types of failures. Therefore,
+> we always retry by falling back to SW CoW based atomic write even for
+> page cache invalidation failures.
+> 
+> __iomap_dio_rw()
+> {
+> <...>
+> 		/*
+> 		 * Try to invalidate cache pages for the range we are writing.
+> 		 * If this invalidation fails, let the caller fall back to
+> 		 * buffered I/O.
+> 		 */
+> 		ret = kiocb_invalidate_pages(iocb, iomi.len);
+> 		if (ret) {
+> 			if (ret != -EAGAIN) {
+> 				trace_iomap_dio_invalidate_fail(inode, iomi.pos,
+> 								iomi.len);
+> 				if (iocb->ki_flags & IOCB_ATOMIC) {
+> 					/*
+> 					 * folio invalidation failed, maybe
+> 					 * this is transient, unlock and see if
+> 					 * the caller tries again.
+> 					 */
+> 					ret = -EAGAIN;
+> 				} else {
+> 					/* fall back to buffered write */
+> 					ret = -ENOTBLK;
+> 				}
+> 			}
+> 			goto out_free_dio;
+> 		}
+> <...>
+> }
+> 
+> It's easy to miss such error handling conditions. If this is something
+> which was already discussed earlier, then perhaps it is better if
+> document this.  BTW - Is this something that we already know of and has
+> been kept as such intentionally?
+> 
 
-- Exercise `map_shadow_stack` syscall
-- `fork` test to make sure COW works for shadow stack pages
-- gup tests
-  Kernel uses FOLL_FORCE when access happens to memory via
-  /proc/<pid>/mem. Not breaking that for shadow stack.
-- signal test. Make sure signal delivery results in token creation on
-  shadow stack and consumes (and verifies) token on sigreturn
-- shadow stack protection test. attempts to write using regular store
-  instruction on shadow stack memory must result in access faults
+On mainline, for kiocb_invalidate_pages() error for IOCB_ATOMIC, we 
+always return -EAGAIN to userspace.
 
-Test outut
-==========
+Now if we have any kiocb_invalidate_pages() error for IOCB_ATOMIC, we 
+retry with SW CoW mode - and if it fails again, we return -EAGAIN to 
+userspace.
 
-"""
-TAP version 13
-1..5
-  This is to ensure shadow stack is indeed enabled and working
-  This is to ensure shadow stack is indeed enabled and working
-ok 1 shstk fork test
-ok 2 map shadow stack syscall
-ok 3 shadow stack gup tests
-ok 4 shadow stack signal tests
-ok 5 memory protections of shadow stack memory
-"""
+If we choose some other error code to trigger the SW-based COW retry (so 
+that we don't always retry for kiocb_invalidate_pages() error when 
+!IOMAP_DIO_ATOMIC_HW), then kiocb_invalidate_pages() could still return 
+that same error code and we still retry in SW-based COW mode - is that 
+better? Or do we need to choose some error code which 
+kiocb_invalidate_pages() would never return?
 
-Signed-off-by: Deepak Gupta <debug@rivosinc.com>
----
- tools/testing/selftests/riscv/Makefile             |   2 +-
- tools/testing/selftests/riscv/cfi/.gitignore       |   3 +
- tools/testing/selftests/riscv/cfi/Makefile         |  10 +
- tools/testing/selftests/riscv/cfi/cfi_rv_test.h    |  84 +++++
- tools/testing/selftests/riscv/cfi/riscv_cfi_test.c |  78 +++++
- tools/testing/selftests/riscv/cfi/shadowstack.c    | 375 +++++++++++++++++++++
- tools/testing/selftests/riscv/cfi/shadowstack.h    |  37 ++
- 7 files changed, 588 insertions(+), 1 deletion(-)
+Note that -EAGAIN is used by xfs_file_dio_unwrite_unaligned(), so would 
+be nice to use the same error code.
 
-diff --git a/tools/testing/selftests/riscv/Makefile b/tools/testing/selftests/riscv/Makefile
-index 099b8c1f46f8..5671b4405a12 100644
---- a/tools/testing/selftests/riscv/Makefile
-+++ b/tools/testing/selftests/riscv/Makefile
-@@ -5,7 +5,7 @@
- ARCH ?= $(shell uname -m 2>/dev/null || echo not)
- 
- ifneq (,$(filter $(ARCH),riscv))
--RISCV_SUBTARGETS ?= abi hwprobe mm sigreturn vector
-+RISCV_SUBTARGETS ?= abi hwprobe mm sigreturn vector cfi
- else
- RISCV_SUBTARGETS :=
- endif
-diff --git a/tools/testing/selftests/riscv/cfi/.gitignore b/tools/testing/selftests/riscv/cfi/.gitignore
-new file mode 100644
-index 000000000000..82545863bac6
---- /dev/null
-+++ b/tools/testing/selftests/riscv/cfi/.gitignore
-@@ -0,0 +1,3 @@
-+cfitests
-+riscv_cfi_test
-+shadowstack
-diff --git a/tools/testing/selftests/riscv/cfi/Makefile b/tools/testing/selftests/riscv/cfi/Makefile
-new file mode 100644
-index 000000000000..b65f7ff38a32
---- /dev/null
-+++ b/tools/testing/selftests/riscv/cfi/Makefile
-@@ -0,0 +1,10 @@
-+CFLAGS += -I$(top_srcdir)/tools/include
-+
-+CFLAGS += -march=rv64gc_zicfilp_zicfiss
-+
-+TEST_GEN_PROGS := cfitests
-+
-+include ../../lib.mk
-+
-+$(OUTPUT)/cfitests: riscv_cfi_test.c shadowstack.c
-+	$(CC) -o$@ $(CFLAGS) $(LDFLAGS) $^
-diff --git a/tools/testing/selftests/riscv/cfi/cfi_rv_test.h b/tools/testing/selftests/riscv/cfi/cfi_rv_test.h
-new file mode 100644
-index 000000000000..a9d5d6f8e29c
---- /dev/null
-+++ b/tools/testing/selftests/riscv/cfi/cfi_rv_test.h
-@@ -0,0 +1,84 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+
-+#ifndef SELFTEST_RISCV_CFI_H
-+#define SELFTEST_RISCV_CFI_H
-+#include <stddef.h>
-+#include <sys/types.h>
-+#include "shadowstack.h"
-+
-+#define RISCV_CFI_SELFTEST_COUNT RISCV_SHADOW_STACK_TESTS
-+
-+#define CHILD_EXIT_CODE_SSWRITE		10
-+#define CHILD_EXIT_CODE_SIG_TEST	11
-+
-+#define my_syscall5(num, arg1, arg2, arg3, arg4, arg5)			\
-+({									\
-+	register long _num  __asm__ ("a7") = (num);			\
-+	register long _arg1 __asm__ ("a0") = (long)(arg1);		\
-+	register long _arg2 __asm__ ("a1") = (long)(arg2);		\
-+	register long _arg3 __asm__ ("a2") = (long)(arg3);		\
-+	register long _arg4 __asm__ ("a3") = (long)(arg4);		\
-+	register long _arg5 __asm__ ("a4") = (long)(arg5);		\
-+									\
-+	__asm__ volatile(						\
-+		"ecall\n"						\
-+		: "+r"							\
-+		(_arg1)							\
-+		: "r"(_arg2), "r"(_arg3), "r"(_arg4), "r"(_arg5),	\
-+		  "r"(_num)						\
-+		: "memory", "cc"					\
-+	);								\
-+	_arg1;								\
-+})
-+
-+#define my_syscall3(num, arg1, arg2, arg3)				\
-+({									\
-+	register long _num  __asm__ ("a7") = (num);			\
-+	register long _arg1 __asm__ ("a0") = (long)(arg1);		\
-+	register long _arg2 __asm__ ("a1") = (long)(arg2);		\
-+	register long _arg3 __asm__ ("a2") = (long)(arg3);		\
-+									\
-+	__asm__ volatile(						\
-+		"ecall\n"						\
-+		: "+r" (_arg1)						\
-+		: "r"(_arg2), "r"(_arg3),				\
-+		  "r"(_num)						\
-+		: "memory", "cc"					\
-+	);								\
-+	_arg1;								\
-+})
-+
-+#ifndef __NR_prctl
-+#define __NR_prctl 167
-+#endif
-+
-+#ifndef __NR_map_shadow_stack
-+#define __NR_map_shadow_stack 453
-+#endif
-+
-+#define CSR_SSP 0x011
-+
-+#ifdef __ASSEMBLY__
-+#define __ASM_STR(x)    x
-+#else
-+#define __ASM_STR(x)    #x
-+#endif
-+
-+#define csr_read(csr)							\
-+({									\
-+	register unsigned long __v;					\
-+	__asm__ __volatile__ ("csrr %0, " __ASM_STR(csr)		\
-+				: "=r" (__v) :				\
-+				: "memory");				\
-+	__v;								\
-+})
-+
-+#define csr_write(csr, val)						\
-+({									\
-+	unsigned long __v = (unsigned long)(val);			\
-+	__asm__ __volatile__ ("csrw " __ASM_STR(csr) ", %0"		\
-+				: : "rK" (__v)				\
-+				: "memory");				\
-+})
-+
-+#endif
-diff --git a/tools/testing/selftests/riscv/cfi/riscv_cfi_test.c b/tools/testing/selftests/riscv/cfi/riscv_cfi_test.c
-new file mode 100644
-index 000000000000..cf33aa25cc73
---- /dev/null
-+++ b/tools/testing/selftests/riscv/cfi/riscv_cfi_test.c
-@@ -0,0 +1,78 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include "../../kselftest.h"
-+#include <sys/signal.h>
-+#include <asm/ucontext.h>
-+#include <linux/prctl.h>
-+#include "cfi_rv_test.h"
-+
-+/* do not optimize cfi related test functions */
-+#pragma GCC push_options
-+#pragma GCC optimize("O0")
-+
-+void sigsegv_handler(int signum, siginfo_t *si, void *uc)
-+{
-+	struct ucontext *ctx = (struct ucontext *)uc;
-+
-+	if (si->si_code == SEGV_CPERR) {
-+		ksft_print_msg("Control flow violation happened somewhere\n");
-+		ksft_print_msg("PC where violation happened %lx\n", ctx->uc_mcontext.gregs[0]);
-+		exit(-1);
-+	}
-+
-+	/* all other cases are expected to be of shadow stack write case */
-+	exit(CHILD_EXIT_CODE_SSWRITE);
-+}
-+
-+bool register_signal_handler(void)
-+{
-+	struct sigaction sa = {};
-+
-+	sa.sa_sigaction = sigsegv_handler;
-+	sa.sa_flags = SA_SIGINFO;
-+	if (sigaction(SIGSEGV, &sa, NULL)) {
-+		ksft_print_msg("Registering signal handler for landing pad violation failed\n");
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	int ret = 0;
-+	unsigned long lpad_status = 0, ss_status = 0;
-+
-+	ksft_print_header();
-+
-+	ksft_print_msg("Starting risc-v tests\n");
-+
-+	/*
-+	 * Landing pad test. Not a lot of kernel changes to support landing
-+	 * pad for user mode except lighting up a bit in senvcfg via a prctl
-+	 * Enable landing pad through out the execution of test binary
-+	 */
-+	ret = my_syscall5(__NR_prctl, PR_GET_INDIR_BR_LP_STATUS, &lpad_status, 0, 0, 0);
-+	if (ret)
-+		ksft_exit_fail_msg("Get landing pad status failed with %d\n", ret);
-+
-+	if (!(lpad_status & PR_INDIR_BR_LP_ENABLE))
-+		ksft_exit_fail_msg("Landing pad is not enabled, should be enabled via glibc\n");
-+
-+	ret = my_syscall5(__NR_prctl, PR_GET_SHADOW_STACK_STATUS, &ss_status, 0, 0, 0);
-+	if (ret)
-+		ksft_exit_fail_msg("Get shadow stack failed with %d\n", ret);
-+
-+	if (!(ss_status & PR_SHADOW_STACK_ENABLE))
-+		ksft_exit_fail_msg("Shadow stack is not enabled, should be enabled via glibc\n");
-+
-+	if (!register_signal_handler())
-+		ksft_exit_fail_msg("Registering signal handler for SIGSEGV failed\n");
-+
-+	ksft_print_msg("Landing pad and shadow stack are enabled for binary\n");
-+	execute_shadow_stack_tests();
-+
-+	return 0;
-+}
-+
-+#pragma GCC pop_options
-diff --git a/tools/testing/selftests/riscv/cfi/shadowstack.c b/tools/testing/selftests/riscv/cfi/shadowstack.c
-new file mode 100644
-index 000000000000..a0ef066e98ab
---- /dev/null
-+++ b/tools/testing/selftests/riscv/cfi/shadowstack.c
-@@ -0,0 +1,375 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include "../../kselftest.h"
-+#include <sys/wait.h>
-+#include <signal.h>
-+#include <fcntl.h>
-+#include <asm-generic/unistd.h>
-+#include <sys/mman.h>
-+#include "shadowstack.h"
-+#include "cfi_rv_test.h"
-+
-+/* do not optimize shadow stack related test functions */
-+#pragma GCC push_options
-+#pragma GCC optimize("O0")
-+
-+void zar(void)
-+{
-+	unsigned long ssp = 0;
-+
-+	ssp = csr_read(CSR_SSP);
-+	ksft_print_msg("Spewing out shadow stack ptr: %lx\n"
-+			"  This is to ensure shadow stack is indeed enabled and working\n",
-+			ssp);
-+}
-+
-+void bar(void)
-+{
-+	zar();
-+}
-+
-+void foo(void)
-+{
-+	bar();
-+}
-+
-+void zar_child(void)
-+{
-+	unsigned long ssp = 0;
-+
-+	ssp = csr_read(CSR_SSP);
-+	ksft_print_msg("Spewing out shadow stack ptr: %lx\n"
-+			"  This is to ensure shadow stack is indeed enabled and working\n",
-+			ssp);
-+}
-+
-+void bar_child(void)
-+{
-+	zar_child();
-+}
-+
-+void foo_child(void)
-+{
-+	bar_child();
-+}
-+
-+typedef void (call_func_ptr)(void);
-+/*
-+ * call couple of functions to test push pop.
-+ */
-+int shadow_stack_call_tests(call_func_ptr fn_ptr, bool parent)
-+{
-+	ksft_print_msg("dummy calls for sspush and sspopchk in context of %s\n",
-+		       parent ? "parent" : "child");
-+
-+	(fn_ptr)();
-+
-+	return 0;
-+}
-+
-+/* forks a thread, and ensure shadow stacks fork out */
-+bool shadow_stack_fork_test(unsigned long test_num, void *ctx)
-+{
-+	int pid = 0, child_status = 0, parent_pid = 0, ret = 0;
-+	unsigned long ss_status = 0;
-+
-+	ksft_print_msg("Exercising shadow stack fork test\n");
-+
-+	ret = my_syscall5(__NR_prctl, PR_GET_SHADOW_STACK_STATUS, &ss_status, 0, 0, 0);
-+	if (ret) {
-+		ksft_exit_skip("Shadow stack get status prctl failed with errorcode %d\n", ret);
-+		return false;
-+	}
-+
-+	if (!(ss_status & PR_SHADOW_STACK_ENABLE))
-+		ksft_exit_skip("Shadow stack is not enabled, should be enabled via glibc\n");
-+
-+	parent_pid = getpid();
-+	pid = fork();
-+
-+	if (pid) {
-+		ksft_print_msg("Parent pid %d and child pid %d\n", parent_pid, pid);
-+		shadow_stack_call_tests(&foo, true);
-+	} else {
-+		shadow_stack_call_tests(&foo_child, false);
-+	}
-+
-+	if (pid) {
-+		ksft_print_msg("Waiting on child to finish\n");
-+		wait(&child_status);
-+	} else {
-+		/* exit child gracefully */
-+		exit(0);
-+	}
-+
-+	if (pid && WIFSIGNALED(child_status)) {
-+		ksft_print_msg("Child faulted, fork test failed\n");
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+/* exercise `map_shadow_stack`, pivot to it and call some functions to ensure it works */
-+#define SHADOW_STACK_ALLOC_SIZE 4096
-+bool shadow_stack_map_test(unsigned long test_num, void *ctx)
-+{
-+	unsigned long shdw_addr;
-+	int ret = 0;
-+
-+	ksft_print_msg("Exercising shadow stack map test\n");
-+
-+	shdw_addr = my_syscall3(__NR_map_shadow_stack, NULL, SHADOW_STACK_ALLOC_SIZE, 0);
-+
-+	if (((long)shdw_addr) <= 0) {
-+		ksft_print_msg("map_shadow_stack failed with error code %d\n",
-+			       (int)shdw_addr);
-+		return false;
-+	}
-+
-+	ret = munmap((void *)shdw_addr, SHADOW_STACK_ALLOC_SIZE);
-+
-+	if (ret) {
-+		ksft_print_msg("munmap failed with error code %d\n", ret);
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+/*
-+ * shadow stack protection tests. map a shadow stack and
-+ * validate all memory protections work on it
-+ */
-+bool shadow_stack_protection_test(unsigned long test_num, void *ctx)
-+{
-+	unsigned long shdw_addr;
-+	unsigned long *write_addr = NULL;
-+	int ret = 0, pid = 0, child_status = 0;
-+
-+	ksft_print_msg("Exercising shadow stack protection test (WPT)\n");
-+
-+	shdw_addr = my_syscall3(__NR_map_shadow_stack, NULL, SHADOW_STACK_ALLOC_SIZE, 0);
-+
-+	if (((long)shdw_addr) <= 0) {
-+		ksft_print_msg("map_shadow_stack failed with error code %d\n",
-+			       (int)shdw_addr);
-+		return false;
-+	}
-+
-+	write_addr = (unsigned long *)shdw_addr;
-+	pid = fork();
-+
-+	/* no child was created, return false */
-+	if (pid == -1)
-+		return false;
-+
-+	/*
-+	 * try to perform a store from child on shadow stack memory
-+	 * it should result in SIGSEGV
-+	 */
-+	if (!pid) {
-+		/* below write must lead to SIGSEGV */
-+		*write_addr = 0xdeadbeef;
-+	} else {
-+		wait(&child_status);
-+	}
-+
-+	/* test fail, if 0xdeadbeef present on shadow stack address */
-+	if (*write_addr == 0xdeadbeef) {
-+		ksft_print_msg("Shadow stack WPT failed\n");
-+		return false;
-+	}
-+
-+	/* if child reached here, then fail */
-+	if (!pid) {
-+		ksft_print_msg("Shadow stack WPT failed: child reached unreachable state\n");
-+		return false;
-+	}
-+
-+	/* if child exited via signal handler but not for write on ss */
-+	if (WIFEXITED(child_status) &&
-+	    WEXITSTATUS(child_status) != CHILD_EXIT_CODE_SSWRITE) {
-+		ksft_print_msg("Shadow stack WPT failed: child wasn't signaled for write\n");
-+		return false;
-+	}
-+
-+	ret = munmap(write_addr, SHADOW_STACK_ALLOC_SIZE);
-+	if (ret) {
-+		ksft_print_msg("Shadow stack WPT failed: munmap failed, error code %d\n",
-+			       ret);
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+#define SS_MAGIC_WRITE_VAL 0xbeefdead
-+
-+int gup_tests(int mem_fd, unsigned long *shdw_addr)
-+{
-+	unsigned long val = 0;
-+
-+	lseek(mem_fd, (unsigned long)shdw_addr, SEEK_SET);
-+	if (read(mem_fd, &val, sizeof(val)) < 0) {
-+		ksft_print_msg("Reading shadow stack mem via gup failed\n");
-+		return 1;
-+	}
-+
-+	val = SS_MAGIC_WRITE_VAL;
-+	lseek(mem_fd, (unsigned long)shdw_addr, SEEK_SET);
-+	if (write(mem_fd, &val, sizeof(val)) < 0) {
-+		ksft_print_msg("Writing shadow stack mem via gup failed\n");
-+		return 1;
-+	}
-+
-+	if (*shdw_addr != SS_MAGIC_WRITE_VAL) {
-+		ksft_print_msg("GUP write to shadow stack memory failed\n");
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-+
-+bool shadow_stack_gup_tests(unsigned long test_num, void *ctx)
-+{
-+	unsigned long shdw_addr = 0;
-+	unsigned long *write_addr = NULL;
-+	int fd = 0;
-+	bool ret = false;
-+
-+	ksft_print_msg("Exercising shadow stack gup tests\n");
-+	shdw_addr = my_syscall3(__NR_map_shadow_stack, NULL, SHADOW_STACK_ALLOC_SIZE, 0);
-+
-+	if (((long)shdw_addr) <= 0) {
-+		ksft_print_msg("map_shadow_stack failed with error code %d\n", (int)shdw_addr);
-+		return false;
-+	}
-+
-+	write_addr = (unsigned long *)shdw_addr;
-+
-+	fd = open("/proc/self/mem", O_RDWR);
-+	if (fd == -1)
-+		return false;
-+
-+	if (gup_tests(fd, write_addr)) {
-+		ksft_print_msg("gup tests failed\n");
-+		goto out;
-+	}
-+
-+	ret = true;
-+out:
-+	if (shdw_addr && munmap(write_addr, SHADOW_STACK_ALLOC_SIZE)) {
-+		ksft_print_msg("munmap failed with error code %d\n", ret);
-+		ret = false;
-+	}
-+
-+	return ret;
-+}
-+
-+volatile bool break_loop;
-+
-+void sigusr1_handler(int signo)
-+{
-+	break_loop = true;
-+}
-+
-+bool sigusr1_signal_test(void)
-+{
-+	struct sigaction sa = {};
-+
-+	sa.sa_handler = sigusr1_handler;
-+	sa.sa_flags = 0;
-+	sigemptyset(&sa.sa_mask);
-+	if (sigaction(SIGUSR1, &sa, NULL)) {
-+		ksft_print_msg("Registering signal handler for SIGUSR1 failed\n");
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+/*
-+ * shadow stack signal test. shadow stack must be enabled.
-+ * register a signal, fork another thread which is waiting
-+ * on signal. Send a signal from parent to child, verify
-+ * that signal was received by child. If not test fails
-+ */
-+bool shadow_stack_signal_test(unsigned long test_num, void *ctx)
-+{
-+	int pid = 0, child_status = 0, ret = 0;
-+	unsigned long ss_status = 0;
-+
-+	ksft_print_msg("Exercising shadow stack signal test\n");
-+
-+	ret = my_syscall5(__NR_prctl, PR_GET_SHADOW_STACK_STATUS, &ss_status, 0, 0, 0);
-+	if (ret) {
-+		ksft_print_msg("Shadow stack get status prctl failed with errorcode %d\n", ret);
-+		return false;
-+	}
-+
-+	if (!(ss_status & PR_SHADOW_STACK_ENABLE))
-+		ksft_print_msg("Shadow stack is not enabled, should be enabled via glibc\n");
-+
-+	/* this should be caught by signal handler and do an exit */
-+	if (!sigusr1_signal_test()) {
-+		ksft_print_msg("Registering sigusr1 handler failed\n");
-+		exit(-1);
-+	}
-+
-+	pid = fork();
-+
-+	if (pid == -1) {
-+		ksft_print_msg("Signal test: fork failed\n");
-+		goto out;
-+	}
-+
-+	if (pid == 0) {
-+		while (!break_loop)
-+			sleep(1);
-+
-+		exit(11);
-+		/* child shouldn't go beyond here */
-+	}
-+
-+	/* send SIGUSR1 to child */
-+	kill(pid, SIGUSR1);
-+	wait(&child_status);
-+
-+out:
-+
-+	return (WIFEXITED(child_status) &&
-+		WEXITSTATUS(child_status) == 11);
-+}
-+
-+int execute_shadow_stack_tests(void)
-+{
-+	int ret = 0;
-+	unsigned long test_count = 0;
-+	unsigned long shstk_status = 0;
-+	bool test_pass = false;
-+
-+	ksft_print_msg("Executing RISC-V shadow stack self tests\n");
-+	ksft_set_plan(RISCV_SHADOW_STACK_TESTS);
-+
-+	ret = my_syscall5(__NR_prctl, PR_GET_SHADOW_STACK_STATUS, &shstk_status, 0, 0, 0);
-+
-+	if (ret != 0)
-+		ksft_exit_fail_msg("Get shadow stack status failed with %d\n", ret);
-+
-+	/*
-+	 * If we are here that means get shadow stack status succeeded and
-+	 * thus shadow stack support is baked in the kernel.
-+	 */
-+	while (test_count < ARRAY_SIZE(shstk_tests)) {
-+		test_pass = (*shstk_tests[test_count].t_func)(test_count, NULL);
-+		ksft_test_result(test_pass, shstk_tests[test_count].name);
-+		test_count++;
-+	}
-+
-+	ksft_finished();
-+
-+	return 0;
-+}
-+
-+#pragma GCC pop_options
-diff --git a/tools/testing/selftests/riscv/cfi/shadowstack.h b/tools/testing/selftests/riscv/cfi/shadowstack.h
-new file mode 100644
-index 000000000000..b43e74136a26
---- /dev/null
-+++ b/tools/testing/selftests/riscv/cfi/shadowstack.h
-@@ -0,0 +1,37 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+
-+#ifndef SELFTEST_SHADOWSTACK_TEST_H
-+#define SELFTEST_SHADOWSTACK_TEST_H
-+#include <stddef.h>
-+#include <linux/prctl.h>
-+
-+/*
-+ * a cfi test returns true for success or false for fail
-+ * takes a number for test number to index into array and void pointer.
-+ */
-+typedef bool (*shstk_test_func)(unsigned long test_num, void *);
-+
-+struct shadow_stack_tests {
-+	char *name;
-+	shstk_test_func t_func;
-+};
-+
-+bool shadow_stack_fork_test(unsigned long test_num, void *ctx);
-+bool shadow_stack_map_test(unsigned long test_num, void *ctx);
-+bool shadow_stack_protection_test(unsigned long test_num, void *ctx);
-+bool shadow_stack_gup_tests(unsigned long test_num, void *ctx);
-+bool shadow_stack_signal_test(unsigned long test_num, void *ctx);
-+
-+static struct shadow_stack_tests shstk_tests[] = {
-+	{ "shstk fork test\n", shadow_stack_fork_test },
-+	{ "map shadow stack syscall\n", shadow_stack_map_test },
-+	{ "shadow stack gup tests\n", shadow_stack_gup_tests },
-+	{ "shadow stack signal tests\n", shadow_stack_signal_test},
-+	{ "memory protections of shadow stack memory\n", shadow_stack_protection_test }
-+};
-+
-+#define RISCV_SHADOW_STACK_TESTS ARRAY_SIZE(shstk_tests)
-+
-+int execute_shadow_stack_tests(void);
-+
-+#endif
-
--- 
-2.34.1
-
+Thanks,
+John
 
