@@ -1,148 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-43641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43642-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0381BA59B07
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Mar 2025 17:30:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A2B5A59B84
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Mar 2025 17:51:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DAAF1886159
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Mar 2025 16:30:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9FBA1694E5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Mar 2025 16:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1B022FF21;
-	Mon, 10 Mar 2025 16:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED3B23536A;
+	Mon, 10 Mar 2025 16:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="z8RHn6OS"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="e9YzPdcR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F4A1E519;
-	Mon, 10 Mar 2025 16:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F2E23237C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Mar 2025 16:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741624192; cv=none; b=DfG/nWoUBCqhH6wQFauLp36HBi/qC6ZNIqeMPr8t1TS92wX9MrLUCiu1UeGDiMgeAClt1Us9iCieC942hLVn70Si5XtAsletSSNLwESP+sDc9awc1NVE/Q1+Hq9UfMvy2mA3McJ+GszwaUDjnlSwFc4k/E0Ct8Hs8+yC3up3asg=
+	t=1741624990; cv=none; b=oSJZmJfued+zTA2RqJqEb9GP//V0JbyiLhM4CqprkRxeYsxVj66bb8QdVbehuT6ZwyutZ7G1q/3Vw4MdKTYxbmvMFjsmIKJWciGRP0HlQFH4yc0+FDeKlfOb2r5Qn0r2Y7NgQ+KXYVeDvx8zq6eNRLcprF2lQPomdu+rQlLnWfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741624192; c=relaxed/simple;
-	bh=gABqmGkapmTt2L/4ZtpVO5U5Zj/H+RDxhf8PyL6oVv4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=meDTA/V7xoF9haRhEnEm3ixbpEkLuT44JLzXCiIj7BtctqEHit8GlU1Sd6fhP3peDa1wIo8p4jRG1RfzPQ//Q8SVhKPm/lnPleVk/PflGtmbK5OHBrQJEaEF1lkO1wUIv/4FESvpH3EpPGRdQ9pbMG7Gcd8rFs61r3HVP/AI1Ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=z8RHn6OS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA831C4CEE5;
-	Mon, 10 Mar 2025 16:29:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741624192;
-	bh=gABqmGkapmTt2L/4ZtpVO5U5Zj/H+RDxhf8PyL6oVv4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=z8RHn6OSg2yPaH56yWA0H9dS+yWzzMcHZVmRSW6jgHmOmDrBY/V6BZorZsvNA/EHt
-	 9l6XlRW1HF2InIvxoGRx8ZJPOdAI6C09gBtPVZ0j1FNSs8KRRtJQF19qmv1THWCwtz
-	 6DR12n5Ny1hUi4+Px8uB3tEExjOpXxWPLlcsOEgQ=
-Date: Mon, 10 Mar 2025 17:29:49 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable <stable@kernel.org>, Takashi Iwai <tiwai@suse.de>
-Subject: Re: [PATCH] Revert "libfs: Use d_children list to iterate
- simple_offset directories"
-Message-ID: <2025031039-gander-stamina-4bb6@gregkh>
-References: <2025022644-blinked-broadness-c810@gregkh>
- <a7fe0eda-78e4-43bb-822b-c1dfa65ba4dd@oracle.com>
- <2025022621-worshiper-turtle-6eb1@gregkh>
- <a2e5de22-f5d1-4f99-ab37-93343b5c68b1@oracle.com>
- <2025022612-stratus-theology-de3c@gregkh>
- <ca00f758-2028-49da-a2fe-c8c4c2b2cefd@oracle.com>
+	s=arc-20240116; t=1741624990; c=relaxed/simple;
+	bh=KeJ1RRzvTqUvULwTdyZYl5//YQOn9JBoSQ1imwwbGMo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HXi0kTQlWKV2cU9QeiJliNEr2pCwFqBlf1xS99RhKkfxO6lKzOEXV1piIRUuJG4tNbzxUIaWgIzimFuwUV348atBbEAaWwCwDpkQ37Lan2K2+Ma4RT5xCT5CaodotT9yGQT8QtKFWSOm4g5GyLHo6S74f5U86rWA7L14O0Zg2GQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=e9YzPdcR; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4768a4fdfc6so12634311cf.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Mar 2025 09:43:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1741624986; x=1742229786; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=o7+xCb6XzG3joR6a4M5865iGYkCdDkI6eexc4SK+HB0=;
+        b=e9YzPdcR3SFGD+bZJnuWgXoRnN1teJnbhbLGJ02CMSZV/2Sh/iFUP1vtA+FZICDd1h
+         /ojuL8ALW2tgQyVBsfq+shE/L2G1YWwcfx7MgSnvikhjzOwwSlt663tDAohogz99P02b
+         RdYm8pHf0JncWM8AzIv+qaLfAktzdvfUkyHtI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741624986; x=1742229786;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o7+xCb6XzG3joR6a4M5865iGYkCdDkI6eexc4SK+HB0=;
+        b=MQ/R2YSdj8Y9fi43+xHN11Ajr5VPYPop56NuGVYPDBQqLoyUcA0M3K53LWnghnGEOQ
+         MBV4buUVlG/x6C7EGOEaNcwvY+L1xlJcul+u5ZWyYdpZBBv+AetlxeNvZzjwSOEd1yq9
+         zmkvMdFNb/LApd+fSR8WTQtWyEGoWN3TnRCDOeuaaEfwXL1u5Y9hFy3qVXZIB+W/jEtE
+         zNS7b0Mf320BL+iuKvSPSaVCTd+MJffrJRpCQTU0YFgC4l0ftrPI4js0RrpVX4CfTOFl
+         bs7iFJHkg1qcaEQm+8twSN7ibarc7kqj01/ENQzup6gHEo+xmDopvswHRXjvF4EHxXN7
+         iy/w==
+X-Forwarded-Encrypted: i=1; AJvYcCX+YDKnlYJgZGZUPY0ygswGspZgwpA4FGOqQP3fpY9hHzSficNvkJRSI/q2osoyn1sw2RtiP2F0gua1hF8G@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5H25q8WDNPXfOtIoYB0d+pxq/2CRpsvIWRt0cU1jdMj68ad62
+	0XHRUFubyfNK1txxuSexC4spNUNbbI4w7RPGvW+4Izk6G4Sl6h7SHf0k6HSnUfstSmV54KMV4WC
+	u5/xTouRXe53tIbNRAcRtBw1gR9BbQ5YS87IRQg==
+X-Gm-Gg: ASbGncvtdXIP6S47xsy9xlttuGIVW4KFjTw9Ub57cBb/6K3aNyyBW6svIYEu/HlxOJT
+	A6Rioob66FamWJ3NcjWxxhQSe2G1jx3SjFQyDf/xoFPsr9o7FbXbSRaYOKFZa0/4ig42GRqUa3C
+	yRm9s5B3Sc9SlalafhWtu9LY+N/2U=
+X-Google-Smtp-Source: AGHT+IEBIzx9e6K8gY1P3uwG4053vKnCQo/A/45CHTp4TpCwHW2p6fOzKlu/gMvt4iEwPXinaX6bmM7d+7zufNH5siI=
+X-Received: by 2002:ac8:5a4e:0:b0:476:959b:7592 with SMTP id
+ d75a77b69052e-476959b7aadmr25117691cf.17.1741624986587; Mon, 10 Mar 2025
+ 09:43:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ca00f758-2028-49da-a2fe-c8c4c2b2cefd@oracle.com>
+References: <20250226091451.11899-1-luis@igalia.com> <87msdwrh72.fsf@igalia.com>
+In-Reply-To: <87msdwrh72.fsf@igalia.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 10 Mar 2025 17:42:53 +0100
+X-Gm-Features: AQ5f1JqEE_1WaqbsqdDTMPa4eJILmqSWGchDRmitOQV2dELsrChoGlHoLVS5zaw
+Message-ID: <CAJfpegvcEgJtmRkvHm+WuPQgdyeCQZggyExayc5J9bdxWwOm4w@mail.gmail.com>
+Subject: Re: [PATCH v8] fuse: add more control over cache invalidation behaviour
+To: Luis Henriques <luis@igalia.com>
+Cc: Bernd Schubert <bschubert@ddn.com>, Dave Chinner <david@fromorbit.com>, 
+	Matt Harvey <mharvey@jumptrading.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Feb 26, 2025 at 03:33:56PM -0500, Chuck Lever wrote:
-> On 2/26/25 2:13 PM, Greg Kroah-Hartman wrote:
-> > On Wed, Feb 26, 2025 at 11:28:35AM -0500, Chuck Lever wrote:
-> >> On 2/26/25 11:21 AM, Greg Kroah-Hartman wrote:
-> >>> On Wed, Feb 26, 2025 at 10:57:48AM -0500, Chuck Lever wrote:
-> >>>> On 2/26/25 9:29 AM, Greg Kroah-Hartman wrote:
-> >>>>> This reverts commit b9b588f22a0c049a14885399e27625635ae6ef91.
-> >>>>>
-> >>>>> There are reports of this commit breaking Chrome's rendering mode.  As
-> >>>>> no one seems to want to do a root-cause, let's just revert it for now as
-> >>>>> it is affecting people using the latest release as well as the stable
-> >>>>> kernels that it has been backported to.
-> >>>>
-> >>>> NACK. This re-introduces a CVE.
-> >>>
-> >>> As I said elsewhere, when a commit that is assigned a CVE is reverted,
-> >>> then the CVE gets revoked.  But I don't see this commit being assigned
-> >>> to a CVE, so what CVE specifically are you referring to?
-> >>
-> >> https://nvd.nist.gov/vuln/detail/CVE-2024-46701
-> > 
-> > That refers to commit 64a7ce76fb90 ("libfs: fix infinite directory reads
-> > for offset dir"), which showed up in 6.11 (and only backported to 6.10.7
-> > (which is long end-of-life).  Commit b9b588f22a0c ("libfs: Use
-> > d_children list to iterate simple_offset directories") is in 6.14-rc1
-> > and has been backported to 6.6.75, 6.12.12, and 6.13.1.
-> > 
-> > I don't understand the interaction here, sorry.
-> 
-> Commit 64a7ce76fb90 is an attempt to fix the infinite loop, but can
-> not be applied to kernels before 0e4a862174f2 ("libfs: Convert simple
-> directory offsets to use a Maple Tree"), even though those kernels also
-> suffer from the looping symptoms described in the CVE.
-> 
-> There was significant controversy (which you responded to) when Yu Kuai
-> <yukuai3@huawei.com> attempted a backport of 64a7ce76fb90 to address
-> this CVE in v6.6 by first applying all upstream mtree patches to v6.6.
-> That backport was roundly rejected by Liam and Lorenzo.
-> 
-> Commit b9b588f22a0c is a second attempt to fix the infinite loop problem
-> that does not depend on having a working Maple tree implementation.
-> b9b588f22a0c is a fix that can work properly with the older xarray
-> mechanism that 0e4a862174f2 replaced, so it can be backported (with
-> certain adjustments) to kernels before 0e4a862174f2.
-> 
-> Note that as part of the series where b9b588f22a0c was applied,
-> 64a7ce76fb90 is reverted (v6.10 and forward). Reverting b9b588f22a0c
-> leaves LTS kernels from v6.6 forward with the infinite loop problem
-> unfixed entirely because 64a7ce76fb90 has also now been reverted.
-> 
-> 
-> >> The guideline that "regressions are more important than CVEs" is
-> >> interesting. I hadn't heard that before.
-> > 
-> > CVEs should not be relevant for development given that we create 10-11
-> > of them a day.  Treat them like any other public bug list please.
-> > 
-> > But again, I don't understand how reverting this commit relates to the
-> > CVE id you pointed at, what am I missing?
-> > 
-> >> Still, it seems like we haven't had a chance to actually work on this
-> >> issue yet. It could be corrected by a simple fix. Reverting seems
-> >> premature to me.
-> > 
-> > I'll let that be up to the vfs maintainers, but I'd push for reverting
-> > first to fix the regression and then taking the time to find the real
-> > change going forward to make our user's lives easier.  Especially as I
-> > don't know who is working on that "simple fix" :)
-> 
-> The issue is that we need the Chrome team to tell us what new system
-> behavior is causing Chrome to malfunction. None of us have expertise to
-> examine as complex an application as Chrome to nail the one small change
-> that is causing the problem. This could even be a latent bug in Chrome.
-> 
-> As soon as they have reviewed the bug and provided a simple reproducer,
-> I will start active triage.
+On Fri, 7 Mar 2025 at 16:31, Luis Henriques <luis@igalia.com> wrote:
 
-What ever happened with all of this?
+> Any further feedback on this patch, or is it already OK for being merged?
 
-thanks,
+The patch looks okay.  I have ideas about improving the name, but that can wait.
 
-greg k-h
+What I think is still needed is an actual use case with performance numbers.
+
+> And what about the extra call to shrink_dcache_sb(), do you think that
+> would that be acceptable?  Maybe that could be conditional, by for example
+> setting a flag.
+
+My wish would be a more generic "garbage collection" mechanism that
+would collect stale cache entries and get rid of them in the
+background.  Doing that synchronously doesn't really make sense, IMO.
+
+But that can be done independently of this patch, obviously.
+
+Thanks,
+Miklos
 
