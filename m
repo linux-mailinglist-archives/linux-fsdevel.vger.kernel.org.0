@@ -1,163 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-43574-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43575-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24367A58FE5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Mar 2025 10:40:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33205A58FEB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Mar 2025 10:42:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F7CA16BD8D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Mar 2025 09:40:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9BD916BD34
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Mar 2025 09:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD5422579F;
-	Mon, 10 Mar 2025 09:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521AB225407;
+	Mon, 10 Mar 2025 09:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fy3cAe1t"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983A222578C
-	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Mar 2025 09:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EFE223322
+	for <linux-fsdevel@vger.kernel.org>; Mon, 10 Mar 2025 09:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741599629; cv=none; b=UxnU4xVv7oM0kxGQwIFXnC21EqvfrTs31U5d9m/ndhfOpBOh7nGxDfMs1OWpWFcBlkVlG4QyH08KKNtzpgLkAwdL5KRihJQdkDXufhYU+xvyONpJgxOK1mzwH4ydgxgmnfQPnHG3oc+rq2o73TbkSmL/g8FkP/NAN23sDYtWiHU=
+	t=1741599744; cv=none; b=B8hckmlN6eugc/ghD3dR40n48jomQPAT477250b+KnVHkt3yXnsfsF/c3WfD1xEHnjFJ+MpDsC3CU9VkCLGerJRyKZNhekYwxZlURAsSuVbnWEuppB73imE/WOoN4BXrBMqkcCh07vp4b/JOstoRLyIKViKuafAvd1V4nNT17Ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741599629; c=relaxed/simple;
-	bh=lo+mgRRNQjvpOTF3c3mfILdt7OCcuqmpFl0MOtPCrC8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HqploRXRHdLr7VjwL+lHxmjY/Le+h0M3l2l9OReVzDZ9IBqgFBGdzK+7e0gDB+Ny9FrdufYpKtGmhgMzENDY9SvPk2zBo8NC6gTDRDGmFw30PVUM2VfWx8330ma7Phaqs5dliBq+H7v5kYLcvo8w374z8SwCOXrYoJL2M/kJuKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d43d3338d7so66182595ab.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Mar 2025 02:40:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741599627; x=1742204427;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NE/k1yN/gLjrNlDfMWfhJPadtzMdT1WCO7NFniN3tmA=;
-        b=jvNA6yc32AUFRWUIlUsDWifU70L6J7eUDwZX6LZgMahZen3soegvqXLFWUnWsej7yz
-         0wyVzVelQuE8ttuGc3MgGN3gcqi/zFfI5NGZ0mieXAOPhpsemO/8zK0uwg++wu9vA3dZ
-         6chf6Y7O/zY7fkCcNMavh2rRp+Zz9iJWsAhdCWHeeBf5vNgYtUz4Wbc1kpqCbL9jx7CD
-         wEvztHBx8dSPlOBURQ2BzI9Yu1S3wq4Co6Xuyv+3cm2nzli/yRhD5maxtN6Yw6qJrT4A
-         pwzOic1ILoDbEO83tA4C1GFizyl8qUOgoqnAltthBa6GMDWpPXamMl3j2sOTCyruxhpP
-         bDeA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKCVwpfGCoewzQnEpW065k+Zte6/LFsa7isayOrcwmj7mN/I9+WbxcI0SLU8SPgLGkpIo5amPDQMiKWmCZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4tNTP5lbic7zqg1PM0ng9Y726+UjFOa9B1XZfe6P03Y+KNYVk
-	GA4xkBUkkvtUpqMaA9UJ/C6rvG2scM4zIpbqUzWOx/51SiZt2iw7kHX3SX1Ji37/Eae+nYtuT5N
-	v9jOubYpm1tVgaxvbD4iDhVd0ERlgc3tNAQderjfUgAPKuHyekyteNKw=
-X-Google-Smtp-Source: AGHT+IFwfuahL2FdpG6q4fYGDj1OphYaUWZoo8mff8eTs9/Lt2LG1X3x7humY8uWcVcDb4A33QAji53ZHNKx8r4N2MQYNRASfR40
+	s=arc-20240116; t=1741599744; c=relaxed/simple;
+	bh=9NUbkeHFJVXSvpJC6cffvGAry+3XZDrlAYjzGGwtup4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SS3RHI0khzhQAq6XuF5HSVGIe5tEIUkPH9U5ytJXfEPuW5QSxvSq5V0ncT39DSMIGpFL1LwXXG8t7kuO7iMqCqtpD5VF6hrpD2FxFQ52F8f7owbEjmX10AU3bE0CL5SuQAztl2oWrJpqKC/kNqRzkkxfk2/FPLfPwVVvvV+VesM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fy3cAe1t; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741599742;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Sp9hYSzH6vGjH5HKqctZ4em7wna5YpsrQRLignkLGyE=;
+	b=Fy3cAe1tCTOf02n7iXTAoE+aoSI/XuX0XHbjbwvPP09TeSDhXy39Xa0qLO7kCBLJTmqenv
+	3oYUdVtdv94pOmXE6smCI8AmRD7004NJgL8ZUOcv6EvQyyuBbZWIbyJEEBp/yWWOJbl4am
+	FzLnIxlZpAQig/RazsVFIbm6bkq5qpo=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-481-OF0Y5ao4N9SMK71jUXUVLw-1; Mon,
+ 10 Mar 2025 05:42:18 -0400
+X-MC-Unique: OF0Y5ao4N9SMK71jUXUVLw-1
+X-Mimecast-MFC-AGG-ID: OF0Y5ao4N9SMK71jUXUVLw_1741599737
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4F6121955BC1;
+	Mon, 10 Mar 2025 09:42:12 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.61])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A5BA81800366;
+	Mon, 10 Mar 2025 09:42:09 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Marc Dionne <marc.dionne@auristor.com>
+Cc: David Howells <dhowells@redhat.com>,
+	Christian Brauner <christian@brauner.io>,
+	linux-afs@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 00/11] afs, rxrpc: Clean up refcounting on afs_cell and afs_server records
+Date: Mon, 10 Mar 2025 09:41:53 +0000
+Message-ID: <20250310094206.801057-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:198e:b0:3d4:36da:19a1 with SMTP id
- e9e14a558f8ab-3d44193ed4fmr179769775ab.21.1741599626800; Mon, 10 Mar 2025
- 02:40:26 -0700 (PDT)
-Date: Mon, 10 Mar 2025 02:40:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67ceb38a.050a0220.e1a89.04b1.GAE@google.com>
-Subject: [syzbot] [mm?] [fs?] KCSAN: data-race in __filemap_add_folio /
- invalidate_bdev (8)
-From: syzbot <syzbot+f2aaf773187f5cae54f3@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Hello,
+This series fixes an occasional hang that's only really encountered when
+rmmod'ing the kafs module, one of the reasons why I'm proposing it for the
+next merge window rather than immediate upstreaming.  The changes include:
 
-syzbot found the following issue on:
+ (1) Fix missing handling of RCU pathwalk in afs_atcell_get_link().
 
-HEAD commit:    80e54e84911a Linux 6.14-rc6
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1664a7a8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=958433697845b9a6
-dashboard link: https://syzkaller.appspot.com/bug?extid=f2aaf773187f5cae54f3
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+ (2) Remove the "-o autocell" mount option.  This is obsolete with the
+     dynamic root and removing it makes the next patch slightly easier.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+ (3) Change how the dynamic root mount is constructed.  Currently, the root
+     directory is (de)populated when it is (un)mounted if there are cells
+     already configured and, further, pairs of automount points have to be
+     created/removed each time a cell is added/deleted.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e94728c052e3/disk-80e54e84.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/742f05e27746/vmlinux-80e54e84.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/90d418e775f7/bzImage-80e54e84.xz
+     This is changed so that readdir on the root dir lists all the known
+     cell automount pairs plus the @cell symlinks and the inodes and
+     dentries are constructed by lookup on demand.  This simplifies the
+     cell management code.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f2aaf773187f5cae54f3@syzkaller.appspotmail.com
+ (4) A few improvements to the afs_volume tracepoint.
 
-EXT4-fs (loop0): unmounting filesystem 00000000-0000-0000-0000-000000000000.
-==================================================================
-BUG: KCSAN: data-race in __filemap_add_folio / invalidate_bdev
+ (5) A few improvements to the afs_server tracepoint.
 
-read-write to 0xffff888100630570 of 8 bytes by task 3291 on cpu 0:
- __filemap_add_folio+0x430/0x6f0 mm/filemap.c:929
- filemap_add_folio+0x9c/0x1b0 mm/filemap.c:981
- page_cache_ra_unbounded+0x1c1/0x350 mm/readahead.c:276
- do_page_cache_ra mm/readahead.c:328 [inline]
- force_page_cache_ra mm/readahead.c:357 [inline]
- page_cache_sync_ra+0x252/0x680 mm/readahead.c:585
- filemap_get_pages+0x2ca/0x11a0 mm/filemap.c:2580
- filemap_read+0x230/0x8c0 mm/filemap.c:2691
- blkdev_read_iter+0x228/0x2d0 block/fops.c:796
- new_sync_read fs/read_write.c:484 [inline]
- vfs_read+0x5cc/0x6f0 fs/read_write.c:565
- ksys_read+0xe8/0x1b0 fs/read_write.c:708
- __do_sys_read fs/read_write.c:717 [inline]
- __se_sys_read fs/read_write.c:715 [inline]
- __x64_sys_read+0x42/0x50 fs/read_write.c:715
- x64_sys_call+0x2874/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:1
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+ (6) Pass trace info into the afs_lookup_cell() function to allow the trace
+     log to indicate the purpose of the lookup.
 
-read to 0xffff888100630570 of 8 bytes by task 3306 on cpu 1:
- invalidate_bdev+0x25/0x70 block/bdev.c:99
- ext4_put_super+0x571/0x810 fs/ext4/super.c:1356
- generic_shutdown_super+0xe5/0x220 fs/super.c:642
- kill_block_super+0x2a/0x70 fs/super.c:1710
- ext4_kill_sb+0x44/0x80 fs/ext4/super.c:7368
- deactivate_locked_super+0x7d/0x1c0 fs/super.c:473
- deactivate_super+0x9f/0xb0 fs/super.c:506
- cleanup_mnt+0x268/0x2e0 fs/namespace.c:1413
- __cleanup_mnt+0x19/0x20 fs/namespace.c:1420
- task_work_run+0x13a/0x1a0 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0xa8/0x120 kernel/entry/common.c:218
- do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+ (7) Remove the 'net' parameter from afs_unuse_cell() as it's superfluous.
 
-value changed: 0x000000000000000d -> 0x000000000000000e
+ (8) In rxrpc, allow a kernel app (such as kafs) to store a word of
+     information on rxrpc_peer records.
 
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 UID: 0 PID: 3306 Comm: syz-executor Not tainted 6.14.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-==================================================================
+ (9) Use the information stored on the rxrpc_peer record to point to the
+     afs_server record.  This allows the server address lookup to be done
+     away with.
 
+(10) Simplify the afs_server ref/activity accounting to make each one
+     self-contained and not garbage collected from the cell management work
+     item.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+(11) Simplify the afs_cell ref/activity accounting to make each one of
+     these also self-contained and not driven by a central management work
+     item.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+     The current code was intended to make it such that a single timer for
+     the namespace and one work item per cell could do all the work
+     required to maintain these records.  This, however, made for some
+     sequencing problems when cleaning up these records.  Further, the
+     attempt to pass refs along with timers and work items made getting it
+     right rather tricky when the timer or work item already had a ref
+     attached and now a ref had to be got rid of.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+The patches are here:
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=afs-next
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Thanks,
+David
 
-If you want to undo deduplication, reply with:
-#syz undup
+Changes
+=======
+ver #4)
+ - Add a fix patch to handle RCU pathwalk in afs_atcell_get_link().
+
+ver #3)
+ - Fix the fix for an error check of the form "unsigned value < 0".
+
+ver #2)
+ - Fix an error check of the form "unsigned value < 0".
+
+Link: https://lore.kernel.org/r//3190716.1740733119@warthog.procyon.org.uk/ # v1
+Link: https://lore.kernel.org/r//3399677.1740754398@warthog.procyon.org.uk/ # v2
+Link: https://lore.kernel.org/r//3761344.1740995350@warthog.procyon.org.uk/ # v3
+
+David Howells (11):
+  afs: Fix afs_atcell_get_link() to handle RCU pathwalk
+  afs: Remove the "autocell" mount option
+  afs: Change dynroot to create contents on demand
+  afs: Improve afs_volume tracing to display a debug ID
+  afs: Improve server refcount/active count tracing
+  afs: Make afs_lookup_cell() take a trace note
+  afs: Drop the net parameter from afs_unuse_cell()
+  rxrpc: Allow the app to store private data on peer structs
+  afs: Use the per-peer app data provided by rxrpc
+  afs: Fix afs_server ref accounting
+  afs: Simplify cell record handling
+
+ fs/afs/addr_list.c         |  50 +++
+ fs/afs/cell.c              | 446 ++++++++++++---------------
+ fs/afs/cmservice.c         |  82 +----
+ fs/afs/dir.c               |   5 +-
+ fs/afs/dynroot.c           | 501 +++++++++++++------------------
+ fs/afs/fs_probe.c          |  32 +-
+ fs/afs/fsclient.c          |   4 +-
+ fs/afs/internal.h          | 100 +++---
+ fs/afs/main.c              |  16 +-
+ fs/afs/mntpt.c             |   5 +-
+ fs/afs/proc.c              |  19 +-
+ fs/afs/rxrpc.c             |   8 +-
+ fs/afs/server.c            | 601 ++++++++++++++++---------------------
+ fs/afs/server_list.c       |   6 +-
+ fs/afs/super.c             |  25 +-
+ fs/afs/vl_alias.c          |   7 +-
+ fs/afs/vl_rotate.c         |   2 +-
+ fs/afs/volume.c            |  15 +-
+ include/net/af_rxrpc.h     |   2 +
+ include/trace/events/afs.h |  83 ++---
+ net/rxrpc/ar-internal.h    |   1 +
+ net/rxrpc/peer_object.c    |  30 +-
+ 22 files changed, 927 insertions(+), 1113 deletions(-)
+
 
