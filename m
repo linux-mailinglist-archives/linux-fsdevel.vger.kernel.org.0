@@ -1,115 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-43669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D3EFA5A3E3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Mar 2025 20:38:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 170E1A5A471
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Mar 2025 21:11:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBAFE17407A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Mar 2025 19:37:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE5A53AC990
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Mar 2025 20:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079A423644E;
-	Mon, 10 Mar 2025 19:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE74D1C8FD7;
+	Mon, 10 Mar 2025 20:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="hiO6ZetK";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZddtfY0f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0572356CC;
-	Mon, 10 Mar 2025 19:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C80F1CEADB;
+	Mon, 10 Mar 2025 20:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741635464; cv=none; b=f09Z+QxytirLFmSe4+cCwWXKpQ47PoOBR3aKG833jwyWFeyl9IKb2uIhG7sn3Ullq0tycS9gIvv9NVqoYRoM5aDd+sjsp3ZYUQ6017W+5xcojctji9kucHQLfJiz525TmZs2dX5FXxfYq4CAZKhIRpxlJmUz6hGXZpwnFopHV8Y=
+	t=1741637482; cv=none; b=hgayji8dYL7dvvjM5MQ0V9iRuD82NAy+Bdx/PSgGZLc78ZCDmEkBgqX91smj+AJ2Ln762n5gPKFGu5HWkTJLn3Yu9JDqmVVHZsTSWO10pUWP1u6LHPgTU5hNCwy3L2WtoUBXa1Tsu9nhjlCzDZJ3X9ttdq/nIN82xFBXW4r57uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741635464; c=relaxed/simple;
-	bh=c1iYrSO8Kd/12THIxsVRKDsAM0Bj4Yao50BlyA3CgBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mr6wJ87uhj6dXvwYVxAM8dKmaUlUMmmqt6xllOd0gjQETRNLzzOj8MZkNznn+LBEISL6tcHrXzVIKgyLv0PinomdJA+fsVhBrez7pET/bZ7G7L74cFCyoyg+x6yV/GPaZ1uw5oQeBufRBqSSCa7OLsigDztwGBpcSAa4tARd1QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8194A152B;
-	Mon, 10 Mar 2025 12:37:52 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B96A83F694;
-	Mon, 10 Mar 2025 12:37:38 -0700 (PDT)
-Date: Mon, 10 Mar 2025 19:37:32 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Kees Cook <kees@kernel.org>, Peter Collingbourne <pcc@google.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
-Subject: Re: [PATCH] string: Disable read_word_at_a_time() optimizations if
- kernel MTE is enabled
-Message-ID: <Z88_fFgr23_EtHMf@J2N7QTR9R3>
-References: <20250308023314.3981455-1-pcc@google.com>
- <202503071927.1A795821A@keescook>
- <Z88jbhobIz2yWBbJ@arm.com>
- <Z88r5qFLOSo0itaq@J2N7QTR9R3.cambridge.arm.com>
- <Z88yC7Oaj9DGaswc@arm.com>
+	s=arc-20240116; t=1741637482; c=relaxed/simple;
+	bh=NTmmEk6Y/0bEQNAiPtlqnmpvVmyBIl52/5IQxvWQLEQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M91EOgJPuL7KP+ElR3kfl0Y/eQG3ASkpsPQRBEZrd6XJemZCc5O6b2EBP4/S2pf0Obmpt5lMtU7L9bT2KYeo/owQCjgpAbU+I+Bq9JUQdkjucBT3jaIGXxqcruOJZTVxe1aMCarICkyc73WX7pdPLuE/sCJRoLomWD3vDTViRVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=hiO6ZetK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZddtfY0f; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfout.phl.internal (Postfix) with ESMTP id 19C471382CF1;
+	Mon, 10 Mar 2025 16:11:19 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Mon, 10 Mar 2025 16:11:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1741637479;
+	 x=1741723879; bh=dCX5pMMbMGFfjWv/fglntdoyDzZ8q91V84L27+XBwpE=; b=
+	hiO6ZetKav547Lt+ZrrSdskO7FE7UOfjG+wyue6wNBS/tTlJLpuyz8lrLwcz86BT
+	9oOEx3cLPpfNvmYmV7JvRjGc6CMOi9ZElB/ZjbziHZP2xzg7jaPfuwrC9y+URImL
+	m1ktBvqpBj2bkqQ1Vk7v0ttAQuG4X0omvh4B+9hi/f1UMO4cgMQ5xTx1t3Zcyps/
+	tzofuDV7irzhGB7+syccomlpMdYxWEe026LCYGIrzrLSQ4Irsy0JFKLFYfUsKL6G
+	+Yj17hiTC9GI73z3B4t/mUdT7aMhLDouoqKiMe66mxt+VkPFhubGZ0VfGydlwBlv
+	PGz58RkaYhDpTVd9QGsXrQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741637479; x=
+	1741723879; bh=dCX5pMMbMGFfjWv/fglntdoyDzZ8q91V84L27+XBwpE=; b=Z
+	ddtfY0f34QxCq6wcEKGa4VQOkds+kpIhDFkH3/q6GzYC/U6+84MASYbAZQOocrkB
+	jIAGF7xP2Kg6BirpfH04NuMtCk84V+Nm8oQx/B64ZD0fkWY/Ug6ptr2+gyWwMiX+
+	92dBW0Z39d2fHDQYyPOyhXOUDoqa8r/JGBKVR9Tsh0qBQIwSlmc5H8yTOCX23ufL
+	5PwqeEm9jI+a00Rk33swa2wW0Zul2ya1hZ+wWUAlofwApUBLoX6DiMxygiJFOT8d
+	apDjOoIZCuYFl1emDG3K+LJ24llCogMRG/w7Sdfsirs5FaTnomTgu5SYAQGs8FaJ
+	9zTeDq94VZvK2Hjq+Hi5Q==
+X-ME-Sender: <xms:ZkfPZ03YOAnqfK7PWJyHazXjkyhldlQMWQB25nFZ9U3Y3XYqcRDR_Q>
+    <xme:ZkfPZ_Fie3RB2wUH7sXe1dmBROWXGmR71-PAWWQ2pHYPdVypp6yLlNSrr8Tg2e482
+    eDxt05W1lBt2PvI>
+X-ME-Received: <xmr:ZkfPZ87--Z5YbLFQFi7VxWqJQMaUAvoUWYb1yIbOcfcrxbZ6gX5OJwls3lr71MDPWPUsQ8UHdOATE7ltnofH8xQEX69DUb6_RcozxGCEhTDbkn8x_Gb->
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvddtvdejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
+    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvg
+    hrnhgurdgtohhmqeenucggtffrrghtthgvrhhnpeeugfevvdeggeeutdelgffgiefgffej
+    heffkedtieduffehledvfeevgeejhedtjeenucffohhmrghinhepghhithhhuhgsrdgtoh
+    hmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggv
+    rhhnugessghssggvrhhnugdrtghomhdpnhgspghrtghpthhtohepjedpmhhouggvpehsmh
+    htphhouhhtpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphht
+    thhopehluhhishesihhgrghlihgrrdgtohhmpdhrtghpthhtohepsghstghhuhgsvghrth
+    esuggunhdrtghomhdprhgtphhtthhopegurghvihgusehfrhhomhhorhgsihhtrdgtohhm
+    pdhrtghpthhtohepmhhhrghrvhgvhiesjhhumhhpthhrrgguihhnghdrtghomhdprhgtph
+    htthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:ZkfPZ939KRpJniMCDKAIQL1oZwx5fLzCnj1b9kMS53RWOTmFoOTBmQ>
+    <xmx:ZkfPZ3Fp9cfth7i76Qm5PQfvd9lzD0GnsL6YF-lRimdhZsK2nB7Bow>
+    <xmx:ZkfPZ28HTFMsAXZ1tAmP2ZdMbzTFpoIosfEANAFa_JXlDrf4GfRysg>
+    <xmx:ZkfPZ8l1_lTgxWC8ga-iWdekOhYM6xy3ll0xajymSoc9dIKDC6jfSw>
+    <xmx:Z0fPZ22Lt7HCiYTtGAFV42gRfmpEcbXTKuWPeTHnz58gki7DG59Pty1J>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 10 Mar 2025 16:11:17 -0400 (EDT)
+Message-ID: <0bd342bf-df71-4026-8d26-2c990e99b40d@bsbernd.com>
+Date: Mon, 10 Mar 2025 21:11:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z88yC7Oaj9DGaswc@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8] fuse: add more control over cache invalidation
+ behaviour
+To: Miklos Szeredi <miklos@szeredi.hu>, Luis Henriques <luis@igalia.com>
+Cc: Bernd Schubert <bschubert@ddn.com>, Dave Chinner <david@fromorbit.com>,
+ Matt Harvey <mharvey@jumptrading.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250226091451.11899-1-luis@igalia.com>
+ <87msdwrh72.fsf@igalia.com>
+ <CAJfpegvcEgJtmRkvHm+WuPQgdyeCQZggyExayc5J9bdxWwOm4w@mail.gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJfpegvcEgJtmRkvHm+WuPQgdyeCQZggyExayc5J9bdxWwOm4w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 10, 2025 at 06:40:11PM +0000, Catalin Marinas wrote:
-> On Mon, Mar 10, 2025 at 06:13:58PM +0000, Mark Rutland wrote:
-> > On Mon, Mar 10, 2025 at 05:37:50PM +0000, Catalin Marinas wrote:
-> > > On Fri, Mar 07, 2025 at 07:36:31PM -0800, Kees Cook wrote:
-> > > > On Fri, Mar 07, 2025 at 06:33:13PM -0800, Peter Collingbourne wrote:
-> > > > > The optimized strscpy() and dentry_string_cmp() routines will read 8
-> > > > > unaligned bytes at a time via the function read_word_at_a_time(), but
-> > > > > this is incompatible with MTE which will fault on a partially invalid
-> > > > > read. The attributes on read_word_at_a_time() that disable KASAN are
-> > > > > invisible to the CPU so they have no effect on MTE. Let's fix the
-> > > > > bug for now by disabling the optimizations if the kernel is built
-> > > > > with HW tag-based KASAN and consider improvements for followup changes.
-> > > > 
-> > > > Why is faulting on a partially invalid read a problem? It's still
-> > > > invalid, so ... it should fault, yes? What am I missing?
-> > > 
-> > > read_word_at_a_time() is used to read 8 bytes, potentially unaligned and
-> > > beyond the end of string. The has_zero() function is then used to check
-> > > where the string ends. For this uses, I think we can go with
-> > > load_unaligned_zeropad() which handles a potential fault and pads the
-> > > rest with zeroes.
-> > 
-> > If we only care about synchronous and asymmetric modes, that should be
-> > possible, but that won't work in asynchronous mode. In asynchronous mode
-> > the fault will accumulate into TFSR and will be detected later
-> > asynchronously where it cannot be related to its source and fixed up.
-> > 
-> > That means that both read_word_at_a_time() and load_unaligned_zeropad()
-> > are dodgy in async mode.
+
+
+On 3/10/25 17:42, Miklos Szeredi wrote:
+> On Fri, 7 Mar 2025 at 16:31, Luis Henriques <luis@igalia.com> wrote:
 > 
-> load_unaligned_zeropad() has a __mte_enable_tco_async() call to set
-> PSTATE.TCO if in async mode, so that's covered. read_word_at_a_time() is
-> indeed busted and I've had Vincezo's patches for a couple of years
-> already, they just never made it to the list.
+>> Any further feedback on this patch, or is it already OK for being merged?
+> 
+> The patch looks okay.  I have ideas about improving the name, but that can wait.
+> 
+> What I think is still needed is an actual use case with performance numbers.
+> 
+>> And what about the extra call to shrink_dcache_sb(), do you think that
+>> would that be acceptable?  Maybe that could be conditional, by for example
+>> setting a flag.
+> 
+> My wish would be a more generic "garbage collection" mechanism that
+> would collect stale cache entries and get rid of them in the
+> background.  Doing that synchronously doesn't really make sense, IMO.
+> 
+> But that can be done independently of this patch, obviously.
 
-Sorry, I missed the __mte_{enable,disable}_tco_async() calls. So long as
-we're happy to omit the check in that case, that's fine.
+Can't that be done in fuse-server? Maybe we should improve
+notifications to allow a batch of invalidations?
 
-I was worried that ex_handler_load_unaligned_zeropad() might not do the
-right thing in response to a tag check fault (e.g. access the wrong 8
-bytes), but it looks as though that's ok due to the way it generates the
-offset and the aligned pointer.
+I'm a bit thinking about
+https://github.com/libfuse/libfuse/issues/1131
 
-If load_unaligned_zeropad() is handed a string that starts with an
-unexpected tag (and even if that starts off aligned),
-ex_handler_load_unaligned_zeropad() will access that and cause another
-tag check fault, which will be reported.
+I.e. userspace got out of FDs and my guess is it happens
+because of dentry/inode cache in the kernel. Here userspace
+could basically need to create its own LRU and then send
+invalidations. It also could be done in kernel,
+but kernel does not know amount of max open userspace FDs.
+We could add it into init-reply, but wouldn't be better
+to keep what we can in userspace?
 
-Mark.
+
+Thanks,
+Bernd
 
