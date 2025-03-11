@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-43702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43703-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E76FA5BFB1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 12:49:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C311DA5BFB6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 12:49:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22CC7189631A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 11:49:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22BF83A5653
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 11:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0832254872;
-	Tue, 11 Mar 2025 11:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6F0253F0E;
+	Tue, 11 Mar 2025 11:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="swP1eeJq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="afnQ3xQ+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60736224258
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Mar 2025 11:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B32BF9CB
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Mar 2025 11:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741693740; cv=none; b=qI4Fh+s6V2ErzJ8FfmydQzw233o4GDqD2Vs8/cYuIeNCwXpkBxvPBXHa7ZwNh7v3gxNwI6hkwiyadcC2YvSs5TJ8rWkyJhEnJcstSw9RmvLGrksKYoVaXFqRzEPQacHIEln8GQG4Mo0Dm8+ojfZUKpdMrGm6aMurZaHPlvWUW9M=
+	t=1741693752; cv=none; b=FMfjPO0fnpy3+kvGdNEyphjaN6bnhLFMhTip6l/VUmKdjVIvaHAVfYIcMPh6HMlMJFdw36SchAyHvX0pZlUVXw26rxWIJ7CoT29HCd4ljFt2nagrhR6Uv9DSFeXAV+yfscHnp+pko5d58QKmNMlMNUWTcmezuoNmhzlFsshOyBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741693740; c=relaxed/simple;
+	s=arc-20240116; t=1741693752; c=relaxed/simple;
 	bh=RtjSiZtx5omuFVg3avMcut1p0gnfZssAhseajHHPr5c=;
 	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=fGQVxkK+p8yurdfx9Y14GYmcLmoUpTksjzFRkeQYsoMkvGYdh1zyteuSFDo4WFW8RJf+l6A3uLdS+h03RqZunE5WL3fHLL9qndH8/VUgBZ9+MvsQ9WO6x+LSI8IHhaZypAuXADBW1lFdPYs/qM5PgjdXXwI3VsRaZ/6zDOt2UIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=swP1eeJq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CB98C4CEEE;
-	Tue, 11 Mar 2025 11:48:57 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=RLqx/xKvfeWQEXUhgpuwhq1DC8w4GtmjWWUXrEjBQST9uHiTqavncspieUfKwTWNXqnto+mHISlpINYm0EXAA8KNKj341Y/5gtDgeYsDZVbNTKq4dVY8DaOSrV1SLbEMBEShUEJnnqTRkg+ma1TT+yf5DrD3XGo1rrBVU1iQiPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=afnQ3xQ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DD17C4CEE9;
+	Tue, 11 Mar 2025 11:49:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741693739;
+	s=k20201202; t=1741693751;
 	bh=RtjSiZtx5omuFVg3avMcut1p0gnfZssAhseajHHPr5c=;
 	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=swP1eeJqz9wAlJelMRxacwPkGbFz6jh0DEgR7pUP0pbGycnEyhtMvsxwzvh1LD5YK
-	 LIWiwzgY+BbGJA4LoafjQO1AIywnS7Ytl+SWVG+GRSpnHY9/8IQvUwVYDJlcraPMAs
-	 LV/m0fXHIp7yUFNWeMFD8Pat0sQ9MRj+e+tCxbVAGB1ZS0wof2BtbTeOnvfeJMbszb
-	 dqR+bVNWcQiFi/HU4KrBZ3QtI6tIhYCGKUpbEQlAjBsXZH3R9UU+ecDDfb5PVarKv6
-	 6u8RLr1+cdGZ4G/j28jn7Yd25DHwweCCO2+Npv1xiJIA5QkVPIxgwOQU/rGSQyb7Ka
-	 hlK49v4FGxpIQ==
-Message-ID: <88e7f270-a752-471b-b57a-8b557c586ed4@kernel.org>
-Date: Tue, 11 Mar 2025 19:48:57 +0800
+	b=afnQ3xQ+6T+/rweyszaV5KAUraFYtibSpTjHU75K27TTjSpEkxIHS0Oc2LY93X0zf
+	 YHY/9Ay7ij4v3QvW6AIIkcTrKgwwRVx5u1LslNyvrttk1uWwwenGQ90C8pqsiJ71in
+	 jMrQ96ygv9MeGn+V9Al3uiv5i5Y5ETKByDdZbMQE+dn8GX7K/IcPyG4osmWUgXcmyZ
+	 +FTbs0I6dcnBPvmwsd+Rv7YgjSBaCfagYXcZDG+b34KZjpddOuoFjNM2HrFEyDfb/l
+	 H2zNr7/tVpYnK0WQFlsDPBWWAnEhapmk7YBUUyX+Mg/9/3vO30lj/SF7iH4SmBZi7d
+	 koA2mpxEztEUA==
+Message-ID: <e633ffab-0731-433f-82e4-44477b1f96e9@kernel.org>
+Date: Tue, 11 Mar 2025 19:49:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,14 +52,14 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/4] f2fs: Remove f2fs_write_data_page()
+Subject: Re: [PATCH 3/4] f2fs: Remove f2fs_write_meta_page()
 To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
  Jaegeuk Kim <jaegeuk@kernel.org>
 References: <20250307182151.3397003-1-willy@infradead.org>
- <20250307182151.3397003-3-willy@infradead.org>
+ <20250307182151.3397003-4-willy@infradead.org>
 Content-Language: en-US
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250307182151.3397003-3-willy@infradead.org>
+In-Reply-To: <20250307182151.3397003-4-willy@infradead.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
