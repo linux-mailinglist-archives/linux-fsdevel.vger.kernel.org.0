@@ -1,112 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-43706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E5DA5BFD1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 12:56:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B098A5C093
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 13:19:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70A4B173DB9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 11:56:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8649163FF4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 12:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6A3255E3A;
-	Tue, 11 Mar 2025 11:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539CD25B679;
+	Tue, 11 Mar 2025 12:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V2hm2Lw/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1772221F10;
-	Tue, 11 Mar 2025 11:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87D725A648;
+	Tue, 11 Mar 2025 12:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741694158; cv=none; b=TARmqLB7u1dpeig+Tm0blu9IXu4MfL/II0z47c7RjZh47pB0bp/rnUvBBYy+LcEe9krfksHqU/Scv73Qt0aEdJhE5sFeLOSQD04wXdpixbj4X6eDbSdehdsgGXwVeb+rEsXinHmAIR1gPqYlxjxR7Xo+mdwn3opKUhkkbyIcAjs=
+	t=1741694853; cv=none; b=Cm59c3MXBjC4s9V91gOGLbEdtzSc4qO1zLBo/9R4I1dJ/xK37DtG5m2g3bBGHNpGtKwGFkKSMs4WG/GXmy3sIf0Ycmn9620u1s7ep/QTPU5EjMbcrWwUMBUv2ycf9+CfhmMMvMyV0vLB3SWpeJYLJlxT8PjUrKPHeX1ojk35dCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741694158; c=relaxed/simple;
-	bh=R6D6TLTMr0oW9Mj0KH3+YY8ScQKRFMhfTtqWwF7+U0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gXRN/6f27gNAEaOrWDnjbSfAOqdZ8KVct899yFuWgWmQTdvNenVcTupA5S2v8eS1/OMjSDVL8L5IDm3eZRR0CvqoX+tL5N/SUlBm2VVQp8hNN3zR0j+lI9bFKvlNTfsv5SADehhrLOafnAeo+bumtTeytnfQInovGwiugrIPOaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2722A152B;
-	Tue, 11 Mar 2025 04:56:07 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F00443F673;
-	Tue, 11 Mar 2025 04:55:53 -0700 (PDT)
-Date: Tue, 11 Mar 2025 11:55:43 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Kees Cook <kees@kernel.org>, Peter Collingbourne <pcc@google.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
-Subject: Re: [PATCH] string: Disable read_word_at_a_time() optimizations if
- kernel MTE is enabled
-Message-ID: <Z9Akv6qQFfmYFReD@J2N7QTR9R3>
-References: <20250308023314.3981455-1-pcc@google.com>
- <202503071927.1A795821A@keescook>
- <Z88jbhobIz2yWBbJ@arm.com>
- <Z88r5qFLOSo0itaq@J2N7QTR9R3.cambridge.arm.com>
- <Z88yC7Oaj9DGaswc@arm.com>
- <Z88_fFgr23_EtHMf@J2N7QTR9R3>
- <Z9AiUQdC4o0g8sxu@arm.com>
+	s=arc-20240116; t=1741694853; c=relaxed/simple;
+	bh=jmQ7nPvDWPX4ysCzL3zjUSbc5owtj/SgCViNOxWXCg0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=To9lI9WlT2AxwWymwSVhGdOLo0FbYCq7herkc5ulIYUIooeChpeZnE1kPZ4/Fd0fnA14rxiG7KkVGq2uYTR0f7ZmLzxFEwiaU1v7aoHGSqwIVQJDJWQOhTYTFAC6jBqGJapJwJLMf8ozAUOVBrhZN40yufzLhDJQwyuaRfjQ4YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V2hm2Lw/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EE4FC4CEE9;
+	Tue, 11 Mar 2025 12:07:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741694853;
+	bh=jmQ7nPvDWPX4ysCzL3zjUSbc5owtj/SgCViNOxWXCg0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=V2hm2Lw/aCNAksho3mLJw/PIJCA0dLQer0MnGVMEdTNxgEtMGJ3IdknFxcV4XMaD2
+	 ns4jN6ivLRPEWzleRqOcMP30B/FXkPFTiKerD/iPuNh4lfHXplJzPduuFbvw5ZMIi4
+	 9hB6Gue9Fmty1TVxVLbJgtErHwpgkpunZ3KjTzLUJ4SOe5+8x7MTO1ymQfwYkS6m6c
+	 LD5ku7xybWG3N6BdPrO0X+QqtIhn3BxmxJ1xQ5R4WX2fk9OEGMcVl2L9D9lySL1i+T
+	 gTO8jV8EB7b8xDE0ALvY2U7Ca0LUgLux7/58j+KZPA33tyucPEKSyCyeoX0DMT5HSz
+	 8XxDBwPJWjhKw==
+From: Christian Brauner <brauner@kernel.org>
+To: Hans de Goede <hdegoede@redhat.com>,
+	Kees Cook <kees@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Brahmajit Das <brahmajit.xyz@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] vboxsf: Add __nonstring annotations for unterminated strings
+Date: Tue, 11 Mar 2025 13:07:26 +0100
+Message-ID: <20250311-daran-einige-e64c81600277@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250310222530.work.374-kees@kernel.org>
+References: <20250310222530.work.374-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9AiUQdC4o0g8sxu@arm.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1388; i=brauner@kernel.org; h=from:subject:message-id; bh=jmQ7nPvDWPX4ysCzL3zjUSbc5owtj/SgCViNOxWXCg0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRfUK9PKr4euCnMqv+//Y68A+IS9fzr0475cpSl6E9eJ L3sp/+5jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImoHWD4pxoYsbF1i3njql6W RheT9pnX2qy+3v+2NsXRNvlJve5SPUaGs59qDv19k+zD1egmWZqUcSLi9938tjdWmq/exs/0v6n HDgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 11, 2025 at 11:45:21AM +0000, Catalin Marinas wrote:
-> On Mon, Mar 10, 2025 at 07:37:32PM +0000, Mark Rutland wrote:
-> > I was worried that ex_handler_load_unaligned_zeropad() might not do the
-> > right thing in response to a tag check fault (e.g. access the wrong 8
-> > bytes), but it looks as though that's ok due to the way it generates the
-> > offset and the aligned pointer.
-> > 
-> > If load_unaligned_zeropad() is handed a string that starts with an
-> > unexpected tag (and even if that starts off aligned),
-> > ex_handler_load_unaligned_zeropad() will access that and cause another
-> > tag check fault, which will be reported.
+On Mon, 10 Mar 2025 15:25:31 -0700, Kees Cook wrote:
+> When a character array without a terminating NUL character has a static
+> initializer, GCC 15's -Wunterminated-string-initialization will only
+> warn if the array lacks the "nonstring" attribute[1]. Mark the arrays
+> with __nonstring to and correctly identify the char array as "not a C
+> string" and thereby eliminate the warning.
 > 
-> Yes, it will report an async tag check fault on the
-> exit_to_kernel_mode() path _if_ load_unaligned_zeropad() triggered the
-> fault for other reasons (end of page).
+> This effectively reverts the change in 4e7487245abc ("vboxsf: fix building
+> with GCC 15"), to add the annotation that has other uses (i.e. warning
+> if the string is ever used with C string APIs).
+> 
+> [...]
 
-Sorry, yes. The aligned case I mentioned shouldn't apply here.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-> It's slightly inconsistent, we could set TCO for the async case in
-> ex_handler_load_unaligned_zeropad() as well.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Yep, I think that'd be necessary for async mode.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-> For sync checks, we'd get the first fault ending up in
-> ex_handler_load_unaligned_zeropad() and a second tag check fault while
-> processing the first. This ends up in do_tag_recovery and we disable
-> tag checking after the report. Not ideal but not that bad.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Yep; that's what I was describing in the second paragraph above, though
-I forgot to say that was assuming sync or asymm mode.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
 
-> We could adjust ex_handler_load_unaligned_zeropad() to return false if
-> the pointer is already aligned but we need to check the semantics of
-> load_unaligned_zeropad(), is it allowed to fault on the first byte?
-
-IIUC today it's only expected to fault due to misalignment, and the
-gneral expectation is that for a sequence of load_unaligned_zeropad()
-calls, we should get at least one byte without faulting (for the NUL
-terminator).
-
-I reckon it'd be better to figure this out based on the ESR if possible.
-Kristina's patches for MOPS would give us that.
-
-Mark.
+[1/1] vboxsf: Add __nonstring annotations for unterminated strings
+      https://git.kernel.org/vfs/vfs/c/986a6f5eacb9
 
