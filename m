@@ -1,56 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-43695-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43696-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC58A5BE87
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 12:08:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB3AA5BE8A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 12:09:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 078291898314
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 11:08:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA82118981EF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 11:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 902C2252913;
-	Tue, 11 Mar 2025 11:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1F8252913;
+	Tue, 11 Mar 2025 11:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cVqYr2vr"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="fY1ciEpn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F386C24394B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Mar 2025 11:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EE723F295;
+	Tue, 11 Mar 2025 11:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741691256; cv=none; b=lTYNyY7eUd6dDwXkIqGbHTamuXlTWAUytcqBPLcNY+VXzAzCdN3rujz1GqzWBZaHSkdEgSV6Mty8x1EX02iybfFAoCQSEskdkAGShMZ/Iz4sJnp3sPtXfQtsr7mw1tyBf3S56VB7BET3r/t1J8ZByH+TUQ8Z3WW0RimZLdZI2HU=
+	t=1741691336; cv=none; b=ErzuOR7SubhZazOowibtVidWI0z4T+ptCj0oO+Jc4V1tdyamtxNPGQeVvt42VpaXOWHN9mke5xWntm+4fBL8pCFwUbvk2RpWkvDJXC1mXJ5oDend1/80XlF3OZhl1FPHneUeXFLWl+AeBkGPuhSZ19q6wgMjdgswog37aafvzUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741691256; c=relaxed/simple;
-	bh=yCUYZ35L1dCUZlM3Iv2ktpduTKLg8T8RbXihOP5V+3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JsXzhW0Fw/J1SOkCtkR1hg5jOjsX7lHquflQHBQNZVxF40LPXcHJv0OYvgDo3j35lAKiqtPXkJWNZbiXN8qMxDQArSc2hzh/LXG3/5pbt+MRHkOueADDOwGkVdQt7UmP1FEwGq8rxAEgNMh98ttmR9I/PQWQ6VyEjwihkCas0GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cVqYr2vr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B380C4CEEB;
-	Tue, 11 Mar 2025 11:07:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741691255;
-	bh=yCUYZ35L1dCUZlM3Iv2ktpduTKLg8T8RbXihOP5V+3k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cVqYr2vrIcQ8sTYIUEi+Bounp1NHfDDSSRylEt4/LpLg9BrgWB5zVcsFNwFRJe/wz
-	 Tkf2gRsMeSLcx2ZtHraN6+7bUrrm0vN/F6gwBj9s+hjAXptVdlu8bGqf7oWCveMBs9
-	 0XOI2cIaKrqTJaEq1DErUwLeNCKawXA892bV0N4Rj1qvLP35ZPbfUBKFwwUnC/gM+2
-	 L3iLJOJIkXHoxx3S5MurlpiydDieMUGD+L1Q3oqlc21tv8ejC6PG+bToEH7qUaRqlT
-	 aX2ie7Mhe6iwhmoq+QeIAagnExZ0RYk/y3uSnEpeHIdjQ9E1/1hAp8f3Tb9PJyeeBK
-	 kG+/z2kKxP2+A==
-Date: Tue, 11 Mar 2025 12:07:31 +0100
-From: Christian Brauner <brauner@kernel.org>
+	s=arc-20240116; t=1741691336; c=relaxed/simple;
+	bh=6QPAKh6/UhudhOGiYP2Joig8dg3+yA0xnLYREG0IUt4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=I+rva1ia8NEvSLfW7hXAqD9OwSKm161ReHMCv2yXROrlb7s/Wq4yswCWyFaWRmpj0MBwYK+j0reHIIYe2kr0etbbL0LyhpRnfBtAQsNYVY9knWZ4IDWEQRfLsPXNgsbbieEYTWyyUEygnaRIBz1U6rSJ6nkP+DJgbcn7d6AD0Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=fY1ciEpn; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=3Wt+6IsDowyHHy1LGGn9ikHPVWxsgvWGSYUv9JfpVDI=; b=fY1ciEpnYiwX9D3XxypCUl3njY
+	8CUV4yWNxteb/xDBgteZB1ujY8A3qeBFWl+Th6KaSvAu6ML8+vtKMk0PnsEGCa9ae83ZSowB8Z3FS
+	sNKZTMaYb6UworjgCzR8iYHnRYljsjgs+cJUj3xUG0s9cvHQDCwNvsMPkMN8Tci8oEx30BPscNoPj
+	hrw68uKPQmwbdmqs0EuJHkuBw9PETWsHouX0NqiQXPpdkipEK1tqAWh1HbCPC7s6OmhxIMg3tGggK
+	l1g1Uj1VjzPWfu0TtLl3VGw+q9FipdKbaEyLVdyFNsdGzMqQaGoVQT+ACpfGRiY9AFapfeHimYLvQ
+	ZnvbArrQ==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1trxTK-0072PK-17; Tue, 11 Mar 2025 12:08:35 +0100
+From: Luis Henriques <luis@igalia.com>
 To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] selftests: add tests for mount notification
-Message-ID: <20250311-riesig-leihwagen-62030ac9a55f@brauner>
-References: <20250307204046.322691-1-mszeredi@redhat.com>
- <20250308-preis-skandal-1631e95a883c@brauner>
- <CAJfpegs-h8M1PFcnqiHN=wsRJD_8cMyTzjoivJe-BACik7U6sg@mail.gmail.com>
+Cc: Bernd Schubert <bschubert@ddn.com>,  Dave Chinner <david@fromorbit.com>,
+  Matt Harvey <mharvey@jumptrading.com>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8] fuse: add more control over cache invalidation
+ behaviour
+In-Reply-To: <CAJfpegvcEgJtmRkvHm+WuPQgdyeCQZggyExayc5J9bdxWwOm4w@mail.gmail.com>
+	(Miklos Szeredi's message of "Mon, 10 Mar 2025 17:42:53 +0100")
+References: <20250226091451.11899-1-luis@igalia.com>
+	<87msdwrh72.fsf@igalia.com>
+	<CAJfpegvcEgJtmRkvHm+WuPQgdyeCQZggyExayc5J9bdxWwOm4w@mail.gmail.com>
+Date: Tue, 11 Mar 2025 11:08:35 +0000
+Message-ID: <87v7sfzux8.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,21 +68,58 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJfpegs-h8M1PFcnqiHN=wsRJD_8cMyTzjoivJe-BACik7U6sg@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 10, 2025 at 12:00:43PM +0100, Miklos Szeredi wrote:
-> On Sat, 8 Mar 2025 at 13:10, Christian Brauner <brauner@kernel.org> wrote:
-> 
-> > setup_namespace() can just be called on each FIXTURE_SETUP() invocation
-> > and cleanup_namespace() on each FIXTURE_TEARDOWN(). They will always
-> > start with a clean slate this way.
-> 
-> Ah, hadn't realized that each test case will get a fresh process...
-> 
-> Attached further cleanup with this in mind.
+Hi Miklos,
 
-Thanks! I've folded this into the patch!
+On Mon, Mar 10 2025, Miklos Szeredi wrote:
 
-Christian
+> On Fri, 7 Mar 2025 at 16:31, Luis Henriques <luis@igalia.com> wrote:
+>
+>> Any further feedback on this patch, or is it already OK for being merged?
+>
+> The patch looks okay.  I have ideas about improving the name, but that ca=
+n wait.
+
+Naming suggestions are always welcome!
+
+> What I think is still needed is an actual use case with performance numbe=
+rs.
+
+Well, the use-case I had in mind is, as I mentioned before, CVMFS.  I
+think this file system could benefit from using this mechanism.
+
+However, I don't think that measuring the direct benefits is something
+easily done.  At the moment, it uses a thread that tries to drain the
+cache using the FUSE_NOTIFY_INVAL_{INODE,ENTRY} operations.  These are,
+obviously, operations that are much more expensive than the proposed
+FUSE_NOTIFY_INC_EPOCH.  But, on the other hand, they have *immediate*
+effect while the new operation does not: without the call to
+shrink_dcache_sb() it's effect can only be observed in the long run.
+
+I can try to come up with some artificial test case for this, but
+comparing these operations will always need to be done indirectly.  And I
+wonder how useful that would be.
+
+>> And what about the extra call to shrink_dcache_sb(), do you think that
+>> would that be acceptable?  Maybe that could be conditional, by for examp=
+le
+>> setting a flag.
+>
+> My wish would be a more generic "garbage collection" mechanism that
+> would collect stale cache entries and get rid of them in the
+> background.  Doing that synchronously doesn't really make sense, IMO.
+
+So, you're proposing something like having a workqueue that would walk
+through the entries.  And this workqueue would be triggered when the epoch
+is increased.
+
+> But that can be done independently of this patch, obviously.
+
+OK, cool!  I'm adding this to my TODO list, I can have a look into it once
+we're done this patch.
+
+Cheers,
+--=20
+Lu=C3=ADs
 
