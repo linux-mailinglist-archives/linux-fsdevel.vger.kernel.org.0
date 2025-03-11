@@ -1,86 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-43698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43699-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBF3FA5BF6D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 12:42:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E626A5BF71
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 12:42:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4BDD1899C3E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 11:42:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 648393B3395
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 11:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954642566CE;
-	Tue, 11 Mar 2025 11:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9BF254879;
+	Tue, 11 Mar 2025 11:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mbFPMhhX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JUo6/5uW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B1C254B1B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Mar 2025 11:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A3D2561B4
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Mar 2025 11:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741693324; cv=none; b=kMuQCjfPx2qakLQFPep7F7Q4N7aVC+tFbTFHWtePe6T/T6MkDByqMPdRo6V3cqoAONHjmbRFipoorPye6g4pnTFSoArmdcYkqNJMJOjOL5Kp49k+j55O5iTfK1vMdMSHXemQ8IVNuxZxotjnQL7g1krXb9HJIkSCt83Yn5hHKaw=
+	t=1741693325; cv=none; b=kd+wq8aOK3rl0O5s9XTT8wRDBahNV7l3yLyrgvLwptMFsPS+CEfcgi4Q4dBUbooMfvqs9GvmQmBO6Z8JpNcHrXU828PJbXDWceoAPIyj1YO0BBGhG7LqLXPfrdGa7L92NYgrFTfzbJPhPL/cm0pj43K7nKSjVH4lngQMcrIS3Fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741693324; c=relaxed/simple;
-	bh=BBxOOGa0e/TjU3macJ1B64w40/0lMtH0exwdv8IsIqE=;
+	s=arc-20240116; t=1741693325; c=relaxed/simple;
+	bh=Bq1sJYsyY7SmmtyVoHLTJ7RwhSzjxyvvaNHE2BoP5o4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PVUa7QiBqQRLHS0RQiTUKZPUoj9HMvC3t07Sr+LUiNhNjF/3qg9hy0jqtos5cyX8E0HZ4S+68X93ijmk5xRGJ2YNyIpxvmOZKeEEAMk7eoARx2Af+wWCv5w8+0RPCb/yg/0/dRThc6zWXklLXmfdNNClHahgvgIFDasozGIv5oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mbFPMhhX; arc=none smtp.client-ip=209.85.128.50
+	 MIME-Version; b=cHXnKjpctL2n7F8yYMtm7sjcZJumeOR8zlf+XPJ9rhO/mlYsoqqKqIWeGNzCppsKUiiZYAS4pL1aXH/Fe4W6d5RQOTQ9JKVdXLMjX/sYPHURinajw277Gw4p4FTmiyObItT5JclqenLWmyoqFySWT+8JeXk5kmn8ww7IpsKv3Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JUo6/5uW; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cf0d787eeso22819145e9.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Mar 2025 04:42:01 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso9935005e9.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Mar 2025 04:42:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741693320; x=1742298120; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741693322; x=1742298122; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3LWiYFXrKdxrv5GZCsPLgeGjiJIUrbXXnL2aZByYV4A=;
-        b=mbFPMhhXSXzxo6ziBY2X49Tn6bee+Jrl2NQmJ5wEAG8eATzz97gLW5Ol12McXrlgyz
-         lAqrcCUV4d0IAE62h6myiMnfXDs1CDLo0CWcfA/qISLM+KmClegAKpZP+6IJAJWt4KEQ
-         Dni9SPjz87B5+vy2OiPoMi8x6MapEQSUhZuv3UszSfxtHGhtxxGcRPoBjhwqH9IZwMmG
-         LguJvsPF2UrAnVctNy37WmbzRp8oJthL6rPs/dz0JXc8tYlJqmuMQoTQBjoU9cUtqoH4
-         4VFM06KBg+hYmC6gwefzbIXPY5a9g1xXU8h610zaVDdSoqt6T1mAH84GjUtVj9YCeozA
-         lylw==
+        bh=+CJk22BJz8Xn8B3iCqwMnyA5UrA707UUiR3U0dZkau0=;
+        b=JUo6/5uWA7YurD40tlehlyJ+9UqwyNnuxe3PyyuqP5o9qSGQXed7KvhsSpLuEQo185
+         tpF5SZxMRWUO3ID7SjcBeE7V11o/vRZpBscz1x7X4cHeWGdiHfecc7TL3e4HRpmgzHxs
+         gfVW8b/Uzy5e44tlijGg7z6g8R7XBgwgCoq0azBQc7dhIXpGfy/cCW71cCxPmSPVAv0T
+         y74k2DZGwJc+bEuBDo3Erundg76jwa0TIZEYA2QQXnUGagYMcX5fx9Z/imTvYQMO0UA6
+         DDQmoxkv1XIXjp/ph4fEtaW0VPbox1YeAlR2cIw+85Y9KQ8haN9LCpKTk38iBCXNlIGy
+         RIBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741693320; x=1742298120;
+        d=1e100.net; s=20230601; t=1741693322; x=1742298122;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3LWiYFXrKdxrv5GZCsPLgeGjiJIUrbXXnL2aZByYV4A=;
-        b=npNNCNNagTjx27ZSEexS/6nL1CvcTmcmZ7b2sMo5pZXMmuQTilhvsU19JJj2F8i5+Q
-         71iELyMUI0aej+CRQufvhWrKfkmrxwFWSxtswpix2MiDzzCCCUPK5PPP2YMh4yz8bfPw
-         i/MebfC0/EoSOQnpro76G4P0nSRW9HWAiOvNFz36yu48ic8rQsV3IAUZVCLs37pytUIG
-         ouNbuBoEitm59dpJGwTArAEfulhVk5g3ce0IE56sNhykSi2bifFTuzfOLf84DGE6ErE+
-         QOftlQAWRF0n07iBc/EMxs3wSziJTdQuUSKHTr5mFZYXhHx8Xoe8pMtvjWi/jYfn9Gv/
-         SfZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXz3Yl+L8EsRUTQNptVBo8is7ou/hXdxuRTqLNjQQkJDfPh75hHSlq91sYJuEucnXiMC8n/8N4uwbL/ca54@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO+g2kG2eHwxlGCwPt5Lbxd3vxajB7Pcbnfvf4Y3tn6HVwhYmu
-	ru42aRkx2gPlBu1BAYPdIMV/nnU2Jd5fPlql0rlqWwyNhF2THQrwHf2GcyRd
-X-Gm-Gg: ASbGnct1wSqQYTPlqC8QNA1UGYhPKgtj4ikqU3Yo4tYMllhV+zVy1VaPwcwsV+Ie+3U
-	Dxil5IMIRdWIVNPW0Y3TlBKtdMC6zz0VNM+5+XtUSb8rDGlQcyLgCrpjJTnsogFDp8aTU6lzwi2
-	+JceGFZLuT5fKPmvfGyS0+WwLnBO7FXpL1qsxjvjjk9iRR+lEVH0T+vDKyiNmYNbEW7K9S3JViB
-	oj9N9/62O4aRZBilAG1BuET9Zm8n5OTsdffZ62Qyxl+fPdbAovA4hheHC8ClMbCWwGPqJC0Ayvq
-	HeHc9G/IrOtHDMxp1uego+dPH4B6ds2QL+fHDdKY9tiA+5mFvndSyihbYQ8WlGeSPMWZdIkfDkJ
-	xoPocl5nixe3XD/ADhb717cllpzdI81yXfj+ul4VFPA==
-X-Google-Smtp-Source: AGHT+IHRrNckHtWKqXE2GcoA18nuJrHyK6Stltvj6KwcLJLRRhBJUiuKccsdZPhjhYRh+tf6mS/xhg==
-X-Received: by 2002:a05:600c:45d1:b0:439:6118:c188 with SMTP id 5b1f17b1804b1-43c5a62a276mr114232015e9.19.1741693319941;
-        Tue, 11 Mar 2025 04:41:59 -0700 (PDT)
+        bh=+CJk22BJz8Xn8B3iCqwMnyA5UrA707UUiR3U0dZkau0=;
+        b=gSZKAkM/eMQoB0hrS1m/SPkcBzQ7EOFdLQPKKCvGGJVTX8SeZn/XvVkji0cf14QbPm
+         cB8zuIbSs9e1Nvgn28UxxIFewx/YuWnWI7Sft5rbATuFrvyFvguL31SqwhBVrw4bn6Gl
+         ma4QqemuzuOUXUMMZ4PMcSb70bde8y2H+/+/xRyQpgqbCDQ3gzL+NcaBp1+WSN6UlpTs
+         l+vLDrKW/tl/7dMcjX331m0srOiUrfZkZbLG2qfdt3L8z9PRXrhG9YOwm2LcyKu9TeHV
+         oSIer82SbRzUH0OEVNNmUK9ujJ48R2sN3Fa66VEByTgUUIaj2Wh9cfVOd/eaDM6ygeIh
+         +VBw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbXchuC+Wd94X2LhR3loeOZz98vTD1yQAFXvgsqGCJ43VK18mA7Twmra0b7h7uRlwA1naKX5rvw8BLNkgC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7eSzp56B6vg2MAMRIVgxo9iXiWFCskgdpGFRibwAELwbMQLX/
+	FDgLGKPZwpI8D9U4vZG6ZZy6MSSBGG5fqoGA/uZIpfDU2iHORsvK
+X-Gm-Gg: ASbGncviGLzK/aHUgCRACy+YzB4BtBYM2semSZFsP0xrnFvdug9g5S7K5pRidLgu3OJ
+	Kf5+cJCBRrtZ+XZTI9PqDzDFNCHv4Y2xs/p1sqKpkh8xh9HMa9AWxDdQGLOXyZleMWHDcOVWxse
+	o/SEmFTNJx++hTP3Nlra3hkbpb5Wrb+8hSMwMDBhk+sEqENgdP6MvcGzdJ4E63KRnjiRBZle3mR
+	FNS4fU72GtN+x3M+ESBzsvj5qlRGPLVDuwjAtvBT5b4eqTWNDGZB0SD6FPG8b97Byz+DrvdBdcW
+	NAJG1yexKPep6WMOb+g6VeHGALdBigowy/oCismueQeypNfo1bg4xHgXvKIIcFnRbwQA/boMEDF
+	DIvVbDt1PKHYE5iDmxDR4P+0jXXxBggx0T1TjHiBjrg==
+X-Google-Smtp-Source: AGHT+IEVHzwQ04qtMKlf95A6L6Vuza+31cxNZYdOvBdcl+2F0s0ZZFvghbzwVS7/hg7im2AE9ODgrg==
+X-Received: by 2002:a05:600c:4708:b0:43c:f050:fee8 with SMTP id 5b1f17b1804b1-43d01c1e109mr40936175e9.20.1741693321342;
+        Tue, 11 Mar 2025 04:42:01 -0700 (PDT)
 Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43cea8076fcsm111297525e9.15.2025.03.11.04.41.58
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43cea8076fcsm111297525e9.15.2025.03.11.04.42.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 04:41:58 -0700 (PDT)
+        Tue, 11 Mar 2025 04:42:00 -0700 (PDT)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Jan Kara <jack@suse.cz>
 Cc: Josef Bacik <josef@toxicpanda.com>,
 	Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 1/2] fsnotify: add pre-content hooks on mmap()
-Date: Tue, 11 Mar 2025 12:41:52 +0100
-Message-Id: <20250311114153.1763176-2-amir73il@gmail.com>
+Subject: [PATCH 2/2] fsnotify: avoid pre-content events when faulting in user pages
+Date: Tue, 11 Mar 2025 12:41:53 +0100
+Message-Id: <20250311114153.1763176-3-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250311114153.1763176-1-amir73il@gmail.com>
 References: <20250311114153.1763176-1-amir73il@gmail.com>
@@ -92,106 +92,58 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Pre-content hooks in page faults introduces potential deadlock of HSM
-handler in userspace with filesystem freezing.
+In the use case of buffered write whose input buffer is mmapped file on a
+filesystem with a pre-content mark, the prefaulting of the buffer can
+happen under the filesystem freeze protection (obtained in vfs_write())
+which breaks assumptions of pre-content hook and introduces potential
+deadlock of HSM handler in userspace with filesystem freezing.
 
-The requirement with pre-content event is that for every accessed file
-range an event covering at least this range will be generated at least
-once before the file data is accesses.
+Now that we have pre-content hooks at file mmap() time, disable the
+pre-content event hooks on page fault to avoid the potential deadlock.
 
-In preparation to disabling pre-content event hooks on page faults,
-change those hooks to always use the mask MAY_ACCESS and add pre-content
-hooks at mmap() variants for the entire mmaped range, so HSM can fill
-content when user requests to map a portion of the file.
+Leave the code of pre-content hooks in page fault because we may want
+to re-enable them on executables or user mapped files under certain
+conditions after resolving the potential deadlocks.
 
-Note that exec() variant also calls vm_mmap_pgoff() internally to map
-code sections, so pre-content hooks are also generated in this case.
-
-Link: https://lore.kernel.org/linux-fsdevel/7ehxrhbvehlrjwvrduoxsao5k3x4aw275patsb3krkwuq573yv@o2hskrfawbnc/
+Reported-by: syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/linux-fsdevel/7ehxrhbvehlrjwvrduoxsao5k3x4aw275patsb3krkwuq573yv@o2hskrfawbnc/
+Fixes: 8392bc2ff8c8b ("fsnotify: generate pre-content permission event on page fault")
 Suggested-by: Josef Bacik <josef@toxicpanda.com>
+Tested-by: syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- mm/filemap.c |  3 +--
- mm/mmap.c    | 12 ++++++++++++
- mm/util.c    |  7 +++++++
- 3 files changed, 20 insertions(+), 2 deletions(-)
+ include/linux/fsnotify.h | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 2974691fdfad2..f85d288209b44 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3350,7 +3350,6 @@ static vm_fault_t filemap_fault_recheck_pte_none(struct vm_fault *vmf)
- vm_fault_t filemap_fsnotify_fault(struct vm_fault *vmf)
+diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+index 6a33288bd6a1f..796dacceec488 100644
+--- a/include/linux/fsnotify.h
++++ b/include/linux/fsnotify.h
+@@ -137,6 +137,14 @@ void file_set_fsnotify_mode_from_watchers(struct file *file);
+ static inline int fsnotify_file_area_perm(struct file *file, int perm_mask,
+ 					  const loff_t *ppos, size_t count)
  {
- 	struct file *fpin = NULL;
--	int mask = (vmf->flags & FAULT_FLAG_WRITE) ? MAY_WRITE : MAY_ACCESS;
- 	loff_t pos = vmf->pgoff >> PAGE_SHIFT;
- 	size_t count = PAGE_SIZE;
- 	int err;
-@@ -3370,7 +3369,7 @@ vm_fault_t filemap_fsnotify_fault(struct vm_fault *vmf)
- 	if (!fpin)
- 		return VM_FAULT_SIGBUS;
- 
--	err = fsnotify_file_area_perm(fpin, mask, &pos, count);
-+	err = fsnotify_file_area_perm(fpin, MAY_ACCESS, &pos, count);
- 	fput(fpin);
- 	if (err)
- 		return VM_FAULT_SIGBUS;
-diff --git a/mm/mmap.c b/mm/mmap.c
-index cda01071c7b1f..70318936fd588 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -48,6 +48,7 @@
- #include <linux/sched/mm.h>
- #include <linux/ksm.h>
- #include <linux/memfd.h>
-+#include <linux/fsnotify.h>
- 
- #include <linux/uaccess.h>
- #include <asm/cacheflush.h>
-@@ -1151,6 +1152,17 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
- 		return ret;
- 	}
- 
-+	if (file && unlikely(FMODE_FSNOTIFY_HSM(file->f_mode))) {
-+		int mask = (prot & PROT_WRITE) ? MAY_WRITE : MAY_READ;
-+		loff_t pos = pgoff >> PAGE_SHIFT;
++	/*
++	 * Temporarily disable pre-content hooks from page faults (MAY_ACCESS).
++	 * We may bring them back later either only to executables or to user
++	 * mapped files under some conditions.
++	 */
++	if (!(perm_mask & (MAY_READ | MAY_WRITE)))
++		return 0;
 +
-+		ret = fsnotify_file_area_perm(file, mask, &pos, size);
-+		if (ret) {
-+			fput(file);
-+			return ret;
-+		}
-+	}
-+
- 	ret = -EINVAL;
+ 	/*
+ 	 * filesystem may be modified in the context of permission events
+ 	 * (e.g. by HSM filling a file on access), so sb freeze protection
+@@ -144,9 +152,6 @@ static inline int fsnotify_file_area_perm(struct file *file, int perm_mask,
+ 	 */
+ 	lockdep_assert_once(file_write_not_started(file));
  
- 	/* OK security check passed, take write lock + let it rip. */
-diff --git a/mm/util.c b/mm/util.c
-index b6b9684a14388..2dddeabac6098 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -23,6 +23,7 @@
- #include <linux/processor.h>
- #include <linux/sizes.h>
- #include <linux/compat.h>
-+#include <linux/fsnotify.h>
+-	if (!(perm_mask & (MAY_READ | MAY_WRITE | MAY_ACCESS)))
+-		return 0;
+-
+ 	if (likely(!FMODE_FSNOTIFY_PERM(file->f_mode)))
+ 		return 0;
  
- #include <linux/uaccess.h>
- 
-@@ -569,6 +570,12 @@ unsigned long vm_mmap_pgoff(struct file *file, unsigned long addr,
- 	LIST_HEAD(uf);
- 
- 	ret = security_mmap_file(file, prot, flag);
-+	if (!ret && file && unlikely(FMODE_FSNOTIFY_HSM(file->f_mode))) {
-+		int mask = (prot & PROT_WRITE) ? MAY_WRITE : MAY_READ;
-+		loff_t pos = pgoff >> PAGE_SHIFT;
-+
-+		ret = fsnotify_file_area_perm(file, mask, &pos, len);
-+	}
- 	if (!ret) {
- 		if (mmap_write_lock_killable(mm))
- 			return -EINTR;
 -- 
 2.34.1
 
