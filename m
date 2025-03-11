@@ -1,173 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-43742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1971A5D305
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 00:15:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 976D5A5D30F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 00:19:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AA5E3B2A25
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 23:15:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27954189AB83
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 23:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2532356AA;
-	Tue, 11 Mar 2025 23:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0FF522FACA;
+	Tue, 11 Mar 2025 23:18:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DooT6gto"
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="R33NVmO7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H9wdx+rP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from flow-b3-smtp.messagingengine.com (flow-b3-smtp.messagingengine.com [202.12.124.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DE023370B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Mar 2025 23:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FFD14F117;
+	Tue, 11 Mar 2025 23:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741734912; cv=none; b=Fu07TjJjBKFXZ+PbAWZrChQ49iolr3QfrPeuaWEzVanug8F7N3Clih5MDYlL4yFb0cmrPLhz/Ak8NUy2KZSkdllpvzHqqpvOArXVVLjQtIZRf/rMPXgDtFz6H9yu4zaeKvEP0jobdgnEGspx9zBFFtc+Pg8RaEa2nMadSPP2y74=
+	t=1741735137; cv=none; b=k+ijuTrwv5OdrvqnHkAD54gEqjrNz1NDG7xDAqHksOgfj7L6D0hRqJ4a0Lpn1NOELOW3gxybsfLTatJ8CcWKou/NwdGeimyPJCpRD4zploDONeh08wJmhLKGzcnNNCLcj0N83oevk6cOCHjvVMjW32mQB9mnDVXkWPukJJkBXks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741734912; c=relaxed/simple;
-	bh=dn4yPhL5avHiqtNfeTaKE69bgTDdHt4EMpDz5juIA4M=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=uzhQ/j328NCR5YNSNFgLOug4v9mTeW2ARvD9Sp7QAWD04tb+pOCUTmg52Q4w1KvUqqRi0YpzVJf/nd3N2p3bdEjBjpqhNTeJx5ZuRJHqIsGvmslN7PoRir9iokkP74jwnxHROI6rKOMdQbVivpyLQxizTGDtWMIvtifXBGH5Gho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DooT6gto; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741734909;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YtUFGu6o0/J9RvV/h3s9K30gUjjCCkNCcQynXOmfbNQ=;
-	b=DooT6gtoegrILwo3YNxA0H7LowX+oo6wM4c3CXTSFu/CeYa35wynBsgNGhFvjsuuv+uwOT
-	YiijB/X9kTvjv76GFwCWUTbbZjRwKcUKHKS5QjmVBYn5wr9VE+BjGF+IdPED+Vs+MvK/BL
-	zAp0yBA9C/kHPfcZMhLC7AX8wvO4x8U=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-463-AgbKgPtGMVetziY0cnJATw-1; Tue,
- 11 Mar 2025 19:15:04 -0400
-X-MC-Unique: AgbKgPtGMVetziY0cnJATw-1
-X-Mimecast-MFC-AGG-ID: AgbKgPtGMVetziY0cnJATw_1741734902
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D01361809CA3;
-	Tue, 11 Mar 2025 23:15:01 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E0F43180094A;
-	Tue, 11 Mar 2025 23:14:57 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <953587.1741611236@warthog.procyon.org.uk>
-References: <953587.1741611236@warthog.procyon.org.uk>
-To: netdev@vger.kernel.org
-Cc: dhowells@redhat.com, Herbert Xu <herbert@gondor.apana.org.au>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-    "David S. Miller" <davem@davemloft.net>,
-    Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
-    Chuck Lever <chuck.lever@oracle.com>, linux-crypto@vger.kernel.org,
-    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL net-next] crypto: Add Kerberos crypto lib
+	s=arc-20240116; t=1741735137; c=relaxed/simple;
+	bh=BTSwDeUVq9UPDpqm8BsNvk6ciNap3kvZUI0Bdc1MGYA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ha4WxABfzkt6uWHpOyuto/Jyklcn3AMH6jE/NtaLTkVe/SSpOgeXtSBMNHx+RmAd6CWr8IG51WdaPuTXWCKvG/pjH94LfPuSkh8UnlDcM6WpOnk4OaGIJAqEKFiwhhgYNaU3EtuHvg9lh9pZgaTThIuZKltlHtTvbBtKkuOnjEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=R33NVmO7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H9wdx+rP; arc=none smtp.client-ip=202.12.124.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailflow.stl.internal (Postfix) with ESMTP id 2D5C21D41267;
+	Tue, 11 Mar 2025 19:18:53 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Tue, 11 Mar 2025 19:18:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1741735133;
+	 x=1741738733; bh=crRX9uE+ooOi0V96Xu/LVXF8iKiANj0u/9DiYRjeUUE=; b=
+	R33NVmO79gQ3N1/zbl38kymGXlM0XMrqmgHk9qC4HAdT00alctgR0fcs9mrnXIjS
+	IZ0/cK5WB+2R8q+KomYrohAhv3ul85J5iZA3O5sPd6kpSWlQ5eb6tuIVO8Xjly5R
+	9bmNKVM47fjmsdTMEVENUVoq3RyzmiKfD9gaqAX0D7AN58Vp4IfojpUX+Bt2icox
+	I/HWuz5oYsdz39J5kwjYFphY7JxKFLTwKqHq2r/8LF0t5yi78dmLMBzV2E2LDoA/
+	zgRr+kX5APXRxCXBS5mvjBHp/X2WxEiPdevuZLQfRR7c3zVzS98DJjAzJXV8F2lJ
+	QHKmUxTBIHIlJAIPBqQ7cQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741735133; x=
+	1741738733; bh=crRX9uE+ooOi0V96Xu/LVXF8iKiANj0u/9DiYRjeUUE=; b=H
+	9wdx+rPqmmry9qevd5In2rFNVsNKO/Yqf7n+WzyYDhC/3GkEa0CfOSNNHCi0IMiq
+	MbrzHhW6Tc7vo2Z4FAWAZxkofR5SHAaoqFnl5nyPA1ePGjB0efsvZ9t7QaCmtaGi
+	EvSFkewFdXIq2q6dNYFpavlbRW27ftlMj0sYfn9zUT7X3FxLXxDAzLEpmc4K3jwW
+	GIu429U7QxIOtCaTHncmaN4/Isiu8SpgOCzooNRP0j1tp0t+xuCuTcV9HHnXeyEp
+	M5OFV58zVd0Chi5CkzbVKk05seqC82D/nNlaYENxIPqRh4wYbb9cJtewqxHGnk7y
+	5aTzZQY1wpSfUDR1hyyjA==
+X-ME-Sender: <xms:3MTQZwrPsmiKejzJRzUZMs7bu2aMG-UGvkWVVRM7RrKTRl9tzdZ_EA>
+    <xme:3MTQZ2o_UwtgpU9XxQhQlWgiPMB7UlKdEqHDpoI_KkcpE1lPNBXLE30qcn-RrMxyD
+    ElZHvZvwS8WysCHQV0>
+X-ME-Received: <xmr:3MTQZ1OUg_YmJn90ofjpTslIszpuaRTSfBu_ysdepS-67qZfk9A3tiErosQo0LdV6_k8aZtu6Cnyff9JuubDa_zGFvlw-DYB_yc9Q45rjfch_rFmoECTY8My>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdefgeelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddt
+    vdejnecuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhrgh
+    eqnecuggftrfgrthhtvghrnhepudekvefhgeevvdevieehvddvgefhgeelgfdugeeftedv
+    keeigfeltdehgeeghffgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
+    hilhhfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopeekpdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopehmihgtseguihhgihhkohgurdhnvghtpdhrtg
+    hpthhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdprhgtphhtthhopehjrggtkhes
+    shhushgvrdgtiidprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulh
+    gvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghmihhrjeefihhlsehg
+    mhgrihhlrdgtohhmpdhrtghpthhtoheprhgvphhnohhpsehgohhoghhlvgdrtghomhdprh
+    gtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtohepthihtghhohesthihtghhohdrphhiiiiirg
+X-ME-Proxy: <xmx:3MTQZ34lsCj0emFBvVp9gRmBzOCKwPQkfwh6Sy4viUevCpIu3aepuQ>
+    <xmx:3MTQZ_7uGqWcngwBfhoyGAhJdkQgjPNEPGREI8FkQnl6ycluR0NEAA>
+    <xmx:3MTQZ3iSPpY791yiazrdpKrWOAx1tPTf9T2l3tmm5fzf0Bz7qSGGhQ>
+    <xmx:3MTQZ56-ebniW9vwoRqHp1-OJ-1YEWjq2H2rLJZVVkYZBmiz31WyHQ>
+    <xmx:3MTQZ1T-VKVCl3MvHz1oJyKwMN7gwbmI8yoBSWbP6U_fgmj5mAC00ozu>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 11 Mar 2025 19:18:51 -0400 (EDT)
+Message-ID: <63681c08-dd9e-4f8f-9c41-f87762ea536c@maowtm.org>
+Date: Tue, 11 Mar 2025 23:18:49 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1199600.1741734896.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 11 Mar 2025 23:14:56 +0000
-Message-ID: <1199601.1741734896@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 5/9] Define user structure for events and responses.
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Jan Kara <jack@suse.cz>, linux-security-module@vger.kernel.org,
+ Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>,
+ linux-fsdevel@vger.kernel.org, Tycho Andersen <tycho@tycho.pizza>
+References: <cover.1741047969.git.m@maowtm.org>
+ <cde6bbf0b52710b33170f2787fdcb11538e40813.1741047969.git.m@maowtm.org>
+ <20250304.eichiDu9iu4r@digikod.net>
+ <fbb8e557-0b63-4bbe-b8ac-3f7ba2983146@maowtm.org>
+ <543c242b-0850-4398-804c-961470275c9e@maowtm.org>
+ <20250311.laiGhooquu1p@digikod.net>
+Content-Language: en-US
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <20250311.laiGhooquu1p@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Sigh.  I used the old tag by accident.  Attached is a pull request for one
-that got pulled Herbert.  The only difference was that I rebased it on the
-cryptodev tree - no other changes were made.
+On 3/11/25 19:28, Mickaël Salaün wrote:
+> On Mon, Mar 10, 2025 at 12:39:04AM +0000, Tingmao Wang wrote:
+>> On 3/6/25 03:05, Tingmao Wang wrote:
+>> [...]
+>>> This is also motivated by the potential UX I'm thinking of. For example,
+>>> if a newly installed application tries to create ~/.app-name, it will be
+>>> much more reassuring and convenient to the user if we can show something
+>>> like
+>>>
+>>>       [program] wants to mkdir ~/.app-name. Allow this and future
+>>>       access to the new directory?
+>>>
+>>> rather than just "[program] wants to mkdir under ~". (The "Allow this
+>>> and future access to the new directory" bit is made possible by the
+>>> supervisor knowing the name of the file/directory being created, and can
+>>> remember them / write them out to a persistent profile etc)
+>>
+>> Another significant motivation, which I forgot to mention, is to auto-grant
+>> access to newly created files/sockets etc under things like /tmp,
+>> $XDG_RUNTIME_DIR, or ~/Downloads.
+> 
+> What do you mean?  What is not currently possible?
 
-Apologies for that.
-David
----
-The following changes since commit 17ec3e71ba797cdb62164fea9532c81b60f4716=
-7:
+It is not currently possible with landlock to say "I will allow this 
+application access to create and open new file/folders under this 
+directory, change or delete the files it creates, but not touch any 
+existing files". Landlock supervisor can make this possible (keeping 
+track via its own state to allow future requests on the new file, or 
+modifying the domain if we support that), but for that the supervisor 
+has to know what file the application tried to create, hence motivating 
+sending filename.
 
-  crypto: lib/Kconfig - Hide arch options from user (2025-03-02 15:21:47 +=
-0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
-/crypto-krb5-20250303
-
-for you to fetch changes up to fc0cf10c04f49ddba1925b630467f49ea993569e:
-
-  crypto/krb5: Implement crypto self-testing (2025-03-02 21:56:47 +0000)
-
-----------------------------------------------------------------
-crypto: Add Kerberos crypto lib
-
-----------------------------------------------------------------
-David Howells (17):
-      crypto/krb5: Add API Documentation
-      crypto/krb5: Add some constants out of sunrpc headers
-      crypto: Add 'krb5enc' hash and cipher AEAD algorithm
-      crypto/krb5: Test manager data
-      crypto/krb5: Implement Kerberos crypto core
-      crypto/krb5: Add an API to query the layout of the crypto section
-      crypto/krb5: Add an API to alloc and prepare a crypto object
-      crypto/krb5: Add an API to perform requests
-      crypto/krb5: Provide infrastructure and key derivation
-      crypto/krb5: Implement the Kerberos5 rfc3961 key derivation
-      crypto/krb5: Provide RFC3961 setkey packaging functions
-      crypto/krb5: Implement the Kerberos5 rfc3961 encrypt and decrypt fun=
-ctions
-      crypto/krb5: Implement the Kerberos5 rfc3961 get_mic and verify_mic
-      crypto/krb5: Implement the AES enctypes from rfc3962
-      crypto/krb5: Implement the AES enctypes from rfc8009
-      crypto/krb5: Implement the Camellia enctypes from rfc6803
-      crypto/krb5: Implement crypto self-testing
-
- Documentation/crypto/index.rst   |   1 +
- Documentation/crypto/krb5.rst    | 262 +++++++++++++
- crypto/Kconfig                   |  13 +
- crypto/Makefile                  |   3 +
- crypto/krb5/Kconfig              |  26 ++
- crypto/krb5/Makefile             |  18 +
- crypto/krb5/internal.h           | 247 ++++++++++++
- crypto/krb5/krb5_api.c           | 452 ++++++++++++++++++++++
- crypto/krb5/krb5_kdf.c           | 145 +++++++
- crypto/krb5/rfc3961_simplified.c | 797 ++++++++++++++++++++++++++++++++++=
-+++++
- crypto/krb5/rfc3962_aes.c        | 115 ++++++
- crypto/krb5/rfc6803_camellia.c   | 237 ++++++++++++
- crypto/krb5/rfc8009_aes2.c       | 362 ++++++++++++++++++
- crypto/krb5/selftest.c           | 544 ++++++++++++++++++++++++++
- crypto/krb5/selftest_data.c      | 291 ++++++++++++++
- crypto/krb5enc.c                 | 504 +++++++++++++++++++++++++
- crypto/testmgr.c                 |  16 +
- crypto/testmgr.h                 | 351 +++++++++++++++++
- include/crypto/authenc.h         |   2 +
- include/crypto/krb5.h            | 160 ++++++++
- 20 files changed, 4546 insertions(+)
- create mode 100644 Documentation/crypto/krb5.rst
- create mode 100644 crypto/krb5/Kconfig
- create mode 100644 crypto/krb5/Makefile
- create mode 100644 crypto/krb5/internal.h
- create mode 100644 crypto/krb5/krb5_api.c
- create mode 100644 crypto/krb5/krb5_kdf.c
- create mode 100644 crypto/krb5/rfc3961_simplified.c
- create mode 100644 crypto/krb5/rfc3962_aes.c
- create mode 100644 crypto/krb5/rfc6803_camellia.c
- create mode 100644 crypto/krb5/rfc8009_aes2.c
- create mode 100644 crypto/krb5/selftest.c
- create mode 100644 crypto/krb5/selftest_data.c
- create mode 100644 crypto/krb5enc.c
- create mode 100644 include/crypto/krb5.h
+(I can see this kind of policy being applied to dirs like /tmp or my 
+Downloads folder. $XDG_RUNTIME_DIR is also a sensible place for this 
+behaviour due to the common pattern of creating a lock/pid file/socket 
+there, although on second thought a GUI sandbox probably will want to 
+create a private copy of that dir anyway for each app, to do dbus 
+filtering etc)
 
 
