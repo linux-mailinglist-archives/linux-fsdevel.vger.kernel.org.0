@@ -1,150 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-43699-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43700-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E626A5BF71
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 12:42:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 717F9A5BF84
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 12:45:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 648393B3395
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 11:42:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 292C8189857B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 11:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9BF254879;
-	Tue, 11 Mar 2025 11:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JUo6/5uW"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7961A254AE5;
+	Tue, 11 Mar 2025 11:45:27 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A3D2561B4
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Mar 2025 11:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C0F1D514E;
+	Tue, 11 Mar 2025 11:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741693325; cv=none; b=kd+wq8aOK3rl0O5s9XTT8wRDBahNV7l3yLyrgvLwptMFsPS+CEfcgi4Q4dBUbooMfvqs9GvmQmBO6Z8JpNcHrXU828PJbXDWceoAPIyj1YO0BBGhG7LqLXPfrdGa7L92NYgrFTfzbJPhPL/cm0pj43K7nKSjVH4lngQMcrIS3Fs=
+	t=1741693527; cv=none; b=cqkV4Cvvz3hJsIqsnabD86hS7fcW3U1hXOGqUkrREMihUSiZCgr7roUBkigV7s8dGjSRjSyynCBeQGGr/dff7xswhp/mpPJVGKeFddKQGHBLeqd3EQWUkirMeAFhXaVbzR3wymje2bfdiQyy4V64kBWzDPeUj2F3MYqcNygLzKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741693325; c=relaxed/simple;
-	bh=Bq1sJYsyY7SmmtyVoHLTJ7RwhSzjxyvvaNHE2BoP5o4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cHXnKjpctL2n7F8yYMtm7sjcZJumeOR8zlf+XPJ9rhO/mlYsoqqKqIWeGNzCppsKUiiZYAS4pL1aXH/Fe4W6d5RQOTQ9JKVdXLMjX/sYPHURinajw277Gw4p4FTmiyObItT5JclqenLWmyoqFySWT+8JeXk5kmn8ww7IpsKv3Wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JUo6/5uW; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso9935005e9.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Mar 2025 04:42:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741693322; x=1742298122; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+CJk22BJz8Xn8B3iCqwMnyA5UrA707UUiR3U0dZkau0=;
-        b=JUo6/5uWA7YurD40tlehlyJ+9UqwyNnuxe3PyyuqP5o9qSGQXed7KvhsSpLuEQo185
-         tpF5SZxMRWUO3ID7SjcBeE7V11o/vRZpBscz1x7X4cHeWGdiHfecc7TL3e4HRpmgzHxs
-         gfVW8b/Uzy5e44tlijGg7z6g8R7XBgwgCoq0azBQc7dhIXpGfy/cCW71cCxPmSPVAv0T
-         y74k2DZGwJc+bEuBDo3Erundg76jwa0TIZEYA2QQXnUGagYMcX5fx9Z/imTvYQMO0UA6
-         DDQmoxkv1XIXjp/ph4fEtaW0VPbox1YeAlR2cIw+85Y9KQ8haN9LCpKTk38iBCXNlIGy
-         RIBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741693322; x=1742298122;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+CJk22BJz8Xn8B3iCqwMnyA5UrA707UUiR3U0dZkau0=;
-        b=gSZKAkM/eMQoB0hrS1m/SPkcBzQ7EOFdLQPKKCvGGJVTX8SeZn/XvVkji0cf14QbPm
-         cB8zuIbSs9e1Nvgn28UxxIFewx/YuWnWI7Sft5rbATuFrvyFvguL31SqwhBVrw4bn6Gl
-         ma4QqemuzuOUXUMMZ4PMcSb70bde8y2H+/+/xRyQpgqbCDQ3gzL+NcaBp1+WSN6UlpTs
-         l+vLDrKW/tl/7dMcjX331m0srOiUrfZkZbLG2qfdt3L8z9PRXrhG9YOwm2LcyKu9TeHV
-         oSIer82SbRzUH0OEVNNmUK9ujJ48R2sN3Fa66VEByTgUUIaj2Wh9cfVOd/eaDM6ygeIh
-         +VBw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbXchuC+Wd94X2LhR3loeOZz98vTD1yQAFXvgsqGCJ43VK18mA7Twmra0b7h7uRlwA1naKX5rvw8BLNkgC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7eSzp56B6vg2MAMRIVgxo9iXiWFCskgdpGFRibwAELwbMQLX/
-	FDgLGKPZwpI8D9U4vZG6ZZy6MSSBGG5fqoGA/uZIpfDU2iHORsvK
-X-Gm-Gg: ASbGncviGLzK/aHUgCRACy+YzB4BtBYM2semSZFsP0xrnFvdug9g5S7K5pRidLgu3OJ
-	Kf5+cJCBRrtZ+XZTI9PqDzDFNCHv4Y2xs/p1sqKpkh8xh9HMa9AWxDdQGLOXyZleMWHDcOVWxse
-	o/SEmFTNJx++hTP3Nlra3hkbpb5Wrb+8hSMwMDBhk+sEqENgdP6MvcGzdJ4E63KRnjiRBZle3mR
-	FNS4fU72GtN+x3M+ESBzsvj5qlRGPLVDuwjAtvBT5b4eqTWNDGZB0SD6FPG8b97Byz+DrvdBdcW
-	NAJG1yexKPep6WMOb+g6VeHGALdBigowy/oCismueQeypNfo1bg4xHgXvKIIcFnRbwQA/boMEDF
-	DIvVbDt1PKHYE5iDmxDR4P+0jXXxBggx0T1TjHiBjrg==
-X-Google-Smtp-Source: AGHT+IEVHzwQ04qtMKlf95A6L6Vuza+31cxNZYdOvBdcl+2F0s0ZZFvghbzwVS7/hg7im2AE9ODgrg==
-X-Received: by 2002:a05:600c:4708:b0:43c:f050:fee8 with SMTP id 5b1f17b1804b1-43d01c1e109mr40936175e9.20.1741693321342;
-        Tue, 11 Mar 2025 04:42:01 -0700 (PDT)
-Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43cea8076fcsm111297525e9.15.2025.03.11.04.42.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 04:42:00 -0700 (PDT)
-From: Amir Goldstein <amir73il@gmail.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Josef Bacik <josef@toxicpanda.com>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/2] fsnotify: avoid pre-content events when faulting in user pages
-Date: Tue, 11 Mar 2025 12:41:53 +0100
-Message-Id: <20250311114153.1763176-3-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250311114153.1763176-1-amir73il@gmail.com>
-References: <20250311114153.1763176-1-amir73il@gmail.com>
+	s=arc-20240116; t=1741693527; c=relaxed/simple;
+	bh=iBNg5mEvsajHG4sU2bcGfllId35XtLdM5A9w2n+8DnY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=peYPW5KHZo84xHZ4cofB/s+E9iW0+zY0F0ju4dXyPd2ny5EH0kIqgSANWu/Dv0Z5sGO/zPp7jz7iADI4CXTiuagXiQaDdItuPCVM/+i0ZZeMgetodBopqixMh4MmxkrS4+wtIv+xlTOi9YUDSTBKGTd6ayhMqQ1Kgg182THq0gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 249CBC4CEE9;
+	Tue, 11 Mar 2025 11:45:23 +0000 (UTC)
+Date: Tue, 11 Mar 2025 11:45:21 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Kees Cook <kees@kernel.org>, Peter Collingbourne <pcc@google.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
+Subject: Re: [PATCH] string: Disable read_word_at_a_time() optimizations if
+ kernel MTE is enabled
+Message-ID: <Z9AiUQdC4o0g8sxu@arm.com>
+References: <20250308023314.3981455-1-pcc@google.com>
+ <202503071927.1A795821A@keescook>
+ <Z88jbhobIz2yWBbJ@arm.com>
+ <Z88r5qFLOSo0itaq@J2N7QTR9R3.cambridge.arm.com>
+ <Z88yC7Oaj9DGaswc@arm.com>
+ <Z88_fFgr23_EtHMf@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z88_fFgr23_EtHMf@J2N7QTR9R3>
 
-In the use case of buffered write whose input buffer is mmapped file on a
-filesystem with a pre-content mark, the prefaulting of the buffer can
-happen under the filesystem freeze protection (obtained in vfs_write())
-which breaks assumptions of pre-content hook and introduces potential
-deadlock of HSM handler in userspace with filesystem freezing.
+On Mon, Mar 10, 2025 at 07:37:32PM +0000, Mark Rutland wrote:
+> On Mon, Mar 10, 2025 at 06:40:11PM +0000, Catalin Marinas wrote:
+> > On Mon, Mar 10, 2025 at 06:13:58PM +0000, Mark Rutland wrote:
+> > > On Mon, Mar 10, 2025 at 05:37:50PM +0000, Catalin Marinas wrote:
+> > > > On Fri, Mar 07, 2025 at 07:36:31PM -0800, Kees Cook wrote:
+> > > > > On Fri, Mar 07, 2025 at 06:33:13PM -0800, Peter Collingbourne wrote:
+> > > > > > The optimized strscpy() and dentry_string_cmp() routines will read 8
+> > > > > > unaligned bytes at a time via the function read_word_at_a_time(), but
+> > > > > > this is incompatible with MTE which will fault on a partially invalid
+> > > > > > read. The attributes on read_word_at_a_time() that disable KASAN are
+> > > > > > invisible to the CPU so they have no effect on MTE. Let's fix the
+> > > > > > bug for now by disabling the optimizations if the kernel is built
+> > > > > > with HW tag-based KASAN and consider improvements for followup changes.
+> > > > > 
+> > > > > Why is faulting on a partially invalid read a problem? It's still
+> > > > > invalid, so ... it should fault, yes? What am I missing?
+> > > > 
+> > > > read_word_at_a_time() is used to read 8 bytes, potentially unaligned and
+> > > > beyond the end of string. The has_zero() function is then used to check
+> > > > where the string ends. For this uses, I think we can go with
+> > > > load_unaligned_zeropad() which handles a potential fault and pads the
+> > > > rest with zeroes.
+> > > 
+> > > If we only care about synchronous and asymmetric modes, that should be
+> > > possible, but that won't work in asynchronous mode. In asynchronous mode
+> > > the fault will accumulate into TFSR and will be detected later
+> > > asynchronously where it cannot be related to its source and fixed up.
+> > > 
+> > > That means that both read_word_at_a_time() and load_unaligned_zeropad()
+> > > are dodgy in async mode.
+> > 
+> > load_unaligned_zeropad() has a __mte_enable_tco_async() call to set
+> > PSTATE.TCO if in async mode, so that's covered. read_word_at_a_time() is
+> > indeed busted and I've had Vincezo's patches for a couple of years
+> > already, they just never made it to the list.
+> 
+> Sorry, I missed the __mte_{enable,disable}_tco_async() calls. So long as
+> we're happy to omit the check in that case, that's fine.
 
-Now that we have pre-content hooks at file mmap() time, disable the
-pre-content event hooks on page fault to avoid the potential deadlock.
+That was the easiest. Alternatively we can try to sync the TFSR before
+and after the load but with the ISBs, that's too expensive. We could
+also do a dummy one byte load before setting TCO. read_word_at_a_time()
+does have an explicit kasan_check_read() but last time I checked it has
+no effect on MTE.
 
-Leave the code of pre-content hooks in page fault because we may want
-to re-enable them on executables or user mapped files under certain
-conditions after resolving the potential deadlocks.
+> I was worried that ex_handler_load_unaligned_zeropad() might not do the
+> right thing in response to a tag check fault (e.g. access the wrong 8
+> bytes), but it looks as though that's ok due to the way it generates the
+> offset and the aligned pointer.
+> 
+> If load_unaligned_zeropad() is handed a string that starts with an
+> unexpected tag (and even if that starts off aligned),
+> ex_handler_load_unaligned_zeropad() will access that and cause another
+> tag check fault, which will be reported.
 
-Reported-by: syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-fsdevel/7ehxrhbvehlrjwvrduoxsao5k3x4aw275patsb3krkwuq573yv@o2hskrfawbnc/
-Fixes: 8392bc2ff8c8b ("fsnotify: generate pre-content permission event on page fault")
-Suggested-by: Josef Bacik <josef@toxicpanda.com>
-Tested-by: syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- include/linux/fsnotify.h | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+Yes, it will report an async tag check fault on the
+exit_to_kernel_mode() path _if_ load_unaligned_zeropad() triggered the
+fault for other reasons (end of page). It's slightly inconsistent, we
+could set TCO for the async case in ex_handler_load_unaligned_zeropad()
+as well.
 
-diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-index 6a33288bd6a1f..796dacceec488 100644
---- a/include/linux/fsnotify.h
-+++ b/include/linux/fsnotify.h
-@@ -137,6 +137,14 @@ void file_set_fsnotify_mode_from_watchers(struct file *file);
- static inline int fsnotify_file_area_perm(struct file *file, int perm_mask,
- 					  const loff_t *ppos, size_t count)
- {
-+	/*
-+	 * Temporarily disable pre-content hooks from page faults (MAY_ACCESS).
-+	 * We may bring them back later either only to executables or to user
-+	 * mapped files under some conditions.
-+	 */
-+	if (!(perm_mask & (MAY_READ | MAY_WRITE)))
-+		return 0;
-+
- 	/*
- 	 * filesystem may be modified in the context of permission events
- 	 * (e.g. by HSM filling a file on access), so sb freeze protection
-@@ -144,9 +152,6 @@ static inline int fsnotify_file_area_perm(struct file *file, int perm_mask,
- 	 */
- 	lockdep_assert_once(file_write_not_started(file));
- 
--	if (!(perm_mask & (MAY_READ | MAY_WRITE | MAY_ACCESS)))
--		return 0;
--
- 	if (likely(!FMODE_FSNOTIFY_PERM(file->f_mode)))
- 		return 0;
- 
+For sync checks, we'd get the first fault ending up in
+ex_handler_load_unaligned_zeropad() and a second tag check fault while
+processing the first. This ends up in do_tag_recovery and we disable tag
+checking after the report. Not ideal but not that bad. We could adjust
+ex_handler_load_unaligned_zeropad() to return false if the pointer is
+already aligned but we need to check the semantics of
+load_unaligned_zeropad(), is it allowed to fault on the first byte?
+
 -- 
-2.34.1
-
+Catalin
 
