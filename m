@@ -1,259 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-43689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43690-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72414A5BB05
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 09:46:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A700A5BD46
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 11:10:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 632B23AADDC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 08:45:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0CB81897E63
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 10:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6559A226CF8;
-	Tue, 11 Mar 2025 08:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66030230D0D;
+	Tue, 11 Mar 2025 10:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="khDC3Qmn"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Gqe/NiK5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B930622170A;
-	Tue, 11 Mar 2025 08:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BF822D7A5
+	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Mar 2025 10:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741682722; cv=none; b=O4LMA2SNCE1zO86nvAyndKkSas9ED/Ult7EcnaLQoZRxNL3dDdEXqXSzaW7PUk4kkAS/6BmBbtvey7lpoceaGpT2HAY+6vLrC3nJtRRQcZVa961VXZVBASYRiIdHTwHILBE+Eit4Es3ew/q8zQzT+SNo9As9epPh8aUM9ShcKS8=
+	t=1741687797; cv=none; b=ItrGhbwGy6Jj7qtiZ9Q78msIzlRbyjYKbeX/UixshIWmo8lejzFSIWhBasSJenVhaPC7XFH/zUlDBsoe9DsfLEzuFrGsPzNMpG2Lqy4bYt3fY/rV6tKCqxv3i+SAconZqynpK3RMGP4xjQK/KT59fts+RsCXvHjHYLJM93kCX78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741682722; c=relaxed/simple;
-	bh=N9ti5RiaRpT1tNwEt+6s4aMLX61sSMleWeCRdLu0vRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gp2CN+k3xFj3fJbdV8LMB/CYW953gCRDQEIWytF85UXrbcsAoDAEEE0vOjFCyjNXfr09f/RZXHbvBu1RDX53iHZwDXebyPhtkeTW+wbFvK3b0fQCOjMMWl+uRtIvcTkoT3CggFZGsa68GRKrrcZOnitZJd/lJg1a9LYAPSK8fr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=khDC3Qmn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84B58C4CEE9;
-	Tue, 11 Mar 2025 08:45:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741682722;
-	bh=N9ti5RiaRpT1tNwEt+6s4aMLX61sSMleWeCRdLu0vRo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=khDC3QmnMIrnmmb1FPIFzpqN2IXIOe5NEH+HOQMDiRHJED8T9m48iO7iURB2C0IZV
-	 NttRgvepFzWc9A4WmwzjIsOaNNshl1mn57huVuTDkFFyv+/FF+aq4HwTWJP/GfnGwb
-	 gmLnOer9xktPRV/L52o4cFPfIRJi4IVgCJ5b0Yy3wzU2qHZbLrj5BxM/vT89NpQ3KQ
-	 4x7AzLUiJhv+MJHnWxdy2gaEZCy3FRc9InwsJGQgsFypG+zsMmU7STyzWc/JziZxBL
-	 mwOdokGqFI78p3PEimv19fBivjHY3CTDO/ctjNGgo2pE9GDlx1Za10juRUZ5+TAWIW
-	 Zt9Rs2luR2qMg==
-Date: Tue, 11 Mar 2025 09:45:16 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Ryan Lee <ryan.lee@canonical.com>, 
-	Malte =?utf-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>, linux-security-module@vger.kernel.org, 
-	apparmor <apparmor@lists.ubuntu.com>, linux-efi@vger.kernel.org, 
-	John Johansen <john.johansen@canonical.com>, "jk@ozlabs.org" <jk@ozlabs.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: apparmor NULL pointer dereference on resume [efivarfs]
-Message-ID: <20250311-visite-rastplatz-d1fdb223dc10@brauner>
-References: <e54e6a2f-1178-4980-b771-4d9bafc2aa47@tnxip.de>
- <CAKCV-6s3_7RzDfo_yGQj9ndf4ZKw_Awf8oNc6pYKXgDTxiDfjw@mail.gmail.com>
- <465d1d23-3b36-490e-b0dd-74889d17fa4c@tnxip.de>
- <CAKCV-6uuKo=RK37GhM+fV90yV9sxBFqj0s07EPSoHwVZdDWa3A@mail.gmail.com>
- <ea97dd9d1cb33e28d6ca830b6bff0c2ece374dbe.camel@HansenPartnership.com>
- <CAMj1kXGLXbki1jezLgzDGE7VX8mNmHKQ3VLQPq=j5uAyrSomvQ@mail.gmail.com>
+	s=arc-20240116; t=1741687797; c=relaxed/simple;
+	bh=ZR+XCIBQs9+80ifRtPgR+U/OFpGq/zuM7lgT746lhxw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mvy6F1A9M3r4ItfJvV8Pff4a/rvIyNIzB3134U8rveLelzZhWG5Dyya6tq40Vt904ZJnkj7B0UknZEXxzoK+tB7llaKsJme9breuxmKvTyU+qx+tyVAdsP13bao5bPqevNH8gBz1jSJy/n8TlH02f3DlPKuXjY4q8ykk5OKDGuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Gqe/NiK5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741687794;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IYjkd0g01QmPqFmmHmr74WTt10z1qqPixGBi+49Tezc=;
+	b=Gqe/NiK51gPuiICF6Ijdj0fYkGxtn1lBUPe22fi8LgVsVayDil5ca4a6ZC9oS2NhlmcI+Z
+	HNm8knXF71IARkbhAXEXV4UZmememAmrA8FCMit/TAMwHghb2MlM5I5bwMYxKyKD9bfFdY
+	2Y2nK0UAEhr1P4Q4N/Q0yfiYFj2mAUU=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-97-7myi1EWNPNWtgudn72IgKQ-1; Tue, 11 Mar 2025 06:09:53 -0400
+X-MC-Unique: 7myi1EWNPNWtgudn72IgKQ-1
+X-Mimecast-MFC-AGG-ID: 7myi1EWNPNWtgudn72IgKQ_1741687792
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-ac287f28514so267966266b.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Mar 2025 03:09:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741687791; x=1742292591;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IYjkd0g01QmPqFmmHmr74WTt10z1qqPixGBi+49Tezc=;
+        b=U5FIdxsxfeoOK4PK7x7iZKryoxAOBbvsBdgBgrJxJk9QQf8ZyHTBFmn0S5MK0JQC79
+         1dHPptNPDCeygU86dzJl7pClvIv0j1PAgpQYD9Qbww1dJHDmZEMtxCNeJcYkviAj3weZ
+         zp8nWFSV34Jn7FOSrCYAoV3H68EXkN842bivUFEdeBjmy0gcDS6UeivppBAh/KRcsU53
+         NUS2lDP5qYrr0fbDf5ZlQYYh7PJgNWkzNM/uId50AAvdhsNHvq0HOFysGBkA5FH4PiMd
+         c23uUecDVsEz0oUrXr2dyisBdrJxZ3R3wKUSWOesWstpGxCIfLUE0/aCHTiEAlFfwec5
+         TFFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWaYiYiLssyyOK26+hGAfBg6S92+qbnNlDyL+ZGx7Vcr/tMp8cYyBPMzw3u+IqXY0iPDc5qgkrfh9Ldh0uN@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDEMF1zO8PcojZJvUfSxtWFSi5ppmoEjpdS9lAB7Ox1EKYgjb0
+	LFX/+Z/xNrQSWq9OV+i3IBdoBoTSXE/JS6zDR53YtRvXjv42NNismMZdIEBeAungWZovpcfSb+n
+	XB3e3GD4KdwRT85dz0udfV/Hkupno7GNpdzhXmZkwCkuzpsHqBNxyu9n+C2DdSd0G7c2gsM0=
+X-Gm-Gg: ASbGncv657c10v3V0VfD6/2aL6/rBXtw1KRQhIa2HLpPFpqIAEpgbwHBp8Gvon62zwv
+	Hux2nfspINrsY1keHikjKb4EWqdLN8ejxvVOIUyTf/E0TDt2TtiQ3nTp/WaEu0o3qG7gk76H5CC
+	gemxOK9sQl5Bfn+Oumn86L4l5MDtiVud6EO/P0+pAOrEgr7JwUXzoUI4tc1H00deQeIlVpWshOC
+	AblFyKHSOpRRtfZJLH/WR/2+NfaeQRxQCktzSTFMOhZeqV0tgZEo2VsNafciaGsZUei2cc0d2/e
+	EkCGLUsmDC8g69Ja30FnEUPBSRSO9fhQ5/3yH756ZyceLKJ5l9oADmzQgRjscUk6mVo+AAa8bxm
+	BKrb4BGqrCHMFNK7RWmFPUW8QzZiPJyTh0ggpvD28n3JST3bwCkOoRUblzu5/ycDa6A==
+X-Received: by 2002:a17:907:720a:b0:ac1:e881:89aa with SMTP id a640c23a62f3a-ac2525b9c95mr2043899566b.5.1741687791352;
+        Tue, 11 Mar 2025 03:09:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGOtp2eumlycwdsPaAxaDUlofVKvmeDoy+4Ahh4afVHjwmszC51GixSB4O24V97bjopnGYZwg==
+X-Received: by 2002:a17:907:720a:b0:ac1:e881:89aa with SMTP id a640c23a62f3a-ac2525b9c95mr2043896666b.5.1741687790943;
+        Tue, 11 Mar 2025 03:09:50 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac288ffe157sm449727566b.132.2025.03.11.03.09.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Mar 2025 03:09:50 -0700 (PDT)
+Message-ID: <7ceea724-4e9e-409e-88fa-0d186096744f@redhat.com>
+Date: Tue, 11 Mar 2025 11:09:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMj1kXGLXbki1jezLgzDGE7VX8mNmHKQ3VLQPq=j5uAyrSomvQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] vboxsf: Add __nonstring annotations for unterminated
+ strings
+To: Kees Cook <kees@kernel.org>
+Cc: Brahmajit Das <brahmajit.xyz@gmail.com>,
+ Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20250310222530.work.374-kees@kernel.org>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20250310222530.work.374-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 11, 2025 at 08:16:34AM +0100, Ard Biesheuvel wrote:
-> (cc Al Viro)
+Hi,
+
+On 10-Mar-25 11:25 PM, Kees Cook wrote:
+> When a character array without a terminating NUL character has a static
+> initializer, GCC 15's -Wunterminated-string-initialization will only
+> warn if the array lacks the "nonstring" attribute[1]. Mark the arrays
+> with __nonstring to and correctly identify the char array as "not a C
+> string" and thereby eliminate the warning.
 > 
-> On Mon, 10 Mar 2025 at 22:49, James Bottomley
-> <James.Bottomley@hansenpartnership.com> wrote:
-> >
-> > On Mon, 2025-03-10 at 12:57 -0700, Ryan Lee wrote:
-> > > On Wed, Mar 5, 2025 at 1:47 PM Malte Schröder
-> > > <malte.schroeder@tnxip.de> wrote:
-> > > >
-> > > > On 05/03/2025 20:22, Ryan Lee wrote:
-> > > > > On Wed, Mar 5, 2025 at 11:11 AM Malte Schröder
-> > > > > <malte.schroeder@tnxip.de> wrote:
-> > > > > > Hi,
-> > > > > >
-> > > > > > I hope this is the right place to report this. Since 6.14-rc1
-> > > > > > ff. resume
-> > > > > > from hibernate does not work anymore. Now I finally managed to
-> > > > > > get dmesg
-> > > > > > from when this happens (Console is frozen, but managed to login
-> > > > > > via
-> > > > > > network). If I read that trace correctly there seems to be some
-> > > > > > interaction with apparmor. I retried with apparmor disabled and
-> > > > > > the
-> > > > > > issue didn't trigger.
-> > > > > Also CC'ing the AppArmor-specific mailing list in this reply.
-> > > > >
-> > > > > > I am happy to provide more data if required.
-> > > > > Could you try to reproduce this NULL pointer dereference with a
-> > > > > clean
-> > > > > kernel with debug info (that I'd be able to access the source
-> > > > > code of)
-> > > > > and send a symbolized stacktrace processed with
-> > > > > scripts/decode_stacktrace.sh?
-> > > >
-> > > > Sure. Result using plain v6.14-rc5:
-> > > >
-> > > > [  142.014428] BUG: kernel NULL pointer dereference, address:
-> > > > 0000000000000018
-> > > > [  142.014429] #PF: supervisor read access in kernel mode
-> > > > [  142.014431] #PF: error_code(0x0000) - not-present page
-> > > > [  142.014432] PGD 0 P4D 0
-> > > > [  142.014433] Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
-> > > > [  142.014436] CPU: 4 UID: 0 PID: 6833 Comm: systemd-sleep Not
-> > > > tainted
-> > > > 6.14.0-rc5 #1
-> > > > [  142.014437] Hardware name: To Be Filled By O.E.M. X570
-> > > > Extreme4/X570
-> > > > Extreme4, BIOS P5.60 01/18/2024
-> > > > [  142.014439] RIP: 0010:apparmor_file_open
-> > > > (./include/linux/mount.h:78
-> > > > (discriminator 2) ./include/linux/fs.h:2781 (discriminator 2)
-> > > > security/apparmor/lsm.c:483 (discriminator 2))
-> > > > [ 142.014442] Code: c5 00 08 00 00 0f 85 4b 01 00 00 4c 89 e9 31 c0
-> > > > f6
-> > > > c1 02 0f 85 fd 00 00 00 48 8b 87 88 00 00 00 4c 8d b7 88 00 00 00
-> > > > 48 89
-> > > > fd <48> 8b 40 18 48 8b 4f 70 0f b7 11 48 89 c7 66 89 54 24 04 48 8b
-> > > > 51
-> > > > All code
-> > > > ========
-> > > >    0:    c5 00 08                 (bad)
-> > > >    3:    00 00                    add    %al,(%rax)
-> > > >    5:    0f 85 4b 01 00 00        jne    0x156
-> > > >    b:    4c 89 e9                 mov    %r13,%rcx
-> > > >    e:    31 c0                    xor    %eax,%eax
-> > > >   10:    f6 c1 02                 test   $0x2,%cl
-> > > >   13:    0f 85 fd 00 00 00        jne    0x116
-> > > >   19:    48 8b 87 88 00 00 00     mov    0x88(%rdi),%rax
-> > > >   20:    4c 8d b7 88 00 00 00     lea    0x88(%rdi),%r14
-> > > >   27:    48 89 fd                 mov    %rdi,%rbp
-> > > >   2a:*    48 8b 40 18              mov    0x18(%rax),%rax        <-
-> > > > -
-> > > > trapping instruction
-> > > >   2e:    48 8b 4f 70              mov    0x70(%rdi),%rcx
-> > > >   32:    0f b7 11                 movzwl (%rcx),%edx
-> > > >   35:    48 89 c7                 mov    %rax,%rdi
-> > > >   38:    66 89 54 24 04           mov    %dx,0x4(%rsp)
-> > > >   3d:    48                       rex.W
-> > > >   3e:    8b                       .byte 0x8b
-> > > >   3f:    51                       push   %rcx
-> > > >
-> > > > Code starting with the faulting instruction
-> > > > ===========================================
-> > > >    0:    48 8b 40 18              mov    0x18(%rax),%rax
-> > > >    4:    48 8b 4f 70              mov    0x70(%rdi),%rcx
-> > > >    8:    0f b7 11                 movzwl (%rcx),%edx
-> > > >    b:    48 89 c7                 mov    %rax,%rdi
-> > > >    e:    66 89 54 24 04           mov    %dx,0x4(%rsp)
-> > > >   13:    48                       rex.W
-> > > >   14:    8b                       .byte 0x8b
-> > > >   15:    51                       push   %rcx
-> > > > [  142.014443] RSP: 0018:ffffb9ef7189bc50 EFLAGS: 00010246
-> > > > [  142.014445] RAX: 0000000000000000 RBX: ffff95eb5e555b00 RCX:
-> > > > 0000000000000300
-> > > > [  142.014446] RDX: ffff95f838227538 RSI: 00000000002ba677 RDI:
-> > > > ffff95e992be2a00
-> > > > [  142.014447] RBP: ffff95e992be2a00 R08: ffff95f838227520 R09:
-> > > > 0000000000000002
-> > > > [  142.014447] R10: ffff95ea72241d00 R11: 0000000000000001 R12:
-> > > > 0000000000000010
-> > > > [  142.014448] R13: 0000000000000300 R14: ffff95e992be2a88 R15:
-> > > > ffff95e95a6034e0
-> > > > [  142.014449] FS:  00007f74ab6cf880(0000)
-> > > > GS:ffff95f838200000(0000)
-> > > > knlGS:0000000000000000
-> > > > [  142.014450] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > > [  142.014451] CR2: 0000000000000018 CR3: 00000002473b6000 CR4:
-> > > > 0000000000f50ef0
-> > > > [  142.014452] PKRU: 55555554
-> > > > [  142.014453] Call Trace:
-> > > > [  142.014454]  <TASK>
-> > > > [  142.014456] ? __die_body (arch/x86/kernel/dumpstack.c:421)
-> > > > [  142.014459] ? page_fault_oops (arch/x86/mm/fault.c:710)
-> > > > [  142.014460] ? __lock_acquire (kernel/locking/lockdep.c:?
-> > > > kernel/locking/lockdep.c:5174)
-> > > > [  142.014462] ? local_lock_acquire
-> > > > (./include/linux/local_lock_internal.h:29 (discriminator 1))
-> > > > [  142.014465] ? do_user_addr_fault (arch/x86/mm/fault.c:?)
-> > > > [  142.014467] ? exc_page_fault
-> > > > (./arch/x86/include/asm/irqflags.h:37
-> > > > ./arch/x86/include/asm/irqflags.h:92 arch/x86/mm/fault.c:1488
-> > > > arch/x86/mm/fault.c:1538)
-> > > > [  142.014468] ? asm_exc_page_fault
-> > > > (./arch/x86/include/asm/idtentry.h:623)
-> > > > [  142.014471] ? apparmor_file_open (./include/linux/mount.h:78
-> > > > (discriminator 2) ./include/linux/fs.h:2781 (discriminator 2)
-> > > > security/apparmor/lsm.c:483 (discriminator 2))
-> > > > [  142.014472] security_file_open (security/security.c:?)
-> > > > [  142.014474] do_dentry_open (fs/open.c:934)
-> > > > [  142.014476] kernel_file_open (fs/open.c:1201)
-> > > > [  142.014477] efivarfs_pm_notify (fs/efivarfs/super.c:505)
-> > >
-> > > I traced the NULL dereference down to efivarfs_pm_notify creating a
-> > > struct path with a NULL .mnt pointer which is then passed into
-> > > kernel_file_open, which then invokes the LSM file_open security hook,
-> > > where AppArmor is not expecting a path that has a NULL .mnt pointer.
-> > > The code in question was introduced in b5d1e6ee761a (efivarfs: add
-> > > variable resync after hibernation).
-> > >
-> > > I have sent in a patch to the AppArmor mailing list at
-> > > https://lists.ubuntu.com/archives/apparmor/2025-March/013545.html
-> > > which should give improved diagnostics for this case happening again.
-> > > My understanding is that path .mnt pointers generally should not be
-> > > NULL, but I do not know what an appropriate (non-NULL) value for that
-> > > pointer should be, as I am not familiar with the efivarfs subsystem.
-> >
-> > The problem comes down to the superblock functions not being able to
-> > get the struct vfsmount for the superblock (because it isn't even
-> > allocated until after they've all been called).  The assumption I was
-> > operating under was that provided I added O_NOATIME to prevent the
-> > parent directory being updated, passing in a NULL mnt for the purposes
-> > of iterating the directory dentry was safe.  What apparmour is trying
-> > to do is look up the idmap for the mount point to do one of its checks.
-> >
-> > There are two ways of fixing this that I can think of.  One would be
-> > exporting a function that lets me dig the vfsmount out of s_mounts and
-> > use that (it's well hidden in the internals of fs/mount.h, so I suspect
-> > this might not be very acceptable) or to get mnt_idmap to return
-
-Nope, please don't.
-
-> > &nop_mnt_idmap if the passed in mnt is NULL.  I'd lean towards the
-> > latter, but I'm cc'ing fsdevel to see what others think.
-
-A struct path with mount NULL and dentry != NULL is guaranteed to bit us
-in the ass in other places. That's the bug.
-
-> >
+> This effectively reverts the change in 4e7487245abc ("vboxsf: fix building
+> with GCC 15"), to add the annotation that has other uses (i.e. warning
+> if the string is ever used with C string APIs).
 > 
+> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117178 [1]
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Cc: Brahmajit Das <brahmajit.xyz@gmail.com>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: linux-fsdevel@vger.kernel.org
+> Signed-off-by: Kees Cook <kees@kernel.org>
+
+Thanks, patch looks good to me:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
+
+
+
+> ---
+>  fs/vboxsf/super.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> Al spotted the same issue based on a syzbot report [0]
-> 
-> [0] https://lore.kernel.org/all/20250310235831.GL2023217@ZenIV/
+> diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
+> index 1d94bb784108..0bc96ab6580b 100644
+> --- a/fs/vboxsf/super.c
+> +++ b/fs/vboxsf/super.c
+> @@ -21,8 +21,7 @@
+>  
+>  #define VBOXSF_SUPER_MAGIC 0x786f4256 /* 'VBox' little endian */
+>  
+> -static const unsigned char VBSF_MOUNT_SIGNATURE[4] = { '\000', '\377', '\376',
+> -						       '\375' };
+> +static const unsigned char VBSF_MOUNT_SIGNATURE[4] __nonstring = "\000\377\376\375";
+>  
+>  static int follow_symlinks;
+>  module_param(follow_symlinks, int, 0444);
 
-efivars as written only has a single global superblock and it doesn't
-support idmapped mounts and I don't see why it ever would.
-
-But since efivars does only ever have a single global superblock, one
-possibility is to an internal superblock that always exits and is
-resurfaced whenever userspace mounts efivarfs. That's essentially the
-devtmpfs model.
-
-Then you can stash:
-
-static struct vfsmount *efivarfs_mnt;
-
-globally and use that in efivarfs_pm_notify() to fill in struct path.
 
