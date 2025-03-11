@@ -1,135 +1,223 @@
-Return-Path: <linux-fsdevel+bounces-43692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43693-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43D9BA5BE36
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 11:50:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C584FA5BE64
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 12:02:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F20661894DBD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 10:50:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 582481897A72
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 11:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03032505AE;
-	Tue, 11 Mar 2025 10:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5551253F11;
+	Tue, 11 Mar 2025 11:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kUWdCtrC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KCCm3a5z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887972222CA
-	for <linux-fsdevel@vger.kernel.org>; Tue, 11 Mar 2025 10:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A13C24394B;
+	Tue, 11 Mar 2025 11:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741690233; cv=none; b=TZU4APGmlFFCOG1YLnO7feICab7B72CNM4PKRPZhrz2RQvSgZOIAL0co8Rx2RhQQ1zhpxJ7llh9cKLRGOwJsUE4bh5n3Or/dJytZHm6CH/H6DSkpTMcVOT3RCbqThIZuZkLFU2hLlTr7J/+y6wT/joNGZYoGrbRMqLiuy/UHKTU=
+	t=1741690915; cv=none; b=tp+CeNbeS5T2qQq+omih806JQgfPac5TqpbnNSNhJ08prJ8hOZcMb7EEO/cKlk6qIxJs/ZsAoxjw25fQdsjceuIH/LGr18dA4Rrbjml7vGoZwy/PCY0zNXwuY/79B+8936NTUAyS+aQpuXE5Z5+74ZUOMTF+zWTnNe8REdFols4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741690233; c=relaxed/simple;
-	bh=nBjZf1u2hN6gZjA+s1zUBKo47rkKQYdv7n5EbBsACOw=;
+	s=arc-20240116; t=1741690915; c=relaxed/simple;
+	bh=bzG5empnqjfqOndH97Rq0Q6/H40g6JtmHmBet6dPs6U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PH6cXZPT1B5RHXbdUBfwK5mRcN7Dah8iDMU+aT9dzldyNL7sCoXhU/iJ5bVJLx4nzramuCYAGfdRyIQY+MdmoGc7bAvgjHUsXhpeYKnMOxdQiHHQ8NVdBGYzuH3EMdMY+w8UI0EeJSkRkQjwl9cywpeMxoW4WFmZrPJO+FWvb80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kUWdCtrC; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 11 Mar 2025 06:50:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741690228;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1V5hJ26I6gRazId7fU1hqBzw/DYCVhVzgNLV64nnxIo=;
-	b=kUWdCtrCYHZ/Nsbw96YfEbwlWjxrxmpU3RzuRBC8TxiqsfxnYbo5qqQtfQEV8GlZ5+KJVk
-	MkruHhXGvV9HRpwxBXFR7e0DypxATHE/Dqo7DegRNnw4KWwRWfHzd+ZbZ49yBJrjG1sxZm
-	CiFOrrqTukhTsg0Uly/5e3lDp2FWBHE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=i3/F80CUGhZTPtQ/TK64RkdyHitDdDW/0WPpzYd3f29dfT2nbzV8npzXQRwOv7vcGargk3RodEvbdJCx9l2LOunXEFTPxI4upcrxAFIyEblHCR9LTMe3NQPB9DB487u8UnDo6sWkyrHl9RjMfeS4xsQhEz/3FOCjYwi5t7r/Ils=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KCCm3a5z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFE14C4CEE9;
+	Tue, 11 Mar 2025 11:01:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741690914;
+	bh=bzG5empnqjfqOndH97Rq0Q6/H40g6JtmHmBet6dPs6U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KCCm3a5z6BhW/8D+wIydNCz0NaGAwnMbzp7oUZdXh3zrUDL+L+a7oWQpu/V+JQP/u
+	 Uj1omE//IQ1UOU5B8E5ke4Nhrgm8rp+ldrGXkmWJyh7r7jGCQjTAkk+Nu7buniBG57
+	 WXolEagNXpQeRd6hOTumioP1rTMNxoTlbVrT9OXPZZ2BtSEVygoSr5uMFNEMGPc1lL
+	 f5l75Rl4qcDsyaJLnu71a6BLiDQkzZO1WSzVLEhje6+i+zUvrWFt+F4WIZcAp+BMQp
+	 Qxa04/zpkdVZde4udT3D/6iXbH+05BUk3fI+Bubeh41MjDff3iiFW6U5/mKcACQ56d
+	 k9e7nCope6Few==
+Date: Tue, 11 Mar 2025 12:01:48 +0100
+From: Christian Brauner <brauner@kernel.org>
 To: Dave Chinner <david@fromorbit.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, cve@kernel.org, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, linux-security-module@vger.kernel.org, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: CVE-2025-21830: landlock: Handle weird files
-Message-ID: <aopeucbzl6v5ptrprc6fz4xpn65ccfg34wl4qiblwvmkkrjx5k@u22nfnxieipc>
-References: <2025030611-CVE-2025-21830-da64@gregkh>
- <20250310.ooshu9Cha2oo@digikod.net>
- <2025031034-savanna-debit-eb8e@gregkh>
- <Z8948cR5aka4Cc5g@dread.disaster.area>
- <33m2msv3elqbviurca3ayebwzfzzjenh472b246gf7hbkfjk25@sl7plpwvpxig>
- <Z8-7CH7mwJtxpgyx@dread.disaster.area>
+Cc: Demi Marie Obenour <demi@invisiblethingslab.com>, cve@kernel.org, 
+	gnoack@google.com, gregkh@linuxfoundation.org, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, mic@digikod.net, Demi Marie Obenour <demiobenour@gmail.com>
+Subject: Re: Unprivileged filesystem mounts
+Message-ID: <20250311-desillusionieren-goldfisch-0c2ce3194e68@brauner>
+References: <Z8948cR5aka4Cc5g@dread.disaster.area>
+ <20250311021957.2887-1-demi@invisiblethingslab.com>
+ <Z8_Q4nOR5X3iZq3j@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z8-7CH7mwJtxpgyx@dread.disaster.area>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <Z8_Q4nOR5X3iZq3j@dread.disaster.area>
 
-On Tue, Mar 11, 2025 at 03:24:40PM +1100, Dave Chinner wrote:
-> On Mon, Mar 10, 2025 at 10:09:22PM -0400, Kent Overstreet wrote:
-> > On Tue, Mar 11, 2025 at 10:42:41AM +1100, Dave Chinner wrote:
-> > If user mounts are enabled, that comes with UID mapping, and device
-> > nodes disabled - no?
+On Tue, Mar 11, 2025 at 04:57:54PM +1100, Dave Chinner wrote:
+> On Mon, Mar 10, 2025 at 10:19:57PM -0400, Demi Marie Obenour wrote:
+> > People have stuff to get done.  If you disallow unprivileged filesystem
+> > mounts, they will just use sudo (or equivalent) instead.
 > 
-> Not necessarily. Those security mechanisms are all optional mount
-> options under userspace control....
+> I am not advocating that we disallow mounting of untrusted devices.
+> 
+> > The problem is
+> > not that users are mounting untrusted filesystems.  The problem is that
+> > mounting untrusted filesystems is unsafe.
+> 
+> > Making untrusted filesystems safe to mount is the only solution that
+> > lets users do what they actually need to do. That means either actually
+> > fixing the filesystem code,
+> 
+> Yes, and the point I keep making is that we cannot provide that
+> guarantee from the kernel for existing filesystems. We cannot detect
+> all possible malicous tampering situations without cryptogrpahically
+> secure verification, and we can't generate full trust from nothing.
+> 
+> The typical desktop policy of "probe and automount any device that
+> is plugged in" prevents the user from examining the device to
+> determine if it contains what it is supposed to contain.  The user
+> is not given any opportunity to device if trust is warranted before
+> the kernel filesystem parser running in ring 0 is exposed to the
+> malicious image.
+> 
+> That's the fundamental policy problem we need to address: the user
+> and/or admin is not in control of their own security because
+> application developers and/or distro maintainers have decided they
+> should not have a choice.
+> 
+> In this situation, the choice of what to do *must* fall to the user,
+> but the argument for "filesystem corruption is a CVE-worthy bug" is
+> that the choice has been taken away from the user. That's what I'm
+> saying needs to change - the choice needs to be returned to the
+> user...
+> 
+> > or running it in a sufficiently tight
+> > sandbox that vulnerabilities in it are of too low importance to matter.
+> > libguestfs+FUSE is the most obvious way to do this, but the performance
+> > might not be enough for distros to turn it on.
+> 
+> Yes, I have advocated for that to be used for desktop mounts in the
+> past. Similarly, I have also advocated for liblinux + FUSE to be
+> used so that the kernel filesystem code is used but run from a
+> userspace context where the kernel cannot be compromised.
+> 
+> I have also advocated for user removable devices to be encrypted by
+> default. The act of the user unlocking the device automatically
+> marks it as trusted because undetectable malicious tampering is
+> highly unlikely.
+> 
+> I have also advocated for a device registry that records removable
+> device signatures and whether the user trusted them or not so that
+> they only need to be prompted once for any given removable device
+> they use.
+> 
+> There are *many* potential user-friendly solutions to the problem,
+> but they -all- lie in the domain of userspace applications and/or
+> policies. This is *not* a problem more or better code in the kernel
+> can solve.
 
-Well, if someone's being an idiot, that's on them and not something I'm
-going to argue about :) Uidmapping has been around for plenty long
-enough for userspace to start using it.
+Strongly agree.
 
 > 
-> > Out of curiosity, what's keeping us from saying "user mounts are
-> > generally expected to be safe" for XFS?
-> 
-> What does "generally expected to be safe" actually mean?
-> 
-> If be "safe" you mean "won't crash the kernel if the structure has
-> been altered in detectable ways with", then we already largely tick
-> that box. However, there are whole classes of DOS attacks that are
-> very difficult to detect without rigorous, expensive runtime
-> checking (e.g. loops in btree pointers).
+> Kees and Co keep telling us we should be making changes that make it
+> harder (or compeltely prevent) entire classes of vulnerabilities
+> from being exploited. Yet every time we suggest that a more secure
+> policy should be applied to automounting filesystems to prevent
+> system compromise on device hotplug, nobody seems to be willing to
+> put security first.
 
-btree nodes don't change depth, so just recording the level of a node
-and validating it trivially defeats that. bcachefs has that in its on
-disk format, but if you don't have that then that might be a problem -
-you'd at least need to know a priori the depth of the root node.
+I agree with Dave here a lot.
 
-> Hence while we catch almost all the the obvious out-of-bounds
-> corruptions within an object, detecting corruptions that require
-> spanning a largely unbound number of objects to detect are not
-> handled at all. I can corrupt a filesystem to induce an endless
-> btree search loop like this pretty easily with a little bit of
-> xfs_db magic. Yup, we even provide the tools to make doing stuff
-> like this easy...
+The case where arbitrary devices stuck into a laptop (e.g., USB sticks)
+are mounted isn't solved by making a filesystem mountable unprivileged.
+The mounted device cannot show up in the global mount namespace
+somewhere since the user doesn't own the initial mount+user namespace.
+So it's pointless. In other words, there's filesystem level checks and
+mount namespace based checks. Circumventing that restriction means that
+any user can just mount the device at any location in the global mount
+namespace and therefore simply overmount other stuff.
 
-*nod*
+The other thing is whether or not a filesystem is allowed to be mounted
+by an unprivileged user namespaces. That is not a policy decision the
+kernel can make, should make, or has to make. This is a road to security
+disaster.
 
-In bcachefs, we right now have no way to cleanly detect "filesystem is
-actually full, disk accounting info is wrong" so - that means corruption
-causes allocations to get stuck. That one is fixable, and I'm going to
-have to at some point since syzbot knows how to trigger it :)
+The new mount api has built-in
+delegation capabilities for exactly this reason and use-case so the
+kernel doesn't have to do that. Policy like that belongs into userspace. 
+The new mount api makes it possible for userspace to correctly and
+safely delegate any filesystem mount to unprivileged users. It's e.g.,
+heavily used by bpf to make bpffs and thus bpf usable by unprivileged
+userspace and containers.
 
-> If by "safe" you mean "can detect all cases where a metadata field
-> or file data has been tampered with", then XFS is completely unsafe
-> and should not be used.
-> 
-> We can't detect that a malicious actor has changed something like a
-> file permission field or the contents of a security xattr.  To do
-> that requires cryptographically secure signatures of metadata
-> objects and file data. We do not have that sort of feature in the
-> on-disk format. We expect users that need protection from such
-> tampering will use an envrypted block device to prevent malicious
-> actors from being able to mutate the filesystem structure in this
-> way.
+There's a generic API for this already that we presented on in [1] at
+LSFMM 2023. This has proper security policies in place when and how it
+is allowed even for a user not in a user namespace to mount an arbitrary
+filesystem (device or no device-based).
 
-Yeah, but that's the less interesting case to me. Not uninteresting,
-since "I don't fully trust my block device" is a real scenario with
-network attached storage. But generally, the tampering would be done by
-the user that did the mount - so perhaps we need to find some new nudges
-to make uidmapping of user mounts required?
+    NAME
+    systemd-mountfsd.service, systemd-mountfsd - Disk Image File System Mount Service
+    
+    SYNOPSIS
+    systemd-mountfsd.service
+    
+    /usr/lib/systemd/systemd-mountfsd
+    
+    DESCRIPTION
+    systemd-mountfsd is a system service that dissects disk images, and
+    returns mount file descriptors for the file systems contained therein to
+    clients, via a Varlink IPC API.
+    
+    The disk images provided must contain a raw file system image or must
+    follow the Discoverable Partitions Specification[1]. Before mounting any
+    file systems authenticity of the disk image is established in one or a
+    combination of the following ways:
+    
+    1. If the disk image is located in a regular file in one of the
+       directories /var/lib/machines/, /var/lib/portables/,
+       /var/lib/extensions/, /var/lib/confexts/ or their counterparts in the
+       /etc/, /run/, /usr/lib/ it is assumed to be trusted.
+    
+    2. If the disk image contains a Verity enabled disk image, along with a
+       signature partition with a key in the kernel keyring or in
+       /etc/verity.d/ (and related directories) the disk image is considered
+       trusted.
 
-That could be done in util-linux...
+    This service provides one Varlink[2] service:
+    io.systemd.MountFileSystem which accepts a file descriptor to a
+    regular file or block device, and returns a number of file
+    descriptors referring to an fsmount() file descriptor the client may
+    then attach to a path of their choice.
+    
+    The returned mounts are automatically allowlisted in the
+    per-user-namespace allowlist maintained by
+    systemd-nsresourced.service(8).
+
+    The file systems are automatically fsck(8)'ed before mounting.
+
+    NOTES
+    1. Discoverable Partitions Specification
+       https://uapi-group.org/specifications/specs/discoverable_partitions_specification/
+
+    2. Varlink
+       https://varlink.org/
+
+This work has now also been expanded to cover plain directory trees and
+will be available in the next release.
+
+It is currently part of systemd but like with a lot of other such tools
+they are available standalone for non-systemd systems and if not that
+can be done.
+
+[1]: https://youtu.be/RbMhupT3Dk4?si=pIGH5XPPUJ0m6bi0
 
