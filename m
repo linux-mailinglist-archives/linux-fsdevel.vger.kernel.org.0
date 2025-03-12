@@ -1,65 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-43817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7465A5E137
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 16:56:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CE65A5E152
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 17:00:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6EAF189E4B2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 15:56:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 279AD3BBD62
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 16:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9904C256C6A;
-	Wed, 12 Mar 2025 15:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F711BCA07;
+	Wed, 12 Mar 2025 16:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lmpV8HCJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G9yNkysk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0337198E76;
-	Wed, 12 Mar 2025 15:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB06E3D81;
+	Wed, 12 Mar 2025 16:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741794961; cv=none; b=iNlYfD85y0swStBlBHZ0ChKo3rggk066nFO/0Pt5/87umZ1mdj97NmQznXj2SkWpzvPs0LXOoykmO8DxQSGcIxnNRwQKhQUaykezcnzZaxSMhgQTO8TwIyM2HlcZedGvf9vCCR3ZfzZX58+fOT5IfGKvWsnsr83CfkqZp5apJ9A=
+	t=1741795228; cv=none; b=n5R6iQoEAyJ7i62vYPHSEgNr2JGha8wbiTYsgAumfbRkfd1Sz1yg5ZaIqg1YcA6f2rfNRAn+jRkRXH4ry+kR34PAVqZ9LhAvZQcLYMxA137oVrIKkqyIWWwIfgGpP7VBYTz6b69koPbr+9vrdVt0c14VW4tUbMj+logbW6eWyqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741794961; c=relaxed/simple;
-	bh=Y8XqINxWTLY7AKJYXp2mS7v0+6MGrDY3mz3QwfDceq8=;
+	s=arc-20240116; t=1741795228; c=relaxed/simple;
+	bh=UDAhSVz9bbUM72gEhqkUroxkFdp6FR7RnbdsbIfL4+c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g8mk1FC72YsVBd8chfK58c3hVCNHd4VJZDwT6rfGR0eS0C2Xxha7zjRU2ghJN2kR1YGRn3PbfzpWl0EyW+3OumNCquLUagr+ME7tXs+Kv2flFU0Ecz/FAKEhc9XiIHvKUNCGm3TH7b2O8D/Zu3gE7L4vRsFCLYb9UKmN9zU/hw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lmpV8HCJ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=sLv6DldMmCXALdSl/mjQMsKUaK5QmzyqMPOb8IvMdAQ=; b=lmpV8HCJkThP+yJ8t665ZxH5i4
-	OtBX9wDa+K9zhB+tBtpyo9dwlQ0jR+Fdjlf41jEnfubxSfBItFhpXmQtsKNczXHyDBNlcIEiV5W5y
-	QMA5DOH2BOQNXCrYR+BACVKj4vU/mM+uNvlyuGUVo0riTVkcNxX0Uf1c/uVTYSZCWeNuuFgaMHYPB
-	5G07MyDU1Bnn0Eu0zXqFWweASsFGTGRCxcUuFhd3/+NV4/o4Oy4LdLWUSbeQ/iuqEqAXYbIivXCEG
-	0OBqtsFX6UdPJJNcr6cMAA0m8yaVxFxsyQ2n6iK2fbU1a38zxGCmD9Pe0RvpEVSxgNJpSRMHAtA6a
-	T1GHgtrw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tsOR5-00000008x2P-1nh0;
-	Wed, 12 Mar 2025 15:55:59 +0000
-Date: Wed, 12 Mar 2025 08:55:59 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
-	djwong@kernel.org, cem@kernel.org, linux-xfs@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=pvgHC1MdGRcur3iwU0w5ORVm7KTIkNmx0zQ7FFihngQGWsqKCQhl+gR6YwkfTWlpXsnZvM5rkEhRekfE5l0hH9OqyRwX/rKDBhX3Nv73sP1MIAtVlPFGbrCXUqiE9xTaCMVa0jzDZO2Tef5NdoQ6zk6B3caRVBw0/A1sGLdS6IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G9yNkysk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8D44C4CEDD;
+	Wed, 12 Mar 2025 16:00:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741795228;
+	bh=UDAhSVz9bbUM72gEhqkUroxkFdp6FR7RnbdsbIfL4+c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G9yNkysk5+h6unTvmjqkO6a84Cl0Yo+36z3J6RQ/ApWWsEeZovm319rsU7K3TXaip
+	 dlu7bc/iib9O1Bo3XOrXjYVSB5UfqZrzEik0TQHuRijrwXtwDjB8xAMEmrQezerPLK
+	 61XB5RPwcV5YntZ4glbpTYBQHuwWyUaRoEoOM9KW23wjUrVrkrrR9Xpui2TB+LkfD7
+	 U9Rxo0tdg9rgKHq4fdDZf6tlIl4nfkGbsoNisn/X6evuIggupQYIxnhf7+UdZ7nVB1
+	 3S70RUcw7tqAP9Bbt9pWQmjuUp7Vw9UyP7gWydbtaKHal2OFgPEw9IUeDI6Ip4nm2u
+	 +DngfzQ7NEeBg==
+Date: Wed, 12 Mar 2025 09:00:27 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
+	cem@kernel.org, linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
 	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
 	martin.petersen@oracle.com
-Subject: Re: [PATCH v5 05/10] xfs: Iomap SW-based atomic write support
-Message-ID: <Z9Guj3oZPhD2LLjt@infradead.org>
+Subject: Re: [PATCH v5 09/10] xfs: Allow block allocator to take an alignment
+ hint
+Message-ID: <20250312160027.GY2803749@frogsfrogsfrogs>
 References: <20250310183946.932054-1-john.g.garry@oracle.com>
- <20250310183946.932054-6-john.g.garry@oracle.com>
- <Z9E5nDg3_cred1bH@infradead.org>
- <ea94c5cd-ebba-404f-ba14-d59f1baa6e16@oracle.com>
- <Z9GRg-X76T-7rshv@infradead.org>
- <9337105f-d35a-4985-ad21-bf0c36c8fd50@oracle.com>
+ <20250310183946.932054-10-john.g.garry@oracle.com>
+ <Z9E679YhzP6grfDV@infradead.org>
+ <4d9499e3-4698-4d0c-b7bb-104023b29f3a@oracle.com>
+ <Z9GP6F_n2BR3XCn5@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,36 +65,61 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9337105f-d35a-4985-ad21-bf0c36c8fd50@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <Z9GP6F_n2BR3XCn5@infradead.org>
 
-On Wed, Mar 12, 2025 at 02:57:38PM +0000, John Garry wrote:
-> > > I do admit that the checks are a bit uneven, i.e. check vs
-> > > IOMAP_DIO_ATOMIC_SW and IOCB_ATOMIC
-> > > 
-> > > If we want a flag to set REQ_ATOMIC from the FS then we need
-> > > IOMAP_DIO_BIO_ATOMIC, and that would set IOMAP_BIO_ATOMIC. Is that better?
+On Wed, Mar 12, 2025 at 06:45:12AM -0700, Christoph Hellwig wrote:
+> On Wed, Mar 12, 2025 at 08:05:14AM +0000, John Garry wrote:
+> > > Shouldn't we be doing this by default for any extent size hint
+> > > based allocations?
 > > 
-> > My expectation from a very cursory view is that iomap would be that
-> > there is a IOMAP_F_REQ_ATOMIC that is set in ->iomap_begin and which
-> > would make the core iomap code set REQ_ATOMIC on the bio for that
-> > iteration.
+> > I'm not sure.
+> > 
+> > I think that currently users just expect extszhint to hint at the
+> > granularity only.
+
+Yes, the current behavior is that extszhint only affects the granularity
+of the file range that's passed into the allocator.  To align the actual
+space, you have to set the raid stripe parameters.
+
+I can see how that sorta made sense in the old days -- the fs could get
+moved between raid arrays (or the raid array gets reconfigured), so you
+want the actual allocations to be aligned to whatever the current
+hardware config advertises.  The extent size hint is merely a means to
+amortize the cost of allocation/second-guess the delalloc machinery.
+
+> > Maybe users don't require alignment and adding an alignment requirement just
+> > leads to more fragmentation.
 > 
-> but we still need to tell ->iomap_begin about IOCB_ATOMIC, hence
+> But does it?  Once an extsize hint is set I'd expect that we keep
+> getting more allocation with it.  And keeping the aligned is the concept
+> of a buddy allocator which reduces fragmentation.  Because of that I
+> wonder why we aren't doing that by default.
 
-Yeah, ->iomap_begin  can't directly look at the iocb.
+Histerical raisins?
 
-> IOMAP_DIO_BIO_ATOMIC which sets IOMAP_BIO_ATOMIC.
+We /could/ let extszhint influence allocation alignment by default, but
+then anyone who had (say) a 8k hint on a 32k raid stripe might be
+surprised when the allocator behavior changes.
 
-> 
-> We can't allow __iomap_dio_rw() check IOCB_ATOMIC only (and set
-> IOMAP_BIO_ATOMIC), as this is the common path for COW and regular atomic
-> write
+What do you say about logic like this?
 
-Well, I'd imagine __iomap_dio_rw just sets IOMAP_ATOMIC from IOCB_ATOMIC
-and then it's up to file system internal state if it wants to set
-IOMAP_F_REQ_ATOMIC based on that, i.e. the actual setting of
-IOMAP_F_REQ_ATOMIC is fully controlled by the file system and not
-by the iomap core.
+	if (software_atomic) {
+		/*
+		 * align things so we can use hw atomic on the next
+		 * overwrite, no matter what hw says
+		 */
+		args->alignment = ip->i_extsize;
+	} else if (raid_stripe) {
+		/* otherwise try to align for better raid performance */
+		args->alignment = mp->m_dalign;
+	} else if (ip->i_extsize) {
+		/* if no raid, align to the hint provided */
+		args->alignment = ip->i_extsize;
+	} else {
+		args->alignment = 1;
+	}
 
+Hm?  (I'm probably forgetting something...)
+
+--D
 
