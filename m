@@ -1,121 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-43835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43836-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17656A5E654
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 22:16:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83C94A5E66F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 22:23:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0963F7A404E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 21:15:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8E41168A12
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 21:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66BFB1EF389;
-	Wed, 12 Mar 2025 21:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313621EF0B5;
+	Wed, 12 Mar 2025 21:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jawZtg+1"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Rc1pNXbF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDB21EF092;
-	Wed, 12 Mar 2025 21:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB3B1E260A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 21:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741814187; cv=none; b=tCB9+mGt1L+2K2xVOWqigrv/DFtZJLkGOU7BnE9FHu0pyflvha9sJF68PvEvfyZNZfQnFwEexfamb55KqXlG+EBV8koNzM14TAm8Rluz8Tfd1ASZCTZp47Meposi6WL55MHr2wG4rwEJzpBCEYpBuAvdM6+FD4Q7nDI58mIOS6I=
+	t=1741814575; cv=none; b=PuQ5/EjAAGgJrxVhHiyua/UUghUKAaBGs02+Hwbg9cWjTJmQ8XnSNbtA+uj6u3Loo30Tfu2g/EJczgd39AuoAFjs3GNiZqDPlmQaPPslcskvrgg+IuRK/rvSkM0X7/lv5J6mxCjBmV4wEQRn1BBxuaFJfBkbI+wTnsQagPJjFGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741814187; c=relaxed/simple;
-	bh=gXobkr5RGlxGsi4Oyj14C+WHajtLZFJfSI92ipFvpXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CIPa7IrjLckpuELfFR9ShmbA6zlS1TmdfHs5KdSrEllhbuejKMtekQ9rGttw3a/DXVn68nkpF/NGmjA06XnsrfP8hVRVz1JJpr9QnsVYB7qbapqfFhRKELiaG14VRbUYF++m0mbhdGYcRom3kpFqMKFC4MjaK41PpgJR3c7MBGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jawZtg+1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E837C4CEEF;
-	Wed, 12 Mar 2025 21:16:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741814187;
-	bh=gXobkr5RGlxGsi4Oyj14C+WHajtLZFJfSI92ipFvpXs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jawZtg+1KlRN/fQwKl2oWCwYXgmYGA9bWl0strszKxmCGLiTCEG8XjsyrDcXzQHzM
-	 bM1HFavyf/XvZ8jAdu0VfoVNVx1kvH+ZB7aF1uJi3OUMzro8k61YARENoTbCOejhDB
-	 3+DVtVO6o8M52APoEvKGlbHzw5JJI5SRtECa+JGQj/5Ff6bNqUvPK/ZmtMc5IYraId
-	 rzRmi1SVLXd/fR0KEK+zJI5Xpn1gMAnHYtgZIEljyK7pwg27UU77khh8Lkh0E/ebO8
-	 kkoi3DEPZCNvWVfXdW5pHER5xX2JZcx3gbXVLzL2p/yQGyAyzVEgKqimKnPAfl/KRy
-	 lhucv3rAjhNEg==
-Date: Wed, 12 Mar 2025 22:15:45 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: John Sperbeck <jsperbeck@google.com>
-Cc: Kees Cook <kees@kernel.org>, Wen Yang <wen.yang@linux.dev>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] sysctl: unregister sysctl table after testing
-Message-ID: <5cves6b5bzpvmhwl3jqepz4pm5oz226fzjqzlxpzmxvxmiftv2@2vgc37lywq3a>
-References: <20241224171124.3676538-1-jsperbeck@google.com>
- <jedmwyiggspxnr76ugyax73zwotbnrwpccy7gafdeq6vyweb6z@4c3ivqegpgkd>
+	s=arc-20240116; t=1741814575; c=relaxed/simple;
+	bh=6cBhe/0J0x7XG16Ij8KWWPYPemaK8pVTxylYk+O6p0E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dTQ/5dUqoJWaxztuV9WAG2x/HE90x8XOJORb/iI2cknla+HguwP+DvnQoh6RnVzQYgxKVbSr8HGCJTQf54YFy2KzHahcUGsQz9eEdAtkx5oQzw3GT4tEob8dUUafJWAdjl64XKonT+inmlq/a2r1GHdSbNG2xsgQ9jGB2yKeI90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Rc1pNXbF; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id EAF583F5B6
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 21:22:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1741814563;
+	bh=UYHE7PfrFzAetCRzPVVNsPinECVfo2Zm0WG/ZDMIyJE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
+	b=Rc1pNXbFbnXXCbTzwMpSkrJv9F+x6BA5D2j9tVs9bxHaaOP4BoMneWMVkCzwLrRy8
+	 4WunHHnuh+eTZghZZI9PZXrKjPeVPfOOFB5V4ef0D05pbWwmbarOQ9u2c6bazz5A+O
+	 oLKtEWr7+pdiZEJrzWL/m9edy983t18LjHo8oZOVt0jpo4HnVFXmHmN2lMCgWoXU2N
+	 kpW8goWoxVlE9pY4GF5RIBymc4B5G2CIwLrMsnaNwM2ztsModpVt0S+x/JJkS590+G
+	 frN21DvvN4WsboKU4MixRfr7VXhM9xIZ3QJJr+9TfXvqJV9EGrU8ZHELYC4Pi31/J9
+	 qS0jv52lhsDCA==
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-3011c150130so466220a91.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 14:22:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741814562; x=1742419362;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UYHE7PfrFzAetCRzPVVNsPinECVfo2Zm0WG/ZDMIyJE=;
+        b=Gethqv5uWkT7prca7d37ykUhHDTKJP0Ye6+uBVS1JU7uxdWsolexIqSdJYmEnsXDi8
+         rVK04LMA3PI4VEv22IXP5uaLnQr17HWkG+Vz6IvkJc1kDGNMAQsQTUn3PBGVWtt0pq19
+         B2glGRUEDxpWvLgx6OtxwNKKH11K0rRROIIvENczcLDJGO8fbRy/NZgBdCyhE0Doj4ob
+         C799iSbmaxTZ1T8rhaJSnM1e1bgw+AFOU2FRsaahwHUI8E2qwjnp3G5wNeUnrd6uOX/7
+         gzjk3NxQkxyJpBO5A4As3X5FVbMAUx29Rpsnkdz5faBiRk4GL2CRNzGdPsTYA75tek7q
+         Rc8w==
+X-Gm-Message-State: AOJu0YxuzBhM5Nj6OXOyXam6bQlrX5zrSkUijS4kf+4ajyfvYw+wktNV
+	zV2fP2X61v+kFqPKuX0fmKTuaW2921NsfuH/fwGO7cD0WCHIqulek82o1b/TwwluNYeZGcsK31P
+	AUaPyQDl3osR9NPj6Mn+Zb4lxF9Ieu5syyepAglfWjgHtlO1CHya+bz0EFuF2aqiU1A+o6Hzb2O
+	oXuAX43P9oDsHIfA==
+X-Gm-Gg: ASbGncttCD9aKKnuXjTwYuy5kQaaC//NZLBd1QKkQ5M807o/vmKIwEUxFRc9RaNEkTg
+	9909hdwwC/P5Dg0fPk2WkW+HjoYN4DuDOG1ttPYAZKpigGs5JHKyhwgPuM3dFOkpI8cCC6aK1cj
+	8Vux9xw1GY6BHt2vq+ltDbSt8b33BPd59Y7hTMzur6/DvF8H45zo9YKAQ1kNEe7wzJLxD1YUB/c
+	UIkSwIzUR654sXr5MBPwViQ7RCNXBX5jcmraxbIVYBrXazxnc3yXzs2GOflUwmHHJv0IqoywtNr
+	sjS6gKh3DwSFwqx53VtKBwEXhXDoyHJtGRZ2q14Vt4dHiqigNJyVweKlIuWqhhCYztm5ewo=
+X-Received: by 2002:a17:90b:1d8c:b0:2ee:f677:aa14 with SMTP id 98e67ed59e1d1-2ff7ce6ff9dmr33955126a91.13.1741814562174;
+        Wed, 12 Mar 2025 14:22:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IESqd74aQLaRYMlhUC52mOCTMPtX58VJpqPHYNlhWsmVgCtfWUR4bux5MtYAMon8vBiSS29gA==
+X-Received: by 2002:a17:90b:1d8c:b0:2ee:f677:aa14 with SMTP id 98e67ed59e1d1-2ff7ce6ff9dmr33955108a91.13.1741814561871;
+        Wed, 12 Mar 2025 14:22:41 -0700 (PDT)
+Received: from ryan-lee-laptop-13-amd.. (c-76-103-38-92.hsd1.ca.comcast.net. [76.103.38.92])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301190b98b7sm2353887a91.32.2025.03.12.14.22.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 14:22:41 -0700 (PDT)
+From: Ryan Lee <ryan.lee@canonical.com>
+To: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org
+Cc: Ryan Lee <ryan.lee@canonical.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Kentaro Takeda <takedakn@nttdata.co.jp>,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [RFC PATCH 0/6] fs, lsm: mediate O_PATH fd creation in file_open hook
+Date: Wed, 12 Mar 2025 14:21:40 -0700
+Message-ID: <20250312212148.274205-1-ryan.lee@canonical.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <jedmwyiggspxnr76ugyax73zwotbnrwpccy7gafdeq6vyweb6z@4c3ivqegpgkd>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jan 06, 2025 at 03:15:13PM +0100, Joel Granados wrote:
-> 
-> On Tue, Dec 24, 2024 at 09:11:24AM -0800, John Sperbeck wrote:
-> > In commit b5ffbd139688 ("sysctl: move the extra1/2 boundary check
-> > of u8 to sysctl_check_table_array"), a kunit test was added that
-> > registers a sysctl table.  If the test is run as a module, then a
-> > lingering reference to the module is left behind, and a 'sysctl -a'
-> > leads to a panic.
-> 
-> Very good catch indeed!!!.
-> > 
-...
-> >  	KUNIT_EXPECT_NULL(test, register_sysctl("foo", table_foo));
-> >  	KUNIT_EXPECT_NULL(test, register_sysctl("foo", table_bar));
-> > -	KUNIT_EXPECT_NOT_NULL(test, register_sysctl("foo", table_qux));
-> > +	hdr = register_sysctl("foo", table_qux);
-> > +	KUNIT_EXPECT_NOT_NULL(test, hdr);
-> > +	unregister_sysctl_table(hdr);
-> This indeed fixes the behaviour, but it is not what should be done
-> and this is why:
-> 1. sysctl-test.c is part of the unit tests for sysctl and actually
->    trying to execute a register here does not really make sense.
-> 2. The file that actually does the regression testing is
->    lib/test_sysctl.c
-> 
-> If you are up for it this is what needs to be done:
-> 1. change what is in sysctl-test.c to call sysctl_check_table_array
->    directly and not worry about keeping track of the registration.
+Calls to the openat(2) family of syscalls are mediated by the file_open LSM
+hook, but the opening of O_PATH file descriptors completely bypasses LSM
+mediation, preventing LSMs from initializing LSM file security context
+blobs for such file descriptors for use in other mediation hooks.
 
-With your V4 it is clear to me know that I should *not* have made the
-first suggestion of calling sysctl_check_table. Exposing the
-sysctl_check_table just for the kunit test is overkill as we can get the
-same result with a register call from lib/tests_sysctl.c without all the
-hassle of exposing the function call. Your proposal was still valuable
-as it clarified what the "right" approach should be.
+This patchset enables mediation of O_PATH file descriptors through the
+file_open hook and updates the LSMs using that hook to unconditionally
+allow creation of O_PATH fds, in order to preserve the existing behavior.
+However, the LSM patches are primarily meant as a starting point for
+discussions on how each one wants to handle O_PATH fd creation.
 
-Best
-> 2. Add a similar regression test in lib/test_sysctl.c where we actually
->    check for the error.
-> 
-> Please tell me if you are up for it (if not I can add it to my todos)
-> 
-> Best
-> 
-> >  }
-> >  
-> >  static struct kunit_case sysctl_test_cases[] = {
-> > -- 
-> > 2.47.1.613.gc27f4b7a9f-goog
-> > 
-> 
-> -- 
-> 
-> Joel Granados
+Ryan Lee (6):
+  fs: invoke LSM file_open hook in do_dentry_open for O_PATH fds as well
+  apparmor: explicitly skip mediation of O_PATH file descriptors
+  landlock: explicitly skip mediation of O_PATH file descriptors
+  selinux: explicitly skip mediation of O_PATH file descriptors
+  smack: explicitly skip mediation of O_PATH file descriptors
+  tomoyo: explicitly skip mediation of O_PATH file descriptors
+
+ fs/open.c                  |  7 ++++++-
+ security/apparmor/lsm.c    | 10 ++++++++++
+ security/landlock/fs.c     |  8 ++++++++
+ security/selinux/hooks.c   |  5 +++++
+ security/smack/smack_lsm.c |  4 ++++
+ security/tomoyo/file.c     |  4 ++++
+ 6 files changed, 37 insertions(+), 1 deletion(-)
 
 -- 
+2.43.0
 
-Joel Granados
 
