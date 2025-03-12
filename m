@@ -1,141 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-43750-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43751-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57CD2A5D393
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 01:09:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21EB0A5D3AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 01:18:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 910A23B4540
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 00:08:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87F143B614A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 00:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997763D81;
-	Wed, 12 Mar 2025 00:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A351CF96;
+	Wed, 12 Mar 2025 00:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BAXKzrVa"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ge9Ns2a3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D03F12E7F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 00:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718632F24
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 00:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741738098; cv=none; b=Jjsg+mITjVblbo37UhDeYwHWEsDcsIIYeci1GkeslWsu2wwwNFaC+eAjgFz87Q4DbW40LgdH83JEzAoyZh2NgdVCBtybr5aX9piwAs1kJ48Ufxyp9vSfj5srWFthx2u/0YVliIfJycXduv4bmD6ThrGM+2NO0SSS+NTB0WEmAfI=
+	t=1741738704; cv=none; b=SDsjUIJDgeQYWREtqmNC7MxDX/J42YprH51/g2P8DoM3i+o/hCBppQbw6Jw3B/0nHT2Q3GHaQRoXFv2sdY8l/fb27CWwUrNTevEwAbJBHzBi5oZQGvF7TLghP+oNDJg4DhbJkQgEh+JZFGlBsKQDkkplch1I7P4t8eCw50MxjJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741738098; c=relaxed/simple;
-	bh=7JAKR1B2EJs5OMc3kDKDyMYaNnMBEQeVe+0pTH470+w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qmT3pFz8MUW2cHrBzg2BUsLJ5sl5mXmDfOahPkWMzZi1hkhNE82MIcDVGUZMHwhZsgzzEiJWhR1rpw/ksEVjIcoZRiX6BBEYZIHf/qE1nPR5iXABRZ4VT3igYigl/5LBrW8qtuRmAb+cbt2qIJ4bBzSO8fpUwHJZ7qnaIS7QrfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BAXKzrVa; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741738095;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dGPxM9RdXtkX+Els8nvXOJm60GkYwZd/fztNUeVaxvI=;
-	b=BAXKzrVa2UcUeyKCZ60+1DRsaTld9aBR8Qpq5KfsblfeaYGCE8RjDZTpHax+2gM57G9mlM
-	SISiVEsYhVcPpbjqFECaXls9LejjtX6Jpp1Huwc3nMFdfX/bP1wnDHpXx+UGrKgtdFdKXV
-	zQU9O7yKEE754tkHDlmc87rKkMa9ZeI=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-687-a_RbZen0O8GYnddRn1Kahg-1; Tue,
- 11 Mar 2025 20:08:11 -0400
-X-MC-Unique: a_RbZen0O8GYnddRn1Kahg-1
-X-Mimecast-MFC-AGG-ID: a_RbZen0O8GYnddRn1Kahg_1741738088
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 942B7180AF4C;
-	Wed, 12 Mar 2025 00:08:07 +0000 (UTC)
-Received: from h1.redhat.com (unknown [10.22.88.56])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B44AA1955DDD;
-	Wed, 12 Mar 2025 00:08:00 +0000 (UTC)
-From: Nico Pache <npache@redhat.com>
-To: linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	xen-devel@lists.xenproject.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	cgroups@vger.kernel.org
-Cc: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	jerrin.shaji-george@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com,
-	arnd@arndb.de,
-	gregkh@linuxfoundation.org,
-	mst@redhat.com,
-	david@redhat.com,
-	jasowang@redhat.com,
-	xuanzhuo@linux.alibaba.com,
-	eperezma@redhat.com,
-	jgross@suse.com,
-	sstabellini@kernel.org,
-	oleksandr_tyshchenko@epam.com,
-	akpm@linux-foundation.org,
-	hannes@cmpxchg.org,
-	mhocko@kernel.org,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	muchun.song@linux.dev,
-	nphamcs@gmail.com,
-	yosry.ahmed@linux.dev,
-	kanchana.p.sridhar@intel.com,
-	alexander.atanasov@virtuozzo.com
-Subject: [RFC 5/5] xen: balloon: update the NR_BALLOON_PAGES state
-Date: Tue, 11 Mar 2025 18:07:00 -0600
-Message-ID: <20250312000700.184573-6-npache@redhat.com>
-In-Reply-To: <20250312000700.184573-1-npache@redhat.com>
-References: <20250312000700.184573-1-npache@redhat.com>
+	s=arc-20240116; t=1741738704; c=relaxed/simple;
+	bh=xVzKP8w5U0bXGUEi6CrFctVJuudSHiuUQjDleCz79PQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HwEkub6nAZ/MfHx+dd46K/hlzaegUO5dOI7H80pX6+7ZmcUbOtQTsivr8roBpaYgylboyi7MPcYIThZjLTbc3s490/vgj9YQv76l4JIuxRCF3i7xjU/ECuVXfDPZEFPacS1BHMYxNXdSYgA03GjiJK8w6WzpKUcfRPSrooYVquw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ge9Ns2a3; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rMmV95KfMYOSOuwrpe9GLg7ghg5pqY7RQiEb0Q/OJas=; b=ge9Ns2a3BwkDtNyZ9UbIyHO8Y2
+	0PeIokoXdiA2S2EIANSsDCo+mkEjhziIZ52Z0dJxL2zzmrdwZ3lt/IyXcvYGrxCSgszIWKC4jyxl8
+	5GTi43kcQfUZyOU5BBi66mE+GpYU6MJtpKQEM+3xpdV4ksubeFEVkm2EeryFpC7sqCiZyT7IiRSZF
+	B6aWkhUYq+9Gzr55fxmAmANSTw5zQfg34Ey4AbN0Thf+Yk+tt6N/PWjxzO98dmmxpUiCCB0Ya7uaS
+	3QfBqtGaIWakQMrnlp4JZcv47OhoHw4LbniwCbX3u7lPDr5UyVezjA+GHprS3G0tgDYz/pwHn5DDP
+	bHmuS2iQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1ts9nf-0000000B2l8-00VK;
+	Wed, 12 Mar 2025 00:18:19 +0000
+Date: Wed, 12 Mar 2025 00:18:18 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: patchwork-bot+f2fs@kernel.org
+Cc: jaegeuk@kernel.org, chao@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH 0/4] f2fs: Remove uses of writepage
+Message-ID: <Z9DSym8c9h53Xmr8@casper.infradead.org>
+References: <20250307182151.3397003-1-willy@infradead.org>
+ <174172263873.214029.5458881997469861795.git-patchwork-notify@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <174172263873.214029.5458881997469861795.git-patchwork-notify@kernel.org>
 
-Update the NR_BALLOON_PAGES counter when pages are added to or
-removed from the Xen balloon.
+On Tue, Mar 11, 2025 at 07:50:38PM +0000, patchwork-bot+f2fs@kernel.org wrote:
+> Hello:
+> 
+> This series was applied to jaegeuk/f2fs.git (dev)
+> by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Signed-off-by: Nico Pache <npache@redhat.com>
----
- drivers/xen/balloon.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Thanks!
 
-diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
-index 163f7f1d70f1..65d4e7fa1eb8 100644
---- a/drivers/xen/balloon.c
-+++ b/drivers/xen/balloon.c
-@@ -157,6 +157,8 @@ static void balloon_append(struct page *page)
- 		list_add(&page->lru, &ballooned_pages);
- 		balloon_stats.balloon_low++;
- 	}
-+	inc_node_page_state(page, NR_BALLOON_PAGES);
-+
- 	wake_up(&balloon_wq);
- }
- 
-@@ -179,6 +181,8 @@ static struct page *balloon_retrieve(bool require_lowmem)
- 		balloon_stats.balloon_low--;
- 
- 	__ClearPageOffline(page);
-+	dec_node_page_state(page, NR_BALLOON_PAGES);
-+
- 	return page;
- }
- 
--- 
-2.48.1
-
+FWIW, I have a tree with 75 patches in it on top of this that do more
+folio conversion work.  It's not done yet; maybe another 200 patches to
+go?  I don't think it's worth posting at this point in the cycle, so
+I'll wait until -rc1 to post, by which point it'll probably be much
+larger.
 
