@@ -1,145 +1,232 @@
-Return-Path: <linux-fsdevel+bounces-43839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43843-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5541A5E683
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 22:24:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC895A5E691
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 22:25:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 680F916F814
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 21:23:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F22401652A7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 21:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940D51F12FC;
-	Wed, 12 Mar 2025 21:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64CDC1F03CD;
+	Wed, 12 Mar 2025 21:23:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="MtivOH+6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xt2CCD6F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321121F03ED
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 21:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF571EFFAC;
+	Wed, 12 Mar 2025 21:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741814581; cv=none; b=dkf07oz/TS4NHOOI95pTQcUWKxng0LslWurVAQHTJ7XRZQm3E+bi/otB3EzltsHxvKfGUotvL9/3wMhtZM8K3GQep8dzATO0bUIDVIpf9q2C+8+At1JoA7Bg7bRm/PaTEAmlmw+1YgMZdct0QaESJ1xSJj6HJ7a3zw27i4Xm9ic=
+	t=1741814618; cv=none; b=UV6Dua6sddwUcLbO7O9fd3a6nC4AuCU8a7/OCUSmDn8t3mzjEoWd5hR0wTO6x6f04ZctqDQ/BNnPYEVw2brBblXudyCv1j16IAdqgrZvVFugd3Hq/G0OTywJcFpyklJAFX0tnWUaXxTqJdZv4O6jMXv308amejjBB/NZqJB0gfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741814581; c=relaxed/simple;
-	bh=nQa75EiYN3ygFHWP5CltgBdCU2YvLoFl9S3DeRklaTs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TSFXuKY8p1nGjE8Mlpqqdu/0Ult2c+JuRyiYgLPSl1VDU4uT8/XreFMvo4M7vBr5LIz2V8CgyMcHPxELjLC6PJyR+ZWAXYWUtUaKQrBqiGSw5dEH4USrvIUwBh+TuebNV22MU9pdxOScOwfSlCPc8mAYW4e8NZZvYeRhb3W2GNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=MtivOH+6; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 8C8753F718
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 21:22:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1741814576;
-	bh=sxXlT+NKuH/R8o+IpND8qEtQPr3+MVFoHvHlcLQeNOw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version;
-	b=MtivOH+6oH6UTK+4oGyQtFWdgYBGpW1BvdIHgh7/qBgWgjWjFrGWySzoHsGKl+Wi1
-	 fYnl06dylR21woajIXp6AXVh9C8ZXl04c1KymASkPC5WuZZvkcBm0TylCB5hKHWSKp
-	 0nHMhzpPgd8O0aqjmT0ROyGy92jzeVKpOuGR9SxD7bxJZphLTSzozF//tMsXqRSU5c
-	 0wTSbuyKJ9bPxuwydT0jholChSKtU0CYNBty8n8j3/wOnjMVxjcWitVhBIqWMBpGPb
-	 i1acZ3ZFESWEkR+tosN3uSDjCZZMe67TmqC/IrO8gRxKhOR7FgynA9yqqT3A9yVR2J
-	 XIhth+M5B7NnQ==
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ff4b130bb2so535180a91.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 14:22:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741814575; x=1742419375;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sxXlT+NKuH/R8o+IpND8qEtQPr3+MVFoHvHlcLQeNOw=;
-        b=dxjyBpJ/qBhevSn5KM/YQyb+OLRmGH8ztYUjTtg0CDK+FvhXzznu7KBWzEDMZZxHIu
-         mbLQjwI3A8q3HADxUTnwgC8CtMeyw5PR5hr4XzP3Otc5x5UDh0le5On9v4xL8J9gvQiG
-         Dwuo3iehI2gbY5GzpNXk82uQz4doBTAU/t/gb/L0DCrsgz1MprOkXZbSMFK3CKjXTVOc
-         LWpIiGCC65d3sKi0t27HI/874vUkXf9fnFEUYs3wMYMcst46ym2M4bgJEpMDDqKk0ZAM
-         PxlGqwfD0XmqRAFVMfPOD76RImhwK6/4GOxZHw+CCv8EvZiUghNEwrTXbwEZTfdEfAwo
-         HoSQ==
-X-Gm-Message-State: AOJu0YxXbNqn8qW2QqTfkD+sZth5pZ1HWpOlNyzIL33QZiw0VhIOoTC8
-	q3vMAX96xttwvbWpiSGYvSYBY6ylxqNRe0v0FQBKoQnCpvAxWvBjW0CBf1R8+bequkIKoFreZrr
-	4fVhzfoB4gS4/f/YJP4P8ml2ZdFlMtEyQMivCQtBICF40vLxh7HRdoJGWJvNz5LDMg7MJCSKJbM
-	66qwrI7aI0pibvHg==
-X-Gm-Gg: ASbGnctJ0HCJCWGqUTLUCyjAnKLYqhnswo8nbGyTOqTKFrjKLXQMgn+vJUEapclrLhx
-	l0l9UzA/8dwbU4RzZZsaWvYG6ZJ+hg6qAMSAZmfWKLnYmz5v4ulGxO7lukF+Sy+LaEwOgn/V7ue
-	25luMsGGihC4CCuSF5NP84s1a/eoHYpx74iS2Grisodu8yeSI9Yr/p8LiD82zEEEi8nIeIh2xov
-	hKgE3ueJOcnaATR/htMuKRQV/gOYsQnqchiX0o57XnTUOv8xl19EoYYfesphhkdIaTibsO30A0w
-	cGUd476yhOM4Qry+vXw8jZAdBhqBNN68uHcrKPR6UYFFt04vOv4aefYLImYraC2oV0fVL1I=
-X-Received: by 2002:a17:90a:7345:b0:301:1bce:c255 with SMTP id 98e67ed59e1d1-3011bcec36fmr4989215a91.27.1741814575224;
-        Wed, 12 Mar 2025 14:22:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF7VJ3I6Ag0U5c89zoKAvdV8xkokC+gkGPKK5VTC7ZbVdDme14D+x+zHYl4u3ZWPKhOLxMFvA==
-X-Received: by 2002:a17:90a:7345:b0:301:1bce:c255 with SMTP id 98e67ed59e1d1-3011bcec36fmr4989199a91.27.1741814574931;
-        Wed, 12 Mar 2025 14:22:54 -0700 (PDT)
-Received: from ryan-lee-laptop-13-amd.. (c-76-103-38-92.hsd1.ca.comcast.net. [76.103.38.92])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301190b98b7sm2353887a91.32.2025.03.12.14.22.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 14:22:54 -0700 (PDT)
-From: Ryan Lee <ryan.lee@canonical.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org
-Cc: Ryan Lee <ryan.lee@canonical.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Kentaro Takeda <takedakn@nttdata.co.jp>,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [RFC PATCH 6/6] tomoyo: explicitly skip mediation of O_PATH file descriptors
-Date: Wed, 12 Mar 2025 14:21:46 -0700
-Message-ID: <20250312212148.274205-7-ryan.lee@canonical.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250312212148.274205-1-ryan.lee@canonical.com>
-References: <20250312212148.274205-1-ryan.lee@canonical.com>
+	s=arc-20240116; t=1741814618; c=relaxed/simple;
+	bh=fnzHkBsN0HcTbIHtBC4wnKkC1gwS9OR6BwvSv99xNqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a2HSyK744Qzlx8gQ3TbXn8Qb8NzuiexpVFrYIlxevgHm3jqNA63q2MnpPD7CHVUOxncdQJouNH5pnvR9qbtNEAi5oL3JpDptIctPumkuGTiO8YZhYJZ2QU9kpYGvdvrZX2s+BHx3Q0DaEJKmBQ8eQHVBYKsGPHq/KM52VrXkQII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xt2CCD6F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8EAEC4CEDD;
+	Wed, 12 Mar 2025 21:23:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741814618;
+	bh=fnzHkBsN0HcTbIHtBC4wnKkC1gwS9OR6BwvSv99xNqs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xt2CCD6Flcn0afa/+HYxP6IApYG+Cov1Bs6IRV/pNdc6F9eGb/0YmY3JQ3n1GjIPQ
+	 lNFIDH6BU8bHhMbLsYJi+kitFXOgi2qGjTCKb70lZ9e5fUemU8HIxrHH7pqK15iAf9
+	 oyHE0gKxbzV6VOibjd0AtJC/H85LQaGuu7uCsONMBWdxTYeNlBe7LbdPPOavCAZU4i
+	 X6+TmWJSHnEJ3bo7/SsikLcJqU9mNDqIAwMJ9w0mT8ELoRiuWu6dLgN2NAo+WD9lXo
+	 Nkkr+xaKuJ4cJHjsszzOvmTIRZFkD2DffHuzWpgTQccYXlI4BLVhmf22HwJoHXAMfz
+	 0sEJdrfRLEv+w==
+Date: Wed, 12 Mar 2025 22:23:32 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: John Sperbeck <jsperbeck@google.com>
+Cc: Kees Cook <kees@kernel.org>, Wen Yang <wen.yang@linux.dev>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4] sysctl: expose sysctl_check_table for unit testing
+ and use it
+Message-ID: <se2nci5ftb2s53or6ysbgvtgcvvqwudxxzg3lbrxjm3y5mpo5o@y7k77ck3rz3k>
+References: <202501182003.Gfi63jzH-lkp@intel.com>
+ <20250121213354.3775644-1-jsperbeck@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250121213354.3775644-1-jsperbeck@google.com>
 
-Now that O_PATH fds are being passed to the file_open hook,
-unconditionally skip mediation of them to preserve existing behavior.
+On Tue, Jan 21, 2025 at 01:33:53PM -0800, John Sperbeck wrote:
+> In commit b5ffbd139688 ("sysctl: move the extra1/2 boundary check
+> of u8 to sysctl_check_table_array"), a kunit test was added that
+> registers a sysctl table.  If the test is run as a module, then a
+> lingering reference to the module is left behind, and a 'sysctl -a'
+> leads to a panic.
+> 
+> This can be reproduced with these kernel config settings:
+> 
+>     CONFIG_KUNIT=y
+>     CONFIG_SYSCTL_KUNIT_TEST=m
+> 
+> Then run these commands:
+> 
+>     modprobe sysctl-test
+>     rmmod sysctl-test
+>     sysctl -a
+> 
+> The panic varies but generally looks something like this:
+> 
+>     BUG: unable to handle page fault for address: ffffa4571c0c7db4
+>     #PF: supervisor read access in kernel mode
+>     #PF: error_code(0x0000) - not-present page
+>     PGD 100000067 P4D 100000067 PUD 100351067 PMD 114f5e067 PTE 0
+>     Oops: Oops: 0000 [#1] SMP NOPTI
+>     ... ... ...
+>     RIP: 0010:proc_sys_readdir+0x166/0x2c0
+>     ... ... ...
+>     Call Trace:
+>      <TASK>
+>      iterate_dir+0x6e/0x140
+>      __se_sys_getdents+0x6e/0x100
+>      do_syscall_64+0x70/0x150
+>      entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> Instead of fully registering a sysctl table, expose the underlying
+> checking function and use it in the unit test.
+> 
+> Fixes: b5ffbd139688 ("sysctl: move the extra1/2 boundary check of u8 to sysctl_check_table_array")
+> Signed-off-by: John Sperbeck <jsperbeck@google.com>
+> ---
+> 
+> The Change from v3 to v4 is to make sure sysctl_check_table_test_helper_sz()
+> is defined in the unusual case that the sysctl kunit test is enabled, but 
+> CONFIG_SYSCTL is disabled.
+> 
+>  fs/proc/proc_sysctl.c  | 22 +++++++++++++++++-----
+>  include/linux/sysctl.h | 17 +++++++++++++++++
+>  kernel/sysctl-test.c   |  9 ++++++---
+>  3 files changed, 40 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> index 27a283d85a6e..2d3272826cc2 100644
+> --- a/fs/proc/proc_sysctl.c
+> +++ b/fs/proc/proc_sysctl.c
+> @@ -1137,11 +1137,12 @@ static int sysctl_check_table_array(const char *path, const struct ctl_table *ta
+>  	return err;
+>  }
+>  
+> -static int sysctl_check_table(const char *path, struct ctl_table_header *header)
+> +static int sysctl_check_table(const char *path, const struct ctl_table *table,
+> +			      size_t table_size)
+>  {
+> -	const struct ctl_table *entry;
+> +	const struct ctl_table *entry = table;
+>  	int err = 0;
+> -	list_for_each_table_entry(entry, header) {
+> +	for (size_t i = 0 ; i < table_size; ++i, entry++) {
+This should be avoided as the traversal of the ctl_table should be
+handled in one place (the list_for_each_table_entry macro)
 
-Signed-off-by: Ryan Lee <ryan.lee@canonical.com>
----
- security/tomoyo/file.c | 4 ++++
- 1 file changed, 4 insertions(+)
+>  		if (!entry->procname)
+>  			err |= sysctl_err(path, entry, "procname is null");
+>  		if ((entry->proc_handler == proc_dostring) ||
+> @@ -1173,6 +1174,16 @@ static int sysctl_check_table(const char *path, struct ctl_table_header *header)
+>  	return err;
+>  }
+>  
+> +#if IS_ENABLED(CONFIG_KUNIT)
+> +int sysctl_check_table_test_helper_sz(const char *path,
+> +				      const struct ctl_table *table,
+> +				      size_t table_size)
+> +{
+> +	return sysctl_check_table(path, table, table_size);
+> +}
+> +EXPORT_SYMBOL(sysctl_check_table_test_helper_sz);
+> +#endif /* CONFIG_KUNIT */
+> +
+>  static struct ctl_table_header *new_links(struct ctl_dir *dir, struct ctl_table_header *head)
+>  {
+>  	struct ctl_table *link_table, *link;
+> @@ -1372,6 +1383,9 @@ struct ctl_table_header *__register_sysctl_table(
+>  	struct ctl_dir *dir;
+>  	struct ctl_node *node;
+>  
+> +	if (sysctl_check_table(path, table, table_size))
+> +		return NULL;
+> +
+>  	header = kzalloc(sizeof(struct ctl_table_header) +
+>  			 sizeof(struct ctl_node)*table_size, GFP_KERNEL_ACCOUNT);
+>  	if (!header)
+> @@ -1379,8 +1393,6 @@ struct ctl_table_header *__register_sysctl_table(
+>  
+>  	node = (struct ctl_node *)(header + 1);
+>  	init_header(header, root, set, node, table, table_size);
+> -	if (sysctl_check_table(path, header))
+> -		goto fail;
+>  
+>  	spin_lock(&sysctl_lock);
+>  	dir = &set->dir;
+> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+> index 40a6ac6c9713..02acd3670bd2 100644
+> --- a/include/linux/sysctl.h
+> +++ b/include/linux/sysctl.h
+> @@ -288,4 +288,21 @@ static inline bool sysctl_is_alias(char *param)
+>  int sysctl_max_threads(const struct ctl_table *table, int write, void *buffer,
+>  		size_t *lenp, loff_t *ppos);
+>  
+> +#if IS_ENABLED(CONFIG_KUNIT)
+> +#define sysctl_check_table_test_helper(path, table)	\
+> +	sysctl_check_table_test_helper_sz(path, table, ARRAY_SIZE(table))
+> +#ifdef CONFIG_SYSCTL
+> +int sysctl_check_table_test_helper_sz(const char *path,
+> +				      const struct ctl_table *table,
+> +				      size_t table_size);
+> +#else /* CONFIG_SYSCTL */
+> +static inline int sysctl_check_table_test_helper_sz(const char *path,
+> +				      const struct ctl_table *table,
+> +				      size_t table_size)
+> +{
+> +	return 0;
+> +}
+> +#endif /* CONFIG_SYSCTL */
+> +#endif /* CONFIG_KUNIT */
+> +
+>  #endif /* _LINUX_SYSCTL_H */
+> diff --git a/kernel/sysctl-test.c b/kernel/sysctl-test.c
+> index 3ac98bb7fb82..247dd8536fc7 100644
+> --- a/kernel/sysctl-test.c
+> +++ b/kernel/sysctl-test.c
+> @@ -410,9 +410,12 @@ static void sysctl_test_register_sysctl_sz_invalid_extra_value(
+>  		},
+>  	};
+>  
+> -	KUNIT_EXPECT_NULL(test, register_sysctl("foo", table_foo));
+> -	KUNIT_EXPECT_NULL(test, register_sysctl("foo", table_bar));
+> -	KUNIT_EXPECT_NOT_NULL(test, register_sysctl("foo", table_qux));
+> +	KUNIT_EXPECT_EQ(test, -EINVAL,
+> +			sysctl_check_table_test_helper("foo", table_foo));
+> +	KUNIT_EXPECT_EQ(test, -EINVAL,
+> +			sysctl_check_table_test_helper("foo", table_bar));
+> +	KUNIT_EXPECT_EQ(test, 0,
+> +			sysctl_check_table_test_helper("foo", table_qux));
 
-diff --git a/security/tomoyo/file.c b/security/tomoyo/file.c
-index 8f3b90b6e03d..efecfa7d15b2 100644
---- a/security/tomoyo/file.c
-+++ b/security/tomoyo/file.c
-@@ -762,6 +762,10 @@ int tomoyo_check_open_permission(struct tomoyo_domain_info *domain,
- 	};
- 	int idx;
- 
-+	/* Preserve the behavior of O_PATH fd creation not being mediated */
-+	if (flag & O_PATH)
-+		return 0;
-+
- 	buf.name = NULL;
- 	r.mode = TOMOYO_CONFIG_DISABLED;
- 	idx = tomoyo_read_lock();
+This should all be in lib/tests_sysctl.c. We should remove all this
+function from the kunit and add an equivalent one to lib/tests_sysctl.c
+
+Best
+>  }
+>  
+>  static struct kunit_case sysctl_test_cases[] = {
+> -- 
+> 2.48.0.rc2.279.g1de40edade-goog
+> 
+
 -- 
-2.43.0
 
-base-kernel: v6.14-rc6
+Joel Granados
 
