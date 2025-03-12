@@ -1,86 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-43771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85BA0A5D76B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 08:39:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B489AA5D76C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 08:39:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 168583B9AA1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 07:39:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F93D17794D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 07:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1E91F463E;
-	Wed, 12 Mar 2025 07:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06E81F4C98;
+	Wed, 12 Mar 2025 07:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HeDIrOqi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HEFonwmE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E31C1F419D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 07:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEDE1F460D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 07:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741765145; cv=none; b=f04XqrhMIA3Zy0L9eG5GGImVWhv637PZt6n8DN3atcU4IBL2gj97ByJ1n3Y5x6lmiR+EiPbcc3WJ8DqDP3CI6dfu9+63VLKpOKoFW+AxMknMvHab6P9BD+OHFAW0dusl4nYCSA4Unji0xngWD5h9b8FREz/Ily4tzdrTjPLgDBY=
+	t=1741765147; cv=none; b=NBDpzKjZAcMLQ98e7zg1WZ+uAUIgLzI+cdXH+e/ZS6OKHoFCjNSjxtJ8f7PXEcKRQ4MEVBBxOHZe4uqzhrzT5pDfMqyP5UxgR3324PxDpgSCt2lpQgOv+/hcZ5pJsuy+ZD1bBYgsUvEi0r0iacehGeLYwKd+XYCmTWxQrFTAdOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741765145; c=relaxed/simple;
-	bh=/rOCAt1GyVkpzHU3IkZAjzIjdK46yCqVbQSVConueeQ=;
+	s=arc-20240116; t=1741765147; c=relaxed/simple;
+	bh=bTK3jtftynOv/WlNZDvT/yF/UXzCPiJWj2Qcmbp1dbk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XpNOJQ8nDhfKNnCkxE6Xq7FO6D+UL3JgvvT7CS/FhgNfabMWillzMxtIjHf5guhjqAxZphfE3QUmXtRVbBoeYg5WePMmnjp+qcBeVUvca+HGm3an8kSMM0qKSTfn6nbJtBH//YDUTE5uriA0IYqE3EbiSOseI0d8BOzhT3c0xCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HeDIrOqi; arc=none smtp.client-ip=209.85.218.49
+	 MIME-Version; b=X9fSHSd3AZH6VZYJ3OtVP1bkNBdquKeYMIgFqWwFWPqgLg5O83qP8fgVFq2N05+qLMaTxLF6Df5thgAmKfFgHcGT2sviI6B0ESETx9NZ0ceJv0VTb0tHUl8VGPydb/heR2CNr6i6yuPyPSIgo5mPB3ehtax4mlIqT1lsn6FJGTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HEFonwmE; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac297cbe017so122237666b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 00:39:03 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac2af2f15d1so356757366b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 00:39:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741765142; x=1742369942; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741765144; x=1742369944; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZZtCeKv6mXgDvaZfcbJLDl1nCwkzDkIL3ON1FgL1MyU=;
-        b=HeDIrOqiMlZetQleEGK4MxEiH3GpAof2qpP33nWIQDlAzXTW0Q+lldNb29V3Tzic9e
-         jiuBthOog6CO2IZrqUECkKt5ZodwZIvEWHI8dWgWs4Owh81/udP/GgETEy45ZMBLhaRX
-         7EreYg4zA3yk4LOx6x/cQ1q3hJLfFwJEchyMQ1bCovMhTxP9ZPYH6wmMVmC6SsWin0Oh
-         Vgg9jlEVwQa6pYKE4CSq1dfetrF8XeHZ2FCwLrA0cymViVmNpEnf7dbJombRoRu3CZDr
-         8nJtNe2y9lZe9Qr5YzelivnvhrM9tZshqkGA2YB8nLPMr3PEof+lku3gUkj5iaZIvT4s
-         Fb9Q==
+        bh=N2DQBQeFfgio6scrhS9JiQpooi7cpDMvH51E4N2rfb4=;
+        b=HEFonwmEqj1QaDYCaqiLCYYWjagXJNDUxcmYmALYVH+JTEYVqbp5vctKUYhpkVsA1e
+         BDmP1RIFm+M7KA5WorF5HS8KG2Y+JD5PPcIPEgPSqKY/yez1KZmpIwNyz6aQNwZ1dKTy
+         olgYMea220vhUjNI0g5HQ30WGIs9dVonx6RhdrBj/FkHxH5SIKRaIMt3sOxhzI6/lk2s
+         fgZoYRqaJFl7FEiOW4Q0oSVav/misFkRIJ9rCq/IL8GiMeXCbDTIpbD+azIdcQ1pXvCZ
+         M/t8bSb124KLkPySb3sgnPysS53wlaP4ZJDwCCZRnguaDic5IQitDRYgxIssftSgZdTE
+         0Pcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741765142; x=1742369942;
+        d=1e100.net; s=20230601; t=1741765144; x=1742369944;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZZtCeKv6mXgDvaZfcbJLDl1nCwkzDkIL3ON1FgL1MyU=;
-        b=EDH8x8Qv/mnlISgdR8ubBIyYFIGyvt2Ndix2P9OU0z/YQProjzQ2rYGnggVznVEJdy
-         4tC54/C4REWixoo+xBi2qmWwZHZsPK2ejP1NlkY4ijNGhRhwUPV6E+ymzgdZdcnhp9Bo
-         5HgZ1csR76gGmYHAIRR3VE5sXKxpZwmeDQJNlOm62XQlh12Nf+R+SdPT2QEqesandD/c
-         0mKhZltzHw7vEfEFw3oEOZowLULyvS9JbxBQzOGQEjcImLtO+TvXfMKLXhmHZ90BvBlA
-         5G6ryzxfb82Savt9A4Ach6tJfK1nRP/JQH9Ouwk0I/k7eiBidJK4wGMsKQZmeCyyQGrp
-         jsBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVlctGABzcSr1f/B10C1o7/TfWeahM7g+yGo6WqzsZ97GWCntwvEJ70Ob8Zpg5vOJsbPW3lM3r4QdRM3cUJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEKThFLkN1XPFYSb2iKRtKLLXfRVtV0JqjdDpnqsEPV+/YpUs+
-	cGkXlyVostiIavkb8rSomkNDkAKlemCDylTa/a9DK7OCCx6dNbBN
-X-Gm-Gg: ASbGncvNsFs8yROekiWJWkeVXgAagc1MEuax0jNijvxPrSdIxHSZyzAiHkHClVnXZdN
-	7xoEcfETtHdPYJBHZ4Cf26qv4/YZen/2186GLNP2oqEZsxvzqKGKHQ+M5OkVK2gwqKCb+JmdHfI
-	EpNcPOEPVKnFNIdtR5sFnuUZ3bAu8NFGdGNJTltomZz8hQxRSCBLuglUmOvtJS50nE/fu/Ma/RK
-	CNcjty0Fqt5ztaDVaLfIfCGnQ5xh3yODH897DqLoC+7mf8PbOFZiGqsAyz6vzsw3CR2goMj1+s+
-	9kKARW19OeG/63eU2JYvp44whFCjXqXDv/yRY4Nx0uOpIqWuO8FK4IY4ziZgb9dJ9Qvi1MpCbTR
-	OROT8vKymOOfcYyuF6X+lUWI1IAgCHyUDH1lZjh4AOQ==
-X-Google-Smtp-Source: AGHT+IEDLicMYo5wrVMzxXmJns8T7Rc0qAzgkOVTtLk9IaHkRTIuBY/c3ap9z2y5v68kO7sqHdLuJA==
-X-Received: by 2002:a17:906:6a06:b0:ab7:d34a:8f83 with SMTP id a640c23a62f3a-ac2ba4ec689mr787368766b.17.1741765142056;
-        Wed, 12 Mar 2025 00:39:02 -0700 (PDT)
+        bh=N2DQBQeFfgio6scrhS9JiQpooi7cpDMvH51E4N2rfb4=;
+        b=rA2SFiAAZh0PvfTKQxc5fVggSbspLig9K5n5oDJg1uMRJ7MYrApQiu9QhrLxfFdKDK
+         id21blC2+ouIxUxT3+KqhAmPyokIiswI6ECk1NSzcZNzQfNjbPCsB2lOnJxxqS/dE0T+
+         51AeJR/nkWgTgkxxPg2oI+q9oTVQoR/xw4oB4+B+dwy2lDTLSMmQhD6CGbCee1qTjQg2
+         NJrIG5m4zy5/EFe90MIvVoLiaktbpls/jo0YBMKXugnTwdtlGKuc5GcNB+IGv0yPHqPc
+         frL+vRvLxxLmMY9YKqlCzkbnjASSN7FCldM3ET3H91XZucareDLLkN6tkQ49jC0zWdDY
+         /XVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXuAPHsiUz7o9gKgk6hyByJTh1uxTgOY+63bScrK/3oo2i7edE4qQVdNj9qPA/EDVZKAcoETkOjgGramVA+@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVXr/1XsDqK/dE2v/BCHVDsoTG44c/aD/AmH1Ovj/f37lGnWtz
+	p1Iwn1tqq9ms9Jn+1aEL3zRoeu6FtSt2yYDflr2mNDZaAt/FVhj/b4OLdqxr
+X-Gm-Gg: ASbGncsOO5TdwQg5/rBNXpEBRd9ITijgb9H+7nkN8xF4zzylN82aBC3qBJ6mASGH9PN
+	GzFpWW4jg0+bJ3AZwMawbnWbjXVghfpM5R/cjc0FDBLaDMH2/JLPCsKm5xv1kECl2VXgJjmlMFO
+	kr7mAxtJPRlJh/QiAMDgFOu/ejdvL/I5Jb0WII1eSOG7EM1WiiBVRNaK8nTU+dTvC4Q/a5zErru
+	0WT4YCKAGhj7U0+iYcxUKtehWQVIa5GsuZtRFGMz7fgUxo+IJxysPVq+r2bcjU8PtOyaP5ACERO
+	Zasq/QG0nvVSxIp+dFhqLWYsrG5DWycaHG7BfpUhRTOO1hdn2if1OZT2pBVeSuIgWmWDZmv/OjE
+	g10EdY+NQLpE/5u7IyY5XJzI70NeNZpB6+sWAvJYf2Q==
+X-Google-Smtp-Source: AGHT+IHp+6imqaRdqahtNJSC0y4twKiAMajeOL008N2BmoKne5vBXzxLbY6tsDEGRYCVj53AMPaesQ==
+X-Received: by 2002:a17:907:c99a:b0:ac2:b684:541d with SMTP id a640c23a62f3a-ac2b9ee9204mr755158866b.54.1741765143665;
+        Wed, 12 Mar 2025 00:39:03 -0700 (PDT)
 Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac282c69e89sm624740666b.167.2025.03.12.00.39.01
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac282c69e89sm624740666b.167.2025.03.12.00.39.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 00:39:01 -0700 (PDT)
+        Wed, 12 Mar 2025 00:39:02 -0700 (PDT)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Jan Kara <jack@suse.cz>
 Cc: Josef Bacik <josef@toxicpanda.com>,
 	Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 2/6] Revert "ext4: add pre-content fsnotify hook for DAX faults"
-Date: Wed, 12 Mar 2025 08:38:48 +0100
-Message-Id: <20250312073852.2123409-3-amir73il@gmail.com>
+Subject: [PATCH v3 3/6] Revert "xfs: add pre-content fsnotify hook for DAX faults"
+Date: Wed, 12 Mar 2025 08:38:49 +0100
+Message-Id: <20250312073852.2123409-4-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250312073852.2123409-1-amir73il@gmail.com>
 References: <20250312073852.2123409-1-amir73il@gmail.com>
@@ -92,25 +92,42 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This reverts commit bb480760ffc7018e21ee6f60241c2b99ff26ee0e.
+This reverts commit 7f4796a46571ced5d3d5b0942e1bfea1eedaaecd.
 ---
- fs/ext4/file.c | 3 ---
- 1 file changed, 3 deletions(-)
+ fs/xfs/xfs_file.c | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index a5205149adba3..3bd96c3d4cd0c 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -756,9 +756,6 @@ static vm_fault_t ext4_dax_huge_fault(struct vm_fault *vmf, unsigned int order)
- 			return VM_FAULT_SIGBUS;
- 		}
- 	} else {
--		result = filemap_fsnotify_fault(vmf);
--		if (unlikely(result))
--			return result;
- 		filemap_invalidate_lock_shared(mapping);
- 	}
- 	result = dax_iomap_fault(vmf, order, &pfn, &error, &ext4_iomap_ops);
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index f7a7d89c345ec..9a435b1ff2647 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -1451,9 +1451,6 @@ xfs_dax_read_fault(
+ 
+ 	trace_xfs_read_fault(ip, order);
+ 
+-	ret = filemap_fsnotify_fault(vmf);
+-	if (unlikely(ret))
+-		return ret;
+ 	xfs_ilock(ip, XFS_MMAPLOCK_SHARED);
+ 	ret = xfs_dax_fault_locked(vmf, order, false);
+ 	xfs_iunlock(ip, XFS_MMAPLOCK_SHARED);
+@@ -1482,16 +1479,6 @@ xfs_write_fault(
+ 	vm_fault_t		ret;
+ 
+ 	trace_xfs_write_fault(ip, order);
+-	/*
+-	 * Usually we get here from ->page_mkwrite callback but in case of DAX
+-	 * we will get here also for ordinary write fault. Handle HSM
+-	 * notifications for that case.
+-	 */
+-	if (IS_DAX(inode)) {
+-		ret = filemap_fsnotify_fault(vmf);
+-		if (unlikely(ret))
+-			return ret;
+-	}
+ 
+ 	sb_start_pagefault(inode->i_sb);
+ 	file_update_time(vmf->vma->vm_file);
 -- 
 2.34.1
 
