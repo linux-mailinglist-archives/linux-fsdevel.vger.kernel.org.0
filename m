@@ -1,122 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-43744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43745-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A691A5D31E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 00:23:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95F0AA5D378
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 01:07:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B31251780D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Mar 2025 23:23:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C00E3B292A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 00:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126591D6DBB;
-	Tue, 11 Mar 2025 23:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1881A4C85;
+	Wed, 12 Mar 2025 00:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RRd28xlM"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c8b/YNwO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71AD71EF087;
-	Tue, 11 Mar 2025 23:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DAF4A01
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 00:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741735423; cv=none; b=CfdjuenIL3yk4b/cWu7Yc/vrMVc6tdmG1LcAHDuCLA4cJc3kGm+aSjBoSVCoMJ523lENb2wVGEbHwdCr3gZgZZyLQz1pstUy9sYKSo8w1J60FSN1obos5hVvmi9BeqaV26wPyN95HVOOQQjtmIN0QKKH3F6bivyEkwakJiGwyWQ=
+	t=1741738058; cv=none; b=GJwQvuX51WD9jUGPUjrQ3WdSs2DqsaTn8hxr7zDBHDEDV0pZj+mBBZTCQdZl8cILynPvfhkO2hmam6flUIEg/fK6A/Y2cnBfrrqP+4Hl8ht+um0d7sqfbbb8dWEgCnkESSDTgTzChhUKG4ObLmUO1JJByf/KEO81LM5y+zTqNlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741735423; c=relaxed/simple;
-	bh=1c4nORsM3kHkHPY3YDwsODM3vgceCesqpOnjPI4HjSY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KlaYVdDi7DSeeUqmRNfgaZeiFnOLVIN5UfXjdvijqKrt9fAugF0KQYFtaR12hgQlUOM/e0J8nmecHJaAT9jXdWZ8c191j+hSt78TGTjdY6mH28a6XVFHdDP5xVF4sZafar9kYsYmoX//NWUWbt432lweziirri2gVo//97VJZFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RRd28xlM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6EABC4CEEF;
-	Tue, 11 Mar 2025 23:23:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741735422;
-	bh=1c4nORsM3kHkHPY3YDwsODM3vgceCesqpOnjPI4HjSY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RRd28xlM/3XWqa5EKMacWeDb6zTqIKJvWIe7lwk3F+gwNV3StpKVAguGWCmT+/s7P
-	 Z4t5YHLSk4jR3VcsKAiRLxAPHZ/9DTIGQF9QJYsYUzgXXD2vxcpNyHzL9edhhuzrj7
-	 fr/pQ1eq0oFZBRFehpvB2k1/96K7QoHypROryHvGPOpiHY41SrxEwY3Gpjf9Nc4uBw
-	 TSIRoF7YWEjm4tmQWkZy5gTdG1pItA59FaCqstUg/rZ+YTouxTOX83p8+oRK9KsSHY
-	 pwilBoBe7UL1bAt5GrVBznUcwrTig01MExqF/wru2yi3oqJzbMTiYBYK6RlAoaI1O6
-	 XVPH7TDA0gxxA==
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3d439f01698so1282715ab.1;
-        Tue, 11 Mar 2025 16:23:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVOhRFNG7lnj71z1v4Aa/6SZN89BINS1p8UkNRq3OVsSKfv13UugdhQqs1ni8mHmAqHozabJV7I0zv1JYC0@vger.kernel.org, AJvYcCWU0mR3RitwYjOVPvpIjWmSo7APJrf4jvVblhwHB1IWj12sBYur/lmOL/YGziAj+3h+WcNV7XuCuoiEXN4QmEZfFqlsL34t@vger.kernel.org
-X-Gm-Message-State: AOJu0YwskhIUMFW0FVBvcT44b58baU1R1BpKOUBOJPaAtlXpA4YVmyMf
-	jeIRPuxXtoMvsjk//PaxDp54nx6lrWXJtqahFfRX4JTign/K+4zpWMBb+2meYsPl7pI8faKTiHt
-	jQy5Rxu/4iQKnRhUkcdq2+nTJf/c=
-X-Google-Smtp-Source: AGHT+IE2KY686o1GqGq2o0w9GqRc5dcso+bwdKxvv7E3OPoQZojU8H8Kb+hWWrp5C2i0/sqayJbZU6KTxpQCNQvoiI4=
-X-Received: by 2002:a05:6e02:2207:b0:3d3:f15e:8e23 with SMTP id
- e9e14a558f8ab-3d4691b938cmr65752745ab.10.1741735422249; Tue, 11 Mar 2025
- 16:23:42 -0700 (PDT)
+	s=arc-20240116; t=1741738058; c=relaxed/simple;
+	bh=ahoiaCICAThel6fGzAyXhFBeyWeKIoJcx5Q+1e5zZN4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uV8i4sJqU0wuJ//xD6DqDCM5OZFTrsc7VGB2qp2suNwq/4SDLnvl7AUGr2OkeoGIIk7uohq4ToUjxkh46X/jB72s8FCrZQgwQbz/K55B4g/XeoOhc7OdUFGYbLBGj80tpOjRwBw3bzZGrkc+QEGLU8vccfySt164ppk/c+emj4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c8b/YNwO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741738055;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+Jp3d8TwivY0inesFFsBMmfW4NNIDtSVjUkd3EkZcf4=;
+	b=c8b/YNwOHP7J7drlwWoxoirX7EupAtG4LZTPFPSxOnJ3Gd9w5688d/Ng2yGtJ2reHkJBNY
+	XAM9upSqu+yhuiDjAm5XRNpRWNwnZXgxAOmHc43nSYtqqh1kggCeIMUFEt5zwt3hqFM4wJ
+	FWfp/so7rKASrR2EC584eW2VzOWQEt8=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-607-tVpdxDOENfqjZCOHY5FruQ-1; Tue,
+ 11 Mar 2025 20:07:34 -0400
+X-MC-Unique: tVpdxDOENfqjZCOHY5FruQ-1
+X-Mimecast-MFC-AGG-ID: tVpdxDOENfqjZCOHY5FruQ_1741738051
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F07CE195608A;
+	Wed, 12 Mar 2025 00:07:29 +0000 (UTC)
+Received: from h1.redhat.com (unknown [10.22.88.56])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 20D971956094;
+	Wed, 12 Mar 2025 00:07:20 +0000 (UTC)
+From: Nico Pache <npache@redhat.com>
+To: linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	xen-devel@lists.xenproject.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	cgroups@vger.kernel.org
+Cc: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	jerrin.shaji-george@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	mst@redhat.com,
+	david@redhat.com,
+	jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com,
+	eperezma@redhat.com,
+	jgross@suse.com,
+	sstabellini@kernel.org,
+	oleksandr_tyshchenko@epam.com,
+	akpm@linux-foundation.org,
+	hannes@cmpxchg.org,
+	mhocko@kernel.org,
+	roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev,
+	muchun.song@linux.dev,
+	nphamcs@gmail.com,
+	yosry.ahmed@linux.dev,
+	kanchana.p.sridhar@intel.com,
+	alexander.atanasov@virtuozzo.com
+Subject: [RFC 0/5] track memory used by balloon drivers
+Date: Tue, 11 Mar 2025 18:06:55 -0600
+Message-ID: <20250312000700.184573-1-npache@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1741047969.git.m@maowtm.org> <20250304.Choo7foe2eoj@digikod.net>
- <f6ef02c3-ad22-4dc6-b584-93276509dbeb@maowtm.org> <CAOQ4uxjz4tGmW3DH3ecBvXEnacQexgM86giXKqoHFGzwzT33bA@mail.gmail.com>
- <1e009b28-1e6b-4b8c-9934-b768cde63c2b@maowtm.org> <20250311.Ti7bi9ahshuu@digikod.net>
- <CAPhsuW4YXGFY___8x7my4tUbgyp5N4FHSQpJpKgEDK6r0vphAA@mail.gmail.com> <c6e67ee5-9f85-44f4-a27c-97e10942ff57@maowtm.org>
-In-Reply-To: <c6e67ee5-9f85-44f4-a27c-97e10942ff57@maowtm.org>
-From: Song Liu <song@kernel.org>
-Date: Tue, 11 Mar 2025 16:23:30 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW5XNE67LoRjX335iFwCSnZ_QLYCwMxbZtj_cSn=0xMy6Q@mail.gmail.com>
-X-Gm-Features: AQ5f1Jp_HbBeztuuPTCMHnqFDUncNRHhbQysJhpo1jC6a0hrlpxzjXUpqnT-soQ
-Message-ID: <CAPhsuW5XNE67LoRjX335iFwCSnZ_QLYCwMxbZtj_cSn=0xMy6Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/9] Landlock supervise: a mechanism for interactive
- permission requests
-To: Tingmao Wang <m@maowtm.org>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Christian Brauner <brauner@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, Jan Kara <jack@suse.cz>, 
-	linux-security-module@vger.kernel.org, Matthew Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, Tycho Andersen <tycho@tycho.pizza>, 
-	Kees Cook <kees@kernel.org>, Jeff Xu <jeffxu@google.com>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Francis Laniel <flaniel@linux.microsoft.com>, Matthieu Buffet <matthieu@buffet.re>, 
-	Paul Moore <paul@paul-moore.com>, Kentaro Takeda <takedakn@nttdata.co.jp>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	John Johansen <john.johansen@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Tue, Mar 11, 2025 at 3:03=E2=80=AFPM Tingmao Wang <m@maowtm.org> wrote:
-[...]
-> >
-> > I think there is a fundamental difference between LSM hooks and fsnotif=
-y,
-> > so putting fsnotify behind some LSM hooks might be weird. Specifically,
-> > LSM hooks are always global. If a LSM attaches to a hook, say
-> > security_file_open, it will see all the file open calls in the system. =
-On the
-> > other hand, each fsnotify rule only applies to a group, so that one fan=
-otify
-> > handler doesn't touch files watched by another fanotify handler. Given =
-this
-> > difference, I am not sure how fsnotify LSM hooks should look like.
-> >
-> > Does this make sense?
->
-> To clarify, I wasn't suggesting that we put one hook _behind_ another
-> ("behind" in the sense of one calling the other), just that the place
-> that calls the new fsnotify_name_perm/fsnotify_rename_perm hook (in
-> Amir's WIP branch) could also be made to call some new LSM hooks in
-> addition to fsnotify (i.e. security_pathname_create/delete/rename).
->
-> My understanding of the current code is that VFS calls security_... and
-> fsnotify_... unconditionally, and the fsnotify_... functions figure out
-> who needs to be notified.
+This series introduces a way to track memory used by balloon drivers.
 
-Yes, VFS calls security_* and fsnotify_* unconditionally. In this sense,
-fsnotify can be implemented as a LSM. But fsnotify also supports some
-non-security use cases. So it will be weird to implement it as a LSM.
+Add a NR_BALLOON_PAGES counter to track how many pages are reclaimed by the
+balloon drivers. First add the accounting, then updates the balloon drivers
+(virtio, Hyper-V, VMware, and Xen) to maintain this counter.
 
-Thanks,
-Song
+This makes the information visible in memory reporting interfaces like
+/proc/meminfo, show_mem, and OOM reporting.
 
-[...]
+This provides admins visibility into their VM balloon sizes without
+requiring different virtualization tooling. Furthermore, this information
+is helpful when debugging an OOM inside a VM.
+
+Tested: virtio_balloon, run stress-ng, inflate balloon, oom prints
+Signed-off-by: Nico Pache <npache@redhat.com>
+
+Nico Pache (5):
+  meminfo: add a per node counter for balloon drivers
+  virtio_balloon: update the NR_BALLOON_PAGES state
+  hv_balloon: update the NR_BALLOON_PAGES state
+  vmx_balloon: update the NR_BALLOON_PAGES state
+  xen: balloon: update the NR_BALLOON_PAGES state
+
+ drivers/hv/hv_balloon.c         | 2 ++
+ drivers/misc/vmw_balloon.c      | 5 ++++-
+ drivers/virtio/virtio_balloon.c | 4 ++++
+ drivers/xen/balloon.c           | 4 ++++
+ fs/proc/meminfo.c               | 2 ++
+ include/linux/mmzone.h          | 1 +
+ mm/memcontrol.c                 | 1 +
+ mm/show_mem.c                   | 4 +++-
+ mm/vmstat.c                     | 1 +
+ 9 files changed, 22 insertions(+), 2 deletions(-)
+
+-- 
+2.48.1
+
 
