@@ -1,172 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-43830-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D6DBA5E4CF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 20:53:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2864A5E515
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 21:11:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2789F7AA084
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 19:52:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2960E16EAA6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 20:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97DA25BAB1;
-	Wed, 12 Mar 2025 19:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615CB1EB5D5;
+	Wed, 12 Mar 2025 20:11:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="tQak4WAb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GHJ6vDlI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6439125A349
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 19:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434BD1EA7C8
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 20:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741809125; cv=none; b=TmWGMb7OX5NS+5PnilndYa4/D5WDkWQticdUnCPFgifHV6aOwU8I5VTL68SijVGxaeIAr0rZ+JJ4QYWCxE2CvsRayKYOGmLYObJz2+qb0dJwTK/bGgsnm37sk/ZPwOPev5BVuXFMF2x+nSPEd75IGfLM2Id4QawJuFReT+4tyQY=
+	t=1741810316; cv=none; b=YX8NxySELsUmLlApgL6Zj+X/sHxDTRjkw92m6T1oBd5mkoOK5PVHpaNPxk7vvuQbnlvJ8po/M7teL0v7Ft8V5wmRMOBl8nvEdPo1EvsrTFEaVgi/wsOQR4yz/tvpUcsBjuXepGKmunTBmvO/u9Lk+vTpN9dQvISmyRGKNLwUZGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741809125; c=relaxed/simple;
-	bh=9nCebzwQcT7vsmLoqvflspQkiwpll02VlnYPMm4lKOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tCnQ6JmbuDjK5DOOElJkzYUtVOnlhG8zaxCiFRBq9x9vFjrqgQHkOQof1BOvX4MhNfuSG8wxrgc1BfsA9gFvXpJZi7wiF9wrVoB5/Aq+nV+BfSo6ZoHXaD/fNBuCtdkdQ3UhKcgg8CqcXMNCj9K4uh03gC2xIdtHCRlHO5V0A88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=tQak4WAb; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-223fb0f619dso4670055ad.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 12:52:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1741809122; x=1742413922; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IZXks1yCL59Hzx10jJaOlAET0rV27Iyc9SiIzk3nPyM=;
-        b=tQak4WAbEgPG4nUKoNes1ONPbE2D41On46VqD8YIFyHeMxccDJck1qIWhNnnq6AuyP
-         BotEZTS9HHuTvSnegsfY7KrD0/pxxWNxM8a6KV/EsmEHtZLsweHQJyrzNKrcbJwXvKC7
-         5GMObXcuy/kpdOOjq2y7f4pFFHP51TbWcsxw8VzVh5qwQrpGjqZwfWnuO+TdyBCZhjeS
-         EGKkQiD4FzbXGY+Ng8ARqfhCbAsZvy09NSRVA+lkGF4AxN6Uc+TZR+l0vuvZB95Y7CXm
-         pMgzBRZBb0yNMUy+UdRi5eSip3zeg4cgO44pVSqdcJ1/zX8dZy8DJb1CY130uKRY/SgR
-         pbcg==
+	s=arc-20240116; t=1741810316; c=relaxed/simple;
+	bh=nUvK5QSlWouoKts1hziqxpMybmXDATURg6I3GYwAYvs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TtykFIEGgX3RmRLSsI4PAPno8AoBEHj96nsBMRwADpYv/VukCXhkxKYeVeVeBJnO6CuPPt2UUws36eo2aIM1m0P7Fb0lcpP9BP8ouI+kb8yhGkhudWMLt3mLhp4LFkTI6xEuCqpISaP4zy8NLq/7pYor4+UaBQ6CgMCp8gPqztg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GHJ6vDlI; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741810314;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CUM3a6gnZC/3zAtpJFYD7FtGrYIIZpsLuUMo7CMvX0I=;
+	b=GHJ6vDlI2kLo7263FkCBa5A9zCaRa/bxKCnddOWgeKSThLNe+/sH7qBKMekFV5HzckGgSx
+	SfjFlD3ewaJGvyWn/+Wp94wB4SsA54QDi6ro/XJTHXvlAc577dNWBSFx4bDg7Uj71SPSx4
+	1Ft20tqroWOancCThVs/qCvwvLrIMA0=
+Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com
+ [209.85.219.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-587-NLZemzWsO6-y0qr7iTDioA-1; Wed, 12 Mar 2025 16:11:53 -0400
+X-MC-Unique: NLZemzWsO6-y0qr7iTDioA-1
+X-Mimecast-MFC-AGG-ID: NLZemzWsO6-y0qr7iTDioA_1741810312
+Received: by mail-yb1-f198.google.com with SMTP id 3f1490d57ef6-e549c458692so389651276.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 13:11:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741809123; x=1742413923;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IZXks1yCL59Hzx10jJaOlAET0rV27Iyc9SiIzk3nPyM=;
-        b=LGdtlSCyU/ombHFzzxZspneINqWnE1MMZ5/qsWrz3r/qVxxM4AwICCCMFWjdOaelkv
-         /bYzWhhyqmqvelmM1oIJDNEByyoveiuYG6rHsCW10EQYEoJtmGsIOD6dz/7oUw2v1j78
-         u/PCKZp0BmLFaRL40RDD0WuyVTpyrzuKTlkf8YLYe5TZa5lIE+kM9U7fWXnk4E6dP0X/
-         ftRu8Htt+D9yzSSfRkP9Bn5X4Muuf4oSZZI1vFQPof3AxUb1GcsE4MBnk3v3yLQbQpHe
-         q/PESkmjsM9NijFNHz7LkV9CcjsZXpws1DJhPJFHe909KHchWwEA8A/wY8f8xISqiYXr
-         Gvug==
-X-Forwarded-Encrypted: i=1; AJvYcCXA+Cwtehp/pxlFal4IWmWnfOkpbKIsMjaGDSAMoHbtQvDOqIghqJVRTqdKf2UAaCapGEO3OQfCy0X9miO/@vger.kernel.org
-X-Gm-Message-State: AOJu0YyygxDwgdSW3j3o64aRpRqMLM8niraK9SLuyi98yd+5WvapyEc/
-	UBBaFcbJfuFKcuPF9DKCYXR/uGUepLiKYtlLjNHPT+rsjo2UNQ67UO4IiebQUK0=
-X-Gm-Gg: ASbGncv1xfIC8J5r7S/v8yV/cYV4ehvR5S0eY56G98W+osmN/zfuMlrO7NuFkihepte
-	STKTlv9OXXDyPaHIEeb9s5oGd8j6KBRR1SZP/eBXTUJ4VZSy6JWVRlErf549Y8aRUPymunU1Cm+
-	NrbNAvydjiYi6rx00HEYJYyHgIbNPm2It5GMR0lp3GHTg9RIq3pvMsWzzfRsHl0Jiln7e5FA3O+
-	n0hQ7UPeb3k7Z9FgH9O44pHS/hSR6jVq/3IF7q8I3gtfihwc1leaX5PfJnf+sSHvOW6L0kW2CR4
-	qC1ioaGyifrSHsSYLa5xMgL3v0truDN2lrJWWnzddgTVEFxkDlJjggLzD+Q27zgqt1Q8wX3SI3C
-	ZIJFf9PY9u7iyXA68joi9
-X-Google-Smtp-Source: AGHT+IEE2EJW9ndEG7Y/L7HAyUCKmqOhXbnMCG+N60tA8rq5IwDA5m81XvtvYTp7j4ChVG457AtQ1g==
-X-Received: by 2002:a17:903:228e:b0:224:b60:3cd3 with SMTP id d9443c01a7336-22592e2d676mr134144265ad.19.1741809122629;
-        Wed, 12 Mar 2025 12:52:02 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109e99dfsm120190275ad.91.2025.03.12.12.52.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 12:52:02 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tsS7T-0000000CHVL-0aXe;
-	Thu, 13 Mar 2025 06:51:59 +1100
-Date: Thu, 13 Mar 2025 06:51:59 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v4 12/12] xfs: Allow block allocator to take an alignment
- hint
-Message-ID: <Z9Hl39cS-V2r-5mY@dread.disaster.area>
-References: <20250303171120.2837067-1-john.g.garry@oracle.com>
- <20250303171120.2837067-13-john.g.garry@oracle.com>
- <Z84QRx_yEDEDUxr5@dread.disaster.area>
- <ad152fa0-0767-45cb-921e-c3e9f5eac110@oracle.com>
+        d=1e100.net; s=20230601; t=1741810312; x=1742415112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CUM3a6gnZC/3zAtpJFYD7FtGrYIIZpsLuUMo7CMvX0I=;
+        b=wTuCAI5s0tezs5VVWSubADyFJWANyLjy85/Ef9+KHfMh06IQmMQ+KpyGxMSV8XjSCI
+         aSJUVVvBWjLGsiJEGmETZ/hNocditwJyYo+giiwwlE/CXo1Y7ffACSkrAgIsWL/MhTni
+         +PbrBXvtcaD4I9QARu+uUeAA+FqW3eZoDH9wiHitkKo+SrCvW1KpqDTitWQgfjv4Skw0
+         dnQ1gSTR4jE7HF4E8ym24OfZqLCEWupEolbacME2rxlyGHc6ZDFcObynk+wUYe3sUyzn
+         Dz3LW/E2sh2kmzsFCB2UFNMRgYeRvNBfmOiC/sLeysfr2qjJvsw8clIRy1zqYQzPhn4t
+         rCuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXYZhTequTOFbHEB/NfL7bNiAhE1WJeB1PO2t3ZdTdBLdqpF4+aWpEG779Hw/5l/+xfcP/BWtRA80aRViUm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/gYD/eUd4OJB4NqgLYA1K+RN4hkO4ZyOwTI4UojPxtA6qF5t6
+	Ynn2h5q1YhUOof3XezfZyE492AIqbLdB8vu24qFfbwLxK4hHuxYF0PtAsVYiSwMhaBfooPcONfV
+	t33jWPncGL/CIpgZPgt2o8RLMaD564ttS2dcielF9vB4v8A9j74Q6YFgOGflzKy7mztigUVbGLZ
+	BG46/rnQ0LmrJh+vpDo8FiN+de4YcYHIPMpoboww==
+X-Gm-Gg: ASbGncsdnbOgJZQSnbRL8lFZVWMcztjZGKhXv1TTXoGGx4Z8LPa+/1hHB2Jqaekgwaa
+	FBTn/wG8oWL7kpsoDVhD/oJM7mqcmNtlw+YnVs5oVZb/ivIwjNNr9Yd7nHv6CauAo6kbk3RncVi
+	Mbs11Qw/B3ahs=
+X-Received: by 2002:a05:6902:4908:b0:e63:71cf:7a25 with SMTP id 3f1490d57ef6-e6371cf7f99mr23023394276.19.1741810312525;
+        Wed, 12 Mar 2025 13:11:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFILEwS4y4Eu7CtZytQ1AMLlSYSOVDPPOZAL/URaaVOd4HXzYxT1BzN9xV4mLg1LOlVPDho5H2JPLVwRxAT/sw=
+X-Received: by 2002:a05:6902:4908:b0:e63:71cf:7a25 with SMTP id
+ 3f1490d57ef6-e6371cf7f99mr23022141276.19.1741810296082; Wed, 12 Mar 2025
+ 13:11:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ad152fa0-0767-45cb-921e-c3e9f5eac110@oracle.com>
+References: <20250312000700.184573-1-npache@redhat.com> <20250312000700.184573-5-npache@redhat.com>
+ <20250312025607-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20250312025607-mutt-send-email-mst@kernel.org>
+From: Nico Pache <npache@redhat.com>
+Date: Wed, 12 Mar 2025 14:11:09 -0600
+X-Gm-Features: AQ5f1JpCzw-OMEiWJ5oWmnRpNTzG9s0Jia2dTAgWmtQzoaspW3JJPq9uXITvZCU
+Message-ID: <CAA1CXcDjEErb2L85gi+W=1sFn73VHLto09nG6f1vS+10o4PctA@mail.gmail.com>
+Subject: Re: [RFC 4/5] vmx_balloon: update the NR_BALLOON_PAGES state
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	virtualization@lists.linux.dev, xen-devel@lists.xenproject.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org, 
+	decui@microsoft.com, jerrin.shaji-george@broadcom.com, 
+	bcm-kernel-feedback-list@broadcom.com, arnd@arndb.de, 
+	gregkh@linuxfoundation.org, david@redhat.com, jasowang@redhat.com, 
+	xuanzhuo@linux.alibaba.com, eperezma@redhat.com, jgross@suse.com, 
+	sstabellini@kernel.org, oleksandr_tyshchenko@epam.com, 
+	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org, 
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
+	nphamcs@gmail.com, yosry.ahmed@linux.dev, kanchana.p.sridhar@intel.com, 
+	alexander.atanasov@virtuozzo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 10, 2025 at 12:10:44PM +0000, John Garry wrote:
-> On 09/03/2025 22:03, Dave Chinner wrote:
-> > On Mon, Mar 03, 2025 at 05:11:20PM +0000, John Garry wrote:
-> > > diff --git a/fs/xfs/libxfs/xfs_bmap.h b/fs/xfs/libxfs/xfs_bmap.h
-> > > index 4b721d935994..e6baa81e20d8 100644
-> > > --- a/fs/xfs/libxfs/xfs_bmap.h
-> > > +++ b/fs/xfs/libxfs/xfs_bmap.h
-> > > @@ -87,6 +87,9 @@ struct xfs_bmalloca {
-> > >   /* Do not update the rmap btree.  Used for reconstructing bmbt from rmapbt. */
-> > >   #define XFS_BMAPI_NORMAP	(1u << 10)
-> > > +/* Try to align allocations to the extent size hint */
-> > > +#define XFS_BMAPI_EXTSZALIGN	(1u << 11)
-> > 
-> > Don't we already do that?
-> > 
-> > Or is this doing something subtle and non-obvious like overriding
-> > stripe width alignment for large atomic writes?
-> > 
-> 
-> stripe alignment only comes into play for eof allocation.
-> 
-> args->alignment is used in xfs_alloc_compute_aligned() to actually align the
-> start bno.
-> 
-> If I don't have this, then we can get this ping-pong affect when overwriting
-> atomically the same region:
-> 
-> # dd if=/dev/zero of=mnt/file bs=1M count=10 conv=fsync
-> # xfs_bmap -vp mnt/file
-> mnt/file:
-> EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
->   0: [0..20479]:      192..20671        0 (192..20671)     20480 000000
-> # /xfs_io -d -C "pwrite -b 64k -V 1 -A -D 0 64k" mnt/file
-> wrote 65536/65536 bytes at offset 0
-> 64 KiB, 1 ops; 0.0525 sec (1.190 MiB/sec and 19.0425 ops/sec)
-> # xfs_bmap -vp mnt/file
-> mnt/file:
-> EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
->   0: [0..127]:        20672..20799      0 (20672..20799)     128 000000
->   1: [128..20479]:    320..20671        0 (320..20671)     20352 000000
-> # /xfs_io -d -C "pwrite -b 64k -V 1 -A -D 0 64k" mnt/file
-> wrote 65536/65536 bytes at offset 0
-> 64 KiB, 1 ops; 0.0524 sec (1.191 MiB/sec and 19.0581 ops/sec)
-> # xfs_bmap -vp mnt/file
-> mnt/file:
-> EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
->   0: [0..20479]:      192..20671        0 (192..20671)     20480 000000
-> # /xfs_io -d -C "pwrite -b 64k -V 1 -A -D 0 64k" mnt/file
-> wrote 65536/65536 bytes at offset 0
-> 64 KiB, 1 ops; 0.0524 sec (1.191 MiB/sec and 19.0611 ops/sec)
-> # xfs_bmap -vp mnt/file
-> mnt/file:
-> EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
->   0: [0..127]:        20672..20799      0 (20672..20799)     128 000000
->   1: [128..20479]:    320..20671        0 (320..20671)     20352 000000
-> 
-> We are never getting aligned extents wrt write length, and so have to fall
-> back to the SW-based atomic write always. That is not what we want.
+On Wed, Mar 12, 2025 at 12:57=E2=80=AFAM Michael S. Tsirkin <mst@redhat.com=
+> wrote:
+>
+> On Tue, Mar 11, 2025 at 06:06:59PM -0600, Nico Pache wrote:
+> > Update the NR_BALLOON_PAGES counter when pages are added to or
+> > removed from the VMware balloon.
+> >
+> > Signed-off-by: Nico Pache <npache@redhat.com>
+> > ---
+> >  drivers/misc/vmw_balloon.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
+> > index c817d8c21641..2c70b08c6fb3 100644
+> > --- a/drivers/misc/vmw_balloon.c
+> > +++ b/drivers/misc/vmw_balloon.c
+> > @@ -673,6 +673,8 @@ static int vmballoon_alloc_page_list(struct vmballo=
+on *b,
+> >
+> >                       vmballoon_stats_page_inc(b, VMW_BALLOON_PAGE_STAT=
+_ALLOC,
+> >                                                ctl->page_size);
+> > +                     mod_node_page_state(page_pgdat(page), NR_BALLOON_=
+PAGES,
+> > +                             vmballoon_page_in_frames(ctl->page_size))=
+;
+>
+>
+> same issue as virtio I think - this counts frames not pages.
+I agree with the viritio issue since PAGE_SIZE can be larger than
+VIRTIO_BALLOON_PFN_SHIFT, resulting in multiple virtio_balloon pages
+for each page. I fixed that one, thanks!
 
-Please add a comment to explain this where the XFS_BMAPI_EXTSZALIGN
-flag is set, because it's not at all obvious what it is doing or why
-it is needed from the name of the variable or the implementation.
+For the Vmware one, the code is littered with mentions of counting in
+4k or 2M but as far as I can tell from looking at the code it actually
+operates in PAGE_SIZE or PMD size chunks and this count would be
+correct.
+Perhaps I am missing something though.
 
--Dave.
+>
+> >               }
+> >
+> >               if (page) {
+> > @@ -915,6 +917,8 @@ static void vmballoon_release_page_list(struct list=
+_head *page_list,
+> >       list_for_each_entry_safe(page, tmp, page_list, lru) {
+> >               list_del(&page->lru);
+> >               __free_pages(page, vmballoon_page_order(page_size));
+> > +             mod_node_page_state(page_pgdat(page), NR_BALLOON_PAGES,
+> > +                     -vmballoon_page_in_frames(page_size));
+> >       }
+> >
+> >       if (n_pages)
+> > @@ -1129,7 +1133,6 @@ static void vmballoon_inflate(struct vmballoon *b=
+)
+> >
+> >               /* Update the balloon size */
+> >               atomic64_add(ctl.n_pages * page_in_frames, &b->size);
+> > -
+>
+>
+> unrelated change
+Fixed, Thanks for reviewing!
+>
+> >               vmballoon_enqueue_page_list(b, &ctl.pages, &ctl.n_pages,
+> >                                           ctl.page_size);
+> >
+> > --
+> > 2.48.1
+>
 
--- 
-Dave Chinner
-david@fromorbit.com
 
