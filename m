@@ -1,85 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-43840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B58DEA5E685
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 22:24:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D14ECA5E68E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 22:24:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A75597ABCDD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 21:23:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F5DC188FC6E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 21:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64091F1517;
-	Wed, 12 Mar 2025 21:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3631EF376;
+	Wed, 12 Mar 2025 21:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="vmL06F9F"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="NusxHpgG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93F41F0E4F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 21:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39DD1F1307
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 21:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741814582; cv=none; b=Y8GskxNpcjRDsw9CcZUHhTMv0trG+gkbx3HzbQV/+11HMqEaWdm1k+siIh2mDzq6z8P4UuEYXurGbm+5XErCtoBhsLEI1ndju148WmtqQTtGZKj781RGbKaXqpln4mSek5GkpCL6wdEBz8agYENW0c7/YOloGe8XoBzzSr9aC/c=
+	t=1741814583; cv=none; b=rAaWv7tK2SmjfwEEFNhE5rduU8xquaCzKehrkDLnKO6NzE4M0A1/n1WeoHfjD7cHDUtqt/PfkpWJ/ZrVEiFQwDKG8Hu49M3aYXuLpqazRr5hjQ9LyLzY9K9XRXwMZ5iT/FqKQYnMuOVk8r5CJJxaO1Jztd0/Qv5pWRSko7rmdkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741814582; c=relaxed/simple;
-	bh=YKJUOhSAlbceCTtQeFmVs8IFwOcyWaVLfzVCuOajKmQ=;
+	s=arc-20240116; t=1741814583; c=relaxed/simple;
+	bh=UQi4jGJd9JPX9q54M13Eyu1joQsCWppMerqI6/F5Zeo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QnqYsL9/erPW7DR7ZtGztLEvF2aXmkkJkeHTtQ8htyDpFhTTz5OGtI0Ukch+WWpp8BhZOsykTooN4FJrQUv0e7n7Zo0UgO7XFSPZQ/MTT3YpBo+eZAfXQYpqcvXl92mlB0G277STJhat/JSMPqWvQ0QucLDtkktD8+KOk5ntQik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=vmL06F9F; arc=none smtp.client-ip=185.125.188.122
+	 MIME-Version; b=jjRjsJY21M752U7+mn4kMr5VOSWEA/ALuGBpHw5FJcQ7MVHuSyI8GEtVr8yZSJRRlme15oBXLZOnOVMw8q8kFyaY9IXHafMCYCXl+yikL1/NpKtWDY/84qvkwfzxgdgA5T4RZRFeXQDsmrePVKhH8E15XHTsqA22FG4oaiTn1WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=NusxHpgG; arc=none smtp.client-ip=185.125.188.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 2E7693FCDD
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 21:22:50 +0000 (UTC)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id B4B663FCE9
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 21:22:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1741814570;
-	bh=bQ5ilq+qjctbW08HSKcwKvLmj0dzCcpGagg2F3uVrL4=;
+	s=20210705; t=1741814574;
+	bh=vkBChevR2KYwwFZBDZ6M820pfzcyPKZb2PO3mstNSrA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version;
-	b=vmL06F9FBtpJLaaYr55tRaWWAuRysWlSghmlHws+4ccfGIOKu/r09XtkJ0t2XeANd
-	 i6mp2xCB2TcwZfGBQQko9G7AptQBV6tAVGPPt+Ny/IdmUxR3AsLJcRYT2JF93t6Tbr
-	 KPIAH1xPhRWNs9Yaat8RznLCojnUFhn1uD77B3EU+nWlfhWXPS9b7txWNmiy7XJQSN
-	 VEq4ftfPlpUlroju6uaPfkAmUVq4lAYrho/T2qX/+pcv+/MHxlKcIfnPIKu7pMUieM
-	 I0sgw/skR3jkjn7NgU72gDmhz8J2SOkyySW3W8l80To2O+b7ga9qDH1LkXYoZkSmiq
-	 C1faCZS04BR3A==
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-301192d5d75so804187a91.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 14:22:50 -0700 (PDT)
+	b=NusxHpgGw0gxX62Mk9uf3yyp/VTF1wyvz0njNHfAiqmFtaE2rBE95UKz8pNvd3AK5
+	 G3GZ3EOrs+/vJei6clUU1hr71nYggBLhji5hORdQ6u8XQyVu+kdEeKrUX3fPX6eoC+
+	 iHRkYC31hxN1ir/AU4zwAMH57EfuEXF5uLE1JnUf5wOIIEwIBDa+yTUd0UnkwIv6O5
+	 xhNL/Z5BBDhdsIxa8ss/SBMtFOo0m5FwttJGFjP+Axof9yt5Bv3dccgRa2enJ0kCVj
+	 /yxWC60mQMg6g8POZq/N7/3VimD4nYSmzVVSc60IfiKHf3x1dY8agRiIth74JfQlKK
+	 3tf1eaWBPCzfg==
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2ff6167e9ccso734410a91.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 14:22:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741814568; x=1742419368;
+        d=1e100.net; s=20230601; t=1741814571; x=1742419371;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bQ5ilq+qjctbW08HSKcwKvLmj0dzCcpGagg2F3uVrL4=;
-        b=EwlCecXyQ9/dvlC+iwAwH63fR804OydrCjaEibPoGqF1K6DefjVVU7VDXd7bjGOaT+
-         xl76ooaSKosPO3FzsHcyy7gopZu9oVv8ROjvRpBlmrKRcJULJWsNcWzRJjnBIDspE58k
-         Oq3gPFCKu/rW8VsE7NJMfYSQ35+9Ty6gY7JKI88vA+m4p0ic1yqr9YFfxy22UHN4qK00
-         nU8abWeAVRh4L+qFVYjGGXdRFK4EVUpesY7nID7FZuEIsSGtTXBDP/3EdieXAqcv/xvE
-         /EOli/UU7K1+h03OzJIkJT1kvR/jFYLoR/RHQOrAwWFj2BzSPnngXYyvHPME24xtVe5G
-         Bb0g==
-X-Gm-Message-State: AOJu0YzNx8nF6nftdHi1SYynKifuMl2ScR4L7lxb6o+4xym4+5VHxaU4
-	pfUIrzBjvSEkOLyIgwGqF6dxxgx3YLITxvcZLbPfSs/mvfXYd4y+9HdCbFYWuYT3sS37MX85gL7
-	ID/wAzP8cwN0fdpwgcCMwhsg+jGTmqbvR7NeK+3Cok9HN4cEX7dBQC5brgrpB1ev3UNuiIq46L8
-	kjjljHp5lvKNqfsA==
-X-Gm-Gg: ASbGnctsk1aGp2FKRHgFs7CmUoL/rBrS/CZUkIAipgnyfJ57BhH7WXSsP8c1MwoFfnr
-	y6wucI6ggHAWASyQIvsmYt/5MZzAP7EKu0k+ksbptQ4PS7iVam4fRKdrzidxtwhdzQkhTwFeH6p
-	UYqrxg20BJTI67Ixw8VsVm8cI3WoQQya9vOO/FOsG0M5LP4BI9va/FbVBVWl/l2nbo1Nx8IAP7M
-	rJsNbyl/bxGomryARxFzhAe0bEXO3Nw0tnzRpPRSNY67dnnFIjrC5g6Ldz2P3OGBlN17gIq4I6f
-	lCZQArvfiKU8kkU8yP11UDxafn8VyY3CDSDYWNZtC1camFBOXjEperoa2bJoTmR9bMgnZW0=
-X-Received: by 2002:a17:90b:38c8:b0:2ee:74a1:fba2 with SMTP id 98e67ed59e1d1-2ff7ce84c7bmr34243259a91.20.1741814568678;
-        Wed, 12 Mar 2025 14:22:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE6kNFGkR2Ar2yfV2Wm7/OWkigwZeggzkNDef+VFj2HbCWbxEzVxXle+EcNd+qkPs6JAUusng==
-X-Received: by 2002:a17:90b:38c8:b0:2ee:74a1:fba2 with SMTP id 98e67ed59e1d1-2ff7ce84c7bmr34243239a91.20.1741814568350;
-        Wed, 12 Mar 2025 14:22:48 -0700 (PDT)
+        bh=vkBChevR2KYwwFZBDZ6M820pfzcyPKZb2PO3mstNSrA=;
+        b=qiSys3FRix4HsgX6Bh1BnSM7stJ+BLHmQWI7qgSQoi8Teq0jMylvNTSrgOz8g2M5tr
+         4wIpqhoQk6Sv0HrzAhIjFZtcVfr0oesRwby6esSJK0Ffh293FzuPxQvHws4fXZFBrhc1
+         ccTvsvxju7/LwEAjc9Zu2PuQCfolBXGDvRIUXdobUnqJkFY83SaBSRHX15wmYM96rIQk
+         8YItf2ZJmrjXl6hS25voHv8BsfEw7bxfy9cHcrQMFf2PdSSMyUWQ7oi+pdFdf0jfx+hF
+         UoABGk3UsXq1wLos5L2MWza+l4kBqk30gqcxdciwRSC6Lvnv3BfelVJputpUFCGclyqV
+         h+3w==
+X-Gm-Message-State: AOJu0YxqG78h3v5Nbbn4WLNuNrT2GVmEZbDOY2c4yS2CwPNuW3yNHa/H
+	v1NHpZHS9WFw2JRmmq729rawVLQjEkfsiJkBPrbfSZjqmiuQ8uvGyRXB/hIRPV2lITU3C6Mtkx8
+	eJ4PpezT+Yk/KVmYxVjhYyiHHnkqrwPFw/oweD7Tx4kC26wwD+87wizR11RUqeksnwEH51tbfY+
+	xc096d0L+xoM7P8A==
+X-Gm-Gg: ASbGncv81D+v+mhnb6rGGh+31H80GNrwXlxpnHO/fofnGeynjb4IYazFP1S+9VtzCD6
+	IkroYT+NPyIOCqgBxmyFyPd09tdLknDZoNaHbt7CyAauBRhtSsjUtYfgB+Upm+BFmfDdn8JL2h7
+	eYjU0RDdiexi5iweVQqa/z0b96MaHGeCqECT0lKZaAUetfLgLwjgyeSaq4eaxTETXNecvhMP611
+	hVE7/npyxEOznrl010GqbF+X1Z/VoNHxCo1pzyVGZL3Pmy2Yg3yhmvDC7lb3NgwsnFm/mgeU/no
+	XmUKpzKzOXDNRax4z/zH4FMnb2Gb1Pps6myqlISH/Zc4AFuzkCwroijXSujAJ7F/uLFmq/Q=
+X-Received: by 2002:a17:90b:1b05:b0:2ee:8427:4b02 with SMTP id 98e67ed59e1d1-2ff7cef76acmr32847514a91.28.1741814570792;
+        Wed, 12 Mar 2025 14:22:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG2zy2F9PoKbQMeK6fUS3X/Yt717KlC839Q5G4xkP4Nr8/wnDbMYJ8pDxU6TgdAPfQxzzejkA==
+X-Received: by 2002:a17:90b:1b05:b0:2ee:8427:4b02 with SMTP id 98e67ed59e1d1-2ff7cef76acmr32847501a91.28.1741814570519;
+        Wed, 12 Mar 2025 14:22:50 -0700 (PDT)
 Received: from ryan-lee-laptop-13-amd.. (c-76-103-38-92.hsd1.ca.comcast.net. [76.103.38.92])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301190b98b7sm2353887a91.32.2025.03.12.14.22.46
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301190b98b7sm2353887a91.32.2025.03.12.14.22.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 14:22:47 -0700 (PDT)
+        Wed, 12 Mar 2025 14:22:50 -0700 (PDT)
 From: Ryan Lee <ryan.lee@canonical.com>
 To: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -101,9 +101,9 @@ Cc: Ryan Lee <ryan.lee@canonical.com>,
 	Casey Schaufler <casey@schaufler-ca.com>,
 	Kentaro Takeda <takedakn@nttdata.co.jp>,
 	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [RFC PATCH 3/6] landlock: explicitly skip mediation of O_PATH file descriptors
-Date: Wed, 12 Mar 2025 14:21:43 -0700
-Message-ID: <20250312212148.274205-4-ryan.lee@canonical.com>
+Subject: [RFC PATCH 4/6] selinux: explicitly skip mediation of O_PATH file descriptors
+Date: Wed, 12 Mar 2025 14:21:44 -0700
+Message-ID: <20250312212148.274205-5-ryan.lee@canonical.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250312212148.274205-1-ryan.lee@canonical.com>
 References: <20250312212148.274205-1-ryan.lee@canonical.com>
@@ -115,34 +115,30 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Landlock currently does not have handling of O_PATH fds. Now that they
-are being passed to the file_open hook, explicitly skip mediation of
-them until we can handle them.
+Now that O_PATH fds are being passed to the file_open hook,
+unconditionally skip mediation of them to preserve existing behavior.
 
 Signed-off-by: Ryan Lee <ryan.lee@canonical.com>
 ---
- security/landlock/fs.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ security/selinux/hooks.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index 0804f76a67be..37b2167bf4c6 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -1522,6 +1522,14 @@ static int hook_file_open(struct file *const file)
- 	if (!dom)
- 		return 0;
- 
-+	/*
-+	 * Preserve the behavior of O_PATH fd creation not being mediated, for
-+	 * now.  Remove this when the comment below about handling O_PATH fds
-+	 * is resolved.
-+	 */
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 07f71e6c2660..886ee9381507 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -4009,6 +4009,11 @@ static int selinux_file_open(struct file *file)
+ 	 */
+ 	fsec->isid = isec->sid;
+ 	fsec->pseqno = avc_policy_seqno();
++
++	/* Preserve the behavior of O_PATH fd creation not being mediated */
 +	if (file->f_flags & O_PATH)
 +		return 0;
 +
  	/*
- 	 * Because a file may be opened with O_PATH, get_required_file_open_access()
- 	 * may return 0.  This case will be handled with a future Landlock
+ 	 * Since the inode label or policy seqno may have changed
+ 	 * between the selinux_inode_permission check and the saving
 -- 
 2.43.0
 
