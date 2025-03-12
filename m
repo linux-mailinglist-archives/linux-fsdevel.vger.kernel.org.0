@@ -1,143 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-43792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9DFAA5D91F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 10:18:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B4CEA5DAD5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 11:47:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EBBA173B1B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 09:18:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D97C188EAF6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 10:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA66823A988;
-	Wed, 12 Mar 2025 09:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7E623E326;
+	Wed, 12 Mar 2025 10:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dEDMSpUP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47ED12F43;
-	Wed, 12 Mar 2025 09:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC0A1DD9AD
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 10:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741771114; cv=none; b=MK9NvwxhYTKOAwsb/Hf1F8Ue1p/v5zHNJsiR20KuMElq8ld3nO1xseKAc+VUj1UvqUVag0un9vTALeLDm4r3xtIKVpARzTIo8C9BmOse3SgAfH06NMxI/o4LfQDRRqodaZjEupPvzrTsoQr5Pk0ca+9Iof1qTJPcmTn1Ee2EHYA=
+	t=1741776443; cv=none; b=WhgO7qEXpNCRKITQ/Z6b2yspCsqxXhBZAeo3eGUCh866DKCe8MDCtScR2asaxTHE5eIJBy8BzWeJRipBBwFgPucS8leAN6iUtjcCJKLhnABDPbKirzQCFi1bNnN5v8A/r3rdhLxNTgJ2QbjAd7tjHxsocpYBEYtmljjQ4na4oZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741771114; c=relaxed/simple;
-	bh=XOLSbscohCU8yQFAbEWn+VGCLryXVJ101DuXELd+NOs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=Zh0cDCiVueZFNtyKMpusI4V14jA/o288igYruzuPTYyG+2seTCoveazJS6DTlhEQXznctb3HHjbIrr2RQ2cRwz0JF+EIwRMbzFUFtYq/+T2ZcncVrxmHkW1Mz0BubSXx0Ihu7lXJhHI6om2ahWj2H3pIkQL7d5Q4FtpKE+vjn/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4ZCQ6v1szCz27gBp;
-	Wed, 12 Mar 2025 17:19:03 +0800 (CST)
-Received: from kwepemo200002.china.huawei.com (unknown [7.202.195.209])
-	by mail.maildlp.com (Postfix) with ESMTPS id 466761A0190;
-	Wed, 12 Mar 2025 17:18:28 +0800 (CST)
-Received: from [10.174.179.13] (10.174.179.13) by
- kwepemo200002.china.huawei.com (7.202.195.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 12 Mar 2025 17:18:27 +0800
-Message-ID: <20a6b1c1-389e-b57a-7a5c-d1b0a7185412@huawei.com>
-Date: Wed, 12 Mar 2025 17:18:26 +0800
+	s=arc-20240116; t=1741776443; c=relaxed/simple;
+	bh=R5rLCfIh3wkA1X4M48P9ltJ/JGLhQy59LLBsp6c/nSo=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=kMu1zJqe5KhG1jutG2oBi0LOVJkYqMjJLOiNmHZmq4NFjM7628y3/ZxUThGiZkTow9iSjSH7ETdtfmBn/eFttBrD+4rXbnVBy+3jcqxdclH1IH0dD8e5G5RIQzDFhbPms8WgzWU+oFO6uz0yjyBHtqblkYlWcowCT75s8XK6T6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dEDMSpUP; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741776440;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=C6XL4x7UtP7FT0DII+3H1l0/E12h2d8rNjwlhWXdZe0=;
+	b=dEDMSpUPECTJKDHdnQbe+lH9fTciluHW5ZL3LL2dzBCD05yRz1dFO/XhY7HUHpmxDic+fX
+	+qqwwxpyjTyGo/aN6hN9A2YXnQ9yuRvZl5MeLKornVSaxS84Dv6nsTllQQhdkPZrhCnKPT
+	EcZZavmpuGbkUtH+vgo4sZmcTwsJ/6c=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-135--aI8Gc-YNEOsSDpQxbe5Nw-1; Wed,
+ 12 Mar 2025 06:47:17 -0400
+X-MC-Unique: -aI8Gc-YNEOsSDpQxbe5Nw-1
+X-Mimecast-MFC-AGG-ID: -aI8Gc-YNEOsSDpQxbe5Nw_1741776435
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7971C180AF55;
+	Wed, 12 Mar 2025 10:47:15 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 116BE1801752;
+	Wed, 12 Mar 2025 10:47:12 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
+    Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+    Christian Brauner <brauner@kernel.org>, ceph-devel@vger.kernel.org,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ceph: Fix incorrect flush end position calculation
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: Using userfaultfd with KVM's async page fault handling causes
- processes to hung waiting for mmap_lock to be released
-From: Jinjiang Tu <tujinjiang@huawei.com>
-To: Peter Xu <peterx@redhat.com>
-CC: jimsiak <jimsiak@cslab.ece.ntua.gr>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <viro@zeniv.linux.org.uk>,
-	<linux-mm@kvack.org>, <wangkefeng.wang@huawei.com>, <tujinjiang@huawei.com>
-References: <79375b71-db2e-3e66-346b-254c90d915e2@cslab.ece.ntua.gr>
- <20250307072133.3522652-1-tujinjiang@huawei.com>
- <46ac83f7-d3e0-b667-7352-d853938c9fc9@huawei.com>
- <dee238e365f3727ab16d6685e186c53c@cslab.ece.ntua.gr>
- <Z8t2Np8fOM9jWmuu@x1.local> <bb6eb768-2e3b-0419-6a7d-9ed9165a2024@huawei.com>
- <Z880ejmfqjY1cuX7@x1.local> <bb6bba1d-fabe-cc14-2521-ffbf2e31ac63@huawei.com>
-In-Reply-To: <bb6bba1d-fabe-cc14-2521-ffbf2e31ac63@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemo200002.china.huawei.com (7.202.195.209)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1243043.1741776431.1@warthog.procyon.org.uk>
+Date: Wed, 12 Mar 2025 10:47:11 +0000
+Message-ID: <1243044.1741776431@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
+In ceph, in fill_fscrypt_truncate(), the end flush position is calculated
+by:
 
-在 2025/3/11 16:14, Jinjiang Tu 写道:
->
-> 在 2025/3/11 2:50, Peter Xu 写道:
->> On Mon, Mar 10, 2025 at 02:40:35PM +0800, Jinjiang Tu wrote:
->>> 在 2025/3/8 6:41, Peter Xu 写道:
->>>> On Fri, Mar 07, 2025 at 03:11:09PM +0200, jimsiak wrote:
->>>>> Hi,
->>>>>
->>>>>   From my side, I managed to avoid the freezing of processes with the
->>>>> following change in function userfaultfd_release() in file 
->>>>> fs/userfaultfd.c
->>>>> (https://elixir.bootlin.com/linux/v5.13/source/fs/userfaultfd.c#L842): 
->>>>>
->>>>>
->>>>> I moved the following command from line 851:
->>>>> WRITE_ONCE(ctx->released, true);
->>>>> (https://elixir.bootlin.com/linux/v5.13/source/fs/userfaultfd.c#L851)
->>>>>
->>>>> to line 905, that is exactly before the functions returns 0.
->>>>>
->>>>> That simple workaround worked for my use case but I am far from 
->>>>> sure that is
->>>>> a correct/sufficient fix for the problem at hand.
->>>> Updating the field after userfaultfd_ctx_put() might mean UAF, afaict.
->>>>
->>>> Maybe it's possible to remove ctx->released but only rely on the 
->>>> mmap write
->>>> lock.  However that'll need some closer look and more thoughts.
->>>>
->>>> To me, the more straightforward way to fix it is to use the patch I
->>>> mentioned in the other email:
->>>>
->>>> https://lore.kernel.org/all/ZLmT3BfcmltfFvbq@x1n/
->>>>
->>>> Or does it mean it didn't work at all?
->>> This patch works for me. mlock() syscall calls GUP with 
->>> FOLL_UNLOCKABLE and
->>> allows to release mmap lock and retry.
->>>
->>> But other GUP call without FOLL_UNLOCKABLE will return VM_FAULT_SIGBUS,
->>> is it a regression for the below commit？
->> Do you have an explicit reproducer / use case of such?
->>
->> AFAIU, below commit should only change it from SIGBUS to NOPAGE when
->> "released" is set.  I don't see how it can regress on !FOLL_UNLOCKABLE.
->>
->> Thanks,
->
-> You are right, the below commit seems to only care about page fault 
-> from userspace (which has
-> FAULT_FLAG_ALLOW_RETRY flag), and doesn't care about GUP from drivers 
-> (which may be !FOLL_UNLOCKABLE)
->
-> Thanks.
+                loff_t lend = orig_pos + CEPH_FSCRYPT_BLOCK_SHIFT - 1;
 
-Hi Peter,
+but that's using the block shift not the block size.
 
-Since this patch works, could you please send a formal patch to maillist?
+Fix this to use the block size instead.
 
-Thanks.
+Fixes: 5c64737d2536 ("ceph: add truncate size handling support for fscrypt")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Viacheslav Dubeyko <slava@dubeyko.com>
+cc: Alex Markuze <amarkuze@redhat.com>
+cc: Xiubo Li <xiubli@redhat.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: ceph-devel@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/ceph/inode.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
->>> commit 656710a60e3693911bee3a355d2f2bbae3faba33
->>> Author: Andrea Arcangeli <aarcange@redhat.com>
->>> Date:   Fri Sep 8 16:12:42 2017 -0700
->>>
->>>      userfaultfd: non-cooperative: closing the uffd without 
->>> triggering SIGBUS
->>>
->>>> Thanks,
->>>>
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index ab63c7ebce5b..ec9b80fec7be 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -2363,7 +2363,7 @@ static int fill_fscrypt_truncate(struct inode *inode,
+ 
+ 	/* Try to writeback the dirty pagecaches */
+ 	if (issued & (CEPH_CAP_FILE_BUFFER)) {
+-		loff_t lend = orig_pos + CEPH_FSCRYPT_BLOCK_SHIFT - 1;
++		loff_t lend = orig_pos + CEPH_FSCRYPT_BLOCK_SIZE - 1;
+ 
+ 		ret = filemap_write_and_wait_range(inode->i_mapping,
+ 						   orig_pos, lend);
+
 
