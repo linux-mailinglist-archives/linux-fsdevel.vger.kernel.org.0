@@ -1,117 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-43805-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43806-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 446BDA5DEA9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 15:09:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D508A5DEC5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 15:20:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFDED16CF4F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 14:09:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF36E17A605
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 14:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DD024DFED;
-	Wed, 12 Mar 2025 14:09:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DB124EF60;
+	Wed, 12 Mar 2025 14:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aFpeO10C"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iYn2cEi0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7B123E323
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 14:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A0324E01B;
+	Wed, 12 Mar 2025 14:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741788577; cv=none; b=OJHZpBvCDh0z6G6vUGG8nRPqIE7yIT12CO0lYTQGEj1GBCmDzaw13KPWXW80XIDkWOztSvBlOo8ROjT4nwgNYqkDYs/W0dXekoW9civS0In3gU9qbcm02gLnR068EIGcmEvffdFcns+eweUd7Afn1PGjQ0QkzAnhwIQiTzK7U0E=
+	t=1741789215; cv=none; b=q5QJo3QyFpYN+WdAMy2mlDszJyfpRlx5sEXh+hjFLQSiM1zKutM88veLkLy/O/6d6lXL0nc328Ia4iCZ5srCMSSQS7D8Hbskj6XF5l46x9fTD4w8tvHwg3xcHG4plrtFDebTj72xcGCcSCYcCgZBE45XJrWl80jUBz41YlLSx84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741788577; c=relaxed/simple;
-	bh=WOtEqvsTAlWvvP5rpIOeUjc+MqZj+OxBToAOp2fiQkU=;
+	s=arc-20240116; t=1741789215; c=relaxed/simple;
+	bh=FVgwkNvdBVna1lZKEuoxhUiMfcQJE7r/RVcXktgflO8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PL5O4ja0rnfCvCnmy0QHb9YbCmPC4QbyYc8gYFmN0p/czZzTrlU/OVNjIdoRyd3HStq0HWQR/RZ4rl0HxGfNTryKJEF5HiQr055D3Mcf9wdSYglGEsj1v7A5F+hZQ5ZcyK15BmgSknQn25wFLA7jCy5dehCJ2+ijaA4lbqbdmX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aFpeO10C; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741788574;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rpJ4Bp2vaPkKMLBIs0XU/8MrkCeKduDmY2mvsnVWvGk=;
-	b=aFpeO10CRyrPR66R2Jno3BROrfdi3v6VdRfrstN+uF6qhzZbkTKIo3VblcMT+anNNCrmMm
-	fMlbYrWk2wh86sn/WbuhU96FhSQwMzeCwHBA1bWG88DbPmX9Km/ctt+teygdixnodSyHiV
-	eDFX0fowzyqDRGkZrZNYpFXQCv72d5g=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-625-bb5nsvUZOQqX3Xyq-dUq9g-1; Wed, 12 Mar 2025 10:09:33 -0400
-X-MC-Unique: bb5nsvUZOQqX3Xyq-dUq9g-1
-X-Mimecast-MFC-AGG-ID: bb5nsvUZOQqX3Xyq-dUq9g_1741788572
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c53b4b0d69so1268257785a.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 07:09:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741788572; x=1742393372;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rpJ4Bp2vaPkKMLBIs0XU/8MrkCeKduDmY2mvsnVWvGk=;
-        b=DVmDMlsrKeWKqzXz1Omrw3cWmhzEoifuoO/dMPp6Qm/XrG7mCEHixz+QXtMw1R4XiV
-         fjVADYOvaY24W5woEX3zagm6top72xAs2FA2oYjCzjM5gfL6Cqjo0zd57IaOrr8xsprs
-         rpGV1r96bUcqcAEeSt5wrQJddjea5xUCS73H2XVQeC/f0qbrMZXnf5ERSYo2PuAzr8Ey
-         p/uENvm+E4MtIiqEWdZZae8Z6i6tFJ7r7ETmifR7v4DK53HBvNr8jLYQREwDhyGpnzIn
-         Swsr8hAgq0fy6BX3ynmfId0/Y3GdCHvD9Q4jkB/xSNNqoCX6pLAlfHI1bqPBoOV8ZFo+
-         P2NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmn/A7WPzMKxZKga0zfFsBT01FhUnDWBeysGW/e2gBlTKwFQufWhU6qhZTHVlvO+Hp5tuM8A0v49AkUrlS@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHNQ/E8lO9lSyTeWJ+rUz7ESL6a61S+FZaqLgCuZtNg/uA9/ZC
-	YrE9u+lGdjrsiLnmKwnHPDvbajNHjpSxEswisj/31hXVieJ40Aqu3Sd1K34ofVnmTnJC4R95BAF
-	KRdGSWse+5hPqQUArFkRKx4jVWuVdfBs17AoEa2hPyzcGHPhnq/5fh35sT/LVkrU=
-X-Gm-Gg: ASbGncuTqy66wvZInCzsO7qBCNGWuAjswuptYBDKUCISnf+zmNk+2FhzXBSEGG8Aywf
-	ZuUvhxCh7Fjrz3084vxxxBgrtAhlQB5N2hfg7nlq/Mhq27U+Ke72wBJv81F3iTn8rxvlUTxnTmW
-	S2UFYtpcwU0Alg4pI9PRtfkeRTAnDNlLLkRH6n1OjYWq+lPLSqL3VU07QVGiHey2eHoD1JwIRiP
-	vZ+O7W3NiUYkhtxniXyRKBG/UUtaFPU8iYs7+dDBg9cND9tfdew2hyBYWAMS5NQnOWXHo3TiUP6
-	UjcXbF8=
-X-Received: by 2002:a05:620a:1b85:b0:7c5:4b24:468d with SMTP id af79cd13be357-7c54b244796mr1835005685a.2.1741788572687;
-        Wed, 12 Mar 2025 07:09:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEZVAVnFr8TuudXs0D2kTM0FEywRnFo1M8MBCogN3k6/Xg3Qw7mBw/qIldth+aY3HnE9WFX8Q==
-X-Received: by 2002:a05:620a:1b85:b0:7c5:4b24:468d with SMTP id af79cd13be357-7c54b244796mr1835003585a.2.1741788572459;
-        Wed, 12 Mar 2025 07:09:32 -0700 (PDT)
-Received: from x1.local ([85.131.185.92])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c53c07b645sm727548385a.77.2025.03.12.07.09.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 07:09:31 -0700 (PDT)
-Date: Wed, 12 Mar 2025 10:09:29 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Jinjiang Tu <tujinjiang@huawei.com>
-Cc: jimsiak <jimsiak@cslab.ece.ntua.gr>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-	linux-mm@kvack.org, wangkefeng.wang@huawei.com
-Subject: Re: Using userfaultfd with KVM's async page fault handling causes
- processes to hung waiting for mmap_lock to be released
-Message-ID: <Z9GVmeHJSftfQPPF@x1.local>
-References: <79375b71-db2e-3e66-346b-254c90d915e2@cslab.ece.ntua.gr>
- <20250307072133.3522652-1-tujinjiang@huawei.com>
- <46ac83f7-d3e0-b667-7352-d853938c9fc9@huawei.com>
- <dee238e365f3727ab16d6685e186c53c@cslab.ece.ntua.gr>
- <Z8t2Np8fOM9jWmuu@x1.local>
- <bb6eb768-2e3b-0419-6a7d-9ed9165a2024@huawei.com>
- <Z880ejmfqjY1cuX7@x1.local>
- <bb6bba1d-fabe-cc14-2521-ffbf2e31ac63@huawei.com>
- <20a6b1c1-389e-b57a-7a5c-d1b0a7185412@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GXPTyF0BP1k7TxNJy+HJSlzOeZuS4dmESXPuzDS9vcS4+hwM1c28AZ2tRqH8yU+N42xbzZozEaXD+tZWcpTfm9rhHbpqrP0B0Lds9b9iwesUtqoQyCMP6DOgPOFv51yeAn0pKAbSnlQGsXn4ciL00nD3KEmYvS8dv/5mBvUNbwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iYn2cEi0; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=qKvB2nlT3iUgjzyDXuqxiMFS1Em8INDMpJfZqPHhHac=; b=iYn2cEi0fHqMF9jO945+0Payis
+	ebcZe3lInCyVQtA+Cpk69+kFkR76CPVVG5sWIB1AaJj7JPcZb82CbVScbWZQz0xP73IhCe/l9eS0B
+	gw+nctm7DFDdVykaTKLxCQU2xGZEu40w/fgZhIPiMVIPTwZj0VJxv7wWCvpAzQ3bkzq879siKtCTH
+	r/i1iXP++jhEEGCpf8DzQQBJZKbggvFv+hEm6bF7qKoD9UlmsZtH9o3A4JAW2KZKjgU63y36D1SpG
+	xM7V2kRkanFltPH0HfXyyZd6M+giV8yS0UnMLuPsaMlTzI7uGypDhKznDG5LNMBGK9RPcDgeg+wJ3
+	ZMFdBEEw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsMwN-00000008ffL-2u45;
+	Wed, 12 Mar 2025 14:20:11 +0000
+Date: Wed, 12 Mar 2025 07:20:11 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Mikulas Patocka <mpatocka@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	Jooyung Han <jooyung@google.com>, Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Heinz Mauelshagen <heinzm@redhat.com>, zkabelac@redhat.com,
+	dm-devel@lists.linux.dev, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] the dm-loop target
+Message-ID: <Z9GYGyjJcXLvtDfv@infradead.org>
+References: <7d6ae2c9-df8e-50d0-7ad6-b787cb3cfab4@redhat.com>
+ <Z8W1q6OYKIgnfauA@infradead.org>
+ <b3caee06-c798-420e-f39f-f500b3ea68ca@redhat.com>
+ <Z8XlvU0o3C5hAAaM@infradead.org>
+ <8adb8df2-0c75-592d-bc3e-5609bb8de8d8@redhat.com>
+ <Z8cE_4KSKHe5-J3e@infradead.org>
+ <2pwjcvwkfasiwq5cum63ytgurs6wqzhlh6r25amofjz74ykybi@ru2qpz7ug6eb>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20a6b1c1-389e-b57a-7a5c-d1b0a7185412@huawei.com>
+In-Reply-To: <2pwjcvwkfasiwq5cum63ytgurs6wqzhlh6r25amofjz74ykybi@ru2qpz7ug6eb>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Mar 12, 2025 at 05:18:26PM +0800, Jinjiang Tu wrote:
-> Since this patch works, could you please send a formal patch to maillist?
+On Wed, Mar 12, 2025 at 09:26:55AM -0400, Kent Overstreet wrote:
+> We might be able to provide an API to _request_ a stable mapping to a
+> file - with proper synchronization, of course.
 
-Will do it later today, thanks.
+We already have that with the pNFS layouts.
 
--- 
-Peter Xu
+> I don't recall anyone ever trying that, it'd replace all the weird
+> IF_SWAPFILE() hacks and be a safe way to do these kinds of performance
+> optimizations.
 
+IS_SWAPFILE isn't going way, as can't allow other writers to it.
+Also asides from the that the layouts are fairly complex.
+
+The right way ahead for swap is to literally just treat it as a slightly
+special case of direct I/o that is allowed to IS_SWAPFILE files.  We
+can safely do writeback to file backed folios under memory pressure,
+so we can also go through the normal file system path.
 
