@@ -1,68 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-43815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95912A5E0E8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 16:47:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC291A5E116
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 16:52:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D89B4174251
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 15:47:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8204F1881D9E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 15:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3412505CA;
-	Wed, 12 Mar 2025 15:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA272586EC;
+	Wed, 12 Mar 2025 15:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dKOoPqLP"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fxMytm9d";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Yxo63xRQ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fxMytm9d";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Yxo63xRQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B756E242935
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 15:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A425C256C67
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 15:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741794474; cv=none; b=KNFnt7xf4t9ZS6e0yJIGL8a7wLKgdjBh6VrWbck+5R3KCoeGW3kPULyXW9A37xNmh5wzMlvgmT9unZYuzLmxfS2b4m2ZmhO05h1vAbkZq+tZ60gpDRSWsV6nDh3q7KPVX3ZJLYFhwcACtuzlXhTIsSKsDb5tpize2xOQeBJ8R7A=
+	t=1741794691; cv=none; b=jveigh08Gn5IbwB62RAsF6eqFuo3QT2ekAueLjgyNE8GJpx6gQFgnvIWWAofyw71BbjLcQKLnL9Hr4QKMWjteFBeU4I53FMDQL39P/OvUvARO6zw1LDEhIHtNZUQDTmrm4ivQhM6BTlRVjLgwKwVuTn4HIaI12fgTcCWf1AxiC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741794474; c=relaxed/simple;
-	bh=EgWSUdaCI5vRax1uKDpzRUAsKc7aukmAJretm2UifBI=;
+	s=arc-20240116; t=1741794691; c=relaxed/simple;
+	bh=x0bzaDEk8aQvniRaJxUgWv0R2t78KM+JXoY5XWMzc4E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vq9e5Cci0Rw29a/F0LCgCeZs4DMGqwiwxmC0Ti1QgHZ+tP6VX3xwPHct3MJzYKW4mR9eduJgKm3FyPsbhz7YSQonifeyiRLDWOHUDCcVI5fJUJoq+5a5R05tgHehk21CfuZSHUEpUdKN6MWNlGSD1lH6/A35xyC5hEoY2Q9t9DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dKOoPqLP; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wC2yRLSP9SzCk747Gzjysf5OwHWjvsWZePbtllJ+RrQ=; b=dKOoPqLPN+WlytGcPISI6ZZ0Ja
-	oFzJBX4AtfSXxNUYYO4amoM5s2ZavFiK7NlXD9mamh9Q+9VeCamIgT6kBe/0RW20iDT1IkC+zZFoq
-	lUg7nZPFM7OQDw6CeTSm8yHYhppawJcYuGoxOUy9j7mf9KqfNrpyJ1enCC/jHBhXu7TbANV1rfSyZ
-	F8GIRDlWjkI5VbKU31ISSOa9BRzIdypGwdovZjYbb0Jlh+ygX0bhL/82kn7qMWeM8rqDDcnXJmWvu
-	MyY7WKf7JZE8RVblKUYkN+69ipKp18Lx8rV9ukEd7nuHKTzKHUGZIIu+IkDCvR/VxGp5eEGO7HqEO
-	xp3FBBjg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tsOJC-00000008v49-1Fy4;
-	Wed, 12 Mar 2025 15:47:50 +0000
-Date: Wed, 12 Mar 2025 08:47:50 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Sun Yongjian <sunyongjian1@huawei.com>,
-	linux-fsdevel@vger.kernel.org, yangerkun@huawei.com
-Subject: Re: [PATCH] Revert "libfs: Use d_children list to iterate
- simple_offset directories"
-Message-ID: <Z9GspnEyvYzrJGWt@infradead.org>
-References: <2025022612-stratus-theology-de3c@gregkh>
- <ca00f758-2028-49da-a2fe-c8c4c2b2cefd@oracle.com>
- <2025031039-gander-stamina-4bb6@gregkh>
- <d61acb5f-118e-4589-978c-1107d307d9b5@oracle.com>
- <691e95db-112e-4276-9de4-03a383ff4bfe@huawei.com>
- <f73e4e72-c46d-499b-a5d6-bf469331d496@oracle.com>
- <20250311181139.GC2803730@frogsfrogsfrogs>
- <2fd09a27-dc67-4622-9327-a81e541f4935@oracle.com>
- <20250311185246.GD89034@frogsfrogsfrogs>
- <d0dc742a-7373-4e1e-9af4-d7414b1d3f4e@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KarkhDtDCa6yO7lmoPxDMU42EJRKImrAchAWZoVrW+MSmavim+FLaid7EeS2WxSgO8opCyQdwB55oQd+FhLfP3QOQejuVFb12eNbE+0wOqvUGG1Is9ydUxZ9/dUx93dOibv8PIdp0geytTofdszLK3tcl/5jajNIXZ9oQhMGBZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fxMytm9d; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Yxo63xRQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fxMytm9d; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Yxo63xRQ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id BEDEB21195;
+	Wed, 12 Mar 2025 15:51:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741794686; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YAolITJtosWbgnrc4Sl1gW+rHyFKKmQ+Fk910mjL86Q=;
+	b=fxMytm9dRWRHCGHtl03ouUJ/RAM32u41BjH5yWb28VwBeyGiIo3THR55jxsgi//yujU/3h
+	MOlKmPR591vXtv1Abv73AKMvfFsVnQsYK+8PiKNoqORrr8pY7CAQuBZ0NjvqX+7MaI6vrm
+	bB8XcjTb+z7Y+cm7LU07iE5w+daL9ww=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741794686;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YAolITJtosWbgnrc4Sl1gW+rHyFKKmQ+Fk910mjL86Q=;
+	b=Yxo63xRQgDxrt9B4y5UvKmUR34SS4Cs8MVqymB2MqaJUVmcrFeA6ivRuYCb/ilRM+74DEe
+	t68JcSrFQne43BBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=fxMytm9d;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Yxo63xRQ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741794686; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YAolITJtosWbgnrc4Sl1gW+rHyFKKmQ+Fk910mjL86Q=;
+	b=fxMytm9dRWRHCGHtl03ouUJ/RAM32u41BjH5yWb28VwBeyGiIo3THR55jxsgi//yujU/3h
+	MOlKmPR591vXtv1Abv73AKMvfFsVnQsYK+8PiKNoqORrr8pY7CAQuBZ0NjvqX+7MaI6vrm
+	bB8XcjTb+z7Y+cm7LU07iE5w+daL9ww=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741794686;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YAolITJtosWbgnrc4Sl1gW+rHyFKKmQ+Fk910mjL86Q=;
+	b=Yxo63xRQgDxrt9B4y5UvKmUR34SS4Cs8MVqymB2MqaJUVmcrFeA6ivRuYCb/ilRM+74DEe
+	t68JcSrFQne43BBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B389313AA9;
+	Wed, 12 Mar 2025 15:51:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VcPOK36t0WenFAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 12 Mar 2025 15:51:26 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 65CB5A0908; Wed, 12 Mar 2025 16:51:22 +0100 (CET)
+Date: Wed, 12 Mar 2025 16:51:22 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
+	audit@vger.kernel.org, axboe@kernel.dk
+Subject: Re: [PATCH] fs: dodge an atomic in putname if ref == 1
+Message-ID: <naalmvyvolpfkwxoztkskhz2kyoznjjhm5y4zmfd44tyf5d24k@2jap6ty4nkwz>
+References: <20250311181804.1165758-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -71,40 +104,120 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d0dc742a-7373-4e1e-9af4-d7414b1d3f4e@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20250311181804.1165758-1-mjguzik@gmail.com>
+X-Rspamd-Queue-Id: BEDEB21195
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Mar 11, 2025 at 03:39:32PM -0400, Chuck Lever wrote:
-> It's not possible to guarantee that the next entry will have a higher
-> offset value.
+On Tue 11-03-25 19:18:04, Mateusz Guzik wrote:
+> While the structure is refcounted, the only consumer incrementing it is
+> audit and even then the atomic operation is only needed when it
+> interacts with io_uring.
 > 
-> Suppose the "New offset" value wraps. So the current directory entry
-> will have a offset that is close to U32_MAX, but the next created
-> directory entry will have an offset close to zero. In fact, new entries
-> will have a smaller offset value than "current" for quite some time.
+> If putname spots a count of 1, there is no legitimate way for anyone to
+> bump it.
+> 
+> If audit is disabled, the count is guaranteed to be 1, which
+> consistently elides the atomic for all path lookups. If audit is
+> enabled, it still manages to elide the last decrement.
+> 
+> Note the patch does not do anything to prevent audit from suffering
+> atomics. See [1] and [2] for a different approach.
+> 
+> Benchmarked on Sapphire Rapids issuing access() (ops/s):
+> before: 5106246
+> after:  5269678 (+3%)
+> 
+> Link 1:	https://lore.kernel.org/linux-fsdevel/20250307161155.760949-1-mjguzik@gmail.com/
+> Link 2: https://lore.kernel.org/linux-fsdevel/20250307164216.GI2023217@ZenIV/
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-In fact even for on-disk file systems (including XFS) it often has a
-lower value - most file systems try to fill holes in the d_off space
-created by previously deleted entries.  The big exception is btrfs,
-which just uses a monotonically increasing 64-bit counter (which can
-create problems fairly quickly on 32-bit systems, as the seekdir/telldir
-cookie is a long and not a off_t and thus 32-bit on all 32-bit systems).
+Yeah, I like this much more than the original. Feel free to add:
 
-> The offset is a cookie, not a numeric value. It is simply something that
-> says "please start here when iteration continues".
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Yes.  This then places into the next mine field about reporting
-entries added between getdents iterations.  Which can cause all kinds
-of issues when done wrong especially for rename()d entries.
+								Honza
 
-> Think of it as a
-> hash -- it looks like a hexadecimal number, but has no other intrisic
-> meaning. (In fact, I think some Linux file systems do use a hash here
-> rather than a scalar integer).
-
-A hash is actually kinda dangerous because it can trivially place
-multiple values at the same offset with hash collision.  And given
-the hashes use for directories it isn't that hard to introduce them
-intentionally for many file systems.
-
+> This is an alternative to the patch I linked above.
+> 
+> I think the improved commit message should also cover the feedback
+> Christian previously shared concerning it.
+> 
+> This is a trivial win until the atomic issue gets resolved, I don't see
+> any reason to NOT include it. At the same time I don't have that much
+> interest arguing about it either.
+> 
+> That is to say, here is a different take, if you don't like it, I'm
+> dropping the subject.
+> 
+> cheers
+> 
+>  fs/namei.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 06765d320e7e..add90981cfcd 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -275,14 +275,19 @@ EXPORT_SYMBOL(getname_kernel);
+>  
+>  void putname(struct filename *name)
+>  {
+> +	int refcnt;
+> +
+>  	if (IS_ERR_OR_NULL(name))
+>  		return;
+>  
+> -	if (WARN_ON_ONCE(!atomic_read(&name->refcnt)))
+> -		return;
+> +	refcnt = atomic_read(&name->refcnt);
+> +	if (refcnt != 1) {
+> +		if (WARN_ON_ONCE(!refcnt))
+> +			return;
+>  
+> -	if (!atomic_dec_and_test(&name->refcnt))
+> -		return;
+> +		if (!atomic_dec_and_test(&name->refcnt))
+> +			return;
+> +	}
+>  
+>  	if (name->name != name->iname) {
+>  		__putname(name->name);
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
