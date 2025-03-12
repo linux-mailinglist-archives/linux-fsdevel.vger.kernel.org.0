@@ -1,104 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-43762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CBCAA5D6B7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 07:57:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0E24A5D71C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 08:14:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D0F81782BE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 06:57:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 574391888AE5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 07:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC17B1E8823;
-	Wed, 12 Mar 2025 06:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50D01E9B35;
+	Wed, 12 Mar 2025 07:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dqx3NHs8"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RYPjBWmU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A991CA9C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 06:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A0A1E9B03;
+	Wed, 12 Mar 2025 07:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741762631; cv=none; b=jKdHqnpy2/e+7/dLvo63DKO/bqy4V3XUkvxV52niq3+4KLbYqbTPJL0HekA4ysUapYIcqst8jeZVr/K9O8pcN5huCsUsUamwl4lKZRhpQVmZdMen9U2KHZFLr7Y/ZbFUMtq8ssEIQNTUVCzBNNXMHomrgIle/pUICBf9T44Lhwk=
+	t=1741763624; cv=none; b=nU0ncxz3C9MaIf4CwoecA2vMu3Xrz32radpx7zSlDOvImwokRf5ud7poggm4XaAcPtNTQ/LpQ1Y2L+2ROqSz/G8YNQcRwSFlbxGZMR4eV1YbnBaPhjv/xwAvhztPHyKaR0rePKvAWjo3cnPkePOofK1KhzFkvANQ3TM/PqP+9PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741762631; c=relaxed/simple;
-	bh=CGj6X8im0j6eyvz1ZiOGqKpsN+vOoTYaN9QnyzioSZU=;
+	s=arc-20240116; t=1741763624; c=relaxed/simple;
+	bh=KqBpjelnFqR7IYQV3qZ7nR8rsGn6f0+jyxydzmKvmfA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oaaYdbPOEVGwpPPARcvA/TkTNyU6KmeXOGn3uChpeSMR6uLBRNVMDwuAUPypCB0EsTnQYYwMCRGp7+52fYeLjAma/LXPXT5FZLr0YjKeHa/UOUU9zgST5u+L0UtdXI+VJNku7Cbrc9Jy0Uiq0uA7I69sI/APgBxilHSAufuDfeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dqx3NHs8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741762627;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ngFN5P8pa+SiEt1Ew8FmKgFK9481luIZ3P3zqtJw6G4=;
-	b=Dqx3NHs8K09aFEB/YsOteClM/4lhfRVRqRdYOnYVypGVoplm65WEpVy+exL22j9eV57eBb
-	a5NeLuMoZuZxlAt7LKlccuRRR+vjPGVGg4tISY5gJWnQqxvShcSKPePHRI3lFxIEpWFJC4
-	cjMebRo51dATySOEHS0oq9qg9/3cFpc=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-648-wQl_Ez7OOt-SmLJTcl9iZg-1; Wed, 12 Mar 2025 02:57:06 -0400
-X-MC-Unique: wQl_Ez7OOt-SmLJTcl9iZg-1
-X-Mimecast-MFC-AGG-ID: wQl_Ez7OOt-SmLJTcl9iZg_1741762625
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43ce245c5acso31975225e9.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Mar 2025 23:57:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741762625; x=1742367425;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ngFN5P8pa+SiEt1Ew8FmKgFK9481luIZ3P3zqtJw6G4=;
-        b=ABCduMC6k6/cyuDKRpT9AcXG0xlCdmnHmiO9CUu+EhmFQSSwacMEDqwAF6j6b1pzyk
-         QUluB+5CgSke/uuaCoRQVPQyca93BzdqofgR+CvZkseAMDKQP131r3RgjFITX+EaLwyR
-         jYqCq3DmbfMSACkDYjyrdqEAL5FhIOjn171HXL48AA/8FMwStlPwChYS6aOaSsanFPDe
-         OmZv+BzoBKOcouZM2qRBk45TNbpOhBb2iiSrCXL8XoAqvwBuCTo4wi4btFzRhUBGO5se
-         zRK/P7x944XGiaUs6v6kF8LCz9MyK9c2tP4uvcwTdiPDVPa+EIQWVDwOXUz8FApIK3Id
-         BpBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpJ2Qpu8bkxsigrq2VTHCfVyZHuLF3mbaFpYS5c6p+4ZR+CC2P9zfHgl6qixF/B5ce+2XqjL/K1EK0KOIE@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFtGiHAHJN9enclnJcMM9LfhRsuWfx/v4R/7jUjFiIO2fIgZWi
-	5htNnLDVKhOK82mDCEvgLfaLyS6PrrZqH8J/F6BjfiL5rhgQVwGAVeoVaZ3U9FvVw9jeRdboy+O
-	ovScpvF8bCtC48P57Yden2hJCBBEGwPWXg7wBYQY+2S16kYJtwZL0TYtISPpp8tk=
-X-Gm-Gg: ASbGncunprBT6Ii4Q3YaGz5uuL0vBRF6d1g8W1mM5cuWwB4VghSYdd8/7mJhZjdO6FU
-	yPoibzDW1JZ5RnfUzSygyFDNtS3z2iPD696KtaH5MCxnoWLPzhJsuZ45qTmVxHvazRCny4UA9vB
-	El6O5aFnJn8rov3MvWh1Sv1NK9n6aT8KwJMAMBdf6LqfUE6ioY/BqGr4sTP4GSA4l5GcQ0WiCfc
-	NLMqHGHeLkhn+ujRkQISpxI/kTAKJtBy0MkZZpXQnC8TZKpWVePSQALQQdkFW/1JX/Xwcjn2FYf
-	nTEsDoe8PQ==
-X-Received: by 2002:a05:600c:5618:b0:43b:ce3c:19d0 with SMTP id 5b1f17b1804b1-43cdfb7db88mr143183485e9.29.1741762625064;
-        Tue, 11 Mar 2025 23:57:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFXQUbnjKhdX7cSTwHc/sH5KUBC9yqYpY1/TKqBEmz2tDiKoCFs3roMwKysiE2/kbKi5UsENQ==
-X-Received: by 2002:a05:600c:5618:b0:43b:ce3c:19d0 with SMTP id 5b1f17b1804b1-43cdfb7db88mr143183025e9.29.1741762624636;
-        Tue, 11 Mar 2025 23:57:04 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a731031sm11806955e9.7.2025.03.11.23.57.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 23:57:03 -0700 (PDT)
-Date: Wed, 12 Mar 2025 02:56:59 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Nico Pache <npache@redhat.com>
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	virtualization@lists.linux.dev, xen-devel@lists.xenproject.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	cgroups@vger.kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
-	wei.liu@kernel.org, decui@microsoft.com,
-	jerrin.shaji-george@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com, arnd@arndb.de,
-	gregkh@linuxfoundation.org, david@redhat.com, jasowang@redhat.com,
-	xuanzhuo@linux.alibaba.com, eperezma@redhat.com, jgross@suse.com,
-	sstabellini@kernel.org, oleksandr_tyshchenko@epam.com,
-	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, nphamcs@gmail.com, yosry.ahmed@linux.dev,
-	kanchana.p.sridhar@intel.com, alexander.atanasov@virtuozzo.com
-Subject: Re: [RFC 4/5] vmx_balloon: update the NR_BALLOON_PAGES state
-Message-ID: <20250312025607-mutt-send-email-mst@kernel.org>
-References: <20250312000700.184573-1-npache@redhat.com>
- <20250312000700.184573-5-npache@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HJ1/gX7mRfvCdt5AzZTVNkkgOyYFwdKiiZIla4WJc/5zFQ/z4VfbVG5IjL1krcr1m5uL3fcv1IyL+T5RvzAYl//HH2+DiMO1B6dTyaqqQXrOnImF3EE2XpcHJPqzD4l4KdCP1GuK8WdI2IUBO7Uz2694AGL2kXulDwYHowH/g0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RYPjBWmU; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=wC1y5D3fhfw2mX05dkCvjFc+X6ljXrZsVRIT6DJwfRo=; b=RYPjBWmUccgbZ2bEVCNKDp7ojS
+	OFLrDSNDuxXA+8lJp7icp+NAQtc5djoZFvgR0hXBqi7xEUmKANVlTY79Od02zwyBBc9JU8Ri2GCAm
+	G4pdTP7+9bfWhW5FXtJy0UuBkkqTeS0w3iCNc3GqovHEfzB68wMnlQERBs87rUylJPlEGcz2P2kt8
+	lel3tBSJN/FBxcrBxRn/kJGQRLVqPD9m0+GeNEPyFNazWTgxRXxzGdxL2DveWi0qQERUdGRmmqmx9
+	paxVMF84lBmx+MT8O8UwTPcyTQRynbVu5HaRXD8A9KqOgeeTefz+XwU8E4U8WTXn5jNbnMxYT5eW6
+	xfjAaypg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsGHe-00000007g6a-2IJ0;
+	Wed, 12 Mar 2025 07:13:42 +0000
+Date: Wed, 12 Mar 2025 00:13:42 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, martin.petersen@oracle.com
+Subject: Re: [PATCH RFC v5 10/10] iomap: Rename ATOMIC flags again
+Message-ID: <Z9E0JqQfdL4nPBH-@infradead.org>
+References: <20250310183946.932054-1-john.g.garry@oracle.com>
+ <20250310183946.932054-11-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -107,56 +63,64 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250312000700.184573-5-npache@redhat.com>
+In-Reply-To: <20250310183946.932054-11-john.g.garry@oracle.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Mar 11, 2025 at 06:06:59PM -0600, Nico Pache wrote:
-> Update the NR_BALLOON_PAGES counter when pages are added to or
-> removed from the VMware balloon.
+On Mon, Mar 10, 2025 at 06:39:46PM +0000, John Garry wrote:
+> Dave Chinner thought that names IOMAP_ATOMIC_HW and IOMAP_ATOMIC_SW were
+> not appropopiate. Specifically because IOMAP_ATOMIC_HW could actually be
+> realised with a SW-based method in the block or md/dm layers.
 > 
-> Signed-off-by: Nico Pache <npache@redhat.com>
-> ---
->  drivers/misc/vmw_balloon.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
-> index c817d8c21641..2c70b08c6fb3 100644
-> --- a/drivers/misc/vmw_balloon.c
-> +++ b/drivers/misc/vmw_balloon.c
-> @@ -673,6 +673,8 @@ static int vmballoon_alloc_page_list(struct vmballoon *b,
+> So rename to IOMAP_ATOMIC_BIO and IOMAP_ATOMIC_FS.
+
+Looking over the entire series and the already merged iomap code:
+there should be no reason at all for having IOMAP_ATOMIC_FS.
+The only thing it does is to branch out to
+xfs_atomic_write_sw_iomap_begin from xfs_atomic_write_iomap_begin.
+
+You can do that in a much simpler and nicer way by just having
+different iomap_ops for the bio based vs file system based atomics.
+
+I agree with dave that bio is a better term for the bio based
+atomic, but please use the IOMAP_ATOMIC_BIO name above instead
+of the IOMAP_BIO_ATOMIC actually used in the code if you change
+it.
+
+>   */
+>  static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+> -		const struct iomap *iomap, bool use_fua, bool atomic_hw)
+> +		const struct iomap *iomap, bool use_fua, bool bio_atomic)
+
+Not new here, but these two bools are pretty ugly.
+
+I'd rather have a
+
+    blk_opf_t extra_flags;
+
+in the caller that gets REQ_FUA and REQ_ATOMIC assigned as needed,
+and then just clear 
+
 >  
->  			vmballoon_stats_page_inc(b, VMW_BALLOON_PAGE_STAT_ALLOC,
->  						 ctl->page_size);
-> +			mod_node_page_state(page_pgdat(page), NR_BALLOON_PAGES,
-> +				vmballoon_page_in_frames(ctl->page_size));
+> -	if (atomic_hw && length != iter->len)
+> +	if (bio_atomic && length != iter->len)
+>  		return -EINVAL;
 
+This could really use a comment explaining what the check is for.
 
-same issue as virtio I think - this counts frames not pages.
+> -		if (WARN_ON_ONCE(atomic_hw && n != length)) {
+> +		if (WARN_ON_ONCE(bio_atomic && n != length)) {
 
->  		}
->  
->  		if (page) {
-> @@ -915,6 +917,8 @@ static void vmballoon_release_page_list(struct list_head *page_list,
->  	list_for_each_entry_safe(page, tmp, page_list, lru) {
->  		list_del(&page->lru);
->  		__free_pages(page, vmballoon_page_order(page_size));
-> +		mod_node_page_state(page_pgdat(page), NR_BALLOON_PAGES,
-> +			-vmballoon_page_in_frames(page_size));
->  	}
->  
->  	if (n_pages)
-> @@ -1129,7 +1133,6 @@ static void vmballoon_inflate(struct vmballoon *b)
->  
->  		/* Update the balloon size */
->  		atomic64_add(ctl.n_pages * page_in_frames, &b->size);
-> -
+Same.
 
+> -#define IOMAP_ATOMIC_HW		(1 << 9) /* HW-based torn-write protection */
+> -#define IOMAP_DONTCACHE		(1 << 10)
+> -#define IOMAP_ATOMIC_SW		(1 << 11)/* SW-based torn-write protection */
+> +#define IOMAP_DONTCACHE		(1 << 9)
+> +#define IOMAP_BIO_ATOMIC	(1 << 10) /* Use REQ_ATOMIC on single bio */
+> +#define IOMAP_FS_ATOMIC		(1 << 11) /* FS-based torn-write protection */
 
-unrelated change
-
->  		vmballoon_enqueue_page_list(b, &ctl.pages, &ctl.n_pages,
->  					    ctl.page_size);
->  
-> -- 
-> 2.48.1
+Please also fix the overly long lines here by moving the comments
+above the definitions.  That should also give you enough space to
+expand the comment into a full sentence describing the flag fully.
 
 
