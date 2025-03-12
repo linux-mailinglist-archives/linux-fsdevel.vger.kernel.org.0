@@ -1,85 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-43842-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 976D2A5E68A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 22:24:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5541A5E683
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 22:24:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18842170132
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 21:24:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 680F916F814
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 21:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF001F192B;
-	Wed, 12 Mar 2025 21:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940D51F12FC;
+	Wed, 12 Mar 2025 21:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="e8JsmYR+"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="MtivOH+6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6BE1F130D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 21:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321121F03ED
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 21:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741814583; cv=none; b=joRMYHKs5o57c4gfJcttWr/pAW7vmp6N3vyBvfhdebNwNxcLVPBKm8T32FNFPEYEULOZq24VwzEo/nW8St7X1G4JxXddKNmy3H1vP15eJqJfhGO9hZ5DfhjXR3ppOu76s2lqiWPOjoVSMEHN2Sq5Qdqwbbo6tVo5p3j7ehQA+uY=
+	t=1741814581; cv=none; b=dkf07oz/TS4NHOOI95pTQcUWKxng0LslWurVAQHTJ7XRZQm3E+bi/otB3EzltsHxvKfGUotvL9/3wMhtZM8K3GQep8dzATO0bUIDVIpf9q2C+8+At1JoA7Bg7bRm/PaTEAmlmw+1YgMZdct0QaESJ1xSJj6HJ7a3zw27i4Xm9ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741814583; c=relaxed/simple;
-	bh=G2e3iolvH9qEslV/akG34i7cS7UuqJvA1p2iiSDOzVc=;
+	s=arc-20240116; t=1741814581; c=relaxed/simple;
+	bh=nQa75EiYN3ygFHWP5CltgBdCU2YvLoFl9S3DeRklaTs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PthjYb635uazI0uc2HJ0fxTT2/YeSktAUk0HK7VL9y002r542DnQXTt6e4gWqS3Sf7UMb+Xuyi0lSrzbvPnVfs0LXBPoTEKWsGoUxkn51NhI/Ryb3izJXojK/Kz7C+HSXwFR4KlKG3yRSdm7KU6PNiB2FFaqzmig97WVoQnE4aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=e8JsmYR+; arc=none smtp.client-ip=185.125.188.122
+	 MIME-Version; b=TSFXuKY8p1nGjE8Mlpqqdu/0Ult2c+JuRyiYgLPSl1VDU4uT8/XreFMvo4M7vBr5LIz2V8CgyMcHPxELjLC6PJyR+ZWAXYWUtUaKQrBqiGSw5dEH4USrvIUwBh+TuebNV22MU9pdxOScOwfSlCPc8mAYW4e8NZZvYeRhb3W2GNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=MtivOH+6; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 46CFC3FCEF
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 8C8753F718
 	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 21:22:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
 	s=20210705; t=1741814576;
-	bh=yf0KmmK+2JCiuqTR1dE5uJSectdXjdHO7BaOi/Ze5/Q=;
+	bh=sxXlT+NKuH/R8o+IpND8qEtQPr3+MVFoHvHlcLQeNOw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version;
-	b=e8JsmYR+bmqnDO8ig/JUHN+ga3YznlIadNIojqds0ZG1L7WDRwkxHIzpzFsneg+E5
-	 0srcB3RsuXrVQ5MG3MWonPvlf8gfMjjod2u4SMJ1jKnC0UuERRgmiAAHp8yoB2HPqZ
-	 OxVkH+9w2zXikhY0F60PuuRqZ8yIxDBNw270dYrgm8x5ikmqkOuzFuopIOVY+vBCWl
-	 2kfer8F4Vb1RE2Bndr4A8Gvfo81TDQvmFaoy3spv8NzsLJOeWyRc6y7rGm46EJwmsh
-	 c5kDw25JpC45ZMERGVjT1glEyxSBt7zUpxa9mPK25tYo4HOZVYsTDlJ0RimYfqc0Av
-	 HWF62R3YHdccw==
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2ff6943febeso480138a91.0
+	b=MtivOH+6oH6UTK+4oGyQtFWdgYBGpW1BvdIHgh7/qBgWgjWjFrGWySzoHsGKl+Wi1
+	 fYnl06dylR21woajIXp6AXVh9C8ZXl04c1KymASkPC5WuZZvkcBm0TylCB5hKHWSKp
+	 0nHMhzpPgd8O0aqjmT0ROyGy92jzeVKpOuGR9SxD7bxJZphLTSzozF//tMsXqRSU5c
+	 0wTSbuyKJ9bPxuwydT0jholChSKtU0CYNBty8n8j3/wOnjMVxjcWitVhBIqWMBpGPb
+	 i1acZ3ZFESWEkR+tosN3uSDjCZZMe67TmqC/IrO8gRxKhOR7FgynA9yqqT3A9yVR2J
+	 XIhth+M5B7NnQ==
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ff4b130bb2so535180a91.0
         for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 14:22:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741814574; x=1742419374;
+        d=1e100.net; s=20230601; t=1741814575; x=1742419375;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yf0KmmK+2JCiuqTR1dE5uJSectdXjdHO7BaOi/Ze5/Q=;
-        b=WY/7DgGIxhxKT2Ehv9WOkNEt3/NvqaifTkUp1MP2tJgcTN+r650oSUmlIyNq0f0HuX
-         k2RB+SnW7Tf8NS5z24TH4riCTaLEvIqooAZVWomrd1OVimQPdmixUgO1K3rqlextP/pm
-         cQIg0hJYegZ+z0MMB8lfmBcWpiWX8a2d5RknXvOGQIF4c5xEx4vI7n93DS57YY3fKb71
-         aVb3kpOtp9EqGX1PExEXc6M1Fr8Ft8NtGwAOMBoRmRewTlD4mDzBxQ1WEUZTl3Mg4Jbo
-         BeLdMvGuPWjgnaDl7qhJBTw1jj2N4XsjqL1uorEPla13LbErQMnvCByjnxlY8B77LaBH
-         jL/A==
-X-Gm-Message-State: AOJu0YyZma9Hzpz0MoUvXuxTaoqMcNxiLsFpJeLJAPVdLjrLXpsm39Il
-	3fkq60KJeLXv6BGgs5Sp/YtkUtTFyQx/exn/j6dx7EfVFj+aoCU4pr5uDmyioCdouSPNx5cBK+5
-	fULjHxcfQ4AeeT+FkoAQ4jWe95FgEo3gy/qyiw7nq7Aqr69cHjqN6JKp8dZQoY7t5Fer2gp49Xs
-	nPVmFnRHeS/rnn+A==
-X-Gm-Gg: ASbGncvxPmttEKGSXsXKRceMVnHsidjhfbPXtVqxSz0aIIvC9zPF56tvIfAndBJ8Hid
-	3PvwiSGHiIF/q+Hl2pjXaL7usA6qecD6VgSXLX73UNGLcQLFtH8d6ZKVuqlESmJ78kMceGQpeOX
-	eEuqd5v/rVMoEzAQmrWrFAb1XtziD2i7fmvAnGAbOuk0ro5iWxLhW+pOdTFtL/DNaJmvMy02Fo6
-	MITxSm8hrYQAASlGp4apqeLhypMMH7DrGyU/ldrY8X5vzu8h+ovBmQqbbrCM6D4MiBHPlNUUpTV
-	QenTmYJHAzLzJQ2oJfDVl0NWaEPzmuB53/UkgIeKf/c7QqZKml28Yhae7FTHv8AElya9zt8=
-X-Received: by 2002:a17:90b:3bce:b0:2ef:ad48:7175 with SMTP id 98e67ed59e1d1-30135f6037cmr88389a91.15.1741814573786;
-        Wed, 12 Mar 2025 14:22:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHwAw+1MiMC/B8BNZEJ4oppU1sIELS1vCTl7SNsacHdi/KdGlgg9CgoB/KGdKxX2Zf2vFxSyQ==
-X-Received: by 2002:a17:90b:3bce:b0:2ef:ad48:7175 with SMTP id 98e67ed59e1d1-30135f6037cmr88319a91.15.1741814572564;
-        Wed, 12 Mar 2025 14:22:52 -0700 (PDT)
+        bh=sxXlT+NKuH/R8o+IpND8qEtQPr3+MVFoHvHlcLQeNOw=;
+        b=dxjyBpJ/qBhevSn5KM/YQyb+OLRmGH8ztYUjTtg0CDK+FvhXzznu7KBWzEDMZZxHIu
+         mbLQjwI3A8q3HADxUTnwgC8CtMeyw5PR5hr4XzP3Otc5x5UDh0le5On9v4xL8J9gvQiG
+         Dwuo3iehI2gbY5GzpNXk82uQz4doBTAU/t/gb/L0DCrsgz1MprOkXZbSMFK3CKjXTVOc
+         LWpIiGCC65d3sKi0t27HI/874vUkXf9fnFEUYs3wMYMcst46ym2M4bgJEpMDDqKk0ZAM
+         PxlGqwfD0XmqRAFVMfPOD76RImhwK6/4GOxZHw+CCv8EvZiUghNEwrTXbwEZTfdEfAwo
+         HoSQ==
+X-Gm-Message-State: AOJu0YxXbNqn8qW2QqTfkD+sZth5pZ1HWpOlNyzIL33QZiw0VhIOoTC8
+	q3vMAX96xttwvbWpiSGYvSYBY6ylxqNRe0v0FQBKoQnCpvAxWvBjW0CBf1R8+bequkIKoFreZrr
+	4fVhzfoB4gS4/f/YJP4P8ml2ZdFlMtEyQMivCQtBICF40vLxh7HRdoJGWJvNz5LDMg7MJCSKJbM
+	66qwrI7aI0pibvHg==
+X-Gm-Gg: ASbGnctJ0HCJCWGqUTLUCyjAnKLYqhnswo8nbGyTOqTKFrjKLXQMgn+vJUEapclrLhx
+	l0l9UzA/8dwbU4RzZZsaWvYG6ZJ+hg6qAMSAZmfWKLnYmz5v4ulGxO7lukF+Sy+LaEwOgn/V7ue
+	25luMsGGihC4CCuSF5NP84s1a/eoHYpx74iS2Grisodu8yeSI9Yr/p8LiD82zEEEi8nIeIh2xov
+	hKgE3ueJOcnaATR/htMuKRQV/gOYsQnqchiX0o57XnTUOv8xl19EoYYfesphhkdIaTibsO30A0w
+	cGUd476yhOM4Qry+vXw8jZAdBhqBNN68uHcrKPR6UYFFt04vOv4aefYLImYraC2oV0fVL1I=
+X-Received: by 2002:a17:90a:7345:b0:301:1bce:c255 with SMTP id 98e67ed59e1d1-3011bcec36fmr4989215a91.27.1741814575224;
+        Wed, 12 Mar 2025 14:22:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF7VJ3I6Ag0U5c89zoKAvdV8xkokC+gkGPKK5VTC7ZbVdDme14D+x+zHYl4u3ZWPKhOLxMFvA==
+X-Received: by 2002:a17:90a:7345:b0:301:1bce:c255 with SMTP id 98e67ed59e1d1-3011bcec36fmr4989199a91.27.1741814574931;
+        Wed, 12 Mar 2025 14:22:54 -0700 (PDT)
 Received: from ryan-lee-laptop-13-amd.. (c-76-103-38-92.hsd1.ca.comcast.net. [76.103.38.92])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301190b98b7sm2353887a91.32.2025.03.12.14.22.50
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301190b98b7sm2353887a91.32.2025.03.12.14.22.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 14:22:52 -0700 (PDT)
+        Wed, 12 Mar 2025 14:22:54 -0700 (PDT)
 From: Ryan Lee <ryan.lee@canonical.com>
 To: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -101,9 +101,9 @@ Cc: Ryan Lee <ryan.lee@canonical.com>,
 	Casey Schaufler <casey@schaufler-ca.com>,
 	Kentaro Takeda <takedakn@nttdata.co.jp>,
 	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [RFC PATCH 5/6] smack: explicitly skip mediation of O_PATH file descriptors
-Date: Wed, 12 Mar 2025 14:21:45 -0700
-Message-ID: <20250312212148.274205-6-ryan.lee@canonical.com>
+Subject: [RFC PATCH 6/6] tomoyo: explicitly skip mediation of O_PATH file descriptors
+Date: Wed, 12 Mar 2025 14:21:46 -0700
+Message-ID: <20250312212148.274205-7-ryan.lee@canonical.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250312212148.274205-1-ryan.lee@canonical.com>
 References: <20250312212148.274205-1-ryan.lee@canonical.com>
@@ -120,24 +120,24 @@ unconditionally skip mediation of them to preserve existing behavior.
 
 Signed-off-by: Ryan Lee <ryan.lee@canonical.com>
 ---
- security/smack/smack_lsm.c | 4 ++++
+ security/tomoyo/file.c | 4 ++++
  1 file changed, 4 insertions(+)
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 2f65eb392bc0..c05e223bfb33 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -2062,6 +2062,10 @@ static int smack_file_open(struct file *file)
- 	struct smk_audit_info ad;
- 	int rc;
+diff --git a/security/tomoyo/file.c b/security/tomoyo/file.c
+index 8f3b90b6e03d..efecfa7d15b2 100644
+--- a/security/tomoyo/file.c
++++ b/security/tomoyo/file.c
+@@ -762,6 +762,10 @@ int tomoyo_check_open_permission(struct tomoyo_domain_info *domain,
+ 	};
+ 	int idx;
  
 +	/* Preserve the behavior of O_PATH fd creation not being mediated */
-+	if (file->f_flags & O_PATH)
++	if (flag & O_PATH)
 +		return 0;
 +
- 	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_PATH);
- 	smk_ad_setfield_u_fs_path(&ad, file->f_path);
- 	rc = smk_tskacc(tsp, smk_of_inode(inode), MAY_READ, &ad);
+ 	buf.name = NULL;
+ 	r.mode = TOMOYO_CONFIG_DISABLED;
+ 	idx = tomoyo_read_lock();
 -- 
 2.43.0
 
