@@ -1,140 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-43850-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43852-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAAB3A5E7FF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 00:04:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEDA3A5E876
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 00:33:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D99DD7AC163
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 23:03:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 961AE189D71C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 23:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F661F131A;
-	Wed, 12 Mar 2025 23:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F521D5173;
+	Wed, 12 Mar 2025 23:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MlU6q2A8"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="MB2c+fpz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic307-16.consmr.mail.ne1.yahoo.com (sonic307-16.consmr.mail.ne1.yahoo.com [66.163.190.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E231B0406
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 23:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0B516FF44
+	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 23:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.190.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741820685; cv=none; b=Ytj0wqMBFbQgeo5DDcG4yVdXK8gqF5licMyRr4mxJUYagyNHT+i1h4US8c8jjGGN0eGqeCOeMiOHtcLHc1kQmpfOpqPhFQCXDg0AYyGnBpr0FsDre/XC/6DK4UJRhJgZa2EC/B7cEiIlKkYFqHSv3HVqYINk3Tz5fqmTG+skvjs=
+	t=1741822385; cv=none; b=QoTc35ltHg2abpucwqwHGmFQ6sd62RFiz1MWMefVBQm19A+Yd28JOIkhlSCjvel0hY9EIlCkkGM4hU4/DXZetJ8aF8wcWoLSTBTXAYVRzYhJFo3sOEYJ86uslEEyaFgPxAJ79/8pyV9RFb+smp10X3WnZABOCwS//w8Pp3iQ580=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741820685; c=relaxed/simple;
-	bh=d5PEY+yC9Huewb0HnCtpeT52eaIOfYoMMqMSFveNI50=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BvWwKxCQ8afnJdpRsPqh6ZD1LTIanM6bzPVMXDyUAIXNnm/5HPACLc+U3bzxcq+jzqGSL23VlMdo2wyKMok0BXjZ2c097XN6ZbxHVqLYeYl9w9HPz5ngWqH/2rg1kDYt1iRnF4GzrAs0PUq7Eq8G2cdQEHub1NNOzCWPKo5KS2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MlU6q2A8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741820682;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d5PEY+yC9Huewb0HnCtpeT52eaIOfYoMMqMSFveNI50=;
-	b=MlU6q2A8a4uCwqBNOlxeDEILGorCOSeWUvxDY+SIWf5LWnKEi1j7LJyx151qsyGUl2RY6t
-	NiR9c+TsFmuceIU6+dGFxR1J9sfo1xk8irhkoqPSbYwLVSnYz1FrJDYI8hqERbUhNU4yNv
-	+8X9qeZ9LqKRd2CvH1K/NA4ervmG4fE=
-Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
- [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-457-wCqogoMDPy-Go8oKNq9qCQ-1; Wed, 12 Mar 2025 19:04:41 -0400
-X-MC-Unique: wCqogoMDPy-Go8oKNq9qCQ-1
-X-Mimecast-MFC-AGG-ID: wCqogoMDPy-Go8oKNq9qCQ_1741820681
-Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-6feb1097d64so4946047b3.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 16:04:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741820681; x=1742425481;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d5PEY+yC9Huewb0HnCtpeT52eaIOfYoMMqMSFveNI50=;
-        b=qb3PHTfQKJvrHFbKgRAMNi6jXTePcLzgQMkZEjPW/rC++YHivcd1Wpa7U49/iLirfh
-         de38Jto/d6b7ZT+jxbIMJaLza6QFyLIkjY0+c8lmzpO9+4SpHGze4Cw4pRTuHTGinKT/
-         7HsXo6Oc6oiPfERo2whL+bHRAVt76x6IsO7PnmYkbQZwA9Gt2gkQnVcgCnxdiNGe/q9L
-         /M9ZI8Sz3izDO6aaJ5eBHw3il7/a4zFHT3JHsdFVpxA6YfWyhAQOrDoy3k5pNUk6KuPm
-         s/5oQKWY3ntRSfvcRhc82teuC5OTGWZ2PCztbfV8iCcbaiZ9rhbq+u+ABwn5g0wE5KOZ
-         Qp2w==
-X-Forwarded-Encrypted: i=1; AJvYcCW2BlDVoHmJ3itCS5xOSrxnhELZ+NSwI/32Zw7ZKsVg9kHv4RMf7Kp828WvVeh+5SBrJCg1zbWBjudBRhkZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlZ9h3OCq8ZBQJZ/dFM5Ev9zrmRrrj1dbHYqkHEB3W4wKBLKCL
-	Y+UpihZ6g/DWoYiXXf2gmRgyAIJfeVreXzMxIIOcKOz8LaE4WQ7B0LvcJw6ZxFGkl4Dmi4jyaou
-	P910Tma87Y1wbwiyUEzDzwXluBDN07YehaVQemJ/G6e8G2V7W2a8ZSlXrMj7hV3rQujoXkdWxW0
-	4M7oX/ZFsKaWDzoSl8qV4300TYpN7CFldp94+gGA==
-X-Gm-Gg: ASbGnct9fQAyFqQNjHczrHQz8YSmUCrdCoRpTxppiToeFTP4CnADekU/uL9LGMbV4La
-	sI8Xr1D0l0CxLnQMgNo7qK8Cp1J8XqL+aqXSI3hZKT3G0vbl1pxdlY0xMxYN3zAnqiW31T9AZPY
-	emCU9jgJ2PeIs=
-X-Received: by 2002:a05:6902:2ec3:b0:e63:65bc:a173 with SMTP id 3f1490d57ef6-e6365bca293mr20489031276.41.1741820680968;
-        Wed, 12 Mar 2025 16:04:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFE29IOsL3if064ONRlZf/bCswPuk7JbIN/+ScTtHA6PhUNFhrt31PPwWl6SfPGyM46nmrjRUH8DQbWz44H/+M=
-X-Received: by 2002:a05:6902:2ec3:b0:e63:65bc:a173 with SMTP id
- 3f1490d57ef6-e6365bca293mr20489001276.41.1741820680678; Wed, 12 Mar 2025
- 16:04:40 -0700 (PDT)
+	s=arc-20240116; t=1741822385; c=relaxed/simple;
+	bh=vT6PAURo4MNN0PEl7mxHirVrCIwv91xowfPOi+urB3Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IRBFiyKAMC1L7iDnRIn6Xo0bSyQOACHzNzw0G2ESVwM8tWTeszOgdX70kma/1Xeq65+hRS0SxFg5hjgHouEO1DyqveHZ3ucP2NJ2k297+4zrjDIdvdv8KOZQprk3VWBc4wbYnqYMWJHOkhW0w8+/mnLYc+w59WqY05nRzIIDp6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=MB2c+fpz; arc=none smtp.client-ip=66.163.190.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741822383; bh=GksvniJbV2RDtt/B/FzhP1sVZRmoi2tuT6NLJdfZJFE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=MB2c+fpzRu94tPvrqbuzkPUN5nnAgxcm3Lwbfv49D4bCL8G5zHO/tv45eHgM9hHznvGVzHQvTYNNQDiuOGk4mMNB8DYCksxz10WjMG4mztq341qWDEkxstWMJNW7qitLmwo1dtCIMlVfNHfh6Kq8Tl+YlYQMKVEjwKlCapa2gH1D6g9c3N4O9qi1KOr+FEQcHa/r2GHXqFLoqco2OrBskLc5XElZbPE3QAnXkIg0sml3GYM2JrMGRZOE7HZJiHVdDJohNOYw6iEqphqZUJMKW/NtMuu8OAkY+1pA1f7bUOkEkcaSWTFjw5jXrN/zSFFIw/1tl7KZUSV5eqKjUewE9A==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741822383; bh=T1zOHUYuuf+ZK4x7W7orZmddltnIRpblpNz3KFUtnBT=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=t3Ye+2hAOSB0Ip6r8YaJCSyvBgrJVWqQXv4sz0//YwKOnDrA5YCMEhGHQUBY1GkobRNmDzHsKXSWMdOzpsH4RP76ELoYltU9m+FvMPLz6t/cCaqObDLfUnQ7rMa3V2lumiQ0uvtjM36UEEMXkAgVH8pqNuwuk/9wbhhv9CFQE6MDdtCVjJozwNphdA4mwfm4ZajddmDCIuYne8YOE2syh1feSRT9DmDRjXf1lBBKibF5GXap3BJ8Yyg2x17zPjZRfWOTX9/8GyD/sWXvyDyBbISJ2FXANP0yMxBz5Bha5jksu1TaJJWFaFrS1qHm9eND4gYkSf9DhTUXQX+WJA90AQ==
+X-YMail-OSG: CblqW54VM1mlJoZ1Vh_N7qHqJXDbZX4uGEHXP1NHJeEbB4MozVPfLB92ulLKVaz
+ mIh26SA02syEWkisYf_rAu.UGSdmizh9PqVHTSqJZ5n5b.uWLFaxtjTv1EmJHiIqUfAIixCm1Y1U
+ 4LBp2MprB.UmA3ykYS.Fnkv6qAN_asM9FI60U8i0I2jeI2ceY4ldVMFo3mQFpwAoa3sl7wvxvJWX
+ B41lf6w4xqGPLI6jf5KO.MktqaxW5wCHr323_nCNDIK80oYdiXq2rIXa9YGrtWg46VjNsYdjIguy
+ kV85u0PcaTR2SVfBiiMEbvWHrvMDMrmmsFHSDKqVYnQs12RZnPUn0V7hvY6hgHKx2WD9xw1Gynb4
+ wewbA30H7DCS15wzS3BIMaBmRAE0AX6WWmqsEA3Sbu8xyqj88qdBbIHn_i31b9lSq9qaOwtUcYnV
+ GIslh4Mvabafz6Egik7YpiFdlXKdv4DhxtPSJE5wTqORlpRXM4NSqNebnp5QF.Tmyx95IqJxhepg
+ Q10nm9b21_3zMMXdysiu3foRYCPoanoaPHfEhfcHauIVqpczR.WCcnYX4_Ybvw8d5qY8afipeuYU
+ ECq_BmnQCmIS3u7te.7LvNOsxMSNrZ3FjDKf2GZTH_XG_jq7bPExa4tC0iMWApXRwUxHBpp3aE9e
+ BZ4YEZiFh1WcpAPLjIjHRsFU9VvMz9JOuRDTj1sdo_qLALScOOMDeSr3gr1CLXHqo8diJbQ4p5xX
+ vOy7sWjLIJ2QcL7pTs7B_G6jt_vLb_Fnnzh9U_QjP2V__uzhPfPsmkfDteF2mnhJPhG35TaDArgU
+ _bvRCrHIY1iFeVjXa.WxKngFNV5whESnWOpTAaJ8D2xiIU91MHH5oIc.wjaSXRHtAuTcbG_J9kcM
+ AA6jp8KiQ8l11PoYyh6Cyzae9mH6vMODdRaqAJ9W.IlYyeeqQPYTyT5ORcxg0_ZqvdfolJMBjDJB
+ BJsvYfvWEtY.z4pcPGfhg32wiZ92WoShH1CRuGMraQ21M6fR01DSVTTnlpmqAHsZxUdw4hgTLjbG
+ tDeES_ijWOMIpi6.55cWQ.pP1LbOLBnWInQ27fZVypXJ2OWVXTU7ku09mD0kKJeIRSqUdW.IrR2a
+ odyV_GMwBoTXtaSm3D.7JWTviROUQwsovdIvJ_2TR1sbsR6Ei3uAVCsFfwwzPdNj52hAOwBXdJ2j
+ IjmG.tsoOh17XMJCF4Dcg5LBlzFI9.VJT08AQ0csf0z22Fj9TeUWdAt2TpHcOoa9WdADbEbMuCW3
+ AukpgJLGpRBY_eAARMVdjRUFYK8UOTdB6NvebCSWCEQ0NR1cZxacue64Dhf5RoXZ3YIiO9XCsPHO
+ H0oWDI9CqHjf5gzE5sElKEps9wZW_fX12ouiK4f.4MfMBgSqr11R2fgdEkQSvnqAudSSmxkFYYgU
+ 67n_uQY5NHui2cnblL_Tj6I.K_zjrclJ03v5abj92m8w1DjFD6ak2b5ovrTUAuZZ7Ta2.ME7sK.Y
+ b5eCiLtaPnhxOrCzGf8lY5x9Nnq2icnVWbAvGeXSyWdMYK1z4K6o3d1eSw147sbAjot_ejG42oEN
+ 8rQzvrsXWGrdD6R9Mil.jof5EPzwP.cWceS8EPinRzMQAaQCk0LknjFtUZjffWrAV87MJpeN2yP_
+ v2A7YbHQH.NQgHMcSjGy3iWmRemiZrqBZpLoyHVs2trWFRcdmkQNiprbF3HRqjlMf3lo6mOFVSPt
+ bLuBCXGG6g0QOyGI7pyIxYzHgCnRqELF8ZeRI.t.3lb.2BXDa8zLKxCCZVNYcDXwGMPLzZ7c0hkx
+ fCAe_ZkXralxcDehrf5lUbbXa9zkfH_a5w21MJMdgLiBSWNr3znVhM3GrjOC.WVa.HELylfUXvYB
+ 9AyqZ4.G.jxGQNBHq2lnhClOgK9_KOYbcJ5C7fA51vUHzzHvaWtbDO.a.RsfdtJyE6ySbvIO02W.
+ VIONzjVQ6rQRHgRkGKMbUNncJBK3e9vkuT9o05LBh11DY8aGupVBxf.6w8hhjwqUuHBJv0gjU9xz
+ P04sluQIUpezYH3PWBj3biyCSbzTYyXJcmBGeTS1yl1bImyNQQy2KSWBSAgvYFDr1_YJm1ys3RIv
+ C0.GCqHvJW0pOfNWWfGPp25oer3S.N_mmXXJRhvPgQq_18zMOVeaYhbboujD3jfrqkJQzXdbGCv1
+ Guzi3LIISknIt5_h6eIF5r5iAw7xnnv3uySgEtu_.ijM29O2KT03RsNAp397Sp6.2IaJ82iYVzVg
+ TzjME8302.mLWNOzdzcve5RnKghz6EGnwcHp4YNwhhDNJA9LeWQOPT90Nbm.g1xYC99ipjnuArJC
+ WDF1VToI-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: c231de60-f6ae-47b3-b766-6c39b1353092
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Wed, 12 Mar 2025 23:33:03 +0000
+Received: by hermes--production-gq1-7d5f4447dd-n5sg2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID fae0248b384e80f26af981590c55b4fe;
+          Wed, 12 Mar 2025 23:12:44 +0000 (UTC)
+Message-ID: <fdf0e86a-5ba3-4d28-8c63-b2019af009f1@schaufler-ca.com>
+Date: Wed, 12 Mar 2025 16:12:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250312000700.184573-1-npache@redhat.com> <20250312000700.184573-2-npache@redhat.com>
- <c4229ea5-d991-4f5e-a0ff-45dce78a242a@redhat.com>
-In-Reply-To: <c4229ea5-d991-4f5e-a0ff-45dce78a242a@redhat.com>
-From: Nico Pache <npache@redhat.com>
-Date: Wed, 12 Mar 2025 17:04:14 -0600
-X-Gm-Features: AQ5f1JrCck7ZrLXTjsNL6uP-21nbhhEyl_MT0WXZGBOwpNadq0-oKKZGcnVqKd4
-Message-ID: <CAA1CXcCv20TW+Xgn18E0Jn1rbT003+3gR-KAxxE9GLzh=EHNmQ@mail.gmail.com>
-Subject: Re: [RFC 1/5] meminfo: add a per node counter for balloon drivers
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	virtualization@lists.linux.dev, xen-devel@lists.xenproject.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org, 
-	decui@microsoft.com, jerrin.shaji-george@broadcom.com, 
-	bcm-kernel-feedback-list@broadcom.com, arnd@arndb.de, 
-	gregkh@linuxfoundation.org, mst@redhat.com, jasowang@redhat.com, 
-	xuanzhuo@linux.alibaba.com, eperezma@redhat.com, jgross@suse.com, 
-	sstabellini@kernel.org, oleksandr_tyshchenko@epam.com, 
-	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org, 
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
-	nphamcs@gmail.com, yosry.ahmed@linux.dev, kanchana.p.sridhar@intel.com, 
-	alexander.atanasov@virtuozzo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 5/6] smack: explicitly skip mediation of O_PATH file
+ descriptors
+To: Ryan Lee <ryan.lee@canonical.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ John Johansen <john.johansen@canonical.com>, Paul Moore
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
+ <mic@digikod.net>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>,
+ Kentaro Takeda <takedakn@nttdata.co.jp>,
+ Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20250312212148.274205-1-ryan.lee@canonical.com>
+ <20250312212148.274205-6-ryan.lee@canonical.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20250312212148.274205-6-ryan.lee@canonical.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.23435 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Wed, Mar 12, 2025 at 4:19=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
+On 3/12/2025 2:21 PM, Ryan Lee wrote:
+> Now that O_PATH fds are being passed to the file_open hook,
+> unconditionally skip mediation of them to preserve existing behavior.
 >
-> On 12.03.25 01:06, Nico Pache wrote:
-> > Add NR_BALLOON_PAGES counter to track memory used by balloon drivers an=
-d
-> > expose it through /proc/meminfo and other memory reporting interfaces.
+> Signed-off-by: Ryan Lee <ryan.lee@canonical.com>
+> ---
+>  security/smack/smack_lsm.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 >
-> In balloon_page_enqueue_one(), we perform a
->
-> __count_vm_event(BALLOON_INFLATE)
->
-> and in balloon_page_list_dequeue
->
-> __count_vm_event(BALLOON_DEFLATE);
->
->
-> Should we maybe simply do the per-node accounting similarly there?
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 2f65eb392bc0..c05e223bfb33 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -2062,6 +2062,10 @@ static int smack_file_open(struct file *file)
+>  	struct smk_audit_info ad;
+>  	int rc;
+>  
+> +	/* Preserve the behavior of O_PATH fd creation not being mediated */
 
-I think the issue is that some balloon drivers use the
-balloon_compaction interface while others use their own.
+In Smack the single line comment is discouraged. Please use
 
-This would require unifying all the drivers under a single api which
-may be tricky if they all have different behavior
->
-> --
-> Cheers,
->
-> David / dhildenb
->
++	/*
++	 * Preserve the behavior of O_PATH fd creation not being mediated
++	 */
 
+> +	if (file->f_flags & O_PATH)
+> +		return 0;
+> +
+>  	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_PATH);
+>  	smk_ad_setfield_u_fs_path(&ad, file->f_path);
+>  	rc = smk_tskacc(tsp, smk_of_inode(inode), MAY_READ, &ad);
 
