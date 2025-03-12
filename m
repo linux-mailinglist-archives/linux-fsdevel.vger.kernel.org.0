@@ -1,198 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-43826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43827-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B92A5E216
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 17:56:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62769A5E2B5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 18:27:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BFBB1897F8F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 16:56:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C0923A6BB4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 17:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5C7247DE1;
-	Wed, 12 Mar 2025 16:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606C5257AEC;
+	Wed, 12 Mar 2025 17:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qk6ZOTdN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="x9gDHSwF";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qk6ZOTdN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="x9gDHSwF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cSPN1kFI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060A423C8A1
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 16:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1819E257AC9;
+	Wed, 12 Mar 2025 17:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741798581; cv=none; b=cdGPQrxqSEkneVe8D8YQYRFmWdbh6jSPiqEELFonWO5O35RiUTHrCSX2C+Wd1dhQpn4CfbCC1Ch2JGwbAo39/zYFU/35TDqPVJ/QEMS21Htmlg4ZOsOLsuJufmCC9ccW4QVeRYgO2jIH6/yC9ALN7CdDhtCG+ts9pDWUQLkhuis=
+	t=1741800076; cv=none; b=kWlIzuKvd5iMwYR1CqY+Z5qREi/pOEZoeqOLWqFEVTQX2ieJ+cwyhZPOC6tzkMEi6LzKhJgpqFumW8JrwE3pG/qC1bpc3fAwDvLEThFAmsfn+CqEQdGx5XuMVA3gW6CmVIjv+mgbPL2eSxZjUWPu6NsA3dw7C6ggf2KXYE925dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741798581; c=relaxed/simple;
-	bh=uh35nGN0IHCrnwywIYK+0vEczrB5TEUMO0E6zbeTKfI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nYCm5OW9qvMjB3gj2I72XiStWBVYfFZ9aEO3A9DBNr1wtKZKKIKYauF48GkON9gcJyZs3j4SGCJr7Jqk5Kgrb/Sv4GN+JUgg+DGgbvuue99T6Z2jdCE8gBbb8KTth1OfAus59yID992KuTKLfr5MbtHPQCGQWK73LowSaJ1qO9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qk6ZOTdN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=x9gDHSwF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qk6ZOTdN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=x9gDHSwF; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3130A21162;
-	Wed, 12 Mar 2025 16:56:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741798578; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NP19c8DtsXsOXhqedlpTQdpMcnzzs5JhTXYgSKYWJtA=;
-	b=qk6ZOTdN2O8DG0xVJqfH7r1m04DlHuClu9yl7AcA+uNMUQ6WBog/QaQcDguLUCFBL6Xgr+
-	732vcBNLShhtozBJp7mcbWpIGT+m+HvZ0+1o+46ZXgzXS01ZBcN5yveTV++YA/c4Qi3nFf
-	Z1xXGAe/FeMhtHLmcQdZiK8U338LWwk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741798578;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NP19c8DtsXsOXhqedlpTQdpMcnzzs5JhTXYgSKYWJtA=;
-	b=x9gDHSwFXNaeZ7wmZKSHUh/wCklBf1rLrUcChN7rBbOoU6wT7bYdaWEkqqeF9cDp7ImfEN
-	8Z4CIhyuI44GE/BA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741798578; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NP19c8DtsXsOXhqedlpTQdpMcnzzs5JhTXYgSKYWJtA=;
-	b=qk6ZOTdN2O8DG0xVJqfH7r1m04DlHuClu9yl7AcA+uNMUQ6WBog/QaQcDguLUCFBL6Xgr+
-	732vcBNLShhtozBJp7mcbWpIGT+m+HvZ0+1o+46ZXgzXS01ZBcN5yveTV++YA/c4Qi3nFf
-	Z1xXGAe/FeMhtHLmcQdZiK8U338LWwk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741798578;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NP19c8DtsXsOXhqedlpTQdpMcnzzs5JhTXYgSKYWJtA=;
-	b=x9gDHSwFXNaeZ7wmZKSHUh/wCklBf1rLrUcChN7rBbOoU6wT7bYdaWEkqqeF9cDp7ImfEN
-	8Z4CIhyuI44GE/BA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 28B25132CB;
-	Wed, 12 Mar 2025 16:56:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id SNbqCbK80WdHKQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 12 Mar 2025 16:56:18 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D5E9DA0908; Wed, 12 Mar 2025 17:56:17 +0100 (CET)
-Date: Wed, 12 Mar 2025 17:56:17 +0100
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Josef Bacik <josef@toxicpanda.com>, 
-	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 0/6] Fix for potential deadlock in pre-content event
-Message-ID: <b7ryrvrr4m42x3sjvjeh334zjldtgeioslw4cfe7mbuhhe5w2p@3qujunxr4ezd>
-References: <20250312073852.2123409-1-amir73il@gmail.com>
+	s=arc-20240116; t=1741800076; c=relaxed/simple;
+	bh=ezMQJDDH5pZGdCgBouyFM/QwN7NNld6MDFPteWYa7us=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VLB+GlIBW6OZnDnqllbuwNlYUBgboPk3kvHkNM3LEfRQ6U+NwaFc4tXXzCt3096ednXJbjuR1K6uYrh9f5C6UDJ50+0iUN2V1izvdMo2FpYYF0LguEpQaCbX+vm5gPRijbXfQ92DvnksNnBfEd3CnK7RX4lUNE0Qtc+P8lHGhrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cSPN1kFI; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e6194e9d2cso8965593a12.2;
+        Wed, 12 Mar 2025 10:21:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741800073; x=1742404873; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L2jxprZq6/TlXm3X2dWej9t/G/kOGcm/J/rsTCWSbuc=;
+        b=cSPN1kFITvuitElohoEdUbo7SHs+3p3+EcRrPhUsaP11Z1BsZLIKda5b7+c1924kWN
+         JM1wLZdmuG4B+HjrIM6dgKiWgSBQrmh53K5WQ2T6ucAGpyIIxEji6i11NJ7FSObVEL0/
+         c5Lh+9ybpZ0i3YOoeVV12GG8+TrZnPvI5zs56EULiLgJO+P+WHlTEtGAMh5+/xIeefkq
+         WODpz+G+dVT3YkCOL9LzXAHHaV6Ojt5SoWTkq1g7+pqWuICbNaI7pt/5FWs/0Te0pTXA
+         /AoxhbLXmgAPuF5sUoKhLIkNadE8ynf4aoFN10jtF+2mWIOH4Oga+LdyykFQA1DJWFIp
+         6r4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741800073; x=1742404873;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L2jxprZq6/TlXm3X2dWej9t/G/kOGcm/J/rsTCWSbuc=;
+        b=Qp3v9nqw2mHZ3ui2eEgIpabxH0UrNf+P9LI2Rq9phS0qyfqnVkdS64CI1C5MADSj42
+         bubfRnOsCFaInJfwfTJMoIPkH0Kvon6VJOK3gOBRzjgJI697Y77iAhK2Pq3LT+Ndv5bz
+         /MjdO7FDEXs/xfNoi01c2+EIgfgMytNdHyLH86zXedsdmdVa+6I9hjHv78t8PLpucBZE
+         TEnWK/cvKaVoRRuvklOWzvC8kO8id3mmKubshd5dvi/3UJMvfeJJLN2Z+biInpJbZbKR
+         VNT2TvIDHl20MVgc4nWkNE3jPDGAwrVAzq8iR+hphEsFa+2X8EBUuT40vr2YPsf+YIOx
+         OUxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4/vet71xpcXt5SZwpBmlUj49uOEYrAQCzt/MHJeMtanRHK0mjfunhVNb9nGCiyF84ENCPqs36Ue81yBXG@vger.kernel.org, AJvYcCXE1Neg7nqPRjeT3Kd/c25zNjdRm8XiSq+Qoolv7zDMDq0AedZuq514R16mYBnoQlyDeve8o2NIl/4rBK/i@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq/pxLnGg/9Rcd2bXJEiIHsIkqv9dU7wMbELRgInz6g7DIhUb6
+	+1XaJX8YpqHz10jLUdkcCvOnvzBLFRDNo2yPwrTgEXEeRdKCOE6tOXRcacvzaK+SQeT1s4yy/yw
+	zEsA6IiYazLVEgCvjejy2VUzmoa8=
+X-Gm-Gg: ASbGnct7qbVWGMCooPv1jL7vJxOREJHGQsNaMymEvS1nackZfMs03q49nlqAXq4fSqk
+	lOo4VKPD7sJeB7quBI3PUMLzn15MTbZzMmWJ6BiC430LNKbOf90nQGyNf12Atiw3WgsThlVgTMA
+	3auOjg01A1YCWHQ2ZLQOP3gLEFsQ==
+X-Google-Smtp-Source: AGHT+IGZKCdNaD46bQEQD4yCZY4m8lNuqNL5dctzGNqdvjioAt8O+CuBxKkpjPkJkDlAD+Y1hwqnOUC0RthR/bQa2T8=
+X-Received: by 2002:a05:6402:520c:b0:5e4:d402:5c20 with SMTP id
+ 4fb4d7f45d1cf-5e5e2115ccbmr31219131a12.0.1741800073124; Wed, 12 Mar 2025
+ 10:21:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250312073852.2123409-1-amir73il@gmail.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-0.999];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+References: <20250312161941.1261615-1-mjguzik@gmail.com>
+In-Reply-To: <20250312161941.1261615-1-mjguzik@gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 12 Mar 2025 18:21:01 +0100
+X-Gm-Features: AQ5f1JqIj1j0OFKelg4MBgowbjL56dyWWVXAOq0PAbFCx7yHBpgNlLd3p-OTPro
+Message-ID: <CAGudoHFH70YpLYXnhJq4MDtjJ6FiY59Xn-D_kTB9xsE2UTJD_g@mail.gmail.com>
+Subject: Re: [PATCH] fs: use debug-only asserts around fd allocation and install
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On Wed, Mar 12, 2025 at 5:19=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
+rote:
+>
+> This also restores the check which got removed in 52732bb9abc9ee5b
+> ("fs/file.c: remove sanity_check and add likely/unlikely in alloc_fd()")
+> for performance reasons -- they no longer apply with a debug-only
+> variant.
+>
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+>
+> I have about 0 opinion whether this should be BUG or WARN, the code was
+> already inconsistent on this front. If you want the latter, I'll have 0
+> complaints if you just sed it and commit as yours.
+>
+> This reminded me to sort out that litmus test for smp_rmb, hopefully
+> soon(tm) as it is now nagging me.
+>
+>  fs/file.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/file.c b/fs/file.c
+> index 6c159ede55f1..09460ec74ef8 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -582,6 +582,7 @@ static int alloc_fd(unsigned start, unsigned end, uns=
+igned flags)
+>
+>         __set_open_fd(fd, fdt, flags & O_CLOEXEC);
+>         error =3D fd;
+> +       VFS_BUG_ON(rcu_access_pointer(fdt->fd[fd]) !=3D NULL);
+>
 
-On Wed 12-03-25 08:38:46, Amir Goldstein wrote:
-> This is the mmap solution proposed by Josef to solve the potential
-> deadlock with faulting in user pages [1].
-> 
-> I've added test coverage to mmap() pre-content events and verified
-> no pre-content events on page fault [2].
+when restoring this check i dutifully copy-pasted the original. I only
+now mentally registered it uses a rcu primitive to do the load, while
+the others do a plain load. arguably the former is closer to being
+correct and it definitely does not hurt
 
-Yeah, sorry for a bit delayd reply but this seems like the least
-controversial path forward for now. I was thinking for some time about a
-proper solution for the deadlock but so far I didn't come up with anything
-clever.
+so this line should replace the other 2 lines below. i can send a v2
+to that effect, but given the triviality of the edit, perhaps you will
+be happy to sort it out
 
-> After some push back on [v2] for disabling page fault pre-content hooks
-> while leaving their code in the kernel, this series revert the page
-> fault pre-content hooks.
-> 
-> This leaves DAX files access without pre-content hooks, but that was
-> never a goal for this feature, so I think that is fine.
+>  out:
+>         spin_unlock(&files->file_lock);
+> @@ -647,7 +648,7 @@ void fd_install(unsigned int fd, struct file *file)
+>                 rcu_read_unlock_sched();
+>                 spin_lock(&files->file_lock);
+>                 fdt =3D files_fdtable(files);
+> -               WARN_ON(fdt->fd[fd] !=3D NULL);
+> +               VFS_BUG_ON(fdt->fd[fd] !=3D NULL);
+>                 rcu_assign_pointer(fdt->fd[fd], file);
+>                 spin_unlock(&files->file_lock);
+>                 return;
+> @@ -655,7 +656,7 @@ void fd_install(unsigned int fd, struct file *file)
+>         /* coupled with smp_wmb() in expand_fdtable() */
+>         smp_rmb();
+>         fdt =3D rcu_dereference_sched(files->fdt);
+> -       BUG_ON(fdt->fd[fd] !=3D NULL);
+> +       VFS_BUG_ON(fdt->fd[fd] !=3D NULL);
+>         rcu_assign_pointer(fdt->fd[fd], file);
+>         rcu_read_unlock_sched();
+>  }
+> --
+> 2.43.0
+>
 
-Yes, I think we can live with that for now.
 
-I'll take the patches to my tree with a view of sending them to Linus over
-the weekend after some exposure in linux-next.
-
-Thanks for taking care of this!
-
-								Honza
-
-> Changes since v2:
-> - Revert page fault pre-content hooks
-> - Remove mmap hook from remap_file_pages() (Lorenzo)
-> - Create fsnotify_mmap_perm() wrapper (Lorenzo)
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/20250307154614.GA59451@perftesting/
-> [2] https://github.com/amir73il/ltp/commits/fan_hsm/
-> [v2] https://lore.kernel.org/linux-fsdevel/20250311114153.1763176-1-amir73il@gmail.com/
-> [v1] https://lore.kernel.org/linux-fsdevel/20250309115207.908112-1-amir73il@gmail.com/
-> 
-> Amir Goldstein (6):
->   fsnotify: add pre-content hooks on mmap()
->   Revert "ext4: add pre-content fsnotify hook for DAX faults"
->   Revert "xfs: add pre-content fsnotify hook for DAX faults"
->   Revert "fsnotify: generate pre-content permission event on page fault"
->   Revert "mm: don't allow huge faults for files with pre content
->     watches"
->   Revert "fanotify: disable readahead if we have pre-content watches"
-> 
->  fs/ext4/file.c           |  3 --
->  fs/xfs/xfs_file.c        | 13 ------
->  include/linux/fsnotify.h | 21 ++++++++++
->  include/linux/mm.h       |  1 -
->  mm/filemap.c             | 86 ----------------------------------------
->  mm/memory.c              | 19 ---------
->  mm/nommu.c               |  7 ----
->  mm/readahead.c           | 14 -------
->  mm/util.c                |  3 ++
->  9 files changed, 24 insertions(+), 143 deletions(-)
-> 
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
