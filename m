@@ -1,61 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-43799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B43A5DDF8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 14:27:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D160BA5DE49
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 14:45:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54218189061E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 13:27:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBBFA7A2265
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Mar 2025 13:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9028F245013;
-	Wed, 12 Mar 2025 13:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D2524A064;
+	Wed, 12 Mar 2025 13:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qUYF0vtQ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nnPbfcl/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E5124501D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 12 Mar 2025 13:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F039C42A82;
+	Wed, 12 Mar 2025 13:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741786033; cv=none; b=VvbBQKwxcS4Xu5jqwJUsAGtFG+t2E6b+SrVFD1URC7UfcVXvTa8gaX7jF2/Bx/mxHv6i7rbM6yXblns6gAsRbJaCp3t/XJN++d3vk4T4PihlMPOgl1n0+n8ZBbVs//lC4oNUNakHGlKs4St7SAtjDsyfvwUVGgrt1PMWjA7ZaEM=
+	t=1741787115; cv=none; b=oSG14+jwrjW/cgELILXJIlXbWrVwbxLBTjZ0zHAZ+FIEVKF9AZlhACfJJJj/IwwHApnAbejKuCY285GEuUI8nVidslVfd6lrwkLUuhn7f+pTUxQ9j9GxxQFHqaeZVirxgIB6/gddp+uV5fH2amIZrmgWdlsCXThLfNWQYzUAX0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741786033; c=relaxed/simple;
-	bh=vmPLawssG6OeY2s5RTWKuiub879ZSQW8pkQm4qKUL3Y=;
+	s=arc-20240116; t=1741787115; c=relaxed/simple;
+	bh=4HAhK6US9YpNBFYaYDKcncY7tvv/cqOdDvxd9JID8Uk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PVzWYpjkrr0p4TaTGQ/YXtE+2IUd5odu4gwCJ4X0kK7xha7Lrp0Hm4ZVZ/lLUc6AD2Z/ZYyMCKS1Ddr007uute1FlalKU5/SSIFvGkPQfb0VBK5aSaBDsNuw/4oJzcErtvDJ1gY5w9xnG50IH7WawSq1f5Jd4eiLvkgKvsMBdNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qUYF0vtQ; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 12 Mar 2025 09:26:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741786019;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mq0FRlXHlhlA6kPYT2gBBHxaWA+LBidJU85rrBHb4G0=;
-	b=qUYF0vtQsjZKc+axxpgc7Clq2EEZ0t2c3nn0TkLdyhbmJw7a6D9IWyEhCC8X3QW+5+dloh
-	VaZG9ggVIo5myICYIAbkeOXD6N3JyvCdwy4PG1dd8HlqVIg/xEu1wTSmepDFDl9X3gQtsJ
-	JFEbQ9hoX+QgumCCPVRcPX+/ECGIY7Y=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Mikulas Patocka <mpatocka@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
-	Jooyung Han <jooyung@google.com>, Alasdair Kergon <agk@redhat.com>, 
-	Mike Snitzer <snitzer@kernel.org>, Heinz Mauelshagen <heinzm@redhat.com>, zkabelac@redhat.com, 
-	dm-devel@lists.linux.dev, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] the dm-loop target
-Message-ID: <2pwjcvwkfasiwq5cum63ytgurs6wqzhlh6r25amofjz74ykybi@ru2qpz7ug6eb>
-References: <7d6ae2c9-df8e-50d0-7ad6-b787cb3cfab4@redhat.com>
- <Z8W1q6OYKIgnfauA@infradead.org>
- <b3caee06-c798-420e-f39f-f500b3ea68ca@redhat.com>
- <Z8XlvU0o3C5hAAaM@infradead.org>
- <8adb8df2-0c75-592d-bc3e-5609bb8de8d8@redhat.com>
- <Z8cE_4KSKHe5-J3e@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=vDxUuEjw800RYfrm0ngQLa/2vPaRt4uw1MvzNJfyxQ68J1vMpa0PyHAKubg+6wxq1UqYIfVAFWU0WUgjZ65RFcJMhh4FCz2j08UMb8Wt7DVRVB1xHXy2Cy9tMMJFCleOPuTANCTp7B+moZhlKUMbfJMcMxcUmzLqDOQPnE28ugk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nnPbfcl/; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=mIH+fIUpb4z14XLHnYSwL/PB/xBu/Oavn7NhiKaNRus=; b=nnPbfcl/JjzVTpEx8LURT5nSKQ
+	k4uhb+XrcpQZD3Q3aE3nwvl8B/48TLJGDtzEvuIJW0n2ikKGtbNuu1Pp6erFa8sO42hDXcsaQcPmZ
+	SSMZClF1BgjfoIygwpKflWJfZ3ObOK5gLUDb8kndMdBGD2QnXVbvqf37hQge2omBtE0Pn1uIfjjLP
+	u0Zu6nDy73/7RKXiHwoQJ0hBNCcYrVeuvskDmT2Smwc2qtpEsVWxmbDRU0nOwk8WiA/O6u61W0DeB
+	TJNvcbsU5cVAjTscbk6X9CmtSii24BCOwrvCMhNH+COZzwGVuqzjVxaOMYyNVvcTi0h9FF13dwTnO
+	sum7AIbA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsMOW-00000008by9-0y8J;
+	Wed, 12 Mar 2025 13:45:12 +0000
+Date: Wed, 12 Mar 2025 06:45:12 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
+	djwong@kernel.org, cem@kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v5 09/10] xfs: Allow block allocator to take an alignment
+ hint
+Message-ID: <Z9GP6F_n2BR3XCn5@infradead.org>
+References: <20250310183946.932054-1-john.g.garry@oracle.com>
+ <20250310183946.932054-10-john.g.garry@oracle.com>
+ <Z9E679YhzP6grfDV@infradead.org>
+ <4d9499e3-4698-4d0c-b7bb-104023b29f3a@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,43 +67,24 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z8cE_4KSKHe5-J3e@infradead.org>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <4d9499e3-4698-4d0c-b7bb-104023b29f3a@oracle.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Mar 04, 2025 at 05:49:51AM -0800, Christoph Hellwig wrote:
-> On Mon, Mar 03, 2025 at 10:03:42PM +0100, Mikulas Patocka wrote:
-> > Swapfile does ahead of time mapping.
+On Wed, Mar 12, 2025 at 08:05:14AM +0000, John Garry wrote:
+> > Shouldn't we be doing this by default for any extent size hint
+> > based allocations?
 > 
-> It does.  But it is:
+> I'm not sure.
 > 
->  a) protected against modification by the S_SWAPFILE flag and checked
->     for full allocation first
->  b) something we want to get rid of because even with the above it is
->     rather problematic
+> I think that currently users just expect extszhint to hint at the
+> granularity only.
 > 
-> > And I just looked at what swapfile 
-> > does and copied the logic into dm-loop. If swapfile is not broken, how 
-> > could dm-loop be broken?
-> 
-> As said above, swapfile works around the brokenness in ways that you
-> can't.  And just blindly copying old code without understanding it is
-> never a good idea.
-> 
-> > 
-> > > > Would Jens Axboe agree to merge the dm-loop logic into the existing loop 
-> > > > driver?
-> > > 
-> > > What logic?
-> > 
-> > The ahead-of-time mapping.
-> 
-> As said multiple times you can't do that.  The block mapping is
-> file system private information.
+> Maybe users don't require alignment and adding an alignment requirement just
+> leads to more fragmentation.
 
-We might be able to provide an API to _request_ a stable mapping to a
-file - with proper synchronization, of course.
+But does it?  Once an extsize hint is set I'd expect that we keep
+getting more allocation with it.  And keeping the aligned is the concept
+of a buddy allocator which reduces fragmentation.  Because of that I
+wonder why we aren't doing that by default.
 
-I don't recall anyone ever trying that, it'd replace all the weird
-IF_SWAPFILE() hacks and be a safe way to do these kinds of performance
-optimizations.
 
