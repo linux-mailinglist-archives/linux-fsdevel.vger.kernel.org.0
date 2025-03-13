@@ -1,40 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-43948-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43944-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72AAFA604D0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 23:54:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE5AA60460
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 23:33:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 108CD1890812
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 22:54:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 102323B7D01
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 22:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D6E1F8BA4;
-	Thu, 13 Mar 2025 22:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6663F1F5853;
+	Thu, 13 Mar 2025 22:33:02 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B50F1F585F;
-	Thu, 13 Mar 2025 22:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EDC22612;
+	Thu, 13 Mar 2025 22:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741906439; cv=none; b=jz0x3mpksoFHOXPgs8eiIUjm4xhBYaQ1jKFZ1iv0DdwRMVZasW+gQKN5L++PXqyKBxJ1Y4MchrRXJcCgFGgLz5AjD+K4qua4vyIThcoRck5YFT/0mFPd2PsjEilgNs1QpQualCUSE9cyZyd6XciPfKr2FfpvVKHEDhB3S8R8TcU=
+	t=1741905182; cv=none; b=oQKcCoZRJiYkHZuz4dZwP4UZ7YumsX1RtEoXFQOU1j7X5yuAg3eyEmC47Oyp8d7DgOTX1IyOW4La8EvTKeloNmt18ssqGuZ9gyYbX1xK4Jp1RuGErvZwQuU77ur5980HqGQBWuAPzKwBk4JYTV1mjjrRWlCrU3ECg0TVZ6P+bIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741906439; c=relaxed/simple;
-	bh=/ie6fpq0FXgm9kqxwUTNFnggiB1jw1uZU5XBs5Clzoo=;
-	h=Content-Type:MIME-Version:From:To:Subject:Date:Message-id; b=LzaHOWdcgA1AHT2qdMRK/5FhGS3NcQvFTHpiYE5KGF+VEMsC05piY9xyZ5KLFeq2tRUd8q982LYEsd6ctFY7yJC4jj0ee446TNZQOikKyjBgnqRsTSTELm+bd7t/jOl+gNxbf5yP+SUoQfKstZCvn01cgK/Mlu2TebWJapHD6Uw=
+	s=arc-20240116; t=1741905182; c=relaxed/simple;
+	bh=FwB7tbMC2wL4+ylCvdz2zcoRUGupeXXHPStpgXIXNAc=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:Date:Message-id; b=kKJQridxEuZ0lhEwHaXrCqWRtF/NaYctwRFUnDrL/lBjQe3Bi2fo2h7ZIci6+XP6UG1uVIqGB0c63g/LbF3XWXeoCD+RV3cZ2vALQPDyklp5pbN5O2ESa4hbW4ndf/lY1yGxdilS/STQsh9Zffe8m70/yBFTjRAYAfEs6checus=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
 Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
 	by neil.brown.name with esmtp (Exim 4.95)
 	(envelope-from <mr@neil.brown.name>)
-	id 1tsr3V-00DymL-Fj;
-	Thu, 13 Mar 2025 22:29:33 +0000
+	id 1tsr6k-00Dytg-Lo;
+	Thu, 13 Mar 2025 22:32:54 +0000
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -42,54 +42,83 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "NeilBrown" <neil@brown.name>
-To: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
- Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
- linux-nfs@vger.kernel.org
-Subject: [PATCH] exportfs: remove locking around ->get_parent() call.
-Date: Fri, 14 Mar 2025 09:29:33 +1100
-Message-id: <174190497326.9342.9313518146512158587@noble.neil.brown.name>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Ian Kent <raven@themaw.net>
+Cc: linux-fsdevel@vger.kernel.org, autofs@vger.kernel.org
+Subject: [PATCH] VFS/autofs: try_lookup_one_len() does not need any locks
+Date: Fri, 14 Mar 2025 09:32:54 +1100
+Message-id: <174190517441.9342.5956460781380903128@noble.neil.brown.name>
 
 
-The locking around the ->get_parent() call brings no value.
-We are locking a child which is only used to find an inode and thence the
-parent inode number.  All further activity involves the parent inode
-which may have several children so locking one child cannot protect the
-parent in any useful way.
+try_lookup_one_len() is identical to lookup_one_unlocked() except that
+it doesn't include the call to lookup_slow().  The latter doesn't need
+the inode to be locked, so the former cannot either.
 
-The filesystem must already ensure that only one 'struct inode' exists
-for a given inode, and will call d_obtain_alias() which contains the
-required locking to ensure only one dentry will be attached to that
-inode.
+So fix the documentation, remove the WARN_ON and fix the only caller to
+not take the lock.
 
-So remove the unnecessary locking.
-
-Signed-off-by: NeilBrown <neil@brown.name>
+Signed-off-by: NeilBrown <neilb@suse.de>
 ---
 
-I've been reviewing locking in directories and this stood out has
-unnecessary.  It isn't harmful, but it doesn't bring any value.
+Note that in current upstream fs/afs/dynroot.c also contains a call to
+try_lookup_one_len() with unnecessary locking.  However
+vfs-6.15.shared.afs contains a patch which removes that call, so I
+didn't bother addressing it here.
+
 NeilBrown
 
 
- fs/exportfs/expfs.c | 2 --
- 1 file changed, 2 deletions(-)
+ fs/autofs/dev-ioctl.c | 3 ---
+ fs/namei.c            | 5 ++---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
-index 0c899cfba578..b5845c4846b8 100644
---- a/fs/exportfs/expfs.c
-+++ b/fs/exportfs/expfs.c
-@@ -126,10 +126,8 @@ static struct dentry *reconnect_one(struct vfsmount *mnt,
+diff --git a/fs/autofs/dev-ioctl.c b/fs/autofs/dev-ioctl.c
+index 6d57efbb8110..c5a6aae12d2c 100644
+--- a/fs/autofs/dev-ioctl.c
++++ b/fs/autofs/dev-ioctl.c
+@@ -442,7 +442,6 @@ static int autofs_dev_ioctl_timeout(struct file *fp,
+ 		sbi->exp_timeout =3D timeout * HZ;
+ 	} else {
+ 		struct dentry *base =3D fp->f_path.dentry;
+-		struct inode *inode =3D base->d_inode;
+ 		int path_len =3D param->size - AUTOFS_DEV_IOCTL_SIZE - 1;
+ 		struct dentry *dentry;
+ 		struct autofs_info *ino;
+@@ -460,9 +459,7 @@ static int autofs_dev_ioctl_timeout(struct file *fp,
+ 				"the parent autofs mount timeout which could "
+ 				"prevent shutdown\n");
+=20
+-		inode_lock_shared(inode);
+ 		dentry =3D try_lookup_one_len(param->path, base, path_len);
+-		inode_unlock_shared(inode);
+ 		if (IS_ERR_OR_NULL(dentry))
+ 			return dentry ? PTR_ERR(dentry) : -ENOENT;
+ 		ino =3D autofs_dentry_ino(dentry);
+diff --git a/fs/namei.c b/fs/namei.c
+index ecb7b95c2ca3..c6cef0af0625 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2863,15 +2863,14 @@ static int lookup_one_common(struct mnt_idmap *idmap,
+  * Note that this routine is purely a helper for filesystem usage and should
+  * not be called by generic code.
+  *
+- * The caller must hold base->i_mutex.
++ * No locks need be held - only a counted reference to @base is needed.
++ *
+  */
+ struct dentry *try_lookup_one_len(const char *name, struct dentry *base, int=
+ len)
+ {
+ 	struct qstr this;
  	int err;
- 
- 	parent = ERR_PTR(-EACCES);
--	inode_lock(dentry->d_inode);
- 	if (mnt->mnt_sb->s_export_op->get_parent)
- 		parent = mnt->mnt_sb->s_export_op->get_parent(dentry);
--	inode_unlock(dentry->d_inode);
- 
- 	if (IS_ERR(parent)) {
- 		dprintk("get_parent of %lu failed, err %ld\n",
--- 
+=20
+-	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
+-
+ 	err =3D lookup_one_common(&nop_mnt_idmap, name, base, len, &this);
+ 	if (err)
+ 		return ERR_PTR(err);
+--=20
 2.48.1
 
 
