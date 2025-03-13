@@ -1,216 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-43902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43903-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3C61A5F81A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 15:28:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74E9FA5F928
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 15:59:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1516E161604
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 14:28:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EE1E3B4455
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 14:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7A5267F55;
-	Thu, 13 Mar 2025 14:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42CA2686B4;
+	Thu, 13 Mar 2025 14:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZr0fHek"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="mtIUYoTt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E342267393;
-	Thu, 13 Mar 2025 14:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5133B267F7D;
+	Thu, 13 Mar 2025 14:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741876079; cv=none; b=Tedp4PiGSKRJQUwWBOPbKzvIKpmbNM8U0u0WKge1ITEqu29NC9N7Z7ewGv99BZE4xNkom7kjKzM90wW7IFpo187q7v5uqecwW11l1g7PLAtiDjJYWLhoKNLWWKS4T/lWhu81s0LfwS3K6j/zc6H3Nkx3I3tiAuH5lm2+TpADHf0=
+	t=1741877962; cv=none; b=B8N9KTIgZQVbBdv3ePRIbt2NZwCBGkc7KkbmnyWb/2TmlNYAUdnaW//SQD5ZSEZHC/jlX0bWo6de2gLulN+/2zpEWpp0yML6KC42+wOD2v/rYAJ9cimN9+o132hb5/bCGSVKZjGqlZw6/03cw5jCRFmQxdG+0rPOIhYnfCPd/MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741876079; c=relaxed/simple;
-	bh=gxg+0lDzP4WW6H+ac5tKgySrv/5xRkMqt16F5FhafeQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ssj/HYqDW4kvh8+IXlMghJ/Fn2tuMAWmXganwbTf9i5xBaPOcErCs5S+tUvOcdJUNtfqGwPnwAjlTmu2y5PEprO8PJn/wteXSu9KveU8+fShUd3RZefjHORCM8al3FJBAgi4CH6UDqJwXYp+zAjEtfhK6gpmxV5WH8KoOSebnDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eZr0fHek; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso218849466b.0;
-        Thu, 13 Mar 2025 07:27:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741876076; x=1742480876; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XNUKO0Et5yT84TqbQgeEjeVZKHHspqia0B9fx6XJNnc=;
-        b=eZr0fHekS6ldgQw+cL8QKHjo/Ymdi7o/ER6+LOU9NwPliiskKSRzF3xi98FzaNVzKe
-         bAx0WWOZz/JzPuB1Qb39rlRO11fcHVxvlkyKBBcocxZ5GChafqs/DZMAKMevyHl2CEtF
-         tgElWXF0h4DcJrcVAWyesTqTkrqyFiJBXj218+n8UiRf0BVSdvPp/By/Qs5i/ZchxUZ6
-         yAQpyjYDDr6TFdYnBbAvdCV+//BGq6ed+LAFxYiqkUyUqn8pR32WSMt5jGdDPOFm9l3k
-         Qs2eyOZR6R4cm56jmox4Ax7B9z7xbCOTaJemOvcQU+LEE/lmDiB7XFTBxUcDaAMPnNEE
-         LKdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741876076; x=1742480876;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XNUKO0Et5yT84TqbQgeEjeVZKHHspqia0B9fx6XJNnc=;
-        b=TAUR3y+U0c/oToHWyKt6ReE72luVpxqlsVPt93bKuySNoZ+fIuWFVKS+KOOABe4dkL
-         UFXlGBGkEFDjyVhvu7w6BLpPERl5usPcN4B9WXvJmBL4xjhxgpSU2dnfGa4l4/ll+Ese
-         BrC7z2o6J9sqm6YSYLak8uG4CJ4wEDM7NnijQOs6noYmriFmAqBCyhwHkMZBxqbT53v7
-         VvwbWuo+ZqtK4GWEcXzOdIQmQogGfXILlLr8fZUSQy3k4P6VAUFn1RMbjAVI8C1ZwPvF
-         lcnhn+TF+depoFLpJbLcwlQTpUuk3Eb719N6De1mjqlEDdThFOhKgrikOFALfs390HjZ
-         +Gdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUnpfKhxlzWA4WhGVSBjIdk+hTEHtKNoiqsMKbsF5GcGRG52J47tN7Vdyq7Qce1mwH1XGjTkNvO2bEDCu21@vger.kernel.org, AJvYcCVn+/4CGGltreEHPCpgGStdvXV1Hh9lm/+SML2MXJY5tX9mVZk6aL6XeoyTTIexDLITSU+xl4X2LKRpmCjz@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7T102YWXQPDzsULWZ2wogC3azTSuXr5/BQ9poVj92HBzzkvlZ
-	6b77h6ks8RVlEF9iwHocPdUNlBaYeMfntW5ZDl8YcPzHBe1dzp7J
-X-Gm-Gg: ASbGncuIfEGa36eBRbwB0fuAH7Qi4RnwyjLErCvtBAWDqzLykNyxB7gA70Zyj/0Ncqq
-	QhOIzUqUiCiR9e7UXVOQ49sk3SfZKO4KhJAWx89ELkqPuVOoVmGJ+JUG6mB1uFkF8xwZQmIT28g
-	dBqq/xBcFJC2Wb6uZ0uez8TxfYXUKKa7vAJddN+FhpySQU1pw7D/1dr/SjQ3kmBFfjjzBygjF1f
-	ct70YXfTnHghRk7cwB5aOl0OCGtBH0sUHmKlXca0RRiCSHdKJCyW7Pn5EML8nzT65SFGvYd2zEG
-	csJExC/ukKDZP95QT7o6aA7I3KYq0Vzad/2NwDu4ZC3yWtSVx8H57c6DrFv2XXc=
-X-Google-Smtp-Source: AGHT+IEVZmpHLZrjcMQPf6kMwb6oK78NasXzqSzxf7wU1VF0VoUZxabsmjus6/LDL9zjOhY19483+A==
-X-Received: by 2002:a17:907:1b16:b0:ac1:fa6f:4941 with SMTP id a640c23a62f3a-ac252a9d6a0mr3352723966b.13.1741876075535;
-        Thu, 13 Mar 2025 07:27:55 -0700 (PDT)
-Received: from f.. (cst-prg-90-242.cust.vodafone.cz. [46.135.90.242])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3146aefadsm86411066b.8.2025.03.13.07.27.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 07:27:54 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1741877962; c=relaxed/simple;
+	bh=5liuPlBqcaflDWW/TPdi7YXsdgu4Qktt64p67vZjWFA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lhlvOgMYqi/rF0FCatUdLWTGxaFpnjZufWQvdEWMoN9C6bQnCFqV/lhrIsDwRiwYRdKWXFpfbrJXdOfVWZ6ZARZ6q3JC6Aei5khD0Abp2X9PVKLsBGw7/x3hwa9W12Z1TRcN7wZJiBhWU2VXRmPIzDSB/1fBMqZesj4BvQ0n+rE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=mtIUYoTt; arc=none smtp.client-ip=45.157.188.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZD9cr1zkCzC2d;
+	Thu, 13 Mar 2025 15:59:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1741877948;
+	bh=0Gf1DhgQRyBiPnPBQsXXR7n45nbxbcPvMlsb2hmwO+s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mtIUYoTtQ0tdNQjqeBvqnicNw6dpqGUbj8D4veT61dES8X6IhDRLYCShmU6ku9M4v
+	 IBmZw2jJOwXSbpA9FPw1LwoBgq7nGkAhUer8/aTj5n/NzUoq7WPzj/I6bqdulSAAir
+	 cNXi7s/oYO7ToWmSzvA/LReu/2VlyZztzjCTriRE=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZD9cq3ZlSzD7B;
+	Thu, 13 Mar 2025 15:59:07 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Tahera Fahimi <fahimitahera@gmail.com>,
 	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] fs: dedup handling of struct filename init and refcounts bumps
-Date: Thu, 13 Mar 2025 15:27:44 +0100
-Message-ID: <20250313142744.1323281-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: [RFC PATCH v1] landlock: Allow signals between threads of the same process
+Date: Thu, 13 Mar 2025 15:59:04 +0100
+Message-ID: <20250313145904.3238184-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-No functional changes.
+Because Linux credentials are managed per thread, user space relies on
+some hack to synchronize credential update across threads from the same
+process.  This is required by the Native POSIX Threads Library and
+implemented by set*id(2) wrappers and libcap(3) to use tgkill(2) to
+synchronize threads.  See nptl(7) and libpsx(3).  Furthermore, some
+runtimes like Go do not enable developers to have control over threads
+[1].
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+To avoid potential issues, and because threads are not security
+boundaries, let's relax the Landlock signal scoping to always allow
+signals sent between threads of the same process.  This exception is
+similar to the __ptrace_may_access() one.
+
+hook_file_set_fowner() now checks if the target task is part of the same
+process as the caller.  If this is the case, then the related signal
+triggered by the socket will always be allowed.
+
+Scoping of abstract UNIX sockets is not changed because kernel objects
+(e.g. sockets) should be tied to their creator's domain at creation
+time.
+
+Note that creating one Landlock domain per thread puts each of these
+threads (and their future children) in their own scope, which is
+probably not what users expect, especially in Go where we do not control
+threads.  However, being able to drop permissions on all threads should
+not be restricted by signal scoping.  We are working on a way to make it
+possible to atomically restrict all threads of a process with the same
+domain [2].
+
+Closes: https://github.com/landlock-lsm/go-landlock/issues/36
+Fixes: 54a6e6bbf3be ("landlock: Add signal scoping")
+Fixes: c8994965013e ("selftests/landlock: Test signal scoping for threads")
+Depends-on: 26f204380a3c ("fs: Fix file_set_fowner LSM hook inconsistencies")
+Link: https://pkg.go.dev/kernel.org/pub/linux/libs/security/libcap/psx [1]
+Link: https://github.com/landlock-lsm/linux/issues/2 [2]
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Günther Noack <gnoack@google.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Serge Hallyn <serge@hallyn.com>
+Cc: Tahera Fahimi <fahimitahera@gmail.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Link: https://lore.kernel.org/r/20250313145904.3238184-1-mic@digikod.net
 ---
 
-This is extracted from the patch which tried to introduce optional
-non-atomic operation.
+I'm still not sure how we could reliably detect if the running kernel
+has this fix or not, especially in Go.
+---
+ security/landlock/fs.c                        | 22 +++++++++++++++----
+ security/landlock/task.c                      | 12 ++++++++++
+ .../selftests/landlock/scoped_signal_test.c   |  2 +-
+ 3 files changed, 31 insertions(+), 5 deletions(-)
 
-I think this is an ok cleanup, but I'm not going to argue about it.
-
-ultimately this is a big NOP
-
- fs/namei.c         | 17 +++++++++--------
- include/linux/fs.h |  6 ++++++
- kernel/auditsc.c   | 12 +++++-------
- 3 files changed, 20 insertions(+), 15 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 06765d320e7e..699158c325bf 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -125,6 +125,13 @@
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index 71b9dc331aae..47c862fe14e4 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -27,7 +27,9 @@
+ #include <linux/mount.h>
+ #include <linux/namei.h>
+ #include <linux/path.h>
++#include <linux/pid.h>
+ #include <linux/rcupdate.h>
++#include <linux/sched/signal.h>
+ #include <linux/spinlock.h>
+ #include <linux/stat.h>
+ #include <linux/types.h>
+@@ -1630,15 +1632,27 @@ static int hook_file_ioctl_compat(struct file *file, unsigned int cmd,
  
- #define EMBEDDED_NAME_MAX	(PATH_MAX - offsetof(struct filename, iname))
- 
-+static inline void initname(struct filename *name)
-+{
-+	name->uptr = NULL;
-+	name->aname = NULL;
-+	atomic_set(&name->refcnt, 1);
-+}
-+
- struct filename *
- getname_flags(const char __user *filename, int flags)
+ static void hook_file_set_fowner(struct file *file)
  {
-@@ -203,10 +210,7 @@ getname_flags(const char __user *filename, int flags)
- 			return ERR_PTR(-ENAMETOOLONG);
- 		}
- 	}
--
--	atomic_set(&result->refcnt, 1);
--	result->uptr = filename;
--	result->aname = NULL;
-+	initname(result);
- 	audit_getname(result);
- 	return result;
- }
-@@ -264,11 +268,8 @@ struct filename *getname_kernel(const char * filename)
- 		return ERR_PTR(-ENAMETOOLONG);
- 	}
- 	memcpy((char *)result->name, filename, len);
--	result->uptr = NULL;
--	result->aname = NULL;
--	atomic_set(&result->refcnt, 1);
-+	initname(result);
- 	audit_getname(result);
--
- 	return result;
- }
- EXPORT_SYMBOL(getname_kernel);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 62440a9383dc..016b0fe1536e 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2865,6 +2865,12 @@ static inline struct filename *getname_maybe_null(const char __user *name, int f
- extern void putname(struct filename *name);
- DEFINE_FREE(putname, struct filename *, if (!IS_ERR_OR_NULL(_T)) putname(_T))
+-	struct landlock_ruleset *new_dom, *prev_dom;
++	struct fown_struct *fown = file_f_owner(file);
++	struct landlock_ruleset *new_dom = NULL;
++	struct landlock_ruleset *prev_dom;
++	struct task_struct *p;
  
-+static inline struct filename *refname(struct filename *name)
-+{
-+	atomic_inc(&name->refcnt);
-+	return name;
-+}
+ 	/*
+ 	 * Lock already held by __f_setown(), see commit 26f204380a3c ("fs: Fix
+ 	 * file_set_fowner LSM hook inconsistencies").
+ 	 */
+-	lockdep_assert_held(&file_f_owner(file)->lock);
+-	new_dom = landlock_get_current_domain();
+-	landlock_get_ruleset(new_dom);
++	lockdep_assert_held(&fown->lock);
 +
- extern int finish_open(struct file *file, struct dentry *dentry,
- 			int (*open)(struct inode *, struct file *));
- extern int finish_no_open(struct file *file, struct dentry *dentry);
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 9c853cde9abe..78fd876a5473 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -2207,10 +2207,8 @@ __audit_reusename(const __user char *uptr)
- 	list_for_each_entry(n, &context->names_list, list) {
- 		if (!n->name)
- 			continue;
--		if (n->name->uptr == uptr) {
--			atomic_inc(&n->name->refcnt);
--			return n->name;
--		}
-+		if (n->name->uptr == uptr)
-+			return refname(n->name);
- 	}
- 	return NULL;
- }
-@@ -2237,7 +2235,7 @@ void __audit_getname(struct filename *name)
- 	n->name = name;
- 	n->name_len = AUDIT_NAME_FULL;
- 	name->aname = n;
--	atomic_inc(&name->refcnt);
-+	refname(name);
- }
++	/*
++	 * Always allow sending signals between threads of the same process.  This
++	 * ensures consistency with hook_task_kill().
++	 */
++	p = pid_task(fown->pid, fown->pid_type);
++	if (!same_thread_group(p, current)) {
++		new_dom = landlock_get_current_domain();
++		landlock_get_ruleset(new_dom);
++	}
++
+ 	prev_dom = landlock_file(file)->fown_domain;
+ 	landlock_file(file)->fown_domain = new_dom;
  
- static inline int audit_copy_fcaps(struct audit_names *name,
-@@ -2369,7 +2367,7 @@ void __audit_inode(struct filename *name, const struct dentry *dentry,
- 		return;
- 	if (name) {
- 		n->name = name;
--		atomic_inc(&name->refcnt);
-+		refname(name);
- 	}
+diff --git a/security/landlock/task.c b/security/landlock/task.c
+index dc7dab78392e..4578ce6e319d 100644
+--- a/security/landlock/task.c
++++ b/security/landlock/task.c
+@@ -13,6 +13,7 @@
+ #include <linux/lsm_hooks.h>
+ #include <linux/rcupdate.h>
+ #include <linux/sched.h>
++#include <linux/sched/signal.h>
+ #include <net/af_unix.h>
+ #include <net/sock.h>
  
- out:
-@@ -2496,7 +2494,7 @@ void __audit_inode_child(struct inode *parent,
- 		if (found_parent) {
- 			found_child->name = found_parent->name;
- 			found_child->name_len = AUDIT_NAME_FULL;
--			atomic_inc(&found_child->name->refcnt);
-+			refname(found_child->name);
- 		}
+@@ -264,6 +265,17 @@ static int hook_task_kill(struct task_struct *const p,
+ 		/* Dealing with USB IO. */
+ 		dom = landlock_cred(cred)->domain;
+ 	} else {
++		/*
++		 * Always allow sending signals between threads of the same process.
++		 * This is required for process credential changes by the Native POSIX
++		 * Threads Library and implemented by the set*id(2) wrappers and
++		 * libcap(3) with tgkill(2).  See nptl(7) and libpsx(3).
++		 *
++		 * This exception is similar to the __ptrace_may_access() one.
++		 */
++		if (same_thread_group(p, current))
++			return 0;
++
+ 		dom = landlock_get_current_domain();
  	}
+ 	dom = landlock_get_applicable_domain(dom, signal_scope);
+diff --git a/tools/testing/selftests/landlock/scoped_signal_test.c b/tools/testing/selftests/landlock/scoped_signal_test.c
+index 475ee62a832d..767f117703b7 100644
+--- a/tools/testing/selftests/landlock/scoped_signal_test.c
++++ b/tools/testing/selftests/landlock/scoped_signal_test.c
+@@ -281,7 +281,7 @@ TEST(signal_scoping_threads)
+ 	/* Restricts the domain after creating the first thread. */
+ 	create_scoped_domain(_metadata, LANDLOCK_SCOPE_SIGNAL);
  
+-	ASSERT_EQ(EPERM, pthread_kill(no_sandbox_thread, 0));
++	ASSERT_EQ(0, pthread_kill(no_sandbox_thread, 0));
+ 	ASSERT_EQ(1, write(thread_pipe[1], ".", 1));
+ 
+ 	ASSERT_EQ(0, pthread_create(&scoped_thread, NULL, thread_func, NULL));
+
+base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
 -- 
-2.43.0
+2.48.1
 
 
