@@ -1,107 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-43884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67CEBA5EE97
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 09:55:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 421B7A5EEBA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 10:01:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D074B3B2FE4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 08:55:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D1A119C09A3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 09:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1072641D5;
-	Thu, 13 Mar 2025 08:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09151263C8A;
+	Thu, 13 Mar 2025 09:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MmSuLQqD"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gteJGi8w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F514263F35;
-	Thu, 13 Mar 2025 08:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C951FBCA3
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Mar 2025 09:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741856126; cv=none; b=jKsSaYuPGrmndYaBq2CaS1lvW+rfGo+I0IMu1XLI2a9+a3a3vKvCfehe3xE8GFBMAPTbkLAbbNPQDIC+MrLHD6FjE3IUd8JbDB39IKH/Nul/qMxSubZSoW/HA2W/dCPhtQH7nWQ4lTYszMl3ax52t5WIQC7CXTPopAhyaYICtaU=
+	t=1741856462; cv=none; b=pevSZhJK5BO25r/nb2E3bd8FoYiBDj4J/qZOIWvDeV5s6H9sP/dBbNs02xjrWldpvoTmC49uP5b6q15gctFEx45r2LgcSYWQgO13bMa2jn1ldkv96uc3u3AConHKRV5eHxxjX6E2bYCK8MYHTj9AMdqwZ/c5WZ2NloBzYJjd8hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741856126; c=relaxed/simple;
-	bh=Khg9W2offMS1wtesP5x0nwj9KQm+80HBQi3YVnQnuKY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bGah1ZUGOM7OeJphGJEIxdSgVbedA2KvOp4dZhYbwofS4f29ARx17d1pEAFoYD0s1QOZEKlsom36PTuvXuzqUfbHAoNhudJ1ADHhp8yUolRBAD0FpUjY5mWfNBBd/8OYd8oScE91jfNDSXksdXbp2xpO/J67ApGfEMCj0PedV6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MmSuLQqD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D6C7C4CEE3;
-	Thu, 13 Mar 2025 08:55:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741856125;
-	bh=Khg9W2offMS1wtesP5x0nwj9KQm+80HBQi3YVnQnuKY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MmSuLQqDjpJj9Z4YYsn5v43IbfdoQ+Ompp/WNlil3vR1uINTcWqpiDd2oPltWcwML
-	 Q0GNX9CHp77ZwhmtIkM79IOnLPiVJae6wOAZBeyBo4KFR3B88cqK2fxYDHhnzCI2Xw
-	 V7pJhHBcJv7aRvD6I9CJIDNFN7OPr+uZ+2gqH3RW5Nl3EBRpFl2N5+BDs+KSfPTzG4
-	 uHg7iGq6lGCu8FyWEVqJamlvNEGNidYBVWuj6AELnPwfvS9RAyUUdUt/Qj23pDS+V+
-	 nNNNldXuDXh8Le79R2zkS/yoXryeticYplCtP+sx8iGkTc1BS29SdDagrrvRsVj587
-	 TOGZEQGYVg31A==
-Date: Thu, 13 Mar 2025 09:55:17 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: use debug-only asserts around fd allocation and
- install
-Message-ID: <20250313-rufnummer-fehlen-1184066edf75@brauner>
-References: <20250312161941.1261615-1-mjguzik@gmail.com>
- <CAGudoHFH70YpLYXnhJq4MDtjJ6FiY59Xn-D_kTB9xsE2UTJD_g@mail.gmail.com>
+	s=arc-20240116; t=1741856462; c=relaxed/simple;
+	bh=2NVIlOXjOqN6H2t3XTMFYhxsI9xrRSifYJsUYEBiDaM=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=c7x/eOaaJH9UqOuRFEqfYaV0pu7fgERNUDKFPahxBm8VsIKlEMgEpdrry8jF9R43RhwFSUbR0nKDV7yqVuOWgNBSvqbXvYq9ZL0fqxFKiFl2R6og2DpBMjTXSJPSsfdnWswiaFZQ1NDX2PCYL54GEfk1kB8sH9QsCwX7rrWjeU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gteJGi8w; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741856459;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HWX+NY4k6HSsnkBzV4RnRPKYxMVxCP2ZIMbCALpTIGg=;
+	b=gteJGi8wkysSgTvSO34JGSr0wWP7Uz/dRMLkIk3a2nGL1GvOvU5qWFhKHmSx7Q0pOngSoe
+	UL4He+63hefDaYQkVnJlG350JmSs5GLIkgiT7V3jVlQ7uENgVHsEkI4DRxBGWqsLvlnQ60
+	j78+Sh6CK+zKuV6GkSEqvAxpw7eOhXI=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-140-_jZveJSVOR-CqeIuwQAaWQ-1; Thu,
+ 13 Mar 2025 05:00:55 -0400
+X-MC-Unique: _jZveJSVOR-CqeIuwQAaWQ-1
+X-Mimecast-MFC-AGG-ID: _jZveJSVOR-CqeIuwQAaWQ_1741856454
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3D3DE1800258;
+	Thu, 13 Mar 2025 09:00:54 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C02981828A99;
+	Thu, 13 Mar 2025 09:00:51 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <458de992be8760c387f7a4e55a1e42a021090a02.camel@ibm.com>
+References: <458de992be8760c387f7a4e55a1e42a021090a02.camel@ibm.com> <1243044.1741776431@warthog.procyon.org.uk>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: dhowells@redhat.com, "slava@dubeyko.com" <slava@dubeyko.com>,
+    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+    Alex Markuze <amarkuze@redhat.com>, Xiubo Li <xiubli@redhat.com>,
+    "brauner@kernel.org" <brauner@kernel.org>,
+    "idryomov@gmail.com" <idryomov@gmail.com>,
+    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ceph: Fix incorrect flush end position calculation
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHFH70YpLYXnhJq4MDtjJ6FiY59Xn-D_kTB9xsE2UTJD_g@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1330414.1741856450.1@warthog.procyon.org.uk>
+Date: Thu, 13 Mar 2025 09:00:50 +0000
+Message-ID: <1330415.1741856450@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Wed, Mar 12, 2025 at 06:21:01PM +0100, Mateusz Guzik wrote:
-> On Wed, Mar 12, 2025 at 5:19 PM Mateusz Guzik <mjguzik@gmail.com> wrote:
-> >
-> > This also restores the check which got removed in 52732bb9abc9ee5b
-> > ("fs/file.c: remove sanity_check and add likely/unlikely in alloc_fd()")
-> > for performance reasons -- they no longer apply with a debug-only
-> > variant.
-> >
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > ---
-> >
-> > I have about 0 opinion whether this should be BUG or WARN, the code was
-> > already inconsistent on this front. If you want the latter, I'll have 0
-> > complaints if you just sed it and commit as yours.
-> >
-> > This reminded me to sort out that litmus test for smp_rmb, hopefully
-> > soon(tm) as it is now nagging me.
-> >
-> >  fs/file.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/file.c b/fs/file.c
-> > index 6c159ede55f1..09460ec74ef8 100644
-> > --- a/fs/file.c
-> > +++ b/fs/file.c
-> > @@ -582,6 +582,7 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
-> >
-> >         __set_open_fd(fd, fdt, flags & O_CLOEXEC);
-> >         error = fd;
-> > +       VFS_BUG_ON(rcu_access_pointer(fdt->fd[fd]) != NULL);
-> >
-> 
-> when restoring this check i dutifully copy-pasted the original. I only
-> now mentally registered it uses a rcu primitive to do the load, while
-> the others do a plain load. arguably the former is closer to being
-> correct and it definitely does not hurt
-> 
-> so this line should replace the other 2 lines below. i can send a v2
-> to that effect, but given the triviality of the edit, perhaps you will
-> be happy to sort it out
+Shall I ask Christian to stick this in the vfs tree?  Or did you want to take
+it through the ceph tree?
 
-Yes, sure. Done!
+David
+
 
