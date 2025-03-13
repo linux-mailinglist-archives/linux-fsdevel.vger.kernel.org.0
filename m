@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-43972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B94A605D4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 00:42:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE364A605D5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 00:42:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01FC7881826
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 23:41:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FAA5421ACD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 23:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A11205ABB;
-	Thu, 13 Mar 2025 23:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D4C2066DC;
+	Thu, 13 Mar 2025 23:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ThBN+6Eq"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c5NYk8M4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD71204F94
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Mar 2025 23:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F407205ADF
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Mar 2025 23:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741908924; cv=none; b=UHvfXBfSWbjrmJ9xP4u6DR2Je7Tit7cMRPU16aYkq/P5bfvZssE9fKEOJRhGUnov5VV08p58ntkgtnR4EEcGerWAwcyglEmsHFns8n2dfvLEDImqw34ebiy02saXK1rwnPpZaBR4He+grIukWKLiW+p5o4Fm61o5dKBMiV/DXAI=
+	t=1741908928; cv=none; b=aSpfcHjGYn2nfneb7QdL2k1i1GZHioa2mKcjBEyv/uE4oFK3td4SohIij9FgUd4T1CJ18Hw+C/wixs6npYCu0S28paH+XQDkFK/9k3qN5PluozKwBKRbvhtWToBuSZ90pE1LaXfYaFaVe+k4p7nvef6ivis6R8lwll0k1jytP44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741908924; c=relaxed/simple;
-	bh=E2/FfSQEVeXizQhNicf4rR6freuOTQONEexZxKOIxUI=;
+	s=arc-20240116; t=1741908928; c=relaxed/simple;
+	bh=6OzzDKzbbzQbGvjekWWPuzdxFcthY11POqQiisXIVZc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FF8Ret0DogudrXSgRc9LPBBEZVny5DEbnPKiAANi8pwj1RdWH26IIv0RUfYfAeaQAYNu8n2uClzv4+MFHuS5G9pGr+NIPtJf0RdEu8onVMsmhFPeQrN/VtQnlDUhlhngyjJKtRzi0JJ7b4L5bLgNVov40RemeCqEfR3c5XDA6nE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ThBN+6Eq; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=hlCT7Pho+3X99WHBpZTV5Qoydt+Du1ZaDai3/SAXtWJk7KlD8Mn64smP5in52q67+1Y5boFeAHaVGxsG1TSD/8AmSZEc3K9V/l70eX1oNP7TuRpFCo9pnXoYNg/O+oLvp2oXgTBmrMT9Ibl2GhCHULej/gx0hZ93Y2DUYGvpzt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c5NYk8M4; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741908921;
+	s=mimecast20190719; t=1741908924;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ateNCwwhc3gg0uYNIgkikIKVmAOxANHfCT4U4GJyDlA=;
-	b=ThBN+6EqWMtDTOIdsDtOZhjeG23IN+7jn6srvatAMHo23B223/auyYTuN4AkvmimczVk95
-	H/xN1KE+d+/gaGjaEGthtj0cBYlU7m4L657afpryosHuOncruz/YnuXgaGMNQPN7LV0FMg
-	NZXl+TtnHDLXzNjt4JvUgZlQh110OG0=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+	bh=LT2VwrPDEakuKlQLz45hjD3tXAYQbwEpQFgWzIEY3WI=;
+	b=c5NYk8M41tCygvKzRQD+ptmtQpEZEpUFdeD17GLlkl6ZTHZu4+AsMrccpptdpFwpu7gY5T
+	BGLrOIfsQXTDGQrQ/KRJS1Mh2ChLh6FMuDVtlznBKFNyEdcInQS2nklJ9l3iRXewldpBZq
+	jrDF/AX+UCsRk26sF2X2HarFDjTAsoY=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-653-zdgi842RPDOkS6X_NwWd3w-1; Thu,
- 13 Mar 2025 19:35:17 -0400
-X-MC-Unique: zdgi842RPDOkS6X_NwWd3w-1
-X-Mimecast-MFC-AGG-ID: zdgi842RPDOkS6X_NwWd3w_1741908916
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-32-2l4YVEmmOEC1NkRBqXosiw-1; Thu,
+ 13 Mar 2025 19:35:21 -0400
+X-MC-Unique: 2l4YVEmmOEC1NkRBqXosiw-1
+X-Mimecast-MFC-AGG-ID: 2l4YVEmmOEC1NkRBqXosiw_1741908919
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 188EE1800257;
-	Thu, 13 Mar 2025 23:35:16 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 831A51801A00;
+	Thu, 13 Mar 2025 23:35:19 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.61])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BEFA01828A93;
-	Thu, 13 Mar 2025 23:35:13 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 493F51828A83;
+	Thu, 13 Mar 2025 23:35:17 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Viacheslav Dubeyko <slava@dubeyko.com>,
 	Alex Markuze <amarkuze@redhat.com>
@@ -68,9 +68,9 @@ Cc: David Howells <dhowells@redhat.com>,
 	linux-fsdevel@vger.kernel.org,
 	linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 23/35] rbd: Use ceph_databuf_enc_start/stop()
-Date: Thu, 13 Mar 2025 23:33:15 +0000
-Message-ID: <20250313233341.1675324-24-dhowells@redhat.com>
+Subject: [RFC PATCH 24/35] ceph: Make ceph_calc_file_object_mapping() return size as size_t
+Date: Thu, 13 Mar 2025 23:33:16 +0000
+Message-ID: <20250313233341.1675324-25-dhowells@redhat.com>
 In-Reply-To: <20250313233341.1675324-1-dhowells@redhat.com>
 References: <20250313233341.1675324-1-dhowells@redhat.com>
 Precedence: bulk
@@ -82,11 +82,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Make rbd use ceph_databuf_enc_start() and ceph_databuf_enc_stop() when
-filling out the request data.  Also use ceph_encode_*() rather than
-ceph_databuf_encode_*() as the latter will do an iterator copy to deal with
-page crossing and misalignment (the latter being something that the CPU
-will handle on some arches).
+Make ceph_calc_file_object_mapping() return the size as a size_t.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Viacheslav Dubeyko <slava@dubeyko.com>
@@ -95,189 +91,178 @@ cc: Ilya Dryomov <idryomov@gmail.com>
 cc: ceph-devel@vger.kernel.org
 cc: linux-fsdevel@vger.kernel.org
 ---
- drivers/block/rbd.c | 64 ++++++++++++++++++++++-----------------------
- 1 file changed, 31 insertions(+), 33 deletions(-)
+ fs/ceph/addr.c               | 4 ++--
+ fs/ceph/crypto.c             | 2 +-
+ fs/ceph/file.c               | 9 ++++-----
+ fs/ceph/ioctl.c              | 2 +-
+ include/linux/ceph/striper.h | 6 +++---
+ net/ceph/osd_client.c        | 2 +-
+ net/ceph/striper.c           | 4 ++--
+ 7 files changed, 14 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index a2674077edea..956fc4a8f1da 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -1970,19 +1970,19 @@ static int rbd_cls_object_map_update(struct ceph_osd_request *req,
- 				     int which, u64 objno, u8 new_state,
- 				     const u8 *current_state)
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 482a9f41a685..7c89cafcb91a 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -335,8 +335,8 @@ static int ceph_netfs_prepare_read(struct netfs_io_subrequest *subreq)
+ 	struct inode *inode = rreq->inode;
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct ceph_fs_client *fsc = ceph_inode_to_fs_client(inode);
++	size_t xlen;
+ 	u64 objno, objoff;
+-	u32 xlen;
+ 
+ 	/* Truncate the extent at the end of the current block */
+ 	ceph_calc_file_object_mapping(&ci->i_layout, subreq->start, subreq->len,
+@@ -1205,9 +1205,9 @@ void ceph_allocate_page_array(struct address_space *mapping,
  {
--	struct ceph_databuf *dbuf;
--	void *p, *start;
-+	struct ceph_databuf *request;
-+	void *p;
- 	int ret;
+ 	struct inode *inode = mapping->host;
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
++	size_t xlen;
+ 	u64 objnum;
+ 	u64 objoff;
+-	u32 xlen;
  
- 	ret = osd_req_op_cls_init(req, which, "rbd", "object_map_update");
- 	if (ret)
- 		return ret;
+ 	/* prepare async write request */
+ 	ceph_wbc->offset = (u64)folio_pos(folio);
+diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+index 3b3c4d8d401e..a28dea74ca6f 100644
+--- a/fs/ceph/crypto.c
++++ b/fs/ceph/crypto.c
+@@ -594,8 +594,8 @@ int ceph_fscrypt_decrypt_extents(struct inode *inode, struct page **page,
+ 	struct ceph_client *cl = ceph_inode_to_client(inode);
+ 	int i, ret = 0;
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
++	size_t xlen;
+ 	u64 objno, objoff;
+-	u32 xlen;
  
--	dbuf = ceph_databuf_req_alloc(1, PAGE_SIZE, GFP_NOIO);
--	if (!dbuf)
-+	request = ceph_databuf_req_alloc(1, 8 * 2 + 3 * 1, GFP_NOIO);
-+	if (!request)
- 		return -ENOMEM;
+ 	/* Nothing to do for empty array */
+ 	if (ext_cnt == 0) {
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index fb4024bc8274..ffd36e00b0de 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -1731,12 +1731,11 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+ 		u64 write_pos = pos;
+ 		u64 write_len = len;
+ 		u64 objnum, objoff;
+-		u32 xlen;
+ 		u64 assert_ver = 0;
+ 		bool rmw;
+ 		bool first, last;
+ 		struct iov_iter saved_iter = *from;
+-		size_t off;
++		size_t off, xlen;
  
--	p = start = kmap_ceph_databuf_page(dbuf, 0);
-+	p = ceph_databuf_enc_start(request);
- 	ceph_encode_64(&p, objno);
- 	ceph_encode_64(&p, objno + 1);
- 	ceph_encode_8(&p, new_state);
-@@ -1992,10 +1992,9 @@ static int rbd_cls_object_map_update(struct ceph_osd_request *req,
- 	} else {
- 		ceph_encode_8(&p, 0);
- 	}
--	kunmap_local(p);
--	ceph_databuf_added_data(dbuf, p - start);
-+	ceph_databuf_enc_stop(request, p);
+ 		ceph_fscrypt_adjust_off_and_len(inode, &write_pos, &write_len);
  
--	osd_req_op_cls_request_databuf(req, which, dbuf);
-+	osd_req_op_cls_request_databuf(req, which, request);
- 	return 0;
- }
- 
-@@ -2108,7 +2107,7 @@ static int rbd_obj_calc_img_extents(struct rbd_obj_request *obj_req,
- 
- static int rbd_osd_setup_stat(struct ceph_osd_request *osd_req, int which)
- {
--	struct ceph_databuf *dbuf;
-+	struct ceph_databuf *request;
- 
- 	/*
- 	 * The response data for a STAT call consists of:
-@@ -2118,12 +2117,12 @@ static int rbd_osd_setup_stat(struct ceph_osd_request *osd_req, int which)
- 	 *         le32 tv_nsec;
- 	 *     } mtime;
- 	 */
--	dbuf = ceph_databuf_reply_alloc(1, 8 + sizeof(struct ceph_timespec), GFP_NOIO);
--	if (!dbuf)
-+	request = ceph_databuf_reply_alloc(1, 8 + sizeof(struct ceph_timespec), GFP_NOIO);
-+	if (!request)
- 		return -ENOMEM;
- 
- 	osd_req_op_init(osd_req, which, CEPH_OSD_OP_STAT, 0);
--	osd_req_op_raw_data_in_databuf(osd_req, which, dbuf);
-+	osd_req_op_raw_data_in_databuf(osd_req, which, request);
- 	return 0;
- }
- 
-@@ -2964,16 +2963,16 @@ static int rbd_obj_copyup_current_snapc(struct rbd_obj_request *obj_req,
- 
- static int setup_copyup_buf(struct rbd_obj_request *obj_req, u64 obj_overlap)
- {
--	struct ceph_databuf *dbuf;
-+	struct ceph_databuf *request;
- 
- 	rbd_assert(!obj_req->copyup_buf);
- 
--	dbuf = ceph_databuf_req_alloc(calc_pages_for(0, obj_overlap),
-+	request = ceph_databuf_req_alloc(calc_pages_for(0, obj_overlap),
- 				      obj_overlap, GFP_NOIO);
--	if (!dbuf)
-+	if (!request)
- 		return -ENOMEM;
- 
--	obj_req->copyup_buf = dbuf;
-+	obj_req->copyup_buf = request;
- 	return 0;
- }
- 
-@@ -4580,10 +4579,9 @@ static int rbd_obj_method_sync(struct rbd_device *rbd_dev,
- 		if (!request)
- 			return -ENOMEM;
- 
--		p = kmap_ceph_databuf_page(request, 0);
--		memcpy(p, outbound, outbound_size);
--		kunmap_local(p);
--		ceph_databuf_added_data(request, outbound_size);
-+		p = ceph_databuf_enc_start(request);
-+		ceph_encode_copy(&p, outbound, outbound_size);
-+		ceph_databuf_enc_stop(request, p);
- 	}
- 
- 	reply = ceph_databuf_reply_alloc(1, inbound_size, GFP_KERNEL);
-@@ -4712,7 +4710,7 @@ static void rbd_free_disk(struct rbd_device *rbd_dev)
- static int rbd_obj_read_sync(struct rbd_device *rbd_dev,
- 			     struct ceph_object_id *oid,
- 			     struct ceph_object_locator *oloc,
--			     struct ceph_databuf *dbuf, int len)
-+			     struct ceph_databuf *request, int len)
- {
- 	struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
+@@ -2870,8 +2869,8 @@ static ssize_t ceph_do_objects_copy(struct ceph_inode_info *src_ci, u64 *src_off
+ 	struct ceph_osd_client *osdc;
  	struct ceph_osd_request *req;
-@@ -4727,7 +4725,7 @@ static int rbd_obj_read_sync(struct rbd_device *rbd_dev,
- 	req->r_flags = CEPH_OSD_FLAG_READ;
- 
- 	osd_req_op_extent_init(req, 0, CEPH_OSD_OP_READ, 0, len, 0, 0);
--	osd_req_op_extent_osd_databuf(req, 0, dbuf);
-+	osd_req_op_extent_osd_databuf(req, 0, request);
- 
- 	ret = ceph_osdc_alloc_messages(req, GFP_KERNEL);
- 	if (ret)
-@@ -4750,16 +4748,16 @@ static int rbd_dev_v1_header_info(struct rbd_device *rbd_dev,
- 				  bool first_time)
- {
- 	struct rbd_image_header_ondisk *ondisk;
--	struct ceph_databuf *dbuf = NULL;
-+	struct ceph_databuf *request = NULL;
- 	u32 snap_count = 0;
- 	u64 names_size = 0;
- 	u32 want_count;
+ 	size_t bytes = 0;
++	size_t src_objlen, dst_objlen;
+ 	u64 src_objnum, src_objoff, dst_objnum, dst_objoff;
+-	u32 src_objlen, dst_objlen;
+ 	u32 object_size = src_ci->i_layout.object_size;
+ 	struct ceph_client *cl = fsc->client;
  	int ret;
+@@ -2948,8 +2947,8 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+ 	struct ceph_client *cl = src_fsc->client;
+ 	loff_t size;
+ 	ssize_t ret = -EIO, bytes;
++	size_t src_objlen, dst_objlen;
+ 	u64 src_objnum, dst_objnum, src_objoff, dst_objoff;
+-	u32 src_objlen, dst_objlen;
+ 	int src_got = 0, dst_got = 0, err, dirty;
  
--	dbuf = ceph_databuf_req_alloc(1, sizeof(*ondisk), GFP_KERNEL);
--	if (!dbuf)
-+	request = ceph_databuf_req_alloc(1, sizeof(*ondisk), GFP_KERNEL);
-+	if (!request)
- 		return -ENOMEM;
--	ondisk = kmap_ceph_databuf_page(dbuf, 0);
-+	ondisk = kmap_ceph_databuf_page(request, 0);
+ 	if (src_inode->i_sb != dst_inode->i_sb) {
+@@ -3060,7 +3059,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+ 	 * starting at the src_off
+ 	 */
+ 	if (src_objoff) {
+-		doutc(cl, "Initial partial copy of %u bytes\n", src_objlen);
++		doutc(cl, "Initial partial copy of %zu bytes\n", src_objlen);
  
- 	/*
- 	 * The complete header will include an array of its 64-bit
-@@ -4776,13 +4774,13 @@ static int rbd_dev_v1_header_info(struct rbd_device *rbd_dev,
- 		size += names_size;
+ 		/*
+ 		 * we need to temporarily drop all caps as we'll be calling
+diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
+index e861de3c79b9..fab0e89ad7b4 100644
+--- a/fs/ceph/ioctl.c
++++ b/fs/ceph/ioctl.c
+@@ -186,7 +186,7 @@ static long ceph_ioctl_get_dataloc(struct file *file, void __user *arg)
+ 		&ceph_sb_to_fs_client(inode->i_sb)->client->osdc;
+ 	struct ceph_object_locator oloc;
+ 	CEPH_DEFINE_OID_ONSTACK(oid);
+-	u32 xlen;
++	size_t xlen;
+ 	u64 tmp;
+ 	struct ceph_pg pgid;
+ 	int r;
+diff --git a/include/linux/ceph/striper.h b/include/linux/ceph/striper.h
+index 50bc1b88c5c4..e1036e953d7b 100644
+--- a/include/linux/ceph/striper.h
++++ b/include/linux/ceph/striper.h
+@@ -10,7 +10,7 @@ struct ceph_file_layout;
  
- 		ret = -ENOMEM;
--		if (size > dbuf->limit &&
--		    ceph_databuf_reserve(dbuf, size - dbuf->limit,
-+		if (size > request->limit &&
-+		    ceph_databuf_reserve(request, size - request->limit,
- 					 GFP_KERNEL) < 0)
- 			goto out;
+ void ceph_calc_file_object_mapping(struct ceph_file_layout *l,
+ 				   u64 off, u64 len,
+-				   u64 *objno, u64 *objoff, u32 *xlen);
++				   u64 *objno, u64 *objoff, size_t *xlen);
  
- 		ret = rbd_obj_read_sync(rbd_dev, &rbd_dev->header_oid,
--					&rbd_dev->header_oloc, dbuf, size);
-+					&rbd_dev->header_oloc, request, size);
- 		if (ret < 0)
- 			goto out;
- 		if ((size_t)ret < size) {
-@@ -4806,7 +4804,7 @@ static int rbd_dev_v1_header_info(struct rbd_device *rbd_dev,
- 	ret = rbd_header_from_disk(header, ondisk, first_time);
- out:
- 	kunmap_local(ondisk);
--	ceph_databuf_release(dbuf);
-+	ceph_databuf_release(request);
- 	return ret;
- }
+ struct ceph_object_extent {
+ 	struct list_head oe_item;
+@@ -97,14 +97,14 @@ int ceph_iterate_extents(struct ceph_file_layout *l, u64 off, u64 len,
+ 	while (len) {
+ 		struct ceph_object_extent *ex;
+ 		u64 objno, objoff;
+-		u32 xlen;
++		size_t xlen;
  
-@@ -5625,10 +5623,10 @@ static int rbd_dev_v2_parent_info(struct rbd_device *rbd_dev,
- 	if (!reply)
- 		goto out_free;
+ 		ceph_calc_file_object_mapping(l, off, len, &objno, &objoff,
+ 					      &xlen);
  
--	p = kmap_ceph_databuf_page(request, 0);
-+	p = ceph_databuf_enc_start(request);
- 	ceph_encode_64(&p, rbd_dev->spec->snap_id);
--	kunmap_local(p);
--	ceph_databuf_added_data(request, sizeof(__le64));
-+	ceph_databuf_enc_stop(request, p);
-+
- 	ret = __get_parent_info(rbd_dev, request, reply, pii);
- 	if (ret > 0)
- 		ret = __get_parent_info_legacy(rbd_dev, request, reply, pii);
+ 		ex = ceph_lookup_containing(object_extents, objno, objoff, xlen);
+ 		if (!ex) {
+-			WARN(1, "%s: objno %llu %llu~%u not found!\n",
++			WARN(1, "%s: objno %llu %llu~%zu not found!\n",
+ 			     __func__, objno, objoff, xlen);
+ 			return -EINVAL;
+ 		}
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index 92aaa5ed9145..f943d4e85a13 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -100,7 +100,7 @@ static int calc_layout(struct ceph_file_layout *layout, u64 off, u64 *plen,
+ 			u64 *objnum, u64 *objoff, u64 *objlen)
+ {
+ 	u64 orig_len = *plen;
+-	u32 xlen;
++	size_t xlen;
+ 
+ 	/* object extent? */
+ 	ceph_calc_file_object_mapping(layout, off, orig_len, objnum,
+diff --git a/net/ceph/striper.c b/net/ceph/striper.c
+index 3dedbf018fa6..c934c9addc9d 100644
+--- a/net/ceph/striper.c
++++ b/net/ceph/striper.c
+@@ -23,7 +23,7 @@
+  */
+ void ceph_calc_file_object_mapping(struct ceph_file_layout *l,
+ 				   u64 off, u64 len,
+-				   u64 *objno, u64 *objoff, u32 *xlen)
++				   u64 *objno, u64 *objoff, size_t *xlen)
+ {
+ 	u32 stripes_per_object = l->object_size / l->stripe_unit;
+ 	u64 blockno;	/* which su in the file (i.e. globally) */
+@@ -100,7 +100,7 @@ int ceph_file_to_extents(struct ceph_file_layout *l, u64 off, u64 len,
+ 	while (len) {
+ 		struct list_head *add_pos = NULL;
+ 		u64 objno, objoff;
+-		u32 xlen;
++		size_t xlen;
+ 
+ 		ceph_calc_file_object_mapping(l, off, len, &objno, &objoff,
+ 					      &xlen);
 
 
