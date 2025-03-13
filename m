@@ -1,122 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-43939-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E42BA600E1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 20:15:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6458DA60160
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 20:39:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A04913ABE85
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 19:14:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDA293BDC96
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 19:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090081F1927;
-	Thu, 13 Mar 2025 19:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF471F180F;
+	Thu, 13 Mar 2025 19:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="HnpctnXl"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aqn7Wia5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xad97b2T";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ePbZHaT9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ngZET5/w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D212178C9C
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Mar 2025 19:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E4017E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Mar 2025 19:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741893300; cv=none; b=Ovc1b4EqphAJq6127vLUvD8oSCLr6Bakp8bbiCeYEGfEtgWkCRdhORQCaZ4Fh04cGNSMP358tHv2FayIYYOOqE2a3l5fCFVUSDoLwVI4K0UvipU0z0GUl5FzIeRgwNEQxbty1qteUxBboKcsvcz2kQwU21V30g/khNzWWkFGub8=
+	t=1741894767; cv=none; b=raiLzx5bkm2pf4x9jx4ChyqO3bzJ6SkMJp7OqdkloisNwpZVt9wY63/0Cj3PKRxAsC6aKpdvXP72ZMU2+qYrFSYmB5DfY6mPvY9d1dNMfL6lcrJYIcx6WZ4Oe/C39mUR+3ZJ5hY63JPjc+etJiqxGRETHAfqjTaB9c29nxYBVVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741893300; c=relaxed/simple;
-	bh=Zb+ZXYsETYl//4H2xcjbCVAdiU5mtxxYtFbhePzBlTY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fBL+Dsn6XB7cLlPhVTrniDu715+zEMsbsga2taWC7j5vSceyCDo7nEunD7BXduaBVZpylI9MVlo4KHE0vdZpek86aFu6JFasGsAIZzeHOMrZhQFPz4DrZ0wGCDQUTFtQiujjzaq3Uxbm+/K/PgqqVz8giS+e4G7URWSm5Taa7UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=HnpctnXl; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22398e09e39so29252035ad.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Mar 2025 12:14:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1741893298; x=1742498098; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Zb+ZXYsETYl//4H2xcjbCVAdiU5mtxxYtFbhePzBlTY=;
-        b=HnpctnXlP1sSHNqPi+sBd6CeYKJ9gI9vZit7d4kUFDIZa7mM40s/4LHr5MkzAR11cM
-         M6vWT80oVR1ULNjERJTMoOnFHSChEPGTWEhxEfePAS4fOEiTfZ1obuavIPamydJaix+P
-         IY01HTh5btMgZjo99KX+hlikgBz9u3UNIPIaiE5X96MX0LkKjl/6npUjhTfD4woRh/FF
-         qEtxWMOWU9IdZsfwMds4z2UVbqaZrO5tevyK2/jE7lwUnVYpPe3F3CDPErGduHFfkbe4
-         EZZQGCnmxRakijxfkiQV8Szb5+poIzI3zr2Fhn+QqRt1eU8Tf7rs74HMjMFAsO5udGRz
-         tlRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741893298; x=1742498098;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Zb+ZXYsETYl//4H2xcjbCVAdiU5mtxxYtFbhePzBlTY=;
-        b=RXgGYG/aoLRGSLlx5HLVtBX+ZhS75ObgG4GH1rZcoNJC/6dTmHb1HSx64XYLOvEoe7
-         f/NltPY8eXJ3Z1KqccVicG5ZYNFGFaXfNbLianz8RKMavlCnhfMZcSYNDrR2JkFViazf
-         8/yyEQoH6ukdUchhGYzOsmVlRKHbgv6uSro/I1ENL13xk6OIOmETm7+3bvymayyPtyy1
-         QYgbCMf2/Aq0G5IFGiFWQ22TXds7/d54syFRu+fYksZ+7frNHOBdmD/+c6A4vYIiUd5m
-         ufeKtw6FspjQlUAy72n82NskRe35CGGkn7FoAS8dTl8HDSwJaVgVdaDourVHW/Q7vANv
-         tnLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8qywijN6vKJRuCBzrIRK9dJKuMya0rygCngxL4E9tST8Jz0kuH+rBK+P6MtzzQGkktXeqF5ItopypVOGM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxA8laMJn0VSV1+fkNhj8adzzM3EIjurNMKhR+k6dcgSciFDiMG
-	PQBIYht2pu2NhndlKlfcyXmEqFtbrhWOQ5Mqa2hP1oCUYTegChFuGz0moA8Ug5rVcY+2bii9P02
-	C3Mkgew==
-X-Gm-Gg: ASbGncvWgO9dAcdlS+cQ2dkKFlDlmZJJ0VzIep+R0zNwEil/O6OyFgShO3FGj4/U50y
-	op1nmF+3oruovkOVJPTblq/Cyo4Vy1iP1kFIlECIe0EtCJw/PtPSWmYSIBOAhDy7TrKJrkuDRoi
-	dx+3CxQWVKs2+jnxKWpjlbLHMiThoLPS2DYp5k2slTsNgSQXR5s4y5Z4WbhluHxCXx2ZZhp5vd9
-	rQ6cAoeMat+YoXoIV8fVEtvPUpJGroZ98ZNtnMw8al7C328yjlDfilFiDQ9nNrlm2koV5m/iQsT
-	D1x9BcjUHZf4MrkLdMrChtXFtl+un4LocujtbgNr1d1buXLPjjYi8PdDmnhkZKsbC/Ln/VlLzSJ
-	wCrA+DeEeGY8Jy12e
-X-Google-Smtp-Source: AGHT+IHHCeOtgNM+OytPitUTVjyp5IT+qMTAy7sJY2A+L7brq+8vKqWK5JWvWBrxjO7CL0wONpevIA==
-X-Received: by 2002:a17:902:e78b:b0:223:33cb:335f with SMTP id d9443c01a7336-225dd8318c8mr8102905ad.3.1741893298125;
-        Thu, 13 Mar 2025 12:14:58 -0700 (PDT)
-Received: from ?IPv6:2600:1700:6476:1430:7c68:1792:75b7:f9af? ([2600:1700:6476:1430:7c68:1792:75b7:f9af])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68883adsm17091615ad.47.2025.03.13.12.14.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 12:14:57 -0700 (PDT)
-Message-ID: <3cc1ac78a01be069f79dcf82e2f3e9bfe28d9a4b.camel@dubeyko.com>
-Subject: Re: Does ceph_fill_inode() mishandle I_NEW?
-From: slava@dubeyko.com
-To: David Howells <dhowells@redhat.com>
-Cc: Alex Markuze <amarkuze@redhat.com>, Xiubo Li <xiubli@redhat.com>, Ilya
- Dryomov <idryomov@gmail.com>, Christian Brauner <brauner@kernel.org>,
- ceph-devel@vger.kernel.org, 	linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	Slava.Dubeyko@ibm.com
-Date: Thu, 13 Mar 2025 12:14:55 -0700
-In-Reply-To: <1385372.1741861062@warthog.procyon.org.uk>
-References: <1385372.1741861062@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (by Flathub.org) 
+	s=arc-20240116; t=1741894767; c=relaxed/simple;
+	bh=W5rqcBUU4A1GxojTCKfuA2CDXxVz5Eb40FIjXZS7e7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p45th7p3QKJvoUcZ/u5sHGqO32TKPpQJQdiW81VTr3kO4+nzCF5uW09G8/6yh4T+mDgQ0cMD6SNN1379kP0+DTzBoqlXYn/cd/eB5SZLZiC6HJG607kANsZ8JBQuQDqSBoaFgmIWE8Ye2Sc2Z40UdbeTEKGF9X87UkUOo4Mf49M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aqn7Wia5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xad97b2T; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ePbZHaT9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ngZET5/w; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id DBA651F452;
+	Thu, 13 Mar 2025 19:39:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741894764; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3g4m4zOVwiEvi4EmgmPX97xtAJuoXPNo9SqpSIXoirI=;
+	b=aqn7Wia5Ke1hJRpNUq45DR8AGlrvnEFyBsRcqx1qpa1MsJCZVWYv1e9tamfp6Y6AJTtpdd
+	Av5y4W9SKxpBLx5EjmliLE23ulFBaAeWLY/3nZq6Dj1IPVNLiWfGZwtuX4QPkD546aq2fX
+	Fj2rJLaqk5ot1ajScBGMYUnjPe3VBw4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741894764;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3g4m4zOVwiEvi4EmgmPX97xtAJuoXPNo9SqpSIXoirI=;
+	b=xad97b2THzYHu4VLp/2Jh0qES0Z6GqxUqaiXvG/C7A4j+GPjSrE6Vh9mbHX9m3KDDz4/wz
+	uRKQtcjfrFcecMDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741894762; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3g4m4zOVwiEvi4EmgmPX97xtAJuoXPNo9SqpSIXoirI=;
+	b=ePbZHaT9EtA4gKg6WXRs/EP9PmB+vB/dh94i7uiT23QdM/lLJjnUP2aDdV1IXyvCgn37+9
+	gbLojKl90/vzIGGi09dUbmqn71fC2ESGJSBcpEuSm1nIK1lvtzSPEvM13RjA7NDcluzVwJ
+	gSkLyG2jdotMdJ+BAAowTf/qje8uELs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741894762;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3g4m4zOVwiEvi4EmgmPX97xtAJuoXPNo9SqpSIXoirI=;
+	b=ngZET5/wiQbhlnxLPPbFWOGpCzW3AJrADOFXOz77+M25JbkqxfkvsYmUMRghfboLAhTGwt
+	FgEglODxukLJhYDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C17CC137BA;
+	Thu, 13 Mar 2025 19:39:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id R+7uLmo002fLZwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 13 Mar 2025 19:39:22 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 72FB1A0908; Thu, 13 Mar 2025 20:39:22 +0100 (CET)
+Date: Thu, 13 Mar 2025 20:39:22 +0100
+From: Jan Kara <jack@suse.cz>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Dave Chinner <david@fromorbit.com>, David Bueso <dave@stgolabs.net>, 
+	Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
+	Kundan Kumar <kundan.kumar@samsung.com>, lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	anuj20.g@samsung.com, joshi.k@samsung.com, axboe@kernel.dk, clm@meta.com, 
+	willy@infradead.org, gost.dev@samsung.com
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Parallelizing filesystem writeback
+Message-ID: <xghvunpvjoizxpwskv3oidfif7cyvfgmt252cjm6jco6rhgas6@ou44xipkevfh>
+References: <CGME20250129103448epcas5p1f7d71506e4443429a0b0002eb842e749@epcas5p1.samsung.com>
+ <20250129102627.161448-1-kundan.kumar@samsung.com>
+ <Z5qw_1BOqiFum5Dn@dread.disaster.area>
+ <20250131093209.6luwm4ny5kj34jqc@green245>
+ <Z6GAYFN3foyBlUxK@dread.disaster.area>
+ <20250204050642.GF28103@lst.de>
+ <s43qlmnbtjbpc5vn75gokti3au7qhvgx6qj7qrecmkd2dgrdfv@no2i7qifnvvk>
+ <Z6qkLjSj1K047yPt@dread.disaster.area>
+ <Z9HIoJZmuVsyXdh9@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9HIoJZmuVsyXdh9@bombadil.infradead.org>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Thu, 2025-03-13 at 10:17 +0000, David Howells wrote:
-> ceph_fill_inode() seems to be mishandling I_NEW.=C2=A0 It only check I_NE=
-W
-> when
-> setting i_mode.=C2=A0 It then goes on to clobber a bunch of things in the
-> inode
-> struct and ceph_inode_info struct (granted in some cases it's
-> overwriting with
-> the same thing), irrespective of whether the inode is already set up
-> (i.e. if I_NEW isn't set).
->=20
-> It looks like I_NEW has been interpreted as to indicating that the
-> inode is
-> being created as a filesystem object (e.g. by mkdir) whereas it's
-> actually
-> merely about allocation and initialisation of struct inode in memory.
->=20
+On Wed 12-03-25 10:47:12, Luis Chamberlain wrote:
+> On Tue, Feb 11, 2025 at 12:13:18PM +1100, Dave Chinner wrote:
+> > Should we be looking towards using a subset of the existing list_lru
+> > functionality for writeback contexts here? i.e. create a list_lru
+> > object with N-way scalability, allow the fs to provide an
+> > inode-number-to-list mapping function, and use the list_lru
+> > interfaces to abstract away everything physical and cgroup related
+> > for tracking dirty inodes?
+> > 
+> > Then selecting inodes for writeback becomes a list_lru_walk()
+> > variant depending on what needs to be written back (e.g. physical
+> > node, memcg, both, everything that is dirty everywhere, etc).
+> 
+> I *suspect* you're referring to abstracting or sharing the sharding
+> to numa node functionality of list_lru so we can, divide objects
+> to numa nodes in similar ways for different use cases?
+> 
+> Because list_lru is about reclaim, not writeback, but from my reading
+> the list_lru sharding to numa nodes was the golden nugget to focus on.
 
-What do you mean by mishandling? Do you imply that Ceph has to set up
-the I_NEW somehow? Is it not VFS responsibility?
+Dave was speaking of list_lru mostly as an example how we have a structure
+that is both memcg aware and has N-way parallelism built in it (for NUMA
+nodes). For writeback we need something similar - we already have cgroup
+awareness and now you want to add N-way parallelism. So the idea was that
+we could possibly create a generic structure supporting this usable for
+both. But details matter here for what ends up being practical...
 
-Thanks,
-Slava.
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
