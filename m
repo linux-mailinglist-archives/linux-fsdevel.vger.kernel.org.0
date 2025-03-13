@@ -1,189 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-43877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59B62A5EDFE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 09:27:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E4D6A5EE01
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 09:28:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E69D17C36A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 08:26:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 585E51694E2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 08:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA52260A5D;
-	Thu, 13 Mar 2025 08:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7901A41C6A;
+	Thu, 13 Mar 2025 08:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="s6QPuZxW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OrN/xvZk";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lO+RGv9j";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="p7lzEVQv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJStTGOz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876F441C6A
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Mar 2025 08:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C80260A30
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Mar 2025 08:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741854414; cv=none; b=mBlt2X4U4X2coQLTSQdJ27jgT6MHUMoFhA7vc4sToTZh0pt6w2Kkj8HoYGTes+xG8z4kppMAYcMmupCDphQvCXeLg/zo5w8anN4UgYeU3HUaMIecNlSwGJ/wB1u4rENZLuBWGsYORdptnyOMcyZqFjx/Lei/mRCqvAk/YuxkcbA=
+	t=1741854500; cv=none; b=C6yLHxfpApHxQd9viUYvjtou1/6fZngZXMbg9f+2WW9POibutr36w8rV9g8RXZjgeC9FKbyTuki2jNzr9H1RR/XwGbs9npdQoSCxJJ8F36I1Go3IpEIl8ryedIk+ikCchjtC49R/0Wvr61WNfCU9zXW41HAw0vAl7SvJrves7qM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741854414; c=relaxed/simple;
-	bh=UX7iuUz+BhSDRbPOJ+MIVjqIvQane5u90ZqV2Kqq6Wk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DTm9mu+asrHrPYonGIMMK+Lhv+Yap/E5nRn2ikXdgrli7+ouUbJ85QFK+ghpXYLYrHibAiQDqE4ZMC7MfOaJifnxJrsHOwnUJVZZ8elSW7Yx8KOLC1eUc2Koz/06R5xezyV27ABFSmCZDgFFUgBExwqkJptyQbpwynA6Pcf/tqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=s6QPuZxW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OrN/xvZk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lO+RGv9j; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=p7lzEVQv; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3EEF921180;
-	Thu, 13 Mar 2025 08:26:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741854404; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zcLcvqz+uR00yB+iIZnLWaLpAp+lGE5SfqURGDDmPrA=;
-	b=s6QPuZxWDIOzrqZCj80mMOsICwGCd64xmqDq9AwGpTUk//qO3epEzVzgY5eiwH7TomoCTm
-	OoWzTAA1Prq5SkStEfdyFh5R61o6ggLrzIw6ADucfP8SO+DnXK6Sf428+FD0OGtTFOEFeo
-	UhjsmZAdTbwkOnNAAemENHDssQXHMwQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741854404;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zcLcvqz+uR00yB+iIZnLWaLpAp+lGE5SfqURGDDmPrA=;
-	b=OrN/xvZk/mMIAC02EHTezyPLfw81X+qspMZRCqj08a7WG2wPEF2eMh2SfHonZXmDK4Y+NZ
-	B4nqO8fZlm1CZ2CQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741854403; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zcLcvqz+uR00yB+iIZnLWaLpAp+lGE5SfqURGDDmPrA=;
-	b=lO+RGv9jt7oNdjCbhv+PsTmQELCQs1+GTFqaOaJKaVqCR6+4PgrqzB3chyPwC5qeM3mXV+
-	Xxofj+/d+jYTItxJgpBd7gQz+pRJgxbr8vxNavvB1ECEqMXnzjxmmgny0ULX1cAwvQMspf
-	W1Bx6FGFZVUAbnBArOXzIzQTF9LRaIk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741854403;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zcLcvqz+uR00yB+iIZnLWaLpAp+lGE5SfqURGDDmPrA=;
-	b=p7lzEVQvqtOpfSHWJvDLhXzhIQGfh2xLbwFS5riaYavSoM18lw7jAMxS8NmDPcORS4wwhL
-	OAQObUjSG6mR5uCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 017B413797;
-	Thu, 13 Mar 2025 08:26:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id UehAOsGW0mdGJQAAD6G6ig
-	(envelope-from <hare@suse.de>); Thu, 13 Mar 2025 08:26:41 +0000
-Message-ID: <5fd7a0de-d496-4430-a099-4c29e3c3f111@suse.de>
-Date: Thu, 13 Mar 2025 09:26:41 +0100
+	s=arc-20240116; t=1741854500; c=relaxed/simple;
+	bh=DAX95E8dRRp3Vn7GvTsb/Qtinub6DX3AThaLwxvmN+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=drGoCP+bHCCn7IOVMu1VeyLMvJklk2dh1ZPbzmcUo+/gcLB3MP437gg7WjypF/fnRI7pN9S58lxOsHgMH7x529ybxvCVFGgO6NH0oj5+hb7YSyizALluFelUHeyev0GtZYGy48DKlZec9y7ladK1kis99Go0eCtqJuOJ70Ys7Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJStTGOz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E363BC4CEDD;
+	Thu, 13 Mar 2025 08:28:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741854500;
+	bh=DAX95E8dRRp3Vn7GvTsb/Qtinub6DX3AThaLwxvmN+s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nJStTGOz+8qCd6/5/X7ary1f750sVjJHuVYuuX8VD/tY+SqBr4OZB/2ZvktXNFKgI
+	 0GXLyh1IoSfDyGNXKoFWgSrtzBBnSO/l1+od7KVeciHg93IUcBgKZgxuLmyrIGy3+O
+	 CsAKdzReP8eLuztKBZJknocy9PKmZhxKYcaM5QJnqqqeWAh/seDJ6mFEfbsoIbTHp0
+	 C0Z5IIrfY3xYU9BK0FR23sBBM4sdYUOePE7aNXy9nsEUjmCfPNsqnx7SwKOnbzJonF
+	 YWA3CiCkOGdEy4aaCMyJSHZyciu9I4BcVtacNgn4oTqarirUiP6WsetSnK4d4Tx0jD
+	 kLOyZOrDkT9oQ==
+Date: Thu, 13 Mar 2025 09:28:12 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 2/4] spufs: fix gang directory lifetimes
+Message-ID: <20250313-lakai-halbjahr-d302c0e6108b@brauner>
+References: <20250313042702.GU2023217@ZenIV>
+ <20250313042901.GB2123707@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] block: add BLK_FEAT_LBS to check for PAGE_SIZE limit
-To: Li Wang <liwang@redhat.com>, Christoph Hellwig <hch@lst.de>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, brauner@kernel.org,
- willy@infradead.org, david@fromorbit.com, djwong@kernel.org,
- kbusch@kernel.org, john.g.garry@oracle.com, ritesh.list@gmail.com,
- linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
- ltp@lists.linux.it, lkp@intel.com, oliver.sang@intel.com,
- oe-lkp@lists.linux.dev, gost.dev@samsung.com, p.raghav@samsung.com,
- da.gomez@samsung.com, kernel@pankajraghav.com
-References: <20250312050028.1784117-1-mcgrof@kernel.org>
- <20250312052155.GA11864@lst.de> <Z9Edl05uSrNfgasu@bombadil.infradead.org>
- <20250312054053.GA12234@lst.de> <Z9EfKXH6w8C0arzb@bombadil.infradead.org>
- <CAEemH2du_ULgnX19YnCiAJnCNzAURW0R17Tgxpdy9tg-XzisHQ@mail.gmail.com>
- <20250312135912.GB12488@lst.de>
- <CAEemH2c_S_KMMQcyAp702N0DDBWrqOVxgz6GeS=RfVrUCJFE1Q@mail.gmail.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <CAEemH2c_S_KMMQcyAp702N0DDBWrqOVxgz6GeS=RfVrUCJFE1Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,infradead.org,fromorbit.com,oracle.com,gmail.com,vger.kernel.org,lists.linux.it,intel.com,lists.linux.dev,samsung.com,pankajraghav.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:email,imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid,linux.it:url]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250313042901.GB2123707@ZenIV>
 
-On 3/13/25 03:54, Li Wang wrote:
+On Thu, Mar 13, 2025 at 04:29:01AM +0000, Al Viro wrote:
+> prior to "[POWERPC] spufs: Fix gang destroy leaks" we used to have
+> a problem with gang lifetimes - creation of a gang returns opened
+> gang directory, which normally gets removed when that gets closed,
+> but if somebody has created a context belonging to that gang and
+> kept it alive until the gang got closed, removal failed and we
+> ended up with a leak.
 > 
+> Unfortunately, it had been fixed the wrong way.  Dentry of gang
+> directory was no longer pinned, and rmdir on close was gone.
+> One problem was that failure of open kept calling simple_rmdir()
+> as cleanup, which meant an unbalanced dput().  Another bug was
+> in the success case - gang creation incremented link count on
+> root directory, but that was no longer undone when gang got
+> destroyed.
 > 
-> On Wed, Mar 12, 2025 at 9:59 PM Christoph Hellwig <hch@lst.de 
-> <mailto:hch@lst.de>> wrote:
+> Fix consists of
+> 	* reverting the commit in question
+> 	* adding a counter to gang, protected by ->i_rwsem
+> of gang directory inode.
+> 	* having it set to 1 at creation time, dropped
+> in both spufs_dir_close() and spufs_gang_close() and bumped
+> in spufs_create_context(), provided that it's not 0.
+> 	* using simple_recursive_removal() to take the gang
+> directory out when counter reaches zero.
 > 
->     On Wed, Mar 12, 2025 at 05:19:36PM +0800, Li Wang wrote:
->      > Well, does that patch for ioctl_loop06 still make sense?
->      > Or any other workaround?
->      > https://lists.linux.it/pipermail/ltp/2025-March/042599.html
->     <https://lists.linux.it/pipermail/ltp/2025-March/042599.html>
-> 
->     The real question is what block sizes we want to support for the
->     loop driver.  Because if it is larger than the physical block size
->     it can lead to torn writes.  But I guess no one cared about those
->     on loop so far, so why care about this now..
-> 
-> 
-> That's because the kernel test-robot reports a LTP/ioctl_loop06 test
-> fail in kernel commit:
->    47dd67532303803  ("block/bdev: lift block size restrictions to 64k")
-> 
-> The ioctl_loop06 is a boundary testing and always fail with
-> LOOP_SET_BLOCK_SIZE set a value larger than PAGE_SIZE.
-> But now it's set successfully unexpectedly.
-> 
-> If you all believe the boundary test for loopback driver is redundant,
-> I can help remove that from LTP code.
-> 
-I would remove it.
-Yes, we might incur torn writes, but previously we hadn't cared about 
-that. And if we cared we should have a dedicated test for that; there's
-no guarantee that we cannot have torn writes even with 4k blocks.
+> Fixes: 877907d37da9 "[POWERPC] spufs: Fix gang destroy leaks"
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
 
-Cheers,
-
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 
