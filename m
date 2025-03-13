@@ -1,89 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-43917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43918-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39560A5FBE4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 17:36:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A17A5FBDA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 17:34:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CD9B3B37BD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 16:33:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44CC71886E59
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 16:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FC9269812;
-	Thu, 13 Mar 2025 16:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BA6268C5A;
+	Thu, 13 Mar 2025 16:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qig2UyyW"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="INiw/BY3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21F42E3371
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Mar 2025 16:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8802E3371;
+	Thu, 13 Mar 2025 16:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741883637; cv=none; b=pzdX5kt75SuD0nPULPwBgOErM5nzfLh8Yk9d+AeHEodR/IpiOeegh2HOOvPqc9Wuog4F+VG98CQULxSPF34dIvNzVrsMxOoRMHqpOiXTg7dkDnE0BELMXhev3O/vle8cw3PnACpIDAwc4kaOaTwFtJxbLJHXbTjOFssDG6G+E/g=
+	t=1741883691; cv=none; b=oT3cEZHWIM60V5bWB3vcPi4555N3wtAaFukQMk2ijuJZjtI6lwnHfjMsTFMM0b7aiZ9RngPeRihmgWUxRVHqK8HWeN3RpWBN8Ymfhd53+vB7THi7asiCywZQAoKkeg9iLRVhvDDushHPYhZ9lQSGNks/ztbJQIA3iJk4sJa1syw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741883637; c=relaxed/simple;
-	bh=X1Fn4Z22YxriXZ+XLXS3yric0pSIsewyNYqzNx7CY8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NiYQkJF9YjDlUVyYp3WwZ5x1WdUgcN5W4iHYCtIyeA9HSkN+HZzjzaSXFOsiOl1IHtl4yvFPQJrxZcB8wwap7KyOiuym1Z3YBE9rME8+LpUnrTqTHUQQtGWuzG59Vertn6e0GV1KL63miB9by20D0N78MyGukVvY8YA787xDUis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qig2UyyW; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 13 Mar 2025 12:33:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741883622;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yYYxIVXRSwxyFIJhJvKACu1v5ak9j3w7POVOI2j0xpY=;
-	b=qig2UyyWUSClfgJPkbnnSn4kxaK2MJtXBEFr4dLLqzCiRtpZG7z7bcYIWcYVqT1YekSUv4
-	e+F6Ws8XfN5kclu+e4qoFmEeHvytisZOKChnh/wIHhxc4gaKs+ysqZlKEYOG4uD17Ilwd1
-	b6DqBzVhKYEWnG33AykirVZJv2COweY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>, 
-	Jooyung Han <jooyung@google.com>, Alasdair Kergon <agk@redhat.com>, 
-	Mike Snitzer <snitzer@kernel.org>, Heinz Mauelshagen <heinzm@redhat.com>, zkabelac@redhat.com, 
-	dm-devel@lists.linux.dev, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] the dm-loop target
-Message-ID: <ahddmkk35cmhrh4c5i5474bgqxhwy4kbc6sfo6zem77o25riqe@ptksvxbczl3r>
-References: <7d6ae2c9-df8e-50d0-7ad6-b787cb3cfab4@redhat.com>
- <Z8W1q6OYKIgnfauA@infradead.org>
- <b3caee06-c798-420e-f39f-f500b3ea68ca@redhat.com>
- <Z8XlvU0o3C5hAAaM@infradead.org>
- <8adb8df2-0c75-592d-bc3e-5609bb8de8d8@redhat.com>
- <Z8cE_4KSKHe5-J3e@infradead.org>
- <2pwjcvwkfasiwq5cum63ytgurs6wqzhlh6r25amofjz74ykybi@ru2qpz7ug6eb>
- <Z9GYGyjJcXLvtDfv@infradead.org>
- <e92833a3-c262-d7f5-9034-2a803e27dae7@redhat.com>
+	s=arc-20240116; t=1741883691; c=relaxed/simple;
+	bh=5OKmSnvCdr1VFgeIsGzSe7XOU1tHtPNOb533sHEAdEA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=X/VjJ0dcbj4crhs4imRDKGVo5fGDgrnuJUGxmzYtq6d87dbZPsI1YXQNQ4yXF8OdMPoFhkSxgjJai027+I4D6l9cz2A36eJuVpg9za6k/b+6HaEBNoSCh6cKs/x4TcijyeB3BVC+Ydm2gjZsO3WCOjzM6Qb/rvgCz6Zvcd5/O24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=INiw/BY3; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=t3tspSjPWzUbZJ39HBMWBiuBDmQruoqd/+DIkFO7DU8=; t=1741883687; x=1742488487; 
+	b=INiw/BY3EmpQ+tFbto5KJqYzmXRysM5GThjAhYsbCynEznpLPDo4LhdzdFBTwL58+EdxgvBmbuM
+	028eFSc0XRN70eRuGNl4Y2n3tb+aKMPUE9fasaiQklBDFXoTAtx9Ivce3cjB6GFD/97A0/6jwFUIi
+	l/pIQXAyGtXecH7fIk5k5+/QcTrpW78si4zwBrnWAlfyF8cJnxUqCdv8G+iOc7XeQTpPIgZ93+y4N
+	2rkc9UKNnWUtUhihlBpWpcMvsN88bgThoKynEPt7g26UsXqe7K/GSSTglFEG0jRiH4HrvS+7n/L11
+	isBuLiQ0KzfVqfA2EKk4XM26Qk5t+Dar76Dw==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1tslW3-00000002dFt-2bY1; Thu, 13 Mar 2025 17:34:39 +0100
+Received: from dynamic-078-054-179-053.78.54.pool.telefonica.de ([78.54.179.53] helo=[192.168.178.50])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1tslW3-00000000cJH-1fzt; Thu, 13 Mar 2025 17:34:39 +0100
+Message-ID: <a25daa5d094cf613e2f52fe716a17edf9fb26448.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v3 3/5] tracing: Move trace sysctls into trace.c
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Joel Granados <joel.granados@kernel.org>, Kees Cook <kees@kernel.org>, 
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,  Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, "David S. Miller"
+ <davem@davemloft.net>, Andreas Larsson	 <andreas@gaisler.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, sparclinux@vger.kernel.org
+Date: Thu, 13 Mar 2025 17:34:38 +0100
+In-Reply-To: <20250313-jag-mv_ctltables-v3-3-91f3bb434d27@kernel.org>
+References: <20250313-jag-mv_ctltables-v3-0-91f3bb434d27@kernel.org>
+	 <20250313-jag-mv_ctltables-v3-3-91f3bb434d27@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e92833a3-c262-d7f5-9034-2a803e27dae7@redhat.com>
-X-Migadu-Flow: FLOW_OUT
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Thu, Mar 13, 2025 at 05:21:36PM +0100, Mikulas Patocka wrote:
-> > IS_SWAPFILE isn't going way, as can't allow other writers to it.
-> > Also asides from the that the layouts are fairly complex.
-> > 
-> > The right way ahead for swap is to literally just treat it as a slightly
-> > special case of direct I/o that is allowed to IS_SWAPFILE files.  We
-> > can safely do writeback to file backed folios under memory pressure,
-> > so we can also go through the normal file system path.
-> 
-> But that is prone to low-memory-deadlock because the filesystems allocate 
-> buffer memory when they are mapping logical blocks to physical blocks. You 
-> would need to have a mempool in the filesystems, so that they can make 
-> forward progress even if there is no memory free - and that would 
-> complicate them.
+Hi Joel,
 
-I can't speak for everone else, but bcachefs has those mempools.
+On Thu, 2025-03-13 at 17:22 +0100, Joel Granados wrote:
+> Move trace ctl tables into their own const array in
+> kernel/trace/trace.c. The sysctl table register is called with
+> subsys_initcall placing if after its original place in proc_root_init.
+> This is part of a greater effort to move ctl tables into their
+> respective subsystems which will reduce the merge conflicts in
+> kerenel/sysctl.c.
+  ^^^^^^^
+
+Typo, exists in patches 4 and 5 of this series.
+
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
