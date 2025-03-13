@@ -1,126 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-43882-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43883-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D60EA5EE76
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 09:51:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD08A5EE94
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 09:55:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14C35189FFA8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 08:51:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2330B7AC2CD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 08:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9F8263F45;
-	Thu, 13 Mar 2025 08:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72570262D27;
+	Thu, 13 Mar 2025 08:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmO3jUKm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rwsincOu"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488E4262D16;
-	Thu, 13 Mar 2025 08:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A88262D35;
+	Thu, 13 Mar 2025 08:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741855843; cv=none; b=fzTKEv3KsfIGOCWiV+VtRwFgfVO8I8b8gsmtpPashAyzLp28x2/9ELplkhIP9MuY4H6squzA9KpWtp7FTtTB2JeFm1Go7jfMXlRV1QqjOqupJbi85xeb2A8fq57hvViOM0PV8EJRkOLYXjZEQie4bQtGnJ4TysLBObFVV8t37hY=
+	t=1741856106; cv=none; b=NsMlH1Ob5O1MB/Fmv92/o9paNyIMxSRdUIJZ9KSUkZ7Penuf+xXDyPxdgQDE0HWvix9ZdEiocw9kvZcHMSiJ1kMtLKmLdd72XAASF/r1AeEyq33SidkmKN5mz64J7BpO2l+0gCzbcYG4O3Orx3IhMo0ZIi2zenLSoRsXifR3PGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741855843; c=relaxed/simple;
-	bh=AaLGvCMflk/8nmpvfygkfLg+3xhOY9lgQwRoQdX2ybU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Li1OuxCkhrTdRwUfvoc4WQPxO7S7Noo/VKDiB/giMVPcBdndE5L6u2anqGYQX1YjcI3/ceYOvThdVpJZgL2Usc603UQLMzuxJgqM2u3BNWIOJvC7liJ7uaTsq2dtf8f9+fHySY/I030wQS2lszMhHvZsbxdPwsj57GqXwA9Wt2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dmO3jUKm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FB19C4CEEB;
-	Thu, 13 Mar 2025 08:50:36 +0000 (UTC)
+	s=arc-20240116; t=1741856106; c=relaxed/simple;
+	bh=v/UmHuy4+WdwC6rhInMSg1tPkA5XhywUNIcfydkGDm4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Htg0YPTGIrWqfMcxO4AVhePijEL7asQ42NDVytAfA9QLbHgqtITbzgKlMB3gbVnWOAPNPMAEsDs4KIVYb4kutu9mn2XBn9Jw7iONLviqgcgeeekJgXp6KV0ippeXTCw+qNBLXvAiFj3I/T7DLnJT48QU87njXUSUvEYf/1BLHAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rwsincOu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE8DFC4CEDD;
+	Thu, 13 Mar 2025 08:55:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741855843;
-	bh=AaLGvCMflk/8nmpvfygkfLg+3xhOY9lgQwRoQdX2ybU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dmO3jUKmBVspgoGdMHJ6GCTqbnJmH88g3j1T8G5EAl0THm9yLOFaue5sqRj5OvulL
-	 JDFz0riU11zg/X78iwbTarr4TvFmfK8DLqSfW3eTe6WB8kL6Es42n6O3tlpkHbZAK/
-	 MddO4H7+nAkEsGBtjkyOaEPQGzf99i47IvgYSdPnrbUs4nUDEiD7dXUj7+ljxhekex
-	 WIblD0DPkQSvW7b4+4lYaNNABQnwgyKp9/zbAcNER9k3wtivj85pEii/P8wzA8SRLt
-	 D19EmWaE9tfDyJ7ywnhhFy5RIha0IUNNb88eI8PbrBIswq/SKVNbBt/+G+QCiEvSIQ
-	 5jMpnYmgMMg6w==
-Date: Thu, 13 Mar 2025 09:50:31 +0100
+	s=k20201202; t=1741856105;
+	bh=v/UmHuy4+WdwC6rhInMSg1tPkA5XhywUNIcfydkGDm4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rwsincOuRDAoSQT7lNAF68R69LNaC03bQM8KuC1oAriCzmL6sVDXq5upuGHB8mOt1
+	 CkI37FUnrMb70XF+CdKUrgp9+FFl3p01wwea0lTg1KcxtoHIyaL+75+BEHsNmjQem1
+	 IMCg57BCyobor7B9pzVU6Rj5kNhExNThXtlzjem6D7VnfkN194mbTJnOIXjMwJAL2C
+	 liZVsUWuMngJ/jQfsC1/tHTXi+H10wyQQ/yPBRRU1/e1C1ixagjBWYS678eeoA97u+
+	 HbJ+TMY4g8Uo2MA40KhDAacGDWw15U+zvXtMAxrKnFw0hO1boWr0bLV6/yse0FYVoP
+	 ze+ZsrcmkAVIA==
 From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>, Ryan Lee <ryan.lee@canonical.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	Jan Kara <jack@suse.cz>, John Johansen <john.johansen@canonical.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Kentaro Takeda <takedakn@nttdata.co.jp>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Subject: Re: [RFC PATCH 1/6] fs: invoke LSM file_open hook in do_dentry_open
- for O_PATH fds as well
-Message-ID: <20250313-dompteur-dachten-bb695fcbebf1@brauner>
-References: <20250312212148.274205-1-ryan.lee@canonical.com>
- <20250312212148.274205-2-ryan.lee@canonical.com>
- <20250312213714.GT2023217@ZenIV>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: use debug-only asserts around fd allocation and install
+Date: Thu, 13 Mar 2025 09:54:56 +0100
+Message-ID: <20250313-einspannen-auktion-2f2b8e212eaf@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250312161941.1261615-1-mjguzik@gmail.com>
+References: <20250312161941.1261615-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250312213714.GT2023217@ZenIV>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1079; i=brauner@kernel.org; h=from:subject:message-id; bh=v/UmHuy4+WdwC6rhInMSg1tPkA5XhywUNIcfydkGDm4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRfmpsYdDLWv8wpLJdn4yy5tr9uundmaqkH9165VLQj0 6s/03B3RykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwESSJjH84f831ffCn59PIy5v elW3j+tjYUTuzslMC3gn1T35ZZyos42RYWrTi3kh63vMe3snqq4J8N+1Zkdv2N/967zVn1Tn/To twA8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 12, 2025 at 09:37:14PM +0000, Al Viro wrote:
-> On Wed, Mar 12, 2025 at 02:21:41PM -0700, Ryan Lee wrote:
-> > Currently, opening O_PATH file descriptors completely bypasses the LSM
-> > infrastructure. Invoking the LSM file_open hook for O_PATH fds will
-> > be necessary for e.g. mediating the fsmount() syscall.
-
-LSM mediation for the mount api should be done by adding appropriate
-hooks to the new mount api.
-
-> > 
-> > Signed-off-by: Ryan Lee <ryan.lee@canonical.com>
-> > ---
-> >  fs/open.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/open.c b/fs/open.c
-> > index 30bfcddd505d..0f8542bf6cd4 100644
-> > --- a/fs/open.c
-> > +++ b/fs/open.c
-> > @@ -921,8 +921,13 @@ static int do_dentry_open(struct file *f,
-> >  	if (unlikely(f->f_flags & O_PATH)) {
-> >  		f->f_mode = FMODE_PATH | FMODE_OPENED;
-> >  		file_set_fsnotify_mode(f, FMODE_NONOTIFY);
-> >  		f->f_op = &empty_fops;
-> > -		return 0;
-> > +		/*
-> > +		 * do_o_path in fs/namei.c unconditionally invokes path_put
-> > +		 * after this function returns, so don't path_put the path
-> > +		 * upon LSM rejection of O_PATH opening
-> > +		 */
-> > +		return security_file_open(f);
+On Wed, 12 Mar 2025 17:19:41 +0100, Mateusz Guzik wrote:
+> This also restores the check which got removed in 52732bb9abc9ee5b
+> ("fs/file.c: remove sanity_check and add likely/unlikely in alloc_fd()")
+> for performance reasons -- they no longer apply with a debug-only
+> variant.
 > 
-> Unconditional path_put() in do_o_path() has nothing to do with that -
-> what gets dropped there is the reference acquired there; the reference
-> acquired (and not dropped) here is the one that went into ->f_path.
-> Since you are leaving FMODE_OPENED set, you will have __fput() drop
-> that reference.
 > 
-> Basically, you are simulating behaviour on the O_DIRECT open of
-> something that does not support O_DIRECT - return an error, with
-> ->f_path and FMODE_OPENED left in place.
-> 
-> Said that, what I do not understand is the point of that exercise -
-> why does LSM need to veto anything for those and why is security_file_open()
 
-I really think this is misguided. This should be done via proper hooks
-into apis that use O_PATH file descriptors for specific purposes but not
-for the generic open() path.
+Applied to the vfs-6.15.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.15.misc branch should appear in linux-next soon.
 
-> the right place for such checks?
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-It isn't.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-> 
-> The second part is particularly interesting...
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.15.misc
+
+[1/1] fs: use debug-only asserts around fd allocation and install
+      https://git.kernel.org/vfs/vfs/c/dc530c44cd64
 
