@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-43975-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD2FA605DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 00:43:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2101A605DB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 00:43:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D95903AF2B3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 23:42:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33653421D00
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 23:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBF620B208;
-	Thu, 13 Mar 2025 23:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B03D1F8BA5;
+	Thu, 13 Mar 2025 23:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cuuu3THA"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NJhkggEa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344E2206F0E
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Mar 2025 23:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192D620B818
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Mar 2025 23:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741908934; cv=none; b=N2kiDLx6fSaflSE3Q/RAgGPH61uF8/uXDNBHkQ7h8nvsl4LY+yEteCJ0YBJK9W97/z0AhH0Z9Rm+QWl1hQ2AHcQmjgNubTU/B5bN0LHPkoMGSktWhJ6olmQdqCVXC6Dd9vYFId6InD7np4hxZXtO+FpQMXGWnoZ3SeEwMJ9X2tI=
+	t=1741908938; cv=none; b=W4eGFAC0TeefoqV0cbl5UFR/kQWa42R+LQHKg6ltFMod4XsIm4V+nsz4nvcfiIK5uoC21l70ZGy0DR24ArGPqUqxolksegNsWKs///nqxfldraIWctwUhA/yZrDVOPvRupVWVdgV3XkhlzxL/2PPfOlKBuJG5JcIKRpbhR08K2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741908934; c=relaxed/simple;
-	bh=ufQudNEzzeiDLcQykRdQgPkD6KuVET09igARrkJdeTk=;
+	s=arc-20240116; t=1741908938; c=relaxed/simple;
+	bh=8qJA1t/oP1wKnFSji3XC0BItsvE3qCEUW/Gd2fboNIc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XoOcwN3zfO8HwHVT1a3l8V4hFo5IKTnaNmscM6EIBIeb1FxpjlooAyq39WoMFV8exxaMrcY/+vh0vQ9ENAwherzDDFgV7/kO6Y3EdhS3x+JqVElQHEv7VQYCC8HH9PoZ43/KzXthYWK32ghv5kS+Ct3g9GnNwCzKzfa8KCoJZcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cuuu3THA; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=iD9GggYo07Fnn7PUMjyflUfq/mC642LoSb+mMN2h2LExli22sCuX0myFWpSHqfnIBRQSyUbbQFbPXP7rSJ1YQM4DyI8nYU3qV6TdH+WSVpW0WYKLDPVFwORCkVIht4lXaXOJWj1oEydl0Jy0/C2KUF+ATWT+4jWfnxt5gyAmAfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NJhkggEa; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741908931;
+	s=mimecast20190719; t=1741908935;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5MrayBHV+6dK7LiAjQhlOclbDaGg8mYI23n6D75wm7Q=;
-	b=Cuuu3THAyDIBlXTh0tdzGQC8nF5IBXf4HSnjDD3jilfHEqeZZ/4uzbMs/DYr6fEHGfUUyO
-	c5QVIIqrVl4h4WrvK1iS1htwF9rDPgcoPN0k7gercOUSMV9kku2lteVlN3xRU87vcvL472
-	z653a0z9qFP3CZllzC3nk5xssqpgYsk=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+	bh=xGcz01WnWG0q81+QmgZlmMhhOegvNur4a75Sm9xwI30=;
+	b=NJhkggEavoCk5SQWC1w9j+8VOzWp5J/LL474wCZtWBHEeOhz+mPyb9vb3V2cpCXseGJV3M
+	Gcm7rgCitYTGh1uas9WZihznMgSqUiUi1bNZfRUGUJNhHqcaNwFavAHiTYocGFPfFnBPA3
+	ipDw3Dn9rM4DTUzLz9aIwaHBt8ZZ5tU=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-611-aWQDqZpaOmOITLt0AqEJnw-1; Thu,
- 13 Mar 2025 19:35:28 -0400
-X-MC-Unique: aWQDqZpaOmOITLt0AqEJnw-1
-X-Mimecast-MFC-AGG-ID: aWQDqZpaOmOITLt0AqEJnw_1741908926
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-412-ME2h5ZTGOhyxIk538zxFgA-1; Thu,
+ 13 Mar 2025 19:35:31 -0400
+X-MC-Unique: ME2h5ZTGOhyxIk538zxFgA-1
+X-Mimecast-MFC-AGG-ID: ME2h5ZTGOhyxIk538zxFgA_1741908930
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B32531800259;
-	Thu, 13 Mar 2025 23:35:26 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 821511801A07;
+	Thu, 13 Mar 2025 23:35:30 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.61])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 617181955BCB;
-	Thu, 13 Mar 2025 23:35:24 +0000 (UTC)
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EA2551955F2D;
+	Thu, 13 Mar 2025 23:35:27 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Viacheslav Dubeyko <slava@dubeyko.com>,
 	Alex Markuze <amarkuze@redhat.com>
@@ -67,10 +67,11 @@ Cc: David Howells <dhowells@redhat.com>,
 	ceph-devel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 26/35] ceph: Kill ceph_rw_context
-Date: Thu, 13 Mar 2025 23:33:18 +0000
-Message-ID: <20250313233341.1675324-27-dhowells@redhat.com>
+	linux-kernel@vger.kernel.org,
+	Xiubo Li <xiubli@redhat.com>
+Subject: [RFC PATCH 27/35] netfs: Pass extra write context to write functions
+Date: Thu, 13 Mar 2025 23:33:19 +0000
+Message-ID: <20250313233341.1675324-28-dhowells@redhat.com>
 In-Reply-To: <20250313233341.1675324-1-dhowells@redhat.com>
 References: <20250313233341.1675324-1-dhowells@redhat.com>
 Precedence: bulk
@@ -80,209 +81,200 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-With all invokers of readahead:
+Allow the filesystem to pass in an extra bit of context to certain write
+functions so that netfs_page_mkwrite() and netfs_perform_write() can pass
+it back to the filesystem's ->post_modify() function.
 
-	- read() and co.
-	- splice()
-	- fadvise(POSIX_FADV_WILLNEED)
-	- madvise(MADV_WILLNEED)
-	- fault-in
-
-now getting the FILE_CACHE cap or the LAZYIO cap and holding it across
-readahead invocation, there's no need for the ceph_rw_context.  It can be
-assumed that we have one or other cap - and apparently it doesn't matter
-which as we don't actually check rw_ctx->caps.
+This can be used by ceph to pass in a preallocated ceph_cap_flush record.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Jeff Layton <jlayton@kernel.org>
 cc: Viacheslav Dubeyko <slava@dubeyko.com>
 cc: Alex Markuze <amarkuze@redhat.com>
+cc: Xiubo Li <xiubli@redhat.com>
 cc: Ilya Dryomov <idryomov@gmail.com>
 cc: ceph-devel@vger.kernel.org
 cc: linux-fsdevel@vger.kernel.org
 ---
- fs/ceph/addr.c  | 19 +++++++------------
- fs/ceph/file.c  | 13 +------------
- fs/ceph/super.h | 47 -----------------------------------------------
- 3 files changed, 8 insertions(+), 71 deletions(-)
+ fs/9p/vfs_file.c          |  2 +-
+ fs/afs/write.c            |  2 +-
+ fs/netfs/buffered_write.c | 21 ++++++++++++---------
+ fs/smb/client/file.c      |  4 ++--
+ include/linux/netfs.h     |  9 +++++----
+ 5 files changed, 21 insertions(+), 17 deletions(-)
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 7c89cafcb91a..27f27ab24446 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -473,18 +473,16 @@ static int ceph_init_request(struct netfs_io_request *rreq, struct file *file)
- 	if (!priv)
- 		return -ENOMEM;
+diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+index 348cc90bf9c5..838332d5372c 100644
+--- a/fs/9p/vfs_file.c
++++ b/fs/9p/vfs_file.c
+@@ -477,7 +477,7 @@ v9fs_file_mmap(struct file *filp, struct vm_area_struct *vma)
+ static vm_fault_t
+ v9fs_vm_page_mkwrite(struct vm_fault *vmf)
+ {
+-	return netfs_page_mkwrite(vmf, NULL);
++	return netfs_page_mkwrite(vmf, NULL, NULL);
+ }
  
-+	/*
-+	 * If we are doing readahead triggered by a read, fault-in or
-+	 * MADV/FADV_WILLNEED, someone higher up the stack must be holding the
-+	 * FILE_CACHE and/or LAZYIO caps.
-+	 */
- 	if (file) {
--		struct ceph_rw_context *rw_ctx;
--		struct ceph_file_info *fi = file->private_data;
--
- 		priv->file_ra_pages = file->f_ra.ra_pages;
- 		priv->file_ra_disabled = file->f_mode & FMODE_RANDOM;
--
--		rw_ctx = ceph_find_rw_context(fi);
--		if (rw_ctx) {
--			rreq->netfs_priv = priv;
--			return 0;
--		}
-+		rreq->netfs_priv = priv;
-+		return 0;
+ static void v9fs_mmap_vm_close(struct vm_area_struct *vma)
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index 18b0a9f1615e..054f3a07d2a5 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -276,7 +276,7 @@ vm_fault_t afs_page_mkwrite(struct vm_fault *vmf)
+ 
+ 	if (afs_validate(AFS_FS_I(file_inode(file)), afs_file_key(file)) < 0)
+ 		return VM_FAULT_SIGBUS;
+-	return netfs_page_mkwrite(vmf, NULL);
++	return netfs_page_mkwrite(vmf, NULL, NULL);
+ }
+ 
+ /*
+diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
+index f3370846ba18..0245449b93e3 100644
+--- a/fs/netfs/buffered_write.c
++++ b/fs/netfs/buffered_write.c
+@@ -86,7 +86,8 @@ static void netfs_update_i_size(struct netfs_inode *ctx, struct inode *inode,
+  * netfs_perform_write - Copy data into the pagecache.
+  * @iocb: The operation parameters
+  * @iter: The source buffer
+- * @netfs_group: Grouping for dirty folios (eg. ceph snaps).
++ * @netfs_group: Grouping for dirty folios (eg. ceph snaps)
++ * @fs_priv: Private data to be passed to ->post_modify()
+  *
+  * Copy data into pagecache folios attached to the inode specified by @iocb.
+  * The caller must hold appropriate inode locks.
+@@ -97,7 +98,7 @@ static void netfs_update_i_size(struct netfs_inode *ctx, struct inode *inode,
+  * a new one is started.
+  */
+ ssize_t netfs_perform_write(struct kiocb *iocb, struct iov_iter *iter,
+-			    struct netfs_group *netfs_group)
++			    struct netfs_group *netfs_group, void *fs_priv)
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct inode *inode = file_inode(file);
+@@ -382,7 +383,7 @@ ssize_t netfs_perform_write(struct kiocb *iocb, struct iov_iter *iter,
+ 		 */
+ 		set_bit(NETFS_ICTX_MODIFIED_ATTR, &ctx->flags);
+ 		if (unlikely(ctx->ops->post_modify))
+-			ctx->ops->post_modify(inode);
++			ctx->ops->post_modify(inode, fs_priv);
  	}
  
- 	/*
-@@ -1982,10 +1980,7 @@ static vm_fault_t ceph_filemap_fault(struct vm_fault *vmf)
- 
- 	if ((got & (CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO)) ||
- 	    !ceph_has_inline_data(ci)) {
--		CEPH_DEFINE_RW_CONTEXT(rw_ctx, got);
--		ceph_add_rw_context(fi, &rw_ctx);
- 		ret = filemap_fault(vmf);
--		ceph_del_rw_context(fi, &rw_ctx);
- 		doutc(cl, "%llx.%llx %llu drop cap refs %s ret %x\n",
- 		      ceph_vinop(inode), off, ceph_cap_string(got), ret);
- 	} else
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index b876cecbaba5..4512215cccc6 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -229,8 +229,6 @@ static int ceph_init_file_info(struct inode *inode, struct file *file,
- 	ceph_get_fmode(ci, fmode, 1);
- 	fi->fmode = fmode;
- 
--	spin_lock_init(&fi->rw_contexts_lock);
--	INIT_LIST_HEAD(&fi->rw_contexts);
- 	fi->filp_gen = READ_ONCE(ceph_inode_to_fs_client(inode)->filp_gen);
- 
- 	if ((file->f_mode & FMODE_WRITE) && ceph_has_inline_data(ci)) {
-@@ -999,7 +997,6 @@ int ceph_release(struct inode *inode, struct file *file)
- 		struct ceph_dir_file_info *dfi = file->private_data;
- 		doutc(cl, "%p %llx.%llx dir file %p\n", inode,
- 		      ceph_vinop(inode), file);
--		WARN_ON(!list_empty(&dfi->file_info.rw_contexts));
- 
- 		ceph_put_fmode(ci, dfi->file_info.fmode, 1);
- 
-@@ -1012,7 +1009,6 @@ int ceph_release(struct inode *inode, struct file *file)
- 		struct ceph_file_info *fi = file->private_data;
- 		doutc(cl, "%p %llx.%llx regular file %p\n", inode,
- 		      ceph_vinop(inode), file);
--		WARN_ON(!list_empty(&fi->rw_contexts));
- 
- 		ceph_fscache_unuse_cookie(inode, file->f_mode & FMODE_WRITE);
- 		ceph_put_fmode(ci, fi->fmode, 1);
-@@ -2154,13 +2150,10 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 			retry_op = READ_INLINE;
- 		}
- 	} else {
--		CEPH_DEFINE_RW_CONTEXT(rw_ctx, got);
- 		doutc(cl, "async %p %llx.%llx %llu~%u got cap refs on %s\n",
- 		      inode, ceph_vinop(inode), iocb->ki_pos, (unsigned)len,
- 		      ceph_cap_string(got));
--		ceph_add_rw_context(fi, &rw_ctx);
- 		ret = generic_file_read_iter(iocb, to);
--		ceph_del_rw_context(fi, &rw_ctx);
- 	}
- 
- 	doutc(cl, "%p %llx.%llx dropping cap refs on %s = %d\n",
-@@ -2256,7 +2249,6 @@ static ssize_t ceph_splice_read(struct file *in, loff_t *ppos,
- 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	if (unlikely(wreq)) {
+@@ -411,7 +412,8 @@ EXPORT_SYMBOL(netfs_perform_write);
+  * netfs_buffered_write_iter_locked - write data to a file
+  * @iocb:	IO state structure (file, offset, etc.)
+  * @from:	iov_iter with data to write
+- * @netfs_group: Grouping for dirty folios (eg. ceph snaps).
++ * @netfs_group: Grouping for dirty folios (eg. ceph snaps)
++ * @fs_priv: Private data to be passed to ->post_modify()
+  *
+  * This function does all the work needed for actually writing data to a
+  * file. It does all basic checks, removes SUID from the file, updates
+@@ -431,7 +433,7 @@ EXPORT_SYMBOL(netfs_perform_write);
+  * * negative error code if no data has been written at all
+  */
+ ssize_t netfs_buffered_write_iter_locked(struct kiocb *iocb, struct iov_iter *from,
+-					 struct netfs_group *netfs_group)
++					 struct netfs_group *netfs_group, void *fs_priv)
+ {
+ 	struct file *file = iocb->ki_filp;
  	ssize_t ret;
- 	int want = 0, got = 0;
--	CEPH_DEFINE_RW_CONTEXT(rw_ctx, 0);
+@@ -446,7 +448,7 @@ ssize_t netfs_buffered_write_iter_locked(struct kiocb *iocb, struct iov_iter *fr
+ 	if (ret)
+ 		return ret;
  
- 	dout("splice_read %p %llx.%llx %llu~%zu trying to get caps on %p\n",
- 	     inode, ceph_vinop(inode), *ppos, len, inode);
-@@ -2291,10 +2283,7 @@ static ssize_t ceph_splice_read(struct file *in, loff_t *ppos,
- 	dout("splice_read %p %llx.%llx %llu~%zu got cap refs on %s\n",
- 	     inode, ceph_vinop(inode), *ppos, len, ceph_cap_string(got));
+-	return netfs_perform_write(iocb, from, netfs_group);
++	return netfs_perform_write(iocb, from, netfs_group, fs_priv);
+ }
+ EXPORT_SYMBOL(netfs_buffered_write_iter_locked);
  
--	rw_ctx.caps = got;
--	ceph_add_rw_context(fi, &rw_ctx);
- 	ret = filemap_splice_read(in, ppos, pipe, len, flags);
--	ceph_del_rw_context(fi, &rw_ctx);
+@@ -485,7 +487,7 @@ ssize_t netfs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
  
- 	dout("splice_read %p %llx.%llx dropping cap refs on %s = %zd\n",
- 	     inode, ceph_vinop(inode), ceph_cap_string(got), ret);
-@@ -3177,7 +3166,7 @@ static int ceph_fadvise(struct file *file, loff_t offset, loff_t len, int advice
+ 	ret = generic_write_checks(iocb, from);
+ 	if (ret > 0)
+-		ret = netfs_buffered_write_iter_locked(iocb, from, NULL);
++		ret = netfs_buffered_write_iter_locked(iocb, from, NULL, NULL);
+ 	netfs_end_io_write(inode);
+ 	if (ret > 0)
+ 		ret = generic_write_sync(iocb, ret);
+@@ -499,7 +501,8 @@ EXPORT_SYMBOL(netfs_file_write_iter);
+  * we only track group on a per-folio basis, so we block more often than
+  * we might otherwise.
+  */
+-vm_fault_t netfs_page_mkwrite(struct vm_fault *vmf, struct netfs_group *netfs_group)
++vm_fault_t netfs_page_mkwrite(struct vm_fault *vmf, struct netfs_group *netfs_group,
++			      void *fs_priv)
+ {
+ 	struct netfs_group *group;
+ 	struct folio *folio = page_folio(vmf->page);
+@@ -554,7 +557,7 @@ vm_fault_t netfs_page_mkwrite(struct vm_fault *vmf, struct netfs_group *netfs_gr
+ 	file_update_time(file);
+ 	set_bit(NETFS_ICTX_MODIFIED_ATTR, &ictx->flags);
+ 	if (ictx->ops->post_modify)
+-		ictx->ops->post_modify(inode);
++		ictx->ops->post_modify(inode, fs_priv);
+ 	ret = VM_FAULT_LOCKED;
+ out:
+ 	sb_end_pagefault(inode->i_sb);
+diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
+index 8582cf61242c..4329c2bbf74f 100644
+--- a/fs/smb/client/file.c
++++ b/fs/smb/client/file.c
+@@ -2779,7 +2779,7 @@ cifs_writev(struct kiocb *iocb, struct iov_iter *from)
  		goto out;
  	}
  
--	if ((got & want) == want) {
-+	if (got & want) {
- 		doutc(cl, "fadvise(WILLNEED) %p %llx.%llx %llu~%llu got cap refs on %s\n",
- 		      inode, ceph_vinop(inode), offset, len,
- 		      ceph_cap_string(got));
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index b072572e2cf4..14784ad86670 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -833,10 +833,6 @@ extern void change_auth_cap_ses(struct ceph_inode_info *ci,
- struct ceph_file_info {
- 	short fmode;     /* initialized on open */
- 	short flags;     /* CEPH_F_* */
--
--	spinlock_t rw_contexts_lock;
--	struct list_head rw_contexts;
--
- 	u32 filp_gen;
- };
+-	rc = netfs_buffered_write_iter_locked(iocb, from, NULL);
++	rc = netfs_buffered_write_iter_locked(iocb, from, NULL, NULL);
  
-@@ -859,49 +855,6 @@ struct ceph_dir_file_info {
- 	int dir_info_len;
- };
+ out:
+ 	up_read(&cinode->lock_sem);
+@@ -2955,7 +2955,7 @@ cifs_strict_readv(struct kiocb *iocb, struct iov_iter *to)
  
--struct ceph_rw_context {
--	struct list_head list;
--	struct task_struct *thread;
--	int caps;
--};
--
--#define CEPH_DEFINE_RW_CONTEXT(_name, _caps)	\
--	struct ceph_rw_context _name = {	\
--		.thread = current,		\
--		.caps = _caps,			\
--	}
--
--static inline void ceph_add_rw_context(struct ceph_file_info *cf,
--				       struct ceph_rw_context *ctx)
--{
--	spin_lock(&cf->rw_contexts_lock);
--	list_add(&ctx->list, &cf->rw_contexts);
--	spin_unlock(&cf->rw_contexts_lock);
--}
--
--static inline void ceph_del_rw_context(struct ceph_file_info *cf,
--				       struct ceph_rw_context *ctx)
--{
--	spin_lock(&cf->rw_contexts_lock);
--	list_del(&ctx->list);
--	spin_unlock(&cf->rw_contexts_lock);
--}
--
--static inline struct ceph_rw_context*
--ceph_find_rw_context(struct ceph_file_info *cf)
--{
--	struct ceph_rw_context *ctx, *found = NULL;
--	spin_lock(&cf->rw_contexts_lock);
--	list_for_each_entry(ctx, &cf->rw_contexts, list) {
--		if (ctx->thread == current) {
--			found = ctx;
--			break;
--		}
--	}
--	spin_unlock(&cf->rw_contexts_lock);
--	return found;
--}
--
- struct ceph_readdir_cache_control {
- 	struct folio *folio;
- 	struct dentry **dentries;
+ static vm_fault_t cifs_page_mkwrite(struct vm_fault *vmf)
+ {
+-	return netfs_page_mkwrite(vmf, NULL);
++	return netfs_page_mkwrite(vmf, NULL, NULL);
+ }
+ 
+ static const struct vm_operations_struct cifs_file_vm_ops = {
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index ec1c51697c04..a67297de8a20 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -335,7 +335,7 @@ struct netfs_request_ops {
+ 
+ 	/* Modification handling */
+ 	void (*update_i_size)(struct inode *inode, loff_t i_size);
+-	void (*post_modify)(struct inode *inode);
++	void (*post_modify)(struct inode *inode, void *fs_priv);
+ 
+ 	/* Write request handling */
+ 	void (*begin_writeback)(struct netfs_io_request *wreq);
+@@ -435,9 +435,9 @@ ssize_t netfs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter);
+ 
+ /* High-level write API */
+ ssize_t netfs_perform_write(struct kiocb *iocb, struct iov_iter *iter,
+-			    struct netfs_group *netfs_group);
++			    struct netfs_group *netfs_group, void *fs_priv);
+ ssize_t netfs_buffered_write_iter_locked(struct kiocb *iocb, struct iov_iter *from,
+-					 struct netfs_group *netfs_group);
++					 struct netfs_group *netfs_group, void *fs_priv);
+ ssize_t netfs_unbuffered_write_iter(struct kiocb *iocb, struct iov_iter *from);
+ ssize_t netfs_unbuffered_write_iter_locked(struct kiocb *iocb, struct iov_iter *iter,
+ 					   struct netfs_group *netfs_group);
+@@ -466,7 +466,8 @@ void netfs_invalidate_folio(struct folio *folio, size_t offset, size_t length);
+ bool netfs_release_folio(struct folio *folio, gfp_t gfp);
+ 
+ /* VMA operations API. */
+-vm_fault_t netfs_page_mkwrite(struct vm_fault *vmf, struct netfs_group *netfs_group);
++vm_fault_t netfs_page_mkwrite(struct vm_fault *vmf, struct netfs_group *netfs_group,
++			      void *fs_priv);
+ 
+ /* (Sub)request management API. */
+ void netfs_read_subreq_progress(struct netfs_io_subrequest *subreq);
 
 
