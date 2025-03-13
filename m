@@ -1,112 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-43892-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD144A5F24C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 12:26:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37B3DA5F292
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 12:39:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC5EF7AA810
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 11:25:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B3F51779DD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 11:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35912661BF;
-	Thu, 13 Mar 2025 11:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F184266566;
+	Thu, 13 Mar 2025 11:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Goipk6yy"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="fgiHPmX5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640F1265CAB
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Mar 2025 11:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B4A1F1518
+	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Mar 2025 11:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741865176; cv=none; b=py5b6Lt/5XU8JAy3PPQuYvwy8V2Fazu4/FZOHnmLKSseN293MC+47NWzU+tB76/mkJRAs0Dl1lic+OnW6YFPbb/XIiRhq0s0GlWp1fqk6kZngF7G9PU1Sr/iD4cbupmAv5qdcgefOK/uoX7U0qJ3mAtPeo7DPwBHwdaODQQO8gg=
+	t=1741865971; cv=none; b=c5ijlRhlKulvBdVhFg8l/tRr7i88CMCSWJDPYx/g5npe7i1N9dsDOfr7InICMkWUsS58orA53kZOluxPNNRs77d97oFX5ISma/kA25gQjmgM5iJ5hEsOmXUrotL9wbwlfNN//h1T7qV0K7gLnAYNuinrNb9fcMaWBgZD4RnGWyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741865176; c=relaxed/simple;
-	bh=j8JKeL3My3p380xaKx7CR7AkatM+RkoyVjF5AKF9V/c=;
+	s=arc-20240116; t=1741865971; c=relaxed/simple;
+	bh=h/uGZ3X8jPhgOe/0uLH0jVZbUD3rnwbCquLnxR8exxk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XROcXUtTj7585UBoq4WbxfIVOiwC6ybXRRb7Xj4amMa/BcTbksLdEi3gKfUh0WJrZ+LyDyRyccC50lRVWGjLGxMVzgFvn7wLO8XpIUhEIb1KRBeFW+yYURCc/IgAmw2pwX4hBV2mtJN8FllSixkesViub910Tt0M0hp9PFjbNr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Goipk6yy; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741865173;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=haq21k8jWN6ck+QB/yq8TbL/zWBVpjmfQO2fprJtAqs=;
-	b=Goipk6yyCBvyiEucUCgDLtQrHtHhHffFpE32KhbNmJHjRGPLPQpMPbfPW0EGjDVbKnGO5n
-	guX4SVakDVNYlN6n1fPcJbHuh72z/B7J2keW1o6pNaEziMrbaoO7Cvc02sR2hepvXt2E84
-	pQGvKLB5zwSo5eqcdlX+Ymlw7QsgAzs=
-Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com
- [209.85.222.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-650-ty1ENkddNs-HFsD6oyme7g-1; Thu, 13 Mar 2025 07:26:12 -0400
-X-MC-Unique: ty1ENkddNs-HFsD6oyme7g-1
-X-Mimecast-MFC-AGG-ID: ty1ENkddNs-HFsD6oyme7g_1741865171
-Received: by mail-ua1-f71.google.com with SMTP id a1e0cc1a2514c-86d33b8ead3so195376241.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Mar 2025 04:26:12 -0700 (PDT)
+	 To:Cc:Content-Type; b=DpjjT7YzU3Qmou/x45CIjCAWnkRJZ4KwofLFX9BTBkegrZFPwr6DEqXu6UWAkw2JSv5Yx4+73JSjLD7y/Frc7SZcnUSFVwuxTGvkEMBPgdiVDmNxaL6lbmFAAYNpWgp8LM6uUW8r2WX1fdT0ZYTgNBUG9F6GJILn7XyjJesUdQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=fgiHPmX5; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4767e969b94so13537681cf.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Mar 2025 04:39:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1741865968; x=1742470768; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XLRDNwNQbW48d2euIipoZOCFakmNuPY383cXvSDOrxg=;
+        b=fgiHPmX5gEgvFwaZ8E6i7JKbGPWVOkDc57ryuyJsFxUWtFqTVCSgcvJZKygUQ80dly
+         gGILEloeA5jBRnK0XCyWVlkuIC58rN8KFandWjySZub6RvS1QzLET34e2dZLRFHctFxT
+         2qrYCoXoMLX1JL+DZVw+XvlgMOhAopDK0SboI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741865171; x=1742469971;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=haq21k8jWN6ck+QB/yq8TbL/zWBVpjmfQO2fprJtAqs=;
-        b=JLvLtUV9Vo31r3sjVJ7HDMcrqKzVFMOD2aqhwNj9evILm0qdd5LeDPsn/WRcUQ2XVg
-         IgeDsmP5mcoPjiLG7u9WxwfCDES9KkR5CcPmw4WQToDFtwTa4mYlTD+g/HmKy+o2/m5B
-         8dY786/c+SmzU0FY0xhcCxxq8SE5+/k6eZ1xxd4i/9fIJbRenElxKQFZlxr5aCP6MorI
-         zgjm49QHCdfb2g1H/S2VlpZOEzB2hP3SCpday+eGrBjDGqL6F7vNPnd/wzwqqj4iUvRK
-         yFY0vk5X6obIKhtLiLn+O2Jf8XVzO0InmqFWEkDNEduJ/kVqUFtcDx6OV/qMa7BOOViw
-         EHBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVseykEerLaiaj8B5AeU5KuIREA9ndRg0ROH/V69dlVCI2xX1JixUuIZPRy77foLDRlgAbF4Ls8liB8UO7A@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN8+kbA5UTC5tgklL3JngmFMxA5RDWdtP2STayxL5SzA306XwW
-	QGLl92jXNHduhTQAoX5p52a/WcRWay365GEcei1RZYa1VFdrj7R1k/bBK1++dwEsTHwhDHRBvcc
-	CkmjvEyZqtlukzKtTxGmwrWsiS+/PraT/G31QL2e48+TP8hIbMlb+sAGNfYemRe8IqulIGTmQ6w
-	8Ci2m7+x/e1/oHArHfH+vSA/DYltN2QqOf4sBAsg==
-X-Gm-Gg: ASbGncsJY1rHSeliYYua5YW91VTbl/7H3PaDqkFKSWgb2cK1G9qoyH8kiNwAAp3SG3U
-	pjB6fC0nL/hocH/YuBTMmWWeVU0gI7qMHLYn3+ejvytLWy9NvJHGls3prOSvDo/L6/xW3bLa2
-X-Received: by 2002:a05:6102:8001:b0:4bb:e8c5:b149 with SMTP id ada2fe7eead31-4c30a5ab186mr20926955137.7.1741865171663;
-        Thu, 13 Mar 2025 04:26:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF5cD6PF7kl5NUY7q/OW1oKX5tNdN8eFO7rQ/PRbWr3pjIaSRJ9butzW+C+5ydIiGErfk+O9f+OrAd/60RAi1M=
-X-Received: by 2002:a05:6102:8001:b0:4bb:e8c5:b149 with SMTP id
- ada2fe7eead31-4c30a5ab186mr20926938137.7.1741865171411; Thu, 13 Mar 2025
- 04:26:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741865968; x=1742470768;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XLRDNwNQbW48d2euIipoZOCFakmNuPY383cXvSDOrxg=;
+        b=oxRIiYU5EdfiLOv4CbOpvCuq7e7VobD/O/AbUT3v7lLQ/PveJtuNiFZY1KHnxx8zWA
+         vQpbsGAPx+pMkbzpdGaX3oShYbIha2qmeWpZyC964rGzo4kCasCcrcUoNa2IOdbbYQ1I
+         08VCcaZEiRCLtEVIeBI/dlcjoBmgdxcHqPVvKZkbAmS413WDOGqXG9qoebBN8XgeOA5W
+         R3S8e/arKjXG0elzLiNLu2UGenZig2ho/eKrCw5n+GjVXNpyBaCoh2mPl1q3YJJiSTny
+         7jw4ysD1AuuOEPKb2XU4S0US9Nf0ubvLgM8jBkPrjkCThYWSxtXycm8O/KfO6wicLXvl
+         TYkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXqDgA80aQFu7UVWrlBLK9eq7H941wBAZ2rU5mL+vm8x8i8ZcwjK0tUe5HDONKI9U5wDhKZfc3V8dVXR8Mz@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnWeBu+kiOHdakEavy22twEUJVTbXOrDl8W98JXaeQZNwKWRIi
+	PyBwiCdsFW4Xv2t5c0akoHNB5XunrKtnDJ5kJfvUGxxGN+geViTwYp3Zi5JltylI7ORq2GlTljP
+	HWWvc+razuE8U1HQz1/yFfgibDHhxmxB4mTV8CA==
+X-Gm-Gg: ASbGnctBOyOz6ChZz8lr4uEwOJqG57VmixuRLVNUYW/klaaxPlcK3rXAoofTVgG16KS
+	7+uRVvhjT6jQsGOAUHHX0IFBA8LM/tNq39btbsprCyM589CuPQCS7xTXzWxaxJ9PsYZT2sX6TAD
+	wRc8fYRa2QZ0vNQmCswAd2sl/mbugNfxcdiNxg
+X-Google-Smtp-Source: AGHT+IF/EM5J6cxTIv0NAHRBT204SHkF/k4vjEVRlzzRN+2TcwPcn3MHb41CCfnn/CDcYa8BMon0Pdo+swCXQOQUPzI=
+X-Received: by 2002:a05:622a:5e8b:b0:476:6215:eaf7 with SMTP id
+ d75a77b69052e-47662161001mr306295521cf.19.1741865968385; Thu, 13 Mar 2025
+ 04:39:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1243044.1741776431@warthog.procyon.org.uk> <458de992be8760c387f7a4e55a1e42a021090a02.camel@ibm.com>
- <1330415.1741856450@warthog.procyon.org.uk>
-In-Reply-To: <1330415.1741856450@warthog.procyon.org.uk>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Thu, 13 Mar 2025 13:26:00 +0200
-X-Gm-Features: AQ5f1Jo_X07BVCwtYl8dAOwfTVb-Lg71an6NgYoZsp8YoSb8JBQQYJu-cs0jBDU
-Message-ID: <CAO8a2ShNtAGnaHpf8vj_vqgkw4=020cLn8+wQ9ovOO_5zDBK7g@mail.gmail.com>
-Subject: Re: [PATCH] ceph: Fix incorrect flush end position calculation
-To: David Howells <dhowells@redhat.com>
-Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, "slava@dubeyko.com" <slava@dubeyko.com>, 
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, Xiubo Li <xiubli@redhat.com>, 
-	"brauner@kernel.org" <brauner@kernel.org>, "idryomov@gmail.com" <idryomov@gmail.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250226091451.11899-1-luis@igalia.com> <87msdwrh72.fsf@igalia.com>
+ <CAJfpegvcEgJtmRkvHm+WuPQgdyeCQZggyExayc5J9bdxWwOm4w@mail.gmail.com>
+ <87v7sfzux8.fsf@igalia.com> <CAJfpegvxp6Ah3Br9XUmnz_E5KwfOTC44JTa_Sjt0WGt8cAZKEg@mail.gmail.com>
+ <875xkdfa0d.fsf@igalia.com>
+In-Reply-To: <875xkdfa0d.fsf@igalia.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 13 Mar 2025 12:39:17 +0100
+X-Gm-Features: AQ5f1JrG8qLz6DdlXmet9cKQDSDF_equrPXj5qxgrQyO6hddB5NyJqxHAw2KSfM
+Message-ID: <CAJfpegtDBR4RMMOotxQC3d-pa38xNNB7ajfHrnpi_oQ0XWcTkA@mail.gmail.com>
+Subject: Re: [PATCH v8] fuse: add more control over cache invalidation behaviour
+To: Luis Henriques <luis@igalia.com>
+Cc: Bernd Schubert <bschubert@ddn.com>, Dave Chinner <david@fromorbit.com>, 
+	Matt Harvey <mharvey@jumptrading.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-I'm sure @Ilya Dryomov will pick this up, this doesn't look urgent.
+On Thu, 13 Mar 2025 at 12:25, Luis Henriques <luis@igalia.com> wrote:
 
-On Thu, Mar 13, 2025 at 11:00=E2=80=AFAM David Howells <dhowells@redhat.com=
-> wrote:
->
-> Shall I ask Christian to stick this in the vfs tree?  Or did you want to =
-take
-> it through the ceph tree?
->
-> David
->
+> Hmmm... And would you like this to be done in fuse?  Or do you expect this
+> to me a more generic mechanism in dcache, available for other filesystems
+> as well?
 
+I don't know if this would be useful for anything else, so initially
+fuse specific.
+
+An list sorted by expiry time (implemented with an rbtree) would work,
+I think.
+
+Thanks,
+Miklos
 
