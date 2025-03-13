@@ -1,323 +1,352 @@
-Return-Path: <linux-fsdevel+bounces-43866-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83D37A5ECE3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 08:23:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86539A5ED2A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 08:41:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC9B13A742E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 07:22:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A1587A83AF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 07:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC021FCFCE;
-	Thu, 13 Mar 2025 07:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862B825FA11;
+	Thu, 13 Mar 2025 07:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="d4XWC24e"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MtPIQC2G";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="grYPTwby"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79961FCF72
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Mar 2025 07:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741850495; cv=none; b=hCcFutJJnwmOEP51WHIqken3XDAfj+u/5h2bC4n0mu7n+kqj7QqV7qjMNUISV045LeQNsjDg0E8DLA4+8gH1S6XU+OWHS56ut16MfN7jOKfRaBzyAL7FZoSTk9sPDub5D/ULSRH1uZwL46gGCs1ZiNn/B6vQv8etj+nUeWZ3xaM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741850495; c=relaxed/simple;
-	bh=fubdDPNtjd16g9f8WnsxZv+fL2VwT4oyIziapKYzHwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hn8HDUABcuVNn4YRR36QNfTYYLy+RaPh+IsVg/JzgZ0dvKMrvDi1OEPntsub4Mi+4og30QeEWRXcB93z3+06vRLK5aGJSTYdX3/re8GxB0dsloaXk19FV51o+Zei/kxf1SimGmO7YtlEYybi8bp2Fulpvdwg58lbzJFSjtS00Lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=d4XWC24e; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22401f4d35aso11718045ad.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Mar 2025 00:21:33 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE0D25F995;
+	Thu, 13 Mar 2025 07:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741851706; cv=fail; b=bX3DAgILJGFqwF7equjS/Rphk0Go5wnqVOn3Hb7J4v3UrJspUAhP8UYEcaiBPM63UNIXZdR7CowBEvYUwmSaab5O2cYoOnUhcDbYjbn0l0Es6/pORUZbcxoPCmyquBRc9LLCIF4q3gqnPSSzoPJ6OeCUnXRPS4QLf5MdySlQpK0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741851706; c=relaxed/simple;
+	bh=IPpo8bvquEgiaRd5uk7wkZEADl6RAtj3HwszhWmXkyM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=CIBTfXaJMSA8h0EiKx77CPdKMtYyXQdr8KB/u7CDxE4D8mYBfggDxfgXYaWX58OGO96tpAN85Ls/3xVNXIzCy1abGnCvtCL+ZYcM13UBCOdjX8w9lt4QbbRdSsUhajrN46miPtl53NKNOyLNXXR1ZGNRqiDn4QgH31uTrGq61bk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=MtPIQC2G; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=grYPTwby; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52D7XkwW007227;
+	Thu, 13 Mar 2025 07:41:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=Z+HV2NAAmXgjUGmPQSBegSUoDyI/Mqaez+BcAhrsnM0=; b=
+	MtPIQC2GPcQQWSRLWQKfRPijT0IAQKi8tL9wtSeSSyiMTO0HdOZ+hs6TilufHrgT
+	BlJLb5X6XgoffANPcxIobxEYSB6hvz+g1hkuu8fb8cymYPMpw9eC8s9PslThgGtt
+	koKkQu+d8jpDnrU1jKTLCTKqK6vthqF7IkE6ozvWL8qjrOIX8zHtrPQ26IkkRCpl
+	ZPMB8NZYIrv2AILDJ/NBgkTlD/IC6CeNZI3h5KwRfaZoGJHvObhmubvGZj0dR3t1
+	+7wP3eOX+Fvu65WRTnTaVEEC+Xi5EHtPKUikOnGIMSXWwEtxJu7XJAZTH+2N+ihW
+	qM7aFtfPm82+fTutX6/b9g==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45au4cuj6s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Mar 2025 07:41:33 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52D61VEL002320;
+	Thu, 13 Mar 2025 07:41:17 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2040.outbound.protection.outlook.com [104.47.58.40])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 45atn8bx9h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Mar 2025 07:41:16 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XvSXn+jpBCzjOCgUnW8YEnoUOlm2k2Wpm90OX9ahcS+NivjN/0UbtIoGgdt42HE74gNnKNKPehox5rmNCPcxbXHYb3P610aOitAFZmBOgLygZekEioug/imFyiI5cAXFvUYKfxb+EtbYbVWZcr3tYc/QwuDZo1RyrG/5cddJ4YuS8l8yEQ0K1Z2QTINhZr7INU4UK6KSo3QVm8LxS24837yQQTjw6Jfgv/uMCsQ2FzdZhJUvBcI05X3Y/V+OlA7Nj8XYN/MaWq4JTS18Gpw+uZVokVhxdj2/ZSdiwM5GrWTPMp4e1+otQvrl3fSaYOhuyBgnS7vcoyl0J0tRSqFmOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Z+HV2NAAmXgjUGmPQSBegSUoDyI/Mqaez+BcAhrsnM0=;
+ b=NcP+9/xXnQAo26zI1dPVaz5bd8fOImKZx9g4kSYG4bS1S0sUAIelobcRvqh00TsMIwVDffcf3J3BKDJc0Cyn/lU8PkBG7xTLlEGgUgc+ArGNdxrf7oEwp2r89GUFoIXeJnbQ//HfZXBWmCOKCq/6kthUdER/wMFg1ldOo3/B89g+Dj7+Jo2o6nvK8vCDjefgJ0MgXrppw6vkFWxwFeJwLgIO6aEHFILE1sfxEMyYn8NWeeuzkiY/kMCub7ea1fhvcveaQ32rtBgqJguvNEGrZBTObWj9WbUHp0VmEi6R+8PjotxUD3bfxw+DxaB07UQf7zgv4Hi2UePZWsm0H0IsCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1741850493; x=1742455293; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jk0LIgS/3SxMrP4L8WiUiKlVeO7G2UKoXRUIJ8IOHSc=;
-        b=d4XWC24eGkM3IJY+OBI5afSd9tF7Qf/oxhPr3lD9LfY2Hf7TXEnNUgkB0qf/yAO0aV
-         tC76wsU48HgtQB97E4IDO8ZegRstNM9fi2tSMGmi5KwfjS0jVz1AQfo8YIVRks1HoeeB
-         MgIY2cowhN+McArwwrP5GH1Su1dCcHN6y176VSMxIh1ZAQ9REK4xIehPLw48kplZ4Cgq
-         kB4q5WqsU//F9pk6zDGv7THWGkfVY4ajTWTJv/SOz45hfTZdNxfyIcouZuNy0kT62XMp
-         7tR/ZK7Z8tgs/PEBnfHyf1UWthoGOx//IYFLOMhJsnaNhqxkeurdjg1uYxuvrg306ZJS
-         n6oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741850493; x=1742455293;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jk0LIgS/3SxMrP4L8WiUiKlVeO7G2UKoXRUIJ8IOHSc=;
-        b=nr4aaScd5pqOkgzsIL5uJs26JqDi3UxwCxQJ30rgDP6c6eOjPyFu+6e9dJRwe09wxg
-         O+ee9npbvf8QweyHIji/ejYDZx5uMNRG1jCO2xZXw9XjSYbeZbIz6ESVyC99HwbHSYQ/
-         j+lIkCNprUzWwkU8EjqprLWoODc+fql0QTi42gT0m01AET2bO4KTECZai6+XT9qO/e0Y
-         UtIS7sKyd/PzSXsnfXGEYE7ksosuTayAbR8VBDpsR150uRIv366xMl8RqMSDOuk1c2BS
-         r9H9zeqaFWoDheY6wbAPRCdP2E6XbDdJZhzHaS0yAZ7pECsr0nKjItJnUFHRxTbm91Qk
-         w5Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCWV09ABKJ7m3aZ+mzpUam+LGlRPzS4+wrCiJ6g8frtGUK/BZtUnCUyYUyiNuEkuK50oF8bF9TprTZv8Tdj1@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFHU0ILhalJVRAySt/yve0ZuSQYaevC7vdXhXVT5nVYHNXWopa
-	plyb09bdJ7FTPshS55ITP9H1W527j24igurYySyU+lwG0fDSuJBdHl7jK+Dl5/M=
-X-Gm-Gg: ASbGncvFva96z220ZjcWWw+r1gNlePm73Q/V194w64sq+ybsfGyT+AXPGD7mY/bFr5Z
-	7hA7g8/zdmRkZOw65jTB0yrda8jMiYhfMEajdg2Bip1yOG9ryFiDvGZuE8zdDlCstaB+E4GWFj8
-	faHNC/3LoNrmrbvygz31d2UcGzlWNZZHsUwS15cCaTXp4jiwgjfme4Dd6sXjGa/z+HP5ZKGKh56
-	L2AUyXi0p/ayOcO6RAY6A+3KdXs+cTszyYrCoWTry83w7xi6I5sU1iL9XXuN3l2eBnJ5M2DblBb
-	QFTx3wnziaHTr5N3XQtaAv12g0h1WzyO7cf9xSsiH33qd0qxeMTNu/6FCAsa5vw5R7/SWB0FAGc
-	8jKAFkbdQCqUgafW53GwP
-X-Google-Smtp-Source: AGHT+IGmIGI/JFXTYYX6f4SlsL6WHOgA3BDQ86vTgOi7TwmcIlxDuyTd2476PvQNC1bZhxlfr2XV8A==
-X-Received: by 2002:a17:902:c949:b0:224:78e:4ebe with SMTP id d9443c01a7336-22593183ec4mr143037515ad.33.1741850492997;
-        Thu, 13 Mar 2025 00:21:32 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c688e15fsm6962195ad.18.2025.03.13.00.21.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 00:21:32 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tscsj-0000000CU6d-0U1G;
-	Thu, 13 Mar 2025 18:21:29 +1100
-Date: Thu, 13 Mar 2025 18:21:29 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
-	cem@kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH v5 03/10] xfs: Refactor xfs_reflink_end_cow_extent()
-Message-ID: <Z9KHeVmH1SyPVb5j@dread.disaster.area>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Z+HV2NAAmXgjUGmPQSBegSUoDyI/Mqaez+BcAhrsnM0=;
+ b=grYPTwby+mQ5LgFgzm9MHUXCjr+4UTJxct60Vu4wMdo4Np6Zbg1G+CA0XpqO40T6zAb1tpuvvezl6Yi6Phd6E6ZKHnJsg1stfPxKj7Ur+YoOQEL6luQBXG4iUkxJdcPEpgc6cDAKZp2bEgdUAdcCyBU7n/C0EUEnRMNqEM6WsXg=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by SJ0PR10MB6325.namprd10.prod.outlook.com (2603:10b6:a03:44a::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.28; Thu, 13 Mar
+ 2025 07:41:14 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.8511.026; Thu, 13 Mar 2025
+ 07:41:14 +0000
+Message-ID: <3aeb1d0e-6c74-4bfe-914d-22ba4152bc7f@oracle.com>
+Date: Thu, 13 Mar 2025 07:41:11 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v5 10/10] iomap: Rename ATOMIC flags again
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Dave Chinner <david@fromorbit.com>, brauner@kernel.org, djwong@kernel.org,
+        cem@kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+        martin.petersen@oracle.com
 References: <20250310183946.932054-1-john.g.garry@oracle.com>
- <20250310183946.932054-4-john.g.garry@oracle.com>
- <Z9E2kSQs-wL2a074@infradead.org>
- <589f2ce0-2fd8-47f6-bbd3-28705e306b68@oracle.com>
- <Z9FHSyZ7miJL7ZQM@infradead.org>
- <20250312154636.GX2803749@frogsfrogsfrogs>
- <Z9I0Ab5TyBEdkC32@dread.disaster.area>
- <20250313045121.GE2803730@frogsfrogsfrogs>
+ <20250310183946.932054-11-john.g.garry@oracle.com>
+ <Z9E0JqQfdL4nPBH-@infradead.org> <Z9If-X3Iach3o_l3@dread.disaster.area>
+ <85074165-4e56-421d-970b-0963da8de0e2@oracle.com>
+ <Z9KC7UHOutY61C5K@infradead.org>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <Z9KC7UHOutY61C5K@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P265CA0187.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:311::16) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313045121.GE2803730@frogsfrogsfrogs>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|SJ0PR10MB6325:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9c6e066b-8a2b-4bdf-ed8a-08dd62026e9d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZkNOcGxrYkFoemw4QUdrVW8xd2ZueURYRkt3TXFkaDd5Zks0NXdlUTFlYU5O?=
+ =?utf-8?B?anVKTFlCZTRGQ1JuT2VqSVN1WC9wY004WFF6T0tTOE0zdExCdHVSZTBTL01I?=
+ =?utf-8?B?akVCL3IvVm01ZHFvYkhWVWozcCtoYUFiVzdmcWs5ZjN1b29tZXlXVmkxVUYv?=
+ =?utf-8?B?Um1pQ1dNVEJ6OEY2RldJSnNaSm9BV0RlaFhJZ3Q0U3FZUSs3bWUvYXJTODk5?=
+ =?utf-8?B?NGtkOWE4WjlaUUlMendXRTBIdE9wekJZbG01eHlzRGlkb0dTOU05Y1lIUWp3?=
+ =?utf-8?B?eDlLV1lwYThDaFpVYm9paHdZbStlenhuS1lhb2dXTlJlTUZSRkxsV1lZTEFX?=
+ =?utf-8?B?bDl1bmhzOExHTVU3SnRtZExSY0NnTnNSV0F5Qnl1S2xrSHZqbFpsb2x1NFFC?=
+ =?utf-8?B?azJCTkg0SkZRVGFMQWZhL3FpLzlxaHQ1YnJKZHJBUVFxZWhqQ1AxRGlOa056?=
+ =?utf-8?B?dTlNMzcvQTZtWFV4cEphS0pjNXBHTGJlQkF3YzNabkZrRHB6ZVNwUThRb1k4?=
+ =?utf-8?B?TUxBMElGdHg1aE1iRnFOdDl2QjladkpVR0R3TUdSVFpQNllqczFNVUpNNEhm?=
+ =?utf-8?B?MWxoM3lpZ01kMGNORm9BV2U4TnVrUEM4bExCSzhiTldSckFRNDNoSXI0NTdJ?=
+ =?utf-8?B?RGJLdnJjN1liUUVLNk15SS81RGdYUi9jQWJKb0FLR21kVnlGR3E3R1h4QkJF?=
+ =?utf-8?B?bkVEdlg0K1pmbk93R3NzcXZQNkpLS2FDelJ3UDNHQzhjSFo3dkUzc0FrdW80?=
+ =?utf-8?B?SG1GMi91aHozQ1VQc3lXV3R0OW5kcGl1U29mN3ZVODJFU05kVHp2MEsvYllI?=
+ =?utf-8?B?ZVE4UnVaWFpIOFJGN3FMMHpHb0p1b0VtZXM3R0xQV1JpSVl3VTk4UnptdEhi?=
+ =?utf-8?B?Nk55b21uT3orLzdpZndGbUlLaUVjZy93Qlg0MGZENmxTeEZwQUVGc3ZpeXhx?=
+ =?utf-8?B?TlpGYTlLSEJhcEdsRFY4T2dFREpIU0FoeHJYa21VWXJFeU5ERzRYcTc5TFZR?=
+ =?utf-8?B?Z1pSZ3ZBRDZ6WXoraXdtTGowU2kzOVpHM2NURXNSblhhQ3JOc2dEajVMQUFt?=
+ =?utf-8?B?UkxnUy9kRmRGczhTQUVJREd0QXlVUE8ralJUNlBhNWY2K2xxNFoxVnJZcEM2?=
+ =?utf-8?B?bWFKczJXNnFPaGpsbkNTRDc1blZPYmVLQW9xRGp1d3B1allyYUdUbklxaVRl?=
+ =?utf-8?B?UjlFejU2NDM4aEh5cmdiQ0ZmTzYzTTNmV3QyYUVBVTVVZi9QSWI0Z29Dc3NQ?=
+ =?utf-8?B?Z1pVYnFoYTIzREhGTUJkODRrdVA1NTBmQU14K2IzY21hb0dVN2d4dEZTZVl3?=
+ =?utf-8?B?SENGL0lpWDZ4VGw5VTlBeDNYQTZhcEFYeHZYVVlMcGZXc0hwTnFrQkFtMXVz?=
+ =?utf-8?B?clpJTHllVVVLMGNaMzBjM3h2dmZKQkJjc0ZyeHZPTWxucVl2Mmc3SWFDODNE?=
+ =?utf-8?B?T2VRS2FLaVpVTU1oRnR6cXBZdEdlVERoRHB3L0pNaE1WQVROY2IvV0lUUTZK?=
+ =?utf-8?B?eTRLMkd6cFpzN3IrRnkvZW02ZDBOZ0ZUSytESGUwcTA4bVNjSE9sY3dyREVX?=
+ =?utf-8?B?c1RhR0ZKd1pIQS9OaU5CZlNDS1pWeW91bEwzSEJOajFlOURYc2YrK1F4RDVC?=
+ =?utf-8?B?REQyRnNpK3c4LzFSbGdoSHFQRFZkS3BrRXFRQkdNS3ZMeVExdkh0RTA5WmF1?=
+ =?utf-8?B?S3FOWi9BZmIzSkx5ZU96OTdMTWZiN25lTllhU1lVU2pzckFYMkNsUUJydk83?=
+ =?utf-8?B?WjE2aFM2T1ZVcXNjM2t3cGJHS21JMFI2aHJRSG5RMU5qR3cwZSt1QTBDdEZR?=
+ =?utf-8?B?blpkODYwWnNiM0VCVDFFa2NBV1drL2dTYml6Z3NPeU1TRFJCcHBwM3FLUEc2?=
+ =?utf-8?Q?nfrM3Dg59ekKS?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bERGNUlSemNuUGJZNU4yV3VNZTgyVXJjWjVQSUVQYUxsaDJaalVkTHdROG12?=
+ =?utf-8?B?VXQ2R2NuU3hJU2xya0lMR0pVUnJKSjZEdGNEUjUxMkpld0FHRThwY3d1Mm9X?=
+ =?utf-8?B?ellLa0FHQjVSakFvVTkxVXhyQ3BIVERtcHpxbEpYRy9NSytJN001NVRTanow?=
+ =?utf-8?B?NGFDQVJiTE9jeW1oeWk4bXhXNXZoOTZKcFVNMnN6N3NwbVBpSFFkaTFWdEhI?=
+ =?utf-8?B?cnhYY1VrVTJtd0kvT25yUDNaRlpwckljMFZXK3ZPN3VueVR3cThRZzd0NHMv?=
+ =?utf-8?B?Y0YrMXhsRW1nVVQvTmJYdFVmZHl1akR2Rjg0bEsvbW0zOStWM1djTmM5bm4y?=
+ =?utf-8?B?UmVZYkxuSUFTS1JDTUtlR2lCQ0dudkY4OWluWW1BY2pzZlVlOHhTT0xtSzg0?=
+ =?utf-8?B?ZDlGZ20yWVh3SktyMlptTDRrVVBUdzdkOVZnZnhQYytvZUVEcHZKdVo2YTcz?=
+ =?utf-8?B?Q1p6MENCTUhRWU5qTkJJdmJhMTF1WDlJakVhV2Z3YW9ZOElpdG9CUXlMZlN4?=
+ =?utf-8?B?eGdnUUg0cEhsbWhzLzBNNW4xakZvRnFWaldLYm5hSVZmZGRua0lGaUJobGFw?=
+ =?utf-8?B?cFpYVmdob2tlU0I0aEoyTk1zSkVmc3BDUHhudmNFejdBTklHQmR0cWJ1NUtQ?=
+ =?utf-8?B?MjA1SW5uaThrRFZOSkY3cW0vcEdmZTZKd24zZHFjYzV0bFFJKzZzQitpQ3RQ?=
+ =?utf-8?B?VEtKNmhrOEdrYjFpU1MvbFh2ZGI1NWFHT25tUXdNeUlqWHNOcitDUDk4MzRw?=
+ =?utf-8?B?c0RYZjltRVplMkV3RkJDb0o1RFBFNTF4VXhLc21HcW1HcXhXQXBsZndaaG1o?=
+ =?utf-8?B?SmU0c2ViL0N0WE9LM2ZhRFBtZGpiLzYxNXdJZUJ1NDY1bW8zckFIbkQrcDcy?=
+ =?utf-8?B?N29TZk5qSXRJYmkzbGYzVjFqMVdZYnhmcUJDSEZHbkJraEl5ajNkT09ZSWhR?=
+ =?utf-8?B?SStNSnFsUktvUHpTRndGdWpyZzdzSFlUMU1CNVhrOFc1T05ydlZabXFOa3pH?=
+ =?utf-8?B?bm1tTTM4RlkxT0RybmpmSVZwNGlCTjlQTDNYVWpWbW1VcjZ6aXgwbzdVSm1R?=
+ =?utf-8?B?bWFXamF6dlR6Sk1LMlRIUGptM1dNS0t2dmI1d25aV3FHZnpHdTNEbWd3ODNj?=
+ =?utf-8?B?L1NpNEJNQ2N5aklURTNKMmx0U0twOUprd0ovbmZJNm12WUQyTGRPVGxST2ZX?=
+ =?utf-8?B?TzJxaExpWE5mcVhDcllVMEhBZ3gyRnRlSnRHSVVWRVIxenhERXhDUVpKY28v?=
+ =?utf-8?B?djNYdGN4Ylc0TkR2TkJVZG96U0tzOGVCWmNlcEVva21DSFYwRzluWUdTbC9Q?=
+ =?utf-8?B?WGgycHVDT0RtSVFERWVucnJ5ZVBIeGdNTDY1N1VWOHR0clZJcDFHZm52SXEy?=
+ =?utf-8?B?SU5xRkwvejRrcnE2SlJ0b3dOMXJJRkR0alVmS3h5Tk5vTGM4UkRXNE1OMTlv?=
+ =?utf-8?B?OWhnY3BEL2JMTzE5OGRteERQb2Njek9PZ0ttWE9VZXI2QzFQM0pEZ1F4NW1j?=
+ =?utf-8?B?Vk90eXovR1JkTFV0OG1tOHJ3NzRFWEdYN2gzeFpFTGljeHEvWjN0Sk1EWGVU?=
+ =?utf-8?B?WDZRRnNVYm82SWdVbWtVcnZsbVNvK1lJSmZwdDdvVllkUlFOVTYyOFRVeDdo?=
+ =?utf-8?B?SEJQL0RCZTdsbTNBY2dXUDB5dzBLUTAvSEJpbTZObW16YkVESmt1S21scjhy?=
+ =?utf-8?B?S0JrN1ZSbmNSOVB5VzQ3Zk1oMFAxVXM0WWlEQ0xLazZGNjhmTTRNeWh4eTlJ?=
+ =?utf-8?B?S3J6Ym1sZ1ZNMFRuN2hIWXNldUZXWFdDenVWeTlUd0dFdE5ia0FBK0c4SVFE?=
+ =?utf-8?B?eVlNMTdCY1hRNXA5bHVzeVAwRW1DblJDeXc2Rll0ckdRWlNOKzZtWlptY3g5?=
+ =?utf-8?B?Ymh3RVRQY1BxeEFPTXloU09pRmR3bFE2eStyWE40QUdUajBxOW9ha21RQTZo?=
+ =?utf-8?B?UDhJcjIvZW5UWFZmaDhvM3JsVzZ4UVE0QkhHMjJobUZLdE5HZjJrdlQ3TzN4?=
+ =?utf-8?B?QTBaNHp1Sk1qYld4WHQ1Yjh0SjdTd25Fd0k0RFdSZGVBbC9TY2ZGcklBeU1M?=
+ =?utf-8?B?ODBWU3BjcFdWNXdWb0V2TmtHRm9EK0o0SWRwakg5OXVzcjF6aXdYcFRidG9W?=
+ =?utf-8?B?Wmd4U0R0VmFhSGNuQ21VZEJFQy85RDh3bEdJSm82ZEZ5TGZrWkt2d2dOMXZZ?=
+ =?utf-8?B?QkE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	TdQPfIEShoBuGqFeYvqan2oOSaMmJ2UHbkL4AFCk6Ucl3PBrGLwBrIC7kiEqmFEimIYbFxPOLgPWneUWtWakQuVChq/jGmTZpRixTrQcWM9LWvi+FOP4F894OSms8Ms/9K2TgMdoQGe7zn2riX5FJe7RA1Fm+RejqR49SU8sco04sGBUUtdQpuKpY3BmJkXxAMM47aABe/ZajdSlVpjQS/UPkWtN+Al4Mx3e4jENIxe4ub/M5rOLXtB8GZP7fWFQW5fTs5JfrqF2rp+bCKNU5y3G/Qm23vZ7bccvOJHAFIJ5N307ClISHwLyJszaecwPU0DoPbgV9hPBfl3CRcK7lPX9QSl3fUogUWGqU5a7HPD0maGIO4T2iGioQ9E05rQXcam5SLwjOsNz7/jdXLrVZy2+O7ZS8nrAKT+nvi6kusmQZw4iRrxyzWdQO/tv9HzP3FZNNQyihoIv9x7RnV+EkwUG7S1ZQ7cF5JIQSRH/6f6X2G2FC1TBW2LOtqPQClHK37RNWv4HAl8IRrbB5JjIbju76yUiKtSMwxOcUZ7MJgkNcTLeE7JGbtSUekX+jfHewqD9hEsb36gYBfmqSoZ/Q+9nIpLGIBV+OdUmgMuoQwk=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c6e066b-8a2b-4bdf-ed8a-08dd62026e9d
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 07:41:14.4107
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pyOEyfhMqPAu2v0ZP3ufzN81M00+I8NvLoknj4B++ciYuHpXmbCmmH+LmUhl9fLT7dTkBzIS7dxjegJ5U7rBOA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB6325
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_03,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ suspectscore=0 adultscore=0 spamscore=0 mlxscore=0 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2502280000 definitions=main-2503130059
+X-Proofpoint-ORIG-GUID: AgRQADKMgSvqYmsn9UMEf7KeZAVb7fmb
+X-Proofpoint-GUID: AgRQADKMgSvqYmsn9UMEf7KeZAVb7fmb
 
-On Wed, Mar 12, 2025 at 09:51:21PM -0700, Darrick J. Wong wrote:
-> On Thu, Mar 13, 2025 at 12:25:21PM +1100, Dave Chinner wrote:
-> > On Wed, Mar 12, 2025 at 08:46:36AM -0700, Darrick J. Wong wrote:
-> > > > > > On Mon, Mar 10, 2025 at 06:39:39PM +0000, John Garry wrote:
-> > > > > > > Refactor xfs_reflink_end_cow_extent() into separate parts which process
-> > > > > > > the CoW range and commit the transaction.
-> > > > > > > 
-> > > > > > > This refactoring will be used in future for when it is required to commit
-> > > > > > > a range of extents as a single transaction, similar to how it was done
-> > > > > > > pre-commit d6f215f359637.
-> > > > > > 
-> > > > > > Darrick pointed out that if you do more than just a tiny number
-> > > > > > of extents per transactions you run out of log reservations very
-> > > > > > quickly here:
-> > > > > > 
-> > > > > > https://urldefense.com/v3/__https://lore.kernel.org/all/20240329162936.GI6390@frogsfrogsfrogs/__;!!ACWV5N9M2RV99hQ!PWLcBof1tKimKUObvCj4vOhljWjFmjtzVHLx9apcU5Rah1xZnmp_3PIq6eSwx6TdEXzMLYYyBfmZLgvj$
-> > > > > > 
-> > > > > > how does your scheme deal with that?
-> > > > > > 
-> > > > > The resblks calculation in xfs_reflink_end_atomic_cow() takes care of this,
-> > > > > right? Or does the log reservation have a hard size limit, regardless of
-> > > > > that calculation?
-> > > > 
-> > > > The resblks calculated there are the reserved disk blocks
-> > 
-> > Used for btree block allocations that might be needed during the
-> > processing of the transaction.
-> > 
-> > > > and have
-> > > > nothing to do with the log reservations, which comes from the
-> > > > tr_write field passed in.  There is some kind of upper limited to it
-> > > > obviously by the log size, although I'm not sure if we've formalized
-> > > > that somewhere.  Dave might be the right person to ask about that.
-> > > 
-> > > The (very very rough) upper limit for how many intent items you can
-> > > attach to a tr_write transaction is:
-> > > 
-> > > per_extent_cost = (cui_size + rui_size + bui_size + efi_size + ili_size)
-> > > max_blocks = tr_write::tr_logres / per_extent_cost
-> > > 
-> > > (ili_size is the inode log item size)
-> > 
-> > That doesn't sound right. The number of intents we can log is not
-> > dependent on the aggregated size of all intent types. We do not log
-> > all those intent types in a single transaction, nor do we process
-> > more than one type of intent in a given transaction. Also, we only
-> > log the inode once per transaction, so that is not a per-extent
-> > overhead.
-> > 
-> > Realistically, the tr_write transaction is goign to be at least a
-> > 100kB because it has to be big enough to log full splits of multiple
-> > btrees (e.g. BMBT + both free space trees). Yeah, a small 4kB
-> > filesystem spits out:
-> > 
-> > xfs_trans_resv_calc:  dev 7:0 type 0 logres 193528 logcount 5 flags 0x4
-> > 
-> > About 190kB.
-> > 
-> > However, intents are typically very small - around 32 bytes in size
-> > plus another 12 bytes for the log region ophdr.
-> > 
-> > This implies that we can fit thousands of individual intents in a
-> > single tr_write log reservation on any given filesystem, and the
-> > number of loop iterations in a transaction is therefore dependent
-> > largely on how many intents are logged per iteration.
-> > 
-> > Hence if we are walking a range of extents in the BMBT to unmap
-> > them, then we should only be generating 2 intents per loop - a BUI
-> > for the BMBT removal and a CUI for the shared refcount decrease.
-> > That means we should be able to run at least a thousand iterations
-> > of that loop per transaction without getting anywhere near the
-> > transaction reservation limits.
-> > 
-> > *However!*
-> > 
-> > We have to relog every intent we haven't processed in the deferred
-> > batch every-so-often to prevent the outstanding intents from pinning
-> > the tail of the log. Hence the larger the number of intents in the
-> > initial batch, the more work we have to do later on (and the more
-> > overall log space and bandwidth they will consume) to relog them
-> > them over and over again until they pop to the head of the
-> > processing queue.
-> > 
-> > Hence there is no real perforamce advantage to creating massive intent
-> > batches because we end up doing more work later on to relog those
-> > intents to prevent journal space deadlocks. It also doesn't speed up
-> > processing, because we still process the intent chains one at a time
-> > from start to completion before moving on to the next high level
-> > intent chain that needs to be processed.
-> > 
-> > Further, after the first couple of intent chains have been
-> > processed, the initial log space reservation will have run out, and
-> > we are now asking for a new resrevation on every transaction roll we
-> > do. i.e. we now are now doing a log space reservation on every
-> > transaction roll in the processing chain instead of only doing it
-> > once per high level intent chain.
-> > 
-> > Hence from a log space accounting perspective (the hottest code path
-> > in the journal), it is far more efficient to perform a single high
-> > level transaction per extent unmap operation than it is to batch
-> > intents into a single high level transaction.
-> > 
-> > My advice is this: we should never batch high level iterative
-> > intent-based operations into a single transaction because it's a
-> > false optimisation.  It might look like it is an efficiency
-> > improvement from the high level, but it ends up hammering the hot,
-> > performance critical paths in the transaction subsystem much, much
-> > harder and so will end up being slower than the single transaction
-> > per intent-based operation algorithm when it matters most....
+On 13/03/2025 07:02, Christoph Hellwig wrote:
+> On Thu, Mar 13, 2025 at 06:28:03AM +0000, John Garry wrote:
+>>>> I'd rather have a
+>>>>
+>>>>       blk_opf_t extra_flags;
+>>>>
+>>>> in the caller that gets REQ_FUA and REQ_ATOMIC assigned as needed,
+>>>> and then just clear
+>>> Yep, that is cleaner..
+>>
+>> This suggestion is not clear to me.
+>>
+>> Is it that iomap_dio_bio_iter() [the only caller of iomap_dio_bio_opflags()]
+>> sets REQ_FUA and REQ_ATOMIC in extra_flags, and then we extra_flags |
+>> bio_opf?
 > 
-> How specifically do you propose remapping all the extents in a file
-> range after an untorn write?
+> Yes.
+> 
+>> Note that iomap_dio_bio_opflags() does still use use_fua for clearing
+>> IOMAP_DIO_WRITE_THROUGH.
+> 
+> You can check for REQ_FUA in extra_flags (or the entire op).
+ > >> And to me it seems nicer to set all the REQ_ flags in one place.
+> 
+> Passing multiple bool arguments just loses way too much context.  But
+> if you really want everything in one place you could probably build
+> the entire blk_opf_t in iomap_dio_bio_iter, and avoid having to
+> recalculate it for every bio.
+> 
 
-Sorry, I didn't realise that was the context of the question that
-was asked - there was not enough context in the email I replied to
-to indicate this important detail. hence it just looked like a
-question about "how many intents can we batch into a single write
-transaction reservation".
+Yeah, when we start taking use_fua and atomic_bio args from 
+iomap_dio_bio_opflags(), then iomap_dio_bio_opflags() becomes a shell of 
+the function.
 
-I gave that answer (thousands) and then recommended against doing
-batching like this as an optimisation. Batching operations into a
-single context is normally done as an optimisation, so that is what
-I assumed was being talked about here....
+So how about this (I would re-add the write through comment):
 
-> The regular cow ioend does a single
-> transaction per extent across the entire ioend range and cannot deliver
-> untorn writes.  This latest proposal does, but now you've torn that idea
-> down too.
->
-> At this point I have run out of ideas and conclude that can only submit
-> to your superior intellect.
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -311,30 +311,6 @@ static int iomap_dio_zero(const struct iomap_iter 
+*iter, struct iomap_dio *dio,
+  	return 0;
+  }
 
-I think you're jumping to incorrect conclusions, and then making
-needless personal attacks. This is unacceptable behaviour, Darrick,
-and if you keep it up you are going to end up having to explain
-yourself to the CoC committee....
+-/*
+- * Figure out the bio's operation flags from the dio request, the
+- * mapping, and whether or not we want FUA.  Note that we can end up
+- * clearing the WRITE_THROUGH flag in the dio request.
+- */
+-static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+-		const struct iomap *iomap, bool use_fua, bool atomic_hw)
+-{
+-	blk_opf_t opflags = REQ_SYNC | REQ_IDLE;
+-
+-	if (!(dio->flags & IOMAP_DIO_WRITE))
+-		return REQ_OP_READ;
+-
+-	opflags |= REQ_OP_WRITE;
+-	if (use_fua)
+-		opflags |= REQ_FUA;
+-	else
+-		dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
+-	if (atomic_hw)
+-		opflags |= REQ_ATOMIC;
+-
+-	return opflags;
+-}
+-
+  static int iomap_dio_bio_iter(struct iomap_iter *iter, struct 
+iomap_dio *dio)
+  {
+  	const struct iomap *iomap = &iter->iomap;
+@@ -346,13 +322,20 @@ static int iomap_dio_bio_iter(struct iomap_iter 
+*iter, struct iomap_dio *dio)
+  	blk_opf_t bio_opf;
+  	struct bio *bio;
+  	bool need_zeroout = false;
+-	bool use_fua = false;
+  	int nr_pages, ret = 0;
+  	u64 copied = 0;
+  	size_t orig_count;
 
-Anyway....
+-	if (atomic_hw && length != iter->len)
+-		return -EINVAL;
++	if (dio->flags & IOMAP_DIO_WRITE) {
++		bio_opf = REQ_OP_WRITE;
++		if (atomic_hw)  {
++			if (length != iter->len)
++				return -EINVAL;
++			bio_opf |= REQ_ATOMIC;
++		}
++	} else {
++		bio_opf = REQ_OP_READ;
++	}
 
-Now I understand the assumed context was batching for atomicity and
-not optimisation, I'll address that aspect of the suggested
-approach: overloading the existing write reservation with a special
-case like this is the wrong way to define a new atomic operation.
+  	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
+  	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
+@@ -382,10 +365,12 @@ static int iomap_dio_bio_iter(struct iomap_iter 
+*iter, struct iomap_dio *dio)
+  		 */
+  		if (!(iomap->flags & (IOMAP_F_SHARED|IOMAP_F_DIRTY)) &&
+  		    (dio->flags & IOMAP_DIO_WRITE_THROUGH) &&
+-		    (bdev_fua(iomap->bdev) || !bdev_write_cache(iomap->bdev)))
+-			use_fua = true;
+-		else if (dio->flags & IOMAP_DIO_NEED_SYNC)
++		    (bdev_fua(iomap->bdev) || !bdev_write_cache(iomap->bdev))) {
++			bio_opf |= REQ_FUA; //reads as well?
++			dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
++		} else if (dio->flags & IOMAP_DIO_NEED_SYNC) {
+  			dio->flags &= ~IOMAP_DIO_CALLER_COMP;
++		}
+  	}
 
-That is: trying to infer limits of special case behaviour by adding
-a heuristic based calculation based on the write log reservation
-is poor design.
+  	/*
+@@ -407,7 +392,7 @@ static int iomap_dio_bio_iter(struct iomap_iter 
+*iter, struct iomap_dio *dio)
+  	 * during completion processing.
+  	 */
+  	if (need_zeroout ||
+-	    ((dio->flags & IOMAP_DIO_NEED_SYNC) && !use_fua) ||
++	    ((dio->flags & IOMAP_DIO_NEED_SYNC) && !(bio_opf & REQ_FUA)) ||
+  	    ((dio->flags & IOMAP_DIO_WRITE) && pos >= i_size_read(inode)))
+  		dio->flags &= ~IOMAP_DIO_CALLER_COMP;
 
-The write reservation varies according to the current filesystem's
-geometry (filesystem block size, AG size, capacity, etc) and kernel
-version. Hence the batch size supported for atomic writes would then
-vary unpredictably from filesystem to filesystem and even within the
-same filesystem over time.
+@@ -428,8 +413,6 @@ static int iomap_dio_bio_iter(struct iomap_iter 
+*iter, struct iomap_dio *dio)
+  			goto out;
+  	}
 
-Given that we have to abort atomic writes up front if the mapping
-covering the atomic write range is more fragmented than this
-calculated value, this unpredicable limit will be directly exposed
-to userspace via the errors it generates.
-
-We do not want anything even vaguely related to transaction
-reservation sizes exposed to userspace. They are, and should always
-be, entirely internal filesystem implementation details.
-
-A much better way to define an atomic unmap operation is to set a
-fixed maximum number of extents that a batched atomic unmap
-operation needs to support. With a fixed extent count, we can then
-base the transaction reservation size required for the operation on
-this number.
-
-We know that the write length is never going to be larger than 2GB
-due to MAX_RW_COUNT bounding of user IO. Hence there is a maximum
-number of extents that a single write can map to. Whether that's the
-size we try to support is separate discussion, but I point it out as
-a hard upper maximum.
-
-Regardless of what we define as the maximum number of extents for
-the atomic unmap, we can now calculate the exact log space
-reservation the an unmap intents will require. We can then max()
-that with the log space reservation that any of those specific
-intents will require to process. Now we have an exact log
-reservation to an atomic unmap of a known, fixed number of extents.
-
-Then we can look at what the common unmap behaviour is (e.g. through
-tracing various test cases) are, and determine how many extents we
-are typically going to convert in a single atomic unmap operation.
-That then guides us to an optimal log count for the atomic unmap
-reservation.
-
-This gives us a single log space reservation that can handle a known,
-fixed number of extents on any filesystem. 
-
-It gives us an optimised log count to minimise the number of log
-space reservations the common case code is going to need.
-
-It gives us a reservation size that will contribute to defining the
-minimum supported log size for the features enabled in the
-filesystem.
-
-It gives us a consistent behaviour that we can directly exercise
-from userspace with relatively simple test code based on constant
-values.
-
-It means the high level unmap code doesn't rely on heuristics to
-prevent transaction reservation overflows.
-
-It means the high level code can use bound loops and compile time
-constants without having to worry that they will ever overrun the
-capability of the underlying filesystem or kernel.
-
-Simple, huh?
-
--Dave.
+-	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua, atomic_hw);
+-
+  	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS);
+  	do {
+  		size_t n;
 -- 
-Dave Chinner
-david@fromorbit.com
+
 
