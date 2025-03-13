@@ -1,127 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-43886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1090A5EF41
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 10:13:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2969A5F05E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 11:13:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 265F317069B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 09:13:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 453403BBB2E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 10:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E965826462B;
-	Thu, 13 Mar 2025 09:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3075D264F9A;
+	Thu, 13 Mar 2025 10:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KUrnCwXz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J3rcZCy5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377C52641DC;
-	Thu, 13 Mar 2025 09:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDE21EE028;
+	Thu, 13 Mar 2025 10:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741857206; cv=none; b=FsedAe2MQJ0wG5KvUhPU+yYqfvaDM7ubLfx/5jOPGiz9heeiiwDi45uMdG2zt/XHyDdPu472GrPJPE4R9Zjze+HLd5gubcnGtdJvWdSDzAACMRRyHgek3MYaSQLFOv/B8Vzqg0zFchsQs65dOJjHU67cQTeSwQGw1oFOlpOgAYk=
+	t=1741860830; cv=none; b=H6p/yoTAvho/WnATDggJQ3Msxf0hB5HIcIkYPzUxkGj8gVmuvTj6GtrqrEpmSUtkUqS+Ig9gzHJI3fAt2rqtDxdIxXjgKM2Nq2eXPHe4J3/zP8TrRwmOReS8TeZKGL7HDfMz+H1u4v04DvDm9ti/A9TeQq+jbs90++SRQMmcFx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741857206; c=relaxed/simple;
-	bh=XPChNfFXlAoEhDDQGCfLjaxmtcrf+d26j4cITHrFFaM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mpr3+5EiGwc+sQX/rjyxz72J1Gd9o0ZyM78jF1fLsDFlMtu6FfQVLQw+rzh52KNSJcQh8ITHT7DD9XGX+WiyQcmPCjuiNNa6C4w4VP6BFjw9tFr338oAHOeg7sx3tr7A4tKMfnbJM0pGtr467PrfXHu75Z5//6kUwDHpI+KZaMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KUrnCwXz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D330C4CEEB;
-	Thu, 13 Mar 2025 09:13:23 +0000 (UTC)
+	s=arc-20240116; t=1741860830; c=relaxed/simple;
+	bh=A+clKUiTVxNNWcs3kVwAtPbVCg55Ck1FzU4JTlveFn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CaES3lhg7Pr60/0u+pHO4NaeMbYk3HSzZuJWww60ANvdOKniimnx0HEHZigzgdIowcFKOUTM02AGgPkVYkTX5tO7Rh7NhIYAc3xmj5//SN1CUSk0YYh3T7nKrbd2BryRRuyRTMCrsGzC83cv0mzyD6ewagYeWceb9ouDEMf9b1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J3rcZCy5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1CAAC4CEDD;
+	Thu, 13 Mar 2025 10:13:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741857205;
-	bh=XPChNfFXlAoEhDDQGCfLjaxmtcrf+d26j4cITHrFFaM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=KUrnCwXzugBobwjVxouwhmGfeB0FbL0KotVpkA+nMiAxJqGLyKPmFarApKHNkvHob
-	 NBBqTG+H3n8kEuaYispMI++tro2enNEwgwCHvE3HAwcl+cDmrkQSf3TOUxVw78ACyr
-	 1bszEhcq0kqU5JCLVKvRguf9sv4DdQ6+0UcOqj4p8ostIK6hyiI10q32LZ/YeWi8fB
-	 Vo8ZfXdk0Qkm3uJkMyHAOlsHHtLUUjV87fbUQHFH91KADNicFupDOIRd9l0rRPCKWA
-	 oDEYuyH6d1DCQ4RgtI0u0u2RWhWp4vcaI607kMeAqoYDldM1GF+r+/vCKyFM4khyD8
-	 ArVvBDc7MMOhg==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Thu, 13 Mar 2025 10:13:15 +0100
-Message-ID: <20250313-vfs-fixes-a0e878b9a930@brauner>
-X-Mailer: git-send-email 2.47.2
+	s=k20201202; t=1741860830;
+	bh=A+clKUiTVxNNWcs3kVwAtPbVCg55Ck1FzU4JTlveFn8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J3rcZCy5N59e0R0p3kmXrI4StRKYfepVSAaQEyVMFKsYuOJmmS15990JRbrNyqJj+
+	 GlWs9Dv2sSaTgjpy/4sJbcztYJQiO6H+zB9XMGYm2xeUwPRofUyU5aNdDTWkv3CNUV
+	 b+XqZeV5FRnSsStFr6CKhV0zfekycDRcF6KJrvq5KUwMjHYCvGdrKmlL9RKAOkLIXy
+	 JEq5NRQEd0UewIIgnKhCc1SZA2DlCxZYmlEbDRKI+LQl/13gj0132lCiYYpn1p2In/
+	 R1uLpRVtnL7X3c47yRK6z3y0ArWM/bmbk1Zw+1tDUz70yulv07Grnk3ZOPuUwje4u5
+	 frkKzZDcIXIIQ==
+Date: Thu, 13 Mar 2025 11:13:45 +0100
+From: Carlos Maiolino <cem@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org, 
+	Dan Carpenter <dan.carpenter@linaro.org>, stable@vger.kernel.org
+Subject: Re: [PATCH] udf: Fix inode_getblk() return value
+Message-ID: <zh6ygcz237c23e7w47glfckqioyaeu62shroy6p5mlaxnp25rd@xyrcogmtwmth>
+References: <kTCh8T9LAi-c_EZZeR5n35O79mJYo1igl-bR8kBN0MQn6vWW8i_XSuO3dDDVuHo7ggqWLk4lZOAIAzf4T57-Zg==@protonmail.internalid>
+ <20250312163846.22851-2-jack@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1785; i=brauner@kernel.org; h=from:subject:message-id; bh=XPChNfFXlAoEhDDQGCfLjaxmtcrf+d26j4cITHrFFaM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRfWrh6wgGNRy2OD3meL53uFZPjnPrBfMpu2VULE/885 s3el2dS1FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRZ7YM/9Mj5p9mfp/I8t94 6bUy6QNxXrJ28a31JxTWpy2PUzE0OcDwv/zhGf8V2TH8b67wTOzI2v7Z6Gdx17x7jfbMC9KOqe3 7xAsA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312163846.22851-2-jack@suse.cz>
 
-/* Summary */
+On Wed, Mar 12, 2025 at 05:38:47PM +0100, Jan Kara wrote:
+> Smatch noticed that inode_getblk() can return 1 on successful mapping of
+> a block instead of expected 0 after commit b405c1e58b73 ("udf: refactor
+> udf_next_aext() to handle error"). This could confuse some of the
+> callers and lead to strange failures (although the one reported by
+> Smatch in udf_mkdir() is impossible to trigger in practice). Fix the
+> return value of inode_getblk().
+> 
+> Link: https://lore.kernel.org/all/cb514af7-bbe0-435b-934f-dd1d7a16d2cd@stanley.mountain
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Fixes: b405c1e58b73 ("udf: refactor udf_next_aext() to handle error")
+> CC: stable@vger.kernel.org
+> Signed-off-by: Jan Kara <jack@suse.cz>
+> ---
+>  fs/udf/inode.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> I plan to merge this patch through my tree.
+> 
+> diff --git a/fs/udf/inode.c b/fs/udf/inode.c
+> index 70c907fe8af9..4386dd845e40 100644
+> --- a/fs/udf/inode.c
+> +++ b/fs/udf/inode.c
+> @@ -810,6 +810,7 @@ static int inode_getblk(struct inode *inode, struct udf_map_rq *map)
+>  		}
+>  		map->oflags = UDF_BLK_MAPPED;
+>  		map->pblk = udf_get_lb_pblock(inode->i_sb, &eloc, offset);
+> +		ret = 0;
+>  		goto out_free;
+>  	}
+> 
 
-This contains various fixes for this cycle:
+Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
 
-- Bring in an RCU pathwalk fix for afs. This is brought in as a merge
-  from the vfs-6.15.shared.afs branch that needs this commit and other
-  trees already depend on it.
-
-- Fix vboxfs unterminated string handling.
-
-/* Testing */
-
-gcc version (Debian 14.2.0-8) 14.2.0
-Debian clang version 19.1.4 (1)
-
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-No known conflicts.
-
-The following changes since commit 00a7d39898c8010bfd5ff62af31ca5db34421b38:
-
-  fs/pipe: add simpler helpers for common cases (2025-03-06 18:25:35 -1000)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.14-rc7.fixes
-
-for you to fetch changes up to 986a6f5eacb900ea0f6036ef724b26e76be40f65:
-
-  vboxsf: Add __nonstring annotations for unterminated strings (2025-03-11 13:06:39 +0100)
-
-Please consider pulling these changes from the signed vfs-6.14-rc7.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.14-rc7.fixes
-
-----------------------------------------------------------------
-Christian Brauner (1):
-      Merge afs RCU pathwalk fix
-
-David Howells (1):
-      afs: Fix afs_atcell_get_link() to handle RCU pathwalk
-
-Kees Cook (1):
-      vboxsf: Add __nonstring annotations for unterminated strings
-
- fs/afs/cell.c     | 11 ++++++-----
- fs/afs/dynroot.c  | 15 +++++++++++++--
- fs/afs/internal.h |  2 +-
- fs/afs/proc.c     |  4 ++--
- fs/vboxsf/super.c |  3 +--
- 5 files changed, 23 insertions(+), 12 deletions(-)
+> --
+> 2.43.0
+> 
+> 
 
