@@ -1,56 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-43907-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92E58A5FA7A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 16:54:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27DCCA5FAFC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 17:14:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE404189B2FB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 15:54:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80D693B35C0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 16:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4701D268FFA;
-	Thu, 13 Mar 2025 15:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86AAC26A0E3;
+	Thu, 13 Mar 2025 16:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FMlhzKxn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FnuYAtXc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C43613AA2F;
-	Thu, 13 Mar 2025 15:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8C226980A;
+	Thu, 13 Mar 2025 16:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741881247; cv=none; b=Q3jlbCyTyW50vRTS3gs/YKvt6JZhrO3H4f1R8eJVTcowMpEl1tLT9uihoYxSOU29mgZz96u6Nh6G1vU2FkKDXByOOuGKhhlYw7F6v/Y07wIS6sValqJYQX7SE36YKleG8gqjVo6rKB4VDSh+2JaBgD8l2B38ZJQvLV1XMi8kBGs=
+	t=1741881737; cv=none; b=ar3bOgBYovCAC+kyoGsvbizhbIpSt/SIkgjxvFylqfFvukir8N8r6sEZXnP2nE3AP9/uSpW/tWljBerO8NSJM5NKOV0ynnNzCE9Q/FStTCzcRycXKS6gqCPKDZbxfCh6YRTlADue5V2VYy6ZqTxQm0P8ng29P4MaUS2YlMzjm+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741881247; c=relaxed/simple;
-	bh=CxnWivVLQ4Dd/EZfTFOz5IGyCXEdZefIUY9yz1Sn8wg=;
+	s=arc-20240116; t=1741881737; c=relaxed/simple;
+	bh=SIwoOnJbCCZD6NLPzZTs8MK5F2JNGdpdSvWQ8Oqdt7k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d1hI1CRKXjru7wsgpr+DjAhS/VtQn2G7oVGqiTFuniCU7ajTqBSmEOpAC5WSzNzndVg/vphd93v/sXtyfX8r/7REe/OJSQG8OC2ByTBDJdwls3zJl3SVhvhE8HfKtjMSJBU1xNaZU95qIyhxcXMEljavFakXTZQmDTrxrzeOCNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FMlhzKxn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB496C4CEDD;
-	Thu, 13 Mar 2025 15:54:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=euEWiLsjkNedMAshNKM5/B7obtDwnOaBDIUo7+fzF6qrhseVA3dl1K4CjPpF2iPs67W12hkaXwPt1HzS8AvUYmruyEnGufIohjWBerXx22gclLpd31Ipt4j1/Lqt9yNRrv6sewR1U+Zg3sNFRF5G0wlUag1TDVaZ8nMwkSnhS0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FnuYAtXc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF852C4CEDD;
+	Thu, 13 Mar 2025 16:02:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741881247;
-	bh=CxnWivVLQ4Dd/EZfTFOz5IGyCXEdZefIUY9yz1Sn8wg=;
+	s=k20201202; t=1741881737;
+	bh=SIwoOnJbCCZD6NLPzZTs8MK5F2JNGdpdSvWQ8Oqdt7k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FMlhzKxnDDFp+p+D6fevC/6hJa7GAGc2DzpSRvIdBaRWvKoPQcrp4qXysM7ohbIjw
-	 oQFs9H4s9wve7/Y7Cdo7PTCztDorpuDUrIAxz3t8yO3mcYE3RSVETjnXAJ3HuRJXgh
-	 puNxN+IowhJV1hDMd/JPvACKfenccChxY0UaEw2EL51xZ5ECNB5waXXICx5f8itmkK
-	 mRdOlUemv3ne8HKgylK+BKMg4oE0EEfA465YC13osOd5kRESAXcNpG9FJzI665OBnm
-	 OJm9nG/e0AtlGw26Qcr5XmFtxxqezcTaHKvHShLs4jy73HwD8JCcX23bt52Hcac2ky
-	 sQ7B7pgO5u/9w==
-Date: Thu, 13 Mar 2025 16:54:01 +0100
+	b=FnuYAtXcv4mrX7gH+rVqZueFOZwmu7zNbeuLL+rzBt0Ym3wTPGutW76g/dTeEgnts
+	 fl/Qx3h2ds9r996R1cLAefj3GAlxTP8ObHpJxxmL2YeBqSXmwSozI+/9S0svALjbrN
+	 YoE+G3mnMJu5tQJYyGSBKyudVzTovgoTyJrtCeJNAvj4cxPZNpd4MZMECI00n8ByBA
+	 my7S6e5iM+Q51hFo1k7l3+tYy7WOAjlIS9eJE0jvqUeq5UDbprCuVrKkE6MPR1QoOU
+	 R+YEeQUj3rfxGdu+xvmdmhGJGW2TBh4PqhzMOc6GAxkY7QOnEfWryU4lDuI54OtsGQ
+	 FAPHAi2E4wa9A==
+Date: Thu, 13 Mar 2025 17:02:12 +0100
 From: Joel Granados <joel.granados@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Ruiwu Chen <rwchen404@gmail.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>
-Subject: Re: [PATCH] drop_caches: Allow re-enabling message after disabling
-Message-ID: <znixmeryizgqkb273xidczsgdh52tw3pv4ehfyoj6m2tcxycch@xal6ntp5f5mt>
-References: <20250313-jag-drop_caches_msg-v1-1-c2e4e7874b72@kernel.org>
+To: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Heiko Carstens <hca@linux.ibm.com>, Kees Cook <kees@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, sparclinux@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] s390: mv s390 sysctls into their own file under
+ arch/s390 dir
+Message-ID: <t3q6lsy4tjlp5ngapyguwdzu5arorznl3bgjr3iki3rudetuw5@waddjgfn7vvu>
+References: <20250306-jag-mv_ctltables-v2-0-71b243c8d3f8@kernel.org>
+ <20250306-jag-mv_ctltables-v2-6-71b243c8d3f8@kernel.org>
+ <20250307152620.9880F75-hca@linux.ibm.com>
+ <r73ph4ht5ejeeuj65nxocmqp7pury2mekz2lz3r6fs264s24c4@ransymcrzk2h>
+ <your-ad-here.call-01741690967-ext-1293@work.hours>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,62 +68,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250313-jag-drop_caches_msg-v1-1-c2e4e7874b72@kernel.org>
+In-Reply-To: <your-ad-here.call-01741690967-ext-1293@work.hours>
 
-On Thu, Mar 13, 2025 at 04:46:36PM +0100, Joel Granados wrote:
-> After writing "4" to /proc/sys/vm/drop_caches there was no way to
-> re-enable the drop_caches kernel message. By removing the "or" logic for
-> the stfu variable in drop_cache_sysctl_handler, it is now possible to
-> toggle the message on and off by setting the 4th bit in
-> /proc/sys/vm/drop_caches.
+On Tue, Mar 11, 2025 at 12:02:47PM +0100, Vasily Gorbik wrote:
+> On Mon, Mar 10, 2025 at 02:41:59PM +0100, Joel Granados wrote:
+> > On Fri, Mar 07, 2025 at 04:26:20PM +0100, Heiko Carstens wrote:
+> > > On Thu, Mar 06, 2025 at 12:29:46PM +0100, joel granados wrote:
+> > > > Move s390 sysctls (spin_retry and userprocess_debug) into their own
+> > > > files under arch/s390. We create two new sysctl tables
+> > > > (2390_{fault,spin}_sysctl_table) which will be initialized with
+> > > > arch_initcall placing them after their original place in proc_root_init.
+> > > > 
+> > > > This is part of a greater effort to move ctl tables into their
+> > > > respective subsystems which will reduce the merge conflicts in
+> > > > kernel/sysctl.c.
+> > > > 
+> > > > Signed-off-by: joel granados <joel.granados@kernel.org>
+> > > > ---
+> > > >  arch/s390/lib/spinlock.c | 18 ++++++++++++++++++
+> > > >  arch/s390/mm/fault.c     | 17 +++++++++++++++++
+> > > >  kernel/sysctl.c          | 18 ------------------
+> > > >  3 files changed, 35 insertions(+), 18 deletions(-)
+> > > 
+> > > Acked-by: Heiko Carstens <hca@linux.ibm.com>
+> > > 
+> > > How should this go upstream? Will you take care of this, or should
+> > > this go via the s390 tree?
+> > 
+> > thx for the review
+> > 
+> > It would be great if you can push it through the s390 tree. However, if
+> > it is not possible to do so, please let me know and I'll add it to the
+> > sysctl-next changes.
 > 
-> Signed-off-by: Joel Granados <joel.granados@kernel.org>
-> ---
->  Documentation/admin-guide/sysctl/vm.rst | 2 +-
->  fs/drop_caches.c                        | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> I've slightly changed the commit message
+> s390: Move s390 sysctls into their own file under arch/s390
 > 
-> diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
-> index f48eaa98d22d2b575f6e913f437b0d548daac3e6..75a032f8cbfb4e05f04610cca219d154bd852789 100644
-> --- a/Documentation/admin-guide/sysctl/vm.rst
-> +++ b/Documentation/admin-guide/sysctl/vm.rst
-> @@ -266,7 +266,7 @@ used::
->  	cat (1234): drop_caches: 3
->  
->  These are informational only.  They do not mean that anything is wrong
-> -with your system.  To disable them, echo 4 (bit 2) into drop_caches.
-> +with your system.  To toggle them, echo 4 (bit 2) into drop_caches.
->  
->  enable_soft_offline
->  ===================
-> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-> index d45ef541d848a73cbd19205e0111c2cab3b73617..501b9f690445e245f88cbb31a5123b2752e2e7ce 100644
-> --- a/fs/drop_caches.c
-> +++ b/fs/drop_caches.c
-> @@ -73,7 +73,7 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
->  				current->comm, task_pid_nr(current),
->  				sysctl_drop_caches);
->  		}
-> -		stfu |= sysctl_drop_caches & 4;
-> +		stfu = sysctl_drop_caches & 4;
->  	}
->  	return 0;
->  }
-> 
-> ---
-> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
-> change-id: 20250313-jag-drop_caches_msg-c4fbfedb51f3
-> 
-> Best regards,
-> -- 
-> Joel Granados <joel.granados@kernel.org>
-> 
-> 
-In case you are curious:
-This is a V3 of what was discussed in https://lore.kernel.org/20250216100514.3948-1-rwchen404@gmail.com
-My bad for forgetting to tag it V3 :(.
-Best
-
+> And applied, thank you!
+ok. I'll remove it from my future versions.
+Thx
 
 -- 
 
