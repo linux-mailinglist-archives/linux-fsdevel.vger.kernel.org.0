@@ -1,75 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-43901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80639A5F714
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 14:57:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3C61A5F81A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 15:28:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3977919C1839
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 13:57:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1516E161604
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 14:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D2E267B62;
-	Thu, 13 Mar 2025 13:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7A5267F55;
+	Thu, 13 Mar 2025 14:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kFXDZy9U"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZr0fHek"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7734D2E3366;
-	Thu, 13 Mar 2025 13:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E342267393;
+	Thu, 13 Mar 2025 14:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741874257; cv=none; b=N+FgOgdnTsSJdN0VatuLGPzMxJ1fW86aE43b54wuBv/5u0Ax8viLmdGfbfAR6xb++tcmPH6qkFgkvtPciAEusONTXVt/FwimR7NKfkmKL/ltZzmLqnAyBa4qzDr6huaV7eBNl5sqmq9k8Z1kbe8bL1BF+EwVbVcF6M//pD4rjLg=
+	t=1741876079; cv=none; b=Tedp4PiGSKRJQUwWBOPbKzvIKpmbNM8U0u0WKge1ITEqu29NC9N7Z7ewGv99BZE4xNkom7kjKzM90wW7IFpo187q7v5uqecwW11l1g7PLAtiDjJYWLhoKNLWWKS4T/lWhu81s0LfwS3K6j/zc6H3Nkx3I3tiAuH5lm2+TpADHf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741874257; c=relaxed/simple;
-	bh=DLhdMLDCZ73yAePjjb/7mUh8NxxMFNMkE9CVvGT2MkE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dMvJGkYy0AJUH2+LTk7SGccXKnr9FLZO0M5Lg7d9YqU1y0WfzIceUsY1/qAm+FC5M3CVfPPg9v5pbvEI2zU600B4BkWqHBlMT2ggQEJvF9Xi3bjFM7dAGfpSiy1iPRaGTh9o2D8FyRhB6XSeM6cEs6AsMI+d3MS3Xn+OjRiPRhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kFXDZy9U; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1741876079; c=relaxed/simple;
+	bh=gxg+0lDzP4WW6H+ac5tKgySrv/5xRkMqt16F5FhafeQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ssj/HYqDW4kvh8+IXlMghJ/Fn2tuMAWmXganwbTf9i5xBaPOcErCs5S+tUvOcdJUNtfqGwPnwAjlTmu2y5PEprO8PJn/wteXSu9KveU8+fShUd3RZefjHORCM8al3FJBAgi4CH6UDqJwXYp+zAjEtfhK6gpmxV5WH8KoOSebnDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eZr0fHek; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e5e1a38c1aso1218269a12.2;
-        Thu, 13 Mar 2025 06:57:35 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso218849466b.0;
+        Thu, 13 Mar 2025 07:27:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741874254; x=1742479054; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741876076; x=1742480876; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3C6MvGOiTRxWRu0SbR4M4R9huU60gsGYQ5fIHw+vGNM=;
-        b=kFXDZy9U6kIfwz5uBqv771ya78rJKthaQ6hGux7/mSrLdt7fWN1k+nb2tqly1gZHA3
-         i9ozyNbuZuM0CyQxLLLAZRgBupYE5za+oxsSIt0Ovyxy99BuGs+gmVWJ68Yhn7JLAI5Z
-         KelyoqbMy43sPh4zNRVVkqpT2+peVaCtXgIGw4BV6ixX26pwQV59KzVMn7SOLAMJBHgn
-         vdmonjYJBJtMM4Nzkz7cjejRuUcNYmu8NdW0PDp/KGzpua1gPtXHcGzKdkdGE5QPJVwB
-         vtCNMXDeApeaSbBczM34mZ8P/d4ca8PrbgdR3AfsYXYEu0ryWsyxYfHfnlPsbQFWXeuE
-         lvoA==
+        bh=XNUKO0Et5yT84TqbQgeEjeVZKHHspqia0B9fx6XJNnc=;
+        b=eZr0fHekS6ldgQw+cL8QKHjo/Ymdi7o/ER6+LOU9NwPliiskKSRzF3xi98FzaNVzKe
+         bAx0WWOZz/JzPuB1Qb39rlRO11fcHVxvlkyKBBcocxZ5GChafqs/DZMAKMevyHl2CEtF
+         tgElWXF0h4DcJrcVAWyesTqTkrqyFiJBXj218+n8UiRf0BVSdvPp/By/Qs5i/ZchxUZ6
+         yAQpyjYDDr6TFdYnBbAvdCV+//BGq6ed+LAFxYiqkUyUqn8pR32WSMt5jGdDPOFm9l3k
+         Qs2eyOZR6R4cm56jmox4Ax7B9z7xbCOTaJemOvcQU+LEE/lmDiB7XFTBxUcDaAMPnNEE
+         LKdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741874254; x=1742479054;
+        d=1e100.net; s=20230601; t=1741876076; x=1742480876;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=3C6MvGOiTRxWRu0SbR4M4R9huU60gsGYQ5fIHw+vGNM=;
-        b=AAuXUWytcSM8lpVhEswSuu6UR8x/aROgwVBj/N/bep1SLD4y3TvQwFW66CpcAfz6gc
-         myAfh9oJIgPTR9b6TZ5ViMV69rZwlXFxVw9jeffD0SAU+tebQBMpf923Q/aOVPSxgWhL
-         vm/M9yCHImmV0PwF+7UF6bfQywQLzeti9rZHtrYlXDpLKo0pJ2n7+xrMkNpGmLr/lfAv
-         qe4EZidBOQ2jrQ78RyrEM6TCy8EP8Li9b1TlnAphhCuFZ9+R+ydOF23A/9hICGEIIoAD
-         LYpJ1tD8PVvC1pFIHwu5Ia9oJSkfg43e2X/L+42fpxhf63v0JivP0dl8htVkKHZRXI4Q
-         e1rg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTX1/dRsg1pdErBnzWb1W/4xDZtUxvgfhXPwUt8qGJUmPB4inqTPgUoqHw3yBikSHBNMP7/NoWIGOIx2Xi@vger.kernel.org, AJvYcCXODw4eg0+PCR7ZvTzhExviDOvWGneSO8HClidrqLpYF+qeNzQp0XMKH2RSWLcZx79YxHvU0GX8YRRHLZHu@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP90CYFUllSna7PZ3gLaE87+Pd+OON3AWfxsoa2DVoMcpGak1q
-	Vga4wt4EcB6FtIGHfW49AR/L2SWxhhhcDAu6fCqfv5oX8aX/rHBR
-X-Gm-Gg: ASbGncv06D75L6+jz4BgIBgAc8Jdal3ktoCewM2/fEaR6NQ7XgWMt6TgKlVQdMdRZpv
-	lSG1afbbUPUyfGUjMiFIoSHMs/hwui0O9yxO0asQ+YUJP69uUrIrTrSRmGrs8/L/oiHV5S6kyk7
-	uXGH0uhYXNYH1WfC3ZBLEiXNxJHpuHtHzAoAkRvBXUb1u7+nV6sHLrtgnACTNRMWG+jKXGW7YL3
-	PWzMMHY75ULQ30fDpbHjRG2clMDTEBuIOOlmp9tNBljwqAkcKqUKCy4XrF4FVFlzg4v2A8sxUIS
-	JyASQBsjYleJRqSdDN0YR4T8SwAsC7Sbfg6Bi2sa3Dg5loBfMv08MgnWwg3cNTM=
-X-Google-Smtp-Source: AGHT+IFTSYm/DNS4AaQAvsgnUraYtTjUiIkJZHr41UqEt7kAOX90x8URH7OuDcPRdqHQyVA59ibtvg==
-X-Received: by 2002:a05:6402:42c2:b0:5dc:7374:261d with SMTP id 4fb4d7f45d1cf-5e5e22a3716mr51358629a12.7.1741874253310;
-        Thu, 13 Mar 2025 06:57:33 -0700 (PDT)
+        bh=XNUKO0Et5yT84TqbQgeEjeVZKHHspqia0B9fx6XJNnc=;
+        b=TAUR3y+U0c/oToHWyKt6ReE72luVpxqlsVPt93bKuySNoZ+fIuWFVKS+KOOABe4dkL
+         UFXlGBGkEFDjyVhvu7w6BLpPERl5usPcN4B9WXvJmBL4xjhxgpSU2dnfGa4l4/ll+Ese
+         BrC7z2o6J9sqm6YSYLak8uG4CJ4wEDM7NnijQOs6noYmriFmAqBCyhwHkMZBxqbT53v7
+         VvwbWuo+ZqtK4GWEcXzOdIQmQogGfXILlLr8fZUSQy3k4P6VAUFn1RMbjAVI8C1ZwPvF
+         lcnhn+TF+depoFLpJbLcwlQTpUuk3Eb719N6De1mjqlEDdThFOhKgrikOFALfs390HjZ
+         +Gdw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnpfKhxlzWA4WhGVSBjIdk+hTEHtKNoiqsMKbsF5GcGRG52J47tN7Vdyq7Qce1mwH1XGjTkNvO2bEDCu21@vger.kernel.org, AJvYcCVn+/4CGGltreEHPCpgGStdvXV1Hh9lm/+SML2MXJY5tX9mVZk6aL6XeoyTTIexDLITSU+xl4X2LKRpmCjz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7T102YWXQPDzsULWZ2wogC3azTSuXr5/BQ9poVj92HBzzkvlZ
+	6b77h6ks8RVlEF9iwHocPdUNlBaYeMfntW5ZDl8YcPzHBe1dzp7J
+X-Gm-Gg: ASbGncuIfEGa36eBRbwB0fuAH7Qi4RnwyjLErCvtBAWDqzLykNyxB7gA70Zyj/0Ncqq
+	QhOIzUqUiCiR9e7UXVOQ49sk3SfZKO4KhJAWx89ELkqPuVOoVmGJ+JUG6mB1uFkF8xwZQmIT28g
+	dBqq/xBcFJC2Wb6uZ0uez8TxfYXUKKa7vAJddN+FhpySQU1pw7D/1dr/SjQ3kmBFfjjzBygjF1f
+	ct70YXfTnHghRk7cwB5aOl0OCGtBH0sUHmKlXca0RRiCSHdKJCyW7Pn5EML8nzT65SFGvYd2zEG
+	csJExC/ukKDZP95QT7o6aA7I3KYq0Vzad/2NwDu4ZC3yWtSVx8H57c6DrFv2XXc=
+X-Google-Smtp-Source: AGHT+IEVZmpHLZrjcMQPf6kMwb6oK78NasXzqSzxf7wU1VF0VoUZxabsmjus6/LDL9zjOhY19483+A==
+X-Received: by 2002:a17:907:1b16:b0:ac1:fa6f:4941 with SMTP id a640c23a62f3a-ac252a9d6a0mr3352723966b.13.1741876075535;
+        Thu, 13 Mar 2025 07:27:55 -0700 (PDT)
 Received: from f.. (cst-prg-90-242.cust.vodafone.cz. [46.135.90.242])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816974900sm753210a12.25.2025.03.13.06.57.30
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3146aefadsm86411066b.8.2025.03.13.07.27.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 06:57:32 -0700 (PDT)
+        Thu, 13 Mar 2025 07:27:54 -0700 (PDT)
 From: Mateusz Guzik <mjguzik@gmail.com>
 To: brauner@kernel.org
 Cc: viro@zeniv.linux.org.uk,
@@ -77,9 +77,9 @@ Cc: viro@zeniv.linux.org.uk,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v2] fs: consistently deref the files table with rcu_dereference_raw()
-Date: Thu, 13 Mar 2025 14:57:25 +0100
-Message-ID: <20250313135725.1320914-1-mjguzik@gmail.com>
+Subject: [PATCH] fs: dedup handling of struct filename init and refcounts bumps
+Date: Thu, 13 Mar 2025 15:27:44 +0100
+Message-ID: <20250313142744.1323281-1-mjguzik@gmail.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -89,91 +89,127 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-... except when the table is known to be only used by one thread.
-
-A file pointer can get installed at any moment despite the ->file_lock
-being held since the following:
-8a81252b774b53e6 ("fs/file.c: don't acquire files->file_lock in fd_install()")
-
-Accesses subject to such a race can in principle suffer load tearing.
-
-While here redo the comment in dup_fd -- it only covered a race against
-files showing up, still assuming fd_install() takes the lock.
+No functional changes.
 
 Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
 
-v2: s/rcu_access_pointer/rcu_dererence_raw/
+This is extracted from the patch which tried to introduce optional
+non-atomic operation.
 
-I confirmed the possiblity of the problem with this:
-https://lwn.net/Articles/793253/#Load%20Tearing
+I think this is an ok cleanup, but I'm not going to argue about it.
 
-Granted, the article being 6 years old might mean some magic was added
-by now to prevent this particular problem.
+ultimately this is a big NOP
 
-While technically this classifies as a bugfix, given that nothing blew
-up and this is more of a "just in case" change, I don't think this
-warrants any backports. Thus I'm not adding a Fixes: tag to prevent this
-from being picked by autosel.
+ fs/namei.c         | 17 +++++++++--------
+ include/linux/fs.h |  6 ++++++
+ kernel/auditsc.c   | 12 +++++-------
+ 3 files changed, 20 insertions(+), 15 deletions(-)
 
- fs/file.c | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
-
-diff --git a/fs/file.c b/fs/file.c
-index 6c159ede55f1..58ff50094525 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -423,17 +423,25 @@ struct files_struct *dup_fd(struct files_struct *oldf, struct fd_range *punch_ho
- 	old_fds = old_fdt->fd;
- 	new_fds = new_fdt->fd;
+diff --git a/fs/namei.c b/fs/namei.c
+index 06765d320e7e..699158c325bf 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -125,6 +125,13 @@
  
-+	/*
-+	 * We may be racing against fd allocation from other threads using this
-+	 * files_struct, despite holding ->file_lock.
-+	 *
-+	 * alloc_fd() might have already claimed a slot, while fd_install()
-+	 * did not populate it yet. Note the latter operates locklessly, so
-+	 * the file can show up as we are walking the array below.
-+	 *
-+	 * At the same time we know no files will disappear as all other
-+	 * operations take the lock.
-+	 *
-+	 * Instead of trying to placate userspace racing with itself, we
-+	 * ref the file if we see it and mark the fd slot as unused otherwise.
-+	 */
- 	for (i = open_files; i != 0; i--) {
--		struct file *f = *old_fds++;
-+		struct file *f = rcu_dereference_raw(*old_fds++);
- 		if (f) {
- 			get_file(f);
- 		} else {
--			/*
--			 * The fd may be claimed in the fd bitmap but not yet
--			 * instantiated in the files array if a sibling thread
--			 * is partway through open().  So make sure that this
--			 * fd is available to the new process.
--			 */
- 			__clear_open_fd(open_files - i, new_fdt);
+ #define EMBEDDED_NAME_MAX	(PATH_MAX - offsetof(struct filename, iname))
+ 
++static inline void initname(struct filename *name)
++{
++	name->uptr = NULL;
++	name->aname = NULL;
++	atomic_set(&name->refcnt, 1);
++}
++
+ struct filename *
+ getname_flags(const char __user *filename, int flags)
+ {
+@@ -203,10 +210,7 @@ getname_flags(const char __user *filename, int flags)
+ 			return ERR_PTR(-ENAMETOOLONG);
  		}
- 		rcu_assign_pointer(*new_fds++, f);
-@@ -684,7 +692,7 @@ struct file *file_close_fd_locked(struct files_struct *files, unsigned fd)
- 		return NULL;
+ 	}
+-
+-	atomic_set(&result->refcnt, 1);
+-	result->uptr = filename;
+-	result->aname = NULL;
++	initname(result);
+ 	audit_getname(result);
+ 	return result;
+ }
+@@ -264,11 +268,8 @@ struct filename *getname_kernel(const char * filename)
+ 		return ERR_PTR(-ENAMETOOLONG);
+ 	}
+ 	memcpy((char *)result->name, filename, len);
+-	result->uptr = NULL;
+-	result->aname = NULL;
+-	atomic_set(&result->refcnt, 1);
++	initname(result);
+ 	audit_getname(result);
+-
+ 	return result;
+ }
+ EXPORT_SYMBOL(getname_kernel);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 62440a9383dc..016b0fe1536e 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2865,6 +2865,12 @@ static inline struct filename *getname_maybe_null(const char __user *name, int f
+ extern void putname(struct filename *name);
+ DEFINE_FREE(putname, struct filename *, if (!IS_ERR_OR_NULL(_T)) putname(_T))
  
- 	fd = array_index_nospec(fd, fdt->max_fds);
--	file = fdt->fd[fd];
-+	file = rcu_dereference_raw(fdt->fd[fd]);
- 	if (file) {
- 		rcu_assign_pointer(fdt->fd[fd], NULL);
- 		__put_unused_fd(files, fd);
-@@ -1252,7 +1260,7 @@ __releases(&files->file_lock)
- 	 */
- 	fdt = files_fdtable(files);
- 	fd = array_index_nospec(fd, fdt->max_fds);
--	tofree = fdt->fd[fd];
-+	tofree = rcu_dereference_raw(fdt->fd[fd]);
- 	if (!tofree && fd_is_open(fd, fdt))
- 		goto Ebusy;
- 	get_file(file);
++static inline struct filename *refname(struct filename *name)
++{
++	atomic_inc(&name->refcnt);
++	return name;
++}
++
+ extern int finish_open(struct file *file, struct dentry *dentry,
+ 			int (*open)(struct inode *, struct file *));
+ extern int finish_no_open(struct file *file, struct dentry *dentry);
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 9c853cde9abe..78fd876a5473 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -2207,10 +2207,8 @@ __audit_reusename(const __user char *uptr)
+ 	list_for_each_entry(n, &context->names_list, list) {
+ 		if (!n->name)
+ 			continue;
+-		if (n->name->uptr == uptr) {
+-			atomic_inc(&n->name->refcnt);
+-			return n->name;
+-		}
++		if (n->name->uptr == uptr)
++			return refname(n->name);
+ 	}
+ 	return NULL;
+ }
+@@ -2237,7 +2235,7 @@ void __audit_getname(struct filename *name)
+ 	n->name = name;
+ 	n->name_len = AUDIT_NAME_FULL;
+ 	name->aname = n;
+-	atomic_inc(&name->refcnt);
++	refname(name);
+ }
+ 
+ static inline int audit_copy_fcaps(struct audit_names *name,
+@@ -2369,7 +2367,7 @@ void __audit_inode(struct filename *name, const struct dentry *dentry,
+ 		return;
+ 	if (name) {
+ 		n->name = name;
+-		atomic_inc(&name->refcnt);
++		refname(name);
+ 	}
+ 
+ out:
+@@ -2496,7 +2494,7 @@ void __audit_inode_child(struct inode *parent,
+ 		if (found_parent) {
+ 			found_child->name = found_parent->name;
+ 			found_child->name_len = AUDIT_NAME_FULL;
+-			atomic_inc(&found_child->name->refcnt);
++			refname(found_child->name);
+ 		}
+ 	}
+ 
 -- 
 2.43.0
 
