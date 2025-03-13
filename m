@@ -1,92 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-43885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 421B7A5EEBA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 10:01:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1090A5EF41
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 10:13:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D1A119C09A3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 09:01:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 265F317069B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 09:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09151263C8A;
-	Thu, 13 Mar 2025 09:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E965826462B;
+	Thu, 13 Mar 2025 09:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gteJGi8w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KUrnCwXz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C951FBCA3
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Mar 2025 09:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377C52641DC;
+	Thu, 13 Mar 2025 09:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741856462; cv=none; b=pevSZhJK5BO25r/nb2E3bd8FoYiBDj4J/qZOIWvDeV5s6H9sP/dBbNs02xjrWldpvoTmC49uP5b6q15gctFEx45r2LgcSYWQgO13bMa2jn1ldkv96uc3u3AConHKRV5eHxxjX6E2bYCK8MYHTj9AMdqwZ/c5WZ2NloBzYJjd8hU=
+	t=1741857206; cv=none; b=FsedAe2MQJ0wG5KvUhPU+yYqfvaDM7ubLfx/5jOPGiz9heeiiwDi45uMdG2zt/XHyDdPu472GrPJPE4R9Zjze+HLd5gubcnGtdJvWdSDzAACMRRyHgek3MYaSQLFOv/B8Vzqg0zFchsQs65dOJjHU67cQTeSwQGw1oFOlpOgAYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741856462; c=relaxed/simple;
-	bh=2NVIlOXjOqN6H2t3XTMFYhxsI9xrRSifYJsUYEBiDaM=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=c7x/eOaaJH9UqOuRFEqfYaV0pu7fgERNUDKFPahxBm8VsIKlEMgEpdrry8jF9R43RhwFSUbR0nKDV7yqVuOWgNBSvqbXvYq9ZL0fqxFKiFl2R6og2DpBMjTXSJPSsfdnWswiaFZQ1NDX2PCYL54GEfk1kB8sH9QsCwX7rrWjeU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gteJGi8w; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741856459;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HWX+NY4k6HSsnkBzV4RnRPKYxMVxCP2ZIMbCALpTIGg=;
-	b=gteJGi8wkysSgTvSO34JGSr0wWP7Uz/dRMLkIk3a2nGL1GvOvU5qWFhKHmSx7Q0pOngSoe
-	UL4He+63hefDaYQkVnJlG350JmSs5GLIkgiT7V3jVlQ7uENgVHsEkI4DRxBGWqsLvlnQ60
-	j78+Sh6CK+zKuV6GkSEqvAxpw7eOhXI=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-140-_jZveJSVOR-CqeIuwQAaWQ-1; Thu,
- 13 Mar 2025 05:00:55 -0400
-X-MC-Unique: _jZveJSVOR-CqeIuwQAaWQ-1
-X-Mimecast-MFC-AGG-ID: _jZveJSVOR-CqeIuwQAaWQ_1741856454
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3D3DE1800258;
-	Thu, 13 Mar 2025 09:00:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C02981828A99;
-	Thu, 13 Mar 2025 09:00:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <458de992be8760c387f7a4e55a1e42a021090a02.camel@ibm.com>
-References: <458de992be8760c387f7a4e55a1e42a021090a02.camel@ibm.com> <1243044.1741776431@warthog.procyon.org.uk>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: dhowells@redhat.com, "slava@dubeyko.com" <slava@dubeyko.com>,
-    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-    Alex Markuze <amarkuze@redhat.com>, Xiubo Li <xiubli@redhat.com>,
-    "brauner@kernel.org" <brauner@kernel.org>,
-    "idryomov@gmail.com" <idryomov@gmail.com>,
-    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ceph: Fix incorrect flush end position calculation
+	s=arc-20240116; t=1741857206; c=relaxed/simple;
+	bh=XPChNfFXlAoEhDDQGCfLjaxmtcrf+d26j4cITHrFFaM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mpr3+5EiGwc+sQX/rjyxz72J1Gd9o0ZyM78jF1fLsDFlMtu6FfQVLQw+rzh52KNSJcQh8ITHT7DD9XGX+WiyQcmPCjuiNNa6C4w4VP6BFjw9tFr338oAHOeg7sx3tr7A4tKMfnbJM0pGtr467PrfXHu75Z5//6kUwDHpI+KZaMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KUrnCwXz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D330C4CEEB;
+	Thu, 13 Mar 2025 09:13:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741857205;
+	bh=XPChNfFXlAoEhDDQGCfLjaxmtcrf+d26j4cITHrFFaM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KUrnCwXzugBobwjVxouwhmGfeB0FbL0KotVpkA+nMiAxJqGLyKPmFarApKHNkvHob
+	 NBBqTG+H3n8kEuaYispMI++tro2enNEwgwCHvE3HAwcl+cDmrkQSf3TOUxVw78ACyr
+	 1bszEhcq0kqU5JCLVKvRguf9sv4DdQ6+0UcOqj4p8ostIK6hyiI10q32LZ/YeWi8fB
+	 Vo8ZfXdk0Qkm3uJkMyHAOlsHHtLUUjV87fbUQHFH91KADNicFupDOIRd9l0rRPCKWA
+	 oDEYuyH6d1DCQ4RgtI0u0u2RWhWp4vcaI607kMeAqoYDldM1GF+r+/vCKyFM4khyD8
+	 ArVvBDc7MMOhg==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Thu, 13 Mar 2025 10:13:15 +0100
+Message-ID: <20250313-vfs-fixes-a0e878b9a930@brauner>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1330414.1741856450.1@warthog.procyon.org.uk>
-Date: Thu, 13 Mar 2025 09:00:50 +0000
-Message-ID: <1330415.1741856450@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1785; i=brauner@kernel.org; h=from:subject:message-id; bh=XPChNfFXlAoEhDDQGCfLjaxmtcrf+d26j4cITHrFFaM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRfWrh6wgGNRy2OD3meL53uFZPjnPrBfMpu2VULE/885 s3el2dS1FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRZ7YM/9Mj5p9mfp/I8t94 6bUy6QNxXrJ28a31JxTWpy2PUzE0OcDwv/zhGf8V2TH8b67wTOzI2v7Z6Gdx17x7jfbMC9KOqe3 7xAsA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Shall I ask Christian to stick this in the vfs tree?  Or did you want to take
-it through the ceph tree?
+/* Summary */
 
-David
+This contains various fixes for this cycle:
 
+- Bring in an RCU pathwalk fix for afs. This is brought in as a merge
+  from the vfs-6.15.shared.afs branch that needs this commit and other
+  trees already depend on it.
+
+- Fix vboxfs unterminated string handling.
+
+/* Testing */
+
+gcc version (Debian 14.2.0-8) 14.2.0
+Debian clang version 19.1.4 (1)
+
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+Merge conflicts with mainline
+=============================
+
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+No known conflicts.
+
+The following changes since commit 00a7d39898c8010bfd5ff62af31ca5db34421b38:
+
+  fs/pipe: add simpler helpers for common cases (2025-03-06 18:25:35 -1000)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.14-rc7.fixes
+
+for you to fetch changes up to 986a6f5eacb900ea0f6036ef724b26e76be40f65:
+
+  vboxsf: Add __nonstring annotations for unterminated strings (2025-03-11 13:06:39 +0100)
+
+Please consider pulling these changes from the signed vfs-6.14-rc7.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.14-rc7.fixes
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      Merge afs RCU pathwalk fix
+
+David Howells (1):
+      afs: Fix afs_atcell_get_link() to handle RCU pathwalk
+
+Kees Cook (1):
+      vboxsf: Add __nonstring annotations for unterminated strings
+
+ fs/afs/cell.c     | 11 ++++++-----
+ fs/afs/dynroot.c  | 15 +++++++++++++--
+ fs/afs/internal.h |  2 +-
+ fs/afs/proc.c     |  4 ++--
+ fs/vboxsf/super.c |  3 +--
+ 5 files changed, 23 insertions(+), 12 deletions(-)
 
