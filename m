@@ -1,39 +1,39 @@
-Return-Path: <linux-fsdevel+bounces-43991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D0BA60823
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 05:57:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28511A60822
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 05:57:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23557178927
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 04:57:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEFA119C2BFA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 04:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533B515199B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D57E14BF8F;
 	Fri, 14 Mar 2025 04:57:13 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C522F4A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8526C24B29;
 	Fri, 14 Mar 2025 04:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741928232; cv=none; b=MSuwj4j2KuQVWG1J3lJynoPlA6mdfwbQw2YGXQ7/5OPuW1lxsvcUDWpDNkKd64xXAodMohsHTazFe6AX2oNj245f3B1l/orxbEi6F4ZWxE3k0KBM6/R2iZb3o3fQtn14aBXlbZQjgWbrb5fzA6VAlxyAFrm+ExT/7+qH12Me3rE=
+	t=1741928232; cv=none; b=cy94x1UTNnZhEDbWp8oEIqNTiiPPqSNXslxCJ/qIFwUtxqXEmAYefJKIfocciiyw+OIWYbVbRgoqnZT2dzGY6UTYut9ITXRqqNxh9xHGEm+V0hWDOkiSHkkkerN6GMLQLglRL0hKZWwHqIqlWhLBeNgUI1DdK2032KkJcfdgb1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741928232; c=relaxed/simple;
-	bh=eHbtHUb3kGJx/y1SzBRJaZfmnTOd8qT4RhDO0gFksWw=;
+	bh=f3+gpEKJAqYzbzqvVJPsD4a2ui2KwmtT1yKX34lie0s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kLu1VIrNUYFUTopaViGpKsDrVXe/hcedaEg9UHx4/qE42K1yItv4g48KbWr4GfjaWf8flMshOSCHKcX6V45JkRPIKDO9kY2VWAlyiJ5hCv+DvMBT9hOqiarsVHLcix9BpGYA1zBEKBBpYQZpqxLjUye1wogquQMSOCdxeAul0Dg=
+	 MIME-Version; b=DHxh5Tn+kvShOv2SdCpqgyPS3LFeuU4JMozO6IyxKfMsO6sxaEGJE/m9Gcjuj0p+BarQCTCiJdavq4p03LIOBoM7+yJgFhWqHHw3ELZgkVCO4QqDl6ATFjdrrBlFiVXUKGz9I378opAP3o4bXqZjMO0FA20i7Fu/ol+tgjZqwQw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
 Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
 	by neil.brown.name with esmtp (Exim 4.95)
 	(envelope-from <mr@neil.brown.name>)
-	id 1tsx6Y-00E3vp-LW;
-	Fri, 14 Mar 2025 04:57:06 +0000
+	id 1tsx6Z-00E3vr-7M;
+	Fri, 14 Mar 2025 04:57:07 +0000
 From: NeilBrown <neil@brown.name>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -44,9 +44,9 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
 Cc: linux-nfs@vger.kernel.org,
 	netfs@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 4/8] cachefiles: Use lookup_one() rather than lookup_one_len()
-Date: Fri, 14 Mar 2025 11:34:10 +1100
-Message-ID: <20250314045655.603377-5-neil@brown.name>
+Subject: [PATCH 5/8] cachefiles: use correct mnt_idmap
+Date: Fri, 14 Mar 2025 11:34:11 +1100
+Message-ID: <20250314045655.603377-6-neil@brown.name>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250314045655.603377-1-neil@brown.name>
 References: <20250314045655.603377-1-neil@brown.name>
@@ -58,112 +58,147 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-lookup_one_len() does not support idmapped mounts and does permission
-checking on the non-mapped uids.  This means that cachefiles cannot
-correctly use idmapped mounts as a backing store.
-
-This patch changes to use lookup_one() and lookup_one_positive_unlocked(),
-passing the relevant vfsmount so idmapping can be honoured.
-
-This requires passing the name in a qstr.  This is easily done with
-QSTR() as the name is always nul terminated, and often strlen is used
-anyway.  ->d_name_len is removed as no longer useful.
-
-Note that there are still many places where cachefiles uses
-nop_mnt_idmap so more work is needed to properly support idmapped
-mounts.
+If cachesfiles is configured on a mount that is idmapped, it needs to
+use the idmap from the mount point.  This patch changes all occurrences
+of nop_mnt_idmap in cachefiles to file the correct mnt_idmap.
 
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- fs/cachefiles/internal.h |  1 -
- fs/cachefiles/key.c      |  1 -
- fs/cachefiles/namei.c    | 14 +++++++-------
- 3 files changed, 7 insertions(+), 9 deletions(-)
+ fs/cachefiles/interface.c |  6 ++++--
+ fs/cachefiles/namei.c     | 14 ++++++++------
+ fs/cachefiles/xattr.c     | 12 +++++++-----
+ 3 files changed, 19 insertions(+), 13 deletions(-)
 
-diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
-index 38c236e38cef..b62cd3e9a18e 100644
---- a/fs/cachefiles/internal.h
-+++ b/fs/cachefiles/internal.h
-@@ -71,7 +71,6 @@ struct cachefiles_object {
- 	int				debug_id;
- 	spinlock_t			lock;
- 	refcount_t			ref;
--	u8				d_name_len;	/* Length of filename */
- 	enum cachefiles_content		content_info:8;	/* Info about content presence */
- 	unsigned long			flags;
- #define CACHEFILES_OBJECT_USING_TMPFILE	0		/* Have an unlinked tmpfile */
-diff --git a/fs/cachefiles/key.c b/fs/cachefiles/key.c
-index bf935e25bdbe..4927b533b9ae 100644
---- a/fs/cachefiles/key.c
-+++ b/fs/cachefiles/key.c
-@@ -132,7 +132,6 @@ bool cachefiles_cook_key(struct cachefiles_object *object)
- success:
- 	name[len] = 0;
- 	object->d_name = name;
--	object->d_name_len = len;
- 	_leave(" = %s", object->d_name);
- 	return true;
- }
+diff --git a/fs/cachefiles/interface.c b/fs/cachefiles/interface.c
+index 3e63cfe15874..b2b9867d8428 100644
+--- a/fs/cachefiles/interface.c
++++ b/fs/cachefiles/interface.c
+@@ -143,7 +143,8 @@ static int cachefiles_adjust_size(struct cachefiles_object *object)
+ 		newattrs.ia_size = oi_size & PAGE_MASK;
+ 		ret = cachefiles_inject_remove_error();
+ 		if (ret == 0)
+-			ret = notify_change(&nop_mnt_idmap, file->f_path.dentry,
++			ret = notify_change(mnt_idmap(file->f_path.mnt),
++					    file->f_path.dentry,
+ 					    &newattrs, NULL);
+ 		if (ret < 0)
+ 			goto truncate_failed;
+@@ -153,7 +154,8 @@ static int cachefiles_adjust_size(struct cachefiles_object *object)
+ 	newattrs.ia_size = ni_size;
+ 	ret = cachefiles_inject_write_error();
+ 	if (ret == 0)
+-		ret = notify_change(&nop_mnt_idmap, file->f_path.dentry,
++		ret = notify_change(file_mnt_idmap(file),
++				    file->f_path.dentry,
+ 				    &newattrs, NULL);
+ 
+ truncate_failed:
 diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-index 83a60126de0f..a440a2ff5d41 100644
+index a440a2ff5d41..b156a0671a3d 100644
 --- a/fs/cachefiles/namei.c
 +++ b/fs/cachefiles/namei.c
-@@ -98,7 +98,7 @@ struct dentry *cachefiles_get_directory(struct cachefiles_cache *cache,
- retry:
- 	ret = cachefiles_inject_read_error();
- 	if (ret == 0)
--		subdir = lookup_one_len(dirname, dir, strlen(dirname));
-+		subdir = lookup_one(cache->mnt, QSTR(dirname), dir);
- 	else
- 		subdir = ERR_PTR(ret);
- 	trace_cachefiles_lookup(NULL, dir, subdir);
-@@ -337,7 +337,7 @@ int cachefiles_bury_object(struct cachefiles_cache *cache,
- 		return -EIO;
+@@ -130,7 +130,8 @@ struct dentry *cachefiles_get_directory(struct cachefiles_cache *cache,
+ 			goto mkdir_error;
+ 		subdir = ERR_PTR(cachefiles_inject_write_error());
+ 		if (!IS_ERR(subdir))
+-			subdir = vfs_mkdir(&nop_mnt_idmap, d_inode(dir), subdir, 0700);
++			subdir = vfs_mkdir(mnt_idmap(cache->mnt), d_inode(dir),
++					   subdir, 0700);
+ 		ret = PTR_ERR(subdir);
+ 		if (IS_ERR(subdir)) {
+ 			trace_cachefiles_vfs_error(NULL, d_inode(dir), ret,
+@@ -247,7 +248,8 @@ static int cachefiles_unlink(struct cachefiles_cache *cache,
+ 
+ 	ret = cachefiles_inject_remove_error();
+ 	if (ret == 0) {
+-		ret = vfs_unlink(&nop_mnt_idmap, d_backing_inode(dir), dentry, NULL);
++		ret = vfs_unlink(mnt_idmap(cache->mnt),
++				 d_backing_inode(dir), dentry, NULL);
+ 		if (ret == -EIO)
+ 			cachefiles_io_error(cache, "Unlink failed");
  	}
+@@ -386,10 +388,10 @@ int cachefiles_bury_object(struct cachefiles_cache *cache,
+ 		cachefiles_io_error(cache, "Rename security error %d", ret);
+ 	} else {
+ 		struct renamedata rd = {
+-			.old_mnt_idmap	= &nop_mnt_idmap,
++			.old_mnt_idmap	= mnt_idmap(cache->mnt),
+ 			.old_dir	= d_inode(dir),
+ 			.old_dentry	= rep,
+-			.new_mnt_idmap	= &nop_mnt_idmap,
++			.new_mnt_idmap	= mnt_idmap(cache->mnt),
+ 			.new_dir	= d_inode(cache->graveyard),
+ 			.new_dentry	= grave,
+ 		};
+@@ -455,7 +457,7 @@ struct file *cachefiles_create_tmpfile(struct cachefiles_object *object)
  
--	grave = lookup_one_len(nbuffer, cache->graveyard, strlen(nbuffer));
-+	grave = lookup_one(cache->mnt, QSTR(nbuffer), cache->graveyard);
- 	if (IS_ERR(grave)) {
- 		unlock_rename(cache->graveyard, dir);
- 		trace_cachefiles_vfs_error(object, d_inode(cache->graveyard),
-@@ -629,8 +629,8 @@ bool cachefiles_look_up_object(struct cachefiles_object *object)
- 	/* Look up path "cache/vol/fanout/file". */
+ 	ret = cachefiles_inject_write_error();
+ 	if (ret == 0) {
+-		file = kernel_tmpfile_open(&nop_mnt_idmap, &parentpath,
++		file = kernel_tmpfile_open(mnt_idmap(cache->mnt), &parentpath,
+ 					   S_IFREG | 0600,
+ 					   O_RDWR | O_LARGEFILE | O_DIRECT,
+ 					   cache->cache_cred);
+@@ -714,7 +716,7 @@ bool cachefiles_commit_tmpfile(struct cachefiles_cache *cache,
+ 
  	ret = cachefiles_inject_read_error();
  	if (ret == 0)
--		dentry = lookup_positive_unlocked(object->d_name, fan,
--						  object->d_name_len);
-+		dentry = lookup_one_positive_unlocked(volume->cache->mnt,
-+						      QSTR(object->d_name), fan);
- 	else
- 		dentry = ERR_PTR(ret);
- 	trace_cachefiles_lookup(object, fan, dentry);
-@@ -682,7 +682,7 @@ bool cachefiles_commit_tmpfile(struct cachefiles_cache *cache,
- 	inode_lock_nested(d_inode(fan), I_MUTEX_PARENT);
- 	ret = cachefiles_inject_read_error();
- 	if (ret == 0)
--		dentry = lookup_one_len(object->d_name, fan, object->d_name_len);
-+		dentry = lookup_one(cache->mnt, QSTR(object->d_name), fan);
- 	else
- 		dentry = ERR_PTR(ret);
- 	if (IS_ERR(dentry)) {
-@@ -701,7 +701,7 @@ bool cachefiles_commit_tmpfile(struct cachefiles_cache *cache,
- 		dput(dentry);
- 		ret = cachefiles_inject_read_error();
- 		if (ret == 0)
--			dentry = lookup_one_len(object->d_name, fan, object->d_name_len);
-+			dentry = lookup_one(cache->mnt, QSTR(object->d_name), fan);
- 		else
- 			dentry = ERR_PTR(ret);
- 		if (IS_ERR(dentry)) {
-@@ -750,7 +750,7 @@ static struct dentry *cachefiles_lookup_for_cull(struct cachefiles_cache *cache,
+-		ret = vfs_link(object->file->f_path.dentry, &nop_mnt_idmap,
++		ret = vfs_link(object->file->f_path.dentry, file_mnt_idmap(object->file),
+ 			       d_inode(fan), dentry, NULL);
+ 	if (ret < 0) {
+ 		trace_cachefiles_vfs_error(object, d_inode(fan), ret,
+diff --git a/fs/cachefiles/xattr.c b/fs/cachefiles/xattr.c
+index 52383b1d0ba6..a2ab9100ba74 100644
+--- a/fs/cachefiles/xattr.c
++++ b/fs/cachefiles/xattr.c
+@@ -67,7 +67,7 @@ int cachefiles_set_object_xattr(struct cachefiles_object *object)
+ 	if (ret == 0) {
+ 		ret = mnt_want_write_file(file);
+ 		if (ret == 0) {
+-			ret = vfs_setxattr(&nop_mnt_idmap, dentry,
++			ret = vfs_setxattr(file_mnt_idmap(file), dentry,
+ 					   cachefiles_xattr_cache, buf,
+ 					   sizeof(struct cachefiles_xattr) + len, 0);
+ 			mnt_drop_write_file(file);
+@@ -116,7 +116,8 @@ int cachefiles_check_auxdata(struct cachefiles_object *object, struct file *file
  
- 	inode_lock_nested(d_inode(dir), I_MUTEX_PARENT);
+ 	xlen = cachefiles_inject_read_error();
+ 	if (xlen == 0)
+-		xlen = vfs_getxattr(&nop_mnt_idmap, dentry, cachefiles_xattr_cache, buf, tlen);
++		xlen = vfs_getxattr(file_mnt_idmap(file), dentry,
++				    cachefiles_xattr_cache, buf, tlen);
+ 	if (xlen != tlen) {
+ 		if (xlen < 0) {
+ 			ret = xlen;
+@@ -167,7 +168,7 @@ int cachefiles_remove_object_xattr(struct cachefiles_cache *cache,
+ 	if (ret == 0) {
+ 		ret = mnt_want_write(cache->mnt);
+ 		if (ret == 0) {
+-			ret = vfs_removexattr(&nop_mnt_idmap, dentry,
++			ret = vfs_removexattr(mnt_idmap(cache->mnt), dentry,
+ 					      cachefiles_xattr_cache);
+ 			mnt_drop_write(cache->mnt);
+ 		}
+@@ -230,7 +231,7 @@ bool cachefiles_set_volume_xattr(struct cachefiles_volume *volume)
+ 	if (ret == 0) {
+ 		ret = mnt_want_write(volume->cache->mnt);
+ 		if (ret == 0) {
+-			ret = vfs_setxattr(&nop_mnt_idmap, dentry,
++			ret = vfs_setxattr(mnt_idmap(volume->cache->mnt), dentry,
+ 					   cachefiles_xattr_cache,
+ 					   buf, len, 0);
+ 			mnt_drop_write(volume->cache->mnt);
+@@ -276,7 +277,8 @@ int cachefiles_check_volume_xattr(struct cachefiles_volume *volume)
  
--	victim = lookup_one_len(filename, dir, strlen(filename));
-+	victim = lookup_one(cache->mnt, QSTR(filename), dir);
- 	if (IS_ERR(victim))
- 		goto lookup_error;
- 	if (d_is_negative(victim))
+ 	xlen = cachefiles_inject_read_error();
+ 	if (xlen == 0)
+-		xlen = vfs_getxattr(&nop_mnt_idmap, dentry, cachefiles_xattr_cache, buf, len);
++		xlen = vfs_getxattr(mnt_idmap(volume->cache->mnt),
++				    dentry, cachefiles_xattr_cache, buf, len);
+ 	if (xlen != len) {
+ 		if (xlen < 0) {
+ 			ret = xlen;
 -- 
 2.48.1
 
