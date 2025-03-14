@@ -1,152 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-44020-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44021-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 385CEA60F28
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 11:39:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D62A60F34
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 11:40:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C3857A9B1B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 10:38:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FF197A8175
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 10:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597751F4162;
-	Fri, 14 Mar 2025 10:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF6B1FAC37;
+	Fri, 14 Mar 2025 10:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tfUKyGEp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tWrB2J5W"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF6F1F1934;
-	Fri, 14 Mar 2025 10:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E451FA272;
+	Fri, 14 Mar 2025 10:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741948744; cv=none; b=annqEmkVSYXqvKXbC5ldELaJXfLaErh2vgAl504ONY75qaAaMt102FcJeAWRLR9uUbWK+iYZMEJQvfQY7FaBMLu2XFybtgpPakJRLMK7Tu7g6UOazL/KkQ46H7K/tHlYgEA7DudlTKSkqNS5qyFk1YBZ/zoyf82PX/4gPs1RXhc=
+	t=1741948838; cv=none; b=pnwxzkRLCJdPdFmEHDMyIMUDRlVhudpctvIL83FBfXocCCBO3roDkSeCz4g0pvb2yelfn8/495ao63QMlYtdLWrVmK1Gib4lcWNBhq0u7Ai0ccjx1RLEvmFPHIfRio1LjjkhUpkc7dd8badyBfJvd53VPB+4V56zoy2SndghMzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741948744; c=relaxed/simple;
-	bh=ViuVFqdum2mxJWZUNzKOl9aYIxyVR8GlAtNOhK+gL84=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BeQmqwOGheuZhSEZTYngiGW4TEBA+dS1tEH/YQi4adRdKNSMDXITScc22GEGQ+zoApNs+4WHeTtIdRb9Exk3n4eavveMqW5IruFxVuRWuwwQ4x91QSDjjO0AkD+6A306XRIotBc1oEh7qlXA3m6vIQwlncTQzUItvXNfl88bti0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tfUKyGEp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6F9EC4CEE3;
-	Fri, 14 Mar 2025 10:39:01 +0000 (UTC)
+	s=arc-20240116; t=1741948838; c=relaxed/simple;
+	bh=YlYthM0JFQWS1iQTNWlFWMbsRCG12+fXikfUX1iQQ6A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GmAyE/lypCUNCN0HNz4rb7w6ZpgqWu4kZbrI1qJSzSmQBrIOXIynQYdGaUsFk27VJkner2P6bV0ZdRJOHCNqR+TzvDi6yg+N9kNycXIaO2z4wue9L4/nCgwH2oMwKow54PPsNPJ7tGuUDlWvu4t7+zW725lEPeWliPLxjFY+hVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tWrB2J5W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C253C4CEE3;
+	Fri, 14 Mar 2025 10:40:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741948744;
-	bh=ViuVFqdum2mxJWZUNzKOl9aYIxyVR8GlAtNOhK+gL84=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tfUKyGEpWdoJUFDyizWtcR6MTcBD03ipKELIl9a2+429VyrZo0qU+WNG81OB5RcXA
-	 9NO4E/SWfO5gnwHwy1hyTciOFqNNpAL4qGVP7HhiQgVIOs/IR4VKfeLHdUGKbqOsjc
-	 9UZFhi7GAwPSAd3nhcnN8Iu+KHaKEtlPLGykS+5mfdloi+auywWOQDbGYEos/8+Qq0
-	 DHD/LPicakk5T/1iWPZ6GbiUzH8JSfEIjjEvT+IEfq2GT4xSquIYXnKKRQ6IpHTHqd
-	 VDwXSeYRKED+917tj82eDvROJYfAs1PC4DjMHNgzQ0dXG87df0711wtnhbkEVI1eqm
-	 yHS6q9D8PNVvg==
-Date: Fri, 14 Mar 2025 11:38:58 +0100
+	s=k20201202; t=1741948838;
+	bh=YlYthM0JFQWS1iQTNWlFWMbsRCG12+fXikfUX1iQQ6A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=tWrB2J5WPJg3XnR++pcyP5dwbwdGFcowYP+rfTpaUR624Pq5yDyvrD5zWN8XwK8aS
+	 CHMraz9Rh/aFyoOMPccKmg6hzhA9IbCCH4ty+1CGNIYtnr9/HmElVpzbDaoeown5Kd
+	 B7/+NgN0Vzco0jSmMKDpfEMYCnAahnsQCPM9Q1mP62o5JWnYRcqpPfWP8hL0yu7X74
+	 6FgGxoAH/N+q9TGGZ7E1qCLm4x0yDRZYvUVa5BrMf1EEV41nq2QVEWF8xZXy+B54jP
+	 dIfagmcKxjeS/E7FPeqlbQhwETIafy/rEIOkpvWs+8uzwvCkHYqq+LVVo9XNtZQerw
+	 i/zlKFoQVq3xQ==
 From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neil@brown.name>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	David Howells <dhowells@redhat.com>, Chuck Lever <chuck.lever@oracle.com>, 
-	Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/8 RFC] tidy up various VFS lookup functions
-Message-ID: <20250314-geprobt-akademie-cae577d90899@brauner>
-References: <20250314045655.603377-1-neil@brown.name>
+To: Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	NeilBrown <neil@brown.name>
+Cc: Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH] exportfs: remove locking around ->get_parent() call.
+Date: Fri, 14 Mar 2025 11:40:29 +0100
+Message-ID: <20250314-robust-bauzeit-5b57cf99eff0@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <174190497326.9342.9313518146512158587@noble.neil.brown.name>
+References: <174190497326.9342.9313518146512158587@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250314045655.603377-1-neil@brown.name>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1393; i=brauner@kernel.org; h=from:subject:message-id; bh=YlYthM0JFQWS1iQTNWlFWMbsRCG12+fXikfUX1iQQ6A=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRfYV/gfP7Us+pedoVDnAsfvcqWvab56n2OQMz3T0+PT uCeu7thakcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBEfi1lZFgq0mM8gY91/f30 l4uYWzi9Gf6ctNU6MMU3dB7Pua1HPn9jZJhiOadAqy5Z70Fj2ux3wexZDTe+/N5YzqKW67rozRL V17wA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 14, 2025 at 11:34:06AM +1100, NeilBrown wrote:
-> VFS has some functions with names containing "lookup_one_len" and others
-> without the "_len".  This difference has nothing to do with "len".
+On Fri, 14 Mar 2025 09:29:33 +1100, NeilBrown wrote:
+> The locking around the ->get_parent() call brings no value.
+> We are locking a child which is only used to find an inode and thence the
+> parent inode number.  All further activity involves the parent inode
+> which may have several children so locking one child cannot protect the
+> parent in any useful way.
 > 
-> The functions without "_len" take a "mnt_idmap" pointer.  This is found
-
-When we added idmapped mounts there were all these *_len() helpers and I
-orignally had just ported them to pass mnt_idmap. But we decided to not
-do this. The argument might have been that most callers don't need to be
-switched (I'm not actually sure if that's still true now that we have
-quite a few filesystems that do support idmapped mounts.).
-
-So then we added new helper and then we decided to use better naming
-then that *_len() stuff. That's about it.
-
-> in the "vfsmount" and that is an important question when choosing which
-> to use: do you have a vfsmount, or are you "inside" the filesystem.  A
-> related question is "is permission checking relevant here?".
+> The filesystem must already ensure that only one 'struct inode' exists
+> for a given inode, and will call d_obtain_alias() which contains the
+> required locking to ensure only one dentry will be attached to that
+> inode.
 > 
-> nfsd and cachefiles *do* have a vfsmount but *don't* use the non-_len
-> functions.  They pass nop_mnt_idmap which is not correct if the vfsmount
-> is actually idmaped.  For cachefiles it probably (?) doesn't matter as
-> the accesses to the backing filesystem are always does with elevated privileged (?).
+> [...]
 
-Cachefiles explicitly refuse being mounted on top of an idmapped mount
-and they require that the mount is attached (check_mnt()) and an
-attached mount can never be idmapped as it has already been exposed in
-the filesystem hierarchy.
+Applied to the vfs-6.15.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.15.misc branch should appear in linux-next soon.
 
-> 
-> For nfsd it would matter if anyone exported an idmapped filesystem.  I
-> wonder if anyone has tried...
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-nfsd doesn't support exporting idmapped mounts. See check_export() where
-that's explicitly checked.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-If there are ways to circumvent this I'd be good to know.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-> 
-> These patches change the "lookup_one" functions to take a vfsmount
-> instead of a mnt_idmap because I think that makes the intention clearer.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.15.misc
 
-Please don't!
-
-These internal lookup helpers intentionally do not take a vfsmount.
-First, because they can be called in places where access to a vfsmount
-isn't possible and we don't want to pass vfsmounts down to filesystems
-ever!
-
-Second, the mnt_idmap pointer is - with few safe exceptions - is
-retrieved once in the VFS and then passed down so that e.g., permission
-checking and file creation are guaranteed to use the same mnt_idmap
-pointer.
-
-A caller may start out with a non-idmapped detached mount (e.g., via
-fsmount() or OPEN_TREE_CLONE) (nop_mnt_idmap) and call
-inode_permission(). Now someone idmaps that mount. Now further down the
-callchain someone calls lookup_one() which now retrieves the idmapping
-again and now it's an idmapped mount. Now permission checking is out of
-sync. That's an unlikely scenario but it's possible so lookup_one() is
-not supposed to retrieve the idmapping again. Please keep passing it
-explicitly. I've also written that down in the Documenation somewhere.
-
-> 
-> It also renames the "_one" functions to be "_noperm" and removes the
-> permission checking completely.  In all cases where they are (correctly)
-> used permission checking is irrelevant.
-
-Ok, that sounds fine. Though I haven't taken the time to check the
-callers yet. I'll try to do that during the weekend.
-
-> 
-> I haven't included changes to afs because there are patches in vfs.all
-> which make a lot of changes to lookup in afs.  I think (if they are seen
-> as a good idea) these patches should aim to land after the afs patches
-> and any further fixup in afs can happen then.
-> 
-> The nfsd and cachefiles patches probably should be separate.  Maybe I
-> should submit those to relevant maintainers first, and one afs,
-> cachefiles, and nfsd changes have landed I can submit this series with
-> appropriate modifications.
-> 
-> May main question for review is : have I understood mnt_idmap correctly?
-
-I mean, you didn't ask semantic questions so much as syntactic, I think.
-I hope I explained the reasoning sufficiently.
-
-Thanks for the cleanups.
+[1/1] exportfs: remove locking around ->get_parent() call.
+      https://git.kernel.org/vfs/vfs/c/64a56f635aae
 
