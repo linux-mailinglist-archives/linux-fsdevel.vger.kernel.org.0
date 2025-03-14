@@ -1,130 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-44035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44036-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32CC9A6169B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 17:44:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E38BA616D1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 17:53:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA82D4641D5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 16:43:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E04F03BB50A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 16:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7351D204C37;
-	Fri, 14 Mar 2025 16:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C082040A4;
+	Fri, 14 Mar 2025 16:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PUXUt8oz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MyoQ0uiB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D56C62040B5
-	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Mar 2025 16:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3784118B494;
+	Fri, 14 Mar 2025 16:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741970557; cv=none; b=njhFdpCou2S3dasoTNKKFSvogLSSJiE7YTjudTwdbgQFCwbVaCLPZuGVHXwjIXCuxaKv5E/4dxEUETftAt18rd8g646u77r9xDZABvDwSzZ5QwqJEtQaxNqmxIEvbdzQ0RIXPDo50uwaTKKhySotTH6ZRSXUD2D2G4J8/w3Yty8=
+	t=1741971181; cv=none; b=Fd0Ssg4NHu6amqlrXW/CybJk0O6g8yOJBaOsWFSVv9CLIT8i7LlOU65Xjs1VMLAUcpOeMpH4TkfDuDRWOXl41Ff20aD+DE7EHKc+CKHWvjhYn2fouca0C2CHi9pQzuzaCtkjL0a+X0dwUzMxmn7VD+gfmt4B0onTMjEdoRMjJOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741970557; c=relaxed/simple;
-	bh=7RfnCZTxnffbMtVXJbp1eKsFHKdpEKrmz3WERO38Qz4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=f+dEqOKCbYRAKFb2xqOAbSpKJKgFid/qIBWi19r3Ng/7N0OLIU9cYJN3Jw1VyDSgnI8tkCKgRwE2CNm9YyIUcnWAzwHk7SjYc7+VOZ9NjeUUFne7ha5AzFhIJ5Z5CRM8fRu0eV/dIlg3ewAMpfAMWd/V1QH27kJs9o8STUM6/LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PUXUt8oz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741970555;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KsqgtlbawqA1+pPoXDWlta38taI8Ws6UsIFBymdNjzI=;
-	b=PUXUt8ozQW4h0uVd7UEqJLj07AsCXYNJ3p4ZiIkvN9TsQHibcdEIR7qQnut5LUClG10vP5
-	rz/IXclqHNS4T3v7YIIGCl4hV2y511skH41ZTj6zZoXTTZ+k0N0Z2fvvf2GB2UzpjvQsv7
-	wDEIppOTrRlR0xtHNGxXgiNQANhMHA4=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-622-ABSHVzyUNcyxoKCf-bpvQg-1; Fri,
- 14 Mar 2025 12:42:31 -0400
-X-MC-Unique: ABSHVzyUNcyxoKCf-bpvQg-1
-X-Mimecast-MFC-AGG-ID: ABSHVzyUNcyxoKCf-bpvQg_1741970550
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1E75A180AF50;
-	Fri, 14 Mar 2025 16:42:29 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.61])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DEF571944CE5;
-	Fri, 14 Mar 2025 16:42:24 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>
-Cc: David Howells <dhowells@redhat.com>,
-	Max Kellermann <max.kellermann@ionos.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
-	Alex Markuze <amarkuze@redhat.com>,
-	Ilya Dryomov <idryomov@gmail.com>
-Subject: [PATCH 4/4] netfs: Fix netfs_unbuffered_read() to return ssize_t rather than int
-Date: Fri, 14 Mar 2025 16:41:59 +0000
-Message-ID: <20250314164201.1993231-5-dhowells@redhat.com>
-In-Reply-To: <20250314164201.1993231-1-dhowells@redhat.com>
-References: <20250314164201.1993231-1-dhowells@redhat.com>
+	s=arc-20240116; t=1741971181; c=relaxed/simple;
+	bh=GgvNtudod6MsiKhII9sHkQgjx23EQwv8yeDBHX7lU28=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rYqquATn0WOyBdYsYVz3HvfXYq6C+d8ARHBO06S6fga+fukWnISgTXIWBWzqlC2EOq687JU9kKkda2o1ZMsl2fEEluEVhd+glN7xxC92zbIFutHDcyLp4Xtl048bBRW9Vbc2KtSuyJf/ouSPTEdOLO5GN5cNvUJQ/+XAaiZ2cTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MyoQ0uiB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BEC7C4CEE3;
+	Fri, 14 Mar 2025 16:53:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741971180;
+	bh=GgvNtudod6MsiKhII9sHkQgjx23EQwv8yeDBHX7lU28=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MyoQ0uiBkIltzLC74gkKBirnrR+rCzb1Aq40afi0VqiBeYlLyfvcg2HFGKhpo49+F
+	 zVMS0w7qJaidSNSdZG42U1glyidLpbE2cqvCnz/XrKXY1B57NF9aOmHxZQzcgTjoyJ
+	 g8AkyP11XHKejz4/FUzisntNsS0pZlXwuNLvSCoCSWUrXyfwq9vy4LmyrFiRGJvH1q
+	 PjiT61JX6tqASGi3nQUO82hCJut8mIW5t0ux/AKn/9WW/7FHcZ3fLQBQRITjKXsbw/
+	 /WpB1ETPavZAFeecEDhAJ9TMxvc+y7/WwjfOvXZB0S+Tp+nI9eBRPCyHKQdKE7gdQO
+	 XANnX52FaFFOg==
+Date: Fri, 14 Mar 2025 09:53:00 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Christoph Hellwig <hch@lst.de>, Kanchan Joshi <joshi.k@samsung.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+	Qu Wenruo <wqu@suse.com>, Goldwyn Rodrigues <rgoldwyn@suse.com>,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 3/7] iomap: add bioset in iomap_read_folio_ops for
+ filesystems to use own bioset
+Message-ID: <20250314165300.GF2803730@frogsfrogsfrogs>
+References: <20250203094322.1809766-1-hch@lst.de>
+ <20250203094322.1809766-4-hch@lst.de>
+ <Z9Ljd-AwJGnk7f2D@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9Ljd-AwJGnk7f2D@casper.infradead.org>
 
-Fix netfs_unbuffered_read() to return an ssize_t rather than an int as
-netfs_wait_for_read() returns ssize_t and this gets implicitly truncated.
+On Thu, Mar 13, 2025 at 01:53:59PM +0000, Matthew Wilcox wrote:
+> On Mon, Feb 03, 2025 at 10:43:07AM +0100, Christoph Hellwig wrote:
+> > Allocate the bio from the bioset provided in iomap_read_folio_ops.
+> > If no bioset is provided, fs_bio_set is used which is the standard
+> > bioset for filesystems.
+> 
+> It feels weird to have an 'ops' that contains a bioset rather than a
+> function pointer.  Is there a better name we could be using?  ctx seems
+> wrong because it's not a per-op struct.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: Viacheslav Dubeyko <slava@dubeyko.com>
-cc: Alex Markuze <amarkuze@redhat.com>
-cc: Ilya Dryomov <idryomov@gmail.com>
-cc: ceph-devel@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
----
- fs/netfs/direct_read.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+"profile" is the closest I can come up with, and that feels wrong to me.
+There's at least some precedent in fs-land for ops structs that have
+non-function pointer fields such as magic numbers, descriptive names,
+or crc block offsets.
 
-diff --git a/fs/netfs/direct_read.c b/fs/netfs/direct_read.c
-index 0bf3c2f5a710..5e3f0aeb51f3 100644
---- a/fs/netfs/direct_read.c
-+++ b/fs/netfs/direct_read.c
-@@ -125,9 +125,9 @@ static int netfs_dispatch_unbuffered_reads(struct netfs_io_request *rreq)
-  * Perform a read to an application buffer, bypassing the pagecache and the
-  * local disk cache.
-  */
--static int netfs_unbuffered_read(struct netfs_io_request *rreq, bool sync)
-+static ssize_t netfs_unbuffered_read(struct netfs_io_request *rreq, bool sync)
- {
--	int ret;
-+	ssize_t ret;
- 
- 	_enter("R=%x %llx-%llx",
- 	       rreq->debug_id, rreq->start, rreq->start + rreq->len - 1);
-@@ -155,7 +155,7 @@ static int netfs_unbuffered_read(struct netfs_io_request *rreq, bool sync)
- 	else
- 		ret = -EIOCBQUEUED;
- out:
--	_leave(" = %d", ret);
-+	_leave(" = %zd", ret);
- 	return ret;
- }
- 
+--D
 
+> 
+> > +++ b/include/linux/iomap.h
+> > @@ -311,6 +311,12 @@ struct iomap_read_folio_ops {
+> >  	 */
+> >  	void (*submit_io)(struct inode *inode, struct bio *bio,
+> >  			  loff_t file_offset);
+> > +
+> > +	/*
+> > +	 * Optional, allows filesystem to specify own bio_set, so new bio's
+> > +	 * can be allocated from the provided bio_set.
+> > +	 */
+> > +	struct bio_set *bio_set;
+> >  };
+> 
 
