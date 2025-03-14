@@ -1,110 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-43986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB4FDA60623
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 00:48:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ED6CA6070D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 02:29:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D51C170CAF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Mar 2025 23:48:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48F1E18987EF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 01:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37FB1F9A8B;
-	Thu, 13 Mar 2025 23:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4333317555;
+	Fri, 14 Mar 2025 01:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hf0A/lP0"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="L7G91dQn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6671F428D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 13 Mar 2025 23:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E53F2E3374
+	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Mar 2025 01:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741909682; cv=none; b=h21QwRoA/n8hfvMWq+p4ceA3RvPjPlQDxM9yP5CE4lhGsmiHeTUcT7RnqACLbR5ss6njICFKpUeXEN7gluPAIDbqnphEtiJbRcS4SYRg0E/e6kPS6oSKUrpvR526UaptVQzJAtesa+GSQyeEpvXvHgovM0NxKNLxFK3241EeKxw=
+	t=1741915747; cv=none; b=HqkzyY7/tWEJKLhziBETtvL2pyfnG47dBWe3q9LhDXA/vUm3wkqup0WMERhgj1e450veCv/AetsnIQNSlnN7yKiIkus6jt3NpnGi5mavC+Csf6oVW+hsZsXU/60eVl073ock8mDFoi6vobL6p1hjmXzvofYEzqb69qCIFaMbJG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741909682; c=relaxed/simple;
-	bh=c/R2eWJN73OAnf+cDH4VbIwlHouaueamUjPiMOGohzM=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=VEYjipYQs+bqOV+jp9FCRdUxsUxJEgkx8BI8HeFCcUQu8a8Oyl4dCtAyEiUdLdN3cJWb8uKVQQjaKxlqqgEK0T8Wk3tPmvGZ+pTRPDBSzo/M8P3hAWcaIrIBg3IpsDjkZ6YlfxNOyf9SmncVOmg2rgGZP+NM56Z7G0Djc0AbIaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hf0A/lP0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741909679;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U3KTQtb9P2zqOVNlWFWZBPZQ1STkKHL1APVS4Ih5ZuI=;
-	b=hf0A/lP0WoAC0WpNysA+N33sbbv0opzpo6aTf1lysLAAogF6Io9j9adCI+E8odr2AguVbQ
-	PNGmTWIiIHepzp8cwpRFvS9BGVCAro2LSuNZdmA4cdZqwSujha4g9zh5xCj70T/oBeS0aT
-	xwJJ13AeVOrAq7DhctsNlVZKC8K5TKQ=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-610-FQYqVqO2OfW_o6Tm_0aJ9g-1; Thu,
- 13 Mar 2025 19:47:56 -0400
-X-MC-Unique: FQYqVqO2OfW_o6Tm_0aJ9g-1
-X-Mimecast-MFC-AGG-ID: FQYqVqO2OfW_o6Tm_0aJ9g_1741909675
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 03CFA1801A00;
-	Thu, 13 Mar 2025 23:47:55 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2B756300376F;
-	Thu, 13 Mar 2025 23:47:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <afeb9082273098f47b26371a7e252381d1268c8e.camel@ibm.com>
-References: <afeb9082273098f47b26371a7e252381d1268c8e.camel@ibm.com> <3cc1ac78a01be069f79dcf82e2f3e9bfe28d9a4b.camel@dubeyko.com> <1385372.1741861062@warthog.procyon.org.uk> <1468676.1741898867@warthog.procyon.org.uk>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: dhowells@redhat.com, "slava@dubeyko.com" <slava@dubeyko.com>,
-    Xiubo Li <xiubli@redhat.com>,
-    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-    "brauner@kernel.org" <brauner@kernel.org>,
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-    Alex Markuze <amarkuze@redhat.com>,
-    "jlayton@kernel.org" <jlayton@kernel.org>,
-    "idryomov@gmail.com" <idryomov@gmail.com>,
-    "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-Subject: Re: Does ceph_fill_inode() mishandle I_NEW?
+	s=arc-20240116; t=1741915747; c=relaxed/simple;
+	bh=X3iUNC2W7CqTwo25rU762CJ50V9BUX84A2chKkBkXIo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rRf2vMdb20Tx97QhiezWEQrGZEa6Em8Ijg+TjP1+zhGUyh8K1bb+/2GAnNlHg6JzdgSjXDQ8AA1b7ZYgsy+RF/ZRuExZOQfN18Y5q7ohFmd772l5+ojp72ZHp73o8L9oZ+ZvFUjr2I1E7ENqG3XikX9zsrbpY3eH/pDm4ReI2Dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=L7G91dQn; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e5372a2fbddso1360098276.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Mar 2025 18:29:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1741915744; x=1742520544; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8ES0wXessMMgqNwSiif0rlYAGpc7YP1QvwA1ts5IWAs=;
+        b=L7G91dQnQDp62jON5T5/YaMkHIMonIY8uPtBTsCTXmwcBz3Ra20xw0rIybModsmiYM
+         5QFtVFZw7GZB7jrHKV8ziYwMcMx0ea+J0qOl9bUXgKJf2NzKnD4ok+Yl6A5bmqRFPVYY
+         OAUl5CHTSUqUCNO2mM/TFroejkiZYQ5GTgURjvn+HqW53bynz10X23pwTAV6g3+0XM+z
+         YPsTmi6nHQQc+4Ax461I/eiellYKxphyp7H+rCzxv5iQGMoXulK7z/MlYdq0XJb/hzC4
+         cx2fzQATDu3X8uzVRP3oJJ6YbummtYvVrztuVbHB9hN6cws7A4LRaJLwGHMAVt5s2WOG
+         RCqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741915744; x=1742520544;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8ES0wXessMMgqNwSiif0rlYAGpc7YP1QvwA1ts5IWAs=;
+        b=f18TK/8SEsRSn4SHfIebnoODShGuK1N3Eaz7NcQ+YlBJV3LY3KZ6nmAoHNGRu8YE2V
+         Xt1rhr4uegutgKFYf3C5+Kwc5JFBrTyjrzi/d7a4uRu1gE+Mz20TU4Ox2dyTQW9MQgBo
+         RY/zgO/GZam+E4nS+z73bgzIUK75gVW1pm6wKf3wPyuV3jlWTwmVZ56/BShr8Xov9eDB
+         KqgC4Vl7zAXEl2yj46S6hK4KpMNY6zwqIWgS/+NIYLYzl4BM3CT8yP42f34Zr1uLii7x
+         d6TqXdaxU7jwoWQto42YX1wvzDJtqzwOQPg46tdLrJ/aZ0iF3xdWYkeccHCaTCrFZKhm
+         hBLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVVAA1qeiCiyFdku/6+dYYLpoDnJA6ITxL09SR7fHjT5zi8i/OAeniXg8Iag0u6AoLFbBoUKL3zauZAX7xO@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTep23yCorzqa/r1mhJzkhMjNvqVdwdZAYqS9LpcegTPllFfyE
+	NznjwiTVWCgDTrMhO0J0KV9e2MlztLVKy4rh6Z8LNitxcm7u0DHsMexm5Vu/1uKhhjb2qbVKQoM
+	FTY6lxp1KUe81YJDzeE0TLk27gIelJVN9Qg7+
+X-Gm-Gg: ASbGncvLtj6fnpFfaalxYF+mLTsZaAIU4oHl6hAVRZNDqVwIa9OlJIEOuJOarFPU6a7
+	RS8b7T/GE5MLW+r3pkSLJLhT/hK0I8DcbJvFuxPUmeRIczYVoYMe45jl1hQg0ec2wYzEJ8TJJZO
+	nh1MDZnXLZC/IB8ziippoNToTuwQ==
+X-Google-Smtp-Source: AGHT+IHD2TiU6XQ9tRFKuzzp3FmVek4PiqtcVodzoMshBpH8NjFlYdg8BZn1Vv4kyVm787txJ/ZZdGY4pPNsB4MucI4=
+X-Received: by 2002:a05:6902:15c7:b0:e5b:3b7a:fca7 with SMTP id
+ 3f1490d57ef6-e63f65b4672mr1039551276.39.1741915744021; Thu, 13 Mar 2025
+ 18:29:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1675857.1741909671.1@warthog.procyon.org.uk>
-Date: Thu, 13 Mar 2025 23:47:51 +0000
-Message-ID: <1675858.1741909671@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20250312212148.274205-1-ryan.lee@canonical.com>
+ <20250312212148.274205-2-ryan.lee@canonical.com> <20250312213714.GT2023217@ZenIV>
+ <20250313-dompteur-dachten-bb695fcbebf1@brauner>
+In-Reply-To: <20250313-dompteur-dachten-bb695fcbebf1@brauner>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 13 Mar 2025 21:28:53 -0400
+X-Gm-Features: AQ5f1Jo3Xy-0BZ6a7vddrckfIRl2pXF8wj3ycyI4FjDAH-FopUDoNWqpGjlm6MY
+Message-ID: <CAHC9VhScqcF12XYdqMSsLg55=nux6mjEGfxCpZHEzv-bGyP7Ew@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/6] fs: invoke LSM file_open hook in do_dentry_open
+ for O_PATH fds as well
+To: Christian Brauner <brauner@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Ryan Lee <ryan.lee@canonical.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	John Johansen <john.johansen@canonical.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Kentaro Takeda <takedakn@nttdata.co.jp>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
+On Thu, Mar 13, 2025 at 4:50=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+> On Wed, Mar 12, 2025 at 09:37:14PM +0000, Al Viro wrote:
+> > On Wed, Mar 12, 2025 at 02:21:41PM -0700, Ryan Lee wrote:
+> > > Currently, opening O_PATH file descriptors completely bypasses the LS=
+M
+> > > infrastructure. Invoking the LSM file_open hook for O_PATH fds will
+> > > be necessary for e.g. mediating the fsmount() syscall.
+>
+> LSM mediation for the mount api should be done by adding appropriate
+> hooks to the new mount api.
+>
+> > >
+> > > Signed-off-by: Ryan Lee <ryan.lee@canonical.com>
+> > > ---
+> > >  fs/open.c | 7 ++++++-
+> > >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/fs/open.c b/fs/open.c
+> > > index 30bfcddd505d..0f8542bf6cd4 100644
+> > > --- a/fs/open.c
+> > > +++ b/fs/open.c
+> > > @@ -921,8 +921,13 @@ static int do_dentry_open(struct file *f,
+> > >     if (unlikely(f->f_flags & O_PATH)) {
+> > >             f->f_mode =3D FMODE_PATH | FMODE_OPENED;
+> > >             file_set_fsnotify_mode(f, FMODE_NONOTIFY);
+> > >             f->f_op =3D &empty_fops;
+> > > -           return 0;
+> > > +           /*
+> > > +            * do_o_path in fs/namei.c unconditionally invokes path_p=
+ut
+> > > +            * after this function returns, so don't path_put the pat=
+h
+> > > +            * upon LSM rejection of O_PATH opening
+> > > +            */
+> > > +           return security_file_open(f);
+> >
+> > Unconditional path_put() in do_o_path() has nothing to do with that -
+> > what gets dropped there is the reference acquired there; the reference
+> > acquired (and not dropped) here is the one that went into ->f_path.
+> > Since you are leaving FMODE_OPENED set, you will have __fput() drop
+> > that reference.
+> >
+> > Basically, you are simulating behaviour on the O_DIRECT open of
+> > something that does not support O_DIRECT - return an error, with
+> > ->f_path and FMODE_OPENED left in place.
+> >
+> > Said that, what I do not understand is the point of that exercise -
+> > why does LSM need to veto anything for those and why is security_file_o=
+pen()
+>
+> I really think this is misguided. This should be done via proper hooks
+> into apis that use O_PATH file descriptors for specific purposes but not
+> for the generic open() path.
 
-> As far as I can see, ceph_fill_inode() has comment: "Populate an inode based
-> on info from mds. May be called on new or existing inodes". It sounds to me
-> that particular CephFS kernel client could have obsolete state of inode
-> compared with MDS's state. And we need to "re-new" the existing inode with
-> the actual state that we received from MDS side. My vision is that we need
-> to take into account the distributed nature of Ceph and inode metadata can
-> be updated from multiple CephFS kernel client instances. Am I right here?
+I agree that this patchset is at best incomplete, we don't add LSM
+hooks without at least one in-tree LSM demonstrating a need for it,
+and we don't see any of the LSMs actually making use of this new hook
+placement in this patchset.  In the future Ryan, please ensure that
+the patchset actually does "something" visible, e.g. new
+functionality, bug fixes, etc.  I understand part of your intent was
+to spark some discussion around O_PATH files, but without some initial
+code to do something meaningful, it's hard to have any real discussion
+that doesn't get lost in some rathole or tangent.
 
-As I mentioned in my reply to Jeff, I'm thinking of what happens in the event
-that we have a file that has hard links in several directories in a situation
-where several of those links are looked up simultaneously.  Can we end up with
-ceph_fill_inode() being run in parallel on several threads on the same inode?
+Beyond that, I can only speculate on Ryan's intent here, but based on
+some off-list discussions, it's possible Ryan is (re)using the
+security_file_open() hook in the O_PATH case not necessarily to gate
+the creation of an O_PATH file, but rather to capture some of the
+context when the O_PATH file is created.  However, if that was the
+case I would think Ryan should be able to do that using the
+security_file_alloc() hook, although we would need to pass the file
+flags to that hook if Ryan wanted to do any special handling around
+O_PATH.  Regardless, it's just guessing at this point and I've got
+enough things asking for attention that I can't spend any more time on
+this patchset simply guessing ...
 
-Actually, the use of ci->i_ceph_lock looks like it should make it safe, now
-that I look at it again.
-
-David
-
+--=20
+paul-moore.com
 
