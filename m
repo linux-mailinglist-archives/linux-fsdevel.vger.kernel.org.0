@@ -1,90 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-44028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9E5FA61534
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 16:44:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28090A61597
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 17:00:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F39463B022D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 15:44:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5213917F36E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 16:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106C8200BA3;
-	Fri, 14 Mar 2025 15:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D57200BBE;
+	Fri, 14 Mar 2025 16:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eILPBr78"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qn+0QgCA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFC47081A;
-	Fri, 14 Mar 2025 15:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702A3F510
+	for <linux-fsdevel@vger.kernel.org>; Fri, 14 Mar 2025 16:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741967082; cv=none; b=fJvvb8whHf8j7fhBPxuHx2NnGaz+n507KAl/whxut/elTbpl+vboJZE9ZZwL1EH3aQWUQS5E7o+m6HNlz89Q8stdyeqEnVW+XQi0xGX47ChNRWMGXYdEe2Q3d3xMlz06BUK+WieD3x1XHJ0i4jRNBgi68EtxOoriym9VxNmdfZA=
+	t=1741968052; cv=none; b=LhCoM8wfn7GXuPzQJ9CdhmCh9XJO887A87le6wijZHGLzez9G5+AcPVMsvhJLIB5hkGWBBOc2n0iORZ8tB8UjwvwxeIdcWZgnIg3+mWrVobwO2gPh/+d4+3i5q4VSjsUGYIX+DOjU6pU+8rY3YfLgHq/S2hsX0SvkhPmrFnwq10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741967082; c=relaxed/simple;
-	bh=12gBnWBrlsr8hAimFNvyWNcT/8eRcB41OcwjzN3xe0Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uI8gI4xoJqSyhyE73tDPPtk1Ki+VZpMPHB3bQvw+35RLujhwNOeH3TYqmKpy2EfogJkZnCItmWHg/SxZ0+fhYETOsmuo9sLbmIVldkUSjr+Kl9PJmlUWWS8aeSKWIQkjBSgjIs8x0WAjQ//3UDnfXkxHFioCGqRT40jzMQw7pcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eILPBr78; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 428FFC4CEE3;
-	Fri, 14 Mar 2025 15:44:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741967081;
-	bh=12gBnWBrlsr8hAimFNvyWNcT/8eRcB41OcwjzN3xe0Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=eILPBr78CLrGYrhmzv6PT4lJ6476zZRMwtCCzuhTFiG+P77Zf4Y8BjwG6+bgWY57P
-	 +cCdbMJkPpYB8/kF7FEsgJypKF7jCMoSD0prtRg9GsmmmsNQjp44FVnRMY0usvlnAc
-	 wc3481hlWwUNSwRGnkfyTFSlUD00xVULLh0iWfh/ID5OhOZYfZ6ogEkRTp/XJB/saW
-	 gDLMbGpSdcjBlgzs3F0miEY/bLclbOhnXgVFNUKsW+xXGIQzM6ArtTBX8qvtTJ3gQ2
-	 f0/HEkoOl8ptl17jjcvUn8wYjkvSAPOO9kDS4eHDT2ftzlwiGnQPwGufO2FtDeHUih
-	 Ag2Tt/QdOZhTw==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: dedup handling of struct filename init and refcounts bumps
-Date: Fri, 14 Mar 2025 16:44:34 +0100
-Message-ID: <20250314-urheber-zujubeln-ced6d7db659f@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250313142744.1323281-1-mjguzik@gmail.com>
-References: <20250313142744.1323281-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1741968052; c=relaxed/simple;
+	bh=SAaslc3jmMWJHSveMAddLjA9cKCxSzkSIl21kc5XixQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l+0XLPmloSODnVXPSeIwaCeb+LGcA9Mk4RZpspJQsUDR/6Mwhc1L1d/3PsIjcqKeWorRnaO37wqXcbeCcckprbXtcwYZuO2s+4/65o5LhU3qLTNlr++I//1nJtqP8N44po6gRpQhaODmTSz7bTOkaDKHiz6AjoSj258b5WhRQH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qn+0QgCA; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=C0yYClMn1+x43vPQYH6dJTU2IcS5SituW9z569SSHiw=; b=qn+0QgCAIUlOoSppaJolf+Pkup
+	usBjsQ3GvMp19wz8LDTYZikllk+A4C1L7UMmAfXH0YdHKlFd35aU93LrtVQbVT2SowH4UoOCKllUp
+	xq8UpFKffgvcVmEVGe+tx8iuYEIjD0A/SQYcgi20Dd1UGj/XlrTLD1chu48VYLJFKRZ6OMbBhPsCe
+	Qxtu6q2Tgl4lxLmLIFKRmMORGX5j2vWg2mV/QCIXSJaSsPMKvN4y13KHJYEx0UPZ6R/0bvx9Oom3g
+	1KLLLd4AUxZr7tN4ZKbt3zX7FclJPY5WMmkesGlHpkcHtYnBfZDp8SotwD4fnOkBTOzAMPNC4TEDE
+	VeYQHyKg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tt7PO-00000002jck-2MIq;
+	Fri, 14 Mar 2025 15:58:55 +0000
+Date: Fri, 14 Mar 2025 15:57:14 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: chao@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH 0/4] f2fs: Remove uses of writepage
+Message-ID: <Z9RR2ubkS9CafUdE@casper.infradead.org>
+References: <20250307182151.3397003-1-willy@infradead.org>
+ <174172263873.214029.5458881997469861795.git-patchwork-notify@kernel.org>
+ <Z9DSym8c9h53Xmr8@casper.infradead.org>
+ <Z9Dh4UL7uTm3cQM3@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=881; i=brauner@kernel.org; h=from:subject:message-id; bh=12gBnWBrlsr8hAimFNvyWNcT/8eRcB41OcwjzN3xe0Q=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRf8XviPrFyjvYB+5jA8PftYQ8cHxcdXSjM9M1nlanL7 BUn4g4c7ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjI4kOMDJMT1hcziq5i1e02 qGlYd7+30/Nt0y9GyRVB71W+r1oWcIaR4dkCu8qPyw2S3zyYuExhysct1+RbWMSX6nHt9A3z+Fb KzQMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9Dh4UL7uTm3cQM3@google.com>
 
-On Thu, 13 Mar 2025 15:27:44 +0100, Mateusz Guzik wrote:
-> No functional changes.
+On Wed, Mar 12, 2025 at 01:22:41AM +0000, Jaegeuk Kim wrote:
+> On 03/12, Matthew Wilcox wrote:
+> > On Tue, Mar 11, 2025 at 07:50:38PM +0000, patchwork-bot+f2fs@kernel.org wrote:
+> > > Hello:
+> > > 
+> > > This series was applied to jaegeuk/f2fs.git (dev)
+> > > by Jaegeuk Kim <jaegeuk@kernel.org>:
+> > 
+> > Thanks!
+> > 
+> > FWIW, I have a tree with 75 patches in it on top of this that do more
+> > folio conversion work.  It's not done yet; maybe another 200 patches to
+> > go?  I don't think it's worth posting at this point in the cycle, so
+> > I'll wait until -rc1 to post, by which point it'll probably be much
+> > larger.
 > 
-> 
+> Ok, thanks for the work! Will keep an eye on.
 
-Applied to the vfs-6.15.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.15.misc branch should appear in linux-next soon.
+Unfortunately, I thnk I have to abandon this effort.  It's only going
+to make supporting large folios harder (ie there would then need to be
+an equivalently disruptive series adding support for large folios).
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+The fundamental problem is that f2fs has no concept of block size !=
+PAGE_SIZE.  So if you create a filesystem on a 4kB PAGE_SIZE kernel,
+you can't mount it on a 16kB PAGE_SIZE kernel.  An example:
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+int f2fs_recover_inline_xattr(struct inode *inode, struct page *page)
+{
+        struct f2fs_inode *ri;
+        ipage = f2fs_get_node_page(F2FS_I_SB(inode), inode->i_ino);
+        ri = F2FS_INODE(page);
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+so an inode number is an index into the filesystem in PAGE_SIZE units,
+not in filesystem block size units.  Fixing this is a major effort, and
+I lack the confidence in my abilities to do it without breaking anything.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.15.misc
+As an outline of what needs to happen, I think that rather than passing
+around so many struct page pointers, we should be passing around either
+folio + offset, or we should be passing around struct f2fs_inode pointers.
+My preference is for the latter.  We can always convert back to the
+folio containing the inode if we need to (eg to mark it dirty) and it
+adds some typesafety by ensuring that we're passing around pointers that
+we believe belong to an inode and not, say, a struct page which happens
+to contain a directory entry.
 
-[1/1] fs: dedup handling of struct filename init and refcounts bumps
-      https://git.kernel.org/vfs/vfs/c/e05a35026336
+This is a monster task, I think.  I'm going to have to disable f2fs
+from testing with split page/folio.  This is going to be a big problem
+for Android.
+
 
