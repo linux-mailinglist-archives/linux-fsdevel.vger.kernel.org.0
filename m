@@ -1,79 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-43988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-43990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8111A60714
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 02:38:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3333A60821
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 05:57:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A0B516346C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 01:38:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 430EC17FC5D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Mar 2025 04:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052701F957;
-	Fri, 14 Mar 2025 01:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tl/lhG52"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F05414D28C;
+	Fri, 14 Mar 2025 04:57:13 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527B42E336C;
-	Fri, 14 Mar 2025 01:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE19136327;
+	Fri, 14 Mar 2025 04:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741916290; cv=none; b=Bm8RWXUzKef/bZIET4MK8cbAOJ7wdZB6XnZJASZyhu+L6VPT+mg1ga8q1heAdQXx6N1B07to0nkPresykAjNIL1N8ul6StibrazN2HscYMfjOcJM+32x3l2Dhv+dA50NZ4+e/kzFZMNq7PGWtPStzF/afz/0Gflom+yEQzpu+Ws=
+	t=1741928232; cv=none; b=WMQSeZPHlPxdw/Qz6scy53fPOtjv7r4iQchTNbTRnDyyNyDgMzcUs7QoyCSXH8SGXiTvMHniojS60YiKoGkxgP+Rn392KNLDLjs9K/W6rIrMTQr7281zXJvHZHGASxXkVNZ0Fx2R+w+h5OakigzsUaUgfR2JeFvFES/GqNZ+XyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741916290; c=relaxed/simple;
-	bh=v7zvDlgRx2sfNhAiFBb5W2ZUm46c/FpEEaft0pQ9tro=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=sWwILZqogVyvHg1HvB83DdBhhWx2A1/0dUAaBfuzbgJ+mCI3PewoXeDMR4QSktY5qwhh5N+G1Ba8eS3QvZAREJXRfCsoa9vkxD7UDYj1+2aJhCOP51aipHOI7YDnQA4UrW+5RRa0Wrcx0SPp59T+lsE9K1QFf96+ssHlHNM2CaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tl/lhG52; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD3BEC4CEDD;
-	Fri, 14 Mar 2025 01:38:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741916289;
-	bh=v7zvDlgRx2sfNhAiFBb5W2ZUm46c/FpEEaft0pQ9tro=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=tl/lhG524RlQuH1MOqm2ov3Y+7nAuf9kCb5m0F174MEBTd3/Z+UYFDvWL+lI10WzM
-	 ZBWt9OCc68mg6Wc0b9EMLlnRZOCxUlO3LS4EKxk2tqn/kwrv3cU/m76sPqPOVwQwpR
-	 rlKaHBMjSLff204lV78HxWcgjO70wsTSXVeeqOdCUqt6GdguX7mvqHT5UVMe+VCLG2
-	 dT2bLAsanaOjkqZUqhtu2O//Jpyt4RV0EQ5Sj9+W4weCb/sePUW29I7lch1d5W7We4
-	 Rysk4HvzGm2OR12hnK+vMoBuFDkZeMT6NBzg9LfLL+/NX9kTJSaJKTckRQk/ab40Kf
-	 n3hFiCbOH3v4Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADEE23806651;
-	Fri, 14 Mar 2025 01:38:45 +0000 (UTC)
-Subject: Re: [GIT PULL] bcachefs fixes for 6.14-rc7
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <de7fintuxlgh7wteymuo4oproofqngifpul6gq5f66p4b7qih3@5q34khdi2ikv>
-References: <de7fintuxlgh7wteymuo4oproofqngifpul6gq5f66p4b7qih3@5q34khdi2ikv>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <de7fintuxlgh7wteymuo4oproofqngifpul6gq5f66p4b7qih3@5q34khdi2ikv>
-X-PR-Tracked-Remote: git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-03-13
-X-PR-Tracked-Commit-Id: 9c18ea7ffee090b47afaa7dc41903fb1b436d7bd
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 131c040bbb0f561ef68ad2ba6fcd28c97fa6d4cf
-Message-Id: <174191632441.1722086.11557226538495304115.pr-tracker-bot@kernel.org>
-Date: Fri, 14 Mar 2025 01:38:44 +0000
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1741928232; c=relaxed/simple;
+	bh=RA9d50To9BqK8KgFMnc48DtduuofQFFL5f0rMNSSX+I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W3Va/sSSKoExidqCqlyk+z2hoIgL6m5HR8PDlmwtQp1QUabNFguhFpZhdTnFj0+8VtZns/V9vsZSnnfDLSfEnBp2RaLfubaQOF98OQPNm3OOblE21pwhU73liaqJFBjpOMu5vopWOyq6VvihBqZ6Ogd/adXHrt16cKga4Zhmqz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1tsx6W-00E3vh-Db;
+	Fri, 14 Mar 2025 04:57:04 +0000
+From: NeilBrown <neil@brown.name>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	David Howells <dhowells@redhat.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>
+Cc: linux-nfs@vger.kernel.org,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/8 RFC] tidy up various VFS lookup functions
+Date: Fri, 14 Mar 2025 11:34:06 +1100
+Message-ID: <20250314045655.603377-1-neil@brown.name>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Thu, 13 Mar 2025 18:45:30 -0400:
+VFS has some functions with names containing "lookup_one_len" and others
+without the "_len".  This difference has nothing to do with "len".
 
-> git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-03-13
+The functions without "_len" take a "mnt_idmap" pointer.  This is found
+in the "vfsmount" and that is an important question when choosing which
+to use: do you have a vfsmount, or are you "inside" the filesystem.  A
+related question is "is permission checking relevant here?".
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/131c040bbb0f561ef68ad2ba6fcd28c97fa6d4cf
+nfsd and cachefiles *do* have a vfsmount but *don't* use the non-_len
+functions.  They pass nop_mnt_idmap which is not correct if the vfsmount
+is actually idmaped.  For cachefiles it probably (?) doesn't matter as
+the accesses to the backing filesystem are always does with elevated privileged (?).
 
-Thank you!
+For nfsd it would matter if anyone exported an idmapped filesystem.  I
+wonder if anyone has tried...
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+These patches change the "lookup_one" functions to take a vfsmount
+instead of a mnt_idmap because I think that makes the intention clearer.
+
+It also renames the "_one" functions to be "_noperm" and removes the
+permission checking completely.  In all cases where they are (correctly)
+used permission checking is irrelevant.
+
+I haven't included changes to afs because there are patches in vfs.all
+which make a lot of changes to lookup in afs.  I think (if they are seen
+as a good idea) these patches should aim to land after the afs patches
+and any further fixup in afs can happen then.
+
+The nfsd and cachefiles patches probably should be separate.  Maybe I
+should submit those to relevant maintainers first, and one afs,
+cachefiles, and nfsd changes have landed I can submit this series with
+appropriate modifications.
+
+May main question for review is : have I understood mnt_idmap correctly?
+
+These patches are based on vfs-6.15.async.dir as they touch mkdir
+related code.  There is a small conflict with the recently posted patch
+to remove locking from try_lookup_one_len() calls.
+
+Thanks,
+NeilBrown
+
+
+ [PATCH 1/8] VFS: improve interface for lookup_one functions
+ [PATCH 2/8] nfsd: Use lookup_one() rather than lookup_one_len()
+ [PATCH 3/8] nfsd: use correct idmap for all accesses.
+ [PATCH 4/8] cachefiles: Use lookup_one() rather than lookup_one_len()
+ [PATCH 5/8] cachefiles: use correct mnt_idmap
+ [PATCH 6/8] VFS: rename lookup_one_len() family to lookup_noperm()
+ [PATCH 7/8] Use try_lookup_noperm() instead of d_hash_and_lookup()
+ [PATCH 8/8] VFS: change lookup_one_common and lookup_noperm_common to
 
