@@ -1,77 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-44118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE710A62DD1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Mar 2025 15:04:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A67A5A62DE0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Mar 2025 15:06:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F393A7AC75D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Mar 2025 14:03:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3F1217961B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Mar 2025 14:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E40A200100;
-	Sat, 15 Mar 2025 14:04:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C7D201260;
+	Sat, 15 Mar 2025 14:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="e2Tb8FXm"
+	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="SmHsAVEC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB20C8E0;
-	Sat, 15 Mar 2025 14:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E515B18FC9F;
+	Sat, 15 Mar 2025 14:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742047483; cv=none; b=h4fJ8C+DhWLnZihcBDSp5tZxbI01o3Wmr19S9L2Cg/xLnj5FXUBM3lRhMSa8cgo5uAE2cVvjsoOilq/36dL6r9yHdI1sRjk1jag0+Xb6l1s377ucpCv8eP57KPj0hygQEslxN9BmzXXntUyCVeOZP/8IOtJbWSsKHE8ThTcDau8=
+	t=1742047603; cv=none; b=PL/R9CRABy/bUFluMbowGYdDAtYzHkOdkXtNlO8roZmIrPOS/BxD3vl04ScyIS0W+iWNmXfPc9fF4GxmS3jU0KhYF0JGVacxnb0skiklCBXnuPXgOrgxpHcFYNvcScetwIbkxqs8SMTcFxuRauawAYNk5V11v6PxmOwAWX3mvZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742047483; c=relaxed/simple;
-	bh=T/Mp1wYNOOCsbaYkPHiUEYeEX8T3lHhVOcyMD7fwR6E=;
+	s=arc-20240116; t=1742047603; c=relaxed/simple;
+	bh=IIDSHB6SlYUaI/TMhMqBKdNjosPcqFwHuwYQiYAzRlE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PcqS7YCfw35PASfOPvbGFNBcTdBxR7ffF4+1DntN02WT+/Ff7A+OddQmeX668rvI+CkCyIaoxRW77K/UT/cqFXSQIkr8XfkQi9TeK/vNBynkrFM0B9F3QEo9Dbyr+7AmofgkTSNuGVy2K9P2GicHp+MElWcJKnS1pg07GLoDonQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=e2Tb8FXm; arc=none smtp.client-ip=80.241.56.151
+	 Content-Type:Content-Disposition:In-Reply-To; b=VCbGT4qUwb2gtHMNG9uP7GFKIz0gGtXOjp8e/Uf2GameRFlms7tLhbq170a45mQ01vUSWvuJtzLheupsykSBJiDrWmrPHfdYMzpePi6t6Z5CDQE+qBVpeMLj3v1kMc/xXv75+pKjUX3WRBE9yOA/xSGEwDkoSHX+1NFltsilsvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=SmHsAVEC; arc=none smtp.client-ip=80.241.56.161
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4ZFNK0115vz9sWc;
-	Sat, 15 Mar 2025 15:04:36 +0100 (CET)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4ZFNMK5xNVz9sQ6;
+	Sat, 15 Mar 2025 15:06:37 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
-	s=MBO0001; t=1742047476;
+	s=MBO0001; t=1742047597;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=QHg0buBba8+POh0Hm3WvsZrxeJW3iMfjygpEEvcYPdA=;
-	b=e2Tb8FXmcu5vjvPHQZtpK8LK9EYyxeEQcPRvcQHKDsi44mjaCF6RfwWBD9T7zVnxwctn9/
-	/rG/qMYogasSWSQ09YTOGKeQXEC/zWBwEE5ZV2NHLfSq4h05Kv46jQSWQ6MdWEONZM7Skc
-	quOoIefXYRteg1neVqtHyTE+BT/6Ks0NM/WpT/FwWgg+FzdiXlEtoEJvPEHIQdWvTwoBN8
-	82Nl0xbKWf2snHNvtySNoQrunkge+kmw4u8oYf31exlZ80wWfrRiZSBqzRI281laZ8V3bn
-	ZgxvEBn96NIxeDI82rkm2OteRxkp/1Jb4zvUgQQCEuymsi5KtUGvnGv117pntw==
-Date: Sat, 15 Mar 2025 10:04:32 -0400
+	bh=jcq/Nr5PtzshIuwe2AALGxTOWERvYtDXxca21u3r1pk=;
+	b=SmHsAVEClNCwfeKIzZMQ91YcAKRomgBpNzMSBEnXdo9/gN7gVfpfSGfpNF3ReA9kCR1b1u
+	sh6DuRJjxC/79MeKjTYgM4famq9A3SXii26yTmBxHIgheS3pgudS1V7Cox9Bskwp6L7A1l
+	AOPZZ7DpRgUqzi+lOHaDx2eVC/nUTbzP3bsibD4XZunFFSkvW9Eyzs5LfL+FWSb4QszXja
+	9y4YwjnOLulalvOyh4FTPbyVRTDIkl8s/RyWz0TzHtdVuVK42VChYiCmHuCOjqJveXB4j8
+	UMylV1dDLkDmW9F/hbO3Ccn9DQ7bJ80EDU31GE+XDkmLSHIAUZsCQWRMXS4QiA==
+Date: Sat, 15 Mar 2025 10:06:34 -0400
 From: Ethan Carter Edwards <ethan@ethancedwards.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: tytso@mit.edu, ernesto.mnd.fernandez@gmail.com, 
-	dan.carpenter@linaro.org, sven@svenpeter.dev, ernesto@corellium.com, gargaditya08@live.com, 
-	willy@infradead.org, asahi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-staging@lists.linux.dev
+To: Aditya Garg <gargaditya08@live.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"tytso@mit.edu" <tytso@mit.edu>, 
+	"ernesto.mnd.fernandez@gmail.com" <ernesto.mnd.fernandez@gmail.com>, "dan.carpenter@linaro.org" <dan.carpenter@linaro.org>, 
+	"sven@svenpeter.dev" <sven@svenpeter.dev>, "ernesto@corellium.com" <ernesto@corellium.com>, 
+	"willy@infradead.org" <willy@infradead.org>, "asahi@lists.linux.dev" <asahi@lists.linux.dev>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>
 Subject: Re: [RFC PATCH 0/8] staging: apfs: init APFS module
-Message-ID: <fbixdumfvf52w3yglipgmgjopzqarpxbkd4h64unuodl6kekvj@wwbbvtr7tbce>
+Message-ID: <uxgnqz24sqegttloz54iplfsrdivjoae7rqtbz6oe4cimrjsoy@i7cdsaa3iccj>
 References: <20250314-apfs-v1-0-ddfaa6836b5c@ethancedwards.com>
- <2025031529-greedless-jingle-1f3b@gregkh>
+ <881481D8-AB70-4286-A5FB-731E5C957137@live.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2025031529-greedless-jingle-1f3b@gregkh>
-X-Rspamd-Queue-Id: 4ZFNK0115vz9sWc
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <881481D8-AB70-4286-A5FB-731E5C957137@live.com>
 
-On 25/03/15 08:00AM, Greg Kroah-Hartman wrote:
-> On Fri, Mar 14, 2025 at 05:57:46PM -0400, Ethan Carter Edwards wrote:
+On 25/03/15 07:10AM, Aditya Garg wrote:
+> 
+> 
+> > On 15 Mar 2025, at 3:27 AM, Ethan Carter Edwards <ethan@ethancedwards.com> wrote:
+> > 
 > > Hello everyone,
 > > 
 > > This is a follow up patchset to the driver I sent an email about a few
@@ -97,22 +104,79 @@ On 25/03/15 08:00AM, Greg Kroah-Hartman wrote:
 > > 
 > > Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
 > 
-> I don't mind adding this to staging from this series, thanks for
-> breaking it up!
-> 
-> But I'll wait for an ACK from the filesystem developers before doing it
-> as having filesystem code in drivers/staging/ feels odd, and they kind
-> of need to know what's going on here for when they change api stuff.
+> Why hasn’t Ernesto signed-off here, or in any patch? AFAIK, he is the author of the driver.
 
-No problem. That makes sense. I used the process that erofs used as a
-reference for how the fs development lifecycle should look. They started
-in staging/ and ended in fs/ after. 
+That is correct. He originally authored the code. I can coordinate with
+him and go through the process with him if he is willing (understandable
+if not). I only did some slight refactors to get the code compiling.
 
 Thanks,
 Ethan
 
+> > ---
+> > Ethan Carter Edwards (8):
+> >      staging: apfs: init lzfse compression library for APFS
+> >      staging: apfs: init unicode.{c,h}
+> >      staging: apfs: init apfs_raw.h to handle on-disk structures
+> >      staging: apfs: init libzbitmap.{c,h} for decompression
+> >      staging: apfs: init APFS
+> >      staging: apfs: init build support for APFS
+> >      staging: apfs: init TODO and README.rst
+> >      MAINTAINERS: apfs: add entry and relevant information
+> > 
+> > MAINTAINERS                                      |    6 +
+> > drivers/staging/Kconfig                          |    2 +
+> > drivers/staging/apfs/Kconfig                     |   13 +
+> > drivers/staging/apfs/Makefile                    |   10 +
+> > drivers/staging/apfs/README.rst                  |   87 +
+> > drivers/staging/apfs/TODO                        |    7 +
+> > drivers/staging/apfs/apfs.h                      | 1193 ++++++++
+> > drivers/staging/apfs/apfs_raw.h                  | 1567 +++++++++++
+> > drivers/staging/apfs/btree.c                     | 1174 ++++++++
+> > drivers/staging/apfs/compress.c                  |  442 +++
+> > drivers/staging/apfs/dir.c                       | 1440 ++++++++++
+> > drivers/staging/apfs/extents.c                   | 2371 ++++++++++++++++
+> > drivers/staging/apfs/file.c                      |  164 ++
+> > drivers/staging/apfs/inode.c                     | 2235 +++++++++++++++
+> > drivers/staging/apfs/key.c                       |  337 +++
+> > drivers/staging/apfs/libzbitmap.c                |  442 +++
+> > drivers/staging/apfs/libzbitmap.h                |   31 +
+> > drivers/staging/apfs/lzfse/lzfse.h               |  136 +
+> > drivers/staging/apfs/lzfse/lzfse_decode.c        |   74 +
+> > drivers/staging/apfs/lzfse/lzfse_decode_base.c   |  652 +++++
+> > drivers/staging/apfs/lzfse/lzfse_encode.c        |  163 ++
+> > drivers/staging/apfs/lzfse/lzfse_encode_base.c   |  826 ++++++
+> > drivers/staging/apfs/lzfse/lzfse_encode_tables.h |  218 ++
+> > drivers/staging/apfs/lzfse/lzfse_fse.c           |  217 ++
+> > drivers/staging/apfs/lzfse/lzfse_fse.h           |  606 +++++
+> > drivers/staging/apfs/lzfse/lzfse_internal.h      |  612 +++++
+> > drivers/staging/apfs/lzfse/lzfse_main.c          |  336 +++
+> > drivers/staging/apfs/lzfse/lzfse_tunables.h      |   60 +
+> > drivers/staging/apfs/lzfse/lzvn_decode_base.c    |  721 +++++
+> > drivers/staging/apfs/lzfse/lzvn_decode_base.h    |   68 +
+> > drivers/staging/apfs/lzfse/lzvn_encode_base.c    |  593 ++++
+> > drivers/staging/apfs/lzfse/lzvn_encode_base.h    |  116 +
+> > drivers/staging/apfs/message.c                   |   29 +
+> > drivers/staging/apfs/namei.c                     |  133 +
+> > drivers/staging/apfs/node.c                      | 2069 ++++++++++++++
+> > drivers/staging/apfs/object.c                    |  315 +++
+> > drivers/staging/apfs/snapshot.c                  |  684 +++++
+> > drivers/staging/apfs/spaceman.c                  | 1433 ++++++++++
+> > drivers/staging/apfs/super.c                     | 2099 ++++++++++++++
+> > drivers/staging/apfs/symlink.c                   |   78 +
+> > drivers/staging/apfs/transaction.c               |  959 +++++++
+> > drivers/staging/apfs/unicode.c                   | 3156 ++++++++++++++++++++++
+> > drivers/staging/apfs/unicode.h                   |   27 +
+> > drivers/staging/apfs/xattr.c                     |  912 +++++++
+> > drivers/staging/apfs/xfield.c                    |  171 ++
+> > 45 files changed, 28984 insertions(+)
+> > ---
+> > base-commit: 695caca9345a160ecd9645abab8e70cfe849e9ff
+> > change-id: 20250210-apfs-9d4478785f80
+> > 
+> > Best regards,
+> > -- 
+> > Ethan Carter Edwards <ethan@ethancedwards.com>
+> > 
 > 
-> thanks,
-> 
-> greg k-h
 
