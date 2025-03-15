@@ -1,66 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-44122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE5AA62DF7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Mar 2025 15:13:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE1FA62DF8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Mar 2025 15:14:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7265F7AA4B7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Mar 2025 14:12:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFE8D17A6D8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Mar 2025 14:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01104202C40;
-	Sat, 15 Mar 2025 14:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C223A202C45;
+	Sat, 15 Mar 2025 14:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="bcpqGaRY"
+	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="Kqk4R/fm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5BF1C84C6;
-	Sat, 15 Mar 2025 14:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19D028F4;
+	Sat, 15 Mar 2025 14:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742048023; cv=none; b=jGwPpEbYILMoCXMxMr+L8HicCaGh1AXGEtqzq+23OOYbW5jiFWgG7ZEuAYvt8SqNcM7J2VaOHJ2m/PyZf4ioyn0j30MkxeRJ67aTiWy9oUrIAHz6VAKp6+OvtL9ZiATCZllQN60ysUx32oisTd6yzHRdKoHe8W83wix14SBx/78=
+	t=1742048079; cv=none; b=Wvxbz7N/pXYLczWqD3yG/FU0RPCxuLn1oriSCObupxrKzhV/ulLUActyScMa19r0NEbCaM14kSF1OckZsyHsjSqfeTPgBF54yoOvUWuxE3krODUgT05opu+EhyjkLvPWghONpCwm1wJKoXNmYejYV589QxXY9N8uN2TTsN925zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742048023; c=relaxed/simple;
-	bh=WhAi2P/xoWb2QFlpwuGYAcV6+FUtBWOiikfVFGic3K8=;
+	s=arc-20240116; t=1742048079; c=relaxed/simple;
+	bh=B3YznuWjoZCjX4Cn9npsPWTPaOamh/m7ntXOsj4+f6g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tRmADC4UoAbcLdE9tjfBHxgFYV+N/DmJrFTv+dioxVaQLFZmyIb08Qq9qeRSiwVKIr9Mvsj/e77oxwxA7V/ubRY8rs4tcF/YwY/oDywZ+Fm/jxWrb/kvtMV+54v+KOX9GCTtl9STZ+0xzYKHZR0Ap2DBxeJF/A84EFy4qeLIgy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=bcpqGaRY; arc=none smtp.client-ip=80.241.56.171
+	 Content-Type:Content-Disposition:In-Reply-To; b=NwAj8H5hiWP4gfCJ+go5kXUoG/C1Yx0mEaRucBjH0P7g6zTTfvlHuZYwFUTeVHTi/+9xNif+gDO6ONcQkKxddwXHuM9X6IX3SnFKcKJFYWFKMrKjvXlNzOqPdYQNMcXfC2ptmTGGdaaMral+xg462UUy0yKFFrfOu8Uv01daJJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=Kqk4R/fm; arc=none smtp.client-ip=80.241.56.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
 Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4ZFNWQ0mf1z9tYL;
-	Sat, 15 Mar 2025 15:13:38 +0100 (CET)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4ZFNXV047Jz9smr;
+	Sat, 15 Mar 2025 15:14:34 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
-	s=MBO0001; t=1742048018;
+	s=MBO0001; t=1742048074;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OKB3Ev3QrQKX8dFU3lgB02L412RpyryG6yr1b6IQWSY=;
-	b=bcpqGaRY5MyGzItZbHkHYqt19U5I7aOYL0tfy0iUcP27ouF5kJ+lEvWcB7Gj+zKtFxCQXM
-	elJGy8gpq8C7T1fsiHZ9i8wfkgB+FVIbOwPY4o8qDA3ArM4DG10AzI0lxMBun55NX1UoZJ
-	PrvUUDZZnwkxBUuEGqxJLEiWGnNa/jMw1sJWibyIvU5wAooUYIQzvSq5EAoWgkMYWwQ89s
-	KkxhsY/CbCzIsfgkp/Tc80cjyY3oOzwBA+ycpDGsHvDldt7l9Yd1sGxmw4HhNdR4Lkpu3I
-	8GRb13LRKHLK+Bp+k7/WS5CytG53UCt/hiY/G7zDO6miNfTVSbztcRjuSdb1xg==
-Date: Sat, 15 Mar 2025 10:13:34 -0400
+	bh=gkzquW45bQIDk5GWnrRlp9BUPNkZHHJscF8H/Tu5E+c=;
+	b=Kqk4R/fml7XpPnY4mzgk9nJ2ykekTDxNIicdbs4qiLwVhC6VhLEzHMUWGVR7xKjV2ilMi3
+	h63ft3PR6svwzxBsr328xL9Q2qEcrQkEeS7pFodp98mY13plxx4hJsGX+0uU7GUJX/OvIr
+	IpwdCzIoiKcS0swRRH+IUgdbjrnW2I7Bgf5djMTRB/KsoOw/UrjXfUk4awqNwna++kUUCu
+	yg6BADha9CEr0oCa2fU162vZ/KTb9191YOfPLBerRGRoqne4V44QUO7QK0SLAlWFf9NaHh
+	J8nRa7F178py/SYMkXMM4V6qGIj3ecTwgurIkYgcmYPEnxSFHDNtrvsCPZoqpA==
+Date: Sat, 15 Mar 2025 10:14:29 -0400
 From: Ethan Carter Edwards <ethan@ethancedwards.com>
-To: Christian Brauner <brauner@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, tytso@mit.edu, 
-	ernesto.mnd.fernandez@gmail.com, dan.carpenter@linaro.org, sven@svenpeter.dev, 
-	ernesto@corellium.com, gargaditya08@live.com, willy@infradead.org, 
-	asahi@lists.linux.dev, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-staging@lists.linux.dev
-Subject: Re: [RFC PATCH 0/8] staging: apfs: init APFS module
-Message-ID: <krww5lm4ot3qqgaxojipb5zyhrgtgjftvt4khdhcnsofmh2574@vyhzmrxf6vdk>
+	ernesto.mnd.fernandez@gmail.com, sven@svenpeter.dev, ernesto@corellium.com, gargaditya08@live.com, 
+	willy@infradead.org, asahi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH RFC 1/8] staging: apfs: init lzfse compression library
+ for APFS
+Message-ID: <qfsx67vdly35gj642ae6wok6kzms6iuy626p5sfkqincofwfu2@3r5tk65hj4ie>
 References: <20250314-apfs-v1-0-ddfaa6836b5c@ethancedwards.com>
- <2025031529-greedless-jingle-1f3b@gregkh>
- <20250315-gruft-evidenz-d2054ba2f684@brauner>
+ <20250314-apfs-v1-1-ddfaa6836b5c@ethancedwards.com>
+ <51af0391-4dcf-434b-8c10-8682ab4a6179@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,25 +69,42 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250315-gruft-evidenz-d2054ba2f684@brauner>
+In-Reply-To: <51af0391-4dcf-434b-8c10-8682ab4a6179@stanley.mountain>
 
-On 25/03/15 10:18AM, Christian Brauner wrote:
-> > But I'll wait for an ACK from the filesystem developers before doing it
-> > as having filesystem code in drivers/staging/ feels odd, and they kind
-> > of need to know what's going on here for when they change api stuff.
+On 25/03/15 12:41PM, Dan Carpenter wrote:
+> On Fri, Mar 14, 2025 at 05:57:47PM -0400, Ethan Carter Edwards wrote:
+> > +static size_t lzfse_decode_buffer_with_scratch(uint8_t *__restrict dst_buffer,
+> > +                         size_t dst_size, const uint8_t *__restrict src_buffer,
+> > +                         size_t src_size, void *__restrict scratch_buffer) {
+> > +  int status;
+> > +  lzfse_decoder_state *s = (lzfse_decoder_state *)scratch_buffer;
+> > +  memset(s, 0x00, sizeof(*s));
+> > +
+> > +  // Initialize state
+> > +  s->src = src_buffer;
+> > +  s->src_begin = src_buffer;
+> > +  s->src_end = s->src + src_size;
+> > +  s->dst = dst_buffer;
+> > +  s->dst_begin = dst_buffer;
+> > +  s->dst_end = dst_buffer + dst_size;
+> > +
+> > +  // Decode
+> > +  status = lzfse_decode(s);
+> > +  if (status == LZFSE_STATUS_DST_FULL)
+> > +    return dst_size;
+> > +  if (status != LZFSE_STATUS_OK)
+> > +    return 0;                           // failed
+> > +  return (size_t)(s->dst - dst_buffer); // bytes written
+> > +}
 > 
-> Sorry, I don't want new filesystems going through the generic staging
-> tree. Next week during LSFMM we can discuss a filesystem specific
-> staging tree that is directly maintained as part of fs so it's tightly
-> integrated. We're going to talk about two new filesystems anyway.
+> You'd be better off doing a reformat of the white space before sending
+> the driver.  The really basic stuff.
 
-No problem! I understand. I just wanted to get the ball rolling and
-start the conversation about this process. I am eager to hear back.
-
-Thanks,
-Ethan
+Yes, I apologize. Admittedly, I did not scrutinize the library code as
+much as I should have. I will refactor it in the next revision.
 
 > 
-> Thanks!
-> Christian
+> regards,
+> dan carpenter
+> 
 
