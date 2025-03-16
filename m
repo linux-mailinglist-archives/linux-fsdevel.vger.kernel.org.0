@@ -1,143 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-44149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84272A6372D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Mar 2025 20:20:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C32FA63802
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Mar 2025 00:24:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A5B7188D31F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Mar 2025 19:20:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50471188D66A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Mar 2025 23:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431381E1E0C;
-	Sun, 16 Mar 2025 19:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18701A23A5;
+	Sun, 16 Mar 2025 23:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="czsWyEhX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e9AQV3b9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E3D1448E0;
-	Sun, 16 Mar 2025 19:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC12199E94;
+	Sun, 16 Mar 2025 23:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742152801; cv=none; b=MhtWG0CevJKviiMbKqQCAjAxMqc51yJ7kj9+DJJVCvRDeKrlqu8KTuBJeRwLjvY4YX3QkUVspf5Iuz3I8mlTeHjl2pOT4mMcVSb1S/4L1WH5mDxoNMfjEhLPsr2YMcn+HnB4jd3KVxTrP5j4Z2TdtoCWneIpeti+4rva1RyPBgk=
+	t=1742167474; cv=none; b=K3IaixsDnsJNsOrKirQwdXagRxi66pw6G0k9aTRiwznx6faMzTSQgmRIiNh9lZbkzeeefBZj5CbALN2JRWsCFfX51QBF91qNICox8rhj/uo2+TY3NViTrpu+V5NqSHsQ2Fu5gMpl6ZK8cBcfhwR7mreuRKp3Ucbho0IChVC7UoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742152801; c=relaxed/simple;
-	bh=3zkdgl+5fRrhnPfnmcyMUK5BRIeYR/RPL0KOX8K6Tnw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fMctrV6Ktv5UVUWKGQXi3/b6J/gaJcdesPu9ZnAIfsm1gxKnN2qA75PXfZY7K8voA7xm255ytQLkXx+3QXa9RE9x9z62HmQqN3HSODPW/LvDPx+5GuGiMJEl3YmnD7wOrbKBCJMws3+6F1ULh349ae4+aRmNWk3WCAavlxngLys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=czsWyEhX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 036AAC4CEEA;
-	Sun, 16 Mar 2025 19:20:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742152801;
-	bh=3zkdgl+5fRrhnPfnmcyMUK5BRIeYR/RPL0KOX8K6Tnw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=czsWyEhXjjZY0TtC8wPpv5LKIp2OCAf7pOt3CrSe31wlUO5Z7Ao8BMbbscV49KdjA
-	 ZsdPAvxOQCPbwaW6qZXXJoYDUCKxC2CfCJ6ahJOEZBccP6DEv4dhaScImFS+JrTU3H
-	 nimLyH9/m8pMB1Gj6XMCwiZ5hyJxxW5kycDn8tkC352A5nIoDxZ8xikRmVuJ0Fzdcj
-	 jYCvSiE0/W2UQczp8PMzQXkidkAdypCRnkvayBavp20eYA/YbyOs+1vepwtvQelssF
-	 KP87YNetnokcEc+JfRRwg8pEpnrS6zJqZYfNfpoFkszM+3pU3AZipA1ZMWntBgg2Dm
-	 nZBj0Ynu4tb0Q==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-549946c5346so3847643e87.2;
-        Sun, 16 Mar 2025 12:20:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVQCWziY6FucEasu0A4cN1P3FVRiOOuoVgZSBqxvTbhLRvU8TgOPrUG2TtrBAd8P48Ud8ArGUpPxNA=@vger.kernel.org, AJvYcCWdaaY/XqlOj/FK398TfOTKjbtUPa6ZWbkp6h8r5PmdwkYlo0bHlWz0FK/yrtKPG4Km1lzwMpR9SHGaY3G2aA==@vger.kernel.org, AJvYcCWpsYnIefjsOx9MYZCS/huyuMxeYW+vxE2y1feB+LhexfgPFJ6mF17v+2h0zp8vzZcxOh/9/qKMwsMjdSkaBUKZpfpGATc7@vger.kernel.org
-X-Gm-Message-State: AOJu0YyueBMTwYwefQ+3z2b+QaVDal/xhn5ylRjf/X5hPs5eBrVf4DBe
-	73+UKCGGxX/d6MgaE8nIPBx+/uAGuSKzzVHc03TW14OU77RkZdkv4pEfweRDwIZQeYatfSZrBuf
-	uU1IyKyfeHx2o1EhFreR1xlBMOxw=
-X-Google-Smtp-Source: AGHT+IGcfsGWidxv9sRAkkFQzKwjpDHZOVE300xVnp+qPdHtQRaXTm3nUv0t/PqqXA0WFmss8SFP1FVNTS2rHPoZVhY=
-X-Received: by 2002:a05:6512:4029:b0:549:b0f3:43a2 with SMTP id
- 2adb3069b0e04-549c392511amr3793918e87.40.1742152799381; Sun, 16 Mar 2025
- 12:19:59 -0700 (PDT)
+	s=arc-20240116; t=1742167474; c=relaxed/simple;
+	bh=o8eQgeGPtZihVG/PijoiUznJGFjprjCaGiX4A/YJgLk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hEs4bn82UH2XjtikPtjTx4JFa8vPlvchsSpZ5UdMKX/bGSesxq6U4y4+qbmlVexsju1D8EMHf4RTqzD6l/pg4BwPY0CwHsBuGiAuZLk0OIxLzagJYlHxgJjya9aPYXlXV+rN0P9jTxv5P9QiKArrdIETh79YbbVVAK/r/9vAuNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e9AQV3b9; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac339f53df9so93886266b.1;
+        Sun, 16 Mar 2025 16:24:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742167471; x=1742772271; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iox79toLFRQ4duXu/fplfKE03Az8gPUk7RB9gwhhD7g=;
+        b=e9AQV3b9XmV18W7xYGwVY2WpGTSjNPhgxKG6ADKtc4S8denShktIuJ9YOZTtgCG+uR
+         rPWLFRpJsyW9ce3IHQgu14U1Rylzy+08RsptVZlkLn2F6TjNmRGWfmGUhoOSyaecf+WM
+         mwr+3SgG31oElpj3SSoGLvOSjqyKjJ89GZPVk5+uuXJNtEhOyN5U8Mtq7gu6OuZiXKYS
+         0DFbPwP6GO6sc1SvsY8TZSUnjCi77aRfjQu+ub6qgEbjn4CJQI3oKqSl9/H+yCXVcY/2
+         bcvCeWzBDjL21m3dV1SNITQu2KdDGqv7QQwPZ32QZKw2Sl0m8dOcTo8W6TbzbVO1lyhU
+         MDRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742167471; x=1742772271;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iox79toLFRQ4duXu/fplfKE03Az8gPUk7RB9gwhhD7g=;
+        b=CEeJfGiptNnJiT7n1j/BnETO0cgien5eEY+aEkG1QP/BKR7ga+mWEdgUUAm9NcdRZu
+         ZAh9ppYbEZeVzCYfO82Nx2zjpsNNPRweVwlXwuvsUEnlElh+qYCWPcGDVFC4JrdGuJxr
+         S06whBswlhIZNUuVMY6YSsmOBPcE8ufi89UOGAKrgMYM/CqSx6RLYXOG+0xitZcdgS5+
+         0NEdkZvI/y2GbbK49IFPbER7oOqfrgFlwS+obaCvsG5kFCtoddeeYQJMkcbasXG5JPEO
+         6o7Iz8XGAzPxTLNFe7uESNgS4FRc6kr1q+BBOwTer6yw960nyWSYLpvfZSk5lzPaGCoG
+         /OlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQziBprZ0/j2L1AXz/GemDqztw0r9SNx2Mnn7Of73rtru0HT3nXqhJ7hS0/EAfaMFMGoDmW+cVwZgqbpNn@vger.kernel.org, AJvYcCXSRTKPwF+ymfQFXz84wzg46UYGsMOSbHtINHesjjq1pfVckIaGfcuOOXVa2bCH5PwmO2nR4tt0PhxmsocJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxn4it3D2qZ7zuADVQqMpmAhmBijYTEoLvUxt7fpk/EarqkYlZY
+	fWV3xBraI5MSqhQg8JS5gO9AnNqCr6PLa9NOfnX6ZPwcFk5+E9IxxCIhfA==
+X-Gm-Gg: ASbGncvko8jErQ+fVSJlTAH61j46/6aaff/cnWMNeZTWPhozp8s4I75AMmuEjCue7Fl
+	uZxaPjeiEBZeH9GzyK2UqSjd74S2FQUB5IGFS7ZCGwMFP8GamhjSEbo2S/+GC55xo8n7BsI9jbo
+	KE09D7W7U7p9PY94V+l7V6onH7XJm8I1r2qU81W5ZcA9eaURxAJcbV54YHxD0Ix5lKyQIxSy4+p
+	N8LSXT5B3bD3Q1n+3KRApND5vithIHd3U4bBQzOQffrgAuAiSJwOgmiXDNkjujkeAVg4HhSVA6f
+	1pi+bnOuf8SG/4jv7fxHN9seEBUyXzxTLIYTqKHr3s4/xBQuYCw5nvNEjjFyjlo=
+X-Google-Smtp-Source: AGHT+IF76w3efXZamZ5NhBRCQp+3Lt0vIz0OUy0BmgkcVmcfWu8K4VwYwvb1g+lW7UM5OazH+J1Weg==
+X-Received: by 2002:a17:907:9694:b0:abf:6cc9:7ef2 with SMTP id a640c23a62f3a-ac3303bc642mr1207601466b.42.1742167470629;
+        Sun, 16 Mar 2025 16:24:30 -0700 (PDT)
+Received: from f.. (cst-prg-23-176.cust.vodafone.cz. [46.135.23.176])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314858a8fsm549984866b.80.2025.03.16.16.24.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Mar 2025 16:24:29 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: use wq_has_sleeper() in end_dir_add()
+Date: Mon, 17 Mar 2025 00:24:21 +0100
+Message-ID: <20250316232421.1642758-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKCV-6s3_7RzDfo_yGQj9ndf4ZKw_Awf8oNc6pYKXgDTxiDfjw@mail.gmail.com>
- <465d1d23-3b36-490e-b0dd-74889d17fa4c@tnxip.de> <CAKCV-6uuKo=RK37GhM+fV90yV9sxBFqj0s07EPSoHwVZdDWa3A@mail.gmail.com>
- <ea97dd9d1cb33e28d6ca830b6bff0c2ece374dbe.camel@HansenPartnership.com>
- <CAMj1kXGLXbki1jezLgzDGE7VX8mNmHKQ3VLQPq=j5uAyrSomvQ@mail.gmail.com>
- <20250311-visite-rastplatz-d1fdb223dc10@brauner> <814a257530ad5e8107ce5f48318ab43a3ef1f783.camel@HansenPartnership.com>
- <7bdcc2c5d8022d2f1a7ec23c0351f7816d4464c8.camel@HansenPartnership.com>
- <20250315-allemal-fahrbahn-9afc7bc0008d@brauner> <bad92b18f389256d26a886b2b0706d04c8c6c336.camel@HansenPartnership.com>
- <20250316-vergibt-hausrat-b23d525a1d24@brauner> <b2086c64d47463a019ac9fc9e5d7ee7f70becc8d.camel@HansenPartnership.com>
-In-Reply-To: <b2086c64d47463a019ac9fc9e5d7ee7f70becc8d.camel@HansenPartnership.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sun, 16 Mar 2025 20:19:48 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXEsO4qmnkX32Ht-V1uD18raf-9PpwpPhvwf7ebX_cHWFg@mail.gmail.com>
-X-Gm-Features: AQ5f1JrQSfOpiTTW16QAGjedBBidhMNR_3UN8YFpWBBxFs47qYn47cz-oLlz-6I
-Message-ID: <CAMj1kXEsO4qmnkX32Ht-V1uD18raf-9PpwpPhvwf7ebX_cHWFg@mail.gmail.com>
-Subject: Re: [RFC 1/1] fix NULL mnt [was Re: apparmor NULL pointer dereference
- on resume [efivarfs]]
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Ryan Lee <ryan.lee@canonical.com>, =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>, 
-	linux-security-module@vger.kernel.org, apparmor <apparmor@lists.ubuntu.com>, 
-	linux-efi@vger.kernel.org, John Johansen <john.johansen@canonical.com>, 
-	"jk@ozlabs.org" <jk@ozlabs.org>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Sun, 16 Mar 2025 at 15:26, James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
->
-> On Sun, 2025-03-16 at 07:46 +0100, Christian Brauner wrote:
-> > On Sat, Mar 15, 2025 at 02:41:43PM -0400, James Bottomley wrote:
-> [...]
-> > > However, there's another problem: the mntput after kernel_file_open
-> > > may synchronously call cleanup_mnt() (and thus deactivate_super())
-> > > if the open fails because it's marked MNT_INTERNAL, which is caused
-> > > by SB_KERNMOUNT.  I fixed this just by not passing the SB_KERNMOUNT
-> > > flag, which feels a bit hacky.
-> >
-> > It actually isn't. We know that vfs_kern_mount() will always
-> > resurface the single superblock that's exposed to userspace because
-> > we've just taken a reference to it earlier in efivarfs_pm_notify().
-> > So that SB_KERNMOUNT flag is ignored because no new superblock is
-> > allocated. It would only matter if we'd end up allocating a new
-> > superblock which we never do.
->
-> I agree with the above: fc->sb_flags never propagates to the existing
-> superblock.  However, nothing propagates the superblock flags back to
-> fc->sb_flags either.  The check in vfs_create_mount() is on fc-
-> >sb_flags.  Since the code is a bit hard to follow I added a printk on
-> the path.mnt flags and sure enough it comes back with MNT_INTERNAL when
-> SB_KERNMOUNT is set.
->
-> > And if we did it would be a bug because the superblock we allocate
-> > could be reused at any time if a userspace task mounts efivarfs
-> > before efivarfs_pm_notify() has destroyed it (or the respective
-> > workqueue). But that superblock would then have SB_KERNMOUNT for
-> > something that's not supposed to be one.
->
-> True, but the flags don't propagate to the superblock, so no bug.
->
-> > And whether or not that helper mount has MNT_INTERNAL is immaterial
-> > to what you're doing here afaict.
->
-> I think the problem is the call chain mntput() -> mntput_no_expire()
-> which directly calls cleanup_mnt() -> deactivate_super() if that flag
-> is set.  Though I don't see that kernel_file_open() could ever fail
-> except for some catastrophic reason like out of memory, so perhaps it
-> isn't worth quibbling about.
->
-> > So not passing the SB_KERNMOUNT flag is the right thing (see devtmpfs
-> > as well). You could slap a comment in here explaining that we never
-> > allocate a new superblock so it's clear to people not familiar with
-> > this particular code.
->
-> OK, so you agree that the code as written looks correct? Even if we
-> don't necessarily quite agree on why.
->
+The routine is used a lot, while the wakeup almost never has anyone to
+deal with.
 
-Thanks for making progress on this. It would be nice if we could fix
-this before the v6.14 release, given that the code in question was
-introduced this cycle.
+wake_up_all() takes an irq-protected spinlock, wq_has_sleeper() "only"
+contains a full fence -- not free by any means, but still cheaper.
 
-And there's another suggestion from Al, to use inode_lock_nested() to
-work around the lockdep warning. I can take care of that one, unless
-you prefer to do it yourself?
+Sample result tracing waiters using a custom probe during -j 20 kernel
+build (0 - no waiters, 1 - waiters):
+
+@[
+    wakeprobe+5
+    __wake_up_common+63
+    __wake_up+54
+    __d_add+234
+    d_splice_alias+146
+    ext4_lookup+439
+    path_openat+1746
+    do_filp_open+195
+    do_sys_openat2+153
+    __x64_sys_openat+86
+    do_syscall_64+82
+    entry_SYSCALL_64_after_hwframe+118
+]:
+[0, 1)             13999 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+[1, ...)               1 |                                                    |
+
+So that 14000 calls in total from this backtrace, where only one time
+had a waiter.
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+ fs/dcache.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index df8833fe9986..bd5aa136153a 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -2497,7 +2497,8 @@ static inline void end_dir_add(struct inode *dir, unsigned int n,
+ {
+ 	smp_store_release(&dir->i_dir_seq, n + 2);
+ 	preempt_enable_nested();
+-	wake_up_all(d_wait);
++	if (wq_has_sleeper(d_wait))
++		wake_up_all(d_wait);
+ }
+ 
+ static void d_wait_lookup(struct dentry *dentry)
+-- 
+2.43.0
+
 
