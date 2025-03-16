@@ -1,77 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-44134-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44135-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF3F7A633DB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Mar 2025 05:30:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF00BA633DD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Mar 2025 05:31:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFF0A170D23
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Mar 2025 04:30:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B142B3B0520
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Mar 2025 04:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31955157E99;
-	Sun, 16 Mar 2025 04:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD20E183CD1;
+	Sun, 16 Mar 2025 04:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Krz7tgQz"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Z0tKUjf5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2073.outbound.protection.outlook.com [40.107.236.73])
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2043.outbound.protection.outlook.com [40.107.101.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9BC1624E6;
-	Sun, 16 Mar 2025 04:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E67014B06C;
+	Sun, 16 Mar 2025 04:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.43
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742099407; cv=fail; b=pm6eIUCIIMJW4/aSWU854xznrDltMY5MlkTK9cv1jgokYBhIPtjXsTcyBN5JzOYd2yiBaLM+tYvpCa92f3wHmbIvtgLnmNvrEFP/slYBuCjlF8eVyECw5MFfCtDvKJTbiEBqI3H7CogiPq+F3lUiU2XUyAY0HibTZiE/5O8qRcM=
+	t=1742099411; cv=fail; b=JLj/m6BF9AvSLcPN2SxMf49DppuTUFizcM3cIHfLwtXME4+vT4CqaqCduPL5t2OHFevP8um+brJltWCVfDUFc/MkevD2nK3UoAo6xh99rrhtzmK1E4NYRFiCcAW4z9m7kAWsJBK+aMMulFt61Z9aGAmQydqTGnPXYrsOBZ0R77A=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742099407; c=relaxed/simple;
-	bh=XfsO5yMLNVQVUHDZJCai5Rd7qTc8PTJYeiSBBAXSfdU=;
+	s=arc-20240116; t=1742099411; c=relaxed/simple;
+	bh=OshTwv5mZZUzulnGcwaxjVMh86dNw98gYiXEt1iGBmg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DrRdTaEvWN23V3CcLaLQF+QoVxd+v7pOGGJUa0qvbX6h4m4QL0xV1abnNSVJKxgrM6l6xtZFsGJ19vIIIZs4liQ/7qqh1NJ+c8PCilz4IPm/kk5Ibn8ISVgbijycKtKhn8BlyohaFCTLIBAteA5JeOW95N8UU2EKcBwTa4Ifurs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Krz7tgQz; arc=fail smtp.client-ip=40.107.236.73
+	 Content-Type:MIME-Version; b=kQyIKKEGMW2RvmkLH0WlJ3SFrGLmZrTDTH6ZgMjnAYmET1xOreJzBVVnLCylDBCqWTX7Bi3GLc2kNYEKRZhRJ4CX7kGzyGPNABoCYidDTQHzrjkiHqxH1+isbp1uhYG1PHYaMNblaKcvRYTAaaAIsCn4GK/us2H7KdE4+HoI3C8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Z0tKUjf5; arc=fail smtp.client-ip=40.107.101.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DX7eYKCdE2bL7KkhLd9DAPRFrxOdHvwDQkoCO5Xh+Qw0caOKzT+93wTgDtVj9ZBDxPxo9MHquFRvUkiELIcbXNh19CpxYfCZlGbb5eaDjQ/J9y9RH2JILRyflqm50AI5AFwH7D3N9d1DEZk/g/UzjDsLdXt1oUy0wXohGACmsGvmX5PKIRMptr9d2y3GilKrHDDKVYRXlsJV8SVOOrOUj7Xx72ANzweLGRrEy4K5EZLvur+52St4cKF9+f4qO/hrRJKsnLACjC+61GF7QUet6uOj6yGE/VrzJvkpjhQJpzgZYnj1bzNqKFKOvEAoOXdQH+Pdx0z4P0dFU8cSG4CH7Q==
+ b=O+9Up+1rTpRyZ5HC1ilQanfxlVeG59UtXEEKt13Th2Rgg6kl6sXnvJO+PGR+IZqgDkrbBOecfP4tPBtcXOUEGq3JveW4XWWMbMdP3/jxk5bztqZiwXpEGpggfF0Gt+JLYqAeSaubsgftLp2RyZBP+LxjpzkCu7uX0nbxVgT76yhehiSNcX4jbVKqxyY14EvY0eCawnQWuGmzX8PSrDw/+TmM4Z+wKx3GF8ctihX8HDKGsmTQEv8aYi0xJPYCQxlkrKTRNqYEwMJ8Gct9G1Qb8xc57NeMhjghpAbx+aZNEmMjRsBS6bDZDS9XBe8WnNRHZPcnp4axWRSDw4BNQfyDxg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NgRT6WueUkXEphwCJUp8cua2k9wyzPo9pbza8QRm0DQ=;
- b=bHhqUYe4+y7rDFmLoVeK3E993oZ7tH6LiQ1oYlXuOloC1nmnKC8/Is96dmQY0YibWP4Lyj85BhRsNlZ/shcn0WNKBwLNXOAtCJBXJ2sufcPId+Gw1wy8RYnS0+7hMF1B1xb7z9USW7GR9kzmwx/9rXWmWWP+ulIaUHRo5huTGYSvjquINRuFkVSon1o7iRI0lmuKWmLZxO8wFWedoUc3wLXWmghCPRQGNhUcQM7dhF/JtKJTBg5Qt3lBXIYXhPr3IGaeix+4tR/7tE5oNDusJqTgCBeX7hILPBM6tEQ/zYVaLAAORT+/tVe0i2wrWkdp8YA+7MAuWMsgTuIyDk08FQ==
+ bh=5SHU6pED30VI4i2x05K56G+ModCjzq+/3eUcWasst7Y=;
+ b=Knjbvg5zgwuIRp94Fzg0XViQ+KtqJMxoXcwFwAUYlSu0ptOzPfFP4agBSYnTTZQWhZEDxzhC9I9O2tO3W5gqxHcGHgUwN4iXqxR0yIkFfQ3ZdvScTzekXOomSXbllbozwyqsUdtFRX66cZsApnic0Mp0d2vCJD/iyybSBE8KVqNcp0igJbcvOX5yHIqI8DYvK1rOjuHQdQ1ycgAUnhDkWn0TeYOYvlHVurjAEHYqJ7KSM9roB+oIf6wNfxdDIXyXoqL8gYpSPkthxcZ53Ql+hhPyAxpXA2+S2uCp+pGVR52jpveE9oz2j+ybta8rJR3mvK11okx7rdtu7G4LQGvcBA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NgRT6WueUkXEphwCJUp8cua2k9wyzPo9pbza8QRm0DQ=;
- b=Krz7tgQzIr827ehFY+3u3Rxfqr6NuflRpAwALqm+yw1rWKD96eFOD6CZgh4xtpF5vtKTiIJfhXIgY3QqYBZnHEe+nHvydd+YXPnP7WipGuOOdiZwg8p51i3STAU7ZzTK2jmXmSwhkXlSLgtCbKZgVe8VUSXzU8f7zlVFh7Flzm1NPxw0RvJpXtxN5mnvi/mxrf6gYzxLGXZTHQTW46BS/fwDnnbhnWBffC20nwCn+u6eDazdfNW9rNOdwb7s+CzINh3vbVKC4p3wixAqnSelwWwYD9372E1wgybdE4RpevQs6zXLAXJNsgEX2Qo543LqtLrItI63gZrZw0sj8DemBw==
+ bh=5SHU6pED30VI4i2x05K56G+ModCjzq+/3eUcWasst7Y=;
+ b=Z0tKUjf5VnIoyCamHZsOTwdW4ndyt2W2G8VvV7GiiTMin+NlmXwylOHAFH9FIE95pQj4cnGUQrFLtv2la45yKqq5Eh4TCdnN9ljDTzlQDFKNaukgu0VN2QxN/j7rP4vS/JgPtQlJBsZS6G8kj9uZvU4qOgReORlSg4SsENR1/ocPbhSRYodCo3UGVFeNrDN0jHaKIUamgP7WVYHp44Bd9su7pnKdfGMtaoP1/l6JklUCQ7l2XAmygAtlnJ7qPbJZ+en65lZhs/diCoU/KvSE7FcfxjpH5rUHMk7nCJokv+t3gPP0zVub4fltSs4YPCwFw6HU9rXF1eDBTD09n4dUbA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
  LV3PR12MB9260.namprd12.prod.outlook.com (2603:10b6:408:1b4::21) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Sun, 16 Mar
- 2025 04:30:02 +0000
+ 2025 04:30:07 +0000
 Received: from DS0PR12MB7726.namprd12.prod.outlook.com
  ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
  ([fe80::953f:2f80:90c5:67fe%7]) with mapi id 15.20.8511.031; Sun, 16 Mar 2025
- 04:30:02 +0000
+ 04:30:07 +0000
 From: Alistair Popple <apopple@nvidia.com>
 To: linux-mm@kvack.org
 Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Alistair Popple <apopple@nvidia.com>
-Subject: [PATCH RFC 3/6] mm: Allow device private pages to exist in page cache
-Date: Sun, 16 Mar 2025 15:29:26 +1100
-Message-ID: <846bb6f8a3077ceac767002a88119adde2e86491.1742099301.git-series.apopple@nvidia.com>
+Subject: [PATCH RFC 4/6] mm: Implement writeback for share device private pages
+Date: Sun, 16 Mar 2025 15:29:27 +1100
+Message-ID: <1bfac47d0477ad5f13a8daac673d4d4c415645ca.1742099301.git-series.apopple@nvidia.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <cover.24b48fced909fe1414e83b58aa468d4393dd06de.1742099301.git-series.apopple@nvidia.com>
 References: <cover.24b48fced909fe1414e83b58aa468d4393dd06de.1742099301.git-series.apopple@nvidia.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SY5P282CA0058.AUSP282.PROD.OUTLOOK.COM
- (2603:10c6:10:20a::17) To DS0PR12MB7726.namprd12.prod.outlook.com
+X-ClientProxiedBy: SY5PR01CA0087.ausprd01.prod.outlook.com
+ (2603:10c6:10:1f5::9) To DS0PR12MB7726.namprd12.prod.outlook.com
  (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -81,405 +81,216 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|LV3PR12MB9260:EE_
-X-MS-Office365-Filtering-Correlation-Id: e1851664-a826-4158-bb4a-08dd64433804
+X-MS-Office365-Filtering-Correlation-Id: d0ca5b5b-2fed-4671-49ff-08dd64433ad3
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gylJrbRE1Fngn2PyPKYO1KWoaV0nk/cAiXw0kdE7Xzako+RcGOURbYMg/goI?=
- =?us-ascii?Q?NAD5tfsXGXJC9Kfe3+DiFP/kPWUXvaE0XNgPEHBtpUg+jmV5pAPEvPeK8td6?=
- =?us-ascii?Q?ZdltW2dtxYvZKhKjUYe7tFC1AmeD5hXzo+1A+/O2NS8itrqLn24qJKs/E78d?=
- =?us-ascii?Q?n7+NsxOIAerYX8Dxv5cepDlxOYCb8LcsMoKfZXliG8m7cQlHcEtBbelVvoqg?=
- =?us-ascii?Q?9b6EMtlxCRzr2Y9Z1dc7tAPmHeihJXi+QDjgAwZvK0OpTfjsi8oCAt42VWX0?=
- =?us-ascii?Q?jyrMiOfKajF0QKYbZoDQHlCNfj8VvVclhEwC17oJN93Qssv7K8JDmIax2dcB?=
- =?us-ascii?Q?+vwqOFf2pHhT9yA8e/I0jgRbbTWK7fdqN2M1MYp2QxBtYrXY3WLWcm8CWua+?=
- =?us-ascii?Q?KryU3ZMLycIEafVo3YeBEfFIs7qmB7Jn1lFng907+LQojZZVydng1G2P5b2h?=
- =?us-ascii?Q?29bkmgaWUh3KNCjAWUNl37TZHoFoigsyHZo0Ujohj2nXjBTAm+e62buBszBG?=
- =?us-ascii?Q?GoHW2ulzG4vCEu4F51rFjJd163HQoHU/vASXlqKWQkEvYhdWnis3umpknQ5L?=
- =?us-ascii?Q?C6rR/KFULs+k5LcJB0ffT/mCReIcnEVFVlztjN+Kiqif0661ykR7Vl5pQaf2?=
- =?us-ascii?Q?OtYC7CqMIbSw4m28XsOUW1HOgqEQkBGu8/c3AiBxGG2s2fVyyzLAf/lsPWas?=
- =?us-ascii?Q?K9eWn3fMLDvVqrJmfV5Z8hVSZPG1/0sIxDiVWDIsx6qADMXc26ra/xU8UBYD?=
- =?us-ascii?Q?YNzW0PUvCGPR9RwKWUR302vv4jMcuKDfPCz+tobzakKf2eYR/JDhHBlC6xYP?=
- =?us-ascii?Q?qpLPuUA9+lGb0gMhIhZR6iL9D6kl27+nK9j5gHqXGK+iRSZoFf0lZ3N3Rbr7?=
- =?us-ascii?Q?Csa1DnM8yD8/uk5VLEbf0d/tUvb/yLPRghh8KQhl7KFYp3L+RXpJZOgj1vdd?=
- =?us-ascii?Q?C9PifRUox2VFmGEPM57QY8oGYFDAVjECAqqKowjI+2cdEOz+rYh8MDiinHWh?=
- =?us-ascii?Q?JQmefR+Hg+a5Lcad+Pqw/pV86mAhdR9YpajdGRFS8LJTwLuIdA+FN8DNm6GX?=
- =?us-ascii?Q?w+47Eqewyr2GQlKm14AUXiCKaK6TaNTunvzwwiutNN1mhP6yK1Scmkm/3CXa?=
- =?us-ascii?Q?WcPvCuKHxCPgHeUdrbs68i593hWF3zm2SP6qs8saiAvu6fJxddMkj/pU81z4?=
- =?us-ascii?Q?Vlgb+vaX7T1SyGOGtLRM7z+yc8xLR81ENvMVePktbrH1VSCYD+hYozCFPVo5?=
- =?us-ascii?Q?1BwISu0olL8p//s3gGhq/7x9PPICPKjckFDy6BIiSjpKKz4ydG7FrkrJcp9n?=
- =?us-ascii?Q?NdKTKFUQJEclCgu6h/17BVt+9AOAXCd5/Vu63Ph6Hjk5UTZRNGbO2MjPiy0M?=
- =?us-ascii?Q?hPKmY8V92dgndplbvThHyU8bWNaH?=
+	=?us-ascii?Q?2ywLTXMtkeGmjxI8tpPAfHSAICttmqI1pwfPDRbrCqowJUZgXPUQa/fqmA/M?=
+ =?us-ascii?Q?yrU7um5o2fPNw3v+NLO0jm9yWNpIk1/Bb69fcd1HBzjHWZgK9g8/p133vyFX?=
+ =?us-ascii?Q?YDYsYUqTL2ImesOiPSBoWpKILTMAqp9fa4l2oinsY7Q5eO9wNRJFtH51ZAqP?=
+ =?us-ascii?Q?EabJ89eNhdIOYVOH/1HSNwhO54UaEOFquR/izkLGAXJSN7qc28Bjub7UE5gb?=
+ =?us-ascii?Q?GBfQUATtDsiQXjOFUU0VMFUCXJxAGwxjK2urKxEmSOnX+eZZoRCuhdDuwATo?=
+ =?us-ascii?Q?furWA/J2McWrKA4yubKv7EvD1tj4+tvidbrkA+yYgSyon5U8iNoSafpM+zBq?=
+ =?us-ascii?Q?STQ5AbBR2oLEv86jmtpnpB/uG8/QK9qm+05hiAILJX4Uh2mON0m1VLPfDvA5?=
+ =?us-ascii?Q?tkvkJhNzH7ZdQGMcSSOuPGHH6HmtfMTMxCDC9APPTz0FyMjAjlDnyi05VrBZ?=
+ =?us-ascii?Q?9U8d21bhjWHMp+C/aQe5QflCyoXqhM14Hl2LZgdjREV3qf0iJVTGMMdwHJaX?=
+ =?us-ascii?Q?Eg3jaGtW7j/hcNHu6F9Jkqh5yz4LqqYhP32jFxeHnNgUIYKgDGAYnPmX3rWd?=
+ =?us-ascii?Q?klb/p6rtxNj24m6/7vzpDutd3muaAbqDlavlNoL160R2ri3w3xWGGzQjzXkv?=
+ =?us-ascii?Q?MUmk5e1HAI1oLFD/TZ8kyIehbU0JXg9nIDEnmUUmSWZyvt1PqZYpuxP8UXxv?=
+ =?us-ascii?Q?qvbeD9JAGNzZeTgh9txkezvzxHz/1AVO2NdYuSEzZZGm58qsBeSOafciE5XR?=
+ =?us-ascii?Q?Bhhaz9HwsqM0hNUF4RQbF+F/JBiFap3Br2A8R79xjSxNy3run2RnlmGLJstx?=
+ =?us-ascii?Q?k4wYP3K/vzh9iJZ0P4uYnHWj4Ce6XlnzZzAHe0SN20AlFssmB+jDy966Da18?=
+ =?us-ascii?Q?9AXP4EuDg1dL8URegJEabVhmtddKw23yz5OwgMowMKbMwy71iSWJAHwQDCrL?=
+ =?us-ascii?Q?J22iG0Hlucmsnb0of8qvUbJhFgRgviTgrGPnE4qjvZOHBS5+8VnC77gub/EI?=
+ =?us-ascii?Q?WnAONVnzyI6R8R73d6KVlYMBTikAlTx4RuLfMo5XZEEXokCzIDLpAvjVUpPb?=
+ =?us-ascii?Q?L+esGfuzpMH7rgR3HTS4xNG3RbrujdiarC6+7nvz+gyEDyMkSLp8C7dlOT6W?=
+ =?us-ascii?Q?tGUKUv1hDYwMRLK03Nav6av5AvCREnnbtbKXcRF/nti0ytb6jO1hR29BtWrN?=
+ =?us-ascii?Q?vHO9gIlj35qn9bOBLe8D8RfAunbg47XIkbxyhMTZRFqi9Uc0d/O4hOZlWNwS?=
+ =?us-ascii?Q?M1hNCvizCXwfmtjIch9nTEokLOOnt7oB+MVlX5M5WvGVuuZnQ4LpBwsEGpMq?=
+ =?us-ascii?Q?gD34UjMMDS999iW4VXdsrpIvAo1TjWgXieJjEGYMcPhAHuHcEfHpFKxNlCxG?=
+ =?us-ascii?Q?6Q/XvxYdL9Wn6X6fuP1CMcHSDi4/?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?iOkFIZnBDwfQ9xlvBe8dh65ivII9ovIk99u/Q5MA7nUNPmnVV0zy/dFqiu4m?=
- =?us-ascii?Q?V+lKSFOiGa5JbUa5NzB9qZRGW8YYU8cjceDj8l+JMoVNIp7Gh6muPvoYvQDZ?=
- =?us-ascii?Q?d5hRHrnYK3QEspoUeN3nq3s46b+moQHB+bf7GQ6mKxJ7lSMnxFwrg8rktklO?=
- =?us-ascii?Q?MhHhUzZuL4zSR11inMnPGFPGKrM9v6Kwoak2lREj0BZiwpbelZmLrMm3rB5l?=
- =?us-ascii?Q?9kDgYlPDtNoYO6XnDyzgO8r0M0yKan4zNGJuTJCDho9Q1ig8TIqMui8W7r8Q?=
- =?us-ascii?Q?DNv0qkmsDxFt9O7JKtV1B0NhADQnt7iXUq322zsnP3fOIUzUs68QjJk7/CHZ?=
- =?us-ascii?Q?FLqdQo9zo2WDJDcNnqGw8fn04zkavumMplBXzmLER7+BjRCwGIvCE9mMamBs?=
- =?us-ascii?Q?YLi6GtCaR/hXhnQ9KXR63A4Qdbdr7LFFDHSouJGkVo3eflYmB3zWxIjSXkuK?=
- =?us-ascii?Q?9aPbv2sPPVUAHwab/eIbtTf8mS43LhqOkdxp73dpisyxaVe9k5AcwcxbGwrm?=
- =?us-ascii?Q?YNwUDBWhbU0DK6qH+HQfAU0bHL7s0Ah+RpzseuL97UZKiDLU89u+HtSEdZ6z?=
- =?us-ascii?Q?FaDaWlmaV1eYoGPKnSVfjzIA55gLljrqJgLEZl4WDE6KDXLNDpiX/vTLG6qS?=
- =?us-ascii?Q?M5ZwUrDoEs5k2u75o3G8q3k2/wfr3grmj1tHLkqVEVyIqIQq0Oez1gBzl4In?=
- =?us-ascii?Q?enQYo0w5ORe+rovL4Z1/KTFTzI3ScZS/Yi4BrfFkl+tuq9igv9NSjoNg8GO4?=
- =?us-ascii?Q?b7fo4l/Cno4sjn8hKvpahF3SivHKMlM0JLZFts/k8a+1bYrL0VhpywgPwef3?=
- =?us-ascii?Q?wiP2/57axVmaMasF6iGh0g1A19AYo0QghRBFMVLPf3gqmPg2ya+2vtsXKLoL?=
- =?us-ascii?Q?m+IWlc97ZSQDVOQp5CAEyHTuiWsJQ99+7dNBpi4hfkiTYZB2V0gAsaowHtBz?=
- =?us-ascii?Q?p7lLe93BwdjTV8fhVj23uIjI5PBkSpi4LZWu9MeUOWamBO8RnmuMZFQYjcJ0?=
- =?us-ascii?Q?lNJkMWmaQ0AKchGThogEUn7bNBPr8kXAcqREwpHo4vlcWMbEqQ10EYJzdFmC?=
- =?us-ascii?Q?R078P24Q4XDCNqcaFkvGQuXppXJ6+40LFUOFYAvThtKe0uaCrlT0u48oIYzr?=
- =?us-ascii?Q?deYq564Nyu9R9LmwycLddIlgV8Whn2icH99dZiIQ55vkxBo7jxyAk1WTjORB?=
- =?us-ascii?Q?e4Agc91ElDNapsvUgZL1NkRyeAlyNPywaL82onZ2XuhVjCArVSOizEMidM1W?=
- =?us-ascii?Q?7TXI7vSrM+okS5dfotJnM+0eZ68LacxUFd8SJXqcjNkWIF61sd1UVzwGYOfD?=
- =?us-ascii?Q?iu3X1/YkWnz7+1AFfK4QEoF2Vta6vY82WEwsO0T8SnKQhpP8qkWxIhzAuHq9?=
- =?us-ascii?Q?3wgjmvAcxXP9JXpBo6Ubt0EcNx/XvG3EzUFGQkWCvPaGLGF+dLOgwOZy5HZ+?=
- =?us-ascii?Q?IAiKQnnwEjqicr7azzW4Di/QcANjw8bahNrH5oW5UqTSmVg0FREaq63e0Swh?=
- =?us-ascii?Q?4zVhwwE/iTQ5+wRsMC52Dm75Zc+YKdOAJyq50ARAfnee4IWm9uhw83uNb+DM?=
- =?us-ascii?Q?0KBri2DLDWBVP60nOj97DL/MPJnuwNeDA8LbA4mj?=
+	=?us-ascii?Q?oxfMNpIiggBcek0H0Ys3ybYzvZXLXqev/tIHkO3wXyY1SRyDi+ziTAd41b6y?=
+ =?us-ascii?Q?xLVz1iwWhRGlWsMThUqMPrxhyDKD+m6FWrknK1SEQgHDc8GiS+6DpZsx+dO7?=
+ =?us-ascii?Q?NDrTaTgBp7ZKDnxjfsPFZtrfhcuqMBLgYs4Kb7UxbJ4H6StgN7MERba6wn6P?=
+ =?us-ascii?Q?6zy9bZfhST68/miFEcrec/sz3wO2RFFVSys9oXsvHx81nobJ+QmH0EXj128g?=
+ =?us-ascii?Q?GzggG/jqVf52dDlEHkRP3COyPxebUj0HBRok5b3emMflQ/p95iuO0gZJRbZY?=
+ =?us-ascii?Q?Oy+y0R8eG9QLsY/W/ZQFiG8cgWhJyAJ9+4MKqgZISSbnF2XIOeI16wC850K9?=
+ =?us-ascii?Q?WpBJqeMA047AWzNd/97HnLjcZyK8j8kDnncdNz3WHUg3RzLW7T3G7pi/ygd4?=
+ =?us-ascii?Q?tqAuiXI47+B/d8+qgF/f+DJa8+d6vn9Cen1sOb/29wQNBcNV/GE3mudtp87x?=
+ =?us-ascii?Q?v1gg7hDNO5fY1cvztsw097diNpRzOa3FEiiGAHUBQ03eGxJ849Js879SOt3S?=
+ =?us-ascii?Q?E3pwBfiGJ1UiXMcjbybRkOGMDX2DOCTRcUS0K7bORfowE2w1xzWpfdogGZGi?=
+ =?us-ascii?Q?TyV30PPiw5ACtsEf2O/R6mjvUnwRmbYwGW3foLsXTkEhGz4V5ucNjXE3ShP9?=
+ =?us-ascii?Q?CTNDebFyT99M0YIlIUhADGsj5yT+kvLieUGW0IvIsq0dVoI0/rKFOcN6aScd?=
+ =?us-ascii?Q?wICl2PqLYtcIOyKy3UX3J8mzPrkAH3AvB4lQ2OHtXTyTt+AkqIJ36Z5Q3Loe?=
+ =?us-ascii?Q?6S1wDWDfZMBfz0lvGihzWLryx2rnw/qnwy8OzFLEWRquASJQQIPkcv+u+wkx?=
+ =?us-ascii?Q?+1lINTAYV2NqJdaztNLvroaXjeHLwEZf/c4ny0h4JYYNpN4hQXAfN4QxYuEU?=
+ =?us-ascii?Q?tnCyN8+yYhGl39KrbcnNYOupzjWL0OxkfQEUBigi3T1QNaWjFqUkEorNX6Kt?=
+ =?us-ascii?Q?zbaV3PSiLo3mcMCSOU0R5P32uuLG9MqmqCYzsVVZ5oupPnOMBkWeZq2kieGW?=
+ =?us-ascii?Q?SxhPUdh9ajM8rkliNz+33VkT2Op004zUpzCSrakYcv+7kr6ktXkr2CYkwIq/?=
+ =?us-ascii?Q?oLMpWZtUmfzWDnghLlCjtkXy+sDvP1r6iLy4u2/gnTMHTfgQd8ChFOc6KoMk?=
+ =?us-ascii?Q?4KzmTOxTPVf3RdxhY2hAIph9UkTMeqExwZJS06IOP6ecp3H+4h7IbVaFHSK1?=
+ =?us-ascii?Q?uLla+jHi/iWP8KvSEJ+2pTg/iHPB3q9XY7PC3LvKBaXeEf0WsRk6+VxrBc1y?=
+ =?us-ascii?Q?HikptAslytMTS8x+faVMYvents5U4MmFH9JKdUx3vtw2v6XLsDoUH01xSnou?=
+ =?us-ascii?Q?ws7g5JeMgTKeeD0ZNMuftgGbsnwrFVFd6iFxCVFlp68kn8wxe5vDlRgQtr/b?=
+ =?us-ascii?Q?7IIPDSMW38WDalSWwxgwkxXbaPIJLfRyz7XKVVWdC1S2A66rF6TdU0eSl1RY?=
+ =?us-ascii?Q?H2fMi+GlLDqRO7dXNj0Y3v9Q7T7LSFmDv313sXnDqS0PUP1ekf76aHdUyPgW?=
+ =?us-ascii?Q?49ikpjEUL9PP+VWbqs4c42SBco+bEduf8eFfU/hZ3i0BqNkmT6/3xJ1PYdFD?=
+ =?us-ascii?Q?M9/T321FDACEbnnonQN0+cI1BHKot6KlIPk6SZ4q?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1851664-a826-4158-bb4a-08dd64433804
+X-MS-Exchange-CrossTenant-Network-Message-Id: d0ca5b5b-2fed-4671-49ff-08dd64433ad3
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2025 04:30:02.4710
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2025 04:30:07.1856
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bJP74SKwaVhmf8RSCNMJ4sHxM1YguYY2wXmp6vEK1uNiN7nyIkgoa1tvDX5x18JELFrIee19UQnd51b9hKhoTQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: lJFoOnlKV7w0wc8PLzN0nBsfh5EJxxg/vuwozpySClR0IyvGkA1PGZ7cFM4QCh1XjalIlbY0bkl33hHJ8ytSOA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9260
 
-Device private pages can currently only be used for private anonymous
-memory. This is because they are inaccessible from the CPU, making
-shared mappings between device and CPU difficult.
+Currently devices can't write to shared filebacked device private pages
+and any writes will be lost. This is because when a device private
+pagecache page is migrated back to the CPU the contents are always
+reloaded from backing storage.
 
-For private mappings this problem is resolved by installing non-present
-PTEs which allows the pages to be migrated back to the CPU as required.
-However shared filebacked mappings are not always accessed via PTEs
-(for example read/write syscalls), so such entries are not sufficient to
-prevent the CPU trying to access device private pages.
+To allow data written by the device to be migrated back add a new pgmap
+call, migrate_to_pagecache(), which will be called when a device private
+entry is found in the page cache to copy the data back from the device
+to the new pagecache page.
 
-However most other accesses go via the pagecache, so can be intercepted
-there. Implement this by allowing device private pages to exist in the
-pagecache. Whenever a device private entry is found in the pagecache
-migrate the entry back from the device to the CPU and restore the data
-from disk.
-
-Drivers can create these entries using the standard migrate_vma calls.
-For this migration to succeed any buffer heads or private data must
-be stripped from the page. Normally the migrate_folio() address space
-operation would be used for this if available for a particular mapping.
-
-However this is not appropriate for device private pages because buffers
-cannot be migrated to device memory and ZONE_DEVICE pages have no where
-to store the private data. So instead the page is always cleaned and
-written back to disk in an attempt to remove any buffers and/or private
-data. If that fails the migration will fail.
+Because the page was clean when migrating to the device we need to
+inform the filesystem that the pages needs to be writable. Drivers are
+expected to do this by calling set_page_dirty() on the new page if it
+was written to in the migrate_to_pagecache() callback.
 
 Signed-off-by: Alistair Popple <apopple@nvidia.com>
 ---
- include/linux/migrate.h |  2 +-
- mm/filemap.c            | 41 ++++++++++++++++++++++++++-
- mm/memory.c             |  9 ++----
- mm/memremap.c           |  1 +-
- mm/migrate.c            | 21 +++++++++----
- mm/migrate_device.c     | 66 +++++++++++++++++++++++++++++++++++++++++-
- 6 files changed, 128 insertions(+), 12 deletions(-)
+ include/linux/memremap.h |  2 ++-
+ mm/migrate.c             |  2 +-
+ mm/migrate_device.c      | 54 ++++++++++++++++++++++++++++-------------
+ 3 files changed, 41 insertions(+), 17 deletions(-)
 
-diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-index 9023d0f..623fea4 100644
---- a/include/linux/migrate.h
-+++ b/include/linux/migrate.h
-@@ -62,6 +62,7 @@ extern const char *migrate_reason_names[MR_TYPES];
+diff --git a/include/linux/memremap.h b/include/linux/memremap.h
+index 3f7143a..d921db2 100644
+--- a/include/linux/memremap.h
++++ b/include/linux/memremap.h
+@@ -89,6 +89,8 @@ struct dev_pagemap_ops {
+ 	 */
+ 	vm_fault_t (*migrate_to_ram)(struct vm_fault *vmf);
  
- #ifdef CONFIG_MIGRATION
- 
-+void migrate_device_page(struct page *page);
- void putback_movable_pages(struct list_head *l);
- int migrate_folio(struct address_space *mapping, struct folio *dst,
- 		struct folio *src, enum migrate_mode mode);
-@@ -82,6 +83,7 @@ int folio_migrate_mapping(struct address_space *mapping,
- 
- #else
- 
-+static inline void migrate_device_page(struct page *page) {}
- static inline void putback_movable_pages(struct list_head *l) {}
- static inline int migrate_pages(struct list_head *l, new_folio_t new,
- 		free_folio_t free, unsigned long private,
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 804d736..ee35277 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -658,6 +658,12 @@ bool filemap_range_has_writeback(struct address_space *mapping,
- 	xas_for_each(&xas, folio, max) {
- 		if (xas_retry(&xas, folio))
- 			continue;
-+		/*
-+		 * TODO: We would have to query the driver to find out if write
-+		 * back is required. Probably easiest just to migrate the page
-+		 * back. Need to drop the rcu lock and retry.
-+		 */
-+		WARN_ON(is_device_private_page(&folio->page));
- 		if (xa_is_value(folio))
- 			continue;
- 		if (folio_test_dirty(folio) || folio_test_locked(folio) ||
-@@ -1874,6 +1880,15 @@ void *filemap_get_entry(struct address_space *mapping, pgoff_t index)
- 		folio_put(folio);
- 		goto repeat;
- 	}
++	int (*migrate_to_pagecache)(struct page *page, struct page *newpage);
 +
-+	if (is_device_private_page(&folio->page)) {
-+		rcu_read_unlock();
-+		migrate_device_page(&folio->page);
-+		folio_put(folio);
-+		rcu_read_lock();
-+		goto repeat;
-+	}
-+
- out:
- 	rcu_read_unlock();
- 
-@@ -2034,6 +2049,14 @@ static inline struct folio *find_get_entry(struct xa_state *xas, pgoff_t max,
- 		goto reset;
- 	}
- 
-+	if (is_device_private_page(&folio->page)) {
-+		rcu_read_unlock();
-+		migrate_device_page(&folio->page);
-+		folio_put(folio);
-+		rcu_read_lock();
-+		goto reset;
-+	}
-+
- 	return folio;
- reset:
- 	xas_reset(xas);
-@@ -2229,6 +2252,14 @@ unsigned filemap_get_folios_contig(struct address_space *mapping,
- 		if (unlikely(folio != xas_reload(&xas)))
- 			goto put_folio;
- 
-+		if (is_device_private_page(&folio->page)) {
-+			rcu_read_unlock();
-+			migrate_device_page(&folio->page);
-+			folio_put(folio);
-+			rcu_read_lock();
-+			goto retry;
-+		}
-+
- 		if (!folio_batch_add(fbatch, folio)) {
- 			nr = folio_nr_pages(folio);
- 			*start = folio->index + nr;
-@@ -2361,6 +2392,14 @@ static void filemap_get_read_batch(struct address_space *mapping,
- 		if (unlikely(folio != xas_reload(&xas)))
- 			goto put_folio;
- 
-+		if (is_device_private_page(&folio->page)) {
-+			rcu_read_unlock();
-+			migrate_device_page(&folio->page);
-+			folio_put(folio);
-+			rcu_read_lock();
-+			goto retry;
-+		}
-+
- 		if (!folio_batch_add(fbatch, folio))
- 			break;
- 		if (!folio_test_uptodate(folio))
-@@ -3642,6 +3681,8 @@ static struct folio *next_uptodate_folio(struct xa_state *xas,
- 		/* Has the page moved or been split? */
- 		if (unlikely(folio != xas_reload(xas)))
- 			goto skip;
-+		if (is_device_private_page(&folio->page))
-+			goto skip;
- 		if (!folio_test_uptodate(folio) || folio_test_readahead(folio))
- 			goto skip;
- 		if (!folio_trylock(folio))
-diff --git a/mm/memory.c b/mm/memory.c
-index 539c0f7..c346683 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1616,12 +1616,11 @@ static inline int zap_nonpresent_ptes(struct mmu_gather *tlb,
- 		if (unlikely(!should_zap_folio(details, folio)))
- 			return 1;
- 		/*
--		 * Both device private/exclusive mappings should only
--		 * work with anonymous page so far, so we don't need to
--		 * consider uffd-wp bit when zap. For more information,
--		 * see zap_install_uffd_wp_if_needed().
-+		 * TODO: Do we need to consider uffd-wp bit when zap? For more
-+		 * information, see zap_install_uffd_wp_if_needed().
- 		 */
--		WARN_ON_ONCE(!vma_is_anonymous(vma));
-+		WARN_ON_ONCE(zap_install_uffd_wp_if_needed(vma, addr, pte, nr,
-+							details, ptent));
- 		rss[mm_counter(folio)]--;
- 		if (is_device_private_entry(entry))
- 			folio_remove_rmap_pte(folio, page, vma);
-diff --git a/mm/memremap.c b/mm/memremap.c
-index 40d4547..e49fdcb 100644
---- a/mm/memremap.c
-+++ b/mm/memremap.c
-@@ -143,7 +143,6 @@ void memunmap_pages(struct dev_pagemap *pgmap)
- 	    pgmap->type != MEMORY_DEVICE_COHERENT)
- 		for (i = 0; i < pgmap->nr_range; i++)
- 			percpu_ref_put_many(&pgmap->ref, pfn_len(pgmap, i));
--
- 	wait_for_completion(&pgmap->done);
- 
- 	for (i = 0; i < pgmap->nr_range; i++)
+ 	/*
+ 	 * Handle the memory failure happens on a range of pfns.  Notify the
+ 	 * processes who are using these pfns, and try to recover the data on
 diff --git a/mm/migrate.c b/mm/migrate.c
-index 11fca43..21f92eb 100644
+index 21f92eb..c660151 100644
 --- a/mm/migrate.c
 +++ b/mm/migrate.c
-@@ -248,12 +248,14 @@ static bool remove_migration_pte(struct folio *folio,
- 		pte_t pte;
- 		swp_entry_t entry;
- 		struct page *new;
-+		struct page *old;
- 		unsigned long idx = 0;
- 
- 		/* pgoff is invalid for ksm pages, but they are never large */
- 		if (folio_test_large(folio) && !folio_test_hugetlb(folio))
- 			idx = linear_page_index(vma, pvmw.address) - pvmw.pgoff;
- 		new = folio_page(folio, idx);
-+		old = folio_page(rmap_walk_arg->folio, idx);
- 
- #ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
- 		/* PMD-mapped THP migration entry */
-@@ -291,7 +293,12 @@ static bool remove_migration_pte(struct folio *folio,
- 			rmap_flags |= RMAP_EXCLUSIVE;
- 
- 		if (unlikely(is_device_private_page(new))) {
--			if (pte_write(pte))
-+			/*
-+			 * Page should have been written out during migration.
-+			 */
-+			WARN_ON_ONCE(PageDirty(old) &&
-+				folio_mapping(page_folio(old)));
-+			if (!folio_mapping(page_folio(old)) && pte_write(pte))
- 				entry = make_writable_device_private_entry(
- 							page_to_pfn(new));
- 			else
-@@ -758,9 +765,12 @@ static int __migrate_folio(struct address_space *mapping, struct folio *dst,
- 	if (folio_ref_count(src) != expected_count)
- 		return -EAGAIN;
- 
--	rc = folio_mc_copy(dst, src);
--	if (unlikely(rc))
--		return rc;
-+	/* Drivers will do the copy before calling migrate_device_finalize() */
-+	if (!folio_is_device_private(dst) && !folio_is_device_private(src)) {
-+		rc = folio_mc_copy(dst, src);
-+		if (unlikely(rc))
-+			return rc;
-+	}
- 
- 	rc = __folio_migrate_mapping(mapping, dst, src, expected_count);
- 	if (rc != MIGRATEPAGE_SUCCESS)
-@@ -1044,7 +1054,8 @@ static int move_to_new_folio(struct folio *dst, struct folio *src,
- 			rc = migrate_folio(mapping, dst, src, mode);
- 		else if (mapping_inaccessible(mapping))
- 			rc = -EOPNOTSUPP;
--		else if (mapping->a_ops->migrate_folio)
-+		else if (!is_device_private_page(&dst->page) &&
-+			 mapping->a_ops->migrate_folio)
- 			/*
- 			 * Most folios have a mapping and most filesystems
- 			 * provide a migrate_folio callback. Anonymous folios
+@@ -1006,7 +1006,7 @@ int fallback_migrate_folio(struct address_space *mapping,
+ 		struct folio *dst, struct folio *src, enum migrate_mode mode,
+ 		int extra_count)
+ {
+-	if (folio_test_dirty(src)) {
++	if (!folio_is_device_private(src) && folio_test_dirty(src)) {
+ 		/* Only writeback folios in full synchronous migration */
+ 		switch (mode) {
+ 		case MIGRATE_SYNC:
 diff --git a/mm/migrate_device.c b/mm/migrate_device.c
-index 7bcc177..946e9fd 100644
+index 946e9fd..9aeba66 100644
 --- a/mm/migrate_device.c
 +++ b/mm/migrate_device.c
-@@ -745,7 +745,7 @@ static void __migrate_device_pages(unsigned long *src_pfns,
- 				 *
- 				 * Try to get rid of swap cache if possible.
- 				 */
--				if (!folio_test_anon(folio) ||
-+				if (folio_test_anon(folio) &&
- 				    !folio_free_swap(folio)) {
- 					src_pfns[i] &= ~MIGRATE_PFN_MIGRATE;
- 					continue;
-@@ -862,6 +862,7 @@ void migrate_device_finalize(unsigned long *src_pfns,
+@@ -160,6 +160,17 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+ 				goto next;
+ 			mpfn = migrate_pfn(pfn) | MIGRATE_PFN_MIGRATE;
+ 			mpfn |= pte_write(pte) ? MIGRATE_PFN_WRITE : 0;
++
++			/*
++			 * Tell the driver it may write to the PTE. Normally
++			 * page_mkwrite() would need to be called to upgrade a
++			 * read-only to writable PTE for a folio with mappings.
++			 * So the driver is responsible for marking the page dirty
++			 * with set_page_dirty() if it does actually write to
++			 * the page.
++			 */
++			mpfn |= vma->vm_flags & VM_WRITE && page->mapping ?
++				MIGRATE_PFN_WRITE : 0;
+ 		}
  
- 		if (dst != src) {
- 			folio_unlock(dst);
-+
- 			if (folio_is_zone_device(dst))
- 				folio_put(dst);
- 			else
-@@ -888,6 +889,69 @@ void migrate_vma_finalize(struct migrate_vma *migrate)
- }
- EXPORT_SYMBOL(migrate_vma_finalize);
+ 		/* FIXME support THP */
+@@ -240,6 +251,7 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+ 					entry = make_migration_entry_dirty(entry);
+ 				}
+ 			}
++			entry = make_migration_entry_dirty(entry);
+ 			swp_pte = swp_entry_to_pte(entry);
+ 			if (pte_present(pte)) {
+ 				if (pte_soft_dirty(pte))
+@@ -898,14 +910,15 @@ void migrate_device_page(struct page *page)
+ 	int ret;
+ 	struct page *newpage;
  
-+/*
-+ * This migrates the device private page back to the page cache. It doesn't
-+ * actually copy any data though, it reads it back from the filesystem.
-+ */
-+void migrate_device_page(struct page *page)
-+{
-+	int ret;
-+	struct page *newpage;
-+
-+	WARN_ON(!is_device_private_page(page));
-+
-+	/*
-+	 * We don't support writeback of dirty pages from the driver yet.
-+	 */
-+	WARN_ON(PageDirty(page));
+-	WARN_ON(!is_device_private_page(page));
++	if (WARN_ON_ONCE(!is_device_private_page(page)))
++		return;
 +
 +	lock_page(page);
-+	try_to_migrate(page_folio(page), 0);
+ 
+ 	/*
+-	 * We don't support writeback of dirty pages from the driver yet.
++	 * TODO: It would be nice to have the driver call some version of this
++	 * (migrate_device_range()?)  so it can expand the region.
+ 	 */
+-	WARN_ON(PageDirty(page));
+-
+-	lock_page(page);
+ 	try_to_migrate(page_folio(page), 0);
+ 
+ 	/*
+@@ -932,18 +945,27 @@ void migrate_device_page(struct page *page)
+ 	WARN_ON_ONCE(ret != MIGRATEPAGE_SUCCESS);
+ 	page->mapping = NULL;
+ 
+-	/*
+-	 * We're going to read the newpage back from disk so make it not
+-	 * uptodate.
+-	 */
+-	ClearPageUptodate(newpage);
++	if (page->pgmap->ops->migrate_to_pagecache)
++		ret = page->pgmap->ops->migrate_to_pagecache(page, newpage);
+ 
+-	/*
+-	 * IO will unlock newpage asynchronously.
+-	 */
+-	folio_mapping(page_folio(newpage))->a_ops->read_folio(NULL,
+-						page_folio(newpage));
+-	lock_page(newpage);
++	/* Fallback to reading page from disk */
++	if (!page->pgmap->ops->migrate_to_pagecache || ret) {
++		if (WARN_ON_ONCE(PageDirty(newpage)))
++			ClearPageDirty(newpage);
 +
-+	/*
-+	 * We should always be able to unmap device-private pages. Right?
-+	 */
-+	WARN_ON(page_mapped(page));
++		/*
++		 * We're going to read the newpage back from disk so make it not
++		 * uptodate.
++		 */
++		ClearPageUptodate(newpage);
 +
-+	newpage = alloc_pages(GFP_HIGHUSER_MOVABLE, 0);
-+	/*
-+	 * OOM is fatal, so need to retry harder although 0-order allocations
-+	 * should never fail?
-+	 */
-+	WARN_ON(!newpage);
-+	lock_page(newpage);
-+
-+	/*
-+	 * Replace the device-private page with the new page in the page cache.
-+	 */
-+	ret = fallback_migrate_folio(folio_mapping(page_folio(page)),
-+				page_folio(newpage), page_folio(page),
-+				MIGRATE_SYNC, 0);
-+
-+	/* This should never fail... */
-+	WARN_ON_ONCE(ret != MIGRATEPAGE_SUCCESS);
-+	page->mapping = NULL;
-+
-+	/*
-+	 * We're going to read the newpage back from disk so make it not
-+	 * uptodate.
-+	 */
-+	ClearPageUptodate(newpage);
-+
-+	/*
-+	 * IO will unlock newpage asynchronously.
-+	 */
-+	folio_mapping(page_folio(newpage))->a_ops->read_folio(NULL,
-+						page_folio(newpage));
-+	lock_page(newpage);
-+
-+	remove_migration_ptes(page_folio(page), page_folio(newpage), false);
-+
-+	unlock_page(page);
-+	unlock_page(newpage);
-+	folio_putback_lru(page_folio(newpage));
-+}
-+
- /**
-  * migrate_device_range() - migrate device private pfns to normal memory.
-  * @src_pfns: array large enough to hold migrating source device private pfns.
++		/*
++		 * IO will unlock newpage asynchronously.
++		 */
++		folio_mapping(page_folio(newpage))->a_ops->read_folio(NULL,
++							page_folio(newpage));
++		lock_page(newpage);
++	}
+ 
+ 	remove_migration_ptes(page_folio(page), page_folio(newpage), false);
+ 
 -- 
 git-series 0.9.1
 
