@@ -1,188 +1,281 @@
-Return-Path: <linux-fsdevel+bounces-44145-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44146-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00A5DA635AE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Mar 2025 13:54:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24F71A635D2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Mar 2025 14:40:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62D0016E42D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Mar 2025 12:54:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CB2016D4C5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Mar 2025 13:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB551A8F79;
-	Sun, 16 Mar 2025 12:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16351AA7BF;
+	Sun, 16 Mar 2025 13:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b="Ld8tWdC/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UyDP/fEA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F7986348
-	for <linux-fsdevel@vger.kernel.org>; Sun, 16 Mar 2025 12:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D279A32;
+	Sun, 16 Mar 2025 13:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742129674; cv=none; b=gIvSa40Dn0DVvjNVOCXCAobOhnlVI3h0xJQb8y2jTTvqxyHw0SHVPncY6Iw+AZIp+NjMFeRu+VInbe3LiOKLAEdkDhPhGftYfjifiSWOmh1cQl29a/IQqmSsCB7tvE8RD5HcfH5uponeusao1CsBGoEuC6Udj1ss98V4y2V63jU=
+	t=1742132434; cv=none; b=JrfcD2huPMFnRDTsSoOSjmsoWysrWvGCPGBtUd81/lRVya9ZUDJzMH1xUXm+9QEwgoCd8MNDiN6ZlcVWETfE+sg865LmG+gzgdEFbA6DIR+IzdIPyNsdg5PfYKnaMmrSNWVHWutoXjDR3uxQA15k5NlLROEbcDKcALhTmxvbMk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742129674; c=relaxed/simple;
-	bh=OxA9qjBJqKakYnBRGso9o9ug7I0v0v6fw9kJZL/v/EQ=;
-	h=From:Message-Id:Content-Type:Mime-Version:Subject:Date:
-	 In-Reply-To:Cc:To:References; b=jkhUdtHxkA4bL831UbM7Ez35qxOoYiHPWuh2jhLz6DVFZLA/tmlpoSGpnO3IjIEeLx0BE1kAdab+7M894iHh7rsTTSdI1Q/GIqYaX335gP+GAdBS2Gn8//FgnoAiqqq4jaXKVtBg4DYZ5aQEbhp4VHAdpec4GhAxGLIA6SOZB+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca; spf=pass smtp.mailfrom=dilger.ca; dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b=Ld8tWdC/; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dilger.ca
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-223fd89d036so69119455ad.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Mar 2025 05:54:30 -0700 (PDT)
+	s=arc-20240116; t=1742132434; c=relaxed/simple;
+	bh=+eP3COHMGSILG+3VCh2zSSWR05FiQeElPNL6B3fjFgg=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=tAPVDdA21nHL2kZl6Ci+XbNblsN74Mt2jK+Xa7g4gbq4lY+5wjAV7YvcTDzVvMXdsb6zm8KD73PamfsvdiHk0+ww/g/nZHkYw6Ymwgiiy8oV69tbgsL8KBGXCN83eZSAB9r4LIefAN8Sie50/r0zjoVLX35HR85QdhkoZSnjA58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UyDP/fEA; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-224100e9a5cso66786965ad.2;
+        Sun, 16 Mar 2025 06:40:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20230601.gappssmtp.com; s=20230601; t=1742129670; x=1742734470; darn=vger.kernel.org;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DNgoIYRjmwaaNFGCS9H1CvEFT1qMkwLF12E6od/1rOs=;
-        b=Ld8tWdC/eOY6w1F+Fnc/5pk2MW7JvwwhAuT4snjfVVTFRKSj9GWyKF60SQ8s6/c83a
-         Oeo7RVzYpsCGk0JddN7Pgmv9sGjV3vh0SnYi432XaBi7bhJsCTkSv3vByoYemkmsbdFt
-         TSxWZBtT/YC2BRYHudBk/Jl5ROQYU3ixpIjv3ucTF4FLtddKo3SOtonLLWqlU6aRCqrG
-         9Qfl9MJPyujYhtElGkk6gU6j3a2K33lcEiw9TLMrPeKebdyMCdB+rrsxk0Nbk/6MfVOX
-         mvZiqlBYRzitSNRQJFIU9Xlw2xoSvmMy1zgCN/ySq79mKSlnM4dv+zEU3uNtPtyjMixU
-         VPwg==
+        d=gmail.com; s=20230601; t=1742132431; x=1742737231; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=VdLYDQ9fmoN/8PBxziQo7P+nVlZR+8JRc9oB0auVypw=;
+        b=UyDP/fEAqiicfNLY/OHjqXBIZROZhPkQMJmWQacIyna7CFAVoBwz9UYEAZwfVNCQUC
+         zfwjCP4IQq9RUGff8o3eDB3gpjFHm85PRbZjX8ghxBBdHvL/4KqYk6vI9B70wv08TJcu
+         LmsTA9X/MS7sCLps/IrD1oWRnmHsBrWxnE/zZUThBGBDxo6vakF5ltwqd1BO3bykkrKX
+         CpMhP6kXDLnVqZpMoWlv4XSeCYFvf3dTHPbR3bJlau5wr8Ij5V6Uxacnn1ydwTvJ4OZI
+         tNPnaX7xeDBDLYKgtHB2Nh/HeA8Jghhszrx9k0fwnZhjAj1wObzxdBKGkReW4hcrr8pm
+         bxZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742129670; x=1742734470;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DNgoIYRjmwaaNFGCS9H1CvEFT1qMkwLF12E6od/1rOs=;
-        b=k5RT9kDe4NjF0ncgwqELk1FGd4F5cs98w9b5iofOb5b5pMRvkrDAbD2BTfY3NL++N+
-         QWbs0U1wBWdO+B5KP56p3GDVb2TvBGRgqe34xX5Ioqu4SXp6QhYUvJ0Jqr6sacVvWndj
-         kKUHoi+o9RJZgKXTtKuq935dm0yu3Zbr2p5hMP5AI9hQ02B08oDIf1/IiTzM+ahKh0AB
-         MmEVEl+D88cwkbRgrEl1voIwWouJAnv98OqvpHtpW/jYL2pjtzAOJL2vZ9MGgBbPfKwt
-         qAS1jTE6Ep7Vd+pUQPf8+/FZRAsVjT1v31ZaIOmADbFSgrxLEgHqsgoDjnx5tx65my+J
-         YERQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1BFyYOtrEVP8mvAhq/I1ZmcP9hqEVdW8nEjGhhY62hG700YpN6PlwnR3qcp6ZA6v0H0sorGJNsMKemcl4@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXmSDp/cFr6ga7r1rI7lB7hujxhIJNaxG2NLRm+Q7FTjZMX27b
-	+uX3nlUjAy52GmMHK56My6cdpYLG/zHXdLvNBhQtkeU8UssGnZMWOQQdWtONYIY=
-X-Gm-Gg: ASbGnctLxGhjYUSOYdfqREB/Ps16d9cPxfUAqoi5WxQ+CvLHaHSAbookBn7YSpp/BZ1
-	CAXLBXROJ+/qEbjm6W5TJvRKsULT/0SQ1Rhx38zLtBvFoILhjEZJoKf34zKOALXs9WS8trHvyaF
-	2gCV0pBJ+FNNI0TnV0LKeLzGnNqX/8Aa4c93zow9S/g0+XakhyGSCc1DwPu9nuvKAwAWQnyAlQY
-	/9Nk/aXc1NwTMm5r+FGhp75xcFkI2tIg358njnJhE89u+pOMqWnmVXXgRuiBqpmOW6VsMp84CVs
-	Q64f2bU+bWS9tIP74oLZ0FI8OsdPM/LNEFqjLOuZA7lpu3JxAr9ncV6NcwYCi+RAtngvSr1Rtaa
-	pcwzqlBBpibp+t7WVow==
-X-Google-Smtp-Source: AGHT+IFzsFhOYNXxQ4P0xXMx/sSODUbQClgIcbHZhWjx33vG1Z2MB70E9uzcFuoB9hQ2s+qFlx9SMA==
-X-Received: by 2002:a17:902:dacc:b0:224:1c95:451e with SMTP id d9443c01a7336-225e0af5c09mr90792615ad.33.1742129670186;
-        Sun, 16 Mar 2025 05:54:30 -0700 (PDT)
-Received: from cabot.adilger.int (S01068c763f81ca4b.cg.shawcable.net. [70.77.200.158])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbeb94sm57281945ad.199.2025.03.16.05.54.28
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 16 Mar 2025 05:54:29 -0700 (PDT)
-From: Andreas Dilger <adilger@dilger.ca>
-Message-Id: <1AFB99D7-8C35-4011-8A76-8D5099963C00@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_39AAF613-7FCD-49C2-BDB1-1F3EA6BDDDA2";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        d=1e100.net; s=20230601; t=1742132431; x=1742737231;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VdLYDQ9fmoN/8PBxziQo7P+nVlZR+8JRc9oB0auVypw=;
+        b=dF0IJl9kvm+jGKbq8c4Q+nMdWMefaDmEt5xWJgq7yb2HnbD31VDmy/zReH5Nh3zzbv
+         tOV02rENvxnwhgTuI0asKVrtrHzOxZdk6V2BB0g+G1RcpQyM2IdwnpGHVdeM4iJsBVkQ
+         EyNGM2fRRVL8Ahf3fjQ7cBXUtdUUwGw/Faj2RKUMp2e9LWZMHeSW2PMHHzOJDSSATN91
+         EPvNzobIbvyRqZuYyyqWie92aqap2RQxEL+1/+CdsXQwsgcSjzoitiF3ugPBb4xoywDv
+         7BtYhioeRcCOD/HKWhrxZ4dv6CGhaNohRuFz0reXMnwzFYzXNm7UVMesgFtwwrLnEEft
+         Vc+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVmBNyPxljPBEHO0+afo4gNA6DBQW1MafVW3NlGxViZQtkAZ9U5pvIwSRByMP5dBViZmAuChgA13gAIOdqM@vger.kernel.org, AJvYcCW8UlRatNyQHPtwdTy+uAzdd7fQN//28TbCjCu1RyETg1V02/bhoa0l3tqcsOrW/ffyavTnDF67lByv@vger.kernel.org, AJvYcCWS/9R2xlgvetBVx3Nbglql38SaZxoV2cc2Xy0dgaxfEDd18UtYkNXHbMyQG/sr18FrqR2HapvLBfU1MLd5lg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVuWZReBferxWVjS6OOupuJaNiK9a90mZyIZqnwFdBKSjbJw0y
+	O+SFt/vOqvzGVgTZkoB8g5mPtVGliSgz2JN3WmUw0ok7Hd6xR+a9
+X-Gm-Gg: ASbGncvj2X0XCLK/knUmTlp9SEcXzrDnNdjc/DYK7ct+VB32unaDuhqJUh0+KWqywd0
+	U6s/pu+lNMI7Ky3uXFFnaUC3d1eW5znobkeBHqU5ZRceenrVy9wLwC8+TH+NMFv5JT7hbFOXiOV
+	pR/GyBTIkjGfLVo7hx26NlpgpP/kWcPXzr0vcMlZxsIzBhKw9CXzHleg7+a68QwhVzEzpjd3NGU
+	c620Kw0K9kivfvHWB+HMrnEqxODXrP4QJrs2lPAkdpQCZGVDeEnt4eeZziJLUgagpAqvB1Yjgey
+	fKnm13/Rex1B45dgACnhjGs2/0ANRMaTf4tQjw==
+X-Google-Smtp-Source: AGHT+IGhz7Ue+ZLyG8VUmXRsrEHkfX2BRwH78PG4XyOl+NG2xSpQf6wEawvh82ePN1A6+gBd5ewDVg==
+X-Received: by 2002:a17:903:41cd:b0:21f:1549:a563 with SMTP id d9443c01a7336-225e0a19b8cmr111256885ad.2.1742132431486;
+        Sun, 16 Mar 2025 06:40:31 -0700 (PDT)
+Received: from dw-tp ([171.76.81.247])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba6f09sm57950155ad.133.2025.03.16.06.40.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Mar 2025 06:40:30 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: John Garry <john.g.garry@oracle.com>, brauner@kernel.org, djwong@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com, martin.petersen@oracle.com, tytso@mit.edu, linux-ext4@vger.kernel.org, John Garry <john.g.garry@oracle.com>
+Subject: Re: [PATCH v6 01/13] iomap: inline iomap_dio_bio_opflags()
+In-Reply-To: <20250313171310.1886394-2-john.g.garry@oracle.com>
+Date: Sun, 16 Mar 2025 19:10:06 +0530
+Message-ID: <87cyeh5c21.fsf@gmail.com>
+References: <20250313171310.1886394-1-john.g.garry@oracle.com> <20250313171310.1886394-2-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH v2] ext4: hash: simplify kzalloc(n * 1, ...) to kzalloc(n,
- ...)
-Date: Sun, 16 Mar 2025 06:54:11 -0600
-In-Reply-To: <20250316-ext4-hash-kcalloc-v2-1-2a99e93ec6e0@ethancedwards.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
- Theodore Ts'o <tytso@mit.edu>,
- Ext4 Developers List <linux-ext4@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- linux-hardening@vger.kernel.org
-To: Ethan Carter Edwards <ethan@ethancedwards.com>
-References: <20250316-ext4-hash-kcalloc-v2-1-2a99e93ec6e0@ethancedwards.com>
-X-Mailer: Apple Mail (2.3273)
+
+John Garry <john.g.garry@oracle.com> writes:
+
+> It is neater to build blk_opf_t fully in one place, so inline
+> iomap_dio_bio_opflags() in iomap_dio_bio_iter().
+>
+> Also tidy up the logic in dealing with IOMAP_DIO_CALLER_COMP, in generally
+> separate the logic in dealing with flags associated with reads and writes.
+>
+
+Indeed it clean things up and separates the logic required for
+IOMAP_DIO_WRITE v/s reads.
+
+The change looks good to me. Please feel free to add -
+Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 
 
---Apple-Mail=_39AAF613-7FCD-49C2-BDB1-1F3EA6BDDDA2
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
-
-On Mar 15, 2025, at 11:33 PM, Ethan Carter Edwards =
-<ethan@ethancedwards.com> wrote:
->=20
-> sizeof(char) evaluates to 1. Remove the churn.
->=20
-> Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
-
-Thanks,
-
-Reviewed-by: Andreas Dilger <adilger@dilger.ca>
-
+> Originally-from: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
 > ---
-> Changes in v2:
-> - change back to kzalloc because sizeof(char) is 1. Nice catch. =
-Thanks.
-> - Link to v1: =
-https://lore.kernel.org/r/20250315-ext4-hash-kcalloc-v1-1-a9132cb49276@eth=
-ancedwards.com
-> ---
-> fs/ext4/hash.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/fs/ext4/hash.c b/fs/ext4/hash.c
-> index =
-deabe29da7fbc3d35f674ff861a2f3b579ffdea2..33cd5b6b02d59fb749844fe481022f5f=
-44244bb6 100644
-> --- a/fs/ext4/hash.c
-> +++ b/fs/ext4/hash.c
-> @@ -302,7 +302,7 @@ int ext4fs_dirhash(const struct inode *dir, const =
-char *name, int len,
->=20
-> 	if (len && IS_CASEFOLDED(dir) &&
-> 	   (!IS_ENCRYPTED(dir) || fscrypt_has_encryption_key(dir))) {
-> -		buff =3D kzalloc(sizeof(char) * PATH_MAX, GFP_KERNEL);
-> +		buff =3D kzalloc(PATH_MAX, GFP_KERNEL);
-> 		if (!buff)
-> 			return -ENOMEM;
->=20
->=20
-> ---
-> base-commit: da920b7df701770e006928053672147075587fb2
-> change-id: 20250315-ext4-hash-kcalloc-203033977bd9
->=20
-> Best regards,
-> --
-> Ethan Carter Edwards <ethan@ethancedwards.com>
->=20
-
-
-Cheers, Andreas
-
-
-
-
-
-
---Apple-Mail=_39AAF613-7FCD-49C2-BDB1-1F3EA6BDDDA2
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmfWygAACgkQcqXauRfM
-H+BQ0BAAsNaIw3vgIaT+xh7yJw5BH45EMg3Ku3GEXEt1acV4lFDZhcF1LVfC0vsa
-M74lEHtETKjJWBIcYZLqXHZGLne/JpFbt6g1HfTjaV4MMfooNNrA44VnZYLUUA2+
-RZM3HrlWFUhgvqP+j8nY8pO/1x6KuStnv2FiitZbAFeKyw+HjrGF3hZD9BZU3tds
-AG0jpP6rindOWFzQFgIBB88Tl09BUSDsq4twC3vdkJ69fxYtuEhVqrQsQTRSG5oQ
-Xp8OaKkgUsOr+AqWSqtqYLBH96Ogp61qsjQH1Ax7aYvt63hTlsVLCjwa+vMz1gTf
-ji6BYvz7SP/4lFJJfDqVlvUlPhFKd2StdFn8WhAUqgkseIVA+GCaSGlcXuC+lFaG
-pimvYEKQ6kNETl7aop+tMn2ijy1Nb8XFO9mf7PpuIDFIjtdvCNEj+vbnMbdI1VLm
-CymVdzVeQENPg78GqlumiJm7BIX8FjdA4yH3enUueXDoAlT/3eNu9a+kfLBngqci
-HxYzThWlICLdSQhnX1ciIaB3P9b5e8+4vEE5j8AXbaVJYURdEr2UDQUnXRYBL0Zo
-zE9MbxpxXwVju3m7khAj5L/XQOIK3cC9HUcYA+/CPTZ8O9d2EkYHQYc6bqXOs+7t
-ldMLrwbbyRBVSZjHoR/wsr8TD3budCa9f6A8/rw7um/MBqWIXJU=
-=jEr/
------END PGP SIGNATURE-----
-
---Apple-Mail=_39AAF613-7FCD-49C2-BDB1-1F3EA6BDDDA2--
+> Should I change author?
+>  fs/iomap/direct-io.c | 112 +++++++++++++++++++------------------------
+>  1 file changed, 49 insertions(+), 63 deletions(-)
+>
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 5299f70428ef..8c1bec473586 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -312,27 +312,20 @@ static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+>  }
+>  
+>  /*
+> - * Figure out the bio's operation flags from the dio request, the
+> - * mapping, and whether or not we want FUA.  Note that we can end up
+> - * clearing the WRITE_THROUGH flag in the dio request.
+> + * Use a FUA write if we need datasync semantics and this is a pure data I/O
+> + * that doesn't require any metadata updates (including after I/O completion
+> + * such as unwritten extent conversion) and the underlying device either
+> + * doesn't have a volatile write cache or supports FUA.
+> + * This allows us to avoid cache flushes on I/O completion.
+>   */
+> -static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+> -		const struct iomap *iomap, bool use_fua, bool atomic_hw)
+> +static inline bool iomap_dio_can_use_fua(const struct iomap *iomap,
+> +		struct iomap_dio *dio)
+>  {
+> -	blk_opf_t opflags = REQ_SYNC | REQ_IDLE;
+> -
+> -	if (!(dio->flags & IOMAP_DIO_WRITE))
+> -		return REQ_OP_READ;
+> -
+> -	opflags |= REQ_OP_WRITE;
+> -	if (use_fua)
+> -		opflags |= REQ_FUA;
+> -	else
+> -		dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
+> -	if (atomic_hw)
+> -		opflags |= REQ_ATOMIC;
+> -
+> -	return opflags;
+> +	if (iomap->flags & (IOMAP_F_SHARED | IOMAP_F_DIRTY))
+> +		return false;
+> +	if (!(dio->flags & IOMAP_DIO_WRITE_THROUGH))
+> +		return false;
+> +	return !bdev_write_cache(iomap->bdev) || bdev_fua(iomap->bdev);
+>  }
+>  
+>  static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+> @@ -340,52 +333,59 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  	const struct iomap *iomap = &iter->iomap;
+>  	struct inode *inode = iter->inode;
+>  	unsigned int fs_block_size = i_blocksize(inode), pad;
+> -	bool atomic_hw = iter->flags & IOMAP_ATOMIC_HW;
+>  	const loff_t length = iomap_length(iter);
+>  	loff_t pos = iter->pos;
+> -	blk_opf_t bio_opf;
+> +	blk_opf_t bio_opf = REQ_SYNC | REQ_IDLE;
+>  	struct bio *bio;
+>  	bool need_zeroout = false;
+> -	bool use_fua = false;
+>  	int nr_pages, ret = 0;
+>  	u64 copied = 0;
+>  	size_t orig_count;
+>  
+> -	if (atomic_hw && length != iter->len)
+> -		return -EINVAL;
+> -
+>  	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
+>  	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
+>  		return -EINVAL;
+>  
+> -	if (iomap->type == IOMAP_UNWRITTEN) {
+> -		dio->flags |= IOMAP_DIO_UNWRITTEN;
+> -		need_zeroout = true;
+> -	}
+> +	if (dio->flags & IOMAP_DIO_WRITE) {
+> +		bio_opf |= REQ_OP_WRITE;
+> +
+> +		if (iter->flags & IOMAP_ATOMIC_HW) {
+> +			if (length != iter->len)
+> +				return -EINVAL;
+> +			bio_opf |= REQ_ATOMIC;
+> +		}
+> +
+> +		if (iomap->type == IOMAP_UNWRITTEN) {
+> +			dio->flags |= IOMAP_DIO_UNWRITTEN;
+> +			need_zeroout = true;
+> +		}
+>  
+> -	if (iomap->flags & IOMAP_F_SHARED)
+> -		dio->flags |= IOMAP_DIO_COW;
+> +		if (iomap->flags & IOMAP_F_SHARED)
+> +			dio->flags |= IOMAP_DIO_COW;
+> +
+> +		if (iomap->flags & IOMAP_F_NEW) {
+> +			need_zeroout = true;
+> +		} else if (iomap->type == IOMAP_MAPPED) {
+> +			if (iomap_dio_can_use_fua(iomap, dio))
+> +				bio_opf |= REQ_FUA;
+> +			else
+> +				dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
+> +		}
+>  
+> -	if (iomap->flags & IOMAP_F_NEW) {
+> -		need_zeroout = true;
+> -	} else if (iomap->type == IOMAP_MAPPED) {
+>  		/*
+> -		 * Use a FUA write if we need datasync semantics, this is a pure
+> -		 * data IO that doesn't require any metadata updates (including
+> -		 * after IO completion such as unwritten extent conversion) and
+> -		 * the underlying device either supports FUA or doesn't have
+> -		 * a volatile write cache. This allows us to avoid cache flushes
+> -		 * on IO completion. If we can't use writethrough and need to
+> -		 * sync, disable in-task completions as dio completion will
+> -		 * need to call generic_write_sync() which will do a blocking
+> -		 * fsync / cache flush call.
+> +		 * We can only do deferred completion for pure overwrites that
+> +		 * don't require additional I/O at completion time.
+> +		 *
+> +		 * This rules out writes that need zeroing or extent conversion,
+> +		 * extend the file size, or issue metadata I/O or cache flushes
+> +		 * during completion processing.
+>  		 */
+> -		if (!(iomap->flags & (IOMAP_F_SHARED|IOMAP_F_DIRTY)) &&
+> -		    (dio->flags & IOMAP_DIO_WRITE_THROUGH) &&
+> -		    (bdev_fua(iomap->bdev) || !bdev_write_cache(iomap->bdev)))
+> -			use_fua = true;
+> -		else if (dio->flags & IOMAP_DIO_NEED_SYNC)
+> +		if (need_zeroout || (pos >= i_size_read(inode)) ||
+> +		    ((dio->flags & IOMAP_DIO_NEED_SYNC) &&
+> +		     !(bio_opf & REQ_FUA)))
+>  			dio->flags &= ~IOMAP_DIO_CALLER_COMP;
+> +	} else {
+> +		bio_opf |= REQ_OP_READ;
+>  	}
+>  
+>  	/*
+> @@ -399,18 +399,6 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  	if (!iov_iter_count(dio->submit.iter))
+>  		goto out;
+>  
+> -	/*
+> -	 * We can only do deferred completion for pure overwrites that
+> -	 * don't require additional IO at completion. This rules out
+> -	 * writes that need zeroing or extent conversion, extend
+> -	 * the file size, or issue journal IO or cache flushes
+> -	 * during completion processing.
+> -	 */
+> -	if (need_zeroout ||
+> -	    ((dio->flags & IOMAP_DIO_NEED_SYNC) && !use_fua) ||
+> -	    ((dio->flags & IOMAP_DIO_WRITE) && pos >= i_size_read(inode)))
+> -		dio->flags &= ~IOMAP_DIO_CALLER_COMP;
+> -
+>  	/*
+>  	 * The rules for polled IO completions follow the guidelines as the
+>  	 * ones we set for inline and deferred completions. If none of those
+> @@ -428,8 +416,6 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  			goto out;
+>  	}
+>  
+> -	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua, atomic_hw);
+> -
+>  	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS);
+>  	do {
+>  		size_t n;
+> @@ -461,7 +447,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  		}
+>  
+>  		n = bio->bi_iter.bi_size;
+> -		if (WARN_ON_ONCE(atomic_hw && n != length)) {
+> +		if (WARN_ON_ONCE((bio_opf & REQ_ATOMIC) && n != length)) {
+>  			/*
+>  			 * This bio should have covered the complete length,
+>  			 * which it doesn't, so error. We may need to zero out
+> -- 
+> 2.31.1
 
