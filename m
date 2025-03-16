@@ -1,200 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-44144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44145-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6223AA635AB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Mar 2025 13:49:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A5DA635AE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Mar 2025 13:54:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E900188EE9C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Mar 2025 12:49:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62D0016E42D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Mar 2025 12:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2851A83E8;
-	Sun, 16 Mar 2025 12:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB551A8F79;
+	Sun, 16 Mar 2025 12:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M17U5ERM"
+	dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b="Ld8tWdC/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C14E1A5BB2
-	for <linux-fsdevel@vger.kernel.org>; Sun, 16 Mar 2025 12:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F7986348
+	for <linux-fsdevel@vger.kernel.org>; Sun, 16 Mar 2025 12:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742129359; cv=none; b=Ru1S8X9BXdfYmDIfHIUrMFe4p8TsRZ6NvOh0nKcL/WtDqI8X//7gOJtBvn7oTjUE5apRHwCkct+lHLH0tV0hFaOV1oYYv+0DnKmek7J+r7Nf78pRk9Lh/J84OhAOOF1cRQRTeI1+pxizsFCfrJiMMUXHxfwqYTA4dqbqKndVixQ=
+	t=1742129674; cv=none; b=gIvSa40Dn0DVvjNVOCXCAobOhnlVI3h0xJQb8y2jTTvqxyHw0SHVPncY6Iw+AZIp+NjMFeRu+VInbe3LiOKLAEdkDhPhGftYfjifiSWOmh1cQl29a/IQqmSsCB7tvE8RD5HcfH5uponeusao1CsBGoEuC6Udj1ss98V4y2V63jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742129359; c=relaxed/simple;
-	bh=gYGNBY+d4J2eTwFtOpFvwnowHkLW5Z0a1XFfZs4JGwk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gaBC4XEMRdNtyKYdUe2/xCbjQ4rOxzn+xZmg6hUnVCA3YXOu/3NaflATl1DEDVfh9iiK8msW/Nz6ncerEQ6SheYG2WipwJY3Mzi3xBn0H8Df/p8H4GYWQ9vHaa2LNCim/Gn4el9KfAW2P+ubkM60UHEC1b0osfCYImxmZPsG3HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M17U5ERM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC542C4CEDD;
-	Sun, 16 Mar 2025 12:49:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742129357;
-	bh=gYGNBY+d4J2eTwFtOpFvwnowHkLW5Z0a1XFfZs4JGwk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=M17U5ERMHrN7upUcpJ2CPWm6CsLD5BUOAKRlqCLl3O5qBtTa0Z9fCbswduGAjBVwq
-	 Ir3zU0ivrK5ugO5FT4ND8NReVTz8nnZrT7EuMy4F8t15s4ZuKhUUQb80hAtQp38PS1
-	 S8TZUd4XOqFbZmlSrPU/RJP7yS4inKVm8KDhfoM1zwNzvYEAMjC8nPPl3G+nHt4rjv
-	 EHY58qqYgbvu5pYLfpkdUNrRrfi2BhkauxzpXOu4mS3T0OUPuOaM6G1vW21cyP0LXE
-	 jV4nGjXD8LZZJzRrDDoDzULJmWC3g8O+XMuBRm+zUX7i0G4oNwK64hC/L5o0O24/Ge
-	 zeeubp0OUNgnA==
-From: Christian Brauner <brauner@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	Jeff Layton <jlayton@kernel.org>,
-	Lennart Poettering <lennart@poettering.net>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>,
-	Mike Yuan <me@yhndnzj.com>
-Subject: [PATCH] pidfs: ensure that PIDFS_INFO_EXIT is available
-Date: Sun, 16 Mar 2025 13:49:09 +0100
-Message-ID: <20250316-kabel-fehden-66bdb6a83436@brauner>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1742129674; c=relaxed/simple;
+	bh=OxA9qjBJqKakYnBRGso9o9ug7I0v0v6fw9kJZL/v/EQ=;
+	h=From:Message-Id:Content-Type:Mime-Version:Subject:Date:
+	 In-Reply-To:Cc:To:References; b=jkhUdtHxkA4bL831UbM7Ez35qxOoYiHPWuh2jhLz6DVFZLA/tmlpoSGpnO3IjIEeLx0BE1kAdab+7M894iHh7rsTTSdI1Q/GIqYaX335gP+GAdBS2Gn8//FgnoAiqqq4jaXKVtBg4DYZ5aQEbhp4VHAdpec4GhAxGLIA6SOZB+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca; spf=pass smtp.mailfrom=dilger.ca; dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b=Ld8tWdC/; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dilger.ca
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-223fd89d036so69119455ad.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Mar 2025 05:54:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dilger-ca.20230601.gappssmtp.com; s=20230601; t=1742129670; x=1742734470; darn=vger.kernel.org;
+        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DNgoIYRjmwaaNFGCS9H1CvEFT1qMkwLF12E6od/1rOs=;
+        b=Ld8tWdC/eOY6w1F+Fnc/5pk2MW7JvwwhAuT4snjfVVTFRKSj9GWyKF60SQ8s6/c83a
+         Oeo7RVzYpsCGk0JddN7Pgmv9sGjV3vh0SnYi432XaBi7bhJsCTkSv3vByoYemkmsbdFt
+         TSxWZBtT/YC2BRYHudBk/Jl5ROQYU3ixpIjv3ucTF4FLtddKo3SOtonLLWqlU6aRCqrG
+         9Qfl9MJPyujYhtElGkk6gU6j3a2K33lcEiw9TLMrPeKebdyMCdB+rrsxk0Nbk/6MfVOX
+         mvZiqlBYRzitSNRQJFIU9Xlw2xoSvmMy1zgCN/ySq79mKSlnM4dv+zEU3uNtPtyjMixU
+         VPwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742129670; x=1742734470;
+        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DNgoIYRjmwaaNFGCS9H1CvEFT1qMkwLF12E6od/1rOs=;
+        b=k5RT9kDe4NjF0ncgwqELk1FGd4F5cs98w9b5iofOb5b5pMRvkrDAbD2BTfY3NL++N+
+         QWbs0U1wBWdO+B5KP56p3GDVb2TvBGRgqe34xX5Ioqu4SXp6QhYUvJ0Jqr6sacVvWndj
+         kKUHoi+o9RJZgKXTtKuq935dm0yu3Zbr2p5hMP5AI9hQ02B08oDIf1/IiTzM+ahKh0AB
+         MmEVEl+D88cwkbRgrEl1voIwWouJAnv98OqvpHtpW/jYL2pjtzAOJL2vZ9MGgBbPfKwt
+         qAS1jTE6Ep7Vd+pUQPf8+/FZRAsVjT1v31ZaIOmADbFSgrxLEgHqsgoDjnx5tx65my+J
+         YERQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1BFyYOtrEVP8mvAhq/I1ZmcP9hqEVdW8nEjGhhY62hG700YpN6PlwnR3qcp6ZA6v0H0sorGJNsMKemcl4@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXmSDp/cFr6ga7r1rI7lB7hujxhIJNaxG2NLRm+Q7FTjZMX27b
+	+uX3nlUjAy52GmMHK56My6cdpYLG/zHXdLvNBhQtkeU8UssGnZMWOQQdWtONYIY=
+X-Gm-Gg: ASbGnctLxGhjYUSOYdfqREB/Ps16d9cPxfUAqoi5WxQ+CvLHaHSAbookBn7YSpp/BZ1
+	CAXLBXROJ+/qEbjm6W5TJvRKsULT/0SQ1Rhx38zLtBvFoILhjEZJoKf34zKOALXs9WS8trHvyaF
+	2gCV0pBJ+FNNI0TnV0LKeLzGnNqX/8Aa4c93zow9S/g0+XakhyGSCc1DwPu9nuvKAwAWQnyAlQY
+	/9Nk/aXc1NwTMm5r+FGhp75xcFkI2tIg358njnJhE89u+pOMqWnmVXXgRuiBqpmOW6VsMp84CVs
+	Q64f2bU+bWS9tIP74oLZ0FI8OsdPM/LNEFqjLOuZA7lpu3JxAr9ncV6NcwYCi+RAtngvSr1Rtaa
+	pcwzqlBBpibp+t7WVow==
+X-Google-Smtp-Source: AGHT+IFzsFhOYNXxQ4P0xXMx/sSODUbQClgIcbHZhWjx33vG1Z2MB70E9uzcFuoB9hQ2s+qFlx9SMA==
+X-Received: by 2002:a17:902:dacc:b0:224:1c95:451e with SMTP id d9443c01a7336-225e0af5c09mr90792615ad.33.1742129670186;
+        Sun, 16 Mar 2025 05:54:30 -0700 (PDT)
+Received: from cabot.adilger.int (S01068c763f81ca4b.cg.shawcable.net. [70.77.200.158])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbeb94sm57281945ad.199.2025.03.16.05.54.28
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 16 Mar 2025 05:54:29 -0700 (PDT)
+From: Andreas Dilger <adilger@dilger.ca>
+Message-Id: <1AFB99D7-8C35-4011-8A76-8D5099963C00@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_39AAF613-7FCD-49C2-BDB1-1F3EA6BDDDA2";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4815; i=brauner@kernel.org; h=from:subject:message-id; bh=gYGNBY+d4J2eTwFtOpFvwnowHkLW5Z0a1XFfZs4JGwk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRfO3FMyqHDLM0unjHa5Efv/Z7nGm8Yi767+lV0H2+2n KBTp1baUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMBGXZIY/vJJ/XDezX05d80JH 4Pj21Ii9YrP26prekcj5Hb00ksn0CCPD/sfXD7yYbFL+V+96j2DvRzeO2BnlWV9UyvR/yp6SZH/ BBwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH v2] ext4: hash: simplify kzalloc(n * 1, ...) to kzalloc(n,
+ ...)
+Date: Sun, 16 Mar 2025 06:54:11 -0600
+In-Reply-To: <20250316-ext4-hash-kcalloc-v2-1-2a99e93ec6e0@ethancedwards.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+ Theodore Ts'o <tytso@mit.edu>,
+ Ext4 Developers List <linux-ext4@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ linux-hardening@vger.kernel.org
+To: Ethan Carter Edwards <ethan@ethancedwards.com>
+References: <20250316-ext4-hash-kcalloc-v2-1-2a99e93ec6e0@ethancedwards.com>
+X-Mailer: Apple Mail (2.3273)
 
-When we currently create a pidfd we check that the task hasn't been
-reaped right before we create the pidfd. But it is of course possible
-that by the time we return the pidfd to userspace the task has already
-been reaped since we don't check again after having created a dentry for
-it.
 
-This was fine until now because that race was meaningless. But now that
-we provide PIDFD_INFO_EXIT it is a problem because it is possible that
-the kernel returns a reaped pidfd and it depends on the race whether
-PIDFD_INFO_EXIT information is available. This depends on if the task
-gets reaped before or after a dentry has been attached to struct pid.
+--Apple-Mail=_39AAF613-7FCD-49C2-BDB1-1F3EA6BDDDA2
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
-Make this consistent and only returned pidfds for reaped tasks if
-PIDFD_INFO_EXIT information is available. This is done by performing
-another check whether the task has been reaped right after we attached a
-dentry to struct pid.
+On Mar 15, 2025, at 11:33 PM, Ethan Carter Edwards =
+<ethan@ethancedwards.com> wrote:
+>=20
+> sizeof(char) evaluates to 1. Remove the churn.
+>=20
+> Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
 
-Since pidfs_exit() is called before struct pid's task linkage is removed
-the case where the task got reaped but a dentry was already attached to
-struct pid and exit information was recorded and published can be
-handled correctly. In that case we do return a pidfd for a reaped task
-like we would've before.
+Thanks,
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
-Note: I haven't had time to run selftests over this yet.
----
- fs/pidfs.c    | 54 +++++++++++++++++++++++++++++++++++++++++++++++----
- kernel/fork.c |  7 +++++--
- 2 files changed, 55 insertions(+), 6 deletions(-)
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index 3c630e9d4a62..3f6eca0ea4c1 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -753,8 +753,49 @@ static int pidfs_export_permission(struct handle_to_path_ctx *ctx,
- 	return 0;
- }
- 
-+static inline bool pidfs_pid_valid(struct pid *pid, const struct path *path,
-+				   unsigned int flags)
-+{
-+	enum pid_type type;
-+
-+	if (flags & CLONE_PIDFD)
-+		return true;
-+
-+	/*
-+	 * Make sure that if a pidfd is created PIDFD_INFO_EXIT
-+	 * information will be available. So after an inode for the
-+	 * pidfd has been allocated perform another check that the pid
-+	 * is still alive. If it is exit information is available even
-+	 * if the task gets reaped before the pidfd is returned to
-+	 * userspace. The only exception is CLONE_PIDFD where no task
-+	 * linkage has been established for @pid yet and the kernel is
-+	 * in the middle of process creation so there's nothing for
-+	 * pidfs to miss.
-+	 */
-+	if (flags & PIDFD_THREAD)
-+		type = PIDTYPE_PID;
-+	else
-+		type = PIDTYPE_TGID;
-+
-+	/*
-+	 * Since pidfs_exit() is called before struct pid's task linkage
-+	 * is removed  the case where the task got reaped but a dentry
-+	 * was already attached to struct pid and exit information was
-+	 * recorded and published can be handled correctly.
-+	 */
-+	if (unlikely(!pid_has_task(pid, type))) {
-+		struct inode *inode = d_inode(path->dentry);
-+		return !!READ_ONCE(pidfs_i(inode)->exit_info);
-+	}
-+
-+	return true;
-+}
-+
- static struct file *pidfs_export_open(struct path *path, unsigned int oflags)
- {
-+	if (!pidfs_pid_valid(d_inode(path->dentry)->i_private, path, oflags))
-+		return ERR_PTR(-ESRCH);
-+
- 	/*
- 	 * Clear O_LARGEFILE as open_by_handle_at() forces it and raise
- 	 * O_RDWR as pidfds always are.
-@@ -820,19 +861,24 @@ struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags)
- {
- 
- 	struct file *pidfd_file;
--	struct path path;
-+	struct path path __free(path_put) = {};
-+	unsigned int pidfd_flags = (flags & ~CLONE_PIDFD);
- 	int ret;
- 
-+	BUILD_BUG_ON(O_DSYNC != CLONE_PIDFD);
-+
- 	ret = path_from_stashed(&pid->stashed, pidfs_mnt, get_pid(pid), &path);
- 	if (ret < 0)
- 		return ERR_PTR(ret);
- 
--	pidfd_file = dentry_open(&path, flags, current_cred());
-+	if (!pidfs_pid_valid(pid, &path, flags))
-+		return ERR_PTR(-ESRCH);
-+
-+	pidfd_file = dentry_open(&path, pidfd_flags, current_cred());
- 	/* Raise PIDFD_THREAD explicitly as do_dentry_open() strips it. */
- 	if (!IS_ERR(pidfd_file))
--		pidfd_file->f_flags |= (flags & PIDFD_THREAD);
-+		pidfd_file->f_flags |= (pidfd_flags & PIDFD_THREAD);
- 
--	path_put(&path);
- 	return pidfd_file;
- }
- 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 8eac9cd3385b..2c25de14df02 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2425,8 +2425,11 @@ __latent_entropy struct task_struct *copy_process(
- 	if (clone_flags & CLONE_PIDFD) {
- 		int flags = (clone_flags & CLONE_THREAD) ? PIDFD_THREAD : 0;
- 
--		/* Note that no task has been attached to @pid yet. */
--		retval = __pidfd_prepare(pid, flags, &pidfile);
-+		/*
-+		 * Note that no task has been attached to @pid yet indicate
-+		 * that via CLONE_PIDFD.
-+		 */
-+		retval = __pidfd_prepare(pid, flags | CLONE_PIDFD, &pidfile);
- 		if (retval < 0)
- 			goto bad_fork_free_pid;
- 		pidfd = retval;
--- 
-2.47.2
+> ---
+> Changes in v2:
+> - change back to kzalloc because sizeof(char) is 1. Nice catch. =
+Thanks.
+> - Link to v1: =
+https://lore.kernel.org/r/20250315-ext4-hash-kcalloc-v1-1-a9132cb49276@eth=
+ancedwards.com
+> ---
+> fs/ext4/hash.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/fs/ext4/hash.c b/fs/ext4/hash.c
+> index =
+deabe29da7fbc3d35f674ff861a2f3b579ffdea2..33cd5b6b02d59fb749844fe481022f5f=
+44244bb6 100644
+> --- a/fs/ext4/hash.c
+> +++ b/fs/ext4/hash.c
+> @@ -302,7 +302,7 @@ int ext4fs_dirhash(const struct inode *dir, const =
+char *name, int len,
+>=20
+> 	if (len && IS_CASEFOLDED(dir) &&
+> 	   (!IS_ENCRYPTED(dir) || fscrypt_has_encryption_key(dir))) {
+> -		buff =3D kzalloc(sizeof(char) * PATH_MAX, GFP_KERNEL);
+> +		buff =3D kzalloc(PATH_MAX, GFP_KERNEL);
+> 		if (!buff)
+> 			return -ENOMEM;
+>=20
+>=20
+> ---
+> base-commit: da920b7df701770e006928053672147075587fb2
+> change-id: 20250315-ext4-hash-kcalloc-203033977bd9
+>=20
+> Best regards,
+> --
+> Ethan Carter Edwards <ethan@ethancedwards.com>
+>=20
 
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_39AAF613-7FCD-49C2-BDB1-1F3EA6BDDDA2
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmfWygAACgkQcqXauRfM
+H+BQ0BAAsNaIw3vgIaT+xh7yJw5BH45EMg3Ku3GEXEt1acV4lFDZhcF1LVfC0vsa
+M74lEHtETKjJWBIcYZLqXHZGLne/JpFbt6g1HfTjaV4MMfooNNrA44VnZYLUUA2+
+RZM3HrlWFUhgvqP+j8nY8pO/1x6KuStnv2FiitZbAFeKyw+HjrGF3hZD9BZU3tds
+AG0jpP6rindOWFzQFgIBB88Tl09BUSDsq4twC3vdkJ69fxYtuEhVqrQsQTRSG5oQ
+Xp8OaKkgUsOr+AqWSqtqYLBH96Ogp61qsjQH1Ax7aYvt63hTlsVLCjwa+vMz1gTf
+ji6BYvz7SP/4lFJJfDqVlvUlPhFKd2StdFn8WhAUqgkseIVA+GCaSGlcXuC+lFaG
+pimvYEKQ6kNETl7aop+tMn2ijy1Nb8XFO9mf7PpuIDFIjtdvCNEj+vbnMbdI1VLm
+CymVdzVeQENPg78GqlumiJm7BIX8FjdA4yH3enUueXDoAlT/3eNu9a+kfLBngqci
+HxYzThWlICLdSQhnX1ciIaB3P9b5e8+4vEE5j8AXbaVJYURdEr2UDQUnXRYBL0Zo
+zE9MbxpxXwVju3m7khAj5L/XQOIK3cC9HUcYA+/CPTZ8O9d2EkYHQYc6bqXOs+7t
+ldMLrwbbyRBVSZjHoR/wsr8TD3budCa9f6A8/rw7um/MBqWIXJU=
+=jEr/
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_39AAF613-7FCD-49C2-BDB1-1F3EA6BDDDA2--
 
