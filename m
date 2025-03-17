@@ -1,189 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-44180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C486FA6465F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Mar 2025 09:57:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE862A64662
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Mar 2025 09:57:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7778D7A5DA4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Mar 2025 08:56:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8821B3AB7F4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Mar 2025 08:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A19B221727;
-	Mon, 17 Mar 2025 08:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B440E221F14;
+	Mon, 17 Mar 2025 08:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fK+jftjz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="njcCKsv9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C6121ABD7
-	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Mar 2025 08:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146471B412B;
+	Mon, 17 Mar 2025 08:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742201815; cv=none; b=D842hi44Lqf5ibZ6UiK6jVoMkmkRUPLIR6ZcZUa2cccyAIofOStrG2hM3teXbK0nQ/RfFXX+0Sw/TaAbhkN8029GTnVxRn7xVW38JUNmri5Gdn87c/0nFMxOBL/PyBhvlq+PtWAEjXWmoZDkrUEvnO/sUXOeB48KTOBx3VCFnCI=
+	t=1742201822; cv=none; b=TyslbrCAm49VgrUk3tpqBBy/HmiNDUMcnThhxxzoXKg0RkhQoDffbwKaCjIkf1MQRlauwNGHeEpra55FYzLCqzm8X5HwlHPWxfACwTorw6CBZks2Q8bChuF+714PK4J7cScSkXVZTBKiblbglFkOAzLAFj4cPh8+xiL51stmkUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742201815; c=relaxed/simple;
-	bh=ZYj8b8y8QX9Pm1xmNBK6oGANO3/04Ws0gCnKVRGngMI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YSnx9FaUQNpVCh7VXzRDqlxNeC+BcECtn/nJmOTvK0PYolVmqvAj6abGIfOp8yL2FpsOMYBwxaiudHSw6Ng5bioPG5y8KnJpUuVGqa0zEuZ+WwmvtCjZanXlZGu74rC+ZpZEBREN0MLONnMdSEdYXLQOsaap9qavgDJKxbqxN4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fK+jftjz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742201813;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jM/mmsLHCA3hsf5yRrO/MVwhGD8w1bWurA3e+6TGTHM=;
-	b=fK+jftjzEBS8Se6gbWXXTNB+9KudEuxEnuefPSPj7BXIGoJcrjvLGCB9fUuDSkodYUNgMh
-	Qntki9VYMWIb0OCt/jTZi/zLwBEYHyka61rRTAjJ8Ow3FfcCZktsSsjOWS95VBbqhvBhkb
-	CfWbWMYhG26C/HkcxNVdELpfjvhzj1w=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-70-4KMAY24MMomjQHuPEmo18g-1; Mon, 17 Mar 2025 04:56:51 -0400
-X-MC-Unique: 4KMAY24MMomjQHuPEmo18g-1
-X-Mimecast-MFC-AGG-ID: 4KMAY24MMomjQHuPEmo18g_1742201810
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-391492acb59so2611459f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Mar 2025 01:56:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742201810; x=1742806610;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jM/mmsLHCA3hsf5yRrO/MVwhGD8w1bWurA3e+6TGTHM=;
-        b=f20kxiBdpp8BTZFgUGtyjZLOIyZC81ak0ZioU+9a/5Ic77u20nwCtwpksaxlcQ60yp
-         IuJe8UdY63Rted2tgVq96OM8pRD8Huqnyv42M0hAWXXfniTn3jc5qD4nrbbibpIQnOIY
-         /xiGyXTyArlpMH06X7I19b6UYTS6X4e+MsgiHtZwC/DevnYUataQu2bBlOBkwioGI6v+
-         5rDk4htvHYuNjaGkNcr6MYuJMEiLW3+wYKZ2yQ3em4sv03INVomfotROb9jmVbCay62B
-         wqf6dWFl7V+YfGXUdOprool7kNhLY7fsOp/E+2sxzBeT5SPdff/8XvJJd3sPpROM+PGf
-         W1dA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbdqe/LjvFN8QBUFty1BtcZKeJlpfknBPds5zqUEXVImJcK4m3GaSx8oGQ6ruPFq23RhR5M/zJ7iYoHaHK@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvFUgQwFzajPyUHO6ozqzwPjiIqzw5asS92ts0mXDuxmF3tur6
-	N5L2O5DiddfHI/aXGlwC7PKWdTxDdMkO5s9y0tzR9qNCYlCbYnmv2A3peeluYmFbXbVs7E4gl0r
-	SjsBe8bFm+7dSCk0KscY7YyBEvKcBmnfc3saBA6zYEQanGK0Bn8Ofu2PHfcCeB94=
-X-Gm-Gg: ASbGnctbTTQJ32e8lDymOUuskjsfBCg2yKGVzPQxJuaAIxTj8r14tP/7MA+8CyLotuu
-	L+BPrnu+SvkmQA5nU3gB+h7OF3Lo3Cq86Gg5x7eZ3roZ6kAUL7h8qmiPctrHhiQr9BIj9NIxKOd
-	X/S6f1HJptzGzlkscjWAkUI9sqwXA4Cx11Y3k32RXt/UqSljlGwj55CGRN3AfGge58h6hJIH0NE
-	A6uZlyNMvmqlyw0szwyYo9b6V0kkhv1D4xDNQ4nQ+MrW6mV4CktPss6uPTiQt2RzBwJv+t7b6tu
-	5qWW7V15J3ClC29a2gY06G+MvW/fyxdHpxdpHp5BQc2hSo9UByXvNLsXXmycJq5chpseQ47kOA+
-	Q/Mx5am8CbrkxkFifKTxWHUzicQnlGxkYQpYLPElZZ8I=
-X-Received: by 2002:a5d:588c:0:b0:38d:d371:e04d with SMTP id ffacd0b85a97d-3971ee44380mr10292294f8f.34.1742201809885;
-        Mon, 17 Mar 2025 01:56:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG6sFzpIy3f/Pv2Gq78PQtI2i6sVUEa7ZSCENPZGFwK1C9x3Bmdp/wdYGN+6WX2vOInODK0Xw==
-X-Received: by 2002:a5d:588c:0:b0:38d:d371:e04d with SMTP id ffacd0b85a97d-3971ee44380mr10292276f8f.34.1742201809441;
-        Mon, 17 Mar 2025 01:56:49 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c73c:aa00:ab00:6415:bbb7:f3a1? (p200300cbc73caa00ab006415bbb7f3a1.dip0.t-ipconnect.de. [2003:cb:c73c:aa00:ab00:6415:bbb7:f3a1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c83b6e4esm14163659f8f.29.2025.03.17.01.56.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 01:56:48 -0700 (PDT)
-Message-ID: <1c7018f1-fdc5-4fc6-adc7-fae592851710@redhat.com>
-Date: Mon, 17 Mar 2025 09:56:47 +0100
+	s=arc-20240116; t=1742201822; c=relaxed/simple;
+	bh=ywlphlxpwCbbPyYcOlpQM+tQkwstJ8CoKCBbl1Omctg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BDRVANsfAM+DmaTsm9jlPtGXm6csWt54a1Rqqt1PIBYBM6VCAVoMCOyZncBJbgxxdhL1hNaa43yKuqSStZz/qNiXi7c3hKTtQRR6yk7kV8NoD7oNlBgPZ4oBLIdImIBBsT49INCnj+MVdeg8pdd40t2ToWVVVc74U9oAPJnMx3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=njcCKsv9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C619C4CEE3;
+	Mon, 17 Mar 2025 08:56:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742201821;
+	bh=ywlphlxpwCbbPyYcOlpQM+tQkwstJ8CoKCBbl1Omctg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=njcCKsv9iXfeuAqtf22Aoj3cXDpO82NMV6YXnb4cMRONWBaOjoS/BLaMzhGLK3984
+	 o43sWUkgw8B/ofiiaaUm85Y2LF0+YyJu+U27im+JEzUTgxY6xqeea40663LJ4Z6vIT
+	 oncktrJDsZBd6JB7bB1YQMxzgXxELEf4Xt3SbiyX1CprO33Y+14dw2KbkIxArKwnA6
+	 RzzUy5rF9z19lBw3EKvDedt2AsZtLG6eyk4UlSQSJgvEmKVzBvl42OsUVd4h+wSzyM
+	 hMmt/xy4aHOj5aINlORD20C3Ki8x3f8jhz+QCZSFX3RV7W2I+ljVTwH+LXdbzsyc/D
+	 7hQs4reau5ihQ==
+Date: Mon, 17 Mar 2025 09:56:54 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Ryan Lee <ryan.lee@canonical.com>, Malte =?utf-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>, 
+	linux-security-module@vger.kernel.org, apparmor <apparmor@lists.ubuntu.com>, linux-efi@vger.kernel.org, 
+	John Johansen <john.johansen@canonical.com>, "jk@ozlabs.org" <jk@ozlabs.org>, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC 1/1] fix NULL mnt [was Re: apparmor NULL pointer
+ dereference on resume [efivarfs]]
+Message-ID: <20250317-luftdicht-mehrweg-aab410542864@brauner>
+References: <CAKCV-6uuKo=RK37GhM+fV90yV9sxBFqj0s07EPSoHwVZdDWa3A@mail.gmail.com>
+ <ea97dd9d1cb33e28d6ca830b6bff0c2ece374dbe.camel@HansenPartnership.com>
+ <CAMj1kXGLXbki1jezLgzDGE7VX8mNmHKQ3VLQPq=j5uAyrSomvQ@mail.gmail.com>
+ <20250311-visite-rastplatz-d1fdb223dc10@brauner>
+ <814a257530ad5e8107ce5f48318ab43a3ef1f783.camel@HansenPartnership.com>
+ <7bdcc2c5d8022d2f1a7ec23c0351f7816d4464c8.camel@HansenPartnership.com>
+ <20250315-allemal-fahrbahn-9afc7bc0008d@brauner>
+ <bad92b18f389256d26a886b2b0706d04c8c6c336.camel@HansenPartnership.com>
+ <20250316-vergibt-hausrat-b23d525a1d24@brauner>
+ <b2086c64d47463a019ac9fc9e5d7ee7f70becc8d.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/proc/page: Refactoring to reduce code duplication.
-To: Liu Ye <liuyerd@163.com>, akpm@linux-foundation.org
-Cc: willy@infradead.org, ran.xiaokai@zte.com.cn, dan.carpenter@linaro.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Liu Ye <liuye@kylinos.cn>
-References: <20250317080118.95696-1-liuyerd@163.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250317080118.95696-1-liuyerd@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b2086c64d47463a019ac9fc9e5d7ee7f70becc8d.camel@HansenPartnership.com>
 
-On 17.03.25 09:01, Liu Ye wrote:
-> From: Liu Ye <liuye@kylinos.cn>
+On Sun, Mar 16, 2025 at 10:26:12AM -0400, James Bottomley wrote:
+> On Sun, 2025-03-16 at 07:46 +0100, Christian Brauner wrote:
+> > On Sat, Mar 15, 2025 at 02:41:43PM -0400, James Bottomley wrote:
+> [...]
+> > > However, there's another problem: the mntput after kernel_file_open
+> > > may synchronously call cleanup_mnt() (and thus deactivate_super())
+> > > if the open fails because it's marked MNT_INTERNAL, which is caused
+> > > by SB_KERNMOUNT.  I fixed this just by not passing the SB_KERNMOUNT
+> > > flag, which feels a bit hacky.
+> > 
+> > It actually isn't. We know that vfs_kern_mount() will always
+> > resurface the single superblock that's exposed to userspace because
+> > we've just taken a reference to it earlier in efivarfs_pm_notify().
+> > So that SB_KERNMOUNT flag is ignored because no new superblock is
+> > allocated. It would only matter if we'd end up allocating a new
+> > superblock which we never do.
 > 
-> The function kpageflags_read and kpagecgroup_read is quite similar
-> to kpagecount_read. Consider refactoring common code into a helper
-> function to reduce code duplication.
+> I agree with the above: fc->sb_flags never propagates to the existing
+> superblock.  However, nothing propagates the superblock flags back to
+> fc->sb_flags either.  The check in vfs_create_mount() is on fc-
+> >sb_flags.  Since the code is a bit hard to follow I added a printk on
+> the path.mnt flags and sure enough it comes back with MNT_INTERNAL when
+> SB_KERNMOUNT is set.
 > 
-> Signed-off-by: Liu Ye <liuye@kylinos.cn>
-> ---
->   fs/proc/page.c | 158 ++++++++++++++++---------------------------------
->   1 file changed, 50 insertions(+), 108 deletions(-)
+> > And if we did it would be a bug because the superblock we allocate
+> > could be reused at any time if a userspace task mounts efivarfs
+> > before efivarfs_pm_notify() has destroyed it (or the respective
+> > workqueue). But that superblock would then have SB_KERNMOUNT for
+> > something that's not supposed to be one.
 > 
-> diff --git a/fs/proc/page.c b/fs/proc/page.c
-> index a55f5acefa97..f413016ebe67 100644
-> --- a/fs/proc/page.c
-> +++ b/fs/proc/page.c
-> @@ -37,19 +37,17 @@ static inline unsigned long get_max_dump_pfn(void)
->   #endif
->   }
->   
-> -/* /proc/kpagecount - an array exposing page mapcounts
-> - *
-> - * Each entry is a u64 representing the corresponding
-> - * physical page mapcount.
-> - */
-> -static ssize_t kpagecount_read(struct file *file, char __user *buf,
-> -			     size_t count, loff_t *ppos)
-> +static ssize_t kpage_read(struct file *file, char __user *buf,
-> +		size_t count, loff_t *ppos,
-> +		u64 (*get_page_info)(struct page *))
+> True, but the flags don't propagate to the superblock, so no bug.
 
-Can we just indicate using an enum which operation to perform, so we can 
-avoid having+passing these functions?
+SB_KERNMOUNT does propagate to the superblock if it is newly allocated
+via sget_fc(): alloc_super(fc->fs_type, fc->sb_flags, user_ns);
 
--- 
-Cheers,
+But you misunderstood. "If we did it" means "If efivarfs_pm_notify()
+somehow were to allocate a new superblock (which it doesn't) then having
+SB_KERNMOUNT raised on the newly allocated superblock would be bug
+because the superblock could be reused by userspace mounting efivars.
 
-David / dhildenb
+So removing it is the correct thing in either case. It's just confusing
+to anyone maintaining that code thinking that it'd be possible for a
+superblock to resurface with SB_KERNMOUNT.
 
+> 
+> > And whether or not that helper mount has MNT_INTERNAL is immaterial
+> > to what you're doing here afaict.
+> 
+> I think the problem is the call chain mntput() -> mntput_no_expire()
+> which directly calls cleanup_mnt() -> deactivate_super() if that flag
+> is set.  Though I don't see that kernel_file_open() could ever fail
+> except for some catastrophic reason like out of memory, so perhaps it
+> isn't worth quibbling about.
+
+Not what I'm saying. Not having MNT_INTERNAL is paramount to not
+deadlocking but by not having it you're not losing anything.
+
+> 
+> > So not passing the SB_KERNMOUNT flag is the right thing (see devtmpfs
+> > as well). You could slap a comment in here explaining that we never
+> > allocate a new superblock so it's clear to people not familiar with
+> > this particular code.
+> 
+> OK, so you agree that the code as written looks correct? Even if we
+> don't necessarily quite agree on why.
+
+We agree but you just misunderstood. :)
 
