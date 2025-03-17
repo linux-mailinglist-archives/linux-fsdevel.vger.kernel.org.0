@@ -1,219 +1,263 @@
-Return-Path: <linux-fsdevel+bounces-44197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517F3A64D62
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Mar 2025 12:53:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7789DA65295
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Mar 2025 15:15:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09FF018963D6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Mar 2025 11:53:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75452188A3D2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Mar 2025 14:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B2D238D51;
-	Mon, 17 Mar 2025 11:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5EC241675;
+	Mon, 17 Mar 2025 14:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="He+teU/w"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XRZTcg/J"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DA523815F
-	for <linux-fsdevel@vger.kernel.org>; Mon, 17 Mar 2025 11:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E470220322;
+	Mon, 17 Mar 2025 14:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742212392; cv=none; b=k6DRANSGIkyeOhelNqbNSY/pRJU0mvyDfhq3s1uqQ1g+2nEEGuqT6fDXuUw11H8RInP4dMsuxlm0fUNY578fQy2FcOMejN1eV2UVFSwOCpMZAeCM6PBsLtRu6rE1Wg51F77dU3eaJqJVviirWsQcFKba5UXoX262k0IV+Ob5COM=
+	t=1742220858; cv=none; b=pnSkEaQ0HmbvQ4+FPUiGVTMev/EXIIERjedS1vcnZnJ6q5EipwA431wxyl+U03YOQg+EeVLOZAJeTDSRyvA3MFJpA+xqJt1xynmwnXVM8Upzko8NydKAEg+uuN248SPGv9tRZoIgXrW09sOf1JxQA3QBMvakp/Qpf0mhNEpVC+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742212392; c=relaxed/simple;
-	bh=5kErYDQm5IeYb+fhyjZg6NjqMDCo2JxgEGxd2Qz+a3Q=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=PSLwDhmHQ7zrv63L49lBwdPaCVS2VGmsOAyXxaayVcTJ3rAnbl5JDOwP+2SYqHj4xdA5QDBMpJjuvn17Hn4+Y4YoGUPds0ia43PQ0EaBM0e72gEeIMbfs/r2twr0RPakQuv+X16TFb3b6Og0VPiJN/W4mF8xJEGw8gONrVTzTVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=He+teU/w; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742212389;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YcQ5Y3qi8I25j6PFVriuZX0AXowSo1CEZ8WifhltYCQ=;
-	b=He+teU/wHrEEJFAbPCGWMwQn08NUKLirRvsKHuFN/0AbUUuUDlni6dA83VxTssy50i2WIq
-	+zJUOeDnjo9NcEuXqvUU1ICPin4Ce0wyJ5PJ1KlLATWWqaGHozkN82RzkzasGvczb9qeo6
-	iPbwLF3lN2s9VeGKvcuh9MfmypQTyQo=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-694-VFydDtk5ObakTPaIGfce_g-1; Mon,
- 17 Mar 2025 07:53:04 -0400
-X-MC-Unique: VFydDtk5ObakTPaIGfce_g-1
-X-Mimecast-MFC-AGG-ID: VFydDtk5ObakTPaIGfce_g_1742212383
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C34DF195605A;
-	Mon, 17 Mar 2025 11:53:02 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 55A711800946;
-	Mon, 17 Mar 2025 11:52:59 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <a62918950646701cb9bb2ab0a32c87b53e2f102e.camel@dubeyko.com>
-References: <a62918950646701cb9bb2ab0a32c87b53e2f102e.camel@dubeyko.com> <20250313233341.1675324-1-dhowells@redhat.com> <20250313233341.1675324-5-dhowells@redhat.com>
-To: slava@dubeyko.com
-Cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
-    Ilya Dryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>,
-    Dongsheng Yang <dongsheng.yang@easystack.cn>,
-    ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-    linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-    Slava.Dubeyko@ibm.com
-Subject: Re: [RFC PATCH 04/35] ceph: Convert ceph_mds_request::r_pagelist to a databuf
+	s=arc-20240116; t=1742220858; c=relaxed/simple;
+	bh=FaKXewuiPsteMre9gO10msskbpTrobL3/oyES+8hp/g=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=pGCDWEed5UxJmAKVohhTKTsZBEKFzknUzVTRr2lF2kTYcB4eiWfz2KWMJvR5DycFFfRIc5DZtlJekuwEtgiAeqd63H04EF2s2wSaIdmDrUqHPWTmRd97JEVxzcYwQl1zTZAacUEHHMFBHbljBhK3A6yynLvOzPEizKudGY0ap5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XRZTcg/J; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2260c915749so14854365ad.3;
+        Mon, 17 Mar 2025 07:14:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742220855; x=1742825655; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=FWm0/DCZUe0Mhr2IZVtrNDeCytOlPsIxKkTRgrtWi20=;
+        b=XRZTcg/JPchPz3Lxx79CdG/GVNqkFXxhhRH8EZ1qtktS3pd7Tap6nuBQlBQFqHgBig
+         g8e2Fp42AuN4qnS56kSJ0IdU2GoUbTGY8n4HZJSQHMFoMKFe5zscjH40ORLSaqGFlqFS
+         TbgdJqxHzQrKS6fLomZrq6VVRHSMbK+O0G2HK1pMrbc0DWNlIoxp1MAlocr9hVpC5dSN
+         yEkoK3LbR9PgLCICE+KpTZYpS3aZ+TOMf0vzFNGCCvEtM8qTAIPt6alJhPnfhFD4kFst
+         Or0pkQgXDHoSGgWyDDjTHnnozOiEPO2xyge4jW8tnqi2SR1HibcaCOnuaLGvizjIZIyc
+         9pAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742220855; x=1742825655;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FWm0/DCZUe0Mhr2IZVtrNDeCytOlPsIxKkTRgrtWi20=;
+        b=TsNU/Zi69aUl6rCcUU4wUkIoElTy72lqCKebiEj5CD5boAUAusBm1RisTnjkia/b3s
+         B+1BeykTy9OdiKGgKSl2slNXPPaR9azLMwaTzwPYxwbuiRhcy9iR4mP93Bh1uZ2m4YKF
+         Ewi66cf4DEYo6yQIH58Vvk2DlzRMaZ0wAyIiqk6sWxSmV3tL657diFXr8eSPJjh4ODzA
+         JkzfYVGEjPerbIcnxX+mWsQ56rYXZnGa/a/boT3GavlMwDdfxapQCvC6IJVdeuXCKLib
+         3Q1QqJD9w6jpJaTetXq8mBDcw4/n/fCsN3GS4QJz8PWNG9lmNSX/0C/udIfwSikgjA5v
+         m3RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNhvOT0b6U9Qlgqznry7nvXKfy/USlJyJ7rKSrhGjHJxWYQEnZh1Aes2X0Q0i2Rot6tmdAIJ6xsGKwSwiaEQ==@vger.kernel.org, AJvYcCW63Etva4ufkSqVKhSgbKfrAmp3jHeucBLIrKp8oiC0bzCrc25QIx6jP5+WEw04j2zS7P1Y/tpYX/qrwEc+@vger.kernel.org, AJvYcCXegqR5uQfhhI9URTo19JnQ7EVWBJTRInJenx3asmAO7alFe4kfwS2Ao1ChfwAa8NOgUF80NyD5YLw9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8o6NsVfWKpCqgB8Rmm/jHhEt+vYpzZMtxrZgax0szxPrqFgzI
+	LejeFCn99ItGw04v345nXBMieMKvdwTUgp/nOZMYApj2Gb/Tqr1V
+X-Gm-Gg: ASbGncunJJbWyDbes82ULLzHJMCyqfPhiQPfpOmT2Y8k8G06HLjDr9vzMJUcEQNFPzk
+	QoY/1JlAouA50puRSAJjvebzbY3BQwZLOin/2ribd/jpoosb7E9uVmTQjKEIerm01cRmOyCOpB3
+	n6mTTAkz3Xs8r05OiP2mZt45Whp6L2rfb3nAFJCqN6UT8fmX0WfQ/RHKl/JDbbIhE//C4H84qvZ
+	sJkrPLY/5PZxdfxKL+r46PZpigbz9jCzn+2fDhu0TrY3YmW44f7ruNkNZe0VeyiMR+8FBHrz1DM
+	9INMGL92lVUEAkCS9vBTo5EI6bzp5ZzENYWdgA==
+X-Google-Smtp-Source: AGHT+IGVhWiXUXLlgBwJrqlpMtNkeAgOI0BV23gIzLp9axR+K2PcVY/OoWewktpbkKvIm0EfbAd1fA==
+X-Received: by 2002:a17:902:cf07:b0:223:fbc7:25f4 with SMTP id d9443c01a7336-225e0a6c368mr158926935ad.14.1742220854975;
+        Mon, 17 Mar 2025 07:14:14 -0700 (PDT)
+Received: from dw-tp ([171.76.81.247])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba6ca3sm75479905ad.134.2025.03.17.07.14.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 07:14:14 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: John Garry <john.g.garry@oracle.com>, brauner@kernel.org, djwong@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com, martin.petersen@oracle.com, tytso@mit.edu, linux-ext4@vger.kernel.org, John Garry <john.g.garry@oracle.com>
+Subject: Re: [PATCH v6 03/13] iomap: rework IOMAP atomic flags
+In-Reply-To: <20250313171310.1886394-4-john.g.garry@oracle.com>
+Date: Mon, 17 Mar 2025 19:14:25 +0530
+Message-ID: <87tt7rsreu.fsf@gmail.com>
+References: <20250313171310.1886394-1-john.g.garry@oracle.com> <20250313171310.1886394-4-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 17 Mar 2025 11:52:58 +0000
-Message-ID: <2161520.1742212378@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-slava@dubeyko.com wrote:
+John Garry <john.g.garry@oracle.com> writes:
 
-> > -		err =3D ceph_pagelist_reserve(pagelist, len +
-> > val_size1 + 8);
-> > +		err =3D ceph_databuf_reserve(dbuf, len + val_size1 +
-> > 8,
-> > +					=C2=A0=C2=A0 GFP_KERNEL);
->=20
-> I know that it's simple change. But this len + val_size1 + 8 looks
-> confusing, anyway. What this hardcoded 8 means? :)
-
-You tell me.  The '8' is pre-existing.
-
-> > -	if (req->r_pagelist) {
-> > -		iinfo.xattr_len =3D req->r_pagelist->length;
-> > -		iinfo.xattr_data =3D req->r_pagelist->mapped_tail;
-> > +	if (req->r_dbuf) {
-> > +		iinfo.xattr_len =3D ceph_databuf_len(req->r_dbuf);
-> > +		iinfo.xattr_data =3D kmap_ceph_databuf_page(req-
-> > >r_dbuf, 0);
->=20
-> Possibly, it's in another patch. Have we removed req->r_pagelist from
-> the structure?
-
-See patch 20 "libceph: Remove ceph_pagelist".
-
-It cannot be removed here as the kernel must still compile and work at this
-point.
-
-> Do we always have memory pages in ceph_databuf? How
-> kmap_ceph_databuf_page() will behave if it's not memory page.
-
-Are there other sorts of pages?
-
-> Maybe, we need to hide kunmap_local() into something like
-> kunmap_ceph_databuf_page()?
-
-Actually, probably better to rename kmap_ceph_databuf_page() to
-kmap_local_ceph_databuf().
-
-> Maybe, it makes sense to call something like ceph_databuf_length()
-> instead of low level access to dbuf->nr_bvec?
-
-Sounds reasonable.  Better to hide the internal workings.
-
-> > +	if (as_ctx->dbuf) {
-> > +		req->r_dbuf =3D as_ctx->dbuf;
-> > +		as_ctx->dbuf =3D NULL;
->=20
-> Maybe, we need something like swap() method? :)
-
-I could point out that you were complaining about ceph_databuf_get() return=
-ing
-a pointer than a void;-).
-
-> > +	dbuf =3D ceph_databuf_req_alloc(2, 0, GFP_KERNEL);
->=20
-> So, do we allocate 2 items of zero length here?
-
-You don't.  One is the bvec[] count (2) and one is that amount of memory to
-preallocate (0) and attach to that bvec[].
-
-Now, it may make sense to split the API calls to handle a number of differe=
-nt
-scenarios, e.g.: request with just protocol, no pages; request with just
-pages; request with both protocol bits and page list.
-
-> > +	if (ceph_databuf_insert_frag(dbuf, 0, sizeof(*header),
-> > GFP_KERNEL) < 0)
-> > +		goto out;
-> > +	if (ceph_databuf_insert_frag(dbuf, 1, PAGE_SIZE, GFP_KERNEL)
-> > < 0)
-> >  		goto out;
-> >=20=20
-> > +	iov_iter_bvec(&iter, ITER_DEST, &dbuf->bvec[1], 1, len);
->=20
-> Is it correct &dbuf->bvec[1]? Why do we work with item #1? I think it
-> looks confusing.
-
-Because you have a protocol element (in dbuf->bvec[0]) and a buffer (in
-dbuf->bvec[1]).
-
-An iterator is attached to the buffer and the iterator then conveys it to
-__ceph_sync_read() as the destination.
-
-If you look a few lines further on in the patch, you can see the first
-fragment being accessed:
-
-> +	header =3D kmap_ceph_databuf_page(dbuf, 0);
+> Flag IOMAP_ATOMIC_SW is not really required. The idea of having this flag
+> is that the FS ->iomap_begin callback could check if this flag is set to
+> decide whether to do a SW (FS-based) atomic write. But the FS can set
+> which ->iomap_begin callback it wants when deciding to do a FS-based
+> atomic write.
+>
+> Furthermore, it was thought that IOMAP_ATOMIC_HW is not a proper name, as
+> the block driver can use SW-methods to emulate an atomic write. So change
+> back to IOMAP_ATOMIC.
+>
+> The ->iomap_begin callback needs though to indicate to iomap core that
+> REQ_ATOMIC needs to be set, so add IOMAP_F_ATOMIC_BIO for that.
+>
+> These changes were suggested by Christoph Hellwig and Dave Chinner.
+>
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  fs/ext4/inode.c       |  5 ++++-
+>  fs/iomap/direct-io.c  |  8 +++-----
+>  fs/iomap/trace.h      |  2 +-
+>  fs/xfs/xfs_iomap.c    |  3 +++
+>  include/linux/iomap.h | 12 +++++-------
+>  5 files changed, 16 insertions(+), 14 deletions(-)
+>
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index ba2f1e3db7c7..949d74d34926 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3290,6 +3290,9 @@ static void ext4_set_iomap(struct inode *inode, struct iomap *iomap,
+>  	if (map->m_flags & EXT4_MAP_NEW)
+>  		iomap->flags |= IOMAP_F_NEW;
+>  
+> +	if (flags & IOMAP_ATOMIC)
+> +		iomap->flags |= IOMAP_F_ATOMIC_BIO;
 > +
+>  	if (flags & IOMAP_DAX)
+>  		iomap->dax_dev = EXT4_SB(inode->i_sb)->s_daxdev;
+>  	else
+> @@ -3467,7 +3470,7 @@ static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
+>  		return false;
+>  
+>  	/* atomic writes are all-or-nothing */
+> -	if (flags & IOMAP_ATOMIC_HW)
+> +	if (flags & IOMAP_ATOMIC)
+>  		return false;
+>  
 
-Note that, because the read buffer is very likely a whole page, I split them
-into separate sections rather than trying to allocate an order-1 page as th=
-at
-would be more likely to fail.
+The changes in ext4 is mostly straight forward. Essentially for
+an IOMAP_ATOMIC write requests we are always setting IOMAP_F_ATOMIC_BIO in
+the ->iomap_begin() routine. This is done to inform the iomap that this
+write request needs to issue an atomic bio, so iomap then goes and sets
+REQ_ATOMIC flag in the bio.
 
-> > -		header.data_len =3D cpu_to_le32(8 + 8 + 4);
-> > -		header.file_offset =3D 0;
-> > +		header->data_len =3D cpu_to_le32(8 + 8 + 4);
->=20
-> The same problem of understanding here for me. What this hardcoded 8 +
-> 8 + 4 value means? :)
 
-You need to ask a ceph expert.  This is nothing specifically to do with my
-changes.  However, I suspect it's the size of the message element.
+>  	/* can only try again if we wrote nothing */
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 9d72b99cb447..c28685fd3362 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -349,7 +349,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  	if (dio->flags & IOMAP_DIO_WRITE) {
+>  		bio_opf |= REQ_OP_WRITE;
+>  
+> -		if (iter->flags & IOMAP_ATOMIC_HW) {
+> +		if (iomap->flags & IOMAP_F_ATOMIC_BIO) {
+>  			/*
+>  			* Ensure that the mapping covers the full write length,
+>  			* otherwise we will submit multiple BIOs, which is
+> @@ -677,10 +677,8 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  			iomi.flags |= IOMAP_OVERWRITE_ONLY;
+>  		}
+>  
+> -		if (dio_flags & IOMAP_DIO_ATOMIC_SW)
+> -			iomi.flags |= IOMAP_ATOMIC_SW;
+> -		else if (iocb->ki_flags & IOCB_ATOMIC)
+> -			iomi.flags |= IOMAP_ATOMIC_HW;
+> +		if (iocb->ki_flags & IOCB_ATOMIC)
+> +			iomi.flags |= IOMAP_ATOMIC;
+>  
+>  		/* for data sync or sync, we need sync completion processing */
+>  		if (iocb_is_dsync(iocb)) {
+> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+> index 69af89044ebd..9eab2c8ac3c5 100644
+> --- a/fs/iomap/trace.h
+> +++ b/fs/iomap/trace.h
+> @@ -99,7 +99,7 @@ DEFINE_RANGE_EVENT(iomap_dio_rw_queued);
+>  	{ IOMAP_FAULT,		"FAULT" }, \
+>  	{ IOMAP_DIRECT,		"DIRECT" }, \
+>  	{ IOMAP_NOWAIT,		"NOWAIT" }, \
+> -	{ IOMAP_ATOMIC_HW,	"ATOMIC_HW" }
+> +	{ IOMAP_ATOMIC,		"ATOMIC" }
+>  
+>  #define IOMAP_F_FLAGS_STRINGS \
+>  	{ IOMAP_F_NEW,		"NEW" }, \
+> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> index 30e257f683bb..9a22ecd794eb 100644
+> --- a/fs/xfs/xfs_iomap.c
+> +++ b/fs/xfs/xfs_iomap.c
+> @@ -831,6 +831,9 @@ xfs_direct_write_iomap_begin(
+>  	if (offset + length > i_size_read(inode))
+>  		iomap_flags |= IOMAP_F_DIRTY;
+>  
+> +	if (flags & IOMAP_ATOMIC)
+> +		iomap_flags |= IOMAP_F_ATOMIC_BIO;
+> +
+>  	/*
+>  	 * COW writes may allocate delalloc space or convert unwritten COW
+>  	 * extents, so we need to make sure to take the lock exclusively here.
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 9cd93530013c..51f4c13bd17a 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -60,6 +60,9 @@ struct vm_fault;
+>   * IOMAP_F_ANON_WRITE indicates that (write) I/O does not have a target block
+>   * assigned to it yet and the file system will do that in the bio submission
+>   * handler, splitting the I/O as needed.
+> + *
+> + * IOMAP_F_ATOMIC_BIO indicates that (write) I/O needs to be issued as an
+> + * atomic bio, i.e. set REQ_ATOMIC.
+>   */
 
-> > -		memset(iov.iov_base + boff, 0, PAGE_SIZE - boff);
-> > +		p =3D kmap_ceph_databuf_page(dbuf, 1);
->=20
-> Maybe, we need to introduce some constants to address #0 and #1 pages?
-> Because, #0 it's header and I assume #1 is some content.
 
-Whilst that might be useful, I don't know that the 0 and 1... being header =
-and
-content respectively always hold.  I haven't checked, but there could even =
-be
-a protocol trailer in some cases as well.
+Maybe we can be more explicit here?
 
-> > -	err =3D ceph_pagelist_reserve(pagelist,
-> > -				=C2=A0=C2=A0=C2=A0 4 * 2 + name_len + as_ctx-
-> > >lsmctx.len);
-> > +	err =3D ceph_databuf_reserve(dbuf, 4 * 2 + name_len + as_ctx-
-> > >lsmctx.len,
-> > +				=C2=A0=C2=A0 GFP_KERNEL);
->=20
-> The 4 * 2 + name_len + as_ctx->lsmctx.len looks unclear to me. It wil
-> be good to have some well defined constants here.
+IOMAP_F_ATOMIC_BIO flag indicates that write I/O must be issued as an
+atomic bio by setting the REQ_ATOMIC flag. Filesystems need to set this
+flag to inform iomap that the write I/O operation should be submitted as
+an atomic bio.
 
-Again, nothing specifically to do with my changes.
+This definition (or whatever you feel is the better version), should also
+go in Documentation/filesystems/iomap/design.rst
 
-David
+>  #define IOMAP_F_NEW		(1U << 0)
+>  #define IOMAP_F_DIRTY		(1U << 1)
+> @@ -73,6 +76,7 @@ struct vm_fault;
+>  #define IOMAP_F_XATTR		(1U << 5)
+>  #define IOMAP_F_BOUNDARY	(1U << 6)
+>  #define IOMAP_F_ANON_WRITE	(1U << 7)
+> +#define IOMAP_F_ATOMIC_BIO	(1U << 8)
+>  
+>  /*
+>   * Flags set by the core iomap code during operations:
+> @@ -189,9 +193,8 @@ struct iomap_folio_ops {
+>  #else
+>  #define IOMAP_DAX		0
+>  #endif /* CONFIG_FS_DAX */
+> -#define IOMAP_ATOMIC_HW		(1 << 9) /* HW-based torn-write protection */
+> +#define IOMAP_ATOMIC		(1 << 9) /* torn-write protection */
+>  #define IOMAP_DONTCACHE		(1 << 10)
+> -#define IOMAP_ATOMIC_SW		(1 << 11)/* SW-based torn-write protection */
 
+Now that we are killing separate IOMAP_ATOMIC_** names, we may would
+like to update the iomap design document as well. Otherwise it will
+carry use of IOMAP_ATOMIC_HW & IOMAP_ATOMIC_SW definitions. Instead we
+should only keep IOMAP_ATOMIC and update the design info there.
+
+-ritesh
+
+>  
+>  struct iomap_ops {
+>  	/*
+> @@ -503,11 +506,6 @@ struct iomap_dio_ops {
+>   */
+>  #define IOMAP_DIO_PARTIAL		(1 << 2)
+>  
+> -/*
+> - * Use software-based torn-write protection.
+> - */
+> -#define IOMAP_DIO_ATOMIC_SW		(1 << 3)
+> -
+>  ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+>  		unsigned int dio_flags, void *private, size_t done_before);
+> -- 
+> 2.31.1
 
