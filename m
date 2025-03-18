@@ -1,211 +1,222 @@
-Return-Path: <linux-fsdevel+bounces-44260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F7AA66B60
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 08:16:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52F37A66B17
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 08:07:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F407189BA9D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 07:16:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A01CF178BF4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 07:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF0E1DDA3B;
-	Tue, 18 Mar 2025 07:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E854A1E1DF2;
+	Tue, 18 Mar 2025 07:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rsOFMtvW"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NDVZQYJK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41461991CA
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 07:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EFC1E5210
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 07:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742282192; cv=none; b=Gew4QC+xYE+NzBQhPJki1QTPnGBM8l6xoAZToH+iGW4W9pXgS5o1PEBlchGB5CEQX8lXq4u2Jqb5hXAfamswRbG+8U3WWdQbJR2WqNG4Kb5828r97VQr3lyqapBecftxwcNyXcSbJN6NuYo1suSa/0H4XFZU5nQ1SNmna96Z3l4=
+	t=1742281624; cv=none; b=QhRjhG3sa54j/tFAaVERv/BT2NVEfRgYWHnqZ9EJKBbjM4J0JAENPjhEDNZM5jGuQIwactWpPRa4bmGpTaoIy8lI8uep9n5EV4f6stSCipQCN7AciWfR+6xduuc5Uc4VHsy4kJ5f7H9ZNE/CgkdgcdZbaJNzhUnd0t/YEuGbnxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742282192; c=relaxed/simple;
-	bh=qF2N/NsSW/vYxFq63A0suX8KbUBT2qWBUMLcITpblhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=FWz7EblRvwSiOKulIWIalprigZdGj6T9il5VF5gfmTNuxSyvwxoVgDXaFzXAfm9WkjvMxcXaVpkyXTUncTgZAaDjz008X7+ea9KlR+KY35rNR5LdXfSiHGWiXdOBOz5J+ZUaa6ij8TqGataPglkwmUzaK5Oai/0u38pykh53NTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rsOFMtvW; arc=none smtp.client-ip=203.254.224.25
+	s=arc-20240116; t=1742281624; c=relaxed/simple;
+	bh=d8PtkrdNtZxYKD2u1cY8BemtU8YT5fQ8WzTd56g0vmU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=CqIPRKaOvt13tWF0lUGmeQTEjW9sjj6cDKHgohBjPbkOFmLgqdVMCNgD6Ifj6gjix9eADfDF2kkxpn7UT2J9fRor8t5F7EW1EQB+lGPCCiM21MqWixsk2pBU1HCKcQIF/VXh3g7JioDgQiTXcsPRaT1Q76Al6NNAqkRSykpVITI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=NDVZQYJK; arc=none smtp.client-ip=203.254.224.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250318071622epoutp02a6b0c575032ea39eb4a9162cf48f78f5~t1GnjW4562773027730epoutp02e
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 07:16:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250318071622epoutp02a6b0c575032ea39eb4a9162cf48f78f5~t1GnjW4562773027730epoutp02e
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250318070653epoutp048f1666a9a004e3d6d92bc9270d868d17~t0_WOX_um0411704117epoutp04d
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 07:06:53 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250318070653epoutp048f1666a9a004e3d6d92bc9270d868d17~t0_WOX_um0411704117epoutp04d
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1742282182;
-	bh=P+U8KeQVZedOlNTir0zIlGTTT6DDID6YQsAP2yc78Zc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rsOFMtvWttUxTGZPsFcw0ZYBy+r8egZLuvgjj9mq508/EGQiurQMEfTD3BvLzcpVU
-	 SFrZqD17Yw44cDtg4aug6DJe1q7twb6XZ/9ie6pBBSE/CuIwIwpeF8+vgPF+SqowHy
-	 fG7aNf+GEQIm80oOyOvIgIi3UgMrB6RvFJG6X8mE=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20250318071621epcas5p47578fc4507c81dbdd2173917e0796a03~t1Gm3int82682526825epcas5p4L;
-	Tue, 18 Mar 2025 07:16:21 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4ZH36W3RP1z4x9QY; Tue, 18 Mar
-	2025 07:16:19 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	81.27.19710.3CD19D76; Tue, 18 Mar 2025 16:16:19 +0900 (KST)
+	s=mail20170921; t=1742281613;
+	bh=4BcyKe56ztD+lnm938/6LqmBi37tVsoiHEhtNJhj4sA=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=NDVZQYJK5vFZn8vMYAWJyNm613DPQhfMBWmKdxUgI0vmEaF3GW/vk+qxdv1xuoYlm
+	 MbYO+X/wOfnlXfpuu0TH2ohk1a3dweYP7AJSjtLGomUPdvcIJBniAFW6cXQIHs55m0
+	 v8253dvfJZWEHAtNr9vZZhBIecVRqDPA0z/V9ugE=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20250318070653epcas5p3beda02f314d748f29f9f6fdbb6d76eff~t0_VkBnTa1730717307epcas5p34;
+	Tue, 18 Mar 2025 07:06:53 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4ZH2vW4CVYz4x9QF; Tue, 18 Mar
+	2025 07:06:47 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	6B.92.19933.78B19D76; Tue, 18 Mar 2025 16:06:47 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250318064955epcas5p17f56990ac27b59e721a1a15272349cee~t0viGE63u1466714667epcas5p1i;
-	Tue, 18 Mar 2025 06:49:55 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250318070647epcas5p2f3e162aa3a172113cbda22326e7bd34e~t0_QALYS90333203332epcas5p2D;
+	Tue, 18 Mar 2025 07:06:47 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
 	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250318064955epsmtrp29a06e80d74bde32c453637caf087ba77~t0viFUwYv1914319143epsmtrp2Z;
-	Tue, 18 Mar 2025 06:49:55 +0000 (GMT)
-X-AuditID: b6c32a44-363dc70000004cfe-30-67d91dc39c45
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	20.52.18949.39719D76; Tue, 18 Mar 2025 15:49:55 +0900 (KST)
-Received: from green245 (unknown [107.99.41.245]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250318064953epsmtip17c609251fde611117f81c4829903b14a~t0vgTqmv62367223672epsmtip1V;
-	Tue, 18 Mar 2025 06:49:53 +0000 (GMT)
-Date: Tue, 18 Mar 2025 12:11:34 +0530
-From: Kundan Kumar <kundan.kumar@samsung.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	anuj20.g@samsung.com, mcgrof@kernel.org, joshi.k@samsung.com,
-	axboe@kernel.dk, clm@meta.com, willy@infradead.org, gost.dev@samsung.com
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Parallelizing filesystem writeback
-Message-ID: <20250318064134.xzjx2bviq2x4db52@green245>
+	20250318070647epsmtrp2a497a90be0e121f52a9bd2bb8de63412~t0_P-YHaA2960529605epsmtrp2i;
+	Tue, 18 Mar 2025 07:06:47 +0000 (GMT)
+X-AuditID: b6c32a4a-c1fda70000004ddd-d5-67d91b8716ec
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	EB.72.23488.68B19D76; Tue, 18 Mar 2025 16:06:46 +0900 (KST)
+Received: from [107.122.11.51] (unknown [107.122.11.51]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250318070645epsmtip28678c6c9740b3ed29fd27514977523ad~t0_OdCvfv0823908239epsmtip2U;
+	Tue, 18 Mar 2025 07:06:45 +0000 (GMT)
+Message-ID: <edde46e9-403b-4ddf-bd73-abe95446590c@samsung.com>
+Date: Tue, 18 Mar 2025 12:36:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <qdgoyhi5qjnlfk6zmlizp2lcrmg43rwmy3tl4yz6zkgavgfav5@nsfculj7aoxe>
-User-Agent: NeoMutt/20171215
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJJsWRmVeSWpSXmKPExsWy7bCmlu5h2ZvpBmsWils0TfjLbLH6bj+b
-	xZZL9hZbjt1jtLh5YCeTxcrVR5ksZk9vZrI4+v8tm8WevSdZLPa93stscWPCU0aL3z/msDnw
-	eJxaJOGxeYWWx+WzpR6bVnWyeUy+sZzRY/fNBjaPcxcrPPq2rGL0OLPgCLvH501yAVxR2TYZ
-	qYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QDcrKZQl5pQC
-	hQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgpMCvSKE3OLS/PS9fJSS6wMDQyMTIEKE7Iz9u9o
-	ZSv4JVmxr2UFWwPjctEuRk4OCQETicXtM1m6GLk4hAR2M0pcX9zNBOF8YpTYdnM2VOYbo8SM
-	53eBHA6wll9vwyDiexkldh5uZYNwnjFKXFjXwwIyl0VAVWJry2t2kAY2AV2JH02hIGERAWmJ
-	WcdWgg1lFpjGJPHoYTcbSEJYwFui4fVmVhCbV8BM4vihj1C2oMTJmU/AZnIK+Em8bH4AZosK
-	yEjMWPqVGWSQhMARDomll/awQzzkIjH9+ytWCFtY4tXxLVBxKYnP7/ayQdjZEocaNzBB2CUS
-	O480QNXYS7Se6mcGsZkFMiSWbD8ENUdWYuqpdUwQcT6J3t9PoHp5JXbMg7HVJOa8m8oCYctI
-	LLw0AyruIXFhxSlmSAj1s0iseDiBeQKj/Cwkz81Csg/CtpLo/NAEZHMA2dISy/9xQJiaEut3
-	6S9gZF3FKJlaUJybnppsWmCYl1oOj/Hk/NxNjOA0reWyg/HG/H96hxiZOBgPMUpwMCuJ8Lo/
-	uZ4uxJuSWFmVWpQfX1Sak1p8iNEUGFkTmaVEk/OBmSKvJN7QxNLAxMzMzMTS2MxQSZy3eWdL
-	upBAemJJanZqakFqEUwfEwenVANT2E2pBnmdhxs2qnJv3/btbDPD5jci5yv1t2qd8RWaa3u8
-	sft4ssyBp7Pvps2uNmWu1Sk44vZWu++SToDr2Vwhi58L/uXfjNpqUezIlGh9Ysb7LqV9T7Rn
-	3KoTe3CnyfqwvuCqP9HVOyZmPdJ4dZKLScprur3bi3ypF0ofq5f3dcVe2eikIh82bfW5W+FT
-	g75E5NtJ6Wjnb2PwFN33NHDv1pqsb4t9PRyezTvv9PGz/toHX5Z/+D7H7dCuH+veX59kK/H7
-	W/mauQzP92bxy/Gb3v24MpH/56o52xJV/MItH3XaL8zde84tI+vu+kcPp4iK+e1q8z9r/mW/
-	fzR/9PP10bMbM3IVmhV5TiQuOrxLXomlOCPRUIu5qDgRAF9VB7lcBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkkeLIzCtJLcpLzFFi42LZdlhJTney+M10g/ZVahZNE/4yW6y+289m
-	seWSvcWWY/cYLW4e2MlksXL1USaL2dObmSyO/n/LZrFn70kWi32v9zJb3JjwlNHi9485bA48
-	HqcWSXhsXqHlcflsqcemVZ1sHpNvLGf02H2zgc3j3MUKj74tqxg9ziw4wu7xeZNcAFcUl01K
-	ak5mWWqRvl0CV8bDJ61MBWvEK3qv7GNtYPws1MXIwSEhYCLx621YFyMXh5DAbkaJbTs6GLsY
-	OYHiMhK77+5khbCFJVb+e84OUfSEUWLGvbnsIAkWAVWJrS2v2UEGsQnoSvxoCgUJiwhIS8w6
-	tpIFpJ5ZYAaTxMXNa5hBEsIC3hINrzeDDeUVMJM4fugjmC0kMJFFYvYNR4i4oMTJmU9YQGxm
-	oJp5mx8yg8xnBhq6/B8HSJhTwE/iZfMDsBJRoDtnLP3KPIFRcBaS7llIumchdC9gZF7FKJla
-	UJybnltsWGCUl1quV5yYW1yal66XnJ+7iREcW1paOxj3rPqgd4iRiYPxEKMEB7OSCK/7k+vp
-	QrwpiZVVqUX58UWlOanFhxilOViUxHm/ve5NERJITyxJzU5NLUgtgskycXBKNTDt//Tl4pkb
-	l6Q27ve45+jpnl5hsODakpQVSUsjNs2IWNMo/lLS4OGu8xOr9JdP3Tg5cVLpW57zFybY3V3x
-	Qi7l13H1y66+Z69oO4rYGe22/ij7+3qJbGaa4irF8C21rkX/zzd36sp+2Wj24+ZlzwhBs4z1
-	ZoYCS6ynhTLuCf4vGxnef0A8pJ1z+olPJhnHVdX86nw/Pbu7YMmLs6zMd6L3cesvLlWyeryv
-	tqn3fuT54HWTUg4+jHmoVtH3wv1RZ+WbnDZ1afX9601v8zJs/MZs0O5Uqy/e+6z82+TO6+lm
-	9pZpXeKcR2+vmr5c8kBeuqvcJO1Jcb5zehUm/NpjGl7xtH16+oTD+wz5LHIkFhxQYinOSDTU
-	Yi4qTgQATVtVKhwDAAA=
-X-CMS-MailID: 20250318064955epcas5p17f56990ac27b59e721a1a15272349cee
+User-Agent: Mozilla Thunderbird
+Subject: Re: [LSF/MM/BPF TOPIC] File system checksum offload
+To: "hch@infradead.org" <hch@infradead.org>
+Cc: Qu Wenruo <wqu@suse.com>, Johannes Thumshirn
+	<Johannes.Thumshirn@wdc.com>, Theodore Ts'o <tytso@mit.edu>,
+	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
+	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"josef@toxicpanda.com" <josef@toxicpanda.com>
+Content-Language: en-US
+From: Kanchan Joshi <joshi.k@samsung.com>
+In-Reply-To: <Z6GivxxFWFZhN7jD@infradead.org>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCJsWRmVeSWpSXmKPExsWy7bCmpm679M10g55WGYvTExYxWfztusdk
+	8eehocXeW9oWlx6vYLfYs/cki8X8ZU/ZLfa93sts0drzk91izbqP7A5cHptXaHlsXlLvMfnG
+	ckaPpjNHmT3Wb7nK4jFh80ZWj8+b5DzaD3QzBXBEZdtkpCampBYppOYl56dk5qXbKnkHxzvH
+	m5oZGOoaWlqYKynkJeam2iq5+AToumXmAB2opFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFV
+	Si1IySkwKdArTswtLs1L18tLLbEyNDAwMgUqTMjO6Gn7zVTwV7ri+OUX7A2MV0W7GDk5JARM
+	JBo6brB2MXJxCAnsZpT4cncfM4TziVFi+bSXUJlvjBJtk/YydjFygLVMeagBEd/LKDH7wzkm
+	COcto8TjvmcsIHN5Bewk/i/7wAhiswioSmxvXQUVF5Q4OfMJmC0qIC9x/9YMdhBbWMBGonvX
+	ITaQBSIC2hKLH9eBzGQW+MAs0fZsMxNIDbOAuMStJ/OZQGrYBDQlLkwuBQlzCuhK7P/9jQWi
+	RF5i+9s5YB9ICGzhkHjd+5EF4k8XiQ13LrFC2MISr45vYYewpSQ+v9vLBmFnSzx49ACqvkZi
+	x+Y+qHp7iYY/oDDiAFqgKbF+lz7ELj6J3t9PmCBhwivR0SYEUa0ocW/SU6hOcYmHM5ZA2R4S
+	l1ZthgbVF2aJh3va2CYwKsxCCpVZSL6cheSdWQibFzCyrGKUTC0ozk1PLTYtMMpLLYfHd3J+
+	7iZGcPLV8trB+PDBB71DjEwcjIcYJTiYlUR43Z9cTxfiTUmsrEotyo8vKs1JLT7EaAqMnonM
+	UqLJ+cD0n1cSb2hiaWBiZmZmYmlsZqgkztu8syVdSCA9sSQ1OzW1ILUIpo+Jg1OqgWmV4JeV
+	KTMjWMQMWGt/W64Vk5RRnr7gsp3JLc27RTVzBaZcnPHjxYS5ax6wFWgdOS7pWpEx9xB78MMf
+	kxSNLqh52nlwFJmXNb59/N1k1gKHKxs9c4V3LzZlr9z/fF1XcCezunKv8yyPX3zi/+aICN0r
+	1phVE/vP3apgTd3GUuXADJGwmNf5R6x4X8oIXJ94YOfjZonwzUKK5d6R1Rt1mDcv3hgTsz7I
+	8/l/O6nFSw/c54mf8sHMKkfi9gMmFlP7yco75Oc/3nvQre6lc6ivTX/R369dBfLPQxk27r71
+	88y2yYfF/Kd5q/83VP92jsXGZW+Z8E3jwFiJzBWvg0926F0M7OBLcZ/rNWH1l+iO20osxRmJ
+	hlrMRcWJADEFMl1HBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAIsWRmVeSWpSXmKPExsWy7bCSvG6b9M10g/3t1hanJyxisvjbdY/J
+	4s9DQ4u9t7QtLj1ewW6xZ+9JFov5y56yW+x7vZfZorXnJ7vFmnUf2R24PDav0PLYvKTeY/KN
+	5YweTWeOMnus33KVxWPC5o2sHp83yXm0H+hmCuCI4rJJSc3JLEst0rdL4MroafvNVPBXuuL4
+	5RfsDYxXRbsYOTgkBEwkpjzU6GLk4hAS2M0osezIOeYuRk6guLhE87Uf7BC2sMTKf8/ZIYpe
+	M0r0LP3MBpLgFbCT+L/sAyOIzSKgKrG9dRULRFxQ4uTMJ2C2qIC8xP1bM8AGCQvYSHTvOsQG
+	slhEQFti8eM6kJnMAh+YJZZufcEMseALs8ScmefAhjIDXXHryXwmkAY2AU2JC5NLQcKcAroS
+	+39/Y4EoMZPo2toFVS4vsf3tHOYJjEKzkJwxC8mkWUhaZiFpWcDIsopRMrWgODc9N9mwwDAv
+	tVyvODG3uDQvXS85P3cTIzjStDR2ML771qR/iJGJg/EQowQHs5IIr/uT6+lCvCmJlVWpRfnx
+	RaU5qcWHGKU5WJTEeVcaRqQLCaQnlqRmp6YWpBbBZJk4OKUamHT9LD177vsv3/vcSKtmAfO3
+	x/vnfH1nse8MT75kmJK6tJCIt0qFKoO4fso5zumKmd+Zcj/1abr/vPYmInSpfstqPsk+77XL
+	VpXmydb6PwpfZ96xwt7yUNqHXS6xbH/XvcqaUq+dFVjD1CJ6kuPR+wWzHOYZc4TEKllZRnys
+	OTvTseRaVuXsHX3JfLZH2wQe81X7hZxawPwod5KX0c+A5eWNnC/Zt3ycyXR57b3jZz9cubHc
+	wD+dNe6PWqa9B9/5q/vWnnxQuqpv2xSbm/PC2lj6piyK6BefK/7+7R9ZvUitq/XGH4+82DZX
+	VW/GlQJd4bVqxVttdf681bCZvEf0Sh3LtCdpr3aVvrp9TFLCRYmlOCPRUIu5qDgRAE9nlqMj
+	AwAA
+X-CMS-MailID: 20250318070647epcas5p2f3e162aa3a172113cbda22326e7bd34e
 X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="-----n9Uixv_.-ZhL2v3ig-snSfcYkP.kLEj6PbqjIokIlCsp6vK=_118b4_"
-X-Sendblock-Type: REQ_APPROVE
+Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250129103448epcas5p1f7d71506e4443429a0b0002eb842e749
-References: <CGME20250129103448epcas5p1f7d71506e4443429a0b0002eb842e749@epcas5p1.samsung.com>
-	<20250129102627.161448-1-kundan.kumar@samsung.com>
-	<Z5qw_1BOqiFum5Dn@dread.disaster.area>
-	<20250131093209.6luwm4ny5kj34jqc@green245>
-	<Z6GAYFN3foyBlUxK@dread.disaster.area> <20250204050642.GF28103@lst.de>
-	<s43qlmnbtjbpc5vn75gokti3au7qhvgx6qj7qrecmkd2dgrdfv@no2i7qifnvvk>
-	<Z6qkLjSj1K047yPt@dread.disaster.area>
-	<20250220141824.ju5va75s3xp472cd@green245>
-	<qdgoyhi5qjnlfk6zmlizp2lcrmg43rwmy3tl4yz6zkgavgfav5@nsfculj7aoxe>
+X-CMS-RootMailID: 20250130092400epcas5p1a3a9d899583e9502ed45fe500ae8a824
+References: <CGME20250130092400epcas5p1a3a9d899583e9502ed45fe500ae8a824@epcas5p1.samsung.com>
+	<20250130091545.66573-1-joshi.k@samsung.com>
+	<20250130142857.GB401886@mit.edu>
+	<97f402bc-4029-48d4-bd03-80af5b799d04@samsung.com>
+	<b8790a76-fd4e-49b6-bc08-44e5c3bf348a@wdc.com>
+	<Z6B2oq_aAaeL9rBE@infradead.org>
+	<bb516f19-a6b3-4c6b-89f9-928d46b66e2a@wdc.com>
+	<eaec853d-eda6-4ee9-abb6-e2fa32f54f5c@suse.com>
+	<cfe11af2-44c5-43a7-9114-72471a615de7@samsung.com>
+	<Z6GivxxFWFZhN7jD@infradead.org>
 
--------n9Uixv_.-ZhL2v3ig-snSfcYkP.kLEj6PbqjIokIlCsp6vK=_118b4_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+On 2/4/2025 10:46 AM, hch@infradead.org wrote:
+> On Mon, Feb 03, 2025 at 06:57:13PM +0530, Kanchan Joshi wrote:
+>> But, patches do exactly that i.e., hardware cusm support. And posted
+>> numbers [*] are also when hardware is checksumming the data blocks.
+> 
+> I'm still not sure why you think the series implements hardware
+> csum support.
 
->> > Then selecting inodes for writeback becomes a list_lru_walk()
->> > variant depending on what needs to be written back (e.g. physical
->> > node, memcg, both, everything that is dirty everywhere, etc).
->>
->> We considered using list_lru to track inodes within a writeback context.
->> This can be implemented as:
->> struct bdi_writeback {
->>  struct list_lru b_dirty_inodes_lru; // instead of a single b_dirty list
->>  struct list_lru b_io_dirty_inodes_lru;
->>  ...
->>  ...
->> };
->> By doing this, we would obtain a sharded list of inodes per NUMA node.
->
->I think you've misunderstood Dave's suggestion here. list_lru was given as
->an example of a structure for inspiration. We cannot take it directly as is
->for writeback purposes because we don't want to be sharding based on NUMA
->nodes but rather based on some other (likely FS driven) criteria.
+Series ensure that (a) that host does not compute the csum, and (b) 
+device computes.
+Not sure if you were doubting the HW instead, but I checked that part 
+with user-space nvme-passthrough program which
+- [During write] does not send checksum and sets PRACT as 1.
+- [During read] sends metadata buffer and keeps PRACT as 0.
+It reads the correct data checksum which host never computed (but device 
+did at the time of write).
 
-Makes sense. Thanks for the clarification.
+> The buf mode is just a duplicate implementation of the block layer
+> automatic PI.  The no buf means PRACT which let's the device auto
+> generate and strip PI.
 
->I was thinking about how to best parallelize the writeback and I think
->there are two quite different demands for which we probably want two
->different levels of parallelism.
->
->One case is the situation when the filesystem for example has multiple
->underlying devices (like btrfs or bcachefs) or for other reasons writeback
->to different parts is fairly independent (like for different XFS AGs). Here
->we want parallelism at rather high level I think including separate
->dirty throttling, tracking of writeback bandwidth etc.. It is *almost* like
->separate bdis (struct backing_dev_info) but I think it would be technically
->and also conceptually somewhat easier to do the multiplexing by factoring
->out:
->
->        struct bdi_writeback wb;  /* the root writeback info for this bdi */
->        struct list_head wb_list; /* list of all wbs */
->#ifdef CONFIG_CGROUP_WRITEBACK
->        struct radix_tree_root cgwb_tree; /* radix tree of active cgroup wbs */
->        struct rw_semaphore wb_switch_rwsem; /* no cgwb switch while syncing */
->#endif
->        wait_queue_head_t wb_waitq;
->
->into a new structure (looking for a good name - bdi_writeback_context???)
->that can get multiplied (filesystem can create its own bdi on mount and
->configure there number of bdi_writeback_contexts it wants). We also need to
->add a hook sb->s_ops->get_inode_wb_context() called from __inode_attach_wb()
->which will return appropriate bdi_writeback_context (or perhaps just it's
->index?) for an inode. This will be used by the filesystem to direct
->writeback code where the inode should go. This is kind of what Kundan did
->in the last revision of his patches but I hope this approach should
->somewhat limit the changes necessary to writeback infrastructure - the
+Regardless of buf or no buf, it applies PRACT and only device computes 
+the checksum. The two modes are taking shape only because of the way 
+PRACT works for two different device configurations
 
-This looks much better than the data structures we had in previous
-version. I will prepare a new version based on this feedback.
+#1: when meta-size == pi-size, we don't need to send meta-buffer.
+#2: when meta-size > pi-size, we need to.
 
->patch 2 in his series is really unreviewably large...
+Automatic PI helps for #2 as split handling of meta-buffer comes free if 
+I/O is split. But overall, this is also about abstracting PRACT details 
+so that each filesystem does not have to bother.
+And changes to keep this abstracted in Auto-PI/NVMe are not much:
 
-I agree. Sorry, will try to streamline the patches in a better fashion
-in the next iteration.
+  block/bio-integrity.c     | 42 ++++++++++++++++++++++++++++++++++++++-
+  block/t10-pi.c            |  7 +++++++
+  drivers/nvme/host/core.c  | 24 ++++++++++++++++++++++
+  drivers/nvme/host/nvme.h  |  1 +
 
+>  Especially the latter one (which is the
+> one that was benchmarked) literally provides no additional protection
+> over what the device would already do.  It's the "trust me, bro" of
+> data integrity :)  Which to be fair will work pretty well as devices
+> that support PI are the creme de la creme of storage devices and
+> will have very good internal data protection internally.  But the
+> point of data checksums is to not trust the storage device and
+> not trust layers between the checksum generation and the storage
+> device.
 
--------n9Uixv_.-ZhL2v3ig-snSfcYkP.kLEj6PbqjIokIlCsp6vK=_118b4_
-Content-Type: text/plain; charset="utf-8"
+Right, I'm not saying that protection is getting better. Just that any 
+offload is about trusting someone else with the job. We have other 
+instances like atomic-writes, copy, write-zeroes, write-same etc.
 
+> IFF using PRACT is an acceptable level of protection just running
+> NODATASUM and disabling PI generation/verification in the block
+> layer using the current sysfs attributes (or an in-kernel interface
+> for that) to force the driver to set PRACT will do exactly the same
+> thing.
 
--------n9Uixv_.-ZhL2v3ig-snSfcYkP.kLEj6PbqjIokIlCsp6vK=_118b4_--
+I had considered but that can't work because:
+
+- the sysfs attributes operate at block-device level for all read or all 
+write operations. That's not flexible for policies such "do something 
+for some writes/reads but not for others" which can translate to "do 
+checksum offload for FS data, but keep things as is for FS meta" or 
+other combinations.
+
+- If the I/O goes down to driver with , driver will start failing 
+(rather than setting PRACT) if the configuration is "meta-size > 
+pi-size". This part in nvme_setup_rw:
+
+                 if (!blk_integrity_rq(req)) {
+                         if (WARN_ON_ONCE(!nvme_ns_has_pi(ns->head)))
+                                 return BLK_STS_NOTSUPP;
+                         control |= NVME_RW_PRINFO_PRACT;
+                 }
+
 
