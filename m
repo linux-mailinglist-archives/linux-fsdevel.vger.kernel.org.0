@@ -1,343 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-44257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F2EA66A87
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 07:34:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A73AA66B0E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 08:05:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A1733BB3CA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 06:34:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29355176033
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 07:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2215F1D63CD;
-	Tue, 18 Mar 2025 06:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EE61EF362;
+	Tue, 18 Mar 2025 07:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="C2aHdx9E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sjPtPCx7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85EC4C6D;
-	Tue, 18 Mar 2025 06:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401F71EB5E4;
+	Tue, 18 Mar 2025 07:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742279656; cv=none; b=K6ek521MdNGSQM9IFttjiLFzYrKQPzlLU3gaVh9IBqEF2Q8zhqxEA0VM2qzBP8yC8UVxyrU+9GHnB0r0/O6BzaKMFAc+Fj6KDpHdwgXQbkwMu+77x/Z0humfHxhkRj3cPPk5uudrIooi0J+U8akyxF6YGLR8Q+N3R37jqh7oHrQ=
+	t=1742281513; cv=none; b=BsGAnaaZJi5s0SRcwvf7KPrEQ3n5Mij7IlHPzdG42o8hP6IEj3gqtiBbf5huQYMckk7CYBdTHLQiD6yl5P13eVfLHD70EGNzTVgVBBcTbFOKD5mgwtE0q07K3QkuMfRQX9kR6u7ENW/zhXP7pHE/3VwhVOyDNVIqd28hx5oe6/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742279656; c=relaxed/simple;
-	bh=R8IA/h5kuNMYoLSiaR1PFdQprQUncRuQof6zLLOa+Gw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O7nHlqaacuysipxm4H9hajiC4UjkTr9fN5zEVIuehChKSMFuxEs36ONmkUbW5cYLVxH8b69JGiNdkig5LQtzP+ghdA8kdA3jZtazMTEaDqHQnEC+W/vk0Oy02teIyN7Fz4QbCSidU2qkg14WTBBXIq+uV2lE9xyOJm6kMIpXyDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=C2aHdx9E; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=/lMSm
-	DJnLQOCrq8yGaCgmI/hezWy6ytM+F+ncidM3WY=; b=C2aHdx9EIQtVaa3mFsBHS
-	/F2jAQxF2koD63mAcmLhPD5hzL+rn2ZObrWyrYJFUvTtnK5merK6LWCOD+feLOm1
-	T1s0wBWMeIqVv55HQFpEf0Yn3YV289ZWSG0H+fzUXXG3hxW9cLFPYKHFGIeVzcha
-	EYl/FqhHZAU7sq8I2KqwQY=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wDnj1R_E9lnWny0AA--.27191S2;
-	Tue, 18 Mar 2025 14:32:32 +0800 (CST)
-From: Liu Ye <liuyerd@163.com>
-To: hannes@cmpxchg.org,
-	mhocko@kernel.org,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	muchun.song@linux.dev
-Cc: akpm@linux-foundation.org,
-	willy@infradead.org,
-	david@redhat.com,
-	svetly.todorov@memverge.com,
-	vbabka@suse.cz,
-	liuyerd@163.com,
-	ran.xiaokai@zte.com.cn,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	linux-mm@kvack.org,
-	Liu Ye <liuye@kylinos.cn>
-Subject: [PATCH v4] fs/proc/page: Refactoring to reduce code duplication.
-Date: Tue, 18 Mar 2025 14:32:26 +0800
-Message-Id: <20250318063226.223284-1-liuyerd@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742281513; c=relaxed/simple;
+	bh=pqyE2mcUwycqxxBCmftvhiDIGpcRNzfGegdT4Et+GHQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tE048fc1r+pw4nI0JGxEapHc6Tq85eK2Z0+vudc8fQ9w5mmUDmjEN33N7QzFm7GkrVdRmYHXdpuMXV+jIsPabmb5Z/DLdBiatoACJObFcex6vzZgbISJRAhp2DhJhOCz+UJYgMlzquUPvWal3RzVrpByZkQpsGCeiIwzdboL/UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sjPtPCx7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD859C4CEEE;
+	Tue, 18 Mar 2025 07:05:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742281512;
+	bh=pqyE2mcUwycqxxBCmftvhiDIGpcRNzfGegdT4Et+GHQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sjPtPCx7jRJVkCb0JBBNT5eS9NGJ/eOj2A0b9eV5TAUVZlnV+zX0PuBiq34JkFL6g
+	 TLjd5swvW7zKM6ZFvSJHFPobu5JzJ8nQTQ0bKqtfSMy0NgTY8OX9J4NPDSysQze7rK
+	 JPZaZEHnHCKozsTTMM8t9OGJGk+vBxKwZQi83DegGS0PXXLI8urSByX3aXwLUHSo6Y
+	 Zm6m5qf9W4dwM/LZkcWZUlFlTEC4SzdrPfqa5CuggFo9q+EddMLGOuJskDeA2ImI9M
+	 fOQKOxLXLQ0ZnaoI4wdEIguxXQuP1ry6MlIUDyE1YRGa8EacP73RXyARAMhTR0B8wH
+	 2QruVea+VlaFQ==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5439a6179a7so5770849e87.1;
+        Tue, 18 Mar 2025 00:05:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV2nkdsDm3BBtSk8Q9OxAFwl2A5vQq1jHIcZkW2gRFGG5dJ0kouJP4JUu0P2R5T9fmI946yRTRQ2TQ=@vger.kernel.org, AJvYcCXPin2cu9gcrxAbtgdJEYSbFK2ezC+9p7zHGSHxsXYo1IeSG/oXv0mdseuVtq01vS8WcK3tLdOQThvwdepucw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4puA1sTonyyiHUSZmVsIrPHbYGH1uqfIogocbHybgj6tHsdX9
+	32XqrMJv7M7lj3hfAdBfUtS8cEOeSQetufwepLmY1gRGbqdDX8y4QeZ5MU7fx6qblnJACEF7MrJ
+	OcvP2/HID6NRNhfTjl6nCubSrF3A=
+X-Google-Smtp-Source: AGHT+IFCCy11dbnnfZDGX/YUPbHzaI/kkJP28eCiDF1flPn+bHfOYkYvKC7HTwYt5dCQ6MKCD4aij7oFdgAfqZPD4E0=
+X-Received: by 2002:a05:6512:3ca2:b0:549:981b:169d with SMTP id
+ 2adb3069b0e04-54a30470b07mr2068803e87.3.1742281510969; Tue, 18 Mar 2025
+ 00:05:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnj1R_E9lnWny0AA--.27191S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxKr48XF4xZr1kuw4xZw4kXrb_yoWxAry8pF
-	s8Gr4jyw48W34Ykr1xJ395Zas8G3s3Aa1Yy3y7G34Sva47JFnaka4SyFn0vFyxGryUZF1U
-	ua909ry3CFWjyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jnjjgUUUUU=
-X-CM-SenderInfo: 5olx5vlug6il2tof0z/1tbiKBAUTGfZDod+JgAAsP
+References: <3e998bf87638a442cbc6864cdcd3d8d9e08ce3e3.camel@HansenPartnership.com>
+ <20250318033738.GV2023217@ZenIV>
+In-Reply-To: <20250318033738.GV2023217@ZenIV>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 18 Mar 2025 08:04:59 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXHOqzvpUOMTpfQfny10B7M3WnwPYdm1jVX7saP4cy2F=A@mail.gmail.com>
+X-Gm-Features: AQ5f1JqCd4LRanA9yEDwtlAdTJYIW53bxFcVs25aZMvA-N0wpX2k1nXI_6kTftY
+Message-ID: <CAMj1kXHOqzvpUOMTpfQfny10B7M3WnwPYdm1jVX7saP4cy2F=A@mail.gmail.com>
+Subject: Re: [PATCH] efivarfs: fix NULL dereference on resume
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, linux-efi@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Ryan Lee <ryan.lee@canonical.com>, 
+	=?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>, 
+	Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Liu Ye <liuye@kylinos.cn>
+On Tue, 18 Mar 2025 at 04:37, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Mon, Mar 17, 2025 at 11:06:01PM -0400, James Bottomley wrote:
+>
+> > +     /* ensure single superblock is alive and pin it */
+> > +     if (!atomic_inc_not_zero(&s->s_active))
+> > +             return NOTIFY_DONE;
+> > +
+> >       pr_info("efivarfs: resyncing variable state\n");
+> >
+> > -     /* O_NOATIME is required to prevent oops on NULL mnt */
+> > +     path.dentry = sfi->sb->s_root;
+> > +
+> > +     /*
+> > +      * do not add SB_KERNMOUNT which a single superblock could
+> > +      * expose to userspace and which also causes MNT_INTERNAL, see
+> > +      * below
+> > +      */
+> > +     path.mnt = vfs_kern_mount(&efivarfs_type, 0,
+> > +                               efivarfs_type.name, NULL);
+>
+> Umm...  That's probably safe, but not as a long-term solution -
+> it's too intimately dependent upon fs/super.c internals.
+> The reasons why you can't run into ->s_umount deadlock here
+> are non-trivial...
 
-The function kpageflags_read and kpagecgroup_read is quite similar
-to kpagecount_read. Consider refactoring common code into a helper
-function to reduce code duplication.
+Thanks - I'll incorporate this observation in the commit log, if you don't mind.
 
-Signed-off-by: Liu Ye <liuye@kylinos.cn>
+To me, it seems rather counter-intuitive that we need a second mount
+in order to be able to implement this. Synchronizing the efivarfs
+contents with the backing store after an event that may have modified
+the latter is only needed when it is mounted to begin with, and as a
+VFS non-expert, I struggle to understand why it is a) ok and b)
+preferred to create a new mount to pass to kernel_file_open(). Could
+we add a paragraph to the commit log that explains this?
 
----
-V4 : Update code remake patch.
-V3 : Add a stub for page_cgroup_ino and remove the #ifdef CONFIG_MEMCG.
-V2 : Use an enumeration to indicate the operation to be performed
-to avoid passing functions.
----
----
- fs/proc/page.c             | 161 +++++++++++++------------------------
- include/linux/memcontrol.h |   4 +
- 2 files changed, 58 insertions(+), 107 deletions(-)
-
-diff --git a/fs/proc/page.c b/fs/proc/page.c
-index 23fc771100ae..999af26c7298 100644
---- a/fs/proc/page.c
-+++ b/fs/proc/page.c
-@@ -22,6 +22,12 @@
- #define KPMMASK (KPMSIZE - 1)
- #define KPMBITS (KPMSIZE * BITS_PER_BYTE)
- 
-+enum kpage_operation {
-+	KPAGE_FLAGS,
-+	KPAGE_COUNT,
-+	KPAGE_CGROUP,
-+};
-+
- static inline unsigned long get_max_dump_pfn(void)
- {
- #ifdef CONFIG_SPARSEMEM
-@@ -37,19 +43,17 @@ static inline unsigned long get_max_dump_pfn(void)
- #endif
- }
- 
--/* /proc/kpagecount - an array exposing page mapcounts
-- *
-- * Each entry is a u64 representing the corresponding
-- * physical page mapcount.
-- */
--static ssize_t kpagecount_read(struct file *file, char __user *buf,
--			     size_t count, loff_t *ppos)
-+static ssize_t kpage_read(struct file *file, char __user *buf,
-+		size_t count, loff_t *ppos,
-+		enum kpage_operation op)
- {
- 	const unsigned long max_dump_pfn = get_max_dump_pfn();
- 	u64 __user *out = (u64 __user *)buf;
-+	struct page *page;
- 	unsigned long src = *ppos;
- 	unsigned long pfn;
- 	ssize_t ret = 0;
-+	u64 info;
- 
- 	pfn = src / KPMSIZE;
- 	if (src & KPMMASK || count & KPMMASK)
-@@ -59,24 +63,34 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
- 	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
- 
- 	while (count > 0) {
--		struct page *page;
--		u64 mapcount = 0;
--
- 		/*
- 		 * TODO: ZONE_DEVICE support requires to identify
- 		 * memmaps that were actually initialized.
- 		 */
- 		page = pfn_to_online_page(pfn);
--		if (page) {
--			struct folio *folio = page_folio(page);
- 
--			if (IS_ENABLED(CONFIG_PAGE_MAPCOUNT))
--				mapcount = folio_precise_page_mapcount(folio, page);
--			else
--				mapcount = folio_average_page_mapcount(folio);
--		}
--
--		if (put_user(mapcount, out)) {
-+		if (page) {
-+			switch (op) {
-+			case KPAGE_FLAGS:
-+				info = stable_page_flags(page);
-+				break;
-+			case KPAGE_COUNT:
-+				if (IS_ENABLED(CONFIG_PAGE_MAPCOUNT))
-+					info = folio_precise_page_mapcount(page_folio(page), page);
-+				else
-+					info = folio_average_page_mapcount(page_folio(page));
-+				break;
-+			case KPAGE_CGROUP:
-+				info = page_cgroup_ino(page);
-+				break;
-+			default:
-+				info = 0;
-+				break;
-+			}
-+		} else
-+			info = 0;
-+
-+		if (put_user(info, out)) {
- 			ret = -EFAULT;
- 			break;
- 		}
-@@ -94,17 +108,23 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
- 	return ret;
- }
- 
-+/* /proc/kpagecount - an array exposing page mapcounts
-+ *
-+ * Each entry is a u64 representing the corresponding
-+ * physical page mapcount.
-+ */
-+static ssize_t kpagecount_read(struct file *file, char __user *buf,
-+		size_t count, loff_t *ppos)
-+{
-+	return kpage_read(file, buf, count, ppos, KPAGE_COUNT);
-+}
-+
- static const struct proc_ops kpagecount_proc_ops = {
- 	.proc_flags	= PROC_ENTRY_PERMANENT,
- 	.proc_lseek	= mem_lseek,
- 	.proc_read	= kpagecount_read,
- };
- 
--/* /proc/kpageflags - an array exposing page flags
-- *
-- * Each entry is a u64 representing the corresponding
-- * physical page flags.
-- */
- 
- static inline u64 kpf_copy_bit(u64 kflags, int ubit, int kbit)
- {
-@@ -225,47 +245,17 @@ u64 stable_page_flags(const struct page *page)
- #endif
- 
- 	return u;
--};
-+}
- 
-+/* /proc/kpageflags - an array exposing page flags
-+ *
-+ * Each entry is a u64 representing the corresponding
-+ * physical page flags.
-+ */
- static ssize_t kpageflags_read(struct file *file, char __user *buf,
--			     size_t count, loff_t *ppos)
-+		size_t count, loff_t *ppos)
- {
--	const unsigned long max_dump_pfn = get_max_dump_pfn();
--	u64 __user *out = (u64 __user *)buf;
--	unsigned long src = *ppos;
--	unsigned long pfn;
--	ssize_t ret = 0;
--
--	pfn = src / KPMSIZE;
--	if (src & KPMMASK || count & KPMMASK)
--		return -EINVAL;
--	if (src >= max_dump_pfn * KPMSIZE)
--		return 0;
--	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
--
--	while (count > 0) {
--		/*
--		 * TODO: ZONE_DEVICE support requires to identify
--		 * memmaps that were actually initialized.
--		 */
--		struct page *page = pfn_to_online_page(pfn);
--
--		if (put_user(stable_page_flags(page), out)) {
--			ret = -EFAULT;
--			break;
--		}
--
--		pfn++;
--		out++;
--		count -= KPMSIZE;
--
--		cond_resched();
--	}
--
--	*ppos += (char __user *)out - buf;
--	if (!ret)
--		ret = (char __user *)out - buf;
--	return ret;
-+	return kpage_read(file, buf, count, ppos, KPAGE_FLAGS);
- }
- 
- static const struct proc_ops kpageflags_proc_ops = {
-@@ -276,53 +266,10 @@ static const struct proc_ops kpageflags_proc_ops = {
- 
- #ifdef CONFIG_MEMCG
- static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
--				size_t count, loff_t *ppos)
-+		size_t count, loff_t *ppos)
- {
--	const unsigned long max_dump_pfn = get_max_dump_pfn();
--	u64 __user *out = (u64 __user *)buf;
--	struct page *ppage;
--	unsigned long src = *ppos;
--	unsigned long pfn;
--	ssize_t ret = 0;
--	u64 ino;
--
--	pfn = src / KPMSIZE;
--	if (src & KPMMASK || count & KPMMASK)
--		return -EINVAL;
--	if (src >= max_dump_pfn * KPMSIZE)
--		return 0;
--	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
--
--	while (count > 0) {
--		/*
--		 * TODO: ZONE_DEVICE support requires to identify
--		 * memmaps that were actually initialized.
--		 */
--		ppage = pfn_to_online_page(pfn);
--
--		if (ppage)
--			ino = page_cgroup_ino(ppage);
--		else
--			ino = 0;
--
--		if (put_user(ino, out)) {
--			ret = -EFAULT;
--			break;
--		}
--
--		pfn++;
--		out++;
--		count -= KPMSIZE;
--
--		cond_resched();
--	}
--
--	*ppos += (char __user *)out - buf;
--	if (!ret)
--		ret = (char __user *)out - buf;
--	return ret;
-+	return kpage_read(file, buf, count, ppos, KPAGE_CGROUP);
- }
--
- static const struct proc_ops kpagecgroup_proc_ops = {
- 	.proc_flags	= PROC_ENTRY_PERMANENT,
- 	.proc_lseek	= mem_lseek,
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 53364526d877..5264d148bdd9 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -1793,6 +1793,10 @@ static inline void count_objcg_events(struct obj_cgroup *objcg,
- {
- }
- 
-+static inline ino_t page_cgroup_ino(struct page *page)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_MEMCG */
- 
- #if defined(CONFIG_MEMCG) && defined(CONFIG_ZSWAP)
--- 
-2.25.1
-
+But if the VFS experts agree that this is a reasonable band-aid for
+the time being, I will take the changes themselves as they are. I
+intend to send this out asap as a fix for the v6.14 release.
 
