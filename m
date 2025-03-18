@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-44263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38D75A66BCE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 08:35:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ACE3A66BDB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 08:36:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 239C01734C5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 07:35:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3550717B793
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 07:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FAB1F9A91;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4692204F81;
 	Tue, 18 Mar 2025 07:34:51 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9F41EFF84;
-	Tue, 18 Mar 2025 07:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B531EFFAB;
+	Tue, 18 Mar 2025 07:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742283290; cv=none; b=CjcQslpEjl1W4Kuzhoxj0qsEC2xKoMnti9cLIriJvN5Hv3N57lPblQC2KbMjJR+agoqCcDObva9f/GnhID9YRV4mXdvUK6u1TdXXOeJ9JV3U5p7o2EjMWkdOqI5Lu+/bL8TJcfFDpkCkre+VGPw357AlFzYcjHw1FCXKyy3KA+E=
+	t=1742283291; cv=none; b=qXkntMonNabhiLKAWPhDJm0EAlb5dKqiWYjS/tnrJs0d9ov5nfkfmb6NOyzIi/xM7FN6oBOYPmLz//F5UHHmYLeu9bhLKH7jTeQ9UwmBMRaaPz9BKVCLiZ+yiQxeKM8vYEuYPC6DVZFGaCAc+FJDeMPK0cWzHeLoo6lN1DRSesY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742283290; c=relaxed/simple;
-	bh=oYwn6ih0UfRiOU+4Xat14ng1/rQxcPjekv6N1k937W8=;
+	s=arc-20240116; t=1742283291; c=relaxed/simple;
+	bh=L+ouOj41YhRbekkzz9nlgWr+5i3mO6Mv6VS53KQ8hZ0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s3458cbK4W0M7tAqaffXgnnHtFdBivmR3iKymCRntOwxMF19XZ/e5qaDmW9jnlpPLmtlSBFHefjGRekBEJUm8PpK6ft5+MfZHQRMPDp1yoJU9QOASHgF2W38be6cxq6GKLrl/cFpoEzLmbjirVPxA1fG3KLBUJDU//Dds0Ri+Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=lKEhmFaPdL45HWThTRBKZhkBzigHFHMVT2mIHpW5wLUCBMz91ELwqZuUOpafud1iaFPMoa6u6ET+sTJL2TeXYEhJKctDYaNeUXyMI8cz8nLV6/LEMkl4vTEoQWuYWrCbneMbqQkcLWVKcHX5QJcY0YnUQ/v26sWMleobMLD1BdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZH3WQ69L9z4f3jZd;
-	Tue, 18 Mar 2025 15:34:26 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZH3WL1w4xz4f3khc;
+	Tue, 18 Mar 2025 15:34:22 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 1F2211A19F6;
+	by mail.maildlp.com (Postfix) with ESMTP id D3D071A058E;
 	Tue, 18 Mar 2025 15:34:44 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgCnCl8EItlnJDdYGw--.56140S5;
-	Tue, 18 Mar 2025 15:34:43 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgCnCl8EItlnJDdYGw--.56140S6;
+	Tue, 18 Mar 2025 15:34:44 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-fsdevel@vger.kernel.org,
 	linux-ext4@vger.kernel.org,
@@ -59,9 +59,9 @@ Cc: linux-xfs@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH xfstests 1/5] generic/764: add page boundaries tests for fallocate write zeroes
-Date: Tue, 18 Mar 2025 15:26:11 +0800
-Message-ID: <20250318072615.3505873-2-yi.zhang@huaweicloud.com>
+Subject: [PATCH xfstests 2/5] generic/765: add generic tests for fallocate write zeroes
+Date: Tue, 18 Mar 2025 15:26:12 +0800
+Message-ID: <20250318072615.3505873-3-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20250318072615.3505873-1-yi.zhang@huaweicloud.com>
 References: <20250318072615.3505873-1-yi.zhang@huaweicloud.com>
@@ -72,74 +72,56 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCnCl8EItlnJDdYGw--.56140S5
-X-Coremail-Antispam: 1UD129KBjvAXoWftr4xXF1xJw1fAF13CrWrGrg_yoW8urW5Xo
-	Wayw1DGws5CryUCr1UAw12vr45W343W3W3ArW8Zr13tr9rWF47A3W0y3WUJr4kJryI9wn8
-	Jr10yrn8C3Z0grn3n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UjIYCTnIWjp_UUUOc7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
-	j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r18M28IrcIa0x
-	kI8VCY1x0267AKxVW8JVW5JwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84AC
-	jcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr
-	1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1l
-	e2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI
-	8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwAC
-	jcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka0x
-	kIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-	Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-	AY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
-	cVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
-	AIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2
-	KfnxnUUI43ZEXa7sR_YFAtUUUUU==
+X-CM-TRANSID:gCh0CgCnCl8EItlnJDdYGw--.56140S6
+X-Coremail-Antispam: 1UD129KBjvJXoW3Xr1UAF18JrWkKFW8tryfXrb_yoWfAFy5pr
+	Wqvw1DCr48Gw4kZa1YkF4rGr97XFsFy3WDur1xuF1Ykry7Kry0kF48Ww4xA342yF1xCF43
+	XrZ5A3ZFgr1qk3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUmY14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
+	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
+	Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
+	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
+	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
+	IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
+	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
+	xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
+	JVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67
+	kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY
+	6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42
+	IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIev
+	Ja73UjIFyTuYvjTR_3kZDUUUU
 X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Add page boundaries and boundaries that are off-by-one tests for the
-fallocate FALLOC_FL_WRITE_ZEROES command.
+Add generic tests for the fallocate FALLOC_FL_WRITE_ZEROES command.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- common/rc             |   2 +-
- tests/generic/764     |  34 ++++
- tests/generic/764.out | 433 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 468 insertions(+), 1 deletion(-)
- create mode 100755 tests/generic/764
- create mode 100644 tests/generic/764.out
+ tests/generic/765     |  40 +++++++
+ tests/generic/765.out | 269 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 309 insertions(+)
+ create mode 100755 tests/generic/765
+ create mode 100644 tests/generic/765.out
 
-diff --git a/common/rc b/common/rc
-index 6592c835..ed70c3c4 100644
---- a/common/rc
-+++ b/common/rc
-@@ -2780,7 +2780,7 @@ _require_xfs_io_command()
- 		testio=`$XFS_IO_PROG -F -f -c "$command $param 0 1m" $testfile 2>&1`
- 		param_checked="$param"
- 		;;
--	"fpunch" | "fcollapse" | "zero" | "fzero" | "finsert" | "funshare")
-+	"fpunch" | "fcollapse" | "zero" | "fzero" | "fwzero" | "finsert" | "funshare")
- 		local blocksize=$(_get_file_block_size $TEST_DIR)
- 		testio=`$XFS_IO_PROG -F -f -c "pwrite 0 $((5 * $blocksize))" \
- 			-c "fsync" -c "$command $blocksize $((2 * $blocksize))" \
-diff --git a/tests/generic/764 b/tests/generic/764
+diff --git a/tests/generic/765 b/tests/generic/765
 new file mode 100755
-index 00000000..0750666b
+index 00000000..4cbef82a
 --- /dev/null
-+++ b/tests/generic/764
-@@ -0,0 +1,34 @@
++++ b/tests/generic/765
+@@ -0,0 +1,40 @@
 +#! /bin/bash
 +# SPDX-License-Identifier: GPL-2.0
 +# Copyright (c) 2025 Huawei.  All Rights Reserved.
 +#
-+# FS QA Test No. 764
++# FS QA Test No. 765
 +#
-+# Makes calls to fallocate write zeroes range and checks tossed ranges
-+#
-+# Primarily tests page boundries and boundries that are off-by-one to
-+# ensure we're only tossing what's expected
++# Test fallocate FALLOC_FL_WRITE_ZEROES
 +#
 +# (generic/008 is a similar test but for fzero.)
 +#
 +. ./common/preamble
-+_begin_fstest auto quick prealloc zero
++_begin_fstest auto quick prealloc zero fiemap
 +
 +# Import common functions.
 +. ./common/filter
@@ -147,457 +129,302 @@ index 00000000..0750666b
 +
 +# Modify as appropriate.
 +_require_xfs_io_command "fwzero"
++_require_xfs_io_command "fiemap"
++_require_xfs_io_command "falloc"
 +_require_test
 +
-+testfile=$TEST_DIR/764.$$
++testfile=$TEST_DIR/765.$$
 +
-+_test_block_boundaries 1024 fwzero _filter_xfs_io_unique $testfile
-+_test_block_boundaries 2048 fwzero _filter_xfs_io_unique $testfile
-+_test_block_boundaries 4096 fwzero _filter_xfs_io_unique $testfile
-+_test_block_boundaries 65536 fwzero _filter_xfs_io_unique $testfile
++# Standard write zeroes tests
++_test_generic_punch falloc fwzero fwzero fiemap _filter_fiemap $testfile
++
++# Delayed allocation write zeroes tests
++_test_generic_punch -d falloc fwzero fwzero fiemap _filter_fiemap $testfile
++
++# Multi write zeroes tests
++_test_generic_punch -k falloc fwzero fwzero fiemap _filter_fiemap $testfile
++
++# Delayed allocation multi write zeroes tests
++_test_generic_punch -d -k falloc fwzero fwzero fiemap _filter_fiemap $testfile
 +
 +# success, all done
 +status=0
 +exit
-diff --git a/tests/generic/764.out b/tests/generic/764.out
+diff --git a/tests/generic/765.out b/tests/generic/765.out
 new file mode 100644
-index 00000000..18bda195
+index 00000000..7dd949c4
 --- /dev/null
-+++ b/tests/generic/764.out
-@@ -0,0 +1,433 @@
-+QA output created by 764
-+zero 0, 1
-+wrote 1024/1024 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 1024/1024 bytes at offset 1024
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  00 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  .AAAAAAAAAAAAAAA
-+00000010:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
++++ b/tests/generic/765.out
+@@ -0,0 +1,269 @@
++QA output created by 765
++	1. into a hole
++0: [0..127]: hole
++1: [128..383]: data
++2: [384..639]: hole
++1aca77e2188f52a62674fe8a873bdaba
++	2. into allocated space
++0: [0..639]: data
++2f7a72b9ca9923b610514a11a45a80c9
++	3. into unwritten space
++0: [0..127]: unwritten
++1: [128..383]: data
++2: [384..639]: unwritten
++1aca77e2188f52a62674fe8a873bdaba
++	4. hole -> data
++0: [0..127]: hole
++1: [128..511]: data
++2: [512..639]: hole
++286aad7ca07b2256f0f2bb8e608ff63d
++	5. hole -> unwritten
++0: [0..127]: hole
++1: [128..383]: data
++2: [384..511]: unwritten
++3: [512..639]: hole
++1aca77e2188f52a62674fe8a873bdaba
++	6. data -> hole
++0: [0..383]: data
++1: [384..639]: hole
++3976e5cc0b8a47c4cdc9e0211635f568
++	7. data -> unwritten
++0: [0..383]: data
++1: [384..511]: unwritten
++2: [512..639]: hole
++3976e5cc0b8a47c4cdc9e0211635f568
++	8. unwritten -> hole
++0: [0..127]: unwritten
++1: [128..383]: data
++2: [384..639]: hole
++1aca77e2188f52a62674fe8a873bdaba
++	9. unwritten -> data
++0: [0..127]: unwritten
++1: [128..511]: data
++2: [512..639]: hole
++286aad7ca07b2256f0f2bb8e608ff63d
++	10. hole -> data -> hole
++0: [0..127]: hole
++1: [128..511]: data
++2: [512..639]: hole
++1aca77e2188f52a62674fe8a873bdaba
++	11. data -> hole -> data
++0: [0..639]: data
++0bcfc7652751f8fe46381240ccadd9d7
++	12. unwritten -> data -> unwritten
++0: [0..127]: unwritten
++1: [128..511]: data
++2: [512..639]: unwritten
++1aca77e2188f52a62674fe8a873bdaba
++	13. data -> unwritten -> data
++0: [0..639]: data
++0bcfc7652751f8fe46381240ccadd9d7
++	14. data -> hole @ EOF
++0: [0..639]: data
++eb591f549edabba2b21f80ce4deed8a9
++	15. data -> hole @ 0
++0: [0..639]: data
++b0c249edb75ce5b52136864d879cde83
++	16. data -> cache cold ->hole
++0: [0..639]: data
++b0c249edb75ce5b52136864d879cde83
++	17. data -> hole in single block file
++0: [0..7]: data
++0000000 cdcd cdcd cdcd cdcd cdcd cdcd cdcd cdcd
++*
++0000200 0000 0000 0000 0000 0000 0000 0000 0000
++*
++0000400 cdcd cdcd cdcd cdcd cdcd cdcd cdcd cdcd
++*
++	1. into a hole
++0: [0..127]: hole
++1: [128..383]: data
++2: [384..639]: hole
++1aca77e2188f52a62674fe8a873bdaba
++	2. into allocated space
++0: [0..639]: data
++2f7a72b9ca9923b610514a11a45a80c9
++	3. into unwritten space
++0: [0..127]: unwritten
++1: [128..383]: data
++2: [384..639]: unwritten
++1aca77e2188f52a62674fe8a873bdaba
++	4. hole -> data
++0: [0..127]: hole
++1: [128..511]: data
++2: [512..639]: hole
++286aad7ca07b2256f0f2bb8e608ff63d
++	5. hole -> unwritten
++0: [0..127]: hole
++1: [128..383]: data
++2: [384..511]: unwritten
++3: [512..639]: hole
++1aca77e2188f52a62674fe8a873bdaba
++	6. data -> hole
++0: [0..383]: data
++1: [384..639]: hole
++3976e5cc0b8a47c4cdc9e0211635f568
++	7. data -> unwritten
++0: [0..383]: data
++1: [384..511]: unwritten
++2: [512..639]: hole
++3976e5cc0b8a47c4cdc9e0211635f568
++	8. unwritten -> hole
++0: [0..127]: unwritten
++1: [128..383]: data
++2: [384..639]: hole
++1aca77e2188f52a62674fe8a873bdaba
++	9. unwritten -> data
++0: [0..127]: unwritten
++1: [128..511]: data
++2: [512..639]: hole
++286aad7ca07b2256f0f2bb8e608ff63d
++	10. hole -> data -> hole
++0: [0..127]: hole
++1: [128..511]: data
++2: [512..639]: hole
++1aca77e2188f52a62674fe8a873bdaba
++	11. data -> hole -> data
++0: [0..639]: data
++0bcfc7652751f8fe46381240ccadd9d7
++	12. unwritten -> data -> unwritten
++0: [0..127]: unwritten
++1: [128..511]: data
++2: [512..639]: unwritten
++1aca77e2188f52a62674fe8a873bdaba
++	13. data -> unwritten -> data
++0: [0..639]: data
++0bcfc7652751f8fe46381240ccadd9d7
++	14. data -> hole @ EOF
++0: [0..639]: data
++eb591f549edabba2b21f80ce4deed8a9
++	15. data -> hole @ 0
++0: [0..639]: data
++b0c249edb75ce5b52136864d879cde83
++	16. data -> cache cold ->hole
++0: [0..639]: data
++b0c249edb75ce5b52136864d879cde83
++	17. data -> hole in single block file
++0: [0..7]: data
++0000000 cdcd cdcd cdcd cdcd cdcd cdcd cdcd cdcd
++*
++0000200 0000 0000 0000 0000 0000 0000 0000 0000
++*
++0000400 cdcd cdcd cdcd cdcd cdcd cdcd cdcd cdcd
++*
++	1. into a hole
++0: [0..127]: hole
++1: [128..383]: data
++2: [384..639]: hole
++1aca77e2188f52a62674fe8a873bdaba
++	2. into allocated space
++0: [0..639]: data
++2f7a72b9ca9923b610514a11a45a80c9
++	3. into unwritten space
++0: [0..639]: data
++2f7a72b9ca9923b610514a11a45a80c9
++	4. hole -> data
++0: [0..639]: data
++2f7a72b9ca9923b610514a11a45a80c9
++	5. hole -> unwritten
++0: [0..639]: data
++2f7a72b9ca9923b610514a11a45a80c9
++	6. data -> hole
++0: [0..639]: data
++2f7a72b9ca9923b610514a11a45a80c9
++	7. data -> unwritten
++0: [0..639]: data
++2f7a72b9ca9923b610514a11a45a80c9
++	8. unwritten -> hole
++0: [0..639]: data
++2f7a72b9ca9923b610514a11a45a80c9
++	9. unwritten -> data
++0: [0..639]: data
++2f7a72b9ca9923b610514a11a45a80c9
++	10. hole -> data -> hole
++0: [0..639]: data
++0bcfc7652751f8fe46381240ccadd9d7
++	11. data -> hole -> data
++0: [0..639]: data
++0bcfc7652751f8fe46381240ccadd9d7
++	12. unwritten -> data -> unwritten
++0: [0..639]: data
++0bcfc7652751f8fe46381240ccadd9d7
++	13. data -> unwritten -> data
++0: [0..639]: data
++0bcfc7652751f8fe46381240ccadd9d7
++	14. data -> hole @ EOF
++0: [0..639]: data
++eb591f549edabba2b21f80ce4deed8a9
++	15. data -> hole @ 0
++0: [0..639]: data
++b0c249edb75ce5b52136864d879cde83
++	16. data -> cache cold ->hole
++0: [0..639]: data
++b0c249edb75ce5b52136864d879cde83
++	17. data -> hole in single block file
++0: [0..7]: data
++0000000 cdcd cdcd cdcd cdcd cdcd cdcd cdcd cdcd
++*
++0000200 0000 0000 0000 0000 0000 0000 0000 0000
++*
++0000400 cdcd cdcd cdcd cdcd cdcd cdcd cdcd cdcd
++*
++	1. into a hole
++0: [0..127]: hole
++1: [128..383]: data
++2: [384..639]: hole
++1aca77e2188f52a62674fe8a873bdaba
++	2. into allocated space
++0: [0..639]: data
++2f7a72b9ca9923b610514a11a45a80c9
++	3. into unwritten space
++0: [0..639]: data
++2f7a72b9ca9923b610514a11a45a80c9
++	4. hole -> data
++0: [0..639]: data
++2f7a72b9ca9923b610514a11a45a80c9
++	5. hole -> unwritten
++0: [0..639]: data
++2f7a72b9ca9923b610514a11a45a80c9
++	6. data -> hole
++0: [0..639]: data
++2f7a72b9ca9923b610514a11a45a80c9
++	7. data -> unwritten
++0: [0..639]: data
++2f7a72b9ca9923b610514a11a45a80c9
++	8. unwritten -> hole
++0: [0..639]: data
++2f7a72b9ca9923b610514a11a45a80c9
++	9. unwritten -> data
++0: [0..639]: data
++2f7a72b9ca9923b610514a11a45a80c9
++	10. hole -> data -> hole
++0: [0..639]: data
++0bcfc7652751f8fe46381240ccadd9d7
++	11. data -> hole -> data
++0: [0..639]: data
++0bcfc7652751f8fe46381240ccadd9d7
++	12. unwritten -> data -> unwritten
++0: [0..639]: data
++0bcfc7652751f8fe46381240ccadd9d7
++	13. data -> unwritten -> data
++0: [0..639]: data
++0bcfc7652751f8fe46381240ccadd9d7
++	14. data -> hole @ EOF
++0: [0..639]: data
++eb591f549edabba2b21f80ce4deed8a9
++	15. data -> hole @ 0
++0: [0..639]: data
++b0c249edb75ce5b52136864d879cde83
++	16. data -> cache cold ->hole
++0: [0..639]: data
++b0c249edb75ce5b52136864d879cde83
++	17. data -> hole in single block file
++0: [0..7]: data
++0000000 cdcd cdcd cdcd cdcd cdcd cdcd cdcd cdcd
++*
++0000200 0000 0000 0000 0000 0000 0000 0000 0000
++*
++0000400 cdcd cdcd cdcd cdcd cdcd cdcd cdcd cdcd
 +*
-+00000400:  42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  BBBBBBBBBBBBBBBB
-+*
-+read 2048/2048 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 0, 1023
-+wrote 1024/1024 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 1024/1024 bytes at offset 1024
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+000003f0:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 41  ...............A
-+00000400:  42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  BBBBBBBBBBBBBBBB
-+*
-+read 2048/2048 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 0, 1024
-+wrote 1024/1024 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 1024/1024 bytes at offset 1024
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+00000400:  42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  BBBBBBBBBBBBBBBB
-+*
-+read 2048/2048 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 0, 1025
-+wrote 1024/1024 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 1024/1024 bytes at offset 1024
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+00000400:  00 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  .BBBBBBBBBBBBBBB
-+00000410:  42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  BBBBBBBBBBBBBBBB
-+*
-+read 2048/2048 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 1023, 1024
-+wrote 1024/1024 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 1024/1024 bytes at offset 1024
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+000003f0:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 00  AAAAAAAAAAAAAAA.
-+00000400:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+000007f0:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 42  ...............B
-+read 2048/2048 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 1023, 1025
-+wrote 1024/1024 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 1024/1024 bytes at offset 1024
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+000003f0:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 00  AAAAAAAAAAAAAAA.
-+00000400:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+read 2048/2048 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 1023, 1026
-+wrote 1024/1024 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 1024/1024 bytes at offset 1024
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+000003f0:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 00  AAAAAAAAAAAAAAA.
-+00000400:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+read 2048/2048 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 1024, 1024
-+wrote 1024/1024 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 1024/1024 bytes at offset 1024
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+00000400:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+read 2048/2048 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 512 , 1024
-+wrote 1024/1024 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 1024/1024 bytes at offset 1024
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+00000200:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+00000600:  42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  BBBBBBBBBBBBBBBB
-+*
-+read 2048/2048 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 0, 1
-+wrote 2048/2048 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 2048/2048 bytes at offset 2048
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  00 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  .AAAAAAAAAAAAAAA
-+00000010:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+00000800:  42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  BBBBBBBBBBBBBBBB
-+*
-+read 4096/4096 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 0, 2047
-+wrote 2048/2048 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 2048/2048 bytes at offset 2048
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+000007f0:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 41  ...............A
-+00000800:  42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  BBBBBBBBBBBBBBBB
-+*
-+read 4096/4096 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 0, 2048
-+wrote 2048/2048 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 2048/2048 bytes at offset 2048
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+00000800:  42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  BBBBBBBBBBBBBBBB
-+*
-+read 4096/4096 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 0, 2049
-+wrote 2048/2048 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 2048/2048 bytes at offset 2048
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+00000800:  00 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  .BBBBBBBBBBBBBBB
-+00000810:  42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  BBBBBBBBBBBBBBBB
-+*
-+read 4096/4096 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 2047, 2048
-+wrote 2048/2048 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 2048/2048 bytes at offset 2048
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+000007f0:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 00  AAAAAAAAAAAAAAA.
-+00000800:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+00000ff0:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 42  ...............B
-+read 4096/4096 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 2047, 2049
-+wrote 2048/2048 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 2048/2048 bytes at offset 2048
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+000007f0:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 00  AAAAAAAAAAAAAAA.
-+00000800:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+read 4096/4096 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 2047, 2050
-+wrote 2048/2048 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 2048/2048 bytes at offset 2048
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+000007f0:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 00  AAAAAAAAAAAAAAA.
-+00000800:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+read 4096/4096 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 2048, 2048
-+wrote 2048/2048 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 2048/2048 bytes at offset 2048
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+00000800:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+read 4096/4096 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 1024 , 2048
-+wrote 2048/2048 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 2048/2048 bytes at offset 2048
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+00000400:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+00000c00:  42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  BBBBBBBBBBBBBBBB
-+*
-+read 4096/4096 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 0, 1
-+wrote 4096/4096 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 4096/4096 bytes at offset 4096
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  00 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  .AAAAAAAAAAAAAAA
-+00000010:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+00001000:  42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  BBBBBBBBBBBBBBBB
-+*
-+read 8192/8192 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 0, 4095
-+wrote 4096/4096 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 4096/4096 bytes at offset 4096
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+00000ff0:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 41  ...............A
-+00001000:  42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  BBBBBBBBBBBBBBBB
-+*
-+read 8192/8192 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 0, 4096
-+wrote 4096/4096 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 4096/4096 bytes at offset 4096
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+00001000:  42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  BBBBBBBBBBBBBBBB
-+*
-+read 8192/8192 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 0, 4097
-+wrote 4096/4096 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 4096/4096 bytes at offset 4096
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+00001000:  00 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  .BBBBBBBBBBBBBBB
-+00001010:  42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  BBBBBBBBBBBBBBBB
-+*
-+read 8192/8192 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 4095, 4096
-+wrote 4096/4096 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 4096/4096 bytes at offset 4096
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+00000ff0:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 00  AAAAAAAAAAAAAAA.
-+00001000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+00001ff0:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 42  ...............B
-+read 8192/8192 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 4095, 4097
-+wrote 4096/4096 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 4096/4096 bytes at offset 4096
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+00000ff0:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 00  AAAAAAAAAAAAAAA.
-+00001000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+read 8192/8192 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 4095, 4098
-+wrote 4096/4096 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 4096/4096 bytes at offset 4096
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+00000ff0:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 00  AAAAAAAAAAAAAAA.
-+00001000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+read 8192/8192 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 4096, 4096
-+wrote 4096/4096 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 4096/4096 bytes at offset 4096
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+00001000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+read 8192/8192 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 2048 , 4096
-+wrote 4096/4096 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 4096/4096 bytes at offset 4096
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+00000800:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+00001800:  42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  BBBBBBBBBBBBBBBB
-+*
-+read 8192/8192 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 0, 1
-+wrote 65536/65536 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 65536/65536 bytes at offset 65536
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  00 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  .AAAAAAAAAAAAAAA
-+00000010:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+00010000:  42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  BBBBBBBBBBBBBBBB
-+*
-+read 131072/131072 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 0, 65535
-+wrote 65536/65536 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 65536/65536 bytes at offset 65536
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+0000fff0:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 41  ...............A
-+00010000:  42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  BBBBBBBBBBBBBBBB
-+*
-+read 131072/131072 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 0, 65536
-+wrote 65536/65536 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 65536/65536 bytes at offset 65536
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+00010000:  42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  BBBBBBBBBBBBBBBB
-+*
-+read 131072/131072 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 0, 65537
-+wrote 65536/65536 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 65536/65536 bytes at offset 65536
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+00010000:  00 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  .BBBBBBBBBBBBBBB
-+00010010:  42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  BBBBBBBBBBBBBBBB
-+*
-+read 131072/131072 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 65535, 65536
-+wrote 65536/65536 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 65536/65536 bytes at offset 65536
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+0000fff0:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 00  AAAAAAAAAAAAAAA.
-+00010000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+0001fff0:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 42  ...............B
-+read 131072/131072 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 65535, 65537
-+wrote 65536/65536 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 65536/65536 bytes at offset 65536
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+0000fff0:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 00  AAAAAAAAAAAAAAA.
-+00010000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+read 131072/131072 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 65535, 65538
-+wrote 65536/65536 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 65536/65536 bytes at offset 65536
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+0000fff0:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 00  AAAAAAAAAAAAAAA.
-+00010000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+read 131072/131072 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 65536, 65536
-+wrote 65536/65536 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 65536/65536 bytes at offset 65536
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+00010000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+read 131072/131072 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+zero 32768 , 65536
-+wrote 65536/65536 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+wrote 65536/65536 bytes at offset 65536
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+00000000:  41 41 41 41 41 41 41 41 41 41 41 41 41 41 41 41  AAAAAAAAAAAAAAAA
-+*
-+00008000:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-+*
-+00018000:  42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42  BBBBBBBBBBBBBBBB
-+*
-+read 131072/131072 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
 -- 
 2.46.1
 
