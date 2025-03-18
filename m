@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-44272-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B8BBA66C3D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 08:43:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C006A66C71
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 08:47:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D552917FDD9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 07:41:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E07B7189B4E0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 07:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702301EFF86;
-	Tue, 18 Mar 2025 07:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9511F8729;
+	Tue, 18 Mar 2025 07:44:16 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CECF7E9;
-	Tue, 18 Mar 2025 07:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123091A7045;
+	Tue, 18 Mar 2025 07:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742283644; cv=none; b=WuYqg2YvM5mTfkSOtCdnWgbfE8l9N272atiDweRDSVtHAfN4woMaaSbSYk/IcR685GbBIKBkdVT7C/T9lFUeFJZDVSK42zEKScNqfBSSyOJepzNSVVBUrdq7kMA3Q9lM67xPbEGTqi7usSsqcRHEDwTJ/BQrWPuEOVEtJN6lNkI=
+	t=1742283855; cv=none; b=Sj2feCxvuPNzQSiv7UAMT/smYncMLdyw/sF+oieoVYW8htSBm2ETLuUvWt+EV4f7NSBFgcIp4stfmMEdOQ6KzawzJfA8iEM/GwbEEwQtWeqlojMvjmft2B5UUYOrvRhbdjgXio84l0/xVJthUnH0EzSNCeK0Vvky9/i0MPTjV0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742283644; c=relaxed/simple;
-	bh=K+XA7GFK0xb73WCV79w/cHUhfkLJzifDbaFT/ICcowg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fLiZTVuCaEmEaCqdJrvohALDtbUB3eyrfwJx3TTY7agUgSz0Dgh1ZjG1EnRvkV+Hx8yZhkExIa3ak4sq01vY5sKtYw+q/ECD+xxora90qa4sdcIq3MsKIGkapxq5MSEsSJXhTHUrZkd/qkeeJkP0SYi1mKVV3djnE0jq0vlJGyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	s=arc-20240116; t=1742283855; c=relaxed/simple;
+	bh=D62hU0UbBe50hVmwESXBSTMdGOW2ppQgTS0YlGm3+5E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fvhCP+u5h1p7ZRYq2ojmkaHRCW9xCiODdlRWZuDqug3Kjz3vndd5lcmnNQmrjWrDP7M5e5kaqREFke3/Q7aP1S446otH/bF3fl/lxqKSawWXK9ysrj7wLmLgYhPyrTeVTp+Isg4V/LpiDFvDBlDs8F/Sv69SNSEQa7UJDrS40A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZH3f60Hksz4f3m7R;
-	Tue, 18 Mar 2025 15:40:14 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZH3kB73R6z4f3khd;
+	Tue, 18 Mar 2025 15:43:46 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 1A6041A1BDC;
-	Tue, 18 Mar 2025 15:40:38 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 9215A1A058E;
+	Tue, 18 Mar 2025 15:44:09 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgBHq19uI9ln0aBYGw--.57558S4;
-	Tue, 18 Mar 2025 15:40:37 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgCH6189JNlnEt1YGw--.55732S4;
+	Tue, 18 Mar 2025 15:44:07 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-fsdevel@vger.kernel.org,
 	linux-ext4@vger.kernel.org,
@@ -58,9 +58,9 @@ Cc: linux-xfs@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH util-linux] fallocate: add FALLOC_FL_WRITE_ZEROES support
-Date: Tue, 18 Mar 2025 15:32:18 +0800
-Message-ID: <20250318073218.3513262-1-yi.zhang@huaweicloud.com>
+Subject: [RFC PATCH -next v3 00/10] fallocate: introduce FALLOC_FL_WRITE_ZEROES flag
+Date: Tue, 18 Mar 2025 15:35:35 +0800
+Message-ID: <20250318073545.3518707-1-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -69,13 +69,13 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHq19uI9ln0aBYGw--.57558S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxKF1DuF4DWw18Cry5KFW5GFg_yoW7Kw48pF
-	W5tF18K3yFgw47Gwn7Aw4kWrn8Z395WrW5CrZ2grykAr13Ga17Ka1vgFyFgasrXrWvka15
-	XryaqFy3ur48AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgCH6189JNlnEt1YGw--.55732S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxKFy3AryrZF43Zr4UAFW5KFg_yoW3tryfpa
+	y8XryYkryDKryxC3s3ua1I9ryrZws5ArW3Gw4xK34UuFZ8ZF1xKFs2ga4Yqa9rZFyxW3WD
+	XFsF9r9ru3W7A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUU9I14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
 	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
 	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
 	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
@@ -90,132 +90,193 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-The Linux kernel is planning to supports FALLOC_FL_WRITE_ZEROES in
-fallocate(2). Add FALLOC_FL_ZERO_RANGE support to fallocate utility by
-introducing a new option -w|--write-zeroes.
+Changes since RFC v2:
+ - Rebase codes on next-20250314.
+ - Add support for nvme multipath.
+ - Add support for NVMeT with block device backing.
+ - Clear FALLOC_FL_WRITE_ZEROES if dm clear
+   limits->max_write_zeroes_sectors.
+ - Complement the counterpart userspace tools(util-linux and xfs_io)
+   and tests(blktests and xfstests), please see below for details.
+Changes since RFC v1:
+ - Switch to add a new write zeroes operation, FALLOC_FL_WRITE_ZEROES,
+   in fallocate, instead of just adding a supported flag to
+   FALLOC_FL_ZERO_RANGE.
+ - Introduce a new flag BLK_FEAT_WRITE_ZEROES_UNMAP to the block
+   device's queue limit features, and implement it on SCSI sd driver,
+   NVMe SSD driver and dm driver.
+ - Implement FALLOC_FL_WRITE_ZEROES on both the ext4 filesystem and
+   block device (bdev).
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+RFC v2: https://lore.kernel.org/linux-fsdevel/20250115114637.2705887-1-yi.zhang@huaweicloud.com/
+RFC v1: https://lore.kernel.org/linux-fsdevel/20241228014522.2395187-1-yi.zhang@huaweicloud.com/
+
+The counterpart userspace tools changes and tests are here:
+ - util-linux: https://lore.kernel.org/linux-fsdevel/20250318073218.3513262-1-yi.zhang@huaweicloud.com/ 
+ - xfsprogs: https://lore.kernel.org/linux-fsdevel/20250318072318.3502037-1-yi.zhang@huaweicloud.com/
+ - xfstests: https://lore.kernel.org/linux-fsdevel/20250318072615.3505873-1-yi.zhang@huaweicloud.com/
+ - blktests: https://lore.kernel.org/linux-fsdevel/20250318072835.3508696-1-yi.zhang@huaweicloud.com/
+
+Currently, we can use the fallocate command to quickly create a
+pre-allocated file. However, on most filesystems, such as ext4 and XFS,
+fallocate create pre-allocation blocks in an unwritten state, and the
+FALLOC_FL_ZERO_RANGE flag also behaves similarly. The extent state must
+be converted to a written state when the user writes data into this
+range later, which can trigger numerous metadata changes and consequent
+journal I/O. This may leads to significant write amplification and
+performance degradation in synchronous write mode. Therefore, we need a
+method to create a pre-allocated file with written extents that can be
+used for pure overwriting. At the monent, the only method available is
+to create an empty file and write zero data into it (for example, using
+'dd' with a large block size). However, this method is slow and consumes
+a considerable amount of disk bandwidth, we must pre-allocate files in
+advance but cannot add pre-allocated files while user business services
+are running.
+
+Fortunately, with the development and more and more widely used of
+flash-based storage devices, we can efficiently write zeros to SSDs
+using the unmap write zeroes command if the devices do not write
+physical zeroes to the media. For example, if SCSI SSDs support the
+UMMAP bit or NVMe SSDs support the DEAC bit[1], the write zeroes command
+does not write actual data to the device, instead, NVMe converts the
+zeroed range to a deallocated state, which works fast and consumes
+almost no disk write bandwidth. Consequently, this feature can provide
+us with a faster method for creating pre-allocated files with written
+extents and zeroed data.
+
+This series aims to implement this by:
+1. Introduce a new feature BLK_FEAT_WRITE_ZEROES_UNMAP to the block
+   device queue limit features, which indicates whether the storage is
+   device explicitly supports the unmapped write zeroes command. This
+   flag should be set to 1 by the driver if the attached disk supports
+   this command. Users can check this flag by querying:
+
+       /sys/block/<disk>/queue/write_zeroes_unmap
+
+2. Introduce a new flag FALLOC_FL_WRITE_ZEROES into the fallocate,
+   filesystems with this operaion should allocate written extents and
+   issuing zeroes to the range of the device. If the device supports
+   unmap write zeroes command, the zeroing can be accelerated, if not,
+   we currently still allow to fall back to submit zeroes data. Users
+   can verify if the device supports the unmap write zeroes command and
+   then decide whether to use it.
+
+This series implemented the BLK_FEAT_WRITE_ZEROES_UNMAP flag for SCSI,
+NVMe and device-mapper drivers, and added the FALLOC_FL_WRITE_ZEROES
+support for ext4 and raw bdev devices. Any comments are welcome.
+
+I've tested performance with this series on ext4 filesystem on my
+machine with an Intel Xeon Gold 6248R CPU, a 7TB KCD61LUL7T68 NVMe SSD
+which supports unmap write zeroes command with the Deallocated state
+and the DEAC bit. Feel free to give it a try.
+
+0. Ensure the NVMe device supports WRITE_ZERO command.
+
+ $ cat /sys/block/nvme5n1/queue/write_zeroes_max_bytes
+   8388608
+ $ nvme id-ns -H /dev/nvme5n1 | grep -i -A 3 "dlfeat"
+   dlfeat  : 25
+   [4:4] : 0x1   Guard Field of Deallocated Logical Blocks is set to CRC
+                 of The Value Read
+   [3:3] : 0x1   Deallocate Bit in the Write Zeroes Command is Supported
+   [2:0] : 0x1   Bytes Read From a Deallocated Logical Block and its
+                 Metadata are 0x00
+
+1. Compare 'dd' and fallocate with unmap write zeroes, the later one is
+   significantly faster than 'dd'.
+
+   Create a 1GB and 10GB zeroed file.
+    $dd if=/dev/zero of=foo bs=2M count=$count oflag=direct
+    $time fallocate -w -l $size bar
+
+    #1G
+    dd:                     0.5s
+    FALLOC_FL_WRITE_ZEROES: 0.17s
+
+    #10G
+    dd:                     5.0s
+    FALLOC_FL_WRITE_ZEROES: 1.7s
+
+2. Run fio overwrite and fallocate with unmap write zeroes
+   simultaneously, fallocate has little impact on write bandwidth and
+   only slightly affects write latency.
+
+ a) Test bandwidth costs.
+  $ fio -directory=/test -direct=1 -iodepth=10 -fsync=0 -rw=write \
+        -numjobs=10 -bs=2M -ioengine=libaio -size=20G -runtime=20 \
+        -fallocate=none -overwrite=1 -group_reportin -name=bw_test
+
+   Without background zero range:
+    bw (MiB/s): min= 2068, max= 2280, per=100.00%, avg=2186.40
+
+   With background zero range:
+    bw (MiB/s): min= 2056, max= 2308, per=100.00%, avg=2186.20
+
+ b) Test write latency costs.
+  $ fio -filename=/test/foo -direct=1 -iodepth=1 -fsync=0 -rw=write \
+        -numjobs=1 -bs=4k -ioengine=psync -size=5G -runtime=20 \
+        -fallocate=none -overwrite=1 -group_reportin -name=lat_test
+
+   Without background zero range:
+   lat (nsec): min=9269, max=71635, avg=9840.65
+
+   With a background zero range:
+   lat (usec): min=9, max=982, avg=11.03
+
+3. Compare overwriting in a pre-allocated unwritten file and a written
+   file in O_DSYNC mode. Write to a file with written extents is much
+   faster.
+
+  # First mkfs and create a test file according to below three cases,
+  # and then run fio.
+
+  $ fio -filename=/test/foo -direct=1 -iodepth=1 -fdatasync=1 \
+        -rw=write -numjobs=1 -bs=4k -ioengine=psync -size=5G \
+        -runtime=20 -fallocate=none -group_reportin -name=test
+
+   unwritten file:                 IOPS=20.1k, BW=78.7MiB/s
+   unwritten file + fast_commit:   IOPS=42.9k, BW=167MiB/s
+   written file:                   IOPS=98.8k, BW=386MiB/s
+
+Thanks,
+Yi.
+
 ---
- sys-utils/fallocate.1.adoc | 11 +++++++++--
- sys-utils/fallocate.c      | 20 ++++++++++++++++----
- 2 files changed, 25 insertions(+), 6 deletions(-)
 
-diff --git a/sys-utils/fallocate.1.adoc b/sys-utils/fallocate.1.adoc
-index 44ee0ef4c..f9226b909 100644
---- a/sys-utils/fallocate.1.adoc
-+++ b/sys-utils/fallocate.1.adoc
-@@ -12,7 +12,7 @@ fallocate - preallocate or deallocate space to a file
- 
- == SYNOPSIS
- 
--*fallocate* [*-c*|*-p*|*-z*] [*-o* _offset_] *-l* _length_ [*-n*] _filename_
-+*fallocate* [*-c*|*-p*|*-z*|*-w*] [*-o* _offset_] *-l* _length_ [*-n*] _filename_
- 
- *fallocate* *-d* [*-o* _offset_] [*-l* _length_] _filename_
- 
-@@ -28,7 +28,7 @@ The exit status returned by *fallocate* is 0 on success and 1 on failure.
- 
- The _length_ and _offset_ arguments may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB, and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB") or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB, and YB.
- 
--The options *--collapse-range*, *--dig-holes*, *--punch-hole*, *--zero-range* and *--posix* are mutually exclusive.
-+The options *--collapse-range*, *--dig-holes*, *--punch-hole*, *--zero-range*, *--write-zeroes* and *--posix* are mutually exclusive.
- 
- *-c*, *--collapse-range*::
- Removes a byte range from a file, without leaving a hole. The byte range to be collapsed starts at _offset_ and continues for _length_ bytes. At the completion of the operation, the contents of the file starting at the location __offset__+_length_ will be appended at the location _offset_, and the file will be _length_ bytes smaller. The option *--keep-size* may not be specified for the collapse-range operation.
-@@ -76,6 +76,13 @@ Option *--keep-size* can be specified to prevent file length modification.
- +
- Available since Linux 3.14 for ext4 (only for extent-based files) and XFS.
- 
-+*-w*, *--write-zeroes*::
-+Zeroes space in the byte range starting at _offset_ and continuing for _length_ bytes. Within the specified range, blocks are preallocated for the regions that span the holes in the file. After a successful call, subsequent reads from this range will return zeroes.
-++
-+Zeroing is done within the filesystem by preferably submitting write zeores commands, the alternative way is submitting actual zeroed data, the specified range will be converted into written extents. The write zeroes command is significantly faster than write actual data if the device supports unmap write zeroes, and the specified range will not be physically zeroed out on the device.
-++
-+Options *--keep-size* can not be specified for the write-zeroes operation.
-+
- include::man-common/help-version.adoc[]
- 
- == AUTHORS
-diff --git a/sys-utils/fallocate.c b/sys-utils/fallocate.c
-index fff75b03f..69e1e1e5b 100644
---- a/sys-utils/fallocate.c
-+++ b/sys-utils/fallocate.c
-@@ -41,7 +41,7 @@
- #if defined(HAVE_LINUX_FALLOC_H) && \
-     (!defined(FALLOC_FL_KEEP_SIZE) || !defined(FALLOC_FL_PUNCH_HOLE) || \
-      !defined(FALLOC_FL_COLLAPSE_RANGE) || !defined(FALLOC_FL_ZERO_RANGE) || \
--     !defined(FALLOC_FL_INSERT_RANGE))
-+     !defined(FALLOC_FL_INSERT_RANGE) || !defined(FALLOC_FL_WRITE_ZEROES))
- # include <linux/falloc.h>	/* non-libc fallback for FALLOC_FL_* flags */
- #endif
- 
-@@ -66,6 +66,10 @@
- # define FALLOC_FL_INSERT_RANGE		0x20
- #endif
- 
-+#ifndef FALLOC_FL_WRITE_ZEROES
-+# define FALLOC_FL_WRITE_ZEROES		0x80
-+#endif
-+
- #include "nls.h"
- #include "strutils.h"
- #include "c.h"
-@@ -95,6 +99,7 @@ static void __attribute__((__noreturn__)) usage(void)
- 	fputs(_(" -o, --offset <num>   offset for range operations, in bytes\n"), out);
- 	fputs(_(" -p, --punch-hole     replace a range with a hole (implies -n)\n"), out);
- 	fputs(_(" -z, --zero-range     zero and ensure allocation of a range\n"), out);
-+	fputs(_(" -w, --write-zeroes   write zeroes and ensure allocation of a range\n"), out);
- #ifdef HAVE_POSIX_FALLOCATE
- 	fputs(_(" -x, --posix          use posix_fallocate(3) instead of fallocate(2)\n"), out);
- #endif
-@@ -305,6 +310,7 @@ int main(int argc, char **argv)
- 	    { "dig-holes",      no_argument,       NULL, 'd' },
- 	    { "insert-range",   no_argument,       NULL, 'i' },
- 	    { "zero-range",     no_argument,       NULL, 'z' },
-+	    { "write-zeroes",   no_argument,       NULL, 'w' },
- 	    { "offset",         required_argument, NULL, 'o' },
- 	    { "length",         required_argument, NULL, 'l' },
- 	    { "posix",          no_argument,       NULL, 'x' },
-@@ -313,8 +319,8 @@ int main(int argc, char **argv)
- 	};
- 
- 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
--		{ 'c', 'd', 'i', 'p', 'x', 'z'},
--		{ 'c', 'i', 'n', 'x' },
-+		{ 'c', 'd', 'i', 'p', 'w', 'x', 'z'},
-+		{ 'c', 'i', 'n', 'w', 'x' },
- 		{ 0 }
- 	};
- 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
-@@ -324,7 +330,7 @@ int main(int argc, char **argv)
- 	textdomain(PACKAGE);
- 	close_stdout_atexit();
- 
--	while ((c = getopt_long(argc, argv, "hvVncpdizxl:o:", longopts, NULL))
-+	while ((c = getopt_long(argc, argv, "hvVncpdizwxl:o:", longopts, NULL))
- 			!= -1) {
- 
- 		err_exclusive_options(c, longopts, excl, excl_st);
-@@ -354,6 +360,9 @@ int main(int argc, char **argv)
- 		case 'z':
- 			mode |= FALLOC_FL_ZERO_RANGE;
- 			break;
-+		case 'w':
-+			mode |= FALLOC_FL_WRITE_ZEROES;
-+			break;
- 		case 'x':
- #ifdef HAVE_POSIX_FALLOCATE
- 			posix = 1;
-@@ -430,6 +439,9 @@ int main(int argc, char **argv)
- 			else if (mode & FALLOC_FL_ZERO_RANGE)
- 				fprintf(stdout, _("%s: %s (%ju bytes) zeroed.\n"),
- 								filename, str, length);
-+			else if (mode & FALLOC_FL_WRITE_ZEROES)
-+				fprintf(stdout, _("%s: %s (%ju bytes) write zeroed.\n"),
-+								filename, str, length);
- 			else
- 				fprintf(stdout, _("%s: %s (%ju bytes) allocated.\n"),
- 								filename, str, length);
+[1] https://nvmexpress.org/specifications/
+    NVM Command Set Specification, section 3.2.8
+
+Zhang Yi (10):
+  block: introduce BLK_FEAT_WRITE_ZEROES_UNMAP to queue limits features
+  nvme: set BLK_FEAT_WRITE_ZEROES_UNMAP if device supports DEAC bit
+  nvme-multipath: add BLK_FEAT_WRITE_ZEROES_UNMAP support
+  nvmet: set WZDS and DRB if device supports BLK_FEAT_WRITE_ZEROES_UNMAP
+  scsi: sd: set BLK_FEAT_WRITE_ZEROES_UNMAP if device supports unmap
+    zeroing mode
+  dm: add BLK_FEAT_WRITE_ZEROES_UNMAP support
+  fs: introduce FALLOC_FL_WRITE_ZEROES to fallocate
+  block: add FALLOC_FL_WRITE_ZEROES support
+  block: factor out common part in blkdev_fallocate()
+  ext4: add FALLOC_FL_WRITE_ZEROES support
+
+ Documentation/ABI/stable/sysfs-block | 14 +++++++
+ block/blk-settings.c                 |  6 +++
+ block/blk-sysfs.c                    |  3 ++
+ block/fops.c                         | 37 +++++++++--------
+ drivers/md/dm-table.c                |  7 +++-
+ drivers/md/dm.c                      |  1 +
+ drivers/nvme/host/core.c             | 21 +++++-----
+ drivers/nvme/host/multipath.c        |  3 +-
+ drivers/nvme/target/io-cmd-bdev.c    |  4 ++
+ drivers/scsi/sd.c                    |  5 +++
+ fs/ext4/extents.c                    | 59 ++++++++++++++++++++++------
+ fs/open.c                            |  1 +
+ include/linux/blkdev.h               |  8 ++++
+ include/linux/falloc.h               |  3 +-
+ include/trace/events/ext4.h          |  3 +-
+ include/uapi/linux/falloc.h          | 18 +++++++++
+ 16 files changed, 149 insertions(+), 44 deletions(-)
+
 -- 
 2.46.1
 
