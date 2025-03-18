@@ -1,207 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-44293-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44294-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 537E3A66E65
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 09:36:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F96A66EA7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 09:42:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B2421763FD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 08:35:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A48B9172B84
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 08:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4B3204F8A;
-	Tue, 18 Mar 2025 08:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FDC204879;
+	Tue, 18 Mar 2025 08:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzVbHHI6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JkGDbmlq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E10204F65
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 08:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26AE85260
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 08:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742286903; cv=none; b=nOESNwhBJtloFJkQYlcPQwUskxo+hTeutx1JRFUCB4g01RCy2lUX7HnS8NXKxXBRy8POLl/SV6Fxb4nqaetes4fAJaBdmK0IiWWAPEzZJkUbkKTgrjvrjr45gR4aR1w+ZRh5GjCMNbuH4kMrPHPnKRuCPhha8dIneqfm6jojwmI=
+	t=1742287362; cv=none; b=H1PUV7imegvVY3UyZ7/viMDbwXmJ+k70Z48DGdrUt3ZgUdsjrfkHuzXWxxCsUaJxJfcU6xwwK7Iy/aW/fXAXJMokJUvuBmBsoujlqbdFMXSk3N1xW2HxESaPgtdqbUqYvC7NuTJbJ0FGPNj4J2F1NnQ8xmXpQBrHDUymmQP8E50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742286903; c=relaxed/simple;
-	bh=RntO+3M2/psv1Zs3oZ+vHjdEEKvp6GZN4SqKzd/TB5s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W9c9aEO5b+fmzP2wDxvCspq8Nca8JN+I5LsaqjzyL9zRjtG5t7B8BmSctmdcqjxSS3cea0od0HzaCJoZuDbyZnQtYnLD63a0WVYYXMOLZ5nY3zrF08souzhUr6g6AodhzlwG+zu23o4RXmJkwrr0922njfAdiv/OOPE+IPcNpCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzVbHHI6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C567C4CEDD;
-	Tue, 18 Mar 2025 08:35:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742286902;
-	bh=RntO+3M2/psv1Zs3oZ+vHjdEEKvp6GZN4SqKzd/TB5s=;
-	h=From:To:Cc:Subject:Date:From;
-	b=bzVbHHI6BP44+cxg4OZr0cynOLPhQmjg/Cc0e0264WSn4PDVwnPmtprCVxO33TnXb
-	 hTI/CwgRvoEWIRndA//OrhS/v5UVx7mdnOa/WcuzkQkMvDKB9cuEjhE4u+5ffcgF2A
-	 yOKWQz636a/AteMkrlXFoh0pyRm/GkdIpXULYTb7+ssda9NwpzBA4DLNIx/1THlzoT
-	 d8AlAupbz8JHTvtQj9QF0q7qkMBxiLoO6nXsSL0IIvu1jrDZh+ZKLJP0soleRcTH2j
-	 w6EIlCPL6Cmz+NIvMNdN8yAN80mk8XCSEfoh/HHfwqIiL2FQfozJ+y8c2zo1seW6l7
-	 fEj6LL4pf0eFQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	Jeff Layton <jlayton@kernel.org>,
-	Lennart Poettering <lennart@poettering.net>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>,
-	Mike Yuan <me@yhndnzj.com>
-Subject: [PATCH v2] pidfs: ensure that PIDFS_INFO_EXIT is available
-Date: Tue, 18 Mar 2025 09:34:53 +0100
-Message-ID: <20250318-geknebelt-anekdote-87bdb6add5fd@brauner>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1742287362; c=relaxed/simple;
+	bh=ZGbW9fo3vP5338LrYCQ1+PmiczltGel6mYT8arK9AD4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EqW/TxpVHQ/FlEb02QGsPctoFUuZ4TLUaSHZnlhRjniYOLKXZ8XushHJiyYHRV6DOgBmJ+QHy3DqQoqkU2NhdTKfejrfZ//bdYMDQQoXR5XldtVejARCB/hidGjoq4B7dBOG9W+uIIV+WciDs1Ba5KAubn4bZpSCVMwWpyGh1t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JkGDbmlq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742287356;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=yRHbKX6FjVUBiO+1/40VtuZMRWI5J7GJ/G7eeYB6Zhg=;
+	b=JkGDbmlqxWUUx5M8gv7O+EeFHjU8HBEd/LOQpbBGVp9EXyZO+r19CUsuBWoiS9UelrwPSy
+	qqfJQBC39uWGyN4T7LdtBiszjO77AZFY4Wutgb8NNcJfs0Kor5rusGWEJC1v4g9/rb7n7y
+	rSVhif7H7py6D7cUHoYVYt4gdUyRAFk=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-602-ULQI-Fl_MVGexuHHJ_qxng-1; Tue, 18 Mar 2025 04:42:35 -0400
+X-MC-Unique: ULQI-Fl_MVGexuHHJ_qxng-1
+X-Mimecast-MFC-AGG-ID: ULQI-Fl_MVGexuHHJ_qxng_1742287354
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3912539665cso3082764f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 01:42:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742287354; x=1742892154;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yRHbKX6FjVUBiO+1/40VtuZMRWI5J7GJ/G7eeYB6Zhg=;
+        b=g++SVmRdp73BQwUwU7Gp8iCIV7kSzBXdVdFt7yJp3CwmbqnSaGqKyCY2Z+qZW06N/7
+         BUeiwHoXpUVO3INPARfd/SvmZHq/so+YCBctcqx+SDGLHsVVYvMjjxiAqP2QomyXCwEe
+         PexnpngSVpsqZGj6+d5EerrXrS9TR4f2Vc10Z+83XZxv0lyvNZLqiwQklkrYu4jgJ3G1
+         NRrbq7iiyWVk2A9PiDyFeAFx9TF+UEYK40Doq2I27hIB2xvxIu25jQzgNdtPOMPsr+xK
+         Z9vH0la21oHDJucb+hpvbbqr4kLIbZ+4RlFxV1cy1coiW0lBkfjdXYpKRpXTNfdc2bo+
+         ZpBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWi4fsweMruNsrksV/Ay8KADVrWRai83ijOxllBHpgeCxFF3i/4qqYK9SlgjJIopmESQn49N0n6xu1DYilE@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGa/2muspWskxN1fT6lz3Zj+AegvBqAtUntB9+i15ggBzk3DzX
+	QjsQViY2CBdoaXaV1wG5S97/Nx51VF67Rxjh7GB2zMEextFZ00xBqAlyavM80VZkagfUgD71RtI
+	0IlS7P6ANoFQksZWMQE2KKzI0hoys171vIRVOoxmObl+xONwZbGW7u2cpX/3b5aQ=
+X-Gm-Gg: ASbGncu0UJ/PZccfSOWbUwja/GMF6SmYa+gO+1bOAPG+Oa2UM0kify5Z2ljBxfsqkR4
+	qYwMXRK4hNBDt/RVDrVlP6fHYTrlJltG483jRQlvdoIS2VyLyQ7ynnZndukzByxy8wbSvOovLUC
+	3J6wNFtVQIZ+jgdwodPf/BD1/DootklqXHb40PKpuercitauYez+VOMwaEgxv0tinAfDFFPd17b
+	ZMNr/5x7WsbnKSpeLbn34KA/grr4NA4a1fOk0uVW4EJLtFQ/NkyOFMtHbmOOH1uBdzEkgsts6/+
+	A1a0ux5JHPBQMTUpZ+nWxetmxG8ZbmayxLemGvHTO7t4ukr3ltflyhXaAUXBcIsnSzvAh9Vtc4X
+	PWy01AyUCyqbALNYVA91oQb14T+shT4wbl0hWUIikRC0=
+X-Received: by 2002:a05:6000:2ce:b0:391:bc8:564a with SMTP id ffacd0b85a97d-3996bb7747dmr2048457f8f.22.1742287354067;
+        Tue, 18 Mar 2025 01:42:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHcxCaRjsQElGo8NhVhjZFDKXM0lcxpeWA0RUWXl+T2QyfIskBHdftyBRjuJL2uDCD2grYz9g==
+X-Received: by 2002:a05:6000:2ce:b0:391:bc8:564a with SMTP id ffacd0b85a97d-3996bb7747dmr2048427f8f.22.1742287353654;
+        Tue, 18 Mar 2025 01:42:33 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c72d:2500:94b5:4b7d:ad4a:fd0b? (p200300cbc72d250094b54b7dad4afd0b.dip0.t-ipconnect.de. [2003:cb:c72d:2500:94b5:4b7d:ad4a:fd0b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb7eb9ccsm17724747f8f.96.2025.03.18.01.42.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 01:42:33 -0700 (PDT)
+Message-ID: <e2807c0f-c6db-4946-a731-009d34c2c72e@redhat.com>
+Date: Tue, 18 Mar 2025 09:42:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4979; i=brauner@kernel.org; h=from:subject:message-id; bh=RntO+3M2/psv1Zs3oZ+vHjdEEKvp6GZN4SqKzd/TB5s=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTfNNBbmbuy/uGriXqK7JWXDc4H79EImHXLuNrFIv27m ojM8jkCHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOZ84Hhv3Pb+bhrXUvs3j7O vNw6cz+jfoSm3MeA3hM+v1QeRTwxFmdkOLDuW4Gf82KheQzHDy0qfPlu7mOR9rt8KZ2Cz45+ZGw JZwMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation: Add "Unaccepted" meminfo entry
+To: Nico Pache <npache@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+ kirill.shutemov@linux.intel.com
+Cc: corbet@lwn.net, akpm@linux-foundation.org, surenb@google.com,
+ pasha.tatashin@soleen.com, catalin.marinas@arm.com, jeffxu@chromium.org,
+ andrii@kernel.org, xu.xin16@zte.com.cn
+References: <20250317230403.79632-1-npache@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250317230403.79632-1-npache@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-When we currently create a pidfd we check that the task hasn't been
-reaped right before we create the pidfd. But it is of course possible
-that by the time we return the pidfd to userspace the task has already
-been reaped since we don't check again after having created a dentry for
-it.
+On 18.03.25 00:04, Nico Pache wrote:
+> Commit dcdfdd40fa82 ("mm: Add support for unaccepted memory") added a
+> entry to meminfo but did not document it in the proc.rst file.
+> 
+> This counter tracks the amount of "Unaccepted" guest memory for some
+> Virtual Machine platforms, such as Intel TDX or AMD SEV-SNP.
+> 
+> Add the missing entry in the documentation.
+> 
+> Signed-off-by: Nico Pache <npache@redhat.com>
+> ---
+>   Documentation/filesystems/proc.rst | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+> index 09f0aed5a08b..8fcf19c31b18 100644
+> --- a/Documentation/filesystems/proc.rst
+> +++ b/Documentation/filesystems/proc.rst
+> @@ -1060,6 +1060,7 @@ Example output. You may not have all of these fields.
+>       FilePmdMapped:         0 kB
+>       CmaTotal:              0 kB
+>       CmaFree:               0 kB
+> +    Unaccepted:            0 kB
+>       HugePages_Total:       0
+>       HugePages_Free:        0
+>       HugePages_Rsvd:        0
+> @@ -1228,6 +1229,8 @@ CmaTotal
+>                 Memory reserved for the Contiguous Memory Allocator (CMA)
+>   CmaFree
+>                 Free remaining memory in the CMA reserves
+> +Unaccepted
+> +              Memory that has not been accepted by the guest
 
-This was fine until now because that race was meaningless. But now that
-we provide PIDFD_INFO_EXIT it is a problem because it is possible that
-the kernel returns a reaped pidfd and it depends on the race whether
-PIDFD_INFO_EXIT information is available. This depends on if the task
-gets reaped before or after a dentry has been attached to struct pid.
+I was wondering if we could be clearer like
 
-Make this consistent and only returned pidfds for reaped tasks if
-PIDFD_INFO_EXIT information is available. This is done by performing
-another check whether the task has been reaped right after we attached a
-dentry to struct pid.
+"Memory that has not been accepted. Especially in some confidential VM 
+implementations, memory must be accepted manually by the guest OS before 
+it can be used the first time."
 
-Since pidfs_exit() is called before struct pid's task linkage is removed
-the case where the task got reaped but a dentry was already attached to
-struct pid and exit information was recorded and published can be
-handled correctly. In that case we do return a pidfd for a reaped task
-like we would've before.
+In any case
 
-Link: https://lore.kernel.org/r/20250316-kabel-fehden-66bdb6a83436@brauner
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
-Now tested and no regressions were observed.
-This contains minor changes.
----
- fs/pidfs.c    | 56 ++++++++++++++++++++++++++++++++++++++++++++++++---
- kernel/fork.c |  7 +++++--
- 2 files changed, 58 insertions(+), 5 deletions(-)
+Acked-by: David Hildenbrand <david@redhat.com>
 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index 3c630e9d4a62..d980f779c213 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -753,8 +753,49 @@ static int pidfs_export_permission(struct handle_to_path_ctx *ctx,
- 	return 0;
- }
- 
-+static inline bool pidfs_pid_valid(struct pid *pid, const struct path *path,
-+				   unsigned int flags)
-+{
-+	enum pid_type type;
-+
-+	if (flags & CLONE_PIDFD)
-+		return true;
-+
-+	/*
-+	 * Make sure that if a pidfd is created PIDFD_INFO_EXIT
-+	 * information will be available. So after an inode for the
-+	 * pidfd has been allocated perform another check that the pid
-+	 * is still alive. If it is exit information is available even
-+	 * if the task gets reaped before the pidfd is returned to
-+	 * userspace. The only exception is CLONE_PIDFD where no task
-+	 * linkage has been established for @pid yet and the kernel is
-+	 * in the middle of process creation so there's nothing for
-+	 * pidfs to miss.
-+	 */
-+	if (flags & PIDFD_THREAD)
-+		type = PIDTYPE_PID;
-+	else
-+		type = PIDTYPE_TGID;
-+
-+	/*
-+	 * Since pidfs_exit() is called before struct pid's task linkage
-+	 * is removed the case where the task got reaped but a dentry
-+	 * was already attached to struct pid and exit information was
-+	 * recorded and published can be handled correctly.
-+	 */
-+	if (unlikely(!pid_has_task(pid, type))) {
-+		struct inode *inode = d_inode(path->dentry);
-+		return !!READ_ONCE(pidfs_i(inode)->exit_info);
-+	}
-+
-+	return true;
-+}
-+
- static struct file *pidfs_export_open(struct path *path, unsigned int oflags)
- {
-+	if (!pidfs_pid_valid(d_inode(path->dentry)->i_private, path, oflags))
-+		return ERR_PTR(-ESRCH);
-+
- 	/*
- 	 * Clear O_LARGEFILE as open_by_handle_at() forces it and raise
- 	 * O_RDWR as pidfds always are.
-@@ -818,21 +859,30 @@ static struct file_system_type pidfs_type = {
- 
- struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags)
- {
--
- 	struct file *pidfd_file;
--	struct path path;
-+	struct path path __free(path_put) = {};
- 	int ret;
- 
-+	/*
-+	 * Ensure that CLONE_PIDFD can be passed as a flag without
-+	 * overloading other uapi pidfd flags.
-+	 */
-+	BUILD_BUG_ON(CLONE_PIDFD == PIDFD_THREAD);
-+	BUILD_BUG_ON(CLONE_PIDFD == PIDFD_NONBLOCK);
-+
- 	ret = path_from_stashed(&pid->stashed, pidfs_mnt, get_pid(pid), &path);
- 	if (ret < 0)
- 		return ERR_PTR(ret);
- 
-+	if (!pidfs_pid_valid(pid, &path, flags))
-+		return ERR_PTR(-ESRCH);
-+
-+	flags &= ~CLONE_PIDFD;
- 	pidfd_file = dentry_open(&path, flags, current_cred());
- 	/* Raise PIDFD_THREAD explicitly as do_dentry_open() strips it. */
- 	if (!IS_ERR(pidfd_file))
- 		pidfd_file->f_flags |= (flags & PIDFD_THREAD);
- 
--	path_put(&path);
- 	return pidfd_file;
- }
- 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 8eac9cd3385b..2c25de14df02 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2425,8 +2425,11 @@ __latent_entropy struct task_struct *copy_process(
- 	if (clone_flags & CLONE_PIDFD) {
- 		int flags = (clone_flags & CLONE_THREAD) ? PIDFD_THREAD : 0;
- 
--		/* Note that no task has been attached to @pid yet. */
--		retval = __pidfd_prepare(pid, flags, &pidfile);
-+		/*
-+		 * Note that no task has been attached to @pid yet indicate
-+		 * that via CLONE_PIDFD.
-+		 */
-+		retval = __pidfd_prepare(pid, flags | CLONE_PIDFD, &pidfile);
- 		if (retval < 0)
- 			goto bad_fork_free_pid;
- 		pidfd = retval;
 -- 
-2.47.2
+Cheers,
+
+David / dhildenb
 
 
