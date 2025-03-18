@@ -1,167 +1,241 @@
-Return-Path: <linux-fsdevel+bounces-44234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44235-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6FE8A664C8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 02:15:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EF93A665E9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 03:01:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C12D4189C003
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 01:15:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 017423A9078
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 02:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308DE8468;
-	Tue, 18 Mar 2025 01:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291B4158DAC;
+	Tue, 18 Mar 2025 02:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fN2GcF9H"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="AHmfcYpP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0B515A87C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 01:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6E83A1DB;
+	Tue, 18 Mar 2025 02:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742260513; cv=none; b=kpZ5GPdmUJwTBoY+87iUPsUGPBHmZMNMQ5IXouEppIzuIdYYisHnxGOW0ayPbuiAm2A/kf/TvZ4rqsdUupSAkxwFoF/Ggm1h39ZgVoYN2EPoMikW0/Rsus8x+618w+U73OSyTeNFgmmjIzkSv+ulqDrPrkdd1xrAnYo3Pl7asJ8=
+	t=1742263250; cv=none; b=kUsiH9JAKGBxDSxXWvdl8sm/Jqx3o/ixONTpRYWfML1X8Qb/ql1Yz+igjH1nPOdBDWeJz0JssSE8kc3iS83plg+tvanRZ9EKm8OmpPIx+dS2qtQ45L6M9QB2H7iTGu6Hu5V/I4Q7V+GftTTBYl/r5/nZUj/Aqfv7nPACPU7TMdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742260513; c=relaxed/simple;
-	bh=Bli4yDmu5+3qrchprxkFeZDERB5C2XJ6haYQD7Z5688=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KoEwRrwWyNRWo2ywez7jtOh/MU8pKFhU+WtQVf6D4H+TQ/r7FdsQDYvI+LJF2a7Mwgd0+kijs8RfHTf+F6U9Deqc9hsui0Di6XTn2YHx8qBO4mJO2bOHkO4WmA4fh+92MAUeC05KAFyGT0PpX1jujlQWEvA6XgYCEOCIUzCU1nA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fN2GcF9H; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 17 Mar 2025 21:15:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742260509;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9Q7/l4Ub370JHe+SyOW8etUedb9vG4uU2/MyRZY5mf4=;
-	b=fN2GcF9HJn9s+ei475W6p/NCBLxB68JGBzF8tCZhF8//dsXWCY1aGXCI1CATTqVqYE91XD
-	sw2ArNagu5VKQZwg2tOFtMoh1HPl269S+YkNpoPMTUS0sU1nrjPfgr5Cxek++T/WG+i15I
-	WozqnAJ3P7w/ZPn886CfBNVKx4YGyls=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: John Stoffel <john@stoffel.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-block@vger.kernel.org, 
-	Roland Vet <vet.roland@protonmail.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 00/14] better handling of checksum errors/bitrot
-Message-ID: <avmzp2nswsowb3hg2tcrb6fv2djgkiw7yl3bgdn4dnccuk4yti@ephd5sxy5b7w>
-References: <20250311201518.3573009-1-kent.overstreet@linux.dev>
- <26584.35900.850011.320586@quad.stoffel.home>
+	s=arc-20240116; t=1742263250; c=relaxed/simple;
+	bh=h6DxCv8KCQCCwl330zqTekHMwkW9BBmhURXCAhubH+A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IirSk9NYImhbC905QQY2fmmj6igj7wvmnjIaUczCjcHOKJcojA0UIXohOwEKVyMouze1dFTr9nI+gqpLRAJ5yNmm4z907JWfzjnONEb/7CpiH/852Yis3yrJSMIJhQTG5NspqjHheg8o++Bv5jlqXRKhyTxCp8CJKSzNfgJtiFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=AHmfcYpP; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=h6DxCv8KCQCCwl330zqTekHMwkW9BBmhURXCAhubH+A=;
+	b=AHmfcYpPlJtC1vOwUXsDFy11Om8PiFvxXTnX/XEG5VyKYVYN2E23NmLnAiNjWp
+	mLvVlBxDoDG3rwdyZRICiUUtm/jyFbWm9sth3lo2/CVE2zQbB5140fQ7YIQxZKE7
+	+JObgheOgvn0IhKGBY7ghlaye4Owa5cNGs6WaE6iS9Q6E=
+Received: from [192.168.22.248] (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wD3P_Cz09hnajuAAA--.18397S2;
+	Tue, 18 Mar 2025 10:00:21 +0800 (CST)
+Message-ID: <0693eb9c-226b-4233-9d60-dcd65967222a@163.com>
+Date: Tue, 18 Mar 2025 10:00:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <26584.35900.850011.320586@quad.stoffel.home>
-X-Migadu-Flow: FLOW_OUT
-
-On Mon, Mar 17, 2025 at 04:55:24PM -0400, John Stoffel wrote:
-> >>>>> "Kent" == Kent Overstreet <kent.overstreet@linux.dev> writes:
-> 
-> > Roland Vet spotted a good one: currently, rebalance/copygc get stuck if
-> > we've got an extent that can't be read, due to checksum error/bitrot.
-> 
-> > This took some doing to fix properly, because
-> 
-> > - We don't want to just delete such data (replace it with
-> >   KEY_TYPE_error); we never want to delete anything except when
-> >   explicitly told to by the user, and while we don't yet have an API for
-> >   "read this file even though there's errors, just give me what you
-> >   have" we definitely will in the future.
-> 
-> So will open() just return an error?  How will this look from
-> userspace?  
-
-Not the open, the read - the typical case is only a single extent goes
-bad; it's like any other IO error.
-
-> > - Not being able to move data is a non-option: that would block copygc,
-> >   device removal, etc.
-> 
-> > - And, moving said extent requires giving it a new checksum - strictly
-> >   required if the move has to fragment it, teaching the write/move path
-> >   about extents with bad checksums is unpalateable, and anyways we'd
-> >   like to be able to guard against more bitrot, if we can.
-> 
-> Why does it need a new checksum if there are read errors?  What
-> happens if there are more read errors?   If I have a file on a
-> filesystem which is based in spinning rust and I get a single bit
-> flip, I'm super happy you catch it.  
-
-The data move paths very strictly verify checksums as they move data
-around so they don't introduce bitrot.
-
-I'm not going to add
-	if (!bitrotted_extent) checksum(); else no_checksum()
-Eww...
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] fs/proc/page: Refactoring to reduce code duplication.
+To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
+Cc: willy@infradead.org, ran.xiaokai@zte.com.cn, dan.carpenter@linaro.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Liu Ye <liuye@kylinos.cn>
+References: <20250317100719.134558-1-liuyerd@163.com>
+ <a43ff37d-497c-4508-b6e5-667e060908cc@redhat.com>
+Content-Language: en-US
+From: Liu Ye <liuyerd@163.com>
+In-Reply-To: <a43ff37d-497c-4508-b6e5-667e060908cc@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3P_Cz09hnajuAAA--.18397S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxWrW3uw4fWw4rJr15Xw4ruFg_yoWrKr17pF
+	s8GF42ka18Ja45KrWxJaykZry5ZrykGF4UtrW7Gw1fXa47twna9a4FyFnYvFyxGryUAF1x
+	ua9I9ry3uFWjyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jB1vxUUUUU=
+X-CM-SenderInfo: 5olx5vlug6il2tof0z/1tbiKBMUTGfY0I5n2QAAs8
 
 
-Besides being gross, we also would like to guard against introducing
-more bitrot.
+在 2025/3/17 18:24, David Hildenbrand 写道:
+> On 17.03.25 11:07, Liu Ye wrote:
+>> From: Liu Ye <liuye@kylinos.cn>
+>>
+>> The function kpageflags_read and kpagecgroup_read is quite similar
+>> to kpagecount_read. Consider refactoring common code into a helper
+>> function to reduce code duplication.
+>>
+>> Signed-off-by: Liu Ye <liuye@kylinos.cn>
+>>
+>> ---
+>> V2 : Use an enumeration to indicate the operation to be performed
+>> to avoid passing functions.
+>> ---
+>> ---
+>>   fs/proc/page.c | 166 +++++++++++++++++--------------------------------
+>>   1 file changed, 58 insertions(+), 108 deletions(-)
+>>
+>> diff --git a/fs/proc/page.c b/fs/proc/page.c
+>> index a55f5acefa97..66f454330a87 100644
+>> --- a/fs/proc/page.c
+>> +++ b/fs/proc/page.c
+>> @@ -22,6 +22,14 @@
+>>   #define KPMMASK (KPMSIZE - 1)
+>>   #define KPMBITS (KPMSIZE * BITS_PER_BYTE)
+>>   +enum kpage_operation {
+>> +    KPAGE_FLAGS,
+>> +    KPAGE_COUNT,
+>> +#ifdef CONFIG_MEMCG
+>> +    KPAGE_CGROUP,
+>> +#endif
+>> +};
+>> +
+>>   static inline unsigned long get_max_dump_pfn(void)
+>>   {
+>>   #ifdef CONFIG_SPARSEMEM
+>> @@ -37,19 +45,17 @@ static inline unsigned long get_max_dump_pfn(void)
+>>   #endif
+>>   }
+>>   -/* /proc/kpagecount - an array exposing page mapcounts
+>> - *
+>> - * Each entry is a u64 representing the corresponding
+>> - * physical page mapcount.
+>> - */
+>> -static ssize_t kpagecount_read(struct file *file, char __user *buf,
+>> -                 size_t count, loff_t *ppos)
+>> +static ssize_t kpage_read(struct file *file, char __user *buf,
+>> +        size_t count, loff_t *ppos,
+>> +        enum kpage_operation op)
+>>   {
+>>       const unsigned long max_dump_pfn = get_max_dump_pfn();
+>>       u64 __user *out = (u64 __user *)buf;
+>> +    struct page *ppage;
+>>       unsigned long src = *ppos;
+>>       unsigned long pfn;
+>>       ssize_t ret = 0;
+>> +    u64 info;
+>>         pfn = src / KPMSIZE;
+>>       if (src & KPMMASK || count & KPMMASK)
+>> @@ -59,19 +65,29 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
+>>       count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
+>>         while (count > 0) {
+>> -        struct page *page;
+>> -        u64 mapcount = 0;
+>> -
+>> -        /*
+>> -         * TODO: ZONE_DEVICE support requires to identify
+>> -         * memmaps that were actually initialized.
+>> -         */
+>> -        page = pfn_to_online_page(pfn);
+>> -        if (page)
+>> -            mapcount = folio_precise_page_mapcount(page_folio(page),
+>> -                                   page);
+>> -
+>> -        if (put_user(mapcount, out)) {
+>> +        ppage = pfn_to_online_page(pfn);
+>> +
+>> +        if (ppage) {
+>> +            switch (op) {
+>> +            case KPAGE_FLAGS:
+>> +                info = stable_page_flags(ppage);
+>> +                break;
+>> +            case KPAGE_COUNT:
+>> +                info = folio_precise_page_mapcount(page_folio(ppage), ppage);
+>> +                break;
+>> +#ifdef CONFIG_MEMCG
+>> +            case KPAGE_CGROUP:
+>> +                info = page_cgroup_ino(ppage);
+>> +                break;
+>> +#endif
+>
+> In general, LGTM.
+>
+> I do wonder if we should just get rid of the two "#ifdef CONFIG_MEMCG" by adding
+> a stub for page_cgroup_ino().
+>
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 57664e2a8fb7b..24248f4dcc971 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -1788,6 +1788,11 @@ static inline void count_objcg_events(struct obj_cgroup *objcg,
+>  {
+>  }
+>  
+> +static inline ino_t page_cgroup_ino(struct page *page)
+> +{
+> +       return 0;
+> +}
+> +
+>  #endif /* CONFIG_MEMCG */
+>  
+>  #if defined(CONFIG_MEMCG) && defined(CONFIG_ZSWAP)
+>
+>
+Agreed. I’ll add a stub for page_cgroup_ino() and remove the #ifdef CONFIG_MEMCG.
 
-> But now you re-checksum the file, with the read error, and return it?
-> I'm stupid and just a user/IT guy.  I want notifications, but I don't
-> want my application to block so I can't kill it, or unmount the
-> filesystem.  Or continue to use it if I like.  
+like this.
 
-The aforementioned poison bit ensures that you still get the error from
-the original checksum error when you read that data - unless you use an
-appropriate "give it to me anyways" API.
+diff --git a/fs/proc/page.c b/fs/proc/page.c
+index 66f454330a87..cbadbf9568a1 100644
+--- a/fs/proc/page.c
++++ b/fs/proc/page.c
+@@ -25,9 +25,7 @@
+ enum kpage_operation {
+        KPAGE_FLAGS,
+        KPAGE_COUNT,
+-#ifdef CONFIG_MEMCG
+        KPAGE_CGROUP,
+-#endif
+ };
+ 
+ static inline unsigned long get_max_dump_pfn(void)
+@@ -75,11 +73,9 @@ static ssize_t kpage_read(struct file *file, char __user *buf,
+                        case KPAGE_COUNT:
+                                info = folio_precise_page_mapcount(page_folio(ppage), ppage);
+                                break;
+-#ifdef CONFIG_MEMCG
+                        case KPAGE_CGROUP:
+                                info = page_cgroup_ino(ppage);
+                                break;
+-#endif
+                        default:
+                                info = 0;
+                                break;
+@@ -262,7 +258,6 @@ static const struct proc_ops kpageflags_proc_ops = {
+ };
+ 
+ #ifdef CONFIG_MEMCG
+-
+ static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
+                size_t count, loff_t *ppos)
+ {
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 6e74b8254d9b..e806e2ebf5b8 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -1794,6 +1794,10 @@ static inline void count_objcg_events(struct obj_cgroup *objcg,
+ {
+ }
+ 
++static inline ino_t page_cgroup_ino(struct page *page)
++{
++       return 0;
++}
+ #endif /* CONFIG_MEMCG */
+ 
+ #if defined(CONFIG_MEMCG) && defined(CONFIG_ZSWAP)
 
-> > So that means:
-> 
-> > - Extents need a poison bit: "reads return errors, even though it now
-> >   has a good checksum" - this was added in a separate patch queued up
-> >   for 6.15.
-> 
-> Sorry for being dense, but does a file have one or more extents?  Or
-> is this at a level below that?  
 
-Files have multiple extents.
 
-An extent is one contiguous range of data, and in bcachefs checksums are
-at the extent level, not block, so checksummed (and compressed) extents
-are limited to, by default, 128k.
 
-> >   It's an incompat feature because it's a new extent field, and old
-> >   versions can't parse extents with unknown field types, since they
-> >   won't know their sizes - meaning users will have to explicitly do an
-> >   incompat upgrade to make use of this stuff.
-> 
-> > - The read path needs to do additional retries after checksum errors
-> >   before giving up and marking it poisoned, so that we don't
-> >   accidentally convert a transient error to permanent corruption.
-> 
-> When doing these retries, is the filesystem locked up or will the
-> process doing the read() be blocked from being killed?  
-
-The process doing the read() can't be killed during this, no. If
-requested this could be changed, but keep in mind retries are limited in
-number.
-
-Nothing else is "locked up", everything else proceeds as normal.
-
-> > - The read path gets a whole bunch of work to plumb precise modern error
-> >   codes around, so that e.g. the retry path, the data move path, and the
-> >   "mark extent poisoned" path all know exactly what's going on.
-> 
-> > - Read path is responsible for marking extents poisoned after sufficient
-> >   retry attempts (controlled by a new filesystem option)
-> 
-> > - Data move path is allowed to move extents after a read error, if it's
-> >   a checksum error (giving it a new checksum) if it's been poisoned
-> >   (i.e. the extent flags feature is enabled).
-> 
-> So if just a single bit flips, the extent gets moved onto better
-> storage, and the file gets re-checksummed.  But what about if more
-> bits go bad afterwards?  
-
-The new checksum means they're detected, and if you have replication
-enabled they'll be corrected automatically, like any other IO error.
 
