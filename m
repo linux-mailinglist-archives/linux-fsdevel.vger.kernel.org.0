@@ -1,163 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-44334-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44342-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C358A67860
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 16:52:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 304F9A67926
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 17:23:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7602F7AB468
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 15:51:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99C3616E4AD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 16:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD48C20FAA8;
-	Tue, 18 Mar 2025 15:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4B2211A15;
+	Tue, 18 Mar 2025 16:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9gwtEEl"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="N9ntLxtZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09D720F07A;
-	Tue, 18 Mar 2025 15:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D98920E715
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 16:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742313108; cv=none; b=BSlBiI4V+iPI7wUkqXhk69nEzgyS4CrOfZ2XZSXx8UvblUuyZJYDQ5vUU8JHzDeJFEGhN6Ev8ACQkeHjVvsE1JhImaKvf1O8b8Wc/k+ZIgL1gixJ1EUtnsOAwFNQfM+raZdae4R9uNZ8wwLSApzAdeuzVkUCyXFHpA3j+TtsBrI=
+	t=1742314819; cv=none; b=dOP46/HvYPQg93FQMozGdGDhWl7ru0Pm5zwcs3XtdO1Rmqy27sH+wAS1bxnYtw2oYo2nMIb3HkXvddjZbS91A4S5HEZEiR5SxQnLe+z8SpmhTExIS2Ga7HUp8i6YROlcQJ4E9hFrDR0FML03LCp3g0yHrt4+laGhV0wdLIKOolc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742313108; c=relaxed/simple;
-	bh=3IUzgW0tqmvBtDPQEnXyodqPaV1/XSemXMh7OodnVNw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KaNHPceErXBV/EoLshhVZHBXOYMzqRYreQ7iTNe4B77Arw93gLfe8QXsiWogSJ0nzFgTcaOGectoJVlgdXKt6P7Jji+7Lu3gIr//RwAWK4Dma31+HNw+V/HxO3CnQsbYR3BXOxyw3cKGP/amx8auqkHPVZFF+QtuSX6RxPTh/r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E9gwtEEl; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso219275766b.0;
-        Tue, 18 Mar 2025 08:51:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742313100; x=1742917900; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OQsfpXrf/4c4YQpb8eNn6gMWmckTaNQ66mxt9z5Ef4E=;
-        b=E9gwtEElyso6PZ/HIK0pKB6sfZISNou8ITo7h5uRZZh64tHLnJvXJe4JGYG4J/fWvo
-         zB7pfudsVDW5FqrEhXDZu9Qzw0j81MbpV9FQs/SNC1gM15vmoOSm3a9Yos+JnG5z5Ok1
-         yesHNPVv90+2QK7HhmGOPAw0YyCr0RPGprz46iHQf6oTa9p2Qbco4W+vASKDSoPEbxLH
-         7oHvxQAOD7N9aqdO9+zGsiY7neR3Zrembw1DsA1/nNinKJw2RFjAMk2arpOXyPEZ822b
-         9dxDqY7uDKEGPg0eCVxp6JGMC8e7wvdr51CfxDABKS/f1dMlfJAB4VLRImGVyxgLBqe/
-         8Lbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742313100; x=1742917900;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OQsfpXrf/4c4YQpb8eNn6gMWmckTaNQ66mxt9z5Ef4E=;
-        b=cNrS5qfTrJcrshGgH32pvJm/3rukLYe6VItRVK+FIztLgHiLE6gXHeP1QPkcz8QPNf
-         YbUDZ6HLRYJmp4iddcO6oatfTmU2wH/tXOnWGpkwxdDouL2lwEGAcSLj1gUMJ1EnbVU7
-         LSZ9/SbJjSTaiM2mTjOVf8YdBr7M0r4flMCXkAnbu+XFNfXeugeR1VGfFIhXRJl2xUEr
-         z0xDTYMTiEqXq/HZ8tFb70N91fSVWKzigzydhwlU199qmZIwmH9yfb1fuCHGKOMpy1iq
-         Y3Q17BowXT4DfbNtoYnWT7jAcJbh/28/6T0i1fWVMBlIXAwLRjxYdRSz6WeWOTTDkBl+
-         ZZJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqLPxM8bT72/nVjV/6S9UVz+Rx5WHTdWhokpgz6HJdkxMeCvr5kxAyUoj0gywQja3arKsode7irfo3Qvq1@vger.kernel.org, AJvYcCXNizgZymjGEdomWbL7WzKNMzLZ+Nr5MZv7GqO7poEfuDq9Pi3ClGA6N0pyvSZn7FdVITiPscNCdtRYt9UQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6EHeD2L3RnKBJuA+LHZ9WN1qW6TdNTAbKjopkZRbcFHtye5Vz
-	5aGduC4NoLOZZW+MXk86nnw/ut8BiLxlfnBYw0V79g7OiV43Y93n2IhsjdKCQyKzqd6ilPCebQt
-	soCdobsNoR52KAh861l5gOcO5Lyw=
-X-Gm-Gg: ASbGncump5gXjfyl74pisdrZiVrFUSg5fIpCuk7/nV246/emK8mKmcsp29p21Joe5+7
-	0/ef9BX0/LQTs2nm+4lR5WsNmwZsa+n1tL5ym/atXOmf6qVF11kVjC9sj1Zbxvo+P6WCLLa2tJQ
-	TkxbSfunopd6Lt7LlXc0hMNx0dVg==
-X-Google-Smtp-Source: AGHT+IFjG8edwwuf2mEVeTcyHLZb3BYe7dhVljkptYUqPN1fOMiWWxKawFj8Wyt+UhG++lSQFRDFKNY1P6+HUcVXn7o=
-X-Received: by 2002:a17:907:d92:b0:ac1:da09:5d32 with SMTP id
- a640c23a62f3a-ac3301d979bmr1912910866b.6.1742313099481; Tue, 18 Mar 2025
- 08:51:39 -0700 (PDT)
+	s=arc-20240116; t=1742314819; c=relaxed/simple;
+	bh=DfDkyMj1tIYaHz4hoTjAqKyZHEMNoutDmpyXNLXROUY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ax5sKkNCMvyTOLXQ5+Y8VzKrNogYSV7m24YhjLvqoWCYHrd1HpCfdqzb5aQr6iOLNPCUHT2/KFB7ed9WXUgea4I7+0+EY4x79kiH18ruhWJ+e7DhJ09aZ0fJQ539/w136jOuzaMyhG4Rdssh3HGw63OGoMgelVuRqlMOFMyz8VI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=N9ntLxtZ; arc=none smtp.client-ip=84.16.66.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZHH3t4ZHmz7Fd;
+	Tue, 18 Mar 2025 17:14:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1742314490;
+	bh=0G26ifulcpI8LBwhoOBo2yOOyJoQqElv9YQpuMH2qyc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=N9ntLxtZAdvNsJPTP2kOX1x6wbUcMa5XFY3zOTzXGKIkerMunzvyczKb7g776I35L
+	 28DEEmmGYOP8g5D2Wwra6VIATV5NrHEaRGxywKHd44kIdQSj44sF21Ai7P/zlj2/Qu
+	 HlZroM0z/EPEeCrTFy0qiRgt8yRjh0NaciO8FUU8=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZHH3s6gRmzH2Q;
+	Tue, 18 Mar 2025 17:14:49 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Paul Moore <paul@paul-moore.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Christian Brauner <brauner@kernel.org>,
+	Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	Tahera Fahimi <fahimitahera@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v2 0/8] Landlock signal scope fix and errata interface
+Date: Tue, 18 Mar 2025 17:14:35 +0100
+Message-ID: <20250318161443.279194-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250115094702.504610-1-hch@lst.de> <20250115094702.504610-4-hch@lst.de>
- <ptwb6urnzbov545jsndxa4d324ezvor5vutbcev64dwauibwaj@kammuj4pbi45>
-In-Reply-To: <ptwb6urnzbov545jsndxa4d324ezvor5vutbcev64dwauibwaj@kammuj4pbi45>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 18 Mar 2025 16:51:27 +0100
-X-Gm-Features: AQ5f1JoIV3Ekgoa3AyaPQZviu6xh4y3D7_TilsaK7QfN_pG3EjUXa6A87nuBb0M
-Message-ID: <CAGudoHEW=MmNLQSnvZ3MJy0KAnGuKKNGevOccd2LdiuUWcb0Yg@mail.gmail.com>
-Subject: Re: [PATCH 3/8] lockref: use bool for false/true returns
-To: Christoph Hellwig <hch@lst.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, 
-	Andreas Gruenbacher <agruenba@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-erofs@lists.ozlabs.org, 
-	gfs2@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Tue, Mar 18, 2025 at 4:25=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
->
-> On Wed, Jan 15, 2025 at 10:46:39AM +0100, Christoph Hellwig wrote:
-> > Replace int used as bool with the actual bool type for return values th=
-at
-> > can only be true or false.
-> >
-> [snip]
->
-> > -int lockref_get_not_zero(struct lockref *lockref)
-> > +bool lockref_get_not_zero(struct lockref *lockref)
-> >  {
-> > -     int retval;
-> > +     bool retval =3D false;
-> >
-> >       CMPXCHG_LOOP(
-> >               new.count++;
-> >               if (old.count <=3D 0)
-> > -                     return 0;
-> > +                     return false;
-> >       ,
-> > -             return 1;
-> > +             return true;
-> >       );
-> >
-> >       spin_lock(&lockref->lock);
-> > -     retval =3D 0;
-> >       if (lockref->count > 0) {
-> >               lockref->count++;
-> > -             retval =3D 1;
-> > +             retval =3D true;
-> >       }
-> >       spin_unlock(&lockref->lock);
-> >       return retval;
->
-> While this looks perfectly sane, it worsens codegen around the atomic
-> on x86-64 at least with gcc 13.3.0. It bisected to this commit and
-> confirmed top of next-20250318 with this reverted undoes it.
->
-> The expected state looks like this:
->        f0 48 0f b1 13          lock cmpxchg %rdx,(%rbx)
->        75 0e                   jne    ffffffff81b33626 <lockref_get_not_d=
-ead+0x46>
->
-> However, with the above patch I see:
->        f0 48 0f b1 13          lock cmpxchg %rdx,(%rbx)
->        40 0f 94 c5             sete   %bpl
->        40 84 ed                test   %bpl,%bpl
->        74 09                   je     ffffffff81b33636 <lockref_get_not_d=
-ead+0x46>
->
-> This is not the end of the world, but also really does not need to be
-> there.
->
-> Given that the patch is merely a cosmetic change, I would suggest I gets
-> dropped.
+Hi,
 
-fwiw I confirmed clang does *not* have the problem, I don't know about gcc =
-14.
+The initial motivation for this series is a fix for the signal scoping
+restriction (see patch 5/8).
 
-Maybe I'll get around to testing it, but first I'm gonna need to carve
-out the custom asm into a standalone testcase.
+Because some user space code cannot use the signal scoping feature
+without this fix, we need to have a way to identify if this fix is
+applied to the running kernel.  This led me to implement a new "errata"
+interface to let user space know if it can use some fixed features.
+This should be especially useful in the Landlock Go library to be able
+to use the signal scoping control.
 
-Regardless, 13 suffering the problem is imo a good enough reason to
-whack the change.
+Testing this series with Sparse, I had to add a check for __has_include
+support to avoid Sparse errors.  I guess this could be fixed in Sparse
+but for now let's just ignore this error.
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+This second patch series also brings new tests for this fix.
+
+Previous version:
+v1: https://lore.kernel.org/r/20250313145904.3238184-1-mic@digikod.net
+
+Regards,
+
+Mickaël Salaün (8):
+  landlock: Move code to ease future backports
+  landlock: Add the errata interface
+  landlock: Add erratum for TCP fix
+  landlock: Prepare to add second errata
+  landlock: Always allow signals between threads of the same process
+  selftests/landlock: Split signal_scoping_threads tests
+  selftests/landlock: Add a new test for setuid()
+  landlock: Document errata
+
+ Documentation/userspace-api/landlock.rst      |  24 +++-
+ include/uapi/linux/landlock.h                 |   2 +
+ security/landlock/errata.h                    |  99 ++++++++++++++++
+ security/landlock/errata/abi-4.h              |  15 +++
+ security/landlock/errata/abi-6.h              |  19 +++
+ security/landlock/fs.c                        |  22 +++-
+ security/landlock/setup.c                     |  38 +++++-
+ security/landlock/setup.h                     |   3 +
+ security/landlock/syscalls.c                  |  22 +++-
+ security/landlock/task.c                      |  12 ++
+ tools/testing/selftests/landlock/base_test.c  |  38 +++++-
+ tools/testing/selftests/landlock/common.h     |   1 +
+ .../selftests/landlock/scoped_signal_test.c   | 108 +++++++++++++++---
+ 13 files changed, 374 insertions(+), 29 deletions(-)
+ create mode 100644 security/landlock/errata.h
+ create mode 100644 security/landlock/errata/abi-4.h
+ create mode 100644 security/landlock/errata/abi-6.h
+
+
+base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+-- 
+2.48.1
+
 
