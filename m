@@ -1,73 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-44327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F11A676C3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 15:49:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A00F6A676C5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 15:49:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADD153B1A8B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 14:47:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F8933B5504
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 14:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F76120E016;
-	Tue, 18 Mar 2025 14:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X8Y9PtCD"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D55B20E32D;
+	Tue, 18 Mar 2025 14:47:55 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mail.stoffel.org (mail.stoffel.org [172.104.24.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8461420E010
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 14:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7D6207DFD;
+	Tue, 18 Mar 2025 14:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.104.24.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742309266; cv=none; b=UQ9KOZK3avbYFWZST0o4g2F50twcFoenKHXlGrSoN7hOydajtbigYKpD4z4BoffVVPhyUI0r5n2Eclta/fp/Tnpam6k53p61sCjwGeBF0w9hF6ZUHFQq8mChoaTAdlIogOHcU6oYuWx+M/StrT9Lg5KLSoYrzYD9MYuaYcDBMFk=
+	t=1742309274; cv=none; b=BzQkInQOLJuaGuNPB3g8SxOom91QR0r5kpfbS7K897jpPu/2zX8yTJykjGfH3xGH+tzA3vvKsyQHUZiP/DLyn9oHaBGBPuwvFjrzxHUmJC+8GUBb6Oq6tgq5ugWJlr9Iekbk2gvqKWmXcRcWxK26VCFod21HBmUgX28ulKWUFdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742309266; c=relaxed/simple;
-	bh=EYIyrR+wwIF/Uwb9Rs5+jvTyKUMnjE731tOHnh4p3Aw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dDVB4d+841lEJS1zE5sZNI5P6zjeERa2Yi+RbCmr1/BiNOPgggejZJemPv2Xqrqm9kji7u9nGq2KTO0OtLi4H4h3z5PAaQ8Q8d/C1hWKy0VZquKFXhB0yoGgFbky39NFbwVzac5RiFf+6WYSMY28FGll/1IVLfcIM9Lc+5ZMWJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X8Y9PtCD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742309259;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kkhRbg1C4uG3YU7cChJAbWN5iF2Y82Lg6ewPzJk1EvQ=;
-	b=X8Y9PtCDwIQUP98wGjzt56jDuce5JkocisCfw6/nx1gPPm3Os8mAWPNUL3F1LSQMm8sZwJ
-	63hXvkgZYmTyQVEkpUhJ1wVq6Bxbl0Xm2wF0lU+z5L8bwZ0m2bUuArIWm0sOmJcjB/DSQX
-	UFrobn/AT2CUuGttar3ud3VISbuJBY8=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-36-AFABDqdLPJufa51CgG2feA-1; Tue,
- 18 Mar 2025 10:47:32 -0400
-X-MC-Unique: AFABDqdLPJufa51CgG2feA-1
-X-Mimecast-MFC-AGG-ID: AFABDqdLPJufa51CgG2feA_1742309251
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	s=arc-20240116; t=1742309274; c=relaxed/simple;
+	bh=HvQIZM+EkifqhBgtCmAJn6RhN+1+XsIWn5ez233abgs=;
+	h=MIME-Version:Content-Type:Message-ID:Date:From:To:Cc:Subject:
+	 In-Reply-To:References; b=iQgUpkgCwQdBhWvvHN1vRyYmZ5jP/VAtjVP1wzS+v7X7bpz5oyNZVuI794F49oQKsQFw9muZUgsi+vio/MmZbOIbirYh0W369KlOwDK0MoYst1R1pGQBpM6VJ4YSxtr4oOJe1M/bnSBlEpAMf46VXy2MW2c8xPcdRa3vUD50hOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stoffel.org; spf=pass smtp.mailfrom=stoffel.org; arc=none smtp.client-ip=172.104.24.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stoffel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stoffel.org
+Received: from quad.stoffel.org (syn-097-095-183-072.res.spectrum.com [97.95.183.72])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 39C921800A3E;
-	Tue, 18 Mar 2025 14:47:31 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.101])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 672AB1955BE1;
-	Tue, 18 Mar 2025 14:47:28 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 18 Mar 2025 15:46:58 +0100 (CET)
-Date: Tue, 18 Mar 2025 15:46:54 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-	Lennart Poettering <lennart@poettering.net>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>,
-	Mike Yuan <me@yhndnzj.com>
-Subject: Re: [PATCH v2] pidfs: ensure that PIDFS_INFO_EXIT is available
-Message-ID: <20250318142601.GA19943@redhat.com>
-References: <20250318-geknebelt-anekdote-87bdb6add5fd@brauner>
+	by mail.stoffel.org (Postfix) with ESMTPSA id D7A7F1E1D9;
+	Tue, 18 Mar 2025 10:47:51 -0400 (EDT)
+Received: by quad.stoffel.org (Postfix, from userid 1000)
+	id 82458A0E82; Tue, 18 Mar 2025 10:47:51 -0400 (EDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,50 +44,158 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318-geknebelt-anekdote-87bdb6add5fd@brauner>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Transfer-Encoding: 7bit
+Message-ID: <26585.34711.506258.318405@quad.stoffel.home>
+Date: Tue, 18 Mar 2025 10:47:51 -0400
+From: "John Stoffel" <john@stoffel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: John Stoffel <john@stoffel.org>,
+    linux-bcachefs@vger.kernel.org,
+    linux-block@vger.kernel.org,
+    Roland Vet <vet.roland@protonmail.com>,
+    linux-fsdevel@vger.kernel.org
+X-Clacks-Overhead: GNU Terry Pratchett
+Subject: Re: [PATCH 00/14] better handling of checksum errors/bitrot
+In-Reply-To: <avmzp2nswsowb3hg2tcrb6fv2djgkiw7yl3bgdn4dnccuk4yti@ephd5sxy5b7w>
+References: <20250311201518.3573009-1-kent.overstreet@linux.dev>
+	<26584.35900.850011.320586@quad.stoffel.home>
+	<avmzp2nswsowb3hg2tcrb6fv2djgkiw7yl3bgdn4dnccuk4yti@ephd5sxy5b7w>
+X-Mailer: VM 8.3.x under 28.2 (x86_64-pc-linux-gnu)
 
-I'll try to actually read this patch (and pidfs: improve multi-threaded
-exec and premature thread-group leader exit polling) tomorrow, but I am
-a bit confused after the quick glance...
+>>>>> "Kent" == Kent Overstreet <kent.overstreet@linux.dev> writes:
 
+> On Mon, Mar 17, 2025 at 04:55:24PM -0400, John Stoffel wrote:
+>> >>>>> "Kent" == Kent Overstreet <kent.overstreet@linux.dev> writes:
+>> 
+>> > Roland Vet spotted a good one: currently, rebalance/copygc get stuck if
+>> > we've got an extent that can't be read, due to checksum error/bitrot.
+>> 
+>> > This took some doing to fix properly, because
+>> 
+>> > - We don't want to just delete such data (replace it with
+>> >   KEY_TYPE_error); we never want to delete anything except when
+>> >   explicitly told to by the user, and while we don't yet have an API for
+>> >   "read this file even though there's errors, just give me what you
+>> >   have" we definitely will in the future.
+>> 
+>> So will open() just return an error?  How will this look from
+>> userspace?  
 
-On 03/18, Christian Brauner wrote:
->
-> +static inline bool pidfs_pid_valid(struct pid *pid, const struct path *path,
-> +				   unsigned int flags)
-> +{
-> +	enum pid_type type;
-> +
-> +	if (flags & CLONE_PIDFD)
-> +		return true;
+> Not the open, the read - the typical case is only a single extent goes
+> bad; it's like any other IO error.
 
-OK, this is clear.
+Good. But then how would an application know we got a checksum error
+for data corruption?  Would I have to update all my code to do another
+special call when I get a read/write error to see if it was a
+corruption issue?  
 
-> +	if (flags & PIDFD_THREAD)
-> +		type = PIDTYPE_PID;
-> +	else
-> +		type = PIDTYPE_TGID;
-> +
-> +	/*
-> +	 * Since pidfs_exit() is called before struct pid's task linkage
-> +	 * is removed the case where the task got reaped but a dentry
-> +	 * was already attached to struct pid and exit information was
-> +	 * recorded and published can be handled correctly.
-> +	 */
-> +	if (unlikely(!pid_has_task(pid, type))) {
-> +		struct inode *inode = d_inode(path->dentry);
-> +		return !!READ_ONCE(pidfs_i(inode)->exit_info);
-> +	}
+>> > - Not being able to move data is a non-option: that would block copygc,
+>> >   device removal, etc.
+>> 
+>> > - And, moving said extent requires giving it a new checksum - strictly
+>> >   required if the move has to fragment it, teaching the write/move path
+>> >   about extents with bad checksums is unpalateable, and anyways we'd
+>> >   like to be able to guard against more bitrot, if we can.
+>> 
+>> Why does it need a new checksum if there are read errors?  What
+>> happens if there are more read errors?   If I have a file on a
+>> filesystem which is based in spinning rust and I get a single bit
+>> flip, I'm super happy you catch it.  
 
-Why pidfs_pid_valid() can't simply return false if !pid_has_task(pid,type) ?
+> The data move paths very strictly verify checksums as they move data
+> around so they don't introduce bitrot.
 
-pidfd_open() paths check pid_has_task() too and fail if it returns NULL.
-If this task is already reaped when pidfs_pid_valid() is called, we can
-pretend it was reaped before sys_pidfd_open() was called?
+Good.  This is something I really liked as an idea in ZFS, happy to
+see it coming to bcachefs as well. 
 
-Oleg.
+> I'm not going to add
+> 	if (!bitrotted_extent) checksum(); else no_checksum()
+> Eww...
 
+LOL!
+
+> Besides being gross, we also would like to guard against introducing
+> more bitrot.
+
+>> But now you re-checksum the file, with the read error, and return it?
+>> I'm stupid and just a user/IT guy.  I want notifications, but I don't
+>> want my application to block so I can't kill it, or unmount the
+>> filesystem.  Or continue to use it if I like.  
+
+> The aforementioned poison bit ensures that you still get the error from
+> the original checksum error when you read that data - unless you use an
+> appropriate "give it to me anyways" API.
+
+So this implies that I need to do extra work to A) know I'm on
+bcachefs filesystem, B) that I got a read/write error and I need to do
+some more checks to see what the error exactly is.  
+
+And if I want to re-write the file I can either copy it to a new name,
+but only when I use the new API to say "give me all the data, even if
+you have a checksum error".  
+
+>> > So that means:
+>> 
+>> > - Extents need a poison bit: "reads return errors, even though it now
+>> >   has a good checksum" - this was added in a separate patch queued up
+>> >   for 6.15.
+>> 
+>> Sorry for being dense, but does a file have one or more extents?  Or
+>> is this at a level below that?  
+
+> Files have multiple extents.
+
+> An extent is one contiguous range of data, and in bcachefs checksums are
+> at the extent level, not block, so checksummed (and compressed) extents
+> are limited to, by default, 128k.
+
+>> >   It's an incompat feature because it's a new extent field, and old
+>> >   versions can't parse extents with unknown field types, since they
+>> >   won't know their sizes - meaning users will have to explicitly do an
+>> >   incompat upgrade to make use of this stuff.
+>> 
+>> > - The read path needs to do additional retries after checksum errors
+>> >   before giving up and marking it poisoned, so that we don't
+>> >   accidentally convert a transient error to permanent corruption.
+>> 
+>> When doing these retries, is the filesystem locked up or will the
+>> process doing the read() be blocked from being killed?  
+
+> The process doing the read() can't be killed during this, no. If
+> requested this could be changed, but keep in mind retries are limited in
+> number.
+
+How limited?  And in the worse case, if I have 10 or 100 readers of a
+file with checksum errors, now I've blocked all those processes for X
+amount of time.  Will this info be logged somewhere so a sysadm could
+possibly just do an 'rm' on the file to nuke it, or have some means of
+forcing a scrub?  
+
+> Nothing else is "locked up", everything else proceeds as normal.
+
+But is the filesystem able to be unmounted when there's a locked up
+process?  I'm just thinking in terms of system shutdowns when you have
+failing hardware and want to get things closed as cleanly as possible
+since you're going to clone the underlying block device onto new media
+ASAP in an offline manner.  
+
+>> > - The read path gets a whole bunch of work to plumb precise modern error
+>> >   codes around, so that e.g. the retry path, the data move path, and the
+>> >   "mark extent poisoned" path all know exactly what's going on.
+>> 
+>> > - Read path is responsible for marking extents poisoned after sufficient
+>> >   retry attempts (controlled by a new filesystem option)
+>> 
+>> > - Data move path is allowed to move extents after a read error, if it's
+>> >   a checksum error (giving it a new checksum) if it's been poisoned
+>> >   (i.e. the extent flags feature is enabled).
+>> 
+>> So if just a single bit flips, the extent gets moved onto better
+>> storage, and the file gets re-checksummed.  But what about if more
+>> bits go bad afterwards?  
+
+> The new checksum means they're detected, and if you have replication
+> enabled they'll be corrected automatically, like any other IO error.
+
+Nice!
 
