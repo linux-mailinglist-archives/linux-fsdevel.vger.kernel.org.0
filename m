@@ -1,135 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-44376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B2ADA67FDC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 23:36:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC6AEA68064
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 00:04:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 615377A2748
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 22:35:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3DB93B21DC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 23:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B143207A32;
-	Tue, 18 Mar 2025 22:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E794205E33;
+	Tue, 18 Mar 2025 23:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ul453hAB"
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="netNYtCU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14812205E23
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 22:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C4918C03A;
+	Tue, 18 Mar 2025 23:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742337400; cv=none; b=Ro0sXUaTx+cCka0T1LYLWg3FFhopVA6ltQGH9atTdaS5x+17KfX0pFbhmOJ0WwjNq43GBP7m4Z/+T4BHeZLkPvFTdEm+axiZQ44C70Mn4XqhYbUULpmqYXBb6U3p0a0IIKDewRILOdry9sqTU/V41blzPenMEXmjCG/dL5DO2FE=
+	t=1742338960; cv=none; b=gTampyqKqLEhZJqapqiu9funTD4LKgKnlBnSdNbvRgFiZQ2IK96k+b8p1RoKGvNzJrhr08mGXlAfg5fsvdcc0dr5KG8NzVxPfL263rh+bHDvFFjSQLygsgsf0c+kglbi48xxpQaExd4T8pGJ8RaNPkrcGiyNopLCfd1sRC9OxhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742337400; c=relaxed/simple;
-	bh=RcrbS/0cvKeFq0VHnvdKx9U5gcBVqcap9xaA76NX5UY=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=nfNgK6NfQAnkhTtHpzvMXypxFqI9oNxbH2rX/6fXkkdnpx/kU56ifn7AW4JVRuI4xjOjZKBhKAnbu3xSzSPh59/EXM300XEGjDt5V1W4x0ZrSHWMHtpNmI4PXrrg2nS+1boNDr7UCGDUbJSLVGUF8/ktuPWMuvfcM5tWEf57+5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ul453hAB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742337398;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sUfdBswyWQVZKBqjTUSF+HgpIQhYgENsHS6lzHk2ocg=;
-	b=Ul453hABX3bvAf+uHM2Eymd1AWWjpxsVHroMwE1d0LgDUTrymgetlmyyaCDo6V/HVU2p6T
-	LgIEJsKa+UAPqPIECwkamgBosedKj+Nbe8cY/XnB7qQS/Yi1yAaFtl3X9Xq3aRptnII60O
-	6m9lJ/aoDdeR0KhSeM5wAuI3TKg65lo=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-536-a3XHYFoDMz2M5KIy0620og-1; Tue,
- 18 Mar 2025 18:36:36 -0400
-X-MC-Unique: a3XHYFoDMz2M5KIy0620og-1
-X-Mimecast-MFC-AGG-ID: a3XHYFoDMz2M5KIy0620og_1742337394
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 521901956048;
-	Tue, 18 Mar 2025 22:36:34 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 42F6019560AD;
-	Tue, 18 Mar 2025 22:36:31 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <229984a0b00679cc2f1bbfb42df4174c6c896fd2.camel@ibm.com>
-References: <229984a0b00679cc2f1bbfb42df4174c6c896fd2.camel@ibm.com> <20250313233341.1675324-1-dhowells@redhat.com> <20250313233341.1675324-22-dhowells@redhat.com>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
-    "slava@dubeyko.com" <slava@dubeyko.com>,
-    "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-    "idryomov@gmail.com" <idryomov@gmail.com>,
-    "jlayton@kernel.org" <jlayton@kernel.org>,
-    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-    "dongsheng.yang@easystack.cn" <dongsheng.yang@easystack.cn>,
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 21/35] libceph: Make notify code use ceph_databuf_enc_start/stop
+	s=arc-20240116; t=1742338960; c=relaxed/simple;
+	bh=AFcG2UK8M7dIJr1iIPgFqTjloiFOP77afCaJhcKvdi4=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cznAOdr8Cwc2Fzo1wi52CZOyKl53+sxtW4MMvua+ZQ0iiNRUvQ0vEgtm3ZRSipO0uxb+fia2GNgOE55YzV8fexlEzCAcF0eruN8nunFRjdgVaNfxRLxprA8F0bQeaTu8X65YctxXM92Vn9NfFMShWS4g6W7u39tQAfXwNmW6S2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=netNYtCU; arc=none smtp.client-ip=52.119.213.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1742338959; x=1773874959;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=o9Gs8I6caiy1/fPWZYvSLm6+kkS17oGi9fBfJW9dipQ=;
+  b=netNYtCU2EjRfOEaokWfRpyWrLFQGqiDTcWKYeGCTnA5bQbWo5dNrr+y
+   uhQjZ0Je3XkcJvUpS4nu2TBDqQwFf8Dkghs8YQdxYyP91lno9tWwo2GF+
+   Zt104rIR8vYo2795fsOeWmc3t3j7ng6lInbE8gs8P1hK9deDNFGGpP9D+
+   g=;
+X-IronPort-AV: E=Sophos;i="6.14,258,1736812800"; 
+   d="scan'208";a="706160683"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 23:02:34 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:9378]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.40.40:2525] with esmtp (Farcaster)
+ id 587d40c0-f869-4b16-8e9b-ae504ea90e33; Tue, 18 Mar 2025 23:02:32 +0000 (UTC)
+X-Farcaster-Flow-ID: 587d40c0-f869-4b16-8e9b-ae504ea90e33
+Received: from EX19D020UWC003.ant.amazon.com (10.13.138.187) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 18 Mar 2025 23:02:32 +0000
+Received: from EX19MTAUWB001.ant.amazon.com (10.250.64.248) by
+ EX19D020UWC003.ant.amazon.com (10.13.138.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 18 Mar 2025 23:02:32 +0000
+Received: from email-imr-corp-prod-pdx-1box-2b-ecca39fb.us-west-2.amazon.com
+ (10.25.36.214) by mail-relay.amazon.com (10.250.64.254) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1544.14 via Frontend Transport; Tue, 18 Mar 2025 23:02:32 +0000
+Received: from dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com [172.19.91.144])
+	by email-imr-corp-prod-pdx-1box-2b-ecca39fb.us-west-2.amazon.com (Postfix) with ESMTP id 201F480140;
+	Tue, 18 Mar 2025 23:02:32 +0000 (UTC)
+Received: by dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (Postfix, from userid 23027615)
+	id AB4514EA8; Tue, 18 Mar 2025 23:02:31 +0000 (UTC)
+From: Pratyush Yadav <ptyadav@amazon.de>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: Christian Brauner <brauner@kernel.org>, Linus Torvalds
+	<torvalds@linux-foundation.org>, <linux-kernel@vger.kernel.org>, "Jonathan
+ Corbet" <corbet@lwn.net>, Eric Biederman <ebiederm@xmission.com>, "Arnd
+ Bergmann" <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, "Hugh
+ Dickins" <hughd@google.com>, Alexander Graf <graf@amazon.com>, "Benjamin
+ Herrenschmidt" <benh@kernel.crashing.org>, David Woodhouse
+	<dwmw2@infradead.org>, James Gowans <jgowans@amazon.com>, Mike Rapoport
+	<rppt@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Pasha Tatashin
+	<tatashin@google.com>, Anthony Yznaga <anthony.yznaga@oracle.com>, "Dave
+ Hansen" <dave.hansen@intel.com>, David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>, Wei Yang <richard.weiyang@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-mm@kvack.org>,
+	<kexec@lists.infradead.org>
+Subject: Re: [RFC PATCH 1/5] misc: introduce FDBox
+In-Reply-To: <20250318145707.GX9311@nvidia.com>
+References: <20250307005830.65293-1-ptyadav@amazon.de>
+	<20250307005830.65293-2-ptyadav@amazon.de>
+	<20250307-sachte-stolz-18d43ffea782@brauner> <mafs0ikokidqz.fsf@amazon.de>
+	<20250309-unerwartet-alufolie-96aae4d20e38@brauner>
+	<20250317165905.GN9311@nvidia.com>
+	<20250318-toppen-elfmal-968565e93e69@brauner>
+	<20250318145707.GX9311@nvidia.com>
+Date: Tue, 18 Mar 2025 23:02:31 +0000
+Message-ID: <mafs0a59i3ptk.fsf@amazon.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2681245.1742337390.1@warthog.procyon.org.uk>
-Date: Tue, 18 Mar 2025 22:36:30 +0000
-Message-ID: <2681246.1742337390@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain
 
-Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
+On Tue, Mar 18 2025, Jason Gunthorpe wrote:
 
-> > @@ -4852,20 +4854,19 @@ int ceph_osdc_notify(struct ceph_osd_client *osdc,
-> >  	if (!lreq)
-> >  		return -ENOMEM;
-> >  
-> > -	lreq->request_pl = ceph_databuf_req_alloc(1, PAGE_SIZE, GFP_NOIO);
-> > +	lreq->request_pl = ceph_databuf_req_alloc(0, 3 * 4 + payload_len,
-> 
-> The same question... :)
-> 
-> Thanks,
-> Slava.
-> 
-> > +						  GFP_NOIO);
-> >  	if (!lreq->request_pl) {
-> >  		ret = -ENOMEM;
-> >  		goto out_put_lreq;
-> >  	}
-> >  
-> > -	ret = ceph_databuf_encode_32(lreq->request_pl, 1); /* prot_ver */
-> > -	ret |= ceph_databuf_encode_32(lreq->request_pl, timeout);
-> > -	ret |= ceph_databuf_encode_32(lreq->request_pl, payload_len);
-> > -	ret |= ceph_databuf_append(lreq->request_pl, payload, payload_len);
-> > -	if (ret) {
-> > -		ret = -ENOMEM;
-> > -		goto out_put_lreq;
-> > -	}
-> > +	p = ceph_databuf_enc_start(lreq->request_pl);
-> > +	ceph_encode_32(&p, 1); /* prot_ver */
-> > +	ceph_encode_32(&p, timeout);
-> > +	ceph_encode_32(&p, payload_len);
-> > +	ceph_encode_copy(&p, payload, payload_len);
-> > +	ceph_databuf_enc_stop(lreq->request_pl, p);
+> On Tue, Mar 18, 2025 at 03:25:25PM +0100, Christian Brauner wrote:
+>
+>> > It is not really a stash, it is not keeping files, it is hardwired to
+>> 
+>> Right now as written it is keeping references to files in these fdboxes
+>> and thus functioning both as a crippled high-privileged fdstore and a
+>> serialization mechanism. 
+>
+> I think Pratyush went a bit overboard on that, I can see it is useful
+> for testing, but really the kho control FD should be in either
+> serializing or deserializing mode and it should not really act as an
+> FD store.
+>
+> However, edge case handling makes this a bit complicated. 
+>
+> Once a FD is submitted to be serialized that FD has to be frozen and
+> can't be allowed to change anymore.
+>
+> If the kexec process aborts then we need to unwind all of this stuff
+> and unfreeze all the FDs.
 
-I think the answer is obvious from that.  You have 3 protocol LE32 words plus
-the payload.  Previously, ceph just allocated a whole page, whether or not we
-needed anywhere near that much, and then would dynamically add pages as it
-went along if one was insufficient.  By allocating up front, we get to make
-use of the bulk allocator.
+I do think I might have went a bit overboard, but this was one of the
+reasons for doing so. Having the struct file around, and having the
+ability to map it back in allowed for kexec failure to be recoverable
+easily and quickly.
 
-However, if we don't need all that much space, it affords us the opportunity
-to make use of a page fragment allocator.
+I suppose we can serialize all FDs when the box is sealed and get rid of
+the struct file. If kexec fails, userspace can unseal the box, and FDs
+will be deserialized into a new struct file. This way, the behaviour
+from userspace perspective also stays the same regardless of whether
+kexec went through or not. This also helps tie FDBox closer to KHO.
 
-David
+The downside is that the recovery time will be slower since the state
+has to be deserialized, but I suppose kexec failure should not happen
+too often so that is something we can live with.
 
+What do you think about doing it this way?
+
+>
+> It sure would be nice if the freezing process could be managed
+> generically somehow.
+>
+> One option for freezing would have the kernel enforce that userspace
+> has closed and idled the FD everywhere (eg check the struct file
+> refcount == 1). If userspace doesn't have access to the FD then it is
+> effectively frozen.
+
+Yes, that is what I want to do in the next revision. FDBox itself will
+not close the file descriptors when you put a FD in the box. It will
+just grab a reference and let the userspace close the FD. Then when the
+box is sealed, the operation can be refused if refcount != 1.
+
+>
+> In this case the error path would need to bring the FD back out of the
+> fdbox.
+>
+> Jason
+>
+
+-- 
+Regards,
+Pratyush Yadav
 
