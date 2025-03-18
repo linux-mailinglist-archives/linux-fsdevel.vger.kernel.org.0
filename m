@@ -1,117 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-44369-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D14BA67F20
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 22:51:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9F04A67F3C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 23:06:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14C8E7A6CBA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 21:50:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DF7E423CDE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 22:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FD02063D2;
-	Tue, 18 Mar 2025 21:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B852063EB;
+	Tue, 18 Mar 2025 22:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="e5kj2+CK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BQoyYtGK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6161F8753;
-	Tue, 18 Mar 2025 21:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EF2F9DA
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 22:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742334656; cv=none; b=kLJPmWglu3rEguThProfa7I8PuwYABz1N1Wkd7Txj9TDCqNLM2MdsWMUwy+h5HFhjtIzIh3M0lYVZEAjT8x/c2vw1BkpihXosd6fdllNBCY9Mqko5psqMBhMuoqTYyjIIFWKA0PyJ/0mUYmtyWVh0Tj47YRVWG5BBuSjK1pp050=
+	t=1742335598; cv=none; b=g/hzhvGg+FbLCQ57M8i4gPfV/BJGJPalhW184vBIle2GD+Ka1uM5753o1swcLTJLZ2fnX3mo8drKKzVBIa/Ol8O+PbwXnWp/ElihanG0EpOLu4BTLF0AiCTMwfZJkIKis2zNunxiy2I3ryLgvII9sYD2LKx31ARfm6i39c9iNIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742334656; c=relaxed/simple;
-	bh=3xDFnvrCMohToHimfKRmGaq73SZjQ0ScP+VjQkfRoqo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kq0K0Eeh4l61CrYLHFpQ9mthoSvzxJII23B5IFsYyMyt0Ve/v3o9rncjQxsZ8hK1Oi18+q288n5Wx24ujN4Z0Pdn+kC605vn69893gRcnPtEp0IXpvh5nIbg9BCoTG66vMDxZbfp/9i9ly9Fx7Wy40ebrtY6B0b+nMuFZRm/LP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=e5kj2+CK; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1742334652;
-	bh=3xDFnvrCMohToHimfKRmGaq73SZjQ0ScP+VjQkfRoqo=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=e5kj2+CKJm3kEhHuV5zjcawSNjpmnB/yVV4QokU4OGZ9KwWA9EVoJ6GMZwk82IaHv
-	 +dZTLuR9qUMwQxUkRAQUVzpG/v6Bides6KzSxyxYTrMzThTEhGBoKle8xvkSf+cKCC
-	 T1yZqY5F4+k2nNgev2urcXYezXBoZ8Ahomy54DeM=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 6101A1C00D0;
-	Tue, 18 Mar 2025 17:50:52 -0400 (EDT)
-Message-ID: <8145eb82476edd40c6d168e14db9f16939efb8bb.camel@HansenPartnership.com>
-Subject: Re: [RFC PATCH 2/3] libfs: add simple directory iteration function
- with callback
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-efi@vger.kernel.org, linux-fsdevel@vger.kernel.org, Christian
- Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Date: Tue, 18 Mar 2025 17:50:51 -0400
-In-Reply-To: <CAMj1kXHZfABW6JyPgHDHm-wDX0Orbhs8v=Y1vrboQh2ra1opFQ@mail.gmail.com>
-References: <20250318194111.19419-1-James.Bottomley@HansenPartnership.com>
-	 <20250318194111.19419-3-James.Bottomley@HansenPartnership.com>
-	 <CAMj1kXHZfABW6JyPgHDHm-wDX0Orbhs8v=Y1vrboQh2ra1opFQ@mail.gmail.com>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1742335598; c=relaxed/simple;
+	bh=Io+JdtUIBffFZ1B6iHUYRfDu77sJLK+ELx7zZn8Qs80=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B+xRG9vU5cv1cLvSYkxlI2dMb9iadL08rZFswJjdnSuWPa3gfSZcNj2EITpSTmWqqHI8cpr+yXct479MOV+6JkZXXyj8snFrVHLqqhomkljgFiH9Uui5Zbq3a9L7cvbCS2QcdHAdFoFdS5HVMicI6ncjdIE4BcGXyanjBLfJJWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BQoyYtGK; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-46fcbb96ba9so44468401cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 15:06:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742335596; x=1742940396; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mvDGPTmu7K4ToDRV3WafsmIL0EJSnBnQZmuv1af418g=;
+        b=BQoyYtGKybJUie51jjOc/6T6JFpZzQfWZ10FUpcaXKlTdA+mJHwTri4E1S88wOlSvK
+         Ws5Z3ewU1YxXj3PNelwKL1gkdFa2ThbHxU+l1rNWor/+8KZsUVou4En7aUzXfYzK2SXo
+         unhML1aq+7enG0UIdLIfwdPr4VJyfvaLQHcE2p6B5jyneauAwHwEq7D0lpJXt0LDEUEF
+         BRsziT7izGl3CIBOTCmtvf9CSB5zOpsb0ti05qFmXk5lTEUGlngkhtpdTOU+FFIISTmc
+         NxYerisXfZkPOVFw8MXDslIcITNqt7mYy9QpFkL7SCg0t/QETiQ5uRXNdE66fa/8m8RU
+         f03g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742335596; x=1742940396;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mvDGPTmu7K4ToDRV3WafsmIL0EJSnBnQZmuv1af418g=;
+        b=oZb/hUnTCjtD2KdstEN/oLtqhqdUBxupaqWN6kGblseR+CCL0i4eXISxkAe0WeiAUG
+         Br/P8oBXISxFIgABul1S5dDLH3v5iYiFZkZKPfQ49lTEiuHTdilT4yFysamVuMWEUek8
+         2Ciku8PRyBNeI7spj3QGe+rdQmL+KoOLT/3jLNSX8x5HVC5rNw63Quv/Mf6g8EN7pkgO
+         D/L+C4ohDSQzh42o1J6lnJ0/MRUeeeqizwrkcEkIFMYD1CfqoUc74faJ+OFN1HEdOt/j
+         84FUgt22OFP/EQ6t3DK0SW2IIccE3RBOczcfJa2D6WFBwxC530y7s2nZag7vtD0VVFbM
+         xA+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWEpAa/6JdZyP3hhY9kRHW1QT+R0Z8rdTQtnKRSHIFL5MeosmLasKJn8dvh7q30qnjua3B98H59XwmmxtTW@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHZ37MUpG/CHQrLPauUZrQmHy7VhxDhW/EP5VtwNvLd5MEoXLO
+	OyGy0LgBSfSrKDaG2g+GumcBUtuDe46wIjEPfhDjkCiZHcfrtLwpKmD0VZjjx4vkjQ6uy4kW/aM
+	Y19HTwrbZXBRS12zjXaiINj7wh44=
+X-Gm-Gg: ASbGncvBuUzfJsoR9RWbxBywzZPyp3HrEAJKBHH7xQhbMwCpJGlMZycXfMYZ76ZrVJB
+	SgYR23eYHn/cuim6L9qlkVZxH3ediop5n3UuOXBMXKLqVqjeOEX5MFkqUPLRoNsBkvwJ0psbi5Y
+	UTqYSExXmXQqwF8n+Fuy1TB6KhrepOha6FsQwaYIcbtA==
+X-Google-Smtp-Source: AGHT+IFK0/SA0aYfCLP4fSto+MFaqvl0/79ShZWkCjR20V0K8QM6RoXUZoqwww25Xka7qPkzDI85JHe4ozoEvge5i8Y=
+X-Received: by 2002:a05:622a:5a90:b0:476:add4:d2bf with SMTP id
+ d75a77b69052e-47708336219mr9898581cf.22.1742335595700; Tue, 18 Mar 2025
+ 15:06:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250318003028.3330599-1-joannelkoong@gmail.com> <fd9ba4b3-319a-443c-966e-b34eaca8d24c@fastmail.fm>
+In-Reply-To: <fd9ba4b3-319a-443c-966e-b34eaca8d24c@fastmail.fm>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 18 Mar 2025 15:06:24 -0700
+X-Gm-Features: AQ5f1Jr949FlosjITKRbXI_fT61Ix0RQpMbej-4F5K7FOIK_MtolxdZzu6fzEww
+Message-ID: <CAJnrk1ZHQVGZ+UZHQ_QpSDVZvjmp3uySEZ6o0wneRHS+zQU=jg@mail.gmail.com>
+Subject: Re: [PATCH v3] fuse: fix uring race condition for null dereference of fc
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2025-03-18 at 22:33 +0100, Ard Biesheuvel wrote:
-> On Tue, 18 Mar 2025 at 20:45, James Bottomley
-> <James.Bottomley@hansenpartnership.com> wrote:
-> >=20
-> > The current iterate_dir() infrastructure is somewhat cumbersome to
-> > use from within the kernel.=C2=A0 Introduce a lighter weight
-> > simple_iterate_dir() function that directly iterates the directory
-> > and executes a callback for each positive dentry.
-> >=20
-> > Signed-off-by: James Bottomley
-> > <James.Bottomley@HansenPartnership.com>
+On Tue, Mar 18, 2025 at 3:38=E2=80=AFAM Bernd Schubert
+<bernd.schubert@fastmail.fm> wrote:
+>
+>
+>
+> On 3/18/25 01:30, Joanne Koong wrote:
+> > There is a race condition leading to a kernel crash from a null
+> > dereference when attemping to access fc->lock in
+> > fuse_uring_create_queue(). fc may be NULL in the case where another
+> > thread is creating the uring in fuse_uring_create() and has set
+> > fc->ring but has not yet set ring->fc when fuse_uring_create_queue()
+> > reads ring->fc. There is another race condition as well where in
+> > fuse_uring_register(), ring->nr_queues may still be 0 and not yet set
+> > to the new value when we compare qid against it.
+> >
+> > This fix sets fc->ring only after ring->fc and ring->nr_queues have bee=
+n
+> > set, which guarantees now that ring->fc is a proper pointer when any
+> > queues are created and ring->nr_queues reflects the right number of
+> > queues if ring is not NULL. We must use smp_store_release() and
+> > smp_load_acquire() semantics to ensure the ordering will remain correct
+> > where fc->ring is assigned only after ring->fc and ring->nr_queues have
+> > been assigned.
+> >
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > Fixes: 24fe962c86f5 ("fuse: {io-uring} Handle SQEs - register commands"=
+)
+> >
 > > ---
-> > =C2=A0fs/libfs.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 33 +=
-++++++++++++++++++++++++++++++++
-> > =C2=A0include/linux/fs.h |=C2=A0 2 ++
-> > =C2=A02 files changed, 35 insertions(+)
-> >=20
-> > diff --git a/fs/libfs.c b/fs/libfs.c
-> > index 816bfe6c0430..37da5fe25242 100644
-> > --- a/fs/libfs.c
-> > +++ b/fs/libfs.c
-> > @@ -214,6 +214,39 @@ static void internal_readdir(struct dentry
-> > *dentry, struct dentry *cursor,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dput(next);
-> > =C2=A0}
-> >=20
-> > +/**
-> > + * generic_iterate_call - iterate all entries executing @callback
->=20
-> This name doesn't match the name below.
+> >
+> > Changes between v2 -> v3:
+> > * v2 implementation still has race condition for ring->nr_queues
+> > *link to v2: https://lore.kernel.org/linux-fsdevel/20250314205033.76264=
+1-1-joannelkoong@gmail.com/
+> >
+> > Changes between v1 -> v2:
+> > * v1 implementation may be reordered by compiler (Bernd)
+> > * link to v1: https://lore.kernel.org/linux-fsdevel/20250314191334.2157=
+41-1-joannelkoong@gmail.com/
+> >
+> > ---
+> >  fs/fuse/dev_uring.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> > index ab8c26042aa8..97e6d31479e0 100644
+> > --- a/fs/fuse/dev_uring.c
+> > +++ b/fs/fuse/dev_uring.c
+> > @@ -235,11 +235,11 @@ static struct fuse_ring *fuse_uring_create(struct=
+ fuse_conn *fc)
+> >
+> >       init_waitqueue_head(&ring->stop_waitq);
+> >
+> > -     fc->ring =3D ring;
+> >       ring->nr_queues =3D nr_queues;
+> >       ring->fc =3D fc;
+> >       ring->max_payload_sz =3D max_payload_size;
+> >       atomic_set(&ring->queue_refs, 0);
+> > +     smp_store_release(&fc->ring, ring);
+> >
+> >       spin_unlock(&fc->lock);
+> >       return ring;
+> > @@ -1068,7 +1068,7 @@ static int fuse_uring_register(struct io_uring_cm=
+d *cmd,
+> >                              unsigned int issue_flags, struct fuse_conn=
+ *fc)
+> >  {
+> >       const struct fuse_uring_cmd_req *cmd_req =3D io_uring_sqe_cmd(cmd=
+->sqe);
+> > -     struct fuse_ring *ring =3D fc->ring;
+> > +     struct fuse_ring *ring =3D smp_load_acquire(&fc->ring);
+> >       struct fuse_ring_queue *queue;
+> >       struct fuse_ring_ent *ent;
+> >       int err;
+>
+> I was actually debating with myself that smp_load_acquire() on Friday.
+> I think we do not need it, because if the ring is not found, it will
+> go into the spin lock. But it does not hurt either and it might
+> cleaner to have a pair of smp_store_release() and smp_load_acquire().
+>
 
-Right, I started out thinking the generic_ prefix was the preferred
-one, but then simple_ looked better and I forgot to update the docbook.
+I think the problem is that if we don't have it, then ring may be
+non-null but the ring->nr_queues value we read in "if (qid >=3D
+ring->nr_queues)" might still be the stale value, which would make the
+uring registration fail with -EINVAL.
 
-Regards,
+Thanks,
+Joanne
 
-James
-
+>
+> Reviewed-by: Bernd Schubert <bschubert@ddn.com>
 
