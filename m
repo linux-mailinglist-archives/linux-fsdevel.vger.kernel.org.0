@@ -1,180 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-44370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44371-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9F04A67F3C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 23:06:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 608D0A67F7D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 23:13:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DF7E423CDE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 22:06:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE494886203
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 22:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B852063EB;
-	Tue, 18 Mar 2025 22:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BQoyYtGK"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD66D206F17;
+	Tue, 18 Mar 2025 22:12:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EF2F9DA
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 22:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938F72063FE
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 22:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742335598; cv=none; b=g/hzhvGg+FbLCQ57M8i4gPfV/BJGJPalhW184vBIle2GD+Ka1uM5753o1swcLTJLZ2fnX3mo8drKKzVBIa/Ol8O+PbwXnWp/ElihanG0EpOLu4BTLF0AiCTMwfZJkIKis2zNunxiy2I3ryLgvII9sYD2LKx31ARfm6i39c9iNIo=
+	t=1742335924; cv=none; b=ZDyxX/650ForvCmkk9pd5jbQpSYDGqDF0SYl8tnnIHL2l+eE+E3m7jfhCbwzSvPLTkRXhxmbjizbKiHZ6l0VaEoyLfIyyyRNOOlEDU3i9J+YaoW2n0y1KD70yPiw3J8J2kIvYvUJVtZatqnSajMdApr7S66wdScn4ZxKI73O2cI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742335598; c=relaxed/simple;
-	bh=Io+JdtUIBffFZ1B6iHUYRfDu77sJLK+ELx7zZn8Qs80=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B+xRG9vU5cv1cLvSYkxlI2dMb9iadL08rZFswJjdnSuWPa3gfSZcNj2EITpSTmWqqHI8cpr+yXct479MOV+6JkZXXyj8snFrVHLqqhomkljgFiH9Uui5Zbq3a9L7cvbCS2QcdHAdFoFdS5HVMicI6ncjdIE4BcGXyanjBLfJJWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BQoyYtGK; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-46fcbb96ba9so44468401cf.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 15:06:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742335596; x=1742940396; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mvDGPTmu7K4ToDRV3WafsmIL0EJSnBnQZmuv1af418g=;
-        b=BQoyYtGKybJUie51jjOc/6T6JFpZzQfWZ10FUpcaXKlTdA+mJHwTri4E1S88wOlSvK
-         Ws5Z3ewU1YxXj3PNelwKL1gkdFa2ThbHxU+l1rNWor/+8KZsUVou4En7aUzXfYzK2SXo
-         unhML1aq+7enG0UIdLIfwdPr4VJyfvaLQHcE2p6B5jyneauAwHwEq7D0lpJXt0LDEUEF
-         BRsziT7izGl3CIBOTCmtvf9CSB5zOpsb0ti05qFmXk5lTEUGlngkhtpdTOU+FFIISTmc
-         NxYerisXfZkPOVFw8MXDslIcITNqt7mYy9QpFkL7SCg0t/QETiQ5uRXNdE66fa/8m8RU
-         f03g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742335596; x=1742940396;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mvDGPTmu7K4ToDRV3WafsmIL0EJSnBnQZmuv1af418g=;
-        b=oZb/hUnTCjtD2KdstEN/oLtqhqdUBxupaqWN6kGblseR+CCL0i4eXISxkAe0WeiAUG
-         Br/P8oBXISxFIgABul1S5dDLH3v5iYiFZkZKPfQ49lTEiuHTdilT4yFysamVuMWEUek8
-         2Ciku8PRyBNeI7spj3QGe+rdQmL+KoOLT/3jLNSX8x5HVC5rNw63Quv/Mf6g8EN7pkgO
-         D/L+C4ohDSQzh42o1J6lnJ0/MRUeeeqizwrkcEkIFMYD1CfqoUc74faJ+OFN1HEdOt/j
-         84FUgt22OFP/EQ6t3DK0SW2IIccE3RBOczcfJa2D6WFBwxC530y7s2nZag7vtD0VVFbM
-         xA+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWEpAa/6JdZyP3hhY9kRHW1QT+R0Z8rdTQtnKRSHIFL5MeosmLasKJn8dvh7q30qnjua3B98H59XwmmxtTW@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHZ37MUpG/CHQrLPauUZrQmHy7VhxDhW/EP5VtwNvLd5MEoXLO
-	OyGy0LgBSfSrKDaG2g+GumcBUtuDe46wIjEPfhDjkCiZHcfrtLwpKmD0VZjjx4vkjQ6uy4kW/aM
-	Y19HTwrbZXBRS12zjXaiINj7wh44=
-X-Gm-Gg: ASbGncvBuUzfJsoR9RWbxBywzZPyp3HrEAJKBHH7xQhbMwCpJGlMZycXfMYZ76ZrVJB
-	SgYR23eYHn/cuim6L9qlkVZxH3ediop5n3UuOXBMXKLqVqjeOEX5MFkqUPLRoNsBkvwJ0psbi5Y
-	UTqYSExXmXQqwF8n+Fuy1TB6KhrepOha6FsQwaYIcbtA==
-X-Google-Smtp-Source: AGHT+IFK0/SA0aYfCLP4fSto+MFaqvl0/79ShZWkCjR20V0K8QM6RoXUZoqwww25Xka7qPkzDI85JHe4ozoEvge5i8Y=
-X-Received: by 2002:a05:622a:5a90:b0:476:add4:d2bf with SMTP id
- d75a77b69052e-47708336219mr9898581cf.22.1742335595700; Tue, 18 Mar 2025
- 15:06:35 -0700 (PDT)
+	s=arc-20240116; t=1742335924; c=relaxed/simple;
+	bh=9d3EbaMoYysDxaknxbHqaz2DgcYC2l3wa8cV1wVoKeE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c9CoMvygdn2m8GS8osP82CiQbmLxyC9YJSTX1pm6x37F8II4BnHGsLVxjbi/cnDNpPMFEq6SDPuySIb7zXKs7G0IVBNcBXY9VedP7qJzcYdP5kJSkXtvkXQR2ShH3jARjmGBCrbnhm8PJpjE6WDeB3zKFq98ASlUHHGLsgS+kuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-82-222.bstnma.fios.verizon.net [173.48.82.222])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 52IMBSSr025381
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 18:11:29 -0400
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 284D02E010B; Tue, 18 Mar 2025 18:11:28 -0400 (EDT)
+Date: Tue, 18 Mar 2025 18:11:28 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Demi Marie Obenour <demi@invisiblethingslab.com>
+Cc: Dave Chinner <david@fromorbit.com>, cve@kernel.org, gnoack@google.com,
+        gregkh@linuxfoundation.org, kent.overstreet@linux.dev,
+        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, mic@digikod.net,
+        Demi Marie Obenour <demiobenour@gmail.com>
+Subject: Re: Unprivileged filesystem mounts
+Message-ID: <20250318221128.GA1040959@mit.edu>
+References: <Z8948cR5aka4Cc5g@dread.disaster.area>
+ <20250311021957.2887-1-demi@invisiblethingslab.com>
+ <Z8_Q4nOR5X3iZq3j@dread.disaster.area>
+ <Z9CYzjpQUH8Bn4AL@itl-email>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318003028.3330599-1-joannelkoong@gmail.com> <fd9ba4b3-319a-443c-966e-b34eaca8d24c@fastmail.fm>
-In-Reply-To: <fd9ba4b3-319a-443c-966e-b34eaca8d24c@fastmail.fm>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 18 Mar 2025 15:06:24 -0700
-X-Gm-Features: AQ5f1Jr949FlosjITKRbXI_fT61Ix0RQpMbej-4F5K7FOIK_MtolxdZzu6fzEww
-Message-ID: <CAJnrk1ZHQVGZ+UZHQ_QpSDVZvjmp3uySEZ6o0wneRHS+zQU=jg@mail.gmail.com>
-Subject: Re: [PATCH v3] fuse: fix uring race condition for null dereference of fc
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9CYzjpQUH8Bn4AL@itl-email>
 
-On Tue, Mar 18, 2025 at 3:38=E2=80=AFAM Bernd Schubert
-<bernd.schubert@fastmail.fm> wrote:
->
->
->
-> On 3/18/25 01:30, Joanne Koong wrote:
-> > There is a race condition leading to a kernel crash from a null
-> > dereference when attemping to access fc->lock in
-> > fuse_uring_create_queue(). fc may be NULL in the case where another
-> > thread is creating the uring in fuse_uring_create() and has set
-> > fc->ring but has not yet set ring->fc when fuse_uring_create_queue()
-> > reads ring->fc. There is another race condition as well where in
-> > fuse_uring_register(), ring->nr_queues may still be 0 and not yet set
-> > to the new value when we compare qid against it.
-> >
-> > This fix sets fc->ring only after ring->fc and ring->nr_queues have bee=
-n
-> > set, which guarantees now that ring->fc is a proper pointer when any
-> > queues are created and ring->nr_queues reflects the right number of
-> > queues if ring is not NULL. We must use smp_store_release() and
-> > smp_load_acquire() semantics to ensure the ordering will remain correct
-> > where fc->ring is assigned only after ring->fc and ring->nr_queues have
-> > been assigned.
-> >
-> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > Fixes: 24fe962c86f5 ("fuse: {io-uring} Handle SQEs - register commands"=
-)
-> >
-> > ---
-> >
-> > Changes between v2 -> v3:
-> > * v2 implementation still has race condition for ring->nr_queues
-> > *link to v2: https://lore.kernel.org/linux-fsdevel/20250314205033.76264=
-1-1-joannelkoong@gmail.com/
-> >
-> > Changes between v1 -> v2:
-> > * v1 implementation may be reordered by compiler (Bernd)
-> > * link to v1: https://lore.kernel.org/linux-fsdevel/20250314191334.2157=
-41-1-joannelkoong@gmail.com/
-> >
-> > ---
-> >  fs/fuse/dev_uring.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> > index ab8c26042aa8..97e6d31479e0 100644
-> > --- a/fs/fuse/dev_uring.c
-> > +++ b/fs/fuse/dev_uring.c
-> > @@ -235,11 +235,11 @@ static struct fuse_ring *fuse_uring_create(struct=
- fuse_conn *fc)
-> >
-> >       init_waitqueue_head(&ring->stop_waitq);
-> >
-> > -     fc->ring =3D ring;
-> >       ring->nr_queues =3D nr_queues;
-> >       ring->fc =3D fc;
-> >       ring->max_payload_sz =3D max_payload_size;
-> >       atomic_set(&ring->queue_refs, 0);
-> > +     smp_store_release(&fc->ring, ring);
-> >
-> >       spin_unlock(&fc->lock);
-> >       return ring;
-> > @@ -1068,7 +1068,7 @@ static int fuse_uring_register(struct io_uring_cm=
-d *cmd,
-> >                              unsigned int issue_flags, struct fuse_conn=
- *fc)
-> >  {
-> >       const struct fuse_uring_cmd_req *cmd_req =3D io_uring_sqe_cmd(cmd=
-->sqe);
-> > -     struct fuse_ring *ring =3D fc->ring;
-> > +     struct fuse_ring *ring =3D smp_load_acquire(&fc->ring);
-> >       struct fuse_ring_queue *queue;
-> >       struct fuse_ring_ent *ent;
-> >       int err;
->
-> I was actually debating with myself that smp_load_acquire() on Friday.
-> I think we do not need it, because if the ring is not found, it will
-> go into the spin lock. But it does not hurt either and it might
-> cleaner to have a pair of smp_store_release() and smp_load_acquire().
->
+On Tue, Mar 11, 2025 at 04:10:42PM -0400, Demi Marie Obenour wrote:
+> 
+> Why is it not possible to provide that guarantee?  I'm not concerned
+> about infinite loops or deadlocks.  Is there a reason it is not possible
+> to prevent memory corruption?
 
-I think the problem is that if we don't have it, then ring may be
-non-null but the ring->nr_queues value we read in "if (qid >=3D
-ring->nr_queues)" might still be the stale value, which would make the
-uring registration fail with -EINVAL.
+Companies and users are willing to pay to improve performance for file
+systems.  q(For example, we have been working for Cloud services that
+are interested in improving the performance of their first party
+database products using the fact with cloud emulated block devices, we
+can guarantee that 16k write won't be torn, and this can resul;t in
+significant database performance.)
 
-Thanks,
-Joanne
+However, I have *yet* to see any company willing to invest in
+hardening file systems against maliciously modified file system
+images.  We can debate how much it might cost it to harden a file
+system, but given how much companies are willing to pay --- zero ---
+it's mostly an academic question.
 
->
-> Reviewed-by: Bernd Schubert <bschubert@ddn.com>
+In addition, if someone made a file system which is guaranteed to be
+safe, but it had massive performance regressions relative other file
+systems --- it's unclear how many users or system administrators would
+use it.  And we've seen that --- there are known mitigations for CPU
+cache attacks which are so expensive, that companies or end users have
+chosen not to enable them.  Yes, there are some security folks who
+believe that security is the most important thing, uber alles.
+Unfortunately, those people tend not to be the ones writing the checks
+or authorizing hiring budgets.
+
+That being said, if someone asked me if it was best way to invest
+software development dollars --- I'd say no.  Don't get me wrong, if
+someone were to give me some minions tasked to harden ext4, I know how
+I could keep them busy and productive.  But a more cost effective way
+of addressing the "untrusted file sytem problem" would be:
+
+(a) Run a forced fsck to check the file system for inconsistency
+before letting the file system be mounted.
+
+(b) Mount the file system in a virtual machine, and then make it
+available to the host using something like 9pfs.  9pfs is very simple
+file system which is easy to validate, and it's a strategy used by
+gVisor's file system gopher.
+
+These two approaches are complementary, with (a) being easier, and (b)
+probably a bit more robust from a security perspective, but it a bit
+more work --- with both providing a layered approach.
+
+> > In this situation, the choice of what to do *must* fall to the user,
+> > but the argument for "filesystem corruption is a CVE-worthy bug" is
+> > that the choice has been taken away from the user. That's what I'm
+> > saying needs to change - the choice needs to be returned to the
+> > user...
+
+Users can alwayus do stupid things.  For example, they could download
+a random binary from the web, then execute it.  We've seen very
+popular software which is instaled via "curl <URL> | bash".  Should we
+therefore call bash be a CVE-vulnerability?
+
+Realistically, this is probably a far bigger vulnerability if we're
+talking about stupid user tricks.  ("But.... but... but... users need
+to be able to install software" --- we can't stop them from piping the
+output of curl into bash.)  Which is another reason why I don't really
+blame the VP's that are making funding decisions; it's not clear that
+the ROI of funding file system security hardening is the best way to
+spend a company's dollars.  Remember, Zuckerburg has been quoted as
+saying that he's laying off engineers so his company can buy more
+GPU's, we know that funding is not infinite.  Every company is making
+ROI decisions; you might not agree with the decisions, but trust me,
+they're making them.
+
+But if some company would like to invest software engineering effort
+in addition features or perform security hardening --- they should
+contact me, and I'd be happy to chat.  We have weekly ext4 video
+conference calls, and I'm happy to collaborate with companies have a
+business interest in seeing some feature get pursued.  There *have*
+been some that are security related --- fscrypt and fsverity were both
+implemented for ext4 first, in support of Android and ChromeOS's
+security use cases.  But in practice this has been the exception, and
+not the rule.
+
+> Not automounting filesystems on hotplug is a _part_ of the solution.
+> It cannot be the _entire_ solution.  Users sometimes need to be able to
+> interact with untrusted filesystem images with a reasonable speed.
+
+Running fsck on a file system *before* automounting file systems would
+be a pretty decent start towards a solution.  Is it perfect?  No.  But
+it would provide a huge amount of protection.
+
+Note that this won't help if you have a malicious hardware that
+*pretends* to be a USB storage device, but which doens't behave a like
+a honest storage device.  For example, reading a particular sector
+with one data at time T, and a different data at time T+X, with no
+intervening writes.  There is no real defense to this attack, since
+there is no way that you can authentiate the external storage device;
+you could have a registry of USB vendor and model id's, but a device
+can always lie about its id numbers.
+
+If you are worried about this kind of attack, the only thing you can
+do is to prevent external USB devices from being attached.  This *is*
+something that you can do with Chrome and Android enterprise security
+policies, and, I've talked to a bank's senior I/T leader that chose to
+put epoxy in their desktop, to mitigate aginst a whole *class* of USB
+security attacks.
+
+Like everything else, security and usability and performance and costs
+are all engineering tradeoffs.  So what works for one use case and
+threat model won't be optimal for another, just as fscrypt works well
+for Android and ChromeOS, but it doesn't necessarily work well for
+other use cases (where I might recommed dm-crypt instead).
+
+Cheers,
+
+					- Ted
+
 
