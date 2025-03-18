@@ -1,75 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-44284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6708A66CB0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 08:50:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CF12A66CC6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 08:52:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D678A3BCC5E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 07:49:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6B9A7AD308
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 07:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21F11FF7CC;
-	Tue, 18 Mar 2025 07:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4991EF387;
+	Tue, 18 Mar 2025 07:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mBsga6EI"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="l31KXGVe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9985C1DF742;
-	Tue, 18 Mar 2025 07:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13291EF39B;
+	Tue, 18 Mar 2025 07:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742284034; cv=none; b=rYvABsA2Cg5+mBjNcNxaReu59QY3mTUuH+PqD34GzuHxcbLMcOVyk6S9znIQHDZdyceNqz1g60P1t6tImLsabQXx6n+V5iL0S8YrLwZFwB0h1iig6v9vu6o5Vsl++3cbJoMtIGfhd86nGRN3/C77Tkg2gge5au6W7CLgt0+oQdg=
+	t=1742284168; cv=none; b=rSGxXjxsZwi4fbmnOYR1Q28ErIqpo+FsZxsE5B1XF2K+3ZE/9z3PYAyUCeqyKQ4x48h/B/dpqOQCo1RdHhgr+yXwCrFd9zFOKJPt2KO9WJohpVSWJBoCWtfc5uA3FVRAGP91glY0oGJNqOLAuDEuV9peKkhlUZXFleL2Yi/ueDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742284034; c=relaxed/simple;
-	bh=q5gyFvbl6bkYEOehFIWAJ1zNNVQ1iTslUk/DCfO4Rq4=;
+	s=arc-20240116; t=1742284168; c=relaxed/simple;
+	bh=Y6RdoGCNCPbWSGXi/T72o28pM9Gq7gZPH7wZZD0d4jM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SWRcT2ctHCduzXv2adIeQVEQAVIoWzIBI085qjbg9QOEtwd0v7TaLvigmjvCq46DMuGd2GrxtqUsT4MquhqfcnH1ONWEF2FMiX87ZnzLpbee3ORgP0PyjqwEsSgmvNSCFSDkmnDYnKN+00NMeClcDWS/3UGXhZDvQJywmhCPwpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mBsga6EI; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742284033; x=1773820033;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=q5gyFvbl6bkYEOehFIWAJ1zNNVQ1iTslUk/DCfO4Rq4=;
-  b=mBsga6EIGtOTVf/NYvzjMtIOscge6tXLBz9QOmUT1k3H1WXjY8+7VeLy
-   YzOmyhcmfIymtfOa7WEqvFqWkKIbbcqip032horJrfWCn5mN8/PoG99oh
-   AlT2eHeR/UWziEgBU8psncDioNxPq2Q8oqH0QF2K9ttSYrhwJpEoJVwJq
-   WXRKeM8r+g4h9+3cEN70K278YjodfZjnLIcFfvoEnKwx4YsSaSScrMfqR
-   PQmhkq/KD4hYUKjaXaO0YiM+yt0Yz0CQdG+39muN37L5eLF2YI3DPmxSB
-   U/boTyn/Se+lS0LIhmF3J4hRuk1k1TT8CNdyNmNdHH/OgosiDY2RZtgGG
-   Q==;
-X-CSE-ConnectionGUID: 25reoVTdSASkBNXpqglEpw==
-X-CSE-MsgGUID: 1DMXB/VlRCSZGSys0nB5uQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="30991861"
-X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
-   d="scan'208";a="30991861"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 00:47:12 -0700
-X-CSE-ConnectionGUID: 3VtcVOfoQgyR2trRmJu9Zw==
-X-CSE-MsgGUID: 5KlqKzSiQtuXt3IwL/ft+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
-   d="scan'208";a="122198631"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa007.fm.intel.com with ESMTP; 18 Mar 2025 00:47:09 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 9E39217B; Tue, 18 Mar 2025 09:47:07 +0200 (EET)
-Date: Tue, 18 Mar 2025 09:47:07 +0200
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Nico Pache <npache@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, corbet@lwn.net, akpm@linux-foundation.org, surenb@google.com, 
-	pasha.tatashin@soleen.com, catalin.marinas@arm.com, david@redhat.com, jeffxu@chromium.org, 
-	andrii@kernel.org, xu.xin16@zte.com.cn
-Subject: Re: [PATCH] Documentation: Add "Unaccepted" meminfo entry
-Message-ID: <6lh47q4gsgrmt2bajjngwfyjxs6dn7zmkuhnfftsrazp5ivs5j@pr4q6fpb2ulx>
-References: <20250317230403.79632-1-npache@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sbSRJut6Ob0Z/Ll3Q/vjVOCAcz0B56hO44JmwCu4xjIAJAn3Y5pLflCdAcGE5M4SQzst30x8ZK+w1TZT38kQSpFSFvubSnAx2idlwNS4N/eUVa7LHWQTQmCvZ8xtglvNnOQJq6tURmtInTMjXEvMsVxLBDs38JD+gBDLZpeOGew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=l31KXGVe; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=c+fTThbaba4IfiJ9ksjfwJ6NxRjEzbsQT04jzMLLOfA=; b=l31KXGVe4ffoSUWX/gblJAd56S
+	bQLFi/OlU4vcbUYTErp3HTKhmcuA8bUnAI6LKfVcPUK4MtiOL2xOl4jsEtLNMTjyBML5xHi1fVSft
+	aeFTnGVqZ0ww/OsT89TFLH5AwiH8be6uLuaSuForS/H4rDWx6U49CgaIfJKUBW8z276v6cutWn0uW
+	5kSBu5BTYRCJqJx5r3HhbLKY9iI3305Xdhjk0cGmYo7q/3tL8KjFiWKTBdCFzzwEYTfAv82flDSkI
+	29zu2xuTeQlGT5uTqTtFxKZnBRPAgrNXFuU/TvPtAgVey2xc8G/BUw1VflyIgHRqEo6z10eoOBVNt
+	fIPoPRlg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1tuRhS-0000000F0ct-3ng4;
+	Tue, 18 Mar 2025 07:49:23 +0000
+Date: Tue, 18 Mar 2025 07:49:22 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
+	linux-efi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Ryan Lee <ryan.lee@canonical.com>,
+	Malte =?iso-8859-1?Q?Schr=F6der?= <malte.schroeder@tnxip.de>,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH] efivarfs: fix NULL dereference on resume
+Message-ID: <20250318074922.GX2023217@ZenIV>
+References: <3e998bf87638a442cbc6864cdcd3d8d9e08ce3e3.camel@HansenPartnership.com>
+ <20250318033738.GV2023217@ZenIV>
+ <CAMj1kXHOqzvpUOMTpfQfny10B7M3WnwPYdm1jVX7saP4cy2F=A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,21 +65,37 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250317230403.79632-1-npache@redhat.com>
+In-Reply-To: <CAMj1kXHOqzvpUOMTpfQfny10B7M3WnwPYdm1jVX7saP4cy2F=A@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Mar 17, 2025 at 05:04:03PM -0600, Nico Pache wrote:
-> Commit dcdfdd40fa82 ("mm: Add support for unaccepted memory") added a
-> entry to meminfo but did not document it in the proc.rst file.
-> 
-> This counter tracks the amount of "Unaccepted" guest memory for some
-> Virtual Machine platforms, such as Intel TDX or AMD SEV-SNP.
-> 
-> Add the missing entry in the documentation.
-> 
-> Signed-off-by: Nico Pache <npache@redhat.com>
+On Tue, Mar 18, 2025 at 08:04:59AM +0100, Ard Biesheuvel wrote:
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> the latter is only needed when it is mounted to begin with, and as a
+> VFS non-expert, I struggle to understand why it is a) ok and b)
+> preferred to create a new mount to pass to kernel_file_open(). Could
+> we add a paragraph to the commit log that explains this?
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+I'm not at all convinced that iterate_dir() is the right thing to use
+there, but *IF* we go that way, yes, we need a reference to struct
+mount.  We are not going to introduce a very special kind of struct
+file, along with the arseloads of checking for that crap all over the
+place - not for the sake of one weird case in one weird filesystem.
+
+file->f_path is a valid struct path, which means that ->mnt->mnt_sb == ->dentry->d_sb
+and refcount of ->mnt is positive as long as struct file exists.
+
+Keeping a persistent internal struct mount is, of course, possible,
+but it will make the damn thing impossible to rmmod, etc. - it will
+remain in place until the reboot.
+
+It might be possible to put together something like "grab a reference
+to superblock and allocate a temporary struct mount refering to it"
+(which is what that vfs_kern_mount() boils down to).  But I would
+very much prefer to have it go over the list of children of ->s_root
+manually, instead of playing silly buggers with iterate_dir().
+
+And yes, it would require exclusion with dissolving dentry tree on
+umount, for obvious reasons.  Which might be done with ->s_active
+or simply by unregistering that notifier chain as the very first step
+in ->kill_sb() there.
 
