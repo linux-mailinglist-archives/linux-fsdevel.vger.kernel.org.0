@@ -1,61 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-44368-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44369-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B19FA67F21
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 22:51:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D14BA67F20
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 22:51:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEEDC1893AA2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 21:49:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14C8E7A6CBA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 21:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06191205517;
-	Tue, 18 Mar 2025 21:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FD02063D2;
+	Tue, 18 Mar 2025 21:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ghyC/zaz"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="e5kj2+CK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99F41EB5DB;
-	Tue, 18 Mar 2025 21:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6161F8753;
+	Tue, 18 Mar 2025 21:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742334560; cv=none; b=l+sH+8lIqE4CjXy4Kf9gJ3sFBcpMXGpbqIO/GvYhApybHfRAQTf1EDAihHGATCVMqVuJ3Md1AAA3Q284vbuTSEFJ9tzqdAK2QMMysKJLuAS8p2iXRBY5g0JJPcw9PU9/aleJ83QREaumpb1OqVYdg4LuD3KBkMjdl020zLZkVHI=
+	t=1742334656; cv=none; b=kLJPmWglu3rEguThProfa7I8PuwYABz1N1Wkd7Txj9TDCqNLM2MdsWMUwy+h5HFhjtIzIh3M0lYVZEAjT8x/c2vw1BkpihXosd6fdllNBCY9Mqko5psqMBhMuoqTYyjIIFWKA0PyJ/0mUYmtyWVh0Tj47YRVWG5BBuSjK1pp050=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742334560; c=relaxed/simple;
-	bh=Of+Qs3P64PS9pIzijgy1+hEGYCNZ8JQ6yWbz80fLzdw=;
+	s=arc-20240116; t=1742334656; c=relaxed/simple;
+	bh=3xDFnvrCMohToHimfKRmGaq73SZjQ0ScP+VjQkfRoqo=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fco5UrP06mq/osiF0eJQOackuEb6uGmqBNE+q++X56PAECgmkUBwxYuUZW6QvZ2Z86VbKWPI50Xu0OHOCrNeLc4ePBNOqNxQe/wniV3KF3PXU2aAsRZPuzwiwUhwgK0jbWgRXrVzhiDog35LBHE6x9ML1T3IK8IRe/Jg08o5aOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=ghyC/zaz; arc=none smtp.client-ip=198.37.111.173
+	 Content-Type:MIME-Version; b=kq0K0Eeh4l61CrYLHFpQ9mthoSvzxJII23B5IFsYyMyt0Ve/v3o9rncjQxsZ8hK1Oi18+q288n5Wx24ujN4Z0Pdn+kC605vn69893gRcnPtEp0IXpvh5nIbg9BCoTG66vMDxZbfp/9i9ly9Fx7Wy40ebrtY6B0b+nMuFZRm/LP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=e5kj2+CK; arc=none smtp.client-ip=198.37.111.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1742334557;
-	bh=Of+Qs3P64PS9pIzijgy1+hEGYCNZ8JQ6yWbz80fLzdw=;
+	d=hansenpartnership.com; s=20151216; t=1742334652;
+	bh=3xDFnvrCMohToHimfKRmGaq73SZjQ0ScP+VjQkfRoqo=;
 	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=ghyC/zaz1f84aRn/czu7I41jYQdqjlXC1CQPwxFUMZRmvXVizMJva/JeoT5eAAEu3
-	 i7IPIMOySmDjiwIHIHEr6CHxlFwD6KQE5qaarIq8ZTw24VWiyHBFrc6E9i1zYxRezn
-	 gzkSvkdurCfSwuSNdwjy1hRkFsGyG+MDdUIQcl4A=
+	b=e5kj2+CKJm3kEhHuV5zjcawSNjpmnB/yVV4QokU4OGZ9KwWA9EVoJ6GMZwk82IaHv
+	 +dZTLuR9qUMwQxUkRAQUVzpG/v6Bides6KzSxyxYTrMzThTEhGBoKle8xvkSf+cKCC
+	 T1yZqY5F4+k2nNgev2urcXYezXBoZ8Ahomy54DeM=
 Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange x25519)
 	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 63D331C00D0;
-	Tue, 18 Mar 2025 17:49:17 -0400 (EDT)
-Message-ID: <2e0b7ceb7926d1b2cba1459b5848593502d00c20.camel@HansenPartnership.com>
-Subject: Re: [RFC PATCH 1/3] libfs: rework dcache_readdir to use an internal
- function with callback
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 6101A1C00D0;
+	Tue, 18 Mar 2025 17:50:52 -0400 (EDT)
+Message-ID: <8145eb82476edd40c6d168e14db9f16939efb8bb.camel@HansenPartnership.com>
+Subject: Re: [RFC PATCH 2/3] libfs: add simple directory iteration function
+ with callback
 From: James Bottomley <James.Bottomley@HansenPartnership.com>
 To: Ard Biesheuvel <ardb@kernel.org>
 Cc: linux-efi@vger.kernel.org, linux-fsdevel@vger.kernel.org, Christian
  Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Date: Tue, 18 Mar 2025 17:49:16 -0400
-In-Reply-To: <CAMj1kXGxXY7jh-2WC7WjWkioZA73mkm1CFhXa+VHCt_qNyxzVQ@mail.gmail.com>
+Date: Tue, 18 Mar 2025 17:50:51 -0400
+In-Reply-To: <CAMj1kXHZfABW6JyPgHDHm-wDX0Orbhs8v=Y1vrboQh2ra1opFQ@mail.gmail.com>
 References: <20250318194111.19419-1-James.Bottomley@HansenPartnership.com>
-	 <20250318194111.19419-2-James.Bottomley@HansenPartnership.com>
-	 <CAMj1kXGxXY7jh-2WC7WjWkioZA73mkm1CFhXa+VHCt_qNyxzVQ@mail.gmail.com>
+	 <20250318194111.19419-3-James.Bottomley@HansenPartnership.com>
+	 <CAMj1kXHZfABW6JyPgHDHm-wDX0Orbhs8v=Y1vrboQh2ra1opFQ@mail.gmail.com>
 Autocrypt: addr=James.Bottomley@HansenPartnership.com;
  prefer-encrypt=mutual;
  keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNElecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHURfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvdHRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmBLmY0FCRs1hL0ACgkQgUrkfCFIVNaEiQgAg18F4G7PGWQ68xqnIrccke7Reh5thjUz6kQIii6Dh64BDW6/UvXn20UxK2uSs/0TBLO81k1mV4c6rNE+H8b7IEjieGR9frBsp/+Q01JpToJfzzMUY7ZTDV1IXQZ+AY9L7vRzyimnJHx0Ba4JTlAyHB+Ly5i4Ab2+uZcnNfBXquWrG3oPWz+qPK88LJLya5Jxse1m1QT6R/isDuPivBzntLOooxPk+Cwf5sFAAJND+idTAzWzslexr9j7rtQ1UW6FjO4CvK9yVNz7dgG6FvEZl6J/HOr1rivtGgpCZTBzKNF8jg034n49zGfKkkzWLuXbPUOp3/oGfsKv8pnEu1c2GbQpSmFtZXMgQm90dG9tbGV5IDxqZWpiQGxpbnV4LnZuZXQuaWJtLmNvbT6JAVYEEwEIAEACGwMHCwkIBwMCAQYVC
@@ -76,47 +76,39 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Tue, 2025-03-18 at 22:32 +0100, Ard Biesheuvel wrote:
-> Hi James,
->=20
-> Thanks for persisting with this.
-
-Heh, well, it is starting to feel a bit like the swamp I can't get out
-of ...
-
-> On Tue, 18 Mar 2025 at 20:44, James Bottomley
+On Tue, 2025-03-18 at 22:33 +0100, Ard Biesheuvel wrote:
+> On Tue, 18 Mar 2025 at 20:45, James Bottomley
 > <James.Bottomley@hansenpartnership.com> wrote:
 > >=20
-> > No functional change.=C2=A0 Preparatory to using the internal function
-> > to iterate a directory with just a dentry not a file.
+> > The current iterate_dir() infrastructure is somewhat cumbersome to
+> > use from within the kernel.=C2=A0 Introduce a lighter weight
+> > simple_iterate_dir() function that directly iterates the directory
+> > and executes a callback for each positive dentry.
 > >=20
 > > Signed-off-by: James Bottomley
 > > <James.Bottomley@HansenPartnership.com>
 > > ---
-> > =C2=A0fs/libfs.c | 41 +++++++++++++++++++++++++++++------------
-> > =C2=A01 file changed, 29 insertions(+), 12 deletions(-)
+> > =C2=A0fs/libfs.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 33 +=
+++++++++++++++++++++++++++++++++
+> > =C2=A0include/linux/fs.h |=C2=A0 2 ++
+> > =C2=A02 files changed, 35 insertions(+)
 > >=20
 > > diff --git a/fs/libfs.c b/fs/libfs.c
-> > index 8444f5cc4064..816bfe6c0430 100644
+> > index 816bfe6c0430..37da5fe25242 100644
 > > --- a/fs/libfs.c
 > > +++ b/fs/libfs.c
-> > @@ -189,28 +189,21 @@ EXPORT_SYMBOL(dcache_dir_lseek);
-> > =C2=A0 * for ramfs-type trees they can't go away without unlink() or
-> > rmdir(),
-> > =C2=A0 * both impossible due to the lock on directory.
-> > =C2=A0 */
-> > -
-> > -int dcache_readdir(struct file *file, struct dir_context *ctx)
-> > +static void internal_readdir(struct dentry *dentry, struct dentry
-> > *cursor,
+> > @@ -214,6 +214,39 @@ static void internal_readdir(struct dentry
+> > *dentry, struct dentry *cursor,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dput(next);
+> > =C2=A0}
+> >=20
+> > +/**
+> > + * generic_iterate_call - iterate all entries executing @callback
 >=20
-> It might make sense to make this __always_inline, so that the
-> callback argument is guaranteed to become a compile time constant
-> when the caller is dcache_readdir(). Otherwise, the indirect call
-> overhead might impact its performance.
+> This name doesn't match the name below.
 
-I was hoping the compiler would pick that up ... especially as it's a
-tail call, but I can add it if necessary.
+Right, I started out thinking the generic_ prefix was the preferred
+one, but then simple_ looked better and I forgot to update the docbook.
 
 Regards,
 
