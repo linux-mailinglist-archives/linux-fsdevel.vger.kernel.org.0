@@ -1,147 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-44331-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AECD3A677B5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 16:26:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFCE1A67809
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 16:38:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15348170AF0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 15:26:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2466B164F90
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 15:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3D020F08A;
-	Tue, 18 Mar 2025 15:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CA920764A;
+	Tue, 18 Mar 2025 15:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hCWnokui"
+	dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b="QZd7DN4h"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E106A20E024;
-	Tue, 18 Mar 2025 15:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9345022094
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 15:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742311528; cv=none; b=X3nWcvMJ/U8oJoGdt6ZIfFgjaWY2XajBx+Ly/dOMuiZ/6XYRL5aTCN9t53o4S3ZsFb24i7ov2Qm0SqlTzMwJ8yS/FfLMm2mmqFWA3klvvBqGLcxnRpb7OKH97httnty1pD1fCoEwxKObzq+9Xur2YYqwKF7kUYMLDnZgb/Jqki8=
+	t=1742312145; cv=none; b=DDsiXWhSqf3juQKfboY5k4Td86yDF36ZB6xpsR7IYCRMrhHTbi2bf2T3gvmww/HT+Nt/F/G5TAwhPL+chm/Sxtsfe8iJemhGuK1V4LNpo9MImv1OZeFbz4wdp9zefRKPpk7RRWcYdmaa5mAf5blA92kvW/K7uvk7bZ32q99p5aU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742311528; c=relaxed/simple;
-	bh=n7VgW5IdpWHpR4QRlwLyqADMhcQRXhHFMtOMOX33dhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H1p1X8nu8eUj6KNu8DrLpaBSMXz6xLY2gLpbQLVQsoa6cP8qeV1Ncr1SfTNAk4cM6Wyu4/J/aCl4Sq/xRWa601YaYwEhACKpbcAGEtqoG6Vyp6OOAQTkNp9bZPyhszIeR+XKH908xNFUkGq+Kv7WOMRhcbEXudaUVYWi8IiFhSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hCWnokui; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6e8fce04655so49427136d6.3;
-        Tue, 18 Mar 2025 08:25:26 -0700 (PDT)
+	s=arc-20240116; t=1742312145; c=relaxed/simple;
+	bh=rjSHBZfvGbuKnjb6orx+Eag32m8zChJL/2d4fmNqHEE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L25fDf+kbhV4nBTkBqCsHqqbls61HovATK6gKiPblMF4vDtV6rBupXU2uvyHZarm7GO+X3uQXj+aSrQGHxa/2PlidwJhz7R4IJgkJ4EY/UZhLPA9NwiWDfzKDFhslnHIwE4Smu3UELF3bTpL6PWqYA2e1PCCe6e34kaYdUBk1Z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com; spf=pass smtp.mailfrom=omnibond.com; dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b=QZd7DN4h; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omnibond.com
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-85b58d26336so458725939f.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 08:35:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742311526; x=1742916326; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Iyn8RJjlleD7uhnXI6huIEcPWo+6WvTYSC8J/PV1Ppw=;
-        b=hCWnokuixxvGMHot9o9nu6buYw2XTDLBFDBTOIQHi7pUG0zQxHv53f3iHwtE2QNQMW
-         9xpyzLNKpIbQUB3lhKB+P2jRlIAPNWMvK96yBtGtXkiFwaYf4k+cVASkgFWPVPrf4Lk/
-         nDKaqzR2ZxDYepJl9aQHFAlR4ZoB5T06SgGDRtk4rXtlffPjt9bWIw2hZKuiF6xZoLlu
-         ZaOQ6C77ozKIyMVu+k5h4Xa86Q9BKFgYfZ1ynmnqYJWZctde3xL3Lsgs5jGq5H2j9KAP
-         0Ys9uySODmG3vHzFwmJkkxGs+wSBx/e928qvDjVy1C2+NL3F0X9onEWyl1DX6SJRBnbU
-         w7Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742311526; x=1742916326;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=omnibond-com.20230601.gappssmtp.com; s=20230601; t=1742312142; x=1742916942; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Iyn8RJjlleD7uhnXI6huIEcPWo+6WvTYSC8J/PV1Ppw=;
-        b=lP4m1kiDdXvmJWbWMzrBm3oCGwiPatsagO1TJgGeCzyFPydSNMhEg1Q8Ly7Pp0hd68
-         XYYKF6W0EolQKJe/AG90bHoi0ZdppaSFD7f8GGn0b5PWiNCBPqFa4mnxALeRUveNsVpl
-         rkugg2t+1nCWOEYoIBoBI6nhG/bCF8IRttfP9FSU59bfJNTP38qoUZJTqFagxQbZMDyr
-         90Frw22RWIsYyX+N9w6ZyZWp8F3wVhfIdhi/99mtStrUjK/KavGy3dOmuQPQED/Daq2T
-         PhJPCtv554AnQIqU71KyNr8StrokYbvcPVYCsKeFqK8aEoQJ1MpvaRm8ruy4AG5uX6/H
-         AF+w==
-X-Forwarded-Encrypted: i=1; AJvYcCX2J7vQwKyKykQELEjS2KYozhf4DwKViHkklveDgEAj4ditwCbX0LknooOqj6Pq+18c5K4RvI8nKvCOcbbe@vger.kernel.org, AJvYcCXus2KWj8S00cc3ffA+b70OL85R2Rb6mvkdUqPJUwgz5SNd0LDPTWg2uFyUGpP/aLWTJGvPpXLrkgcCITb5@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW2cq7XaxeD606oZteZW/fLBJDbgyCGgCkGb8+FtNM/HKeaf5M
-	B961DkvQgKUCCpzQYZimMXYWqo0474MQpAiV5J1cFH03+MoH2TCm
-X-Gm-Gg: ASbGncsRvVS3zrd8kaYOFnND3DgNZE7AbbE20X485sGfPJrFUSbMff+MEZWr/laK1q2
-	80NTAYXWbugQ8rm8b6dUC274xBYrErSPsmRfxNZNGuPct2ZgLkUjvdCiVUCZ219gizzTUm55BUa
-	HFkIDg5I1z15GSIZzi+RTKqw9WwJO9h+Pg7JQqqdivM3hFQJkuAKAs1wNuw55+VUmBsltUIYsdc
-	eAK/Iv2UNWRafsto9sIZqpODugajvNbsi6xmAqjQlZ+Hso6xSpZCQ9SUER7F8eEXiVTsGwTdhT/
-	o5g5MXrHyHKMuzGVsrZEthv1AFHJgE2LexKqzCyW4A2L5ibj1tRshCvnvDsG
-X-Google-Smtp-Source: AGHT+IFMrxghikRrokajWNq7Qgw70xbXKxuDnySNPyGwfwT2Ss7893xwolfUMGoDpYSi2hTG/afasQ==
-X-Received: by 2002:a05:6214:c88:b0:6e8:fa33:2969 with SMTP id 6a1803df08f44-6eb1b8391fdmr53856596d6.10.1742311525741;
-        Tue, 18 Mar 2025 08:25:25 -0700 (PDT)
-Received: from f (cst-prg-67-174.cust.vodafone.cz. [46.135.67.174])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade209bcdsm69412376d6.24.2025.03.18.08.25.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 08:25:24 -0700 (PDT)
-Date: Tue, 18 Mar 2025 16:25:15 +0100
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, 
-	Andreas Gruenbacher <agruenba@redhat.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, gfs2@lists.linux.dev
-Subject: Re: [PATCH 3/8] lockref: use bool for false/true returns
-Message-ID: <ptwb6urnzbov545jsndxa4d324ezvor5vutbcev64dwauibwaj@kammuj4pbi45>
-References: <20250115094702.504610-1-hch@lst.de>
- <20250115094702.504610-4-hch@lst.de>
+        bh=TB4wQt+hXwTfKdBYmNtfrnfOJ/tSYMzGg+erg760nKo=;
+        b=QZd7DN4hMGqRHVuGyPThWVAxkEsFCkdNVK2cgvEpPVEg6RlCmYzl3Ww8GGY2KJwjbG
+         BUhZooDp8qe6dssJcdAwY4jMlvaCfJhoizmNEzBfGE59UFjzAwAa6tzab14f/1s5rLnZ
+         IMSxH+lynUpjnF6YpOj1lteLTV8pL+OyZgjMxhyffWh2kVVibD4iY7VcaVTjEIlm0t0K
+         La0tz3t2eV2wnPLInACa6GmI56NZQraCB7hgQmB5aQImOdC5scfDIofnQaoIm6lVh1hg
+         uQJQ/TL1AYJ0+fS4hlwyGGTSQNpmLpV2f/ssWB3HAkbJCi73RwEmL4Abpv8TjaN/QfV7
+         FIcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742312142; x=1742916942;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TB4wQt+hXwTfKdBYmNtfrnfOJ/tSYMzGg+erg760nKo=;
+        b=CSf/pFxm+/AE9AaFqqYFPbN5TtG5SmIT0hwQHG/C3Da6k375/tirtc4NgZbjCSWWAX
+         5Dti+7Zq28A4oS/KYFsfJFZA0KeI058PAGUNi0XgQhZZH6S9kljDbPL019limoKEKCRq
+         Yrmd6m00af+TjqbUlkMOXLqSpfIjJOcUg6v1u+HRpo6T5tpyNzeWkJsLxvy/nvv7uuqR
+         tuVCV/kt/zDY75s+7ydKyR0yScJvZqesWJIF79QjcN0lU3zq8jeNt078p7Lgw7htLLD4
+         lONvE7LZUmDIIl3+dadBVHRsw5ZsXiMCMl4belvBiZAZA/7kogmMQfbHfRoI9W3hfN5R
+         FDtw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/ltDZpXoMA6aaETtqeLMsShNzbPlxJgJ5LOyH1KzgxLXW7P3/xzoCMSCzj0e0/19r9kBsWxSLpzEuBjGS@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkISr2P5yqTXVn3aghf38XK/AX/Wg8s/jfL7xMTuyrF73+FQ5Q
+	knVrPjyXagIcQcTxyc3NQ/Mo3U2cKM5splvN/EifH7QPQ/PHMfhDlplvhl/4JAIMw76x8HR4ycN
+	cxdKhXQAPZBhFG4WU1zGctnUwFZvpr+B9b4Df
+X-Gm-Gg: ASbGncu49u3vTyo3AxRDfVzo0lKZvBxHVQVs1ae6ix5Q/VN5sPATlBm2ruzPV+qZxF4
+	ue6RnQjlvrxPpg7DRs4G/BUR7ZSw7WjyJssccXUiA2Fi14gNGtufwb2arzYAXFHGSBqpd2sJLiH
+	5KqYXMtqsSSMeiy/VxXI7zbYl0cbbjci0o3sDLfHWD9+unjz15
+X-Google-Smtp-Source: AGHT+IFZmDZErlEvObrUGR6mGQcHglkPZoGXLncV/C2NMKSfWfeDM2JWDi/aOM6Xz2HZbZtdQ92cvp5wJKGQSQZxVCQ=
+X-Received: by 2002:a05:6e02:3397:b0:3d3:dd60:bc37 with SMTP id
+ e9e14a558f8ab-3d483a90667mr218164675ab.22.1742312142567; Tue, 18 Mar 2025
+ 08:35:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250115094702.504610-4-hch@lst.de>
+References: <20250305204734.1475264-1-willy@infradead.org> <20250305204734.1475264-2-willy@infradead.org>
+In-Reply-To: <20250305204734.1475264-2-willy@infradead.org>
+From: Mike Marshall <hubcap@omnibond.com>
+Date: Tue, 18 Mar 2025 11:35:31 -0400
+X-Gm-Features: AQ5f1JryUbGq_KnBzTvU7679Ld-7xoa3_KkN0meSuXXj53OlWjhXwmBWtUg-ChA
+Message-ID: <CAOg9mSS3Hy4nG396jo2EPfFoQxGLo42c_nu4BEM7Y0Z-WbZARw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/9] orangefs: Do not truncate file size
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Christian Brauner <brauner@kernel.org>, devel@lists.orangefs.org, 
+	linux-fsdevel@vger.kernel.org, Mike Marshall <hubcap@omnibond.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 15, 2025 at 10:46:39AM +0100, Christoph Hellwig wrote:
-> Replace int used as bool with the actual bool type for return values that
-> can only be true or false.
-> 
-[snip]
+Hi Matthew... I've run version 2 of your "orangefs folio" patch
+through xfstests with no regressions...
 
-> -int lockref_get_not_zero(struct lockref *lockref)
-> +bool lockref_get_not_zero(struct lockref *lockref)
->  {
-> -	int retval;
-> +	bool retval = false;
->  
->  	CMPXCHG_LOOP(
->  		new.count++;
->  		if (old.count <= 0)
-> -			return 0;
-> +			return false;
->  	,
-> -		return 1;
-> +		return true;
->  	);
->  
->  	spin_lock(&lockref->lock);
-> -	retval = 0;
->  	if (lockref->count > 0) {
->  		lockref->count++;
-> -		retval = 1;
-> +		retval = true;
->  	}
->  	spin_unlock(&lockref->lock);
->  	return retval;
+-Mike
 
-While this looks perfectly sane, it worsens codegen around the atomic
-on x86-64 at least with gcc 13.3.0. It bisected to this commit and
-confirmed top of next-20250318 with this reverted undoes it.
-
-The expected state looks like this:
-       f0 48 0f b1 13          lock cmpxchg %rdx,(%rbx)
-       75 0e                   jne    ffffffff81b33626 <lockref_get_not_dead+0x46>
-
-However, with the above patch I see:
-       f0 48 0f b1 13          lock cmpxchg %rdx,(%rbx)
-       40 0f 94 c5             sete   %bpl
-       40 84 ed                test   %bpl,%bpl
-       74 09                   je     ffffffff81b33636 <lockref_get_not_dead+0x46>
-
-This is not the end of the world, but also really does not need to be
-there.
-
-Given that the patch is merely a cosmetic change, I would suggest I gets
-dropped.
+On Wed, Mar 5, 2025 at 3:47=E2=80=AFPM Matthew Wilcox (Oracle)
+<willy@infradead.org> wrote:
+>
+> 'len' is used to store the result of i_size_read(), so making 'len'
+> a size_t results in truncation to 4GiB on 32-bit systems.
+>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Tested-by: Mike Marshall <hubcap@omnibond.com>
+> ---
+>  fs/orangefs/inode.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+> index aae6d2b8767d..63d7c1ca0dfd 100644
+> --- a/fs/orangefs/inode.c
+> +++ b/fs/orangefs/inode.c
+> @@ -23,9 +23,9 @@ static int orangefs_writepage_locked(struct page *page,
+>         struct orangefs_write_range *wr =3D NULL;
+>         struct iov_iter iter;
+>         struct bio_vec bv;
+> -       size_t len, wlen;
+> +       size_t wlen;
+>         ssize_t ret;
+> -       loff_t off;
+> +       loff_t len, off;
+>
+>         set_page_writeback(page);
+>
+> @@ -91,8 +91,7 @@ static int orangefs_writepages_work(struct orangefs_wri=
+tepages *ow,
+>         struct orangefs_write_range *wrp, wr;
+>         struct iov_iter iter;
+>         ssize_t ret;
+> -       size_t len;
+> -       loff_t off;
+> +       loff_t len, off;
+>         int i;
+>
+>         len =3D i_size_read(inode);
+> --
+> 2.47.2
+>
 
