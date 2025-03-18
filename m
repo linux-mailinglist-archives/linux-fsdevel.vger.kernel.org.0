@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-44323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B2D0A675AF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 14:57:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C56F6A67614
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 15:15:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E08217D434
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 13:57:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C88D883153
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 14:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A3D20DD6D;
-	Tue, 18 Mar 2025 13:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9146E20DD7D;
+	Tue, 18 Mar 2025 14:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bTFKbk6F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJUuKkQ/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7B276026;
-	Tue, 18 Mar 2025 13:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E789520D519;
+	Tue, 18 Mar 2025 14:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742306259; cv=none; b=aWNvTHfIh9nlRcSmaNSm7cw8XT1nzLio7+A6TprYrBHkEXakLHdrtah43wrAOITE5AJR+yyN12mOpW9FS1bwwKnzQcdJnYOOQnhpbjkx74QEfAeb4f5vbQHSXJK3z2+JJrr33ZHEM3vAuOHL/xXHUt1M0m9nE8E+VoMU3qx04Ww=
+	t=1742307203; cv=none; b=sS6bx+iloITV9xeVq4Mal3D9vcf2m+kqdN8OQqLH717V9INKCFWPeyiPv5TOa+Ni45F1KQUsNSKqmSfdVK12W1BozfRf521KjUG8mD18TER5B28a6VqkdM0eZa3jIkxPgOvhvplDqN1E9vnEdTK8u5qONYY0zw1NeDd7zwd2yqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742306259; c=relaxed/simple;
-	bh=640pjyCCFM0HPbzddzhSVRq68zzvtQCSwus+WHQec5s=;
+	s=arc-20240116; t=1742307203; c=relaxed/simple;
+	bh=UNbAmU2ybVAucOJ5vVVEiENUGebkcj0BNaQ6AbP4bmc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JPBObyI3J4VIC66T2iHS+WwJwX0LTVia1r6eyAS9ySy2Tdw2FjtyPYTlpxuxEnrrmZQnGdo2DtDlH+xdG0niBBshg9BIDIJ6sH2BZ8p0WwHkfz2qdZX0z9UO8V0gebHFiGcvjgLZJSi6eHBvB4TD+Y1zzn9rnY7CVJmchOVbkRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bTFKbk6F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54485C4CEDD;
-	Tue, 18 Mar 2025 13:57:36 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=JtXt0lYQfi9QH1Ero4xhJ6V3dvMzkKmnlogT4UVP9IbkW3uycsO3rHo7CnkhgULZZknB+7+EsbKzcX/gsBV7GnQ6H7R2jgsozNrIEWs8VXJ4nWXNnf4C7wG2nF7QWKIdfkzPSXgZd99sPaSMisOkqArV5eDMytl0Rzv3rgBDZj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJUuKkQ/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D6B4C4CEDD;
+	Tue, 18 Mar 2025 14:13:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742306258;
-	bh=640pjyCCFM0HPbzddzhSVRq68zzvtQCSwus+WHQec5s=;
+	s=k20201202; t=1742307202;
+	bh=UNbAmU2ybVAucOJ5vVVEiENUGebkcj0BNaQ6AbP4bmc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bTFKbk6Ff6esbCcGPcwNLuOb+hbF+/KQNSgZC+9lnSqVL7spOORQk7xaJaV/SgWwV
-	 lUe4G2daxs42y8oQxvysaq9cfz3ff7YgkSladGBXFlT+XBZFk0jQPSPbDWrYHMjy1y
-	 nbEjnYoujX5Dht5dscgF1pVnL2QPjNLLQ4XSr9e5DSWj+gkrV/gkaa/1u5hxwK/Znm
-	 yVwsBmCokRmjNNS0u8vAFvwbomII5r9aHDqIvILjsVp+pdgIMvDr7KzbkALSoGln9z
-	 O2IaHMy7phH288PwjsADw4X2ll8luVCpTAHbyuxiVymjP4osSEwcBr0iiIowVeArn2
-	 eEHpBaa11B8XA==
-Date: Tue, 18 Mar 2025 14:57:33 +0100
+	b=VJUuKkQ/i9prlUo4xbGfxy933izuSgRUXGhcG3M96o4cH6ebLUmDeiv5559u8y7nx
+	 uf/n2G5imcyCUw++Tmliq8zpivIy4A9RkDtzs0L2ZO3PLRfZh/PHDvwW1680FUr1Pl
+	 GQlEoZUeHxuIWTikowkZM1Vv+btt+XJyiottOn7gdhxB8hRvhapKBoxc8hi41XPU1a
+	 nWiNTMs2sSYBjA4P+vWb+SHOYFwu2OHiguLK2g46QBm5mTtJ2kPlWETHa1t3Ez5PFT
+	 UqDZ0rq9BkgTkvjcVc5637K2SMP6HlsaNB1Y5UcLAgrKEKrIToMh/rjzupfXcVEJoj
+	 m5QA/WlCLAeVw==
+Date: Tue, 18 Mar 2025 15:13:17 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neil@brown.name>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	David Howells <dhowells@redhat.com>, Chuck Lever <chuck.lever@oracle.com>, 
-	Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/8 RFC] tidy up various VFS lookup functions
-Message-ID: <20250318-audienz-radeln-17745f4c6b8e@brauner>
-References: <20250314045655.603377-1-neil@brown.name>
- <20250314-geprobt-akademie-cae577d90899@brauner>
- <174217721714.9342.9504907056839144338@noble.neil.brown.name>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Ard Biesheuvel <ardb@kernel.org>, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, linux-efi@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Ryan Lee <ryan.lee@canonical.com>, Malte =?utf-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>
+Subject: Re: [PATCH] efivarfs: fix NULL dereference on resume
+Message-ID: <20250318-ovale-ausziehen-94ede9b50d75@brauner>
+References: <3e998bf87638a442cbc6864cdcd3d8d9e08ce3e3.camel@HansenPartnership.com>
+ <20250318033738.GV2023217@ZenIV>
+ <CAMj1kXHOqzvpUOMTpfQfny10B7M3WnwPYdm1jVX7saP4cy2F=A@mail.gmail.com>
+ <20250318074922.GX2023217@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,131 +61,12 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <174217721714.9342.9504907056839144338@noble.neil.brown.name>
+In-Reply-To: <20250318074922.GX2023217@ZenIV>
 
-On Mon, Mar 17, 2025 at 01:06:57PM +1100, NeilBrown wrote:
-> On Fri, 14 Mar 2025, Christian Brauner wrote:
-> > On Fri, Mar 14, 2025 at 11:34:06AM +1100, NeilBrown wrote:
-> > > VFS has some functions with names containing "lookup_one_len" and others
-> > > without the "_len".  This difference has nothing to do with "len".
-> > > 
-> > > The functions without "_len" take a "mnt_idmap" pointer.  This is found
-> > 
-> > When we added idmapped mounts there were all these *_len() helpers and I
-> > orignally had just ported them to pass mnt_idmap. But we decided to not
-> > do this. The argument might have been that most callers don't need to be
-> > switched (I'm not actually sure if that's still true now that we have
-> > quite a few filesystems that do support idmapped mounts.).
-> > 
-> > So then we added new helper and then we decided to use better naming
-> > then that *_len() stuff. That's about it.
-> > 
-> > > in the "vfsmount" and that is an important question when choosing which
-> > > to use: do you have a vfsmount, or are you "inside" the filesystem.  A
-> > > related question is "is permission checking relevant here?".
-> > > 
-> > > nfsd and cachefiles *do* have a vfsmount but *don't* use the non-_len
-> > > functions.  They pass nop_mnt_idmap which is not correct if the vfsmount
-> > > is actually idmaped.  For cachefiles it probably (?) doesn't matter as
-> > > the accesses to the backing filesystem are always does with elevated privileged (?).
-> > 
-> > Cachefiles explicitly refuse being mounted on top of an idmapped mount
-> > and they require that the mount is attached (check_mnt()) and an
-> > attached mount can never be idmapped as it has already been exposed in
-> > the filesystem hierarchy.
-> > 
-> > > 
-> > > For nfsd it would matter if anyone exported an idmapped filesystem.  I
-> > > wonder if anyone has tried...
-> > 
-> > nfsd doesn't support exporting idmapped mounts. See check_export() where
-> > that's explicitly checked.
-> > 
-> > If there are ways to circumvent this I'd be good to know.
-> 
-> I should have checked that they rejected idmapped mounts
-> (is_idmapped_mnt()).  But I think that just changes my justification for
-> the change, not my desire to make the change.
-> 
-> There are two contexts in which lookup is done.  One is the common
-> context when there is a vfsmount present and permission checking is
-> expected.  nfsd and cachefiles both fit this context.
-> 
-> The other is when there is no vfsmount and/or permission checking is not
-> relevant.  This happens after lookup_parentat when the permission check
-> has already been performed, and in various virtual filesystems when the
-> filesystem itself is adding/removing files or in normal filesystems
-> where dedicated names like "lost+found" and "quota" are being accessed.
-> 
-> I would like to make a clear distinction between these, and for that to
-> be done nfsd and cachefiles need to be changed to clearly fit the first
-> context.  Whether they should allow idmapped mounts or not is to some
-> extent a separate question.  They do want to do permission checking
-> (certainly nfsd does) so they should use the same API as other
-> permission-checking code.
-> 
-> > 
-> > > 
-> > > These patches change the "lookup_one" functions to take a vfsmount
-> > > instead of a mnt_idmap because I think that makes the intention clearer.
-> > 
-> > Please don't!
-> > 
-> > These internal lookup helpers intentionally do not take a vfsmount.
-> > First, because they can be called in places where access to a vfsmount
-> > isn't possible and we don't want to pass vfsmounts down to filesystems
-> > ever!
-> 
-> There are two sorts of internal lookup helpers.
-> Those that currently don't even take a mnt_idmap and are called, as you
-> say, in places where a vfsmount isn't available.
-> And those that are currently called with a mnt_idmap and called (after a
-> few cleanup) in places where a vfsmount is readily available.
+> (which is what that vfs_kern_mount() boils down to).  But I would
+> very much prefer to have it go over the list of children of ->s_root
+> manually, instead of playing silly buggers with iterate_dir().
 
-That's not the point. The vfsmount is the wrong data structure to pass
-to lookup_one(). The mount is completely immaterial to what it does. The
-only thing that matters is the idmap. Passing the vfsmount is actively
-misleading.
-
-> 
-> 
-> > 
-> > Second, the mnt_idmap pointer is - with few safe exceptions - is
-> > retrieved once in the VFS and then passed down so that e.g., permission
-> > checking and file creation are guaranteed to use the same mnt_idmap
-> > pointer.
-> 
-> In every case that I changed a call to pass a vfsmount instead of a
-> mnt_idmap, the mnt_idmap had recently been fetched from the vfsmount,
-> often by mnt_idmap() in the first argument to lookup_one().  Sometimes
-> by file_mnt_idmap() or similar.  So the patch never changed the safety
-> of the idmap.
-
-Taking btrfs:
-
-        dentry = lookup_one(parent->mnt, QSTR_LEN(name, namelen), parent->dentry);
-        error = PTR_ERR(dentry);
-        if (IS_ERR(dentry))
-                goto out_unlock;
-
-        error = btrfs_may_create(idmap, dir, dentry);
-        if (error)
-                goto out_dput;
-
-You fetch the idmap pointer twice here. The only reason that this is
-safe is because I made it so that while an active writer is on a mount
-the idmap cannot be changed. But that's subtle knowledge. By passing the
-idmap pointer directly it is visually trivial to figure out that it is
-guaranteed to be the same idmap without having to know how
-mnt_want_write_file() interacts with mount_setattr().
-
-The changes here also make following the logic complex. The idmap
-pointer is fetched once and passed down everywhere it is needed. But
-suddenly that's not true anymore for lookup_one() where its the
-vfsmount. First question this raises is whether the mount topology
-somehow matters for the lookup when really it doesn't.
-
-Your cleanup series is really good with or without stuffing vfsmount
-into all of these helpers. So please just either resend it and continue
-passing struct mnt_idmap or I'll change it when I apply.
+This is what I suggested earlier in the thread to rewrite it to not rely
+on files. That's probably the full-on fix we want later.
 
