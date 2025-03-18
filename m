@@ -1,168 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-44233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EAF4A664C5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 02:14:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6FE8A664C8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 02:15:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6122717D59F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 01:14:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C12D4189C003
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 01:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E4114A0B7;
-	Tue, 18 Mar 2025 01:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308DE8468;
+	Tue, 18 Mar 2025 01:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WZNH9c04";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="g81lNsWx";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WZNH9c04";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="g81lNsWx"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fN2GcF9H"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0C913D891
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 01:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0B515A87C
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 01:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742260478; cv=none; b=g3WiZlZkQdKZqVDqEEYlIVCQvKOPZSrd40e1aFthc6k+EP0bYCgYpUIT3NE9LyPJfxuI8ksMJcw+o+XBN8J1C/0pGTGzBNvNMCV8xyWrl4Y4cfrNO1g1puw8CsG8SyQ4NPtUjBmsnL48V10bvavqV+tcN6+bIHCzdU18hMk0RKo=
+	t=1742260513; cv=none; b=kpZ5GPdmUJwTBoY+87iUPsUGPBHmZMNMQ5IXouEppIzuIdYYisHnxGOW0ayPbuiAm2A/kf/TvZ4rqsdUupSAkxwFoF/Ggm1h39ZgVoYN2EPoMikW0/Rsus8x+618w+U73OSyTeNFgmmjIzkSv+ulqDrPrkdd1xrAnYo3Pl7asJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742260478; c=relaxed/simple;
-	bh=xSj40BbHmDdg0wjOaoxV3IAxz8W8piz7XYcG1WqT8Lk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KFGLUTz4HByvnPiSuvOZ7mkQKFesi7Q97Q+A9N7DrZJ5JliTtAHLvVV0PwGZLzZfh2bDhkj3nTH68VF1U4ERAh9lBxVqebA4WgCkmr+JG+UKBaLO1DtNk3HXSCOjHJNoIrtBJDfxofBVL26bmI0y3rufFaiIy0XgJ++9Q8fdfZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WZNH9c04; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=g81lNsWx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WZNH9c04; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=g81lNsWx; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DC62121D28;
-	Tue, 18 Mar 2025 01:14:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742260474; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1742260513; c=relaxed/simple;
+	bh=Bli4yDmu5+3qrchprxkFeZDERB5C2XJ6haYQD7Z5688=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KoEwRrwWyNRWo2ywez7jtOh/MU8pKFhU+WtQVf6D4H+TQ/r7FdsQDYvI+LJF2a7Mwgd0+kijs8RfHTf+F6U9Deqc9hsui0Di6XTn2YHx8qBO4mJO2bOHkO4WmA4fh+92MAUeC05KAFyGT0PpX1jujlQWEvA6XgYCEOCIUzCU1nA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fN2GcF9H; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 17 Mar 2025 21:15:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742260509;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GUGeCMcO6sAX6QYQ3Gxmvzt9f9j7wj/VBO8lpxh+YeE=;
-	b=WZNH9c04XAYdpgwwio5s0/IwR6Xq58WuveOeDvLDS+ATx0RjR5QsxgPt3UbNb3ZI0TtYuh
-	boIvqhAi5irWNk8nbIAUJYwTzH/UU1G8LJUaiS2gvfOsH9+3Cu1ok5Vdr+S6fjjN1132kT
-	hGNfO+KxX8ucz2aSi5OfLtILY0hwaR4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742260474;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GUGeCMcO6sAX6QYQ3Gxmvzt9f9j7wj/VBO8lpxh+YeE=;
-	b=g81lNsWxGcqPeIyDW41of8u7PSbvVZ+iauGryMlbVyX1VhXPvSqDDR5AjiLxCwqmHSL0ah
-	rM0av090mkN6FcCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742260474; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GUGeCMcO6sAX6QYQ3Gxmvzt9f9j7wj/VBO8lpxh+YeE=;
-	b=WZNH9c04XAYdpgwwio5s0/IwR6Xq58WuveOeDvLDS+ATx0RjR5QsxgPt3UbNb3ZI0TtYuh
-	boIvqhAi5irWNk8nbIAUJYwTzH/UU1G8LJUaiS2gvfOsH9+3Cu1ok5Vdr+S6fjjN1132kT
-	hGNfO+KxX8ucz2aSi5OfLtILY0hwaR4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742260474;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GUGeCMcO6sAX6QYQ3Gxmvzt9f9j7wj/VBO8lpxh+YeE=;
-	b=g81lNsWxGcqPeIyDW41of8u7PSbvVZ+iauGryMlbVyX1VhXPvSqDDR5AjiLxCwqmHSL0ah
-	rM0av090mkN6FcCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 047E5139D2;
-	Tue, 18 Mar 2025 01:14:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WD6hK/fI2GdxIgAAD6G6ig
-	(envelope-from <ddiss@suse.de>); Tue, 18 Mar 2025 01:14:31 +0000
-Date: Tue, 18 Mar 2025 12:14:24 +1100
-From: David Disseldorp <ddiss@suse.de>
-To: Stephen Eta Zhou <stephen.eta.zhou@outlook.com>
-Cc: "jsperbeck@google.com" <jsperbeck@google.com>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "lukas@wunner.de" <lukas@wunner.de>, "wufan@linux.microsoft.com"
- <wufan@linux.microsoft.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
- <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC PATCH] initramfs: Add size validation to prevent tmpfs
- exhaustion
-Message-ID: <20250318121424.614148e1.ddiss@suse.de>
-In-Reply-To: <BYAPR12MB3205A7903D8EF06EFF8F575AD5DF2@BYAPR12MB3205.namprd12.prod.outlook.com>
-References: <BYAPR12MB3205F96E780AA2F00EAD16E8D5D22@BYAPR12MB3205.namprd12.prod.outlook.com>
-	<20250317182157.7adbc168.ddiss@suse.de>
-	<BYAPR12MB3205A7903D8EF06EFF8F575AD5DF2@BYAPR12MB3205.namprd12.prod.outlook.com>
+	bh=9Q7/l4Ub370JHe+SyOW8etUedb9vG4uU2/MyRZY5mf4=;
+	b=fN2GcF9HJn9s+ei475W6p/NCBLxB68JGBzF8tCZhF8//dsXWCY1aGXCI1CATTqVqYE91XD
+	sw2ArNagu5VKQZwg2tOFtMoh1HPl269S+YkNpoPMTUS0sU1nrjPfgr5Cxek++T/WG+i15I
+	WozqnAJ3P7w/ZPn886CfBNVKx4YGyls=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: John Stoffel <john@stoffel.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-block@vger.kernel.org, 
+	Roland Vet <vet.roland@protonmail.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 00/14] better handling of checksum errors/bitrot
+Message-ID: <avmzp2nswsowb3hg2tcrb6fv2djgkiw7yl3bgdn4dnccuk4yti@ephd5sxy5b7w>
+References: <20250311201518.3573009-1-kent.overstreet@linux.dev>
+ <26584.35900.850011.320586@quad.stoffel.home>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-0.999];
-	NEURAL_HAM_SHORT(-0.20)[-0.985];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[outlook.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FREEMAIL_ENVRCPT(0.00)[outlook.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <26584.35900.850011.320586@quad.stoffel.home>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 17 Mar 2025 09:41:35 +0000, Stephen Eta Zhou wrote:
-...
-> Before the init process runs, initramfs needs to be decompressed to tmpfs and become the root file system (rootfs). If there is insufficient tmpfs space after decompression, init may not be able to run at all, causing the system to crash or panic.
+On Mon, Mar 17, 2025 at 04:55:24PM -0400, John Stoffel wrote:
+> >>>>> "Kent" == Kent Overstreet <kent.overstreet@linux.dev> writes:
 > 
-> Letting the init process decide whether it is sufficient means that the initramfs must be decompressed first, which may have filled up tmpfs, making the entire system unusable, rather than a controllable error handling process.
+> > Roland Vet spotted a good one: currently, rebalance/copygc get stuck if
+> > we've got an extent that can't be read, due to checksum error/bitrot.
 > 
-> This problem is more obvious in extreme cases, for example:
+> > This took some doing to fix properly, because
 > 
-> 1. After initramfs is decompressed, there is only a small amount of available space in tmpfs, causing early-user-space tasks such as mount and udevadm to fail, affecting device initialization.
-
-It's still not clear to me why early-user-space can't determine this
-before attempting to mount, etc. It's in a better position to know the
-resource requirements of what it's going to run.
-
-> 2. On embedded devices, tmpfs is usually configured small, and insufficient space is found after decompression, which directly leads to boot failure.
+> > - We don't want to just delete such data (replace it with
+> >   KEY_TYPE_error); we never want to delete anything except when
+> >   explicitly told to by the user, and while we don't yet have an API for
+> >   "read this file even though there's errors, just give me what you
+> >   have" we definitely will in the future.
 > 
-> The reason why the check is performed before decompression is to expose the problem in advance to avoid the passive failure mode of insufficient space after decompression.
-> Calculating the theoretically required tmpfs resources and making judgments in advance can reduce unnecessary I/O operations and provide clearer error reports to help users adjust the initramfs size or tmpfs configuration.
-> My idea is to expose problems as early as possible. If problems occur during operation, it may be more troublesome to troubleshoot or bring unnecessary risks.
+> So will open() just return an error?  How will this look from
+> userspace?  
 
-There's room for improvement WRT how out-of-memory failures are reported
-and handled during decompression and I/O. However, adding an extra pass
-and some arbitrary free-space logic doesn't improve the situation IMO.
+Not the open, the read - the typical case is only a single extent goes
+bad; it's like any other IO error.
 
-Cheers, David
+> > - Not being able to move data is a non-option: that would block copygc,
+> >   device removal, etc.
+> 
+> > - And, moving said extent requires giving it a new checksum - strictly
+> >   required if the move has to fragment it, teaching the write/move path
+> >   about extents with bad checksums is unpalateable, and anyways we'd
+> >   like to be able to guard against more bitrot, if we can.
+> 
+> Why does it need a new checksum if there are read errors?  What
+> happens if there are more read errors?   If I have a file on a
+> filesystem which is based in spinning rust and I get a single bit
+> flip, I'm super happy you catch it.  
+
+The data move paths very strictly verify checksums as they move data
+around so they don't introduce bitrot.
+
+I'm not going to add
+	if (!bitrotted_extent) checksum(); else no_checksum()
+Eww...
+
+
+Besides being gross, we also would like to guard against introducing
+more bitrot.
+
+> But now you re-checksum the file, with the read error, and return it?
+> I'm stupid and just a user/IT guy.  I want notifications, but I don't
+> want my application to block so I can't kill it, or unmount the
+> filesystem.  Or continue to use it if I like.  
+
+The aforementioned poison bit ensures that you still get the error from
+the original checksum error when you read that data - unless you use an
+appropriate "give it to me anyways" API.
+
+> > So that means:
+> 
+> > - Extents need a poison bit: "reads return errors, even though it now
+> >   has a good checksum" - this was added in a separate patch queued up
+> >   for 6.15.
+> 
+> Sorry for being dense, but does a file have one or more extents?  Or
+> is this at a level below that?  
+
+Files have multiple extents.
+
+An extent is one contiguous range of data, and in bcachefs checksums are
+at the extent level, not block, so checksummed (and compressed) extents
+are limited to, by default, 128k.
+
+> >   It's an incompat feature because it's a new extent field, and old
+> >   versions can't parse extents with unknown field types, since they
+> >   won't know their sizes - meaning users will have to explicitly do an
+> >   incompat upgrade to make use of this stuff.
+> 
+> > - The read path needs to do additional retries after checksum errors
+> >   before giving up and marking it poisoned, so that we don't
+> >   accidentally convert a transient error to permanent corruption.
+> 
+> When doing these retries, is the filesystem locked up or will the
+> process doing the read() be blocked from being killed?  
+
+The process doing the read() can't be killed during this, no. If
+requested this could be changed, but keep in mind retries are limited in
+number.
+
+Nothing else is "locked up", everything else proceeds as normal.
+
+> > - The read path gets a whole bunch of work to plumb precise modern error
+> >   codes around, so that e.g. the retry path, the data move path, and the
+> >   "mark extent poisoned" path all know exactly what's going on.
+> 
+> > - Read path is responsible for marking extents poisoned after sufficient
+> >   retry attempts (controlled by a new filesystem option)
+> 
+> > - Data move path is allowed to move extents after a read error, if it's
+> >   a checksum error (giving it a new checksum) if it's been poisoned
+> >   (i.e. the extent flags feature is enabled).
+> 
+> So if just a single bit flips, the extent gets moved onto better
+> storage, and the file gets re-checksummed.  But what about if more
+> bits go bad afterwards?  
+
+The new checksum means they're detected, and if you have replication
+enabled they'll be corrected automatically, like any other IO error.
 
