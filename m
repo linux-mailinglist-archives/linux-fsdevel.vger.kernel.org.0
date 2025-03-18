@@ -1,91 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-44239-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44240-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE211A66775
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 04:37:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D0A8A66792
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 04:42:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E38C1756A6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 03:37:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60D0B176983
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 03:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD01018DB1D;
-	Tue, 18 Mar 2025 03:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Nq0eiCx7"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF13C1B0402;
+	Tue, 18 Mar 2025 03:42:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD61638FA6;
-	Tue, 18 Mar 2025 03:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D9C1A5BBC
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 03:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742269065; cv=none; b=Wt06rYzlRbujIMP7fmFXvqr68vCIpykf0Eutzk5QJDVAZn7QZ+H4TOIRYWqHIwEMF8N3AHiZxzJmcYpviIdw58S5Jo+KIY+QsGWYNFttqCi3LMUGQlx+CxGCnK6D+E41WaZJbgenSPsWyIRFmPH2fVhylPFCzuckdAv2aSH0f/I=
+	t=1742269326; cv=none; b=Dp8MeSzaf7MFgUK3elkdw9reOaHfTercIk81ZNJXa+kaAzFmxOQdTaSq51djofRUYetzsvgXJsFa3TOJ4xF4IKCQ9YUAQ/qXKQXVLao6vKSYsGJnp4lTJ3+M0c7+a9ZAdgTDIJ8EdowFXljT496xm2ZU2bNfW/KTtE6/l6M/sds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742269065; c=relaxed/simple;
-	bh=bKyIFPg3XZ+Bod/00TpreRsU5QJfPCsSdLDDvUS2/Qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QmHTORVirkQJKMaIMXxdVnWlnP70aj7IKKLbc/N71CTogSrLfXxgYkIjLf3299PE/XD9CsfqF156mpieLQdhnqBWHgNKWsfv9tXdZOBc73jW4ENw3a12LwAp5uUBPOdrIrrXKIkgKDR4J+HGTmXYrYd9zIPJg+VOG84UQS3aoDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Nq0eiCx7; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=SiljaLdkd2hmHxgBxKsouw1FqJx45KhXJjStC2gpHY0=; b=Nq0eiCx7JLz/2AlosYt/4PmHMs
-	WRL0HL181MMNSM6simbggdyqJc/6mHuDSaYMsrxvMkZ777reUkIBlGsDI5Cpz58mxk9kOWggFnNA6
-	U9i4lsr1O+h5sse7L1OW27R8HNr4+MWd9sz6wbXFxgzn8RQ2WIob8YR6YGIbiqLWOP8nO+73GUr+5
-	j/ImiVWlE9X/dAADgzUwJMU9gTnj+PWK2NfhlwrAhXfMH96OQJDoQLTMArdBXfqHi1RBdqeBBm7O/
-	GJyLlH5WBioDaA4JcjBX8HEkPU8JgVPlwiDzLsz0MvgrPdZv+IGF5W34YcrQO8IiVvxm2kWe2Tq8f
-	3Ndlyz4g==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1tuNlq-0000000EbPo-2byP;
-	Tue, 18 Mar 2025 03:37:38 +0000
-Date: Tue, 18 Mar 2025 03:37:38 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: linux-efi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>, Ryan Lee <ryan.lee@canonical.com>,
-	Malte =?iso-8859-1?Q?Schr=F6der?= <malte.schroeder@tnxip.de>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH] efivarfs: fix NULL dereference on resume
-Message-ID: <20250318033738.GV2023217@ZenIV>
-References: <3e998bf87638a442cbc6864cdcd3d8d9e08ce3e3.camel@HansenPartnership.com>
+	s=arc-20240116; t=1742269326; c=relaxed/simple;
+	bh=9eJd2c2jI8tonpAzZVV70wU8FI0H8wvqVyfQSv+Q5j0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DoF7Myo1+ZXpnUvXl5TGhxo3/LPwIeS+uhPFER2e2cN8+oUPnCsHd/wLhpVfwYPdmf+7GxH1MmaIk+Z97UC83xEjliRu4LZwOtr7h8U+wYSFtDALmmPS/zO998vpiy/dY/A4EkxS5r5ORQjSMIL/Q5kIeBD5315XtuftZSbcRS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-111-34.bstnma.fios.verizon.net [173.48.111.34])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 52I3fnxO012168
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 23:41:49 -0400
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id F21AF2E011A; Mon, 17 Mar 2025 23:41:45 -0400 (EDT)
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] ext4: Remove references to bh->b_page
+Date: Mon, 17 Mar 2025 23:41:28 -0400
+Message-ID: <174226639137.1025346.16102247341347415028.b4-ty@mit.edu>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250213182303.2133205-1-willy@infradead.org>
+References: <20250213182303.2133205-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3e998bf87638a442cbc6864cdcd3d8d9e08ce3e3.camel@HansenPartnership.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 17, 2025 at 11:06:01PM -0400, James Bottomley wrote:
 
-> +	/* ensure single superblock is alive and pin it */
-> +	if (!atomic_inc_not_zero(&s->s_active))
-> +		return NOTIFY_DONE;
-> +
->  	pr_info("efivarfs: resyncing variable state\n");
->  
-> -	/* O_NOATIME is required to prevent oops on NULL mnt */
-> +	path.dentry = sfi->sb->s_root;
-> +
-> +	/*
-> +	 * do not add SB_KERNMOUNT which a single superblock could
-> +	 * expose to userspace and which also causes MNT_INTERNAL, see
-> +	 * below
-> +	 */
-> +	path.mnt = vfs_kern_mount(&efivarfs_type, 0,
-> +				  efivarfs_type.name, NULL);
+On Thu, 13 Feb 2025 18:23:01 +0000, Matthew Wilcox (Oracle) wrote:
+> Buffer heads are attached to folios, not to pages.  Also
+> flush_dcache_page() is now deprecated in favour of flush_dcache_folio().
+> 
+> 
 
-Umm...  That's probably safe, but not as a long-term solution -
-it's too intimately dependent upon fs/super.c internals.
-The reasons why you can't run into ->s_umount deadlock here
-are non-trivial...
+Applied, thanks!
+
+[1/1] ext4: Remove references to bh->b_page
+      commit: a5a1102f81be238f21a1fbff00f6229078d44daf
+
+Best regards,
+-- 
+Theodore Ts'o <tytso@mit.edu>
 
