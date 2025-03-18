@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-44278-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44279-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 633E2A66C91
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 08:49:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B61A66C95
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 08:49:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B29D11887ACE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 07:46:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF75019A46A8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 07:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF602066EE;
-	Tue, 18 Mar 2025 07:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64A4207A05;
+	Tue, 18 Mar 2025 07:44:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2061A1F4CA4;
-	Tue, 18 Mar 2025 07:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79241F9A91;
+	Tue, 18 Mar 2025 07:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742283858; cv=none; b=QWjJBhERrZGI1pwIbjcen69GnAvgASY+YBFqJBYdEnw4jno1eN3dibt3DuxMvYIy7n1P+5uchVWMN01/knDRHXQ5g59/o6Np0+v1kSMGZUjQuSKi/79ZJh+PygNo0HD6s/0YuGuAMbqrKuHz1AbAdEn+ZEXCdkosM5/Yf7AukGQ=
+	t=1742283859; cv=none; b=lyCcPBRRddjC3ckioILdLD28w0s0o3neQHi2axUz0VP5C+0m4WpyikvC1b51ndree0dFFRFrpSMbp3dmhLonySJfJo0Ddox6vSugtVJtqEj5A53hiX5MacHPTxvi3lOy4TPqC1K9s6vYO9JCPyJ47/AyHKsJ066OyZas9uqWld8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742283858; c=relaxed/simple;
-	bh=X4pMOYTSWhX0IJM2gqJZG979HxvaHLl2kbgCXf1BEYM=;
+	s=arc-20240116; t=1742283859; c=relaxed/simple;
+	bh=kDGFYVOXjVgr6JtDvaknzy4AZF9TucbiVmIuO3UodHk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JhS/AJOHqyOwgeRbkhj9hkTZSj/S/R7vcIsSjSDi+AYPdjzb/bdfPiCIw/HmUB6odzUK4Y1XQQPow4UUWj9I661d6gKiSn9cpbUAvV5LeQMA1wcwkcvCcf1lwqbTgFfFIURXdBvFDC/7HgCHohXbazn5QF3OQJn803PSv2zCrz8=
+	 MIME-Version; b=qtquD1ozAEqI+u/QxyUEZtfRlGF9RoCyw7N1Z7U2p2hqtNpcsO3o0/pGuz5BEOH15Ayaxt3aKAXxjmCWgwkSNk8KgGWOoxr2mrMzN3VkbBw26rlBa5j45ckjTevfr3n1/CLbR4WJ1B345k9VrWZwYpBEemPkBBKgEhSPWJRg7PE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZH3kF0BLNz4f3lg9;
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZH3kF55Jzz4f3m76;
 	Tue, 18 Mar 2025 15:43:49 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 1A06C1A058E;
+	by mail.maildlp.com (Postfix) with ESMTP id BE9FF1A19AA;
 	Tue, 18 Mar 2025 15:44:13 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgCH6189JNlnEt1YGw--.55732S9;
-	Tue, 18 Mar 2025 15:44:12 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgCH6189JNlnEt1YGw--.55732S10;
+	Tue, 18 Mar 2025 15:44:13 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-fsdevel@vger.kernel.org,
 	linux-ext4@vger.kernel.org,
@@ -59,9 +59,9 @@ Cc: linux-xfs@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	yangerkun@huawei.com
-Subject: [RFC PATCH -next v3 05/10] scsi: sd: set BLK_FEAT_WRITE_ZEROES_UNMAP if device supports unmap zeroing mode
-Date: Tue, 18 Mar 2025 15:35:40 +0800
-Message-ID: <20250318073545.3518707-6-yi.zhang@huaweicloud.com>
+Subject: [RFC PATCH -next v3 06/10] dm: add BLK_FEAT_WRITE_ZEROES_UNMAP support
+Date: Tue, 18 Mar 2025 15:35:41 +0800
+Message-ID: <20250318073545.3518707-7-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20250318073545.3518707-1-yi.zhang@huaweicloud.com>
 References: <20250318073545.3518707-1-yi.zhang@huaweicloud.com>
@@ -72,15 +72,15 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCH6189JNlnEt1YGw--.55732S9
-X-Coremail-Antispam: 1UD129KBjvdXoWrZFW3tF18AF48ur4kZFW5Wrg_yoWDZwc_Ca
-	1fur9rJr4vyFyIkrWfXF43Cryvvan7uFyjgrnFqrySyrZ7Zrs5J3Wvvr1av3WUJayUK343
-	Aa9rXr1Syr1DJjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbvAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAVCq3wA2048vs2
-	IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28E
-	F7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr
-	1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0D
+X-CM-TRANSID:gCh0CgCH6189JNlnEt1YGw--.55732S10
+X-Coremail-Antispam: 1UD129KBjvJXoW7trWfury8AF13GrWUuw1xXwb_yoW8Cr4Up3
+	ZrWFWayry5tF47u3Z5WFyxuFy5Ka1YyFy7CrW7Cws8u3W3GryUWF47ta4UX3yDJFy3Xay3
+	K3Wjkr9ruF4rGwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUma14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
+	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
+	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr1j6r
+	xdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0D
 	M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjx
 	v20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
 	F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2
@@ -94,33 +94,54 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-When the device supports the Write Zeroes command and the zeroing mode
-is set to SD_ZERO_WS16_UNMAP or SD_ZERO_WS10_UNMAP, this means that the
-device supports unmap Write Zeroes, so set the corresponding
-BLK_FEAT_WRITE_ZEROES_UNMAP feature to the device's queue limit.
+Set the BLK_FEAT_WRITE_ZEROES_UNMAP feature on stacking queue limits by
+default. This feature shall be disabled if any underlying device does
+not support it.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/scsi/sd.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/md/dm-table.c | 7 +++++--
+ drivers/md/dm.c       | 1 +
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 950d8c9fb884..652630b410de 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -1118,6 +1118,11 @@ static void sd_config_write_same(struct scsi_disk *sdkp,
- 	else
- 		sdkp->zeroing_mode = SD_ZERO_WRITE;
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index 453803f1edf5..d4a483287e26 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -598,7 +598,8 @@ int dm_split_args(int *argc, char ***argvp, char *input)
+ static void dm_set_stacking_limits(struct queue_limits *limits)
+ {
+ 	blk_set_stacking_limits(limits);
+-	limits->features |= BLK_FEAT_IO_STAT | BLK_FEAT_NOWAIT | BLK_FEAT_POLL;
++	limits->features |= BLK_FEAT_IO_STAT | BLK_FEAT_NOWAIT | BLK_FEAT_POLL |
++			    BLK_FEAT_WRITE_ZEROES_UNMAP;
+ }
  
-+	if (sdkp->max_ws_blocks &&
-+	    (sdkp->zeroing_mode == SD_ZERO_WS16_UNMAP ||
-+	     sdkp->zeroing_mode == SD_ZERO_WS10_UNMAP))
-+		lim->features |= BLK_FEAT_WRITE_ZEROES_UNMAP;
-+
- 	if (sdkp->max_ws_blocks &&
- 	    sdkp->physical_block_size > logical_block_size) {
- 		/*
+ /*
+@@ -1848,8 +1849,10 @@ int dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
+ 		limits->discard_alignment = 0;
+ 	}
+ 
+-	if (!dm_table_supports_write_zeroes(t))
++	if (!dm_table_supports_write_zeroes(t)) {
+ 		limits->max_write_zeroes_sectors = 0;
++		limits->features &= ~BLK_FEAT_WRITE_ZEROES_UNMAP;
++	}
+ 
+ 	if (!dm_table_supports_secure_erase(t))
+ 		limits->max_secure_erase_sectors = 0;
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 5ab7574c0c76..b59c3dbeaaf1 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1096,6 +1096,7 @@ void disable_write_zeroes(struct mapped_device *md)
+ 
+ 	/* device doesn't really support WRITE ZEROES, disable it */
+ 	limits->max_write_zeroes_sectors = 0;
++	limits->features &= ~BLK_FEAT_WRITE_ZEROES_UNMAP;
+ }
+ 
+ static bool swap_bios_limit(struct dm_target *ti, struct bio *bio)
 -- 
 2.46.1
 
