@@ -1,131 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-44326-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E8A8A67669
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 15:31:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08F11A676C3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 15:49:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBCF8188905B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 14:25:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADD153B1A8B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 14:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F86D20E01F;
-	Tue, 18 Mar 2025 14:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F76120E016;
+	Tue, 18 Mar 2025 14:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eM8GGehu"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X8Y9PtCD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A6C20DD5C;
-	Tue, 18 Mar 2025 14:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8461420E010
+	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 14:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742307934; cv=none; b=HLhfF+RhML0gO6V07//D5R2r/96zSdBYP5AYyEP5ogBqQxg9iMcskWZthzJVqhEf0kxMMHGduxeasyja1a5tXZhL+T6zJjb5HbVARyrGV/t59PFyOBuXOFIO81I03kPYfwQQAyjtAEAIsi8ZIJHOBSFEkwEmlhmeisScb2qLoxA=
+	t=1742309266; cv=none; b=UQ9KOZK3avbYFWZST0o4g2F50twcFoenKHXlGrSoN7hOydajtbigYKpD4z4BoffVVPhyUI0r5n2Eclta/fp/Tnpam6k53p61sCjwGeBF0w9hF6ZUHFQq8mChoaTAdlIogOHcU6oYuWx+M/StrT9Lg5KLSoYrzYD9MYuaYcDBMFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742307934; c=relaxed/simple;
-	bh=nZIVy8rDifxs0gFezfDSsyY7SSuvanD4bNKBzieVH6U=;
+	s=arc-20240116; t=1742309266; c=relaxed/simple;
+	bh=EYIyrR+wwIF/Uwb9Rs5+jvTyKUMnjE731tOHnh4p3Aw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RdvXG1ecr5KRiGBwXJrr7A1kT+AjCFqNS4hNBmB+aMELWG4ouTCS3JVZGSZI3RBu540PdPEVCx9kTuOSLYGn+WuhcsTn7n/v+/R9g9sIMlu2nZ8oA1lhd4IFtkckVT8cSBUgZ7ASujRqzpgPAjei/the5bCGpwTNtHEFPalEz9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eM8GGehu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CDB4C4CEE3;
-	Tue, 18 Mar 2025 14:25:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742307933;
-	bh=nZIVy8rDifxs0gFezfDSsyY7SSuvanD4bNKBzieVH6U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eM8GGehuJpGvKpivoD4QSR+KNpQOrsTrQe+Eub+aqiMOwfDX+Sd0MybIJqruOhLex
-	 biGvEmTGReQmgJ0IFMiGSlsFCq55zmnjRdh9Dlq8a6caIHoCMo3/rPvEJL08UzkuDN
-	 toN9B7pWXLt+twkHsRTlar9Rfb66Cl4bQcgCIOS8cFxXk2uIFCHgdYG8XQb4ijRSm1
-	 w0PNZNXJFIdg+wPtVYcf+3mmQxVsJ26tSr9ThAZwKrW6wApcHfaFvTr2sYnUovdUby
-	 vejqSYllChZiA15Jx6PSxONI+qOkHqf4Bvr4azaaeG/UCSBsE68OPkVC5lNPRzkyLS
-	 65BarMYc5GzlQ==
-Date: Tue, 18 Mar 2025 15:25:25 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Pratyush Yadav <ptyadav@amazon.de>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, 
-	Eric Biederman <ebiederm@xmission.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, Hugh Dickins <hughd@google.com>, 
-	Alexander Graf <graf@amazon.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, 
-	David Woodhouse <dwmw2@infradead.org>, James Gowans <jgowans@amazon.com>, 
-	Mike Rapoport <rppt@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Pasha Tatashin <tatashin@google.com>, Anthony Yznaga <anthony.yznaga@oracle.com>, 
-	Dave Hansen <dave.hansen@intel.com>, David Hildenbrand <david@redhat.com>, 
-	Matthew Wilcox <willy@infradead.org>, Wei Yang <richard.weiyang@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, kexec@lists.infradead.org
-Subject: Re: [RFC PATCH 1/5] misc: introduce FDBox
-Message-ID: <20250318-toppen-elfmal-968565e93e69@brauner>
-References: <20250307005830.65293-1-ptyadav@amazon.de>
- <20250307005830.65293-2-ptyadav@amazon.de>
- <20250307-sachte-stolz-18d43ffea782@brauner>
- <mafs0ikokidqz.fsf@amazon.de>
- <20250309-unerwartet-alufolie-96aae4d20e38@brauner>
- <20250317165905.GN9311@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dDVB4d+841lEJS1zE5sZNI5P6zjeERa2Yi+RbCmr1/BiNOPgggejZJemPv2Xqrqm9kji7u9nGq2KTO0OtLi4H4h3z5PAaQ8Q8d/C1hWKy0VZquKFXhB0yoGgFbky39NFbwVzac5RiFf+6WYSMY28FGll/1IVLfcIM9Lc+5ZMWJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X8Y9PtCD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742309259;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kkhRbg1C4uG3YU7cChJAbWN5iF2Y82Lg6ewPzJk1EvQ=;
+	b=X8Y9PtCDwIQUP98wGjzt56jDuce5JkocisCfw6/nx1gPPm3Os8mAWPNUL3F1LSQMm8sZwJ
+	63hXvkgZYmTyQVEkpUhJ1wVq6Bxbl0Xm2wF0lU+z5L8bwZ0m2bUuArIWm0sOmJcjB/DSQX
+	UFrobn/AT2CUuGttar3ud3VISbuJBY8=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-36-AFABDqdLPJufa51CgG2feA-1; Tue,
+ 18 Mar 2025 10:47:32 -0400
+X-MC-Unique: AFABDqdLPJufa51CgG2feA-1
+X-Mimecast-MFC-AGG-ID: AFABDqdLPJufa51CgG2feA_1742309251
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 39C921800A3E;
+	Tue, 18 Mar 2025 14:47:31 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.101])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 672AB1955BE1;
+	Tue, 18 Mar 2025 14:47:28 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 18 Mar 2025 15:46:58 +0100 (CET)
+Date: Tue, 18 Mar 2025 15:46:54 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+	Lennart Poettering <lennart@poettering.net>,
+	Daan De Meyer <daan.j.demeyer@gmail.com>,
+	Mike Yuan <me@yhndnzj.com>
+Subject: Re: [PATCH v2] pidfs: ensure that PIDFS_INFO_EXIT is available
+Message-ID: <20250318142601.GA19943@redhat.com>
+References: <20250318-geknebelt-anekdote-87bdb6add5fd@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250317165905.GN9311@nvidia.com>
+In-Reply-To: <20250318-geknebelt-anekdote-87bdb6add5fd@brauner>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Mon, Mar 17, 2025 at 01:59:05PM -0300, Jason Gunthorpe wrote:
-> On Sun, Mar 09, 2025 at 01:03:31PM +0100, Christian Brauner wrote:
-> 
-> > So either that work is done right from the start or that stashing files
-> > goes out the window and instead that KHO part is implemented in a way
-> > where during a KHO dump relevant userspace is notified that they must
-> > now serialize their state into the serialization stash. And no files are
-> > actually kept in there at all.
-> 
-> Let's ignore memfd/shmem for a moment..
-> 
-> It is not userspace state that is being serialized, it is *kernel*
-> state inside device drivers like VFIO/iommufd/kvm/etc that is being
-> serialized to the KHO.
-> 
-> The file descriptor is simply the handle to the kernel state. It is
-> not a "file" in any normal filesystem sense, it is just an uAPI handle
-> for a char dev that is used with IOCTL.
-> 
-> When KHO is triggered triggered whatever is contained inside the FD is
-> serialized into the KHO.
-> 
-> So we need:
->  1) A way to register FDs to be serialized. For instance, not every
->     VFIO FD should be retained.
->  2) A way for the kexecing kernel to make callbacks to the char dev
->     owner (probably via struct file operations) to perform the
->     serialization
->  3) A way for the new kernel to ask the char dev owner to create a new
->     struct file out of the serialized data. Probably allowed to happen
->     only once, ie you can't clone these things. This is not the same
->     as just opening an empty char device, it would also fill the char
->     device with whatever data was serialized.
->  4) A way to get the struct file into a process fd number so userspace
->     can route it to the right place.
-> 
-> It is not really a stash, it is not keeping files, it is hardwired to
+I'll try to actually read this patch (and pidfs: improve multi-threaded
+exec and premature thread-group leader exit polling) tomorrow, but I am
+a bit confused after the quick glance...
 
-Right now as written it is keeping references to files in these fdboxes
-and thus functioning both as a crippled high-privileged fdstore and a
-serialization mechanism. Please get rid of the fdstore bits and
-implement it in a way that it serializes files without stashing
-references to live files that can at arbitrary points in time before the
-fdbox is "sealed" be pulled out and installed into the caller's fdtable
-again.
 
-> KHO to drive it's serialize/deserialize mechanism around char devs in
-> a very limited way.
-> 
-> If you have that then feeding an anonymous memfd/guestmemfd through
-> the same machinery is a fairly small and logical step.
-> 
-> Jason
+On 03/18, Christian Brauner wrote:
+>
+> +static inline bool pidfs_pid_valid(struct pid *pid, const struct path *path,
+> +				   unsigned int flags)
+> +{
+> +	enum pid_type type;
+> +
+> +	if (flags & CLONE_PIDFD)
+> +		return true;
+
+OK, this is clear.
+
+> +	if (flags & PIDFD_THREAD)
+> +		type = PIDTYPE_PID;
+> +	else
+> +		type = PIDTYPE_TGID;
+> +
+> +	/*
+> +	 * Since pidfs_exit() is called before struct pid's task linkage
+> +	 * is removed the case where the task got reaped but a dentry
+> +	 * was already attached to struct pid and exit information was
+> +	 * recorded and published can be handled correctly.
+> +	 */
+> +	if (unlikely(!pid_has_task(pid, type))) {
+> +		struct inode *inode = d_inode(path->dentry);
+> +		return !!READ_ONCE(pidfs_i(inode)->exit_info);
+> +	}
+
+Why pidfs_pid_valid() can't simply return false if !pid_has_task(pid,type) ?
+
+pidfd_open() paths check pid_has_task() too and fail if it returns NULL.
+If this task is already reaped when pidfs_pid_valid() is called, we can
+pretend it was reaped before sys_pidfd_open() was called?
+
+Oleg.
+
 
