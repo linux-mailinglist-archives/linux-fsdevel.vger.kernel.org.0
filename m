@@ -1,413 +1,234 @@
-Return-Path: <linux-fsdevel+bounces-44378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5607A680A1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 00:16:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAEFEA680B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 00:27:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E16C7A31A3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 23:15:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B8B84237F3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 23:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F5C1F7076;
-	Tue, 18 Mar 2025 23:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 776C920E6ED;
+	Tue, 18 Mar 2025 23:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cxLPwpWF"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="oUdtzA6p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2060.outbound.protection.outlook.com [40.107.220.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9072F1D6DBC
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 23:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742339798; cv=none; b=qBwQAdYhZeQbT8HEI9pYYly/SIWddFg/Q/9FiTUmTXCTzpSzEuVLBMFQolNp1DwfMnF+va79yLSRHlvJNupn1SXOB7ug5dfjVuu2h3xTu/CWi8/9bpN7L1M1VU3uL0egd43cE0ejq7QpbfTj8HRrdppMyYYiaW+Je0ZBlqMNOSg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742339798; c=relaxed/simple;
-	bh=ayAeRXvtZKZXJcNNuwrwuAARO/vCuD7DbIRIbM2a1V8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qiN5J0KRR/aJ1gO1FEl8ugDa3NVxXO/AfAqL0HdVk5/vLjMy91/Vl6AxWBay9ubXLB8CPse2pUvmIQnpOecS1bV1TYAyN+OMrl0fFvs8MytKf1FM4e5z/kdTACoHyOSbVIIU4onimUTjLERmpYVp/UiO5itRhjDGZVxmhJx9ogI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cxLPwpWF; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-476f4e9cf92so18386731cf.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 16:16:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742339795; x=1742944595; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6dANghKS4Ua1df77VAwcJE2chG305e6Go0F7nOty3OU=;
-        b=cxLPwpWFeS0HijDm872jiLCglVK2v44ev5NvZHBSqj30y9jCUxvZvY4MX06EN4IpjH
-         8faGo4f0p0BO8uTMfk0r6cpRA685OnDlKt8yEOmD4Ajrx3aDmh4hR+AQ066JJS33TROE
-         e1zSj7vFS67kGrzqC5oxvHs6RuqservAo/Ac1EhHn5vM69chvCe5a4LwCZjsTjgbezYc
-         68fAKWjZ2EUptvNMpgCw3MYSk3JF+ze3qatV/8hjQRTbvPcBc9UK0xsXvN64931M/ftt
-         1g/tpHiaUFCY5FlU9yG+hfHbRU46SmvWdIJIn7C6OumRFk/c+XPvQTzSMc9hKCGSkqG8
-         7TbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742339795; x=1742944595;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6dANghKS4Ua1df77VAwcJE2chG305e6Go0F7nOty3OU=;
-        b=O/w0CzTGKYh98OjHyCv3NR6+EZ4+DbKVycWLkVAj7M4YnspcPVuvjYTshOSDJC5rMu
-         7nx/QjLZgvDXMdBuerqQecTNPKGtU+1Q5FyIuYdxTYJuQrSd9Bdgg6qQ3n/GxcWDOR28
-         iLPNMhcA4uCH7b6zU6rcEKtKvzFk/TsrEPrQ+DBYgZsdR1AjGR1Cxl33Ecx0IXYqYUBU
-         XZqx1ROyVLadUc9B2v67dOpB9U01ZMOVFz8aYC8V4slBa6ePoM8BNt1jCxencTrtX5sY
-         YJo4sbUjfECOinabZUPPsNGhEAm3QHg+Lw7FBAPnCLjKFJusgtMGtj8iBKo1KvopbOIp
-         JoNw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUKMKilf8laGEibpEXH2cp8y0dmZFygtKFaXqpQGURCwDuI7YwrqH4aw4iMLLEr5K4vWi5BNi70M5b6H5O@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaH4cmv2syLedV7MkE78CWsZ3E2P6Q37x/yCYkIiytEz8XIuJT
-	GhP8CzELBdStsFqizWCME/AFwERYggmFVQVwroRXnVW3h6in39fUxFod3GRQ6U8hQRldS3JAljS
-	6KeY8FtUiQVjdZd3MTyldFzuFMQ8=
-X-Gm-Gg: ASbGnctW2SBBpdD/Bct+4xbT+wPEcfAyE6N7Ytll3MW3UvjjokQlZAos3GeZkJ8w9IG
-	zuZGXdL8IUkqXrhf7ThmoosZ9GUD70NzB6dhmcS4YtrE4kTZX1bX4khm7Av/34aDqCYNYsiPPUl
-	b4IrkgdtNvr8v1W4kB1qEksGWfVF+lHHqq30VT7go/NQ==
-X-Google-Smtp-Source: AGHT+IFCMIdM9j9DcQCw2hb2X1Y/LiYtpLoltfJrdaqwL/4sMTrMSY8+fIGlI991mDjiE9djk1JdP3S+dul6KzonQqo=
-X-Received: by 2002:a05:622a:248e:b0:476:ac73:c3f3 with SMTP id
- d75a77b69052e-477082c1083mr17280301cf.1.1742339795352; Tue, 18 Mar 2025
- 16:16:35 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F4A207A0F;
+	Tue, 18 Mar 2025 23:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742340460; cv=fail; b=eOmEdbedO63nE4DDKohW52bFaKQngSXXKp2enmzYId57Pn6f1Ccc8uWztAEJsuufZRdl1R1k7+Dxl1Cro+bM35xbLKkMPz4vqM3KyEMou6j4c2xFf+tbU+tgX3oEm7RR14DT0HH5aD/KjE0tQ+AFgHTAW46jT6LWL3YaqqVQwV0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742340460; c=relaxed/simple;
+	bh=UPRWnWT9px/nAXuWA9ofSrh3xTHXxZSc8fScWGSbbaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=OxxNLnLIAvp1dknyFnmUFNYZwkBDo1F0DQmE9t2Fb7oUnfuDR7W7G+iGO8R8CnUIpeAjI0fndKbU3QWZmMxeZSgOJcvwwK9wBstxGPt1h9VlgCPX9vx7IKcOwLUzeqRbYwvBwtFRrxuebsq7YjTDiawmbNRI5N8nJOMyXCmfR+k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=oUdtzA6p; arc=fail smtp.client-ip=40.107.220.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XsyOctzUlRH1DZ96TBdMG0CLiyTgdM0qqCwsing4OHxlvMb9xCHCvxGbSs1xANIC9iXFV3LsAD/2CGhFcIB4UoqA6gThwCtGPPYG4SFcXO2V8VLSJaY1Tc/gj2verM4QzBMWjABHrKeVnUwR1NTuN1NiqYBHJxqNsSNUKreaSoQnYBCYQGU4PZybzzFjOMwIrdz+6BDgc1Yr+iY5JUqx53AZzeKgh/JIPDSWBDwWW66cnZjgDy66sC5Zd2Lw1Vhy8rrsjrEz8/7g+30G7D8NphYnDxikEh9xK8NKUiIgzYlxjYEYMpVfneZnbvm3fCu5VqWvYQTO6lHxnqXxH7HVRg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hsD/cNP7h1e8utnjLBLKS6ANzPTwpah93KDTAMzLMaA=;
+ b=Pq5luflQlBlkRyL00Q3ePhQ3Z31eIKa5lIB9k8gGqFqYHNytl/AY+NKhxSLflyLO181UhEpBiW1AT1CsqzeQRAHMw8kZEdDl9x+NHSl7ib6JJhjMZwxAdEymPF9DZjps5yqK1hwdVVsfCRib7Y+UzabsX2Oqz/I169rsR4DKAxwYRVzyxxSKg9wK3FMmenWzkr518Juj9VWkMN0Fi5qhALJeDN8ffYiKSK24ah1H7WPgMryKvxKwPi+D9OzVUGnw5wJgFJM0iDgBxHUwIOfIsegRxk7qIftT4Sssrcthe58SyU+DxiZ61LWaWVy7gD0VLGfkq//wTPGQ4JcPvu59eA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hsD/cNP7h1e8utnjLBLKS6ANzPTwpah93KDTAMzLMaA=;
+ b=oUdtzA6pM5x/qUWDXl5wctVTWMU52MG/6x2zSQN9pAsqOu1GDNoWs0QFpTEO/w9yDtlkTX8COzuzbQY2UPVGmfB+xRpeZGob9UhW10iMfijsn1qTFCfnJ8h85QBD4bbdems1ooZ5LMP1uA5NU3lDWQq0A/W5j3/mj9uSXpu7nLFI5ZGvGG9/f4rw1rg8nvcQz/0vwD4gs4QRc1ZovuRe0G9RqBY7PyuLZmbfXmEfC1swYN/KDFApUYXbeLc6bKcZih7ftofzXVVsHjenmPmxi17XCEu/E83zkN/ecGZhC/xoE3SzCIUZyNa3hA7SzPfPqaU3dcfaS+BKamBPAQgXYg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by BL1PR12MB5706.namprd12.prod.outlook.com (2603:10b6:208:385::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
+ 2025 23:27:35 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8534.034; Tue, 18 Mar 2025
+ 23:27:35 +0000
+Date: Tue, 18 Mar 2025 20:27:27 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Pratyush Yadav <ptyadav@amazon.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Hugh Dickins <hughd@google.com>, Alexander Graf <graf@amazon.com>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	David Woodhouse <dwmw2@infradead.org>,
+	James Gowans <jgowans@amazon.com>, Mike Rapoport <rppt@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Pasha Tatashin <tatashin@google.com>,
+	Anthony Yznaga <anthony.yznaga@oracle.com>,
+	Dave Hansen <dave.hansen@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-mm@kvack.org, kexec@lists.infradead.org
+Subject: Re: [RFC PATCH 1/5] misc: introduce FDBox
+Message-ID: <20250318232727.GF9311@nvidia.com>
+References: <20250307005830.65293-1-ptyadav@amazon.de>
+ <20250307005830.65293-2-ptyadav@amazon.de>
+ <20250307-sachte-stolz-18d43ffea782@brauner>
+ <mafs0ikokidqz.fsf@amazon.de>
+ <20250309-unerwartet-alufolie-96aae4d20e38@brauner>
+ <20250317165905.GN9311@nvidia.com>
+ <20250318-toppen-elfmal-968565e93e69@brauner>
+ <20250318145707.GX9311@nvidia.com>
+ <mafs0a59i3ptk.fsf@amazon.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mafs0a59i3ptk.fsf@amazon.de>
+X-ClientProxiedBy: BL1PR13CA0303.namprd13.prod.outlook.com
+ (2603:10b6:208:2c1::8) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250314204437.726538-1-joannelkoong@gmail.com>
- <8aca27b0-609b-44c4-90ff-314e3c086b90@fastmail.fm> <CAJnrk1YoN6gayDQ6hBMa9NnxgkOpf9qYmMRg9kP=2iQR9_B8Ew@mail.gmail.com>
- <1b249021-c69c-4548-b01b-0321b241d434@fastmail.fm>
-In-Reply-To: <1b249021-c69c-4548-b01b-0321b241d434@fastmail.fm>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 18 Mar 2025 16:16:24 -0700
-X-Gm-Features: AQ5f1Jqjsz3w_nVh-8lsdFBycGNVsB2_czL-u4_UZD50dCRM-RYbRrvvcAaGVE0
-Message-ID: <CAJnrk1azHgMXTaUjb+c4iZ-g7S-RqqfmNPQneZaOaZrQsy_cxQ@mail.gmail.com>
-Subject: Re: [PATCH v1] fuse: support configurable number of uring queues
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|BL1PR12MB5706:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2ebdee6d-685d-41ad-be9c-08dd667476bd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Q53noda3R8aMYbfatufiGio4q/n3sUfoojImqRJrXQRVPfHtBA67wXQqEud8?=
+ =?us-ascii?Q?cq9oTcGCKWvRLgQVKvGiUS12xdR/oJBKWoNOm2ScPW7Xg58hfW3G3ZPcYwHV?=
+ =?us-ascii?Q?JpPhrjWFdlA77N5xEY94eJR+qGfDeemDoVxRjqgTwwXc8CGOM4NHXUVkea/w?=
+ =?us-ascii?Q?gUDJ/GXg8w5ql2EGPS36/rAOMebSvOzwmCRatwWPgcO44EddqbYx+hYUFxNq?=
+ =?us-ascii?Q?K6OF7npf+53F9lf4iK//6BRoYA7GFw3QZnv0RO8GB7nK4XSF95XHNcPty17/?=
+ =?us-ascii?Q?1QIJK74Uvm2sKjmUno1MRDdQww/IYta95cK2ROL9KB7kWQM3/T55J5+SkqCm?=
+ =?us-ascii?Q?uDFZMYTU0mWCdcGm21STw7Vf6IM/QgBGvuJ2l+LGZ66O7OC8WH+IcYUXzV4C?=
+ =?us-ascii?Q?xr/VKyN+VmZ4DmuW30LVqu1jsvCPfVOtEQ65IER196T8dAT7PKD+E/vvboYs?=
+ =?us-ascii?Q?wnJm2oQ/BvlmQqaOfjNuFl0jUHgU9tmKhcl/cFTcxwu3dz994SWUKk4CuezI?=
+ =?us-ascii?Q?YVbG0TrGm09bZuswyYl+6YAI9r+OtipJVas1bEHcz9FLP22r+2PKwjZaWWG5?=
+ =?us-ascii?Q?lZdgwiqu2fSFBJEeg9eVlVoE+FtJabRJZdIPoGLGcULoi66Sa81K4Ch4M6aH?=
+ =?us-ascii?Q?xKG+Ras8fXnDmD7SnyAAa0YKwTvhxVodv0bGi+VwhaHJ8doE01azs6S5V19b?=
+ =?us-ascii?Q?ude+pjCpXALUU0/PAeAScTCbL3Djei499pErhL2uUXQxDjRgtYZB9OTGsyeZ?=
+ =?us-ascii?Q?kLfDOK6wXW0Cmpz5nfr1nYn7e5pvWGyrnpv2cpBvWJ4kTnwaqwjeFBV5MKZ0?=
+ =?us-ascii?Q?RVcVXzrGw5YYfoFKDksYAoES38yrdPGWNO2g4t5iwkTOQsQlCMzkTDg2vmZV?=
+ =?us-ascii?Q?q58stF2MgU3O1N0o0I4abRCrGqkUL9NFL/cylHlfggqOy31rJexnUuZH+uG8?=
+ =?us-ascii?Q?fm1Kaso+gqhu2O+Q7U5aUppSwQbs1Hfxsk0DqPrIDZBDfPEzGk0UPy8CgGmR?=
+ =?us-ascii?Q?pJpWIF0OvQ8I4A1VJxLsoPedgWWY7i2fzi+m/n3I2gutsH1DQnCc/3uT507O?=
+ =?us-ascii?Q?iySQCRhfW+xqB/xj5sonUhdQWJ5WSeq9tATC3eofq8BkgU1WaM8Bvbc9TmqQ?=
+ =?us-ascii?Q?bFXhQc6uHBrQvjK3KtsxBvF0S55iVhWKDxQ9ykAQlV5WxnBAVIrOXbshdsxy?=
+ =?us-ascii?Q?6vRSZAMYYSP0glmcOOpaXlZ2n0ktLPHf4X7lftjDW7z2/Okitjzo8S0mR2bS?=
+ =?us-ascii?Q?/sS73Ahmxc+lhgESUazQBBFlqZ7IrQ4nwH19a2Nvc1jkfLJ4ko5H7VhLZHWf?=
+ =?us-ascii?Q?YxrF9xd47GuDvYXaOschALyd2Hh6A6U4eHOsTzHQdHeekHcEJYa8BqxePC0w?=
+ =?us-ascii?Q?NIWyr5J3YPLvikT1sm7rGQx0aEJY?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?VyhMP1+HTJKiSJuyVdw0SPBycw/qFuk5ZgC2vNCSgRWVA3WfX6FyNu19Ti3Z?=
+ =?us-ascii?Q?Zke7ZXC1ATnUbO8OvfoEL6X87216M3VVW0vFuQBFJj7oMv/RH2FmWe7uaDYm?=
+ =?us-ascii?Q?bq8QVP4S4p2VNkgywiBO6Jek4GKgzbzXRJrM5sIuu7FRbJGgf/+MtTdYyCV4?=
+ =?us-ascii?Q?H6SqAocWHwJcYM4OH98+5v52nAvbMhls29cNnSmpBRNkV8NEU9eGxuerIwpY?=
+ =?us-ascii?Q?AaGvsueVZe1HTz20CBPau/eM6AzUXzS9Uv1ps+j/DoasIXvCwSgpD2rc3/S5?=
+ =?us-ascii?Q?5dqhuhRksWaniOzq/fqEQocdaGxWutqbztz94Zk/VUP4bZgytddkTmzdAPP6?=
+ =?us-ascii?Q?wpmOuKFQVQOrDxAbGCdp9+B4DVfGHQ+qKH5zJfurPVYRegxjUdwnl57k61t8?=
+ =?us-ascii?Q?kIiWcX/4J+sEAFGFnDVmt63Bujv3oc7bOvW2JOUmc45n3qViVasDpmuHO2Pa?=
+ =?us-ascii?Q?am7LTp6sko3K+wJnlzgWt2AsfinyNpsxnv2f9IOmu83K4V8XHQQPPjOPSdzX?=
+ =?us-ascii?Q?DS3/7e6WuC0Pj9wYOaKf0skcdl9EUqV1ZhC4O0CeZiKuG2SuVDcg5eKTxhWD?=
+ =?us-ascii?Q?NL9Zh53B0FQGD8udTXzFoE/r4VcI565rqKHZs71NS8Y5I9sGKzsYt9y/6jIZ?=
+ =?us-ascii?Q?JtiA4WvBKgfEVItFr+PTUFwsaw4WxAsG5otuNg6yLuWLTZ4bTfC4MhnPALgA?=
+ =?us-ascii?Q?2bc3X4oGB4UpRllpLiPKaKeW3hZ6htqJ9T+jJLHucFjNJYfm19MWQ7kg85D0?=
+ =?us-ascii?Q?qZ+Biky3H79ZnN1Ci7KvRCWo1HIlZsdPlu94bB/E1kYXeao6o7lHCrNmmbb5?=
+ =?us-ascii?Q?0CHoOmjy5kpK8/zb1E0UyfDaF2d6bGYBySpDWz0ab7bWMXm/Mv+rLnLmN3u2?=
+ =?us-ascii?Q?ZZdO5ePgb8LLmfofbyqRPNy3SwWmUYA2w+2mEBPaJ1mAgjTR09gIC6yy30M3?=
+ =?us-ascii?Q?bYXVnk62Rmwr5eM12ty0Ae4UtKnusjffvvIn233K4kP9yUv+A3Ld4hceW+5p?=
+ =?us-ascii?Q?Tc26rRbPke6dwImG7uuN+wJYkfyd6bUAv81Ke1V3FxA8OyNGOmtjDYW+xWER?=
+ =?us-ascii?Q?a2b/g38xevEDNCLaciaZWdWH2sOi5Wln3xvNxAgjrndzd9UCrZngIwlvvOcn?=
+ =?us-ascii?Q?ZumQ7bwwMWWN6oOStvRCRCNBljUfQkb2zb7f8PeVvvdQwRvvoFy/l/Yc2Yri?=
+ =?us-ascii?Q?Q7z7ix8ywlLOE3KegvAFS0hKRyrsEx0ZZgUx8wG3cQFN7GQYV7gh5brZDOYa?=
+ =?us-ascii?Q?PTg1YRAVoC0YZwNpiBFzm+SvkjsV8/3WGqrUwMxyfVn13BOh6BMO5e/3LnQ5?=
+ =?us-ascii?Q?Ca4vZlwpebJo35aiBlVLsei2ssOpsmGKwtXDDz7WLg6+hg7h3cIr5KRhy1Aq?=
+ =?us-ascii?Q?o1WrNJP95ve+lcn8ZKNrv2DWCIBt8ZmC2WEkYGgOnw4/Sh6bP727kQ0Y6FAJ?=
+ =?us-ascii?Q?tBqFOFreN+tZJ/OcC/wouzxU/BLxCRjzlSGxRXcnWWhHo0ST8bIIdOqziWbR?=
+ =?us-ascii?Q?vAMY1Gk8tF2tNI96XqHpUuzTSn3pfmFnsafe0rgA9JNgc0sRVikCXVfFiqME?=
+ =?us-ascii?Q?4HOTdymAtqVUNJmAoKc=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2ebdee6d-685d-41ad-be9c-08dd667476bd
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 23:27:35.2955
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 83HNvW/1NSWvVj9wY+Yr4I0iyYpOahzLa7KDSFhiUJgKppUudCqxX6bsf7R61sXo
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5706
 
-On Tue, Mar 18, 2025 at 3:33=E2=80=AFAM Bernd Schubert
-<bernd.schubert@fastmail.fm> wrote:
->
->
->
-> On 3/18/25 01:55, Joanne Koong wrote:
-> > Hi Bernd,
-> > Thanks for the quick turnaround on the review!
-> >
-> > On Fri, Mar 14, 2025 at 4:11=E2=80=AFPM Bernd Schubert
-> > <bernd.schubert@fastmail.fm> wrote:
-> >>
-> >> Thanks Joanne! That is rather close to what I wanted to add,
-> >> just a few comments.
-> >>
-> >> On 3/14/25 21:44, Joanne Koong wrote:
-> >>> In the current uring design, the number of queues is equal to the num=
-ber
-> >>> of cores on a system. However, on high-scale machines where there are
-> >>> hundreds of cores, having such a high number of queues is often
-> >>> overkill and resource-intensive. As well, in the current design where
-> >>> the queue for the request is set to the cpu the task is currently
-> >>> executing on (see fuse_uring_task_to_queue()), there is no guarantee
-> >>> that requests for the same file will be sent to the same queue (eg if=
- a
-> >>> task is preempted and moved to a different cpu) which may be problema=
-tic
-> >>> for some servers (eg if the server is append-only and does not suppor=
-t
-> >>> unordered writes).
-> >>>
-> >>> In this commit, the server can configure the number of uring queues
-> >>> (passed to the kernel through the init reply). The number of queues m=
-ust
-> >>> be a power of two, in order to make queue assignment for a request
-> >>> efficient. If the server specifies a non-power of two, then it will b=
-e
-> >>> automatically rounded down to the nearest power of two. If the server
-> >>> does not specify the number of queues, then this will automatically
-> >>> default to the current behavior where the number of queues will be eq=
-ual
-> >>> to the number of cores with core and numa affinity. The queue id hash
-> >>> is computed on the nodeid, which ensures that requests for the same f=
-ile
-> >>> will be forwarded to the same queue.
-> >>>
-> >>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> >>> ---
-> >>>  fs/fuse/dev_uring.c       | 48 +++++++++++++++++++++++++++++++++++--=
---
-> >>>  fs/fuse/dev_uring_i.h     | 11 +++++++++
-> >>>  fs/fuse/fuse_i.h          |  1 +
-> >>>  fs/fuse/inode.c           |  4 +++-
-> >>>  include/uapi/linux/fuse.h |  6 ++++-
-> >>>  5 files changed, 63 insertions(+), 7 deletions(-)
-> >>>
-> >>> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> >>> index 64f1ae308dc4..f173f9e451ac 100644
-> >>> --- a/fs/fuse/dev_uring.c
-> >>> +++ b/fs/fuse/dev_uring.c
-> >>> @@ -209,9 +209,10 @@ void fuse_uring_destruct(struct fuse_conn *fc)
-> >>>  static struct fuse_ring *fuse_uring_create(struct fuse_conn *fc)
-> >>>  {
-> >>>       struct fuse_ring *ring;
-> >>> -     size_t nr_queues =3D num_possible_cpus();
-> >>> +     size_t nr_queues =3D fc->uring_nr_queues;
-> >>>       struct fuse_ring *res =3D NULL;
-> >>>       size_t max_payload_size;
-> >>> +     unsigned int nr_cpus =3D num_possible_cpus();
-> >>>
-> >>>       ring =3D kzalloc(sizeof(*fc->ring), GFP_KERNEL_ACCOUNT);
-> >>>       if (!ring)
-> >>> @@ -237,6 +238,13 @@ static struct fuse_ring *fuse_uring_create(struc=
-t fuse_conn *fc)
-> >>>
-> >>>       fc->ring =3D ring;
-> >>>       ring->nr_queues =3D nr_queues;
-> >>> +     if (nr_queues =3D=3D nr_cpus) {
-> >>> +             ring->core_affinity =3D 1;
-> >>> +     } else {
-> >>> +             WARN_ON(!nr_queues || nr_queues > nr_cpus ||
-> >>> +                     !is_power_of_2(nr_queues));
-> >>> +             ring->qid_hash_bits =3D ilog2(nr_queues);
-> >>> +     }
-> >>>       ring->fc =3D fc;
-> >>>       ring->max_payload_sz =3D max_payload_size;
-> >>>       atomic_set(&ring->queue_refs, 0);
-> >>> @@ -1217,12 +1225,24 @@ static void fuse_uring_send_in_task(struct io=
-_uring_cmd *cmd,
-> >>>       fuse_uring_send(ent, cmd, err, issue_flags);
-> >>>  }
-> >>>
-> >>> -static struct fuse_ring_queue *fuse_uring_task_to_queue(struct fuse_=
-ring *ring)
-> >>> +static unsigned int hash_qid(struct fuse_ring *ring, u64 nodeid)
-> >>> +{
-> >>> +     if (ring->nr_queues =3D=3D 1)
-> >>> +             return 0;
-> >>> +
-> >>> +     return hash_long(nodeid, ring->qid_hash_bits);
-> >>> +}
-> >>> +
-> >>> +static struct fuse_ring_queue *fuse_uring_task_to_queue(struct fuse_=
-ring *ring,
-> >>> +                                                     struct fuse_req=
- *req)
-> >>>  {
-> >>>       unsigned int qid;
-> >>>       struct fuse_ring_queue *queue;
-> >>>
-> >>> -     qid =3D task_cpu(current);
-> >>> +     if (ring->core_affinity)
-> >>> +             qid =3D task_cpu(current);
-> >>> +     else
-> >>> +             qid =3D hash_qid(ring, req->in.h.nodeid);
-> >>
-> >> I think we need to handle numa affinity.
-> >>
-> >
-> > Could you elaborate more on this? I'm not too familiar with how to
-> > enforce this in practice. As I understand it, the main goal of numa
-> > affinity is to make sure processes access memory that's physically
-> > closer to the CPU it's executing on. How does this usually get
-> > enforced at the kernel level?
->
-> The request comes on a specific core and that is on a numa node -
-> we should try to avoid switching. If there is no queue for the
-> current core we should try to stay on the same numa node.
-> And we should probably also consider the waiting requests per
-> queue and distribute between that, although that is a bit
-> independent.
->
+On Tue, Mar 18, 2025 at 11:02:31PM +0000, Pratyush Yadav wrote:
 
-In that case then, there's no guarantee that requests on the same file
-will get sent to the same queue. But thinking more about this, maybe
-it doesn't matter after all if they're sent to different queues. I
-need to think some more about this. But I agree, if we don't care
-about requests for the same inode getting routed to the same queue,
-then we should aim for numa affinity. I'll look more into this.
+> I suppose we can serialize all FDs when the box is sealed and get rid of
+> the struct file. If kexec fails, userspace can unseal the box, and FDs
+> will be deserialized into a new struct file. This way, the behaviour
+> from userspace perspective also stays the same regardless of whether
+> kexec went through or not. This also helps tie FDBox closer to KHO.
 
-Thanks,
-Joanne
+I don't think we can do a proper de-serialization without going
+through kexec. The new stuff Mike is posting for preserving memory
+will not work like that.
 
+I think error recovery wil have to work by just restoring access to
+the FD and it's driver state that was never actually destroyed.
+
+> > It sure would be nice if the freezing process could be managed
+> > generically somehow.
 > >
-> >>>
-> >>>       if (WARN_ONCE(qid >=3D ring->nr_queues,
-> >>>                     "Core number (%u) exceeds nr queues (%zu)\n", qid=
-,
-> >>> @@ -1253,7 +1273,7 @@ void fuse_uring_queue_fuse_req(struct fuse_ique=
-ue *fiq, struct fuse_req *req)
-> >>>       int err;
-> >>>
-> >>>       err =3D -EINVAL;
-> >>> -     queue =3D fuse_uring_task_to_queue(ring);
-> >>> +     queue =3D fuse_uring_task_to_queue(ring, req);
-> >>>       if (!queue)
-> >>>               goto err;
-> >>>
-> >>> @@ -1293,7 +1313,7 @@ bool fuse_uring_queue_bq_req(struct fuse_req *r=
-eq)
-> >>>       struct fuse_ring_queue *queue;
-> >>>       struct fuse_ring_ent *ent =3D NULL;
-> >>>
-> >>> -     queue =3D fuse_uring_task_to_queue(ring);
-> >>> +     queue =3D fuse_uring_task_to_queue(ring, req);
-> >>>       if (!queue)
-> >>>               return false;
-> >>>
-> >>> @@ -1344,3 +1364,21 @@ static const struct fuse_iqueue_ops fuse_io_ur=
-ing_ops =3D {
-> >>>       .send_interrupt =3D fuse_dev_queue_interrupt,
-> >>>       .send_req =3D fuse_uring_queue_fuse_req,
-> >>>  };
-> >>> +
-> >>> +void fuse_uring_set_nr_queues(struct fuse_conn *fc, unsigned int nr_=
-queues)
-> >>> +{
-> >>> +     if (!nr_queues) {
-> >>> +             fc->uring_nr_queues =3D num_possible_cpus();
-> >>> +             return;
-> >>> +     }
-> >>> +
-> >>> +     if (!is_power_of_2(nr_queues)) {
-> >>> +             unsigned int old_nr_queues =3D nr_queues;
-> >>> +
-> >>> +             nr_queues =3D rounddown_pow_of_two(nr_queues);
-> >>> +             pr_debug("init: uring_nr_queues=3D%u is not a power of =
-2. "
-> >>> +                      "Rounding down uring_nr_queues to %u\n",
-> >>> +                      old_nr_queues, nr_queues);
-> >>> +     }
-> >>> +     fc->uring_nr_queues =3D min(nr_queues, num_possible_cpus());
-> >>> +}
-> >>> diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
-> >>> index ce823c6b1806..81398b5b8bf2 100644
-> >>> --- a/fs/fuse/dev_uring_i.h
-> >>> +++ b/fs/fuse/dev_uring_i.h
-> >>> @@ -122,6 +122,12 @@ struct fuse_ring {
-> >>>        */
-> >>>       unsigned int stop_debug_log : 1;
-> >>>
-> >>> +     /* Each core has its own queue */
-> >>> +     unsigned int core_affinity : 1;
-> >>> +
-> >>> +     /* Only used if core affinity is not set */
-> >>> +     unsigned int qid_hash_bits;
-> >>> +
-> >>>       wait_queue_head_t stop_waitq;
-> >>>
-> >>>       /* async tear down */
-> >>> @@ -143,6 +149,7 @@ int fuse_uring_cmd(struct io_uring_cmd *cmd, unsi=
-gned int issue_flags);
-> >>>  void fuse_uring_queue_fuse_req(struct fuse_iqueue *fiq, struct fuse_=
-req *req);
-> >>>  bool fuse_uring_queue_bq_req(struct fuse_req *req);
-> >>>  bool fuse_uring_request_expired(struct fuse_conn *fc);
-> >>> +void fuse_uring_set_nr_queues(struct fuse_conn *fc, unsigned int nr_=
-queues);
-> >>>
-> >>>  static inline void fuse_uring_abort(struct fuse_conn *fc)
-> >>>  {
-> >>> @@ -200,6 +207,10 @@ static inline bool fuse_uring_request_expired(st=
-ruct fuse_conn *fc)
-> >>>       return false;
-> >>>  }
-> >>>
-> >>> +static inline void fuse_uring_set_nr_queues(struct fuse_conn *fc, un=
-signed int nr_queues)
-> >>> +{
-> >>> +}
-> >>> +
-> >>>  #endif /* CONFIG_FUSE_IO_URING */
-> >>>
-> >>>  #endif /* _FS_FUSE_DEV_URING_I_H */
-> >>> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> >>> index 38a782673bfd..7c3010bda02d 100644
-> >>> --- a/fs/fuse/fuse_i.h
-> >>> +++ b/fs/fuse/fuse_i.h
-> >>> @@ -962,6 +962,7 @@ struct fuse_conn {
-> >>>  #ifdef CONFIG_FUSE_IO_URING
-> >>>       /**  uring connection information*/
-> >>>       struct fuse_ring *ring;
-> >>> +     uint8_t uring_nr_queues;
-> >>>  #endif
-> >>>
-> >>>       /** Only used if the connection opts into request timeouts */
-> >>> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> >>> index fd48e8d37f2e..c168247d87f2 100644
-> >>> --- a/fs/fuse/inode.c
-> >>> +++ b/fs/fuse/inode.c
-> >>> @@ -1433,8 +1433,10 @@ static void process_init_reply(struct fuse_mou=
-nt *fm, struct fuse_args *args,
-> >>>                               else
-> >>>                                       ok =3D false;
-> >>>                       }
-> >>> -                     if (flags & FUSE_OVER_IO_URING && fuse_uring_en=
-abled())
-> >>> +                     if (flags & FUSE_OVER_IO_URING && fuse_uring_en=
-abled()) {
-> >>>                               fc->io_uring =3D 1;
-> >>> +                             fuse_uring_set_nr_queues(fc, arg->uring=
-_nr_queues);
-> >>> +                     }
-> >>>
-> >>>                       if (flags & FUSE_REQUEST_TIMEOUT)
-> >>>                               timeout =3D arg->request_timeout;
-> >>> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> >>> index 5ec43ecbceb7..0d73b8fcd2be 100644
-> >>> --- a/include/uapi/linux/fuse.h
-> >>> +++ b/include/uapi/linux/fuse.h
-> >>> @@ -232,6 +232,9 @@
-> >>>   *
-> >>>   *  7.43
-> >>>   *  - add FUSE_REQUEST_TIMEOUT
-> >>> + *
-> >>> + * 7.44
-> >>> + * - add uring_nr_queues to fuse_init_out
-> >>>   */
-> >>>
-> >>>  #ifndef _LINUX_FUSE_H
-> >>> @@ -915,7 +918,8 @@ struct fuse_init_out {
-> >>>       uint32_t        flags2;
-> >>>       uint32_t        max_stack_depth;
-> >>>       uint16_t        request_timeout;
-> >>> -     uint16_t        unused[11];
-> >>> +     uint8_t         uring_nr_queues;
-> >>> +     uint8_t         unused[21];
-> >>
-> >>
-> >> I'm a bit scared that uint8_t might not be sufficient at some.
-> >> The largest system we have in the lab has 244 cores. So far
-> >> I'm still not sure if we are going to do queue-per-core or
-> >> are going to reduce it. That even might become a generic tuning
-> >> for us. If we add this value it probably would need to be
-> >> uint16_t. Though I wonder if we can do without this variable
-> >> and just set initialization to completed once the first
-> >> queue had an entry.
-> >
-> > The only thing I could think of for not having it be part of the init w=
-as:
-> > a) adding another ioctl call, something like FUSE_IO_URING_CMD_INIT
-> > where we pass that as an init param before FUSE_IO_URING_CMD_REGISTERs
-> > get called
-> > or
-> > b) adding the nr_queues to fuse_uring_cmd_req (in the padding bits)
-> > for FUSE_IO_URING_CMD_REGISTER calls
-> >
-> > but I don't think either of these are backwards-compatible unfortunatel=
-y.
-> >
-> > I think the issue with setting initialization to completed once the
-> > first queue has an entry is that we need to allocate the queues at
-> > ring creation time, so we need to know nr_queues from the beginning.
-> >
-> > If we do go with the init approach, having uring_nr_queues be a
-> > uint16_t sounds reasonable to me.
->
-> I will take an hour a bit later today and try to update the patch.
->
->
-> Thanks,
-> Bernd
+> > One option for freezing would have the kernel enforce that userspace
+> > has closed and idled the FD everywhere (eg check the struct file
+> > refcount == 1). If userspace doesn't have access to the FD then it is
+> > effectively frozen.
+> 
+> Yes, that is what I want to do in the next revision. FDBox itself will
+> not close the file descriptors when you put a FD in the box. It will
+> just grab a reference and let the userspace close the FD. Then when the
+> box is sealed, the operation can be refused if refcount != 1.
+
+I'm not sure about this sealed idea..
+
+One of the design points here was to have different phases for the KHO
+process and we want to shift alot of work to the earlier phases. Some
+of that work should be putting things into the fdbox, freezing them,
+and writing out the serialzation as that may be quite time consuming.
+
+The same is true for the deserialize step where we don't want to bulk
+deserialize but do it in an ordered way to minimize the critical
+downtime.
+
+So I'm not sure if a 'seal' operation that goes and bulk serializes
+everything makes sense. I still haven't seen a state flow chart and a
+proposal where all the different required steps would have to land to
+get any certainty here.
+
+At least in my head I imagined you'd open the KHO FD, put it in
+serializing mode and then go through in the right order pushing all
+the work and building the serializion data structure as you go.
+
+At the very end you'd finalize the KHO serialization, which just
+writes out a little bit more to the FDT and gives you back the FDT
+blob for the kexec. It should be a very fast operation.
+
+Jason
 
