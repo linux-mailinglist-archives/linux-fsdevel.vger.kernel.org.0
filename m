@@ -1,182 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-44309-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44310-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB8F9A67183
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 11:39:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E009BA671D1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 11:51:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACC377A993B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 10:37:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C201A167B8D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Mar 2025 10:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A29D207A33;
-	Tue, 18 Mar 2025 10:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="SM2SaPkE";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KEJ7Y/Zq"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB6B209667;
+	Tue, 18 Mar 2025 10:51:32 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C27F2080CD
-	for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 10:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45662EAC6;
+	Tue, 18 Mar 2025 10:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742294335; cv=none; b=sMj4nErPjrqz8GmswrqVR6rTssp0sc2beBsbAUIvTgIwjfJl9CyPHc0QGVKXyuz9BYnvzzzlZzZUPShgq4I59/q2yIIM1rhJvAlB30F7V7F5YLl5OUXrLUitJlCiYW6iuH+YwfjLvgQai5lTHzDcsLbzG6KvZgt4zb+nJv71FvI=
+	t=1742295092; cv=none; b=JshDD735LHbcEK7EUfMtP3dGWZoBA+WozgCn8CNL4RxuaKmMwNM5seUQY9awf07o2wOcVrr+Pa1+EWGM9VwuWXmNu/haqm4Qh68fwi4f+RyMeqFySsxKCcYzB8zs05yqq2/13LBxyYXlMj/iS72w4NEnPC+IVKswBgkRU1m1jh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742294335; c=relaxed/simple;
-	bh=eojSfRiCnhvLL8Sk7LIGbM3RWONvNNRMk4hoeH/YM/I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hGQquFQEM3/uKJYxN1jXKzD0UPqYh5NXD47kWVJNOrSo721UnJ+96CbEsoKBa1CD839kJN9DEsLj00UC7ipYI0dY8kR8BG9Q+5pp4E8YOcBUAtSg8Tbl3cq5UBBslk73JD5GvmsaKnK6oECMSvPxdG03KRaJAKP3SMA5Ap3k5zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=SM2SaPkE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KEJ7Y/Zq; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id A883A2540191;
-	Tue, 18 Mar 2025 06:38:51 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Tue, 18 Mar 2025 06:38:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1742294331;
-	 x=1742380731; bh=xMK9swX+xySOu4N8Bmoue8ORdFCbO9Jq6Y8jpj7cVAU=; b=
-	SM2SaPkEW3Wh0h32a9W9ruH4pE5RjsWm3m3OM27iI7L7m4Uue+Oxw30OVjjZ/b0y
-	4Ryu3Oem9P8ypsqwGzs5Igaq3DgYJKQKnBv1NbNaNttBzbRiWsBjFDpuG5FBdpxU
-	B6Zap9R7qjZgbex5pZSTn7MzKWznn81ILaiFCiWAXCbpCwxP3vEV0i3RQtg+tZnK
-	LzGRULO5v8rdrIVN9TXauRENF5MsGQ7YXWkvH9G/uDqgYG90nhuzTigWxfcYeqRk
-	LO0+HTCPay1pw0SpWbmDq+ktbMQ8jbaRk0lFJM+k2SuHYOWjV2p1jNyPJLM6x0ar
-	WodDxK3MN5MFh/88zj0mEw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742294331; x=
-	1742380731; bh=xMK9swX+xySOu4N8Bmoue8ORdFCbO9Jq6Y8jpj7cVAU=; b=K
-	EJ7Y/ZqIMzTgx+CHT4pQ/mn+QUC+vtNmGJKi+ZnGuaFRkIwlUueJZIjNmUW1bhDp
-	F+0f456wsDGNfpqgpwqK2DZar20lRoRi1AXxQgTTs5YeUL/mgJupLwTskqX12x/B
-	9fePu+AS0s4v/BEvUm+yTbNqaSJqwh6u8aeQAWiTMMT+YR4l20f0dNmogvdH1mZk
-	CLBMEoV05JFfdjulA0Ax/ot7xhOVzMEHm13YKfKGetZCypsSXx2iZFssMxaPUSnt
-	PiM+9Had5+yAH0e/mh1EygIwO/CkWs+ZLkx7aR4QLbs4n814e0H2drE5ilBW/ZXn
-	PUC2mnV46NeVazyrjj1ag==
-X-ME-Sender: <xms:O03ZZxPSayoVHXnOfe-8rTrngzGO3RDIPJq6s2o11VtoCFCrsy7OvA>
-    <xme:O03ZZz-gH1owOGI2tIahW3pwHvqhUPQWI-GJt77lZq5m8vMdyS5lHxHbccZ2YUC0R
-    jU4ympCgf3uL4y0>
-X-ME-Received: <xmr:O03ZZwQt5BwmrnGy-ZxdUUZ1MZzZVseXkzcWCLLlA-AGLzSqwIBF7V0JBVszNnE9azrqz017Zui8UQSRVdvYGfYJiYaPhIh2duAKd8KbHTMK3PjwHwtw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedvvddvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
-    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuh
-    gsvghrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepffejveeffeej
-    gffhfefhieeuffffteeltdfghffhtddtfeeuveelvdelteefvedtnecuffhomhgrihhnpe
-    hkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgr
-    ihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmhdpnh
-    gspghrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhorghn
-    nhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsii
-    gvrhgvughirdhhuhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgvrhhnvghlqdhtvggrmhesmhgvthgrrd
-    gtohhm
-X-ME-Proxy: <xmx:O03ZZ9suLIoQJoNhGCCUFWP0fJWXP_-VtDa2TalIKFcSDUYG57hMsA>
-    <xmx:O03ZZ5d5EN-4-FHnOO4QZJtlJLEeXu1I4UBuAOSxiJOkM85Me2DUXQ>
-    <xmx:O03ZZ50LXFHHSOGauk1CYsE-6Rifc5jZOhGVNQtGrkQx-wx05UjLjg>
-    <xmx:O03ZZ1-R-aNPJk8XGnBNvBMbiIlaPy8dcVl_JB6p9CV-BYzmPv7k4A>
-    <xmx:O03ZZw5NIn1eXXALcz47IW4xpA76kkT6p9C9mjPkv5acbQaOkRrgcfHY>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 18 Mar 2025 06:38:50 -0400 (EDT)
-Message-ID: <fd9ba4b3-319a-443c-966e-b34eaca8d24c@fastmail.fm>
-Date: Tue, 18 Mar 2025 11:38:49 +0100
+	s=arc-20240116; t=1742295092; c=relaxed/simple;
+	bh=4umO4f6ePd0sJ1/++/GgZoX7xLdyK7mbDiQ6/iNDCaA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aG6OvssbfjLz0W3gT+o6/sh8pJYNZtg/Ts7wYQdmt2pJnPiglAahIQfHkz5z3Hrc68xyvGIn06HWjQDt5N3rI4/2zHrEsPZxHnrf2+cMAbFbSLlPwMsZS8LLua5QU8QgNnvle95erWS07pgHf6gXEEB5E9nSSGHYijGiQdFKUGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-51eb1823a8eso2394283e0c.3;
+        Tue, 18 Mar 2025 03:51:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742295089; x=1742899889;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qNxLDnoSRAhm1nLn1xN2OwKLhUKpRiAxSHPfWger/54=;
+        b=XAt2m6ykDB4MjVDJReOq8/HMPQnEpwp7NW6gY53wKh66kpWfIG5Jwh5wnPZ31MVwWV
+         HhbKEZgLt0LXN6iSYjsPIz55alzBS3PMRdqvEK3aBd8Wt2w7daQN4FlRO3QW3fQVH1ik
+         u4SiozVCFRs7vwnAgpSwjucBGOCMT27TVwLjL16wGIINpdASf5GdJuhYG6lDDSJ87+W3
+         CG11R/fLf1S1GHE5yvDaJqFWhNwkjffpLaY4IVriCQ0l9ZJ2/ixO3C/HOGVEliRwgaje
+         cT8wUXiz3nnjhg0okHXRkuFSSCz3MfRbjzNuC+f1b6X47F74l8QJhILxJTYIwCukiHLJ
+         TGyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUeE20qxew57HOpgJgTjHP27BIlq+eLOEDsONMQJHaCTnjSIE2WsvaIMAiSLeU8jitxf2uaH2HeCablp1/zwg==@vger.kernel.org, AJvYcCVwha4Rw4dSHWxhHqfi54YDJHy/73nZpXkcKN99z7Tlw677hRC1vNhWfHbcSV5HgzsajtGQnedaI9bj@vger.kernel.org, AJvYcCWtA/sDPlHH92/Zv1mHqaNW/xJZAHMt0qxNKmznFvKti+/d7GSls9s562z6ri3NVd8IplwlfE2MchzydN0=@vger.kernel.org, AJvYcCX2hjkUXj0Stsws5M630J+4JoYT9Vb5QkXU9mjodb7uynM5TqDqaJx6VDepgMJ3J+Asl76UrDrdPOoW2rv4@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPMPHtp6AH3aole9OaS60Wg0FY1e98pZocGmI4Dl0AO4iM55vB
+	ihtFZQF+ykYELnBiTPszU693rtN5f1g9ZnC/A0FuBOwsKOw2vDJrqRdGLkGi
+X-Gm-Gg: ASbGncsKn5l8mw/rCtHcpVlNfL0vt9BzRabLugNaDDbUReGRd6wvY0727jLtDr71Iqy
+	orgS92osTP0cZYf++uobUsK6c2bT6VlzD6g8IDJnQKo9CvlvZl1y2c2FWFp1oOWfA8BRrAINfXs
+	eSHWudUmPtCbD+NSnYs7jYQiJAh8zzpqivYe1HSxHVMLap53/zJdd88JDqpSE0QUUh/q1ta6mwz
+	fqyWaVWZKxNjGOkaU9lPXAQPjkEiKzGSuNVkUZJPSroBooJ43jmOr1I1pJgUNr1Z7QKSna+ecWT
+	NG3824mw+6cU2PM4Y1HSrVXE4HRTbtNXRkvE/h7zV1t/kSl7QHTLEr4URR/LxIBDM6omYhZpIKx
+	JEgB6s0k0eZY=
+X-Google-Smtp-Source: AGHT+IGK8W1ulz1rqCWNtWhzDi7y6+XmdCKftGr72HNdqdyMYPhgG5vfge5b/TrjlBcrh59H9zkW3w==
+X-Received: by 2002:a05:6102:38cf:b0:4bb:d394:46ce with SMTP id ada2fe7eead31-4c38311c3dfmr11424948137.3.1742295088753;
+        Tue, 18 Mar 2025 03:51:28 -0700 (PDT)
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com. [209.85.221.173])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-86d90e8c43asm2026998241.34.2025.03.18.03.51.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 03:51:28 -0700 (PDT)
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-52413efd0d3so2262813e0c.2;
+        Tue, 18 Mar 2025 03:51:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU9BRsrE+ro8YMqiwm9mLHwbN3cBCYVdc2Py/m5AQpJp0LtmcDpWSdoVd/i6I+SX8JV0l7k/pbRs1gqw5M=@vger.kernel.org, AJvYcCVR1Tx4Xa6lmRSwA5yjZiBywI3qitQxTOh1iDlhIwRy4gDBSE9IfB4Z96+V4nGfXZYVBEMLmbodhoK5D0QmMA==@vger.kernel.org, AJvYcCVi/JVzTfuO9JBowpV76QT7Op2r48tXj4c6S5amyfORi398b8AmXs7fg05Ef6lPSrFRunxu8b8vf8FFDb7c@vger.kernel.org, AJvYcCVi6fbeEjQfKlTuZmcDsxQyqvVNnQ6xin0Z2yUL5SsRXQQqf3pNgUHcONbZpmfFykW3jUrzL77UEd+F@vger.kernel.org
+X-Received: by 2002:a05:6122:400f:b0:520:42d3:91d2 with SMTP id
+ 71dfb90a1353d-524498ae7d1mr9420222e0c.1.1742295088389; Tue, 18 Mar 2025
+ 03:51:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] fuse: fix uring race condition for null dereference of
- fc
-To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
- linux-fsdevel@vger.kernel.org
-Cc: kernel-team@meta.com
-References: <20250318003028.3330599-1-joannelkoong@gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <20250318003028.3330599-1-joannelkoong@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250203142343.248839-1-dhowells@redhat.com> <20250203142343.248839-4-dhowells@redhat.com>
+In-Reply-To: <20250203142343.248839-4-dhowells@redhat.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Mar 2025 11:51:16 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdX0ShSafh44_D7D9GW5OzxYPx1NUc4uxpsKe1jAiTsBaA@mail.gmail.com>
+X-Gm-Features: AQ5f1JqexfcZ4Wr8wl7KhbMINkBkWsh1eamHniftlMSeRlz46aDdMofNJr-x84g
+Message-ID: <CAMuHMdX0ShSafh44_D7D9GW5OzxYPx1NUc4uxpsKe1jAiTsBaA@mail.gmail.com>
+Subject: Re: [PATCH net 03/24] crypto: Add 'krb5enc' hash and cipher AEAD algorithm
+To: David Howells <dhowells@redhat.com>
+Cc: netdev@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Marc Dionne <marc.dionne@auristor.com>, Jakub Kicinski <kuba@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Trond Myklebust <trond.myklebust@hammerspace.com>, Chuck Lever <chuck.lever@oracle.com>, 
+	Eric Biggers <ebiggers@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org, 
+	linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+
+Hi David,
+
+On Mon, 3 Feb 2025 at 15:25, David Howells <dhowells@redhat.com> wrote:
+> Add an AEAD template that does hash-then-cipher (unlike authenc that does
+> cipher-then-hash).  This is required for a number of Kerberos 5 encoding
+> types.
+>
+> [!] Note that the net/sunrpc/auth_gss/ implementation gets a pair of
+> ciphers, one non-CTS and one CTS, using the former to do all the aligned
+> blocks and the latter to do the last two blocks if they aren't also
+> aligned.  It may be necessary to do this here too for performance reasons -
+> but there are considerations both ways:
+>
+>  (1) firstly, there is an optimised assembly version of cts(cbc(aes)) on
+>      x86_64 that should be used instead of having two ciphers;
+>
+>  (2) secondly, none of the hardware offload drivers seem to offer CTS
+>      support (Intel QAT does not, for instance).
+>
+> However, I don't know if it's possible to query the crypto API to find out
+> whether there's an optimised CTS algorithm available.
+>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+
+Thanks for your patch, which is now commit d1775a177f7f3815 ("crypto:
+Add 'krb5enc' hash and cipher AEAD algorithm") in crypto/master.
+
+> --- a/crypto/Kconfig
+> +++ b/crypto/Kconfig
+> @@ -228,6 +228,18 @@ config CRYPTO_AUTHENC
+>
+>           This is required for IPSec ESP (XFRM_ESP).
+>
+> +config CRYPTO_KRB5ENC
+> +       tristate "Kerberos 5 combined hash+cipher support"
+> +       select CRYPTO_AEAD
+> +       select CRYPTO_SKCIPHER
+> +       select CRYPTO_MANAGER
+> +       select CRYPTO_HASH
+> +       select CRYPTO_NULL
+> +       help
+> +         Combined hash and cipher support for Kerberos 5 RFC3961 simplified
+> +         profile.  This is required for Kerberos 5-style encryption, used by
+> +         sunrpc/NFS and rxrpc/AFS.
+
+Hence shouldn't the latter (e.g. RPCSEC_GSS_KRB5) select CRYPTO_KRB5ENC
+or CRYPTO_KRB5? Or am I missing something?
+
+Thanks!
+
+> +
+>  config CRYPTO_TEST
+>         tristate "Testing module"
+>         depends on m || EXPERT
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-On 3/18/25 01:30, Joanne Koong wrote:
-> There is a race condition leading to a kernel crash from a null
-> dereference when attemping to access fc->lock in
-> fuse_uring_create_queue(). fc may be NULL in the case where another
-> thread is creating the uring in fuse_uring_create() and has set
-> fc->ring but has not yet set ring->fc when fuse_uring_create_queue()
-> reads ring->fc. There is another race condition as well where in
-> fuse_uring_register(), ring->nr_queues may still be 0 and not yet set
-> to the new value when we compare qid against it.
-> 
-> This fix sets fc->ring only after ring->fc and ring->nr_queues have been
-> set, which guarantees now that ring->fc is a proper pointer when any
-> queues are created and ring->nr_queues reflects the right number of
-> queues if ring is not NULL. We must use smp_store_release() and
-> smp_load_acquire() semantics to ensure the ordering will remain correct
-> where fc->ring is assigned only after ring->fc and ring->nr_queues have
-> been assigned.
-> 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> Fixes: 24fe962c86f5 ("fuse: {io-uring} Handle SQEs - register commands")
-> 
-> ---
-> 
-> Changes between v2 -> v3:
-> * v2 implementation still has race condition for ring->nr_queues
-> *link to v2: https://lore.kernel.org/linux-fsdevel/20250314205033.762641-1-joannelkoong@gmail.com/
-> 
-> Changes between v1 -> v2:
-> * v1 implementation may be reordered by compiler (Bernd)
-> * link to v1: https://lore.kernel.org/linux-fsdevel/20250314191334.215741-1-joannelkoong@gmail.com/
-> 
-> ---
->  fs/fuse/dev_uring.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> index ab8c26042aa8..97e6d31479e0 100644
-> --- a/fs/fuse/dev_uring.c
-> +++ b/fs/fuse/dev_uring.c
-> @@ -235,11 +235,11 @@ static struct fuse_ring *fuse_uring_create(struct fuse_conn *fc)
->  
->  	init_waitqueue_head(&ring->stop_waitq);
->  
-> -	fc->ring = ring;
->  	ring->nr_queues = nr_queues;
->  	ring->fc = fc;
->  	ring->max_payload_sz = max_payload_size;
->  	atomic_set(&ring->queue_refs, 0);
-> +	smp_store_release(&fc->ring, ring);
->  
->  	spin_unlock(&fc->lock);
->  	return ring;
-> @@ -1068,7 +1068,7 @@ static int fuse_uring_register(struct io_uring_cmd *cmd,
->  			       unsigned int issue_flags, struct fuse_conn *fc)
->  {
->  	const struct fuse_uring_cmd_req *cmd_req = io_uring_sqe_cmd(cmd->sqe);
-> -	struct fuse_ring *ring = fc->ring;
-> +	struct fuse_ring *ring = smp_load_acquire(&fc->ring);
->  	struct fuse_ring_queue *queue;
->  	struct fuse_ring_ent *ent;
->  	int err;
-
-I was actually debating with myself that smp_load_acquire() on Friday. 
-I think we do not need it, because if the ring is not found, it will 
-go into the spin lock. But it does not hurt either and it might
-cleaner to have a pair of smp_store_release() and smp_load_acquire().
-
-
-Reviewed-by: Bernd Schubert <bschubert@ddn.com>
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
