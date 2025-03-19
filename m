@@ -1,328 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-44449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44451-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E14FBA692B3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 16:14:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B775A693A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 16:37:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4AE5480448
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 15:06:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 511561B66C28
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 15:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C8D221734;
-	Wed, 19 Mar 2025 14:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04D651AF0BC;
+	Wed, 19 Mar 2025 15:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b="I0P8fEZ7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wXasLh0C"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JJRvzB3+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2798A21D596;
-	Wed, 19 Mar 2025 14:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647671C6FEE
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 15:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742396170; cv=none; b=U2l8hGZnLtLCDhbI5W9LPX2f7RK9pzoY2k25AXk6Jno4fCtIqK2eTdRSarpI2OzJBDDDznit1aYOsMBCB6AGKzJi8OEiew5p+5gOfVduXGrb5VhdhF7fMM2JB3KKmNULqXp23l/ZyDZygzDlTroVyiDR1tObvIY/FiofsU88ClI=
+	t=1742397879; cv=none; b=kcEqthV08fl2w9z9Yc2eAUb+E2eXd9M2ujC+5u4GWeqHKXwlhCwbAYkBTmqJlZbm+len+2+tMinag25Qgf2nvVsEu6x1rTHFKOSl5q5XJUkOG9EjYy6fPV4pYr/E9cKVpH2ytf4qhPLy9/HDLMEnxI7nYb0QKiuUH9nkTdFQrqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742396170; c=relaxed/simple;
-	bh=fJ3F0yiZWpnOp2Nq8Bm3nwRNQRkQKyKmPX7nnAGXLv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R24cyh3zyfOK6IIU2BJGjX0jPZq9E4x02js05Z97FOZOg6VLGpOXrY5/da5WpY0cAZZCYzWmmFY2jntUu02kcVpdxfM6kYf4p/DbEwrWttehrmenS4esLBQTiqMxI1SNJ+k8vjL82Yn86vrJPA8uenSvXH7KaFYToSWf7Ph+Y8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com; spf=pass smtp.mailfrom=invisiblethingslab.com; dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b=I0P8fEZ7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wXasLh0C; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=invisiblethingslab.com
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id CEC7C2540234;
-	Wed, 19 Mar 2025 10:56:03 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Wed, 19 Mar 2025 10:56:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	invisiblethingslab.com; h=cc:cc:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1742396163;
-	 x=1742482563; bh=6YtNAy6HBfsyucG2rvA4CF+wsGauxsNRU9FKvC0/25E=; b=
-	I0P8fEZ7Te6/fmNHSvma2ma4o3KZl7xibq7+WBYcevRbRMqWYXQH+SLBOe2mPVIB
-	nrtvAufJI4WjVrJJ/pjMY3lb2v2bwlQ1iI/kqpTMGvXB2B/fY5Did42fTCdlZBGZ
-	dExdWLr2ujBT2Zq7/MtEAiSRyFcKyobGTCydjaVWz5MtWT41gAcV2X/grmNWuy0o
-	p3Fy9QgMfN3ghOUgZVV4pDE+LgXcdd4cSMIB3XJXiRjN5+UiOopBxPY7E3NTAkY7
-	/V3KUEPxNDkLxrhAQL01s4P5qk+g7lvwQOrFVwCQUUiF/GaVGmDBGDECOnfZeXNR
-	zX7esmNwD/nZR2fB2lRqjA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1742396163; x=1742482563; bh=6YtNAy6HBfsyucG2rvA4CF+wsGauxsNRU9F
-	KvC0/25E=; b=wXasLh0C6wlK8Db10HpqaXvAZpHubQmGV6opRrkLP1H75vnKChi
-	0GG7l2jQI7fwSBQ8VNoJMSNdb6KNm1PrjR3VVoZ+AD6K7M37lUgKGKQSZWM002bw
-	kQhdP+1uCX48Fgpx0254MyM8nIcVxH2GoqGaZG8OW6E87ik9MVdLjY1iPJ4mppnc
-	SnEWIU/KBECMCeh7bnDvLTc+bWATvxc1Mrl6bwrH+C6NB0UO+5aqu1Zuffppx0CI
-	T2JOL5rGn96zHHnF+ShRGNG97gcnFnCojasQdsXuvFNjL86u4MspQYVFOJFgKLv9
-	9bnYhD8K9Ow/rSCZTDzF8z7enOrCD5I4yZA==
-X-ME-Sender: <xms:A9vaZ7RnSNY02nEqV1hyrQOySEmJsob6Iyx-XVn8-lsjY7T8t-W8og>
-    <xme:A9vaZ8z75UMAMWlpnYOiiEdBORXWQ-MDUMIuzBLq1R2c3EJeJIW-2oEGF8ydPETJl
-    xvgZue4XP2ZEuc>
-X-ME-Received: <xmr:A9vaZw3WlYjSFGNuPoawng7kBIsf59frkYCpUsioIpYbvcgzqAAU_fhAfdTA8Lbge5sqm4fMv6r9UVOYNjjslHdwhnr22c4yOp45iXimelU5X78k>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeehieefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhf
-    fvvefukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeffvghmihcuofgrrhhivgcu
-    qfgsvghnohhurhcuoeguvghmihesihhnvhhishhisghlvghthhhinhhgshhlrggsrdgtoh
-    hmqeenucggtffrrghtthgvrhhnpeduieelfeeutedvleehueetffejgeejgeffkeelveeu
-    leeukeejjeduffetjeekteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpeguvghmihesihhnvhhishhisghlvghthhhinhhgshhlrggsrdgtohhm
-    pdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepug
-    grvhhiugesfhhrohhmohhrsghithdrtghomhdprhgtphhtthhopegtvhgvsehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehgnhhorggtkhesghhoohhglhgvrdgtohhmpdhrtghpth
-    htohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthht
-    ohepkhgvnhhtrdhovhgvrhhsthhrvggvtheslhhinhhugidruggvvhdprhgtphhtthhope
-    hlihhnuhigqdgstggrtghhvghfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopehmihgtseguihhgihhkohgurdhnvght
-X-ME-Proxy: <xmx:A9vaZ7A9-6RclAM5pIHAvhRBh5ExBrhP_2-wmjR0OFxpgoFz9thkcQ>
-    <xmx:A9vaZ0go6bICdLT_Mm7qKXyEtM6ZLApvB-zHv_lV_yNPO6rAR6i9lQ>
-    <xmx:A9vaZ_pyvbpGcS4o_NrRF2lKc_i_p9hDHrYch1oXASrdrIsaKIz1vw>
-    <xmx:A9vaZ_ghDPW_Hc6jOWrmcUbajlRJNmDNL-qcl3xgKelXZtN2IRUUNA>
-    <xmx:A9vaZ5ZcihA2eqyE0NqXT1reBPLXNYAHL0WzUrUx8JC0PKUaBYvWixpL>
-Feedback-ID: iac594737:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 19 Mar 2025 10:56:02 -0400 (EDT)
-Date: Wed, 19 Mar 2025 10:55:39 -0400
-From: Demi Marie Obenour <demi@invisiblethingslab.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: cve@kernel.org, gnoack@google.com, gregkh@linuxfoundation.org,
-	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, mic@digikod.net,
-	Demi Marie Obenour <demiobenour@gmail.com>
-Subject: Re: Unprivileged filesystem mounts
-Message-ID: <Z9rbDdLr0ai-UFE_@itl-email>
-References: <Z8948cR5aka4Cc5g@dread.disaster.area>
- <20250311021957.2887-1-demi@invisiblethingslab.com>
- <Z8_Q4nOR5X3iZq3j@dread.disaster.area>
- <Z9CYzjpQUH8Bn4AL@itl-email>
- <Z9kC7MKTGS_RB-2Q@dread.disaster.area>
+	s=arc-20240116; t=1742397879; c=relaxed/simple;
+	bh=P37qi40Ws5FQBrhzExvWM3FjjILBQqoBwdLQeMYzSVA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g8kdJBborGORkfnjdaVhpsH1C4eTZ+SVf5mkA/Pa327CnK4/BaZDqiSCAaWraLks0LG9zA+vmTFWWWEpAosXN5oP3Y1wMvLyXxZeN4ylg/rEtgCNTDAJwIHqrMVTlzCYAkJPBR0vxCo2Mwni/4EO/tA9AVPqWeGrYN2fALh2+PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JJRvzB3+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742397876;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P37qi40Ws5FQBrhzExvWM3FjjILBQqoBwdLQeMYzSVA=;
+	b=JJRvzB3+oavYW0d8Ek4giFcU6srzyelS9L2PKqrdqOAg6unM7wo0LT8ToGmFdo+arRjfsG
+	ufLMKVIDyCwjIlJ8qvWu/HEcSfAuBnOLNQWJcUPvP6sMlGNNJnq9tfHLzfvgIiFV14xq7p
+	YE/HzRBsg6qkZzs94YkC45K3G0iULL4=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-683-oficzY1MMlqohph6hHavYA-1; Wed, 19 Mar 2025 11:24:35 -0400
+X-MC-Unique: oficzY1MMlqohph6hHavYA-1
+X-Mimecast-MFC-AGG-ID: oficzY1MMlqohph6hHavYA_1742397874
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2265a09dbfcso5724315ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 08:24:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742397874; x=1743002674;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P37qi40Ws5FQBrhzExvWM3FjjILBQqoBwdLQeMYzSVA=;
+        b=hTwLq6yUlJ6oAQHTvCasjcJI1F8X0Y5QAjgDsEI4XGWbmek5Q/04ik95IbJsjbh18D
+         v9ESrvA3IcWElBOfGqbTSKV2CyotECuFgfjl4fhFVyLQADUFPITs1aD2yzjYYKxBzRUT
+         xJrGoe2S2I+xqYyUI2h5hLdSPOwMU4N7RyoGkxCcQtYtUF+m2s0UnDtlBF/z/Bedn3Fe
+         LqpCHxmfCJb5avqrpjp/VfmioBtUdRdO/z2ce9mf/7Us9TUrWzIEXJYXYSbuaZ2fAwES
+         WATRpKcutqIDO1S7G0fmpT9jKLX+iwZmSg/sxcjrJoKIS+Cbxa7Ynus7aSlNZW/T/c/C
+         sNtg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWla7X2qksl/bwVqKhTWnkpFticR9zX+q5cgx4fWb95dDVSkEtbEEzzOHeSQlIr4HxGDFhLjO5ZDFr/loo@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKiLpUJhtNzuBToaZz6qwheddxJUMzDBCnOb0mf6EroXx5h9X0
+	Ra6AUE3gEZpp1iWTmhGMO3G+BjXeovrS3/E2OrypeJzy/4xUTCzYPhXmUtz327FtAV4eSqqW+Fl
+	z1wuVseivG4hUUlwXH1nERLQDN2tQN/avvU0SKJzsUiqbN+UpWOgflVVo8eU5FeHRM3UwH9P1oW
+	H7iUnkASnEJNl8eVfMI2SExjOc3JGtPuHW6xF5Nw==
+X-Gm-Gg: ASbGncv+CmzjQDEw7Up0Zhvl6OxU0GVqROPbQBS8X44Gvz8lvLvcLOQbK0JjpamOsq3
+	HviQKdBz4uhRS9iXWi4Sbdi2Ki53k6Gmj6QxP2JluDIeT1I5zyWewjkpOftH9o18lwWQTBL6Uj5
+	C+PT8oKFor1MkNEOTzrZMKU05+AZA8Oo4=
+X-Received: by 2002:a05:6a20:938a:b0:1f3:486c:8509 with SMTP id adf61e73a8af0-1fbebc83800mr5725968637.25.1742397873467;
+        Wed, 19 Mar 2025 08:24:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGtajrOOycCqo+ctQq6DjEzA7+VzJUdO1juK6xrGmGpSnzkLMoZhTDxevcByLY9ELu1uKbiujwBlcIlCqy9ta8=
+X-Received: by 2002:a05:6a20:938a:b0:1f3:486c:8509 with SMTP id
+ adf61e73a8af0-1fbebc83800mr5725872637.25.1742397872411; Wed, 19 Mar 2025
+ 08:24:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="gJn/WH0kaLCMp1ft"
-Content-Disposition: inline
-In-Reply-To: <Z9kC7MKTGS_RB-2Q@dread.disaster.area>
-
-
---gJn/WH0kaLCMp1ft
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20250318234752.886003-1-slava@dubeyko.com>
+In-Reply-To: <20250318234752.886003-1-slava@dubeyko.com>
+From: Gregory Farnum <gfarnum@redhat.com>
+Date: Wed, 19 Mar 2025 08:24:21 -0700
+X-Gm-Features: AQ5f1JolNqI7B5lqhY5f-PIYn-KA3wVnHeoSYDShL43lA8KIwoXMw4jiEu0lfkM
+Message-ID: <CAJ4mKGYmcJ5SSbGhEFKrTw_BJWtT1z460JMcbg++7EBreUn6tA@mail.gmail.com>
+Subject: Re: [RFC PATCH] ceph: fix ceph_fallocate() ignoring of
+ FALLOC_FL_ALLOCATE_RANGE mode
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: ceph-devel@vger.kernel.org, amarkuze@redhat.com, dhowells@redhat.com, 
+	idryomov@gmail.com, linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, 
+	Slava.Dubeyko@ibm.com, Milind Changire <mchangir@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 19 Mar 2025 10:55:39 -0400
-From: Demi Marie Obenour <demi@invisiblethingslab.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: cve@kernel.org, gnoack@google.com, gregkh@linuxfoundation.org,
-	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, mic@digikod.net,
-	Demi Marie Obenour <demiobenour@gmail.com>
-Subject: Re: Unprivileged filesystem mounts
 
-On Tue, Mar 18, 2025 at 04:21:48PM +1100, Dave Chinner wrote:
-> On Tue, Mar 11, 2025 at 04:10:42PM -0400, Demi Marie Obenour wrote:
-> > On Tue, Mar 11, 2025 at 04:57:54PM +1100, Dave Chinner wrote:
-> > > On Mon, Mar 10, 2025 at 10:19:57PM -0400, Demi Marie Obenour wrote:
-> > > > People have stuff to get done.  If you disallow unprivileged filesy=
-stem
-> > > > mounts, they will just use sudo (or equivalent) instead.
-> > >=20
-> > > I am not advocating that we disallow mounting of untrusted devices.
-> > >=20
-> > > > The problem is
-> > > > not that users are mounting untrusted filesystems.  The problem is =
-that
-> > > > mounting untrusted filesystems is unsafe.
-> > >=20
-> > > > Making untrusted filesystems safe to mount is the only solution that
-> > > > lets users do what they actually need to do. That means either actu=
-ally
-> > > > fixing the filesystem code,
-> > >=20
-> > > Yes, and the point I keep making is that we cannot provide that
-> > > guarantee from the kernel for existing filesystems. We cannot detect
-> > > all possible malicous tampering situations without cryptogrpahically
-> > > secure verification, and we can't generate full trust from nothing.
-> >=20
-> > Why is it not possible to provide that guarantee?  I'm not concerned
-> > about infinite loops or deadlocks.  Is there a reason it is not possible
-> > to prevent memory corruption?
->=20
-> You're asking me to prove that the on-disk filesystem format parsing
-> implementation is 100% provably correct. Not only that, you're
-> wanting me to say that journal replay copying incomplete,
-> unverifiable structure fragments over the top of existing disk
-> structures is 100% provably correct.
->=20
-> I am the person whole architected the existing metadata validation
-> infrastructure that XFS uses, and so I know it's limitations in
-> intimate detail. It is, by far, the closest thing we have to
-> complete runtime metadata validation in any Linux filesystem
-> (except maybe bcachefs), but it is nowhere near able to detect and
-> prevent 100% of potential structure corruptions.
->=20
-> It is *far from trivial* to validate all the weird corner cases that
-> exist in the on-disk format that have evolved over the last 3
-> decades. For the first 15 years of development, almost zero thought
-> was given to runtime validation of the on-disk format. People even
-> fought against introducing it at all. And despite this, we still
-> have to support the on-disk functionality those old, difficult to
-> validate, persistent structures describe.
->=20
-> [ And then there's some other random memory corruption bug in the
-> code, and all bets are off... ]
->=20
-> IOWs, no filesystem developer is ever going to give you a guarantee
-> that a filesystem implementation is free from memory corruption bugs
-> unless they've designed and implemented from the ground up to be
-> 100% safe from such issues. No such filesystem exists in the kernel,
-> and it will probably be years away before anything may exist to fill
-> that gap.
+On Tue, Mar 18, 2025 at 4:48=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko.c=
+om> wrote:
+> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+>
+> The fio test reveals the issue for the case of file size
+> is not aligned on 4K (for example, 4122, 8600, 10K etc).
+> The reproducing path:
+>
+> target_dir=3D/mnt/cephfs
+> report_dir=3D/report
+> size=3D100ki
+> nrfiles=3D10
+> pattern=3D0x74657374
+>
+> fio --runtime=3D5M --rw=3Dwrite --bs=3D4k --size=3D$size \
+> --nrfiles=3D$nrfiles --numjobs=3D16 --buffer_pattern=3D0x74657374 \
+> --iodepth=3D1 --direct=3D0 --ioengine=3Dlibaio --group_reporting \
+> --name=3Dfiotest --directory=3D$target_dir \
+> --output $report_dir/sequential_write.log
+>
+> fio --runtime=3D5M --verify_only --verify=3Dpattern \
+> --verify_pattern=3D0x74657374 --size=3D$size --nrfiles=3D$nrfiles \
+> --numjobs=3D16 --bs=3D4k --iodepth=3D1 --direct=3D0 --name=3Dfiotest \
+> --ioengine=3Dlibaio --group_reporting --verify_fatal=3D1 \
+> --verify_state_save=3D0 --directory=3D$target_dir \
+> --output $report_dir/verify_sequential_write.log
+>
+> The essence of the issue that the write phase calls
+> the fallocate() to pre-allocate 10K of file size and, then,
+> it writes only 8KB of data. However, CephFS code
+> in ceph_fallocate() ignores the FALLOC_FL_ALLOCATE_RANGE
+> mode and, finally, file is 8K in size only. As a result,
+> verification phase initiates wierd behaviour of CephFS code.
+> CephFS code calls ceph_fallocate() again and completely
+> re-write the file content by some garbage. Finally,
+> verification phase fails because file contains unexpected
+> data pattern.
 
-That makes sense. =20
 
-> > > The typical desktop policy of "probe and automount any device that
-> > > is plugged in" prevents the user from examining the device to
-> > > determine if it contains what it is supposed to contain.  The user
-> > > is not given any opportunity to device if trust is warranted before
-> > > the kernel filesystem parser running in ring 0 is exposed to the
-> > > malicious image.
-> > >=20
-> > > That's the fundamental policy problem we need to address: the user
-> > > and/or admin is not in control of their own security because
-> > > application developers and/or distro maintainers have decided they
-> > > should not have a choice.
-> > >=20
-> > > In this situation, the choice of what to do *must* fall to the user,
-> > > but the argument for "filesystem corruption is a CVE-worthy bug" is
-> > > that the choice has been taken away from the user. That's what I'm
-> > > saying needs to change - the choice needs to be returned to the
-> > > user...
-> >=20
-> > I am 100% in favor of not automounting filesystems without user
-> > interaction, but that only means that an exploit will require user
-> > interaction.  Users need to get things done, and if their task requires
-> > them to a not-fully-trusted filesystem image, then that is what they
-> > will do, and they will typically do it in the most obvious way possible.
-> > That most obvious way needs to be a safe way, and it needs to have good
-> > enough performance that users don't go around looking for an unsafe way.
->=20
-> Well, yes, that is obvious, and not a point of contention at all,
-> as is evidenced by the list of solutions to this problem I outlined.
+CephFS doesn=E2=80=99t really support fallocate in the general case to begi=
+n
+with =E2=80=94 we don=E2=80=99t want to go out and create an arbitrary numb=
+er of 4MiB
+objects in response to a large allocation command. AFAIK the only one
+we really do is letting you set a specific file size up (or down,
+maybe?). Do we actually want to support this specific sub-piece of the
+API? What happens if somebody uses FALLOC_FL_ALLOCATE_RANGE to set a
+size of 4MiB+1KiB? Is this synched with the current state of the user
+space client? I know Milind just made some changes around userspace
+fallocate to rationalize our behavior.
 
-What kind of performance do the existing solutions (libguestfs, lklfuse)
-have?
 
-> > > > or running it in a sufficiently tight
-> > > > sandbox that vulnerabilities in it are of too low importance to mat=
-ter.
-> > > > libguestfs+FUSE is the most obvious way to do this, but the perform=
-ance
-> > > > might not be enough for distros to turn it on.
-> > >=20
-> > > Yes, I have advocated for that to be used for desktop mounts in the
-> > > past. Similarly, I have also advocated for liblinux + FUSE to be
-> > > used so that the kernel filesystem code is used but run from a
-> > > userspace context where the kernel cannot be compromised.
-> > >=20
-> > > I have also advocated for user removable devices to be encrypted by
-> > > default. The act of the user unlocking the device automatically
-> > > marks it as trusted because undetectable malicious tampering is
-> > > highly unlikely.
-> >=20
-> > That is definitely a good idea.
-> >=20
-> > > I have also advocated for a device registry that records removable
-> > > device signatures and whether the user trusted them or not so that
-> > > they only need to be prompted once for any given removable device
-> > > they use.
-> > >=20
-> > > There are *many* potential user-friendly solutions to the problem,
-> > > but they -all- lie in the domain of userspace applications and/or
-> > > policies. This is *not* a problem more or better code in the kernel
-> > > can solve.
-> >=20
-> > It is certainly possible to make a memory safe implementation of amy
-> > filesystem.
->=20
-> Spoken like a True Expert.
+> fio: got pattern 'd0', wanted '74'. Bad bits 3
+> fio: bad pattern block offset 0
+> pattern: verify failed at file /mnt/cephfs/fiotest.3.0 offset 0, length 2=
+631490270 (requested block: offset=3D0, length=3D4096, flags=3D8)
+> fio: verify type mismatch (36969 media, 18 given)
+> fio: got pattern '25', wanted '74'. Bad bits 3
+> fio: bad pattern block offset 0
+> pattern: verify failed at file /mnt/cephfs/fiotest.4.0 offset 0, length 1=
+694436820 (requested block: offset=3D0, length=3D4096, flags=3D8)
+> fio: verify type mismatch (6714 media, 18 given)
+>
+> Expected state ot the file:
+>
+> hexdump -C ./fiotest.0.0
+> 00000000 74 65 73 74 74 65 73 74 74 65 73 74 74 65 73 74 |testtesttesttes=
+t| *
+> 00002000 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |...............=
+.| *
+> 00002190 00 00 00 00 00 00 00 00 |........|
+> 00002198
+>
+> Real state of the file:
+>
+> head -n 2 ./fiotest.0.0
+> 00000000 35 e0 28 cc 38 a0 99 16 06 9c 6a a9 f2 cd e9 0a |5.(.8.....j....=
+.|
+> 00000010 80 53 2a 07 09 e5 0d 15 70 4a 25 f7 0b 39 9d 18 |.S*.....pJ%..9.=
+.|
+>
+> The patch reworks ceph_fallocate() method by means of adding
+> support of FALLOC_FL_ALLOCATE_RANGE mode. Also, it adds the checking
+> that new size can be allocated by means of checking inode_newsize_ok(),
+> fsc->max_file_size, and ceph_quota_is_max_bytes_exceeded().
+> Invalidation and making dirty logic is moved into dedicated
+> methods.
+>
+> There is one peculiarity for the case of generic/103 test.
+> CephFS logic receives max_file_size from MDS server and it's 1TB
+> by default. As a result, generic/103 can fail if max_file_size
+> is smaller than volume size:
+>
+> generic/103 6s ... - output mismatch (see /home/slavad/XFSTESTS/xfstests-=
+dev/results//generic/103.out.bad)
+> --- tests/generic/103.out 2025-02-25 13:05:32.494668258 -0800
+> +++ /home/slavad/XFSTESTS/xfstests-dev/results//generic/103.out.bad 2025-=
+03-17 22:28:26.475750878 -0700
+> @ -1,2 +1,3 @
+> QA output created by 103
+> +fallocate: No space left on device
+> Silence is golden.
+>
+> The solution is to set the max_file_size equal to volume size:
 
-I am saying this in the sense of "it is possible to make a memory safe
-implementation of *anything*, unless that thing exposes a memory unsafe
-API.".  It's a generic statement about programs in general.  It does not
-imply that doing so is practical.
 
-> > If the current implementation can't prevent memory
-> > corruption if a malicious filesystem is mounted, that is a
-> > characteristic of the implementation.
->=20
-> Ah, now I see what you are trying to do. You're building a strawman
-> around memory corruption that you can use the argument "we need to
-> reimplement everything in Rust" to knock down.
->=20
-> Sorry, not playing that game.
+That is really not a good idea. Is there really a test that tries to
+fallocate that much space? We probably just want to skip it=E2=80=A6cleanin=
+g
+up files set to that size isn=E2=80=99t much fun.
+-Greg
 
-There are other options, like "run the filesystem in a tightly sandboxed
-userspace process, especially compiled through WebAssembly".  The
-difficulty is making them sufficiently performant for distributions to
-actually use them.
-
-> > However, the root filesystem is not the only filesystem image that must
-> > be mounted.  There is also a writable data volume, and that _cannot_ be
-> > signed because it contains user data.  It is encrypted, but part of the
-> > threat model for both Android and ChromeOS is an attacker who has gained
-> > root or even kernel code execution and wants to retain their access
-> > across device reboots. They can't tamper with the kernel or root
-> > filesystem, and privileged userspace treats the data on the writable
-> > filesystem as untrusted.  However, the attacker can replace the writable
-> > filesystem image with anything they want,
->=20
-> And therein lies the attack a fielsystem implementation can't defend
-> against: the attacker can rewrite the unencrypted block device to
-> contain anything they want, and that will then pass verification on
-> the next boot. Perhaps that's the class of storage attack you should
-> seek to prevent, not try to slap bandaids over trust model
-> violations or insinuate the only solution is to rewrite complex
-> subsystems in Rust....
-
-The Chrome OS and Android threat models require that they remain secure
-no matter what the contents of the unsigned block device actually are,
-even if they are completely malicious.
---=20
-Sincerely,
-Demi Marie Obenour (she/her/hers)
-Invisible Things Lab
-
---gJn/WH0kaLCMp1ft
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEopQtqVJW1aeuo9/sszaHOrMp8lMFAmfa2vMACgkQszaHOrMp
-8lOcpA//UMgEPqZkVnreLSPBSJyFUb1QUNe7uIl5vUbwNEjrTXdonIfAaBRg2jIv
-j7/nRxdbUDCQG0gZc9Gd8mWnZlZVi2lrjcYMzyUEfPV/eX+dGyB03xmUTWgPRiqU
-NMgnGAcLNHy647kXfzHoP2F/B3Wt8+MRK4rSMKZH7PnwyoyVR8xAd2BrMRRyUYb+
-uBKDhl7n2Knf+OzS9N/ZUdy6ABlkqetszR1OP6a8hOaKnG/He/Z1hZyIZSTWd3xH
-sW2mQEoXXtUJyHQUs72/PLfWeuDs/m2q6cABtX/JGDtH013WY06m9OUGLgDGkVt3
-3rtnxBmEnf09pWyOsvoDDD7mFaVogFb5c9f4jWyo7IBtGSAykmFXUh3pLfS6GJfk
-ccUZDhDQs4Ro9G+IBa9JmV9/avqxVSMPeuX/Wm2DCNfPbjyUV6Q3CVWlhffXs77d
-K7c5Rpkc4yeYUkEGiZDlbCYcJcMcSqEgZq/FqO+OkG7kpKwPwXgl/DZ8/e4mB77R
-EC470TjjJHYGlrsdwVF9eB3b0Fc8x0gow5BJOA01qcFAVy6gQPcKjA3ejbGCu2xW
-TrQEQGiWw4LuqJTQ7v9v2VnZn61Zy4GkIiPBH2iE+V6uTfuuRmT8X/FH3IhFovPB
-DQIdXvu16oy7CLmmU2Sd4CEwrRpUB/YEeCqOehK4nSiGVgz4WnQ=
-=JTKC
------END PGP SIGNATURE-----
-
---gJn/WH0kaLCMp1ft--
 
