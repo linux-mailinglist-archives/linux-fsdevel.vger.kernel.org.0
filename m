@@ -1,244 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-44471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07431A6982A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 19:37:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63331A6984A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 19:46:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A59419C2DC9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 18:37:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1AE54669B7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 18:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB0620DD63;
-	Wed, 19 Mar 2025 18:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384F620E316;
+	Wed, 19 Mar 2025 18:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="rY4aAwr7"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="fHmi1TfK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60FC20C480
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 18:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A0F14AD29;
+	Wed, 19 Mar 2025 18:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742409454; cv=none; b=c7+c1s1SzqXxxP0b8PtCTawXg8MtacOTSEZsmvZ3QAJ3FNU3YqYF+dUA/EWkx1WZoKh0F9METfMPrBz4Wgl9Hj6s1NTfARr6ETr0AHC/K8DhnNFawnQfzVQ/06otrXO05aI+d2sPgjsmmsJdWn7WLDeCTrAnzpPU9olloZQwv48=
+	t=1742409957; cv=none; b=AFBI1a0TAYXk3hTlWJHfBHuUjyMGV2XKCHRsoG3CO4wfpcZ855HFl6IZ9eJMFDjOpazUm0GQz/S3JGlCpeaO+hvcKj4oRK6KhR9uvZ+4CxRMrHX6+PijD0zQPChltioSXBq9vCpCzBSo/GVhVVT0ApJfpjYMKWIisalW1qBNraY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742409454; c=relaxed/simple;
-	bh=Kfa8G/vNjaGYGNW0JEQ3dlKDH4NKHYZbxfNqGPSjPo4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=V+IA6ovyzYB6fhnsyxSw49nw1tLt8I/bKVzLoCxDviPepuRH5qQ4Mqfc6M//AcUareeXBST97M2v23HN1frhiz6N3Lbyt1fUeZ/8gwXD2Yzqc4Gyt6d81FI3pYoLDqoOZO7gSUdP6fyfecYhwvv8keb67aJIfXHrgEqgby/vP0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=rY4aAwr7; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-85517db52a2so76452539f.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 11:37:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1742409452; x=1743014252; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=tOU2TrWkWar/3vjS2cdu6jloemO8+tWZ3XM9RPU5SBM=;
-        b=rY4aAwr7MzroRirr+3kEnWfq9zhfrbVCQVhgq+OcvrjnPB2546k1DLITEOxdeavOYw
-         J/xv7QmLV2guZ0GpbEcemzbnmVSzjYkDJp7PgXCwo5dtCEP9UuXjcb92T5Tttx71t1H1
-         vkfVxatNPm6NRhDBdTWuTkdv0Jhw9U5pV20pDh8fdhJgHZvsd+6p9fXwMCdyBG012J9O
-         OPzVwQY96LHOn9KtXYAUmlwMV9Sc6NMvEM0w8bq+6QAk62DCCQEuqNgLJbLJ25CBaHfx
-         TKswsw1IPaW6VXT+b/mKN4vDGNsyA8ro3GgbgUEb30mw5dK9HB11bEQDcBGCkR9s0FYE
-         OFFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742409452; x=1743014252;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tOU2TrWkWar/3vjS2cdu6jloemO8+tWZ3XM9RPU5SBM=;
-        b=nPUeKKZO7wk9O83xZvbTiAg1InSw9clS6ZBiSMfqhWlxRFO6VCQs1C4QscWn7u0iWR
-         fIAentKGavNdQYA9Dl75H7jZbHnEHjri4dNBo1bpxwI3S6yVJz1w7dWY/KyZ7ew3tuDm
-         oDvb+nSBZGLtjWviMbvRxn7YsYZZ/uMdrkPT+rX6vopLEnVNZH5eN9ZT22WxU1AW/Wwj
-         v3w9AhK3KRmAsBd+oBFJtU/jj5NkUlZdCjM9mrC42SL2ErMdnfhI6wwlAdRe8L1mR6cN
-         l+ZBZEL/i0Outa5YZt5e7aC2HzEqAWCk2QkUqUIezmeYz1rIdBMGiAuqSttyv0Sf6NKz
-         U65g==
-X-Forwarded-Encrypted: i=1; AJvYcCVVCtFSG0Odu2ov98y2gJcJyCCVdPlkR38ob8iAu64P/kqfitEXZhzRLxXitTYrCMKIAKr4oIicwgWN6B8C@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9+/2quPR5mqV6R9Z8wGnwTWWN+V98G83eSgossq6ehiY+qsTB
-	TzujLGQcWA20r0NtnMt4F9fkH+rDHESBbWT7LMjFqGxbhphhCF+BNoL1JAj1l8k=
-X-Gm-Gg: ASbGncv6LbCB6ex/eCzRoyEz6Nu7u7hQtRH66zLxGVrS4KWvMmMvjnvDC4oU9gNOAEK
-	rSyZOK3wf8ZtpcBdr0f9NBTg0dnFrmurBFU5NXuQsT88Bez9VrZLfAmkNfHf1x33dSwTSwdl3bm
-	v03I+T/Eb/v71CXRfn2wv2QJwseOPU6vxLJeqfNVwntwN6TL4ymU+h41vM4UDJrQ0iWbRhnUYwH
-	KcuvdToizkmeo9Jyhycl9z0l5VMHvUwLn2TCBXA/D5VXysnizh+G3pSmXf6MppmIIxkdM7UkCpe
-	65i2tmzZiByzTd/7hpqo215ym6Or7ldSKpzmrM3+hOq4Q+jYodI=
-X-Google-Smtp-Source: AGHT+IECcYnfpxvlC0iwBwA5lQBypcp+EaJg23jC62c//8nQymJPnN/mdYzW4CY8JWkJ1PAm8TMlJw==
-X-Received: by 2002:a05:6602:3587:b0:85d:a69f:371d with SMTP id ca18e2360f4ac-85e137b6f82mr529954939f.4.1742409451617;
-        Wed, 19 Mar 2025 11:37:31 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f263702081sm3364488173.14.2025.03.19.11.37.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Mar 2025 11:37:31 -0700 (PDT)
-Message-ID: <dc3ebb86-f4b2-443a-9b0d-f5470fd773f1@kernel.dk>
-Date: Wed, 19 Mar 2025 12:37:29 -0600
+	s=arc-20240116; t=1742409957; c=relaxed/simple;
+	bh=jmYzgtTRkcsqHiNNpg4VW93gtX90O8mign3nhlF50Ew=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=J7btii3IOaLpnDe9nmgWTx23H1T8SgmEn717kA6fqq33fre6SrVWqIFC9Eb3FO3bILAgEXnrFGkB9bO7T19EZEDkCwHXUz+5NQzhXGeXwZj8wQSeVE2t8bMwPLEZlpos5yr6WNDjRpXcEHiG17JGhDw2T+OD5GIKfDEGJNAyup8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=fHmi1TfK; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1742409954;
+	bh=jmYzgtTRkcsqHiNNpg4VW93gtX90O8mign3nhlF50Ew=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=fHmi1TfKjlZRbxCv8ta/Euopz8Mtv/SIGM8rkxxiWVXQeSAUlb3Pdwq2nNOUhc3Ir
+	 ftXM8JdEXjTi479T3IYt8YVr4dk/L2qR+U8tT8ZaNrrV9VzKiNbcKmvT79zOO6Kyis
+	 HMwyO4UnxjjoMCtgfS43HGFXfgPKIxofMbwmrZ5Q=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 1A7B91C00D0;
+	Wed, 19 Mar 2025 14:45:54 -0400 (EDT)
+Message-ID: <efa9428042d721979efe9a351dfbfb779833b467.camel@HansenPartnership.com>
+Subject: Re: [RFC PATCH 0/3] create simple libfs directory iterator and make
+ efivarfs use it
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-efi@vger.kernel.org, linux-fsdevel@vger.kernel.org, Ard Biesheuvel
+	 <ardb@kernel.org>, Christian Brauner <brauner@kernel.org>
+Date: Wed, 19 Mar 2025 14:45:53 -0400
+In-Reply-To: <70ba7c8e2cdc4c76f71274c9aaf77b360692613d.camel@HansenPartnership.com>
+References: <20250318194111.19419-1-James.Bottomley@HansenPartnership.com>
+	 <20250318234505.GY2023217@ZenIV>
+	 <70ba7c8e2cdc4c76f71274c9aaf77b360692613d.camel@HansenPartnership.com>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
-To: Joe Damato <jdamato@fastly.com>, Christoph Hellwig <hch@infradead.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- asml.silence@gmail.com, linux-fsdevel@vger.kernel.org, edumazet@google.com,
- pabeni@redhat.com, horms@kernel.org, linux-api@vger.kernel.org,
- linux-arch@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
- kuba@kernel.org, shuah@kernel.org, sdf@fomichev.me, mingo@redhat.com,
- arnd@arndb.de, brauner@kernel.org, akpm@linux-foundation.org,
- tglx@linutronix.de, jolsa@kernel.org, linux-kselftest@vger.kernel.org
-References: <20250319001521.53249-1-jdamato@fastly.com>
- <Z9p6oFlHxkYvUA8N@infradead.org> <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
- <2d68bc91-c22c-4b48-a06d-fa9ec06dfb25@kernel.dk>
- <Z9r5JE3AJdnsXy_u@LQ3V64L9R2>
- <19e3056c-2f7b-4f41-9c40-98955c4a9ed3@kernel.dk>
- <Z9sCsooW7OSTgyAk@LQ3V64L9R2>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Z9sCsooW7OSTgyAk@LQ3V64L9R2>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 3/19/25 11:45 AM, Joe Damato wrote:
-> On Wed, Mar 19, 2025 at 11:20:50AM -0600, Jens Axboe wrote:
->> On 3/19/25 11:04 AM, Joe Damato wrote:
->>> On Wed, Mar 19, 2025 at 10:07:27AM -0600, Jens Axboe wrote:
->>>> On 3/19/25 9:32 AM, Joe Damato wrote:
->>>>> On Wed, Mar 19, 2025 at 01:04:48AM -0700, Christoph Hellwig wrote:
->>>>>> On Wed, Mar 19, 2025 at 12:15:11AM +0000, Joe Damato wrote:
->>>>>>> One way to fix this is to add zerocopy notifications to sendfile similar
->>>>>>> to how MSG_ZEROCOPY works with sendmsg. This is possible thanks to the
->>>>>>> extensive work done by Pavel [1].
->>>>>>
->>>>>> What is a "zerocopy notification" 
->>>>>
->>>>> See the docs on MSG_ZEROCOPY [1], but in short when a user app calls
->>>>> sendmsg and passes MSG_ZEROCOPY a completion notification is added
->>>>> to the error queue. The user app can poll for these to find out when
->>>>> the TX has completed and the buffer it passed to the kernel can be
->>>>> overwritten.
->>>>>
->>>>> My series provides the same functionality via splice and sendfile2.
->>>>>
->>>>> [1]: https://www.kernel.org/doc/html/v6.13/networking/msg_zerocopy.html
->>>>>
->>>>>> and why aren't you simply plugging this into io_uring and generate
->>>>>> a CQE so that it works like all other asynchronous operations?
->>>>>
->>>>> I linked to the iouring work that Pavel did in the cover letter.
->>>>> Please take a look.
->>>>>
->>>>> That work refactored the internals of how zerocopy completion
->>>>> notifications are wired up, allowing other pieces of code to use the
->>>>> same infrastructure and extend it, if needed.
->>>>>
->>>>> My series is using the same internals that iouring (and others) use
->>>>> to generate zerocopy completion notifications. Unlike iouring,
->>>>> though, I don't need a fully customized implementation with a new
->>>>> user API for harvesting completion events; I can use the existing
->>>>> mechanism already in the kernel that user apps already use for
->>>>> sendmsg (the error queue, as explained above and in the
->>>>> MSG_ZEROCOPY documentation).
->>>>
->>>> The error queue is arguably a work-around for _not_ having a delivery
->>>> mechanism that works with a sync syscall in the first place. The main
->>>> question here imho would be "why add a whole new syscall etc when
->>>> there's already an existing way to do accomplish this, with
->>>> free-to-reuse notifications". If the answer is "because splice", then it
->>>> would seem saner to plumb up those bits only. Would be much simpler
->>>> too...
->>>
->>> I may be misunderstanding your comment, but my response would be:
->>>
->>>   There are existing apps which use sendfile today unsafely and
->>>   it would be very nice to have a safe sendfile equivalent. Converting
->>>   existing apps to using iouring (if I understood your suggestion?)
->>>   would be significantly more work compared to calling sendfile2 and
->>>   adding code to check the error queue.
->>
->> It's really not, if you just want to use it as a sync kind of thing. If
->> you want to have multiple things in flight etc, yeah it could be more
->> work, you'd also get better performance that way. And you could use
->> things like registered buffers for either of them, which again would
->> likely make it more efficient.
-> 
-> I haven't argued that performance would be better using sendfile2
-> compared to iouring, just that existing apps which already use
-> sendfile (but do so unsafely) would probably be more likely to use a
-> safe alternative with existing examples of how to harvest completion
-> notifications vs something more complex, like wrapping iouring.
+On Wed, 2025-03-19 at 12:46 -0400, James Bottomley wrote:
+> I assume you won't like the way I have to allocate and toss a cursor
+> for each iteration, nor the fact that there's still the
+> cond_resched() in there?=C2=A0 I think I can fix that but I'd have to
+> slice apart simple_positive(), which is a bigger undertaking.
 
-Sure and I get that, just not sure it'd be worth doing on the kernel
-side for such (fairly) weak reasoning. The performance benefit is just a
-side note in that if you did do it this way, you'd potentially be able
-to run it more efficiently too. And regardless what people do or use
-now, they are generally always interested in that aspect.
+So this is what I think that would look like: it still exports the same
+simple_next_child() function but doesn't need to allocate cursors or do
+any of the cond_resched() stuff.  The down side is that the slice is a
+lot less easily verified than the other two patches, so this one's
+going to need a lot of code inspection to make sure I got it right.
 
->> If you just use it as a sync thing, it'd be pretty trivial to just wrap
->> a my_sendfile_foo() in a submit_and_wait operation, which issues and
->> waits on the completion in a single syscall. And if you want to wait on
->> the notification too, you could even do that in the same syscall and
->> wait on 2 CQEs. That'd be a downright trivial way to provide a sync way
->> of doing the same thing.
-> 
-> I don't disagree; I just don't know if app developers:
->   a.) know that this is possible to do, and
->   b.) know how to do it
+Regards,
 
-Writing that wrapper would be not even a screenful of code. Yes maybe
-they don't know how to do it now, but it's _really_ trivial to do. It'd
-take me roughly 1 min to do that, would be happy to help out with that
-side so it could go into a commit or man page or whatever.
+James
 
-> In general: it does seem a bit odd to me that there isn't a safe
-> sendfile syscall in Linux that uses existing completion notification
-> mechanisms.
+---
 
-Pretty natural, I think. sendfile(2) predates that by quite a bit, and
-the last real change to sendfile was using splice underneath. Which I
-did, and that was probably almost 20 years ago at this point...
+ fs/libfs.c         | 85 +++++++++++++++++++++++++++++++++++++++-------
+ include/linux/fs.h |  2 ++
+ 2 files changed, 74 insertions(+), 13 deletions(-)
 
-I do think it makes sense to have a sendfile that's both fast and
-efficient, and can be used sanely with buffer reuse without relying on
-odd heuristics.
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 8444f5cc4064..3a32910f44dc 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -101,6 +101,34 @@ int dcache_dir_close(struct inode *inode, struct
+file *file)
+ }
+ EXPORT_SYMBOL(dcache_dir_close);
+=20
++/*
++ * helper for positive scanning.  Requires a nested while loop which shoul=
+d
++ * be broken if this returns false
++ */
++static bool internal_scan_positive(struct hlist_node **p, struct dentry *d=
+,
++				   struct dentry **found, loff_t *count)
++{
++	while (*p) {
++		p =3D &d->d_sib.next;
++
++		// we must at least skip cursors, to avoid livelocks
++		if (d->d_flags & DCACHE_DENTRY_CURSOR)
++			continue;
++
++		if (simple_positive(d) && !--*count) {
++			spin_lock_nested(&d->d_lock, DENTRY_D_LOCK_NESTED);
++			if (simple_positive(d))
++				*found =3D dget_dlock(d);
++			spin_unlock(&d->d_lock);
++			if (likely(*found))
++				return true;
++			*count =3D 1;
++		}
++		return false;
++	}
++	return true;
++}
++
+ /* parent is locked at least shared */
+ /*
+  * Returns an element of siblings' list.
+@@ -118,19 +146,9 @@ static struct dentry *scan_positives(struct dentry *cu=
+rsor,
+ 	spin_lock(&dentry->d_lock);
+ 	while (*p) {
+ 		struct dentry *d =3D hlist_entry(*p, struct dentry, d_sib);
+-		p =3D &d->d_sib.next;
+-		// we must at least skip cursors, to avoid livelocks
+-		if (d->d_flags & DCACHE_DENTRY_CURSOR)
+-			continue;
+-		if (simple_positive(d) && !--count) {
+-			spin_lock_nested(&d->d_lock, DENTRY_D_LOCK_NESTED);
+-			if (simple_positive(d))
+-				found =3D dget_dlock(d);
+-			spin_unlock(&d->d_lock);
+-			if (likely(found))
+-				break;
+-			count =3D 1;
+-		}
++
++		if (internal_scan_positive(p, d, &found, &count))
++			break;
+ 		if (need_resched()) {
+ 			if (!hlist_unhashed(&cursor->d_sib))
+ 				__hlist_del(&cursor->d_sib);
+@@ -146,6 +164,47 @@ static struct dentry *scan_positives(struct dentry *cu=
+rsor,
+ 	return found;
+ }
+=20
++/**
++ * simple_next_child - get next child of the parent directory
++ *
++ * @parent: the directory to scan
++ * @child: last child (or NULL to start at the beginning)
++ *
++ * returns the next positive child in sequence with the reference
++ * elevated but if a child is passed in will drop that
++ * reference. Returns NULL on either error or when directory has been
++ * fully scanned.
++ *
++ * The intended use is as an iterator because all the references will
++ * be dropped by the end of the while loop:
++ *
++ *     child =3D NULL
++ *     while(child =3D simple_next_child(parent, child)) {
++ *          // do something
++ *     }
++ */
++struct dentry *simple_next_child(struct dentry *parent, struct dentry *chi=
+ld)
++{
++	struct hlist_node **p;
++	loff_t count =3D 1;
++	struct dentry *found =3D NULL;
++
++	if (child)
++		p =3D &child->d_sib.next;
++	else
++		p =3D &parent->d_children.first;
++
++	while (*p) {
++		struct dentry *d =3D hlist_entry(*p, struct dentry, d_sib);
++
++		if (internal_scan_positive(p, d, &found, &count))
++			break;
++	}
++	dput(child);
++	return found;
++}
++EXPORT_SYMBOL(simple_next_child);
++
+ loff_t dcache_dir_lseek(struct file *file, loff_t offset, int whence)
+ {
+ 	struct dentry *dentry =3D file->f_path.dentry;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 2788df98080f..dd84d1c3b8af 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3531,6 +3531,8 @@ extern int simple_rename(struct mnt_idmap *, struct i=
+node *,
+ 			 unsigned int);
+ extern void simple_recursive_removal(struct dentry *,
+                               void (*callback)(struct dentry *));
++extern struct dentry *simple_next_child(struct dentry *parent,
++					struct dentry *child);
+ extern int noop_fsync(struct file *, loff_t, loff_t, int);
+ extern ssize_t noop_direct_IO(struct kiocb *iocb, struct iov_iter *iter);
+ extern int simple_empty(struct dentry *);
+--=20
+2.43.0
 
->>> I would also argue that there are likely user apps out there that
->>> use both sendmsg MSG_ZEROCOPY for certain writes (for data in
->>> memory) and also use sendfile (for data on disk). One example would
->>> be a reverse proxy that might write HTTP headers to clients via
->>> sendmsg but transmit the response body with sendfile.
->>>
->>> For those apps, the code to check the error queue already exists for
->>> sendmsg + MSG_ZEROCOPY, so swapping in sendfile2 seems like an easy
->>> way to ensure safe sendfile usage.
->>
->> Sure that is certainly possible. I didn't say that wasn't the case,
->> rather that the error queue approach is a work-around in the first place
->> for not having some kind of async notification mechanism for when it's
->> free to reuse.
-> 
-> Of course, I certainly agree that the error queue is a work around.
-> But it works, app use it, and its fairly well known. I don't see any
-> reason, other than historical context, why sendmsg can use this
-> mechanism, splice can, but sendfile shouldn't?
 
-My argument would be the same as for other features - if you can do it
-simpler this other way, why not consider that? The end result would be
-the same, you can do fast sendfile() with sane buffer reuse. But the
-kernel side would be simpler, which is always a kernel main goal for
-those of us that have to maintain it.
-
-Just adding sendfile2() works in the sense that it's an easier drop in
-replacement for an app, though the error queue side does mean it needs
-to change anyway - it's not just replacing one syscall with another. And
-if we want to be lazy, sure that's fine. I just don't think it's the
-best way to do it when we literally have a mechanism that's designed for
-this and works with reuse already with normal send zc (and receive side
-too, in the next kernel).
-
--- 
-Jens Axboe
 
