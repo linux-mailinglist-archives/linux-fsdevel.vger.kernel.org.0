@@ -1,249 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-44412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDA50A68636
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 08:55:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48AB4A68644
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 08:59:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C41D16A2F9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 07:54:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70C9618971C3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 07:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2FC2505B2;
-	Wed, 19 Mar 2025 07:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC19C24FC1F;
+	Wed, 19 Mar 2025 07:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="DqG01zv6"
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="ih0aDDqk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04olkn2041.outbound.protection.outlook.com [40.92.47.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B9C24EF7F;
-	Wed, 19 Mar 2025 07:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742370839; cv=none; b=Lg6sqvoScINW1kI9rKECYQ9gsBXUh/ArTwCH4NU/uIPFPmZlEJlCIN8dqVPzDaaw6vnXATzTVjJJ3+Z5uFqdEhZjA0ZF1yyg6Zmq3Zqlzm74Ey4Nbw9YCZkBR2RWLpC0UlVT6RX0tJ6+8eR7D/EvIHXxi1+c++qFZAQnYMghf4w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742370839; c=relaxed/simple;
-	bh=ky3jiM1bjOMzTVRWpEBEoFuEvp1kviCET1tz7ZVwE2M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=p8sRDjXxkj5H37obxICefLjVocm67tUslQfkJU9E4m66fo/T/qiVAZsDROPRwgK1Xib8zjrb78p4Oqi+ZCZ73ZV1OtIFnUaNHon6XPgQwJawgSc7/Uca9hfi41azEqJNHIAUEVAmM2Z2LhjnkGVhM9IbCuFKjFv3A7IipfNRQEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=DqG01zv6; arc=none smtp.client-ip=52.95.48.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1742370839; x=1773906839;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=jXl/8vzx6TOy29mjcSY/yyQLEaXHaFbsfFs77FD/cV4=;
-  b=DqG01zv6efHOu5qF8LBUlJK8bGv0/di64ealz+ky2yRSAraysEpZX/O3
-   l2+gmCRnUavBY4q3NPaHk+z5e6b1t40AyTs91I43cpNU/2YCpZPnWb2Mz
-   i793CHBoh7ICQm8BJLz1StnIFOzDBVveVbW4sPRklXxGx2dAklUCRYBZj
-   4=;
-X-IronPort-AV: E=Sophos;i="6.14,259,1736812800"; 
-   d="scan'208";a="472339262"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 07:53:51 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.7.35:10937]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.62.245:2525] with esmtp (Farcaster)
- id f1034041-96c5-4fa3-9e32-0aaec99408b2; Wed, 19 Mar 2025 07:53:50 +0000 (UTC)
-X-Farcaster-Flow-ID: f1034041-96c5-4fa3-9e32-0aaec99408b2
-Received: from EX19D020UWA001.ant.amazon.com (10.13.138.249) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 19 Mar 2025 07:53:50 +0000
-Received: from EX19MTAUEC002.ant.amazon.com (10.252.135.146) by
- EX19D020UWA001.ant.amazon.com (10.13.138.249) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 19 Mar 2025 07:53:49 +0000
-Received: from email-imr-corp-prod-iad-all-1a-f1af3bd3.us-east-1.amazon.com
- (10.43.8.6) by mail-relay.amazon.com (10.252.135.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1544.14 via Frontend Transport; Wed, 19 Mar 2025 07:53:49 +0000
-Received: from [127.0.0.1] (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
-	by email-imr-corp-prod-iad-all-1a-f1af3bd3.us-east-1.amazon.com (Postfix) with ESMTPS id 5C81F40881;
-	Wed, 19 Mar 2025 07:53:45 +0000 (UTC)
-Message-ID: <ad359b73-e50c-48e0-a5b5-4df9823fa289@amazon.co.uk>
-Date: Wed, 19 Mar 2025 07:53:43 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84454E552;
+	Wed, 19 Mar 2025 07:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.47.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742371176; cv=fail; b=MnRCVMt8708YEfT2V1OmY7/BcWMOr0qXauARnFvTqceEnc7SbBpM4/jtt1Roz/7aYfUenL4RFznWH7WxnF6YKlwP2jdVEgl0gyPQlh9PeS1GY9ZIRbCOCEvdhw2YGDMhAizclD5l2I+luW1gUxnfE2wgF5KD4L9bUgj9BmULMo4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742371176; c=relaxed/simple;
+	bh=a7kuoficIJ3865IH73sEwgofOLfmEZta+pBu2LFLKbY=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Ix3+SjhQOw2t7JEDylXLE/4CTs72mNBaT4/7WG/LQc7kDz6Wui4W2+KOcCRTBV5uf0f5+8uTJFoKuTGHdgdGYOHWv0Mb6WtIVEHbh/7MzfxfFHv5LNMaPrRwLdaRxtIV6V1ALV/cXOfmHmMjVZFXiCX61yt50DufAadvA9561jM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=ih0aDDqk; arc=fail smtp.client-ip=40.92.47.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GJL45rnsGF/omSMcSi5o1UHtv+eiKYnVCYsy60YWLJaYYKvhbr0uqmmwruJwMIp/loDKo3tpmywXI2+EqmjqM4TzUEwn3BYZQWQqj4Uwcxjp//ulz6CHi3Pslp0+6/E41dcFY5FCCXTlhhghNwll4We7yFrqWmIDUwYTT429BZ9MFVjadW7VVCnTF5r31uuQaD1eat3RWXehnKEXLjbSjFLn9RdYJ7YM0N5/J+6UJ48ni/0IJS7K3sHXFutbD3J7K8xVQPLjL4AS86G+K6BJbSj4V+eoZ73x6Ja5jG26p2K7yHVPV6WZsf8ouH/nBxZVoSa1+IZYid/2oJqG0dLotA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Xk0gEpTEz1WDzuHd3XUENiLjSe7yZ8nolTwGj49VSF8=;
+ b=Kbrz+cvTeClkCGfzDDXuXUlKZrGw3YB5ujIUtAuzcnfnaGR/rsnHLN8T6b2y6gz08tYxBsBxh5s1PEAiqqQTFcZDopcrhZwR43seuTBW6038yKpmjwkw8ljkdd9OBPzdUh/g9RZyIDxWreg4Y0Mdc3C/6XQkPAUQpigCzzF9z+fOPThrrBIazdZ6BO+AL2R90iepW/OsRgdV8/fwDcDaKz75mCFBUiBVpd6GNRdD5Lyu4TQlvl/8CmkIztWlVTj61Rz3MtJS1hAYWqyOoAlqSfMf1uV+mRZLb1IHSuzWcFRIW+WLc+NdXCz9EnJ85WR+xiFjvwLdoYcvUG4axS/7Mw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Xk0gEpTEz1WDzuHd3XUENiLjSe7yZ8nolTwGj49VSF8=;
+ b=ih0aDDqkq94DbXEpJulPBqW7vVRgL6/RdZg72QNymzeZw0+raWEvWvBPAUtB89UqldBK/kZBcGlFgc66BKITr5jZ2XxL19AFenSpKL/SBCEXviYceVTodV375vv97aYNGRkEBQh4rNm6HeRHocZtxhSTpKVFr9MJWhEucmAOWnB8YmEB/c9P81e79WcLCiORYnhth+IpS4vRW9onc92bihMO2xhKqzzUvVfieNDsqpGoN7fEzhccMNSc01W2I8hfEo2DeISQrdHX1FbGSXSS0alUJ3nmGj2N7U6mqiB5SqXQ1s+s78i4wpQNpV2T8eb0w8A+AJUwhb+A+9bDKhXEvg==
+Received: from BYAPR12MB3205.namprd12.prod.outlook.com (2603:10b6:a03:134::32)
+ by MN0PR12MB5857.namprd12.prod.outlook.com (2603:10b6:208:378::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Wed, 19 Mar
+ 2025 07:59:31 +0000
+Received: from BYAPR12MB3205.namprd12.prod.outlook.com
+ ([fe80::489:5515:fcf2:b991]) by BYAPR12MB3205.namprd12.prod.outlook.com
+ ([fe80::489:5515:fcf2:b991%5]) with mapi id 15.20.8534.031; Wed, 19 Mar 2025
+ 07:59:31 +0000
+From: Stephen Eta Zhou <stephen.eta.zhou@outlook.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, David Disseldorp <ddiss@suse.de>
+CC: "jsperbeck@google.com" <jsperbeck@google.com>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>, "lukas@wunner.de" <lukas@wunner.de>,
+	"wufan@linux.microsoft.com" <wufan@linux.microsoft.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH] initramfs: Add size validation to prevent tmpfs
+ exhaustion
+Thread-Topic: [RFC PATCH] initramfs: Add size validation to prevent tmpfs
+ exhaustion
+Thread-Index: AQHbmKTYpUwqyBSJDU6CvzaMkV07IQ==
+Date: Wed, 19 Mar 2025 07:59:31 +0000
+Message-ID:
+ <BYAPR12MB32059646E1837EC3EDB678B9D5D92@BYAPR12MB3205.namprd12.prod.outlook.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BYAPR12MB3205:EE_|MN0PR12MB5857:EE_
+x-ms-office365-filtering-correlation-id: ab96285e-6e2b-43ff-d33a-08dd66bbfb38
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|8062599003|8060799006|15030799003|19110799003|15080799006|440099028|3412199025|102099032|4295299021;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?cz85IePy8rA8v8aM2QChc5ZX43gMDOr958KLLHoha4uw07uZGK8k7yxDQL?=
+ =?iso-8859-1?Q?/jiYxZqrmxBKjwZ3FyfVqxpJMEeBgKOafDhIPf/N7W06NDPhjVyq3J0oSD?=
+ =?iso-8859-1?Q?ylivBnIu86prmEJPukV1JPBTmZSstSSSqeyPwSVPtI2hFGyywTDZXDPe4L?=
+ =?iso-8859-1?Q?qo4q084S0ERWhbl0/gmD67EBV0dh8sxJMygD9CrUG4FlAO0KABsomSlKR2?=
+ =?iso-8859-1?Q?ZtQvbqX0/AJ87G8JUXYcznWg7puKdc+SenKe4cX91roaMaLghQHTgisBEF?=
+ =?iso-8859-1?Q?w1LJfEE18j5CgCFMHt41B9pleoZYInszLlrEVq3cOxk5UwgjSYjZbJ3b9E?=
+ =?iso-8859-1?Q?FIqLSHHhu+3uPtuetPtZMfF2PWOfG7NbXz7TmCikzK7JNinZOTFtc8lDnZ?=
+ =?iso-8859-1?Q?fX624ExmgIvtw4R0oz3GHs9MsHvYrj0mBBeEBFMogLVLW423gn1OgXWZfw?=
+ =?iso-8859-1?Q?g0F8+t2D8U0dz6fSinNxth8NcV0Zr6s8Qw7ICEIOM8FwjiknNlO+84AFZP?=
+ =?iso-8859-1?Q?i4tU5vvq7gg+qVXfD+4PCeBj0BVK5XECx2LIHRoSjXm9BnIhqzFYCYqtqW?=
+ =?iso-8859-1?Q?VgMwo3IOQZ9bfzt5fGLa0ic9pi2LVJj14n3RXjtCIbKVY6gQ8oKDPMzW5I?=
+ =?iso-8859-1?Q?R9igwGHs50i0ktd+V/S6OwgFQKGsiouzWN3OZ46Hs72ec1bm8y/h4X5fRb?=
+ =?iso-8859-1?Q?PYxZjCPovtZNvqxD/VNDDixjyJvpIEqIthVVv6EE+cb3jxdZ2O/5OnOyib?=
+ =?iso-8859-1?Q?pROBG+NLQHa+qekAbAJMq2mHfiqi0InBu5le/uXBQhUjIHyh4etOJMyHnd?=
+ =?iso-8859-1?Q?E+DH6bT+t9GB2iCuHGrf/TN/wyB+y/Ezc/kPy8hLbrR+zFceseVHTx8ijm?=
+ =?iso-8859-1?Q?4GXGXOThVjFCryUJn/ehaeULWbWc0GD5Hiyn22vZmzmfUU6cWHCjvXbBiQ?=
+ =?iso-8859-1?Q?tLo2IexKekf07vLIZnzmDumkiwkGHCp3U1cNxN/q3reyhC/YbZHiFyxVhK?=
+ =?iso-8859-1?Q?NA49z9vgJRlEHyM08GabeXQKPiuUxoDjlbCG75TgvGowo6cly7paBP91bT?=
+ =?iso-8859-1?Q?gJ6J8OwoFML+9asLwbOs0IgHCDhf1IojvdvKx+X30ZorE/RuK6XoUiSP0/?=
+ =?iso-8859-1?Q?TG4bzd0DJ4uMMbof9jAz4rIZLNhudMbZoHmIvyyHnNprFMdBbn?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?LkzAYiy8zac56eLn3DBwJfZPm1PqwS5PboZUA6Ltf/j0rc7s3HM0WyWg9W?=
+ =?iso-8859-1?Q?Z3eQpDLavyJ+sZrss/R5vUNzcwStZWCt0fAt/9hsaDeei5voTSHP5Y6iin?=
+ =?iso-8859-1?Q?5DuevqFV1vO0S3ma1kCj3X5ZzEM0pGlQxVKEwGL9ZXSox/m3trz0djhHWZ?=
+ =?iso-8859-1?Q?10LCyaYMN82Hzzn8mqxxwYbA4Ef3gvjzAMUphppaDTFIUYtwbP5PyqZRPN?=
+ =?iso-8859-1?Q?AjsGcBpSmP+BTGTTGEZK2EiOK/rIefag3Ckj80YPcd5FDcx52V93flLvDY?=
+ =?iso-8859-1?Q?IijDrjv4aj5Q09r4zkSdeU0P1q/9L9pQYrQM/m/xZMnGBabhiBYyS0DSWb?=
+ =?iso-8859-1?Q?ZnPlYFqG6iTAg/f8RWFrV1PXYvISQMh6p0FezYif0U5pDOahLpuAZJR7qZ?=
+ =?iso-8859-1?Q?UMCZomcARDag8Gn5N9FW1AR5S0l5M0vcE7Oe1GPpJSzyZ+jlShYU05Ww9L?=
+ =?iso-8859-1?Q?UnIeXwEJK0brvziPxHM9jP/2JJmQSmCNCbVn4Q1agdTmAeOffOLaKzEODt?=
+ =?iso-8859-1?Q?YYu69QHK5YZFBx+8kdos1DuXs+bw7piGAL9TeDa1+a7FdcbYcktE6LF3Vq?=
+ =?iso-8859-1?Q?Sl1/W8wZQdFf2LsYBqgQi11S5d9HmQpF1CuqLkxQRut1VZeHo35W1tbGou?=
+ =?iso-8859-1?Q?qGlA28naZdzn670h2JTWn4Q5vqIxnB2y6bIyzRIp97pU4T+Srf8NaiJ4O/?=
+ =?iso-8859-1?Q?tttKSWtmwnQh5FCZREZsQsZMOL15f/218JjelpWA56AL7L1XNXmGRJk2Gc?=
+ =?iso-8859-1?Q?gJP2dNEUEf1F5Qar0T+yIu4BXI2ogkeeV7sIu0sH5k7zgvO2P+mP98fWg/?=
+ =?iso-8859-1?Q?AsTxrQJlrP7E/Oc55XjD1rKHnW+y8Xjwo3kE7+BLFDxAVvP5VyDdweoexP?=
+ =?iso-8859-1?Q?e1F6y17WmMeR1OYrWqgGVpjpZ9XmcXl6F3dD75kXGIYVgIYNffyeX2HJdi?=
+ =?iso-8859-1?Q?3yNPAk6t+9daJDYC5c2p7ko11U2ptJp1Ab1649ermARqU7SXlafONWDc25?=
+ =?iso-8859-1?Q?qNnTOx23aVRYgxxT/n/v2403QXITHR+z5apMAd9G2Ac8mpyfhQkuMHtKao?=
+ =?iso-8859-1?Q?yPNtr1ssvQ2Q2dgBSHIfki/td6QrOV4MEm0XotovE5cEyb5NxIh8dWfEkk?=
+ =?iso-8859-1?Q?pHX8y0ITUNzm/eDMpK8IEPl77xj6uX3m/vWPhVAVceK2d0aSbqWsUqg6U7?=
+ =?iso-8859-1?Q?jNh81S7uVJ3AnWlc6Tr2BloUv+WUUtl/ueAsgDM+qiiGbgSr0SjKppu2gy?=
+ =?iso-8859-1?Q?XcIe3tm4TTHi+3rehf1FupABIyZJaAaqGSt8kEBRI=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/12] KVM: guest_memfd: Add flag to remove from direct
- map
-To: David Hildenbrand <david@redhat.com>, <rppt@kernel.org>,
-	<seanjc@google.com>
-CC: <pbonzini@redhat.com>, <corbet@lwn.net>, <willy@infradead.org>,
-	<akpm@linux-foundation.org>, <song@kernel.org>, <jolsa@kernel.org>,
-	<ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
-	<martin.lau@linux.dev>, <eddyz87@gmail.com>, <yonghong.song@linux.dev>,
-	<john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@fomichev.me>,
-	<haoluo@google.com>, <Liam.Howlett@oracle.com>, <lorenzo.stoakes@oracle.com>,
-	<vbabka@suse.cz>, <jannh@google.com>, <shuah@kernel.org>,
-	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <bpf@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <tabba@google.com>, <jgowans@amazon.com>,
-	<graf@amazon.com>, <kalyazin@amazon.com>, <xmarcalx@amazon.com>,
-	<derekmn@amazon.com>, <jthoughton@google.com>, Elliot Berman
-	<quic_eberman@quicinc.com>
-References: <20250221160728.1584559-1-roypat@amazon.co.uk>
- <20250221160728.1584559-4-roypat@amazon.co.uk>
- <a3178c50-2e76-4743-8008-9a33bd0af93f@redhat.com>
- <8642de57-553a-47ec-81af-803280a360ec@amazon.co.uk>
- <bfe43591-66b6-4fb9-bf6c-df79ddeffb17@redhat.com>
- <7f38018b-dc89-4d79-a309-149557796121@amazon.co.uk>
- <9ffce724-23c9-4aa1-bc53-8292e1029991@redhat.com>
-From: Patrick Roy <roypat@amazon.co.uk>
-Content-Language: en-US
-Autocrypt: addr=roypat@amazon.co.uk; keydata=
- xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
- NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
- wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
- CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
- AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
- AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
- IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
- 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
- 8hlxFQM=
-In-Reply-To: <9ffce724-23c9-4aa1-bc53-8292e1029991@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB3205.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab96285e-6e2b-43ff-d33a-08dd66bbfb38
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2025 07:59:31.6145
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5857
 
-Hi David!
-
-On Wed, 2025-02-26 at 15:30 +0000, David Hildenbrand wrote:
-> On 26.02.25 16:14, Patrick Roy wrote:
->>
->>
->> On Wed, 2025-02-26 at 09:08 +0000, David Hildenbrand wrote:
->>> On 26.02.25 09:48, Patrick Roy wrote:
->>>>
->>>>
->>>> On Tue, 2025-02-25 at 16:54 +0000, David Hildenbrand wrote:> On 21.02.25 17:07, Patrick Roy wrote:
->>>>>> Add KVM_GMEM_NO_DIRECT_MAP flag for KVM_CREATE_GUEST_MEMFD() ioctl. When
->>>>>> set, guest_memfd folios will be removed from the direct map after
->>>>>> preparation, with direct map entries only restored when the folios are
->>>>>> freed.
->>>>>>
->>>>>> To ensure these folios do not end up in places where the kernel cannot
->>>>>> deal with them, set AS_NO_DIRECT_MAP on the guest_memfd's struct
->>>>>> address_space if KVM_GMEM_NO_DIRECT_MAP is requested.
->>>>>>
->>>>>> Note that this flag causes removal of direct map entries for all
->>>>>> guest_memfd folios independent of whether they are "shared" or "private"
->>>>>> (although current guest_memfd only supports either all folios in the
->>>>>> "shared" state, or all folios in the "private" state if
->>>>>> !IS_ENABLED(CONFIG_KVM_GMEM_SHARED_MEM)). The usecase for removing
->>>>>> direct map entries of also the shared parts of guest_memfd are a special
->>>>>> type of non-CoCo VM where, host userspace is trusted to have access to
->>>>>> all of guest memory, but where Spectre-style transient execution attacks
->>>>>> through the host kernel's direct map should still be mitigated.
->>>>>>
->>>>>> Note that KVM retains access to guest memory via userspace
->>>>>> mappings of guest_memfd, which are reflected back into KVM's memslots
->>>>>> via userspace_addr. This is needed for things like MMIO emulation on
->>>>>> x86_64 to work. Previous iterations attempted to instead have KVM
->>>>>> temporarily restore direct map entries whenever such an access to guest
->>>>>> memory was needed, but this turned out to have a significant performance
->>>>>> impact, as well as additional complexity due to needing to refcount
->>>>>> direct map reinsertion operations and making them play nicely with gmem
->>>>>> truncations.
->>>>>>
->>>>>> This iteration also doesn't have KVM perform TLB flushes after direct
->>>>>> map manipulations. This is because TLB flushes resulted in a up to 40x
->>>>>> elongation of page faults in guest_memfd (scaling with the number of CPU
->>>>>> cores), or a 5x elongation of memory population. On the one hand, TLB
->>>>>> flushes are not needed for functional correctness (the virt->phys
->>>>>> mapping technically stays "correct",  the kernel should simply to not it
->>>>>> for a while), so this is a correct optimization to make. On the other
->>>>>> hand, it means that the desired protection from Spectre-style attacks is
->>>>>> not perfect, as an attacker could try to prevent a stale TLB entry from
->>>>>> getting evicted, keeping it alive until the page it refers to is used by
->>>>>> the guest for some sensitive data, and then targeting it using a
->>>>>> spectre-gadget.
->>>>>>
->>>>>> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
->>>>>
->>>>> ...
->>>>>
->>>>>>
->>>>>> +static bool kvm_gmem_test_no_direct_map(struct inode *inode)
->>>>>> +{
->>>>>> +     return ((unsigned long) inode->i_private) & KVM_GMEM_NO_DIRECT_MAP;
->>>>>> +}
->>>>>> +
->>>>>>     static inline void kvm_gmem_mark_prepared(struct folio *folio)
->>>>>>     {
->>>>>> +     struct inode *inode = folio_inode(folio);
->>>>>> +
->>>>>> +     if (kvm_gmem_test_no_direct_map(inode)) {
->>>>>> +             int r = set_direct_map_valid_noflush(folio_page(folio, 0), folio_nr_pages(folio),
->>>>>> +                                                  false);
->>>>>
->>>>> Will this work if KVM is built as a module, or is this another good
->>>>> reason why we might want guest_memfd core part of core-mm?
->>>>
->>>> mh, I'm admittedly not too familiar with the differences that would come
->>>> from building KVM as a module vs not. I do remember something about the
->>>> direct map accessors not being available for modules, so this would
->>>> indeed not work. Does that mean moving gmem into core-mm will be a
->>>> pre-requisite for the direct map removal stuff?
->>>
->>> Likely, we'd need some shim.
->>>
->>> Maybe for the time being it could be fenced using #if IS_BUILTIN() ...
->>> but that sure won't win in a beauty contest.
->>
->> Is anyone working on such a shim at the moment? Otherwise, would it make
->> sense for me to look into it? (although I'll probably need a pointer or
->> two for what is actually needed)
->>
->> I saw your comment on Fuad's series [1] indicating that he'll also need
->> some shim, so probably makes sense to tackle it anyway instead of
->> hacking around it with #if-ery.
-> 
-> Elliot (CC) was working on "guestmem library" project [1], but it was
-> unclear what we could factor out into the core.
-> 
-> Looks like a simple shim for such stuff might be a good starting point,
-> although not the final idea of encapsulating more in the library.
-
-So I started looking into this based on what we talked about at the last
-guest_memfd sync. I tried to sort of go the way you hinted at when this
-topic of "direct map removal from modules" came up in the past [1], and
-hide it behind some sort of "alloc/free" abstraction. E.g. have the
-library/shim expose gmem_get_folio(struct inode *inode, pgoff_t index)
-that is a sorta equivalent of today __kvm_gmem_get_pfn(), which grabs a
-new folio from the filemap, prepares it via a callback provided by KVM,
-and then direct map removes it before returning it proper. But then,
-that could still be "abused" by module code to just remove arbitrary
-folios from the direct map, if a caller messed up any old struct inode
-to look sufficiently like a gmem inode for the purposes of
-gmem_get_folio(). But I also couldn't really come up with anything that
-_wouldn't_ allow something like this. What're your thoughts on this? Do
-we need to find a way to prevent this sort of stuff, and is that even
-possible? I checked some of Elliot's old submissions that contain
-direct map removal as part of the library and they run into the
-same problem.
-
-Best, 
-Patrick
-
-[1]: https://lore.kernel.org/all/49d14780-56f4-478d-9f5f-0857e788c667@redhat.com/
- 
-> @Elliot, are you currently still looking into this?
->
-> [1]
-> https://lore.kernel.org/all/20241113-guestmem-library-v3-0-71fdee85676b@quicinc.com/T/#u
-> 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
+On Wednesday, March 19, 2025 03:01, Krzysztof Kozlowski  wrote:=0A=
+> What is this header doing this? Use standard mailing list response=0A=
+> style, not some copy-paste and then quote entire irrelevant context.=0A=
+oh....sorry, My email client carries these contents...=0A=
+I will be more careful in the future. Apologies for the disruption to the=
+=0A=
+email thread.=0A=
+=0A=
+Thanks,=0A=
+Stephen=
 
