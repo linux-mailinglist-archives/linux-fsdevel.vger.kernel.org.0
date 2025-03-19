@@ -1,74 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-44391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72A79A68149
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 01:18:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3B54A6815C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 01:20:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FE9342550F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 00:18:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD347884B14
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 00:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5145C1C4A2D;
-	Wed, 19 Mar 2025 00:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C9B1C0DED;
+	Wed, 19 Mar 2025 00:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="LdwLkSF8"
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="Fgfu4GvO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCED71B4138
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 00:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8317F1BE251
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 00:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742343350; cv=none; b=bmimXXevLA+uE2PUzWhNuTTyESG3LVqGqtFaPGh8O55ZEQnAKYYwS7wU4/c19H6TFJ4lkxdLEvQrJLDZx0d9k1bHSvvWGopvo1W3Gs635D3Vm+ZtR+DK7wn5uMvXLBMH8stV9za9ZLVB6tMmHFuPQahygp71BQ9hyMEMlQ5DHJs=
+	t=1742343352; cv=none; b=Kz9wJfM/aL1OkwfRlIK17IXR+b+aBeQhyoLxMcKELQQUiqCtT/dcEuz3PkOzbFwfIOr6aoKvSBU1YICp0XTiW4IeTzbaUltkYX34UDbK0ln8/fYLDE+bqP7disoiJFf9rpK7OJq2kyp9dK9Cf+bHv31Jt9P2nvzju8W3FWnj4/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742343350; c=relaxed/simple;
-	bh=vqb5bSp3KtgrIHH2C10i+ZCVORS25O8aQdSoxaGrdX4=;
+	s=arc-20240116; t=1742343352; c=relaxed/simple;
+	bh=vfmaI48yQu2LzbBRsfUKYj71ya/2pybugWom3+MlAb0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N+QhHAJMcaUN0aAjfEvATAN1HC+UNFS4di7zPbwOAIz0ESlTKt5ofm02RgUR/G8jzRmZdQbL/dhbx2bOmzsD6oI1lGGIlQYkNkFgTw9pzRnj0grIiFsoAVBmVpY6VkWfKdPMwnbQSV5kW+QT55YRGWSM7RfdL+CwnLQQeY5E6ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=LdwLkSF8; arc=none smtp.client-ip=209.85.214.175
+	 MIME-Version; b=moERBfz5N+JGJb26OoqKZXgEkmdqKM6K4fyWV3hYULs3KiT9G7IcmoWb5/rXBWCOUzNPQhBeTZuvqhU0bDqZ6EQbO/s2aSaVkjg8/dB5AmEP4YiQTbvmYRFunyR+eMYOjausdlNfSbdLpowl+uGwfyV15SZy4SbvJ5kbHuq0L0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=Fgfu4GvO; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22548a28d0cso18570615ad.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 17:15:48 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22622ddcc35so7154465ad.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Mar 2025 17:15:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1742343348; x=1742948148; darn=vger.kernel.org;
+        d=fastly.com; s=google; t=1742343350; x=1742948150; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2XqGZqCGsxMqM6QeHlFNqgLyn7L0jWSrp5tLsnvgx2I=;
-        b=LdwLkSF8TBzC36dt6CntOhHl+LeUMOlyXozok9/QMwsLzJCbZQtUiV5ZsMTPkYtqcJ
-         4vcWfNjrYyGyxoOe5/0cRUNiClXg+CCpU+5N+tyoxTI6DfO2pupR5WhY5mA3NEiF58ul
-         8MrOhgdbfV7a7Eii7fwAIIFWtUdit226D4msI=
+        bh=m2h8ahGEK8NaWNEbWiVu/ZrnscNwqcwDayJj5C9lFzM=;
+        b=Fgfu4GvOW7stKhQu5e7z9IC/Nv0oQmJEqDAVI/BLiHzM8QdXiSjIqaUlpvskDPWngk
+         M4Hhz1GrWXmXi+HYbhJImPSMiUnprJifoEwOxFpvOZAdYtnHrcj830d1SNiEyFw5h2uP
+         z0OEH0Ld/35wCgYMxFW3HKiDEMZ3tg9kH47Qc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742343348; x=1742948148;
+        d=1e100.net; s=20230601; t=1742343350; x=1742948150;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2XqGZqCGsxMqM6QeHlFNqgLyn7L0jWSrp5tLsnvgx2I=;
-        b=ShZxSo47azRtKPDDreiW1C3MQLWIwboeMwyOBhLQIbOP2ahEOnq0TK+Lu8IkLTtsCi
-         8RAiK0jr3deg8x2oYZn5hpbZhlRNQcFtf+2m8Q0L3uQpe+dg+3rDq6/la1nOs13Nt+SE
-         IbKrkDwx6gUVZw6S+gZ5slikv/yq4GO6bSki9JcdXaNyIfQAXS52n3Esdtz/65cVHvMM
-         cJE62u40c3DTmIkrCebNo+KKrlW3IfFW0M0VHlYpPjBTzT+Uj1QOnJe+TFNKf16Viz9w
-         gKXlrKwnuAnrQjIGOnuXKGae9NkxYZ6+acoWSaamnff/GYwqtlAFn1+js3XNZjV4gSQu
-         KvnA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbVcLqeX+rWWCE0myJ7ZMDPJ4zNJAIHPV6L0wCIqjxtuLkIbXnySRvXr+3B2jG+a+FYOwaMgNLhgrphviR@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywgtli8kDiNlHFS86c6kRa83tjbAsdPoIdfahWZqi/sZ/KR4z+z
-	43bU4IDb5Z1jtzR1v/kuwGOPiEVCjB06z7E6/U5QGXYg2RC1oCa3OydNn6ZG2FY=
-X-Gm-Gg: ASbGncu5W+ZGUOPPS75GgtS99w/J3E1fO2UMzCHooHTN1cqCVnxvdq8KBjrwMyqUlM9
-	RQAi3UKn+L6H4wOeeSipS7fB/E8X7Fhj60pFpiJqrRszZP5ArY1vn+H+VZ1sQU5xO8ZI1Fx3Ze9
-	IgAGarAVS/jXbewTW5paYayTuPaITBkmHhUPEghH/i3EAdqL7OaT0benTsgbn7qWuNMUgNpDnoo
-	FDFMgzFK47PhAZ+hn+tN4goc4hwZdc0kl3UKfavH5kwfs6VOl5AW9LlL/WVHgWucfm0wMl4cQPF
-	JY0AUnlyGwgpwlCbgxqh7JeaaIr3wmjEoqmCbHya2wYvbROqqcG8
-X-Google-Smtp-Source: AGHT+IEmJYpbp+6vVhqsiGvsZq35cbhyVslRXzs04bm/SNmdXK2RzQx72NbvXgQ96Ga+Vw4Kk+NJMQ==
-X-Received: by 2002:a17:903:22cd:b0:223:58ea:6fdf with SMTP id d9443c01a7336-22649a3c6a7mr8745335ad.28.1742343348190;
-        Tue, 18 Mar 2025 17:15:48 -0700 (PDT)
+        bh=m2h8ahGEK8NaWNEbWiVu/ZrnscNwqcwDayJj5C9lFzM=;
+        b=OmUKGkg7yatY0PWYRI+aLIpWyQQIjaDnIpkPHG5vgR5adeXJ+wPayQp/LGMdfyhRAR
+         BMUEv8tpoubm8zbbb8TfqTMsOiRS69vmpluNQH8vN3oiB+4c5KD3RYjItYFm3WGhE3y9
+         h6hY5+MlG0Via8BKe2RmA7vS+K1gsuFyg629tFD1p4Pne+cqC9R1dDwpvKpqPQ7YT7l4
+         7DllZ9nMSzEJ76Xp9eGMNdkU3h2MEnIkTdzIBEaThzvGFlZswf3cRdyCNZitj8wKbHpz
+         P3dyiWt9gm0MBbVAaVl4r7IKRpSz8RgVma3r6TferVwtA8IeBY7s6XVHoZ4h/OgA4/bE
+         a3LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVa87CDFmZ0RzhAjwaZyKFESI7paqChm66B8AOJQLjY4M9P2ajD/TNaIJRTFgAQJ9YF5gB+Myz5lKnHyyQJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/Sdp3O3VPi12LxafOIUffjNbOBBolYfR4OubOLa0CNHxkIvUz
+	vVCp06bWRKP3x+w4DI0ZKs/BkQqTtqNPNxIsiZjOs+MbPB0NyvUQG5alvrL3/l4=
+X-Gm-Gg: ASbGncu0TKakqSrTNhSZjZAFxUwNbEV/aZMlNWTzerzy2b0mj68dHm89CZ17PfLW5DM
+	Y050Q4TKn2ZVzR6/a+LrMBxuzPXPwRK5RrQco4CKwQEIiyRLyvK0+fXOaGTEuWmmMgXiuoeKRkS
+	lx0ym6WFR3yPIda2u9OSRmBquwDeHhVBBFlt8U7oL3SKiCvDEd+u97IKbFzuvhq23EljY3LbF4d
+	yy3gsm0RsllZjDpypKHyU6Jx6sFRdukNz8bpGvjrP9eujikLpCtQywb5lS2jlx919dvMNIVcWdg
+	xatOPdbeedlri4gU09pUn8X6enXG2k62R7i5SFGJsYPTisE9HlOT
+X-Google-Smtp-Source: AGHT+IGTEGf1f8q+q48T1ikUY+fDbR7xEVmvuzHJIMrxwMpGrnPzwUvPjVZv+TsZZ6BX0OHQ1CwSDw==
+X-Received: by 2002:a17:903:22c4:b0:220:faa2:c911 with SMTP id d9443c01a7336-2264992ff63mr9690915ad.14.1742343349888;
+        Tue, 18 Mar 2025 17:15:49 -0700 (PDT)
 Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68a4876sm101281375ad.70.2025.03.18.17.15.46
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68a4876sm101281375ad.70.2025.03.18.17.15.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 17:15:47 -0700 (PDT)
+        Tue, 18 Mar 2025 17:15:49 -0700 (PDT)
 From: Joe Damato <jdamato@fastly.com>
 To: netdev@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -92,9 +92,9 @@ Cc: linux-kernel@vger.kernel.org,
 	jolsa@kernel.org,
 	linux-kselftest@vger.kernel.org,
 	Joe Damato <jdamato@fastly.com>
-Subject: [RFC -next 07/10] fs: Add sendfile2 which accepts a flags argument
-Date: Wed, 19 Mar 2025 00:15:18 +0000
-Message-ID: <20250319001521.53249-8-jdamato@fastly.com>
+Subject: [RFC -next 08/10] fs: Add sendfile flags for sendfile2
+Date: Wed, 19 Mar 2025 00:15:19 +0000
+Message-ID: <20250319001521.53249-9-jdamato@fastly.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250319001521.53249-1-jdamato@fastly.com>
 References: <20250319001521.53249-1-jdamato@fastly.com>
@@ -106,42 +106,56 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add sendfile2 which is similar to sendfile64, but takes a flags
-argument.
+Add a default flag (SENDFILE_DEFAULT) and a flag for requesting zerocopy
+notifications (SENDFILE_ZC). do_sendfile is updated to pass through the
+corresponding splice flag to enable zerocopy notifications.
 
 Signed-off-by: Joe Damato <jdamato@fastly.com>
 ---
- fs/read_write.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ fs/read_write.c          |  5 +++++
+ include/linux/sendfile.h | 10 ++++++++++
+ 2 files changed, 15 insertions(+)
+ create mode 100644 include/linux/sendfile.h
 
 diff --git a/fs/read_write.c b/fs/read_write.c
-index 03d2a93c3d1b..057e5f37645d 100644
+index 057e5f37645d..e3929fd0f605 100644
 --- a/fs/read_write.c
 +++ b/fs/read_write.c
-@@ -1424,6 +1424,23 @@ SYSCALL_DEFINE4(sendfile64, int, out_fd, int, in_fd, loff_t __user *, offset, si
- 	return do_sendfile(out_fd, in_fd, NULL, count, 0, 0);
- }
- 
-+SYSCALL_DEFINE5(sendfile2, int, out_fd, int, in_fd, loff_t __user *, offset, size_t, count, int, flags)
-+{
-+	loff_t pos;
-+	ssize_t ret;
+@@ -16,6 +16,7 @@
+ #include <linux/export.h>
+ #include <linux/syscalls.h>
+ #include <linux/pagemap.h>
++#include <linux/sendfile.h>
+ #include <linux/splice.h>
+ #include <linux/compat.h>
+ #include <linux/mount.h>
+@@ -1360,6 +1361,10 @@ static ssize_t do_sendfile(int out_fd, int in_fd, loff_t *ppos,
+ 		retval = rw_verify_area(WRITE, fd_file(out), &out_pos, count);
+ 		if (retval < 0)
+ 			return retval;
 +
-+	if (offset) {
-+		if (unlikely(copy_from_user(&pos, offset, sizeof(loff_t))))
-+			return -EFAULT;
-+		ret = do_sendfile(out_fd, in_fd, &pos, count, 0, flags);
-+		if (unlikely(put_user(pos, offset)))
-+			return -EFAULT;
-+		return ret;
-+	}
++		if (flags & SENDFILE_ZC)
++			fl |= SPLICE_F_ZC;
 +
-+	return do_sendfile(out_fd, in_fd, NULL, count, 0, flags);
-+}
+ 		retval = do_splice_direct(fd_file(in), &pos, fd_file(out), &out_pos,
+ 					  count, fl);
+ 	} else {
+diff --git a/include/linux/sendfile.h b/include/linux/sendfile.h
+new file mode 100644
+index 000000000000..0bd3c76ea6f2
+--- /dev/null
++++ b/include/linux/sendfile.h
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef SENDFILE_H
++#define SENDFILE_H
 +
- #ifdef CONFIG_COMPAT
- COMPAT_SYSCALL_DEFINE4(sendfile, int, out_fd, int, in_fd,
- 		compat_off_t __user *, offset, compat_size_t, count)
++#define SENDFILE_DEFAULT (0x1)  /* normal sendfile */
++#define SENDFILE_ZC (0x2)       /* sendfile which generates ZC notifications */
++
++#define SENDFILE_ALL (SENDFILE_DEFAULT|SENDFILE_ZC)
++
++#endif
 -- 
 2.43.0
 
