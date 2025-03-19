@@ -1,158 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-44399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C1AA6836B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 04:06:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F06BFA68392
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 04:16:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 424D97A46B2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 03:05:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA0667ABC89
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 03:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCDF24E4C4;
-	Wed, 19 Mar 2025 03:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XUs5+gRN"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C7624EF65;
+	Wed, 19 Mar 2025 03:16:09 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3E2524F;
-	Wed, 19 Mar 2025 03:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22F020D4F7;
+	Wed, 19 Mar 2025 03:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742353593; cv=none; b=jCDzxbdOaaQ/UUNqPlbq/ftWy/bFv6qj37NvPnFuYxuwMWXAfWqFgzWLm/lWb2qq95XDzmNKjB00ku4D9fzhlXTMCvXbfaTa8+B2V0FvKqqUv5h7Yx8DMRdbwzQkDp00XguOZUXLTD8TbAOi+dJZXP2rV3BVJRCs+/NPu8tJyR0=
+	t=1742354169; cv=none; b=dM9Dq4KME6e11hY1amOHaNY3yGdVBxhtPepKK3wCx1rhA8QNIo6vzUzlvyzrsiErM77pHTW1vJZAcWM6KAAT3L7AYatAPPO3/POZQomAlAahbEVDG2ufuNv2hF8ebynnRr/jg3GxmwMCRad9vTxKGs7Nn1QTPBqV1hOqifmaBRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742353593; c=relaxed/simple;
-	bh=bSt/O7czoSNWFRcsE3rQTY00tKWSZJC7M7fXZe1tBRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cNy7r/jKZNSmRXVRBAdaY6Ki+R8V3M7mJvKL473pLaEg/8rvsiURetXnaXpuV0638zcVSO1wM+aVhWrGgbPPnPzIqBek2YvXPPDLqF6fmKo8/0nh98VShBh84veLjiwUdsXDPBTkTYu+5YhQor82bJTMWubX3lyhVJB0dAylsQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XUs5+gRN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DC99C4CEE3;
-	Wed, 19 Mar 2025 03:06:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742353592;
-	bh=bSt/O7czoSNWFRcsE3rQTY00tKWSZJC7M7fXZe1tBRY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XUs5+gRN7F3D9wjM00iR5qUYJ+zg+KhgaBhp3hIjBKS7MmOnFRi5z4uyKZMByuzpT
-	 aRnLHnPrRFmw8TJD3EQ9k+RW4h8RwxCa62cAsI/eHS2et+ABobxSUuR51AjK8Qkkmx
-	 aTXLesTsTLkqQ0TyHDI6ckPdzTz7db3ZvW/Nbv9lOSP+4w+eqg/pLJD5mMykQEWnh2
-	 +g/1KVNEsR5ZjYg+2/frXjJkI7gO9Zr/97dD3MApFTAzH2nEFs6eoQtXFJbJIxt3kR
-	 GrWHMXbljMz8EcObP0y6RWAQ0vYec8y7uKu9SlDUyWi8TEW2Ilp4CmqKbnh1Zx6SnC
-	 ZePzyIlyjLcTA==
-Date: Tue, 18 Mar 2025 20:06:28 -0700
-From: Kees Cook <kees@kernel.org>
-To: Peter Collingbourne <pcc@google.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] string: Add load_unaligned_zeropad() code path to
- sized_strscpy()
-Message-ID: <202503181957.55A0E0A@keescook>
-References: <20250318214035.481950-1-pcc@google.com>
- <20250318214035.481950-2-pcc@google.com>
+	s=arc-20240116; t=1742354169; c=relaxed/simple;
+	bh=XDyl/InuyBklka32/8zOUc02s3WLVFULLm9/bUqNIMU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rskigl0KEL8wUO84Sj7SNu70GkPkDf5E+NquejNHHHzlitKPNvzy4ma/KOAuFvVVEm3/a1YQ90fDdhqV6LBgM+uCnjibelBqMfqIfr8oqe8+GbUlsNk4S+O+ZabXPVQcgFI9iYsSUy5qv44inzn1doGnynnU30d9CCBB3ZX+E/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1tujuM-00G6oe-Rj;
+	Wed, 19 Mar 2025 03:15:54 +0000
+From: NeilBrown <neil@brown.name>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	David Howells <dhowells@redhat.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>
+Cc: linux-nfs@vger.kernel.org,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/6 RFC v2] tidy up various VFS lookup functions
+Date: Wed, 19 Mar 2025 14:01:31 +1100
+Message-ID: <20250319031545.2999807-1-neil@brown.name>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318214035.481950-2-pcc@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 18, 2025 at 02:40:32PM -0700, Peter Collingbourne wrote:
-> The call to read_word_at_a_time() in sized_strscpy() is problematic
-> with MTE because it may trigger a tag check fault when reading
-> across a tag granule (16 bytes) boundary. To make this code
-> MTE compatible, let's start using load_unaligned_zeropad()
-> on architectures where it is available (i.e. architectures that
-> define CONFIG_DCACHE_WORD_ACCESS). Because load_unaligned_zeropad()
-> takes care of page boundaries as well as tag granule boundaries,
-> also disable the code preventing crossing page boundaries when using
-> load_unaligned_zeropad().
-> 
-> Signed-off-by: Peter Collingbourne <pcc@google.com>
-> Link: https://linux-review.googlesource.com/id/If4b22e43b5a4ca49726b4bf98ada827fdf755548
-> Fixes: 94ab5b61ee16 ("kasan, arm64: enable CONFIG_KASAN_HW_TAGS")
-> Cc: stable@vger.kernel.org
-> ---
-> v2:
-> - new approach
-> 
->  lib/string.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/lib/string.c b/lib/string.c
-> index eb4486ed40d25..b632c71df1a50 100644
-> --- a/lib/string.c
-> +++ b/lib/string.c
-> @@ -119,6 +119,7 @@ ssize_t sized_strscpy(char *dest, const char *src, size_t count)
->  	if (count == 0 || WARN_ON_ONCE(count > INT_MAX))
->  		return -E2BIG;
->  
-> +#ifndef CONFIG_DCACHE_WORD_ACCESS
->  #ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+This a revised version of a previous posting.  I have dropped the change
+to some lookup functions to pass a vfsmount.  I have also dropped the
+changes to nfsd and cachefiles which passed a mnt_idmap other than
+&nop_mnt_idmap.  Those modules now explicitly pass &nop_mnt_idmap to
+some lookup functions where previously that was implicit.
 
-I would prefer this were written as:
+============== Revised cover letter.
 
-#if !defined(CONFIG_DCACHE_WORD_ACCESS) && \
-    defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)
+VFS has some functions with names containing "lookup_one_len" and others
+without the "_len".  This difference has nothing to do with "len".  This
+is an historical accident but can be confusing.
 
-Having 2 #ifs makes me think there is some reason for having them
-separable. But the logic here is for a single check.
+The functions without "_len" take a "mnt_idmap" pointer.  This is found
+in the "vfsmount" and that is an important question when choosing which
+to use: do you have a vfsmount, or are you "inside" the filesystem.  A
+related question is "is permission checking relevant here?".
 
->  	/*
->  	 * If src is unaligned, don't cross a page boundary,
-> @@ -133,12 +134,14 @@ ssize_t sized_strscpy(char *dest, const char *src, size_t count)
->  	/* If src or dest is unaligned, don't do word-at-a-time. */
->  	if (((long) dest | (long) src) & (sizeof(long) - 1))
->  		max = 0;
-> +#endif
->  #endif
+nfsd and cachefiles *do* have a vfsmount but *don't* use the non-_len
+functions.  They pass nop_mnt_idmap and refuse to work on filesystems
+which have any other idmap.
 
-(Then no second #endif needed)
+This series changes nfsd and cachefile to use the lookup_one family of
+functions and to explictily pass &nop_mnt_idmap which is consistent with
+all other vfs interfaces used where &nop_mnt_idmap is explicitly passed.
 
->  
->  	/*
-> -	 * read_word_at_a_time() below may read uninitialized bytes after the
-> -	 * trailing zero and use them in comparisons. Disable this optimization
-> -	 * under KMSAN to prevent false positive reports.
-> +	 * load_unaligned_zeropad() or read_word_at_a_time() below may read
-> +	 * uninitialized bytes after the trailing zero and use them in
-> +	 * comparisons. Disable this optimization under KMSAN to prevent
-> +	 * false positive reports.
->  	 */
->  	if (IS_ENABLED(CONFIG_KMSAN))
->  		max = 0;
-> @@ -146,7 +149,11 @@ ssize_t sized_strscpy(char *dest, const char *src, size_t count)
->  	while (max >= sizeof(unsigned long)) {
->  		unsigned long c, data;
->  
-> +#ifdef CONFIG_DCACHE_WORD_ACCESS
-> +		c = load_unaligned_zeropad(src+res);
-> +#else
->  		c = read_word_at_a_time(src+res);
-> +#endif
->  		if (has_zero(c, &data, &constants)) {
->  			data = prep_zero_mask(c, data, &constants);
->  			data = create_zero_mask(data);
+The remaining uses of the "_one" functions do not require permission
+checks so these are renamed to be "_noperm" and the permission checking
+is removed.
 
-The rest seems good. Though I do wonder: what happens on a page boundary
-for read_word_at_a_time(), then? We get back zero-filled remainder? Will
-that hide a missing NUL terminator? As in, it's not actually there
-because of the end of the page/granule, but a zero was put in, so now
-it looks like it's been terminated and the exception got eaten? And
-doesn't this hide MTE faults since we can't differentiate "overran MTE
-tag" from "overran granule while over-reading"?
+This series also changes these lookup function to take a qstr instead of
+separate name and len.  In many cases this simplifies the call.
 
--- 
-Kees Cook
+I haven't included changes to afs because there are patches in vfs.all
+which make a lot of changes to lookup in afs.  I think (if they are seen
+as a good idea) these patches should aim to land after the afs patches
+and any further fixup in afs can happen then.
+
+These patches are based on vfs-6.15.async.dir as they touch mkdir
+related code.  There is a small conflict with the recently posted patch
+to remove locking from try_lookup_one_len() calls.
+
+Thanks,
+NeilBrown
+
+ [PATCH 1/6] VFS: improve interface for lookup_one functions
+ [PATCH 2/6] nfsd: Use lookup_one() rather than lookup_one_len()
+ [PATCH 3/6] cachefiles: Use lookup_one() rather than lookup_one_len()
+ [PATCH 4/6] VFS: rename lookup_one_len family to lookup_noperm and
+ [PATCH 5/6] Use try_lookup_noperm() instead of d_hash_and_lookup()
+ [PATCH 6/6] VFS: change lookup_one_common and lookup_noperm_common to
 
