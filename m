@@ -1,96 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-44416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44417-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC28CA6868A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 09:18:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDD03A68693
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 09:20:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC27F3AA7DF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 08:17:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 667513B3DCC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 08:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F20B2505B8;
-	Wed, 19 Mar 2025 08:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C4E250C05;
+	Wed, 19 Mar 2025 08:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="On+xef/r"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5B242A93;
-	Wed, 19 Mar 2025 08:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFB02505AA;
+	Wed, 19 Mar 2025 08:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742372257; cv=none; b=rs4qp6DnL6ulhwFE+TDm44nrN38x9jQmSbWWvuhb1pRizY1TB/YiUanPKkoKLN0NjSKxN0u5b89OvjvrkMVHtJWfVBCIMlgRXVHi8Nj8mEKaop1b6MBPW8+fp8gGZdfpFr1wCwtFByuvNLRJN1HyYKbPv9XUdcTgH7bsndpZ9nA=
+	t=1742372373; cv=none; b=YEo2T0gZC/+NlpAhIW+PgzHfKe0MLZAUubPVutaSbkaFnPGsIuUBuTYCzP+iI26yWNOBsU5B2unEezQO48BUbONHeViEilvkhnDboiymlp/0lb2QvoYDiMOs2XFNfCzxD73zcG2wLpLs7ExggePUVdL0lOaDDM0On5Ef67LVltU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742372257; c=relaxed/simple;
-	bh=ZLmBezBDWfIQPFZftRo8pyyejObu0SQitX9Sp2sZav4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XFPs6msyXB8+IRGj6nLB1BO+iFfy2CW4OKLt2w0YkOyjemFjfVlnEhbt/Ncgz5TZ5GNXqnKknJBW+m1/L0XvNYTZ+zBN3pwgrvRr8rZxLR2USBbEGvLzmdI1OIh1SkdtXh9DXmRIY6sKOoFV3RA5iHn8Hhdlfei7iQnX13M1eBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 7C30367373; Wed, 19 Mar 2025 09:17:30 +0100 (CET)
-Date: Wed, 19 Mar 2025 09:17:30 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	Brian Foster <bfoster@redhat.com>, linux-erofs@lists.ozlabs.org,
-	linux-xfs@vger.kernel.org, Bo Liu <liubo03@inspur.com>,
-	Christoph Hellwig <hch@lst.de>,
-	"Darrick J. Wong" <djwong@kernel.org>
-Subject: Re: [PATCH -next] iomap: fix inline data on buffered read
-Message-ID: <20250319081730.GB26281@lst.de>
-References: <20250319025953.3559299-1-hsiangkao@linux.alibaba.com>
+	s=arc-20240116; t=1742372373; c=relaxed/simple;
+	bh=AIU0izELLfVsmUnUZGvBo7Wtpo3Jg7KQs2WJYmfFS8Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Hxh04kR83IpVoq2lBVwcCktkbJ+jI1ICPNCqhvjchQOEZe4ck+9NMdXw/XwSf1z2MI6ZHq+Qh3SoA2tCvPbmvcHwHIP8VaVTL/3APpius3fbCsCb7RG/gl37dkAZmonVVq7MhxHmFedAoXKH3LIq2SePUswY7P2y1WnnRfhMAbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=On+xef/r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8521C4CEE9;
+	Wed, 19 Mar 2025 08:19:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742372372;
+	bh=AIU0izELLfVsmUnUZGvBo7Wtpo3Jg7KQs2WJYmfFS8Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=On+xef/r2qHnyEwX90PVNfqSIdEskAuaEpvCzy+LFvHZE9PGyYGjMzhFqG1pjpLao
+	 FQJ+AAu49BxcG9OXYm8pcPDxM6l6pWRMXjzvU/rqQZF+qRVM5vkYxkOjGzpYPzUnia
+	 TD/xNdn+zrdWlFTHkF9vEH2ay9V0wJlc/nh1Drioy7eRvuwRs/1VgeLS3hgLS/razq
+	 Fe5QNihFM2qNisdm0vJkIaatgkrQ8peUESH0yP620QlRKN0epX1lZWaw1wcKjCKD4B
+	 aFEOqGl4zMiug1hRaRPBQVCcvlClkTWQZBecWed8oOTzIycapI137WnCHATJrrht2Z
+	 ojSBTzOtkgWUA==
+From: Christian Brauner <brauner@kernel.org>
+To: trondmy@kernel.org
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	"Eric W . Biederman" <ebiederm@xmission.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org
+Subject: Re: [PATCH] umount: Allow superblock owners to force umount
+Date: Wed, 19 Mar 2025 09:19:17 +0100
+Message-ID: <20250319-verebben-kahlschlag-6567088ede4d@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <12f212d4ef983714d065a6bb372fbb378753bf4c.1742315194.git.trond.myklebust@hammerspace.com>
+References: <12f212d4ef983714d065a6bb372fbb378753bf4c.1742315194.git.trond.myklebust@hammerspace.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319025953.3559299-1-hsiangkao@linux.alibaba.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1071; i=brauner@kernel.org; h=from:subject:message-id; bh=AIU0izELLfVsmUnUZGvBo7Wtpo3Jg7KQs2WJYmfFS8Y=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTfquPb92qFVP/frX8vx/A/O9Bw72ajTJlS0d4FvLcbr HoWBF450lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCR2B2MDHfZpj09+/+6wYSE 0C88HU8OmZX+qV1kxbG4dsUK7+1mW94xMixf6pL5f+5+4Xn7pJdYvFudINqWtE1wWldxwTuXWRs F9jEBAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-I'd move the iomap_iter_advance into iomap_read_inline_data, just like
-we've pushed it down as far as possible elsewhere, e.g. something like
-the patch below.  Although with that having size and length puzzles
-me a bit, so maybe someone more familar with the code could figure
-out why we need both, how they can be different and either document
-or eliminate that.
+On Tue, 18 Mar 2025 12:29:21 -0400, trondmy@kernel.org wrote:
+> Loosen the permission check on forced umount to allow users holding
+> CAP_SYS_ADMIN privileges in namespaces that are privileged with respect
+> to the userns that originally mounted the filesystem.
+> 
+> 
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index d52cfdc299c4..7858c8834144 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -332,15 +332,15 @@ struct iomap_readpage_ctx {
-  * Only a single IOMAP_INLINE extent is allowed at the end of each file.
-  * Returns zero for success to complete the read, or the usual negative errno.
-  */
--static int iomap_read_inline_data(const struct iomap_iter *iter,
--		struct folio *folio)
-+static int iomap_read_inline_data(struct iomap_iter *iter, struct folio *folio)
- {
- 	const struct iomap *iomap = iomap_iter_srcmap(iter);
- 	size_t size = i_size_read(iter->inode) - iomap->offset;
-+	loff_t length = iomap_length(iter);
- 	size_t offset = offset_in_folio(folio, iomap->offset);
- 
- 	if (folio_test_uptodate(folio))
--		return 0;
-+		goto advance;
- 
- 	if (WARN_ON_ONCE(size > iomap->length))
- 		return -EIO;
-@@ -349,7 +349,8 @@ static int iomap_read_inline_data(const struct iomap_iter *iter,
- 
- 	folio_fill_tail(folio, offset, iomap->inline_data, size);
- 	iomap_set_range_uptodate(folio, offset, folio_size(folio) - offset);
--	return 0;
-+advance:
-+	return iomap_iter_advance(iter, &length);
- }
- 
- static inline bool iomap_block_needs_zeroing(const struct iomap_iter *iter,
+Sensible.
+
+---
+
+Applied to the vfs-6.15.mount branch of the vfs/vfs.git tree.
+Patches in the vfs-6.15.mount branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.15.mount
+
+[1/1] umount: Allow superblock owners to force umount
+      https://git.kernel.org/vfs/vfs/c/e1ff7aa34dec
 
