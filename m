@@ -1,91 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-44422-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C2AAA686C7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 09:29:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4747A686F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 09:35:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB56D17DC60
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 08:28:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDD03178CD0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 08:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD052512D7;
-	Wed, 19 Mar 2025 08:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2362512E8;
+	Wed, 19 Mar 2025 08:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MSzLal1s"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="n2HfXWU8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177F324E4C6;
-	Wed, 19 Mar 2025 08:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA942116F4;
+	Wed, 19 Mar 2025 08:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742372913; cv=none; b=OKaDQJKXU3ItimUr9jSBMLa2do3msIx1VXacibIINbnVUEWsECHgT6fQMi/ykDDVTxCFX3+xggeC4NXJ4tzy7Pq0Vh0+DcPl+v7pIByGsZeUzZbQWTVdG8bdlYCZSEDsajMxNOYuILn92LRmmaR1BU+I8yahEDo8t213NxSUu/Y=
+	t=1742373295; cv=none; b=Aam6bvRU7rRmQKYl0n1CWUQokvAzhMWOOsbleyrFVQ2xOXKLKyeyk7P5l6oR+ut1APdwkkNtZRFJ3hx2WBvulybPYisQGGWVH9sCLmBeedGfrTxUYmK4hAzFcbncC7zOcqAlTekBStTlpUNmUI2KloKpuwFkSU+iVgfECHzu5GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742372913; c=relaxed/simple;
-	bh=mBqjz/BnDz4OJKVEtX06Ia/9DwMqMPB3XggP0oABitY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K3GoSBy3srGuXgYfpEjVDvyWvAKxZ48CpIn270JksP8LRC0CFnTDnCAR7v4Yr6oGNwtkbulx/cUyFe5saQ+Nal7r7UnS5jWdJMPcIoYXLflHrm8BiMqEYMhHXW9/asMrPfaxHtfbXbVcjbdc+F5MjxCS/+BDKkOVdLVeUowdEw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MSzLal1s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39F04C4CEE9;
-	Wed, 19 Mar 2025 08:28:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742372912;
-	bh=mBqjz/BnDz4OJKVEtX06Ia/9DwMqMPB3XggP0oABitY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MSzLal1sjG0YfoXZnyepzkZ/PTo/JGJzxMHE6r1Q0ICXZ+XluHhFaQHYGv5Opf9QY
-	 bznflldLi9qpyk++tWe7lilRzjTkV8Wds/lcZD9PWsltKWqr2yCyKg5sPznB8Q48Hc
-	 M+4sDt9ecq7uhzWhcDjctzpqe3VYP4xHbg/v7msW9cBYdDvAGslYv+n9Dgxty7/3ap
-	 oQfG4a/AyQHm8thV1WuG2v56+tVIHSyEbbTQUU8/1Myh0Zhe+K4LRDaCUyYrQsagio
-	 ldJnAfW76u1Jnx4RkgYEWSL/jWyhbJqHk5s9b8sZVP98sDlrzh3V3/KcUvx1YOwRJo
-	 1BnQBRxEpc1Fw==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: load the ->i_sb pointer once in inode_sb_list_{add,del}
-Date: Wed, 19 Mar 2025 09:28:24 +0100
-Message-ID: <20250319-geben-tiermedizin-6f83e28a46d1@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250319004635.1820589-1-mjguzik@gmail.com>
-References: <20250319004635.1820589-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1742373295; c=relaxed/simple;
+	bh=1xM1DrpT09p1mW48MEX1ARim+lLQ9QVmz8MWA2/egyw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N8fKgRyJyYqUbkh/NEZ2GLkCcdTi8W6XUwAvhRxwmIS/UqvgEtGGZv+Y+qq4qDcqThFE9eIgNre2oovLnYd57dNCKx7R2spLj+YAfaiGfIb32Cm9yspB1vPS48v6cON8QMoEsB1FcRXHpsWgZPr0jN0CzfvyIlELCPSE315IgDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=n2HfXWU8; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1742373289; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=RR5YqJVptrlygILdNOhzAjC7cpOvrMCLJY+Szj5Ekn4=;
+	b=n2HfXWU8jABWW4Gn+Y9zTGp9oyYsvbXB0g174lm0qpls+uyMqSekiQpq18SABv6m3O/+xyv26+3uhLMgTRdoo0GaKcDIVZWaO4DrLMTlDzWVuAtbWfyhVpKrho6pmMwfg88Z/C7beGWXJcuOjqXpkoWB9bglFmm7ZXKjAmDsSGA=
+Received: from 30.74.128.211(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WS1efwN_1742373287 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 19 Mar 2025 16:34:48 +0800
+Message-ID: <d6643b61-1411-4858-b75e-76bcbb75071c@linux.alibaba.com>
+Date: Wed, 19 Mar 2025 16:34:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=992; i=brauner@kernel.org; h=from:subject:message-id; bh=mBqjz/BnDz4OJKVEtX06Ia/9DwMqMPB3XggP0oABitY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTfatAqfh/BJGjyZXb8maqnd76xOnNtcaqtembXWMLjt 0Kst2pPRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwERiNRkZXoXUx3r7ft3pk9de OHPux7O6f+6ztPJnXtLvYX8bYcZ6nJGh7Y7NLLF3330P/DlhH2Sau+J+03WjGWbryoxeHda54Py TFQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] iomap: fix inline data on buffered read
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+ linux-erofs@lists.ozlabs.org, linux-xfs@vger.kernel.org,
+ Bo Liu <liubo03@inspur.com>, "Darrick J. Wong" <djwong@kernel.org>,
+ Brian Foster <bfoster@redhat.com>
+References: <20250319025953.3559299-1-hsiangkao@linux.alibaba.com>
+ <20250319081730.GB26281@lst.de> <20250319082323.GA26665@lst.de>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20250319082323.GA26665@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 19 Mar 2025 01:46:35 +0100, Mateusz Guzik wrote:
-> While this may sound like a pedantic clean up, it does in fact impact
-> code generation -- the patched add routine is slightly smaller.
+Hi Christoph,
+
+On 2025/3/19 16:23, Christoph Hellwig wrote:
+> On Wed, Mar 19, 2025 at 09:17:30AM +0100, Christoph Hellwig wrote:
+>> I'd move the iomap_iter_advance into iomap_read_inline_data, just like
+>> we've pushed it down as far as possible elsewhere, e.g. something like
+>> the patch below.  Although with that having size and length puzzles
+>> me a bit, so maybe someone more familar with the code could figure
+>> out why we need both, how they can be different and either document
+>> or eliminate that.
 > 
-> 
+> ... and this doesn't even compile because it breaks write_begin.
+> So we'll need to keep it in the caller, but maybe without the
+> goto and just do the plain advance on length?
 
-Applied to the vfs-6.15.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.15.misc branch should appear in linux-next soon.
+Yeah, I was just writing an email to your previous reply:
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+I think iomap_write_begin_inline() will break if
+iomap_iter_advance() is in iomap_read_inline_data().
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Because:
+   iomap_write_iter
+      iomap_write_begin
+        iomap_write_begin_inline
+          iomap_read_inline_data
+             iomap_iter_advance		# 1
+      copy_folio_from_iter_atomic
+      iomap_write_end
+      ...
+      iomap_iter_advance			# 1
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+I will do a plain advance as your suggested instead, but commit
+"iomap: advance the iter directly on buffered read" makes EROFS
+unusable, and I think gfs2 too.  It needs be fixed now.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.15.misc
+Thanks,
+Gao Xiang
 
-[1/1] fs: load the ->i_sb pointer once in inode_sb_list_{add,del}
-      https://git.kernel.org/vfs/vfs/c/5a607aa94398
+Thanks,
+Gao Xiang
+
 
