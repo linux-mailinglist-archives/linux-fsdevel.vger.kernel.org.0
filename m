@@ -1,299 +1,250 @@
-Return-Path: <linux-fsdevel+bounces-44467-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C99ACA696C1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 18:44:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAC0AA696CC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 18:45:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B12D881F7F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 17:44:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8949119C37D8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 17:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2CA202979;
-	Wed, 19 Mar 2025 17:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC576207A2A;
+	Wed, 19 Mar 2025 17:45:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b="0yoPHxvN";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="l9SNzGNu"
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="biyyC0Ci"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B1B1DE4FF;
-	Wed, 19 Mar 2025 17:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5CF1E231F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 17:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742406250; cv=none; b=kFhCWWc5Nil38jOZqgXIx2hmnVVRFih2/Xh1TsSP6yX5lwSYzCI9qwMVDzbqDruSoaPXZIusntuknQX/8dYcvQ+yKDQ+X6IBkxqwDXrXM2AnmjFoVtRBWuGf/i7RlG1iIGxXpv5JYS+S5zfnWdg1Js2/etpdPKS7XsQPbh5fiYY=
+	t=1742406329; cv=none; b=aZ8VcgoLAq2j1DZpsnzdw8aBk6pbjycXThBIGgPxZ7G4n2YiC/lo/a4ybVXp0zhuWPhji2ZE2Vnpn5jdZSTzoifZE2YEWmbCaJHcAqyOXlmW5astITXgjrFo3qE+1YVjgppKaQ/EQHUd0XMl16k7YigzzuWcYLgvzIGAZFW8bXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742406250; c=relaxed/simple;
-	bh=JzT5hud3FFKMKtIDoWSnB5zcQti65fif8taowP7NhhY=;
+	s=arc-20240116; t=1742406329; c=relaxed/simple;
+	bh=Mja/DsqMC96aBenZikHbYJ7mmYRS4Gju4qJTnOUreFE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Exp9pJ2+K0MYFVB2XFuuMvgw6UMNEk+ZqtFMFfs4ks23BDGezNIGNSoJ2PkCZfA6idpm/Smaj8vjcB6ZzMQ8bI8mtGzMAJPuctMZb2cdXOEO6/ph6h/fz6MpH6SlpRdAtEPdKuP90S+MV8jsexmuYkwSrC6FOU0Zhne/kw2pYwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com; spf=pass smtp.mailfrom=invisiblethingslab.com; dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b=0yoPHxvN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=l9SNzGNu; arc=none smtp.client-ip=202.12.124.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=invisiblethingslab.com
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 4936225400A2;
-	Wed, 19 Mar 2025 13:44:07 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Wed, 19 Mar 2025 13:44:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	invisiblethingslab.com; h=cc:cc:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1742406247;
-	 x=1742492647; bh=zB6ZRf3c6pO2URHszAPQbA4dx5JJIaII0NuZzQVfRT8=; b=
-	0yoPHxvNt9J+ZYv8OZtgjw+2LBmA1iDC68J255warXN4Nb5VD8DuJvy/gSRYP50V
-	SyWxORt7jNq1oeZ5fuv0pA3HIPy+w0+1zQpvqL/TjI6xhSuVgW+5lwT9GyGsW2ZX
-	djMLTX8b3xSf/ipGaU/wVW5ygQ++t9gNhA0oUI3L5wteStkatuE1OvWAO6hqrcpA
-	EgRtyh3DVTnaMxJqk0tOwriSawRKE7D9Fodv6TqhR7YLUfjX5Azfr7/csc30kqBc
-	koOR06UEvAZ3xZiI96lbp2KmI96wROX9nR0BXhTFx4/DU1h2E90zmnQTx924q1cW
-	0NA/LrF6xCpElZHpk7NDlA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1742406247; x=1742492647; bh=zB6ZRf3c6pO2URHszAPQbA4dx5JJIaII0Nu
-	ZzQVfRT8=; b=l9SNzGNujw9TSoY/Dx51bW/6TAfp7YMH8eVl4jyrjEXW3N9QXJA
-	r78++2smGi/Gk9285gZpLViWGa170wP65R3AcNtGNNYjkJaKoMBWcMxQtgWJTxue
-	lwUAzO8fhmroAwS5tFnIfP1hJuCEIfSh3TR5WW9sA3AB6StOEP+3YjYWM/qiGTqO
-	tcmzof79CdLa5fsQQLhRyzzGN335HzewDWkZWw6iCrverCPUwoTKaksMwuXU2+Ig
-	XnZW3WnsypJhvNh8tmKu4Delwa77PKksmtKCiAlkJaF0QTvvxLypzyXIUotDATCl
-	E3daIJLGGCDBTscEKXgp6VBLlDfHkauLIJA==
-X-ME-Sender: <xms:ZgLbZ_U9kcqVyj-eZ3gbp17gtL9zAVftclnLXM5-a87sBjN_aQMB9A>
-    <xme:ZgLbZ3mbU5nunjthERAZ7WXlxKk2QbYabI1FpCFMo1Dxm6DQKlkjIHBCMdykUVreR
-    OjMcJlSm66CXoE>
-X-ME-Received: <xmr:ZgLbZ7ZANJ9x6HpLrfBD0nd3L2g3DbbT8v_6uPrtSujtcUpwyxJpPzspSKjbBXmk5sMH-lHuW1djCiYmfvGVEr6P173PXU8p3qx-DjwN1O4jeCXq>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeehleeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhf
-    fvvefukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeffvghmihcuofgrrhhivgcu
-    qfgsvghnohhurhcuoeguvghmihesihhnvhhishhisghlvghthhhinhhgshhlrggsrdgtoh
-    hmqeenucggtffrrghtthgvrhhnpeduieelfeeutedvleehueetffejgeejgeffkeelveeu
-    leeukeejjeduffetjeekteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpeguvghmihesihhnvhhishhisghlvghthhhinhhgshhlrggsrdgtohhm
-    pdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepth
-    ihthhsohesmhhithdrvgguuhdprhgtphhtthhopegurghvihgusehfrhhomhhorhgsihht
-    rdgtohhmpdhrtghpthhtoheptghvvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepgh
-    hnohgrtghksehgohhoghhlvgdrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhinhhu
-    gihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehkvghnthdrohhvvghrshhtrh
-    gvvghtsehlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqsggtrggthhgvfhhs
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvh
-    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvggt
-    uhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:ZgLbZ6V9DnyhkC5uWLbiUoFBFsCyKJM_aabPn3T1mxAEwUrUMBxVrA>
-    <xmx:ZgLbZ5mBbf34iM4hKx7UbEadSEWIK9eeT-LKgt2xOD4BFomATO6Hcg>
-    <xmx:ZgLbZ3dAAvJcWGHU2Acx4vTTUQ0PFIx0apT8brlGVeawtaEJXwrOVw>
-    <xmx:ZgLbZzHuMSP6Txrq58rs97a-F-Uz6yUjHGCaf654enKtVxz6mm0acQ>
-    <xmx:ZwLbZ_delYsivibNlruuGnukXMaIWxPi9vjRoItCZ0UqdO8GwbJBtxHY>
-Feedback-ID: iac594737:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 19 Mar 2025 13:44:06 -0400 (EDT)
-Date: Wed, 19 Mar 2025 13:44:13 -0400
-From: Demi Marie Obenour <demi@invisiblethingslab.com>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Dave Chinner <david@fromorbit.com>, cve@kernel.org, gnoack@google.com,
-	gregkh@linuxfoundation.org, kent.overstreet@linux.dev,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, mic@digikod.net,
-	Demi Marie Obenour <demiobenour@gmail.com>
-Subject: Re: Unprivileged filesystem mounts
-Message-ID: <Z9sCcbZ7sdBgbX77@itl-email>
-References: <Z8948cR5aka4Cc5g@dread.disaster.area>
- <20250311021957.2887-1-demi@invisiblethingslab.com>
- <Z8_Q4nOR5X3iZq3j@dread.disaster.area>
- <Z9CYzjpQUH8Bn4AL@itl-email>
- <20250318221128.GA1040959@mit.edu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CcrwU/os7vFf6oaj04oQzZHWKcTgkq2gQWLt34i8B5nyUXZbdAOpt7gUVRFxu2ewL9HDpy8zFa6klAj8n5/ByM+A8NQZ7h8qpSK71sgMMUcsXeVbkEQLwI0xHFnuHlN04UY9W1++a3X+oTAdjrTC8aJWb7MbxI0GhnpOMxN8E2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=biyyC0Ci; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-224171d6826so52547385ad.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 10:45:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1742406327; x=1743011127; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=88yW33TrWIk/+/WaI5H9h1QmYyDkMe4Hu9deS8t+58M=;
+        b=biyyC0CidajeDa7Wg0pt7wfyYZZOZLbjQReMFZW/rVpEewIuWNO8Ax1CIz6Cw/iE8F
+         SutXvBmY8l5JfvXre1l+/hxuFPtHvxtQ+qUj+6vuz8fCrloLxxu7eFqzJyOoNJBmkkR2
+         K757qV5PZ9fzsIOXsHG1NnJom0T7GfETHUvy0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742406327; x=1743011127;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=88yW33TrWIk/+/WaI5H9h1QmYyDkMe4Hu9deS8t+58M=;
+        b=rEBwfMr6CoORiPZ62rWjIEs5JKJVKFjtslzTRYMWpOTBYwkj9D/OXBCq840LrXwiv+
+         tv1YQR6LnKqe+SXqmv7UI5iQZF0QYD5bN37Jur4pOoBR5w7Xqo6ciePiLX5qtAj6rXtf
+         Lco5VzI4FPMWFK9M606RY7xDrhmGSRdRRf6jHKNjzV8jYWxBMfgkuqsmDSfQkxPGdZK2
+         7VcHcmdM7TQx4vNQCC1QeCxM9qcDZxw5paelOkLy8DP9G35SGmFkuL2ozvHFYgEkIjC9
+         EpX9IvnzQq/45x3lnKbPvhgpX1O1hgNRd5C/CQAyx8dFemAUthwczH2DYI3FNfvrvrW3
+         8nUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWaKKcg+MmYEQYGL7GSFnAKAbI9YbmPWy70992rFrcs4C3nbYp5wZaJkviDl1l6mwAizPz8Qb9aASlzNkcq@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCiBThDDzv53G3jJnatUoT1kZlNpRhCITj1yq0ydXSrTI2XB0R
+	Zgp/5/woUti+uXaf2zeELv+kMjR/wHET1Q8nF5k30OjwslJ9HwFp/x/+u+D8er4=
+X-Gm-Gg: ASbGncvtF58IXpaqBUGGzokc5PnbFrcvLTXwkI0lyXF44qkn9smZRHJchFHyBL9njus
+	HmU3pdjai5woE8MewGugOkzuj6QmNMzcabTW5YvdwgrsEKrmd5VMGDX+KJadEjQjAmr/09dZaOq
+	sFWz0SN/er9KcLmtc8627TT7lKOyca0GA2YqdVVq1i/XmHngHxfSro4M+Xuk/JwVK0X9JFS2M0i
+	TauZDKdQbGFzuw25kvvd1MQfqrrckpVrPgu5QK7aluqJ6BQ8AgQHDkAMXXveM4flo+MjHTbh4gO
+	XvNGnPCdQG7+OjuSR9tHA7RZqpK43+4YPxwnB5xpWfCGcgenh71ZWfZ5UVlNuahNfqhBpy2/Z+x
+	9h3mKOPoJDh53LuJK
+X-Google-Smtp-Source: AGHT+IERFHHbx0A4wA9qJdQkKklw0ufeU3XYHswtvVKJOCpGkGhgwLEpUnI6jmKEfZkWMIg4V+8Kpw==
+X-Received: by 2002:a17:903:1790:b0:224:283f:a9ef with SMTP id d9443c01a7336-2264981d654mr49179945ad.6.1742406326748;
+        Wed, 19 Mar 2025 10:45:26 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22634aa7462sm36188005ad.224.2025.03.19.10.45.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 10:45:26 -0700 (PDT)
+Date: Wed, 19 Mar 2025 10:45:22 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, asml.silence@gmail.com,
+	linux-fsdevel@vger.kernel.org, edumazet@google.com,
+	pabeni@redhat.com, horms@kernel.org, linux-api@vger.kernel.org,
+	linux-arch@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	kuba@kernel.org, shuah@kernel.org, sdf@fomichev.me,
+	mingo@redhat.com, arnd@arndb.de, brauner@kernel.org,
+	akpm@linux-foundation.org, tglx@linutronix.de, jolsa@kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
+Message-ID: <Z9sCsooW7OSTgyAk@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
+	edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
+	linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, kuba@kernel.org,
+	shuah@kernel.org, sdf@fomichev.me, mingo@redhat.com, arnd@arndb.de,
+	brauner@kernel.org, akpm@linux-foundation.org, tglx@linutronix.de,
+	jolsa@kernel.org, linux-kselftest@vger.kernel.org
+References: <20250319001521.53249-1-jdamato@fastly.com>
+ <Z9p6oFlHxkYvUA8N@infradead.org>
+ <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
+ <2d68bc91-c22c-4b48-a06d-fa9ec06dfb25@kernel.dk>
+ <Z9r5JE3AJdnsXy_u@LQ3V64L9R2>
+ <19e3056c-2f7b-4f41-9c40-98955c4a9ed3@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6SHvia9fKGYi0QHp"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250318221128.GA1040959@mit.edu>
+In-Reply-To: <19e3056c-2f7b-4f41-9c40-98955c4a9ed3@kernel.dk>
 
+On Wed, Mar 19, 2025 at 11:20:50AM -0600, Jens Axboe wrote:
+> On 3/19/25 11:04 AM, Joe Damato wrote:
+> > On Wed, Mar 19, 2025 at 10:07:27AM -0600, Jens Axboe wrote:
+> >> On 3/19/25 9:32 AM, Joe Damato wrote:
+> >>> On Wed, Mar 19, 2025 at 01:04:48AM -0700, Christoph Hellwig wrote:
+> >>>> On Wed, Mar 19, 2025 at 12:15:11AM +0000, Joe Damato wrote:
+> >>>>> One way to fix this is to add zerocopy notifications to sendfile similar
+> >>>>> to how MSG_ZEROCOPY works with sendmsg. This is possible thanks to the
+> >>>>> extensive work done by Pavel [1].
+> >>>>
+> >>>> What is a "zerocopy notification" 
+> >>>
+> >>> See the docs on MSG_ZEROCOPY [1], but in short when a user app calls
+> >>> sendmsg and passes MSG_ZEROCOPY a completion notification is added
+> >>> to the error queue. The user app can poll for these to find out when
+> >>> the TX has completed and the buffer it passed to the kernel can be
+> >>> overwritten.
+> >>>
+> >>> My series provides the same functionality via splice and sendfile2.
+> >>>
+> >>> [1]: https://www.kernel.org/doc/html/v6.13/networking/msg_zerocopy.html
+> >>>
+> >>>> and why aren't you simply plugging this into io_uring and generate
+> >>>> a CQE so that it works like all other asynchronous operations?
+> >>>
+> >>> I linked to the iouring work that Pavel did in the cover letter.
+> >>> Please take a look.
+> >>>
+> >>> That work refactored the internals of how zerocopy completion
+> >>> notifications are wired up, allowing other pieces of code to use the
+> >>> same infrastructure and extend it, if needed.
+> >>>
+> >>> My series is using the same internals that iouring (and others) use
+> >>> to generate zerocopy completion notifications. Unlike iouring,
+> >>> though, I don't need a fully customized implementation with a new
+> >>> user API for harvesting completion events; I can use the existing
+> >>> mechanism already in the kernel that user apps already use for
+> >>> sendmsg (the error queue, as explained above and in the
+> >>> MSG_ZEROCOPY documentation).
+> >>
+> >> The error queue is arguably a work-around for _not_ having a delivery
+> >> mechanism that works with a sync syscall in the first place. The main
+> >> question here imho would be "why add a whole new syscall etc when
+> >> there's already an existing way to do accomplish this, with
+> >> free-to-reuse notifications". If the answer is "because splice", then it
+> >> would seem saner to plumb up those bits only. Would be much simpler
+> >> too...
+> > 
+> > I may be misunderstanding your comment, but my response would be:
+> > 
+> >   There are existing apps which use sendfile today unsafely and
+> >   it would be very nice to have a safe sendfile equivalent. Converting
+> >   existing apps to using iouring (if I understood your suggestion?)
+> >   would be significantly more work compared to calling sendfile2 and
+> >   adding code to check the error queue.
+> 
+> It's really not, if you just want to use it as a sync kind of thing. If
+> you want to have multiple things in flight etc, yeah it could be more
+> work, you'd also get better performance that way. And you could use
+> things like registered buffers for either of them, which again would
+> likely make it more efficient.
 
---6SHvia9fKGYi0QHp
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 19 Mar 2025 13:44:13 -0400
-From: Demi Marie Obenour <demi@invisiblethingslab.com>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Dave Chinner <david@fromorbit.com>, cve@kernel.org, gnoack@google.com,
-	gregkh@linuxfoundation.org, kent.overstreet@linux.dev,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, mic@digikod.net,
-	Demi Marie Obenour <demiobenour@gmail.com>
-Subject: Re: Unprivileged filesystem mounts
+I haven't argued that performance would be better using sendfile2
+compared to iouring, just that existing apps which already use
+sendfile (but do so unsafely) would probably be more likely to use a
+safe alternative with existing examples of how to harvest completion
+notifications vs something more complex, like wrapping iouring.
 
-On Tue, Mar 18, 2025 at 06:11:28PM -0400, Theodore Ts'o wrote:
-> On Tue, Mar 11, 2025 at 04:10:42PM -0400, Demi Marie Obenour wrote:
-> >=20
-> > Why is it not possible to provide that guarantee?  I'm not concerned
-> > about infinite loops or deadlocks.  Is there a reason it is not possible
-> > to prevent memory corruption?
->=20
-> Companies and users are willing to pay to improve performance for file
-> systems.  q(For example, we have been working for Cloud services that
-> are interested in improving the performance of their first party
-> database products using the fact with cloud emulated block devices, we
-> can guarantee that 16k write won't be torn, and this can resul;t in
-> significant database performance.)
->=20
-> However, I have *yet* to see any company willing to invest in
-> hardening file systems against maliciously modified file system
-> images.  We can debate how much it might cost it to harden a file
-> system, but given how much companies are willing to pay --- zero ---
-> it's mostly an academic question.
+> If you just use it as a sync thing, it'd be pretty trivial to just wrap
+> a my_sendfile_foo() in a submit_and_wait operation, which issues and
+> waits on the completion in a single syscall. And if you want to wait on
+> the notification too, you could even do that in the same syscall and
+> wait on 2 CQEs. That'd be a downright trivial way to provide a sync way
+> of doing the same thing.
 
-Google _ought_ to be willing to pay for ext4 and f2fs.  Have you asked
-ChromeOS and Android security about this?  Exploits involving malicious
-filesystem images are in scope for their bug bounty programs.
+I don't disagree; I just don't know if app developers:
+  a.) know that this is possible to do, and
+  b.) know how to do it
 
-> In addition, if someone made a file system which is guaranteed to be
-> safe, but it had massive performance regressions relative other file
-> systems --- it's unclear how many users or system administrators would
-> use it.  And we've seen that --- there are known mitigations for CPU
-> cache attacks which are so expensive, that companies or end users have
-> chosen not to enable them.  Yes, there are some security folks who
-> believe that security is the most important thing, uber alles.
-> Unfortunately, those people tend not to be the ones writing the checks
-> or authorizing hiring budgets.
->=20
-> That being said, if someone asked me if it was best way to invest
-> software development dollars --- I'd say no.  Don't get me wrong, if
-> someone were to give me some minions tasked to harden ext4, I know how
-> I could keep them busy and productive.  But a more cost effective way
-> of addressing the "untrusted file sytem problem" would be:
->=20
-> (a) Run a forced fsck to check the file system for inconsistency
-> before letting the file system be mounted.
->=20
-> (b) Mount the file system in a virtual machine, and then make it
-> available to the host using something like 9pfs.  9pfs is very simple
-> file system which is easy to validate, and it's a strategy used by
-> gVisor's file system gopher.
->=20
-> These two approaches are complementary, with (a) being easier, and (b)
-> probably a bit more robust from a security perspective, but it a bit
-> more work --- with both providing a layered approach.
+In general: it does seem a bit odd to me that there isn't a safe
+sendfile syscall in Linux that uses existing completion notification
+mechanisms.
 
-Definitely a good idea.
+> > I would also argue that there are likely user apps out there that
+> > use both sendmsg MSG_ZEROCOPY for certain writes (for data in
+> > memory) and also use sendfile (for data on disk). One example would
+> > be a reverse proxy that might write HTTP headers to clients via
+> > sendmsg but transmit the response body with sendfile.
+> > 
+> > For those apps, the code to check the error queue already exists for
+> > sendmsg + MSG_ZEROCOPY, so swapping in sendfile2 seems like an easy
+> > way to ensure safe sendfile usage.
+> 
+> Sure that is certainly possible. I didn't say that wasn't the case,
+> rather that the error queue approach is a work-around in the first place
+> for not having some kind of async notification mechanism for when it's
+> free to reuse.
 
-> > > In this situation, the choice of what to do *must* fall to the user,
-> > > but the argument for "filesystem corruption is a CVE-worthy bug" is
-> > > that the choice has been taken away from the user. That's what I'm
-> > > saying needs to change - the choice needs to be returned to the
-> > > user...
->=20
-> Users can alwayus do stupid things.  For example, they could download
-> a random binary from the web, then execute it.  We've seen very
-> popular software which is instaled via "curl <URL> | bash".  Should we
-> therefore call bash be a CVE-vulnerability?
->=20
-> Realistically, this is probably a far bigger vulnerability if we're
-> talking about stupid user tricks.  ("But.... but... but... users need
-> to be able to install software" --- we can't stop them from piping the
-> output of curl into bash.)  Which is another reason why I don't really
-> blame the VP's that are making funding decisions; it's not clear that
-> the ROI of funding file system security hardening is the best way to
-> spend a company's dollars.  Remember, Zuckerburg has been quoted as
-> saying that he's laying off engineers so his company can buy more
-> GPU's, we know that funding is not infinite.  Every company is making
-> ROI decisions; you might not agree with the decisions, but trust me,
-> they're making them.
->=20
-> But if some company would like to invest software engineering effort
-> in addition features or perform security hardening --- they should
-> contact me, and I'd be happy to chat.  We have weekly ext4 video
-> conference calls, and I'm happy to collaborate with companies have a
-> business interest in seeing some feature get pursued.  There *have*
-> been some that are security related --- fscrypt and fsverity were both
-> implemented for ext4 first, in support of Android and ChromeOS's
-> security use cases.  But in practice this has been the exception, and
-> not the rule.
+Of course, I certainly agree that the error queue is a work around.
+But it works, app use it, and its fairly well known. I don't see any
+reason, other than historical context, why sendmsg can use this
+mechanism, splice can, but sendfile shouldn't?
 
-Android and ChromeOS do _not_ allow you to run curl <URL> | bash, at
-least outside of a VM.
+> > As far as the bit about plumbing only the splice bits, sorry if I'm
+> > being dense here, do you mean plumbing the error queue through to
+> > splice only and dropping sendfile2?
+> > 
+> > That is an option. Then the apps currently using sendfile could use
+> > splice instead and get completion notifications on the error queue.
+> > That would probably work and be less work than rewriting to use
+> > iouring, but probably a bit more work than using a new syscall.
+> 
+> Yep
 
-> > Not automounting filesystems on hotplug is a _part_ of the solution.
-> > It cannot be the _entire_ solution.  Users sometimes need to be able to
-> > interact with untrusted filesystem images with a reasonable speed.
->=20
-> Running fsck on a file system *before* automounting file systems would
-> be a pretty decent start towards a solution.  Is it perfect?  No.  But
-> it would provide a huge amount of protection.
->=20
-> Note that this won't help if you have a malicious hardware that
-> *pretends* to be a USB storage device, but which doens't behave a like
-> a honest storage device.  For example, reading a particular sector
-> with one data at time T, and a different data at time T+X, with no
-> intervening writes.  There is no real defense to this attack, since
-> there is no way that you can authentiate the external storage device;
-> you could have a registry of USB vendor and model id's, but a device
-> can always lie about its id numbers.
+I'm not opposed to dropping the sendfile2 part of the series for the
+official submission. I do think it is a bit odd to add the
+functionality to splice only, though, when probably many apps are
+using splice via calls to sendfile and there is no way to safely use
+sendfile.
 
-This attack can be defended against by sandboxing the filesystem driver
-and copying files to trusted storage before using them.  You can
-authenticate devices based on what port they are plugged into, and Qubes
-OS is working on exactly that.
+If you feel very strongly that this cannot be merged without
+dropping sendfile2 and only plumbing this through for splice, then
+I'll drop the sendfile2 syscall when I submit officially (probably
+next week?).
 
-> If you are worried about this kind of attack, the only thing you can
-> do is to prevent external USB devices from being attached.  This *is*
-> something that you can do with Chrome and Android enterprise security
-> policies, and, I've talked to a bank's senior I/T leader that chose to
-> put epoxy in their desktop, to mitigate aginst a whole *class* of USB
-> security attacks.
+I do feel pretty strongly that it's more likely apps would use
+sendfile2 and we'd have safer apps out in the wild. But, I could be
+wrong.
 
-Or you can disable your firmware's USB stack and ensure that USB devices
-are only attached to virtual machines.  Dasharo allows the former, and
-Qubes OS allows the latter.
+That said: if the new syscsall is the blocker, I'll drop it and
+offer a change to the sendfile man page suggesting users swap it
+with calls to splice + error queue for safety.
 
-(Disclaimer: I work on Qubes OS).
+I greatly appreciate you taking a look and your feedback.
 
-> Like everything else, security and usability and performance and costs
-> are all engineering tradeoffs.  So what works for one use case and
-> threat model won't be optimal for another, just as fscrypt works well
-> for Android and ChromeOS, but it doesn't necessarily work well for
-> other use cases (where I might recommed dm-crypt instead).
-
-Is the tradeoff fundamental, or is it a consequence of Linux being a
-monolithic kernel?  If Linux were a microkernel and every filesystem
-driver ran as a userspace process with no access to anything but the
-device it is accessing, then there would be no tradeoff when it comes to
-filesystems: a compromised filesystem driver would have no more access
-than the device itself would, so compromising a filesystem driver would
-be of much less value to an attacker.  There is still the problem that
-plug and play is incompatible with not trusting devices to identify
-themselves, but that's a different concern.
---=20
-Sincerely,
-Demi Marie Obenour (she/her/hers)
-Invisible Things Lab
-
---6SHvia9fKGYi0QHp
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEopQtqVJW1aeuo9/sszaHOrMp8lMFAmfbAm4ACgkQszaHOrMp
-8lPcUg//fmUmchrAVJ0yMUnR1YT5Qc+IL6H4fOXOzaY5AwGFfsMFgZQZEOuodF8O
-ym8pSj9l9hDpQbLUDKn6xWr3zEncy2508ve+jggoEvxasi04QMhYnze20v2+Bpjj
-rMK8/6Qdsyp3KfndxB5Bf1O1FX2CpYOK6OJIkXLfVrwrw3R6Un0KKjTF5D4F59BT
-+WioHos6YyWWe8l5jk/5e/Ko5LD/GCJUxaUXcyExqfvsi6vcUyNed4HS70Vyqtv3
-/lzX02fRNGt97pOp0SteqIDSlu7viRXP6oe0ss8qFl2Tt2fkRoZUBCs7itNYGR0g
-Q33w0/aCs+VYZo3B4KlveTpxTkRgrXpnluO/TZzEJpRCvwqmRgrM5CVupBLzpM/V
-K9sgBV9Zr002/kjnGBdCLsVp/FSeyxj0/MkQf/i4dIM4lfIvAChPXxVBZYJdlcT3
-xYwsDGMpK54dn2MNwrvBVMLkaWnDcXaSdkKx6cITJncWRdG+Y2JBHj9kIqNOPSQT
-AartmqGbueUbIty3gGsnJzUEWxlksg4Q7Kk5icKA+g+aHbfGrDHwA8ntmEYqhoKP
-M2F7dAHKov2Q5V+e+gIx3AIR1n+wVvdmdgtjlwysFNPLo763eb0ME3e900ttkqn0
-lPzc0lEgXIxSF/JZ1N0acibydBgcU9SvzNC4jyFl5bV0S9Vaj7U=
-=thIz
------END PGP SIGNATURE-----
-
---6SHvia9fKGYi0QHp--
+Thanks,
+Joe
 
