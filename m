@@ -1,541 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-44454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44455-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 331FDA6941C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 16:54:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E153A6946A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 17:11:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AB8E17C9CF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 15:54:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0733819C32B2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 16:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D68F1D79B8;
-	Wed, 19 Mar 2025 15:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637C11DF248;
+	Wed, 19 Mar 2025 16:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="a2y7yMoR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GmjBBI9g";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="a2y7yMoR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GmjBBI9g"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="y+r2+hEf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F02E1B6CE0
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 15:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35B11AC43A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 16:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742399653; cv=none; b=ImFrlJl5uVEkW+jz77eK17IUL6HjJmiOqSFBt+0IYHvbFG1v+Ov0Qt7e09uf3XZpfYvTxbXvuYYGorFOqCL5JVFHAc9L/5BrwwHjfXn1uhRNNo42o/KS1Jrw/LHMtqsGyQ9GxOF0ptd7uLFtVWfLyqi863vCqaw1mLQ9nFaER8U=
+	t=1742400452; cv=none; b=H4cvMJXcbJc/9M0E0bz/aMqLtJ6kZuqHjx7E28m/N7Q7RCxT02PZzp+lR0Aw1l1u0doytbJiULiEsah/AAAjRczU6E/1jUg6YUIL4n5A789OvCDvlWwAmYsW2/rfngQP0IwJlFaTLom35gJrFu6gGVBB/9ZYJGNklEM0l5nxPyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742399653; c=relaxed/simple;
-	bh=cN3YtOFtZDW5KQ8WSF2b1CCv7JD/rgunE0F184aQ6mo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CU9P82Eji9qh7sT3xkLkbTF244i/Tl+ro3G7R0/UU6glVB4hLHNa/e1GWatuvqWY1jshwCgoGIjsMv0wCHN+bu6aioXdw5RIDpqd/doV8v+Fe8u0unA9gRmZk20POjsc4I2IVX1E9dyhKhbF67+pjyBp8hSF7uttL6R7dJ/ZhR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=a2y7yMoR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GmjBBI9g; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=a2y7yMoR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GmjBBI9g; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 893DE2191C;
-	Wed, 19 Mar 2025 15:54:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742399648; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QRaFa1MFKzQ/6eSVd+w33b/cDI8lOm8iEz6IbpJxhUY=;
-	b=a2y7yMoR7YbJ5MJVbCiwdPKcJoztzioppPforCO8l5DGdbU/PI9bErfONQ8hYiTC8b3K2+
-	2N9qBkMN6cPf38/84S0rHjuKcpH5GomAJpfmcPOD7adi5ZBOvSUHyCnZp8WxQNLR7ZDg+U
-	OXkoB2oPEzLYfNHC5T5XterL4ir3IC4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742399648;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QRaFa1MFKzQ/6eSVd+w33b/cDI8lOm8iEz6IbpJxhUY=;
-	b=GmjBBI9gelOHeDTMYPEWYQTs3kTxqff203/pS+0kKg2KOQZtleXlZluGRY5Q1PtAAhYG0n
-	Gb/DyH1iuvCIWVAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742399648; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QRaFa1MFKzQ/6eSVd+w33b/cDI8lOm8iEz6IbpJxhUY=;
-	b=a2y7yMoR7YbJ5MJVbCiwdPKcJoztzioppPforCO8l5DGdbU/PI9bErfONQ8hYiTC8b3K2+
-	2N9qBkMN6cPf38/84S0rHjuKcpH5GomAJpfmcPOD7adi5ZBOvSUHyCnZp8WxQNLR7ZDg+U
-	OXkoB2oPEzLYfNHC5T5XterL4ir3IC4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742399648;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QRaFa1MFKzQ/6eSVd+w33b/cDI8lOm8iEz6IbpJxhUY=;
-	b=GmjBBI9gelOHeDTMYPEWYQTs3kTxqff203/pS+0kKg2KOQZtleXlZluGRY5Q1PtAAhYG0n
-	Gb/DyH1iuvCIWVAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 676EA13726;
-	Wed, 19 Mar 2025 15:54:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dKw8GaDo2mfyUQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 19 Mar 2025 15:54:08 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0A18EA08D2; Wed, 19 Mar 2025 16:54:08 +0100 (CET)
-Date: Wed, 19 Mar 2025 16:54:07 +0100
-From: Jan Kara <jack@suse.cz>
-To: Anuj Gupta <anuj20.g@samsung.com>
-Cc: Jan Kara <jack@suse.cz>, Kundan Kumar <kundan.kumar@samsung.com>, 
-	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>, 
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, mcgrof@kernel.org, 
-	joshi.k@samsung.com, axboe@kernel.dk, clm@meta.com, willy@infradead.org, 
-	gost.dev@samsung.com
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Parallelizing filesystem writeback
-Message-ID: <gamxtewl5yzg4xwu7lpp7obhp44xh344swvvf7tmbiknvbd3ww@jowphz4h4zmb>
-References: <20250129102627.161448-1-kundan.kumar@samsung.com>
- <Z5qw_1BOqiFum5Dn@dread.disaster.area>
- <20250131093209.6luwm4ny5kj34jqc@green245>
- <Z6GAYFN3foyBlUxK@dread.disaster.area>
- <20250204050642.GF28103@lst.de>
- <s43qlmnbtjbpc5vn75gokti3au7qhvgx6qj7qrecmkd2dgrdfv@no2i7qifnvvk>
- <Z6qkLjSj1K047yPt@dread.disaster.area>
- <20250220141824.ju5va75s3xp472cd@green245>
- <qdgoyhi5qjnlfk6zmlizp2lcrmg43rwmy3tl4yz6zkgavgfav5@nsfculj7aoxe>
- <20250318113712.GA14945@green245>
+	s=arc-20240116; t=1742400452; c=relaxed/simple;
+	bh=n24KzPzMfIDbuu7S5CaFyw0UePwN7haHff4RjRQuRy4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=tm9DxORHnGN56Ifr1PwyE6NvdhOlp7lpX+AlwTw+99jl649uZAICSmQU5snjMAPeMKbiIm6iY4hovwpz8cLqmYh3037VGKPzWvC/nkNFTkNnes5acY+603GSh3Qxq4hP2hIIDuNTEekzx5Rdu0fdJQh2WAnpwNeuLxHAaM6U/4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=y+r2+hEf; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-85df99da233so225165339f.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 09:07:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1742400450; x=1743005250; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Ija8XGDNXdwDWcF7Obpxn5AkOPtI89VS3WVbcU/kpys=;
+        b=y+r2+hEfjU2Zz7ALNOq5svFqzJiE9cuXQdmJA+P20x3ThNxa4mu8TtLObqNVlmroGR
+         OlmZyYGQuf90qEw4W3uFuM+qnOHzzxc8ucTo7UpOKYtNKkyBbOReAsQhAQo3E/IP7leE
+         E9wx4qFx45Oa2aV/2THQw+dab2TirOSA0A+EQ6K560wTR4bka8wphawWRyI/d1vJFHr+
+         qzQXF+jXmP7T7oWdIYtu4AfbRAkJbRlbzJRgprCtUulnirrdugfhtvRDW6HS5GWmBfRc
+         krNJStKgc3sx9SLXZLXnd0wZOcaGEL7gXh4wuw7XqjLN2dft+wd5LxMmSpHgutBnovf3
+         PLfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742400450; x=1743005250;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ija8XGDNXdwDWcF7Obpxn5AkOPtI89VS3WVbcU/kpys=;
+        b=Val6pgeSx3T10XaWh6OSyD9gy09puBHTxO9Arj/Er9JYStJUwwkpP94FL4DdR0acLS
+         VRZm1GUosw2x+VXXY+8Ft+OajmmCFzk36uJ3zoAYCQs/sOxaABHtMJ3CHuSHS7DPbJ18
+         Br7yPRkV0wUaSIyAXLh4yXAurHD/sa8mMje4ch66KQwORaFFFSrC05nl8Uc/fuMZvloZ
+         vZdWpbRNx5zHxG6X72i90ThoinhWJfS2gZpMRKMPffqHBIA5IYr9wKyMBXa8lTo0HLZz
+         cZhjvcTqUGE9ms2ek+R7rGkw4siKMMOVHZWN5/0+rfS1TR1teaqcY5BFmSJPjkMcEHyY
+         cdEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIRlQV2Vvd8oi5KGGi74Cur5YNDaOQGFXSr4ApXzy3SSKVGMPmSB7M3byUaL5HELtZKCeqRSbV1CKtKz6j@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSNUmzLLzoRRrGsqEm42ysv+78BTIev4jKCmt8igNsU7yAA/Gq
+	i2vUeEtf1NuUszfuU0SIgi1Kh8ejBaDSpfTOtckDLnd5bSkS7k+OWdyjGOsgnqQ=
+X-Gm-Gg: ASbGncuSiOs8j8p78SkEeT/JL9/0qkepVcQ4OmvMsKy9PFRKGPumGDgyWiyRj+UcjYt
+	1hiUijxsLCcBi2PkZHU1OAZTTSd5FwUidNVpVpewzIiZQ3PebxkIschmXRFkGQmt1pEazZ2dDRY
+	JoXcE45TO9KmflcpfJJVCz0z4dFcnSGuWysIg2lHw/jylQbaLM6pc0YDv8Pi7Yvq3RyBGJW6a7c
+	I6njS/0fC6DfqRH7YiAYVb6VePH2N3ocRZiEIjoj3gjQ9xrkZrPORUtlG90/CMKooOEcymjeNzo
+	JxNA7nMNU5SIPT6k7Z14c0cgq6F38ySWSNiBh1AVRE2a2fy/V74=
+X-Google-Smtp-Source: AGHT+IFDBCFWtf4DEWZHOAZhQMfKg6BVxtB70LM/11gT5po4hUy91hL9GfbCfrY2dAmweb9btJ2fRg==
+X-Received: by 2002:a05:6e02:1d1d:b0:3d4:3aba:e5ce with SMTP id e9e14a558f8ab-3d586bb9f32mr38295495ab.20.1742400449657;
+        Wed, 19 Mar 2025 09:07:29 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f263719730sm3269768173.36.2025.03.19.09.07.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Mar 2025 09:07:29 -0700 (PDT)
+Message-ID: <2d68bc91-c22c-4b48-a06d-fa9ec06dfb25@kernel.dk>
+Date: Wed, 19 Mar 2025 10:07:27 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318113712.GA14945@green245>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	URIBL_BLOCKED(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,samsung.com:email,suse.cz:email];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,samsung.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
+To: Joe Damato <jdamato@fastly.com>, Christoph Hellwig <hch@infradead.org>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ asml.silence@gmail.com, linux-fsdevel@vger.kernel.org, edumazet@google.com,
+ pabeni@redhat.com, horms@kernel.org, linux-api@vger.kernel.org,
+ linux-arch@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+ kuba@kernel.org, shuah@kernel.org, sdf@fomichev.me, mingo@redhat.com,
+ arnd@arndb.de, brauner@kernel.org, akpm@linux-foundation.org,
+ tglx@linutronix.de, jolsa@kernel.org, linux-kselftest@vger.kernel.org
+References: <20250319001521.53249-1-jdamato@fastly.com>
+ <Z9p6oFlHxkYvUA8N@infradead.org> <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue 18-03-25 17:07:12, Anuj Gupta wrote:
-> > I was thinking about how to best parallelize the writeback and I think
-> > there are two quite different demands for which we probably want two
-> > different levels of parallelism.
-> > 
-> > One case is the situation when the filesystem for example has multiple
-> > underlying devices (like btrfs or bcachefs) or for other reasons writeback
-> > to different parts is fairly independent (like for different XFS AGs). Here
-> > we want parallelism at rather high level I think including separate
-> > dirty throttling, tracking of writeback bandwidth etc.. It is *almost* like
-> > separate bdis (struct backing_dev_info) but I think it would be technically
-> > and also conceptually somewhat easier to do the multiplexing by factoring
-> > out:
-> > 
-> >         struct bdi_writeback wb;  /* the root writeback info for this bdi */
-> >         struct list_head wb_list; /* list of all wbs */
-> > #ifdef CONFIG_CGROUP_WRITEBACK
-> >         struct radix_tree_root cgwb_tree; /* radix tree of active cgroup wbs */
-> >         struct rw_semaphore wb_switch_rwsem; /* no cgwb switch while syncing */
-> > #endif
-> >         wait_queue_head_t wb_waitq;
-> > 
-> > into a new structure (looking for a good name - bdi_writeback_context???)
-> > that can get multiplied (filesystem can create its own bdi on mount and
-> > configure there number of bdi_writeback_contexts it wants). We also need to
-> > add a hook sb->s_ops->get_inode_wb_context() called from __inode_attach_wb()
-> > which will return appropriate bdi_writeback_context (or perhaps just it's
-> > index?) for an inode. This will be used by the filesystem to direct
-> > writeback code where the inode should go. This is kind of what Kundan did
-> > in the last revision of his patches but I hope this approach should
-> > somewhat limit the changes necessary to writeback infrastructure - the
-> > patch 2 in his series is really unreviewably large...
+On 3/19/25 9:32 AM, Joe Damato wrote:
+> On Wed, Mar 19, 2025 at 01:04:48AM -0700, Christoph Hellwig wrote:
+>> On Wed, Mar 19, 2025 at 12:15:11AM +0000, Joe Damato wrote:
+>>> One way to fix this is to add zerocopy notifications to sendfile similar
+>>> to how MSG_ZEROCOPY works with sendmsg. This is possible thanks to the
+>>> extensive work done by Pavel [1].
+>>
+>> What is a "zerocopy notification" 
 > 
-> Thanks Jan.
+> See the docs on MSG_ZEROCOPY [1], but in short when a user app calls
+> sendmsg and passes MSG_ZEROCOPY a completion notification is added
+> to the error queue. The user app can poll for these to find out when
+> the TX has completed and the buffer it passed to the kernel can be
+> overwritten.
 > 
-> I tried to modify the existing infra based on your suggestion [1]. This
-> only takes care of the first case that you mentioned. I am yet to start
-> to evaluate and implement the second case (when amount of cpu work is
-> high). The patch is large, because it requires changing all the places
-> that uses bdi's fields that have now been moved to a new structure. I
-> will try to streamline it further.
+> My series provides the same functionality via splice and sendfile2.
 > 
-> I have omitted the xfs side plumbing for now.
-> Can you please see if this aligns with the scheme that you had in mind?
-> If the infra looks fine, I can plumb XFS changes on top of it.
+> [1]: https://www.kernel.org/doc/html/v6.13/networking/msg_zerocopy.html
 > 
-> Note: This patch is only compile tested, haven't run any tests on it.
-
-Sure, this is fine for this early prototyping phase.
-
-> Subject: [PATCH] writeback: add infra for parallel writeback
+>> and why aren't you simply plugging this into io_uring and generate
+>> a CQE so that it works like all other asynchronous operations?
 > 
-> Introduce a new bdi_writeback_ctx structure that enables us to have
-> multiple writeback contexts for parallel writeback.
+> I linked to the iouring work that Pavel did in the cover letter.
+> Please take a look.
 > 
-> Existing single threaded writeback will use default_ctx.
+> That work refactored the internals of how zerocopy completion
+> notifications are wired up, allowing other pieces of code to use the
+> same infrastructure and extend it, if needed.
 > 
-> Filesystem now have the option to create there own bdi aind populate
-> multiple bdi_writeback_ctx in bdi's bdi_wb_ctx_arr (xarray for now, but
-> plan to move to use a better structure like list_lru).
-> 
-> Introduce a new hook get_inode_wb_ctx() in super_operations which takes
-> inode as a parameter and returns the bdi_wb_ctx corresponding to the
-> inode.
-> 
-> Modify all the functions/places that operate on bdi's wb, wb_list,
-> cgwb_tree, wb_switch_rwsem, wb_waitq as these fields have now been moved
-> to bdi_writeback_ctx
-> 
-> Store a reference to bdi_wb_ctx in bdi_writeback.
-> 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
-> Signed-off-by: Kundan Kumar <kundan.kumar@samsung.com>
+> My series is using the same internals that iouring (and others) use
+> to generate zerocopy completion notifications. Unlike iouring,
+> though, I don't need a fully customized implementation with a new
+> user API for harvesting completion events; I can use the existing
+> mechanism already in the kernel that user apps already use for
+> sendmsg (the error queue, as explained above and in the
+> MSG_ZEROCOPY documentation).
 
-Thanks for the patch! Overall I think we are going in the right direction
-:) Some comments below.
+The error queue is arguably a work-around for _not_ having a delivery
+mechanism that works with a sync syscall in the first place. The main
+question here imho would be "why add a whole new syscall etc when
+there's already an existing way to do accomplish this, with
+free-to-reuse notifications". If the answer is "because splice", then it
+would seem saner to plumb up those bits only. Would be much simpler
+too...
 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 3cd99e2dc6ac..4c47c298f174 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -265,23 +265,27 @@ void __inode_attach_wb(struct inode *inode, struct folio *folio)
->  {
->  	struct backing_dev_info *bdi = inode_to_bdi(inode);
->  	struct bdi_writeback *wb = NULL;
-> +	struct bdi_writeback_ctx *bdi_writeback_ctx =
-> +						fetch_bdi_writeback_ctx(inode);
-						^^^
-I'd call this inode_bdi_writeback_ctx(). I think that name tells a bit
-more.
-
->  	if (inode_cgwb_enabled(inode)) {
->  		struct cgroup_subsys_state *memcg_css;
->  
->  		if (folio) {
->  			memcg_css = mem_cgroup_css_from_folio(folio);
-> -			wb = wb_get_create(bdi, memcg_css, GFP_ATOMIC);
-> +			wb = wb_get_create(bdi, bdi_writeback_ctx, memcg_css,
-> +					   GFP_ATOMIC);
->  		} else {
->  			/* must pin memcg_css, see wb_get_create() */
->  			memcg_css = task_get_css(current, memory_cgrp_id);
-> -			wb = wb_get_create(bdi, memcg_css, GFP_ATOMIC);
-> +			wb = wb_get_create(bdi, bdi_writeback_ctx, memcg_css,
-> +					   GFP_ATOMIC);
->  			css_put(memcg_css);
->  		}
->  	}
->  
->  	if (!wb)
-> -		wb = &bdi->wb;
-> +		wb = &bdi_writeback_ctx->wb;
-
-Perhaps as a preparation patch, can you please rename bdi->wb to
-bdi->root_wb (just mechanical replacement) and then carry over this name to
-bdi_writeback_ctx? Because we have too many wbs here already and as the
-structure is getting more complex, explanatory naming becomes more
-important. Thanks!
-
-> @@ -1103,7 +1112,17 @@ int cgroup_writeback_by_id(u64 bdi_id, int memcg_id,
->  	 * And find the associated wb.  If the wb isn't there already
->  	 * there's nothing to flush, don't create one.
->  	 */
-> -	wb = wb_get_lookup(bdi, memcg_css);
-> +	if (bdi->is_parallel) {
-> +		struct bdi_writeback_ctx *bdi_wb_ctx;
-> +
-> +		for_each_bdi_wb_ctx(bdi, bdi_wb_ctx) {
-> +			wb = wb_get_lookup(bdi_wb_ctx, memcg_css);
-> +			if (wb)
-> +				break;
-> +		}
-> +	} else {
-> +		wb = wb_get_lookup(&bdi->default_ctx, memcg_css);
-> +	}
-
-Why do you introduce this bdi->is_parallel bool? Why don't we
-unconditionally do:
-
-	for_each_bdi_wb_ctx(bdi, bdi_wb_ctx) {
-		wb = wb_get_lookup(bdi_wb_ctx, memcg_css);
-		if (wb)
-			break;
-	}
-
-It would seem more obvious and with less code duplication... It might
-require a bit of magic inside for_each_bdi_wb_ctx() but I think it pays
-off. BTW, you should initialize 'wb' before the loop to NULL. Otherwise I
-expect some compilers to complain and also for readers it makes the test
-below obviously do the right thing.
-
->  	if (!wb) {
->  		ret = -ENOENT;
->  		goto out_css_put;
-...
-> @@ -1232,13 +1251,14 @@ static long wb_split_bdi_pages(struct bdi_writeback *wb, long nr_pages)
->  
->  static void bdi_split_work_to_wbs(struct backing_dev_info *bdi,
->  				  struct wb_writeback_work *base_work,
-> -				  bool skip_if_busy)
-> +				  bool skip_if_busy,
-> +				  struct bdi_writeback_ctx *bdi_wb_ctx)
-
-Nit; logical position for bdi_wb_ctx argument would be just after 'bdi' but
-see below - I think we could pass only bdi_wb_ctx here after some changes.
-
-> @@ -2713,11 +2753,12 @@ static void wait_sb_inodes(struct super_block *sb)
->  	mutex_unlock(&sb->s_sync_lock);
->  }
->  
-> -static void __writeback_inodes_sb_nr(struct super_block *sb, unsigned long nr,
-> -				     enum wb_reason reason, bool skip_if_busy)
-> +static void __writeback_inodes_sb_nr_bdi_wb_ctx(struct super_block *sb,
-> +						unsigned long nr, enum wb_reason reason,
-> +						bool skip_if_busy,
-> +						struct bdi_writeback_ctx *bdi_wb_ctx)
->  {
-> -	struct backing_dev_info *bdi = sb->s_bdi;
-> -	DEFINE_WB_COMPLETION(done, bdi);
-> +	DEFINE_WB_COMPLETION(done, bdi_wb_ctx);
->  	struct wb_writeback_work work = {
->  		.sb			= sb,
->  		.sync_mode		= WB_SYNC_NONE,
-> @@ -2727,12 +2768,29 @@ static void __writeback_inodes_sb_nr(struct super_block *sb, unsigned long nr,
->  		.reason			= reason,
->  	};
->  
-> +	bdi_split_work_to_wbs(sb->s_bdi, &work, skip_if_busy, bdi_wb_ctx);
-> +	wb_wait_for_completion(&done);
-> +}
-> +
-> +static void __writeback_inodes_sb_nr(struct super_block *sb, unsigned long nr,
-> +				     enum wb_reason reason, bool skip_if_busy)
-> +{
-> +	struct backing_dev_info *bdi = sb->s_bdi;
-> +
->  	if (!bdi_has_dirty_io(bdi) || bdi == &noop_backing_dev_info)
->  		return;
->  	WARN_ON(!rwsem_is_locked(&sb->s_umount));
->  
-> -	bdi_split_work_to_wbs(sb->s_bdi, &work, skip_if_busy);
-> -	wb_wait_for_completion(&done);
-> +	if (bdi->is_parallel) {
-> +		struct bdi_writeback_ctx *bdi_wb_ctx;
-> +
-> +		for_each_bdi_wb_ctx(bdi, bdi_wb_ctx)
-> +			__writeback_inodes_sb_nr_bdi_wb_ctx(sb, nr, reason,
-> +							    skip_if_busy, bdi_wb_ctx);
-> +	} else {
-> +		__writeback_inodes_sb_nr_bdi_wb_ctx(sb, nr, reason,
-> +						    skip_if_busy, &bdi->default_ctx);
-> +	}
->  }
-
-If we drop this 'is_parallel' thing, I think we don't need the new
-__writeback_inodes_sb_nr_bdi_wb_ctx() function and can keep everything
-in one function.
-
->  
->  /**
-> @@ -2785,17 +2843,10 @@ void try_to_writeback_inodes_sb(struct super_block *sb, enum wb_reason reason)
->  }
->  EXPORT_SYMBOL(try_to_writeback_inodes_sb);
->  
-> -/**
-> - * sync_inodes_sb	-	sync sb inode pages
-> - * @sb: the superblock
-> - *
-> - * This function writes and waits on any dirty inode belonging to this
-> - * super_block.
-> - */
-> -void sync_inodes_sb(struct super_block *sb)
-> +static void sync_inodes_bdi_wb_ctx(struct super_block *sb,
-> +		struct backing_dev_info *bdi, struct bdi_writeback_ctx *bdi_wb_ctx)
->  {
-> -	struct backing_dev_info *bdi = sb->s_bdi;
-> -	DEFINE_WB_COMPLETION(done, bdi);
-> +	DEFINE_WB_COMPLETION(done, bdi_wb_ctx);
->  	struct wb_writeback_work work = {
->  		.sb		= sb,
->  		.sync_mode	= WB_SYNC_ALL,
-> @@ -2805,6 +2856,22 @@ void sync_inodes_sb(struct super_block *sb)
->  		.reason		= WB_REASON_SYNC,
->  		.for_sync	= 1,
->  	};
-> +	bdi_wb_ctx_down_write_wb_switch_rwsem(bdi_wb_ctx);
-> +	bdi_split_work_to_wbs(bdi, &work, false, bdi_wb_ctx);
-> +	wb_wait_for_completion(&done);
-> +	bdi_wb_ctx_up_write_wb_switch_rwsem(bdi_wb_ctx);
-> +}
-> +
-> +/**
-> + * sync_inodes_sb	-	sync sb inode pages
-> + * @sb: the superblock
-> + *
-> + * This function writes and waits on any dirty inode belonging to this
-> + * super_block.
-> + */
-> +void sync_inodes_sb(struct super_block *sb)
-> +{
-> +	struct backing_dev_info *bdi = sb->s_bdi;
->  
->  	/*
->  	 * Can't skip on !bdi_has_dirty() because we should wait for !dirty
-> @@ -2815,12 +2882,15 @@ void sync_inodes_sb(struct super_block *sb)
->  		return;
->  	WARN_ON(!rwsem_is_locked(&sb->s_umount));
->  
-> -	/* protect against inode wb switch, see inode_switch_wbs_work_fn() */
-> -	bdi_down_write_wb_switch_rwsem(bdi);
-> -	bdi_split_work_to_wbs(bdi, &work, false);
-> -	wb_wait_for_completion(&done);
-> -	bdi_up_write_wb_switch_rwsem(bdi);
-> +	if (bdi->is_parallel) {
-> +		struct bdi_writeback_ctx *bdi_wb_ctx;
->  
-> +		for_each_bdi_wb_ctx(bdi, bdi_wb_ctx) {
-> +			sync_inodes_bdi_wb_ctx(sb, bdi, bdi_wb_ctx);
-> +		}
-> +	} else {
-> +		sync_inodes_bdi_wb_ctx(sb, bdi, &bdi->default_ctx);
-> +	}
->  	wait_sb_inodes(sb);
->  }
->  EXPORT_SYMBOL(sync_inodes_sb);
-
-The same comment as above.
-
-> @@ -104,6 +104,7 @@ struct wb_completion {
->   */
->  struct bdi_writeback {
->  	struct backing_dev_info *bdi;	/* our parent bdi */
-> +	struct bdi_writeback_ctx *bdi_wb_ctx;
->  
->  	unsigned long state;		/* Always use atomic bitops on this */
->  	unsigned long last_old_flush;	/* last old data flush */
-> @@ -160,6 +161,16 @@ struct bdi_writeback {
->  #endif
->  };
->  
-> +struct bdi_writeback_ctx {
-> +	struct bdi_writeback wb;  /* the root writeback info for this bdi */
-> +	struct list_head wb_list; /* list of all wbs */
-> +#ifdef CONFIG_CGROUP_WRITEBACK
-> +	struct radix_tree_root cgwb_tree; /* radix tree of active cgroup wbs */
-> +	struct rw_semaphore wb_switch_rwsem; /* no cgwb switch while syncing */
-> +#endif
-> +	wait_queue_head_t wb_waitq;
-> +};
-> +
-
-As I was seeing the patch, I'd also add:
-	struct backing_dev_info *bdi;
-
-pointer to bdi_writeback_ctx. Then in most functions, you can just pass
-bdi_wb_ctx into them instead of both bdi *and* bdi_wb_ctx and it makes
-interfaces somewhat nicer.
-
->  struct backing_dev_info {
->  	u64 id;
->  	struct rb_node rb_node; /* keyed by ->id */
-> @@ -182,16 +193,13 @@ struct backing_dev_info {
->  	 * blk-wbt.
->  	 */
->  	unsigned long last_bdp_sleep;
-> -
-> -	struct bdi_writeback wb;  /* the root writeback info for this bdi */
-> -	struct list_head wb_list; /* list of all wbs */
-> +	struct bdi_writeback_ctx default_ctx;
-> +	bool is_parallel;
-> +	int nr_wb_ctx;
-> +	struct xarray bdi_wb_ctx_arr;
-
-I think xarray here is overkill. I'd just make this a plain array:
-
-	struct bdi_writeback_ctx **bdi_wb_ctx_arr;
-
-which will get allocated with nr_wb_ctx entries during bdi_init(). Also I'd
-make default_ctx just be entry at index 0 in this array. I'm undecided
-whether it will be clearer to just drop default_ctx altogether or keep it
-and set:
-
-	struct bdi_writeback_ctx *default_ctx = bdi_wb_ctx_arr[0];
-
-on init so I'll leave that up to you.
-
->  #ifdef CONFIG_CGROUP_WRITEBACK
-> -	struct radix_tree_root cgwb_tree; /* radix tree of active cgroup wbs */
->  	struct mutex cgwb_release_mutex;  /* protect shutdown of wb structs */
-> -	struct rw_semaphore wb_switch_rwsem; /* no cgwb switch while syncing */
->  #endif
-> -	wait_queue_head_t wb_waitq;
-> -
->  	struct device *dev;
->  	char dev_name[64];
->  	struct device *owner;
-
-...
-
-> +static inline struct bdi_writeback_ctx *fetch_bdi_writeback_ctx(struct inode *inode)
-> +{
-> +	struct backing_dev_info *bdi = inode_to_bdi(inode);
-> +	struct super_block *sb = inode->i_sb;
-> +	struct bdi_writeback_ctx *bdi_wb_ctx;
-> +
-> +	if (sb->s_op->get_inode_wb_ctx)
-> +		bdi_wb_ctx = sb->s_op->get_inode_wb_ctx(inode);
-> +	else
-> +		bdi_wb_ctx = &bdi->default_ctx;
-> +	return bdi_wb_ctx;
-> +}
-
-The indirect call (and the handling in there) might get potentially
-expensive given all the places where this is called. For now I think we are
-fine but eventually we might need to find space in struct inode (I know
-that's a hard sell) for u8/u16 to store writeback context index there. But
-first let's get this working before we burry ourselves in (potentially
-premature) performance optimizations.
-
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 7e29433c5ecc..667f97c68cd1 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2228,6 +2228,7 @@ struct super_operations {
->     	struct inode *(*alloc_inode)(struct super_block *sb);
->  	void (*destroy_inode)(struct inode *);
->  	void (*free_inode)(struct inode *);
-> +	struct bdi_writeback_ctx* (*get_inode_wb_ctx)(struct inode *);
-                                ^^ wrongly placed space here.
->  
->     	void (*dirty_inode) (struct inode *, int flags);
->  	int (*write_inode) (struct inode *, struct writeback_control *wbc);
-
-								Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Jens Axboe
 
