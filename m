@@ -1,112 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-44398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A81A5A68364
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 04:00:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83C1AA6836B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 04:06:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3BB817F7FF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 03:00:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 424D97A46B2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 03:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C6F24E4C3;
-	Wed, 19 Mar 2025 03:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCDF24E4C4;
+	Wed, 19 Mar 2025 03:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="L7cnJjrH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XUs5+gRN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04F324EA92;
-	Wed, 19 Mar 2025 03:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3E2524F;
+	Wed, 19 Mar 2025 03:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742353215; cv=none; b=njrH13OjnkMmeqCxgWTyrd61FDZmzGomdlRQ0PbRdu07Oxe0PXPSG7/Ov8blV3t2Yn7j1+4a6NA74erRXb7VbFwoXpiJgRvmrxh1KeP0dMPUB9/lOw7L2ak6k8Ejo2wyg64Qqv4p+7/trLDmZRNMdubAC1qO72+APTreEuZcK5E=
+	t=1742353593; cv=none; b=jCDzxbdOaaQ/UUNqPlbq/ftWy/bFv6qj37NvPnFuYxuwMWXAfWqFgzWLm/lWb2qq95XDzmNKjB00ku4D9fzhlXTMCvXbfaTa8+B2V0FvKqqUv5h7Yx8DMRdbwzQkDp00XguOZUXLTD8TbAOi+dJZXP2rV3BVJRCs+/NPu8tJyR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742353215; c=relaxed/simple;
-	bh=2LAHDm5a9kiQId0Ehu1siqrV+XlXNO/nld7/RHZmQ0U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hjb0nA759cjzK+c/cKiZV1jYO6oae6JFe3Ww1LMgAO9BJAyLBu3NEQbZqhv3SioKjuZW/dCXsIhTgd5hWIYkX9ux7mLja64unDHk5uOg0pLgmz8LRlqmVehR4KnkKbRLwNDpvf2AzvxWph/joT9MNEDbyX47sS+/9QEmlBpUUwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=L7cnJjrH; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1742353200; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=VUPAqvDxo94oQ2Yp5DEmT3wiJN+0p+J2Q0KkA4Qbhbg=;
-	b=L7cnJjrHc0YiF9gAEncFI7S/2h8W/bs3hSuDzAMTQ4WPqi3qB9FHjH4UsHIIA7Enqy7gDq7iHQGlearmxzeJiSk3DCW1sSn7fA6EY7HN6Zqejx1JfVyY9CMWGWLRU+XQ5RZx/6siYGtf07VFT75fycqciSgjdBmLzCOg+J5r9WE=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WS-6Nzc_1742353195 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 19 Mar 2025 11:00:00 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	Brian Foster <bfoster@redhat.com>
-Cc: linux-erofs@lists.ozlabs.org,
-	linux-xfs@vger.kernel.org,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Bo Liu <liubo03@inspur.com>,
-	Christoph Hellwig <hch@lst.de>,
-	"Darrick J. Wong" <djwong@kernel.org>
-Subject: [PATCH -next] iomap: fix inline data on buffered read
-Date: Wed, 19 Mar 2025 10:59:53 +0800
-Message-ID: <20250319025953.3559299-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1742353593; c=relaxed/simple;
+	bh=bSt/O7czoSNWFRcsE3rQTY00tKWSZJC7M7fXZe1tBRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cNy7r/jKZNSmRXVRBAdaY6Ki+R8V3M7mJvKL473pLaEg/8rvsiURetXnaXpuV0638zcVSO1wM+aVhWrGgbPPnPzIqBek2YvXPPDLqF6fmKo8/0nh98VShBh84veLjiwUdsXDPBTkTYu+5YhQor82bJTMWubX3lyhVJB0dAylsQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XUs5+gRN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DC99C4CEE3;
+	Wed, 19 Mar 2025 03:06:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742353592;
+	bh=bSt/O7czoSNWFRcsE3rQTY00tKWSZJC7M7fXZe1tBRY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XUs5+gRN7F3D9wjM00iR5qUYJ+zg+KhgaBhp3hIjBKS7MmOnFRi5z4uyKZMByuzpT
+	 aRnLHnPrRFmw8TJD3EQ9k+RW4h8RwxCa62cAsI/eHS2et+ABobxSUuR51AjK8Qkkmx
+	 aTXLesTsTLkqQ0TyHDI6ckPdzTz7db3ZvW/Nbv9lOSP+4w+eqg/pLJD5mMykQEWnh2
+	 +g/1KVNEsR5ZjYg+2/frXjJkI7gO9Zr/97dD3MApFTAzH2nEFs6eoQtXFJbJIxt3kR
+	 GrWHMXbljMz8EcObP0y6RWAQ0vYec8y7uKu9SlDUyWi8TEW2Ilp4CmqKbnh1Zx6SnC
+	 ZePzyIlyjLcTA==
+Date: Tue, 18 Mar 2025 20:06:28 -0700
+From: Kees Cook <kees@kernel.org>
+To: Peter Collingbourne <pcc@google.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] string: Add load_unaligned_zeropad() code path to
+ sized_strscpy()
+Message-ID: <202503181957.55A0E0A@keescook>
+References: <20250318214035.481950-1-pcc@google.com>
+ <20250318214035.481950-2-pcc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318214035.481950-2-pcc@google.com>
 
-Previously, iomap_readpage_iter() returning 0 would break out of the
-loops of iomap_readahead_iter(), which is what iomap_read_inline_data()
-relies on.
+On Tue, Mar 18, 2025 at 02:40:32PM -0700, Peter Collingbourne wrote:
+> The call to read_word_at_a_time() in sized_strscpy() is problematic
+> with MTE because it may trigger a tag check fault when reading
+> across a tag granule (16 bytes) boundary. To make this code
+> MTE compatible, let's start using load_unaligned_zeropad()
+> on architectures where it is available (i.e. architectures that
+> define CONFIG_DCACHE_WORD_ACCESS). Because load_unaligned_zeropad()
+> takes care of page boundaries as well as tag granule boundaries,
+> also disable the code preventing crossing page boundaries when using
+> load_unaligned_zeropad().
+> 
+> Signed-off-by: Peter Collingbourne <pcc@google.com>
+> Link: https://linux-review.googlesource.com/id/If4b22e43b5a4ca49726b4bf98ada827fdf755548
+> Fixes: 94ab5b61ee16 ("kasan, arm64: enable CONFIG_KASAN_HW_TAGS")
+> Cc: stable@vger.kernel.org
+> ---
+> v2:
+> - new approach
+> 
+>  lib/string.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/lib/string.c b/lib/string.c
+> index eb4486ed40d25..b632c71df1a50 100644
+> --- a/lib/string.c
+> +++ b/lib/string.c
+> @@ -119,6 +119,7 @@ ssize_t sized_strscpy(char *dest, const char *src, size_t count)
+>  	if (count == 0 || WARN_ON_ONCE(count > INT_MAX))
+>  		return -E2BIG;
+>  
+> +#ifndef CONFIG_DCACHE_WORD_ACCESS
+>  #ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
 
-However, commit d9dc477ff6a2 ("iomap: advance the iter directly on
-buffered read") changes this behavior without calling
-iomap_iter_advance(), which causes EROFS to get stuck in
-iomap_readpage_iter().
+I would prefer this were written as:
 
-It seems iomap_iter_advance() cannot be called in
-iomap_read_inline_data() because of the iomap_write_begin() path, so
-handle this in iomap_readpage_iter() instead.
+#if !defined(CONFIG_DCACHE_WORD_ACCESS) && \
+    defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)
 
-Reported-by: Bo Liu <liubo03@inspur.com>
-Fixes: d9dc477ff6a2 ("iomap: advance the iter directly on buffered read")
-Cc: Brian Foster <bfoster@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
- fs/iomap/buffered-io.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Having 2 #ifs makes me think there is some reason for having them
+separable. But the logic here is for a single check.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index d52cfdc299c4..2d6e1e3be747 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -372,9 +372,15 @@ static int iomap_readpage_iter(struct iomap_iter *iter,
- 	struct iomap_folio_state *ifs;
- 	size_t poff, plen;
- 	sector_t sector;
-+	int ret;
- 
--	if (iomap->type == IOMAP_INLINE)
--		return iomap_read_inline_data(iter, folio);
-+	if (iomap->type == IOMAP_INLINE) {
-+		ret = iomap_read_inline_data(iter, folio);
-+		if (ret)
-+			return ret;
-+		plen = length;
-+		goto done;
-+	}
- 
- 	/* zero post-eof blocks as the page may be mapped */
- 	ifs = ifs_alloc(iter->inode, folio, iter->flags);
+>  	/*
+>  	 * If src is unaligned, don't cross a page boundary,
+> @@ -133,12 +134,14 @@ ssize_t sized_strscpy(char *dest, const char *src, size_t count)
+>  	/* If src or dest is unaligned, don't do word-at-a-time. */
+>  	if (((long) dest | (long) src) & (sizeof(long) - 1))
+>  		max = 0;
+> +#endif
+>  #endif
+
+(Then no second #endif needed)
+
+>  
+>  	/*
+> -	 * read_word_at_a_time() below may read uninitialized bytes after the
+> -	 * trailing zero and use them in comparisons. Disable this optimization
+> -	 * under KMSAN to prevent false positive reports.
+> +	 * load_unaligned_zeropad() or read_word_at_a_time() below may read
+> +	 * uninitialized bytes after the trailing zero and use them in
+> +	 * comparisons. Disable this optimization under KMSAN to prevent
+> +	 * false positive reports.
+>  	 */
+>  	if (IS_ENABLED(CONFIG_KMSAN))
+>  		max = 0;
+> @@ -146,7 +149,11 @@ ssize_t sized_strscpy(char *dest, const char *src, size_t count)
+>  	while (max >= sizeof(unsigned long)) {
+>  		unsigned long c, data;
+>  
+> +#ifdef CONFIG_DCACHE_WORD_ACCESS
+> +		c = load_unaligned_zeropad(src+res);
+> +#else
+>  		c = read_word_at_a_time(src+res);
+> +#endif
+>  		if (has_zero(c, &data, &constants)) {
+>  			data = prep_zero_mask(c, data, &constants);
+>  			data = create_zero_mask(data);
+
+The rest seems good. Though I do wonder: what happens on a page boundary
+for read_word_at_a_time(), then? We get back zero-filled remainder? Will
+that hide a missing NUL terminator? As in, it's not actually there
+because of the end of the page/granule, but a zero was put in, so now
+it looks like it's been terminated and the exception got eaten? And
+doesn't this hide MTE faults since we can't differentiate "overran MTE
+tag" from "overran granule while over-reading"?
+
 -- 
-2.43.5
-
+Kees Cook
 
