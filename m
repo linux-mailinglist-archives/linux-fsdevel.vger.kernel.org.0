@@ -1,78 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-44427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D06E6A68725
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 09:44:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2245AA68744
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 09:52:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 312153BF982
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 08:42:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAC2F7AA217
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 08:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CC5251786;
-	Wed, 19 Mar 2025 08:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5D32528E1;
+	Wed, 19 Mar 2025 08:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BcFg2WkQ"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Yvd/l7GV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2C015A85A;
-	Wed, 19 Mar 2025 08:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807501DDC16;
+	Wed, 19 Mar 2025 08:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742373780; cv=none; b=NmOfr63g0VDqTF8d74k76dj5W6lNxVUMV3fk2asIQliBDSiR6OqSmUrY8N/UVWwc31q7dkztClwK6mQW6rkVFi8Ah4+zvH4q7yxVwtS8pbchSAy2eUujRbVpoRizH+xiBs2MKe1fXg6D7WISTTuL0f3iz+Eook7Yey0cK7OTna8=
+	t=1742374305; cv=none; b=mijT6j2b6L9CbvhItqswdnHEI7nhZzZGDpRFJN9MRRa0RTIPd61S4BZZikrITrM9gL2e8KJAhqcc9eRsSK8pB6XwzjbQ6tqmGoQd53wHtjon9yuSlDenfaNEfVuUCfjrUP5Oo8FiwUnhnKSTXbOqiLa38kd3SD8BAxjZSBw5K0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742373780; c=relaxed/simple;
-	bh=IkEiNEdqmolE27++iMMEHfqbw6Gq8wNRl3q5lhELABE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IpAA9SkPLKSzIvlOI0fTlW2vF/4/gHKY0ZtqHtmhXlINLv3+3MLzURFht1VV3XuL2MIQWE6oIelL1Hykfoq2g80oRgWagtZth4wcoR4IqliN25iCSljStHbu2v59FkpHWup86OPIXOt0xOLU4xHE4lyGEgZ6Dy06odMjQ5lH7/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BcFg2WkQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1637C4CEE9;
-	Wed, 19 Mar 2025 08:42:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742373779;
-	bh=IkEiNEdqmolE27++iMMEHfqbw6Gq8wNRl3q5lhELABE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BcFg2WkQ5+E9suI1jQUWXbUciZ0z1Ncl160NNNt9tkMkhafL6XmvmT3enS/ABYT0X
-	 u716aw/fJ7nMfQ7B2fEGvjWFsiwdmOt3mzVuE90zLnfmY6QqQTNQY8omq1UFLIRfJ+
-	 QnrAM1oGpEVLdJRiminYzPg/W5s2nDbt8abPc58Par2n2KCtBiJEjwEpSa+g4Xc7iI
-	 oJ8pBR+fSFy6J3uhajS+YraX9hHHEbx2ezWSo86xeT3l9ktBnu9QBh7G4KqtECi0Vn
-	 LTb02bRSOCq3Rv9QRYOs5/UdDyaWTaaGulFxUYT0Z4yNPoU8pPVnSsJ9ksHLN+t7Cu
-	 ATOvw6dnCtlsA==
-Date: Wed, 19 Mar 2025 09:42:54 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neil@brown.name>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	David Howells <dhowells@redhat.com>, Chuck Lever <chuck.lever@oracle.com>, 
-	Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/6 RFC v2] tidy up various VFS lookup functions
-Message-ID: <20250319-vierbeinig-aufruf-ea327bc39320@brauner>
-References: <20250319031545.2999807-1-neil@brown.name>
+	s=arc-20240116; t=1742374305; c=relaxed/simple;
+	bh=dMtN5sUtYYEnsqN58qACo5iVsrZBwnnUBmSNIOzS75w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V+fdd+4aw3Fuwmqwfr/XJGwxqvYOuDk3s97ZUpAgC+urn1Q/m/ccAaQR07jHZFDMNCMt/icplo6E7TDbaDlYvXKdip3DaAwrbiAEBRiUCalxCe9eUk6HptHN0OQ8gGoupiaB8A1Mv44g54SCqzUncTxCtynu3vmhsilWUoWrMVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Yvd/l7GV; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1742374293; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=kDgPRHGhOjEJ2nJvu5o/zZXNhwOUwu+3KFzmJNBgHPw=;
+	b=Yvd/l7GV8InDN8Shw7n4cgfHUXnwie5rrgR0HFZfmoY8FLfrP2BEajLP3B4/QAjUmwxnCzf72baSBaS1CbB4kbMEGkZCoObn98IPQP5gWGWxmlrDruvn1da1hqYUo7E8Iq7lRCgSEIXkyDaJ86y23/HQufOHEFxvM4Lq02wCjm4=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WS1h3h7_1742374287 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 19 Mar 2025 16:51:32 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>,
+	Brian Foster <bfoster@redhat.com>
+Cc: linux-erofs@lists.ozlabs.org,
+	linux-xfs@vger.kernel.org,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Bo Liu <liubo03@inspur.com>,
+	Christoph Hellwig <hch@lst.de>,
+	"Darrick J. Wong" <djwong@kernel.org>
+Subject: [PATCH v2] iomap: fix inline data on buffered read
+Date: Wed, 19 Mar 2025 16:51:25 +0800
+Message-ID: <20250319085125.4039368-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250319031545.2999807-1-neil@brown.name>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 19, 2025 at 02:01:31PM +1100, NeilBrown wrote:
-> This a revised version of a previous posting.  I have dropped the change
-> to some lookup functions to pass a vfsmount.  I have also dropped the
+Previously, iomap_readpage_iter() returning 0 would break out of the
+loops of iomap_readahead_iter(), which is what iomap_read_inline_data()
+relies on.
 
-Thank you for compromising! I appreciate it.
+However, commit d9dc477ff6a2 ("iomap: advance the iter directly on
+buffered read") changes this behavior without calling
+iomap_iter_advance(), which causes EROFS to get stuck in
+iomap_readpage_iter().
 
-> I haven't included changes to afs because there are patches in vfs.all
-> which make a lot of changes to lookup in afs.  I think (if they are seen
-> as a good idea) these patches should aim to land after the afs patches
-> and any further fixup in afs can happen then.
+It seems iomap_iter_advance() cannot be called in
+iomap_read_inline_data() because of the iomap_write_begin() path, so
+handle this in iomap_readpage_iter() instead.
 
-If you're fine with this then I suggest we delay this to v6.16. So I've
-moved this to the vfs-6.16.async.dir branch which won't show up in -next
-before the v6.15 merge window has concluded. I'm pushing this out now.
+Reported-and-tested-by: Bo Liu <liubo03@inspur.com>
+Fixes: d9dc477ff6a2 ("iomap: advance the iter directly on buffered read")
+Cc: Brian Foster <bfoster@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+v1: https://lore.kernel.org/r/20250319025953.3559299-1-hsiangkao@linux.alibaba.com
+change since v1:
+ - iomap_iter_advance() directly instead of `goto done`
+   as suggested by Christoph.
+
+ fs/iomap/buffered-io.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index d52cfdc299c4..814b7f679486 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -372,9 +372,14 @@ static int iomap_readpage_iter(struct iomap_iter *iter,
+ 	struct iomap_folio_state *ifs;
+ 	size_t poff, plen;
+ 	sector_t sector;
++	int ret;
+ 
+-	if (iomap->type == IOMAP_INLINE)
+-		return iomap_read_inline_data(iter, folio);
++	if (iomap->type == IOMAP_INLINE) {
++		ret = iomap_read_inline_data(iter, folio);
++		if (ret)
++			return ret;
++		return iomap_iter_advance(iter, &length);
++	}
+ 
+ 	/* zero post-eof blocks as the page may be mapped */
+ 	ifs = ifs_alloc(iter->inode, folio, iter->flags);
+-- 
+2.43.5
+
 
