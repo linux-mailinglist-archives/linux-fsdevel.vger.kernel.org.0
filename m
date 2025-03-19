@@ -1,250 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-44468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAC0AA696CC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 18:45:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EB44A69770
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 19:06:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8949119C37D8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 17:45:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15A717AFC72
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 18:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC576207A2A;
-	Wed, 19 Mar 2025 17:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036EB1E5B60;
+	Wed, 19 Mar 2025 18:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="biyyC0Ci"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Mt8saeKe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5CF1E231F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 17:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A69A19006F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 18:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742406329; cv=none; b=aZ8VcgoLAq2j1DZpsnzdw8aBk6pbjycXThBIGgPxZ7G4n2YiC/lo/a4ybVXp0zhuWPhji2ZE2Vnpn5jdZSTzoifZE2YEWmbCaJHcAqyOXlmW5astITXgjrFo3qE+1YVjgppKaQ/EQHUd0XMl16k7YigzzuWcYLgvzIGAZFW8bXU=
+	t=1742407599; cv=none; b=IIqjvlk/+oAPUmEGvJjgmmJCSB8qol7tkP+vGpc70vchjS18O2w2j3oVJro5uauCv3VtZc44gFEjau4hnt1WGC/ZquBfmiBVxPjkyTrKsNGGidtXm8grXbAThZulMmdmoE6sa4HR9ogNV8dEVWygf5bjw2Jv8webhYlMt4h91dE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742406329; c=relaxed/simple;
-	bh=Mja/DsqMC96aBenZikHbYJ7mmYRS4Gju4qJTnOUreFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CcrwU/os7vFf6oaj04oQzZHWKcTgkq2gQWLt34i8B5nyUXZbdAOpt7gUVRFxu2ewL9HDpy8zFa6klAj8n5/ByM+A8NQZ7h8qpSK71sgMMUcsXeVbkEQLwI0xHFnuHlN04UY9W1++a3X+oTAdjrTC8aJWb7MbxI0GhnpOMxN8E2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=biyyC0Ci; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-224171d6826so52547385ad.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 10:45:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1742406327; x=1743011127; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=88yW33TrWIk/+/WaI5H9h1QmYyDkMe4Hu9deS8t+58M=;
-        b=biyyC0CidajeDa7Wg0pt7wfyYZZOZLbjQReMFZW/rVpEewIuWNO8Ax1CIz6Cw/iE8F
-         SutXvBmY8l5JfvXre1l+/hxuFPtHvxtQ+qUj+6vuz8fCrloLxxu7eFqzJyOoNJBmkkR2
-         K757qV5PZ9fzsIOXsHG1NnJom0T7GfETHUvy0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742406327; x=1743011127;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=88yW33TrWIk/+/WaI5H9h1QmYyDkMe4Hu9deS8t+58M=;
-        b=rEBwfMr6CoORiPZ62rWjIEs5JKJVKFjtslzTRYMWpOTBYwkj9D/OXBCq840LrXwiv+
-         tv1YQR6LnKqe+SXqmv7UI5iQZF0QYD5bN37Jur4pOoBR5w7Xqo6ciePiLX5qtAj6rXtf
-         Lco5VzI4FPMWFK9M606RY7xDrhmGSRdRRf6jHKNjzV8jYWxBMfgkuqsmDSfQkxPGdZK2
-         7VcHcmdM7TQx4vNQCC1QeCxM9qcDZxw5paelOkLy8DP9G35SGmFkuL2ozvHFYgEkIjC9
-         EpX9IvnzQq/45x3lnKbPvhgpX1O1hgNRd5C/CQAyx8dFemAUthwczH2DYI3FNfvrvrW3
-         8nUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWaKKcg+MmYEQYGL7GSFnAKAbI9YbmPWy70992rFrcs4C3nbYp5wZaJkviDl1l6mwAizPz8Qb9aASlzNkcq@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCiBThDDzv53G3jJnatUoT1kZlNpRhCITj1yq0ydXSrTI2XB0R
-	Zgp/5/woUti+uXaf2zeELv+kMjR/wHET1Q8nF5k30OjwslJ9HwFp/x/+u+D8er4=
-X-Gm-Gg: ASbGncvtF58IXpaqBUGGzokc5PnbFrcvLTXwkI0lyXF44qkn9smZRHJchFHyBL9njus
-	HmU3pdjai5woE8MewGugOkzuj6QmNMzcabTW5YvdwgrsEKrmd5VMGDX+KJadEjQjAmr/09dZaOq
-	sFWz0SN/er9KcLmtc8627TT7lKOyca0GA2YqdVVq1i/XmHngHxfSro4M+Xuk/JwVK0X9JFS2M0i
-	TauZDKdQbGFzuw25kvvd1MQfqrrckpVrPgu5QK7aluqJ6BQ8AgQHDkAMXXveM4flo+MjHTbh4gO
-	XvNGnPCdQG7+OjuSR9tHA7RZqpK43+4YPxwnB5xpWfCGcgenh71ZWfZ5UVlNuahNfqhBpy2/Z+x
-	9h3mKOPoJDh53LuJK
-X-Google-Smtp-Source: AGHT+IERFHHbx0A4wA9qJdQkKklw0ufeU3XYHswtvVKJOCpGkGhgwLEpUnI6jmKEfZkWMIg4V+8Kpw==
-X-Received: by 2002:a17:903:1790:b0:224:283f:a9ef with SMTP id d9443c01a7336-2264981d654mr49179945ad.6.1742406326748;
-        Wed, 19 Mar 2025 10:45:26 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22634aa7462sm36188005ad.224.2025.03.19.10.45.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 10:45:26 -0700 (PDT)
-Date: Wed, 19 Mar 2025 10:45:22 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, asml.silence@gmail.com,
-	linux-fsdevel@vger.kernel.org, edumazet@google.com,
-	pabeni@redhat.com, horms@kernel.org, linux-api@vger.kernel.org,
-	linux-arch@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	kuba@kernel.org, shuah@kernel.org, sdf@fomichev.me,
-	mingo@redhat.com, arnd@arndb.de, brauner@kernel.org,
-	akpm@linux-foundation.org, tglx@linutronix.de, jolsa@kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
-Message-ID: <Z9sCsooW7OSTgyAk@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
-	edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
-	linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, kuba@kernel.org,
-	shuah@kernel.org, sdf@fomichev.me, mingo@redhat.com, arnd@arndb.de,
-	brauner@kernel.org, akpm@linux-foundation.org, tglx@linutronix.de,
-	jolsa@kernel.org, linux-kselftest@vger.kernel.org
-References: <20250319001521.53249-1-jdamato@fastly.com>
- <Z9p6oFlHxkYvUA8N@infradead.org>
- <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
- <2d68bc91-c22c-4b48-a06d-fa9ec06dfb25@kernel.dk>
- <Z9r5JE3AJdnsXy_u@LQ3V64L9R2>
- <19e3056c-2f7b-4f41-9c40-98955c4a9ed3@kernel.dk>
+	s=arc-20240116; t=1742407599; c=relaxed/simple;
+	bh=G6iHZgQIholcAW90us3ob4KynXMLkF5xSbRKYF29/C0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=A+MsgbDZkT23WNmMUi7jtSjr6+dxWKQUcD+OQPmTuKMPi5Zt4A8RgfPuXQ6rf7L33QllhCN0WnBMjk4GLYc5Amud5kBazHxP0B8cljEdjsgPvDh6jDYGsTGJTTezx9WfQozDLdSGI6QpBn+5JJtOedlKhrToVHzT9Ev6bRghE3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Mt8saeKe; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250319180634epoutp0121121891944cada730c40e0bb0d46ed5~uRnmjc-Y72112921129epoutp01B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 18:06:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250319180634epoutp0121121891944cada730c40e0bb0d46ed5~uRnmjc-Y72112921129epoutp01B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1742407594;
+	bh=r+OZ0dZjRdagPeJioXzbnIj1AKfJy9OpWi/BR3HcRpc=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=Mt8saeKeErG5R1xYmueL6B2f16sgH+Q2vcAjLX/Rllbf+0RbnX+QuV9YPwy3JBzq4
+	 1+haMKLx7WCIlnLOvVlwyEt1w/MQ9b7n8/soLReOZ67Ww+XXHddpfUKeJbuy0GwwOa
+	 JJDNCXh0qBA09dPuPsag8tMuKCoU2Ngd77ZKvFOg=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20250319180633epcas5p37fdb720f28677dc579821d1b4f820966~uRnmEC2MM1969719697epcas5p32;
+	Wed, 19 Mar 2025 18:06:33 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4ZHxVH4ZWnz4x9Pv; Wed, 19 Mar
+	2025 18:06:31 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	50.5D.19956.7A70BD76; Thu, 20 Mar 2025 03:06:31 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250319180631epcas5p47dbbc86eb8982b6cb230ab33dfd43aa0~uRnj33X9u1744817448epcas5p4N;
+	Wed, 19 Mar 2025 18:06:31 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250319180631epsmtrp176ea9c1c70e9a2b5756a793717c5e402~uRnj3F3l21334513345epsmtrp1G;
+	Wed, 19 Mar 2025 18:06:31 +0000 (GMT)
+X-AuditID: b6c32a4b-fe9f470000004df4-d5-67db07a78a2b
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	4F.EC.18729.6A70BD76; Thu, 20 Mar 2025 03:06:31 +0900 (KST)
+Received: from [107.122.11.51] (unknown [107.122.11.51]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250319180629epsmtip27f2b0f464fbd09d8727b5ef0ca773742~uRniVqTrs2457824578epsmtip25;
+	Wed, 19 Mar 2025 18:06:29 +0000 (GMT)
+Message-ID: <435cf6be-98e7-4b8b-ae42-e074091de991@samsung.com>
+Date: Wed, 19 Mar 2025 23:36:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <19e3056c-2f7b-4f41-9c40-98955c4a9ed3@kernel.dk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [LSF/MM/BPF TOPIC] File system checksum offload
+To: "hch@infradead.org" <hch@infradead.org>
+Cc: Qu Wenruo <wqu@suse.com>, Johannes Thumshirn
+	<Johannes.Thumshirn@wdc.com>, Theodore Ts'o <tytso@mit.edu>,
+	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
+	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"josef@toxicpanda.com" <josef@toxicpanda.com>
+Content-Language: en-US
+From: Kanchan Joshi <joshi.k@samsung.com>
+In-Reply-To: <Z9kpyh_8RH5irL96@infradead.org>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCJsWRmVeSWpSXmKPExsWy7bCmhu5y9tvpBn9uy1qcnrCIyeJv1z0m
+	iz8PDS323tK2uPR4BbvFnr0nWSzmL3vKbrHv9V5mi9aen+wWa9Z9ZHfg8ti8Qstj85J6j8k3
+	ljN6NJ05yuyxfstVFo8JmzeyenzeJOfRfqCbKYAjKtsmIzUxJbVIITUvOT8lMy/dVsk7ON45
+	3tTMwFDX0NLCXEkhLzE31VbJxSdA1y0zB+hAJYWyxJxSoFBAYnGxkr6dTVF+aUmqQkZ+cYmt
+	UmpBSk6BSYFecWJucWleul5eaomVoYGBkSlQYUJ2xtSbfxkLtvNWrG69z9zA+I2ri5GTQ0LA
+	RGLuy6UsXYxcHEICuxklVvw+yASSEBL4xCix9akpROIbo8Tn59dZYTqmrtoO1bGXUaLtxQUm
+	COctUEfDZbAqXgE7iZ27zoLZLAKqEk+WLGKGiAtKnJz5hAXEFhWQl7h/awY7iC0sYCPRvesQ
+	WxcjB4eIgLbE4sd1IDOZBT4wS7Q92wx2ErOAuMStJ/OZQGrYBDQlLkwuBQlzCuhKbHl+kBGi
+	RF5i+9s5zCC9EgI7OCQm3twBdbWLxK+P19ggbGGJV8e3sEPYUhIv+9ug7GyJB48esEDYNRI7
+	NvdB9dpLNPy5wQqylxlo7/pd+hC7+CR6fz8BO0dCgFeio00IolpR4t6kp1Cd4hIPZyyBsj0k
+	9k94ywgJqjMsEpvfnWSbwKgwCylUZiH5chaSd2YhbF7AyLKKUTK1oDg3PbXYtMA4L7UcHt/J
+	+bmbGMHJV8t7B+OjBx/0DjEycTAeYpTgYFYS4XV/cj1diDclsbIqtSg/vqg0J7X4EKMpMHom
+	MkuJJucD039eSbyhiaWBiZmZmYmlsZmhkjhv886WdCGB9MSS1OzU1ILUIpg+Jg5OqQYmg+2L
+	6pxbDzC/3Sd5Nn6N7EX+a2alxpud3Mp/SdpZ5V59Ne2ql+APiZ93vyc1LrNwj57NyxTwbOvN
+	2L1NdSvyP8uZviw6u5BXMeLE9/31Ux5e/fj6zWTLLRpsG1dM+iDovtp6aVjzypCUKzXybKdt
+	/+fq1vyWDPooIi5woN/kkUy97enOaxqcKoail740cPn6HXg3cf/85xUzz4Q3fXBivi/H+ePd
+	Nu6/CTEvDs9pNNNlnPM36aTMg3mbAzZ8zAmb+H/rLpdGXtFvdpYZm36Ef2bkn85/7/W+A7u5
+	PaV8fB7JHZnDfPvIqvymxozsc7Z2UiXzrkZnPVdsCDEUl2dP5/NJtW/+yGl1+GjGxJ6JSizF
+	GYmGWsxFxYkATfiznkcEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIIsWRmVeSWpSXmKPExsWy7bCSvO5y9tvpBs3HmCxOT1jEZPG36x6T
+	xZ+HhhZ7b2lbXHq8gt1iz96TLBbzlz1lt9j3ei+zRWvPT3aLNes+sjtweWxeoeWxeUm9x+Qb
+	yxk9ms4cZfZYv+Uqi8eEzRtZPT5vkvNoP9DNFMARxWWTkpqTWZZapG+XwJUx9eZfxoLtvBWr
+	W+8zNzB+4+pi5OSQEDCRmLpqO0sXIxeHkMBuRolDv68xQSTEJZqv/WCHsIUlVv57zg5R9JpR
+	4uDabSwgCV4BO4mdu86ygtgsAqoST5YsYoaIC0qcnPkErEZUQF7i/q0ZYIOEBWwkuncdYuti
+	5OAQEdCWWPy4DmQms8AHZomlW18wQyw4wyKxvG8aG0gDM9AVt57MZwJpYBPQlLgwuRQkzCmg
+	K7Hl+UFGiBIzia6tXVC2vMT2t3OYJzAKzUJyxiwkk2YhaZmFpGUBI8sqRsnUguLc9NxiwwLD
+	vNRyveLE3OLSvHS95PzcTYzgWNPS3MG4fdUHvUOMTByMhxglOJiVRHjdn1xPF+JNSaysSi3K
+	jy8qzUktPsQozcGiJM4r/qI3RUggPbEkNTs1tSC1CCbLxMEp1cC0rt3H9EagrTpb1ofsx3cf
+	3eiYsTL+ZPXiFyH8Uiny8avzXn/czVTxfYdEi4H/6o/zP3yZvH3qn1/BJ05xpb1ZN1/rYbK9
+	cYiB7SONJXXHNtWvvv/s6DvOmp/N3auOKXtv99zatyXs5LaG7afyPs0qz7hbdSE4bcaS+oK2
+	yP0HfvOY6fEoLl4z/5qD/vGbjE/frLVavubv8ljT7reGG5z/dJr//jVHcxVP6Czx5uoph47z
+	7/lodHbCLLmO3wskt60KSdznwrpRdKqv+t6n75sNaxtlwy6xNTsZnGHKWSzRqq9icTno5fo3
+	ee4PRVuMn67z+WY6ufSRh7rPq0ui+7YduLi81ovflbn/ubaph504hxJLcUaioRZzUXEiAOXN
+	lTYkAwAA
+X-CMS-MailID: 20250319180631epcas5p47dbbc86eb8982b6cb230ab33dfd43aa0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250318080742epcas5p31b31b3024d6f7d9d150c8a7c2db4dffd
+References: <20250130091545.66573-1-joshi.k@samsung.com>
+	<20250130142857.GB401886@mit.edu>
+	<97f402bc-4029-48d4-bd03-80af5b799d04@samsung.com>
+	<b8790a76-fd4e-49b6-bc08-44e5c3bf348a@wdc.com>
+	<Z6B2oq_aAaeL9rBE@infradead.org>
+	<bb516f19-a6b3-4c6b-89f9-928d46b66e2a@wdc.com>
+	<eaec853d-eda6-4ee9-abb6-e2fa32f54f5c@suse.com>
+	<cfe11af2-44c5-43a7-9114-72471a615de7@samsung.com>
+	<Z6GivxxFWFZhN7jD@infradead.org>
+	<edde46e9-403b-4ddf-bd73-abe95446590c@samsung.com>
+	<CGME20250318080742epcas5p31b31b3024d6f7d9d150c8a7c2db4dffd@epcas5p3.samsung.com>
+	<Z9kpyh_8RH5irL96@infradead.org>
 
-On Wed, Mar 19, 2025 at 11:20:50AM -0600, Jens Axboe wrote:
-> On 3/19/25 11:04 AM, Joe Damato wrote:
-> > On Wed, Mar 19, 2025 at 10:07:27AM -0600, Jens Axboe wrote:
-> >> On 3/19/25 9:32 AM, Joe Damato wrote:
-> >>> On Wed, Mar 19, 2025 at 01:04:48AM -0700, Christoph Hellwig wrote:
-> >>>> On Wed, Mar 19, 2025 at 12:15:11AM +0000, Joe Damato wrote:
-> >>>>> One way to fix this is to add zerocopy notifications to sendfile similar
-> >>>>> to how MSG_ZEROCOPY works with sendmsg. This is possible thanks to the
-> >>>>> extensive work done by Pavel [1].
-> >>>>
-> >>>> What is a "zerocopy notification" 
-> >>>
-> >>> See the docs on MSG_ZEROCOPY [1], but in short when a user app calls
-> >>> sendmsg and passes MSG_ZEROCOPY a completion notification is added
-> >>> to the error queue. The user app can poll for these to find out when
-> >>> the TX has completed and the buffer it passed to the kernel can be
-> >>> overwritten.
-> >>>
-> >>> My series provides the same functionality via splice and sendfile2.
-> >>>
-> >>> [1]: https://www.kernel.org/doc/html/v6.13/networking/msg_zerocopy.html
-> >>>
-> >>>> and why aren't you simply plugging this into io_uring and generate
-> >>>> a CQE so that it works like all other asynchronous operations?
-> >>>
-> >>> I linked to the iouring work that Pavel did in the cover letter.
-> >>> Please take a look.
-> >>>
-> >>> That work refactored the internals of how zerocopy completion
-> >>> notifications are wired up, allowing other pieces of code to use the
-> >>> same infrastructure and extend it, if needed.
-> >>>
-> >>> My series is using the same internals that iouring (and others) use
-> >>> to generate zerocopy completion notifications. Unlike iouring,
-> >>> though, I don't need a fully customized implementation with a new
-> >>> user API for harvesting completion events; I can use the existing
-> >>> mechanism already in the kernel that user apps already use for
-> >>> sendmsg (the error queue, as explained above and in the
-> >>> MSG_ZEROCOPY documentation).
-> >>
-> >> The error queue is arguably a work-around for _not_ having a delivery
-> >> mechanism that works with a sync syscall in the first place. The main
-> >> question here imho would be "why add a whole new syscall etc when
-> >> there's already an existing way to do accomplish this, with
-> >> free-to-reuse notifications". If the answer is "because splice", then it
-> >> would seem saner to plumb up those bits only. Would be much simpler
-> >> too...
-> > 
-> > I may be misunderstanding your comment, but my response would be:
-> > 
-> >   There are existing apps which use sendfile today unsafely and
-> >   it would be very nice to have a safe sendfile equivalent. Converting
-> >   existing apps to using iouring (if I understood your suggestion?)
-> >   would be significantly more work compared to calling sendfile2 and
-> >   adding code to check the error queue.
+On 3/18/2025 1:37 PM, hch@infradead.org wrote:
+> On Tue, Mar 18, 2025 at 12:36:44PM +0530, Kanchan Joshi wrote:
+>> Right, I'm not saying that protection is getting better. Just that any
+>> offload is about trusting someone else with the job. We have other
+>> instances like atomic-writes, copy, write-zeroes, write-same etc.
 > 
-> It's really not, if you just want to use it as a sync kind of thing. If
-> you want to have multiple things in flight etc, yeah it could be more
-> work, you'd also get better performance that way. And you could use
-> things like registered buffers for either of them, which again would
-> likely make it more efficient.
+> So wahst is the use case for it? 
 
-I haven't argued that performance would be better using sendfile2
-compared to iouring, just that existing apps which already use
-sendfile (but do so unsafely) would probably be more likely to use a
-safe alternative with existing examples of how to harvest completion
-notifications vs something more complex, like wrapping iouring.
+I tried to describe that in the cover letter of the PoC:
+https://lore.kernel.org/linux-btrfs/20250129140207.22718-1-joshi.k@samsung.com/
 
-> If you just use it as a sync thing, it'd be pretty trivial to just wrap
-> a my_sendfile_foo() in a submit_and_wait operation, which issues and
-> waits on the completion in a single syscall. And if you want to wait on
-> the notification too, you could even do that in the same syscall and
-> wait on 2 CQEs. That'd be a downright trivial way to provide a sync way
-> of doing the same thing.
 
-I don't disagree; I just don't know if app developers:
-  a.) know that this is possible to do, and
-  b.) know how to do it
+  What is the "thread" model you are
+> trying to protect against (where thread here is borrowed from the
+> security world and implies data corruption caught by checksums).
 
-In general: it does seem a bit odd to me that there isn't a safe
-sendfile syscall in Linux that uses existing completion notification
-mechanisms.
+Seems you meant threat model. That was not on my mind for this series, 
+but sure, we don't boost integrity with offload.
 
-> > I would also argue that there are likely user apps out there that
-> > use both sendmsg MSG_ZEROCOPY for certain writes (for data in
-> > memory) and also use sendfile (for data on disk). One example would
-> > be a reverse proxy that might write HTTP headers to clients via
-> > sendmsg but transmit the response body with sendfile.
-> > 
-> > For those apps, the code to check the error queue already exists for
-> > sendmsg + MSG_ZEROCOPY, so swapping in sendfile2 seems like an easy
-> > way to ensure safe sendfile usage.
+>>
+>>> IFF using PRACT is an acceptable level of protection just running
+>>> NODATASUM and disabling PI generation/verification in the block
+>>> layer using the current sysfs attributes (or an in-kernel interface
+>>> for that) to force the driver to set PRACT will do exactly the same
+>>> thing.
+>>
+>> I had considered but that can't work because:
+>>
+>> - the sysfs attributes operate at block-device level for all read or all
+>> write operations. That's not flexible for policies such "do something
+>> for some writes/reads but not for others" which can translate to "do
+>> checksum offload for FS data, but keep things as is for FS meta" or
+>> other combinations.
 > 
-> Sure that is certainly possible. I didn't say that wasn't the case,
-> rather that the error queue approach is a work-around in the first place
-> for not having some kind of async notification mechanism for when it's
-> free to reuse.
+> Well, we can easily do the using a per-I/O flag
 
-Of course, I certainly agree that the error queue is a work around.
-But it works, app use it, and its fairly well known. I don't see any
-reason, other than historical context, why sendmsg can use this
-mechanism, splice can, but sendfile shouldn't?
-
-> > As far as the bit about plumbing only the splice bits, sorry if I'm
-> > being dense here, do you mean plumbing the error queue through to
-> > splice only and dropping sendfile2?
-> > 
-> > That is an option. Then the apps currently using sendfile could use
-> > splice instead and get completion notifications on the error queue.
-> > That would probably work and be less work than rewriting to use
-> > iouring, but probably a bit more work than using a new syscall.
-> 
-> Yep
-
-I'm not opposed to dropping the sendfile2 part of the series for the
-official submission. I do think it is a bit odd to add the
-functionality to splice only, though, when probably many apps are
-using splice via calls to sendfile and there is no way to safely use
-sendfile.
-
-If you feel very strongly that this cannot be merged without
-dropping sendfile2 and only plumbing this through for splice, then
-I'll drop the sendfile2 syscall when I submit officially (probably
-next week?).
-
-I do feel pretty strongly that it's more likely apps would use
-sendfile2 and we'd have safer apps out in the wild. But, I could be
-wrong.
-
-That said: if the new syscsall is the blocker, I'll drop it and
-offer a change to the sendfile man page suggesting users swap it
-with calls to splice + error queue for safety.
-
-I greatly appreciate you taking a look and your feedback.
-
-Thanks,
-Joe
+Right, a per-I/O flag (named REQ_INTEGRITY_OFFLOAD) is what I did in the 
+patch:
+https://lore.kernel.org/linux-btrfs/20250129140207.22718-2-joshi.k@samsung.com/
 
