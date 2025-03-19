@@ -1,149 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-44452-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8049A693A3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 16:36:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76B02A693E7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 16:47:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54638460DCD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 15:32:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 398BB88407F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 15:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDDB51D7E5C;
-	Wed, 19 Mar 2025 15:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5E01DD0DC;
+	Wed, 19 Mar 2025 15:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="VHEtRE82"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ghghe3g7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E341C3BF1
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 15:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF321DA10C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 15:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742398347; cv=none; b=VhkNX+3ImnGdT73QjWKsRzVB3+pjWnzGUbayIQ091iRjPZV0pQ85jH9bTCrVdSumKxpPpdG7qAmldwo7XvKhgvgDiGbWYIJmIyjDrFUQi6iN3iZTiF1CoNUBBo44DRvFYSJ6WQMbEJUrxV3JM8EXAMmiE+6gBEULo7/lBavcMuc=
+	t=1742398795; cv=none; b=Izz7v8HT83MHQT9q3wAAx6P6unFHTMbzdqjl3Jh6NHxJdO1LHGFnYSX+I1ZPlCvuoOBGll7AnwhBoD/nbUTIytzWpNNX1NCVlmRweH1EJ+2rdeUtW/7UBqZnMU++JpjqqxKsf6egcYTKu15FS9cOgaNIDyC6v9LraXkFTsLGdYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742398347; c=relaxed/simple;
-	bh=DecHoeVvuZPf1798B6ofl0KEVe3MSa1ULHgC3f/pgt8=;
+	s=arc-20240116; t=1742398795; c=relaxed/simple;
+	bh=NKafdDFhvA+B0LDfrEObML9M32C3bsMtrBhdwT5NO8Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=twqEsUUtGlYOTpBzBqFk9tnKKPa4CLpCiUhDF9Fvq6rSXdc4qA3mqkmaCHqez8YDC+swxHHwX3qETtUfgF7jjaHhihaGcvpCKOfWTNaYMSd88kDnKbmUMQsvKE5cjNd5ufCxNBB2zjhkPQ6qie5Wv6CRJgX+1YSYhEn4tVGnLD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=VHEtRE82; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22359001f1aso27942955ad.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 08:32:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1742398343; x=1743003143; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wn9F1c5LdYViJ/xCFgH69JHzYJf0t1bW8IYQTve3Il0=;
-        b=VHEtRE82dpW80KhRY2ibVphmyZxSCwFrNEb47iibxNFEoqgYfCoeXH/9f1C+JxXAbT
-         PkNtN2RH9ixJHgDd4g2ZrCjIHzNSfTmQkkSzMR6hR2OcmL3z96OUpkeVdVjnkLkJRjuH
-         YqVxFgFMdB3x7wAuV0MHrb7qir5rwBztA8CPs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742398343; x=1743003143;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wn9F1c5LdYViJ/xCFgH69JHzYJf0t1bW8IYQTve3Il0=;
-        b=IWGFvy04w+QsESZfe58Hz10y/d9yqBoiXlFoX0UGq82AS2ulm+OkoksY08VLhabcFx
-         THGywwBKJfjc1UlFcYFnLfS3ReCpXknSCclZ7rdIZRVM8AybCclprntPmsFUhrAy6o6B
-         qzFEOX+RuMCpnoi6XK04cRvUvqEuqU31l2u5HiiUTMlqCNBdLrXo3qefRFZ+I9zvsijz
-         T0G6BHw5vfk4PpKBZAHqX3oCSQAU7R/tqDopPU+P1JnKqR+XjOtemD1t6GS/0K6Gl1w1
-         oOAjDxR0DDA9znGqJb3MF29TQBkvNrXmDVpJW8gRMeu97Sg+BFZs09VKSfCC+RrZlmnj
-         oPPg==
-X-Forwarded-Encrypted: i=1; AJvYcCWe/0Q5GYt/RtTjcHaBoMXWEvZMJyFkviGk8me18sSZOdCbbwB5MIa/JDjAKYzigxxj0uOKJxjdOt1dCjt+@vger.kernel.org
-X-Gm-Message-State: AOJu0YysBcBCj0mCvER5FRD0x4e40Jva3przAGNe3EvtvwHwElmG4bm9
-	cJmP+Fs/Hoch1HsPwJZrhMIS/gSa4w/ZZsA4/MKFTyOltiv8v28sjFpn4PGOlR8=
-X-Gm-Gg: ASbGnctwikFkkPxwtyHzNzn3/rAuKmHvA/p9jUX5aoXREhaSTgVMM+AY3Th2yajXmWl
-	REjGgL1yyxNLfH82elDubEB54pV5r5whkOFlOM6qr7KCWWQ/LZZuQenz0nHHoFjJOpmdEHu8A+t
-	kNZqYKSrMnOhcaP43F/nmpqbZh3NBDxr6+0FOHeKjzfMuV3O+/aSWuk7IPOyO9I6G1b1icrQ1u2
-	reRaQ0abIjFrA1LSwZeto0yu/RxKCQbZX20RUZtGEIWnKBklvD/vFr74d4UlPsEklJZJ1C9vyGI
-	8Z5ANT3sSGQKGO3vlVnmXLZuxS1mzPfoD3RH3m+LpFCXqWJZvIIT1sH1cfUfE1lqd/nuD0jPF1c
-	7HaZckKj93Ic6bKcC8ZsR7DWlkyo=
-X-Google-Smtp-Source: AGHT+IE928EvL/A0pSVSiRkpQ590uJxm0F/MyNYT3ARIPaWUxA9t+V2zDq6An5Z8ZPQuHl4hSSFFbg==
-X-Received: by 2002:a05:6a20:a111:b0:1f5:a577:dd10 with SMTP id adf61e73a8af0-1fbed315b41mr5956837637.36.1742398343445;
-        Wed, 19 Mar 2025 08:32:23 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56ea96e58sm11106959a12.78.2025.03.19.08.32.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 08:32:22 -0700 (PDT)
-Date: Wed, 19 Mar 2025 08:32:19 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
-	edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
-	linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, kuba@kernel.org,
-	shuah@kernel.org, sdf@fomichev.me, mingo@redhat.com, arnd@arndb.de,
-	brauner@kernel.org, akpm@linux-foundation.org, tglx@linutronix.de,
-	jolsa@kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
-Message-ID: <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, asml.silence@gmail.com,
-	linux-fsdevel@vger.kernel.org, edumazet@google.com,
-	pabeni@redhat.com, horms@kernel.org, linux-api@vger.kernel.org,
-	linux-arch@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	kuba@kernel.org, shuah@kernel.org, sdf@fomichev.me,
-	mingo@redhat.com, arnd@arndb.de, brauner@kernel.org,
-	akpm@linux-foundation.org, tglx@linutronix.de, jolsa@kernel.org,
-	linux-kselftest@vger.kernel.org
-References: <20250319001521.53249-1-jdamato@fastly.com>
- <Z9p6oFlHxkYvUA8N@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qEkxF6m6WB4EhcLUDCm3NDWI9GvmbPvf6JG8ZdJLhZieR4UThsvJCbe/ZtQ22Ahw1wfII0aITWH/8UxAuJzIfTERMeAX5BUiytB/lDW3ryTcfrI7vzVhswh9mktGJXJkL+6+Pfea1JQbbw0G/iYcJlxXDYkfYZS4nsyd253q4Co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ghghe3g7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3377C4CEE9;
+	Wed, 19 Mar 2025 15:39:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742398795;
+	bh=NKafdDFhvA+B0LDfrEObML9M32C3bsMtrBhdwT5NO8Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ghghe3g72e4MAuTgwAfCy3/rWuJv6lxs+DIYOCI5p/nRf07RD5iuGRqrbHYw+DOBC
+	 5XVNeeXZ0/XxXNL0kmqWC3AM/DzcvrOQoMhDzYhh/WsJYyD8njaj84o4KEb5MALpAD
+	 hRbxJIWid3Nb2toBb3nXYBux2rkUHc0UqW4YFqzLwNMeQ8q3wWUk6rmrpIEtNDdyZr
+	 g+4gs5dcI1skACUsRbJyTIMUCna2oWhTikawm/4MKJ+JJGfI92fQiDu10/TvHR11gJ
+	 HJ8B4wOoinPMGRwmgk8+KjT8SRc9AwgzwbWO6Ahp4degTy8MKJk91nauIhMK7EDH7h
+	 F3hsAGw1cELZA==
+Date: Wed, 19 Mar 2025 16:39:50 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	Lennart Poettering <lennart@poettering.net>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
+	Mike Yuan <me@yhndnzj.com>
+Subject: Re: [PATCH RFC v2 1/3] pidfs: improve multi-threaded exec and
+ premature thread-group leader exit polling
+Message-ID: <20250319-zeitmanagement-beginnen-9a36392fb214@brauner>
+References: <20250318-work-pidfs-thread_group-v2-0-2677898ffa2e@kernel.org>
+ <20250318-work-pidfs-thread_group-v2-1-2677898ffa2e@kernel.org>
+ <20250319140052.GC26879@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z9p6oFlHxkYvUA8N@infradead.org>
+In-Reply-To: <20250319140052.GC26879@redhat.com>
 
-On Wed, Mar 19, 2025 at 01:04:48AM -0700, Christoph Hellwig wrote:
-> On Wed, Mar 19, 2025 at 12:15:11AM +0000, Joe Damato wrote:
-> > One way to fix this is to add zerocopy notifications to sendfile similar
-> > to how MSG_ZEROCOPY works with sendmsg. This is possible thanks to the
-> > extensive work done by Pavel [1].
+On Wed, Mar 19, 2025 at 03:00:52PM +0100, Oleg Nesterov wrote:
+> On 03/18, Christian Brauner wrote:
+> >
+> > @@ -746,8 +751,23 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
+> >  	 * sub-thread or delay_group_leader(), wake up the
+> >  	 * PIDFD_THREAD waiters.
+> >  	 */
+> > -	if (!thread_group_empty(tsk))
+> > -		do_notify_pidfd(tsk);
+> > +	if (!thread_group_empty(tsk)) {
+> > +		if (delay_group_leader(tsk)) {
+> > +			struct pid *pid;
+> > +
+> > +			/*
+> > +			 * This is a thread-group leader exiting before
+> > +			 * all of its subthreads have exited allow pidfd
+> > +			 * polling to detect this case and delay exit
+> > +			 * notification until the last thread has
+> > +			 * exited.
+> > +			 */
+> > +			pid = task_pid(tsk);
+> > +			WRITE_ONCE(pid->delayed_leader, 1);
 > 
-> What is a "zerocopy notification" 
+> This is racy, tsk->exit_state is already set so pidfd_poll() can see
+> task->exit_state && !pid->delayed_leader.
 
-See the docs on MSG_ZEROCOPY [1], but in short when a user app calls
-sendmsg and passes MSG_ZEROCOPY a completion notification is added
-to the error queue. The user app can poll for these to find out when
-the TX has completed and the buffer it passed to the kernel can be
-overwritten.
+You're right. I had not considered that.
 
-My series provides the same functionality via splice and sendfile2.
+> But this is minor. I can't understand all these complications,
+> probably because I barely slept tonight ;) I will re-read this patch
+> again tomorrow, but could you explain why we can't simply use the
+> trivial patch below?
 
-[1]: https://www.kernel.org/doc/html/v6.13/networking/msg_zerocopy.html
+Sure, if that works I'm more than happy if we run with this.
 
-> and why aren't you simply plugging this into io_uring and generate
-> a CQE so that it works like all other asynchronous operations?
+> 
+> Oleg.
+> ---
+> 
+> diff --git a/fs/pidfs.c b/fs/pidfs.c
+> index d980f779c213..8a95920aed98 100644
+> --- a/fs/pidfs.c
+> +++ b/fs/pidfs.c
+> @@ -210,7 +210,6 @@ static void pidfd_show_fdinfo(struct seq_file *m, struct file *f)
+>  static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
+>  {
+>  	struct pid *pid = pidfd_pid(file);
+> -	bool thread = file->f_flags & PIDFD_THREAD;
+>  	struct task_struct *task;
+>  	__poll_t poll_flags = 0;
+>  
+> @@ -223,7 +222,7 @@ static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
+>  	task = pid_task(pid, PIDTYPE_PID);
+>  	if (!task)
+>  		poll_flags = EPOLLIN | EPOLLRDNORM | EPOLLHUP;
+> -	else if (task->exit_state && (thread || thread_group_empty(task)))
+> +	else if (task->exit_state && !delay_group_leader(task))
+>  		poll_flags = EPOLLIN | EPOLLRDNORM;
+>  
+>  	return poll_flags;
+> diff --git a/kernel/exit.c b/kernel/exit.c
+> index 9916305e34d3..356ca41d313b 100644
+> --- a/kernel/exit.c
+> +++ b/kernel/exit.c
+> @@ -746,7 +746,7 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
+>  	 * sub-thread or delay_group_leader(), wake up the
+>  	 * PIDFD_THREAD waiters.
+>  	 */
+> -	if (!thread_group_empty(tsk))
+> +	if (!delay_group_leader(tsk))
+>  		do_notify_pidfd(tsk);
 
-I linked to the iouring work that Pavel did in the cover letter.
-Please take a look.
+Two cases we need to handle:
 
-That work refactored the internals of how zerocopy completion
-notifications are wired up, allowing other pieces of code to use the
-same infrastructure and extend it, if needed.
+(1) thread-group leader exits prematurely and none of the subthreads
+    ever exec. Once the last thread exits it'll notify the
+    thread-specific and non-thread specific thread-group leader pidfd
+    pollers from release_task().
 
-My series is using the same internals that iouring (and others) use
-to generate zerocopy completion notifications. Unlike iouring,
-though, I don't need a fully customized implementation with a new
-user API for harvesting completion events; I can use the existing
-mechanism already in the kernel that user apps already use for
-sendmsg (the error queue, as explained above and in the
-MSG_ZEROCOPY documentation).
+(2) thread-group leader exits prematurely but one of the subthreads
+    later execs. In this case we don't want any exit notification to
+    be generated for thread-specific thread-group leaders.
 
-Let me know if that answers your question or if you have other
-questions.
+I was concerned that handling (2) would be more complex but it passes
+all the new tests so I won't complain about less code needed. ;)
 
-Thanks,
-Joe
+Do you want me to just dump your draft and slap a Co-Developed-by on it?
+
+Another idea I had that I would welcome your thoughts on:
+
+When a task execs we could indicate this by generating a POLLPRI event
+on the pidfd. If we wanted to be fine-grained we could generate
+POLLPRI | POLLRDUP if a subthread execs. The latter would give userspace
+a reliable way to detect this case and figure out that tasks changed
+TIDs.
 
