@@ -1,108 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-44415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 219BBA68673
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 09:14:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC28CA6868A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 09:18:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43B3A3A8E82
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 08:14:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC27F3AA7DF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 08:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA2F42505C4;
-	Wed, 19 Mar 2025 08:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KYThBfFA"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F20B2505B8;
+	Wed, 19 Mar 2025 08:17:37 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE2220C46B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 08:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5B242A93;
+	Wed, 19 Mar 2025 08:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742372055; cv=none; b=qDLouw9eqZ0CS4py3EZP5bd7zyzDFxH5hF0A/6iBV/E+5+4ZdLt276HcgMLTX2D6i9rOnekZqEXTrZvRbstID0EPiHihR3LMRIdJU5JqqNrrhr/dFaWvRxaXnmIQuwqBDhddSjTlDdnEeiLZrcA+h7eYdQLXP5BkyVRUfv7wQS8=
+	t=1742372257; cv=none; b=rs4qp6DnL6ulhwFE+TDm44nrN38x9jQmSbWWvuhb1pRizY1TB/YiUanPKkoKLN0NjSKxN0u5b89OvjvrkMVHtJWfVBCIMlgRXVHi8Nj8mEKaop1b6MBPW8+fp8gGZdfpFr1wCwtFByuvNLRJN1HyYKbPv9XUdcTgH7bsndpZ9nA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742372055; c=relaxed/simple;
-	bh=hwUJk5uVE9ltrabdqyucQ5kvFNSSDgIpW2kesnMQZCo=;
+	s=arc-20240116; t=1742372257; c=relaxed/simple;
+	bh=ZLmBezBDWfIQPFZftRo8pyyejObu0SQitX9Sp2sZav4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fg0Q/A0q1nYmiCg/fEWPcYWmpBmgY1Y3mY+QGwSu/R4ixSWT3FVrRtD8vnVsm0tqddfD7f5io9kajwoUJWq36FZMbSE2fTaE7bspGbOGyALCfsMLV4DmmMqaiHzyxtbmWS092+ILQe8BDefKZ2wWQSAYeeOUz4fte1ypEYwcv3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KYThBfFA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1B78C4CEE9;
-	Wed, 19 Mar 2025 08:14:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742372054;
-	bh=hwUJk5uVE9ltrabdqyucQ5kvFNSSDgIpW2kesnMQZCo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KYThBfFAC5osIDbeMImoGPMnq54hp3Ozv+sbfR76mIhbdsc7UzkprS19t9w6IZBt/
-	 3iHO+Gc6G0mjeI8FlNg9s5L5S1W7ZeXoMV+saJs9PLK13iCKd4hzQjTZEubm/bR85k
-	 H1Wu7ldeNM06ppS0bbhpBqOFXGPKjs0BXWDZ3g2EqP8Rzgtr9HIZY1atgLWhyM7tnu
-	 wf1GiDe7wvUwYd5W/oGke+GMX6to8Bxn7IYAQFXcv4wEzERl3p6OMCrZ/w4fQHce7R
-	 jTW8pyjb3qw2Kbf8gHiBCbbe0X+AoKH0rW6aQIYv/ouoHCu1cIBQotLCZiM7F521SI
-	 aDOfqUZGn3ouw==
-Date: Wed, 19 Mar 2025 09:14:09 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
-	Lennart Poettering <lennart@poettering.net>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
-	Mike Yuan <me@yhndnzj.com>
-Subject: Re: [PATCH v2] pidfs: ensure that PIDFS_INFO_EXIT is available
-Message-ID: <20250319-behielt-zensieren-e63e234730d2@brauner>
-References: <20250318-geknebelt-anekdote-87bdb6add5fd@brauner>
- <20250318142601.GA19943@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XFPs6msyXB8+IRGj6nLB1BO+iFfy2CW4OKLt2w0YkOyjemFjfVlnEhbt/Ncgz5TZ5GNXqnKknJBW+m1/L0XvNYTZ+zBN3pwgrvRr8rZxLR2USBbEGvLzmdI1OIh1SkdtXh9DXmRIY6sKOoFV3RA5iHn8Hhdlfei7iQnX13M1eBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 7C30367373; Wed, 19 Mar 2025 09:17:30 +0100 (CET)
+Date: Wed, 19 Mar 2025 09:17:30 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+	Brian Foster <bfoster@redhat.com>, linux-erofs@lists.ozlabs.org,
+	linux-xfs@vger.kernel.org, Bo Liu <liubo03@inspur.com>,
+	Christoph Hellwig <hch@lst.de>,
+	"Darrick J. Wong" <djwong@kernel.org>
+Subject: Re: [PATCH -next] iomap: fix inline data on buffered read
+Message-ID: <20250319081730.GB26281@lst.de>
+References: <20250319025953.3559299-1-hsiangkao@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250318142601.GA19943@redhat.com>
+In-Reply-To: <20250319025953.3559299-1-hsiangkao@linux.alibaba.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Mar 18, 2025 at 03:46:54PM +0100, Oleg Nesterov wrote:
-> I'll try to actually read this patch (and pidfs: improve multi-threaded
-> exec and premature thread-group leader exit polling) tomorrow, but I am
-> a bit confused after the quick glance...
-> 
-> 
-> On 03/18, Christian Brauner wrote:
-> >
-> > +static inline bool pidfs_pid_valid(struct pid *pid, const struct path *path,
-> > +				   unsigned int flags)
-> > +{
-> > +	enum pid_type type;
-> > +
-> > +	if (flags & CLONE_PIDFD)
-> > +		return true;
-> 
-> OK, this is clear.
-> 
-> > +	if (flags & PIDFD_THREAD)
-> > +		type = PIDTYPE_PID;
-> > +	else
-> > +		type = PIDTYPE_TGID;
-> > +
-> > +	/*
-> > +	 * Since pidfs_exit() is called before struct pid's task linkage
-> > +	 * is removed the case where the task got reaped but a dentry
-> > +	 * was already attached to struct pid and exit information was
-> > +	 * recorded and published can be handled correctly.
-> > +	 */
-> > +	if (unlikely(!pid_has_task(pid, type))) {
-> > +		struct inode *inode = d_inode(path->dentry);
-> > +		return !!READ_ONCE(pidfs_i(inode)->exit_info);
-> > +	}
-> 
-> Why pidfs_pid_valid() can't simply return false if !pid_has_task(pid,type) ?
-> 
-> pidfd_open() paths check pid_has_task() too and fail if it returns NULL.
-> If this task is already reaped when pidfs_pid_valid() is called, we can
-> pretend it was reaped before sys_pidfd_open() was called?
+I'd move the iomap_iter_advance into iomap_read_inline_data, just like
+we've pushed it down as far as possible elsewhere, e.g. something like
+the patch below.  Although with that having size and length puzzles
+me a bit, so maybe someone more familar with the code could figure
+out why we need both, how they can be different and either document
+or eliminate that.
 
-We could for sure but why would we. If we know that exit information is
-available then returning a pidfd can still be valuable for userspace as
-they can retrieve exit information via PIDFD_INFO_EXIT and it really
-doesn't hurt to do this.
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index d52cfdc299c4..7858c8834144 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -332,15 +332,15 @@ struct iomap_readpage_ctx {
+  * Only a single IOMAP_INLINE extent is allowed at the end of each file.
+  * Returns zero for success to complete the read, or the usual negative errno.
+  */
+-static int iomap_read_inline_data(const struct iomap_iter *iter,
+-		struct folio *folio)
++static int iomap_read_inline_data(struct iomap_iter *iter, struct folio *folio)
+ {
+ 	const struct iomap *iomap = iomap_iter_srcmap(iter);
+ 	size_t size = i_size_read(iter->inode) - iomap->offset;
++	loff_t length = iomap_length(iter);
+ 	size_t offset = offset_in_folio(folio, iomap->offset);
+ 
+ 	if (folio_test_uptodate(folio))
+-		return 0;
++		goto advance;
+ 
+ 	if (WARN_ON_ONCE(size > iomap->length))
+ 		return -EIO;
+@@ -349,7 +349,8 @@ static int iomap_read_inline_data(const struct iomap_iter *iter,
+ 
+ 	folio_fill_tail(folio, offset, iomap->inline_data, size);
+ 	iomap_set_range_uptodate(folio, offset, folio_size(folio) - offset);
+-	return 0;
++advance:
++	return iomap_iter_advance(iter, &length);
+ }
+ 
+ static inline bool iomap_block_needs_zeroing(const struct iomap_iter *iter,
 
