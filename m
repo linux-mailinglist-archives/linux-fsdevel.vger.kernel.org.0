@@ -1,200 +1,328 @@
-Return-Path: <linux-fsdevel+bounces-44450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53D17A6930F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 16:20:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E14FBA692B3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 16:14:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41C558A4664
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 15:13:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4AE5480448
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 15:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85DB1DDA39;
-	Wed, 19 Mar 2025 15:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C8D221734;
+	Wed, 19 Mar 2025 14:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="tLzgdU94"
+	dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b="I0P8fEZ7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wXasLh0C"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outbound-ip191a.ess.barracuda.com (outbound-ip191a.ess.barracuda.com [209.222.82.58])
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36EF536B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 15:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742397135; cv=fail; b=TyDGeENtJeqOiyfvBaGAxfjtmVkavOqWcvs7GwY1hwpaWzYAhGW4deXi+lVnGNeixTSG2glq7y9X3LYRRHycaDpBvOle9a9z6iTpGKCclL0WnSOlHeC22nYHBH7rb/gMpcizboitHber4zkLAxNaV/rocYvldwZqIf5ZBQRQDTY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742397135; c=relaxed/simple;
-	bh=KVB8pk6lpypMTWJdc3MYy2au+sE0ewYLr4HMBfSRvMs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gJiIQZMSKuYlOPdCuAH64yf55wUvoPJj83/kvLkUvuMpwNAEloFhhoGm5SDc1Cc2vi9GefwPq93mbQMmfX1xqSs/bcJ80RQk5TDjtHzrrkGibi+so5IJKUWh3+I/yanR1BqKAMiHoxt6anJMUiqugDexLoZRlPgsWzjy89qBUQQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=tLzgdU94; arc=fail smtp.client-ip=209.222.82.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2044.outbound.protection.outlook.com [104.47.70.44]) by mx-outbound10-195.us-east-2a.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Wed, 19 Mar 2025 15:12:10 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SwG0/TogVzuJEB4+jk6HN0mN6HmHkLb72zOt8axS+qdXENyaTiJL4ZuONhjLmYlv3OzSeRyBi6mF6aBJxcHjAfHAWQeDhD5TmJQNBd4EqiZH5w+9k7C57svZ9/Ds+UQ7PI1A76urHRwxErz3wxUsBw0X08clknJfHzkXpuc6G68huoXLW1UeiD0hrdyEuuh4WORjnXHEn74+7OdSTtHaFU7XeIaPF5aUOljHHq5jbzwqGcK8NrwiudeFDCavilrbmB6OK5fQdq3mOw27Dp2Ck7zw3CZPjMqhw1GCDOY/+Vg9AOPQj7vesnDMOYAyy7mRZFHGVzWvGv/7Xb56L1YD7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HXT0Y9GR5OQW7FrVy+z+ODD1u5IEv+oZhyIDdC3YdeI=;
- b=WYUsIqJKwqHUL6wpJuClRODlr0B246Y03ViqkAuHzEMjllJP7WKpdUv0uOGizP2rBc4jYel0I44gdWuQqCCipDBIR1ZWiGtrNVCjmSlsYqMaYiTplUpY0vEtN/PN+XNVddtfiGZKQEA5ltONctzpWQtxEY0yWeFO+kvZGplYDZPEDuXjTgME/cdlG/b09XcdheikxltZGFVuiurV0qM7zkCP12kNYhKrjSVcnzTLbb2+eThgWC2kUDD6DI9QcAo9tZoYR1DuIbmQnzXo+Q4zuRowHIzpsFCJWM1ZhTmh214UwwHD9U1ZCiECzKiSnVcinTtucMEgM1eDnmYtr5XOSA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 50.222.100.11) smtp.rcpttodomain=ddn.com smtp.mailfrom=ddn.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=ddn.com; dkim=none
- (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HXT0Y9GR5OQW7FrVy+z+ODD1u5IEv+oZhyIDdC3YdeI=;
- b=tLzgdU94TwpegQ6Op0vpYRV3orxCQ4hFfqraHZrYTYl9EZpbx4aDyzrY/fICyBXyERzt/Edc6y9FrVK5jwo/XjpqfRfVUBt0PbTdd2Es6ild7/ZyDPRnftwWj07Ji+4ObI9a0CW9+BWI4vlgqg2UpXql/f9RHw6zi4KkrkK9QIU=
-Received: from SA9PR13CA0005.namprd13.prod.outlook.com (2603:10b6:806:21::10)
- by SN7PR19MB6587.namprd19.prod.outlook.com (2603:10b6:806:271::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Wed, 19 Mar
- 2025 12:36:51 +0000
-Received: from SA2PEPF00003F62.namprd04.prod.outlook.com
- (2603:10b6:806:21:cafe::c0) by SA9PR13CA0005.outlook.office365.com
- (2603:10b6:806:21::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.33 via Frontend Transport; Wed,
- 19 Mar 2025 12:36:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
- smtp.mailfrom=ddn.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=ddn.com;
-Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
- 50.222.100.11 as permitted sender) receiver=protection.outlook.com;
- client-ip=50.222.100.11; helo=uww-mrp-01.datadirectnet.com; pr=C
-Received: from uww-mrp-01.datadirectnet.com (50.222.100.11) by
- SA2PEPF00003F62.mail.protection.outlook.com (10.167.248.37) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.20
- via Frontend Transport; Wed, 19 Mar 2025 12:36:50 +0000
-Received: from localhost (unknown [10.68.0.8])
-	by uww-mrp-01.datadirectnet.com (Postfix) with ESMTP id EC2064D;
-	Wed, 19 Mar 2025 12:36:49 +0000 (UTC)
-From: Bernd Schubert <bschubert@ddn.com>
-Date: Wed, 19 Mar 2025 13:36:34 +0100
-Subject: [PATCH 1/2] fuse: Clear FR_PENDING in request_wait_answer
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2798A21D596;
+	Wed, 19 Mar 2025 14:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742396170; cv=none; b=U2l8hGZnLtLCDhbI5W9LPX2f7RK9pzoY2k25AXk6Jno4fCtIqK2eTdRSarpI2OzJBDDDznit1aYOsMBCB6AGKzJi8OEiew5p+5gOfVduXGrb5VhdhF7fMM2JB3KKmNULqXp23l/ZyDZygzDlTroVyiDR1tObvIY/FiofsU88ClI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742396170; c=relaxed/simple;
+	bh=fJ3F0yiZWpnOp2Nq8Bm3nwRNQRkQKyKmPX7nnAGXLv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R24cyh3zyfOK6IIU2BJGjX0jPZq9E4x02js05Z97FOZOg6VLGpOXrY5/da5WpY0cAZZCYzWmmFY2jntUu02kcVpdxfM6kYf4p/DbEwrWttehrmenS4esLBQTiqMxI1SNJ+k8vjL82Yn86vrJPA8uenSvXH7KaFYToSWf7Ph+Y8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com; spf=pass smtp.mailfrom=invisiblethingslab.com; dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b=I0P8fEZ7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wXasLh0C; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=invisiblethingslab.com
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id CEC7C2540234;
+	Wed, 19 Mar 2025 10:56:03 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Wed, 19 Mar 2025 10:56:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	invisiblethingslab.com; h=cc:cc:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1742396163;
+	 x=1742482563; bh=6YtNAy6HBfsyucG2rvA4CF+wsGauxsNRU9FKvC0/25E=; b=
+	I0P8fEZ7Te6/fmNHSvma2ma4o3KZl7xibq7+WBYcevRbRMqWYXQH+SLBOe2mPVIB
+	nrtvAufJI4WjVrJJ/pjMY3lb2v2bwlQ1iI/kqpTMGvXB2B/fY5Did42fTCdlZBGZ
+	dExdWLr2ujBT2Zq7/MtEAiSRyFcKyobGTCydjaVWz5MtWT41gAcV2X/grmNWuy0o
+	p3Fy9QgMfN3ghOUgZVV4pDE+LgXcdd4cSMIB3XJXiRjN5+UiOopBxPY7E3NTAkY7
+	/V3KUEPxNDkLxrhAQL01s4P5qk+g7lvwQOrFVwCQUUiF/GaVGmDBGDECOnfZeXNR
+	zX7esmNwD/nZR2fB2lRqjA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1742396163; x=1742482563; bh=6YtNAy6HBfsyucG2rvA4CF+wsGauxsNRU9F
+	KvC0/25E=; b=wXasLh0C6wlK8Db10HpqaXvAZpHubQmGV6opRrkLP1H75vnKChi
+	0GG7l2jQI7fwSBQ8VNoJMSNdb6KNm1PrjR3VVoZ+AD6K7M37lUgKGKQSZWM002bw
+	kQhdP+1uCX48Fgpx0254MyM8nIcVxH2GoqGaZG8OW6E87ik9MVdLjY1iPJ4mppnc
+	SnEWIU/KBECMCeh7bnDvLTc+bWATvxc1Mrl6bwrH+C6NB0UO+5aqu1Zuffppx0CI
+	T2JOL5rGn96zHHnF+ShRGNG97gcnFnCojasQdsXuvFNjL86u4MspQYVFOJFgKLv9
+	9bnYhD8K9Ow/rSCZTDzF8z7enOrCD5I4yZA==
+X-ME-Sender: <xms:A9vaZ7RnSNY02nEqV1hyrQOySEmJsob6Iyx-XVn8-lsjY7T8t-W8og>
+    <xme:A9vaZ8z75UMAMWlpnYOiiEdBORXWQ-MDUMIuzBLq1R2c3EJeJIW-2oEGF8ydPETJl
+    xvgZue4XP2ZEuc>
+X-ME-Received: <xmr:A9vaZw3WlYjSFGNuPoawng7kBIsf59frkYCpUsioIpYbvcgzqAAU_fhAfdTA8Lbge5sqm4fMv6r9UVOYNjjslHdwhnr22c4yOp45iXimelU5X78k>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeehieefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhf
+    fvvefukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeffvghmihcuofgrrhhivgcu
+    qfgsvghnohhurhcuoeguvghmihesihhnvhhishhisghlvghthhhinhhgshhlrggsrdgtoh
+    hmqeenucggtffrrghtthgvrhhnpeduieelfeeutedvleehueetffejgeejgeffkeelveeu
+    leeukeejjeduffetjeekteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpeguvghmihesihhnvhhishhisghlvghthhhinhhgshhlrggsrdgtohhm
+    pdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepug
+    grvhhiugesfhhrohhmohhrsghithdrtghomhdprhgtphhtthhopegtvhgvsehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehgnhhorggtkhesghhoohhglhgvrdgtohhmpdhrtghpth
+    htohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthht
+    ohepkhgvnhhtrdhovhgvrhhsthhrvggvtheslhhinhhugidruggvvhdprhgtphhtthhope
+    hlihhnuhigqdgstggrtghhvghfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehmihgtseguihhgihhkohgurdhnvght
+X-ME-Proxy: <xmx:A9vaZ7A9-6RclAM5pIHAvhRBh5ExBrhP_2-wmjR0OFxpgoFz9thkcQ>
+    <xmx:A9vaZ0go6bICdLT_Mm7qKXyEtM6ZLApvB-zHv_lV_yNPO6rAR6i9lQ>
+    <xmx:A9vaZ_pyvbpGcS4o_NrRF2lKc_i_p9hDHrYch1oXASrdrIsaKIz1vw>
+    <xmx:A9vaZ_ghDPW_Hc6jOWrmcUbajlRJNmDNL-qcl3xgKelXZtN2IRUUNA>
+    <xmx:A9vaZ5ZcihA2eqyE0NqXT1reBPLXNYAHL0WzUrUx8JC0PKUaBYvWixpL>
+Feedback-ID: iac594737:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 19 Mar 2025 10:56:02 -0400 (EDT)
+Date: Wed, 19 Mar 2025 10:55:39 -0400
+From: Demi Marie Obenour <demi@invisiblethingslab.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: cve@kernel.org, gnoack@google.com, gregkh@linuxfoundation.org,
+	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, mic@digikod.net,
+	Demi Marie Obenour <demiobenour@gmail.com>
+Subject: Re: Unprivileged filesystem mounts
+Message-ID: <Z9rbDdLr0ai-UFE_@itl-email>
+References: <Z8948cR5aka4Cc5g@dread.disaster.area>
+ <20250311021957.2887-1-demi@invisiblethingslab.com>
+ <Z8_Q4nOR5X3iZq3j@dread.disaster.area>
+ <Z9CYzjpQUH8Bn4AL@itl-email>
+ <Z9kC7MKTGS_RB-2Q@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250319-fr_pending-race-v1-1-1f832af2f51e@ddn.com>
-References: <20250319-fr_pending-race-v1-0-1f832af2f51e@ddn.com>
-In-Reply-To: <20250319-fr_pending-race-v1-0-1f832af2f51e@ddn.com>
-To: Miklos Szeredi <miklos@szeredi.hu>, Luis Henriques <luis@igalia.com>
-Cc: Joanne Koong <joannelkoong@gmail.com>, Jeff Layton <jlayton@kernel.org>, 
- linux-fsdevel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>, 
- Bernd Schubert <bschubert@ddn.com>
-X-Mailer: b4 0.15-dev-2a633
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742387808; l=911;
- i=bschubert@ddn.com; s=20240529; h=from:subject:message-id;
- bh=KVB8pk6lpypMTWJdc3MYy2au+sE0ewYLr4HMBfSRvMs=;
- b=sdafUy3Ha7eOsmxOorARK24p81L7Jd9oyl+NqGoLIeRSlLwPcm4Idhi1MD+P2AVvBNbEzs/wX
- 5NSVy+MwXLTDX3brZWTWt+VbJimEQG2ANHjMv4/ed7/x8BrIyc9oKrF
-X-Developer-Key: i=bschubert@ddn.com; a=ed25519;
- pk=EZVU4bq64+flgoWFCVQoj0URAs3Urjno+1fIq9ZJx8Y=
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F62:EE_|SN7PR19MB6587:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8b6f1036-9529-482d-d807-08dd66e2b90f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?SGg0RXJyS25IVU5sb3gzM2JWTVg0dFZJdjM1V1dLU0FGMHhHTEZRcXZKTGR4?=
- =?utf-8?B?OFU1VXdhbk5wd0t5QU1JRHp2YlNMWXY0K2dWNTZ1RE03SG5SSTdlSk5iUkhY?=
- =?utf-8?B?eHJ3Mi9lMTU2bTU5ZUlQT2ZSbFFSMi9nS3VUbXFFS1UxOUF3S3VobkgvdWkw?=
- =?utf-8?B?YysxWE52YXJxRllyZTVPdzlHQmptUDJpcmdybVlrMUMzNE1hNWlsN2t2amN4?=
- =?utf-8?B?MnV4V0k1eDZWU0tpQ0d2SHZGVThJdGpIcnEwZGFkTEMwNzhmWkxGNUhZTjMr?=
- =?utf-8?B?U3dBUWw1SWZyVHpnbkc5eVA0M3N2aGVKZklGMFRKWENNMFZTRzZxbnhNaVh3?=
- =?utf-8?B?WUNlcTk1citPWXFDQTA3L1J4cWVoWHNvVzhhVHdQdEkzRHBKOE03SGxVbHEx?=
- =?utf-8?B?VksvYTRRUTZGaEdOZFcyRjNOUjBpR2ZtZ3U5aVFsRHRPaVZlVEpCdStQL1lU?=
- =?utf-8?B?NktQNUFoZGFESVE5VzVCWGxiOTc3YUNFT1pEVTZjSkw3ZVNXRDBNYndCTjdq?=
- =?utf-8?B?ZGdKQVU4bmFZRWZ4ODh3N0dnOXQ0MnZTZW5sWkY0cXFXcnhYelFJUXZIS2xp?=
- =?utf-8?B?S1B4bDBjRHVFN05DQTQ1clI4cGJQS3dmK2NTZ3V0Z2g2M1RFRVg2SzBaN2dS?=
- =?utf-8?B?WVAxZjRMVFp1elQycFFzaDJFOEtpQ21Vbitld2pYT2pLWVd5NitHWmR5Umpi?=
- =?utf-8?B?dm9wYXYxSmdYSFpzQ1F1YlBQL0NzVjVlYTdMMnRkZW1aM2ZHeWdXTEMydTJD?=
- =?utf-8?B?WTdnV1RxclYzZno3c0hQdGcyenM5N2wvNG92VjQ2M0hHZDd1SXNuRHZRV0Jw?=
- =?utf-8?B?UTcvOVVsZ2FCZHVoKzJUTXgxVEhVcnNRVnMrNEVkUUt5c0h0R2NPeUkzb1JV?=
- =?utf-8?B?RUdtUFAwbGgvTlhGc0xtRURuZWN5UktKY1J0T09FZURnZTNFTGRNRVN2MlhI?=
- =?utf-8?B?OW03cWhJbU15K2dzMW5kOCtSM0VDQXlvZEVvUTdMbnFWa3ZYU0hLN3BkOGNs?=
- =?utf-8?B?Y09TN3JvVi9HcExiYTdIdHQyRkZGN0VoOFJQOWZJZlBxMkc2eUlPckxRUG5z?=
- =?utf-8?B?cytTZkhnb1FMaDdQMmkxVHZNUEFnTHJEQUFVa1VsaGt3b1IyRWJLVEZxc1NS?=
- =?utf-8?B?Y0kzcUJ4UnN1TnYyT3NpZDhWK0tFc3o4TDZmL0dEYzFOTnZKckh1ZUs5MW9G?=
- =?utf-8?B?ODFWTWpzSVJJM3Nwa05BZ3N4WkcwOWpzMGkwRzQ1UklsQVNkZEJqRG9wK0VH?=
- =?utf-8?B?SzROVGc3aWdGbDQzT1FpbmVxbGgxV0JnMXkraitFQUJTNzdFZWJheEdTOG5N?=
- =?utf-8?B?SWFrNURFRFFNRC9HMHhibS81STUrTjl3MmtMMndNQlpSVW83SlFydWlXcnMv?=
- =?utf-8?B?RDFmaHdxd3ZsbERQb1VEY0p0NDBROFJyTmt2bW5JZDhocUtGZVN0TSs5ZExD?=
- =?utf-8?B?aHZpUW9GVEo1dk4xcVBBTHZMSzNjUnFDUUN6dStLQUhUQ2ZCQ3UvUVRWNjIw?=
- =?utf-8?B?SFp6V09BUHpBNGd4TXZhTExBMkk0dlBlcmoveHpaSG1wOFdtekFBRy9CWlMw?=
- =?utf-8?B?dzAxQmJ6OElMOWFMcU1oRDFuQWlkMXJLbVkxWGNSUUdBdDk5ZGFUeVNIV0J2?=
- =?utf-8?B?NDhRdm43TFM1RXNpT1ZGTUlhemhYQndxZWpJV1crWHhmMFpHNXl2M1cwemxl?=
- =?utf-8?B?dnhIWW9wSVB1dGpvTEZuTW1ERFl2NVB1WkJybFNCWE9GdWs3cUpKUjQvczBG?=
- =?utf-8?B?bDVKQTIxeUR1S3ROVmxaUy83dmU5K2w5NkxWQVVYQ0lSY09rY3FTVkZzaGg2?=
- =?utf-8?B?azZidXR3bnJkU0oza2tiemJtWTlNY0MvMkRISFFnSnFFTWl0cWM1SmJMTUxm?=
- =?utf-8?B?L1h1c29rZGpjTk1wM0FDSjZDTWNYWVkzT0ltT1Vza3djNyt6dHcxUldjVkRk?=
- =?utf-8?B?VnBnMURCZTNaS1VocHVURDhlVUgwVC92OFVIOFo3TVlNWENwbFNEbUpEa1R3?=
- =?utf-8?Q?38YakBO6E4UAbGvUqXswyRtpTRz1+E=3D?=
-X-Forefront-Antispam-Report:
- CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mrp-01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
- e+zFQ7xdzTOlsjJCMU4IN2v3NTjtw37jPD6P+bm1VqxX4PcK/AfQgmKb0POTk2NJ6ChAijrx+sYhPc7VemS8369+vZr94yiwJIETnSgc1D9Va1nRIhxxeOmE81Z+tx/SIRGw1xOKIWZ6UdZ9i8ReFhaCsYuzrlPfY4TDluhuxs1oU+MX4aOP14KcAZ3r1MFKl2qunCDTZ8yEvDNMmKbmqYhIh8BQgqRWGNzGaV/1B8TSBvudyXaVXVlrAdD/YLU6HUCDX7yPlZA9bErMIfkjv1ouWU2yxarFLzLx4bBA54Elfe/ct+srcJ9wfG1Fn9McBeW5OutuofEu/tPwRIIzWFCV33RxHWOeIVMukM7VGNdeUUwr7xySZxlu+t5dpb0RVnibik/x52T8ZFUjoyVpacaDwCxhkjXn5A/uwvJbNc3ABl4rTqQihBSmf06UudsM+qPo/+BZclXhcDACk5drRQ3q8i5I3AjlvTMHPK1KSVE/gIyf5LVQHBs+pHsG27o9geybNy2rGmj7G3H21WZmCT2ZJOKKdvA2S8rzkCi94FEsLTJK2mk2FvwUyn81DRR2rzh2GiHx6ONuqweXn/BBhUc4Y/C/dgtKhjgDS/k6Tlp3Rm0IDkYqMV+rmawdH+6/UwsymnJhFUjvXEwROksfLA==
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 12:36:50.9162
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b6f1036-9529-482d-d807-08dd66e2b90f
-X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mrp-01.datadirectnet.com]
-X-MS-Exchange-CrossTenant-AuthSource:
- SA2PEPF00003F62.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR19MB6587
-X-OriginatorOrg: ddn.com
-X-BESS-ID: 1742397130-102755-15474-2094-1
-X-BESS-VER: 2019.1_20250317.2316
-X-BESS-Apparent-Source-IP: 104.47.70.44
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVhYWZkBGBlAsNSnRzCIxLdUyxc
-	wiNTUtLdnC2Mg42cTSyNgkzTTFwEypNhYA+hB19kAAAAA=
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.263269 [from 
-	cloudscan9-86.us-east-2a.ess.aws.cudaops.com]
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------
-	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status:1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="gJn/WH0kaLCMp1ft"
+Content-Disposition: inline
+In-Reply-To: <Z9kC7MKTGS_RB-2Q@dread.disaster.area>
 
-The request is removed from the list of pending requests,
-directly after follows a __fuse_put_request() which is
-likely going to destruct the request, but that is not
-guaranteed, better if FR_PENDING gets cleared.
 
-Suggested-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Bernd Schubert <bschubert@ddn.com>
----
- fs/fuse/dev.c | 1 +
- 1 file changed, 1 insertion(+)
+--gJn/WH0kaLCMp1ft
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 19 Mar 2025 10:55:39 -0400
+From: Demi Marie Obenour <demi@invisiblethingslab.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: cve@kernel.org, gnoack@google.com, gregkh@linuxfoundation.org,
+	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, mic@digikod.net,
+	Demi Marie Obenour <demiobenour@gmail.com>
+Subject: Re: Unprivileged filesystem mounts
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 2c3a4d09e500f98232d5d9412a012235af6bec2e..124a6744e8088474efa014a483dc6d297cf321b7 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -438,6 +438,7 @@ static void request_wait_answer(struct fuse_req *req)
- 		/* Request is not yet in userspace, bail out */
- 		if (test_bit(FR_PENDING, &req->flags)) {
- 			list_del(&req->list);
-+			clear_bit(FR_PENDING, &req->flags);
- 			spin_unlock(&fiq->lock);
- 			__fuse_put_request(req);
- 			req->out.h.error = -EINTR;
+On Tue, Mar 18, 2025 at 04:21:48PM +1100, Dave Chinner wrote:
+> On Tue, Mar 11, 2025 at 04:10:42PM -0400, Demi Marie Obenour wrote:
+> > On Tue, Mar 11, 2025 at 04:57:54PM +1100, Dave Chinner wrote:
+> > > On Mon, Mar 10, 2025 at 10:19:57PM -0400, Demi Marie Obenour wrote:
+> > > > People have stuff to get done.  If you disallow unprivileged filesy=
+stem
+> > > > mounts, they will just use sudo (or equivalent) instead.
+> > >=20
+> > > I am not advocating that we disallow mounting of untrusted devices.
+> > >=20
+> > > > The problem is
+> > > > not that users are mounting untrusted filesystems.  The problem is =
+that
+> > > > mounting untrusted filesystems is unsafe.
+> > >=20
+> > > > Making untrusted filesystems safe to mount is the only solution that
+> > > > lets users do what they actually need to do. That means either actu=
+ally
+> > > > fixing the filesystem code,
+> > >=20
+> > > Yes, and the point I keep making is that we cannot provide that
+> > > guarantee from the kernel for existing filesystems. We cannot detect
+> > > all possible malicous tampering situations without cryptogrpahically
+> > > secure verification, and we can't generate full trust from nothing.
+> >=20
+> > Why is it not possible to provide that guarantee?  I'm not concerned
+> > about infinite loops or deadlocks.  Is there a reason it is not possible
+> > to prevent memory corruption?
+>=20
+> You're asking me to prove that the on-disk filesystem format parsing
+> implementation is 100% provably correct. Not only that, you're
+> wanting me to say that journal replay copying incomplete,
+> unverifiable structure fragments over the top of existing disk
+> structures is 100% provably correct.
+>=20
+> I am the person whole architected the existing metadata validation
+> infrastructure that XFS uses, and so I know it's limitations in
+> intimate detail. It is, by far, the closest thing we have to
+> complete runtime metadata validation in any Linux filesystem
+> (except maybe bcachefs), but it is nowhere near able to detect and
+> prevent 100% of potential structure corruptions.
+>=20
+> It is *far from trivial* to validate all the weird corner cases that
+> exist in the on-disk format that have evolved over the last 3
+> decades. For the first 15 years of development, almost zero thought
+> was given to runtime validation of the on-disk format. People even
+> fought against introducing it at all. And despite this, we still
+> have to support the on-disk functionality those old, difficult to
+> validate, persistent structures describe.
+>=20
+> [ And then there's some other random memory corruption bug in the
+> code, and all bets are off... ]
+>=20
+> IOWs, no filesystem developer is ever going to give you a guarantee
+> that a filesystem implementation is free from memory corruption bugs
+> unless they've designed and implemented from the ground up to be
+> 100% safe from such issues. No such filesystem exists in the kernel,
+> and it will probably be years away before anything may exist to fill
+> that gap.
 
--- 
-2.43.0
+That makes sense. =20
 
+> > > The typical desktop policy of "probe and automount any device that
+> > > is plugged in" prevents the user from examining the device to
+> > > determine if it contains what it is supposed to contain.  The user
+> > > is not given any opportunity to device if trust is warranted before
+> > > the kernel filesystem parser running in ring 0 is exposed to the
+> > > malicious image.
+> > >=20
+> > > That's the fundamental policy problem we need to address: the user
+> > > and/or admin is not in control of their own security because
+> > > application developers and/or distro maintainers have decided they
+> > > should not have a choice.
+> > >=20
+> > > In this situation, the choice of what to do *must* fall to the user,
+> > > but the argument for "filesystem corruption is a CVE-worthy bug" is
+> > > that the choice has been taken away from the user. That's what I'm
+> > > saying needs to change - the choice needs to be returned to the
+> > > user...
+> >=20
+> > I am 100% in favor of not automounting filesystems without user
+> > interaction, but that only means that an exploit will require user
+> > interaction.  Users need to get things done, and if their task requires
+> > them to a not-fully-trusted filesystem image, then that is what they
+> > will do, and they will typically do it in the most obvious way possible.
+> > That most obvious way needs to be a safe way, and it needs to have good
+> > enough performance that users don't go around looking for an unsafe way.
+>=20
+> Well, yes, that is obvious, and not a point of contention at all,
+> as is evidenced by the list of solutions to this problem I outlined.
+
+What kind of performance do the existing solutions (libguestfs, lklfuse)
+have?
+
+> > > > or running it in a sufficiently tight
+> > > > sandbox that vulnerabilities in it are of too low importance to mat=
+ter.
+> > > > libguestfs+FUSE is the most obvious way to do this, but the perform=
+ance
+> > > > might not be enough for distros to turn it on.
+> > >=20
+> > > Yes, I have advocated for that to be used for desktop mounts in the
+> > > past. Similarly, I have also advocated for liblinux + FUSE to be
+> > > used so that the kernel filesystem code is used but run from a
+> > > userspace context where the kernel cannot be compromised.
+> > >=20
+> > > I have also advocated for user removable devices to be encrypted by
+> > > default. The act of the user unlocking the device automatically
+> > > marks it as trusted because undetectable malicious tampering is
+> > > highly unlikely.
+> >=20
+> > That is definitely a good idea.
+> >=20
+> > > I have also advocated for a device registry that records removable
+> > > device signatures and whether the user trusted them or not so that
+> > > they only need to be prompted once for any given removable device
+> > > they use.
+> > >=20
+> > > There are *many* potential user-friendly solutions to the problem,
+> > > but they -all- lie in the domain of userspace applications and/or
+> > > policies. This is *not* a problem more or better code in the kernel
+> > > can solve.
+> >=20
+> > It is certainly possible to make a memory safe implementation of amy
+> > filesystem.
+>=20
+> Spoken like a True Expert.
+
+I am saying this in the sense of "it is possible to make a memory safe
+implementation of *anything*, unless that thing exposes a memory unsafe
+API.".  It's a generic statement about programs in general.  It does not
+imply that doing so is practical.
+
+> > If the current implementation can't prevent memory
+> > corruption if a malicious filesystem is mounted, that is a
+> > characteristic of the implementation.
+>=20
+> Ah, now I see what you are trying to do. You're building a strawman
+> around memory corruption that you can use the argument "we need to
+> reimplement everything in Rust" to knock down.
+>=20
+> Sorry, not playing that game.
+
+There are other options, like "run the filesystem in a tightly sandboxed
+userspace process, especially compiled through WebAssembly".  The
+difficulty is making them sufficiently performant for distributions to
+actually use them.
+
+> > However, the root filesystem is not the only filesystem image that must
+> > be mounted.  There is also a writable data volume, and that _cannot_ be
+> > signed because it contains user data.  It is encrypted, but part of the
+> > threat model for both Android and ChromeOS is an attacker who has gained
+> > root or even kernel code execution and wants to retain their access
+> > across device reboots. They can't tamper with the kernel or root
+> > filesystem, and privileged userspace treats the data on the writable
+> > filesystem as untrusted.  However, the attacker can replace the writable
+> > filesystem image with anything they want,
+>=20
+> And therein lies the attack a fielsystem implementation can't defend
+> against: the attacker can rewrite the unencrypted block device to
+> contain anything they want, and that will then pass verification on
+> the next boot. Perhaps that's the class of storage attack you should
+> seek to prevent, not try to slap bandaids over trust model
+> violations or insinuate the only solution is to rewrite complex
+> subsystems in Rust....
+
+The Chrome OS and Android threat models require that they remain secure
+no matter what the contents of the unsigned block device actually are,
+even if they are completely malicious.
+--=20
+Sincerely,
+Demi Marie Obenour (she/her/hers)
+Invisible Things Lab
+
+--gJn/WH0kaLCMp1ft
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEopQtqVJW1aeuo9/sszaHOrMp8lMFAmfa2vMACgkQszaHOrMp
+8lOcpA//UMgEPqZkVnreLSPBSJyFUb1QUNe7uIl5vUbwNEjrTXdonIfAaBRg2jIv
+j7/nRxdbUDCQG0gZc9Gd8mWnZlZVi2lrjcYMzyUEfPV/eX+dGyB03xmUTWgPRiqU
+NMgnGAcLNHy647kXfzHoP2F/B3Wt8+MRK4rSMKZH7PnwyoyVR8xAd2BrMRRyUYb+
+uBKDhl7n2Knf+OzS9N/ZUdy6ABlkqetszR1OP6a8hOaKnG/He/Z1hZyIZSTWd3xH
+sW2mQEoXXtUJyHQUs72/PLfWeuDs/m2q6cABtX/JGDtH013WY06m9OUGLgDGkVt3
+3rtnxBmEnf09pWyOsvoDDD7mFaVogFb5c9f4jWyo7IBtGSAykmFXUh3pLfS6GJfk
+ccUZDhDQs4Ro9G+IBa9JmV9/avqxVSMPeuX/Wm2DCNfPbjyUV6Q3CVWlhffXs77d
+K7c5Rpkc4yeYUkEGiZDlbCYcJcMcSqEgZq/FqO+OkG7kpKwPwXgl/DZ8/e4mB77R
+EC470TjjJHYGlrsdwVF9eB3b0Fc8x0gow5BJOA01qcFAVy6gQPcKjA3ejbGCu2xW
+TrQEQGiWw4LuqJTQ7v9v2VnZn61Zy4GkIiPBH2iE+V6uTfuuRmT8X/FH3IhFovPB
+DQIdXvu16oy7CLmmU2Sd4CEwrRpUB/YEeCqOehK4nSiGVgz4WnQ=
+=JTKC
+-----END PGP SIGNATURE-----
+
+--gJn/WH0kaLCMp1ft--
 
