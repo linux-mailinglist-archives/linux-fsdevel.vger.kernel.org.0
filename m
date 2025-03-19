@@ -1,148 +1,241 @@
-Return-Path: <linux-fsdevel+bounces-44455-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44456-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E153A6946A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 17:11:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C38A69470
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 17:12:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0733819C32B2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 16:08:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A3A817B1BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 16:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637C11DF248;
-	Wed, 19 Mar 2025 16:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11841E0DE6;
+	Wed, 19 Mar 2025 16:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="y+r2+hEf"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IdDeYMF5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rEFOIyg0";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IdDeYMF5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rEFOIyg0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35B11AC43A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 16:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BFA1DF75D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 16:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742400452; cv=none; b=H4cvMJXcbJc/9M0E0bz/aMqLtJ6kZuqHjx7E28m/N7Q7RCxT02PZzp+lR0Aw1l1u0doytbJiULiEsah/AAAjRczU6E/1jUg6YUIL4n5A789OvCDvlWwAmYsW2/rfngQP0IwJlFaTLom35gJrFu6gGVBB/9ZYJGNklEM0l5nxPyI=
+	t=1742400693; cv=none; b=gzEdp29lEh2qB5wydkQWc1xE6Cj3dQLjMpTi9Dm6Oh+H7jrk2MuTft7CZtuJ5JJMg5sLIg+epx98lnSzvibapwW6SDGXm3P7rymrRALPrdrS67M9SPlL5Zjacm8156R0SSWhUE0Ejgc4EjghrPQmVTXtREktspJECCDgeN7FWC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742400452; c=relaxed/simple;
-	bh=n24KzPzMfIDbuu7S5CaFyw0UePwN7haHff4RjRQuRy4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=tm9DxORHnGN56Ifr1PwyE6NvdhOlp7lpX+AlwTw+99jl649uZAICSmQU5snjMAPeMKbiIm6iY4hovwpz8cLqmYh3037VGKPzWvC/nkNFTkNnes5acY+603GSh3Qxq4hP2hIIDuNTEekzx5Rdu0fdJQh2WAnpwNeuLxHAaM6U/4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=y+r2+hEf; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-85df99da233so225165339f.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 09:07:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1742400450; x=1743005250; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Ija8XGDNXdwDWcF7Obpxn5AkOPtI89VS3WVbcU/kpys=;
-        b=y+r2+hEfjU2Zz7ALNOq5svFqzJiE9cuXQdmJA+P20x3ThNxa4mu8TtLObqNVlmroGR
-         OlmZyYGQuf90qEw4W3uFuM+qnOHzzxc8ucTo7UpOKYtNKkyBbOReAsQhAQo3E/IP7leE
-         E9wx4qFx45Oa2aV/2THQw+dab2TirOSA0A+EQ6K560wTR4bka8wphawWRyI/d1vJFHr+
-         qzQXF+jXmP7T7oWdIYtu4AfbRAkJbRlbzJRgprCtUulnirrdugfhtvRDW6HS5GWmBfRc
-         krNJStKgc3sx9SLXZLXnd0wZOcaGEL7gXh4wuw7XqjLN2dft+wd5LxMmSpHgutBnovf3
-         PLfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742400450; x=1743005250;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ija8XGDNXdwDWcF7Obpxn5AkOPtI89VS3WVbcU/kpys=;
-        b=Val6pgeSx3T10XaWh6OSyD9gy09puBHTxO9Arj/Er9JYStJUwwkpP94FL4DdR0acLS
-         VRZm1GUosw2x+VXXY+8Ft+OajmmCFzk36uJ3zoAYCQs/sOxaABHtMJ3CHuSHS7DPbJ18
-         Br7yPRkV0wUaSIyAXLh4yXAurHD/sa8mMje4ch66KQwORaFFFSrC05nl8Uc/fuMZvloZ
-         vZdWpbRNx5zHxG6X72i90ThoinhWJfS2gZpMRKMPffqHBIA5IYr9wKyMBXa8lTo0HLZz
-         cZhjvcTqUGE9ms2ek+R7rGkw4siKMMOVHZWN5/0+rfS1TR1teaqcY5BFmSJPjkMcEHyY
-         cdEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIRlQV2Vvd8oi5KGGi74Cur5YNDaOQGFXSr4ApXzy3SSKVGMPmSB7M3byUaL5HELtZKCeqRSbV1CKtKz6j@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSNUmzLLzoRRrGsqEm42ysv+78BTIev4jKCmt8igNsU7yAA/Gq
-	i2vUeEtf1NuUszfuU0SIgi1Kh8ejBaDSpfTOtckDLnd5bSkS7k+OWdyjGOsgnqQ=
-X-Gm-Gg: ASbGncuSiOs8j8p78SkEeT/JL9/0qkepVcQ4OmvMsKy9PFRKGPumGDgyWiyRj+UcjYt
-	1hiUijxsLCcBi2PkZHU1OAZTTSd5FwUidNVpVpewzIiZQ3PebxkIschmXRFkGQmt1pEazZ2dDRY
-	JoXcE45TO9KmflcpfJJVCz0z4dFcnSGuWysIg2lHw/jylQbaLM6pc0YDv8Pi7Yvq3RyBGJW6a7c
-	I6njS/0fC6DfqRH7YiAYVb6VePH2N3ocRZiEIjoj3gjQ9xrkZrPORUtlG90/CMKooOEcymjeNzo
-	JxNA7nMNU5SIPT6k7Z14c0cgq6F38ySWSNiBh1AVRE2a2fy/V74=
-X-Google-Smtp-Source: AGHT+IFDBCFWtf4DEWZHOAZhQMfKg6BVxtB70LM/11gT5po4hUy91hL9GfbCfrY2dAmweb9btJ2fRg==
-X-Received: by 2002:a05:6e02:1d1d:b0:3d4:3aba:e5ce with SMTP id e9e14a558f8ab-3d586bb9f32mr38295495ab.20.1742400449657;
-        Wed, 19 Mar 2025 09:07:29 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f263719730sm3269768173.36.2025.03.19.09.07.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Mar 2025 09:07:29 -0700 (PDT)
-Message-ID: <2d68bc91-c22c-4b48-a06d-fa9ec06dfb25@kernel.dk>
-Date: Wed, 19 Mar 2025 10:07:27 -0600
+	s=arc-20240116; t=1742400693; c=relaxed/simple;
+	bh=HxXeFi5acaSNx0MfdZcTxvpnNDvZCQvX1nx0iU7NeGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=puhYnfum2hFezkeE5MpyBU2mxrl+n5yFYEdQBEKssCtQncaLMW+P2B5RhGNE0ohs5rzVLd5MrgidC5rkhg2EopNKtG3WeQfSK6hy1e2TbPI31OQX79C3uySXXZYt1Q2DRjEzvGcUtakz/BWzo0gHBY0755l13Lka1ISrtF7F3Ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IdDeYMF5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rEFOIyg0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IdDeYMF5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rEFOIyg0; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 844CF21FB8;
+	Wed, 19 Mar 2025 16:11:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742400689; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t38FJ9pOxUaqmS3N5jNBSr31fg0PwAlFwVydojs5Pac=;
+	b=IdDeYMF5HI9QqCoW1o4WBl8Hj8iepK5KkiKF9ouZ5vmcXD2SkFybBF0Zvl3P1tQKQSty19
+	o0AzuKbafyzjwqRYhNyt/Go+FE36lC+leWzgGr70ILSh9y8Cv0HI0HLvV1lDI74/77lrdT
+	pni1QuT+22owY3LjcKNbxOuSPyNpIcY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742400689;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t38FJ9pOxUaqmS3N5jNBSr31fg0PwAlFwVydojs5Pac=;
+	b=rEFOIyg0bEUjg+Pj4/2F4e8DSn/TuhUuEEmPxnnLCErG2ngYJ4CGXkob3Vjb3yhJeAujsn
+	DlMx2m+fBziHXQAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742400689; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t38FJ9pOxUaqmS3N5jNBSr31fg0PwAlFwVydojs5Pac=;
+	b=IdDeYMF5HI9QqCoW1o4WBl8Hj8iepK5KkiKF9ouZ5vmcXD2SkFybBF0Zvl3P1tQKQSty19
+	o0AzuKbafyzjwqRYhNyt/Go+FE36lC+leWzgGr70ILSh9y8Cv0HI0HLvV1lDI74/77lrdT
+	pni1QuT+22owY3LjcKNbxOuSPyNpIcY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742400689;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t38FJ9pOxUaqmS3N5jNBSr31fg0PwAlFwVydojs5Pac=;
+	b=rEFOIyg0bEUjg+Pj4/2F4e8DSn/TuhUuEEmPxnnLCErG2ngYJ4CGXkob3Vjb3yhJeAujsn
+	DlMx2m+fBziHXQAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 73A5A13726;
+	Wed, 19 Mar 2025 16:11:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3N4yHLHs2meMVwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 19 Mar 2025 16:11:29 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 14B18A08D2; Wed, 19 Mar 2025 17:11:25 +0100 (CET)
+Date: Wed, 19 Mar 2025 17:11:25 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: load the ->i_sb pointer once in
+ inode_sb_list_{add,del}
+Message-ID: <nb5g34ehva6wmjusa3tin3wbsr26gm6shvuxfspzkwpor6edxk@ncx2um24ipwq>
+References: <20250319004635.1820589-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
-To: Joe Damato <jdamato@fastly.com>, Christoph Hellwig <hch@infradead.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- asml.silence@gmail.com, linux-fsdevel@vger.kernel.org, edumazet@google.com,
- pabeni@redhat.com, horms@kernel.org, linux-api@vger.kernel.org,
- linux-arch@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
- kuba@kernel.org, shuah@kernel.org, sdf@fomichev.me, mingo@redhat.com,
- arnd@arndb.de, brauner@kernel.org, akpm@linux-foundation.org,
- tglx@linutronix.de, jolsa@kernel.org, linux-kselftest@vger.kernel.org
-References: <20250319001521.53249-1-jdamato@fastly.com>
- <Z9p6oFlHxkYvUA8N@infradead.org> <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319004635.1820589-1-mjguzik@gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-0.998];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On 3/19/25 9:32 AM, Joe Damato wrote:
-> On Wed, Mar 19, 2025 at 01:04:48AM -0700, Christoph Hellwig wrote:
->> On Wed, Mar 19, 2025 at 12:15:11AM +0000, Joe Damato wrote:
->>> One way to fix this is to add zerocopy notifications to sendfile similar
->>> to how MSG_ZEROCOPY works with sendmsg. This is possible thanks to the
->>> extensive work done by Pavel [1].
->>
->> What is a "zerocopy notification" 
+On Wed 19-03-25 01:46:35, Mateusz Guzik wrote:
+> While this may sound like a pedantic clean up, it does in fact impact
+> code generation -- the patched add routine is slightly smaller.
 > 
-> See the docs on MSG_ZEROCOPY [1], but in short when a user app calls
-> sendmsg and passes MSG_ZEROCOPY a completion notification is added
-> to the error queue. The user app can poll for these to find out when
-> the TX has completed and the buffer it passed to the kernel can be
-> overwritten.
-> 
-> My series provides the same functionality via splice and sendfile2.
-> 
-> [1]: https://www.kernel.org/doc/html/v6.13/networking/msg_zerocopy.html
-> 
->> and why aren't you simply plugging this into io_uring and generate
->> a CQE so that it works like all other asynchronous operations?
-> 
-> I linked to the iouring work that Pavel did in the cover letter.
-> Please take a look.
-> 
-> That work refactored the internals of how zerocopy completion
-> notifications are wired up, allowing other pieces of code to use the
-> same infrastructure and extend it, if needed.
-> 
-> My series is using the same internals that iouring (and others) use
-> to generate zerocopy completion notifications. Unlike iouring,
-> though, I don't need a fully customized implementation with a new
-> user API for harvesting completion events; I can use the existing
-> mechanism already in the kernel that user apps already use for
-> sendmsg (the error queue, as explained above and in the
-> MSG_ZEROCOPY documentation).
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-The error queue is arguably a work-around for _not_ having a delivery
-mechanism that works with a sync syscall in the first place. The main
-question here imho would be "why add a whole new syscall etc when
-there's already an existing way to do accomplish this, with
-free-to-reuse notifications". If the answer is "because splice", then it
-would seem saner to plumb up those bits only. Would be much simpler
-too...
+I'm surprised it matters for the compiler but as Christian wrote, why not.
+Feel free to add:
 
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+> 
+> Below is disasm before/after. I did not want to pull this into the
+> commit message because of the total length vs long term usefulness ratio.
+> 
+> can be moved up into the commit message no problem if someone insists on
+> it:
+> 
+> (gdb) disassemble inode_sb_list_add
+> before:
+>  <+0>:     endbr64
+>  <+4>:     call   0xffffffff8130e9b0 <__fentry__>
+>  <+9>:     push   %rbx
+>  <+10>:    mov    0x28(%rdi),%rax
+>  <+14>:    mov    %rdi,%rbx
+>  <+17>:    lea    0x540(%rax),%rdi
+>  <+24>:    call   0xffffffff8225cf20 <_raw_spin_lock>
+>  <+29>:    mov    0x28(%rbx),%rax
+>  <+33>:    lea    0x110(%rbx),%rdx
+>  <+40>:    mov    0x548(%rax),%rcx
+>  <+47>:    mov    %rdx,0x8(%rcx)
+>  <+51>:    mov    %rcx,0x110(%rbx)
+>  <+58>:    lea    0x548(%rax),%rcx
+>  <+65>:    mov    %rcx,0x118(%rbx)
+>  <+72>:    mov    %rdx,0x548(%rax)
+>  <+79>:    mov    0x28(%rbx),%rdi
+>  <+83>:    pop    %rbx
+>  <+84>:    add    $0x540,%rdi
+>  <+91>:    jmp    0xffffffff8225d020 <_raw_spin_unlock>
+> 
+> after:
+>  <+0>:     endbr64
+>  <+4>:     call   0xffffffff8130e9b0 <__fentry__>
+>  <+9>:     push   %r12
+>  <+11>:    push   %rbp
+>  <+12>:    push   %rbx
+>  <+13>:    mov    0x28(%rdi),%rbp
+>  <+17>:    mov    %rdi,%rbx
+>  <+20>:    lea    0x540(%rbp),%r12
+>  <+27>:    mov    %r12,%rdi
+>  <+30>:    call   0xffffffff8225cf20 <_raw_spin_lock>
+>  <+35>:    mov    0x548(%rbp),%rdx
+>  <+42>:    lea    0x110(%rbx),%rax
+>  <+49>:    mov    %r12,%rdi
+>  <+52>:    mov    %rax,0x8(%rdx)
+>  <+56>:    mov    %rdx,0x110(%rbx)
+>  <+63>:    lea    0x548(%rbp),%rdx
+>  <+70>:    mov    %rdx,0x118(%rbx)
+>  <+77>:    mov    %rax,0x548(%rbp)
+>  <+84>:    pop    %rbx
+>  <+85>:    pop    %rbp
+>  <+86>:    pop    %r12
+>  <+88>:    jmp    0xffffffff8225d020 <_raw_spin_unlock>
+> 
+>  fs/inode.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 10121fc7b87e..e188bb1eb07a 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -623,18 +623,22 @@ static void inode_wait_for_lru_isolating(struct inode *inode)
+>   */
+>  void inode_sb_list_add(struct inode *inode)
+>  {
+> -	spin_lock(&inode->i_sb->s_inode_list_lock);
+> -	list_add(&inode->i_sb_list, &inode->i_sb->s_inodes);
+> -	spin_unlock(&inode->i_sb->s_inode_list_lock);
+> +	struct super_block *sb = inode->i_sb;
+> +
+> +	spin_lock(&sb->s_inode_list_lock);
+> +	list_add(&inode->i_sb_list, &sb->s_inodes);
+> +	spin_unlock(&sb->s_inode_list_lock);
+>  }
+>  EXPORT_SYMBOL_GPL(inode_sb_list_add);
+>  
+>  static inline void inode_sb_list_del(struct inode *inode)
+>  {
+> +	struct super_block *sb = inode->i_sb;
+> +
+>  	if (!list_empty(&inode->i_sb_list)) {
+> -		spin_lock(&inode->i_sb->s_inode_list_lock);
+> +		spin_lock(&sb->s_inode_list_lock);
+>  		list_del_init(&inode->i_sb_list);
+> -		spin_unlock(&inode->i_sb->s_inode_list_lock);
+> +		spin_unlock(&sb->s_inode_list_lock);
+>  	}
+>  }
+>  
+> -- 
+> 2.43.0
+> 
 -- 
-Jens Axboe
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
