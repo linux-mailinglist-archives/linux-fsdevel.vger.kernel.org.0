@@ -1,276 +1,245 @@
-Return-Path: <linux-fsdevel+bounces-44536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D867BA6A37A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 11:22:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB812A6A3A4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 11:29:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4990317E476
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 10:22:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DCA416F03C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 10:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC8B22332A;
-	Thu, 20 Mar 2025 10:22:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32B522424D;
+	Thu, 20 Mar 2025 10:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cyj/xb6O"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YkSD8vcU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9923987D;
-	Thu, 20 Mar 2025 10:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DE6215783;
+	Thu, 20 Mar 2025 10:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742466130; cv=none; b=obSoqFIDSU3nsXaEL9lqTYZqk1qS6qlRx6XDYm+L/RWtpUOpKzXpNpaUUJ95JFw8tNbH5VZACko2a2mrsYDRiqc9v2mhgi6uvLoFZgd3yBvwEri8Le6Llh8jCqXXWwMoIKPo4NL2SY6viGg85wa+Cd4lsveWTM/+Qurmt9PeCHo=
+	t=1742466502; cv=none; b=G+mTZ9WMNEpB44iINEDDHkTtaDZdp1EmAjpsov4ZujEvC8jRSw7fzHKqCA3W51ydf7F83DQJ64yM0VCm6CiHJ8LFBLwF0meBbaPdopLUKKFDI3gAQiyZw0ydMU5GcA+ExQ9nlEhYq2yjyCvsNNP0vv1kROa8ELZH7HahposT/4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742466130; c=relaxed/simple;
-	bh=gmRz2/NMlDM53NGE2aacgcAmvCTTT1LFk57cGWwn6kM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PubsvW2pCbacsPWUJs+mu4l5rM/+qJI4yB6FsZCpe/vAQi7vCAUaAFLfsMRCtzARujakonHfd9vkbYnLCdI6ooMxqkPoap+u5nwKcZe7vXcN/XI+gaGtJo22fXa8uOUOY3TxkmYHGSVubuZWDK/Bbfmn7EBnq+6iOEFuCNx0qp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cyj/xb6O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B26DC4CEDD;
-	Thu, 20 Mar 2025 10:22:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742466130;
-	bh=gmRz2/NMlDM53NGE2aacgcAmvCTTT1LFk57cGWwn6kM=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=cyj/xb6OaaBrbvRnW8Nx2QXMSheRvTYnII2Ik6rkWJJdznQySY9cbk0oub41gvVUV
-	 ke83j1vZ0JjGJqwoCLzhXD/5WHIla/8J3uzjWf291efpgJUkiV3b9+oOlohJ9yWijH
-	 HOWWyDRIuE4oydL0cwii+0yZhES60MaoevkRD2CXgrAndsmR/yg4/jnWM4fytRgtWY
-	 mNm028lzYvdab0DxbKMzsX0uGogoAsQqpLmHRRIXCWjzahgDgE5NZ40BfNh+99zPCq
-	 DdJKcmYiYUzQvyLci4iV7ZKg/0cD6vquyPv1QqGIu3sPHWvOM0WI7Pu6u0G0jVVry2
-	 ZE6KKtF/3Om5A==
-Message-ID: <ee36dab38583d28205c4b40a87126c44cab69dc9.camel@kernel.org>
-Subject: Re: [PATCH 3/6] cachefiles: Use lookup_one() rather than
- lookup_one_len()
-From: Jeff Layton <jlayton@kernel.org>
-To: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner	 <brauner@kernel.org>, Jan Kara <jack@suse.cz>, David
- Howells <dhowells@redhat.com>,  Chuck Lever <chuck.lever@oracle.com>
-Cc: linux-nfs@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org
-Date: Thu, 20 Mar 2025 06:22:08 -0400
-In-Reply-To: <20250319031545.2999807-4-neil@brown.name>
-References: <20250319031545.2999807-1-neil@brown.name>
-	 <20250319031545.2999807-4-neil@brown.name>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1742466502; c=relaxed/simple;
+	bh=Vdb13DtJiXnZxDAs4aDGQFXm6vfhoua21VF7YNCZ5CI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gfw1Ya1PvfZrWG1pa2vm9zcmcIdCXNJRaszMTE4upz/exQywy5X4AB77TlR2mefvEJX9tLUwZRAsv200/siN0ph9K6GDc6/rppDfk8u+eiU3rCFwR8YZgp79/wW+VJ+ByVCSszDgbB9vJHV5fkqa4Vd543FMbtsaT7lej4k1kfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YkSD8vcU; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742466499; x=1774002499;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Vdb13DtJiXnZxDAs4aDGQFXm6vfhoua21VF7YNCZ5CI=;
+  b=YkSD8vcUcFlFln4lcR47GmsOfI2Ql5fErdAyMmr4RSpI6EbIYmWu/yi1
+   nhd1Rn6L/ahNfaHNZXKYsTmf9FN2GedqvKjhHwIaMOYwlBAqTyVZfQ58N
+   C56zYe8/jfUmeGppHPIAC8U/FjN/7VjF5Ypg5+u+QML7wntiOObQw+NLo
+   AmySEhMh1jGWZ0kgwtGVzNd/1kgBavXGzA6CpTOyT1Qwuac8z/x5xlQRa
+   ExKASMvqxlfNpDFYRR/R+1Gwc28DgKWr0ZjO/Le2Z1zuw0m/MQ0CRfed+
+   AiLiqDl0OpZ8AiaA9gKMXQNr8nvldnnKg18mCBMRyT8L4j7Z0RKlXKmcr
+   w==;
+X-CSE-ConnectionGUID: HbhJpT7fTP+yFKCBrOTWhw==
+X-CSE-MsgGUID: gyzVUdg/Rw20E/dZijnosA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="47465134"
+X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
+   d="scan'208";a="47465134"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 03:28:18 -0700
+X-CSE-ConnectionGUID: Dlzr80dPSyeHdt7kQLuJig==
+X-CSE-MsgGUID: fwTtqrPESt+LDjzEQfj5pQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
+   d="scan'208";a="146256653"
+Received: from irvmail002.ir.intel.com ([10.43.11.120])
+  by fmviesa002.fm.intel.com with ESMTP; 20 Mar 2025 03:28:14 -0700
+Received: from vecna.igk.intel.com (vecna.igk.intel.com [10.123.220.17])
+	by irvmail002.ir.intel.com (Postfix) with ESMTP id 7E48233E91;
+	Thu, 20 Mar 2025 10:28:12 +0000 (GMT)
+From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+	Pierre Riteau <pierre@stackhpc.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@intel.com>,
+	Dave Hansen <dave.hansen@intel.com>
+Subject: [PATCH] xarray: make xa_alloc_cyclic() return 0 on all success cases
+Date: Thu, 20 Mar 2025 11:22:19 +0100
+Message-Id: <20250320102219.8101-1-przemyslaw.kitszel@intel.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2025-03-19 at 14:01 +1100, NeilBrown wrote:
-> From: NeilBrown <neilb@suse.de>
->=20
-> cachefiles uses some VFS interfaces (such as vfs_mkdir) which take an
-> explicit mnt_idmap, and it passes &nop_mnt_idmap as cachefiles doesn't
-> yet support idmapped mounts.
->=20
-> It also uses the lookup_one_len() family of functions which implicitly
-> use &nop_mnt_idmap.  This mixture of implicit and explicit could be
-> confusing.  When we eventually update cachefiles to support idmap mounts =
-it
+Change xa_alloc_cyclic() to return 0 even on wrap-around.
+Do the same for xa_alloc_cyclic_irq() and xa_alloc_cyclic_bh().
 
-Is that something we ever plan to do?
+This will prevent any future bug of treating return of 1 as an error:
+	int ret = xa_alloc_cyclic(...)
+	if (ret) // currently mishandles ret==1
+		goto failure;
 
-> would be best if all places which need an idmap determined from the
-> mount point were similar and easily found.
->=20
-> So this patch changes cachefiles to use lookup_one(), lookup_one_unlocked=
-(),
-> and lookup_one_positive_unlocked(), passing &nop_mnt_idmap.
->=20
-> This has the benefit of removing the remaining user of the
-> lookup_one_len functions where permission checking is actually needed.
-> Other callers don't care about permission checking and using these
-> function only where permission checking is needed is a valuable
-> simplification.
->=20
-> This requires passing the name in a qstr.  This is easily done with
-> QSTR() as the name is always nul terminated, and often strlen is used
-> anyway.  ->d_name_len is removed as no longer useful.
->=20
-> Signed-off-by: NeilBrown <neilb@suse.de>
-> ---
->  fs/cachefiles/internal.h |  1 -
->  fs/cachefiles/key.c      |  1 -
->  fs/cachefiles/namei.c    | 14 +++++++-------
->  3 files changed, 7 insertions(+), 9 deletions(-)
->=20
-> diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
-> index 38c236e38cef..b62cd3e9a18e 100644
-> --- a/fs/cachefiles/internal.h
-> +++ b/fs/cachefiles/internal.h
-> @@ -71,7 +71,6 @@ struct cachefiles_object {
->  	int				debug_id;
->  	spinlock_t			lock;
->  	refcount_t			ref;
-> -	u8				d_name_len;	/* Length of filename */
->  	enum cachefiles_content		content_info:8;	/* Info about content presence=
- */
->  	unsigned long			flags;
->  #define CACHEFILES_OBJECT_USING_TMPFILE	0		/* Have an unlinked tmpfile *=
-/
-> diff --git a/fs/cachefiles/key.c b/fs/cachefiles/key.c
-> index bf935e25bdbe..4927b533b9ae 100644
-> --- a/fs/cachefiles/key.c
-> +++ b/fs/cachefiles/key.c
-> @@ -132,7 +132,6 @@ bool cachefiles_cook_key(struct cachefiles_object *ob=
-ject)
->  success:
->  	name[len] =3D 0;
->  	object->d_name =3D name;
-> -	object->d_name_len =3D len;
->  	_leave(" =3D %s", object->d_name);
->  	return true;
->  }
-> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-> index 83a60126de0f..4fc6f3efd3d9 100644
-> --- a/fs/cachefiles/namei.c
-> +++ b/fs/cachefiles/namei.c
-> @@ -98,7 +98,7 @@ struct dentry *cachefiles_get_directory(struct cachefil=
-es_cache *cache,
->  retry:
->  	ret =3D cachefiles_inject_read_error();
->  	if (ret =3D=3D 0)
-> -		subdir =3D lookup_one_len(dirname, dir, strlen(dirname));
-> +		subdir =3D lookup_one(&nop_mnt_idmap, QSTR(dirname), dir);
->  	else
->  		subdir =3D ERR_PTR(ret);
->  	trace_cachefiles_lookup(NULL, dir, subdir);
-> @@ -337,7 +337,7 @@ int cachefiles_bury_object(struct cachefiles_cache *c=
-ache,
->  		return -EIO;
->  	}
-> =20
-> -	grave =3D lookup_one_len(nbuffer, cache->graveyard, strlen(nbuffer));
-> +	grave =3D lookup_one(&nop_mnt_idmap, QSTR(nbuffer), cache->graveyard);
->  	if (IS_ERR(grave)) {
->  		unlock_rename(cache->graveyard, dir);
->  		trace_cachefiles_vfs_error(object, d_inode(cache->graveyard),
-> @@ -629,8 +629,8 @@ bool cachefiles_look_up_object(struct cachefiles_obje=
-ct *object)
->  	/* Look up path "cache/vol/fanout/file". */
->  	ret =3D cachefiles_inject_read_error();
->  	if (ret =3D=3D 0)
-> -		dentry =3D lookup_positive_unlocked(object->d_name, fan,
-> -						  object->d_name_len);
-> +		dentry =3D lookup_one_positive_unlocked(&nop_mnt_idmap,
-> +						      QSTR(object->d_name), fan);
->  	else
->  		dentry =3D ERR_PTR(ret);
->  	trace_cachefiles_lookup(object, fan, dentry);
-> @@ -682,7 +682,7 @@ bool cachefiles_commit_tmpfile(struct cachefiles_cach=
-e *cache,
->  	inode_lock_nested(d_inode(fan), I_MUTEX_PARENT);
->  	ret =3D cachefiles_inject_read_error();
->  	if (ret =3D=3D 0)
-> -		dentry =3D lookup_one_len(object->d_name, fan, object->d_name_len);
-> +		dentry =3D lookup_one(&nop_mnt_idmap, QSTR(object->d_name), fan);
->  	else
->  		dentry =3D ERR_PTR(ret);
->  	if (IS_ERR(dentry)) {
-> @@ -701,7 +701,7 @@ bool cachefiles_commit_tmpfile(struct cachefiles_cach=
-e *cache,
->  		dput(dentry);
->  		ret =3D cachefiles_inject_read_error();
->  		if (ret =3D=3D 0)
-> -			dentry =3D lookup_one_len(object->d_name, fan, object->d_name_len);
-> +			dentry =3D lookup_one(&nop_mnt_idmap, QSTR(object->d_name), fan);
->  		else
->  			dentry =3D ERR_PTR(ret);
->  		if (IS_ERR(dentry)) {
-> @@ -750,7 +750,7 @@ static struct dentry *cachefiles_lookup_for_cull(stru=
-ct cachefiles_cache *cache,
-> =20
->  	inode_lock_nested(d_inode(dir), I_MUTEX_PARENT);
-> =20
-> -	victim =3D lookup_one_len(filename, dir, strlen(filename));
-> +	victim =3D lookup_one(&nop_mnt_idmap, QSTR(filename), dir);
->  	if (IS_ERR(victim))
->  		goto lookup_error;
->  	if (d_is_negative(victim))
+If there will be someone interested in when wrap-around occurs,
+there is still __xa_alloc_cyclic() that behaves as before.
+For now there is no such user.
 
-Patch looks sane though.
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Link: https://lore.kernel.org/netdev/Z9gUd-5t8b5NX2wE@casper.infradead.org
+Signed-off-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+---
+CC: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+CC: Pierre Riteau <pierre@stackhpc.com>
+CC: Andrew Morton <akpm@linux-foundation.org>
+CC: linux-fsdevel@vger.kernel.org
+CC: linux-mm@kvack.org
+CC: linux-kernel@vger.kernel.org
+Thanks to Andy and Dave for internal review feedback
+CC: Andy Shevchenko <andriy.shevchenko@intel.com>
+CC: Dave Hansen <dave.hansen@intel.com>
+---
+ include/linux/xarray.h | 24 +++++++++++++++---------
+ lib/test_xarray.c      | 17 +++++++++++++++--
+ 2 files changed, 30 insertions(+), 11 deletions(-)
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index 0b618ec04115..46eb751fd5df 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -965,10 +965,12 @@ static inline int __must_check xa_alloc_irq(struct xarray *xa, u32 *id,
+  * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
+  * in xa_init_flags().
+  *
++ * Note that callers interested in whether wrapping has occurred should
++ * use __xa_alloc_cyclic() instead.
++ *
+  * Context: Any context.  Takes and releases the xa_lock.  May sleep if
+  * the @gfp flags permit.
+- * Return: 0 if the allocation succeeded without wrapping.  1 if the
+- * allocation succeeded after wrapping, -ENOMEM if memory could not be
++ * Return: 0 if the allocation succeeded, -ENOMEM if memory could not be
+  * allocated or -EBUSY if there are no free entries in @limit.
+  */
+ static inline int xa_alloc_cyclic(struct xarray *xa, u32 *id, void *entry,
+@@ -981,7 +983,7 @@ static inline int xa_alloc_cyclic(struct xarray *xa, u32 *id, void *entry,
+ 	err = __xa_alloc_cyclic(xa, id, entry, limit, next, gfp);
+ 	xa_unlock(xa);
+ 
+-	return err;
++	return err < 0 ? err : 0;
+ }
+ 
+ /**
+@@ -1002,10 +1004,12 @@ static inline int xa_alloc_cyclic(struct xarray *xa, u32 *id, void *entry,
+  * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
+  * in xa_init_flags().
+  *
++ * Note that callers interested in whether wrapping has occurred should
++ * use __xa_alloc_cyclic() instead.
++ *
+  * Context: Any context.  Takes and releases the xa_lock while
+  * disabling softirqs.  May sleep if the @gfp flags permit.
+- * Return: 0 if the allocation succeeded without wrapping.  1 if the
+- * allocation succeeded after wrapping, -ENOMEM if memory could not be
++ * Return: 0 if the allocation succeeded, -ENOMEM if memory could not be
+  * allocated or -EBUSY if there are no free entries in @limit.
+  */
+ static inline int xa_alloc_cyclic_bh(struct xarray *xa, u32 *id, void *entry,
+@@ -1018,7 +1022,7 @@ static inline int xa_alloc_cyclic_bh(struct xarray *xa, u32 *id, void *entry,
+ 	err = __xa_alloc_cyclic(xa, id, entry, limit, next, gfp);
+ 	xa_unlock_bh(xa);
+ 
+-	return err;
++	return err < 0 ? err : 0;
+ }
+ 
+ /**
+@@ -1039,10 +1043,12 @@ static inline int xa_alloc_cyclic_bh(struct xarray *xa, u32 *id, void *entry,
+  * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
+  * in xa_init_flags().
+  *
++ * Note that callers interested in whether wrapping has occurred should
++ * use __xa_alloc_cyclic() instead.
++ *
+  * Context: Process context.  Takes and releases the xa_lock while
+  * disabling interrupts.  May sleep if the @gfp flags permit.
+- * Return: 0 if the allocation succeeded without wrapping.  1 if the
+- * allocation succeeded after wrapping, -ENOMEM if memory could not be
++ * Return: 0 if the allocation succeeded, -ENOMEM if memory could not be
+  * allocated or -EBUSY if there are no free entries in @limit.
+  */
+ static inline int xa_alloc_cyclic_irq(struct xarray *xa, u32 *id, void *entry,
+@@ -1055,7 +1061,7 @@ static inline int xa_alloc_cyclic_irq(struct xarray *xa, u32 *id, void *entry,
+ 	err = __xa_alloc_cyclic(xa, id, entry, limit, next, gfp);
+ 	xa_unlock_irq(xa);
+ 
+-	return err;
++	return err < 0 ? err : 0;
+ }
+ 
+ /**
+diff --git a/lib/test_xarray.c b/lib/test_xarray.c
+index 0e865bab4a10..393ffaaf090c 100644
+--- a/lib/test_xarray.c
++++ b/lib/test_xarray.c
+@@ -1040,6 +1040,7 @@ static noinline void check_xa_alloc_3(struct xarray *xa, unsigned int base)
+ 	unsigned int i, id;
+ 	unsigned long index;
+ 	void *entry;
++	int ret;
+ 
+ 	XA_BUG_ON(xa, xa_alloc_cyclic(xa, &id, xa_mk_index(1), limit,
+ 				&next, GFP_KERNEL) != 0);
+@@ -1059,7 +1060,7 @@ static noinline void check_xa_alloc_3(struct xarray *xa, unsigned int base)
+ 		else
+ 			entry = xa_mk_index(i - 0x3fff);
+ 		XA_BUG_ON(xa, xa_alloc_cyclic(xa, &id, entry, limit,
+-					&next, GFP_KERNEL) != (id == 1));
++					&next, GFP_KERNEL) != 0);
+ 		XA_BUG_ON(xa, xa_mk_index(id) != entry);
+ 	}
+ 
+@@ -1072,15 +1073,27 @@ static noinline void check_xa_alloc_3(struct xarray *xa, unsigned int base)
+ 				xa_limit_32b, &next, GFP_KERNEL) != 0);
+ 	XA_BUG_ON(xa, id != UINT_MAX);
+ 	XA_BUG_ON(xa, xa_alloc_cyclic(xa, &id, xa_mk_index(base),
+-				xa_limit_32b, &next, GFP_KERNEL) != 1);
++				xa_limit_32b, &next, GFP_KERNEL) != 0);
+ 	XA_BUG_ON(xa, id != base);
+ 	XA_BUG_ON(xa, xa_alloc_cyclic(xa, &id, xa_mk_index(base + 1),
+ 				xa_limit_32b, &next, GFP_KERNEL) != 0);
+ 	XA_BUG_ON(xa, id != base + 1);
+ 
+ 	xa_for_each(xa, index, entry)
+ 		xa_erase_index(xa, index);
++	XA_BUG_ON(xa, !xa_empty(xa));
+ 
++	/* check wrap-around return of __xa_alloc_cyclic() */
++	next = UINT_MAX;
++	XA_BUG_ON(xa, xa_alloc_cyclic(xa, &id, xa_mk_index(UINT_MAX),
++				      xa_limit_32b, &next, GFP_KERNEL) != 0);
++	xa_lock(xa);
++	ret = __xa_alloc_cyclic(xa, &id, xa_mk_index(base), xa_limit_32b,
++				&next, GFP_KERNEL);
++	xa_unlock(xa);
++	XA_BUG_ON(xa, ret != 1);
++	xa_for_each(xa, index, entry)
++		xa_erase_index(xa, index);
+ 	XA_BUG_ON(xa, !xa_empty(xa));
+ }
+ 
+-- 
+2.39.3
+
 
