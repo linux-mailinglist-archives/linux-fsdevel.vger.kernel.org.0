@@ -1,298 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-44630-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44631-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6BC3A6AC35
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 18:40:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B103DA6ACCB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 19:07:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C499B1892C51
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 17:40:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9760980ED7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 18:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BCF22758F;
-	Thu, 20 Mar 2025 17:39:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F84A22A4E5;
+	Thu, 20 Mar 2025 18:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rhoF7fXR"
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="ajRjGUQX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA52226CE6
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 17:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FFD229B0E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 18:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742492382; cv=none; b=qh+jG/azM/uq8KpUDNQ1isQCMTrqj0emBhzXjV1lcUvKQeXCaed28hZhO06ILViBr2MWC+mmZv2B0sANBhhdY6+7q5ab3NiOB+NiOXMVZ/bYBB2Mrkn098byUmTFSsrpYzQ9aNJj0RtJIFoKX4OjW25fcE/mf0C1O5pUBWSP/Zc=
+	t=1742493948; cv=none; b=UJZCRqRc3IYcbVK2pq3nplwCckGPTz6uUJ9V0yxzAurxN9P1toyFNzKhEpppXbHU3KwQH1RJ0/kxKws4t+Wcv2oAsUT58c7gLnofgxIEuLx/e+TFEa2wx3Itxo2wugD8q7agDmE2BI4kD1YM5ao6aJiaGKFVfon7tVYQ/N4o6Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742492382; c=relaxed/simple;
-	bh=/GCpGVOT7OdG6BMZ0eppGKF2eeuXHrVXsB4ZgTs1Sno=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=L5SPllvzK96LUg4R3iu10NpuAFMy+dn+4CDwieQl98qb3lWWwvM7Ur0+WZsHGcCmepu7YYqhw4acqYxdkOUI6u6cmB5y51CmDdG315q6xuHGsQyvdjtR+OCu4X9+wu0CGLoGpw0wzgAuC7elE6s2S2x4WDbelWvdnVLm8u+yMd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rhoF7fXR; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-224192ff68bso13075925ad.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 10:39:40 -0700 (PDT)
+	s=arc-20240116; t=1742493948; c=relaxed/simple;
+	bh=eSRjWYWO4yxvYztB0ncS8vovMEhY+BbOB3dCMJ7BgSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o/EQQSuL6uwkNqB7MH5/J+c4ceFn1/MVwGGwWAwsXd0CEV9K50A/noqkfSHTTVDtGWbDmvA+vCFsXyogWPvqKHlW9a7IKcBfcoEQP+5gRW2VQ7ou+N2e4QbK+UWMKJZMMlwkqP1ZvFGIV+R6qIeOonfQHz+6YWyZzGNPBtpdZhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=ajRjGUQX; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22359001f1aso27958465ad.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 11:05:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742492380; x=1743097180; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=L1LeZ1NqRBiJP18aw9wNSepnO5CEnnjsFwRWiKcady0=;
-        b=rhoF7fXRF+vncbdEUu2UTBItKY58j2hyqirZTwjpu4+EqVABlW5yEch3w5QHhNPEGT
-         BOSIfhx5LAUpVTmGgLNWKYieJS9vlhQlZgae1ZL6pJcB479/L4p+xd1pspPYRWKiKOc+
-         7dEjcMXrW4YwXTmcYHsmgOixefby2a43UcrozVzrC2RRnZ6ErlYnW0e3F8gYlrxvD0WT
-         Hdug6gKdGuzGVXXEkzaZyOoe5RErwBD2/HnqKVftBh4cG+kgW11aQJJft80cSxA/Ygjd
-         6RDcOEaSe9AkC4sDHeow+GlX2fxI2hpxvIkI7H2bvLBB9kDHzb0ODuOrfuWCVHVwARPn
-         g4OA==
+        d=fastly.com; s=google; t=1742493946; x=1743098746; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JM/OqN7Oy0ivRWEL6tEbo+CUHh5BBsQYtWvf3MvSx6w=;
+        b=ajRjGUQXyGVvsgtPaeQJmQu+Wsg70IKSHxrTMYZBn6eRX1UAm6V2gHcmTuZTV9REPV
+         1up0vNoQjtiVlGu4f207Mfv9yyryEWL08XFDtXjT9e/BencAUtujgH9hRlNWy7QpdhtN
+         dLPMa/+rqjHN+huFyT6bpvFUP2OUnRGCi/5Po=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742492380; x=1743097180;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L1LeZ1NqRBiJP18aw9wNSepnO5CEnnjsFwRWiKcady0=;
-        b=XWgRbHrkQdNQx4JX6CF8MPykO+SVBczZxr9JdLxHq7fx7xqWGh68b5mEVB/1XkJMx1
-         5uodutsoejXoqWjI9Rxd52gJavvJi4Os3X/3GrYe2bCTz9l5HhXcLG875SyPtCWJvkDH
-         iTAJMmm4fN2Zh9YceMQQ5ql7r+IC1NhN09PKQmPYx+lBmhR8G8eE6IjYOD7BzLwDGqYd
-         C9hQJ0OEoEo4FyFXtCL1XUsrApBXTndBWvl6EVGgXVmwKxfoLokyVTgcJD5Db2igY0Sa
-         ETYkH7vVQDkLEuEgDOCFchG8f1yjlUu3UtfL1bJqVR6Mn44r2iZNjLGJPHYxPKn6nPkR
-         eXTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqvl7O06LT5ZL8FuuwiraWzWsIO819A1uG3XDB7Iuw+o1p3wxr4cDCFwR5Rn4EfQk5a9elYxAStb+72oR8@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLVZf6FeHAFzQQH1Ugl6azkXKvSNPEUlvTpVdgLIna73khYYSk
-	mreRpF/qg1TERqoZqCydYJCLafD++aq39u9/CcB3F8ATWzXog1m/auDfUeJsFPbWvPMyE5PqvUK
-	c2A==
-X-Google-Smtp-Source: AGHT+IFIgtoncBq9NM/3xD7Imlcbq1xmz7ZhqdBzB7CyCMtuFxcwQyRcHUOe3EsR477ZgjHZHfVYEHABcPU=
-X-Received: from plbkj16.prod.google.com ([2002:a17:903:6d0:b0:220:ecac:27e5])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e888:b0:223:35cb:e421
- with SMTP id d9443c01a7336-22780e258cemr2827355ad.49.1742492380069; Thu, 20
- Mar 2025 10:39:40 -0700 (PDT)
-Date: Thu, 20 Mar 2025 10:39:31 -0700
-In-Reply-To: <20250320173931.1583800-1-surenb@google.com>
+        d=1e100.net; s=20230601; t=1742493946; x=1743098746;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JM/OqN7Oy0ivRWEL6tEbo+CUHh5BBsQYtWvf3MvSx6w=;
+        b=ma72l37sg4ZvPWsHnYHDzGHzsMv6QQg0D01AVhNuFpCXgK/PYSgKLl/DZ2IOGEtojJ
+         TezTRsxT4H0g93mPaWf8Lb9xTkWXVxACcLCWGqsSl7NhAdYdceLhAvzdW1sAufXtOl6E
+         gDDryJbVPfndm4EOHJX7Achd7+CesLDe5/or7M8lmDWFyW/nIGh1zMhQ4/RTCL4ySQJm
+         JnzzbUZNxxPCIY3xOkZFt0fAOkIGesuXqqIbt1HxxHmbWKlbmiS+uzXFx/LbvEA1CvEf
+         wPSw1/HliS4fXigd03rhDb/faxSd2Oo78AaFZXq2zqtP7CdrS8DgCukj+rTnO4Zx/ntV
+         95zg==
+X-Forwarded-Encrypted: i=1; AJvYcCWKVXBdkirThTMuZqMVlp9U1U8JwmDoQe9J16QznRvi6KplAaP/p8xCCY9YjXCOyCAJqD6yOoicZ5wtMQrm@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuLnQ1tHLJ8bxOEcTN+3SAu6SSyxkrmBjcz5/fT29TrTJX169H
+	OEAu1VIhU2k8ZEYPwZ1uAgix04vlFQzC37kKsZEWkerlJ2UR7R0qSggb7Jd4VKY=
+X-Gm-Gg: ASbGncs0a692H3moST0KfyPnNggSLbktF7IlOzX7P9INPliPY+3FPlA9hXu1QZepPCB
+	6XevqWpgcVEgOn4QJU7FYz5zSBEnqLyxLcoy8t0Jb8EK+lazty9+NSUWxgQeyYzCWmPIHna2WIV
+	eG6d6VDGAOP7fsMpwB4PTK7VIjxavaouwt2WeacrLgA/Mq7lIfog77oAh8lcaN3y6CKJhNehycp
+	Fh2BER8MAIVLXSAqyrSt9Ywnj0E3LKYZfxmAFSxqlYCXwTeetQfiQtaoBAOxq2nab/Bh5D1xbJt
+	9MpEZw2fMLhDvzD25KXzqmJ4t2xVrTtD+Rvg74PcI7t7Sqm42Q8+n3jsuSzuW23bs216ZgLus69
+	0MZRG/2soZ5/8hc19
+X-Google-Smtp-Source: AGHT+IFkG9txbev4JCYggmYZhNgAMBuFDffjPJdvIx8M6hPHeRaY1eSW3KdhJ6WDYT270hXE0myOaQ==
+X-Received: by 2002:a05:6a00:2d84:b0:736:4e02:c543 with SMTP id d2e1a72fcca58-739059a3471mr465905b3a.9.1742493945615;
+        Thu, 20 Mar 2025 11:05:45 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7390618f1d1sm87958b3a.173.2025.03.20.11.05.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 11:05:45 -0700 (PDT)
+Date: Thu, 20 Mar 2025 11:05:41 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
+	edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
+	linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, kuba@kernel.org,
+	shuah@kernel.org, sdf@fomichev.me, mingo@redhat.com, arnd@arndb.de,
+	brauner@kernel.org, akpm@linux-foundation.org, tglx@linutronix.de,
+	jolsa@kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
+Message-ID: <Z9xY9d2hOc6hOlda@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, asml.silence@gmail.com,
+	linux-fsdevel@vger.kernel.org, edumazet@google.com,
+	pabeni@redhat.com, horms@kernel.org, linux-api@vger.kernel.org,
+	linux-arch@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	kuba@kernel.org, shuah@kernel.org, sdf@fomichev.me,
+	mingo@redhat.com, arnd@arndb.de, brauner@kernel.org,
+	akpm@linux-foundation.org, tglx@linutronix.de, jolsa@kernel.org,
+	linux-kselftest@vger.kernel.org
+References: <20250319001521.53249-1-jdamato@fastly.com>
+ <Z9p6oFlHxkYvUA8N@infradead.org>
+ <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
+ <Z9usmpFw7y75eOhk@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250320173931.1583800-1-surenb@google.com>
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Message-ID: <20250320173931.1583800-4-surenb@google.com>
-Subject: [RFC 3/3] mm: integrate GCMA with CMA using dt-bindings
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: willy@infradead.org, david@redhat.com, vbabka@suse.cz, 
-	lorenzo.stoakes@oracle.com, liam.howlett@oracle.com, alexandru.elisei@arm.com, 
-	peterx@redhat.com, hannes@cmpxchg.org, mhocko@kernel.org, 
-	m.szyprowski@samsung.com, iamjoonsoo.kim@lge.com, mina86@mina86.com, 
-	axboe@kernel.dk, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	hch@infradead.org, jack@suse.cz, hbathini@linux.ibm.com, 
-	sourabhjain@linux.ibm.com, ritesh.list@gmail.com, aneesh.kumar@kernel.org, 
-	bhelgaas@google.com, sj@kernel.org, fvdl@google.com, ziy@nvidia.com, 
-	yuzhao@google.com, minchan@kernel.org, surenb@google.com, linux-mm@kvack.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-block@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Minchan Kim <minchan@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9usmpFw7y75eOhk@infradead.org>
 
-This patch introduces a new "guarantee" property for shared-dma-pool.
-With this property, admin can create specific memory pool as
-GCMA-based CMA if they care about allocation success rate and latency.
-The downside of GCMA is that it can host only clean file-backed pages
-since it's using cleancache as its secondary user.
+On Wed, Mar 19, 2025 at 10:50:18PM -0700, Christoph Hellwig wrote:
+> On Wed, Mar 19, 2025 at 08:32:19AM -0700, Joe Damato wrote:
+> > See the docs on MSG_ZEROCOPY [1], but in short when a user app calls
+> > sendmsg and passes MSG_ZEROCOPY a completion notification is added
+> > to the error queue. The user app can poll for these to find out when
+> > the TX has completed and the buffer it passed to the kernel can be
+> > overwritten.
+> 
+> Yikes.  That's not just an ugly interface, but something entirely
+> specific to sockets and incompatible with all other asynchronous I/O
+> interfaces.
 
-Signed-off-by: Minchan Kim <minchan@google.com>
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- arch/powerpc/kernel/fadump.c |  2 +-
- include/linux/cma.h          |  2 +-
- kernel/dma/contiguous.c      | 11 ++++++++++-
- mm/cma.c                     | 33 ++++++++++++++++++++++++++-------
- mm/cma.h                     |  1 +
- mm/cma_sysfs.c               | 10 ++++++++++
- 6 files changed, 49 insertions(+), 10 deletions(-)
+I don't really know but I would assume it was introduced, as Jens
+said, as a work-around long before other completion mechanisms
+existed.
 
-diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
-index 4b371c738213..4eb7be0cdcdb 100644
---- a/arch/powerpc/kernel/fadump.c
-+++ b/arch/powerpc/kernel/fadump.c
-@@ -111,7 +111,7 @@ void __init fadump_cma_init(void)
- 		return;
- 	}
- 
--	rc = cma_init_reserved_mem(base, size, 0, "fadump_cma", &fadump_cma);
-+	rc = cma_init_reserved_mem(base, size, 0, "fadump_cma", &fadump_cma, false);
- 	if (rc) {
- 		pr_err("Failed to init cma area for firmware-assisted dump,%d\n", rc);
- 		/*
-diff --git a/include/linux/cma.h b/include/linux/cma.h
-index 62d9c1cf6326..3207db979e94 100644
---- a/include/linux/cma.h
-+++ b/include/linux/cma.h
-@@ -46,7 +46,7 @@ extern int __init cma_declare_contiguous_multi(phys_addr_t size,
- extern int cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
- 					unsigned int order_per_bit,
- 					const char *name,
--					struct cma **res_cma);
-+					struct cma **res_cma, bool gcma);
- extern struct page *cma_alloc(struct cma *cma, unsigned long count, unsigned int align,
- 			      bool no_warn);
- extern bool cma_pages_valid(struct cma *cma, const struct page *pages, unsigned long count);
-diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
-index 055da410ac71..a68b3123438c 100644
---- a/kernel/dma/contiguous.c
-+++ b/kernel/dma/contiguous.c
-@@ -459,6 +459,7 @@ static int __init rmem_cma_setup(struct reserved_mem *rmem)
- 	unsigned long node = rmem->fdt_node;
- 	bool default_cma = of_get_flat_dt_prop(node, "linux,cma-default", NULL);
- 	struct cma *cma;
-+	bool gcma;
- 	int err;
- 
- 	if (size_cmdline != -1 && default_cma) {
-@@ -476,7 +477,15 @@ static int __init rmem_cma_setup(struct reserved_mem *rmem)
- 		return -EINVAL;
- 	}
- 
--	err = cma_init_reserved_mem(rmem->base, rmem->size, 0, rmem->name, &cma);
-+	gcma = !!of_get_flat_dt_prop(node, "guarantee", NULL);
-+#ifndef CONFIG_GCMA
-+	if (gcma) {
-+		pr_err("Reserved memory: unable to setup GCMA region, GCMA is not enabled\n");
-+		return -EINVAL;
-+	}
-+#endif
-+	err = cma_init_reserved_mem(rmem->base, rmem->size, 0, rmem->name,
-+				    &cma, gcma);
- 	if (err) {
- 		pr_err("Reserved memory: unable to setup CMA region\n");
- 		return err;
-diff --git a/mm/cma.c b/mm/cma.c
-index b06d5fe73399..f12cef849e58 100644
---- a/mm/cma.c
-+++ b/mm/cma.c
-@@ -26,6 +26,7 @@
- #include <linux/cma.h>
- #include <linux/highmem.h>
- #include <linux/io.h>
-+#include <linux/gcma.h>
- #include <linux/kmemleak.h>
- #include <trace/events/cma.h>
- 
-@@ -165,11 +166,18 @@ static void __init cma_activate_area(struct cma *cma)
- 			count = cmr->early_pfn - cmr->base_pfn;
- 			bitmap_count = cma_bitmap_pages_to_bits(cma, count);
- 			bitmap_set(cmr->bitmap, 0, bitmap_count);
-+		} else {
-+			count = 0;
- 		}
- 
--		for (pfn = cmr->early_pfn; pfn < cmr->base_pfn + cmr->count;
--		     pfn += pageblock_nr_pages)
--			init_cma_reserved_pageblock(pfn_to_page(pfn));
-+		if (cma->gcma) {
-+			gcma_register_area(cma->name, cmr->early_pfn,
-+					   cma->count - count);
-+		} else {
-+			for (pfn = cmr->early_pfn; pfn < cmr->base_pfn + cmr->count;
-+			     pfn += pageblock_nr_pages)
-+				init_cma_reserved_pageblock(pfn_to_page(pfn));
-+		}
- 	}
- 
- 	spin_lock_init(&cma->lock);
-@@ -270,7 +278,7 @@ static void __init cma_drop_area(struct cma *cma)
- int __init cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
- 				 unsigned int order_per_bit,
- 				 const char *name,
--				 struct cma **res_cma)
-+				 struct cma **res_cma, bool gcma)
- {
- 	struct cma *cma;
- 	int ret;
-@@ -301,6 +309,7 @@ int __init cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
- 	cma->ranges[0].count = cma->count;
- 	cma->nranges = 1;
- 	cma->nid = NUMA_NO_NODE;
-+	cma->gcma = gcma;
- 
- 	*res_cma = cma;
- 
-@@ -721,7 +730,8 @@ static int __init __cma_declare_contiguous_nid(phys_addr_t base,
- 		base = addr;
- 	}
- 
--	ret = cma_init_reserved_mem(base, size, order_per_bit, name, res_cma);
-+	ret = cma_init_reserved_mem(base, size, order_per_bit, name, res_cma,
-+				    false);
- 	if (ret)
- 		memblock_phys_free(base, size);
- 
-@@ -815,7 +825,13 @@ static int cma_range_alloc(struct cma *cma, struct cma_memrange *cmr,
- 
- 		pfn = cmr->base_pfn + (bitmap_no << cma->order_per_bit);
- 		mutex_lock(&cma->alloc_mutex);
--		ret = alloc_contig_range(pfn, pfn + count, MIGRATE_CMA, gfp);
-+		if (cma->gcma) {
-+			gcma_alloc_range(pfn, count);
-+			ret = 0;
-+		} else {
-+			ret = alloc_contig_range(pfn, pfn + count, MIGRATE_CMA,
-+						 gfp);
-+		}
- 		mutex_unlock(&cma->alloc_mutex);
- 		if (ret == 0) {
- 			page = pfn_to_page(pfn);
-@@ -992,7 +1008,10 @@ bool cma_release(struct cma *cma, const struct page *pages,
- 	if (r == cma->nranges)
- 		return false;
- 
--	free_contig_range(pfn, count);
-+	if (cma->gcma)
-+		gcma_free_range(pfn, count);
-+	else
-+		free_contig_range(pfn, count);
- 	cma_clear_bitmap(cma, cmr, pfn, count);
- 	cma_sysfs_account_release_pages(cma, count);
- 	trace_cma_release(cma->name, pfn, pages, count);
-diff --git a/mm/cma.h b/mm/cma.h
-index 41a3ab0ec3de..c2a5576d7987 100644
---- a/mm/cma.h
-+++ b/mm/cma.h
-@@ -47,6 +47,7 @@ struct cma {
- 	char name[CMA_MAX_NAME];
- 	int nranges;
- 	struct cma_memrange ranges[CMA_MAX_RANGES];
-+	bool gcma;
- #ifdef CONFIG_CMA_SYSFS
- 	/* the number of CMA page successful allocations */
- 	atomic64_t nr_pages_succeeded;
-diff --git a/mm/cma_sysfs.c b/mm/cma_sysfs.c
-index 97acd3e5a6a5..4ecc36270a4d 100644
---- a/mm/cma_sysfs.c
-+++ b/mm/cma_sysfs.c
-@@ -80,6 +80,15 @@ static ssize_t available_pages_show(struct kobject *kobj,
- }
- CMA_ATTR_RO(available_pages);
- 
-+static ssize_t gcma_show(struct kobject *kobj,
-+			 struct kobj_attribute *attr, char *buf)
-+{
-+	struct cma *cma = cma_from_kobj(kobj);
-+
-+	return sysfs_emit(buf, "%d\n", cma->gcma);
-+}
-+CMA_ATTR_RO(gcma);
-+
- static void cma_kobj_release(struct kobject *kobj)
- {
- 	struct cma *cma = cma_from_kobj(kobj);
-@@ -95,6 +104,7 @@ static struct attribute *cma_attrs[] = {
- 	&release_pages_success_attr.attr,
- 	&total_pages_attr.attr,
- 	&available_pages_attr.attr,
-+	&gcma_attr.attr,
- 	NULL,
- };
- ATTRIBUTE_GROUPS(cma);
--- 
-2.49.0.rc1.451.g8f38331e32-goog
+> > > and why aren't you simply plugging this into io_uring and generate
+> > > a CQE so that it works like all other asynchronous operations?
+> > 
+> > I linked to the iouring work that Pavel did in the cover letter.
+> > Please take a look.
+> 
+> Please write down what matters in the cover letter, including all the
+> important tradeoffs.
 
+OK, I will enhance the cover letter for the next submission. I had
+originally thought I'd submit something officially, but I think I'll
+probably submit another RFC with some of the changes I've made based
+on the discussion with Jens.
+
+Namely: dropping sendfile2 completely and plumbing the bits through
+for splice. I'll wait a bit to hear what Jens thinks about the
+SO_ZEROCOPY thing (basically: if a network socket has that option
+set, maybe the existing sendfile can generate error queue
+completions without needing a separate system call?).
+
+I agree overall that sendfile2 or sendmsg2 or whatever else could
+likely be built differently now that better interfaces and
+mechanisms exist in the kernel - but I still think there's room to
+improve existing system calls so they can be used safely.
 
