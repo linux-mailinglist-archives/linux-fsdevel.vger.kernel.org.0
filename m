@@ -1,150 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-44503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAE25A69ED3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 04:30:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E4F0A69ECD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 04:30:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 437918A1F3A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 03:28:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DD9C3BA68E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 03:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDEA207A03;
-	Thu, 20 Mar 2025 03:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1F81EDA3B;
+	Thu, 20 Mar 2025 03:27:39 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115F81EB1BA
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 03:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C601EDA27
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 03:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742441309; cv=none; b=pjDCEdP/EAKDf7+L37cExL4Kinx3MWtRNbLWyuco5zdapHtzAVHf5O3atnafTBsqKjZ0cH+22IGeY0CwlxDcHi7KhvzJh3RBWSw84RpTj+ORxu+izILzfXuwIkt+RxXxNsu6TIYtKtRD3LSF8CkaKnSC2Ult+YwtNDmwYKQBB+w=
+	t=1742441259; cv=none; b=qrzfuGEzNAUm+5LtJC5PsuMcF2Fdh/JUAHY2fGkz5jTBludorUcYXFW6di6C/zUV3zmwl58lwi/QBn8T7raA8///2xLTPMgSacdxqkyDU6V6Vb1pdvbSyWB1j+SnFh318blzZIGSFNtTy4r0Ig/OVGB57OJFGoLojeRRqVvInrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742441309; c=relaxed/simple;
-	bh=JLOL9AJQ2cnSXdz2CMf8N5vWGfKJ6GmWRVN03fA85Hk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Wa2ta0/G41VT/VdXy6OUKQfgTMaXbNfaczp4gAQ4N6H6ojbvUoghqqW5DKo0KswJxi2YQ1AqwKT15VqGNhl99TjPBsLYzT2rqZP0kA+IjwaclbSErB9s92uj+PsptxHimezPb+m5c79kPXQ6H8EeJH/a4QyxE3NRD/WBOKDS/ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d054d79dacso7082635ab.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 20:28:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742441307; x=1743046107;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hecAEkEpOupHb2oLD0Zh2B0utuBtVCK9YGIDBVlwllE=;
-        b=d4K4vJO+mBZxPTH4jELu4/+cPM+w1Mq9cbDHTWXVIGo9h84x57oLvsKR1F/sqxm5zy
-         zCjw3IHrqfldqAj8lyMC5yUCv5f6tOIgUrn8CWfBedlV9n/qHn/Kc7hFJ4m/y1kbaXNA
-         1QknEtNyNBGSiYQxIpd8GjZSbS/IYSudRy17oAaNJCqAcBE+obF3gjlFUslR3dOF3ZRK
-         c24uD3+pt7RKn/5+Hpp3vJzaiSnjYr8zKSGOWvaQL2x/LHr+2PcKKbmmZDagc0BBHBvT
-         JjaZXLsXmqWWdMBX+7g5/9KypUl1VWuQYpXoX/BaK4WzMV8jE6MPnAzaMrAnC6A8f1vR
-         /7Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ8UHNZiIt7U5oXAI0O0jzfvpzwuiMMIdfBTcNxPNGeYLNsyhCxePaAHH1kxWIih5bmSd06XQt3/WWULAe@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY0J4VrYkKfgelu7KfqWadF7cHYmRfAgFHr5xLYhZ7ddk4Lc0C
-	eN7lVMT9tUJcglS6bakANJsxEVbiNrAuOF4op/PIy+QWfbD30lXZ3CUpVilmfoRe69uM6ndUrJY
-	KXK9jC5nP/1OUhepGshBK3ziKy1hYkqJPBlVN8vrOaoY+PFwTnSZes0Y=
-X-Google-Smtp-Source: AGHT+IH2FH63ihr7KH8PHX4OwIbTm0+zipnw7sTZ8BDsGMrxsR8sA4b5DdQfTomhyQTgDAln6rbz9JOtu9oWrogpobyrchcjdtaD
+	s=arc-20240116; t=1742441259; c=relaxed/simple;
+	bh=NdGbicUvIY97RXgtzGTNEjBlbhVlFY4x5SIhxVF/Y2I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ouPQDea2upyNTGMqQeww8mHF1Atcg8w3TPMGirJH1a/F9GL3J5xUCcbM8U47JCQ/BnuhWVRtlBQeMX0bICvBKeeplu5DGTnWMNeydetdd6uXDKIlSlAkc6kn7Ilr1o3QxM/it/l+2VqBKO1O/5Axiovp+xFYw3lkeQh8xdykd3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZJ9x75ThPz4f3lfd;
+	Thu, 20 Mar 2025 11:27:07 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id E62651A17D2;
+	Thu, 20 Mar 2025 11:27:31 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.127.227])
+	by APP3 (Coremail) with SMTP id _Ch0CgCn+sQii9tnJ8KoGw--.42997S4;
+	Thu, 20 Mar 2025 11:27:31 +0800 (CST)
+From: Yongjian Sun <sunyongjian@huaweicloud.com>
+To: linux-fsdevel@vger.kernel.org,
+	linux-mm@vger.kernel.org
+Cc: yangerkun@huawei.com
+Subject: [PATCH] libfs: Fix duplicate directory entry in offset_dir_lookup
+Date: Thu, 20 Mar 2025 11:44:17 +0800
+Message-Id: <20250320034417.555810-1-sunyongjian@huaweicloud.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cdac:0:b0:3d3:d28e:eae9 with SMTP id
- e9e14a558f8ab-3d586b40c24mr59334145ab.7.1742441307205; Wed, 19 Mar 2025
- 20:28:27 -0700 (PDT)
-Date: Wed, 19 Mar 2025 20:28:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67db8b5b.050a0220.31a16b.0001.GAE@google.com>
-Subject: [syzbot] [fs?] KCSAN: data-race in __lookup_mnt / __se_sys_pivot_root (6)
-From: syzbot <syzbot+de8b27abd23eac60e15f@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgCn+sQii9tnJ8KoGw--.42997S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7trW7trW3Gr48Cw1UXr48Xrb_yoW8CF4kpF
+	W5J3s0kw4kJr1xCw4qkF1kW34Ik39rGFsruFZ5Ww1rA398GFn7tF1xKF1Yq3s7Jrs3uw1q
+	qF4Fy398J34UZa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUgGb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6r106r1rM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCj
+	c4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4
+	CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1x
+	MIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
+	4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnI
+	WIevJa73UjIFyTuYvjxUzsqWUUUUU
+X-CM-SenderInfo: 5vxq505qjmxt3q6k3tpzhluzxrxghudrp/
 
-Hello,
+From: Yongjian Sun <sunyongjian1@huawei.com>
 
-syzbot found the following issue on:
+There is an issue in the kernel:
 
-HEAD commit:    a7f2e10ecd8f Merge tag 'hwmon-fixes-for-v6.14-rc8/6.14' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=166a383f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f33d372c4021745
-dashboard link: https://syzkaller.appspot.com/bug?extid=de8b27abd23eac60e15f
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+In tmpfs, when using the "ls" command to list the contents
+of a directory with a large number of files, glibc performs
+the getdents call in multiple rounds. If a concurrent unlink
+occurs between these getdents calls, it may lead to duplicate
+directory entries in the ls output. One possible reproduction
+scenario is as follows:
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Create 1026 files and execute ls and rm concurrently:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/614aabc71b48/disk-a7f2e10e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d47dd90a010a/vmlinux-a7f2e10e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/418d8cf8782b/bzImage-a7f2e10e.xz
+for i in {1..1026}; do
+    echo "This is file $i" > /tmp/dir/file$i
+done
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+de8b27abd23eac60e15f@syzkaller.appspotmail.com
+ls /tmp/dir				rm /tmp/dir/file4
+	->getdents(file1026-file5)
+						->unlink(file4)
 
-==================================================================
-BUG: KCSAN: data-race in __lookup_mnt / __se_sys_pivot_root
+	->getdents(file5,file3,file2,file1)
 
-write to 0xffff888118782d98 of 8 bytes by task 20163 on cpu 0:
- unhash_mnt fs/namespace.c:1030 [inline]
- __do_sys_pivot_root fs/namespace.c:4456 [inline]
- __se_sys_pivot_root+0x850/0x1090 fs/namespace.c:4388
- __x64_sys_pivot_root+0x31/0x40 fs/namespace.c:4388
- x64_sys_call+0x1abf/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:156
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+It is expected that the second getdents call to return file3
+through file1, but instead it returns an extra file5.
 
-read to 0xffff888118782d98 of 8 bytes by task 20164 on cpu 1:
- __lookup_mnt+0xa0/0xf0 fs/namespace.c:839
- __follow_mount_rcu fs/namei.c:1592 [inline]
- handle_mounts fs/namei.c:1622 [inline]
- step_into+0x426/0x820 fs/namei.c:1952
- walk_component fs/namei.c:2120 [inline]
- link_path_walk+0x50e/0x830 fs/namei.c:2479
- path_lookupat+0x72/0x2b0 fs/namei.c:2635
- filename_lookup+0x150/0x340 fs/namei.c:2665
- user_path_at+0x3c/0x120 fs/namei.c:3072
- __do_sys_pivot_root fs/namespace.c:4404 [inline]
- __se_sys_pivot_root+0x10e/0x1090 fs/namespace.c:4388
- __x64_sys_pivot_root+0x31/0x40 fs/namespace.c:4388
- x64_sys_call+0x1abf/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:156
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+The root cause of this problem is in the offset_dir_lookup
+function. It uses mas_find to determine the starting position
+for the current getdents call. Since mas_find locates the first
+position that is greater than or equal to mas->index, when file4
+is deleted, it ends up returning file5.
 
-value changed: 0xffff888106a31d80 -> 0xffff8881004dccc0
+It can be fixed by replacing mas_find with mas_find_rev, which
+finds the first position that is less than or equal to mas->index.
 
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 UID: 0 PID: 20164 Comm: syz.0.5594 Tainted: G        W          6.14.0-rc7-syzkaller-00074-ga7f2e10ecd8f #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-==================================================================
-
-
+Fixes: b9b588f22a0c ("libfs: Use d_children list to iterate simple_offset directories")
+Signed-off-by: Yongjian Sun <sunyongjian1@huawei.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/libfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 8444f5cc4064..dc042a975a56 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -496,7 +496,7 @@ offset_dir_lookup(struct dentry *parent, loff_t offset)
+ 		found = find_positive_dentry(parent, NULL, false);
+ 	else {
+ 		rcu_read_lock();
+-		child = mas_find(&mas, DIR_OFFSET_MAX);
++		child = mas_find_rev(&mas, DIR_OFFSET_MIN);
+ 		found = find_positive_dentry(parent, child, false);
+ 		rcu_read_unlock();
+ 	}
+-- 
+2.39.2
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
