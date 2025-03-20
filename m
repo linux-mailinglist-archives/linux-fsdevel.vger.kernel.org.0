@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-44542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A1A3A6A3FF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 11:46:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD56DA6A403
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 11:46:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DB39189D77C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 10:46:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 079D87B00F7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 10:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB499224254;
-	Thu, 20 Mar 2025 10:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1DE224B0D;
+	Thu, 20 Mar 2025 10:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHLdbn9e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gi4Ey/7Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D885209F4E;
-	Thu, 20 Mar 2025 10:45:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31607209F4E;
+	Thu, 20 Mar 2025 10:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742467544; cv=none; b=gRXFEyomB1WsZipb2pndNq0KGiawBMKcBm1Xtf3Kmc1Ize8lmrheEuiMJeSONTgplENEFhaMX/HEd6tkNH0slz0Kp1OYnmz/6T22d5Za1MBIIgyrFEtkS6LqkkIpTJ7bveoddRJHauemMeapvXzMosYHkR7aJfl2K496Ir1yDlg=
+	t=1742467594; cv=none; b=tAAR/DaYcN15CVIJ4d+jc9x+GpqNEsEhCuNoMkZytcg8Lx6WfzXbwHNoqnWrU0e23h7KPwFJhbZJ5Ca6XoV7UCxGmUGr6sjo2uze0tjzB1UTo1tYqYuD/3DnVCK4mLWnI8p1CwUINw1zfvA5k3Yq7yPBX56T7tTmRe3dUh+OgUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742467544; c=relaxed/simple;
-	bh=uhTRmSvju8WYMAnf/mgl7BiwduH4AAy7uMFg1eLjCcM=;
+	s=arc-20240116; t=1742467594; c=relaxed/simple;
+	bh=YvMQlYXlkwRZkEReaqyNkiXw7BWYWP12LN8EdzHzpsU=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Da6FT/H/6VjGo+Kjjf+IddxU86thCSDilStaizAruP6vxV3wgdcp4rsk7LV5UMo1EsUQC4hp2cih0uDs7mczTd7fnZn1BYk854nNuuqNlPGJEBB2EsjEVkR/B+ML4S9ya887y7JFlFdx+eDka03SCz8ElgdeDbdl7/vQtsouHOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHLdbn9e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8B7BC4CEDD;
-	Thu, 20 Mar 2025 10:45:42 +0000 (UTC)
+	 Content-Type:MIME-Version; b=eDeC7JaZRov4gzVUPy0PgTxKCQIjtI0NMT3xBaCPbJZUx0pQnt8ClncwHm7wPCmncLu+ll+2m7Z+XXPX7lr2csj3fwma+35d4XFOTXmqOetHya4Cow0LlHz3B66l7MfBwOfl9y8UJB3qF149FaR4oJxDBKRcHlOV96jTZWjEHIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gi4Ey/7Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2273C4CEEC;
+	Thu, 20 Mar 2025 10:46:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742467543;
-	bh=uhTRmSvju8WYMAnf/mgl7BiwduH4AAy7uMFg1eLjCcM=;
+	s=k20201202; t=1742467593;
+	bh=YvMQlYXlkwRZkEReaqyNkiXw7BWYWP12LN8EdzHzpsU=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=BHLdbn9elunW1tqHdj5yu07PAsDPi0NSjBWvtgfleMIXS1Qm4yn+p5xrqT7FoYmWS
-	 gfGLos0eCPElmvgKm1dl9boj11cCRdAhobSG44QBO99TsaO5O8QM0hTPgpq127B2MT
-	 /gEpcjjP073hC7J9n0q8WF6+bkzeiZm3dPL0wIL5IqMhQfnnFYYCjbE9/7oa6kPnjG
-	 K08cKi8vRCXMDeD1W4QvllqNlwr5IFk71mKj+9mCC8WF2k1fI39nC+RIabri+dlBoI
-	 XUJplREFNUSBM6dPMhGPcUTLy0dTaouH44uwxfSQms06XkZ1rUDm7ml44qCDgHwoXF
-	 W5UkJFCmNAHtQ==
-Message-ID: <3fb9594115c3df18120dedec1091f18be5ea22a4.camel@kernel.org>
-Subject: Re: [PATCH 5/6] Use try_lookup_noperm() instead of
- d_hash_and_lookup() outside of VFS
+	b=gi4Ey/7ZG9i4OVoCYEMtLOriw101iUKTiHUW4fze1MmUgdWAA/dxjnp2cJc5pTBUb
+	 teJL+hCQKNeg9PmJGsYy2W9yuNnaAEUORZnKYVx5p7BxIUY2ogPXGw+EdCI1EK28Jp
+	 XgPnhb8kH/upO8Bp6TEe0gk4Fvt0a3wHg/Q5OzrRO+eBrU0FzgEnrbVe3MWZTOps1P
+	 oEg+Lp+0tQle42tW4nb3ugOmbz+rUuXMuogZLcDPO/bhDKcuss59/Pduv2cBr/OpIw
+	 hkJFhyy9fnKiDFAsZJyU5d67NlrwL8XStoASxu/5nyIPLrB4/e9Gjw0bwQ8Dpr2J+W
+	 69mFeb2UkR28Q==
+Message-ID: <bd523c84e64ffd405e1a1184796269c153baa119.camel@kernel.org>
+Subject: Re: [PATCH 6/6] VFS: change lookup_one_common and
+ lookup_noperm_common to take a qstr
 From: Jeff Layton <jlayton@kernel.org>
 To: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner	 <brauner@kernel.org>, Jan Kara <jack@suse.cz>, David
  Howells <dhowells@redhat.com>,  Chuck Lever <chuck.lever@oracle.com>
 Cc: linux-nfs@vger.kernel.org, netfs@lists.linux.dev, 
 	linux-fsdevel@vger.kernel.org
-Date: Thu, 20 Mar 2025 06:45:41 -0400
-In-Reply-To: <20250319031545.2999807-6-neil@brown.name>
+Date: Thu, 20 Mar 2025 06:46:31 -0400
+In-Reply-To: <20250319031545.2999807-7-neil@brown.name>
 References: <20250319031545.2999807-1-neil@brown.name>
-	 <20250319031545.2999807-6-neil@brown.name>
+	 <20250319031545.2999807-7-neil@brown.name>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -141,277 +141,148 @@ MIME-Version: 1.0
 On Wed, 2025-03-19 at 14:01 +1100, NeilBrown wrote:
 > From: NeilBrown <neilb@suse.de>
 >=20
-> try_lookup_noperm() and d_hash_and_lookup() are nearly identical.  The
-> former does some validation of the name where the latter doesn't.
-> Outside of the VFS that validation is likely valuable, and having only
-> one exported function for this task is certainly a good idea.
->=20
-> So make d_hash_and_lookup() local to VFS files and change all other
-> callers to try_lookup_noperm().  Note that the arguments are swapped.
+> These function already take a qstr of course, but they also currently
+> take a name/len was well and fill in the qstr.
+> Now they take a qstr that is already filled in, which is what all the
+> callers have.
 >=20
 > Signed-off-by: NeilBrown <neilb@suse.de>
 > ---
->  Documentation/filesystems/porting.rst | 11 +++++++++++
->  fs/dcache.c                           |  1 -
->  fs/efivarfs/super.c                   | 14 ++++----------
->  fs/internal.h                         |  1 +
->  fs/proc/base.c                        |  2 +-
->  fs/smb/client/readdir.c               |  3 ++-
->  fs/xfs/scrub/orphanage.c              |  4 ++--
->  include/linux/dcache.h                |  1 -
->  net/sunrpc/rpc_pipe.c                 | 12 ++++++------
->  security/selinux/selinuxfs.c          |  4 ++--
->  10 files changed, 29 insertions(+), 24 deletions(-)
+>  fs/namei.c | 44 +++++++++++++++++++-------------------------
+>  1 file changed, 19 insertions(+), 25 deletions(-)
 >=20
-> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesy=
-stems/porting.rst
-> index df9516cd82e0..626f094787e8 100644
-> --- a/Documentation/filesystems/porting.rst
-> +++ b/Documentation/filesystems/porting.rst
-> @@ -1225,3 +1225,14 @@ checked that the caller has 'X' permission on the =
-parent.  They must
->  ONLY be used internally by a filesystem on itself when it knows that
->  permissions are irrelevant or in a context where permission checks have
->  already been performed such as after vfs_path_parent_lookup()
-> +
-> +---
-> +
-> +** mandatory**
-> +
-> +d_hash_and_lookup() is no longer exported or available outside the VFS.
-> +Use try_lookup_noperm() instead.  This adds name validation and takes
-> +arguments in the opposite order but is otherwise identical.
-> +
-> +Using try_lookup_noperm() will require linux/namei.h to be included.
-> +
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index 726a5be2747b..17f8e0b7f04f 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -2395,7 +2395,6 @@ struct dentry *d_hash_and_lookup(struct dentry *dir=
-, struct qstr *name)
->  	}
->  	return d_lookup(dir, name);
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 16605f7108c0..e2fb61573f13 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2833,13 +2833,12 @@ int vfs_path_lookup(struct dentry *dentry, struct=
+ vfsmount *mnt,
 >  }
-> -EXPORT_SYMBOL(d_hash_and_lookup);
+>  EXPORT_SYMBOL(vfs_path_lookup);
 > =20
->  /*
->   * When a file is deleted, we have two options:
-> diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
-> index 09fcf731e65d..867cd6e0fbad 100644
-> --- a/fs/efivarfs/super.c
-> +++ b/fs/efivarfs/super.c
-> @@ -204,7 +204,6 @@ bool efivarfs_variable_is_present(efi_char16_t *varia=
-ble_name,
->  	char *name =3D efivar_get_utf8name(variable_name, vendor);
->  	struct super_block *sb =3D data;
->  	struct dentry *dentry;
-> -	struct qstr qstr;
-> =20
->  	if (!name)
->  		/*
-> @@ -217,9 +216,7 @@ bool efivarfs_variable_is_present(efi_char16_t *varia=
-ble_name,
->  		 */
->  		return true;
-> =20
-> -	qstr.name =3D name;
-> -	qstr.len =3D strlen(name);
-> -	dentry =3D d_hash_and_lookup(sb->s_root, &qstr);
-> +	dentry =3D try_lookup_noperm(&QSTR(name), sb->s_root);
->  	kfree(name);
->  	if (!IS_ERR_OR_NULL(dentry))
->  		dput(dentry);
-> @@ -402,8 +399,8 @@ static bool efivarfs_actor(struct dir_context *ctx, c=
-onst char *name, int len,
+> -static int lookup_noperm_common(const char *name, struct dentry *base,
+> -				  int len,
+> -				  struct qstr *this)
+> +static int lookup_noperm_common(struct qstr *qname, struct dentry *base)
 >  {
->  	unsigned long size;
->  	struct efivarfs_ctx *ectx =3D container_of(ctx, struct efivarfs_ctx, ct=
-x);
-> -	struct qstr qstr =3D { .name =3D name, .len =3D len };
-> -	struct dentry *dentry =3D d_hash_and_lookup(ectx->sb->s_root, &qstr);
-> +	struct dentry *dentry =3D try_lookup_noperm(QSTR_LEN(name, len),
-> +						  ectx->sb->s_root);
->  	struct inode *inode;
->  	struct efivar_entry *entry;
->  	int err;
-> @@ -439,7 +436,6 @@ static int efivarfs_check_missing(efi_char16_t *name1=
-6, efi_guid_t vendor,
->  	char *name;
->  	struct super_block *sb =3D data;
->  	struct dentry *dentry;
-> -	struct qstr qstr;
->  	int err;
+> -	this->name =3D name;
+> -	this->len =3D len;
+> -	this->hash =3D full_name_hash(base, name, len);
+> +	const char *name =3D qname->name;
+> +	u32 len =3D qname->len;
+> +
+> +	qname->hash =3D full_name_hash(base, name, len);
+>  	if (!len)
+>  		return -EACCES;
 > =20
->  	if (guid_equal(&vendor, &LINUX_EFI_RANDOM_SEED_TABLE_GUID))
-> @@ -449,9 +445,7 @@ static int efivarfs_check_missing(efi_char16_t *name1=
-6, efi_guid_t vendor,
->  	if (!name)
->  		return -ENOMEM;
-> =20
-> -	qstr.name =3D name;
-> -	qstr.len =3D strlen(name);
-> -	dentry =3D d_hash_and_lookup(sb->s_root, &qstr);
-> +	dentry =3D try_lookup_noperm(&QSTR(name), sb->s_root);
->  	if (IS_ERR(dentry)) {
->  		err =3D PTR_ERR(dentry);
->  		goto out;
-> diff --git a/fs/internal.h b/fs/internal.h
-> index e7f02ae1e098..c21534a23196 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -66,6 +66,7 @@ int do_linkat(int olddfd, struct filename *old, int new=
-dfd,
->  int vfs_tmpfile(struct mnt_idmap *idmap,
->  		const struct path *parentpath,
->  		struct file *file, umode_t mode);
-> +struct dentry *d_hash_and_lookup(struct dentry *, struct qstr *);
-> =20
->  /*
->   * namespace.c
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index cd89e956c322..7d36c7567c31 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -2124,7 +2124,7 @@ bool proc_fill_cache(struct file *file, struct dir_=
-context *ctx,
->  	unsigned type =3D DT_UNKNOWN;
->  	ino_t ino =3D 1;
-> =20
-> -	child =3D d_hash_and_lookup(dir, &qname);
-> +	child =3D try_lookup_noperm(&qname, dir);
->  	if (!child) {
->  		DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
->  		child =3D d_alloc_parallel(dir, &qname, &wq);
-> diff --git a/fs/smb/client/readdir.c b/fs/smb/client/readdir.c
-> index 50f96259d9ad..7329ec532bcf 100644
-> --- a/fs/smb/client/readdir.c
-> +++ b/fs/smb/client/readdir.c
-> @@ -9,6 +9,7 @@
->   *
->   */
->  #include <linux/fs.h>
-> +#include <linux/namei.h>
->  #include <linux/pagemap.h>
->  #include <linux/slab.h>
->  #include <linux/stat.h>
-> @@ -78,7 +79,7 @@ cifs_prime_dcache(struct dentry *parent, struct qstr *n=
-ame,
-> =20
->  	cifs_dbg(FYI, "%s: for %s\n", __func__, name->name);
-> =20
-> -	dentry =3D d_hash_and_lookup(parent, name);
-> +	dentry =3D try_lookup_noperm(name, parent);
->  	if (!dentry) {
->  		/*
->  		 * If we know that the inode will need to be revalidated
-> diff --git a/fs/xfs/scrub/orphanage.c b/fs/xfs/scrub/orphanage.c
-> index 987af5b2bb82..f42ffad5a7b9 100644
-> --- a/fs/xfs/scrub/orphanage.c
-> +++ b/fs/xfs/scrub/orphanage.c
-> @@ -444,7 +444,7 @@ xrep_adoption_check_dcache(
->  	if (!d_orphanage)
->  		return 0;
-> =20
-> -	d_child =3D d_hash_and_lookup(d_orphanage, &qname);
-> +	d_child =3D try_lookup_noperm(&qname, d_orphanage);
->  	if (d_child) {
->  		trace_xrep_adoption_check_child(sc->mp, d_child);
-> =20
-> @@ -481,7 +481,7 @@ xrep_adoption_zap_dcache(
->  	if (!d_orphanage)
->  		return;
-> =20
-> -	d_child =3D d_hash_and_lookup(d_orphanage, &qname);
-> +	d_child =3D try_lookup_noperm(&qname, d_orphanage);
->  	while (d_child !=3D NULL) {
->  		trace_xrep_adoption_invalidate_child(sc->mp, d_child);
-> =20
-> diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-> index 1f01f4e734c5..cf37ae54955d 100644
-> --- a/include/linux/dcache.h
-> +++ b/include/linux/dcache.h
-> @@ -288,7 +288,6 @@ extern void d_exchange(struct dentry *, struct dentry=
- *);
->  extern struct dentry *d_ancestor(struct dentry *, struct dentry *);
-> =20
->  extern struct dentry *d_lookup(const struct dentry *, const struct qstr =
-*);
-> -extern struct dentry *d_hash_and_lookup(struct dentry *, struct qstr *);
-> =20
->  static inline unsigned d_count(const struct dentry *dentry)
->  {
-> diff --git a/net/sunrpc/rpc_pipe.c b/net/sunrpc/rpc_pipe.c
-> index eadc00410ebc..98f78cd55905 100644
-> --- a/net/sunrpc/rpc_pipe.c
-> +++ b/net/sunrpc/rpc_pipe.c
-> @@ -631,7 +631,7 @@ static struct dentry *__rpc_lookup_create_exclusive(s=
-truct dentry *parent,
->  					  const char *name)
->  {
->  	struct qstr q =3D QSTR(name);
-> -	struct dentry *dentry =3D d_hash_and_lookup(parent, &q);
-> +	struct dentry *dentry =3D try_lookup_noperm(&q, parent);
->  	if (!dentry) {
->  		dentry =3D d_alloc(parent, &q);
->  		if (!dentry)
-> @@ -658,7 +658,7 @@ static void __rpc_depopulate(struct dentry *parent,
->  	for (i =3D start; i < eof; i++) {
->  		name.name =3D files[i].name;
->  		name.len =3D strlen(files[i].name);
-> -		dentry =3D d_hash_and_lookup(parent, &name);
-> +		dentry =3D try_lookup_noperm(&name, parent);
-> =20
->  		if (dentry =3D=3D NULL)
->  			continue;
-> @@ -1190,7 +1190,7 @@ static const struct rpc_filelist files[] =3D {
->  struct dentry *rpc_d_lookup_sb(const struct super_block *sb,
->  			       const unsigned char *dir_name)
->  {
-> -	return d_hash_and_lookup(sb->s_root, &QSTR(dir_name));
-> +	return try_lookup_noperm(&QSTR(dir_name), sb->s_root);
->  }
->  EXPORT_SYMBOL_GPL(rpc_d_lookup_sb);
-> =20
-> @@ -1301,7 +1301,7 @@ rpc_gssd_dummy_populate(struct dentry *root, struct=
- rpc_pipe *pipe_data)
->  	struct dentry *pipe_dentry =3D NULL;
-> =20
->  	/* We should never get this far if "gssd" doesn't exist */
-> -	gssd_dentry =3D d_hash_and_lookup(root, &QSTR(files[RPCAUTH_gssd].name)=
-);
-> +	gssd_dentry =3D try_lookup_noperm(&QSTR(files[RPCAUTH_gssd].name), root=
-);
->  	if (!gssd_dentry)
->  		return ERR_PTR(-ENOENT);
-> =20
-> @@ -1311,8 +1311,8 @@ rpc_gssd_dummy_populate(struct dentry *root, struct=
- rpc_pipe *pipe_data)
->  		goto out;
+> @@ -2856,7 +2855,7 @@ static int lookup_noperm_common(const char *name, s=
+truct dentry *base,
+>  	 * to use its own hash..
+>  	 */
+>  	if (base->d_flags & DCACHE_OP_HASH) {
+> -		int err =3D base->d_op->d_hash(base, this);
+> +		int err =3D base->d_op->d_hash(base, qname);
+>  		if (err < 0)
+>  			return err;
 >  	}
+> @@ -2864,10 +2863,10 @@ static int lookup_noperm_common(const char *name,=
+ struct dentry *base,
+>  }
 > =20
-> -	clnt_dentry =3D d_hash_and_lookup(gssd_dentry,
-> -					&QSTR(gssd_dummy_clnt_dir[0].name));
-> +	clnt_dentry =3D try_lookup_noperm(&QSTR(gssd_dummy_clnt_dir[0].name),
-> +					  gssd_dentry);
->  	if (!clnt_dentry) {
->  		__rpc_depopulate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1);
->  		pipe_dentry =3D ERR_PTR(-ENOENT);
-> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-> index 47480eb2189b..e67a8ce4b64c 100644
-> --- a/security/selinux/selinuxfs.c
-> +++ b/security/selinux/selinuxfs.c
-> @@ -2158,8 +2158,8 @@ static int __init init_sel_fs(void)
+>  static int lookup_one_common(struct mnt_idmap *idmap,
+> -			     const char *name, struct dentry *base, int len,
+> -			     struct qstr *this) {
+> +			     struct qstr *qname, struct dentry *base)
+> +{
+>  	int err;
+> -	err =3D lookup_noperm_common(name, base, len, this);
+> +	err =3D lookup_noperm_common(qname, base);
+>  	if (err < 0)
 >  		return err;
->  	}
+>  	return inode_permission(idmap, base->d_inode, MAY_EXEC);
+> @@ -2888,16 +2887,14 @@ static int lookup_one_common(struct mnt_idmap *id=
+map,
+>   */
+>  struct dentry *try_lookup_noperm(struct qstr *name, struct dentry *base)
+>  {
+> -	struct qstr this;
+>  	int err;
 > =20
-> -	selinux_null.dentry =3D d_hash_and_lookup(selinux_null.mnt->mnt_root,
-> -						&null_name);
-> +	selinux_null.dentry =3D try_lookup_noperm(&null_name,
-> +						  selinux_null.mnt->mnt_root);
->  	if (IS_ERR(selinux_null.dentry)) {
->  		pr_err("selinuxfs:  could not lookup null!\n");
->  		err =3D PTR_ERR(selinux_null.dentry);
+>  	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
+> =20
+> -	err =3D lookup_noperm_common(name->name, base, name->len, &this);
+> +	err =3D lookup_noperm_common(name, base);
+>  	if (err)
+>  		return ERR_PTR(err);
+> =20
+> -	name->hash =3D this.hash;
+>  	return lookup_dcache(name, base, 0);
+>  }
+>  EXPORT_SYMBOL(try_lookup_noperm);
+> @@ -2915,17 +2912,16 @@ EXPORT_SYMBOL(try_lookup_noperm);
+>  struct dentry *lookup_noperm(struct qstr name, struct dentry *base)
+>  {
+>  	struct dentry *dentry;
+> -	struct qstr this;
+>  	int err;
+> =20
+>  	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
+> =20
+> -	err =3D lookup_noperm_common(name.name, base, name.len, &this);
+> +	err =3D lookup_noperm_common(&name, base);
+>  	if (err)
+>  		return ERR_PTR(err);
+> =20
+> -	dentry =3D lookup_dcache(&this, base, 0);
+> -	return dentry ? dentry : __lookup_slow(&this, base, 0);
+> +	dentry =3D lookup_dcache(&name, base, 0);
+> +	return dentry ? dentry : __lookup_slow(&name, base, 0);
+>  }
+>  EXPORT_SYMBOL(lookup_noperm);
+> =20
+> @@ -2943,17 +2939,16 @@ struct dentry *lookup_one(struct mnt_idmap *idmap=
+, struct qstr name,
+>  			  struct dentry *base)
+>  {
+>  	struct dentry *dentry;
+> -	struct qstr this;
+>  	int err;
+> =20
+>  	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
+> =20
+> -	err =3D lookup_one_common(idmap, name.name, base, name.len, &this);
+> +	err =3D lookup_one_common(idmap, &name, base);
+>  	if (err)
+>  		return ERR_PTR(err);
+> =20
+> -	dentry =3D lookup_dcache(&this, base, 0);
+> -	return dentry ? dentry : __lookup_slow(&this, base, 0);
+> +	dentry =3D lookup_dcache(&name, base, 0);
+> +	return dentry ? dentry : __lookup_slow(&name, base, 0);
+>  }
+>  EXPORT_SYMBOL(lookup_one);
+> =20
+> @@ -2971,17 +2966,16 @@ EXPORT_SYMBOL(lookup_one);
+>  struct dentry *lookup_one_unlocked(struct mnt_idmap *idmap,
+>  				   struct qstr name, struct dentry *base)
+>  {
+> -	struct qstr this;
+>  	int err;
+>  	struct dentry *ret;
+> =20
+> -	err =3D lookup_one_common(idmap, name.name, base, name.len, &this);
+> +	err =3D lookup_one_common(idmap, &name, base);
+>  	if (err)
+>  		return ERR_PTR(err);
+> =20
+> -	ret =3D lookup_dcache(&this, base, 0);
+> +	ret =3D lookup_dcache(&name, base, 0);
+>  	if (!ret)
+> -		ret =3D lookup_slow(&this, base, 0);
+> +		ret =3D lookup_slow(&name, base, 0);
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL(lookup_one_unlocked);
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
