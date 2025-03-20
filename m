@@ -1,274 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-44623-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA828A6AB9F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 18:01:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DAD4A6ABAA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 18:04:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C9C2188A210
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 17:01:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3505217C9AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 17:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 568C91EB5F0;
-	Thu, 20 Mar 2025 17:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2A722155C;
+	Thu, 20 Mar 2025 17:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YBJS66lj"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="l/1cujF8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA6142065
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 17:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CA0188915
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 17:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742490056; cv=none; b=NxXruoKrxKKGz+JnOR11ES5ahtoNwbVp9i8SJX+0MzBxIwHcvIfYXgtVCMQ2eYnOFN9iol7bWM4Y9PqbN5UCpZp4dpsCX2LHwb9yEfH7a61W+zuPdI3auifA6fRhVPU0SEW+Yict2LsNL/Qu1mIRknKO83b3eWEfXyse48n33l8=
+	t=1742490273; cv=none; b=VTovlEJu/HAoo3BketpUFE2tIL3buJbSLYiLt8S0BiC4F1nKrbiSrxwSXoCd3nUhq7ia6ZavRb2o9t5Hizpi/kkDAYn0XkTSEeHSErvaKEYyO10hkUNJe2PiI85v7MUYuyBpweeMpfLhVCFiseKkoAkWNVWjzaeBgRCKDctQxC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742490056; c=relaxed/simple;
-	bh=PU6R+wPFTRLoSpAjFSt+4EcJEERtPHK4ICoCLjO4sow=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SXrEfpLXRyheMkgwIc90pmyS5c/KkvkPUR9rxqafDttXL7YkfydBWzaIBJFyk39NP1tfsaHhUlqyOTU7y/eRwJEGHvSKCDLeYpegE7h8677awUNkJzV++7JvuAAFIcfBEXv2oXapw1pNL3tJ7bB3urSlGvcuqdchyyDam6kqKCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YBJS66lj; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso180515766b.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 10:00:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742490053; x=1743094853; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GFJeoOiqJ8FbRuMY8d+eOqJGpdi4Y9e7kZ/UxPwtCO0=;
-        b=YBJS66ljXMx08rlV6F0HW4rrJ77LFm+1EMCmmNkAcDTXR2LRSWhs5BmQU/G1fDKaUD
-         njI182Otyqy452JOpuSqfLBaCFZRZPD2f8lQJoVk6rKDSa5JDY89femRufavmVsulqB0
-         ACdkrGBt8ivV1ll4ubTGhVisl20cOBoIpV1meUgAIQZU+YaGZlBlFr5p012EoHNa8TyI
-         7hfsHIDWBppVSC5IHCcDDyoTizQRjVSfQVABdpuIL1rj2Cq08si4gysLdZFTTPguioWg
-         bdzvFglarz3u8r0+SmGLypxlUbJahYt+lwaRn+rKHX5rmAFVBeGvyxjiYgxGnaW+5X+n
-         UitA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742490053; x=1743094853;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GFJeoOiqJ8FbRuMY8d+eOqJGpdi4Y9e7kZ/UxPwtCO0=;
-        b=rFavimT9TdX8Pm9pzbLIxD8URn2Gwpgvq7ERr+b/cDefgp28L8W1A6Q9RuC4DS5EnL
-         js11I/MmJnD4j3JL+xt2vKYiIoWT8ZAnir16T5AzZoLExgmyXp1nHjVLr5muUQWxzHb7
-         hoTOWWBTxOOCmvtIT6i/0iMWGgkQ4zp3lT9EYVddO0/S9snOU8M5gF8382hUibELWmXR
-         lUs8lc1pfB9RKFmtSKrWQEhvfYhlGLwwGQoz8s1YvN3ZCaaq8GEwbVgkNpIvTiRMXOAO
-         13RoAWcpC179mGp2KRXJXi4NLi2gczPHPNrcFMM62TtSdnFiGS1vISAio7AMVOg5iu3q
-         HTcA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6D2oWBMIbUBZLbCTTfOdTtXlO4vbEHrKNf0uryUCsCgr3/pkPogAJdyeKUjLPqqovJqeCHE28pa9bWHqU@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIiGwcLgjbwb7gaVb+CiG4OARX/DgFHPQvjNdwhbcJormm3M71
-	jMmmdWI7UOOY9hgu3csIEv0JEdR7nNjIMvyq16/YtB5yq9ueWPsfCh79WrVOJG9yV3anHVmKQ0v
-	CE5khys0Pe4yWg6vgm3zw6q30kwg=
-X-Gm-Gg: ASbGncuHEqkVZv9UwmVW5i9hwVFiP/YixoGBzk6n9Wrd434p4Luw9YCelBzXjhMlyBT
-	WFpHusBrPQg+gIpU+/k+H6mR+sa+Y572QUpThnMizJ0aZz1cCAl1AF/4M2ab79WeEsi32swVdLk
-	16YMf4IKA1ToqSSIMzqbJb2AbAX11TwczcsBPJ
-X-Google-Smtp-Source: AGHT+IEK+Gx4M545quvtd2AA8LUzhnO2YYVjTQ730xTz5cykMagH7f1Ggx8Q/7DXxz9ICNc3Ia3Jw03ClI3LZ1dZ6VY=
-X-Received: by 2002:a17:907:7208:b0:ac2:898f:ba50 with SMTP id
- a640c23a62f3a-ac3cdf8e3b7mr442674566b.7.1742490052081; Thu, 20 Mar 2025
- 10:00:52 -0700 (PDT)
+	s=arc-20240116; t=1742490273; c=relaxed/simple;
+	bh=A9SaWLKe5nn8GnWqWap5c9I7pEdcPjzJ2d4KLbMUb8Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=K7zfN7mgbtZhqAUciXCItI+t4YclTJqLEGbg+1IGk1SGiBRfQMyKXIsVroYXX3k+9OzJDAklZtcODrBB5Xv9DcemT09HvEGRWBKTJ6r/nc27KjDQQAXBf1kvgCOp7yEbsKrZW1bGnNZaC2hZ4ox98aMBh1KMHMzpRu87me4byec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=l/1cujF8; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1742490269;
+	bh=A9SaWLKe5nn8GnWqWap5c9I7pEdcPjzJ2d4KLbMUb8Q=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=l/1cujF8TD1eFvawkb/366xN+ZWs9uyK4Q87FA9qlVm9otKWlKEftnxffsBuiNbBH
+	 gsnbflInsTSCC4yO0hbv0DdKA7ou6ktXwMRguA3SfpVdMBYG5ChcXSz4yiHk7nfSni
+	 EMMHVpXj9gcwgFiSD1CPftnOO/4635f/9t3osefM=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 8FACD1C037C;
+	Thu, 20 Mar 2025 13:04:29 -0400 (EDT)
+Message-ID: <8ebb5d18b812cec5f8bee668858d63eefe7ad906.camel@HansenPartnership.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Filesystem Suspend Resume
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org
+Date: Thu, 20 Mar 2025 13:04:28 -0400
+In-Reply-To: <Z9xG2l8lm7ha3Pf2@infradead.org>
+References: 
+	<0a76e074ef262ca857c61175dd3d0dc06b67ec42.camel@HansenPartnership.com>
+	 <Z9xG2l8lm7ha3Pf2@infradead.org>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOQ4uxj00D_fP3nRUBjAry6vwUCNjYuUpCZg2Uc8hwMk6n+2HA@mail.gmail.com>
- <Z41rfVwqp6mmgOt9@dread.disaster.area> <CAOQ4uxgYERCmPrTXjuM4Q3HdWK_HxuOkkpAEnesDHCAD=9fsOg@mail.gmail.com>
- <dc0649f70ca69741d351060c8c3816a347c00687.camel@kernel.org> <gihbrvdkldci257z5amkrowcsrzgjjmtnif7ycvpi6rsbktvnz@rfqybs7klfkj>
-In-Reply-To: <gihbrvdkldci257z5amkrowcsrzgjjmtnif7ycvpi6rsbktvnz@rfqybs7klfkj>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 20 Mar 2025 18:00:40 +0100
-X-Gm-Features: AQ5f1Jq49eriq2unsRiotrXflSLZR54CA781Diw64heWHNDEpVEMZ50ncFQxFJU
-Message-ID: <CAOQ4uxinA4C0iJCwZqkhLo-R9NLF=Sd_YXHEcXCX2BBNBSvNAA@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] vfs write barriers
-To: Jan Kara <jack@suse.cz>
-Cc: Jeff Layton <jlayton@kernel.org>, Dave Chinner <david@fromorbit.com>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, lsf-pc <lsf-pc@lists.linux-foundation.org>, 
-	Christian Brauner <brauner@kernel.org>, Josef Bacik <josef@toxicpanda.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 11, 2025 at 5:22=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Thu 23-01-25 13:14:11, Jeff Layton wrote:
-> > On Mon, 2025-01-20 at 12:41 +0100, Amir Goldstein wrote:
-> > > On Sun, Jan 19, 2025 at 10:15=E2=80=AFPM Dave Chinner <david@fromorbi=
-t.com> wrote:
-> > > >
-> > > > On Fri, Jan 17, 2025 at 07:01:50PM +0100, Amir Goldstein wrote:
-> > > > > Hi all,
-> > > > >
-> > > > > I would like to present the idea of vfs write barriers that was p=
-roposed by Jan
-> > > > > and prototyped for the use of fanotify HSM change tracking events=
- [1].
-> > > > >
-> > > > > The historical records state that I had mentioned the idea briefl=
-y at the end of
-> > > > > my talk in LSFMM 2023 [2], but we did not really have a lot of ti=
-me to discuss
-> > > > > its wider implications at the time.
-> > > > >
-> > > > > The vfs write barriers are implemented by taking a per-sb srcu re=
-ad side
-> > > > > lock for the scope of {mnt,file}_{want,drop}_write().
-> > > > >
-> > > > > This could be used by users - in the case of the prototype - an H=
-SM service -
-> > > > > to wait for all in-flight write syscalls, without blocking new wr=
-ite syscalls
-> > > > > as the stricter fsfreeze() does.
-> > > > >
-> > > > > This ability to wait for in-flight write syscalls is used by the =
-prototype to
-> > > > > implement a crash consistent change tracking method [3] without t=
-he
-> > > > > need to use the heavy fsfreeze() hammer.
-> > > >
-> > > > How does this provide anything guarantee at all? It doesn't order o=
-r
-> > > > wait for physical IOs in any way, so writeback can be active on a
-> > > > file and writing data from both sides of a syscall write "barrier".
-> > > > i.e. there is no coherency between what is on disk, the cmtime of
-> > > > the inode and the write barrier itself.
-> > > >
-> > > > Freeze is an actual physical write barrier. A very heavy handed
-> > > > physical right barrier, yes, but it has very well defined and
-> > > > bounded physical data persistence semantics.
-> > >
-> > > Yes. Freeze is a "write barrier to persistence storage".
-> > > This is not what "vfs write barrier" is about.
-> > > I will try to explain better.
-> > >
-> > > Some syscalls modify the data/metadata of filesystem objects in memor=
-y
-> > > (a.k.a "in-core") and some syscalls query in-core data/metadata
-> > > of filesystem objects.
-> > >
-> > > It is often the case that in-core data/metadata readers are not fully
-> > > synchronized with in-core data/metadata writers and it is often that
-> > > in-core data and metadata are not modified atomically w.r.t the
-> > > in-core data/metadata readers.
-> > > Even related metadata attributes are often not modified atomically
-> > > w.r.t to their readers (e.g. statx()).
-> > >
-> > > When it comes to "observing changes" multigrain ctime/mtime has
-> > > improved things a lot for observing a change in ctime/mtime since
-> > > last sampled and for observing an order of ctime/mtime changes
-> > > on different inodes, but it hasn't changed the fact that ctime/mtime
-> > > changes can be observed *before* the respective metadata/data
-> > > changes can be observed.
-> > >
-> > > An example problem is that a naive backup or indexing program can
-> > > read old data/metadata with new timestamp T and wrongly conclude
-> > > that it read all changes up to time T.
-> > >
-> > > It is true that "real" backup programs know that applications and
-> > > filesystem needs to be quisences before backup, but actual
-> > > day to day cloud storage sync programs and indexers cannot
-> > > practically freeze the filesystem for their work.
-> > >
-> >
-> > Right. That is still a known problem. For directory operations, the
-> > i_rwsem keeps things consistent, but for regular files, it's possible
-> > to see new timestamps alongside with old file contents. That's a
-> > problem since caching algorithms that watch for timestamp changes can
-> > end up not seeing the new contents until the _next_ change occurs,
-> > which might not ever happen.
-> >
-> > It would be better to change the file write code to update the
-> > timestamps after copying data to the pagecache. It would still be
-> > possible in that case to see old attributes + new contents, but that's
-> > preferable to the reverse for callers that are watching for changes to
-> > attributes.
-> >
-> > Would fixing that help your use-case at all?
->
-> I think Amir wanted to make here a point in the other direction: I.e., if
-> the application did:
->  * sample inode timestamp
->  * vfs_write_barrier()
->  * read file data
->
-> then it is *guaranteed* it will never see old data & new timestamp and he=
-nce
-> the caching problem is solved. No need to update timestamp after the writ=
-e.
->
-> Now I agree updating timestamps after write is much nicer from usability
-> POV (given how common pattern above it) but this is just a simple example
-> demonstrating possible uses for vfs_write_barrier().
->
+On Thu, 2025-03-20 at 09:48 -0700, Christoph Hellwig wrote:
+> On Thu, Mar 20, 2025 at 11:36:17AM -0400, James Bottomley wrote:
+> > Part of the thought here is that other filesystems might possibly
+> > want suspend resume hooks as well, although not for the reasons
+> > efivarfs does:=C2=A0 Hibernate is a particularly risky operation and
+> > resume may not work leading to a full reboot and filesystem
+> > inconsistencies. In many ways, a failed resume is exactly like a
+> > system crash, for which filesystems already make specific
+> > guarantees.=C2=A0 However, it is a crash for which they could, if they
+> > had power management hooks, be forewarned and possibly make the
+> > filesystem cleaner for eventual full restore. Things like
+> > guaranteeing that uncommitted data would be preserved even
+> > if a resume failed, which isn't something we guarantee across a
+> > crash today.
+>=20
+> We finally got hibernate to freeze file system on suspend, which is
+> the right thing for the above reasons.
 
-I was trying to figure out if updating timestamp after write would be enoug=
-h
-to deal with file writes and I think that it is not enough when adding
-signalling
-(events) into the picture.
-In this case, the consumer is expected to act on changes (e.g. index/backup=
-)
-soon after they happen.
-I think this case is different from NFS cache which only cares about cache
-invalidation on file access(?).
+Agreed, so perhaps there are no other reasons a real filesystem would
+like to know.
 
-In any case, we need a FAN_PRE_MODIFY blocking event to store a
-persistent change intent record before the write - that is needed to find
-changes after a crash.
+> This might not work quite as well for virtual file systems tied to an
+> actualy resource like efivarsfs, so you might just register a fake
+> device to get the system suspend/resume notifications for it.=C2=A0 Or
+> whatever better way the PM and device model maintainers things that
+> suites, but definitively something that isn't a file system
+> interface.
 
-Now unless we want to start polling ctime (and we do not want that),
-we need a signal to wake the consumer after the write to page cache
+Yes, we register a blocking notifier for power management via
+register_pm_notifier() so no device is involved (useful because we
+don't have one).  The notifier is unregistered in ->kill_sb() which is
+why we get "interesting" deadlock possibilities.
 
-One way is to rely on the FAN_MODIFY async event post write.
-But there is ambiguity in the existing FAN_MODIFY events:
+Regards,
 
-    Thread A starts write on file F (no listener for FAN_PRE_MODIFY)
-Event consumer starts
-        Thread B starts write on file F
-        FAN_PRE_MODIFY(F) reported from thread B
-    Thread A completes write on file F
-    FAN_MODIFY(F) reported from thread A (or from aio completion thread)
-Event consumer believes it got the last event and can read the final
-version of F
+James
 
-So if we use this method we will need a unique cookie to
-associate the POST_MODIFY with the PRE_MODIFY event.
-
-Something like this:
-
-writer                                [fsnotifyd]
--------                                -------------
-file_start_write_usn() =3D> FAN_PRE_MODIFY[ fsid, usn, fhandle ]
-{                                 <=3D Record change intent before response
-=E2=80=A6do some in-core changes
-   (e.g. data + mode + ctime)...
-} file_end_write_usn() =3D> FAN_POST_MODIFY[ fsid, usn, fhandle ]
-                                         Consume changes after FAN_POST_MOD=
-IFY
-
-While this is a viable option, it adds yet more hooks and more
-events and it does not provide an easy way for consumers to
-wait for the completion of a batch of modifications.
-
-The vfs_write_barrier method provides a better way to wait for completion:
-
-writer                                [fsnotifyd]
--------                                -------------
-file_start_write_srcu() =3D> FAN_PRE_MODIFY[ fsid, usn, fhandle ]
-{                                  <=3D Record change intent before respons=
-e
-=E2=80=A6do some in-core changes under srcu read lock
-   (e.g. data + mode + ctime)...
-} file_end_write_srcu()
-     synchronize_srcu()   <=3D vfs_write_barrier();
-                    Consume a batch of recorded changes after write barrier
-                    act on the changes and clear the change intent records
-
-I am hoping to be able to argue for the case of vfs_write_barrier()
-in LSFMM, but if this will not be acceptable, I can work with the
-post modify events solution.
-
-Thanks,
-Amir.
 
