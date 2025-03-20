@@ -1,181 +1,233 @@
-Return-Path: <linux-fsdevel+bounces-44543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 352BBA6A402
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 11:46:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6210FA6A412
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 11:49:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 612E7189E61F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 10:46:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA8553BD064
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 10:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948DB224B01;
-	Thu, 20 Mar 2025 10:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8748224887;
+	Thu, 20 Mar 2025 10:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W9SH1Se0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTQTcCj6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9007482;
-	Thu, 20 Mar 2025 10:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B402080D9;
+	Thu, 20 Mar 2025 10:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742467545; cv=none; b=ArKZPjMItVwHDAWEENL8eEawD9JV/TDkdyHxrWTLEf8blzszMPXp6HRWDZGt6vCW/28f35eclfsJFfhZp4/79zZKRWOOH5aqw9+a3mJAVirjN8BJVm95k3ibosL89yMMCK3Q6kOKdRi0Kmk3aIn6DrM2WFNh2d7KslPt3j8KMOM=
+	t=1742467776; cv=none; b=eWcABilXqDU41V+PcupTCsXAbq5rtEzhi52u3Oo8Hesh9QYHV7z0WkAONhXh77UcTz0DN+l9bL/l7OW1OclFNQkvXPJ9Cm7MkvSh5XRYe04gGrybpFInQUnj6tb0F/VdBQtKiWOmL4rMpmIv04jFwbJPY8E82zd/ODrtpDuFU2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742467545; c=relaxed/simple;
-	bh=CQRvnqo/OIGXmbGJKfYMBDG6e62wvoNjBK2uoAkIXQ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=dfaquALgV5v434SrvjhyGfYwHoSWyGZSEhDm0p00v1fRmM/p0g4H8zcUzK1+1VLyUGbEvMnYvKTLlBN2oVe4mYagfjGbSHRhaN5+FI1pepDUVnQjDD6INrQ6Z/3Ef+MGrs4T7XGpiF6nY1Jux/F/hm1dZGQgzWHtN9WCj0ouByo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W9SH1Se0; arc=none smtp.client-ip=209.85.218.46
+	s=arc-20240116; t=1742467776; c=relaxed/simple;
+	bh=ak0bH5VBArM9dgqVdz1GZ80nURKTsbHuii2hrbIquTg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VIovS3XQm2PuwJdK7O8I9w7CW6VM3h0v8WCw12SWw/Gv02L6tm4y5FfnBjV/pltCymzj7aRKWMa1LZF4LmRKlBuTIwOFA8/ceBoZ6aZ0yaDKm3i0qFB5RKOP5EFFcfHZvHf4MkrpJX3pewUkPk8d44GO6gKE6l1dGqkbUJMjIuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VTQTcCj6; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac289147833so125624966b.2;
-        Thu, 20 Mar 2025 03:45:41 -0700 (PDT)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3996af42857so1130033f8f.0;
+        Thu, 20 Mar 2025 03:49:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742467540; x=1743072340; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:cc:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Wu2qFMonGPrgHGmqn+23t9IhepY6HpevAK0T3D5ofOE=;
-        b=W9SH1Se0tzc5ytz0y+BgIsppAP80yDOtK1OcuIyGoKHK5McDMvZugteJfrf3QU0ABm
-         B0Xa+qE78Hs6MOHFTPz0+Hi7Kj67QNC32qrTozteR1lRTqQ6j1EhA9QriMD7FfF9hVDs
-         pkJZTS/ckjYmGsDfdUElfdmJLjf0ODtrLdKrMPbvsZ4Z3zXfa8Vbizv/+bNzQCP7bTPs
-         fp6S5fZgZ3S5z63R/FkgqzvXbp4ZbhErqxCSxMKqqqZt4L1o+DgaKoWlwr4Tva6NSfM+
-         4Tok9AkoihT2dh8cihN54dQKyp39Xuz1TL4eMFmZaoW9UZL0aPfMZoQ7rXX9+tjOGlT8
-         e5nw==
+        d=gmail.com; s=20230601; t=1742467772; x=1743072572; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jk4+4I5tIyCXCGc4MllrQDDfIeW6/YEI8kHwE9WZjQQ=;
+        b=VTQTcCj63usj610/ICNFe2N6QX3VbfEowjXq2/ecxY2ONaPNiQVw9wQYd5fS0XMfIJ
+         B9WLy8aM7bG1Yq/x+xi7yUBy1V5XyO2msTAFA+S9OI9yCztUGlTCx+iRdxbCbzOyaLLB
+         UEsDULZaKlSGMddla3EGDdxaDhJTut6ndezMpFEyIuuqK2GrixbVimfC44fErwqBNpuc
+         Au8d+8TGEJCsWKE4arZC6I6Gssxsio1Dx+qwGfrCJ+PcMF120Zs+yjYVXIbHP1PsuzWh
+         VsNLCbfHV6pesPVVC3IxgHxmCFITMTylSPKygPL2FNEpVdufFKKdigzCRRiA174TSi84
+         hxAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742467540; x=1743072340;
-        h=content-transfer-encoding:in-reply-to:cc:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wu2qFMonGPrgHGmqn+23t9IhepY6HpevAK0T3D5ofOE=;
-        b=g6Ld72hN6HIL168bL+EP7cu/dmgh5ZH/HntFTdyomb3BHo/HvuRG9LpIq/gzo63Kwc
-         av4FR4KDasFyaM2EPG3J2u1nxZImavo1w8ONsQ4nTG//5iqMOW+Zahu+gKr5Z/h7MVzy
-         giAa8kZ5V3zSXCyG+QIjk69GbW5K63rbrlXYxfmYcNmTSaI0FeOQgEGEIE9OEpEUutlB
-         FDN3IrE6fukeY/BNKubkJrX/LlP5JpNXQDmXQMUMotevbmR55hNnwcbJYr4MzLyHj8/2
-         dWgnpSXehu95ZAEHjXMHr+g/JxMUf9c4vXnP5ZNAYETCC43isTPh51EKMXag3VbIsIX2
-         U5lA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDIeKkCTLBv2+MEtuIKOFoLTg0l1EItLB8ypvAyG1EJ3NOpTA0+T+0Fzw2SW77bTwG/DehSSCy@vger.kernel.org, AJvYcCV9g5AuerfB8Uxj8/iWJD23ZtI/5TFLmuV/40UAvgIJnKMbdxQ4BlFaxuHcJwFrv8gO1dOV3cXD6j6Iwg==@vger.kernel.org, AJvYcCVCfPJh461ikYSTh8b/2BFUtSKo8YrYMVpWPhaKezjCh4bQp1uyrEfbXRuSNx7YC8R/ROhXczlM+1JDxvk1ClT7@vger.kernel.org, AJvYcCVQjajVVBmoC5Ogh94GmVHsmsU0oQc64/syNya3HQlIzIQeuQcRgxCz+ZeL/P9c6CrO5Z7kO3pW7tfpveVl3w==@vger.kernel.org, AJvYcCXCiYSj/69cXxUdOlDgApOWDWW7DYuh545xtwp90gdpy6Loy5fiIZsSUR5DOW6EPFN6EKftq4Jfjyrjfwoi@vger.kernel.org, AJvYcCXlpFSUJRhTweB9lE1ixOyklwo/zFQEYTLanmz/+Y72sMaU/Ju0SLau/OQFIN0ymjtoX65tDKW/z+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKB5GGXSmwX6Rs46JL6G4yHMJ31cCKHg/FntUZHXrxtzuqM3/s
-	BRrMNu95CV6rHBy7MNMtNgkC1A+20fYHsKQKlbo73szCPm2QhcsnXua54w==
-X-Gm-Gg: ASbGncsWHYOz87Zfu57dzpe3Lg2WQbRBR1KNraabSF1V+J9/LIwjoZxMqISA8Yl9k3C
-	2pRDrNgNYD1ohcxMy5UEzPHFBRXL/xQHIWn41uQFO5OjWVrFcLNoKmVuP4Uwo3zxfPKRhOAC3n7
-	SMjTgkxdUQxH2JHqtSUMdmGdKTkxHN270V2J59O2XtSzN8rLmBKO3Vvcl1Hzxv8QNZI6x9mn/Q0
-	OiLJ6FzkKs3fzq5FdfFh0DFKVFY6jmie1x6H2T4vitEjmKr6YOBFpE4SMyTiXxgsu2Bi5dcu+PF
-	pSlQU+OVspGW+pb7x5GrQ/NLqktAvY9FlbCIlUlQ8Xjl8+KYjfiqB/3wGHItpURJeSoFDtZz9eX
-	3sw==
-X-Google-Smtp-Source: AGHT+IGBL9AnC6ZQjzhuCI4g1r8h2sdfYy3s1KoFQvorGxx8LXkr1BFrXgmvhJrixYKJRPzgzvC0DA==
-X-Received: by 2002:a17:906:d7cb:b0:ac3:c7bd:e436 with SMTP id a640c23a62f3a-ac3c7bde4damr497034866b.51.1742467540085;
-        Thu, 20 Mar 2025 03:45:40 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:5148])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3146aebb0sm1164606466b.10.2025.03.20.03.45.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 03:45:39 -0700 (PDT)
-Message-ID: <fbcd759e-2453-4570-a2a0-c9ad67ae9277@gmail.com>
-Date: Thu, 20 Mar 2025 10:46:35 +0000
+        d=1e100.net; s=20230601; t=1742467772; x=1743072572;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Jk4+4I5tIyCXCGc4MllrQDDfIeW6/YEI8kHwE9WZjQQ=;
+        b=a4GDLAzXIivGYyuAWnilr4Bl/ZVqrqM6glbATIeunVMIXcPm2egIdh37fcBBEt5CxE
+         /iz3O/0+YqlKLDZeRhSnqOY6YGG7iRgc0DLyKMejqVHMsxw+lf0yatnI1bOf+vR3Rroi
+         /25FvirhpqvR6rdPv4DOrvOuEhwYcUeneXsQCsUeY9lKZCjte1sMgWngKti6QKihXhpl
+         yvw1yXKfE7RSTkddjUc9tLKKexZC0Xo7WWjPmeJcULo6cq15fYXg70+JDeKmdxZ9+LfN
+         IVUujzxx06i044l4gXWzgLkdMEAzXydVtUB0ijekYxHPgI0BDddWqMgwgNqIrn2lBkoW
+         iHoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrc+hhktdx5Pq8OdRl9Fu5t0BeBiPqcaJS32aZvbFPo9jbek8tz6j2U1DMYXS6iP/DzHgWM25a6+wwUFat@vger.kernel.org, AJvYcCUtO7IabyptUrQ8m7KSJ8Hw6Pt/ZWFZB7aF9IOccXo6Au06ZrZesq4I9MIVbmie1gkiLTucN9hU0+4AKuS8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9haN6KADpo2namdYomlDv8+bWQcfmXOH2qT5cDQL1nVD751P/
+	+HajCcu7fIwH3Dic5y48vaasf74WNPMHwK7OopMuIelU311Yx+LU
+X-Gm-Gg: ASbGncvlPYgfYls31pf6HUvr8LaTJtCCiYG4kOnw/S2BZVuAN9a/kbAfrBUcb3huQ0n
+	WtNZSxyEHVu++kPdH7CB8Snbc3bZ7B4lJ4rtoR5QNVotUw2Zwo7+gsOoY4yakZ5NMY6IPAk3Gld
+	aEFbFCZCPsSG6LNy2Fvyua69BKEKO/mfs9rjBEvOrzvzx5rXynrvYDWC+P4nfKeXHA+SWbN2fT3
+	4LUP5Cx0fbgsJFURsmYSeNfddoBLXYamIb/HQLvwiHCMCNo3iuvduA7yzjGt/mt7Cm9ybTe33rx
+	nErNUNYoXUnhDJZYN6W5JAR9VZCEycvGKeA+OuPYvBI2gcwC86Kh1Lc+9UcvntU=
+X-Google-Smtp-Source: AGHT+IH7IHYglIPsFR5Yz4XMi3toi73MU18BBRwjfxKR5Wa+qwGqEc6tfXIeU39WaV8+kUF1ZqZsfA==
+X-Received: by 2002:adf:e846:0:b0:390:f0ff:2c10 with SMTP id ffacd0b85a97d-39979586da2mr2129503f8f.19.1742467772197;
+        Thu, 20 Mar 2025 03:49:32 -0700 (PDT)
+Received: from f.. (cst-prg-67-174.cust.vodafone.cz. [46.135.67.174])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997e3eb672sm249387f8f.95.2025.03.20.03.49.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 03:49:31 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v2] fs: sort out stale commentary about races between fd alloc and dup2()
+Date: Thu, 20 Mar 2025 11:49:22 +0100
+Message-ID: <20250320104922.1925198-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
-To: Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
- Joe Damato <jdamato@fastly.com>, Christoph Hellwig <hch@infradead.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, edumazet@google.com, pabeni@redhat.com,
- horms@kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
- viro@zeniv.linux.org.uk, jack@suse.cz, kuba@kernel.org, shuah@kernel.org,
- sdf@fomichev.me, mingo@redhat.com, arnd@arndb.de, brauner@kernel.org,
- akpm@linux-foundation.org, tglx@linutronix.de, jolsa@kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20250319001521.53249-1-jdamato@fastly.com>
- <Z9p6oFlHxkYvUA8N@infradead.org> <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
- <2d68bc91-c22c-4b48-a06d-fa9ec06dfb25@kernel.dk>
- <Z9r5JE3AJdnsXy_u@LQ3V64L9R2>
- <19e3056c-2f7b-4f41-9c40-98955c4a9ed3@kernel.dk>
- <Z9sCsooW7OSTgyAk@LQ3V64L9R2>
- <dc3ebb86-f4b2-443a-9b0d-f5470fd773f1@kernel.dk>
- <356ce660-fc2e-4016-a0d9-6896936669c2@samba.org>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-Cc: David Wei <dw@davidwei.uk>
-In-Reply-To: <356ce660-fc2e-4016-a0d9-6896936669c2@samba.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/19/25 19:15, Stefan Metzmacher wrote:
-> Am 19.03.25 um 19:37 schrieb Jens Axboe:
->> On 3/19/25 11:45 AM, Joe Damato wrote:
->>> On Wed, Mar 19, 2025 at 11:20:50AM -0600, Jens Axboe wrote:
-...
->> My argument would be the same as for other features - if you can do it
->> simpler this other way, why not consider that? The end result would be
->> the same, you can do fast sendfile() with sane buffer reuse. But the
->> kernel side would be simpler, which is always a kernel main goal for
->> those of us that have to maintain it.
->>
->> Just adding sendfile2() works in the sense that it's an easier drop in
->> replacement for an app, though the error queue side does mean it needs
->> to change anyway - it's not just replacing one syscall with another. And
->> if we want to be lazy, sure that's fine. I just don't think it's the
->> best way to do it when we literally have a mechanism that's designed for
->> this and works with reuse already with normal send zc (and receive side
->> too, in the next kernel).
-> 
-> A few month (or even years) back, Pavel came up with an idea
-> to implement some kind of splice into a fixed buffer, if that
-> would be implemented I guess it would help me in Samba too.
-> My first usage was on the receive side (from the network).
+Userspace may be trying to dup2() over a fd which is allocated but not
+yet populated.
 
-I did it as a testing ground for infra needed for ublk zerocopy,
-but if that's of interest I can resurrect the patches and see
-where it goes, especially since the aforementioned infra just got
-queued.
+Commentary about it is split in 2 parts (and both warrant changes):
 
-> But the other side might also be possible now we have RWF_DONTCACHE.
-> Instead of dropping the pages from the page cache, it might
-> be possible move them to fixed buffer instead.
-> It would mean the pages would be 'stable' when they are
-> no longer part of the pagecache.
-> But maybe my assumption for that is too naive...
+1. in dup2()
 
-That's an interesting idea
+It claims the issue is only relevant for shared descriptor tables which
+is of no concern for POSIX (but then is POSIX of concern to anyone
+today?), which I presume predates standarized threading.
 
-> Anyway that splice into a fixed buffer would great to have,
-> as the new IORING_OP_RECV_ZC, requires control over the
-> hardware queues of the nic and only allows a single process
+The comment also mentions the following systems:
+- OpenBSD installing a larval file -- they moved away from it, file is
+installed late and EBUSY is returned on conflict
+- FreeBSD returning EBADF -- reworked to install the file early like
+OpenBSD used to do
+- NetBSD "deadlocks in amusing ways" -- their solution looks
+Solaris-inspired (not a compliment) and I would not be particularly
+surprised if it indeed deadlocked, in amusing ways or otherwise
 
-Right, it basically borrows a hardware rx queue and that
-needs CAP_NET_ADMIN, and the user also has to set up steering
-rules.
+I don't believe mentioning any of these adds anything and the statement
+about the issue not being POSIX-relevant is outdated.
 
-> to provide buffers for that receive queue (at least that's how
-> I understand it). And that's not possible for multiple process
-> (maybe not belonging to the same high level application and likely
+dup2 description in POSIX still does not mention the problem.
 
-It's up to the user to decide who returns buffers back (and how to
-sychronise that) as the api is just a user mapped ring. Regardless,
-it's not a finished project, David and I looked at features we want
-to add to make life easier for multithreaded apps that can't throw
-that many queues. I see your point though.
+2. above fd_install()
 
-> non-root applications). So it would be great have splice into
-> fixed buffer as alternative to IORING_OP_SPLICE/IORING_OP_TEE,
-> as it would be more flexible to use in combination with
-> IORING_OP_SENDMSG_ZC as well as IORING_OP_WRITE[V]_FIXED with RWF_DONTCACHE.
-> 
-> I guess such a splice into fixed buffer linked to IORING_OP_SENDMSG_ZC
-> would be the way to simulate the sendfile2() in userspace?
+<quote>
+> We need to detect this and fput() the struct file we are about to
+> overwrite in this case.
+>
+> It should never happen - if we allow dup2() do it, _really_ bad things
+> will follow.
+</quote>
 
-Right, and that approach allows to handle intermediate errors,
-which is why it doesn't need to put restrictions on the input
-file.
+I have difficulty parsing it. The first sentence would suggest
+fd_install() tries to detect and recover from the race (it does not),
+the next one claims the race needs to be dealt with (it is, by dup2()).
 
+Given that fd_install() does not suffer the burden, this patch removes
+the above and instead expands on the race in dup2() commentary.
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+
+This contains the new commentary from:
+https://lore.kernel.org/linux-fsdevel/20250320102637.1924183-1-mjguzik@gmail.com/T/#u
+
+and obsoletes this guy hanging out in -next:
+ommit ec052fae814d467d6aa7e591b4b24531b87e65ec
+Author: Mateusz Guzik <mjguzik@gmail.com>
+Date:   Thu Dec 5 16:47:43 2024 +0100
+
+    fs: sort out a stale comment about races between fd alloc and dup2
+
+as in it needs to be dropped.
+
+apologies for the churn :)
+
+I think it will be best long term if this is one commit.
+
+ fs/file.c | 52 ++++++++++++++++++++++++++++------------------------
+ 1 file changed, 28 insertions(+), 24 deletions(-)
+
+diff --git a/fs/file.c b/fs/file.c
+index d0ecc3e59f2f..dc3f7e120e3e 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -626,22 +626,14 @@ void put_unused_fd(unsigned int fd)
+ 
+ EXPORT_SYMBOL(put_unused_fd);
+ 
+-/*
+- * Install a file pointer in the fd array.
+- *
+- * The VFS is full of places where we drop the files lock between
+- * setting the open_fds bitmap and installing the file in the file
+- * array.  At any such point, we are vulnerable to a dup2() race
+- * installing a file in the array before us.  We need to detect this and
+- * fput() the struct file we are about to overwrite in this case.
+- *
+- * It should never happen - if we allow dup2() do it, _really_ bad things
+- * will follow.
++/**
++ * fd_install - install a file pointer in the fd array
++ * @fd: file descriptor to install the file in
++ * @file: the file to install
+  *
+  * This consumes the "file" refcount, so callers should treat it
+  * as if they had called fput(file).
+  */
+-
+ void fd_install(unsigned int fd, struct file *file)
+ {
+ 	struct files_struct *files = current->files;
+@@ -1259,18 +1251,30 @@ __releases(&files->file_lock)
+ 	struct fdtable *fdt;
+ 
+ 	/*
+-	 * We need to detect attempts to do dup2() over allocated but still
+-	 * not finished descriptor.  NB: OpenBSD avoids that at the price of
+-	 * extra work in their equivalent of fget() - they insert struct
+-	 * file immediately after grabbing descriptor, mark it larval if
+-	 * more work (e.g. actual opening) is needed and make sure that
+-	 * fget() treats larval files as absent.  Potentially interesting,
+-	 * but while extra work in fget() is trivial, locking implications
+-	 * and amount of surgery on open()-related paths in VFS are not.
+-	 * FreeBSD fails with -EBADF in the same situation, NetBSD "solution"
+-	 * deadlocks in rather amusing ways, AFAICS.  All of that is out of
+-	 * scope of POSIX or SUS, since neither considers shared descriptor
+-	 * tables and this condition does not arise without those.
++	 * dup2() is expected to close the file installed in the target fd slot
++	 * (if any). However, userspace hand-picking a fd may be racing against
++	 * its own threads which happened to allocate it in open() et al but did
++	 * not populate it yet.
++	 *
++	 * Broadly speaking we may be racing against the following:
++	 * fd = get_unused_fd_flags();     // fd slot reserved, ->fd[fd] == NULL
++	 * file = hard_work_goes_here();
++	 * fd_install(fd, file);           // only now ->fd[fd] == file
++	 *
++	 * It is an invariant that a successfully allocated fd has a NULL entry
++	 * in the array until the matching fd_install().
++	 *
++	 * If we fit the window, we have the fd to populate, yet no target file
++	 * to close. Trying to ignore it and install our new file would violate
++	 * the invariant and make fd_install() overwrite our file.
++	 *
++	 * Things can be done(tm) to handle this. However, the issue does not
++	 * concern legitimate programs and we only need to make sure the kernel
++	 * does not trip over it.
++	 *
++	 * The simplest way out is to return an error if we find ourselves here.
++	 *
++	 * POSIX is silent on the issue, we return -EBUSY.
+ 	 */
+ 	fdt = files_fdtable(files);
+ 	fd = array_index_nospec(fd, fdt->max_fds);
 -- 
-Pavel Begunkov
+2.43.0
 
 
