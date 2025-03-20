@@ -1,156 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-44489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44490-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B992A69CFD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 00:58:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B7F9A69D16
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 01:15:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9E42426252
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Mar 2025 23:58:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64B9C188829A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 00:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10A72253BA;
-	Wed, 19 Mar 2025 23:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49985AD5A;
+	Thu, 20 Mar 2025 00:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="q+zJaD5Z"
+	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="pImCxAYP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0222D1DE3A9;
-	Wed, 19 Mar 2025 23:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425B879F2;
+	Thu, 20 Mar 2025 00:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742428702; cv=none; b=RXJm0eYgEzTrzNxukvGjmWFame/uNzATeuuEp03JZkYfGq4B//dMqhC1AprfNf6ZzycTeS+UK10qis6se0jHDw1u7j/AqlyMvTOC7E4MAlZrKI1joWYEVQaASzsHPP1hykc+7uQnxPppSLimGIJ0YVAXnJ105AeJxiwJLxo8k18=
+	t=1742429651; cv=none; b=LAZqGC9lwPJU/jcsY+CrXR0MdLfVxnOGDgVa5oabHd3RppWrxPE9dp0zwJ1dBb8S0s0csZCAPlSRWY6rcGoDwsOToed5nEHkhEBTgFO+P97sYO3J3vvvurY8LZXzoYaRzorq7VTRaOrknidEuUXEE2y4/+TLF/0QYpaZi2G/W9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742428702; c=relaxed/simple;
-	bh=rSoECxcX9b+KRE1xg6jEVohUbJ3UCjA1B7aestxTcxw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ltAe43yX/MwUjLmIJ+JOay2wecmLGS7IKurla7Gg2l5jwDf8PD7h5QZbX+0j0eDJRCuQbcHC7jOBxPLJSGDNoDD3dFpda0/wAl9j8bUeGuB6t0/set5DbxlE8ZA+n8A8jdHulQTDpIpOUTaPKp3ID2+oTWkuuRDL4yK2uFa9IFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=q+zJaD5Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FDC3C4CEE4;
-	Wed, 19 Mar 2025 23:58:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742428701;
-	bh=rSoECxcX9b+KRE1xg6jEVohUbJ3UCjA1B7aestxTcxw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q+zJaD5ZkbHyP65BU62zb0Z09w1g8gdTKWaro2JmheI6rghm/wSVjxss59SjF+HkY
-	 ghX1cHNnun2clJl+F8/XZIGBHM8Shbn5pDWMl5zoX/DWIMP6mbWkDdI+KYvtYL60o5
-	 exXZV9mru0SWOyahtPKOPl1WAimpdJ/TO0RkkxfE=
-Date: Wed, 19 Mar 2025 16:57:02 -0700
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrei Vagin <avagin@gmail.com>, David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Kalesh Singh <kaleshsingh@google.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Jann Horn <jannh@google.com>, Juan Yescas <jyescas@google.com>,
-	linux-mm@kvack.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
-	criu@lists.linux.dev,
-	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-	Pavel Tikhomirov <snorcht@gmail.com>,
-	Mike Rapoport <mike.rapoport@gmail.com>
-Subject: Re: [PATCH 1/2] fs/proc/task_mmu: add guard region bit to pagemap
-Message-ID: <2025031926-engraved-footer-3e9b@gregkh>
-References: <cover.1740139449.git.lorenzo.stoakes@oracle.com>
- <521d99c08b975fb06a1e7201e971cc24d68196d1.1740139449.git.lorenzo.stoakes@oracle.com>
- <857b2c3f-7be7-44e8-a825-82a7353665fb@redhat.com>
- <cd57ed04-c6b1-4df3-a5cb-a33078a08e74@lucifer.local>
- <09d7ca19-e6cc-4aa9-8474-8975373bdebd@redhat.com>
- <CANaxB-yMBSFeYcTr-PaevooSeHUkCN9GWTUkLZUNW2vxKzm0sg@mail.gmail.com>
- <10c3e304-1a6d-45ac-a3ad-7c0c8d00e03f@lucifer.local>
+	s=arc-20240116; t=1742429651; c=relaxed/simple;
+	bh=llHSV+7G4W8fjSvREfF+ZiSJfXs53TD9xSG8C/Szsz4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uyG8SLSIfzid9mtn6oYSqaFSpCWILqKCmJuSQfVirjXtnQ7jYDhvRxQVnUr2Kil/SR+ONc0LgYZgRHftE+8D4qRewjjn/XeuE1MMaaZnx+ADQ2wUShmOsufkpMEKLq08rDcndFA4uUvEx6Z94ONAQJbkE50Mf13SleZYC0Vp17U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=pImCxAYP; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4ZJ5fG2nsgz9skV;
+	Thu, 20 Mar 2025 01:13:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
+	s=MBO0001; t=1742429638;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=xmF6T9wgWmDv9JlK9e1PAWOlAEmjIU7jY2iEqbhLZsg=;
+	b=pImCxAYP4uWrWjZedSGJs0CSHryiN9gJD029xCznk/r+X84g/EPFnz471bEiO51Gw6xInW
+	akOflDfmBkbF0zHpzRgHSs8oOv/ZmfpjZ3mrx4IcF1CXDyQQH3Ch8neWHO1a0Rsa9GMaJB
+	rAMrRKwjHzLaBUmVotYfTtMzVQZE9wAt51SXRrfA5QYs0C/MozV0UBxHtLD6M3h8ojcsF0
+	w2u/1T/8rTwFmcs+AUEP8wWLpI3awXm4AvXG5U76FqwfsepL7uDdN7Y7QxR7VYGJqrt6IH
+	HugIVlI+pDKM4wfZKAfFIAbEYv9VrCK/7bvvCS9G5J6PbecxoKgnqp0L27syug==
+From: Ethan Carter Edwards <ethan@ethancedwards.com>
+Subject: [RFC PATCH v2 0/8] staging: apfs: init APFS filesystem support
+Date: Wed, 19 Mar 2025 20:13:49 -0400
+Message-Id: <20250319-apfs-v2-0-475de2e25782@ethancedwards.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <10c3e304-1a6d-45ac-a3ad-7c0c8d00e03f@lucifer.local>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL5d22cC/yXNQQ7CIBCF4as0sxYDFFp05T1MFwiDnYVtAw1qG
+ u4utsv/ZfLNBgkjYYJrs0HETInmqYY8NeBGOz2Rka8NkkvNpeDMLiGxi1eqN73RwXCop0vEQJ+
+ duQ+1R0rrHL+7msV/PYBWqAPIgnHmfbC2M2330O6Ga33n0L9t9Ons5hcMpZQf1qa7ZKAAAAA=
+X-Change-ID: 20250210-apfs-9d4478785f80
+To: brauner@kernel.org, tytso@mit.edu, jack@suse.cz, 
+ viro@zeniv.linux.org.uk
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ ernesto.mnd.fernandez@gmail.com, dan.carpenter@linaro.org, 
+ sven@svenpeter.dev, ernesto@corellium.com, gargaditya08@live.com, 
+ willy@infradead.org, asahi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linux-staging@lists.linux.dev, 
+ Ethan Carter Edwards <ethan@ethancedwards.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5942;
+ i=ethan@ethancedwards.com; h=from:subject:message-id;
+ bh=llHSV+7G4W8fjSvREfF+ZiSJfXs53TD9xSG8C/Szsz4=;
+ b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkp2QXk4ekFKWGJEOXFoNThlVGp6e
+ GhQcXlVeHBOK08zYS9jVy9mbDJOOERQRDg3d3kxcjc4L2NmRGZFCjZBTnY2Y3k3b3VWeUN6NDhh
+ OVhwS0dWaEVPTmlrQlZUWlBtZm81ejJVSE9Hd3M2L0xrMHdjMWlaUUlZd2NIRUsKd0VURWZ6QXl
+ uSkM5K2lwbHJybm1HNDl1ZDlrVzh6OHhIYnlCN092U2ZkcE1DbHVtVmJ2L1lmanZJYzU2bGozSA
+ p2VjFvNFFPMzlYTnVIc3pJMnBZZHVNRjNLMWZ2ODEybFUxVzVBR2V0VGFzPQo9UVVCWgotLS0tL
+ UVORCBQR1AgTUVTU0FHRS0tLS0tCg==
+X-Developer-Key: i=ethan@ethancedwards.com; a=openpgp;
+ fpr=2E51F61839D1FA947A7300C234C04305D581DBFE
+X-Rspamd-Queue-Id: 4ZJ5fG2nsgz9skV
 
-On Wed, Mar 19, 2025 at 07:12:45PM +0000, Lorenzo Stoakes wrote:
-> +cc Greg for stable question
-> 
-> On Wed, Mar 19, 2025 at 11:22:40AM -0700, Andrei Vagin wrote:
-> > On Mon, Feb 24, 2025 at 2:39 AM David Hildenbrand <david@redhat.com> wrote:
-> > >
-> > > On 24.02.25 11:18, Lorenzo Stoakes wrote:
-> 
-> [snip]
-> > > >>
-> > > >> Acked-by: David Hildenbrand <david@redhat.com>
-> > > >
-> > > > Thanks! :)
-> > > >>
-> > > >> Something that might be interesting is also extending the PAGEMAP_SCAN
-> > > >> ioctl.
-> > > >
-> > > > Yeah, funny you should mention that, I did see that, but on reading the man
-> > > > page it struck me that it requires the region to be uffd afaict? All the
-> > > > tests seem to establish uffd, and the man page implies it:
-> > > >
-> > > >         To start tracking the written state (flag) of a page or range of
-> > > >         memory, the UFFD_FEATURE_WP_ASYNC must be enabled by UFFDIO_API
-> > > >         ioctl(2) on userfaultfd and memory range must be registered with
-> > > >         UFFDIO_REGISTER ioctl(2) in UFFDIO_REGISTER_MODE_WP mode.
-> > > >
-> > > > It would be a bit of a weird edge case to add support there. I was excited
-> > > > when I first saw this ioctl, then disappointed afterwards... but maybe I
-> > > > got it wrong?
-> >
-> > > >
-> > >
-> > > I never managed to review that fully, but I thing that
-> > > UFFD_FEATURE_WP_ASYNC thingy is only required for PM_SCAN_CHECK_WPASYNC
-> > > and PM_SCAN_WP_MATCHING.
-> > >
-> > > See pagemap_scan_test_walk().
-> > >
-> > > I do recall that it works on any VMA.
-> > >
-> > > Ah yes, tools/testing/selftests/mm/vm_util.c ends up using it for
-> > > pagemap_is_swapped() and friends via page_entry_is() to sanity check
-> > > that what pagemap gives us is consistent with what pagemap_scan gives us.
-> > >
-> > > So it should work independent of the uffd magic.
-> > > I might be wrong, though ...
-> >
-> >
-> > PAGEMAP_SCAN can work without the UFFD magic. CRIU utilizes PAGEMAP_SCAN
-> > as a more efficient alternative to /proc/pid/pagemap:
-> > https://github.com/checkpoint-restore/criu/blob/d18912fc88f3dc7bde5fdfa3575691977eb21753/criu/pagemap-cache.c#L178
-> >
-> 
-> Yeah we ascertained that - is on my list, LSF coming up next week means we
-> aren't great on timing here, but I'll prioritise this. When I'm back.
-> 
-> > For CRIU, obtaining information about guard regions is critical.
-> > Without this functionality in the kernel, CRIU is broken. We probably should
-> > consider backporting these changes to the 6.13 and 6.14 stable branches.
-> >
-> 
-> I'm not sure on precedent for backporting a feature like this - Greg? Am
-> happy to do it though.
+Hello everyone,
 
-If it's a regression, sure, we can take it for stable.
+In series 2, I have fixed the formatting with clang-format of the lzfse
+library and fixed the comments to use linux kernel styles. I also
+removed my Copyright from files where it was not appropriate. 
+Additionally, I removed the encode.c files as they were unused and 
+not compiled into the final module They should be easy enough to add 
+back if needed. I also rebased on Linus's tree, just in case. 
+Nothing broke! ;)
 
-> As a stop gap we can backport the pagemap feature if Greg feels this is
-> appropriate?
+I am holding off on adding Ernesto's Co-developed-by and Signed-off-by
+tags until I get a better grasp of where this module is headed. I hope
+to here back from Christian and the LSFMMBPF folks sometime in the next
+few weeks.
 
-Which do the maintainers of the code feel is appropriate?  I'll defer to
-them for making that call :)
+I understand the jury is still out on supporting both reading and
+writing. As it stands, I have configured the code to support
+reading/writing on mount, but upstream auto-rw is configurable via a
+CONFIG option. Some people have expressed that they want the module
+upstreamed even if only read is supported. I will stay tuned and make
+changes as needed.
 
-thanks,
+Additionally, I realize that staging/ may not be the correct location
+for the driver. However, I am basing my upstream process off of the
+erofs process. They started in staging. I understand that the correct
+tree and dir will be discussed as next weeks LSFMMBPF summit, 
+so I will wait on their feedback before making any moves.
 
-greg k-h
+I am curious to hear everyone's thoughts on this and to start getting
+the ball rolling for the code-review process. Please feel free to
+include/CC anyone who may be interested in this driver/the review
+process. I have included a few people, but have certainly missed others.
+
+Ernesto, the original author, encouraged me to submit any code
+improvements upstream instead of submitting here. I am upstreaming my 
+code improvements to his tree, but I will continue the effort here in
+caes upstream fs folks are interested. In any case, my goal here is to
+create discussion around the project and make the code better while I am
+at it.
+
+Some people on Asahi channels have mentioned that this driver could be
+helpful for implementing certain features like the fingerprint reader and
+simplify the boot process some. This feedback encourages me to continue
+with this effort. Asahi folks, keep at it, y'all are awesome.
+
+[0]: https://lore.kernel.org/lkml/20250307165054.GA9774@eaf/
+
+Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
+---
+Changes in v2:
+- remove Ethan copyright in files
+- cleanup/format lzfse code and comments
+- fix a few checkpatch problems
+- Link to v1: https://lore.kernel.org/r/20250314-apfs-v1-0-ddfaa6836b5c@ethancedwards.com
+
+---
+Ethan Carter Edwards (8):
+      staging: apfs: init lzfse compression library for APFS
+      staging: apfs: init unicode.{c,h}
+      staging: apfs: init apfs_raw.h to handle on-disk structures
+      staging: apfs: init libzbitmap.{c,h} for decompression
+      staging: apfs: init APFS
+      staging: apfs: init build support for APFS
+      staging: apfs: init TODO and README.rst
+      MAINTAINERS: apfs: add entry and relevant information
+
+ MAINTAINERS                                      |    6 +
+ drivers/staging/Kconfig                          |    2 +
+ drivers/staging/apfs/Kconfig                     |   13 +
+ drivers/staging/apfs/Makefile                    |   10 +
+ drivers/staging/apfs/README.rst                  |   87 +
+ drivers/staging/apfs/TODO                        |    7 +
+ drivers/staging/apfs/apfs.h                      | 1192 ++++++++
+ drivers/staging/apfs/apfs_raw.h                  | 1566 +++++++++++
+ drivers/staging/apfs/btree.c                     | 1174 ++++++++
+ drivers/staging/apfs/compress.c                  |  441 +++
+ drivers/staging/apfs/dir.c                       | 1439 ++++++++++
+ drivers/staging/apfs/extents.c                   | 2370 ++++++++++++++++
+ drivers/staging/apfs/file.c                      |  163 ++
+ drivers/staging/apfs/inode.c                     | 2234 +++++++++++++++
+ drivers/staging/apfs/key.c                       |  337 +++
+ drivers/staging/apfs/libzbitmap.c                |  448 +++
+ drivers/staging/apfs/libzbitmap.h                |   32 +
+ drivers/staging/apfs/lzfse/lzfse.h               |   86 +
+ drivers/staging/apfs/lzfse/lzfse_decode.c        |   66 +
+ drivers/staging/apfs/lzfse/lzfse_decode_base.c   |  725 +++++
+ drivers/staging/apfs/lzfse/lzfse_encode_tables.h |  224 ++
+ drivers/staging/apfs/lzfse/lzfse_fse.c           |  214 ++
+ drivers/staging/apfs/lzfse/lzfse_fse.h           |  632 +++++
+ drivers/staging/apfs/lzfse/lzfse_internal.h      |  599 ++++
+ drivers/staging/apfs/lzfse/lzfse_tunables.h      |   50 +
+ drivers/staging/apfs/lzfse/lzvn_decode_base.c    |  721 +++++
+ drivers/staging/apfs/lzfse/lzvn_decode_base.h    |   53 +
+ drivers/staging/apfs/lzfse/lzvn_encode_base.h    |  105 +
+ drivers/staging/apfs/message.c                   |   29 +
+ drivers/staging/apfs/namei.c                     |  132 +
+ drivers/staging/apfs/node.c                      | 2069 ++++++++++++++
+ drivers/staging/apfs/object.c                    |  315 +++
+ drivers/staging/apfs/snapshot.c                  |  683 +++++
+ drivers/staging/apfs/spaceman.c                  | 1433 ++++++++++
+ drivers/staging/apfs/super.c                     | 2098 ++++++++++++++
+ drivers/staging/apfs/symlink.c                   |   77 +
+ drivers/staging/apfs/transaction.c               |  959 +++++++
+ drivers/staging/apfs/unicode.c                   | 3156 ++++++++++++++++++++++
+ drivers/staging/apfs/unicode.h                   |   27 +
+ drivers/staging/apfs/xattr.c                     |  911 +++++++
+ drivers/staging/apfs/xfield.c                    |  171 ++
+ 41 files changed, 27056 insertions(+)
+---
+base-commit: a7f2e10ecd8f18b83951b0bab47ddaf48f93bf47
+change-id: 20250210-apfs-9d4478785f80
+
+Best regards,
+-- 
+Ethan Carter Edwards <ethan@ethancedwards.com>
+
 
