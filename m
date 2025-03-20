@@ -1,89 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-44508-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44509-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B83C7A69F6D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 06:39:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 597F9A69F7C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 06:48:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 460D13BD47F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 05:39:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61AF3170EC1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 05:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754FC1D5CDD;
-	Thu, 20 Mar 2025 05:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBCA1E7C23;
+	Thu, 20 Mar 2025 05:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mH/nYgnZ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FevDVPUt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11AEC1CB337
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 05:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72917482;
+	Thu, 20 Mar 2025 05:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742449171; cv=none; b=LjV8Nqj2RMjCKM2cnX3ZjyQIcwj4fKrROtCIeZtaJUNjWNzqHE4Q1os4ZgF1WuIze7ah6QvkjTDrNdkxI19LZW8Dx5Sb2KbLj0faR5y1Spc+yUF90LVmmvXuF+kbKApq9QIuVvojykJXSEagCVuo8DkAc4vigl8M1PJw/BDm6jU=
+	t=1742449696; cv=none; b=SENvlyNtyHns6+BodpfkHSkM09KpvEx/vu091ojYwthDCwfmR33Ynw/kctJ7RwIIgVS1EGtH3puBujdJbO8KAQFJxg9KqOLlq9he7dR5/OlRq2r2EG/d+D2lEdKj/JwIMqtqFmg0EXgYFniNMfkRb+Z7sXFuuYKH3iLXGHntEms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742449171; c=relaxed/simple;
-	bh=HSCSKfhfDD7I1zTxBolH/tzZ9w0jNV+XNDv1/LCD76o=;
+	s=arc-20240116; t=1742449696; c=relaxed/simple;
+	bh=ZCqa1kK4yN7nk/NG8bkHiIXdA+DyndLxxAyigDwUJbk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OaXoBejeTS+SiYxgbHunHr309KqNRtoOdSAaG5buTkoRyn5qrvF1b76QvNa/SH278jKOtxTUI1U6zQNi0iZcGpv6aNPk1Ks2JfTrTH7pXgpo4wOoM9PvZjyPCAbtiF02Doq8LmbDOrNxEejwcPv7ioU83vNvu37DNw5Z66OEJ5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mH/nYgnZ; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-39727fe912cso76843f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Mar 2025 22:39:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742449168; x=1743053968; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=T1xfmCIlDCLZv6ta1QqTTHp5D0zhqGln1AOW6eZ+4nQ=;
-        b=mH/nYgnZW/DbN1VRYVvFwzepXqzkrut4fgO2GX5Lsf6Nk2+Ixby17BeC8gr1cftnDi
-         jKfx26DnI4yq82lZXLi/i20RUM+sxeWxLWyp9D8Gx5tIGGfhN2rLsvSEQElg79EOyPUC
-         1rnQD/4ermbWGgOFNJ2WRBGR2lf9zUJng/gQGzuHyPQN+qqcgSkJVUla+GHN7rq2bd4A
-         Bgo6Wy8nMkfhREskXKc5Ily/bZsuv9858HvUcXuIuP8yWXi9aeGeOwtOO9kHukpmWbBu
-         Mwy33St28bzsb6HlIpPoqOA5i9Zfnevv0OxA4QIuqZ15wZzO5ELhR3DtbpNwPbbofuu3
-         v7og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742449168; x=1743053968;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T1xfmCIlDCLZv6ta1QqTTHp5D0zhqGln1AOW6eZ+4nQ=;
-        b=vCmqGm2JqA3rHu47ADev2nJH0DmQTGRHBwhZqzFwf2h3V95CxfZ3osCUCi/+uOx0VJ
-         NDQNJ21wI7Ycrg0Tkec9TQEvFY1tcz/2ezc9ONpfLBj5HQqwlQOLaPGTtNGHtZ2jv9+G
-         GON/lGCFx+B93Gs2R+t8RkRPJ1AexpyBcoDITaylBGskbt4Xl8Ij565mroBAIhixHEmO
-         u0joaPXq6GRLVZOv5jPe7LBD6U4jxw7XVjJ9YXiMJxKCiRKvDz9eQcGlyPpy739N5Zsb
-         LDhC0jK+64umndU8fIGawfcDhEJpYYhoanWlBrEKEXybhtdRGY4tmKOw+rtB3G+rUd+z
-         LpQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHN7yLN4csMpZSpDaUfJ68vdHvFjyAW7yjhgHFlH4DXMQVbC0IvT/AOx4aAAbCUgL7Im6xJ+1Sq5BR2uk8@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy59V3XWtS10di1u7rfp12VyIwofA+qK/ljBw4WXMY4Q9YBSOGL
-	vaTZRojo6AqhcwnjRRtftG3WycfbmJJUwV03EyIf47apaF2tRUmVlheX7wvL/Q8=
-X-Gm-Gg: ASbGncsDxDi2nNM/taMvI86J+FlATTRKd2L4MYuroCK509GUCfQIptX0AQuEwpHzz7o
-	uqwMqy6qDxtC17KZETwkQT7/xvAtpbIHzDB9vuDkcO1S0XaEDPMfa9FjKyOZhQehq48TeKItoaB
-	pSKt0tG2y9NYqRx9L/nmnae/1WCcs70ob3H63hot7X/03BzSmXZJHz8kxkEFexy2zMKxgeOsiLr
-	ZEp3rb4ocrsW1H0oKASL34YJ8xwQJeMueY9ux0MPDep8jqgA2Ju58vblGhIFaS3sEo4RrQWKyoD
-	tdanSy7H85taxXSHTAo3b7xtvLRuW6IbS4RnLvWEUuO5Rp0YeQ==
-X-Google-Smtp-Source: AGHT+IGQzpC9EimzyS/t+4sa9m1WxjhJGJdtlCwpcWgQVOt2GkYCyDGik+tts44dUuzfVSiwyZSIYA==
-X-Received: by 2002:a5d:5888:0:b0:391:231b:8e0d with SMTP id ffacd0b85a97d-39973b32bb3mr6150923f8f.39.1742449168214;
-        Wed, 19 Mar 2025 22:39:28 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-395c83b6a10sm22976809f8f.36.2025.03.19.22.39.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 22:39:27 -0700 (PDT)
-Date: Thu, 20 Mar 2025 08:39:24 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ethan Carter Edwards <ethan@ethancedwards.com>
-Cc: brauner@kernel.org, tytso@mit.edu, jack@suse.cz,
-	viro@zeniv.linux.org.uk,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	ernesto.mnd.fernandez@gmail.com, sven@svenpeter.dev,
-	ernesto@corellium.com, gargaditya08@live.com, willy@infradead.org,
-	asahi@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [RFC PATCH v2 0/8] staging: apfs: init APFS filesystem support
-Message-ID: <541236f7-adb5-4514-a888-19fef74c14f0@stanley.mountain>
-References: <20250319-apfs-v2-0-475de2e25782@ethancedwards.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=E6VYi2F4WA2WyjIVoszfA1LfXxKZqgz0uVQPzj6ZWfemypcNTtTWJX+fNTu7TM9GpC1jeNnab2hxGkoMbbUSYu2Cm29OaR3eBes1xXMBILwwSILEPXPyQ6xv2UhYg46kWMrJEgZK40DEA2vVQCC3UKnm3Onql+7ge9Xc4eG3ge0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FevDVPUt; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=whmPEYHG6N1H8UlgtSGjiPfpFSDvL0exFGvh42fP/5g=; b=FevDVPUt3SbAei9b89H4qsOjgq
+	+CAmjV0Pw3nprvaf5FRhHJQyRNhvIKAW0Tnev6dtJD/er8x3hRC+t3i1JQjNFvoSsmMuWwLkrtVbm
+	xmsstUnYCIZDSbY0iZnkyqH/AsRno2o6Fx9dK7qoEqBQdRoSWT+I47eRXq+e5FQq/r0p4QVFUx7w5
+	lwIN8FNswBc7XiRuqRF7odDNVxi7CcRwdcGcc+/JgutaEl0tK8pXZeQDeFCRoru93RQgd3R4K4fUr
+	EzS0heeUB9AD9+Aux7VDk2D3jKfmQF+oex2GEjb/s+zUixuQMJGKpwSer5GfM6kCTPeTQWHBxBI9z
+	K5iFxIAA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tv8lH-0000000BFMr-3Blz;
+	Thu, 20 Mar 2025 05:48:11 +0000
+Date: Wed, 19 Mar 2025 22:48:11 -0700
+From: "hch@infradead.org" <hch@infradead.org>
+To: Kanchan Joshi <joshi.k@samsung.com>
+Cc: "hch@infradead.org" <hch@infradead.org>, Qu Wenruo <wqu@suse.com>,
+	Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
+	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"josef@toxicpanda.com" <josef@toxicpanda.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: Re: [LSF/MM/BPF TOPIC] File system checksum offload
+Message-ID: <Z9usG3LELEWPYSUG@infradead.org>
+References: <b8790a76-fd4e-49b6-bc08-44e5c3bf348a@wdc.com>
+ <Z6B2oq_aAaeL9rBE@infradead.org>
+ <bb516f19-a6b3-4c6b-89f9-928d46b66e2a@wdc.com>
+ <eaec853d-eda6-4ee9-abb6-e2fa32f54f5c@suse.com>
+ <cfe11af2-44c5-43a7-9114-72471a615de7@samsung.com>
+ <Z6GivxxFWFZhN7jD@infradead.org>
+ <edde46e9-403b-4ddf-bd73-abe95446590c@samsung.com>
+ <CGME20250318080742epcas5p31b31b3024d6f7d9d150c8a7c2db4dffd@epcas5p3.samsung.com>
+ <Z9kpyh_8RH5irL96@infradead.org>
+ <435cf6be-98e7-4b8b-ae42-e074091de991@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,12 +77,17 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250319-apfs-v2-0-475de2e25782@ethancedwards.com>
+In-Reply-To: <435cf6be-98e7-4b8b-ae42-e074091de991@samsung.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-I don't think this filesystem should be merged.  The real upstream
-is out of tree.
+On Wed, Mar 19, 2025 at 11:36:28PM +0530, Kanchan Joshi wrote:
+> I tried to describe that in the cover letter of the PoC:
+> https://lore.kernel.org/linux-btrfs/20250129140207.22718-1-joshi.k@samsung.com/
 
-regards,
-dan carpenter
+I don't think it does as people have pointed that out multiple times.
+Once you do checksums on the device they are not end to end, either in
+the T10 DIF definition or that of file system checksums.  You leave a
+huge glaring gap in the protection envelope.  So calling this "offload"
+is extremely dishonest and misleading.
 
 
