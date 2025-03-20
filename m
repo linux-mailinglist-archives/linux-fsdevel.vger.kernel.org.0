@@ -1,121 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-44597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B57EEA6A8C8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 15:39:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8169FA6A8C3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 15:39:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C862189F6E6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 14:32:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 825418813CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 14:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC521D63DA;
-	Thu, 20 Mar 2025 14:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B54D1E0E13;
+	Thu, 20 Mar 2025 14:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfJ82MWh"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TTFywso2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164EC1C5D77
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 14:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF741E32C3
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 14:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742481126; cv=none; b=ZZNGYixvKsk/RcrBWQzhJRWqiNF1HmrCnla923YyXX0EhfJX6JYTilydndorLojkPTqkKCIiMAW65wPkL3hdSlHPA7UZg/OMMI/2Aidt+v3Bzw40dab2bk4KS+JY+Gtq0+E7yNuB5I0/dJZdl2TMTCejQk2AbG5ekghs+U5+kow=
+	t=1742481437; cv=none; b=etLeWNVeT8QR1I3dI/5dkO1KWuF52puH8bWlcOQ/CKuaPEG5yvAleU4LA8XaCd+fec0N9ZviUL/ef111uh7joaysW9NcGcR2fLaISdoQ907k7fiEPUla1yuAyzuZnhjiv9QqGDeApKXiDS96ikgaZFPUCAqztSmJXyIQ0IB872Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742481126; c=relaxed/simple;
-	bh=x3rx5y5bS6zJzOBbuJmSeYptnEPVAOZxKshEmcDR6nk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jHvWquoTzsayv0FXHJlIwCxLsaq58/dnEvKFpe0UkqXlu9x/awR5Md7YVJK5s/P342ChMLdK55WBkD6Abe0fVf/E3pq/0y/eRyFUb1fFaGbSgad7SvqWXjeG8OIC2AA+3rXwlACpMqrG4BJTbSjfcDfvlUpwVPyDTzQJ0r7hV/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cfJ82MWh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFCAFC4CEDD;
-	Thu, 20 Mar 2025 14:32:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742481125;
-	bh=x3rx5y5bS6zJzOBbuJmSeYptnEPVAOZxKshEmcDR6nk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cfJ82MWhMrObOKUHVJtj5af7iOQ6P+XHO0aBg/y0X9yZUPvYYBzTXsl0sDe/e8M9b
-	 5jUltwJPOQsOmRz8NswCvHWeWZRJEfGWBZyyPE/JJ7Ifzqnt6uSf1DrHTUjQ5Gihyp
-	 m6UUPc4G/vszx556mhBv+s34ZCdTQljMGKdo8ckfoeSduyuqPgrw/bN+utwiMyp2wo
-	 fzwPe1Llw826fYrw9DiDyyjVCFzMw5T1HMaEFchfYXl1slwUrkF3f/HqozJa3No2kj
-	 UocJjfzAo5aMuR+O8eAuj0Q387wIQVVWnMmDzwTOBtHAAB/QtypkO+XzFYepZskJ4E
-	 u9Z5xXTlFdCrg==
-Date: Thu, 20 Mar 2025 15:32:01 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
-	Lennart Poettering <lennart@poettering.net>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
-	Mike Yuan <me@yhndnzj.com>
-Subject: Re: [PATCH v3 1/4] pidfs: improve multi-threaded exec and premature
- thread-group leader exit polling
-Message-ID: <20250320-amtsmissbrauch-wochen-97b5dd092bdf@brauner>
-References: <20250320-work-pidfs-thread_group-v3-0-b7e5f7e2c3b1@kernel.org>
- <20250320-work-pidfs-thread_group-v3-1-b7e5f7e2c3b1@kernel.org>
- <20250320105701.GA11256@redhat.com>
- <20250320-erzwungen-adjektiv-6a73b88f5f30@brauner>
- <20250320140159.GD11256@redhat.com>
+	s=arc-20240116; t=1742481437; c=relaxed/simple;
+	bh=dKWHt6FujybyOyL5cedYtqrafz17Hc5CfWsQ5YrnuQ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bXQPfYw0qDfYFmOtjNQJhTfMafUKQfyHRYQguSl3LgCRoaPDPSFRu2NN5vg6w5RF85UPQdll6xpdQLiygoAtgfLIoasLwYGKeuPr/q0T40I53/jLK2TYN48kBkNDQHLN5umIxFqiBxGW98KeeV6hHEU+omvZbptH4Ku/ju0FMIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TTFywso2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742481435;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OhfkO0nOeFh31dBWlpIBHPp/23oMIm4/ZzrV7nDHXfs=;
+	b=TTFywso2Ojbbk91z0cot3WKzNQzE37s53hI/f1SKJmBuXE0AV7gQFfbJMQA+Nb2o44fZ70
+	4ny8nYiA02RmXk5yBkvvI2tyP+zRnEy38zYMYX1/guvTC7B8waK/mugIGkKZ/NprI0oTaG
+	76ASQ+x2qm07nuSP0GJ63Is9pn7BYKg=
+Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com
+ [209.85.221.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-422-2qONZDfXNp2TuBzvevIMag-1; Thu, 20 Mar 2025 10:37:12 -0400
+X-MC-Unique: 2qONZDfXNp2TuBzvevIMag-1
+X-Mimecast-MFC-AGG-ID: 2qONZDfXNp2TuBzvevIMag_1742481432
+Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-523f6535842so301551e0c.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 07:37:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742481432; x=1743086232;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OhfkO0nOeFh31dBWlpIBHPp/23oMIm4/ZzrV7nDHXfs=;
+        b=pj6/rlpymPN/0tzX+Kvb9Fu8Z0v5r/ojwAKa2mlV3dAQ1MMESVV3CKbWNDh9oiGmV2
+         59Uw4sfgDu4wXQJVYj+Llk+ZsLznMmEXS7vdjny0Bk9/Ue8LTRwsIZuQ3UL3CGywqmMO
+         pnSF7sCi7H7FC4N1Xfg1tC3GCNi+n+6NpNQtafzYrWaLPxZzre9Oy4qPEpbF7XvI3jeL
+         SqcXgZF2JCgAj3/nSglD8iuoRB/LCXU8MxGw8XK3Nx0ZxB3mANUMyDDErmPuqRx0/onT
+         nQiUnYRz6OJPTxczBPXXIoLA7zaGdT+UxJh0pVscYJ+QYJ0jPokeRCoalXEtjpOC+O7t
+         7mBg==
+X-Forwarded-Encrypted: i=1; AJvYcCXPYgjc9WVgBI/0v1nbBRpiOeB2s2b1V18SpKTw4j3diHWtp7AjmYi5vlYxHmEUrzp8FC6hjofk5y0N7CrL@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZlR6CdQzTMsR49yIoCCr0jGLwz02KEqvcGuT2LgRnP7EehUCI
+	FzE27eZIoQhQ8VgqbOntKZpyHTQZlAUCdoPv8/8m6CWoaMAFc8rG5733fYLpVbR/r1H7+qUOJg0
+	rDCrQNQkl+juVMl+gndGKyBxyx9ZdxyS7qAf9zX4zSAVcabWyVKG1FOp+L1Ru3VhAdnn5RzRI+i
+	2Gu2C+p6hydkLG0EjHFTAodPq+DmRh+8WHZEDf5g==
+X-Gm-Gg: ASbGncvhB3lMr9HUdgr13RR/9/lxwYtJfB6WZwcwULWF7hz0ufSpjw/xwfPIkPNUMdf
+	O9fPlDili+DEtXCMMSxaUst9VS1vs5E445y1ZoB9cXNsdCCGeebgy64Iu6gSpWZoDR8f9PvC5CA
+	==
+X-Received: by 2002:a05:6122:608b:b0:520:60c2:3fb with SMTP id 71dfb90a1353d-525960812c0mr3062146e0c.0.1742481431793;
+        Thu, 20 Mar 2025 07:37:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGZzOib+M1uSgBNdPU9As6RS1qawt2FeKNo41kWJkJdCE9L3Fh8fjGANZNClbTw9gJ8Xn1+es3nosLVtfd7E60=
+X-Received: by 2002:a05:6122:608b:b0:520:60c2:3fb with SMTP id
+ 71dfb90a1353d-525960812c0mr3062090e0c.0.1742481431364; Thu, 20 Mar 2025
+ 07:37:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250320140159.GD11256@redhat.com>
+References: <Z8-ReyFRoTN4G7UU@dread.disaster.area> <Z9ATyhq6PzOh7onx@fedora>
+ <Z9DymjGRW3mTPJTt@dread.disaster.area> <Z9FFTiuMC8WD6qMH@fedora>
+ <7b8b8a24-f36b-d213-cca1-d8857b6aca02@redhat.com> <Z9j2RJBark15LQQ1@dread.disaster.area>
+ <Z9knXQixQhs90j5F@infradead.org> <Z9k-JE8FmWKe0fm0@fedora>
+ <Z9u-489C_PVu8Se1@infradead.org> <Z9vGxrPzJ6oswWrS@fedora> <Z9wko1GfrScgv4Ev@infradead.org>
+In-Reply-To: <Z9wko1GfrScgv4Ev@infradead.org>
+From: Ming Lei <ming.lei@redhat.com>
+Date: Thu, 20 Mar 2025 22:36:59 +0800
+X-Gm-Features: AQ5f1Jr8FjeQhNt7BbY6PJzfG3RS9LN-fvPsePmLRNjHLbVpaQVZTtsZ8BaAdPI
+Message-ID: <CAFj5m9J1BGiqG+P+7kidH4V0hR9f-BmUar=0ADDR9wpGbnWSZw@mail.gmail.com>
+Subject: Re: [PATCH] the dm-loop target
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Dave Chinner <david@fromorbit.com>, Mikulas Patocka <mpatocka@redhat.com>, 
+	Jens Axboe <axboe@kernel.dk>, Jooyung Han <jooyung@google.com>, Alasdair Kergon <agk@redhat.com>, 
+	Mike Snitzer <snitzer@kernel.org>, Heinz Mauelshagen <heinzm@redhat.com>, zkabelac@redhat.com, 
+	dm-devel@lists.linux.dev, linux-block@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 20, 2025 at 03:02:00PM +0100, Oleg Nesterov wrote:
-> On 03/20, Christian Brauner wrote:
+On Thu, Mar 20, 2025 at 10:22=E2=80=AFPM Christoph Hellwig <hch@infradead.o=
+rg> wrote:
+>
+> On Thu, Mar 20, 2025 at 03:41:58PM +0800, Ming Lei wrote:
+> > > That does not match my observations in say nvmet.  But if you have
+> > > numbers please share them.
 > >
-> > What you seem to be saying is that you want all references to
-> > PIDFD_THREAD to be dropped in the comments because the behavior is now
-> > identical.
-> 
-> yes, to me the references to PIDFD_THREAD look as if PIDFD_THREAD
-> has some subtle differences in behavior.
-> 
-> With or without PIDFD_THREAD, do_notify_pidfd() is called and pidfd_poll()
-> returns EPOLLIN when this thread (leader or not) is ready for wait() from
-> the parent or debugger.
-> 
-> But!
-> 
-> > So I'm wiping the comments but I very much disagree that they are
-> > misleading/useless.
-> 
-> No, if you don't agree than do not remove the comments ;)
+> > Please see the result I posted:
+> >
+> > https://lore.kernel.org/linux-block/Z9FFTiuMC8WD6qMH@fedora/
+>
+> That shows it improves numbers and not that it doens't.
 
-No, it's fine. We always find some compromise and I've reworded the
-comments substantially to not rely on PIDFD_THREAD at all. I always
-appreciate the feedback, don't get me wrong!
+Fine, then please look at the result in the following reply:
 
-> And... can you explain the motivation for this patch?
+https://lore.kernel.org/linux-block/Z9I2lm31KOQ784nb@fedora/
 
-Yes, sure.
+Thanks,
 
-> 
-> I mean... Again, the current PIDFD_THREAD/group-leader behavior is
-> not well defined, this is clear.
-> 
-> But if user-space does sys_pidfd_open(group_leader_pid) and needs the
-> "correct" EPOLLIN when the whole process exits, then it should not use
-> PIDFD_THREAD ?
-> 
-> Just in case, I am not arguing, I am just trying to understand.
-
-One driver is consistency. It's really weird to sometimes get exit
-notifications and sometimes don't. It's easier to understand that we
-delay notification until the thread-group is empty for a thread-based
-pidfd for a thread-group leader rather than explaining de_thread()
-timing issues for subthread exec.
-
-But also remembering our earlier discussion on PIDFD_INFO_EXIT: If the
-thread-group leader exits prematurely and userspace gets an exit
-notification they end up with a Zombie they cannot (yet) reap.
-
-I don't think we should carry that behavior over into the pidfd api. I'd
-rather have it be so that if you get an exit notification it means that
-you can may now reap the thing (I'm probably unaware of some ptrace
-induced behavior that render this statement wrong.).
 
