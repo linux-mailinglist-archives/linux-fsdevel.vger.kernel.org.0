@@ -1,131 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-44639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF61DA6AE96
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 20:33:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96641A6AED9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 20:49:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E688716412B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 19:33:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17BEE3AFA1E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 19:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5952288FE;
-	Thu, 20 Mar 2025 19:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E13229B32;
+	Thu, 20 Mar 2025 19:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RsK9QkXp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GJLYJm0h"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF77C1E3DDB;
-	Thu, 20 Mar 2025 19:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E2E339A1;
+	Thu, 20 Mar 2025 19:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742499193; cv=none; b=INq0L3SInxZwiUiKB7hl2qO3PG8TXx9pbqwjTvC+SrxL5JLm2zPp4zZ0orJ1B1FlrDxyvDG0bcVfWrSfrjK9yRhZffm3VZVE8PQAk3UCxaLfTBD3OU/nLUQfCybNCPRQ/yIEsHr1gN8pVuSglOk/t8+dj/hEJ47XyEgPQQwyFGo=
+	t=1742499984; cv=none; b=unrCsswwSYS5GCUBARWR9bx+RKz2Vt6eWCTtK/s3asztsOMO41QjLJIOC9R0WfKLmAf8mt9rn3BpWY/bvgLqeJMBkIXvoB2LHqJzP65qn3CSlXkf6iTPGbFnfu6lAeOC0F7qvkb11Nudc9nwG+cbBp3dYtWd0u4T0xDox15X2k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742499193; c=relaxed/simple;
-	bh=67Rli1aMINRhNsEK6vbiKzUJhYIb+DD/lRRVWBz/1Yk=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=qGcPWlWVGAoMTlNxZW0cuF9xhQ25PUJnZHxSR4hA6tsM81N5uuf73/mblgK0s0vKAZed/Je+bhiCu5MhUPjhnPiOVGufE6yFUI4/c9QuRJAvmF2vgovPBq4Wy4hPPEm3qCdqr+V4D9YtX+X7IBXOSouNbQDxc6a683KCcpI9jrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RsK9QkXp; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22580c9ee0aso25645615ad.2;
-        Thu, 20 Mar 2025 12:33:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742499191; x=1743103991; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zHVmJxf9G38/fiYNmkpuUJFgM3KpXEnE/rPC5REGcCM=;
-        b=RsK9QkXphHlIMrkQIT0XlIqRFu9N/BBnh2tT/kfciCR5uzA8XWA/aMq42sqhItHyPa
-         HM3kwKrQPjIpd93sVKk5YLQ33IP2G4tQeWRfFLJE629EKviYZwyzL99tk/HdGHvCjo7C
-         NuKxUPjuM5IlASNmur2sJIIKa6NIaVpppwDkKo20nlrj6MA0Q4iAhfIYQcKH3IAUrQ0O
-         7Sv9qgsaqXt+YD+fvSS4OXb+Bo4kK4Xb8XEKmWRo628Se4F3vFCuOpGNlxEsuEOxjF5G
-         LYv1jPX8p5CKPmKdo9Q8hkVHfreCTQ6yDgkFeGbNENbczwYmYFFskw37Sub7QVBqu0QK
-         bloQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742499191; x=1743103991;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zHVmJxf9G38/fiYNmkpuUJFgM3KpXEnE/rPC5REGcCM=;
-        b=wuU2msu/Fk3t124DnPUZehRxtoPheGIrql0pdxd2Dhv/FAh1xd6+Ai6VLQS7fcTWtk
-         ZfrpuMGNZK6Ef5bVSLOlezW/hULxvjSOMe4pDQt5oQsOMkVLh3ZcUkYkmJQ4yd2rRA3w
-         jXnqqAYW4Myvf2RW4HQyG7dXNBl25EqQMagIw1AA7nuXEzn+m44km3IIMJUSieARJBFj
-         1t9nC2K0vrZvYJ4g/7Yz4WRN/cgno1nUjyEKHi75eJJDr2ZPTJz3ioRSBJ7Jpr4malBr
-         yQM7P+3UZfAKsCMhhw5C9q7H3bC9eJ2c4GN+Ekv9qC6HgoIAvuAKrkXe7wLBmHMz8f9Q
-         O5SA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIvy1qEzI8u50CBoCU0dhfRfvWCx2TTlbN5yuS0+Y1Ms2NvslZ9v8vzjElYOEmX4Lk3A7XYGwm5fam5yT2@vger.kernel.org, AJvYcCVVwBF7CnDbPMrPkIgUvhrrcXtWjnf6mEHwP69JUjGaVpvpqelWx/DTmEb7xo0TgwtbtFbLxl7nxAZ9@vger.kernel.org, AJvYcCW4Me0nbBteDU1ggSp4xeoH9thhyyD9ZVfyzr/arJmOm7wUBnBHBxxB39bCja26R/ZM2KZC8/e7LZ1e@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPpycMFbMNHXNHW1MvBYtpP0IGNcgiARFa8fedhkSDTHCpoYC4
-	v0LP0PwR9STadGz7PWWl9pNetLaivWV2BwlbqIIfYVuk2CfqJuPm
-X-Gm-Gg: ASbGncu9vDdwGUzXEaeAOI09/H4inPxVYA8vRytiXUEsuvFALIAhNGe5B3F4H/eFDe9
-	d22cApmoSGx5lW3yf+4JtpT49BdTxlfwNxJlu6vTMlmJa+zRhgNkwN4oKHbTaBwrn2i0SUadjUS
-	gLUCwig0YmwqSHlu9WeWvEOs/PIu/EaisZLE608ll8vdLBV4h/6DTdo7650HJCdTGfglBjc65sW
-	bozEgVvnNolTHA5FmdAqZa0R/BpGForVi63C3T/eYt41c3ee40d8qrfh3PFc+vrSmbjnT5jJ4su
-	8HZpF1MfCJPhYkWc4tvKDU3O33UwguvoqXWG+Q==
-X-Google-Smtp-Source: AGHT+IHGOMDIgVFAm5eHa6xBoB4g60AmPE2lbPYGqoWBuwkqeKe/nKrFEMTBiXvluqrnWb5TXYd+KA==
-X-Received: by 2002:a17:902:ecd0:b0:223:325c:89de with SMTP id d9443c01a7336-22780c5467fmr8489935ad.1.1742499191155;
-        Thu, 20 Mar 2025 12:33:11 -0700 (PDT)
-Received: from dw-tp ([171.76.82.198])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811daa6esm1661575ad.163.2025.03.20.12.33.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 12:33:10 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: John Garry <john.g.garry@oracle.com>, brauner@kernel.org, djwong@kernel.org, hch@lst.de
-Cc: linux-fsdevel@vger.kernel.org, dchinner@redhat.com, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com, martin.petersen@oracle.com, tytso@mit.edu, linux-ext4@vger.kernel.org, John Garry <john.g.garry@oracle.com>
-Subject: Re: [PATCH 2/3] iomap: comment on atomic write checks in iomap_dio_bio_iter()
-In-Reply-To: <20250320120250.4087011-3-john.g.garry@oracle.com>
-Date: Fri, 21 Mar 2025 01:02:05 +0530
-Message-ID: <87ldszsdl6.fsf@gmail.com>
-References: <20250320120250.4087011-1-john.g.garry@oracle.com> <20250320120250.4087011-3-john.g.garry@oracle.com>
+	s=arc-20240116; t=1742499984; c=relaxed/simple;
+	bh=DEBRvZYrH0JfYADSrP884+yCkESKunslfy4DNnZqOt8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FjOBHSzIxw92o5qpuEOSx/toW5l+TLyCj2sB9UeIEBebwCScdfpohREqbDnT5xpixfwNl7i9K7+grsWDR9It1sPPkpXSEcz7GEpGpm8SRt3wQzD1d3Rk7BGCYFoWDmipy+yXGBtUYY222ik6XhSVXg16tImDx6I8mkw8gpku23c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GJLYJm0h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DAE59C4CEE8;
+	Thu, 20 Mar 2025 19:46:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742499983;
+	bh=DEBRvZYrH0JfYADSrP884+yCkESKunslfy4DNnZqOt8=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=GJLYJm0h6Z08SDPupchhLRkbmHepqmLEUUP+2Kqbsdf0DmPBNzrLrBJCea/d2m1qb
+	 nT3qXG5d3auyLe2p93QMGxvv/IJWw8oKvFAdcwiJXjKoaNbI+yhzvzD1N55wWuyDqp
+	 633+QQYepZe4rwUByJYYf7HkCR3eL/Wu8c1UV+t7QEUnnc1JSRLalTO6g2Orc/+sK6
+	 AikZNK+YHRxy4XJHsCCx2e8trI2xg9iCL1ihLdq92X6jkIschNG1X1BEh2Nh7b5SNb
+	 AN/poTWqKJjaa7ov4U1UoVO+G2fAS8e7ppKvDElc/gcvHoErYL5+OpqNCSGSqpq2hG
+	 NZGDZelhw/6NA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1FB2C28B30;
+	Thu, 20 Mar 2025 19:46:23 +0000 (UTC)
+From: Julian Stecklina via B4 Relay <devnull+julian.stecklina.cyberus-technology.de@kernel.org>
+Date: Thu, 20 Mar 2025 20:46:14 +0100
+Subject: [PATCH RFC] initrd: resize /dev/ram as needed
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250320-initrd-autoresize-v1-1-a9a5930205f8@cyberus-technology.de>
+X-B4-Tracking: v=1; b=H4sIAIVw3GcC/x3MsQ5AMBCA4VeRmzWpSkmsEg9gFQN15ZaSa4lov
+ LvG+A3/H8EjE3posgiMF3naXUKRZ2C2ya0oaEkGJZWWpZKCHAVexHSGndHTg2Iu0Bpja11WFaT
+ uYLR0/88B+q6F8X0/7g1A+2gAAAA=
+X-Change-ID: 20250320-initrd-autoresize-b1efccf75366
+To: Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>, 
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Julian Stecklina <julian.stecklina@cyberus-technology.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742499982; l=2280;
+ i=julian.stecklina@cyberus-technology.de; s=20250320;
+ h=from:subject:message-id;
+ bh=cCiCLxLx2A0Zi6Phf6RkFbbe0h/GF0wXaGlOEKWI1pc=;
+ b=A5zvzV3RRP1qqWNVLxRfbNCd+jmPdkg+qMjcYwPg+vFGUuxp2TZmghC5IsNUpN0u2CttjgQWo
+ jXXURgvuFv5ANNIQracW2wlNBxkunZKTVfndUD1+NdgNfAbQLfp1Ei/
+X-Developer-Key: i=julian.stecklina@cyberus-technology.de; a=ed25519;
+ pk=m051/8gQfs5AmkACfykwRcD6CUr2T7DQ9OA5eBgyy7c=
+X-Endpoint-Received: by B4 Relay for
+ julian.stecklina@cyberus-technology.de/20250320 with auth_id=363
+X-Original-From: Julian Stecklina <julian.stecklina@cyberus-technology.de>
+Reply-To: julian.stecklina@cyberus-technology.de
 
-John Garry <john.g.garry@oracle.com> writes:
+From: Julian Stecklina <julian.stecklina@cyberus-technology.de>
 
-> Help explain the code.
->
-> Also clarify the comment for bio size check.
+When the initrd doesn't fit into the RAM disk, we currently just die.
+This is unfortunate, because users have to manually configure the RAM
+disk size for no good reason. It also means that the kernel command
+line needs to be changed for different initrds, which is sometimes
+cumbersome.
 
-Looks good to me. Feel free to add:
+Attempt resizing /dev/ram to fit the RAM disk size instead. This makes
+initrd images work a bit more like initramfs images in that they just
+work.
 
-Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+Of course, this only works, because we know that /dev/ram is a RAM
+disk and we can resize it freely. I'm not sure whether I've used the
+blockdev APIs here in a sane way. If not, please advise!
+
+Signed-off-by: Julian Stecklina <julian.stecklina@cyberus-technology.de>
+---
+ init/do_mounts_rd.c | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+index ac021ae6e6fa78c7b7828a78ab2fa3af3611bef3..5ae3639765199294a07a9b9025b7b43265370896 100644
+--- a/init/do_mounts_rd.c
++++ b/init/do_mounts_rd.c
+@@ -183,6 +183,24 @@ static unsigned long nr_blocks(struct file *file)
+ 	return i_size_read(inode) >> 10;
+ }
+ 
++static int resize_ramdisk(const char *devname, u64 new_size_blocks)
++{
++	struct block_device *bdev;
++	struct file *bdev_file;
++
++	bdev_file = bdev_file_open_by_path(devname, BLK_OPEN_READ, NULL, NULL);
++	if (IS_ERR(bdev_file))
++		goto err;
++
++	bdev = file_bdev(bdev_file);
++	set_capacity(bdev->bd_disk, (new_size_blocks * BLOCK_SIZE) / SECTOR_SIZE);
++
++	fput(bdev_file);
++	return 0;
++err:
++	return -1;
++}
++
+ int __init rd_load_image(char *from)
+ {
+ 	int res = 0;
+@@ -219,9 +237,10 @@ int __init rd_load_image(char *from)
+ 	 * the number of kibibytes of data to load into a ramdisk.
+ 	 */
+ 	rd_blocks = nr_blocks(out_file);
+-	if (nblocks > rd_blocks) {
+-		printk("RAMDISK: image too big! (%dKiB/%ldKiB)\n",
++	if (nblocks > rd_blocks && resize_ramdisk("/dev/ram", nblocks)) {
++		printk("RAMDISK: image too big and couldn't resize! (%dKiB/%ldKiB)\n",
+ 		       nblocks, rd_blocks);
++
+ 		goto done;
+ 	}
+ 
+
+---
+base-commit: 5fc31936081919a8572a3d644f3fbb258038f337
+change-id: 20250320-initrd-autoresize-b1efccf75366
+
+Best regards,
+-- 
+Julian Stecklina <julian.stecklina@cyberus-technology.de>
 
 
-
->
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->  fs/iomap/direct-io.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 8c1bec473586..b9f59ca43c15 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -350,6 +350,11 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
->  		bio_opf |= REQ_OP_WRITE;
->  
->  		if (iter->flags & IOMAP_ATOMIC_HW) {
-> +			/*
-> +			 * Ensure that the mapping covers the full write
-> +			 * length, otherwise it won't be submitted as a single
-> +			 * bio, which is required to use hardware atomics.
-> +			 */
->  			if (length != iter->len)
->  				return -EINVAL;
->  			bio_opf |= REQ_ATOMIC;
-> @@ -449,7 +454,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
->  		n = bio->bi_iter.bi_size;
->  		if (WARN_ON_ONCE((bio_opf & REQ_ATOMIC) && n != length)) {
->  			/*
-> -			 * This bio should have covered the complete length,
-> +			 * An atomic write bio must cover the complete length,
->  			 * which it doesn't, so error. We may need to zero out
->  			 * the tail (complete FS block), similar to when
->  			 * bio_iov_iter_get_pages() returns an error, above.
-> -- 
-> 2.31.1
 
