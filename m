@@ -1,121 +1,208 @@
-Return-Path: <linux-fsdevel+bounces-44607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44608-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578EAA6AA0F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 16:39:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36518A6AA11
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 16:39:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED933189787B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 15:37:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 839B68A6447
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 15:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014C41E7C3B;
-	Thu, 20 Mar 2025 15:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2AD1E883A;
+	Thu, 20 Mar 2025 15:38:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Qv4MB0lJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KffU33hF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA61A1DDC0F;
-	Thu, 20 Mar 2025 15:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A20E1DDC0F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 15:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742485047; cv=none; b=k6MTFhsESs+Oms/Ikpka+hnhyqWhXjFYFXbnEK/pAyRaq43qLOiOwtIPO8NiCrY7T6WQ++TRP3QNyYDHumAVYg4DQ4q7huHi0GIki1D4x5A2rnLZHOJib6Iwj5dWzlVCfKNAhhgsD+If3LCSO4gXg847bPQnNBPZFU2vQLOiOkk=
+	t=1742485101; cv=none; b=f2BrsDELD72H+amYPEPMp/a6ypPdNP7IgNgN6wRW3bFVRiuAz0E7+U89zwjVfnujCjgEEzNgHpaxSt4heSxN2eAxunUi5p9RBQJuTFRpI8L2lkTg/6Z3lWK5f/YiKyN3W0lCaDbJdIjBZ0NhRs8IN8ETBGwxJOGPIYsIHkINuO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742485047; c=relaxed/simple;
-	bh=J+e8IhyIIBJvv0xjeU0BQK7lYADTbr9FmLCze4AWg3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tZRr8k7VVCBYc5IMjKpPAk6swNLxJGZ3ho97un7CCQ8gD8AFMHW3Sagz3MpGDbiXxp782wedflkCJtMqM4eMyJQIhbKVGKwSDXa8Kl8qJbcWGP3PZgDYBPQqp4n/LBqY0ebgubkx2Naw7Q4eb4NAkR3UAPcNIBTmRoaPD1+41Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Qv4MB0lJ; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4ZJV7m2n5qzmWRtG;
-	Thu, 20 Mar 2025 15:37:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1742485041; x=1745077042; bh=3XYe1tuQS507NL5nm9rpDihD
-	H8Gzkr7TFGJUWeSwmG8=; b=Qv4MB0lJ9xWZJ9jMy8RMFI9qzNsHX2Zk8MxpcKaH
-	c4HSTrBC9zuL8atxolDY9431JpPYULMP/TAF/Cej53mMuAM6OsnjQKiXq1oeqDqA
-	RHIXi5Hkh0JYIMEzcSYQfnVgJZf6RnJvxjisw5Rw6a6tLIBwMkLuKIhpaw0Cp1XK
-	hksP4adk00A0QIY4Ebo0BKimLRW9zAhR1wfY/50RhrUD8n3QHGIxkNWMg6klQrAn
-	rhKkLib7pV1kZjzwbd0F2YzxQ/208axbE0tYcls+8KzTkXm/YLimi96KDaHUfvNm
-	lsRhKyOHR/3nAlBty+Jzd81HQ7SyD++zqsEXhc9t0hgiCg==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id GJk4IoTrJnfO; Thu, 20 Mar 2025 15:37:21 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
+	s=arc-20240116; t=1742485101; c=relaxed/simple;
+	bh=uRdiTVbQkm4pvbxGi/kkATI+pxb9e8rW3KQUa7Y7oGE=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=aU9RNL2nMmkhYpdsFE2XqlfFAjqqLObHzkjz3o0I3mF8D7CbLrNhRElXoqYaNIVqKxB6vGogkCePNIwoG5gcz1/X8kDJWnVfHsnomO+kB/gfaaPE09TIEMUBDottNE0n9ONjBH0Q5wSnwq0jzVfIx/uHV6JeZTORPqjxGqtwpP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KffU33hF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742485098;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jfSEIrY/qgegWJTIRwrY+ragQR0uVn2TNvXZB6uD0e8=;
+	b=KffU33hFmEoyeRu6j9qcSWiPUc78PvHBgNzI1FejqfOd7XqW6CWzGgy7yjondKVaejfnMo
+	JELOedyAxgp1ALVtoCxBp/JF/0UiIPcdvY7yHWHI3z/v+3+y8TTndHzoLRzAiUWIPaiHqq
+	F8im2f/Wc+8Uh2+l7FVI/c6AusGumDw=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-41-7-UAd8ssNKi_alG6mQXI0A-1; Thu,
+ 20 Mar 2025 11:38:15 -0400
+X-MC-Unique: 7-UAd8ssNKi_alG6mQXI0A-1
+X-Mimecast-MFC-AGG-ID: 7-UAd8ssNKi_alG6mQXI0A_1742485093
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4ZJV7R4kR0zmWSKQ;
-	Thu, 20 Mar 2025 15:37:06 +0000 (UTC)
-Message-ID: <a40a704f-22c8-4ae9-9800-301c9865cee4@acm.org>
-Date: Thu, 20 Mar 2025 08:37:05 -0700
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B138E180AF4C;
+	Thu, 20 Mar 2025 15:38:12 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BB3361955BFE;
+	Thu, 20 Mar 2025 15:38:09 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <4c30dae500352e31a47ecfa34d60f4a8c015297e.camel@ibm.com>
+References: <4c30dae500352e31a47ecfa34d60f4a8c015297e.camel@ibm.com> <20250313233341.1675324-1-dhowells@redhat.com> <20250313233341.1675324-34-dhowells@redhat.com>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
+    "slava@dubeyko.com" <slava@dubeyko.com>,
+    "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+    "idryomov@gmail.com" <idryomov@gmail.com>,
+    "jlayton@kernel.org" <jlayton@kernel.org>,
+    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+    "dongsheng.yang@easystack.cn" <dongsheng.yang@easystack.cn>,
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 33/35] ceph: Use netfslib [INCOMPLETE]
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [LSF/MM/BPF TOPIC] breaking the 512 KiB IO boundary on x86_64
-To: Christoph Hellwig <hch@lst.de>, Luis Chamberlain <mcgrof@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-block@vger.kernel.org, lsf-pc@lists.linux-foundation.org,
- david@fromorbit.com, leon@kernel.org, kbusch@kernel.org, sagi@grimberg.me,
- axboe@kernel.dk, joro@8bytes.org, brauner@kernel.org, hare@suse.de,
- willy@infradead.org, djwong@kernel.org, john.g.garry@oracle.com,
- ritesh.list@gmail.com, p.raghav@samsung.com, gost.dev@samsung.com,
- da.gomez@samsung.com
-References: <Z9v-1xjl7dD7Tr-H@bombadil.infradead.org>
- <20250320141846.GA11512@lst.de>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250320141846.GA11512@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3174102.1742485088.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 20 Mar 2025 15:38:08 +0000
+Message-ID: <3174103.1742485088@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 3/20/25 7:18 AM, Christoph Hellwig wrote:
-> On Thu, Mar 20, 2025 at 04:41:11AM -0700, Luis Chamberlain wrote:
->> We've been constrained to a max single 512 KiB IO for a while now on x86_64.
-> 
-> No, we absolutely haven't.  I'm regularly seeing multi-MB I/O on both
-> SCSI and NVMe setup.
+Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
 
-Is NVME_MAX_KB_SZ the current maximum I/O size for PCIe NVMe
-controllers? From drivers/nvme/host/pci.c:
+> > +		fret =3D ceph_fscrypt_decrypt_pages(inode, &page[pgidx],
+> > +						 off + pgsoff, ext->len);
+> > +		dout("%s: [%d] 0x%llx~0x%llx fret %d\n", __func__, i,
+> > +				ext->off, ext->len, fret);
+> > +		if (fret < 0) {
+> =
 
-/*
-  * These can be higher, but we need to ensure that any command doesn't
-  * require an sg allocation that needs more than a page of data.
-  */
-#define NVME_MAX_KB_SZ	8192
-#define NVME_MAX_SEGS	128
-#define NVME_MAX_META_SEGS 15
-#define NVME_MAX_NR_ALLOCATIONS	5
+> Possibly, I am missing some logic here. But do we really need to introdu=
+ce fret?
+> Why we cannot user ret here? =
 
->> This is due to the number of DMA segments and the segment size.
-> 
-> In nvme the max_segment_size is UINT_MAX, and for most SCSI HBAs it is
-> fairly large as well.
+> =
 
-I have a question for NVMe device manufacturers. It is known since a
-long time that submitting large I/Os with the NVMe SGL format requires
-less CPU time compared to the NVMe PRP format. Is this sufficient to
-motivate NVMe device manufacturers to implement the SGL format? All SCSI
-controllers I know of, including UFS controllers, support something that
-is much closer to the NVMe SGL format rather than the NVMe PRP format.
+> > +			if (ret =3D=3D 0)
+> > +				ret =3D fret;
+> > +			break;
+> > +		}
+> > +		ret =3D pgsoff + fret;
 
-Thanks,
+Because ret holds the amount of data so far decrypted.  We should only ret=
+urn
+an error if we didn't decrypt any (ie. ret =3D=3D 0 at the time of error).
 
-Bart.
+> > +static int ceph_init_request(struct netfs_io_request *rreq, struct fi=
+le *file)
+> > +{
+> > +	struct ceph_io_request *priv =3D container_of(rreq, struct ceph_io_r=
+equest, rreq);
+> > +	struct inode *inode =3D rreq->inode;
+> > +	struct ceph_client *cl =3D ceph_inode_to_client(inode);
+> > +	struct ceph_fs_client *fsc =3D ceph_inode_to_fs_client(inode);
+> > +	int got =3D 0, want =3D CEPH_CAP_FILE_CACHE;
+> > +	int ret =3D 0;
+> > +
+> > +	rreq->rsize =3D 1024 * 1024;
+> =
 
+> Why do we hardcoded rreq->rsize value?
+> =
+
+> struct ceph_mount_options {
+> 	unsigned int flags;
+> =
+
+> 	unsigned int wsize;            /* max write size */
+> 	unsigned int rsize;            /* max read size */
+> 	unsigned int rasize;           /* max readahead */
+> 	unsigned int congestion_kb;    /* max writeback in flight */
+> 	unsigned int caps_wanted_delay_min, caps_wanted_delay_max;
+> 	int caps_max;
+> 	unsigned int max_readdir;       /* max readdir result (entries) */
+> 	unsigned int max_readdir_bytes; /* max readdir result (bytes) */
+> =
+
+> 	bool new_dev_syntax;
+> =
+
+> 	/*
+> 	 * everything above this point can be memcmp'd; everything below
+> 	 * is handled in compare_mount_options()
+> 	 */
+> =
+
+> 	char *snapdir_name;   /* default ".snap" */
+> 	char *mds_namespace;  /* default NULL */
+> 	char *server_path;    /* default NULL (means "/") */
+> 	char *fscache_uniq;   /* default NULL */
+> 	char *mon_addr;
+> 	struct fscrypt_dummy_policy dummy_enc_policy;
+> };
+> =
+
+> Why we don't use fsc->mount_options->rsize?
+
+Actually, I should get rid of rreq->rsize since there's now a function,
+->prepare_read() to deal with this.
+
+> > +	loff_t limit =3D max(i_size_read(inode), fsc->max_file_size);
+> =
+
+> Do we need to take into account the quota max bytes here?
+
+Could be.
+
+> > +/*
+> > + * Size of allocations for default netfs_io_(sub)request object slabs=
+ and
+> > + * mempools.  If a filesystem's request and subrequest objects fit wi=
+thin this
+> > + * size, they can use these otherwise they must provide their own.
+> > + */
+> > +#define NETFS_DEF_IO_REQUEST_SIZE (sizeof(struct netfs_io_request) + =
+24)
+> =
+
+> Why do we hardcode 24 here? What's about named constant? And why namely =
+24?
+> =
+
+> > +#define NETFS_DEF_IO_SUBREQUEST_SIZE (sizeof(struct netfs_io_subreque=
+st) + 16)
+> =
+
+> The same question about 16.
+
+See the comment.  24 allows three extra words and 16 two.  Actually, I sho=
+uld
+probably express it as a multiple of sizeof(long).  But this allows netfsl=
+ib
+to allocate (sub)request structs for ceph from the default mempool by allo=
+wing
+a little bit of extra space.
+
+David
 
 
