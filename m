@@ -1,305 +1,417 @@
-Return-Path: <linux-fsdevel+bounces-44541-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A349CA6A3D9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 11:38:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A1A3A6A3FF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 11:46:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2D523B2E7D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 10:38:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DB39189D77C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 10:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1128224253;
-	Thu, 20 Mar 2025 10:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB499224254;
+	Thu, 20 Mar 2025 10:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KfTOVxHV";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="PhRxSkEV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHLdbn9e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71ED3214A98;
-	Thu, 20 Mar 2025 10:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742467124; cv=fail; b=U2Mf5XpmmyYEtE+Uoh14xSJGg/UWfyUjJE7FTCPs2VjQHu8SgBXzVFVuc3Fr6wblfqW5d3GJX6ByaeMpeyE4IV3RvozrcuhRq+GRqUT9LQFFzVff0MKfk6p9XigvXtU8+4/Fua8sigDe1JtUhASWnzSNZbZY5MWZ/g6Ml/5WFlM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742467124; c=relaxed/simple;
-	bh=c6W+y+MCDrKAJK0z7DXLt7QLAfVebEGGAUDH5bYnA5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=G6YmxBYvnrlf4n9SDtEOFPD+pVRubunhY0PaYwJNgX9Tlv/L83j6CDWz9mhIFLCVbe8CIP0yHOCKhmvl7BnpcT5jgXn9ZEIufI0GfP+7zjEC4UIDCxiJhsRt8l2QJ1O5ok+kvkQipC9fVTbZp4nfdejuzWYyV+D8h/MlVbKLWkA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=KfTOVxHV; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=PhRxSkEV; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52K8C6qk004923;
-	Thu, 20 Mar 2025 10:38:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=lDKP0oQx3FrVoqiurw
-	fim7ZeCB5QbFffjnXsocIAnHY=; b=KfTOVxHVsvxty93bIxY+D8iKd3LIK8vqs4
-	x3pEVdQlIk1DclPxG+Zw3Z4ul+ipJDI0W+YOVD1JNthSm/YUIlEv6naGcoR8ZdKl
-	FW7jEKq8hjLt/egKb7i+coNkKxgsFW+n3gr4853kT362yE+10QqwUO+akE3TrKfG
-	Kw5E0aYiOI1RSLuA+/tO3FTuq2A399ziDhEYJ4o+F68ORw/zUm2IT30MpUiRvM97
-	3gSGCBzuii6p6+yF29HVFSWwSNR9Bwyc2qChiR6hSqmFb3RQ4Rfpn4Z8NzlVU5kn
-	evqWm2qdSi0/TGbIU6/UCYcjVDR+Hid5YcBbC/klN72PCaqWpe1A==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45d1ka5v5d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 20 Mar 2025 10:38:30 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52K9f6aG009760;
-	Thu, 20 Mar 2025 10:38:28 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2046.outbound.protection.outlook.com [104.47.66.46])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 45dxm2fmju-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 20 Mar 2025 10:38:28 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NO0rqoMjorJVmu2GoASzsQaa4z7muoFEmPXn3a2KzJnzEk6dwtp8EeGd/VpODGF73dYIQq6CleO/0bhdtRDT5EdIg/5arKfA0sXeljhp9Zlcf1DpE1pY4aOZ4tab9B4gTAFEoxbzaRY8AB30zg4b5T5pHl/ewry00FmorVa6LTrwBjYGeFmOAk4t9+TEFQFSJkaEVnJ+8BL7RZBzZRtkEI5sJxf90RCt48P7MR8Ng4jzJfBoENAsL/t1B9M2dDfNhfw8bTl/ZpYHMhNv5oZzBDLR2yQ4rjw+t/qdlNBj2xPqm3sERtE9SFPsfg1A34nxY06suXuEp185p5TB+F2Rew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lDKP0oQx3FrVoqiurwfim7ZeCB5QbFffjnXsocIAnHY=;
- b=bguNEwp6aomx+L9XUEnscwKtX9lW1gZds+p45pEHIIrouQJBagnE6zYEfBK+yJC7z6mqj9Q7AHH6f+wQHyYbS4e0Gj/Jxrd0frvqKqJme2iuAINcOMvlmO1u34Yv0UsXxHMwDKx53kLvfbdy4cxpellVSNYOWNicgB0RdraB++on/6E00L2/YtmzgeDrSL1fJUoBXZQ9vdwCWw+e/AmgbikGivkNQpQYgefQDIRLRE52qGJiv+er2GeaG+bozapGjc42qBKeE3izLjug6ZPoGVZVbg4Zb9O963ZLISvhapYB01zDRtYMj5rk1uIptfK67iShExzhrxMKhn//9ern/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lDKP0oQx3FrVoqiurwfim7ZeCB5QbFffjnXsocIAnHY=;
- b=PhRxSkEVIjOgOfO39YEx5/L8HRBIKPiuUAegog6rcu8v5NPhFq6KrKgI/orQeVIG5U6wAKa/A8hCRTCKbvKp4y0IFhMAbnBCkokRUKahU4B7sJy2gy3ajrLxxbwRUfR1/nwj4u5F+ivBeO25aBVtigWTWAZIgT2FeHEb3EYu+Qk=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by DS0PR10MB8152.namprd10.prod.outlook.com (2603:10b6:8:1fd::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.36; Thu, 20 Mar
- 2025 10:38:26 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%7]) with mapi id 15.20.8534.034; Thu, 20 Mar 2025
- 10:38:26 +0000
-Date: Thu, 20 Mar 2025 10:38:21 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Andrei Vagin <avagin@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Andrei Vagin <avagin@gmail.com>
-Subject: Re: [PATCH 2/2] selftests/mm: add PAGEMAP_SCAN guard region test
-Message-ID: <90d37a32-d913-4e15-bba3-1fd12747ff82@lucifer.local>
-References: <20250320063903.2685882-1-avagin@google.com>
- <20250320063903.2685882-3-avagin@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250320063903.2685882-3-avagin@google.com>
-X-ClientProxiedBy: LO4P123CA0581.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:276::11) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D885209F4E;
+	Thu, 20 Mar 2025 10:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742467544; cv=none; b=gRXFEyomB1WsZipb2pndNq0KGiawBMKcBm1Xtf3Kmc1Ize8lmrheEuiMJeSONTgplENEFhaMX/HEd6tkNH0slz0Kp1OYnmz/6T22d5Za1MBIIgyrFEtkS6LqkkIpTJ7bveoddRJHauemMeapvXzMosYHkR7aJfl2K496Ir1yDlg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742467544; c=relaxed/simple;
+	bh=uhTRmSvju8WYMAnf/mgl7BiwduH4AAy7uMFg1eLjCcM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Da6FT/H/6VjGo+Kjjf+IddxU86thCSDilStaizAruP6vxV3wgdcp4rsk7LV5UMo1EsUQC4hp2cih0uDs7mczTd7fnZn1BYk854nNuuqNlPGJEBB2EsjEVkR/B+ML4S9ya887y7JFlFdx+eDka03SCz8ElgdeDbdl7/vQtsouHOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHLdbn9e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8B7BC4CEDD;
+	Thu, 20 Mar 2025 10:45:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742467543;
+	bh=uhTRmSvju8WYMAnf/mgl7BiwduH4AAy7uMFg1eLjCcM=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=BHLdbn9elunW1tqHdj5yu07PAsDPi0NSjBWvtgfleMIXS1Qm4yn+p5xrqT7FoYmWS
+	 gfGLos0eCPElmvgKm1dl9boj11cCRdAhobSG44QBO99TsaO5O8QM0hTPgpq127B2MT
+	 /gEpcjjP073hC7J9n0q8WF6+bkzeiZm3dPL0wIL5IqMhQfnnFYYCjbE9/7oa6kPnjG
+	 K08cKi8vRCXMDeD1W4QvllqNlwr5IFk71mKj+9mCC8WF2k1fI39nC+RIabri+dlBoI
+	 XUJplREFNUSBM6dPMhGPcUTLy0dTaouH44uwxfSQms06XkZ1rUDm7ml44qCDgHwoXF
+	 W5UkJFCmNAHtQ==
+Message-ID: <3fb9594115c3df18120dedec1091f18be5ea22a4.camel@kernel.org>
+Subject: Re: [PATCH 5/6] Use try_lookup_noperm() instead of
+ d_hash_and_lookup() outside of VFS
+From: Jeff Layton <jlayton@kernel.org>
+To: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner	 <brauner@kernel.org>, Jan Kara <jack@suse.cz>, David
+ Howells <dhowells@redhat.com>,  Chuck Lever <chuck.lever@oracle.com>
+Cc: linux-nfs@vger.kernel.org, netfs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org
+Date: Thu, 20 Mar 2025 06:45:41 -0400
+In-Reply-To: <20250319031545.2999807-6-neil@brown.name>
+References: <20250319031545.2999807-1-neil@brown.name>
+	 <20250319031545.2999807-6-neil@brown.name>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
+ n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
+ egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
+ T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
+ 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
+ YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
+ VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
+ cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
+ CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
+ LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
+ MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
+ gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
+ 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
+ R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
+ rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
+ ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
+ Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
+ lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
+ iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
+ QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
+ YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
+ wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
+ LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
+ 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
+ c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
+ LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
+ TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
+ 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
+ xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
+ +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
+ Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
+ BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
+ N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
+ naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
+ RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
+ FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
+ 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
+ P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
+ aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
+ T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
+ dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
+ 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
+ kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
+ uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
+ AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
+ FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
+ 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
+ sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
+ qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
+ sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
+ IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
+ UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
+ dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
+ EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
+ apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
+ M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
+ dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
+ 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
+ jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
+ flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
+ BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
+ AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
+ 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
+ HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
+ 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
+ uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
+ DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
+ CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
+ Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
+ AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
+ aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
+ f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DS0PR10MB8152:EE_
-X-MS-Office365-Filtering-Correlation-Id: 35563487-7eba-4d35-eec3-08dd679b5894
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MzTfsdmyY0cIAhNsOo1osXPcjPsX3abZGyy8RaRiF3mni6SoiIqB20bG7TBE?=
- =?us-ascii?Q?GR+lzxzJPZKkNnqtGrQyuCSjhF3YVLuMQRjMcN0qDBhq87rIbg2On4BXndKb?=
- =?us-ascii?Q?9QYW0iN1B7YLQDApssfvlxSYz/OJRGoylWf9bvzOKZcOFSV2tC9WmcLncmYO?=
- =?us-ascii?Q?21sM7mFB3GmbVuZ0Hz2pJL+JVGAQeGUta3hsZ06Hq5ZglzXfO22HEM98jXKh?=
- =?us-ascii?Q?KY8QrzJbsDn30Z5mNU2+WvEUhC3y+HKa051AnUmNKAjJ1OVM/b494WB23Tw6?=
- =?us-ascii?Q?ud0t3JXU2e3xu1tPc76U/MjbUnnKloOxr+zyAAc+soxLurwUB1rS+cX1awJI?=
- =?us-ascii?Q?MDr7tz2qxKsb78pp5Fqdn5IsAActrng77ax738dBYiP5mQ+tKgKAnzK7m9Cq?=
- =?us-ascii?Q?yrxKEdSNCYCcZ94JZXaZAiTHqisfMsWkrpeQcMS0YUQ3AR2QMl/FMDQc8I9N?=
- =?us-ascii?Q?NTrnr3MUWVf2mpuT8J1/MVS/UQ8o7/pEpxq5b4I1EpdUufVaA/eswoNBGBO5?=
- =?us-ascii?Q?mod76bjV0CyGJffimcjXC4deExAvdXqhX1HKI0fWNnTs/UZhqnEIENMrLb68?=
- =?us-ascii?Q?JPorEw76p6h9rMzo7tvBOFQQP3P3mXa2y1h/e++DDS/5m9bQzRcZid19L93w?=
- =?us-ascii?Q?1E6BaWgrYwkjoK9wEb9+v93/scAhuZOhwH5hGyS7TXrLzI7UJrl753XT4I25?=
- =?us-ascii?Q?tv6p0bumq0pBClMVVZqfX4ViD6rqPmaW04n9bdanOzXvXG09fawf2BkG2yKQ?=
- =?us-ascii?Q?uXo7ygYXCr0aHRHXJMIgfyUggP+8ec2HzkNqyar4IfFOvAz+6cCUAx0Rq98V?=
- =?us-ascii?Q?U7QExAYjWWRkDri3wulpOKv2K0daNuERyQLmBn5ISH0qsjyOEAef+FDSdiP3?=
- =?us-ascii?Q?4QNrgXRYnk1tE3aiBO0qYPH6HGCgdOH5Ic3vu1xqSwL3S/ZP9dYpxt5ZT3V8?=
- =?us-ascii?Q?K7c49U4B0cY//c+o/c3RpRtNgTAf3DbXe8VCF/+BFXsXLxYCTpsXv9OiNN7j?=
- =?us-ascii?Q?ndqLM5GaeQVtcSqeYNWzdkLCQh00ELrdPcWqAj7na1ubw8y4hhaYXK0p0AOS?=
- =?us-ascii?Q?j5SiI08BRGL0fNg2npX1A7HgPXYWipVPyTXC9SOH4vh/Gs1dAtsTq7ZfYEbi?=
- =?us-ascii?Q?YRyPcle/M/u58p1HZKvTtetfqz6is0i+9dstATWTW6uY+D1aok6+NkxrzQ1E?=
- =?us-ascii?Q?nHJvehsKrfykwCq1OUa5jAMEXmYRW0q/8yKmlNTAdn3yrK+DrqCBJIK2IC7x?=
- =?us-ascii?Q?dImMQB2Ckwzj/q9siNQkFtMU0tIR8CQPuqwBroz641Mhs+7EzL4RnYOqAJlx?=
- =?us-ascii?Q?18p0eLtE8vq3AYo4QgRqLn1A8e/FlhiRvBxWJ5MgU2AIIi9kqKVV5h4FZU1A?=
- =?us-ascii?Q?EwNCcr3DbuRuGJAYO1rENuJ5cfyx?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?FSjpWQxjn+PEBYu6W640r8/qq6A6AyxXGqMYkXpG3DF8Z+NdlL1h/XZxBRgM?=
- =?us-ascii?Q?Yt+oJi4f4mi0IWudkn1xD/i7pH58QxW0AMLgaZIH6g+tt/kjgII2EORqcPdh?=
- =?us-ascii?Q?d3pyPW04E2mmBff2Jye+5T95EIhnc7HyTbELDOR5vpcNS58Q/8oroSwVrbbs?=
- =?us-ascii?Q?kjbGlhB9jNdcXRfHTErFe8LwXPxibiZTrh78LIP2y9YNXErDPYLXj4UWEn2E?=
- =?us-ascii?Q?v3JvJWq0IxKvc46wYdDch6AFxRafd4R5X3Zu861q1XTMBC9iEM8qs5oSTAbE?=
- =?us-ascii?Q?V8DmFtBb6Sgw766sffKQr3bmbiK8Dcs7LbPdDsm1jigM28zZzV1Hw6ibVEH3?=
- =?us-ascii?Q?Xar8QRpeu1++8vM4wk3bBDHFt9Xnua0UurbacO47Pg1DA/gspHJwE9tpa6tk?=
- =?us-ascii?Q?QxsoVGmtvw0UnedQ3bXQHe6flylPIz0zv5CXtofLYUegCb6zOqbhTkpu7Kf+?=
- =?us-ascii?Q?AgR8HdF25wRz51Jje8cxHd954+VAuBOtKg40+wj+gL9MtVimIcgOH0IMyFGa?=
- =?us-ascii?Q?cE2GbbfHUPZniI471/RqDTYJbNIvii+PLpj53RuiyeJavCOZX2GqJeK4TXLq?=
- =?us-ascii?Q?apNZeUqFap1q5pMp+E8RIutIeaeCwthK37sFU7IAoCSDxfjnOkYQRP613Kzs?=
- =?us-ascii?Q?q9BdZ5cMpk+XD8/yT1Xu7lysz8X5ZRjGLNkUAmXG7EfdACejkPpLXWf4+Hmw?=
- =?us-ascii?Q?CrvI+RQU5hX3scsk/zS0SbE0QDzu2QRNGZmBSkrG1PunZG+dbAWdyjpIqZk0?=
- =?us-ascii?Q?sooCNaDZz7MPnJpOuzqrZSY0X/OUoPHiHnhKw8QxvbvgFFjetW00kjNxGZUm?=
- =?us-ascii?Q?UwrVRSXLlOYfe5yAZaI6sPxkibon1kWtL+2ZJOFnpzOq1ZRkEQXD2xPVCWtx?=
- =?us-ascii?Q?ISl1jje8rGck9TM4zvmzGKohlAiz0g1Qa9Bhtd+7Lkv6t2OkWGLUroQoyd0A?=
- =?us-ascii?Q?XnWIootaGwsMkstMaXr2+kvd3nmOd+FMVUzkB86gDuUL/eq+GKrdfjzexhjf?=
- =?us-ascii?Q?d6mz7hoMNMUGFpZM1XM8Xn6fzOWkSN28vixaCKwrDwkAA7+4j5h/BA7KOLEl?=
- =?us-ascii?Q?WOBZ8duw5ZkqaUnAyCOruFUvNuo1or1TBCSbtsAA4Xz1EYIre1eqCxGlKJ5N?=
- =?us-ascii?Q?7YFQfcMohZjYGh45o54whAz1rUWELSB3/z4yTiHm441uGedmHS1KRhEOos3h?=
- =?us-ascii?Q?nnKk2zIXdxaf+UCjvnqBgv5Xgw+GiRKii1pWMc/i2es2KtVhvZ/q9mmOs1vp?=
- =?us-ascii?Q?8737qm7QvORItBlgu6f9eu9tj5eFAi7vd2eqyo/PGZ9irUSKnGe//pK1wqG8?=
- =?us-ascii?Q?9gmZB2MO3pABTtEqACmUFtk4O5criYnnTnqGiTCIeugqmIbqSNaSdBq9l0Y8?=
- =?us-ascii?Q?NOAhmOSzSpafWcob9lm7xg3C75iDT3HF88/iDlGH5q7zm1uyuuPG1ajsyY2m?=
- =?us-ascii?Q?hgb8b5soohNrucAimAVcZwcin33soEw1AZBXhvF46aGOI3NxYUNNmheExRe+?=
- =?us-ascii?Q?LCeRshAoxljioOszlmBhm+3eJaZ/68tvj4EXe6ITYBwWev92E04RmrlE9abq?=
- =?us-ascii?Q?lsk6PxblFshkR27KPjAeRENao5JYJ2mpXRabwMThPbUisk2qrNoG3GTcRcwh?=
- =?us-ascii?Q?Qw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	vIUg4Hr2sseByS2QyuUh11c0547XUEu7h5me7t1x254GTE5Ku9bx0JWmrETrAHCkAOaCkSXtpwJg2M18vBj67qeOukYwQZb4pyiupraSre8/kP1x27yZF153UxpB0lTsXZ9whLpnBcTpg7smCaS3/kXyE2oZGW+MTfXOsbpzuBoUGmueKSFljxGj7/RoBMZxAXgeKUZNNyiR0vcCp/TUA7xsy03WamNpkGJ7tZ96kzmHFmAFvAb/VmIg4V6kXacMCW5mxTRSnptxKTNn652UWtlg9Gc37uThcIW183ugnrkHZXzXjUASI3IK5u9ipHbduFw84nC0BjEdT1ypAt9AJgsNPQzoyIO7apU3OF3SwTWCrGj/s0UymUdW/ubV6iju0UkSxmtyb/2DSJaLyFKHZEl/iEyV1wMspMOKVFMjL71+ESGSlx72SjSZbxTFa5/J1DwnKOK3rixtBD5rV/UcPZU4eOko3AddEYst/sf+v3YXnuqDVNr2GsN9jSdLoKoqRwhy1VXp6jAHUJ4hLYra8KM9CqOkC5F4VAEF8cNiyFKIZ0ysoYjXACDT+pPJMQr76AoKfCCy4C1Fw6Y55ubfpo1QcPLt1i5jhj0zqZZlPPI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35563487-7eba-4d35-eec3-08dd679b5894
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 10:38:26.1863
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: w6aQLq407k4nCtvJ016pUiln4of1ajsBikXB3wqyJmbtBON7ulLlhbmThmjhEbAmO4WhsrpuEwMRtBXEVjiI16Reb+EG0FPGnlqOsju2RBs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB8152
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-20_03,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0
- malwarescore=0 bulkscore=0 mlxscore=0 spamscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2502280000 definitions=main-2503200064
-X-Proofpoint-GUID: 8SXyf0fSdxUXGOVPjjpSqA7xS5RdAyfX
-X-Proofpoint-ORIG-GUID: 8SXyf0fSdxUXGOVPjjpSqA7xS5RdAyfX
 
-On Thu, Mar 20, 2025 at 06:39:03AM +0000, Andrei Vagin wrote:
-> From: Andrei Vagin <avagin@gmail.com>
->
-> Add a selftest to verify the PAGEMAP_SCAN ioctl correctly reports guard
-> regions using the newly introduced PAGE_IS_GUARD flag.
->
-> Signed-off-by: Andrei Vagin <avagin@gmail.com>
+On Wed, 2025-03-19 at 14:01 +1100, NeilBrown wrote:
+> From: NeilBrown <neilb@suse.de>
+>=20
+> try_lookup_noperm() and d_hash_and_lookup() are nearly identical.  The
+> former does some validation of the name where the latter doesn't.
+> Outside of the VFS that validation is likely valuable, and having only
+> one exported function for this task is certainly a good idea.
+>=20
+> So make d_hash_and_lookup() local to VFS files and change all other
+> callers to try_lookup_noperm().  Note that the arguments are swapped.
+>=20
+> Signed-off-by: NeilBrown <neilb@suse.de>
 > ---
->  tools/testing/selftests/mm/guard-regions.c | 53 ++++++++++++++++++++++
->  1 file changed, 53 insertions(+)
->
-> diff --git a/tools/testing/selftests/mm/guard-regions.c b/tools/testing/selftests/mm/guard-regions.c
-> index 0c7183e8b661..24e09092fda5 100644
-> --- a/tools/testing/selftests/mm/guard-regions.c
-> +++ b/tools/testing/selftests/mm/guard-regions.c
-> @@ -8,6 +8,7 @@
->  #include <fcntl.h>
->  #include <linux/limits.h>
->  #include <linux/userfaultfd.h>
-> +#include <linux/fs.h>
-
-This is insufficient, you also need to update tools/include/uapi/linux/fs.h
-- we don't want to have to rely on make headers for these tests.
-
-Basically just:
-
-cp include/uapi/linux/fs.h tools/include/uapi/linux/fs.h
-
-And commit this (you can see format of commit messages like this in git log
-for that file).
-
-Thanks!
-
->  #include <setjmp.h>
->  #include <signal.h>
->  #include <stdbool.h>
-> @@ -2079,4 +2080,56 @@ TEST_F(guard_regions, pagemap)
->  	ASSERT_EQ(munmap(ptr, 10 * page_size), 0);
+>  Documentation/filesystems/porting.rst | 11 +++++++++++
+>  fs/dcache.c                           |  1 -
+>  fs/efivarfs/super.c                   | 14 ++++----------
+>  fs/internal.h                         |  1 +
+>  fs/proc/base.c                        |  2 +-
+>  fs/smb/client/readdir.c               |  3 ++-
+>  fs/xfs/scrub/orphanage.c              |  4 ++--
+>  include/linux/dcache.h                |  1 -
+>  net/sunrpc/rpc_pipe.c                 | 12 ++++++------
+>  security/selinux/selinuxfs.c          |  4 ++--
+>  10 files changed, 29 insertions(+), 24 deletions(-)
+>=20
+> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesy=
+stems/porting.rst
+> index df9516cd82e0..626f094787e8 100644
+> --- a/Documentation/filesystems/porting.rst
+> +++ b/Documentation/filesystems/porting.rst
+> @@ -1225,3 +1225,14 @@ checked that the caller has 'X' permission on the =
+parent.  They must
+>  ONLY be used internally by a filesystem on itself when it knows that
+>  permissions are irrelevant or in a context where permission checks have
+>  already been performed such as after vfs_path_parent_lookup()
+> +
+> +---
+> +
+> +** mandatory**
+> +
+> +d_hash_and_lookup() is no longer exported or available outside the VFS.
+> +Use try_lookup_noperm() instead.  This adds name validation and takes
+> +arguments in the opposite order but is otherwise identical.
+> +
+> +Using try_lookup_noperm() will require linux/namei.h to be included.
+> +
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index 726a5be2747b..17f8e0b7f04f 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -2395,7 +2395,6 @@ struct dentry *d_hash_and_lookup(struct dentry *dir=
+, struct qstr *name)
+>  	}
+>  	return d_lookup(dir, name);
 >  }
->
-> +/*
-> + * Assert that PAGEMAP_SCAN correctly reports guard region ranges.
-> + */
-> +TEST_F(guard_regions, pagemap_scan)
-> +{
-> +	const unsigned long page_size = self->page_size;
-> +	struct page_region pm_regs[10];
-> +	struct pm_scan_arg pm_scan_args = {
-> +		.size = sizeof(struct pm_scan_arg),
-> +		.category_anyof_mask = PAGE_IS_GUARD,
-> +		.return_mask = PAGE_IS_GUARD,
-> +		.vec = (long)&pm_regs,
-> +		.vec_len = ARRAY_SIZE(pm_regs),
-> +	};
+> -EXPORT_SYMBOL(d_hash_and_lookup);
+> =20
+>  /*
+>   * When a file is deleted, we have two options:
+> diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
+> index 09fcf731e65d..867cd6e0fbad 100644
+> --- a/fs/efivarfs/super.c
+> +++ b/fs/efivarfs/super.c
+> @@ -204,7 +204,6 @@ bool efivarfs_variable_is_present(efi_char16_t *varia=
+ble_name,
+>  	char *name =3D efivar_get_utf8name(variable_name, vendor);
+>  	struct super_block *sb =3D data;
+>  	struct dentry *dentry;
+> -	struct qstr qstr;
+> =20
+>  	if (!name)
+>  		/*
+> @@ -217,9 +216,7 @@ bool efivarfs_variable_is_present(efi_char16_t *varia=
+ble_name,
+>  		 */
+>  		return true;
+> =20
+> -	qstr.name =3D name;
+> -	qstr.len =3D strlen(name);
+> -	dentry =3D d_hash_and_lookup(sb->s_root, &qstr);
+> +	dentry =3D try_lookup_noperm(&QSTR(name), sb->s_root);
+>  	kfree(name);
+>  	if (!IS_ERR_OR_NULL(dentry))
+>  		dput(dentry);
+> @@ -402,8 +399,8 @@ static bool efivarfs_actor(struct dir_context *ctx, c=
+onst char *name, int len,
+>  {
+>  	unsigned long size;
+>  	struct efivarfs_ctx *ectx =3D container_of(ctx, struct efivarfs_ctx, ct=
+x);
+> -	struct qstr qstr =3D { .name =3D name, .len =3D len };
+> -	struct dentry *dentry =3D d_hash_and_lookup(ectx->sb->s_root, &qstr);
+> +	struct dentry *dentry =3D try_lookup_noperm(QSTR_LEN(name, len),
+> +						  ectx->sb->s_root);
+>  	struct inode *inode;
+>  	struct efivar_entry *entry;
+>  	int err;
+> @@ -439,7 +436,6 @@ static int efivarfs_check_missing(efi_char16_t *name1=
+6, efi_guid_t vendor,
+>  	char *name;
+>  	struct super_block *sb =3D data;
+>  	struct dentry *dentry;
+> -	struct qstr qstr;
+>  	int err;
+> =20
+>  	if (guid_equal(&vendor, &LINUX_EFI_RANDOM_SEED_TABLE_GUID))
+> @@ -449,9 +445,7 @@ static int efivarfs_check_missing(efi_char16_t *name1=
+6, efi_guid_t vendor,
+>  	if (!name)
+>  		return -ENOMEM;
+> =20
+> -	qstr.name =3D name;
+> -	qstr.len =3D strlen(name);
+> -	dentry =3D d_hash_and_lookup(sb->s_root, &qstr);
+> +	dentry =3D try_lookup_noperm(&QSTR(name), sb->s_root);
+>  	if (IS_ERR(dentry)) {
+>  		err =3D PTR_ERR(dentry);
+>  		goto out;
+> diff --git a/fs/internal.h b/fs/internal.h
+> index e7f02ae1e098..c21534a23196 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -66,6 +66,7 @@ int do_linkat(int olddfd, struct filename *old, int new=
+dfd,
+>  int vfs_tmpfile(struct mnt_idmap *idmap,
+>  		const struct path *parentpath,
+>  		struct file *file, umode_t mode);
+> +struct dentry *d_hash_and_lookup(struct dentry *, struct qstr *);
+> =20
+>  /*
+>   * namespace.c
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index cd89e956c322..7d36c7567c31 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -2124,7 +2124,7 @@ bool proc_fill_cache(struct file *file, struct dir_=
+context *ctx,
+>  	unsigned type =3D DT_UNKNOWN;
+>  	ino_t ino =3D 1;
+> =20
+> -	child =3D d_hash_and_lookup(dir, &qname);
+> +	child =3D try_lookup_noperm(&qname, dir);
+>  	if (!child) {
+>  		DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
+>  		child =3D d_alloc_parallel(dir, &qname, &wq);
+> diff --git a/fs/smb/client/readdir.c b/fs/smb/client/readdir.c
+> index 50f96259d9ad..7329ec532bcf 100644
+> --- a/fs/smb/client/readdir.c
+> +++ b/fs/smb/client/readdir.c
+> @@ -9,6 +9,7 @@
+>   *
+>   */
+>  #include <linux/fs.h>
+> +#include <linux/namei.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/slab.h>
+>  #include <linux/stat.h>
+> @@ -78,7 +79,7 @@ cifs_prime_dcache(struct dentry *parent, struct qstr *n=
+ame,
+> =20
+>  	cifs_dbg(FYI, "%s: for %s\n", __func__, name->name);
+> =20
+> -	dentry =3D d_hash_and_lookup(parent, name);
+> +	dentry =3D try_lookup_noperm(name, parent);
+>  	if (!dentry) {
+>  		/*
+>  		 * If we know that the inode will need to be revalidated
+> diff --git a/fs/xfs/scrub/orphanage.c b/fs/xfs/scrub/orphanage.c
+> index 987af5b2bb82..f42ffad5a7b9 100644
+> --- a/fs/xfs/scrub/orphanage.c
+> +++ b/fs/xfs/scrub/orphanage.c
+> @@ -444,7 +444,7 @@ xrep_adoption_check_dcache(
+>  	if (!d_orphanage)
+>  		return 0;
+> =20
+> -	d_child =3D d_hash_and_lookup(d_orphanage, &qname);
+> +	d_child =3D try_lookup_noperm(&qname, d_orphanage);
+>  	if (d_child) {
+>  		trace_xrep_adoption_check_child(sc->mp, d_child);
+> =20
+> @@ -481,7 +481,7 @@ xrep_adoption_zap_dcache(
+>  	if (!d_orphanage)
+>  		return;
+> =20
+> -	d_child =3D d_hash_and_lookup(d_orphanage, &qname);
+> +	d_child =3D try_lookup_noperm(&qname, d_orphanage);
+>  	while (d_child !=3D NULL) {
+>  		trace_xrep_adoption_invalidate_child(sc->mp, d_child);
+> =20
+> diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+> index 1f01f4e734c5..cf37ae54955d 100644
+> --- a/include/linux/dcache.h
+> +++ b/include/linux/dcache.h
+> @@ -288,7 +288,6 @@ extern void d_exchange(struct dentry *, struct dentry=
+ *);
+>  extern struct dentry *d_ancestor(struct dentry *, struct dentry *);
+> =20
+>  extern struct dentry *d_lookup(const struct dentry *, const struct qstr =
+*);
+> -extern struct dentry *d_hash_and_lookup(struct dentry *, struct qstr *);
+> =20
+>  static inline unsigned d_count(const struct dentry *dentry)
+>  {
+> diff --git a/net/sunrpc/rpc_pipe.c b/net/sunrpc/rpc_pipe.c
+> index eadc00410ebc..98f78cd55905 100644
+> --- a/net/sunrpc/rpc_pipe.c
+> +++ b/net/sunrpc/rpc_pipe.c
+> @@ -631,7 +631,7 @@ static struct dentry *__rpc_lookup_create_exclusive(s=
+truct dentry *parent,
+>  					  const char *name)
+>  {
+>  	struct qstr q =3D QSTR(name);
+> -	struct dentry *dentry =3D d_hash_and_lookup(parent, &q);
+> +	struct dentry *dentry =3D try_lookup_noperm(&q, parent);
+>  	if (!dentry) {
+>  		dentry =3D d_alloc(parent, &q);
+>  		if (!dentry)
+> @@ -658,7 +658,7 @@ static void __rpc_depopulate(struct dentry *parent,
+>  	for (i =3D start; i < eof; i++) {
+>  		name.name =3D files[i].name;
+>  		name.len =3D strlen(files[i].name);
+> -		dentry =3D d_hash_and_lookup(parent, &name);
+> +		dentry =3D try_lookup_noperm(&name, parent);
+> =20
+>  		if (dentry =3D=3D NULL)
+>  			continue;
+> @@ -1190,7 +1190,7 @@ static const struct rpc_filelist files[] =3D {
+>  struct dentry *rpc_d_lookup_sb(const struct super_block *sb,
+>  			       const unsigned char *dir_name)
+>  {
+> -	return d_hash_and_lookup(sb->s_root, &QSTR(dir_name));
+> +	return try_lookup_noperm(&QSTR(dir_name), sb->s_root);
+>  }
+>  EXPORT_SYMBOL_GPL(rpc_d_lookup_sb);
+> =20
+> @@ -1301,7 +1301,7 @@ rpc_gssd_dummy_populate(struct dentry *root, struct=
+ rpc_pipe *pipe_data)
+>  	struct dentry *pipe_dentry =3D NULL;
+> =20
+>  	/* We should never get this far if "gssd" doesn't exist */
+> -	gssd_dentry =3D d_hash_and_lookup(root, &QSTR(files[RPCAUTH_gssd].name)=
+);
+> +	gssd_dentry =3D try_lookup_noperm(&QSTR(files[RPCAUTH_gssd].name), root=
+);
+>  	if (!gssd_dentry)
+>  		return ERR_PTR(-ENOENT);
+> =20
+> @@ -1311,8 +1311,8 @@ rpc_gssd_dummy_populate(struct dentry *root, struct=
+ rpc_pipe *pipe_data)
+>  		goto out;
+>  	}
+> =20
+> -	clnt_dentry =3D d_hash_and_lookup(gssd_dentry,
+> -					&QSTR(gssd_dummy_clnt_dir[0].name));
+> +	clnt_dentry =3D try_lookup_noperm(&QSTR(gssd_dummy_clnt_dir[0].name),
+> +					  gssd_dentry);
+>  	if (!clnt_dentry) {
+>  		__rpc_depopulate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1);
+>  		pipe_dentry =3D ERR_PTR(-ENOENT);
+> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+> index 47480eb2189b..e67a8ce4b64c 100644
+> --- a/security/selinux/selinuxfs.c
+> +++ b/security/selinux/selinuxfs.c
+> @@ -2158,8 +2158,8 @@ static int __init init_sel_fs(void)
+>  		return err;
+>  	}
+> =20
+> -	selinux_null.dentry =3D d_hash_and_lookup(selinux_null.mnt->mnt_root,
+> -						&null_name);
+> +	selinux_null.dentry =3D try_lookup_noperm(&null_name,
+> +						  selinux_null.mnt->mnt_root);
+>  	if (IS_ERR(selinux_null.dentry)) {
+>  		pr_err("selinuxfs:  could not lookup null!\n");
+>  		err =3D PTR_ERR(selinux_null.dentry);
 
-Yeah this interface is quite nice actually... :)
-
-> +	int proc_fd, i;
-> +	char *ptr;
-> +
-> +	proc_fd = open("/proc/self/pagemap", O_RDONLY);
-> +	ASSERT_NE(proc_fd, -1);
-> +
-> +	ptr = mmap_(self, variant, NULL, 10 * page_size,
-> +		    PROT_READ | PROT_WRITE, 0, 0);
-> +	ASSERT_NE(ptr, MAP_FAILED);
-> +
-> +	pm_scan_args.start = (long)ptr;
-> +	pm_scan_args.end = (long)ptr + 10 * page_size;
-> +	ASSERT_EQ(ioctl(proc_fd, PAGEMAP_SCAN, &pm_scan_args), 0);
-> +	ASSERT_EQ(pm_scan_args.walk_end, (long)ptr + 10 * page_size);
-> +
-> +	/* Install a guard region in every other page. */
-> +	for (i = 0; i < 10; i += 2) {
-> +		char *ptr_p = &ptr[i * page_size];
-> +
-> +		ASSERT_EQ(syscall(__NR_madvise, ptr_p, page_size, MADV_GUARD_INSTALL), 0);
-> +	}
-> +
-> +	ASSERT_EQ(ioctl(proc_fd, PAGEMAP_SCAN, &pm_scan_args), 5);
-
-Nit but might be worth saying that you're asserting 5 because every other
-over 10.
-
-As trivial as;
-
-/* Assert ioctl() returns the count of located pages */
-
-Which I presume it does right?
-
-> +	ASSERT_EQ(pm_scan_args.walk_end, (long)ptr + 10 * page_size);
-> +
-> +	/* Re-read from pagemap, and assert guard regions are detected. */
-> +	for (i = 0; i < 5; i++) {
-> +		long ptr_p = (long)&ptr[2 * i * page_size];
-> +
-> +		ASSERT_EQ(pm_regs[i].start, ptr_p);
-> +		ASSERT_EQ(pm_regs[i].end, ptr_p + page_size);
-> +		ASSERT_EQ(pm_regs[i].categories, PAGE_IS_GUARD);
-> +	}
-> +
-> +	ASSERT_EQ(close(proc_fd), 0);
-> +	ASSERT_EQ(munmap(ptr, 10 * page_size), 0);
-> +}
-
-Generally test looks ok though, thanks! Passing in my setup.
-
-> +
->  TEST_HARNESS_MAIN
-> --
-> 2.49.0.rc1.451.g8f38331e32-goog
->
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
