@@ -1,50 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-44531-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44532-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17291A6A29E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 10:30:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18B66A6A2DB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 10:42:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E29461893AE8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 09:29:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AC09463609
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 09:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB48422256A;
-	Thu, 20 Mar 2025 09:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A458722257D;
+	Thu, 20 Mar 2025 09:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJZH4EgO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a3cHjiTz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3282222AB
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 09:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B63A42A93;
+	Thu, 20 Mar 2025 09:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742462968; cv=none; b=fUFC0C6sVoXBtdEV7pqHT9xsWR0wCI7gcBNterm0gihm3CHErXZ5sr2TNYAS15uSof+bU/kBsIbGv1t7dAPj0Woe6IJDwz3wV7us2hfQ9tN0qp5jbUMq/6L/q0aoujgCo1RZ7PqMyLcCCLhm2k3GLvSTAn8aKHPVZQ79iiQ1uIE=
+	t=1742463740; cv=none; b=VfX0zBqJ3zd8TXrlDnTUV8Px3AxO7qDk/mAvD1AUEjxCV56+E0h02Xb8qsV14Zp3hpOxJud016/6zB39qnnzfvsIp6r34cFqRRX+QAiql6GJB9c36iNnqZ9IP40hN3B5lyKRrYb7auTbcogtFSFJiI0de9HrmstcMWsc1pGYBd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742462968; c=relaxed/simple;
-	bh=2oPuMKXAnppK07WHh02sLh41hDtkPLKu83E2A4l+cPw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IjxP2OeSYDEZQbiKmGYxlGow1F2dpNKFWITFxzisd37sVQdImmZD6VMUnf7QCj6WqJcF8CLSsKoG+k28FdYD5BXKiXWV7PExcRoA8oqtBFkv4Xwg1z07H7wd9g90Sg58wi1neM9YnZ7oTQJDit1TGsh+keIMFkjVup06Ej8Bdj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KJZH4EgO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 776BBC4CEDD;
-	Thu, 20 Mar 2025 09:29:25 +0000 (UTC)
+	s=arc-20240116; t=1742463740; c=relaxed/simple;
+	bh=PZ/7BGHRn6GuUaETo4eTdreWBAY9KxpU7F8noLXZgqY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AOqd7wdT6PcBEaVDDFyBPF4KRMkrXetbUazRYW3sk+K2x9TMS5YbHnFeB1zGYtk8dDotWce83hiVWIETtf+A9abZ8d5O3LOoal3PmOQW7H+Fu8gFLh31WrrE6R6Mny2aE8P8JFbsYQmbvtRxcawbSRQicmyIqFdhfLK0B9D/YnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a3cHjiTz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C593C4CEE8;
+	Thu, 20 Mar 2025 09:42:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742462968;
-	bh=2oPuMKXAnppK07WHh02sLh41hDtkPLKu83E2A4l+cPw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=KJZH4EgOZqKZQILNGONlROMHAzBp96guN32MVLJ2B0FbgKwKnbOFPyc9mqd1U1eX9
-	 +8KdRuwl9PS5eVv3ET3dsQDQUTT0auqa2WkmpPQoIZPAcx16aCO19vMLmMhRymze3N
-	 y1lEdh6M3mp1d+3kOHvk9gudJFQgHsVFvkyx1SDGceYK1CG/OvpFi1uz1Mq4sE4LrK
-	 TT14uzV8I6hf8ZevBXfrbDNOxpuBIWI7euJPIP915ll2YY9D30DhcsO5gKH0Msp6EE
-	 bEnj7lnucc73vaGFLmDqF/ozeL/1kAP2Q8V1BNUfSqnxNHwJbJL4NW4LEj1K9fGEAx
-	 6YTMm3P+28xWQ==
+	s=k20201202; t=1742463739;
+	bh=PZ/7BGHRn6GuUaETo4eTdreWBAY9KxpU7F8noLXZgqY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=a3cHjiTzdma9DeUbw4fIAcpbpVg4JEugo2OB3ED9yotCmugNUYfU9yoiW4j+CZs4p
+	 +xTXvpz5M9MoFE0TwNWXHe0ejL6P9TEgzSvqK4kJKdIXokeAhPKgCHNKLrff36CiED
+	 0fB6GeRrxH6v7Xps4zwLVW7+R41FfqeyS2esj3nblKuZW17aWLJjaIJw/cQW1hhl3q
+	 s6+RiKNAj6ooMjudSGg86X2ixuxbRlkth3Bi3fMbBK7MuRpeSeurdcH1yrz074SJXd
+	 4Fx6Y8gENV93SsD3eqj2Hef/L+5Ta6ZErx/JTpdzhT/ll/IcOCNzrCze9sKbqP8w3t
+	 jZvTmLK8gFg+g==
 From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 20 Mar 2025 10:29:09 +0100
-Subject: [PATCH v3 4/4] selftests/pidfd: third test for multi-threaded exec
- polling
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: tidy up do_sys_openat2() with likely/unlikely
+Date: Thu, 20 Mar 2025 10:42:12 +0100
+Message-ID: <20250320-kleeblatt-heimweg-40fad461e8e2@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250320092331.1921700-1-mjguzik@gmail.com>
+References: <20250320092331.1921700-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,191 +61,31 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250320-work-pidfs-thread_group-v3-4-b7e5f7e2c3b1@kernel.org>
-References: <20250320-work-pidfs-thread_group-v3-0-b7e5f7e2c3b1@kernel.org>
-In-Reply-To: <20250320-work-pidfs-thread_group-v3-0-b7e5f7e2c3b1@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
- Lennart Poettering <lennart@poettering.net>, 
- Daan De Meyer <daan.j.demeyer@gmail.com>, Mike Yuan <me@yhndnzj.com>, 
- Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5712; i=brauner@kernel.org;
- h=from:subject:message-id; bh=2oPuMKXAnppK07WHh02sLh41hDtkPLKu83E2A4l+cPw=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTfvv8y6CJvtcVdr8S22/cvnT4/gWe+onzcmh171lW0G
- 3lc89by6yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAbjIDob/iQ/CmP6+qfQNmyK3
- 47aTW3DK+SzR2fFGKrdWvOLtOdSizshwWerCqaJX/mc8Tt3dO3vLqb+7H8uGae7Y0hF9QeVqYyQ
- THwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+X-Developer-Signature: v=1; a=openpgp-sha256; l=977; i=brauner@kernel.org; h=from:subject:message-id; bh=PZ/7BGHRn6GuUaETo4eTdreWBAY9KxpU7F8noLXZgqY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTffvRVdGt3X1PTemXR0A1MJ/r3MuwO5mPv9nw3Yc20L 6la/0qDO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYSf4bhr7h16dJlxTJ7nrae MhXO334/aK1tjNYKjX9l23suiQXvkmdkeCJ+m3upVYep2M0Zaq+PXjOTKD0vw7J0fvXXqM6Kw4d T2AE=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Ensure that during a multi-threaded exec and premature thread-group
-leader exit no exit notification is generated.
+On Thu, 20 Mar 2025 10:23:31 +0100, Mateusz Guzik wrote:
+> Otherwise gcc 13 generates conditional forward jumps (aka branch
+> mispredict by default) for build_open_flags() being succesfull.
+> 
+> 
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- tools/testing/selftests/pidfd/pidfd_info_test.c | 147 ++++++++++++++++++++++++
- 1 file changed, 147 insertions(+)
+Applied to the vfs-6.15.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.15.misc branch should appear in linux-next soon.
 
-diff --git a/tools/testing/selftests/pidfd/pidfd_info_test.c b/tools/testing/selftests/pidfd/pidfd_info_test.c
-index 4169780c9e55..1758a1b0457b 100644
---- a/tools/testing/selftests/pidfd/pidfd_info_test.c
-+++ b/tools/testing/selftests/pidfd/pidfd_info_test.c
-@@ -542,4 +542,151 @@ TEST_F(pidfd_info, thread_group_exec)
- 	EXPECT_EQ(close(pidfd_thread), 0);
- }
- 
-+static void *pidfd_info_thread_exec_sane(void *arg)
-+{
-+	pid_t pid_thread = gettid();
-+	int ipc_socket = *(int *)arg;
-+
-+	/* Inform the grand-parent what the tid of this thread is. */
-+	if (write_nointr(ipc_socket, &pid_thread, sizeof(pid_thread)) != sizeof(pid_thread))
-+		return NULL;
-+
-+	if (read_nointr(ipc_socket, &pid_thread, sizeof(pid_thread)) != sizeof(pid_thread))
-+		return NULL;
-+
-+	close(ipc_socket);
-+
-+	sys_execveat(AT_FDCWD, "pidfd_exec_helper", NULL, NULL, 0);
-+	return NULL;
-+}
-+
-+TEST_F(pidfd_info, thread_group_exec_thread)
-+{
-+	pid_t pid_leader, pid_poller, pid_thread;
-+	pthread_t thread;
-+	int nevents, pidfd_leader, pidfd_leader_thread, pidfd_thread, ret;
-+	int ipc_sockets[2];
-+	struct pollfd fds = {};
-+	struct pidfd_info info = {
-+		.mask = PIDFD_INFO_CGROUPID | PIDFD_INFO_EXIT,
-+	};
-+
-+	ret = socketpair(AF_LOCAL, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets);
-+	EXPECT_EQ(ret, 0);
-+
-+	pid_leader = create_child(&pidfd_leader, 0);
-+	EXPECT_GE(pid_leader, 0);
-+
-+	if (pid_leader == 0) {
-+		close(ipc_sockets[0]);
-+
-+		/* The thread will outlive the thread-group leader. */
-+		if (pthread_create(&thread, NULL, pidfd_info_thread_exec_sane, &ipc_sockets[1]))
-+			syscall(__NR_exit, EXIT_FAILURE);
-+
-+		/*
-+		 * Pause the thread-group leader. It will be killed once
-+		 * the subthread execs.
-+		 */
-+		pause();
-+		syscall(__NR_exit, EXIT_SUCCESS);
-+	}
-+
-+	/* Retrieve the tid of the thread. */
-+	EXPECT_EQ(close(ipc_sockets[1]), 0);
-+	ASSERT_EQ(read_nointr(ipc_sockets[0], &pid_thread, sizeof(pid_thread)), sizeof(pid_thread));
-+
-+	/* Opening a thread as a PIDFD_THREAD must succeed. */
-+	pidfd_thread = sys_pidfd_open(pid_thread, PIDFD_THREAD);
-+	ASSERT_GE(pidfd_thread, 0);
-+
-+	/* Open a thread-specific pidfd for the thread-group leader. */
-+	pidfd_leader_thread = sys_pidfd_open(pid_leader, PIDFD_THREAD);
-+	ASSERT_GE(pidfd_leader_thread, 0);
-+
-+	pid_poller = fork();
-+	ASSERT_GE(pid_poller, 0);
-+	if (pid_poller == 0) {
-+		/*
-+		 * The subthread will now exec. The struct pid of the old
-+		 * thread-group leader will be assumed by the subthread which
-+		 * becomes the new thread-group leader. So no exit notification
-+		 * must be generated. Wait for 5 seconds and call it a success
-+		 * if no notification has been received.
-+		 */
-+		fds.events = POLLIN;
-+		fds.fd = pidfd_leader_thread;
-+		nevents = poll(&fds, 1, 10000 /* wait 5 seconds */);
-+		if (nevents != 0)
-+			_exit(EXIT_FAILURE);
-+		if (fds.revents & POLLIN)
-+			_exit(EXIT_FAILURE);
-+		if (fds.revents & POLLHUP)
-+			_exit(EXIT_FAILURE);
-+		_exit(EXIT_SUCCESS);
-+	}
-+
-+	/* Now that we've opened a thread-specific pidfd the thread can exec. */
-+	ASSERT_EQ(write_nointr(ipc_sockets[0], &pid_thread, sizeof(pid_thread)), sizeof(pid_thread));
-+	EXPECT_EQ(close(ipc_sockets[0]), 0);
-+	ASSERT_EQ(wait_for_pid(pid_poller), 0);
-+
-+	/* Wait until the kernel has SIGKILLed the thread. */
-+	fds.events = POLLHUP;
-+	fds.fd = pidfd_thread;
-+	nevents = poll(&fds, 1, -1);
-+	ASSERT_EQ(nevents, 1);
-+	/* The thread has been reaped. */
-+	ASSERT_TRUE(!!(fds.revents & POLLHUP));
-+
-+	/* Retrieve thread-specific exit info from pidfd. */
-+	ASSERT_EQ(ioctl(pidfd_thread, PIDFD_GET_INFO, &info), 0);
-+	ASSERT_FALSE(!!(info.mask & PIDFD_INFO_CREDS));
-+	ASSERT_TRUE(!!(info.mask & PIDFD_INFO_EXIT));
-+	/*
-+	 * While the kernel will have SIGKILLed the whole thread-group
-+	 * during exec it will cause the individual threads to exit
-+	 * cleanly.
-+	 */
-+	ASSERT_TRUE(WIFEXITED(info.exit_code));
-+	ASSERT_EQ(WEXITSTATUS(info.exit_code), 0);
-+
-+	/*
-+	 * The thread-group leader is still alive, the thread has taken
-+	 * over its struct pid and thus its pid number.
-+	 */
-+	info.mask = PIDFD_INFO_CGROUPID | PIDFD_INFO_EXIT;
-+	ASSERT_EQ(ioctl(pidfd_leader, PIDFD_GET_INFO, &info), 0);
-+	ASSERT_TRUE(!!(info.mask & PIDFD_INFO_CREDS));
-+	ASSERT_FALSE(!!(info.mask & PIDFD_INFO_EXIT));
-+	ASSERT_EQ(info.pid, pid_leader);
-+
-+	/* Take down the thread-group leader. */
-+	EXPECT_EQ(sys_pidfd_send_signal(pidfd_leader, SIGKILL, NULL, 0), 0);
-+
-+	/*
-+	 * Afte the exec we're dealing with an empty thread-group so now
-+	 * we must see an exit notification on the thread-specific pidfd
-+	 * for the thread-group leader as there's no subthread that can
-+	 * revive the struct pid.
-+	 */
-+	fds.events = POLLIN;
-+	fds.fd = pidfd_leader_thread;
-+	nevents = poll(&fds, 1, -1);
-+	ASSERT_EQ(nevents, 1);
-+	ASSERT_TRUE(!!(fds.revents & POLLIN));
-+	ASSERT_FALSE(!!(fds.revents & POLLHUP));
-+
-+	EXPECT_EQ(sys_waitid(P_PIDFD, pidfd_leader, NULL, WEXITED), 0);
-+
-+	/* Retrieve exit information for the thread-group leader. */
-+	info.mask = PIDFD_INFO_CGROUPID | PIDFD_INFO_EXIT;
-+	ASSERT_EQ(ioctl(pidfd_leader, PIDFD_GET_INFO, &info), 0);
-+	ASSERT_FALSE(!!(info.mask & PIDFD_INFO_CREDS));
-+	ASSERT_TRUE(!!(info.mask & PIDFD_INFO_EXIT));
-+
-+	EXPECT_EQ(close(pidfd_leader), 0);
-+	EXPECT_EQ(close(pidfd_thread), 0);
-+}
-+
- TEST_HARNESS_MAIN
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
--- 
-2.47.2
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.15.misc
+
+[1/1] fs: tidy up do_sys_openat2() with likely/unlikely
+      https://git.kernel.org/vfs/vfs/c/d5a05a5a44a9
 
