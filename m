@@ -1,47 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-44516-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49959A6A00F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 08:01:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53CD9A6A024
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 08:08:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB29C4625CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 07:01:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0254317AFE3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 07:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38991EE01A;
-	Thu, 20 Mar 2025 07:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115D61EE7CB;
+	Thu, 20 Mar 2025 07:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Lfi9GVUP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898A3819;
-	Thu, 20 Mar 2025 07:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78791C3F02;
+	Thu, 20 Mar 2025 07:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742454061; cv=none; b=ajXBNQyYO+mP6FYAKgPHxBxbtO0cfa5pBwWKuBP9ERFTu6SQRazbVzOsLnl4k3RZJjw2f1AdFhC+8PBjtOHbMHWgiIm6wqicp+ua3GwvXx+VcInD2nNnxryWed8W3cLkeagw5kA0KtXTzttoE1DNmxGMQShJ1piR1kbrZVUC0bA=
+	t=1742454503; cv=none; b=V5vaRprPvfgjEg/nT2NWuE/3PMffkrJFkb+FV6pB8dqb8oZL7bzu9sWTNduewGjgXBTgOfjYj/1ZPOxiabFi8xXXYEDFeLgwvBSK62m0XJc0QPk/Mf+SymoXxV7FFBPCSLrj7h4fErJTTnYbN5QdmQZMTTjKj6Ruojn2aqfjSuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742454061; c=relaxed/simple;
-	bh=+z2wZPLFas1paqJW6IdM/iwi6AbcV2FdZfJRNwc5JKk=;
+	s=arc-20240116; t=1742454503; c=relaxed/simple;
+	bh=W+9m4XEehGdKldYYVEGbIC6F/LyBFoLsNvRrssBfmkA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N7Ch6/XVx3/02+a+1oQXefNwfjrq/WrAVEh+HVYiTgFAZvgUpp1/9DZTiveiGrUi0GYg0A+IfURDaLjmKRhHx0dLI4XuhZvK6QiGfHJRYe7gpxdaH0KoVisFZh6g2UAM+8x6uvbh3w5LdtUGzbdLUXAfUkPHEXZh2Mu0QxszSDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 527E168D12; Thu, 20 Mar 2025 08:00:50 +0100 (CET)
-Date: Thu, 20 Mar 2025 08:00:48 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: alx@kernel.org, brauner@kernel.org, djwong@kernel.org,
-	dchinner@redhat.com, hch@lst.de, linux-man@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, martin.petersen@oracle.com
-Subject: Re: [PATCH RFC] statx.2: Add stx_atomic_write_unit_max_opt
-Message-ID: <20250320070048.GA14099@lst.de>
-References: <20250319114402.3757248-1-john.g.garry@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aAl3SRwwIrl8482+lWRO6dDny8Ma+tsQhmCPn5TXn2q8cvqpqLWoURY7/7aKY6CMV9rmYkGCvbTwQwX7xK7xW54NORC32FEqdp/FHYQwMGZ1iAx+uqi7FwOM+9v77Uss1e3bsVGBFWjWcBR0ShYK61nNVmXvLFHx50ffc/1dieY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Lfi9GVUP; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Z1vSfJUNPkSiRaWMFL7kD4jilYBU0XwUxXLmUH1EUDc=; b=Lfi9GVUP7J0+CSIvCCEI9YBvDt
+	NG6+M1wHsK5fW6nYH7D2gxkPlwi047ytsQs+KDdovgDNmsr2Flg5NrwjefXdwJbX6OaELW7/Hidyi
+	MMbR2kuyVXC+jSPCKCTb/cCP6Ur/fXK/rcD7eb5CIe7EfTWum142o0rFFw1n4t+ZTT3g0jSQ7r6tw
+	QNNAmQQfubgOKceoh+S9i/9OvaTREuTx6yvgxJMbmjqSQE/zWR+CgbpB85vF31YwbnRdlcogymNc+
+	HRLXr9FWGHDaOzs0wVso0L4veyVaP/pBK8yQxTXWpF5jUQp52yVY/VNsxDAj+yqrTHvNNWT+k3AMD
+	hZoEy8MQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tvA0q-0000000BMyY-05jV;
+	Thu, 20 Mar 2025 07:08:20 +0000
+Date: Thu, 20 Mar 2025 00:08:19 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Dave Chinner <david@fromorbit.com>,
+	Mikulas Patocka <mpatocka@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	Jooyung Han <jooyung@google.com>, Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Heinz Mauelshagen <heinzm@redhat.com>, zkabelac@redhat.com,
+	dm-devel@lists.linux.dev, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH] the dm-loop target
+Message-ID: <Z9u-489C_PVu8Se1@infradead.org>
+References: <Z8zbYOkwSaOJKD1z@fedora>
+ <a8e5c76a-231f-07d1-a394-847de930f638@redhat.com>
+ <Z8-ReyFRoTN4G7UU@dread.disaster.area>
+ <Z9ATyhq6PzOh7onx@fedora>
+ <Z9DymjGRW3mTPJTt@dread.disaster.area>
+ <Z9FFTiuMC8WD6qMH@fedora>
+ <7b8b8a24-f36b-d213-cca1-d8857b6aca02@redhat.com>
+ <Z9j2RJBark15LQQ1@dread.disaster.area>
+ <Z9knXQixQhs90j5F@infradead.org>
+ <Z9k-JE8FmWKe0fm0@fedora>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,26 +75,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250319114402.3757248-1-john.g.garry@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <Z9k-JE8FmWKe0fm0@fedora>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Mar 19, 2025 at 11:44:02AM +0000, John Garry wrote:
-> XFS supports atomic writes - or untorn writes - based on different methods:
-> - HW offload in the disk
-> - Software emulation
+On Tue, Mar 18, 2025 at 05:34:28PM +0800, Ming Lei wrote:
+> On Tue, Mar 18, 2025 at 12:57:17AM -0700, Christoph Hellwig wrote:
+> > On Tue, Mar 18, 2025 at 03:27:48PM +1100, Dave Chinner wrote:
+> > > Yes, NOWAIT may then add an incremental performance improvement on
+> > > top for optimal layout cases, but I'm still not yet convinced that
+> > > it is a generally applicable loop device optimisation that everyone
+> > > wants to always enable due to the potential for 100% NOWAIT
+> > > submission failure on any given loop device.....
 > 
-> The value reported in stx_atomic_write_unit_max will be the max of the
-> software emulation method.
+> NOWAIT failure can be avoided actually:
+> 
+> https://lore.kernel.org/linux-block/20250314021148.3081954-6-ming.lei@redhat.com/
 
-I don't think emulation is a good word.  A file system implementing
-file systems things is not emulation.
+That's a very complex set of heuristics which doesn't match up
+with other uses of it.
 
-> We want STATX_WRITE_ATOMIC to get this new member in addition to the
-> already-existing members, so mention that a value of 0 means that
-> stx_atomic_write_unit_max holds this limit.
+> 
+> > 
+> > Yes, I think this is a really good first step:
+> > 
+> > 1) switch loop to use a per-command work_item unconditionally, which also
+> >    has the nice effect that it cleans up the horrible mess of the
+> >    per-blkcg workers.  (note that this is what the nvmet file backend has
+> 
+> It could be worse to take per-command work, because IO handling crosses
+> all system wq worker contexts.
 
-Does that actually work?  Can userspace assume all unknown statx
-fields are padded to zero?  If so my dio read align change could have
-done away with the extra flag.
+So do other workloads with pretty good success.
+
+> 
+> >    always done with good result)
+> 
+> per-command work does burn lots of CPU unnecessarily, it isn't good for
+> use case of container
+
+That does not match my observations in say nvmet.  But if you have
+numbers please share them.
 
 
