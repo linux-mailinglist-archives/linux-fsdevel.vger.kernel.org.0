@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-44574-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44575-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FD26A6A713
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 14:24:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D4E4A6A727
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 14:29:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 452E017C715
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 13:24:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75AE9189BCA8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 13:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92880221574;
-	Thu, 20 Mar 2025 13:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19EC2221704;
+	Thu, 20 Mar 2025 13:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SIXwluCc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f3MR5Ibh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010B81DFE00
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 13:24:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAF91DFE00
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 13:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742477059; cv=none; b=adbqF1jVP+9VgCiYM9IxZ/MRc8jq6J+jnFgxLDhp1dLgtf9DuiujrfQ9iHAMRX+NrzBr73FpD5PNO15bslG3kWw4fUSUKYm/fnXqA8vzCd1ulvKDKKPFxKvNRFnjgbqvdy5q1VEFm5Sev/VAf0yesx3JYOonnui/QiTLtj3hWl0=
+	t=1742477061; cv=none; b=gz3ib44q91SZYwDU2HmdmucLhoqKolLfS8TbwbqFZX4PDHZYvorVYOn3BRkGL14hzpUpJ3cXyc4fj0nb9bgJ9wnWADU8iuFfFw8dICLV1pkam65cFdv7evndSjGpfbTecb6bxmJF1j8Zv5hSBkA8xl15bi4Yn0M9XG4lPfkt4PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742477059; c=relaxed/simple;
-	bh=BtOaVjDpk1fZqkfhmjGWg+YUBdmOSa3NNOtmB7NQCiY=;
+	s=arc-20240116; t=1742477061; c=relaxed/simple;
+	bh=nbqWaPaXqyDnB0HDQ1wL/80R9Ma05kzOsoIHnfmrKKY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=O9WRu7osQEKjkkMyp65iTKZ8u754E+bY5CQMN3HGLsA9DJKSlZOYda2CeQER7IsB95qBlFXvnmceY40nUv/s3Whz+h8CRT+IcwV88tpnMuT7MW+rAT6eTRUckawVvgriHLRJqACl46ajs85OxcAjhVhJvHmvassFhDlEpr7iK2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SIXwluCc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBD32C4CEE3;
-	Thu, 20 Mar 2025 13:24:16 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=iQClOhYt8EPdCyVSafhwyDxdy9CYpczGAu4tXpKhRxbxf7w+af3FkalT1bDNcPbef+167O40uu2yMs/FTZVjoZch8NNz9Q/YpiQKADHxF8sdwy98pGdLxVDV30j7OBj/9qyVaEIT/u8PtLF3oMyNeWESOy2ZQ/FyjoJNbavsdEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f3MR5Ibh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F00CDC4CEDD;
+	Thu, 20 Mar 2025 13:24:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742477058;
-	bh=BtOaVjDpk1fZqkfhmjGWg+YUBdmOSa3NNOtmB7NQCiY=;
+	s=k20201202; t=1742477061;
+	bh=nbqWaPaXqyDnB0HDQ1wL/80R9Ma05kzOsoIHnfmrKKY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=SIXwluCcD57pydf5ZoqGOjdCxgCHs65MBijEaPoSfwwl8GvkSsJy/Y7m7EJKbkRAb
-	 rA+Bwdt5sdkqY/RAw3HRJNwoMZC6asWIIxEIl2l10xrov3OXddAzCQXuBZV/nuaQPZ
-	 OKAz141f/C5hqN3c9uOTl8YWSV/iz49/4bYjtR+zsxDUkCIg50ptE51KzOv8O5vDsf
-	 anqvSq7FDcF4OY2FXuDZJ5ne1H7gAKDiXR/KIzcXaxm1xxNCPFDt5QXgKAtJct02Eh
-	 Z/4qrNzvGXgxox8KC3pYAa6/n6ZRJprhuVT5kym0GW++LV3NGuFjkuFIPsgZWMt7UB
-	 /AxKdGfIQeh7g==
+	b=f3MR5Ibhd2l+kn1XAlXC9u4BxOCgL9hW/IoqJfqcKvrWbPIIOXsrUZAXif+lfzMML
+	 UCi919NexzlKHrEB7t95V/71lXEZGVLoaaPDbWhcNpjbhannJuYN7xCzAmQdq2s6mI
+	 OubaWPAuBGmTwqMYXKAmgHKxlmv0961JUGayCMK11BC/UY1tN6px2Ortpw2qGkuId9
+	 3OR0Ui0qCVRAhCgWexPN2xmQEVPxyz4aFoI4RWWz58LAo4cksG7ImWivOmVf7+gjAd
+	 akI0lhEn3cuSzcC3EEWVeNFKnJhG1yNsx9RKDdob3le5S6LGZ5+WdweHq5MQeNYkNk
+	 OY8o2PzFq62yA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 20 Mar 2025 14:24:08 +0100
-Subject: [PATCH v4 1/4] pidfs: improve multi-threaded exec and premature
- thread-group leader exit polling
+Date: Thu, 20 Mar 2025 14:24:09 +0100
+Subject: [PATCH v4 2/4] selftests/pidfd: first test for multi-threaded exec
+ polling
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250320-work-pidfs-thread_group-v4-1-da678ce805bf@kernel.org>
+Message-Id: <20250320-work-pidfs-thread_group-v4-2-da678ce805bf@kernel.org>
 References: <20250320-work-pidfs-thread_group-v4-0-da678ce805bf@kernel.org>
 In-Reply-To: <20250320-work-pidfs-thread_group-v4-0-da678ce805bf@kernel.org>
 To: Oleg Nesterov <oleg@redhat.com>
@@ -62,129 +62,85 @@ Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
  Daan De Meyer <daan.j.demeyer@gmail.com>, Mike Yuan <me@yhndnzj.com>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4740; i=brauner@kernel.org;
- h=from:subject:message-id; bh=BtOaVjDpk1fZqkfhmjGWg+YUBdmOSa3NNOtmB7NQCiY=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTfEfu3Q+KNZMKDK8I/4k26lOv9b6/5vk6701l520aeF
- dK8xZP7O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaieYGRYYrf48bva+cvspyo
- VjFF8+DdaWLh3GJs4je+nj6Ve1lPW43hn+HbJTNjMi8t/mLXY88zT1HYw7+y4v5NBQX96bki+29
- 9YgcA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2472; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=nbqWaPaXqyDnB0HDQ1wL/80R9Ma05kzOsoIHnfmrKKY=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTfEfsnP/9yvGZfauZsZQuhA0Uy1k+/6HY1efx4KWvDx
+ 13/r0O7o5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCLHQxn+17KppTiVxkhtt97x
+ 2OHJP8u3z/7d+/hS/ebBGAYd/w6rKYwMV5kEteLqpTMSQmo/Gq10zTfxm6E35cj+ns6AEp9H+3f
+ xAgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-This is another attempt trying to make pidfd polling for multi-threaded
-exec and premature thread-group leader exit consistent.
+Add first test for premature thread-group leader exit.
 
-A quick recap of these two cases:
-
-(1) During a multi-threaded exec by a subthread, i.e., non-thread-group
-    leader thread, all other threads in the thread-group including the
-    thread-group leader are killed and the struct pid of the
-    thread-group leader will be taken over by the subthread that called
-    exec. IOW, two tasks change their TIDs.
-
-(2) A premature thread-group leader exit means that the thread-group
-    leader exited before all of the other subthreads in the thread-group
-    have exited.
-
-Both cases lead to inconsistencies for pidfd polling with PIDFD_THREAD.
-Any caller that holds a PIDFD_THREAD pidfd to the current thread-group
-leader may or may not see an exit notification on the file descriptor
-depending on when poll is performed. If the poll is performed before the
-exec of the subthread has concluded an exit notification is generated
-for the old thread-group leader. If the poll is performed after the exec
-of the subthread has concluded no exit notification is generated for the
-old thread-group leader.
-
-The correct behavior would be to simply not generate an exit
-notification on the struct pid of a subhthread exec because the struct
-pid is taken over by the subthread and thus remains alive.
-
-But this is difficult to handle because a thread-group may exit
-prematurely as mentioned in (2). In that case an exit notification is
-reliably generated but the subthreads may continue to run for an
-indeterminate amount of time and thus also may exec at some point.
-
-So far there was no way to distinguish between (1) and (2) internally.
-This tiny series tries to address this problem by discarding
-PIDFD_THREAD notification on premature thread-group leader exit.
-
-If that works correctly then no exit notifications are generated for a
-PIDFD_THREAD pidfd for a thread-group leader until all subthreads have
-been reaped. If a subthread should exec aftewards no exit notification
-will be generated until that task exits or it creates subthreads and
-repeates the cycle.
-
-Co-Developed-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/pidfs.c      | 9 +++++----
- kernel/exit.c   | 6 +++---
- kernel/signal.c | 3 +--
- 3 files changed, 9 insertions(+), 9 deletions(-)
+ tools/testing/selftests/pidfd/pidfd_info_test.c | 38 ++++++++++++++++++++-----
+ 1 file changed, 31 insertions(+), 7 deletions(-)
 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index a48cc44ced6f..1b3d23e0ffdd 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -210,20 +210,21 @@ static void pidfd_show_fdinfo(struct seq_file *m, struct file *f)
- static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
+diff --git a/tools/testing/selftests/pidfd/pidfd_info_test.c b/tools/testing/selftests/pidfd/pidfd_info_test.c
+index 09bc4ae7aed5..28a28ae4686a 100644
+--- a/tools/testing/selftests/pidfd/pidfd_info_test.c
++++ b/tools/testing/selftests/pidfd/pidfd_info_test.c
+@@ -236,7 +236,7 @@ static void *pidfd_info_pause_thread(void *arg)
+ 
+ TEST_F(pidfd_info, thread_group)
  {
- 	struct pid *pid = pidfd_pid(file);
--	bool thread = file->f_flags & PIDFD_THREAD;
- 	struct task_struct *task;
- 	__poll_t poll_flags = 0;
+-	pid_t pid_leader, pid_thread;
++	pid_t pid_leader, pid_poller, pid_thread;
+ 	pthread_t thread;
+ 	int nevents, pidfd_leader, pidfd_thread, pidfd_leader_thread, ret;
+ 	int ipc_sockets[2];
+@@ -262,6 +262,35 @@ TEST_F(pidfd_info, thread_group)
+ 		syscall(__NR_exit, EXIT_SUCCESS);
+ 	}
  
- 	poll_wait(file, &pid->wait_pidfd, pts);
++	/*
++	 * Opening a PIDFD_THREAD aka thread-specific pidfd based on a
++	 * thread-group leader must succeed.
++	 */
++	pidfd_leader_thread = sys_pidfd_open(pid_leader, PIDFD_THREAD);
++	ASSERT_GE(pidfd_leader_thread, 0);
++
++	pid_poller = fork();
++	ASSERT_GE(pid_poller, 0);
++	if (pid_poller == 0) {
++		/*
++		 * We can't poll and wait for the old thread-group
++		 * leader to exit using a thread-specific pidfd. The
++		 * thread-group leader exited prematurely and
++		 * notification is delayed until all subthreads have
++		 * exited.
++		 */
++		fds.events = POLLIN;
++		fds.fd = pidfd_leader_thread;
++		nevents = poll(&fds, 1, 10000 /* wait 5 seconds */);
++		if (nevents != 0)
++			_exit(EXIT_FAILURE);
++		if (fds.revents & POLLIN)
++			_exit(EXIT_FAILURE);
++		if (fds.revents & POLLHUP)
++			_exit(EXIT_FAILURE);
++		_exit(EXIT_SUCCESS);
++	}
++
+ 	/* Retrieve the tid of the thread. */
+ 	EXPECT_EQ(close(ipc_sockets[1]), 0);
+ 	ASSERT_EQ(read_nointr(ipc_sockets[0], &pid_thread, sizeof(pid_thread)), sizeof(pid_thread));
+@@ -275,12 +304,7 @@ TEST_F(pidfd_info, thread_group)
+ 	pidfd_thread = sys_pidfd_open(pid_thread, PIDFD_THREAD);
+ 	ASSERT_GE(pidfd_thread, 0);
+ 
+-	/*
+-	 * Opening a PIDFD_THREAD aka thread-specific pidfd based on a
+-	 * thread-group leader must succeed.
+-	 */
+-	pidfd_leader_thread = sys_pidfd_open(pid_leader, PIDFD_THREAD);
+-	ASSERT_GE(pidfd_leader_thread, 0);
++	ASSERT_EQ(wait_for_pid(pid_poller), 0);
+ 
  	/*
--	 * Depending on PIDFD_THREAD, inform pollers when the thread
--	 * or the whole thread-group exits.
-+	 * Don't wake waiters if the thread-group leader exited
-+	 * prematurely. They either get notified when the last subthread
-+	 * exits or not at all if one of the remaining subthreads execs
-+	 * and assumes the struct pid of the old thread-group leader.
- 	 */
- 	guard(rcu)();
- 	task = pid_task(pid, PIDTYPE_PID);
- 	if (!task)
- 		poll_flags = EPOLLIN | EPOLLRDNORM | EPOLLHUP;
--	else if (task->exit_state && (thread || thread_group_empty(task)))
-+	else if (task->exit_state && !delay_group_leader(task))
- 		poll_flags = EPOLLIN | EPOLLRDNORM;
- 
- 	return poll_flags;
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 9916305e34d3..683766316a3d 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -743,10 +743,10 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
- 
- 	tsk->exit_state = EXIT_ZOMBIE;
- 	/*
--	 * sub-thread or delay_group_leader(), wake up the
--	 * PIDFD_THREAD waiters.
-+	 * Ignore thread-group leaders that exited before all
-+	 * subthreads did.
- 	 */
--	if (!thread_group_empty(tsk))
-+	if (!delay_group_leader(tsk))
- 		do_notify_pidfd(tsk);
- 
- 	if (unlikely(tsk->ptrace)) {
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 081f19a24506..027ad9e97417 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2180,8 +2180,7 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
- 	WARN_ON_ONCE(!tsk->ptrace &&
- 	       (tsk->group_leader != tsk || !thread_group_empty(tsk)));
- 	/*
--	 * tsk is a group leader and has no threads, wake up the
--	 * non-PIDFD_THREAD waiters.
-+	 * Notify for thread-group leaders without subthreads.
- 	 */
- 	if (thread_group_empty(tsk))
- 		do_notify_pidfd(tsk);
+ 	 * Note that pidfd_leader is a thread-group pidfd, so polling on it
 
 -- 
 2.47.2
