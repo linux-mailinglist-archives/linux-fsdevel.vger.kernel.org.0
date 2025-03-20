@@ -1,96 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-44565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19FBBA6A5E9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 13:10:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2328A6A613
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 13:15:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61D26171913
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 12:07:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80A18188E07D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 12:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D48521E0BE;
-	Thu, 20 Mar 2025 12:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E6E221578;
+	Thu, 20 Mar 2025 12:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YAlds+kt"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CYrG33lH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A57F21B9C5;
-	Thu, 20 Mar 2025 12:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14B613C695;
+	Thu, 20 Mar 2025 12:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742472446; cv=none; b=rAbHhHeHZvCVKJeUjeacDX5AWwO0SnKCCQxEyq9NZ48wWrHfisWV3ZaM0/RZrwzC5Q5uBmTV/6+ekM8l9uT1wJCfWLlVxqMBmOGDNUf8AteHn2TPAIqCg/qviSoA30Y7abQ4/7FhDLh0VUhlnjIU9tXPSrCRtUYMEOeRsWUP6nI=
+	t=1742472717; cv=none; b=ZeZpKxfxVOqMSI3HrMJfREts5Czfw9t+QVtGlh8r1bNvTbOUAuNzX77dkiJi7zmwnNHW47JveGaDdgTgM5LScHMsAh+5eEt/VZ56HmSBMZHvJVchonEqbCGYduviHFvPsxoVmJenDBdW3+uKz05zwoh5H3bqyFd2k0onmx1LwtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742472446; c=relaxed/simple;
-	bh=DdLmbiZIe5M95mj8ZrqKxiqcbLuETf4IHvDcbhbav20=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=avg7O/MrNKfWYTXCREqOSJeBVpsCCxBUdI8oOhNAPkuVjy0RVDONu0elBXSCucQbXvkGowWbvZAPZngf0RkZjl7p2vWBrUtFiQe+7dJ2jXBLtahwAhPbERcGMrglUM2ODiC7IMhB5PiriZkAkBMhCSOBn2Ts+ej8v8JFWL2PuA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YAlds+kt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F245C4CEDD;
-	Thu, 20 Mar 2025 12:07:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742472446;
-	bh=DdLmbiZIe5M95mj8ZrqKxiqcbLuETf4IHvDcbhbav20=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YAlds+ktckns+lx03YOhpcg7QLsXf9aTlsiGKvG65wTlG8kGo2HsLfriEq1U/AcDs
-	 mLVZ3CuuKVEuAyeq0y0iNA+ICMevPsGa0BRE/g6cB+z/kpBBuWxwS38Y+dxPjNIhRQ
-	 0mtBsJstRSHycySS37jacLoCmSD3Y5k1IOPBMYpDok/ADoiWZGaEMkBkNa7SSlrTlL
-	 UuLekyyTzn7FNb/R2pEVhJD2PbkgdmBEGehqkQ7pGsA8UwTO+t4kUsxOlWVX6L5uQM
-	 FfdSoyAuiEaxo259JWLDS70qY98+2O63Rv0U0XdyGtn7WEZvSyuBe37qXY01OCjaDb
-	 88FM+56MeoXkQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: call inode_sb_list_add() outside of inode hash lock
-Date: Thu, 20 Mar 2025 13:07:20 +0100
-Message-ID: <20250320-rustikal-urwald-20739009faa8@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250320004643.1903287-1-mjguzik@gmail.com>
-References: <20250320004643.1903287-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1742472717; c=relaxed/simple;
+	bh=K3hg1bCjJiCU739YdKYncHOb2k8F152AweW3t/yo/+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fYPiQlnb6jcwyOtpOzn9kwpKi2Awhm3kd8WBENiEjesdghWgmd6dvaqpj1YBBElLtHFIzLW1SoNlJyjlX/mZ7d0FLu0W9DSPbzhkYSbFLTxrIUgrXOQPzovyUnNKz05ri+DkmWEYhcFIcdZ2ueoyTVIgA7HvC+JFXYOTLXr8wA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CYrG33lH; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6GdYJvaUyHN33OWPLsIOGOvCIvn/uOWWV0lLG312V8w=; b=CYrG33lHZUSnxCeeDL6buuQ3Gd
+	ZXncxZYgvDt1AhMNMoxH0NNgwN2Vl/F9DMX+klnY+ql1Nb+wF/bNYyP/5zrijkmvfvPDldi/G/EXp
+	KZ1Q1NnN3Rr8W5nTujHbkt3VZiKIH9ixxUui/KKTA3xtFqsZfx5lXXPq5W6wTx/2lpL8sWXxZKC4J
+	TOdTSyTLt3BwtjJhMpAK7cx44jaEMtN5u4ZeVbRBcNzwzpAjKmCKA3scFSbMAUkwwPWRaK1TbSfTT
+	ixPtmOV+j6xVtlwvDjX1uEPVjP7nTjGExNuYoIeZyhvmcGgOTeQaTXbjfMIkvYPuLHAk9OrzT0L5s
+	orBbgBbA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tvEkV-0000000A7g4-2x1Q;
+	Thu, 20 Mar 2025 12:11:47 +0000
+Date: Thu, 20 Mar 2025 12:11:47 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-block@vger.kernel.org, lsf-pc@lists.linux-foundation.org,
+	david@fromorbit.com, leon@kernel.org, hch@lst.de, kbusch@kernel.org,
+	sagi@grimberg.me, axboe@kernel.dk, joro@8bytes.org,
+	brauner@kernel.org, hare@suse.de, djwong@kernel.org,
+	john.g.garry@oracle.com, ritesh.list@gmail.com,
+	p.raghav@samsung.com, gost.dev@samsung.com, da.gomez@samsung.com
+Subject: Re: [LSF/MM/BPF TOPIC] breaking the 512 KiB IO boundary on x86_64
+Message-ID: <Z9wGA9z_cVn6Mfa1@casper.infradead.org>
+References: <Z9v-1xjl7dD7Tr-H@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1238; i=brauner@kernel.org; h=from:subject:message-id; bh=DdLmbiZIe5M95mj8ZrqKxiqcbLuETf4IHvDcbhbav20=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTfYfmxX9HM1eu/zYcpl/bfNJvSH2Sefbxg+ev+5D9id zf86jt3t6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiBcsZ/uleLV84pWZ640G3 d/8rWZ4dy1h/2qh1xrIrPEuF9y+88EuSkeEhR1zVj4O3Ci/nSKvd2bTli/NDQcuvr3+0HhC3eOu 0YBkXAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9v-1xjl7dD7Tr-H@bombadil.infradead.org>
 
-On Thu, 20 Mar 2025 01:46:43 +0100, Mateusz Guzik wrote:
-> As both locks are highly contended during significant inode churn,
-> holding the inode hash lock while waiting for the sb list lock
-> exacerbates the problem.
+On Thu, Mar 20, 2025 at 04:41:11AM -0700, Luis Chamberlain wrote:
+> We've been constrained to a max single 512 KiB IO for a while now on x86_64.
+...
+> It does beg a few questions:
 > 
-> Why moving it out is safe: the inode at hand still has I_NEW set and
-> anyone who finds it through legitimate means waits for the bit to clear,
-> by which time inode_sb_list_add() is guaranteed to have finished.
-> 
-> [...]
+>  - How are we computing the new max single IO anyway? Are we really
+>    bounded only by what devices support?
+>  - Do we believe this is the step in the right direction?
+>  - Is 2 MiB a sensible max block sector size limit for the next few years?
+>  - What other considerations should we have?
+>  - Do we want something more deterministic for large folios for direct IO?
 
-Applied to the vfs-6.15.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.15.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.15.misc
-
-[1/1] fs: call inode_sb_list_add() outside of inode hash lock
-      https://git.kernel.org/vfs/vfs/c/c918f15420e3
+Is the 512KiB limit one that real programs actually hit?  Would we
+see any benefit from increasing it?  A high end NVMe device has a
+bandwidth limit around 10GB/s, so that's reached around 20k IOPS,
+which is almost laughably low.
 
