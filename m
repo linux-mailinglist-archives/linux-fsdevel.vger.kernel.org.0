@@ -1,97 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-44593-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44594-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D43ABA6A875
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 15:28:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F01A6A88F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 15:31:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 689B41B6059E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 14:19:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 070381B66617
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 14:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D4B222580;
-	Thu, 20 Mar 2025 14:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEDF225413;
+	Thu, 20 Mar 2025 14:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZBeojsTi"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wiq4onaB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA767FBD6;
-	Thu, 20 Mar 2025 14:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCB32253FB;
+	Thu, 20 Mar 2025 14:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742480352; cv=none; b=WffuCy1oOSJ1tTvyUKDNpzMwAitLN0zXBhPFoqJu3+HEEzT9wcbCjz/9Cb52DgMQ2sR2N7Uu6VcZTtrzJfHtJgs4KOF/rcqPSTF+5OcDQ1i56B0bI+L6w79WdIkWGbBierPbeHFCEX2Rdo3O0rTMWtzvuHVYc38RR+pC2tY83/M=
+	t=1742480552; cv=none; b=bU5GbN1mnoWVkyAo4XfrzTlhmAjKhNOuz6fvzG4qLr1oGIvUUI4to7ttFVLuV8O3bk8SsVtZEwKXNp6ZVuuuVO8gCLtBGwVRzq5BHF1mwRYtfZxi5MHDv66gJ1kpZnNFjVUPAPZshqZVeI5nYbjbQMalcAZKeO1OJ8QMqVDUHEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742480352; c=relaxed/simple;
-	bh=ykMiPvcTwQMVIvfcRVO0FVXDV8aKd7Cnvgwwftoy0Ew=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TGMnyb0H1FDE6nTtUfguI6sTt7G0IFGFy7Pq0UQ6c+AKjYRajOxwrYvVgXsgZRPx794T955uxF0Fi2Jbz4HxNQu73Hqph37aFRZ7dw0NNzCWtGWvHZiZAGSb7O/Snt8oQVwLihEsP+XDnW3Lv52q6muqIbDC2a2DOCuBWAdKy3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZBeojsTi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 908BFC4CEDD;
-	Thu, 20 Mar 2025 14:19:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742480352;
-	bh=ykMiPvcTwQMVIvfcRVO0FVXDV8aKd7Cnvgwwftoy0Ew=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZBeojsTi8VAKDev+l82UocdghtoV0RcrCHY2iNl+/4OYj7NrCjyeMxGJcFoEnlX+3
-	 Q1rJwsOCJ0MyJNhd6xHkkAuTI/BQ06ljhebXaJC1ZCatxIEKnIYqypifRgNFR+QvRQ
-	 l7oMYrpY0DhgZEruwNYYaRw3DAiFsDonVGSpbDH3bxbTG7Vl27XgmBXkB9e8vGNk9V
-	 lMmFFqUBRMgS7MxpLcwm2YZW3rhb7bpMYWIDUhBnwF5YuUHfI7G+E5IkeElgZ2dYTk
-	 dLO8dDe3Zmxy6ai8P8yqmE3NZaGyazvCsT2sCHICIwkS6pZeP4f8wVBKlpl1Yeon76
-	 GsChH/oB1W+uw==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: sort out fd allocation vs dup2 race commentary, take 2
-Date: Thu, 20 Mar 2025 15:19:06 +0100
-Message-ID: <20250320-glitzer-losung-a9d47764b766@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250320102637.1924183-1-mjguzik@gmail.com>
-References: <20250320102637.1924183-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1742480552; c=relaxed/simple;
+	bh=IdkMRHnUO/qRTR7NCURnpDcjkokfTVGPb8CQ59hfS1k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fhcb665vLW+oVrQAu1bo+CSy3uFS+JIWKRntvhzxE4nlfJM0N+8EZFPLcBbSguXnbdwDqCpb5uVn04IuSaO4BfJER6QNu+dpwvh3b/8FXIhIgdMKtJfS4iJrvWSqREhltuNRb91zEeWT2ebQmqSLhH414fvpLim/Qn4U0pGISiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wiq4onaB; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ApHStimX9vO8afb2pgoWPG9MHpxSpNGMq6vSzrYXkvI=; b=wiq4onaB4pn4qb8/QHx7rQEypz
+	8PHj4dZ8NSoiLbKm3J9mnqcx6PMKNx3+n56JfJd3wCQ+Kiu9oeejOF1f1wLCWfPV5rP6QnHbbN8uu
+	39PcbICrh7bu6fiLIXGKFEaHhRMg4rcQEYSzzgl6QPMSCUPWbPRscflI974xy7lSIHQT8y+cIT82q
+	2XOrCB9xiaVqWfAtEf6Odgw28DIJTHICshE/HiNkOyEcVoKy50wCYSOSKM+DyShbucyfFPKYiOl0l
+	KG5UpaZTaPeou4/paqNoK5/ZEfoS7XBCw6Dvgs0F1rj/C6+IBbp9U0oTThO6S9oO5yZzoJUf7JUR6
+	pcwlJNCg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tvGmx-0000000CN6x-07LL;
+	Thu, 20 Mar 2025 14:22:27 +0000
+Date: Thu, 20 Mar 2025 07:22:27 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Dave Chinner <david@fromorbit.com>,
+	Mikulas Patocka <mpatocka@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	Jooyung Han <jooyung@google.com>, Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Heinz Mauelshagen <heinzm@redhat.com>, zkabelac@redhat.com,
+	dm-devel@lists.linux.dev, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH] the dm-loop target
+Message-ID: <Z9wko1GfrScgv4Ev@infradead.org>
+References: <Z8-ReyFRoTN4G7UU@dread.disaster.area>
+ <Z9ATyhq6PzOh7onx@fedora>
+ <Z9DymjGRW3mTPJTt@dread.disaster.area>
+ <Z9FFTiuMC8WD6qMH@fedora>
+ <7b8b8a24-f36b-d213-cca1-d8857b6aca02@redhat.com>
+ <Z9j2RJBark15LQQ1@dread.disaster.area>
+ <Z9knXQixQhs90j5F@infradead.org>
+ <Z9k-JE8FmWKe0fm0@fedora>
+ <Z9u-489C_PVu8Se1@infradead.org>
+ <Z9vGxrPzJ6oswWrS@fedora>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1188; i=brauner@kernel.org; h=from:subject:message-id; bh=ykMiPvcTwQMVIvfcRVO0FVXDV8aKd7Cnvgwwftoy0Ew=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTfUb6VUC7Sq7/TnTtW/Tj789xvnlNefoya8bcmKuJHf tuRGfNfdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkYjDDP02Xbu270/O1K6pE BXfFx7A7nXmdu6jjjGFrz6vQj2uaFjH84Zq0wcZ59vvEwuOX7ioLZV5/uqQqZ4tYcOvMpxekG3R 6mAE=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9vGxrPzJ6oswWrS@fedora>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, 20 Mar 2025 11:26:37 +0100, Mateusz Guzik wrote:
-> fd_install() has a questionable comment above it.
+On Thu, Mar 20, 2025 at 03:41:58PM +0800, Ming Lei wrote:
+> > That does not match my observations in say nvmet.  But if you have
+> > numbers please share them.
 > 
-> While it correctly points out a possible race against dup2(), it states:
-> > We need to detect this and fput() the struct file we are about to
-> > overwrite in this case.
-> >
-> > It should never happen - if we allow dup2() do it, _really_ bad things
-> > will follow.
+> Please see the result I posted:
 > 
-> [...]
+> https://lore.kernel.org/linux-block/Z9FFTiuMC8WD6qMH@fedora/
 
-Applied to the vfs-6.15.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.15.misc branch should appear in linux-next soon.
+That shows it improves numbers and not that it doens't.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.15.misc
-
-[1/1] fs: sort out fd allocation vs dup2 race commentary, take 2
-      https://git.kernel.org/vfs/vfs/c/4dec4f91359c
 
