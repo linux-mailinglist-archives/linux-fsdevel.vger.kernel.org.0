@@ -1,118 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-44656-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44657-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F891A6B03F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 23:02:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59DF8A6B085
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 23:13:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E74CE189F328
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 22:02:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59A7F46337D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 22:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1919322A4F3;
-	Thu, 20 Mar 2025 22:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D0D22A80C;
+	Thu, 20 Mar 2025 22:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AJgU/vas"
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="SQyL5yoc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7AB1F7074
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 22:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531F022A4ED
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 22:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742508115; cv=none; b=bjK2YG8lBnnnryv9ghKb1h108qgmoyJF/GU2QzDmt674XBtcipPphc5QCerxF7lTmZk448nPRCl2p0pYMCvB9m4imoMdEPfp3v7plekGugBWm14Gkbgi5KboflVHbSOLQJRr2szPedfthI72bIyq3apb8xWn1K0XhIsJ4lhPgOk=
+	t=1742508615; cv=none; b=ZNNtX+dmFY6XXcLSS8oQqSPwkjddxHhjmLEWTo3K5MBNcS5CP96eKhs3B973CIRnZ3TYr6DVf6QCtmUt3QR+jKzc/d8jhVvPw30NBrRtrAWO16AnqSM5jrsTbzDudSlL+KPXgr2oBXKaao5oKpwUsMt1Zg659i2/wXgPUgY+in4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742508115; c=relaxed/simple;
-	bh=l46e7WvQp7J+u4Z5EX8AQyZh+dGtvJNmAWmfgvlr7CM=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=k78ZiInjxVomfKMQEr9YJUVW0Hu7uhhXIAXobLh3jvxEq1/WXHi3sT5CkF2g22Am+EGZgGgQqq6Djf6uujdDnznjJ9fuu4/+9KKlkzk4QfAAd8BekusWm76D0NuexGcAIR91Pr5uz2mXGXaBW33FIjM0KZPismwZDOy0ENa6Aug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AJgU/vas; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742508112;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3pVNFaMrkkMNH1afwjuMhJu9nhsFzBTmbXX/DA+H+oU=;
-	b=AJgU/vasrsGmQrflmJ8X3Yyp4Xu46sXPcL2+FLVv4PWCZkSJJP/toi0rRUy6iIVHk46xR/
-	R0zNnhpEtWeu87Kq3ReqosJKbdYwqSII+Sb38WF4qaeFdIP3ODmbh58epVSaGBefUM5g8a
-	6JpqUUBChUOnSayrF0N32V3fRW6QRG8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-623-DoN8hO2rPGWqv68As9fzgw-1; Thu,
- 20 Mar 2025 18:01:49 -0400
-X-MC-Unique: DoN8hO2rPGWqv68As9fzgw-1
-X-Mimecast-MFC-AGG-ID: DoN8hO2rPGWqv68As9fzgw_1742508108
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 74367180882E;
-	Thu, 20 Mar 2025 22:01:47 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D710D3001D1F;
-	Thu, 20 Mar 2025 22:01:43 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <3fa0bf814ce79765c88211990644a010197b11bf.camel@ibm.com>
-References: <3fa0bf814ce79765c88211990644a010197b11bf.camel@ibm.com> <a62918950646701cb9bb2ab0a32c87b53e2f102e.camel@dubeyko.com> <20250313233341.1675324-1-dhowells@redhat.com> <20250313233341.1675324-5-dhowells@redhat.com> <2161520.1742212378@warthog.procyon.org.uk>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: dhowells@redhat.com, "slava@dubeyko.com" <slava@dubeyko.com>,
-    "dongsheng.yang@easystack.cn" <dongsheng.yang@easystack.cn>,
-    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-    Alex Markuze <amarkuze@redhat.com>,
-    "jlayton@kernel.org" <jlayton@kernel.org>,
-    "idryomov@gmail.com" <idryomov@gmail.com>,
-    "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Subject: Re: [RFC PATCH 04/35] ceph: Convert ceph_mds_request::r_pagelist to a databuf
+	s=arc-20240116; t=1742508615; c=relaxed/simple;
+	bh=WUircD2gMunYayRFEsupwySC2IZlWNKmBLpSeBOKDuk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=dcY/SNsgUUmMBezH42AXhSThIU77bZHneA3WwLucGW7mybL/khyUzXiaIU3GuiLA8ek780q1qDLdhFhoCZDYtidynOVHg+P6Tw/QyVAS3IyksyRCww7D6EkQ4JMoLbR3CD5mgO4e8uZy3x09VIBtjfIK11+Z4j7ih/CClsk5rlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=SQyL5yoc; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cf7c2c351so949435e9.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 15:10:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1742508611; x=1743113411; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:from:to:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ewXqUeA7RBIygwSLbMlGfEG1GVvVQPFVPFBcsvVuklE=;
+        b=SQyL5yoctpMIiYraB/AyPJVy5DTn1JNM7nuDEIwNOlvDwmTGaE9QarnzBNwRDAf9Yr
+         S6lWelZYnyG13MGjY2aFEn46naiKYS1xGah6DovppVBMq+DDhC342JRPMjGWevaGDi5D
+         P38+EiLB1ojzvFt5wwQFvpnLxSbZuIRTVsaZQMg27u8bgMpy60iVeHb9rDYaq9Ch1DoL
+         n7VygtUNpF09YivzwCyYIE5D9NYt11cY5TEpv7Rmqd0MetiT4IISrsvho8/QptOahGnW
+         HSodB+AOHO/NZGq3BhnhMnt67qgbmBRCOsz5KNU9y7+Ek/5TWWnpf2wajHBWkLWd3rAk
+         KQIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742508611; x=1743113411;
+        h=in-reply-to:references:subject:from:to:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ewXqUeA7RBIygwSLbMlGfEG1GVvVQPFVPFBcsvVuklE=;
+        b=OfdDcI5i7vDXwkAOP/Gif6zGzrhKbCBrpVx4RYwxJ4dBPBM7pg6KOAESmbp6YHB/jV
+         5HLyZ6F5mN7GNhzuEjOZ+FZweYBsF4IRPSDu9/4tB2UaP1g5AEAAyYwqTjxriUkvHOMv
+         QUR21QpyBMZx4C2zb+Mr2N6owRdxAHigHBm/iaawvtqVSJKeekkXkdijTI/g66W/xXgy
+         zGy7W53EpOrFPPGTozAIjpG8JwOo99sKtPTDjWCUdyVhABuKSw1b5SiQLFWpsiSv+thI
+         wnvMnhOtz2fB7jtF9q2/3gFLJi4DGCexhC/7Sl8xF5Lf6B+IQprRvvB1KrN5kKSQgeLu
+         Ryfw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3tdV6JdEgeo5466Qvr6YIcdlSgEvpEkx+Nyc0ATFuKxYRbFhBzebZACYxImzPAdh8Yp21ruxaMSkQrIHR@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywgn/JRcCz2Z3cmx/Sos+eJx5oGc6u9hvlvZIVDqgvAR7CRl+Ln
+	UaC9Y/kSybg8Bz5k46z5+50bbRks5vMBvPUvWckvcL2+AQ2wi/wrJUsEPXW7uf8=
+X-Gm-Gg: ASbGncvIc7eQVxjak0Oc4PDOogn8epRRYuld5mXqCJ4hNuKBnMsMGMi+YhgRoud55sp
+	k6BHluQI3JA3Y1IYdhS6n5Pwsxv6BNcQ6RJ+u+h5YADoFoERCnW9aPi3/CBNkHKynq3kwDbVtnC
+	kFr4o/h6nYkpd5/Btpd9/D9X/Xmp5XhkgW/pJhGdQlyFLDatwLtd9uaLQCj0oZEeDQJ6IEy/Zb9
+	au15hbA2rdf4ZQyASoQO3ms4LAIq/Bj/541OQFlOX4fCXIiewTQylQZxcYv9WxoI9+TeewyW+B5
+	Xv2z5KgaeQWlYXchdpmxcvYHqCDIYAnEGbQzA9/prUsntaPeQEFwEtIQ1Gir6vdto9d6fIDOoUQ
+	5myi5U8uHJdvxphM=
+X-Google-Smtp-Source: AGHT+IG3iOdJG0QpOBXcV58Rkg48UtcOBUQNUhvPAa+an4gh1o0G7FLaaJ5j+6uFEW3mo9uctUtXkw==
+X-Received: by 2002:a05:600c:5252:b0:439:9909:c785 with SMTP id 5b1f17b1804b1-43d5171da80mr576165e9.7.1742508611223;
+        Thu, 20 Mar 2025 15:10:11 -0700 (PDT)
+Received: from localhost (ip-89-103-73-235.bb.vodafone.cz. [89.103.73.235])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9eef37sm655138f8f.85.2025.03.20.15.10.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 15:10:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3188325.1742508102.1@warthog.procyon.org.uk>
-Date: Thu, 20 Mar 2025 22:01:42 +0000
-Message-ID: <3188326.1742508102@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 20 Mar 2025 23:10:06 +0100
+Message-Id: <D8LFQYX4EHF8.2AJ01XL34WK0W@ventanamicro.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
+ <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+ <alistair.francis@wdc.com>, <richard.henderson@linaro.org>,
+ <jim.shu@sifive.com>, <andybnac@gmail.com>, <kito.cheng@sifive.com>,
+ <charlie@rivosinc.com>, <atishp@rivosinc.com>, <evan@rivosinc.com>,
+ <cleger@rivosinc.com>, <alexghiti@rivosinc.com>, <samitolvanen@google.com>,
+ <broonie@kernel.org>, <rick.p.edgecombe@intel.com>, "Zong Li"
+ <zong.li@sifive.com>, "linux-riscv"
+ <linux-riscv-bounces@lists.infradead.org>
+To: "Deepak Gupta" <debug@rivosinc.com>, "Thomas Gleixner"
+ <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov"
+ <bp@alien8.de>, "Dave Hansen" <dave.hansen@linux.intel.com>,
+ <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "Andrew Morton"
+ <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Vlastimil Babka" <vbabka@suse.cz>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
+ "Conor Dooley" <conor@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Arnd Bergmann"
+ <arnd@arndb.de>, "Christian Brauner" <brauner@kernel.org>, "Peter Zijlstra"
+ <peterz@infradead.org>, "Oleg Nesterov" <oleg@redhat.com>, "Eric Biederman"
+ <ebiederm@xmission.com>, "Kees Cook" <kees@kernel.org>, "Jonathan Corbet"
+ <corbet@lwn.net>, "Shuah Khan" <shuah@kernel.org>, "Jann Horn"
+ <jannh@google.com>, "Conor Dooley" <conor+dt@kernel.org>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+Subject: Re: [PATCH v12 22/28] riscv: enable kernel access to shadow stack
+ memory via FWFT sbi call
+References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com>
+ <20250314-v5_user_cfi_series-v12-22-e51202b53138@rivosinc.com>
+In-Reply-To: <20250314-v5_user_cfi_series-v12-22-e51202b53138@rivosinc.com>
 
-Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
+2025-03-14T14:39:41-07:00, Deepak Gupta <debug@rivosinc.com>:
+> Kernel will have to perform shadow stack operations on user shadow stack.
+> Like during signal delivery and sigreturn, shadow stack token must be
+> created and validated respectively. Thus shadow stack access for kernel
+> must be enabled.
 
-> > > > +	if (ceph_databuf_insert_frag(dbuf, 0, sizeof(*header),
-> > > > GFP_KERNEL) < 0)
-> > > > +		goto out;
-> > > > +	if (ceph_databuf_insert_frag(dbuf, 1, PAGE_SIZE, GFP_KERNEL)
-> > > > < 0)
-> > > >  		goto out;
-> > > >  
-> > > > +	iov_iter_bvec(&iter, ITER_DEST, &dbuf->bvec[1], 1, len);
-> > > 
-> > > Is it correct &dbuf->bvec[1]? Why do we work with item #1? I think it
-> > > looks confusing.
-> > 
-> > Because you have a protocol element (in dbuf->bvec[0]) and a buffer (in
-> > dbuf->bvec[1]).
-> 
-> It sounds to me that we need to have two declarations (something like this):
-> 
-> #define PROTOCOL_ELEMENT_INDEX    0
-> #define BUFFER_INDEX              1
+Why can't kernel access the user shadow stack through an aliased WR
+mapping?
 
-But that's specific to this particular usage.  There may or may not be a
-frag/page allocated to a protocol element and there may or may not be buffer
-parts and may be multiple buffer parts.  There could even be multiple pages
-allocated to protocol elements.
+> In future when kernel shadow stacks are enabled for linux kernel, it must
+> be enabled as early as possible for better coverage and prevent imbalance
+> between regular stack and shadow stack. After `relocate_enable_mmu` has
+> been done, this is as early as possible it can enabled.
+>
+> Reviewed-by: Zong Li <zong.li@sifive.com>
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
+> @@ -320,6 +326,12 @@ SYM_CODE_START(_start_kernel)
+>  	la tp, init_task
+>  	la sp, init_thread_union + THREAD_SIZE
+>  	addi sp, sp, -PT_SIZE_ON_STACK
+> +	li a7, SBI_EXT_FWFT
+> +	li a6, SBI_EXT_FWFT_SET
+> +	li a0, SBI_FWFT_SHADOW_STACK
+> +	li a1, 1 /* enable supervisor to access shadow stack access */
+> +	li a2, SBI_FWFT_SET_FLAG_LOCK
+> +	ecall
 
-David
-
+I think the ecall can fail even on machines that have Zicfiss, so it
+would be good to disable user shadow stack if that happens.
 
