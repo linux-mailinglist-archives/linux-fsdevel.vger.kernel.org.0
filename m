@@ -1,155 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-44640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96641A6AED9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 20:49:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55BCBA6AEF8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 21:09:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17BEE3AFA1E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 19:47:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3A618A247B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 20:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E13229B32;
-	Thu, 20 Mar 2025 19:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67669228CB8;
+	Thu, 20 Mar 2025 20:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GJLYJm0h"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCQR0lzD"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E2E339A1;
-	Thu, 20 Mar 2025 19:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C353F21CA00;
+	Thu, 20 Mar 2025 20:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742499984; cv=none; b=unrCsswwSYS5GCUBARWR9bx+RKz2Vt6eWCTtK/s3asztsOMO41QjLJIOC9R0WfKLmAf8mt9rn3BpWY/bvgLqeJMBkIXvoB2LHqJzP65qn3CSlXkf6iTPGbFnfu6lAeOC0F7qvkb11Nudc9nwG+cbBp3dYtWd0u4T0xDox15X2k8=
+	t=1742501383; cv=none; b=M1pFyqXUpiVgOzxDM++WNuGwrMx4h1Hk4Me/5LesVpPg5zkAUNV2wrhE+kt8A5gw4LuDfTnOOEY9yf6VkJfXaIJ8j8nNRD6A2cdm34Zmu5rU3tMkVXCc6vuFZEwIBWcpqRBpFBtzT2tv0geFpF96RNWfiBy1Tb6/p2Q7H5kp684=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742499984; c=relaxed/simple;
-	bh=DEBRvZYrH0JfYADSrP884+yCkESKunslfy4DNnZqOt8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FjOBHSzIxw92o5qpuEOSx/toW5l+TLyCj2sB9UeIEBebwCScdfpohREqbDnT5xpixfwNl7i9K7+grsWDR9It1sPPkpXSEcz7GEpGpm8SRt3wQzD1d3Rk7BGCYFoWDmipy+yXGBtUYY222ik6XhSVXg16tImDx6I8mkw8gpku23c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GJLYJm0h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DAE59C4CEE8;
-	Thu, 20 Mar 2025 19:46:23 +0000 (UTC)
+	s=arc-20240116; t=1742501383; c=relaxed/simple;
+	bh=IXvse+cPAOPI+1A/p8odtSxPd7pf1eSfCqgYQkxrS5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qk5+ZZABOPCUd4vPx1gZc1S9kzwsYMkhls4MdPxFJY8LCpfpv333M2ucyaNxJR75ZA7xOAqWPd2bHVHDkWH4f4AhiAgrWLi6k80ijwm1qkw16OJRs1dXlFoJIYPVBFRGqrNaeW7sTMBXJV+ARGDkIGb+tAioSAXj6/c3jWV66/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCQR0lzD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 279A7C4CEDD;
+	Thu, 20 Mar 2025 20:09:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742499983;
-	bh=DEBRvZYrH0JfYADSrP884+yCkESKunslfy4DNnZqOt8=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=GJLYJm0h6Z08SDPupchhLRkbmHepqmLEUUP+2Kqbsdf0DmPBNzrLrBJCea/d2m1qb
-	 nT3qXG5d3auyLe2p93QMGxvv/IJWw8oKvFAdcwiJXjKoaNbI+yhzvzD1N55wWuyDqp
-	 633+QQYepZe4rwUByJYYf7HkCR3eL/Wu8c1UV+t7QEUnnc1JSRLalTO6g2Orc/+sK6
-	 AikZNK+YHRxy4XJHsCCx2e8trI2xg9iCL1ihLdq92X6jkIschNG1X1BEh2Nh7b5SNb
-	 AN/poTWqKJjaa7ov4U1UoVO+G2fAS8e7ppKvDElc/gcvHoErYL5+OpqNCSGSqpq2hG
-	 NZGDZelhw/6NA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1FB2C28B30;
-	Thu, 20 Mar 2025 19:46:23 +0000 (UTC)
-From: Julian Stecklina via B4 Relay <devnull+julian.stecklina.cyberus-technology.de@kernel.org>
-Date: Thu, 20 Mar 2025 20:46:14 +0100
-Subject: [PATCH RFC] initrd: resize /dev/ram as needed
+	s=k20201202; t=1742501382;
+	bh=IXvse+cPAOPI+1A/p8odtSxPd7pf1eSfCqgYQkxrS5Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UCQR0lzDuAIiEy/tA38KqCCM+VStvYEx9jAE3vPLr3wopNeo4XTajhm4MYNcbPNmG
+	 vvLLZFuo5tnuoMpQVOeosbZoPFFFy4Ic3wND4JXKvh0eQRbIgEs/xbStBon3JSQsqu
+	 0MYcR+XA+Eu+8cQnaAimhpLHdQiWCGXJvEviJ7VwWwnt/FtvSpNOSIno+/rnoF/0AL
+	 ThUX2y+6wE5sSETTDE1dZxvO43sF0Rn7U/0LHf9P8XM6kF1BC2k6M0pZtTJHGOBMVD
+	 iwq0kR3sA3YpeGiKLkbEHKTmFQJaPSLR4A/pEctjO64+aZNtb52XUwT/UNMcBZqtJe
+	 iWXpSFaiBgYCA==
+Date: Thu, 20 Mar 2025 13:09:38 -0700
+From: Kees Cook <kees@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>, brauner@kernel.org
+Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+	syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>
+Subject: Re: [syzbot] [fs?] [mm?] KCSAN: data-race in bprm_execve / copy_fs
+ (4)
+Message-ID: <202503201225.92C5F5FB1@keescook>
+References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250320-initrd-autoresize-v1-1-a9a5930205f8@cyberus-technology.de>
-X-B4-Tracking: v=1; b=H4sIAIVw3GcC/x3MsQ5AMBCA4VeRmzWpSkmsEg9gFQN15ZaSa4lov
- LvG+A3/H8EjE3posgiMF3naXUKRZ2C2ya0oaEkGJZWWpZKCHAVexHSGndHTg2Iu0Bpja11WFaT
- uYLR0/88B+q6F8X0/7g1A+2gAAAA=
-X-Change-ID: 20250320-initrd-autoresize-b1efccf75366
-To: Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>, 
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Julian Stecklina <julian.stecklina@cyberus-technology.de>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742499982; l=2280;
- i=julian.stecklina@cyberus-technology.de; s=20250320;
- h=from:subject:message-id;
- bh=cCiCLxLx2A0Zi6Phf6RkFbbe0h/GF0wXaGlOEKWI1pc=;
- b=A5zvzV3RRP1qqWNVLxRfbNCd+jmPdkg+qMjcYwPg+vFGUuxp2TZmghC5IsNUpN0u2CttjgQWo
- jXXURgvuFv5ANNIQracW2wlNBxkunZKTVfndUD1+NdgNfAbQLfp1Ei/
-X-Developer-Key: i=julian.stecklina@cyberus-technology.de; a=ed25519;
- pk=m051/8gQfs5AmkACfykwRcD6CUr2T7DQ9OA5eBgyy7c=
-X-Endpoint-Received: by B4 Relay for
- julian.stecklina@cyberus-technology.de/20250320 with auth_id=363
-X-Original-From: Julian Stecklina <julian.stecklina@cyberus-technology.de>
-Reply-To: julian.stecklina@cyberus-technology.de
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
 
-From: Julian Stecklina <julian.stecklina@cyberus-technology.de>
+Hey look another threaded exec bug. :|
 
-When the initrd doesn't fit into the RAM disk, we currently just die.
-This is unfortunate, because users have to manually configure the RAM
-disk size for no good reason. It also means that the kernel command
-line needs to be changed for different initrds, which is sometimes
-cumbersome.
+On Thu, Mar 20, 2025 at 12:09:36PM -0700, syzbot wrote:
+> ==================================================================
+> BUG: KCSAN: data-race in bprm_execve / copy_fs
+> 
+> write to 0xffff8881044f8250 of 4 bytes by task 13692 on cpu 0:
+>  bprm_execve+0x748/0x9c0 fs/exec.c:1884
 
-Attempt resizing /dev/ram to fit the RAM disk size instead. This makes
-initrd images work a bit more like initramfs images in that they just
-work.
+This is:
 
-Of course, this only works, because we know that /dev/ram is a RAM
-disk and we can resize it freely. I'm not sure whether I've used the
-blockdev APIs here in a sane way. If not, please advise!
+        current->fs->in_exec = 0;
 
-Signed-off-by: Julian Stecklina <julian.stecklina@cyberus-technology.de>
----
- init/do_mounts_rd.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+And is part of the execve failure path:
 
-diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
-index ac021ae6e6fa78c7b7828a78ab2fa3af3611bef3..5ae3639765199294a07a9b9025b7b43265370896 100644
---- a/init/do_mounts_rd.c
-+++ b/init/do_mounts_rd.c
-@@ -183,6 +183,24 @@ static unsigned long nr_blocks(struct file *file)
- 	return i_size_read(inode) >> 10;
- }
- 
-+static int resize_ramdisk(const char *devname, u64 new_size_blocks)
-+{
-+	struct block_device *bdev;
-+	struct file *bdev_file;
-+
-+	bdev_file = bdev_file_open_by_path(devname, BLK_OPEN_READ, NULL, NULL);
-+	if (IS_ERR(bdev_file))
-+		goto err;
-+
-+	bdev = file_bdev(bdev_file);
-+	set_capacity(bdev->bd_disk, (new_size_blocks * BLOCK_SIZE) / SECTOR_SIZE);
-+
-+	fput(bdev_file);
-+	return 0;
-+err:
-+	return -1;
-+}
-+
- int __init rd_load_image(char *from)
- {
- 	int res = 0;
-@@ -219,9 +237,10 @@ int __init rd_load_image(char *from)
- 	 * the number of kibibytes of data to load into a ramdisk.
- 	 */
- 	rd_blocks = nr_blocks(out_file);
--	if (nblocks > rd_blocks) {
--		printk("RAMDISK: image too big! (%dKiB/%ldKiB)\n",
-+	if (nblocks > rd_blocks && resize_ramdisk("/dev/ram", nblocks)) {
-+		printk("RAMDISK: image too big and couldn't resize! (%dKiB/%ldKiB)\n",
- 		       nblocks, rd_blocks);
-+
- 		goto done;
- 	}
- 
+out:
+	...
+        if (bprm->point_of_no_return && !fatal_signal_pending(current))
+                force_fatal_sig(SIGSEGV);
 
----
-base-commit: 5fc31936081919a8572a3d644f3fbb258038f337
-change-id: 20250320-initrd-autoresize-b1efccf75366
+        sched_mm_cid_after_execve(current);
+        current->fs->in_exec = 0;
+        current->in_execve = 0;
 
-Best regards,
+        return retval;
+}
+
+>  do_execveat_common+0x769/0x7e0 fs/exec.c:1966
+>  do_execveat fs/exec.c:2051 [inline]
+>  __do_sys_execveat fs/exec.c:2125 [inline]
+>  __se_sys_execveat fs/exec.c:2119 [inline]
+>  __x64_sys_execveat+0x75/0x90 fs/exec.c:2119
+>  x64_sys_call+0x291e/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:323
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> read to 0xffff8881044f8250 of 4 bytes by task 13686 on cpu 1:
+>  copy_fs+0x95/0xf0 kernel/fork.c:1770
+
+This is:
+
+                if (fs->in_exec) {
+
+Which is under lock:
+
+        struct fs_struct *fs = current->fs;
+        if (clone_flags & CLONE_FS) {
+                /* tsk->fs is already what we want */
+                spin_lock(&fs->lock);
+                /* "users" and "in_exec" locked for check_unsafe_exec() * */
+                if (fs->in_exec) {
+                        spin_unlock(&fs->lock);
+                        return -EAGAIN;
+                }
+                fs->users++;
+                spin_unlock(&fs->lock);
+
+
+Does execve need to be taking this lock? The other thing touching it is
+check_unsafe_exec(), which takes the lock. It looks like the bprm_execve()
+lock was removed in commit 8c652f96d385 ("do_execve() must not clear
+fs->in_exec if it was set by another thread") which used the return
+value from check_unsafe_exec():
+
+    When do_execve() succeeds, it is safe to clear ->in_exec unconditionally.
+    It can be set only if we don't share ->fs with another process, and since
+    we already killed all sub-threads either ->in_exec == 0 or we are the
+    only user of this ->fs.
+
+    Also, we do not need fs->lock to clear fs->in_exec.
+
+This logic was updated in commit 9e00cdb091b0 ("exec:check_unsafe_exec:
+kill the dead -EAGAIN and clear_in_exec logic"), which includes this
+rationale:
+
+            2. "out_unmark:" in do_execve_common() is either called
+               under ->cred_guard_mutex, or after de_thread() which
+               kills other threads, so we can't race with sub-thread
+               which could set ->in_exec. And if ->fs is shared with
+               another process ->in_exec should be false anyway.
+
+The de_thread() is part of the "point of no return" in exec_binprm(),
+called via exec_binprm(). But the bprm_execve() error path is reachable
+from many paths prior to the point of no return.
+
+What I can imagine here is two failing execs racing a fork:
+
+	A start execve
+	B fork with CLONE_FS
+	C start execve, reach check_unsafe_exec(), set fs->in_exec
+	A bprm_execve() failure, clear fs->in_exec
+	B copy_fs() increment fs->users.
+	C bprm_execve() failure, clear fs->in_exec
+
+But I don't think this is a "real" flaw, though, since the locking is to
+protect a _successful_ execve from a fork (i.e. getting the user count
+right). A successful execve will de_thread, and I don't see any wrong
+counting of fs->users with regard to thread lifetime.
+
+Did I miss something in the analysis? Should we perform locking anyway,
+or add data race annotations, or something else?
+
 -- 
-Julian Stecklina <julian.stecklina@cyberus-technology.de>
-
-
+Kees Cook
 
