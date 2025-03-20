@@ -1,58 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-44568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44569-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A674AA6A653
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 13:36:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94F8EA6A6DC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 14:07:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F5083AF60C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 12:36:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F84716DFC4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 13:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9531D38DDB;
-	Thu, 20 Mar 2025 12:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE721DF247;
+	Thu, 20 Mar 2025 13:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lJ4DOh4S"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J4tQQU3P"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0448D63A9
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 12:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C4129A1;
+	Thu, 20 Mar 2025 13:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742474181; cv=none; b=Qc1bab4hCaOXoZ6yv0La8u1N+JT3IefnOJ2YO4PTYdDN4lFCZA4UeV49FX/GvoK/xlqaK93kqDPGbJ7nYVErjhoFhNJIZ8f/OqTIAskr1VABJM+qE+7nobxLnh/bSAfIp7s2aSGr8kf/Y4fc71fpr3rpHJAgRA2SzzOFmiaOmqI=
+	t=1742475983; cv=none; b=V9ZegP2f2emBYng6Rw61V1mFiy1sqK44tYHtYyoLVpsoMhyNy4iCEnMmXj0apCMTLwuF9kXxzNEFxZhaOJJ0rj/uwf7SFNky5cHTF5nnZ9lveoIm5e18/LubMc49J2FPfI+gFktgHVd2r6f3FGJ4IELzhPYc2oC8lh7m/6lCHNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742474181; c=relaxed/simple;
-	bh=9qPm6fB6sWkfrTcNRefhHCZqDNS4AEnbGLe3DGGTM00=;
+	s=arc-20240116; t=1742475983; c=relaxed/simple;
+	bh=tcq3Zpp8Cjo3AgGj7Pb+Yz8TsC7q7a54VIwoPlnJTwU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jq8ke1a/VYYxvOo+mX+JdpB5QbaxDBBU9upZpOZxvn2N1k2x3L3FpSsls4DB2z0wfAMD3Xb3ubmJhApmsqSNZfxCIM5T76DfA4pAGbhN6obacIWOsF0ieIyS2jRl/RaXlms14xCXV+LWAa7V2NIzLGOgVW+a8Z2yCmaMo5zBitg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lJ4DOh4S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC5F0C4CEDD;
-	Thu, 20 Mar 2025 12:36:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742474179;
-	bh=9qPm6fB6sWkfrTcNRefhHCZqDNS4AEnbGLe3DGGTM00=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lJ4DOh4SSO8LIh24pJApsl4iN2N0K8eeL3CqlC2Jb3D4CvCWLvVHZr2MCjiYqcMn1
-	 VUe1HZ6Y8Q0QijWKAxBDIneht95Idti1jh6gav2H39hgJv+X7Y8ky3Tfhc/bC8i5It
-	 +h0Jp3LE6CIR68bTmxqm0rKeHAXlnBL+ERdgjPJ1k5yaFl+puD2lbfihCwkcXZN/Iy
-	 APlPZC9KKiAyWRcxoRNL2UTsefnkqs4B9VqmH8AASVGEqv7b93CcL8lyv4V7/LIRA1
-	 2w9mtd+rAO9CU/Kke4AcYwJ4Hsmv7w2tnelTQTFOYF2MGI/XF2245g9FKHEJpEqDHt
-	 CvdD0kyggKVjA==
-Date: Thu, 20 Mar 2025 13:36:14 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
-	Lennart Poettering <lennart@poettering.net>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
-	Mike Yuan <me@yhndnzj.com>
-Subject: Re: [PATCH v3 1/4] pidfs: improve multi-threaded exec and premature
- thread-group leader exit polling
-Message-ID: <20250320-erzwungen-adjektiv-6a73b88f5f30@brauner>
-References: <20250320-work-pidfs-thread_group-v3-0-b7e5f7e2c3b1@kernel.org>
- <20250320-work-pidfs-thread_group-v3-1-b7e5f7e2c3b1@kernel.org>
- <20250320105701.GA11256@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GMihnH+N54lXGJZDwauqGsgwsyXi6Mx13RcmZ8dJr0a6TU+0jmZ0COCJSH8uBENhEYTSwsTuua89iWHw2ETwsHZnVrsZUuPTqqWaGuWBw4LBp92nSNTWhG8mNGuvuph2QeMmSLO9MtzDeb9BnXP6r0lhILhCd/SHc+9WtTUJ7w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J4tQQU3P; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5fcef5dc742so191255eaf.1;
+        Thu, 20 Mar 2025 06:06:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742475980; x=1743080780; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ygMKS1E4qG7XXUm9+PlSPlMx++048YekvAsHTICfd2g=;
+        b=J4tQQU3PiNTHa5T/VgVdMAnxFP6b5U6E2vCO3a/cEKYtMOXchib/DO4PS4NbTfjNN1
+         xz6/fdYA7TFlLN9T79QA/JLqnJmx1aMtIbPlWSm9ETCg/YdexlIM4aHGh+xpn9qh1xww
+         jTTzx8YGjE77LjBGispuxr3yx40qSNVbyebXW/CPUTCbDNU2xek5N04YudF3oO5jPGxd
+         avn5usaYfVWfGdsKfwxQhdaiNMTLPboKf08G3U75EsqCsYFkadjvPGXIxoh+f99YQhs4
+         ozMgsw0sn67JXhOsK25Qkaw3qOKmkwqjIRSG9KyAYtQUhpTt4UisXkh/3cCjvvWbPZ72
+         +pNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742475980; x=1743080780;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ygMKS1E4qG7XXUm9+PlSPlMx++048YekvAsHTICfd2g=;
+        b=NTVqe42kD+tS9gFi6V6e3YQfMzjS9G+D3sR3dVHFChcWRWJCDpoApEIyKaSOU70Lkf
+         dx75v0LRhyiH+DioAQL6mm72Dua4VhcoiAZkwMhvzi/IFTIpf+yGTGPbkigfMfv/mhfR
+         jtLQAC/Je8HJ6dCeqzL4BJ3uMRCLwNLZxFBZBiA2sKlOR5gZKXdX6oS9d1HOCBEut/vW
+         hhJALWWdUat1pAKK1EEMwusPD/nNh73gBQSBCjiukCDDzpeOVt0Zj0tTe3i+QmHwbnZs
+         46bnt/lACO0r4MkGfEwrmF7nLLoXeWBTel3bEHVlKIYI5hOUnRA/zhJZx0P6VpWFSUvr
+         +Zkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFSxHz8qaEZeCYdANPIewg8CnWUEwaqWApmvw3dgcterSHpwuN42sF7KIo37dV1rSWIcfDgTIZSgsku+jcBg==@vger.kernel.org, AJvYcCWsXk730e+VxfgrhfZbOijp/RAEaBXp+vi2+K/6PYpxLAKG1iEEIF40bYEhCxEuzQlDaWd5F6rFoDM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+txZ0twHt8u7Qnh29anqLA15YyDtMXVJ70JpMMoAMooiOtKAf
+	WHTcgN3tW0Him/qIvgKJ21unEOTUfm1gIByO85Ox095RDtmXzTnL
+X-Gm-Gg: ASbGnctGaNZmS/YJOB9pX1Lepkz1YH7z1jLeefAMH1/Q1q8ZYarDNoimJshIjvMOXvK
+	EQYP8UqCQ6xo8V8vTPJzAtC72JhlCFbw7OYsX2slgBA7PyN4JEujX2XiXbQAYu5jFHC3s032mRh
+	Q+jSTg1kMM3rfBR9yGc/AP5HuNymh3p+p6GV7xP53Pp7dRlmrxkVB946GUbQm+mIyr/9o3lJqXq
+	YmKBjFI+ejNhRB+JUPN0WyKPBD61gp2BFnxeGVx4qw0MbD2vAQqHX7UtEmEjENv+p21jzDISpY0
+	fCbsaGyjIpSstEJfyGwWIoh40Klf3IBmvYVwfUXSUQQ6YS2Sm1TvOhc4
+X-Google-Smtp-Source: AGHT+IGwV/c5mK56KHQxiHSoNgxmTQNI/mLVJS2gCgNQJZUDy/VIz4gmSfPgUjFHygDx7IJsokEffQ==
+X-Received: by 2002:a4a:cb17:0:b0:602:2e4f:94f3 with SMTP id 006d021491bc7-6022e4f9a49mr581029eaf.2.1742475979896;
+        Thu, 20 Mar 2025 06:06:19 -0700 (PDT)
+Received: from Borg-550 ([2603:8080:1500:3d89:30eb:b380:b0a9:db6a])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-601db69d4dbsm3012548eaf.19.2025.03.20.06.06.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 06:06:19 -0700 (PDT)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Thu, 20 Mar 2025 08:06:17 -0500
+From: John Groves <John@groves.net>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	Amir Goldstein <amir73il@gmail.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
+	Stefan Hajnoczi <shajnocz@redhat.com>, Josef Bacik <josef@toxicpanda.com>, 
+	John Groves <jgroves@micron.com>, linux-fsdevel@vger.kernel.org, linux-cxl@vger.kernel.org, 
+	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>, 
+	Eishan Mirakhur <emirakhur@micron.com>
+Subject: Re: famfs port to fuse - questions
+Message-ID: <eqcigeptla4obqqaix737tfqmkjdet3fzmq2kqttm5etab2us5@vqignnrha2m5>
+References: <20250224152535.42380-1-john@groves.net>
+ <CAJnrk1bJ5jE5qWdRju6xz+DipYHUrj8w4PdL80J1M6ujMxXJ1g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,163 +94,128 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250320105701.GA11256@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1bJ5jE5qWdRju6xz+DipYHUrj8w4PdL80J1M6ujMxXJ1g@mail.gmail.com>
 
-On Thu, Mar 20, 2025 at 11:57:02AM +0100, Oleg Nesterov wrote:
-> Christian,
-
-Oleg!
-
-> 
-> All the comments look misleading (and overcomplicated) to me.
-> 
-> See below, but first lets recall the commit 64bef697d33b75fc06c5789
-> ("pidfd: implement PIDFD_THREAD flag for pidfd_open()") which says
-> 
->     pidfd: implement PIDFD_THREAD flag for pidfd_open()
-> 
->     With this flag:
-> 
->             ....
-> 
->             - pidfd_poll() succeeds when the task exits and becomes a
->               zombie (iow, passes exit_notify()), even if it is a leader
->               and thread-group is not empty.
-> 
-> This patch simply reverts this behaviour, the exiting leader will not
-> report the exit if it has sub-threads (alive or not). And afaics your
-> V1 tried to do the same. And this eliminates the
-> 
->               This means that the behaviour of pidfd_poll(PIDFD_THREAD,
->               pid-of-group-leader) is not well defined if it races with
->               exec() from its sub-thread; ...
-> 
-> problem mentioned in the changelog. That is all.
-> 
-> IOW, with this change PIDFD_THREAD has no effect.
-
-But that's what I'm trying to say: This patch aligns the behavior of
-thread-specific and non-thread-specific thread-group leader pidfds. IOW,
-the behavior of:
-
-pidfd_open(<thread-group-leader-pid>, 0)
-pidfd_open(<thread-group-leader-pid>, PIDFD_THREAD)
-
-is the same wrt to polling after this patch. That's also what the
-selftests are designed to test and show.
-
-> 
-> Except the pid_has_task() checks in sys_pidfd_open() paths, without
-> PIDFD_THREAD the target task must be a group leader.
-> 
-> On 03/20, Christian Brauner wrote:
+On 25/02/24 03:40PM, Joanne Koong wrote:
+> On Mon, Feb 24, 2025 at 7:25 AM John Groves <John@groves.net> wrote:
 > >
-> > @@ -218,12 +218,32 @@ static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
-> 
-> Your forgot to remove the no longer used
-> 
-> 	bool thread = file->f_flags & PIDFD_THREAD;
-> 
-> above ;)
-
-Thanks, fixed.
-
-> 
-> >  	/*
-> >  	 * Depending on PIDFD_THREAD, inform pollers when the thread
-> >  	 * or the whole thread-group exits.
-> 
-> See above (and below), this no longer depends on PIDFD_THREAD.
-> 
-> > +	else if (task->exit_state && !delay_group_leader(task))
-> >  		poll_flags = EPOLLIN | EPOLLRDNORM;
-> 
-> So with this change:
-> 
-> If the exiting task is a sub-thread, report EPOLLIN as before.
-> delay_group_leader() can't be true. In this case PIDFD_THREAD
-> must be set.
-> 
-> If the exiting task is a leader, we do not care about PIDFD_THREAD.
-> We report EPOLLIN only if it is the last/only thread.
-> 
-> > diff --git a/kernel/exit.c b/kernel/exit.c
-> > index 9916305e34d3..ce5cdad5ba9c 100644
-> > --- a/kernel/exit.c
-> > +++ b/kernel/exit.c
-> > @@ -271,6 +271,9 @@ void release_task(struct task_struct *p)
-> >  		 * If we were the last child thread and the leader has
-> >  		 * exited already, and the leader's parent ignores SIGCHLD,
-> >  		 * then we are the one who should release the leader.
-> > +		 *
-> > +		 * This will also wake PIDFD_THREAD pidfds for the
-> > +		 * thread-group leader that already exited.
-> >  		 */
-> >  		zap_leader = do_notify_parent(leader, leader->exit_signal);
-> 
-> Again, this doesn't depend on PIDFD_THREAD.
-
-The comment is literally just saying that we delayed notification of
-PIDFD_THREAD pidfds for a thread-group leader until now. After all its
-subthreads are released instead of when the thread-group leader did
-actually exit earlier.
-
-> 
-> > @@ -743,10 +746,13 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
+> > Miklos et. al.:
 > >
-> >  	tsk->exit_state = EXIT_ZOMBIE;
-> >  	/*
-> > -	 * sub-thread or delay_group_leader(), wake up the
-> > -	 * PIDFD_THREAD waiters.
-> > +	 * Wake up PIDFD_THREAD waiters if this is a proper subthread
-> > +	 * exit. If this is a premature thread-group leader exit delay
-> > +	 * the notification until the last subthread exits. If a
-> > +	 * subthread should exec before then no notification will be
-> > +	 * generated.
-> >  	 */
-> > -	if (!thread_group_empty(tsk))
-> > +	if (!delay_group_leader(tsk))
-> >  		do_notify_pidfd(tsk);
+> > Here are some specific questions related to the famfs port into fuse [1][2]
+> > that I hope Miklos (and others) can give me feedback on soonish.
+> >
+> > This work is active and serious, although you haven't heard much from me
+> > recently. I'm showing a famfs poster at Usenix FAST '25 this week [3].
+> >
+> > I'm generally following the approach in [1] - in a famfs file system,
+> > LOOKUP is followed by GET_FMAP to retrieve the famfs file/dax metadata.
+> > It's tempting to merge the fmap into the LOOKUP reply, but this seems like
+> > an optimization to consider once basic function is established.
+> >
+> > Q: Do you think it makes sense to make the famfs fmap an optional,
+> >    variable sized addition to the LOOKUP response?
+> >
+> > Whenever an fmap references a dax device that isn't already known to the
+> > famfs/fuse kernel code, a GET_DAXDEV message is sent, with the reply
+> > providing the info required to open teh daxdev. A file becomes available
+> > when the fmap is complete and all referenced daxdevs are "opened".
+> >
+> > Q: Any heartburn here?
+> >
+> > When GET_FMAP is separate from LOOKUP, READDIRPLUS won't add value unless it
+> > receives fmaps as part of the attributes (i.e. lookups) that come back in
+> > its response - since a READDIRPLUS that gets 12 files will still need 12
+> > GET_FMAP messages/responses to be complete. Merging fmaps as optional,
+> > variable-length components of the READDIRPLUS response buffers could
+> > eventualy make sense, but a cleaner solution intially would seem to be
+> > to disable READDIRPLUS in famfs. But...
+> >
 > 
-> The same...
-
-What you seem to be saying is that you want all references to
-PIDFD_THREAD to be dropped in the comments because the behavior is now
-identical. But what I would like to have is comments in the code that
-illustrate where and how we guarantee this behavioral equivalency.
-
-Because where the notifications happen does differ.
-
-The delayed thread-group leader stuff is literally only apparent to
-anyone who has stared and lived with these horrible behavioral warts of
-early thread-group leader exit and subthread exec for a really long
-time. For anyone else this isn't self-explanatory at all and each time
-one has to go look at it it requires jumping around all the locations
-where and how exit notifications are generated and piece together the
-whole picture. It is laughably complex to follow.
-
-So I'm wiping the comments but I very much disagree that they are
-misleading/useless.
-
+> Hi John,
 > 
-> > --- a/kernel/signal.c
-> > +++ b/kernel/signal.c
-> > @@ -2180,8 +2180,10 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
-> >  	WARN_ON_ONCE(!tsk->ptrace &&
-> >  	       (tsk->group_leader != tsk || !thread_group_empty(tsk)));
-> >  	/*
-> > -	 * tsk is a group leader and has no threads, wake up the
-> > -	 * non-PIDFD_THREAD waiters.
-> > +	 * This is a thread-group leader without subthreads so wake up
-> > +	 * the non-PIDFD_THREAD waiters. This also wakes the
-> > +	 * PIDFD_THREAD waiters for the thread-group leader in case it
-> > +	 * exited prematurely from release_task().
-> >  	 */
+> > * The libfuse/kernel ABI appears to allow low-level fuse servers that don't
+> >   support READDIRPLUS...
+> > * But libfuse doesn't look at conn->want for the READDIRPLUS related
+> >   capabilities
+> > * I have overridden that, but the kernel still sends the READDIRPLUS
+> >   messages. It's possible I'm doing something hinky, and I'll keep looking
+> >   for it.
 > 
-> This too.
+> On the kernel side, FUSE_READDIR / FUSE_READDIRPLUS requests are sent
+> in fuse_readdir_uncached(). I don't see anything there that skips
+> sending readdir / readdirplus requests if the server doesn't have
+> .readdir / .readdirplus implemented. For some request types (eg
+> FUSE_RENAME2, FUSE_LINK, FUSE_FSYNCDIR, FUSE_CREATE, ...), we do track
+> if a request type isn't implemented by the server and then skip
+> sending that request in the future (for example, see fuse_tmpfile()).
+> If we wanted to do this skipping for readdir as well, it'd probably
+> look something like
+> 
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -870,6 +870,9 @@ struct fuse_conn {
+>         /* Is link not implemented by fs? */
+>         unsigned int no_link:1;
+> 
+> +       /* Is readdir/readdirplus not implemented by fs? */
+> +       unsigned int no_readdir:1;
+> +
+>         /* Use io_uring for communication */
+>         unsigned int io_uring;
+> 
+> diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
+> index 17ce9636a2b1..176d6ce953e5 100644
+> --- a/fs/fuse/readdir.c
+> +++ b/fs/fuse/readdir.c
+> @@ -341,6 +341,9 @@ static int fuse_readdir_uncached(struct file
+> *file, struct dir_context *ctx)
+>         u64 attr_version = 0, evict_ctr = 0;
+>         bool locked;
+> 
+> +       if (fm->fc->no_readdir)
+> +               return -ENOSYS;
+> +
+>         folio = folio_alloc(GFP_KERNEL, 0);
+>         if (!folio)
+>                 return -ENOMEM;
+> @@ -376,6 +379,8 @@ static int fuse_readdir_uncached(struct file
+> *file, struct dir_context *ctx)
+>                         res = parse_dirfile(folio_address(folio), res, file,
+>                                             ctx);
+>                 }
+> +       } else if (res == -ENOSYS) {
+> +               fm->fc->no_readdir = 1;
+>         }
+> 
+>         folio_put(folio);
+> 
+> > * When I just return -ENOSYS to READDIRPLUS, things don't work well. Still
+> >   looking into this.
+> >
+> > Q: Do you know whether the current fuse kernel mod can handle a low-level
+> >    fuse server that doesn't support READDIRPLUS? This may be broken.
+> 
+> From what I see, the fuse kernel code can handle servers that don't
+> support readdir/readdirplus. The fuse readdir path gets invoked from
+> file_operations->iterate_shared callback, which from what i see, the
+> only ramification of this always returning an error is that the
+> syscalls calling into this (eg getdents(), readdir()) fail.
 
-This one I agree is misplaced. It would be sufficient to have the
-comment in release_task().
+Thanks for doing some of the digging Joanne. I'm not sure what was going wrong
+a few weeks ago when I initially disabled readdirplus, but I have it working 
+now - in fact I now have famfs "fully" working under fuse (for some definition
+of fully ;).
 
-Christian
+I have a gnarly rebase plus some documentation to write, but I may go ahead 
+and share branches this week, in case anybody wants to take a look. That will
+be a fuse kernel branch, and a famfs user space branch...
+
+Also: any plans for a fuse BOF at LSFMM?
+
+<snip>
+
+Thanks,
+John
+
 
