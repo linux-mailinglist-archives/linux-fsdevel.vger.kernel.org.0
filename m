@@ -1,145 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-44634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44636-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74FC6A6AE5D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 20:16:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 764E6A6AE7F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 20:29:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7D7C461ED1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 19:13:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28A4F7AB49B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 19:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752D9227EB9;
-	Thu, 20 Mar 2025 19:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59D8227E89;
+	Thu, 20 Mar 2025 19:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BtKXVuF2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9AA227B9C
-	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 19:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B311227E98;
+	Thu, 20 Mar 2025 19:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742497779; cv=none; b=gbhSh7iZhmGWu9saJwuW4Cm8pL6VmuOdF3mKPVIHGkeMH/vxmO5p+zHPGSXSWw8JlpUEc4bnoRoMdVQyzHWSLjO9tq3d9M+6GrViqAhFxeKAApZ7hWrFvK0prbSfr04TlYLvKT65ROoPoiSH+xSdpnuuerKtLcEhWAA7C0OF6D0=
+	t=1742498909; cv=none; b=u3CDJgzLNqXvTp8TnySxXxNAxmCvF5qgUKFmDiitKQHV/66a4nlA2YZL1+vHwoHKUUU6lXC8zITWLu2pFdoZcxDODpx08ng464EyS/9v8QhmaatRZNJIJZKjsCyfm8M7HT9o38z6G6gECtxuCpCx3Zj3Ta3tLmtHxkvC+o8RHMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742497779; c=relaxed/simple;
-	bh=XP2c0iOMlju/KaYPIMWGPY6gaj0IGteFbxfj+WLhYJA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rXrMcPIEqZHRpuj29UV25DaXrAzXsSe/v/7sBZYzEGWTqKYJXkzQTgD9Obw+kFmFfuVMkeXD6pQEW2skXEgosviqbDQP9dQs3bZewmez/ERUeYeLKInAgzxTZdc+mWfNslrlQWEYnXi6DqbKVz1XoRrF3moNP2WK3LClyZiRUSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d44ba1c2b5so11461045ab.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 12:09:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742497776; x=1743102576;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iJNBSRkCkwXpy3/GTKSlTshNCEplDM0arhTkqcmj6Y4=;
-        b=NPLCe//9RbelU2X1csswlj1x+UTWAavxQjL+nsqIYaxVbGEH5TABUbriApJTTW8TuV
-         FZuNulIcT7aYuWEBXGczjH+tuGP4IRWAuE8RoCYGhuJZ0bgWqrRxeQjoybVQazwjWSzF
-         JqWS6/9/PRTlD3XOnXoidoLrr064lafIGi3k5C7xRrLXweEeFKzHx44UFT9CS1KyE/ut
-         gAOPn195nI1Kkx4FG0ZA4plw/yD+jaOGEHFIMJopbgwhO3zxXjGKeH47jfhJ5rVdI1Dd
-         8UOW7IIh1VPkLt4lqn+gh+D5KJoye0zlnbMh2PXfVBLEX48aiUuLMpdrTP/8YJO+E67b
-         cQqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCdA0DUqZOM8h1b0rtZg/ibcAT79A9ywbXhLTBkIh2MweCFT+7t4nhtw4lJbr+SMpF7SgXMG+yJvUOvRXO@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMj0xSwlvfi2kUQJjUGzm14WAHWpfMEslCRvDWS9hgDVWXseSI
-	R/qCNi/mlBylu+j16N6kZleP2UL1234AMZLRzshKrPkH/8mRxDGCXjcsNzuXKx/C4oMf/L6gB3G
-	vIsWvl4AIWpymTtZJF0HoQBrgKe7NpeqC5cQmhvaRuWG+/31MCYWKWDw=
-X-Google-Smtp-Source: AGHT+IFElqRZlDcgS4Dvjb+fprnftS6tMrdLBS/A7MAxW7UI0jTqmQo3MShpEuXyw3vp10MODOxisucR6/0VHyhajkYCzpkcGlBn
+	s=arc-20240116; t=1742498909; c=relaxed/simple;
+	bh=D8iocau2N1axFaCMOPfu2U2+YOYlfq5VLw9N0oFkipI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GUTJd5gZjF8k/KG+awG6Gp6F2nk2aaZotbTFCkkeugLAz+NBMd5iqxgR2Nuq3hSkHqWUD/hkavhaRgJn1VG1z6uPcqVGpHdYYDqb7HafEkBqnm1XVEj+IApwC1QP4tW5LpI2Aeyo7qxuQ0QoyHIfPRTi7kpVolYkeTt8adRTe6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BtKXVuF2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D9395C4CEDD;
+	Thu, 20 Mar 2025 19:28:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742498908;
+	bh=D8iocau2N1axFaCMOPfu2U2+YOYlfq5VLw9N0oFkipI=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=BtKXVuF2PxYzEkIyIj755XEdZD8rpKBMR45/0OR2e0umnr9FJY0OJj5y1gwSUmPYQ
+	 jfXAZIEAbh1/YcajBBXy8xBIlD8oWYyghEauWovfIT6l4N3dclav/sQ0WI5nS59Yfv
+	 9QA9U+hJJRSKm+wDqyjEVyV7ovbp7Hu1CijD+/G44j3JxxtoNEiJkDDggRiWyVl6MR
+	 i4txtyA8kh8ArzEFkP8A8xODRItg7h2W/gjMQ/r/C7QRBDX7XQlDsyheHaCQfND/+R
+	 t6dOILwOOGxzo2yIxnrLWQXo/PTb03HSwSDvZdGHQky1IS8kT8NdfuUg8uR0aA0lFy
+	 6Wu1qlwlBp5SQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC7C8C28B30;
+	Thu, 20 Mar 2025 19:28:28 +0000 (UTC)
+From: Julian Stecklina via B4 Relay <devnull+julian.stecklina.cyberus-technology.de@kernel.org>
+Date: Thu, 20 Mar 2025 20:28:23 +0100
+Subject: [PATCH] initrd: support erofs as initrd
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:348b:b0:3d3:dd32:73d5 with SMTP id
- e9e14a558f8ab-3d5960cd11cmr8785025ab.4.1742497776240; Thu, 20 Mar 2025
- 12:09:36 -0700 (PDT)
-Date: Thu, 20 Mar 2025 12:09:36 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
-Subject: [syzbot] [fs?] [mm?] KCSAN: data-race in bprm_execve / copy_fs (4)
-From: syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, kees@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250320-initrd-erofs-v1-1-35bbb293468a@cyberus-technology.de>
+X-B4-Tracking: v=1; b=H4sIAFZs3GcC/x3MTQqAIBBA4avIrBPM0H6uEi1Cx5qNxhgRiHdPW
+ n6L9wpkZMIMiyjA+FCmFBv6ToA793igJN8MWmmjBq0kRbrZS+QUshwtztoEH+zkoCUXY6D3361
+ brR+PanHjXgAAAA==
+X-Change-ID: 20250320-initrd-erofs-76e925fdf68c
+To: Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>, 
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Julian Stecklina <julian.stecklina@cyberus-technology.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742498907; l=2366;
+ i=julian.stecklina@cyberus-technology.de; s=20250320;
+ h=from:subject:message-id;
+ bh=BUYkfXvGRCCRkCmYxAvEbgWOurQPuzo1uS6OSJk5+3k=;
+ b=Mk1jtb+JY2aUM8xqHbUFACnyzukucXfSGBBvDhBwvkFBoRCp91HLZZ6pKPzlf05wSG4VWpQlu
+ aByHBVWECyeDT1y5hGEB87X8eMiRRUZXkQhuoqjxNo//TRDew7IjVA0
+X-Developer-Key: i=julian.stecklina@cyberus-technology.de; a=ed25519;
+ pk=m051/8gQfs5AmkACfykwRcD6CUr2T7DQ9OA5eBgyy7c=
+X-Endpoint-Received: by B4 Relay for
+ julian.stecklina@cyberus-technology.de/20250320 with auth_id=363
+X-Original-From: Julian Stecklina <julian.stecklina@cyberus-technology.de>
+Reply-To: julian.stecklina@cyberus-technology.de
 
-Hello,
+From: Julian Stecklina <julian.stecklina@cyberus-technology.de>
 
-syzbot found the following issue on:
+Add erofs detection to the initrd mount code. This allows systems to
+boot from an erofs-based initrd in the same way as they can boot from
+a squashfs initrd.
 
-HEAD commit:    a7f2e10ecd8f Merge tag 'hwmon-fixes-for-v6.14-rc8/6.14' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=114fee98580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f33d372c4021745
-dashboard link: https://syzkaller.appspot.com/bug?extid=1c486d0b62032c82a968
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Just as squashfs initrds, erofs images as initrds are a good option
+for systems that are memory-constrained.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Signed-off-by: Julian Stecklina <julian.stecklina@cyberus-technology.de>
+---
+ init/do_mounts_rd.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/614aabc71b48/disk-a7f2e10e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d47dd90a010a/vmlinux-a7f2e10e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/418d8cf8782b/bzImage-a7f2e10e.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KCSAN: data-race in bprm_execve / copy_fs
-
-write to 0xffff8881044f8250 of 4 bytes by task 13692 on cpu 0:
- bprm_execve+0x748/0x9c0 fs/exec.c:1884
- do_execveat_common+0x769/0x7e0 fs/exec.c:1966
- do_execveat fs/exec.c:2051 [inline]
- __do_sys_execveat fs/exec.c:2125 [inline]
- __se_sys_execveat fs/exec.c:2119 [inline]
- __x64_sys_execveat+0x75/0x90 fs/exec.c:2119
- x64_sys_call+0x291e/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:323
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-read to 0xffff8881044f8250 of 4 bytes by task 13686 on cpu 1:
- copy_fs+0x95/0xf0 kernel/fork.c:1770
- copy_process+0xc91/0x1f50 kernel/fork.c:2394
- kernel_clone+0x167/0x5e0 kernel/fork.c:2815
- __do_sys_clone3 kernel/fork.c:3119 [inline]
- __se_sys_clone3+0x1c1/0x200 kernel/fork.c:3098
- __x64_sys_clone3+0x31/0x40 kernel/fork.c:3098
- x64_sys_call+0x2d56/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:436
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-value changed: 0x00000001 -> 0x00000000
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 UID: 0 PID: 13686 Comm: syz.1.3826 Not tainted 6.14.0-rc7-syzkaller-00074-ga7f2e10ecd8f #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-==================================================================
-
+diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+index ac021ae6e6fa78c7b7828a78ab2fa3af3611bef3..7c3f8b45b5ed2eea3c534d7f2e65608542009df5 100644
+--- a/init/do_mounts_rd.c
++++ b/init/do_mounts_rd.c
+@@ -11,6 +11,7 @@
+ 
+ #include "do_mounts.h"
+ #include "../fs/squashfs/squashfs_fs.h"
++#include "../fs/erofs/erofs_fs.h"
+ 
+ #include <linux/decompress/generic.h>
+ 
+@@ -47,6 +48,7 @@ static int __init crd_load(decompress_fn deco);
+  *	romfs
+  *	cramfs
+  *	squashfs
++ *	erofs
+  *	gzip
+  *	bzip2
+  *	lzma
+@@ -63,6 +65,7 @@ identify_ramdisk_image(struct file *file, loff_t pos,
+ 	struct romfs_super_block *romfsb;
+ 	struct cramfs_super *cramfsb;
+ 	struct squashfs_super_block *squashfsb;
++	struct erofs_super_block *erofsb;
+ 	int nblocks = -1;
+ 	unsigned char *buf;
+ 	const char *compress_name;
+@@ -77,6 +80,7 @@ identify_ramdisk_image(struct file *file, loff_t pos,
+ 	romfsb = (struct romfs_super_block *) buf;
+ 	cramfsb = (struct cramfs_super *) buf;
+ 	squashfsb = (struct squashfs_super_block *) buf;
++	erofsb = (struct erofs_super_block *) buf;
+ 	memset(buf, 0xe5, size);
+ 
+ 	/*
+@@ -165,6 +169,21 @@ identify_ramdisk_image(struct file *file, loff_t pos,
+ 		goto done;
+ 	}
+ 
++	/* Try erofs */
++	pos = (start_block * BLOCK_SIZE) + EROFS_SUPER_OFFSET;
++	kernel_read(file, buf, size, &pos);
++
++	if (erofsb->magic == EROFS_SUPER_MAGIC_V1) {
++		printk(KERN_NOTICE
++		       "RAMDISK: erofs filesystem found at block %d\n",
++		       start_block);
++
++		nblocks = ((erofsb->blocks << erofsb->blkszbits) + BLOCK_SIZE - 1)
++			>> BLOCK_SIZE_BITS;
++
++		goto done;
++	}
++
+ 	printk(KERN_NOTICE
+ 	       "RAMDISK: Couldn't find valid RAM disk image starting at %d.\n",
+ 	       start_block);
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+base-commit: 5fc31936081919a8572a3d644f3fbb258038f337
+change-id: 20250320-initrd-erofs-76e925fdf68c
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Best regards,
+-- 
+Julian Stecklina <julian.stecklina@cyberus-technology.de>
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
