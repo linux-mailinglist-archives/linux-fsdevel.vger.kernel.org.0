@@ -1,288 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-44544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD56DA6A403
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 11:46:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 352BBA6A402
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 11:46:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 079D87B00F7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 10:45:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 612E7189E61F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 10:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1DE224B0D;
-	Thu, 20 Mar 2025 10:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948DB224B01;
+	Thu, 20 Mar 2025 10:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gi4Ey/7Z"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W9SH1Se0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31607209F4E;
-	Thu, 20 Mar 2025 10:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9007482;
+	Thu, 20 Mar 2025 10:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742467594; cv=none; b=tAAR/DaYcN15CVIJ4d+jc9x+GpqNEsEhCuNoMkZytcg8Lx6WfzXbwHNoqnWrU0e23h7KPwFJhbZJ5Ca6XoV7UCxGmUGr6sjo2uze0tjzB1UTo1tYqYuD/3DnVCK4mLWnI8p1CwUINw1zfvA5k3Yq7yPBX56T7tTmRe3dUh+OgUA=
+	t=1742467545; cv=none; b=ArKZPjMItVwHDAWEENL8eEawD9JV/TDkdyHxrWTLEf8blzszMPXp6HRWDZGt6vCW/28f35eclfsJFfhZp4/79zZKRWOOH5aqw9+a3mJAVirjN8BJVm95k3ibosL89yMMCK3Q6kOKdRi0Kmk3aIn6DrM2WFNh2d7KslPt3j8KMOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742467594; c=relaxed/simple;
-	bh=YvMQlYXlkwRZkEReaqyNkiXw7BWYWP12LN8EdzHzpsU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eDeC7JaZRov4gzVUPy0PgTxKCQIjtI0NMT3xBaCPbJZUx0pQnt8ClncwHm7wPCmncLu+ll+2m7Z+XXPX7lr2csj3fwma+35d4XFOTXmqOetHya4Cow0LlHz3B66l7MfBwOfl9y8UJB3qF149FaR4oJxDBKRcHlOV96jTZWjEHIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gi4Ey/7Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2273C4CEEC;
-	Thu, 20 Mar 2025 10:46:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742467593;
-	bh=YvMQlYXlkwRZkEReaqyNkiXw7BWYWP12LN8EdzHzpsU=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=gi4Ey/7ZG9i4OVoCYEMtLOriw101iUKTiHUW4fze1MmUgdWAA/dxjnp2cJc5pTBUb
-	 teJL+hCQKNeg9PmJGsYy2W9yuNnaAEUORZnKYVx5p7BxIUY2ogPXGw+EdCI1EK28Jp
-	 XgPnhb8kH/upO8Bp6TEe0gk4Fvt0a3wHg/Q5OzrRO+eBrU0FzgEnrbVe3MWZTOps1P
-	 oEg+Lp+0tQle42tW4nb3ugOmbz+rUuXMuogZLcDPO/bhDKcuss59/Pduv2cBr/OpIw
-	 hkJFhyy9fnKiDFAsZJyU5d67NlrwL8XStoASxu/5nyIPLrB4/e9Gjw0bwQ8Dpr2J+W
-	 69mFeb2UkR28Q==
-Message-ID: <bd523c84e64ffd405e1a1184796269c153baa119.camel@kernel.org>
-Subject: Re: [PATCH 6/6] VFS: change lookup_one_common and
- lookup_noperm_common to take a qstr
-From: Jeff Layton <jlayton@kernel.org>
-To: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner	 <brauner@kernel.org>, Jan Kara <jack@suse.cz>, David
- Howells <dhowells@redhat.com>,  Chuck Lever <chuck.lever@oracle.com>
-Cc: linux-nfs@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org
-Date: Thu, 20 Mar 2025 06:46:31 -0400
-In-Reply-To: <20250319031545.2999807-7-neil@brown.name>
-References: <20250319031545.2999807-1-neil@brown.name>
-	 <20250319031545.2999807-7-neil@brown.name>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
- MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
- gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
- 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
- R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
- rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
- ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
- Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
- lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
- iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
- QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
- YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
- wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
- LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
- 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
- c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
- LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
- TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
- 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
- xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
- +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
- Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
- BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
- N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
- naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
- RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
- FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
- 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
- P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
- aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
- T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
- dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
- 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
- kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
- uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
- AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
- FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
- 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
- sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
- qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
- sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
- IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
- UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
- dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
- EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
- apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
- M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
- dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
- 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
- jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
- flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
- BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
- AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
- 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
- HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
- 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
- uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
- DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
- CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
- Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
- AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
- aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
- f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1742467545; c=relaxed/simple;
+	bh=CQRvnqo/OIGXmbGJKfYMBDG6e62wvoNjBK2uoAkIXQ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=dfaquALgV5v434SrvjhyGfYwHoSWyGZSEhDm0p00v1fRmM/p0g4H8zcUzK1+1VLyUGbEvMnYvKTLlBN2oVe4mYagfjGbSHRhaN5+FI1pepDUVnQjDD6INrQ6Z/3Ef+MGrs4T7XGpiF6nY1Jux/F/hm1dZGQgzWHtN9WCj0ouByo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W9SH1Se0; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac289147833so125624966b.2;
+        Thu, 20 Mar 2025 03:45:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742467540; x=1743072340; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:cc:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Wu2qFMonGPrgHGmqn+23t9IhepY6HpevAK0T3D5ofOE=;
+        b=W9SH1Se0tzc5ytz0y+BgIsppAP80yDOtK1OcuIyGoKHK5McDMvZugteJfrf3QU0ABm
+         B0Xa+qE78Hs6MOHFTPz0+Hi7Kj67QNC32qrTozteR1lRTqQ6j1EhA9QriMD7FfF9hVDs
+         pkJZTS/ckjYmGsDfdUElfdmJLjf0ODtrLdKrMPbvsZ4Z3zXfa8Vbizv/+bNzQCP7bTPs
+         fp6S5fZgZ3S5z63R/FkgqzvXbp4ZbhErqxCSxMKqqqZt4L1o+DgaKoWlwr4Tva6NSfM+
+         4Tok9AkoihT2dh8cihN54dQKyp39Xuz1TL4eMFmZaoW9UZL0aPfMZoQ7rXX9+tjOGlT8
+         e5nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742467540; x=1743072340;
+        h=content-transfer-encoding:in-reply-to:cc:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wu2qFMonGPrgHGmqn+23t9IhepY6HpevAK0T3D5ofOE=;
+        b=g6Ld72hN6HIL168bL+EP7cu/dmgh5ZH/HntFTdyomb3BHo/HvuRG9LpIq/gzo63Kwc
+         av4FR4KDasFyaM2EPG3J2u1nxZImavo1w8ONsQ4nTG//5iqMOW+Zahu+gKr5Z/h7MVzy
+         giAa8kZ5V3zSXCyG+QIjk69GbW5K63rbrlXYxfmYcNmTSaI0FeOQgEGEIE9OEpEUutlB
+         FDN3IrE6fukeY/BNKubkJrX/LlP5JpNXQDmXQMUMotevbmR55hNnwcbJYr4MzLyHj8/2
+         dWgnpSXehu95ZAEHjXMHr+g/JxMUf9c4vXnP5ZNAYETCC43isTPh51EKMXag3VbIsIX2
+         U5lA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDIeKkCTLBv2+MEtuIKOFoLTg0l1EItLB8ypvAyG1EJ3NOpTA0+T+0Fzw2SW77bTwG/DehSSCy@vger.kernel.org, AJvYcCV9g5AuerfB8Uxj8/iWJD23ZtI/5TFLmuV/40UAvgIJnKMbdxQ4BlFaxuHcJwFrv8gO1dOV3cXD6j6Iwg==@vger.kernel.org, AJvYcCVCfPJh461ikYSTh8b/2BFUtSKo8YrYMVpWPhaKezjCh4bQp1uyrEfbXRuSNx7YC8R/ROhXczlM+1JDxvk1ClT7@vger.kernel.org, AJvYcCVQjajVVBmoC5Ogh94GmVHsmsU0oQc64/syNya3HQlIzIQeuQcRgxCz+ZeL/P9c6CrO5Z7kO3pW7tfpveVl3w==@vger.kernel.org, AJvYcCXCiYSj/69cXxUdOlDgApOWDWW7DYuh545xtwp90gdpy6Loy5fiIZsSUR5DOW6EPFN6EKftq4Jfjyrjfwoi@vger.kernel.org, AJvYcCXlpFSUJRhTweB9lE1ixOyklwo/zFQEYTLanmz/+Y72sMaU/Ju0SLau/OQFIN0ymjtoX65tDKW/z+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKB5GGXSmwX6Rs46JL6G4yHMJ31cCKHg/FntUZHXrxtzuqM3/s
+	BRrMNu95CV6rHBy7MNMtNgkC1A+20fYHsKQKlbo73szCPm2QhcsnXua54w==
+X-Gm-Gg: ASbGncsWHYOz87Zfu57dzpe3Lg2WQbRBR1KNraabSF1V+J9/LIwjoZxMqISA8Yl9k3C
+	2pRDrNgNYD1ohcxMy5UEzPHFBRXL/xQHIWn41uQFO5OjWVrFcLNoKmVuP4Uwo3zxfPKRhOAC3n7
+	SMjTgkxdUQxH2JHqtSUMdmGdKTkxHN270V2J59O2XtSzN8rLmBKO3Vvcl1Hzxv8QNZI6x9mn/Q0
+	OiLJ6FzkKs3fzq5FdfFh0DFKVFY6jmie1x6H2T4vitEjmKr6YOBFpE4SMyTiXxgsu2Bi5dcu+PF
+	pSlQU+OVspGW+pb7x5GrQ/NLqktAvY9FlbCIlUlQ8Xjl8+KYjfiqB/3wGHItpURJeSoFDtZz9eX
+	3sw==
+X-Google-Smtp-Source: AGHT+IGBL9AnC6ZQjzhuCI4g1r8h2sdfYy3s1KoFQvorGxx8LXkr1BFrXgmvhJrixYKJRPzgzvC0DA==
+X-Received: by 2002:a17:906:d7cb:b0:ac3:c7bd:e436 with SMTP id a640c23a62f3a-ac3c7bde4damr497034866b.51.1742467540085;
+        Thu, 20 Mar 2025 03:45:40 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:5148])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3146aebb0sm1164606466b.10.2025.03.20.03.45.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Mar 2025 03:45:39 -0700 (PDT)
+Message-ID: <fbcd759e-2453-4570-a2a0-c9ad67ae9277@gmail.com>
+Date: Thu, 20 Mar 2025 10:46:35 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
+To: Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
+ Joe Damato <jdamato@fastly.com>, Christoph Hellwig <hch@infradead.org>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, edumazet@google.com, pabeni@redhat.com,
+ horms@kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+ viro@zeniv.linux.org.uk, jack@suse.cz, kuba@kernel.org, shuah@kernel.org,
+ sdf@fomichev.me, mingo@redhat.com, arnd@arndb.de, brauner@kernel.org,
+ akpm@linux-foundation.org, tglx@linutronix.de, jolsa@kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20250319001521.53249-1-jdamato@fastly.com>
+ <Z9p6oFlHxkYvUA8N@infradead.org> <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
+ <2d68bc91-c22c-4b48-a06d-fa9ec06dfb25@kernel.dk>
+ <Z9r5JE3AJdnsXy_u@LQ3V64L9R2>
+ <19e3056c-2f7b-4f41-9c40-98955c4a9ed3@kernel.dk>
+ <Z9sCsooW7OSTgyAk@LQ3V64L9R2>
+ <dc3ebb86-f4b2-443a-9b0d-f5470fd773f1@kernel.dk>
+ <356ce660-fc2e-4016-a0d9-6896936669c2@samba.org>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+Cc: David Wei <dw@davidwei.uk>
+In-Reply-To: <356ce660-fc2e-4016-a0d9-6896936669c2@samba.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-03-19 at 14:01 +1100, NeilBrown wrote:
-> From: NeilBrown <neilb@suse.de>
->=20
-> These function already take a qstr of course, but they also currently
-> take a name/len was well and fill in the qstr.
-> Now they take a qstr that is already filled in, which is what all the
-> callers have.
->=20
-> Signed-off-by: NeilBrown <neilb@suse.de>
-> ---
->  fs/namei.c | 44 +++++++++++++++++++-------------------------
->  1 file changed, 19 insertions(+), 25 deletions(-)
->=20
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 16605f7108c0..e2fb61573f13 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -2833,13 +2833,12 @@ int vfs_path_lookup(struct dentry *dentry, struct=
- vfsmount *mnt,
->  }
->  EXPORT_SYMBOL(vfs_path_lookup);
-> =20
-> -static int lookup_noperm_common(const char *name, struct dentry *base,
-> -				  int len,
-> -				  struct qstr *this)
-> +static int lookup_noperm_common(struct qstr *qname, struct dentry *base)
->  {
-> -	this->name =3D name;
-> -	this->len =3D len;
-> -	this->hash =3D full_name_hash(base, name, len);
-> +	const char *name =3D qname->name;
-> +	u32 len =3D qname->len;
-> +
-> +	qname->hash =3D full_name_hash(base, name, len);
->  	if (!len)
->  		return -EACCES;
-> =20
-> @@ -2856,7 +2855,7 @@ static int lookup_noperm_common(const char *name, s=
-truct dentry *base,
->  	 * to use its own hash..
->  	 */
->  	if (base->d_flags & DCACHE_OP_HASH) {
-> -		int err =3D base->d_op->d_hash(base, this);
-> +		int err =3D base->d_op->d_hash(base, qname);
->  		if (err < 0)
->  			return err;
->  	}
-> @@ -2864,10 +2863,10 @@ static int lookup_noperm_common(const char *name,=
- struct dentry *base,
->  }
-> =20
->  static int lookup_one_common(struct mnt_idmap *idmap,
-> -			     const char *name, struct dentry *base, int len,
-> -			     struct qstr *this) {
-> +			     struct qstr *qname, struct dentry *base)
-> +{
->  	int err;
-> -	err =3D lookup_noperm_common(name, base, len, this);
-> +	err =3D lookup_noperm_common(qname, base);
->  	if (err < 0)
->  		return err;
->  	return inode_permission(idmap, base->d_inode, MAY_EXEC);
-> @@ -2888,16 +2887,14 @@ static int lookup_one_common(struct mnt_idmap *id=
-map,
->   */
->  struct dentry *try_lookup_noperm(struct qstr *name, struct dentry *base)
->  {
-> -	struct qstr this;
->  	int err;
-> =20
->  	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
-> =20
-> -	err =3D lookup_noperm_common(name->name, base, name->len, &this);
-> +	err =3D lookup_noperm_common(name, base);
->  	if (err)
->  		return ERR_PTR(err);
-> =20
-> -	name->hash =3D this.hash;
->  	return lookup_dcache(name, base, 0);
->  }
->  EXPORT_SYMBOL(try_lookup_noperm);
-> @@ -2915,17 +2912,16 @@ EXPORT_SYMBOL(try_lookup_noperm);
->  struct dentry *lookup_noperm(struct qstr name, struct dentry *base)
->  {
->  	struct dentry *dentry;
-> -	struct qstr this;
->  	int err;
-> =20
->  	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
-> =20
-> -	err =3D lookup_noperm_common(name.name, base, name.len, &this);
-> +	err =3D lookup_noperm_common(&name, base);
->  	if (err)
->  		return ERR_PTR(err);
-> =20
-> -	dentry =3D lookup_dcache(&this, base, 0);
-> -	return dentry ? dentry : __lookup_slow(&this, base, 0);
-> +	dentry =3D lookup_dcache(&name, base, 0);
-> +	return dentry ? dentry : __lookup_slow(&name, base, 0);
->  }
->  EXPORT_SYMBOL(lookup_noperm);
-> =20
-> @@ -2943,17 +2939,16 @@ struct dentry *lookup_one(struct mnt_idmap *idmap=
-, struct qstr name,
->  			  struct dentry *base)
->  {
->  	struct dentry *dentry;
-> -	struct qstr this;
->  	int err;
-> =20
->  	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
-> =20
-> -	err =3D lookup_one_common(idmap, name.name, base, name.len, &this);
-> +	err =3D lookup_one_common(idmap, &name, base);
->  	if (err)
->  		return ERR_PTR(err);
-> =20
-> -	dentry =3D lookup_dcache(&this, base, 0);
-> -	return dentry ? dentry : __lookup_slow(&this, base, 0);
-> +	dentry =3D lookup_dcache(&name, base, 0);
-> +	return dentry ? dentry : __lookup_slow(&name, base, 0);
->  }
->  EXPORT_SYMBOL(lookup_one);
-> =20
-> @@ -2971,17 +2966,16 @@ EXPORT_SYMBOL(lookup_one);
->  struct dentry *lookup_one_unlocked(struct mnt_idmap *idmap,
->  				   struct qstr name, struct dentry *base)
->  {
-> -	struct qstr this;
->  	int err;
->  	struct dentry *ret;
-> =20
-> -	err =3D lookup_one_common(idmap, name.name, base, name.len, &this);
-> +	err =3D lookup_one_common(idmap, &name, base);
->  	if (err)
->  		return ERR_PTR(err);
-> =20
-> -	ret =3D lookup_dcache(&this, base, 0);
-> +	ret =3D lookup_dcache(&name, base, 0);
->  	if (!ret)
-> -		ret =3D lookup_slow(&this, base, 0);
-> +		ret =3D lookup_slow(&name, base, 0);
->  	return ret;
->  }
->  EXPORT_SYMBOL(lookup_one_unlocked);
+On 3/19/25 19:15, Stefan Metzmacher wrote:
+> Am 19.03.25 um 19:37 schrieb Jens Axboe:
+>> On 3/19/25 11:45 AM, Joe Damato wrote:
+>>> On Wed, Mar 19, 2025 at 11:20:50AM -0600, Jens Axboe wrote:
+...
+>> My argument would be the same as for other features - if you can do it
+>> simpler this other way, why not consider that? The end result would be
+>> the same, you can do fast sendfile() with sane buffer reuse. But the
+>> kernel side would be simpler, which is always a kernel main goal for
+>> those of us that have to maintain it.
+>>
+>> Just adding sendfile2() works in the sense that it's an easier drop in
+>> replacement for an app, though the error queue side does mean it needs
+>> to change anyway - it's not just replacing one syscall with another. And
+>> if we want to be lazy, sure that's fine. I just don't think it's the
+>> best way to do it when we literally have a mechanism that's designed for
+>> this and works with reuse already with normal send zc (and receive side
+>> too, in the next kernel).
+> 
+> A few month (or even years) back, Pavel came up with an idea
+> to implement some kind of splice into a fixed buffer, if that
+> would be implemented I guess it would help me in Samba too.
+> My first usage was on the receive side (from the network).
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+I did it as a testing ground for infra needed for ublk zerocopy,
+but if that's of interest I can resurrect the patches and see
+where it goes, especially since the aforementioned infra just got
+queued.
+
+> But the other side might also be possible now we have RWF_DONTCACHE.
+> Instead of dropping the pages from the page cache, it might
+> be possible move them to fixed buffer instead.
+> It would mean the pages would be 'stable' when they are
+> no longer part of the pagecache.
+> But maybe my assumption for that is too naive...
+
+That's an interesting idea
+
+> Anyway that splice into a fixed buffer would great to have,
+> as the new IORING_OP_RECV_ZC, requires control over the
+> hardware queues of the nic and only allows a single process
+
+Right, it basically borrows a hardware rx queue and that
+needs CAP_NET_ADMIN, and the user also has to set up steering
+rules.
+
+> to provide buffers for that receive queue (at least that's how
+> I understand it). And that's not possible for multiple process
+> (maybe not belonging to the same high level application and likely
+
+It's up to the user to decide who returns buffers back (and how to
+sychronise that) as the api is just a user mapped ring. Regardless,
+it's not a finished project, David and I looked at features we want
+to add to make life easier for multithreaded apps that can't throw
+that many queues. I see your point though.
+
+> non-root applications). So it would be great have splice into
+> fixed buffer as alternative to IORING_OP_SPLICE/IORING_OP_TEE,
+> as it would be more flexible to use in combination with
+> IORING_OP_SENDMSG_ZC as well as IORING_OP_WRITE[V]_FIXED with RWF_DONTCACHE.
+> 
+> I guess such a splice into fixed buffer linked to IORING_OP_SENDMSG_ZC
+> would be the way to simulate the sendfile2() in userspace?
+
+Right, and that approach allows to handle intermediate errors,
+which is why it doesn't need to put restrictions on the input
+file.
+
+-- 
+Pavel Begunkov
+
 
