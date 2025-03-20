@@ -1,149 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-44649-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BA4CA6AFD8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 22:30:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9D7A6AFE5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 22:36:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39F401897240
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 21:30:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D4061896812
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Mar 2025 21:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D9D22170A;
-	Thu, 20 Mar 2025 21:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76291221F0F;
+	Thu, 20 Mar 2025 21:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QzV8meK9"
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="G5JYC3jm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDA574BED;
-	Thu, 20 Mar 2025 21:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E86E1EC01E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 21:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742506235; cv=none; b=mWFXkmPBTyHjHMOn/qHdEghsE8+9gyPd/ZVgAu5e3CnLSCg9oE6DWD3QWH5IP6yLo+hn4dGzHidSCRleK2nrbhkbknt9LHOX50xusylL7NTXAc5eog3/A6NHRKj8/pJNFc5/X+Uw0YtwGj37OeFuO0oqcOgW0NDZKX830G/wPds=
+	t=1742506559; cv=none; b=FGA2xtVekTlWZ4XCnkykpxvG/1uHKdct7kUUypge9Usr/OdrpHsTQueZ+znYPaGom254msdaoGVkxcXSD6G1SPXUhSAmbBaI26ppGGEE+npKZjhSoTjPYmtH+ocBFbPz7qKTyHvL9GXcMaGeIkwbIpeepe0bRfBsmxJMx/m1wTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742506235; c=relaxed/simple;
-	bh=CgP4k9ANcDRlennigDXlxcwKnu1yZe66xO2hywmqiCU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B0nyzlPqJPqCeCnzLFcUn9Lvj85iBKVevzEEkihXeBiEemkDtSrD7xPJxPfYif+UV2e2VD73rLVXhK9xHx83706M1cLn2YNRRmR4VlWP9U+wdS4VD2GF9AbPr+pEDmFLffO2HLgyZ0rT2BJU7tycsLjZNLfibs20nUmDWU6nRgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QzV8meK9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEB52C4CEDD;
-	Thu, 20 Mar 2025 21:30:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742506234;
-	bh=CgP4k9ANcDRlennigDXlxcwKnu1yZe66xO2hywmqiCU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QzV8meK9/w+yYwh3ZBWM8Gffl7+cYsZkDptGBNJtxYtbcsK3/i5Dl5EyWG+TzDlIg
-	 tJiMr3QwOx03nB7BN41036DgwHAgN+ZzX7x58hu6US40VQkjWuLw3yXoOAW4K8+EOw
-	 XUJP8YrxETf3DYBnPR1Ew6s42+VSEG0svtfui2gWYicr/SQ7g+zVfF+BM+KLlI7sTP
-	 C2jdAVaoCv4y83XHvlq2+YO9Mmd1IZsfB5Y58iB/iQSu+8006NOXV5VLJUfNyHimyh
-	 sej5PtejGRksl0YRmHSUQIuygNw1DsYYDneN35uwXk0leAae0ejqZFddwSKkWTXOsD
-	 sqbgLXqiFBfhA==
-Date: Thu, 20 Mar 2025 14:30:34 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Ritesh Harjani <ritesh.list@gmail.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-block@vger.kernel.org,
-	lsf-pc@lists.linux-foundation.org, david@fromorbit.com,
-	leon@kernel.org, hch@lst.de, kbusch@kernel.org, sagi@grimberg.me,
-	axboe@kernel.dk, joro@8bytes.org, brauner@kernel.org, hare@suse.de,
-	willy@infradead.org, john.g.garry@oracle.com, p.raghav@samsung.com,
-	gost.dev@samsung.com, da.gomez@samsung.com
-Subject: Re: [LSF/MM/BPF TOPIC] breaking the 512 KiB IO boundary on x86_64
-Message-ID: <20250320213034.GG2803730@frogsfrogsfrogs>
-References: <Z9v-1xjl7dD7Tr-H@bombadil.infradead.org>
- <87o6xvsfp7.fsf@gmail.com>
+	s=arc-20240116; t=1742506559; c=relaxed/simple;
+	bh=0gasMJ9MwLFF9X4TIJDjjd2uvTa8ezZ/DrhvXflVu0E=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=WfdyemYFq2lZ6pgfw1V6js9yqjrn6/WMQ46QwHJ6feRAnLT5rtL12idQeVS7vHKeQ2riLGSnEb/gndHnxVEuVyW3i7AfEvnc0cgbvDESK2XX86Iaf9qjG10pgQzImgTpvpYS/D92fyA5faS6/m1BjvV/r/8v+z4NuYK9Kvj7BWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=G5JYC3jm; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43d4ff56136so474675e9.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 14:35:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1742506555; x=1743111355; darn=vger.kernel.org;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JqJgAERJO0hWodgjO+O6nsJOj3YPTpObkXEvNBlmG3c=;
+        b=G5JYC3jmOb6Ff6mrYC1Qo26ZnarpsB81DQV9Kc+bUEWnMhXaly+qjZvxG0p0KjOBum
+         ryIRnFQu2RO/iEP8XJxRypNekFqA6IpYfSuR0MFKfnHCq6V8wQKpjyhE2jclV1S18efO
+         MJCiKZA+53oolojvPRJ450/cEsJjjlLB2RfSTJhuEgIQarg+KPK1c6akJARSSsofNfPD
+         Rd0HCwzfE4hUr/3VHKKPvGGVSg4m65k7DJmu9iAGCezSGjYisxglBwUQ/tGTEjhO0oBC
+         Y7WtOA/EUh2856lqJ7qx/EgRq3IetHW4JjNIf0sQkNzF1dSt+r92eZ8w/xK63tTQw2bc
+         fXpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742506555; x=1743111355;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=JqJgAERJO0hWodgjO+O6nsJOj3YPTpObkXEvNBlmG3c=;
+        b=q/CFwLK+hp8ZReKLlSrOEd86hoTfiO4ykfEHa6E7pNCGbuREkY96sSItYFEDFo+nfU
+         yPez5NBEKR/j8sWGWc+jntYx+Sf8UOJllMsx6MbRogwb1vRM2gjiQGfVAkP9xTcGa7qI
+         654Lcjs0onJjqkjyjmpyDzyCAKFkKIPHfXIKOn5AvT5NncozQDksWEdIi/fDIDdtDpa+
+         8c1YLjn0jbnSjIKll0VG9FJ/8/3RS/T0zMDZEsCzjHpmfKBnVtD8159wLdDCixFa0UXl
+         LqcSdy/IutRE0pTole6TH+YtlnlF67kIKcvkId0x8u4jX5rCZbqu6cOjpAviv7yLuA1h
+         cMoA==
+X-Forwarded-Encrypted: i=1; AJvYcCULA2/Cf3SAuwuIL/i/Dwoi0PC90PukdwNoouhkR5f3y0LB+ktwgVh+KE8cRztdfoEfBU/KhlxYJxX4OiYa@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSNyJ5uSY9UxuFfiHuxImlB3oxcfkfsVbrxU4s/QO4XjLaqtN9
+	c7kSdNX/pboH1PDNazjfuMF7M8Kw42CFtZ57M4OKoX9EHG+MsWTgfxILav+HAfs=
+X-Gm-Gg: ASbGncsas9pDjgDX5+M5/UuznS4hIJNV/04uUOQJXj0RwsxoBZwdepnKgiAw+KrigtD
+	DuUDm6to3VfGvXzB0Xo4YHj3XsZZO58SPW/jCexsijboG7GXXFN/TwN58hOs3U94XMtx83i+JYx
+	iwnDagucAj3K+MQc0uq+AZvkljdX2LjrMfSXCXgLNIqUOZ6SgyPcuNCCkvRyRrZAIiUtkYF+PYv
+	Q1E7iqmmdgWvQwxBaXcDXg8LqMSQlP9g4GyryPxEnkPb5GVrQccmYL7iJibGDHLxxI01NuoXSot
+	gb3Cvf2qqkGhyDNrHKFH+Zh4dvkDvzWH3Zm18qjyXriph0vIwf4YS+9Owlp+0JKOSqSSYrGFNcH
+	Crghl
+X-Google-Smtp-Source: AGHT+IHQLBHBcxn45pDMJ6mBe7Q5GjHdSOzikTUHc7bZFFqM3IvCF49MKGgOPWFCY1ifjxDw5fxebw==
+X-Received: by 2002:a05:600c:3552:b0:439:9a40:aa1a with SMTP id 5b1f17b1804b1-43d5170c622mr550105e9.6.1742506555439;
+        Thu, 20 Mar 2025 14:35:55 -0700 (PDT)
+Received: from localhost (ip-89-103-73-235.bb.vodafone.cz. [89.103.73.235])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9ef16csm605211f8f.86.2025.03.20.14.35.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 14:35:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87o6xvsfp7.fsf@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 20 Mar 2025 22:35:52 +0100
+Message-Id: <D8LF0RDZ6809.1I3MCCVSHRSQ2@ventanamicro.com>
+Subject: Re: [PATCH v12 23/28] riscv: kernel command line option to opt out
+ of user cfi
+Cc: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
+ <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+ <alistair.francis@wdc.com>, <richard.henderson@linaro.org>,
+ <jim.shu@sifive.com>, <andybnac@gmail.com>, <kito.cheng@sifive.com>,
+ <charlie@rivosinc.com>, <atishp@rivosinc.com>, <evan@rivosinc.com>,
+ <cleger@rivosinc.com>, <alexghiti@rivosinc.com>, <samitolvanen@google.com>,
+ <broonie@kernel.org>, <rick.p.edgecombe@intel.com>, "linux-riscv"
+ <linux-riscv-bounces@lists.infradead.org>
+To: "Deepak Gupta" <debug@rivosinc.com>, "Thomas Gleixner"
+ <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov"
+ <bp@alien8.de>, "Dave Hansen" <dave.hansen@linux.intel.com>,
+ <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "Andrew Morton"
+ <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Vlastimil Babka" <vbabka@suse.cz>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
+ "Conor Dooley" <conor@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Arnd Bergmann"
+ <arnd@arndb.de>, "Christian Brauner" <brauner@kernel.org>, "Peter Zijlstra"
+ <peterz@infradead.org>, "Oleg Nesterov" <oleg@redhat.com>, "Eric Biederman"
+ <ebiederm@xmission.com>, "Kees Cook" <kees@kernel.org>, "Jonathan Corbet"
+ <corbet@lwn.net>, "Shuah Khan" <shuah@kernel.org>, "Jann Horn"
+ <jannh@google.com>, "Conor Dooley" <conor+dt@kernel.org>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com>
+ <20250314-v5_user_cfi_series-v12-23-e51202b53138@rivosinc.com>
+In-Reply-To: <20250314-v5_user_cfi_series-v12-23-e51202b53138@rivosinc.com>
 
-On Fri, Mar 21, 2025 at 12:16:28AM +0530, Ritesh Harjani wrote:
-> Luis Chamberlain <mcgrof@kernel.org> writes:
-> 
-> > We've been constrained to a max single 512 KiB IO for a while now on x86_64.
-> > This is due to the number of DMA segments and the segment size. With LBS the
-> > segments can be much bigger without using huge pages, and so on a 64 KiB
-> > block size filesystem you can now see 2 MiB IOs when using buffered IO.
-> > But direct IO is still crippled, because allocations are from anonymous
-> > memory, and unless you are using mTHP you won't get large folios. mTHP
-> > is also non-deterministic, and so you end up in a worse situation for
-> > direct IO if you want to rely on large folios, as you may *sometimes*
-> > end up with large folios and sometimes you might not. IO patterns can
-> > therefore be erratic.
-> >
-> > As I just posted in a simple RFC [0], I believe the two step DMA API
-> > helps resolve this.  Provided we move the block integrity stuff to the
-> > new DMA API as well, the only patches really needed to support larger
-> > IOs for direct IO for NVMe are:
-> >
-> >   iomap: use BLK_MAX_BLOCK_SIZE for the iomap zero page
-> >   blkdev: lift BLK_MAX_BLOCK_SIZE to page cache limit
-> 
-> Maybe some naive questions, however I would like some help from people
-> who could confirm if my understanding here is correct or not.
-> 
-> Given that we now support large folios in buffered I/O directly on raw
-> block devices, applications must carefully serialize direct I/O and
-> buffered I/O operations on these devices, right?
-> 
-> IIUC. until now, mixing buffered I/O and direct I/O (for doing I/O on
-> /dev/xxx) on separate boundaries (blocksize == pagesize) worked fine,
-> since direct I/O would only invalidate its corresponding page in the
-> page cache. This assumes that both direct I/O and buffered I/O use the
-> same blocksize and pagesize (e.g. both using 4K or both using 64K).
-> However with large folios now introduced in the buffered I/O path for
-> block devices, direct I/O may end up invalidating an entire large folio,
-> which could span across a region where an ongoing direct I/O operation
+2025-03-14T14:39:42-07:00, Deepak Gupta <debug@rivosinc.com>:
+> This commit adds a kernel command line option using which user cfi can be
+> disabled.
+>
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>  arch/riscv/kernel/usercfi.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>
+> diff --git a/arch/riscv/kernel/usercfi.c b/arch/riscv/kernel/usercfi.c
+> index d31d89618763..813162ce4f15 100644
+> --- a/arch/riscv/kernel/usercfi.c
+> +++ b/arch/riscv/kernel/usercfi.c
+> @@ -17,6 +17,8 @@
+>  #include <asm/csr.h>
+>  #include <asm/usercfi.h>
+> =20
+> +bool disable_riscv_usercfi;
+> +
+>  #define SHSTK_ENTRY_SIZE sizeof(void *)
+> =20
+>  bool is_shstk_enabled(struct task_struct *task)
+> @@ -396,6 +398,9 @@ int arch_set_shadow_stack_status(struct task_struct *=
+t, unsigned long status)
+>  	unsigned long size =3D 0, addr =3D 0;
+>  	bool enable_shstk =3D false;
+> =20
+> +	if (disable_riscv_usercfi)
+> +		return 0;
+> +
+>  	if (!cpu_supports_shadow_stack())
+>  		return -EINVAL;
+> =20
+> @@ -475,6 +480,9 @@ int arch_set_indir_br_lp_status(struct task_struct *t=
+, unsigned long status)
+>  {
+>  	bool enable_indir_lp =3D false;
+> =20
+> +	if (disable_riscv_usercfi)
+> +		return 0;
+> +
+>  	if (!cpu_supports_indirect_br_lp_instr())
+>  		return -EINVAL;
+> =20
+> @@ -507,3 +515,16 @@ int arch_lock_indir_br_lp_status(struct task_struct =
+*task,
+> =20
+>  	return 0;
+>  }
+> +
+> +static int __init setup_global_riscv_enable(char *str)
+> +{
+> +	if (strcmp(str, "true") =3D=3D 0)
+> +		disable_riscv_usercfi =3D true;
+> +
+> +	pr_info("Setting riscv usercfi to be %s\n",
+> +		(disable_riscv_usercfi ? "disabled" : "enabled"));
+> +
+> +	return 1;
+> +}
+> +
+> +__setup("disable_riscv_usercfi=3D", setup_global_riscv_enable);
 
-I don't understand the question.  Should this read  ^^^ "buffered"?
-As in, directio submits its write bio, meanwhile another thread
-initiates a buffered write nearby, the write gets a 2MB folio, and
-then the post-write invalidation knocks down the entire large folio?
-Even though the two ranges written are (say) 256k apart?
+I'd prefer two command line options instead.
 
---D
-
-> is taking place. That means, with large folio support in block devices,
-> application developers must now ensure that direct I/O and buffered I/O
-> operations on block devices are properly serialized, correct?
-> 
-> I was looking at posix page [1] and I don't think posix standard defines
-> the semantics for operations on block devices. So it is really upto the
-> individual OS implementation, correct? 
-> 
-> And IIUC, what Linux recommends is to never mix any kind of direct-io
-> and buffered-io when doing I/O on raw block devices, but I cannot find
-> this recommendation in any Documentation? So can someone please point me
-> one where we recommend this?
-> 
-> [1]: https://pubs.opengroup.org/onlinepubs/9799919799/
-> 
-> 
-> -ritesh
-> 
-> >
-> > The other two nvme-pci patches in that series are to just help with
-> > experimentation now and they can be ignored.
-> >
-> > It does beg a few questions:
-> >
-> >  - How are we computing the new max single IO anyway? Are we really
-> >    bounded only by what devices support?
-> >  - Do we believe this is the step in the right direction?
-> >  - Is 2 MiB a sensible max block sector size limit for the next few years?
-> >  - What other considerations should we have?
-> >  - Do we want something more deterministic for large folios for direct IO?
-> >
-> > [0] https://lkml.kernel.org/r/20250320111328.2841690-1-mcgrof@kernel.org
-> >
-> >   Luis
-> 
+In any case, I think we still document params in kernel-parameters.txt.
 
