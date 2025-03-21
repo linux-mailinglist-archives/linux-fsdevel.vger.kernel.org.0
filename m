@@ -1,134 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-44707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1469A6BAC0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Mar 2025 13:34:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30CD1A6BB15
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Mar 2025 13:49:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6595466964
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Mar 2025 12:34:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4678417A470
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Mar 2025 12:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6729822687A;
-	Fri, 21 Mar 2025 12:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCA422AE7B;
+	Fri, 21 Mar 2025 12:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ddIDAwJi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNZpIWs1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2B486250;
-	Fri, 21 Mar 2025 12:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FEC1EA7D3;
+	Fri, 21 Mar 2025 12:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742560445; cv=none; b=CNEiG/vPP55b5q9gBLGbPpiOKavS+DZz06IpepnBsPvoqjHY00H9ipVtHy6LXiFuV4KnZR1he4UOZkGqzrXIo+MZxr5qGjs5mynnAYyBkYjOhD714Dd1jR6HxL7PM+q+5N3boKeYgHXvcjTdX4Zh1jKsWub0iK2cxemvIFf2H2A=
+	t=1742561291; cv=none; b=gC3t+1seZb6/XPsS5z+6rGG/USxoXKVTT76Gq9tudEx7zvc87V/rnngFz2sxLKSNq7jgLHv2oodfsCV6lqkA/KZG4CrSrCeS6c3qRjDtfrVxz7NWHIXgF0XppBodc+m6BriT4BoYlwXAQiVgwjfcJx0Mzb80allMOQ47Kzwa95Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742560445; c=relaxed/simple;
-	bh=GFNU56b7WdHpKXPmdWPdZ2I/P7yGjJPYxXE7+9dTP5M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ftv2mWlVutgjmzeCEmVe+MnMMSo4G2yMDS26uXonmCLKzIAHMgrQRdX/R7gGcMxW52XG/iA8SoQ/2mu3SqGNG/1vB+K4sBtQZ0/9ERknosNqiJ8l0ASapUwoZTVIhewWxb9/uzquoRhpLLm6b6vSH93Sf1VQRg3zVMwWOZXgfC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=ddIDAwJi; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1742560442;
-	bh=GFNU56b7WdHpKXPmdWPdZ2I/P7yGjJPYxXE7+9dTP5M=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=ddIDAwJieaefjo7z1ZfVPnDYd3rhPM/S0IgEBhmLVTn/KcXhs3IBP0cBzVrXN2mH6
-	 M7l9aCr4mQa4GockzM9BNKINOBwxqaEJvOB3+U5zAyK6Bbp2gNK1Xp+yFXdvmx/8Lz
-	 thTbTQ5TWOWOePOehemP29IXWvAoM/D2Aj7Kwts4=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 62E191C0396;
-	Fri, 21 Mar 2025 08:34:02 -0400 (EDT)
-Message-ID: <576418420308d2511a4c155cc57cf0b1420c273b.camel@HansenPartnership.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Filesystem Suspend Resume
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org, 
-	"Rafael J. Wysocki"
-	 <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, Len Brown
-	 <len.brown@intel.com>, linux-pm@vger.kernel.org
-Date: Fri, 21 Mar 2025 08:34:01 -0400
-In-Reply-To: <Z9z32X7k_eVLrYjR@infradead.org>
-References: 
-	<0a76e074ef262ca857c61175dd3d0dc06b67ec42.camel@HansenPartnership.com>
-	 <Z9xG2l8lm7ha3Pf2@infradead.org>
-	 <acae7a99f8acb0ebf408bb6fc82ab53fb687559c.camel@HansenPartnership.com>
-	 <Z9z32X7k_eVLrYjR@infradead.org>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNElecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHURfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvdHRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmBLmY0FCRs1hL0ACgkQgUrkfCFIVNaEiQgAg18F4G7PGWQ68xqnIrccke7Reh5thjUz6kQIii6Dh64BDW6/UvXn20UxK2uSs/0TBLO81k1mV4c6rNE+H8b7IEjieGR9frBsp/+Q01JpToJfzzMUY7ZTDV1IXQZ+AY9L7vRzyimnJHx0Ba4JTlAyHB+Ly5i4Ab2+uZcnNfBXquWrG3oPWz+qPK88LJLya5Jxse1m1QT6R/isDuPivBzntLOooxPk+Cwf5sFAAJND+idTAzWzslexr9j7rtQ1UW6FjO4CvK9yVNz7dgG6FvEZl6J/HOr1rivtGgpCZTBzKNF8jg034n49zGfKkkzWLuXbPUOp3/oGfsKv8pnEu1c2GbQpSmFtZXMgQm90dG9tbGV5IDxqZWpiQGxpbnV4LnZuZXQuaWJtLmNvbT6JAVYEEwEIAEACGwMHCwkIBwMCAQYVC
-	AIJCgsEFgIDAQIeAQIXgBYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJgS5mXBQkbNYS9AAoJEIFK5HwhSFTWEYEH/1YZpV+1uCI2MVz0wTRlnO/3OW/xnyigrw+K4cuO7MToo0tHJb/qL9CBJ2ddG6q+GTnF5kqUe87t7M7rSrIcAkIZMbJmtIbKk0j5EstyYqlE1HzvpmssGpg/8uJBBuWbU35af1ubKCjUs1+974mYXkfLmS0a6h+cG7atVLmyClIc2frd3o0zHF9+E7BaB+HQzT4lheQAXv9KI+63ksnbBpcZnS44t6mi1lzUE65+Am1z+1KJurF2Qbj4AkICzJjJa0bXa9DmFunjPhLbCU160LppaG3OksxuNOTkGCo/tEotDOotZNBYejWaXN2nr9WrH5hDfQ5zLayfKMtLSd33T9u0IUphbWVzIEJvdHRvbWxleSA8amVqYkBrZXJuZWwub3JnPokBVQQTAQgAPwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AWIQTVYG5zyLRicb6tmt+BSuR8IUhU1gUCYEuZmAUJGzWEvQAKCRCBSuR8IUhU1gacCAC+QZN+RQd+FOoh5g884HQm8S07ON0/2EMiaXBiL6KQb5yP3w2PKEhug3+uPzugftUfgPEw6emRucrFFpwguhriGhB3pgWJIrTD4JUevrBgjEGOztJpbD73bLLyitSiPQZ6OFVOqIGhdqlc3n0qoNQ45n/w3LMVj6yP43SfBQeQGEdq4yHQxXPs0XQCbmr6Nf2p8mNsIKRYf90fCDmABH1lfZxoGJH/frQOBCJ9bMRNCNy+aFtjd5m8ka5M7gcDvM7TAsKhD5O5qFs4aJHGajF4gCGoWmXZGrISQvrNl9kWUhgsvoPqb2OTTeAQVRuV8C4FQamxzE3MRNH25j6s/qujtCRKYW1lcyBCb3R0b21sZXkgPGplamJAbGludXguaWJtLmNvbT6JAVQEEwEIAD
-	4CGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AWIQTVYG5zyLRicb6tmt+BSuR8IUhU1gUCYEuZmQUJGzWEvQAKCRCBSuR8IUhU1kyHB/9VIOkf8RapONUdZ+7FgEpDgESE/y3coDeeb8jrtJyeefWCA0sWU8GSc9KMcMoSUetUreB+fukeVTe/f2NcJ87Bkq5jUEWff4qsbqf5PPM+wlD873StFc6mP8koy8bb7QcH3asH9fDFXUz7Oz5ubI0sE8+qD+Pdlk5qmLY5IiZ4D98V239nrKIhDymcuL7VztyWfdFSnbVXmumIpi79Ox536P2aMe3/v+1jAsFQOIjThMo/2xmLkQiyacB2veMcBzBkcair5WC7SBgrz2YsMCbC37X7crDWmCI3xEuwRAeDNpmxhVCb7jEvigNfRWQ4TYQADdC4KsilPfuW8Edk/8tPtCVKYW1lcyBCb3R0b21sZXkgPEpCb3R0b21sZXlAT2Rpbi5jb20+iQEfBDABAgAJBQJXI+B0Ah0gAAoJEIFK5HwhSFTWzkwH+gOg1UG/oB2lc0DF3lAJPloSIDBW38D3rezXTUiJtAhenWrH2Cl/ejznjdTukxOcuR1bV8zxR9Zs9jhUin2tgCCxIbrdvFIoYilMMRKcue1q0IYQHaqjd7ko8BHn9UysuX8qltJFar0BOClIlH95gdKWJbK46mw7bsXeD66N9IhAsOMJt6mSJmUdIOMuKy4dD4X3adegKMmoTRvHOndZQClTZHiYt5ECRPO534Lb/gyKAKQkFiwirsgx11ZSx3zGlw28brco6ohSLMBylna/Pbbn5hII86cjrCXWtQ4mE0Y6ofeFjpmMdfSRUxy6LHYd3fxVq9PoAJTv7vQ6bLTDFNa0KkphbWVzIEJvdHRvbWxleSA8SkJvdHRvbWxleUBQYXJhbGxlbHMuY29tPokBHwQwAQIACQUCVyPgjAIdIAAKCRCBSuR8IUhU1tXiB/9D9OOU8qB
-	CZPxkxB6ofp0j0pbZppRe6iCJ+btWBhSURz25DQzQNu5GVBRQt1Us6v3PPGU1cEWi5WL935nw+1hXPIVB3x8hElvdCO2aU61bMcpFd138AFHMHJ+emboKHblnhuY5+L1OlA1QmPw6wQooCor1h113lZiBZGrPFxjRYbWYVQmVaM6zhkiGgIkzQw/g9v57nAzYuBhFjnVHgmmu6/B0N8z6xD5sSPCZSjYSS38UG9w189S8HVr4eg54jReIEvLPRaxqVEnsoKmLisryyaw3EpqZcYAWoX0Am+58CXq3j5OvrCvbyqQIWFElba3Ka/oT7CnTdo/SUL/jPNobtCxKYW1lcyBCb3R0b21sZXkgPGplamJAaGFuc2VucGFydG5lcnNoaXAuY29tPokBVwQTAQgAQRYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJjg2eQAhsDBQkbNYS9BQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEIFK5HwhSFTWbtAH/087y9vzXYAHMPbjd8etB/I3OEFKteFacXBRBRDKXI9ZqK5F/xvd1fuehwQWl2Y/sivD4cSAP0iM/rFOwv9GLyrr82pD/GV/+1iXt9kjlLY36/1U2qoyAczY+jsS72aZjWwcO7Og8IYTaRzlqif9Zpfj7Q0Q1e9SAefMlakI6dcZTSlZWaaXCefdPBCc7BZ0SFY4kIg0iqKaagdgQomwW61nJZ+woljMjgv3HKOkiJ+rcB/n+/moryd8RnDhNmvYASheazYvUwaF/aMj5rIb/0w5p6IbFax+wGF5RmH2U5NeUlhIkTodUF/P7g/cJf4HCL+RA1KU/xS9o8zrAOeut2+4UgRaZ7bmEwgqhkjOPQMBBwIDBH4GsIgL0yQij5S5ISDZmlR7qDQPcWUxMVx6zVPsAoITdjKFjaDmUATkS+l5zmiCrUBcJ6MBavPiYQ4kqn4/xwaJAbMEGAEIACYCGwIWIQTVYG5zyLRi
-	cb6tmt+BSuR8IUhU1gUCZag0LwUJDwLkSQCBdiAEGRMIAB0WIQTnYEDbdso9F2cI+arnQslM7pishQUCWme25gAKCRDnQslM7pishdi9AQDyOvLYOBkylBqiTlJrMnGCCsWgGZwPpKq3e3s7JQ/xBAEAlx29pPY5z0RLyIDUsjf9mtkSNTaeaQ6TIjDrFa+8XH8JEIFK5HwhSFTWkasH/j7LL9WH9dRfwfTwuMMj1/KGzjU/4KFIu4uKxDaevKpGS7sDx4F56mafCdGD8u4+ri6bJr/3mmuzIdyger0vJdRlTrnpX3ONXvR57p1JHgCljehE1ZB0RCzIk0vKhdt8+CDBQWfKbbKBTmzA7wR68raMQb2D7nQ9d0KXXbtr7Hag29yj92aUAZ/sFoe9RhDOcRUptdYyPKU1JHgJyc0Z7HwNjRSJ4lKJSKP+Px0/XxT3gV3LaDLtHuHa2IujLEAKcPzTr5DOV+xsgA3iSwTYI6H5aEe+ZRv/rA4sdjqRiVpo2d044aCUFUNQ3PiIHPAZR3KK5O64m6+BJMDXBvgSsMy4VgRaZ7clEggqhkjOPQMBBwIDBMfuMuE+PECbOoYjkD0Teno7TDbcgxJNgPV7Y2lQbNBnexMLOEY6/xJzRi1Xm/o9mOyZ+VIj8h4G5V/eWSntNkwDAQgHiQE8BBgBCAAmAhsMFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmWoNBwFCQ8C4/cACgkQgUrkfCFIVNZs4AgAnIjU1QEPLdpotiy3X01sKUO+hvcT3/Cd6g55sJyKJ5/U0o3f8fdSn6MWPhi1m62zbAxcLJFiTZ3OWNCZAMEvwHrXFb684Ey6yImQ9gm2dG2nVuCzr1+9gIaMSBeZ+4kUJqhdWSJjrNLQG38GbnBuYOJUD+x6oJ2AT10/mQfBVZ3qWDQXr/je2TSf0OIXaWyG6meG5yTqOEv0eaTH22yBb1nbodoZkmlMMb56jzRGZuorhFE06
-	N0Eb0kiGz5cCIrHZoH10dHWoa7/Z+AzfL0caOKjcmsnUPcmcrqmWzJTEibLA81z15GBCrldfQVt+dF7Us2kc0hKUgaWeI8Gv4CzwLkCDQRUdhaZARAApeF9gbNSBBudW8xeMQIiB/CZwK4VOEP7nGHZn3UsWemsvE9lvjbFzbqcIkbUp2V6ExM5tyEgzio2BavLe1ZJGHVaKkL3cKLABoYi/yBLEnogPFzzYfK2fdipm2G+GhLaqfDxtAQ7cqXeo1TCsZLSvjD+kLVV1TvKlaHS8tUCh2oUyR7fTbv6WHi5H8DLyR0Pnbt9E9/Gcs1j11JX+MWJ7jset2FVDsB5U1LM70AjhXiDiQCtNJzKaqKdMei8zazWS50iMKKeo4m/adWBjG/8ld3fQ7/Hcj6Opkh8xPaCnmgDZovYGavw4Am2tjRqE6G6rPQpS0we5I6lSsKNBP/2FhLmI9fnsBnZC1l1NrASRSX1BK0xf4LYB2Ww3fYQmbbApAUBbWZ/1aQoc2ECKbSK9iW0gfZ8rDggfMw8nzpmEEExl0hU6wtJLymyDV+QGoPx5KwYK/6qAUNJQInUYz8z2ERM/HOI09Zu3jiauFBDtouSIraX/2DDvTf7Lfe1+ihARFSlp64kEMAsjKutNBK2u5oj4H7hQ7zD+BvWLHxMgysOtYYtwggweOrM/k3RndsZ/z3nsGqF0ggct1VLuH2eznDksI+KkZ3Bg0WihQyJ7Z9omgaQAyRDFct+jnJsv2Iza+xIvPei+fpbGNAyFvj0e+TsZoQGcC34/ipGwze651UAEQEAAYkBHwQoAQIACQUCVT6BaAIdAwAKCRCBSuR8IUhU1p5QCAC7pgjOM17Hxwqz9mlGELilYqjzNPUoZt5xslcTFGxj/QWNzu0K8gEQPePnc5dTfumzWL077nxhdKYtoqwm2C6fOmXiJBZx6khBfRqctUvN2DlOB6dFf5I+1QT9TRBvceGzw01E4Gi0xjWKAB6OII
-	MAdnPcDVFzaXJdlAAJdjfg/lyJtAyxifflG8NnXJ3elwGqoBso84XBNWWzbc5VKmatzhYLOvXtfzDhu4mNPv/z7S1HTtRguI0NlH5RVBzSvfzybin9hysE3/+r3C0HJ2xiOHzucNAmG03aztzZYDMTbKQW4bQqeD5MJxT68vBYu8MtzfIe41lSLpb/qlwq1qg0iQElBBgBAgAPBQJUdhaZAhsMBQkA7U4AAAoJEIFK5HwhSFTW3YgH/AyJL2rlCvGrkLcas94ND9Pmn0cUlVrPl7wVGcIV+6I4nrw6u49TyqNMmsYam2YpjervJGgbvIbMzoHFCREi6R9XyUsw5w7GCRoWegw2blZYi5A52xe500+/RruG//MKfOtVUotu3N+u7FcXaYAg9gbYeGNZCV70vI+cnFgq0AEJRdjidzfCWVKPjafTo7jHeFxX7Q22kUfWOkMzzhoDbFg0jPhVYNiEXpNyXCwirzvKA7bvFwZPlRkbfihaiXDE7QKIUtQ10i5kw4C9rqDKwx8F0PaWDRF9gGaKd7/IJGHJaac/OcSJ36zxgkNgLsVX5GUroJ2GaZcR7W9Vppj5H+C4UgRkuRyTEwgqhkjOPQMBBwIDBOySomnsW2SkApXv1zUBaD38dFEj0LQeDEMdSE7bm1fnrdjAYt0f/CtbUUiDaPodQk2qeHzOP6wA/2K6rrjwNIWJAT0EGAEIACcDGyAEFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmWoM/gFCQSxfmUACgkQgUrkfCFIVNZhTgf/VQxtQ5rgu2aoXh2KOH6naGzPKDkYDJ/K7XCJAq3nJYEpYN8G+F8mL/ql0hrihAsHfjmoDOlt+INa3AcG3v0jDZIMEzmcjAlu7g5NcXS3kntcMHgw3dCgE9eYDaKGipUCubdXvBaZWU6AUlTldaB8FE6u7It7+UO+IW4/L+KpLYKs8V5POInu2rqahlm7vgxY5iv4Txz4EvCW2e4dAlG
-	8mT2Eh9SkH+YVOmaKsajgZgrBxA7fWmGoxXswEVxJIFj3vW7yNc0C5HaUdYa5iGOMs4kg2ht4s7yy7NRQuh7BifWjo6BQ6k4S1H+6axZucxhSV1L6zN9d+lr3Xo/vy1unzA==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1742561291; c=relaxed/simple;
+	bh=V1kuVirUzH2nkyWLPiJEMJZeSr0lXGHfzJy65bU2PIU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MhLdhNDzqvyMm1gQ4/qG5bbBW8v5lezvEuRvaGIyuYOercORDzquCX64usjm+Eibmf5exIlKM4UF+4RnKwHrB8RujcQpwRj0Ucym6+Ld7fOZXQghBz8Mh2XbNq3SGZv5ybLpdHuzvBW9ePEq7dG6yjrcaVJfGoNO1Qngj5kOwKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hNZpIWs1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id F30A0C4CEE3;
+	Fri, 21 Mar 2025 12:48:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742561291;
+	bh=V1kuVirUzH2nkyWLPiJEMJZeSr0lXGHfzJy65bU2PIU=;
+	h=From:Subject:Date:To:Cc:From;
+	b=hNZpIWs1lA6keN30ewySL8adHm7ZIpM8aKj5tYVOJRtShEVz6ByogEDtCnBhqHDXE
+	 pr4y6prFc8BZZYNWse2lLSOdDralKYImrtkVruGUYr6r0cJ/TNimMpgo5exS/lk21T
+	 PwRieMsIG8fpJWJJDKoRFUyhf3prfkRf8TLKvGAUeonSOwEHlrRav/JNucEgFf70mn
+	 x7t7eLQeb2m5mPZ/uAjyvi/mO1tPG/EoATmlM+THhgmodBkOcgydAK9cjxLIUDGn4f
+	 FVWilkONl4b3zivoRQi/qFqXJVwsajXtYmuulunRlwsHteGGXdE/EA8x0/rreVIRFs
+	 CBpcPvBszS9Hg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E06BEC36000;
+	Fri, 21 Mar 2025 12:48:10 +0000 (UTC)
+From: Joel Granados <joel.granados@kernel.org>
+Subject: [PATCH 0/4] sysctl: Move the u8 range check test to
+ lib/test_sysctl.c
+Date: Fri, 21 Mar 2025 13:47:23 +0100
+Message-Id: <20250321-jag-test_extra_val-v1-0-a01b3b17dc66@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANtf3WcC/x3MQQqAIBBA0avErBNG06CuEhFDjTURFSoRRHdPW
+ r7F/w9EDsIR2uKBwJdEOfYMXRYwLrTPrGTKBoPGYWW0WmlWiWMa+E6Bhos2ZbFxFh2S9jXk8Az
+ s5f6nXf++H9WjZ5NkAAAA
+X-Change-ID: 20250321-jag-test_extra_val-40954050a1f6
+To: Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+ Shuah Khan <shuah@kernel.org>, John Sperbeck <jsperbeck@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, Joel Granados <joel.granados@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1500;
+ i=joel.granados@kernel.org; h=from:subject:message-id;
+ bh=V1kuVirUzH2nkyWLPiJEMJZeSr0lXGHfzJy65bU2PIU=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGfdX/FPFhpvFqkJqN3iGTeATAeIgw8EUpiWc
+ uFR+zMa2BVTtIkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJn3V/xAAoJELqXzVK3
+ lkFPfJAL/RJDhNqBvDB4ZlliaKap+XBFny/pRlk5qJ+dvQS8sW+vmNPIciZJhg7giKcagOrfAAh
+ GMnQ83x0sa2307sdt7pzOHKT0hHi0PxoJ+ifjT9fmNtZEgGixSV+ItF9woYnx8a4AZ3qs5ETsQZ
+ EXPvLXPrt6RGQX2VtaietDAxKOmFQ7fj9KnXr5BS3rK4r5e12YJKo5yGs5kOa8fbrOXvIDKUcVN
+ QHdq1YKZ8zfDE4UjxqScbUIQyWaxadehog7Jc3DPdB7WucQU8YyHCGTNp8CN82hBEYxvu3SRbYP
+ x80/TXzWSa9Pf0nIMJnYGITm7im/p8GkA+Cbho+8JYyTUWj19/iTExtm8UGPwyV4vqpFX3ZcX5w
+ UJxfpY8xqyjV2oJebrbraipCqvn5D3Ihk7naw9csbEeXAUTinsQl1cyLY4QspSxz8VHASkXqU9y
+ bT6KSeP76eys4dqOsZB8/wCmPdMfYr7n4Eime7Kg6wLzprrzn9DxSqX077D1n+7/JjlYcXQ6AH5
+ o0=
+X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
+ auth_id=239
 
-On Thu, 2025-03-20 at 22:23 -0700, Christoph Hellwig wrote:
-> On Thu, Mar 20, 2025 at 02:15:15PM -0400, James Bottomley wrote:
-> > On Thu, 2025-03-20 at 09:48 -0700, Christoph Hellwig wrote:
-> > [...]
-> > > We finally got hibernate to freeze file system on suspend,
-> >=20
-> > I was looking for this to see if I could possibly plug something in
-> > for pseudo filesystems that don't have backing devices.=C2=A0 However, =
-I
-> > can't find the path where suspend causes freeze (at least the bdev
-> > doesn't seem to register any power notifier like the scsi block
-> > device does), where is the code?
->=20
-> Looking again I can't find it either.=C2=A0 On the internet I find a patc=
-h
-> adding it from 2006:
-> =20
-> https://groups.google.com/g/fa.linux.kernel/c/dtxsNJ7ks58/m/mqU8SIAbvLgJ
+Originally introduced to sysctl-test.c by commit b5ffbd139688 ("sysctl:
+move the extra1/2 boundary check of u8 to sysctl_check_table_array"), it
+has been shown to lead to a panic under certain conditions related to a
+dangling registration.
 
-Wow google has a terrible interface.  This is the lore link:
+This series moves the u8 test to lib/test_sysctl.c where the
+registration calls are kept and correctly removed on module exit. An
+additional 0012 test is added to selftests/sysctl/sysctl.sh in order to
+visualize the registration calls done in test_sysctl.c.
 
-https://lore.kernel.org/all/200611011200.18438.rjw@sisk.pl/
+Very much related to adding tests to sysctl, the last two patches of
+this series reduce the places that need to be changed when tests are
+added by managing the initialization and closing of sysctl tables with a
+for loop.
 
-So the patch indicates where to put direct hooks in the power
-management but it operates via bdev_freeze/thaw() which wouldn't work
-for pseudo filesystems, but could be replaced by a direct hook into the
-vfs that would iterate over superblocks calling
-freeze_super/thaw_super().
+Comments are greatly appreciated
 
-> But I couldn't see if it got applied or disappaeared again somehow.
-> Adding the relevant maintainers.
+Signed-off-by: Joel Granados <joel.granados@kernel.org>
+---
+Joel Granados (4):
+      sysctl: move u8 register test to lib/test_sysctl.c
+      sysctl: Add 0012 to test the u8 range check
+      sysctl: call sysctl tests with a for loop
+      sysctl: Close test ctl_headers with a for loop
 
-It looks like it got reposted about 5 years later as well (in the
-middle of a thread about xfs hibernate lockups):
+ kernel/sysctl-test.c                     |  49 ------------
+ lib/test_sysctl.c                        | 133 +++++++++++++++++++++----------
+ tools/testing/selftests/sysctl/sysctl.sh |  30 +++++++
+ 3 files changed, 122 insertions(+), 90 deletions(-)
+---
+base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+change-id: 20250321-jag-test_extra_val-40954050a1f6
 
-https://lore.kernel.org/all/201108032315.06012.rjw__14254.1066081778$131240=
-6161$gmane$org@sisk.pl/
+Best regards,
+-- 
+Joel Granados <joel.granados@kernel.org>
 
-Then again 6 months later:
-
-https://lore.kernel.org/all/201201281445.49377.rjw@sisk.pl/
-
-everything kept foundering on deadlock problems between filesystems
-needing threads to shrink and complete writeout and the freezing of
-those threads.
-
-Let me digest all that and see if we have more hope this time around.
-
-Regards,
-
-James
 
 
