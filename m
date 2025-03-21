@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-44672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF417A6B3F1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Mar 2025 06:14:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18B1FA6B3F5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Mar 2025 06:15:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EDB64825DD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Mar 2025 05:14:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87928188C314
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Mar 2025 05:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9FA1E9919;
-	Fri, 21 Mar 2025 05:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18191E9B1B;
+	Fri, 21 Mar 2025 05:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Kf2KvaaY"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1wmiI9+V"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D611D5CD7;
-	Fri, 21 Mar 2025 05:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62F31E493C;
+	Fri, 21 Mar 2025 05:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742534062; cv=none; b=eVVepYG1LfWC+eWF5MCaxJIlDaw0zCkPxoq4k5COdM7EZvX66oDwwCUEezTMz9hJCUXJ5BM5aGlUpBOHegLk/4q8dkOf8F0tvbRyU6JWa0/Hrh2rwH+iBOGm0wzu7TlowRIHmXluN2l4Dj+oAL6HEhZW7VPE9qE0/yuiRc2nAP8=
+	t=1742534098; cv=none; b=Ol6B1hGJj2GDJZTzgE6hjMEJkWk2SbHqLzsuvO70xMn043S8K0tYkS0nIwbqKSbae/SuWmcaFj3E0MNnvJcMXeJGI1hRXaPuVkSbruQO0OC6rYggXpQA6AcmQnO0GeL/vkqUnMJ9jP3pb0xdNIa5+Dlzw5wjSv4V4CxyzloPw+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742534062; c=relaxed/simple;
-	bh=kwOkxKV4qTer06lP41Ffd6PSlRNYEP3PWjtpJ0CNkzY=;
+	s=arc-20240116; t=1742534098; c=relaxed/simple;
+	bh=xdG9r9zig5930+Z9+K5PrYoRrYhQzmwyeGDldmRg6fM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VoulZZ8uuMf4ZYZpjHiqb5T+loSczqTZddJJhPwFM25fTJHsenavZdj0P8bY/LBAdoAVXHCm7nEezpSscT6Az5TDxaB0PbI7M/nwZFFQNPoVCKGig9A4upMMTivzg8dvS56FpomDUEdIM896REs0Gfbes3L7DL5YayoWgwjx6pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Kf2KvaaY; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=A4IxCqx65jsDNo0m/34U/MgSROzar4pBrWfR5PaIcczYQ6VOMDYzsxpLP6y6aA/hcpfqzZuZ7Ii2W8NuEwm3ooP3jC0HhleMufXHWlLDgoze67MRv4AfPZikyose7B1BMbcZckp5EX0yjPBQUIaSEp+B8ALLqjeXfawiDL9FiQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=1wmiI9+V; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=rUyXpJNwMUhzMPk5QM3GkvuJrE/4O7e8Ynsm2+/B6s8=; b=Kf2KvaaYATGpCtxdSKU5/6rPCA
-	KAkFT3eZmQAkfjf5zy7uXXS82wFhob4doB/KA+43X3dISEqyPawWkrNyBlpoZtdgWVXEmob7h9A2T
-	INmhKDoOOCjOrjW4ZSjUvWB03s3OSD+vre15oic0+OgKkwp14Sr/g6/gqSwlMApZNHX6IiM17Op0A
-	0pdaXp0Ty2kdgJI3qfEyUskbjjdfeoRtb2GuSsZ2qkpEpR0MO0Y/g0FonmFmXlySGE0zWNjOhaN18
-	6K+0taEVWg/lI1bi9TslKaztZnjLhaXpsm7T4I+pdul/sW/3pyTjE0hNQ2c74u6nXUIlDS+1SjHRs
-	WTlUT8bw==;
+	bh=fIC/SAXuaviF4kGty41Kn3ZZ26v8zIm5FHzMRtfkfFc=; b=1wmiI9+VZjGjXVJSYgYQgrg6N1
+	t5dpCQ9cWL8kFMKwc19IlHoDP7CaQdDWJhrB8p7UjT/s0y+sKqjIWWZfy/VHNp3CoCXALSc7yKnbR
+	iI3qfxX9AFYNvdMABaL+ZQ3Wq94cBUX/4ZGjDQpEEqxbCkNaBG9X47Lx3OXVA+GBnEAhNjC+DC1lS
+	9h4zNL/fx2G2f6uOLH+8ehqAH5Byvo0FHJOm32VV0yA8YncZ/7GRtxSoOJwwDOOogrYawcbuA9HrH
+	c90vZ+beiRPDIl915nDJC97Vd1M1BlHuVnb/zBYhDVi4KK80b5b+/UQQCW5v/Dysa3Uuq8pCi69Sc
+	s79lkjwA==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tvUhg-0000000DsHV-1Vd5;
-	Fri, 21 Mar 2025 05:13:56 +0000
-Date: Thu, 20 Mar 2025 22:13:56 -0700
+	id 1tvUiR-0000000DsQw-3ibf;
+	Fri, 21 Mar 2025 05:14:43 +0000
+Date: Thu, 20 Mar 2025 22:14:43 -0700
 From: Christoph Hellwig <hch@infradead.org>
 To: Suren Baghdasaryan <surenb@google.com>
 Cc: akpm@linux-foundation.org, willy@infradead.org, david@redhat.com,
@@ -60,10 +60,10 @@ Cc: akpm@linux-foundation.org, willy@infradead.org, david@redhat.com,
 	linuxppc-dev@lists.ozlabs.org, linux-block@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org, iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org, Minchan Kim <minchan@google.com>
-Subject: Re: [RFC 1/3] mm: implement cleancache
-Message-ID: <Z9z1lC9ppphUhDjk@infradead.org>
+Subject: Re: [RFC 2/3] mm: introduce GCMA
+Message-ID: <Z9z1w2vHfJrwSgWW@infradead.org>
 References: <20250320173931.1583800-1-surenb@google.com>
- <20250320173931.1583800-2-surenb@google.com>
+ <20250320173931.1583800-3-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,14 +72,24 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250320173931.1583800-2-surenb@google.com>
+In-Reply-To: <20250320173931.1583800-3-surenb@google.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Mar 20, 2025 at 10:39:29AM -0700, Suren Baghdasaryan wrote:
-> Cleancache can be thought of as a page-granularity victim cache for clean
+On Thu, Mar 20, 2025 at 10:39:30AM -0700, Suren Baghdasaryan wrote:
+> From: Minchan Kim <minchan@google.com>
+> 
+> This patch introduces GCMA (Guaranteed Contiguous Memory Allocator)
+> cleacache backend which reserves some amount of memory at the boot
+> and then donates it to store clean file-backed pages in the cleancache.
+> GCMA aims to guarantee contiguous memory allocation success as well as
+> low and deterministic allocation latency.
+> 
+> Notes:
+> Originally, the idea was posted by SeongJae Park and Minchan Kim [1].
+> Later Minchan reworked it to be used in Android as a reference for
+> Android vendors to use [2].
 
-Please implement your semantics directly instea of with a single user
-abstraction.  If we ever need an abstraction we can add it once we have
-multiple consumers and know what they need.
+That is not a very good summay.  It needs to explain how you ensure
+that the pages do stay clean forever.
 
 
