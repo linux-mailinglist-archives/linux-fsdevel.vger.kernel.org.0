@@ -1,125 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-44704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 815BEA6BA38
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Mar 2025 13:01:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1B45A6BA3C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Mar 2025 13:01:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05EB319C4DDB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Mar 2025 12:01:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F62D3B5875
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Mar 2025 12:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DFB225768;
-	Fri, 21 Mar 2025 12:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2C8226188;
+	Fri, 21 Mar 2025 12:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mz1D0YZs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sLlExwYz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4868B86250;
-	Fri, 21 Mar 2025 12:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8BB225788
+	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Mar 2025 12:01:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742558450; cv=none; b=JLOkH0QlYjnGLaL6eF5wGuxx23dA7GqVgWZ5U9khlTqMPSZSL9lm31qS0keSkoK4+q5j9aqdvbsK7VwsLwM+BqqerGXAidVloCS1IGsEdpz8o4c9fuYq42Wk0OSJTsFXyWlvesmO6hIGe4PEZXhUukbc2Y2SGqFw3baf9L+1i0Q=
+	t=1742558481; cv=none; b=TB59DWX0MAj97ieaaLUa9HI89SpDp+OBlrtKfnEjKl5ZVZs6IqXfarN1QpTz3qqBsRbHTrFzmuMthj0o0PPGWN9Cz6RfPcSnpqxQOQ8aUpd2jyJedq8OejabzpKwGh4eZ72KqXRSJkQg9Vjo1supdGtFiusgIbkHyqtAVIXXtPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742558450; c=relaxed/simple;
-	bh=74QhnzKbW9aHnDTtmDERlGimhlX1E287SbG7cG+icRI=;
+	s=arc-20240116; t=1742558481; c=relaxed/simple;
+	bh=lIvoTqYCyh4CD7MM1R9bi+jS+Ww2jitNiBWq4UzzC+s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mbeSOG3PFpHd6Re9lZHH8UhfIM1wSEJOJF41e3pp0zTNbc54XByLfHuAoRU/Ej2kUjquXht6nkj0xXHR1/bRDxqoDnUnO9F+qcE57oPb6YyVSbQOt0o3f158EeyJKBufX81/5xTTdU0v6hM2gWd/FAuvZ6naKWlv6RjWZmt28BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mz1D0YZs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8EFEC4CEE7;
-	Fri, 21 Mar 2025 12:00:49 +0000 (UTC)
+	 To:Cc:Content-Type; b=HB07lBywQv2hmZi7BeeAOGijgE0VJwC1a/X2W2uJcQUHB4W0LRiMI82mWIJ6m15jpv68G8vVMHAWEm9VbW5y6cf+vFYAApXJ1OUqjU3WprH8nTyPSTugPHBaKdXRR9ym+nqJ1WpmtYL7FkFgmm+wx1s2ZrRw20O+FR3GqLkJERs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sLlExwYz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69D71C4CEEF
+	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Mar 2025 12:01:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742558449;
-	bh=74QhnzKbW9aHnDTtmDERlGimhlX1E287SbG7cG+icRI=;
+	s=k20201202; t=1742558480;
+	bh=lIvoTqYCyh4CD7MM1R9bi+jS+Ww2jitNiBWq4UzzC+s=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=mz1D0YZsM2pLNIT1SCovFGLqEX7Q46WY5mFHIv68qrOetghCx1G8lHbKRd07Ffv1J
-	 UBVxom9NWgR60qqeI3mF3qVuiFGjN7uZLE9aiIhYyKPxTEhjjDPHi6HhNlU/ai24rq
-	 8sKQhZfzQZ6Vo+E8iVoO1g6a+bix0YGC1q3p4lSHk4+rC5WQb9EF94avfYxQajTupR
-	 YpoKL/ClJlFneRPeBYYYrMkEt3WOg26K0AE7WuPiZdtpT1ApK08485OWeKsov2Vx7m
-	 CDHzr7ZJ2CqSLyL4iRsh7HgISo79zx1ztKvCqMl9jPsmsAq3MSTNh1CioibDEcjpaF
-	 /q6XMPci5Rfvw==
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2c1c9b7bd9aso958408fac.0;
-        Fri, 21 Mar 2025 05:00:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVr5eP8MNguHjMfRehT/1UxOZ5bx64JeGegXwGmOhzqReSwX12A/K/5YmuNXV6XQwM+JzLGZsyJtDX0F6lX@vger.kernel.org, AJvYcCWZzZNqB6cAwhfamHJ0bL0hVv+dIrFeGQdsQnWrD2VEFpboJh23R7jyWK2ohtXtaJW2vVE7lzYd@vger.kernel.org, AJvYcCWhd/gKzl3AaXeg0p6bm/9YS2AwH/bMWetHiii/MBaEyhTrYa6iC7+HDn8v8y8EkmKELovE/ZoZ0Eey7MrT@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaCr4YqEFtwP3h277G3cHkXqXMUqXVPNJI/tfGx9WhIGuL1ihn
-	Dxa/JdHYkh29QmOBO1kfD+0jH3YlPMjcFk7Hg0O3YQKcpfJzirkQLciBFsCRjCrskIMgEdLqVly
-	A2KYI8/RopZTausZ7fbCvZoHBRxY=
-X-Google-Smtp-Source: AGHT+IGg70qn+JL2hDJ2egmXLZUTud2yr+t4hljxG8JLcN5gpp6kww4yC+6Y1ZvsgXF4Xmo0tmRupqHE60axkjxAFp0=
-X-Received: by 2002:a05:6870:aa91:b0:288:6a16:fe1 with SMTP id
- 586e51a60fabf-2c7802ffef7mr2087934fac.18.1742558449048; Fri, 21 Mar 2025
- 05:00:49 -0700 (PDT)
+	b=sLlExwYzQhBZaMuFa4GI7BU3vOC4I25ajsFsoJT+OoNL+ycODX0D8ZkwYWWZCn5rc
+	 KLhlUE7ehGWfxKdKjFTQxghKH3Kx4ij16ws9oG4z1zGjJlZI9Ulh2Uv+mqbogdQ+Cj
+	 32zy9iEavAoh/rIG1JiB15Lv1d0GfSjVAv5CAtMb3w02e+7gGjKzVHXDOwYii1pxsr
+	 1HkcmCxD55+DbqLky6vovUxU0sII+xSIokGUecxOa+CSugv+tPoqrZT5W0EmfyIzqu
+	 W2WoSwc1A1LQ1BT7YvTLs1r7Ms6KRFKFLJ3aOU2BAqA4oi+LCifnI0lQqazud45lKX
+	 zG2myvuouEHtA==
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2bcca6aae0bso1606987fac.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Mar 2025 05:01:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUkkziewENN0J6/kePWe8wLuD0PnJwn3VkEF/mH1E5K9vd1rPrlan8zQmTwk8B+zn88VQ85VIw4XX9LyifG@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI0dZJoyOhA6Nb2Em/au/y8ddlOdzp7pIo4tDv9mWOkoOGMQZD
+	iAxF8UbsJbjJih3UrVo1k8ILu7Lu6ebfe26S7tSisH83lPzgbIqJVFxXx028XcUyMWGxw6qmYNG
+	/oh/SYYRqUC5Hui66p4x+f99pepE=
+X-Google-Smtp-Source: AGHT+IGQLQZwc0/CrIkIOHdV2FIx1nWZelfPpfcsf9X1WR9/orOIUxvJPxrxu8PCLR3RvGDli8uNNi+blfVq1KNrIBo=
+X-Received: by 2002:a05:6870:8194:b0:2c2:cd87:7521 with SMTP id
+ 586e51a60fabf-2c780246312mr2158633fac.4.1742558479779; Fri, 21 Mar 2025
+ 05:01:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250321063454epcas1p2194c3e69371dd4f025202d727bfb93a4@epcas1p2.samsung.com>
- <158453976.61742539083228.JavaMail.epsvc@epcpadp2new>
-In-Reply-To: <158453976.61742539083228.JavaMail.epsvc@epcpadp2new>
+References: <PUZPR04MB63160E8D5EF0855E84D9D07781D82@PUZPR04MB6316.apcprd04.prod.outlook.com>
+In-Reply-To: <PUZPR04MB63160E8D5EF0855E84D9D07781D82@PUZPR04MB6316.apcprd04.prod.outlook.com>
 From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Fri, 21 Mar 2025 21:00:37 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd_S3t6PX-TMJH5WiY1YqyFBLu=_fBKiCw=uDfb+n=xXPw@mail.gmail.com>
-X-Gm-Features: AQ5f1JrZ_3lOK7hGKG_opFQuodPfEiB2Cjbi9_TFj8psvCs0xxwOXRVvTfPkCZs
-Message-ID: <CAKYAXd_S3t6PX-TMJH5WiY1YqyFBLu=_fBKiCw=uDfb+n=xXPw@mail.gmail.com>
-Subject: Re: [PATCH v2] exfat: fix random stack corruption after get_block
-To: Sungjong Seo <sj1557.seo@samsung.com>
-Cc: yuezhang.mo@sony.com, sjdev.seo@gmail.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, cpgs@samsung.com, stable@vger.kernel.org, 
-	Yeongjin Gil <youngjin.gil@samsung.com>
+Date: Fri, 21 Mar 2025 21:01:08 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-sP2aSheFbfpWgz9CvH5V-NxTnrw2jQ62TT08=scLxHw@mail.gmail.com>
+X-Gm-Features: AQ5f1JpJ8Om-WDziXHhHMn-q70P2ABZdwiXQ0eCJTvIjVwrM8ke_D6xDTbGyIaw
+Message-ID: <CAKYAXd-sP2aSheFbfpWgz9CvH5V-NxTnrw2jQ62TT08=scLxHw@mail.gmail.com>
+Subject: Re: [PATCH v1] exfat: fix the infinite loop in exfat_find_last_cluster()
+To: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+Cc: "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 21, 2025 at 3:38=E2=80=AFPM Sungjong Seo <sj1557.seo@samsung.co=
-m> wrote:
+On Thu, Mar 20, 2025 at 5:28=E2=80=AFPM Yuezhang.Mo@sony.com
+<Yuezhang.Mo@sony.com> wrote:
 >
-> When get_block is called with a buffer_head allocated on the stack, such
-> as do_mpage_readpage, stack corruption due to buffer_head UAF may occur i=
-n
-> the following race condition situation.
+> In exfat_find_last_cluster(), the cluster chain is traversed until
+> the EOF cluster. If the cluster chain includes a loop due to file
+> system corruption, the EOF cluster cannot be traversed, resulting
+> in an infinite loop.
 >
->      <CPU 0>                      <CPU 1>
-> mpage_read_folio
->   <<bh on stack>>
->   do_mpage_readpage
->     exfat_get_block
->       bh_read
->         __bh_read
->           get_bh(bh)
->           submit_bh
->           wait_on_buffer
->                               ...
->                               end_buffer_read_sync
->                                 __end_buffer_read_notouch
->                                    unlock_buffer
->           <<keep going>>
->         ...
->       ...
->     ...
->   ...
-> <<bh is not valid out of mpage_read_folio>>
->    .
->    .
-> another_function
->   <<variable A on stack>>
->                                    put_bh(bh)
->                                      atomic_dec(bh->b_count)
->   * stack corruption here *
+> If the number of clusters indicated by the file size is inconsistent
+> with the cluster chain length, exfat_find_last_cluster() will return
+> an error, so if this inconsistency is found, the traversal can be
+> aborted without traversing to the EOF cluster.
 >
-> This patch returns -EAGAIN if a folio does not have buffers when bh_read
-> needs to be called. By doing this, the caller can fallback to functions
-> like block_read_full_folio(), create a buffer_head in the folio, and then
-> call get_block again.
->
-> Let's do not call bh_read() with on-stack buffer_head.
->
-> Fixes: 11a347fb6cef ("exfat: change to get file size from DataLength")
-> Cc: stable@vger.kernel.org
-> Tested-by: Yeongjin Gil <youngjin.gil@samsung.com>
-> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
+> Reported-by: syzbot+f7d147e6db52b1e09dba@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3Df7d147e6db52b1e09dba
+> Tested-by: syzbot+f7d147e6db52b1e09dba@syzkaller.appspotmail.com
+> Fixes: 31023864e67a ("exfat: add fat entry operations")
+> Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
 Applied it to #dev.
 Thanks!
 
