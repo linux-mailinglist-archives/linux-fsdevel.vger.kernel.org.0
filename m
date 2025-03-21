@@ -1,207 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-44666-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44667-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF7DCA6B30D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Mar 2025 03:42:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F07FDA6B321
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Mar 2025 04:05:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 264C919C0A8C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Mar 2025 02:42:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46BA218906B5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Mar 2025 03:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F17B1E5713;
-	Fri, 21 Mar 2025 02:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F42F1E0E0C;
+	Fri, 21 Mar 2025 03:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MNAu3Zw7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="syXon8Ls"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148971E2614
-	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Mar 2025 02:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD8433F6;
+	Fri, 21 Mar 2025 03:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742524929; cv=none; b=XhXn92tFjTKjQPFnkfN3ov7zKavfs5/9vV7XiTNE0ru1hakbXk+YV7lpDFvbmSVS0aU749GvTUCMH8Gv8uenfNNCtJORBoDdwiMvzQh2i++Tg/Zv6AXfmRowCtgzqiQidcBKAl2TcnYHsgguzQ2ZjBfKqFBt3rtBxvZidCBABvI=
+	t=1742526327; cv=none; b=WB6Z88sHrN26xdWUwFBMZc2emT0g0+J6gqiOmYvdxqMa6T9EhZqtmv3N9h0igsDVoOMkFa3wHCo79V3ymTvLr0ELCb8i/eEOL8UF5/kBxp/xPi/qcPoVKUlR7Rc13bguVj1bRmW5MvQo163aOzMxs+5ECGJzK3DRiPcw9UCIcYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742524929; c=relaxed/simple;
-	bh=GqXRT9Mj0QQF8+zoU//BIotvHNU6s/WomEB85g4+M8g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jvedrv9YNi67TaFsCa3drm3zYzIXpC57ecooSw1Sr0RhOxwgpoyasTzUQrwYTZtiXYzhGTGGHO7+0vI5rgu3Y8SQDqFJrkkaJZRx0rQ7pnre0DFMNW5JoGRlyLt28DyjGaA0zAyBvoy2aeI+Wb42+NX46zXUUyXzoJOWPcW+nXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MNAu3Zw7; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e789411187so3205a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Mar 2025 19:42:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742524923; x=1743129723; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5O8FFjA3hcgQ8XDHydtzreoc5IOsI1FD+LSzQZJbGkI=;
-        b=MNAu3Zw7IncQiRxhNZx1NpYjESDIjcrvCCU6F66d/xbcHM3RYiGD2dr39iD1p7/RJT
-         HiE69v/ZEcsj1yMwUzcTO8HHdUIzpxiUYMrzt0thiaEjSKS9ZMTt+9WAiOuwbhEfQDTL
-         Te0M9CHefiLUQiqVcwej8nQeG+w4XrwWDWBzx+dMTBaHWVHebk7SIV96NP7ks5M3zSyB
-         ZObM2rIKluqOLs8LB6/mKu+ZnOYcg9ya02rHYPfafOZU9zx/ncHAE/VpPcS3gddYHFe4
-         mZQHVH4z+zZ0/jC3/6sHWofPmfRWfR5QLoEIGsAkvkyM0WYMK/e+sH9dFxM6f3XOsOn2
-         Jflg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742524923; x=1743129723;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5O8FFjA3hcgQ8XDHydtzreoc5IOsI1FD+LSzQZJbGkI=;
-        b=aOmHJ20UMsqqYqlUfPFIdu9bOh84Tr0HyhwkPcKtkx+WXkTlQaolmiLe8r6278lKwG
-         ItlQTU+vl0fK/VYihKl1Io95PzmtvLEc7pMz0itIz0UtLtJCvKrlTZs74s35kZEKbdux
-         n7o0UqTXD10wOGNdTpTNy+zpaXELW8jHXjRZD/a5A3t2ynv0awzvRBSvqoFkr3v1R4a3
-         TND+DXB0e6AVQNx5BCS4nNNCfBLb1ayv1N8fS9VPnynpdj96A5I2ntJXPeQw5AH95rv6
-         r/Loy3sWgfQ15c0F1eQnlIm1IS2zTnLFeHx7SIpupOx4v7YyuW8DwhMWHLeqD/MlV/kr
-         F25g==
-X-Forwarded-Encrypted: i=1; AJvYcCWxCyID4FIIiVlRp3wylczdM0n1Y5FgMLKD6tpYKodd3dWXMYY8kBvRn8WQ9RlUI9hNK+kxQ3C6f2adlrYj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi4tUzeGcw8oTdhn4rhUEyjhq6ed2JEyEkuuhq3kfT8STvHGGs
-	2tPo9r/AuzdN0n7xIkfsmkOlzc4rCv/3sjx5dWnhgDCwpNTBoRs/3aQ119chzgQlMAu0wbaLQbh
-	2Wi2i57Lb42OraykzVv0eJA6GeA3MAi/z0Ds5
-X-Gm-Gg: ASbGncs6AwV3TkE4S8BH0c9YFIERO3kUpb19X2W2RIRFoGix/l70aXm2hPEIUQrCYP7
-	Jb74XJSL6Wcn2Kl/fCAPeaO1GGvmCUVypwSVIsqvLZhp93tDx+28P8GjHmQSOAfiOyHOYpv+OLk
-	VqJZtVh2gjy3z2y4cLyGeN3GWi+mJU0nmXzhC/mRCJGXxdV1L+3VhtFP8=
-X-Google-Smtp-Source: AGHT+IHOXKmMdZDx/zHgype/m05qi/GswNz7l+pOv7uCTCxdggJGQMw2FvJ3qLXemOkS/xcOSlApQYGzrEpAGMI2DMk=
-X-Received: by 2002:a50:d607:0:b0:5e5:be08:c07d with SMTP id
- 4fb4d7f45d1cf-5ebcfee3421mr30310a12.7.1742524923099; Thu, 20 Mar 2025
- 19:42:03 -0700 (PDT)
+	s=arc-20240116; t=1742526327; c=relaxed/simple;
+	bh=eSNizQvwTtixUL1Hx9p4KwZhPdnWQFaJAuDisKJWEDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E3lUO9Jy6Miepl1XxbdZwBj9uAd839QqDt15Zp6zZGj0RMc+QIN2LkSL4qYNodTbVmB3t8ZxB9Y1KKuxd+kbcSabJxVbq0YIcb3LB1HURpPELVjxwFFM5dfgqdKFKki4ZwsDH8qCzkszwGAnyc5F3YUyLf0PFdiD72Zf9zfRMlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=syXon8Ls; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C788FC4CEDD;
+	Fri, 21 Mar 2025 03:05:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742526326;
+	bh=eSNizQvwTtixUL1Hx9p4KwZhPdnWQFaJAuDisKJWEDg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=syXon8Ls2j9bn40xp2X6juSK6lv9GOm/aQxwH/SQoVRyaV7IF3jd6s+dTL3T9lWdU
+	 9xp2GGFQPhMMBNQOYdEc22zmq5Dekq029JeOrwtZmONPE+zdyooS7t6vczvqUif/Ka
+	 MkYodVo9Wrr15yflut/Z72lbHyRslr5/M8m6hF2Tk+IvH0gpaf4hHpKnGaRummT2Xu
+	 USyvfhyi1pBFW4GzDIRZFM0b4fzDgp98vXKjKOGqA2fERiAqB97HNdy0CezvfuIhOa
+	 4MXVHxkza69miim95JF4illwQX8uti+xpDmObBp6a6Oau7/deBcNMWuRzXxLsbGKi2
+	 e+Z7bfP2wEMoA==
+Date: Thu, 20 Mar 2025 20:05:26 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ritesh Harjani <ritesh.list@gmail.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-block@vger.kernel.org,
+	lsf-pc@lists.linux-foundation.org, david@fromorbit.com,
+	leon@kernel.org, hch@lst.de, kbusch@kernel.org, sagi@grimberg.me,
+	axboe@kernel.dk, joro@8bytes.org, brauner@kernel.org, hare@suse.de,
+	willy@infradead.org, john.g.garry@oracle.com, p.raghav@samsung.com,
+	gost.dev@samsung.com, da.gomez@samsung.com
+Subject: Re: [LSF/MM/BPF TOPIC] breaking the 512 KiB IO boundary on x86_64
+Message-ID: <20250321030526.GW89034@frogsfrogsfrogs>
+References: <Z9v-1xjl7dD7Tr-H@bombadil.infradead.org>
+ <87o6xvsfp7.fsf@gmail.com>
+ <20250320213034.GG2803730@frogsfrogsfrogs>
+ <87jz8jrv0q.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318214035.481950-1-pcc@google.com> <20250318214035.481950-3-pcc@google.com>
- <CA+fCnZfG79JmGG9rj7KbE=9yX-EM4e8CXDSm5F9=YEmgyX5v3w@mail.gmail.com>
-In-Reply-To: <CA+fCnZfG79JmGG9rj7KbE=9yX-EM4e8CXDSm5F9=YEmgyX5v3w@mail.gmail.com>
-From: Peter Collingbourne <pcc@google.com>
-Date: Thu, 20 Mar 2025 19:41:50 -0700
-X-Gm-Features: AQ5f1Jr2sdg2WCeju5nnmXrNh9jqK16Q_xv8y9FFZD-yPNesP3YY2srT1TECdII
-Message-ID: <CAMn1gO4k-d+8ZwndJhF5Sudr+kWDABe+3Wq=iBhcg3tDwJ60Bg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] kasan: Add strscpy() test to trigger tag fault on arm64
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Mark Rutland <mark.rutland@arm.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Will Deacon <will@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87jz8jrv0q.fsf@gmail.com>
 
-On Thu, Mar 20, 2025 at 10:25=E2=80=AFAM Andrey Konovalov <andreyknvl@gmail=
-.com> wrote:
->
-> On Tue, Mar 18, 2025 at 10:41=E2=80=AFPM Peter Collingbourne <pcc@google.=
-com> wrote:
+On Fri, Mar 21, 2025 at 07:43:09AM +0530, Ritesh Harjani wrote:
+> "Darrick J. Wong" <djwong@kernel.org> writes:
+> 
+> > On Fri, Mar 21, 2025 at 12:16:28AM +0530, Ritesh Harjani wrote:
+> >> Luis Chamberlain <mcgrof@kernel.org> writes:
+> >> 
+> >> > We've been constrained to a max single 512 KiB IO for a while now on x86_64.
+> >> > This is due to the number of DMA segments and the segment size. With LBS the
+> >> > segments can be much bigger without using huge pages, and so on a 64 KiB
+> >> > block size filesystem you can now see 2 MiB IOs when using buffered IO.
+> >> > But direct IO is still crippled, because allocations are from anonymous
+> >> > memory, and unless you are using mTHP you won't get large folios. mTHP
+> >> > is also non-deterministic, and so you end up in a worse situation for
+> >> > direct IO if you want to rely on large folios, as you may *sometimes*
+> >> > end up with large folios and sometimes you might not. IO patterns can
+> >> > therefore be erratic.
+> >> >
+> >> > As I just posted in a simple RFC [0], I believe the two step DMA API
+> >> > helps resolve this.  Provided we move the block integrity stuff to the
+> >> > new DMA API as well, the only patches really needed to support larger
+> >> > IOs for direct IO for NVMe are:
+> >> >
+> >> >   iomap: use BLK_MAX_BLOCK_SIZE for the iomap zero page
+> >> >   blkdev: lift BLK_MAX_BLOCK_SIZE to page cache limit
+> >> 
+> >> Maybe some naive questions, however I would like some help from people
+> >> who could confirm if my understanding here is correct or not.
+> >> 
+> >> Given that we now support large folios in buffered I/O directly on raw
+> >> block devices, applications must carefully serialize direct I/O and
+> >> buffered I/O operations on these devices, right?
+> >> 
+> >> IIUC. until now, mixing buffered I/O and direct I/O (for doing I/O on
+> >> /dev/xxx) on separate boundaries (blocksize == pagesize) worked fine,
+> >> since direct I/O would only invalidate its corresponding page in the
+> >> page cache. This assumes that both direct I/O and buffered I/O use the
+> >> same blocksize and pagesize (e.g. both using 4K or both using 64K).
+> >> However with large folios now introduced in the buffered I/O path for
+> >> block devices, direct I/O may end up invalidating an entire large folio,
+> >> which could span across a region where an ongoing direct I/O operation
 > >
-> > From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> > I don't understand the question.  Should this read  ^^^ "buffered"?
+> 
+> oops, yes.
+> 
+> > As in, directio submits its write bio, meanwhile another thread
+> > initiates a buffered write nearby, the write gets a 2MB folio, and
+> > then the post-write invalidation knocks down the entire large folio?
+> > Even though the two ranges written are (say) 256k apart?
 > >
-> > When we invoke strscpy() with a maximum size of N bytes, it assumes
-> > that:
-> > - It can always read N bytes from the source.
-> > - It always write N bytes (zero-padded) to the destination.
-> >
-> > On aarch64 with Memory Tagging Extension enabled if we pass an N that i=
-s
-> > bigger then the source buffer, it triggers an MTE fault.
-> >
-> > Implement a KASAN KUnit test that triggers the issue with the current
-> > implementation of read_word_at_a_time() on aarch64 with MTE enabled.
-> >
-> > Cc: Will Deacon <will@kernel.org>
-> > Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> > Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-> > Co-developed-by: Peter Collingbourne <pcc@google.com>
-> > Signed-off-by: Peter Collingbourne <pcc@google.com>
-> > Link: https://linux-review.googlesource.com/id/If88e396b9e7c058c1a4b5a2=
-52274120e77b1898a
-> > ---
-> > v2:
-> > - rebased
-> > - fixed test failure
-> >
-> >  mm/kasan/kasan_test_c.c | 31 ++++++++++++++++++++++++++++++-
-> >  1 file changed, 30 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
-> > index 59d673400085f..c4bb3ee497b54 100644
-> > --- a/mm/kasan/kasan_test_c.c
-> > +++ b/mm/kasan/kasan_test_c.c
-> > @@ -1570,7 +1570,9 @@ static void kasan_memcmp(struct kunit *test)
-> >  static void kasan_strings(struct kunit *test)
-> >  {
-> >         char *ptr;
-> > -       size_t size =3D 24;
-> > +       char *src, *src2;
-> > +       u8 tag;
-> > +       size_t size =3D 2 * KASAN_GRANULE_SIZE;
-> >
-> >         /*
-> >          * str* functions are not instrumented with CONFIG_AMD_MEM_ENCR=
-YPT.
-> > @@ -1581,6 +1583,33 @@ static void kasan_strings(struct kunit *test)
-> >         ptr =3D kmalloc(size, GFP_KERNEL | __GFP_ZERO);
-> >         KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
-> >
-> > +       src =3D kmalloc(size, GFP_KERNEL | __GFP_ZERO);
-> > +       strscpy(src, "f0cacc1a00000000f0cacc1a00000000", size);
-> > +
-> > +       tag =3D get_tag(src);
-> > +
-> > +       src2 =3D src + KASAN_GRANULE_SIZE;
-> > +
-> > +       /*
-> > +        * Shorten string and poison the granule after it so that the u=
-naligned
-> > +        * read in strscpy() triggers a tag mismatch.
-> > +        */
-> > +       src[KASAN_GRANULE_SIZE - 1] =3D '\0';
-> > +       kasan_poison(src2, KASAN_GRANULE_SIZE, tag + 1, false);
-> > +
-> > +       /*
-> > +        * The expected size does not include the terminator '\0'
-> > +        * so it is (KASAN_GRANULE_SIZE - 2) =3D=3D
-> > +        * KASAN_GRANULE_SIZE - ("initial removed character" + "\0").
-> > +        */
-> > +       KUNIT_EXPECT_EQ(test, KASAN_GRANULE_SIZE - 2,
-> > +                       strscpy(ptr, src + 1, size));
-> > +
-> > +       /* Undo operations above. */
-> > +       src[KASAN_GRANULE_SIZE - 1] =3D '0';
-> > +       kasan_poison(src2, KASAN_GRANULE_SIZE, tag, false);
-> > +
-> > +       kfree(src);
->
-> I have trouble understanding what this code is doing...
->
-> So the goal is to call strcpy with such an address, that the first 8
-> bytes (partially) cover 2 granules, one accessible and the other is
-> not?
+> 
+> Yes, Darrick. That is my question. 
+> 
+> i.e. w/o large folios in block devices one could do direct-io &
+> buffered-io in parallel even just next to each other (assuming 4k pagesize). 
+> 
+>            |4k-direct-io | 4k-buffered-io | 
+> 
+> 
+> However with large folios now supported in buffered-io path for block
+> devices, the application cannot submit such direct-io + buffered-io
+> pattern in parallel. Since direct-io can end up invalidating the folio
+> spanning over it's 4k range, on which buffered-io is in progress.
+> 
+> So now applications need to be careful to not submit any direct-io &
+> buffered-io in parallel with such above patterns on a raw block device,
+> correct? That is what I would like to confirm.
 
-The first 16 bytes, but yes.
+I think that's correct, and kind of horrifying if true.  I wonder if
+->invalidate_folio might be a reasonable way to clear the uptodate bits
+on the relevant parts of a large folio without having to split or remove
+it?
 
-> If so, can we not do something like:
->
-> src =3D kmalloc(KASAN_GRANULE_SIZE, GFP_KERNEL | __GFP_ZERO);
-> strscpy(src, "aabbcceeddeeffg\0", size);
-> strscpy(ptr, src + KASAN_GRANULE_SIZE - 2, sizeof(unsigned long));
+--D
 
-Yes, something like that should work as well. Let me send a v3.
-
-Peter
-
-> Otherwise, this code needs more explanatory comments and it's probably
-> better to move it out to a helper function.
->
-> >         kfree(ptr);
+> > --D
 > >
-> >         /*
-> > --
-> > 2.49.0.395.g12beb8f557-goog
-> >
+> >> is taking place. That means, with large folio support in block devices,
+> >> application developers must now ensure that direct I/O and buffered I/O
+> >> operations on block devices are properly serialized, correct?
+> >> 
+> >> I was looking at posix page [1] and I don't think posix standard defines
+> >> the semantics for operations on block devices. So it is really upto the
+> >> individual OS implementation, correct? 
+> >> 
+> >> And IIUC, what Linux recommends is to never mix any kind of direct-io
+> >> and buffered-io when doing I/O on raw block devices, but I cannot find
+> >> this recommendation in any Documentation? So can someone please point me
+> >> one where we recommend this?
+> 
+> And this ^^^ 
+> 
+> 
+> -ritesh
+> 
+> >> 
+> >> [1]: https://pubs.opengroup.org/onlinepubs/9799919799/
+> >> 
+> >> 
+> >> -ritesh
+> >> 
+> >> >
+> >> > The other two nvme-pci patches in that series are to just help with
+> >> > experimentation now and they can be ignored.
+> >> >
+> >> > It does beg a few questions:
+> >> >
+> >> >  - How are we computing the new max single IO anyway? Are we really
+> >> >    bounded only by what devices support?
+> >> >  - Do we believe this is the step in the right direction?
+> >> >  - Is 2 MiB a sensible max block sector size limit for the next few years?
+> >> >  - What other considerations should we have?
+> >> >  - Do we want something more deterministic for large folios for direct IO?
+> >> >
+> >> > [0] https://lkml.kernel.org/r/20250320111328.2841690-1-mcgrof@kernel.org
+> >> >
+> >> >   Luis
+> >> 
 
