@@ -1,158 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-44695-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44696-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C86C9A6B6CF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Mar 2025 10:16:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8F26A6B7D8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Mar 2025 10:43:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5862F3B6C06
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Mar 2025 09:16:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D341F482F6B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Mar 2025 09:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCD11EB5F4;
-	Fri, 21 Mar 2025 09:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A7D1F1301;
+	Fri, 21 Mar 2025 09:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yhmPJ9/m";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wkXp5JlQ"
+	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="hBvZjC+H";
+	dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="OgDqqYwU";
+	dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="EvFlgfDH";
+	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="PPO0HiJJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from mail.tnxip.de (mail.tnxip.de [49.12.77.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C65374EA;
-	Fri, 21 Mar 2025 09:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86F61EFFA4
+	for <linux-fsdevel@vger.kernel.org>; Fri, 21 Mar 2025 09:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.77.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742548606; cv=none; b=qKjSNq3OnV3xcQAJxgkg8bNEO5Huxndb59Uu3/AlnpeN0QesdVm/Nr0BPQ92dY1mTS7RnnwQ5UioEHZvz4AIyyclGTXypidTWOQOPhET33cLtYOYsurhHpo+emVn7YLALfNvjFk2TSnaPFIrzDqwT1YHYKSp3SLRITjWWqXdsMs=
+	t=1742550123; cv=none; b=OCT84jc35XrPL62S99Vx7+aXcRXZ/1aE0Y/0s8xjKZr0gW2IIGFkRs1o7+6VYz6VaYLzoATaGtBAVq0KTcp4zUeZyaDYaF24v4XE0oVysr4iRpw64rW03Dr92bBRV71aDwVYBLPx+qB4q/PcbvhbIdk2mwPcWOHwLDT8uxmOaQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742548606; c=relaxed/simple;
-	bh=xoNsETAwGnGqUy6v0axtvhEcA08DUOVN0nuY6ulJ9T8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j3TpyRd/vvIg02scPp0eTDFOhSf9cBcGJfRyjyrDSjd2CfHpHBsOXnlvqSWIreu4EyzJoeb/7FREgXBqKZhtM1U1rdfa+h0HAQFMa7Z1RgB1QcOFvgNB/TEDULgDA3xa5rixS3EwtqqzIp40BsPbtldhD8XZOFsXc1ZEbh1H0zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yhmPJ9/m; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wkXp5JlQ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 21 Mar 2025 10:16:41 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742548602;
+	s=arc-20240116; t=1742550123; c=relaxed/simple;
+	bh=IJ+K5OSTJBkQCs1C6yqJdB3J0gF/16mRNM2HCkD9Nso=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=nN+ySdkiNg4AG8DpxdyPPb3sS3nnM9ZvxJyqL8DmMjIwu+bSwg6wglpPyre4WJZ1aiefxDU9L/Mr/KFarSwpbQI1X39xrNO6oyH81ks8I50Hl4JZh0+EVSAAJdOxtmJ5WNFjA3FPymJjMgYPF4mT3XIqWJJB4tUES9E/iRWzwTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de; spf=pass smtp.mailfrom=tnxip.de; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=hBvZjC+H; dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=OgDqqYwU; dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=EvFlgfDH; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=PPO0HiJJ; arc=none smtp.client-ip=49.12.77.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tnxip.de
+Received: from gw.tnxip.de (unknown [IPv6:fdc7:1cc3:ec03:1:5d4e:344b:7eb2:7ccc])
+	by mail.tnxip.de (Postfix) with ESMTPS id 972C7208AD;
+	Fri, 21 Mar 2025 10:41:45 +0100 (CET)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
+	s=mail-vps-ed; t=1742550105;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lOlK+eL5r3AeVJKFxqRBPjUBz8BosDtwVqbakwZyR5o=;
-	b=yhmPJ9/mxAs/zmob5oDztYhhJWRpID2yT3FffkinffCRdNMaO1oz2TLNCzmOiY0DwGJCpP
-	2mUiQ3uVhUzouwZMr3hSbt196mg7NtspIFEdYWsaKRYe/SKvvKJOp9hTHpz7iF1KPLGsyO
-	EQu9yHycOHVeyAyDWDl0tden8hs1nSz9bkBVJaqljV9PkgMjixNoy+qhEG5E0VS52vZx65
-	4YfHqgujRbhU00OTqp0oJ7OxDNE9kCcscnzGgIrFb7lInYhzh4x7hoFsU3YDkK9h4pliqV
-	tLtWpljyyuIsRvTbp2xc5HmMbBz2rDQTePPKEN0XXnzgBPIMomJr7iuyVZkSSQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742548602;
+	bh=qx26ebe7MdjOE9pme50/NbVnGkpmGGZxsnPspoOiOH8=;
+	b=hBvZjC+HjfPWBmPYXR+T/QV1F9MW51z4oitkZ9ijnUaZ2GfLTCE0ns4u5Ty/g3oL+t2YxG
+	Yj3VHwFow42ZVDCQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-vps;
+	t=1742550105;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lOlK+eL5r3AeVJKFxqRBPjUBz8BosDtwVqbakwZyR5o=;
-	b=wkXp5JlQlBpwQcG9aAHc/DRX7H1HkmXg1y4UG7AYkvLjDXoNvVqGNqjMnQQ/OR7tlzCNXJ
-	NVDacZNzjnehdjAg==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Julian Stecklina <julian.stecklina@cyberus-technology.de>
-Cc: Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] initrd: support erofs as initrd
-Message-ID: <20250321101029-8a3a1fea-223a-42c3-8528-a3239fb4b24e@linutronix.de>
-References: <20250320-initrd-erofs-v1-1-35bbb293468a@cyberus-technology.de>
+	bh=qx26ebe7MdjOE9pme50/NbVnGkpmGGZxsnPspoOiOH8=;
+	b=OgDqqYwUjvJxaN5pur8S9zUsbSRfYU7EtbIJBzvoPCSrrFveUNtGtt3AwOT7H51Vba2Sfv
+	q2SYLa93bSW+vxDuQZ4i3DV9/lYI5XnMQdqgr3uB/UUsksB2jJQALy01z5CAL6dGxa9Q1v
+	4GLcAYkx4CfYjouOEthm6hFzFS7bq/c=
+Received: from [IPV6:2a04:4540:8c08:700:b62a:cab:307d:8dc9] (unknown [IPv6:2a04:4540:8c08:700:b62a:cab:307d:8dc9])
+	by gw.tnxip.de (Postfix) with ESMTPSA id 5A66C5800000000000E32;
+	Fri, 21 Mar 2025 10:41:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-gw;
+	t=1742550105;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qx26ebe7MdjOE9pme50/NbVnGkpmGGZxsnPspoOiOH8=;
+	b=EvFlgfDHPhRh3savza2YBKX20Iujr+nqrmE7Jw7RghZqmalL8Z742NjNJMUA+64NFi44Yb
+	9vrP8HNoQHIbpljs53QHqAYjkbZnWPrQ+FsbRO/pel4x7ciTKCAQOWsS6/PzmpUMOXvDXP
+	32pEXDEDktlYDUebQIpRoqnq+EyFSdk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
+	s=mail-gw-ed; t=1742550105;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qx26ebe7MdjOE9pme50/NbVnGkpmGGZxsnPspoOiOH8=;
+	b=PPO0HiJJctbR8UsWAuzRTQG5K/kj8rJEwN1PEzkCE2Hdd/etcx/JsT1OzOeO+WnTAWaUSx
+	c19nD6/vk6QZa0CQ==
+Message-ID: <5d1428e6-3a8b-448d-817e-f46eb343cd67@tnxip.de>
+Date: Fri, 21 Mar 2025 10:41:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250320-initrd-erofs-v1-1-35bbb293468a@cyberus-technology.de>
-
-On Thu, Mar 20, 2025 at 08:28:23PM +0100, Julian Stecklina via B4 Relay wrote:
-> From: Julian Stecklina <julian.stecklina@cyberus-technology.de>
-> 
-> Add erofs detection to the initrd mount code. This allows systems to
-> boot from an erofs-based initrd in the same way as they can boot from
-> a squashfs initrd.
-> 
-> Just as squashfs initrds, erofs images as initrds are a good option
-> for systems that are memory-constrained.
-> 
-> Signed-off-by: Julian Stecklina <julian.stecklina@cyberus-technology.de>
-> ---
->  init/do_mounts_rd.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
-> index ac021ae6e6fa78c7b7828a78ab2fa3af3611bef3..7c3f8b45b5ed2eea3c534d7f2e65608542009df5 100644
-> --- a/init/do_mounts_rd.c
-> +++ b/init/do_mounts_rd.c
-> @@ -11,6 +11,7 @@
->  
->  #include "do_mounts.h"
->  #include "../fs/squashfs/squashfs_fs.h"
-> +#include "../fs/erofs/erofs_fs.h"
->  
->  #include <linux/decompress/generic.h>
->  
-> @@ -47,6 +48,7 @@ static int __init crd_load(decompress_fn deco);
->   *	romfs
->   *	cramfs
->   *	squashfs
-> + *	erofs
->   *	gzip
->   *	bzip2
->   *	lzma
-> @@ -63,6 +65,7 @@ identify_ramdisk_image(struct file *file, loff_t pos,
->  	struct romfs_super_block *romfsb;
->  	struct cramfs_super *cramfsb;
->  	struct squashfs_super_block *squashfsb;
-> +	struct erofs_super_block *erofsb;
->  	int nblocks = -1;
->  	unsigned char *buf;
->  	const char *compress_name;
-> @@ -77,6 +80,7 @@ identify_ramdisk_image(struct file *file, loff_t pos,
->  	romfsb = (struct romfs_super_block *) buf;
->  	cramfsb = (struct cramfs_super *) buf;
->  	squashfsb = (struct squashfs_super_block *) buf;
-> +	erofsb = (struct erofs_super_block *) buf;
->  	memset(buf, 0xe5, size);
->  
->  	/*
-> @@ -165,6 +169,21 @@ identify_ramdisk_image(struct file *file, loff_t pos,
->  		goto done;
->  	}
->  
-> +	/* Try erofs */
-> +	pos = (start_block * BLOCK_SIZE) + EROFS_SUPER_OFFSET;
-> +	kernel_read(file, buf, size, &pos);
-> +
-> +	if (erofsb->magic == EROFS_SUPER_MAGIC_V1) {
-
-le32_to_cpu(erofsb->magic)
-
-> +		printk(KERN_NOTICE
-> +		       "RAMDISK: erofs filesystem found at block %d\n",
-> +		       start_block);
-> +
-> +		nblocks = ((erofsb->blocks << erofsb->blkszbits) + BLOCK_SIZE - 1)
-> +			>> BLOCK_SIZE_BITS;
-
-le32_to_cpu(erofsb->blocks)
-
-> +
-> +		goto done;
-> +	}
-> +
->  	printk(KERN_NOTICE
->  	       "RAMDISK: Couldn't find valid RAM disk image starting at %d.\n",
->  	       start_block);
-> 
-
-This seems to be broken for cramfs and minix, too.
+User-Agent: Betterbird (Linux)
+Subject: Re: Random desktop freezes since 6.14-rc. Seems VFS related
+From: =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <39cc7426-3967-45de-b1a1-526c803b9a84@tnxip.de>
+ <Z7DKs3dSPdDLRRmF@casper.infradead.org>
+ <87e7e4e9-b87b-4333-9a2a-fcf590271744@tnxip.de>
+ <Z7Hj3pzwylskq4Fd@casper.infradead.org>
+ <0e5236de-93b9-466a-aba0-2cc8351eb2b5@tnxip.de>
+ <d61dd288-cd7c-4adc-a025-21715311704b@tnxip.de>
+Content-Language: en-US, de-DE
+In-Reply-To: <d61dd288-cd7c-4adc-a025-21715311704b@tnxip.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
-Thomas
+On 06/03/2025 17:37, Malte Schröder wrote:
+> On 16/02/2025 17:12, Malte Schröder wrote:
+>> On 16/02/2025 14:10, Matthew Wilcox wrote:
+>>> On Sun, Feb 16, 2025 at 12:26:06AM +0100, Malte Schröder wrote:
+>>>> On 15/02/2025 18:11, Matthew Wilcox wrote:
+>>>>> On Sat, Feb 15, 2025 at 01:34:33PM +0100, Malte Schröder wrote:
+>>>>>> Hi,
+>>>>>> I am getting stuff freezing randomly since 6.14-rc. I do not have a clear way to 
+>>>>> When you say "since 6.14-rc", what exactly do you mean?  6.13 is fine
+>>>>> and 6.14-rc2 is broken?  Or some other version?
+>>>> 6.13 and 6.13 + bcachefs-master was fine. Issue started with 6.14-rc1.
+>>> That's interesting.
+>>>
+>>>>> This seems very similar to all of these syzbot reports:
+>>>>> https://lore.kernel.org/linux-bcachefs/Z6-o5A4Y-rf7Hq8j@casper.infradead.org/
+>>>>>
+>>>>> Fortunately, syzbot thinks it's bisected one of them:
+>>>>> https://lore.kernel.org/linux-bcachefs/67b0bf29.050a0220.6f0b7.0010.GAE@google.com/
+>>>>>
+>>>>> Can you confirm?
+>>>> >From my limited understanding of how bcachefs works I do not think this
+>>>> commit is the root cause of this issue. That commit just changes the
+>>>> autofix flags, so it might just uncover some other issue in fsck code.
+>>>> Also I've been running that code before the 6.14 merge without issues.
+>>> If you have time to investigate this, seeing if you can reproduce this on
+>>> commit 141526548052 and then (if it does reproduce) bisecting between that
+>>> and v6.13-rc3 might lead us to the real commit that's causing the problem.
+>>>
+>> I will try. But I will need to find a way to reliably reproduce my issue
+>> first.
+> I did not find a reliable way to reproduce this issue. It happens like
+> every few weeks, so bisecting is not an option for me. Sorry.
+>
+>
+> It is also is hard to distinguish, which kind of freeze I just
+> encountered. I also found issues with apparmor vs. resume (just
+> reported) and I have a feeling something is going on in amdgpu-land but
+> can't quite pinpoint it, yet.
+>
+>
+> /Malte
+>
+I get the feeling this issue lies deeper. I get this about once a week,
+but also when there is nothing really going on IO wise. May there be a
+deeper issue with rcu? Who to involve?
+
+/Malte
+
 
