@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-44768-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44769-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 759C5A6C909
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 11:16:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4918DA6C904
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 11:15:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20ADB1B640CD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 10:15:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB88D3B725C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 10:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFBC81F541E;
-	Sat, 22 Mar 2025 10:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD331F872C;
+	Sat, 22 Mar 2025 10:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eaYNKqo5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IXEN+9R8"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4819C1F4E48;
-	Sat, 22 Mar 2025 10:14:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0631F4E5B;
+	Sat, 22 Mar 2025 10:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742638498; cv=none; b=DnQEHh7lH8MTci5nOKlTZKV5MEssAL5+LX6JLU7CxbSz/OTLvde1JKpzO72cfebCvuH5wnPL4RTS4jEOQt8Ew/VaZQGlR5B+bCFvGEVDb53YCZN5CLVoWzRaFZb23kjfrWDJeb3oc7OrhyT9h2zFhhgRSIn7PALOa6VKr7u2mx8=
+	t=1742638511; cv=none; b=Mn7/Ay3QozcgSTkgdKjp3nENdT069EXg3lVck5im8WPP+tS8ZtvWZkVF6QxuMjhkxSIECZ/Qf7VHehTeCtkOURjYJCd+t+Y/3WcmjCG7H+NEV70tUYMDTpLYpdyJX+TaqLtiICcsyjPP1QZ0PDodtAqMHbRlMSM/HmF3Jo9CRvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742638498; c=relaxed/simple;
-	bh=LMzpCqkJQeJGuXfWMz8L6MPk0I3cjNqoGDAnPW0rq4I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OZwBJk3FbbH50wqHo4X48p+iPy8Zq8q5ObMGNnXlTHmBj7z+E1+eHAaWr29iMWoA+sMHBs+iD+4c6vpKxICxMvKHTcktQxQfekAwoo4oJbiGQtd9HPQj6ViLAfZQHX6c7oy+ioQGqA5GE3ik/tt4a9f4LR7rQwnjAI6frsOckR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eaYNKqo5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A48EC4CEDD;
-	Sat, 22 Mar 2025 10:14:56 +0000 (UTC)
+	s=arc-20240116; t=1742638511; c=relaxed/simple;
+	bh=VwuWqCuq/nahe3KrsnNCNONybwm09cdnbnt4rBD0E+Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C6l2U/PiMg5a+p2BRYYZNcud9+QFZf2rPuJMdywOJgsFN4jaaWtt/iJNXrSzhJr5jz377LOdRJ++iJVuqyrHLVuXpvTKYUBA6NVNF0H3qd4mZI8QB0MbXAD58lZrGG8xa+9bUcU8D1sP7F+qQSnsZeSqFZ3Nllzg2z7zaNFhIag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IXEN+9R8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6469FC4CEDD;
+	Sat, 22 Mar 2025 10:15:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742638497;
-	bh=LMzpCqkJQeJGuXfWMz8L6MPk0I3cjNqoGDAnPW0rq4I=;
+	s=k20201202; t=1742638510;
+	bh=VwuWqCuq/nahe3KrsnNCNONybwm09cdnbnt4rBD0E+Q=;
 	h=From:To:Cc:Subject:Date:From;
-	b=eaYNKqo5OX9pAMBpeDnkNIsddBnP86Xha2ARGz59XRW/Vq80s3G2VDLlwXBsZU2gr
-	 7ZLbwJPJ0/QEoChwc5MoxB17Jk0BQFyKmFAjZnesIOEK97PSLbVI8gaznIQU0XfC8I
-	 Txwy3SOq1hMyMgKowZr9+Ec7DGmEvExv1p9rBz/6schPrCUhEd55IfjN76TQWMQ1P5
-	 cESK0W5LaVce75fc9tm03vJRuNhtT4BZSb9m6bvc1Z1HxDfn/16ib6tJAXVw+Yu4vd
-	 bGbmwOoYEonMsCfPdIpU2v+QOyPuILPHC8n2zyzEZTeLtOAqVreUn9jsY22a5EClIp
-	 5PNuSjyfVpt9g==
+	b=IXEN+9R82iDtvBnAxJlQfAtB31Ut+n6+YgecDGFvzDPsLi7MGY4w0tcerc141cb9+
+	 JAhUxnvOgfP6RC6r1KpjHCkRN1imgmK+EWCzKBLSmLtjs6t3yeClVuWcJrZPHuNjPR
+	 gEHa1QNd103jdgiQ6k02SoJFsNpeh4Ks+kHilvr1cI3So+SXbPModEDKSgDfZgGLK3
+	 TvFlJxMcpM62DzFXL57lBSbNkT/8JoSSdr4voAEFgQlexu6C6DdzlR+8QymYIhse6G
+	 zpG9ryb9QOCCjOsiEdDYmKz0jyWMIO3sZqR5XpEycykKm/oLaTxR984bLBVn3FH0pU
+	 UhiosH22GdLWg==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs iomap
-Date: Sat, 22 Mar 2025 11:14:48 +0100
-Message-ID: <20250322-vfs-iomap-a2f096e9d3fd@brauner>
+Subject: [GIT PULL] vfs mkdir
+Date: Sat, 22 Mar 2025 11:15:02 +0100
+Message-ID: <20250322-vfs-mkdir-78768e0d8dee@brauner>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -55,7 +55,7 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6691; i=brauner@kernel.org; h=from:subject:message-id; bh=LMzpCqkJQeJGuXfWMz8L6MPk0I3cjNqoGDAnPW0rq4I=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTf6531Syvgk2u8Yqc4Q+A71/apRyrfyE7uefV1+y6Ot ich6tJtHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABM5+ZXhf6T5/3RnE+mSY+aT zoXazxS3W2Iv9e6yxMkP039Xz8zQWM7wh4ftwtGJys5ODja7uD9JZvy90yb71/JhjFSLH/+Oj6n HWAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8812; i=brauner@kernel.org; h=from:subject:message-id; bh=VwuWqCuq/nahe3KrsnNCNONybwm09cdnbnt4rBD0E+Q=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTf612xaUGcdtIqs6lG+1kK9uwVZ772eVvl3tDtJsmfz Vi5DyWf7ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIGWFGhqa1D4rfzJy2oen/ qqbNL0TePrrvaPRwukDznYYndYZ1ufUM/8PsqncU37+wtfKWvUnb1V3yLScuyG/9UmwhclHe2G7 GKwYA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
@@ -63,39 +63,26 @@ Hey Linus,
 
 /* Summary */
 
-This contains the iomap changes for this cycle:
+This contains cleanups that fell out of the work from async directory
+handling:
 
-- Allow the filesystem to submit the writeback bios.
+- Change kern_path_locked() and user_path_locked_at() to never return a
+  negative dentry. This simplifies the usability of these helpers in
+  various places.
 
-  - Allow the filsystem to track completions on a per-bio bases instead
-    of the entire I/O.
+- Drop d_exact_alias() from the remaining place in NFS where it is still
+  used. This also allows us to drop the d_exact_alias() helper completely.
 
-  - Change writeback_ops so that ->submit_bio can be done by the filesystem.
+- Drop an unnecessary call to fh_update() from nfsd_create_locked().
 
-  - A new ANON_WRITE flag for writes that don't have a block number
-    assigned to them at the iomap level leaving the filesystem to do
-    that work in the submission handler.
+- Change i_op->mkdir() to return a struct dentry.
 
+  Change vfs_mkdir() to return a dentry provided by the filesystems
+  which is hashed and positive. This allows us to reduce the number of
+  cases where the resulting dentry is not positive to very few cases.
+  The code in these places becomes simpler and easier to understand.
 
-- Incremental iterator advance
-
-  The folio_batch support for zero range where the filesystem provides a
-  batch of folios to process that might not be logically continguous
-  requires more flexibility than the current offset based iteration
-  currently offers.
-
-  Update all iomap operations to advance the iterator within the
-  operation and thus remove the need to advance from the core iomap
-  iterator.
-
-- Make buffered writes work with RWF_DONTCACHE
-
-  If RWF_DONTCACHE is set for a write, mark the folios being written as
-  uncached. On writeback completion the pages will be dropped.
-
-- Introduce infrastructure for large atomic writes
-
-  This will eventually be used by xfs and ext4.
+- Repack DENTRY_* and LOOKUP_* flags.
 
 /* Testing */
 
@@ -109,118 +96,178 @@ No build failures or warnings were observed.
 Merge conflicts with mainline
 =============================
 
-No known conflicts.
+This contains a merge conflict with current mainline:
+
+diff --cc Documentation/filesystems/porting.rst
+index 12a71ba221b8,6817614e0820..000000000000
+--- a/Documentation/filesystems/porting.rst
++++ b/Documentation/filesystems/porting.rst
+@@@ -1160,5 -1160,39 +1160,44 @@@ magic
+  
+  ---
+  
+ +** mandatory **
+ +invalidate_inodes() is gone use evict_inodes() instead.
+++
+++---
+++
++ ** recommended**
++ 
++ kern_path_locked() and user_path_locked() no longer return a negative
++ dentry so this doesn't need to be checked.  If the name cannot be found,
++ ERR_PTR(-ENOENT) is returned.
++ 
++ ** recommend**
++ 
++ lookup_one_qstr_excl() is changed to return errors in more cases, so
++ these conditions don't require explicit checks:
++ 
++  - if LOOKUP_CREATE is NOT given, then the dentry won't be negative,
++    ERR_PTR(-ENOENT) is returned instead
++  - if LOOKUP_EXCL IS given, then the dentry won't be positive,
++    ERR_PTR(-EEXIST) is rreturned instread
++ 
++ LOOKUP_EXCL now means "target must not exist".  It can be combined with
++ LOOK_CREATE or LOOKUP_RENAME_TARGET.
++ 
++ ---
++ 
++ ** mandatory**
++ 
++ ->mkdir() now returns a dentry.  If the created inode is found to
++ already be in cache and have a dentry (often IS_ROOT()), it will need to
++ be spliced into the given name in place of the given dentry. That dentry
++ now needs to be returned.  If the original dentry is used, NULL should
++ be returned.  Any error should be returned with ERR_PTR().
++ 
++ In general, filesystems which use d_instantiate_new() to install the new
++ inode can safely return NULL.  Filesystems which may not have an I_NEW inode
++ should use d_drop();d_splice_alias() and return the result of the latter.
++ 
++ If a positive dentry cannot be returned for some reason, in-kernel
++ clients such as cachefiles, nfsd, smb/server may not perform ideally but
++ will fail-safe.
 
 Merge conflicts with other trees
 ================================
 
 No known conflicts.
 
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+The following changes since commit d082ecbc71e9e0bf49883ee4afd435a77a5101b6:
 
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+  Linux 6.14-rc4 (2025-02-23 12:32:57 -0800)
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.15-rc1.iomap
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.15-rc1.async.dir
 
-for you to fetch changes up to c84042b32f275dee8e3f10cdd8973e2e879f1fc8:
+for you to fetch changes up to be6690199719a2968628713a746002fda14bd595:
 
-  Merge patch series "further iomap large atomic writes changes" (2025-03-20 15:16:08 +0100)
+  doc: fix inline emphasis warning (2025-03-05 11:52:50 +0100)
 
-Please consider pulling these changes from the signed vfs-6.15-rc1.iomap tag.
+Please consider pulling these changes from the signed vfs-6.15-rc1.async.dir tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-vfs-6.15-rc1.iomap
+vfs-6.15-rc1.async.dir
 
 ----------------------------------------------------------------
-Brian Foster (22):
-      iomap: factor out iomap length helper
-      iomap: split out iomap check and reset logic from iter advance
-      iomap: refactor iomap_iter() length check and tracepoint
-      iomap: lift error code check out of iomap_iter_advance()
-      iomap: lift iter termination logic from iomap_iter_advance()
-      iomap: export iomap_iter_advance() and return remaining length
-      iomap: support incremental iomap_iter advances
-      iomap: advance the iter directly on buffered writes
-      iomap: advance the iter directly on unshare range
-      iomap: advance the iter directly on zero range
-      iomap: advance the iter directly on buffered read
-      iomap: advance the iter on direct I/O
-      iomap: convert misc simple ops to incremental advance
-      dax: advance the iomap_iter in the read/write path
-      dax: push advance down into dax_iomap_iter() for read and write
-      dax: advance the iomap_iter on zero range
-      dax: advance the iomap_iter on unshare range
-      dax: advance the iomap_iter on dedupe range
-      dax: advance the iomap_iter on pte and pmd faults
-      iomap: remove unnecessary advance from iomap_iter()
-      iomap: rename iomap_iter processed field to status
-      iomap: introduce a full map advance helper
+Christian Brauner (4):
+      Merge patch series "VFS: change kern_path_locked() and user_path_locked_at() to never return negative dentry"
+      Merge patch series "prep patches for my mkdir series"
+      Merge patch series "Change inode_operations.mkdir to return struct dentry *"
+      doc: fix inline emphasis warning
 
-Christian Brauner (7):
-      Merge patch series "iomap: allow the file system to submit the writeback bios"
-      Merge patch series "iomap: incremental per-operation iter advance"
-      Merge patch series "iomap: incremental advance conversion -- phase 2"
-      Merge patch series "iomap: make buffered writes work with RWF_DONTCACHE"
-      Merge branch 'vfs-6.15.shared.iomap' of gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs
-      Merge patch series "iomap preliminaries for large atomic write for xfs with CoW"
-      Merge patch series "further iomap large atomic writes changes"
+NeilBrown (12):
+      VFS: repack DENTRY_ flags.
+      VFS: repack LOOKUP_ bit flags.
+      VFS: change kern_path_locked() and user_path_locked_at() to never return negative dentry
+      VFS: add common error checks to lookup_one_qstr_excl()
+      nfs/vfs: discard d_exact_alias()
+      nfsd: drop fh_update() from S_IFDIR branch of nfsd_create_locked()
+      Change inode_operations.mkdir to return struct dentry *
+      hostfs: store inode in dentry after mkdir if possible.
+      ceph: return the correct dentry on mkdir
+      fuse: return correct dentry for ->mkdir
+      nfs: change mkdir inode_operation to return alternate dentry if needed.
+      VFS: Change vfs_mkdir() to return the dentry.
 
-Christoph Hellwig (11):
-      iomap: allow the file system to submit the writeback bios
-      iomap: simplify io_flags and io_type in struct iomap_ioend
-      iomap: add a IOMAP_F_ANON_WRITE flag
-      iomap: split bios to zone append limits in the submission handlers
-      iomap: move common ioend code to ioend.c
-      iomap: factor out a iomap_dio_done helper
-      iomap: optionally use ioends for direct I/O
-      iomap: add a io_private field to struct iomap_ioend
-      iomap: pass private data to iomap_page_mkwrite
-      iomap: pass private data to iomap_zero_range
-      iomap: pass private data to iomap_truncate_page
-
-Gao Xiang (1):
-      iomap: fix inline data on buffered read
-
-Jens Axboe (2):
-      iomap: make buffered writes work with RWF_DONTCACHE
-      xfs: flag as supporting FOP_DONTCACHE
-
-John Garry (5):
-      iomap: Rename IOMAP_ATOMIC -> IOMAP_ATOMIC_HW
-      iomap: Support SW-based atomic writes
-      iomap: inline iomap_dio_bio_opflags()
-      iomap: comment on atomic write checks in iomap_dio_bio_iter()
-      iomap: rework IOMAP atomic flags
-
-Ritesh Harjani (IBM) (1):
-      iomap: Lift blocksize restriction on atomic writes
-
- Documentation/filesystems/iomap/design.rst     |   9 +
- Documentation/filesystems/iomap/operations.rst |  42 ++-
- fs/dax.c                                       | 111 ++++----
- fs/ext4/inode.c                                |   4 +
- fs/gfs2/bmap.c                                 |   3 +-
- fs/iomap/Makefile                              |   1 +
- fs/iomap/buffered-io.c                         | 356 +++++++++----------------
- fs/iomap/direct-io.c                           | 279 ++++++++++---------
- fs/iomap/fiemap.c                              |  21 +-
- fs/iomap/internal.h                            |  10 +
- fs/iomap/ioend.c                               | 216 +++++++++++++++
- fs/iomap/iter.c                                |  97 ++++---
- fs/iomap/seek.c                                |  16 +-
- fs/iomap/swapfile.c                            |   7 +-
- fs/iomap/trace.h                               |   8 +-
- fs/xfs/xfs_aops.c                              |  25 +-
- fs/xfs/xfs_file.c                              |   6 +-
- fs/xfs/xfs_iomap.c                             |   8 +-
- fs/zonefs/file.c                               |   2 +-
- include/linux/iomap.h                          | 116 ++++++--
- 20 files changed, 816 insertions(+), 521 deletions(-)
- create mode 100644 fs/iomap/internal.h
- create mode 100644 fs/iomap/ioend.c
+ Documentation/filesystems/locking.rst |   2 +-
+ Documentation/filesystems/porting.rst |  39 +++++++++++++
+ Documentation/filesystems/vfs.rst     |  23 +++++++-
+ drivers/base/devtmpfs.c               |  72 +++++++++++------------
+ fs/9p/vfs_inode.c                     |   7 +--
+ fs/9p/vfs_inode_dotl.c                |   8 +--
+ fs/affs/affs.h                        |   2 +-
+ fs/affs/namei.c                       |   8 +--
+ fs/afs/dir.c                          |  12 ++--
+ fs/autofs/root.c                      |  14 ++---
+ fs/bad_inode.c                        |   6 +-
+ fs/bcachefs/fs-ioctl.c                |   4 --
+ fs/bcachefs/fs.c                      |   6 +-
+ fs/btrfs/inode.c                      |   8 +--
+ fs/cachefiles/namei.c                 |  16 +++---
+ fs/ceph/dir.c                         |  30 ++++++----
+ fs/coda/dir.c                         |  14 ++---
+ fs/configfs/dir.c                     |   6 +-
+ fs/dcache.c                           |  46 ---------------
+ fs/ecryptfs/inode.c                   |  20 ++++---
+ fs/exfat/namei.c                      |   8 +--
+ fs/ext2/namei.c                       |   9 +--
+ fs/ext4/namei.c                       |  10 ++--
+ fs/f2fs/namei.c                       |  14 ++---
+ fs/fat/namei_msdos.c                  |   8 +--
+ fs/fat/namei_vfat.c                   |   8 +--
+ fs/fuse/dir.c                         |  50 ++++++++++------
+ fs/gfs2/inode.c                       |   9 +--
+ fs/hfs/dir.c                          |  10 ++--
+ fs/hfsplus/dir.c                      |   6 +-
+ fs/hostfs/hostfs_kern.c               |  16 ++++--
+ fs/hpfs/namei.c                       |  10 ++--
+ fs/hugetlbfs/inode.c                  |   6 +-
+ fs/init.c                             |   7 ++-
+ fs/jffs2/dir.c                        |  18 +++---
+ fs/jfs/namei.c                        |   8 +--
+ fs/kernfs/dir.c                       |  12 ++--
+ fs/minix/namei.c                      |   8 +--
+ fs/namei.c                            | 105 ++++++++++++++++++----------------
+ fs/nfs/dir.c                          |  20 +++----
+ fs/nfs/internal.h                     |   4 +-
+ fs/nfs/nfs3proc.c                     |  29 +++++-----
+ fs/nfs/nfs4proc.c                     |  47 ++++++++++-----
+ fs/nfs/proc.c                         |  12 ++--
+ fs/nfsd/nfs4recover.c                 |   7 ++-
+ fs/nfsd/vfs.c                         |  34 ++++-------
+ fs/nilfs2/namei.c                     |   8 +--
+ fs/ntfs3/namei.c                      |   8 +--
+ fs/ocfs2/dlmfs/dlmfs.c                |  10 ++--
+ fs/ocfs2/namei.c                      |  10 ++--
+ fs/omfs/dir.c                         |   6 +-
+ fs/orangefs/namei.c                   |   8 +--
+ fs/overlayfs/dir.c                    |  46 +++------------
+ fs/overlayfs/overlayfs.h              |  15 +++--
+ fs/overlayfs/super.c                  |   7 ++-
+ fs/ramfs/inode.c                      |   6 +-
+ fs/smb/client/cifsfs.h                |   4 +-
+ fs/smb/client/inode.c                 |  10 ++--
+ fs/smb/server/vfs.c                   |  58 +++++++------------
+ fs/sysv/namei.c                       |   6 +-
+ fs/tracefs/inode.c                    |  10 ++--
+ fs/ubifs/dir.c                        |  10 ++--
+ fs/udf/namei.c                        |  12 ++--
+ fs/ufs/namei.c                        |   8 +--
+ fs/vboxsf/dir.c                       |   8 +--
+ fs/xfs/scrub/orphanage.c              |   9 +--
+ fs/xfs/xfs_iops.c                     |   4 +-
+ include/linux/dcache.h                |  39 ++++++-------
+ include/linux/fs.h                    |   8 +--
+ include/linux/namei.h                 |  45 ++++++++-------
+ include/linux/nfs_xdr.h               |   2 +-
+ kernel/audit_watch.c                  |  12 ++--
+ kernel/bpf/inode.c                    |   8 +--
+ mm/shmem.c                            |   8 +--
+ security/apparmor/apparmorfs.c        |   8 +--
+ 75 files changed, 614 insertions(+), 597 deletions(-)
 
