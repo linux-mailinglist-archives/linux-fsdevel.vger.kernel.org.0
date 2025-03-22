@@ -1,153 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-44790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C21A6CB71
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 17:22:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 127D2A6CBBF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 18:53:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACFED46165C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 16:21:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A92AD1893785
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 17:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CBB231A2D;
-	Sat, 22 Mar 2025 16:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9A4230BE6;
+	Sat, 22 Mar 2025 17:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dfEZ08Kf";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KUEo3ZsP";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DhOAG2JU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="nTV5l7uh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AuXwyKu+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E7B12D758
-	for <linux-fsdevel@vger.kernel.org>; Sat, 22 Mar 2025 16:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAE64D599
+	for <linux-fsdevel@vger.kernel.org>; Sat, 22 Mar 2025 17:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742660515; cv=none; b=lZ7SzfqX3Lfjz94XuriEQfVYU4n3mcJxXH7y9wdEgdMx91rIHFSkFH7IYl5aAGl6yRiPJFBtZi24gYyG6Nta53x7+PrEt7trBIBWJM0CZf1RKoSl9Ulx5YjBNPgxwfXo7TksCQhlf6oUCOCfv+xsBm+d4q0QUeozfSMCuIJyxas=
+	t=1742665991; cv=none; b=C0hUDECfYK7073lRjPQYI6KywzFIty84W/3xNi8C/90adIPylCcw5gje3VtVpeYk1FlLXzRu5h2RjfAAM+WTMZyhjoQYb68mzUC84mNXft4C1XyaUcDpjxG8QwmAF7lW57gTN50D/ljQ0NMAoHUYBbOwWTUyf1C7SP0FsRGgWcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742660515; c=relaxed/simple;
-	bh=TDOPyX4RredP+eHc98Bn3kwBpMzKBWGoxfgC8FQDuh8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XWCE4LykD+sUGORt6c9cuZiiWfDd9qwufjqhltAFNv6DRbY64Mu4KaVv6q27pJr1cfJKfFi66xyzBKUPsZxz96YMIGqCORegRfWpiBb+eqjPc+LbZKYrUB5ShO571a0BdFF/WQKNXUTbXFjo9W+Auo7kCWK3U40TaiDJwO+9uCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dfEZ08Kf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KUEo3ZsP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DhOAG2JU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=nTV5l7uh; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C713421186;
-	Sat, 22 Mar 2025 16:21:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742660506; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wK/exj5N83u3i2QYOzuHN0D+7nQ1TTHf2Xgu8IGmwmw=;
-	b=dfEZ08Kf64CxXPKglswEt41eRIpno8JA9LWPzF+kjny6dV50tMEI2/QbfS+YFIXy8B6coc
-	VKOdoRXhpQtTZYU1NhcLi853k5wnAyc0iqb226zqqPcnizCzFKtFZphmYZdvTOzdOnmIMb
-	BVwrRDkURRZzQma5dUqHzAN6qx3w4TM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742660506;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wK/exj5N83u3i2QYOzuHN0D+7nQ1TTHf2Xgu8IGmwmw=;
-	b=KUEo3ZsPgSrqvpsaqb23444z2qLmThgDMU0hXBGJbTxGmLC8ah3Si7iOC7JMnGxNTU2AK5
-	r+UZ/MU/nllPHhAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742660505; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wK/exj5N83u3i2QYOzuHN0D+7nQ1TTHf2Xgu8IGmwmw=;
-	b=DhOAG2JU1jTpJCCgrzKAeimnJrvTCw2xDDg6Dz+ddzFDPqAkX2EH58l4jy40BearfKGaRj
-	uI02x4mWYcuqZaEWtOtZVHoYJ0XLOM7X/gj0GOaEPjdBAgQHiVKv7rzOCVCaNkkUN3ffSS
-	qhOoLR1ZBbvrG7mJwbk9DH3QIaQbPYs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742660505;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wK/exj5N83u3i2QYOzuHN0D+7nQ1TTHf2Xgu8IGmwmw=;
-	b=nTV5l7uhYhzJo6A9tAPiS1JIhU0KP1YwovnxncCUe/sp3tv9NQ+5Pr5FYNLEVmHvjjB3AS
-	JcUNIhHbawQP3yAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 38C5413A38;
-	Sat, 22 Mar 2025 16:21:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mmRpCpnj3mfvBQAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Sat, 22 Mar 2025 16:21:45 +0000
-Date: Sat, 22 Mar 2025 16:21:43 +0000
-From: Pedro Falcato <pfalcato@suse.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Tamir Duberstein <tamird@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] XArray: revert (unintentional?) behavior change
-Message-ID: <blhrpa6do6ishcimnskwqjndu75cnv6ky7k3tznp7pczrsig65@ky6yo4upky6m>
-References: <20250321-xarray-fix-destroy-v1-1-7154bed93e84@gmail.com>
- <20250321213733.b75966312534184c6d46d6aa@linux-foundation.org>
+	s=arc-20240116; t=1742665991; c=relaxed/simple;
+	bh=tmtEIbsWyNywcdc7xXNKcatnpc3yUWgEIBW0lF0HLpM=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=d2Vx3dT/EfBlYJELjUY/6CNMdho/lmRqbVbUbf/sgdw1M2uL2jrFGE++hPBE8WREaHt4lgTG1w1Es3OAVxgGKnUiSpoHsr6tVEEIoApVtwS+35ydAVGFisQTFjWhiEru0DbJUzq5hV2S+YLqAr7F/UrUxWBUkq/xo6eNxl+oqfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AuXwyKu+; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4769bbc21b0so32546671cf.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Mar 2025 10:53:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742665988; x=1743270788; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PBCKG58OWbq4NvEZOol9u+x0f2IAGLNFGfS/6kDnnOs=;
+        b=AuXwyKu+cmWcKHncmThmP00sERKaFrKytG35hVRtLG4R7AfPyt+xgGs732DIKwVLdl
+         alCeEi0iKW71VjNKwTRCQn8Lt+AA1izbgJap1HWJ7QlyWhD+eJNGKySWAz+/pfA2WByp
+         g1LZl06ZhN48TKBYByq/5FLyXMn/k1iwZ0MxnEUq9yQRAqjK4agfcwUUI8DyWe/Zi9oG
+         fscCMgDUI+1d6GyE0rCz871HgBQb2m9qVtTErfCTElrDGOL+ZOz/6L8NBp//WyP4yMxT
+         7Syd8l6wUrrS8C3/qrPqYjwX9ClhiY8KeXqfxQz2SicVbHEsW9KaMv/ivPlYyejx4jwg
+         wuSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742665988; x=1743270788;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PBCKG58OWbq4NvEZOol9u+x0f2IAGLNFGfS/6kDnnOs=;
+        b=T7U6EInFP8kk+PkCvTIIXLpC4BgQQxC1trPY4c91jWXizpghXqS02IQTn4gCJaFgAj
+         pc1Ttqkb861x6dh2LFSATNA2BsaKfNuc9FdbJ/awKUBezC1rgCy+fHz7BxvwuZ2XmLrF
+         ctNZuA3Hty438pncWH0/k0ZRxrbJeDkZOMbhE7L7jzPae+CC2N40ZlVyzdC7WRdR99i/
+         K/oTBu4YJoU1tiLIdUsz6NQWulFEL/snxVF4bSD+/hEQtMx+g2mF1naf3TqlV/Bb29hz
+         X1kT3B4Au9Q8Hy5zBuaj1LnYH1Ndg4SNWkhomcDBq2uXDBKadPh2alfQoqVHMUoqbaa1
+         Ty9g==
+X-Forwarded-Encrypted: i=1; AJvYcCXF5M4nRV5gnqfKS6P0FDTcVkHA6ViAhGxDLlngidloagGP0PBk1LQUCOuds5zbmcv64U5GqlZmHkZ27t8C@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzjtmjqk4kLE5I+k/940Z5XVMH7agsfdTWBMqCz3WuvQM9KduCi
+	MaeCrMIYtyLeBdsAQyFOGIDTuL/G+HQOKLl6g8t5yxx4O9ADNuvjT0b0ww6pTJaet64KDlFrSYb
+	jr3UAJsyccThnJzdrS1b8aTdwbHrrlrlR/1gG9pT0
+X-Gm-Gg: ASbGncu6YPOJF//ajHxKN1YMwiIH13IagbCJvYYpQ1p82jN8TU6QLFPh6RyTWqfuf/2
+	yLYKUIcJDbuMDrAhWfcu2tf1NTtQGaTPCV7zsSJmKUFzSqcckmlmbjhkWUeT6tnSCyxKoVwO0IW
+	UIFzCU3RJNimILZ83Vk3c1D3dRZ47tqKV+lEPs
+X-Google-Smtp-Source: AGHT+IGKK3NV4bw7gpIlEDbh27zEF4Gn+ZrEB8R9BgsJQaz208yDYG9AhP01a8FuE9lZ3805g1ZbUm04iE5GwYxdvJw=
+X-Received: by 2002:a05:622a:4c12:b0:476:9296:80a4 with SMTP id
+ d75a77b69052e-4771dd57f2dmr102326501cf.7.1742665988449; Sat, 22 Mar 2025
+ 10:53:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250321213733.b75966312534184c6d46d6aa@linux-foundation.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.996];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,infradead.org,canb.auug.org.au,vger.kernel.org,kvack.org];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,infradead.org:url];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+From: Zhiyu Zhang <zhiyuzhang999@gmail.com>
+Date: Sun, 23 Mar 2025 01:52:57 +0800
+X-Gm-Features: AQ5f1Jrp16QlfX2NcM--u10pTmWnZ6Q-G-eiKeKZdQgh0QhR53jQFg-Ds2gxi7c
+Message-ID: <CALf2hKtnFskBvmZeigK_=mqq9Vd4TWT+YOXcwfNNt1ydOY=0Yg@mail.gmail.com>
+Subject: [Kernel Bug] BUG: unable to handle kernel paging request in const_folio_flags
+To: mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	ocfs2-devel@lists.linux.dev, willy@infradead.org, akpm@linux-foundation.org, 
+	linux-fsdevel@vger.kernel.org, syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Mar 21, 2025 at 09:37:33PM -0700, Andrew Morton wrote:
-> On Fri, 21 Mar 2025 22:17:08 -0400 Tamir Duberstein <tamird@gmail.com> wrote:
-> 
-> > Partially revert commit 6684aba0780d ("XArray: Add extra debugging check
-> > to xas_lock and friends"), fixing test failures in check_xa_alloc.
-> > 
-> > Fixes: 6684aba0780d ("XArray: Add extra debugging check to xas_lock and friends")
-> 
-> Thanks.
-> 
-> 6684aba0780d appears to be only in linux-next.  It has no Link: and my
-> efforts to google its origin story failed.  Help?
-> 
+Dear Developers and Maintainers,
 
-It was added back in september to willy's tree due to an XFS data corruption bug.
-See https://lore.kernel.org/linux-mm/ZvLhrF5lj3x596Qm@casper.infradead.org/ and
-https://git.infradead.org/?p=users/willy/xarray.git;a=commitdiff;h=6684aba0780da9f505c202f27e68ee6d18c0aa66.
+We would like to report a Linux kernel bug titled "BUG: unable to
+handle kernel paging request in const_folio_flags" found in
+Linux-6.14-rc7 by our modified tool. We have reproduced the crash and
+applied a patch that can avoid the kernel panic. Here are the relevant
+attachments:
 
--- 
-Pedro
+kernel config: https://drive.google.com/file/d/1vHuHlQyiKlXbyuo03sZTiuaA5jZ5MtV6/view?usp=sharing
+report: https://drive.google.com/file/d/11LD1uFid1u3r7brsvd85-SrBzvXwH-w2/view?usp=sharing
+syz reproducer:
+https://drive.google.com/file/d/10v3FtkewHcAnTjsUGqFCDl7k7hiCJ12-/view?usp=sharing
+C reproducer: https://drive.google.com/file/d/1L9WTVbO2pfqXLjXyQcMy4f-Am3obTJcN/view?usp=sharing
+crash log: https://drive.google.com/file/d/1zwYU3061pnTSVIEpuZ-EBR7FYvWPxX4z/view?usp=sharing
+
+We speculate this vulnerability arises from a missing check for error
+pointers in the array folios[i] within the function
+ocfs2_unlock_and_free_folios(). When the kernel fails to write or
+allocate folios for writing (e.g., due to OOM), the wc->w_folios[i]
+may be assigned an error pointer (e.g., -ENOMEM) in
+fs/ocfs2/aops.c:1075, which is then returned as an error to
+ocfs2_write_begin_nolock(). Within ocfs2_unlock_and_free_folios(),
+there is no proper handling for error pointers, so the function
+attempts to process folios[i] directly. This results in the kernel
+attempting to dereference an invalid pointer during the call chain:
+ocfs2_unlock_and_free_folios->folio_unlock->folio_test_locked->const_folio_flags.
+Specifically, during debugging, we observe that the kernel attempts to
+read data from rbx+0x8 (where rbx = 0xfffffffffffffff4), causing a
+page fault and kernel panic.
+
+I tested the following patch, which prevents the kernel panic by
+checking for error pointers before accessing folios[i]:
+
+--- a/fs/ocfs2/aops.c
++++ b/fs/ocfs2/aops.c
+@@ -767,7 +767,7 @@ void ocfs2_unlock_and_free_folios(struct folio
+**folios, int num_folios)
+        int i;
+
+        for(i = 0; i < num_folios; i++) {
+-               if (!folios[i])
++               if (!folios[i] || IS_ERR(folios[i]))    // or use
+IS_ERR_OR_NULL instead
+                        continue;
+                folio_unlock(folios[i]);
+                folio_mark_accessed(folios[i]);
+
+However, I am not sure if the analysis and patch are appropriate.
+Could you check this issue? With the verification, I would like to
+submit a patch.
+
+Wish you a nice day!
+
+Best,
+Zhiyu Zhang
 
