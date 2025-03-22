@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-44774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7877BA6C919
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 11:18:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA1D5A6C91B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 11:19:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 433CE1B6288A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 10:17:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 774C6188DB13
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 10:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952511F541E;
-	Sat, 22 Mar 2025 10:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56FAA1F8AC8;
+	Sat, 22 Mar 2025 10:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CBZlKxsS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTeIZMNX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7371F8690;
-	Sat, 22 Mar 2025 10:16:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC561FAC4D;
+	Sat, 22 Mar 2025 10:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742638563; cv=none; b=pNyzgKuezvspGblC+4I/I+72H+lk3I05UAm2qvwpmq8Fnwfo+xt48tja7EfCnRr3RGuWKGEEeOFjjLXEbpjUP2OrYUJWRePR9hQJx2LWOMFq+8OdBq5xSmqIHoFEBKfyxU1Y93zmtYQpGdbvm4lxIFtYVLG9xSS1RVBKL12qTjo=
+	t=1742638577; cv=none; b=J9r+/5k2Kn4uV3YN3i8+zO5X4Gpq29DWeaPVV7z3+rbTXkLzanUF+bHTl/JDwR0oEL8NGlizEgxmx4K8s9BQQ4poRBqwPkEGIhWHafIwLV0nK5+SJjRNv/zcawspxEh3CTL5QzuNlWYfSuUOE4iNos+/HqRXrNgeAQnmf0jBn8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742638563; c=relaxed/simple;
-	bh=PF02WhT/PY5AMumrWCbFWM1+36mcUovgKSZXMdLVFgU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uR0m2HcHA0RTk5kiVyn4jE8mja+IIEGoZYoNyQd7RkP/XekgRtyxlq4If9Oca8X6bdhmJLx3L+ulNKztwPU/Enjcz0Qgjnu16pKgMpqrCNYMLL6eKdUnpaqg2OGiTHNBLj86/+A3o1/fL4lHgoG1BWAUCrLy203red9BToFvfp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CBZlKxsS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 455F8C4CEE9;
-	Sat, 22 Mar 2025 10:16:02 +0000 (UTC)
+	s=arc-20240116; t=1742638577; c=relaxed/simple;
+	bh=7E8KrKyWXwjRY1rdu3XON1N4bmhvoFKS2xSfZlDp1cQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FQmuSMtw5HoI8VO8pM2qDF9vNLd1/6Zc4/KJOwmuyCWi1Y2mJhOGFvtuQYE047MLtXWWjCrAjUf+lxVfvSaWNIalUSwiZTCrS15a8E89VAmbUbyDQxY2KtGWi3aIvUbaq/kEQ3+pZZjost51A80QqDI+1vKIiBAS0O9KTwUVeXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gTeIZMNX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0811C4CEED;
+	Sat, 22 Mar 2025 10:16:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742638563;
-	bh=PF02WhT/PY5AMumrWCbFWM1+36mcUovgKSZXMdLVFgU=;
+	s=k20201202; t=1742638575;
+	bh=7E8KrKyWXwjRY1rdu3XON1N4bmhvoFKS2xSfZlDp1cQ=;
 	h=From:To:Cc:Subject:Date:From;
-	b=CBZlKxsS5vhDOBcAcwPERgV4kqB5uhA7qXJ1SqvKuCcC8pWcVNn70VujIDSY04XM3
-	 0uv4OiWF351itp3COuQktFKipvnHIvZTAlH0bbisd/aaOsOgRY/BlizLX1vrnotrrD
-	 hvS1w3lvU+at6pm2L0S9wzM7fJb/SkmMfOYi4MQQGB7KR+B/O9z8iaxdYTNxgOE40z
-	 ksvA2QtUM9PjPkymqCVIO0nd50rnGZxpmjs38RXcngh4bAAPcI5DZoJykDT4VYRB9C
-	 r5/lrCmaC9LZHInwWPfJdP4YVyuwyicGN4j/jqAnYujIj9Ona1Xj3Tnf7OPVWpXRGv
-	 U+lMczJMyqgBA==
+	b=gTeIZMNXPo4YvbLZn6LjFsGv1pr2d7dUdXO1CiiWDPx+qMzTTyq2QikK+sIz3brJm
+	 8cosq1gPfcsYqWm2BDuvpxyJjeIqBT15kl5W6qAgwjUSZ/KCm6cs4bAiXiU0THChPE
+	 XhjTUVFjrhqeskA5xfZkY+37FIZ/kIfsL2Pliq+vLYvJZnBm9/kL3O5U4+rWDxwv37
+	 zeoDTVVsjNpS7w529T2KMSgWW+BLyedg+fy5fWEzSGYWl3f/IHywoisQsRDDwz3m3P
+	 WDvvRG9ay5UWUye3+2DMgQPfUcx4WpUGcIMdQyqHalNG5srsTYo8yFnhfLG11n8Iu/
+	 KEE4H2VK/eTaw==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs sysv
-Date: Sat, 22 Mar 2025 11:15:55 +0100
-Message-ID: <20250322-vfs-sysv-abc5d9a610b9@brauner>
+Subject: [GIT PULL] vfs pagesize
+Date: Sat, 22 Mar 2025 11:16:07 +0100
+Message-ID: <20250322-vfs-pagesize-6972cdf9bda9@brauner>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -55,7 +55,7 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4805; i=brauner@kernel.org; h=from:subject:message-id; bh=PF02WhT/PY5AMumrWCbFWM1+36mcUovgKSZXMdLVFgU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTf67179sJ168e9UZuY1n6Nl432aDuRHCGq9dD7UXjbs /OL7ile7ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiI5UWG/15RHnXux1mV53b8 na8Vz1ed7Xpm8bwK5yOXr/iUhxdu6GH4K1z7zjMvQclPL6Le3iikOq1HXeNw/auM8MIsx9VRD3e xAAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2586; i=brauner@kernel.org; h=from:subject:message-id; bh=7E8KrKyWXwjRY1rdu3XON1N4bmhvoFKS2xSfZlDp1cQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTf631h7OzrqBqeZjrFoi1g3cFn8z13n97jse7/l5KFG 7/nr79R1FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRjTsY/od8YPSYXvg5ecaL 22Ucgv4Bi97ITXj8ZZp/CsP/zSrccfyMDCfuXDJSk/w75WO55XL/6xN8mA8WCR9eYTXrvaH3Si8 HT34A
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
@@ -63,8 +63,12 @@ Hey Linus,
 
 /* Summary */
 
-This removes the sysv filesystem. We've discussed this various times.
-It's time to try.
+This enables block sizes greater than the page size for block devices.
+With this we can start supporting block devices with logical block sizes
+larger than 4k. It also allows to lift the device cache sector size
+support to 64k. This allows filesystems which can use larger sector
+sizes up to 64k to ensure that the filesystem will not generate writes
+that are smaller than the specified sector size.
 
 /* Testing */
 
@@ -83,10 +87,7 @@ No known conflicts.
 Merge conflicts with other trees
 ================================
 
-This contains a merge conflict with the vfs-6.15.async.dir pull request
-that can be resolved simply by:
-
-git rm fs/sysv/namei.c
+No known conflicts.
 
 The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
@@ -94,92 +95,45 @@ The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.15-rc1.sysv
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.15-rc1.pagesize
 
-for you to fetch changes up to f988166291e035f315ee8a947587f7a3542f1189:
+for you to fetch changes up to a64e5a596067bddba87fcc2ce37e56c3fca831b7:
 
-  Merge patch "sysv: Remove the filesystem" (2025-02-21 10:32:52 +0100)
+  bdev: add back PAGE_SIZE block size validation for sb_set_blocksize() (2025-03-07 12:56:05 +0100)
 
-Please consider pulling these changes from the signed vfs-6.15-rc1.sysv tag.
+Please consider pulling these changes from the signed vfs-6.15-rc1.pagesize tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-vfs-6.15-rc1.sysv
+vfs-6.15-rc1.pagesize
 
 ----------------------------------------------------------------
-Christian Brauner (2):
-      Merge patch series "fs: last of the pseudofs mount api conversions"
-      Merge patch "sysv: Remove the filesystem"
+Christian Brauner (1):
+      Merge patch series "enable bs > ps for block devices"
 
-David Howells (1):
-      vfs: Convert devpts to use the new mount API
+Hannes Reinecke (2):
+      fs/mpage: avoid negative shift for large blocksize
+      block/bdev: enable large folio support for large logical block sizes
 
-Eric Sandeen (4):
-      pstore: convert to the new mount API
-      devtmpfs: replace ->mount with ->get_tree in public instance
-      vfs: remove some unused old mount api code
-      sysv: convert sysv to use the new mount api
+Luis Chamberlain (6):
+      fs/buffer: simplify block_read_full_folio() with bh_offset()
+      fs/mpage: use blocks_per_folio instead of blocks_per_page
+      fs/buffer fs/mpage: remove large folio restriction
+      block/bdev: lift block size restrictions to 64k
+      bdev: use bdev_io_min() for statx block size
+      bdev: add back PAGE_SIZE block size validation for sb_set_blocksize()
 
-Jan Kara (1):
-      sysv: Remove the filesystem
+Matthew Wilcox (1):
+      fs/buffer: remove batching from async read
 
- Documentation/filesystems/index.rst         |   1 -
- Documentation/filesystems/sysv-fs.rst       | 264 ------------
- MAINTAINERS                                 |   6 -
- arch/loongarch/configs/loongson3_defconfig  |   1 -
- arch/m68k/configs/amiga_defconfig           |   1 -
- arch/m68k/configs/apollo_defconfig          |   1 -
- arch/m68k/configs/atari_defconfig           |   1 -
- arch/m68k/configs/bvme6000_defconfig        |   1 -
- arch/m68k/configs/hp300_defconfig           |   1 -
- arch/m68k/configs/mac_defconfig             |   1 -
- arch/m68k/configs/multi_defconfig           |   1 -
- arch/m68k/configs/mvme147_defconfig         |   1 -
- arch/m68k/configs/mvme16x_defconfig         |   1 -
- arch/m68k/configs/q40_defconfig             |   1 -
- arch/m68k/configs/sun3_defconfig            |   1 -
- arch/m68k/configs/sun3x_defconfig           |   1 -
- arch/mips/configs/malta_defconfig           |   1 -
- arch/mips/configs/malta_kvm_defconfig       |   1 -
- arch/mips/configs/maltaup_xpa_defconfig     |   1 -
- arch/mips/configs/rm200_defconfig           |   1 -
- arch/parisc/configs/generic-64bit_defconfig |   1 -
- arch/powerpc/configs/fsl-emb-nonhw.config   |   1 -
- arch/powerpc/configs/ppc6xx_defconfig       |   1 -
- drivers/base/devtmpfs.c                     |  81 +++-
- fs/Kconfig                                  |   1 -
- fs/Makefile                                 |   1 -
- fs/devpts/inode.c                           | 251 +++++-------
- fs/pstore/inode.c                           | 109 +++--
- fs/super.c                                  |  55 ---
- fs/sysv/Kconfig                             |  38 --
- fs/sysv/Makefile                            |   9 -
- fs/sysv/balloc.c                            | 240 -----------
- fs/sysv/dir.c                               | 378 ------------------
- fs/sysv/file.c                              |  59 ---
- fs/sysv/ialloc.c                            | 235 -----------
- fs/sysv/inode.c                             | 354 -----------------
- fs/sysv/itree.c                             | 511 ------------------------
- fs/sysv/namei.c                             | 280 -------------
- fs/sysv/super.c                             | 595 ----------------------------
- fs/sysv/sysv.h                              | 245 ------------
- include/linux/fs.h                          |   3 -
- include/linux/fs_context.h                  |   2 -
- include/linux/sysv_fs.h                     | 214 ----------
- 43 files changed, 248 insertions(+), 3704 deletions(-)
- delete mode 100644 Documentation/filesystems/sysv-fs.rst
- delete mode 100644 fs/sysv/Kconfig
- delete mode 100644 fs/sysv/Makefile
- delete mode 100644 fs/sysv/balloc.c
- delete mode 100644 fs/sysv/dir.c
- delete mode 100644 fs/sysv/file.c
- delete mode 100644 fs/sysv/ialloc.c
- delete mode 100644 fs/sysv/inode.c
- delete mode 100644 fs/sysv/itree.c
- delete mode 100644 fs/sysv/namei.c
- delete mode 100644 fs/sysv/super.c
- delete mode 100644 fs/sysv/sysv.h
- delete mode 100644 include/linux/sysv_fs.h
+ block/bdev.c           | 13 ++++++-----
+ fs/bcachefs/fs.c       |  2 +-
+ fs/buffer.c            | 58 ++++++++++++++++++++------------------------------
+ fs/mpage.c             | 49 ++++++++++++++++++++----------------------
+ fs/xfs/xfs_super.c     |  3 ++-
+ include/linux/blkdev.h |  8 ++++++-
+ include/linux/fs.h     |  1 +
+ 7 files changed, 65 insertions(+), 69 deletions(-)
 
