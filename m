@@ -1,76 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-44756-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42338A6C777
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 04:37:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46732A6C797
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 05:37:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6583B46424F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 03:37:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 797347A3684
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 04:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2388D156653;
-	Sat, 22 Mar 2025 03:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B3B147C9B;
+	Sat, 22 Mar 2025 04:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cXloBZzY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341D9155382
-	for <linux-fsdevel@vger.kernel.org>; Sat, 22 Mar 2025 03:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0561BAD2D;
+	Sat, 22 Mar 2025 04:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742614621; cv=none; b=EdfkqC5HdZarlXokOx3I4JUHvuJ828SprYsi/lPNmJbmcTPDGvG6rr8CzMOSeoYGZ6e4JsbZP1mZfDsr1qTWbo4v6yFCy0kuNpOYHrJSqhP4O4TsvlUXjQbrrgugUn2FKlnAzR0BHi8me1WBg3KIZob4JyvN5t+S5oza/MKF0fc=
+	t=1742618255; cv=none; b=WOFHcct90jpWtnh6MH5WoT41uiBnsT3PEgvPrn1BcrJ4BumJ+YI9cyRcxwh0xlB6+E4kY28GdtWN3BZcRb2QA+nrIpWxyHvBnBpP8e8lmEHQkyh9NzJ0OZtfYFM8EGSn14Hf6vEQR8CGnEt6CiBWug4Z2mNTsXaUSy+JEaFVrTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742614621; c=relaxed/simple;
-	bh=G7S8mDnweQ0QEQVt0tgiIFlnUT/TmYty8hUukQIlgB8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lmDVfH7EzLV9yZTJjDRcmRqg5N5HlMg3L/tgTlZBYNKPkFUtAgQUfdQm3iNMWQwvzIV3GeE3k5JiPbYqPUXoMGR5M7sIga0ATScokwyOULeeQI0zigiXqZOO33Fb3QJ+//rhLxxCSM4RVyVkCsQXj1Bei+CILpHbzEcCmX7FeIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-112-29.bstnma.fios.verizon.net [173.48.112.29])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 52M3aNo8007718
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Mar 2025 23:36:24 -0400
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id C3C8A2E0110; Fri, 21 Mar 2025 23:36:22 -0400 (EDT)
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: linux-ext4@vger.kernel.org, Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, adilger.kernel@dilger.ca, jack@suse.cz,
-        yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com,
-        yangerkun@huawei.com
-Subject: Re: [PATCH -next] ext4: correct the error handle in ext4_fallocate()
-Date: Fri, 21 Mar 2025 23:36:19 -0400
-Message-ID: <174261457018.1344301.14790065059237204237.b4-ty@mit.edu>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250319023557.2785018-1-yi.zhang@huaweicloud.com>
-References: <20250319023557.2785018-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1742618255; c=relaxed/simple;
+	bh=2EcT9oRj1eVirSYNwY+I32OLgi/kxyRa5uOs4hIPc8g=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=fG7rDcgT1AWBXge8706yQMHJ7j59dTfHDs6aYho4h2aFvW6EdIKpLzed3vFKd8BKrFh29uVrl7yt7xRxGxwHtRhyCij4SIQVof78ct1+RicpcF4u/10LzFlu2TbMOso1Mcc/o6MkeEFQ/5fAsoh441kFfk+C3vB+UN9gswuXd5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cXloBZzY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FFEBC4CEDD;
+	Sat, 22 Mar 2025 04:37:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1742618254;
+	bh=2EcT9oRj1eVirSYNwY+I32OLgi/kxyRa5uOs4hIPc8g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cXloBZzYzyc/uyKQy2ozZBxUcEGTQ0a6LeMMmnxvsyNP470Lbv2fg1NpeZGpdzvEO
+	 G3aGJ44BbETaFVVZYeTJLEO7/Fc6phDT6BOlV8n47TbQasEAfOUiN8wzora/2CyDE5
+	 bhd+T3CcWNp3IdP/7ETqeDcGLSLTUD8RNccjXOfk=
+Date: Fri, 21 Mar 2025 21:37:33 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>, Stephen Rothwell
+ <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] XArray: revert (unintentional?) behavior change
+Message-Id: <20250321213733.b75966312534184c6d46d6aa@linux-foundation.org>
+In-Reply-To: <20250321-xarray-fix-destroy-v1-1-7154bed93e84@gmail.com>
+References: <20250321-xarray-fix-destroy-v1-1-7154bed93e84@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Fri, 21 Mar 2025 22:17:08 -0400 Tamir Duberstein <tamird@gmail.com> wrote:
 
-On Wed, 19 Mar 2025 10:35:57 +0800, Zhang Yi wrote:
-> The error out label of file_modified() should be out_inode_lock in
-> ext4_fallocate().
+> Partially revert commit 6684aba0780d ("XArray: Add extra debugging check
+> to xas_lock and friends"), fixing test failures in check_xa_alloc.
 > 
-> 
+> Fixes: 6684aba0780d ("XArray: Add extra debugging check to xas_lock and friends")
 
-Applied, thanks!
+Thanks.
 
-[1/1] ext4: correct the error handle in ext4_fallocate()
-      commit: 129245cfbd6d79c6d603f357f428010ccc0f0ee7
-
-Best regards,
--- 
-Theodore Ts'o <tytso@mit.edu>
+6684aba0780d appears to be only in linux-next.  It has no Link: and my
+efforts to google its origin story failed.  Help?
 
