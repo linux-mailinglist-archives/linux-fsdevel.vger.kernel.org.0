@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-44766-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44767-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 382FDA6C903
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 11:15:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F54EA6C901
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 11:15:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2DA21B61709
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 10:14:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28DF63B79FB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 10:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ADFE1F4E54;
-	Sat, 22 Mar 2025 10:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3B91F5404;
+	Sat, 22 Mar 2025 10:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M4xRJQuH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D2ZOej8X"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E441F03F0;
-	Sat, 22 Mar 2025 10:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9699C1F4E59;
+	Sat, 22 Mar 2025 10:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742638467; cv=none; b=f4553VBeMcLnXTfsmhD/WGNkMD1YG7h8du2xAParjP1TijuHmhymSEE8uhRqIbF48rVPfgLSBgnxmEhqmb6kSncnQoGhwSL+hnWzpRYpGobWlp6o9hhA+9vDi7Ms8JgQFJZGyQgYsIZfTPbuNRL2uhN0XvZVAdHM2htyIoCCEVI=
+	t=1742638484; cv=none; b=hieqix0uheW1bsMMt7inq/dMLSCg0NHH9cCM3rkMt+89ifprajdQEZbbBaazEWa8LrSDViasi0CRVshat+tvWuhIWwi4UR3eVXsobbhzGQYVAW1XR7Ps2juNbs4qJC1y1X/TxybqcbErfuOmRzdHQMN1TxtDIuxpELnXuObakfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742638467; c=relaxed/simple;
-	bh=mQSuwrntYEMg0m0zhElfPTystgEzsEcXX+jk3CB1OUc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DYUNyX9uWYLFVtD/ZyLWZMUcG2iNVmILyu2a7LYux/Q49yHT4KRK3qz79j/dWzhCOWfvM0MwtLi/VgYFiCbvKST4pVZujmZ6red9SB0epZKhNRTjBq5y/PshEZJAAnoRhSd/6XVKXfcWQmTuwcT9zpVWgoxxDZJQVadC+5kY8KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M4xRJQuH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEFFDC4CEDD;
-	Sat, 22 Mar 2025 10:14:25 +0000 (UTC)
+	s=arc-20240116; t=1742638484; c=relaxed/simple;
+	bh=KoaBZiU24zoOJqndFMsPFyx7tsJlmHpdRY86je/cZac=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BwBfznzcy1D6bOjAEfmJ1Ld3fzO8NEDfgiKTJn1DfUDZah3PkwpboqYDEuTY9yHH/sOcFntJRYVv2bo+sn8CMNJMxjYthaLl8/8bjeA1K8169PzOsqdo0vYkoizsh+IQkz0MO2d34mDIiJ0F2w1idiJvhsU7BG79YzEycBjekNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D2ZOej8X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07989C4CEDD;
+	Sat, 22 Mar 2025 10:14:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742638466;
-	bh=mQSuwrntYEMg0m0zhElfPTystgEzsEcXX+jk3CB1OUc=;
+	s=k20201202; t=1742638484;
+	bh=KoaBZiU24zoOJqndFMsPFyx7tsJlmHpdRY86je/cZac=;
 	h=From:To:Cc:Subject:Date:From;
-	b=M4xRJQuH21ETdjHgcg7J8gcFVZ67KIxTgRI8aFlBJuQKj4EQndhTJpSU0pa7k5hxe
-	 zBpzc8kWg/Yt4v10ls07H53JbDekRzdQ2hs3UGeggdHdB4ugQeJJ5a853NxLlCMC/W
-	 s7gYJc+TfTKVg4ocHimCbaBmJV5La57M4qrkzzfMLu981YmJe9H13I9QQMxvFMc2Iv
-	 UINjkbYAPBYtl9O3zSN7fEVCeTGGXAGICsw6f9lgpsDBlNy7dLbP5gjzYGKayIu/GB
-	 ZrGKH6WyitgVU/DIGHCewwjPOCSlvSZDDo0cPxbAizgthu9UDugqTP4MXTn3gQooix
-	 8FsMbxqAqIoIw==
+	b=D2ZOej8XEYjE/lG2q7rG3WjEKq4ZtGcy4nK7umd1DBLSLmJoPw+GsSo0dpsi68oNa
+	 dBoDfMdBLkTrXAkVzkvMnTM/w1qKhvO4s53fBEWO6rRsWj/VEfAVBHwPWbGWJ5E5VS
+	 CetVNIgC76Fv/MQYKZOwczHbwaId8y1gjOwmJcZ4fOJpgt2b3QE150tEGgt0B9QQtO
+	 rkrX5UFAFYTp9kC4iWzZJSJ+z9X0fDh2Yrt98uVDYt+7ytldkSEWUbtAkKFsCycF78
+	 CMHebk+axHzVV9VpplHL/XZAYdiwGEBJPvKu0MfxDHGZ6NTXQtqrZsmAU+FXPG0nAG
+	 mi+sW5cwTlRPw==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] tasklist lock
-Date: Sat, 22 Mar 2025 11:14:06 +0100
-Message-ID: <20250322-kernel-tasklist-lock-38eaec7fea1e@brauner>
+Subject: [GIT PULL] vfs mount api
+Date: Sat, 22 Mar 2025 11:14:34 +0100
+Message-ID: <20250322-vfs-mount-api-04accc00c1fa@brauner>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -55,7 +55,7 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2610; i=brauner@kernel.org; h=from:subject:message-id; bh=mQSuwrntYEMg0m0zhElfPTystgEzsEcXX+jk3CB1OUc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTf6813YxBzd1jtmy2sez6p1edR6NGZb0KyWqX6WvK+v j5wpPxnRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEReHmL4X5bRaeD0f55spkiC 0oRFGgkH5H09E+b7C4VIbKr5wG71m5Hht//W0E8Wza4cna8Nthx+lPX70fynIt//XJ/vNvF08c4 3DAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2134; i=brauner@kernel.org; h=from:subject:message-id; bh=KoaBZiU24zoOJqndFMsPFyx7tsJlmHpdRY86je/cZac=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTf6+3lYUl5WPJW65Kwmoqaxm7bavemqIuVXof62iasX O6w6YxJRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETmzGH4Z1khd9uJvcspXyp6 mbS970zGXwJvfUqOOovGyzxK5TirwsiwzOvDsRerRd9M2y3Q3NHitG7z1zu8ofOnO9nvbF/Ty9v FAwA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
@@ -63,22 +63,10 @@ Hey Linus,
 
 /* Summary */
 
-According to the performance testbots this brings a 23% performance
-increase when creating new processes:
-
-- Reduce tasklist_lock hold time on exit.
-
-  - Perform add_device_randomness() without tasklist_lock.
-
-  - Perform free_pid() calls outside of tasklist_lock.
-
-- Drop irq disablement around pidmap_lock.
-
-- Add some tasklist_lock asserts.
-
-- Call flush_sigqueue() lockless by changing release_task().
-
-- Don't pointlessly clear __exit_signal()->clear_tsk_thread_flag(TIF_SIGPENDING).
+This converts the remaining pseudo filesystems to the new mount api. The
+sysv conversion is a bit gratuitous because we remove sysv in another
+pull request. But if we have to revert the removal we at least will have
+it converted to the new mount api already.
 
 /* Testing */
 
@@ -105,39 +93,39 @@ The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/kernel-6.15-rc1.tasklist_lock
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.15-rc1.mount.api
 
-for you to fetch changes up to 0a7713ac0d98d02f2c69145754c93715ab07b307:
+for you to fetch changes up to 00dac020ca2a2d82c3e4057a930794cca593ea77:
 
-  Merge patch series "reduce tasklist_lock hold time on exit and do some pid cleanup" (2025-02-07 11:22:44 +0100)
+  sysv: convert sysv to use the new mount api (2025-02-06 15:26:12 +0100)
 
-Please consider pulling these changes from the signed kernel-6.15-rc1.tasklist_lock tag.
+Please consider pulling these changes from the signed vfs-6.15-rc1.mount.api tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-kernel-6.15-rc1.tasklist_lock
+vfs-6.15-rc1.mount.api
 
 ----------------------------------------------------------------
-Christian Brauner (2):
-      Merge patch series "exit: change the release_task() paths to call flush_sigqueue() lockless"
-      Merge patch series "reduce tasklist_lock hold time on exit and do some pid cleanup"
+Christian Brauner (1):
+      Merge patch series "fs: last of the pseudofs mount api conversions"
 
-Mateusz Guzik (5):
-      exit: perform add_device_randomness() without tasklist_lock
-      exit: hoist get_pid() in release_task() outside of tasklist_lock
-      pid: sprinkle tasklist_lock asserts
-      pid: perform free_pid() calls outside of tasklist_lock
-      pid: drop irq disablement around pidmap_lock
+David Howells (1):
+      vfs: Convert devpts to use the new mount API
 
-Oleg Nesterov (2):
-      exit: change the release_task() paths to call flush_sigqueue() lockless
-      exit: kill the pointless __exit_signal()->clear_tsk_thread_flag(TIF_SIGPENDING)
+Eric Sandeen (4):
+      pstore: convert to the new mount API
+      devtmpfs: replace ->mount with ->get_tree in public instance
+      vfs: remove some unused old mount api code
+      sysv: convert sysv to use the new mount api
 
- include/linux/pid.h |  7 +++--
- kernel/exit.c       | 56 ++++++++++++++++++++++--------------
- kernel/pid.c        | 82 +++++++++++++++++++++++++++++------------------------
- kernel/sys.c        | 14 +++++----
- 4 files changed, 93 insertions(+), 66 deletions(-)
+ drivers/base/devtmpfs.c    |  81 ++++++++++++---
+ fs/devpts/inode.c          | 251 ++++++++++++++++++++-------------------------
+ fs/pstore/inode.c          | 109 +++++++++++++-------
+ fs/super.c                 |  55 ----------
+ fs/sysv/super.c            |  57 ++++++----
+ include/linux/fs.h         |   3 -
+ include/linux/fs_context.h |   2 -
+ 7 files changed, 287 insertions(+), 271 deletions(-)
 
