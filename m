@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-44749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44750-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E920A6C6B7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 01:34:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44F0FA6C6BB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 01:39:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E6EA3B3037
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 00:34:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C036418923B2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Mar 2025 00:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA041C695;
-	Sat, 22 Mar 2025 00:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747E4B644;
+	Sat, 22 Mar 2025 00:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="qw+da38A"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="jjnxhkN0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32ED171A1;
-	Sat, 22 Mar 2025 00:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A5510E3;
+	Sat, 22 Mar 2025 00:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742603648; cv=none; b=YQ/wfc0R8GHIUFIkis8t9ORX484jRqvI7cGBUW+/0eMsO8042IqjS7wDbe1n+UhdL25LlG8osIixoecxuJ1Ec7Gjd/B00JZK877wVbhEhG+ZaES8SwcXj5lvPBT09Y8ZKpUdLPvIC5bwCVoBRtmD2f3DqWnr9r37iz+UYPo3L+4=
+	t=1742603970; cv=none; b=O81cdMe15lZjiUhatUG9/1WfPIbCjY1uSZN8VXvWgDIDXqmZqoy8oj6N+WJLdZTMNnO9pj0w8ySVJsLIzN1CHvDY0EdLwFviMp96eZ5wpXvd6diRBd7wq8rwe5OO3cbjIn6Qa1oljQu8iF+8TiwgHz7sinPnX4TZ5He3pxeesgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742603648; c=relaxed/simple;
-	bh=w/dRm0IJu0lY6XMYSY6ulvCw2Tp5NQYkuAVoXC0Dof0=;
+	s=arc-20240116; t=1742603970; c=relaxed/simple;
+	bh=c/V5a//1qlr5iVsNs9NgpOaYa+Aj4MLtsna7PgrQ6Ak=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DUeuPhSlFgXUgK1LpJAW2Yd5epaJE4y97yySxNKDdVKe8drDCFW74CoYYQdacuDFj47W2/zl9pCZ9949B6dNZsyZjU/ZWb/NbcZE/QMQmv1YomC/snQAn1ie1ofhoOU/+cSIq+CQM5QKcpzxvCMyXRyz0p3hxvPOm1xQHRDUwlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=qw+da38A; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=HAB7791DCEmrCnAnjntufo8c48YNteGXoEUelmGOS3frcpBgV8grktD4rvuPC+WjJWsf3vLKQXGUbuwHGQMb//mi75QhBspF5YyDUqPWPWGFj6nxYlg9zJiKomypwZmnHJoyL+rK73nK+zwVMMV7jjj2yT583SRjWxTqtiut0aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=jjnxhkN0; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=w/dRm0IJu0lY6XMYSY6ulvCw2Tp5NQYkuAVoXC0Dof0=; b=qw+da38AvVtT/Peu4ub0Q/8vg3
-	q/xvBbbAmVcrgYwg96zZDX9SmpDgC8r2MXQUd632VDerMOaJDw4rq+H2SqBEtJlc8p0Io5JQyB7nT
-	kHJ66RSzfjQgOHOt7YTYwpsGsLYAFB/j6iLQdSoBBU9NrQB+HR6vX8Omx7j8gvU/80K3Y8H90PiAA
-	01geuaKLT6KsNfqSW85smmgXHB5q/r5MXr+nsaRsEw7BCWrQ0JRsse4BdTV4/ccX1o38YnZ9EjjJQ
-	b26U4lTqnx8LOXpPX+r4fF4bqEGZQEEBUUdFydsTbCIVdSGzA103+jHUTy1kFSjQMtzpkzKfxb+Ue
-	CJZMky/g==;
+	bh=4m/hhhx7Bs4SIxnI64dOeasdcghyf2gQcEOh44Oo110=; b=jjnxhkN0glQghuHdTwc8Mmr3Je
+	QRpoyk2fnuYiTRk6Qu+GdNJ634QX9J7WX7wSH0H4hbj5DitBz7QE20KjALApjUf/cvmEYtR+BlQVu
+	hjC2tdSw9H1f156U4uRMKHXeTDKfgqdur7oAKWs4AI77lcKUR17/NZxoT3lcGRArlaMikSzY1dg1E
+	w3173j3igwhBd1gRWZ2HGVsnOE9GYlEFanE2vXR+zbu8QWCg5eCpWNCr1YgPNe3EN8xL5GWQg0PuW
+	Li2okoIife8GzUhw9MMoAN9rx/ypTIh19jnUdINF3Jq20vJiwTjk3tWYPa9wc++rPnr5GqpuAvS1U
+	t71dCtwQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1tvmoN-0000000BClA-1R1m;
-	Sat, 22 Mar 2025 00:34:03 +0000
-Date: Sat, 22 Mar 2025 00:34:03 +0000
+	id 1tvmtZ-0000000BDl1-1HXU;
+	Sat, 22 Mar 2025 00:39:25 +0000
+Date: Sat, 22 Mar 2025 00:39:25 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: NeilBrown <neil@brown.name>
 Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
@@ -52,11 +52,11 @@ Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
 	Chuck Lever <chuck.lever@oracle.com>,
 	Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org,
 	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/6] VFS: rename lookup_one_len family to lookup_noperm
- and remove permission check
-Message-ID: <20250322003403.GE2023217@ZenIV>
+Subject: Re: [PATCH 5/6] Use try_lookup_noperm() instead of
+ d_hash_and_lookup() outside of VFS
+Message-ID: <20250322003925.GF2023217@ZenIV>
 References: <20250319031545.2999807-1-neil@brown.name>
- <20250319031545.2999807-5-neil@brown.name>
+ <20250319031545.2999807-6-neil@brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,14 +65,14 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250319031545.2999807-5-neil@brown.name>
+In-Reply-To: <20250319031545.2999807-6-neil@brown.name>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Mar 19, 2025 at 02:01:35PM +1100, NeilBrown wrote:
+On Wed, Mar 19, 2025 at 02:01:36PM +1100, NeilBrown wrote:
 
-Quite a few of those should be switched to a common helper,
-lifted out of debugfs/tracefs start_creating()...
+	efivarfs stuff conflicts with jejb's fixes.  And rpc_pipe
+part adds fuckload of conflicts for me; what's more, the only caller to
+survive is rpc_d_lookup_sb(); the rest will be gone anyway...
 
-I can live with that, but it'll cause fuckloads of noise in
-persistency queue... ;-/
+Oh, well...
 
