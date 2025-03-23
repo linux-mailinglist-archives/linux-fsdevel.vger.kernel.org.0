@@ -1,104 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-44839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E9DA6D0E2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Mar 2025 20:47:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22C0BA6D0EA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Mar 2025 20:51:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C16316DA9A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Mar 2025 19:47:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 537573AC587
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Mar 2025 19:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8847F19C569;
-	Sun, 23 Mar 2025 19:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1583719E7D0;
+	Sun, 23 Mar 2025 19:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KA7UFNDy"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2c4zU1c8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2044.outbound.protection.outlook.com [40.107.92.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A54BF507
-	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Mar 2025 19:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742759269; cv=none; b=oqhAUkmo31xv7/UCTj3cpKtKmk1aK8KHLq6jZCl76X1v6ui+5T2rMWCHfQlBjgaH+D0WpZVIwXQ/06x9kxi4JNVvssT+TfoKL8/UC5Foics1/z8PSuDjH8SMVeD/zylyUIIYFKFAbns1YrM8iQBGmp0ItsokQL/DgM0RPVO4QHY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742759269; c=relaxed/simple;
-	bh=iUR3681lmcQ8e6lNQBa94X6U9ui9TWzgm3USzDftaHU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u8HGsJAIwP4PzQVaQyg+T+BRpUtzKALE086hPaCofAjkFMIJdybfxyvmBKKpvJCFDg/5XPyCoMp/dkEaZq3m8dB6l7M9EIO5MPlsKFS18zt8FIp9x4/diHFm20flEx8pquuJ9uGgHM3eRMAuU5gNWbAj3qZoHIF91OO40n4LO0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KA7UFNDy; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742759266;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iUR3681lmcQ8e6lNQBa94X6U9ui9TWzgm3USzDftaHU=;
-	b=KA7UFNDylyslgnq0aEs3TTCnJJSrXY72AkV+plL/VHdMux8MlL9UkIq23AGBFOgUTQg1+k
-	GZQSQwAg6ewC/GSneZfinziX/E7k/nEt0s/V43TojzDyIv5fC89SfEuO4wyJ9ryETY4hVL
-	360+2WmSaap4HQ/RWRf/B9nirVwND6g=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-690-MbqQq6QfOPCwiRx3qmyF7g-1; Sun,
- 23 Mar 2025 15:47:43 -0400
-X-MC-Unique: MbqQq6QfOPCwiRx3qmyF7g-1
-X-Mimecast-MFC-AGG-ID: MbqQq6QfOPCwiRx3qmyF7g_1742759261
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0EB56196D2CC;
-	Sun, 23 Mar 2025 19:47:41 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.42])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 2FC6F30001A1;
-	Sun, 23 Mar 2025 19:47:35 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun, 23 Mar 2025 20:47:08 +0100 (CET)
-Date: Sun, 23 Mar 2025 20:47:02 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>
-Cc: brauner@kernel.org, dhowells@redhat.com, jack@suse.cz,
-	jlayton@kernel.org, kprateek.nayak@amd.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mjguzik@gmail.com, netfs@lists.linux.dev, swapnil.sapkal@amd.com,
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
-Message-ID: <20250323194701.GC14883@redhat.com>
-References: <20250323184848.GB14883@redhat.com>
- <67e05e30.050a0220.21942d.0003.GAE@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A0428E7;
+	Sun, 23 Mar 2025 19:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742759460; cv=fail; b=sFXfcr4imtF0LJayWI+6OvcffkUtHzpMJ68uHolJjHC8KCvaGJpkg3FJsYG3skrEU3yTQ2y6FUO4+ajhDgu/y1Q3UrDH7M1KJDq/jjqs44ChMZ3Iq81vlPUYE+wQLVzkeaxY5d3f+WAj24b/k1uPuVjhoCPevy+yV2J9LR1Uvbg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742759460; c=relaxed/simple;
+	bh=z55Gz56za39C3sjAP9Lb4zTVymqC0X6JHvt2n+NVXHw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eHbYfTSbmEGrH+fyx2xvpy7nt5Xugw67+o/bF0WanOO48MJ3ETnz+sERfD1uo87HRlnNDq0R7QLXYAsXmKxcK5o0ALK64bjdCTtB+gsyj27mcUQxeQDoGFbEPmGOAIwjRcwdZhw4FdDHVFC6mgzxc+FMhFTfg+yN4skdQK2tGaE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2c4zU1c8; arc=fail smtp.client-ip=40.107.92.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=J+G6pM3V6OHoF5ZYZ3olXLq7zHiNbwFRvW/wpI3qyhmAASf2HzYBxPopAx63pAaPg9DrZaLr6hpz5flaVPfyzmV1Puj89OCXvvXSqysYHDhXfU1XoaCU8G1VXgGrQOWAKVSxCQBfSFzCwTU1+GprKmbvaGIRdiAoyp/CfIUQdYLMqAksXxWaQ0v5x9Jnqd49h6dKyJ9NOmlARviGuazl5z8eALFu0kyWb3Z91ikeBtK1rJsBnO/qNAjO0F0CI66DcOND3gRB9TfxljIS5da2bIBqP64sXjLnntK2ZTx1Hy0wVYWl5EQ+zfYuD2g05MfXR9Uh4ulKWi/xp5dOZdfdUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bioPFA65gArxZ5kNg6BQB/qc6THJBJWwxanL9UTbMrw=;
+ b=zDpB/dwqrFOhJr8PSgg58fKw6glZVrHlfWU/Znif9BKgR4mA/JGcu4i0JS/ckFecdf391oVGnoFS1ieWbHt7AdXiGjDRxJ7dGTWslDOfvBk6dTixjQ3s8yNf5CZouiGyqYRfImXNwZFSDWIwi9Us+bl0ao50tGKj9vQ/xMQpV20eS9PBsnrUS0kq3fu5MVTGa0n6ECDemLD7LPPeRdgXsxGGKk3vCNIROB0hsA44K9ravqeLgpJIn+BteBngnBCF/sON0s12J0W4eySG+ElfLAD8Ywf67fL641itLMY3EUk7X3TVSFf6IFto4y8F7SrEhv0zDOE8TrHxeeO2fFVIrg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bioPFA65gArxZ5kNg6BQB/qc6THJBJWwxanL9UTbMrw=;
+ b=2c4zU1c8KaKf2nj44OXevjKtWrqBUEIhgXWdAbFfT2N9/1E/UXN+g6nctUD2Jmqe5EYpk3JA0vRR/8xbwudq7SAY0bLdjbxKjZA2f/roDN8+zNiFzf8rxImJEQAfZ4rAPSCTvkBmv/mKT3WnDi74OikJFI3YZSb5FFmfo/vTeTE=
+Received: from SJ0PR03CA0033.namprd03.prod.outlook.com (2603:10b6:a03:33e::8)
+ by IA1PR12MB9531.namprd12.prod.outlook.com (2603:10b6:208:596::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.28; Sun, 23 Mar
+ 2025 19:50:56 +0000
+Received: from CY4PEPF0000FCBE.namprd03.prod.outlook.com
+ (2603:10b6:a03:33e:cafe::dc) by SJ0PR03CA0033.outlook.office365.com
+ (2603:10b6:a03:33e::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.37 via Frontend Transport; Sun,
+ 23 Mar 2025 19:50:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000FCBE.mail.protection.outlook.com (10.167.242.100) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8534.20 via Frontend Transport; Sun, 23 Mar 2025 19:50:54 +0000
+Received: from [10.252.90.31] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 23 Mar
+ 2025 14:50:50 -0500
+Message-ID: <791d5b5a-3204-41cf-8796-b26018824333@amd.com>
+Date: Mon, 24 Mar 2025 01:20:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67e05e30.050a0220.21942d.0003.GAE@google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
+To: Oleg Nesterov <oleg@redhat.com>, syzbot
+	<syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>
+CC: <brauner@kernel.org>, <dhowells@redhat.com>, <jack@suse.cz>,
+	<jlayton@kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <mjguzik@gmail.com>, <netfs@lists.linux.dev>,
+	<swapnil.sapkal@amd.com>, <syzkaller-bugs@googlegroups.com>,
+	<viro@zeniv.linux.org.uk>
+References: <20250323184848.GB14883@redhat.com>
+ <67e05e30.050a0220.21942d.0003.GAE@google.com>
+ <20250323194701.GC14883@redhat.com>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20250323194701.GC14883@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCBE:EE_|IA1PR12MB9531:EE_
+X-MS-Office365-Filtering-Correlation-Id: 300e54d9-b91a-478b-6ec1-08dd6a44060b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|7416014|376014|30052699003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cHNRdHVyZEdJMlMzVzJrdUdkOVRhM0pNNmJQcnMzV1dXR2RSbTdzQ0IzaXBF?=
+ =?utf-8?B?MUR0ZHRySHNxUzFFMlJ5Wkd1RHphSzlJT0NUQnFmV1pvZmR1L0pyY29vOG96?=
+ =?utf-8?B?a3dRMzcrR1JJemhoSVd1Q2hyanJRSXpFRkd5YlpUZDdFWWwySGVIKzN0VnYw?=
+ =?utf-8?B?R3gyWUFjRDhGVnBBd0FQYzVNSHFZS016bzZNcXJYQ2Q5RllZL29KS2I3dmYv?=
+ =?utf-8?B?TEhQbVg1QkZkNVRLS1RpeHk1L21sRGR5dCtzWEh5NnJZdERiUE9xYUR4bmRo?=
+ =?utf-8?B?SEFUOHVveTBvQjJOTmEyaFFHNjZ1ejc4SkVYN3NkMXhFamFhVUlaUk5mM0ZL?=
+ =?utf-8?B?MElMN3pmV1JqTlFINm56clh2YjIvekduYk5iN1c4VFlka2s3MEYzQjBMWjJX?=
+ =?utf-8?B?RVIyank3SGlpWEVKS3A1K3FpcHNvbDVrczVWRlJrU1ROWlJTckRMeTlTRWNk?=
+ =?utf-8?B?RmxXZTdONlhqZ0ZVeHYzSTJsdEt4ZkJENEtvWWxWaytCOGE1K3FIUEVBZFFS?=
+ =?utf-8?B?a3llaXVQMWI1QTlyNFJERkZBTHBxZm1mVUxPTFBBMCswTDhPbnpJR0I2eUwy?=
+ =?utf-8?B?amlTTUZOYkthN3hRYjVmV1Rzb2NVK0t4Wlc2QTdWK1VvUWx5NzJaOCtNNHFs?=
+ =?utf-8?B?U3hlWCswSTRyZlhHQVp4QUlzZUhLUWh0NHF1TGZBSkJ5cTAwazhvc0U2ZWRw?=
+ =?utf-8?B?L0xFYUxnT3lLVHE4SG45dHZUUk5CdGRjaXl2NTcvckR6aHVjNHZiRlZDVUlO?=
+ =?utf-8?B?ditTWG1EcHFQVFZOVXV1eHR0cnhTY3BIMXd6d2hrWTFqMnhPYXhnbFRiekJX?=
+ =?utf-8?B?MjdpNjgxa21tN0xWZUM4cUd4MmJkWExwamJWYmdZdktEanhRVVA2WjdmaE5E?=
+ =?utf-8?B?YkJZSGtyak5IdFNVOW1WY3pvSnBOcWdmTFZ2Vzc2VFB5MkhLSVdnbUp3STlE?=
+ =?utf-8?B?R1hnYVIzQ1Nna3gxNHpXMEpOejJzNjExU1ZYQ1pzODFOdThvMmRhdnh2Qm1Q?=
+ =?utf-8?B?L21uY1FML3VhUjZrUWl3SVdDbXQ5bE9UbFlFS09wSmJmRFlpMkJjZ1BkN2t3?=
+ =?utf-8?B?RnJTRkhkRTduc25UeE5sbVIvSWt1YlppQ3ZsdGdQQXAwOTJGZTg4R3k4ZGVq?=
+ =?utf-8?B?eDVkM01HZGRsVW5iN205TERkYjh5R2dzd1hFcVBzTDNDVHkzRXNVWlBIYzN1?=
+ =?utf-8?B?RllVczRPSG0rL1BpTG9mK2t3L1hUVkNwN1J0dEpwbDluQUs5YllHSjNUa1lG?=
+ =?utf-8?B?K0xCNWRlNDNoNWMreVlEaHhFU1ZKV2F5WFlROUtvRHVBUElxK1FhVnNLVVU1?=
+ =?utf-8?B?czZlaE9oWEFteC9NakRCOURLK1ROWGlGb1RUTkN1Qm1wcndINHVNZVB1MXVn?=
+ =?utf-8?B?cVh0UkZkL2g2bGFkZEpyWDdIMlB4bWl0T09vcjlueE5BZVZMajMzRzlpaGlv?=
+ =?utf-8?B?bmU0eGphVDZhcWovcFJ0RzdNY2RpZFpoaU5MK21BbkNUS2paL015bHc5bWln?=
+ =?utf-8?B?YWs4TkZnT1lDQ1NGemRDRHRodktpV3JxQjlQUDJ1QWpoRXB3R1FQUTBmVHcx?=
+ =?utf-8?B?Qk9NQTZtOU1DbWVMMk5oclBJeDRDdktONzYyRWhjUnhtdmhXT2IzMTJTSzV6?=
+ =?utf-8?B?V0EzNjRCVlVOb0NtdHFvSE0wMXE4TWNtRmlnY3NCQkltcXRZTUQxWkplUVdB?=
+ =?utf-8?B?QzFLZTgrYUEzbmFhYUQ2eElueVBvbFQ3UmJBYjJMTy9nbVBCSkNhOXlzMmor?=
+ =?utf-8?B?N3JvN1pxdTFpQ1BPa0YvU3hVSXYreTQ3dlF6bVliZjY1TTVnQlJUenQwVDQ3?=
+ =?utf-8?B?VlByY2dxVWxRVWJiaWlCOHhMeXhYZnorYytKcDZFKy8rR09rL2dJVmdybVha?=
+ =?utf-8?B?MEJFVGFvWlkvc2VIb0lLbFZNN01QSnNUSmNpT2VKL0dzY0FQWVJmb1BVL3dZ?=
+ =?utf-8?B?WjRPUCtNQW5Wa2FQbG5ZWWpaSXhGSGRGOEhwTVpaa21HNWkweE5aSHJabzY3?=
+ =?utf-8?B?TUIzR09WUGJ3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(7416014)(376014)(30052699003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2025 19:50:54.6648
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 300e54d9-b91a-478b-6ec1-08dd6a44060b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000FCBE.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9531
 
-On 03/23, syzbot wrote:
->
-> Hello,
->
-> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> INFO: task hung in netfs_unbuffered_write_iter
+Hello Oleg,
 
-OK, as expected.
+On 3/24/2025 1:17 AM, Oleg Nesterov wrote:
+> On 03/23, syzbot wrote:
+>>
+>> Hello,
+>>
+>> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+>> INFO: task hung in netfs_unbuffered_write_iter
+> 
+> OK, as expected.
+> 
+> Dear syzbot, thank you.
+> 
+> So far I think this is another problem revealed by aaec5a95d59615523db03dd5
+> ("pipe_read: don't wake up the writer if the pipe is still full").
+> 
+> I am going to forget about this report for now and return to it later, when
+> all the pending pipe-related changes in vfs.git are merged.
 
-Dear syzbot, thank you.
+P.S. I'm trying to repro this on my machine on latest upstream. Haven't
+gotten lucky yet with the C reproducer with my config. I'm moving to the
+the syzbot's config to see if it reveals something. If I have something
+I'll report back here.
 
-So far I think this is another problem revealed by aaec5a95d59615523db03dd5
-("pipe_read: don't wake up the writer if the pipe is still full").
+> 
+> Oleg.
+> 
 
-I am going to forget about this report for now and return to it later, when
-all the pending pipe-related changes in vfs.git are merged.
-
-Oleg.
+-- 
+Thanks and Regards,
+Prateek
 
 
