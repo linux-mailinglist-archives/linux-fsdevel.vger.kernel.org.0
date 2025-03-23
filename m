@@ -1,72 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-44844-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAFB4A6D116
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Mar 2025 21:41:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE2EA6D11A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Mar 2025 21:42:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50EA07A7202
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Mar 2025 20:39:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FE8B16F0B4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Mar 2025 20:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AA71A841A;
-	Sun, 23 Mar 2025 20:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E421A0BED;
+	Sun, 23 Mar 2025 20:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqMgEYW5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUOA5CBy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD2A1A5BBF
-	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Mar 2025 20:40:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A11136E
+	for <linux-fsdevel@vger.kernel.org>; Sun, 23 Mar 2025 20:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742762447; cv=none; b=LaSA06FkXiklS+moFuQpdFLf4NqPtQrhBmnRiDW51Yg1jc7j4xWsHQW049Vn5jUw/ckd0cYWiqMh39/W71YhED5IFyNmRaKbucSq2JEyxVHHDDf7/4gzOqbhY6sXAPJJE/pIhSkQFyuVQW+2XaWgC/QKIH6q58Q2USWRTTMJFaY=
+	t=1742762543; cv=none; b=S4embeUB7r0BPrTvFAjJkYvmyGsYOpIakQnfVaNj4LWxNozRGyBE/3rcMUj3aMcTCDdbyaxxoJUvray87CFurrJfiF/fsiKX0xxFcxH4TFMY6mZlvNEnK9pvKLx3Qatn0Mwd6dvDorCpJ7TE+9dkzhol4dF1GC3x26LgIiVkaOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742762447; c=relaxed/simple;
-	bh=+/Xz8LtzUwpk8KE4PhwRRIyW9p+1Hy/47BdoSXGm8ho=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aSACC6Tjk1I3t9dG35iV4lvRPqRITcG/uRdaxhvqQT4Vf9dxaDwEmwRWtvGuA4Hk9j+OLj6QvDVsHnkNkFneMd9BYFXvhylT1mCiBPTAQxluJBCMWEt/q/FVgwn25/DReFBWsk4I/ibezISNXR/t8ijYqaZIznRo56mz42vuQr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WqMgEYW5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B6A7C4CEEE;
-	Sun, 23 Mar 2025 20:40:46 +0000 (UTC)
+	s=arc-20240116; t=1742762543; c=relaxed/simple;
+	bh=neI/fUnpJL6FTv21Wn+1kCYKTbaUZaSNEiKksBvB7aY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bb0nPDpa1HEMaut0cl/C+DVuIK3/EvOZ3HCmzzb4PyAlQXIqMCoAjsjm8pQX10H3O5/UIyPclZiKHEoapDYEtbb79TrhQA/G2aB8q77zVPdb4YHgw8Ttu/vkYuaUQGy4ZGdacfWrQ99LK3N5vZmKPawSu3XWUKSEGhptDYn/5Uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUOA5CBy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52B6EC4CEE2;
+	Sun, 23 Mar 2025 20:42:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742762447;
-	bh=+/Xz8LtzUwpk8KE4PhwRRIyW9p+1Hy/47BdoSXGm8ho=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WqMgEYW5z+5gabQWYQ0ft77uld6/2CKtNN67H675fs0sGQQJmV4FDpT+M9/Wg7pp+
-	 wHmr1LGCzmboUaevJOv+ik6pgxXffANBsLmzAXfB3ZW6aTFUlm0AvNuEojXXUpoHk+
-	 OPgkRdo9BEM2FT2NXdxXMhhh008JDxgoUDF6xHL/BmIR3B9us0UoNf+MNv5lNwTSrv
-	 1rAQSB9xpUAczABYQ+CkXIDzpXy8jCtdHkXiJuvpn9TJ3B/ufb8ElzCtihdO4cimfv
-	 ThlxuN7MSEB1p2ZNKBHOL1PPw+oLErTFzPVCU9Pd8tz2TIb0iSONCciTL+m2Tf1bSA
-	 3ETu5qTqU9dnA==
+	s=k20201202; t=1742762542;
+	bh=neI/fUnpJL6FTv21Wn+1kCYKTbaUZaSNEiKksBvB7aY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oUOA5CBy3LSiZOKGGDNe+TOEgMrAqc0oJvtcg4YCE/cHNrG8y7Ej27n5FI3n/Tt8z
+	 IbV0wWeciEncywaOBmwl4Oe17W2hezxudckPJOXup+Qoh00Rqyb7Q8ZvgLhCkShzFh
+	 ic2JZax3mIP7o/VrkCh8YlXacy8agNd/KOtIQhDNtH//DV/3WQLXgIuS0B4/CgCUaQ
+	 qVZJ+BsolN38sasGsHFYqgHSgdSKLO+iyLZGPMhoVAuyLpINw2PwvmuRA+EGvER6jx
+	 Z79nbwuX45w5R6Vd/YHQ6XXlSCyCPo+Q59AZN6+SZbW1WjwzKtb+Y9C4vDMb8wlsPW
+	 1FpJUMLvF/dVQ==
+Date: Sun, 23 Mar 2025 21:42:21 +0100
 From: Christian Brauner <brauner@kernel.org>
 To: Oleg Nesterov <oleg@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	Jeff Layton <jlayton@kernel.org>,
-	Lennart Poettering <lennart@poettering.net>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>,
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	Lennart Poettering <lennart@poettering.net>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
 	Mike Yuan <me@yhndnzj.com>
 Subject: Re: [PATCH] pidfs: cleanup the usage of do_notify_pidfd()
-Date: Sun, 23 Mar 2025 21:40:38 +0100
-Message-ID: <20250323-marginal-stich-5343e5f7c7e7@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250323171955.GA834@redhat.com>
-References: <20250320-work-pidfs-thread_group-v4-0-da678ce805bf@kernel.org> <20250323171955.GA834@redhat.com>
+Message-ID: <20250323-merkbar-hallen-8cfd79b6f2ed@brauner>
+References: <20250320-work-pidfs-thread_group-v4-0-da678ce805bf@kernel.org>
+ <20250323171955.GA834@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1322; i=brauner@kernel.org; h=from:subject:message-id; bh=+/Xz8LtzUwpk8KE4PhwRRIyW9p+1Hy/47BdoSXGm8ho=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ/KDzzMqnSfPf+J34b4rZO/i93S7/v+5IUES//P1ejZ /iybOr401HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRXW2MDM9zAl88WvZf2lSK dZLMkSfP9hbaH2l7rSw5M9Xf9LAVNxsjQ89PyeofP1r0ZAXPRRvW81zQtpH+f53n+6s1L/wT1or PZwMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250323171955.GA834@redhat.com>
 
-On Sun, 23 Mar 2025 18:19:55 +0100, Oleg Nesterov wrote:
+On Sun, Mar 23, 2025 at 06:19:55PM +0100, Oleg Nesterov wrote:
 > If a single-threaded process exits do_notify_pidfd() will be called twice,
 > from exit_notify() and right after that from do_notify_parent().
 > 
@@ -75,25 +70,78 @@ On Sun, 23 Mar 2025 18:19:55 +0100, Oleg Nesterov wrote:
 > 
 > 2. Change do_notify_parent() to call do_notify_pidfd() unconditionally.
 > 
-> [...]
+>    If tsk is not ptraced, do_notify_parent() will only be called when it
+>    is a group-leader and thread_group_empty() is true.
+> 
+> This means that if tsk is ptraced, do_notify_pidfd() will be called from
+> do_notify_parent() even if tsk is a delay_group_leader(). But this case is
+> less common, and apart from the unnecessary __wake_up() is harmless.
+> 
+> Granted, this unnecessary __wake_up() can be avoided, but I don't want to
+> do it in this patch because it's just a consequence of another historical
+> oddity: we notify the tracer even if !thread_group_empty(), but do_wait()
+> from debugger can't work until all other threads exit. With or without this
+> patch we should either eliminate do_notify_parent() in this case, or change
+> do_wait(WEXITED) to untrace the ptraced delay_group_leader() at least when
+> ptrace_reparented().
+> 
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> ---
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Thanks for doing this! I'll send this together with the first set of
+fixes after the merge window closes.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] pidfs: cleanup the usage of do_notify_pidfd()
-      https://git.kernel.org/vfs/vfs/c/98ce463bc6f4
-[1/1] selftests/pidfd: (Was: [PATCH] pidfs: cleanup the usage of do_notify_pidfd())
-      https://git.kernel.org/vfs/vfs/c/cc8c2e338a25
+>  kernel/exit.c   | 8 ++------
+>  kernel/signal.c | 8 +++-----
+>  2 files changed, 5 insertions(+), 11 deletions(-)
+> 
+> diff --git a/kernel/exit.c b/kernel/exit.c
+> index 683766316a3d..d0ebccb9dec0 100644
+> --- a/kernel/exit.c
+> +++ b/kernel/exit.c
+> @@ -742,12 +742,6 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
+>  		kill_orphaned_pgrp(tsk->group_leader, NULL);
+>  
+>  	tsk->exit_state = EXIT_ZOMBIE;
+> -	/*
+> -	 * Ignore thread-group leaders that exited before all
+> -	 * subthreads did.
+> -	 */
+> -	if (!delay_group_leader(tsk))
+> -		do_notify_pidfd(tsk);
+>  
+>  	if (unlikely(tsk->ptrace)) {
+>  		int sig = thread_group_leader(tsk) &&
+> @@ -760,6 +754,8 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
+>  			do_notify_parent(tsk, tsk->exit_signal);
+>  	} else {
+>  		autoreap = true;
+> +		/* untraced sub-thread */
+> +		do_notify_pidfd(tsk);
+>  	}
+>  
+>  	if (autoreap) {
+> diff --git a/kernel/signal.c b/kernel/signal.c
+> index 027ad9e97417..1d8db0dabb71 100644
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -2179,11 +2179,9 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
+>  
+>  	WARN_ON_ONCE(!tsk->ptrace &&
+>  	       (tsk->group_leader != tsk || !thread_group_empty(tsk)));
+> -	/*
+> -	 * Notify for thread-group leaders without subthreads.
+> -	 */
+> -	if (thread_group_empty(tsk))
+> -		do_notify_pidfd(tsk);
+> +
+> +	/* ptraced, or group-leader without sub-threads */
+> +	do_notify_pidfd(tsk);
+>  
+>  	if (sig != SIGCHLD) {
+>  		/*
+> -- 
+> 2.25.1.362.g51ebf55
+> 
+> 
 
