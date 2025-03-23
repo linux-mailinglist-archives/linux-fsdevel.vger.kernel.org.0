@@ -1,58 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-44831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15588A6CFBD
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Mar 2025 15:24:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 059A5A6CFC2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Mar 2025 15:34:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B82211684E5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Mar 2025 14:24:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C61941889613
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Mar 2025 14:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1DA5103F;
-	Sun, 23 Mar 2025 14:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F0874E09;
+	Sun, 23 Mar 2025 14:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RzuMR0Ls"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kxK36Rxm"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70B7DF60;
-	Sun, 23 Mar 2025 14:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2BF6ADD;
+	Sun, 23 Mar 2025 14:33:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742739860; cv=none; b=ilLJGp9jcQBKVLXGqgiwuO8lO7/3SaH+ciiPMrOyOfvXf74p8IAR+pOYpcMfu+Fq+PJ58V4hB4gBkQqZFKXCO+QMgWLU1elz8ApXBpbEE9yB5PDmx6gYec22HrUQ059PoIP6ddKeqbJOx/E9P3XvawYYqrknF+S1PEaylJ4kvs0=
+	t=1742740426; cv=none; b=TFZV0Bi/Ns21gh08qP4dY5Mx+E6VXPXS3IvxxvyGi8ICPvuxzUI3IaqSq31dSmnKVwpheoGsdc1ooV6XbqBpcs+ugJh/LseYVPDb/wJLUJGuvXsS0J3swvY+TWEueGqzXmdrVI8rivoWaBNsX4IBypyhkewSc8xuSexVABEzbZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742739860; c=relaxed/simple;
-	bh=SBYzxFD1hwFvuIV4C5YJU/aVEIiuuFHGYfxfHfLvkQI=;
+	s=arc-20240116; t=1742740426; c=relaxed/simple;
+	bh=rKINkbhYV6hTVFAbzvACFUklqCfglI92COp/9PBq9eY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qr6lWH2GawxnXKWG3QxGhHIhF6voz3nUf6M51QrFzRloqQ6tIWmfMIyvMqPNeCKDrHU1pDKdmyATVWtQrfXsvOc8t18l9PWTB5HXpAxF52Ylte8omW4Pwy4WrVJU7NJiS17AnKHmEv+obmhj28hxsD6KgVz9Dvfai05hiiiN0UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RzuMR0Ls; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type:Content-Disposition:In-Reply-To; b=lJ9ipFwiPTGF97SodkaePMSa+uUN23nI1EKfkXGHIPzC1Ld0BBPY5qQDyU1NN7UuDHV74x/l3+RPViecFUXDA0CpjRhepateZqiT35WbIXNz98YgSdoakVodeGUCQWMG80Wkn1MFv1KgHXX5Wa9gefbsSt7g7YWDDCYaKP6Isn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kxK36Rxm; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
 	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=quM6B9G2VUOD40sCNsVXuMGBCuUlsByGgiKxIF63r7o=; b=RzuMR0LsCk0+xzbYpEFUG149Lw
-	xXA5lIIX+nXb6B8yT0wLBeIJBYcx5SSeI8q+bx9SPJTV5U0/46QwRHw06eDpgk5Naqr0RkA6VQBbg
-	H2snYOKQ6raJydR3xwh4TE84QOjIZ7y9nogjOuF5K57Lnpiz+mJjtjI9/aEayeGoVvBblP06t4/Ln
-	9HEZwqbbeG/JH3Xr7hnh6u7ZtvU4o8vQY8kdDFHQPpCnr5SD5k9B+1KLGNn+U9mErXXAoGYRKOz50
-	URN0kAVfTn6m5gd9+twXzB9oILtiSnCsctrhPE/rv1IpYz97fHVHmaLU6iopIftDOyMS0PldP7P7K
-	1lAw3zqg==;
+	bh=zGBTpFLK0UixlShYpg/OWoA6cRXQfCGU0ZBvGLWIcIo=; b=kxK36Rxm0wzobQNar9Cv3m5UPz
+	0G/kYXg/jvR3ydP9fmiTHxM6kftq9uKF0ATEvxJsc3aqu7xSnU6QoxbHf7xQPRLKi0l0VOubdkOTf
+	kUVa5+BCmN2Ds/f8rEIVDWzzx4j0sLLTvJCTEw/9FL2I7cuOqcBIDXSwnjrCF6GFarhbgjGt4s3Er
+	fhcmPHrHOxcOt7FZwZG7dmkfz48YvC5h09KgiCN3Hyp+AkQiVkmsoadosGyN2xk86iXNO50ZGv+z8
+	FyLVqGcW1EYM6XeYYjZffoat3bKdcY/qzVi+3gKvGnOPuXVgP4+T7ghDqYcXD9ktlnth3PqWwLKoe
+	aGaAoHIg==;
 Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1twMFG-00000006fyU-0Kjr;
-	Sun, 23 Mar 2025 14:24:10 +0000
-Date: Sun, 23 Mar 2025 14:24:09 +0000
+	id 1twMOR-00000006gTC-1B8U;
+	Sun, 23 Mar 2025 14:33:39 +0000
+Date: Sun, 23 Mar 2025 14:33:39 +0000
 From: Matthew Wilcox <willy@infradead.org>
-To: I Hsin Cheng <richard120310@gmail.com>
-Cc: corbet@lwn.net, linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] docs: vfs: Update struct file_system_type
-Message-ID: <Z-AZiYwkE9PsST90@casper.infradead.org>
-References: <20250323034725.32329-1-richard120310@gmail.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: David Howells <dhowells@redhat.com>,
+	Leon Romanovsky <leonro@nvidia.com>,
+	Christian Brauner <christian@brauner.io>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Steve French <smfrench@gmail.com>,
+	Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/4] iov_iter: Add composite, scatterlist and skbuff
+ iterator types
+Message-ID: <Z-AbwwTtfpKr_pgY@casper.infradead.org>
+References: <20250321161407.3333724-1-dhowells@redhat.com>
+ <Z9-oaC3lVIMQ4rUF@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,22 +68,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250323034725.32329-1-richard120310@gmail.com>
+In-Reply-To: <Z9-oaC3lVIMQ4rUF@infradead.org>
 
-On Sun, Mar 23, 2025 at 11:47:25AM +0800, I Hsin Cheng wrote:
-> The structure definition now in the kernel adds macros defining the
-> value of "fs_flags", and the value "FS_NO_DCACHE" no longer exists,
-> update it to an existing flag value.
+On Sat, Mar 22, 2025 at 11:21:28PM -0700, Christoph Hellwig wrote:
+> This is going entirely in the wrong direction.  We don't need more iter
+> types but less.  The reason why we have to many is because the underlying
+> representation of the ranges is a mess which goes deeper than just the
+> iterator, because it also means we have to convert between the
+> underlying representations all the time.
+> 
+> E.g. the socket code should have (and either has for a while or at least
+> there were patches) been using bio_vecs instead of reinventing them as sk
+> fragment.  The crypto code should not be using scatterlists, which are a
 
-What value does it add to duplicate these flag definitions in the
-documentation?  I would not do this.
+I did this work six years ago -- see 8842d285bafa
 
-> @@ -140,7 +148,7 @@ members are defined:
->  	"msdos" and so on
->  
->  ``fs_flags``
-> -	various flags (i.e. FS_REQUIRES_DEV, FS_NO_DCACHE, etc.)
-> +	various flags (i.e. FS_REQUIRES_DEV, FS_BINARY_MOUNTDATA, etc.)
+Unfortunately, networking is full of inconsiderate arseholes who backed
+it out without even talking to me in 21d2e6737c97
 
-This should be "eg.", not "i.e."
 
