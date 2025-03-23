@@ -1,313 +1,347 @@
-Return-Path: <linux-fsdevel+bounces-44824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67049A6CE2D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Mar 2025 08:02:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EC65A6CE65
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Mar 2025 09:45:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7188170643
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Mar 2025 07:02:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64F7116BD49
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Mar 2025 08:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590E320297B;
-	Sun, 23 Mar 2025 07:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39AD4202F70;
+	Sun, 23 Mar 2025 08:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IJ3dOfVK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WAAfNB21"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D6920127F;
-	Sun, 23 Mar 2025 07:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BCF48CFC;
+	Sun, 23 Mar 2025 08:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742713351; cv=none; b=VGbE0kNFRdglL09OVt8tO7VZlSX4Y2BFmWbqBvZBfoIxi2k9JeKWcdTgN/wajTL7FWIRH0QCxPhDM/Ck8/zKO0B/kJhpYpc77c0hi0wZtKc3Ntj70EhHtaeTFbjwxcW3i4xZKuySVKYHGeVbJh83XGGO0/2nuMd7iygVjmiR0Mo=
+	t=1742719521; cv=none; b=A58PE9VYCoNHfmvXNTxYKCSbW1L2VYXZrES1lfoz3MMuLqBPP12ww2Dn2K+jzNSZqHn0dKDCc1koovdK7CopcWczofGUzJnzd4A8t8miD/ax9yaaFPDx1anCDzcKJaSvHaFv1p5240uYfstXGSRO3tqEs5UwsHn4taqWY6Dv3ME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742713351; c=relaxed/simple;
-	bh=g0HhcUvi3h43mpX6YclPZ4YNxHm5ucruPLBM3q4312s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jQJSJm9W2FbvOdlWYQV690iPV0yXsacyLkrnNHtu4G+Xc4m5ESOEaBVRBEDjZ+wkeIGUL7DXWT6efi9FHIO4nxY55WOmgStPyUf+G5lNLMkS2XH0um5bHUC+rnIcTheJnMfE8XvEFvtOZHV/TjPuDSVLwSGbVYGpbyEENAyuod8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IJ3dOfVK; arc=none smtp.client-ip=209.85.214.169
+	s=arc-20240116; t=1742719521; c=relaxed/simple;
+	bh=b7msV9pgJYlhEyRge9PfEcB6ipwT555t51j3Jg4i4JU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Zg92qAbM6MpvfuCxFzKyzi17WxBU8UloE4FnwEEpFDkj78OY6CHkgE1O/PSWZ2RpkHDpW4AMt+GwaW0oupyjGwA1WryFOUkXY4KSpNi3qk/Y+qJxDPjYgqS8bJZ6IZK+S4YWdCcoye7xWvqQChlBjEVgJ2qapDxYQP8flRkhz/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WAAfNB21; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-223fb0f619dso66767155ad.1;
-        Sun, 23 Mar 2025 00:02:30 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5dccaaca646so6317781a12.0;
+        Sun, 23 Mar 2025 01:45:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742713349; x=1743318149; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1742719517; x=1743324317; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=l4RXegz01jmIND++90wQM9qaUECiHSM93MWBrYRkjoY=;
-        b=IJ3dOfVKs7b1N5AFgWWn4KyT5rTPYIHfl1rqHArd/VPjD4r/lUq+uZGudmQhQmiN7h
-         K1JQa6RVqZzKlbUXlSOQVOaiWoAK96+rMYb1FCQiXI6pE3cwakoMF5iyhzvunNrGB8d8
-         l1mXLo8Ia9SVc/ZbMHW3+Huzkr43g+/PJLwYVuRrTpmH3sVl9loXrI7HSeOr7LTTlF4S
-         WC69Dg+Y8cwBYWa9obZz6tk/sDURmxD2GBWBlABDZY4YTrA0QlB/q127GRZHB34nUqnd
-         iaqtHsJrj8qQY2+iACsAqdxo/8LA8EfdZqxc5EOYzoxPKHEAZzGa9e+Rbzx2e3oMbxf9
-         vfig==
+        bh=3jxIP2TIUbDJlhhIEkW541D6lu1Z7/8FzD6NZfb9i/w=;
+        b=WAAfNB216UMy7CKSShnqnY+mjW47ObBF+cghNpRQlgyFL0J+F21tXzfwjW9UxT6TL6
+         wT9iJxH3qzPBcVIpgvX0QHyO0bBNz87otlgPCR+NqYgtFTegDt4Ieq8rURLTkA0WeOFe
+         NZPijf0zeYuSEsT/X13oSBH3J4Dq06CD0LXPgSN00o6uAwH9JAS7ucPTwKLp1dstf7XR
+         KHNeu+FSM63XJ+KuX5hzs7GB2Fr9U9YrKjfqvR+Ivaj3zzs98QTH+bfSmZoWmsWWV9na
+         2K4Z6aXu2eQhOBtHxI0dAFZJnSUFVSDAOQ7tqICcxXuYO96D1eac0kix2P9NkrSVYLwB
+         A48g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742713349; x=1743318149;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1742719517; x=1743324317;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=l4RXegz01jmIND++90wQM9qaUECiHSM93MWBrYRkjoY=;
-        b=SYgw0eWxbcb/ijd9R2Z6oUZtyjBYy9lvFuP4NXa2PAdjY7d6wm50bn9pxa3GHncXMB
-         b8DQnc+YtBMZGl3pkJF/k5nw3VGaoXklQuEhFXWwVr9sLCjJIOxGczbHOzh8ZhRTNu/6
-         jS9ezSNewGPb2lREeEyXWdhb25B2kJ9mSqzlFXHjwpXJ6sLFsbJxI9Rd+06VNo51/Ui5
-         A2RGLDsd3+YhXMKOeSm+xTsQ+Rt7WNsOItwV1ocpQQM3zUaUYNXC8gO/UYSFU9QwtAsM
-         RADwMHV8GKzomOVNkIKfQKxtHIGzTiTGtUK/SPa0PpwHQp+LwgMckZKzwYxYoeQpkKXX
-         QolA==
-X-Forwarded-Encrypted: i=1; AJvYcCUclVi4HRIb5LUpA55jNHrTMa20XVhzxBgzh4XnorcjhwhOJkB61CFQnup7Csw7nmsJyfHWm/sGC7w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMe1XV107mQloWLqpRETlOHH8BGG8ba5IOVJLO3qQqCqSyUGpp
-	iwFhmXGk0vrjFifryLoZod7epY3D3aB9hgcZWcF+XJQJyPz63q+TxTb+aw==
-X-Gm-Gg: ASbGncsL+QPVbEhTiA9ymEeY0ucPxzrrHeAwzFhf1RsR7RoP5do6jTbJU8Xw8Kspjhl
-	KFxER+/ggRWgR33ckPNN9z/eDOywRvCF6CAgrSjtXUfc3OQnuTykVPn6gXlwxAXUR+oQypfmocG
-	2FvFrtPdFLZvFfeioA/bltuFsRAuQVQV4cywuxZu+S9ESr4DjrHyK16WTHXhHh72SO0Ah0QG2FA
-	qHz7HrisHoXKF9uNOJMyjtsaeHRHGORQzby2f5ZRsC/IBcFSBxTFXJNdRBRyQwvo8c9c8VSG+8D
-	BP911EXXZ9ULMUQw3Khem7lQnFB6EQGkcSPZ6sBH
-X-Google-Smtp-Source: AGHT+IEZ0OMMq/aaClZvY0NFB5sMNSfeukbv/nOcGfRp38YG4jdCYZOQooqJG4ocKr4axR0ucXdqRA==
-X-Received: by 2002:a17:902:d58b:b0:224:1579:5e8e with SMTP id d9443c01a7336-22780c5111fmr139750095ad.1.1742713348804;
-        Sun, 23 Mar 2025 00:02:28 -0700 (PDT)
-Received: from dw-tp.. ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811da89csm46058445ad.193.2025.03.23.00.02.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Mar 2025 00:02:28 -0700 (PDT)
-From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	John Garry <john.g.garry@oracle.com>,
-	djwong@kernel.org,
-	linux-xfs@vger.kernel.org,
-	Theodore Ts'o <tytso@mit.edu>,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [RFCv1 1/1] ext4: Add multi-fsblock atomic write support with bigalloc
-Date: Sun, 23 Mar 2025 12:32:18 +0530
-Message-ID: <6ce4303bfbccc4f5ed3be96b56eb1080b724b0da.1742699765.git.ritesh.list@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <cover.1742699765.git.ritesh.list@gmail.com>
-References: <cover.1742699765.git.ritesh.list@gmail.com>
+        bh=3jxIP2TIUbDJlhhIEkW541D6lu1Z7/8FzD6NZfb9i/w=;
+        b=YTJF+jOSM+HsPv0QJp8otAA9lOsf7p68SwsdEBqAFzZQ8BjWoA7VlLLdlJyC2FTb8k
+         aa+M5trHjKFi1Zivz0sVif2jlWuLo398YkUv5KWD5jbTa0/POLUSyXeph/vP8EQ5qq4k
+         8a5vt3ISiVgsSwulUbpBN2JUSlLnPhIx4LcUIU+bI3DxSk+TQVuBZhg2Zf9kq2BKPL7w
+         2LscRJQkY+lZl6mkcrDmypnJFq0NU/gEWzvzVM/5s5dutc/9Ng1RRWaiIATtTOYM7cBY
+         IprrjP7qA0sqrRK3cIjH3o5kP6AJ7YBwsGUAlbQliEEHvMwbUP5bJzx2SFXhwG6l/PWv
+         1IBw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3ttjF/xWrM+HlJPtQmvjQuPxvbZ3VkcgivhLZdfoSjk99/KjDv7IEtFJRn0gNqVEyD15a9glRztD1RKkYCL90iJ4Ky8i9@vger.kernel.org, AJvYcCUAnZSPSH4D4Q5PFZS1IyMx0s+aWKxblKVi4arAZC8E2JAmg9LytzMkCG3RYPSjI0iah5ZijrtUk3v+8g==@vger.kernel.org, AJvYcCULdxeqkdoYqiSHYnyCDjYeUMQ2hZOn27F4+lFKgYQUxYgckWucW3QXGnbuy6nAOLjaVBvP76SncWQ=@vger.kernel.org, AJvYcCUQ4cluKDU/Vk5im62fIJrsECSddB72Q6WuiR8VsXQc5NqeLDLSnILxjONBoO04Wjt6Nl9D9wn3cNmoQg==@vger.kernel.org, AJvYcCUXw7D9MA0V1jmqlCJe1nGuCYo2IOQofO/K6nSkPqw255rtroF5UVvrLj62u0CK2qOgRZZUBlNVu5iPBSh0@vger.kernel.org, AJvYcCUZaooI7mSenRN9gwZirHX1jo8JwiuIEyF0aOL9DaxhsP9ZhPiwcKzNfQx4ILgrnU5VwRoYzsfZ2CzmRA==@vger.kernel.org, AJvYcCUbIcjpa0DmDLasACLEYNeKBdP1i5eK1goIuNMDLjAlJyHvGhYz02+VKlwoyceVSb7MgH5X4ikKESuflIhX@vger.kernel.org, AJvYcCWL9fFQsleDgCCko7RnjWXOb3ZvyJ7ho5/lF/zPGAHw9NJMrat8dVrg1GGRIQIJ3gBQanNvRcsOag==@vger.kernel.org, AJvYcCWM/yrdkyhAJyOw65kJVfjvANvbVDKr6CyY/KszL+Pq0u6vV7LaypAUneNyI6M/XqY1lA399aP6doyf@vger.kernel.org, AJvYcCWdfrjdarAL
+ IaXl2JMPt153iZnju5AbuM68rtbArvdwQBuPgKeGMRfc6aU0MZcyseH+VYysmF1sSTOw@vger.kernel.org, AJvYcCXP/nMWmU2tIxm7JfJnM2waQVp+E0toS3QjzYIdNCtrZeMK9HDTgUmLRMCnwuy7V8RAiJo1P+BnAr4bmg==@vger.kernel.org, AJvYcCXp2RYc7nUUiNFaO95rW/EDYOtGEwdUgWuMTbFosrHJMlbNppU+lSJ+ORjXxvALRqd5cMSDeNsfCt7MBw==@vger.kernel.org, AJvYcCXwrXGrI33v4dT8PARvYeQ+FV5BCgUXevqqajr1i0ZgseLncByRV/FvFVfS1bshwAeO3LZYIYrRjALY6ZNHHQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRaomk2nfLx+0x3p30ej185JpUWGnEvZBFbQoqwt+Aa70Kl1U2
+	2+TA6AY86Y7XkUw6VmdCgOi+oOGJl4q6Pj1RCoaPOEzphzFYWOr6OA25l0QEEdNwlfHaGccqLhv
+	BjAKkGVe2fTrH4r9uiyFD578M818=
+X-Gm-Gg: ASbGncuC6hUmK5HAqANgVa6OC1mOIE6AiVyy8TCmlUQ7ZLPnhxO+gcSWluHVQmbVvm/
+	DwGzAoaKkldfaAFXUby/pGL82wFSnCkdbCZ8uXYXaDmYtogRNS82GlT3tw2BqQb37ptBjW31lmW
+	s8Nfc/vriGzubd8Dx85BXaV0SLwH+x0VAjReS903my5GP9wrClIyzxhKrRSH4=
+X-Google-Smtp-Source: AGHT+IGKn4NZALUSEG+rHMaGWglZZduHpRclHK5w+Kv4NN031fphTZKyVC6h710/5c6HAafbvHO3fjsZw2YzDAeWHLw=
+X-Received: by 2002:a05:6402:42c9:b0:5e5:854d:4d17 with SMTP id
+ 4fb4d7f45d1cf-5eb9a017821mr12555025a12.11.1742719516454; Sun, 23 Mar 2025
+ 01:45:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org>
+In-Reply-To: <20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sun, 23 Mar 2025 09:45:06 +0100
+X-Gm-Features: AQ5f1JqljvGQqYT8xQtG-jZ8bGx-mNtzX8tKytu1uegIaEXtua4XQMAbrGMEflk
+Message-ID: <CAOQ4uxjQDUg8HFG+mSxMkR54zen7nC2jttzOKqh13Bx-uosh3Q@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] fs: introduce getfsxattrat and setfsxattrat syscalls
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-alpha@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-arch@vger.kernel.org, selinux@vger.kernel.org, 
+	Andrey Albershteyn <aalbersh@kernel.org>, linux-xfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-EXT4 supports bigalloc feature which allows the FS to work in size of
-clusters (group of blocks) rather than individual blocks. This patch
-adds atomic write support for bigalloc so that systems with bs = ps can
-also create FS using -
-    mkfs.ext4 -F -O bigalloc -b 4096 -C 16384 <dev>
+On Fri, Mar 21, 2025 at 8:50=E2=80=AFPM Andrey Albershteyn <aalbersh@redhat=
+.com> wrote:
+>
+> This patchset introduced two new syscalls getfsxattrat() and
+> setfsxattrat(). These syscalls are similar to FS_IOC_FSSETXATTR ioctl()
+> except they use *at() semantics. Therefore, there's no need to open the
+> file to get an fd.
+>
+> These syscalls allow userspace to set filesystem inode attributes on
+> special files. One of the usage examples is XFS quota projects.
+>
+> XFS has project quotas which could be attached to a directory. All
+> new inodes in these directories inherit project ID set on parent
+> directory.
+>
+> The project is created from userspace by opening and calling
+> FS_IOC_FSSETXATTR on each inode. This is not possible for special
+> files such as FIFO, SOCK, BLK etc. Therefore, some inodes are left
+> with empty project ID. Those inodes then are not shown in the quota
+> accounting but still exist in the directory. This is not critical but in
+> the case when special files are created in the directory with already
+> existing project quota, these new inodes inherit extended attributes.
+> This creates a mix of special files with and without attributes.
+> Moreover, special files with attributes don't have a possibility to
+> become clear or change the attributes. This, in turn, prevents userspace
+> from re-creating quota project on these existing files.
+>
+> Christian, if this get in some mergeable state, please don't merge it
+> yet. Amir suggested these syscalls better to use updated struct fsxattr
+> with masking from Pali Roh=C3=A1r patchset, so, let's see how it goes.
 
-With bigalloc ext4 can support multi-fsblock atomic writes. We will have to
-adjust ext4's atomic write unit max value to cluster size. This can then support
-atomic write of size anywhere between [blocksize, clustersize].
+Andrey,
 
-We first query the underlying region of the requested range by calling
-ext4_map_blocks() call. Here are the various cases which we then handle
-for block allocation depending upon the underlying mapping type:
-1. If the underlying region for the entire requested range is a mapped extent,
-   then we don't call ext4_map_blocks() to allocate anything. We don't need to
-   even start the jbd2 txn in this case.
-2. For an append write case, we create a mapped extent.
-3. If the underlying region is entirely a hole, then we create an unwritten
-   extent for the requested range.
-4. If the underlying region is a large unwritten extent, then we split the
-   extent into 2 unwritten extent of required size.
-5. If the underlying region has any type of mixed mapping, then we call
-   ext4_map_blocks() in a loop to zero out the unwritten and the hole regions
-   within the requested range. This then provide a single mapped extent type
-   mapping for the requested range.
+To be honest I don't think it would be fair to delay your syscalls more
+than needed.
 
-Note: We invoke ext4_map_blocks() in a loop with the EXT4_GET_BLOCKS_ZERO
-flag only when the underlying extent mapping of the requested range is
-not entirely a hole, an unwritten extent, or a fully mapped extent. That
-is, if the underlying region contains a mix of hole(s), unwritten
-extent(s), and mapped extent(s), we use this loop to ensure that all the
-short mappings are zeroed out. This guarantees that the entire requested
-range becomes a single, uniformly mapped extent. It is ok to do so
-because we know this is being done on a bigalloc enabled filesystem
-where the block bitmap represents the entire cluster unit.
+If Pali can follow through and post patches on top of your syscalls for
+next merge window that would be great, but otherwise, I think the
+minimum requirement is that the syscalls return EINVAL if fsx_pad
+is not zero. we can take it from there later.
 
-Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
----
- fs/ext4/inode.c | 90 +++++++++++++++++++++++++++++++++++++++++++++++--
- fs/ext4/super.c |  8 +++--
- 2 files changed, 93 insertions(+), 5 deletions(-)
+We can always also increase the size of struct fsxattr, but let's first
+use the padding space already available.
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index d04d8a7f12e7..0096a597ad04 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3332,6 +3332,67 @@ static void ext4_set_iomap(struct inode *inode, struct iomap *iomap,
- 		iomap->addr = IOMAP_NULL_ADDR;
- 	}
- }
-+/*
-+ * ext4_map_blocks_atomic: Helper routine to ensure the entire requested mapping
-+ * [map.m_lblk, map.m_len] is one single contiguous extent with no mixed
-+ * mappings. This function is only called when the bigalloc is enabled, so we
-+ * know that the allocated physical extent start is always aligned properly.
-+ *
-+ * We call EXT4_GET_BLOCKS_ZERO only when the underlying physical extent for the
-+ * requested range does not have a single mapping type (Hole, Mapped, or
-+ * Unwritten) throughout. In that case we will loop over the requested range to
-+ * allocate and zero out the unwritten / holes in between, to get a single
-+ * mapped extent from [m_lblk, m_len]. This case is mostly non-performance
-+ * critical path, so it should be ok to loop using ext4_map_blocks() with
-+ * appropriate flags to allocate & zero the underlying short holes/unwritten
-+ * extents within the requested range.
-+ */
-+static int ext4_map_blocks_atomic(handle_t *handle, struct inode *inode,
-+				  struct ext4_map_blocks *map)
-+{
-+	ext4_lblk_t m_lblk = map->m_lblk;
-+	unsigned int m_len = map->m_len;
-+	unsigned int mapped_len = 0, flags = 0;
-+	u8 blkbits = inode->i_blkbits;
-+	int ret;
-+
-+	WARN_ON(!ext4_has_feature_bigalloc(inode->i_sb));
-+
-+	ret = ext4_map_blocks(handle, inode, map, 0);
-+	if (((loff_t)map->m_lblk << blkbits) >= i_size_read(inode))
-+		flags = EXT4_GET_BLOCKS_CREATE;
-+	else if ((ret == 0 && map->m_len >= m_len) ||
-+		(ret >= m_len && map->m_flags & EXT4_MAP_UNWRITTEN))
-+		flags = EXT4_GET_BLOCKS_IO_CREATE_EXT;
-+	else
-+		flags = EXT4_GET_BLOCKS_CREATE_ZERO;
-+
-+	do {
-+		ret = ext4_map_blocks(handle, inode, map, flags);
-+		if (ret < 0)
-+			return ret;
-+		mapped_len += map->m_len;
-+		map->m_lblk += map->m_len;
-+		map->m_len = m_len - mapped_len;
-+	} while (mapped_len < m_len);
-+
-+	map->m_lblk = m_lblk;
-+	map->m_len = m_len;
-+
-+	/*
-+	 * We might have done some work in above loop. Let's ensure we query the
-+	 * start of the physical extent, based on the origin m_lblk and m_len
-+	 * and also ensure we were able to allocate the required range for doing
-+	 * atomic write.
-+	 */
-+	ret = ext4_map_blocks(handle, inode, map, 0);
-+	if (ret != m_len) {
-+		ext4_warning_inode(inode, "allocation failed for atomic write request pos:%u, len:%u\n",
-+				m_lblk, m_len);
-+		return -EINVAL;
-+	}
-+	return mapped_len;
-+}
+Thanks,
+Amir.
 
- static int ext4_iomap_alloc(struct inode *inode, struct ext4_map_blocks *map,
- 			    unsigned int flags)
-@@ -3377,7 +3438,10 @@ static int ext4_iomap_alloc(struct inode *inode, struct ext4_map_blocks *map,
- 	else if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
- 		m_flags = EXT4_GET_BLOCKS_IO_CREATE_EXT;
-
--	ret = ext4_map_blocks(handle, inode, map, m_flags);
-+	if (flags & IOMAP_ATOMIC && ext4_has_feature_bigalloc(inode->i_sb))
-+		ret = ext4_map_blocks_atomic(handle, inode, map);
-+	else
-+		ret = ext4_map_blocks(handle, inode, map, m_flags);
-
- 	/*
- 	 * We cannot fill holes in indirect tree based inodes as that could
-@@ -3401,6 +3465,7 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 	int ret;
- 	struct ext4_map_blocks map;
- 	u8 blkbits = inode->i_blkbits;
-+	unsigned int m_len_orig;
-
- 	if ((offset >> blkbits) > EXT4_MAX_LOGICAL_BLOCK)
- 		return -EINVAL;
-@@ -3414,6 +3479,7 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 	map.m_lblk = offset >> blkbits;
- 	map.m_len = min_t(loff_t, (offset + length - 1) >> blkbits,
- 			  EXT4_MAX_LOGICAL_BLOCK) - map.m_lblk + 1;
-+	m_len_orig = map.m_len;
-
- 	if (flags & IOMAP_WRITE) {
- 		/*
-@@ -3424,8 +3490,16 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 		 */
- 		if (offset + length <= i_size_read(inode)) {
- 			ret = ext4_map_blocks(NULL, inode, &map, 0);
--			if (ret > 0 && (map.m_flags & EXT4_MAP_MAPPED))
--				goto out;
-+			/*
-+			 * For atomic writes the entire requested length should
-+			 * be mapped.
-+			 */
-+			if (map.m_flags & EXT4_MAP_MAPPED) {
-+				if ((!(flags & IOMAP_ATOMIC) && ret > 0) ||
-+				   (flags & IOMAP_ATOMIC && ret >= m_len_orig))
-+					goto out;
-+			}
-+			map.m_len = m_len_orig;
- 		}
- 		ret = ext4_iomap_alloc(inode, &map, flags);
- 	} else {
-@@ -3442,6 +3516,16 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 	 */
- 	map.m_len = fscrypt_limit_io_blocks(inode, map.m_lblk, map.m_len);
-
-+	/*
-+	 * Before returning to iomap, let's ensure the allocated mapping
-+	 * covers the entire requested length for atomic writes.
-+	 */
-+	if (flags & IOMAP_ATOMIC) {
-+		if (map.m_len < (length >> blkbits)) {
-+			WARN_ON(1);
-+			return -EINVAL;
-+		}
-+	}
- 	ext4_set_iomap(inode, iomap, &map, offset, length, flags);
-
- 	return 0;
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index a50e5c31b937..cbb24d535d59 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -4442,12 +4442,13 @@ static int ext4_handle_clustersize(struct super_block *sb)
- /*
-  * ext4_atomic_write_init: Initializes filesystem min & max atomic write units.
-  * @sb: super block
-- * TODO: Later add support for bigalloc
-  */
- static void ext4_atomic_write_init(struct super_block *sb)
- {
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	struct block_device *bdev = sb->s_bdev;
-+	unsigned int blkbits = sb->s_blocksize_bits;
-+	unsigned int clustersize = sb->s_blocksize;
-
- 	if (!bdev_can_atomic_write(bdev))
- 		return;
-@@ -4455,9 +4456,12 @@ static void ext4_atomic_write_init(struct super_block *sb)
- 	if (!ext4_has_feature_extents(sb))
- 		return;
-
-+	if (ext4_has_feature_bigalloc(sb))
-+		clustersize = 1U << (sbi->s_cluster_bits + blkbits);
-+
- 	sbi->s_awu_min = max(sb->s_blocksize,
- 			      bdev_atomic_write_unit_min_bytes(bdev));
--	sbi->s_awu_max = min(sb->s_blocksize,
-+	sbi->s_awu_max = min(clustersize,
- 			      bdev_atomic_write_unit_max_bytes(bdev));
- 	if (sbi->s_awu_min && sbi->s_awu_max &&
- 	    sbi->s_awu_min <= sbi->s_awu_max) {
---
-2.48.1
-
+>
+> NAME
+>
+>         getfsxattrat/setfsxattrat - get/set filesystem inode attributes
+>
+> SYNOPSIS
+>
+>         #include <sys/syscall.h>    /* Definition of SYS_* constants */
+>         #include <unistd.h>
+>
+>         long syscall(SYS_getfsxattrat, int dirfd, const char *pathname,
+>                 struct fsxattr *fsx, size_t size,
+>                 unsigned int at_flags);
+>         long syscall(SYS_setfsxattrat, int dirfd, const char *pathname,
+>                 struct fsxattr *fsx, size_t size,
+>                 unsigned int at_flags);
+>
+>         Note: glibc doesn't provide for getfsxattrat()/setfsxattrat(),
+>         use syscall(2) instead.
+>
+> DESCRIPTION
+>
+>         The syscalls take fd and path to the child together with struct
+>         fsxattr. If path is absolute, fd is not used. If path is empty,
+>         inode under fd is used to get/set attributes on.
+>
+>         This is an alternative to FS_IOC_FSGETXATTR/FS_IOC_FSSETXATTR
+>         ioctl with a difference that file don't need to be open as we
+>         can reference it with a path instead of fd. By having this we
+>         can manipulated filesystem inode attributes not only on regular
+>         files but also on special ones. This is not possible with
+>         FS_IOC_FSSETXATTR ioctl as with special files we can not call
+>         ioctl() directly on the filesystem inode using file descriptor.
+>
+> RETURN VALUE
+>
+>         On success, 0 is returned.  On error, -1 is returned, and errno
+>         is set to indicate the error.
+>
+> ERRORS
+>
+>         EINVAL          Invalid at_flag specified (only
+>                         AT_SYMLINK_NOFOLLOW and AT_EMPTY_PATH is
+>                         supported).
+>
+>         EINVAL          Size was smaller than any known version of
+>                         struct fsxattr.
+>
+>         EINVAL          Invalid combination of parameters provided in
+>                         fsxattr for this type of file.
+>
+>         E2BIG           Size of input argument **struct fsxattr** is too
+>                         big.
+>
+>         EBADF           Invalid file descriptor was provided.
+>
+>         EPERM           No permission to change this file.
+>
+>         EOPNOTSUPP      Filesystem does not support setting attributes
+>                         on this type of inode
+>
+> HISTORY
+>
+>         Added in Linux 6.14.
+>
+> EXAMPLE
+>
+> Create directory and file "mkdir ./dir && touch ./dir/foo" and then
+> execute the following program:
+>
+>         #include <fcntl.h>
+>         #include <errno.h>
+>         #include <string.h>
+>         #include <linux/fs.h>
+>         #include <stdio.h>
+>         #include <sys/syscall.h>
+>         #include <unistd.h>
+>
+>         int
+>         main(int argc, char **argv) {
+>                 int dfd;
+>                 int error;
+>                 struct fsxattr fsx;
+>
+>                 dfd =3D open("./dir", O_RDONLY);
+>                 if (dfd =3D=3D -1) {
+>                         printf("can not open ./dir");
+>                         return dfd;
+>                 }
+>
+>                 error =3D syscall(467, dfd, "./foo", &fsx, 0);
+>                 if (error) {
+>                         printf("can not call 467: %s", strerror(errno));
+>                         return error;
+>                 }
+>
+>                 printf("dir/foo flags: %d\n", fsx.fsx_xflags);
+>
+>                 fsx.fsx_xflags |=3D FS_XFLAG_NODUMP;
+>                 error =3D syscall(468, dfd, "./foo", &fsx, 0);
+>                 if (error) {
+>                         printf("can not call 468: %s", strerror(errno));
+>                         return error;
+>                 }
+>
+>                 printf("dir/foo flags: %d\n", fsx.fsx_xflags);
+>
+>                 return error;
+>         }
+>
+> SEE ALSO
+>
+>         ioctl(2), ioctl_iflags(2), ioctl_xfs_fsgetxattr(2)
+>
+> ---
+> Changes in v4:
+> - Use getname_maybe_null() for correct handling of dfd + path semantic
+> - Remove restriction for special files on which flags are allowed
+> - Utilize copy_struct_from_user() for better future compatibility
+> - Add draft man page to cover letter
+> - Convert -ENOIOCTLCMD to -EOPNOSUPP as more appropriate for syscall
+> - Add missing __user to header declaration of syscalls
+> - Link to v3: https://lore.kernel.org/r/20250211-xattrat-syscall-v3-1-a07=
+d15f898b2@kernel.org
+>
+> Changes in v3:
+> - Remove unnecessary "dfd is dir" check as it checked in user_path_at()
+> - Remove unnecessary "same filesystem" check
+> - Use CLASS() instead of directly calling fdget/fdput
+> - Link to v2: https://lore.kernel.org/r/20250122-xattrat-syscall-v2-1-5b3=
+60d4fbcb2@kernel.org
+>
+> v1:
+> https://lore.kernel.org/linuxppc-dev/20250109174540.893098-1-aalbersh@ker=
+nel.org/
+>
+> Previous discussion:
+> https://lore.kernel.org/linux-xfs/20240520164624.665269-2-aalbersh@redhat=
+.com/
+>
+> ---
+> Andrey Albershteyn (3):
+>       lsm: introduce new hooks for setting/getting inode fsxattr
+>       fs: split fileattr/fsxattr converters into helpers
+>       fs: introduce getfsxattrat and setfsxattrat syscalls
+>
+>  arch/alpha/kernel/syscalls/syscall.tbl      |   2 +
+>  arch/arm/tools/syscall.tbl                  |   2 +
+>  arch/arm64/tools/syscall_32.tbl             |   2 +
+>  arch/m68k/kernel/syscalls/syscall.tbl       |   2 +
+>  arch/microblaze/kernel/syscalls/syscall.tbl |   2 +
+>  arch/mips/kernel/syscalls/syscall_n32.tbl   |   2 +
+>  arch/mips/kernel/syscalls/syscall_n64.tbl   |   2 +
+>  arch/mips/kernel/syscalls/syscall_o32.tbl   |   2 +
+>  arch/parisc/kernel/syscalls/syscall.tbl     |   2 +
+>  arch/powerpc/kernel/syscalls/syscall.tbl    |   2 +
+>  arch/s390/kernel/syscalls/syscall.tbl       |   2 +
+>  arch/sh/kernel/syscalls/syscall.tbl         |   2 +
+>  arch/sparc/kernel/syscalls/syscall.tbl      |   2 +
+>  arch/x86/entry/syscalls/syscall_32.tbl      |   2 +
+>  arch/x86/entry/syscalls/syscall_64.tbl      |   2 +
+>  arch/xtensa/kernel/syscalls/syscall.tbl     |   2 +
+>  fs/inode.c                                  | 130 ++++++++++++++++++++++=
+++++++
+>  fs/ioctl.c                                  |  39 ++++++---
+>  include/linux/fileattr.h                    |   2 +
+>  include/linux/lsm_hook_defs.h               |   4 +
+>  include/linux/security.h                    |  16 ++++
+>  include/linux/syscalls.h                    |   6 ++
+>  include/uapi/asm-generic/unistd.h           |   8 +-
+>  include/uapi/linux/fs.h                     |   3 +
+>  security/security.c                         |  32 +++++++
+>  25 files changed, 259 insertions(+), 13 deletions(-)
+> ---
+> base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
+> change-id: 20250114-xattrat-syscall-6a1136d2db59
+>
+> Best regards,
+> --
+> Andrey Albershteyn <aalbersh@kernel.org>
+>
+>
 
