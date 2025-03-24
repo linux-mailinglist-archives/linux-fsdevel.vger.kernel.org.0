@@ -1,320 +1,274 @@
-Return-Path: <linux-fsdevel+bounces-44860-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44861-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1A1DA6D869
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 11:40:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E9FEA6D894
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 11:48:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4121E16BB8E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 10:40:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C729916C6B9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 10:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7327525DCFC;
-	Mon, 24 Mar 2025 10:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBFA25DCF8;
+	Mon, 24 Mar 2025 10:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b="t0tM5kh+"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="d3stwIN2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2048.outbound.protection.outlook.com [40.107.96.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0049325DCE0;
-	Mon, 24 Mar 2025 10:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.129.21.66
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742812815; cv=none; b=b7jH36No4qRE7xQKQDZEoO67X+48uIWy7WklZCB8uyESIIhaCxAV0PqJe7te/mt2qnJClUq+Kc9ajPZkyeYXqBr7lrISkOCtdXPjam6Tzo+GonPOKK1i9EMqi4m+DMK1YdU9nLGCikQGs/L9vtObvSrhaGBWFHBjh/M9PNJB5P8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742812815; c=relaxed/simple;
-	bh=3zyKTjQs/OB6iAaRE9Ife3b39lro/KTj1mbHsGu+BpE=;
-	h=MIME-Version:Date:From:To:Cc:Subject:Message-ID:Content-Type; b=Gl+qaG4Ch0hMqVBvYl2RhOADEJSPNh1EDJyEWvU1ddH0ZOMS+edUqseLkiUBnsiIdTip5u9KfnNo/TV5bgF6W/ON1tUoCru8ivyr4jH+ugmoqVMdYcRi+w5tyOs0WKEiGwG8ThhYHo7JKEMr1PGb8vKKleW+6k/KBy0q5GA3OIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr; spf=pass smtp.mailfrom=3xo.fr; dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b=t0tM5kh+; arc=none smtp.client-ip=212.129.21.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xo.fr
-Received: from localhost (mail.3xo.fr [212.129.21.66])
-	by mail.3xo.fr (Postfix) with ESMTP id 0AA44CB;
-	Mon, 24 Mar 2025 11:40:11 +0100 (CET)
-X-Virus-Scanned: Debian amavis at nxo2.3xo.fr
-Received: from mail.3xo.fr ([212.129.21.66])
- by localhost (mail.3xo.fr [212.129.21.66]) (amavis, port 10024) with ESMTP
- id TBIROaVj1m-o; Mon, 24 Mar 2025 11:40:09 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.3xo.fr D5CA58D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xo.fr; s=3xo;
-	t=1742812809; bh=jAatwW99hb+aFvtznLhiTkgdJUYkBUYSrPmdAagNwv4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=t0tM5kh+dyxp1nOdT4I36YGQhcvMEji0z1wKVUhoV8ZgT3XY2AefeXQR6w3p4uOuq
-	 FGI9P5WaYWOIXoMAfFPnlSvHnfHW8WuNjDkGzvXQtru+BvUmdGua3sylaUQoJc9nH/
-	 KfNrn7lSqcyufMa/Q7tASGsjzR7uVrplbD3COYW5m28PLoMstMnm7/o9+sQGU9s9T+
-	 Yx1Vxk+Ui7cX3TDv3SJy4jq8UQakoa9OUy1dXaytteJODDaM6hZl5iTc/lwq6Hv4HC
-	 7GA+UXS4t+a+Tpbw6pE1t5NIfa+93Gt4IoEEHtn8ahvNJB0ctu6FaDncQBu+siWe8Q
-	 Q4UYS7wn/xEzA==
-Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3xo.fr (Postfix) with ESMTPSA id D5CA58D;
-	Mon, 24 Mar 2025 11:40:08 +0100 (CET)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4E5205E26;
+	Mon, 24 Mar 2025 10:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742813286; cv=fail; b=n2aBiTvsSjE6JaxunNC9LxoSqL6h/Z0umvc+R6l4iq+jMnokzj9DrxoyWpxjT+5mfehfQZQ/gqpDicQI7FlVAHU3N3E1/qKEEL+TJj/WCZAG7apmVCjyc8wV/Ysx2/KHCDQ0m3A51Fl9RhB1UBLTgqRzUEiVVGO7RaB5WuLqsEY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742813286; c=relaxed/simple;
+	bh=S1Q+5mMYzsATkM9fBO6oOkbTnKu7ocD2WYGL+sf/UiU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rowO0UgT5wpfftwPopP1GZiG2fialVi+mI8mqM7oapEt0Tw3XYjyQWwDJnIhE+82p6VTy9sEkW+tAM1QjXHfxwEn1rSA5nI3GHjIAqjiNmaAzXa1aegxC22HEcb3HkYDtheOOxhvh5yq4qnIg/dPYLpiUilT1IhLE8hzmwaQyNY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=d3stwIN2; arc=fail smtp.client-ip=40.107.96.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VE8HyVeUotswK2v/jUXKWsnpGbKybxQdwijrYQZMNqgcLhBKOxooMvozd8DpVFyoIgYTl1ArrcCOk5Ij4gCLyYMz0r90RQ2gyQLKN15QXCV1XxGuv8oLh3FCZaRD1esBwPcTY+/DkzXmEDkRs9ATheQ+MZeGIQJ0vqBEvGVx+odJ+HuWTs3oCt2RJ4mg2+HLwtLR1+89IG4x6p9dLkSq1e/C/Og7yGQc3PfdNPIBGjHiu0siYARegwB/Gxg3DfRKJToT653MPypz7ffvNQiVxlCDfrkWoctEh9hK6Li/p+uTMCU/isEqQJB+6EF2GfWyGMhiiL83zUjBTI5B3zkyTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5Z4gUFn+HAQXWsRvG1fmQun0e/a+AY+40KMkfinjWp8=;
+ b=lEbkJanFoLMdxNXWe0Xp/idK+oSR/zr376wHvjvvHssUJarydZLv8tESLQU6YOGdytcuUeGytUEt73zCGWYE3tAQ/7IZq+foI7PK+Oem1hngs+DfEMaUAu8TheznZOgahC1f3RJomDVZ5XgrfyrVvIzn9LjNb7NACsXj61HfBVhYtRByl6w6jupwjKVMytbaQQ5bcT19OgyXfzj8hbJM/xNxG++xIRU2+7oUUL9rya51pjFobvo4HDjBJBQBbOrPD/QMGcNNiz+8LjOSj9Ag/Q0Qg0mJc4b4wB4BtTRMut0DImfrQ7FZFxn0TU0OLUJZmhtSZhTeIlGdfnEdiWcwMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5Z4gUFn+HAQXWsRvG1fmQun0e/a+AY+40KMkfinjWp8=;
+ b=d3stwIN2EyBnViFZD/Sh7IEhLU8xxpYoDAVXku03IUy97WFa2PXBiY4VEVyRVzPqgfYOk30ew6BaPDrZto0pkQTLeOwe9teYg8U5n3wQdzr//Gk9FCCtlhWkpfGEi1OpPPaj6krIt8IraJlnjXlPqctQIsomBfQoDipoN55L5L8=
+Received: from BY5PR13CA0014.namprd13.prod.outlook.com (2603:10b6:a03:180::27)
+ by PH7PR12MB7380.namprd12.prod.outlook.com (2603:10b6:510:20f::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
+ 2025 10:48:00 +0000
+Received: from CO1PEPF000066E6.namprd05.prod.outlook.com
+ (2603:10b6:a03:180:cafe::56) by BY5PR13CA0014.outlook.office365.com
+ (2603:10b6:a03:180::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.38 via Frontend Transport; Mon,
+ 24 Mar 2025 10:48:00 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000066E6.mail.protection.outlook.com (10.167.249.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8534.20 via Frontend Transport; Mon, 24 Mar 2025 10:48:00 +0000
+Received: from [10.252.90.31] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Mar
+ 2025 05:47:56 -0500
+Message-ID: <af0134a7-6f2a-46e1-85aa-c97477bd6ed8@amd.com>
+Date: Mon, 24 Mar 2025 16:17:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 24 Mar 2025 11:40:08 +0100
-From: Nicolas Baranger <nicolas.baranger@3xo.fr>
-To: Christoph Hellwig <hch@infradead.org>, David Howells
- <dhowells@redhat.com>, netfs@lists.linux.dev, linux-cifs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Steve French <smfrench@gmail.com>, Jeff Layton <jlayton@kernel.org>,
- Christian Brauner <brauner@kernel.org>
-Subject: [netfs/cifs - Linux 6.14] loop on file cat + file copy when files are
- on CIFS share
-Message-ID: <10bec2430ed4df68bde10ed95295d093@3xo.fr>
-X-Sender: nicolas.baranger@3xo.fr
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
+To: Oleg Nesterov <oleg@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>
+CC: syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>,
+	<brauner@kernel.org>, <dhowells@redhat.com>, <jack@suse.cz>,
+	<jlayton@kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <netfs@lists.linux.dev>,
+	<swapnil.sapkal@amd.com>, <syzkaller-bugs@googlegroups.com>,
+	<viro@zeniv.linux.org.uk>
+References: <20250323184848.GB14883@redhat.com>
+ <67e05e30.050a0220.21942d.0003.GAE@google.com>
+ <20250323194701.GC14883@redhat.com>
+ <CAGudoHHmvU54MU8dsZy422A4+ZzWTVs7LFevP7NpKzwZ1YOqgg@mail.gmail.com>
+ <20250323210251.GD14883@redhat.com>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20250323210251.GD14883@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000066E6:EE_|PH7PR12MB7380:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0d5c6b3f-6b63-47f8-f4b5-08dd6ac1588f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013|13003099007|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eGlrK2FRZWNZcjZ0SmlRQTZyTFplYU1ZM2ZEMksvWWRKRzRwUU5sTGJ1U0hu?=
+ =?utf-8?B?VzhEb0MrMGxTOUQ5K3gyNGxSeStKSmh2clRkeDVMNkd1aFZGczJLWFlDWGxI?=
+ =?utf-8?B?ditrUHVJaUhGT2lXaFZNdHFpMEZUM1lGaC90ZTJZWFBDdkZNY01wbU9WQ2Qz?=
+ =?utf-8?B?NGxNRGdldExacDdJTXlnMmVQeUxXOGs4T0dnSEVLaW1aQWQ2Tmd2S3RGUXRY?=
+ =?utf-8?B?MS8zdmJWeG9KL3Rmc1dwWXlOenhTV2xYLzVSV1NELzdrOTIxNFZmajJGYWNQ?=
+ =?utf-8?B?Mzl2UzBlQXR4dlpsK3RobmZ6SVpmMTh4aE1NZXhOUXR4MWJOVDEwN05NWWZy?=
+ =?utf-8?B?TnhvUlYrZnh3WitBbVFMaWRHNTgybXFiUENzM3dXNzlPYVd5WmQ2VHMzVDU2?=
+ =?utf-8?B?UU1ZSk9LMUc3R3pEbmRDVjJvQ3hRSWQwck9wR3Raekt5aHFvaDZyYVdPQnFz?=
+ =?utf-8?B?ekpYWUMwWlhnZmRHMDVwWHpwajg5djY5ZTZBa0RXeW5JUGlOVjByNmtvclR6?=
+ =?utf-8?B?Z3JqdU1hVDVtVkp5QjdDNXROc3l4TUYzNFNtYVBRMklkN0dQRjRISW1xUjJP?=
+ =?utf-8?B?ZzVFYmpta01oc0c5cUZ0SnEvUzlLRnN5L0U2RHNHNzl6WTc1dzVtQ1MzdkxK?=
+ =?utf-8?B?d2Q0Mk4rdGlWNTBLS2tsb2t4eDE5Zkt5cDRSTFZTaUxaeE5DdVNWQnh5Y0s5?=
+ =?utf-8?B?b0N3cENjS09ValZNNW1rVURyZ3FQc3RxdmNsZGRNMTlmMTJXemMzcmRTb0xX?=
+ =?utf-8?B?ZlQ3K3dyRmh5MWRKL25rRmZYbWN1bGUyOUpURjRnc3FrbWoybTlqZUhzZmhr?=
+ =?utf-8?B?eitBTTBLbjNrbTNGUVdoUTRLcjgvalN3TzE5TjNzaG9abHgwdW8zcmVSSXJ2?=
+ =?utf-8?B?bHV3b1VhY2VmOVQ2QU02V1ZmWVB1TzU2Z0NpYkZmOFIzRDhQZHNMRVB2K1A1?=
+ =?utf-8?B?TUNTaHBLTlBRUS9CN09PTE1ocTJYdTc5TVhkMWNFZXlpaU92a2R2N0FSbjcr?=
+ =?utf-8?B?enV0UFh0eURWcnlXcGtVOFEzdDA1QkR3NHk2WHprMEYyUXNGcDI5Z2tURjZl?=
+ =?utf-8?B?YmZBRUNtVldBZjFtd0taREdqY2JRK2tCTlB5R01qc1ljbEwvZUl2ZkFLaEFl?=
+ =?utf-8?B?QTU0NWZxbDIzbk1mbVZpZnFFMEFiNjFiV1dWbmwwTVlybkkvcFp2cjYxSFNE?=
+ =?utf-8?B?VFZoL2ozdUxISzN1WlliaG1LZFB1cUFGd0NCcFlRcDFtUTR0ZmRyamVtNTVX?=
+ =?utf-8?B?R3hxbm52RUVPTWo3SlNyaHhic2NMQmE4QXNidnVsUU1ZOUdDQlFqMWRleXNT?=
+ =?utf-8?B?N1hVaXhNTkJDSFhKK1lKZ01oNWhYMU1JZGRyL3h1bk9SUm9GVmFRS1ZFMjVH?=
+ =?utf-8?B?cjc4dFdMMjdmOXhta0Y0QlgvcllkdjkraVk2R1E2Z05JNDZwQkJJUThUZVNR?=
+ =?utf-8?B?cmQ5ZUFUajRjUkFrWVRlMTA2VHE3VWcvU0ViQzRvRkFYciszZDJ4ZFhvY25B?=
+ =?utf-8?B?QjZSUlJJOHpvaGRkWkV1eXdSV1J1L1REUVlaV2gvRHlGVVBmNDVNbXpaclk3?=
+ =?utf-8?B?Q1FFUXdXZThFVlhRRktvMTVhTDdoWU1RNXY2VlZLUUNKeFY1UU1QOXYwZ2VD?=
+ =?utf-8?B?T1I0bGM0M2g5SUV1UExMRUVUNk1JODA5N1JHS3RUNUpuVEQvc09LeW9tb09J?=
+ =?utf-8?B?N0VxcENRMWM4Q0lxSmJ0YUk3WjNlRmFoWlJHZ1NCUUFUWXpXTHJxWmZYck9E?=
+ =?utf-8?B?a0JmY2h0cWZsZ3ljUVMrbVZDQTJTcHNBWkUzN1BXd0lpZFdBQU43N1UvZW9G?=
+ =?utf-8?B?bG5lU3FkVTR5THRGMEZJM2xYSGxrQk5ETGwxcU1mQTVLTG50MWl4VlBMMjZ5?=
+ =?utf-8?B?cFJLVHFzc2kvNmtMbklIcEptbFVpQWpEVE9JK1pwNTJqTmdBOXZ0UTJVRWhW?=
+ =?utf-8?Q?uLBPKLiwO4c=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013)(13003099007)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 10:48:00.2133
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d5c6b3f-6b63-47f8-f4b5-08dd6ac1588f
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000066E6.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7380
 
-Hi Christoph, David
+Hello Oleg, Mateusz,
 
-Sorry my last mail didn't arrive at the top of the list so I resend it 
-with a new title
+On 3/24/2025 2:32 AM, Oleg Nesterov wrote:
+> Prateek, Mateusz, thanks for your participation!
+> 
+> On 03/23, Mateusz Guzik wrote:
+>>
+>> On Sun, Mar 23, 2025 at 8:47 PM Oleg Nesterov <oleg@redhat.com> wrote:
+>>>
+>>> OK, as expected.
+>>>
+>>> Dear syzbot, thank you.
+>>>
+>>> So far I think this is another problem revealed by aaec5a95d59615523db03dd5
+>>> ("pipe_read: don't wake up the writer if the pipe is still full").
+>>>
+>>> I am going to forget about this report for now and return to it later, when
+>>> all the pending pipe-related changes in vfs.git are merged.
+>>>
+>>
+>> How do you ask syzbot for all stacks?
+> 
+> Heh, I don't know.
+> 
+>> The reproducer *does* use pipes, but it is unclear to me if they play
+>> any role here
+> 
+> please see the reproducer,
+> 
+> 	https://syzkaller.appspot.com/x/repro.c?x=10d6a44c580000
+> 
+>    res = syscall(__NR_pipe2, /*pipefd=*/0x400000001900ul, /*flags=*/0ul);
+>    if (res != -1) {
+>      r[2] = *(uint32_t*)0x400000001900;
+>      r[3] = *(uint32_t*)0x400000001904;
+>    }
+> 
+> then
+> 
+>    res = syscall(__NR_dup, /*oldfd=*/r[3]);
+>    if (res != -1)
+>      r[4] = res;
+> 
+> so r[2] and r[4] are the read/write fd's.
+> 
+> then later
+> 
+>     memcpy((void*)0x400000000280, "trans=fd,", 9);
+>     ...
+>     memcpy((void*)0x400000000289, "rfdno", 5);
+>     ...
+>     sprintf((char*)0x40000000028f, "0x%016llx", (long long)r[2]);
+>     ...
+>     memcpy((void*)0x4000000002a2, "wfdno", 5);
+>     ...
+>     sprintf((char*)0x4000000002a8, "0x%016llx", (long long)r[4]);
+>     ...
+>     syscall(__NR_mount, /*src=*/0ul, /*dst=*/0x400000000000ul,
+>             /*type=*/0x400000000040ul, /*flags=*/0ul, /*opts=*/0x400000000280ul);
+> 
+> so this pipe is actually used as "trans=fd".
+> 
+>> -- and notably we don't know if there is someone stuck
+>> in pipe code, resulting in not waking up the reported thread.
+> 
+> Yes, I am not familiar with 9p or netfs, so I don't know either.
 
-I don't know if it had already been reported but after building Linux 
-6.14-rc1 I constat the following behaviour:
+Didn't have any luck reproducing this yet but I'm looking at
+https://syzkaller.appspot.com/x/log.txt?x=1397319b980000
+which is the trimmed log from original report and I see ...
 
-'cat' command is going on a loop when I cat a file which reside on cifs 
-share
+[pid  5842] creat("./file0", 000)       = 7
+[  137.753309][   T30] audit: type=1400 audit(1742312362.045:90): avc:  denied  { mount } for  pid=5842 comm="syz-executor309" name="/" dev="9p" ino=2 scontext=root:sysadm_r:sysadm_t tcontext=system_u:object_r:unlabeled_t tclass=filesystem permissive=1
+[  137.775741][   T30] audit: type=1400 audit(1742312362.065:91): avc:  denied  { setattr } for  pid=5842 comm="syz-executor309" name="/" dev="9p" ino=2 scontext=root:sysadm_r:sysadm_t tcontext=system_u:object_r:unlabeled_t tclass=file permissive=1
+[  137.798215][   T30] audit: type=1400 audit(1742312362.075:92): avc:  denied  { write } for  pid=5842 comm="syz-executor309" dev="9p" ino=2 scontext=root:sysadm_r:sysadm_t tcontext=system_u:object_r:unlabeled_t tclass=file permissive=1
+[  137.819189][   T30] audit: type=1400 audit(1742312362.075:93): avc:  denied  { open } for  pid=5842 comm="syz-executor309" path="/file0" dev="9p" ino=2 scontext=root:sysadm_r:sysadm_t tcontext=system_u:object_r:unlabeled_t tclass=file permissive=1
+[pid  5842] write(7, "\x08\x00\x00\x00\x1a\x17\x92\x4a\xb2\x18\xea\xcb\x15\xa3\xfc\xcf\x92\x9e\x2d\xd2\x49\x79\x03\xc1\xf8\x53\xd9\x5b\x99\x5c\x65\xe9\x94\x49\xff\x95\x3f\xa1\x1c\x77\x23\xb2\x14\x9e\xcd\xaa\x7f\x83\x3f\x60\xe1\x3b\x19\xa6\x6e\x96\x3f\x7e\x8d\xa4\x29\x7e\xbb\xfd\xda\x5b\x36\xfb\x4d\x01\xbd\x02\xe6\xc6\x52\xdc\x4d\x99\xe2\xcb\x82\xc2\xa1\xd4\xa4\x5e\x4c\x89\xba\x99\x94\xe8\x2f\x85\x4b\xbc\x34\xa4\x0b\x3a"..., 32748 <unfinished ...>
 
-And so 'cp' command does the same: it copy the content of a file on cifs 
-share and loop writing it to the destination
-I did test with a file named 'toto' and containing only ascii string 
-'toto'.
+So we have a "write" denied for pid 5842 and then it tries a write that
+seems to hangs. In all the traces for hang, I see a denied for a task
+followed by a hang for the task in the same tgid.
 
-When I started copying it from cifs share to local filesystem, I had to 
-CTRL+C the copy of this 5 bytes file after some time because the 
-destination file was using all the filesystem free space and containing 
-billions of 'toto' lines
+But since this is a "permissive" policy, it should not cause a hang,
+only report that the program is in violation. Also I have no clue how a
+spurious wakeup of a writer could then lead to progress.
 
-Here is an example with cat:
+Since in all cases the thread info flags "flags:0x00004006" has the
+TIF_NOTIFY_SIGNAL bit set, I'm wondering if it has something to do with
+the fact that pipe_read() directly return -ERESTARTSYS in case of a
+pending signal without any wakeups?
 
-CIFS SHARE is mounted as /mnt/fbx/FBX-24T
+Well here goes nothing I guess; Totally a shot in the dark:
 
-CIFS mount options:
-grep cifs /proc/mounts
-//10.0.10.100/FBX24T /mnt/fbx/FBX-24T cifs 
-rw,nosuid,nodev,noexec,relatime,vers=3.1.1,cache=none,upcall_target=app,username=fbx,domain=HOMELAN,uid=0,noforceuid,gid=0,noforcegid,addr=10.0.10.100,file_mode=0666,dir_mode=0755,iocharset=utf8,soft,nounix,serverino,mapposix,mfsymlinks,reparse=nfs,nativesocket,symlink=mfsymlinks,rsize=65536,wsize=65536,bsize=16777216,retrans=1,echo_interval=60,actimeo=1,closetimeo=1 
-0 0
+P.S. I think it should be wake_next_reader but if this does not hang,
+perhaps it could point to some interaction with signal pending and
+wakeup. There are some EPOLL semantics in pipe_write() which will
+cause readers to wakeup if the writer has signal_pending() and
+pipe->poll_usage is set.
 
-KERNEL: uname -a
-Linux 14RV-SERVER.14rv.lan 6.14.0.1-ast-rc2-amd64 #0 SMP PREEMPT_DYNAMIC 
-Wed Feb 12 18:23:00 CET 2025 x86_64 GNU/Linux
+#syz test: upstream aaec5a95d59615523db03dd53c2052f0a87beea7
 
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 82fede0f2111..9efeb86eaac5 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -359,6 +359,8 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+  			ret = -EAGAIN;
+  			break;
+  		}
++		if (signal_pending(current) && pipe_full(pipe->head, pipe->tail, pipe->max_usage))
++			wake_writer = true;
+  		mutex_unlock(&pipe->mutex);
+  
+  		/*
 
-To be reproduced:
-echo toto >/mnt/fbx/FBX-24T/toto
-
-ls -l /mnt/fbx/FBX-24T/toto
--rw-rw-rw- 1 root root 5 20 mars  09:20 /mnt/fbx/FBX-24T/toto
-
-cat /mnt/fbx/FBX-24T/toto
-toto
-toto
-toto
-toto
-toto
-toto
-toto
-^C
-
-strace cat /mnt/fbx/FBX-24T/toto
-execve("/usr/bin/cat", ["cat", "/mnt/fbx/FBX-24T/toto"], 0x7ffc39b41848 
-/* 19 vars */) = 0
-brk(NULL)                               = 0x55755b1c1000
-mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) 
-= 0x7f55f95d6000
-access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (Aucun fichier ou 
-dossier de ce type)
-openat(AT_FDCWD, "glibc-hwcaps/x86-64-v3/libc.so.6", O_RDONLY|O_CLOEXEC) 
-= -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "glibc-hwcaps/x86-64-v2/libc.so.6", O_RDONLY|O_CLOEXEC) 
-= -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "tls/haswell/x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = 
--1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "tls/haswell/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 
-ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "tls/x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT 
-(Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "tls/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun 
-fichier ou dossier de ce type)
-openat(AT_FDCWD, "haswell/x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 
-ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "haswell/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT 
-(Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT 
-(Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun 
-fichier ou dossier de ce type)
-openat(AT_FDCWD, 
-"/usr/local/cuda-12.6/lib64/glibc-hwcaps/x86-64-v3/libc.so.6", 
-O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-newfstatat(AT_FDCWD, 
-"/usr/local/cuda-12.6/lib64/glibc-hwcaps/x86-64-v3", 0x7fff25937800, 0) 
-= -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, 
-"/usr/local/cuda-12.6/lib64/glibc-hwcaps/x86-64-v2/libc.so.6", 
-O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-newfstatat(AT_FDCWD, 
-"/usr/local/cuda-12.6/lib64/glibc-hwcaps/x86-64-v2", 0x7fff25937800, 0) 
-= -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, 
-"/usr/local/cuda-12.6/lib64/tls/haswell/x86_64/libc.so.6", 
-O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls/haswell/x86_64", 
-0x7fff25937800, 0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls/haswell/libc.so.6", 
-O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls/haswell", 
-0x7fff25937800, 0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls/x86_64/libc.so.6", 
-O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls/x86_64", 
-0x7fff25937800, 0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls/libc.so.6", 
-O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls", 0x7fff25937800, 
-0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/haswell/x86_64/libc.so.6", 
-O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/haswell/x86_64", 
-0x7fff25937800, 0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/haswell/libc.so.6", 
-O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/haswell", 
-0x7fff25937800, 0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/x86_64/libc.so.6", 
-O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/x86_64", 
-0x7fff25937800, 0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/libc.so.6", 
-O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64", 
-{st_mode=S_IFDIR|S_ISGID|0755, st_size=4570, ...}, 0) = 0
-openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
-newfstatat(3, "", {st_mode=S_IFREG|0644, st_size=148466, ...}, 
-AT_EMPTY_PATH) = 0
-mmap(NULL, 148466, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f55f95b1000
-close(3)                                = 0
-openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) 
-= 3
-read(3, 
-"\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\20t\2\0\0\0\0\0"..., 
-832) = 832
-pread64(3, 
-"\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 
-64) = 784
-newfstatat(3, "", {st_mode=S_IFREG|0755, st_size=1922136, ...}, 
-AT_EMPTY_PATH) = 0
-pread64(3, 
-"\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 
-64) = 784
-mmap(NULL, 1970000, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 
-0x7f55f93d0000
-mmap(0x7f55f93f6000, 1396736, PROT_READ|PROT_EXEC, 
-MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x26000) = 0x7f55f93f6000
-mmap(0x7f55f954b000, 339968, PROT_READ, 
-MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x17b000) = 0x7f55f954b000
-mmap(0x7f55f959e000, 24576, PROT_READ|PROT_WRITE, 
-MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1ce000) = 0x7f55f959e000
-mmap(0x7f55f95a4000, 53072, PROT_READ|PROT_WRITE, 
-MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f55f95a4000
-close(3)                                = 0
-mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 
-0) = 0x7f55f93cd000
-arch_prctl(ARCH_SET_FS, 0x7f55f93cd740) = 0
-set_tid_address(0x7f55f93cda10)         = 38427
-set_robust_list(0x7f55f93cda20, 24)     = 0
-rseq(0x7f55f93ce060, 0x20, 0, 0x53053053) = 0
-mprotect(0x7f55f959e000, 16384, PROT_READ) = 0
-mprotect(0x55754475e000, 4096, PROT_READ) = 0
-mprotect(0x7f55f960e000, 8192, PROT_READ) = 0
-prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, 
-rlim_max=RLIM64_INFINITY}) = 0
-munmap(0x7f55f95b1000, 148466)          = 0
-getrandom("\x19\x6b\x9e\x55\x7e\x09\x74\x5f", 8, GRND_NONBLOCK) = 8
-brk(NULL)                               = 0x55755b1c1000
-brk(0x55755b1e2000)                     = 0x55755b1e2000
-openat(AT_FDCWD, "/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = 
-3
-newfstatat(3, "", {st_mode=S_IFREG|0644, st_size=3048928, ...}, 
-AT_EMPTY_PATH) = 0
-mmap(NULL, 3048928, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f55f9000000
-close(3)                                = 0
-newfstatat(1, "", {st_mode=S_IFCHR|0600, st_rdev=makedev(0x88, 0), ...}, 
-AT_EMPTY_PATH) = 0
-openat(AT_FDCWD, "/mnt/fbx/FBX-24T/toto", O_RDONLY) = 3
-newfstatat(3, "", {st_mode=S_IFREG|0666, st_size=5, ...}, AT_EMPTY_PATH) 
-= 0
-fadvise64(3, 0, 0, POSIX_FADV_SEQUENTIAL) = 0
-mmap(NULL, 16785408, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, 
--1, 0) = 0x7f55f7ffe000
-read(3, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16777216) = 16711680
-write(1, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16711680toto
-) = 16711680
-read(3, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16777216) = 16711680
-write(1, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16711680toto
-) = 16711680
-read(3, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16777216) = 16711680
-write(1, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16711680toto
-) = 16711680
-read(3, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16777216) = 16711680
-write(1, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16711680toto
-) = 16711680
-read(3, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16777216) = 16711680
-write(1, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16711680toto
-) = 16711680
-read(3, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16777216) = 16711680
-write(1, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16711680toto
-) = 16711680
-read(3, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16777216) = 16711680
-write(1, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16711680toto
-^Cstrace: Process 38427 detached
-  <detached ...>
-
-
-Please let me know if it had already been fixed or reported and if 
-you're able to reproduce this issue.
-
-Thanks for help
-
-Kind regards
-Nicolas Baranger
 
 
