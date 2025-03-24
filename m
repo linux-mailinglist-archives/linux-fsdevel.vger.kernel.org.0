@@ -1,198 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-44895-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0767DA6E384
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 20:29:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 883F7A6E3F8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 21:11:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE2E9188B3C2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 19:29:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A402171633
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 20:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B851519C54A;
-	Mon, 24 Mar 2025 19:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398BB1B4248;
+	Mon, 24 Mar 2025 20:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WrGOfM93";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="x4F6Qmlq";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WrGOfM93";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="x4F6Qmlq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rywrObxm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0C819539F
-	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Mar 2025 19:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C533157A46;
+	Mon, 24 Mar 2025 20:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742844542; cv=none; b=tBiY06Vqt1Lp3VqksuUJSUfh65o1CNs52tZKh4vqzu2h2Bnjn6ifRbTOuHQZNY3X1g3zg01J4cnRaU1ucRZf97dILDd6sMi5vifkv/9Bp3ru/UTXFjbWmYESgVAP+RKS86f95Bkdh3DoOsofIDspEqJImnujnvWO8lMTn1/DcQI=
+	t=1742847070; cv=none; b=cQENmgrTIbO/m08A68w1ONnYnlZ7CffJhtN7IbcCiNMBYjAUzXngK09KfpdpCFwgoeHrjWIUQZ+2iEbb4KXgCNhnpCOk+Z0Zsm8xp/pqS4O5hq7bd8iY+GH1UlUuG497HnNiR3ZlIR76MC0MBDvdURK8bocCT+81nACgy55i7KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742844542; c=relaxed/simple;
-	bh=XNg+LNi2K2eeCtKxyyvCMOFI1BWkciSsUfOTFxVtEbM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IYYlZcGfGLlz+jFqDNsuCuKiwAVjmrMbWwDs5WT9vdAWCTlOyuEYgC20G55nUeFX4ieP5nCa6qqaJ9us7d+qNVbCnsquFGa9aCBE1G6dQmcw8eMQmJdAkTGYoNMUI+bfbNDaiu/QRMMF0uONQAtVqnSaFIb4IEdk/INuZwQkC1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WrGOfM93; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=x4F6Qmlq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WrGOfM93; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=x4F6Qmlq; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AE8A31F391;
-	Mon, 24 Mar 2025 19:28:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742844538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k3WIe+aW55w3GUihCgD/R92wsulm9AHVCAYpzTFIDJw=;
-	b=WrGOfM93aEF7jIiX5XR6PgSKBpXpyRo2hvZP8qSbYwpsp8umXT5NIjXRE6VPQ3iz69mu+M
-	VbH6FFN3UkoHt7EpKTWrz3WSfxJs/q2iNoGhH3Vko4g+pnG2LRLWcNbSjz2fZVc0qBWhd6
-	iO1Oc4cccR1wib146oJo+MF0zS43rt0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742844538;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k3WIe+aW55w3GUihCgD/R92wsulm9AHVCAYpzTFIDJw=;
-	b=x4F6QmlqSRYQ8fikygfo90FQ5j+WJC/WJgB/zqLr5GzX2Iro4v6GWAnAmA2/6zI27Nu8O3
-	KBv8XlPnJgbltoCw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742844538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k3WIe+aW55w3GUihCgD/R92wsulm9AHVCAYpzTFIDJw=;
-	b=WrGOfM93aEF7jIiX5XR6PgSKBpXpyRo2hvZP8qSbYwpsp8umXT5NIjXRE6VPQ3iz69mu+M
-	VbH6FFN3UkoHt7EpKTWrz3WSfxJs/q2iNoGhH3Vko4g+pnG2LRLWcNbSjz2fZVc0qBWhd6
-	iO1Oc4cccR1wib146oJo+MF0zS43rt0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742844538;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k3WIe+aW55w3GUihCgD/R92wsulm9AHVCAYpzTFIDJw=;
-	b=x4F6QmlqSRYQ8fikygfo90FQ5j+WJC/WJgB/zqLr5GzX2Iro4v6GWAnAmA2/6zI27Nu8O3
-	KBv8XlPnJgbltoCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A173413874;
-	Mon, 24 Mar 2025 19:28:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9NVkJ3qy4Wc0KQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 24 Mar 2025 19:28:58 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 03B81A076A; Mon, 24 Mar 2025 20:28:57 +0100 (CET)
-Date: Mon, 24 Mar 2025 20:28:57 +0100
-From: Jan Kara <jack@suse.cz>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>, 
-	linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	linux-pm@vger.kernel.org
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Filesystem Suspend Resume
-Message-ID: <jlnc33bmqefx3273msuzq3yyei7la2ttwzqyyavohzm2k66sl6@gtqq6jpueipz>
-References: <0a76e074ef262ca857c61175dd3d0dc06b67ec42.camel@HansenPartnership.com>
- <Z9xG2l8lm7ha3Pf2@infradead.org>
- <acae7a99f8acb0ebf408bb6fc82ab53fb687559c.camel@HansenPartnership.com>
- <Z9z32X7k_eVLrYjR@infradead.org>
- <576418420308d2511a4c155cc57cf0b1420c273b.camel@HansenPartnership.com>
- <62bfd49bc06a58e435431610256e722651e1e5ca.camel@HansenPartnership.com>
- <vnb6flqo3hhijz4kb3yio5rxzaugvaxharocvtf4j4s5o5xynm@nbccfx5xqvnk>
- <9f5bea0af3e32de0e338481d6438676d99f40be7.camel@HansenPartnership.com>
+	s=arc-20240116; t=1742847070; c=relaxed/simple;
+	bh=Gn5wfqsdTg1pXDcCJCEM+rXwyK0EQsgqeOcG4tszqnE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QLYUNuajgvQJYgiYX2NaiHDwaLngHGBDWjRgIEQyQTGqPvhVrVfNn93g0elB2pmmv2/MdpH26UcB8XF4VcveEAhEz8GZPAPI319Eg3frZfrVjb7GX7/tiru4MVefnxJHjRQqDqX2l7QHpLd3GCR3L98LXluYudhSylTUC+VLYSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rywrObxm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61F32C4CEDD;
+	Mon, 24 Mar 2025 20:11:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742847069;
+	bh=Gn5wfqsdTg1pXDcCJCEM+rXwyK0EQsgqeOcG4tszqnE=;
+	h=From:Date:Subject:To:Cc:From;
+	b=rywrObxmwYPkcNeBmbolmbjUbDA9Rd6eP1WMfILmwYYcW4jv9MhutxK7moLt9Q3Ck
+	 7Tj6R2aVeGipQOJE6wQ/xRrP68XijqlJ8LkZwaS57pcKR8m+LAyH0yGSlfLQyIEKfo
+	 0RWAPKXvngrHXxs94yW9/FvcCyYNSqWLLGN1ivt01UESiR5m927ffXaOfO1Fmxv3gh
+	 A/BR3x5CQeefBQ0uvrH13yP/7KzNUihFrvUYVurYv7Gxe/xwKd5N0OiMDsyM0T1MF8
+	 vc4qAvJWif0zGUkpLT3CXkcBJc3LXh0M6503E6x77j2Q6ix2ywrIkx1BdvvJ77IfQz
+	 po4L+Mbq9B0JQ==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Mon, 24 Mar 2025 16:11:03 -0400
+Subject: [PATCH] netfs: add Paulo as maintainer and remove myself as
+ Reviewer
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9f5bea0af3e32de0e338481d6438676d99f40be7.camel@HansenPartnership.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250324-master-v1-1-e2dd2fdb15b4@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAFe84WcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDYyMT3dzE4pLUIl1Tg0QL01TzNAtzUwsloOKCotS0zAqwQdGxtbUAF2g
+ Wg1gAAAA=
+X-Change-ID: 20250324-master-50a85e7f8758
+To: David Howells <dhowells@redhat.com>
+Cc: Paulo Alcantara <pc@manguebit.com>, netfs@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=957; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=Gn5wfqsdTg1pXDcCJCEM+rXwyK0EQsgqeOcG4tszqnE=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBn4bxbKFzFjdJAGXy3sHo/I0yftZpLUC2AQU9xL
+ AHRREEar1qJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZ+G8WwAKCRAADmhBGVaC
+ FbY3D/9KqZwlmB8nJ5KpZUrrLdpAXl1ekPbjBhz6vV6xotsNv1NWQkfYnFjJxga0RVXB6OfLkEy
+ M9bskr1zAHZZ9Nhay1nILBegDT+ITM841deu5YKAvBsWC9okIOcTv5orkrnpj7MFYCkasRVymS7
+ GzcghO7cj0+aILYfZNfAZTvBcWrbr2QAZi8ToEpjnlgJkavpqCye1nXeVY9ITr0UQEElxtVhUbX
+ O4VPk2mWvZwMcDzpa/TUIXMV+MJfcMZ7oLaMe6BPWmXFtbgXgVyJW/B3NJmTTSZVXXAWmpWCwt/
+ cwWwkCMpAf9ohHGszhCTVnI256dCGUpflN0vsT4ZLQbXwGTDt6ly3F3DibhTIMIzJnty9wwwSNy
+ kHcYrg+cIOOjJ8o2jLwuVM7j9rn4YBwijM0t7yWHrOq0TH3A1FIU1YSXa71iLGKFHDLByJIIuwH
+ 98Qiz3Co+aBxI14lNYTtIA+jq76aOWHbawWIeAMckLIHCGQGkIHH1wJcj5wH9GMLZVWDq7vFl68
+ 6AklRcVxEqRTJkOeQPVaQmbwI+96rvtAFaecLwll05OgTA2xEuctkWihSodQPC/EJT3P2jQvuVP
+ EM3pFAvepWHoZuKPIYiTp7+TvPCDYsl4OUb4AGiJ4Gt51KOerL5+VnZw/g0fLV9/k4Pv9CTcEAH
+ k4tHMaPPtSAO6Iw==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Mon 24-03-25 10:34:56, James Bottomley wrote:
-> On Mon, 2025-03-24 at 12:38 +0100, Jan Kara wrote:
-> > On Fri 21-03-25 13:00:24, James Bottomley via Lsf-pc wrote:
-> > > On Fri, 2025-03-21 at 08:34 -0400, James Bottomley wrote:
-> > > [...]
-> > > > Let me digest all that and see if we have more hope this time
-> > > > around.
-> > > 
-> > > OK, I think I've gone over it all.  The biggest problem with
-> > > resurrecting the patch was bugs in ext3, which isn't a problem now.
-> > > Most of the suspend system has been rearchitected to separate
-> > > suspending user space processes from kernel ones.  The sync it
-> > > currently does occurs before even user processes are frozen.  I
-> > > think
-> > > (as most of the original proposals did) that we just do freeze all
-> > > supers (using the reverse list) after user processes are frozen but
-> > > just before kernel threads are (this shouldn't perturb the image
-> > > allocation in hibernate, which was another source of bugs in xfs).
-> > 
-> > So as far as my memory serves the fundamental problem with this
-> > approach was FUSE - once userspace is frozen, you cannot write to
-> > FUSE filesystems so filesystem freezing of FUSE would block if
-> > userspace is already suspended. You may even have a setup like:
-> > 
-> > bdev <- fs <- FUSE filesystem <- loopback file <- loop device <-
-> > another fs
-> > 
-> > So you really have to be careful to freeze this stack without causing
-> > deadlocks.
-> 
-> Ah, so that explains why the sys_sync() sits in suspend resume *before*
-> freezing userspace ... that always appeared odd to me.
-> 
-> >  So you need to be freezing userspace after filesystems are
-> > frozen but then you have to deal with the fact that parts of your
-> > userspace will be blocked in the kernel (trying to do some write)
-> > waiting for the filesystem to thaw. But it might be tractable these
-> > days since I have a vague recollection that system suspend is now
-> > able to gracefully handle even tasks in uninterruptible sleep.
-> 
-> There is another thing I thought about: we don't actually have to
-> freeze across the sleep.  It might be possible simply to invoke
-> freeze/thaw where sys_sync() is now done to get a better on stable
-> storage image?  That should have fewer deadlock issues.
+My role has changed since I originally agreed to help with netfs, and
+I'm no longer providing a lot of value here. Luckily, Paulo has agreed
+to step in as co-maintainer.
 
-Well, there's not going to be a huge difference between doing sync(2) and
-doing freeze+thaw for each filesystem. After you thaw the filesystem
-drivers usually mark that the fs is in inconsistent state and that triggers
-journal replay / fsck on next mount.
+Acked-by: Paulo Alcantara <pc@manguebit.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 00e94bec401e1b2fd9d3a01f158d66291cd3c30f..f44ebf6ccfa082a8567de649d09c78ef9ad22c82 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8938,7 +8938,7 @@ F:	include/linux/iomap.h
  
-								Honza
+ FILESYSTEMS [NETFS LIBRARY]
+ M:	David Howells <dhowells@redhat.com>
+-R:	Jeff Layton <jlayton@kernel.org>
++M:	Paulo Alcantara <pc@manguebit.com>
+ L:	netfs@lists.linux.dev
+ L:	linux-fsdevel@vger.kernel.org
+ S:	Supported
+
+---
+base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
+change-id: 20250324-master-50a85e7f8758
+
+Best regards,
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Jeff Layton <jlayton@kernel.org>
+
 
