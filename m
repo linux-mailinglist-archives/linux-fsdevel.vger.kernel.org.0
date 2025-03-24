@@ -1,173 +1,220 @@
-Return-Path: <linux-fsdevel+bounces-44875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 016EDA6DF35
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 17:03:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AA0FA6DF65
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 17:14:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A053189164D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 16:03:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E37F33B1609
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 16:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BB826158F;
-	Mon, 24 Mar 2025 16:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D07C2627FF;
+	Mon, 24 Mar 2025 16:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g2OaV9kH"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="ez+DjuDo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE6613C3F2;
-	Mon, 24 Mar 2025 16:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5635261583
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Mar 2025 16:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742832202; cv=none; b=avEPrDt8r8didP77yyP+XP6sZcgzRp7OYvbuWxaOr5kizdmpJqlQgqTd6u/9pv9vd+ARnwWngeW+PNno6bstiQy2NDB6Bu1dYeW8QuDuIjt8vbeRPL3A929yXxPqUBHqdfRY9QsSPkSNHzILBUo/OtZnrzTPYsmFkxLiNBANWk4=
+	t=1742832863; cv=none; b=DeGiVxEvu44TQrzgmcV9PdO8jGEF0+ZH97eOAwDRzYa1fwlCAvnZbefkWPkmtjBQE8+FiOcvEzHeKdEAGRkG2QxjSUoXtaC2U+4gZYIvSGtSz3lMLJK6Mv6imlR0t58DPxb03QwzGL7QQyv5hdqAdxGTcuf8aX9gsV+k4IYPopI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742832202; c=relaxed/simple;
-	bh=9FU0ifTamX5piTP5b4Ro9Ugpo0FdpNJ35VxXTjvf2j8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M/OyfRSAkdeBIOo9Pm6yz7ANfAk0DoE7efRitbjafqdVwrwYw5RzCbX2tVQqztEnjGnSIol6S1oEv2FMo7rg9PjRMKfruSYQspkzjiuvj3ZrC9ywzvaqB9CWx2awXgi/IC/lmCoPYsKS9wPXzboB8eXCjYwnUJhh2H92eLjuBt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g2OaV9kH; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e6c18e2c7dso8201530a12.3;
-        Mon, 24 Mar 2025 09:03:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742832198; x=1743436998; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1QWkU/bMqwAqGIllPSmXgHuefvas1isqn0786Bpkz2M=;
-        b=g2OaV9kHkO83Dn2DI6LEhOT6RgxJJib8uu60UGdkp3AWbymg2anPg7Ik+pEoNBcnK4
-         TU4L1iIoCGxqahrwmZFU8mifCTul0WpixjhnWHoXiReky5W9iUWq8znm5Z0JnLvMd5PE
-         vSA9g2stzijvICOxjZor/7W2eMIztWGurFvJQNwpiXl2Mx/f3Bxg93jGZ43eiN7eLroj
-         cFDT7tZJ9IP5N7Vk8fQNneNWntYrRqwv+w9pkfqlXv8Kwun8p21WvAmSrnUmf4JUmOaQ
-         pKnppIdAY9d4hCxV/tu1ecj0oH69PQpgcZMwt3ktAy6CSrugVgTqBk01dQ5JAg2P0O7y
-         5LKQ==
+	s=arc-20240116; t=1742832863; c=relaxed/simple;
+	bh=OVx5qEzHDwHumfbtV5HYHgl6QC/zhZ7PJD7CJVooSts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aRKYT7ORn/MN9IGi60LlUccpsQ5/dIxBN1eck2fnQHHcGMCuNyeDsNKCNr+fNI/bHxZPvHX4g11IyTs9cNH4dasbR0OG4BzS0bM438b1/CIwJ8aTxw64gO3P039D0l3lkSVi7KNxzxIfgCnOIgJE9v4NCx0if5JH34gQzNZQr/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=ez+DjuDo; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 666EA3F2E4
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Mar 2025 16:14:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1742832853;
+	bh=vrCEXjms1HEeHeCcBRgtI9vYOaSHDCJqhJDM0xoNcLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=ez+DjuDozZbB4k1BxvxPDwDjluwmaYtoRIUuhGkVbqXes1HPgU7D/Z8QYzdIbgoax
+	 MAOpjqGLXjG/lCcG7mRgiV3G9IKhbBBL6YPQFe62xqFUUugiRCipmDCAlDBUyTgjqZ
+	 IDLZhcKTpHvCinR/lj0z0aw43KZ7Xu3r8hVrceuINhu6cJ75NFiyA61pVXVcosMgO0
+	 H/b5Z42gE+6YHZ1PCvwTZEgWXC0pDkrUzkw8D7zsUEDE/2cZ5xdvC/7HigWfO8q2g1
+	 2QI+i61uI7lH4hgYuI2yRhVOe+mbuo1DxV1bu8ikTW+YLVDwfsICmPw5P9FBSNeANK
+	 yMh/CJyhyozow==
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-ac3c16d6199so406702266b.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Mar 2025 09:14:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742832198; x=1743436998;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1742832852; x=1743437652;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1QWkU/bMqwAqGIllPSmXgHuefvas1isqn0786Bpkz2M=;
-        b=Rrvhy2HkXCIrVtANWO3qncnvwMoO0YEOs2ytKjDsWSq/oliC8KEZD6ztIIpZdqrWDt
-         qXBE3HK6CIc+YJw0Ewt7BaiEmEu14jk/XurWJGmNVzK/ALwL5ll/v2jYo8l4BMfNN+W/
-         cmYdXqW0DDPUwsCnWB7kaJPtFEwEqIOD+rXDjq5MZOsNYA0giC65uUCjwveoKbdQ3Ou5
-         4jzGQRuqbgr6XSXDHkmWHhwJoUVZEmqYn1nuEivTzvsu6kH+IxmaWFpW2OQD8msqV7ot
-         TAESUUOOnImWyvQEgbyOIZ9Wu04d8sSaaaaMddP7OXCQyPqjqxRckCjwNZU7rvaonbE/
-         MlEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV243aPXUJpKKBm61pkVYG0GRLIDv/ick4ZmoXhx8Ws8NISrRN6iJHXm9wwsVJXoPApZOz/o0H/zfK0Xe5J@vger.kernel.org, AJvYcCWrhcOC2wvRzH5CYr2OzPcBWcEoL5zFb8OT0KkE56U4Nkn/yFkVw5OwKh2xidOya5ZhLC0vKzaRUd3YvYcR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyoc1akZmXz55HVN71y3uHK3OrwId/W5/SQ1L1wAzAPIdfEl0Cc
-	upmfyOln+37cyem/IniX+kn0vsVerFH08Gxu3AuLNjyiWoak55qoyJiLasUDBaTaZvwmCUKCxOT
-	1pupC5cNCu6hTaTLBdw7XqEeS1hA=
-X-Gm-Gg: ASbGnctKkenny7C9n+dUTe7OWnuIGitTO5BqlpG/PjDWpFcb6KguPMUfc7y5cyitNAG
-	+vAD3fTMemjr7JM7B6bl9tBfyD+/mYJ17JpJkPAbpCMuBYpqor7/un71A39AdAj4Fm7+/6Tmh3Y
-	aZ5xRVLh5x05a+QQYxgw5XbtZqpg==
-X-Google-Smtp-Source: AGHT+IG2+OeCLLVerEDx+IngTZJIlJRTqun6x/Jhs9u5Ler7WQckD41CQaVLpBgtja/BwNKAX/6oWi8OAjVk+dSeKpw=
-X-Received: by 2002:a17:907:bc8b:b0:ac3:3e40:e181 with SMTP id
- a640c23a62f3a-ac3f1e04bfdmr1370423866b.0.1742832197605; Mon, 24 Mar 2025
- 09:03:17 -0700 (PDT)
+        bh=vrCEXjms1HEeHeCcBRgtI9vYOaSHDCJqhJDM0xoNcLM=;
+        b=TGYdgpl26kvulxNvFgiaKue/LIoXwXK07P+91yJmplX7qdFvUugQz5DtNqO3EyBQxw
+         +iZFKjXNEAA3tO/t3r6B5J4O6Etf78ePEzfGlIgcj2qNDZqpD6slvdqLbAfg8RcQHecH
+         /0789ijAnldOEACPOxIJ9xMohoNqJtfLZNdNCGoIxbLGu1RPLR6csdli0+QKv50lQgTm
+         6D0303zBxwologoN2+Dsx9A/8xd2mTGrE+ppf9M67sHOpSLY3fzT/PBue5x4lic/wK0X
+         7bcYz+pVZayvQQ5CraQ8xCck9K+Km6rC2BPgk5worPMP5JfXucHvCG1zyDY1cUgwKuvw
+         hFzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWoUEFTFigOAXyaxTZyIEx2OueLiB9iqvxX5608QIQpDDn21NaAAe4BK3b3LSHphAij67VAJp+Wwuc3y0KN@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywe78idEVhEca4ZpnW/wBg7QeeCJyLNZhZDFhpHtZFPAVxr7IK+
+	hSgEZyAA+e6hNhS7lMS66ykYuHUF15KMLo0/uifYbZopcyawqPoSQI/dk12O94004J1RfKMSKLp
+	lu+HErw/g6VhcRxmixTendPl9z+zLBWuEsdaFLNh4U0Zv3ctXpyIpsfbYNjWVxIMH3QIsuwXeuw
+	tWjTI=
+X-Gm-Gg: ASbGnct8cfEIL1MDv4DjlNroUL/6nrCBOCDeQyH5g34Mz4JNpVqyw+TYFJ2jr0opycT
+	z0tPuSCQtHKkCpDIjmGThnTxr3VjmZsGiwvEhrzbkePGm+jS5VZrZ6SnF9NGGmcKfmFARf7qv2w
+	orLWWRoTsSJQ5athI+ncamuzlMD6SYu6mAPD495+qJrfRKMl3lkVnMEt4aNSutM1ul7cmnU7Wfy
+	pzjnnnjLggRWqLTRqNF6O819/F8SO9bEu/fX9WZDU+7d0ZlVxoCKOYvXfAHaPa7gTPQ0jdrlE5m
+	xVOd+d2RBUfPjsQw6qY=
+X-Received: by 2002:a17:907:d58c:b0:ac3:c05d:3083 with SMTP id a640c23a62f3a-ac3f24d6f4cmr1390896666b.35.1742832852505;
+        Mon, 24 Mar 2025 09:14:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGBoAqH0NuQib7zD9bnBjLQS0nzGw/Lcb59ZJ35t8yUAZYJ88GwfFPzoOrDGVL+L95eR27PQg==
+X-Received: by 2002:a17:907:d58c:b0:ac3:c05d:3083 with SMTP id a640c23a62f3a-ac3f24d6f4cmr1390893966b.35.1742832852056;
+        Mon, 24 Mar 2025 09:14:12 -0700 (PDT)
+Received: from localhost ([176.88.101.113])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efd24f6esm694852166b.154.2025.03.24.09.14.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 09:14:11 -0700 (PDT)
+Date: Mon, 24 Mar 2025 19:14:07 +0300
+From: Cengiz Can <cengiz.can@canonical.com>
+To: Salvatore Bonaccorso <carnil@debian.org>
+Cc: Vasiliy Kovalev <kovalev@altlinux.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lvc-patches@linuxtesting.org, dutyrok@altlinux.org, 
+	gerben@altlinux.org, syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
+Message-ID: <d4mpuomgxqi7xppaewlpey6thec7h2fk4sm2iktqsx6bhwu5ph@ctkjksxmkgne>
+References: <20241019191303.24048-1-kovalev@altlinux.org>
+ <Z9xsx-w4YCBuYjx5@eldamar.lan>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250323184848.GB14883@redhat.com> <67e05e30.050a0220.21942d.0003.GAE@google.com>
- <20250323194701.GC14883@redhat.com> <CAGudoHHmvU54MU8dsZy422A4+ZzWTVs7LFevP7NpKzwZ1YOqgg@mail.gmail.com>
- <20250323210251.GD14883@redhat.com> <af0134a7-6f2a-46e1-85aa-c97477bd6ed8@amd.com>
- <CAGudoHH9w8VO8069iKf_TsAjnfuRSrgiJ2e2D9-NGEDgXW+Lcw@mail.gmail.com>
- <7e377feb-a78b-4055-88cc-2c20f924bf82@amd.com> <f7585a27-aaef-4334-a1de-5e081f10c901@amd.com>
-In-Reply-To: <f7585a27-aaef-4334-a1de-5e081f10c901@amd.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 24 Mar 2025 17:03:03 +0100
-X-Gm-Features: AQ5f1JqcXy-bG1AdbIVqBBipWfJLjXRMqOFRTPcGpSJ3frxXEsEwWshQXjEegpw
-Message-ID: <CAGudoHGdOf35YM013VjGKQJF81OeMN6XQfkx8oF7PKLe08CjDQ@mail.gmail.com>
-Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, 
-	syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>, brauner@kernel.org, 
-	dhowells@redhat.com, jack@suse.cz, jlayton@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netfs@lists.linux.dev, swapnil.sapkal@amd.com, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z9xsx-w4YCBuYjx5@eldamar.lan>
+User-Agent: NeoMutt/20231103
 
-On Mon, Mar 24, 2025 at 3:52=E2=80=AFPM K Prateek Nayak <kprateek.nayak@amd=
-.com> wrote:
-> So far, with tracing, this is where I'm:
->
-> o Mainline + Oleg's optimization reverted:
->
->      ...
->      kworker/43:1-1723    [043] .....   115.309065: p9_read_work: Data re=
-ad wait 55
->      kworker/43:1-1723    [043] .....   115.309066: p9_read_work: Data re=
-ad 55
->      kworker/43:1-1723    [043] .....   115.309067: p9_read_work: Data re=
-ad wait 7
->      kworker/43:1-1723    [043] .....   115.309068: p9_read_work: Data re=
-ad 7
->             repro-4138    [043] .....   115.309084: netfs_wake_write_coll=
-ector: Wake collector
->             repro-4138    [043] .....   115.309085: netfs_wake_write_coll=
-ector: Queuing collector work
->             repro-4138    [043] .....   115.309088: netfs_unbuffered_writ=
-e: netfs_unbuffered_write
->             repro-4138    [043] .....   115.309088: netfs_end_issue_write=
-: netfs_end_issue_write
->             repro-4138    [043] .....   115.309089: netfs_end_issue_write=
-: Write collector need poke 0
->             repro-4138    [043] .....   115.309091: netfs_unbuffered_writ=
-e_iter_locked: Waiting on NETFS_RREQ_IN_PROGRESS!
->   kworker/u1030:1-1951    [168] .....   115.309096: netfs_wake_write_coll=
-ector: Wake collector
->   kworker/u1030:1-1951    [168] .....   115.309097: netfs_wake_write_coll=
-ector: Queuing collector work
->   kworker/u1030:1-1951    [168] .....   115.309102: netfs_write_collectio=
-n_worker: Write collect clearing and waking up!
->      ... (syzbot reproducer continues)
->
-> o Mainline:
->
->     kworker/185:1-1767    [185] .....   109.485961: p9_read_work: Data re=
-ad wait 7
->     kworker/185:1-1767    [185] .....   109.485962: p9_read_work: Data re=
-ad 7
->     kworker/185:1-1767    [185] .....   109.485962: p9_read_work: Data re=
-ad wait 55
->     kworker/185:1-1767    [185] .....   109.485963: p9_read_work: Data re=
-ad 55
->             repro-4038    [185] .....   114.225717: netfs_wake_write_coll=
-ector: Wake collector
->             repro-4038    [185] .....   114.225723: netfs_wake_write_coll=
-ector: Queuing collector work
->             repro-4038    [185] .....   114.225727: netfs_unbuffered_writ=
-e: netfs_unbuffered_write
->             repro-4038    [185] .....   114.225727: netfs_end_issue_write=
-: netfs_end_issue_write
->             repro-4038    [185] .....   114.225728: netfs_end_issue_write=
-: Write collector need poke 0
->             repro-4038    [185] .....   114.225728: netfs_unbuffered_writ=
-e_iter_locked: Waiting on NETFS_RREQ_IN_PROGRESS!
->     ... (syzbot reproducer hangs)
->
-> There is a third "kworker/u1030" component that never gets woken up for
-> reasons currently unknown to me with Oleg's optimization. I'll keep
-> digging.
->
+On 20-03-25 20:30:15, Salvatore Bonaccorso wrote:
+> Hi
+> 
 
-Thanks for the update.
+Hello Salvatore,
 
-It is unclear to me if you checked, so I'm going to have to ask just
-in case: when there is a hang, is there *anyone* stuck in pipe code
-(and if so, where)?
+> On Sat, Oct 19, 2024 at 10:13:03PM +0300, Vasiliy Kovalev wrote:
+> > Syzbot reported an issue in hfs subsystem:
+> > 
+> > BUG: KASAN: slab-out-of-bounds in memcpy_from_page include/linux/highmem.h:423 [inline]
+> > BUG: KASAN: slab-out-of-bounds in hfs_bnode_read fs/hfs/bnode.c:35 [inline]
+> > BUG: KASAN: slab-out-of-bounds in hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
+> > Write of size 94 at addr ffff8880123cd100 by task syz-executor237/5102
+> > 
+> > Call Trace:
+> >  <TASK>
+> >  __dump_stack lib/dump_stack.c:94 [inline]
+> >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+> >  print_address_description mm/kasan/report.c:377 [inline]
+> >  print_report+0x169/0x550 mm/kasan/report.c:488
+> >  kasan_report+0x143/0x180 mm/kasan/report.c:601
+> >  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+> >  __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
+> >  memcpy_from_page include/linux/highmem.h:423 [inline]
+> >  hfs_bnode_read fs/hfs/bnode.c:35 [inline]
+> >  hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
+> >  hfs_brec_insert+0x7f3/0xbd0 fs/hfs/brec.c:159
+> >  hfs_cat_create+0x41d/0xa50 fs/hfs/catalog.c:118
+> >  hfs_mkdir+0x6c/0xe0 fs/hfs/dir.c:232
+> >  vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
+> >  do_mkdirat+0x264/0x3a0 fs/namei.c:4280
+> >  __do_sys_mkdir fs/namei.c:4300 [inline]
+> >  __se_sys_mkdir fs/namei.c:4298 [inline]
+> >  __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
+> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> >  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > RIP: 0033:0x7fbdd6057a99
+> > 
+> > Add a check for key length in hfs_bnode_read_key to prevent
+> > out-of-bounds memory access. If the key length is invalid, the
+> > key buffer is cleared, improving stability and reliability.
+> > 
+> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > Reported-by: syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=5f3a973ed3dfb85a6683
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+> > ---
+> >  fs/hfs/bnode.c     | 6 ++++++
+> >  fs/hfsplus/bnode.c | 6 ++++++
+> >  2 files changed, 12 insertions(+)
+> > 
+> > diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
+> > index 6add6ebfef8967..cb823a8a6ba960 100644
+> > --- a/fs/hfs/bnode.c
+> > +++ b/fs/hfs/bnode.c
+> > @@ -67,6 +67,12 @@ void hfs_bnode_read_key(struct hfs_bnode *node, void *key, int off)
+> >  	else
+> >  		key_len = tree->max_key_len + 1;
+> >  
+> > +	if (key_len > sizeof(hfs_btree_key) || key_len < 1) {
+> > +		memset(key, 0, sizeof(hfs_btree_key));
+> > +		pr_err("hfs: Invalid key length: %d\n", key_len);
+> > +		return;
+> > +	}
+> > +
+> >  	hfs_bnode_read(node, key, off, key_len);
+> >  }
 
-You can get the kernel to print stacks for all threads with sysrq:
-echo t > /proc/sysrq-trigger
+Simpler the better. 
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Our fix was released back in February. (There are other issues in our attempt I
+admit).
+
+https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/jammy/commit/?id=2e8d8dffa2e0b5291522548309ec70428be7cf5a
+
+If someone can pick this submission, I will be happy to replace our version.
+
+> >  
+> > diff --git a/fs/hfsplus/bnode.c b/fs/hfsplus/bnode.c
+> > index 87974d5e679156..079ea80534f7de 100644
+> > --- a/fs/hfsplus/bnode.c
+> > +++ b/fs/hfsplus/bnode.c
+> > @@ -67,6 +67,12 @@ void hfs_bnode_read_key(struct hfs_bnode *node, void *key, int off)
+> >  	else
+> >  		key_len = tree->max_key_len + 2;
+> >  
+> > +	if (key_len > sizeof(hfsplus_btree_key) || key_len < 1) {
+> > +		memset(key, 0, sizeof(hfsplus_btree_key));
+> > +		pr_err("hfsplus: Invalid key length: %d\n", key_len);
+> > +		return;
+> > +	}
+> > +
+> >  	hfs_bnode_read(node, key, off, key_len);
+> >  }
+> >  
+> > -- 
+> > 2.33.8
+
+Reviewed-by: Cengiz Can <cengiz.can@canonical.com>
+
+> 
+> I do realize that the HFS filesystem is "Orphan". But in the light of
+> the disclosure in
+> https://ssd-disclosure.com/ssd-advisory-linux-kernel-hfsplus-slab-out-of-bounds-write/
+> is there still something which needs to be done here?
+> 
+> Does the above needs to be picked in mainline and then propagated to
+> the supported stable versions?
+> 
+> Regards,
+> Salvatore
+> 
 
