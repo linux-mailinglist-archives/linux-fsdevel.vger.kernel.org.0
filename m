@@ -1,155 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-44877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B91A6A6DF73
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 17:21:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7290A6DF6F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 17:21:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1522188A60E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 16:19:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EBC37A2621
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 16:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D392E2638BF;
-	Mon, 24 Mar 2025 16:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4FB263C77;
+	Mon, 24 Mar 2025 16:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cUooPKZv"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZwJ6RZP/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36AF4261577;
-	Mon, 24 Mar 2025 16:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54652638B0
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Mar 2025 16:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742833146; cv=none; b=iQaTvm2RN09MQAHrVkrn0sglsDbQt5yMHu5mszZA2YxAaEiqlFrDGECTbycqNxKZBnA5rSEU+awfu/yRcdmOutaxNGJCNiRiQ/aHeZfzEwhI3f5/O9x3/4klOUo00zU+jKrxA8wAcINsxNcRydPy1FHTUA06e9VPxHlp5KJ/rpg=
+	t=1742833244; cv=none; b=UxkXuUnU5NydfAC+vYr9T5WNU66X5NzQ5IVR3xi3Si7hLKGibuzhQd1U9LiKc3vR7N5V4cd+lB5rQTah2Q0a8uV5fHPIwZutFzYNnpMn/UMP+Q/pgLXpgkapvNb/Ee9fPUESNWQArF0DAbthl+j2Zjc9+Pa9zcp3qx/2I+9cOlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742833146; c=relaxed/simple;
-	bh=7ocTwtJHSxgTAKQDZy8c0kf/SmLiv3uVNj5AZmyLi2E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kdhKWAmysg9knSlYcuh51S3CC35Y6EL0ny8mrgzp2hHNO9xO5Jvjy4ggPJnM8Ey5aV9ssE++mkyxkivW/GDK0AC4ghq0hgPd0xVsZigFzmje6FAnv1LVQhOsJWsSwifsmuEslbFrGzPkW/BMTdqSwjfgIhbJpbou2KXBNL6/Jhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cUooPKZv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81D04C4CEE9;
-	Mon, 24 Mar 2025 16:19:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742833144;
-	bh=7ocTwtJHSxgTAKQDZy8c0kf/SmLiv3uVNj5AZmyLi2E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cUooPKZvSqG2lE2mau828JPJBCXqBGBWdLNKx4DZ3c1ltWrxxCstK+OxOev+p3o+9
-	 MQewyp5MDtnVRyYOE7295XtueeBrJTywvs/ixDbOl16CoI0WZ8IxQlj2OkDhp+Xp9n
-	 UB8kTHHytRTZhFw5ztOj+1CzBI8KXmmqDboLfaJk=
-Date: Mon, 24 Mar 2025 09:17:05 -0700
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Cengiz Can <cengiz.can@canonical.com>
-Cc: Salvatore Bonaccorso <carnil@debian.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, lvc-patches@linuxtesting.org,
-	dutyrok@altlinux.org,
-	syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
-Message-ID: <2025032402-jam-immovable-2d57@gregkh>
-References: <20241019191303.24048-1-kovalev@altlinux.org>
- <Z9xsx-w4YCBuYjx5@eldamar.lan>
- <d4mpuomgxqi7xppaewlpey6thec7h2fk4sm2iktqsx6bhwu5ph@ctkjksxmkgne>
+	s=arc-20240116; t=1742833244; c=relaxed/simple;
+	bh=QEMyyGsi6pKVdO1NZX06aqp/5WGNOG/kiMBDZvItNyc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c5Pj61mmeSWU4zVSdyZBiaEe+reaquFaIJiZq+QYOOdgKucufKWz1T/40QmeWksDpqzaBqw/T6NhyyDBxjzsIEqVJwTK752+bC8JYEGyZz+0RaX7InKqj9UWcXPdie+CtH8alZQJjuFZhvXp1Jl85gnsNpFHaNCuvgO85NqA/mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZwJ6RZP/; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e614da8615so8418541a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Mar 2025 09:20:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1742833241; x=1743438041; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=RvYPLpIx/vsSMNptY5I/a8vTPmXkTJh7cHFovrjH+zs=;
+        b=ZwJ6RZP//we7OiBrbt0k6+LxpikEZvO5AMbM6H633EwfirkyajUD2n1q9uhMsD8n7u
+         jRlrjfh9ycqQM0iLHoHK77Wv22egrF2JcjyHXPczozorDR4k5ZxoEZPq3zK7iIWUDT++
+         lVr+xn2GJIHc8Wf2S/Nb/vKHTgJGN7RwnVM5A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742833241; x=1743438041;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RvYPLpIx/vsSMNptY5I/a8vTPmXkTJh7cHFovrjH+zs=;
+        b=hFkzdA9yqZmnYMyYNpp1p6xfK5h7UNLMWOAcobccbfQfv7iCpjuVSxoCw4bL4n4GDz
+         Mn8RKKdFHKFo2ZHWH4Cxs9NugUYsDirGIvmUwhBXDXaZVr2y1hIHrvSUVKWfo0Eh3sEX
+         R/KZFVAPriMVYMR7dtN+ORLl7vmn4QHldj9j8Rj7IeftS8Q7q/D7x/kwoXCYm6jrh/Wk
+         sHV/kOw1a69WSPnPBfeifsQiBANQZCOJXXCtYYUx1LnO/6lieUa3t9SDW7dz+XZ1NUcI
+         7b2JJIjz8DHPTnWdOhxr+nIhCh1O5f+yUvKwweWaTMm8AideGQgjat+Rcfn7ZPXiAsIy
+         tUcg==
+X-Gm-Message-State: AOJu0Yx+Iifsql8eofbcOAZ39kat01zctWLjMCjbYezb9zX49xjsTMM1
+	agUrBJcxK998b9xsaKB57/P59jkAU7wxWEAuAE1iHCB/tvZ0j95E+EHnXruhtxmiPRhwOfdiw2X
+	hL+c=
+X-Gm-Gg: ASbGncuWfoKe1Mg6PiDH8Hi5I5IaYqj2iBm2VMtuvuldTDzuqysCYblYdQc31NgfE6w
+	FU2OQSvrXWxGYd5HSbs81tZIbjLPQgExaI+jLWH6MqEujSdlSxQK/x0oqxN68jUriP3rvjNirTT
+	rwI2qGa1v5nat+WEVzBZx3BvlDM6tJeCHYMKsir3KTXCp0gK5rYG+zhGzPbWAsj2XKKFNxKIZHw
+	YqEth/tHaKv73K6Fk/q1MDIsaYV8USZ7dzNiRLdrsEUruvweUKVpcqL3Wi+U9AVBaP68FUysq5b
+	nXosR8C9gaEQ6bxAXyHL06Ps5xhPIj95cxdOg0K3Z57BAGbTDgudHF9Ye8kfEPyV7HSLhjWDkuF
+	2spkM+Q705r3ym2K2Z5Dt1UNtZW4FYg==
+X-Google-Smtp-Source: AGHT+IFvGZ8LCx2V8prIMthhBRxJv1VFp2Air02PE+Pnt7s5EKlBwt5fucpEDva1Prh4NWTSGUm1fw==
+X-Received: by 2002:a05:6402:2691:b0:5eb:95aa:486 with SMTP id 4fb4d7f45d1cf-5ebccd32f66mr13111151a12.6.1742833240790;
+        Mon, 24 Mar 2025 09:20:40 -0700 (PDT)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebcd0dfe0esm6321920a12.75.2025.03.24.09.20.40
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Mar 2025 09:20:40 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ab771575040so1096614766b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Mar 2025 09:20:40 -0700 (PDT)
+X-Received: by 2002:a17:907:c23:b0:ac1:edc5:d73b with SMTP id
+ a640c23a62f3a-ac3cdb96185mr1669224866b.8.1742833239650; Mon, 24 Mar 2025
+ 09:20:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d4mpuomgxqi7xppaewlpey6thec7h2fk4sm2iktqsx6bhwu5ph@ctkjksxmkgne>
+References: <20250321-vfs-misc-77bd9633b854@brauner>
+In-Reply-To: <20250321-vfs-misc-77bd9633b854@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 24 Mar 2025 09:20:22 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjNojYGmik93aB5UG1Nd5h2VHcVhKfBoYu9jVv_zh6Zng@mail.gmail.com>
+X-Gm-Features: AQ5f1JowOKwVmnN0rwQkJkZQnbuG77xhgomiTzUPj4v6fu6nQxCSbS6hjKowXAw
+Message-ID: <CAHk-=wjNojYGmik93aB5UG1Nd5h2VHcVhKfBoYu9jVv_zh6Zng@mail.gmail.com>
+Subject: Re: [GIT PULL] vfs misc
+To: Christian Brauner <brauner@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 24, 2025 at 07:14:07PM +0300, Cengiz Can wrote:
-> On 20-03-25 20:30:15, Salvatore Bonaccorso wrote:
-> > Hi
-> > 
-> 
-> Hello Salvatore,
-> 
-> > On Sat, Oct 19, 2024 at 10:13:03PM +0300, Vasiliy Kovalev wrote:
-> > > Syzbot reported an issue in hfs subsystem:
-> > > 
-> > > BUG: KASAN: slab-out-of-bounds in memcpy_from_page include/linux/highmem.h:423 [inline]
-> > > BUG: KASAN: slab-out-of-bounds in hfs_bnode_read fs/hfs/bnode.c:35 [inline]
-> > > BUG: KASAN: slab-out-of-bounds in hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
-> > > Write of size 94 at addr ffff8880123cd100 by task syz-executor237/5102
-> > > 
-> > > Call Trace:
-> > >  <TASK>
-> > >  __dump_stack lib/dump_stack.c:94 [inline]
-> > >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
-> > >  print_address_description mm/kasan/report.c:377 [inline]
-> > >  print_report+0x169/0x550 mm/kasan/report.c:488
-> > >  kasan_report+0x143/0x180 mm/kasan/report.c:601
-> > >  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
-> > >  __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
-> > >  memcpy_from_page include/linux/highmem.h:423 [inline]
-> > >  hfs_bnode_read fs/hfs/bnode.c:35 [inline]
-> > >  hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
-> > >  hfs_brec_insert+0x7f3/0xbd0 fs/hfs/brec.c:159
-> > >  hfs_cat_create+0x41d/0xa50 fs/hfs/catalog.c:118
-> > >  hfs_mkdir+0x6c/0xe0 fs/hfs/dir.c:232
-> > >  vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
-> > >  do_mkdirat+0x264/0x3a0 fs/namei.c:4280
-> > >  __do_sys_mkdir fs/namei.c:4300 [inline]
-> > >  __se_sys_mkdir fs/namei.c:4298 [inline]
-> > >  __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
-> > >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> > >  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > > RIP: 0033:0x7fbdd6057a99
-> > > 
-> > > Add a check for key length in hfs_bnode_read_key to prevent
-> > > out-of-bounds memory access. If the key length is invalid, the
-> > > key buffer is cleared, improving stability and reliability.
-> > > 
-> > > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > > Reported-by: syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com
-> > > Closes: https://syzkaller.appspot.com/bug?extid=5f3a973ed3dfb85a6683
-> > > Cc: stable@vger.kernel.org
-> > > Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
-> > > ---
-> > >  fs/hfs/bnode.c     | 6 ++++++
-> > >  fs/hfsplus/bnode.c | 6 ++++++
-> > >  2 files changed, 12 insertions(+)
-> > > 
-> > > diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
-> > > index 6add6ebfef8967..cb823a8a6ba960 100644
-> > > --- a/fs/hfs/bnode.c
-> > > +++ b/fs/hfs/bnode.c
-> > > @@ -67,6 +67,12 @@ void hfs_bnode_read_key(struct hfs_bnode *node, void *key, int off)
-> > >  	else
-> > >  		key_len = tree->max_key_len + 1;
-> > >  
-> > > +	if (key_len > sizeof(hfs_btree_key) || key_len < 1) {
-> > > +		memset(key, 0, sizeof(hfs_btree_key));
-> > > +		pr_err("hfs: Invalid key length: %d\n", key_len);
-> > > +		return;
-> > > +	}
-> > > +
-> > >  	hfs_bnode_read(node, key, off, key_len);
-> > >  }
-> 
-> Simpler the better. 
-> 
-> Our fix was released back in February. (There are other issues in our attempt I
-> admit).
-> 
-> https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/jammy/commit/?id=2e8d8dffa2e0b5291522548309ec70428be7cf5a
-> 
-> If someone can pick this submission, I will be happy to replace our version.
+On Sat, 22 Mar 2025 at 03:13, Christian Brauner <brauner@kernel.org> wrote:
+>
+> Merge conflicts with mainline
+> =============================
+>
+> This contains a minor merge conflict for include/linux/fs.h.
 
-any specific reason why you didn't submit this upstream?  Or did that
-happen and it somehow not get picked up?
+Hmm. My resolution here was to just take the plain VFS_WARN_ON_INODE()
+side, which basically drops commit 37d11cfc6360 ("vfs: sanity check
+the length passed to inode_set_cached_link()") entirely, because that
+one had a "TODO" that implies it's now replaced by the new
+VFS_WARN_ON_INODE() interface.
 
-And why assign a CVE for an issue that is in the mainline kernel, last I
-checked, Canonical was NOT allowed to do that.
+This is just a note to make sure that if anybody was expecting
+something else, you can now speak up and say "can you please do X".
 
-Please work to revoke that CVE and ask for one properly.
+Or, better yet, send a patch.
 
-thanks,
-
-greg k-h
+                Linus
 
