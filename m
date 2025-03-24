@@ -1,338 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-44853-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44854-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D4DA6D356
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 04:27:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D24C1A6D473
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 07:55:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66ADB3B22E2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 03:27:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FBF91891723
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 06:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B33185B73;
-	Mon, 24 Mar 2025 03:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609AF198833;
+	Mon, 24 Mar 2025 06:53:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="CcNhVdVG"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bferOem4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24F841C69;
-	Mon, 24 Mar 2025 03:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+Received: from mail-oo1-f74.google.com (mail-oo1-f74.google.com [209.85.161.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09448204C29
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Mar 2025 06:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742786844; cv=none; b=bythI3eBKeyVCyz62B4G9tBKTES7fkxjWh3vyW/SePkRU3LF4ocVhOqGRbhCkByAInt9aZhT4090eK1Sv9SBa9YFbm0Gm5GeK9UL0lkINDcyisCEU/u+xM9aNpmErCNeilIMHEXVeufbgQR1M0IiWAnr9ovhDnScZ7gi6D6COE0=
+	t=1742799215; cv=none; b=pfBF015h73rxn7Px07AQPnmqYQOkLiUxxEaJPalKScyiUKFvlDqlrs8sZJhFc2+J4LMiQoNYkKgOgLRTSohNaPuxjRQyUID/LImazQycFXvz2CEuTGwpT6/3F9XluHql300Be2su4quzB1VIQxXmpFWnt91CfeKbUIltoXi2bUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742786844; c=relaxed/simple;
-	bh=Xf2ozL92Gzlryg9xYd9n8bZc3aBJ+vAiIawfSXBJIis=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MX53ryNZRgTjEXRSW+9k008hUFB4XDo10Kycd/ww7CPYQ7yKa0qB7kXf4ZmAl5QbjQK3P1u03obyoDWUQCfSyaq1nVhGeWzDP8JzsJ7SA6sTQ39XdkkrUVYX6VLQvgRCoJgrhouL2lkT6mh80LzIqof9wl0pHP48jdJce0hhSJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=CcNhVdVG; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=HkbejiPMTMwvJkup0zgJvuVm3HcrQGNtexmCZvXZV6Q=;
-	b=CcNhVdVGCGSAQ1vmsePlw+MbAWWGDCHNksI+gvYxVcQd7oEDhfo8114/WCPUts
-	NK1PuigMIeeYzcnedKib2qve8ZEpMMeTxRUnk09b1WmzoP682Xn4AO9qckB7m3+o
-	6gjt7zcdP6QaQRqJMURxoRweGf7H934H63Pls5PyQ495U=
-Received: from [192.168.22.248] (unknown [223.70.253.31])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgA3eaaU0OBnwVitSA--.46911S2;
-	Mon, 24 Mar 2025 11:25:11 +0800 (CST)
-Message-ID: <c21dbc6b-3f1b-4015-9aee-44979ef0233e@163.com>
-Date: Mon, 24 Mar 2025 11:25:08 +0800
+	s=arc-20240116; t=1742799215; c=relaxed/simple;
+	bh=BBod9XlyyDQ8D6adGtugfu8HDKv7/m/WFoETZ5Ucj84=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=uA3s52YksRz+akzpRJgphelLlnG2ar0Pp7ZP4RRP95DK5Wkim9NfdR6ulTiXTahU/VDLV2+z/O+ufzwYVmab4O2r2TMLP7GOTaX3I6ZSbA26lRM+l8Uy1PIwqe0O7K1ym4EIP6Nd2mZgR4iRFU2Yw0Igiq1TMTvTprpNBJMiah8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bferOem4; arc=none smtp.client-ip=209.85.161.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com
+Received: by mail-oo1-f74.google.com with SMTP id 006d021491bc7-5fe8759156aso2972573eaf.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Mar 2025 23:53:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742799211; x=1743404011; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Ij8NrI5xZ43JBAGEthvNKWDZxxjZlhI2ViPlC5qM+Ac=;
+        b=bferOem4Kmpd73E/n6xq19KUOfp97nSAZkcPz7DO4yw3lssi+zAGYriQuKYIQES1/a
+         RO/v5grBrWbnyOpuY6NDWG9WXM2bUqhOt0MnEL181/o1X85rVcIElbeoXUQ6m8eg3nlC
+         pDa80t0NC5atHl8/YQICgZ+UP8LVhtRtLfaZtJ3O14j1+mlaYzojfLcK7Fp7sJpXo8eK
+         kCKoiKXHnQMctne3QVxZjxUYBMXs4UASBABuLMiF7s5kKzKG6UE3uHpFKmxdx00NMCFh
+         9xRVKbwFmOnwyLVIDw/JBU9TH9QZ8uH/HvB4LkNh1l/QgwiAt+SwqzeVXk34I5tpgRMe
+         47Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742799211; x=1743404011;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ij8NrI5xZ43JBAGEthvNKWDZxxjZlhI2ViPlC5qM+Ac=;
+        b=KOgmdwD9n7FLzgRGe2GMI0+5abawFFs9QeLhLshMGUHsKM+JNN9vcOnENEzxVCL+Xg
+         0m0raAfdIlWgDG2SLQp9BHNv/Qnnsf1bEOQWsLz+Pc/vtwd2l4KHWRnwQEOCktAmKrUx
+         rYFuV6Nj8CVwmPwnMn3joSFWGOZ96pq/IMoNFsVEvBxd1L968HX9bP3I3/QCMPpKvCGp
+         c0FLQmJMbSa08sPWyOM3RSg21/yCulb5atyCCrlyuxc6KnsK/EuS1ppWg6xvP8SNhx8t
+         O5WWm5NNp6bxFHICRyg+vrsEgBWjJP26yceE7m5RfYCMCDsMi02Q3q+e7CC6isHQLD3V
+         gf7g==
+X-Forwarded-Encrypted: i=1; AJvYcCWo2s6DQCb6kSfuSux9Pkz56/r33rXUdC2mj3ChMjRdmshxv5A0Zs19Z4UipPPkyKpnMMMu224r7HrGUros@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfGebd0aFhJBzEsKgQ7Oza9WF5zUL0WX7ZPZu+MYRFCX0GVb7Q
+	9F3j/Y+eEnA/NPuG1SIIf+JZcMX+p0fr6ume/xY7Y/DsvMHBX834wKkCi4w35KH6Acp89hB2gyy
+	ETQ==
+X-Google-Smtp-Source: AGHT+IHpdLVbnzsd3cNvYjM2o8eY6lwTbr3KBAgc79gozX2wYwWUwNW68nIoXf4IdVkTdg+SlaMY46oDTYQ=
+X-Received: from oacpc8.prod.google.com ([2002:a05:6871:7a08:b0:2b8:faad:4f1d])
+ (user=avagin job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6870:8901:b0:2c2:57a9:79c4
+ with SMTP id 586e51a60fabf-2c7805045acmr8278062fac.32.1742799211140; Sun, 23
+ Mar 2025 23:53:31 -0700 (PDT)
+Date: Mon, 24 Mar 2025 06:53:25 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] fs/proc/page: Refactoring to reduce code duplication.
-To: hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev,
- shakeel.butt@linux.dev, muchun.song@linux.dev
-Cc: akpm@linux-foundation.org, willy@infradead.org, david@redhat.com,
- svetly.todorov@memverge.com, vbabka@suse.cz, ran.xiaokai@zte.com.cn,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-mm@kvack.org, Liu Ye <liuye@kylinos.cn>
-References: <20250318063226.223284-1-liuyerd@163.com>
-Content-Language: en-US
-From: Liu Ye <liuyerd@163.com>
-In-Reply-To: <20250318063226.223284-1-liuyerd@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:QCgvCgA3eaaU0OBnwVitSA--.46911S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxKr45tr4kKFyxZFW7Jw1DKFg_yoWxur4fpF
-	s8GF4jyw4xX34Ykr17Jws8Za45u3s5Za1Yy3y7G34fXa47twnakFySy3Z0vFy8GryUZF48
-	WFWq9r1akFWUtFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jwa93UUUUU=
-X-CM-SenderInfo: 5olx5vlug6il2tof0z/xtbBMQ8aTGfgx7fuFQAAsk
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+Message-ID: <20250324065328.107678-1-avagin@google.com>
+Subject: [PATCH 0/3 v2] fs/proc: extend the PAGEMAP_SCAN ioctl to report guard regions
+From: Andrei Vagin <avagin@google.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	David Hildenbrand <david@redhat.com>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	criu@lists.linux.dev, Andrei Vagin <avagin@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Friendly ping.
+Introduce the PAGE_IS_GUARD flag in the PAGEMAP_SCAN ioctl to expose
+information about guard regions. This allows userspace tools, such as
+CRIU, to detect and handle guard regions.
 
-在 2025/3/18 14:32, Liu Ye 写道:
-> From: Liu Ye <liuye@kylinos.cn>
->
-> The function kpageflags_read and kpagecgroup_read is quite similar
-> to kpagecount_read. Consider refactoring common code into a helper
-> function to reduce code duplication.
->
-> Signed-off-by: Liu Ye <liuye@kylinos.cn>
->
-> ---
-> V4 : Update code remake patch.
-> V3 : Add a stub for page_cgroup_ino and remove the #ifdef CONFIG_MEMCG.
-> V2 : Use an enumeration to indicate the operation to be performed
-> to avoid passing functions.
-> ---
-> ---
->  fs/proc/page.c             | 161 +++++++++++++------------------------
->  include/linux/memcontrol.h |   4 +
->  2 files changed, 58 insertions(+), 107 deletions(-)
->
-> diff --git a/fs/proc/page.c b/fs/proc/page.c
-> index 23fc771100ae..999af26c7298 100644
-> --- a/fs/proc/page.c
-> +++ b/fs/proc/page.c
-> @@ -22,6 +22,12 @@
->  #define KPMMASK (KPMSIZE - 1)
->  #define KPMBITS (KPMSIZE * BITS_PER_BYTE)
->  
-> +enum kpage_operation {
-> +	KPAGE_FLAGS,
-> +	KPAGE_COUNT,
-> +	KPAGE_CGROUP,
-> +};
-> +
->  static inline unsigned long get_max_dump_pfn(void)
->  {
->  #ifdef CONFIG_SPARSEMEM
-> @@ -37,19 +43,17 @@ static inline unsigned long get_max_dump_pfn(void)
->  #endif
->  }
->  
-> -/* /proc/kpagecount - an array exposing page mapcounts
-> - *
-> - * Each entry is a u64 representing the corresponding
-> - * physical page mapcount.
-> - */
-> -static ssize_t kpagecount_read(struct file *file, char __user *buf,
-> -			     size_t count, loff_t *ppos)
-> +static ssize_t kpage_read(struct file *file, char __user *buf,
-> +		size_t count, loff_t *ppos,
-> +		enum kpage_operation op)
->  {
->  	const unsigned long max_dump_pfn = get_max_dump_pfn();
->  	u64 __user *out = (u64 __user *)buf;
-> +	struct page *page;
->  	unsigned long src = *ppos;
->  	unsigned long pfn;
->  	ssize_t ret = 0;
-> +	u64 info;
->  
->  	pfn = src / KPMSIZE;
->  	if (src & KPMMASK || count & KPMMASK)
-> @@ -59,24 +63,34 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
->  	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
->  
->  	while (count > 0) {
-> -		struct page *page;
-> -		u64 mapcount = 0;
-> -
->  		/*
->  		 * TODO: ZONE_DEVICE support requires to identify
->  		 * memmaps that were actually initialized.
->  		 */
->  		page = pfn_to_online_page(pfn);
-> -		if (page) {
-> -			struct folio *folio = page_folio(page);
->  
-> -			if (IS_ENABLED(CONFIG_PAGE_MAPCOUNT))
-> -				mapcount = folio_precise_page_mapcount(folio, page);
-> -			else
-> -				mapcount = folio_average_page_mapcount(folio);
-> -		}
-> -
-> -		if (put_user(mapcount, out)) {
-> +		if (page) {
-> +			switch (op) {
-> +			case KPAGE_FLAGS:
-> +				info = stable_page_flags(page);
-> +				break;
-> +			case KPAGE_COUNT:
-> +				if (IS_ENABLED(CONFIG_PAGE_MAPCOUNT))
-> +					info = folio_precise_page_mapcount(page_folio(page), page);
-> +				else
-> +					info = folio_average_page_mapcount(page_folio(page));
-> +				break;
-> +			case KPAGE_CGROUP:
-> +				info = page_cgroup_ino(page);
-> +				break;
-> +			default:
-> +				info = 0;
-> +				break;
-> +			}
-> +		} else
-> +			info = 0;
-> +
-> +		if (put_user(info, out)) {
->  			ret = -EFAULT;
->  			break;
->  		}
-> @@ -94,17 +108,23 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
->  	return ret;
->  }
->  
-> +/* /proc/kpagecount - an array exposing page mapcounts
-> + *
-> + * Each entry is a u64 representing the corresponding
-> + * physical page mapcount.
-> + */
-> +static ssize_t kpagecount_read(struct file *file, char __user *buf,
-> +		size_t count, loff_t *ppos)
-> +{
-> +	return kpage_read(file, buf, count, ppos, KPAGE_COUNT);
-> +}
-> +
->  static const struct proc_ops kpagecount_proc_ops = {
->  	.proc_flags	= PROC_ENTRY_PERMANENT,
->  	.proc_lseek	= mem_lseek,
->  	.proc_read	= kpagecount_read,
->  };
->  
-> -/* /proc/kpageflags - an array exposing page flags
-> - *
-> - * Each entry is a u64 representing the corresponding
-> - * physical page flags.
-> - */
->  
->  static inline u64 kpf_copy_bit(u64 kflags, int ubit, int kbit)
->  {
-> @@ -225,47 +245,17 @@ u64 stable_page_flags(const struct page *page)
->  #endif
->  
->  	return u;
-> -};
-> +}
->  
-> +/* /proc/kpageflags - an array exposing page flags
-> + *
-> + * Each entry is a u64 representing the corresponding
-> + * physical page flags.
-> + */
->  static ssize_t kpageflags_read(struct file *file, char __user *buf,
-> -			     size_t count, loff_t *ppos)
-> +		size_t count, loff_t *ppos)
->  {
-> -	const unsigned long max_dump_pfn = get_max_dump_pfn();
-> -	u64 __user *out = (u64 __user *)buf;
-> -	unsigned long src = *ppos;
-> -	unsigned long pfn;
-> -	ssize_t ret = 0;
-> -
-> -	pfn = src / KPMSIZE;
-> -	if (src & KPMMASK || count & KPMMASK)
-> -		return -EINVAL;
-> -	if (src >= max_dump_pfn * KPMSIZE)
-> -		return 0;
-> -	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
-> -
-> -	while (count > 0) {
-> -		/*
-> -		 * TODO: ZONE_DEVICE support requires to identify
-> -		 * memmaps that were actually initialized.
-> -		 */
-> -		struct page *page = pfn_to_online_page(pfn);
-> -
-> -		if (put_user(stable_page_flags(page), out)) {
-> -			ret = -EFAULT;
-> -			break;
-> -		}
-> -
-> -		pfn++;
-> -		out++;
-> -		count -= KPMSIZE;
-> -
-> -		cond_resched();
-> -	}
-> -
-> -	*ppos += (char __user *)out - buf;
-> -	if (!ret)
-> -		ret = (char __user *)out - buf;
-> -	return ret;
-> +	return kpage_read(file, buf, count, ppos, KPAGE_FLAGS);
->  }
->  
->  static const struct proc_ops kpageflags_proc_ops = {
-> @@ -276,53 +266,10 @@ static const struct proc_ops kpageflags_proc_ops = {
->  
->  #ifdef CONFIG_MEMCG
->  static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
-> -				size_t count, loff_t *ppos)
-> +		size_t count, loff_t *ppos)
->  {
-> -	const unsigned long max_dump_pfn = get_max_dump_pfn();
-> -	u64 __user *out = (u64 __user *)buf;
-> -	struct page *ppage;
-> -	unsigned long src = *ppos;
-> -	unsigned long pfn;
-> -	ssize_t ret = 0;
-> -	u64 ino;
-> -
-> -	pfn = src / KPMSIZE;
-> -	if (src & KPMMASK || count & KPMMASK)
-> -		return -EINVAL;
-> -	if (src >= max_dump_pfn * KPMSIZE)
-> -		return 0;
-> -	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
-> -
-> -	while (count > 0) {
-> -		/*
-> -		 * TODO: ZONE_DEVICE support requires to identify
-> -		 * memmaps that were actually initialized.
-> -		 */
-> -		ppage = pfn_to_online_page(pfn);
-> -
-> -		if (ppage)
-> -			ino = page_cgroup_ino(ppage);
-> -		else
-> -			ino = 0;
-> -
-> -		if (put_user(ino, out)) {
-> -			ret = -EFAULT;
-> -			break;
-> -		}
-> -
-> -		pfn++;
-> -		out++;
-> -		count -= KPMSIZE;
-> -
-> -		cond_resched();
-> -	}
-> -
-> -	*ppos += (char __user *)out - buf;
-> -	if (!ret)
-> -		ret = (char __user *)out - buf;
-> -	return ret;
-> +	return kpage_read(file, buf, count, ppos, KPAGE_CGROUP);
->  }
-> -
->  static const struct proc_ops kpagecgroup_proc_ops = {
->  	.proc_flags	= PROC_ENTRY_PERMANENT,
->  	.proc_lseek	= mem_lseek,
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 53364526d877..5264d148bdd9 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -1793,6 +1793,10 @@ static inline void count_objcg_events(struct obj_cgroup *objcg,
->  {
->  }
->  
-> +static inline ino_t page_cgroup_ino(struct page *page)
-> +{
-> +	return 0;
-> +}
->  #endif /* CONFIG_MEMCG */
->  
->  #if defined(CONFIG_MEMCG) && defined(CONFIG_ZSWAP)
+Currently, CRIU utilizes PAGEMAP_SCAN as a more efficient alternative to
+parsing /proc/pid/pagemap. Without this change, guard regions are
+incorrectly reported as swap-anon regions, leading CRIU to attempt
+dumping them and subsequently failing.
+
+This series should be applied on top of "[PATCH 0/2] fs/proc/task_mmu:
+add guard region bit to pagemap":
+https://lore.kernel.org/all/2025031926-engraved-footer-3e9b@gregkh/T/
+
+The series includes updates to the documentation and selftests to
+reflect the new functionality.
+
+v2:
+- sync linux/fs.h with the kernel sources
+- address comments from Lorenzo and David.
+
+Andrei Vagin (3):
+  fs/proc: extend the PAGEMAP_SCAN ioctl to report guard regions
+  tools headers UAPI: Sync linux/fs.h with the kernel sources
+  selftests/mm: add PAGEMAP_SCAN guard region test
+
+ Documentation/admin-guide/mm/pagemap.rst   |  1 +
+ fs/proc/task_mmu.c                         | 17 ++++---
+ include/uapi/linux/fs.h                    |  1 +
+ tools/include/uapi/linux/fs.h              | 19 +++++++-
+ tools/testing/selftests/mm/guard-regions.c | 57 ++++++++++++++++++++++
+ 5 files changed, 87 insertions(+), 8 deletions(-)
+
+-- 
+2.49.0.rc1.451.g8f38331e32-goog
 
 
