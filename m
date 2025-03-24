@@ -1,145 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-44869-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44870-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E06F8A6DD1F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 15:35:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73BD5A6DD4A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 15:46:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6F5B167BC8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 14:35:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 905F13A95C1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 14:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B08261379;
-	Mon, 24 Mar 2025 14:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002FC26136B;
+	Mon, 24 Mar 2025 14:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="e/BCoVIB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dqsnhrgl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26FCE261376;
-	Mon, 24 Mar 2025 14:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D873B7A8;
+	Mon, 24 Mar 2025 14:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742826902; cv=none; b=OowsReiwxVYV8wsEn3DFQoaX8cmhJSTtCSqPNwst1ldoTqgyd2Obp8zo6B3M1BVjRWbb/D1BSrul5eCJpbhDnpSCNmaBUkazpOTzg2ZHwa3kKg0FkO0SE1GcNhe39ls82gsIzRbsi253Of8/kZLe8gVJLIEGS8BlFJ6QULYlGq8=
+	t=1742827548; cv=none; b=iE3GQCVIG2CyVKlQtdvSvWLO6Ei/fStB35NNIWsjEJyvYbh4psSyqLOR4OFvQZtcOhYujchxY7x99RQzCD4/zHqQyP5KpyYk7YnZl5MTzMfT0glK9+gXZqaZnMyPnNMRWBJn5RKK8LUpQfXm9xhw8JIjKPKTMMF5x7fQ6sHMPRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742826902; c=relaxed/simple;
-	bh=eXZOjdsz3n3Gnq7r2I/kxtbzwWU3mSzTlQX9+6VwZjo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dB2XesuUV/5iKSxMhheYF778H9iuAzS5THSPR2umIq6qo/1OTVTVXDFTHN0etCYZIYqpWtI45/T82IM6I3C9bwCZACE15vCCYu+ztmSnVkXhQNYQVw0p4Ec7WIugn+kIHZTLejiMG4MpwVi6iBW/ehFjaffcwmbjTXTPL4/VW34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=e/BCoVIB; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1742826897;
-	bh=eXZOjdsz3n3Gnq7r2I/kxtbzwWU3mSzTlQX9+6VwZjo=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=e/BCoVIB2xjGLwwZhZh13iLYyQw8MEbshM/0g+jMd4kl/GBirsniZq66xCNmRUZR8
-	 Gyswg9KtN/vhJ9tFbSMZdy/3GBCU4whHFtRCot+OJeVeuYMlYi+6iemoKrOW67FUMc
-	 DJBBe7/+4rgLkvM44iwMmTgYc0uqB0b9oTdOCKPQ=
-Received: from [172.22.32.239] (unknown [99.209.85.25])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 6714D1C036F;
-	Mon, 24 Mar 2025 10:34:57 -0400 (EDT)
-Message-ID: <9f5bea0af3e32de0e338481d6438676d99f40be7.camel@HansenPartnership.com>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Filesystem Suspend Resume
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org, 
- lsf-pc@lists.linux-foundation.org, "Rafael J. Wysocki" <rafael@kernel.org>,
-  Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>,
- linux-pm@vger.kernel.org
-Date: Mon, 24 Mar 2025 10:34:56 -0400
-In-Reply-To: <vnb6flqo3hhijz4kb3yio5rxzaugvaxharocvtf4j4s5o5xynm@nbccfx5xqvnk>
-References: 
-	<0a76e074ef262ca857c61175dd3d0dc06b67ec42.camel@HansenPartnership.com>
-	 <Z9xG2l8lm7ha3Pf2@infradead.org>
-	 <acae7a99f8acb0ebf408bb6fc82ab53fb687559c.camel@HansenPartnership.com>
-	 <Z9z32X7k_eVLrYjR@infradead.org>
-	 <576418420308d2511a4c155cc57cf0b1420c273b.camel@HansenPartnership.com>
-	 <62bfd49bc06a58e435431610256e722651e1e5ca.camel@HansenPartnership.com>
-	 <vnb6flqo3hhijz4kb3yio5rxzaugvaxharocvtf4j4s5o5xynm@nbccfx5xqvnk>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1742827548; c=relaxed/simple;
+	bh=rMIDekdgu7k+w3o8KxlJ2MhnfGm0bZTtGCdWxSGqOTo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HRZUJX8zMbB/SjA0/wKgs4if3PsNITNkIyoOrkh74UlGErgefFPnLfoJg+5QpLzes9viWYL9wrggFShLdzTn9MBZFn8cRHQkcpSZnxUIOFccMey60GfW3FK7Mwo0wQx40FxqvUlmT3JsdU8nkpcBikw3czNCq9YG+cxh6s51GXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dqsnhrgl; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-307bc125e2eso46848411fa.3;
+        Mon, 24 Mar 2025 07:45:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742827545; x=1743432345; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YySDT6NdhdJKGPUFeJR1/DEX+p2cFBnIzeE/4PTN8fk=;
+        b=dqsnhrglCaGX/uQGUWAs2NrspxZWhpEIMJKBkXMjuX7CcvEG88R3HNlcUCQCYWnddc
+         yKAHsQmap+AvbuOkGXZeuoESmz8KUEH8oSrW4Un4U/ZwcVS1Qntf3+XEFSQ4LFtJlwdr
+         ppCD/OdDoICYgEsgmwyv2EkbAwTpE9spSJp3hn4H37pLCRh540ksOfUI+9IwXVCZ1MsA
+         26EPlXdxufdH8wm+8/3ECtXW8txc/R86VS/X8AkQButqBosQXcT1gvNJhPf6x9ncOP/0
+         TSO1mYpOMIJ22K9/HvhQYoScJP73M8N9ag75LGWQG6DCHz0CVGeElA+enRsLKIqFvrfo
+         w5CA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742827545; x=1743432345;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YySDT6NdhdJKGPUFeJR1/DEX+p2cFBnIzeE/4PTN8fk=;
+        b=nij6Jsr6VxniPHQcm2OeiWOEmOuCeVfSUcPhqoa2Z3lWCQhJ/kXIXzpyWIG3bTZZjN
+         FZ0CGKREwGjEqyyVnjTZqlfLBgylCQAdDgd9qkLgyKOQ9WCCdLvSP/+DdYouiWj3EOxT
+         bxPbERIiIQ6knAqZSq0uv26PbyUx8nP9vvRW78aqyw+Tnpw7S9Mm2C/ew8FVELrUW1My
+         MZZyK1Ju16S7Mhmz8jCoHqJaLwA3Zrvk9YZSwLkoua6SsGMqLguvXagUnAxSWe89xrF5
+         nGSvmcster7FzwphxVZfrhIhkjiBIP2mNPaqpZl9D+x1uZuzqcNFMPT24/CNUfjCzhCF
+         /V7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUNnVWCgWNYCgzInCbau1rI60wDXI5B6ofP4C32aRKkl+PjP9dhEYy0GiPDE8Ftvmuqw7qcEi4zEOYbPCmG@vger.kernel.org, AJvYcCUtSPl2lQsl8793sJ6AR35wafMXLqbL/T973/jTBYoTjaPlb5wPRfpFLkcK4uFfQqO0YC8ZDhwcuLXSCdC0@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEgXCOL2x3vVbgMkhv/VRj3/zfbGMJFeizukiRSyw4LKEw6/Z/
+	EELZaYRcbDZQcLDmjVH6v8C90dLi4QaBoD+A5X+Pk2QJXhtUI34f5/pRhBKfh/+mWHiE6LrnwG1
+	sBKcvvJhJDXYmMjCmom7+jmtSxAksTUtPD80=
+X-Gm-Gg: ASbGncuCgBz595JXbEdfXfbucXV+Lqr2LYPN0PpSmKxJVB0rL4Ao+vMLApfjC3KoNr1
+	G+bdBEbrpb2a8hMmJRCpGDy/vXacskoCLrPqnf/1h9lLpqRfEFW6IAnxdRRB054KRs9XBgjM9EG
+	wu2WbNgo/OA+BsFgtvPokknO6eUZQvlXgIFa/IwPExX7gdCzDS4heB
+X-Google-Smtp-Source: AGHT+IHl9dwplhezNLn7IB7Sq3eiZyr65Hj6aswx7up7md4DBgKJttJkhnAhxsOY6v3v1JjbW7Pfci2rEpaF23aoXNM=
+X-Received: by 2002:a2e:b8c8:0:b0:308:eb34:103a with SMTP id
+ 38308e7fff4ca-30d7e2a722cmr57009151fa.28.1742827544473; Mon, 24 Mar 2025
+ 07:45:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250321-xarray-fix-destroy-v1-1-7154bed93e84@gmail.com> <Z98oChgU7Z9wyTw1@casper.infradead.org>
+In-Reply-To: <Z98oChgU7Z9wyTw1@casper.infradead.org>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 24 Mar 2025 10:45:07 -0400
+X-Gm-Features: AQ5f1JrW68Vn_B0jmPyAT5zcOLPzNVAsAnicIcYueNfueTreXg8ST6v187cy9-0
+Message-ID: <CAJ-ks9kZ-745x2_U00xwwG6nsJbcd=Fg-n8-X6oS+z=CsGy5VA@mail.gmail.com>
+Subject: Re: [PATCH] XArray: revert (unintentional?) behavior change
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2025-03-24 at 12:38 +0100, Jan Kara wrote:
-> On Fri 21-03-25 13:00:24, James Bottomley via Lsf-pc wrote:
-> > On Fri, 2025-03-21 at 08:34 -0400, James Bottomley wrote:
-> > [...]
-> > > Let me digest all that and see if we have more hope this time
-> > > around.
-> >=20
-> > OK, I think I've gone over it all.=C2=A0 The biggest problem with
-> > resurrecting the patch was bugs in ext3, which isn't a problem now.
-> > Most of the suspend system has been rearchitected to separate
-> > suspending user space processes from kernel ones.=C2=A0 The sync it
-> > currently does occurs before even user processes are frozen.=C2=A0 I
-> > think
-> > (as most of the original proposals did) that we just do freeze all
-> > supers (using the reverse list) after user processes are frozen but
-> > just before kernel threads are (this shouldn't perturb the image
-> > allocation in hibernate, which was another source of bugs in xfs).
->=20
-> So as far as my memory serves the fundamental problem with this
-> approach was FUSE - once userspace is frozen, you cannot write to
-> FUSE filesystems so filesystem freezing of FUSE would block if
-> userspace is already suspended. You may even have a setup like:
->=20
-> bdev <- fs <- FUSE filesystem <- loopback file <- loop device <-
-> another fs
->=20
-> So you really have to be careful to freeze this stack without causing
-> deadlocks.
+On Sat, Mar 22, 2025 at 5:13=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Fri, Mar 21, 2025 at 10:17:08PM -0400, Tamir Duberstein wrote:
+> > Partially revert commit 6684aba0780d ("XArray: Add extra debugging chec=
+k
+> > to xas_lock and friends"), fixing test failures in check_xa_alloc.
+> >
+> > Fixes: 6684aba0780d ("XArray: Add extra debugging check to xas_lock and=
+ friends")
+>
+> This doesn't fix anything.  The first failure is:
+>
+> #6  0x0000555555649979 in XAS_INVALID (xas=3Dxas@entry=3D0x7ffff4a003a0)
+>     at ../shared/linux/../../../../include/linux/xarray.h:1434
+> #7  0x000055555564f545 in check_xas_retry (xa=3Dxa@entry=3D0x55555591ba00=
+ <array>)
+> --Type <RET> for more, q to quit, c to continue without paging--
+>     at ../../../lib/test_xarray.c:131
+> #8  0x0000555555663869 in xarray_checks () at ../../../lib/test_xarray.c:=
+2221
+> #9  0x00005555556639ab in xarray_tests () at xarray.c:15
 
-Ah, so that explains why the sys_sync() sits in suspend resume *before*
-freezing userspace ... that always appeared odd to me.
+That's not what I see when I boot a kernel with CONFIG_TEST_XARRAY=3Dy.
 
->  So you need to be freezing userspace after filesystems are
-> frozen but then you have to deal with the fact that parts of your
-> userspace will be blocked in the kernel (trying to do some write)
-> waiting for the filesystem to thaw. But it might be tractable these
-> days since I have a vague recollection that system suspend is now
-> able to gracefully handle even tasks in uninterruptible sleep.
+> That has nothing to do with xa_destroy().  What on earth are you doing?
 
-There is another thing I thought about: we don't actually have to
-freeze across the sleep.  It might be possible simply to invoke
-freeze/thaw where sys_sync() is now done to get a better on stable
-storage image?  That should have fewer deadlock issues.
+I'm running the kernel in a VM on arm64. What are you doing?
 
-> > There's a final wrinkle in that if I plumb efivarfs into all this,
-> > it needs to know whether it was a hibernate or suspend, but I can
-> > add that as an extra freeze_holder flag.
-> >=20
-> > This looked like such a tiny can of worms when I opened it; now it
-> > seems to be a lot bigger on the inside than it was on the outside,
-> > sigh.
->=20
-> Never underestimate the amount of worms in a can ;)
+> Anyway, I'm at LSFMM and it'a Saturday.  I shan't be looking at this
+> until the 27th.  There's clearly no urgency since you're the first one
+> to notice in six months.
 
-Tell me about it ...
-
-Regards,
-
-James
-
+Sure. I misunderstood the purpose of linux-next, thinking that if a
+commit is in there then it will soon head to mainline. I realize now
+this isn't the case.
 
