@@ -1,115 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-44878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44879-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7290A6DF6F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 17:21:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 736C4A6DF8A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 17:25:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EBC37A2621
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 16:19:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DDBF188A6C1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Mar 2025 16:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4FB263C77;
-	Mon, 24 Mar 2025 16:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34AF263C6B;
+	Mon, 24 Mar 2025 16:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZwJ6RZP/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TAffRKsv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54652638B0
-	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Mar 2025 16:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1333425E81C;
+	Mon, 24 Mar 2025 16:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742833244; cv=none; b=UxkXuUnU5NydfAC+vYr9T5WNU66X5NzQ5IVR3xi3Si7hLKGibuzhQd1U9LiKc3vR7N5V4cd+lB5rQTah2Q0a8uV5fHPIwZutFzYNnpMn/UMP+Q/pgLXpgkapvNb/Ee9fPUESNWQArF0DAbthl+j2Zjc9+Pa9zcp3qx/2I+9cOlU=
+	t=1742833444; cv=none; b=VUXDv846c147f0xnyG8vFhnrROciqLuVpvVf8+vM5Nm+Ktoic38Ell30BEAEWY5gmYC+nvBzllDXW3I6147XQjPzhxtQIfya3cHFMl1qJW6kHJKYq1BNU0bywdi5ubkDHQT5ByHBQOERREMsNPEnX5tLR4uJVITgT49MJQ8cMD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742833244; c=relaxed/simple;
-	bh=QEMyyGsi6pKVdO1NZX06aqp/5WGNOG/kiMBDZvItNyc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c5Pj61mmeSWU4zVSdyZBiaEe+reaquFaIJiZq+QYOOdgKucufKWz1T/40QmeWksDpqzaBqw/T6NhyyDBxjzsIEqVJwTK752+bC8JYEGyZz+0RaX7InKqj9UWcXPdie+CtH8alZQJjuFZhvXp1Jl85gnsNpFHaNCuvgO85NqA/mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZwJ6RZP/; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e614da8615so8418541a12.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Mar 2025 09:20:42 -0700 (PDT)
+	s=arc-20240116; t=1742833444; c=relaxed/simple;
+	bh=gG2U0rwHUfXmhboLhgXja8zI1PVcLv4TVPPi4iGB9bo=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=J4ktAXgSbaL6J2sqT+4gyk8UFgC+oDnlJmXeitRmMMtDcycrI2MROZOC79rJStEhMl60poknWI9QDCWV5B9Hpn2IrFXWRnFxb3Z4PDq6vS3UjN9T0zYl3RD/1ksJq1KA9QHrIOjH1EvXuQ/H/Eivf1zicew99CE22IzpV0+jOaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TAffRKsv; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ff187f027fso9936935a91.1;
+        Mon, 24 Mar 2025 09:24:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1742833241; x=1743438041; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=RvYPLpIx/vsSMNptY5I/a8vTPmXkTJh7cHFovrjH+zs=;
-        b=ZwJ6RZP//we7OiBrbt0k6+LxpikEZvO5AMbM6H633EwfirkyajUD2n1q9uhMsD8n7u
-         jRlrjfh9ycqQM0iLHoHK77Wv22egrF2JcjyHXPczozorDR4k5ZxoEZPq3zK7iIWUDT++
-         lVr+xn2GJIHc8Wf2S/Nb/vKHTgJGN7RwnVM5A=
+        d=gmail.com; s=20230601; t=1742833442; x=1743438242; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kysj7IBo2X0ysdrAKwKae8EbeSBOtCN5Ht/coLd5RSE=;
+        b=TAffRKsvaMXRHuvahCAN04z4pFfmiKoB8PLXzt3FPTVfb+exGb1a2d0wm1LLWwa2RR
+         2OWQaZMgeCNphBvbCz4cvGZQ59jfUIq80WPNf5EWhbF+i9mZhvc60m26c4eQsb38YvN1
+         3NETt5lqN/EYw7pt6F8agVSaAQFTlAmUG4xTEDCSmMytImA25kH0M2nykURgvlj2IVJw
+         NQRbtnW/uNFynqDggGyCL4f+hQWB8sQmHre3WpIYO/itaI6iw8HO7SNls1t13/gHY0Eb
+         d7TusmAmmTE8MflS1/hsR++nfYvaFtCFsWM7ZBP69iL2MigGPQlKM8BBHKSSkO4uaw2l
+         Ho2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742833241; x=1743438041;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RvYPLpIx/vsSMNptY5I/a8vTPmXkTJh7cHFovrjH+zs=;
-        b=hFkzdA9yqZmnYMyYNpp1p6xfK5h7UNLMWOAcobccbfQfv7iCpjuVSxoCw4bL4n4GDz
-         Mn8RKKdFHKFo2ZHWH4Cxs9NugUYsDirGIvmUwhBXDXaZVr2y1hIHrvSUVKWfo0Eh3sEX
-         R/KZFVAPriMVYMR7dtN+ORLl7vmn4QHldj9j8Rj7IeftS8Q7q/D7x/kwoXCYm6jrh/Wk
-         sHV/kOw1a69WSPnPBfeifsQiBANQZCOJXXCtYYUx1LnO/6lieUa3t9SDW7dz+XZ1NUcI
-         7b2JJIjz8DHPTnWdOhxr+nIhCh1O5f+yUvKwweWaTMm8AideGQgjat+Rcfn7ZPXiAsIy
-         tUcg==
-X-Gm-Message-State: AOJu0Yx+Iifsql8eofbcOAZ39kat01zctWLjMCjbYezb9zX49xjsTMM1
-	agUrBJcxK998b9xsaKB57/P59jkAU7wxWEAuAE1iHCB/tvZ0j95E+EHnXruhtxmiPRhwOfdiw2X
-	hL+c=
-X-Gm-Gg: ASbGncuWfoKe1Mg6PiDH8Hi5I5IaYqj2iBm2VMtuvuldTDzuqysCYblYdQc31NgfE6w
-	FU2OQSvrXWxGYd5HSbs81tZIbjLPQgExaI+jLWH6MqEujSdlSxQK/x0oqxN68jUriP3rvjNirTT
-	rwI2qGa1v5nat+WEVzBZx3BvlDM6tJeCHYMKsir3KTXCp0gK5rYG+zhGzPbWAsj2XKKFNxKIZHw
-	YqEth/tHaKv73K6Fk/q1MDIsaYV8USZ7dzNiRLdrsEUruvweUKVpcqL3Wi+U9AVBaP68FUysq5b
-	nXosR8C9gaEQ6bxAXyHL06Ps5xhPIj95cxdOg0K3Z57BAGbTDgudHF9Ye8kfEPyV7HSLhjWDkuF
-	2spkM+Q705r3ym2K2Z5Dt1UNtZW4FYg==
-X-Google-Smtp-Source: AGHT+IFvGZ8LCx2V8prIMthhBRxJv1VFp2Air02PE+Pnt7s5EKlBwt5fucpEDva1Prh4NWTSGUm1fw==
-X-Received: by 2002:a05:6402:2691:b0:5eb:95aa:486 with SMTP id 4fb4d7f45d1cf-5ebccd32f66mr13111151a12.6.1742833240790;
-        Mon, 24 Mar 2025 09:20:40 -0700 (PDT)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebcd0dfe0esm6321920a12.75.2025.03.24.09.20.40
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 09:20:40 -0700 (PDT)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ab771575040so1096614766b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Mar 2025 09:20:40 -0700 (PDT)
-X-Received: by 2002:a17:907:c23:b0:ac1:edc5:d73b with SMTP id
- a640c23a62f3a-ac3cdb96185mr1669224866b.8.1742833239650; Mon, 24 Mar 2025
- 09:20:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742833442; x=1743438242;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kysj7IBo2X0ysdrAKwKae8EbeSBOtCN5Ht/coLd5RSE=;
+        b=jLhfngXpBRqvk23/jgM0Bmz2cpXaAKnplcw6g3hEo+9ifxOXkKEBNgR885gfZlsHTG
+         DlC50ePECsJQOX5oq33ujsR4lWdA5srI66eyLKb7fKwxMIP0Fxk6fU566djkGjSVcyP4
+         Bkf86s9XD2vYGwz25kX/hVjQA3bDPKI2898JK4YfwzyvVlgLLYgIael2Sv0PNLX2E46X
+         ff+7Y01096Nvn6veOmRBIPWuQJcUcx17x6RquSGINVcphJtQwOMYVP2QoXmYYQ/YjXOa
+         qqhtSxnZyuv780+UbdA54CxvwoKgVqtbE7ob8Dqku3YlOCexgZ4aBCrKsq33rvoMdzis
+         ycLw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8aayqmSOdLV4ZkAq845deV5+hPgfcr2ybKd/BlfPkmClA63IMVbq3pbtqjdrOn099Cuw8lXwbFmcbVHNJ@vger.kernel.org, AJvYcCWlYgPOXJYqfcH+HJ0ep7WT58UQACcPgdLs+5iIsHFodWt+huCaAugJrlJc99+CSxHr20qrjImeG3c3DHv/@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsBHPDMP4xvGJfTRhjWSJ2i8ACfYWYm6bLin64V66JozrO9DeS
+	IPaCPyEbx7QE7e5KaMJ9f/bsrVpRrvlnxARwQg9NJahRnoLVHHHi
+X-Gm-Gg: ASbGncv1lzO6BBSuq3AhORCoseBOd7Hnr5avPbw3IBfazkHFjG//SFEj6ewdzK/9s2D
+	iDipliqsaSTLY2Waiyz8tE/5yCfZ3BfDCPUQpDeYFdIjvMfCk79igeQDuCdgs0ZE6N5EH9ZhFvf
+	uR31vq1Up8ioR8trEy1VWMDMeccxgONCjFocN6K/8Ttdf3mbfCPKDPTwItxlBfQVTjt7Od0y5Tl
+	MaFvCwCMDxc3vPfNVCO3EGoX5R220WtaAAa9zsSYWCCVUXwuUavuqw7hX2392PzYiGwltQ4Eiza
+	rlNh6+GJdEw6VdeGG0eIpVXfH/sII4PQT6Yrq+pS8LhLI7CDgCRx6X/O0SbnYjMNSThysw==
+X-Google-Smtp-Source: AGHT+IEvNnBjw5De5SVjsZeYu7qUy5PqIxNAPMhbDeTvl0ikfBm1tdeg8dNDggku/btrG3cVZ+aOrQ==
+X-Received: by 2002:a17:90b:38d0:b0:2fa:30e9:2051 with SMTP id 98e67ed59e1d1-301d42b3a2dmr26594206a91.5.1742833442081;
+        Mon, 24 Mar 2025 09:24:02 -0700 (PDT)
+Received: from ubuntu.localdomain ([221.214.202.225])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301b9e19ceesm12518210a91.0.2025.03.24.09.23.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 09:24:01 -0700 (PDT)
+From: Penglei Jiang <superman.xpt@gmail.com>
+To: brauner@kernel.org,
+	akpm@linux-foundation.org,
+	lorenzo.stoakes@oracle.com
+Cc: tglx@linutronix.de,
+	jlayton@kernel.org,
+	viro@zeniv.linux.org.uk,
+	felix.moessbauer@siemens.com,
+	adrian.ratiu@collabora.com,
+	xu.xin16@zte.com.cn,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	syzbot+f9238a0a31f9b5603fef@syzkaller.appspotmail.com,
+	syzbot+02e64be5307d72e9c309@syzkaller.appspotmail.com,
+	Penglei Jiang <superman.xpt@gmail.com>
+Subject: [PATCH] proc: Fix the issue of proc_mem_open returning NULL
+Date: Mon, 24 Mar 2025 09:23:53 -0700
+Message-Id: <20250324162353.72271-1-superman.xpt@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250321-vfs-misc-77bd9633b854@brauner>
-In-Reply-To: <20250321-vfs-misc-77bd9633b854@brauner>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 24 Mar 2025 09:20:22 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjNojYGmik93aB5UG1Nd5h2VHcVhKfBoYu9jVv_zh6Zng@mail.gmail.com>
-X-Gm-Features: AQ5f1JowOKwVmnN0rwQkJkZQnbuG77xhgomiTzUPj4v6fu6nQxCSbS6hjKowXAw
-Message-ID: <CAHk-=wjNojYGmik93aB5UG1Nd5h2VHcVhKfBoYu9jVv_zh6Zng@mail.gmail.com>
-Subject: Re: [GIT PULL] vfs misc
-To: Christian Brauner <brauner@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 22 Mar 2025 at 03:13, Christian Brauner <brauner@kernel.org> wrote:
->
-> Merge conflicts with mainline
-> =============================
->
-> This contains a minor merge conflict for include/linux/fs.h.
+The following functions call proc_mem_open but do not handle the case
+where it returns NULL:
 
-Hmm. My resolution here was to just take the plain VFS_WARN_ON_INODE()
-side, which basically drops commit 37d11cfc6360 ("vfs: sanity check
-the length passed to inode_set_cached_link()") entirely, because that
-one had a "TODO" that implies it's now replaced by the new
-VFS_WARN_ON_INODE() interface.
+  __mem_open in fs/proc/base.c
+  proc_maps_open in fs/proc/task_mmu.c
+  smaps_rollup_open in fs/proc/task_mmu.c
+  pagemap_open in fs/proc/task_mmu.c
+  maps_open in fs/proc/task_nommu.c
 
-This is just a note to make sure that if anybody was expecting
-something else, you can now speak up and say "can you please do X".
+The following reported bugs may be related to this issue:
 
-Or, better yet, send a patch.
+  https://lore.kernel.org/all/000000000000f52642060d4e3750@google.com
+  https://lore.kernel.org/all/0000000000001bc4a00612d9a7f4@google.com
 
-                Linus
+Fix:
+
+Modify proc_mem_open to return an error code in case of errors, instead
+of returning NULL.
+
+Signed-off-by: Penglei Jiang <superman.xpt@gmail.com>
+---
+ fs/proc/base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index cd89e956c322..b5e7317cf0dc 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -840,7 +840,7 @@ struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
+ 	put_task_struct(task);
+ 
+ 	if (IS_ERR(mm))
+-		return mm == ERR_PTR(-ESRCH) ? NULL : mm;
++		return mm;
+ 
+ 	/* ensure this mm_struct can't be freed */
+ 	mmgrab(mm);
+-- 
+2.17.1
+
 
