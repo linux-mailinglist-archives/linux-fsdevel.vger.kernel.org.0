@@ -1,198 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-44939-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D59A6ED60
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 11:15:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7681A6EE1D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 11:46:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05997188F966
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 10:16:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9BE5189116C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 10:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F274254866;
-	Tue, 25 Mar 2025 10:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FAF41C5D50;
+	Tue, 25 Mar 2025 10:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="oRdac0lw"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CoNvGv3j"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677B21EEA4E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Mar 2025 10:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139F719ABA3
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Mar 2025 10:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742897732; cv=none; b=Ln80u/J48ffOx//zPDvm1WrKQmzJ+iWxRzLg1Ea8XaqW2tQItBecBLAxx+oop2xdGnsr/WmoI3e35qCV8Ml4Fnc8IQg3KQiC2PFLo2rFJp/UvaiNoFhCawxcm3AzAyUb3T+gpsjvmJJgXc5K79xkprkI3i+wB2IecLun7bpbFCk=
+	t=1742899601; cv=none; b=c0CsPxP0xoUEay1Y6j0sHCYkAqEQcFfTlPfkPf1uO83en98+TDEN2Oh/LIB9nb5CGeYXo7QlYUvI7VTV4IdietCwyrdpF2ocZf760tRYDr5YsIAn+j14Zrie8EuJz/AF281/IWXMhn214wydgdpBPak3TAGFWRR/tcJhSZD8XC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742897732; c=relaxed/simple;
-	bh=Ef4HGfhFH2O5B+2fOUPuazpKm+OfKzc+RqhjPOtADx0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kID7xmfXTfwr/sep6bXj+ivDbxNPbDiQ5YTwmBVYrpVN0CS67Ls3u7Wk7snWrmT7sbPmP/1NIVuLv86L6MnPyspp6aawyo3eXbCBoiBNZuqH98X2NSA9SbNDCP/QZqkEvmIstaOgSJ+EJW2CyAAXYeXb37KJYmnn4LO3886JdW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=oRdac0lw; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2260c915749so70554335ad.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Mar 2025 03:15:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1742897730; x=1743502530; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rOl85kkn8EDad0L2ymXY6WKpnUIUcFZbIKv6caJf9qs=;
-        b=oRdac0lwMHoLY2V2nvORNbtoPjkNkOC6xmfpd+36Bpm5rWZ2prgOSvqfT8i760aIsn
-         iNBVDR7PZpM7v8y0i727giaNmFjAyESgFHg8kNvjRmhDS059+9G0j2ZYP1ZxM8Iv6phP
-         hSCoNoCilYwRth8A0PscgguLNER8o7CWJwX3TXJ2B3f7zd/UMw9vZQx72HiWKQ8dHAi5
-         mzXWxuB9fZeVL910QIATuxOJjGqiwmw5qlEtTrW4FI772lo4e756ChV1DV+Un474r+pt
-         xF/SMN6d3x2Xt8njzapFDI4O+x9VjBzvB9LhS1cZ/AZXj9wR84JiBGyOkOgiy1Xnjvpr
-         ygIQ==
+	s=arc-20240116; t=1742899601; c=relaxed/simple;
+	bh=zS3iedtb9CGE+6AikF6XtcfJb/KtdMt4kbhmDjh5djU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z5md9kq8GlQcWcQIZuH+MCa5rgS75NVMNin5wVNbToijzBvMaDOAwzX8V2Alzald3t1KbSdmbz6zwZuOkXLGrRZx3ce1wzB2M5fC3E8jBB+diWCpbPZu5GCa5beP3YJ+lA7+LODeVvKw5MArGTnm9JGQZ2wJL8t2I8ERhHnwvA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CoNvGv3j; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742899598;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=llfCjfXs/RkEx1xDFKie+QOsYGNOm/qxwhosEg+VjwI=;
+	b=CoNvGv3j0q8+l4h7nwZMzQmVMB8v/RenQ5PkDd4zkmpPN5HTmEbQ49j/8lnwl9BaLfJ/w8
+	3WYbuaW7RX8idcwd5DXVll7PFsNG3dpHRQgx7np5H33s+zO1nHL20Sm56o7mGGirbF75Fr
+	6q7nV6q+6cUcjfmVST3jqa6e3jzq1a4=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-529-kjQhjRN2NiGzkeLerxZ1MQ-1; Tue, 25 Mar 2025 06:46:37 -0400
+X-MC-Unique: kjQhjRN2NiGzkeLerxZ1MQ-1
+X-Mimecast-MFC-AGG-ID: kjQhjRN2NiGzkeLerxZ1MQ_1742899596
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3913d8d7c3eso2820677f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Mar 2025 03:46:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742897730; x=1743502530;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rOl85kkn8EDad0L2ymXY6WKpnUIUcFZbIKv6caJf9qs=;
-        b=T2kuVJuRE93LTQogS84AfF3zUFneRkFT/i04Op0p4TGeEmoIxo+BweOlYOOSk8463n
-         WFJ2hZ+3h6jkbRJixB08/lSm+KtR+UICc6nZXA1YfgumKohmknuhyHIZvATn0RbRhV59
-         xAlee5KIPPTeDFJIokY56zkqVWoOWp6osI7Md19OVm3ck/yDT1gDG+OkckxFp7WcocKi
-         y3ZQTPPMWqmQb9vqeglkRXl2NKbUN9OOo3wWcSNmyPtiiWVmn2JQjhHx1SDPvMOa6SqK
-         bTz+Bru0MHLdqBmpoEm5txFvlcl2oWs6wwxFYTw8wVHr2/C5utjYgHr2FuACb1q9G8JD
-         /Y6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXCqyH+VjZr2HmVEmsKfTA0HOgAoZOElesfKjUMQjcA8Llm9pE1ySMgdGG1vK2rUOL8IToiI9YIA1VeDt/k@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYptlfTzslaloYU4OGZDEUQuDi7Rip0f24NLI+qxzuPIU9E0l8
-	wbriW7mSTe6arX8m3XU+LjEw+srL5k0vpBDxb5wFvZfRRPDImtoXgkUrKAVp1/8=
-X-Gm-Gg: ASbGncuy3HRw3BWkaoiep+rHj5DFqOrdl3Om6L/eOq6mQDoWP4rMgKPKglSzmtPYmzw
-	q+xaCc0jlMpJWUPlyhqiI/cpH2VYIlDcoI7hJjgGIqKfFhjC2hqZJ0EOy0Un6PIzsJbvLws9iK7
-	95Y5gvUS0PpBQS6dkbqWR3GWksswk75pkG028438Xicrb7VEcya/d/4H2WDWQSh1pAdwFeHoIx/
-	aZfXZnDe9PdoZX8J8D4sgpNXL5/lvhtRt6Lh657Kkz+qdoQ4kd4BAF45FImL2ulmLvHdRKfWj2g
-	mJnT4Ynn1fcyXHnTJGDyB3Md7ct322W94DilJ6ScvLl6tGDuc9vwBaf6n48n700lsIltMTFd5vQ
-	2cHzC2ZPeO1DcZCwsG3RL
-X-Google-Smtp-Source: AGHT+IFYqGWlzR8VFFYDQinF38dCfjE8ZCvm9Px3j5zTOBDRVJpAJEvMsURXg6g0GEroKGOZlrSeAw==
-X-Received: by 2002:a17:902:da82:b0:224:162:a3e0 with SMTP id d9443c01a7336-22780e2a37fmr236154395ad.49.1742897729510;
-        Tue, 25 Mar 2025 03:15:29 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-36-239.pa.vic.optusnet.com.au. [49.186.36.239])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f397cesm85648665ad.52.2025.03.25.03.15.28
+        d=1e100.net; s=20230601; t=1742899596; x=1743504396;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=llfCjfXs/RkEx1xDFKie+QOsYGNOm/qxwhosEg+VjwI=;
+        b=uYrc0RabtqrThnEE8R4fWiMPr3yY/dPNbNsJK+ARqETGBbIrkXKt3kA87h5ZJ19Kfh
+         F/d3PVzRHN7Jvx8T2hLgrV89JVEDn6ocyHwUcdezDCXmjfdFLeum8hvNrhwHz0enEZK4
+         pupCgwRxOyAH2zlkHcmTLe9YqJ/asG9BMnzkKKqA1MkD8KfRxYeI+kNMHZ4sLdIqiJ9D
+         Us2ora/lsX7KwI96Krz88XQi8DHdt/cA/wDKc5/o5Oni7TP6mBFCOKEUFhQqXhoZoxl/
+         +wVsepNgaiA7nKjePRZWXaMyu0iGMeYSOr3MM3e4MlQTdGVWW5GTfC65dmNt0As2hsxE
+         87JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVg3Nhhf+IkyKk04zAJNw79EROGHsIdrdCJhZ3H74ItbV5CL6iwtRijm6awDwkQsx5fhyHgIIkgZ7W9WI7a@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpuFaZkK/Rc9kxNSEQnsy5/k/OrhPw5Kni9G2wApmZKRBbWkdj
+	IvebxdvJBgBtKO+upWhe4MzZ94zpnCC+QXIlLs7yaBZpn5rUsmqZo8nzIyBh1GpNzGVNx+KIq3y
+	oQExKIrM8ycoHLP5bPrV7nRBW4NnVAa9kkV5SRD7TEGN2UTvgNHH4LXTVdqMqdsI=
+X-Gm-Gg: ASbGnctmsCCm77nnl7MmmQJJdx8yKJoi2IQxxWPzgIv+/foZOEOC3gQUO4uGYwytZgN
+	qdiV2PfHjSSi+7+XAHN0fu/98hxRHOfpp5aJn4O6lxwIUIYbT5O8r9i+E28E/Vhjq7XaGJAQIKi
+	pWuCYz75htZA1RxNdPJVc7BI/eKkpwUXr5g4fsgDNAXy6zdzgWYW+QZl7blnINDKqcO5MRbtRnm
+	xvnVfjY09LKzH1kS5x90O3o4y4mNirt8qvuH9RAP9flB94RCN+/u5+XM6zyy0KkTB/MY8kljcZR
+	Rc/T7GYOaHhC9bIf+ftiutS9GXExc0uT4V3owgOA4ICnLZ5JiCtVqjMxnXRx2cS9++E=
+X-Received: by 2002:a5d:47a5:0:b0:390:f699:8c27 with SMTP id ffacd0b85a97d-3997f902e3dmr14212174f8f.12.1742899596171;
+        Tue, 25 Mar 2025 03:46:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGbPImIP/lo9XeKEIz0Dxt34DSlVTLHymW8RqoW4OZVQLvzK6BjYDTV2S9svurxcLkem4p2mQ==
+X-Received: by 2002:a5d:47a5:0:b0:390:f699:8c27 with SMTP id ffacd0b85a97d-3997f902e3dmr14212151f8f.12.1742899595810;
+        Tue, 25 Mar 2025 03:46:35 -0700 (PDT)
+Received: from maszat.piliscsaba.szeredi.hu (87-97-53-119.pool.digikabel.hu. [87.97.53.119])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9a50c1sm13572203f8f.38.2025.03.25.03.46.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 03:15:28 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tx1Je-0000000049n-0EgB;
-	Tue, 25 Mar 2025 21:15:26 +1100
-Date: Tue, 25 Mar 2025 21:15:26 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Mikulas Patocka <mpatocka@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-	Jooyung Han <jooyung@google.com>, Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Heinz Mauelshagen <heinzm@redhat.com>, zkabelac@redhat.com,
-	dm-devel@lists.linux.dev, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH] the dm-loop target
-Message-ID: <Z-KCPvmBO3AeuiDf@dread.disaster.area>
-References: <Z8-ReyFRoTN4G7UU@dread.disaster.area>
- <Z9ATyhq6PzOh7onx@fedora>
- <Z9DymjGRW3mTPJTt@dread.disaster.area>
- <Z9FFTiuMC8WD6qMH@fedora>
- <7b8b8a24-f36b-d213-cca1-d8857b6aca02@redhat.com>
- <Z9j2RJBark15LQQ1@dread.disaster.area>
- <Z9knXQixQhs90j5F@infradead.org>
- <Z9k-JE8FmWKe0fm0@fedora>
- <Z9u-489C_PVu8Se1@infradead.org>
- <Z9vGxrPzJ6oswWrS@fedora>
+        Tue, 25 Mar 2025 03:46:35 -0700 (PDT)
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-unionfs@vger.kernel.org
+Cc: Amir Goldstein <amir73il@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	Giuseppe Scrivano <gscrivan@redhat.com>,
+	Alexander Larsson <alexl@redhat.com>
+Subject: [PATCH v2 0/5] ovl: metacopy/verity fixes and improvements
+Date: Tue, 25 Mar 2025 11:46:28 +0100
+Message-ID: <20250325104634.162496-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9vGxrPzJ6oswWrS@fedora>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 20, 2025 at 03:41:58PM +0800, Ming Lei wrote:
-> On Thu, Mar 20, 2025 at 12:08:19AM -0700, Christoph Hellwig wrote:
-> > On Tue, Mar 18, 2025 at 05:34:28PM +0800, Ming Lei wrote:
-> > > On Tue, Mar 18, 2025 at 12:57:17AM -0700, Christoph Hellwig wrote:
-> > > > On Tue, Mar 18, 2025 at 03:27:48PM +1100, Dave Chinner wrote:
-> > > > > Yes, NOWAIT may then add an incremental performance improvement on
-> > > > > top for optimal layout cases, but I'm still not yet convinced that
-> > > > > it is a generally applicable loop device optimisation that everyone
-> > > > > wants to always enable due to the potential for 100% NOWAIT
-> > > > > submission failure on any given loop device.....
-> > > 
-> > > NOWAIT failure can be avoided actually:
-> > > 
-> > > https://lore.kernel.org/linux-block/20250314021148.3081954-6-ming.lei@redhat.com/
-> > 
-> > That's a very complex set of heuristics which doesn't match up
-> > with other uses of it.
-> 
-> I'd suggest you to point them out in the patch review.
+The main purpose of this patchset is allowing metadata/data-only layers to
+be usable in user namespaces (without super user privs).
 
-Until you pointed them out here, I didn't know these patches
-existed.
+v2:
+	- drop broken hunk in param.c (Amir)
+	- patch header improvements (Amir)
 
-Please cc linux-fsdevel on any loop device changes you are
-proposing, Ming. It is as much a filesystem driver as it is a block
-device, and it changes need review from both sides of the fence.
+---
+Giuseppe Scrivano (1):
+  ovl: remove unused forward declaration
 
-> > > > Yes, I think this is a really good first step:
-> > > > 
-> > > > 1) switch loop to use a per-command work_item unconditionally, which also
-> > > >    has the nice effect that it cleans up the horrible mess of the
-> > > >    per-blkcg workers.  (note that this is what the nvmet file backend has
-> > > 
-> > > It could be worse to take per-command work, because IO handling crosses
-> > > all system wq worker contexts.
-> > 
-> > So do other workloads with pretty good success.
-> > 
-> > > 
-> > > >    always done with good result)
-> > > 
-> > > per-command work does burn lots of CPU unnecessarily, it isn't good for
-> > > use case of container
-> > 
-> > That does not match my observations in say nvmet.  But if you have
-> > numbers please share them.
-> 
-> Please see the result I posted:
-> 
-> https://lore.kernel.org/linux-block/Z9FFTiuMC8WD6qMH@fedora/
+Miklos Szeredi (4):
+  ovl: don't allow datadir only
+  ovl: make redirect/metacopy rejection consistent
+  ovl: relax redirect/metacopy requirements for lower -> data redirect
+  ovl: don't require "metacopy=on" for "verity"
 
-You are arguing in circles about how we need to optimise for static
-file layouts.
+ Documentation/filesystems/overlayfs.rst |  7 +++
+ fs/overlayfs/namei.c                    | 77 ++++++++++++++++---------
+ fs/overlayfs/overlayfs.h                |  2 -
+ fs/overlayfs/params.c                   | 16 +----
+ fs/overlayfs/super.c                    |  5 ++
+ 5 files changed, 66 insertions(+), 41 deletions(-)
 
-Please listen to the filesystem people when they tell you that
-static file layouts are a -secondary- optimisation target for loop
-devices.
-
-The primary optimisation target is the modification that makes all
-types of IO perform better in production, not just the one use case
-that overwrite-specific IO benchmarks exercise.
-
-If you want me to test your changes, I have a very loop device heavy
-workload here - it currently creates about 300 *sparse* loop devices
-totalling about 1.2TB of capacity, then does all sorts of IO to them
-through both the loop devices themselves and filesystems created on
-top of the loop devices. It typically generates 4-5GB/s of IO
-through the loop devices to the backing filesystem and it's physical
-storage.
-
-Speeding up or slowing down IO submission through the loop devices
-has direct impact on the speed of the workload. Using buffered IO
-through the loop device right now is about 25% faster than using
-aio+dio for the loop because there is some amount of re-read and
-re-write in the filesystem IO patterns. That said, AIO+DIO should be
-much faster than it is, hence my interest in making all the AIO+DIO
-IO submission independent of potential blocking operations.
-
-Hence if you have patch sets that improve loop device performance,
-then you need to make sure filesystem people like myself see those
-patch series so they can be tested and reviewed in a timely manner.
-That means you need to cc loop device patches to linux-fsdevel....
-
--Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+2.49.0
+
 
