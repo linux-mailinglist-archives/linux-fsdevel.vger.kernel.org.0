@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-44994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44995-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D098A6FEB6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:56:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6927BA6FECF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:57:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C14119A018D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 12:49:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63D803A8FC8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 12:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692A5280CD0;
-	Tue, 25 Mar 2025 12:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C26C28150E;
+	Tue, 25 Mar 2025 12:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tbm8Xu/x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MseyejDn"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7831A262811;
-	Tue, 25 Mar 2025 12:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7103A25743E;
+	Tue, 25 Mar 2025 12:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742905510; cv=none; b=MiChJk0XGEOXbNyHKx6HnnRsIiSg0ltdTVAi0vWwxIvSu/4YrpWJOLDGd6P1OKrwdr4khTZRlvhhf5Td0P2+D+otTQrfzZK9NeGTvysZ20oTOrMJK2Ql6JEvgKW1/4ldouW2YrGzwu65eXFQU5Ptc/cwCEuXFZPXCuYlInBOJrE=
+	t=1742905525; cv=none; b=tvtvcy8TQnRqKGSvWfiOSpQjkdSdS7KVGV/bzyplZJkwuqX/wBAD4at1i9+iRMqrVwa5CQtW6CUE/MHxqc43dZSxwVSn/JhlrFaYsUn0zFH2iQ9wcK4QEwL75qUE6g0A6jGd4EtgyhLu8Cc/xtuz4sqCOxdke+D7GE1scSdI0/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742905510; c=relaxed/simple;
-	bh=uqoJTO8TQ6On8+9R1MYgJxGk7xYpfwdXChiuqug5XKY=;
+	s=arc-20240116; t=1742905525; c=relaxed/simple;
+	bh=YhFQ2ibshi4VdwpUCryIeDZCxGJd5L8LcBHKHU0qt6Q=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=C/CdgXTGN/LQteLk88R6CO/9NNzr4GFN2m571anakaMHYn0zJPudLTOhrluGCAHlWivgPDKXK5Rb+hs4CIE1tUHNnanKV+GK3lFXl84Thi7oX+YbsIkHx5BweXZkNGZldZ5uvtZu89q+tWT41/HW53byTfRAt56NoTIZDbtxgGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tbm8Xu/x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2981CC4CEE4;
-	Tue, 25 Mar 2025 12:24:55 +0000 (UTC)
+	 MIME-Version; b=RDRBZkdXy+GY89rkFcFB0SyuYeWX82s2/n/xXW3RDHIRWcSZEL3xc9EDY7LE8R1WGjpbdUswyJOzK7yMi0A8eCREHbkYMcKTNOghD3tKUmUqPrIedrehz2lCz0cNN946K1dkngGS1VpLdMJkTyLABw72bsPSiyr7P7BN7vZFRo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MseyejDn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7793AC4CEEE;
+	Tue, 25 Mar 2025 12:25:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742905510;
-	bh=uqoJTO8TQ6On8+9R1MYgJxGk7xYpfwdXChiuqug5XKY=;
+	s=k20201202; t=1742905525;
+	bh=YhFQ2ibshi4VdwpUCryIeDZCxGJd5L8LcBHKHU0qt6Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Tbm8Xu/xL9LwAkup8nr/CZGwgZ/HtBocjjMNivSDeL5hMNIibkzNWBIjcdug8EvfD
-	 QidFgTYi+HMsMkeR8+VRTweKTrWgmou5CzsndMXzlO4oZEivwlhPhDjj4fjOc56Qc9
-	 LEKFd8XS0hLN2de0NvYOj9MFS3ZC1n3uwR87P/ChdO+Qxq566Apd5rBSyR6mxaQqhR
-	 uYwPY7KfQYrAJZbgGx2D1hYimJ9ECj2lRGYUD9xqOKdph3HacGa/jE9YJiGcpZdWWY
-	 sfTkSdpa1Iac6eeiW6fFY3790kvmIaOHme0uYaLwkVlbwify8gYY2fjL3qNT/qkevh
-	 HrFm01xwFxqLQ==
+	b=MseyejDnF7mwqmEqN7tEG0RqwtwCeVyNtPH/896j91wVIegZa2jtI2EZ83uU/0V2E
+	 9lABAyLdbPYzFsVhyfmGnTTu37x50QYjuV8s+jH6Amg7TKgjIpjJN8Z1yU4VwkbWUT
+	 x5BXsnAu3qJ+98zrmXtBO952PUMQ22v+Yt9pce53Mph3EDro8EXgBHN3FBLaE3Dems
+	 iwO2PikBqjaPdls2M1/9azOD9y8bGLfzPBTVJus/mPdsTHro2WluEYbis3rUZIYFMZ
+	 ayOSUhoxogSQEsa2y3V0uhRHOG/GCXPjaG6XijbjVMJSyE4jTNrm5nZ34MPsJ6W1+h
+	 mVg9mRnoG2F4A==
 From: guoren@kernel.org
 To: arnd@arndb.de,
 	gregkh@linuxfoundation.org,
@@ -114,9 +114,9 @@ Cc: ardb@kernel.org,
 	linux-sctp@vger.kernel.org,
 	linux-usb@vger.kernel.org,
 	linux-media@vger.kernel.org
-Subject: [RFC PATCH V3 35/43] rv64ilp32_abi: net: Use BITS_PER_LONG in struct dst_entry
-Date: Tue, 25 Mar 2025 08:16:16 -0400
-Message-Id: <20250325121624.523258-36-guoren@kernel.org>
+Subject: [RFC PATCH V3 36/43] rv64ilp32_abi: printf: Use BITS_PER_LONG instead of CONFIG_64BIT
+Date: Tue, 25 Mar 2025 08:16:17 -0400
+Message-Id: <20250325121624.523258-37-guoren@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20250325121624.523258-1-guoren@kernel.org>
 References: <20250325121624.523258-1-guoren@kernel.org>
@@ -130,46 +130,27 @@ Content-Transfer-Encoding: 8bit
 
 From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
 
-The rv64ilp32 ABI depends on CONFIG_64BIT for its ILP32 data type,
-which is smaller. To align with ILP32 requirements, CONFIG_64BIT
-was changed to BITS_PER_LONG in struct dts_entry.
+RV64ILP32 ABI systems have BITS_PER_LONG set to 32. Use
+BITS_PER_LONG instead of CONFIG_64BIT.
 
 Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
 ---
- include/net/dst.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ lib/vsprintf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/net/dst.h b/include/net/dst.h
-index 78c78cdce0e9..af1c74c4836e 100644
---- a/include/net/dst.h
-+++ b/include/net/dst.h
-@@ -65,7 +65,7 @@ struct dst_entry {
- 	 * __rcuref wants to be on a different cache line from
- 	 * input/output/ops or performance tanks badly
- 	 */
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 56fe96319292..2d719be86945 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -771,7 +771,7 @@ static inline int __ptr_to_hashval(const void *ptr, unsigned long *hashval_out)
+ 	/* Pairs with smp_wmb() after writing ptr_key. */
+ 	smp_rmb();
+ 
 -#ifdef CONFIG_64BIT
 +#if BITS_PER_LONG == 64
- 	rcuref_t		__rcuref;	/* 64-bit offset 64 */
- #endif
- 	int			__use;
-@@ -74,7 +74,7 @@ struct dst_entry {
- 	short			error;
- 	short			__pad;
- 	__u32			tclassid;
--#ifndef CONFIG_64BIT
-+#if BITS_PER_LONG == 32
- 	struct lwtunnel_state   *lwtstate;
- 	rcuref_t		__rcuref;	/* 32-bit offset 64 */
- #endif
-@@ -89,7 +89,7 @@ struct dst_entry {
- 	 */
- 	struct list_head	rt_uncached;
- 	struct uncached_list	*rt_uncached_list;
--#ifdef CONFIG_64BIT
-+#if BITS_PER_LONG == 64
- 	struct lwtunnel_state   *lwtstate;
- #endif
- };
+ 	hashval = (unsigned long)siphash_1u64((u64)ptr, &ptr_key);
+ 	/*
+ 	 * Mask off the first 32 bits, this makes explicit that we have
 -- 
 2.40.1
 
