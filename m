@@ -1,181 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-45023-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45024-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5063A70336
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 15:08:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA7C8A7037A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 15:21:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AC44168C7F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 14:04:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BE88188D85C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 14:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1747257AD1;
-	Tue, 25 Mar 2025 14:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6FE258CE3;
+	Tue, 25 Mar 2025 14:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jy/8UQh+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xob5GJY/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BCE2580C6
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Mar 2025 14:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED75E25522B;
+	Tue, 25 Mar 2025 14:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742911470; cv=none; b=pozILbzZaaqyFpNQexK9YT4P74Q3/bm+U7f5LIC8yu+6U+13zWo+0bvxd4PCDLNWVQl/bNMmqSwA50ah07H3xJ7GcC50nkFp+mMXs+a1ubeATrh4rfxMWk6Q/vpmXIUNp7obxX9smR2gjqTKEdlXIdhO/DT/BhsQW9iXzVylDo4=
+	t=1742912123; cv=none; b=mlowtc5xo+C5jPLr/nMfD9l8IEeBf3vvLw2VKFew4EjSNlNhcUQNvqOjUcRrqkQHq1RclPZhzbmr/R3eqZF2XlPi4ICvVElWeB6lOD8YFQm3yH3pl+EWbC6ZNVyLMhRVb5LqARqSSQjD28nBCgCsNf4ZJtb4RVNgjCHL2/UvHHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742911470; c=relaxed/simple;
-	bh=R+r1CguaOOz35iJ/DY6/umHEvBsP/o8mOXzzoR+V+0s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=idaDMSJ12rD9e7ZhArGtSB97/fot1vkArqOsC0/iZTTKRBx7A7A/4imZzRxsXGqlv0g15Ky+2udzBVUaALt5dag0zC6EXD8iXDV81maWtyk0wUHc+9+sQnQlBAup4BGps/situRlSzwZVXru5rOmqgou7azEAlOsvBYnHvJDV/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jy/8UQh+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742911467;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/ZgU7DrYK2qYRBNgm/CP2xQb06HcVoXyGjUHERMlZwk=;
-	b=Jy/8UQh+ur5SGU4M9gXoOtpd5GeNVlq5Vp7Wi+aVNU+5DcQ5omDs903lgs+Yx8A6rc+2c6
-	6D8jazfbxIWfLWC/frhUB5Zws3G9v87sCrnjC/2IpoKtzIuMXACQx4INAKB3DyY4ZC/juT
-	WD4zMMcBIUYfsw02frgkSOIMuUDRodI=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-331-M4O2IuOuOiaMDht8op7Pbg-1; Tue, 25 Mar 2025 10:04:24 -0400
-X-MC-Unique: M4O2IuOuOiaMDht8op7Pbg-1
-X-Mimecast-MFC-AGG-ID: M4O2IuOuOiaMDht8op7Pbg_1742911462
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-30bff0c526cso26032531fa.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Mar 2025 07:04:23 -0700 (PDT)
+	s=arc-20240116; t=1742912123; c=relaxed/simple;
+	bh=ZMaNHZC6xbmIZfH1KZ7uFhl2JDUoKP3oGCElsgWSgIw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KyJ9hBNxSWheQVYT+1XfZp8wTId9FmcIGsmKv7Sa0UUQiint/UEUqZCRrX+trk+QitGI8sOAnX8WIEkIU9qnCcoTgqERBup4OHu5Ntrnmww22dVGriVQglatewAKf4FuD8ppb6eio+aY/EYLQhyWhqF40LSjdVJC9FsP1bWfQb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xob5GJY/; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e614da8615so10230916a12.1;
+        Tue, 25 Mar 2025 07:15:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742912120; x=1743516920; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZMaNHZC6xbmIZfH1KZ7uFhl2JDUoKP3oGCElsgWSgIw=;
+        b=Xob5GJY/JSC+XBU5GOgWFti7wzv5A7ApXFX6667Ph18jTYxXWzoxr7UrabL+A44sCk
+         cimdWsTDipyas+vgjg4qE27wCsP/tT+pEOvpwd6Jn6C3Wl0TILAmOoDQgyL+JDV4WrgI
+         JU9sWWKDOeC+KFIAK9/6pIex0YWIiVpBIfA+DezRWUV/PjCYOcTXtraISDk1DNBMP1H2
+         Ibg9C4IVte4hGOMRe6pVRcE6Gg732KRL2lRiGMM6Kyuwjcol8ntbR/8qpROiqpyS2PfQ
+         yxUkFGVZTk6oGs+KsSqIbF3Otd5RNHIiyEt6TvDboqbs8YNFRxer1PGAE5TTnZhDguWV
+         RxGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742911462; x=1743516262;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/ZgU7DrYK2qYRBNgm/CP2xQb06HcVoXyGjUHERMlZwk=;
-        b=Ce7M7IhzFyG5FeX2gj2kTdDYmyJ4Q80gmDqjVqhFl9iMfMROsmz2vabEMQeXe9CJFy
-         1bFCS/PjBmLObBeJj99SpmZ9pXtYySxEDPoXiSaTcWwblOsWtvlyHOg53s/cCb4VCQtf
-         yjHK9OX7puwG+0cww1NgFcLJtSCo4cK4f1UxIGpDjPaJTZ7P3wmY6N2bFDrQU6IbFJgy
-         laNGKWruQevRl0rOkmQRMf+Bazx2eSr+2RvhA1vB/rVwku/gjuZoMwXI6dwpU8zaAafI
-         L1LoFmuPprl/n5WmMhvjd0+wttv8XA8nSi5/oJDXp7NfS86U88jZ2zGdY8Ct3deo8rmD
-         E48w==
-X-Forwarded-Encrypted: i=1; AJvYcCW8y15NqzKqthmS0ZtEcsviRrJ01UCXcb73nmWs35uKGgsWv6c6rLuPMw5Sp6i9yNHJ2tmQpR1+xAm2/g8x@vger.kernel.org
-X-Gm-Message-State: AOJu0YznM4b5D/KsCKYcQI/6sIR1sWm4b+SZlqvMTnUyeiSZVX8+zUuh
-	9Yick5jCBjSSaGQySUtEyZhQhdySeTp40KYrHTrZYzXx+PuGzI0ADyRV21CZ2/aSRE4yvG09ERT
-	aQHQDK0Foxa7gIu0qS7OvKgxjRMJr9Ddqhes27W6v29WqdilN7kRz0IDj1Y4Fu6U=
-X-Gm-Gg: ASbGnct/VYlXxKLZH2fjTNJmhuK2jl6FTmIvROedT6Pu7LjevA+FiCD9Vcv/IUF2hVr
-	gCjKKoDTNV640mR4nK8fHedC1va2DJVX0BQd7grRXzgfV6uUVtrrzVJg4WxKzpxlct0Iz10A+zQ
-	8Gagi0kkJ3D+mmPdaP3Zt4+B6m8q62kFF4J2LXTntp1I0taFijGQBYdkpKARB/uQwN31J2WVF0G
-	6rATZ4sougnS9hPZIAr9AMWMfP7MlHVTf2UiKW9nlwW5F0X2LG4LLjEAiprZg/sI/vPey2zPqDy
-	4ECHkgk8Pne7TG6mYVDJewk2leiGZYhFBrpD0ztncs+YNkZnqKnjxx8=
-X-Received: by 2002:a05:6512:33d6:b0:54a:c835:cc58 with SMTP id 2adb3069b0e04-54ad650d593mr5612569e87.50.1742911461871;
-        Tue, 25 Mar 2025 07:04:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHip8bhUQjYnv9bsqUqpdYcMzQDzIEXrVHTgN5VSGt0hGOS04oWCeFU0f4Ct8xM1JS4Aj/0nA==
-X-Received: by 2002:a05:6512:33d6:b0:54a:c835:cc58 with SMTP id 2adb3069b0e04-54ad650d593mr5612491e87.50.1742911461047;
-        Tue, 25 Mar 2025 07:04:21 -0700 (PDT)
-Received: from [192.168.68.107] (c-85-226-167-233.bbcust.telenor.se. [85.226.167.233])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad647c69esm1554602e87.69.2025.03.25.07.04.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 07:04:19 -0700 (PDT)
-Message-ID: <75253bff47313b895772b914e0a77bd4f19b546d.camel@redhat.com>
-Subject: Re: [PATCH 3/5] ovl: make redirect/metacopy rejection consistent
-From: Alexander Larsson <alexl@redhat.com>
-To: Colin Walters <walters@redhat.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
-  Miklos Szeredi <mszeredi@redhat.com>, linux-unionfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Giuseppe Scrivano <gscrivan@redhat.com>
-Date: Tue, 25 Mar 2025 15:04:17 +0100
-In-Reply-To: <CAGUVWovzT=7Gj2nj-RWC9g5_KWMzPPzAbFs9-xKWpFuh8iFTiw@mail.gmail.com>
-References: <20250210194512.417339-1-mszeredi@redhat.com>
-	 <20250210194512.417339-3-mszeredi@redhat.com>
-	 <CAOQ4uxiqis6kawuv4pa6jxHYgpQPc18izFP8e0TORfA_mVu_-w@mail.gmail.com>
-	 <CAJfpegt=PWs8ZDF11p3nOCWHbWescE5nwVtUt82f=B6B+S0Miw@mail.gmail.com>
-	 <CAOQ4uxiQQV_O1MJgTksKycBjJ6Bneqc=CQbUoghvXc=8KEEsMg@mail.gmail.com>
-	 <CAJfpegs1hKDGne7c3q4zs+O5Z4p=X3PK8yFXhyCY2iAjs4orig@mail.gmail.com>
-	 <1b196080679851d7731c0f4662d07640d483be4e.camel@redhat.com>
-	 <CAGUVWovzT=7Gj2nj-RWC9g5_KWMzPPzAbFs9-xKWpFuh8iFTiw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+        d=1e100.net; s=20230601; t=1742912120; x=1743516920;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZMaNHZC6xbmIZfH1KZ7uFhl2JDUoKP3oGCElsgWSgIw=;
+        b=Becc7DLGpkHiExhAY0PunoTA30iMt+B/0NMZ1zChBrJ3OjYR1UXLMQpL8ccYCckDF0
+         A/ZvEEUeQfFFm1dtLOpWrJmKEowqrvavzaeP0IqGev/CiKYh1XWdENyZBI+zjZYV2W43
+         JC9u884zvwfQXaleTH5FuVgoxf/2Cx7RcRe9mWZLULVRisXsoP4WFp/SgzEln14rXoZh
+         slZRq+PY7xLOpiLvoZiXYHh6L6RE6jxFu+r6v+TN7dTbVocz/d9BPA3qhuubkpUQqgf6
+         ItOxOknVDQAWtPk5aeOSpHTPDn6BPO7pxHBAjtANjdUtEINoMpgIKwjLWFqi5pasJR4q
+         R3fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+B5MgnpypyGa+aHXfuBeaWtN39pE+jsRm5axyPXgqwHJv/zuuT9CD8ADBvLRQy8/bYQAWuh7po675KcpI@vger.kernel.org, AJvYcCVfoTmh4b2918IAgMkylVGtaHatXE3bZeHf0QDNWPD1XEKk3KCaQsivkHbBQe+RHaQgBJmIH/YvVxv1D9cz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8czkqEnWQ5xhAgkistgjx2Q9FoWij2RpV4g5tHeLFitewt4U8
+	hp6oOs9LInykV7dEUQFEO4kSINNJ5xKy2QAXaNnVPaVEMfl25bbsmE8MEP6TwlY2TsdrsDjOrxp
+	8IR8y+4JWqoy57JhRFWlWDR42XTA=
+X-Gm-Gg: ASbGncsgpWRpZVAzRspIuIQcfLFFcGMT9d4EzKhuhXRUq5iC/5VztJXgfbASwjxX+Qf
+	d3z6G4TIEeQHNi82uRK4PBVmXbCTsAoTMX7nquBa2qYj+WytphQ4YUgnhg/nG2PGmttIeLrbQVn
+	H5OW2n/EJUgS+8Rbqp+Kv/rBfLRQEHobYJ3OC2
+X-Google-Smtp-Source: AGHT+IGCXq0i5sPbB6D+egYNTkN8t7fqQ46d/BSo5o0rsWhypxWST0TCfi0Il6K80MobV/2JX8on8SPeqOHSZWZg/k4=
+X-Received: by 2002:a05:6402:2712:b0:5e5:9c04:777 with SMTP id
+ 4fb4d7f45d1cf-5eb9972ae95mr19756146a12.6.1742912119870; Tue, 25 Mar 2025
+ 07:15:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com> <20250324160003.GA8878@redhat.com>
+ <CAGudoHHuZEc4AbxXUyBQ3n28+fzF9VPjMv8W=gmmbu+Yx5ixkg@mail.gmail.com>
+ <20250324182722.GA29185@redhat.com> <CAGudoHE8AKKxvtw+e4KpOV5DuVcVdtTwO0XjaYSaFir+09gWhQ@mail.gmail.com>
+ <20250325100936.GC29185@redhat.com> <CAGudoHFSzw7KJ-E9qZzfgHs3uoye08po0KJ_cGN_Kumu7ajaBw@mail.gmail.com>
+ <20250325132136.GB7904@redhat.com> <20250325-bretter-anfahren-39ee9eedf048@brauner>
+In-Reply-To: <20250325-bretter-anfahren-39ee9eedf048@brauner>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 25 Mar 2025 15:15:06 +0100
+X-Gm-Features: AQ5f1Jr8oXwwdmvGSBUITgwEGjTjEUXxS32Qqv2Kn_lvnq3BY7I5kPchOqLOEt8
+Message-ID: <CAGudoHFGcTergsO2Pg_v9J4aj94dWnCn_KrE1wpGd+x=g8_f1Q@mail.gmail.com>
+Subject: Re: [PATCH] exec: fix the racy usage of fs_struct->in_exec
+To: Christian Brauner <brauner@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, 
+	syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>, kees@kernel.org, 
+	viro@zeniv.linux.org.uk, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2025-03-25 at 08:51 -0400, Colin Walters wrote:
-> On Tue, Mar 25, 2025 at 7:18=E2=80=AFAM Alexander Larsson <alexl@redhat.c=
-om>
-> wrote:
->=20
-> > > So I think lookup code needs to disallow finding metacopy
-> > > in middle layer and need to enforce that also when upper is found
-> > > via index.
->=20
-> That sounds right to me, yes. Especially when fsverity is required,
-> hopefully we can keep the code paths involved as simple as possible.
->=20
-> > The most common usecase is to get a read-only image
->=20
-> Yes, especially for signed images that require fsverity - often the
-> deployments of those will not want a writable upper because we want
-> to be able to ultimately pair it with policies to enforce userspace
-> execution from verity/composefs like IPE etc.
->=20
-> > However, sometimes (for example with containers) we have a writable
-> > upper
-> > layer too. I'm not sure how important metacopy is for that though,
-> > it is more commonly used to avoid duplicating things between
-> > e.g. the container image layers. Giuseppe?
->=20
-> Wait isn't that statement backwards? metacopy is just for optimizing
-> the metadata-only copyup-from-lower case when having a writable upper
-> (not technically part of the container image layers).
-> I don't see what it has to do with the read-only stack for layers one
-> might want to create especially for a composefs use case.
-> Though on this topic personally I think it can often make sense to
-> perform some "eager" flattening of images in userspace, but that's a
-> metadata-only operation (in userspace) and has nothing to do with the
-> in-kernel optimization of metacopy (which is about optimizing when
-> userspace dynamically changes metadata on disk).
+On Tue, Mar 25, 2025 at 2:30=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Tue, Mar 25, 2025 at 02:21:36PM +0100, Oleg Nesterov wrote:
+> > On 03/25, Mateusz Guzik wrote:
+> > >
+> > > On Tue, Mar 25, 2025 at 11:10=E2=80=AFAM Oleg Nesterov <oleg@redhat.c=
+om> wrote:
+> > > >
+> > > > On 03/24, Mateusz Guzik wrote:
+> > > > >
+> > > > > On Mon, Mar 24, 2025 at 7:28=E2=80=AFPM Oleg Nesterov <oleg@redha=
+t.com> wrote:
+> > > > > >
+> > > > > > So to me it would be better to have the trivial fix for stable,
+> > > > > > exactly because it is trivially backportable. Then cleanup/simp=
+lify
+> > > > > > this logic on top of it.
+> > > > >
+> > > > > So I got myself a crap testcase with a CLONE_FS'ed task which can
+> > > > > execve and sanity-checked that suid is indeed not honored as expe=
+cted.
+> > > >
+> > > > So you mean my patch can't fix the problem?
+> > >
+> > > No, I think the patch works.
+> > >
+> > > I am saying the current scheme is avoidably hard to reason about.
+> >
+> > Ah, OK, thanks. Then I still think it makes more sense to do the
+> > cleanups you propose on top of this fix.
+>
+> I agree. We should go with Oleg's fix that in the old scheme and use
+> that. And then @Mateusz your cleanup should please go on top!
 
-I think this misses the question. There are two things in play here
-that are sort of handled by the same thing. The redirects from lower to
-data-only, and the metadata-change-avoids-copy-up optimization.
-However, they are currently enabled/disabled by the same option
-(metacopy).=20
-
-The problem here is that if metacopy is on in general, then a writable
-upper can also use it for general rewrites, and this is considered
-problematic:
-
-* Following redirects can have security consequences: it's like
-* a symlink into the lower layer without the permission checks.
-* This is only a problem if the upper layer is untrusted (e.g
-* comes from an USB drive).  This can allow a non-readable file
-* or directory to become readable.
-*
-* Only following redirects when redirects are enabled disables
-* this attack vector when not necessary.
-
-So, I think the question is about whether to split these two options so
-we can allow only the lower =3D> data-only redirect, without enabling all
-the copy-up optimization, and whether there are cases even with
-composefs where the copy-up optimization is useful. (And there are, but
-they are not necessarily super important.)
+Ok, in that case I'm gonna ship when I'm gonna ship(tm), maybe later this w=
+eek.
 
 --=20
-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D=
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-=3D-=3D-=3D
- Alexander Larsson                                            Red Hat,
-Inc=20
-       alexl@redhat.com            alexander.larsson@gmail.com=20
-He's an old-fashioned vegetarian master criminal moving from town to=20
-town, helping folk in trouble. She's a bloodthirsty foul-mouthed snake=20
-charmer with an incredible destiny. They fight crime!=20
-
+Mateusz Guzik <mjguzik gmail.com>
 
