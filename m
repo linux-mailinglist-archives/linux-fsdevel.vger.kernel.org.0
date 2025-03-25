@@ -1,109 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-45040-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45041-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67152A7091F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 19:39:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E8F8A70920
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 19:40:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7AD816F858
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 18:39:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CA53188F8A2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 18:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE021ADC86;
-	Tue, 25 Mar 2025 18:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816EE1ACEC8;
+	Tue, 25 Mar 2025 18:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b="Dm5hoeBW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUPm3Es2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938D71A8405
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Mar 2025 18:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD021190679;
+	Tue, 25 Mar 2025 18:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742927952; cv=none; b=VZeR3SKFxJxYEZdEOpsIGTeUGWJdMwwipXFsNtacb+lRivDJNC3iUIIXmY3rCGxMFDm08EbVPaCYPr3bw8Q2qBK7luyO0QNg7U2ZLYqqAm6xvCv0OP4sbhcmzYdyLodvaEFEMZP6A1X9ZUT7WJVj+apfs2FqbOyf+RdAoSL+ZKk=
+	t=1742928019; cv=none; b=oExew6mWOKMv9GApukcV8M6A3A+F32yT38XgoubpOy74ZPX7t0E19TcspXrj9oq9P7W4x3rgr9fp28S+alZZs0arguy9rkXld1p5X1Mlw5857QoRtnqc6XAIoimiI9HVciTyZlQs1Q/Th+T2u1JkoMTjaIzeobnNGRD0UU707os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742927952; c=relaxed/simple;
-	bh=bCJlJhl8YucfnAzgKhJCd2WQ+80iWTH8RHXaGInB99Y=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=naLf4rJc6Eb+aa6UohfP8F7E+uUne6JXD5Phnd/OHNIDSZLYZcsXvi0yliLSQFr1wqHeBU9t2WUZ+A3VQpr3Hm3FAzbyyMPrdbH3J/omx4YsHkqbB/b7M1RdgXdq1QtopZe88MA4GM8tPmfFwjhf8FnL8Yjr5IqtC/YgH4G/g60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com; spf=pass smtp.mailfrom=omnibond.com; dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b=Dm5hoeBW; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omnibond.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22398e09e39so124253195ad.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Mar 2025 11:39:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20230601.gappssmtp.com; s=20230601; t=1742927950; x=1743532750; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=n4sTxL8z8ZFyKWGtLFgWMnbMp9iEFajQjElF2stpIL0=;
-        b=Dm5hoeBWXZVQGzGpD+AEbaFtS4Udy+CkEbMjSVMi1pv2jw9NvXokmbI1xaSWPjMcAH
-         hUQxrkR+vIHxrpgbAW3Roum2I4djjrzLG9sJ4DeuyaK1UyHMkveWkehC7apiCDBIN0KA
-         JV4cRNN7FXKJFnAhWLglpIWyrAA9J2xlA+VciUidwHOuEzAvBqk/+J2a8sOswjhnp3Az
-         RvPBjEZ59ZNpb/yC8DVQGeg8n5b08ER5zuOjdfe9akf/xqVu1kHy3+dJFrP1RXeKd111
-         CIdPjXopBx74+IdCE2wm6+BuwNlF/0jvuQ9xmhLpGmQ8Cy4sCofWlh7h45ZTQ5VrGU/W
-         Pdnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742927950; x=1743532750;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=n4sTxL8z8ZFyKWGtLFgWMnbMp9iEFajQjElF2stpIL0=;
-        b=CXkH3DlprGlK42TYJysWYLIC3YwrLU9USsebZYkOkQ083coQXSeGiIyVQvykLmLCoj
-         /2WDUEPHa4suWU4HOEPhoMLrtJnp3xCNnDGAsWjn3ghL1fPecMDMAs5Jr2u8Y2ptff87
-         ykTVONClX6qtwaDhbxJEzVE3D6woRoQggZkvfds2rl1USvKW6QeKycmXi+SzoLGyc6j+
-         eVfLJdpghZ6xm113j94hLJ+0YoZQ0b/WeWhONZmNvm3iqbpIvHZ5Uf6zLjRFIJIJllOK
-         CosSFhd1s67m5MpZwJ8MCYOT7mS8bqsfsJF6WaJalhEiPo/ZA8eRXzAaj/0znR6cmWxi
-         tqPA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1mbZJgHtrbp5OVxw8TNnXrR/iq44K6MePCR8cdtglDKRPSWpbzhrn5qPVfuV1Uehj2cmxSmyXgM2DwGMr@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7jc8UUzKb5HXxsQJPdPIQzUYovx6NWmn5mPqbwnpUZfFyzqrU
-	bz9xYwlD9qLpe4an8OuurfpREixb1FjkYoAyQxdHidtUcbnSVe6/mw5XaZHNSOe3NSEQVbwYoqZ
-	g9e2G86EF39WyC26bjes8iAmH0K3UWLIfp/OdDkoACiJSkMjmRw==
-X-Gm-Gg: ASbGnculTr5ifmjBQYN1/pt4PVPI4g00rUH9afez9NWR6HvLV5RVoCUok+gpYnWRB/7
-	kqJQmWbdY+nfD1r1KjY9OBeteJMSTc3D4OjraSY3H2I80G14IPUyAxY7KDtlzUUZbsLEO0F35X1
-	abgaQkqRtlABNyLqV8raeR7nDLcXUbdgalimzDxw==
-X-Google-Smtp-Source: AGHT+IGSTGm3jyjlzqMiRIBP9nkdZErm4upxg148yL2BQ/Q/JmGxg4x58u+o7i/pQzVYoMgRRXII9Cgtd8qgy/C5y/o=
-X-Received: by 2002:a17:902:d50f:b0:21f:4649:fd49 with SMTP id
- d9443c01a7336-22780e2bc7amr292152155ad.49.1742927949535; Tue, 25 Mar 2025
- 11:39:09 -0700 (PDT)
+	s=arc-20240116; t=1742928019; c=relaxed/simple;
+	bh=46bS5zblPi4Cgi/GNAZgCaWw2aUsl90BI6FA+un2euk=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=qJYracd/y+GhHBZh9LsYBE+ni1lf5tbWb8fUNGXyn8rR0O8fHG46S8J36P1gXPhCXSXKTvn5LDKWF1+VyFtema5YXbSwjkskrJPO1PUoqKRoVuZMW0SXqceuVtId8qgN0IwzzKxtuju35tIXZ24FhyMe1E36oFUo82BPD7TMvCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUPm3Es2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28F7FC4CEE4;
+	Tue, 25 Mar 2025 18:40:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742928017;
+	bh=46bS5zblPi4Cgi/GNAZgCaWw2aUsl90BI6FA+un2euk=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=nUPm3Es2dRzj3FRgaG8tA42h7dX9GKnc4DWwth7T3WvuzXc906Khs8/oiG+pElZL1
+	 NBj6FKVCaG7M3fZ6xEGWVVOFCiXlRuMNeht3jfPQXN7lvwo2MtMmHY78ggOa65t4jm
+	 X7vV2dV8pwjTa+prQTkQaZkcgazfzXHO9jDyMXibvYFFYsuoinn4vszAwj5BSt3/Ad
+	 ukHZb4Q5yi9eKwjWd+9DqWVQ82lADzEtqIrvU0yaSOkngD1cCaAgaB/uNnU1RGu2DH
+	 gF6kh1+j2oZfHZABDa83+4bbQ7xzC4QxSmfox0s0BsJaFUyUsFjEXr6AAzfQkysc/e
+	 00oRHgNpTDBAA==
+Date: Tue, 25 Mar 2025 11:40:15 -0700
+From: Kees Cook <kees@kernel.org>
+To: Christian Brauner <brauner@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>
+CC: Oleg Nesterov <oleg@redhat.com>,
+ syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>,
+ viro@zeniv.linux.org.uk, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] exec: fix the racy usage of fs_struct->in_exec
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250325-stilbruch-deeskalation-f212bb2499de@brauner>
+References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com> <20250324160003.GA8878@redhat.com> <CAGudoHHuZEc4AbxXUyBQ3n28+fzF9VPjMv8W=gmmbu+Yx5ixkg@mail.gmail.com> <20250324182722.GA29185@redhat.com> <CAGudoHE8AKKxvtw+e4KpOV5DuVcVdtTwO0XjaYSaFir+09gWhQ@mail.gmail.com> <20250325100936.GC29185@redhat.com> <CAGudoHFSzw7KJ-E9qZzfgHs3uoye08po0KJ_cGN_Kumu7ajaBw@mail.gmail.com> <20250325132136.GB7904@redhat.com> <20250325-bretter-anfahren-39ee9eedf048@brauner> <CAGudoHFGcTergsO2Pg_v9J4aj94dWnCn_KrE1wpGd+x=g8_f1Q@mail.gmail.com> <20250325-stilbruch-deeskalation-f212bb2499de@brauner>
+Message-ID: <AA35714D-AB8B-4CC5-B298-2F1E00C4B3ED@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Mike Marshall <hubcap@omnibond.com>
-Date: Tue, 25 Mar 2025 14:38:57 -0400
-X-Gm-Features: AQ5f1Jqh8RozJArAut6NjWNnAfpcNnES62KdtTBuxvamGV6dc19eM3WlvW-jdyI
-Message-ID: <CAOg9mSQm_2=gAhyqUHjbK6pqedxH6n6Wd5Zq5opdZ0gjHMKsTQ@mail.gmail.com>
-Subject: [GIT PULL] orangefs updates for 6.15
-To: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Mike Marshall <hubcap@omnibond.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The following changes since commit 7eb172143d5508b4da468ed59ee857c6e5e01da6:
 
-  Linux 6.14-rc5 (2025-03-02 11:48:20 -0800)
 
-are available in the Git repository at:
+On March 25, 2025 7:46:15 AM PDT, Christian Brauner <brauner@kernel=2Eorg>=
+ wrote:
+>On Tue, Mar 25, 2025 at 03:15:06PM +0100, Mateusz Guzik wrote:
+>> On Tue, Mar 25, 2025 at 2:30=E2=80=AFPM Christian Brauner <brauner@kern=
+el=2Eorg> wrote:
+>> >
+>> > On Tue, Mar 25, 2025 at 02:21:36PM +0100, Oleg Nesterov wrote:
+>> > > On 03/25, Mateusz Guzik wrote:
+>> > > >
+>> > > > On Tue, Mar 25, 2025 at 11:10=E2=80=AFAM Oleg Nesterov <oleg@redh=
+at=2Ecom> wrote:
+>> > > > >
+>> > > > > On 03/24, Mateusz Guzik wrote:
+>> > > > > >
+>> > > > > > On Mon, Mar 24, 2025 at 7:28=E2=80=AFPM Oleg Nesterov <oleg@r=
+edhat=2Ecom> wrote:
+>> > > > > > >
+>> > > > > > > So to me it would be better to have the trivial fix for sta=
+ble,
+>> > > > > > > exactly because it is trivially backportable=2E Then cleanu=
+p/simplify
+>> > > > > > > this logic on top of it=2E
+>> > > > > >
+>> > > > > > So I got myself a crap testcase with a CLONE_FS'ed task which=
+ can
+>> > > > > > execve and sanity-checked that suid is indeed not honored as =
+expected=2E
+>> > > > >
+>> > > > > So you mean my patch can't fix the problem?
+>> > > >
+>> > > > No, I think the patch works=2E
+>> > > >
+>> > > > I am saying the current scheme is avoidably hard to reason about=
+=2E
+>> > >
+>> > > Ah, OK, thanks=2E Then I still think it makes more sense to do the
+>> > > cleanups you propose on top of this fix=2E
+>> >
+>> > I agree=2E We should go with Oleg's fix that in the old scheme and us=
+e
+>> > that=2E And then @Mateusz your cleanup should please go on top!
+>>=20
+>> Ok, in that case I'm gonna ship when I'm gonna ship(tm), maybe later th=
+is week=2E
+>
+>Ok, I've taken the patch as I've got a first round of fixes to send
+>already=2E
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git
-tags/for-linus-6.15-ofs1
+Thanks!=20
 
-for you to fetch changes up to 121a83ce6fe69d3024dfc24fee48b7a2b5386f4c:
+Acked-by: Kees Cook <kees@kernel=2Eorg>
 
-  orangefs: Bufmap deadcoding (2025-03-18 19:39:19 -0400)
 
-----------------------------------------------------------------
-orangefs: one fixup
-
-From "Dr. David Alan Gilbert" <linux@treblig.org>
-remove two orangefs bufmap routines that no longer have callers.
-
-----------------------------------------------------------------
-Dr. David Alan Gilbert (1):
-      orangefs: Bufmap deadcoding
-
- fs/orangefs/orangefs-bufmap.c | 25 -------------------------
- fs/orangefs/orangefs-bufmap.h |  3 ---
- 2 files changed, 28 deletions(-)
+--=20
+Kees Cook
 
