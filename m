@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-45004-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE3E4A7002E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 14:11:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8223CA7015B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 14:22:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 662E217B160
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:05:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCC401793C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B17268FEE;
-	Tue, 25 Mar 2025 12:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E0E29DB7D;
+	Tue, 25 Mar 2025 12:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fgaHN1tV"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="wi0m3IVt"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB76F1DD9D3;
-	Tue, 25 Mar 2025 12:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E62625DD12;
+	Tue, 25 Mar 2025 12:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742905971; cv=none; b=GBxs4P6l9dUpg4OJfMFjkTvkF5Q8HW9+SNahHd/fnvSBzGbuSDMoAQe57NedQMmVM6S+mD+xcZFSi5yqbczPjnjsxhRhEfviMVKAAyYRF8+U4NUvekgNacgBgCywo05IUM1YdV2RWWacSOmeJQcRAlwW/uV5ADSM6EEkSU1IIE4=
+	t=1742906411; cv=none; b=PnXjl+cLINmW+U+554978dD5liK9ULnI3jEjyazxQ7VuVcCTiBJsGz7s6nFMUVqb+FsoEZlS3nnlb6UmmkmmGuJ21jm2YPxSt/3k5kZcZnFihaQ7kRkCngX74VdjMzdGLziEkN1BZbTkfXbSfxxXXoaPNfrr2RoamHyhhb7okaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742905971; c=relaxed/simple;
-	bh=2CNd3Rknkdg7eU4W7zZ58Mhb5X4t5PmEEQK/wbRZsms=;
+	s=arc-20240116; t=1742906411; c=relaxed/simple;
+	bh=0GiKN6tISkpV4LvSTah7oJ/7zLYtwmACS2t+S7QGOMs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UKE2DgmCGEqEwPapRwjdAjzvChae8SSiE5zfkVXyePJKTEdAtTjE8ad7B05L6QZ+fqIlPaB5yHgZlaIZTiWxBNMHB5N3ww11Zxj0bfheAcgtAAoI+RKqzWRoFpyi+Y1+s+JUHtSTlxOhDF47K+1p7YqhM0/+DuZZ6CEJgToNExg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fgaHN1tV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F967C4CEE4;
-	Tue, 25 Mar 2025 12:32:51 +0000 (UTC)
+	 MIME-Version; b=NyrziWRnZHFZV7lfLphonw015qIM61ceexAEgimjjIx9JWS1MEox6vzEYuWPwsa16p3Dq8N8+/63jE2XGTBD2J+0hywq2FAcVDSgEaxI0/zX/DNFMmxHwiR0A9ZDFYuA/GiwtWSNbHqe8na6gEnKXBwyV0K0Fq12pdNu38Jbei8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=wi0m3IVt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10CF3C4CEE4;
+	Tue, 25 Mar 2025 12:40:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742905971;
-	bh=2CNd3Rknkdg7eU4W7zZ58Mhb5X4t5PmEEQK/wbRZsms=;
+	s=korg; t=1742906411;
+	bh=0GiKN6tISkpV4LvSTah7oJ/7zLYtwmACS2t+S7QGOMs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fgaHN1tVyRYj32kHHcV6fOOAr7wTmfSOBuC02w0257ik1dT5G2pcLwOqLoy1LWg0c
-	 UYzRTG7J3h2ZU37XGMK735xhClBPWaeR4n1WKagNx1Y1605p7gAQx0suLjabxDeoHN
-	 SP/HAM0t+QmeM1tTaa+SLja7+XMUb9yX3HCEo+g8=
+	b=wi0m3IVtZM4e8BB7n91udlGaZzucfF1nmO/zpkwZGnYnv36wGU0Gjy8/f0yfscGBM
+	 f9kFPuaNqoXAbtD+Fp3UmpHO1eEbyZLAsLNv5tAqq7eLnPspTeVWzPns+gAf5UdWpQ
+	 SF1Osm6Oqad+Qyde5TnVWxWhuDYi7pfjQif2BtFM=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -49,12 +49,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-cifs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 6.13 065/119] netfs: Call `invalidate_cache` only if implemented
-Date: Tue, 25 Mar 2025 08:22:03 -0400
-Message-ID: <20250325122150.721104001@linuxfoundation.org>
+Subject: [PATCH 6.12 063/116] netfs: Call `invalidate_cache` only if implemented
+Date: Tue, 25 Mar 2025 08:22:30 -0400
+Message-ID: <20250325122150.824193812@linuxfoundation.org>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250325122149.058346343@linuxfoundation.org>
-References: <20250325122149.058346343@linuxfoundation.org>
+In-Reply-To: <20250325122149.207086105@linuxfoundation.org>
+References: <20250325122149.207086105@linuxfoundation.org>
 User-Agent: quilt/0.68
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -66,7 +66,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.13-stable review patch.  If anyone has any objections, please let me know.
+6.12-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -140,7 +140,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/fs/netfs/write_collect.c
 +++ b/fs/netfs/write_collect.c
-@@ -575,7 +575,8 @@ void netfs_write_collection_worker(struc
+@@ -576,7 +576,8 @@ void netfs_write_collection_worker(struc
  	trace_netfs_rreq(wreq, netfs_rreq_trace_write_done);
  
  	if (wreq->io_streams[1].active &&
