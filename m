@@ -1,106 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-45033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA27A7046B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 15:59:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A19FA7046D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 15:59:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8F8D7A2725
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 14:58:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D19D3AF966
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 14:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E50625B682;
-	Tue, 25 Mar 2025 14:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069EC25B67F;
+	Tue, 25 Mar 2025 14:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="THjc/2tX"
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="W3/5436i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17D6A2D;
-	Tue, 25 Mar 2025 14:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10BA1EDA3E;
+	Tue, 25 Mar 2025 14:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742914752; cv=none; b=A5KMpQwLaAmvDnIjCmPpa2Wex43neZsQR/G2PMGj7Ps9rtVM9Samd186+C3hY+sTlClPHdPb09HbXHunMo+PBTFxWzD+EMa9+O6pdiL6lqJnxsB5jp457HwhO9lGQ+qPJH/LzX4TDdudQdkKVs01uOXKWaVI3ZmrySB8B2zn7+w=
+	t=1742914762; cv=none; b=DnpF4+qCt+jfw2Kw/Lp0vxEvSe4qkw1+3mkaH6P9rhCSCb7z8jqHfquAB0Ecevvowk1kioMmOwE2XuGXRJRY4ax64T3tjCgkPHKDfV8Wt0Q+3XWckSMASLXK1/VRCnvXUPojlTDzXv6i/NqpY1PHbtxljNW+jY+Lf8GcEglSezk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742914752; c=relaxed/simple;
-	bh=GG0tU6LAS0IFpbXq1LKTAjBG2Gdzv1j6t3kcYYdww/0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FH6UhMFgOIS8h3/k/aLAzAh3l/TbqcQEFu2szWm5ZWSUbvOmH9oX+1Zy4NuYtlTz34CF2tXmZy8+yLOuQ2lJ++OhuvVi36LfLIMSBlDC1Bl5gzehX0mbPVRIYxwq+UmeeGm3AUUlHaGUO8aB54MlQv1ukeopUXMYKa5lUfHOLdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=THjc/2tX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B21EEC4CEE4;
-	Tue, 25 Mar 2025 14:59:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742914750;
-	bh=GG0tU6LAS0IFpbXq1LKTAjBG2Gdzv1j6t3kcYYdww/0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=THjc/2tXjglNxUVBg49jtkwvKg3Q6v6ExEDsXkormSA4o1E094osQbHG1L50sjLLN
-	 l22BzJ8t7UVC2UrJoZLPg9zOiCWClpXJc+1MiZW2o8M2ZUwZ+sdfLn8ODLijRBmLyM
-	 nbNwZ8QXS2rYaiLARjuJE1Y9KkqGCZJbzWWWUrchlrPN6rG+xnrURxCbSyHdA9OjgM
-	 3zyemc6xcpwYS0I+6VPkrNZorSlFQVszix6P7NhomKeCSqwHPdWwOPAj+yQCsyOPFQ
-	 iv05QgxhyTnDgDkHjkXbFrGnS0LQ5+8X4+QaHzpNrtncIZDoFmLPH83iA7RBEVJ+XS
-	 V1vlOouXQ4TxQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	linux-next@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Amir Goldstein <amir73il@gmail.com>,
-	NeilBrown <neil@brown.name>,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>
-Subject: Re: (subset) [PATCH 01/10] exportfs: add module description
-Date: Tue, 25 Mar 2025 15:58:29 +0100
-Message-ID: <20250325-typisch-absicht-8fd692d68fe6@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250324173242.1501003-1-arnd@kernel.org>
-References: <20250324173242.1501003-1-arnd@kernel.org>
+	s=arc-20240116; t=1742914762; c=relaxed/simple;
+	bh=jFKEhjNjq9tWLi1tufH12YoYuLncNqbR/nzyYY8yoFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NGLFVkiCOiHzA4Bsg/ZvvgR2Euwg2WGw9qdKsoC1JT58k99EEkANMUcw/iX6RYlenJLUqpO/jeK2czJ5Y1uSLaSakP5FDcp7CxyvrfY2v5gozSnUlywpjUNPe85e0OcLCLo1pT0+Yot1GxHyKJQIdPY/xYVnvdMsnWOzakxGvCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=W3/5436i; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 494BD14C2D3;
+	Tue, 25 Mar 2025 15:59:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1742914758;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LA2ZWfipp543V5Octm+YivgRf31pm38h6sG4nFoFVL4=;
+	b=W3/5436ielp+x8Mg+ylaT1KwQLXmybgWQDRFANia1QIR5etK8+gW7Dk4fWWTQlCrj6Tkad
+	vgLy5gZ/5N8CvbH+NS29LwIEi23qDuWlaxtwdi8nV8zNAN8L0Ztf0cUYdpEIPrYOvKrtL0
+	nKtHroMZM9HTu/lCxJ7sBGryNeMS1iRjuWs2kl7o1BM6Pg1FkZkhBBAwWCpBVnvNcGzq3s
+	rVAXnUzgy8K1U3e/Qn6FeFY4w8hcycOuxZKajjueOVaqnN0z4ieDQOQEqh70519uT/MjvE
+	cWZOqiDjql//4x7MeXIQ9UiRxAtbG0VD4DWlRRn0JeRy5uelCkgZgtw/6cgWlg==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id ad07f38a;
+	Tue, 25 Mar 2025 14:59:11 +0000 (UTC)
+Date: Tue, 25 Mar 2025 23:58:56 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Oleg Nesterov <oleg@redhat.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>,
+	brauner@kernel.org, dhowells@redhat.com, jack@suse.cz,
+	jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
+	swapnil.sapkal@amd.com, syzkaller-bugs@googlegroups.com,
+	viro@zeniv.linux.org.uk, v9fs@lists.linux.dev
+Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
+Message-ID: <Z-LEsPFE4e7TTMiY@codewreck.org>
+References: <CAGudoHHmvU54MU8dsZy422A4+ZzWTVs7LFevP7NpKzwZ1YOqgg@mail.gmail.com>
+ <20250323210251.GD14883@redhat.com>
+ <af0134a7-6f2a-46e1-85aa-c97477bd6ed8@amd.com>
+ <CAGudoHH9w8VO8069iKf_TsAjnfuRSrgiJ2e2D9-NGEDgXW+Lcw@mail.gmail.com>
+ <7e377feb-a78b-4055-88cc-2c20f924bf82@amd.com>
+ <f7585a27-aaef-4334-a1de-5e081f10c901@amd.com>
+ <ff294b3c-cd24-4aa6-9d03-718ff7087158@amd.com>
+ <20250325121526.GA7904@redhat.com>
+ <20250325130410.GA10828@redhat.com>
+ <f855a988-d5e9-4f5a-8b49-891828367ed7@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1092; i=brauner@kernel.org; h=from:subject:message-id; bh=GG0tU6LAS0IFpbXq1LKTAjBG2Gdzv1j6t3kcYYdww/0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ/OrLL/f3quYkNWyV8ZiSd/XfmfJrdBb2wCZYP4n29h FU9JD6rdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExE8CTDP3VWP6lba9iS9mut ubm85d4jVuMnpgLu2Q86Ij4KJV83DGf4wz3h3Vr5COGVnxsEDFav5Z9Tt9qWmcc7+GbgEq6F33e 85wMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f855a988-d5e9-4f5a-8b49-891828367ed7@amd.com>
 
-On Mon, 24 Mar 2025 18:32:26 +0100, Arnd Bergmann wrote:
-> Every loadable module should have a description, to avoid a warning such as:
-> 
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/exportfs/exportfs.o
-> 
-> 
+Thanks for the traces.
 
-I've removed mentioning of NFS from the module description because
-exportfs is now used for a lot more.
+w/ revert
+K Prateek Nayak wrote on Tue, Mar 25, 2025 at 08:19:26PM +0530:
+>    kworker/100:1-1803    [100] .....   286.618822: p9_fd_poll: p9_fd_poll rd poll
+>    kworker/100:1-1803    [100] .....   286.618822: p9_fd_poll: p9_fd_request wr poll
+>    kworker/100:1-1803    [100] .....   286.618823: p9_read_work: Data read wait 7
 
----
+new behavior
+>            repro-4076    [031] .....    95.011394: p9_fd_poll: p9_fd_poll rd poll
+>            repro-4076    [031] .....    95.011394: p9_fd_poll: p9_fd_request wr poll
+>            repro-4076    [031] .....    99.731970: p9_client_rpc: Wait event killable (-512)
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+For me the problem isn't so much that this gets ERESTARTSYS but that it
+nevers gets to read the 7 bytes that are available?
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+If the repro has already written the bytes in both cases then there's no
+reason to wait 5 seconds here...
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+OTOH syzbot 9p code is silly and might have been depending on something
+that's not supposed to work e.g. they might be missing a flush or
+equivalent for all I know (I still haven't looked at the repro)
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[01/10] exportfs: add module description
-        https://git.kernel.org/vfs/vfs/c/e3206c4aa06f
+-- 
+Dominique
 
