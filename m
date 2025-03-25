@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-44996-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9C8A6FEFD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:59:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C892EA6FF36
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 14:01:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DD7F19A2BD8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 12:51:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC5A719A1069
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 12:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2254F2836BF;
-	Tue, 25 Mar 2025 12:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A5D284B5C;
+	Tue, 25 Mar 2025 12:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kb/eV2Rw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TKIbxeDg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4967C257AC7;
-	Tue, 25 Mar 2025 12:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4282265618;
+	Tue, 25 Mar 2025 12:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742905540; cv=none; b=LiyN/KAaJpya6Z0CXQ849vt7qR6BVNhGS6Q/2LwQTa/Eg806o++jEf/XTiK29/t6+PGsZ5thRK9r2uC/J8909lglcKZIGub5zhycygKwQiuo7NZWmNYg1MlK149JDjhLIdqLWuS8nHgInzpihxN6AuhZh1V9kXBJnFpGCw3uGc0=
+	t=1742905554; cv=none; b=EC3zoYCKR267p7G5SvpwrW/WQVe56fH13yfmabwrnZg2ZpDnIAjZxb9WwnblRTh+zARcaBxJ16o497F9Xi1WIIH81mluDLQEaZzSnYi09R3dsn1D8O9CWvUKfYaWJcUOaLwuHejTLdD+F2IocLRVPHRnbsminSrwiJd7o8keJXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742905540; c=relaxed/simple;
-	bh=sm654hPYjWJMXJD/nEEXxI+s+R28mm6voQq4ZrjJStU=;
+	s=arc-20240116; t=1742905554; c=relaxed/simple;
+	bh=eb9pFbZS3Y9m5tP2e5oU2ev4kJ8aZOyHuzMgMflfDxM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fMe7PiSXydF+rGbYnyvinNjlvNVjYHybAfRu9q2marLG7xZlRm+xWmmyndQq06NRj2pGVv0cUdwOH0+Rj8FzzU1A8zaNLkSQPeIfJXc6rzyfJ2aC/yOnhWGiRvEm+GPFqH6a22XH4b4Qz3KqOcGnUYaoFHKrtdvH3jGod7EIyRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kb/eV2Rw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2764C4CEE4;
-	Tue, 25 Mar 2025 12:25:25 +0000 (UTC)
+	 MIME-Version; b=RqjGZuG33/QYFt4LqjKmx9V9ufMU9l8R40cvUjzRmgrbN/peTjv1LimR61OfpeoOrxNmIakXhmEeytubObWW/hGTY5jR4Jhn1ZEIUhgo54UprZ2MbqzFNeFTEV1J3P1EawlzX6GRWAkFlJOvsZJafIaGufB6/LjvSYw5D3HaOPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TKIbxeDg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98700C4CEE4;
+	Tue, 25 Mar 2025 12:25:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742905540;
-	bh=sm654hPYjWJMXJD/nEEXxI+s+R28mm6voQq4ZrjJStU=;
+	s=k20201202; t=1742905554;
+	bh=eb9pFbZS3Y9m5tP2e5oU2ev4kJ8aZOyHuzMgMflfDxM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Kb/eV2Rwu3zYNU7Jt3dNKcNXYL8nMRHt5pyAJqK6Q/FHeFvW6XiemJEA3uvEk7fVs
-	 3EdHOm9rkT05EzHBa5buxdZyLrstfBsowWufM7HqrOlG+CIUjr96jk/fDQXjnFPt+R
-	 dWfnumlqW9XRN8RlSa4I28acYRg721cxluLl8IEARR3ZQbcXBk3NZPefJ2WwhFLcUe
-	 OiQ0cG9dLZ0sgksiS+3kI0Gf4fzOMT9Xk2MfF9taYcuO0Y49REu0hLiOZAG6x8XWZ3
-	 isLS319gnMj4Vs30saFH4Hmz96Q2P/kZ1dTH5mgBIdyz3rnr7TCbzfvoPIkyCS5b43
-	 0M+WNWc7E/U2Q==
+	b=TKIbxeDg/4MGDoxGYhtsr77x8nD9+TpCG8oy/mBv1GHzr8ZWepo0+9u/qgnTYwhM7
+	 9FoabPbbN9S6IfOf26oxS3m5p0frx/eThfy2pNkvlIe2k1adYFkjCwm3E3QYrPnnXY
+	 qg1+2WeIhc8bsbGmrVaN8x2QJEpf+pJnOK1bpb9Cm3LPqRTJwuy9bTAStpIJuNhcng
+	 U6oe1mYNc6XNsLp33CR0gMzzC0NbL9mf8zaoGaRdRBmnSf8sdgpDmPkIT5iWLXo5Lq
+	 f6F/efG1+AqbmifuFranEddUppFwWnYxtFJSXivX7reLfW7B+/YSGNRM9ytoYkkqRu
+	 QY3BUYNUiqCrw==
 From: guoren@kernel.org
 To: arnd@arndb.de,
 	gregkh@linuxfoundation.org,
@@ -114,9 +114,9 @@ Cc: ardb@kernel.org,
 	linux-sctp@vger.kernel.org,
 	linux-usb@vger.kernel.org,
 	linux-media@vger.kernel.org
-Subject: [RFC PATCH V3 37/43] rv64ilp32_abi: random: Adapt fast_pool struct
-Date: Tue, 25 Mar 2025 08:16:18 -0400
-Message-Id: <20250325121624.523258-38-guoren@kernel.org>
+Subject: [RFC PATCH V3 38/43] rv64ilp32_abi: syscall: Use CONFIG_64BIT instead of BITS_PER_LONG
+Date: Tue, 25 Mar 2025 08:16:19 -0400
+Message-Id: <20250325121624.523258-39-guoren@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20250325121624.523258-1-guoren@kernel.org>
 References: <20250325121624.523258-1-guoren@kernel.org>
@@ -130,42 +130,58 @@ Content-Transfer-Encoding: 8bit
 
 From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
 
-RV64ILP32 ABI systems have BITS_PER_LONG set to 32, matching
-sizeof(compat_ulong_t). Adjust code
+The RV64ILP32 ABI adopts the syscall rules from CONFIG_64BIT and
+directly uses 64BIT, replacing BITS_PER_LONG representation.
 
 Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
 ---
- drivers/char/random.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/riscv/include/asm/syscall_table.h | 2 +-
+ arch/riscv/include/asm/unistd.h        | 4 ++--
+ scripts/checksyscalls.sh               | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 2581186fa61b..0bfbe02ee255 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -1015,7 +1015,11 @@ EXPORT_SYMBOL_GPL(unregister_random_vmfork_notifier);
+diff --git a/arch/riscv/include/asm/syscall_table.h b/arch/riscv/include/asm/syscall_table.h
+index 0c2d61782813..aab2bc0ddf4e 100644
+--- a/arch/riscv/include/asm/syscall_table.h
++++ b/arch/riscv/include/asm/syscall_table.h
+@@ -1,6 +1,6 @@
+ #include <asm/bitsperlong.h>
+ 
+-#if __BITS_PER_LONG == 64
++#ifdef CONFIG_64BIT
+ #include <asm/syscall_table_64.h>
+ #else
+ #include <asm/syscall_table_32.h>
+diff --git a/arch/riscv/include/asm/unistd.h b/arch/riscv/include/asm/unistd.h
+index e6d904fa67c5..86b9c1712f24 100644
+--- a/arch/riscv/include/asm/unistd.h
++++ b/arch/riscv/include/asm/unistd.h
+@@ -16,10 +16,10 @@
+ #define __ARCH_WANT_COMPAT_FADVISE64_64
  #endif
  
- struct fast_pool {
+-#if defined(__LP64__) && !defined(__SYSCALL_COMPAT)
++#if defined(CONFIG_64BIT) && !defined(__SYSCALL_COMPAT)
+ #define __ARCH_WANT_NEW_STAT
+ #define __ARCH_WANT_SET_GET_RLIMIT
+-#endif /* __LP64__ */
++#endif /* CONFIG_64BIT */
+ 
+ #define __ARCH_WANT_MEMFD_SECRET
+ 
+diff --git a/scripts/checksyscalls.sh b/scripts/checksyscalls.sh
+index 1e5d2eeb726d..9cc4f9086dfe 100755
+--- a/scripts/checksyscalls.sh
++++ b/scripts/checksyscalls.sh
+@@ -76,7 +76,7 @@ cat << EOF
+ #endif
+ 
+ /* System calls for 32-bit kernels only */
+-#if BITS_PER_LONG == 64
 +#ifdef CONFIG_64BIT
-+	u64 pool[4];
-+#else
- 	unsigned long pool[4];
-+#endif
- 	unsigned long last;
- 	unsigned int count;
- 	struct timer_list mix;
-@@ -1040,7 +1044,11 @@ static DEFINE_PER_CPU(struct fast_pool, irq_randomness) = {
-  * and therefore this has no security on its own. s represents the
-  * four-word SipHash state, while v represents a two-word input.
-  */
-+#ifdef CONFIG_64BIT
-+static void fast_mix(u64 s[4], u64 v1, u64 v2)
-+#else
- static void fast_mix(unsigned long s[4], unsigned long v1, unsigned long v2)
-+#endif
- {
- 	s[3] ^= v1;
- 	FASTMIX_PERM(s[0], s[1], s[2], s[3]);
+ #define __IGNORE_sendfile64
+ #define __IGNORE_ftruncate64
+ #define __IGNORE_truncate64
 -- 
 2.40.1
 
