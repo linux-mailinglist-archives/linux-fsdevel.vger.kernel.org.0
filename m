@@ -1,132 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-45009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74997A70210
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 14:37:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D45A9A701EA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 14:33:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30619188CB8E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:24:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F80617CCDB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B7E267B66;
-	Tue, 25 Mar 2025 13:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C383264A89;
+	Tue, 25 Mar 2025 13:18:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NyPrZX2z"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ImDeFIUl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AJbcpvEt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from flow-b2-smtp.messagingengine.com (flow-b2-smtp.messagingengine.com [202.12.124.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6871EB5D4;
-	Tue, 25 Mar 2025 13:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4124255E30;
+	Tue, 25 Mar 2025 13:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742908452; cv=none; b=jrqq/7posKSng++8kNx6wo80V7aqht0OfyqEcfFdiHkhW7WS1uviRvsv4j+MIkChgIPD9tsoO57JX0KpftCctvn4tVFbmwBvOCRpNeTyAaB8NClhIICRJQFDnSrHWpbY8SY4OAlqNWl5keQEwOlJra2jfcWEjfvHer6Yj8B4I6M=
+	t=1742908715; cv=none; b=OV+1a+U0blzJP2PP4eTRXfJoZpEH9j6pdlAMoNuSf59C81XafWKZUS6gSVGb0xHzsGcRozZDOT/SSLS5Ggm+7YDIlTHhgyh3Rt34Rj7NsTdVPb7N9f6RKz66we2EVukSyIce+kViQhmsflfdH9H+E5fuUvACopN6rc1vvZaWlkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742908452; c=relaxed/simple;
-	bh=7bzJUIwY16l63QfKJmsiupVF7IYNqpkd3IzG9gYAALc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RpXY77JZei/+ZU7lsyb28PmmjTlrF3nZtvFn3n2TW9QPMQWcW6fx0KgClXm5pK4KZ//PkWrdhnWVepgkw6/WUHfxhX2N74OLjFGqSYYi2pfKt8bgWdBmXQFZy3ni/4E/PIxtJXwar9qTpCXt9GGv3Q1UBcKsmkh7AKvv4tok7aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NyPrZX2z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEAD6C4CEE9;
-	Tue, 25 Mar 2025 13:14:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742908451;
-	bh=7bzJUIwY16l63QfKJmsiupVF7IYNqpkd3IzG9gYAALc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NyPrZX2zvYx4m3VH9Fc1wiiQCHtp81BxhFIgJErfM1e6iK8yvSerc4sfbMDBzx1kQ
-	 QplIQZnPOseIWFkTXjK02uSDnGG6Uzq1AYv5KPHeujZiOAlbpwn4SbWEHhmX/gy469
-	 fFXR2na2foa9uxqRXn9AF0M+fongqdtMQAsDD80dHI5sfoaBLx23YVNceFsMWYKaVs
-	 C7/p11hnQkANTPBqtf0OU6Q+v+kaVBZb6VFrZLAR7m0krBlnMAO88LNmzTdnsOfaKI
-	 VpbZ0yXg04wccCBO9NlBypwixYU1z2XvmV1vo+KcGfLfjl1MuRnqI83HTSb88ieULT
-	 G+VRbIUrF/dSg==
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cf034d4abso59983555e9.3;
-        Tue, 25 Mar 2025 06:14:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUCDQXv//uYnrj0xTcZU7WoVMoXsnC/3gu66XtlzhNcKWAWClCYZLvGFOhRd/wPwE/RplCvZC8TRDulLQ==@vger.kernel.org, AJvYcCUQQaPOp/iHR9mUH3hdZ+jeZspVo8mWHltjG4p6aFoXYWYErU0uVVevUEdNaM5KJyAGAsY/nPfvd/1HefU=@vger.kernel.org, AJvYcCUarW0/Q35ssU9KErxd22g/odNmW7MR/7ygwu9BNiONMaL16TcYLEHZD3f0WgNBNKEv+V9WzIOzDfsrUg==@vger.kernel.org, AJvYcCUpTdI73jiOVulOW3xykQocH8ESIfVuJ0NwI6UXCa48EFAt8i13cVMKKbo2EfJbuxQZugM19eMEj1FkQ9LRdYHAmbIw@vger.kernel.org, AJvYcCUqGtqqdu1BKbieA+m4mV5HVW9A2zxvB7ue4nTXF1/9dYiq5bfuwZ7rxSIw7nzijLV3o4AlDF+9j5T+yYBPyrRD@vger.kernel.org, AJvYcCV0k0WLTol/AmF2TwDXkA5hHdRhlGI57vtKgWgbfUIy5zxgs32qEyeUd6OlBWwU3uue36s7qtb8FHqPZwrUkavU5Q==@vger.kernel.org, AJvYcCV96R7XvC0sBcJzfv1+JFi6y5dPPwcQmIXIgecPUoh5uPwP1IFsxC/aXtchKwD3sa08m65JEC3NRmer9NjWLg==@vger.kernel.org, AJvYcCVbY2P44jOmYD5WokSgc83MD52DC+DZvPTPpxrt5Z8EVe7vmdtWoxhd5FQIWvutTjQApH4EHMpv72NkGG8=@vger.kernel.org, AJvYcCVeJHk5ZgNEpRWzlERRIwowRlMXJhBVfyql9AKKr0d7Vlkx4ICmApOZ2sKWnKcsyPo3n6/yVofk@vger.kernel.org, 
- AJvYcCVuYHLlMYcQv0Chh3BGwMkFkbvO0UOiR8AXIZiZbmMeeD5BxR5ZK3+sVhUbOSkZI44tfEJwGnCNu/tf@vger.kernel.org, AJvYcCWUpyV3xY/tdBoaSzQg2aYhiXmzdLzCoPOIR+F1/QgIJjjSTYJEJ6omIGJqSkMUyyE7I8P8Hv7dhkrBffUb@vger.kernel.org, AJvYcCWY8Lx2oS3HV6lWBflOKBK6wQRPntVljekJTuf6VsvNdyrLl7fuNgVmsaP1ajle7/moLNfx4EQ+KZk084wL@vger.kernel.org, AJvYcCWuz2C1r6mkcr/lPwDS0gbHaYWXfHvDpKWBsvUYR0Ah9PHOarVdzdyUjtghSFfSkhl1Y0+I@vger.kernel.org, AJvYcCXJUJcg+Gw/oApBcMnGSX3f4CVkwk4GwaIN3+KgITbhIslMhO4Qwj6sZCVzL8bM8YRc1wVSQonl65ODuYGW@vger.kernel.org, AJvYcCXa37OlWm9MB2tH2oLAyFSuTKm04ajOsu2x/6NvYEbVFU+WaC89nXd3tzqTZWfvf+ETO+0=@vger.kernel.org, AJvYcCXc+KKLEe6Pf7joAGeGC6EvUCyprnEFqKNblq7UzQ5Q3G3G+cH8Fo/gYPvDL/4ezEKVzwMAyTtn0LfU@vger.kernel.org, AJvYcCXfxGrHfVIPwNBEYnIhw9DhpGlSgk0I/R5ZRuBRRKwoYjDJ8lzE1N0WBhLWQXr8RJSR23cRXkzVQjcPeM8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFeIsFzV8LJgj+BUWgRx+dxrTbPmpqy/u2qrclOXzYCj6EUYAD
-	nV4naJhtYOgZQWzUIjJnZhpfSvQUrrOMvEzolKZoT37wZCvUyrv5tYCRnUAZQgxDs5gZ7KtmS/+
-	YapgTykTq3Os678Q8bDY1BsGd1fo=
-X-Google-Smtp-Source: AGHT+IGfKexksGgX0maV0KTcsKLOGrgVH5YKmlbhOfh8iEjwSz3eKgWZcomNnjiD6N1+SrsmiEpO9V65lbI9UvtGx1A=
-X-Received: by 2002:a5d:59a2:0:b0:38f:6287:6474 with SMTP id
- ffacd0b85a97d-3997f8fc43dmr15193020f8f.15.1742908449922; Tue, 25 Mar 2025
- 06:14:09 -0700 (PDT)
+	s=arc-20240116; t=1742908715; c=relaxed/simple;
+	bh=C5mrfP7F3Jg/lt8fV5RKe+diz2c9+8VrzuXO+lZEKsk=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=ucXm544baYho5mQ9Sf7OzrqWrpDva+0+aS/QQ/vnRT+bvsQPMB4gtIhGwvq3/9ExszTdSWCScWJziH0SqAE9b/ftR1wVYgYxOH52lD7vogrD+3XZf9T51lPbqM57E6DyBZ3aW9Es7LoHpI0du1iVOXuCokmybN0yEcBoSrdkV4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ImDeFIUl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AJbcpvEt; arc=none smtp.client-ip=202.12.124.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailflow.stl.internal (Postfix) with ESMTP id 145781D41618;
+	Tue, 25 Mar 2025 09:18:31 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-07.internal (MEProxy); Tue, 25 Mar 2025 09:18:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1742908710;
+	 x=1742915910; bh=7uJCsElQFNSpp9yzC8ZbXV0umGMGK1SA9vUHShT/4EA=; b=
+	ImDeFIUlaPDd5ArnPxULaKFYin+F0C7Ltwhhbiw4k7YJ41vuGpa4S0yQgq9xPsTe
+	uJRvlxGtCeN8CpZuIT8pDsErIP9+bN/T8wL1tp/ARdfFsLcv8Sc8Rcm2AAGU22J+
+	QDfsMB27MlJ7Fh/RgFUJCVCjIT3YZoGmX8veA4VhtWah8Pa2dOJDZNENO5efOhCF
+	m3Aj/gZEic8zK7xg5Ge5VcUq9SwT677DKgbhu4s+jchHqDCVBX26EBF+Jyr1L5C7
+	63jXD83O9CYKFI6eG//84unPYNTVnG6PBAwgNm0MSU3dz67bgY73jNJFOhGYl0LB
+	s8TJP3x2kc2XfX0NxWNPbA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1742908710; x=
+	1742915910; bh=7uJCsElQFNSpp9yzC8ZbXV0umGMGK1SA9vUHShT/4EA=; b=A
+	JbcpvEtDY5GIbS4yWE3NXqHeL6XvezyIp78DhI5UvjpRspYi/G9CdSAwYSUCtNWb
+	yZCSTBsfwYT3pBmPHiX1MLdzsCwNGdqTg8pOqvQ1H2TQErjO20YnrvBIqr/9DMiS
+	N/aEn/bfBhxGa3yoge377x6x7UBRw+o2D2Qg6mmJ3KKWHRDwG4n8FjXRe5ziwEm/
+	wUGvAXF0t7FBZIYI28jJqmK/q7kzLry7J34szfZlVS+GOBQDtwkcol+hbMPCqvOl
+	aXXG9vwK4i1gpOxa8dIUlIDZzNMjb3dauDasxJL1NU5UvnvM0wrjeuV397H1C8sF
+	5R0FPcBeip3Dcp0RsoYDg==
+X-ME-Sender: <xms:Jq3iZ2T8JTz-jbX0ypdu8XvymSl6Ha60DCRSyE3kfaeDEsEdhgXRHQ>
+    <xme:Jq3iZ7xqFGmiYIgqeQgAYIE6NT795DUlcZ5oRdxvyZLcCtNjxwf5apWHvH69UlzU0
+    90ZNR5B4xx83SxrA2s>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedvjeehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    vddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeihohhnghiguhgrnhdrfigrnh
+    hgsehsihhfihhvvgdrtghomhdprhgtphhtthhopehqihhnghhfrghnghdruggvnhhgsehs
+    ihhflhhofigvrhdrtghomhdrtghnpdhrtghpthhtohepughsthgvrhgsrgesshhushgvrd
+    gtohhmpdhrtghpthhtohepjhhoshgvfhesthhogihitghprghnuggrrdgtohhmpdhrtghp
+    thhtohepsghpfhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvhhmse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrtghhsehv
+    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqsghtrhhfshesvh
+    hgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgtrhihphhtohes
+    vhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:Jq3iZz2yRnqhHEw1IF85xMNxg4AIr2suK_Z7V6TXceVVmAzSa6K9mA>
+    <xmx:Jq3iZyAeXA8oa-5WGTCdkkC63QtF5vTYRHuh5qi7ccyHz9ZFy6uGWQ>
+    <xmx:Jq3iZ_hXDQ-VIXP0Zn7YnVUgAq0b19IaMLt4GaWKi3jJzguZr_HdUA>
+    <xmx:Jq3iZ-rgPQ_c8apCNrICWaw237kvlBRA58SynDoqVL6QMmwWVWyA2Q>
+    <xmx:Jq3iZ-U7_q_MN5COfgfdsTStOp5gWRt0SJfrgmunU_hcwDOxH-bYhAym>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id DF35E2220071; Tue, 25 Mar 2025 09:18:29 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325121624.523258-1-guoren@kernel.org> <20250325122640.GK36322@noisy.programming.kicks-ass.net>
+X-ThreadId: T218a0d8b70d1a53d
+Date: Tue, 25 Mar 2025 14:17:44 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Peter Zijlstra" <peterz@infradead.org>, guoren <guoren@kernel.org>
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>,
+ "Anup Patel" <anup@brainfault.org>,
+ "Atish Patra" <atishp@atishpatra.org>, "Oleg Nesterov" <oleg@redhat.com>,
+ "Kees Cook" <kees@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Will Deacon" <will@kernel.org>, "Mark Rutland" <mark.rutland@arm.com>,
+ "Christian Brauner" <brauner@kernel.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Steven Rostedt" <rostedt@goodmis.org>,
+ "Eric Dumazet" <edumazet@google.com>,
+ "Chen Wang" <unicorn_wang@outlook.com>,
+ "Inochi Amaoto" <inochiama@outlook.com>, gaohan@iscas.ac.cn,
+ shihua@iscas.ac.cn, jiawei@iscas.ac.cn, wuwei2016@iscas.ac.cn,
+ "Drew Fustini" <drew@pdp7.com>, "Lad,
+ Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ ctsai390@andestech.com, wefu@redhat.com,
+ "Jakub Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>,
+ "Josef Bacik" <josef@toxicpanda.com>, "David Sterba" <dsterba@suse.com>,
+ "Ingo Molnar" <mingo@redhat.com>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Xiao W Wang" <xiao.w.wang@intel.com>, qingfang.deng@siflower.com.cn,
+ "Leonardo Bras" <leobras@redhat.com>,
+ "Jisheng Zhang" <jszhang@kernel.org>,
+ "Conor.Dooley" <conor.dooley@microchip.com>,
+ "Samuel Holland" <samuel.holland@sifive.com>, yongxuan.wang@sifive.com,
+ "Xu Lu" <luxu.kernel@bytedance.com>,
+ "David Hildenbrand" <david@redhat.com>,
+ "Ruan Jinjie" <ruanjinjie@huawei.com>,
+ "Yunhui Cui" <cuiyunhui@bytedance.com>,
+ "Kefeng Wang" <wangkefeng.wang@huawei.com>, qiaozhe@iscas.ac.cn,
+ "Ard Biesheuvel" <ardb@kernel.org>,
+ "Alexei Starovoitov" <ast@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, kvm@vger.kernel.org,
+ kvm-riscv@lists.infradead.org, linux-mm@kvack.org,
+ linux-crypto@vger.kernel.org, bpf@vger.kernel.org,
+ linux-input@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Linux-Arch <linux-arch@vger.kernel.org>, maple-tree@lists.infradead.org,
+ linux-trace-kernel@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+ linux-atm-general@lists.sourceforge.net, linux-btrfs@vger.kernel.org,
+ netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ linux-nfs@vger.kernel.org, linux-sctp@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-media@vger.kernel.org
+Message-Id: <db3c9923-8800-4ed3-a352-4ee9ef79c0b7@app.fastmail.com>
 In-Reply-To: <20250325122640.GK36322@noisy.programming.kicks-ass.net>
-From: Guo Ren <guoren@kernel.org>
-Date: Tue, 25 Mar 2025 21:13:57 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTRfo-JuGtCJvZKAFJ0BAEzdqe83TvccCKM54BL0NQHHJw@mail.gmail.com>
-X-Gm-Features: AQ5f1JorUn_mZoEMhlL0Xe-AITZgnQPYbvOfeukBw1Vy-vsynC2mh-QB0cq8pe8
-Message-ID: <CAJF2gTRfo-JuGtCJvZKAFJ0BAEzdqe83TvccCKM54BL0NQHHJw@mail.gmail.com>
-Subject: Re: [RFC PATCH V3 00/43] rv64ilp32_abi: Build CONFIG_64BIT
- kernel-self with ILP32 ABI
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: arnd@arndb.de, gregkh@linuxfoundation.org, torvalds@linux-foundation.org, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, anup@brainfault.org, 
-	atishp@atishpatra.org, oleg@redhat.com, kees@kernel.org, tglx@linutronix.de, 
-	will@kernel.org, mark.rutland@arm.com, brauner@kernel.org, 
-	akpm@linux-foundation.org, rostedt@goodmis.org, edumazet@google.com, 
-	unicorn_wang@outlook.com, inochiama@outlook.com, gaohan@iscas.ac.cn, 
-	shihua@iscas.ac.cn, jiawei@iscas.ac.cn, wuwei2016@iscas.ac.cn, drew@pdp7.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, ctsai390@andestech.com, 
-	wefu@redhat.com, kuba@kernel.org, pabeni@redhat.com, josef@toxicpanda.com, 
-	dsterba@suse.com, mingo@redhat.com, boqun.feng@gmail.com, 
-	xiao.w.wang@intel.com, qingfang.deng@siflower.com.cn, leobras@redhat.com, 
-	jszhang@kernel.org, conor.dooley@microchip.com, samuel.holland@sifive.com, 
-	yongxuan.wang@sifive.com, luxu.kernel@bytedance.com, david@redhat.com, 
-	ruanjinjie@huawei.com, cuiyunhui@bytedance.com, wangkefeng.wang@huawei.com, 
-	qiaozhe@iscas.ac.cn, ardb@kernel.org, ast@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-mm@kvack.org, 
-	linux-crypto@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-input@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, maple-tree@lists.infradead.org, 
-	linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-atm-general@lists.sourceforge.net, linux-btrfs@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	linux-nfs@vger.kernel.org, linux-sctp@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-media@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+References: <20250325121624.523258-1-guoren@kernel.org>
+ <20250325122640.GK36322@noisy.programming.kicks-ass.net>
+Subject: Re: [RFC PATCH V3 00/43] rv64ilp32_abi: Build CONFIG_64BIT kernel-self with
+ ILP32 ABI
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 25, 2025 at 8:27=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
+On Tue, Mar 25, 2025, at 13:26, Peter Zijlstra wrote:
 > On Tue, Mar 25, 2025 at 08:15:41AM -0400, guoren@kernel.org wrote:
-> > From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
-> >
-> > Since 2001, the CONFIG_64BIT kernel has been built with the LP64 ABI,
-> > but this patchset allows the CONFIG_64BIT kernel to use an ILP32 ABI
->
-> I'm thinking you're going to be finding a metric ton of assumptions
-> about 'unsigned long' being 64bit when 64BIT=3Dy throughout the kernel.
-Less than you imagined. Most code is compatible with ILP32 ABI due to
-the CONFIG_32BIT. In my practice, it's deemed acceptable.
-
->
-> I know of a couple of places where 64BIT will result in different math
-> such that a 32bit 'unsigned long' will trivially overflow.
-I would be grateful if you could share some with me.
-
+>> From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
+>> 
+>> Since 2001, the CONFIG_64BIT kernel has been built with the LP64 ABI,
+>> but this patchset allows the CONFIG_64BIT kernel to use an ILP32 ABI
 >
 > Please, don't do this. This adds a significant maintenance burden on all
 > of us.
-The 64ILP32 ABI would bear the maintenance burden, not traditional
-64-bit or 32-bit ABIs. The patch set won't impact other CONFIG_64BIT
-or CONFIG_32BIT. Numerous RV64 chips require the RV64ILP32 ABI to
-reduce the memory and cache footprint; we will bear the burden. The
-core code maintainers would receive patches that would make them use
-BITS_PER_LONG and CONFIG_64BIT more accurately.
 
---=20
-Best Regards
- Guo Ren
+It would be easier to this with CONFIG_64BIT disabled and continue
+treating CONFIG_64BIT to be the same as BITS_PER_LONG=64, but I still
+think it's fundamentally a bad idea to support this in mainline
+kernels in any variation, other than supporting regular 32-bit
+compat mode tasks on a regular 64-bit kernel.
+
+>> The patchset targets RISC-V and is built on the RV64ILP32 ABI, which
+>> was introduced into RISC-V's psABI in January 2025 [1]. This patchset
+>> equips an rv64ilp32-abi kernel with all the functionalities of a
+>> traditional lp64-abi kernel, yet restricts the address space to 2GiB.
+>> Hence, the rv64ilp32-abi kernel simultaneously supports lp64-abi
+>> userspace and ilp32-abi (compat) userspace, the same as the
+>> traditional lp64-abi kernel.
+
+You declare the syscall ABI to be the native 64-bit ABI, but this
+is fundamentally not true because a many uapi structures are
+defined in terms of 'long' or pointer values, in particular in
+the ioctl call. This might work for an rv64ilp32 userspace that
+uses the same headers and the same types, but you explicitly
+say that the goal is to run native rv64 or compat rv32 tasks,
+not rv64ilp32 (thanks!).
+
+As far as I can tell, there is no way to rectify this design flaw
+other than to drop support for 64-bit userspace and only support
+regular rv32 userspace. I'm also skeptical that supporting rv64
+userspace helps in practice other than for testing, since
+generally most memory overhead is in userspace rather than the
+kernel, and there is much more to gain from shrinking the larger
+userspace by running rv32 compat mode binaries on a 64-bit kernel
+than the other way round.
+
+If you remove the CONFIG_64BIT changes that Peter mentioned and
+the support for ilp64 userland from your series, you end up
+with a kernel that is very similar to a native rv32 kernel
+but executes as rv64ilp32 and runs rv32 userspace. I don't have
+any objections to that approach, and the same thing has come
+up on arm64 as a possible idea as well, but I don't know if
+that actually brings any notable advantage over an rv32 kernel.
+
+Are there CPUs that can run rv64 kernels and rv32 userspace
+but not rv32 kernels, similar to what we have on Arm Cortex-A76
+and Cortex-A510?
+
+       Arnd
 
