@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-44982-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44983-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF984A6FD84
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:44:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E63D7A6FD95
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:45:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FDB9188AA52
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 12:39:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE568841895
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 12:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFBA426FA44;
-	Tue, 25 Mar 2025 12:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B5D26FDA8;
+	Tue, 25 Mar 2025 12:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qevNB9uN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p2sof5de"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F392A25D8F7;
-	Tue, 25 Mar 2025 12:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C141C25D8F7;
+	Tue, 25 Mar 2025 12:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742905350; cv=none; b=h5l9MacviEInDUl1jU2UjQuuVtE24qbsUvtou0aDFz+AW/dqVqxX033q1xN8DgtqkIS45Cb4xnTk9hPgJlvPspMRSAzoVT32U/qBBW4IAUHO6jWYsCJsb/5jVo+jPlRJViS6CJ9n7wg+vmy88q3mAzefaazsichjUylOcsb6ItI=
+	t=1742905364; cv=none; b=O5iLTxfcEvGc7WLje7XHMSkWVcQAxRDCzzO24ZIb+ZWIJ4sPo+gGiW1WS+W6G7FQE5C7ZeRJ1abLlvSXq4LMpzhjIgRRqiTWO3THaFc2365anEGogGWFVkkKUIFiF6XNSA44HO7MeZR4mdkXrLeMqZlNV3DOuLZ+8O2mcLtc1yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742905350; c=relaxed/simple;
-	bh=eZJhhLnjsJ5KjWkXGFxCn3MEvfIMBL+8sG27XCid5KE=;
+	s=arc-20240116; t=1742905364; c=relaxed/simple;
+	bh=pRtaUMiFeAu+95a3CJwIpLTg/ZslxDoQ016dR5ldst0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dmkUsoEpCb1W9mjVlHaQjBy44RZBnNG6CKWsghVSqNsz4VKZYIiKJnNNQmMbq/qL/6voBLX7vsWJa5wKy0eAES7YBAPMuUxOXqhJ4BDmRmaaq7i8K3UrMIx2QzKl+HwuosK62n3jklM/1sHrzzj2jtFNALAGi2TZDOMm/nnzEd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qevNB9uN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6F4EC4CEE4;
-	Tue, 25 Mar 2025 12:22:15 +0000 (UTC)
+	 MIME-Version; b=H2HKm6OcOHwOglAcARoacMwd/Xp5LJfL+ZTDpOoLRCVCBxnLJj4tPqopfcRmXTFl17tSLUzkSfKEgijapwSYbVv3IiW5n4m4rMoF8kNKt6Df/5011bUNODgNmduibrKArfiQsRfUSQSV3m3lO3PwRPg+pjjTPGGmytT7vvsZ3mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p2sof5de; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED6B6C4CEE9;
+	Tue, 25 Mar 2025 12:22:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742905349;
-	bh=eZJhhLnjsJ5KjWkXGFxCn3MEvfIMBL+8sG27XCid5KE=;
+	s=k20201202; t=1742905363;
+	bh=pRtaUMiFeAu+95a3CJwIpLTg/ZslxDoQ016dR5ldst0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qevNB9uNRXUhGTfVJr+DKl6lS8FQeFJOY4f7ttg3jO2P7YXXcyp32FuamCgRbpfp6
-	 Tj8ZRiyJrxpkmlppbuR0aTZlagq4HpBxvwcxFyDkvXMwezEgXXrlUpqBLGrm+vhQVE
-	 9kwRr/BG5obSIi/E5vhu4AY8QmWoUzLcx2UvdyDSQLaiwaxvQJ5CeLSKOf3FwJJ5E/
-	 hXAzq1VCYp+EoL2e1cTTQa5pm9NoxQr4RcYtb1wSopiaMM/m+ZruEqXbAWZjV+7luh
-	 k16fsX64eUOJWO5eXZk1Sat/sU8lm9uDUQzukBAAtX2breq8iLsn6lrcBr2XGHy3Dn
-	 z3KzNteqnEguQ==
+	b=p2sof5deaUnKxXsdbuejLa7cMfsQ/jfo9NR4yzxltIbGt9I7LGg3viUZpXT1k8RFw
+	 9WTRwz7YQbBmvTKk30sv6fC7V/LIHte4FG9qKAIedqe9Y/ickF0YMfyR54zTwhm5BQ
+	 obpUACKtQgLFBumRgfvC3WYEeXtPc/EwoiH4j3URzIqNlAo4TJWEvolJgwku1sqkJx
+	 7rKaKFTW+8U8evbqHZ+v5cGHZoXKojJ2sQX8sVgxL7kldYux1laci0G+UGSLEZ94Hd
+	 tb6MX1/sRkfPX52VC52FXAgkrmJ6qByYnTyzQlY4MscJzEO+hWOnTRGT/1TDXE8C38
+	 5yNfgh3K5oAwg==
 From: guoren@kernel.org
 To: arnd@arndb.de,
 	gregkh@linuxfoundation.org,
@@ -114,9 +114,9 @@ Cc: ardb@kernel.org,
 	linux-sctp@vger.kernel.org,
 	linux-usb@vger.kernel.org,
 	linux-media@vger.kernel.org
-Subject: [RFC PATCH V3 24/43] rv64ilp32_abi: compiler_types: Add "long long" into __native_word()
-Date: Tue, 25 Mar 2025 08:16:05 -0400
-Message-Id: <20250325121624.523258-25-guoren@kernel.org>
+Subject: [RFC PATCH V3 25/43] rv64ilp32_abi: exec: Adapt 64lp64 env and argv
+Date: Tue, 25 Mar 2025 08:16:06 -0400
+Message-Id: <20250325121624.523258-26-guoren@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20250325121624.523258-1-guoren@kernel.org>
 References: <20250325121624.523258-1-guoren@kernel.org>
@@ -130,36 +130,29 @@ Content-Transfer-Encoding: 8bit
 
 From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
 
-The rv64ilp32 abi supports native atomic64 operations. The
-atomic64_t is defined by "long long," so add "long long" into
-__native_word().
+The rv64ilp32 abi reuses the env and argv memory layout of the
+lp64 abi, so leave the space to fit the lp64 struct layout.
 
 Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
 ---
- include/linux/compiler_types.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/exec.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index 981cc3d7e3aa..6cf36a8e9570 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -505,9 +505,16 @@ struct ftrace_likely_data {
- 			 default: (x)))
+diff --git a/fs/exec.c b/fs/exec.c
+index 506cd411f4ac..548d18b7ae92 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -424,6 +424,10 @@ static const char __user *get_user_arg_ptr(struct user_arg_ptr argv, int nr)
+ 	}
+ #endif
  
- /* Is this type a native word size -- useful for atomic operations */
-+#ifdef CONFIG_64BIT
-+#define __native_word(t) \
-+	(sizeof(t) == sizeof(char) || sizeof(t) == sizeof(short) || \
-+	 sizeof(t) == sizeof(int) || sizeof(t) == sizeof(long) || \
-+	 sizeof(t) == sizeof(long long))
-+#else
- #define __native_word(t) \
- 	(sizeof(t) == sizeof(char) || sizeof(t) == sizeof(short) || \
- 	 sizeof(t) == sizeof(int) || sizeof(t) == sizeof(long))
++#if defined(CONFIG_64BIT) && (BITS_PER_LONG == 32)
++	nr = nr * 2;
 +#endif
++
+ 	if (get_user(native, argv.ptr.native + nr))
+ 		return ERR_PTR(-EFAULT);
  
- #ifdef __OPTIMIZE__
- # define __compiletime_assert(condition, msg, prefix, suffix)		\
 -- 
 2.40.1
 
