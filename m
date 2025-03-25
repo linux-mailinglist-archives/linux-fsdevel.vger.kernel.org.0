@@ -1,155 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-44937-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44938-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD46A6E9B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 07:42:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B0BA6ED53
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 11:10:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E4353AB854
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 06:42:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D5DC16E76C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 10:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6DF20468D;
-	Tue, 25 Mar 2025 06:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3261F9A95;
+	Tue, 25 Mar 2025 10:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yWw076pz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eE53qwTu";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yWw076pz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eE53qwTu"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e8Ux/VdZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09BEA93D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Mar 2025 06:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E8A1A2389
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Mar 2025 10:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742884947; cv=none; b=fqFZOP/qnHccCQel9+MhFVu0aCjffBtt9o/V9yewTAIqav1vCkN7eMqXK9/+bN9ZDLWXLHdgotCsXLp69jwIKW0jWS8xUL+mkyF4FGzsNSdDhkn9FKzsVrGewofKwWLP6peXLZsfC3U0vE8uV+UrNdtuafLeE+afuq7XNod7BhU=
+	t=1742897423; cv=none; b=BbyxG4LiYaJWnpLdK6KN1/+wse6CTDiszr7bllfqPoMOKIYw25tD48UTzaD/VkpSPjjrJSovNYuvpbVeIj49pyGwbpFeUpprobA3JZrcmOdenJSghrujlBP0lnEuE3mVscCrE2/s4rd8Fv8MfI3c4aRI5ONr6etNN1mZhrYRjuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742884947; c=relaxed/simple;
-	bh=HumAS1jvRZ4ha6GWl14Y+g2ezuCC0Aw6+B4VeiTuRqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MZLKTQQsj8xIz1BUbeevSBKwc4tsyA+AjIe6doDefiE4EcABaRVeNnyky30I5wyVNasS5YRUMXi8B3WrevlM6TaDUwp3rqd6tBAnZwCo8LIZ5XkoKQTtj+S7k0C4pvn2kp3oaKnz/yLBXnVFh61shUY4EzCaYlJ6FgNGVuRS4zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yWw076pz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eE53qwTu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yWw076pz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eE53qwTu; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1742897423; c=relaxed/simple;
+	bh=+yHwlyVryiDRjhu9Lrq1vGrFAuzbF6NTK9Kgojwnnyo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MbLFeCSYFlDcjWPTyxYxM+k3/F33iX0/9lmUQvfbsCI0GbhWuz4IfjF3neKEjILdztnrAJoLiOJuNhVYCNNZDwVOs2odZkoyB69bcJvcC7EMmkfQmgzbBKvGW+WKXp6Z0W4j4Dfx2VhgpWbuXNi4a4yVG5gAQMQw9EuNBUKwmm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e8Ux/VdZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742897420;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+yHwlyVryiDRjhu9Lrq1vGrFAuzbF6NTK9Kgojwnnyo=;
+	b=e8Ux/VdZ8/0rqameauoBQanfYKTZa/3JGDtmlDzV/fvSXiG8wVJPOOjNbOYdZA8PARBP02
+	45PPtwR/FEjo+FFyaos8IQ0zpEZY3wzbt7X67bHXBm4ReEMWZjYzod9rR9tY4Nl9OltmPm
+	usZObD9xEdnlbk+V3SK9OFuggttb2DM=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-496-liIXkxccNoKKRN5ZT6cOSw-1; Tue,
+ 25 Mar 2025 06:10:17 -0400
+X-MC-Unique: liIXkxccNoKKRN5ZT6cOSw-1
+X-Mimecast-MFC-AGG-ID: liIXkxccNoKKRN5ZT6cOSw_1742897415
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0D52E21179;
-	Tue, 25 Mar 2025 06:42:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742884938; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XXwI8dfCcwC4g4BUCUZgxrLvKM1Snxm0aSv7x3EVfic=;
-	b=yWw076pzQgxu1rGu3pGJJiK3uS1kUhcN0l+dxjgUXioApt3CGt4OJC1QLS93un/klqhnEs
-	JWbazHfYw6pJ5hb0ry6bHXjTRTP1foaj0d/PgZEo5WwE6eqigkf0qrtQri0tBUQL0NUdYW
-	IEVJouBBZtEzPu8zvMqRGegMsq5SykM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742884938;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XXwI8dfCcwC4g4BUCUZgxrLvKM1Snxm0aSv7x3EVfic=;
-	b=eE53qwTufrzx0xlgjcug5ixl2lqozCkcSQRofYhV86v39ssDlyDNjwCgb6J67LElRT/swu
-	J2dcwtzHEwMw7lDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742884938; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XXwI8dfCcwC4g4BUCUZgxrLvKM1Snxm0aSv7x3EVfic=;
-	b=yWw076pzQgxu1rGu3pGJJiK3uS1kUhcN0l+dxjgUXioApt3CGt4OJC1QLS93un/klqhnEs
-	JWbazHfYw6pJ5hb0ry6bHXjTRTP1foaj0d/PgZEo5WwE6eqigkf0qrtQri0tBUQL0NUdYW
-	IEVJouBBZtEzPu8zvMqRGegMsq5SykM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742884938;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XXwI8dfCcwC4g4BUCUZgxrLvKM1Snxm0aSv7x3EVfic=;
-	b=eE53qwTufrzx0xlgjcug5ixl2lqozCkcSQRofYhV86v39ssDlyDNjwCgb6J67LElRT/swu
-	J2dcwtzHEwMw7lDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2657B13957;
-	Tue, 25 Mar 2025 06:42:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hUDwMkVQ4md/fAAAD6G6ig
-	(envelope-from <ddiss@suse.de>); Tue, 25 Mar 2025 06:42:13 +0000
-Date: Tue, 25 Mar 2025 17:42:03 +1100
-From: David Disseldorp <ddiss@suse.de>
-To: julian.stecklina@cyberus-technology.de
-Cc: Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Gao
- Xiang <xiang@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-erofs@lists.ozlabs.org
-Subject: Re: [PATCH v2 1/9] initrd: remove ASCII spinner
-Message-ID: <20250325174203.67398632.ddiss@suse.de>
-In-Reply-To: <20250322-initrd-erofs-v2-1-d66ee4a2c756@cyberus-technology.de>
-References: <20250322-initrd-erofs-v2-0-d66ee4a2c756@cyberus-technology.de>
-	<20250322-initrd-erofs-v2-1-d66ee4a2c756@cyberus-technology.de>
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2C8D61801A06;
+	Tue, 25 Mar 2025 10:10:15 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.42])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 4080D1956095;
+	Tue, 25 Mar 2025 10:10:10 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 25 Mar 2025 11:09:42 +0100 (CET)
+Date: Tue, 25 Mar 2025 11:09:37 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>,
+	brauner@kernel.org, kees@kernel.org, viro@zeniv.linux.org.uk,
+	jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] exec: fix the racy usage of fs_struct->in_exec
+Message-ID: <20250325100936.GC29185@redhat.com>
+References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
+ <20250324160003.GA8878@redhat.com>
+ <CAGudoHHuZEc4AbxXUyBQ3n28+fzF9VPjMv8W=gmmbu+Yx5ixkg@mail.gmail.com>
+ <20250324182722.GA29185@redhat.com>
+ <CAGudoHE8AKKxvtw+e4KpOV5DuVcVdtTwO0XjaYSaFir+09gWhQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -3.30
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHE8AKKxvtw+e4KpOV5DuVcVdtTwO0XjaYSaFir+09gWhQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-> From: Julian Stecklina <julian.stecklina@cyberus-technology.de>
-> 
-> Writing the ASCII spinner probably costs more cycles than copying the
-> block of data on some output devices if you output to serial and in
-> all other cases it rotates at lightspeed in 2025.
-> 
-> Signed-off-by: Julian Stecklina <julian.stecklina@cyberus-technology.de>
-> ---
->  init/do_mounts_rd.c | 11 -----------
->  1 file changed, 11 deletions(-)
-> 
-> diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
-> index ac021ae6e6fa78c7b7828a78ab2fa3af3611bef3..473f4f9417e157118b9a6e582607435484d53d63 100644
+On 03/24, Mateusz Guzik wrote:
+>
+> On Mon, Mar 24, 2025 at 7:28 PM Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > So to me it would be better to have the trivial fix for stable,
+> > exactly because it is trivially backportable. Then cleanup/simplify
+> > this logic on top of it.
+>
+> So I got myself a crap testcase with a CLONE_FS'ed task which can
+> execve and sanity-checked that suid is indeed not honored as expected.
 
-Looks good.
-Reviewed-by: David Disseldorp <ddiss@suse.de>
+So you mean my patch can't fix the problem?
 
-Will wait for v3 before looking at the rest of the series.
+> Anyhow, the plan would be to serialize on the bit, synchronized with
+> the current spin lock. copy_fs would call a helper to wait for it to
+> clear, would still bump ->users under the spin lock.
+>
+> This would decouple the handling from cred_mutex and avoid weirdness
+> like clearing the ->in_exec flag when we never set it.
+
+I don't really understand the idea, but as I said I won't argue with
+another solution.
+
+Oleg.
+
 
