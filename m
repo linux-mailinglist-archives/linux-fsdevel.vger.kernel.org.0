@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-44963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44964-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B73DA6FB1B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:22:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A00FFA6FB4F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:24:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B05BB7A4D0B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 12:20:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 185A71892142
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 12:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B212525C6E5;
-	Tue, 25 Mar 2025 12:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BA725DAE1;
+	Tue, 25 Mar 2025 12:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJnrUfpQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="teUw2FHO"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DB125B69D;
-	Tue, 25 Mar 2025 12:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB0E2571BF;
+	Tue, 25 Mar 2025 12:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742905082; cv=none; b=FmDS6pGYfOS5MTgEfg/0uzgmTgQTeZO3Kw40D1k+D8RHJi40Dqy6+w6KHVsBSHa86zL43NerZ0sFcMyR1C/fqpRhq35f41Po7l8YlBp8cokxAqO7Pp4R4M9dj1/t+QIxfcgPlfMvEoZwbYKllZlJr0szUFmB+TASY20n9xOTL6o=
+	t=1742905098; cv=none; b=j67yYqqg0y6WqNl8J4rYQIUAmFo6pfTvgmvxQdEwRgD/qujWd/k/xAyvnTg/f6i3nWXg4kZ6FFASvXb1TtS4CqOCLs6hZpOCXCXM0dthnD8++QMzFpCJ1beq65ck2rqrpuPSvrEIXsJTEoEz6ZsioHRekQp/WIXY9EOzeTiYleI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742905082; c=relaxed/simple;
-	bh=iWYi5/d3lIOrxHNI1EIVP5k9hUi9+eK2hLYPYcT89jg=;
+	s=arc-20240116; t=1742905098; c=relaxed/simple;
+	bh=UABL4vMSXTJ7ioKDShPOJnvQ/v/SXYqnkdRYWjffYuI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hS7fLASXrlg/B6TGaWLkgRSzkCTpRQEafmnj2cUVU5wvkItXf62lH8/hyYbnMKfcxPaZEQLflo8WxR8sE8cf+bjVWi/zwvgn5pJV6Z2qxqQKH0A6MJbm7iVosfx2ctxuG1xDioAuMPq9XjDxT8Y3og3H0T9GD+eK2+eyv6Hwlzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mJnrUfpQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B2FDC4CEF0;
-	Tue, 25 Mar 2025 12:17:47 +0000 (UTC)
+	 MIME-Version; b=SyJwV++7HcvMup5wz1WMiXdvGniqVOA9szkS+ycAZDN+s5VtFzB9Uvn38uRQ1d0ohCODLFbI3SNXT4UqPR6aoef5bmqj15daAE621Ns9c1uSvahOqPaXXkiqIrRNtYmVvTEadaCWhs1tBMaCkxLsVpY4QfEc0m4jLv6TOO2kBSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=teUw2FHO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3232CC4CEE4;
+	Tue, 25 Mar 2025 12:18:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742905081;
-	bh=iWYi5/d3lIOrxHNI1EIVP5k9hUi9+eK2hLYPYcT89jg=;
+	s=k20201202; t=1742905095;
+	bh=UABL4vMSXTJ7ioKDShPOJnvQ/v/SXYqnkdRYWjffYuI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mJnrUfpQU3tRiz/k25gw4Uqd12Aw8TcM6cjFO/pD8K+3ShkeSS04mnHDe7BpyS9ke
-	 O8z/kOa0aXdpl9GLvZpnTK+Xx+g5W6fJjabNS4JH2Wwvd5+2wgVNE54fuiymHoC1wG
-	 50KxnfqoOdtuha4aPxrF6rszRIRlwHFNHlIfbWoUlSci7i3a1tzNjs60WJvLsFt2CL
-	 k4uREm/BjGR8keu0URF80UT0E0VmN+e0XoVL0J9C2x4l4RFyOLnqNqNi9ALPjHGSGJ
-	 JkfPLCYVJWSPzMY2y47OjruYC0XtjptJeJQjpc7rLp5TYbe0YDu+bublV7qn3GnUev
-	 yahK8zT/PrMfQ==
+	b=teUw2FHOlBQ1lrIKT7Hs+qUfkkWnEEpTWG7+L12tSB2mbphU+tEwWLTIzWHI0iiRJ
+	 DbQvjYXhNoIHuNkVkJjJR9grTurlc5egb+jrZsRmnn/7yCBhuoST5sWNFrEg4whn8S
+	 R8w4LPsMxn2q34XM1d2a9BJgQLJkEbNoee3acd75JHM7OSqPc/dbF55YqAnxMmxb3B
+	 GonCtkmj1hPTAVD6eZOTRDAsO7Au8f+9qjRty68GqzTjCoMQ60GAujyzoXiVezS8hQ
+	 Cw9dI4jq4Uyzfsd0C+8lhRsjuPYR84Qgic3GJeVkTgp4byQiRpTz3vrpRfdwMGr/ce
+	 BEShK8B1mJ11Q==
 From: guoren@kernel.org
 To: arnd@arndb.de,
 	gregkh@linuxfoundation.org,
@@ -114,9 +114,9 @@ Cc: ardb@kernel.org,
 	linux-sctp@vger.kernel.org,
 	linux-usb@vger.kernel.org,
 	linux-media@vger.kernel.org
-Subject: [RFC PATCH V3 05/43] rv64ilp32_abi: riscv: crc32: Utilize 64-bit width to improve the performance
-Date: Tue, 25 Mar 2025 08:15:46 -0400
-Message-Id: <20250325121624.523258-6-guoren@kernel.org>
+Subject: [RFC PATCH V3 06/43] rv64ilp32_abi: riscv: csum: Utilize 64-bit width to improve the performance
+Date: Tue, 25 Mar 2025 08:15:47 -0400
+Message-Id: <20250325121624.523258-7-guoren@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20250325121624.523258-1-guoren@kernel.org>
 References: <20250325121624.523258-1-guoren@kernel.org>
@@ -131,143 +131,138 @@ Content-Transfer-Encoding: 8bit
 From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
 
 The RV64ILP32 ABI, derived from a 64-bit ISA, uses 32-bit
-BITS_PER_LONG. Therefore, crc32 algorithm could utilize 64-bit width
-to improve the performance.
+BITS_PER_LONG. Therefore, checksum algorithm could utilize 64-bit
+width to improve the performance.
 
 Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
 ---
- arch/riscv/lib/crc32-riscv.c | 35 ++++++++++++++++++-----------------
- 1 file changed, 18 insertions(+), 17 deletions(-)
+ arch/riscv/lib/csum.c | 48 +++++++++++++++++++++----------------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
 
-diff --git a/arch/riscv/lib/crc32-riscv.c b/arch/riscv/lib/crc32-riscv.c
-index 53d56ab422c7..68dfb0565696 100644
---- a/arch/riscv/lib/crc32-riscv.c
-+++ b/arch/riscv/lib/crc32-riscv.c
-@@ -8,6 +8,7 @@
- #include <asm/hwcap.h>
- #include <asm/alternative-macros.h>
- #include <asm/byteorder.h>
-+#include <asm/csr.h>
- 
- #include <linux/types.h>
- #include <linux/minmax.h>
-@@ -59,12 +60,12 @@
-  */
- # define CRC32_POLY_QT_BE	0x04d101df481b4e5a
- 
--static inline u64 crc32_le_prep(u32 crc, unsigned long const *ptr)
-+static inline u64 crc32_le_prep(u32 crc, u64 const *ptr)
+diff --git a/arch/riscv/lib/csum.c b/arch/riscv/lib/csum.c
+index 7fb12c59e571..7139ab855349 100644
+--- a/arch/riscv/lib/csum.c
++++ b/arch/riscv/lib/csum.c
+@@ -22,17 +22,17 @@ __sum16 csum_ipv6_magic(const struct in6_addr *saddr,
+ 			__u32 len, __u8 proto, __wsum csum)
  {
- 	return (u64)crc ^ (__force u64)__cpu_to_le64(*ptr);
- }
+ 	unsigned int ulen, uproto;
+-	unsigned long sum = (__force unsigned long)csum;
++	xlen_t sum = (__force xlen_t)csum;
  
--static inline u32 crc32_le_zbc(unsigned long s, u32 poly, unsigned long poly_qt)
-+static inline u32 crc32_le_zbc(u64 s, u32 poly, u64 poly_qt)
- {
- 	u32 crc;
+-	sum += (__force unsigned long)saddr->s6_addr32[0];
+-	sum += (__force unsigned long)saddr->s6_addr32[1];
+-	sum += (__force unsigned long)saddr->s6_addr32[2];
+-	sum += (__force unsigned long)saddr->s6_addr32[3];
++	sum += (__force xlen_t)saddr->s6_addr32[0];
++	sum += (__force xlen_t)saddr->s6_addr32[1];
++	sum += (__force xlen_t)saddr->s6_addr32[2];
++	sum += (__force xlen_t)saddr->s6_addr32[3];
  
-@@ -85,7 +86,7 @@ static inline u32 crc32_le_zbc(unsigned long s, u32 poly, unsigned long poly_qt)
- 	return crc;
- }
+-	sum += (__force unsigned long)daddr->s6_addr32[0];
+-	sum += (__force unsigned long)daddr->s6_addr32[1];
+-	sum += (__force unsigned long)daddr->s6_addr32[2];
+-	sum += (__force unsigned long)daddr->s6_addr32[3];
++	sum += (__force xlen_t)daddr->s6_addr32[0];
++	sum += (__force xlen_t)daddr->s6_addr32[1];
++	sum += (__force xlen_t)daddr->s6_addr32[2];
++	sum += (__force xlen_t)daddr->s6_addr32[3];
  
--static inline u64 crc32_be_prep(u32 crc, unsigned long const *ptr)
-+static inline u64 crc32_be_prep(u32 crc, u64 const *ptr)
- {
- 	return ((u64)crc << 32) ^ (__force u64)__cpu_to_be64(*ptr);
- }
-@@ -131,7 +132,7 @@ static inline u32 crc32_be_prep(u32 crc, unsigned long const *ptr)
- # error "Unexpected __riscv_xlen"
+ 	ulen = (__force unsigned int)htonl((unsigned int)len);
+ 	sum += ulen;
+@@ -46,7 +46,7 @@ __sum16 csum_ipv6_magic(const struct in6_addr *saddr,
+ 	 */
+ 	if (IS_ENABLED(CONFIG_RISCV_ISA_ZBB) &&
+ 	    IS_ENABLED(CONFIG_RISCV_ALTERNATIVE)) {
+-		unsigned long fold_temp;
++		xlen_t fold_temp;
+ 
+ 		/*
+ 		 * Zbb is likely available when the kernel is compiled with Zbb
+@@ -85,12 +85,12 @@ EXPORT_SYMBOL(csum_ipv6_magic);
+ #define OFFSET_MASK 7
  #endif
  
--static inline u32 crc32_be_zbc(unsigned long s)
-+static inline u32 crc32_be_zbc(xlen_t s)
+-static inline __no_sanitize_address unsigned long
+-do_csum_common(const unsigned long *ptr, const unsigned long *end,
+-	       unsigned long data)
++static inline __no_sanitize_address xlen_t
++do_csum_common(const xlen_t *ptr, const xlen_t *end,
++	       xlen_t data)
  {
- 	u32 crc;
+ 	unsigned int shift;
+-	unsigned long csum = 0, carry = 0;
++	xlen_t csum = 0, carry = 0;
  
-@@ -156,16 +157,16 @@ typedef u32 (*fallback)(u32 crc, unsigned char const *p, size_t len);
- 
- static inline u32 crc32_le_unaligned(u32 crc, unsigned char const *p,
- 				     size_t len, u32 poly,
--				     unsigned long poly_qt)
-+				     xlen_t poly_qt)
+ 	/*
+ 	 * Do 32-bit reads on RV32 and 64-bit reads otherwise. This should be
+@@ -130,8 +130,8 @@ static inline __no_sanitize_address unsigned int
+ do_csum_with_alignment(const unsigned char *buff, int len)
  {
- 	size_t bits = len * 8;
--	unsigned long s = 0;
-+	xlen_t s = 0;
- 	u32 crc_low = 0;
+ 	unsigned int offset, shift;
+-	unsigned long csum, data;
+-	const unsigned long *ptr, *end;
++	xlen_t csum, data;
++	const xlen_t *ptr, *end;
  
- 	for (int i = 0; i < len; i++)
--		s = ((unsigned long)*p++ << (__riscv_xlen - 8)) | (s >> 8);
-+		s = ((xlen_t)*p++ << (__riscv_xlen - 8)) | (s >> 8);
+ 	/*
+ 	 * Align address to closest word (double word on rv64) that comes before
+@@ -140,7 +140,7 @@ do_csum_with_alignment(const unsigned char *buff, int len)
+ 	 */
+ 	offset = (unsigned long)buff & OFFSET_MASK;
+ 	kasan_check_read(buff, len);
+-	ptr = (const unsigned long *)(buff - offset);
++	ptr = (const xlen_t *)(buff - offset);
  
--	s ^= (unsigned long)crc << (__riscv_xlen - bits);
-+	s ^= (xlen_t)crc << (__riscv_xlen - bits);
- 	if (__riscv_xlen == 32 || len < sizeof(u32))
- 		crc_low = crc >> bits;
+ 	/*
+ 	 * Clear the most significant bytes that were over-read if buff was not
+@@ -153,7 +153,7 @@ do_csum_with_alignment(const unsigned char *buff, int len)
+ #else
+ 	data = (data << shift) >> shift;
+ #endif
+-	end = (const unsigned long *)(buff + len);
++	end = (const xlen_t *)(buff + len);
+ 	csum = do_csum_common(ptr, end, data);
  
-@@ -177,12 +178,12 @@ static inline u32 crc32_le_unaligned(u32 crc, unsigned char const *p,
+ #ifdef CC_HAS_ASM_GOTO_TIED_OUTPUT
+@@ -163,7 +163,7 @@ do_csum_with_alignment(const unsigned char *buff, int len)
+ 	 */
+ 	if (IS_ENABLED(CONFIG_RISCV_ISA_ZBB) &&
+ 	    IS_ENABLED(CONFIG_RISCV_ALTERNATIVE)) {
+-		unsigned long fold_temp;
++		xlen_t fold_temp;
  
- static inline u32 __pure crc32_le_generic(u32 crc, unsigned char const *p,
- 					  size_t len, u32 poly,
--					  unsigned long poly_qt,
-+					  xlen_t poly_qt,
- 					  fallback crc_fb)
+ 		/*
+ 		 * Zbb is likely available when the kernel is compiled with Zbb
+@@ -233,15 +233,15 @@ do_csum_with_alignment(const unsigned char *buff, int len)
+ static inline __no_sanitize_address unsigned int
+ do_csum_no_alignment(const unsigned char *buff, int len)
  {
- 	size_t offset, head_len, tail_len;
--	unsigned long const *p_ul;
--	unsigned long s;
-+	xlen_t const *p_ul;
-+	xlen_t s;
+-	unsigned long csum, data;
+-	const unsigned long *ptr, *end;
++	xlen_t csum, data;
++	const xlen_t *ptr, *end;
  
- 	asm goto(ALTERNATIVE("j %l[legacy]", "nop", 0,
- 			     RISCV_ISA_EXT_ZBC, 1)
-@@ -199,7 +200,7 @@ static inline u32 __pure crc32_le_generic(u32 crc, unsigned char const *p,
+-	ptr = (const unsigned long *)(buff);
++	ptr = (const xlen_t *)(buff);
+ 	data = *(ptr++);
  
- 	tail_len = len & OFFSET_MASK;
- 	len = len >> STEP_ORDER;
--	p_ul = (unsigned long const *)p;
-+	p_ul = (xlen_t const *)p;
+ 	kasan_check_read(buff, len);
  
- 	for (int i = 0; i < len; i++) {
- 		s = crc32_le_prep(crc, p_ul);
-@@ -236,7 +237,7 @@ static inline u32 crc32_be_unaligned(u32 crc, unsigned char const *p,
- 				     size_t len)
- {
- 	size_t bits = len * 8;
--	unsigned long s = 0;
-+	xlen_t s = 0;
- 	u32 crc_low = 0;
+-	end = (const unsigned long *)(buff + len);
++	end = (const xlen_t *)(buff + len);
+ 	csum = do_csum_common(ptr, end, data);
  
- 	s = 0;
-@@ -247,7 +248,7 @@ static inline u32 crc32_be_unaligned(u32 crc, unsigned char const *p,
- 		s ^= crc >> (32 - bits);
- 		crc_low = crc << bits;
- 	} else {
--		s ^= (unsigned long)crc << (bits - 32);
-+		s ^= (xlen_t)crc << (bits - 32);
- 	}
+ 	/*
+@@ -250,7 +250,7 @@ do_csum_no_alignment(const unsigned char *buff, int len)
+ 	 */
+ 	if (IS_ENABLED(CONFIG_RISCV_ISA_ZBB) &&
+ 	    IS_ENABLED(CONFIG_RISCV_ALTERNATIVE)) {
+-		unsigned long fold_temp;
++		xlen_t fold_temp;
  
- 	crc = crc32_be_zbc(s);
-@@ -259,8 +260,8 @@ static inline u32 crc32_be_unaligned(u32 crc, unsigned char const *p,
- u32 __pure crc32_be_arch(u32 crc, const u8 *p, size_t len)
- {
- 	size_t offset, head_len, tail_len;
--	unsigned long const *p_ul;
--	unsigned long s;
-+	xlen_t const *p_ul;
-+	xlen_t s;
- 
- 	asm goto(ALTERNATIVE("j %l[legacy]", "nop", 0,
- 			     RISCV_ISA_EXT_ZBC, 1)
-@@ -277,7 +278,7 @@ u32 __pure crc32_be_arch(u32 crc, const u8 *p, size_t len)
- 
- 	tail_len = len & OFFSET_MASK;
- 	len = len >> STEP_ORDER;
--	p_ul = (unsigned long const *)p;
-+	p_ul = (xlen_t const *)p;
- 
- 	for (int i = 0; i < len; i++) {
- 		s = crc32_be_prep(crc, p_ul);
+ 		/*
+ 		 * Zbb is likely available when the kernel is compiled with Zbb
 -- 
 2.40.1
 
