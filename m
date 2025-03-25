@@ -1,159 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-44958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20B14A6FB04
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:20:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F585A6FE15
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:50:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62B473B1702
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 12:17:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B265A3B3195
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 12:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5BA257AED;
-	Tue, 25 Mar 2025 12:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6DD02627F9;
+	Tue, 25 Mar 2025 12:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XDElJhse"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T2cStf5v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767EEA937;
-	Tue, 25 Mar 2025 12:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80FAE2620C4
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Mar 2025 12:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742905012; cv=none; b=IU1fziTOpVvGAypjb//2qClaVqE0XdkFr3wzR/9uzI9pNdVKGHnXLwMFe6lnEVfhIyqgxgO21bhYK4wq4EWvyWjJ3GTOXGJu9ZdQ4RdRR4AjT2x7UvNAvyq7P/uHhJBrT+Qow0PJZzd6IZhadho5n29SDTogc3uemGxKqwMRQl4=
+	t=1742905446; cv=none; b=pDRIbDqLp/KVVgwsZSnJTVAMSX06JhBPV3MNMxz6CBZTy+TeoKLLcqjY1UMI/17iMzPIxtgvFvYMmDKIdIeE/VAM6rWUgFEe0+Ye0nM8myHaW9kCvZj12vy38JPGK/NMnkR/5kCJbLAgy9e6NN2fu/XjNiizIIbTLQMNW1u7tYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742905012; c=relaxed/simple;
-	bh=A/HVEfJcYRT01uF6p+bjIsoGXJumPIltSSZeiBV1byA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L6+t+Td2Lg3vpO3kKL2hy5F7ziwYZggU1Df4mdeFVImaHZm63Z8HlyVrBROE7BFutLxmdXIvK4+/f/DGpktSpcwEsOCvLB9MXkN1Js0utbRem001gOG4g/O891LY+vQmXBx945NYMPuAxj94PaTfpnqFVMyemC6SNRHE5Ew1xRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XDElJhse; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac2aeada833so1026422766b.0;
-        Tue, 25 Mar 2025 05:16:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742905009; x=1743509809; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3YwMoGN98deik8uPYk+jICPEOK3Aa0K3ta2oIfbGfLw=;
-        b=XDElJhseBmlrc3xHaRYHs+Jv2nnd99JiIkilyaQ+GUmGgNpva+DBkGFbHLfyRiAc4q
-         D9MVRPSOYTxXSVcR0CHrOJqH2XNswTqmiUbqwptkFSW/QzdGXlkn27XxYHcy4uVQguhK
-         wzKB6EAUal56g4abQyAb6kQT6i12S1l+rRnZYVytvYQag3a+qgj/P3k468CcyvVRM4+A
-         7+xcME9hTx/xx3LZnydAHinyuAMIO9Tnj7fk+GzjTiQeG96DMwTjjRhHL69K7fcacfwm
-         uWt3fK2VvLnbCh6Pxl37/zJPBqvbAHUPPZ7zrN7B4b1HnN3dEyv2p9um3th0PVQLHX4N
-         LrhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742905009; x=1743509809;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3YwMoGN98deik8uPYk+jICPEOK3Aa0K3ta2oIfbGfLw=;
-        b=rXkmJoPHnlDmmJ+gkUK8gpuPFrApXNk2NXtFW0GT6IYQyBZicQ1rywdV+7iSr0P4Bp
-         1kENYv9mtYPx8XgGuE8fVF5KGuTRlWEXGP8Ao9r4Bdu3d95hTipWd9aV/yvWEEgHjCY9
-         HQQrAoquI5gCdXdJXcD4vn9HqzBvZPtCLYVUJZvP2or2HZQw/Xp7H6R7K6sB2KfxuxPc
-         1c6cKrkU8GWe+v+lszIX4n0y6vWwqc/fvu7XVF/uqpdZcVwMaVm7nAFkm2YuNw+DvkDh
-         x82g2fZ21W7rdujsldRjKD6NV97woRLeX7cFMnhgUNIxPLHYMw7hNnPhpu1bjF5ylYAJ
-         cmOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPDHOJq+Yz/TWdWkCOyZ1UErPR7zDjLOFng3Rlv7VaedzHdVKFO4pT670maq6ZDoZc51CpRAkGHK7ltaGd@vger.kernel.org, AJvYcCVbq/YezcLoLx7Kexe9+bP9lkIqR1p2XBXTPtnnz1zmmNu7pf/mwsFoBbD56nLWPdrY/3GMOwN7P2o5zSBhdw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKKw5+l9JQyqno/IEjnvTGKBfrpkGqcXvU7hcQrxpct+XOqntA
-	JNQUvAWYYXWIFKAj/q5nwpkJ3+7/0EDPdbJjXINBzNQN1YSW/b5nob/trskYam2oa2xjg8rm8pQ
-	KeeBmaexuCJz4bpn8K+DtfvaquzUfWERG
-X-Gm-Gg: ASbGncsBipHfMr0v/b7TbIsnLzpJgbj0fSg4LHm34uG5auIeZU2O8CVJfiLHpMnl22w
-	qQorwYz3LDK3Sm+3P1eX6vjZcnuz5N3Zo7c0uitsoEsUAhQnds14//7/+BsnzQA7vUZdFJo63mI
-	zVvXwaSgWb7clr1ypFO8rLAzNTNJH6rGcBWpU=
-X-Google-Smtp-Source: AGHT+IEh5kgWuYcKo36DTgjK2wx0ObTGE58OJAEbZCdPYzv2jYpEeNhIbzGSogxiqqoWpxFyWSXcfctHK9/nU6lWsP4=
-X-Received: by 2002:a17:906:c10b:b0:ac2:d6c4:958d with SMTP id
- a640c23a62f3a-ac3f0176d24mr1753102366b.18.1742905008170; Tue, 25 Mar 2025
- 05:16:48 -0700 (PDT)
+	s=arc-20240116; t=1742905446; c=relaxed/simple;
+	bh=wn1WBoIMzL15p320nXFa8dKndRoz/qSGoUe1u5eIMCQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NgM9Yf+ekPlX/ktmTamzKlioR2tyLKX/5o5kV3AzqHSPJES/fgs9eDSvRiXTl/DAISyfhbniS+1Do77h5gvaikJiFA/6rrFHek0YS/aVi5ME8I9I/JjYJIuukyfrUdS6NnVycGMPNoHqTnU8BjDjAR7kdxuNELA8Xn0VcHVDNnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T2cStf5v; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742905443;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8FZoxiXkYnN/E/dxEvlD3+meuAIyG+ElT4G9u+2PW1g=;
+	b=T2cStf5v6jLrUZg0Zv/+LJlDGP0ASsfO94Yn7ChoQK8hw/pfxxiU4p2atp8NSYYIZuhaKv
+	z2RCKrc75Vov+NYPJE6EsEoKhMCO5apyaOJUmKbVwNvyKz9u0FZpbHi9dxA9nWeC/bw16t
+	C8pm0H6esXdDK0GoAWS3Oim0cCI9nA8=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-456-1sbbKYNFPeeJZ9r7Jdz1Wg-1; Tue,
+ 25 Mar 2025 08:24:00 -0400
+X-MC-Unique: 1sbbKYNFPeeJZ9r7Jdz1Wg-1
+X-Mimecast-MFC-AGG-ID: 1sbbKYNFPeeJZ9r7Jdz1Wg_1742905438
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B1EBC180049D;
+	Tue, 25 Mar 2025 12:23:57 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.3])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 397CA180A803;
+	Tue, 25 Mar 2025 12:23:48 +0000 (UTC)
+Date: Tue, 25 Mar 2025 20:23:43 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Mikulas Patocka <mpatocka@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	Jooyung Han <jooyung@google.com>, Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Heinz Mauelshagen <heinzm@redhat.com>, zkabelac@redhat.com,
+	dm-devel@lists.linux.dev, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH] the dm-loop target
+Message-ID: <Z-KgT3Xine0kcVo-@fedora>
+References: <Z9ATyhq6PzOh7onx@fedora>
+ <Z9DymjGRW3mTPJTt@dread.disaster.area>
+ <Z9FFTiuMC8WD6qMH@fedora>
+ <7b8b8a24-f36b-d213-cca1-d8857b6aca02@redhat.com>
+ <Z9j2RJBark15LQQ1@dread.disaster.area>
+ <Z9knXQixQhs90j5F@infradead.org>
+ <Z9k-JE8FmWKe0fm0@fedora>
+ <Z9u-489C_PVu8Se1@infradead.org>
+ <Z9vGxrPzJ6oswWrS@fedora>
+ <Z-KCPvmBO3AeuiDf@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210194512.417339-1-mszeredi@redhat.com> <20250210194512.417339-3-mszeredi@redhat.com>
- <CAOQ4uxiqis6kawuv4pa6jxHYgpQPc18izFP8e0TORfA_mVu_-w@mail.gmail.com>
- <CAJfpegt=PWs8ZDF11p3nOCWHbWescE5nwVtUt82f=B6B+S0Miw@mail.gmail.com>
- <CAOQ4uxiQQV_O1MJgTksKycBjJ6Bneqc=CQbUoghvXc=8KEEsMg@mail.gmail.com>
- <CAJfpegsuN+C4YiA9PAuY3+-BJ959aSAaXTYBwKNCjEnhXVw0pg@mail.gmail.com>
- <CAOQ4uxjkBQP=x6+2YPYw4pCfaNy0=x48McLCMPJdEJYEb85f-A@mail.gmail.com>
- <CAJfpegvUdaCeBcPPc_Qe6vK4ELz7NXWCxuDcVHLpbzZJazXsqA@mail.gmail.com>
- <87a5ahdjrd.fsf@redhat.com> <CAJfpeguv2+bRiatynX2wzJTjWpUYY5AS897-Tc4EBZZXq976qQ@mail.gmail.com>
- <875xl4etgk.fsf@redhat.com> <CAJfpeguhVYAp5aKeKDXDwip-Z0hc=3W4t=TMLr+-cbEUODf2vA@mail.gmail.com>
-In-Reply-To: <CAJfpeguhVYAp5aKeKDXDwip-Z0hc=3W4t=TMLr+-cbEUODf2vA@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 25 Mar 2025 13:16:35 +0100
-X-Gm-Features: AQ5f1Jpwz9fIfJs_p0muEkmk0cSF1jqwMl_r4GomS2pemCSeZg3habMN0cxsbPc
-Message-ID: <CAOQ4uxgenjB-TQ4rT9JH3wk+q6Qb8b4TgoPxA0P3G8R-gVm+WA@mail.gmail.com>
-Subject: Re: [PATCH 3/5] ovl: make redirect/metacopy rejection consistent
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Giuseppe Scrivano <gscrivan@redhat.com>, Miklos Szeredi <mszeredi@redhat.com>, 
-	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Alexander Larsson <alexl@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-KCPvmBO3AeuiDf@dread.disaster.area>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Thu, Feb 20, 2025 at 12:48=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu>=
- wrote:
->
-> On Thu, 20 Feb 2025 at 12:39, Giuseppe Scrivano <gscrivan@redhat.com> wro=
-te:
-> >
-> > Miklos Szeredi <miklos@szeredi.hu> writes:
-> >
-> > > On Thu, 20 Feb 2025 at 10:54, Giuseppe Scrivano <gscrivan@redhat.com>=
- wrote:
-> > >>
-> > >> Miklos Szeredi <miklos@szeredi.hu> writes:
-> > >>
-> > >> > On Tue, 11 Feb 2025 at 16:52, Amir Goldstein <amir73il@gmail.com> =
-wrote:
-> > >
-> > >> >> The short version - for lazy data lookup we store the lowerdata
-> > >> >> redirect absolute path in the ovl entry stack, but we do not stor=
-e
-> > >> >> the verity digest, we just store OVL_HAS_DIGEST inode flag if the=
-re
-> > >> >> is a digest in metacopy xattr.
-> > >> >>
-> > >> >> If we store the digest from lookup time in ovl entry stack, your =
-changes
-> > >> >> may be easier.
-> > >> >
-> > >> > Sorry, I can't wrap my head around this issue.  Cc-ing Giuseppe.
-> > >
-> > > Giuseppe, can you describe what should happen when verity is enabled
-> > > and a file on a composefs setup is copied up?
-> >
-> > we don't care much about this case since the composefs metadata is in
-> > the EROFS file system.  Once copied up it is fine to discard this
-> > information.  Adding Alex to the discussion as he might have a differen=
-t
-> > opinion/use case in mind.
->
-> Okay.
->
-> Amir, do I understand correctly that your worry is that after copy-up
-> verity digest is still being used?  If that's the case, we just need
-> to make sure that OVL_HAS_DIGEST is cleared on copy-up?
->
-> Or am I still misunderstanding this completely?
+On Tue, Mar 25, 2025 at 09:15:26PM +1100, Dave Chinner wrote:
+> On Thu, Mar 20, 2025 at 03:41:58PM +0800, Ming Lei wrote:
+> > On Thu, Mar 20, 2025 at 12:08:19AM -0700, Christoph Hellwig wrote:
+> > > On Tue, Mar 18, 2025 at 05:34:28PM +0800, Ming Lei wrote:
+> > > > On Tue, Mar 18, 2025 at 12:57:17AM -0700, Christoph Hellwig wrote:
+> > > > > On Tue, Mar 18, 2025 at 03:27:48PM +1100, Dave Chinner wrote:
+> > > > > > Yes, NOWAIT may then add an incremental performance improvement on
+> > > > > > top for optimal layout cases, but I'm still not yet convinced that
+> > > > > > it is a generally applicable loop device optimisation that everyone
+> > > > > > wants to always enable due to the potential for 100% NOWAIT
+> > > > > > submission failure on any given loop device.....
+> > > > 
+> > > > NOWAIT failure can be avoided actually:
+> > > > 
+> > > > https://lore.kernel.org/linux-block/20250314021148.3081954-6-ming.lei@redhat.com/
+> > > 
+> > > That's a very complex set of heuristics which doesn't match up
+> > > with other uses of it.
+> > 
+> > I'd suggest you to point them out in the patch review.
+> 
+> Until you pointed them out here, I didn't know these patches
+> existed.
+> 
+> Please cc linux-fsdevel on any loop device changes you are
+> proposing, Ming. It is as much a filesystem driver as it is a block
+> device, and it changes need review from both sides of the fence.
 
-Sorry, I have somehow missed this email.
+Please see the patchset:
 
-TBH, I am not sure what is expected to happen in the use case in question
-on copy up - that is if a full copy up on any metadata change is acceptable=
-.
+https://lore.kernel.org/linux-block/20250322012617.354222-1-ming.lei@redhat.com/
 
-Technically, we could allow a metacopy upper as long as we take the md5dige=
-st
-from the middle layer but that complicates things and I am not sure if we n=
-eed
-to care - can't wrap my head around this case either.
+> 
+> > > > > Yes, I think this is a really good first step:
+> > > > > 
+> > > > > 1) switch loop to use a per-command work_item unconditionally, which also
+> > > > >    has the nice effect that it cleans up the horrible mess of the
+> > > > >    per-blkcg workers.  (note that this is what the nvmet file backend has
+> > > > 
+> > > > It could be worse to take per-command work, because IO handling crosses
+> > > > all system wq worker contexts.
+> > > 
+> > > So do other workloads with pretty good success.
+> > > 
+> > > > 
+> > > > >    always done with good result)
+> > > > 
+> > > > per-command work does burn lots of CPU unnecessarily, it isn't good for
+> > > > use case of container
+> > > 
+> > > That does not match my observations in say nvmet.  But if you have
+> > > numbers please share them.
+> > 
+> > Please see the result I posted:
+> > 
+> > https://lore.kernel.org/linux-block/Z9FFTiuMC8WD6qMH@fedora/
+> 
+> You are arguing in circles about how we need to optimise for static
+> file layouts.
+> 
+> Please listen to the filesystem people when they tell you that
+> static file layouts are a -secondary- optimisation target for loop
+> devices.
+> 
+> The primary optimisation target is the modification that makes all
+> types of IO perform better in production, not just the one use case
+> that overwrite-specific IO benchmarks exercise.
+> 
+> If you want me to test your changes, I have a very loop device heavy
+> workload here - it currently creates about 300 *sparse* loop devices
+> totalling about 1.2TB of capacity, then does all sorts of IO to them
+> through both the loop devices themselves and filesystems created on
+> top of the loop devices. It typically generates 4-5GB/s of IO
+> through the loop devices to the backing filesystem and it's physical
+> storage.
+
+The patchset does cover the sparse backfile, and I also provide one test
+case in which one completely sparse file is used, and make sure that
+there isn't regression in this case.
+
+This patchset is supposed to address Mikulas's case of stable FS mapping,
+meantime without introducing regression on other cases, such as
+the sparse backing file.
+
+> 
+> Speeding up or slowing down IO submission through the loop devices
+> has direct impact on the speed of the workload. Using buffered IO
+> through the loop device right now is about 25% faster than using
+> aio+dio for the loop because there is some amount of re-read and
+> re-write in the filesystem IO patterns. That said, AIO+DIO should be
+> much faster than it is, hence my interest in making all the AIO+DIO
+> IO submission independent of potential blocking operations.
+> 
+> Hence if you have patch sets that improve loop device performance,
+> then you need to make sure filesystem people like myself see those
+> patch series so they can be tested and reviewed in a timely manner.
+> That means you need to cc loop device patches to linux-fsdevel....
+
+OK, will Cc you and linux-fsdevel in future loop patch submission.
+
 
 Thanks,
-Amir.
+Ming
+
 
