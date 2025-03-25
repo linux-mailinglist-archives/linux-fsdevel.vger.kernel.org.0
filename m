@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-44983-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44984-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E63D7A6FD95
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:45:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F7E8A6FDF8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:49:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE568841895
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 12:39:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34A577AAA42
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 12:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B5D26FDA8;
-	Tue, 25 Mar 2025 12:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1444270EDC;
+	Tue, 25 Mar 2025 12:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p2sof5de"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ntclLWyc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C141C25D8F7;
-	Tue, 25 Mar 2025 12:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015DB258CD6;
+	Tue, 25 Mar 2025 12:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742905364; cv=none; b=O5iLTxfcEvGc7WLje7XHMSkWVcQAxRDCzzO24ZIb+ZWIJ4sPo+gGiW1WS+W6G7FQE5C7ZeRJ1abLlvSXq4LMpzhjIgRRqiTWO3THaFc2365anEGogGWFVkkKUIFiF6XNSA44HO7MeZR4mdkXrLeMqZlNV3DOuLZ+8O2mcLtc1yE=
+	t=1742905381; cv=none; b=fxvwXUA8D1jD3DFNE+iQK6Z/q0Wn9A/RE3IgEItHM3UU+AhxJacV3gFfbZTu8I13c5AzdwezHrdTonWpFr3XQLRZ7R3cj+X68qIfmFtWPNFnPHpyo9B7s+y6VY9N/wJQdNiiAoVJMmUQ/pRjki/iz71FYZrMgBzSxmMKTvOMGmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742905364; c=relaxed/simple;
-	bh=pRtaUMiFeAu+95a3CJwIpLTg/ZslxDoQ016dR5ldst0=;
+	s=arc-20240116; t=1742905381; c=relaxed/simple;
+	bh=kGPsHFFMg2CAbXtRnGFCoMZoeXyVXOmvw2ykjsD95WE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=H2HKm6OcOHwOglAcARoacMwd/Xp5LJfL+ZTDpOoLRCVCBxnLJj4tPqopfcRmXTFl17tSLUzkSfKEgijapwSYbVv3IiW5n4m4rMoF8kNKt6Df/5011bUNODgNmduibrKArfiQsRfUSQSV3m3lO3PwRPg+pjjTPGGmytT7vvsZ3mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p2sof5de; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED6B6C4CEE9;
-	Tue, 25 Mar 2025 12:22:29 +0000 (UTC)
+	 MIME-Version; b=Vd7wR9xRSzglgqhy+urllQIHZyvC20E4PjPJlpqV+Dz8lCr7MXvAPpgJJG5wO7l+EA1h66acIQWpgmSIUIQVRFm+G50zGHnBQ3kDnt3ZVbvD504BHp0SbRx960Wo0wq6rJLpjIPlbjzuy8QZvcKGL2joHYBthnkosd5wxSbz47s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ntclLWyc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E4CEC4CEE4;
+	Tue, 25 Mar 2025 12:22:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742905363;
-	bh=pRtaUMiFeAu+95a3CJwIpLTg/ZslxDoQ016dR5ldst0=;
+	s=k20201202; t=1742905380;
+	bh=kGPsHFFMg2CAbXtRnGFCoMZoeXyVXOmvw2ykjsD95WE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=p2sof5deaUnKxXsdbuejLa7cMfsQ/jfo9NR4yzxltIbGt9I7LGg3viUZpXT1k8RFw
-	 9WTRwz7YQbBmvTKk30sv6fC7V/LIHte4FG9qKAIedqe9Y/ickF0YMfyR54zTwhm5BQ
-	 obpUACKtQgLFBumRgfvC3WYEeXtPc/EwoiH4j3URzIqNlAo4TJWEvolJgwku1sqkJx
-	 7rKaKFTW+8U8evbqHZ+v5cGHZoXKojJ2sQX8sVgxL7kldYux1laci0G+UGSLEZ94Hd
-	 tb6MX1/sRkfPX52VC52FXAgkrmJ6qByYnTyzQlY4MscJzEO+hWOnTRGT/1TDXE8C38
-	 5yNfgh3K5oAwg==
+	b=ntclLWycxIrsN91q9/Iq7DZLV3nwTWOf4Qo5f6R8yJlXo1s0ypvyO9gc8nw1n9iJa
+	 FXE4HvXg9jbtr74bzaGhsm46h50G8b9MlQPjOkwWiuLMEejz6lYx8r2CpJVGHd+i84
+	 Y9n4c1aA4xtTudNn6+y4oe79jba9Mxkk0kZFXd/7xCyMom+qmIyy4T/0ysXPzI7bay
+	 5sdbYuoQbrTw4El0JuMiLQwd1ke34f9kjkg3HXYA3l/Iwam2xe4E80RyKMurhKZ1jo
+	 s5Lzild3//u1NkkMe5ZEFU8hjrRZDyJHVc5UpBWJ9x1eZ2XWDKu2b3FH9QfncuRVF3
+	 1ztYGTU3Jqe1Q==
 From: guoren@kernel.org
 To: arnd@arndb.de,
 	gregkh@linuxfoundation.org,
@@ -114,9 +114,9 @@ Cc: ardb@kernel.org,
 	linux-sctp@vger.kernel.org,
 	linux-usb@vger.kernel.org,
 	linux-media@vger.kernel.org
-Subject: [RFC PATCH V3 25/43] rv64ilp32_abi: exec: Adapt 64lp64 env and argv
-Date: Tue, 25 Mar 2025 08:16:06 -0400
-Message-Id: <20250325121624.523258-26-guoren@kernel.org>
+Subject: [RFC PATCH V3 26/43] rv64ilp32_abi: file_ref: Use 32-bit width for refcnt
+Date: Tue, 25 Mar 2025 08:16:07 -0400
+Message-Id: <20250325121624.523258-27-guoren@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20250325121624.523258-1-guoren@kernel.org>
 References: <20250325121624.523258-1-guoren@kernel.org>
@@ -130,29 +130,37 @@ Content-Transfer-Encoding: 8bit
 
 From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
 
-The rv64ilp32 abi reuses the env and argv memory layout of the
-lp64 abi, so leave the space to fit the lp64 struct layout.
+The sizeof(atomic_t) is 4 in rv64ilp32 abi linux kernel, which
+could provide a higher density of cache and a smaller memory
+footprint.
 
 Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
 ---
- fs/exec.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/linux/file_ref.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 506cd411f4ac..548d18b7ae92 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -424,6 +424,10 @@ static const char __user *get_user_arg_ptr(struct user_arg_ptr argv, int nr)
- 	}
+diff --git a/include/linux/file_ref.h b/include/linux/file_ref.h
+index 9b3a8d9b17ab..ce9b47359e14 100644
+--- a/include/linux/file_ref.h
++++ b/include/linux/file_ref.h
+@@ -27,7 +27,7 @@
+  * 0xFFFFFFFFFFFFFFFFUL
+  */
+ 
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ #define FILE_REF_ONEREF		0x0000000000000000UL
+ #define FILE_REF_MAXREF		0x7FFFFFFFFFFFFFFFUL
+ #define FILE_REF_SATURATED	0xA000000000000000UL
+@@ -44,7 +44,7 @@
  #endif
  
-+#if defined(CONFIG_64BIT) && (BITS_PER_LONG == 32)
-+	nr = nr * 2;
-+#endif
-+
- 	if (get_user(native, argv.ptr.native + nr))
- 		return ERR_PTR(-EFAULT);
- 
+ typedef struct {
+-#ifdef CONFIG_64BIT
++#if BITS_PER_LONG == 64
+ 	atomic64_t refcnt;
+ #else
+ 	atomic_t refcnt;
 -- 
 2.40.1
 
