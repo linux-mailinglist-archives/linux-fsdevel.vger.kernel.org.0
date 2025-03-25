@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-44967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D30A6FBAC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:29:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E486A6FC0A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:32:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D05D5172421
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 12:24:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C99683BEC0F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 12:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3522264629;
-	Tue, 25 Mar 2025 12:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBE32264FB6;
+	Tue, 25 Mar 2025 12:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Av1iWZ11"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="idrJWqFJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F7C1531C5;
-	Tue, 25 Mar 2025 12:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F382580E1;
+	Tue, 25 Mar 2025 12:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742905137; cv=none; b=n0B1337E7y+I1P6O3E1qGFAy4+c0MzkLnYcXAsvlsHARrtj7dCC6BBUYIsLPFhSFdnh7MLJX4nT5G4tPURnzEh8AcU0mRSHovKGRdXEGMDUKbkQNk7da+AcbsNmjw8BuEqZX77TRS92gt/enRyVJ+BO9VGwFiToyrjZUjQFNhjk=
+	t=1742905152; cv=none; b=hm5thc+6llBEnYvDKg8SciB1j3lRC6uAkYPdUKXBTsCEbWpc/TxTPOeiyFBaC+lbKwWpWoABOBsNIw8DtLOWmS3CLvEhiSW4e4zeH4gLco4Tw6mKqUluIXLcFJhzHebhNK2VxbrxjF8gYdViPIg6UFbG2No7CizG1l+IfNbwObE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742905137; c=relaxed/simple;
-	bh=CkHSnvK7MIdZ92ELdn81bKYc+IanecbF+EpzeS9eHgE=;
+	s=arc-20240116; t=1742905152; c=relaxed/simple;
+	bh=PoJfUz6fT96JeSEjLBp9COIPADXcL2k0zITHh5nATsw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ey2BljTHrNk38SWIWw4SAlaFUbJy4knR0C1mOhOMKscJF0tbHZqHSNwl6uRFRdiKdevE9e88O5Oi8ir/vBBnviogi1Y0aOL/1C3ELcR8LNGo/ycOgTmxkSySrq4EjOKDHKHehtxYGp8G7Sg0UlfyLMgUPLIxMhJLbZ6qoWqL/B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Av1iWZ11; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86390C4CEE9;
-	Tue, 25 Mar 2025 12:18:43 +0000 (UTC)
+	 MIME-Version; b=UMOcLCuPfdDC8a+RVYXp/HthF+vB/7sok9FWK7LVtiPPMcO/Z4+pPap6+2Mz0tyrAYktYc6RDp9HkNE1qlx/xxchEm9DQioBz7HQNvMk1EuBzu/XUtJpgPNib5XWOsyzLOyX/j7UwMVSDKO0ujoBd7lhq8I7NMOq7VA5TYAHur0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=idrJWqFJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80920C4CEED;
+	Tue, 25 Mar 2025 12:18:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742905136;
-	bh=CkHSnvK7MIdZ92ELdn81bKYc+IanecbF+EpzeS9eHgE=;
+	s=k20201202; t=1742905151;
+	bh=PoJfUz6fT96JeSEjLBp9COIPADXcL2k0zITHh5nATsw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Av1iWZ11H8OzWTpyQcaIUWDHae7LxA08a0FAeGsTT0s3iZgbkbcvAiqA4Rq0Xet5j
-	 2+nlUrRJn1Vdt4iPov5qd9QlPxivEDsvOF5iUx9h8lOhYO9d47s7kHGa++wrFLVQww
-	 53MRjEzXHEO+oKZMkSTWTYqHIQtTZyJhdAOmn6ZL1My7/G6jgIBZEKrbYJVnm5oCxa
-	 /DbU6+44emZ6CpsPev+uHgQN0R65JAVjtBDYAeDCA2qNPLdBL72n5vY6OzwaN5WDP0
-	 mgLrQoaZyBOPAzgJfO6fikBN77EJGRFL39+NYHrRa8zWigK//5KeYsOg84YR6W6DN2
-	 W8PIgwH1HOLeQ==
+	b=idrJWqFJvuxgW12tmUJ11d1s4uc7k7PpbAbB+aU99OQWXa8XQFwfpZR+CB2M6ows7
+	 Bz7BKgIF7aIQFg1EH6+6k9nvQ4/LIXOrz/dv06mqIlwL6pxot5D2kv43LU9xJWOJzn
+	 bHh+KnkpPFol8tYdehZj0xxoJoT5gFWoHWFPvMSPjzMlXWP4nj3z6rtUCxGDtyVqFK
+	 wOG14MRBpR1bBnJkwf2yaxxZEEY6ZbpvA2VfbgC0LfqqXSOCNlw5XHFEghaI39aEcK
+	 y+5moRsvfS2RFZv/6u6rfqAAETpyO09KDMkz7jZWqmtTOZfS1qXlXxnvTZYH3YblLN
+	 kreGeQ3duF5RA==
 From: guoren@kernel.org
 To: arnd@arndb.de,
 	gregkh@linuxfoundation.org,
@@ -114,9 +114,9 @@ Cc: ardb@kernel.org,
 	linux-sctp@vger.kernel.org,
 	linux-usb@vger.kernel.org,
 	linux-media@vger.kernel.org
-Subject: [RFC PATCH V3 09/43] rv64ilp32_abi: riscv: Reuse LP64 SBI interface
-Date: Tue, 25 Mar 2025 08:15:50 -0400
-Message-Id: <20250325121624.523258-10-guoren@kernel.org>
+Subject: [RFC PATCH V3 10/43] rv64ilp32_abi: riscv: Update SATP.MODE.ASID width
+Date: Tue, 25 Mar 2025 08:15:51 -0400
+Message-Id: <20250325121624.523258-11-guoren@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20250325121624.523258-1-guoren@kernel.org>
 References: <20250325121624.523258-1-guoren@kernel.org>
@@ -130,136 +130,53 @@ Content-Transfer-Encoding: 8bit
 
 From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
 
-The RV64ILP32 ABI leverages the LP64 SBI interface, enabling the
-RV64ILP32 Linux kernel to run seamlessly on LP64 OpenSBI or KVM.
-Using RV64ILP32 Linux doesn't require changing the bootloader,
-firmware, or hypervisor; it could replace the LP64 kernel directly.
+The RV32 employs 9-bit asid_bits due to CSR's xlen=32 constraint,
+whereas RV64ILP32 ABI, rooted in RV64 ISA, features a 64-bit
+satp CSR. Hence, for rv64ilp32 abi, the exact asid mechanism as
+in 64-bit architecture is adopted.
 
 Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
 ---
- arch/riscv/include/asm/cpu_ops_sbi.h |  4 ++--
- arch/riscv/include/asm/sbi.h         | 22 +++++++++++-----------
- arch/riscv/kernel/cpu_ops_sbi.c      |  4 ++--
- arch/riscv/kernel/sbi_ecall.c        | 22 +++++++++++-----------
- 4 files changed, 26 insertions(+), 26 deletions(-)
+ arch/riscv/mm/context.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/arch/riscv/include/asm/cpu_ops_sbi.h b/arch/riscv/include/asm/cpu_ops_sbi.h
-index d6e4665b3195..d967adad6b48 100644
---- a/arch/riscv/include/asm/cpu_ops_sbi.h
-+++ b/arch/riscv/include/asm/cpu_ops_sbi.h
-@@ -19,8 +19,8 @@ extern const struct cpu_operations cpu_ops_sbi;
-  * @stack_ptr: A pointer to the hart specific sp
-  */
- struct sbi_hart_boot_data {
--	void *task_ptr;
--	void *stack_ptr;
-+	xlen_t task_ptr;
-+	xlen_t stack_ptr;
- };
- #endif
+diff --git a/arch/riscv/mm/context.c b/arch/riscv/mm/context.c
+index 4abe3de23225..c3f9926d9337 100644
+--- a/arch/riscv/mm/context.c
++++ b/arch/riscv/mm/context.c
+@@ -226,14 +226,18 @@ static inline void set_mm(struct mm_struct *prev,
  
-diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-index 3d250824178b..fd9a9c723ec6 100644
---- a/arch/riscv/include/asm/sbi.h
-+++ b/arch/riscv/include/asm/sbi.h
-@@ -138,16 +138,16 @@ enum sbi_ext_pmu_fid {
- };
- 
- union sbi_pmu_ctr_info {
--	unsigned long value;
-+	xlen_t value;
- 	struct {
--		unsigned long csr:12;
--		unsigned long width:6;
-+		xlen_t csr:12;
-+		xlen_t width:6;
- #if __riscv_xlen == 32
--		unsigned long reserved:13;
-+		xlen_t reserved:13;
- #else
--		unsigned long reserved:45;
-+		xlen_t reserved:45;
- #endif
--		unsigned long type:1;
-+		xlen_t type:1;
- 	};
- };
- 
-@@ -422,15 +422,15 @@ enum sbi_ext_nacl_feature {
- 
- extern unsigned long sbi_spec_version;
- struct sbiret {
--	long error;
--	long value;
-+	xlen_t error;
-+	xlen_t value;
- };
- 
- void sbi_init(void);
- long __sbi_base_ecall(int fid);
--struct sbiret __sbi_ecall(unsigned long arg0, unsigned long arg1,
--			  unsigned long arg2, unsigned long arg3,
--			  unsigned long arg4, unsigned long arg5,
-+struct sbiret __sbi_ecall(xlen_t arg0, xlen_t arg1,
-+			  xlen_t arg2, xlen_t arg3,
-+			  xlen_t arg4, xlen_t arg5,
- 			  int fid, int ext);
- #define sbi_ecall(e, f, a0, a1, a2, a3, a4, a5)	\
- 		__sbi_ecall(a0, a1, a2, a3, a4, a5, f, e)
-diff --git a/arch/riscv/kernel/cpu_ops_sbi.c b/arch/riscv/kernel/cpu_ops_sbi.c
-index e6fbaaf54956..f9ef3c0155f4 100644
---- a/arch/riscv/kernel/cpu_ops_sbi.c
-+++ b/arch/riscv/kernel/cpu_ops_sbi.c
-@@ -71,8 +71,8 @@ static int sbi_cpu_start(unsigned int cpuid, struct task_struct *tidle)
- 
- 	/* Make sure tidle is updated */
- 	smp_mb();
--	bdata->task_ptr = tidle;
--	bdata->stack_ptr = task_pt_regs(tidle);
-+	bdata->task_ptr = (ulong)tidle;
-+	bdata->stack_ptr = (ulong)task_pt_regs(tidle);
- 	/* Make sure boot data is updated */
- 	smp_mb();
- 	hsm_data = __pa(bdata);
-diff --git a/arch/riscv/kernel/sbi_ecall.c b/arch/riscv/kernel/sbi_ecall.c
-index 24aabb4fbde3..ee22e69d70da 100644
---- a/arch/riscv/kernel/sbi_ecall.c
-+++ b/arch/riscv/kernel/sbi_ecall.c
-@@ -17,23 +17,23 @@ long __sbi_base_ecall(int fid)
- }
- EXPORT_SYMBOL(__sbi_base_ecall);
- 
--struct sbiret __sbi_ecall(unsigned long arg0, unsigned long arg1,
--			  unsigned long arg2, unsigned long arg3,
--			  unsigned long arg4, unsigned long arg5,
-+struct sbiret __sbi_ecall(xlen_t arg0, xlen_t arg1,
-+			  xlen_t arg2, xlen_t arg3,
-+			  xlen_t arg4, xlen_t arg5,
- 			  int fid, int ext)
+ static int __init asids_init(void)
  {
- 	struct sbiret ret;
+-	unsigned long asid_bits, old;
++	xlen_t asid_bits, old;
  
- 	trace_sbi_call(ext, fid);
+ 	/* Figure-out number of ASID bits in HW */
+ 	old = csr_read(CSR_SATP);
+ 	asid_bits = old | (SATP_ASID_MASK << SATP_ASID_SHIFT);
+ 	csr_write(CSR_SATP, asid_bits);
+ 	asid_bits = (csr_read(CSR_SATP) >> SATP_ASID_SHIFT)  & SATP_ASID_MASK;
+-	asid_bits = fls_long(asid_bits);
++#if __riscv_xlen == 64
++	asid_bits = fls64(asid_bits);
++#else
++	asid_bits = fls(asid_bits);
++#endif
+ 	csr_write(CSR_SATP, old);
  
--	register uintptr_t a0 asm ("a0") = (uintptr_t)(arg0);
--	register uintptr_t a1 asm ("a1") = (uintptr_t)(arg1);
--	register uintptr_t a2 asm ("a2") = (uintptr_t)(arg2);
--	register uintptr_t a3 asm ("a3") = (uintptr_t)(arg3);
--	register uintptr_t a4 asm ("a4") = (uintptr_t)(arg4);
--	register uintptr_t a5 asm ("a5") = (uintptr_t)(arg5);
--	register uintptr_t a6 asm ("a6") = (uintptr_t)(fid);
--	register uintptr_t a7 asm ("a7") = (uintptr_t)(ext);
-+	register xlen_t a0 asm ("a0") = (xlen_t)(arg0);
-+	register xlen_t a1 asm ("a1") = (xlen_t)(arg1);
-+	register xlen_t a2 asm ("a2") = (xlen_t)(arg2);
-+	register xlen_t a3 asm ("a3") = (xlen_t)(arg3);
-+	register xlen_t a4 asm ("a4") = (xlen_t)(arg4);
-+	register xlen_t a5 asm ("a5") = (xlen_t)(arg5);
-+	register xlen_t a6 asm ("a6") = (xlen_t)(fid);
-+	register xlen_t a7 asm ("a7") = (xlen_t)(ext);
- 	asm volatile ("ecall"
- 		       : "+r" (a0), "+r" (a1)
- 		       : "r" (a2), "r" (a3), "r" (a4), "r" (a5), "r" (a6), "r" (a7)
+ 	/*
+@@ -265,9 +269,9 @@ static int __init asids_init(void)
+ 		static_branch_enable(&use_asid_allocator);
+ 
+ 		pr_info("ASID allocator using %lu bits (%lu entries)\n",
+-			asid_bits, num_asids);
++			(ulong)asid_bits, num_asids);
+ 	} else {
+-		pr_info("ASID allocator disabled (%lu bits)\n", asid_bits);
++		pr_info("ASID allocator disabled (%lu bits)\n", (ulong)asid_bits);
+ 	}
+ 
+ 	return 0;
 -- 
 2.40.1
 
