@@ -1,60 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-45032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87E3EA70463
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 15:57:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA27A7046B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 15:59:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6DEC3AAE02
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 14:57:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8F8D7A2725
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 14:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C72825BADA;
-	Tue, 25 Mar 2025 14:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E50625B682;
+	Tue, 25 Mar 2025 14:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AlgCtgWi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="THjc/2tX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB5B25BAC7
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Mar 2025 14:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17D6A2D;
+	Tue, 25 Mar 2025 14:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742914629; cv=none; b=pA8mb/dJHXtXpwVPilMzSGEgPMy+2uYshqk4eTQShjlslL2bqjToIg+MPakG/saiWjiruHesMm197NV68ydnhd1+ZeuYeDGjZo5mS0xTZVG+5ykiYRnDHrbYFAIW9P/U+z8uSRsrfnvjIaOoDYnWDkAC5MlwOLOlO9UxyrpN+E8=
+	t=1742914752; cv=none; b=A5KMpQwLaAmvDnIjCmPpa2Wex43neZsQR/G2PMGj7Ps9rtVM9Samd186+C3hY+sTlClPHdPb09HbXHunMo+PBTFxWzD+EMa9+O6pdiL6lqJnxsB5jp457HwhO9lGQ+qPJH/LzX4TDdudQdkKVs01uOXKWaVI3ZmrySB8B2zn7+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742914629; c=relaxed/simple;
-	bh=DnHcVrZ46dwF91W+cXf8malWjX5idgoBQtx46r8DDYQ=;
+	s=arc-20240116; t=1742914752; c=relaxed/simple;
+	bh=GG0tU6LAS0IFpbXq1LKTAjBG2Gdzv1j6t3kcYYdww/0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jFmSdpoaKIXyBlhhTMLwYiU0gofR8Wg9IvHZTKPh6d1NhrujKnSc7Q9qOzHUke76GXfFXWLClr0qkzyQVLiGHOXpfD0mgzlUYLZnVBoYhNVQrsNVpAKl16dpuZq92jjtIOBihaZW+9QBoUWFl1ifzBK6Y6IkLaX/IATC3AO6Uxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AlgCtgWi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76CFFC4CEF1;
-	Tue, 25 Mar 2025 14:57:08 +0000 (UTC)
+	 MIME-Version:Content-Type; b=FH6UhMFgOIS8h3/k/aLAzAh3l/TbqcQEFu2szWm5ZWSUbvOmH9oX+1Zy4NuYtlTz34CF2tXmZy8+yLOuQ2lJ++OhuvVi36LfLIMSBlDC1Bl5gzehX0mbPVRIYxwq+UmeeGm3AUUlHaGUO8aB54MlQv1ukeopUXMYKa5lUfHOLdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=THjc/2tX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B21EEC4CEE4;
+	Tue, 25 Mar 2025 14:59:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742914629;
-	bh=DnHcVrZ46dwF91W+cXf8malWjX5idgoBQtx46r8DDYQ=;
+	s=k20201202; t=1742914750;
+	bh=GG0tU6LAS0IFpbXq1LKTAjBG2Gdzv1j6t3kcYYdww/0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AlgCtgWib7d3XGvTaeFsGklFjx9GDMX9UE2DDy2QY+a2OWbcu8ZQ1q8QEJce2/8m0
-	 E5WbFLaKMoJhRvAlH82FxO2VLm/2gstrjtuPWLI9p+rvFQFq7Fmkhr07a1ZQm+pRpL
-	 6428ghV4zMTGfZHTAUixFJay83NzNPWplb4s7+GiqESKzTrv8uGAqB93XNVkxpA7KS
-	 3JTbe1el5Kcls4j4tgYpXEHS/aBjbQYd3Lkd9AK3/oamdUPERr0JG14FzYFMpCtlT1
-	 Yu3B1Z0O36Iv4uTvuJXzsIWFFieg7stfFMNANw5xIEPi4kIs35O3etnLKDNdV3/7Pj
-	 UO06DddJir7vw==
+	b=THjc/2tXjglNxUVBg49jtkwvKg3Q6v6ExEDsXkormSA4o1E094osQbHG1L50sjLLN
+	 l22BzJ8t7UVC2UrJoZLPg9zOiCWClpXJc+1MiZW2o8M2ZUwZ+sdfLn8ODLijRBmLyM
+	 nbNwZ8QXS2rYaiLARjuJE1Y9KkqGCZJbzWWWUrchlrPN6rG+xnrURxCbSyHdA9OjgM
+	 3zyemc6xcpwYS0I+6VPkrNZorSlFQVszix6P7NhomKeCSqwHPdWwOPAj+yQCsyOPFQ
+	 iv05QgxhyTnDgDkHjkXbFrGnS0LQ5+8X4+QaHzpNrtncIZDoFmLPH83iA7RBEVJ+XS
+	 V1vlOouXQ4TxQ==
 From: Christian Brauner <brauner@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
+To: Arnd Bergmann <arnd@kernel.org>
 Cc: Christian Brauner <brauner@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	linux-next@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Amir Goldstein <amir73il@gmail.com>,
+	NeilBrown <neil@brown.name>,
 	linux-fsdevel@vger.kernel.org,
-	Jeff Layton <jlayton@kernel.org>,
-	Lennart Poettering <lennart@poettering.net>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>,
-	Mike Yuan <me@yhndnzj.com>
-Subject: Re: [PATCH] exit: fix the usage of delay_group_leader->exit_code in do_notify_parent() and pidfs_exit()
-Date: Tue, 25 Mar 2025 15:57:00 +0100
-Message-ID: <20250325-gemacht-artefakte-b27c3b51cbae@brauner>
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>
+Subject: Re: (subset) [PATCH 01/10] exportfs: add module description
+Date: Tue, 25 Mar 2025 15:58:29 +0100
+Message-ID: <20250325-typisch-absicht-8fd692d68fe6@brauner>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250324171941.GA13114@redhat.com>
-References: <20250320-work-pidfs-thread_group-v4-0-da678ce805bf@kernel.org> <20250324171941.GA13114@redhat.com>
+In-Reply-To: <20250324173242.1501003-1-arnd@kernel.org>
+References: <20250324173242.1501003-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,23 +70,21 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1429; i=brauner@kernel.org; h=from:subject:message-id; bh=DnHcVrZ46dwF91W+cXf8malWjX5idgoBQtx46r8DDYQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ/OuLoaqp0fe7TRW1xvRLHugStFTjYTG4sqNCVW7aqx e2LM+ubjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInMb2FkeGQwIYLl0vXZUy57 N2mYbj696Jfz4pacH57mzTycTwV2/GT4X8Wbq7u6x1tSI37/M1e+7cWS7BFh1aIsvc4m7brsoWp sAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1092; i=brauner@kernel.org; h=from:subject:message-id; bh=GG0tU6LAS0IFpbXq1LKTAjBG2Gdzv1j6t3kcYYdww/0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ/OrLL/f3quYkNWyV8ZiSd/XfmfJrdBb2wCZYP4n29h FU9JD6rdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExE8CTDP3VWP6lba9iS9mut ubm85d4jVuMnpgLu2Q86Ij4KJV83DGf4wz3h3Vr5COGVnxsEDFav5Z9Tt9qWmcc7+GbgEq6F33e 85wMA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Mon, 24 Mar 2025 18:19:41 +0100, Oleg Nesterov wrote:
-> Consider a process with a group leader L and a sub-thread T.
-> L does sys_exit(1), then T does sys_exit_group(2).
+On Mon, 24 Mar 2025 18:32:26 +0100, Arnd Bergmann wrote:
+> Every loadable module should have a description, to avoid a warning such as:
 > 
-> In this case wait_task_zombie(L) will notice SIGNAL_GROUP_EXIT and use
-> L->signal->group_exit_code, this is correct.
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/exportfs/exportfs.o
 > 
-> But, before that, do_notify_parent(L) called by release_task(T) will use
-> L->exit_code != L->signal->group_exit_code, and this is not consistent.
-> We don't really care, I think that nobody relies on the info which comes
-> with SIGCHLD, if nothing else SIGCHLD < SIGRTMIN can be queued only once.
 > 
-> [...]
+
+I've removed mentioning of NFS from the module description because
+exportfs is now used for a lot more.
+
+---
 
 Applied to the vfs.fixes branch of the vfs/vfs.git tree.
 Patches in the vfs.fixes branch should appear in linux-next soon.
@@ -95,6 +101,6 @@ trailer updates or similar. If in doubt, please check the listed branch.
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
 branch: vfs.fixes
 
-[1/1] exit: fix the usage of delay_group_leader->exit_code in do_notify_parent() and pidfs_exit()
-      https://git.kernel.org/vfs/vfs/c/9133607de37a
+[01/10] exportfs: add module description
+        https://git.kernel.org/vfs/vfs/c/e3206c4aa06f
 
