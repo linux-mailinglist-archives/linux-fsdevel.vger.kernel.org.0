@@ -1,130 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-45008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B856A701F9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 14:35:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74997A70210
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 14:37:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D633E1882E10
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:20:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30619188CB8E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39DCF25A651;
-	Tue, 25 Mar 2025 13:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B7E267B66;
+	Tue, 25 Mar 2025 13:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YU9OVafZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NyPrZX2z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072631A5B8F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Mar 2025 13:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6871EB5D4;
+	Tue, 25 Mar 2025 13:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742907900; cv=none; b=ppYFGsLNWsj4D7On1HePKoKl3ou92PsO6H+AV7OvleuY5WzYYe2bOtZO71s3UQGBRvwi8pEMmd4ZADDh3MTEfpCYzQkKHNguFcNimeGpDa2GN9KjCAxyMUbvb9zPTB/S8/Q88Fu6h7IypQ6G/wHrAshcXQ1ZzDQIVtxSouVzYkE=
+	t=1742908452; cv=none; b=jrqq/7posKSng++8kNx6wo80V7aqht0OfyqEcfFdiHkhW7WS1uviRvsv4j+MIkChgIPD9tsoO57JX0KpftCctvn4tVFbmwBvOCRpNeTyAaB8NClhIICRJQFDnSrHWpbY8SY4OAlqNWl5keQEwOlJra2jfcWEjfvHer6Yj8B4I6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742907900; c=relaxed/simple;
-	bh=KtXukF7zS507yXC0bV3Lgtc0k1fuYoFUyPiii35Srw4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MtpJh7K86uIJtOLs6oeLN8CeMVCXptnmj1XynAneFUAKPJFMtZTqV1nlYkoG88JkkXzHiKprkgUy3hCdlQpUUxTnXpA9Zm0fjkoQGGPZWFGOgnPzMk4yCu7JJI4RwbgpHJoKO+qujXz8qRHPDH2YZ4YFm8pM/zocSG39q/yOT44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YU9OVafZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742907897;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a717aorAR0FFD6ZXSPKWzRFsANFSqFlPrG/xcqr9NTM=;
-	b=YU9OVafZAgzynuL3xyL4Cf5Gx/TXMMkPm2thizX1ws8braLuDCE6Ic9w7YRV/u7goukamr
-	+EsZ3825Nr4TWyZxUH3bQvgD1MsqAhA6Mmtd9vvY5RtYwyHDemcpStRi7mSbnp3m3c9A+q
-	OF/BX3lWFSr9KV5j6jy6fodH+0N4aLI=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-688-ONqfwzWAMceN_6i1pbI_rA-1; Tue,
- 25 Mar 2025 09:04:54 -0400
-X-MC-Unique: ONqfwzWAMceN_6i1pbI_rA-1
-X-Mimecast-MFC-AGG-ID: ONqfwzWAMceN_6i1pbI_rA_1742907891
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E66D21956067;
-	Tue, 25 Mar 2025 13:04:50 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.42])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 719BF19541A5;
-	Tue, 25 Mar 2025 13:04:44 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 25 Mar 2025 14:04:17 +0100 (CET)
-Date: Tue, 25 Mar 2025 14:04:10 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc: Mateusz Guzik <mjguzik@gmail.com>,
-	syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>,
-	brauner@kernel.org, dhowells@redhat.com, jack@suse.cz,
-	jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
-	swapnil.sapkal@amd.com, syzkaller-bugs@googlegroups.com,
-	viro@zeniv.linux.org.uk, v9fs@lists.linux.dev
-Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
-Message-ID: <20250325130410.GA10828@redhat.com>
-References: <67e05e30.050a0220.21942d.0003.GAE@google.com>
- <20250323194701.GC14883@redhat.com>
- <CAGudoHHmvU54MU8dsZy422A4+ZzWTVs7LFevP7NpKzwZ1YOqgg@mail.gmail.com>
- <20250323210251.GD14883@redhat.com>
- <af0134a7-6f2a-46e1-85aa-c97477bd6ed8@amd.com>
- <CAGudoHH9w8VO8069iKf_TsAjnfuRSrgiJ2e2D9-NGEDgXW+Lcw@mail.gmail.com>
- <7e377feb-a78b-4055-88cc-2c20f924bf82@amd.com>
- <f7585a27-aaef-4334-a1de-5e081f10c901@amd.com>
- <ff294b3c-cd24-4aa6-9d03-718ff7087158@amd.com>
- <20250325121526.GA7904@redhat.com>
+	s=arc-20240116; t=1742908452; c=relaxed/simple;
+	bh=7bzJUIwY16l63QfKJmsiupVF7IYNqpkd3IzG9gYAALc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RpXY77JZei/+ZU7lsyb28PmmjTlrF3nZtvFn3n2TW9QPMQWcW6fx0KgClXm5pK4KZ//PkWrdhnWVepgkw6/WUHfxhX2N74OLjFGqSYYi2pfKt8bgWdBmXQFZy3ni/4E/PIxtJXwar9qTpCXt9GGv3Q1UBcKsmkh7AKvv4tok7aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NyPrZX2z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEAD6C4CEE9;
+	Tue, 25 Mar 2025 13:14:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742908451;
+	bh=7bzJUIwY16l63QfKJmsiupVF7IYNqpkd3IzG9gYAALc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NyPrZX2zvYx4m3VH9Fc1wiiQCHtp81BxhFIgJErfM1e6iK8yvSerc4sfbMDBzx1kQ
+	 QplIQZnPOseIWFkTXjK02uSDnGG6Uzq1AYv5KPHeujZiOAlbpwn4SbWEHhmX/gy469
+	 fFXR2na2foa9uxqRXn9AF0M+fongqdtMQAsDD80dHI5sfoaBLx23YVNceFsMWYKaVs
+	 C7/p11hnQkANTPBqtf0OU6Q+v+kaVBZb6VFrZLAR7m0krBlnMAO88LNmzTdnsOfaKI
+	 VpbZ0yXg04wccCBO9NlBypwixYU1z2XvmV1vo+KcGfLfjl1MuRnqI83HTSb88ieULT
+	 G+VRbIUrF/dSg==
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cf034d4abso59983555e9.3;
+        Tue, 25 Mar 2025 06:14:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUCDQXv//uYnrj0xTcZU7WoVMoXsnC/3gu66XtlzhNcKWAWClCYZLvGFOhRd/wPwE/RplCvZC8TRDulLQ==@vger.kernel.org, AJvYcCUQQaPOp/iHR9mUH3hdZ+jeZspVo8mWHltjG4p6aFoXYWYErU0uVVevUEdNaM5KJyAGAsY/nPfvd/1HefU=@vger.kernel.org, AJvYcCUarW0/Q35ssU9KErxd22g/odNmW7MR/7ygwu9BNiONMaL16TcYLEHZD3f0WgNBNKEv+V9WzIOzDfsrUg==@vger.kernel.org, AJvYcCUpTdI73jiOVulOW3xykQocH8ESIfVuJ0NwI6UXCa48EFAt8i13cVMKKbo2EfJbuxQZugM19eMEj1FkQ9LRdYHAmbIw@vger.kernel.org, AJvYcCUqGtqqdu1BKbieA+m4mV5HVW9A2zxvB7ue4nTXF1/9dYiq5bfuwZ7rxSIw7nzijLV3o4AlDF+9j5T+yYBPyrRD@vger.kernel.org, AJvYcCV0k0WLTol/AmF2TwDXkA5hHdRhlGI57vtKgWgbfUIy5zxgs32qEyeUd6OlBWwU3uue36s7qtb8FHqPZwrUkavU5Q==@vger.kernel.org, AJvYcCV96R7XvC0sBcJzfv1+JFi6y5dPPwcQmIXIgecPUoh5uPwP1IFsxC/aXtchKwD3sa08m65JEC3NRmer9NjWLg==@vger.kernel.org, AJvYcCVbY2P44jOmYD5WokSgc83MD52DC+DZvPTPpxrt5Z8EVe7vmdtWoxhd5FQIWvutTjQApH4EHMpv72NkGG8=@vger.kernel.org, AJvYcCVeJHk5ZgNEpRWzlERRIwowRlMXJhBVfyql9AKKr0d7Vlkx4ICmApOZ2sKWnKcsyPo3n6/yVofk@vger.kernel.org, 
+ AJvYcCVuYHLlMYcQv0Chh3BGwMkFkbvO0UOiR8AXIZiZbmMeeD5BxR5ZK3+sVhUbOSkZI44tfEJwGnCNu/tf@vger.kernel.org, AJvYcCWUpyV3xY/tdBoaSzQg2aYhiXmzdLzCoPOIR+F1/QgIJjjSTYJEJ6omIGJqSkMUyyE7I8P8Hv7dhkrBffUb@vger.kernel.org, AJvYcCWY8Lx2oS3HV6lWBflOKBK6wQRPntVljekJTuf6VsvNdyrLl7fuNgVmsaP1ajle7/moLNfx4EQ+KZk084wL@vger.kernel.org, AJvYcCWuz2C1r6mkcr/lPwDS0gbHaYWXfHvDpKWBsvUYR0Ah9PHOarVdzdyUjtghSFfSkhl1Y0+I@vger.kernel.org, AJvYcCXJUJcg+Gw/oApBcMnGSX3f4CVkwk4GwaIN3+KgITbhIslMhO4Qwj6sZCVzL8bM8YRc1wVSQonl65ODuYGW@vger.kernel.org, AJvYcCXa37OlWm9MB2tH2oLAyFSuTKm04ajOsu2x/6NvYEbVFU+WaC89nXd3tzqTZWfvf+ETO+0=@vger.kernel.org, AJvYcCXc+KKLEe6Pf7joAGeGC6EvUCyprnEFqKNblq7UzQ5Q3G3G+cH8Fo/gYPvDL/4ezEKVzwMAyTtn0LfU@vger.kernel.org, AJvYcCXfxGrHfVIPwNBEYnIhw9DhpGlSgk0I/R5ZRuBRRKwoYjDJ8lzE1N0WBhLWQXr8RJSR23cRXkzVQjcPeM8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFeIsFzV8LJgj+BUWgRx+dxrTbPmpqy/u2qrclOXzYCj6EUYAD
+	nV4naJhtYOgZQWzUIjJnZhpfSvQUrrOMvEzolKZoT37wZCvUyrv5tYCRnUAZQgxDs5gZ7KtmS/+
+	YapgTykTq3Os678Q8bDY1BsGd1fo=
+X-Google-Smtp-Source: AGHT+IGfKexksGgX0maV0KTcsKLOGrgVH5YKmlbhOfh8iEjwSz3eKgWZcomNnjiD6N1+SrsmiEpO9V65lbI9UvtGx1A=
+X-Received: by 2002:a5d:59a2:0:b0:38f:6287:6474 with SMTP id
+ ffacd0b85a97d-3997f8fc43dmr15193020f8f.15.1742908449922; Tue, 25 Mar 2025
+ 06:14:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250325121526.GA7904@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20250325121624.523258-1-guoren@kernel.org> <20250325122640.GK36322@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250325122640.GK36322@noisy.programming.kicks-ass.net>
+From: Guo Ren <guoren@kernel.org>
+Date: Tue, 25 Mar 2025 21:13:57 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTRfo-JuGtCJvZKAFJ0BAEzdqe83TvccCKM54BL0NQHHJw@mail.gmail.com>
+X-Gm-Features: AQ5f1JorUn_mZoEMhlL0Xe-AITZgnQPYbvOfeukBw1Vy-vsynC2mh-QB0cq8pe8
+Message-ID: <CAJF2gTRfo-JuGtCJvZKAFJ0BAEzdqe83TvccCKM54BL0NQHHJw@mail.gmail.com>
+Subject: Re: [RFC PATCH V3 00/43] rv64ilp32_abi: Build CONFIG_64BIT
+ kernel-self with ILP32 ABI
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: arnd@arndb.de, gregkh@linuxfoundation.org, torvalds@linux-foundation.org, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, anup@brainfault.org, 
+	atishp@atishpatra.org, oleg@redhat.com, kees@kernel.org, tglx@linutronix.de, 
+	will@kernel.org, mark.rutland@arm.com, brauner@kernel.org, 
+	akpm@linux-foundation.org, rostedt@goodmis.org, edumazet@google.com, 
+	unicorn_wang@outlook.com, inochiama@outlook.com, gaohan@iscas.ac.cn, 
+	shihua@iscas.ac.cn, jiawei@iscas.ac.cn, wuwei2016@iscas.ac.cn, drew@pdp7.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, ctsai390@andestech.com, 
+	wefu@redhat.com, kuba@kernel.org, pabeni@redhat.com, josef@toxicpanda.com, 
+	dsterba@suse.com, mingo@redhat.com, boqun.feng@gmail.com, 
+	xiao.w.wang@intel.com, qingfang.deng@siflower.com.cn, leobras@redhat.com, 
+	jszhang@kernel.org, conor.dooley@microchip.com, samuel.holland@sifive.com, 
+	yongxuan.wang@sifive.com, luxu.kernel@bytedance.com, david@redhat.com, 
+	ruanjinjie@huawei.com, cuiyunhui@bytedance.com, wangkefeng.wang@huawei.com, 
+	qiaozhe@iscas.ac.cn, ardb@kernel.org, ast@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-mm@kvack.org, 
+	linux-crypto@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, maple-tree@lists.infradead.org, 
+	linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-atm-general@lists.sourceforge.net, linux-btrfs@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+	linux-nfs@vger.kernel.org, linux-sctp@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03/25, K Prateek Nayak wrote:
+On Tue, Mar 25, 2025 at 8:27=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
 >
-> I chased this down to p9_client_rpc() net/9p/client.c specifically:
+> On Tue, Mar 25, 2025 at 08:15:41AM -0400, guoren@kernel.org wrote:
+> > From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
+> >
+> > Since 2001, the CONFIG_64BIT kernel has been built with the LP64 ABI,
+> > but this patchset allows the CONFIG_64BIT kernel to use an ILP32 ABI
 >
->         err = c->trans_mod->request(c, req);
->         if (err < 0) {
->                 /* write won't happen */
->                 p9_req_put(c, req);
->                 if (err != -ERESTARTSYS && err != -EFAULT)
->                         c->status = Disconnected;
->                 goto recalc_sigpending;
->         }
+> I'm thinking you're going to be finding a metric ton of assumptions
+> about 'unsigned long' being 64bit when 64BIT=3Dy throughout the kernel.
+Less than you imagined. Most code is compatible with ILP32 ABI due to
+the CONFIG_32BIT. In my practice, it's deemed acceptable.
+
 >
-> c->trans_mod->request() calls p9_fd_request() in net/9p/trans_fd.c
-> which basically does a p9_fd_poll().
+> I know of a couple of places where 64BIT will result in different math
+> such that a 32bit 'unsigned long' will trivially overflow.
+I would be grateful if you could share some with me.
 
-Again, I know nothing about 9p... but if p9_fd_request() returns
-an err < 0, then it comes from p9_conn->err and p9_fd_request()
-does nothing else.
+>
+> Please, don't do this. This adds a significant maintenance burden on all
+> of us.
+The 64ILP32 ABI would bear the maintenance burden, not traditional
+64-bit or 32-bit ABIs. The patch set won't impact other CONFIG_64BIT
+or CONFIG_32BIT. Numerous RV64 chips require the RV64ILP32 ABI to
+reduce the memory and cache footprint; we will bear the burden. The
+core code maintainers would receive patches that would make them use
+BITS_PER_LONG and CONFIG_64BIT more accurately.
 
-> Previously, the above would fail with err as -EIO which would
-> cause the client to "Disconnect" and the retry logic would make
-> progress. Now however, the err returned is -ERESTARTSYS
-
-OK... So p9_conn->err = -ERESTARTSYS was set by p9_conn_cancel()
-called by p9_write_work() because pipe_write() returns ERESTARTSYS?
-
-But I don't understand -EIO with the reverted commit aaec5a95d59615
-
-Oleg.
-
+--=20
+Best Regards
+ Guo Ren
 
