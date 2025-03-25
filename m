@@ -1,228 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-45016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D57A70298
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 14:48:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECCB2A702AB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 14:50:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95FB816B92E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:42:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF79C18891F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924D41A317A;
-	Tue, 25 Mar 2025 13:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E351C8611;
+	Tue, 25 Mar 2025 13:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RAAB1lV3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Xki1MZq4";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RAAB1lV3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Xki1MZq4"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hIUPCCaI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE0C18BC3B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Mar 2025 13:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED141C7015
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Mar 2025 13:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742910171; cv=none; b=j3cs3PbNdzHxDcTcvlmHCrQHmaqp/nQRNth7ly05i9juuo/W+ZV6jd0iGlYbo88sDTbfcv67F47crZPMXFg7VC2dwMgNyqIF011ykN1PkBi1tJwnjfics2nYoQ0dQ1YdRH8bF3UKyplaykyje0/M1nG8Do8BdXHXZU1Deqh8IsA=
+	t=1742910176; cv=none; b=fK6znmlIjNfi1vq9y4LZSCLJXCaK/D4fG0va9BNeLYZUQQBGK7YrvqXoSiLIkRUAIBaLalMmIef5G45HUMS0DJ6cLXVh+Yu20A6qAtVVBrteoOsCknJ302HA4TcXPH+4fds0tJCzDidZdXfFdY3FWXQrpor7ZI2VLEzyIyKzaSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742910171; c=relaxed/simple;
-	bh=2FLRT0Z9gzT0KHelUyeQE9+ZmPajFGdhfFDcCXoRiFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CAt0Q7nfFE1g0xh4YXF4/GSsXtUYkcR2ClJIuOp2mi0/V4NrKZ3oCZLVQwc4gaoNwiAsYOmHm9AjsgxFfNsXNw+F95B0kOPUTSe88Y3d9wQorZT5PJD72lwaf/iS3lS/Pzl4kAxrIwz4H0BK2e7VQP7eliMaZ4olwIG3yzJh6A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RAAB1lV3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Xki1MZq4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RAAB1lV3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Xki1MZq4; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 99ED11F445;
-	Tue, 25 Mar 2025 13:42:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742910161; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1742910176; c=relaxed/simple;
+	bh=TmhFQT6VJUJqZ51skEu9Jhpxp5sAQY124LRVZ2gBF4A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qW83MfLgvYyl36G92FAF+06JShqFEp8vVNjGoEKaInReabHLk6JGlMPcytiKw0zGC4+mHuVXK/43ZgSQsEEeSkbUE08pV/C1TI+b20xCu0Y2Qi4OrI3Mr7Iayxx+nFClnK35NvH8oJ71ijmPvV71dR33YJ/Sxsv8qruc2OPC5aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hIUPCCaI; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742910173;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=89zlWdUkkhkDJ3fTIQjE5Aa9v+qsos4UINRkoHMtlzQ=;
-	b=RAAB1lV3xOMKkFhWsDrHJQCVmu3t/cceS3IogrUTXFkWLa200ovbCJGBFueqOnY1vTPTIg
-	Adug3T5G6B2lAn9NQkNRinYwerOq8+demhpT99s2nsScoeVWm6ABIB9+2bdfkFrB8dgmi/
-	RWSA9hv2/xAnpJopw5XCT4UHeubXZvw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742910161;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=89zlWdUkkhkDJ3fTIQjE5Aa9v+qsos4UINRkoHMtlzQ=;
-	b=Xki1MZq42cXH+bJZ+XsoXarxnw3aur4mS5l5tgzElGT02OyT4/38QZPOs7MxGRIcD15gZI
-	I2fvuv8U8Crl44CA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742910161; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=89zlWdUkkhkDJ3fTIQjE5Aa9v+qsos4UINRkoHMtlzQ=;
-	b=RAAB1lV3xOMKkFhWsDrHJQCVmu3t/cceS3IogrUTXFkWLa200ovbCJGBFueqOnY1vTPTIg
-	Adug3T5G6B2lAn9NQkNRinYwerOq8+demhpT99s2nsScoeVWm6ABIB9+2bdfkFrB8dgmi/
-	RWSA9hv2/xAnpJopw5XCT4UHeubXZvw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742910161;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=89zlWdUkkhkDJ3fTIQjE5Aa9v+qsos4UINRkoHMtlzQ=;
-	b=Xki1MZq42cXH+bJZ+XsoXarxnw3aur4mS5l5tgzElGT02OyT4/38QZPOs7MxGRIcD15gZI
-	I2fvuv8U8Crl44CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8B79C13957;
-	Tue, 25 Mar 2025 13:42:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id PSULItGy4mfNDQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 25 Mar 2025 13:42:41 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 2F41BA0838; Tue, 25 Mar 2025 14:42:41 +0100 (CET)
-Date: Tue, 25 Mar 2025 14:42:41 +0100
-From: Jan Kara <jack@suse.cz>
-To: Dave Chinner <david@fromorbit.com>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>, 
-	linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	linux-pm@vger.kernel.org
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Filesystem Suspend Resume
-Message-ID: <l6qesrzfadpiknnpy7dare7pfnxyfjljseuxvhjcajszymktu3@oitqnbt6fwvr>
-References: <0a76e074ef262ca857c61175dd3d0dc06b67ec42.camel@HansenPartnership.com>
- <Z9xG2l8lm7ha3Pf2@infradead.org>
- <acae7a99f8acb0ebf408bb6fc82ab53fb687559c.camel@HansenPartnership.com>
- <Z9z32X7k_eVLrYjR@infradead.org>
- <576418420308d2511a4c155cc57cf0b1420c273b.camel@HansenPartnership.com>
- <62bfd49bc06a58e435431610256e722651e1e5ca.camel@HansenPartnership.com>
- <vnb6flqo3hhijz4kb3yio5rxzaugvaxharocvtf4j4s5o5xynm@nbccfx5xqvnk>
- <Z-HFjTGaOnOjnhLP@dread.disaster.area>
- <7f3eddf89f8fd128ffeb643bc582e45a7d13c216.camel@HansenPartnership.com>
- <Z-HJqLI7Bi4iHWKU@dread.disaster.area>
+	bh=AeeNT6X9gAD0O2uvRcV8bqL1Oo9tE1JDreYsjTsZvR8=;
+	b=hIUPCCaIfl5XEFKX1z5YI6Demj+6NKeWKz0Uw12qkuX+nujIIPRZvVTkTHo4mUs32HbQeq
+	QhjlKF7gEIKdd/F8xxF2u3iqO3PfU4smAdPd0b0Ag6rNvYHRGW58ewznWXk98bEOn7Bmki
+	4vz8g7dWVD+nojksbAB4oG1qWbdUZnk=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-335-3j52cjPnO-mgk9zIaIMaZA-1; Tue, 25 Mar 2025 09:42:52 -0400
+X-MC-Unique: 3j52cjPnO-mgk9zIaIMaZA-1
+X-Mimecast-MFC-AGG-ID: 3j52cjPnO-mgk9zIaIMaZA_1742910171
+Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-30be985454aso25931771fa.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Mar 2025 06:42:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742910171; x=1743514971;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AeeNT6X9gAD0O2uvRcV8bqL1Oo9tE1JDreYsjTsZvR8=;
+        b=hBU57xE9etNDF10VnZEHgkQDT0BPAKAL7KGLb4jfUbRpRyi2/YXePDHnoqAMF5NeLd
+         UvQMUyP3z3PYmoX0h5RMzNxHCEj1IqKOVzvI/8hlOCP4HG7UJbRo3VCo/RY+9f/tItgi
+         LBMR3FBZlzELrrifVJNUgEJocpmGFfzJ++8zBu9aulFnzMljfr5wu/d0SBsiAcVA65aW
+         ZXOEawwtV+5IUuKCcmszXY3AlaxSZspxGGrEpijwRVabcU9K+a81bmPc3iLv3oMlf5uU
+         CrZbHHDAq1x6izmePtTASTvCDJoYjD2hN4KXick6oSsgiHqsFDIZnCnnkPlrDP0zNAyR
+         NtbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1m7zAtcPaRVK9u/9ear02bZ3mJeX/htGT65PFct3L/Pxp4+SmvGo5LqDuBSFIePqkTNvoUatt/QBDsgXT@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJNjP1Th9aON+dwunAttKWpJ29MiRt6+GgbrScsZQ4ykv8nQF5
+	iWmyRt551b2VW9OtB1L1rzcY69kyunLI6S/eQIWrlzw/8ryLLY4whTJDsJQlDOWKIiBIvxjSy/W
+	SXQ9vEqdtF2MzWHIVyLpxGdH96M60Nwm87cqXWg5juIQdN3vtvy6yKAvi1cZRgm8=
+X-Gm-Gg: ASbGnctMBxKAk4WtP3NXKDB2WUSyBDhlDyJwuXKxMBkTsEJrTGCFFGwhsoh4GF3xwmo
+	MLfiGb0k5mXo7yh31Iypn7VNPThnwH/zownjP5cW8RR5L7kVxp5ln9A0Gj4J4B7nMN3h1XratRu
+	/ri+5qixTcVVbs8DqW6HMjiSe//a1otVD6K5YSUpWN8Kyo9ISKs+SqCwN6jG2Re6Juei3OZizDd
+	rymQzZ4BL8BjomdAlzRyJe7+4G6asCv74zajhCwcw0aZtHqLuDOe/hQXC2v/glHCU+kA+shkyPd
+	H9Zil7XCjduMtOrwxASUHjebSXKaP42dXZC4xcXhW45d3J/rtMLBMWg=
+X-Received: by 2002:a05:651c:d1:b0:30c:7a7:e841 with SMTP id 38308e7fff4ca-30d7e2bacb6mr68350401fa.34.1742910170587;
+        Tue, 25 Mar 2025 06:42:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH4Z9GM7jvLC8YuLUgX4+qn45UtJz50Pgn8mNqnBvFPDw++TTxPfdlOQaB1QYhvFNjzyebA+w==
+X-Received: by 2002:a05:651c:d1:b0:30c:7a7:e841 with SMTP id 38308e7fff4ca-30d7e2bacb6mr68350301fa.34.1742910170123;
+        Tue, 25 Mar 2025 06:42:50 -0700 (PDT)
+Received: from [192.168.68.107] (c-85-226-167-233.bbcust.telenor.se. [85.226.167.233])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30d7d910f75sm18065991fa.107.2025.03.25.06.42.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 06:42:49 -0700 (PDT)
+Message-ID: <baa1759f95062baaecb474a0a6e447fbba6a4b0e.camel@redhat.com>
+Subject: Re: [PATCH v2 5/5] ovl: don't require "metacopy=on" for "verity"
+From: Alexander Larsson <alexl@redhat.com>
+To: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, Giuseppe
+ Scrivano <gscrivan@redhat.com>
+Date: Tue, 25 Mar 2025 14:42:48 +0100
+In-Reply-To: <CAOQ4uxjZOtdMcGpXBYLO4Cxe04_w-GS1Zwy2GY2Yr+jyO+iS-w@mail.gmail.com>
+References: <20250325104634.162496-1-mszeredi@redhat.com>
+	 <20250325104634.162496-6-mszeredi@redhat.com>
+	 <CAOQ4uxgif5FZNqp7NtP+4EqRW1W0xp+zXPFj=DDG3ztxCswv_Q@mail.gmail.com>
+	 <CAOQ4uxjZOtdMcGpXBYLO4Cxe04_w-GS1Zwy2GY2Yr+jyO+iS-w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z-HJqLI7Bi4iHWKU@dread.disaster.area>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-On Tue 25-03-25 08:07:52, Dave Chinner wrote:
-> On Mon, Mar 24, 2025 at 05:02:54PM -0400, James Bottomley wrote:
-> > On Tue, 2025-03-25 at 07:50 +1100, Dave Chinner wrote:
-> > > On Mon, Mar 24, 2025 at 12:38:20PM +0100, Jan Kara wrote:
-> > > > On Fri 21-03-25 13:00:24, James Bottomley via Lsf-pc wrote:
-> > > > > On Fri, 2025-03-21 at 08:34 -0400, James Bottomley wrote:
-> > > > > [...]
-> > > > > > Let me digest all that and see if we have more hope this time
-> > > > > > around.
-> > > > > 
-> > > > > OK, I think I've gone over it all.  The biggest problem with
-> > > > > resurrecting the patch was bugs in ext3, which isn't a problem
-> > > > > now.  Most of the suspend system has been rearchitected to
-> > > > > separate suspending user space processes from kernel ones.  The
-> > > > > sync it currently does occurs before even user processes are
-> > > > > frozen.  I think (as most of the original proposals did) that we
-> > > > > just do freeze all supers (using the reverse list) after user
-> > > > > processes are frozen but just before kernel threads are (this
-> > > > > shouldn't perturb the image allocation in hibernate, which was
-> > > > > another source of bugs in xfs).
-> > > > 
-> > > > So as far as my memory serves the fundamental problem with this
-> > > > approach was FUSE - once userspace is frozen, you cannot write to
-> > > > FUSE filesystems so filesystem freezing of FUSE would block if
-> > > > userspace is already suspended. You may even have a setup like:
-> > > > 
-> > > > bdev <- fs <- FUSE filesystem <- loopback file <- loop device <-
-> > > > another fs
-> > > > 
-> > > > So you really have to be careful to freeze this stack without
-> > > > causing deadlocks. So you need to be freezing userspace after
-> > > > filesystems are frozen but then you have to deal with the fact that
-> > > > parts of your userspace will be blocked in the kernel (trying to do
-> > > > some write) waiting for the filesystem to thaw. But it might be
-> > > > tractable these days since I have a vague recollection that system
-> > > > suspend is now able to gracefully handle even tasks in
-> > > > uninterruptible sleep.
-> > > 
-> > > I thought we largely solved this problem with userspace flusher
-> > > threads being able to call prctl(PR_IO_FLUSHER) to tell the kernel
-> > > they are part of the IO stack and so need to be considered
-> > > special from the POV of memory allocation and write (dirty page)
-> > > throttling.
-> > > 
-> > > Maybe hibernate needs to be aware of these userspace flusher
-> > > tasks and only suspend them after filesystems are frozen instead
-> > > of when userspace is initially halted?
-> > 
-> > I can confirm it's not.  Its check for kernel thread is in
-> > kernel/power/process.c:try_to_freeze_tasks().  It really only uses the
-> > PF_KTHREAD flag in differentiating between user and kernel threads.
-> > 
-> > But what I heard in the session was that we should freeze filesystems
-> > before any tasks because that means tasks touching the frozen fs freeze
-> > themselves.
-> 
-> But that's exactly the behaviour that leads to FUSE based deadlocks,
-> is it not? i.e. freeze the backing fs, then try to freeze the FUSE
-> filesystem and the freeze blocks forever trying to write to the
-> frozen backing fs....
-> 
-> What am I missing here?
+On Tue, 2025-03-25 at 12:47 +0100, Amir Goldstein wrote:
+> On Tue, Mar 25, 2025 at 12:33=E2=80=AFPM Amir Goldstein <amir73il@gmail.c=
+om>
+> wrote:
+> >=20
+> > On Tue, Mar 25, 2025 at 11:46=E2=80=AFAM Miklos Szeredi
+> > <mszeredi@redhat.com> wrote:
+> > >=20
+> > > Allow the "verity" mount option to be used with "userxattr" data-
+> > > only
+> > > layer(s).
+> > >=20
+> > > Previous patches made sure that with "userxattr" metacopy only
+> > > works in the
+> > > lower -> data scenario.
+> > >=20
+> > > In this scenario the lower (metadata) layer must be secured
+> > > against
+> > > tampering, in which case the verity checksums contained in this
+> > > layer can
+> > > ensure integrity of data even in the case of an untrusted data
+> > > layer.
+> > >=20
+> > > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> > > ---
+> > > =C2=A0fs/overlayfs/params.c | 11 +++--------
+> > > =C2=A01 file changed, 3 insertions(+), 8 deletions(-)
+> > >=20
+> > > diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
+> > > index 54468b2b0fba..8ac0997dca13 100644
+> > > --- a/fs/overlayfs/params.c
+> > > +++ b/fs/overlayfs/params.c
+> > > @@ -846,8 +846,8 @@ int ovl_fs_params_verify(const struct
+> > > ovl_fs_context *ctx,
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 config->uuid =3D OVL_UUID_NULL;
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> > >=20
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Resolve verity -> metacopy d=
+ependency */
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (config->verity_mode && !con=
+fig->metacopy) {
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Resolve verity -> metacopy d=
+ependency (unless used
+> > > with userxattr) */
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (config->verity_mode && !con=
+fig->metacopy && !config-
+> > > >userxattr) {
+> >=20
+> > This is very un-intuitive to me.
+> >=20
+> > Why do we need to keep the dependency verity -> metacopy with
+> > trusted xattrs?
+> >=20
+> > Anyway, I'd like an ACK from composefs guys on this change.
+>=20
+> What do you guys think about disallowing the relaxed
+> OVL_VERITY_ON mode in case of !metacopy or in case of userxattr?
+>=20
+> I am not sure if it makes any sense wrt security, but if user is
+> putting their
+> trust on the lower layer's immutable content, it feels like this
+> content
+> should include the verity digests???
 
-I don't think that creates FUSE based deadlocks. Whan you describe is
-generally a problem with the order of how filesystems are frozen and can
-happen with loop devices as well. If you leave userspace running and freeze
-filesystems in proper order (happens to be reverse ordering of superblock
-list), then you should freeze all filesystems without deadlocking.
+In the case of composefs, we will always either pass metacopy or
+userxattrs, so this is moot and the patches as-is look good for
+composefs.=C2=A0
 
-If I remember correctly, the problem in the past was, that if you leave
-userspace running while freezing filesystems, some processes may enter
-uninterruptible sleep waiting for fs to be thawed and in the past suspend
-code was not able to hibernate such processes. But I think this obstacle
-has been removed couple of years ago as now we could use TASK_FREEZABLE
-flag in sb_start_write() -> percpu_rwsem_wait and thus allow tasks blocked
-on frozen filesystem to be hibernated.
+However, I agree that it is a bit weird. The new behavior is that as
+soon as numdatalayer > 0 we following redirects into a data-layer even
+if metacopy=3D0. This is a change from the old behavior which would
+previously have thrown an error here. I think this change is safe, but
+once we have decided to allow it I don't see any increased risk in also
+allowing verity=3Don in this case.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+So, the case you're talking about is: data-only used, verity=3Don,
+metacopy & userxattrs not set.=C2=A0
+
+In this case with the new patch it would (due to numdatalayer check)
+allow following redirects into a data layer. This sounds ok to me, but
+it does change behavior in other ways than just the verity check (i.e.
+it used to error on a redirect). Once we allow this behavior change I
+don't see any reason to not also allow verifying the destination digest
+(verity=3Don). This can only result in possible errors on read, and never
+grant more rights.
+
+The verity=3Drequire case is less clear.
+
+--=20
+=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D=
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+=3D-=3D-=3D
+ Alexander Larsson                                            Red Hat,
+Inc=20
+       alexl@redhat.com            alexander.larsson@gmail.com=20
+He's a benighted devious farmboy possessed of the uncanny powers of an=20
+insect. She's a strong-willed blonde stripper fleeing from a Satanic=20
+cult. They fight crime!=20
+
 
