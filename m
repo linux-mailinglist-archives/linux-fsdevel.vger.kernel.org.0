@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-44995-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44996-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6927BA6FECF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:57:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB9C8A6FEFD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:59:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63D803A8FC8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 12:50:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DD7F19A2BD8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 12:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C26C28150E;
-	Tue, 25 Mar 2025 12:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2254F2836BF;
+	Tue, 25 Mar 2025 12:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MseyejDn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kb/eV2Rw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7103A25743E;
-	Tue, 25 Mar 2025 12:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4967C257AC7;
+	Tue, 25 Mar 2025 12:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742905525; cv=none; b=tvtvcy8TQnRqKGSvWfiOSpQjkdSdS7KVGV/bzyplZJkwuqX/wBAD4at1i9+iRMqrVwa5CQtW6CUE/MHxqc43dZSxwVSn/JhlrFaYsUn0zFH2iQ9wcK4QEwL75qUE6g0A6jGd4EtgyhLu8Cc/xtuz4sqCOxdke+D7GE1scSdI0/w=
+	t=1742905540; cv=none; b=LiyN/KAaJpya6Z0CXQ849vt7qR6BVNhGS6Q/2LwQTa/Eg806o++jEf/XTiK29/t6+PGsZ5thRK9r2uC/J8909lglcKZIGub5zhycygKwQiuo7NZWmNYg1MlK149JDjhLIdqLWuS8nHgInzpihxN6AuhZh1V9kXBJnFpGCw3uGc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742905525; c=relaxed/simple;
-	bh=YhFQ2ibshi4VdwpUCryIeDZCxGJd5L8LcBHKHU0qt6Q=;
+	s=arc-20240116; t=1742905540; c=relaxed/simple;
+	bh=sm654hPYjWJMXJD/nEEXxI+s+R28mm6voQq4ZrjJStU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RDRBZkdXy+GY89rkFcFB0SyuYeWX82s2/n/xXW3RDHIRWcSZEL3xc9EDY7LE8R1WGjpbdUswyJOzK7yMi0A8eCREHbkYMcKTNOghD3tKUmUqPrIedrehz2lCz0cNN946K1dkngGS1VpLdMJkTyLABw72bsPSiyr7P7BN7vZFRo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MseyejDn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7793AC4CEEE;
-	Tue, 25 Mar 2025 12:25:10 +0000 (UTC)
+	 MIME-Version; b=fMe7PiSXydF+rGbYnyvinNjlvNVjYHybAfRu9q2marLG7xZlRm+xWmmyndQq06NRj2pGVv0cUdwOH0+Rj8FzzU1A8zaNLkSQPeIfJXc6rzyfJ2aC/yOnhWGiRvEm+GPFqH6a22XH4b4Qz3KqOcGnUYaoFHKrtdvH3jGod7EIyRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kb/eV2Rw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2764C4CEE4;
+	Tue, 25 Mar 2025 12:25:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742905525;
-	bh=YhFQ2ibshi4VdwpUCryIeDZCxGJd5L8LcBHKHU0qt6Q=;
+	s=k20201202; t=1742905540;
+	bh=sm654hPYjWJMXJD/nEEXxI+s+R28mm6voQq4ZrjJStU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MseyejDnF7mwqmEqN7tEG0RqwtwCeVyNtPH/896j91wVIegZa2jtI2EZ83uU/0V2E
-	 9lABAyLdbPYzFsVhyfmGnTTu37x50QYjuV8s+jH6Amg7TKgjIpjJN8Z1yU4VwkbWUT
-	 x5BXsnAu3qJ+98zrmXtBO952PUMQ22v+Yt9pce53Mph3EDro8EXgBHN3FBLaE3Dems
-	 iwO2PikBqjaPdls2M1/9azOD9y8bGLfzPBTVJus/mPdsTHro2WluEYbis3rUZIYFMZ
-	 ayOSUhoxogSQEsa2y3V0uhRHOG/GCXPjaG6XijbjVMJSyE4jTNrm5nZ34MPsJ6W1+h
-	 mVg9mRnoG2F4A==
+	b=Kb/eV2Rwu3zYNU7Jt3dNKcNXYL8nMRHt5pyAJqK6Q/FHeFvW6XiemJEA3uvEk7fVs
+	 3EdHOm9rkT05EzHBa5buxdZyLrstfBsowWufM7HqrOlG+CIUjr96jk/fDQXjnFPt+R
+	 dWfnumlqW9XRN8RlSa4I28acYRg721cxluLl8IEARR3ZQbcXBk3NZPefJ2WwhFLcUe
+	 OiQ0cG9dLZ0sgksiS+3kI0Gf4fzOMT9Xk2MfF9taYcuO0Y49REu0hLiOZAG6x8XWZ3
+	 isLS319gnMj4Vs30saFH4Hmz96Q2P/kZ1dTH5mgBIdyz3rnr7TCbzfvoPIkyCS5b43
+	 0M+WNWc7E/U2Q==
 From: guoren@kernel.org
 To: arnd@arndb.de,
 	gregkh@linuxfoundation.org,
@@ -114,9 +114,9 @@ Cc: ardb@kernel.org,
 	linux-sctp@vger.kernel.org,
 	linux-usb@vger.kernel.org,
 	linux-media@vger.kernel.org
-Subject: [RFC PATCH V3 36/43] rv64ilp32_abi: printf: Use BITS_PER_LONG instead of CONFIG_64BIT
-Date: Tue, 25 Mar 2025 08:16:17 -0400
-Message-Id: <20250325121624.523258-37-guoren@kernel.org>
+Subject: [RFC PATCH V3 37/43] rv64ilp32_abi: random: Adapt fast_pool struct
+Date: Tue, 25 Mar 2025 08:16:18 -0400
+Message-Id: <20250325121624.523258-38-guoren@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20250325121624.523258-1-guoren@kernel.org>
 References: <20250325121624.523258-1-guoren@kernel.org>
@@ -130,27 +130,42 @@ Content-Transfer-Encoding: 8bit
 
 From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
 
-RV64ILP32 ABI systems have BITS_PER_LONG set to 32. Use
-BITS_PER_LONG instead of CONFIG_64BIT.
+RV64ILP32 ABI systems have BITS_PER_LONG set to 32, matching
+sizeof(compat_ulong_t). Adjust code
 
 Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
 ---
- lib/vsprintf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/char/random.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index 56fe96319292..2d719be86945 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -771,7 +771,7 @@ static inline int __ptr_to_hashval(const void *ptr, unsigned long *hashval_out)
- 	/* Pairs with smp_wmb() after writing ptr_key. */
- 	smp_rmb();
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index 2581186fa61b..0bfbe02ee255 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -1015,7 +1015,11 @@ EXPORT_SYMBOL_GPL(unregister_random_vmfork_notifier);
+ #endif
  
--#ifdef CONFIG_64BIT
-+#if BITS_PER_LONG == 64
- 	hashval = (unsigned long)siphash_1u64((u64)ptr, &ptr_key);
- 	/*
- 	 * Mask off the first 32 bits, this makes explicit that we have
+ struct fast_pool {
++#ifdef CONFIG_64BIT
++	u64 pool[4];
++#else
+ 	unsigned long pool[4];
++#endif
+ 	unsigned long last;
+ 	unsigned int count;
+ 	struct timer_list mix;
+@@ -1040,7 +1044,11 @@ static DEFINE_PER_CPU(struct fast_pool, irq_randomness) = {
+  * and therefore this has no security on its own. s represents the
+  * four-word SipHash state, while v represents a two-word input.
+  */
++#ifdef CONFIG_64BIT
++static void fast_mix(u64 s[4], u64 v1, u64 v2)
++#else
+ static void fast_mix(unsigned long s[4], unsigned long v1, unsigned long v2)
++#endif
+ {
+ 	s[3] ^= v1;
+ 	FASTMIX_PERM(s[0], s[1], s[2], s[3]);
 -- 
 2.40.1
 
