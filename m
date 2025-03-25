@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-45002-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45003-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 178E2A6FF64
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 14:04:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7EA3A6FF6E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 14:04:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75C9E173FBD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 12:57:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 914C9177B15
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 12:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F952980A4;
-	Tue, 25 Mar 2025 12:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52AFE298CDD;
+	Tue, 25 Mar 2025 12:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PSXvc+q0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BOK/wPKS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AC425A2C0;
-	Tue, 25 Mar 2025 12:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A5D26656F;
+	Tue, 25 Mar 2025 12:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742905616; cv=none; b=KWRmue95ZmwWF08cLkg27KpsG31njfBe+yci+lYzec7Qonx2HOsDt53Ga72Sz13dzG/TcvygT/QcFAmDa3VNELYUdp2scy+AcMXO8+c6kI2ruszhSK4pjQP9IYBvtjFi926PBLnNMVeV7IUhLPLeDdsPNxP6ZMM1JI9OUyB+AGY=
+	t=1742905630; cv=none; b=lSA3gxwGMP/D51a9ShRV/Oui4UEy61exe2Mv+BKBak0UgB7m4jJIHGjj0+7TLuFR2KNhEFA/mczgbvnRp03mEMupxoD1KJHWdo+Eujo1UCBc+T2KCqPNJp3JJWS/nBdfOfzxjPuPTxGe3gYu5R7Ep3kT/Q4o1XEk6hLYrPSeR0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742905616; c=relaxed/simple;
-	bh=9rClAibepR5410hMymY5QyjFNfu9myyrJTkBJ7yJs84=;
+	s=arc-20240116; t=1742905630; c=relaxed/simple;
+	bh=AWjl4tBrnhRkcRiex/88q6k6fRAmxNwISnnYEf7182Q=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RxBua4H0dWDogKpleXnKcVygmGTcbymhQrq32sqktiQaQklcHQ61TGtpRLtm26A721MIhwGdqvKi1WxgLZRdn7RoOBntTlpxkVj2WlF4S22cXDXextvAvTGzsoMwaZwd+Tp/VVulQxzhYQOO45puQ/sH6Xkv4jfObA3/oIP9GkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PSXvc+q0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AD52C4CEED;
-	Tue, 25 Mar 2025 12:26:41 +0000 (UTC)
+	 MIME-Version; b=m7H9qapBaAXxp+Tk/PZCNHDJ6C4mD/pSePwrd1a/6/Tpx1ArkIgEI3BWkrsbOuqwD6m/wzfajLNCAzXD44K6TbUyVOB/5XfCwq9++a2oUEsNuZanagW71We/UNy58cXcTT44MAPbwL1lWHgx6/qYWxj98cbkeF7XQEDU70gebQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BOK/wPKS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EF18C4CEE4;
+	Tue, 25 Mar 2025 12:26:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742905616;
-	bh=9rClAibepR5410hMymY5QyjFNfu9myyrJTkBJ7yJs84=;
+	s=k20201202; t=1742905629;
+	bh=AWjl4tBrnhRkcRiex/88q6k6fRAmxNwISnnYEf7182Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PSXvc+q07mYxURgabvhC0EDZ07GzmsdGsbFL99gOWwWn2P5z8FZ/BlJ02MvKw0oi0
-	 DebZmNXKJ2CXOdMnsWEWR3OoVOJMtpx5upcoqoGzimuBC7isnkYS1TqP5L1E6cxZU6
-	 4XrYv8tJiQ/yVO+KpHHDW9WJtvg1IAC6n5lPmXBEkrmtDpQIZKAsCw9ZnEWbQ7Gm8D
-	 EFr+OQdexB1ClgCWhZJhpf6cX91lUXmdACsoE7/AQufDa2ng7DPJR1k3C71ynpd+D/
-	 KrFEXsFArC7JDeWksZBrKc+/l/OmyTWBnHSzZmaXAgyqRcEOww2gygQgud3qZdqgXr
-	 KuA9Abd2ez09A==
+	b=BOK/wPKSymoONoK8d8zXPGGMy5MG+aYpHf3TkadCLwDPTOQJGUAW9et07ZG7zCZWv
+	 ef4pdsDxtkJTHjY+SAKtAcW26il80oDtB38MozaTEhXlGd4IkrTlN3tIWkXmAwnoLn
+	 BzHu8ImCylu3Yb81WL68Buni1g0ODfLOGd7OBrnKV/M2af0y77JoFV43LSNATjnN4G
+	 9CzIE3AozXUaiD7HuaDWAl0wAkWF1HUbFGm1CJxGQ45QPczxfx9HKr6TYKmSS9kPAD
+	 gZpFZHUBEZFz8k7KsyAguseekaOJzmeEib25mONLZRMhFlnpUorLwGTrqPnI6I56MM
+	 2bv1z0/9P4X3A==
 From: guoren@kernel.org
 To: arnd@arndb.de,
 	gregkh@linuxfoundation.org,
@@ -114,9 +114,9 @@ Cc: ardb@kernel.org,
 	linux-sctp@vger.kernel.org,
 	linux-usb@vger.kernel.org,
 	linux-media@vger.kernel.org
-Subject: [RFC PATCH V3 42/43] rv64ilp32_abi: memfd: Use vm_flag_t
-Date: Tue, 25 Mar 2025 08:16:23 -0400
-Message-Id: <20250325121624.523258-43-guoren@kernel.org>
+Subject: [RFC PATCH V3 43/43] riscv: Fixup address space overlay of print_mlk
+Date: Tue, 25 Mar 2025 08:16:24 -0400
+Message-Id: <20250325121624.523258-44-guoren@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20250325121624.523258-1-guoren@kernel.org>
 References: <20250325121624.523258-1-guoren@kernel.org>
@@ -130,68 +130,52 @@ Content-Transfer-Encoding: 8bit
 
 From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
 
-RV64ILP32 ABI linux kernel is based on CONFIG_64BIT, and uses
-unsigned long long as vm_flags_t. Using unsigned long would
-break rv64ilp32 abi.
+If phyical memory is 1GiB for ilp32 linux, then print_mlk would be:
+lowmem : 0xc0000000 - 0x00000000   ( 1024 MB)
 
-The definition of vm_flag_t exists, hence its usage is
-preferred even if it's not essential.
+After fixup:
+lowmem : 0xc0000000 - 0xffffffff   ( 1024 MB)
 
 Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
 ---
- include/linux/memfd.h | 4 ++--
- mm/memfd.c            | 8 ++++----
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ arch/riscv/mm/init.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/memfd.h b/include/linux/memfd.h
-index 246daadbfde8..6f606d9573c3 100644
---- a/include/linux/memfd.h
-+++ b/include/linux/memfd.h
-@@ -14,7 +14,7 @@ struct folio *memfd_alloc_folio(struct file *memfd, pgoff_t idx);
-  * We also update VMA flags if appropriate by manipulating the VMA flags pointed
-  * to by vm_flags_ptr.
-  */
--int memfd_check_seals_mmap(struct file *file, unsigned long *vm_flags_ptr);
-+int memfd_check_seals_mmap(struct file *file, vm_flags_t *vm_flags_ptr);
+diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+index 3cdbb033860e..e09286d4916a 100644
+--- a/arch/riscv/mm/init.c
++++ b/arch/riscv/mm/init.c
+@@ -105,26 +105,26 @@ static void __init zone_sizes_init(void)
+ 
+ static inline void print_mlk(char *name, unsigned long b, unsigned long t)
+ {
+-	pr_notice("%12s : 0x%08lx - 0x%08lx   (%4ld kB)\n", name, b, t,
++	pr_notice("%12s : 0x%08lx - 0x%08lx   (%4ld kB)\n", name, b, t - 1,
+ 		  (((t) - (b)) >> LOG2_SZ_1K));
+ }
+ 
+ static inline void print_mlm(char *name, unsigned long b, unsigned long t)
+ {
+-	pr_notice("%12s : 0x%08lx - 0x%08lx   (%4ld MB)\n", name, b, t,
++	pr_notice("%12s : 0x%08lx - 0x%08lx   (%4ld MB)\n", name, b, t - 1,
+ 		  (((t) - (b)) >> LOG2_SZ_1M));
+ }
+ 
+ static inline void print_mlg(char *name, unsigned long b, unsigned long t)
+ {
+-	pr_notice("%12s : 0x%08lx - 0x%08lx   (%4ld GB)\n", name, b, t,
++	pr_notice("%12s : 0x%08lx - 0x%08lx   (%4ld GB)\n", name, b, t - 1,
+ 		   (((t) - (b)) >> LOG2_SZ_1G));
+ }
+ 
+ #if BITS_PER_LONG == 64
+ static inline void print_mlt(char *name, unsigned long b, unsigned long t)
+ {
+-	pr_notice("%12s : 0x%08lx - 0x%08lx   (%4ld TB)\n", name, b, t,
++	pr_notice("%12s : 0x%08lx - 0x%08lx   (%4ld TB)\n", name, b, t - 1,
+ 		   (((t) - (b)) >> LOG2_SZ_1T));
+ }
  #else
- static inline long memfd_fcntl(struct file *f, unsigned int c, unsigned int a)
- {
-@@ -25,7 +25,7 @@ static inline struct folio *memfd_alloc_folio(struct file *memfd, pgoff_t idx)
- 	return ERR_PTR(-EINVAL);
- }
- static inline int memfd_check_seals_mmap(struct file *file,
--					 unsigned long *vm_flags_ptr)
-+					 vm_flags_t *vm_flags_ptr)
- {
- 	return 0;
- }
-diff --git a/mm/memfd.c b/mm/memfd.c
-index 37f7be57c2f5..50dad90ffedc 100644
---- a/mm/memfd.c
-+++ b/mm/memfd.c
-@@ -332,10 +332,10 @@ static inline bool is_write_sealed(unsigned int seals)
- 	return seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE);
- }
- 
--static int check_write_seal(unsigned long *vm_flags_ptr)
-+static int check_write_seal(vm_flags_t *vm_flags_ptr)
- {
--	unsigned long vm_flags = *vm_flags_ptr;
--	unsigned long mask = vm_flags & (VM_SHARED | VM_WRITE);
-+	vm_flags_t vm_flags = *vm_flags_ptr;
-+	vm_flags_t mask = vm_flags & (VM_SHARED | VM_WRITE);
- 
- 	/* If a private matting then writability is irrelevant. */
- 	if (!(mask & VM_SHARED))
-@@ -357,7 +357,7 @@ static int check_write_seal(unsigned long *vm_flags_ptr)
- 	return 0;
- }
- 
--int memfd_check_seals_mmap(struct file *file, unsigned long *vm_flags_ptr)
-+int memfd_check_seals_mmap(struct file *file, vm_flags_t *vm_flags_ptr)
- {
- 	int err = 0;
- 	unsigned int *seals_ptr = memfd_file_seals_ptr(file);
 -- 
 2.40.1
 
