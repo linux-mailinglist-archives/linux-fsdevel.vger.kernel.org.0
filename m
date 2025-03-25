@@ -1,147 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-44953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-44954-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73398A6F779
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 12:47:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34143A6FA8F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 13:00:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC5FD16CE7C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 11:47:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 898D21892BC3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 11:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4DD2566DE;
-	Tue, 25 Mar 2025 11:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D867F256C7B;
+	Tue, 25 Mar 2025 11:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QOjKaBgt"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lz1M7sFy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC791EFF85;
-	Tue, 25 Mar 2025 11:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921F62571C1
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Mar 2025 11:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742903235; cv=none; b=oZobSQyUD5DIYu//jj7XlE6LRNk/+nw8fZOEOats7DzA3GcpdgqsyWXWPva9fxOtMnlqqNoL5aOjy+qRnX8hmWh5ACmFUNNSfP78iKLZEq4jDx1R7+12s9G8wUOY5LQ8M9y4DF3QY7KwVL0+2oLZPaDGdXVJqVsJCmYOJsxk/fc=
+	t=1742903885; cv=none; b=B3DqhfhDTu8v6rJmjKCXcqruCMZh96AAqAq2BD31GloVXa3yezm4Mas8OtumN39aJL52hIrPk3QTGevcSH6/anhY+v9ixbjYulXDYkDH9D9B2PPR3+C2KWxK1TrwLjZTOidgOV3AU9WDFZxsYy7gZ6h5nUAgGFEdWnkgD+GTKys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742903235; c=relaxed/simple;
-	bh=b+DQcLwGQvyUvi24Zz6+No4f4nkddsTi6jfrwQUVUEo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ebnXg9o5hZN5zXFazd1zok77cMKeueP5IyaTmu0yypZTnBAy1CwJzw/yCAtSpgLaWN8+FToS7kIf0HKS1tUv3wQnYYHg7lN7OzMzgBcjZdDQTWsfD8+xtych9KBLHQ1hzKzJwqLWXsAYAIVGPU+x4zqV70F6FBAcMcJgetcjQD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QOjKaBgt; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e686d39ba2so10694732a12.2;
-        Tue, 25 Mar 2025 04:47:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742903232; x=1743508032; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p4zh20yeb7WVeLMd2P2vt6NV+ovZIxk93u4hoJcH1c0=;
-        b=QOjKaBgtSsfVtf8BADGQc25ez2O8bwQuMICE26iHa98vL8nTGXCXjlsnh+/F4BJdTg
-         kpjvccB4EYz58/Vry/Ns51msgESvfCL73DtnP/AoMZFliixlKzU50T71sYzHWBa2vYCN
-         TpquO8E6pdSkozUM9nSC8Ad0FXZ9kOO5y+LHFYaXLeL9xoSqCR0JldAmhuV3gSh3XVYs
-         RSbzI0Psrto1ERPTGk6PvvaRABz0gaL5Nt/9PcrAurraQPDLCNivaNCKz9IZL00OmvnI
-         fcJE3JRHDscjb0wc3tmaMfPljEp85+7uA6+yeGm2juN8VR0CYWZZZ0plr1B2/LuCyKRw
-         tHMQ==
+	s=arc-20240116; t=1742903885; c=relaxed/simple;
+	bh=EhkCcKvMO5FXE+BxXjdos8aDqMsGvPPSOVvmXd199Ng=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kRM5Iue0XZbvKnyGZlU1bOeSaX9Wt2wx3cHpT8PGD2NWad7jmKEe9mLe5bTO3+CZyPJHdue9bh6591uyFkWZ7irKZtu9s469QJ0QJ5K/2G1hCKNtduutwUrGFKdYO27bHVjXFNlrLY4OBctuBcrjTANkr27eAw6Ffcovu1I04JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lz1M7sFy; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742903881;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=66ScJ5U4mFltzfqo02WJQQOu9FrvajI5Tu1fFaDtkl4=;
+	b=Lz1M7sFyeXzgHjfuMBjoXtgjtY6yr48h5QD0Tmen3MFh9Bw8zGQ7OW8eJoolA4VZa7x0BW
+	R7TKI1MG4hsEJHW5/DD9wPF94OaK33MQ2rmTU9VLayO6ir80+FJbtiAc5o6XGhdtOvV5da
+	TFJIU5HHxNzuZHK7j7plLv27D5N37Os=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-457-rU1h3beIO3ubSMiLHGXvUQ-1; Tue, 25 Mar 2025 07:57:58 -0400
+X-MC-Unique: rU1h3beIO3ubSMiLHGXvUQ-1
+X-Mimecast-MFC-AGG-ID: rU1h3beIO3ubSMiLHGXvUQ_1742903877
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-30c0c56a73aso26292021fa.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Mar 2025 04:57:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742903232; x=1743508032;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p4zh20yeb7WVeLMd2P2vt6NV+ovZIxk93u4hoJcH1c0=;
-        b=kkodkGTXLQA/btFmjJn6qEj0evxkGpK2KeCNfKNUWvwipJX1IAPfBRqZypg38ud6ox
-         ZOiyhZwAFVccdjN7e2XTcZmzqNsn2Yi9++bG3prJGUsbF38rliuFzpUoyMDEukzSHCoK
-         p9PSS+z58YGTHcpXJRUHTlfq7ApP5z2DZ1PlraUHfGDMvpsQ0L1csbbFZ59oDEqy0Nf1
-         XEV/sqWZwuyVVOmYghe38jE6mRMrSbGofa2WimYECHhIv1sl01ZxyMrYK35E40373L15
-         3elfoRezp+sXCV8ity+gmwfPSw2uuBwJpwR+DT4hsnmGBNxA4pVrVfMALeQmU4z/d5+h
-         zGjg==
-X-Forwarded-Encrypted: i=1; AJvYcCXvn3ZAxuSBMCim5jqikIUU4aL3MpPI7hBY9F4Y3/ZEFQxMDhkTDHg9U2vEgQdnZHEe0w4W1qAzGegLPUpj@vger.kernel.org
-X-Gm-Message-State: AOJu0YxksDY5z8lDidsz4ugocsPx2kr2VxWNzXy2Lf7u9bIeQUWtUaR4
-	6W6pLOd8lnIf8+1E+5RwvLf8e5ZishRDAsifcsUOQqlbW3p5GepvM9b63h2b/7W5tJvdx9ZAi8/
-	zPdEjhc2dewRyVNaS8LzvRTLsc6RFnA6PyK0=
-X-Gm-Gg: ASbGncv+nK746ot5yjFYIw01raZZ5RYgOkX/EtweKUf+veaCjga9jlIrChRRqedOPnC
-	r4Onico5Qzia3+y/fi5m17ZwgWUxGYIYqBumb9Ob5Ls7tN8TJqPV9z/3THIJuKfdQ2hcYvFMpMY
-	xdycCNfC6iC094cf2VLl5g7Aq1
-X-Google-Smtp-Source: AGHT+IGFga4yZwH9zibaR7pz2j7v2QhcuecgN2l7S/Dl4mQgAc/pyw/kjxgXZ33rynDEoUJvkKgowa+Avymv1xYnQ8U=
-X-Received: by 2002:a05:6402:35c4:b0:5e7:8efa:ba13 with SMTP id
- 4fb4d7f45d1cf-5ebcd40a6b3mr15898396a12.7.1742903231733; Tue, 25 Mar 2025
- 04:47:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742903877; x=1743508677;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=66ScJ5U4mFltzfqo02WJQQOu9FrvajI5Tu1fFaDtkl4=;
+        b=LFkB4F62oJL+zDITaXPkBhdPZjVasXg2OSTzYHjp+YBewDIXemijD1ObFJkvA7JcDU
+         LOxkHaQDC9BpFSyzZZwhY/eAI5sNnq1Sk7+T8I6Qtl0XhfrdeyA0LdixiOSt7KJ+UWov
+         r++XrT2uHzhikaVmdud/Z3oYQFWiKBamw79gSJwEsMlbgD3B/mf2kTOqz7IsJLxB/ucN
+         FaWqujTLlBOFKyAXohaBED98bn/2cck7p/h1qc6zJkHBmeKN00dD4dNIkL5bUpL2K9ah
+         wycqGctawd1n+Id2db8MZVgW7Vqg8miwxQEZdINUHujdo6GkvL/OnvRx8mfRWDzR+XmH
+         eCBw==
+X-Forwarded-Encrypted: i=1; AJvYcCXoFX91ibEw0JK+mfkWmwh2Xo4dUgHZb9yYaDSn5Eksw2tAtzkpWwmiuoSnGic7JFVgYCGOnhqrwms/fbnm@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFR6GFW9r777okbH8cnR+ILYOpt438iTLNPIJq6lFQ7ATDiwMJ
+	dmLl3h/5pqrxryOv+hEpYYjvN/En0/6AQHiaCP3mYt1ANnGSm8/0coLR60GXdzi2VjsWyvvJSeU
+	WWUg30il3HHx4WpN+OExBGax2KOIysPSgjP8/i2L3GDerGbCV6KXKG7xu17yaamI=
+X-Gm-Gg: ASbGnctbtWEs9kneYk6AuULCvFCSas/t2lum/Va66FYGwDCv6t7lm4QnHmh5qE4Y1Ch
+	ZS98NvTVRkWF9wxDA/og9T1U3xATLVhFvdM3wZjXhXZ4mSl9ea1WhjGyR3fbBo6ZcTjlM8MjCf0
+	Wjj0k7CmHdIDVPP/8w11sTm/NIA0nFHt7JBTYGgTbj5dn5y4CAJf0KP0YNnM558J2RFAhUoOGbo
+	iQg0OOOai6sxXwsVlcTjFUeTRRNHSCeQBK+73rfXNEP/q9EPHwQLpscQwoKEad9Zuebl8tdzKob
+	OuJ3QTimDF6g0jOcAaNxhDfjy24GHkjuXtlkspbY5KzQuBozUeMGkmo=
+X-Received: by 2002:a05:651c:170d:b0:30c:460f:f56 with SMTP id 38308e7fff4ca-30d7e2349a2mr51836641fa.20.1742903876760;
+        Tue, 25 Mar 2025 04:57:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFFsVQ5ThcgNl6aFdF7RZUEJ9ftLWGxPNlNQbEsFkk48iEQQ4ebeeG5mcwR88P3gcTTqWHXCA==
+X-Received: by 2002:a05:651c:170d:b0:30c:460f:f56 with SMTP id 38308e7fff4ca-30d7e2349a2mr51836521fa.20.1742903876296;
+        Tue, 25 Mar 2025 04:57:56 -0700 (PDT)
+Received: from [192.168.68.107] (c-85-226-167-233.bbcust.telenor.se. [85.226.167.233])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30d7d7c1d8esm17547331fa.13.2025.03.25.04.57.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 04:57:55 -0700 (PDT)
+Message-ID: <636546d444306b8af453cdf126453a8a1f0404d1.camel@redhat.com>
+Subject: Re: [PATCH v2 1/5] ovl: don't allow datadir only
+From: Alexander Larsson <alexl@redhat.com>
+To: Miklos Szeredi <mszeredi@redhat.com>, linux-unionfs@vger.kernel.org
+Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
+ Giuseppe Scrivano <gscrivan@redhat.com>, stable@vger.kernel.org
+Date: Tue, 25 Mar 2025 12:57:54 +0100
+In-Reply-To: <20250325104634.162496-2-mszeredi@redhat.com>
+References: <20250325104634.162496-1-mszeredi@redhat.com>
+	 <20250325104634.162496-2-mszeredi@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325104634.162496-1-mszeredi@redhat.com> <20250325104634.162496-6-mszeredi@redhat.com>
- <CAOQ4uxgif5FZNqp7NtP+4EqRW1W0xp+zXPFj=DDG3ztxCswv_Q@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgif5FZNqp7NtP+4EqRW1W0xp+zXPFj=DDG3ztxCswv_Q@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 25 Mar 2025 12:47:00 +0100
-X-Gm-Features: AQ5f1JrFUNNttc7pVUHabB5shkjHAQ1u2N5ZQoXYKntBUP4kjRy9J0-DH_3V4Do
-Message-ID: <CAOQ4uxjZOtdMcGpXBYLO4Cxe04_w-GS1Zwy2GY2Yr+jyO+iS-w@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] ovl: don't require "metacopy=on" for "verity"
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Giuseppe Scrivano <gscrivan@redhat.com>, Alexander Larsson <alexl@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 25, 2025 at 12:33=E2=80=AFPM Amir Goldstein <amir73il@gmail.com=
-> wrote:
->
-> On Tue, Mar 25, 2025 at 11:46=E2=80=AFAM Miklos Szeredi <mszeredi@redhat.=
-com> wrote:
-> >
-> > Allow the "verity" mount option to be used with "userxattr" data-only
-> > layer(s).
-> >
-> > Previous patches made sure that with "userxattr" metacopy only works in=
- the
-> > lower -> data scenario.
-> >
-> > In this scenario the lower (metadata) layer must be secured against
-> > tampering, in which case the verity checksums contained in this layer c=
-an
-> > ensure integrity of data even in the case of an untrusted data layer.
-> >
-> > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> > ---
-> >  fs/overlayfs/params.c | 11 +++--------
-> >  1 file changed, 3 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
-> > index 54468b2b0fba..8ac0997dca13 100644
-> > --- a/fs/overlayfs/params.c
-> > +++ b/fs/overlayfs/params.c
-> > @@ -846,8 +846,8 @@ int ovl_fs_params_verify(const struct ovl_fs_contex=
-t *ctx,
-> >                 config->uuid =3D OVL_UUID_NULL;
-> >         }
-> >
-> > -       /* Resolve verity -> metacopy dependency */
-> > -       if (config->verity_mode && !config->metacopy) {
-> > +       /* Resolve verity -> metacopy dependency (unless used with user=
-xattr) */
-> > +       if (config->verity_mode && !config->metacopy && !config->userxa=
-ttr) {
->
-> This is very un-intuitive to me.
->
-> Why do we need to keep the dependency verity -> metacopy with trusted xat=
-trs?
->
-> Anyway, I'd like an ACK from composefs guys on this change.
+On Tue, 2025-03-25 at 11:46 +0100, Miklos Szeredi wrote:
+> In theory overlayfs could support upper layer directly referring to a
+> data
+> layer, but there's no current use case for this.
+>=20
+> Originally, when data-only layers were introduced, this wasn't
+> allowed,
+> only introduced by the "datadir+" feature, but without actually
+> handling
+> this case, resulting in an Oops.
+>=20
+> Fix by disallowing datadir without lowerdir.
+>=20
+> Reported-by: Giuseppe Scrivano <gscrivan@redhat.com>
+> Fixes: 24e16e385f22 ("ovl: add support for appending lowerdirs one by
+> one")
+> Cc: <stable@vger.kernel.org> # v6.7
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 
-What do you guys think about disallowing the relaxed
-OVL_VERITY_ON mode in case of !metacopy or in case of userxattr?
+Reviewed-by: Alexander Larsson <alexl@redhat.com>
 
-I am not sure if it makes any sense wrt security, but if user is putting th=
-eir
-trust on the lower layer's immutable content, it feels like this content
-should include the verity digests???
 
-Thanks,
-Amir.
+> =C2=A0		return ERR_PTR(-EINVAL);
+> =C2=A0	}
+> =C2=A0
+> +	if (ctx->nr =3D=3D ctx->nr_data) {
+> +		pr_err("at least one non-data lowerdir is
+> required\n");
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> =C2=A0	err =3D -EINVAL;
+> =C2=A0	for (i =3D 0; i < ctx->nr; i++) {
+> =C2=A0		l =3D &ctx->lower[i];
+
+--=20
+=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D=
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+=3D-=3D-=3D
+ Alexander Larsson                                            Red Hat,
+Inc=20
+       alexl@redhat.com            alexander.larsson@gmail.com=20
+He's an obese crooked filmmaker trapped in a world he never made. She's
+a=20
+provocative red-headed stripper from a different time and place. They=20
+fight crime!=20
+
 
