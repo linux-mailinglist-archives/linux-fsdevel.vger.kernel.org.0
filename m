@@ -1,110 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-45034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A19FA7046D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 15:59:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC484A707F0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 18:20:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D19D3AF966
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 14:59:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D3411885FEA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 17:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069EC25B67F;
-	Tue, 25 Mar 2025 14:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="W3/5436i"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C91B263F51;
+	Tue, 25 Mar 2025 17:19:56 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10BA1EDA3E;
-	Tue, 25 Mar 2025 14:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1896313633F;
+	Tue, 25 Mar 2025 17:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742914762; cv=none; b=DnpF4+qCt+jfw2Kw/Lp0vxEvSe4qkw1+3mkaH6P9rhCSCb7z8jqHfquAB0Ecevvowk1kioMmOwE2XuGXRJRY4ax64T3tjCgkPHKDfV8Wt0Q+3XWckSMASLXK1/VRCnvXUPojlTDzXv6i/NqpY1PHbtxljNW+jY+Lf8GcEglSezk=
+	t=1742923195; cv=none; b=JVnlwqVX6P2mPQEyZ+/VCGqJ4P18sGpLohEiLA42NvMdcuwFnvm6Gts6MotbeIPjngeCkr7IXavTEdHtxZ54NYjKzjnieHJbw52OYu20xq+NTnzQV8+qEdFr9x29mvagLSgEdt93kTrsER3utBA5TBu0NaZouBObCpg2MWJ/vlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742914762; c=relaxed/simple;
-	bh=jFKEhjNjq9tWLi1tufH12YoYuLncNqbR/nzyYY8yoFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NGLFVkiCOiHzA4Bsg/ZvvgR2Euwg2WGw9qdKsoC1JT58k99EEkANMUcw/iX6RYlenJLUqpO/jeK2czJ5Y1uSLaSakP5FDcp7CxyvrfY2v5gozSnUlywpjUNPe85e0OcLCLo1pT0+Yot1GxHyKJQIdPY/xYVnvdMsnWOzakxGvCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=W3/5436i; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 494BD14C2D3;
-	Tue, 25 Mar 2025 15:59:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1742914758;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LA2ZWfipp543V5Octm+YivgRf31pm38h6sG4nFoFVL4=;
-	b=W3/5436ielp+x8Mg+ylaT1KwQLXmybgWQDRFANia1QIR5etK8+gW7Dk4fWWTQlCrj6Tkad
-	vgLy5gZ/5N8CvbH+NS29LwIEi23qDuWlaxtwdi8nV8zNAN8L0Ztf0cUYdpEIPrYOvKrtL0
-	nKtHroMZM9HTu/lCxJ7sBGryNeMS1iRjuWs2kl7o1BM6Pg1FkZkhBBAwWCpBVnvNcGzq3s
-	rVAXnUzgy8K1U3e/Qn6FeFY4w8hcycOuxZKajjueOVaqnN0z4ieDQOQEqh70519uT/MjvE
-	cWZOqiDjql//4x7MeXIQ9UiRxAtbG0VD4DWlRRn0JeRy5uelCkgZgtw/6cgWlg==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id ad07f38a;
-	Tue, 25 Mar 2025 14:59:11 +0000 (UTC)
-Date: Tue, 25 Mar 2025 23:58:56 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Oleg Nesterov <oleg@redhat.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>,
-	brauner@kernel.org, dhowells@redhat.com, jack@suse.cz,
-	jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
-	swapnil.sapkal@amd.com, syzkaller-bugs@googlegroups.com,
-	viro@zeniv.linux.org.uk, v9fs@lists.linux.dev
-Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
-Message-ID: <Z-LEsPFE4e7TTMiY@codewreck.org>
-References: <CAGudoHHmvU54MU8dsZy422A4+ZzWTVs7LFevP7NpKzwZ1YOqgg@mail.gmail.com>
- <20250323210251.GD14883@redhat.com>
- <af0134a7-6f2a-46e1-85aa-c97477bd6ed8@amd.com>
- <CAGudoHH9w8VO8069iKf_TsAjnfuRSrgiJ2e2D9-NGEDgXW+Lcw@mail.gmail.com>
- <7e377feb-a78b-4055-88cc-2c20f924bf82@amd.com>
- <f7585a27-aaef-4334-a1de-5e081f10c901@amd.com>
- <ff294b3c-cd24-4aa6-9d03-718ff7087158@amd.com>
- <20250325121526.GA7904@redhat.com>
- <20250325130410.GA10828@redhat.com>
- <f855a988-d5e9-4f5a-8b49-891828367ed7@amd.com>
+	s=arc-20240116; t=1742923195; c=relaxed/simple;
+	bh=XhmLROfnnL3FtaOH27gIOe9sbljr3QNEJt4khOaoGEw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=thXfkLpcysvlslOLNwAsjXCeCS6JfK6KctSbO2VGPV3RuKnyk0b5C13uS18qMml/OaXFTQll1YJumJb0xtEBlz6OVXMzXwT+u0OP1YIXmFUMXF7N6mj6jdKsM0A+dPbTQIyLF0c2blFZmvdsLhtgQIwwYgh2AD86/cle9R4yFAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.2.102] (213.87.136.199) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 25 Mar
+ 2025 20:19:41 +0300
+Message-ID: <05fec753-cdaa-45a5-a029-b6435c30eb07@omp.ru>
+Date: Tue, 25 Mar 2025 20:19:39 +0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f855a988-d5e9-4f5a-8b49-891828367ed7@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH V3 25/43] rv64ilp32_abi: exec: Adapt 64lp64 env and
+ argv
+To: <guoren@kernel.org>, <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
+	<torvalds@linux-foundation.org>, <paul.walmsley@sifive.com>,
+	<palmer@dabbelt.com>, <anup@brainfault.org>, <atishp@atishpatra.org>,
+	<oleg@redhat.com>, <kees@kernel.org>, <tglx@linutronix.de>,
+	<will@kernel.org>, <mark.rutland@arm.com>, <brauner@kernel.org>,
+	<akpm@linux-foundation.org>, <rostedt@goodmis.org>, <edumazet@google.com>,
+	<unicorn_wang@outlook.com>, <inochiama@outlook.com>, <gaohan@iscas.ac.cn>,
+	<shihua@iscas.ac.cn>, <jiawei@iscas.ac.cn>, <wuwei2016@iscas.ac.cn>,
+	<drew@pdp7.com>, <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	<ctsai390@andestech.com>, <wefu@redhat.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <josef@toxicpanda.com>, <dsterba@suse.com>,
+	<mingo@redhat.com>, <peterz@infradead.org>, <boqun.feng@gmail.com>,
+	<xiao.w.wang@intel.com>, <qingfang.deng@siflower.com.cn>,
+	<leobras@redhat.com>, <jszhang@kernel.org>, <conor.dooley@microchip.com>,
+	<samuel.holland@sifive.com>, <yongxuan.wang@sifive.com>,
+	<luxu.kernel@bytedance.com>, <david@redhat.com>, <ruanjinjie@huawei.com>,
+	<cuiyunhui@bytedance.com>, <wangkefeng.wang@huawei.com>,
+	<qiaozhe@iscas.ac.cn>
+CC: <ardb@kernel.org>, <ast@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-riscv@lists.infradead.org>, <kvm@vger.kernel.org>,
+	<kvm-riscv@lists.infradead.org>, <linux-mm@kvack.org>,
+	<linux-crypto@vger.kernel.org>, <bpf@vger.kernel.org>,
+	<linux-input@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
+	<linux-serial@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-arch@vger.kernel.org>, <maple-tree@lists.infradead.org>,
+	<linux-trace-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-atm-general@lists.sourceforge.net>, <linux-btrfs@vger.kernel.org>,
+	<netfilter-devel@vger.kernel.org>, <coreteam@netfilter.org>,
+	<linux-nfs@vger.kernel.org>, <linux-sctp@vger.kernel.org>,
+	<linux-usb@vger.kernel.org>, <linux-media@vger.kernel.org>
+References: <20250325121624.523258-1-guoren@kernel.org>
+ <20250325121624.523258-26-guoren@kernel.org>
+Content-Language: en-US
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+In-Reply-To: <20250325121624.523258-26-guoren@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 03/25/2025 16:50:54
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 192097 [Mar 25 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 51 0.3.51
+ 68896fb0083a027476849bf400a331a2d5d94398
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info:
+	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
+X-KSE-AntiSpam-Info: {Tracking_ip_hunter}
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.136.199
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 03/25/2025 16:52:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 3/25/2025 3:18:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-Thanks for the traces.
+On 3/25/25 3:16 PM, guoren@kernel.org wrote:
 
-w/ revert
-K Prateek Nayak wrote on Tue, Mar 25, 2025 at 08:19:26PM +0530:
->    kworker/100:1-1803    [100] .....   286.618822: p9_fd_poll: p9_fd_poll rd poll
->    kworker/100:1-1803    [100] .....   286.618822: p9_fd_poll: p9_fd_request wr poll
->    kworker/100:1-1803    [100] .....   286.618823: p9_read_work: Data read wait 7
+> From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
+> 
+> The rv64ilp32 abi reuses the env and argv memory layout of the
+> lp64 abi, so leave the space to fit the lp64 struct layout.
+> 
+> Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
+> ---
+>  fs/exec.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 506cd411f4ac..548d18b7ae92 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -424,6 +424,10 @@ static const char __user *get_user_arg_ptr(struct user_arg_ptr argv, int nr)
+>  	}
+>  #endif
+>  
+> +#if defined(CONFIG_64BIT) && (BITS_PER_LONG == 32)
 
-new behavior
->            repro-4076    [031] .....    95.011394: p9_fd_poll: p9_fd_poll rd poll
->            repro-4076    [031] .....    95.011394: p9_fd_poll: p9_fd_request wr poll
->            repro-4076    [031] .....    99.731970: p9_client_rpc: Wait event killable (-512)
+   Parens don't seem necessary...
 
-For me the problem isn't so much that this gets ERESTARTSYS but that it
-nevers gets to read the 7 bytes that are available?
+> +	nr = nr * 2;
 
-If the repro has already written the bytes in both cases then there's no
-reason to wait 5 seconds here...
+   Why not nr *= 2?
 
-OTOH syzbot 9p code is silly and might have been depending on something
-that's not supposed to work e.g. they might be missing a flush or
-equivalent for all I know (I still haven't looked at the repro)
+[...]
 
--- 
-Dominique
+MBR, Sergey
+
 
