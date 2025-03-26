@@ -1,238 +1,264 @@
-Return-Path: <linux-fsdevel+bounces-45051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45052-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FBFEA70C69
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 22:54:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A6D5A70DDF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 01:04:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 791E6175085
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Mar 2025 21:54:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33F7618877A9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 00:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E547A26980C;
-	Tue, 25 Mar 2025 21:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C312E3370;
+	Wed, 26 Mar 2025 00:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="1CxLOuYd"
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="DMFNZpC2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="W5P69hPP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outbound-ip191b.ess.barracuda.com (outbound-ip191b.ess.barracuda.com [209.222.82.124])
+Received: from flow-b8-smtp.messagingengine.com (flow-b8-smtp.messagingengine.com [202.12.124.143])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1603267B9D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Mar 2025 21:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.124
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742939652; cv=fail; b=kZYWvkuSY+CZS4gxA57kjUBtyZvdDJGqYy7DyaHpZ1v0k+HDzSmh4Gn7HFE7LSQqGBjKrjeeI7BZUXoVzcguk5extHKN2i+Vds1+BmuOM8z3NgDxLYjYndUv0IvYafXwgEh7qb6lkhSLjNtXWuqaCTQpkXXS4E5XMale35ju2Us=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742939652; c=relaxed/simple;
-	bh=nml0YEknrU2y9WrZZpYSmyIujMMoFOf3ppMM92OJleg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Dpwv17AeU8SP8D6mN0ZmAaqHuhI10AO8kwlk6Xckk753aLvMgiu8d5yNWXDAC5TEjIsJv7tZPBUmPQkuFaLUJVwH+5S5R4r37rBpTd7qsFBRGmxDWwRRG+uoZtTMJZ6U0fXO2d/BJzR8kjIivxcZRIYIE8T9BLPtbnRiR7HPlcw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=1CxLOuYd; arc=fail smtp.client-ip=209.222.82.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2046.outbound.protection.outlook.com [104.47.66.46]) by mx-outbound23-22.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Tue, 25 Mar 2025 21:53:43 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NGmwc7OJ32CIpSvty8tXigN32VnIZMOHQ8DXjN87WhANHaBD6QQ7G12hAfHuylf15jJMVF33CsMVC7cGf+28v0l9tO54ipesu3ANVrf1gX07kCvXpDPqnihp9WeP0OgJZ9tURknDD3oyNRT8k5tAO9yjCTOpi0kN25udOp6GiyJqDIxfXadDNvL5+FSzLfslXEXqUGg4qz8Oc9lMnYUAzxSCD6y8DeX0u/6Np9gCnmx8l3D+sHCTMkNsf1cbmP3vBK5CWfnSOV4FstxMjBwJpQk/Ug2rH9klB+oy4Yy2XU+PAhyMcLDWgyyizSRiUnBJUrbz+hYz64RMMrSf1JKMBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nml0YEknrU2y9WrZZpYSmyIujMMoFOf3ppMM92OJleg=;
- b=DK9UV0NCTrzTs2IZYrytHl/ey4A5YfpnfIMq7HICtNfVItnGNcFVZdTyzLG3W9oNxfTkkHrtIajyZB+jMv9fhkV7SlGTzHMXXgseYffHzPEW9FCxqdEn/50+rcC4HRWZgtFd9sbf7m535MyZf0T+UgfglCuAtD4kMtw2Xt1wet23IEt4uI9yna8402GyeRgJaS2Ihs+paBJh6PckadE57BcCAahdktZoyXDDllASqdldeFtLpPoVOLWN1O9UHhqmk3bDe7ULctWp2F1rD3Y9e3qIkl/TmY2/Sg4Ob6GD2LMOtnK76w3swY9r4W05ukxqFP1CLf4Q+PSl42sT2Qcxkw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ddn.com; dmarc=pass action=none header.from=ddn.com; dkim=pass
- header.d=ddn.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nml0YEknrU2y9WrZZpYSmyIujMMoFOf3ppMM92OJleg=;
- b=1CxLOuYdqwB4H/XJWp0DUbtujvk344I+yMQazQAS8Sgg4KgRPNUoEkJe+yAms8cKXz3fXGzrHISRW5MoxP8kQQQuTYC9PuJxDZU6pApLiaUAZMfldcHLf1N1vyxuY2Fsrwet+3BmXZjNP6A0/2RzmEEXgbilBkKcjJioxWjKDg4=
-Received: from CH2PR19MB3864.namprd19.prod.outlook.com (2603:10b6:610:93::21)
- by CY8PR19MB6939.namprd19.prod.outlook.com (2603:10b6:930:60::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Tue, 25 Mar
- 2025 21:53:39 +0000
-Received: from CH2PR19MB3864.namprd19.prod.outlook.com
- ([fe80::abe1:8b29:6aaa:8f03]) by CH2PR19MB3864.namprd19.prod.outlook.com
- ([fe80::abe1:8b29:6aaa:8f03%4]) with mapi id 15.20.8534.040; Tue, 25 Mar 2025
- 21:53:39 +0000
-From: Bernd Schubert <bschubert@ddn.com>
-To: Luis Henriques <luis@igalia.com>
-CC: Miklos Szeredi <miklos@szeredi.hu>, Joanne Koong <joannelkoong@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, Miklos Szeredi <mszeredi@redhat.com>
-Subject: Re: [PATCH v2] fuse: {io-uring} Fix a possible req cancellation race
-Thread-Topic: [PATCH v2] fuse: {io-uring} Fix a possible req cancellation race
-Thread-Index: AQHbnat+CS38rN0kUkaAU4oT7DFW+rOEYTs+gAAEKAA=
-Date: Tue, 25 Mar 2025 21:53:39 +0000
-Message-ID: <01d4007d-4f25-4014-b8a0-a59cf6d17aeb@ddn.com>
-References: <20250325-fr_pending-race-v2-1-487945a6c197@ddn.com>
- <87pli4u6xy.fsf@igalia.com>
-In-Reply-To: <87pli4u6xy.fsf@igalia.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-GB
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=ddn.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH2PR19MB3864:EE_|CY8PR19MB6939:EE_
-x-ms-office365-filtering-correlation-id: 3c5ee526-62d0-4400-aef1-08dd6be7807a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|366016|10070799003|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?Zy9LY0tjSXBMcjhWbVFYelVOSm02dE1vZDVpNkNORVduWVdueUdWZTArUXZN?=
- =?utf-8?B?WlBTQXY1RkY3MlllWHRoN1B6b3I0WEluTmFUNFNJT2JhRVJ1UjdWZmZXaXUv?=
- =?utf-8?B?bzZESWVYQUgxbEQxZk5QZ1ppMkNjMDh2aC9iSlZReWpEUnVUSXliUFhSd043?=
- =?utf-8?B?TUJidEhZWWJmUjlYNkd3cmtYYVNQc3FSek5oOGhWV1RjdG95c1hpRU1BYWZT?=
- =?utf-8?B?eFhoK2pMbGFBdXBVancvd1l3ZklnLzIrSGZsNW9KY0hDQVBxOEdRa1kwOHpx?=
- =?utf-8?B?U0wvYzhSYzdmczNpTkk2UkJ6Z1dRQytaTHQvbHd6RGRja2hRV3ZiRTIxM2Jr?=
- =?utf-8?B?aDJGYm56VnBrb2FPSW0yaXRXbER5Y1BWd0YxUkF2VVNua21DZUxSWG1CRUwx?=
- =?utf-8?B?bHhWZm1iVEJjUmc2QTkzVzQ5SUdkQ0NmbVZnSU1HN1hQbEtTdWlweUJ2TWs0?=
- =?utf-8?B?WWJrY3FGa3cwL2grQTAvMmwrMmpWVGNhSWovMmkzOHFWWTZkQ3A2UVRBeGp2?=
- =?utf-8?B?UlNHL1I1OHR6cXJkY2ttVGJQTFZlMTl2Z0dWN2daN3VRcUtXZXNJdDVnS3pz?=
- =?utf-8?B?bWszOGhYK2FuK3dzMFJ4VnhnbktwTmpDUmU3eGMvT2IwY2FYeTVnUGd2eE1y?=
- =?utf-8?B?d1NwenN6blp0ZGZJUWFObW95U1lGWEtjVEFUVDU5bVM0amdSeVpYNkdKUW05?=
- =?utf-8?B?aWl1SHc1bk80RFpwYXl4RmlqQ2JnMGljdmw0SVFZSW9KV1p4RnZxbFFxSCs4?=
- =?utf-8?B?NU1rZkRnTnV2VFV1c0FQTE85ZFd5WmJhMUl0K29yTldFSmF6L2dXYUgrOFdz?=
- =?utf-8?B?eWxIbm02Q2l6b0czMzVCQ1ZTRlEyZkN6UWJZNFlGdVRrbG5YUnB4R0RZaC9x?=
- =?utf-8?B?WXlhWE9yc3Fwdm0wUDlLRUdFTitmdVVYNXlzV2cyUkxZZ29rSUY0dUhtdGpS?=
- =?utf-8?B?bU5wUGZmcWNQMzNJeVlmSFhkMlJ0WTh1RlJKR2ZndmkvQkFIOWtsUlFKMEhu?=
- =?utf-8?B?ZlhPVkt5ZXBEQm5IMVZ1SFd5QW9SZHFuNkt6am1Yc1ZLYVNKME9DNDVoZU9u?=
- =?utf-8?B?QXRTZUc2a3dwcE9MOFVodnppU0M0L2w5djByMnQzTVVONXBQVDBMbTNIRDNr?=
- =?utf-8?B?UDY1MExuaGI4SW1vSFRBZXN4ckJldUdSNStQdXB4NjhpcngvR25vVUxuczJE?=
- =?utf-8?B?VkVjTGxyYUNBZFRkbFp1Uzd5bzJibUxoWGFhQ0MzRi9iQ3FwNGJlSEIwZytH?=
- =?utf-8?B?bHVGM2lrbUdzTEVoQ20rSTl2cCtjL2wvaHMxVTkyUnQvK3hvNnJGWUxYdnhT?=
- =?utf-8?B?V2FDYmJTeXdDTWhJVFhIalNOUm1WeCtMSzYxZWEyYW1LbXRLNUlsQTdodFJX?=
- =?utf-8?B?SnBnNUVTWGt0MGl1T0c4TnRHd0F5YzhDS05hdnNFOVZxR2FXazhIL2NRNGZo?=
- =?utf-8?B?dWk3Tlk0M3kzQkl5TnVyZzVHTytHankwRU5mdys3VlN2d3grcyt1c3VlWnIv?=
- =?utf-8?B?ZTNMOFJxL2pGZllpTWZxQ2lZU3IwbS9EaUE0OWtHMGx5b0dLQmJDa2pvSm9L?=
- =?utf-8?B?QndBQ1FXQiszc3haaEd0Ym9mRkhZb2crUm9CUGh3WnZHckNJSzhCaFZhQ1hX?=
- =?utf-8?B?WTN6bGd4SGtUaWh6ay83ekQ0TlVmajBPOTdHUng0VnBrSS9QNUVNTmlBZ2tT?=
- =?utf-8?B?aFVVekJubmlRVGxSOXhYVkJyK1BZMHlWTEFhamZWdXd3cVVPYnZTaEdleC9T?=
- =?utf-8?B?TUxPR2lxYkRYYVBWSnRWQVRuajZPRDVJcm0wWjJ4d215M005TUZycUlJNmtQ?=
- =?utf-8?B?dm1Rc21KanhYOFIvVWdibkc0aGtVYWxsbWROakRkUHc2YThBSFVyOWMzaGdD?=
- =?utf-8?B?Uk14cVFEd3JpVUVwYTBISTJIVVo3b1V6b0pid1AvNEVsRjh1QlVGbldJc2JY?=
- =?utf-8?Q?Rszvmu+OkNn7IVgTwUrP31zwvzQ8rrC1?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR19MB3864.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(10070799003)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?TnRKQldHZXp0a1FpR01hY1J0VDV0ZXZ6T3JxZm5oYmVZeHFPMXQ4YlZHVU9w?=
- =?utf-8?B?WHFNamI0WVNabS9WdWsrMUIwMWhLMGpUVDRuZEYvU3dUV2YvaTJEMEgyWWlX?=
- =?utf-8?B?MUdoclZiQlRNbnVEM0VGM20xV1M3cld2bk5URUdIaFh1N21zZ1hFR2ZlUFBU?=
- =?utf-8?B?eTk0TGQ5WW5qWkJkZzF6REZmM0ltNTNERnlIKzgrUFRHNW82Q2pmQitqK2w2?=
- =?utf-8?B?TFVoZklPUm1nRWdoR2dSUS9OUU5xUHF6bTNralRmdzIzV0t3SGJvaHM0N0Ja?=
- =?utf-8?B?ZGRjV2ZJQUFYd0NOQ2FvKzAzR1NndS93UGZlblgrbEtLb0FBdCtZOE5rQzN2?=
- =?utf-8?B?YlpRSTNzdTVtRXk4dFNndFZMa2RWbnBtcVpVRzFOSHNNc24yeVB3dVdhcVRZ?=
- =?utf-8?B?cDJaMVhtWnBaZDVZRVQramJOTWpoY3huRXBzaktMNGs4Q3FqMENmZTU0MVpn?=
- =?utf-8?B?T2J0d2hHNWJxd1BsV2RzYWkrM3NsOXcrT2xNc25nbFhqeGJ6YXJLWUxwTXN5?=
- =?utf-8?B?aU9CRzNVdWRLc2V4aWZSSXFpdUo0WVkreXNvVUlmeTRFZFNTUS9UYnlVajB4?=
- =?utf-8?B?cmlNWEQrZDRnTWZQN3dRSDZaL1RJZ0NJeVpidFdDYWxNaVJuNkY0S1NGVE9h?=
- =?utf-8?B?bkd6ZEMvaUVvV3JrRDcvbk5xS0tKUjZnSVNobDJkVS9sMTIxMVBWNVpGWWFH?=
- =?utf-8?B?UG4rSW93WW1mb2pNQjN5U3JLODR5WmJMTy8yeTh5Yi9wOEtJZlJWYVJtbzFQ?=
- =?utf-8?B?R24rdXNoQmF5cGRLSlpQeGQzZmdweDZSdkpBR25ZcXphSE1RdXoyS2wvczk2?=
- =?utf-8?B?RzBTR1p6RW1WR2ZaR2o1MWEyaXJvN2U5S2ZkZHI1THczREQxNlRtbHg0NlVT?=
- =?utf-8?B?ZW42QkVDQzNkcmtrVGl5cXprQkxjRVQzVitaOGxwUnNPbDZUOTZGOWpFMnpr?=
- =?utf-8?B?ZE1OZGYvbzJuUVRCNlRvbmwvaVFpa0ovL0IvWHVSVW9VTldvWUFsTXFNZ3Mr?=
- =?utf-8?B?cEZPSEtCQ2JmTUQ2RHlvUmx0OG1SaXBRN1BMUVZsdk8zOXVZSXlxQTIvODk0?=
- =?utf-8?B?SklFUUNza1AvU0tXbFpmSHV4djdRYXFwTmY1ei9SZlVFUiszK0hpaVhySjVr?=
- =?utf-8?B?bUhYRlJmVGxTWFNnby8xMDBYeHUrbk5BbFNvLzhtTThZc3N2WUwwc3IxUitm?=
- =?utf-8?B?YjVXaG9OeGZ2TWYrd1BETEc1M1VWWUlYU1RCNnYwZTlUK1J4YWlHd2d2S2Rp?=
- =?utf-8?B?dDhzK1lIL0xUVXFJb2ZUOTFzTlY5Rmo4eE1Cb2JlcDZlQTlQbjhNdEpIVk05?=
- =?utf-8?B?N2E1M2xHWDFrR213SndyYmE5Tm82OWhpREkvVUNTT1c3eXE3OE1BZy9FWFo0?=
- =?utf-8?B?dVdGR2p3dHVBSXJQVVZ0eVF4dnpTcXRZR0syU0NaK1NzbkgwRVRESG9KV3lN?=
- =?utf-8?B?NUxiUFNVU3lMejVlcnBzTlVxNzBESTNXeHllejE0RVpuVDJOdFpxc3RNQ2V1?=
- =?utf-8?B?d0xZZW90MDF3K3RPMkpxdnI3bE11YnVKSERwSEVuQTh4YWRnMUVSQWxOaU9m?=
- =?utf-8?B?R2w0ODh5VEtKWEJiYkRBZHg5V3B5cXlmRXl2Q01uMEk4Y1d2RFBmL1ppc3Qy?=
- =?utf-8?B?dVFLdHcyQ0REeFUzSEtweVRySWJEQVJKU25Ubm5naFpJMUlWaDI4a3NPdENS?=
- =?utf-8?B?U2ZXMmlWblRoU05sL0FGRXl2dEdIaDIyMzdNcEUvRHdESzh2Z2xaSEVvNFRo?=
- =?utf-8?B?OEg4cHNFUFAwNkprV0JqSWc1eVJRV25kdW5pUGRnQjdBVnQ3Ymw1MWVDMzN1?=
- =?utf-8?B?amhPNkUzOHNPN2RhSmNnMEJUWEROMzFIV3BacklySHd5SUhkUko2N3dzMzVW?=
- =?utf-8?B?VG5BaDI2Y21XUVIyc1BHemR1ZWJCNlJDLzBYbEFtMXRoWnRXL0pyOTFxNWxr?=
- =?utf-8?B?RTN2Q1RUT0Z4YlRpV2diUVRlTVR4R1pDSFhJVWRhc1d0Z0M4R3cxQVI2MEt3?=
- =?utf-8?B?ZEFUUFpqbzc0amhORVB0TFJOMS9MRmJBWkRpa01yVXZZbVkyT0Y0bmorci9B?=
- =?utf-8?B?bVF2VGRGSlJ3MmtIMDFwcGk4dy9qcEZCNDlmY2E4dDA5a2FzNFBrZ1NQekhQ?=
- =?utf-8?B?WkxRUWR4eWsxWkZHWERFbFZNekp5Z2tBMmJZUlJmL2MxR29qMDAyc284Y2Vp?=
- =?utf-8?Q?CfA5/ewzO7RCqnRBENIiG74=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F3DB5404BCBF8248B317833A563515EB@namprd19.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A218196;
+	Wed, 26 Mar 2025 00:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.143
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742947455; cv=none; b=oWIqcCY3QVLrU/HbbUw9O/W7PNTGTPMRFHFqTdjkbxSsW9rMQwQVdzHTKRt8lmH0CsSwk+LYy8P6ZXr5hBSPKzsnXprskCXGzq+n09Us6oVag/Gs8S6KzuwXm8L8X5qS1z34/YKzIcbLnNPy5S/rqrVqnrsM7WuRDQ3Cuh783rc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742947455; c=relaxed/simple;
+	bh=TR7DrG4K7pZ1c/JQSnI5XUVv96vN8aATvSbBfUmZWH0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XF6jo8Sb1SLyHFGJIeqrbpRgHyvo3nng51vo/kw8qvzcjLRSEa3iKCyfldpUL9KjJoqt/sSN6mnTtWnxGhsRS+I5MfjuW+ct0sq+FD5qI41veBmejilOjSkPYtQuPYTwWsMAPiJH7vLBjIMVOZRSeshmIuTUifo2ViKk8dYMfsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=DMFNZpC2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=W5P69hPP; arc=none smtp.client-ip=202.12.124.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailflow.stl.internal (Postfix) with ESMTP id C9CD21D414E3;
+	Tue, 25 Mar 2025 20:04:11 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Tue, 25 Mar 2025 20:04:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1742947451;
+	 x=1742951051; bh=m4l/q9V2dSOFC5U3I6XEeoMUQl4KjUMU85tGOonrlrM=; b=
+	DMFNZpC25hT6H+fKwumbe/vSglRJiNTQddwrW+9U7Ud8IlI3Zvd7ZxZTcDWIt66Z
+	4V/9h2UJ5Iei9knip7uiiNM1DbZysV4y60cCwMgCaVzmSeVbNciGyyvC1THbQqK0
+	+rSPIb8NxC23YlPk4xVpVu/be01DAlW2SQUFWuYQLsJfrQIbgCbpG/n09G3QNKoi
+	OjaWXUfSWaWJ8++8dTcN/KO25qKOVtOPRkiOzSfy69+LUswIv/ndIkBMCO1L3LC4
+	SSKqK4TZHy+LfqjG14YaHk/myBu95s4le4juzm3ULVpruovrF1U99mWDyzooFYrX
+	ou8GSLCoFAtdOwAnuGtNUQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1742947451; x=
+	1742951051; bh=m4l/q9V2dSOFC5U3I6XEeoMUQl4KjUMU85tGOonrlrM=; b=W
+	5P69hPPUyrvg8JvABM71oKhn6dp5QMY8Y4PpBt7Ci0uAealYBCnhIvquiZWt5vbh
+	KH3PtCpZyfj59GioqykwYxA5QJvkLnBe5VfjFeWjEqSJXSoZdwCnv85nVYG1qFQl
+	cLSxJYOjdJRLsKBNhsyKCj3jFPF5h+9y8/I5RXfmZB6VvjOzJSz9zCu13r0KKL54
+	UocGorFHKiH8vQtnzbkikuTWZVHYfpf/3rKf7FR13dnydrqR269GR+u7QuBbbVDg
+	C6wWun+7OHb3JpR58HhKMElP/KhwGuBWp47JzQ2HqwNEKXH4CY3J9kWd1Uh7PK44
+	3bjfJykygblzmKgFyNUHw==
+X-ME-Sender: <xms:ekTjZwkDVP7Ih-aIGWpxBQmmC6qu4cchY54ETo4iqzvWect0vfPTXA>
+    <xme:ekTjZ_18waaxWJIb0WtpUgrliDbskX7h787WjQH2J2E5dTJrVawqqhR86NoWjWXwI
+    hdEbFRgjOFVFuJLMNU>
+X-ME-Received: <xmr:ekTjZ-rdSW2FUDtVY2EX7lw_XklXhPme5oX6UOLMVV6ptGxs03WOzoxTwy3AK-k3AUp4Zg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieegtdehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddt
+    vdejnecuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhrgh
+    eqnecuggftrfgrthhtvghrnhepfffhhfegueejkeefhffffeetieejffevtedutefhhfej
+    jeegleeuieejfffggedunecuffhomhgrihhnpehgihhthhhusgdrtghomhenucevlhhush
+    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdr
+    ohhrghdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
+    epmhhitgesughighhikhhougdrnhgvthdprhgtphhtthhopehgnhhorggtkhesghhoohhg
+    lhgvrdgtohhmpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtoheplh
+    hinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomhdprhgtphhtthhope
+    hrvghpnhhophesghhoohhglhgvrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhsuggv
+    vhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehthigthhhosehthi
+    gthhhordhpihiiiigrpdhrtghpthhtohepnhhitgholhgrshdrsghouhgthhhinhgvthes
+    shhsihdrghhouhhvrdhfrh
+X-ME-Proxy: <xmx:ekTjZ8kkb6qBllyPCsvvRo23Lxe22CcczNkESBikknvKzBLeKSAzdw>
+    <xmx:ekTjZ-0D79_4anMZQTZb914-fvcdylZ8SsNYcs52iBYfwcpZskTA1Q>
+    <xmx:ekTjZzs2rrsNlvdjeNtrIGp-nGwdjoHNkh_slAwPMrlU1vAY99pCVA>
+    <xmx:ekTjZ6Wq5wjkGHdDSLO1q5xUVpPSCjJ0DFrFJ8m_9yVcBQeBvDMssQ>
+    <xmx:e0TjZ4o83KaBeBwvVoCdUAxIYHkPiX5F2jn3U_gP3ILcCbvrZmcH2ATe>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 25 Mar 2025 20:04:09 -0400 (EDT)
+Message-ID: <d46ab68c-efec-4204-b720-5fb819daa329@maowtm.org>
+Date: Wed, 26 Mar 2025 00:02:38 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	ZXwNfxCHJcqu9FQxAYhXEMMJUCdlDiJN0d/dMm3S1c9LJJZUUhBkIFZ/A+Bo6C/w5tqSN1Hd1BOo2gE3s5FfMnd2WOUT4jtyvvw+Gj6ErYdxaLMnaHgkhsJjcNalhUMHCaRX+/bszdOekMmsWfTIT4ZSBX5Q+w3uFpYymCuTNyu7IHjx96hYk/yy1GYeSZKRyrPIlbQbJsZxcuB7nTvJSNm5uUVAqXjC8irrNj8HSR//K8l52Js8KwzZVvdfDgYXKhbzZ2h8cp3AtpMMPR7zs8fbgSQH3nZD9HF+UutqGAiwfUWM0m/gEvsZiwYNyQ8ViJaxqj7btjECvrTbAy/HX4lt1p/NKR/EFvZBzzAxfaosaF+E/INROTUpR+h8/n5/ZesGLLIW5Znj89idYru5cGL5LngXZBuJWDDXJEjja1gmF1uY6DnqhmSUgyFSK0Jenf5KnMbK+DKdvU5jvQHW6slbrLBDr3lzdg8/rjgr4qbhrRbsPGAiWYs1tsmnG933YsFvOhHHM7YWvpQJVO/rKc0VFOmVj+Kba6ZrAy1rGcj7hGropegnmV6d4XZYw6d4zyE65olSnCrhBrBubtivnfY8Ifm9KnB2obADoPAPgUJu+XreOyoTcfm5EC3wvCXpefHYkyyeGAOIUb1EfaX5Rw==
-X-OriginatorOrg: ddn.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR19MB3864.namprd19.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c5ee526-62d0-4400-aef1-08dd6be7807a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Mar 2025 21:53:39.3436
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: nfLBMsF/R9Q3V3D5mACiXBLLcWkSfISOtsny7Z2TVVHlMaaWs3wVSgiAzShlgq3hGCJ+vBjO+ddThrhrKcirMQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR19MB6939
-X-BESS-ID: 1742939622-105910-21859-16488-1
-X-BESS-VER: 2019.1_20250319.1753
-X-BESS-Apparent-Source-IP: 104.47.66.46
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkZGBuZAVgZQ0CDR2CDN1NTYIs
-	3M0tjQJMk0ydAiJSk5zdw0LdUgMSVFqTYWAIf3oVlBAAAA
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.263417 [from 
-	cloudscan11-88.us-east-2a.ess.aws.cudaops.com]
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------
-	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status:1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 5/9] Define user structure for events and responses.
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Jan Kara <jack@suse.cz>, linux-security-module@vger.kernel.org,
+ Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>,
+ linux-fsdevel@vger.kernel.org, Tycho Andersen <tycho@tycho.pizza>,
+ Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+References: <cover.1741047969.git.m@maowtm.org>
+ <cde6bbf0b52710b33170f2787fdcb11538e40813.1741047969.git.m@maowtm.org>
+ <20250304.eichiDu9iu4r@digikod.net>
+ <fbb8e557-0b63-4bbe-b8ac-3f7ba2983146@maowtm.org>
+ <543c242b-0850-4398-804c-961470275c9e@maowtm.org>
+ <20250311.laiGhooquu1p@digikod.net>
+ <63681c08-dd9e-4f8f-9c41-f87762ea536c@maowtm.org>
+ <20250312.uo7QuoiZ7iu1@digikod.net>
+Content-Language: en-US
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <20250312.uo7QuoiZ7iu1@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-T24gMy8yNS8yNSAyMjozOCwgTHVpcyBIZW5yaXF1ZXMgd3JvdGU6DQo+IEhpIEJlcm5kIQ0KPiAN
-Cj4gT24gVHVlLCBNYXIgMjUgMjAyNSwgQmVybmQgU2NodWJlcnQgd3JvdGU6DQo+IA0KPj4gdGFz
-ay1BIChhcHBsaWNhdGlvbikgbWlnaHQgYmUgaW4gcmVxdWVzdF93YWl0X2Fuc3dlciBhbmQNCj4+
-IHRyeSB0byByZW1vdmUgdGhlIHJlcXVlc3Qgd2hlbiBpdCBoYXMgRlJfUEVORElORyBzZXQuDQo+
-Pg0KPj4gdGFzay1CIChhIGZ1c2Utc2VydmVyIGlvLXVyaW5nIHRhc2spIG1pZ2h0IGhhbmRsZSB0
-aGlzDQo+PiByZXF1ZXN0IHdpdGggRlVTRV9JT19VUklOR19DTURfQ09NTUlUX0FORF9GRVRDSCwg
-d2hlbg0KPj4gZmV0Y2hpbmcgdGhlIG5leHQgcmVxdWVzdCBhbmQgYWNjZXNzZWQgdGhlIHJlcSBm
-cm9tDQo+PiB0aGUgcGVuZGluZyBsaXN0IGluIGZ1c2VfdXJpbmdfZW50X2Fzc2lnbl9yZXEoKS4N
-Cj4+IFRoYXQgY29kZSBwYXRoIHdhcyBub3QgcHJvdGVjdGVkIGJ5IGZpcS0+bG9jayBhbmQgc28N
-Cj4+IG1pZ2h0IHJhY2Ugd2l0aCB0YXNrLUEuDQo+Pg0KPj4gRm9yIHNjYWxpbmcgcmVhc29ucyB3
-ZSBiZXR0ZXIgZG9uJ3QgdXNlIGZpcS0+bG9jaywgYnV0DQo+PiBhZGQgYSBoYW5kbGVyIHRvIHJl
-bW92ZSBjYW5jZWxlZCByZXF1ZXN0cyBmcm9tIHRoZSBxdWV1ZS4NCj4+DQo+PiBUaGlzIGFsc28g
-cmVtb3ZlcyB1c2FnZSBvZiBmaXEtPmxvY2sgZnJvbQ0KPj4gZnVzZV91cmluZ19hZGRfcmVxX3Rv
-X3JpbmdfZW50KCkgYWx0b2dldGhlciwgYXMgaXQgd2FzDQo+PiB0aGVyZSBqdXN0IHRvIHByb3Rl
-Y3QgYWdhaW5zdCB0aGlzIHJhY2UgYW5kIGluY29tcGxldGUuDQo+Pg0KPj4gQWxzbyBhZGRlZCBp
-cyBhIGNvbW1lbnQgd2h5IEZSX1BFTkRJTkcgaXMgbm90IGNsZWFyZWQuDQoNCkhpIEx1aXMsDQoN
-CnRoYW5rcyBmb3IgeW91ciByZXZpZXchDQoNCj4gDQo+IEF0IGZpcnN0LCB0aGlzIHBhdGNoIGxv
-b2tlZCBPSyB0byBtZS4gIEhvd2V2ZXIsIGFmdGVyIGxvb2tpbmcgY2xvc2VyLCBJJ20NCj4gbm90
-IHN1cmUgaWYgdGhpcyBkb2Vzbid0IGJyZWFrIGZ1c2VfYWJvcnRfY29ubigpLiAgQmVjYXVzZSB0
-aGF0IGZ1bmN0aW9uDQo+IGFzc3VtZXMgaXQgaXMgc2FmZSB0byB3YWxrIHRocm91Z2ggYWxsIHRo
-ZSByZXF1ZXN0cyB1c2luZyBmaXEtPmxvY2ssIGl0DQo+IGNvdWxkIHJhY2UgYWdhaW5zdCBmdXNl
-X3VyaW5nX3JlbW92ZV9wZW5kaW5nX3JlcSgpLCB3aGljaCB1c2VzIHF1ZXVlLT5sb2NrDQo+IGlu
-c3RlYWQuICBBbSBJIG1pc3Npbmcgc29tZXRoaW5nIChxdWl0ZSBsaWtlbHkhKSwgb3IgZG9lcyBm
-dXNlX2Fib3J0X2Nvbm4oKQ0KPiBhbHNvIG5lZWRzIHRvIGJlIG1vZGlmaWVkPw0KDQpJIGRvbid0
-IHRoaW5rIHRoZXJlIGlzIGFuIGlzc3VlIHdpdGggYWJvcnQNCg0KZnVzZV9hYm9ydF9jb25uKCkN
-CiAgIHNwaW5fbG9jaygmZmlxLT5sb2NrKTsNCiAgIGxpc3RfZm9yX2VhY2hfZW50cnkocmVxLCAm
-ZmlxLT5wZW5kaW5nLCBsaXN0KQ0KICAgLi4uDQogICBzcGluX3VubG9jaygmZmlxLT5sb2NrKTsN
-Cg0KICAgLi4uDQoNCiAgIGZ1c2VfdXJpbmdfYWJvcnQoZmMpOw0KDQpJdGVyYXRpbmcgZmlxLT5w
-ZW5kaW5nIHdpbGwgbm90IGhhbmRsZSBhbnkgdXJpbmcgcmVxdWVzdCwgYXMgdGhlc2UgYXJlDQpp
-biBwZXIgcXVldWUgbGlzdHMuIFRoZSBwZXIgdXJpbmcgcXVldWVzIGFyZSB0aGVuIGhhbmRsZWQg
-aW4NCmZ1c2VfdXJpbmdfYWJvcnQoKS4NCg0KSS5lLiBJIGRvbid0IHRoaW5rIHRoaXMgY29tbWl0
-IGNoYW5nZXMgYW55dGhpbmcgZm9yIGFib3J0Lg0KDQoNCg0KPiANCj4gWyBBbm90aGVyIHNjZW5h
-cmlvIHRoYXQgaXMgbm90IHByb2JsZW1hdGljLCBidXQgdGhhdCBjb3VsZCBiZWNvbWUgbWVzc3kg
-aW4NCj4gICB0aGUgZnV0dXJlIGlzIGlmIHdlIHdhbnQgdG8gYWRkIHN1cHBvcnQgZm9yIHRoZSBG
-VVNFX05PVElGWV9SRVNFTkQNCj4gICBvcGVyYXRpb24gdGhyb3VnaCB1cmluZy4gIE9idmlvdXNs
-eSwgdGhhdCdzIG5vdCBhbiBpc3N1ZSByaWdodCBub3csIGJ1dA0KPiAgIHRoaXMgcGF0Y2ggcHJv
-YmFibHkgd2lsbCBtYWtlIGl0IGhhcmRlciB0byBhZGQgdGhhdCBzdXBwb3J0LiBdDQoNCk9oIHll
-YWgsIHRoaXMgbmVlZHMgdG8gYmUgZml4ZWQuIFRob3VnaCBJIGRvbid0IHRoaW5rIHRoYXQgdGhp
-cyBwYXRjaA0KY2hhbmdlcyBtdWNoLiBXZSBuZWVkIHRvIGl0ZXJhdGUgdGhyb3VnaCB0aGUgcGVy
-IGZwcSBhbmQgYXBwbHkgdGhlDQpzYW1lIGxvZ2ljPw0KDQoNClRoYW5rcywNCkJlcm5kDQo=
+On 3/12/25 11:49, Mickaël Salaün wrote:
+> On Tue, Mar 11, 2025 at 11:18:49PM +0000, Tingmao Wang wrote:
+>> On 3/11/25 19:28, Mickaël Salaün wrote:
+>>> On Mon, Mar 10, 2025 at 12:39:04AM +0000, Tingmao Wang wrote:
+>>>> On 3/6/25 03:05, Tingmao Wang wrote:
+>>>> [...]
+>>>>> This is also motivated by the potential UX I'm thinking of. For example,
+>>>>> if a newly installed application tries to create ~/.app-name, it will be
+>>>>> much more reassuring and convenient to the user if we can show something
+>>>>> like
+>>>>>
+>>>>>        [program] wants to mkdir ~/.app-name. Allow this and future
+>>>>>        access to the new directory?
+>>>>>
+>>>>> rather than just "[program] wants to mkdir under ~". (The "Allow this
+>>>>> and future access to the new directory" bit is made possible by the
+>>>>> supervisor knowing the name of the file/directory being created, and can
+>>>>> remember them / write them out to a persistent profile etc)
+>>>>
+>>>> Another significant motivation, which I forgot to mention, is to auto-grant
+>>>> access to newly created files/sockets etc under things like /tmp,
+>>>> $XDG_RUNTIME_DIR, or ~/Downloads.
+>>>
+>>> What do you mean?  What is not currently possible?
+>>
+>> It is not currently possible with landlock to say "I will allow this
+>> application access to create and open new file/folders under this directory,
+>> change or delete the files it creates, but not touch any existing files".
+>> Landlock supervisor can make this possible (keeping track via its own state
+>> to allow future requests on the new file, or modifying the domain if we
+>> support that), but for that the supervisor has to know what file the
+>> application tried to create, hence motivating sending filename.
+> 
+> This capability would be at least inconsistent, and dangerous at worse,
+> because of policy inconsistencies over time.  A sandbox policy should be
+> seen over several invocations of the same sandbox.  See related deny
+> listing issues: https://github.com/landlock-lsm/linux/issues/28
+> 
+> Let's say a first instance of the sandbox can create files and access
+> them, but not other existing files in the same directory.  A second
+> instance of this sandbox would not be able to access the files the same
+> application created, so it will not be able to clean them if required.
+> That could be OK in the case of the ~/Downloads directory but I think it
+> would be weird for users to not be able to open their previous
+> downloaded files from the browser, whereas it was allowed before.
+> 
+> For such use case, if we want to avoid new browser instances to access
+> old downloaded files, I'd recommand to create a new download directory
+> per browser/sandbox launch.
+> 
+
+I had some more thoughts on this - In terms of inconsistency / security 
+implications of such a supervisor behaviour, I think I can identify two 
+aspects:
+
+First is policy inconsistency over different instances / restarts (like 
+the example you mentioned about not being able to open previously 
+downloaded files).  I think in this case, this is fine and would not be 
+dangerous, because it will only result in extra permission requests 
+(potentially the user having to allow the access again, or maybe the 
+sandboxer can remember it from last time and auto-allow it internally). 
+(whereas an inconsistent deny rule is more problematic because it opens 
+up the access on the next restart / for other instances, if done wrong)
+
+The second problem is that if the supervisor wants to automatically 
+permit further access to the newly created files, it can only do so by 
+remembering and comparing file names, since the new inode doesn't exist 
+yet*, and so even with mutable domains there is nothing to attach new 
+rules to.  This means that there is a potential for files/dirs to be 
+moved/created/linked behind its back onto the destination by someone 
+outside the sandbox, and this may result in the supervisor 
+unintentionally allowing access to files it doesn't want to? (like, if 
+it approves the request based solely on the belief that the file is new)
+
+*: Assuming we don't want to lock the parent dir forever until the 
+supervisor replies.
+
+While this does seem like a problem, I'm not sure how practical it would 
+be to exploit, since any further action by the sandboxed app itself on 
+the destination can/would also be blocked by landlock, and in some sense 
+we're already dead if the sandboxed app can somehow convince something 
+outside of the sandbox to create arbitrary links or move arbitrary files 
+to a destination path that would appear to belong legitimately to the 
+malicious app.  But this does raises more questions than I initially 
+thought, and shows how an overly creative supervisor may shoot itself in 
+the foot -- when filenames are involved in permission decisions the 
+semantics starts becoming a bit fuzzy, and is different from current 
+landlock which is entirely inode-based.
+
+With that said, I would still really like to make the mentioned UX 
+possible tho - allowing an app to create a file/dir and any further 
+access to it as well _feels very intuitive_, and is especially 
+convenient for cases where the first launch of an app is sandboxed.  But 
+I do recognize that this capability is less important for self-sandbox 
+scenarios (since the supervisor can pre-create all the scaffolding 
+directories it knows the app would need).
+
+I have some thoughts, none of which are perfect, and not doing any of 
+them is also an option (i.e. the supervisor just have to decide whether 
+to give permission to create files of arbitrary names or not, and can't 
+find out about any new files/dirs created (unless with some other Linux 
+mechanism)):
+
+1. Maybe there can be a mechanism for the supervisor to be invoked 
+post-creation (passing in a fd for the new file directly), then it can 
+prompt the user and either allow and optionally add the new inode to the 
+mutable domain, or it can "undo" the operation by deleting the new 
+file/dir then reject the "request".  I recognize that this is a bit 
+weird and is also only applicable to supervise mode, but it might be 
+acceptable since merely creating an empty file/dir is relatively 
+harmless (ignoring symlinks and device nodes for the moment).
+
+2. The supervisor can create the file/dir/device-node/symlink on behalf 
+of the sandboxed app, if we can pass all the relevant arguments to it in 
+the request.  Then there needs to be a mechanism for it to tell the 
+kernel to return a custom error code to the invoking program.
+(seccomp-unotify deja vu)
+
+3. We find a way to implement "allow once" which will only allow this 
+particular create request, with this name.  At least this way the 
+supervisor can implement the above mentioned feature, with the caveat 
+mentioned above.
+
+(For other's reference, I had a discussion with Mickaël and it looks 
+like we will want to have mutable domains and base the implementation of 
+landlock supervise off that, returning a -ERESTARTNOINTR from the hook 
+when access is allowed.  I will write up the discussion tomorrow / later)
+
+
+>>
+>> (I can see this kind of policy being applied to dirs like /tmp or my
+>> Downloads folder. $XDG_RUNTIME_DIR is also a sensible place for this
+>> behaviour due to the common pattern of creating a lock/pid file/socket
+>> there, although on second thought a GUI sandbox probably will want to create
+>> a private copy of that dir anyway for each app, to do dbus filtering etc)
+> 
+> An $XDG_RUNTIME_DIR per sandbox looks reasonable, but in practice we
+> also need secure proxies/portals to still share some user's resources.
+> This part should be implemented in user space because the kernel doesn't
+> know about this semantic (e.g. DBus requests).
+
 
