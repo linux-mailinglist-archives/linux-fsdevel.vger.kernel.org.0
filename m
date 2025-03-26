@@ -1,228 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-45085-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45086-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00AF3A717C1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 14:49:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68F72A7181F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 15:10:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67E557A5976
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 13:47:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24E223BA96D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 14:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6DB71F2C3B;
-	Wed, 26 Mar 2025 13:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C501F09B6;
+	Wed, 26 Mar 2025 14:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hfCx/SlJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9f+4W7sk";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EphIdENI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="weRtWAKL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BXBzmOFU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D64F1F130F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Mar 2025 13:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9282918EB0;
+	Wed, 26 Mar 2025 14:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742996880; cv=none; b=CiR7reKpYA7N3vZaASFuZT10eJFUqJsVNx4QPHQ55mAnUVIy1lMEehunAj9FSk2GwYWleY45WXgG4YIdlBXn7Hk4l1JboxHC+r30KP9QMTZaYha5u7nHAexGxzwQi6AvGDpWOwI3f0sxWMSBtLbOztsuwIciKz7lQt98IVzOOOA=
+	t=1742998173; cv=none; b=Lv4CZz1f0Boty050vk+LzngbJfHXJ9kQODKDuvhJ6VP4tlId10+DVh4fqXeYbRJ9g7R1rMP1qBUis1QnfosQkakcMsasOivJOluqxGsHIO83c+dO72Nr/UchA0cYRmtCK/6Ltr+zF8xIt1OyBA50xi18mDQBZ09PZjiEb0cNYJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742996880; c=relaxed/simple;
-	bh=1dtOfPd1grZ8FZiU2HSezoxWtSTXPWaZ7iGKFkps7PQ=;
+	s=arc-20240116; t=1742998173; c=relaxed/simple;
+	bh=FSOumSpVRhnq8fGHRsWzvox4kopjt7In8JRuzp6ndFc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gYA9Zl258H5JnlZpyaiyv3Itq92QOjqVjsvyXDOHc+kmtp+cdU5tVUYN7MXYbMBh6nWQg4NyudfVYaJll5oFBwD3Q1t97j6iauZXyx403tQ0voQj312bI5TMgC/whOLGG8j+4i3DRjkqysKWaFwVVMDYR3cfK/R4LzueAPTAOlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hfCx/SlJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9f+4W7sk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EphIdENI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=weRtWAKL; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 80A1921194;
-	Wed, 26 Mar 2025 13:47:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742996876;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LdmZiXEyh3XUCxG9Tb3RBsn5eUfWAO0Nz+jMxRAFVqI=;
-	b=hfCx/SlJdowrKBmqYc/F5rdHQRrxegUCPNF+Sqxggwsigi62Yb7z/fumbzAdmuoQzoplN3
-	Z/eXEmo0KAQWGqCC7KpOPwQr+Ey6/IKrj+/JTzKbklCneRECSl6IQA//kkam2xrJWl+RXd
-	cO90B5IgH8YQj/v45xm5hyDDDfnMdv8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742996876;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LdmZiXEyh3XUCxG9Tb3RBsn5eUfWAO0Nz+jMxRAFVqI=;
-	b=9f+4W7skWroaSFCFMv/8yb3rYba+SEOTAUEHzXDGWjxfyMN8d/gZeqSCdjuGOh3pRn6JsU
-	snh70HVEupIq/WAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742996875;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LdmZiXEyh3XUCxG9Tb3RBsn5eUfWAO0Nz+jMxRAFVqI=;
-	b=EphIdENI5r2z3U2HMUP+ybB12j94itXt6uM4p3R04paKKxNKMiznIry96nBml1jBXVZxqc
-	IdAWe7QVShdF2l7BdXmVRJaug7aMmMFXsC6zA8cNC/NqoeryA0Gzg9b289thbHdrchrVif
-	VEbqxolkTp9moOx7KPB+yamyE6WnNVk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742996875;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LdmZiXEyh3XUCxG9Tb3RBsn5eUfWAO0Nz+jMxRAFVqI=;
-	b=weRtWAKLvNG16scx/HCtwiZFGLUR+fAej4vVYDf1uqtf97eucLrnuHPXzZeH4Xro9FYvSM
-	jE2AcARjkfbR/WBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4727E1374A;
-	Wed, 26 Mar 2025 13:47:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id PSfyD4sF5GemOQAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Wed, 26 Mar 2025 13:47:55 +0000
-Date: Wed, 26 Mar 2025 14:47:49 +0100
-From: Petr Vorel <pvorel@suse.cz>
-To: Andrea Cervesato <andrea.cervesato@suse.de>
-Cc: ltp@lists.linux.it, Kent Overstreet <kent.overstreet@linux.dev>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Li Wang <liwang@redhat.com>, Cyril Hrubis <chrubis@suse.cz>
-Subject: Re: [LTP] [PATCH] ioctl_ficlone03: fix capabilities on immutable
- files
-Message-ID: <20250326134749.GA45449@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20250326-fix_ioctl_ficlone03_32bit_bcachefs-v1-1-554a0315ebf5@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JEtJbUgpRChcHUc8EebtktiLqW7PMjaSHgXkKVI7RDY8IUVV2aLjWPxU0fmr9Ef/J15hNQtghlvUs+JXrhhAx6MnLnJngSMo1FcV8xAgNVZN9uqNRNTEPMa4dHJ+EviHv0FPa8kxl9d4oalmsgdkdhvoPDFw6SnzjG8qWdgsc0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BXBzmOFU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7301C4CEE2;
+	Wed, 26 Mar 2025 14:09:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742998173;
+	bh=FSOumSpVRhnq8fGHRsWzvox4kopjt7In8JRuzp6ndFc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BXBzmOFUR3LEoBqvb4sSfmlEaTxaSZjaMhi68DJCV0IX0NCxCH8QstXwUY0pQ6kjr
+	 P/Fw2CeJ87thzb+X+1z7JH+IH5qnxbKb3lCPO5CcVn5f/Tz5Vy/RpNIm/DkKZs1sF4
+	 wa7mEc+Jx6JegU+CmQ88tEp8SLQ3dUQgEEfga0ORbTL3M4rMGz3zkmtaHhVYrT08ET
+	 zXSVHjQC5U3RoKVv4mhHbIvbzX5XJ6g0iIFov+Ugw75W2kbE+t6b4G2VtJpm7lh58b
+	 13IYrXCle8F9A+EXghbWtbIqg6iMauisWdg+Gw2+TOir3L57JesT6aQLbVKnqRAsHe
+	 I2uQ0SjxySMzA==
+Date: Wed, 26 Mar 2025 15:09:30 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>
+Cc: jack@suse.cz, hch@infradead.org, david@fromorbit.com, 
+	rafael@kernel.org, djwong@kernel.org, pavel@kernel.org, song@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, gost.dev@samsung.com
+Subject: Re: [RFC 3/6] fs: add automatic kernel fs freeze / thaw and remove
+ kthread freezing
+Message-ID: <20250326-hochnehmen-hiebe-99baf5409aa2@brauner>
+References: <20250326112220.1988619-1-mcgrof@kernel.org>
+ <20250326112220.1988619-4-mcgrof@kernel.org>
+ <827c1ff030dd3b208e7a14be63160703b67e7031.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250326-fix_ioctl_ficlone03_32bit_bcachefs-v1-1-554a0315ebf5@suse.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	HAS_REPLYTO(0.30)[pvorel@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:replyto,imap1.dmz-prg2.suse.org:helo];
-	REPLYTO_EQ_FROM(0.00)[]
-X-Spam-Score: -3.50
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <827c1ff030dd3b208e7a14be63160703b67e7031.camel@HansenPartnership.com>
 
-Hi all,
+On Wed, Mar 26, 2025 at 07:53:10AM -0400, James Bottomley wrote:
+> On Wed, 2025-03-26 at 04:22 -0700, Luis Chamberlain wrote:
+> > Add support to automatically handle freezing and thawing filesystems
+> > during the kernel's suspend/resume cycle.
+> > 
+> > This is needed so that we properly really stop IO in flight without
+> > races after userspace has been frozen. Without this we rely on
+> > kthread freezing and its semantics are loose and error prone.
+> > For instance, even though a kthread may use try_to_freeze() and end
+> > up being frozen we have no way of being sure that everything that
+> > has been spawned asynchronously from it (such as timers) have also
+> > been stopped as well.
+> > 
+> > A long term advantage of also adding filesystem freeze / thawing
+> > supporting during suspend / hibernation is that long term we may
+> > be able to eventually drop the kernel's thread freezing completely
+> > as it was originally added to stop disk IO in flight as we hibernate
+> > or suspend.
+> > 
+> > This does not remove the superfluous freezer calls on all
+> > filesystems.
+> > Each filesystem must remove all the kthread freezer stuff and peg
+> > the fs_type flags as supporting auto-freezing with the FS_AUTOFREEZE
+> > flag.
+> > 
+> > Subsequent patches remove the kthread freezer usage from each
+> > filesystem, one at a time to make all this work bisectable.
+> > Once all filesystems remove the usage of the kthread freezer we
+> > can remove the FS_AUTOFREEZE flag.
+> > 
+> > Reviewed-by: Jan Kara <jack@suse.cz>
+> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> > ---
+> >  fs/super.c             | 50
+> > ++++++++++++++++++++++++++++++++++++++++++
+> >  include/linux/fs.h     | 14 ++++++++++++
+> >  kernel/power/process.c | 15 ++++++++++++-
+> >  3 files changed, 78 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/super.c b/fs/super.c
+> > index 9995546cf159..7428f0b2251c 100644
+> > --- a/fs/super.c
+> > +++ b/fs/super.c
+> > @@ -2279,3 +2279,53 @@ int sb_init_dio_done_wq(struct super_block
+> > *sb)
+> >  	return 0;
+> >  }
+> >  EXPORT_SYMBOL_GPL(sb_init_dio_done_wq);
+> > +
+> > +#ifdef CONFIG_PM_SLEEP
+> > +static bool super_should_freeze(struct super_block *sb)
+> > +{
+> > +	if (!(sb->s_type->fs_flags & FS_AUTOFREEZE))
+> > +		return false;
+> > +	/*
+> > +	 * We don't freeze virtual filesystems, we skip those
+> > filesystems with
+> > +	 * no backing device.
+> > +	 */
+> > +	if (sb->s_bdi == &noop_backing_dev_info)
+> > +		return false;
+> 
+> 
+> This logic won't work for me because efivarfs is a pseudofilesystem and
+> will have a noop bdi (or simply a null s_bdev, which is easier to check
+> for).  I was thinking of allowing freeze/thaw to continue for a s_bdev
+> == NULL filesystem if it provided a freeze or thaw callback, which will
+> cover efivarfs.
 
-[ Cc Kent and other filesystem folks to be sure we don't hide a bug ]
+Filesystem freezing isn't dependent on backing devices. I'm not sure
+where that impression comes from. The FS_AUTOFREEZE shouldn't be
+necessary once all filesystems have been fixed up (which I guess this is
+about). The logic should just be similar to what we do for the freeze
+ioctl.
 
-> From: Andrea Cervesato <andrea.cervesato@suse.com>
+IOW, we skip filesystems without any freeze method. That excludes any fs
+that isn't prepared to be frozen:
 
-> Make sure that capabilities requirements are satisfied when accessing
-> immutable files. On OpenSUSE Tumbleweed 32bit bcachefs fails with the
-> following error due to missing capabilities:
+The easiest way is very likely to give efivarfs a ->freeze_super() and
+->thaw_super() method since it likely doesn't all of the fanciness that
+freeze_super() adds.
 
-> tst_test.c:1833: TINFO: === Testing on bcachefs ===
-> ..
-> ioctl_ficlone03.c:74: TBROK: ioctl .. failed: ENOTTY (25)
-> ioctl_ficlone03.c:89: TWARN: ioctl ..  failed: ENOTTY (25)
-> ioctl_ficlone03.c:91: TWARN: ioctl ..  failed: ENOTTY (25)
-> ioctl_ficlone03.c:98: TWARN: close(-1) failed: EBADF (9)
+Then we have two approaches:
 
-> Introduce CAP_LINUX_IMMUTABLE capability to make sure that test won't
-> fail on other systems as well.
+(1) Change the iterator to take a reference while holding the super_lock() and
+    then calling a helper to freeze the fs.
+(2) Pass the information that s_umount is held down to the freeze methods.
 
-> Signed-off-by: Andrea Cervesato <andrea.cervesato@suse.com>
-> ---
->  testcases/kernel/syscalls/ioctl/ioctl_ficlone03.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+For example (2) would be something like:
 
-> diff --git a/testcases/kernel/syscalls/ioctl/ioctl_ficlone03.c b/testcases/kernel/syscalls/ioctl/ioctl_ficlone03.c
-> index 6a9d270d9fb56f3a263f0aed976f62c4576e6a5f..6716423d9c96d9fc1d433f28e0ae1511b912ae2c 100644
-> --- a/testcases/kernel/syscalls/ioctl/ioctl_ficlone03.c
-> +++ b/testcases/kernel/syscalls/ioctl/ioctl_ficlone03.c
-> @@ -122,5 +122,9 @@ static struct tst_test test = {
->  	.bufs = (struct tst_buffers []) {
->  		{&clone_range, .size = sizeof(struct file_clone_range)},
->  		{},
-> -	}
-> +	},
-> +	.caps = (struct tst_cap []) {
-> +		TST_CAP(TST_CAP_REQ, CAP_LINUX_IMMUTABLE),
-> +		{}
-> +	},
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index be3ad155ec9f..7ad515ad6934 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2272,6 +2272,7 @@ enum freeze_holder {
+        FREEZE_HOLDER_KERNEL    = (1U << 0),
+        FREEZE_HOLDER_USERSPACE = (1U << 1),
+        FREEZE_MAY_NEST         = (1U << 2),
++       FREEZE_SUPER_LOCKED     = (1U << 3),
+ };
 
-Reviewed-by: Petr Vorel <pvorel@suse.cz>
+ struct super_operations {
 
-LGTM, obviously it is CAP_LINUX_IMMUTABLE related.
-
-This looks like fs/bcachefs/fs-ioctl.c
-
-static int bch2_inode_flags_set(struct btree_trans *trans,
-				struct bch_inode_info *inode,
-				struct bch_inode_unpacked *bi,
-				void *p)
+static int freeze_super_locked(struct file *filp)
 {
-	...
-	if (((newflags ^ oldflags) & (BCH_INODE_append|BCH_INODE_immutable)) &&
-	    !capable(CAP_LINUX_IMMUTABLE))
-		return -EPERM;
+	/* If filesystem doesn't support freeze feature, return. */
+	if (sb->s_op->freeze_fs == NULL && sb->s_op->freeze_super == NULL)
+		return 0;
 
+	if (sb->s_op->freeze_super)
+		return sb->s_op->freeze_super(sb, FREEZE_HOLDER_KERNEL | FREEZE_SUPER_LOCKED);
+	return freeze_super(sb, FREEZE_HOLDER_KERNEL | FREEZE_SUPER_LOCKED);
+}
 
-We don't test on vfat and exfat. If I try to do it fail the same way (bcachefs,
-fat, exfat and ocfs2 use custom handler for FAT_IOCTL_SET_ATTRIBUTES).
+Why do you care about efivarfs taking part in system suspend though?
 
-I wonder why it does not fail for generic VFS fs/ioctl.c used by Btrfs and XFS:
+> 
+> > +
+> > +	return true;
+> > +}
+> > +
+> > +int fs_suspend_freeze_sb(struct super_block *sb, void *priv)
+> > +{
+> > +	int error = 0;
+> > +
+> > +	if (!super_should_freeze(sb))
+> > +		goto out;
+> > +
+> > +	pr_info("%s (%s): freezing\n", sb->s_type->name, sb->s_id);
+> > +
+> > +	error = freeze_super(sb, false);
+> 
+> This is actually not wholly correct now.  If the fs provides a sb-
+> >freeze() method, you should use that instead of freeze_super() ... see
+> how fs_bdev_freeze() is doing it.
 
-/*
- * Generic function to check FS_IOC_FSSETXATTR/FS_IOC_SETFLAGS values and reject
- * any invalid configurations.
- *
- * Note: must be called with inode lock held.
- */
-static int fileattr_set_prepare(struct inode *inode,
-			      const struct fileattr *old_ma,
-			      struct fileattr *fa)
-{
-	int err;
+> 
+> Additionally, the first thing freeze_super() does is take the
+> superblock lock exclusively.  Since you've already taken it exclusively
+> in your iterate super, how does this not deadlock?
 
-	/*
-	 * The IMMUTABLE and APPEND_ONLY flags can only be changed by
-	 * the relevant capability.
-	 */
-	if ((fa->flags ^ old_ma->flags) & (FS_APPEND_FL | FS_IMMUTABLE_FL) &&
-	    !capable(CAP_LINUX_IMMUTABLE))
-		return -EPERM;
-
-
-Kind regards,
-Petr
-
->  };
-
-> ---
-> base-commit: 753bd13472d4be44eb70ff183b007fe9c5fffa07
-> change-id: 20250326-fix_ioctl_ficlone03_32bit_bcachefs-2ec15bd6c0c6
-
-> Best regards,
+It will deadlock.
 
