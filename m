@@ -1,138 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-45097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45098-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB3F8A71C37
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 17:49:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2933A71CBB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 18:13:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F7507A337D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 16:48:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 126F07A5460
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 17:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465A71F5433;
-	Wed, 26 Mar 2025 16:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0444F1F8922;
+	Wed, 26 Mar 2025 17:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JyS3UwKK"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2ulq3LNU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2511F63DD;
-	Wed, 26 Mar 2025 16:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7E81F472E
+	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Mar 2025 17:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743007744; cv=none; b=Le0/E0HzC/TFtzoNmCVyh2ZIQ1M9F4dD1cgdXMtHUq9MckSu7WqrF1t10vSEA+3gPKgF3bhgXmYMx8O3RvsMRvr/SSHxfFlM9GVIXYJPFdMZSMDzp5IaqIP+/S1YJTrLukQTrFzmK04dZ72uW5bZ+cT0EEX5AYL1axqkfj+VbuE=
+	t=1743009189; cv=none; b=RPZehEFpH4iSRJhuZhKmBdmfe0qY6eo1pro5nBdz1xRA1JfG/PgSf8zX1ykQ7Jdgb8emlpcqQDqMIW3B7u4ZNRYKIEuiytctV3nRl3LFntnvHBUPbqJaHJ+pkmcmQTLedg+RfzOtdID/Xv5R7I9YTf7qhvbg29D1NdRtIhRx3t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743007744; c=relaxed/simple;
-	bh=/j6PcOoWyDgRrb4mDoUwSYJNqXaS+qewMovhxAHvQ1Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pXWvz6sc4i8TlOk1FF3l72bNjgcunqboMiQCFjHG8bbzKgzPkU1eRIW8Dv4y8Voj3hPrMMjWTlwzoN54pYKuLtJyBEkUMlDMHZDcF1uO098Eik3aLR+XLEPdLhlFskKzfJ95VM/88TGzXj2wxoCPWEz0JMWk4XkuEyaPJXdES1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JyS3UwKK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76AF7C4CEE8;
-	Wed, 26 Mar 2025 16:49:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743007744;
-	bh=/j6PcOoWyDgRrb4mDoUwSYJNqXaS+qewMovhxAHvQ1Q=;
-	h=From:Date:Subject:To:Cc:From;
-	b=JyS3UwKK3WkGtk39qAWuY7N9POEno+elq8+Yn63ObrElD0PH/fWZWWgGKIAG64Psf
-	 nwJMov2csx1azoWJ8WSDwB4w4eKxd+zoxgBe2KvFPIJpzgixDr2E9DoBBRVKJOqAWg
-	 2TFDMDu7iWVWQmdSkPQ29vYEvlSIO7lugoJP0nKlpOfIrJDkKeQSpaDwjjVNUWRio4
-	 oU8O6aOloQYP0kP1yygoP4kDARVAs60jiyLdtK3U+ftX07fJdzfBtA1npzcSUu1Ola
-	 IhLFp8DNVg5hEffOYMU9HzGkBUyQuu126xwpH0jZ98wXW/vlSnCdzqq1rNf6DtYm+P
-	 59gictiW/9nxg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Wed, 26 Mar 2025 17:45:30 +0100
-Subject: [PATCH] MAINTAINERS: configfs: add Andreas Hindborg as maintainer
+	s=arc-20240116; t=1743009189; c=relaxed/simple;
+	bh=tU4zVqjsmoIfqvS43cfmupX6NzIQQKSAzd5QQ/IuB4g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZQFdl28AP95XzISZqksgOb1hFRCczYPvjAsW8vEA81srb0urm1SrCCdkm3p4ZtqW/xEJ+u7kb/K2CgXx6WLmURxRQd1uMMjFnkGESDqLhg9qZJI8iR2rMPa+vNyauoSngqDrAdYMq+4a8HJaJh4qrv7qOL72ZFEI9hdNen3hPlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2ulq3LNU; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2264c9d0295so12315ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Mar 2025 10:13:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1743009187; x=1743613987; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tU4zVqjsmoIfqvS43cfmupX6NzIQQKSAzd5QQ/IuB4g=;
+        b=2ulq3LNUbq8QlmlGGFHsJyljuyR3endfuqLV47tEye+OYOrJwCV85qm4mkFkiAZi0U
+         0c4XJv7YGjfFcA7rB0v3qD4P1fhGIvN0X4AtFZmGJ4VIsi93w3bjFz6xu8DJTjql3JJk
+         +QKDyBwF2yuvM3X9Qzh5dBImn1IHAX+stvGP8t62JN+ag3D6HfluNYbG1G10obJA7kln
+         HnPEWvyiAZ6aZMlWfQMaPzq0ceoh7FJTK+iJfqU7tv4VnPDW4JYcU8BK6lL8m7EYLgNQ
+         nvqMPmo0IrDpxmnNV8iNmvojvksxKbqP1i2IpUB8QfzKgbcfYY2ag7hXW4oSK3lutrYB
+         HxWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743009187; x=1743613987;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tU4zVqjsmoIfqvS43cfmupX6NzIQQKSAzd5QQ/IuB4g=;
+        b=IwRTuSyKhTwyjvymdhys7rkmIiBGypFQ4k0yd3CtSr7m8TUDC2i8zDxVI6ZhIwu/KD
+         c9M20sepkOrdHbTJUuYLM27kIEaVJxhE095KVPARWCjMa3NiytI8q8cFWtkrqYzXuuok
+         B3mWi6iKQ0IBrHpM+v2EN78/drAW06xNsfcbSozwpmXGqgizT28+StHjLKeffTmdpOhS
+         qtgkK3WuQW1UJ4POIanjTOEvm6scxI6OIoAfDblknSVG+2BvHwZPFpZq9d/lEZGs5i1O
+         op1QBDQ/ilDVzpCj1XB22/bf6LnHRrGgzv5RlG0cdGjvCqk2QkBmXuovt7RGK8eymJnF
+         lSKA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9E9o1TC+p0fph6b3xvDmk8h5KPFwz0WfGy4eAOeRPpknhzP9TqkFcYKFvJRn4v8NJwYZ1f/We76F0AZvY@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXM3qXqXx5GDRp0LEIt7MbMha6zEry+kO9DxwBaUvJUPw5s8CX
+	mEjjAwY/+0trXEoMl4pbVe3cv0BVvpHK9FWn/DQcnd6HJ5l7W/bRkzmLIUkb//AqN/DMBxt0Cpb
+	EHxPLMkS4F2Hok0LiOcY8+Sv92vUrwV0tgSEA
+X-Gm-Gg: ASbGncvp3sJQHmkU+JmyzIuRPxt+2Isj1Gvnth2RrMIdQzZ9Plw095HawTKlfBSyKeA
+	6AmV7ROnHebqMIDKembKWtedZNYOLiNrQ/MACzICuwNlqRlDaTbwep1tEd5YaePeDBJ86FjbCKN
+	eb2TzZGYzvcBa8CWFDPlQBadTDT8vJI4/AfTCCeMPcck31mGqK3aA0+3sX
+X-Google-Smtp-Source: AGHT+IFvk39LnkeMkX25OX1JcG8F54jZn2W19dDnfX7iWusa4FMz7ouKzjv48eaBIVtkQbCfKLgP4xKq2VNnjn++uzA=
+X-Received: by 2002:a17:903:13d0:b0:223:37ec:63be with SMTP id
+ d9443c01a7336-227f365b723mr3316495ad.4.1743009186911; Wed, 26 Mar 2025
+ 10:13:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250326-configfs-maintainer-v1-1-b175189fa27b@kernel.org>
-X-B4-Tracking: v=1; b=H4sIACkv5GcC/x2MQQqAIBAAvyJ7TjDTor4SHcRW20MaGhGIf086z
- GEOMwUyJsIMCyuQ8KFMMTTpOwb2MMEjp705SCG1GOTIbQyOvMv8NBTuBiY+oxJ2Etoop6GVV0J
- H739dt1o/1dN962UAAAA=
-X-Change-ID: 20250326-configfs-maintainer-9e40c705a4f5
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Cc: Breno Leitao <leitao@debian.org>, 
- Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1620; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=/j6PcOoWyDgRrb4mDoUwSYJNqXaS+qewMovhxAHvQ1Q=;
- b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBn5C87y6IUdxQ9EJ3NhSrjxdqXDgFE/kOR30jGs
- xF2EKadJSaJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCZ+QvOwAKCRDhuBo+eShj
- dy8GD/oCrGI/gskZiZMr9Nuvx5Ycpzijn/pIDaqkH8RyHRLyWThcn3B/w2xOVGnBxbf7ahWesVE
- yOnnxX1FVr5yC1PHsPIXeWgnfLplYgtYNkvNkOBhB9kBxRchVvUO4l24g0iHNmCwl6khmebED8l
- +xh5otRCFy9WZ0G9l3xbVk3sVwXtKd77lWInSZ1ITCSrFpxA5G9GvIHsUIuqXmPA+by4qRo9tF9
- wLk6JNrDjB5RATDlHJ07QIbbFrEYLju/Il4rYwJvN7om5buz12agrBIP1GHo8hRdy3ZFInMHp+X
- E2b130MpYH14r5Hx6LajYj9u8i51e7voA1He0QkwKzJV5UZ9XKiyzcCEincMEiAYMy4yOoTDLXA
- UtdG4jZZweIHaJWMOdobXQH6Sx8TpvkCaB1f1Yv6o4pJ1LvfMYxAaqKCTuElyqoUYjgO7I2Z/kw
- zd6yaH5dCpFP5cqnRifmcm858vd2MOZ6ipcseZaEtYeZfEP/41RSLKPR5wJTpHnAewTBISoLjnK
- 8sFnMh/iyzQp8iU2LIsWTbmRr3yT4pfB0tf++Q1XH8JrelqyCce+T9JNCZ0dgWINTIbS3cZLMjQ
- 8KRlp7PPQ/CtrHDULtlkgkLF2GjnYme4HnAMrsNgf76cbpCp4TTJTVf+3CG4SBsVutK0qb2K906
- vHQZFE090OAxXeg==
-X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
- fpr=3108C10F46872E248D1FB221376EB100563EF7A7
+References: <20250325015617.23455-1-pcc@google.com> <202503251242.FFDB6940@keescook>
+In-Reply-To: <202503251242.FFDB6940@keescook>
+From: Peter Collingbourne <pcc@google.com>
+Date: Wed, 26 Mar 2025 10:12:54 -0700
+X-Gm-Features: AQ5f1JrGljJm4PeWBnKXpI12td-rU59plY-cd4apU9o-HArGlIBfJwqu8UHG7l4
+Message-ID: <CAMn1gO5Ero80wm=P3_-BQAFPuefUr_VUBV-msTN-FD6oL_1Gig@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] string: Add load_unaligned_zeropad() code path to sized_strscpy()
+To: Kees Cook <kees@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Shevchenko <andy@kernel.org>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Mark Rutland <mark.rutland@arm.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Remove Joel Becker as maintainer of configfs and add Andreas Hindborg as
-maintainer and Breno Leitao as reviewer. Also update the tree URL.
+On Tue, Mar 25, 2025 at 12:43=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
+>
+> On Mon, Mar 24, 2025 at 06:56:13PM -0700, Peter Collingbourne wrote:
+> > This series fixes an issue where strscpy() would sometimes trigger
+> > a false positive KASAN report with MTE.
+>
+> Thanks! Should this go via string API (me) or KASAN?
 
-Add an entry for Joel Becker to CREDITS.
+Let's take this via string API.
 
-Acked-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
----
-As recommended in plenary session at LSF/MM plenary session on March 25 2025.
-Joel is no longer active in the community.
----
- CREDITS     | 4 ++++
- MAINTAINERS | 5 +++--
- 2 files changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/CREDITS b/CREDITS
-index 53d11a46fd69..3ec620f7260b 100644
---- a/CREDITS
-+++ b/CREDITS
-@@ -317,6 +317,10 @@ S: Code 930.5, Goddard Space Flight Center
- S: Greenbelt, Maryland 20771
- S: USA
- 
-+N: Joel Becker
-+E: jlbec@evilplan.org
-+D: configfs
-+
- N: Adam Belay
- E: ambx1@neo.rr.com
- D: Linux Plug and Play Support
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 00e94bec401e..ff62b2bff99a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5860,9 +5860,10 @@ S:	Maintained
- F:	Documentation/security/snp-tdx-threat-model.rst
- 
- CONFIGFS
--M:	Joel Becker <jlbec@evilplan.org>
-+M:	Andreas Hindborg <a.hindborg@kernel.org>
-+R:	Breno Leitao <leitao@debian.org>
- S:	Supported
--T:	git git://git.infradead.org/users/hch/configfs.git
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/a.hindborg/linux.git configfs-next
- F:	fs/configfs/
- F:	include/linux/configfs.h
- F:	samples/configfs/
-
----
-base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
-change-id: 20250326-configfs-maintainer-9e40c705a4f5
-
-Best regards,
--- 
-Andreas Hindborg <a.hindborg@kernel.org>
-
-
+Peter
 
