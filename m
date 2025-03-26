@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-45073-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45072-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6675A7159D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 12:22:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 015FFA7159C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 12:22:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D86857A38D2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 11:21:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF4C2188B8E9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 11:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67641DE3B5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8CFF1DE2A9;
 	Wed, 26 Mar 2025 11:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VrLxQf1m"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="46lg4Qo4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65D61D7E54;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F2BEEC3;
 	Wed, 26 Mar 2025 11:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742988149; cv=none; b=NGu2YS679PkKrsvzaUAiJelVaMlCWNdHLaCf38LySLGaO6Je+6S0N65Mao1ANBxgtnYtl7HYfqGU80GStmLgPq1OFFSMd4CerzriH4fJQv8zpAlmt5+5bMNdtcAbbeuTesmHkkvVAz5ricqenb1+I4pz90d4/B5f9ttCCdCsjfk=
+	t=1742988149; cv=none; b=X2EfzP9GyL8c9ZX5oralJjXgHs0pTrkLrLhxGgv/D7hz1sLBT9g9CJBFB6kejosA8dgtPHhjEYF8Z6t0lP70qeKcClPrNvM/g2OuedJLK9VIGOfz6l35nYrvI8HKh0pCYD5xs4l28hffl9GWxm22rayr1/iBxxUOYI38tmc2O38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742988149; c=relaxed/simple;
-	bh=hQmD8Ne/zZ/7oILam905jmXxWAOBDGDDhXw5kV1cutY=;
+	bh=GqQAE2gI9jpYg3gMwXkCpEnwEG0pEMzVmX2dEBpK1U8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mCLvgiigdj9O1f43b7fl5FttciLMLQYRf5PiEGfrBPPxtnKUzeoqjgtjGUXY2yNfPSvd7UoE5ujq8XP7uTjKmlJjhQ4Yl5oMlqPOrH4b5lMKDxTOkBksfMDzYYITEoRowCyY63yRPc8et/arJ7VnadMZ3eliMQ9xMsK7MXsigR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VrLxQf1m; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=POgYJAvf4GxxnEIJDa9PFOrXMU25BsiOr7lavuDkS8TLAyFPAYTKHkTwUc9h8BNc9XtmbC6MmoMcpiw7yq/m3SqFRjcuPsY+FL4bKDjsOyw4iOiFgeHip93244+wYa4fDyinC1MRCXLRyC3h5j46RSZ26sNKC/HRUDGdxj3/6Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=46lg4Qo4; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=pdczgHoQ3gJoGYNTPNCpioUWf2FhTA/MekqoAmjq6go=; b=VrLxQf1mv7g2AsZ9CjHeHgjGTp
-	coHNkOSAclf5NumdxeToua2tseVq70wGIMOAmROTVso5X/mSMQFDC84jspLT6HMclEWIO+BhsLwX2
-	0R0TLQz0+AokaMad0DJBq0s6/NQExIFog8syQqc0koMymLuEZgT1wHe0Sh1OtmkzalHKhIzcuOzU2
-	LKXaDsBr+cLlMllkXm7BCy+4zDMdlo+MQinOmGzTI8Jaa9g5rsZgIZ8+tIW25sRYRxK9MWRHWFOjJ
-	OxinKT8FQQHM2IyY6lfiDPoBcM8aC3/GCWUZdVNjs+SZsg7iZ+jUhrcvZIgFEIPR6JcbKNxpyck0B
-	wTwG/+rw==;
+	bh=d0u73LY7N6aNB4yHaOSQ3RxfhJSx72C3Op6MMJeJuck=; b=46lg4Qo4UazkYkHkgsh8m6mAjk
+	WRSWIz5C4Rel7jWx3B95q5QuEtiCg9gMLXHdnjX3lk7xbtrd2j8lXZeXJlpynb+5hWRjBmvuNghtA
+	p2BaXSqMYkyBXIfn7rwL3LHtFdsPhsDujTeGXnb3EU7by29LgkPr44fCcd1TXM20bFyaUFQJwJ9my
+	OGMFSCxu1ov1IbzEvxDqB/yZ3vuA016Y7F/5ETa4SFq3oFecg7D/Ctgg/W9slCF7b4B9Uwf7erPPU
+	6IdZSsnwvCHuXWVVWD50/lVKtYZUP9y2ji3GigrY47BAbJ6wxkYHlwafsva1bZ32FFGklnj4JPKay
+	4yrqtGhg==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1txOq0-00000008LM8-3O8f;
+	id 1txOq0-00000008LMC-3XEq;
 	Wed, 26 Mar 2025 11:22:24 +0000
 From: Luis Chamberlain <mcgrof@kernel.org>
 To: jack@suse.cz,
@@ -57,9 +57,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	gost.dev@samsung.com,
 	Luis Chamberlain <mcgrof@kernel.org>
-Subject: [RFC 5/6] btrfs: replace kthread freezing with auto fs freezing
-Date: Wed, 26 Mar 2025 04:22:19 -0700
-Message-ID: <20250326112220.1988619-6-mcgrof@kernel.org>
+Subject: [RFC 6/6] xfs: replace kthread freezing with auto fs freezing
+Date: Wed, 26 Mar 2025 04:22:20 -0700
+Message-ID: <20250326112220.1988619-7-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250326112220.1988619-1-mcgrof@kernel.org>
 References: <20250326112220.1988619-1-mcgrof@kernel.org>
@@ -86,7 +86,7 @@ it knows better than how the VFS handles it.
 The following Coccinelle rule was used as to remove the now superfluous
 freezer calls:
 
-make coccicheck MODE=patch SPFLAGS="--in-place --no-show-diff" COCCI=./fs-freeze-cleanup.cocci M=fs/btrfs
+make coccicheck MODE=patch SPFLAGS="--in-place --no-show-diff" COCCI=./fs-freeze-cleanup.cocci M=fs/xfs
 
 virtual patch
 
@@ -183,52 +183,189 @@ struct file_system_type fs_type = {
 Generated-by: Coccinelle SmPL
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- fs/btrfs/disk-io.c | 4 ++--
- fs/btrfs/scrub.c   | 2 +-
- fs/btrfs/super.c   | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ fs/xfs/xfs_discard.c   |  2 +-
+ fs/xfs/xfs_log.c       |  3 +--
+ fs/xfs/xfs_log_cil.c   |  2 +-
+ fs/xfs/xfs_mru_cache.c |  2 +-
+ fs/xfs/xfs_pwork.c     |  2 +-
+ fs/xfs/xfs_super.c     | 16 ++++++++--------
+ fs/xfs/xfs_trans_ail.c |  3 ---
+ fs/xfs/xfs_zone_gc.c   |  2 --
+ 8 files changed, 13 insertions(+), 19 deletions(-)
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 3dd555db3d32..03332f914be7 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -1962,8 +1962,8 @@ static void btrfs_init_qgroup(struct btrfs_fs_info *fs_info)
- static int btrfs_init_workqueues(struct btrfs_fs_info *fs_info)
+diff --git a/fs/xfs/xfs_discard.c b/fs/xfs/xfs_discard.c
+index c1a306268ae4..1596cf0ecb9b 100644
+--- a/fs/xfs/xfs_discard.c
++++ b/fs/xfs/xfs_discard.c
+@@ -333,7 +333,7 @@ xfs_trim_gather_extents(
+ static bool
+ xfs_trim_should_stop(void)
  {
- 	u32 max_active = fs_info->thread_pool_size;
--	unsigned int flags = WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_UNBOUND;
--	unsigned int ordered_flags = WQ_MEM_RECLAIM | WQ_FREEZABLE;
-+	unsigned int flags = WQ_MEM_RECLAIM | WQ_UNBOUND;
-+	unsigned int ordered_flags = WQ_MEM_RECLAIM;
+-	return fatal_signal_pending(current) || freezing(current);
++	return fatal_signal_pending(current);
+ }
  
- 	fs_info->workers =
- 		btrfs_alloc_workqueue(fs_info, "worker", flags, max_active, 16);
-diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
-index ae34353a34d9..52ef84923645 100644
---- a/fs/btrfs/scrub.c
-+++ b/fs/btrfs/scrub.c
-@@ -2811,7 +2811,7 @@ static void scrub_workers_put(struct btrfs_fs_info *fs_info)
- static noinline_for_stack int scrub_workers_get(struct btrfs_fs_info *fs_info)
+ /*
+diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
+index 6493bdb57351..317f6db292fb 100644
+--- a/fs/xfs/xfs_log.c
++++ b/fs/xfs/xfs_log.c
+@@ -1489,8 +1489,7 @@ xlog_alloc_log(
+ 	log->l_iclog->ic_prev = prev_iclog;	/* re-write 1st prev ptr */
+ 
+ 	log->l_ioend_workqueue = alloc_workqueue("xfs-log/%s",
+-			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM |
+-				    WQ_HIGHPRI),
++			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_HIGHPRI),
+ 			0, mp->m_super->s_id);
+ 	if (!log->l_ioend_workqueue)
+ 		goto out_free_iclog;
+diff --git a/fs/xfs/xfs_log_cil.c b/fs/xfs/xfs_log_cil.c
+index 1ca406ec1b40..8ff5d68394e6 100644
+--- a/fs/xfs/xfs_log_cil.c
++++ b/fs/xfs/xfs_log_cil.c
+@@ -1932,7 +1932,7 @@ xlog_cil_init(
+ 	 * concurrency the log spinlocks will be exposed to.
+ 	 */
+ 	cil->xc_push_wq = alloc_workqueue("xfs-cil/%s",
+-			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_UNBOUND),
++			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_UNBOUND),
+ 			4, log->l_mp->m_super->s_id);
+ 	if (!cil->xc_push_wq)
+ 		goto out_destroy_cil;
+diff --git a/fs/xfs/xfs_mru_cache.c b/fs/xfs/xfs_mru_cache.c
+index d0f5b403bdbe..c9a49c6f6129 100644
+--- a/fs/xfs/xfs_mru_cache.c
++++ b/fs/xfs/xfs_mru_cache.c
+@@ -293,7 +293,7 @@ int
+ xfs_mru_cache_init(void)
  {
- 	struct workqueue_struct *scrub_workers = NULL;
--	unsigned int flags = WQ_FREEZABLE | WQ_UNBOUND;
-+	unsigned int flags = WQ_UNBOUND;
- 	int max_active = fs_info->thread_pool_size;
- 	int ret = -ENOMEM;
+ 	xfs_mru_reap_wq = alloc_workqueue("xfs_mru_cache",
+-			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_FREEZABLE), 1);
++			XFS_WQFLAGS(WQ_MEM_RECLAIM), 1);
+ 	if (!xfs_mru_reap_wq)
+ 		return -ENOMEM;
+ 	return 0;
+diff --git a/fs/xfs/xfs_pwork.c b/fs/xfs/xfs_pwork.c
+index c283b801cc5d..3f5bf53f8778 100644
+--- a/fs/xfs/xfs_pwork.c
++++ b/fs/xfs/xfs_pwork.c
+@@ -72,7 +72,7 @@ xfs_pwork_init(
+ 	trace_xfs_pwork_init(mp, nr_threads, current->pid);
  
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index 40709e2a44fc..153e8a2d7fbb 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -2178,7 +2178,7 @@ static struct file_system_type btrfs_fs_type = {
- 	.parameters		= btrfs_fs_parameters,
- 	.kill_sb		= btrfs_kill_super,
- 	.fs_flags		= FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA |
--				  FS_ALLOW_IDMAP | FS_MGTIME,
-+				  FS_ALLOW_IDMAP | FS_MGTIME | FS_AUTOFREEZE,
-  };
+ 	pctl->wq = alloc_workqueue("%s-%d",
+-			WQ_UNBOUND | WQ_SYSFS | WQ_FREEZABLE, nr_threads, tag,
++			WQ_UNBOUND | WQ_SYSFS, nr_threads, tag,
+ 			current->pid);
+ 	if (!pctl->wq)
+ 		return -ENOMEM;
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index b2dd0c0bf509..4fae48072ef3 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -565,37 +565,37 @@ xfs_init_mount_workqueues(
+ 	struct xfs_mount	*mp)
+ {
+ 	mp->m_buf_workqueue = alloc_workqueue("xfs-buf/%s",
+-			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
++			XFS_WQFLAGS(WQ_MEM_RECLAIM),
+ 			1, mp->m_super->s_id);
+ 	if (!mp->m_buf_workqueue)
+ 		goto out;
  
- MODULE_ALIAS_FS("btrfs");
+ 	mp->m_unwritten_workqueue = alloc_workqueue("xfs-conv/%s",
+-			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
++			XFS_WQFLAGS(WQ_MEM_RECLAIM),
+ 			0, mp->m_super->s_id);
+ 	if (!mp->m_unwritten_workqueue)
+ 		goto out_destroy_buf;
+ 
+ 	mp->m_reclaim_workqueue = alloc_workqueue("xfs-reclaim/%s",
+-			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
++			XFS_WQFLAGS(WQ_MEM_RECLAIM),
+ 			0, mp->m_super->s_id);
+ 	if (!mp->m_reclaim_workqueue)
+ 		goto out_destroy_unwritten;
+ 
+ 	mp->m_blockgc_wq = alloc_workqueue("xfs-blockgc/%s",
+-			XFS_WQFLAGS(WQ_UNBOUND | WQ_FREEZABLE | WQ_MEM_RECLAIM),
++			XFS_WQFLAGS(WQ_UNBOUND | WQ_MEM_RECLAIM),
+ 			0, mp->m_super->s_id);
+ 	if (!mp->m_blockgc_wq)
+ 		goto out_destroy_reclaim;
+ 
+ 	mp->m_inodegc_wq = alloc_workqueue("xfs-inodegc/%s",
+-			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
++			XFS_WQFLAGS(WQ_MEM_RECLAIM),
+ 			1, mp->m_super->s_id);
+ 	if (!mp->m_inodegc_wq)
+ 		goto out_destroy_blockgc;
+ 
+ 	mp->m_sync_workqueue = alloc_workqueue("xfs-sync/%s",
+-			XFS_WQFLAGS(WQ_FREEZABLE), 0, mp->m_super->s_id);
++			XFS_WQFLAGS(0), 0, mp->m_super->s_id);
+ 	if (!mp->m_sync_workqueue)
+ 		goto out_destroy_inodegc;
+ 
+@@ -2228,7 +2228,7 @@ static struct file_system_type xfs_fs_type = {
+ 	.parameters		= xfs_fs_parameters,
+ 	.kill_sb		= xfs_kill_sb,
+ 	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME |
+-				  FS_LBS,
++				  FS_LBS | FS_AUTOFREEZE,
+ };
+ MODULE_ALIAS_FS("xfs");
+ 
+@@ -2500,7 +2500,7 @@ xfs_init_workqueues(void)
+ 	 * max_active value for this workqueue.
+ 	 */
+ 	xfs_alloc_wq = alloc_workqueue("xfsalloc",
+-			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_FREEZABLE), 0);
++			XFS_WQFLAGS(WQ_MEM_RECLAIM), 0);
+ 	if (!xfs_alloc_wq)
+ 		return -ENOMEM;
+ 
+diff --git a/fs/xfs/xfs_trans_ail.c b/fs/xfs/xfs_trans_ail.c
+index 0fcb1828e598..ad8183db0780 100644
+--- a/fs/xfs/xfs_trans_ail.c
++++ b/fs/xfs/xfs_trans_ail.c
+@@ -636,7 +636,6 @@ xfsaild(
+ 	unsigned int	noreclaim_flag;
+ 
+ 	noreclaim_flag = memalloc_noreclaim_save();
+-	set_freezable();
+ 
+ 	while (1) {
+ 		/*
+@@ -695,8 +694,6 @@ xfsaild(
+ 
+ 		__set_current_state(TASK_RUNNING);
+ 
+-		try_to_freeze();
+-
+ 		tout = xfsaild_push(ailp);
+ 	}
+ 
+diff --git a/fs/xfs/xfs_zone_gc.c b/fs/xfs/xfs_zone_gc.c
+index c5136ea9bb1d..1875b6551ab0 100644
+--- a/fs/xfs/xfs_zone_gc.c
++++ b/fs/xfs/xfs_zone_gc.c
+@@ -993,7 +993,6 @@ xfs_zone_gc_handle_work(
+ 	}
+ 
+ 	__set_current_state(TASK_RUNNING);
+-	try_to_freeze();
+ 
+ 	if (reset_list)
+ 		xfs_zone_gc_reset_zones(data, reset_list);
+@@ -1041,7 +1040,6 @@ xfs_zoned_gcd(
+ 	unsigned int		nofs_flag;
+ 
+ 	nofs_flag = memalloc_nofs_save();
+-	set_freezable();
+ 
+ 	for (;;) {
+ 		set_current_state(TASK_INTERRUPTIBLE | TASK_FREEZABLE);
 -- 
 2.47.2
 
