@@ -1,153 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-45067-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45068-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C60A71478
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 11:11:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94462A714C9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 11:26:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 490BF3ADFFE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 10:11:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63D473BDD35
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 10:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C491B3939;
-	Wed, 26 Mar 2025 10:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0991A5B9C;
+	Wed, 26 Mar 2025 10:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="qwjjSp8A"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="eRzmj+Ik"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E551A83F5
-	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Mar 2025 10:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583631A8405
+	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Mar 2025 10:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742983871; cv=none; b=BmjMaLsSxQ5ld+4vNlNF9Bm0dQqKZ/V/AJBuP2xgKD8396l+cCqS9edQGO5XtvKi3ntBvfvSWuS7TVqCV9YSngdoVdo45xHXdkHZBe+KNOOxls14MQU33jCyKXUUtr1EGrkSGzNUdvHE4/47izz+yVVDgF/cyBEH0jfTGJ5J4DY=
+	t=1742984660; cv=none; b=qDH1XVvR+HaTP0kGnPsSq5GMlbtWkCi5/OxPcVL4E+7pkgCoZNEbVy7u20d4j5jfUlXR3pXI4l50PWgwHxBu/IPfSs1Tu6jr7P2jwtQM4nTQtVS/PGumaEwLYnfYwHzWG/z2u3rwF8bJtqnrh4yoMi76akvPS/tMHN0YoeRfOn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742983871; c=relaxed/simple;
-	bh=HnyPChT1rHVmaHzJGsHbOlfv8XMG3sq37y9Rgbth8ts=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Zyir6X/62W6JCkN469Kplc9EAGSkRrHUNnTQ3WskPGkl6ia1f9c/xhEO41dliZ+0O2qGnV+wXAgrdx7iSa93EnmC/0t1Z62pjtLKvo3gUrsLin76Wpwsg7fvtQ5NMZAeY7o2atCzwwLTpgdVaecSD2iHOn5JBNfT6aHoMvdLj6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=qwjjSp8A; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=/dCNR6GVF9aLu5e35W/aTIZ1RvDqLKERY5YgN7EnyN0=; b=qwjjSp8AS/YMZRMCed4VOx4JTd
-	J8h/JW8/yOXIR2CyZxf3dAFy20/BVUgfvw0ZrUQutfNlXcLWVzs+P31xCQoGTd7ZqEGUTSLsihm7g
-	2soBIAKrf1o6Qq8nou2JW1I5rQpWZdKGD7vkzIhQwfjparAsSq1zZpQOial3kj5FjEqFFf6X4+PCL
-	xcqoGqN9ibxP/Je976iRe9Nbz4LlEhtMm1+PT46LLpNTl/obUXqwUIi6zqzbmC+nzMgCNWupB6LbJ
-	Hdv4h8SDMYo6IJAnR7OtolWdzr6ysI1VOd0viBaMvLrr3jSLxL8/4kJPlS5rEoNIogPU1c3oXmvYy
-	vRrv4azw==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1txNip-006XV0-KE; Wed, 26 Mar 2025 11:10:55 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  Joanne Koong
- <joannelkoong@gmail.com>,  Jeff Layton <jlayton@kernel.org>,
-  "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,  Miklos
- Szeredi <mszeredi@redhat.com>
-Subject: Re: [PATCH v2] fuse: {io-uring} Fix a possible req cancellation race
-In-Reply-To: <01d4007d-4f25-4014-b8a0-a59cf6d17aeb@ddn.com> (Bernd Schubert's
-	message of "Tue, 25 Mar 2025 21:53:39 +0000")
-References: <20250325-fr_pending-race-v2-1-487945a6c197@ddn.com>
-	<87pli4u6xy.fsf@igalia.com>
-	<01d4007d-4f25-4014-b8a0-a59cf6d17aeb@ddn.com>
-Date: Wed, 26 Mar 2025 10:10:49 +0000
-Message-ID: <87y0wsgl06.fsf@igalia.com>
+	s=arc-20240116; t=1742984660; c=relaxed/simple;
+	bh=lZPIEtWGSE0y5u6EupvD4OT9j5kgccDjdrK1LWEGiM4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OpHHgsMANQtC/RfynCdF3JJbPE1qtdrqQdgB/8rdCzBhdbYZwFvxTHRwhrp3cqQc1jlOlL0cFxLLA5EEkiD7s1ClO1uGZkcZGLcbV+fg+1y1cPsJbja1W48HwbEHpoKTIxuR2mpq9FMkm/xpIBXxTNGxIo9biat4NGIrNJT278k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=eRzmj+Ik; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-476964b2c1dso124091581cf.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Mar 2025 03:24:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1742984656; x=1743589456; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rN9uHgr8U12WiQGTul08dzabhr16jXGifO29BZdVxVs=;
+        b=eRzmj+IkF0YKPHSY42mZy1aH4OdhkTvaVmWO8FLoiCCaEAVBwx4uUxAYutCaoeMPRS
+         fNZcSNqEcXt8UEjJ8Bt8sP+dVuwv2rHgaYGA8LQZVlPn8SMNVrJg4oh3t0UX4tEUQdhg
+         zuRD5Pp1PSftzWwOwP18uIEzLEKXZ4nWH0js0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742984656; x=1743589456;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rN9uHgr8U12WiQGTul08dzabhr16jXGifO29BZdVxVs=;
+        b=PALPrp/PmR4JRnW+U9WcsJO5P1qAXbbblHLRMwblMd8biSqNHa+foSIHUfqorul70i
+         2taLa575BOK2XAMmxg3mQa9RUxbPipucal/5AC3GmAq2sY4RrP6tCIL2QTOnCGcM9OJL
+         rEMBCxP4BlTjr9Hn5OHYDW3xUI9EkMZ/rRtIxsK7/VAW1Hwk+b5hiE0vBL7QjNukmJkN
+         FqmOAm5pzuMCpG0Hr5rh1UVo0TydE5AfFAxtsWqFnHpV2X1Dkxy+Qaeu1JS5Wy341vzv
+         MAjB5JHyOW2cuBoVRu5DLDBlWfl68aWHvKmB8mL81JDfxcmAcOU1ujfNc0K2V1583lEI
+         d0lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcIGy5jXHsRPfdGo+tBlIl6M9z+3JDXdbRpCza8stKiGjqmhF0SYX9l7wm97e9ytcKoDqUp/XiJoi7CkYH@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGTE/NoB6RNkNw1z7h39jLkz8JgT+5Xnxl4YsQaGOOljONhmKR
+	r/HfnGTyCVoP9b1tn53Nj2gGo1krFXhLWOiHVrePl6tXdg/63B5VtVoNQBSpDDZshPp95JZbIvD
+	WTzmCdkMagNT0XqxjE65trrldSV0zKHRMsYoYDg==
+X-Gm-Gg: ASbGncvVXe4iKSa4kh1b7LW/lCI1Z+AgoElD8FrqZycxBd3GAHUAaQrn/828nXTPmF8
+	H6NAxStLWzMeGgxxtrXHPH+UPvuJUa8yCzgXwESLTZF4OQnnUasT80+b2Dtww+5R8jCX3zdpuMC
+	A2OgP202g6MKIwwWgoaVyPs/9FDb4V6DjqgBY=
+X-Google-Smtp-Source: AGHT+IH0vLhqq3lg+yaWzhqlmKzVspPqQDKFlNiMEjqP6SKmduHR410XaWJXVXMEsHW7vnEmjWa8vn496rkqsY7iD4k=
+X-Received: by 2002:a05:622a:5c16:b0:476:b489:8f9e with SMTP id
+ d75a77b69052e-4771dd61582mr344077411cf.11.1742984655891; Wed, 26 Mar 2025
+ 03:24:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20250325104634.162496-1-mszeredi@redhat.com> <20250325104634.162496-6-mszeredi@redhat.com>
+ <CAOQ4uxgif5FZNqp7NtP+4EqRW1W0xp+zXPFj=DDG3ztxCswv_Q@mail.gmail.com>
+In-Reply-To: <CAOQ4uxgif5FZNqp7NtP+4EqRW1W0xp+zXPFj=DDG3ztxCswv_Q@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 26 Mar 2025 11:24:05 +0100
+X-Gm-Features: AQ5f1Jrs1ZlRc3qM97IRR2sB8E1k3KTYERXzDxx8JPpp_Wy0xPwgBuFeLw2pvJU
+Message-ID: <CAJfpegvvRBgYHpuOUuunurwN0Nad+OUdjNOdLw6d1C0kEAg5PQ@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] ovl: don't require "metacopy=on" for "verity"
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-unionfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Giuseppe Scrivano <gscrivan@redhat.com>, 
+	Alexander Larsson <alexl@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Mar 25 2025, Bernd Schubert wrote:
+On Tue, 25 Mar 2025 at 12:35, Amir Goldstein <amir73il@gmail.com> wrote:
 
-> On 3/25/25 22:38, Luis Henriques wrote:
->> Hi Bernd!
->>=20
->> On Tue, Mar 25 2025, Bernd Schubert wrote:
->>=20
->>> task-A (application) might be in request_wait_answer and
->>> try to remove the request when it has FR_PENDING set.
->>>
->>> task-B (a fuse-server io-uring task) might handle this
->>> request with FUSE_IO_URING_CMD_COMMIT_AND_FETCH, when
->>> fetching the next request and accessed the req from
->>> the pending list in fuse_uring_ent_assign_req().
->>> That code path was not protected by fiq->lock and so
->>> might race with task-A.
->>>
->>> For scaling reasons we better don't use fiq->lock, but
->>> add a handler to remove canceled requests from the queue.
->>>
->>> This also removes usage of fiq->lock from
->>> fuse_uring_add_req_to_ring_ent() altogether, as it was
->>> there just to protect against this race and incomplete.
->>>
->>> Also added is a comment why FR_PENDING is not cleared.
+> > --- a/fs/overlayfs/params.c
+> > +++ b/fs/overlayfs/params.c
+> > @@ -846,8 +846,8 @@ int ovl_fs_params_verify(const struct ovl_fs_context *ctx,
+> >                 config->uuid = OVL_UUID_NULL;
+> >         }
+> >
+> > -       /* Resolve verity -> metacopy dependency */
+> > -       if (config->verity_mode && !config->metacopy) {
+> > +       /* Resolve verity -> metacopy dependency (unless used with userxattr) */
+> > +       if (config->verity_mode && !config->metacopy && !config->userxattr) {
 >
-> Hi Luis,
+> This is very un-intuitive to me.
 >
-> thanks for your review!
->
->>=20
->> At first, this patch looked OK to me.  However, after looking closer, I'm
->> not sure if this doesn't break fuse_abort_conn().  Because that function
->> assumes it is safe to walk through all the requests using fiq->lock, it
->> could race against fuse_uring_remove_pending_req(), which uses queue->lo=
-ck
->> instead.  Am I missing something (quite likely!), or does fuse_abort_con=
-n()
->> also needs to be modified?
->
-> I don't think there is an issue with abort
->
-> fuse_abort_conn()
->    spin_lock(&fiq->lock);
->    list_for_each_entry(req, &fiq->pending, list)
->    ...
->    spin_unlock(&fiq->lock);
->
->    ...
->
->    fuse_uring_abort(fc);
->
-> Iterating fiq->pending will not handle any uring request, as these are
-> in per queue lists. The per uring queues are then handled in
-> fuse_uring_abort().
->
-> I.e. I don't think this commit changes anything for abort.
+> Why do we need to keep the dependency verity -> metacopy with trusted xattrs?
 
-Yeah, you're right.  Thanks for looking, Bernd.
+Yeah, now it's clear that metacopy has little to do with the data
+redirect feature that verity was added for.
 
->>=20
->> [ Another scenario that is not problematic, but that could become messy =
-in
->>   the future is if we want to add support for the FUSE_NOTIFY_RESEND
->>   operation through uring.  Obviously, that's not an issue right now, but
->>   this patch probably will make it harder to add that support. ]
->
-> Oh yeah, this needs to be fixed. Though I don't think that this patch
-> changes much. We need to iterate through the per fpq and apply the
-> same logic?
+I don't really understand the copy-up logic around verity=require,
+though.  Why does that not return EIO like open?
 
-Right, I agree this patch doesn't change anything here.  And I guess I
-also misunderstood the problem here as well -- I thought this would be an
-issue when adding support for iouring, but in fact it is already a
-problem.  The ideal solution would be to implement NOTIFY_RESEND over
-iouring, but that would be a bit more evolving.
-
-Cheers,
---=20
-Lu=C3=ADs
+Thanks,
+Miklos
 
