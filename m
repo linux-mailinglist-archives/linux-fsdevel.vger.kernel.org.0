@@ -1,98 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-45088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 382C9A718AA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 15:38:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE791A71970
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 15:54:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73F333B7390
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 14:37:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A5803BFE25
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 14:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA211EEA59;
-	Wed, 26 Mar 2025 14:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0111F2C5F;
+	Wed, 26 Mar 2025 14:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="TtDG/POH"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="B8qKfZkW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E17C5383;
-	Wed, 26 Mar 2025 14:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB201C8638
+	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Mar 2025 14:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742999871; cv=none; b=pg1b5jAWc44jpR5KVpWjunyAFvtJyqjFFvl8w3Bhow4qkYwSHrdLxgCSg9iT06KqFVDWcF0K4w0oS6O9MYlUaVEPwxBKZ16OaUdkr23b3dduqy5IAOakzWwIjpCKrMIlJ0hJVhgSmIf0WhvAl9S0DN1V5tZe/+n+ZjNitWOiAIQ=
+	t=1743000566; cv=none; b=YSnfxkJpD/7EMhJp9fsFYkQWlKbYQqL0rb8WLowNnPameE+XLDWvpOlRG3rqd2rbWW9MrB8Q1agMTQ9bZM1xkd165YvARWHmny8bsLWHwBQo1HXgrmpmo/S/0BE5N3bQv8/wACb1+fFiEE4zE09+7mos268YlM+3tpxIEd/8Q/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742999871; c=relaxed/simple;
-	bh=9vIKFTabzIEfQ3nAR9qGMuci/zEUl4lJnj8X1TW7D6E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=b8pR/J5DqGsXhEreeMJ9oV+Gi5dinl0XddCh7wUs6twN1EIqrTqhT7qpU6Qo8HzQWnZBuV4M/PUBj3EX0YVqh5BfJ6Fe2EWA7Yhsl1G5iUMp3ETobx0loRNn3SAdp1HhOuvG1YfG5pAyXoOlbDIPtxdGN5YxfbGFANNvXScLxFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=TtDG/POH; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1742999868;
-	bh=9vIKFTabzIEfQ3nAR9qGMuci/zEUl4lJnj8X1TW7D6E=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=TtDG/POHYSOObO1Itx0YKqWroucLJHTf8GA5itSeJt+Skz59ZEYUtwkEHSl1d5MQH
-	 HjkprtYjM7ScMDpJQWpi6900FtTrkHA6a7+X5MjcTZavgJyGSN/rUy7SdqNECKNDUY
-	 RJiesiA//7DWUHUK8Imhp6UwXihOVyd1NgcNsQwM=
-Received: from [172.22.32.239] (unknown [99.209.85.25])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 802581C030A;
-	Wed, 26 Mar 2025 10:37:47 -0400 (EDT)
-Message-ID: <c3a2616dd46103049c0c61864841370011a042cf.camel@HansenPartnership.com>
-Subject: Re: [RFC 3/6] fs: add automatic kernel fs freeze / thaw and remove
- kthread freezing
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Christian Brauner <brauner@kernel.org>, Luis Chamberlain
- <mcgrof@kernel.org>
-Cc: jack@suse.cz, hch@infradead.org, david@fromorbit.com, rafael@kernel.org,
-  djwong@kernel.org, pavel@kernel.org, song@kernel.org, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- gost.dev@samsung.com
-Date: Wed, 26 Mar 2025 10:37:46 -0400
-In-Reply-To: <20250326-hochnehmen-hiebe-99baf5409aa2@brauner>
-References: <20250326112220.1988619-1-mcgrof@kernel.org>
-	 <20250326112220.1988619-4-mcgrof@kernel.org>
-	 <827c1ff030dd3b208e7a14be63160703b67e7031.camel@HansenPartnership.com>
-	 <20250326-hochnehmen-hiebe-99baf5409aa2@brauner>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1743000566; c=relaxed/simple;
+	bh=AGunnTLAw5lTuH6SsD/sMvxG9Gr1cJo6gPHAUcIVnFk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=PQYup+FgUgPrL4p5Im9TFqaAnJxV6zvysnmJX2ecV8m5UvcZ6GDGO3DAONHyNlOXZj0te/BiBWeIJ9YHnsXH48jmTyWwgQyETcQNJDSi06pKmhZdBI3jlOrio3pHN1F/BIEsx6kVzYW1d7zukrVlyx/7LSdxL0S4XqNQ+y8fiIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=B8qKfZkW; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250326144921epoutp01945086f38b23b7277624e98e3d4aef95~wYcaT_oGo1299912999epoutp01P
+	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Mar 2025 14:49:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250326144921epoutp01945086f38b23b7277624e98e3d4aef95~wYcaT_oGo1299912999epoutp01P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1743000561;
+	bh=PvMcIFBpghuJtM2xf/uXNWsaSErjxIY7zcXBIjwPBxw=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=B8qKfZkW9HoJyF1/sXAkBx2t0kzRq2Y+GCp6phehgCUA0qnGvYlIWr2aLiNvhRvk3
+	 jg2blhoN30NjRK15vpwOQPswtU4X9/XFhLrG/nIXcVZuaOTi/3o6vcIx2Yk4dqXlCt
+	 DQLBhoj8GczccZiM6R/2emUYeqDTJ42vO4/ZDijQ=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250326144920epcas1p1600652c78cdba835e964c248d4be8405~wYcZgqUcf2108921089epcas1p1U;
+	Wed, 26 Mar 2025 14:49:20 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.36.227]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4ZN8nX0l02z6B9m4; Wed, 26 Mar
+	2025 14:49:20 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+	epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	BF.1D.10189.FE314E76; Wed, 26 Mar 2025 23:49:20 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250326144918epcas1p1bf704db657010812a18e9fef5c3a6784~wYcYJKFtO2109021090epcas1p19;
+	Wed, 26 Mar 2025 14:49:18 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250326144918epsmtrp10915de4994d13fa30065075f8a332688~wYcYIanw42811128111epsmtrp1x;
+	Wed, 26 Mar 2025 14:49:18 +0000 (GMT)
+X-AuditID: b6c32a35-737e8700000027cd-eb-67e413ef0064
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	05.70.07818.EE314E76; Wed, 26 Mar 2025 23:49:18 +0900 (KST)
+Received: from u20pb1-0435.tn.corp.samsungelectronics.net (unknown
+	[10.91.133.14]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250326144918epsmtip101730a348a9d61efdbe7a43f38ed3c30~wYcX7tfee2376823768epsmtip1j;
+	Wed, 26 Mar 2025 14:49:18 +0000 (GMT)
+From: Sungjong Seo <sj1557.seo@samsung.com>
+To: linkinjeon@kernel.org, yuezhang.mo@sony.com
+Cc: sjdev.seo@gmail.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, cpgs@samsung.com, Sungjong Seo
+	<sj1557.seo@samsung.com>, stable@vger.kernel.org
+Subject: [PATCH] exfat: fix potential wrong error return from get_block
+Date: Wed, 26 Mar 2025 23:48:48 +0900
+Message-Id: <20250326144848.3219740-1-sj1557.seo@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMJsWRmVeSWpSXmKPExsWy7bCmnu4H4SfpBhs2M1m8PKRpMXHaUmaL
+	PXtPslhc3jWHzWLLvyOsFi8+bGCzWLDxEaPF9TcPWR04PHbOusvusWlVJ5tH35ZVjB7tE3Yy
+	e3zeJBfAGtXAaJNYlJyRWZaqkJqXnJ+SmZduqxQa4qZroaSQkV9cYqsUbWhopGdoYK5nZGSk
+	Z2oUa2VkqqSQl5ibaqtUoQvVq6RQlFwAVJtbWQw0ICdVDyquV5yal+KQlV8Kcr9ecWJucWle
+	ul5yfq6SQlliTinQCCX9hG+MGbePnWQreM9WcWvlBaYGxi2sXYycHBICJhJbHh4Ds4UEdjBK
+	fGphhLA/MUrsn+PSxcgFZH9jlFi4oI8dpqFh4VZGiMReRomDDZeYIZx2Jokzx7aAtbMJaEss
+	b1oGlODgEBHQl2hpqgKpYRZYySixalMjM0iNsIC7xLxHt8FWswioSszZ3Q5m8wrYSjTOb4A6
+	T15i5qXv7BBxQYmTM5+wgNjMQPHmrbOZIWousUtc7GWEsF0kLp+fDHWpsMSr41ugbCmJl/1t
+	7CBHSAh0M0oc//iOBSIxg1FiSYcDhG0v0dzazAZyNLOApsT6XfoQu/gk3n3tgbqHV6Jh42+o
+	mYISp691g/0IEu9oE4IIq0h8/7CTBWbtlR9XmSBsD4mTvxYwQ0I3VqL3xGGmCYwKs5B8NgvJ
+	Z7MQjljAyLyKUSy1oDg3PbXYsMAQOYo3MYLTq5bpDsaJbz/oHWJk4mA8xCjBwawkwnuM9WG6
+	EG9KYmVValF+fFFpTmrxIcZkYFhPZJYSTc4HJvi8knhDMzNLC0sjE0NjM0NDwsImlgYmZkYm
+	FsaWxmZK4rwXtrWkCwmkJ5akZqemFqQWwWxh4uCUamDKX828t/tfvqTNpPo7+w57rp4u2Vz8
+	ZeN89Sdbvotp3eI85OYVZiK8+qHgRa/dNf2bZx948fxRRsYCxSf+lnUy+TV3dk39pmTPU/FB
+	8NCDift9XCfr/RPsncIbLGeQdEU4q+3XpM09ActX7j1+7Zbg3rizttaHj32YI3w7T0B0+dEP
+	e0x1y3z0Il5HmDy8fPiyi3p8yIue1dPKq1ecmBHr3+Nro37h4ouLe/73PA+uuPJmo/l0nYNZ
+	qr2rPqxlv9Ow4FFv0/ETeRsN9m5XLlToTG/qWBl9r8M3JeL9T5Pb77oqpM0XGK9+N/eJl5+z
+	2Q9Jt7agN30Xeu0f3F3X5sgV9pY7+RVzssyZTsEvpt67lViKMxINtZiLihMB9kR97WYEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrELMWRmVeSWpSXmKPExsWy7bCSnO474SfpBtNmmVm8PKRpMXHaUmaL
+	PXtPslhc3jWHzWLLvyOsFi8+bGCzWLDxEaPF9TcPWR04PHbOusvusWlVJ5tH35ZVjB7tE3Yy
+	e3zeJBfAGsVlk5Kak1mWWqRvl8CVcfvYSbaC92wVt1ZeYGpg3MLaxcjJISFgItGwcCtjFyMX
+	h5DAbkaJvQeOsXQxcgAlpCQO7tOEMIUlDh8uhihpZZI42neAHaSXTUBbYnnTMmYQW0TAUGLD
+	4r3sIEXMAusZJZqerWADSQgLuEvMe3QbbBmLgKrEnN3tYDavgK1E4/wGqCPkJWZe+s4OEReU
+	ODnzCQuIzQwUb946m3kCI98sJKlZSFILGJlWMUqmFhTnpucmGxYY5qWW6xUn5haX5qXrJefn
+	bmIEB6uWxg7Gd9+a9A8xMnEwHmKU4GBWEuE9xvowXYg3JbGyKrUoP76oNCe1+BCjNAeLkjjv
+	SsOIdCGB9MSS1OzU1ILUIpgsEwenVAOTqPCpY7+mbbl9ybZqv3/PonyXr6yeVRuKTaKj82Ym
+	RB2NL7DOtvvTrOAl6VxZYHBPd92BlhTfrbdDCkvjJjYZXTq+zKf7uV+D85uIOa12FR6/f0a6
+	buGdkS7E5RZY2WTQxJN2WuH6hC3rZkTFdvhr3MiJmCjhIvNR741OvWbBqniW/sZrxW9ZE2WN
+	VqpPS98jEJ+X+FrgybGVBlfZ4x+18nX2WVhWnHTkfCE+q61iy8FV/hbRgr8dDH+2/95TGrRU
+	xN6Kp2XWeYerewVv9kz4EDy7aVHEZWumt9abPymJMNhLR6vwr2Zb7/LkQGJQxI/jJrOnXNG5
+	mBY0Id/isvC+03mnvBh/7V0V/H/rDCWW4oxEQy3mouJEAFlDL0fFAgAA
+X-CMS-MailID: 20250326144918epcas1p1bf704db657010812a18e9fef5c3a6784
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-CPGSPASS: Y
+X-ArchiveUser: EV
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250326144918epcas1p1bf704db657010812a18e9fef5c3a6784
+References: <CGME20250326144918epcas1p1bf704db657010812a18e9fef5c3a6784@epcas1p1.samsung.com>
 
-On Wed, 2025-03-26 at 15:09 +0100, Christian Brauner wrote:
-[...]
-> Why do you care about efivarfs taking part in system suspend though?
+If there is no error, get_block() should return 0. However, when bh_read()
+returns 1, get_block() also returns 1 in the same manner.
 
-I don't, I only care about intercepting thaw.  If ->thaw_super can get
-called on resume without me having to provide a freeze_super, then I'm
-happy.
+Let's set err to 0, if there is no error from bh_read()
 
-I'd still like to know whether the thaw is for suspend or hibernate,
-though.
+Fixes: 11a347fb6cef ("exfat: change to get file size from DataLength")
+Cc: stable@vger.kernel.org
+Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
+---
+ fs/exfat/inode.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Regards,
-
-James
+diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+index f3fdba9f4d21..a23677de4544 100644
+--- a/fs/exfat/inode.c
++++ b/fs/exfat/inode.c
+@@ -391,6 +391,8 @@ static int exfat_get_block(struct inode *inode, sector_t iblock,
+ 			/* Zero unwritten part of a block */
+ 			memset(bh_result->b_data + size, 0,
+ 			       bh_result->b_size - size);
++
++			err = 0;
+ 		} else {
+ 			/*
+ 			 * The range has not been written, clear the mapped flag
+-- 
+2.25.1
 
 
