@@ -1,319 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-45108-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CDCFA72083
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 22:11:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5276BA720FB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 22:49:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE5E63B4A45
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 21:10:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F9497A3584
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Mar 2025 21:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AEA6261362;
-	Wed, 26 Mar 2025 21:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BEC1F2369;
+	Wed, 26 Mar 2025 21:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ogzrCv+q"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="FDLl1TPr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32E849659
-	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Mar 2025 21:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF36B1A5BB1
+	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Mar 2025 21:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743023453; cv=none; b=W6631BeCix1V10sHgbEqhmcqQKes/ISH6dBh0Zj/1tQctb2PtErPcLvQTh0wC7nRKiFozm/DCwkgDbj6ZOPYb/B0PMRVhIURkihHV277EdIZvqnmWO84DLXGyGW6IXNanvC33yZFWMWLp1Qb4hj8cVDZF4NrJPt01VmSmHKuBMU=
+	t=1743025736; cv=none; b=cvGmvVkyitwhb00pb0N59g/Dum1YCqzXhHarjY6E8DwFHGPrFw+pC9vqvur54IFh0XyBiICaU0Iho4Evv1NM6oWglhz0zGOqyky5uSJ9MbFGED7vODDuPWGPoRhf72W3iQZOY03q/Jbywfdwd0j7PQMqBKsBPSxfxEAHLq9kuCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743023453; c=relaxed/simple;
-	bh=KtFDJQf3LCeM6WKs6szT70ZPm1vK4ET1jMCs1JH8pQs=;
+	s=arc-20240116; t=1743025736; c=relaxed/simple;
+	bh=vfQeV3TaD1LEXFq2KgnmHl5O26/mT0UXWGUHeykb0oc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eV14EEcJysFG+sSGZ0fXgqs9e5RjL7A8lKvrVNmZmU4O4Q1KlnRaOiGoj/q1sbrsL/U0ZmL8JIP4+62W8qL3TJ5TT7zwfnXbqJdN1c9GR0EELQc0ndzs/b+p5H9ieeFCXULuLWfeT1hRO2qDlE9P/VgWr7d8WrrqxFx5/eDhPAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=ogzrCv+q; arc=none smtp.client-ip=209.85.216.46
+	 Content-Type:Content-Disposition:In-Reply-To; b=NFs7hSrETyKpNhBliTh5kE6mbSd/Xjl3B101wJCCiACgHHz1NHcmL7k3YD1+G1eZ69FqnjWrKaQvjRi3slUag1b/FI81NepBHI5z4qRACyBodHl3WbSftc6Tdhf7/6+gboBkp2R2fwUED4Y9zhQp2lUtqqAXN/Gh3bwWWFRs2qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=FDLl1TPr; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3014678689aso391096a91.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Mar 2025 14:10:51 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22438c356c8so7938335ad.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Mar 2025 14:48:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1743023451; x=1743628251; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8r5zblQElbPQO87GHLZRnHgdEdr+1fSpbnjgQJ9+CIo=;
-        b=ogzrCv+qfm/PcZgE13fUY5r088fSh+RcKSDWV9KaGM2XFshVVazTy0bPJu8RXfseo6
-         qc756fEwntfK1Z/1qAe9XgYBgbkQCzsiVgi1ZrmTBDG5gbCZkumKYGj3FIQPJ/RWxI//
-         KAepLxognxE3oszgrf1aRB6gT4T2VFYkEtDa0nKy9ivVIqxB2Ae7LhE3Zsj9EdzVxHyH
-         j9evHWiC+jQB5oGqBBYQnSDV1VqRffol5I3dE+Mao2YbEnPq2W8iykrPLKg/F7AbaEF7
-         Go4jumkLtt5guKYd5IurQfhUaO9SdxLkPRzQlC262tXO0DY6ic5z2EJrZ74XEZIjnvyv
-         Atzg==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1743025734; x=1743630534; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AOA0g6xjZW3NM82qhVrH0hYkXRzjDdNGaRStsJEGb/4=;
+        b=FDLl1TPrCFvzzZR9HSuJ0/1lOjNBrImLsqyXpaEyHNWbQu2SZa6mGM7ueTGHnI+q13
+         FZLGe2t5vq/a1XshOcCS9ZqB7M70LXzPHK/5SWYwnpWoQ3tEYjxZ7PFsp7TNX3wvLM6I
+         sVn6Qk646DBxulihcYgJtl7wYBB2BG18eoAXYHT/W2uMxmQPURMDjLaovD7jPjJtYEK6
+         cafBZ7akFPMWBPG5FWEsXurEKkuE6BGKHMYh94yLziX70nAq0vXfCKJGRwfMjfw5TndD
+         vGabe+mW1+d/7MvmkQUPyWZc5K022V54NzgsBM8n6yDa8JtRboRBl8i2FsIBGqTqXDSg
+         V+fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743023451; x=1743628251;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8r5zblQElbPQO87GHLZRnHgdEdr+1fSpbnjgQJ9+CIo=;
-        b=I65z8tVbkCGuMfzIb6BLgnwNGp4aWs2enJu33ZPAB1Ku0Anci6adKpofzTkM8i86cr
-         GSZa/NMnuREzEwni01sVLY8XcyuiEkle0ynnhmkeQVrIlJsznhlQn2qowFCoN5qVsUCM
-         DpreKUbCVDzWIAvQNvdinIT/M0MCFA22TaCx2Z4xKiaKHH2HOP9uL4GJjHPiaXtIKYc8
-         ICqPlI8qECfitK/jWd2DglNMDVLvDiMkXTx9DYlrYszGhN6SPKBi1OGmboJGprxQZbCE
-         rEjBnM/ZFXm9m5CXeE8V1cDa1ygl8q5VL6hGbzQeQPYQzFisVltsv53AM4zZmV8zujyy
-         v0iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/Z27IFD2SwJJKDoJwg1TJx9RWNbed/OimkOL6fGglUskkORKKMGWKYq+mvkL3p2fmXR1eEaVMIWOvPr2N@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3HssOX+ahSvlIJ0LYMRnQ287tja+9Ld63FQ1JWGK2KYaj9Qdt
-	kqjl6suxFrIhjKuG+r7RuV+aL6rQesWbKEYD3Cmpu0XcgUwOwrTu1Q9lPeiRNNA=
-X-Gm-Gg: ASbGnctAqlGxXjFhPFjnbRzc9egUBNdT5QtsiKnNMMwClFYwClGR4Ph6K5yP0i5WDrw
-	6y1Ewy7Az758p1NAn2i/j2MCFG+UyFIeTPH9xDS7o9oKGY+iXH0EKiRrtN33FBhjLZSQ35tedfS
-	tnkQjxJ/RSLOhST7Ywgxk+n6BQGahZnRY9f3LbesYJZNVSLHqCu19lTuQtGBXXcrHDhUJ76+WH5
-	qk6tETOGKcczszmIrleqqMzw1qTtuXRW6EQHduDn9x3dqjxGqt72KrbCAY9qRFo53CP58tLNTMf
-	RF6XsvJswVJUN8SeI40+fa74Q96MCzlNoFEm8dYohh7oooss8gUe21c14x5fSX3X5SYX6uy4TAA
-	PLS/Fxfo=
-X-Google-Smtp-Source: AGHT+IH74ag5XeN4ls7BanUgMSLHcrsUvl+HEw2fiukQfAGjZxR0vReelBylQGQRPmjYWqz5PrQAvw==
-X-Received: by 2002:a17:90a:d2cb:b0:2ff:7b28:a51a with SMTP id 98e67ed59e1d1-303a815a72cmr2059828a91.17.1743023450937;
-        Wed, 26 Mar 2025 14:10:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743025734; x=1743630534;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AOA0g6xjZW3NM82qhVrH0hYkXRzjDdNGaRStsJEGb/4=;
+        b=fZ1VC9nxq2p9K27/CXyFCpkVtoyOkreBl7RlMR3fgYt9bbUeu7X96QZ9FLYgRYNUiE
+         K1B1AWF8AsiNUBCVbrpQgaZA3GZ2dxuLjzrAG5lgoMsl9XhjxmMdBUkJ/VPuRejfSj0x
+         6/1l90nGDUFMzCbyc2W4wHUGxh6QCzKQ21CW2K8TAhdOJqHPsfPZG+xLQA+xwsInwdtC
+         /JuGGb4EgofS3YhzBfPwux4wVZ5T2A241Z6H56BiY9/w01QaiDb/U3RMk1iWZXXB++B3
+         D0maxN6pRpKvsKPQ7hgtEKSjRT5nVoTXkk33Xz3XRguxH352syYen/hGlV/uf80EqeJd
+         LPaw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXWm18JFnPyKx0GDb/i/do/ywyHrbeJ7i/8XKPHUY5egvgV9ecdqRdyYYSe5C/GPXXXioy3AD00ZlJjOCZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5oo8OaBm6YJmfG8N8GG6wEIgIGgQkKH8OZKlGT/skIBUKCj/V
+	3Ao5CS0KpYMaz1GYLtGqds/oawiRQwW0W66ToTNz82jz1d5FfAaxjLO1v72XhTw=
+X-Gm-Gg: ASbGncuqjQMEaJSnbRad+YdN5P6Ykg8OlPr+byC0gYCNKm5xXH7WS1xyowdVqTajLj9
+	EspD6ai8dUo+O7zizppO+eGS7fSAefYjcLIdjWIiy4VeqRE+y6U+JosNm0Ea6RbKCAztq3UjP6G
+	V2dx+GPadViXnCCiHZjBZf/yXqbtba1Zud34Bq8StOoWx635Unpz6dtZ0qCvpqiBQbK8F5iF/br
+	3qubV71rEIvna7GLrqi9ZzcaNmj5ROTZIcs7kPC/IKNOCorF1vQ0PD4kvLpoeA2LxgEfxt2U77I
+	FI4IOK5NGc1A8rgRCD46RI3xYVbC03sFSWxwO4/IxvqokIMgP/dMfI8IRmuAxBLwx2Uw94bzcbB
+	+ofgZYjGe5RPIcqg9hA3w+72pHeP4
+X-Google-Smtp-Source: AGHT+IExYtNqemtiH4PchdNU0gkFofimKplIG0mYOp41fANWlH1UQJZ5KnbvIsB+XPVtQSaw6PmPeA==
+X-Received: by 2002:a05:6a00:4607:b0:736:3d7c:2368 with SMTP id d2e1a72fcca58-73960e2cff6mr1752334b3a.7.1743025733869;
+        Wed, 26 Mar 2025 14:48:53 -0700 (PDT)
 Received: from dread.disaster.area (pa49-181-60-96.pa.nsw.optusnet.com.au. [49.181.60.96])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811b2ae1sm114999645ad.114.2025.03.26.14.10.50
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a292b1ffsm11398612a12.61.2025.03.26.14.48.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 14:10:50 -0700 (PDT)
+        Wed, 26 Mar 2025 14:48:53 -0700 (PDT)
 Received: from dave by dread.disaster.area with local (Exim 4.98)
 	(envelope-from <david@fromorbit.com>)
-	id 1txY1P-00000000h3J-1N9l;
-	Thu, 27 Mar 2025 08:10:47 +1100
-Date: Thu, 27 Mar 2025 08:10:47 +1100
+	id 1txYcD-00000000hgM-2MZe;
+	Thu, 27 Mar 2025 08:48:49 +1100
+Date: Thu, 27 Mar 2025 08:48:49 +1100
 From: Dave Chinner <david@fromorbit.com>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: patches@lists.linux.dev, fstests@vger.kernel.org, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	oliver.sang@intel.com, hannes@cmpxchg.org, willy@infradead.org,
-	jack@suse.cz, apopple@nvidia.com, brauner@kernel.org, hare@suse.de,
-	oe-lkp@lists.linux.dev, lkp@intel.com, john.g.garry@oracle.com,
-	p.raghav@samsung.com, da.gomez@samsung.com, dave@stgolabs.net,
-	riel@surriel.com, krisman@suse.de, boris@bur.io,
-	jackmanb@google.com, gost.dev@samsung.com
-Subject: Re: [PATCH] generic/764: fsstress + migrate_pages() test
-Message-ID: <Z-RtV6OO_IhggLvT@dread.disaster.area>
-References: <20250326185101.2237319-1-mcgrof@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>,
+	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	Luis Chamberlain <mcgrof@kernel.org>
+Subject: Re: [LSF/MM/BPF Topic] Filesystem reclaim & memory allocation BOF
+Message-ID: <Z-R2QcpHxwetMp5v@dread.disaster.area>
+References: <Z-QcUwDHHfAXl9mK@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250326185101.2237319-1-mcgrof@kernel.org>
+In-Reply-To: <Z-QcUwDHHfAXl9mK@casper.infradead.org>
 
-On Wed, Mar 26, 2025 at 11:50:55AM -0700, Luis Chamberlain wrote:
-> 0-day reported a page migration kernel warning with folios which happen
-> to be buffer-heads [0]. I'm having a terribly hard time reproducing the bug
-> and so I wrote this test to force page migration filesystems.
+On Wed, Mar 26, 2025 at 03:25:07PM +0000, Matthew Wilcox wrote:
 > 
-> It turns out we have have no tests for page migration on fstests or ltp,
-> and its no surprise, other than compaction covered by generic/750 there
-> is no easy way to trigger page migration right now unless you have a
-> numa system.
+> We've got three reports now (two are syzkaller kiddie stuff, but one's a
+> real workload) of a warning in the page allocator from filesystems
+> doing reclaim.  Essentially they're using GFP_NOFAIL from reclaim
+> context.  This got me thinking about bs>PS and I realised that if we fix
+> this, then we're going to end up trying to do high order GFP_NOFAIL allocations
+> in the memory reclaim path, and that is really no bueno.
 > 
-> We should evaluate if we want to help stress test page migration
-> artificially by later implementing a way to do page migration on simple
-> systems to an artificial target.
-> 
-> So far, this doesn't trigger any kernel splats, not even warnings for me.
-> 
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Link: https://lore.kernel.org/r/202503101536.27099c77-lkp@intel.com # [0]
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
->  common/config         |  2 +
->  common/rc             |  8 ++++
->  tests/generic/764     | 94 +++++++++++++++++++++++++++++++++++++++++++
->  tests/generic/764.out |  2 +
->  4 files changed, 106 insertions(+)
->  create mode 100755 tests/generic/764
->  create mode 100644 tests/generic/764.out
-> 
-> diff --git a/common/config b/common/config
-> index 2afbda141746..93b50f113b44 100644
-> --- a/common/config
-> +++ b/common/config
-> @@ -239,6 +239,8 @@ export BTRFS_MAP_LOGICAL_PROG=$(type -P btrfs-map-logical)
->  export PARTED_PROG="$(type -P parted)"
->  export XFS_PROPERTY_PROG="$(type -P xfs_property)"
->  export FSCRYPTCTL_PROG="$(type -P fscryptctl)"
-> +export NUMACTL_PROG="$(type -P numactl)"
-> +export MIGRATEPAGES_PROG="$(type -P migratepages)"
->  
->  # udev wait functions.
->  #
-> diff --git a/common/rc b/common/rc
-> index e51686389a78..ed9613a9bf28 100644
-> --- a/common/rc
-> +++ b/common/rc
-> @@ -281,6 +281,14 @@ _require_vm_compaction()
->  	fi
->  }
->  
-> +_require_numa_nodes()
-> +{
-> +	readarray -t QUEUE < <($NUMACTL_PROG --show | awk '/^membind:/ {for (i=2; i<=NF; i++) print $i}')
+> https://lore.kernel.org/linux-mm/20250326105914.3803197-1-matt@readmodwrite.com/
 
-sed makes this easier: remove the membind token, then remove all the
-lines that have ":"s left in them. This leaves behind the membind
-node string.
+Anything that does IO or blocking memory allocation from evict()
+context is a deadlock vector. They will also cause unpredictable
+memory allocation latency as direct reclaim can get stuck on them.
 
-$ numactl --show | sed -e 's/membind://' -e '/:/d'
- 0 1 2 3
-$
+The case that was brought up here is overlay dropping the last
+reference to an inode from dentry cache reclaim, and that inode
+having evict() run on it.
 
-Also should have:
+The filesystems then make journal reservations (which can block
+waiting on IO), memory allocation (which can block waiting on IO
+and/or direct memory reclaim stalling), do IO directly from that
+context, etc.
 
-	_require_command "$NUMACTL_PROG" "numactl"
+Memory reclaim is supposed to be a non-blocking operation, so inode
+reclaim really needs to avoid blocking or doing complex stuff that
+requires memory allocation or IO in the direct evict() path.
 
-built into it, rather than requiring the test to declare it first.
+Indeed, people spent -years- complaining that XFS did IO from
+evict() context from direct memory reclaim because this caused
+unacceptable memory allocation latency variations. It required
+significant architectural changes to XFS inode journalling and
+writeback to avoid blocking RMW IO during inode reclaim. It's also
+one of the driving reasons for XFS aggressively pushing *any*
+XFS-specific inode reclaim work that could block to background
+inodegc workers that run after ->destroy_inode has removed the inode
+from VFS visibility.
 
-> +	if (( ${#QUEUE[@]} < 2 )); then
-> +		_notrun "You need a system with at least two numa nodes to run this test"
-> +	fi
-> +}
-
-
-
-> +
->  # Requires CONFIG_DEBUGFS and truncation knobs
->  _require_split_huge_pages_knob()
->  {
-> diff --git a/tests/generic/764 b/tests/generic/764
-> new file mode 100755
-> index 000000000000..91d9fb7e08da
-> --- /dev/null
-> +++ b/tests/generic/764
-> @@ -0,0 +1,94 @@
-> +#! /bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (c) 2024 Luis Chamberlain.  All Rights Reserved.
-> +#
-> +# FS QA Test 764
-> +#
-> +# fsstress + migrate_pages() test
-> +#
-> +. ./common/preamble
-> +_begin_fstest auto rw long_rw stress soak smoketest
-> +
-> +_cleanup()
-> +{
-> +	cd /
-> +	rm -f $runfile
-> +	rm -f $tmp.*
-> +	kill -9 $run_migration_pid > /dev/null 2>&1
-> +	kill -9 $stress_pid > /dev/null 2>&1
-> +
-> +	wait > /dev/null 2>&1
-> +}
-
-If you implement this using the fsstress wrappers like I mention
-below, and get rid of running the main migration loop in background,
-this cleanup function can go away completely.
-
-> +
-> +_require_scratch
-> +_require_command "$NUMACTL_PROG" "numactl"
-> +_require_command "$MIGRATEPAGES_PROG" "migratepages"
-> +_require_numa_nodes
-> +
-> +readarray -t QUEUE < <($NUMACTL_PROG --show | awk '/^membind:/ {for (i=2; i<=NF; i++) print $i}')
-> +if (( ${#QUEUE[@]} < 2 )); then
-> +	echo "Not enough NUMA nodes to pick two different ones."
-> +	exit 1
-> +fi
-
-You've implemented this twice.
-
-> +echo "Silence is golden"
-> +
-> +_scratch_mkfs > $seqres.full 2>&1
-> +_scratch_mount >> $seqres.full 2>&1
-> +
-> +nr_cpus=$((LOAD_FACTOR * 4))
-> +nr_ops=$((25000 * nr_cpus * TIME_FACTOR))
-
-Don't scale ops with nr_cpus - you've already scaled processes
-with nr_cpus.
-
-> +fsstress_args=(-w -d $SCRATCH_MNT -n $nr_ops -p $nr_cpus)
-> +test -n "$SOAK_DURATION" && fsstress_args+=(--duration="$SOAK_DURATION")
-> +
-> +runfile="$tmp.migratepages"
-> +pidfile="$tmp.stress.pid"
-> +
-> +run_stress_fs()
-> +{
-> +	$FSSTRESS_PROG $FSSTRESS_AVOID "${fsstress_args[@]}" &
-> +	stress_pid=$!
-> +	echo $stress_pid > $pidfile
-> +	wait $stress_pid
-> +	rm -f $runfile
-> +	rm -f $pidfile
-> +}
-
-Don't reimplement _run_fsstress(), call it instead.
-
-> +
-> +run_stress_fs &
-
-Actually, you want _run_fsstress_bg() here, and then
-_kill_fsstress() when you want it to die.
-
-> +touch $runfile
-> +stress_pid=$(cat $pidfile)
-
-Don't need either of these.
-
-> +
-> +while [ -e $runfile ]; do
-
-while [ -n "_FSSTRESS_PID" ]; do
-
-
-> +	readarray -t QUEUE < <(numactl --show | awk '/^membind:/ {for (i=2; i<=NF; i++) print $i}')
-
-Third time this is implemented.
-
-> +	# Proper Fisher–Yates shuffle
-> +	for ((i=${#QUEUE[@]} - 1; i > 0; i--)); do
-> +		j=$((RANDOM % (i + 1)))
-> +		var=${QUEUE[i]}
-> +		QUEUE[i]=${QUEUE[j]}
-> +		QUEUE[j]=$var
-> +	done
-> +
-> +	RANDOM_NODE_1=${QUEUE[0]}
-> +	RANDOM_NODE_2=${QUEUE[1]}
-
-If all you are doing is picking two random nodes, then you could
-just use RANDOM for the array index and drop the whole shuffle
-thing, yes?
-
-> +	if [[ -f $pidfile ]]; then
-
-no need for this if we gate the loop on _FSSTRESS_PID
-
-> +		echo "migrating parent fsstress process:" >> $seqres.full
-> +		echo -en "\t$MIGRATEPAGES_PROG $pid $RANDOM_NODE_1 $RANDOM_NODE_2 ..." >> $seqres.full
-> +		$MIGRATEPAGES_PROG $stress_pid $RANDOM_NODE_1 $RANDOM_NODE_2
-> +		echo " $?" >> $seqres.full
-> +		echo "migrating child fsstress processes ..." >> $seqres.full
-> +		for pid in $(ps --ppid "$stress_pid" -o pid=); do
-> +			echo -en "\tmigratepages $pid $RANDOM_NODE_1 $RANDOM_NODE_2 ..." >> $seqres.full
-> +			$MIGRATEPAGES_PROG $pid $RANDOM_NODE_1 $RANDOM_NODE_2
-> +			echo " $?" >> $seqres.full
-> +		done
-> +	fi
-> +	sleep 2
-> +done &
-> +run_migration_pid=$!
-
-why is this put in the background, only to then wait on it to
-complete? The loop will stop when fsstress finishes, yes?
-Which means this doesn't need to be run in the background at all,
-and then cleanup doesn't need to handle killing this, either.
+As I understand it, Josef's recent inode reference counting changes
+will help with this, allowing the filesystem to hold a passive
+reference to the inode whilst it it gets pushed to a background
+context where the fs-specific cleanup code is allowed to block. This
+is probably the direction we need to head to solve this problem in a
+generic manner....
 
 -Dave.
 -- 
