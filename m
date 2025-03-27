@@ -1,59 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-45173-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45174-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8467A74064
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 22:42:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F372EA7406B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 22:46:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ED4A16DA28
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 21:42:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C164B3ABA19
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 21:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC8C1DDC0B;
-	Thu, 27 Mar 2025 21:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698B11DDA3D;
+	Thu, 27 Mar 2025 21:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RqNNF7S4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PbrjDgJ4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1C01CCB21;
-	Thu, 27 Mar 2025 21:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42AF8462;
+	Thu, 27 Mar 2025 21:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743111770; cv=none; b=b81k+78mjKjr9WaWy/x3wHlLsa/rpzb3UPfAHHW8FML2di/0fZqFI0JSzi/Oz++O2HpcKIeZGknxBLciLbZ/J/C8U9AcScPDD8tbzkbB2zlItVNOv+xtv5g7eNw7tGEHenEIqPd9wMDmAu2xzt0oLe5XnUVOpnf4D1glnT57a2o=
+	t=1743112006; cv=none; b=ow7SO+T/Kk7cWB87dtzNQtY7XcNf7Hc0V/pxL5Fj5/TRTNnG6FYMmTWxMwrqTMQxHAJbbL+zwcEftedbkqI1/czCh+2O/EOy2YiV0LTUOyAt6LqrfBzLcCdyXINTKBr5J4kgxCIie3vWqWsAV+NTJkxojlfMZx+gx3aSz/nci3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743111770; c=relaxed/simple;
-	bh=wuNLkKAivy4ND6gJk+lfRdXsflBg+O8HRse8kZCo6g0=;
+	s=arc-20240116; t=1743112006; c=relaxed/simple;
+	bh=044NMnypJBKDHzV54PkNfkWM1PAfOVt5sNmhyUdaFz8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DiHQkkll+9i0D3yYqf6UMPz7leoH1yCT4QCVax7/SoZ/13JwBPF6aUDo5S1wm4eo9nYuORRM/gvutGX9PQwGPibLUNyPuNylpNcMAMoze2tEEhbyvneO5UTtaUAiUiPw2+EL/pdx8980eiRWQ8kufdJAKqMmzIbZ8dFsbvI2nug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RqNNF7S4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8F7EC4CEDD;
-	Thu, 27 Mar 2025 21:42:49 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=JaNkzehRHK+8F1f4WcLOb4rM2SHWrEUa/WeggmBc5f4nvouESylVw0FZaXHGBhjBK0RMoYyC+spuibiRqFOxK2QxFNzq6jwbyoxytyEg2XM6sjnoIOuSG+ciS1FJw//6+ev0xypFpm5mNyGzCbkdE/oWoBrQkx3vAoeVD2K4/FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PbrjDgJ4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D4EFC4CEDD;
+	Thu, 27 Mar 2025 21:46:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743111770;
-	bh=wuNLkKAivy4ND6gJk+lfRdXsflBg+O8HRse8kZCo6g0=;
+	s=k20201202; t=1743112006;
+	bh=044NMnypJBKDHzV54PkNfkWM1PAfOVt5sNmhyUdaFz8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RqNNF7S4votd5Xq5iAEeYkkiJIXIg9J8NFpD0RoUrhO9hbm1NqNGRNw2Y7By4KZLx
-	 XW/FQuyzNQhUU10z5i4Td0LSUXEHUwKOJB2ht0BhP3/+tTZ/30t9qQmR1oKdclsT4Y
-	 pP8VagRQBCjgSo81azT7L2tN/zbAOz5i83+L5efhoRjGgLzm83kNgOkcgj6+cSFLBD
-	 LjdVCF+x99sR/Ril4HWToOypmzBvYp0k/ZfURsGHN904zy2VVSZP4kt8g0MSdmIsE5
-	 yq+45AADRgLSi/f7dmEunz87AWX9MfQ/ZRnCODkwTiZ0kT75swOEBTVygd0JDPIP0A
-	 9ngntWTxCzogQ==
-Date: Thu, 27 Mar 2025 14:42:48 -0700
+	b=PbrjDgJ4+NfAozJ7lqUyl/lBGtxzqX4FdqXvsbkLlWVlzKiNBfvv149fKViJAbrER
+	 5CtC9il1MqDLyz8I+p1kXiPFoz/CM9Nhcz/IX3D4UQSkykxPycZSr9Pi7jpc660yUL
+	 V6UyTrNzKm1mzyTeNkpZsi+y7JCsoe1BvdEWYlTU5niHpJ1/r4mogyHZJZvWD+VuUV
+	 xO8+ZystdjlkOMfDt9ox3odkNMIpmJ+5CdmMH7QpGTbv0AJ4aho7RMV+6L/Cl+c2WA
+	 TZV0g/0RPt5SvtM/IdTaZxRlNVhyJSy48fNnsreUpmVUtNBrTvwejGc7HOZfnXi5jU
+	 zhyBn2nGlwvyg==
+Date: Thu, 27 Mar 2025 14:46:44 -0700
 From: Luis Chamberlain <mcgrof@kernel.org>
-To: syzbot <syzbot+f3c6fda1297c748a7076@syzkaller.appspotmail.com>,
-	Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>
-Cc: brauner@kernel.org, hare@suse.de, joel.granados@kernel.org,
-	john.g.garry@oracle.com, kees@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
-	willy@infradead.org
-Subject: Re: [syzbot] [mm?] [fs?] BUG: sleeping function called from invalid
- context in folio_mc_copy
-Message-ID: <Z-XGWGKJJThjtsXM@bombadil.infradead.org>
-References: <67e57c41.050a0220.2f068f.0033.GAE@google.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: lsf-pc@lists.linux-foundation.org, patches@lists.linux.dev,
+	fstests@vger.kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	oliver.sang@intel.com, hannes@cmpxchg.org, willy@infradead.org,
+	jack@suse.cz, apopple@nvidia.com, brauner@kernel.org, hare@suse.de,
+	oe-lkp@lists.linux.dev, lkp@intel.com, john.g.garry@oracle.com,
+	p.raghav@samsung.com, da.gomez@samsung.com, dave@stgolabs.net,
+	riel@surriel.com, krisman@suse.de, boris@bur.io,
+	jackmanb@google.com, gost.dev@samsung.com
+Subject: Re: [LSF/MM/BPF Topic] synthetic mm testing like page migration
+Message-ID: <Z-XHRAgL0u2qO7LH@bombadil.infradead.org>
+References: <Z-ROpGYBo37-q9Hb@bombadil.infradead.org>
+ <Z-Rni3UhAF4RB7AY@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,25 +65,38 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <67e57c41.050a0220.2f068f.0033.GAE@google.com>
+In-Reply-To: <Z-Rni3UhAF4RB7AY@dread.disaster.area>
 
-On Thu, Mar 27, 2025 at 09:26:41AM -0700, syzbot wrote:
-> Hello,
+On Thu, Mar 27, 2025 at 07:46:03AM +1100, Dave Chinner wrote:
+> On Wed, Mar 26, 2025 at 11:59:48AM -0700, Luis Chamberlain wrote:
+> > I'd like to propose this as a a BoF for MM.
+> > 
+> > We can find issues if we test them, but some bugs are hard to reproduce,
+> > specially some mm bugs. How far are we willing to add knobs to help with
+> > synthetic tests which which may not apply to numa for instance? An
+> > example is the recent patch I just posted to force testing page
+> > migration [0]. We can only run that test if we have a numa system, and a
+> > lot of testing today runs on guests without numa. Would we be willing
+> > to add a fake numa node to help with synthetic tests like page
+> > migration?
+> 
+> Boot your test VMs with fake-numa=4, and now you have a 4 node
+> system being tested even though it's not a real, physical numa
+> machine.  I've been doing this for the best part of 15 years now
+> with a couple of my larger test VMs explicitly to test NUMA
+> interactions.
 
-Thanks, this is a known issue and we're having a hard time reproducing [0].
+Suuuuweet! Given your long term use of it, we'll just make it a default
+for all kdevops libvirt testing now!
 
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=152d4de4580000
+> One of the eventual goals of check-parallel is to have all these
+> things environmental variables like memory load, compaction, cpu
+> hotplug, etc to be changing in the background whilst the tests
+> running so that we can exercise all the filesystem functionality
+> under changing MM and environmental conditions without having to
+> code that into individual tests....
 
-Thanks! Sadly this has not yet been able to let me reprodouce the issue,
-and so we're trying to come up with other ways to test the imminent spin
-lock + sleep on buffer_migrate_folio_norefs() path different ways now,
-including a new fstests [1] but no luck yet.
-
-We will work on a fix, let's follow up on the original report [0] or the new
-tests case suggested thread [1] thanks!
-
-[0] https://lkml.kernel.org/r/202503101536.27099c77-lkp@intel.com                    
-[1] https://lkml.kernel.org/r/0250326185101.2237319-1-mcgrof@kernel.org
+Indeed, I have high hopes for check-parallel.
 
   Luis
 
