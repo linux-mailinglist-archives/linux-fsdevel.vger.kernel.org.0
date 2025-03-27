@@ -1,120 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-45178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8D26A740FC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 23:38:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 044EEA74102
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 23:41:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D8D93AEE04
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 22:33:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 576DC3AF556
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 22:41:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A467B1E835E;
-	Thu, 27 Mar 2025 22:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CE11D7E4F;
+	Thu, 27 Mar 2025 22:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ppS7nWzq"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FqM5wGCR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Vd3BMtPD";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FqM5wGCR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Vd3BMtPD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF6C1DF75C
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Mar 2025 22:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA4015442A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Mar 2025 22:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743114463; cv=none; b=tu5PcoAZrhO3fp2xS45nhHr4ftq8M1cf2hFtWHbA7BYLqREat9+rfHXavjlZYn69X+MGk+SIll4lIE1F5egE2h1lp8pjs+y0A/dQZN5ozGo2UmEWj8nkcM9LqttWwpJNKZ1WrGAjvl+FdfZi6yyijkX9JoXNlpRtn/WaIg4BnRg=
+	t=1743115277; cv=none; b=k1p3sbQq8X0uzsFcJ8z8K+Wnaii30XeCA4m9OTAWd3+H/ivF5XZUGjn+3fk3iZX3HznUDP8eMZ2d4SMt6zHSVOBgtIgfM7PpfRy6s5b3gmLLs03CICTPBYX3QgFiI1FzYsg8jN04dDljT1w/aEUkBLCEWR5UYt6ltYq68eFhtyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743114463; c=relaxed/simple;
-	bh=FzIjcx9dBnfY4ctyzoIH3XwzJbef24djr7Tb+00ZDJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XagNUN8qACkboEPKyI1HA+/RvT83FLAOTaKNhNEIe/rdZ3B1IZUqeWweVtOaf7TBnyhVG2UIfSn1PJXo4xbDlzABvzvfCfN3/7oS+1YcbV8qwyemHYgR4UFGp02dDtxgViF5anl11Kd6utiGu9mhw3eAj7zLo8Jw17fHNy7NFrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ppS7nWzq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E4EAC4CEDD;
-	Thu, 27 Mar 2025 22:27:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743114462;
-	bh=FzIjcx9dBnfY4ctyzoIH3XwzJbef24djr7Tb+00ZDJk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ppS7nWzqshJOtPe5St3wFnGfv9q45JbWKKvTn5/5mr7PaBtQ4goFI/XReyZxQZtOT
-	 g8QOonmhqMCFDEhPyran1KmrG60CzHIaZpT9kHt+W3qNOmCgh/WywpMEDn9Fz74v2V
-	 /LS7v1BzOgeRJk5BSvpihlI81ZTkK9EObGaiFzfwwir9jEC8o+8Rbwe6yFwkz3gGW2
-	 /x56F57URYEaWr9Dd2BeGeOaajlAHU6hQfsPEgRL4CnB0fSSljPULzhU2f7nTKRkOZ
-	 cCmrJ02Kc4XRH8Yo37xgsIWiiVV0P53R3LjkWQs9r05lmZQr096HYCr1cWrCVGpoJL
-	 C1k8BEDzdVxJA==
-Date: Thu, 27 Mar 2025 22:27:40 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: chao@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH 0/4] f2fs: Remove uses of writepage
-Message-ID: <Z-XQ3NFrfi2-bd3U@google.com>
-References: <20250307182151.3397003-1-willy@infradead.org>
- <174172263873.214029.5458881997469861795.git-patchwork-notify@kernel.org>
- <Z9DSym8c9h53Xmr8@casper.infradead.org>
- <Z9Dh4UL7uTm3cQM3@google.com>
- <Z9RR2ubkS9CafUdE@casper.infradead.org>
- <Z9Shx72mSqnQxCh3@google.com>
- <Z-N2hsKd2NJeNiKN@casper.infradead.org>
+	s=arc-20240116; t=1743115277; c=relaxed/simple;
+	bh=5vF2VEIll+nbmunkeAIzR57XTr7d4+B0Ywub9B08pQU=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=gF55V+b04r2u6EfW1jzQ65Hv2l44QOvRRVR3BotfhqRfS1OP9q9stYvIQgtqTRuWOJ6p+ft7Xd9jx9QwXye/Bj3X4M/Du+CKNgz4aq6xBlhq+2xWEuAxAyil7D4OTbYrdBM/XyJGH9nKZfZMZpwsDBuh7xnqrP/YJdNV63w6HiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FqM5wGCR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Vd3BMtPD; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FqM5wGCR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Vd3BMtPD; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 845D2211AB;
+	Thu, 27 Mar 2025 22:41:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743115272; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kyyBv0MDhyXCRlumN9tNdad83XBQwuSIRjL+sSn/aIc=;
+	b=FqM5wGCRqaheNu7ExCv9gpKqVt4eOOhPxlmk6LjiSG9fnCC75B+KhNKEHyW8QVs+S95ucZ
+	xCir34D689r9c6qu6Of2BdGQGrFwARnWDV5ayROgY5HJCaIUH4PehjyXDdWiYdyw4msqp1
+	CibKHEC42AsOfFQdET4KpieFXq8DJ+g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743115272;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kyyBv0MDhyXCRlumN9tNdad83XBQwuSIRjL+sSn/aIc=;
+	b=Vd3BMtPDplJY/AzWUC1ZJ7Rgm2Imm0hMX0rsUwZY1X//xMeDCJiiS63R+9zDcJ0FYKayMT
+	kiowBrYfWagH7uCQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=FqM5wGCR;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Vd3BMtPD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743115272; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kyyBv0MDhyXCRlumN9tNdad83XBQwuSIRjL+sSn/aIc=;
+	b=FqM5wGCRqaheNu7ExCv9gpKqVt4eOOhPxlmk6LjiSG9fnCC75B+KhNKEHyW8QVs+S95ucZ
+	xCir34D689r9c6qu6Of2BdGQGrFwARnWDV5ayROgY5HJCaIUH4PehjyXDdWiYdyw4msqp1
+	CibKHEC42AsOfFQdET4KpieFXq8DJ+g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743115272;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kyyBv0MDhyXCRlumN9tNdad83XBQwuSIRjL+sSn/aIc=;
+	b=Vd3BMtPDplJY/AzWUC1ZJ7Rgm2Imm0hMX0rsUwZY1X//xMeDCJiiS63R+9zDcJ0FYKayMT
+	kiowBrYfWagH7uCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0915E139D4;
+	Thu, 27 Mar 2025 22:41:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id bN8SLAbU5WcZbQAAD6G6ig
+	(envelope-from <neilb@suse.de>); Thu, 27 Mar 2025 22:41:10 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-N2hsKd2NJeNiKN@casper.infradead.org>
+From: "NeilBrown" <neilb@suse.de>
+To: "Marc Dionne" <marc.dionne@auristor.com>
+Cc: linux-fsdevel@vger.kernel.org, "David Howells" <dhowells@redhat.com>,
+ netfs@lists.linux.dev
+Subject:
+ Re: [PATCH] cachefiles: Fix oops in vfs_mkdir from cachefiles_get_directory
+In-reply-to: <20250325125905.395372-1-marc.dionne@auristor.com>
+References: <20250325125905.395372-1-marc.dionne@auristor.com>
+Date: Fri, 28 Mar 2025 09:41:03 +1100
+Message-id: <174311526371.9342.7621229997134615298@noble.neil.brown.name>
+X-Rspamd-Queue-Id: 845D2211AB
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-On 03/26, Matthew Wilcox wrote:
-> On Fri, Mar 14, 2025 at 09:38:15PM +0000, Jaegeuk Kim wrote:
-> > On 03/14, Matthew Wilcox wrote:
-> > > Unfortunately, I thnk I have to abandon this effort.  It's only going
-> > > to make supporting large folios harder (ie there would then need to be
-> > > an equivalently disruptive series adding support for large folios).
-> > > 
-> > > The fundamental problem is that f2fs has no concept of block size !=
-> > > PAGE_SIZE.  So if you create a filesystem on a 4kB PAGE_SIZE kernel,
-> > > you can't mount it on a 16kB PAGE_SIZE kernel.  An example:
-> > > 
-> > > int f2fs_recover_inline_xattr(struct inode *inode, struct page *page)
-> > > {
-> > >         struct f2fs_inode *ri;
-> > >         ipage = f2fs_get_node_page(F2FS_I_SB(inode), inode->i_ino);
-> > >         ri = F2FS_INODE(page);
-> > > 
-> > > so an inode number is an index into the filesystem in PAGE_SIZE units,
-> > > not in filesystem block size units.  Fixing this is a major effort, and
-> > > I lack the confidence in my abilities to do it without breaking anything.
-> > > 
-> > > As an outline of what needs to happen, I think that rather than passing
-> > > around so many struct page pointers, we should be passing around either
-> > > folio + offset, or we should be passing around struct f2fs_inode pointers.
-> > > My preference is for the latter.  We can always convert back to the
-> > > folio containing the inode if we need to (eg to mark it dirty) and it
-> > > adds some typesafety by ensuring that we're passing around pointers that
-> > > we believe belong to an inode and not, say, a struct page which happens
-> > > to contain a directory entry.
-> > > 
-> > > This is a monster task, I think.  I'm going to have to disable f2fs
-> > > from testing with split page/folio.  This is going to be a big problem
-> > > for Android.
-> > 
-> > I see. fyi; in Android, I'm thinking to run 16KB page kernel with 16KB format
-> > natively to keep block_size = PAGE_SIZE. Wasn't large folio to support a set
-> > of pages while keeping block_size = PAGE_SIZE?
-> 
-> Oh, I think I do see a possible argument for continuing this work.
-> 
-> If we have an f2fs filesystem with a 16kB block size, we can use order-0
-> folios with a 16kB PAGE_SIZE kernel, and if we want to mount it on a
-> kernel with a 4kB PAGE_SIZE kernel, then we can use order-2 folios to
-> do that.
-> 
-> Is that a useful improvement to f2fs?  It's not really the intent of
-> large folios; it's supposed to be used to support arbitrary order folios.
-> But we have all the pieces in place such that we could tell the page
-> cache min-order = max-order = 2.
+On Tue, 25 Mar 2025, Marc Dionne wrote:
+> Commit c54b386969a5 ("VFS: Change vfs_mkdir() to return the dentry.")
+> changed cachefiles_get_directory, replacing "subdir" with a ERR_PTR
+> from the result of cachefiles_inject_write_error, which is either 0
+> or some error code.  This causes an oops when the resulting pointer
+> is passed to vfs_mkdir.
 
-It may be helpful in case where someone wants to try 4KB page kernel back,
-after Android ships 16KB page/block products. Does it require a big surgery?
+Thanks for fixing that - now that I look at my code again it is
+obviously wrong :-(
+
+Reviewed-by: NeilBrown <neilb@sue.de>
+
+Thanks,
+NeilBrown
+
+
+>=20
+> Use a similar pattern to what is used earlier in the function; replace
+> subdir with either the return value from vfs_mkdir, or the ERR_PTR
+> of the cachefiles_inject_write_error() return value, but only if it
+> is non zero.
+>=20
+> Fixes: c54b386969a5 ("VFS: Change vfs_mkdir() to return the dentry.")
+> cc: netfs@lists.linux.dev
+> Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
+> ---
+>  fs/cachefiles/namei.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+> index 83a60126de0f..14d0cc894000 100644
+> --- a/fs/cachefiles/namei.c
+> +++ b/fs/cachefiles/namei.c
+> @@ -128,10 +128,11 @@ struct dentry *cachefiles_get_directory(struct cachef=
+iles_cache *cache,
+>  		ret =3D security_path_mkdir(&path, subdir, 0700);
+>  		if (ret < 0)
+>  			goto mkdir_error;
+> -		subdir =3D ERR_PTR(cachefiles_inject_write_error());
+> -		if (!IS_ERR(subdir))
+> +		ret =3D cachefiles_inject_write_error();
+> +		if (ret =3D=3D 0)
+>  			subdir =3D vfs_mkdir(&nop_mnt_idmap, d_inode(dir), subdir, 0700);
+> -		ret =3D PTR_ERR(subdir);
+> +		else
+> +			subdir =3D ERR_PTR(ret);
+>  		if (IS_ERR(subdir)) {
+>  			trace_cachefiles_vfs_error(NULL, d_inode(dir), ret,
+>  						   cachefiles_trace_mkdir_error);
+> --=20
+> 2.48.1
+>=20
+>=20
+
 
