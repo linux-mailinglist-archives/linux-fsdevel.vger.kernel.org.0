@@ -1,143 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-45151-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45152-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFBC1A737A1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 18:01:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F0FCA737AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 18:05:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAE60188E668
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 17:02:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B73EA17654B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 17:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3FAC1AE01C;
-	Thu, 27 Mar 2025 17:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206771AD3E0;
+	Thu, 27 Mar 2025 17:05:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VrZu7i0y"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YxiKJVCT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C660E14AA9;
-	Thu, 27 Mar 2025 17:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E212A1DFF8;
+	Thu, 27 Mar 2025 17:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743094902; cv=none; b=RY0gn8Jmzsxz27I2HIIMNVBEkox2mjUJAv/VMM2gA2wsK9IuZGi770KJxeg2S3J8lBxC8b0BKEl2vWab2sIUqP8vElVr8MSCHG2yvUEO+tktutWqdc4IOCY428qlODUE7xHxG87DirX7Z9FLa56mxeOPxTjAcGgatun7BN74pXI=
+	t=1743095106; cv=none; b=l14jVdW0OxdiQlSBDEXwkhY28lRAUC2UI1J+zgxYnfFJgrh33EuFjMiFXsWf4BS7agw87w3y87UJsOiPzomuHkwXEG9pomutTcyBTi8+0ZJT5RcimINOi7xe+ZaUir36J6J2GSN8nZl7/fCo87HYxJyi0pNMYbQEGEIGYnSBGuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743094902; c=relaxed/simple;
-	bh=yDp5v2+EtKv7vIooGT7aK2o6WBhVIV8zl9ZQR/gjQiY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A+4CBxCo4DQeNLC6gLiye+VHNKt/RkoGBtrgGB+5CqMx1ZcVkMuxq/wPf/4/QOMuWuhZXhNXAN8Vn4xQGGVAoH5ARBXLNssPrPcFcE4lsekvh3QbGj87tgrWHLV/Rrs2sNW7WgoUEYUS0oxQ7aDtieirCqbs1kGtCSQjAaIGYKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VrZu7i0y; arc=none smtp.client-ip=209.85.216.45
+	s=arc-20240116; t=1743095106; c=relaxed/simple;
+	bh=UCukrpff5csPN5PME//Bu0ltX0l7g8zKWFio8g/DdbY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LTX9/1VfD6phQoHhQx+yM4No9svbpYq3iZDKD26BHRSTZrSRU3dhB44ldAQNGyyGD9rTsEtyDlNaWeEA41JVFPjfV4TK4TJ7YEMjFo7t3050LULM+IFi7gznJ6dPgwiyfk9R81Znk1sqMAjlTYZfGFpafXLrNGIIxXKvDz0k3PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YxiKJVCT; arc=none smtp.client-ip=209.85.219.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-301302a328bso2172671a91.2;
-        Thu, 27 Mar 2025 10:01:40 -0700 (PDT)
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e3c8ae3a3b2so1068808276.0;
+        Thu, 27 Mar 2025 10:05:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743094899; x=1743699699; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ro7wdwaqUs2f5wAR7wtoF+lx+yF3AkxnaK0zSEVn14o=;
-        b=VrZu7i0ygBtabUr4T7u/PGEU8KhWie4xlvMEP6Z2PXL8yEKCsTwo8kAC3Z0xHrpYoz
-         dtJyMGZLe3CQL2v1yktp32cyISQIjAvfwbnHhiMMYPXMuEl+/rZvM6+zBfM4lm+qnqSA
-         BV2/CZCrQO6zA9OAHXcSiB83FNOnz5VjKZfDTuE+zM97nL7Irrm2JS89nDDIFZA26lG1
-         WahtsaT++7zpcY3rYyu1Z8/Xp3fJTe+bOutKMO+bNH5WHLuhxFD3cpkwm5P96+vDvfI2
-         eFbdur31Kbq+qkDHn7Ut6QJIijx75RBxg36TchgWo62Yp0PEvDjNPPZyYtdM2Z6UxRgI
-         Gbqg==
+        d=gmail.com; s=20230601; t=1743095104; x=1743699904; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gIMP4nmwgubN4Pys5aTU2WlwnqqvwCpJ2MLL4ep//RA=;
+        b=YxiKJVCTbmMWGGZuNMlQEqbWHb9FNVxRXKeFy5ubU7oTK9uJwrlPNj9NSmmF+kO3VZ
+         JK7JCFKiZ9+zIWTi3FfHGwzKSd2Mw++laRUzHd1tlI6hSEYncn7/q3U0cyyAYaqAY9lm
+         UlIug5GZgAD9CILLlqNk4L73TYPTlYUGWghAw5wRR0UcPBj0oz4EGUyphdlaMUP4MxKc
+         OvAXUn/v5zKMl2DwTWFvBdqDXJEH+v/p0po0fTGfCI+5DLOYfm3oFiPGn60qjVjXl7qd
+         muBGXzQLhVMN8Zu29rWTtwqOOKz3PD2W/3GSuGbcWP91x2xDMxIhM2L2AoYYrFK8LtNq
+         L2lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743094899; x=1743699699;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ro7wdwaqUs2f5wAR7wtoF+lx+yF3AkxnaK0zSEVn14o=;
-        b=ilssSQhvnK659GMzaqhuQ49HUUn61D8CPmu566hRcFNPRqJqD4NqEL75QIrljD0h0V
-         Ai9CMWLmeYtaG8I3Webd22brJVWB9Dr9x4eXT51XjtgwuLMuW2DVqKffKmP8s9y7GfvM
-         qDM0PBgngMS8cj2hrLBDPr9k+SvwU8jlLn/xcL6tjx5D0WBiRUW3ovU07Vi3sF7M01n4
-         sXdRhAzbVNHJ8M24H2CAiakSJqCX+ro4rOdGqTCxCH4bDuy783eN/q+oikldbMW+6xNJ
-         FGGemeBKP7XD2vYxlH2rJns5m9qfQIWqC63bYm37WkVlSWdVgJdLTePLJ83+OReeavEv
-         EYqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVuDCZWmlM6CG1piIkg1uOW2QUEhsbGzdQK9bwYxJkhl5jzqXOOzyHYeoYV/+vwPOV5iF+otujj8Q/1i7jG@vger.kernel.org, AJvYcCXXKQWZkqNBqMS5IG5Jof44NN2xG1XC+BqEu7CGoPhymjubZ8AFcT43UeGJbdHSRNqVe6JpWzex+5Za@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjCvbIqvt4ksKyc1n5MzMSDoLEk8dXURqLqtgS9xPQeKGBZ4gN
-	HufreyNJe4tsf3dMW+GKOWoRbHgy0BZv3ySJBeu9p+xMmEOnBwytH1zu6ob6
-X-Gm-Gg: ASbGncsHcdYkMLczXC3WE81EzQKg2rI3fQ6UsjxxUlPqkSjIsyfnfLZ3k4xUG2o04bW
-	PDhhDW/S3n0J0GudHvetv2FahrAQuW/JKf+LSUURPA2qsO8iEprH51b4G8WnH5FdNqAKu1gCwcK
-	Kk5x2VtXTEM1uPwO29/C4Nl9Ad4frXo1lLbPUAnzjUDHHyn8OyRIArqjrxvbjbcdXlHFj5iXyEg
-	QHj85S/DlLlISdc7QMAbZoip0+dm0QDmbRMQj8IfuuYDg9tqmp8rBmdibBCcsdWgnPh1iOPlypp
-	RaIxFWRVjY+GcWMRs3xY6ipTsQhilgjdcgjBBJhAcci/PXN4unCaquRGz1i4Jw==
-X-Google-Smtp-Source: AGHT+IHQM/Pp/PibTbh/PCo5gLJC81Gdm5sJP68OC1Cj7UsrJA+UFQlDiFaPCECD9hR0PiABxPXOrQ==
-X-Received: by 2002:a17:90b:3eca:b0:2ff:592d:23bc with SMTP id 98e67ed59e1d1-303a7c5a48amr6562193a91.4.1743094899030;
-        Thu, 27 Mar 2025 10:01:39 -0700 (PDT)
-Received: from localhost.localdomain ([129.126.185.185])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291f1df4acsm1860195ad.199.2025.03.27.10.01.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 10:01:38 -0700 (PDT)
-From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To: linux-xfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	John Garry <john.g.garry@oracle.com>,
-	brauner@kernel.org,
-	djwong@kernel.org,
-	dchinner@redhat.com,
-	linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com,
-	linux-ext4@vger.kernel.org,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [PATCH] iomap: Fix conflicting values of iomap flags
-Date: Fri, 28 Mar 2025 01:01:19 +0800
-Message-ID: <20250327170119.61045-1-ritesh.list@gmail.com>
-X-Mailer: git-send-email 2.48.1
+        d=1e100.net; s=20230601; t=1743095104; x=1743699904;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gIMP4nmwgubN4Pys5aTU2WlwnqqvwCpJ2MLL4ep//RA=;
+        b=MtUirJQH/p2iGyVu9F0RM44rnAepzX8pQYXdfsoNAev2N+ibizOiuYmItHN1jB7DT9
+         /9iUxj2mXzBSLA2lwfek/mHNBHt9OoIcPWG9DOZzVPgLydyDEJ1wMIHbda4FhyK+p1qA
+         xllOuXr+HawBBAIxMg8XHxoleizo1wqJ9At63rmYzV4F/SKuz9FzMD/8jANK9d/2X0xo
+         fqwfth5lWPDBBOkFTrkpMpq9iCUI1stc6DzUVwRLJ+1PFOhLL0ayvznNikh/Rpz6eyPT
+         8Rz8EJ6YM/ZndeYMmv2xQCy0Hb6eC48Sy+h01gZlCgAxUcRviXX3DREC/qZcyrBXbZxr
+         d4Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCVGm8hDhbAt84eVVTi/gyU62fpLti0BlTYd2oFmvkZywUbm6KfJKRKBZ5AHzgWm5jO/asLhg5yGAnSY@vger.kernel.org, AJvYcCW+4QbNGNwXTL0GbOBJyYxHUiGv+eDGnrCQ3WDf2p/nvTEfVn/lOl+c8OvXSBlW8/5UwXc0yaOb@vger.kernel.org, AJvYcCWR5GA3ICUYUDVJ90RjwCTuMQY+QBoi8fWn0MPiGi421ZiHkO7JU4Rv6C3oPwC3wshuQGj1UnT0uPxaZmfd@vger.kernel.org, AJvYcCXZ0+NG9s5cK5kp7d/U6VhAWJGEIZosW0QlRVwpf2zfY8vPFfv/XD+SH0/KjpwHv1Ic1Jye22LzWBm6m6xs@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFjIwoYcvzK5dvIpcOa/ra2//VbPW/nNVLsQz1CeXL2LLodhuH
+	6ojqECDKJ4BIX2r8E4oOAaJwmgYZuBl0vZ46d87TZYwoWR23rHTibBM8wwt+tZBN0stF4ZoLX3c
+	wF4TOQpNYIQWMTmvWXUAwZV5/Or4=
+X-Gm-Gg: ASbGncvIEukiOXZXhF/tUnv01k/iqM17MzL6Op4rnrqx4vaeejgUYg/HhvuU4/IdW+f
+	5kAGbPYIbueV+gPOFIk3Yzua/zZgXhKneZk5g/n0+uN6GE24+V3wF+7NqyzKE+qwKAQxyQK/TZU
+	x+H5N/cp9xxmBri/HomCmkqBXvGRXuqIvteUScz4p11i4Yo0eXaF3PAMI=
+X-Google-Smtp-Source: AGHT+IE0V4W9RPbFnppqS3nJN9J9jxtEhxV4mELuux5c5aERSjVw4aOfjObJ5DON3dZ9u7fr2lGONyc2RPHgBUOPdqI=
+X-Received: by 2002:a05:6902:478b:b0:e58:aa00:ffd5 with SMTP id
+ 3f1490d57ef6-e69435eb3d5mr5861203276.4.1743095103548; Thu, 27 Mar 2025
+ 10:05:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250326154349.272647840@linuxfoundation.org> <CA+G9fYsRQub2qq0ePDs6aBAc+0qHRGwH_WPsTfhcwkviD1eH1w@mail.gmail.com>
+In-Reply-To: <CA+G9fYsRQub2qq0ePDs6aBAc+0qHRGwH_WPsTfhcwkviD1eH1w@mail.gmail.com>
+From: Leah Rumancik <leah.rumancik@gmail.com>
+Date: Thu, 27 Mar 2025 10:04:52 -0700
+X-Gm-Features: AQ5f1JoUWc8i3RgAxN3mjRbk-tD1j9a8iUSQkbDB7BjyLErxq3tg2jL0zFBfxIE
+Message-ID: <CACzhbgQ=TU-C=MvU=fNRwZuFKBRgnrXzQZw15HVci_vT5w8O7Q@mail.gmail.com>
+Subject: Re: [PATCH 6.1 000/197] 6.1.132-rc2 review
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, 
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, 
+	shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, 
+	pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, 
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Dave Chinner <dchinner@redhat.com>, Christoph Hellwig <hch@lst.de>, 
+	Anders Roxell <anders.roxell@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-IOMAP_F_ATOMIC_BIO mistakenly took the same value as of IOMAP_F_SIZE_CHANGED
-in patch '370a6de7651b ("iomap: rework IOMAP atomic flags")'.
-Let's fix this and let's also create some more space for filesystem reported
-flags to avoid this in future. This patch makes the core iomap flags to start
-from bit 15, moving downwards. Note that "flags" member within struct iomap
-is of type u16.
+This is fixed by
 
-Fixes: 370a6de7651b ("iomap: rework IOMAP atomic flags")
-Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
----
- include/linux/iomap.h | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+https://lore.kernel.org/all/20250321010112.3386403-1-leah.rumancik@gmail.co=
+m/T/
 
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 02fe001feebbd4..68416b135151d7 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -78,6 +78,11 @@ struct vm_fault;
- #define IOMAP_F_ANON_WRITE	(1U << 7)
- #define IOMAP_F_ATOMIC_BIO	(1U << 8)
+but I'm waiting on an ACK. Let me do some nagging :)
 
-+/*
-+ * Flag reserved for file system specific usage
-+ */
-+#define IOMAP_F_PRIVATE		(1U << 12)
-+
- /*
-  * Flags set by the core iomap code during operations:
-  *
-@@ -88,14 +93,8 @@ struct vm_fault;
-  * range it covers needs to be remapped by the high level before the operation
-  * can proceed.
-  */
--#define IOMAP_F_SIZE_CHANGED	(1U << 8)
--#define IOMAP_F_STALE		(1U << 9)
--
--/*
-- * Flags from 0x1000 up are for file system specific usage:
-- */
--#define IOMAP_F_PRIVATE		(1U << 12)
--
-+#define IOMAP_F_SIZE_CHANGED	(1U << 14)
-+#define IOMAP_F_STALE		(1U << 15)
+- leah
 
- /*
-  * Magic value for addr:
+
+
+On Thu, Mar 27, 2025 at 5:50=E2=80=AFAM Naresh Kamboju
+<naresh.kamboju@linaro.org> wrote:
+>
+> On Wed, 26 Mar 2025 at 21:15, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 6.1.132 release.
+> > There are 197 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Fri, 28 Mar 2025 15:43:27 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patc=
+h-6.1.132-rc2.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git linux-6.1.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+>
+> Regressions on arm, arm64, mips, powerpc builds failed with gcc-13 and
+> clang the stable-rc 6.1.132-rc1 and 6.1.132-rc2.
+>
+> First seen on the 6.1.132-rc1
+>  Good: v6.1.131
+>  Bad: Linux 6.1.132-rc1 and Linux 6.1.132-rc2
+>
+> * arm, build
+>   - clang-20-davinci_all_defconfig
+>   - clang-nightly-davinci_all_defconfig
+>   - gcc-13-davinci_all_defconfig
+>   - gcc-8-davinci_all_defconfig
+>
+> * arm64, build
+>   - gcc-12-lkftconfig-graviton4
+>   - gcc-12-lkftconfig-graviton4-kselftest-frag
+>   - gcc-12-lkftconfig-graviton4-no-kselftest-frag
+>
+> * mips, build
+>   - gcc-12-malta_defconfig
+>   - gcc-8-malta_defconfig
+>
+> * powerpc, build
+>   - clang-20-defconfig
+>   - clang-20-ppc64e_defconfig
+>   - clang-nightly-defconfig
+>   - clang-nightly-ppc64e_defconfig
+>   - gcc-13-defconfig
+>   - gcc-13-ppc64e_defconfig
+>   - gcc-13-ppc6xx_defconfig
+>   - gcc-8-defconfig
+>   - gcc-8-ppc64e_defconfig
+>   - gcc-8-ppc6xx_defconfig
+>
+> Regression Analysis:
+>  - New regression? yes
+>  - Reproducibility? Yes
+>
+> Build regression: arm arm64 mips powerpc xfs_alloc.c 'mp' undeclared
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>
+> ## Build log
+> fs/xfs/libxfs/xfs_alloc.c: In function '__xfs_free_extent_later':
+> fs/xfs/libxfs/xfs_alloc.c:2551:51: error: 'mp' undeclared (first use
+> in this function); did you mean 'tp'?
+>  2551 |         if (XFS_IS_CORRUPT(mp, !xfs_verify_fsbext(mp, bno, len)))
+>       |                                                   ^~
+>
+>
+> ## Source
+> * Kernel version: 6.1.132-rc2
+> * Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-=
+stable-rc.git
+> * Git sha: f5ad54ef021f6fb63ac97b3dec5efa9cc1a2eb51
+> * Git describe: v6.1.131-198-gf5ad54ef021f
+> * Project details:
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1=
+.131-198-gf5ad54ef021f/
+>
+> ## Build
+> * Build log: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1=
+.y/build/v6.1.131-198-gf5ad54ef021f/testrun/27785617/suite/build/test/gcc-1=
+2-lkftconfig-graviton4-kselftest-frag/log
+> * Build history:
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1=
+.131-198-gf5ad54ef021f/testrun/27785617/suite/build/test/gcc-12-lkftconfig-=
+graviton4-kselftest-frag/history/
+> * Build details:
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1=
+.131-198-gf5ad54ef021f/testrun/27785617/suite/build/test/gcc-12-lkftconfig-=
+graviton4-kselftest-frag/
+> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2urS=
+wNctsyhQzf1j7dvt6nHemP5/
+> * Kernel config:
+> https://storage.tuxsuite.com/public/linaro/lkft/builds/2urSwNctsyhQzf1j7d=
+vt6nHemP5/config
+>
+> ## Steps to reproduce
+>  - tuxmake --runtime podman --target-arch arm64 --toolchain gcc-12 \
+>     --kconfig https://storage.tuxsuite.com/public/linaro/lkft/builds/2urS=
+wNctsyhQzf1j7dvt6nHemP5/config
+> debugkernel dtbs dtbs-legacy headers kernel kselftest modules
+>  - tuxmake --runtime podman --target-arch arm --toolchain clang-20
+> --kconfig davinci_all_defconfig LLVM=3D1 LLVM_IAS=3D1
+>
+>
+> --
+> Linaro LKFT
+> https://lkft.linaro.org
 
