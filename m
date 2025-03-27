@@ -1,140 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-45165-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45166-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4260FA73F46
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 21:23:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31F6BA73F82
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 21:50:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D90371703AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 20:23:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 710EC3BF33E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 20:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9A31CEAA3;
-	Thu, 27 Mar 2025 20:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6271F1D934D;
+	Thu, 27 Mar 2025 20:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZizUhPCU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73FEC1C84B7;
-	Thu, 27 Mar 2025 20:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93671D7E52;
+	Thu, 27 Mar 2025 20:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743107004; cv=none; b=RXPKPpu3DX9hcwvWL3cF+hDG9NYycxh8aW/+quTqKTdxZpZIjTAOFuZaOUA7b3XxJ843HwxwKN3l7tsjuMfGZbti04wJ/jLCZ+waUUOEZBBppaJ4LsNwINBydD/N9z4D+hwwioWL7oSDn+Ep0iM2GiPUz4Fk+nSt6+BTcP4IZPE=
+	t=1743108495; cv=none; b=P+UPotqWZPHoCGYFd2rhKKq74BQCa8IYaRo6Op7U0OG1ZQeD1VCcei9Xatc01qj8faVdSuRBeEao4Duej0SsUdoP9KWxas1VI9uO+LB6ZYDJqP4UzSTHy6MKHMm9TEP4bO1BNWKdf+nOLUAQqAg06EGcylvpDuwGJImQwxU8JYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743107004; c=relaxed/simple;
-	bh=M8X/u5Ol7Vve/jFOayTpPJNz9VSFpL6D8TqnZ2j6Kzw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k6BQlzJOilAp3hSSiUWed7Y3vdXzuLbquJdnVACmK0nPsYSlG55N06H67ZNrSV0CRTFTQ/TIDJHEAH7kT8q1WVJVTj4dfZny+o7adatCTNoAGKMMbj4dJdxCl6ZFsUPCgh3v+dwKKSQC1ANRd1aG6j6fmNVXTOlZsAvdqZexRQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7C4271762;
-	Thu, 27 Mar 2025 13:23:25 -0700 (PDT)
-Received: from [10.57.86.101] (unknown [10.57.86.101])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A0CEA3F694;
-	Thu, 27 Mar 2025 13:23:17 -0700 (PDT)
-Message-ID: <5131c7ad-cc37-44fc-8672-5866ecbef65b@arm.com>
-Date: Thu, 27 Mar 2025 16:23:14 -0400
+	s=arc-20240116; t=1743108495; c=relaxed/simple;
+	bh=SdPbA0aHeBLqE7nZx4Bu1kmxgHP5+VLI0VP6d+QffGg=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=UdpmgRz66YKFWePi9fSDAJO1eZttQ4hUrMBYINTGPNx+NH8/qlXzvs3MteppB33nuVCP6bz9pmbwr14j/tRZjUyNMxAXCkBert1lljj7mNPGkqsPLF/4sEZlwgRByskTh/AfTKqWeQK4YMhbNLMBiXQJnpXyvYXpFDugDdQGdTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZizUhPCU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92703C4CEDD;
+	Thu, 27 Mar 2025 20:48:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743108495;
+	bh=SdPbA0aHeBLqE7nZx4Bu1kmxgHP5+VLI0VP6d+QffGg=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=ZizUhPCUAiblDjVSUe1cDhQr3cvefNf/hqa0qkC7PmGhGRZP5wFB0WoiDBzlLsqM2
+	 v+s8vZ3y9Yx7LNFgA5d2I6HIg96kbWFCa2WZt9Vs+Ff2Mavv5JIUNFAOB4069FrLL9
+	 Tu7CbE/99qCAJyB4r+/SQYZW0J5Z4v3cXumqNaFOTTQuNCJTWz8kz5OqsVHF3opx9q
+	 HZir1cagp+bXXGbv7LAYwRwdtCbySFl7PQFs6XlH12c149xG2wjHy5B0hlRogl7ShH
+	 DTfmhWSkQFaAv51e9YgnRzMKIPALPxaniQsDrBMt1DHsEU5AFlDW5wtlJmOOEH1XkM
+	 T26EVoa5msDSw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D72380AAFD;
+	Thu, 27 Mar 2025 20:48:53 +0000 (UTC)
+Subject: Re: [GIT PULL] bcachefs for 6.15, v2...
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <wg47lanrvfqkqdospive4b3ymc5snuhqdygcle33q3cxudw3xl@rkllblbmre4v>
+References: <wg47lanrvfqkqdospive4b3ymc5snuhqdygcle33q3cxudw3xl@rkllblbmre4v>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <wg47lanrvfqkqdospive4b3ymc5snuhqdygcle33q3cxudw3xl@rkllblbmre4v>
+X-PR-Tracked-Remote: git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-03-24
+X-PR-Tracked-Commit-Id: d8bdc8daac1d1b0a4efb1ecc69bef4eb4fc5e050
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 4a4b30ea80d8cb5e8c4c62bb86201f4ea0d9b030
+Message-Id: <174310853165.2212788.13300034262823916193.pr-tracker-bot@kernel.org>
+Date: Thu, 27 Mar 2025 20:48:51 +0000
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mm/filemap: Allow arch to request folio size for exec
- memory
-Content-Language: en-GB
-To: Matthew Wilcox <willy@infradead.org>,
- Kalesh Singh <kaleshsingh@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Dave Chinner <david@fromorbit.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20250327160700.1147155-1-ryan.roberts@arm.com>
- <Z-WAbWfZzG1GA-4n@casper.infradead.org>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <Z-WAbWfZzG1GA-4n@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-+ Kalesh
+The pull request you sent on Mon, 24 Mar 2025 14:56:15 -0400:
 
-On 27/03/2025 12:44, Matthew Wilcox wrote:
-> On Thu, Mar 27, 2025 at 04:06:58PM +0000, Ryan Roberts wrote:
->> So let's special-case the read(ahead) logic for executable mappings. The
->> trade-off is performance improvement (due to more efficient storage of
->> the translations in iTLB) vs potential read amplification (due to
->> reading too much data around the fault which won't be used), and the
->> latter is independent of base page size. I've chosen 64K folio size for
->> arm64 which benefits both the 4K and 16K base page size configs and
->> shouldn't lead to any read amplification in practice since the old
->> read-around path was (usually) reading blocks of 128K. I don't
->> anticipate any write amplification because text is always RO.
-> 
-> Is there not also the potential for wasted memory due to ELF alignment?
+> git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-03-24
 
-I think this is an orthogonal issue? My change isn't making that any worse.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/4a4b30ea80d8cb5e8c4c62bb86201f4ea0d9b030
 
-> Kalesh talked about it in the MM BOF at the same time that Ted and I
-> were discussing it in the FS BOF.  Some coordination required (like
-> maybe Kalesh could have mentioned it to me rathere than assuming I'd be
-> there?)
+Thank you!
 
-I was at Kalesh's talk. David H suggested that a potential solution might be for
-readahead to ask the fs where the next hole is and then truncate readahead to
-avoid reading the hole. Given it's padding, nothing should directly fault it in
-so it never ends up in the page cache. Not sure if you discussed anything like
-that if you were talking in parallel?
-
-Anyway, I'm not sure if you're suggesting these changes need to be considered as
-one somehow or if you're just mentioning it given it is loosely related? My view
-is that this change is an improvement indepently and could go in much sooner.
-
-> 
->> +#define arch_exec_folio_order() ilog2(SZ_64K >> PAGE_SHIFT)
-> 
-> I don't think the "arch" really adds much value here.
-
-I was following the pattern used by arch_wants_old_prefaulted_pte(),
-arch_has_hw_pte_young(), etc. But I think you're right. I'll change as you suggest.
-
-> 
-> #define exec_folio_order()	get_order(SZ_64K)
-
-ooh... get_order()... nice.
-
-> 
->> +#ifndef arch_exec_folio_order
->> +/*
->> + * Returns preferred minimum folio order for executable file-backed memory. Must
->> + * be in range [0, PMD_ORDER]. Negative value implies that the HW has no
->> + * preference and mm will not special-case executable memory in the pagecache.
->> + */
->> +static inline int arch_exec_folio_order(void)
->> +{
->> +	return -1;
->> +}
-> 
-> This feels a bit fragile.  I often expect to be able to store an order
-> in an unsigned int.  Why not return 0 instead?
-
-Well 0 is a valid order, no? I think we have had the "is order signed or
-unsigned" argument before. get_order() returns a signed int :)
-
-Personally I'd prefer to keep it signed and use a negative value as the
-sentinel. I don't think 0 is the right choice because it's a valid order. How
-about returning unsigned int and use UINT_MAX as the sentinel?
-
-#define EXEC_FOLIO_ORDER_NONE	UINT_MAX
-
-static inline unsigned int arch_exec_folio_order(void)
-{
-	return EXEC_FOLIO_ORDER_NONE;
-}
-
-Thanks,
-Ryan
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
