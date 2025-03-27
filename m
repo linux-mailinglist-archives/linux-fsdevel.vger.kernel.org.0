@@ -1,192 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-45140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE37A734FC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 15:51:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9A8AA7350B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 15:55:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAAFB188F162
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 14:50:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CB8B172A5D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 14:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BDC218845;
-	Thu, 27 Mar 2025 14:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA3C218851;
+	Thu, 27 Mar 2025 14:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bX2V9li8"
+	dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b="Sy3JHFfr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KueJ0GjR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2057.outbound.protection.outlook.com [40.107.244.57])
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A57979E1;
-	Thu, 27 Mar 2025 14:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743087000; cv=fail; b=eC/25Eqa3KcG4WJGcvWFNzyWLmPTvzaEnsmI6dKDauntiL/NUGS7tEu6RfhBsOzEMUz2QTFAYeeFDncFJ3UmUcqXR+qe9un7nsPugKiemBPLhWrhXlCMbauwELiMRwc+INo/BeknGc+QpvsSnwvdjasbQGSPvmCCDeSIDOhjbDQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743087000; c=relaxed/simple;
-	bh=v+Qa0m5NUBPi7wqpulo5Ff8E3dAHXm4yuandj29rR4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=u+5gLxb2S9ilRLyBoR1WZCDG3FOlpex6jnthLXcs06kaSykRHvAzuaaSrUnaix6t+WlVncGcIH9BPyl3OcpBllCgL5lKFrn6Svh9eJMUZDvA1bO/AuUspBBz7YPGBNvV9PMtHuskmrxolO+E+brT8R4kkQ2ezePogb0cEZoO0iM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bX2V9li8; arc=fail smtp.client-ip=40.107.244.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WOYB61+Jil1tvwtNiN89Ijhg5L322c7DDUi3aj0C7oe2m5fJyczZ4E3ess8PIKAvcrQCU2N5dJaqmUvoDqWUYzd/SQXFJGKETk4/bCunjkRAm/PehBOTfYTZa35zeGV5F6UEzOEP5z7MPVjNneMcV7nZ1aquB2wG+GS52I+nJuIccBgFYzsNLOOUvhm5h0cvhqBg5U7+R+tLk32lEO2mbMO0BLZCLQx8foDeFi5N4W84e0DM7ilwWTjkotzXVF2WhWwaN9AYbrswOGWvv0ANMAwi+PJpY5SKoSDXB6WC7kkUv3skOVrJ2tnjCmHB3Z+uAUR8N31odPndQOmDA7/WuA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=taK75GSgOINkRwYN91eeHKeOiAD7kVmtQe5VcG7uzc4=;
- b=FGy8WbjxBaqes4CoJyRGpTcdOaSsPE6R4unP8X1NPvDvgHUSPFxpbhC9yy7JBMl0ae/EmnA2FdU8Mm4HWmOj1CU/uIQKAhvERwktpnWJ1sZddqT9NzeB/ZZlBT0HOTZUkqfQLKCBPq31mA+B75qKd8W9MEWl+imWRNqQQGHl97I7I3A2t3RSuoWux//phllGJCJta/xvYqcggHlkLk8PT/iPDByCIcYxDsLpWc0DBeGYE136t6kAvLodQ5O3NA3hebUNWBODhPts1C9BSzoaZdnehJqO16Sb8jYqF6fPKlyExLp1DqACNB7lbL56rWKB5gu0KPD14LE0aAn0BdMjDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=taK75GSgOINkRwYN91eeHKeOiAD7kVmtQe5VcG7uzc4=;
- b=bX2V9li80K7fLyJw93gHjFBUIJ8FG7bYuPUofRHtDmq4SJTdmmSod2bYtgnMkdk54z9ZHdD3cKacKjQboykre3BJQVTsDM8GUk3iAZN5dqWC5wi4rQHxexrl8JT1TUkEgup66kOrARKRfkJFkUVZRd5S1zASl3fZNWhsYYLH+pVf94x1Pkyn1lrZiYhvdHjwF2GAdcHr7RaV4ffc5gbtB5+NK/V31EdwPL9yOxb0wj6fpBdNL1K0fbpnf25xWFBKBtNGQW63dtNuNS52Z7yqPpGJUB6+mmkBikgVLyiE9qEyzmUoKIM4GQM2ZVur0s8C2v1CPb/KNEsCi2M6KVGmYw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- SA3PR12MB7880.namprd12.prod.outlook.com (2603:10b6:806:305::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Thu, 27 Mar
- 2025 14:49:55 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%7]) with mapi id 15.20.8534.043; Thu, 27 Mar 2025
- 14:49:55 +0000
-Date: Thu, 27 Mar 2025 07:49:47 -0700
-From: Alistair Popple <apopple@nvidia.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/6] Allow file-backed or shared device private pages
-Message-ID: <jcrkl6my4u3tyjmaoibor4lwe2diox4moo4ap52eu4v3yxhnn3@mmahcrjxeiba>
-References: <cover.24b48fced909fe1414e83b58aa468d4393dd06de.1742099301.git-series.apopple@nvidia.com>
- <Z9e7Vye7OHSbEEx_@infradead.org>
- <Z-NjI8DO6bvWphO3@casper.infradead.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-NjI8DO6bvWphO3@casper.infradead.org>
-X-ClientProxiedBy: SY5PR01CA0033.ausprd01.prod.outlook.com
- (2603:10c6:10:1f8::10) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8D25C603;
+	Thu, 27 Mar 2025 14:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743087326; cv=none; b=KwN/0+w+SpOBzkzNmsdO0pKfI+NBbcONINx/StYbSnJdB3nsCneeX82xA81Ep2DJY+/BgbFKOvr2iuYB6h866cU6FVl3PrJYHZ8eRpQOyD1MIbFKKujl3nduPrzobuUQqZH6rhQm9sswSgbkqsEcVdzGxymaefB+g5mto8TiZiY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743087326; c=relaxed/simple;
+	bh=N8uQKQWunTMpvDqhaPC/RN2tSlaGzF2l9fFeSi2g9Qk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CZJMT3u4qVdkj2Elnl+8AFVi4XAMvZFo3XB8CBT6/Z0WRPWSjAGieq67dbxSqWIzP7WjNqf7cMm1D5OEQ2HKaE4iRju8U85Zm09E1gv8dVqwz5x3411dpSh3fLyhEo5DGd8AehUpRFZhK3Rp3/qL3r56X/zdNVhoc+MK+DWjBq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net; spf=pass smtp.mailfrom=sandeen.net; dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b=Sy3JHFfr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KueJ0GjR; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandeen.net
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id B987B1140206;
+	Thu, 27 Mar 2025 10:55:23 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Thu, 27 Mar 2025 10:55:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sandeen.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1743087323;
+	 x=1743173723; bh=Uzqqjlk9/VUq8a8twIiFfTROmd/Z39GQ9mWXAznziTg=; b=
+	Sy3JHFfrhy5gUCtGAK2QbKNxxKzF5iQW+HuIKGwWI4bSDv12CzmdjIehbebd5F6K
+	gyqPP7oDyRtVnW4dq1GecySpzGGh8a5Hy+eH3EG0DDnD70LMC/7DQwpGAWi5pxDE
+	Wo2uiHnV+c4wl2+gLr6m27lFmtMzp032AUZNSh+v9AkeUH0DlQWeulCu2hF0JXPd
+	sCoTxGVQ3gYqMSZgWqI9g/MYKw2R7nKzhENwj+CloDyHCZZd1LbL5trt7W0v36TI
+	sq2l3MSxMKRs1kANg0ozZQn1ytrclhsZPz0rBNRujWXaHunxODtlzZdhoohBdxt1
+	FUJ3EnfzIXGIv+uyVIuI4Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743087323; x=
+	1743173723; bh=Uzqqjlk9/VUq8a8twIiFfTROmd/Z39GQ9mWXAznziTg=; b=K
+	ueJ0GjR7/QrQsTI78oQr29RSJPGKvfVs4a94NT/NcMEOM3wYrftBWwPD0k1Aln+D
+	a4AXH6QQ/+jlmEVl8ugGocIcU/YLx2wGtcCHIrsYrP29okPiAF/dE8VNcxTkUzQ6
+	qThg2kG8JLrBDvlhwwbtl10E4yDR7T2RcCMvKD7Sm1QmtVPKbjA8bDHZKr1gkYcs
+	YcSEJpJyX8ia1v/M7zTknmddeIj7+VcqD4qpRIbI/THdxXLoIo4cN5RyUIJrq0yb
+	iO4ZCzPwPSelFzWVHsMFARu7CFpR7PKjGwwTN1E0cxyObET48Eci0XRSgjr8J2RR
+	SJZzQM/0oyydVUFZ6Ps4w==
+X-ME-Sender: <xms:22blZ-wQWkdrJ7LLu9I2Il0vMw1hvqhiNSfBjt1ts-a_qLS4XNN2ow>
+    <xme:22blZ6RYE9anuKNceh6dGOBFDx7ws91H3O_AjGWL5SUAG7VKY87Q5xeXBBpsdHIru
+    DEUNkuDUGYw7wXvaUE>
+X-ME-Received: <xmr:22blZwVucG6H3fP673JJZ7-JtnBoQxTyvfVOxRvU-vrajZwjgUWqjdZlP16w0aI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieekjedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddt
+    vdejnecuhfhrohhmpefgrhhitgcuufgrnhguvggvnhcuoehsrghnuggvvghnsehsrghnug
+    gvvghnrdhnvghtqeenucggtffrrghtthgvrhhnpedtuddvudetueegkeeitdefgfetveev
+    geektdetvdehtdeiueeivedvtddtffelveenucffohhmrghinhepkhgvrhhnvghlrdhorh
+    hgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepshgr
+    nhguvggvnhesshgrnhguvggvnhdrnhgvthdpnhgspghrtghpthhtohepledpmhhouggvpe
+    hsmhhtphhouhhtpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtohep
+    jhgrmhgvshdrsghothhtohhmlhgvhieshhgrnhhsvghnphgrrhhtnhgvrhhshhhiphdrtg
+    homhdprhgtphhtthhopehhtghhsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohep
+    lhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehlshhfqdhptgeslhhishhtshdrlhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
+    pdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprg
+    hvvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvghnrdgsrhhofihnsehinhht
+    vghlrdgtohhmpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrd
+    horhhg
+X-ME-Proxy: <xmx:22blZ0jCNhBbDfoksLmMi2aw6knXqrutsMv7ymj8j6jliPdSmNJWug>
+    <xmx:22blZwAtgeBaYiAd0xIIhIr6zwTIuuQR_YRKsefgiqW2OsWi7ofsKw>
+    <xmx:22blZ1LFVKIIDgRqHq-jVsLJPm1U-eXd1a050Iiulhar5Oj_01AAng>
+    <xmx:22blZ3BBlb1L21KuWMCe6q9ekZ7n8NrziUVCz0fUH2a-_JLvIM2mgA>
+    <xmx:22blZwsFIbGdv-E9fegOAFrUY6bsUJmlcxQ8Nr4TFWgBDtd7vcE4BCBc>
+Feedback-ID: i2b59495a:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 27 Mar 2025 10:55:22 -0400 (EDT)
+Message-ID: <3b5d42a0-933a-457b-aca9-3eaf7c7f947f@sandeen.net>
+Date: Thu, 27 Mar 2025 09:55:21 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|SA3PR12MB7880:EE_
-X-MS-Office365-Filtering-Correlation-Id: ac99069f-9c21-400f-294c-08dd6d3ea36f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|27256017;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?E3F/Uj4lBraIFT7QtmiF2SYEuKeDGAUddXLC1cAd7KcpIy6LH4SbUQcoFDTs?=
- =?us-ascii?Q?bbfOXZd/s+ekj+L3N5xC9CJYsSRyCgQF3atYI5N1VdOG9F85mJ4UkMBB+8pT?=
- =?us-ascii?Q?67qXyPCgVhDRWAT6uQY0eiz8oaJ30KLbdNCDXXHjOa5W+sudl2qzLcuvT4+6?=
- =?us-ascii?Q?bTIkBQUoyxKPXCpe7WTro2tWJPgHqKa1l33IVJWZfTbUcwxprtdf6kvPaJRe?=
- =?us-ascii?Q?73FrgUEC7ZouUBXCfPaOmgeWHQsxGiwLWogCD6cxq7J9omtFpcrECgx4xxBq?=
- =?us-ascii?Q?VIJblLnolJFWfyt96ohGbFnrbNKY10nREQZvNH+uFmpIjVEqtyQF/11ns4+g?=
- =?us-ascii?Q?4WWUTXGOR38jeYeYtiv8XZD8dBaGBbvb0UG055Ag4M3zIPlf/A2gBVOgfMtI?=
- =?us-ascii?Q?etYgDhLJNiyb/rmvb4adamdxnXxUERTRgN42pVIPtq1CCNjcVZZeeTV6YYPw?=
- =?us-ascii?Q?CSq8nEH8o4G/QmKewrLm2TaFgnfrMra/PvwOwb5RTd2F7t32V0wkauXZlYxJ?=
- =?us-ascii?Q?+PkrucvC/BwoFO5Z5HSftSqwtla3XnOFUbeG5ZHBe3nsc4TGypoMJqCpXe/o?=
- =?us-ascii?Q?yX/2MaDpd3pdoPLMmErjKfypMSr6G8O5vNq3eIlmPUus14QKeOK0oW7sbqsT?=
- =?us-ascii?Q?LZFi7rMcy6eEL2Mv++/Kx/SepVnMyqQhJXOhHXCjgudHynI90/6pCVuCYgi0?=
- =?us-ascii?Q?hqnahJoI9EPbP9eVGbaFfptZIVkKkP1go8E2HK6mwdY61lp660VZQmMC7J3Y?=
- =?us-ascii?Q?8XgTsdY5YN5i2HIZGXmKgDo5sj4IaudDCGtRdlhndFpDbJaavo8aMq2Sgs/P?=
- =?us-ascii?Q?6ZmCWPLTFIRea5YJj7se4Z0GEl6tnz/MRbazaIwa4J+oy3h27PCH+z5FPaez?=
- =?us-ascii?Q?/kAX6Y7DgMlxbA7uVtOlyKlrBKW7zxdcvC+1HnlQPSEfsFZbW+hO/JyKllNY?=
- =?us-ascii?Q?SJ0TMR6d87QiLd6g+Wr1hrkXMKcrF4/Djd9h4bcMTJzs/SIj1Mta+5E6lRH+?=
- =?us-ascii?Q?2glBxSRERKf5SO1IsbdH+c/A3akRyLIKh9NIYJLJyKXkSy3gh6Ye3n0Hl5aE?=
- =?us-ascii?Q?QsLslDSN6UOCXbLvUG+4Egqrn1RSnjr/472uxUVWfdrCPBnqLZdqRVGSE92p?=
- =?us-ascii?Q?wJbd6KqWMP/xBb/2JW0xhMixn+VlHgFOoNxFFRW5HIacb5RA8iZNeo2/QQZY?=
- =?us-ascii?Q?z8tN6ixadE6VgPmMy9um0gmFHT3QFfFYKmbJEfBg3E8eKcX5KkCofFHst1ai?=
- =?us-ascii?Q?QLwc1e9wzV23qC3lqkWhfam9M6uj7ov/6/NknCDIOZ60l68gpOH2SwzR6y1B?=
- =?us-ascii?Q?v22GilgeKBkiN+zJ9h5JATTF0edJL1bqcvuk7s+YO6nLQNpxszxBtpnFvSnD?=
- =?us-ascii?Q?dsnbePpCfcoiFWYDG6dNpm+f/ogrM4Nw+yc6TNYAgI7i5F/GyToll2ufpyBe?=
- =?us-ascii?Q?kGu4eMJIe+++frqTGpAnKmhD7S7r7XBw6xKsPLlCq9E1a7JUEnpKrw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(27256017);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?3n6BDz46x5fmSWQqi7T/dpPgISZutz5MWzeycv2AoFDejS9XGkeHhiiJNyRR?=
- =?us-ascii?Q?qg/YZzqpp//i3STmVSu6wkJHjBehfZrAIlnOyX4YUizZo1Rly2Rc2JrGup6X?=
- =?us-ascii?Q?7cdRFe/18BkBseCx/7x/K2hzyb1brv1RtEQhjk3ecyqMByfzomNfFPYw79mz?=
- =?us-ascii?Q?TSicS9I5EmV7s7Etfgh+nRXXyPHInc7oh6xmlWm6f5hJdg6K0z01llAxDMeJ?=
- =?us-ascii?Q?BbUs8/KXGA0fTQlGNhGbNDyPQR4zrCQ2rT/V/ap2p/BYYfHeWz2P4awdpqpF?=
- =?us-ascii?Q?N2BYH9X5x+3C7RbV7RzHqllBk/ULzp8iQP6WmkUpmeIaQ63ut5Fwb8rLeEvh?=
- =?us-ascii?Q?L8xdM/fjSwo8stgVw/3PrWlzYVOpffpjIAYPc5KE+iBeQYWRkUBpnGXM69C+?=
- =?us-ascii?Q?M3H1IpZrix6h36l399+Tyz3isGgcgwo+lNDrDHjnPMRdo+rPhfwiRsz78JgZ?=
- =?us-ascii?Q?9d0hcKo7LEa+wOsRFPMNd3Nplb+8wyKPDsQuW75ulwSiYJ875OcLX1UkphJf?=
- =?us-ascii?Q?nN25VHQl0pUdkNNJsHxNUzOjEQMlp6xIf/0gGn17T0As46V6geQOz25RHe5V?=
- =?us-ascii?Q?WadbDk4wYmhXDeShSqL830EzVpu6nZnqO+2uj3ZnBdIe+6b5mVmENCpdT7NB?=
- =?us-ascii?Q?IpZAAyOoZqU4xGLXPyobc7QtnhTcqPnIpdwfOH9DyCmX93gEQTpLSbevcdVQ?=
- =?us-ascii?Q?DG01ASokjriq79bFo+a58KbOd3POe/HQBaTG2+bxeDgD17MlJrfBktPm+kn2?=
- =?us-ascii?Q?3j7As0YIgdXt3iAkyq/n/wFONw8qyhMiZCHGa+ZC38S5LemPsZgq5f1Zo4Tg?=
- =?us-ascii?Q?GdlGVrvx4fcYFA9cmBfoQNXVuyHwjrK5kqLEZtbPkw5e516HqEpWd/FSpM3v?=
- =?us-ascii?Q?ZcziaurF6TewGkL0eG2WnJ8omsVxZdfUG0tQxeBt+8rl056T3NkDwZU/Z0v5?=
- =?us-ascii?Q?kOa5z1Gq6agpwDmdMrSkPUQyESsS1A4VFwLU9aHYurzunysl7CDOPmBxovx6?=
- =?us-ascii?Q?/1PgDumS6KKHqedcyOFU9o2EbZT9sZgiQmNGlBNkF4opj758p6/aLm+mqA2/?=
- =?us-ascii?Q?WfdYCDv7eYVggxQ8whsOmh0rePMv9RgGBzxFz7Ruvppl9db6/1WNaQYaeFsx?=
- =?us-ascii?Q?twRKB7lSg6aa8pWN8MUvXc9qI5RMo9zs4I0uGuSZPY5hck9zaP3itYAtLIAv?=
- =?us-ascii?Q?jTI68NDl3pVMRBgyxGlqtwecCR1zkR6eC0BpD6CC3t3kJT/ECMbsVr9iBDxj?=
- =?us-ascii?Q?xBlw1N77XHdmA7eRd3y01rZaTMIxiY8lf5XaUkyFm5cD7yAJAtWpqFz6rTOU?=
- =?us-ascii?Q?t+yNkzWPOHVXnP8PwZo4bYvwJVT6fNBYmzDCAWSZCPEIFUF9lDRfI7aU5ILu?=
- =?us-ascii?Q?991yccWCDBHl1Fn9o48bPa5dOVWEGUf8cq7m8M2vPGxqdV7Gw3Dc/JgE0aIM?=
- =?us-ascii?Q?MAqL7Q1lqQo0GuFAZ+GsQFSPFauxYF28nkWxty7csKGlH2qEmxl6v5W0+O1Y?=
- =?us-ascii?Q?6OFAj0xaRd+OHZ5CPqF+lpBIFHW11u69tDoqB38GYmiKWXpQqy+KkFA84yap?=
- =?us-ascii?Q?x3Cx53tcUBAo+pSjMVPzHsULcFQO+tJEscAPDk4g?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac99069f-9c21-400f-294c-08dd6d3ea36f
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2025 14:49:55.5741
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xPsvmwSFcm308oX3qA8e0L1rfdA5zmz4oJwvQAsRtOLKa0A0QmdXVgtIRDrRkflF06j9h0cITaUfn6Fes2baxw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7880
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Filesystem Suspend Resume
+To: Jan Kara <jack@suse.cz>,
+ James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org,
+ lsf-pc@lists.linux-foundation.org, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>,
+ linux-pm@vger.kernel.org
+References: <0a76e074ef262ca857c61175dd3d0dc06b67ec42.camel@HansenPartnership.com>
+ <Z9xG2l8lm7ha3Pf2@infradead.org>
+ <acae7a99f8acb0ebf408bb6fc82ab53fb687559c.camel@HansenPartnership.com>
+ <Z9z32X7k_eVLrYjR@infradead.org>
+ <576418420308d2511a4c155cc57cf0b1420c273b.camel@HansenPartnership.com>
+ <62bfd49bc06a58e435431610256e722651e1e5ca.camel@HansenPartnership.com>
+ <vnb6flqo3hhijz4kb3yio5rxzaugvaxharocvtf4j4s5o5xynm@nbccfx5xqvnk>
+ <9f5bea0af3e32de0e338481d6438676d99f40be7.camel@HansenPartnership.com>
+ <jlnc33bmqefx3273msuzq3yyei7la2ttwzqyyavohzm2k66sl6@gtqq6jpueipz>
+Content-Language: en-US
+From: Eric Sandeen <sandeen@sandeen.net>
+In-Reply-To: <jlnc33bmqefx3273msuzq3yyei7la2ttwzqyyavohzm2k66sl6@gtqq6jpueipz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 26, 2025 at 02:14:59AM +0000, Matthew Wilcox wrote:
-> On Sun, Mar 16, 2025 at 11:04:07PM -0700, Christoph Hellwig wrote:
-> > On Sun, Mar 16, 2025 at 03:29:23PM +1100, Alistair Popple wrote:
-> > > This series lifts that restriction by allowing ZONE_DEVICE private pages to
-> > > exist in the pagecache.
-> > 
-> > You'd better provide a really good argument for why we'd even want
-> > to do that.  So far this cover letter fails to do that.
+On 3/24/25 2:28 PM, Jan Kara wrote:
+> On Mon 24-03-25 10:34:56, James Bottomley wrote:
+>> On Mon, 2025-03-24 at 12:38 +0100, Jan Kara wrote:
+>>> On Fri 21-03-25 13:00:24, James Bottomley via Lsf-pc wrote:
+>>>> On Fri, 2025-03-21 at 08:34 -0400, James Bottomley wrote:
+>>>> [...]
+>>>>> Let me digest all that and see if we have more hope this time
+>>>>> around.
+>>>>
+>>>> OK, I think I've gone over it all.  The biggest problem with
+>>>> resurrecting the patch was bugs in ext3, which isn't a problem now.
+>>>> Most of the suspend system has been rearchitected to separate
+>>>> suspending user space processes from kernel ones.  The sync it
+>>>> currently does occurs before even user processes are frozen.  I
+>>>> think
+>>>> (as most of the original proposals did) that we just do freeze all
+>>>> supers (using the reverse list) after user processes are frozen but
+>>>> just before kernel threads are (this shouldn't perturb the image
+>>>> allocation in hibernate, which was another source of bugs in xfs).
+>>>
+>>> So as far as my memory serves the fundamental problem with this
+>>> approach was FUSE - once userspace is frozen, you cannot write to
+>>> FUSE filesystems so filesystem freezing of FUSE would block if
+>>> userspace is already suspended. You may even have a setup like:
+>>>
+>>> bdev <- fs <- FUSE filesystem <- loopback file <- loop device <-
+>>> another fs
+>>>
+>>> So you really have to be careful to freeze this stack without causing
+>>> deadlocks.
+>>
+>> Ah, so that explains why the sys_sync() sits in suspend resume *before*
+>> freezing userspace ... that always appeared odd to me.
+>>
+>>>  So you need to be freezing userspace after filesystems are
+>>> frozen but then you have to deal with the fact that parts of your
+>>> userspace will be blocked in the kernel (trying to do some write)
+>>> waiting for the filesystem to thaw. But it might be tractable these
+>>> days since I have a vague recollection that system suspend is now
+>>> able to gracefully handle even tasks in uninterruptible sleep.
+>>
+>> There is another thing I thought about: we don't actually have to
+>> freeze across the sleep.  It might be possible simply to invoke
+>> freeze/thaw where sys_sync() is now done to get a better on stable
+>> storage image?  That should have fewer deadlock issues.
 > 
-> Alistair and I discussed this during his session at LSFMM today.
-> Here's what I think we agreed to.
+> Well, there's not going to be a huge difference between doing sync(2) and
+> doing freeze+thaw for each filesystem. After you thaw the filesystem
+> drivers usually mark that the fs is in inconsistent state and that triggers
+> journal replay / fsck on next mount.
 
-Thanks for writing up this summary.
+For XFS, IIRC we only do that (mark the log dirty) so that we will process
+orphan inodes if we crash while frozen, which today happens only during log
+replay. I tried to remove that behavior long ago but didn't get very far.
+(Since then maybe we have grown other reasons to mark dirty, not sure.)
 
-> 
-> The use case is a file containing a potentially very large data set.
-> Some phases of processing that data set are best done on the GPU, other
-> phases on the CPU.  We agreed that shared writable mmap was not actually
-> needed (it might need to be supported for correctness, but it's not a
-> performance requirement).
+https://lore.kernel.org/linux-xfs/83696ce6-4054-0e77-b4b8-e82a1a9fbbc3@redhat.com/
 
-Right. I agree we don't currently have a good usecase for writeback so the next
-revision will definitely only support read-only access.
+Does ext4 mark it dirty too? I actually thought it left a clean journal when
+freezing.
 
-> So, there's no need to put DEVICE_PRIVATE pages in the page cache.
-> Instead the GPU will take a copy of the page(s).  We agreed that there
-> will have to be some indication (probably a folio flag?) that the GPU has
-> or may have a copy of (some of) the folio so that it can be invalidated
-> if the page is removed due to truncation / eviction.
->
-> Alistair, let me know if that's not what you think we agreed to ;-)
+Thanks,
+-Eric
+ 
+> 								Honza
 
-That all looks about right. I think the flag/indication is a good idea and is
-probably the best solution, but I will need to write the code to truely convince
-myself of that :-)
 
