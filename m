@@ -1,337 +1,271 @@
-Return-Path: <linux-fsdevel+bounces-45123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45124-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A666AA72EA2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 12:15:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA531A7303A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 12:42:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE98D188ECF4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 11:15:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BEA718957BD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 11:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A987C2116FA;
-	Thu, 27 Mar 2025 11:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58362213E71;
+	Thu, 27 Mar 2025 11:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b="qs6rOep7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GymUN+1D"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6CF1FF7BC;
-	Thu, 27 Mar 2025 11:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.129.21.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC06120D514;
+	Thu, 27 Mar 2025 11:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743074125; cv=none; b=MyM1H8Qt29tdmoDB8g1y9/BFerOQzzxXCnw8a0L8CyEigJBgS4eR2lA0QSaaE/AxlemhpT8u7a2/WIsGm7btd6VTGifLOAbqMrkIQ+KqqqDExEcaHEf3iF/iVeKKFxhVIxQG/PW45/+BpAdFCU4l4YrdCvDCNS0p5Y0voBSyHlw=
+	t=1743075584; cv=none; b=Xz6vJWVwRPCclLerA40gRC1IZC//GQ/i8HtOVYG5sYyZXj+R0lDJNBsS0yXEfSEiUBN1o3a6EY2LCG1igzLhLnj87xotUFql1OZV3Jo2gNctxX6afimb3+fTX57/iOFB9VxpK/jpunbp1+ctbUt0+OXeB9TodJhDoKDMikzNDjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743074125; c=relaxed/simple;
-	bh=Mum7vPqFk3w8U9ruStP8/tuFAlR9zy/cKyuhzO9J+fc=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=igbO8m/wkpx7W9Y8tSaurEQ/MlvMTIUVZeoj3EbLLeiWXVmxFSDQsHFe0u3qJbKf2sJHpqQM8gk8YzYIAb702fz9qqBnOEEcpGXQ2Xr9F4AuWOQbUirtG7/FkKT5mj9oak79fGnPP4uAfGDfhmI7x5Rp8wL7yhokSoZ3fGVnclM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr; spf=pass smtp.mailfrom=3xo.fr; dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b=qs6rOep7; arc=none smtp.client-ip=212.129.21.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xo.fr
-Received: from localhost (mail.3xo.fr [212.129.21.66])
-	by mail.3xo.fr (Postfix) with ESMTP id 30530CB;
-	Thu, 27 Mar 2025 12:15:14 +0100 (CET)
-X-Virus-Scanned: Debian amavis at nxo2.3xo.fr
-Received: from mail.3xo.fr ([212.129.21.66])
- by localhost (mail.3xo.fr [212.129.21.66]) (amavis, port 10024) with ESMTP
- id yQPAkIiGtRPb; Thu, 27 Mar 2025 12:15:08 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.3xo.fr 20FF88D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xo.fr; s=3xo;
-	t=1743074108; bh=GTQhFaE+IZsmK42SbrfiuQvcmYVy8y20OTUF1YrL+0s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qs6rOep78yib+sqVGEkVxJQReX+7zhoBvNX9GeIYFhVQMjFtgefatu9UaRtlMwQ8i
-	 c6q1eGGvrOa+c9NOLuxujA19XHYat9zLwz44PLeDjPw2joRZl8QWQsb2Di9qzv7PrV
-	 IcBoWMb8MGPfzdHeD/wrZO0L/LUe8URiO+c/jwIAE4gw/KkNI1M9S3HRcy1C+xQktK
-	 +hv0kH5NqXAMssxGNssx/Kax0s+Z9III4wJ0q+ax3baZ3oXRLyQPrIDkxe/jnhW4Fh
-	 OMs9yz7JKM7yrT90LyN2gAsQsglVeDeLhoBjcpDSO3pSHr9ytfGGEQYQKYdSgqXll4
-	 ms/ehJpTNhECA==
-Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3xo.fr (Postfix) with ESMTPSA id 20FF88D;
-	Thu, 27 Mar 2025 12:15:08 +0100 (CET)
+	s=arc-20240116; t=1743075584; c=relaxed/simple;
+	bh=HLTBY8S4ZTpJUpA3lXf5BDLlXk9fvudGXjyPq/LNYbM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EboAFcSnw3GsVBC5UpkADpFWYBO1bS7dfCtDx9JgEv39J0T0QWEAC5Ju3bkrpD9VlVsUS8HMsl76+XPB4PYUo8HnGC/um6fV2uGaKQTm+ve22oBs+6yMdCiKehSipVhBFJ+VZ8W+mXf93TGgeVbai2f4Lk9ebf1MQ8O/aM3KhPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GymUN+1D; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e61da95244so1546058a12.2;
+        Thu, 27 Mar 2025 04:39:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743075581; x=1743680381; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H5YJ+HIPr7Xtl+bdBaUXFEAtySXgJKTavR2pWedTVNo=;
+        b=GymUN+1DDsJvfYJRDpFhJj0OJnFetds2IdVrjcWQtcMLTPrWurKDaQgNH2q+3vnpjh
+         ABewIkVTVYlunGabkMNI3EqjCZJ6sJiNplQBetPk7diietp7GKErMnTsXqYzx3R6A9eo
+         e5qsMgZN/PdoD+RbfSplV1bK263YK8632advVPlh3ss8O5sRpV22ly64jOfTGT1oKY4Y
+         JOWmPDFxALbEQllSj5aGENiu9mGEwXQPdbe6dJPr7jZZ6JK+H4NClpo3FY/RM8e/ICWQ
+         yNDdEQQC3dxXs1QXzyKWrGX58l7gB2X7HeiB6KvI9F8rRWXgRQlwar4uwpPWLr2CVDxm
+         6sCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743075581; x=1743680381;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H5YJ+HIPr7Xtl+bdBaUXFEAtySXgJKTavR2pWedTVNo=;
+        b=MvSIYdYCW7fT2UfYKMvZikDj/IYEYAY3dW7Z0zQSNm4z6Kftl0PNCvTmwiaypCC1XK
+         Qfbj2jsGzMIr5keVhoyVUBCg0WxXzIJ6IkehAduW/xEIQCa6hVK9+PycXFjytOr1IG57
+         L2kIWNLQe93ZAX82vzB8gGfmvsW2O8Cx+SqrDk2u7EAfn7pCbcKetIopDde1rQ00bQRn
+         0otOdzx8NxdDSqXYCIey/t7OPI7Dd/hfhRN7GkDJ7nBfT2el207LC52TSC+HbzjwAXmw
+         5bsJLq8RmBKQKPnaiCWTNuhVf4eBv5CleMavGbWq3ywqhTO6xAqs4ehtSRqdSmxBjZde
+         pCoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEn4+DU3aRS2iwctlVWc+HI97kbBicmV5fSEZJaIoeBBv/mW7BRbl7C11PbZnnjodixaKJtsnjAFxB1RdEDHbItCb/1QF9@vger.kernel.org, AJvYcCUKqSchGNmUHWKSFZ6fBbO+YPX2h6VBoswndf1BRjcPRapXsddlhAb+jsEWK4+dhWjBzEDzpJ/yrE9TXQ==@vger.kernel.org, AJvYcCUaBbPbREmkbhmxWP7LAp4mmheJa+n79KYxchkmin2Oxdknp/XseQ7ag3sQPhbNEY4n0x94INhghFMMhN+x@vger.kernel.org, AJvYcCUdp3C5Q97RaqmtRHzFW8JTWORNVq6bcPoQGtt8e5am15U2pQVN2klhp5w9JuQjONr6zLHFraytxKR6bZfT@vger.kernel.org, AJvYcCV5+PM2leCkf1OTyE9kgJVACzl0hQYTJrflbcRVnPh6JxwMJNCVoIWCgZ/UeVojU0TkHI0Fe+jdK6804A==@vger.kernel.org, AJvYcCVFplNedoYP8ShfaKL86rJHf6g8i5KJQz3uU6TOONIqUOpKusSut4vd9b90M4GdHU4c2sC02LkmFuib@vger.kernel.org, AJvYcCVQQTYk4+swU9Wv0Wj3hwz6JqYYWBRkqE0b6QP/7Wz4Ho8aXxVosmyaStALp9N8CzEvPpv3m9eM8T2CYA==@vger.kernel.org, AJvYcCVpIA/g+pU4DXU8FFBfg0cJxfowGus6Pok/CZ7fhfQu8X0As1ibyqnU5EL0km9SHnwHbrcgQKRke+k=@vger.kernel.org, AJvYcCX/DXRwrxdQYUVnhBwy1CQHGAOkOsr15yHU5UI5vKhpyqQiHb+wzgzfRHUnJIC6wXQ1zN/qjHpWjfaQDQ==@vger.kernel.org, AJvYcCXTKOqO
+ WNzYFL/rVYzJoVSfjCXuwVkXfQAo8fpZsG3w/9junMUAO6RYds6kRLhA/25fiGL2VTwRrsuV@vger.kernel.org, AJvYcCXXrB5aWG4JZYJ6VDgY2x2pI9RCHLfByb4G2ku+2usH8R4nlig9jVgIPgqRAYGLr1Jd0T7Ds872RYTCJR1Zmg==@vger.kernel.org, AJvYcCXpHM1uhitCXIudSl3ytB1LHmlfC7j1t6TGnrl60GDzBW9BCzhRSh0/sGL7U/shlCPiQzBIteJD/GeYcg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyL2tH5UMzVYIR8w8s5QI/BOz4W18M5vsegh4tvaWvQOYmgj1JG
+	ttZmAKsGTC8fhP70qrji6jnp/8YPoopOmBZrH3uGRkS2qV1/iKk4fDdweSSBxz6lZL/K+EzEWV/
+	Sm+ikNoZ+YKXXbH9Bfv+uV0ZcCJ4=
+X-Gm-Gg: ASbGncti0A4FctA4zwc8LIfSh3+rm5t/MAeVTPb47GDnyO9WeLPW0RFwreL+nEMSCG7
+	//JX22PPCjoMjzkIK7TmTrQqOmHvQfOyr3QiuWP0akyF8hijBwtHxaF9ognabUm/uqjEYyYQn+H
+	zpR/lUU1fPRI7lo+opqqV649zi1A==
+X-Google-Smtp-Source: AGHT+IGgy/miY5V7+MPkH09VPO41DMi/jMR8Bk4E49dQyif98hlWpMqsre9jbg/TLCs8zzkfhNjlalqvBIB5xRYILRM=
+X-Received: by 2002:a05:6402:518d:b0:5e7:b02b:6430 with SMTP id
+ 4fb4d7f45d1cf-5ed8f3fd122mr2772445a12.23.1743075580404; Thu, 27 Mar 2025
+ 04:39:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 27 Mar 2025 12:15:07 +0100
-From: Nicolas Baranger <nicolas.baranger@3xo.fr>
-To: hch@lst.de, Christoph Hellwig <hch@infradead.org>, David Howells
- <dhowells@redhat.com>, netfs@lists.linux.dev, linux-cifs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Steve French <smfrench@gmail.com>, Jeff Layton <jlayton@kernel.org>,
- Christian Brauner <brauner@kernel.org>
-Subject: [netfs/cifs - Linux 6.14] loop on file cat + file copy when files are
- on CIFS share
-In-Reply-To: <10bec2430ed4df68bde10ed95295d093@3xo.fr>
-References: <10bec2430ed4df68bde10ed95295d093@3xo.fr>
-Message-ID: <35940e6c0ed86fd94468e175061faeac@3xo.fr>
-X-Sender: nicolas.baranger@3xo.fr
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org>
+ <20250321-xattrat-syscall-v4-3-3e82e6fb3264@kernel.org> <CAOQ4uxj2Fqmc_pSD4bqqoQu7QjmgSVp2V15FbmBdTNqQ03aPGQ@mail.gmail.com>
+ <faqun3wrpvwrhwukql3niqvvauy5ngrpytx5bxbrv5xkounez3@m7j2znjuzapu>
+In-Reply-To: <faqun3wrpvwrhwukql3niqvvauy5ngrpytx5bxbrv5xkounez3@m7j2znjuzapu>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 27 Mar 2025 12:39:28 +0100
+X-Gm-Features: AQ5f1JofzJgaxJ0LZuoFvXDiOPJAJ8w60JwbZ8r4It-kQ_jhprqRZDypv8Lufbk
+Message-ID: <CAOQ4uxjs=Gg-ocwx_fkzc0gxQ_dHx-P9EAgz5ZwbdbrxV0T_EA@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] fs: introduce getfsxattrat and setfsxattrat syscalls
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-alpha@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-xfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dear maintener
+On Thu, Mar 27, 2025 at 10:33=E2=80=AFAM Andrey Albershteyn <aalbersh@redha=
+t.com> wrote:
+>
+> On 2025-03-23 09:56:25, Amir Goldstein wrote:
+> > On Fri, Mar 21, 2025 at 8:49=E2=80=AFPM Andrey Albershteyn <aalbersh@re=
+dhat.com> wrote:
+> > >
+> > > From: Andrey Albershteyn <aalbersh@redhat.com>
+> > >
+> > > Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
+> > > extended attributes/flags. The syscalls take parent directory fd and
+> > > path to the child together with struct fsxattr.
+> > >
+> > > This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
+> > > that file don't need to be open as we can reference it with a path
+> > > instead of fd. By having this we can manipulated inode extended
+> > > attributes not only on regular files but also on special ones. This
+> > > is not possible with FS_IOC_FSSETXATTR ioctl as with special files
+> > > we can not call ioctl() directly on the filesystem inode using fd.
+> > >
+> > > This patch adds two new syscalls which allows userspace to get/set
+> > > extended inode attributes on special files by using parent directory
+> > > and a path - *at() like syscall.
+> > >
+> > > CC: linux-api@vger.kernel.org
+> > > CC: linux-fsdevel@vger.kernel.org
+> > > CC: linux-xfs@vger.kernel.org
+> > > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+> > > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> > > ---
+> > ...
+> > > +SYSCALL_DEFINE5(setfsxattrat, int, dfd, const char __user *, filenam=
+e,
+> > > +               struct fsxattr __user *, ufsx, size_t, usize,
+> > > +               unsigned int, at_flags)
+> > > +{
+> > > +       struct fileattr fa;
+> > > +       struct path filepath;
+> > > +       int error;
+> > > +       unsigned int lookup_flags =3D 0;
+> > > +       struct filename *name;
+> > > +       struct mnt_idmap *idmap;.
+> >
+> > > +       struct dentry *dentry;
+> > > +       struct vfsmount *mnt;
+> > > +       struct fsxattr fsx =3D {};
+> > > +
+> > > +       BUILD_BUG_ON(sizeof(struct fsxattr) < FSXATTR_SIZE_VER0);
+> > > +       BUILD_BUG_ON(sizeof(struct fsxattr) !=3D FSXATTR_SIZE_LATEST)=
+;
+> > > +
+> > > +       if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) !=3D =
+0)
+> > > +               return -EINVAL;
+> > > +
+> > > +       if (!(at_flags & AT_SYMLINK_NOFOLLOW))
+> > > +               lookup_flags |=3D LOOKUP_FOLLOW;
+> > > +
+> > > +       if (at_flags & AT_EMPTY_PATH)
+> > > +               lookup_flags |=3D LOOKUP_EMPTY;
+> > > +
+> > > +       if (usize > PAGE_SIZE)
+> > > +               return -E2BIG;
+> > > +
+> > > +       if (usize < FSXATTR_SIZE_VER0)
+> > > +               return -EINVAL;
+> > > +
+> > > +       error =3D copy_struct_from_user(&fsx, sizeof(struct fsxattr),=
+ ufsx, usize);
+> > > +       if (error)
+> > > +               return error;
+> > > +
+> > > +       fsxattr_to_fileattr(&fsx, &fa);
+> > > +
+> > > +       name =3D getname_maybe_null(filename, at_flags);
+> > > +       if (!name) {
+> > > +               CLASS(fd, f)(dfd);
+> > > +
+> > > +               if (fd_empty(f))
+> > > +                       return -EBADF;
+> > > +
+> > > +               idmap =3D file_mnt_idmap(fd_file(f));
+> > > +               dentry =3D file_dentry(fd_file(f));
+> > > +               mnt =3D fd_file(f)->f_path.mnt;
+> > > +       } else {
+> > > +               error =3D filename_lookup(dfd, name, lookup_flags, &f=
+ilepath,
+> > > +                                       NULL);
+> > > +               if (error)
+> > > +                       return error;
+> > > +
+> > > +               idmap =3D mnt_idmap(filepath.mnt);
+> > > +               dentry =3D filepath.dentry;
+> > > +               mnt =3D filepath.mnt;
+> > > +       }
+> > > +
+> > > +       error =3D mnt_want_write(mnt);
+> > > +       if (!error) {
+> > > +               error =3D vfs_fileattr_set(idmap, dentry, &fa);
+> > > +               if (error =3D=3D -ENOIOCTLCMD)
+> > > +                       error =3D -EOPNOTSUPP;
+> >
+> > This is awkward.
+> > vfs_fileattr_set() should return -EOPNOTSUPP.
+> > ioctl_setflags() could maybe convert it to -ENOIOCTLCMD,
+> > but looking at similar cases ioctl_fiemap(), ioctl_fsfreeze() the
+> > ioctl returns -EOPNOTSUPP.
+> >
+> > I don't think it is necessarily a bad idea to start returning
+> >  -EOPNOTSUPP instead of -ENOIOCTLCMD for the ioctl
+> > because that really reflects the fact that the ioctl is now implemented
+> > in vfs and not in the specific fs.
+> >
+> > and I think it would not be a bad idea at all to make that change
+> > together with the merge of the syscalls as a sort of hint to userspace
+> > that uses the ioctl, that the sycalls API exists.
+> >
+> > Thanks,
+> > Amir.
+> >
+>
+> Hmm, not sure what you're suggesting here. I see it as:
+> - get/setfsxattrat should return EOPNOTSUPP as it make more sense
+>   than ENOIOCTLCMD
+> - ioctl_setflags returns ENOIOCTLCMD which also expected
+>
+> Don't really see a reason to change what vfs_fileattr_set() returns
+> and then copying this if() to other places or start returning
+> EOPNOTSUPP.
 
-I get no answer from linux-cifs and netfs list so I'm sending this new 
-mail
-Today I've just download and build mainline kernel: Linux 6.14.0 (no 
--rc)
+ENOIOCTLCMD conceptually means that the ioctl command is unknown
+This is not the case since ->fileattr_[gs]et() became a vfs API
+the ioctl command is handled by vfs and it is known, but individual
+filesystems may not support it, so conceptually, returning EOPNOTSUPP
+from ioctl() is more correct these days, exactly as is done with the ioctls
+FS_IOC_FIEMAP and FIFREEZE which were also historically per fs
+ioctls and made into a vfs API.
 
-I still constat the bug describe in my previous mail.
-What can I do to be able to use CIFS share ?
+The fact that bcachefs does not implement ->fileattr_[gs]et() and does
+implement FS_IOC_FS[GS]ETXATTR is an oversight IMO, since it
+was probably merged after the vfs conversion patch.
 
-Thanks for help,
+This mistake means that bcachefs fileattr cannot be copied up by
+ovl_copy_fileattr() which uses the vfs API and NOT the ioctl.
 
-Kind regard
-Nicolas Baranger
+However, if you would made the internal vfs API change that I suggested,
+it will have broken ovl_real_fileattr_get() and ovl_copy_fileattr(),
+so leave it for now - if I care enough I can do it later together with
+fixing the overlayfs and fuse code.
 
-Le 2025-03-24 11:40, Nicolas Baranger a écrit :
-
-> Hi Christoph, David
-> 
-> Sorry my last mail didn't arrive at the top of the list so I resend it 
-> with a new title
-> 
-> I don't know if it had already been reported but after building Linux 
-> 6.14-rc1 I constat the following behaviour:
-> 
-> 'cat' command is going on a loop when I cat a file which reside on cifs 
-> share
-> 
-> And so 'cp' command does the same: it copy the content of a file on 
-> cifs share and loop writing it to the destination
-> I did test with a file named 'toto' and containing only ascii string 
-> 'toto'.
-> 
-> When I started copying it from cifs share to local filesystem, I had to 
-> CTRL+C the copy of this 5 bytes file after some time because the 
-> destination file was using all the filesystem free space and containing 
-> billions of 'toto' lines
-> 
-> Here is an example with cat:
-> 
-> CIFS SHARE is mounted as /mnt/fbx/FBX-24T
-> 
-> CIFS mount options:
-> grep cifs /proc/mounts
-> //10.0.10.100/FBX24T /mnt/fbx/FBX-24T cifs 
-> rw,nosuid,nodev,noexec,relatime,vers=3.1.1,cache=none,upcall_target=app,username=fbx,domain=HOMELAN,uid=0,noforceuid,gid=0,noforcegid,addr=10.0.10.100,file_mode=0666,dir_mode=0755,iocharset=utf8,soft,nounix,serverino,mapposix,mfsymlinks,reparse=nfs,nativesocket,symlink=mfsymlinks,rsize=65536,wsize=65536,bsize=16777216,retrans=1,echo_interval=60,actimeo=1,closetimeo=1 
-> 0 0
-> 
-> KERNEL: uname -a
-> Linux 14RV-SERVER.14rv.lan 6.14.0.1-ast-rc2-amd64 #0 SMP 
-> PREEMPT_DYNAMIC Wed Feb 12 18:23:00 CET 2025 x86_64 GNU/Linux
-> 
-> To be reproduced:
-> echo toto >/mnt/fbx/FBX-24T/toto
-> 
-> ls -l /mnt/fbx/FBX-24T/toto
-> -rw-rw-rw- 1 root root 5 20 mars  09:20 /mnt/fbx/FBX-24T/toto
-> 
-> cat /mnt/fbx/FBX-24T/toto
-> toto
-> toto
-> toto
-> toto
-> toto
-> toto
-> toto
-> ^C
-> 
-> strace cat /mnt/fbx/FBX-24T/toto
-> execve("/usr/bin/cat", ["cat", "/mnt/fbx/FBX-24T/toto"], 0x7ffc39b41848 
-> /* 19 vars */) = 0
-> brk(NULL)                               = 0x55755b1c1000
-> mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 
-> 0) = 0x7f55f95d6000
-> access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (Aucun fichier ou 
-> dossier de ce type)
-> openat(AT_FDCWD, "glibc-hwcaps/x86-64-v3/libc.so.6", 
-> O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> openat(AT_FDCWD, "glibc-hwcaps/x86-64-v2/libc.so.6", 
-> O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> openat(AT_FDCWD, "tls/haswell/x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = 
-> -1 ENOENT (Aucun fichier ou dossier de ce type)
-> openat(AT_FDCWD, "tls/haswell/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 
-> ENOENT (Aucun fichier ou dossier de ce type)
-> openat(AT_FDCWD, "tls/x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 
-> ENOENT (Aucun fichier ou dossier de ce type)
-> openat(AT_FDCWD, "tls/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT 
-> (Aucun fichier ou dossier de ce type)
-> openat(AT_FDCWD, "haswell/x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 
-> ENOENT (Aucun fichier ou dossier de ce type)
-> openat(AT_FDCWD, "haswell/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT 
-> (Aucun fichier ou dossier de ce type)
-> openat(AT_FDCWD, "x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT 
-> (Aucun fichier ou dossier de ce type)
-> openat(AT_FDCWD, "libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun 
-> fichier ou dossier de ce type)
-> openat(AT_FDCWD, 
-> "/usr/local/cuda-12.6/lib64/glibc-hwcaps/x86-64-v3/libc.so.6", 
-> O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> newfstatat(AT_FDCWD, 
-> "/usr/local/cuda-12.6/lib64/glibc-hwcaps/x86-64-v3", 0x7fff25937800, 0) 
-> = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> openat(AT_FDCWD, 
-> "/usr/local/cuda-12.6/lib64/glibc-hwcaps/x86-64-v2/libc.so.6", 
-> O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> newfstatat(AT_FDCWD, 
-> "/usr/local/cuda-12.6/lib64/glibc-hwcaps/x86-64-v2", 0x7fff25937800, 0) 
-> = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> openat(AT_FDCWD, 
-> "/usr/local/cuda-12.6/lib64/tls/haswell/x86_64/libc.so.6", 
-> O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls/haswell/x86_64", 
-> 0x7fff25937800, 0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls/haswell/libc.so.6", 
-> O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls/haswell", 
-> 0x7fff25937800, 0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls/x86_64/libc.so.6", 
-> O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls/x86_64", 
-> 0x7fff25937800, 0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls/libc.so.6", 
-> O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls", 0x7fff25937800, 
-> 0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/haswell/x86_64/libc.so.6", 
-> O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/haswell/x86_64", 
-> 0x7fff25937800, 0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/haswell/libc.so.6", 
-> O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/haswell", 
-> 0x7fff25937800, 0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/x86_64/libc.so.6", 
-> O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/x86_64", 
-> 0x7fff25937800, 0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/libc.so.6", 
-> O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-> newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64", 
-> {st_mode=S_IFDIR|S_ISGID|0755, st_size=4570, ...}, 0) = 0
-> openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
-> newfstatat(3, "", {st_mode=S_IFREG|0644, st_size=148466, ...}, 
-> AT_EMPTY_PATH) = 0
-> mmap(NULL, 148466, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f55f95b1000
-> close(3)                                = 0
-> openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) 
-> = 3
-> read(3, 
-> "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\20t\2\0\0\0\0\0"..., 
-> 832) = 832
-> pread64(3, 
-> "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 
-> 784, 64) = 784
-> newfstatat(3, "", {st_mode=S_IFREG|0755, st_size=1922136, ...}, 
-> AT_EMPTY_PATH) = 0
-> pread64(3, 
-> "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 
-> 784, 64) = 784
-> mmap(NULL, 1970000, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 
-> 0x7f55f93d0000
-> mmap(0x7f55f93f6000, 1396736, PROT_READ|PROT_EXEC, 
-> MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x26000) = 0x7f55f93f6000
-> mmap(0x7f55f954b000, 339968, PROT_READ, 
-> MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x17b000) = 0x7f55f954b000
-> mmap(0x7f55f959e000, 24576, PROT_READ|PROT_WRITE, 
-> MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1ce000) = 0x7f55f959e000
-> mmap(0x7f55f95a4000, 53072, PROT_READ|PROT_WRITE, 
-> MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f55f95a4000
-> close(3)                                = 0
-> mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 
-> 0) = 0x7f55f93cd000
-> arch_prctl(ARCH_SET_FS, 0x7f55f93cd740) = 0
-> set_tid_address(0x7f55f93cda10)         = 38427
-> set_robust_list(0x7f55f93cda20, 24)     = 0
-> rseq(0x7f55f93ce060, 0x20, 0, 0x53053053) = 0
-> mprotect(0x7f55f959e000, 16384, PROT_READ) = 0
-> mprotect(0x55754475e000, 4096, PROT_READ) = 0
-> mprotect(0x7f55f960e000, 8192, PROT_READ) = 0
-> prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, 
-> rlim_max=RLIM64_INFINITY}) = 0
-> munmap(0x7f55f95b1000, 148466)          = 0
-> getrandom("\x19\x6b\x9e\x55\x7e\x09\x74\x5f", 8, GRND_NONBLOCK) = 8
-> brk(NULL)                               = 0x55755b1c1000
-> brk(0x55755b1e2000)                     = 0x55755b1e2000
-> openat(AT_FDCWD, "/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) 
-> = 3
-> newfstatat(3, "", {st_mode=S_IFREG|0644, st_size=3048928, ...}, 
-> AT_EMPTY_PATH) = 0
-> mmap(NULL, 3048928, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f55f9000000
-> close(3)                                = 0
-> newfstatat(1, "", {st_mode=S_IFCHR|0600, st_rdev=makedev(0x88, 0), 
-> ...}, AT_EMPTY_PATH) = 0
-> openat(AT_FDCWD, "/mnt/fbx/FBX-24T/toto", O_RDONLY) = 3
-> newfstatat(3, "", {st_mode=S_IFREG|0666, st_size=5, ...}, 
-> AT_EMPTY_PATH) = 0
-> fadvise64(3, 0, 0, POSIX_FADV_SEQUENTIAL) = 0
-> mmap(NULL, 16785408, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, 
-> -1, 0) = 0x7f55f7ffe000
-> read(3, 
-> "toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-> 16777216) = 16711680
-> write(1, 
-> "toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-> 16711680toto
-> ) = 16711680
-> read(3, 
-> "toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-> 16777216) = 16711680
-> write(1, 
-> "toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-> 16711680toto
-> ) = 16711680
-> read(3, 
-> "toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-> 16777216) = 16711680
-> write(1, 
-> "toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-> 16711680toto
-> ) = 16711680
-> read(3, 
-> "toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-> 16777216) = 16711680
-> write(1, 
-> "toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-> 16711680toto
-> ) = 16711680
-> read(3, 
-> "toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-> 16777216) = 16711680
-> write(1, 
-> "toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-> 16711680toto
-> ) = 16711680
-> read(3, 
-> "toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-> 16777216) = 16711680
-> write(1, 
-> "toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-> 16711680toto
-> ) = 16711680
-> read(3, 
-> "toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-> 16777216) = 16711680
-> write(1, 
-> "toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-> 16711680toto
-> ^Cstrace: Process 38427 detached
-> <detached ...>
-> 
-> Please let me know if it had already been fixed or reported and if 
-> you're able to reproduce this issue.
-> 
-> Thanks for help
-> 
-> Kind regards
-> Nicolas Baranger
+Thanks,
+Amir.
 
