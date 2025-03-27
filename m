@@ -1,190 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-45163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FBCAA73E8E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 20:27:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8902AA73F45
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 21:22:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22A3F189A283
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 19:27:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1853016FC66
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 20:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287BC1C84CA;
-	Thu, 27 Mar 2025 19:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD681CEAA3;
+	Thu, 27 Mar 2025 20:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QVvBARqG"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Yh1gb2Zn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E7F74BE1;
-	Thu, 27 Mar 2025 19:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDF41C8635
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Mar 2025 20:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743103605; cv=none; b=MfngSO+pkZ1KfHN4dXUTOvV7LIGHy7QhF0xA1NfrqzL0t9CwDrknBIU/fAjJRHsfWZ5kZz9h7b0vUdBCU29Td917OVDV9OdH1voEYtwPClnmUIAKwjLytATcNyrb4YQzrzB/KRVnr1eYO1+iQ57kubwU8xBm5dny6PJgyy3CDLc=
+	t=1743106972; cv=none; b=HZ9ZP/Dw2v6A5S+gBfouhJgdVLNvQS9CgDsTgAixZWo2ANERwcv0tv/qK/7gPFOakgVkAxtw0GmXsbM1KNFUvkprk+Lju5WzTb+wZ/GE1SvHYKFHPXHBRoePb/7mkSzoXMrRRxBZ4+wq/ffQSRv9N7DewNTBwaunfXaWQVq8Tcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743103605; c=relaxed/simple;
-	bh=g1CYlQqdxlwZLruKDHJtfRscrIkZVdAluXQtGU8MRKc=;
+	s=arc-20240116; t=1743106972; c=relaxed/simple;
+	bh=hWsoNvNHVfFmyq/J/uqEJxexZfkLwaAkkAF8jkhLaLc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TemvPxwLw9ysPgvdH9e3SvnkoYicb4zmcrTMgTARNamEMksG8vzirWKXXyt/UNV1TXo8OFLfhdLakRodlCEaBRVOwcCu3Bd8Y7A2YtnFInMv6Hgo/MTFle7NOwreV8k67KdOSJmgBIaY3blyPNC+uOWiRhlgoL42AlfEH/8ijY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QVvBARqG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94481C4CEDD;
-	Thu, 27 Mar 2025 19:26:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743103605;
-	bh=g1CYlQqdxlwZLruKDHJtfRscrIkZVdAluXQtGU8MRKc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QVvBARqGWv0La9m5OD6QDfWqM9kOlX+iu8S7VdV0a3+BiKOoX7iyf19xR8d084NJE
-	 X1zYvhSfbd+RX1TIl/Bfrfc3Q9RStkqq+I33SjeBdL3rbFVYoZ5mFxGK8qI53tgWhG
-	 E6mcP1CgG1E+q44I66ol4u4AHCkZMht3LsXbAsn7vmffwlODEHOCmWg/b+WE6Q9U6/
-	 b02uVG8iTfSg6I2dn4Kk+KUlaD5N37Wo5lJQJSyN3f6Ociw2MEYrLpjJKtxIWJ64j5
-	 opIEUTU1kj8mWi/xXf+XCIv9e+n8yqAy4VDIpHMidzJ06JW9buLjpZU7A5J8P70XMi
-	 M9Nm3l25jb54A==
-Received: by pali.im (Postfix)
-	id 490BC81B; Thu, 27 Mar 2025 20:26:29 +0100 (CET)
-Date: Thu, 27 Mar 2025 20:26:29 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Matt Turner <mattst88@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Michal Simek <monstr@monstr.eu>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
-	Arnd Bergmann <arnd@arndb.de>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-alpha@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-	linux-arch@vger.kernel.org, selinux@vger.kernel.org,
-	Andrey Albershteyn <aalbersh@kernel.org>, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v4 0/3] fs: introduce getfsxattrat and setfsxattrat
- syscalls
-Message-ID: <20250327192629.ivnarhlkfbhbzjcl@pali>
-References: <20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org>
- <CAOQ4uxjQDUg8HFG+mSxMkR54zen7nC2jttzOKqh13Bx-uosh3Q@mail.gmail.com>
- <20250323103234.2mwhpsbigpwtiby4@pali>
- <CAOQ4uxiTKhGs1H-w1Hv-+MqY284m92Pvxfem0iWO+8THdzGvuA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BktnjkZBrr5AOmq7hMJX7SSyHTn/RZILCUv37hCs8Lu4X540gHUdRfXi/DPnJ7goBD/3O2xNbziktxA41HncApsehUnwVVQKc5lCp+Slu8kP1HbemuyzEMt5pEbPiFH/nxCblABThQycnXVkCZO40CyN/MVleraUIfyFYnxa5dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Yh1gb2Zn; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-223fd89d036so34487805ad.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Mar 2025 13:22:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1743106969; x=1743711769; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=f36YSwLPJ313+jNbvLdd5CTUY7LI4BTt4o8yr4k9tM4=;
+        b=Yh1gb2ZnrNy735DzwOlU3+UeOzHLxvl1Wb5ane4aqeOfcHK66mfgwm6jRq8g2Mci0y
+         fsB9O//bu8gMK8wWck8pnjXMGbPfcQ71l0U06OGY9365oRHu+cFGp8Hs2SFJV0cGH+Wg
+         CDz6uZOsl0eSnBhvaqlVjvRRSQq0sxLTT6F2AU34L+nr1iL0eeHy6RAfYbE3h2KxbQyR
+         50hI1DWM+pVstGaVg6bgMDOwwTHBL8wKjNRX3so/g2BOSOGvkiU4Pm2cvQOWy4aWi36S
+         AqkWKThqJOw8L0IhrglTZlymMVwRrT2uNXnH2GE6cVenjw7AOYYDlq484S1/wvVEJt6T
+         YRfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743106969; x=1743711769;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f36YSwLPJ313+jNbvLdd5CTUY7LI4BTt4o8yr4k9tM4=;
+        b=TsxKK58hTTMmSwRA8bW1lFIarTCbsFQsXwr7lfzh+pvZvAL1UAcXcx3AAlD5kxwjo3
+         ICSo0AdiCD3YGE80KbtBnVwRL2WEA3DZ+Vq0Bae2GQUoq0R9+zoufA0IOGVPvQFznjhA
+         NfA1/f3ofi4xelJA1XoyIPjYCjbSxqDnA3LQfZyqPKs/e6BmHh4HlxjrRn2kl2cLfUjR
+         y4iWnNsWCn80mS/GKed1VZYCIehetZr2STTK14+PT/dyjMjfoeoyyZTme6+ApXdu69UT
+         rmQh+6nge/W4eyIC5Yd9kqg02YPHAEoycjRhjGxqBv9GuJfxxfINTaDQfxIjNX4IDZ5/
+         G4Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCXkgBtcJfNUR8sSgZltIb6J9XbKFyfKjXZ71UICpo21vgfbxxO/LlQbDrm7/GIY1OuunlL1FWgKnN0357mC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1xBz8KxO3WIt4KXfIT6fo8GMhaZVBghk+XPSayp5ENXHihJwf
+	OmBHBlPbKttlldGlt4CEU/5SgFKAcul0wQC+mtrO4W9h42uA8nT6M7GcbqC3IHo=
+X-Gm-Gg: ASbGnctTysJsYQ34f29aRLgIbL8B3FtnuKMCFFCF2pMdyz/BD1BBk8B8ytS6hBMdKXo
+	ChL5kc2Llv+upanIK6YSV0B77c95JxRbCKJ07BNVm7Bh94N5x4DKBDQ+6ur6ZGBoYCkQdUfjNJp
+	cEann2bJ+rVUf7usgQU0zNuuKvVmW8gwaszEbDOk6Aaov3YrO1D+FopAAYXrEDUUJdf8yE/lQP/
+	5+t/+0QQucXFRkHr4mgIXlH93khTPLZzleDGR8eblZxmSVYR5CBJtQT365wbOLccLspUaxNZtH4
+	upR6lVPv/BcfaXijyesKMrKeO9GJs0gd41sNTcbMm7dIvn3f/1W+YUjennGoo4cvy8cWETUVLWl
+	uRpjL0rzx8tZZ5/eKCA==
+X-Google-Smtp-Source: AGHT+IE04slap1s8okAKEtulK560I8Pk5y4yI9BiST5ZRxIXZ4EDqBdpcK7KvdffOC2kSZ2m8M/JJw==
+X-Received: by 2002:a17:90a:c2cd:b0:301:1bce:c252 with SMTP id 98e67ed59e1d1-303a8d81d2bmr7055953a91.27.1743106969072;
+        Thu, 27 Mar 2025 13:22:49 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-60-96.pa.nsw.optusnet.com.au. [49.181.60.96])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3039dff0529sm2964573a91.16.2025.03.27.13.22.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Mar 2025 13:22:48 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1txtkT-000000016eh-2SQ3;
+	Fri, 28 Mar 2025 07:22:45 +1100
+Date: Fri, 28 Mar 2025 07:22:45 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, patches@lists.linux.dev,
+	fstests@vger.kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	oliver.sang@intel.com, hannes@cmpxchg.org, willy@infradead.org,
+	apopple@nvidia.com, brauner@kernel.org, hare@suse.de,
+	oe-lkp@lists.linux.dev, lkp@intel.com, john.g.garry@oracle.com,
+	p.raghav@samsung.com, da.gomez@samsung.com, dave@stgolabs.net,
+	riel@surriel.com, krisman@suse.de, boris@bur.io,
+	jackmanb@google.com, gost.dev@samsung.com
+Subject: Re: [PATCH] generic/764: fsstress + migrate_pages() test
+Message-ID: <Z-WzlUN6fSciApiC@dread.disaster.area>
+References: <20250326185101.2237319-1-mcgrof@kernel.org>
+ <pociwdgfqbzw4mjass6u6wcnvmqlh3ddqzoeoiwiyqs64pl6yu@5ad7ne7rgwe2>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxiTKhGs1H-w1Hv-+MqY284m92Pvxfem0iWO+8THdzGvuA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <pociwdgfqbzw4mjass6u6wcnvmqlh3ddqzoeoiwiyqs64pl6yu@5ad7ne7rgwe2>
 
-On Thursday 27 March 2025 12:47:02 Amir Goldstein wrote:
-> On Sun, Mar 23, 2025 at 11:32 AM Pali Rohár <pali@kernel.org> wrote:
-> >
-> > On Sunday 23 March 2025 09:45:06 Amir Goldstein wrote:
-> > > On Fri, Mar 21, 2025 at 8:50 PM Andrey Albershteyn <aalbersh@redhat.com> wrote:
-> > > >
-> > > > This patchset introduced two new syscalls getfsxattrat() and
-> > > > setfsxattrat(). These syscalls are similar to FS_IOC_FSSETXATTR ioctl()
-> > > > except they use *at() semantics. Therefore, there's no need to open the
-> > > > file to get an fd.
-> > > >
-> > > > These syscalls allow userspace to set filesystem inode attributes on
-> > > > special files. One of the usage examples is XFS quota projects.
-> > > >
-> > > > XFS has project quotas which could be attached to a directory. All
-> > > > new inodes in these directories inherit project ID set on parent
-> > > > directory.
-> > > >
-> > > > The project is created from userspace by opening and calling
-> > > > FS_IOC_FSSETXATTR on each inode. This is not possible for special
-> > > > files such as FIFO, SOCK, BLK etc. Therefore, some inodes are left
-> > > > with empty project ID. Those inodes then are not shown in the quota
-> > > > accounting but still exist in the directory. This is not critical but in
-> > > > the case when special files are created in the directory with already
-> > > > existing project quota, these new inodes inherit extended attributes.
-> > > > This creates a mix of special files with and without attributes.
-> > > > Moreover, special files with attributes don't have a possibility to
-> > > > become clear or change the attributes. This, in turn, prevents userspace
-> > > > from re-creating quota project on these existing files.
-> > > >
-> > > > Christian, if this get in some mergeable state, please don't merge it
-> > > > yet. Amir suggested these syscalls better to use updated struct fsxattr
-> > > > with masking from Pali Rohár patchset, so, let's see how it goes.
-> > >
-> > > Andrey,
-> > >
-> > > To be honest I don't think it would be fair to delay your syscalls more
-> > > than needed.
-> >
-> > I agree.
-> >
-> > > If Pali can follow through and post patches on top of your syscalls for
-> > > next merge window that would be great, but otherwise, I think the
-> > > minimum requirement is that the syscalls return EINVAL if fsx_pad
-> > > is not zero. we can take it from there later.
-> >
-> > IMHO SYS_getfsxattrat is fine in this form.
-> >
-> > For SYS_setfsxattrat I think there are needed some modifications
-> > otherwise we would have problem again with backward compatibility as
-> > is with ioctl if the syscall wants to be extended in future.
-> >
-> > I would suggest for following modifications for SYS_setfsxattrat:
-> >
-> > - return EINVAL if fsx_xflags contains some reserved or unsupported flag
-> >
-> > - add some flag to completely ignore fsx_extsize, fsx_projid, and
-> >   fsx_cowextsize fields, so SYS_setfsxattrat could be used just to
-> >   change fsx_xflags, and so could be used without the preceding
-> >   SYS_getfsxattrat call.
-> >
-> > What do you think about it?
+On Thu, Mar 27, 2025 at 12:53:30PM +0100, Jan Kara wrote:
+> On Wed 26-03-25 11:50:55, Luis Chamberlain wrote:
+> > 0-day reported a page migration kernel warning with folios which happen
+> > to be buffer-heads [0]. I'm having a terribly hard time reproducing the bug
+> > and so I wrote this test to force page migration filesystems.
+> > 
+> > It turns out we have have no tests for page migration on fstests or ltp,
+> > and its no surprise, other than compaction covered by generic/750 there
+> > is no easy way to trigger page migration right now unless you have a
+> > numa system.
+> > 
+> > We should evaluate if we want to help stress test page migration
+> > artificially by later implementing a way to do page migration on simple
+> > systems to an artificial target.
+> > 
+> > So far, this doesn't trigger any kernel splats, not even warnings for me.
+> > 
+> > Reported-by: kernel test robot <oliver.sang@intel.com>
+> > Link: https://lore.kernel.org/r/202503101536.27099c77-lkp@intel.com # [0]
+> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 > 
-> I think all Andrey needs to do now is return -EINVAL if fsx_pad is not zero.
+> So when I was testing page migration in the past MM guys advised me to use
+> THP compaction as a way to trigger page migration. You can manually
+> trigger compaction by:
 > 
-> You can use this later to extend for the semantics of flags/fields mask
-> and we can have a long discussion later on what this semantics should be.
-> 
-> Right?
-> 
-> Amir.
+> echo 1 >/proc/sys/vm/compact_memory
 
-It is really enough? All new extensions later would have to be added
-into fsx_pad fields, and currently unused bits in fsx_xflags would be
-unusable for extensions.
+Right, that's what generic/750 does. IT runs fsstress and every 5
+seconds runs memory compaction in the background.
+
+> So you first mess with the page cache a bit to fragment memory and then
+> call the above to try to compact it back...
+
+Which is effectively what g/750 tries to exercise.
+
+When it's run by check-parallel, compaction ends up doing a lot
+more work over a much wider range of tests...
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
