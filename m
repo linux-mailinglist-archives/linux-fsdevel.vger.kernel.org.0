@@ -1,220 +1,316 @@
-Return-Path: <linux-fsdevel+bounces-45158-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45159-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51375A73DF1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 19:21:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DA69A73DF6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 19:23:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37A6F7A5901
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 18:20:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA10E18894CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 18:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6901921ABC9;
-	Thu, 27 Mar 2025 18:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFD021A454;
+	Thu, 27 Mar 2025 18:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eXCnCWX+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VjFdkMwF";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eXCnCWX+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VjFdkMwF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+q0dvnq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F61D21A45F
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Mar 2025 18:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0E11E4B2
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Mar 2025 18:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743099662; cv=none; b=Ki+XMbnY0Vg0D0h/hxTFwuaHOos0HmJyMGft2mkGY/8+41RPCgLjVFuYX4ttmav8Cyx+20gpH0Dues2Mfe5gTm3eX2FK3OzsQOBM/9tOvKMCz2+bxA9ZOfW38bhIOLWfLYFpzpn1qXbfF4f0RXBCxCwGZCzDSnoPdd/2PRnBX7Q=
+	t=1743099814; cv=none; b=LxE4/sWtNYIhUMjqQWfqGpVAD7+Aq1p0ctmvVUWT9e+rfo/Nq8rOY9G4egFrsetUmA52+VHxqectyH2WT5S2ITFyFKs2anauFv+aImwKtatCDbjXVxJtCdCcLJVFOqGY0wwHZgavJhxNumRYqIKveQt3nbg/BoRratgT/Di3aRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743099662; c=relaxed/simple;
-	bh=aBLV3Sn7z0xp0njCPyD7ONfmrZSIzPT22+6XnwAJ5II=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JyoJ5wKy/BVStuQr5PtBRfcmPQJ7f3GOOQ+NytUQNH88Cb/jblBAw66ogTu7Zdjqpa0ZLhmXkaiN1YNRjixEzQz/igfQweBcJdkflVnwtzpk9nONFWKmQxPFLx1pc5Dz5j3yrTvDFCwHf5MUYCQ+gvi+fDf5vhTPy6kDoJF8O08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eXCnCWX+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VjFdkMwF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eXCnCWX+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VjFdkMwF; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F33D62119B;
-	Thu, 27 Mar 2025 18:20:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1743099659; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U1tx1jdQvYVz6iQ3XKAZ6sA3Iy0kGapu7x+JoDHx8HE=;
-	b=eXCnCWX+M5poAwOACk1QBrI5K51h3oJWu/+TTMg3aeHXutxYPLRiM0MJS/2lM25cx3dG1Q
-	IPlkr8s9HYaFY5I9s4KmUe0TC1Mm4x9clryxI4qmvViPPLdlhMjageOFzXPG5XQK5RtX8Y
-	o7iv2UHek/aTvXMy9pJqkYWDlLhjF9I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1743099659;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U1tx1jdQvYVz6iQ3XKAZ6sA3Iy0kGapu7x+JoDHx8HE=;
-	b=VjFdkMwFGBOw+g6GTSrdjWCoWA4CQFBPJmrHFwkofLd9HU185GAu3kB2d8F8pNftEWV2Py
-	fPBOxzEf3aQuN8Cg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=eXCnCWX+;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=VjFdkMwF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1743099659; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U1tx1jdQvYVz6iQ3XKAZ6sA3Iy0kGapu7x+JoDHx8HE=;
-	b=eXCnCWX+M5poAwOACk1QBrI5K51h3oJWu/+TTMg3aeHXutxYPLRiM0MJS/2lM25cx3dG1Q
-	IPlkr8s9HYaFY5I9s4KmUe0TC1Mm4x9clryxI4qmvViPPLdlhMjageOFzXPG5XQK5RtX8Y
-	o7iv2UHek/aTvXMy9pJqkYWDlLhjF9I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1743099659;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U1tx1jdQvYVz6iQ3XKAZ6sA3Iy0kGapu7x+JoDHx8HE=;
-	b=VjFdkMwFGBOw+g6GTSrdjWCoWA4CQFBPJmrHFwkofLd9HU185GAu3kB2d8F8pNftEWV2Py
-	fPBOxzEf3aQuN8Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E16D3139D4;
-	Thu, 27 Mar 2025 18:20:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /QUDNwqX5WfDKgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 27 Mar 2025 18:20:58 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 89133A082A; Thu, 27 Mar 2025 19:20:58 +0100 (CET)
-Date: Thu, 27 Mar 2025 19:20:58 +0100
-From: Jan Kara <jack@suse.cz>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mcgrof@kernel.org, jack@suse.cz, hch@infradead.org, david@fromorbit.com, 
-	rafael@kernel.org, djwong@kernel.org, pavel@kernel.org, peterz@infradead.org, 
-	mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com
-Subject: Re: [RFC PATCH 4/4] vfs: add filesystem freeze/thaw callbacks for
- power management
-Message-ID: <zcxwcu2ty5fmkqt7dnpwdmohkp6pi7hfhltlxgpnx2xhsutgoc@gkixsx4map3o>
-References: <20250327140613.25178-1-James.Bottomley@HansenPartnership.com>
- <20250327140613.25178-5-James.Bottomley@HansenPartnership.com>
+	s=arc-20240116; t=1743099814; c=relaxed/simple;
+	bh=Saloq+d+jJTOnb7HDZmvwcSUTqw+G5k1yhBiVvped/s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y5zYP2B3GGxlXlRX4S2MdWz6pePSOOObUDzMDbMPz3sdI8F6cMNfQA/6YdYVWoGy+HUBMTEK2u/NRK5lN/DCwtLQa3l/VySYS6apHgni3GFxGjuy/GyJdgXYPxT/SRswzo9atW5STFRiYJPi5/szNmlnpTrX1hbdfQ9Vo5WCruQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+q0dvnq; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aaecf50578eso224977266b.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Mar 2025 11:23:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743099811; x=1743704611; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FTm4aDT1fSRMnjCMJ28lOdR+6ZoSVkc2oosAdMiURpA=;
+        b=Q+q0dvnq2PN4mDXn3wLQ/Bz4Pq8ox2d6MPYIZ+FQvMxiAr61z32/9+K6r9ht8pbyrt
+         XjyHAI/AkD/CLVGzIK91zKcALB2FCLWSx/ShEut4XK2R4WX3p97/OYNL3NpPcj+sf+yk
+         tU5ZjvjfwleRVUhZVqRfsjbNZUTprI6zP4Kg8J0nj66o9JSf6LHwN/ERjakHoSI7prhk
+         fXdZjaKgwr6L+Uzg75hOSuy1B4bfOoPtP8ZGjhvzur4NfMtt+bDLAyZXWtxI+pcrW/tb
+         xthMAK2W11Nk4ijobsaTqz1VNe9o3cfATsQKg6xnRjNQG5X4hSMw0C7Fo7Zww5FwkYwJ
+         RcLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743099811; x=1743704611;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FTm4aDT1fSRMnjCMJ28lOdR+6ZoSVkc2oosAdMiURpA=;
+        b=c3xuUpF1V0yt5P1x7QYv76Yv96pkNKk51kdsXEKNI44oojGpk8B3TtCXrc3mStSYfJ
+         3egZVkiyDfeJQbGLKY93/4OeYkNv1nrz+cRtsa/AS1Jhzh4Y+GdjvBBC5nREpVPbFLrT
+         pZoetgtQ6//FqOdkzg9tYEB04GgQxs2mQpK2zzyBF6BlOaW4c2C/QNQM63142+xc+tpT
+         81WS8y5JlOSnVavsvJ89grtgXstn5TXEhFujxjYIpneQaZZMS5p+6ECKFNTFC3tDKxFy
+         UHz62rXZLubTLDxbZrAE+DykCPdCQlyi68pS+PT/ZfcFzN2FoNTO1/IbSMAxwTmzP7HB
+         K1jg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIEsZ1hcV6evk8p8cPeELrZKFycCXuHPXhLMQLMl6M7e8eJTXxMcVpT5Xdu9XeySI7KQymPLeN3oDDCaD2@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNzdXEgCdTrmMr+hUyZ32xSnFLqLSqGuIJmt5+gc8Mcr2+mf7q
+	JqOk5SGSWHMox4NC8lF0TL3bUnFXOfPy9CLBwmHqpZ/YUWlp5Xes48HzBeUerRIm/BbxXlcd9cg
+	8RW9y9T8QHu6vfqzgDIM6PHjB+ho=
+X-Gm-Gg: ASbGncvEwVFw5fY/STgxcd1RwhSqMf1aLHkbpSlbls6SFCIyxcAmjRZqy6p/fsVJowv
+	VzFd4J4CjkSWBQJlqE9eW0Rr/CUWs3otzA759bmmeXavygsCckGijclyjcDKSb5dgK/oM1uyMTC
+	jpbhEJkKegvZqoDiuRTnCuUmkXoA==
+X-Google-Smtp-Source: AGHT+IH9Kj95hfZOYYJGWljd2kmZLVOjxhCqyzIW96mN6GSO8XmM933x+F+a6gE7zQIwc4q9OmGwMQPjSnVpRw7+lqY=
+X-Received: by 2002:a17:907:940a:b0:ac3:991:a631 with SMTP id
+ a640c23a62f3a-ac6faf0b842mr392392266b.34.1743099810474; Thu, 27 Mar 2025
+ 11:23:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250327140613.25178-5-James.Bottomley@HansenPartnership.com>
-X-Rspamd-Queue-Id: F33D62119B
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,suse.cz,infradead.org,fromorbit.com,redhat.com,gmail.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,hansenpartnership.com:email,suse.com:email]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
-X-Spam-Flag: NO
+References: <CAOQ4uxj00D_fP3nRUBjAry6vwUCNjYuUpCZg2Uc8hwMk6n+2HA@mail.gmail.com>
+ <Z41rfVwqp6mmgOt9@dread.disaster.area> <CAOQ4uxgYERCmPrTXjuM4Q3HdWK_HxuOkkpAEnesDHCAD=9fsOg@mail.gmail.com>
+ <dc0649f70ca69741d351060c8c3816a347c00687.camel@kernel.org>
+ <gihbrvdkldci257z5amkrowcsrzgjjmtnif7ycvpi6rsbktvnz@rfqybs7klfkj> <CAOQ4uxinA4C0iJCwZqkhLo-R9NLF=Sd_YXHEcXCX2BBNBSvNAA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxinA4C0iJCwZqkhLo-R9NLF=Sd_YXHEcXCX2BBNBSvNAA@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 27 Mar 2025 19:23:19 +0100
+X-Gm-Features: AQ5f1Jpjk6zbgLrageWeRNyBVV6pw9XVCkjRkm9fcLW_yvG3VkbkFq9CcYWzugw
+Message-ID: <CAOQ4uxjBysYT3iH=SLuOErMZHXyWRhj=Ym_WF7+uYQySG7RyRA@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] vfs write barriers
+To: Jan Kara <jack@suse.cz>
+Cc: Jeff Layton <jlayton@kernel.org>, Dave Chinner <david@fromorbit.com>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, lsf-pc <lsf-pc@lists.linux-foundation.org>, 
+	Christian Brauner <brauner@kernel.org>, Josef Bacik <josef@toxicpanda.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 27-03-25 10:06:13, James Bottomley wrote:
-> Introduce a freeze function, which iterates superblocks in reverse
-> order freezing filesystems.  The indicator a filesystem is freezable
-> is either possessing a s_bdev or a freeze_super method.  So this can
-> be used in efivarfs, whether the freeze is for hibernate is also
-> passed in via the new FREEZE_FOR_HIBERNATE flag.
-> 
-> Thawing is done opposite to freezing (so superblock traversal in
-> regular order) and the whole thing is plumbed into power management.
-> The original ksys_sync() is preserved so the whole freezing step is
-> optional (if it fails we're no worse off than we are today) so it
-> doesn't inhibit suspend/hibernate if there's a failure.
-> 
-> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+On Thu, Mar 20, 2025 at 6:00=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
+>
+> On Tue, Feb 11, 2025 at 5:22=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Thu 23-01-25 13:14:11, Jeff Layton wrote:
+> > > On Mon, 2025-01-20 at 12:41 +0100, Amir Goldstein wrote:
+> > > > On Sun, Jan 19, 2025 at 10:15=E2=80=AFPM Dave Chinner <david@fromor=
+bit.com> wrote:
+> > > > >
+> > > > > On Fri, Jan 17, 2025 at 07:01:50PM +0100, Amir Goldstein wrote:
+> > > > > > Hi all,
+> > > > > >
+> > > > > > I would like to present the idea of vfs write barriers that was=
+ proposed by Jan
+> > > > > > and prototyped for the use of fanotify HSM change tracking even=
+ts [1].
+> > > > > >
+> > > > > > The historical records state that I had mentioned the idea brie=
+fly at the end of
+> > > > > > my talk in LSFMM 2023 [2], but we did not really have a lot of =
+time to discuss
+> > > > > > its wider implications at the time.
+> > > > > >
+> > > > > > The vfs write barriers are implemented by taking a per-sb srcu =
+read side
+> > > > > > lock for the scope of {mnt,file}_{want,drop}_write().
+> > > > > >
+> > > > > > This could be used by users - in the case of the prototype - an=
+ HSM service -
+> > > > > > to wait for all in-flight write syscalls, without blocking new =
+write syscalls
+> > > > > > as the stricter fsfreeze() does.
+> > > > > >
+> > > > > > This ability to wait for in-flight write syscalls is used by th=
+e prototype to
+> > > > > > implement a crash consistent change tracking method [3] without=
+ the
+> > > > > > need to use the heavy fsfreeze() hammer.
+> > > > >
+> > > > > How does this provide anything guarantee at all? It doesn't order=
+ or
+> > > > > wait for physical IOs in any way, so writeback can be active on a
+> > > > > file and writing data from both sides of a syscall write "barrier=
+".
+> > > > > i.e. there is no coherency between what is on disk, the cmtime of
+> > > > > the inode and the write barrier itself.
+> > > > >
+> > > > > Freeze is an actual physical write barrier. A very heavy handed
+> > > > > physical right barrier, yes, but it has very well defined and
+> > > > > bounded physical data persistence semantics.
+> > > >
+> > > > Yes. Freeze is a "write barrier to persistence storage".
+> > > > This is not what "vfs write barrier" is about.
+> > > > I will try to explain better.
+> > > >
+> > > > Some syscalls modify the data/metadata of filesystem objects in mem=
+ory
+> > > > (a.k.a "in-core") and some syscalls query in-core data/metadata
+> > > > of filesystem objects.
+> > > >
+> > > > It is often the case that in-core data/metadata readers are not ful=
+ly
+> > > > synchronized with in-core data/metadata writers and it is often tha=
+t
+> > > > in-core data and metadata are not modified atomically w.r.t the
+> > > > in-core data/metadata readers.
+> > > > Even related metadata attributes are often not modified atomically
+> > > > w.r.t to their readers (e.g. statx()).
+> > > >
+> > > > When it comes to "observing changes" multigrain ctime/mtime has
+> > > > improved things a lot for observing a change in ctime/mtime since
+> > > > last sampled and for observing an order of ctime/mtime changes
+> > > > on different inodes, but it hasn't changed the fact that ctime/mtim=
+e
+> > > > changes can be observed *before* the respective metadata/data
+> > > > changes can be observed.
+> > > >
+> > > > An example problem is that a naive backup or indexing program can
+> > > > read old data/metadata with new timestamp T and wrongly conclude
+> > > > that it read all changes up to time T.
+> > > >
+> > > > It is true that "real" backup programs know that applications and
+> > > > filesystem needs to be quisences before backup, but actual
+> > > > day to day cloud storage sync programs and indexers cannot
+> > > > practically freeze the filesystem for their work.
+> > > >
+> > >
+> > > Right. That is still a known problem. For directory operations, the
+> > > i_rwsem keeps things consistent, but for regular files, it's possible
+> > > to see new timestamps alongside with old file contents. That's a
+> > > problem since caching algorithms that watch for timestamp changes can
+> > > end up not seeing the new contents until the _next_ change occurs,
+> > > which might not ever happen.
+> > >
+> > > It would be better to change the file write code to update the
+> > > timestamps after copying data to the pagecache. It would still be
+> > > possible in that case to see old attributes + new contents, but that'=
+s
+> > > preferable to the reverse for callers that are watching for changes t=
+o
+> > > attributes.
+> > >
+> > > Would fixing that help your use-case at all?
+> >
+> > I think Amir wanted to make here a point in the other direction: I.e., =
+if
+> > the application did:
+> >  * sample inode timestamp
+> >  * vfs_write_barrier()
+> >  * read file data
+> >
+> > then it is *guaranteed* it will never see old data & new timestamp and =
+hence
+> > the caching problem is solved. No need to update timestamp after the wr=
+ite.
+> >
+> > Now I agree updating timestamps after write is much nicer from usabilit=
+y
+> > POV (given how common pattern above it) but this is just a simple examp=
+le
+> > demonstrating possible uses for vfs_write_barrier().
+> >
+>
+> I was trying to figure out if updating timestamp after write would be eno=
+ugh
+> to deal with file writes and I think that it is not enough when adding
+> signalling
+> (events) into the picture.
+> In this case, the consumer is expected to act on changes (e.g. index/back=
+up)
+> soon after they happen.
+> I think this case is different from NFS cache which only cares about cach=
+e
+> invalidation on file access(?).
+>
+> In any case, we need a FAN_PRE_MODIFY blocking event to store a
+> persistent change intent record before the write - that is needed to find
+> changes after a crash.
+>
+> Now unless we want to start polling ctime (and we do not want that),
+> we need a signal to wake the consumer after the write to page cache
+>
+> One way is to rely on the FAN_MODIFY async event post write.
+> But there is ambiguity in the existing FAN_MODIFY events:
+>
+>     Thread A starts write on file F (no listener for FAN_PRE_MODIFY)
+> Event consumer starts
+>         Thread B starts write on file F
+>         FAN_PRE_MODIFY(F) reported from thread B
+>     Thread A completes write on file F
+>     FAN_MODIFY(F) reported from thread A (or from aio completion thread)
+> Event consumer believes it got the last event and can read the final
+> version of F
+>
+> So if we use this method we will need a unique cookie to
+> associate the POST_MODIFY with the PRE_MODIFY event.
+>
+> Something like this:
+>
+> writer                                [fsnotifyd]
+> -------                                -------------
+> file_start_write_usn() =3D> FAN_PRE_MODIFY[ fsid, usn, fhandle ]
+> {                                 <=3D Record change intent before respon=
+se
+> =E2=80=A6do some in-core changes
+>    (e.g. data + mode + ctime)...
+> } file_end_write_usn() =3D> FAN_POST_MODIFY[ fsid, usn, fhandle ]
+>                                          Consume changes after FAN_POST_M=
+ODIFY
+>
+> While this is a viable option, it adds yet more hooks and more
+> events and it does not provide an easy way for consumers to
+> wait for the completion of a batch of modifications.
+>
+> The vfs_write_barrier method provides a better way to wait for completion=
+:
+>
+> writer                                [fsnotifyd]
+> -------                                -------------
+> file_start_write_srcu() =3D> FAN_PRE_MODIFY[ fsid, usn, fhandle ]
+> {                                  <=3D Record change intent before respo=
+nse
+> =E2=80=A6do some in-core changes under srcu read lock
+>    (e.g. data + mode + ctime)...
+> } file_end_write_srcu()
+>      synchronize_srcu()   <=3D vfs_write_barrier();
+>                     Consume a batch of recorded changes after write barri=
+er
+>                     act on the changes and clear the change intent record=
+s
+>
+> I am hoping to be able to argue for the case of vfs_write_barrier()
+> in LSFMM, but if this will not be acceptable, I can work with the
+> post modify events solution.
+>
 
-OK, I've seen you are setting the new FREEZE_FOR_HIBERNATE flag but I didn't
-find anything using that flag. What do you plan to use it for? Does you
-efivars usecase need it? I find passing down this detail about the caller
-down to all filesystems a bit awkward. Isn't it possible to extract the
-information "hibernate is ongoing" from PM subsystem?
+FYI, I had discussed it with some folks at LSFMM after my talk
+and what was apparent to me from this chat and also from the questions
+during my presentation, is that I did not succeed in explaining the problem=
+.
 
-> +/*
-> + * Kernel freezing and thawing is only done in the power management
-> + * subsystem and is thus single threaded (so we don't have to worry
-> + * here about multiple calls to filesystems_freeze/thaw().
-> + */
-> +
-> +static int freeze_flags;
+I believe that the path forward for me, which is something that Jan
+has told me from the beginning, is to implement a reference design
+of persistent change journal, because this is too complex of an API
+to discuss without the user code that uses it.
 
-Frankly, the global variable to propagate flags is pretty ugly... If we
-really have to propagate some context into the iterator callback, rather do
-it explicitly like iterate_supers() does it.
+I am still on the fence about whether I want to do a userspace fsnotifyfd
+or a kernel persistent change journal library/subsystem as a reference
+design. I do already have a kernel subsystem (ovl watch) so I may end
+up cleaning that one up to use a proper fanotify API and maybe that would
+be the way to do it.
 
-> +static void filesystems_freeze_callback(struct super_block *sb)
-> +{
-> +	/* errors don't fail suspend so ignore them */
-> +	if (sb->s_op->freeze_super)
-> +		sb->s_op->freeze_super(sb, FREEZE_MAY_NEST
-> +				       | FREEZE_HOLDER_KERNEL
-> +				       | freeze_flags);
-> +	else if (sb->s_bdev)
-> +		freeze_super(sb, FREEZE_MAY_NEST | FREEZE_HOLDER_KERNEL
-> +			     | freeze_flags);
+One more thing that I realised during LSFMM, is that some filesystems
+(e.g. NTFS, Lustre) already have an internal persistent change journal.
+If I implement a kernel persistent change journal subsystem, then
+we could use the same fanotify API to read events from fs that implements
+its own persistent change journal and from a fs that allows to use the
+fs agnostic persistent change journal.
 
-Style nit - braces around above blocks would be IMHO appropriate.
-
-> +	else {
-> +		pr_info("Ignoring filesystem %s\n", sb->s_type->name);
-> +		return;
-> +	}
-> +
-> +	pr_info("frozen %s, now syncing block ...", sb->s_type->name);
-> +	sync_blockdev(sb->s_bdev);
-> +	pr_info("done.");
-> +}
-
-Generally this callback is not safe because it can race with filesystem
-unmount and calling ->freeze_super() after the filesystem's ->put_super()
-was called may have all sorts of interesting effects (freeze_super() itself
-will just bail with a warning, which is better but not great either).
-
-The cleanest way I see how to make the iteration safe is to grab active sb
-reference (like grab_super() does it) for the duration of freeze_super()
-calls. Another possibility would be to grab sb->s_umount rwsem exclusively
-as Luis does it in his series but that requires a bit of locking surgery
-and ->freeze_super() handlers make this particularly nasty these days so I
-think active sb reference is going to be nicer these days.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Amir.
 
