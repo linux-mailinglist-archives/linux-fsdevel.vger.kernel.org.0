@@ -1,198 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-45126-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4A63A730A0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 12:47:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91ED6A73122
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 12:55:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72F607A2E43
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 11:46:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB7C5188EA65
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 11:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092562135B3;
-	Thu, 27 Mar 2025 11:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F4E213E6D;
+	Thu, 27 Mar 2025 11:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHWBdwZd"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0WmmS6iH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pIotN3XF";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0WmmS6iH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pIotN3XF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9344213E6B;
-	Thu, 27 Mar 2025 11:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A085D2135B3
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Mar 2025 11:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743076037; cv=none; b=ib1rF7DylRMjQ9iPsgsDB76zfUsB3f/AYKaluItmf9QMoqzoZbv8U2bi39APPZPB/4CJycy4sLjkQ2GNpUQOvgjEd4W5KSK/jSnJaazs/OPYT1PlySjHO91rfnHsCCAmWYxK8ktFu6s110Tl/8372OvUZHDdZyIDOJna9wldqeY=
+	t=1743076414; cv=none; b=posZ/rnZcwyibyJjyIV85qZfrYNQTeVHKqitS8s5QlEIrzEh631KtC9dhMtlhx7SnS8/1ou+5WlsNCpxHNdsblnF/ok9iA4IkXFsbw7+o2bEzmdJzYE25lLo6M6gBdQQE2frbHSblcCua/i4gOMrOcGrLgNDvx1xi0PwvGiz7fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743076037; c=relaxed/simple;
-	bh=n1qijx/OKy6vODUrZhMc5X8x/a/woXnDRx8es3Z+U2Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k2z9w3NAPZQK9HgwB+BPQrMY+Zutn/FCgmWwWQbZrDd7N2Mr20t1SCiHmHcBnw0wOM9bDTCjuAlBBoGd2+derLakUqmTG4Ab7wWvQLSW8gr7SKHjkjrxKXZK3Yn69jx1XnNA/pYbxyGHK/r1vQCAnl4rwy5mbyji3pMpZGz1wxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OHWBdwZd; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac3fcf5ab0dso142165466b.3;
-        Thu, 27 Mar 2025 04:47:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743076034; x=1743680834; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=is9+y2X85jwUJpC2vpoBI5XsOCH7hq1X1nDpdTQ6gJo=;
-        b=OHWBdwZdGHxXuu64JeK3LatbgC/vLSSnwlW7ynWR8oJtMJAlOPLJy23623Lwc++xjU
-         0oKbDkimsU9WUTUv7Yg5c9ms5y0gCXr4900HHeUdyex9w9dYelAYPwHx+aE7uSAYlUDJ
-         pgfXp8wWrzO7UqbZuOlZQUaqy5KSWRDx5TTcG4rn3NAZ11ZRshUlsIvE3C33z0OuDWCo
-         DsBUCXzbqYRk6TAC+PbMSL15q0U9moWPmupH50K+XCP22aby0GLcJ9TYQ1AFL9Y0PTEp
-         5TonltQNY4d/FrW9juEBFavTGlBCdNg5CjfEK53EK4Qpt/NdVvXwnlTp+9nveK3Fmd5Q
-         UleA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743076034; x=1743680834;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=is9+y2X85jwUJpC2vpoBI5XsOCH7hq1X1nDpdTQ6gJo=;
-        b=etKGX0P0N2SdRxT3laCTJuUxy3C4UjRCv3zhGnWNMgc5woShSSe6Aw+gDdMi2mU1Tu
-         XyPVac5QSoxsxrMQfjMPozaO/RS/05tmYOWSItGKExym8oYVuCz428tFhzR0nARSc0eC
-         3nt1KnY4nbpC+yxmF+VfWdesjLXlugzPEGzlaDIfeynbCat9s4BaVqPYt484oljZoLOh
-         EffkQsJr4EfoPsVsdGYQGQVg3cIGLip93jmnGwi9jB777HNbmn+asMHRj4vuJWg8jtu3
-         bl06dwHh4FUHYaf4PbaCe6Iiam5KNyEMAWy/ziG/6nYEPFOdyYgBTAZcRIWU41LY915X
-         G2mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhcpaPjt/WOsLNDlKo/sn87CvnYW1K75mUsN8fbi+v0+sW4M3bC1mjcBhddrCOF4RpHwkSzxT5eR9CFA==@vger.kernel.org, AJvYcCV8Ts24HwzGSZ8Smqj6pcWnwBbIZQV6xGJYRU8mpeLA4XSoDLVr4S/HQ0apVXiQGJ9byLNsHBT21cpak0gCGQ==@vger.kernel.org, AJvYcCVL0gMQumgGJbSYFoa72DHD2W2tm6gWTaNDCH+PNqxpIKtkI0denaPTdJTA3vvmtFsPD0Lbjb4dgdub6g==@vger.kernel.org, AJvYcCVXdJvqmAorpkhh3vZeY/xOYGBIWcrkM+N2wjN8/aJje0kfbs4696Mf4GY7aS30RwBaku0vn8ydmNjx@vger.kernel.org, AJvYcCW0T2mdqUwRg6+X4sXTJNjdbV4uhf79v2+wCo2BP1MN0s4ptDbT2lQRJgidU4fVWvy+F45lDWjO2lIUXg==@vger.kernel.org, AJvYcCW5ZGoDCaT8N/e9oL6QKcrdVdJnlp3cZmqqPFhz/ucYumTGX+/J5maUTdQ7DZ5RjduAbdg3jpzUhRV/jhrbWBH7lV5YLzAy@vger.kernel.org, AJvYcCWtqcCjsjMV1EPokgT/74IVjyS9t6aOkVgaQWbpvyqFj5SizKeSXNaGX8QkPxqz+WjOBqumtJ+34Ds=@vger.kernel.org, AJvYcCWw4e9jLog1rsquRE+l+d9YKl1cXQ0WvKJPqhUNqAlSmDlXO2qRNwJPhTSVHsFNun5E9ZX/oa20H7rRKR+V@vger.kernel.org, AJvYcCXDNi5mgCc4H/YiGGsdYRYPwAOuS8jqCCXUAAvoT3wRZ1snTc22JiCYHCzWI6tph389kP4go9S9nA==@vger.kernel.org, AJvYcCXF5DLF
- lOKck6HQkJbQRfJPMI2lq6yAC9i4E1g92mKm65F8piJmZ2VEo10TyJEhLVrcItub1mctUrAazQ==@vger.kernel.org, AJvYcCXFZpxIHLrAJhsFk/vy7s3Kujl7sEOvjlKV6XZf2o1t67S5/s1zvbX/uMw5ikPZqnKKOvG5TVavplqH@vger.kernel.org, AJvYcCXWd339mxkn33FRYdDQJwECgTt/FWq5NbwpHhJhmB1rFB4YP5WLCgszLRZ7FteJrtq5/tOZ2VCS+4PMzQ==@vger.kernel.org, AJvYcCXkO0+OFNNXlClftTez8QzsyVGudv8fE9+qW6G+ZcNeKEximzM2cf9bvaXenVo9ZzG5YBcZ0dT4x1CLdA0Q@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/08V4JT1k7O2KrOVLXpFV9SRPSxm+KWN52UbGkV2iufQuBMmR
-	aE+v+MGGa1nZmqof9SfE7eGrLNzN29LLYZ9ZP4O4Cv1/jvtLq3YSb3i7JXwdHwffs107iRVtIXL
-	9t8QaLzhM2agFZM04IzQVleStmM8=
-X-Gm-Gg: ASbGnctoQULFj7XmWF3qvuYdcZvaentGyogwYs1KSBURFr3CDPfS74vXXWw21BMQgR9
-	u2d0y7hIZ1bOv4UuvODKydJ8U85gwKR+9zw9IhKF9mhtsbqwWfPDJ0fb919tdtPlzgh5CCoW/Vr
-	+K445EEBqguFf+RyKVcr8WjvT3ng==
-X-Google-Smtp-Source: AGHT+IFDMEzXsY+VZjpd0kG58wjWGn9FeNWYrZGZgOC4akNvRiDgmmjaMJcSLaslSRq0Qq/XBA95rVTpeV7+0zkMjwY=
-X-Received: by 2002:a17:907:7292:b0:ac2:9683:ad25 with SMTP id
- a640c23a62f3a-ac6faf46d6dmr291188966b.34.1743076033463; Thu, 27 Mar 2025
- 04:47:13 -0700 (PDT)
+	s=arc-20240116; t=1743076414; c=relaxed/simple;
+	bh=XABOlLOdb+GYGihfxxXpKbRns0kIKcDt7XDQoGxdyfM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gyhUfT2PSOZ88yHp0fbT/fYfBzKU3DAf5q4jla8JXFEbRX6vFVBseYEf7hbcEFfWetIZ0SN54q0TVSoxDH9t8aDUFRyzbXlp2M5HxWBERxzOhQU+tnjZ3DfgYMxdEG45RHFPjlu6/Q8rabdLEQdmjVuTFU22FaaDEVDiNVoolfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0WmmS6iH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pIotN3XF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0WmmS6iH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pIotN3XF; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A2A181F449;
+	Thu, 27 Mar 2025 11:53:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743076410; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R+QxkDVy5JRXbW51kJ2F9UVtUHbBkep2u9RXAqpaoBw=;
+	b=0WmmS6iHlw/gOs91YI8HSX8we1JIoZSAW6ycjBmd9yfK0HSf1J+h20t4Z96p3NQL4EgvLy
+	pqVLrN6Hm1zJlzxIuQ4gqZGmb2fGiZFJ/KjnMFQiPTnM3hIGCP4XyrnCBa1aTDa4jL1LK7
+	HJfIKZQ8nZ1pjFXGLmphhZqpXOIIL9c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743076410;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R+QxkDVy5JRXbW51kJ2F9UVtUHbBkep2u9RXAqpaoBw=;
+	b=pIotN3XFDhfuYS4qF+/VXHQh4jiW8JPxvUg9Zao5zvzq318vz6yZH7IPHfymstt2WoLJK5
+	9gpWYqRYiKvLeaBw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=0WmmS6iH;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=pIotN3XF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743076410; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R+QxkDVy5JRXbW51kJ2F9UVtUHbBkep2u9RXAqpaoBw=;
+	b=0WmmS6iHlw/gOs91YI8HSX8we1JIoZSAW6ycjBmd9yfK0HSf1J+h20t4Z96p3NQL4EgvLy
+	pqVLrN6Hm1zJlzxIuQ4gqZGmb2fGiZFJ/KjnMFQiPTnM3hIGCP4XyrnCBa1aTDa4jL1LK7
+	HJfIKZQ8nZ1pjFXGLmphhZqpXOIIL9c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743076410;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R+QxkDVy5JRXbW51kJ2F9UVtUHbBkep2u9RXAqpaoBw=;
+	b=pIotN3XFDhfuYS4qF+/VXHQh4jiW8JPxvUg9Zao5zvzq318vz6yZH7IPHfymstt2WoLJK5
+	9gpWYqRYiKvLeaBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 941D9139D4;
+	Thu, 27 Mar 2025 11:53:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id CNgjJDo85WdlMAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 27 Mar 2025 11:53:30 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 49C00A082A; Thu, 27 Mar 2025 12:53:30 +0100 (CET)
+Date: Thu, 27 Mar 2025 12:53:30 +0100
+From: Jan Kara <jack@suse.cz>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: patches@lists.linux.dev, fstests@vger.kernel.org, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, oliver.sang@intel.com, 
+	hannes@cmpxchg.org, willy@infradead.org, jack@suse.cz, apopple@nvidia.com, 
+	brauner@kernel.org, hare@suse.de, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	john.g.garry@oracle.com, p.raghav@samsung.com, da.gomez@samsung.com, dave@stgolabs.net, 
+	riel@surriel.com, krisman@suse.de, boris@bur.io, jackmanb@google.com, 
+	gost.dev@samsung.com
+Subject: Re: [PATCH] generic/764: fsstress + migrate_pages() test
+Message-ID: <pociwdgfqbzw4mjass6u6wcnvmqlh3ddqzoeoiwiyqs64pl6yu@5ad7ne7rgwe2>
+References: <20250326185101.2237319-1-mcgrof@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org>
- <CAOQ4uxjQDUg8HFG+mSxMkR54zen7nC2jttzOKqh13Bx-uosh3Q@mail.gmail.com> <20250323103234.2mwhpsbigpwtiby4@pali>
-In-Reply-To: <20250323103234.2mwhpsbigpwtiby4@pali>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 27 Mar 2025 12:47:02 +0100
-X-Gm-Features: AQ5f1Jpi0M5N9RWSGdapIu4-VZrbOc2LlwCzBFz2QmmwPCZLH_QgJtaO5jSCIs8
-Message-ID: <CAOQ4uxiTKhGs1H-w1Hv-+MqY284m92Pvxfem0iWO+8THdzGvuA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/3] fs: introduce getfsxattrat and setfsxattrat syscalls
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>, Richard Henderson <richard.henderson@linaro.org>, 
-	Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-alpha@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-arch@vger.kernel.org, selinux@vger.kernel.org, 
-	Andrey Albershteyn <aalbersh@kernel.org>, linux-xfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250326185101.2237319-1-mcgrof@kernel.org>
+X-Rspamd-Queue-Id: A2A181F449
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[24];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-On Sun, Mar 23, 2025 at 11:32=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org> =
-wrote:
->
-> On Sunday 23 March 2025 09:45:06 Amir Goldstein wrote:
-> > On Fri, Mar 21, 2025 at 8:50=E2=80=AFPM Andrey Albershteyn <aalbersh@re=
-dhat.com> wrote:
-> > >
-> > > This patchset introduced two new syscalls getfsxattrat() and
-> > > setfsxattrat(). These syscalls are similar to FS_IOC_FSSETXATTR ioctl=
-()
-> > > except they use *at() semantics. Therefore, there's no need to open t=
-he
-> > > file to get an fd.
-> > >
-> > > These syscalls allow userspace to set filesystem inode attributes on
-> > > special files. One of the usage examples is XFS quota projects.
-> > >
-> > > XFS has project quotas which could be attached to a directory. All
-> > > new inodes in these directories inherit project ID set on parent
-> > > directory.
-> > >
-> > > The project is created from userspace by opening and calling
-> > > FS_IOC_FSSETXATTR on each inode. This is not possible for special
-> > > files such as FIFO, SOCK, BLK etc. Therefore, some inodes are left
-> > > with empty project ID. Those inodes then are not shown in the quota
-> > > accounting but still exist in the directory. This is not critical but=
- in
-> > > the case when special files are created in the directory with already
-> > > existing project quota, these new inodes inherit extended attributes.
-> > > This creates a mix of special files with and without attributes.
-> > > Moreover, special files with attributes don't have a possibility to
-> > > become clear or change the attributes. This, in turn, prevents usersp=
-ace
-> > > from re-creating quota project on these existing files.
-> > >
-> > > Christian, if this get in some mergeable state, please don't merge it
-> > > yet. Amir suggested these syscalls better to use updated struct fsxat=
-tr
-> > > with masking from Pali Roh=C3=A1r patchset, so, let's see how it goes=
-.
-> >
-> > Andrey,
-> >
-> > To be honest I don't think it would be fair to delay your syscalls more
-> > than needed.
->
-> I agree.
->
-> > If Pali can follow through and post patches on top of your syscalls for
-> > next merge window that would be great, but otherwise, I think the
-> > minimum requirement is that the syscalls return EINVAL if fsx_pad
-> > is not zero. we can take it from there later.
->
-> IMHO SYS_getfsxattrat is fine in this form.
->
-> For SYS_setfsxattrat I think there are needed some modifications
-> otherwise we would have problem again with backward compatibility as
-> is with ioctl if the syscall wants to be extended in future.
->
-> I would suggest for following modifications for SYS_setfsxattrat:
->
-> - return EINVAL if fsx_xflags contains some reserved or unsupported flag
->
-> - add some flag to completely ignore fsx_extsize, fsx_projid, and
->   fsx_cowextsize fields, so SYS_setfsxattrat could be used just to
->   change fsx_xflags, and so could be used without the preceding
->   SYS_getfsxattrat call.
->
-> What do you think about it?
+On Wed 26-03-25 11:50:55, Luis Chamberlain wrote:
+> 0-day reported a page migration kernel warning with folios which happen
+> to be buffer-heads [0]. I'm having a terribly hard time reproducing the bug
+> and so I wrote this test to force page migration filesystems.
+> 
+> It turns out we have have no tests for page migration on fstests or ltp,
+> and its no surprise, other than compaction covered by generic/750 there
+> is no easy way to trigger page migration right now unless you have a
+> numa system.
+> 
+> We should evaluate if we want to help stress test page migration
+> artificially by later implementing a way to do page migration on simple
+> systems to an artificial target.
+> 
+> So far, this doesn't trigger any kernel splats, not even warnings for me.
+> 
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Link: https://lore.kernel.org/r/202503101536.27099c77-lkp@intel.com # [0]
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 
-I think all Andrey needs to do now is return -EINVAL if fsx_pad is not zero=
-.
+So when I was testing page migration in the past MM guys advised me to use
+THP compaction as a way to trigger page migration. You can manually
+trigger compaction by:
 
-You can use this later to extend for the semantics of flags/fields mask
-and we can have a long discussion later on what this semantics should be.
+echo 1 >/proc/sys/vm/compact_memory
 
-Right?
+So you first mess with the page cache a bit to fragment memory and then
+call the above to try to compact it back...
 
-Amir.
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
