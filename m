@@ -1,198 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-45160-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C2C6A73E71
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 20:15:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D418A73E7C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 20:23:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180083BCD73
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 19:15:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04A05189CFBA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 19:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2976C1C5D60;
-	Thu, 27 Mar 2025 19:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCFE18A6DB;
+	Thu, 27 Mar 2025 19:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fh2GXN8j"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="FZoQwW4d"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F88A55;
-	Thu, 27 Mar 2025 19:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52A874BE1
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Mar 2025 19:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743102943; cv=none; b=nRdRlTkYqXX9Z3dJL522Q84QHqPPkQadfjMbvb325rhaSwx4rEN0IXaX9LB9BqTUv2+dhK7otv3puZf5VQOCGBjzLTPAavGJunQZzufQ+rt94tCk6pzpuCjc/UGCNGm8YceHnzyN+FaIGpQsSf00++WWP2Lu264KtFAe8IsWheE=
+	t=1743103402; cv=none; b=YiLCx2+nOk9h12hPj0YTmL5xNg0117nAJ8wvT2Do/6LDKvt114nq6xS+RdTq9gMEpdFoK6ww+tSXAnnPLA3hqIVj0cb50hz/BePQpnTr7GvTFqlkoroGBcaVQ82Z1Y5r4OFDLF8FoNwgLOhh8u1VxEAvfTpftn+x1+xi2HZj/4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743102943; c=relaxed/simple;
-	bh=Rw5YIuasHI4FgVTE4nUpNhBDzZD/qo8wURofcGnCHPA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=HrursWj+QuPTB6DkxwmbM1YSo9NKeMhu1EVWHgmypl+dU54WQ9hiC/TbA0B1SCebHOd/+Tm6QJ0Vd9J667YH/jZpR8NHPXaPaNk3x5PYTxsCka+SMZ/Fvw9193ZHVrYoOgFfQv0g9KLjkb6Yb9EgGm2mCWv4EF2P1ADg6q7umXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fh2GXN8j; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4394036c0efso9598185e9.2;
-        Thu, 27 Mar 2025 12:15:41 -0700 (PDT)
+	s=arc-20240116; t=1743103402; c=relaxed/simple;
+	bh=TRjHrgaVBLp3454MVUPZtgyslXGw8GeCIfd220q/xiA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i2Krd/KCcwpMYnSEZioeQ5CArKNPhYZpHDH06Eozp61XvBfGiAEW7L2Jn+MnXhbC8GzWOjSaFn5HtWJsSnwmu+LEGxKUSgBu15RIXnVdmIFMwkXk1x0tXElxhe+UoWzAv/+RouOpbgHfV2VGqYawR9Mj1n0+Khd9L3b/6U3fU6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=FZoQwW4d; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-47690a4ec97so14292521cf.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Mar 2025 12:23:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743102940; x=1743707740; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zfwfv1QkpZUVspd7kmNSz+5Pyv+VFy0ns7dOJv/HVl4=;
-        b=Fh2GXN8jSFKLObAex6klCqe1FmDDjFjcR6CXTILaxhNf3Y8hR483QoPxp1O1jenUeH
-         NAhCfls2T5cZCbwuNE32CI9K9IcSc6DSEuUe+WIGP7iqPHpSaKcvop88S4M0cQ5xv32H
-         uoeB21ddooGtV7suz/5yzKN/Zs1dhMHacmu4qzRQJ6/AduAtb2o+SF73GOEgpMUUA+Oy
-         igORk4AWQye2CgM9rlWWN5xm70NSobXKl1HE98UUcakVaEW8d2aL8OIy+EFz8SGvJ9ZV
-         GpqBI426e4fHzWwoSmlgQcRLjhdkP99gtG6MiS1u48ou7iKmKLckREmUylMvuK2Sr1Kx
-         0e6w==
+        d=szeredi.hu; s=google; t=1743103399; x=1743708199; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9rRCOkKmuMTdXZoRz+hZ7Xd6AWiIvdkVjE7qOL93/iY=;
+        b=FZoQwW4dJCgK4STfi3Q7Z98DQwR4V0l/O8L9NskMetBnAZP1CCB8888XYFC9rjHwLP
+         YhcE/CSNsitRaC45p7PDBZvKhhl4+E4KLTG6V6lRFWKdIssbMpeyP0bW68KR6XRVq5Mq
+         1rjo8w1VaZBRvHTduNAk6fG/EQz/LL44fLGLM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743102940; x=1743707740;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zfwfv1QkpZUVspd7kmNSz+5Pyv+VFy0ns7dOJv/HVl4=;
-        b=Dssw4gv4a7A/G26ptVef010ugNvSw9o6xNh7G1bt9iNfGP8Bd+sdaWb0tKYlZGqHb1
-         ZGUaviOGO2lak4KEm4x1Yl+lQGcz6HOdFZi7A/fLQEUTo1Hy4TSGZG3MMSq+CDCPaJGe
-         CuoFhx6D9wpHJCkmCz/+LkwlyfCJXuCCFu8TplZe5bsr2/eCrRtyHufTuSuc5JLn+ysS
-         j/8BRr/zP5vIyrfH2YQGPaU9270F4VA+YwElAbHVCqd71Qx2MrGRGAJZdH2AU3BH7JK0
-         /k+4eM1WOnV7NqnzNq1/CyoyogSJjmC6m5PaKuIyizha3A7JJXNN4vjRDidThgA3uhmF
-         Z9PA==
-X-Forwarded-Encrypted: i=1; AJvYcCWXDd1kiV4B0etWxVrFXxcuGcuE+Kkt+ZP9wfSdcltWJeLzcSgF9tRfKVLHujftTDqV7O2BqOOx@vger.kernel.org, AJvYcCWm33hqdNTVUq+3XStstDhY+Rpq08JVWGliAaInQpPDn6/5wXouktN1k8UsgX22tdVvGaYzggARGDJVQ/W+@vger.kernel.org, AJvYcCXApjFDVsdo6T5CFahldbrAnCK2cQHr+pEr1Zij50vPe3pI4zkWnlOWieZ5E1ZXDnw93Ot721OlwkQ3QRoB@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL9wZbPWTs14q36ymyRYP1eMh65IF1KoR7AsvPewAXzVRGHZPw
-	rO/Sz3vTw2BDvLGOAv2PbImam2gEz8Tx+0whEigMvMzyrPh6bGl2
-X-Gm-Gg: ASbGncs82fum2XvsvF+vE1Xjo5/xZDeSnwbEiruihtD1EAUFMH7NSnS11H/608aPW57
-	bRcJQLGCVhQy41zMfqnrr/dMVXwxtvez06Lmus81D/lI0p6SyzsT+El7qqJyNjrA/qXL4HPSyqU
-	0jcWk1CpaMOnMgd2KOyrxPZ4pKyDNlLuUOPi5SpU+pV3zWWkP9kR9Ubi0jtVdNRg+CQgtTKsGxV
-	viG9HZTMZP44+surchnlfnzjD1SQjH0ryhDg5l3Xc5jdIZeYkqqD0ZRWXSQLvb/leUMrRciO9F8
-	kyi9v5Km8cDQwF/+FsjrXU+gS5s0wW1WQi0Ta1vCSfSgaLd45KITCA==
-X-Google-Smtp-Source: AGHT+IF6wQGZ2i0qPbjE48g6AoqxPSkbrIx5QXDhbvYGV8JqzaVvMSMYLsYltI99DKGgpV1fk5VzWQ==
-X-Received: by 2002:a05:600c:5103:b0:43d:683:8caa with SMTP id 5b1f17b1804b1-43d84fbea4bmr40267415e9.15.1743102939774;
-        Thu, 27 Mar 2025 12:15:39 -0700 (PDT)
-Received: from [192.168.3.5] ([212.115.166.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d830f5f22sm46351685e9.30.2025.03.27.12.15.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Mar 2025 12:15:38 -0700 (PDT)
-Message-ID: <3b1f2031-9f91-48d8-8c79-65d470142f26@gmail.com>
-Date: Thu, 27 Mar 2025 20:15:36 +0100
+        d=1e100.net; s=20230601; t=1743103399; x=1743708199;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9rRCOkKmuMTdXZoRz+hZ7Xd6AWiIvdkVjE7qOL93/iY=;
+        b=d2mUl/bpKytgb2GkR5xVsua+mY1FNtXOuD8ULy9D4IPCUdPnZGeS5M1KsdUPI6R4bc
+         dvwc8CmX0yurmhXrL7xSuusHF5/u+qsA4N0jRq6J1x06Wwq4t9LHPEj3c1GfB9xaONxZ
+         Wv2ksZwXHyHukTucofRcLaPP0JfTVLqw9vhhFVxNsr0qdRhLZR1ZG5BTDhw/RHIvE2Nf
+         wD1w8LaY2jUt20QWp1k8KCaAxPsr2RrIAwIwqi15acQzkUjstIb1a6xs2TIIKNuoGAcF
+         b1kmVv14TfH4mtLoAQIp8ltfHWctQ0aZfZlIJWSMJzJs3Tp7Ne4E4MiKq6Hs0SmO87rh
+         ouvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgkE4vrk4qIr5yuOSRr0HbILgI1RPG81oWnBbx2lzECvUDIr6iWGO3nShOJ4kz9cKoAdncqo2m/txDHd85@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYt+J8c1HzLNfYBoQmxIX0q8os/zXxd30BcYR+ZybZK6MBz62Z
+	kgcv55I2Rc4PRHGAARMR48iPHorqwLOSSTXNLX+hT3VQ4Z35x8WLpq5+1dHHd18ElQxuEtPy4nX
+	+RoVEJ7JC3ZhyogfZRNPqVz1MgrYMDOVQyYT9Mg==
+X-Gm-Gg: ASbGncv0RGAeFERd/1WFxC2OGbwp4AKuNDFkXc8C8plgU6/3QfgcEnKSyOwJQKKIP0L
+	/6VPLeqR4JA4rqhY8LsS68+ZuYC8/4eeojDgC8uQj1PDu1qkUayyN6kxWNVTfSAq73Sr90P4D8K
+	SWXyLtymhYNwe6IS8N8Cs5YOWn
+X-Google-Smtp-Source: AGHT+IFbUthJyzmI+HXRWtZEF5pJ2amrkkAsI9g/G2us87Z3g1xVnUs87w+d1MkhI+sylrU7ZoGb7W9Q1KF5E1V/QZ0=
+X-Received: by 2002:a05:622a:250b:b0:476:7e6b:d2a2 with SMTP id
+ d75a77b69052e-4776e18f5d3mr84769151cf.35.1743103398692; Thu, 27 Mar 2025
+ 12:23:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Attila Szasz <szasza.contact@gmail.com>
-Subject: Re: [PATCH] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
-To: Greg KH <gregkh@linuxfoundation.org>,
- Cengiz Can <cengiz.can@canonical.com>
-Cc: Salvatore Bonaccorso <carnil@debian.org>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, lvc-patches@linuxtesting.org,
- dutyrok@altlinux.org, syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com,
- stable@vger.kernel.org
-References: <20241019191303.24048-1-kovalev@altlinux.org>
- <Z9xsx-w4YCBuYjx5@eldamar.lan>
- <d4mpuomgxqi7xppaewlpey6thec7h2fk4sm2iktqsx6bhwu5ph@ctkjksxmkgne>
- <2025032402-jam-immovable-2d57@gregkh>
-Content-Language: en-US
-In-Reply-To: <2025032402-jam-immovable-2d57@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250210194512.417339-1-mszeredi@redhat.com> <20250210194512.417339-3-mszeredi@redhat.com>
+ <CAOQ4uxiqis6kawuv4pa6jxHYgpQPc18izFP8e0TORfA_mVu_-w@mail.gmail.com>
+ <CAJfpegt=PWs8ZDF11p3nOCWHbWescE5nwVtUt82f=B6B+S0Miw@mail.gmail.com>
+ <CAOQ4uxiQQV_O1MJgTksKycBjJ6Bneqc=CQbUoghvXc=8KEEsMg@mail.gmail.com>
+ <CAJfpegsuN+C4YiA9PAuY3+-BJ959aSAaXTYBwKNCjEnhXVw0pg@mail.gmail.com>
+ <CAOQ4uxjkBQP=x6+2YPYw4pCfaNy0=x48McLCMPJdEJYEb85f-A@mail.gmail.com>
+ <CAJfpegvUdaCeBcPPc_Qe6vK4ELz7NXWCxuDcVHLpbzZJazXsqA@mail.gmail.com>
+ <87a5ahdjrd.fsf@redhat.com> <CAJfpeguv2+bRiatynX2wzJTjWpUYY5AS897-Tc4EBZZXq976qQ@mail.gmail.com>
+ <875xl4etgk.fsf@redhat.com> <CAJfpeguhVYAp5aKeKDXDwip-Z0hc=3W4t=TMLr+-cbEUODf2vA@mail.gmail.com>
+ <CAOQ4uxgenjB-TQ4rT9JH3wk+q6Qb8b4TgoPxA0P3G8R-gVm+WA@mail.gmail.com>
+ <CAJfpegu6mJ2NZr2rkCVexrayUt=wwNSyYv5AE694D04EH2vx2w@mail.gmail.com> <CAOQ4uxjad0hm10F1hMFX8uqZr+kJT-GibFNe9hAv_v971sb97A@mail.gmail.com>
+In-Reply-To: <CAOQ4uxjad0hm10F1hMFX8uqZr+kJT-GibFNe9hAv_v971sb97A@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 27 Mar 2025 20:23:07 +0100
+X-Gm-Features: AQ5f1JrVJvRm2RHIZqdOCuVcPYQFiC2gxuyc6S1g5L4W5_sxAhzF0-8nUPEnfGQ
+Message-ID: <CAJfpegv44p8MhCWCQ2R93+iUCCrTZbk0KowZxVmsf=0tsbGHLA@mail.gmail.com>
+Subject: Re: [PATCH 3/5] ovl: make redirect/metacopy rejection consistent
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Giuseppe Scrivano <gscrivan@redhat.com>, Miklos Szeredi <mszeredi@redhat.com>, 
+	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Larsson <alexl@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-hi, Attila here—the one who wrote the article and the PoC.
+On Thu, 27 Mar 2025 at 18:14, Amir Goldstein <amir73il@gmail.com> wrote:
+> origin xattr only checks from upper to uppermost lower layer IIRC,
+> do definitely not all the way to lowerdata inode.
 
-just for the record: this was a mistake then, and if one happens to 
-discover another impactful bug in a potentially orphaned filesystem or 
-another subsystem, it might EVEN get prioritized by upstream and stable 
-over /panic_on_warn/ stuff next time, right? or am I missing something?
+Makes sense.
 
-On 3/24/25 17:17, Greg KH wrote:
-> On Mon, Mar 24, 2025 at 07:14:07PM +0300, Cengiz Can wrote:
->> On 20-03-25 20:30:15, Salvatore Bonaccorso wrote:
->>> Hi
->>>
->> Hello Salvatore,
->>
->>> On Sat, Oct 19, 2024 at 10:13:03PM +0300, Vasiliy Kovalev wrote:
->>>> Syzbot reported an issue in hfs subsystem:
->>>>
->>>> BUG: KASAN: slab-out-of-bounds in memcpy_from_page include/linux/highmem.h:423 [inline]
->>>> BUG: KASAN: slab-out-of-bounds in hfs_bnode_read fs/hfs/bnode.c:35 [inline]
->>>> BUG: KASAN: slab-out-of-bounds in hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
->>>> Write of size 94 at addr ffff8880123cd100 by task syz-executor237/5102
->>>>
->>>> Call Trace:
->>>>   <TASK>
->>>>   __dump_stack lib/dump_stack.c:94 [inline]
->>>>   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->>>>   print_address_description mm/kasan/report.c:377 [inline]
->>>>   print_report+0x169/0x550 mm/kasan/report.c:488
->>>>   kasan_report+0x143/0x180 mm/kasan/report.c:601
->>>>   kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
->>>>   __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
->>>>   memcpy_from_page include/linux/highmem.h:423 [inline]
->>>>   hfs_bnode_read fs/hfs/bnode.c:35 [inline]
->>>>   hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
->>>>   hfs_brec_insert+0x7f3/0xbd0 fs/hfs/brec.c:159
->>>>   hfs_cat_create+0x41d/0xa50 fs/hfs/catalog.c:118
->>>>   hfs_mkdir+0x6c/0xe0 fs/hfs/dir.c:232
->>>>   vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
->>>>   do_mkdirat+0x264/0x3a0 fs/namei.c:4280
->>>>   __do_sys_mkdir fs/namei.c:4300 [inline]
->>>>   __se_sys_mkdir fs/namei.c:4298 [inline]
->>>>   __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
->>>>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->>>>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->>>>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>>> RIP: 0033:0x7fbdd6057a99
->>>>
->>>> Add a check for key length in hfs_bnode_read_key to prevent
->>>> out-of-bounds memory access. If the key length is invalid, the
->>>> key buffer is cleared, improving stability and reliability.
->>>>
->>>> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
->>>> Reported-by:syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com
->>>> Closes:https://syzkaller.appspot.com/bug?extid=5f3a973ed3dfb85a6683
->>>> Cc:stable@vger.kernel.org
->>>> Signed-off-by: Vasiliy Kovalev<kovalev@altlinux.org>
->>>> ---
->>>>   fs/hfs/bnode.c     | 6 ++++++
->>>>   fs/hfsplus/bnode.c | 6 ++++++
->>>>   2 files changed, 12 insertions(+)
->>>>
->>>> diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
->>>> index 6add6ebfef8967..cb823a8a6ba960 100644
->>>> --- a/fs/hfs/bnode.c
->>>> +++ b/fs/hfs/bnode.c
->>>> @@ -67,6 +67,12 @@ void hfs_bnode_read_key(struct hfs_bnode *node, void *key, int off)
->>>>   	else
->>>>   		key_len = tree->max_key_len + 1;
->>>>   
->>>> +	if (key_len > sizeof(hfs_btree_key) || key_len < 1) {
->>>> +		memset(key, 0, sizeof(hfs_btree_key));
->>>> +		pr_err("hfs: Invalid key length: %d\n", key_len);
->>>> +		return;
->>>> +	}
->>>> +
->>>>   	hfs_bnode_read(node, key, off, key_len);
->>>>   }
->> Simpler the better.
->>
->> Our fix was released back in February. (There are other issues in our attempt I
->> admit).
->>
->> https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/jammy/commit/?id=2e8d8dffa2e0b5291522548309ec70428be7cf5a
->>
->> If someone can pick this submission, I will be happy to replace our version.
-> any specific reason why you didn't submit this upstream?  Or did that
-> happen and it somehow not get picked up?
+> > so as long as the user is unable to change the origin integrity should
+> > be guaranteed.  IOW, what we need is just to always check origin on
+> > metacopy regardless of the index option.
+> >
+> > But I'm not even sure this is used at all, since the verity code was
+> > added for the composefs use case, which does not use this path AFAICS.
+> > Alex, can you clarify?
 >
-> And why assign a CVE for an issue that is in the mainline kernel, last I
-> checked, Canonical was NOT allowed to do that.
->
-> Please work to revoke that CVE and ask for one properly.
->
-> thanks,
->
-> greg k-h
->
+> I am not sure how composefs lowerdata layer is being deployed,
+> but but I am pretty sure that the composefs erofs layers are
+> designed to be migratable to any fs where the lowerdata repo
+> exists, so I think hard coding the lowerdata inode is undesired.
+
+Yeah, I understand the basic composefs architecture, and storing the
+digest in the metadata inode makes perfect sense.
+
+What I'm not sure is what is being used outside of that.
+
+Anyway, I don't see any issue with the current architecture, just
+trying to understand what this is useful for and possible
+simplifications based on that.
+
+For example the copy-up code is apparently unused, and could be
+removed.  OTOH it could be useful for the idmapping case from
+Guiseppe.
+
+Thanks,
+Miklos
+
+Thanks,
+Miklos
 
