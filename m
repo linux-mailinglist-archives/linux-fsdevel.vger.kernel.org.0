@@ -1,193 +1,237 @@
-Return-Path: <linux-fsdevel+bounces-45179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 044EEA74102
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 23:41:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97DEDA74179
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 00:19:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 576DC3AF556
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 22:41:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61478189CCB8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 23:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CE11D7E4F;
-	Thu, 27 Mar 2025 22:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E57F1E832B;
+	Thu, 27 Mar 2025 23:19:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FqM5wGCR";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Vd3BMtPD";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FqM5wGCR";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Vd3BMtPD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L4jZbGME"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA4015442A
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Mar 2025 22:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1611C4A0A;
+	Thu, 27 Mar 2025 23:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743115277; cv=none; b=k1p3sbQq8X0uzsFcJ8z8K+Wnaii30XeCA4m9OTAWd3+H/ivF5XZUGjn+3fk3iZX3HznUDP8eMZ2d4SMt6zHSVOBgtIgfM7PpfRy6s5b3gmLLs03CICTPBYX3QgFiI1FzYsg8jN04dDljT1w/aEUkBLCEWR5UYt6ltYq68eFhtyM=
+	t=1743117571; cv=none; b=GC/O2ul5W8vUbRYsWpmZSl6n/yy+CBaWJvE+z27iWtcS4k7MbmPaVwShW10S2gM5SGVfrCiwNTHIYuTmjstUnzsBMw2Am8Xcpmy++s1JxmGbPOJ8H6BYVrY0cI2qdZE/TXHWRjpyuxUMqrS1wxLM9dI/QJO6QNN6g6VcoMfFd+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743115277; c=relaxed/simple;
-	bh=5vF2VEIll+nbmunkeAIzR57XTr7d4+B0Ywub9B08pQU=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=gF55V+b04r2u6EfW1jzQ65Hv2l44QOvRRVR3BotfhqRfS1OP9q9stYvIQgtqTRuWOJ6p+ft7Xd9jx9QwXye/Bj3X4M/Du+CKNgz4aq6xBlhq+2xWEuAxAyil7D4OTbYrdBM/XyJGH9nKZfZMZpwsDBuh7xnqrP/YJdNV63w6HiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FqM5wGCR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Vd3BMtPD; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FqM5wGCR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Vd3BMtPD; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 845D2211AB;
-	Thu, 27 Mar 2025 22:41:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743115272; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kyyBv0MDhyXCRlumN9tNdad83XBQwuSIRjL+sSn/aIc=;
-	b=FqM5wGCRqaheNu7ExCv9gpKqVt4eOOhPxlmk6LjiSG9fnCC75B+KhNKEHyW8QVs+S95ucZ
-	xCir34D689r9c6qu6Of2BdGQGrFwARnWDV5ayROgY5HJCaIUH4PehjyXDdWiYdyw4msqp1
-	CibKHEC42AsOfFQdET4KpieFXq8DJ+g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743115272;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kyyBv0MDhyXCRlumN9tNdad83XBQwuSIRjL+sSn/aIc=;
-	b=Vd3BMtPDplJY/AzWUC1ZJ7Rgm2Imm0hMX0rsUwZY1X//xMeDCJiiS63R+9zDcJ0FYKayMT
-	kiowBrYfWagH7uCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=FqM5wGCR;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Vd3BMtPD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743115272; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kyyBv0MDhyXCRlumN9tNdad83XBQwuSIRjL+sSn/aIc=;
-	b=FqM5wGCRqaheNu7ExCv9gpKqVt4eOOhPxlmk6LjiSG9fnCC75B+KhNKEHyW8QVs+S95ucZ
-	xCir34D689r9c6qu6Of2BdGQGrFwARnWDV5ayROgY5HJCaIUH4PehjyXDdWiYdyw4msqp1
-	CibKHEC42AsOfFQdET4KpieFXq8DJ+g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743115272;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kyyBv0MDhyXCRlumN9tNdad83XBQwuSIRjL+sSn/aIc=;
-	b=Vd3BMtPDplJY/AzWUC1ZJ7Rgm2Imm0hMX0rsUwZY1X//xMeDCJiiS63R+9zDcJ0FYKayMT
-	kiowBrYfWagH7uCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0915E139D4;
-	Thu, 27 Mar 2025 22:41:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bN8SLAbU5WcZbQAAD6G6ig
-	(envelope-from <neilb@suse.de>); Thu, 27 Mar 2025 22:41:10 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1743117571; c=relaxed/simple;
+	bh=JtHkof5Kn1s3OvzmD5FvCZbT7RpY4G+M3J77IZkSWJk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R0Hn85tbHVWx44h39JO4IOj17/jQbq5yo6LyhAscny6uIeTJ3dkXt3eIxrC7LqYfgXPldPHr5mSgQ13hw5tCucZ06b2Z6CptW0aaACflCjKATnU7mDjqY5+hNo4ItrZ680apEurB5Pl1BhuvDb2I6COiCBhwJ/UzOr0E9Ur+8XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L4jZbGME; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e609cff9927so1178997276.3;
+        Thu, 27 Mar 2025 16:19:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743117569; x=1743722369; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aMnF9vs8JB47IN/cDkEjD5+fBKENuY4T9JJxCznicyY=;
+        b=L4jZbGMEITOymm16C+Z8c1uNRKNeJFqiRRwk2cP8sFnoz09h7D33CWSjEygrF+9z0h
+         2ZYQHBv9YV0H1OeP2VIRfKNHNEJul3559tEPDLPHjB/vZPXFP49MnxknicjxASYyD6Nn
+         gPedzanZsU94PQPswpdoqOLfqzAPY+E1d3MgJ7C94z6Of1ICGesAtE2XTuRaPTVlojwb
+         8HVjRRlazMeKjBUa35GeWKpEEh3qh7b+Y/Uw5P8MFzjoEoIkOoRGrJtcArDFytx4fA2W
+         ut85vjLZx/ldyz1HAM8Hxi6wtfoZm/n1Sx4jNniojDwoDaR8bhepar9nYKKtTNh/LpdF
+         tPDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743117569; x=1743722369;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aMnF9vs8JB47IN/cDkEjD5+fBKENuY4T9JJxCznicyY=;
+        b=Tp0HkPERJ5uja6T2v+E/D2MssFHWZKCdagEEiZ2sgoRb5URpK1LcvGc7KHn3e9rFd1
+         kceTWQ9X6nT7058se/48lPWPcY2/ekSJY+4XeHDTwPh0TJz6wFUqnPTZgBCMqknW4MK/
+         HSqAUBhFrDVxsfAJKZl1CjKaaV+j2zYqAX95XmPlLtiLJjIexanw188E2dpZWq83iAc7
+         zgCSP65qpcuy0J5eunmOFZinRWPTMSzPlxgoYk+X4ejvGE/g6WKaSHhIpdUhbfbulVMf
+         tgccdSEe1EjEF1JyLc3m/Q+dZwQq4BcLoAzcSpWlRWUKWdoyL/Nky6/+/FZEk68In4KW
+         M5eg==
+X-Forwarded-Encrypted: i=1; AJvYcCUARRvJlVHUNIo9s7dQkD+1TFXAe4hzqU2/dUzxTHkfCD/fFfyp1uTy+WIWqu2499f+SQkVXWDvwoz6XCdh@vger.kernel.org, AJvYcCUeG6lEP7ZKYX6Yu35DI6+F6vXOmt1rXLqKNxb3EG/9oMLjD9kwcf4fcTM0GyPWCP471jvn7915V5EMCcsr@vger.kernel.org, AJvYcCXHr9C+ojLuthl2PwXgKPVJhJQm9PkV1ZCmeD2QdlRA565J5NWJXdgGY99z7AuyEY9PVk9stNeH@vger.kernel.org, AJvYcCXONnPjrl48rLVMA70nZ6uvTRCqaZCl6Y3xWzgoN14jp+SyRhl7nQQ+UDJTzcYMuWBOWCl7FjfCJktY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1HNlmxPDF+btycOuTO57XhibkKnsxz02nPtHQdtMLD98POAzF
+	D/aETSzoZvs6+4izgRTkNZ9I6ZeY7Oy8UfYKEEsaD128uDWKl7lz3luRMfYEhZCP5KCsLWbNRqu
+	chq/KKG8fOTVibMQZXvIq6oo6QW4I8O3J
+X-Gm-Gg: ASbGncvk1JnzuOu8Jn40n2r0v/Ni7WErpuv4w4Qc+nGLnudf+NDsksSqWhc2ixD1n/M
+	TGpjkAh2qyxx77fz/GbaQx+PkcoZbxoY4ID17XaMDGSlXTVkIdxC7gMgVC1ncZoO9iLtHpW5yWL
+	tBwGDjrf2qOBoeMKwp/ix9Hc/zuzASUVhPlNvA/EMTz/wXxx1QKLH+Rx0=
+X-Google-Smtp-Source: AGHT+IFFzruC25MmRQ8O0m11e88aqMai4IgHeja7o6hpsDHutAEbLnqb6CJ+2QXVsTRPqdu8ITPVSGFdMHLnDsZUS7Q=
+X-Received: by 2002:a05:6902:4a03:b0:e6b:769f:556b with SMTP id
+ 3f1490d57ef6-e6b769f5aa6mr107233276.35.1743117568538; Thu, 27 Mar 2025
+ 16:19:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Marc Dionne" <marc.dionne@auristor.com>
-Cc: linux-fsdevel@vger.kernel.org, "David Howells" <dhowells@redhat.com>,
- netfs@lists.linux.dev
-Subject:
- Re: [PATCH] cachefiles: Fix oops in vfs_mkdir from cachefiles_get_directory
-In-reply-to: <20250325125905.395372-1-marc.dionne@auristor.com>
-References: <20250325125905.395372-1-marc.dionne@auristor.com>
-Date: Fri, 28 Mar 2025 09:41:03 +1100
-Message-id: <174311526371.9342.7621229997134615298@noble.neil.brown.name>
-X-Rspamd-Queue-Id: 845D2211AB
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+References: <20250326154349.272647840@linuxfoundation.org> <CA+G9fYsRQub2qq0ePDs6aBAc+0qHRGwH_WPsTfhcwkviD1eH1w@mail.gmail.com>
+ <CACzhbgQ=TU-C=MvU=fNRwZuFKBRgnrXzQZw15HVci_vT5w8O7Q@mail.gmail.com>
+In-Reply-To: <CACzhbgQ=TU-C=MvU=fNRwZuFKBRgnrXzQZw15HVci_vT5w8O7Q@mail.gmail.com>
+From: Leah Rumancik <leah.rumancik@gmail.com>
+Date: Thu, 27 Mar 2025 16:19:16 -0700
+X-Gm-Features: AQ5f1Jp8lXbaNFjXv08hBRv1tfhk1348_npPOImkZqUQgUwZQdNGnYymj_B4y2o
+Message-ID: <CACzhbgTQCuig6eqOJFshthQfT5-7cVkemY9VtO_vu4d+aTcU=Q@mail.gmail.com>
+Subject: Re: [PATCH 6.1 000/197] 6.1.132-rc2 review
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, 
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, 
+	shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, 
+	pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, 
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Dave Chinner <dchinner@redhat.com>, Christoph Hellwig <hch@lst.de>, 
+	Anders Roxell <anders.roxell@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 25 Mar 2025, Marc Dionne wrote:
-> Commit c54b386969a5 ("VFS: Change vfs_mkdir() to return the dentry.")
-> changed cachefiles_get_directory, replacing "subdir" with a ERR_PTR
-> from the result of cachefiles_inject_write_error, which is either 0
-> or some error code.  This causes an oops when the resulting pointer
-> is passed to vfs_mkdir.
-
-Thanks for fixing that - now that I look at my code again it is
-obviously wrong :-(
-
-Reviewed-by: NeilBrown <neilb@sue.de>
-
-Thanks,
-NeilBrown
+sent to stable:
+https://lore.kernel.org/stable/20250327215925.3423507-1-leah.rumancik@gmail=
+.com/
 
 
->=20
-> Use a similar pattern to what is used earlier in the function; replace
-> subdir with either the return value from vfs_mkdir, or the ERR_PTR
-> of the cachefiles_inject_write_error() return value, but only if it
-> is non zero.
->=20
-> Fixes: c54b386969a5 ("VFS: Change vfs_mkdir() to return the dentry.")
-> cc: netfs@lists.linux.dev
-> Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
-> ---
->  fs/cachefiles/namei.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->=20
-> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-> index 83a60126de0f..14d0cc894000 100644
-> --- a/fs/cachefiles/namei.c
-> +++ b/fs/cachefiles/namei.c
-> @@ -128,10 +128,11 @@ struct dentry *cachefiles_get_directory(struct cachef=
-iles_cache *cache,
->  		ret =3D security_path_mkdir(&path, subdir, 0700);
->  		if (ret < 0)
->  			goto mkdir_error;
-> -		subdir =3D ERR_PTR(cachefiles_inject_write_error());
-> -		if (!IS_ERR(subdir))
-> +		ret =3D cachefiles_inject_write_error();
-> +		if (ret =3D=3D 0)
->  			subdir =3D vfs_mkdir(&nop_mnt_idmap, d_inode(dir), subdir, 0700);
-> -		ret =3D PTR_ERR(subdir);
-> +		else
-> +			subdir =3D ERR_PTR(ret);
->  		if (IS_ERR(subdir)) {
->  			trace_cachefiles_vfs_error(NULL, d_inode(dir), ret,
->  						   cachefiles_trace_mkdir_error);
-> --=20
-> 2.48.1
->=20
->=20
-
+On Thu, Mar 27, 2025 at 10:04=E2=80=AFAM Leah Rumancik <leah.rumancik@gmail=
+.com> wrote:
+>
+> This is fixed by
+>
+> https://lore.kernel.org/all/20250321010112.3386403-1-leah.rumancik@gmail.=
+com/T/
+>
+> but I'm waiting on an ACK. Let me do some nagging :)
+>
+> - leah
+>
+>
+>
+> On Thu, Mar 27, 2025 at 5:50=E2=80=AFAM Naresh Kamboju
+> <naresh.kamboju@linaro.org> wrote:
+> >
+> > On Wed, 26 Mar 2025 at 21:15, Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > This is the start of the stable review cycle for the 6.1.132 release.
+> > > There are 197 patches in this series, all will be posted as a respons=
+e
+> > > to this one.  If anyone has any issues with these being applied, plea=
+se
+> > > let me know.
+> > >
+> > > Responses should be made by Fri, 28 Mar 2025 15:43:27 +0000.
+> > > Anything received after that time might be too late.
+> > >
+> > > The whole patch series can be found in one patch at:
+> > >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/pa=
+tch-6.1.132-rc2.gz
+> > > or in the git tree and branch at:
+> > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-st=
+able-rc.git linux-6.1.y
+> > > and the diffstat can be found below.
+> > >
+> > > thanks,
+> > >
+> > > greg k-h
+> >
+> > Regressions on arm, arm64, mips, powerpc builds failed with gcc-13 and
+> > clang the stable-rc 6.1.132-rc1 and 6.1.132-rc2.
+> >
+> > First seen on the 6.1.132-rc1
+> >  Good: v6.1.131
+> >  Bad: Linux 6.1.132-rc1 and Linux 6.1.132-rc2
+> >
+> > * arm, build
+> >   - clang-20-davinci_all_defconfig
+> >   - clang-nightly-davinci_all_defconfig
+> >   - gcc-13-davinci_all_defconfig
+> >   - gcc-8-davinci_all_defconfig
+> >
+> > * arm64, build
+> >   - gcc-12-lkftconfig-graviton4
+> >   - gcc-12-lkftconfig-graviton4-kselftest-frag
+> >   - gcc-12-lkftconfig-graviton4-no-kselftest-frag
+> >
+> > * mips, build
+> >   - gcc-12-malta_defconfig
+> >   - gcc-8-malta_defconfig
+> >
+> > * powerpc, build
+> >   - clang-20-defconfig
+> >   - clang-20-ppc64e_defconfig
+> >   - clang-nightly-defconfig
+> >   - clang-nightly-ppc64e_defconfig
+> >   - gcc-13-defconfig
+> >   - gcc-13-ppc64e_defconfig
+> >   - gcc-13-ppc6xx_defconfig
+> >   - gcc-8-defconfig
+> >   - gcc-8-ppc64e_defconfig
+> >   - gcc-8-ppc6xx_defconfig
+> >
+> > Regression Analysis:
+> >  - New regression? yes
+> >  - Reproducibility? Yes
+> >
+> > Build regression: arm arm64 mips powerpc xfs_alloc.c 'mp' undeclared
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> >
+> > ## Build log
+> > fs/xfs/libxfs/xfs_alloc.c: In function '__xfs_free_extent_later':
+> > fs/xfs/libxfs/xfs_alloc.c:2551:51: error: 'mp' undeclared (first use
+> > in this function); did you mean 'tp'?
+> >  2551 |         if (XFS_IS_CORRUPT(mp, !xfs_verify_fsbext(mp, bno, len)=
+))
+> >       |                                                   ^~
+> >
+> >
+> > ## Source
+> > * Kernel version: 6.1.132-rc2
+> > * Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linu=
+x-stable-rc.git
+> > * Git sha: f5ad54ef021f6fb63ac97b3dec5efa9cc1a2eb51
+> > * Git describe: v6.1.131-198-gf5ad54ef021f
+> > * Project details:
+> > https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6=
+.1.131-198-gf5ad54ef021f/
+> >
+> > ## Build
+> > * Build log: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6=
+.1.y/build/v6.1.131-198-gf5ad54ef021f/testrun/27785617/suite/build/test/gcc=
+-12-lkftconfig-graviton4-kselftest-frag/log
+> > * Build history:
+> > https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6=
+.1.131-198-gf5ad54ef021f/testrun/27785617/suite/build/test/gcc-12-lkftconfi=
+g-graviton4-kselftest-frag/history/
+> > * Build details:
+> > https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6=
+.1.131-198-gf5ad54ef021f/testrun/27785617/suite/build/test/gcc-12-lkftconfi=
+g-graviton4-kselftest-frag/
+> > * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2u=
+rSwNctsyhQzf1j7dvt6nHemP5/
+> > * Kernel config:
+> > https://storage.tuxsuite.com/public/linaro/lkft/builds/2urSwNctsyhQzf1j=
+7dvt6nHemP5/config
+> >
+> > ## Steps to reproduce
+> >  - tuxmake --runtime podman --target-arch arm64 --toolchain gcc-12 \
+> >     --kconfig https://storage.tuxsuite.com/public/linaro/lkft/builds/2u=
+rSwNctsyhQzf1j7dvt6nHemP5/config
+> > debugkernel dtbs dtbs-legacy headers kernel kselftest modules
+> >  - tuxmake --runtime podman --target-arch arm --toolchain clang-20
+> > --kconfig davinci_all_defconfig LLVM=3D1 LLVM_IAS=3D1
+> >
+> >
+> > --
+> > Linaro LKFT
+> > https://lkft.linaro.org
 
