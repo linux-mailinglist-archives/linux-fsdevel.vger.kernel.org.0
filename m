@@ -1,225 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-45152-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45153-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F0FCA737AC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 18:05:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 725C1A73A39
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 18:14:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B73EA17654B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 17:05:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 576583AF437
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 17:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206771AD3E0;
-	Thu, 27 Mar 2025 17:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E974B1AF0D6;
+	Thu, 27 Mar 2025 17:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YxiKJVCT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QCbVyf/M"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E212A1DFF8;
-	Thu, 27 Mar 2025 17:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0CE1A8F71;
+	Thu, 27 Mar 2025 17:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743095106; cv=none; b=l14jVdW0OxdiQlSBDEXwkhY28lRAUC2UI1J+zgxYnfFJgrh33EuFjMiFXsWf4BS7agw87w3y87UJsOiPzomuHkwXEG9pomutTcyBTi8+0ZJT5RcimINOi7xe+ZaUir36J6J2GSN8nZl7/fCo87HYxJyi0pNMYbQEGEIGYnSBGuI=
+	t=1743095653; cv=none; b=RggmqXJAqv3TuIuXr+UQI1S8Dl0g0E39UQjcJlje6CcFtHfOOmBJ9eCtR0SARXRYD50VPTJFFYo76dG5bBTQKuaUW7mSuRBzH9PTEYNaMfZUaKevMamWFaXR8dttA3JeIgA2w6RKqrlV38idr47/XePfj070vqZV/EqWZtzHdoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743095106; c=relaxed/simple;
-	bh=UCukrpff5csPN5PME//Bu0ltX0l7g8zKWFio8g/DdbY=;
+	s=arc-20240116; t=1743095653; c=relaxed/simple;
+	bh=rQMinX0XNjR7/a5iErmX7qGW1+nEYEwP5Qn/aB+I7EA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LTX9/1VfD6phQoHhQx+yM4No9svbpYq3iZDKD26BHRSTZrSRU3dhB44ldAQNGyyGD9rTsEtyDlNaWeEA41JVFPjfV4TK4TJ7YEMjFo7t3050LULM+IFi7gznJ6dPgwiyfk9R81Znk1sqMAjlTYZfGFpafXLrNGIIxXKvDz0k3PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YxiKJVCT; arc=none smtp.client-ip=209.85.219.182
+	 To:Cc:Content-Type; b=RLM/kI82x2pNtcBjTv6Q/BRDgIlfEvKG3+jGrusAgAE0uyNqihBedrbXBBkaN79CnmmZliOIsx8gsEVh6puEkCfEFu0FY0O9LQ/9/R2xPsITz8EJ8RZ+jHCY9zKQUEeY4NgKyQlvqjCz6CgmV3dt+khTuYj87ZACyyBZjoxtrJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QCbVyf/M; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e3c8ae3a3b2so1068808276.0;
-        Thu, 27 Mar 2025 10:05:04 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5eb92df4fcbso2205804a12.0;
+        Thu, 27 Mar 2025 10:14:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743095104; x=1743699904; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1743095648; x=1743700448; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gIMP4nmwgubN4Pys5aTU2WlwnqqvwCpJ2MLL4ep//RA=;
-        b=YxiKJVCTbmMWGGZuNMlQEqbWHb9FNVxRXKeFy5ubU7oTK9uJwrlPNj9NSmmF+kO3VZ
-         JK7JCFKiZ9+zIWTi3FfHGwzKSd2Mw++laRUzHd1tlI6hSEYncn7/q3U0cyyAYaqAY9lm
-         UlIug5GZgAD9CILLlqNk4L73TYPTlYUGWghAw5wRR0UcPBj0oz4EGUyphdlaMUP4MxKc
-         OvAXUn/v5zKMl2DwTWFvBdqDXJEH+v/p0po0fTGfCI+5DLOYfm3oFiPGn60qjVjXl7qd
-         muBGXzQLhVMN8Zu29rWTtwqOOKz3PD2W/3GSuGbcWP91x2xDMxIhM2L2AoYYrFK8LtNq
-         L2lg==
+        bh=0lysXTHavxcrjFY0zeQndTG+44zUJzwOCDCJjIjy0GQ=;
+        b=QCbVyf/MslSsl6aEI5IjYMS+A6QuxsrOcRSho/KlCaS0Tnn1bqUmRfNp6VwkbyU928
+         jbzYqDuECDQj5wmd/q3NZNgk4pphYLWTaX7DeEEZhuijt7Bsw444STOXqVTo90OAlNBo
+         LaiFK+SPj3IeKulUeAsIvCjU2iMq68Ox5lWlBp7re6qtiRGaaIl20HhVJCHXVig0ll6z
+         VJUsRbXBhdyygiWf9vI2vxF4alwtKYFy69XZFJi7TlM3TFwlAnc74bnqHrRMs3rNmoLr
+         jep8dHaDBxrTNnUaPE0Fny1qYWoHqyGkVOwgmZbD9WRmfoIlU2Sd4ih6OCcoURI8XEqN
+         wkQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743095104; x=1743699904;
+        d=1e100.net; s=20230601; t=1743095648; x=1743700448;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gIMP4nmwgubN4Pys5aTU2WlwnqqvwCpJ2MLL4ep//RA=;
-        b=MtUirJQH/p2iGyVu9F0RM44rnAepzX8pQYXdfsoNAev2N+ibizOiuYmItHN1jB7DT9
-         /9iUxj2mXzBSLA2lwfek/mHNBHt9OoIcPWG9DOZzVPgLydyDEJ1wMIHbda4FhyK+p1qA
-         xllOuXr+HawBBAIxMg8XHxoleizo1wqJ9At63rmYzV4F/SKuz9FzMD/8jANK9d/2X0xo
-         fqwfth5lWPDBBOkFTrkpMpq9iCUI1stc6DzUVwRLJ+1PFOhLL0ayvznNikh/Rpz6eyPT
-         8Rz8EJ6YM/ZndeYMmv2xQCy0Hb6eC48Sy+h01gZlCgAxUcRviXX3DREC/qZcyrBXbZxr
-         d4Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCVGm8hDhbAt84eVVTi/gyU62fpLti0BlTYd2oFmvkZywUbm6KfJKRKBZ5AHzgWm5jO/asLhg5yGAnSY@vger.kernel.org, AJvYcCW+4QbNGNwXTL0GbOBJyYxHUiGv+eDGnrCQ3WDf2p/nvTEfVn/lOl+c8OvXSBlW8/5UwXc0yaOb@vger.kernel.org, AJvYcCWR5GA3ICUYUDVJ90RjwCTuMQY+QBoi8fWn0MPiGi421ZiHkO7JU4Rv6C3oPwC3wshuQGj1UnT0uPxaZmfd@vger.kernel.org, AJvYcCXZ0+NG9s5cK5kp7d/U6VhAWJGEIZosW0QlRVwpf2zfY8vPFfv/XD+SH0/KjpwHv1Ic1Jye22LzWBm6m6xs@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFjIwoYcvzK5dvIpcOa/ra2//VbPW/nNVLsQz1CeXL2LLodhuH
-	6ojqECDKJ4BIX2r8E4oOAaJwmgYZuBl0vZ46d87TZYwoWR23rHTibBM8wwt+tZBN0stF4ZoLX3c
-	wF4TOQpNYIQWMTmvWXUAwZV5/Or4=
-X-Gm-Gg: ASbGncvIEukiOXZXhF/tUnv01k/iqM17MzL6Op4rnrqx4vaeejgUYg/HhvuU4/IdW+f
-	5kAGbPYIbueV+gPOFIk3Yzua/zZgXhKneZk5g/n0+uN6GE24+V3wF+7NqyzKE+qwKAQxyQK/TZU
-	x+H5N/cp9xxmBri/HomCmkqBXvGRXuqIvteUScz4p11i4Yo0eXaF3PAMI=
-X-Google-Smtp-Source: AGHT+IE0V4W9RPbFnppqS3nJN9J9jxtEhxV4mELuux5c5aERSjVw4aOfjObJ5DON3dZ9u7fr2lGONyc2RPHgBUOPdqI=
-X-Received: by 2002:a05:6902:478b:b0:e58:aa00:ffd5 with SMTP id
- 3f1490d57ef6-e69435eb3d5mr5861203276.4.1743095103548; Thu, 27 Mar 2025
- 10:05:03 -0700 (PDT)
+        bh=0lysXTHavxcrjFY0zeQndTG+44zUJzwOCDCJjIjy0GQ=;
+        b=L8Emb1NhMq8OE3IuUZRKM1jQ5OII3XZ/buqOYGkGDhlM98n7Ma7vY2T6Fl1xDbSogt
+         PRVbvGWKQardgv9EirmIhlglTBvwY07ULrft6QxE4bTLOXZBAPixfhxKWmimuxSgFzb7
+         9QkWn5GKOT5cD5vRUW+0tH1LZqi5z3rHzcIIesWWqMMQLFIdIclA2WcASHJkV+1iOxXP
+         /DNbfxvQeV2xrnOe6+nu3IDPvd8Gian6BbVYmVsjvzn8WMsgPP73uowd6ZZgl5juIKae
+         frkVL4je1Mx6IVuv6lk33VJERHxf1CgeeB5LVyFqShqQ72r4L+2UP05Fv86tc56JsJM2
+         euDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtw9kd/bhIFpdZ4Undpw/hr6Q154GrqRURjjf7aIfmI3X4vSqw/I8YomGOVX9FJfCezPHCsp+biedqWC4F@vger.kernel.org, AJvYcCWlODFjsBN1bgQ/nkn50869LAlKDI2WjG+7YWwpB937kNiIFRxAmE6Kyq3Z4Yn76MdxAvwrvqHdygfCPz8/FQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2I2seQOenUjtgTpppyiH4XgAs1kWslN2wFbq5XZq0x6hkSiiC
+	+GnBTRbVw2mV8uJ9P6clshyXMsxtZcCjwx+XT7zG5ZxGNwgkQENPqaZ5ID493SsvJmTHDG1MvLL
+	SV7Bg+/kQJwdo00ym0qOldj278S4=
+X-Gm-Gg: ASbGnctH/eZydt8ZvE2n0iibPJ8QaaugSVMpjkA6i9sWmYxJ8s2rnhVkl+AZLe6Vn+O
+	iBTyrZYHO9d7fdjSVHRhz12XwzuWePjq9Js5eUCs4KFWSB8sOfYvJVV3V5BcjCwFBZuCwb0AsZV
+	vH+wLCihANDoousZ4enfL5KOHlhA==
+X-Google-Smtp-Source: AGHT+IHbpru8Tj0zrG0oJ2U5WZgDrB2Aj4vF55eI7meboejILkjuZ4uyLjjgCvPjFyzdxNggRnGNtwZ55PxxXigo9BM=
+X-Received: by 2002:a17:907:9729:b0:ac3:b3a3:f19d with SMTP id
+ a640c23a62f3a-ac6fb0ff0a1mr462776566b.43.1743095647616; Thu, 27 Mar 2025
+ 10:14:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250326154349.272647840@linuxfoundation.org> <CA+G9fYsRQub2qq0ePDs6aBAc+0qHRGwH_WPsTfhcwkviD1eH1w@mail.gmail.com>
-In-Reply-To: <CA+G9fYsRQub2qq0ePDs6aBAc+0qHRGwH_WPsTfhcwkviD1eH1w@mail.gmail.com>
-From: Leah Rumancik <leah.rumancik@gmail.com>
-Date: Thu, 27 Mar 2025 10:04:52 -0700
-X-Gm-Features: AQ5f1JoUWc8i3RgAxN3mjRbk-tD1j9a8iUSQkbDB7BjyLErxq3tg2jL0zFBfxIE
-Message-ID: <CACzhbgQ=TU-C=MvU=fNRwZuFKBRgnrXzQZw15HVci_vT5w8O7Q@mail.gmail.com>
-Subject: Re: [PATCH 6.1 000/197] 6.1.132-rc2 review
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, 
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, 
-	shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, 
-	pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, 
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Dave Chinner <dchinner@redhat.com>, Christoph Hellwig <hch@lst.de>, 
-	Anders Roxell <anders.roxell@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>
+References: <20250210194512.417339-1-mszeredi@redhat.com> <20250210194512.417339-3-mszeredi@redhat.com>
+ <CAOQ4uxiqis6kawuv4pa6jxHYgpQPc18izFP8e0TORfA_mVu_-w@mail.gmail.com>
+ <CAJfpegt=PWs8ZDF11p3nOCWHbWescE5nwVtUt82f=B6B+S0Miw@mail.gmail.com>
+ <CAOQ4uxiQQV_O1MJgTksKycBjJ6Bneqc=CQbUoghvXc=8KEEsMg@mail.gmail.com>
+ <CAJfpegsuN+C4YiA9PAuY3+-BJ959aSAaXTYBwKNCjEnhXVw0pg@mail.gmail.com>
+ <CAOQ4uxjkBQP=x6+2YPYw4pCfaNy0=x48McLCMPJdEJYEb85f-A@mail.gmail.com>
+ <CAJfpegvUdaCeBcPPc_Qe6vK4ELz7NXWCxuDcVHLpbzZJazXsqA@mail.gmail.com>
+ <87a5ahdjrd.fsf@redhat.com> <CAJfpeguv2+bRiatynX2wzJTjWpUYY5AS897-Tc4EBZZXq976qQ@mail.gmail.com>
+ <875xl4etgk.fsf@redhat.com> <CAJfpeguhVYAp5aKeKDXDwip-Z0hc=3W4t=TMLr+-cbEUODf2vA@mail.gmail.com>
+ <CAOQ4uxgenjB-TQ4rT9JH3wk+q6Qb8b4TgoPxA0P3G8R-gVm+WA@mail.gmail.com> <CAJfpegu6mJ2NZr2rkCVexrayUt=wwNSyYv5AE694D04EH2vx2w@mail.gmail.com>
+In-Reply-To: <CAJfpegu6mJ2NZr2rkCVexrayUt=wwNSyYv5AE694D04EH2vx2w@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 27 Mar 2025 18:13:56 +0100
+X-Gm-Features: AQ5f1Jqjxtaof17FlUIXZAKebrFWQrvGLIKi3qHR7MVEsEgv33GU_zWnOTnFn3c
+Message-ID: <CAOQ4uxjad0hm10F1hMFX8uqZr+kJT-GibFNe9hAv_v971sb97A@mail.gmail.com>
+Subject: Re: [PATCH 3/5] ovl: make redirect/metacopy rejection consistent
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Giuseppe Scrivano <gscrivan@redhat.com>, Miklos Szeredi <mszeredi@redhat.com>, 
+	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Larsson <alexl@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-This is fixed by
-
-https://lore.kernel.org/all/20250321010112.3386403-1-leah.rumancik@gmail.co=
-m/T/
-
-but I'm waiting on an ACK. Let me do some nagging :)
-
-- leah
-
-
-
-On Thu, Mar 27, 2025 at 5:50=E2=80=AFAM Naresh Kamboju
-<naresh.kamboju@linaro.org> wrote:
+On Thu, Mar 27, 2025 at 4:28=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
 >
-> On Wed, 26 Mar 2025 at 21:15, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
+> On Tue, 25 Mar 2025 at 13:16, Amir Goldstein <amir73il@gmail.com> wrote:
 > >
-> > This is the start of the stable review cycle for the 6.1.132 release.
-> > There are 197 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
+> > On Thu, Feb 20, 2025 at 12:48=E2=80=AFPM Miklos Szeredi <miklos@szeredi=
+.hu> wrote:
+> > >
+> > > On Thu, 20 Feb 2025 at 12:39, Giuseppe Scrivano <gscrivan@redhat.com>=
+ wrote:
+> > > >
+> > > > Miklos Szeredi <miklos@szeredi.hu> writes:
+> > > >
+> > > > > On Thu, 20 Feb 2025 at 10:54, Giuseppe Scrivano <gscrivan@redhat.=
+com> wrote:
+> > > > >>
+> > > > >> Miklos Szeredi <miklos@szeredi.hu> writes:
+> > > > >>
+> > > > >> > On Tue, 11 Feb 2025 at 16:52, Amir Goldstein <amir73il@gmail.c=
+om> wrote:
+> > > > >
+> > > > >> >> The short version - for lazy data lookup we store the lowerda=
+ta
+> > > > >> >> redirect absolute path in the ovl entry stack, but we do not =
+store
+> > > > >> >> the verity digest, we just store OVL_HAS_DIGEST inode flag if=
+ there
+> > > > >> >> is a digest in metacopy xattr.
+> > > > >> >>
+> > > > >> >> If we store the digest from lookup time in ovl entry stack, y=
+our changes
+> > > > >> >> may be easier.
+> > > > >> >
+> > > > >> > Sorry, I can't wrap my head around this issue.  Cc-ing Giusepp=
+e.
+> > > > >
+> > > > > Giuseppe, can you describe what should happen when verity is enab=
+led
+> > > > > and a file on a composefs setup is copied up?
+> > > >
+> > > > we don't care much about this case since the composefs metadata is =
+in
+> > > > the EROFS file system.  Once copied up it is fine to discard this
+> > > > information.  Adding Alex to the discussion as he might have a diff=
+erent
+> > > > opinion/use case in mind.
+> > >
+> > > Okay.
+> > >
+> > > Amir, do I understand correctly that your worry is that after copy-up
+> > > verity digest is still being used?  If that's the case, we just need
+> > > to make sure that OVL_HAS_DIGEST is cleared on copy-up?
+> > >
+> > > Or am I still misunderstanding this completely?
 > >
-> > Responses should be made by Fri, 28 Mar 2025 15:43:27 +0000.
-> > Anything received after that time might be too late.
+> > Sorry, I have somehow missed this email.
 > >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patc=
-h-6.1.132-rc2.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git linux-6.1.y
-> > and the diffstat can be found below.
+> > TBH, I am not sure what is expected to happen in the use case in questi=
+on
+> > on copy up - that is if a full copy up on any metadata change is accept=
+able.
 > >
-> > thanks,
-> >
-> > greg k-h
+> > Technically, we could allow a metacopy upper as long as we take the md5=
+digest
+> > from the middle layer but that complicates things and I am not sure if =
+we need
+> > to care - can't wrap my head around this case either.
 >
-> Regressions on arm, arm64, mips, powerpc builds failed with gcc-13 and
-> clang the stable-rc 6.1.132-rc1 and 6.1.132-rc2.
+> I've been thinking.  If a lower file has verity enabled, and it is
+> meta-copied up on ovl with verity=3Don (or verity=3Drequire), then it wil=
+l
+> have the digest stored in the .overlay.metacopy xattr. What this
+> ensures is that the lower file cannot be swapped out without ovl
+> noticing.
+
+Do you mean the lowerdata file?
+
+> However the .overlay.origin xattr ensures the same thing,
+
+origin xattr only checks from upper to uppermost lower layer IIRC,
+do definitely not all the way to lowerdata inode.
+
+> so as long as the user is unable to change the origin integrity should
+> be guaranteed.  IOW, what we need is just to always check origin on
+> metacopy regardless of the index option.
 >
-> First seen on the 6.1.132-rc1
->  Good: v6.1.131
->  Bad: Linux 6.1.132-rc1 and Linux 6.1.132-rc2
->
-> * arm, build
->   - clang-20-davinci_all_defconfig
->   - clang-nightly-davinci_all_defconfig
->   - gcc-13-davinci_all_defconfig
->   - gcc-8-davinci_all_defconfig
->
-> * arm64, build
->   - gcc-12-lkftconfig-graviton4
->   - gcc-12-lkftconfig-graviton4-kselftest-frag
->   - gcc-12-lkftconfig-graviton4-no-kselftest-frag
->
-> * mips, build
->   - gcc-12-malta_defconfig
->   - gcc-8-malta_defconfig
->
-> * powerpc, build
->   - clang-20-defconfig
->   - clang-20-ppc64e_defconfig
->   - clang-nightly-defconfig
->   - clang-nightly-ppc64e_defconfig
->   - gcc-13-defconfig
->   - gcc-13-ppc64e_defconfig
->   - gcc-13-ppc6xx_defconfig
->   - gcc-8-defconfig
->   - gcc-8-ppc64e_defconfig
->   - gcc-8-ppc6xx_defconfig
->
-> Regression Analysis:
->  - New regression? yes
->  - Reproducibility? Yes
->
-> Build regression: arm arm64 mips powerpc xfs_alloc.c 'mp' undeclared
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->
-> ## Build log
-> fs/xfs/libxfs/xfs_alloc.c: In function '__xfs_free_extent_later':
-> fs/xfs/libxfs/xfs_alloc.c:2551:51: error: 'mp' undeclared (first use
-> in this function); did you mean 'tp'?
->  2551 |         if (XFS_IS_CORRUPT(mp, !xfs_verify_fsbext(mp, bno, len)))
->       |                                                   ^~
->
->
-> ## Source
-> * Kernel version: 6.1.132-rc2
-> * Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-=
-stable-rc.git
-> * Git sha: f5ad54ef021f6fb63ac97b3dec5efa9cc1a2eb51
-> * Git describe: v6.1.131-198-gf5ad54ef021f
-> * Project details:
-> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1=
-.131-198-gf5ad54ef021f/
->
-> ## Build
-> * Build log: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1=
-.y/build/v6.1.131-198-gf5ad54ef021f/testrun/27785617/suite/build/test/gcc-1=
-2-lkftconfig-graviton4-kselftest-frag/log
-> * Build history:
-> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1=
-.131-198-gf5ad54ef021f/testrun/27785617/suite/build/test/gcc-12-lkftconfig-=
-graviton4-kselftest-frag/history/
-> * Build details:
-> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1=
-.131-198-gf5ad54ef021f/testrun/27785617/suite/build/test/gcc-12-lkftconfig-=
-graviton4-kselftest-frag/
-> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2urS=
-wNctsyhQzf1j7dvt6nHemP5/
-> * Kernel config:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2urSwNctsyhQzf1j7d=
-vt6nHemP5/config
->
-> ## Steps to reproduce
->  - tuxmake --runtime podman --target-arch arm64 --toolchain gcc-12 \
->     --kconfig https://storage.tuxsuite.com/public/linaro/lkft/builds/2urS=
-wNctsyhQzf1j7dvt6nHemP5/config
-> debugkernel dtbs dtbs-legacy headers kernel kselftest modules
->  - tuxmake --runtime podman --target-arch arm --toolchain clang-20
-> --kconfig davinci_all_defconfig LLVM=3D1 LLVM_IAS=3D1
->
->
-> --
-> Linaro LKFT
-> https://lkft.linaro.org
+> But I'm not even sure this is used at all, since the verity code was
+> added for the composefs use case, which does not use this path AFAICS.
+> Alex, can you clarify?
+
+I am not sure how composefs lowerdata layer is being deployed,
+but but I am pretty sure that the composefs erofs layers are
+designed to be migratable to any fs where the lowerdata repo
+exists, so I think hard coding the lowerdata inode is undesired.
+But probably I did not understand what you meant?
+
+Thanks,
+Amir.
 
