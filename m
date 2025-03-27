@@ -1,79 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-45114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C16CAA7297F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 05:33:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E902A72A09
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 06:57:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AFEF3AC53D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 04:33:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F16281891377
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 05:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A441B040B;
-	Thu, 27 Mar 2025 04:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003081ACEB7;
+	Thu, 27 Mar 2025 05:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ttyoOeyf"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="W/pZmpbK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DC21AB6D8;
-	Thu, 27 Mar 2025 04:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FEA818027;
+	Thu, 27 Mar 2025 05:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743050009; cv=none; b=JAELObLW8WkRlLZfnAMpJwj+AxTx+3XMiXyutZbdQvckEBj1/qYcsGyDgqf0XogrKdIZAq3LdhpoaMMeb6hmbLF+GgtL2qJW1RYSenqTEIFU2U1razquystStf8vjTjZXWwCEZQHLX9xOHc0IjIkX9yKUOamX75DM3izI9xtB48=
+	t=1743055054; cv=none; b=fZnWKoFCLqEoa8SCwKOLzqMDDeqnptTIlCOzZ/+zW+oO1OhbWyz4IeVy7Ej93ld6BYtaS8jEvESA+1WkPXFeSw4OfJHxacNUXxIxDSfFIDdbU7zqrRGwJugLXMMyDK0CjW3Fu3+1fv3XmLv08N8fWkpPJ0kU94DtvSm045oAvOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743050009; c=relaxed/simple;
-	bh=mTTbUsjA5Kr2K19ofd4bp8BZn7iUKQscyqZDqtTyVIM=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=FkcQLJHKnS7oKq+VO9Q/HuA057/dVmTfSBDawkkjtMTm6CaJYkV+SRrtAzTks0AfSUQEoL4zxCof/FfK07B1kp+VyKMddAVCx17UN6Xxk+cJVdQL3ryKikseu4Ngx8leeneRYeXeKRvau3r0AdRAD3cw+d7uwYteC3uUyT7scAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ttyoOeyf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3CB6C4CEDD;
-	Thu, 27 Mar 2025 04:33:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743050009;
-	bh=mTTbUsjA5Kr2K19ofd4bp8BZn7iUKQscyqZDqtTyVIM=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=ttyoOeyfy7tHErBJrChX0EzW6Eb83b0/5/O1F0tH+XIrj6ZTaGhxzhRwj/+Ufd/uC
-	 0szTPH4j0vnHSJRCeyXC2DC4ROlsAFN0NH6eVh6iMhSc2WJSVCCl5nX8PvBO0IIjne
-	 lQzY+EiMCwDxegN9zJlw2pTsHzC9TjEqBb3x9wI1+wjYpFOyZWMEee76ioGKxNLtwQ
-	 DteVWb9m/QSMV+EVVVr/NmPSsyediCSOeZcpEBHV18IlS1dMIMbKhA1mE+fd9POrpF
-	 vrMcIjJreAyFqwTf5J5YmcYkmjL6QdL+/gI/acR+XSl994wC0ics5TULEWL4Q3dyOK
-	 1Ta9Zey7SvNag==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 719E9380AAFD;
-	Thu, 27 Mar 2025 04:34:06 +0000 (UTC)
-Subject: Re: [GIT PULL] sysctl changes for v6.15-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <mmb5fqe6a3a7bdoeyeccfn4wafhzgbpsnowjhhj6jtnbdwv24r@73wpky2szbg6>
-References: <mmb5fqe6a3a7bdoeyeccfn4wafhzgbpsnowjhhj6jtnbdwv24r@73wpky2szbg6>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <mmb5fqe6a3a7bdoeyeccfn4wafhzgbpsnowjhhj6jtnbdwv24r@73wpky2szbg6>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/ tags/sysctl-6.15-rc1
-X-PR-Tracked-Commit-Id: 29fa7d7934216e0a93102a930ef28e2a6ae852b1
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 592329e5e94e26080f4815c6cc6cd0f487a91064
-Message-Id: <174305004505.1573369.12369452172947990322.pr-tracker-bot@kernel.org>
-Date: Thu, 27 Mar 2025 04:34:05 +0000
-To: Joel Granados <joel.granados@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Anna Schumaker <anna.schumaker@oracle.com>, Bharadwaj Raju <bharadwaj.raju777@gmail.com>, Chandra Pratap <chandrapratap3519@gmail.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, Joel Granados <joel.granados@kernel.org>, Kaixiong Yu <yukaixiong@huawei.com>, Kalesh AP <kalesh-anakkur.purayil@broadcom.com>, Kees Cook <kees@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+	s=arc-20240116; t=1743055054; c=relaxed/simple;
+	bh=dfOJt4VZsxDjQHbdacmRXA60dH+jdi0InNRBXeq652k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cL033CZpumC0ykfgyXO90T7mlV4jhIFG0weAtFdyuu7barjVPd2IOn4ktaSE1Bfmp6pTYrEtRUOyixxQo6oolLL49Zs0kCmHybu83L+sEuZQF3uBz2nq0rLqilHILSwThocvR0oL1x608f6r6DxZbSvelyKRQFyNrawW93BJhww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=W/pZmpbK; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=asBGI
+	gUyw+T6cskUQZ6NxJZpB5WfhcDaPgKOiFRAeEE=; b=W/pZmpbKrq+mesyob0yVH
+	HOl4BbX+Y41XPNzxl65HfmYXMH+S7Mstssn0741O8vEap1+ITg8EpXtRim3KsMq9
+	2uiGeWTNWyVEfAlFQpSo3LdStaAKBF+U6PGKnwOklDrNixzRba94ASMfLR8FLThP
+	QYl3bAR6+ufMOqb9Yhfsos=
+Received: from chi-Redmi-Book.. (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wD34Z+16ORnmeqVCA--.5025S2;
+	Thu, 27 Mar 2025 13:57:10 +0800 (CST)
+From: Chi Zhiling <chizhiling@163.com>
+To: cem@kernel.org,
+	djwong@kernel.org,
+	brauner@kernel.org
+Cc: linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Chi Zhiling <chizhiling@kylinos.cn>
+Subject: [PATCH] iomap: Rename iomap_last_written_block to iomap_first_unchanged_block
+Date: Thu, 27 Mar 2025 13:57:06 +0800
+Message-ID: <20250327055706.3668207-1-chizhiling@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD34Z+16ORnmeqVCA--.5025S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7KF4fCFW5AF4UCFW3Aw1DKFg_yoW8WrW3pr
+	WkK3WrGF4kW348u3WkGFW7Zw1av3Wvkr4UArWrKr13Z345XF1Iqw1vkF1Yk3W7Wws2ya17
+	WrnFg3yUCw45urJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UWv35UUUUU=
+X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbBgAsdnWfk5UUKaQABsK
 
-The pull request you sent on Tue, 25 Mar 2025 18:21:36 +0100:
+From: Chi Zhiling <chizhiling@kylinos.cn>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/ tags/sysctl-6.15-rc1
+This renames iomap_last_written_block() to iomap_first_unchanged_block()
+to better reflect its actual behavior of finding the first unmodified
+block after partial writes, improving code readability.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/592329e5e94e26080f4815c6cc6cd0f487a91064
+Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
+---
+ fs/xfs/xfs_iomap.c    | 2 +-
+ include/linux/iomap.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Thank you!
-
+diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+index 5dd0922fe2d1..d4b0358015ab 100644
+--- a/fs/xfs/xfs_iomap.c
++++ b/fs/xfs/xfs_iomap.c
+@@ -1277,7 +1277,7 @@ xfs_buffered_write_iomap_end(
+ 		return 0;
+ 
+ 	/* Nothing to do if we've written the entire delalloc extent */
+-	start_byte = iomap_last_written_block(inode, offset, written);
++	start_byte = iomap_first_unchanged_block(inode, offset, written);
+ 	end_byte = round_up(offset + length, i_blocksize(inode));
+ 	if (start_byte >= end_byte)
+ 		return 0;
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 2de7a5e7d67d..88d0da23426c 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -308,7 +308,7 @@ static inline const struct iomap *iomap_iter_srcmap(const struct iomap_iter *i)
+  * If nothing was written, round @pos down to point at the first block in
+  * the range, else round up to include the partially written block.
+  */
+-static inline loff_t iomap_last_written_block(struct inode *inode, loff_t pos,
++static inline loff_t iomap_first_unchanged_block(struct inode *inode, loff_t pos,
+ 		ssize_t written)
+ {
+ 	if (unlikely(!written))
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.43.0
+
 
