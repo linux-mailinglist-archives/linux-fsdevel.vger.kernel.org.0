@@ -1,166 +1,207 @@
-Return-Path: <linux-fsdevel+bounces-45112-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2EBFA727DE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 01:49:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F153A72804
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 02:13:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4555A1736B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 00:49:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 134C01672F1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Mar 2025 01:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88025C133;
-	Thu, 27 Mar 2025 00:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="YzxnSyKm"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FB2482EF;
+	Thu, 27 Mar 2025 01:13:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB4A23CE
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Mar 2025 00:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278293A1DB
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Mar 2025 01:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743036564; cv=none; b=VJ1ZIzowwhhdJAkEFEpBN+pL/ppsWqb09yRF1OYU+ir5yyfrOdInIM2QcIA9dGilC38CSTGVX82S/F+Z/Yzkgb/vrAdalf47xdCMKLRqdP+jA24CS2oCccPXHxjHoTS+TkZ4gArPmxzNPfBcIWD/OSvfL1vJbxsNb44xcBx7/jQ=
+	t=1743038013; cv=none; b=HYz141fQaQjKW7HePDMuiMzPOfZevhZpoDI8hnHe7AiAOXtnEVq3+TQlElLrthT6salmPhUk9T2nCkUhwOckZhpjqqOMSQWs1zDm1iW90CmhR8dItDyk7FXMWFooJC8hSAnuTexj+wXX82F7UoanaVvMO71wY+LpuPZEitAkE/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743036564; c=relaxed/simple;
-	bh=vas3lG2zNno1SckSd4WbKbyu5O+A37fZcy1pbm9gH3I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=evo0u3rVEx5cWA/RpfTS/oVnbS0fD5yVDRBmRZoSKVMYJMIhwc/eZUEyJSFwxGPTkHQm9/fiYRCU7kqXhAGUB9A8wPf1DoSQayexASdmW2/UwTCv/l1grK7mR+DoyrhTAfg+ftrayfGtM0aqoqYQZpxC9A0DIv1btzo/0oUihe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=YzxnSyKm; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2260c91576aso7894165ad.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Mar 2025 17:49:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1743036562; x=1743641362; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=U3ibaiMuu+COMl2CleDE3M0U3/NtyoxWAeWllDuQocU=;
-        b=YzxnSyKmdSaV1poyNBEyI6UiHNoF7ftIb+lsNYesV3skiZ3zuhYmLnWlcrDmQSXNiJ
-         Nz5kxCHlJ+ptIm99W8NuZsyJRMvFa08mDNdtmxCfosrC12NW01t5QGyW5jUlBldkobrR
-         Pgcajrn+HP4G5P9pLrEFQKGaBzYxiqHwiuq7lshgjn3naALa6krCuwaIH9Kgx3WIUmGf
-         HbqULy03IuRQtg7t+ehBdOZ1+jeYeXTEXjw5Eh3XOcCq0ZPcs/HePUHqjRwe/utKY7nc
-         ltieODn9avUyZRgp3EYFxt/zN5t10cSom5Vf7Ch5FmhaJTdAkd8mhxcFhUJtKObf09eL
-         xAVw==
+	s=arc-20240116; t=1743038013; c=relaxed/simple;
+	bh=uchq4aTAQ0es6LBl6vgOqfs0ndqCV/gWUkrrpTsvtw8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nt/uXOQMSBiEqrrC2dgubRJ+syKJgvOWCV4Drxgw1PcJO0MNt26DxPXYtBeD8yPLocpSmQ/SwXiYEGSd1wJrJSul0SdM2eqPORyrAzm19N33Zh6R9mLJ5EyYNCiOlgIiS6JuFyhsOm3LzWXmy5phQA8wDLNEvyfwa5KmOwRxLUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d453d367a0so8052565ab.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Mar 2025 18:13:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743036562; x=1743641362;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U3ibaiMuu+COMl2CleDE3M0U3/NtyoxWAeWllDuQocU=;
-        b=B/9gL2na6K2M2yJoDp6IDKC3G6DgIX5+pzSuLQUGaRIHsquJ5LN9cLL5mFXqO9HzNT
-         kbzAecmcyHtPm10D1JzNZzpkfsCOm7jAV/rprxIf7x9JBAhOazBSu+Wt+eV3i5QoZiin
-         VvHxlUs8/GePpZHT0sfYkK4m8o3gOiWLPsjq8QGOg1RMyYjq1v/94ByDzs3wE4zXbYzT
-         NeqOJr8JU6GFqbLPcNDXrQmCK6pTTj/5jEigG7jVaDEIQHFkpEJMEUeD353KAm6GF+iF
-         th/3AgGOW/INNkN5nU281gIYqfLlC5QTnSIoBFI2cf3dyKq8BYKs4QsfBWK5oPvnw82H
-         56yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrUJRyVCCdDQuR/jSBfI9IzfLTwwITAH69AdWEvnt3VIrTLiUb2z9WY1xMTvNjKCZp0tZHVQte6mXjjqtI@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMu4L0H6gpR8NwawGsXcqBE1kq3PYRmb0qp36WBAyB7brFagvP
-	J8FTb1k+42HeoGmk7U8ECCW/hi6HfMzZWpZl3Dv603sB48xAxhaOBnAYQ0uNXLY=
-X-Gm-Gg: ASbGncu3MhtJBkfTB77nugfgX8WNP6IhjkgyHLtFzU8p7chNPFUSybg8GEuLELTRfZp
-	jL+KFWK7MNB5M8fwp47ivB9oUZ+aI5V+O8CkYEMM2K9yvfPSOMQqYcTDzBp9PJcy6437IkrGx1D
-	W8yLtm4HdZUEGi4WJi13t9nUYwfXx6n0BqYw/MZmKGPyZTY+JLAJ6+x92RgWQZjPGIrBD1/wR7Q
-	bEjViSmwXeaI40WsBHC99L6IkW8wWhdcA8R+Lzl1jtR479/pROxmmLlRNjqL98KFbXWBO/E3lA2
-	uFXC+PEU54EF7XYr15HgWpZMg1OU9tHMqMgZGDexr8k39u6t8u+qHWeypdeqvSOjFIcMyVSMlQ9
-	TzS+GIo4=
-X-Google-Smtp-Source: AGHT+IFnAErnvRw6w6zYA8RwNXoDN/pZhTmE2gfdgW366+JFnzo8IFmWZzTDFcSClOKbvjQXE59Ogg==
-X-Received: by 2002:a05:6a20:2d20:b0:1f0:e42e:fb1d with SMTP id adf61e73a8af0-1fea301bd45mr3128802637.36.1743036562470;
-        Wed, 26 Mar 2025 17:49:22 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-60-96.pa.nsw.optusnet.com.au. [49.181.60.96])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7390611c950sm13311890b3a.104.2025.03.26.17.49.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 17:49:21 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1txbQt-00000000kyo-0I5r;
-	Thu, 27 Mar 2025 11:49:19 +1100
-Date: Thu, 27 Mar 2025 11:49:19 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Petr Vorel <pvorel@suse.cz>
-Cc: Andrea Cervesato <andrea.cervesato@suse.de>, ltp@lists.linux.it,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Li Wang <liwang@redhat.com>, Cyril Hrubis <chrubis@suse.cz>
-Subject: Re: [LTP] [PATCH] ioctl_ficlone03: fix capabilities on immutable
- files
-Message-ID: <Z-Sgj_XOVar8myLw@dread.disaster.area>
-References: <20250326-fix_ioctl_ficlone03_32bit_bcachefs-v1-1-554a0315ebf5@suse.com>
- <20250326134749.GA45449@pevik>
+        d=1e100.net; s=20230601; t=1743038011; x=1743642811;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xCEF6T4SitcoskWj2IGtaL2AfQtoG0DKVyGCParkCeQ=;
+        b=LvFrIfWGddfFkftwVP2SIHx7OHxoUlILcsoyj7fSuNLZD+BtObh2H80DjdsC157ZBx
+         Rlzh356v6pPczEcutwfeDWQ/6XIhjvf2FkXM79FK6BVMEoXsWwMbOLt6TsN66iArSZYQ
+         Upo+pyPajpx2Ku5CwK/64CvysAsDNtAWLI/sDXiChQQyg6Qp1KShn+KUW46fOhgOp8EW
+         eylSMblSQqt1fxadgMlMDcFiwyXeC/5SCFI/bNxXKu/I94Zb00uBjWE+jskL+WVU6DvP
+         /WO5HTcfdvLinJusIXYAPBQNTqV2XhSyY+8aEVKxLlag/23u+jhxWWS9mvXzPFOaLenW
+         jzAw==
+X-Forwarded-Encrypted: i=1; AJvYcCX5CJHYmQp6nkkXvSf4A8FI0+F27P21dTUVmDdRWiRhi464wio8jHKhctBvI8jF+xBYvh6XVYBq6jjh//an@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6arjYGdQzfxseCLVsDNzQU7vmNFmnDJ299IC/mPh5kpjJuEXP
+	3S4/WICK4kPq+mNk6cjt/qHh30zCtwCofpCGwieMM9VcMMQ+/t3/C5wEcT+mR5koFvmSST+w0FL
+	1DEHAXiYDsZsnZkxUpIR9bF7BricFG6clDxwocZDZHyVA/Wj7Pibnnt8=
+X-Google-Smtp-Source: AGHT+IFgW3wwrE+l03drQt6xBrOXSi6sqX/MBVPWbUqeWMAsi4gFqZ7Uv/UnbAhUaOhvJ9NzVLx2xd6YQG2r/RGnk7WBO0GDEW75
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250326134749.GA45449@pevik>
+X-Received: by 2002:a05:6e02:188a:b0:3d4:712e:29eb with SMTP id
+ e9e14a558f8ab-3d5ccdc53c1mr21586655ab.5.1743038011130; Wed, 26 Mar 2025
+ 18:13:31 -0700 (PDT)
+Date: Wed, 26 Mar 2025 18:13:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67e4a63b.050a0220.2f068f.0017.GAE@google.com>
+Subject: [syzbot] [ocfs2?] BUG: Dentry still in use in unmount (3)
+From: syzbot <syzbot+e21102eb810a20a034bd@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, jlbec@evilplan.org, 
+	joseph.qi@linux.alibaba.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Mar 26, 2025 at 02:47:49PM +0100, Petr Vorel wrote:
-> Hi all,
-> 
-> [ Cc Kent and other filesystem folks to be sure we don't hide a bug ]
-> 
-> > From: Andrea Cervesato <andrea.cervesato@suse.com>
-> 
-> > Make sure that capabilities requirements are satisfied when accessing
-> > immutable files. On OpenSUSE Tumbleweed 32bit bcachefs fails with the
-> > following error due to missing capabilities:
-> 
-> > tst_test.c:1833: TINFO: === Testing on bcachefs ===
-> > ..
-> > ioctl_ficlone03.c:74: TBROK: ioctl .. failed: ENOTTY (25)
-> > ioctl_ficlone03.c:89: TWARN: ioctl ..  failed: ENOTTY (25)
-> > ioctl_ficlone03.c:91: TWARN: ioctl ..  failed: ENOTTY (25)
-> > ioctl_ficlone03.c:98: TWARN: close(-1) failed: EBADF (9)
+Hello,
 
-None of these are -EPERM, so how is a missing capability that
-results in -EPERM being returned cause -ENOTTY or -EBADF failures?
+syzbot found the following issue on:
 
-ohhhhh. ENOTTY is a result of a kernel side compat ioctl handling bug
-w/ bcachefs.
+HEAD commit:    a2392f333575 drm/panthor: Clean up FW version information ..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=1294443f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=12ccc0a681e19f95
+dashboard link: https://syzkaller.appspot.com/bug?extid=e21102eb810a20a034bd
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1695be98580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1694443f980000
 
-bcachefs doesn't implement ->fileattr_set().
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/aa9dc8dca3f7/disk-a2392f33.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/96ca6097aca7/vmlinux-a2392f33.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/78dee40677fb/Image-a2392f33.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/7db194d99ee0/mount_0.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=15ed73b0580000)
 
-sys_compat_ioctl() does:
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e21102eb810a20a034bd@syzkaller.appspotmail.com
 
-        case FS_IOC32_GETFLAGS:
-        case FS_IOC32_SETFLAGS:
-                cmd = (cmd == FS_IOC32_GETFLAGS) ?
-                        FS_IOC_GETFLAGS : FS_IOC_SETFLAGS;
+------------[ cut here ]------------
+BUG: Dentry 000000007215d8e2{i=42a2,n=file0}  still in use (1) [unmount of ocfs2 loop0]
+WARNING: CPU: 1 PID: 6436 at fs/dcache.c:1572 umount_check+0x164/0x1b8 fs/dcache.c:1564
+Modules linked in:
+CPU: 1 UID: 0 PID: 6436 Comm: syz-executor167 Not tainted 6.14.0-rc7-syzkaller-ga2392f333575 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : umount_check+0x164/0x1b8 fs/dcache.c:1564
+lr : umount_check+0x164/0x1b8 fs/dcache.c:1564
+sp : ffff80009cc17a70
+x29: ffff80009cc17a70 x28: 0000000000000000 x27: ffff0000daefd318
+x26: ffff0000cd89e2f0 x25: ffff80008feda750 x24: ffff0000c6860000
+x23: dfff800000000000 x22: ffff8000902b75a0 x21: 0000000000000001
+x20: 00000000000042a2 x19: ffff0000cd89e2f0 x18: 0000000000000008
+x17: 5b20293128206573 x16: ffff8000832b7b9c x15: 0000000000000001
+x14: 1ffff00013982ea4 x13: 0000000000000000 x12: 0000000000000000
+x11: 0000000000000004 x10: 0000000000ff0100 x9 : c9b6966d3b355500
+x8 : c9b6966d3b355500 x7 : 0000000000000001 x6 : 0000000000000001
+x5 : ffff80009cc17218 x4 : ffff80008fcafb00 x3 : ffff800083249bb4
+x2 : 0000000000000001 x1 : 0000000000000002 x0 : 0000000000000000
+Call trace:
+ umount_check+0x164/0x1b8 fs/dcache.c:1564 (P)
+ d_walk+0x1d4/0x704 fs/dcache.c:1295
+ do_one_tree+0x44/0xfc fs/dcache.c:1579
+ shrink_dcache_for_umount+0xd8/0x188 fs/dcache.c:1595
+ generic_shutdown_super+0x68/0x2bc fs/super.c:620
+ kill_block_super+0x44/0x90 fs/super.c:1710
+ deactivate_locked_super+0xc4/0x12c fs/super.c:473
+ deactivate_super+0xe0/0x100 fs/super.c:506
+ cleanup_mnt+0x34c/0x3dc fs/namespace.c:1413
+ __cleanup_mnt+0x20/0x30 fs/namespace.c:1420
+ task_work_run+0x230/0x2e0 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ do_notify_resume+0x178/0x1f4 arch/arm64/kernel/entry-common.c:151
+ exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
+ el0_svc+0xac/0x168 arch/arm64/kernel/entry-common.c:745
+ el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+irq event stamp: 10970
+hardirqs last  enabled at (10969): [<ffff8000804afa4c>] __up_console_sem kernel/printk/printk.c:344 [inline]
+hardirqs last  enabled at (10969): [<ffff8000804afa4c>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2869
+hardirqs last disabled at (10970): [<ffff80008b7c3e94>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
+softirqs last  enabled at (10964): [<ffff8000803128a4>] softirq_handle_end kernel/softirq.c:407 [inline]
+softirqs last  enabled at (10964): [<ffff8000803128a4>] handle_softirqs+0xb44/0xd34 kernel/softirq.c:589
+softirqs last disabled at (10723): [<ffff800080020dbc>] __do_softirq+0x14/0x20 kernel/softirq.c:595
+---[ end trace 0000000000000000 ]---
+ocfs2: Unmounting device (7,0) on (node local)
+VFS: Busy inodes after unmount of loop0 (ocfs2)
+------------[ cut here ]------------
+kernel BUG at fs/super.c:652!
+Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 1 UID: 0 PID: 6436 Comm: syz-executor167 Tainted: G        W          6.14.0-rc7-syzkaller-ga2392f333575 #0
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : generic_shutdown_super+0x2b8/0x2bc fs/super.c:650
+lr : generic_shutdown_super+0x2b8/0x2bc fs/super.c:650
+sp : ffff80009cc17bb0
+x29: ffff80009cc17bb0 x28: 1fffe0001b097193 x27: 0000000000000008
+x26: 0000000000000003 x25: dfff800000000000 x24: 1fffe00018d0c0f0
+x23: ffff80008bc839e0 x22: dfff800000000000 x21: 0000000000000000
+x20: ffff8000902b75a0 x19: ffff0000c6860668 x18: 0000000000000008
+x17: 000000000000e793 x16: ffff8000832b7b9c x15: 0000000000000001
+x14: 1fffe000366f60f2 x13: 0000000000000000 x12: 0000000000000000
+x11: 0000000000000001 x10: 0000000000ff0100 x9 : c9b6966d3b355500
+x8 : c9b6966d3b355500 x7 : 0000000000000001 x6 : 0000000000000001
+x5 : ffff80009cc17378 x4 : ffff80008fcafb00 x3 : ffff800080743ed0
+x2 : 0000000000000001 x1 : 0000000100000000 x0 : 000000000000002f
+Call trace:
+ generic_shutdown_super+0x2b8/0x2bc fs/super.c:650 (P)
+ kill_block_super+0x44/0x90 fs/super.c:1710
+ deactivate_locked_super+0xc4/0x12c fs/super.c:473
+ deactivate_super+0xe0/0x100 fs/super.c:506
+ cleanup_mnt+0x34c/0x3dc fs/namespace.c:1413
+ __cleanup_mnt+0x20/0x30 fs/namespace.c:1420
+ task_work_run+0x230/0x2e0 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ do_notify_resume+0x178/0x1f4 arch/arm64/kernel/entry-common.c:151
+ exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
+ el0_svc+0xac/0x168 arch/arm64/kernel/entry-common.c:745
+ el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+Code: d00562e0 91208000 aa1303e1 97cfdf8f (d4210000) 
+---[ end trace 0000000000000000 ]---
 
-and then calls do_vfs_ioctl().
 
-This then ends up in vfs_fileattr_set(), which does:
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-	if (!inode->i_op->fileattr_set)
-                return -ENOIOCTLCMD;
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-which means sys_compat_ioctl() then falls back to calling
-->compat_ioctl().
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-However, cmd has been overwritten to FS_IOC_SETFLAGS and
-bch2_compat_fs_ioctl() looks for FS_IOC32_SETFLAGS, so it returns
--ENOIOCTLCMD as it doesn't handle the ioctl command passed in.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-sys_compat_ioctl() then converts the -ENOIOCTLCMD to -ENOTTY, and
-there's the error being reported.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-OK, this is a bcachefs compat ioctl handling bug, triggered by not
-implementing ->fileattr_set and implementing FS_IOC_SETFLAGS
-directly itself via ->unlocked_ioctl.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-Yeah, fixes to bcachefs needed here, not LTP.
-
-> I wonder why it does not fail for generic VFS fs/ioctl.c used by Btrfs and XFS:
-
-Because they implement ->fileattr_set() and so all the compat ioctl
-FS_IOC32_SETFLAGS handling works as expected.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+If you want to undo deduplication, reply with:
+#syz undup
 
