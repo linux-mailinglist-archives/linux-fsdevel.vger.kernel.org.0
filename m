@@ -1,64 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-45213-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45215-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE0F4A74C39
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 15:16:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CB71A74C67
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 15:21:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FA033AA5CC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 14:14:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06BAA188B270
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 14:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588DD1A9B34;
-	Fri, 28 Mar 2025 14:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F211B424E;
+	Fri, 28 Mar 2025 14:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Qr+zHpsQ"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="JhE8/8d5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E7C171092;
-	Fri, 28 Mar 2025 14:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BA320DF4;
+	Fri, 28 Mar 2025 14:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743171266; cv=none; b=SbRyIxBJVpSmCxBhIijYTpR7K37xHbWgg7s1gv0lwpgkrloq6M0xKG6LADFJJzhOyUopUb/p/nsx732eeEWLDv5tfXqhd4yQ4pyKzDayHUeLYGHihptz5yU51mBwGoyYWrTXWVYFSUM+lBz1A7hS1DI3aO3WuNtmJeEhqBnjMmg=
+	t=1743171667; cv=none; b=bPV8C7d+sRiapLZ5PMR+H5PzZgKhyhcGoRZ0C4Y0bNXNUvwbmH0VlN+Rd2W5UXTQND3l9E3qi/KJ0S7AOP4UffeDhoQ62sdJUtLj5KgZZVf5qTew2r+n3Sn1QRHMC+zRiAye0/ym8S8Ep1bEroJvZVSHwVRwmSe2J+TI0eTCPcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743171266; c=relaxed/simple;
-	bh=MlqYufFY1I8WuOKTmU+SdoVXB/Z8BkWl+fhXZZ3vDlI=;
+	s=arc-20240116; t=1743171667; c=relaxed/simple;
+	bh=cLmTnPh0Z5NPWZMG0NKNdgnST47tDlnTp2qQmBP0SWA=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aYc4qbfSj5+5ixa9DNrhoEjk++rvRUvTo3UJf+3nLFcsfET/6ZTDTiXongKnsImuHmZhOTnXXtrpQcfK6p3CcIqs3FN/a4Po2Qs6+oNNehywJiJpXWTeQ0wB7rFZ2I1A1rgR1CYrQOA8I0/ERVvTRV8LXSGEue2X9XKPtoBzvF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=Qr+zHpsQ; arc=none smtp.client-ip=198.37.111.173
+	 Content-Type:MIME-Version; b=bn3k+aGA54uzO5LVzyqXzME9U+S+xf5UHJeY+55QQAAp0iG39pFKhVvXUcNh4yniUehOaIBOsC6uQXwJjBmAfCv+Mx/JP6niBdSGEKc/Ubx8dOAfDM78yIY41aUzrK3D7GnzRWJfegzpKBxIKU4s9CE99GkMUWgkcB1loOZecuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=JhE8/8d5; arc=none smtp.client-ip=198.37.111.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1743171263;
-	bh=MlqYufFY1I8WuOKTmU+SdoVXB/Z8BkWl+fhXZZ3vDlI=;
+	d=hansenpartnership.com; s=20151216; t=1743171664;
+	bh=cLmTnPh0Z5NPWZMG0NKNdgnST47tDlnTp2qQmBP0SWA=;
 	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=Qr+zHpsQZRgcvJr4diTCdw/SHs2VwowM+Ax7COvirluAkRZkD9stnD6LTs0D7cJUh
-	 fgnC71g4x7J8/+sFKITpqw3RAMga1qF4u/TInl+znzRDaFWomWmFADlCUwEN/pHZvV
-	 oxEjL+Vo/yuhZasAEJt+FJ4uzDpFdxK34IKmnFNg=
+	b=JhE8/8d5ozK9aaRRhqzyJgC3WeF1FMu01qTJQntH/8tdTsboZo69mztmD1pU9bTzF
+	 y7aGXdGGjNCPoY59OlzSqlmZRuUmhxDnNhiS1nmtCjA9paPTAs0i18Z32uu8En+Uyq
+	 w0e8Gt/3MogO/5E3+o/SFh6+kM/89wX3if6JQFtk=
 Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange x25519)
 	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id A66EE1C0022;
-	Fri, 28 Mar 2025 10:14:22 -0400 (EDT)
-Message-ID: <cd5c3d8aab9c5fb37fa018cb3302ecf7d2bdb140.camel@HansenPartnership.com>
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 3906D1C02A5;
+	Fri, 28 Mar 2025 10:21:04 -0400 (EDT)
+Message-ID: <0104e4918cc9d1cd7e991699292cf3e7379b2291.camel@HansenPartnership.com>
 Subject: Re: [RFC PATCH 4/4] vfs: add filesystem freeze/thaw callbacks for
  power management
 From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- mcgrof@kernel.org, jack@suse.cz, hch@infradead.org, david@fromorbit.com, 
- rafael@kernel.org, djwong@kernel.org, pavel@kernel.org,
- peterz@infradead.org,  mingo@redhat.com, will@kernel.org,
+ mcgrof@kernel.org, hch@infradead.org, david@fromorbit.com,
+ rafael@kernel.org,  djwong@kernel.org, pavel@kernel.org,
+ peterz@infradead.org, mingo@redhat.com,  will@kernel.org,
  boqun.feng@gmail.com
-Date: Fri, 28 Mar 2025 10:14:22 -0400
-In-Reply-To: <20250328-luxus-zinspolitik-835cc75fbad5@brauner>
+Date: Fri, 28 Mar 2025 10:21:03 -0400
+In-Reply-To: <zcxwcu2ty5fmkqt7dnpwdmohkp6pi7hfhltlxgpnx2xhsutgoc@gkixsx4map3o>
 References: <20250327140613.25178-1-James.Bottomley@HansenPartnership.com>
 	 <20250327140613.25178-5-James.Bottomley@HansenPartnership.com>
-	 <20250328-luxus-zinspolitik-835cc75fbad5@brauner>
+	 <zcxwcu2ty5fmkqt7dnpwdmohkp6pi7hfhltlxgpnx2xhsutgoc@gkixsx4map3o>
 Autocrypt: addr=James.Bottomley@HansenPartnership.com;
  prefer-encrypt=mutual;
  keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNElecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHURfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvdHRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmBLmY0FCRs1hL0ACgkQgUrkfCFIVNaEiQgAg18F4G7PGWQ68xqnIrccke7Reh5thjUz6kQIii6Dh64BDW6/UvXn20UxK2uSs/0TBLO81k1mV4c6rNE+H8b7IEjieGR9frBsp/+Q01JpToJfzzMUY7ZTDV1IXQZ+AY9L7vRzyimnJHx0Ba4JTlAyHB+Ly5i4Ab2+uZcnNfBXquWrG3oPWz+qPK88LJLya5Jxse1m1QT6R/isDuPivBzntLOooxPk+Cwf5sFAAJND+idTAzWzslexr9j7rtQ1UW6FjO4CvK9yVNz7dgG6FvEZl6J/HOr1rivtGgpCZTBzKNF8jg034n49zGfKkkzWLuXbPUOp3/oGfsKv8pnEu1c2GbQpSmFtZXMgQm90dG9tbGV5IDxqZWpiQGxpbnV4LnZuZXQuaWJtLmNvbT6JAVYEEwEIAEACGwMHCwkIBwMCAQYVC
@@ -79,10 +79,54 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Fri, 2025-03-28 at 11:08 +0100, Christian Brauner wrote:
-> On Thu, Mar 27, 2025 at 10:06:13AM -0400, James Bottomley wrote:
-[...]
+On Thu, 2025-03-27 at 19:20 +0100, Jan Kara wrote:
+> On Thu 27-03-25 10:06:13, James Bottomley wrote:
+> > Introduce a freeze function, which iterates superblocks in reverse
+> > order freezing filesystems.=C2=A0 The indicator a filesystem is
+> > freezable is either possessing a s_bdev or a freeze_super method.=C2=A0
+> > So this can be used in efivarfs, whether the freeze is for
+> > hibernate is also passed in via the new FREEZE_FOR_HIBERNATE flag.
+> >=20
+> > Thawing is done opposite to freezing (so superblock traversal in
+> > regular order) and the whole thing is plumbed into power
+> > management.
+> > The original ksys_sync() is preserved so the whole freezing step is
+> > optional (if it fails we're no worse off than we are today) so it
+> > doesn't inhibit suspend/hibernate if there's a failure.
+> >=20
+> > Signed-off-by: James Bottomley
+> > <James.Bottomley@HansenPartnership.com>
+>=20
+> OK, I've seen you are setting the new FREEZE_FOR_HIBERNATE flag but I
+> didn't find anything using that flag. What do you plan to use it for?
+> Does you efivars usecase need it? I find passing down this detail
+> about the caller down to all filesystems a bit awkward. Isn't it
+> possible to extract the information "hibernate is ongoing" from PM
+> subsystem?
+
+That's right.  I'm happy to post my patch below, but it depends on Al
+accepting the simple_next_child() proposal, so it doesn't apply to any
+tree.
+
+> > +/*
+> > + * Kernel freezing and thawing is only done in the power
+> > management
+> > + * subsystem and is thus single threaded (so we don't have to
+> > worry
+> > + * here about multiple calls to filesystems_freeze/thaw().
+> > + */
 > > +
+> > +static int freeze_flags;
+>=20
+> Frankly, the global variable to propagate flags is pretty ugly... If
+> we really have to propagate some context into the iterator callback,
+> rather do it explicitly like iterate_supers() does it.
+
+Christian said the same thing.  I can do it, but if you look in the
+power management subsystem, it relies on single threading and has a lot
+of global variables like this, so I thought of this as a
+simplification.
+
 > > +static void filesystems_freeze_callback(struct super_block *sb)
 > > +{
 > > +	/* errors don't fail suspend so ignore them */
@@ -94,6 +138,9 @@ On Fri, 2025-03-28 at 11:08 +0100, Christian Brauner wrote:
 > > +		freeze_super(sb, FREEZE_MAY_NEST |
 > > FREEZE_HOLDER_KERNEL
 > > +			=C2=A0=C2=A0=C2=A0=C2=A0 | freeze_flags);
+>=20
+> Style nit - braces around above blocks would be IMHO appropriate.
+>=20
 > > +	else {
 > > +		pr_info("Ignoring filesystem %s\n", sb->s_type-
 > > >name);
@@ -105,74 +152,28 @@ On Fri, 2025-03-28 at 11:08 +0100, Christian Brauner wrote:
 > > +	sync_blockdev(sb->s_bdev);
 > > +	pr_info("done.");
 > > +}
-> > +
-> > +/**
-> > + * filesystems_freeze - freeze callback for power management
-> > + *
-> > + * Freeze all active filesystems (in reverse superblock order)
-> > + */
-> > +void filesystems_freeze(bool for_hibernate)
-> > +{
-> > +	freeze_flags =3D for_hibernate ? FREEZE_FOR_HIBERNATE : 0;
-> > +	__iterate_supers_rev(filesystems_freeze_callback);
-> > +}
-> > +
-> > +static void filesystems_thaw_callback(struct super_block *sb)
-> > +{
-> > +	if (sb->s_op->thaw_super)
-> > +		sb->s_op->thaw_super(sb, FREEZE_MAY_NEST
-> > +				=C2=A0=C2=A0=C2=A0=C2=A0 | FREEZE_HOLDER_KERNEL
-> > +				=C2=A0=C2=A0=C2=A0=C2=A0 | freeze_flags);
-> > +	else if (sb->s_bdev)
-> > +		thaw_super(sb,	FREEZE_MAY_NEST |
-> > FREEZE_HOLDER_KERNEL
-> > +			=C2=A0=C2=A0 | freeze_flags);
-> > +}
-> > +
-> > +/**
-> > + * filesystems_thaw - thaw callback for power management
-> > + *
-> > + * Thaw all active filesystems (in forward superblock order)
-> > + */
-> > +void filesystems_thaw(bool for_hibernate)
-> > +{
-> > +	freeze_flags =3D for_hibernate ? FREEZE_FOR_HIBERNATE : 0;
-> > +	__iterate_supers(filesystems_thaw_callback);
 >=20
-> This doesn't work and I've explained in my reply to Luis how this
-> doesn't work and what the alternative are:
+> Generally this callback is not safe because it can race with
+> filesystem unmount and calling ->freeze_super() after the
+> filesystem's ->put_super() was called may have all sorts of
+> interesting effects (freeze_super() itself will just bail with a
+> warning, which is better but not great either).
 >=20
-> A concurrent umount() can wipe the filesystem behind your back. So
-> you either need an active superblock reference or you need to
-> communicate that the superblock is locked through the new flag I
-> proposed (naming irrelevant for now).
+> The cleanest way I see how to make the iteration safe is to grab
+> active sb reference (like grab_super() does it) for the duration of
+> freeze_super() calls. Another possibility would be to grab sb-
+> >s_umount rwsem exclusively as Luis does it in his series but that
+> requires a bit of locking surgery and ->freeze_super() handlers make
+> this particularly nasty these days so I think active sb reference is
+> going to be nicer these days.
 
-Since this is a hybrid thread between power management and VFS, could I
-just summarize what I think the various superblock locks are before
-discussing the actual problem (important because the previous threads
-always gave the impression of petering out for fear of vfs locking).
+Before getting into the how of this, could you just confirm my
+understanding of what the various locks do:
 
-s_count: outermost of the superblock locks refcounting the superblock
-structure itself, making no guarantee that any of the underlying
-filesystem superblock structures are attached (i.e. kill_sb() may have
-been called).  Taken by incrementing under the global sb_lock and
-decremented using a put_super() variant.
+https://lore.kernel.org/cd5c3d8aab9c5fb37fa018cb3302ecf7d2bdb140.camel@Hans=
+enPartnership.com
 
-s_active: an atomic reference counting the underlying filesystem
-specific superblock structures.  if you hold s_active, kill_sb cannot
-be called.  Acquired by atomic_inc_not_zero() with a possible failure
-if it is zero and released by deactivate_super() and its variants.
-
-s_umount: rwsem and innermost of the superblock locks. Used to protect
-various operations from races.  Taken exclusively with down_write and
-shared with down_read. Private functions internal to super.c wrap this
-with grab_super and super_lock_shared/excl() wrappers.
-
-The explicit freeze/thaw_super() functions require the s_umount rwsem
-in down_write or exclusive mode and take it as the first step in their
-operation.  Looking at the locking in fs_bdev_freeze/thaw() implies
-that the super_operations freeze_super/thaw_super *don't* need this
-taken (presumably they handle it internally).
+Is correct?
 
 Regards,
 
