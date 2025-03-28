@@ -1,63 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-45198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45199-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75C26A748A0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 11:46:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25868A748A8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 11:48:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E6B31895A6E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 10:46:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34892189BEAA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 10:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4081F3FF3;
-	Fri, 28 Mar 2025 10:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eR8e3Klg"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48299212B04;
+	Fri, 28 Mar 2025 10:48:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11466FBF;
-	Fri, 28 Mar 2025 10:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140C36FBF;
+	Fri, 28 Mar 2025 10:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743158762; cv=none; b=h4kzbHa5ZqtbhJdcNbuG1Mu3xMOPkrLGc+TMLtbNrpLtONMUb+Q3YYfYf/Cj+C+clfuaBzvC5jH+YVT+XYcGdIX2KxzKFRCTIEUsOqar6+l0mQBGiprzyqGl84dk2EAifCitGQXFPBhp3kjleaLfiqWS+sFh3dzclQ4uI2SWm2o=
+	t=1743158884; cv=none; b=LsaC9H+JDdagIOvHHFLu0LVzTBpdlj/IMWIKj+OzfoU6kKjLKxIxd68Bt5gAxmms7AlCvx6eqOIU6pkJj46LqP9wfvZHlBReKlJc4wliimoZGNBEkoAIfs+ca+5QCL0pj5J9D3rYBkU0EYKQEBelcM7tyZXcTnVaOS7BpP+n6IU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743158762; c=relaxed/simple;
-	bh=HX4L70QTi47Xyax4mvQKMiRVkvBpNvXUFLKXEnV2Uj4=;
+	s=arc-20240116; t=1743158884; c=relaxed/simple;
+	bh=624HXbVtaXf7OEa53mYPunxElgZh35bwXenaW8Dt5o4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JeiW+lN+gdWdJV2jwT1Q3fIfaGpmleKGhVhMH0ejvYWi/4950rSY8PH2RR3MSTPv8J4gzzORLptFp0gd+wgT5VE7d92Lv6fOTH9b/bF65Rt4MHpJ0Z2mJd2aCSM98zbxVwzNgsvw6fePHUPDWitnkILjIf8KpJajic4tEk3oq/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eR8e3Klg; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=7/ZRM+Jgttx6GELXH1bXNxJMDypsQo+VPqHGzIsFl8M=; b=eR8e3KlgEmnGbaljZtyjvTSpwC
-	viEb0pV00OPfxmLrMiI9RdAWyl1+n1Q9oJSbw0PrN9npp7wbyii1AJ472t2B2CFCaflmwh0h3pdqj
-	pTIekseNHeyL3gd/TfubrhCe5ALNXisa010EP98HlJMtM5weBgxROsZAhRKWgxDcIWOoHrOvVbZ/K
-	PWbWqd3mPJC209QEVwetkq5baZzTmPGf0et5Abo/E5zxUJSQiqseWz3VEBb13U8DTgibtUW2Otr6G
-	iwwH9ZRyq5SOvrma3ZZ6hUkOadqGFzCG8AxbUTdA1A5be9OPqOu51m5iyhPLSkq6Ydi+Hli2Z90SL
-	PRKEgR2w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1ty7Dp-0000000DAUI-3wy4;
-	Fri, 28 Mar 2025 10:45:57 +0000
-Date: Fri, 28 Mar 2025 03:45:57 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Nicolas Baranger <nicolas.baranger@3xo.fr>
-Cc: hch@lst.de, Christoph Hellwig <hch@infradead.org>,
-	David Howells <dhowells@redhat.com>, netfs@lists.linux.dev,
-	linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Steve French <smfrench@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [netfs/cifs - Linux 6.14] loop on file cat + file copy when
- files are on CIFS share
-Message-ID: <Z-Z95ePf3KQZ2MnB@infradead.org>
-References: <10bec2430ed4df68bde10ed95295d093@3xo.fr>
- <35940e6c0ed86fd94468e175061faeac@3xo.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MU8dE4WWGFHmp7MPLPhoiVxPyCcaLQ37Hpi/PV3Q+KpRt87OUJvd6MCGPiAzYESlgpHTnalJyrCWqQCozlKhvKEuFwoqIcYPyWIHjmvTQFPx3ZoQdh3faW6gU7Sb0kozhtoJErtoivr3d/CTvNQdBpT1tSAidzA8Ts5E1BihqTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 4214968AA6; Fri, 28 Mar 2025 11:47:51 +0100 (CET)
+Date: Fri, 28 Mar 2025 11:47:50 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Christoph Hellwig <hch@lst.de>,
+	John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
+	djwong@kernel.org, dchinner@redhat.com,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH] iomap: Fix conflicting values of iomap flags
+Message-ID: <20250328104750.GA19460@lst.de>
+References: <20250327170119.61045-1-ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,12 +51,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <35940e6c0ed86fd94468e175061faeac@3xo.fr>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20250327170119.61045-1-ritesh.list@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hi Nicolas,
+On Fri, Mar 28, 2025 at 01:01:19AM +0800, Ritesh Harjani (IBM) wrote:
+> IOMAP_F_ATOMIC_BIO mistakenly took the same value as of IOMAP_F_SIZE_CHANGED
+> in patch '370a6de7651b ("iomap: rework IOMAP atomic flags")'.
+> Let's fix this and let's also create some more space for filesystem reported
+> flags to avoid this in future. This patch makes the core iomap flags to start
+> from bit 15, moving downwards. Note that "flags" member within struct iomap
+> is of type u16.
+> 
+> Fixes: 370a6de7651b ("iomap: rework IOMAP atomic flags")
+> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 
-please wait a bit, many file system developers where at a conference
-this week. 
+Looks good:
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
 
