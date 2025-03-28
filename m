@@ -1,277 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-45203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF132A74994
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 13:01:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA10A749EA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 13:39:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CAF83AD7E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 12:01:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0344A7A46D0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 12:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F48D21ADC4;
-	Fri, 28 Mar 2025 12:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B429EAC7;
+	Fri, 28 Mar 2025 12:39:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LrzyYKIl"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="VgOSSToZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C33521516D;
-	Fri, 28 Mar 2025 12:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B04F17C77;
+	Fri, 28 Mar 2025 12:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743163280; cv=none; b=ltj9shTEbRKNH46ZsTtmbNFUP9GKYbNYbDjcLj8SxgKpYeZJqV7thLF1emMp1z2/fY5U5teZYKJSEXDHnXVx/qu0nFo4F+5tdCOQYXacj6DMF7SffHF3NxqDBEXxR/6ZDNQNkkyco5RIXL053Gxm2vFCQt7BjlkP0hb15v8Och8=
+	t=1743165539; cv=none; b=SrsiDLUZjzg3DEiDGr1PfrQXPbOKWWVwmXHEPyD5LwpOKTkTvwIlydM2e3mCJ/swImZ2Ie9qxbillk+xk2nGqwyfQKITSruXosSgJ+QNWQtvqb6WOr0aFe9YmvpA6glqjrZGfkc2sBfRJqJXRU1Risi+3JJEtMJ4Buz8CyAQLT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743163280; c=relaxed/simple;
-	bh=NpBS8uNG82KPHFF9NPz9ZXFtUUKOSOhJZFr6Y7jrPL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o/sdpvhn29iCdWsePVSZ0L9o/gP7NaLHRnbf+JmDzx9b1Cv3+SClJJVAmKeMnSPk4H0W5oChunj1UMBqrmVgRA0U1lMTIq9XVHkGtkdViDrMYXgpj0qrZngPxdHJi5+PnyYMCT4tG+eQpicbYs7Da2F49yu/zA8S0YuSt3qPzMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LrzyYKIl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8002C4CEE4;
-	Fri, 28 Mar 2025 12:01:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743163280;
-	bh=NpBS8uNG82KPHFF9NPz9ZXFtUUKOSOhJZFr6Y7jrPL0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LrzyYKIlo/8kmBQ+mMa3xNxTPvrTB9AT1fjm8jmchC86tksrN9T446hUu/TGeRRF+
-	 b4y9h7pl8nOZKfkrAQd1dL++AobpDv7yhJMVicgpIwnxfyEct9DyxG//RX/L9pzzT/
-	 Afk6tSUO6oUSiXXPZ/h0ebWrQiu97vtOcOEGugYlaek4kzRjQ9Kv4wdhfWBSu+xBvl
-	 8kayoyx5hSp4x9/fmr0avIk3T8MD7o025y8AXWzl49nAkh9mISOVN419TPnuhEVvvE
-	 UCSuqHO+twDlSuVJU07k6YKrxkqcOi5/UUG6OBi0pnG28TFqymJIjg4em9Nm1vyF9e
-	 TPNB50vzxjc2A==
-Date: Fri, 28 Mar 2025 13:01:14 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
+	s=arc-20240116; t=1743165539; c=relaxed/simple;
+	bh=wanvQ1pmR/aToP4kNrY1h1T7ARZN2ONSus/5TNApHB0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Nh3DLk+t+gmiunucnTDgOmSx7MDG812XTRCtp4SYm7CjrqjnYzRR+e6HLhwVkt7rRkKbRZ86dbOd6MEgRDDfmnOGTOUYEu6T5MBW3b1mdhLOtMcL5BdPw6++u0vBi/xUEhgivXTJUDWuakN1LhSuQ4RTukM5CUU/8OLTxUiqtMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=VgOSSToZ; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1743165536;
+	bh=wanvQ1pmR/aToP4kNrY1h1T7ARZN2ONSus/5TNApHB0=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=VgOSSToZBctz6fVM9qB7KMmJAsRRjaTzd1due1KCEdXcJgmtcS++p3IYA3bJORnCv
+	 1+n9oRC5+F/dS4sA54T24GkRojOea07LFQmnu+tZzBsJUzOjjRXMR9ZkyUgBxOH4yI
+	 4pD0m8hHFEkVFhKM2VnXJONSPJZMLj4I9ujiK7zU=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id C1A961C0329;
+	Fri, 28 Mar 2025 08:38:55 -0400 (EDT)
+Message-ID: <d5d8b5368a95da45f76ccac4abd6ff54093f82fa.camel@HansenPartnership.com>
+Subject: Re: [RFC PATCH 3/4] fs/super.c: introduce reverse superblock
+ iterator and use it in emergency remount
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Christian Brauner <brauner@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mcgrof@kernel.org, jack@suse.cz, hch@infradead.org, david@fromorbit.com, 
-	rafael@kernel.org, djwong@kernel.org, pavel@kernel.org, peterz@infradead.org, 
-	mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com
-Subject: Re: [RFC PATCH 4/4] vfs: add filesystem freeze/thaw callbacks for
- power management
-Message-ID: <20250328-ambulant-elektrisch-8127624ea520@brauner>
+ mcgrof@kernel.org, jack@suse.cz, hch@infradead.org, david@fromorbit.com, 
+ rafael@kernel.org, djwong@kernel.org, pavel@kernel.org,
+ peterz@infradead.org,  mingo@redhat.com, will@kernel.org,
+ boqun.feng@gmail.com
+Date: Fri, 28 Mar 2025 08:38:55 -0400
+In-Reply-To: <20250328-estrich-kaleidoskop-c677a5a3f551@brauner>
 References: <20250327140613.25178-1-James.Bottomley@HansenPartnership.com>
- <20250327140613.25178-5-James.Bottomley@HansenPartnership.com>
+	 <20250327140613.25178-4-James.Bottomley@HansenPartnership.com>
+	 <20250328-estrich-kaleidoskop-c677a5a3f551@brauner>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250327140613.25178-5-James.Bottomley@HansenPartnership.com>
 
-On Thu, Mar 27, 2025 at 10:06:13AM -0400, James Bottomley wrote:
-> Introduce a freeze function, which iterates superblocks in reverse
-> order freezing filesystems.  The indicator a filesystem is freezable
-> is either possessing a s_bdev or a freeze_super method.  So this can
-> be used in efivarfs, whether the freeze is for hibernate is also
-> passed in via the new FREEZE_FOR_HIBERNATE flag.
-> 
-> Thawing is done opposite to freezing (so superblock traversal in
-> regular order) and the whole thing is plumbed into power management.
-> The original ksys_sync() is preserved so the whole freezing step is
-> optional (if it fails we're no worse off than we are today) so it
-> doesn't inhibit suspend/hibernate if there's a failure.
-> 
-> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> ---
->  fs/super.c               | 61 ++++++++++++++++++++++++++++++++++++++++
->  include/linux/fs.h       |  5 ++++
->  kernel/power/hibernate.c | 12 ++++++++
->  kernel/power/suspend.c   |  4 +++
->  4 files changed, 82 insertions(+)
-> 
-> diff --git a/fs/super.c b/fs/super.c
-> index 76785509d906..b4b0986414b0 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -1461,6 +1461,67 @@ static struct super_block *get_bdev_super(struct block_device *bdev)
->  	return sb;
->  }
->  
-> +/*
-> + * Kernel freezing and thawing is only done in the power management
-> + * subsystem and is thus single threaded (so we don't have to worry
-> + * here about multiple calls to filesystems_freeze/thaw().
-> + */
-> +
-> +static int freeze_flags;
-> +
-> +static void filesystems_freeze_callback(struct super_block *sb)
-> +{
-> +	/* errors don't fail suspend so ignore them */
-> +	if (sb->s_op->freeze_super)
-> +		sb->s_op->freeze_super(sb, FREEZE_MAY_NEST
-> +				       | FREEZE_HOLDER_KERNEL
-> +				       | freeze_flags);
-> +	else if (sb->s_bdev)
-> +		freeze_super(sb, FREEZE_MAY_NEST | FREEZE_HOLDER_KERNEL
-> +			     | freeze_flags);
-> +	else {
-> +		pr_info("Ignoring filesystem %s\n", sb->s_type->name);
-> +		return;
-> +	}
-> +
-> +	pr_info("frozen %s, now syncing block ...", sb->s_type->name);
-> +	sync_blockdev(sb->s_bdev);
+On Fri, 2025-03-28 at 12:56 +0100, Christian Brauner wrote:
+> On Thu, Mar 27, 2025 at 10:06:12AM -0400, James Bottomley wrote:
+> > Originally proposed by Amir as an extract from the android kernel:
+> >=20
+> > https://lore.kernel.org/linux-fsdevel/CAA2m6vfatWKS1CQFpaRbii2AXiZFvQUj=
+VvYhGxWTSpz+2rxDyg@mail.gmail.com/
+> >=20
+> > Since suspend/resume requires a reverse iterator, I'm dusting it
+> > off.
+> >=20
+> > Signed-off-by: James Bottomley
+> > <James.Bottomley@HansenPartnership.com>
+> > ---
+> > =C2=A0fs/super.c | 48 +++++++++++++++++++++++++++++-------------------
+> > =C2=A01 file changed, 29 insertions(+), 19 deletions(-)
+> >=20
+> > diff --git a/fs/super.c b/fs/super.c
+> > index 5a7db4a556e3..76785509d906 100644
+> > --- a/fs/super.c
+> > +++ b/fs/super.c
+> > @@ -887,28 +887,38 @@ void drop_super_exclusive(struct super_block
+> > *sb)
+> > =C2=A0}
+> > =C2=A0EXPORT_SYMBOL(drop_super_exclusive);
+> > =C2=A0
+> > +#define ITERATE_SUPERS(f, rev)					\
+>=20
+> I'm not fond of the macro magic here.
+> I've taken some of your patches and massaging them.
 
-Unnecessary, either the filesystem is responsible for this if it
-provides its own ->freeze_super() or freeze_super() does it in
-sync_filesystem.
+I'm not either, so if you have an alternative, I'm all ears.  The
+problem I had is that list_for_each_entry() and _reverse are designed
+to take a code block, so it's very difficult to swap one for the other
+without macroizing.  The internal logic is complex enough that I didn't
+want to duplicate it.
 
-> +	pr_info("done.");
-> +}
-> +
-> +/**
-> + * filesystems_freeze - freeze callback for power management
-> + *
-> + * Freeze all active filesystems (in reverse superblock order)
-> + */
-> +void filesystems_freeze(bool for_hibernate)
-> +{
-> +	freeze_flags = for_hibernate ? FREEZE_FOR_HIBERNATE : 0;
-> +	__iterate_supers_rev(filesystems_freeze_callback);
-> +}
-> +
-> +static void filesystems_thaw_callback(struct super_block *sb)
-> +{
-> +	if (sb->s_op->thaw_super)
-> +		sb->s_op->thaw_super(sb, FREEZE_MAY_NEST
-> +				     | FREEZE_HOLDER_KERNEL
-> +				     | freeze_flags);
-> +	else if (sb->s_bdev)
-> +		thaw_super(sb,	FREEZE_MAY_NEST | FREEZE_HOLDER_KERNEL
-> +			   | freeze_flags);
-> +}
-> +
-> +/**
-> + * filesystems_thaw - thaw callback for power management
-> + *
-> + * Thaw all active filesystems (in forward superblock order)
-> + */
-> +void filesystems_thaw(bool for_hibernate)
-> +{
-> +	freeze_flags = for_hibernate ? FREEZE_FOR_HIBERNATE : 0;
-> +	__iterate_supers(filesystems_thaw_callback);
-> +}
-> +
->  /**
->   * fs_bdev_freeze - freeze owning filesystem of block device
->   * @bdev: block device
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index cbbb704eff74..de154e9379ec 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2272,6 +2272,7 @@ extern loff_t vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
->   * @FREEZE_HOLDER_KERNEL: kernel wants to freeze or thaw filesystem
->   * @FREEZE_HOLDER_USERSPACE: userspace wants to freeze or thaw filesystem
->   * @FREEZE_MAY_NEST: whether nesting freeze and thaw requests is allowed
-> + * @FREEZE_FOR_HIBERNATE: set if freeze is from power management hibernate
->   *
->   * Indicate who the owner of the freeze or thaw request is and whether
->   * the freeze needs to be exclusive or can nest.
-> @@ -2285,6 +2286,7 @@ enum freeze_holder {
->  	FREEZE_HOLDER_KERNEL	= (1U << 0),
->  	FREEZE_HOLDER_USERSPACE	= (1U << 1),
->  	FREEZE_MAY_NEST		= (1U << 2),
-> +	FREEZE_FOR_HIBERNATE	= (1U << 3),
->  };
->  
->  struct super_operations {
-> @@ -3919,4 +3921,7 @@ static inline bool vfs_empty_path(int dfd, const char __user *path)
->  
->  int generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *iter);
->  
-> +void filesystems_freeze(bool for_hibernate);
-> +void filesystems_thaw(bool for_hibernate);
-> +
->  #endif /* _LINUX_FS_H */
-> diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
-> index 10a01af63a80..fc2106e6685a 100644
-> --- a/kernel/power/hibernate.c
-> +++ b/kernel/power/hibernate.c
-> @@ -778,7 +778,12 @@ int hibernate(void)
->  
->  	ksys_sync_helper();
->  
-> +	pr_info("about to freeze filesystems\n");
-> +	filesystems_freeze(true);
-> +	pr_info("filesystem freeze done\n");
-> +
->  	error = freeze_processes();
-> +	pr_info("process freeze done\n");
->  	if (error)
->  		goto Exit;
->  
-> @@ -788,7 +793,9 @@ int hibernate(void)
->  	if (error)
->  		goto Thaw;
->  
-> +	pr_info("About to create snapshot\n");
->  	error = hibernation_snapshot(hibernation_mode == HIBERNATION_PLATFORM);
-> +	pr_info("snapshot done\n");
->  	if (error || freezer_test_done)
->  		goto Free_bitmaps;
->  
-> @@ -842,6 +849,8 @@ int hibernate(void)
->  	}
->  	thaw_processes();
->  
-> +	filesystems_thaw(true);
-> +
->  	/* Don't bother checking whether freezer_test_done is true */
->  	freezer_test_done = false;
->   Exit:
-> @@ -939,6 +948,8 @@ int hibernate_quiet_exec(int (*func)(void *data), void *data)
->  
->  	thaw_processes();
->  
-> +	filesystems_thaw(true);
-> +
->  exit:
->  	pm_notifier_call_chain(PM_POST_HIBERNATION);
->  
-> @@ -1041,6 +1052,7 @@ static int software_resume(void)
->  
->  	error = load_image_and_restore();
->  	thaw_processes();
-> +	filesystems_thaw(true);
->   Finish:
->  	pm_notifier_call_chain(PM_POST_RESTORE);
->   Restore:
-> diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-> index 09f8397bae15..34cc5b0c408c 100644
-> --- a/kernel/power/suspend.c
-> +++ b/kernel/power/suspend.c
-> @@ -544,6 +544,7 @@ int suspend_devices_and_enter(suspend_state_t state)
->  static void suspend_finish(void)
->  {
->  	suspend_thaw_processes();
-> +	filesystems_thaw(false);
->  	pm_notifier_call_chain(PM_POST_SUSPEND);
->  	pm_restore_console();
->  }
-> @@ -581,6 +582,7 @@ static int enter_state(suspend_state_t state)
->  		trace_suspend_resume(TPS("sync_filesystems"), 0, true);
->  		ksys_sync_helper();
->  		trace_suspend_resume(TPS("sync_filesystems"), 0, false);
-> +		filesystems_freeze(false);
->  	}
->  
->  	pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_labels[state]);
-> @@ -603,6 +605,8 @@ static int enter_state(suspend_state_t state)
->  	pm_pr_dbg("Finishing wakeup.\n");
->  	suspend_finish();
->   Unlock:
-> +	if (sync_on_suspend_enabled)
-> +		filesystems_thaw(false);
->  	mutex_unlock(&system_transition_mutex);
->  	return error;
->  }
-> -- 
-> 2.43.0
-> 
+Regards,
+
+James
+
 
