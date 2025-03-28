@@ -1,106 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-45207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7D7A74A6A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 14:10:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62001A74A8D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 14:26:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4235A16F84D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 13:10:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 022F317543A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 13:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8BC1494D9;
-	Fri, 28 Mar 2025 13:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF5015CD52;
+	Fri, 28 Mar 2025 13:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DBcUq5hT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B3513D51E;
-	Fri, 28 Mar 2025 13:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B319C1509A0
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Mar 2025 13:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743167396; cv=none; b=C6Q6SHVeFhFgH7Hin7LasWFjoez011JA7pt00xfv907w9bi25YRZXM+xNxdx7D5rvcupusZ0UxohMmzQlzwl+GetvGQkqLcS6Y6oxYjExeMWy0YUM81AWiVeYj7zxjpB7N4ZNDInwY4FBFdYxh+mvdpxhKXxVod2fomdNURRffs=
+	t=1743168410; cv=none; b=LxewF9S6emxTJK5oUs0sZzMGARJugBSkm8XczVnptO/k8Ui8ePTXJT5njYbYehmP8fs+W66W9q3goSWWorcry7CBPfBbKjBgqnySM8mrT1+i2hBXvqnQpSA+PuDJlK1BvfciIEpMei57TTOhiLRAHggJ+YtTIVKmavXvUbsOPTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743167396; c=relaxed/simple;
-	bh=KOzemAehihq7hY9k8MG4mPWqkmYrZSLFPPIiW7ChcBs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YPffRpkhpsKYbEovsoiUuqFKI77flqGX1bWFtnIx0rd2IEl02UqCuQ0S9zupMYnVzI8utxpPdnueZTxPJW3vwnzuCRjg+Yt3WsMD5PIMQwA2ZHVji6RkhjaQrdMxIL1m/ZLLyZ+DMAOKof87GQvTHfjZjOxDfUdO/hsTywg9Zz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0F6411007;
-	Fri, 28 Mar 2025 06:09:58 -0700 (PDT)
-Received: from [10.57.87.112] (unknown [10.57.87.112])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 45A2B3F63F;
-	Fri, 28 Mar 2025 06:09:51 -0700 (PDT)
-Message-ID: <dfc06a39-3d92-4995-ab06-c552e351f7c8@arm.com>
-Date: Fri, 28 Mar 2025 13:09:49 +0000
+	s=arc-20240116; t=1743168410; c=relaxed/simple;
+	bh=b3S/nzeF4iUi/K7suqqr7ZsBxzyPxd1gpdXP4/kcoyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dEYKgAJkJ+rqjjHKodXr4KhaF+6KXtrpOqFLm50Gpf38gHAm0XlnWL2U872L/RpM+BAQ4UO80BpW72pTXdFqM1KEUU/ntwfUKraMKpkAlLSOScIos99XU6QWN0Ll+Y8ke3i4ykXneHlD3rinyZA7+IbkGLcGh+9sqcv9aNJXjsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DBcUq5hT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743168407;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AnrzPvKl3sLQiFPBdijNOio/KW8lHT+XOZh1AR7FuU0=;
+	b=DBcUq5hT2DFzrlL3GA3E2NyJbmKFpLd1UaY27j0pI4VUY/eZKCPX2x00TCe6+6VWhZgMEq
+	055R6BJ2a0MdnvXhW+w0Gtsaykp+8pag0lpETgc04NLZm8U8KCP1LgepD1A6WIOXfPbv66
+	302Rm1tL22y58PV5+aJqyBwQsMe84Yc=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-614-zwSaCNGoPTO3Nosj5NuWnQ-1; Fri,
+ 28 Mar 2025 09:26:42 -0400
+X-MC-Unique: zwSaCNGoPTO3Nosj5NuWnQ-1
+X-Mimecast-MFC-AGG-ID: zwSaCNGoPTO3Nosj5NuWnQ_1743168400
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 453F418EBE88;
+	Fri, 28 Mar 2025 13:26:39 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.25])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 802361828A92;
+	Fri, 28 Mar 2025 13:26:32 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 28 Mar 2025 14:26:05 +0100 (CET)
+Date: Fri, 28 Mar 2025 14:25:57 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>
+Cc: asmadeus@codewreck.org, brauner@kernel.org, dhowells@redhat.com,
+	ericvh@kernel.org, jack@suse.cz, jlayton@kernel.org,
+	kprateek.nayak@amd.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux_oss@crudebyte.com,
+	lucho@ionkov.net, mjguzik@gmail.com, netfs@lists.linux.dev,
+	swapnil.sapkal@amd.com, syzkaller-bugs@googlegroups.com,
+	v9fs@lists.linux.dev, viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
+Message-ID: <20250328132557.GB29527@redhat.com>
+References: <20250328130625.GA29527@redhat.com>
+ <67e69f04.050a0220.2f068f.0076.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mm/filemap: Allow arch to request folio size for exec
- memory
-Content-Language: en-GB
-To: Zi Yan <ziy@nvidia.com>, Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Dave Chinner <david@fromorbit.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20250327160700.1147155-1-ryan.roberts@arm.com>
- <Z-WAbWfZzG1GA-4n@casper.infradead.org>
- <731D8D6E-52A0-4144-A2BB-7243BFACC92D@nvidia.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <731D8D6E-52A0-4144-A2BB-7243BFACC92D@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67e69f04.050a0220.2f068f.0076.GAE@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On 27/03/2025 20:07, Zi Yan wrote:
-> On 27 Mar 2025, at 12:44, Matthew Wilcox wrote:
-> 
->> On Thu, Mar 27, 2025 at 04:06:58PM +0000, Ryan Roberts wrote:
->>> So let's special-case the read(ahead) logic for executable mappings. The
->>> trade-off is performance improvement (due to more efficient storage of
->>> the translations in iTLB) vs potential read amplification (due to
->>> reading too much data around the fault which won't be used), and the
->>> latter is independent of base page size. I've chosen 64K folio size for
->>> arm64 which benefits both the 4K and 16K base page size configs and
->>> shouldn't lead to any read amplification in practice since the old
->>> read-around path was (usually) reading blocks of 128K. I don't
->>> anticipate any write amplification because text is always RO.
->>
->> Is there not also the potential for wasted memory due to ELF alignment?
->> Kalesh talked about it in the MM BOF at the same time that Ted and I
->> were discussing it in the FS BOF.  Some coordination required (like
->> maybe Kalesh could have mentioned it to me rathere than assuming I'd be
->> there?)
->>
->>> +#define arch_exec_folio_order() ilog2(SZ_64K >> PAGE_SHIFT)
->>
->> I don't think the "arch" really adds much value here.
->>
->> #define exec_folio_order()	get_order(SZ_64K)
-> 
-> How about AMD’s PTE coalescing, which does PTE compression at
-> 16KB or 32KB level? It covers 4 16KB and 2 32KB, at least it will
-> not hurt AMD PTE coalescing. Starting with 64KB across all arch
-> might be simpler to see the performance impact. Just a comment,
-> no objection. :)
+On 03/28, syzbot wrote:
+>
+> > #syz test: upstream
+>
+> want either no args or 2 args (repo, branch), got 5
 
-exec_folio_order() is defined per-architecture and SZ_64K is the arm64 preferred
-size. At the moment x86 is not opted in, but they could choose to opt in with
-32K (or whatever else makese sense) if the HW supports coalescing.
+#syz test
 
-I'm not sure if you thought this was global and are arguing against that, or if
-you are arguing for it to be global because it will more easily show us
-performance regressions earlier if x86 is doing this too?
-
-> 
-> Best Regards,
-> Yan, Zi
+diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+index 56e62978e502..aa9cd248a243 100644
+--- a/net/9p/trans_fd.c
++++ b/net/9p/trans_fd.c
+@@ -669,7 +669,6 @@ static void p9_poll_mux(struct p9_conn *m)
+ 
+ static int p9_fd_request(struct p9_client *client, struct p9_req_t *req)
+ {
+-	__poll_t n;
+ 	struct p9_trans_fd *ts = client->trans;
+ 	struct p9_conn *m = &ts->conn;
+ 
+@@ -687,13 +686,7 @@ static int p9_fd_request(struct p9_client *client, struct p9_req_t *req)
+ 	list_add_tail(&req->req_list, &m->unsent_req_list);
+ 	spin_unlock(&m->req_lock);
+ 
+-	if (test_and_clear_bit(Wpending, &m->wsched))
+-		n = EPOLLOUT;
+-	else
+-		n = p9_fd_poll(m->client, NULL, NULL);
+-
+-	if (n & EPOLLOUT && !test_and_set_bit(Wworksched, &m->wsched))
+-		schedule_work(&m->wq);
++	p9_poll_mux(m);
+ 
+ 	return 0;
+ }
 
 
