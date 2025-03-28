@@ -1,338 +1,290 @@
-Return-Path: <linux-fsdevel+bounces-45212-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B83C9A74C2C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 15:13:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC590A74C5E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 15:21:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4653C3B69DD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 14:09:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C65BD18871F4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 14:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F921ACECF;
-	Fri, 28 Mar 2025 14:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25641B6CE9;
+	Fri, 28 Mar 2025 14:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CqLEGb7F"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Z0npusDx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4731F18FDAF;
-	Fri, 28 Mar 2025 14:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48161B4244
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Mar 2025 14:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743170962; cv=none; b=qkffzI975EP3oDySRPuNg2gXJs+5ynQooVrw7jXihztECavFGIVJe6mCksHJi7omwdoxLWEdanQ0am9ZdRwvYVQGt7TWCs7dvk3HIehPYtkoc7aCDbCEu2I4YSeJhYljHw9lfOJi7HVhHZrsOgz1P4A/cC9F+mciQSWm6iHGrFk=
+	t=1743171624; cv=none; b=OPU2nRjr6HVapWy9FtcVpNYjf5EFh5Wa6aHX9JbA11vfImpHLR+aAYXPTi+PuLa/xvXiNmhb+OF3vc1Gm/IUE8VtfH+JcF+O91tH2kIl1okD7AllnF9rlN09l2kaXyb0QJQP6hWGOOfG0brgj0zgnzaiEH+v/dGzJMnQ6Yftlrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743170962; c=relaxed/simple;
-	bh=tXCqTGn/bYispaGD35awccbnSyOSYc7UdrJ7NfU9JU4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CZT13Mgjdl+Uj0VJ0r8PrgJtYxcoNaj14sOwgUjT9q4H1qKNRjp8BLXgg5eBLLaFNg1GnIc2htWEgGe5w0ZIcMXbJuWjVI+TfSu4M1JSSHAg7Bo/I5vxFNzSjfhlPPdy7Z8RPskvnmiy1MtZhhC84oJxv2icGnxYfOubSlKB8BA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CqLEGb7F; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e61d91a087so3614962a12.0;
-        Fri, 28 Mar 2025 07:09:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743170958; x=1743775758; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2ZsOuifdSx5C6zG54VnSZPZcGikHAgTXK/kBvDrJLmc=;
-        b=CqLEGb7F22DNYtU3eg/mAMQt+QSwpTTmJCQHNkw1AvCPymWCTGzk/Stki/Lpj/8Sjw
-         6XD9Y6n1BodYE53qgIwRz3ELAeSVv1z5b2tsUuBxyeOopXmgfszgIMwxMEwbXNiF4YtV
-         19w5adfstOEBPdF34H/tB05VZgy3j8pPelOikQyZx0J+YF4tghq63S1Iy88pFpGEx3s9
-         VqyAmPgnxWnJ5Q+CK5aI80x35EBtgyNgpo4TlzmRrA58f/EYSTLclj5ODzXLB3go4ubp
-         qVsVmEOwrwBX9LS6jw9HsSwSK2z4YJ8DyjXB2+nqXhPXQ8gpa1KxEbLd5Hzqh4bQ4ChR
-         EwbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743170958; x=1743775758;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2ZsOuifdSx5C6zG54VnSZPZcGikHAgTXK/kBvDrJLmc=;
-        b=iEWFOqulACE0Le2PR0KTc5Za5YwyFzGuBeJDrStxr7k0Og3ino9FZkSbhjZ0mwkoOF
-         gzDL/gsm7in9IhG7ku41L/r6+9YnQ9UVaThMBtP6HH4YEERZee2kVFqZLcawq9SCitXi
-         wAG1LjD7ryp8cdMSQPFZeT7TT/1V7TFLl2T+Zh+1DCgoWBvr7ucPSWXmBlfNAO3x4LAB
-         igXIQ4zsK6b2/Nv+ffEs/XwSpTijab/R85LHuqCr4QHkTy24u4cDRvBrNOxdAAQPxQMd
-         d4cD9IdnwjKNhQo2KOJtnzONw6CRweGQHCA/8GIlPFOUrbVWzkFDNQ7V2tnqYYBcp4dp
-         IR4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUeEndVMFA0urS85HYxz6KwV7U1m0d8xOnUSwusQbAZMoy5VlU7EwfXLfG05nre0H4hTNLYYUZ7wNH2@vger.kernel.org, AJvYcCUjxAjtdHPrKr1ZXJX/e5gPEkqwyGaGm+LcfB2Fvbh1YsEyaKf14UV9dmPpjDnwJ2/EXLFejr7FAA8=@vger.kernel.org, AJvYcCUm3/vUisLsi5WlLgJYlKub6DTFlGJ4g1q4XLgBIKqEMfTwC/iiwXPN7UZjyhOK4/N2xdKnICYntbWLkTVH@vger.kernel.org, AJvYcCVISM0Iby05unvWuAZKQ7k5oIqobSZzE6fRLd8JB+CUkG02zjTR69J4vPm9cL9uGGbODjnXU+OeZRS9Do7AjL8IAbowFAJt@vger.kernel.org, AJvYcCVKPnSf5k8RCx3Se3aiNbT380eHelUDf9X+B6AZhga7+NjO2ybleFhIcMFltAxn5v/fJzJNOyOUUg==@vger.kernel.org, AJvYcCVflDAg7fcXg1qGnIcyu932WgPhNbVf7b45AExqF2XQXz3AOCGGo+LXUKDmVWDO7y1ZeircoWKdEKcRYPH5@vger.kernel.org, AJvYcCW1kZAMx7Yp32YHQfC6XlzKXIQe9WbMxsr5JBfbHQRktp7inLni0TShUpzaJtLPb9XyUKOyoIYeMU9F@vger.kernel.org, AJvYcCW3H9DEcCh+WFK/nTwh5iMuSgSNEeepe2Tk38dCl+CIlHLl5Bp7mHMVkZbzdEoqLcuvjo3nVhsbMjRT7w==@vger.kernel.org, AJvYcCWMrfvtwHD2JRyZ4pSR/H8r/eMvVUzDR+MzwJU9OFyZA5HMTvoi0YLvWiP0U6tsVRC3X5EWCogpQRQiUjmEOQ==@vger.kernel.org, AJvYcCXGn2pmK8qJ
- l91vemLytJGZKQXGBh46wB22RTJuKQLI6uVYU6wxA9G3/1JrjV1ld7StGK2puPOjrPYzcw==@vger.kernel.org, AJvYcCXbf6zb6yKA0Zr8lIRe07a+7OOhrhNNCms0Rk5cLFwWSMgp/tyM6k10XfNv7tu5y56u2TqpiUGFxIoIXw==@vger.kernel.org, AJvYcCXnJnV7c+toLb7p8Z8XpJfqZMQiuUP7ZIXtR45e22YIrYD2ODMIupe11pJcptZEYGJMpMpi06I4NhRkXA==@vger.kernel.org, AJvYcCXu91M72oCKSliVFKXJc2MC3WhGH2mtQFe3U5gMNZShbfMRJG6iqvJcgThNc2SrN/T5tL5VDkZDB0w26Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTM/JQrXFnBS7h8VUVGdier22ne7ATe7GV/Wgz97pRVxGiYU1H
-	/wmNCE87Ot6ggg/8Sh5j+wWhRxOHo2SyYg2UEn4i3sre+JCLeDMio3lUdhHqAts24k/foo6zoCj
-	oEa11Los4L9qgKbkQPPVU1hbsEdM=
-X-Gm-Gg: ASbGncsDF/PASL58mHhjfO8lGtYBdFTCcGpuxDlWipccgefWrBtyMhDpprxG8FnZMfb
-	r2Nnmr5tcqgl8cCMN/+mkFWYw9GD8ofRGk7DQ8czP2aDHApYogxOt3DyEg3P0Xto6MK8erecuq4
-	e2koY0Q6cueBFaFDEvWbE712RFjg==
-X-Google-Smtp-Source: AGHT+IHR2ixT+t94BjkZr/w2qrKr8vCyOHZOQeJuHGHNo/LQshrJ8a3gU3C5jc0FaYRkpYxsuH9rvd/3gEooPk/WaTY=
-X-Received: by 2002:a17:906:f587:b0:ac6:f6f4:adad with SMTP id
- a640c23a62f3a-ac6fb145b61mr858589366b.45.1743170957819; Fri, 28 Mar 2025
- 07:09:17 -0700 (PDT)
+	s=arc-20240116; t=1743171624; c=relaxed/simple;
+	bh=tCiUrUdCF2LourYFrLD46zAIiUJklcnRNi2hRVIDCGU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=awNBjiS/1Z41Wpw1ryQHxTQUEP2/UnyecFBAPAod8eBHxV4KJduLgGCo+MFyro7RJBkaHMK9mx0UXVRKstpAXhpLHjdUFJVQiJ15tWbOU30/zJuNEnytAqQTgejRJicqnBXX5YtOAAVmjzVLL+WvQUc/r1TC5QN833MYLO1Vn6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Z0npusDx; arc=none smtp.client-ip=185.125.25.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZPMrc4s9kzKJ0;
+	Fri, 28 Mar 2025 15:11:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1743171072;
+	bh=NFpUu6WrzhfUSQQIQTu0ReypD0HxLWchYWLFvMJMHMc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Z0npusDx073v2JnL3O5Irx8nSpTz8f0cgOlbn2l2iSzLaE7891FHnwk3Dm/eI1pzY
+	 itkSGtdwwOK+ht2kDo0Xy75kfoq0ARYA2jK6v/SixjaUXzpI/bVYJiKiDQGA52Fqzr
+	 OhjOHxNi4s0C5q3od047kGO5VwvrA6SVbzc0FjKk=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZPMrb3BTZzbVQ;
+	Fri, 28 Mar 2025 15:11:11 +0100 (CET)
+Date: Fri, 28 Mar 2025 15:11:10 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <serge@hallyn.com>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, linux-security-module@vger.kernel.org, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Kees Cook <kees@kernel.org>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [linux-next:master] [landlock]  9d65581539:
+ WARNING:suspicious_RCU_usage
+Message-ID: <20250328.aLawah0saice@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org>
- <CAOQ4uxjQDUg8HFG+mSxMkR54zen7nC2jttzOKqh13Bx-uosh3Q@mail.gmail.com>
- <20250323103234.2mwhpsbigpwtiby4@pali> <CAOQ4uxiTKhGs1H-w1Hv-+MqY284m92Pvxfem0iWO+8THdzGvuA@mail.gmail.com>
- <20250327192629.ivnarhlkfbhbzjcl@pali> <CAOQ4uxhJ53h+1AjtF4B64onqvRfZsJ3n1OFikyJpXAPTyX45iQ@mail.gmail.com>
- <20250327211301.kdsohqou3s242coa@pali>
-In-Reply-To: <20250327211301.kdsohqou3s242coa@pali>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 28 Mar 2025 15:09:06 +0100
-X-Gm-Features: AQ5f1JpNweOw-d_V1vidFC1VFgAIx6VvCKUFr5FxsVRcprjnxwDwW9vgqTHuYto
-Message-ID: <CAOQ4uxiBh42oGyqtc3ekO+jCqtQz85ZWrwFZ9eS0=C8Zq+hPPg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/3] fs: introduce getfsxattrat and setfsxattrat syscalls
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>, Richard Henderson <richard.henderson@linaro.org>, 
-	Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-alpha@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-arch@vger.kernel.org, selinux@vger.kernel.org, 
-	Andrey Albershteyn <aalbersh@kernel.org>, linux-xfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250326.yee0ba6Yai3m@digikod.net>
+ <Z+ZrSPZph9cDvUR4@xsang-OptiPlex-9020>
+X-Infomaniak-Routing: alpha
 
-On Thu, Mar 27, 2025 at 10:13=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org> =
-wrote:
->
-> On Thursday 27 March 2025 21:57:34 Amir Goldstein wrote:
-> > On Thu, Mar 27, 2025 at 8:26=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.or=
-g> wrote:
-> > >
-> > > On Thursday 27 March 2025 12:47:02 Amir Goldstein wrote:
-> > > > On Sun, Mar 23, 2025 at 11:32=E2=80=AFAM Pali Roh=C3=A1r <pali@kern=
-el.org> wrote:
-> > > > >
-> > > > > On Sunday 23 March 2025 09:45:06 Amir Goldstein wrote:
-> > > > > > On Fri, Mar 21, 2025 at 8:50=E2=80=AFPM Andrey Albershteyn <aal=
-bersh@redhat.com> wrote:
-> > > > > > >
-> > > > > > > This patchset introduced two new syscalls getfsxattrat() and
-> > > > > > > setfsxattrat(). These syscalls are similar to FS_IOC_FSSETXAT=
-TR ioctl()
-> > > > > > > except they use *at() semantics. Therefore, there's no need t=
-o open the
-> > > > > > > file to get an fd.
-> > > > > > >
-> > > > > > > These syscalls allow userspace to set filesystem inode attrib=
-utes on
-> > > > > > > special files. One of the usage examples is XFS quota project=
-s.
-> > > > > > >
-> > > > > > > XFS has project quotas which could be attached to a directory=
-. All
-> > > > > > > new inodes in these directories inherit project ID set on par=
-ent
-> > > > > > > directory.
-> > > > > > >
-> > > > > > > The project is created from userspace by opening and calling
-> > > > > > > FS_IOC_FSSETXATTR on each inode. This is not possible for spe=
-cial
-> > > > > > > files such as FIFO, SOCK, BLK etc. Therefore, some inodes are=
- left
-> > > > > > > with empty project ID. Those inodes then are not shown in the=
- quota
-> > > > > > > accounting but still exist in the directory. This is not crit=
-ical but in
-> > > > > > > the case when special files are created in the directory with=
- already
-> > > > > > > existing project quota, these new inodes inherit extended att=
-ributes.
-> > > > > > > This creates a mix of special files with and without attribut=
-es.
-> > > > > > > Moreover, special files with attributes don't have a possibil=
-ity to
-> > > > > > > become clear or change the attributes. This, in turn, prevent=
-s userspace
-> > > > > > > from re-creating quota project on these existing files.
-> > > > > > >
-> > > > > > > Christian, if this get in some mergeable state, please don't =
-merge it
-> > > > > > > yet. Amir suggested these syscalls better to use updated stru=
-ct fsxattr
-> > > > > > > with masking from Pali Roh=C3=A1r patchset, so, let's see how=
- it goes.
-> > > > > >
-> > > > > > Andrey,
-> > > > > >
-> > > > > > To be honest I don't think it would be fair to delay your sysca=
-lls more
-> > > > > > than needed.
-> > > > >
-> > > > > I agree.
-> > > > >
-> > > > > > If Pali can follow through and post patches on top of your sysc=
-alls for
-> > > > > > next merge window that would be great, but otherwise, I think t=
-he
-> > > > > > minimum requirement is that the syscalls return EINVAL if fsx_p=
-ad
-> > > > > > is not zero. we can take it from there later.
-> > > > >
-> > > > > IMHO SYS_getfsxattrat is fine in this form.
-> > > > >
-> > > > > For SYS_setfsxattrat I think there are needed some modifications
-> > > > > otherwise we would have problem again with backward compatibility=
- as
-> > > > > is with ioctl if the syscall wants to be extended in future.
-> > > > >
-> > > > > I would suggest for following modifications for SYS_setfsxattrat:
-> > > > >
-> > > > > - return EINVAL if fsx_xflags contains some reserved or unsupport=
-ed flag
-> > > > >
-> > > > > - add some flag to completely ignore fsx_extsize, fsx_projid, and
-> > > > >   fsx_cowextsize fields, so SYS_setfsxattrat could be used just t=
-o
-> > > > >   change fsx_xflags, and so could be used without the preceding
-> > > > >   SYS_getfsxattrat call.
-> > > > >
-> > > > > What do you think about it?
-> > > >
-> > > > I think all Andrey needs to do now is return -EINVAL if fsx_pad is =
-not zero.
-> > > >
-> > > > You can use this later to extend for the semantics of flags/fields =
-mask
-> > > > and we can have a long discussion later on what this semantics shou=
-ld be.
-> > > >
-> > > > Right?
-> > > >
-> > > > Amir.
-> > >
-> > > It is really enough?
-> >
-> > I don't know. Let's see...
-> >
-> > > All new extensions later would have to be added
-> > > into fsx_pad fields, and currently unused bits in fsx_xflags would be
-> > > unusable for extensions.
-> >
-> > I am working under the assumption that the first extension would be
-> > to support fsx_xflags_mask and from there, you could add filesystem
-> > flags support checks and then new flags. Am I wrong?
-> >
-> > Obviously, fsx_xflags_mask would be taken from fsx_pad space.
-> > After that extension is implemented, calling SYS_setfsxattrat() with
-> > a zero fsx_xflags_mask would be silly for programs that do not do
-> > the legacy get+set.
-> >
-> > So when we introduce  fsx_xflags_mask, we could say that a value
-> > of zero means that the mask is not being checked at all and unknown
-> > flags in set syscall are ignored (a.k.a legacy ioctl behavior).
-> >
-> > Programs that actually want to try and set without get will have to set
-> > a non zero fsx_xflags_mask to do something useful.
->
-> Here we need to also solve the problem that without GET call we do not
-> have valid values for fsx_extsize, fsx_projid, and fsx_cowextsize. So
-> maybe we would need some flag in fsx_pad that fsx_extsize, fsx_projid,
-> or fsx_cowextsize are ignored/masked.
->
-> > I don't think this is great.
-> > I would rather that the first version of syscalls will require the mask
-> > and will always enforce filesystems supported flags.
->
-> It is not great... But what about this? In a first step (part of this
-> syscall patch series) would be just a check that fsx_pad is zero.
-> Non-zero will return -EINVAL.
->
-> In next changes would added fsx_filter bit field, which for each
-> fsx_xflags and also for fsx_extsize, fsx_projid, and fsx_cowextsize
-> fields would add a new bit flag which would say (when SET) that the
-> particular thing has to be ignored.
+On Fri, Mar 28, 2025 at 05:26:32PM +0800, Oliver Sang wrote:
+> hi, Mickaël Salaün,
+> 
+> On Fri, Mar 28, 2025 at 09:31:15AM +0100, Mickaël Salaün wrote:
+> > On Fri, Mar 28, 2025 at 02:05:59PM +0800, Oliver Sang wrote:
+> > > hi, Mickaël Salaün,
+> > > 
+> > > On Fri, Mar 28, 2025 at 11:00:37AM +0800, Oliver Sang wrote:
+> > > > hi, Mickaël Salaün,
+> > > > 
+> > > > On Thu, Mar 27, 2025 at 07:41:08PM +0100, Mickaël Salaün wrote:
+> > > > > Hi Olivier,
+> > > > > 
+> > > > > I pushed an updated yesterday in linux-next that should fix this issue
+> > > > > and this other issue too:
+> > > > > https://lore.kernel.org/all/20250326.yee0ba6Yai3m@digikod.net/
+> > > > > 
+> > > > > Could you please confirm that these issues are really fixed? Or
+> > > > > otherwise, please let me know when I should expect (or not) an email
+> > > > > from kernel test robot. :)
+> > > > 
+> > > > ok, we've started the tests for both issues. upon the commit:
+> > > > db8da9da41bce (tag: next-20250327, linux-next/master) Add linux-next specific files for 20250327
+> > > 
+> > > sorry that due to unknown reason, we cannot build sucessfully upon db8da9da41bce
+> > > for both tests (which are using randconfig). could you give us the commit-id
+> > > of your fix? we could try test upon that fix commit again.
+> > 
+> > The new commit is 18eb75f3af40 ("landlock: Always allow signals between
+> > threads of the same process").
+> 
+> it turned out the build failure is due to my typo. shamed...
+> 
+> we finished tests still upon db8da9da41bce, for the WARNING:suspicious_RCU_usage
+> issue in this report, we run the tests 20 times, cannot reproduce now.
+> 
+> for the random issues we reported in
+> https://lore.kernel.org/all/202503261534.22d970e8-lkp@intel.com/
+> now we cannot reproduce it with db8da9da41bce by 500 runs.
 
-1. I don't like the inverse mask. statx already has the stx_mask
-    and stx_attributes_mask, so I rather stick to same semantics
-    because some of those attributes are exposed via statx as well
-2. fsx_*extsize already have a bit that says if that the particular
-    attribute is valid or not, so setting a zero fsx_cowextsize with the
-    flag FS_XFLAG_COWEXTSIZE has no effect in xfs:
+Yes, that makes sense with my fix.
 
-        /*
-         * Only set the extent size hint if we've already determined that t=
-he
-         * extent size hint should be set on the inode. If no extent size f=
-lags
-         * are set on the inode then unconditionally clear the extent size =
-hint.
-         */
-        if (ip->i_diflags & (XFS_DIFLAG_EXTSIZE | XFS_DIFLAG_EXTSZINHERIT))
-                ip->i_extsize =3D XFS_B_TO_FSB(mp, fa->fsx_extsize);
-        else
-                ip->i_extsize =3D 0;
+> 
+> we think both issues are solved.
+> 
+> and since db8da9da41bce includes the 18eb75f3af40, we won't test again upon
+> 18eb75f3af40. thanks!
 
-        if (xfs_has_v3inodes(mp)) {
-                if (ip->i_diflags2 & XFS_DIFLAG2_COWEXTSIZE)
-                        ip->i_cowextsize =3D XFS_B_TO_FSB(mp, fa->fsx_cowex=
-tsize);
-                else
-                        ip->i_cowextsize =3D 0;
-        }
+Thanks for the confirmation!
 
-I think we need to enforce this logic in fileattr_set_prepare()
-and I think we need to add a flag FS_XFLAG_PROJID
-that will be set in GET when fsx_projid !=3D 0 and similarly
-required when setting fsx_projid !=3D 0.
-
-Probably will need to add some backward compat glue for this
-flag in GET ioctl to avoid breaking out of tree fs and fuse.
-
->
-> So when fsx_pad is all-zeros then fsx_filter (first field in fsx_pad)
-> would say that nothing in fsx_xflags, fsx_extsize, fsx_projid, and
-> fsx_cowextsize is ignored, and hence behave like before.
->
-> And when something in fsx_pad/fsx_filter is set then it says which
-> fields are ignored/filtered-out.
->
-> > If you can get those patches (on top of current series) posted and
-> > reviewed in time for the next merge window, including consensus
-> > on the actual semantics, that would be the best IMO.
->
-> I think that this starting to be more complicated to rebase my patches
-> in a way that they do not affect IOCTL path but implement it properly
-> for new syscall path. It does not sounds like a trivial thing which I
-> would finish in merge window time and having proper review and consensus
-> on this.
->
-
-Yes, it is better to separate the two efforts.
-
-wrt erroring on unsupported SET flags, all fs other than xfs already
-have some variant of fileattr_has_fsx(), so xfs is the only filesystem
-that requires special care with the new syscalls.
-It's easier to write a patch than it is to explain what I mean, so
-I'll try to write a patch.
-
-Thanks,
-Amir.
+> 
+> 
+> > 
+> > > 
+> > > > 
+> > > > if this is not the correct commit to check, please let us know. thanks!
+> > > > 
+> > > > > 
+> > > > > Regards,
+> > > > >  Mickaël
+> > > > > 
+> > > > > On Wed, Mar 26, 2025 at 04:00:12PM +0800, kernel test robot wrote:
+> > > > > > 
+> > > > > > hi, Mickaël Salaün,
+> > > > > > 
+> > > > > > we just reported a random
+> > > > > > "Oops:general_protection_fault,probably_for_non-canonical_address#:#[##]SMP_KASAN"
+> > > > > > issue in
+> > > > > > https://lore.kernel.org/all/202503261534.22d970e8-lkp@intel.com/
+> > > > > > 
+> > > > > > now we noticed this commit is also in linux-next/master.
+> > > > > > 
+> > > > > > we don't have enough knowledge to check the difference, but we found a
+> > > > > > persistent issue for this commit.
+> > > > > > 
+> > > > > > 6d9ac5e4d70eba3e 9d65581539252fdb1666917a095
+> > > > > > ---------------- ---------------------------
+> > > > > >        fail:runs  %reproduction    fail:runs
+> > > > > >            |             |             |
+> > > > > >            :6          100%           6:6     dmesg.WARNING:suspicious_RCU_usage
+> > > > > >            :6          100%           6:6     dmesg.boot_failures
+> > > > > >            :6          100%           6:6     dmesg.kernel/pid.c:#suspicious_rcu_dereference_check()usage
+> > > > > > 
+> > > > > > below full report FYI.
+> > > > > > 
+> > > > > > 
+> > > > > > Hello,
+> > > > > > 
+> > > > > > kernel test robot noticed "WARNING:suspicious_RCU_usage" on:
+> > > > > > 
+> > > > > > commit: 9d65581539252fdb1666917a09549c13090fe9e5 ("landlock: Always allow signals between threads of the same process")
+> > > > > > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> > > > > > 
+> > > > > > [test failed on linux-next/master eb4bc4b07f66f01618d9cb1aa4eaef59b1188415]
+> > > > > > 
+> > > > > > in testcase: trinity
+> > > > > > version: trinity-x86_64-ba2360ed-1_20241228
+> > > > > > with following parameters:
+> > > > > > 
+> > > > > > 	runtime: 300s
+> > > > > > 	group: group-00
+> > > > > > 	nr_groups: 5
+> > > > > > 
+> > > > > > 
+> > > > > > 
+> > > > > > config: x86_64-randconfig-101-20250325
+> > > > > > compiler: gcc-12
+> > > > > > test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+> > > > > > 
+> > > > > > (please refer to attached dmesg/kmsg for entire log/backtrace)
+> > > > > > 
+> > > > > > 
+> > > > > > 
+> > > > > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > > > > > the same patch/commit), kindly add following tags
+> > > > > > | Reported-by: kernel test robot <oliver.sang@intel.com>
+> > > > > > | Closes: https://lore.kernel.org/oe-lkp/202503261510.f9652c11-lkp@intel.com
+> > > > > > 
+> > > > > > 
+> > > > > > [  166.893101][ T3747] WARNING: suspicious RCU usage
+> > > > > > [  166.893462][ T3747] 6.14.0-rc5-00006-g9d6558153925 #1 Not tainted
+> > > > > > [  166.893895][ T3747] -----------------------------
+> > > > > > [  166.894239][ T3747] kernel/pid.c:414 suspicious rcu_dereference_check() usage!
+> > > > > > [  166.894747][ T3747]
+> > > > > > [  166.894747][ T3747] other info that might help us debug this:
+> > > > > > [  166.894747][ T3747]
+> > > > > > [  166.895450][ T3747]
+> > > > > > [  166.895450][ T3747] rcu_scheduler_active = 2, debug_locks = 1
+> > > > > > [  166.896030][ T3747] 3 locks held by trinity-c2/3747:
+> > > > > > [ 166.896415][ T3747] #0: ffff888114a5a930 (&group->mark_mutex){+.+.}-{4:4}, at: fcntl_dirnotify (include/linux/sched/mm.h:332 include/linux/sched/mm.h:386 include/linux/fsnotify_backend.h:279 fs/notify/dnotify/dnotify.c:329) 
+> > > > > > [ 166.897165][ T3747] #1: ffff888148bbea60 (&mark->lock){+.+.}-{3:3}, at: fcntl_dirnotify (fs/notify/dnotify/dnotify.c:349) 
+> > > > > > [ 166.897831][ T3747] #2: ffff888108a53220 (&f_owner->lock){....}-{3:3}, at: __f_setown (fs/fcntl.c:137) 
+> > > > > > [  166.898481][ T3747]
+> > > > > > [  166.898481][ T3747] stack backtrace:
+> > > > > > [  166.898901][ T3747] CPU: 0 UID: 65534 PID: 3747 Comm: trinity-c2 Not tainted 6.14.0-rc5-00006-g9d6558153925 #1
+> > > > > > [  166.898908][ T3747] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> > > > > > [  166.898912][ T3747] Call Trace:
+> > > > > > [  166.898916][ T3747]  <TASK>
+> > > > > > [ 166.898921][ T3747] dump_stack_lvl (lib/dump_stack.c:123) 
+> > > > > > [ 166.898932][ T3747] lockdep_rcu_suspicious (kernel/locking/lockdep.c:6848) 
+> > > > > > [ 166.898945][ T3747] pid_task (kernel/pid.c:414 (discriminator 11)) 
+> > > > > > [ 166.898954][ T3747] hook_file_set_fowner (security/landlock/fs.c:1651 (discriminator 9)) 
+> > > > > > [ 166.898963][ T3747] security_file_set_fowner (arch/x86/include/asm/atomic.h:23 (discriminator 4) include/linux/atomic/atomic-arch-fallback.h:457 (discriminator 4) include/linux/jump_label.h:262 (discriminator 4) security/security.c:3062 (discriminator 4)) 
+> > > > > > [ 166.898969][ T3747] __f_setown (fs/fcntl.c:145) 
+> > > > > > [ 166.898980][ T3747] fcntl_dirnotify (fs/notify/dnotify/dnotify.c:233 fs/notify/dnotify/dnotify.c:371) 
+> > > > > > [ 166.898996][ T3747] do_fcntl (fs/fcntl.c:539) 
+> > > > > > [ 166.899002][ T3747] ? f_getown (fs/fcntl.c:448) 
+> > > > > > [ 166.899007][ T3747] ? check_prev_add (kernel/locking/lockdep.c:3862) 
+> > > > > > [ 166.899011][ T3747] ? do_syscall_64 (arch/x86/entry/common.c:102) 
+> > > > > > [ 166.899023][ T3747] ? syscall_exit_to_user_mode (include/linux/entry-common.h:361 kernel/entry/common.c:220) 
+> > > > > > [ 166.899038][ T3747] __x64_sys_fcntl (fs/fcntl.c:591 fs/fcntl.c:576 fs/fcntl.c:576) 
+> > > > > > [ 166.899050][ T3747] do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83) 
+> > > > > > [ 166.899062][ T3747] ? find_held_lock (kernel/locking/lockdep.c:5341) 
+> > > > > > [ 166.899072][ T3747] ? __lock_release+0x10b/0x440 
+> > > > > > [ 166.899076][ T3747] ? __task_pid_nr_ns (include/linux/rcupdate.h:347 include/linux/rcupdate.h:880 kernel/pid.c:514) 
+> > > > > > [ 166.899082][ T3747] ? reacquire_held_locks (kernel/locking/lockdep.c:5502) 
+> > > > > > [ 166.899087][ T3747] ? lockdep_hardirqs_on (kernel/locking/lockdep.c:4470) 
+> > > > > > [ 166.899093][ T3747] ? do_syscall_64 (arch/x86/entry/common.c:102) 
+> > > > > > [ 166.899099][ T3747] ? do_syscall_64 (arch/x86/entry/common.c:102) 
+> > > > > > [ 166.899111][ T3747] ? syscall_exit_to_user_mode (include/linux/entry-common.h:361 kernel/entry/common.c:220) 
+> > > > > > [ 166.899119][ T3747] ? lockdep_hardirqs_on_prepare (kernel/locking/lockdep.c:469 kernel/locking/lockdep.c:4409) 
+> > > > > > [ 166.899124][ T3747] ? do_syscall_64 (arch/x86/entry/common.c:102) 
+> > > > > > [ 166.899129][ T3747] ? lockdep_hardirqs_on (kernel/locking/lockdep.c:4470) 
+> > > > > > [ 166.899134][ T3747] ? do_syscall_64 (arch/x86/entry/common.c:102) 
+> > > > > > [ 166.899139][ T3747] ? do_int80_emulation (arch/x86/include/asm/atomic.h:23 include/linux/atomic/atomic-arch-fallback.h:457 include/linux/jump_label.h:262 arch/x86/entry/common.c:230) 
+> > > > > > [ 166.899149][ T3747] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130) 
+> > > > > > [  166.899155][ T3747] RIP: 0033:0x7f55ad007719
+> > > > > > [ 166.899159][ T3747] Code: 08 89 e8 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d b7 06 0d 00 f7 d8 64 89 01 48
+> > > > > > All code
+> > > > > > ========
+> > > > > >    0:	08 89 e8 5b 5d c3    	or     %cl,-0x3ca2a418(%rcx)
+> > > > > >    6:	66 2e 0f 1f 84 00 00 	cs nopw 0x0(%rax,%rax,1)
+> > > > > >    d:	00 00 00 
+> > > > > >   10:	90                   	nop
+> > > > > >   11:	48 89 f8             	mov    %rdi,%rax
+> > > > > >   14:	48 89 f7             	mov    %rsi,%rdi
+> > > > > >   17:	48 89 d6             	mov    %rdx,%rsi
+> > > > > >   1a:	48 89 ca             	mov    %rcx,%rdx
+> > > > > >   1d:	4d 89 c2             	mov    %r8,%r10
+> > > > > >   20:	4d 89 c8             	mov    %r9,%r8
+> > > > > >   23:	4c 8b 4c 24 08       	mov    0x8(%rsp),%r9
+> > > > > >   28:	0f 05                	syscall
+> > > > > >   2a:*	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax		<-- trapping instruction
+> > > > > >   30:	73 01                	jae    0x33
+> > > > > >   32:	c3                   	ret
+> > > > > >   33:	48 8b 0d b7 06 0d 00 	mov    0xd06b7(%rip),%rcx        # 0xd06f1
+> > > > > >   3a:	f7 d8                	neg    %eax
+> > > > > >   3c:	64 89 01             	mov    %eax,%fs:(%rcx)
+> > > > > >   3f:	48                   	rex.W
+> > > > > > 
+> > > > > > Code starting with the faulting instruction
+> > > > > > ===========================================
+> > > > > >    0:	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax
+> > > > > >    6:	73 01                	jae    0x9
+> > > > > >    8:	c3                   	ret
+> > > > > >    9:	48 8b 0d b7 06 0d 00 	mov    0xd06b7(%rip),%rcx        # 0xd06c7
+> > > > > >   10:	f7 d8                	neg    %eax
+> > > > > >   12:	64 89 01             	mov    %eax,%fs:(%rcx)
+> > > > > >   15:	48                   	rex.W
+> > > > > > [  166.899164][ T3747] RSP: 002b:00007ffff6eefb48 EFLAGS: 00000246 ORIG_RAX: 0000000000000048
+> > > > > > [  166.899168][ T3747] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f55ad007719
+> > > > > > [  166.899172][ T3747] RDX: 0000000000000027 RSI: 0000000000000402 RDI: 0000000000000043
+> > > > > > [  166.899174][ T3747] RBP: 00007f55ab92f058 R08: 0000000099999999 R09: 00000000377dd000
+> > > > > > [  166.899177][ T3747] R10: 0000000084848484 R11: 0000000000000246 R12: 0000000000000048
+> > > > > > [  166.899180][ T3747] R13: 00007f55acf036c0 R14: 00007f55ab92f058 R15: 00007f55ab92f000
+> > > > > > [  166.899203][ T3747]  </TASK>
+> > > > > > 
+> > > > > > 
+> > > > > > The kernel config and materials to reproduce are available at:
+> > > > > > https://download.01.org/0day-ci/archive/20250326/202503261510.f9652c11-lkp@intel.com
+> > > > > > 
+> > > > > > 
+> > > > > > 
+> > > > > > -- 
+> > > > > > 0-DAY CI Kernel Test Service
+> > > > > > https://github.com/intel/lkp-tests/wiki
+> > > > > > 
+> > > > > > 
 
