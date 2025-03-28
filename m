@@ -1,93 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-45187-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45188-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD3EA7430E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 05:43:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E510A74470
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 08:43:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72E4517938C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 04:43:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0F54189FFA4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 07:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26EAE21129C;
-	Fri, 28 Mar 2025 04:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11517211A21;
+	Fri, 28 Mar 2025 07:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JViAqne8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C86BE573
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Mar 2025 04:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4708118871F;
+	Fri, 28 Mar 2025 07:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743136987; cv=none; b=F9OvvILFDeC9BGdyJvccT5tLde2XdE3WLRAKIlcHQaKFjYhz8H7NxN5egWlfMW+zhvhow4GtQ77WnkfIlsw7YjzFGVe7TFJg13FlxqunKIQ6NAY+oyjU9/GGspqbe6mZZNc4CQ/M80Jg4jguqf1mmhRUXeSXtr+Bs3Yn6D8GSSg=
+	t=1743147811; cv=none; b=mA1ogNCb41WVMZIWpkKsxLNHpQo1mTjJ11gZ4Tq/OZ3XtXJLwK882I/s5qvl0d2uWg/WNnkEfY37ERd/xr2FBSJvLQTiswL3hoM4xRTT39L0+hcL0J7V7ikMe1KNq/ph5davXHFtgo2HjC/NNUP/TLiCvht7KkxoPn+6gud1Ph4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743136987; c=relaxed/simple;
-	bh=js7lVUj/SeoCBiYflPxyZS1OX5HQtjm0DSuCarpQVOk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=AWIJ0BEKMqDLnix+lrIxI/DUVBokmbGnK/w65owg4Zr020keJC7y8Gl2pruoUg2bEc2ZQQMPOA9M+8bUgsbvWogWJCk+QQSRse+TzReanExL6MQ4/hWW9euMToG3MiZSsGblu08ZvYtqlq0DGpb1lysW62OCdX9tJg4n8TPmmDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-85dac327403so334196439f.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Mar 2025 21:43:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743136984; x=1743741784;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5uDB2tY1hUjqwKYCX0GkGa9GQ8Dhnk/SPYhijdcB1Zw=;
-        b=DO9HkImobc7vt0FZZ/gaNnwAyqPRVbQprwTsOwTrCidElCMUxo22/LDM0bGhxDzA/x
-         VDwpAaJRIKVtZHfR4nRCcrdyIyxAsBbLkV1z1kTshKM3ey9JHXyXHHloZRHwk5lHd4FA
-         4KdZaSFmfl/b9HYgW7mVu23nxHiMWH9Q0SEyc/LdEL7xWHFLMvsFIOVsfLs7pLKX6vOD
-         +u8bqXif1QD3dkivVjvf80bkxuWeyxDQKaX/mLQcSQ+ABNWPo4SSZwErbaIE/c6K3d72
-         Dczi6pVL5p1wqfxFKw40HcLMOGP4wJn8cTy7sT8sY3kyXFrkrXGrKKu034jwYJDAD8qO
-         DhSA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6gX50bPOsohlb6ZAZzFDD4kuHnps4yMF1ds49eRQZ6Im7qtAscUHtBqe3XttmOFe02Y8NrHan3b3eeORz@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOG5saBF9t3ySxK3iEg7783AckPbpOg02p87ax4vkHDGHDWBpu
-	VLgVBnb3N87K9SOl00LnXayAYe7asOilTJZfF2qhfP2lgOmFEtPV3ZyzmyCY9OZMM/Z3S+UkFof
-	L0xi/kSDdANgSMLwpr/WUOonqNjy4/Pp9S/ng1OWAkzjCsH1DGAXMvwM=
-X-Google-Smtp-Source: AGHT+IGWgZFryTvbQEfzj3JsavMzFoFExpg1aIjajV07MaP4R+0EXVOn6LPyfYjxRCyNxZA4kryrJUyJ/SpS825l7GjAM0x5LOEH
+	s=arc-20240116; t=1743147811; c=relaxed/simple;
+	bh=HqrgN/kiCOdnp2YxSRvS8lrUEYa7kvy1aqPS8ARDJsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qbltrQgi47BPs41zbTL6VbUgwF/koWxkIAaq9lMR22MoyPe39kY8uVZri7JaweMe/270T07X9NdDzJaheORtDm8PiwQt4lZUrIYQZhhWuEGLOIbK4xO2zMgp5BoxJlvBrYna4n/eSy2BqzHunqe8FKQIurVEj9e6mfrP9RTLTCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JViAqne8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34AFBC4CEE4;
+	Fri, 28 Mar 2025 07:43:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1743147810;
+	bh=HqrgN/kiCOdnp2YxSRvS8lrUEYa7kvy1aqPS8ARDJsI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JViAqne8L+4nVh7OSTX0X75X9EVXn84ibLHcRNOrFC8jtC3o0Ww+TAfYfqgL6F+lJ
+	 pOGB/4nxFBi0kcsN4DWPLjNgARnOxyv+b1Y9FS4/uEu3vjKcsi5sYlAHC8s0s105Sz
+	 50mFLJii71PPViU5fGssQim/tJ1c9ZgweUhv861M=
+Date: Fri, 28 Mar 2025 08:42:06 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Leah Rumancik <leah.rumancik@gmail.com>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 6.1 000/197] 6.1.132-rc2 review
+Message-ID: <2025032853-property-riches-0166@gregkh>
+References: <20250326154349.272647840@linuxfoundation.org>
+ <CA+G9fYsRQub2qq0ePDs6aBAc+0qHRGwH_WPsTfhcwkviD1eH1w@mail.gmail.com>
+ <CACzhbgQ=TU-C=MvU=fNRwZuFKBRgnrXzQZw15HVci_vT5w8O7Q@mail.gmail.com>
+ <CACzhbgTQCuig6eqOJFshthQfT5-7cVkemY9VtO_vu4d+aTcU=Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:174e:b0:3d3:f040:5878 with SMTP id
- e9e14a558f8ab-3d5cce2c7c9mr76000105ab.21.1743136984504; Thu, 27 Mar 2025
- 21:43:04 -0700 (PDT)
-Date: Thu, 27 Mar 2025 21:43:04 -0700
-In-Reply-To: <49c26b3c-cab9-4ee6-919d-c734f4de6028@amd.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67e628d8.050a0220.2f068f.0057.GAE@google.com>
-Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
-From: syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, brauner@kernel.org, dhowells@redhat.com, 
-	ericvh@kernel.org, jack@suse.cz, jlayton@kernel.org, kprateek.nayak@amd.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux_oss@crudebyte.com, lucho@ionkov.net, mjguzik@gmail.com, 
-	netfs@lists.linux.dev, oleg@redhat.com, swapnil.sapkal@amd.com, 
-	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACzhbgTQCuig6eqOJFshthQfT5-7cVkemY9VtO_vu4d+aTcU=Q@mail.gmail.com>
 
-Hello,
+On Thu, Mar 27, 2025 at 04:19:16PM -0700, Leah Rumancik wrote:
+> sent to stable:
+> https://lore.kernel.org/stable/20250327215925.3423507-1-leah.rumancik@gmail.com/
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Now queued up, thanks.
 
-Reported-by: syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com
-Tested-by: syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         aaec5a95 pipe_read: don't wake up the writer if the pi..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=1285fa4c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8d5a2956e94d7972
-dashboard link: https://syzkaller.appspot.com/bug?extid=62262fdc0e01d99573fc
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=121eede4580000
-
-Note: testing is done by a robot and is best-effort only.
+greg k-h
 
