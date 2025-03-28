@@ -1,96 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-45238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45239-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D995A7507F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 19:43:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 150D9A75082
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 19:44:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E6973B1F37
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 18:43:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29DF61894896
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 18:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05EF1E0E0A;
-	Fri, 28 Mar 2025 18:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="r+y+56TL"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B93A1DED59;
+	Fri, 28 Mar 2025 18:44:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177BC1DED59;
-	Fri, 28 Mar 2025 18:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C087B1E04B9
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Mar 2025 18:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743187425; cv=none; b=ILyGwhUJtKG7+7e5eTc5OxYbuKfXKWeXetrKTZMaeRevu5uyaxvuxcdNDjs8yusHqCmfMfeEOEd8Q2r+YZPn+e+maRhs4hP7YigQikry2A0i2y5CFoRvM8Kf+vHAe2NEyJWk0nv2WVKUIfY19AQFyWGxv9VulBEbQG3qqmjMfdA=
+	t=1743187445; cv=none; b=XRHBrepjDUuBvBx3MAX7vYVGbEtcyQWUzogpWM4+WcYqSZCT7nUARTUiPmp1VRWCqwi5yKRWAO7HPYYnxKrx5NJRLqJrPGgpyPqjMDZI4d0yNlzGZBcFlakZkkO2VYa5shCkGCF1dxH8TGoLXpXs8u+zLY82USjIMp5hY8/CeIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743187425; c=relaxed/simple;
-	bh=O4phGZpwuNl+ZoqeFbMDQGKowzefd5Ymz70pDGjKOdA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o3tK5/hrJjH3XdpIGoJBDtdVSzlHomkqb3nPmV6/qRtKUNCMFIdrPGFKw44vGFieNhd2/1g9E8c9xB34vUO0uzh/kJTWUVJOQ6ihJh0hVGZnjyu8s7x9A7G6kdhVhLk3FbAr7ej3I3NeYRPTtJrwyaqQnJBDSCua4TK8rpVNKAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=r+y+56TL; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=p733MeC/DumrK+eFf9MVIXBeMjP2rdW/UhE8zHZGc2o=; b=r+y+56TLWC4CTDCQ6I2uOYHQ6+
-	FF1c9uaTDHZQw0LPTD2TwREUF9SFvc0FnkK4dLA+smSPpaNxGtYLbFectcACLsMuORKjlqeLRDKP6
-	5Lxis3gQ7GbvayJYTYN5qKeoTvCMpvXt3eL/ioPFAhQhyYQBec7NZ02oCqgJZjbseo6K18WYUQWt0
-	kqBksyntKn8gLbqH1hqJBy5Yp5z1HpBGndrBl2xKSTMk5xFAhKIcQsKICzyQGXrHFslC2mh636obt
-	pkOrU6NIpd4zNfvSq70hhAtErCFxKp40OnRcOl3y3RRRuFoCvRhi13CdaqImBRm3KkUUytguUgM2S
-	KSNH5zrw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1tyEg5-000000084Fw-0fD4;
-	Fri, 28 Mar 2025 18:43:37 +0000
-Date: Fri, 28 Mar 2025 18:43:36 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Viacheslav Dubeyko <slava@dubeyko.com>
-Cc: dan.carpenter@linaro.org, ceph-devel@vger.kernel.org,
-	dhowells@redhat.com, idryomov@gmail.com,
-	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com,
-	amarkuze@redhat.com, Slava.Dubeyko@ibm.com,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] ceph: fix variable dereferenced before check in
- ceph_umount_begin()
-Message-ID: <Z-bt2HBqyVPqA5b-@casper.infradead.org>
-References: <20250328183359.1101617-1-slava@dubeyko.com>
+	s=arc-20240116; t=1743187445; c=relaxed/simple;
+	bh=SPecG2wm/IQkCzIGqgAZ0mzsyrh+xZVxCElSIKvubL4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=EwMhFZI7i4H04NJ2w14shJHs8qB+WDu33vUTK5T3O55IijGNhm/tF+lX7hDLFZxlTk7i5yzcr3tz5nUClfuxMWM9SK2H0sVFutfGzZ1LuTaucvTTb3DTa9KC6p8zoeOkdX5C6giu/9HtOMjosi6r5Tu9wPFcIy+WiDKo7nKxLPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-85e7f5129d5so231318039f.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Mar 2025 11:44:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743187443; x=1743792243;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g90s5dJ2ezUv0GG4ZLhmkiZnYoiDPKfC/SO52fRsdOI=;
+        b=LR/fYACxMZ9idrEKFGj+ovoSChTBfvh/xjP/mxjMgVEKbQnQ3VDUmyFyZEmBrGA+5h
+         GMKkMAi6YQ6WBErX6PFqo0lxzqRc2w2NBOH8VQi8fweQ4fEWo3Uwrch4mSSQEirqTQTI
+         h7MpejjEK8Zmxa8rFi4LRwxn2eKwjeRQ/MYIhARpQIujOnBc37xPpLQVc90PRtaBHha0
+         HfNzA/Fn6YhbsNCt2ClO6XsOv1Ih8Qkh+r5Kl3A3VBMSD8A4gTbfybqPGOl/g4zpYmHD
+         k5lkE0qXqTFvj5aIh7xoj9eG8MptvKhs172mgmvLbXOEymmfy9SnRYVm/C2bxxZMgct1
+         kj9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUc7s0bYawgEhe/FucjT0JodH50yF4vQuHa3l7L0tkEfAbZK/8e7L5DOqiwmn9tRftfYIKEPSMkHi7ScM1N@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw41Bs/4w6syCriYFXh+FsLYbcnSPCw3bOi6WpW8fSILdegubb0
+	/ipB+5XYAlw3UKwPxyhj6gxBnhHKcOBAFLCMSdfiOgWxz0p2LM2KbeOJc1gWjDnISEv/eVvGnTn
+	o0m+q21FJ8OUXc4J6biEKYPXxB4sO+29VZ6MyS+RMhtADEihyMrgWiHw=
+X-Google-Smtp-Source: AGHT+IFoCoAM7/Lk0qcdsfAroXF0YLd4ElkidSn67MaROgoMFIwZfHRztGnsixG0Ujvg5uJ9HvohZsxiNtg+jm1cnjPcDCASg0Tz
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250328183359.1101617-1-slava@dubeyko.com>
+X-Received: by 2002:a05:6e02:164b:b0:3d4:3a45:d889 with SMTP id
+ e9e14a558f8ab-3d5e09cdb6amr5254815ab.14.1743187442778; Fri, 28 Mar 2025
+ 11:44:02 -0700 (PDT)
+Date: Fri, 28 Mar 2025 11:44:02 -0700
+In-Reply-To: <86991.1743185694@warthog.procyon.org.uk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67e6edf2.050a0220.2f20fe.0002.GAE@google.com>
+Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
+From: syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>
+To: brauner@kernel.org, dhowells@redhat.com, jack@suse.cz, jlayton@kernel.org, 
+	kprateek.nayak@amd.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mjguzik@gmail.com, netfs@lists.linux.dev, 
+	oleg@redhat.com, swapnil.sapkal@amd.com, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Mar 28, 2025 at 11:33:59AM -0700, Viacheslav Dubeyko wrote:
-> This patch moves pointer check before the first
-> dereference of the pointer.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://urldefense.proofpoint.com/v2/url?u=https-3A__lore.kernel.org_r_202503280852.YDB3pxUY-2Dlkp-40intel.com_&d=DwIBAg&c=BSDicqBQBDjDI9RkVyTcHQ&r=q5bIm4AXMzc8NJu1_RGmnQ2fMWKq4Y4RAkElvUgSs00&m=Ud7uNdqBY_Z7LJ_oI4fwdhvxOYt_5Q58tpkMQgDWhV3199_TCnINFU28Esc0BaAH&s=QOKWZ9HKLyd6XCxW-AUoKiFFg9roId6LOM01202zAk0&e=
+Hello,
 
-Ooh, that's not good.  Need to figure out a way to defeat the proofpoint
-garbage.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+unregister_netdevice: waiting for DEV to become free
 
-> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> index f3951253e393..6cbc33c56e0e 100644
-> --- a/fs/ceph/super.c
-> +++ b/fs/ceph/super.c
-> @@ -1032,9 +1032,11 @@ void ceph_umount_begin(struct super_block *sb)
->  {
->  	struct ceph_fs_client *fsc = ceph_sb_to_fs_client(sb);
->  
-> -	doutc(fsc->client, "starting forced umount\n");
->  	if (!fsc)
->  		return;
-> +
-> +	doutc(fsc->client, "starting forced umount\n");
+unregister_netdevice: waiting for batadv0 to become free. Usage count = 3
 
-I don't think we should be checking fsc against NULL.  I don't see a way
-that sb->s_fs_info can be set to NULL, do you?
+
+Tested on:
+
+commit:         c7fffb8c netfs: Fix wait/wake to be consistent about t..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git netfs-fixes
+console output: https://syzkaller.appspot.com/x/log.txt?x=15722a4c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=95c3bbe7ce8436a7
+dashboard link: https://syzkaller.appspot.com/bug?extid=62262fdc0e01d99573fc
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
 
