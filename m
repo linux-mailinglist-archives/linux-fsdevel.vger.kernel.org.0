@@ -1,48 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-45200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC630A748AB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 11:49:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17B87A748FD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 12:09:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67BCA7A8029
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 10:48:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9533189BED5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 11:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88763212FAB;
-	Fri, 28 Mar 2025 10:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6905218AA5;
+	Fri, 28 Mar 2025 11:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kapvXhVP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A674A35;
-	Fri, 28 Mar 2025 10:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A88211712;
+	Fri, 28 Mar 2025 11:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743158933; cv=none; b=LXeHYoidACCzWZ9HJMGHCSRDh3bj+LyACszODAY4ZGJXTnPjD24h5XxURGE/JvHmXZCJpIouSpMPcfNUJoLEFWjC8FP1tegZWUss7YvcTmkEA2l7UK3uzZaAeHTC2CxLEfF3R1qBFkuOFcrqfQC/J6b6q5jiv6ZMmFoJ5eGLtjU=
+	t=1743160154; cv=none; b=AzhzYlxvuKwK2z0SaqlQp3mY5qyKXgUzEKIsVNF9gvFWjOcymoLLj8SlNbia9GLYjXUs8HgvlZ/Pa93HaE7A4eGsbOXMoy4f3v+H+xfNNhZiHMbaJppykghs9cxXejGAlT0dOYUMaz+5CuCc4MDuFcMg5JwL+JliDCM3XwOC2OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743158933; c=relaxed/simple;
-	bh=QgKdoBWk7QD3E5WTAmGmmymcekklr+ZQjra68hLljTE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gztxHTB34GbfgeREKcX+4ZrKHOEbkfFlaDD48TukCDUCkZ9ipEnCppCsAhxRvBrqNZKvL0COL8vFooS2xW6m7nNNrV/PgVCpVcVjp+lo4uEOCmKNpqyofMrOLZjMwooljUuMKYtdn5HNoUcfmXnMapalEdEHRUQhX9IAuT0/I14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 1504D68AA6; Fri, 28 Mar 2025 11:48:47 +0100 (CET)
-Date: Fri, 28 Mar 2025 11:48:46 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>, brauner@kernel.org,
-	djwong@kernel.org, dchinner@redhat.com,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH] iomap: Fix conflicting values of iomap flags
-Message-ID: <20250328104846.GB19460@lst.de>
-References: <20250327170119.61045-1-ritesh.list@gmail.com> <8f1fc565-9bbb-4bbb-ab53-3c47808ef257@oracle.com>
+	s=arc-20240116; t=1743160154; c=relaxed/simple;
+	bh=D6N9qzKUT9BZh+ogJLR5ASaK3FHRy/BmXp/4ya31Koo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=iPprKBwrRZks1diuftnlgyKF+fbsOVr0iqTW/H7YUI85CKc0noZ5sPskMkJFIfT/AngItuum+V8Ofnn8AnU2Gf11gEjsqsWQTGEX7Blivo+VP2NYkUozVl61sce6FGaVC+ClbEORKV7MajLWO0d12x7fu5f4xadAVYm8ytzxrpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kapvXhVP; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
+	:Content-ID:Content-Description:References;
+	bh=E1CZGD1pidzZgn48GAT1Mcecb/t9aAcKt3ERnV/HmUA=; b=kapvXhVPCuEr6PvbdopbxRbdZJ
+	BQfj9gASltro+1hTUIr7Y1ANg3CYSQ9xx+0FhST4rYrI7nbDSFQ3/yhRo6pLwAVzbk8sECa68zkB/
+	uimOCzMhwQTwDNlheUAgTusdI83xeE0a9Urs6sV/2EvVZYwDyyP6fSTsvzFdNtLHW8rsn5uXhEN58
+	q1bk3HNm4Z6FgM29UR7NNW6D6q/BIYXM/NJw2DaK6hMXBxNdHKk/qEYxTOSLOiOHobv3Mf/4PsIlD
+	BjWvBEGnH/sKD1qog7MU+6SUOt9RqhhILVOfLXXYWwabkNGxliHvV9fBaD4+0InWkpO5vC18SCbnk
+	huIzXc4A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1ty7aJ-0000000DD4H-49YO;
+	Fri, 28 Mar 2025 11:09:11 +0000
+Date: Fri, 28 Mar 2025 04:09:11 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Breno Leitao <leitao@debian.org>,
+	Joel Becker <jlbec@evilplan.org>
+Subject: Re: [PATCH] MAINTAINERS: configfs: add Andreas Hindborg as maintainer
+Message-ID: <Z-aDV4ae3p8_C6k7@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -51,16 +60,19 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8f1fc565-9bbb-4bbb-ab53-3c47808ef257@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20250326-configfs-maintainer-v1-1-b175189fa27b@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Mar 27, 2025 at 10:04:14PM +0000, John Garry wrote:
-> Just my opinion - and others will prob disagree - but I think that the 
-> reason this was missed (my fault, though) was because we have separate 
-> grouping of flags within the same struct member. Maybe having separate 
-> flags altogether would help avoid this.
+On Wed, Mar 26, 2025 at 05:45:30PM +0100, Andreas Hindborg wrote:
+> As recommended in plenary session at LSF/MM plenary session on March 25 2025.
+> Joel is no longer active in the community.
 
-Yes.  But going down to less than 16 bit fields also has downsides, as
-does growing the struture.
+I'm not sure who decided that, but that's an exceptionally offensive move.
+
+Joel has helped actually reviewing configfs patches even when I as running
+the tree, and I explicitly confirmed with him that he is willing to
+maintain it alone when I dropped the maintainership.  You've not even
+Ced him to tell him about how you force him out of the subsystem he
+created.
 
 
