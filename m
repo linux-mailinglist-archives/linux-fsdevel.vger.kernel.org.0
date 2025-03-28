@@ -1,125 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-45196-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA3AA747E8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 11:17:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75C26A748A0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 11:46:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B69A17D2B9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 10:17:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E6B31895A6E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 10:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1198217733;
-	Fri, 28 Mar 2025 10:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4081F3FF3;
+	Fri, 28 Mar 2025 10:46:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="JIYO42aa";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="asR2tvTE"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eR8e3Klg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F14F1A5BAE;
-	Fri, 28 Mar 2025 10:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11466FBF;
+	Fri, 28 Mar 2025 10:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743157021; cv=none; b=radzzAMJMXyL/dcw+gdBe5VSlYhDH7Sgml77Vag/V5CXS3/IriOOhg4QD1u/gV9o73K/dg+7hOu1sj/PqkSIZoI7wshm7jJgRZHe9Ykxa0Gsj0zahGnlIQtjx5h4dBpmu5YFx0+k6mFFdvhwOB1zcYjo/I/tWBDcN9e/wthXmfI=
+	t=1743158762; cv=none; b=h4kzbHa5ZqtbhJdcNbuG1Mu3xMOPkrLGc+TMLtbNrpLtONMUb+Q3YYfYf/Cj+C+clfuaBzvC5jH+YVT+XYcGdIX2KxzKFRCTIEUsOqar6+l0mQBGiprzyqGl84dk2EAifCitGQXFPBhp3kjleaLfiqWS+sFh3dzclQ4uI2SWm2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743157021; c=relaxed/simple;
-	bh=/arn/xPbmGg9sUXMiuKadWzed+23kCeYKFOmCYvBUtU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jIvNP4cLE9gVAbu/JvUmZ3wmQ7vsGLPgNrisyVMG69HjtZbPWcWM8aMJVGPbcNAR8DU2p33vKVPbXSb/GUl9rvvpoJkNW6oe6o5TDw4jXRCC6bYqNYUBq9djZOJx2fr25S31aknGYiuchqWsLSfCzDL7dfFssuef7nYX4QDws9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=JIYO42aa; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=asR2tvTE; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 263B41380B39;
-	Fri, 28 Mar 2025 06:16:58 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Fri, 28 Mar 2025 06:16:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1743157018;
-	 x=1743243418; bh=IMBk0uSPcE9659LgXN2g27zCHtqfCxGM1l5u0E4E2hA=; b=
-	JIYO42aaTijYZrCVLAmu7TcR7c47s+0HLa/+VSkxSE/qpp8dwjMd1g9WHBOBSYuk
-	Tjt+ghXqh6GmJg6/8ubLR7hrEpjSDhWZm1sZi5yhPIFY0YWk3SNd2aEotDmbOmvw
-	IwbvFzZv7Gb1Xt2gaJcDRTOBSSzPdl+N40ujzQbxC40O1ObfQyHL14QJhvq0Wp45
-	11nxkHUsqvxOOz+y154NDjifmIANsI57cgXE+T482kwfb5euf0L5xvVeGJSaNI9p
-	ECOyyhcfdtm9iTxJ6IfPqTXvOulQOGCl6+YORq6aWiRJJA/AI4IJYedpvkctJMa8
-	qJm7L06ZANIVd8x5YX82qA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743157018; x=
-	1743243418; bh=IMBk0uSPcE9659LgXN2g27zCHtqfCxGM1l5u0E4E2hA=; b=a
-	sR2tvTEaugR+Dov5MAHQUSimSAMlu1Z0sc1S5Q/Os6d09f3nDRg7wHRokusneud5
-	4rVsrx6myTJXKT6ZVSFCvoYtUpjLYcWWTPhRNTOSg/Rms9pFvOmBwFC0FR5orMJC
-	NL9FbeISCy4otN6Yx2VADa6KbeillxhDHe+yKEIrjIrtopaGGjTLCAi0i97/p3ah
-	Ls2h5acQfJ/vupUqHdDeu2ylO5WOyA4hTyPbIK2lQ0XIUT3AN4DqoHYBj/sXbBg/
-	TEkKiiiBNbdXtQtzrhil5QqQm0aME8yaw8lsh9TMupXhLv3xatJNg7Dyqb6i/bJj
-	sK1k+W40RyKIqT5d2ebag==
-X-ME-Sender: <xms:GXfmZyz2OWK0eLV7S-9fTcXk5czovMcK7jsBJXk1q277DeechG6qYQ>
-    <xme:GXfmZ-R0X0akjQqYhih8HBXDVXuCsHPnKLVnRcQUBcrWS5I0uWGBJVp9P1kRxVlcf
-    nS2vH0KNLbQHkww>
-X-ME-Received: <xmr:GXfmZ0X1OSvv9ZAc7tYTzwcza9TJj06xexoZ-B08bLJA5CgSIajMMYgwJxdtUhsUVsz5gMPM6TtVddH79Ec66SvOZ8vCfY1gF_gRLoAzDcMV3wNf-EqB>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddujedutddvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
-    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuh
-    gsvghrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledt
-    udfgtdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrh
-    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggv
-    rhhtsehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmth
-    hpohhuthdprhgtphhtthhopehjrggtohesuhhlshdrtghordiirgdprhgtphhtthhopehl
-    ihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
-    ohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehrughunhhlrghpse
-    hinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepthhrrghpvgigihhtsehsphgrfihn
-    rdhlihhnkh
-X-ME-Proxy: <xmx:GXfmZ4jYiLAuzU5Y0sQZRuwx0swgtGMzkTYYrqgJoQi2quf-shHbFg>
-    <xmx:GXfmZ0AmcuaJRImY1WiQjhwsaRHJ7sR96kTjYAnwqxySP_tU5__-Mg>
-    <xmx:GXfmZ5Jl3vBKSJagfwFInK5KWhobLPdpjMGR58oBNxMmc_Z4KnIzag>
-    <xmx:GXfmZ7D8Jw_-_iTqbOYT4VzDlz9gVeBmNJzjI450U6OysBObnLO8SQ>
-    <xmx:GnfmZ20-ARwv0lOLjVjSadSL6TAk6dOPLx1hi0HM4z6qI8-Hw4cUBZ18>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 28 Mar 2025 06:16:56 -0400 (EDT)
-Message-ID: <e89ab398-41f5-48ff-9592-98d21056043f@fastmail.fm>
-Date: Fri, 28 Mar 2025 11:16:55 +0100
+	s=arc-20240116; t=1743158762; c=relaxed/simple;
+	bh=HX4L70QTi47Xyax4mvQKMiRVkvBpNvXUFLKXEnV2Uj4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JeiW+lN+gdWdJV2jwT1Q3fIfaGpmleKGhVhMH0ejvYWi/4950rSY8PH2RR3MSTPv8J4gzzORLptFp0gd+wgT5VE7d92Lv6fOTH9b/bF65Rt4MHpJ0Z2mJd2aCSM98zbxVwzNgsvw6fePHUPDWitnkILjIf8KpJajic4tEk3oq/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eR8e3Klg; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=7/ZRM+Jgttx6GELXH1bXNxJMDypsQo+VPqHGzIsFl8M=; b=eR8e3KlgEmnGbaljZtyjvTSpwC
+	viEb0pV00OPfxmLrMiI9RdAWyl1+n1Q9oJSbw0PrN9npp7wbyii1AJ472t2B2CFCaflmwh0h3pdqj
+	pTIekseNHeyL3gd/TfubrhCe5ALNXisa010EP98HlJMtM5weBgxROsZAhRKWgxDcIWOoHrOvVbZ/K
+	PWbWqd3mPJC209QEVwetkq5baZzTmPGf0et5Abo/E5zxUJSQiqseWz3VEBb13U8DTgibtUW2Otr6G
+	iwwH9ZRyq5SOvrma3ZZ6hUkOadqGFzCG8AxbUTdA1A5be9OPqOu51m5iyhPLSkq6Ydi+Hli2Z90SL
+	PRKEgR2w==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1ty7Dp-0000000DAUI-3wy4;
+	Fri, 28 Mar 2025 10:45:57 +0000
+Date: Fri, 28 Mar 2025 03:45:57 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Nicolas Baranger <nicolas.baranger@3xo.fr>
+Cc: hch@lst.de, Christoph Hellwig <hch@infradead.org>,
+	David Howells <dhowells@redhat.com>, netfs@lists.linux.dev,
+	linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Steve French <smfrench@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [netfs/cifs - Linux 6.14] loop on file cat + file copy when
+ files are on CIFS share
+Message-ID: <Z-Z95ePf3KQZ2MnB@infradead.org>
+References: <10bec2430ed4df68bde10ed95295d093@3xo.fr>
+ <35940e6c0ed86fd94468e175061faeac@3xo.fr>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: fuse: increase readdir() buffer size
-To: Jaco Kroon <jaco@uls.co.za>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: miklos@szeredi.hu, rdunlap@infradead.org, trapexit@spawn.link
-References: <20230727081237.18217-1-jaco@uls.co.za>
- <20250314221701.12509-1-jaco@uls.co.za>
- <05b36be3-f43f-4a49-9724-1a0d8d3a8ce4@uls.co.za>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <05b36be3-f43f-4a49-9724-1a0d8d3a8ce4@uls.co.za>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <35940e6c0ed86fd94468e175061faeac@3xo.fr>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+Hi Nicolas,
 
+please wait a bit, many file system developers where at a conference
+this week. 
 
-On 3/28/25 11:15, Jaco Kroon wrote:
-> Hi All,
-> 
-> I've not seen feedback on this, please may I get some direction on this?
-> 
-> Kind regards,
-> Jaco
-> 
-
-Sorry, will review today.
 
