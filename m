@@ -1,106 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-45235-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45236-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 399C4A75043
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 19:15:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A10A7504A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 19:21:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A51E61708AB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 18:15:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15AC1188E81A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 18:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF2C1E1E14;
-	Fri, 28 Mar 2025 18:15:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A7E1DF97A;
+	Fri, 28 Mar 2025 18:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jHi78glp"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hVa4RYbA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C881DE3B3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Mar 2025 18:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5371D90B3
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Mar 2025 18:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743185709; cv=none; b=oVH7l9NkkeQDu6gamVO32LtfZt/+/gBmuc7DsJKQWycU/AM4C9WRMPe7CrnUJWR9A/YrTS0sfT2akafPYUvFhjfKyd3nKEHYVYGkh8oZb9WCD8N5dL0UnTy1fTThOigXZfaTLUuGsiIf3fxD2TGTwCPmuvoChGR+vL2ExemjQ94=
+	t=1743186064; cv=none; b=GXZ8vT16xSdV8elm+Un3ojqBGqYPv76L9MUSQQ5D62r32KVQHg2FuSkyAdUzrdEIhI1YKf2yYKQRmbMGaDwD6cmBvxCtV4iFsT83kaMsapfOVxgoQPy/R6pyB1MFuJnyNTE2DXPWlPa9JlHZKBXc8o2/L3xUMe+QmH71gXm22+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743185709; c=relaxed/simple;
-	bh=S/CMxBiATfwIX8u78Ausp4MJO1mSJU8pkpiZjklIqC0=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=pYAM/KLzXiavAuyS8hv9rkr+whnkWJIYXVEWaiTwvB4jD5X6oveq5SAXGCMTX7n3IBLd5SZQgpsltm57AKU/ESf1MK80o7CW9WegjftCF0+zHtnQ+BGhH7DWqp4FIQQAiq1WWdVEi00z6eH9jGUbcZdArwTfVBiBUulv1T4p8fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jHi78glp; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1743186064; c=relaxed/simple;
+	bh=RflAqQK0UiKASqVIdkZflxaWM7HtW92Gh/JZzSfUr6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=poTV3OA1cgLhwPnhrISvEAscs7EH2w7sDmTo86X9cJhHtfZLlJwWtEJxyvXK/we7f8TAlsV7e8geX7NZjHUkW0F5MJ5N+NdXQU34Fnx85QjidyL/KL5+O5iGnZVYMxTFm4Dn34WjMa30AbjrdOjhGRvmt5Q3+y6a0dV4Dmn8eLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hVa4RYbA; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743185707;
+	s=mimecast20190719; t=1743186061;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2oGU2c/jU+jROERJKnJ12bX6t4qhq3RiVRF861YZDSA=;
-	b=jHi78glpQibWR2+B5K2JUt0S3WtO4Cq7qQbs02jvhx67+PJJVSES4+ei5b6oaVwW2MlEjt
-	4U2E1TZFODAqCSOPk+NoK41Hb5IcpRQS8SVppjxzlspBW84pVRdhXlSHhkVeIGKbWj3Oju
-	zvh9Fs4fCALv3ryoqylZhxTO7w5puFo=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+	bh=RflAqQK0UiKASqVIdkZflxaWM7HtW92Gh/JZzSfUr6M=;
+	b=hVa4RYbA97xStx6Jo9EoYNSdE/ZLPm3EsYNZiR3cEJHvMraFcncmhxPur2nK94QH4qFEaI
+	X6K9CqN2Sr5D0wvLfOCGkK+EWs8jOX7a3itWP4y9F4I+fttvYpfRdLjEjLm4/RcbGyUhhF
+	7bM4VHsU2HnKIobWnraB0rSDSzG1zGQ=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-422-EeBGk180Nuy2ybQ2ywBfvg-1; Fri,
- 28 Mar 2025 14:15:01 -0400
-X-MC-Unique: EeBGk180Nuy2ybQ2ywBfvg-1
-X-Mimecast-MFC-AGG-ID: EeBGk180Nuy2ybQ2ywBfvg_1743185700
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-624-Dw06vJc5P6KLU9A2zMXTdQ-1; Fri,
+ 28 Mar 2025 14:20:57 -0400
+X-MC-Unique: Dw06vJc5P6KLU9A2zMXTdQ-1
+X-Mimecast-MFC-AGG-ID: Dw06vJc5P6KLU9A2zMXTdQ_1743186055
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AB79719373DB;
-	Fri, 28 Mar 2025 18:14:59 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.40])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1B54B19560AB;
-	Fri, 28 Mar 2025 18:14:55 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250323184848.GB14883@redhat.com>
-References: <20250323184848.GB14883@redhat.com> <67dedd2f.050a0220.31a16b.003f.GAE@google.com>
-To: syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>
-Cc: dhowells@redhat.com, Oleg Nesterov <oleg@redhat.com>,
-    brauner@kernel.org, jack@suse.cz, jlayton@kernel.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-    netfs@lists.linux.dev, syzkaller-bugs@googlegroups.com,
-    viro@zeniv.linux.org.uk, K Prateek Nayak <kprateek.nayak@amd.com>,
-    "Sapkal,
- Swapnil" <swapnil.sapkal@amd.com>,
-    Mateusz Guzik <mjguzik@gmail.com>
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2029C19560B1;
+	Fri, 28 Mar 2025 18:20:54 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.25])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 21A4E30001A1;
+	Fri, 28 Mar 2025 18:20:46 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 28 Mar 2025 19:20:20 +0100 (CET)
+Date: Fri, 28 Mar 2025 19:20:12 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>,
+	asmadeus@codewreck.org, brauner@kernel.org, dhowells@redhat.com,
+	ericvh@kernel.org, jack@suse.cz, jlayton@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux_oss@crudebyte.com, lucho@ionkov.net, mjguzik@gmail.com,
+	netfs@lists.linux.dev, swapnil.sapkal@amd.com,
+	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev,
+	viro@zeniv.linux.org.uk
 Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
+Message-ID: <20250328182011.GE29527@redhat.com>
+References: <20250328144928.GC29527@redhat.com>
+ <67e6be9a.050a0220.2f068f.007f.GAE@google.com>
+ <20250328170011.GD29527@redhat.com>
+ <314522ae-05a4-4dfb-af99-6bb3901a5522@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <86990.1743185694.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 28 Mar 2025 18:14:54 +0000
-Message-ID: <86991.1743185694@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <314522ae-05a4-4dfb-af99-6bb3901a5522@amd.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs=
-.git netfs-fixes
+Hi Prateek,
 
-  There's inconsistency with some wakeups between using rreq->waitq (a pri=
-vate
-  waitqueue) and using clear_and_wake_up_bit() (a shared global waitqueue)=
-.
-  The reason I didn't get round to posting the patches on this branch yet =
-is
-  that they *ought* to fix the problem, but Steve French still sees an
-  occasional hang with cifs - but only in his automated testing thing, and=
- we
-  haven't tracked it down yet.
+On 03/28, K Prateek Nayak wrote:
+>
+> Yours is the right approach.
 
-  David
+OK, thank you, but lets wait for 9p maintainers.
+
+but...
+
+> If this gets picked, feel free to add:
+>
+> Reviewed-and-tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+
+No!
+
+My version is just a slightly updated version of your initial patch.
+It was you who (unless we both are wrong) actually pinpointed the
+problem.
+
+So. If this is acked by maintainers, please-please send the updated patch
+with the changelog, and feel free to add my Reviewed-by or Acked-by.
+
+Oleg.
 
 
