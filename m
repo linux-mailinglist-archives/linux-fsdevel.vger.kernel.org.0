@@ -1,78 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-45201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45202-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17B87A748FD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 12:09:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D7AA7498C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 12:56:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9533189BED5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 11:09:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8ECE87A6B82
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 11:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6905218AA5;
-	Fri, 28 Mar 2025 11:09:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C95F21ABDE;
+	Fri, 28 Mar 2025 11:56:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kapvXhVP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IcX0qI+l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A88211712;
-	Fri, 28 Mar 2025 11:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71B779CF;
+	Fri, 28 Mar 2025 11:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743160154; cv=none; b=AzhzYlxvuKwK2z0SaqlQp3mY5qyKXgUzEKIsVNF9gvFWjOcymoLLj8SlNbia9GLYjXUs8HgvlZ/Pa93HaE7A4eGsbOXMoy4f3v+H+xfNNhZiHMbaJppykghs9cxXejGAlT0dOYUMaz+5CuCc4MDuFcMg5JwL+JliDCM3XwOC2OY=
+	t=1743162995; cv=none; b=DIkxIpojNLcufH7GYHr30V0LJzP0NAc1IWZObiYxOKXRKL9nqLtzpsF9Sn19kfgcjrgX9XtIxZHg0iLojvhbilhM/jy6b5KgbrCw/A8ZUa9gE55fIra1/SGFNYVuhv4wz2H+8Cw6CvU3j1/P5wG5vPN1+m5nFQfXmsr3sYaK56g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743160154; c=relaxed/simple;
-	bh=D6N9qzKUT9BZh+ogJLR5ASaK3FHRy/BmXp/4ya31Koo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=iPprKBwrRZks1diuftnlgyKF+fbsOVr0iqTW/H7YUI85CKc0noZ5sPskMkJFIfT/AngItuum+V8Ofnn8AnU2Gf11gEjsqsWQTGEX7Blivo+VP2NYkUozVl61sce6FGaVC+ClbEORKV7MajLWO0d12x7fu5f4xadAVYm8ytzxrpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kapvXhVP; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
-	:Content-ID:Content-Description:References;
-	bh=E1CZGD1pidzZgn48GAT1Mcecb/t9aAcKt3ERnV/HmUA=; b=kapvXhVPCuEr6PvbdopbxRbdZJ
-	BQfj9gASltro+1hTUIr7Y1ANg3CYSQ9xx+0FhST4rYrI7nbDSFQ3/yhRo6pLwAVzbk8sECa68zkB/
-	uimOCzMhwQTwDNlheUAgTusdI83xeE0a9Urs6sV/2EvVZYwDyyP6fSTsvzFdNtLHW8rsn5uXhEN58
-	q1bk3HNm4Z6FgM29UR7NNW6D6q/BIYXM/NJw2DaK6hMXBxNdHKk/qEYxTOSLOiOHobv3Mf/4PsIlD
-	BjWvBEGnH/sKD1qog7MU+6SUOt9RqhhILVOfLXXYWwabkNGxliHvV9fBaD4+0InWkpO5vC18SCbnk
-	huIzXc4A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1ty7aJ-0000000DD4H-49YO;
-	Fri, 28 Mar 2025 11:09:11 +0000
-Date: Fri, 28 Mar 2025 04:09:11 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Breno Leitao <leitao@debian.org>,
-	Joel Becker <jlbec@evilplan.org>
-Subject: Re: [PATCH] MAINTAINERS: configfs: add Andreas Hindborg as maintainer
-Message-ID: <Z-aDV4ae3p8_C6k7@infradead.org>
+	s=arc-20240116; t=1743162995; c=relaxed/simple;
+	bh=52MwTZJZU0wxVz6g+/oh+9uTD1hcfXzwEj1eTsBI9zc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XX1k/lN2nU/kdEiyLsO6YZb3CVnOx8KMa7fQZwct74AoPmAJZ3cFDB14vIExp+bnXRToY55dsoHJczmj7ipQA/HtNIV9batrRO72Mq027wILzJ0ue5nxN4fpC4fXWrdh+hkGypSXzNeRZiMO0Yo6PZJrMG9bldVID5EtU+tiPPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IcX0qI+l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A269C4CEE4;
+	Fri, 28 Mar 2025 11:56:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743162995;
+	bh=52MwTZJZU0wxVz6g+/oh+9uTD1hcfXzwEj1eTsBI9zc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IcX0qI+lgYeFCMWshqIBCvAHI9PF+s3Vrehln+gBxm1AzA2M2JDldgYyI3ogCIf6r
+	 752uzaT5i/+pMGVnTxRvNKUUMjJ1ugH1U9oNMA7Vxo8BzGZYVr9/qpXoy/aORAtYYB
+	 YrpGdCE2E1enaR+IypIG407HTBVUZmnaT+5g37iDp1xCCsA8e5aXdcS/kFzGrTL3CO
+	 yWU8uqwaZqzi607FoCtasILxfEj1HXIehiXliZEqAc+7x0kLDSeVVoHmYKMM3MAGgI
+	 w2f5k3mN2lEKP5ZSGOdYGmBGKvVw703d42z6BziIP8Ilcr2yAZ+xXIBgocme3C/vl+
+	 cOnJIOOl+8QlQ==
+Date: Fri, 28 Mar 2025 12:56:29 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	mcgrof@kernel.org, jack@suse.cz, hch@infradead.org, david@fromorbit.com, 
+	rafael@kernel.org, djwong@kernel.org, pavel@kernel.org, peterz@infradead.org, 
+	mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com
+Subject: Re: [RFC PATCH 3/4] fs/super.c: introduce reverse superblock
+ iterator and use it in emergency remount
+Message-ID: <20250328-estrich-kaleidoskop-c677a5a3f551@brauner>
+References: <20250327140613.25178-1-James.Bottomley@HansenPartnership.com>
+ <20250327140613.25178-4-James.Bottomley@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250326-configfs-maintainer-v1-1-b175189fa27b@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20250327140613.25178-4-James.Bottomley@HansenPartnership.com>
 
-On Wed, Mar 26, 2025 at 05:45:30PM +0100, Andreas Hindborg wrote:
-> As recommended in plenary session at LSF/MM plenary session on March 25 2025.
-> Joel is no longer active in the community.
+On Thu, Mar 27, 2025 at 10:06:12AM -0400, James Bottomley wrote:
+> Originally proposed by Amir as an extract from the android kernel:
+> 
+> https://lore.kernel.org/linux-fsdevel/CAA2m6vfatWKS1CQFpaRbii2AXiZFvQUjVvYhGxWTSpz+2rxDyg@mail.gmail.com/
+> 
+> Since suspend/resume requires a reverse iterator, I'm dusting it off.
+> 
+> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> ---
+>  fs/super.c | 48 +++++++++++++++++++++++++++++-------------------
+>  1 file changed, 29 insertions(+), 19 deletions(-)
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index 5a7db4a556e3..76785509d906 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -887,28 +887,38 @@ void drop_super_exclusive(struct super_block *sb)
+>  }
+>  EXPORT_SYMBOL(drop_super_exclusive);
+>  
+> +#define ITERATE_SUPERS(f, rev)					\
 
-I'm not sure who decided that, but that's an exceptionally offensive move.
-
-Joel has helped actually reviewing configfs patches even when I as running
-the tree, and I explicitly confirmed with him that he is willing to
-maintain it alone when I dropped the maintainership.  You've not even
-Ced him to tell him about how you force him out of the subsystem he
-created.
-
+I'm not fond of the macro magic here.
+I've taken some of your patches and massaging them.
 
