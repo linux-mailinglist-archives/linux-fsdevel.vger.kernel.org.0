@@ -1,39 +1,39 @@
-Return-Path: <linux-fsdevel+bounces-45182-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F051A741F7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 02:15:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 512E5A741FE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 02:18:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C9A37A7D80
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 01:13:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A0403B63EB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 01:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140E41C5F34;
-	Fri, 28 Mar 2025 01:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023951C5D63;
+	Fri, 28 Mar 2025 01:18:22 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395CE3D3B3;
-	Fri, 28 Mar 2025 01:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0D7A93D;
+	Fri, 28 Mar 2025 01:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743124491; cv=none; b=kYPYwVYDvFi3pX5o771s1Fh9Q/ssd7p8PiAQRHLKRBNfsS90uTDAakJmOB/65noUy/huft4rVW/sx1RzNl6m9N6O8CDrR9sEggOnHe+f5bquCIQ7TWzSlETallNwQgMfZENUOTs9Zvgprl2Iw9gs00rhOnw0KZBIVTuODWqT5JQ=
+	t=1743124701; cv=none; b=Hgcp4ktD2L+vs3+oVygpsxB8YVfGpRAGDwxBoWjaYCU/9cU7W5wlTrH0IWVdRlmLPVcyntM4T4hXkK98CEfZuxrMY7zfx2yVeejyWlTVf1ykEvEvejv5B8vNjhjp0xdajkvJtHlH15akxB7Qdhfqb2EzCiftUtUduhr0n8kD1tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743124491; c=relaxed/simple;
-	bh=Lrs0qJ2XX490B/P+4HpTQ96ufgdA3j9s94aEfJYo+js=;
+	s=arc-20240116; t=1743124701; c=relaxed/simple;
+	bh=3tv+9sVfsxVpQxZpnbHOLZtbXCpdS07eLrspxL6SaKg=;
 	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=WAPqWzuxF4CdLoolT7iEUQRK8P/g4O0aWxckYAnTbTuDAiFZIHHR1cPWj4vajgy1geCSdnZQ2sG1V0RNLP5pwGKLn3lflj2/6u5g+4o+2CUFb0f8lOv4gfImLwTysreLHO9D20PfwwxBSr/IUVyAufBDKYtzZFkjlqEft1Ogfxs=
+	 References:Date:Message-id; b=jkzk1YACxIHLuYozr7QPvKgaoru5yqkmi3eHjD/fzGHp0UMvA4ZXkoquUnNYCIPSei2kt2uvkI6ritUSa8AfHklBViyuH5Din4OxvvWlFZFmm18PADdsNwleNFKnGQ2yOaJ894d/9HIPmqabZ9PH6bQJ4NcldF6pbNyY2zAVsq4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
 Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
 	by neil.brown.name with esmtp (Exim 4.95)
 	(envelope-from <mr@neil.brown.name>)
-	id 1txyJ1-001t2i-99;
-	Fri, 28 Mar 2025 01:14:43 +0000
+	id 1txyMS-001t5k-UX;
+	Fri, 28 Mar 2025 01:18:16 +0000
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -43,116 +43,48 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "NeilBrown" <neil@brown.name>
-To: "Al Viro" <viro@zeniv.linux.org.uk>
-Cc: "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "David Howells" <dhowells@redhat.com>, "Chuck Lever" <chuck.lever@oracle.com>,
- "Jeff Layton" <jlayton@kernel.org>, linux-nfs@vger.kernel.org,
- netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org
+To: "David Howells" <dhowells@redhat.com>
+Cc: dhowells@redhat.com, "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ linux-nfs@vger.kernel.org, netfs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH 1/6] VFS: improve interface for lookup_one functions
-In-reply-to: <20250322002719.GC2023217@ZenIV>
-References: <>, <20250322002719.GC2023217@ZenIV>
-Date: Fri, 28 Mar 2025 12:14:42 +1100
-Message-id: <174312448295.9342.4725506312787082473@noble.neil.brown.name>
+In-reply-to: <3170778.1742479489@warthog.procyon.org.uk>
+References: <>, <3170778.1742479489@warthog.procyon.org.uk>
+Date: Fri, 28 Mar 2025 12:18:16 +1100
+Message-id: <174312469657.9342.13122047478058505480@noble.neil.brown.name>
 
-On Sat, 22 Mar 2025, Al Viro wrote:
-> On Wed, Mar 19, 2025 at 02:01:32PM +1100, NeilBrown wrote:
+On Fri, 21 Mar 2025, David Howells wrote:
+> NeilBrown <neil@brown.name> wrote:
 >=20
-> > -struct dentry *lookup_one(struct mnt_idmap *idmap, const char *name,
-> > -			  struct dentry *base, int len)
-> > +struct dentry *lookup_one(struct mnt_idmap *idmap, struct qstr name,
-> > +			  struct dentry *base)
+> > Also the path component name is passed as "name" and "len" which are
+> > (confusingly?) separate by the "base".  In some cases the len in simply
+> > "strlen" and so passing a qstr using QSTR() would make the calling
+> > clearer.
+> > Other callers do pass separate name and len which are stored in a
+> > struct.  Sometimes these are already stored in a qstr, other times it
+> > easily could be.
+> >=20
+> > So this patch changes these three functions to receive a 'struct qstr',
+> > and improves the documentation.
 >=20
-> >  {
-> >  	struct dentry *dentry;
-> >  	struct qstr this;
-> > @@ -2942,7 +2940,7 @@ struct dentry *lookup_one(struct mnt_idmap *idmap, =
-const char *name,
-> > =20
-> >  	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
-> > =20
-> > -	err =3D lookup_one_common(idmap, name, base, len, &this);
-> > +	err =3D lookup_one_common(idmap, name.name, base, name.len, &this);
->=20
-> No.  Just look at what lookup_one_common() is doing as the first step.
->=20
->         this->name =3D name;
-> 	this->len =3D len;
+> You did want 'struct qstr' not 'struct qstr *' right?  I think there are
+> arches where this will cause the compiler to skip a register argument or two
+> if it's the second argument or third argument - i386 for example.  Plus you
+> have an 8-byte alignment requirement because of the u64 in it that may suck=
+ if
+> passed through several layers of function.
 
-This code is cleaned up in a later patch. lookup_one_common receives the
-address of just one qstr which is initialised with qstr that is passed
-in.
-So on x86_64, the original qstr is passed in as 2 registers.  These are
-stored in the stack and the address is passed to lookup_noperm_common(),
-as lookup_one_common() gets inlined.
+I don't think it is passed through several layers - except where the
+intermediate are inlined.
+And gcc enforces 16 byte alignment of the stack on function calls for
+i386, so I don't think alignment will be an issue.
 
-We have to put the two values onto the stack at some point, either in
-the original callers, or in the lookup_one family of functions.  I think
-it is cleaner in lookup_one as we don't need to put a & in front of all
-the QSTR calls.  But we can change it to pass the pointer if you really
-think that is better.
+I thought 'struct qstr' would result in slightly cleaner calling.  But I
+cannot make a strong argument in favour of it so I'm willing to change
+if there are concerns.
 
 Thanks,
 NeilBrown
-
-
->=20
-> You copy your argument's fields to corresponding fields of *&this.  It migh=
-t make
-> sense to pass a qstr, but not like that - just pass a _pointer_ to struct q=
-str instead.
->=20
-> Have lookup_one_common() do this:
->=20
-> static int lookup_one_common(struct mnt_idmap *idmap,
->                              struct qstr *this, struct dentry *base)
-> {
-> 	const unsigned char *name =3D this->name;
-> 	int len =3D this->len;
->         if (!len)
->                 return -EACCES;
->=20
->         this->hash =3D full_name_hash(base, name, len);
->         if (is_dot_dotdot(name, len))
->                 return -EACCES;
->=20
->         while (len--) {
->                 unsigned int c =3D *name++;
->                 if (c =3D=3D '/' || c =3D=3D '\0')
->                         return -EACCES;
->         }
->         /*
->          * See if the low-level filesystem might want
->          * to use its own hash..
->          */
->         if (base->d_flags & DCACHE_OP_HASH) {
->                 int err =3D base->d_op->d_hash(base, this);
->                 if (err < 0)
->                         return err;
->         }
->=20
->         return inode_permission(idmap, base->d_inode, MAY_EXEC);
-> }
->=20
-> and adjust the callers; e.g.
-> struct dentry *lookup_one(struct mnt_idmap *idmap, struct qstr *this,
-> 			  struct dentry *base)
-> {
->         struct dentry *dentry;
->         int err;
->=20
->         WARN_ON_ONCE(!inode_is_locked(base->d_inode));
->=20
->         err =3D lookup_one_common(idmap, this, base);
->         if (err)
->                 return ERR_PTR(err);
->=20
->         dentry =3D lookup_dcache(this, base, 0);
->         return dentry ? dentry : __lookup_slow(this, base, 0);
-> }
->=20
-> with callers passing idmap, &QSTR_LEN(name, len), base instead of
-> idmap, name, base, len.  lookup_one_common() looks at the fields
-> separately; its callers do not.
->=20
-
 
