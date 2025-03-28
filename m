@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-45215-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45216-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CB71A74C67
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 15:21:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E387A74CD5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 15:36:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06BAA188B270
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 14:21:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D22B53A3541
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Mar 2025 14:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F211B424E;
-	Fri, 28 Mar 2025 14:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A643F9C5;
+	Fri, 28 Mar 2025 14:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="JhE8/8d5"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Skduez/1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BA320DF4;
-	Fri, 28 Mar 2025 14:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7A62A8C1;
+	Fri, 28 Mar 2025 14:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743171667; cv=none; b=bPV8C7d+sRiapLZ5PMR+H5PzZgKhyhcGoRZ0C4Y0bNXNUvwbmH0VlN+Rd2W5UXTQND3l9E3qi/KJ0S7AOP4UffeDhoQ62sdJUtLj5KgZZVf5qTew2r+n3Sn1QRHMC+zRiAye0/ym8S8Ep1bEroJvZVSHwVRwmSe2J+TI0eTCPcI=
+	t=1743172564; cv=none; b=bhrfZ5s858ryUe5XWdMRNVZuqNdg9/8BqRyWUqZPDKRFwV0/drD9XmlHOy1F2JsXrcAHv1s5MnDhSvcuYMdG4q75IopCpB+uQEObLYBYacVdZ6J2mfH3JMkJKjzrvBzNBEPTAqjGEHj5rZesfqJdqs1ZOhvYyR5yYFo37Nf/iNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743171667; c=relaxed/simple;
-	bh=cLmTnPh0Z5NPWZMG0NKNdgnST47tDlnTp2qQmBP0SWA=;
+	s=arc-20240116; t=1743172564; c=relaxed/simple;
+	bh=LIwflXj2px+fE6ChVvAfs05ebTVr9tVy+ie4wVV1c6Q=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bn3k+aGA54uzO5LVzyqXzME9U+S+xf5UHJeY+55QQAAp0iG39pFKhVvXUcNh4yniUehOaIBOsC6uQXwJjBmAfCv+Mx/JP6niBdSGEKc/Ubx8dOAfDM78yIY41aUzrK3D7GnzRWJfegzpKBxIKU4s9CE99GkMUWgkcB1loOZecuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=JhE8/8d5; arc=none smtp.client-ip=198.37.111.173
+	 Content-Type:MIME-Version; b=NwsgVM4ZAyoouO30gyLebURQbCAcGlsSgCcFJNE2mMrJGV8GR5PxLOxGHdwyQbt4DIQLtb+smabv5nJ2HPcFp/3g/FQysq/M53lEomkBCG/xizYMnbn2xPKW9YwgQ9AS+WO4zQ4/SKIDnjADtPNrpoLuKg0COC1Dv9TPlj+VP1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=Skduez/1; arc=none smtp.client-ip=198.37.111.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1743171664;
-	bh=cLmTnPh0Z5NPWZMG0NKNdgnST47tDlnTp2qQmBP0SWA=;
+	d=hansenpartnership.com; s=20151216; t=1743172561;
+	bh=LIwflXj2px+fE6ChVvAfs05ebTVr9tVy+ie4wVV1c6Q=;
 	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=JhE8/8d5ozK9aaRRhqzyJgC3WeF1FMu01qTJQntH/8tdTsboZo69mztmD1pU9bTzF
-	 y7aGXdGGjNCPoY59OlzSqlmZRuUmhxDnNhiS1nmtCjA9paPTAs0i18Z32uu8En+Uyq
-	 w0e8Gt/3MogO/5E3+o/SFh6+kM/89wX3if6JQFtk=
+	b=Skduez/1CVD1kTEZJbU+EFRW5F+ySxEDUHLSNu/ci0goOej375jPgPXZJRTkz/U79
+	 tUoYWbUoylWDehKIbzup1M66iG6XKa3Mm7W7dTktcrYfxDP849No6j9IHYgCDN0hnX
+	 luk32K1Y3V4b/2QG1xLTyfeeGtLOl5PbEoMiF1Ec=
 Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 3906D1C02A5;
-	Fri, 28 Mar 2025 10:21:04 -0400 (EDT)
-Message-ID: <0104e4918cc9d1cd7e991699292cf3e7379b2291.camel@HansenPartnership.com>
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 4FA451C0360;
+	Fri, 28 Mar 2025 10:36:01 -0400 (EDT)
+Message-ID: <a7e6dee45ac11519c33a297797990fce6bb32bff.camel@HansenPartnership.com>
 Subject: Re: [RFC PATCH 4/4] vfs: add filesystem freeze/thaw callbacks for
  power management
 From: James Bottomley <James.Bottomley@HansenPartnership.com>
@@ -54,11 +54,12 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  rafael@kernel.org,  djwong@kernel.org, pavel@kernel.org,
  peterz@infradead.org, mingo@redhat.com,  will@kernel.org,
  boqun.feng@gmail.com
-Date: Fri, 28 Mar 2025 10:21:03 -0400
-In-Reply-To: <zcxwcu2ty5fmkqt7dnpwdmohkp6pi7hfhltlxgpnx2xhsutgoc@gkixsx4map3o>
+Date: Fri, 28 Mar 2025 10:36:00 -0400
+In-Reply-To: <0104e4918cc9d1cd7e991699292cf3e7379b2291.camel@HansenPartnership.com>
 References: <20250327140613.25178-1-James.Bottomley@HansenPartnership.com>
 	 <20250327140613.25178-5-James.Bottomley@HansenPartnership.com>
 	 <zcxwcu2ty5fmkqt7dnpwdmohkp6pi7hfhltlxgpnx2xhsutgoc@gkixsx4map3o>
+	 <0104e4918cc9d1cd7e991699292cf3e7379b2291.camel@HansenPartnership.com>
 Autocrypt: addr=James.Bottomley@HansenPartnership.com;
  prefer-encrypt=mutual;
  keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNElecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHURfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvdHRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmBLmY0FCRs1hL0ACgkQgUrkfCFIVNaEiQgAg18F4G7PGWQ68xqnIrccke7Reh5thjUz6kQIii6Dh64BDW6/UvXn20UxK2uSs/0TBLO81k1mV4c6rNE+H8b7IEjieGR9frBsp/+Q01JpToJfzzMUY7ZTDV1IXQZ+AY9L7vRzyimnJHx0Ba4JTlAyHB+Ly5i4Ab2+uZcnNfBXquWrG3oPWz+qPK88LJLya5Jxse1m1QT6R/isDuPivBzntLOooxPk+Cwf5sFAAJND+idTAzWzslexr9j7rtQ1UW6FjO4CvK9yVNz7dgG6FvEZl6J/HOr1rivtGgpCZTBzKNF8jg034n49zGfKkkzWLuXbPUOp3/oGfsKv8pnEu1c2GbQpSmFtZXMgQm90dG9tbGV5IDxqZWpiQGxpbnV4LnZuZXQuaWJtLmNvbT6JAVYEEwEIAEACGwMHCwkIBwMCAQYVC
@@ -79,104 +80,129 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Thu, 2025-03-27 at 19:20 +0100, Jan Kara wrote:
-> On Thu 27-03-25 10:06:13, James Bottomley wrote:
-> > Introduce a freeze function, which iterates superblocks in reverse
-> > order freezing filesystems.=C2=A0 The indicator a filesystem is
-> > freezable is either possessing a s_bdev or a freeze_super method.=C2=A0
-> > So this can be used in efivarfs, whether the freeze is for
-> > hibernate is also passed in via the new FREEZE_FOR_HIBERNATE flag.
-> >=20
-> > Thawing is done opposite to freezing (so superblock traversal in
-> > regular order) and the whole thing is plumbed into power
-> > management.
-> > The original ksys_sync() is preserved so the whole freezing step is
-> > optional (if it fails we're no worse off than we are today) so it
-> > doesn't inhibit suspend/hibernate if there's a failure.
-> >=20
-> > Signed-off-by: James Bottomley
-> > <James.Bottomley@HansenPartnership.com>
->=20
-> OK, I've seen you are setting the new FREEZE_FOR_HIBERNATE flag but I
-> didn't find anything using that flag. What do you plan to use it for?
-> Does you efivars usecase need it? I find passing down this detail
-> about the caller down to all filesystems a bit awkward. Isn't it
-> possible to extract the information "hibernate is ongoing" from PM
-> subsystem?
+On Fri, 2025-03-28 at 10:21 -0400, James Bottomley wrote:
+> [...]
+> That's right.=C2=A0 I'm happy to post my patch below, but it depends on A=
+l
+> accepting the simple_next_child() proposal, so it doesn't apply to
+> any
+> tree.
 
-That's right.  I'm happy to post my patch below, but it depends on Al
-accepting the simple_next_child() proposal, so it doesn't apply to any
-tree.
-
-> > +/*
-> > + * Kernel freezing and thawing is only done in the power
-> > management
-> > + * subsystem and is thus single threaded (so we don't have to
-> > worry
-> > + * here about multiple calls to filesystems_freeze/thaw().
-> > + */
-> > +
-> > +static int freeze_flags;
->=20
-> Frankly, the global variable to propagate flags is pretty ugly... If
-> we really have to propagate some context into the iterator callback,
-> rather do it explicitly like iterate_supers() does it.
-
-Christian said the same thing.  I can do it, but if you look in the
-power management subsystem, it relies on single threading and has a lot
-of global variables like this, so I thought of this as a
-simplification.
-
-> > +static void filesystems_freeze_callback(struct super_block *sb)
-> > +{
-> > +	/* errors don't fail suspend so ignore them */
-> > +	if (sb->s_op->freeze_super)
-> > +		sb->s_op->freeze_super(sb, FREEZE_MAY_NEST
-> > +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | FREEZE_HOLDER_KERNEL
-> > +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | freeze_flags);
-> > +	else if (sb->s_bdev)
-> > +		freeze_super(sb, FREEZE_MAY_NEST |
-> > FREEZE_HOLDER_KERNEL
-> > +			=C2=A0=C2=A0=C2=A0=C2=A0 | freeze_flags);
->=20
-> Style nit - braces around above blocks would be IMHO appropriate.
->=20
-> > +	else {
-> > +		pr_info("Ignoring filesystem %s\n", sb->s_type-
-> > >name);
-> > +		return;
-> > +	}
-> > +
-> > +	pr_info("frozen %s, now syncing block ...", sb->s_type-
-> > >name);
-> > +	sync_blockdev(sb->s_bdev);
-> > +	pr_info("done.");
-> > +}
->=20
-> Generally this callback is not safe because it can race with
-> filesystem unmount and calling ->freeze_super() after the
-> filesystem's ->put_super() was called may have all sorts of
-> interesting effects (freeze_super() itself will just bail with a
-> warning, which is better but not great either).
->=20
-> The cleanest way I see how to make the iteration safe is to grab
-> active sb reference (like grab_super() does it) for the duration of
-> freeze_super() calls. Another possibility would be to grab sb-
-> >s_umount rwsem exclusively as Luis does it in his series but that
-> requires a bit of locking surgery and ->freeze_super() handlers make
-> this particularly nasty these days so I think active sb reference is
-> going to be nicer these days.
-
-Before getting into the how of this, could you just confirm my
-understanding of what the various locks do:
-
-https://lore.kernel.org/cd5c3d8aab9c5fb37fa018cb3302ecf7d2bdb140.camel@Hans=
-enPartnership.com
-
-Is correct?
+And here's the patch I forgot to attach.
 
 Regards,
 
 James
+
+---
+
+diff --git a/fs/efivarfs/internal.h b/fs/efivarfs/internal.h
+index ac6a1dd0a6a5..f913b6824289 100644
+--- a/fs/efivarfs/internal.h
++++ b/fs/efivarfs/internal.h
+@@ -17,7 +17,6 @@ struct efivarfs_fs_info {
+ 	struct efivarfs_mount_opts mount_opts;
+ 	struct super_block *sb;
+ 	struct notifier_block nb;
+-	struct notifier_block pm_nb;
+ };
+=20
+ struct efi_variable {
+diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
+index 7d47f8d7ad1d..3398ec5c60b3 100644
+--- a/fs/efivarfs/super.c
++++ b/fs/efivarfs/super.c
+@@ -119,12 +119,15 @@ static int efivarfs_statfs(struct dentry *dentry, str=
+uct kstatfs *buf)
+=20
+ 	return 0;
+ }
++
++static int efivarfs_thaw(struct super_block *sb, enum freeze_holder who);
+ static const struct super_operations efivarfs_ops =3D {
+ 	.statfs =3D efivarfs_statfs,
+ 	.drop_inode =3D generic_delete_inode,
+ 	.alloc_inode =3D efivarfs_alloc_inode,
+ 	.free_inode =3D efivarfs_free_inode,
+ 	.show_options =3D efivarfs_show_options,
++	.thaw_super =3D efivarfs_thaw,
+ };
+=20
+ /*
+@@ -367,8 +370,6 @@ static int efivarfs_fill_super(struct super_block *sb, =
+struct fs_context *fc)
+ 	if (err)
+ 		return err;
+=20
+-	register_pm_notifier(&sfi->pm_nb);
+-
+ 	return efivar_init(efivarfs_callback, sb, true);
+ }
+=20
+@@ -432,24 +433,17 @@ static int efivarfs_check_missing(efi_char16_t *name1=
+6, efi_guid_t vendor,
+ 	return err;
+ }
+=20
+-static int efivarfs_pm_notify(struct notifier_block *nb, unsigned long act=
+ion,
+-			      void *ptr)
++static int efivarfs_thaw(struct super_block *sb, enum freeze_holder who)
+ {
+-	struct efivarfs_fs_info *sfi =3D container_of(nb, struct efivarfs_fs_info=
+,
+-						    pm_nb);
+ 	static bool rescan_done =3D true;
+-	struct dentry *parent =3D sfi->sb->s_root;
++	struct dentry *parent =3D sb->s_root;
+ 	struct dentry *child =3D NULL;
+=20
+-	if (action =3D=3D PM_HIBERNATION_PREPARE) {
+-		rescan_done =3D false;
+-		return NOTIFY_OK;
+-	} else if (action !=3D PM_POST_HIBERNATION) {
+-		return NOTIFY_DONE;
+-	}
++	if ((who & FREEZE_FOR_HIBERNATE) =3D=3D 0)
++		return 0;
+=20
+ 	if (rescan_done)
+-		return NOTIFY_DONE;
++		return 0;
+=20
+ 	pr_info("efivarfs: resyncing variable state\n");
+=20
+@@ -488,9 +482,9 @@ static int efivarfs_pm_notify(struct notifier_block *nb=
+, unsigned long action,
+ 	 * then loop over variables, creating them if there's no matching
+ 	 * dentry
+ 	 */
+-	efivar_init(efivarfs_check_missing, sfi->sb, false);
++	efivar_init(efivarfs_check_missing, sb, false);
+=20
+-	return NOTIFY_OK;
++	return 0;
+ }
+=20
+ static int efivarfs_init_fs_context(struct fs_context *fc)
+@@ -510,9 +504,6 @@ static int efivarfs_init_fs_context(struct fs_context *=
+fc)
+ 	fc->s_fs_info =3D sfi;
+ 	fc->ops =3D &efivarfs_context_ops;
+=20
+-	sfi->pm_nb.notifier_call =3D efivarfs_pm_notify;
+-	sfi->pm_nb.priority =3D 0;
+-
+ 	return 0;
+ }
+=20
+@@ -521,7 +512,6 @@ static void efivarfs_kill_sb(struct super_block *sb)
+ 	struct efivarfs_fs_info *sfi =3D sb->s_fs_info;
+=20
+ 	blocking_notifier_chain_unregister(&efivar_ops_nh, &sfi->nb);
+-	unregister_pm_notifier(&sfi->pm_nb);
+ 	kill_litter_super(sb);
+=20
+ 	kfree(sfi);
 
 
