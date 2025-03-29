@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-45256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C2F1A7552E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 09:43:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4521A75530
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 09:43:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9375D3B031C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 08:43:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 763663B1185
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 08:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134E91ACEAC;
-	Sat, 29 Mar 2025 08:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81B21AF0D7;
+	Sat, 29 Mar 2025 08:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fBT70bfy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQd3Vexi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71053149C55;
-	Sat, 29 Mar 2025 08:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22847149C55;
+	Sat, 29 Mar 2025 08:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743237807; cv=none; b=e3Znn8quLNVhFdBIS6RYxvvJ9Uo0pzOcM9WqKaSIGkNH/ol4bw1fKo+MvZjPn/CVtqYHXhci5EfzBlEHJOxydu5O6Rbh8kZtgEfwBzmBjnyb8en3MjFVT7f3RBEe8LN0TxB/sDRb9/VBwO2L38wqEXb8YZMEHKZi5VQ23rT1Qy8=
+	t=1743237811; cv=none; b=nBF+669OZbBy7QvAXkRi5ClMGsPQOVU2gnyn+VAr5ABO19t/he9kLc+AR6ljfUIOkwq8SaEhYlHl2FJ1HAU2d6TNPD2hR0fsxCUOPIzKvSkZUmgBMzOG900ZbHwxLhz38iU+2BjydmKNhs+x1HxP8ede51od/1PMaNwGo9/k9M0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743237807; c=relaxed/simple;
-	bh=tXNgHPkpI1RYcg6+uolFMirXAFbH/6dKuJTHpZX5Tj8=;
+	s=arc-20240116; t=1743237811; c=relaxed/simple;
+	bh=kQuw8pGOEj2HTHUntYvMH05/2F/1BJUoN/04q2b6wh8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fQLo6XaE5egBR2EOyPLdLKwzz2sWBsPM4uB7nJX+xHfVs3JdrEsQ3H5oFCaCZFLH+Su7jvfc38KdYD41cgDihdifl+6akFEAAER3GLPhcohII8dhlXLi2TVniywYZ2k33YVSLEmZ2yUobfhqNJpAL5ShbhTACxiwltL5mhrmBA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fBT70bfy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9356EC4CEED;
-	Sat, 29 Mar 2025 08:43:23 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ZqgB74JGG3qTuLJq5Es6oCTpnU7XpysbMbHd9ecO5WJ72fHnVqp+Wkcwvonh13+niG44mu89Oan9b8E+ourubm7f7DlFoiwUByqhSLZYw0KNxkcVmpgkAPEPJlXm6dj73KgQ7N1T3kDb77q2WX2+mWMPLSosX3DkrDYB5F6EHYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQd3Vexi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6635AC4CEE2;
+	Sat, 29 Mar 2025 08:43:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743237806;
-	bh=tXNgHPkpI1RYcg6+uolFMirXAFbH/6dKuJTHpZX5Tj8=;
+	s=k20201202; t=1743237810;
+	bh=kQuw8pGOEj2HTHUntYvMH05/2F/1BJUoN/04q2b6wh8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fBT70bfyPaaA0fuSCeSOA7l5/riBIMNs4F3cyy+D3/IWg6BtYO3lilkhAwH2p5wZa
-	 nDMKmhJkQqPH0ietrsR3Oam8WMRBKqq3itOyM1ommWHmQUh0XjWiIWSNfk7LEO5t58
-	 cAdrdEa/hxe0M2FZB87Hs3ZxfDdBLahRH6bzYhvhtKKyiuNRMBdptq/fzvXgNxilZD
-	 r7V9Qj0lPCPPPu13kBYmhz4b9qgkLdYHvVX2xfG4MJNCZ/9MQMVzcKJOayJeD2mOQL
-	 n4sp8wYhvXhz+WhkmyAvrHsaZT4vWZ7jdMNdBwQIroXNlLX99SsUqUDy4r3fej9RMV
-	 m0M7h0M40Qo2w==
+	b=ZQd3VexiVWW45/tPrzn4z53ICI/yI4hXlkvQWMGi9f7+TsCseipYM3bhpc87RC5Fl
+	 N1kqpwdysJTtj5pfULoYdZ8AlHvDQcMD30Ei3GPWDTZPhIS1Y+V/li++1kTbvsbNga
+	 ACztT2owrfeM4ps0AIxltTqShzELNOp4+Fv2+wwW0zYS8ZXCkjH8QG87HrcSh2n2I6
+	 chQ/JBwWx2y2N9g7VCGSrurCSIb0NI00BnHNn9GRA10nh+N0SQCy8u262NFQMoxSka
+	 oLnMGxkH02XGC/4ho0gP78sOrwjy77CVXLRvTWvkP8R3RcSMipsrcnX2CwI9kANRo0
+	 cw+Lw2H30aTyw==
 From: Christian Brauner <brauner@kernel.org>
 To: linux-fsdevel@vger.kernel.org,
 	jack@suse.cz
@@ -57,9 +57,9 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	mingo@redhat.com,
 	will@kernel.org,
 	boqun.feng@gmail.com
-Subject: [PATCH v2 1/6] super: remove pointless s_root checks
-Date: Sat, 29 Mar 2025 09:42:14 +0100
-Message-ID: <20250329-work-freeze-v2-1-a47af37ecc3d@kernel.org>
+Subject: [PATCH v2 2/6] super: simplify user_get_super()
+Date: Sat, 29 Mar 2025 09:42:15 +0100
+Message-ID: <20250329-work-freeze-v2-2-a47af37ecc3d@kernel.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250329-work-freeze-v2-0-a47af37ecc3d@kernel.org>
 References: <20250329-work-freeze-v2-0-a47af37ecc3d@kernel.org>
@@ -71,68 +71,57 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1525; i=brauner@kernel.org; h=from:subject:message-id; bh=tXNgHPkpI1RYcg6+uolFMirXAFbH/6dKuJTHpZX5Tj8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ/31Sx6WxNfWNwUarTyhT9TJEezutRx3zrFtr943t+Q OftMqfrHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOpsGNkeLKWM/bK78kd6fcC qg9//CS+xeZ1jgzH/kCn597v5gQs/s/wv9BW67jh8klZoY+jCidPX3f2sF1W/ncu92MuFgYJMhl RDAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1111; i=brauner@kernel.org; h=from:subject:message-id; bh=kQuw8pGOEj2HTHUntYvMH05/2F/1BJUoN/04q2b6wh8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ/31QxY+6rvZ5B5y0OxHG/dJkr/UHibIQuu9Lng0XLm 9WzXpes7ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhI02RGhtmMp+MWnpuZv5lp V7JMzYeLq2Nzvc2nzrjnVrOwr4e56xbDXxG3QHc1W8M3purfGZf/5QmYturhGWfRY10MDe75y13 fsQMA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-The locking guarantees that the superblock is alive and sb->s_root is
-still set. Remove the pointless check.
+Make it easier to read and remove one level of identation.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/super.c | 19 ++++++-------------
- 1 file changed, 6 insertions(+), 13 deletions(-)
+ fs/super.c | 29 +++++++++++++++--------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
 
 diff --git a/fs/super.c b/fs/super.c
-index 97a17f9d9023..dc14f4bf73a6 100644
+index dc14f4bf73a6..b1acfc38ba0c 100644
 --- a/fs/super.c
 +++ b/fs/super.c
-@@ -930,8 +930,7 @@ void iterate_supers(void (*f)(struct super_block *, void *), void *arg)
- 
- 		locked = super_lock_shared(sb);
- 		if (locked) {
--			if (sb->s_root)
--				f(sb, arg);
-+			f(sb, arg);
- 			super_unlock_shared(sb);
- 		}
- 
-@@ -967,11 +966,8 @@ void iterate_supers_type(struct file_system_type *type,
- 		spin_unlock(&sb_lock);
- 
- 		locked = super_lock_shared(sb);
--		if (locked) {
--			if (sb->s_root)
--				f(sb, arg);
--			super_unlock_shared(sb);
--		}
-+		if (locked)
-+			f(sb, arg);
- 
- 		spin_lock(&sb_lock);
- 		if (p)
-@@ -991,18 +987,15 @@ struct super_block *user_get_super(dev_t dev, bool excl)
+@@ -987,20 +987,21 @@ struct super_block *user_get_super(dev_t dev, bool excl)
  
  	spin_lock(&sb_lock);
  	list_for_each_entry(sb, &super_blocks, s_list) {
--		if (sb->s_dev ==  dev) {
-+		if (sb->s_dev == dev) {
- 			bool locked;
- 
- 			sb->s_count++;
- 			spin_unlock(&sb_lock);
- 			/* still alive? */
- 			locked = super_lock(sb, excl);
--			if (locked) {
--				if (sb->s_root)
--					return sb;
--				super_unlock(sb, excl);
--			}
-+			if (locked)
-+				return sb; /* caller will drop */
- 			/* nope, got unmounted */
- 			spin_lock(&sb_lock);
- 			__put_super(sb);
+-		if (sb->s_dev == dev) {
+-			bool locked;
+-
+-			sb->s_count++;
+-			spin_unlock(&sb_lock);
+-			/* still alive? */
+-			locked = super_lock(sb, excl);
+-			if (locked)
+-				return sb; /* caller will drop */
+-			/* nope, got unmounted */
+-			spin_lock(&sb_lock);
+-			__put_super(sb);
+-			break;
+-		}
++		bool locked;
++
++		if (sb->s_dev != dev)
++			continue;
++
++		sb->s_count++;
++		spin_unlock(&sb_lock);
++
++		locked = super_lock(sb, excl);
++		if (locked)
++			return sb;
++
++		spin_lock(&sb_lock);
++		__put_super(sb);
++		break;
+ 	}
+ 	spin_unlock(&sb_lock);
+ 	return NULL;
 
 -- 
 2.47.2
