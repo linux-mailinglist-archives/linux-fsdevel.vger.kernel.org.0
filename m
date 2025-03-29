@@ -1,169 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-45265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45266-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38C00A755AD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 11:08:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54F32A75639
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 13:17:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF72A3AF2B2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 10:08:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E80B516C33F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 12:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570581B3927;
-	Sat, 29 Mar 2025 10:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200EF1C5F39;
+	Sat, 29 Mar 2025 12:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jh5BBsib";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+jfvA3VY";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jh5BBsib";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+jfvA3VY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCE0DDBC;
-	Sat, 29 Mar 2025 10:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F3C1AB50D
+	for <linux-fsdevel@vger.kernel.org>; Sat, 29 Mar 2025 12:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743242886; cv=none; b=S6eD5rk3ZfaetI0Zf7to+KquVivJlr/A4G1wQHtLSXLsGIAUYshH+Vmmm2/544+yCwp+RTsZwTY9GyCQHTBkCQY2FVtXelcwOXSSDtRBalKePMCuYfaB1gcOh/Vd38Hwufd3xI8zYHa1xWeSABJ5kf1/7mEdhafSpsUfbpcTE1s=
+	t=1743250668; cv=none; b=MF6uldQW6/jeopxYgHNTZNgzyq6vU1AYw+PPEIcyKh3FdnkJx8KS2oopdxSpLa4eY3RbENbfRvcKyKIEeoICalgVcgLV0R1J0AMn08x/XRetb+EyEEfqHB1EY0RLWet+3OZ7U2qxDtO1kdm8Y6Qsz+GCm+R5XYm7VyZ8Dm92c7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743242886; c=relaxed/simple;
-	bh=geHv+XKbUv8yf942M+ooDuuafZKdJCTWjjk1ign4pLk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hykEiUdA0PICqmaMTKSp5CxhAtha58/i1W6YgDP9Xp9Hw8dpgt0CXHIIECm2dJGpFGFmWaMAXWXmLGkABa9ZlgQ990dBnyEkQCZ7KN/nZyGl4dU6upNBoYBPUTAT4xC8/9C7xmMbNkkPv1E149C5Q9/SvPMGTOmINezedXX4fYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6505D152B;
-	Sat, 29 Mar 2025 03:08:07 -0700 (PDT)
-Received: from [10.57.87.112] (unknown [10.57.87.112])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2BA713F694;
-	Sat, 29 Mar 2025 03:08:01 -0700 (PDT)
-Message-ID: <ee11907a-5bd7-44ec-844c-8f10ff406b46@arm.com>
-Date: Sat, 29 Mar 2025 10:07:59 +0000
+	s=arc-20240116; t=1743250668; c=relaxed/simple;
+	bh=Th9q2zWuN9ateO/cXt4zELyLpd5GlCiqo47HRHIwo6U=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DPbJi0zVsyAd9eWtHb8UtRXciJ22dwM3D8rKGCFKi8ZnBFH37CMqxzuy8y1mRiEu22sdu/2qzv2MDKbw5r2eu8Kz2vb/t1kAVLL5VOsnpVvwh/UEpHOpL0FfZfSAB8IC2IHiTSWDkThdGnpr6XcpDUk7Yo885m70X99j7erpZ5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jh5BBsib; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+jfvA3VY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jh5BBsib; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+jfvA3VY; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 13EA51F393;
+	Sat, 29 Mar 2025 12:17:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743250665; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qfC8qPNIcAhBLRTyMdYT4Z+49oDjmYN8xkMGiLd1fpw=;
+	b=jh5BBsibFabbvx82IP2rBNMandkFtFiRu+pT5fxN3fSqSJZl5Ka+cR717dFRH8yrp6ruz0
+	7Im4hc0kRBcBKQ3gxKyQp35+ce38rk7Opn/EtS9H6YJBfX4OfDbaF7kWSx/xSOuPin9EDc
+	TKRfolE8vqOGrowHDKYCOrKBHsE/r/8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743250665;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qfC8qPNIcAhBLRTyMdYT4Z+49oDjmYN8xkMGiLd1fpw=;
+	b=+jfvA3VYGqtBsZ0pAfTuaX/iAJkH41m6Zrjmd4S+sWTAwFCpEs0JQETVwfYFltnf7X6BGe
+	aXowyeY63Pd/eDBA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743250665; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qfC8qPNIcAhBLRTyMdYT4Z+49oDjmYN8xkMGiLd1fpw=;
+	b=jh5BBsibFabbvx82IP2rBNMandkFtFiRu+pT5fxN3fSqSJZl5Ka+cR717dFRH8yrp6ruz0
+	7Im4hc0kRBcBKQ3gxKyQp35+ce38rk7Opn/EtS9H6YJBfX4OfDbaF7kWSx/xSOuPin9EDc
+	TKRfolE8vqOGrowHDKYCOrKBHsE/r/8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743250665;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qfC8qPNIcAhBLRTyMdYT4Z+49oDjmYN8xkMGiLd1fpw=;
+	b=+jfvA3VYGqtBsZ0pAfTuaX/iAJkH41m6Zrjmd4S+sWTAwFCpEs0JQETVwfYFltnf7X6BGe
+	aXowyeY63Pd/eDBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AA73E13A4B;
+	Sat, 29 Mar 2025 12:17:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id oUNQJ+jk52e6OgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Sat, 29 Mar 2025 12:17:44 +0000
+Date: Sat, 29 Mar 2025 13:17:44 +0100
+Message-ID: <87wmc83uaf.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: regressions@lists.linux.dev
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	linux-fsdevel@vger.kernel.org,
+	stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [REGRESSION] Chrome and VSCode breakage with the commit b9b588f22a0c
+In-Reply-To: <874j0lvy89.wl-tiwai@suse.de>
+References: <874j0lvy89.wl-tiwai@suse.de>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mm/filemap: Allow arch to request folio size for exec
- memory
-Content-Language: en-GB
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Kalesh Singh <kaleshsingh@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Dave Chinner <david@fromorbit.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20250327160700.1147155-1-ryan.roberts@arm.com>
- <Z-WAbWfZzG1GA-4n@casper.infradead.org>
- <5131c7ad-cc37-44fc-8672-5866ecbef65b@arm.com>
- <Z-b1FmZ5nHzh5huL@casper.infradead.org>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <Z-b1FmZ5nHzh5huL@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -3.30
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.com:url]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 28/03/2025 15:14, Matthew Wilcox wrote:
-> On Thu, Mar 27, 2025 at 04:23:14PM -0400, Ryan Roberts wrote:
->> + Kalesh
->>
->> On 27/03/2025 12:44, Matthew Wilcox wrote:
->>> On Thu, Mar 27, 2025 at 04:06:58PM +0000, Ryan Roberts wrote:
->>>> So let's special-case the read(ahead) logic for executable mappings. The
->>>> trade-off is performance improvement (due to more efficient storage of
->>>> the translations in iTLB) vs potential read amplification (due to
->>>> reading too much data around the fault which won't be used), and the
->>>> latter is independent of base page size. I've chosen 64K folio size for
->>>> arm64 which benefits both the 4K and 16K base page size configs and
->>>> shouldn't lead to any read amplification in practice since the old
->>>> read-around path was (usually) reading blocks of 128K. I don't
->>>> anticipate any write amplification because text is always RO.
->>>
->>> Is there not also the potential for wasted memory due to ELF alignment?
->>
->> I think this is an orthogonal issue? My change isn't making that any worse.
+On Sun, 23 Feb 2025 09:53:10 +0100,
+Takashi Iwai wrote:
 > 
-> To a certain extent, it is.  If readahead was doing order-2 allocations
-> before and is now doing order-4, you're tying up 0-12 extra pages which
-> happen to be filled with zeroes due to being used to cache the contents
-> of a hole.
-
-Well we would still have read them in before, nothing has changed there. But I
-guess your point is more about reclaim? Because those pages are now contained in
-a larger folio, if part of the folio is in use then all of it remains active.
-Whereas before, if the folio was fully contained in the pad area and never
-accessed, it would fall down the LRU quickly and get reclaimed.
-
+> [ resent due to a wrong address for regression reporting, sorry! ]
 > 
->>> Kalesh talked about it in the MM BOF at the same time that Ted and I
->>> were discussing it in the FS BOF.  Some coordination required (like
->>> maybe Kalesh could have mentioned it to me rathere than assuming I'd be
->>> there?)
->>
->> I was at Kalesh's talk. David H suggested that a potential solution might be for
->> readahead to ask the fs where the next hole is and then truncate readahead to
->> avoid reading the hole. Given it's padding, nothing should directly fault it in
->> so it never ends up in the page cache. Not sure if you discussed anything like
->> that if you were talking in parallel?
+> Hi,
 > 
-> Ted said that he and Kalesh had talked about that solution.  I have a
-> more bold solution in mind which lifts the ext4 extent cache to the
-> VFS inode so that the readahead code can interrogate it.
+> we received a bug report showing the regression on 6.13.1 kernel
+> against 6.13.0.  The symptom is that Chrome and VSCode stopped working
+> with Gnome Scaling, as reported on openSUSE Tumbleweed bug tracker
+>   https://bugzilla.suse.com/show_bug.cgi?id=1236943
 > 
->> Anyway, I'm not sure if you're suggesting these changes need to be considered as
->> one somehow or if you're just mentioning it given it is loosely related? My view
->> is that this change is an improvement indepently and could go in much sooner.
+> Quoting from there:
+> """
+> I use the latest TW on Gnome with a 4K display and 150%
+> scaling. Everything has been working fine, but recently both Chrome
+> and VSCode (installed from official non-openSUSE channels) stopped
+> working with Scaling.
+> ....
+> I am using VSCode with:
+> `--enable-features=UseOzonePlatform --enable-features=WaylandWindowDecorations --ozone-platform-hint=auto` and for Chrome, I select `Preferred Ozone platform` == `Wayland`.
+> """
 > 
-> This is not a reason to delay this patch.  It's just a downside which
-> should be mentioned in the commit message.
-
-Fair point; I'll add a paragraph about the potential reclaim issue.
-
+> Surprisingly, the bisection pointed to the backport of the commit
+> b9b588f22a0c049a14885399e27625635ae6ef91 ("libfs: Use d_children list
+> to iterate simple_offset directories").
 > 
->>>> +static inline int arch_exec_folio_order(void)
->>>> +{
->>>> +	return -1;
->>>> +}
->>>
->>> This feels a bit fragile.  I often expect to be able to store an order
->>> in an unsigned int.  Why not return 0 instead?
->>
->> Well 0 is a valid order, no? I think we have had the "is order signed or
->> unsigned" argument before. get_order() returns a signed int :)
+> Indeed, the revert of this patch on the latest 6.13.4 was confirmed to
+> fix the issue.  Also, the reporter verified that the latest 6.14-rc
+> release is still affected, too.
 > 
-> But why not always return a valid order?  I don't think we need a
-> sentinel.  The default value can be 0 to do what we do today.
+> For now I have no concrete idea how the patch could break the behavior
+> of a graphical application like the above.  Let us know if you need
+> something for debugging.  (Or at easiest, join to the bugzilla entry
+> and ask there; or open another bug report at whatever you like.)
 > 
+> BTW, I'll be traveling tomorrow, so my reply will be delayed.
+> 
+> 
+> thanks,
+> 
+> Takashi
+> 
+> #regzbot introduced: b9b588f22a0c049a14885399e27625635ae6ef91
+> #regzbot monitor: https://bugzilla.suse.com/show_bug.cgi?id=1236943
 
-But a single order-0 folio is not what we do today. Note that my change as
-currently implemented requests to read a *single* folio of the specified order.
-And note that we only get the order we request to page_cache_ra_order() because
-the size is limited to a single folio. If the size were bigger, that function
-would actually expand the requested order by 2. (although the parameter is
-called "new_order", it's actually interpretted as "old_order").
+After all, this seems to be a bug in Chrome and its variant, which was
+surfaced by the kernel commit above: as the commit changes the
+directory enumeration, it also changed the list order returned from
+libdrm drmGetDevices2(), and it screwed up the application that worked
+casually beforehand.  That said, the bug itself has been already
+present.  The Chrome upstream tracker:
+  https://issuetracker.google.com/issues/396434686
 
-The current behavior is effectively to read 128K in order-2 folios (with smaller
-folios for boundary alignment).
+#regzbot invalid: problem has always existed on Chrome and related code
 
-So I see a few options:
 
-  - Continue to allow non-opted in arches to use the existing behaviour; in this
-case we need a sentinel. This could be -1, UINT_MAX or 0. But in the latter case
-you are preventing an opted-in arch from specifying that they want order-0 -
-it's meaning is overridden.
-
-  - Force all arches to use the new approach with a default folio order (and
-readahead size) of order-0. (The default can be overridden per-arch). Personally
-I'd be nervous about making this change.
-
-  - Decouple the read size from the folio order size; continue to use the 128K
-read size and only allow opting-in to a specific folio order. The default order
-would be 2 (or 0). We would need to fix page_cache_async_ra() to call
-page_cache_ra_order() with "order + 2" (the new order) and fix
-page_cache_ra_order() to treat its order parameter as the *new* order.
-
-Perhaps we should do those fixes anyway (and then actually start with a folio
-order of 0 - which I think you said in the past was your original intention?).
-
-Thanks,
-Ryan
-
+Takashi
 
