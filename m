@@ -1,187 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-45266-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45267-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54F32A75639
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 13:17:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4852CA75659
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 14:13:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E80B516C33F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 12:17:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C140716EF02
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 13:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200EF1C5F39;
-	Sat, 29 Mar 2025 12:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37951CAA73;
+	Sat, 29 Mar 2025 13:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jh5BBsib";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+jfvA3VY";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jh5BBsib";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+jfvA3VY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Il9zEemB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F3C1AB50D
-	for <linux-fsdevel@vger.kernel.org>; Sat, 29 Mar 2025 12:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CDD35972;
+	Sat, 29 Mar 2025 13:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743250668; cv=none; b=MF6uldQW6/jeopxYgHNTZNgzyq6vU1AYw+PPEIcyKh3FdnkJx8KS2oopdxSpLa4eY3RbENbfRvcKyKIEeoICalgVcgLV0R1J0AMn08x/XRetb+EyEEfqHB1EY0RLWet+3OZ7U2qxDtO1kdm8Y6Qsz+GCm+R5XYm7VyZ8Dm92c7M=
+	t=1743253978; cv=none; b=ebSy3SE1K7scbkJv0Exl1Sol4zIe/6IRAlJX/4suLY8tKJwFCUnCtg+sJ3PJRNcBOz+S3js55WKEVxB4mvcedDb3oYDzCQkZnnHoaY6VK4E4vHZeYD3R3IeTU4koQwcc4AwEd6Bk5OQHyu1lcOtxiGeWD7Dwfe+vaBCNeSzt/x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743250668; c=relaxed/simple;
-	bh=Th9q2zWuN9ateO/cXt4zELyLpd5GlCiqo47HRHIwo6U=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DPbJi0zVsyAd9eWtHb8UtRXciJ22dwM3D8rKGCFKi8ZnBFH37CMqxzuy8y1mRiEu22sdu/2qzv2MDKbw5r2eu8Kz2vb/t1kAVLL5VOsnpVvwh/UEpHOpL0FfZfSAB8IC2IHiTSWDkThdGnpr6XcpDUk7Yo885m70X99j7erpZ5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jh5BBsib; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+jfvA3VY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jh5BBsib; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+jfvA3VY; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 13EA51F393;
-	Sat, 29 Mar 2025 12:17:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743250665; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qfC8qPNIcAhBLRTyMdYT4Z+49oDjmYN8xkMGiLd1fpw=;
-	b=jh5BBsibFabbvx82IP2rBNMandkFtFiRu+pT5fxN3fSqSJZl5Ka+cR717dFRH8yrp6ruz0
-	7Im4hc0kRBcBKQ3gxKyQp35+ce38rk7Opn/EtS9H6YJBfX4OfDbaF7kWSx/xSOuPin9EDc
-	TKRfolE8vqOGrowHDKYCOrKBHsE/r/8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743250665;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qfC8qPNIcAhBLRTyMdYT4Z+49oDjmYN8xkMGiLd1fpw=;
-	b=+jfvA3VYGqtBsZ0pAfTuaX/iAJkH41m6Zrjmd4S+sWTAwFCpEs0JQETVwfYFltnf7X6BGe
-	aXowyeY63Pd/eDBA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743250665; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qfC8qPNIcAhBLRTyMdYT4Z+49oDjmYN8xkMGiLd1fpw=;
-	b=jh5BBsibFabbvx82IP2rBNMandkFtFiRu+pT5fxN3fSqSJZl5Ka+cR717dFRH8yrp6ruz0
-	7Im4hc0kRBcBKQ3gxKyQp35+ce38rk7Opn/EtS9H6YJBfX4OfDbaF7kWSx/xSOuPin9EDc
-	TKRfolE8vqOGrowHDKYCOrKBHsE/r/8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743250665;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qfC8qPNIcAhBLRTyMdYT4Z+49oDjmYN8xkMGiLd1fpw=;
-	b=+jfvA3VYGqtBsZ0pAfTuaX/iAJkH41m6Zrjmd4S+sWTAwFCpEs0JQETVwfYFltnf7X6BGe
-	aXowyeY63Pd/eDBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AA73E13A4B;
-	Sat, 29 Mar 2025 12:17:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id oUNQJ+jk52e6OgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sat, 29 Mar 2025 12:17:44 +0000
-Date: Sat, 29 Mar 2025 13:17:44 +0100
-Message-ID: <87wmc83uaf.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: regressions@lists.linux.dev
-Cc: Chuck Lever <chuck.lever@oracle.com>,
-	linux-fsdevel@vger.kernel.org,
-	stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [REGRESSION] Chrome and VSCode breakage with the commit b9b588f22a0c
-In-Reply-To: <874j0lvy89.wl-tiwai@suse.de>
-References: <874j0lvy89.wl-tiwai@suse.de>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1743253978; c=relaxed/simple;
+	bh=wi+c+GQMw5q+3bCR3TIsBAflQ+EXY6M0KUCrJCujUIE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NWc1JUETbWrqWgHGa8aXM8zb3Gvy/p8czAMwBKTvymmpSH0nS3x4azMPbxoJS5rYfuu2hTTVUG2X1zxWkJjjtpTlJ2RSOcbipiA/hS9VF1L8OAOm47ah24oCr9F3OUPRYwHUL567hCYiWRhaiq9Tgcx1CP1oQOpxGzObgWNxuF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Il9zEemB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99C09C4CEE2;
+	Sat, 29 Mar 2025 13:12:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743253976;
+	bh=wi+c+GQMw5q+3bCR3TIsBAflQ+EXY6M0KUCrJCujUIE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Il9zEemBXLsLnq/x2AxTuTRAxAhSh3YYa8fd8LqgpSehjGi3PZbgMoZFpStXiyh72
+	 rMr7KKW2BTDicz1Pn9qjWfznffKEz9hMEHP6b2ZDMVrMDhy3iic7nzG1SQksqH15mp
+	 sxKhuKfvzetoQ00+BSmj7NC99u5Pw+/WnIDWpMq4Itr6G9vDFp8foUrHgbuMzDLGv4
+	 B7Ff/D/iVncVGVe81ipdI8u4jt7LZEpXDdQlLhHSZM4xSn8GKfRBIJcX2YeriOzPPp
+	 FHcL1Z4QtRyc8mCrWM6ZXFifqPiPTLDZB9jnkINyWMC3R1gtZfnp7yYGCRr1CATSW/
+	 0dXhULS+0ixDA==
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2c2504fa876so788472fac.0;
+        Sat, 29 Mar 2025 06:12:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWhVqi48n65DRkOlDbOT163+sJfknXfnu3MNltZOSuLb/1w7mU3Z8xN9DMHWDTEJtE276tYsF6cjdpUCIgm@vger.kernel.org, AJvYcCXYzh+4cJTCq6IhcjmPhg27xCDV4AZR0/6usQSSvheqhF8t9oAFM7EuqEEg9vpmnTQj/5Mb0ajbrL7QT+Bh@vger.kernel.org
+X-Gm-Message-State: AOJu0YytdebPe076jUoqfyAwNe/khztzBxMv8rkGwqI0ayGGezKAOkK8
+	FErWflc4vpZUxqcwoBscptrFMdbl4qgO35UIM/oUy6Qb0xe22yZlTfWYMfmkB7UukmjZj6qDcgZ
+	Bub+2TVD5iSvs6etI/NwPwjeuxOQ=
+X-Google-Smtp-Source: AGHT+IGNfztDsFLpDkxG/ViPGhrdMUEX8GjFoDByCMbHzEmFCj+HInYa0r+eectfTa2K03ESfZW//t0XL+h0noSgHr0=
+X-Received: by 2002:a05:6870:5253:b0:29d:c832:840d with SMTP id
+ 586e51a60fabf-2cbcf7ae22fmr1815102fac.35.1743253975898; Sat, 29 Mar 2025
+ 06:12:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.30
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.com:url]
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+References: <CGME20250326150136epcas1p3f49bc4a05b976046214486d7aaa23950@epcas1p3.samsung.com>
+ <20250326150116.3223792-1-sj1557.seo@samsung.com>
+In-Reply-To: <20250326150116.3223792-1-sj1557.seo@samsung.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Sat, 29 Mar 2025 22:12:44 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9dK-NPqxjijtx-6y_ejqg1wsSFsKW1sreOcBZmznD-nA@mail.gmail.com>
+X-Gm-Features: AQ5f1JpD2k-OTyUpkuIxuGwuedYuaor34Pv3RdaJt3Hxem700lw4AqInlplhDjI
+Message-ID: <CAKYAXd9dK-NPqxjijtx-6y_ejqg1wsSFsKW1sreOcBZmznD-nA@mail.gmail.com>
+Subject: Re: [PATCH] exfat: call bh_read in get_block only when necessary
+To: Sungjong Seo <sj1557.seo@samsung.com>
+Cc: yuezhang.mo@sony.com, sjdev.seo@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, cpgs@samsung.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 23 Feb 2025 09:53:10 +0100,
-Takashi Iwai wrote:
-> 
-> [ resent due to a wrong address for regression reporting, sorry! ]
-> 
-> Hi,
-> 
-> we received a bug report showing the regression on 6.13.1 kernel
-> against 6.13.0.  The symptom is that Chrome and VSCode stopped working
-> with Gnome Scaling, as reported on openSUSE Tumbleweed bug tracker
->   https://bugzilla.suse.com/show_bug.cgi?id=1236943
-> 
-> Quoting from there:
-> """
-> I use the latest TW on Gnome with a 4K display and 150%
-> scaling. Everything has been working fine, but recently both Chrome
-> and VSCode (installed from official non-openSUSE channels) stopped
-> working with Scaling.
-> ....
-> I am using VSCode with:
-> `--enable-features=UseOzonePlatform --enable-features=WaylandWindowDecorations --ozone-platform-hint=auto` and for Chrome, I select `Preferred Ozone platform` == `Wayland`.
-> """
-> 
-> Surprisingly, the bisection pointed to the backport of the commit
-> b9b588f22a0c049a14885399e27625635ae6ef91 ("libfs: Use d_children list
-> to iterate simple_offset directories").
-> 
-> Indeed, the revert of this patch on the latest 6.13.4 was confirmed to
-> fix the issue.  Also, the reporter verified that the latest 6.14-rc
-> release is still affected, too.
-> 
-> For now I have no concrete idea how the patch could break the behavior
-> of a graphical application like the above.  Let us know if you need
-> something for debugging.  (Or at easiest, join to the bugzilla entry
-> and ask there; or open another bug report at whatever you like.)
-> 
-> BTW, I'll be traveling tomorrow, so my reply will be delayed.
-> 
-> 
-> thanks,
-> 
-> Takashi
-> 
-> #regzbot introduced: b9b588f22a0c049a14885399e27625635ae6ef91
-> #regzbot monitor: https://bugzilla.suse.com/show_bug.cgi?id=1236943
-
-After all, this seems to be a bug in Chrome and its variant, which was
-surfaced by the kernel commit above: as the commit changes the
-directory enumeration, it also changed the list order returned from
-libdrm drmGetDevices2(), and it screwed up the application that worked
-casually beforehand.  That said, the bug itself has been already
-present.  The Chrome upstream tracker:
-  https://issuetracker.google.com/issues/396434686
-
-#regzbot invalid: problem has always existed on Chrome and related code
-
-
-Takashi
+On Thu, Mar 27, 2025 at 12:01=E2=80=AFAM Sungjong Seo <sj1557.seo@samsung.c=
+om> wrote:
+>
+> With commit 11a347fb6cef ("exfat: change to get file size from DataLength=
+"),
+> exfat_get_block() can now handle valid_size. However, most partial
+> unwritten blocks that could be mapped with other blocks are being
+> inefficiently processed separately as individual blocks.
+>
+> Except for partial unwritten blocks that require independent processing,
+> let's handle them simply as before.
+>
+> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
+Applied it to dev with Yuezhang's reviewed-by tag.
+Thanks!
 
