@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-45259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3285A75532
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 09:44:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E09A75535
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 09:44:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B5EB3AFF96
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 08:44:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 607427A5FEE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 08:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45991C173C;
-	Sat, 29 Mar 2025 08:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73AF1AA1C8;
+	Sat, 29 Mar 2025 08:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BOqSSonc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YKSExfwm"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D67C149C55;
-	Sat, 29 Mar 2025 08:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309EB149C55;
+	Sat, 29 Mar 2025 08:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743237818; cv=none; b=c/R/X4y9L9fdgJXZ5rYY0nrq/QKWzfIfSNhZN845EHIC83hfeU1DF5NjwbPI1tDlaPiHKxSTXmbwYZRGFf+jTQtnb4SWGccRtSWuzZqX4cm176VBRl5lhPwZWDgtsYXd4VvPB4KU0fLyeqNtZosJ6c88V4y+qGbd2Egy4I4bh0U=
+	t=1743237825; cv=none; b=Mp+Ah3H8ojDun/J7dCxbYo2EajH4+oJYM9gdp3Ymr2RFtRy0u6bSnN/cM2AaAj9MuL9zpPyAiiFJtmboOL2pqz4Q3uaHtYBDC33ZqiJS8bZRNGKSHdrjnuYh0wh8nqjig0y5idVfwmhj6IumEIesWW6mp8YIZs+ZAcTVEq9A7qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743237818; c=relaxed/simple;
-	bh=kSJquFBWZLjXohp7CdfSUxcMmSKnA8vBlSuTa7rPH5k=;
+	s=arc-20240116; t=1743237825; c=relaxed/simple;
+	bh=72IW7BF44UfUCx/jmJIVhavHPgdnbNCwCPoZ3/+N4Z0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pjm1uhLaGsv0DH+WWZ7xG83+7W0rr0lzk2DjeJCkW5qKteSKIj7XymZqQTUCTIc16j9HS450FUhdYI+J9JfDNaB1b+OkwliRQ/+qZsFRxJmrSacJnueV0PeOFgYyaUMH1RCZzwQ+dMgxThidViUXgduHUMcRWWuIKDyvsaFROj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BOqSSonc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 964DFC4CEEA;
-	Sat, 29 Mar 2025 08:43:34 +0000 (UTC)
+	 MIME-Version:Content-Type; b=EK42E5/i36eayaAyv8FPx/FGPTvUFCeoT+3pF1W6CQRIRBE0CVcJFsFq++e5/95454IfslF+mSiQp42mspZ9P/Hz/8N48T1g7ZQTG8rCWxOqnHAePGnbYhvnGMrA8do/WoJk7hpKl9TxKvaFxUrMHs2CztwCXk2W014Zjm3X9A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YKSExfwm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34B1EC4CEE2;
+	Sat, 29 Mar 2025 08:43:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743237817;
-	bh=kSJquFBWZLjXohp7CdfSUxcMmSKnA8vBlSuTa7rPH5k=;
+	s=k20201202; t=1743237824;
+	bh=72IW7BF44UfUCx/jmJIVhavHPgdnbNCwCPoZ3/+N4Z0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BOqSSoncdSQdi2oPHb1SWPcFCUIW5Sgc0ysHjnv8czeAnhAkNARbN8QxZsYEyiyHx
-	 3nhqjDve+t519n/W0/xywko11laZDCadp3VhFZa5RxRwpmHgEpyexKAntW+02RcTtU
-	 YBXaLp7wTCC4zlfpJ4Gp3iczXRQ7OdmwWfWdHtc2cz2jTFkKRes5kGv2TZk6TTy8CD
-	 bzt4ItopjgIHtwXthnIEQYJi5ivlNEA4dNz3aZ6cWZLf9lbHaJTgNTubEfB7qrlsC5
-	 SJmIbexdNEhXLnfelZtnCgPtpiUYMjRrN+t72yAt5bVnnxHUMHAfWWPWZ5zfIaZpzN
-	 28BHDUn64nz5Q==
+	b=YKSExfwm+GuPiZU5j3tsVy+adDftwiq6kY/YfH1rcyPEwzGvE9AgPzYQOoRXy5pU7
+	 RFwZRmv5zl1uOH0k/CAoaRP2Ca90pEXbkRSHsHDt8O7Y0tavX4fPWdJeURx4wHS9WX
+	 h8TV65+lfCstkGBhCsoVzAkCZnvhoaUaT2UH0KPlprIvIGqP1jY7KIw2H+zCrz9jRF
+	 9A4/lB9qQ2fkP/fPmkUhjoT+VHLgNIjb5KnEoFZp63TiWKnBtzd961FNX4WPkaLwlG
+	 srsswoh3y5xUcf+GyMyNTt6morxPqYEb6IX8Dq7ZWROhMDw6N5UCF6G1mXpEJFXzoq
+	 Rc6kAvgn9jVKQ==
 From: Christian Brauner <brauner@kernel.org>
 To: linux-fsdevel@vger.kernel.org,
 	jack@suse.cz
@@ -57,9 +57,9 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	mingo@redhat.com,
 	will@kernel.org,
 	boqun.feng@gmail.com
-Subject: [PATCH v2 4/6] super: use a common iterator (Part 1)
-Date: Sat, 29 Mar 2025 09:42:17 +0100
-Message-ID: <20250329-work-freeze-v2-4-a47af37ecc3d@kernel.org>
+Subject: [PATCH v2 5/6] super: use common iterator (Part 2)
+Date: Sat, 29 Mar 2025 09:42:18 +0100
+Message-ID: <20250329-work-freeze-v2-5-a47af37ecc3d@kernel.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250329-work-freeze-v2-0-a47af37ecc3d@kernel.org>
 References: <20250329-work-freeze-v2-0-a47af37ecc3d@kernel.org>
@@ -71,153 +71,124 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4478; i=brauner@kernel.org; h=from:subject:message-id; bh=kSJquFBWZLjXohp7CdfSUxcMmSKnA8vBlSuTa7rPH5k=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ/31S59sp7/5W/dLY87awO/8du6b3/8t5ZZSI3GmYGX vr4LF56WkcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBEbr9gZFhS0ufqwN5W99Dy mV0hw+VZz5rkCmXXbTmyTuvAr/9zoiwZ/vBt+/ki4hBn4YVlP5V8Fu9kzpBbyTnjn3Tv0rpotjo 2aQYA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4051; i=brauner@kernel.org; h=from:subject:message-id; bh=72IW7BF44UfUCx/jmJIVhavHPgdnbNCwCPoZ3/+N4Z0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ/31S572aA/JmD9gvK7BxlJY6/yvIoePCizPF/UOkJj oD3vjGbOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYyNZSRoWVpwm/hJ79OTtRe 4Pfk1VPGl4e/Tol7Z8+4t+NMTtr8XB1GhrmLLf7uzsrStnvH923hO5aSHqnpGu8iXE3m+iXrz+1 TYAEA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-Use a common iterator for all callbacks.
+Use a common iterator for all callbacks. We could go for something even
+more elaborate (advance step-by-step similar to iov_iter) but I really
+don't think this is warranted.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/super.c         | 67 +++++++++++-------------------------------------------
- include/linux/fs.h |  6 ++++-
- 2 files changed, 18 insertions(+), 55 deletions(-)
+ fs/super.c         | 49 ++++++++++++++++++++++++++++++++++++++++---------
+ include/linux/fs.h |  6 +-----
+ 2 files changed, 41 insertions(+), 14 deletions(-)
 
 diff --git a/fs/super.c b/fs/super.c
-index c67ea3cdda41..0dd208804a74 100644
+index 0dd208804a74..666a2a16df87 100644
 --- a/fs/super.c
 +++ b/fs/super.c
-@@ -887,37 +887,7 @@ void drop_super_exclusive(struct super_block *sb)
+@@ -887,21 +887,47 @@ void drop_super_exclusive(struct super_block *sb)
  }
  EXPORT_SYMBOL(drop_super_exclusive);
  
--static void __iterate_supers(void (*f)(struct super_block *))
--{
--	struct super_block *sb, *p = NULL;
--
--	spin_lock(&sb_lock);
--	list_for_each_entry(sb, &super_blocks, s_list) {
--		if (super_flags(sb, SB_DYING))
--			continue;
--		sb->s_count++;
--		spin_unlock(&sb_lock);
--
--		f(sb);
--
--		spin_lock(&sb_lock);
--		if (p)
--			__put_super(p);
--		p = sb;
--	}
--	if (p)
--		__put_super(p);
--	spin_unlock(&sb_lock);
--}
--/**
-- *	iterate_supers - call function for all active superblocks
-- *	@f: function to call
-- *	@arg: argument to pass to it
-- *
-- *	Scans the superblock list and calls given function, passing it
-- *	locked superblock and given argument.
-- */
--void iterate_supers(void (*f)(struct super_block *, void *), void *arg)
-+void __iterate_supers(void (*f)(struct super_block *, void *), void *arg, bool excl)
+-void __iterate_supers(void (*f)(struct super_block *, void *), void *arg, bool excl)
++enum super_iter_flags_t {
++	SUPER_ITER_EXCL		= (1U << 0),
++	SUPER_ITER_UNLOCKED	= (1U << 1),
++	SUPER_ITER_REVERSE	= (1U << 2),
++};
++
++static inline struct super_block *first_super(enum super_iter_flags_t flags)
++{
++	if (flags & SUPER_ITER_REVERSE)
++		return list_last_entry(&super_blocks, struct super_block, s_list);
++	return list_first_entry(&super_blocks, struct super_block, s_list);
++}
++
++static inline struct super_block *next_super(struct super_block *sb,
++					     enum super_iter_flags_t flags)
++{
++	if (flags & SUPER_ITER_REVERSE)
++		return list_prev_entry(sb, s_list);
++	return list_next_entry(sb, s_list);
++}
++
++#define invalid_super list_entry_is_head
++
++static void __iterate_supers(void (*f)(struct super_block *, void *), void *arg,
++			     enum super_iter_flags_t flags)
  {
  	struct super_block *sb, *p = NULL;
++	bool excl = flags & SUPER_ITER_EXCL;
  
-@@ -927,14 +897,13 @@ void iterate_supers(void (*f)(struct super_block *, void *), void *arg)
+-	spin_lock(&sb_lock);
+-	list_for_each_entry(sb, &super_blocks, s_list) {
+-		bool locked;
++	guard(spinlock)(&sb_lock);
  
++	for (sb = first_super(flags); !invalid_super(sb, &super_blocks, s_list);
++	     sb = next_super(sb, flags)) {
  		if (super_flags(sb, SB_DYING))
  			continue;
--
  		sb->s_count++;
  		spin_unlock(&sb_lock);
  
--		locked = super_lock_shared(sb);
-+		locked = super_lock(sb, excl);
- 		if (locked) {
+-		locked = super_lock(sb, excl);
+-		if (locked) {
++		if (flags & SUPER_ITER_UNLOCKED) {
++			f(sb, arg);
++		} else if (super_lock(sb, excl)) {
  			f(sb, arg);
--			super_unlock_shared(sb);
-+			super_unlock(sb, excl);
+ 			super_unlock(sb, excl);
  		}
- 
- 		spin_lock(&sb_lock);
-@@ -1111,11 +1080,9 @@ int reconfigure_super(struct fs_context *fc)
- 	return retval;
- }
- 
--static void do_emergency_remount_callback(struct super_block *sb)
-+static void do_emergency_remount_callback(struct super_block *sb, void *unused)
- {
--	bool locked = super_lock_excl(sb);
--
--	if (locked && sb->s_root && sb->s_bdev && !sb_rdonly(sb)) {
-+	if (sb->s_bdev && !sb_rdonly(sb)) {
- 		struct fs_context *fc;
- 
- 		fc = fs_context_for_reconfigure(sb->s_root,
-@@ -1126,13 +1093,11 @@ static void do_emergency_remount_callback(struct super_block *sb)
- 			put_fs_context(fc);
- 		}
+@@ -913,7 +939,11 @@ void __iterate_supers(void (*f)(struct super_block *, void *), void *arg, bool e
  	}
--	if (locked)
--		super_unlock_excl(sb);
+ 	if (p)
+ 		__put_super(p);
+-	spin_unlock(&sb_lock);
++}
++
++void iterate_supers(void (*f)(struct super_block *, void *), void *arg)
++{
++	__iterate_supers(f, arg, 0);
  }
+ 
+ /**
+@@ -1097,7 +1127,8 @@ static void do_emergency_remount_callback(struct super_block *sb, void *unused)
  
  static void do_emergency_remount(struct work_struct *work)
  {
--	__iterate_supers(do_emergency_remount_callback);
-+	__iterate_supers(do_emergency_remount_callback, NULL, true);
+-	__iterate_supers(do_emergency_remount_callback, NULL, true);
++	__iterate_supers(do_emergency_remount_callback, NULL,
++			 SUPER_ITER_EXCL | SUPER_ITER_REVERSE);
  	kfree(work);
  	printk("Emergency Remount complete\n");
  }
-@@ -1148,24 +1113,18 @@ void emergency_remount(void)
- 	}
- }
- 
--static void do_thaw_all_callback(struct super_block *sb)
-+static void do_thaw_all_callback(struct super_block *sb, void *unused)
- {
--	bool locked = super_lock_excl(sb);
--
--	if (locked && sb->s_root) {
--		if (IS_ENABLED(CONFIG_BLOCK))
--			while (sb->s_bdev && !bdev_thaw(sb->s_bdev))
--				pr_warn("Emergency Thaw on %pg\n", sb->s_bdev);
--		thaw_super_locked(sb, FREEZE_HOLDER_USERSPACE);
--		return;
--	}
--	if (locked)
--		super_unlock_excl(sb);
-+	if (IS_ENABLED(CONFIG_BLOCK))
-+		while (sb->s_bdev && !bdev_thaw(sb->s_bdev))
-+			pr_warn("Emergency Thaw on %pg\n", sb->s_bdev);
-+	thaw_super_locked(sb, FREEZE_HOLDER_USERSPACE);
-+	return;
- }
+@@ -1124,7 +1155,7 @@ static void do_thaw_all_callback(struct super_block *sb, void *unused)
  
  static void do_thaw_all(struct work_struct *work)
  {
--	__iterate_supers(do_thaw_all_callback);
-+	__iterate_supers(do_thaw_all_callback, NULL, true);
+-	__iterate_supers(do_thaw_all_callback, NULL, true);
++	__iterate_supers(do_thaw_all_callback, NULL, SUPER_ITER_EXCL);
  	kfree(work);
  	printk(KERN_WARNING "Emergency Thaw complete\n");
  }
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 016b0fe1536e..0351500b71d2 100644
+index 0351500b71d2..c475fa874055 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -3515,7 +3515,11 @@ extern void put_filesystem(struct file_system_type *fs);
+@@ -3515,11 +3515,7 @@ extern void put_filesystem(struct file_system_type *fs);
  extern struct file_system_type *get_fs_type(const char *name);
  extern void drop_super(struct super_block *sb);
  extern void drop_super_exclusive(struct super_block *sb);
--extern void iterate_supers(void (*)(struct super_block *, void *), void *);
-+void __iterate_supers(void (*f)(struct super_block *, void *), void *arg, bool excl);
-+static inline void iterate_supers(void (*f)(struct super_block *, void *), void *arg)
-+{
-+	__iterate_supers(f, arg, false);
-+}
+-void __iterate_supers(void (*f)(struct super_block *, void *), void *arg, bool excl);
+-static inline void iterate_supers(void (*f)(struct super_block *, void *), void *arg)
+-{
+-	__iterate_supers(f, arg, false);
+-}
++extern void iterate_supers(void (*f)(struct super_block *, void *), void *arg);
  extern void iterate_supers_type(struct file_system_type *,
  			        void (*)(struct super_block *, void *), void *);
  
