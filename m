@@ -1,55 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-45264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15EBAA75570
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 10:29:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38C00A755AD
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 11:08:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BFDB189206C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 09:30:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF72A3AF2B2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 10:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C541A1AB50D;
-	Sat, 29 Mar 2025 09:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sO2UC6fT"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570581B3927;
+	Sat, 29 Mar 2025 10:08:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.smtpout.orange.fr (smtp-66.smtpout.orange.fr [80.12.242.66])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B690D2AD2A;
-	Sat, 29 Mar 2025 09:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.66
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCE0DDBC;
+	Sat, 29 Mar 2025 10:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743240589; cv=none; b=N/7pQXvzgdqwwge6/yi3J5J3ssapvsPugcJvyArg2S7J9KZKjB4ohflGS1JEyO0LtgFkfMxOoDE+QcsXToEsaBJtkGCYlt7eMll+BSqynKeYgu/jlbSHkmv5g/ylDswthgAIfuk9OTWVoTSiaAE3MHDNNZdVBjxAMKXDdNVwPbc=
+	t=1743242886; cv=none; b=S6eD5rk3ZfaetI0Zf7to+KquVivJlr/A4G1wQHtLSXLsGIAUYshH+Vmmm2/544+yCwp+RTsZwTY9GyCQHTBkCQY2FVtXelcwOXSSDtRBalKePMCuYfaB1gcOh/Vd38Hwufd3xI8zYHa1xWeSABJ5kf1/7mEdhafSpsUfbpcTE1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743240589; c=relaxed/simple;
-	bh=hzQhOPNqE60R1qkBlg61xzswVm5bJ0iiYEc707dhqi0=;
+	s=arc-20240116; t=1743242886; c=relaxed/simple;
+	bh=geHv+XKbUv8yf942M+ooDuuafZKdJCTWjjk1ign4pLk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mv1HyuDQN7/VFYr5WTIlhYKaD0GiLXE27paRWhioKW2jKbOdbkyxoas1Ci4cMaNA2i7+iO9MV/GLPE4MLVvQQj9ifgIlok+vEzJCrBx6MUZ1Z4enUHZEMw5Rr8drnbzYbK4kq3Ph1HvBRmeupLC2TePSxVzxsR+EWTAyOarzlhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=sO2UC6fT; arc=none smtp.client-ip=80.12.242.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id ySMrtFJFBkHP7ySMutS03L; Sat, 29 Mar 2025 10:20:46 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1743240046;
-	bh=4gKjuoqKQNe9FB94aEC2wTPWEJscygTofIdbbOSUWHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=sO2UC6fTd8Dg3vSzZrTefyMvYX2q5Lac2yYQHSuSDIUvjFwmI1nqgDXRG8Sk7FE+J
-	 PG8Io1viZwSclEF+MXNuiamTY1UuynmpfqDvF21oPMRvw3dSIq25OD147J6uLcRBzF
-	 0GGz6bZJmaBu76xQ2Yy7iNTuvmFw8rJTMot2na3GCMLsUPM+WYocx6KzNkgyENganB
-	 qfx5PqwuxUWOOfOYgM/c6yAY8tricdhGQnqDNypVcehNoIRCQNXhboown4KPgdFAX/
-	 TUGRouwPeGDhWI0g4Nj0MMmdLvTua+J3FsBWd8macfz8idQWjW7t7X0l2Ih9GXvAF+
-	 58DHZ7FidJtuA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sat, 29 Mar 2025 10:20:46 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <b1baac64-f56d-4d0f-92f1-d7bb808a151b@wanadoo.fr>
-Date: Sat, 29 Mar 2025 10:20:40 +0100
+	 In-Reply-To:Content-Type; b=hykEiUdA0PICqmaMTKSp5CxhAtha58/i1W6YgDP9Xp9Hw8dpgt0CXHIIECm2dJGpFGFmWaMAXWXmLGkABa9ZlgQ990dBnyEkQCZ7KN/nZyGl4dU6upNBoYBPUTAT4xC8/9C7xmMbNkkPv1E149C5Q9/SvPMGTOmINezedXX4fYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6505D152B;
+	Sat, 29 Mar 2025 03:08:07 -0700 (PDT)
+Received: from [10.57.87.112] (unknown [10.57.87.112])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2BA713F694;
+	Sat, 29 Mar 2025 03:08:01 -0700 (PDT)
+Message-ID: <ee11907a-5bd7-44ec-844c-8f10ff406b46@arm.com>
+Date: Sat, 29 Mar 2025 10:07:59 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,141 +42,128 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] fs: Supply dir_context.count as readdir buffer size
- hint
-To: Jaco Kroon <jaco@uls.co.za>
-Cc: bernd.schubert@fastmail.fm, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, miklos@szeredi.hu, rdunlap@infradead.org,
- trapexit@spawn.link
-References: <20230727081237.18217-1-jaco@uls.co.za>
- <20250314221701.12509-1-jaco@uls.co.za>
- <20250314221701.12509-2-jaco@uls.co.za>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20250314221701.12509-2-jaco@uls.co.za>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v3] mm/filemap: Allow arch to request folio size for exec
+ memory
+Content-Language: en-GB
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Kalesh Singh <kaleshsingh@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Dave Chinner <david@fromorbit.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20250327160700.1147155-1-ryan.roberts@arm.com>
+ <Z-WAbWfZzG1GA-4n@casper.infradead.org>
+ <5131c7ad-cc37-44fc-8672-5866ecbef65b@arm.com>
+ <Z-b1FmZ5nHzh5huL@casper.infradead.org>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <Z-b1FmZ5nHzh5huL@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
-
-a few nitpicks below to reduce the diffpatch with unrelated changes. 
-(trainling spaces)
-
-
-Le 14/03/2025 à 23:16, Jaco Kroon a écrit :
-> This was provided by Miklos <miklos@szeredi.hu> via LKML on 2023/07/27
-> subject "Re: [PATCH] fuse: enable larger read buffers for readdir.".
+On 28/03/2025 15:14, Matthew Wilcox wrote:
+> On Thu, Mar 27, 2025 at 04:23:14PM -0400, Ryan Roberts wrote:
+>> + Kalesh
+>>
+>> On 27/03/2025 12:44, Matthew Wilcox wrote:
+>>> On Thu, Mar 27, 2025 at 04:06:58PM +0000, Ryan Roberts wrote:
+>>>> So let's special-case the read(ahead) logic for executable mappings. The
+>>>> trade-off is performance improvement (due to more efficient storage of
+>>>> the translations in iTLB) vs potential read amplification (due to
+>>>> reading too much data around the fault which won't be used), and the
+>>>> latter is independent of base page size. I've chosen 64K folio size for
+>>>> arm64 which benefits both the 4K and 16K base page size configs and
+>>>> shouldn't lead to any read amplification in practice since the old
+>>>> read-around path was (usually) reading blocks of 128K. I don't
+>>>> anticipate any write amplification because text is always RO.
+>>>
+>>> Is there not also the potential for wasted memory due to ELF alignment?
+>>
+>> I think this is an orthogonal issue? My change isn't making that any worse.
 > 
-> This is thus preperation for an improved fuse readdir() patch.  The
+> To a certain extent, it is.  If readahead was doing order-2 allocations
+> before and is now doing order-4, you're tying up 0-12 extra pages which
+> happen to be filled with zeroes due to being used to cache the contents
+> of a hole.
 
-s/preperation/preparation/
+Well we would still have read them in before, nothing has changed there. But I
+guess your point is more about reclaim? Because those pages are now contained in
+a larger folio, if part of the folio is in use then all of it remains active.
+Whereas before, if the folio was fully contained in the pad area and never
+accessed, it would fall down the LRU quickly and get reclaimed.
 
-> description he provided:
 > 
-> "The best strategy would be to find the optimal buffer size based on the size of
-> the userspace buffer.  Putting that info into struct dir_context doesn't sound
-> too complicated...
+>>> Kalesh talked about it in the MM BOF at the same time that Ted and I
+>>> were discussing it in the FS BOF.  Some coordination required (like
+>>> maybe Kalesh could have mentioned it to me rathere than assuming I'd be
+>>> there?)
+>>
+>> I was at Kalesh's talk. David H suggested that a potential solution might be for
+>> readahead to ask the fs where the next hole is and then truncate readahead to
+>> avoid reading the hole. Given it's padding, nothing should directly fault it in
+>> so it never ends up in the page cache. Not sure if you discussed anything like
+>> that if you were talking in parallel?
 > 
-> "Here's a patch.  It doesn't touch readdir.  Simply setting the fuse buffer size
-> to the userspace buffer size should work, the record sizes are similar (fuse's
-> is slightly larger than libc's, so no overflow should ever happen)."
+> Ted said that he and Kalesh had talked about that solution.  I have a
+> more bold solution in mind which lifts the ext4 extent cache to the
+> VFS inode so that the readahead code can interrogate it.
+> 
+>> Anyway, I'm not sure if you're suggesting these changes need to be considered as
+>> one somehow or if you're just mentioning it given it is loosely related? My view
+>> is that this change is an improvement indepently and could go in much sooner.
+> 
+> This is not a reason to delay this patch.  It's just a downside which
+> should be mentioned in the commit message.
 
-...
+Fair point; I'll add a paragraph about the potential reclaim issue.
 
-> @@ -239,7 +240,7 @@ SYSCALL_DEFINE3(old_readdir, unsigned int, fd,
->   
->   /*
->    * New, all-improved, singing, dancing, iBCS2-compliant getdents()
-> - * interface.
-> + * interface.
+> 
+>>>> +static inline int arch_exec_folio_order(void)
+>>>> +{
+>>>> +	return -1;
+>>>> +}
+>>>
+>>> This feels a bit fragile.  I often expect to be able to store an order
+>>> in an unsigned int.  Why not return 0 instead?
+>>
+>> Well 0 is a valid order, no? I think we have had the "is order signed or
+>> unsigned" argument before. get_order() returns a signed int :)
+> 
+> But why not always return a valid order?  I don't think we need a
+> sentinel.  The default value can be 0 to do what we do today.
+> 
 
-Unrelated change.
+But a single order-0 folio is not what we do today. Note that my change as
+currently implemented requests to read a *single* folio of the specified order.
+And note that we only get the order we request to page_cache_ra_order() because
+the size is limited to a single folio. If the size were bigger, that function
+would actually expand the requested order by 2. (although the parameter is
+called "new_order", it's actually interpretted as "old_order").
 
->    */
->   struct linux_dirent {
->   	unsigned long	d_ino;
+The current behavior is effectively to read 128K in order-2 folios (with smaller
+folios for boundary alignment).
 
-...
+So I see a few options:
 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 2788df98080f..1e426e2b5999 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -308,7 +308,7 @@ struct iattr {
->    */
->   #define FILESYSTEM_MAX_STACK_DEPTH 2
->   
-> -/**
-> +/**
+  - Continue to allow non-opted in arches to use the existing behaviour; in this
+case we need a sentinel. This could be -1, UINT_MAX or 0. But in the latter case
+you are preventing an opted-in arch from specifying that they want order-0 -
+it's meaning is overridden.
 
-Unrelated change.
+  - Force all arches to use the new approach with a default folio order (and
+readahead size) of order-0. (The default can be overridden per-arch). Personally
+I'd be nervous about making this change.
 
->    * enum positive_aop_returns - aop return codes with specific semantics
->    *
->    * @AOP_WRITEPAGE_ACTIVATE: Informs the caller that page writeback has
-> @@ -318,7 +318,7 @@ struct iattr {
->    * 			    be a candidate for writeback again in the near
->    * 			    future.  Other callers must be careful to unlock
->    * 			    the page if they get this return.  Returned by
-> - * 			    writepage();
-> + * 			    writepage();
+  - Decouple the read size from the folio order size; continue to use the 128K
+read size and only allow opting-in to a specific folio order. The default order
+would be 2 (or 0). We would need to fix page_cache_async_ra() to call
+page_cache_ra_order() with "order + 2" (the new order) and fix
+page_cache_ra_order() to treat its order parameter as the *new* order.
 
-Unrelated change.
+Perhaps we should do those fixes anyway (and then actually start with a folio
+order of 0 - which I think you said in the past was your original intention?).
 
->    *
->    * @AOP_TRUNCATED_PAGE: The AOP method that was handed a locked page has
->    *  			unlocked it and the page might have been truncated.
-> @@ -1151,8 +1151,8 @@ struct file *get_file_active(struct file **f);
->   
->   #define	MAX_NON_LFS	((1UL<<31) - 1)
->   
-> -/* Page cache limit. The filesystems should put that into their s_maxbytes
-> -   limits, otherwise bad things can happen in VM. */
-> +/* Page cache limit. The filesystems should put that into their s_maxbytes
-> +   limits, otherwise bad things can happen in VM. */
-
-Unrelated change.
-
->   #if BITS_PER_LONG==32
->   #define MAX_LFS_FILESIZE	((loff_t)ULONG_MAX << PAGE_SHIFT)
->   #elif BITS_PER_LONG==64
-> @@ -2073,6 +2073,13 @@ typedef bool (*filldir_t)(struct dir_context *, const char *, int, loff_t, u64,
->   struct dir_context {
->   	filldir_t actor;
->   	loff_t pos;
-> +	/*
-> +	 * Filesystems MUST NOT MODIFY count, but may use as a hint:
-> +	 * 0	    unknown
-> +	 * > 0      space in buffer (assume at least one entry)
-> +	 * INT_MAX  unlimited
-> +	 */
-> +	int count;
->   };
->   
->   /*
-> @@ -2609,7 +2616,7 @@ int sync_inode_metadata(struct inode *inode, int wait);
->   struct file_system_type {
->   	const char *name;
->   	int fs_flags;
-> -#define FS_REQUIRES_DEV		1
-> +#define FS_REQUIRES_DEV		1
-
-Unrelated change.
-
->   #define FS_BINARY_MOUNTDATA	2
->   #define FS_HAS_SUBTYPE		4
->   #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
-> @@ -3189,7 +3196,7 @@ ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos);
->   extern ssize_t kernel_write(struct file *, const void *, size_t, loff_t *);
->   extern ssize_t __kernel_write(struct file *, const void *, size_t, loff_t *);
->   extern struct file * open_exec(const char *);
-> -
-> +
-
-Unrelated change.
-
->   /* fs/dcache.c -- generic fs support functions */
->   extern bool is_subdir(struct dentry *, struct dentry *);
->   extern bool path_is_under(const struct path *, const struct path *);
+Thanks,
+Ryan
 
 
