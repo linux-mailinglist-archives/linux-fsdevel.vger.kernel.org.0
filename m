@@ -1,404 +1,207 @@
-Return-Path: <linux-fsdevel+bounces-45294-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45295-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36EFFA759D8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 13:53:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A571BA759E2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 13:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BBBF3AB3AC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 11:53:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C68903A93D0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 11:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EC81C173F;
-	Sun, 30 Mar 2025 11:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACCA1C07F6;
+	Sun, 30 Mar 2025 11:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YkG3+aOd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZ8gQnfc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C011991CD;
-	Sun, 30 Mar 2025 11:53:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C3B4A05;
+	Sun, 30 Mar 2025 11:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743335625; cv=none; b=dsYF+dv902Y9tpJKfabeHuvOcyR/TtIBT4xtXjzNBDzz1nPo2aC/Z2XSx1WqrSVLEhLNUKcWtNvCvGvH6q8yOfBUaw7vu1qcnWW+vHOht0AOxYGPgeG9/mOHgtv994hBdkA3BA5+v84QZE+YQvOIrQtAH2AgNNfgxFGe6cKjb3I=
+	t=1743335881; cv=none; b=eQpHSqGRByzN9Q2qim4HTcnRpihKNO2jm4Xk0SYZp6Rhfkc7ngxMs1y+4HWfrJWhTRplllpYQ2LW1NKyf9dlKd3YY+ocHAAEGyGLN9n+y7p4fhc2KvFJ0/Q97ZOgKAvwCIW75GFUtq5s++2SudKQQDu6fe1sJ/49GGtJi18CUHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743335625; c=relaxed/simple;
-	bh=1lrb21tzJ84nytKxIOFaauJ/gE8C+3BPbGjDhW0NlgE=;
+	s=arc-20240116; t=1743335881; c=relaxed/simple;
+	bh=1FJ+vQV92qoZubCCalX8YibypxVYbfc8SXcjDIok1tc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KH1vW/6y7dLvggj72J/xenGZBXd/FTwzU5XW63Ccx0pfNnOoRdTSER2cGFqWw1DU2Hgm2dgJZjGrusnO05fAoajlZhKaugm450Zfcnf5Gqv/QXHc1+2Vpx+G81lxTXN0RfHYU0JmWKZ9Ftc6UfreIUmHZXwAm0VQe5tB0cGmsuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YkG3+aOd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4226C4CEDD;
-	Sun, 30 Mar 2025 11:53:41 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gBfTJp/ZPlnQ4pb03pbMPWuWEjqaVZJXOZawCAPVDSgAQqRlinprkHTZAhjCKuo6i23RbmMmsb6Lu0khhvf3MwoaI1GZ3Nv7UvQvo2DtFHx3Jr1jMHdIfhcUHlDUHzyQeRif/Db8dBdFzWzInVcpifAytaSe3C53iAFWAOUFvis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZ8gQnfc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F630C4CEDD;
+	Sun, 30 Mar 2025 11:57:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743335625;
-	bh=1lrb21tzJ84nytKxIOFaauJ/gE8C+3BPbGjDhW0NlgE=;
+	s=k20201202; t=1743335880;
+	bh=1FJ+vQV92qoZubCCalX8YibypxVYbfc8SXcjDIok1tc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YkG3+aOd0NW9XZoi/T+x+mVcGzTU5I5qDCNiuaNS82tNsIOrDiE6n7qhgaZtxUxtr
-	 ZY1NqV7JxOMnDz7W5nf5CZ/OFnCTkyp4dbP+6cCpoEGxaTsvaUxfGiNB7IukU6loUs
-	 rd2H3nnmv2ibuxtCS9chlGn2tyLtq69drNknDJDy74tpYRmZhJQjo6uxF/+TeuX9kf
-	 7yWIigsUBPkHFsWy6KHo41mDiLPq/puXn7G97ZGABH3/7a9lxJNXD/GX9bvLyxy/kj
-	 Dzow8Ec/j0HzRV2NImUDglIXyBneJdW/+wrjIVR29RaUubbONaHI/MpFWtwHP8PwhJ
-	 r4PNYMR0jD5WA==
-Date: Sun, 30 Mar 2025 13:53:39 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>, jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mcgrof@kernel.org, hch@infradead.org, david@fromorbit.com, rafael@kernel.org, 
-	djwong@kernel.org, pavel@kernel.org, peterz@infradead.org, mingo@redhat.com, 
-	will@kernel.org, boqun.feng@gmail.com
-Subject: Re: [PATCH v2 0/6] Extend freeze support to suspend and hibernate
-Message-ID: <20250330-akupunktur-weshalb-c90594b6ad01@brauner>
-References: <20250328-work-freeze-v1-0-a2c3a6b0e7a6@kernel.org>
- <20250329-work-freeze-v2-0-a47af37ecc3d@kernel.org>
- <12ce8c18f4e16b1de591cbdfb8f6e7844e42807b.camel@HansenPartnership.com>
- <9c0a24cd8b03539fd6b8ecd5a186a5cf98b5d526.camel@HansenPartnership.com>
- <20250330-heimweg-packen-b73908210f79@brauner>
+	b=eZ8gQnfc44S5HacDrCshR2rzvEbxt2Y1mSfPYT2BBaLqwsJXWMfB8pNp+Gcgz/jKT
+	 F9/8BqcT8FsbTKXuKPb5XdQJPLfPdKG0ZAivQnMuqRJoPv+zFn/dYOUbcSu+tUdNPr
+	 8Lg/mSfOgtfvXrwk4ttLOrxKItrQv9c8ivA5SXkgxcQVNgHzanDYoWKJdAycJ7RrYu
+	 9HuK4NRo4vLqUWIT0O0NSf9KAMdReT0t2AxjaiyRvwGLYrk4dKqT2733VO2aVkTswy
+	 zsnuIpAZgQsoTRLAdle2fzczf+HcFAYvyQJFuSqw5Jr7H4yHOOIr3CQrfSzrY3Va2m
+	 hoaxVkI1WMJIA==
+Date: Sun, 30 Mar 2025 13:57:55 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Alejandro Colomar <alx.manpages@gmail.com>, 
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@poochiereds.net>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-man@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] name_to_handle_at.2: Document the AT_HANDLE_CONNECTABLE
+ flag
+Message-ID: <hih7dv4ct7bud4mzshjdbfinecmhldq7uqiqebiavqqqgsui5a@deboitvqheo2>
+References: <20250330111643.1405265-1-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="5p4k2tvj74tkuxrm"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tvjsndhfqyr22jj3"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250330-heimweg-packen-b73908210f79@brauner>
+In-Reply-To: <20250330111643.1405265-1-amir73il@gmail.com>
 
 
---5p4k2tvj74tkuxrm
-Content-Type: text/plain; charset=utf-8
+--tvjsndhfqyr22jj3
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Alejandro Colomar <alx.manpages@gmail.com>, 
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@poochiereds.net>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-man@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] name_to_handle_at.2: Document the AT_HANDLE_CONNECTABLE
+ flag
+References: <20250330111643.1405265-1-amir73il@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20250330111643.1405265-1-amir73il@gmail.com>
 
-On Sun, Mar 30, 2025 at 10:33:53AM +0200, Christian Brauner wrote:
-> On Sat, Mar 29, 2025 at 01:02:32PM -0400, James Bottomley wrote:
-> > On Sat, 2025-03-29 at 10:04 -0400, James Bottomley wrote:
-> > > On Sat, 2025-03-29 at 09:42 +0100, Christian Brauner wrote:
-> > > > Add the necessary infrastructure changes to support freezing for
-> > > > suspend and hibernate.
-> > > > 
-> > > > Just got back from LSFMM. So still jetlagged and likelihood of bugs
-> > > > increased. This should all that's needed to wire up power.
-> > > > 
-> > > > This will be in vfs-6.16.super shortly.
-> > > > 
-> > > > ---
-> > > > Changes in v2:
-> > > > - Don't grab reference in the iterator make that a requirement for
-> > > > the callers that need custom behavior.
-> > > > - Link to v1:
-> > > > https://lore.kernel.org/r/20250328-work-freeze-v1-0-a2c3a6b0e7a6@kernel.org
-> > > 
-> > > Given I've been a bit quiet on this, I thought I'd better explain
-> > > what's going on: I do have these built, but I made the mistake of
-> > > doing a dist-upgrade on my testing VM master image and it pulled in a
-> > > version of systemd (257.4-3) that has a broken hibernate.  Since I
-> > > upgraded in place I don't have the old image so I'm spending my time
-> > > currently debugging systemd ... normal service will hopefully resume
-> > > shortly.
-> > 
-> > I found the systemd bug
-> > 
-> > https://github.com/systemd/systemd/issues/36888
-> 
-> I don't think that's a systemd bug.
-> 
-> > And hacked around it, so I can confirm a simple hibernate/resume works
-> > provided the sd_start_write() patches are applied (and the hooks are
-> > plumbed in to pm).
-> > 
-> > There is an oddity: the systemd-journald process that would usually
-> > hang hibernate in D wait goes into R but seems to be hung and can't be
-> > killed by the watchdog even with a -9.  It's stack trace says it's
-> > still stuck in sb_start_write:
-> > 
-> > [<0>] percpu_rwsem_wait.constprop.10+0xd1/0x140
-> > [<0>] ext4_page_mkwrite+0x3c1/0x560 [ext4]
-> > [<0>] do_page_mkwrite+0x38/0xa0
-> > [<0>] do_wp_page+0xd5/0xba0
-> > [<0>] __handle_mm_fault+0xa29/0xca0
-> > [<0>] handle_mm_fault+0x16a/0x2d0
-> > [<0>] do_user_addr_fault+0x3ab/0x810
-> > [<0>] exc_page_fault+0x68/0x150
-> > [<0>] asm_exc_page_fault+0x22/0x30
-> > 
-> > So I think there's something funny going on in thaw.
-> 
-> My uneducated guess is that it's probably an issue with ext4 freezing
-> and unfreezing. xfs stops workqueues after all writes and pagefault
-> writers have stopped. This is done in ->sync_fs() when it's called from
-> freeze_super(). They are restarted when ->unfreeze_fs is called.
-> 
-> But for ext4 in ->sync_fs() the rsv_conversion_wq is flushed. I think
-> that should be safe to do but I'm not sure if there can't be other work
-> coming in on it before the actual freeze call. Jan will be able to
-> explain this a lot better. I don't have time today to figure out what
-> this does.
+Hi Amir,
 
-Though I'm just looking at the patch snippet you posted for how you
-hooked up efivarfs in https://lore.kernel.org/r/a7e6dee45ac11519c33a297797990fce6bb32bff.camel@HansenPartnership.com
-and that looks pretty broken and is probably the root cause. You have:
+On Sun, Mar 30, 2025 at 01:16:43PM +0200, Amir Goldstein wrote:
+> A flag since v6.13 to indicate that the requested file_handle is
+> intended to be used for open_by_handle_at(2) to obtain an open file
+> with a known path.
+>=20
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-+static int efivarfs_thaw(struct super_block *sb, enum freeze_holder who);
- static const struct super_operations efivarfs_ops = {
-        .statfs = efivarfs_statfs,
-        .drop_inode = generic_delete_inode,
-        .alloc_inode = efivarfs_alloc_inode,
-        .free_inode = efivarfs_free_inode,
-        .show_options = efivarfs_show_options,
-+       .thaw_super = efivarfs_thaw,
- };
+Please add explicit CC tags for everyone CCd.
 
-Which adds ->thaw_super() without ->freeze_super() which means that
-->thaw_super() is never called for efivarfs.
+> ---
+>  man/man2/open_by_handle_at.2 | 31 ++++++++++++++++++++++++++++++-
+>  1 file changed, 30 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/man/man2/open_by_handle_at.2 b/man/man2/open_by_handle_at.2
+> index 6b9758d42..ce3a2cec8 100644
+> --- a/man/man2/open_by_handle_at.2
+> +++ b/man/man2/open_by_handle_at.2
+> @@ -127,6 +127,7 @@ The
+>  .I flags
+>  argument is a bit mask constructed by ORing together zero or more of
+>  .BR AT_HANDLE_FID ,
+> +.BR AT_HANDLE_CONNECTABLE,
+>  .BR AT_EMPTY_PATH ,
+>  and
+>  .BR AT_SYMLINK_FOLLOW ,
+> @@ -147,6 +148,29 @@ with the returned
+>  .I file_handle
+>  may fail.
+>  .P
+> +When
+> +.I flags
+> +contain the
+> +.BR AT_HANDLE_CONNECTABLE " (since Linux 6.13)"
+> +.\" commit a20853ab8296d4a8754482cb5e9adde8ab426a25
+> +flag, the caller indicates that the returned
+> +.I file_handle
+> +is needed to open a file with known path later,
+> +so it should be expected that a subsequent call to
+> +.BR open_by_handle_at ()
+> +with the returned
+> +.I file_handle
+> +may fail if the file was moved,
+> +but otherwise,
+> +the path of the opened file is expected to be visible
+> +from the
+> +.IR /proc/ pid /fd/*
 
-But also it's broken in other ways. You're not waiting for writers to
-finish. Which is most often fine because efivarfs shouldn't be written
-to that heavily but still this won't work and you need to call the
-generic VFS helpers.
+Literal parts of a path name should be in italics, but variable parts
+should be in roman.  Thus:
 
-I'm appending a draft for how to do this with efivarfs. Note, I don't
-have the means/time to test this right now. Would you please plumb in
-your recursive removal into my patch and test it? I'm pushing it to
-vfs-6.16.super for now (It likely will fail due to unused helpers right
-now because I gutted the recursive removal.).
+	.IR /proc/ pid /fd/ *
 
---5p4k2tvj74tkuxrm
-Content-Type: text/x-diff; charset=utf-8
-Content-Disposition: attachment;
-	filename="0001-DRAFT-efivarfs-support-freeze-thaw-for-suspend-hiber.patch"
+> +magic link.
+> +This flag can not be used in combination with the flags
+> +.BR AT_HANDLE_FID ,
 
-From 4cb24e33a63a8f9dd5a2ab56b1b183c1ef26c4d0 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Sun, 30 Mar 2025 13:24:18 +0200
-Subject: [PATCH] [DRAFT] efivarfs: support freeze/thaw for suspend/hibernate
+for only two items, we don't need a comma here.  It's for three or more
+items, that Oxford comma applies.
 
-The efivarfs subsystem wants to partake in system hibernation and
-suspend. To this end it needs to gain freeze/thaw support.
+> +and
 
-- Don't expose efivarfs freeze/thaw to userspace. It's not just
-  pointless it also would complicate the implementation because we would
-  need to handle userspace initiated freezed in combination with
-  hibernation initiated freezes. IOW, userspace could freeze efivarfs
-  and we get a notification about an imminent freeze request from the
-  power subsystem but since we're already frozen by userspace we never
-  actually sync variables. So this is useful on two fronts.
-
-- Unregister the notifier before we call kill_litter_super() because
-  by that time the filesystems is already dead so no need bothering with
-  reacting to hibernation. We wont't resurrect it anyway.
-
-- Let the notifier set a global variable to indicate that hibernation is
-  ongoing and resync variable state when efivars is actually going to be
-  unfrozen via efivarfs_thaw_super()'s call to efivarfs_unfreeze_fs().
-
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/efivarfs/super.c | 141 ++++++++++++++++----------------------------
- 1 file changed, 51 insertions(+), 90 deletions(-)
-
-diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
-index 0486e9b68bc6..ce0f7ebeed1d 100644
---- a/fs/efivarfs/super.c
-+++ b/fs/efivarfs/super.c
-@@ -119,12 +119,20 @@ static int efivarfs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 
- 	return 0;
- }
-+
-+static int efivarfs_freeze_super(struct super_block *sb, enum freeze_holder who);
-+static int efivarfs_thaw_super(struct super_block *sb, enum freeze_holder who);
-+static int efivarfs_unfreeze_fs(struct super_block *sb);
-+
- static const struct super_operations efivarfs_ops = {
- 	.statfs = efivarfs_statfs,
- 	.drop_inode = generic_delete_inode,
- 	.alloc_inode = efivarfs_alloc_inode,
- 	.free_inode = efivarfs_free_inode,
- 	.show_options = efivarfs_show_options,
-+	.freeze_super = efivarfs_freeze_super,
-+	.thaw_super = efivarfs_thaw_super,
-+	.unfreeze_fs = efivarfs_unfreeze_fs,
- };
- 
- /*
-@@ -368,7 +376,6 @@ static int efivarfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 		return err;
- 
- 	register_pm_notifier(&sfi->pm_nb);
--
- 	return efivar_init(efivarfs_callback, sb, true);
- }
- 
-@@ -474,111 +481,61 @@ static int efivarfs_check_missing(efi_char16_t *name16, efi_guid_t vendor,
- 	return err;
- }
- 
--static void efivarfs_deactivate_super_work(struct work_struct *work)
--{
--	struct super_block *s = container_of(work, struct super_block,
--					     destroy_work);
--	/*
--	 * note: here s->destroy_work is free for reuse (which
--	 * will happen in deactivate_super)
--	 */
--	deactivate_super(s);
--}
--
- static struct file_system_type efivarfs_type;
- 
--static int efivarfs_pm_notify(struct notifier_block *nb, unsigned long action,
--			      void *ptr)
-+static int efivarfs_freeze_super(struct super_block *sb, enum freeze_holder who)
- {
--	struct efivarfs_fs_info *sfi = container_of(nb, struct efivarfs_fs_info,
--						    pm_nb);
--	struct path path;
--	struct efivarfs_ctx ectx = {
--		.ctx = {
--			.actor	= efivarfs_actor,
--		},
--		.sb = sfi->sb,
--	};
--	struct file *file;
--	struct super_block *s = sfi->sb;
--	static bool rescan_done = true;
--
--	if (action == PM_HIBERNATION_PREPARE) {
--		rescan_done = false;
--		return NOTIFY_OK;
--	} else if (action != PM_POST_HIBERNATION) {
--		return NOTIFY_DONE;
--	}
-+	/* We only support freezing from the kernel. */
-+	if (!(who & FREEZE_HOLDER_KERNEL))
-+		return -EOPNOTSUPP;
- 
--	if (rescan_done)
--		return NOTIFY_DONE;
-+	return freeze_super(sb, who);
-+}
- 
--	/* ensure single superblock is alive and pin it */
--	if (!atomic_inc_not_zero(&s->s_active))
--		return NOTIFY_DONE;
-+static int efivarfs_thaw_super(struct super_block *sb, enum freeze_holder who)
-+{
-+	/* We only support freezing from the kernel. */
-+	if (!(who & FREEZE_HOLDER_KERNEL))
-+		return -EOPNOTSUPP;
- 
--	pr_info("efivarfs: resyncing variable state\n");
-+	return thaw_super(sb, who);
-+}
- 
--	path.dentry = sfi->sb->s_root;
-+/*
-+ * Only accessed by the power management notifier before ->unfreeze_fs()
-+ * is ever called so this is serialized through the power management
-+ * system.
-+ */
-+static bool need_unfreeze_fs = false;
- 
--	/*
--	 * do not add SB_KERNMOUNT which a single superblock could
--	 * expose to userspace and which also causes MNT_INTERNAL, see
--	 * below
--	 */
--	path.mnt = vfs_kern_mount(&efivarfs_type, 0,
--				  efivarfs_type.name, NULL);
--	if (IS_ERR(path.mnt)) {
--		pr_err("efivarfs: internal mount failed\n");
--		/*
--		 * We may be the last pinner of the superblock but
--		 * calling efivarfs_kill_sb from within the notifier
--		 * here would deadlock trying to unregister it
--		 */
--		INIT_WORK(&s->destroy_work, efivarfs_deactivate_super_work);
--		schedule_work(&s->destroy_work);
--		return PTR_ERR(path.mnt);
-+static int efivarfs_pm_notify(struct notifier_block *nb, unsigned long action, void *ptr)
-+{
-+	if (action == PM_HIBERNATION_PREPARE) {
-+		need_unfreeze_fs = true;
-+		return NOTIFY_OK;
-+	} else if (action == PM_POST_HIBERNATION) {
-+		need_unfreeze_fs = false;
-+		return NOTIFY_OK;
- 	}
- 
--	/* path.mnt now has pin on superblock, so this must be above one */
--	atomic_dec(&s->s_active);
-+	return NOTIFY_DONE;
-+}
- 
--	file = kernel_file_open(&path, O_RDONLY | O_DIRECTORY | O_NOATIME,
--				current_cred());
--	/*
--	 * safe even if last put because no MNT_INTERNAL means this
--	 * will do delayed deactivate_super and not deadlock
--	 */
--	mntput(path.mnt);
--	if (IS_ERR(file))
--		return NOTIFY_DONE;
-+static int efivarfs_unfreeze_fs(struct super_block *sb)
-+{
-+	/* This isn't a hibernation call so there's nothing for us to do. */
-+	if (!need_unfreeze_fs)
-+		return 0;
- 
--	rescan_done = true;
-+	pr_info("efivarfs: resyncing variable state\n");
- 
- 	/*
--	 * First loop over the directory and verify each entry exists,
--	 * removing it if it doesn't
-+	 * TODO: Now do the variable resyncing thing. vfs_kern_mount()
-+	 * won't work because we'd deadlock with ->thaw_super() fwiw.
- 	 */
--	file->f_pos = 2;	/* skip . and .. */
--	do {
--		ectx.dentry = NULL;
--		iterate_dir(file, &ectx.ctx);
--		if (ectx.dentry) {
--			pr_info("efivarfs: removing variable %pd\n",
--				ectx.dentry);
--			simple_recursive_removal(ectx.dentry, NULL);
--			dput(ectx.dentry);
--		}
--	} while (ectx.dentry);
--	fput(file);
- 
--	/*
--	 * then loop over variables, creating them if there's no matching
--	 * dentry
--	 */
--	efivar_init(efivarfs_check_missing, sfi->sb, false);
-+	return 0;
- 
--	return NOTIFY_OK;
- }
- 
- static int efivarfs_init_fs_context(struct fs_context *fc)
-@@ -609,8 +566,12 @@ static void efivarfs_kill_sb(struct super_block *sb)
- 	struct efivarfs_fs_info *sfi = sb->s_fs_info;
- 
- 	blocking_notifier_chain_unregister(&efivar_ops_nh, &sfi->nb);
--	kill_litter_super(sb);
-+	/*
-+	 * Unregister the pm notifier right now as that superblock is
-+	 * already dead.
-+	 */
- 	unregister_pm_notifier(&sfi->pm_nb);
-+	kill_litter_super(sb);
- 
- 	kfree(sfi);
- }
--- 
-2.47.2
+Maybe it's better to say 'and/or'?  Otherwise, one may wonder if
+combining with only one of those but not both may be valid?
 
 
---5p4k2tvj74tkuxrm--
+Have a lovely day!
+Alex
+
+> +.BR AT_EMPTY_PATH .
+> +.P
+>  Together, the
+>  .I pathname
+>  and
+> @@ -311,7 +335,7 @@ points outside your accessible address space.
+>  .TP
+>  .B EINVAL
+>  .I flags
+> -includes an invalid bit value.
+> +includes an invalid bit value or an invalid bit combination.
+>  .TP
+>  .B EINVAL
+>  .I handle\->handle_bytes
+> @@ -398,6 +422,11 @@ was acquired using the
+>  .B AT_HANDLE_FID
+>  flag and the filesystem does not support
+>  .BR open_by_handle_at ().
+> +This error can also occur if the
+> +.I handle
+> +was acquired using the
+> +.B AT_HANDLE_CONNECTABLE
+> +flag and the file was moved to a different parent.
+>  .SH VERSIONS
+>  FreeBSD has a broadly similar pair of system calls in the form of
+>  .BR getfh ()
+> --=20
+> 2.34.1
+>=20
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--tvjsndhfqyr22jj3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmfpMb0ACgkQ64mZXMKQ
+wqkNEQ//S2YuaMGhnsufRNYajlGVFAQ7sF9ll4gZH6P4PMXuoleGLXoV3nYg8H2V
+ArZYPYR+bgtB5D6xV6NG/8d6DX7V9gom7UpcKEqF/xbOaUNIWFSV3Qmi5O6cTKrF
+kL/JQikJAFW7IekjT9HS5JrWSWF8tfTHFqSscUhmNFflXug2Cm3T3VK6ncu0N9JR
+CWW9EJaFKSsv9Y0adG1a6uFY7fxvdWIkdxEotBRHsMSRoZvGsq7/WLw2S8l3D0n2
+d/PFyAGN6aeTjjWdqDcoeLHqgsVPD3uc94iNa3mk2AQ0HZ6PBwea1Wu55bGcH7/B
+5/9YddMxWyKfTKrTvvtmZ/3njXKn76zDucqt4NQTCepK1sjDAYtFxjaoxdHgNJxd
+9dbCNeSdHNkaxT+ElqUW1t2tv1Otuj7P+j+GX9+Xag9iGna3f2k6QLNHanaiBMVr
+enyWD5B3LEPymEIcw+tZF6lru3mtSwZfqf68jH9vyzi1UWhVaw8iDZGBk46pFVw+
+E5xZ5nyiJNQy47O97/cp/rhaX3nvrwR52lJvNKpWc67XUFnqF9pPkgw+fY/kDnK4
+eDsKwj7VBsEa4tHSGHUACUBSkQvd290GpKERWEfInyWNRWWrL6+kpjjLD0PA2RFj
+jR4ZWw2mmLkP15V+vydJlOTMArcFcsqu78rfcyDtC2zYgQL8NNk=
+=l/0/
+-----END PGP SIGNATURE-----
+
+--tvjsndhfqyr22jj3--
 
