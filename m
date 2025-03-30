@@ -1,136 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-45283-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FA29A7582A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 00:28:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3070A75855
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 04:06:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9DAF16A7E0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Mar 2025 23:28:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88C9F7A4DEF
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 02:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158671DE4EF;
-	Sat, 29 Mar 2025 23:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="U2dqDAnH"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7EB288BA;
+	Sun, 30 Mar 2025 02:05:55 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49356170826;
-	Sat, 29 Mar 2025 23:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560A42594;
+	Sun, 30 Mar 2025 02:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743290881; cv=none; b=TCcA41NRIIEuuyD24c3lK4V6cWeGIh6CHmp6rD9cxDwZEQjVqFTlzgtwowSSHe1mu42JmEt751q4HAlALBcv5OurV/9Ey60Yk0wtH7tE8V/fj2jQ2Fi6Utl1Ms1ECBKFxNXZuO80CxqrNHeNDNJlitbHI21Wmtq0v3ZXActOC/s=
+	t=1743300354; cv=none; b=FNL2HhpjKRo8zNHLvr3GWoOkrDY2r4RdTXIo0raqqQuF8x+noMHTUqBuX0ouv8dsOlQbpj7ciaDFbA+HAhTNIGk00o9rO2fREAVnD/DzYHGvESUhjUoPBBcIqqERI52mbAtztT/kBs1p5XqHr3EF4ap7ovfHlufs7m9Tohd2i9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743290881; c=relaxed/simple;
-	bh=2GeF9mw/vkR55QHz+A360axYh48CX3mSIzfzx+BdoNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cZXBuqFvul4ztUOUciussRyY+QFmr735u3YVe6d5YkstxM2eDmmbOGbzJ+24/crOxRy3ZD2DnGdj7ikJpT6MXB3OliPy5xcoqRVTi/n2d5lBAHENjmkYelbT+wlrQ1222+cqyBuPM+4b4dmA8jqE9ZWNAyj6IgFZeUdQNjfky8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=U2dqDAnH; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id BCF9D14C2D3;
-	Sun, 30 Mar 2025 00:27:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1743290875;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3WeiyxRMgIex99fp1xakmLhCtXZGOkhzhI5rZH/LrpM=;
-	b=U2dqDAnHGruTEEybQgUbQlpesAKQgGQXF0XM65i2aNxHdUWldo9rDYzGptLZ0RpqCz7HIJ
-	p4k3g7Gbo8/DvZoVQH2/JSmVnJxmRC+AqRfoU7rdF1sLpOZ/fFQmt86CBkHhTayBOnHLRR
-	jv45nxgMWGwuU5TnTR42F4UidH4gnHsndYnNDtGSa6H9SsdUYUE2AAl15GUtV4sLF/QpPw
-	qc2TcG2NU6U+ytYs2ruURRH+XIPv2zJiJTS1wUC/A0og0QOQzpou8VcBQy8UwEq+6eriXp
-	ILOXFJV29YSP7GMUiC0sq3KWa7obzWNLVdHSNnP3il07zj9M1VdZWQbxAfpW4w==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id b24f9e42;
-	Sat, 29 Mar 2025 23:27:48 +0000 (UTC)
-Date: Sun, 30 Mar 2025 08:27:33 +0900
-From: asmadeus@codewreck.org
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>,
-	brauner@kernel.org, dhowells@redhat.com, ericvh@kernel.org,
-	jack@suse.cz, jlayton@kernel.org, kprateek.nayak@amd.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux_oss@crudebyte.com, lucho@ionkov.net, mjguzik@gmail.com,
-	netfs@lists.linux.dev, swapnil.sapkal@amd.com,
-	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev,
-	viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
-Message-ID: <Z-iB5QkZyayj0Sua@codewreck.org>
-References: <20250328144928.GC29527@redhat.com>
- <67e6be9a.050a0220.2f068f.007f.GAE@google.com>
- <20250328170011.GD29527@redhat.com>
- <Z-c4B7NbHM3pgQOa@codewreck.org>
- <20250329142138.GA9144@redhat.com>
+	s=arc-20240116; t=1743300354; c=relaxed/simple;
+	bh=h5eblBkeQPp3yr4CoLpcNqIK5ZT10dlT1isVczh0PZc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Rr7AwtUzSeCzKJxVATRzthy27XrWgg/QbYcJo1YNNOZve3Vxj6kmHlnBKlZuKDKbN9SRJmy3ozYCh4XafPRx8v5dy8RE1zpnvUJMTrsZQjLCRoRN/gfb2UPy5hksKo3l/e0seTlcM6RwJOLY56eDBwMO2w2ekgwijUdsYOFgS7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1tyi3K-000000001y7-0Ilg;
+	Sat, 29 Mar 2025 22:05:34 -0400
+Message-ID: <2ccb9f828ea392eb22f8deb7d9644a4575fa9ee5.camel@surriel.com>
+Subject: Re: [syzbot] [mm?] [fs?] BUG: sleeping function called from invalid
+ context in folio_mc_copy
+From: Rik van Riel <riel@surriel.com>
+To: Luis Chamberlain <mcgrof@kernel.org>, syzbot	
+ <syzbot+f3c6fda1297c748a7076@syzkaller.appspotmail.com>, Jan Kara
+ <jack@suse.cz>,  Dave Chinner <david@fromorbit.com>
+Cc: brauner@kernel.org, hare@suse.de, joel.granados@kernel.org, 
+	john.g.garry@oracle.com, kees@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com, willy@infradead.org
+Date: Sat, 29 Mar 2025 22:05:34 -0400
+In-Reply-To: <Z-XGWGKJJThjtsXM@bombadil.infradead.org>
+References: <67e57c41.050a0220.2f068f.0033.GAE@google.com>
+	 <Z-XGWGKJJThjtsXM@bombadil.infradead.org>
+Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
+ keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
+ eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
+ Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
+ lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
+ dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
+ mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
+ gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
+ r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
+ WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
+ 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
+ Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
+ +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
+ g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
+ KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
+ fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
+ 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
+ G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
+ okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
+ TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
+ cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
+ omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
+ QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
+ c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250329142138.GA9144@redhat.com>
+Sender: riel@surriel.com
 
-Oleg Nesterov wrote on Sat, Mar 29, 2025 at 03:21:39PM +0100:
-> First of all, let me remind that I know nothing about 9p or netfs ;)
-> And I am not sure that my patch is the right solution.
-> 
-> I am not even sure we need the fix, according to syzbot testing the
-> problem goes away with the fixes from David
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=netfs-fixes
-> but I didn't even try to read them, this is not my area.
+On Thu, 2025-03-27 at 14:42 -0700, Luis Chamberlain wrote:
+> On Thu, Mar 27, 2025 at 09:26:41AM -0700, syzbot wrote:
+> > Hello,
+>=20
+> Thanks, this is a known issue and we're having a hard time
+> reproducing [0].
+>=20
+> > C reproducer:=C2=A0=C2=A0
+> > https://syzkaller.appspot.com/x/repro.c?x=3D152d4de4580000
+>=20
+> Thanks! Sadly this has not yet been able to let me reprodouce the
+> issue,
+> and so we're trying to come up with other ways to test the imminent
+> spin
+> lock + sleep on buffer_migrate_folio_norefs() path different ways
+> now,
+> including a new fstests [1] but no luck yet.
 
-(gah, I hate emails when one gets added to thread later.. I've just now
-opened the thread on lore and seen David's test :/)
+The backtrace in the report seems to make the cause
+of the bug fairly clear, though.
 
-> > - due to the new optimization (aaec5a95d59615 "pipe_read: don't wake up
-> > the writer if the pipe is still full"), that 'if there is room to send'
-> > check started failing and tx thread doesn't start?
-> 
-> Again, I can be easily wrong, but no.
-> 
-> With or without the optimization above, it doesn't make sense to start
-> the tx thread when the pipe is full, p9_fd_poll() can't report EPOLLOUT.
-> 
-> Lets recall that the idle read worker did kernel_read() -> pipe_read().
-> Before this optimization, pipe_read() did the unnecessary
-> 
-> 	wake_up_interruptible_sync_poll(&pipe->wr_wait);
-> 
-> when the pipe was full before the reading _and_ is still full after the
-> reading.
-> 
-> This wakeup calls p9_pollwake() which kicks p9_poll_workfn().
+The function folio_mc_copy() can sleep.
 
-Aah, that's the bit I didn't get, thank you!
+The function __buffer_migrate_folio() calls
+filemap_migrate_folio() with a spinlock held.
 
-> This no longer happens after the optimization. So in some sense the
-> p9_fd_request() -> p9_poll_mux() hack (which wakes the rx thread in this
-> case) restores the old behaviour.
-> 
-> But again, again, quite possibly I completely misread this (nontrivial)
-> code.
+That function eventually calls folio_mc_copy():
 
-Yes, this totally makes sense; I agree with your analysis.
+ __might_resched+0x5d4/0x780 kernel/sched/core.c:8764
+ folio_mc_copy+0x13c/0x1d0 mm/util.c:742
+ __migrate_folio mm/migrate.c:758 [inline]
+ filemap_migrate_folio+0xb4/0x4c0 mm/migrate.c:943
+ __buffer_migrate_folio+0x3ec/0x5d0 mm/migrate.c:874
+ move_to_new_folio+0x2ac/0xc20 mm/migrate.c:1050
+ migrate_folio_move mm/migrate.c:1358 [inline]
+ migrate_folios_move mm/migrate.c:1710 [inline]
 
-So basically 9p was optimizing for this impossible (on a normal server)
-behaviour in the 9p side (it doesn't make any sense for the tx pipe to
-be full with 0 in flight request, and tx pipe never goes unfull, and
-reply comes (was there) before the actual write happened!!), but this
-old behaviour made it work anyway...
-So part of me wants to just leave it there and if anything try to make
-this kind of usage impossible by adding more checks to mount -o
-trans=fd, but I don't think it's possible to lock down all kind of weird
-behaviour root users (=syzbot) can engage in...
-OTOH syzbot does find some useful bugs so I guess it might be worth
-fixing, I don't know.
-If David's patch also happens to fix it I guess we can also just wait
-for that?
+The big question is how to safely release the
+spinlock in __buffer_migrate_folio() before calling
+filemap_migrate_folio()
 
-Thanks,
--- 
-Dominique Martinet | Asmadeus
+--=20
+All Rights Reversed.
 
