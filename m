@@ -1,223 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-45304-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45305-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BC22A75B99
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 19:56:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B58C2A75BE0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 21:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9B243A9348
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 17:56:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E422166B32
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 19:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7911DDA17;
-	Sun, 30 Mar 2025 17:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D0A1D79A3;
+	Sun, 30 Mar 2025 19:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sj5Fx6cL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QrIWrfr4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB73D17CA1B;
-	Sun, 30 Mar 2025 17:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D3320B22;
+	Sun, 30 Mar 2025 19:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743357399; cv=none; b=qb726DiQ7GpieeFkzGMwzc4Gn870zl1kyGvYGwOOkk90L6oADA9zgJdE36u7oqutXABeCa6uATSHBgsTSE8AxAckqlJaTXVManIrS2/ZFcod+sUh+vhYrVYQjCl6/w7nijMivdvAJcb8YoqNlVKpQxasDD+0za/v/rbS1iBedQA=
+	t=1743362286; cv=none; b=Bu5od2m3oazS+U/VbYflIjQez9j0auwCJLc/CfO+5GXTdR38TLKnSw4IF5LRH+TCEV3Om1I6knVPswgawceR7vdfFL2s0MzCu3Rfi6kxxiPx7HcmMzJNjiodlFaYBx3zQqYLcB31nzvBNeXbr7LaVctqvshHXpImnnJ/Se4ceGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743357399; c=relaxed/simple;
-	bh=7FUVFLvjoO3abDa9TCYrNumtZmwOQ15p1qfdPeDOtMA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L6UVVgt6JLQlRI84ZrNkegHUvcgacQqV8UrGuhiJ1s69bJmjjV2JNg2P08gA8W2NuLW/wtLROt3SAtzodG0pAFC9f2PBoeqcZ/e/clBeU6sry+5t3zo/yzytzq2BE2xZ2Pk4HnxNCU7PkGmsmnZF5Ijtla1n00vFvhd+9Ob4hUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sj5Fx6cL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66E59C4CEDD;
-	Sun, 30 Mar 2025 17:56:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743357399;
-	bh=7FUVFLvjoO3abDa9TCYrNumtZmwOQ15p1qfdPeDOtMA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sj5Fx6cLSMGDBgf5Ocu5dr4ucvhbi/KAsLBV7yozCV8oiL9tioi/fbS30ivCgeYS1
-	 on625DAqldDgZUzLfcpnN82IdidO+1vS05ERzu6T1U8Cow/5Z7ObPOkqBq5WK4W8JY
-	 cEuSPhiXLSICC54qZ8b9IcwHGOyxhVmGaxI0OClVYf4cNkITK8jSMklaDArclAxnXa
-	 k/xMLpZjN4j97jJaMf82EVtYZGqUvqiFekudls08KQ3JnJIxRN2tPyAfGBF+xCkbza
-	 lb/uyj66Vou+0wYhHsR/MOMhqlAN6x5TTR7YY0SEKg5hIuh9AHZNDa7WpaiKGHlzWg
-	 0EU0X0vimzlJg==
-Date: Sun, 30 Mar 2025 19:56:35 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Alejandro Colomar <alx.manpages@gmail.com>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-man@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>, 
-	Jeff Layton <jlayton@poochiereds.net>, Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: [PATCH v2] name_to_handle_at.2: Document the
- AT_HANDLE_CONNECTABLE flag
-Message-ID: <mu6nhfyv77ptgvsvr6n23dc5if3sr6ymjmv3bq7bfnvcas66nu@b7nrofzezhil>
-References: <20250330163502.1415011-1-amir73il@gmail.com>
+	s=arc-20240116; t=1743362286; c=relaxed/simple;
+	bh=DfuZhcLVKpW2x2WudBOngipGHKYbqouh5vMgWn/XrBE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QCe9tGvA+aemY8mR4/XNbBB/6PBDft9GSb0t8aWp9krud9Y1SZT5T8rakgeE5ypu1AX1Ilk+aJpo8HEP/WPveJa1t/k2RsTwfycghQExMvk47TjA4l9BT5IE0xiRj3JDnnOR1qFyrPc6ZtlxyM4tJj6VKZwmWx2cCm0czBndkRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QrIWrfr4; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-abbd96bef64so618889266b.3;
+        Sun, 30 Mar 2025 12:18:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743362283; x=1743967083; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0Uic6/FDzEr0oED1vmoSXEu4/nir+cGGW+rkZAv0vW4=;
+        b=QrIWrfr4F8NdUPs8dHVfxMtC7/6vW4HpfZ3GOdohywcGaljEhvD3Lzz5fehWRHi44+
+         3tI/b/TDZL5ElGYAuMkDcJhGz0WtbF7GvS/z16q8SLMr/tcrBHIdJ/72pKcl7xB11DZ7
+         gfdOOeCcfGVXJVIU/wIWcvsyiQ9oDHvZkeDzHyi22RBvoFaYYLN7dMYQsbLUtqnn3Z2I
+         u8iigvaVsPSP9WnwqVJ/NppOblujJjD7yioGOUXIX0pQ/Q1sxLiCgaJ1a00FonydhRf1
+         yllaSl89r8Wt/UL82g93+z4XUtUfm2ukMA+0a9VJeSsaD3a0AIn0gsXG1aDXuYI6WeH5
+         FovQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743362283; x=1743967083;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0Uic6/FDzEr0oED1vmoSXEu4/nir+cGGW+rkZAv0vW4=;
+        b=qYftV73e9cXQDJIz9hbqEuKNJqwHB09ChAmn+lB4zP4O4FUnitDSNeYyuIW1vhGSr9
+         ROGM8OjsgrRzJa4I/DEuiXZfqG6nTpCUF7kt1cCkwzJaap06aBXEmolA3WssddzI/8yB
+         yroKMvZRsoBoXSjPc9UHA9J/xfIBW8d9Pb5ixul09Nsn8ansGQY/vfrSV4RI06NR8kAD
+         JX9pme5UVmaXIS5LwvRMejiDkeyv9FS+EFjIQ1pVaJrPuFZfIxaX4W8/1oNmt8vCI28/
+         CJul6CjuG86XNONygmn+nSqSj8PiU57BfSaCPF3o5KU3pCaXBP9SNKJps8bJeEk4jHaE
+         ZtJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWEmdKTmqcS02GJbvn71wKQtqnap6rGJ6Dut8MDA+il1sXdbXUsEjbNtNaXvXBFAe8xB6vVNMn1mLXpTnHq@vger.kernel.org, AJvYcCXtjjnKEPy6sixbHR7YTfwXoM6xThH8c4NSZbB1BErjpMFdSw3haAgb/x+BfkbG3o+psiHcky5kTlB3@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJUkTkQ+LTEUWeME7fyYHe50L/dagiqxCylmCE/xZNpHOvpH9t
+	DGj+489qVKsRqFmHxp0ZjxbkDUriWwQ9QawIKEhXg96KeIYWcLBt9/S1VBe6WWI3TvTp7xomurJ
+	VdioBV0P7HEwZ9xQvn1YLrus5XHo=
+X-Gm-Gg: ASbGncsdi4bx1xOHCvjDWZIdU7LKvtqCpq3gZf5vgfxOK7rRlbNWwTxoE1A+yaBXjDB
+	g4kiOTUo+gv1us3qmJw+3SaRuKzT5aoKiN1Z47eDnoDD/vw5o5JicsYCCl04sktUJdu9zeetEv9
+	iaBlF2YtZbjfaShlsa8WhLRYro3w==
+X-Google-Smtp-Source: AGHT+IHVexdM0Y+Mag7vGWg1wjxVbWwW10AYNMYfvplLPInu12dZ+Vq0b9HABIge83ngCY+Ol4ZEz0rKrQu6YauzeyM=
+X-Received: by 2002:a17:907:3d9f:b0:ac3:bb5a:8758 with SMTP id
+ a640c23a62f3a-ac7389e79acmr537256066b.16.1743362282872; Sun, 30 Mar 2025
+ 12:18:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="evceypjn7ghavqfu"
-Content-Disposition: inline
-In-Reply-To: <20250330163502.1415011-1-amir73il@gmail.com>
-
-
---evceypjn7ghavqfu
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20250330163502.1415011-1-amir73il@gmail.com> <mu6nhfyv77ptgvsvr6n23dc5if3sr6ymjmv3bq7bfnvcas66nu@b7nrofzezhil>
+In-Reply-To: <mu6nhfyv77ptgvsvr6n23dc5if3sr6ymjmv3bq7bfnvcas66nu@b7nrofzezhil>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sun, 30 Mar 2025 21:17:51 +0200
+X-Gm-Features: AQ5f1JqvJZbDswJLG9AN1-iwSJDf7tIRc3EEzXWO0Zsi36PKbyDKRVqrKYUb94s
+Message-ID: <CAOQ4uxj48SHB+8m0r50YhdqYZB2964+aK=BxdoW_yuWzZUgzGw@mail.gmail.com>
+Subject: Re: [PATCH v2] name_to_handle_at.2: Document the AT_HANDLE_CONNECTABLE
+ flag
+To: Alejandro Colomar <alx@kernel.org>
+Cc: Alejandro Colomar <alx.manpages@gmail.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@poochiereds.net>, 
+	Aleksa Sarai <cyphar@cyphar.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Alejandro Colomar <alx.manpages@gmail.com>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-man@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>, 
-	Jeff Layton <jlayton@poochiereds.net>, Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: [PATCH v2] name_to_handle_at.2: Document the
- AT_HANDLE_CONNECTABLE flag
-References: <20250330163502.1415011-1-amir73il@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20250330163502.1415011-1-amir73il@gmail.com>
 
-Hi Amir,
+On Sun, Mar 30, 2025 at 7:56=E2=80=AFPM Alejandro Colomar <alx@kernel.org> =
+wrote:
+>
+> Hi Amir,
+>
+> On Sun, Mar 30, 2025 at 06:35:02PM +0200, Amir Goldstein wrote:
+> > A flag since v6.13 to indicate that the requested file_handle is
+> > intended to be used for open_by_handle_at(2) to obtain an open file
+> > with a known path.
+> >
+> > Cc: Chuck Lever <chuck.lever@oracle.com>
+> > Cc: Jeff Layton <jlayton@poochiereds.net>
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Cc: Jan Kara <jack@suse.cz>
+> > Cc: Aleksa Sarai <cyphar@cyphar.com>
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > ---
+> >
+> > Alejandro,
+> >
+> > Addressed your comments from v1 and added missing documentation for
+> > AT_HANDLE_MNT_ID_UNIQUE from v6.12.
+>
+> Please split AT_HANDLE_MNT_ID_UNIQUE into a separate patch, possibly in
+> the same patch set.  Other than that, it LGTM.  Thanks!
+>
 
-On Sun, Mar 30, 2025 at 06:35:02PM +0200, Amir Goldstein wrote:
-> A flag since v6.13 to indicate that the requested file_handle is
-> intended to be used for open_by_handle_at(2) to obtain an open file
-> with a known path.
->=20
-> Cc: Chuck Lever <chuck.lever@oracle.com>
-> Cc: Jeff Layton <jlayton@poochiereds.net>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Aleksa Sarai <cyphar@cyphar.com>
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->=20
-> Alejandro,
->=20
-> Addressed your comments from v1 and added missing documentation for
-> AT_HANDLE_MNT_ID_UNIQUE from v6.12.
+I pushed the separate patches to
+https://github.com/amir73il/man-pages/commits/connectable-fh/
 
-Please split AT_HANDLE_MNT_ID_UNIQUE into a separate patch, possibly in
-the same patch set.  Other than that, it LGTM.  Thanks!
+Do you mind taking them from there?
 
+Most of the reviewers that I CC-ed would care about the text
+of the man page and less about formatting and patch separation,
+and I would rather not spam the reviewers more than have to,
+but if you insist, I can post the patches.
 
-Cheers,
-Alex
-
->=20
-> Thanks,
-> Amir.
->=20
->  man/man2/open_by_handle_at.2 | 46 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 45 insertions(+), 1 deletion(-)
->=20
-> diff --git a/man/man2/open_by_handle_at.2 b/man/man2/open_by_handle_at.2
-> index 6b9758d42..10af60a76 100644
-> --- a/man/man2/open_by_handle_at.2
-> +++ b/man/man2/open_by_handle_at.2
-> @@ -127,6 +127,7 @@ The
->  .I flags
->  argument is a bit mask constructed by ORing together zero or more of
->  .BR AT_HANDLE_FID ,
-> +.BR AT_HANDLE_CONNECTABLE,
->  .BR AT_EMPTY_PATH ,
->  and
->  .BR AT_SYMLINK_FOLLOW ,
-> @@ -147,6 +148,44 @@ with the returned
->  .I file_handle
->  may fail.
->  .P
-> +When
-> +.I flags
-> +contain the
-> +.BR AT_HANDLE_MNT_ID_UNIQUE " (since Linux 6.12)"
-> +.\" commit 4356d575ef0f39a3e8e0ce0c40d84ce900ac3b61
-> +flag, the caller indicates that the size of the
-> +.I mount_id
-> +buffer is at least 64bit
-> +and then the mount id returned in that buffer
-> +is the unique mount id as the one returned by
-> +.BR statx (2)
-> +with the
-> +.BR STATX_MNT_ID_UNIQUE
-> +flag.
-> +.P
-> +When
-> +.I flags
-> +contain the
-> +.BR AT_HANDLE_CONNECTABLE " (since Linux 6.13)"
-> +.\" commit a20853ab8296d4a8754482cb5e9adde8ab426a25
-> +flag, the caller indicates that the returned
-> +.I file_handle
-> +is needed to open a file with known path later,
-> +so it should be expected that a subsequent call to
-> +.BR open_by_handle_at ()
-> +with the returned
-> +.I file_handle
-> +may fail if the file was moved,
-> +but otherwise,
-> +the path of the opened file is expected to be visible
-> +from the
-> +.IR /proc/ pid /fd/ *
-> +magic link.
-> +This flag can not be used in combination with the flags
-> +.B AT_HANDLE_FID
-> +and/or
-> +.BR AT_EMPTY_PATH .
-> +.P
->  Together, the
->  .I pathname
->  and
-> @@ -311,7 +350,7 @@ points outside your accessible address space.
->  .TP
->  .B EINVAL
->  .I flags
-> -includes an invalid bit value.
-> +includes an invalid bit value or an invalid bit combination.
->  .TP
->  .B EINVAL
->  .I handle\->handle_bytes
-> @@ -398,6 +437,11 @@ was acquired using the
->  .B AT_HANDLE_FID
->  flag and the filesystem does not support
->  .BR open_by_handle_at ().
-> +This error can also occur if the
-> +.I handle
-> +was acquired using the
-> +.B AT_HANDLE_CONNECTABLE
-> +flag and the file was moved to a different parent.
->  .SH VERSIONS
->  FreeBSD has a broadly similar pair of system calls in the form of
->  .BR getfh ()
-> --=20
-> 2.34.1
->=20
-
---=20
-<https://www.alejandro-colomar.es/>
-
---evceypjn7ghavqfu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmfphdIACgkQ64mZXMKQ
-wqnD6xAAqF9nG244sIPmAz0+Gu/kzzBOFb2JiLrGAx5p7VTB6t3ONr8XBK1vaJgi
-ssfqZsuSvIIeniNTwk3GO5QcpztCUEUHYIVmFP7mehCyDM6u3cRta4LQl/+ek9O7
-CTbEm9iOGmiXYU6aSenKYZ5Y92WnG5ciZVfnSWSdqJcb2evfOp9X2Ts0R4dBA0Xc
-OvG8Pe3wJNphnU3dEYuANpEcqNAhmgTE9ekuwoDFAn8kEgOpgUDIIqfft39wp81V
-5Uyf5FYhKyx+hibs2hDmQMdyT1n285xk/CbNH7J8M+TjXfNv8JeA/QtA9mD7WrLG
-QL3ZaLO9zNXCbQcPulJ9Vogiuo2i6KKxlFGvoNNuNIQT0xRYXhiXoSBjJToOFeXn
-QBEmlp2hjho+i62qSdjMjWzA4hV6ClOnLkm3Dc7C/VrRuRm6Ymg19qBe/CH1XjgJ
-dy+SgLckBKnp/YXpYRoY02dtHY4qn5eAI/ndYFMKGwSyVGeLi7veE0aaEp0L1W/L
-CsVN0J1+N0DPcKazuwxb/enUzHuwURStw69ECoJTAq14coxuDij/xDU6FpgUQG+T
-bxiiPwXYVdNuQ5oft9ehwTs+dWKIirvZBg4fJ4sdOLSsWKi27Sx4OyAl1v/ZUgSv
-wK/7hcc+LpMimRyE/PcHbn1mob1PadakA5doQsyKuKfTEqF6ick=
-=SfgP
------END PGP SIGNATURE-----
-
---evceypjn7ghavqfu--
+Thanks,
+Amir.
 
