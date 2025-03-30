@@ -1,145 +1,230 @@
-Return-Path: <linux-fsdevel+bounces-45299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45300-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 507D1A75A44
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 16:01:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FF8DA75A52
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 16:28:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E0B57A3F01
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 14:00:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 081233A62D0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 14:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE171CAA71;
-	Sun, 30 Mar 2025 14:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="XUC/4PuY"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3216C1D5172;
+	Sun, 30 Mar 2025 14:27:55 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+Received: from ida.uls.co.za (ida.uls.co.za [154.73.32.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E111288B1;
-	Sun, 30 Mar 2025 14:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA903232;
+	Sun, 30 Mar 2025 14:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.73.32.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743343261; cv=none; b=Ynm78eEi9dPxlbeN15ZKP6r+PJTSzCEvPKnf6IQH7y3qqSbO6wmf/LxTlF3gmVn63OJXZ8V9Jph2PBJyVZy527yn3Mx2NZ/BU7d1yELLiyji5o5JFNOEYE4vAC+yda/CQotyLgQU8MVgid7o1jz656XMBxaB7rONLrfPBXhHeSI=
+	t=1743344874; cv=none; b=pibLdVksXuSRE0pjxslxR5TYnWhAAGGDHa5Df4WAQKzJLwq5OmOH7XdhoERsIstajuYcFqtFL1CIrL/ePGkJsRUJh/sUupMTM1wJd3jQx2sFBZ8Fa/6u848uv72xrQASbHeQL3l3esEjZVC6lArLdf7CG5ByPga4rdsdpbN4LxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743343261; c=relaxed/simple;
-	bh=wi+LA1O4Z14BJNn/fKaFSqytvWpIfpYOMUYZx3QPyCE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GiaOdS8+jnqOV5RMRxE2VExQftTH8E5trLf0uzALJC98J88d2RubU+VPaqp0g8UQ9yDelnA/iEHaHbrROwqts60I3e3BUALBn6txVl2TTvTVoYSNRCsQPXHoaOhUaLhjfbViyH3ehvBY0yceyQb0zgSRKXKHCzxNHMheZ0QDPSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=XUC/4PuY; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1743343258;
-	bh=wi+LA1O4Z14BJNn/fKaFSqytvWpIfpYOMUYZx3QPyCE=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=XUC/4PuYSVRRexyB8oHo03Xu+wOhzPbEjJrzBj/A4Rfg6p+88ufyskSaWDwvoz3WW
-	 LuRnMXNtaASHwcscmTh7aQ57IfN9NJsgQulN2uEk2N+6ovUhza0L1GdIDFYZYcaq9P
-	 6pcehefE7e5u0hOcgx1UELCHiseBHlUjVopIw2AI=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 8B5A01C030D;
-	Sun, 30 Mar 2025 10:00:57 -0400 (EDT)
-Message-ID: <3f140c076c3756e84d515b81ee9eeeaf13ca4b42.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2 0/6] Extend freeze support to suspend and hibernate
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Christian Brauner <brauner@kernel.org>, jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- mcgrof@kernel.org, hch@infradead.org, david@fromorbit.com,
- rafael@kernel.org,  djwong@kernel.org, pavel@kernel.org,
- peterz@infradead.org, mingo@redhat.com,  will@kernel.org,
- boqun.feng@gmail.com
-Date: Sun, 30 Mar 2025 10:00:56 -0400
-In-Reply-To: <20250330-heimweg-packen-b73908210f79@brauner>
-References: <20250328-work-freeze-v1-0-a2c3a6b0e7a6@kernel.org>
-	 <20250329-work-freeze-v2-0-a47af37ecc3d@kernel.org>
-	 <12ce8c18f4e16b1de591cbdfb8f6e7844e42807b.camel@HansenPartnership.com>
-	 <9c0a24cd8b03539fd6b8ecd5a186a5cf98b5d526.camel@HansenPartnership.com>
-	 <20250330-heimweg-packen-b73908210f79@brauner>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1743344874; c=relaxed/simple;
+	bh=Xqehng9m3Qcp1mTjx7Gw51fQtpN49xnpGi3qNQ+ZOpk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Kx5QSGTh7LT9JmKhidLEIxCAkWBOqOMdSm/AzSi7ggiYjszQxQu8K/unLWUg+m6O6ZcYU76jbFmQY/fHxoWwQff7fFZcvVKx40q8zzM1/H2+jKvzcr113qLQGbUprXH1D5SlAcycstlxX/Z+VH7cZfYch4BEoB9dIEColzIsQrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uls.co.za; spf=pass smtp.mailfrom=uls.co.za; arc=none smtp.client-ip=154.73.32.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uls.co.za
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uls.co.za
+Received: from [192.168.241.128]
+	by ida.uls.co.za with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.97.1)
+	(envelope-from <jaco@uls.co.za>)
+	id 1tytdJ-000000000pA-3NNp;
+	Sun, 30 Mar 2025 16:27:30 +0200
+Message-ID: <cb0c9321-9c1d-4910-bcbd-3d0ca10d62cb@uls.co.za>
+Date: Sun, 30 Mar 2025 16:27:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] fs: Supply dir_context.count as readdir buffer size
+ hint
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: bernd.schubert@fastmail.fm, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, miklos@szeredi.hu, rdunlap@infradead.org,
+ trapexit@spawn.link
+References: <20230727081237.18217-1-jaco@uls.co.za>
+ <20250314221701.12509-1-jaco@uls.co.za>
+ <20250314221701.12509-2-jaco@uls.co.za>
+ <b1baac64-f56d-4d0f-92f1-d7bb808a151b@wanadoo.fr>
+Content-Language: en-GB
+From: Jaco Kroon <jaco@uls.co.za>
+Autocrypt: addr=jaco@uls.co.za; keydata=
+ xsBNBFXtplYBCADM6RTLCOSPiclevkn/gdf8h9l+kKA6N+WGIIFuUtoc9Gaf8QhXWW/fvUq2
+ a3eo4ULVFT1jJ56Vfm4MssGA97NZtlOe3cg8QJMZZhsoN5wetG9SrJvT9Rlltwo5nFmXY3ZY
+ gXsdwkpDr9Y5TqBizx7DGxMd/mrOfXeql57FWFeOc2GuJBnHPZQMJsQ66l2obPn36hWEtHYN
+ gcUSPH3OOusSEGZg/oX/8WSDQ/b8xz1JKTEgcnu/JR0FxzjY19zSHmbnyVU+/gF3oeJFcEUk
+ HvZu776LRVdcZ0lb1bHQB2K9rTZBVeZLitgAefPVH2uERVSO8EZO1I5M7afV0Kd/Vyn9ABEB
+ AAHNG0phY28gS3Jvb24gPGphY29AdWxzLmNvLnphPsLAdwQTAQgAIQUCVe2mVgIbAwULCQgH
+ AgYVCAkKCwIEFgIDAQIeAQIXgAAKCRAILcSxr/fungCPB/sHrfufpRbrVTtHUjpbY4bTQLQE
+ bVrh4/yMiKprALRYy0nsMivl16Q/3rNWXJuQ0gR/faC3yNlDgtEoXx8noXOhva9GGHPGTaPT
+ hhpcp/1E4C9Ghcaxw3MRapVnSKnSYL+zOOpkGwye2+fbqwCkCYCM7Vu6ws3+pMzJNFK/UOgW
+ Tj8O5eBa3DiU4U26/jUHEIg74U+ypYPcj5qXG0xNXmmoDpZweW41Cfo6FMmgjQBTEGzo9e5R
+ kjc7MH3+IyJvP4bzE5Paq0q0b5zZ8DUJFtT7pVb3FQTz1v3CutLlF1elFZzd9sZrg+mLA5PM
+ o8PG9FLw9ZtTE314vgMWJ+TTYX0kzsBNBFXtplYBCADedX9HSSJozh4YIBT+PuLWCTJRLTLu
+ jXU7HobdK1EljPAi1ahCUXJR+NHvpJLSq/N5rtL12ejJJ4EMMp2UUK0IHz4kx26FeAJuOQMe
+ GEzoEkiiR15ufkApBCRssIj5B8OA/351Y9PFore5KJzQf1psrCnMSZoJ89KLfU7C5S+ooX9e
+ re2aWgu5jqKgKDLa07/UVHyxDTtQKRZSFibFCHbMELYKDr3tUdUfCDqVjipCzHmLZ+xMisfn
+ yX9aTVI3FUIs8UiqM5xlxqfuCnDrKBJjQs3uvmd6cyhPRmnsjase48RoO84Ckjbp/HVu0+1+
+ 6vgiPjbe4xk7Ehkw1mfSxb79ABEBAAHCwF8EGAEIAAkFAlXtplYCGwwACgkQCC3Esa/37p7u
+ XwgAjpFzUj+GMmo8ZeYwHH6YfNZQV+hfesr7tqlZn5DhQXJgT2NF6qh5Vn8TcFPR4JZiVIkF
+ o0je7c8FJe34Aqex/H9R8LxvhENX/YOtq5+PqZj59y9G9+0FFZ1CyguTDC845zuJnnR5A0lw
+ FARZaL8T7e6UGphtiT0NdR7EXnJ/alvtsnsNudtvFnKtigYvtw2wthW6CLvwrFjsuiXPjVUX
+ 825zQUnBHnrED6vG67UG4z5cQ4uY/LcSNsqBsoj6/wsT0pnqdibhCWmgFimOsSRgaF7qsVtg
+ TWyQDTjH643+qYbJJdH91LASRLrenRCgpCXgzNWAMX6PJlqLrNX1Ye4CQw==
+Organization: Ultimate Linux Solutions (Pty) Ltd
+In-Reply-To: <b1baac64-f56d-4d0f-92f1-d7bb808a151b@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-report: Relay access (ida.uls.co.za).
 
-On Sun, 2025-03-30 at 10:33 +0200, Christian Brauner wrote:
-[...]
-> > I found the systemd bug
-> >=20
-> > https://github.com/systemd/systemd/issues/36888
->=20
-> I don't think that's a systemd bug.
+ACK.  Fixed locally.
 
-Heh, well I have zero interest in refereeing a turf war between systemd
-and dracut over mismatched expectations.  The point for anyone who
-wants to run hibernate tests is that until they both sort this out the
-bug can be fixed by removing the system identifier check from systemd-
-hibernate-resume-generator.
+Thank you.
 
-> > And hacked around it, so I can confirm a simple hibernate/resume
-> > works provided the sd_start_write() patches are applied (and the
-> > hooks are plumbed in to pm).
-> >=20
-> > There is an oddity: the systemd-journald process that would usually
-> > hang hibernate in D wait goes into R but seems to be hung and can't
-> > be killed by the watchdog even with a -9.=C2=A0 It's stack trace says
-> > it's still stuck in sb_start_write:
-> >=20
-> > [<0>] percpu_rwsem_wait.constprop.10+0xd1/0x140
-> > [<0>] ext4_page_mkwrite+0x3c1/0x560 [ext4]
-> > [<0>] do_page_mkwrite+0x38/0xa0
-> > [<0>] do_wp_page+0xd5/0xba0
-> > [<0>] __handle_mm_fault+0xa29/0xca0
-> > [<0>] handle_mm_fault+0x16a/0x2d0
-> > [<0>] do_user_addr_fault+0x3ab/0x810
-> > [<0>] exc_page_fault+0x68/0x150
-> > [<0>] asm_exc_page_fault+0x22/0x30
-> >=20
-> > So I think there's something funny going on in thaw.
->=20
-> My uneducated guess is that it's probably an issue with ext4 freezing
-> and unfreezing. xfs stops workqueues after all writes and pagefault
-> writers have stopped. This is done in ->sync_fs() when it's called
-> from freeze_super(). They are restarted when ->unfreeze_fs is called.
+Will give a few more days before re-sending.
 
-It is possible, but I note that if I do
+Kind regards,
+Jaco
 
-fsfreeze --freeze /
+On 2025/03/29 11:20, Christophe JAILLET wrote:
 
-I can produce exactly the above stack trace in systemd-journald, but if
-I unfreeze root it continues on normally.  Thus I think this is some
-type of bad interaction with the process freezing that goes on in
-hibernate.  I'm going to see if I can replicate using the cgroup
-freezer.
-
-> But for ext4 in ->sync_fs() the rsv_conversion_wq is flushed. I think
-> that should be safe to do but I'm not sure if there can't be other
-> work coming in on it before the actual freeze call. Jan will be able
-> to explain this a lot better. I don't have time today to figure out
-> what this does.
-
-Understood.  The above is for Jan if he'd like to think about it.
-
-Regards,
-
-James
-
+> Hi,
+>
+> a few nitpicks below to reduce the diffpatch with unrelated changes. 
+> (trainling spaces)
+>
+>
+> Le 14/03/2025 à 23:16, Jaco Kroon a écrit :
+>> This was provided by Miklos <miklos@szeredi.hu> via LKML on 2023/07/27
+>> subject "Re: [PATCH] fuse: enable larger read buffers for readdir.".
+>>
+>> This is thus preperation for an improved fuse readdir() patch. The
+>
+> s/preperation/preparation/
+>
+>> description he provided:
+>>
+>> "The best strategy would be to find the optimal buffer size based on 
+>> the size of
+>> the userspace buffer.  Putting that info into struct dir_context 
+>> doesn't sound
+>> too complicated...
+>>
+>> "Here's a patch.  It doesn't touch readdir.  Simply setting the fuse 
+>> buffer size
+>> to the userspace buffer size should work, the record sizes are 
+>> similar (fuse's
+>> is slightly larger than libc's, so no overflow should ever happen)."
+>
+> ...
+>
+>> @@ -239,7 +240,7 @@ SYSCALL_DEFINE3(old_readdir, unsigned int, fd,
+>>     /*
+>>    * New, all-improved, singing, dancing, iBCS2-compliant getdents()
+>> - * interface.
+>> + * interface.
+>
+> Unrelated change.
+>
+>>    */
+>>   struct linux_dirent {
+>>       unsigned long    d_ino;
+>
+> ...
+>
+>> diff --git a/include/linux/fs.h b/include/linux/fs.h
+>> index 2788df98080f..1e426e2b5999 100644
+>> --- a/include/linux/fs.h
+>> +++ b/include/linux/fs.h
+>> @@ -308,7 +308,7 @@ struct iattr {
+>>    */
+>>   #define FILESYSTEM_MAX_STACK_DEPTH 2
+>>   -/**
+>> +/**
+>
+> Unrelated change.
+>
+>>    * enum positive_aop_returns - aop return codes with specific 
+>> semantics
+>>    *
+>>    * @AOP_WRITEPAGE_ACTIVATE: Informs the caller that page writeback has
+>> @@ -318,7 +318,7 @@ struct iattr {
+>>    *                 be a candidate for writeback again in the near
+>>    *                 future.  Other callers must be careful to unlock
+>>    *                 the page if they get this return.  Returned by
+>> - *                 writepage();
+>> + *                 writepage();
+>
+> Unrelated change.
+>
+>>    *
+>>    * @AOP_TRUNCATED_PAGE: The AOP method that was handed a locked 
+>> page has
+>>    *              unlocked it and the page might have been truncated.
+>> @@ -1151,8 +1151,8 @@ struct file *get_file_active(struct file **f);
+>>     #define    MAX_NON_LFS    ((1UL<<31) - 1)
+>>   -/* Page cache limit. The filesystems should put that into their 
+>> s_maxbytes
+>> -   limits, otherwise bad things can happen in VM. */
+>> +/* Page cache limit. The filesystems should put that into their 
+>> s_maxbytes
+>> +   limits, otherwise bad things can happen in VM. */
+>
+> Unrelated change.
+>
+>>   #if BITS_PER_LONG==32
+>>   #define MAX_LFS_FILESIZE    ((loff_t)ULONG_MAX << PAGE_SHIFT)
+>>   #elif BITS_PER_LONG==64
+>> @@ -2073,6 +2073,13 @@ typedef bool (*filldir_t)(struct dir_context 
+>> *, const char *, int, loff_t, u64,
+>>   struct dir_context {
+>>       filldir_t actor;
+>>       loff_t pos;
+>> +    /*
+>> +     * Filesystems MUST NOT MODIFY count, but may use as a hint:
+>> +     * 0        unknown
+>> +     * > 0      space in buffer (assume at least one entry)
+>> +     * INT_MAX  unlimited
+>> +     */
+>> +    int count;
+>>   };
+>>     /*
+>> @@ -2609,7 +2616,7 @@ int sync_inode_metadata(struct inode *inode, 
+>> int wait);
+>>   struct file_system_type {
+>>       const char *name;
+>>       int fs_flags;
+>> -#define FS_REQUIRES_DEV        1
+>> +#define FS_REQUIRES_DEV        1
+>
+> Unrelated change.
+>
+>>   #define FS_BINARY_MOUNTDATA    2
+>>   #define FS_HAS_SUBTYPE        4
+>>   #define FS_USERNS_MOUNT        8    /* Can be mounted by userns 
+>> root */
+>> @@ -3189,7 +3196,7 @@ ssize_t __kernel_read(struct file *file, void 
+>> *buf, size_t count, loff_t *pos);
+>>   extern ssize_t kernel_write(struct file *, const void *, size_t, 
+>> loff_t *);
+>>   extern ssize_t __kernel_write(struct file *, const void *, size_t, 
+>> loff_t *);
+>>   extern struct file * open_exec(const char *);
+>> -
+>> +
+>
+> Unrelated change.
+>
+>>   /* fs/dcache.c -- generic fs support functions */
+>>   extern bool is_subdir(struct dentry *, struct dentry *);
+>>   extern bool path_is_under(const struct path *, const struct path *);
+>
 
