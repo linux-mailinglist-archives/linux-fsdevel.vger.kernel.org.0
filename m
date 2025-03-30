@@ -1,146 +1,240 @@
-Return-Path: <linux-fsdevel+bounces-45309-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45310-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4AF9A75C03
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 21:54:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8166AA75C1B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 22:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41E963A93A5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 19:54:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E04903A7B64
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 20:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCCB1DA0E0;
-	Sun, 30 Mar 2025 19:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99721DDC0B;
+	Sun, 30 Mar 2025 20:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7vmFdOh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DRr43ia8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46488322E;
-	Sun, 30 Mar 2025 19:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205F2524F;
+	Sun, 30 Mar 2025 20:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743364488; cv=none; b=sSjJgfkh2SUpVi1qpoUmBbxcKYLbjgDhlDLJnMoVW5zWIk4QRzwd/IG+ZYlAPcvnbftKNoZZmQYStc53kDfandB3MD5k5ZPdxq9nJR5vwfSoktVnqeDirzB4b6Ek1ag7E3pmdBDLgt/BJEIELg17ZU5/2DUDhgYm0w/FMoLyTkQ=
+	t=1743365278; cv=none; b=Hx3zuZZ6xVowCn8T3QHjXC5wkGLeJUCHUwPCxU0BT8kt2c4hicGQo0YK3iQv5oxJX417JdUhNsoaTIclt8ZrdvLU2t6yaShnG5UEzTm1LjAryb6a8L1UX1+6s4pCrQOYu6KH/4L9yJOHsVw9N/sJrB8oyUERz+hGyKG1Jm1xUAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743364488; c=relaxed/simple;
-	bh=KObNXp8zdMOaTEjj8QkSztxvvIzXlSXmQcogYg/Vtug=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iOZyrd8WvIs9zXAaTUmgYRJ74Ez0lGkN1ngk6V3ctjRRvZoGCDZbqCtcdz91HUprUzO2mognq8fjAfodQjRrEG4Z1SYUm5qGCR3CcWaNCojNOplsygfb6+2GmxA/zX6DNEZ2aLYZUSiAkWrUv9V2xNdPbY0BLrHNah0yP9iNxP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V7vmFdOh; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac2a089fbbdso686321866b.1;
-        Sun, 30 Mar 2025 12:54:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743364484; x=1743969284; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8qj/vhOVV+q0LP2RBtTT/ts00uxivKciEoZbRNV8Hpk=;
-        b=V7vmFdOhvDlFe2M2K7nLRdJpNqr1Qz6wSVDTwGpS0W1LM8xt1N56tDnJeDgKaelphA
-         yzQfxxfatZUkSX9tDKASW/FRXnBF4lHnU1tW+U0aVRme9h8x4Gf+H933mFgp4vVF0wcm
-         bISEYg5MQUPmJ1Jwlh3UdS7dqiyZr12wZ3JsavFkrkQNHdSvJp3PaS7aag7OvSVsy0q2
-         6vGRlro+CIZkOGeBrQB20h385SXgOVm1qD01leREByNkLz3EDzt2WAABZyHAo3/8i1at
-         Sg7bvMTBADHiG458Lu6OU4S4eNYDdoIQ/H5uOfhzU33Yyc7BcmdSdli/DViXgJl/oB3E
-         PPFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743364484; x=1743969284;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8qj/vhOVV+q0LP2RBtTT/ts00uxivKciEoZbRNV8Hpk=;
-        b=vUQJRnbuDp2I7kYKTg9Zes7gaaRCmY7X/zBEhiQyHfgqFKZ2ZzzPLbAJnqlIMF/UQe
-         RoylV6T+/MsgApO7P/vc0HYxUW79a9jpnYqfrZuTsPCjdzO+4bDUsA3Ud6Jq/622IM5y
-         tYbCsjs/JJxlpyPaUFRHIGkzB244bgvj8OCyKiOpccfqF5c5XWuPBQXonTBITf+ss61v
-         1keSHDwPSIDvoFyYGggr2GxcjLmDKc420Se6oxyhVLw2bW/IFdYFXplPWGszg/lKlBmR
-         KfvpmggvdMvlxltwpTdIopU5MckxPwY113c5sWpjXsebW9WnwkLHlUABUBO7dg0HcBn7
-         kScA==
-X-Forwarded-Encrypted: i=1; AJvYcCWznQxI0H0RaLQxA+fDvAhVxUBHXQ3BgQDKSUyqEC6uFr+/TUzfPzvW9J54w4fh/jxccn7MKLyNGibM@vger.kernel.org, AJvYcCXC+eeM5UFBR7B7rbphiexUsRwi4OabIhoNbQ/BkR4L4QyqYFzLhKbsnOl6HhjCbpE8hFQWIUJ7uMnXrDxb@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEOpFjaobhaRGvcxCnlEYVnQpfT5isWzTgSzw1i8YyJUmYGsMn
-	w4JO6tGHzEEdxBSZEcAL8K2wryJg40RgIbFEfj88Gu2cHY+zcCz8hbzqJD9DAHYkNYuOwJYGdCU
-	D9anJUy4opQOTIBHiihuV5VDJmo0=
-X-Gm-Gg: ASbGnctOmysw7LZI+Bpp01EH6lRZB+Khio9SadGUCLHKH9svUatF2GQW/cxdFX3rnuF
-	N6bRfzzEgSjaxZ/oE1amysdrlIU2NNgZoTupgzRGpB0EpuWiI0MGuFM7z47omThUq+5le/C/4BT
-	q5uRDD2PDau1l7/QG7ZO1PNdPo8w==
-X-Google-Smtp-Source: AGHT+IEnfP16myENWEhUHBYQqkLeNKhMDMWwfUWZYkZo0pWMJcibVI5VCXsFBA05x+d+cKavLbvdR97xaZ/+lJk3I+8=
-X-Received: by 2002:a17:907:3daa:b0:ac3:b50c:c94d with SMTP id
- a640c23a62f3a-ac7369c0370mr561335666b.28.1743364484163; Sun, 30 Mar 2025
- 12:54:44 -0700 (PDT)
+	s=arc-20240116; t=1743365278; c=relaxed/simple;
+	bh=7QmN7infl+AWALWj4xdvsM0FLzR3ZY9CNGSP1D6kmOU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VCCkSLX+DOtRvfTVVkAoLLSHrBf/zEhepXD0lC3S8tA85JuUAwpcckLljbUCnpNLSBuA8LoagjfTziCSq0CxzB+639IUcrlEB1AQo9s/LlpTMnelKMhyxApWLRriDTPROuWxOJwqKr193xz4wIdewkxm7rVwgx9lun83PD89EqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DRr43ia8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D551BC4CEDD;
+	Sun, 30 Mar 2025 20:07:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743365277;
+	bh=7QmN7infl+AWALWj4xdvsM0FLzR3ZY9CNGSP1D6kmOU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DRr43ia8dMCh3iZDkBlPhtxyTsE8Hqf3GlI2puSo4VDzlbVtIpd9D268o9r2IlcMv
+	 y9ucyj6Tdy8Zv+ZcHw6v+ixrV6SmjPPIV+CzVY5xWkKRbNF/gU0WN5IQDhrjkvIU3K
+	 FGXGP9rj8m0e/A/ueCiXav9a9XrT/fDA/t8+v1dqw5iJodcjjTlrI8ljp2j4uO/FIn
+	 tbG9S6Qe/vj7TAkFpXGmAyQlaCzs0fVY4fJpa79ZES3Gj/FnKlsl8mP38Xj1VrybME
+	 xmMD+Z4gZ7wH0DfFfWqd/cxm6DDVSDXnbugO11rxEBsdCFgMWzRVh4Q5Zbx4pnSimH
+	 8JgdBqRBHdBfw==
+Date: Sun, 30 Mar 2025 22:07:53 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Alejandro Colomar <alx.manpages@gmail.com>, Jan Kara <jack@suse.cz>, 
+	Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>, 
+	linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Richard Guy Briggs <rgb@redhat.com>
+Subject: Re: [PATCH] fanotify.7: Document extended response to permission
+ events
+Message-ID: <rp7bop6qae4xktexv5obztbzvbrewyitrnwpvhzil4rionzhdz@lxjqvlmqjj64>
+References: <20250330153326.1412509-1-amir73il@gmail.com>
+ <mwttu4y4pvussz2zug6dlmgioqcfwgqsup3fqhyfa437mi2k2p@bl5orpxlsa4z>
+ <CAOQ4uxjppaLhRnWvm_Q7EwRYA9rDTE57xY7_DO0KJKLJngM+xw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250330163502.1415011-1-amir73il@gmail.com> <mu6nhfyv77ptgvsvr6n23dc5if3sr6ymjmv3bq7bfnvcas66nu@b7nrofzezhil>
- <CAOQ4uxj48SHB+8m0r50YhdqYZB2964+aK=BxdoW_yuWzZUgzGw@mail.gmail.com> <esepirxum5w6k3au4fapm6sksjy6bl5ypapvy5rflmqw2g3cjv@iij2nzq7i3uk>
-In-Reply-To: <esepirxum5w6k3au4fapm6sksjy6bl5ypapvy5rflmqw2g3cjv@iij2nzq7i3uk>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sun, 30 Mar 2025 21:54:33 +0200
-X-Gm-Features: AQ5f1JqxYMzLLqtm238rxGd3PAkukYPUIUt6CGV3GZypcQS5xkZtsmKz0xIu5BU
-Message-ID: <CAOQ4uxiL0qUnvLT_J2PaSOwrgLaSDX8Qc2ASmQwpnJQT-gtYTw@mail.gmail.com>
-Subject: Re: [PATCH v2] name_to_handle_at.2: Document the AT_HANDLE_CONNECTABLE
- flag
-To: Alejandro Colomar <alx@kernel.org>
-Cc: Alejandro Colomar <alx.manpages@gmail.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@poochiereds.net>, 
-	Aleksa Sarai <cyphar@cyphar.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kl5dloyr7c4fpuor"
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxjppaLhRnWvm_Q7EwRYA9rDTE57xY7_DO0KJKLJngM+xw@mail.gmail.com>
+
+
+--kl5dloyr7c4fpuor
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Alejandro Colomar <alx.manpages@gmail.com>, Jan Kara <jack@suse.cz>, 
+	Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>, 
+	linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Richard Guy Briggs <rgb@redhat.com>
+Subject: Re: [PATCH] fanotify.7: Document extended response to permission
+ events
+References: <20250330153326.1412509-1-amir73il@gmail.com>
+ <mwttu4y4pvussz2zug6dlmgioqcfwgqsup3fqhyfa437mi2k2p@bl5orpxlsa4z>
+ <CAOQ4uxjppaLhRnWvm_Q7EwRYA9rDTE57xY7_DO0KJKLJngM+xw@mail.gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CAOQ4uxjppaLhRnWvm_Q7EwRYA9rDTE57xY7_DO0KJKLJngM+xw@mail.gmail.com>
 
-On Sun, Mar 30, 2025 at 9:21=E2=80=AFPM Alejandro Colomar <alx@kernel.org> =
-wrote:
->
-> Hi Amir,
->
-> On Sun, Mar 30, 2025 at 09:17:51PM +0200, Amir Goldstein wrote:
-> > On Sun, Mar 30, 2025 at 7:56=E2=80=AFPM Alejandro Colomar <alx@kernel.o=
-rg> wrote:
-> > >
-> > > Hi Amir,
-> > >
-> > > On Sun, Mar 30, 2025 at 06:35:02PM +0200, Amir Goldstein wrote:
-> > > > A flag since v6.13 to indicate that the requested file_handle is
-> > > > intended to be used for open_by_handle_at(2) to obtain an open file
-> > > > with a known path.
-> > > >
-> > > > Cc: Chuck Lever <chuck.lever@oracle.com>
-> > > > Cc: Jeff Layton <jlayton@poochiereds.net>
-> > > > Cc: Christian Brauner <brauner@kernel.org>
-> > > > Cc: Jan Kara <jack@suse.cz>
-> > > > Cc: Aleksa Sarai <cyphar@cyphar.com>
-> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > ---
-> > > >
-> > > > Alejandro,
-> > > >
-> > > > Addressed your comments from v1 and added missing documentation for
-> > > > AT_HANDLE_MNT_ID_UNIQUE from v6.12.
-> > >
-> > > Please split AT_HANDLE_MNT_ID_UNIQUE into a separate patch, possibly =
-in
-> > > the same patch set.  Other than that, it LGTM.  Thanks!
-> > >
-> >
-> > I pushed the separate patches to
-> > https://github.com/amir73il/man-pages/commits/connectable-fh/
-> >
-> > Do you mind taking them from there?
-> >
-> > Most of the reviewers that I CC-ed would care about the text
-> > of the man page and less about formatting and patch separation,
-> > and I would rather not spam the reviewers more than have to,
-> > but if you insist, I can post the patches.
->
-> Could you please send with git-send-email(1) --suppress-cc=3Dall?
->
->
+Hi Amir,
 
-no problem.
+On Sun, Mar 30, 2025 at 09:53:36PM +0200, Amir Goldstein wrote:
+> > I prefer them in two patches.  You can send them in the same patch set,
+> > though.
+>=20
+> ok
+>=20
+> I pushed the two patches to
+> https://github.com/amir73il/man-pages/commits/fan_deny_errno
+>=20
+> Let me know if you want me to re-post them
 
-Thanks,
-Amir.
+Yes, please.
+
+> > > This change to the documentation of fanotify permission event response
+> > > is independent of the previous patches I posted to document the new
+> > > FAN_PRE_ACCESS event (also v6.14) and the fanotify_init(2) flag
+> > > FAN_REPORT_FD_ERROR (v6.13).
+> > >
+> > > There is another fanotify feature in v6.14 (mount events).
+> > > I will try to catch up on documenting that one as well.
+> > >
+> > > Thanks,
+> > > Amir.
+> > >
+> > >  man/man7/fanotify.7 | 60 +++++++++++++++++++++++++++++++++++++++++++=
++-
+> > >  1 file changed, 59 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/man/man7/fanotify.7 b/man/man7/fanotify.7
+> > > index 6f3a9496e..c7b53901a 100644
+> > > --- a/man/man7/fanotify.7
+> > > +++ b/man/man7/fanotify.7
+> > > @@ -820,7 +820,7 @@ This is the file descriptor from the structure
+> > >  .TP
+> > >  .I response
+> > >  This field indicates whether or not the permission is to be granted.
+> > > -Its value must be either
+> > > +Its value must contain either the flag
+> >
+> > This seems unrelated.  Please keep it out of the patches.  If you want
+> > to do it, please have a third trivial patch with "wfix" in the subject.
+>=20
+> what does wfix stand for?
+
+wording fix
+
+$ cat CONTRIBUTING.d/patches/subject | sed -n '/Trivial subject/,+12p';
+    Trivial subject
+	For trivial patches, you can use subject tags:
+
+		ffix	Formatting fix.
+		tfix	Typo fix.
+		wfix	Minor wording fix.
+		srcfix	Change to manual page source that doesn't affect
+			the output.
+
+	Example:
+
+		[PATCH v1] tcp.7: tfix
+
+> this is not a typo fix, this is a semantic fix.
+>=20
+> It is not true that the value of response is either FAN_ALLOW or FAN_DENY
+> those are flags in a bitset and the correct statement is that exactly
+> one of them needs to be set.
+
+I understand now.  Then, I think it's more important to have this in a
+separate patch, to make sure we document the fix in a commit message.
+
+> > > +macro:
+> > > +.BR EPERM ,
+> > > +.BR EIO ,
+> > > +.BR EBUSY ,
+> > > +.BR ETXTBSY ,
+> > > +.BR EAGAIN ,
+> > > +.BR ENOSPC ,
+> > > +.BR EDQUOT .
+> >
+> > Should we have a manual page for FAN_DENY_ERRNO()?  (I think we should.)
+> > I don't understand how it's supposed to work from this paragraph.
+> >
+>=20
+>=20
+> #define FAN_DENY_ERRNO(err) (FAN_DENY | (((err) & 0xff) << 24))
+>=20
+> combined FAN_DENY with a specific error, but I see no
+> reason to expose the internals of this macro
+
+Ahhh, thanks.
+
+>=20
+> This does not deserve a man page of its own IMO.
+>=20
+> If you have a suggested for better formatting, please suggest it
+
+How about an example of using it?  I think that'd be more useful than a
+lot of text.
+
+> > > +Extra response records start with a common header:
+> > > +.P
+> > > +.in +4n
+> > > +.EX
+> > > +struct fanotify_response_info_header {
+> > > +    __u8 type;
+> > > +    __u8 pad;
+> > > +    __u16 len;
+> > > +};
+> > > +.EE
+> > > +.in
+> > > +.P
+> > > +The value of
+> > > +.I type
+> >
+> > I'd say '.type' instead of 'type'.  I know there's no consistency about
+> > it, but I'm going to globally fix that eventually.  Let's do it good for
+> > new documentation.  The '.' allows one to easily know that we're talking
+> > about a struct or union member.
+> >
+>=20
+> Sounds like a good change to me.
+>=20
+> pushed requested fixes to github.
+
+
+Have a lovely night!
+Alex
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--kl5dloyr7c4fpuor
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmfppIsACgkQ64mZXMKQ
+wqnyyA//ZbKsKedAyfB6ILOilryeIKlxTCBM06AnDrPPInP7dSqCVNCArYrin1Hz
+xOLxuGTjvLFdow1bBCTd9ovgoWRyInrllBjeEqD5IIAUIHdgI8XKKPJdGIRRaYgb
+EL1Z+ee7C8/qG8/RajwMkH73UUYriuSPFrkTjfyDAT1xX91zf8uQ55km49xw3GrS
+4m9NnmrcETnbaQKn8zayj3zaESzKe6AWM9gfUjt9X0/+5XLm8rpZ5D9gz0dZXstH
+1kmzaXaStWExrrkntqCOymX0wYRWg7aQRlRPpmW0X7y5OvbOEfzsUS5ejzShjxGM
+sICDbhJ2GjnBnXi09dmQuQSICkPn53NS+YbtKwdtDafqU5rk4BAeiT6ZOX/PhBY2
+K5dHr6gdhSrgzep9A64YOm/VnOShZHMN3xQBbBhNX6qMgKtLdDhSBTHmxTvrBxi9
+/XamftKTvzdqDmv6uaQDHaIzAHX57i8ty52JlTQLfMRuZJFg3XHKTdYnQnk/nHX2
+umUet2w3PUWspSFahp/tmPz3lU3bwVV61DTgBcikFFfcg9PGrHHJuXyrT70r6xVY
+gM9utfIuOkDX93GExDtBG8iMbHC/jClzwgpm8yhN832Qlpy/8rkG5CoXZt60n782
+8kznwS7NkzzrMmJqpFttAueA+0cC1jkfQV8SzZw6uRiEIN9ZSpg=
+=NvhJ
+-----END PGP SIGNATURE-----
+
+--kl5dloyr7c4fpuor--
 
