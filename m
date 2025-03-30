@@ -1,207 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-45295-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45296-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A571BA759E2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 13:58:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B5D7A759E9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 14:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C68903A93D0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 11:57:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85B7C188956E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 12:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACCA1C07F6;
-	Sun, 30 Mar 2025 11:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5A91C460A;
+	Sun, 30 Mar 2025 12:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZ8gQnfc"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q0GkGU+6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C3B4A05;
-	Sun, 30 Mar 2025 11:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277532BB04;
+	Sun, 30 Mar 2025 12:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743335881; cv=none; b=eQpHSqGRByzN9Q2qim4HTcnRpihKNO2jm4Xk0SYZp6Rhfkc7ngxMs1y+4HWfrJWhTRplllpYQ2LW1NKyf9dlKd3YY+ocHAAEGyGLN9n+y7p4fhc2KvFJ0/Q97ZOgKAvwCIW75GFUtq5s++2SudKQQDu6fe1sJ/49GGtJi18CUHU=
+	t=1743336257; cv=none; b=b8hx3XdtnBiyJ6fUkSGar0Jo7L/ZYgn6qWf3Xl3EvUt1NDM8iRWM/0Pf8y5IsD/vJMZrEWRY4qGTzCoJi1xOGHCsyvg3kF8b8x8w4oCRvOiFNNg9+So0FmZDWAthG9/cV4ygAQ1X2JfG9nf4sgzNNoM5VoUw/OSIJXDmPefMxNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743335881; c=relaxed/simple;
-	bh=1FJ+vQV92qoZubCCalX8YibypxVYbfc8SXcjDIok1tc=;
+	s=arc-20240116; t=1743336257; c=relaxed/simple;
+	bh=j8I7Y4X262Zlf2k8C6vN5Flngo160/1EeL7FXB8cA3s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gBfTJp/ZPlnQ4pb03pbMPWuWEjqaVZJXOZawCAPVDSgAQqRlinprkHTZAhjCKuo6i23RbmMmsb6Lu0khhvf3MwoaI1GZ3Nv7UvQvo2DtFHx3Jr1jMHdIfhcUHlDUHzyQeRif/Db8dBdFzWzInVcpifAytaSe3C53iAFWAOUFvis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZ8gQnfc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F630C4CEDD;
-	Sun, 30 Mar 2025 11:57:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743335880;
-	bh=1FJ+vQV92qoZubCCalX8YibypxVYbfc8SXcjDIok1tc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eZ8gQnfc44S5HacDrCshR2rzvEbxt2Y1mSfPYT2BBaLqwsJXWMfB8pNp+Gcgz/jKT
-	 F9/8BqcT8FsbTKXuKPb5XdQJPLfPdKG0ZAivQnMuqRJoPv+zFn/dYOUbcSu+tUdNPr
-	 8Lg/mSfOgtfvXrwk4ttLOrxKItrQv9c8ivA5SXkgxcQVNgHzanDYoWKJdAycJ7RrYu
-	 9HuK4NRo4vLqUWIT0O0NSf9KAMdReT0t2AxjaiyRvwGLYrk4dKqT2733VO2aVkTswy
-	 zsnuIpAZgQsoTRLAdle2fzczf+HcFAYvyQJFuSqw5Jr7H4yHOOIr3CQrfSzrY3Va2m
-	 hoaxVkI1WMJIA==
-Date: Sun, 30 Mar 2025 13:57:55 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Alejandro Colomar <alx.manpages@gmail.com>, 
-	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@poochiereds.net>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-man@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] name_to_handle_at.2: Document the AT_HANDLE_CONNECTABLE
- flag
-Message-ID: <hih7dv4ct7bud4mzshjdbfinecmhldq7uqiqebiavqqqgsui5a@deboitvqheo2>
-References: <20250330111643.1405265-1-amir73il@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bQG+XCWLrsZj/rysOdxLnCARvubVWPJd5fhlXd7GH59GFj7BP8A3hP/OjnUOI7+Gd6IDdQ2dTB+uDGD2pm9+MFBBXTBf/ZqB8uePURq3yx/4zEWmz/oPifo2OfEwyNnJIFyVB++PWz10Ga//5HdK8QZpIR01EQd/yoz88BuFQ0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q0GkGU+6; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=voDv8EMh3wDI8Ol9zgDNGOFRR3qzvAQIM67ZjI3SCz8=; b=q0GkGU+6GJ3rbA/gqQ0Af/LEyg
+	b4UR04DsVRCaisDDpggnecveh2T2HG2hI3FYGxHsV1yK2jwXaHKw8+5hJeqAeB4TBDUiZJBV7sK5/
+	e4ntTTvaW7srOCXgoxG6mHOKljPVQ2BnECSogx8ttaFZu3ZML+5CIYNQ2a7wgaCcuVvrBcPdVvUYW
+	lbIbWtB2ftNtQf31ZMqCRR3mV8C2Pyrtf6kKqRPN4VOnuGrPyjUuCTvFG6iV5og6xRBvpgwMhFmma
+	Yd1uPj0T2gQ+64/f6JemxhVYWoP36361IdpKdNI+arvw72ypRh9rXc64cLBtR3gNUANvGtPGC4Ot0
+	4R2A6eUg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1tyrOU-00000004M53-2Dfn;
+	Sun, 30 Mar 2025 12:04:02 +0000
+Date: Sun, 30 Mar 2025 13:04:02 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: brauner@kernel.org, jack@suse.cz, tytso@mit.edu,
+	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+	riel@surriel.com, hannes@cmpxchg.org, oliver.sang@intel.com,
+	dave@stgolabs.net, david@redhat.com, axboe@kernel.dk, hare@suse.de,
+	david@fromorbit.com, djwong@kernel.org, ritesh.list@gmail.com,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-mm@kvack.org, gost.dev@samsung.com, p.raghav@samsung.com,
+	da.gomez@samsung.com
+Subject: Re: [PATCH 1/3] mm/migrate: add might_sleep() on __migrate_folio()
+Message-ID: <Z-kzMlwJXG7V9lip@casper.infradead.org>
+References: <20250330064732.3781046-1-mcgrof@kernel.org>
+ <20250330064732.3781046-2-mcgrof@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tvjsndhfqyr22jj3"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250330111643.1405265-1-amir73il@gmail.com>
+In-Reply-To: <20250330064732.3781046-2-mcgrof@kernel.org>
 
+On Sat, Mar 29, 2025 at 11:47:30PM -0700, Luis Chamberlain wrote:
+> However tracing shows that folio_mc_copy() *isn't* being called
+> as often as we'd expect from buffer_migrate_folio_norefs() path
+> as we're likely bailing early now thanks to the check added by commit
+> 060913999d7a ("mm: migrate: support poisoned recover from migrate
+> folio").
 
---tvjsndhfqyr22jj3
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Alejandro Colomar <alx.manpages@gmail.com>, 
-	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@poochiereds.net>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-man@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] name_to_handle_at.2: Document the AT_HANDLE_CONNECTABLE
- flag
-References: <20250330111643.1405265-1-amir73il@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20250330111643.1405265-1-amir73il@gmail.com>
+Umm.  You're saying that most folios we try to migrate have extra refs?
+That seems unexpected; does it indicate a bug in 060913999d7a?
 
-Hi Amir,
+> +++ b/mm/migrate.c
+> @@ -751,6 +751,8 @@ static int __migrate_folio(struct address_space *mapping, struct folio *dst,
+>  {
+>  	int rc, expected_count = folio_expected_refs(mapping, src);
+>  
+> +	might_sleep();
 
-On Sun, Mar 30, 2025 at 01:16:43PM +0200, Amir Goldstein wrote:
-> A flag since v6.13 to indicate that the requested file_handle is
-> intended to be used for open_by_handle_at(2) to obtain an open file
-> with a known path.
->=20
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+We deliberately don't sleep when the folio is only a single page.
+So this needs to be:
 
-Please add explicit CC tags for everyone CCd.
+	might_sleep_if(folio_test_large(folio));
 
-> ---
->  man/man2/open_by_handle_at.2 | 31 ++++++++++++++++++++++++++++++-
->  1 file changed, 30 insertions(+), 1 deletion(-)
->=20
-> diff --git a/man/man2/open_by_handle_at.2 b/man/man2/open_by_handle_at.2
-> index 6b9758d42..ce3a2cec8 100644
-> --- a/man/man2/open_by_handle_at.2
-> +++ b/man/man2/open_by_handle_at.2
-> @@ -127,6 +127,7 @@ The
->  .I flags
->  argument is a bit mask constructed by ORing together zero or more of
->  .BR AT_HANDLE_FID ,
-> +.BR AT_HANDLE_CONNECTABLE,
->  .BR AT_EMPTY_PATH ,
->  and
->  .BR AT_SYMLINK_FOLLOW ,
-> @@ -147,6 +148,29 @@ with the returned
->  .I file_handle
->  may fail.
->  .P
-> +When
-> +.I flags
-> +contain the
-> +.BR AT_HANDLE_CONNECTABLE " (since Linux 6.13)"
-> +.\" commit a20853ab8296d4a8754482cb5e9adde8ab426a25
-> +flag, the caller indicates that the returned
-> +.I file_handle
-> +is needed to open a file with known path later,
-> +so it should be expected that a subsequent call to
-> +.BR open_by_handle_at ()
-> +with the returned
-> +.I file_handle
-> +may fail if the file was moved,
-> +but otherwise,
-> +the path of the opened file is expected to be visible
-> +from the
-> +.IR /proc/ pid /fd/*
-
-Literal parts of a path name should be in italics, but variable parts
-should be in roman.  Thus:
-
-	.IR /proc/ pid /fd/ *
-
-> +magic link.
-> +This flag can not be used in combination with the flags
-> +.BR AT_HANDLE_FID ,
-
-for only two items, we don't need a comma here.  It's for three or more
-items, that Oxford comma applies.
-
-> +and
-
-Maybe it's better to say 'and/or'?  Otherwise, one may wonder if
-combining with only one of those but not both may be valid?
-
-
-Have a lovely day!
-Alex
-
-> +.BR AT_EMPTY_PATH .
-> +.P
->  Together, the
->  .I pathname
->  and
-> @@ -311,7 +335,7 @@ points outside your accessible address space.
->  .TP
->  .B EINVAL
->  .I flags
-> -includes an invalid bit value.
-> +includes an invalid bit value or an invalid bit combination.
->  .TP
->  .B EINVAL
->  .I handle\->handle_bytes
-> @@ -398,6 +422,11 @@ was acquired using the
->  .B AT_HANDLE_FID
->  flag and the filesystem does not support
->  .BR open_by_handle_at ().
-> +This error can also occur if the
-> +.I handle
-> +was acquired using the
-> +.B AT_HANDLE_CONNECTABLE
-> +flag and the file was moved to a different parent.
->  .SH VERSIONS
->  FreeBSD has a broadly similar pair of system calls in the form of
->  .BR getfh ()
-> --=20
-> 2.34.1
->=20
-
---=20
-<https://www.alejandro-colomar.es/>
-
---tvjsndhfqyr22jj3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmfpMb0ACgkQ64mZXMKQ
-wqkNEQ//S2YuaMGhnsufRNYajlGVFAQ7sF9ll4gZH6P4PMXuoleGLXoV3nYg8H2V
-ArZYPYR+bgtB5D6xV6NG/8d6DX7V9gom7UpcKEqF/xbOaUNIWFSV3Qmi5O6cTKrF
-kL/JQikJAFW7IekjT9HS5JrWSWF8tfTHFqSscUhmNFflXug2Cm3T3VK6ncu0N9JR
-CWW9EJaFKSsv9Y0adG1a6uFY7fxvdWIkdxEotBRHsMSRoZvGsq7/WLw2S8l3D0n2
-d/PFyAGN6aeTjjWdqDcoeLHqgsVPD3uc94iNa3mk2AQ0HZ6PBwea1Wu55bGcH7/B
-5/9YddMxWyKfTKrTvvtmZ/3njXKn76zDucqt4NQTCepK1sjDAYtFxjaoxdHgNJxd
-9dbCNeSdHNkaxT+ElqUW1t2tv1Otuj7P+j+GX9+Xag9iGna3f2k6QLNHanaiBMVr
-enyWD5B3LEPymEIcw+tZF6lru3mtSwZfqf68jH9vyzi1UWhVaw8iDZGBk46pFVw+
-E5xZ5nyiJNQy47O97/cp/rhaX3nvrwR52lJvNKpWc67XUFnqF9pPkgw+fY/kDnK4
-eDsKwj7VBsEa4tHSGHUACUBSkQvd290GpKERWEfInyWNRWWrL6+kpjjLD0PA2RFj
-jR4ZWw2mmLkP15V+vydJlOTMArcFcsqu78rfcyDtC2zYgQL8NNk=
-=l/0/
------END PGP SIGNATURE-----
-
---tvjsndhfqyr22jj3--
+>  	/* Check whether src does not have extra refs before we do more work */
+>  	if (folio_ref_count(src) != expected_count)
+>  		return -EAGAIN;
+> -- 
+> 2.47.2
+> 
 
