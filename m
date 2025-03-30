@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-45303-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45304-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CC68A75B8E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 19:52:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BC22A75B99
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 19:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D64A7A3AD4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 17:51:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9B243A9348
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 17:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E5E1DC98C;
-	Sun, 30 Mar 2025 17:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7911DDA17;
+	Sun, 30 Mar 2025 17:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ImQ5PeWO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sj5Fx6cL"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DA114B08A;
-	Sun, 30 Mar 2025 17:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB73D17CA1B;
+	Sun, 30 Mar 2025 17:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743357144; cv=none; b=c598Glss5CX9b7zOT+Tqy57CKXhP6H2eEtiGIPaglt29ezudbF2m+DGgbX1ECt4VrJBmM+JgVSAQD8ru0gmhLl17zcZbuligWdeTvBihsCO45Zhhp8z6OgdkaF+TyddrvYFqHx3Rc9MQpkyxQw+RTQrxI5VCalbNf+e9cpnOejY=
+	t=1743357399; cv=none; b=qb726DiQ7GpieeFkzGMwzc4Gn870zl1kyGvYGwOOkk90L6oADA9zgJdE36u7oqutXABeCa6uATSHBgsTSE8AxAckqlJaTXVManIrS2/ZFcod+sUh+vhYrVYQjCl6/w7nijMivdvAJcb8YoqNlVKpQxasDD+0za/v/rbS1iBedQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743357144; c=relaxed/simple;
-	bh=N2X01LKe53G2Joohd54qU4KslJZY126vBbDToIG86zo=;
+	s=arc-20240116; t=1743357399; c=relaxed/simple;
+	bh=7FUVFLvjoO3abDa9TCYrNumtZmwOQ15p1qfdPeDOtMA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lYF5Pg/EUdFkpvVHD76l5NTvSf1swtzjGIrY8TUSEO42oX0gxZPBEG6PpqMeQ9i+9oYzEkuazJ6iTCUef2PMoLpewy7rXS6HxDsL8DnQKHpH+0/l4JV2SjAq3bssOeOG/eUf0cUc6zhgyrBTaXmVzDkLPf8cwk4n3/axwpqYFzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ImQ5PeWO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6B69C4CEDD;
-	Sun, 30 Mar 2025 17:52:21 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=L6UVVgt6JLQlRI84ZrNkegHUvcgacQqV8UrGuhiJ1s69bJmjjV2JNg2P08gA8W2NuLW/wtLROt3SAtzodG0pAFC9f2PBoeqcZ/e/clBeU6sry+5t3zo/yzytzq2BE2xZ2Pk4HnxNCU7PkGmsmnZF5Ijtla1n00vFvhd+9Ob4hUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sj5Fx6cL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66E59C4CEDD;
+	Sun, 30 Mar 2025 17:56:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743357143;
-	bh=N2X01LKe53G2Joohd54qU4KslJZY126vBbDToIG86zo=;
+	s=k20201202; t=1743357399;
+	bh=7FUVFLvjoO3abDa9TCYrNumtZmwOQ15p1qfdPeDOtMA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ImQ5PeWOsFfcg6Xp/yCO7SABE6KJjH4lmdilvinpwsNgyTmIKnzrjFucVoYCJ4K4j
-	 KgCulvFEp7l7qNwAlPYbnckgKdwqV5pcUrTimP94aas1w2Goqc3chjJa0eQhCPHoOs
-	 wMGAY++8wy8tX4+Q4ZW49ra3Intb6tPHMIUL372vYxGPAAhnUErINIm89POZ1Gh1em
-	 eR7TD27r1KoTECYgJ0xnnQ8CTI9f/yvsuvdYthKB4H1st0ahO/s83K5/iR0tndrV1K
-	 nRkf4Ld7HCbEf2BttX0I0EiNC1IB0+8NfaB+qOkFmmZCayZnmGvcs9UtuAd/+eYY6Y
-	 NX4g08uU9QAig==
-Date: Sun, 30 Mar 2025 19:52:19 +0200
+	b=sj5Fx6cLSMGDBgf5Ocu5dr4ucvhbi/KAsLBV7yozCV8oiL9tioi/fbS30ivCgeYS1
+	 on625DAqldDgZUzLfcpnN82IdidO+1vS05ERzu6T1U8Cow/5Z7ObPOkqBq5WK4W8JY
+	 cEuSPhiXLSICC54qZ8b9IcwHGOyxhVmGaxI0OClVYf4cNkITK8jSMklaDArclAxnXa
+	 k/xMLpZjN4j97jJaMf82EVtYZGqUvqiFekudls08KQ3JnJIxRN2tPyAfGBF+xCkbza
+	 lb/uyj66Vou+0wYhHsR/MOMhqlAN6x5TTR7YY0SEKg5hIuh9AHZNDa7WpaiKGHlzWg
+	 0EU0X0vimzlJg==
+Date: Sun, 30 Mar 2025 19:56:35 +0200
 From: Alejandro Colomar <alx@kernel.org>
 To: Amir Goldstein <amir73il@gmail.com>
-Cc: Alejandro Colomar <alx.manpages@gmail.com>, Jan Kara <jack@suse.cz>, 
-	Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>, 
-	linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Richard Guy Briggs <rgb@redhat.com>
-Subject: Re: [PATCH] fanotify.7: Document extended response to permission
- events
-Message-ID: <mwttu4y4pvussz2zug6dlmgioqcfwgqsup3fqhyfa437mi2k2p@bl5orpxlsa4z>
-References: <20250330153326.1412509-1-amir73il@gmail.com>
+Cc: Alejandro Colomar <alx.manpages@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-man@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>, 
+	Jeff Layton <jlayton@poochiereds.net>, Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: [PATCH v2] name_to_handle_at.2: Document the
+ AT_HANDLE_CONNECTABLE flag
+Message-ID: <mu6nhfyv77ptgvsvr6n23dc5if3sr6ymjmv3bq7bfnvcas66nu@b7nrofzezhil>
+References: <20250330163502.1415011-1-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,185 +59,139 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7e2ef2uam4my3q3r"
+	protocol="application/pgp-signature"; boundary="evceypjn7ghavqfu"
 Content-Disposition: inline
-In-Reply-To: <20250330153326.1412509-1-amir73il@gmail.com>
+In-Reply-To: <20250330163502.1415011-1-amir73il@gmail.com>
 
 
---7e2ef2uam4my3q3r
+--evceypjn7ghavqfu
 Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 From: Alejandro Colomar <alx@kernel.org>
 To: Amir Goldstein <amir73il@gmail.com>
-Cc: Alejandro Colomar <alx.manpages@gmail.com>, Jan Kara <jack@suse.cz>, 
-	Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>, 
-	linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Richard Guy Briggs <rgb@redhat.com>
-Subject: Re: [PATCH] fanotify.7: Document extended response to permission
- events
-References: <20250330153326.1412509-1-amir73il@gmail.com>
+Cc: Alejandro Colomar <alx.manpages@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-man@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>, 
+	Jeff Layton <jlayton@poochiereds.net>, Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: [PATCH v2] name_to_handle_at.2: Document the
+ AT_HANDLE_CONNECTABLE flag
+References: <20250330163502.1415011-1-amir73il@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20250330153326.1412509-1-amir73il@gmail.com>
+In-Reply-To: <20250330163502.1415011-1-amir73il@gmail.com>
 
 Hi Amir,
 
-On Sun, Mar 30, 2025 at 05:33:26PM +0200, Amir Goldstein wrote:
-> Document FAN_DENY_ERRNO(), that was added in v6.13 and the
-> FAN_RESPONSE_INFO_AUDIT_RULE extended response info record
-> that was added in v6.3.
+On Sun, Mar 30, 2025 at 06:35:02PM +0200, Amir Goldstein wrote:
+> A flag since v6.13 to indicate that the requested file_handle is
+> intended to be used for open_by_handle_at(2) to obtain an open file
+> with a known path.
 >=20
-> Cc: Richard Guy Briggs <rgb@redhat.com>
+> Cc: Chuck Lever <chuck.lever@oracle.com>
+> Cc: Jeff Layton <jlayton@poochiereds.net>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Aleksa Sarai <cyphar@cyphar.com>
 > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 > ---
 >=20
 > Alejandro,
 >=20
-> I was working on man page updates to fanotify features that landed
-> in v6.14 and found a few bits from v6.3 that were out of date, so
-> I added them along with this change.
->=20
-> If you want me to split them out I can, but I did not see much point.
+> Addressed your comments from v1 and added missing documentation for
+> AT_HANDLE_MNT_ID_UNIQUE from v6.12.
 
-I prefer them in two patches.  You can send them in the same patch set,
-though.
+Please split AT_HANDLE_MNT_ID_UNIQUE into a separate patch, possibly in
+the same patch set.  Other than that, it LGTM.  Thanks!
 
-> This change to the documentation of fanotify permission event response
-> is independent of the previous patches I posted to document the new
-> FAN_PRE_ACCESS event (also v6.14) and the fanotify_init(2) flag
-> FAN_REPORT_FD_ERROR (v6.13).
->=20
-> There is another fanotify feature in v6.14 (mount events).
-> I will try to catch up on documenting that one as well.
+
+Cheers,
+Alex
+
 >=20
 > Thanks,
 > Amir.
 >=20
->  man/man7/fanotify.7 | 60 ++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 59 insertions(+), 1 deletion(-)
+>  man/man2/open_by_handle_at.2 | 46 +++++++++++++++++++++++++++++++++++-
+>  1 file changed, 45 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/man/man7/fanotify.7 b/man/man7/fanotify.7
-> index 6f3a9496e..c7b53901a 100644
-> --- a/man/man7/fanotify.7
-> +++ b/man/man7/fanotify.7
-> @@ -820,7 +820,7 @@ This is the file descriptor from the structure
+> diff --git a/man/man2/open_by_handle_at.2 b/man/man2/open_by_handle_at.2
+> index 6b9758d42..10af60a76 100644
+> --- a/man/man2/open_by_handle_at.2
+> +++ b/man/man2/open_by_handle_at.2
+> @@ -127,6 +127,7 @@ The
+>  .I flags
+>  argument is a bit mask constructed by ORing together zero or more of
+>  .BR AT_HANDLE_FID ,
+> +.BR AT_HANDLE_CONNECTABLE,
+>  .BR AT_EMPTY_PATH ,
+>  and
+>  .BR AT_SYMLINK_FOLLOW ,
+> @@ -147,6 +148,44 @@ with the returned
+>  .I file_handle
+>  may fail.
+>  .P
+> +When
+> +.I flags
+> +contain the
+> +.BR AT_HANDLE_MNT_ID_UNIQUE " (since Linux 6.12)"
+> +.\" commit 4356d575ef0f39a3e8e0ce0c40d84ce900ac3b61
+> +flag, the caller indicates that the size of the
+> +.I mount_id
+> +buffer is at least 64bit
+> +and then the mount id returned in that buffer
+> +is the unique mount id as the one returned by
+> +.BR statx (2)
+> +with the
+> +.BR STATX_MNT_ID_UNIQUE
+> +flag.
+> +.P
+> +When
+> +.I flags
+> +contain the
+> +.BR AT_HANDLE_CONNECTABLE " (since Linux 6.13)"
+> +.\" commit a20853ab8296d4a8754482cb5e9adde8ab426a25
+> +flag, the caller indicates that the returned
+> +.I file_handle
+> +is needed to open a file with known path later,
+> +so it should be expected that a subsequent call to
+> +.BR open_by_handle_at ()
+> +with the returned
+> +.I file_handle
+> +may fail if the file was moved,
+> +but otherwise,
+> +the path of the opened file is expected to be visible
+> +from the
+> +.IR /proc/ pid /fd/ *
+> +magic link.
+> +This flag can not be used in combination with the flags
+> +.B AT_HANDLE_FID
+> +and/or
+> +.BR AT_EMPTY_PATH .
+> +.P
+>  Together, the
+>  .I pathname
+>  and
+> @@ -311,7 +350,7 @@ points outside your accessible address space.
 >  .TP
->  .I response
->  This field indicates whether or not the permission is to be granted.
-> -Its value must be either
-> +Its value must contain either the flag
-
-This seems unrelated.  Please keep it out of the patches.  If you want
-to do it, please have a third trivial patch with "wfix" in the subject.
-
->  .B FAN_ALLOW
->  to allow the file operation or
->  .B FAN_DENY
-> @@ -829,6 +829,24 @@ to deny the file operation.
->  If access is denied, the requesting application call will receive an
->  .B EPERM
->  error.
-> +Since Linux 6.14,
-> +.\" commit b4b2ff4f61ded819bfa22e50fdec7693f51cbbee
-> +if a notification group is initialized with class
-> +.BR FAN_CLASS_PRE_CONTENT ,
-> +the following error values could be returned to the application
-> +by setting the
-> +.I response
-> +value using the
-> +.BR FAN_DENY_ERRNO(err)
-
-This formatting is incorrect.  BR means alternating Bold and Roman, but
-this only has one token.
-
-> +macro:
-> +.BR EPERM ,
-> +.BR EIO ,
-> +.BR EBUSY ,
-> +.BR ETXTBSY ,
-> +.BR EAGAIN ,
-> +.BR ENOSPC ,
-> +.BR EDQUOT .
-
-Should we have a manual page for FAN_DENY_ERRNO()?  (I think we should.)
-I don't understand how it's supposed to work from this paragraph.
-
-> +.P
->  Additionally, if the notification group has been created with the
->  .B FAN_ENABLE_AUDIT
->  flag, then the
-> @@ -838,6 +856,46 @@ flag can be set in the
->  field.
->  In that case, the audit subsystem will log information about the access
->  decision to the audit logs.
-
-Do we want to start a new paragraph maybe?
-
-> +Since Linux 6.3,
-> +.\" commit 70529a199574c15a40f46b14256633b02ba10ca2
-> +the
-> +.B FAN_INFO
-> +flag can be set in the
-> +.I response
-> +to indicate that extra variable length response record follows struct
-
-s/variable length/variable-length/
-
-And we usually say 'XXX structure' instead of 'struct XXX'.
-
-> +.IR fanotify_response .
-
-The above sentence is too long.  I'd split it into two:
-
-Since Linux 6.3, the FAN_INFO flag can be set in the response field.  It
-indicates that an extra variable-length response record follows the
-fanotify_response structure.
-
-> +Extra response records start with a common header:
-> +.P
-> +.in +4n
-> +.EX
-> +struct fanotify_response_info_header {
-> +    __u8 type;
-> +    __u8 pad;
-> +    __u16 len;
-> +};
-> +.EE
-> +.in
-> +.P
-> +The value of
-> +.I type
-
-I'd say '.type' instead of 'type'.  I know there's no consistency about
-it, but I'm going to globally fix that eventually.  Let's do it good for
-new documentation.  The '.' allows one to easily know that we're talking
-about a struct or union member.
-
-
-Have a lovely day!
-Alex
-
-> +determines the format of the extra response record.
-> +In case the value of
-> +.I type
-> +is
-> +.BR FAN_RESPONSE_INFO_AUDIT_RULE ,
-> +the following response record is expected
-> +with extra details for the audit log:
-> +.P
-> +.in +4n
-> +.EX
-> +struct fanotify_response_info_audit_rule {
-> +    struct fanotify_response_info_header hdr;
-> +    __u32 rule_number;
-> +    __u32 subj_trust;
-> +    __u32 obj_trust;
-> +};
-> +.EE
-> +.in
->  .\"
->  .SS Monitoring filesystems for errors
->  A single
+>  .B EINVAL
+>  .I flags
+> -includes an invalid bit value.
+> +includes an invalid bit value or an invalid bit combination.
+>  .TP
+>  .B EINVAL
+>  .I handle\->handle_bytes
+> @@ -398,6 +437,11 @@ was acquired using the
+>  .B AT_HANDLE_FID
+>  flag and the filesystem does not support
+>  .BR open_by_handle_at ().
+> +This error can also occur if the
+> +.I handle
+> +was acquired using the
+> +.B AT_HANDLE_CONNECTABLE
+> +flag and the file was moved to a different parent.
+>  .SH VERSIONS
+>  FreeBSD has a broadly similar pair of system calls in the form of
+>  .BR getfh ()
 > --=20
 > 2.34.1
 >=20
@@ -245,25 +199,25 @@ Alex
 --=20
 <https://www.alejandro-colomar.es/>
 
---7e2ef2uam4my3q3r
+--evceypjn7ghavqfu
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmfphMwACgkQ64mZXMKQ
-wqnoSQ/+Jh4q6oO2C/n0Ihmihypc71UnGD0rETYjJ1gO4ZJdlxoSobhvKsq36x5n
-eNIYbDJfXZ/X90xhuwWXNb9OCu68EHYPDwQQ26MHb5g2gWdzkSewUWcNzO0tb1AD
-Wh/Tr+nhaoy7ugyRCAhB6k8Wpi3AWo0Sl7Ah+ih+pWZY+om1rJ1S8SZHGnqMhdkY
-Hy3HcTxLTs6Uw5sqc2yQpjVV981kclak8Ds+lT8C+NShkseSTxZNDvsXliGRxq35
-AQE6lUOocEN1QNh+gFv4+YWd8SaMI6c2ffcaRMQKfK60IUkM3p9B1M1V58JD3etu
-qhufQ6HLP7vTDpIkk2Sbc3z/P60Gy9DhnF+VKRR2xHz/zBW6E63llArAx66WEGfC
-kR8N5kn0EChK+bMpsUR100U2n1uqlqEchalNZdq7Q9hLQoMqacR6NaXY0D3YCS05
-7XtZBw84wqGEGl/x1zS+Ak1VuA8QD35R67Rdph4CFuoqH+8g3TUOfQ3KX99kBpTt
-X2C+7V1wilC9pNKxp+YXAX8htvC8VscXex6RxcUm9ke1OI8mxKTnaG197EfVuqiT
-5P9a8+/2gKHkS5qxc5v/0jHLoQb5SoTPzzH2ZIjTs60CdQvgjIprB8qun83qPJXo
-nJkedoq850W9mrYzDvG7ABJEZ76i5BvNqj/XD6qvLxfPBbqBSyo=
-=fHQE
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmfphdIACgkQ64mZXMKQ
+wqnD6xAAqF9nG244sIPmAz0+Gu/kzzBOFb2JiLrGAx5p7VTB6t3ONr8XBK1vaJgi
+ssfqZsuSvIIeniNTwk3GO5QcpztCUEUHYIVmFP7mehCyDM6u3cRta4LQl/+ek9O7
+CTbEm9iOGmiXYU6aSenKYZ5Y92WnG5ciZVfnSWSdqJcb2evfOp9X2Ts0R4dBA0Xc
+OvG8Pe3wJNphnU3dEYuANpEcqNAhmgTE9ekuwoDFAn8kEgOpgUDIIqfft39wp81V
+5Uyf5FYhKyx+hibs2hDmQMdyT1n285xk/CbNH7J8M+TjXfNv8JeA/QtA9mD7WrLG
+QL3ZaLO9zNXCbQcPulJ9Vogiuo2i6KKxlFGvoNNuNIQT0xRYXhiXoSBjJToOFeXn
+QBEmlp2hjho+i62qSdjMjWzA4hV6ClOnLkm3Dc7C/VrRuRm6Ymg19qBe/CH1XjgJ
+dy+SgLckBKnp/YXpYRoY02dtHY4qn5eAI/ndYFMKGwSyVGeLi7veE0aaEp0L1W/L
+CsVN0J1+N0DPcKazuwxb/enUzHuwURStw69ECoJTAq14coxuDij/xDU6FpgUQG+T
+bxiiPwXYVdNuQ5oft9ehwTs+dWKIirvZBg4fJ4sdOLSsWKi27Sx4OyAl1v/ZUgSv
+wK/7hcc+LpMimRyE/PcHbn1mob1PadakA5doQsyKuKfTEqF6ick=
+=SfgP
 -----END PGP SIGNATURE-----
 
---7e2ef2uam4my3q3r--
+--evceypjn7ghavqfu--
 
