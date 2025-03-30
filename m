@@ -1,87 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-45301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95458A75AA6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 17:33:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4056CA75AEC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 18:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D1FF165F16
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 15:33:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5230E1888C79
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 16:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86A41D6DC8;
-	Sun, 30 Mar 2025 15:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372A61D63E2;
+	Sun, 30 Mar 2025 16:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WTPvvIGL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ViYHCsKK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E8C10785;
-	Sun, 30 Mar 2025 15:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB379461;
+	Sun, 30 Mar 2025 16:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743348814; cv=none; b=ErSNG1tH/jNiN/Zv8UA13PbpnI22iembRK9GxW93+38n+0lBUfZUxpGPu1ISsGdPrU4tBrkVcZV+FSTN37OK+5ZgzxXKTZpxUjOF6j7x6PTbyEiiaphv/MaVHARy1VhsQEfT3Akxig6wCIfcje4dWDaSe1LGwXCtGmG2Bvb+A28=
+	t=1743352512; cv=none; b=Ql2mOkNfRun/2UpnXHChHxwkL1G8ztG+aDtmSoZMeWLZq4EyFbCczvng29OlKgJKuYfQ3Ql+iDtwtjYEiXyL0Xmq6jDJoPCqXuRE/6WVtDnOhwV6Oy1IafpspbVGJDTiDKikWxaD1h1ny6FOrNZ4ZTepQij2j/sOhMP6LT47e5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743348814; c=relaxed/simple;
-	bh=9QlWzno58XyR1h/zLxeQ2QMHS9b7ewxFun4RrKzC+rU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZwRxDTsZ8rRhhrvOJEP8jyPjRcMrBnxRVlkw+SNr2VhQaBMaMrrxcrbep6V++ijtaGrBoPtGGAFT1MfXtvsERYzsXiD6esA0fEic8Euh+RKDkyj1PCQDspsVLD7p1W80fjB7xoR2Gz0iVXD1Smsw4nLRNtU+BU6dnMYyjsvH0+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WTPvvIGL; arc=none smtp.client-ip=209.85.208.41
+	s=arc-20240116; t=1743352512; c=relaxed/simple;
+	bh=ehSbMdyy0t5e9YeMRCDuDvLQL24Vk7kk0DG94s5v33Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Pa60ld9vSypu2OVOWynwn0QvMxViME3/Z7NjAeR7yApFmhxmroXJ0MQrxpx0TLMtWAAYh8ZhGxkVfYG71KREiXTBJ2IOEcgdeyz7uebZQZfgqZ4k31wXHlXddqSWDQP4xq55GqNvxqXU7+38VvVtnLNpZ95zSowpC5ibGgewQ3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ViYHCsKK; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e61d91a087so5938923a12.0;
-        Sun, 30 Mar 2025 08:33:32 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac29af3382dso583297866b.2;
+        Sun, 30 Mar 2025 09:35:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743348811; x=1743953611; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1743352508; x=1743957308; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LJYTkW7Lvyl2uH8anCEoiKEqzHmNJog1UdReBZaulNU=;
-        b=WTPvvIGLt63jNdXE+7eSuKMQFmGeuOPGhl3OSO48AxhsIMgmaYPLRgHsF5jsZD4wK5
-         mgLie8Qko4OHrLT7dbMurvp0nDLLQrQ5xZh3AmHbmMKyzzv+gQzaL5IKI9sy/ZloRxpB
-         DFunfRdWxYFD3tTzMjxaS1YQM4EYi0CtEyL6r3Oz2mqMhN2A4a1rGPY/DEr/MBd5/Kdm
-         vmDPbsUfsocegEHz4uCNwvdAkoaCj8YSD0LnvDUpEOc0V1+nlc/gr+NNEV6SWwNfLaY/
-         4phZNX12al1gljLQ7U6UFN0L5mBkYoYxBdk4+sqLejTbMMqSWbSiTfkfk/Mwb7WnjUIa
-         6iNw==
+        bh=hSGrK+eEOvoMOUoRNbGGkHQ0YBTE2+lP2PSjhcU90F8=;
+        b=ViYHCsKKGvrE/z7yjoHSwAgr2wEH1EoN4ee2TDAY+Z2F9KPzveJ9yyQoD+ULOQqLs9
+         gNiqpIxQmFzYPkbp9Mb29PfNRweBi4VkrP7gJbktDmwBXADvYLSeNnOQkySCLBPmgIFS
+         2R19+fffdMGfb6FtyrCfboiXaow1eolPLRLY00TqBFHqnJiNc9uRHhYeaqtapIjs/CbR
+         Yvh3NkN3kxuFr5DALda/h1SVHxz/ykLCDj9bPuqh7/MIOlxumtwcNBpJjn+8ihqFjUve
+         iHxlX/5Nm0I2BBI7iK6l8J8iK7b6Tn1sX278BSry6fhgtkgxt3RkJ2j8AzAn/GpLpepe
+         vL6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743348811; x=1743953611;
+        d=1e100.net; s=20230601; t=1743352508; x=1743957308;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LJYTkW7Lvyl2uH8anCEoiKEqzHmNJog1UdReBZaulNU=;
-        b=LeoXUh0ajMk4Su72kKu3POO2QINnQ/vFoaucy+YT+an1jeEqEe0OZ3P32oDehR+pn/
-         iuB8JUtAtOsKfeMuGjwAnTQX/v80W39PtsKjA5kLMvmnYzAU1soGcLBeXvI0gyliz167
-         MDbynXzqDURkFuBGrSZbd4LGdO/meM6LHBXdWgkanMvIa8KrMkFQoMzh6s+EqQQStwb+
-         V9eZyCJBu3oMa119geE1aca9g9g9Kg+vG1b1k3HYrQwmFLIxu+3FSG6WFgoi1olX74ng
-         TRU0LZN4F/9rzboOic7RixRWI2vJPcuC4B3X36RBtCtyoRhfr9e0AF5wFcw+LV9imhvv
-         QmgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0ua6w9eRYghmMq+6NuAxuRxs4g4tEcaDiuYNN0U5/8lQ4bs8XooPV4pP8oaJOFUd709Da9CjkPzkX@vger.kernel.org, AJvYcCX59E6FqGIz1rCPe0M/Y0I2wmZe3xUj+dMK2JgW/6Noc5IU3tKLr6TSfh7/WMEQ4Ldta/SOwkB2C0K8tvbB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/ybLbyFyPBcgT2gB5mgVtvo2vMRfPcXyX7dEry52jD8sTLZSe
-	E6HcSX7LdXetXYRYVagY5tXNdVdqVXIutst2Hahkas2An/93jle6
-X-Gm-Gg: ASbGncsseaML3HWhJD0La7bYciQgeeRCsSmwD0+8YnMP8D/Livjfb1CwByyvJXdqCkY
-	Mw7lCn/hyNQsIvw8FCzeRNll45SnIF+US9tQzmDj7QT61jwtm44KoSKnoSOppnU58hlFgTS0F46
-	/y4mT0kinFWPHKICSUZl1PPVv4E2eEEil1FmbWbOQ9m8nAqZgREzuml0yRBlae6eKPdOUuSksZ2
-	gvAeONJKekpQKCzkwS5peJ9ZYc3ftWIolbdUfWWAvHEeqZY3fx8nBdYGyW2oain8KB1J6bqN4/r
-	tQKrH31O2GY59ptBSQHw8yZNcf6WyTVt6eLxcG5fxihTms4ZOz9bH3SRjJz3N/g/4Vf2KX5uOlN
-	vVDpp/fkDY03pcltTFTWckD3SY/fkRIvILSI2A+ssHw==
-X-Google-Smtp-Source: AGHT+IG5IijeJ2G4lFlSbYr1vhIZCCimFZzJGcyibs2brNXwUSb9ktr6h3dazrHHNJy841O8SINcpA==
-X-Received: by 2002:a05:6402:5254:b0:5e4:92ca:34d0 with SMTP id 4fb4d7f45d1cf-5edfdaf9104mr5167195a12.20.1743348810263;
-        Sun, 30 Mar 2025 08:33:30 -0700 (PDT)
+        bh=hSGrK+eEOvoMOUoRNbGGkHQ0YBTE2+lP2PSjhcU90F8=;
+        b=hC5loZfXCyzLC1vHMsy/Pc0PvPWVT8v9iaJ1COL8qj4nEVDF4WlUiVs8AyLFD/WHGA
+         OGRXiOD6ImONKdg1Z9KMUJayWzoF3deZxmnUf/znvswkOsj24H+i8TxlQfwISlUFBWd4
+         mRiweM5LPYGL0mKElquBdnkTV3cohgtLT1nwGbOwN3nCo3AXlb+xOyVeUmQPMjOis09G
+         +2Rf4UJpEVsiQ+8OcwhKvgIfEyrqzwHSfva4cAJCtp5PdMEqIKDapSL317YCg4uaQszi
+         WW67q2Mxg3qEEfpusWQ5v3X7WmP+oKYnpr6akVLnZudxPTLkl8ivfGMtaEQRbGpixsSW
+         Lxlw==
+X-Forwarded-Encrypted: i=1; AJvYcCX15UGOXqaFWM2hhDr/He540WjFt3L6WkWt/IIfDvaCwzvLBiP0rYHqxj43A/Ja08WQ/vzVBxJMRlpi@vger.kernel.org, AJvYcCXOhjnEHFi08Eh/zal0TyYv4X+EVmQSoa49tJR+NA0hIF+erYeKaxklvrCSWQn+QcP1PcLxx6915lfJ6o4o@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEMVuFfkU4S5kkbhHBsB0KZfBKZif0K2jvnR8i75H3lasEAnIW
+	eWt61blWhOlOVa5CR/ntUSdzL8hut9g47HvJ7prn1mCWJ1Ulddkb
+X-Gm-Gg: ASbGnctPud5u5UB6TW1mfH0UzTRJrMKOodQ6sblRNWJT1DLjkE4AspY7igM+1L6aAh5
+	9d8v0I0cG27N5Tg3MMzO8+h9DN2GLcai5Pcxomwt3tV1nr7PwlmzhXeEJbiqlaaGldsMDm6XbQK
+	cJg8EIGMEmmSVEfvhRkQtai1d8ugkKpIfUcMuTO4SUTqUDSH0Npb9YlrC2WmVRkGgdutpuKkMbe
+	xHoRclx9QihdH9hyTxbTb1i6yrgC5RP6g63IDjcgZ48RLuLSlzzASHQCBqZbrrBRVbGXtiYiBaC
+	X3x6jBMqvra4Yb53bPlPFWer1qtW/ZMaEQ0wfiJS6e4yN5btRB/Ip5T8HyNTI6KEGaJbe3aJ38N
+	YOVux3/+E/Zf5TzR3Ybfvt76A2FIr5WrcHTS12uLCuw==
+X-Google-Smtp-Source: AGHT+IHVhEa7NosEtYZC4MV5Cyzszz96XEMrDFOlHllCinbl5NTIMhcvdVaaKhznjJUnnn3kJqMtwQ==
+X-Received: by 2002:a17:907:97c9:b0:ac6:e42b:7556 with SMTP id a640c23a62f3a-ac7389e6743mr623677466b.11.1743352507693;
+        Sun, 30 Mar 2025 09:35:07 -0700 (PDT)
 Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5edc17b2034sm4365575a12.51.2025.03.30.08.33.29
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac719221034sm500020066b.32.2025.03.30.09.35.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Mar 2025 08:33:29 -0700 (PDT)
+        Sun, 30 Mar 2025 09:35:07 -0700 (PDT)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Alejandro Colomar <alx.manpages@gmail.com>
-Cc: Jan Kara <jack@suse.cz>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Christian Brauner <brauner@kernel.org>,
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
 	linux-man@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH] fanotify.7: Document extended response to permission events
-Date: Sun, 30 Mar 2025 17:33:26 +0200
-Message-Id: <20250330153326.1412509-1-amir73il@gmail.com>
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@poochiereds.net>,
+	Aleksa Sarai <cyphar@cyphar.com>
+Subject: [PATCH v2] name_to_handle_at.2: Document the AT_HANDLE_CONNECTABLE flag
+Date: Sun, 30 Mar 2025 18:35:02 +0200
+Message-Id: <20250330163502.1415011-1-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -91,121 +92,107 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document FAN_DENY_ERRNO(), that was added in v6.13 and the
-FAN_RESPONSE_INFO_AUDIT_RULE extended response info record
-that was added in v6.3.
+A flag since v6.13 to indicate that the requested file_handle is
+intended to be used for open_by_handle_at(2) to obtain an open file
+with a known path.
 
-Cc: Richard Guy Briggs <rgb@redhat.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>
+Cc: Jeff Layton <jlayton@poochiereds.net>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Aleksa Sarai <cyphar@cyphar.com>
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
 
 Alejandro,
 
-I was working on man page updates to fanotify features that landed
-in v6.14 and found a few bits from v6.3 that were out of date, so
-I added them along with this change.
-
-If you want me to split them out I can, but I did not see much point.
-
-This change to the documentation of fanotify permission event response
-is independent of the previous patches I posted to document the new
-FAN_PRE_ACCESS event (also v6.14) and the fanotify_init(2) flag
-FAN_REPORT_FD_ERROR (v6.13).
-
-There is another fanotify feature in v6.14 (mount events).
-I will try to catch up on documenting that one as well.
+Addressed your comments from v1 and added missing documentation for
+AT_HANDLE_MNT_ID_UNIQUE from v6.12.
 
 Thanks,
 Amir.
 
- man/man7/fanotify.7 | 60 ++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 59 insertions(+), 1 deletion(-)
+ man/man2/open_by_handle_at.2 | 46 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 45 insertions(+), 1 deletion(-)
 
-diff --git a/man/man7/fanotify.7 b/man/man7/fanotify.7
-index 6f3a9496e..c7b53901a 100644
---- a/man/man7/fanotify.7
-+++ b/man/man7/fanotify.7
-@@ -820,7 +820,7 @@ This is the file descriptor from the structure
+diff --git a/man/man2/open_by_handle_at.2 b/man/man2/open_by_handle_at.2
+index 6b9758d42..10af60a76 100644
+--- a/man/man2/open_by_handle_at.2
++++ b/man/man2/open_by_handle_at.2
+@@ -127,6 +127,7 @@ The
+ .I flags
+ argument is a bit mask constructed by ORing together zero or more of
+ .BR AT_HANDLE_FID ,
++.BR AT_HANDLE_CONNECTABLE,
+ .BR AT_EMPTY_PATH ,
+ and
+ .BR AT_SYMLINK_FOLLOW ,
+@@ -147,6 +148,44 @@ with the returned
+ .I file_handle
+ may fail.
+ .P
++When
++.I flags
++contain the
++.BR AT_HANDLE_MNT_ID_UNIQUE " (since Linux 6.12)"
++.\" commit 4356d575ef0f39a3e8e0ce0c40d84ce900ac3b61
++flag, the caller indicates that the size of the
++.I mount_id
++buffer is at least 64bit
++and then the mount id returned in that buffer
++is the unique mount id as the one returned by
++.BR statx (2)
++with the
++.BR STATX_MNT_ID_UNIQUE
++flag.
++.P
++When
++.I flags
++contain the
++.BR AT_HANDLE_CONNECTABLE " (since Linux 6.13)"
++.\" commit a20853ab8296d4a8754482cb5e9adde8ab426a25
++flag, the caller indicates that the returned
++.I file_handle
++is needed to open a file with known path later,
++so it should be expected that a subsequent call to
++.BR open_by_handle_at ()
++with the returned
++.I file_handle
++may fail if the file was moved,
++but otherwise,
++the path of the opened file is expected to be visible
++from the
++.IR /proc/ pid /fd/ *
++magic link.
++This flag can not be used in combination with the flags
++.B AT_HANDLE_FID
++and/or
++.BR AT_EMPTY_PATH .
++.P
+ Together, the
+ .I pathname
+ and
+@@ -311,7 +350,7 @@ points outside your accessible address space.
  .TP
- .I response
- This field indicates whether or not the permission is to be granted.
--Its value must be either
-+Its value must contain either the flag
- .B FAN_ALLOW
- to allow the file operation or
- .B FAN_DENY
-@@ -829,6 +829,24 @@ to deny the file operation.
- If access is denied, the requesting application call will receive an
- .B EPERM
- error.
-+Since Linux 6.14,
-+.\" commit b4b2ff4f61ded819bfa22e50fdec7693f51cbbee
-+if a notification group is initialized with class
-+.BR FAN_CLASS_PRE_CONTENT ,
-+the following error values could be returned to the application
-+by setting the
-+.I response
-+value using the
-+.BR FAN_DENY_ERRNO(err)
-+macro:
-+.BR EPERM ,
-+.BR EIO ,
-+.BR EBUSY ,
-+.BR ETXTBSY ,
-+.BR EAGAIN ,
-+.BR ENOSPC ,
-+.BR EDQUOT .
-+.P
- Additionally, if the notification group has been created with the
- .B FAN_ENABLE_AUDIT
- flag, then the
-@@ -838,6 +856,46 @@ flag can be set in the
- field.
- In that case, the audit subsystem will log information about the access
- decision to the audit logs.
-+Since Linux 6.3,
-+.\" commit 70529a199574c15a40f46b14256633b02ba10ca2
-+the
-+.B FAN_INFO
-+flag can be set in the
-+.I response
-+to indicate that extra variable length response record follows struct
-+.IR fanotify_response .
-+Extra response records start with a common header:
-+.P
-+.in +4n
-+.EX
-+struct fanotify_response_info_header {
-+    __u8 type;
-+    __u8 pad;
-+    __u16 len;
-+};
-+.EE
-+.in
-+.P
-+The value of
-+.I type
-+determines the format of the extra response record.
-+In case the value of
-+.I type
-+is
-+.BR FAN_RESPONSE_INFO_AUDIT_RULE ,
-+the following response record is expected
-+with extra details for the audit log:
-+.P
-+.in +4n
-+.EX
-+struct fanotify_response_info_audit_rule {
-+    struct fanotify_response_info_header hdr;
-+    __u32 rule_number;
-+    __u32 subj_trust;
-+    __u32 obj_trust;
-+};
-+.EE
-+.in
- .\"
- .SS Monitoring filesystems for errors
- A single
+ .B EINVAL
+ .I flags
+-includes an invalid bit value.
++includes an invalid bit value or an invalid bit combination.
+ .TP
+ .B EINVAL
+ .I handle\->handle_bytes
+@@ -398,6 +437,11 @@ was acquired using the
+ .B AT_HANDLE_FID
+ flag and the filesystem does not support
+ .BR open_by_handle_at ().
++This error can also occur if the
++.I handle
++was acquired using the
++.B AT_HANDLE_CONNECTABLE
++flag and the file was moved to a different parent.
+ .SH VERSIONS
+ FreeBSD has a broadly similar pair of system calls in the form of
+ .BR getfh ()
 -- 
 2.34.1
 
