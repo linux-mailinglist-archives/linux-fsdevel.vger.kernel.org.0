@@ -1,230 +1,212 @@
-Return-Path: <linux-fsdevel+bounces-45300-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FF8DA75A52
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 16:28:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95458A75AA6
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 17:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 081233A62D0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 14:27:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D1FF165F16
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Mar 2025 15:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3216C1D5172;
-	Sun, 30 Mar 2025 14:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86A41D6DC8;
+	Sun, 30 Mar 2025 15:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WTPvvIGL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from ida.uls.co.za (ida.uls.co.za [154.73.32.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA903232;
-	Sun, 30 Mar 2025 14:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.73.32.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E8C10785;
+	Sun, 30 Mar 2025 15:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743344874; cv=none; b=pibLdVksXuSRE0pjxslxR5TYnWhAAGGDHa5Df4WAQKzJLwq5OmOH7XdhoERsIstajuYcFqtFL1CIrL/ePGkJsRUJh/sUupMTM1wJd3jQx2sFBZ8Fa/6u848uv72xrQASbHeQL3l3esEjZVC6lArLdf7CG5ByPga4rdsdpbN4LxY=
+	t=1743348814; cv=none; b=ErSNG1tH/jNiN/Zv8UA13PbpnI22iembRK9GxW93+38n+0lBUfZUxpGPu1ISsGdPrU4tBrkVcZV+FSTN37OK+5ZgzxXKTZpxUjOF6j7x6PTbyEiiaphv/MaVHARy1VhsQEfT3Akxig6wCIfcje4dWDaSe1LGwXCtGmG2Bvb+A28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743344874; c=relaxed/simple;
-	bh=Xqehng9m3Qcp1mTjx7Gw51fQtpN49xnpGi3qNQ+ZOpk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kx5QSGTh7LT9JmKhidLEIxCAkWBOqOMdSm/AzSi7ggiYjszQxQu8K/unLWUg+m6O6ZcYU76jbFmQY/fHxoWwQff7fFZcvVKx40q8zzM1/H2+jKvzcr113qLQGbUprXH1D5SlAcycstlxX/Z+VH7cZfYch4BEoB9dIEColzIsQrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uls.co.za; spf=pass smtp.mailfrom=uls.co.za; arc=none smtp.client-ip=154.73.32.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uls.co.za
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uls.co.za
-Received: from [192.168.241.128]
-	by ida.uls.co.za with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.97.1)
-	(envelope-from <jaco@uls.co.za>)
-	id 1tytdJ-000000000pA-3NNp;
-	Sun, 30 Mar 2025 16:27:30 +0200
-Message-ID: <cb0c9321-9c1d-4910-bcbd-3d0ca10d62cb@uls.co.za>
-Date: Sun, 30 Mar 2025 16:27:25 +0200
+	s=arc-20240116; t=1743348814; c=relaxed/simple;
+	bh=9QlWzno58XyR1h/zLxeQ2QMHS9b7ewxFun4RrKzC+rU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZwRxDTsZ8rRhhrvOJEP8jyPjRcMrBnxRVlkw+SNr2VhQaBMaMrrxcrbep6V++ijtaGrBoPtGGAFT1MfXtvsERYzsXiD6esA0fEic8Euh+RKDkyj1PCQDspsVLD7p1W80fjB7xoR2Gz0iVXD1Smsw4nLRNtU+BU6dnMYyjsvH0+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WTPvvIGL; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e61d91a087so5938923a12.0;
+        Sun, 30 Mar 2025 08:33:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743348811; x=1743953611; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LJYTkW7Lvyl2uH8anCEoiKEqzHmNJog1UdReBZaulNU=;
+        b=WTPvvIGLt63jNdXE+7eSuKMQFmGeuOPGhl3OSO48AxhsIMgmaYPLRgHsF5jsZD4wK5
+         mgLie8Qko4OHrLT7dbMurvp0nDLLQrQ5xZh3AmHbmMKyzzv+gQzaL5IKI9sy/ZloRxpB
+         DFunfRdWxYFD3tTzMjxaS1YQM4EYi0CtEyL6r3Oz2mqMhN2A4a1rGPY/DEr/MBd5/Kdm
+         vmDPbsUfsocegEHz4uCNwvdAkoaCj8YSD0LnvDUpEOc0V1+nlc/gr+NNEV6SWwNfLaY/
+         4phZNX12al1gljLQ7U6UFN0L5mBkYoYxBdk4+sqLejTbMMqSWbSiTfkfk/Mwb7WnjUIa
+         6iNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743348811; x=1743953611;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LJYTkW7Lvyl2uH8anCEoiKEqzHmNJog1UdReBZaulNU=;
+        b=LeoXUh0ajMk4Su72kKu3POO2QINnQ/vFoaucy+YT+an1jeEqEe0OZ3P32oDehR+pn/
+         iuB8JUtAtOsKfeMuGjwAnTQX/v80W39PtsKjA5kLMvmnYzAU1soGcLBeXvI0gyliz167
+         MDbynXzqDURkFuBGrSZbd4LGdO/meM6LHBXdWgkanMvIa8KrMkFQoMzh6s+EqQQStwb+
+         V9eZyCJBu3oMa119geE1aca9g9g9Kg+vG1b1k3HYrQwmFLIxu+3FSG6WFgoi1olX74ng
+         TRU0LZN4F/9rzboOic7RixRWI2vJPcuC4B3X36RBtCtyoRhfr9e0AF5wFcw+LV9imhvv
+         QmgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0ua6w9eRYghmMq+6NuAxuRxs4g4tEcaDiuYNN0U5/8lQ4bs8XooPV4pP8oaJOFUd709Da9CjkPzkX@vger.kernel.org, AJvYcCX59E6FqGIz1rCPe0M/Y0I2wmZe3xUj+dMK2JgW/6Noc5IU3tKLr6TSfh7/WMEQ4Ldta/SOwkB2C0K8tvbB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/ybLbyFyPBcgT2gB5mgVtvo2vMRfPcXyX7dEry52jD8sTLZSe
+	E6HcSX7LdXetXYRYVagY5tXNdVdqVXIutst2Hahkas2An/93jle6
+X-Gm-Gg: ASbGncsseaML3HWhJD0La7bYciQgeeRCsSmwD0+8YnMP8D/Livjfb1CwByyvJXdqCkY
+	Mw7lCn/hyNQsIvw8FCzeRNll45SnIF+US9tQzmDj7QT61jwtm44KoSKnoSOppnU58hlFgTS0F46
+	/y4mT0kinFWPHKICSUZl1PPVv4E2eEEil1FmbWbOQ9m8nAqZgREzuml0yRBlae6eKPdOUuSksZ2
+	gvAeONJKekpQKCzkwS5peJ9ZYc3ftWIolbdUfWWAvHEeqZY3fx8nBdYGyW2oain8KB1J6bqN4/r
+	tQKrH31O2GY59ptBSQHw8yZNcf6WyTVt6eLxcG5fxihTms4ZOz9bH3SRjJz3N/g/4Vf2KX5uOlN
+	vVDpp/fkDY03pcltTFTWckD3SY/fkRIvILSI2A+ssHw==
+X-Google-Smtp-Source: AGHT+IG5IijeJ2G4lFlSbYr1vhIZCCimFZzJGcyibs2brNXwUSb9ktr6h3dazrHHNJy841O8SINcpA==
+X-Received: by 2002:a05:6402:5254:b0:5e4:92ca:34d0 with SMTP id 4fb4d7f45d1cf-5edfdaf9104mr5167195a12.20.1743348810263;
+        Sun, 30 Mar 2025 08:33:30 -0700 (PDT)
+Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5edc17b2034sm4365575a12.51.2025.03.30.08.33.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Mar 2025 08:33:29 -0700 (PDT)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Alejandro Colomar <alx.manpages@gmail.com>
+Cc: Jan Kara <jack@suse.cz>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-man@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH] fanotify.7: Document extended response to permission events
+Date: Sun, 30 Mar 2025 17:33:26 +0200
+Message-Id: <20250330153326.1412509-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] fs: Supply dir_context.count as readdir buffer size
- hint
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: bernd.schubert@fastmail.fm, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, miklos@szeredi.hu, rdunlap@infradead.org,
- trapexit@spawn.link
-References: <20230727081237.18217-1-jaco@uls.co.za>
- <20250314221701.12509-1-jaco@uls.co.za>
- <20250314221701.12509-2-jaco@uls.co.za>
- <b1baac64-f56d-4d0f-92f1-d7bb808a151b@wanadoo.fr>
-Content-Language: en-GB
-From: Jaco Kroon <jaco@uls.co.za>
-Autocrypt: addr=jaco@uls.co.za; keydata=
- xsBNBFXtplYBCADM6RTLCOSPiclevkn/gdf8h9l+kKA6N+WGIIFuUtoc9Gaf8QhXWW/fvUq2
- a3eo4ULVFT1jJ56Vfm4MssGA97NZtlOe3cg8QJMZZhsoN5wetG9SrJvT9Rlltwo5nFmXY3ZY
- gXsdwkpDr9Y5TqBizx7DGxMd/mrOfXeql57FWFeOc2GuJBnHPZQMJsQ66l2obPn36hWEtHYN
- gcUSPH3OOusSEGZg/oX/8WSDQ/b8xz1JKTEgcnu/JR0FxzjY19zSHmbnyVU+/gF3oeJFcEUk
- HvZu776LRVdcZ0lb1bHQB2K9rTZBVeZLitgAefPVH2uERVSO8EZO1I5M7afV0Kd/Vyn9ABEB
- AAHNG0phY28gS3Jvb24gPGphY29AdWxzLmNvLnphPsLAdwQTAQgAIQUCVe2mVgIbAwULCQgH
- AgYVCAkKCwIEFgIDAQIeAQIXgAAKCRAILcSxr/fungCPB/sHrfufpRbrVTtHUjpbY4bTQLQE
- bVrh4/yMiKprALRYy0nsMivl16Q/3rNWXJuQ0gR/faC3yNlDgtEoXx8noXOhva9GGHPGTaPT
- hhpcp/1E4C9Ghcaxw3MRapVnSKnSYL+zOOpkGwye2+fbqwCkCYCM7Vu6ws3+pMzJNFK/UOgW
- Tj8O5eBa3DiU4U26/jUHEIg74U+ypYPcj5qXG0xNXmmoDpZweW41Cfo6FMmgjQBTEGzo9e5R
- kjc7MH3+IyJvP4bzE5Paq0q0b5zZ8DUJFtT7pVb3FQTz1v3CutLlF1elFZzd9sZrg+mLA5PM
- o8PG9FLw9ZtTE314vgMWJ+TTYX0kzsBNBFXtplYBCADedX9HSSJozh4YIBT+PuLWCTJRLTLu
- jXU7HobdK1EljPAi1ahCUXJR+NHvpJLSq/N5rtL12ejJJ4EMMp2UUK0IHz4kx26FeAJuOQMe
- GEzoEkiiR15ufkApBCRssIj5B8OA/351Y9PFore5KJzQf1psrCnMSZoJ89KLfU7C5S+ooX9e
- re2aWgu5jqKgKDLa07/UVHyxDTtQKRZSFibFCHbMELYKDr3tUdUfCDqVjipCzHmLZ+xMisfn
- yX9aTVI3FUIs8UiqM5xlxqfuCnDrKBJjQs3uvmd6cyhPRmnsjase48RoO84Ckjbp/HVu0+1+
- 6vgiPjbe4xk7Ehkw1mfSxb79ABEBAAHCwF8EGAEIAAkFAlXtplYCGwwACgkQCC3Esa/37p7u
- XwgAjpFzUj+GMmo8ZeYwHH6YfNZQV+hfesr7tqlZn5DhQXJgT2NF6qh5Vn8TcFPR4JZiVIkF
- o0je7c8FJe34Aqex/H9R8LxvhENX/YOtq5+PqZj59y9G9+0FFZ1CyguTDC845zuJnnR5A0lw
- FARZaL8T7e6UGphtiT0NdR7EXnJ/alvtsnsNudtvFnKtigYvtw2wthW6CLvwrFjsuiXPjVUX
- 825zQUnBHnrED6vG67UG4z5cQ4uY/LcSNsqBsoj6/wsT0pnqdibhCWmgFimOsSRgaF7qsVtg
- TWyQDTjH643+qYbJJdH91LASRLrenRCgpCXgzNWAMX6PJlqLrNX1Ye4CQw==
-Organization: Ultimate Linux Solutions (Pty) Ltd
-In-Reply-To: <b1baac64-f56d-4d0f-92f1-d7bb808a151b@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-report: Relay access (ida.uls.co.za).
 
-ACK.  Fixed locally.
+Document FAN_DENY_ERRNO(), that was added in v6.13 and the
+FAN_RESPONSE_INFO_AUDIT_RULE extended response info record
+that was added in v6.3.
 
-Thank you.
+Cc: Richard Guy Briggs <rgb@redhat.com>
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
 
-Will give a few more days before re-sending.
+Alejandro,
 
-Kind regards,
-Jaco
+I was working on man page updates to fanotify features that landed
+in v6.14 and found a few bits from v6.3 that were out of date, so
+I added them along with this change.
 
-On 2025/03/29 11:20, Christophe JAILLET wrote:
+If you want me to split them out I can, but I did not see much point.
 
-> Hi,
->
-> a few nitpicks below to reduce the diffpatch with unrelated changes. 
-> (trainling spaces)
->
->
-> Le 14/03/2025 à 23:16, Jaco Kroon a écrit :
->> This was provided by Miklos <miklos@szeredi.hu> via LKML on 2023/07/27
->> subject "Re: [PATCH] fuse: enable larger read buffers for readdir.".
->>
->> This is thus preperation for an improved fuse readdir() patch. The
->
-> s/preperation/preparation/
->
->> description he provided:
->>
->> "The best strategy would be to find the optimal buffer size based on 
->> the size of
->> the userspace buffer.  Putting that info into struct dir_context 
->> doesn't sound
->> too complicated...
->>
->> "Here's a patch.  It doesn't touch readdir.  Simply setting the fuse 
->> buffer size
->> to the userspace buffer size should work, the record sizes are 
->> similar (fuse's
->> is slightly larger than libc's, so no overflow should ever happen)."
->
-> ...
->
->> @@ -239,7 +240,7 @@ SYSCALL_DEFINE3(old_readdir, unsigned int, fd,
->>     /*
->>    * New, all-improved, singing, dancing, iBCS2-compliant getdents()
->> - * interface.
->> + * interface.
->
-> Unrelated change.
->
->>    */
->>   struct linux_dirent {
->>       unsigned long    d_ino;
->
-> ...
->
->> diff --git a/include/linux/fs.h b/include/linux/fs.h
->> index 2788df98080f..1e426e2b5999 100644
->> --- a/include/linux/fs.h
->> +++ b/include/linux/fs.h
->> @@ -308,7 +308,7 @@ struct iattr {
->>    */
->>   #define FILESYSTEM_MAX_STACK_DEPTH 2
->>   -/**
->> +/**
->
-> Unrelated change.
->
->>    * enum positive_aop_returns - aop return codes with specific 
->> semantics
->>    *
->>    * @AOP_WRITEPAGE_ACTIVATE: Informs the caller that page writeback has
->> @@ -318,7 +318,7 @@ struct iattr {
->>    *                 be a candidate for writeback again in the near
->>    *                 future.  Other callers must be careful to unlock
->>    *                 the page if they get this return.  Returned by
->> - *                 writepage();
->> + *                 writepage();
->
-> Unrelated change.
->
->>    *
->>    * @AOP_TRUNCATED_PAGE: The AOP method that was handed a locked 
->> page has
->>    *              unlocked it and the page might have been truncated.
->> @@ -1151,8 +1151,8 @@ struct file *get_file_active(struct file **f);
->>     #define    MAX_NON_LFS    ((1UL<<31) - 1)
->>   -/* Page cache limit. The filesystems should put that into their 
->> s_maxbytes
->> -   limits, otherwise bad things can happen in VM. */
->> +/* Page cache limit. The filesystems should put that into their 
->> s_maxbytes
->> +   limits, otherwise bad things can happen in VM. */
->
-> Unrelated change.
->
->>   #if BITS_PER_LONG==32
->>   #define MAX_LFS_FILESIZE    ((loff_t)ULONG_MAX << PAGE_SHIFT)
->>   #elif BITS_PER_LONG==64
->> @@ -2073,6 +2073,13 @@ typedef bool (*filldir_t)(struct dir_context 
->> *, const char *, int, loff_t, u64,
->>   struct dir_context {
->>       filldir_t actor;
->>       loff_t pos;
->> +    /*
->> +     * Filesystems MUST NOT MODIFY count, but may use as a hint:
->> +     * 0        unknown
->> +     * > 0      space in buffer (assume at least one entry)
->> +     * INT_MAX  unlimited
->> +     */
->> +    int count;
->>   };
->>     /*
->> @@ -2609,7 +2616,7 @@ int sync_inode_metadata(struct inode *inode, 
->> int wait);
->>   struct file_system_type {
->>       const char *name;
->>       int fs_flags;
->> -#define FS_REQUIRES_DEV        1
->> +#define FS_REQUIRES_DEV        1
->
-> Unrelated change.
->
->>   #define FS_BINARY_MOUNTDATA    2
->>   #define FS_HAS_SUBTYPE        4
->>   #define FS_USERNS_MOUNT        8    /* Can be mounted by userns 
->> root */
->> @@ -3189,7 +3196,7 @@ ssize_t __kernel_read(struct file *file, void 
->> *buf, size_t count, loff_t *pos);
->>   extern ssize_t kernel_write(struct file *, const void *, size_t, 
->> loff_t *);
->>   extern ssize_t __kernel_write(struct file *, const void *, size_t, 
->> loff_t *);
->>   extern struct file * open_exec(const char *);
->> -
->> +
->
-> Unrelated change.
->
->>   /* fs/dcache.c -- generic fs support functions */
->>   extern bool is_subdir(struct dentry *, struct dentry *);
->>   extern bool path_is_under(const struct path *, const struct path *);
->
+This change to the documentation of fanotify permission event response
+is independent of the previous patches I posted to document the new
+FAN_PRE_ACCESS event (also v6.14) and the fanotify_init(2) flag
+FAN_REPORT_FD_ERROR (v6.13).
+
+There is another fanotify feature in v6.14 (mount events).
+I will try to catch up on documenting that one as well.
+
+Thanks,
+Amir.
+
+ man/man7/fanotify.7 | 60 ++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 59 insertions(+), 1 deletion(-)
+
+diff --git a/man/man7/fanotify.7 b/man/man7/fanotify.7
+index 6f3a9496e..c7b53901a 100644
+--- a/man/man7/fanotify.7
++++ b/man/man7/fanotify.7
+@@ -820,7 +820,7 @@ This is the file descriptor from the structure
+ .TP
+ .I response
+ This field indicates whether or not the permission is to be granted.
+-Its value must be either
++Its value must contain either the flag
+ .B FAN_ALLOW
+ to allow the file operation or
+ .B FAN_DENY
+@@ -829,6 +829,24 @@ to deny the file operation.
+ If access is denied, the requesting application call will receive an
+ .B EPERM
+ error.
++Since Linux 6.14,
++.\" commit b4b2ff4f61ded819bfa22e50fdec7693f51cbbee
++if a notification group is initialized with class
++.BR FAN_CLASS_PRE_CONTENT ,
++the following error values could be returned to the application
++by setting the
++.I response
++value using the
++.BR FAN_DENY_ERRNO(err)
++macro:
++.BR EPERM ,
++.BR EIO ,
++.BR EBUSY ,
++.BR ETXTBSY ,
++.BR EAGAIN ,
++.BR ENOSPC ,
++.BR EDQUOT .
++.P
+ Additionally, if the notification group has been created with the
+ .B FAN_ENABLE_AUDIT
+ flag, then the
+@@ -838,6 +856,46 @@ flag can be set in the
+ field.
+ In that case, the audit subsystem will log information about the access
+ decision to the audit logs.
++Since Linux 6.3,
++.\" commit 70529a199574c15a40f46b14256633b02ba10ca2
++the
++.B FAN_INFO
++flag can be set in the
++.I response
++to indicate that extra variable length response record follows struct
++.IR fanotify_response .
++Extra response records start with a common header:
++.P
++.in +4n
++.EX
++struct fanotify_response_info_header {
++    __u8 type;
++    __u8 pad;
++    __u16 len;
++};
++.EE
++.in
++.P
++The value of
++.I type
++determines the format of the extra response record.
++In case the value of
++.I type
++is
++.BR FAN_RESPONSE_INFO_AUDIT_RULE ,
++the following response record is expected
++with extra details for the audit log:
++.P
++.in +4n
++.EX
++struct fanotify_response_info_audit_rule {
++    struct fanotify_response_info_header hdr;
++    __u32 rule_number;
++    __u32 subj_trust;
++    __u32 obj_trust;
++};
++.EE
++.in
+ .\"
+ .SS Monitoring filesystems for errors
+ A single
+-- 
+2.34.1
+
 
