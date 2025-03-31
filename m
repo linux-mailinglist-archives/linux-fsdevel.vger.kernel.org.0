@@ -1,125 +1,236 @@
-Return-Path: <linux-fsdevel+bounces-45390-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72107A76FCC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 22:58:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73E57A77054
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 23:48:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B673D188C852
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 20:58:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8190B1888124
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 21:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A15821B9E3;
-	Mon, 31 Mar 2025 20:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA8821C195;
+	Mon, 31 Mar 2025 21:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="2NUK/SsA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dLif/QjF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05252214A7B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 31 Mar 2025 20:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37C021B9D1;
+	Mon, 31 Mar 2025 21:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743454687; cv=none; b=Rw+9TIHXsZq5ewKTJ0enJclTs9HCEJfq2f7nGVERl6pdlxygLFu2Uz+IoOW1RvQlNy88oV6HHLtTTjVn/K8kdWWBV+oAj5qmKSZfR1xsELtowe6na+Z2kGvGfoFT6hRjVRlLG7qQCkZ5bQtW4wJSZDODthoHeW4J/6tA6kno0Jo=
+	t=1743457697; cv=none; b=esLA8WCniVjFzxSxu4xjx5aNEQbfjoVfMufrqoD6RU1cgxNVfdW6oB4yDMKJLUnKgayvzzNDbbNZ5SEmVs0WncZQ5r27ZB+2d0uhmq3o3jW0Q7rmZSy+CL8ImTg3koTXrxWlNpF5ldeGOjUnatc4p0uEZ+shZGfbNKCGphyKT7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743454687; c=relaxed/simple;
-	bh=aGNIx99XEZi26AFkfCOBDo7LGAYGpiu5frRyAvVPpxc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rOxJZqPhCcSQ6AAHyipIb3ur3cTVFd0zBThY6CN8l0wdhxt3/Gj8nlIcGE/Z264LGqyyyNxFaQYP4o6aFUT/9qtWnMKGGW7p6ST2SN6g56Z4p3VUb33MOW/cD28Cw7/dZXtg1WpRyYCSQLhQeMd/Q2QTVWQhhFIAav8VzrqRGZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=2NUK/SsA; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-223fd89d036so103451625ad.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Mar 2025 13:58:05 -0700 (PDT)
+	s=arc-20240116; t=1743457697; c=relaxed/simple;
+	bh=7tZiZd/j3y3N1NrmqeFd1/H8utQgf+EZTEsfLzvTK8Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gsbjchbYj3qK3dlJN0ML4oNvoASlHg5g3phDepvP0bZj75NKe+w32qlqSKfoHxWFgMdup6bqK20d+rFyeM8UGjp2irie6pDAdFaQS+iNz99witKNmE/B4izKYJuqq9TKWQ26jhhJVM+Gls4x9VyyDPHW9mvo2Xefr3tM3mXQKj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dLif/QjF; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-476ab588f32so70425131cf.2;
+        Mon, 31 Mar 2025 14:48:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1743454685; x=1744059485; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rKR+g8ZaIWjhBn9iMd35DEz0bSp4f98WiNxMgEiv8uA=;
-        b=2NUK/SsASDQcaK2u+cZIgsnDzxxyET/1wwTGOb9mt4VHxWSV5sFzjPix8m0EpfXUx4
-         DgGzqrC2OB9upjjL5Jz2HHO7Ohl1ec9IcLTPB5BNeln4sNYE00MIJozprkpndNQzCYdT
-         CcvSPij+G9uPOecf8aO4RaFWtHuX0dgoyjg2DFth57LiByrabW2V2j98794Cf5JuIW5E
-         MyaInPKbdiUDHWkN0Ej5YIG+/r0zMaKzjQfMAUUfYVsIrIya0HehVi4NM5D0TnjxuFyc
-         AzSuYAdgFhOZuiJtowFNfBXIFknVxqEeDzSin6yrmRql/YgGzcdq0mwhgEDxBGhdHOg9
-         B/9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743454685; x=1744059485;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1743457692; x=1744062492; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rKR+g8ZaIWjhBn9iMd35DEz0bSp4f98WiNxMgEiv8uA=;
-        b=P83iJtvZqt/jMWUz/50VudQjqUFKsXCRzZdfdHWhjbhvjWcL22s6vAUZuYHtP0kCYJ
-         9k7NfvA8OI0JjlrWDBDgMGgqO23BgQBVWGaN2Erg/vc2POJK77uwJmri7vQiqXyCOx2b
-         OHeg0TNwzGAk1XN/4sMWriCf+sCKh/xDsQrW63ZQIighaO63gjhxyuVyLaor+94DDIBu
-         WWvdThtM+BfxAcF2oJyYXctYxM09JS7KrpyYbHtLRqc6rNvG+NlQXYfwk6XbvylISEbG
-         9DKWdii+FzbmjQN0XyiRMnYx5vh7lo1hoIXiT5gCijVqXrv5xYv/XXZkm0R8UxIYw7c8
-         0XOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUg4kDPBxl6dlNMrreXhHNilUPuSg668s1rRRQCjNdaQKNfW/3njRPCZzDIaChZ8JyODd4EOSVdzqC1lQUa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx07TaasboY3gjDNaIdCfY3vOUeeAZjIOOSEc35As3krGMT90FT
-	r+UiLGPONyoZ/jW3xNGn4Sy+iUNyDNklJ0BoVeY1tH5rXzOBADPO7vM7IRPcLdY=
-X-Gm-Gg: ASbGncvGkKe4tZeWytXPg2sFeRyo+9M//xTj1IsWbwfKENRARRjiKMazdV7FoTSROxt
-	pv996m2mxox2OkwKiF9ptQrUWw44DUNeh+rHl0nUPDDIYCcX8vkaIzjyC9vE+OFmviLLfrUuBEN
-	+xFH7MMupT9sOLLvvAWaQH6xxBWasIcNvUSQjVkPvpgJx5VYU5MYAxMvYmniVxgbGMuWySQM9Hx
-	yAFTe8Ngzz4FicNoUnuJB683p0z4PMW8T0ObxubXSBbb1zP0vKUw4SKKE0cmCnc9xQ4i3LNEvhG
-	YfR0MZmuA+i8m7C/r4MhaBGtTzsfsew8rjQHIe4dyrVpqxp433JmbNMTjpqfgAtyjiqGorqFG03
-	TftABixzdhzf3f7WtOA==
-X-Google-Smtp-Source: AGHT+IF0y1YF59gqB0AsgUdcWNQsSB2cHQcE0xeypp1zXbvwSPtmqTmVKsrm5stI9OGLQ8J14fw4lQ==
-X-Received: by 2002:a17:903:2311:b0:227:eb61:34b8 with SMTP id d9443c01a7336-2292f9777d6mr153305955ad.25.1743454685038;
-        Mon, 31 Mar 2025 13:58:05 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-60-96.pa.nsw.optusnet.com.au. [49.181.60.96])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291eedfde5sm73934285ad.78.2025.03.31.13.58.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Mar 2025 13:58:04 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tzMCn-00000002pXB-1yFO;
-	Tue, 01 Apr 2025 07:58:01 +1100
-Date: Tue, 1 Apr 2025 07:58:01 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/2] fs: prepare for extending [gs]etfsxattrat()
-Message-ID: <Z-sB2XYNlEl0u7j0@dread.disaster.area>
-References: <20250329143312.1350603-1-amir73il@gmail.com>
- <20250329143312.1350603-2-amir73il@gmail.com>
+        bh=Ad79aRTfa+0eNUhNq8HxKXJsgzRsdFq80zCNM0ZLlhc=;
+        b=dLif/QjFf4pw4mjTn+X+TgGyB0KhAyxkvQSwIts1HOhvLgcGAf71ZcCx/x/QdaIskH
+         +0PuLVjOrhWP94cObteRYFA2E55K5eRbJ6KjaqpbqQIePM27xR7e3TsgF9IY0hMYZEsM
+         uENeh9kIc5fBWYCvhueNH7aoeXoOe1By+c57ra3jmL5YjXDRtq0L1yEE/ATB1cjYoe5D
+         phK4H7Q+veC8jkAwr4aqD/BX10b+7z0bMbYLW43bJSL7sBy0AzujjA/8cWVnvhy5zmfk
+         Z38UnWcb3qpIqncvrvk0q7Bej9ULcNfQ/N+DdJhOg0ar960CJRWBFBtLzgYF0RSGA4FA
+         1UKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743457692; x=1744062492;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ad79aRTfa+0eNUhNq8HxKXJsgzRsdFq80zCNM0ZLlhc=;
+        b=ktLG/kOR+fqFJqipcexM4R2dHRajjc5k1K8Yf67UepUIwTqIebZtm74GGJ+hrwSIBG
+         vvRiwUWI0Ta//yziPmHy6rJglbG2rxdbC8CoEh3sdDJ25uxoDrT9amDiPXeuOHVPhgmb
+         F4j/y4A7O538QqYC20Y6lFfQfWMEutAjEm7WfwW+229lAB39pNzYDzK9+Q0esRBcq0fM
+         xAZRQHjvcWginHYeZ7zrH5wU0cgE8I/CX26AYm6tGl5xWeErt4rvF88HKkCau0kYXtgq
+         l9cOX8SncNoNA4P986Ibl7+hgIXZQ9He8FsxzH+Lkhqoinb4i1BvH6Rs8RnbCfQD4HEo
+         9Z8A==
+X-Forwarded-Encrypted: i=1; AJvYcCW3dRZyTSang68MAKkrkPGRzDppVDiSbbP460nqnsjENKOPxMZQmPHPxLpKQudRjcjClnVoCkhJzxpzitwk@vger.kernel.org, AJvYcCWLeQsNPtkODqWPC5W2XD/rUHkhHm9FXVXIi5OXxVdf8X4/QQvo4YjDpwYrlmIMdvi9QHNjuswQA7YZ/MWN@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwzuS8BR/HBs331P7Hf62yV/TcEOughacutrA66aVZPMqHcHnY
+	DLtEc5ezyP8bzkTdUKcxzM9nosMti7Tn3V0/TztFQkkloNwZnv8ma536Rh5udvB/i+jTkQMW1fn
+	PiXO8MAyauMVrTY1RYnMTXgQ83F/DFg==
+X-Gm-Gg: ASbGnctwOgFG+DKfrQWWmUZH6vj2TtYZl+9U6hqWlFf+8+a4xuVBrsAGWl2cHrBWrDb
+	Dh+3aGEO1sGp7of8pQ+RACHN5haODRqURSCOviThK2a/aj/D+8bKdEG6YzM2oZhsIuVD4EzKM8s
+	ifjZuXbYv/IAfNnwwDuUmnwnYUYeee2/FxhH9t4VL00Q==
+X-Google-Smtp-Source: AGHT+IGM/dqVoDa9j5ggEk7chMrFfZiIoMyb+U/Wc91ud/PZ/ja3N9I52t+2/RfUF7hoOjpFwVMkQWJnxsO7791Hnd0=
+X-Received: by 2002:ac8:5893:0:b0:476:74de:81e2 with SMTP id
+ d75a77b69052e-477ed75ba4dmr175711341cf.43.1743457692478; Mon, 31 Mar 2025
+ 14:48:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250329143312.1350603-2-amir73il@gmail.com>
+References: <20230727081237.18217-1-jaco@uls.co.za> <20250314221701.12509-1-jaco@uls.co.za>
+ <20250314221701.12509-3-jaco@uls.co.za> <CAJnrk1YqO44P077UwJqS+nrSTNe9m9MrbKwnxsSZn2RCQsEvAQ@mail.gmail.com>
+ <ffeb7915-a028-40d8-94d0-4c647ee8e184@uls.co.za>
+In-Reply-To: <ffeb7915-a028-40d8-94d0-4c647ee8e184@uls.co.za>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 31 Mar 2025 14:48:01 -0700
+X-Gm-Features: AQ5f1JrFlEqza0khvurwGBGniFhYg8BMDkqrK_HHWasuQlxjGlsZBHvQiGKjmbM
+Message-ID: <CAJnrk1ZBDLim8ZK-Fc9gXUVht9rJOdSTKO+fb+kxoGpWuwTu9w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fuse: Adjust readdir() buffer to requesting buffer size.
+To: Jaco Kroon <jaco@uls.co.za>
+Cc: bernd.schubert@fastmail.fm, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, miklos@szeredi.hu, rdunlap@infradead.org, 
+	trapexit@spawn.link
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 29, 2025 at 03:33:11PM +0100, Amir Goldstein wrote:
-> We intend to add support for more xflags to selective filesystems and
-> We cannot rely on copy_struct_from_user() to detect this extention.
-> 
-> In preparation of extending the API, do not allow setting xflags unknown
-> by this kernel version.
-> 
-> Also do not pass the read-only flags and read-only field fsx_nextents to
-> filesystem.
-> 
-> These changes should not affect existing chattr programs that use the
-> ioctl to get fsxattr before setting the new values.
-.....
+On Mon, Mar 31, 2025 at 1:43=E2=80=AFPM Jaco Kroon <jaco@uls.co.za> wrote:
+>
+> Hi,
+>
+> On 2025/03/31 18:41, Joanne Koong wrote:
+> > On Fri, Mar 14, 2025 at 3:39=E2=80=AFPM Jaco Kroon<jaco@uls.co.za> wrot=
+e:
+> >> Clamp to min 1 page (4KB) and max 128 pages (512KB).
+> >>
+> >> Glusterfs trial using strace ls -l.
+> >>
+> >> Before:
+> >>
+> >> getdents64(3, 0x7f2d7d7a7040 /* 25 entries */, 131072) =3D 600
+> >> getdents64(3, 0x7f2d7d7a7040 /* 25 entries */, 131072) =3D 616
+> >> getdents64(3, 0x7f2d7d7a7040 /* 25 entries */, 131072) =3D 624
+> >> getdents64(3, 0x7f2d7d7a7040 /* 25 entries */, 131072) =3D 600
+> >> getdents64(3, 0x7f2d7d7a7040 /* 25 entries */, 131072) =3D 600
+> >> getdents64(3, 0x7f2d7d7a7040 /* 25 entries */, 131072) =3D 624
+> >> getdents64(3, 0x7f2d7d7a7040 /* 25 entries */, 131072) =3D 600
+> >> getdents64(3, 0x7f2d7d7a7040 /* 25 entries */, 131072) =3D 600
+> >> getdents64(3, 0x7f2d7d7a7040 /* 25 entries */, 131072) =3D 600
+> >> getdents64(3, 0x7f2d7d7a7040 /* 25 entries */, 131072) =3D 600
+> >> getdents64(3, 0x7f2d7d7a7040 /* 25 entries */, 131072) =3D 608
+> >> getdents64(3, 0x7f2d7d7a7040 /* 1 entries */, 131072) =3D 24
+> >> getdents64(3, 0x7f2d7d7a7040 /* 0 entries */, 131072) =3D 0
+> >>
+> >> After:
+> >>
+> >> getdents64(3, 0x7ffae8eed040 /* 276 entries */, 131072) =3D 6696
+> >> getdents64(3, 0x7ffae8eed040 /* 0 entries */, 131072) =3D 0
+> >>
+> >> Signed-off-by: Jaco Kroon<jaco@uls.co.za>
+> >> ---
+> >>   fs/fuse/readdir.c | 22 ++++++++++++++++++----
+> >>   1 file changed, 18 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
+> >> index 17ce9636a2b1..a0ccbc84b000 100644
+> >> --- a/fs/fuse/readdir.c
+> >> +++ b/fs/fuse/readdir.c
+> >> @@ -337,11 +337,25 @@ static int fuse_readdir_uncached(struct file *fi=
+le, struct dir_context *ctx)
+> >>          struct fuse_mount *fm =3D get_fuse_mount(inode);
+> >>          struct fuse_io_args ia =3D {};
+> >>          struct fuse_args_pages *ap =3D &ia.ap;
+> >> -       struct fuse_folio_desc desc =3D { .length =3D PAGE_SIZE };
+> >> +       struct fuse_folio_desc desc =3D { .length =3D ctx->count };
+> >>          u64 attr_version =3D 0, evict_ctr =3D 0;
+> >>          bool locked;
+> >> +       int order;
+> >>
+> >> -       folio =3D folio_alloc(GFP_KERNEL, 0);
+> >> +       if (desc.length < PAGE_SIZE)
+> >> +               desc.length =3D PAGE_SIZE;
+> >> +       else if (desc.length > (PAGE_SIZE << 7)) /* 128 pages, typical=
+ly 512KB */
+> >> +               desc.length =3D PAGE_SIZE << 7;
+> >> +
+> > Just wondering, how did 128 pages get decided as the upper bound? It
+> > seems to me to make more sense if the upper bound is fc->max_pages.
+>
+> Best answer ... random/guess at something which may be sensible.
+>
+> > Also btw, I think you can just use the clamp() helper from
+> > <linux/minmax.h> to do the clamping
+>
+> Thanks.  Not a regular contributor to the kernel, not often that I've
+> got an itch that needs scratching here :).
+>
+> So something like this then:
+>
+> 345
+> 346     desc.length =3D clamp(desc.length, PAGE_SIZE, fm->fc->max_pages <=
+<
+> CONFIG_PAGE_SHIFT);
+> 347     order =3D get_count_order(desc.length >> CONFIG_PAGE_SHIFT);
+> 348
+>
 
-> +
-> +#define FS_XFALGS_MASK \
-> +	(FS_XFLAG_COMMON | FS_XFLAG_RDONLY_MASK | FS_XFLAG_VALUES_MASK | \
-> +	 FS_XFLAG_DIRONLY_MASK | FS_XFLAG_MISC_MASK)
+You can just use PAGE_SHIFT here instead of CONFIG_PAGE_SHIFT
 
-You might want to fix the obvious typo....
+> Note:  Can use ctx->count here in clamp directly due to it being signed,
+> where desc.length is unsigned.
+>
+> I'm *assuming* get_count_order will round-up, so if max_pages is 7 (if
+> non-power of two is even possible) we will really get 8 pages here?
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Yes, if you have a max_pages of 7, this will round up and return to
+you an order of 3
+
+>
+> Compile tested only.  Will perform basic run-time test before re-submit.
+>
+> >> +       order =3D get_count_order(desc.length >> CONFIG_PAGE_SHIFT);
+> >> +
+> >> +       do {
+> >> +               folio =3D folio_alloc(GFP_KERNEL, order);
+> > Folios can now be larger than one page size for readdir requests with
+> > your change but I don't believe the current page copying code in fuse
+> > supports this yet. For example, I think the kmapping will be
+> > insufficient in fuse_copy_page() where in the current code we kmap
+> > only the first page in the folio. I sent a patch for supporting large
+> > folios page copying [1] and am trying to get this merged in but
+> > haven't heard back about this patchset yet. In your local tests that
+> > used multiple pages for the readdir request, did you run into any
+> > issues or it worked fine?
+>
+> My tests boiled down to running strace as per above, and then some basic
+> time trials using find /path/to/mount/point with and without the patch
+> over a fairly large structure containing about 170m inodes.  No problems
+> observed.  That said ... I've done similar before, and then introduced a
+> major memory leak that under load destroyed 100GB of RAM in minutes.
+> Thus why I'm looking for a few eyeballs on this before going to
+> production (what we have works, it's just on an older kernel).
+>
+> If further improvements are possible that would be great, but based on
+> testing this is already at least a 10x improvement on readdir() performan=
+ce.
+>
+
+I think you need the patch I linked to or this could cause crashes.
+The patch adds support for copying folios larger than 1 page size in
+fuse. Maybe you're not running into the crash because it's going
+through splice which will circumvent copying, but in the non-splice
+case, I believe the kmap is insufficient when you go to do the actual
+copying. IOW, I think that patch is a dependency for this one.
+
+Thanks,
+Joanne
+
+> > [1]https://lore.kernel.org/linux-fsdevel/20250123012448.2479372-2-joann=
+elkoong@gmail.com/
+> Took a quick look, wish I could provide you some feedback but that's
+> beyond my kernel skill set to just eyeball.
+>
+> Looks like you're primarily getting rid of the code that references the
+> pages inside the folio's and just operating on the folio's directly? A
+> side effect of which (your goal) is to enable larger copies rather than
+> small ones?
+>
+> Thank you,
+> Jaco
 
