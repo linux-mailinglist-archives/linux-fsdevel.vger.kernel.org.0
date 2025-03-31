@@ -1,133 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-45337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F83EA76571
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 14:11:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9597A765A7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 14:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97CDB3A6CB5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 12:10:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 939373A9969
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 12:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3DA1E32DB;
-	Mon, 31 Mar 2025 12:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2821E5209;
+	Mon, 31 Mar 2025 12:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HhmZNge8"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="GGdN2Nda"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C3E1BC073;
-	Mon, 31 Mar 2025 12:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5954D1C5D7D;
+	Mon, 31 Mar 2025 12:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743423057; cv=none; b=IJ1lIVCrVWc6E8YJ1JBLOTLt21lQIjtgQ00uTWIdLEAgtY6ZDhfGtIT5PDYBYje6eU68fHLZXCcaXSsrYesTkQH3RPx8EMGmYxucDPz5NXFtwwc0bdSTc6o9SXmKocJt96j7VosBEGUTw3eeZam9YDHRpG8lRHX5CVXfbpmoF04=
+	t=1743423531; cv=none; b=s9/bmrKoR6Nd/kqYYKIx4JQzwT6Lbt7fwGimlDiLv04+KU6h+GKBC4mx2wC8Skk9WTs8Rt9NpXSOM0cCDJcviJw3oTz0sjK7nj35Dt9XX5XZv2MoCdU/MVcZa+pMWfixoGvfMusowI2GmDNMB8pquuCWp2w33suBg7lu6l8nn+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743423057; c=relaxed/simple;
-	bh=GlFA11aaeLlP4+mdopv4QN65pBT31SFcM+ygWQzrY5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kb4Q01YG3zkQiLJgW81A0qOjy4n97BHqmEXFDOP2UkEt090OWAHL+VhlyfJEsp12Q9XwCydfWf1NPTPZl3bO5YQksq56Sh8kXhusdRwxW1nYmQHqhdLXROWLe3TeuRKeANb0TZike5lr1Sa5TiqN4banxo/7SDgPHrMVJqpw83k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HhmZNge8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 186A6C4CEE3;
-	Mon, 31 Mar 2025 12:10:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743423056;
-	bh=GlFA11aaeLlP4+mdopv4QN65pBT31SFcM+ygWQzrY5k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HhmZNge8CCXhHx2p7RNBAOCzVzCU0prhIdijEykOsHon1ADwr3m5x+uV/Rod+PKrq
-	 vpEJfX9NX8U5T9d5ViTNxQ4ldkTamD4KcJDvUEKgauII6msL/YQDk2IM+Me0gDnxdy
-	 K/6MQdfWWE9ccmV38sNxyW4xK1j8ZauA+pEZi9l0FPhItBG7GiNIfpQLaftr1Z6jMZ
-	 inQ8BxiGR4ssMHln8sYaKJirZmrR6LFyrGQLX+40Vzt/kJKL8WPxMer17K3wYZW0nU
-	 4dk44yyqGOjpSu+QDXlGIcBOZwiuwlc/krfkhJ3L54g7O247mKsyuVg9FojyP9l455
-	 ma1VoIa7TUouA==
-Date: Mon, 31 Mar 2025 14:10:52 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Alejandro Colomar <alx.manpages@gmail.com>, 
-	linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Krishna Vivek Vitta <kvitta@microsoft.com>
-Subject: Re: [PATCH] fanotify: Document FAN_REPORT_FD_ERROR
-Message-ID: <clzz3vdr5wroczrq3kaskaelip5u7bmqfzt4sufnyltsqi4qdb@675aoodlxmcy>
-References: <20250330125146.1408717-1-amir73il@gmail.com>
- <vflts4w73gy23iquev6yxrvbzguxkvlx7ccrcuww3hhvjbuw4q@dqr3up7qjwgx>
- <CAOQ4uxhDR8s5yHc-=xoWCeP5AA49dGoGhk=SU=9ykz+ajOco4Q@mail.gmail.com>
+	s=arc-20240116; t=1743423531; c=relaxed/simple;
+	bh=5YG77Ajfhyd6WQ2BkLEgeYJTHDqsxX4qxnsyIMDg1Og=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GY12MakjmRnirv70hcO+zvEyFN+qqTL1s4XT6j1R+0kHQ4HBes5aa3nZ4uDCWwNqwv2cLvSBvcyX+2Q7S7D/3W8cjbvrOE+Pl49rkGYeF4NwaD7KQMhW7/G6fBm9bcIIYiTKYXfW/JA+Of36cH1aR9DGPijbJ0Pz2NoVqx0Lwv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=GGdN2Nda; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=aYtcRKckV4dYri6hjuncAWA3kwTSWA5xveNInpzPVYo=; b=GGdN2NdaYkI1rFjSVVrEb7O7gx
+	+8uhPYYFVsNEEXfcfaIN+czBiAme2Zn/Rdk1FIATN4r8SHccGKTG5/0nHdcBToT0V1l+oFdPOgxUv
+	I5VPIPRviLgzcEXae7kJk3AKoUsMXT0axXAHfTZkwru1VeG9ZLOwMj6SbRJyxfp8XBARwjVil6PZw
+	qEdQIk9F8wVM3G0L31F4+WBvnzP5rZfmNNElRfos62OULNvf3rI/Baqr9n5K7VE3/TqSb0CWaRYEZ
+	RqjTXR0+CdULxZpFPuBpBcHIgQLYCliGRKjkVXvtriS+bnQdaXo5fE56AneavjgJspMaDmaQ4+X5Y
+	okpQr0eg==;
+Received: from [223.233.69.2] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tzE69-009Btr-Ma; Mon, 31 Mar 2025 14:18:38 +0200
+From: Bhupesh <bhupesh@igalia.com>
+To: akpm@linux-foundation.org
+Cc: bhupesh@igalia.com,
+	kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	oliver.sang@intel.com,
+	lkp@intel.com,
+	laoar.shao@gmail.com,
+	pmladek@suse.com,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	arnaldo.melo@gmail.com,
+	alexei.starovoitov@gmail.com,
+	andrii.nakryiko@gmail.com,
+	mirq-linux@rere.qmqm.pl,
+	peterz@infradead.org,
+	willy@infradead.org,
+	david@redhat.com,
+	viro@zeniv.linux.org.uk,
+	keescook@chromium.org,
+	ebiederm@xmission.com,
+	brauner@kernel.org,
+	jack@suse.cz,
+	mingo@redhat.com,
+	juri.lelli@redhat.com,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com
+Subject: [PATCH v2 0/3] Dynamically allocate memory to store task's full name
+Date: Mon, 31 Mar 2025 17:48:17 +0530
+Message-Id: <20250331121820.455916-1-bhupesh@igalia.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="saevwewhqdfyyubw"
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhDR8s5yHc-=xoWCeP5AA49dGoGhk=SU=9ykz+ajOco4Q@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
+Changes since v1:
+================
+- v1 can be seen here: https://lore.kernel.org/lkml/20250314052715.610377-1-bhupesh@igalia.com/
+- As suggested by Kees, added [PATCH 3/3] to have a consistent
+  'full_name' entry inside 'task_struct' which both tasks and
+  kthreads can use.
+- Fixed the commit message to indicate that the existing ABI
+  '/proc/$pid/task/$tid/comm' remains untouched and a parallel
+  '/proc/$pid/task/$tid/full_name' ABI for new (interested) users.
 
---saevwewhqdfyyubw
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Alejandro Colomar <alx.manpages@gmail.com>, 
-	linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Krishna Vivek Vitta <kvitta@microsoft.com>
-Subject: Re: [PATCH] fanotify: Document FAN_REPORT_FD_ERROR
-References: <20250330125146.1408717-1-amir73il@gmail.com>
- <vflts4w73gy23iquev6yxrvbzguxkvlx7ccrcuww3hhvjbuw4q@dqr3up7qjwgx>
- <CAOQ4uxhDR8s5yHc-=xoWCeP5AA49dGoGhk=SU=9ykz+ajOco4Q@mail.gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <CAOQ4uxhDR8s5yHc-=xoWCeP5AA49dGoGhk=SU=9ykz+ajOco4Q@mail.gmail.com>
+While working with user-space debugging tools which work especially
+on linux gaming platforms, I found that the task name is truncated due
+to the limitation of TASK_COMM_LEN.
 
-Hi Amir,
+Now, during debug tracing, seeing truncated names is not very useful,
+especially on gaming platforms where the number of tasks running can
+be very high.
 
-On Mon, Mar 31, 2025 at 01:55:11PM +0200, Amir Goldstein wrote:
-> and formatting of:
->=20
-> in case of a queue overflow, the value will be
-> +.BR "" - EBADF .
+This patch does not touch 'TASK_COMM_LEN' at all, i.e.
+'TASK_COMM_LEN' and the 16-byte design remains untouched. Which means
+that all the legacy / existing ABI, continue to work as before using
+'/proc/$pid/task/$tid/comm'.
 
-The '-' needs to be escaped: \-
+This patch only adds a parallel, dynamically-allocated
+'task->full_name' which can be used by interested users
+via '/proc/$pid/task/$tid/full_name'.
 
-Also, I'd keep the '-' also in bold:
+After this change, gdb is able to show full name of the task, using a
+simple app which generates threads with long names [see 1]:
+  # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
+  # cat log
 
-=2EBR \-EBADF .
+  NameThatIsTooLongForComm[4662]
 
+[1]. https://github.com/lostgoat/tasknames
 
-Have a lovely day!
-Alex
+Bhupesh (3):
+  exec: Dynamically allocate memory to store task's full name
+  fs/proc: Pass 'task->full_name' via 'proc_task_name()'
+  kthread: Use 'task_struct->full_name' to store kthread's full name
 
->=20
-> As Alejandro requested in another review.
->=20
-> Will post v2 soon.
->=20
-> Thanks,
-> Amir.
+ fs/exec.c             | 21 ++++++++++++++++++---
+ fs/proc/array.c       |  2 +-
+ include/linux/sched.h |  9 +++++++++
+ kernel/kthread.c      |  9 +++------
+ 4 files changed, 31 insertions(+), 10 deletions(-)
 
---=20
-<https://www.alejandro-colomar.es/>
+-- 
+2.38.1
 
---saevwewhqdfyyubw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmfqhkwACgkQ64mZXMKQ
-wqkgDRAAoXcqdvMOixp4kiRJ3kuXanXopwxmZFaa6FMc1dWux18KYZHVCgmpYKsP
-esYkd94/wcE84k91jayoQHTO3MJnxVnVCTWjImpH6qOTmYe9/hsdttS3tbyK5Rqa
-+BpHBqIncvnP9ShtlWei2tfJhLFylUQGPU50doYiw1ecwPzkVKnrtk8MU/TwFSzN
-FgEEnO7Wfu4A7/jebNEm8BpMK+F6cFUB4aVuVBgXfYMm14tVhjfac3BVbr4D4Yxc
-kSRTUP5gvWFoqXrM7Uogw30WtYXtzSA2IWvReq1w1uJwCJELs4vNMvMXP4DC7GAJ
-OYFOxF40Rud5Bsh/sCXX4EkClQdum1Iw7d41HDF+SlP+NuFpnTFhkJDinMyOAe9J
-3UA3n4t8IS/p1Jw2Eg2Q93ed1DuNLu90Zms9DPAMVEoHU+A+R2fsaTGpFpOckR4M
-xZLIQ9IimqGpNyX80ajetnRzaXqK8Ik72/NntdCs+7pTZxQ7NQ9yrPA//PG+kub6
-AIwClOB8SG5XIQ7BhmA/YjcIA7+657aKMdor3qgKE6QWCWIshzm3Bluq0bg/XviU
-kVk9vfPC6EfZ5hZU0Syho2Blet5Ahjk41G9mNl5NuysFxegwKNj1G2ye6fwlF87O
-41zacYnF0fhtJt/X1weHKEqu98VA1/tzm2Jwt4mJ9utAz7jR6+Q=
-=GrHZ
------END PGP SIGNATURE-----
-
---saevwewhqdfyyubw--
 
