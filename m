@@ -1,152 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-45349-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45350-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A96A4A7678B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 16:16:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3800FA767A0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 16:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E74D718898AA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 14:16:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D1943A9BCD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 14:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2BAC213E65;
-	Mon, 31 Mar 2025 14:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B48211A15;
+	Mon, 31 Mar 2025 14:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W/J5tcE8"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0HvSXz7p";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ubplYIP/";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0HvSXz7p";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ubplYIP/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7FE1DF72E;
-	Mon, 31 Mar 2025 14:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471F63234
+	for <linux-fsdevel@vger.kernel.org>; Mon, 31 Mar 2025 14:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743430558; cv=none; b=XF33Rlv2IGsj1Gez8kg+OqfOsrIjRtjiG/mnwsAYk/j1RIaz4H4sT5NqBFj9oXxuMp29kt5jrc3Gs+1eJ24sIAHxQcBeDYNPdmzQIOt59I+gcolabiYhaMxx2oIfICFJBDu7JjTxvg+0Q+OPtL1Mf/NjejlVBbW8QvZTGBYLj1c=
+	t=1743430762; cv=none; b=RPy0mlAE40DbnVNsAmn83HiUUZGg8eBfJX1SdDA6utBtuuBSoEOijErxlxejiN3ON240NReXOTEJEAfRZtOUgVmkeqonctwatmQikrnTtmFPWHlONQsa6iU9dhmOqzzlzJhyBmkJnigEhIyV0GbtI5880v3TAOnZ9s+HPoxsURQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743430558; c=relaxed/simple;
-	bh=u4asOOkJL5H38FdOWS+70qA+ZSrNZ25FZ1N76jwXbz0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q9UOPBOnJ4Ktz8LeCpj+vBZ7kWS8Vzu2SXzRsbIdy6BEKCUQ6/TxMViZzfB9coVSo4dxqvvVgCz/xNJSwVVQokyPP5ZiZi6p00CtLp9+fjiPWHRLLX5iSTJ7RqjpLRaAN7Th76olEseQRUldSVZw8HRfk/SPYsO2BSy0S2DRwjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W/J5tcE8; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac28e66c0e1so670010366b.0;
-        Mon, 31 Mar 2025 07:15:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743430555; x=1744035355; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Efm7vyI0UggOeElhP8HuC+GaLyiMJk4UFAleiVjps3M=;
-        b=W/J5tcE8Gnf1E3xdKClTrvneuENbqOb94We5TKz+vYpFX+c1zFICWEL8P+QH1GN8Sn
-         JAGP9JyZorjqhsyOoRtmj1MP7+lojU7SQiO+yHO7PzQSYiygWyZQaPQHWKZtfSdrX6xs
-         +7/OGg9dhtppNSoT45ZlUL+7wd8o0Yc1z7nsZM/mJ4acTcNVrE+mp8gq8DgS70DPdRL2
-         nsbp3vs970ltgF7VUdHftplP87U6yjAXwhosuEcXwWsDrvpnuLbqBhQndXBIxj6Paw+d
-         HPXzrFRtCur7mi92SltRHz17HY3XLUmznLnxWutaK+82fvOt4A+J2em/9g3rZTBpEUcq
-         ED7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743430555; x=1744035355;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Efm7vyI0UggOeElhP8HuC+GaLyiMJk4UFAleiVjps3M=;
-        b=vCT6jLytpjXINPg+s70V/e63Eh4vAv2ZFrbRy3PXPJh1xObbfqmu19k/BBDUuKe/iP
-         CoqLHGtfTiyf74mrazdjTIM8A+PG+vjXIeP6WJvFbOExESthoVUwwxUNPPMswuJK3lHF
-         lr48vGaANQsRrmIU8xQlwHIaDaZKQx01knWllUUBAOwE/VJ2FTa7RTniT9SY7SRquXwg
-         x05h3wo6a0+kTBJLDYyubKqjNseFc76LaHLdV+n6096wHyxon6EiZK4mOmpMo+751Hwa
-         P9yjs0HNiEidpa5NTRzO/cyFW1IAbTAu3Y8kvTLUDLbd+jaP6s3GiN/ZO8G1eS3tp1aK
-         FOEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUM6WmGsgjDthW5Ws/u2Q9v/84VgrKdwkE3EoHxNgi1lDbXNyjGlyY/y+nNhijpHcDS8PwtNhW99eTytNMS@vger.kernel.org, AJvYcCWTYPoqIlSpx+AsYgAj3p0iA8h3FbXJ5HM/to6b+i5RmC2cDTWzlCZXfXzRNRpR0Sv27FhPsTU5OJx5@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhXYH/oLcSKIddTKW3v9y7fkPqYOe8EPbie0/w0+dwIqb96884
-	JduxpkOZjWk37y67CYsYCn7Nlz3SovkY2Sm8EcXV0htw1bWk7mXBVNzWBEkqwwRfbXRfl9i58QV
-	urgPUaCHkgTKQ70vuKASX30wGS5E=
-X-Gm-Gg: ASbGncv/sebX8as8gGwLQd99MLFQQxOJZ4/G2CSgRynQswnVRr6g2Ocdh/lvAPKLFE4
-	KxAi7shXA6QzFbOmNmp2K7jes/yUj5scza8CvRLcJr6NKq8+0a0+m9YN4LnaXr1j5DPhHsf/oi4
-	J/vnWQ6DY99drYZqozFsAHyh1J8DTcaxaYyyFM
-X-Google-Smtp-Source: AGHT+IEbcdg39ZM8FuXbYHjOnt98fMN2jaTWLAGxMl7FPDzUhH8l2u6iBxX8jWDIDYEQlpG1lwlfKfgbjheCHnHhb0c=
-X-Received: by 2002:a17:906:7955:b0:ac2:758f:9814 with SMTP id
- a640c23a62f3a-ac738a50849mr907341166b.23.1743430554229; Mon, 31 Mar 2025
- 07:15:54 -0700 (PDT)
+	s=arc-20240116; t=1743430762; c=relaxed/simple;
+	bh=k0TDY1ZQdyTe+8KzMniQ0qimMoe9GSg/UWYNVMGdq9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=azY0c8yur+O0+FiTTTshpKV4ABjMLuZye4TSQsW51XLg0z+U/RrvXY7KMmZ1dvotCBWs8ov8cohDdOBuOLxLru0elhl9XOSMSybfhzNCoIo7tZ7gSXuco9GF14iPfhsTrh7/iRuh0u+xwqkzKrdT9403Fp5CyyLQhSPmJ1QRWWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0HvSXz7p; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ubplYIP/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0HvSXz7p; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ubplYIP/; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3F176211C6;
+	Mon, 31 Mar 2025 14:19:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743430759; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=SEgex3dSVWCI8cpNg8uiIkrN/iIq3bM7AWwNTU7EIq0=;
+	b=0HvSXz7pX8A/2yrpBmAMXmOf9ZGY26fIIL5gr5ZntuF8m+JlirY1vinnxKQKDyaJM2Fukx
+	lwusoPCebGCH3EP5ABFdAF2REGhhfGG6mak9bSn3NTEPjuXLKxWAmyrgMEjEJfgydUDT//
+	3ra0En0l68HpakVDooDdLxY8yYjDjKE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743430759;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=SEgex3dSVWCI8cpNg8uiIkrN/iIq3bM7AWwNTU7EIq0=;
+	b=ubplYIP/VVwQIqdZjATByVfkgZVJYFwlFXCiC+l3n/NMg1PQrAla6mH3zycFrLAbAs5oui
+	5gxDLBPyZUKj+PBw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=0HvSXz7p;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="ubplYIP/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743430759; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=SEgex3dSVWCI8cpNg8uiIkrN/iIq3bM7AWwNTU7EIq0=;
+	b=0HvSXz7pX8A/2yrpBmAMXmOf9ZGY26fIIL5gr5ZntuF8m+JlirY1vinnxKQKDyaJM2Fukx
+	lwusoPCebGCH3EP5ABFdAF2REGhhfGG6mak9bSn3NTEPjuXLKxWAmyrgMEjEJfgydUDT//
+	3ra0En0l68HpakVDooDdLxY8yYjDjKE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743430759;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=SEgex3dSVWCI8cpNg8uiIkrN/iIq3bM7AWwNTU7EIq0=;
+	b=ubplYIP/VVwQIqdZjATByVfkgZVJYFwlFXCiC+l3n/NMg1PQrAla6mH3zycFrLAbAs5oui
+	5gxDLBPyZUKj+PBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 33E17139A1;
+	Mon, 31 Mar 2025 14:19:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id oYqjDGek6mcKNAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 31 Mar 2025 14:19:19 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 823BFA08CF; Mon, 31 Mar 2025 16:19:14 +0200 (CEST)
+Date: Mon, 31 Mar 2025 16:19:14 +0200
+From: Jan Kara <jack@suse.cz>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] ext2, udf, and isofs fixes and improvements for 6.15-rc1
+Message-ID: <dsr7ciqsadlveg2lf3zivliyqrmicj3l7crjtvao5hsakpzpbj@pjtvahqcdyln>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250331135101.1436770-1-amir73il@gmail.com> <3k2d32vlljorweynxujgyi4ezkkhbbmg6bfud26fthtg5xrpci@7dtdk72cvaga>
-In-Reply-To: <3k2d32vlljorweynxujgyi4ezkkhbbmg6bfud26fthtg5xrpci@7dtdk72cvaga>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 31 Mar 2025 16:15:42 +0200
-X-Gm-Features: AQ5f1JoYQOabhFVCJUO0zyuAFVzsW9T1GmQosPYpwGJAKjjM6n-rtMGfklP6RDI
-Message-ID: <CAOQ4uxjLcqdPSvfEp9S6=4KSe0s0xaE+k+w=cTSMHYpo-F0TPg@mail.gmail.com>
-Subject: Re: [PATCH] fanotify: Document mount namespace events
-To: Jan Kara <jack@suse.cz>
-Cc: Alejandro Colomar <alx@kernel.org>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Christian Brauner <brauner@kernel.org>, linux-man@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Rspamd-Queue-Id: 3F176211C6
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon, Mar 31, 2025 at 4:03=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Mon 31-03-25 15:51:01, Amir Goldstein wrote:
-> > Used to subscribe for notifications for when mounts
-> > are attached/detached from a mount namespace.
-> >
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: Miklos Szeredi <mszeredi@redhat.com>
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ...
-> > @@ -442,6 +459,12 @@ A file or directory that was opened read-only
-> >  .RB ( O_RDONLY )
-> >  was closed.
-> >  .TP
-> > +.BR FAN_MNT_ATTACH
-> > +A mount was attached to mount namespace.
-> > +.TP
-> > +.BR FAN_MNT_DETACH
-> > +A mount was detached to mount namespace.
->                         ^^ from
->
+  Hello Linus,
 
-thanks for spotting
+  could you please pull from
 
-> > @@ -727,6 +751,21 @@ in case of a terminated process, the value will be
-> >  .BR \-ESRCH .
-> >  .P
-> >  The fields of the
-> > +.I fanotify_event_info_mnt
-> > +structure are as follows:
-> > +.TP
-> > +.I .hdr
-> > +This is a structure of type
-> > +.IR fanotify_event_info_header .
-> > +The
-> > +.I .info_type
-> > +field is set to
-> > +.BR FAN_EVENT_INFO_TYPE_MNT .
-> > +.TP
-> > +.I .mnt_id
-> > +Identifies the mount associated with the event.
->
-> Since mnt_id is not well established, I think we should tell here a bit
-> more about the mnt_id - that this is the ID you'll get from listmount(2)
-> and can use it e.g. with statmount(2).
+git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fs_for_v6.15-rc1
 
-You are right, but it is actually established much sooner,
-As I described mount_id in the recently merged man page patch
-name_to_handle_at.2: Document the AT_HANDLE_MNT_ID_UNIQUE flag
+to get:
+* conversion of ext2 to the new mount API
+* small folio conversion work for ext2
+* a fix of an unexpected return value in udf in inode_getblk()
+* a fix of handling of corrupted directory in isofs
 
-...is the unique mount id as the one returned by
-.BR statx (2)
-with the
-.BR STATX_MNT_ID_UNIQUE
-flag.
+Top of the tree is 6afdc60ec30b. The full shortlog is:
 
-So I will add a reference to statx here as well.
+Eric Sandeen (2):
+      ext2: convert to the new mount API
+      ext2: create ext2_msg_fc for use during parsing
 
-Thanks,
-Amir.
+Jan Kara (2):
+      ext2: Make ext2_params_spec static
+      udf: Fix inode_getblk() return value
+
+Matthew Wilcox (Oracle) (1):
+      ext2: Remove reference to bh->b_page
+
+Qasim Ijaz (1):
+      isofs: fix KMSAN uninit-value bug in do_isofs_readdir()
+
+The diffstat is
+
+ fs/ext2/ext2.h  |   1 +
+ fs/ext2/super.c | 595 +++++++++++++++++++++++++++++++-------------------------
+ fs/isofs/dir.c  |   3 +-
+ fs/udf/inode.c  |   1 +
+ 4 files changed, 337 insertions(+), 263 deletions(-)
+
+							Thanks
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
