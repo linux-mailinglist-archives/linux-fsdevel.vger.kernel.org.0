@@ -1,132 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-45315-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFD52A75ED2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 08:28:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 866A4A75F02
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 08:50:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 706EB167A1D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 06:28:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D97018891D5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 06:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA5018CBE1;
-	Mon, 31 Mar 2025 06:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39AA9192D96;
+	Mon, 31 Mar 2025 06:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ey+hvM+9"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dMONIVjP";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="09wHGfdY";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dMONIVjP";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="09wHGfdY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B50D524B0;
-	Mon, 31 Mar 2025 06:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB7870805
+	for <linux-fsdevel@vger.kernel.org>; Mon, 31 Mar 2025 06:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743402490; cv=none; b=blwF2zt9DDDExE8Tg495Fra722+hPo1icGA4QQBCa9LRWo4kE3id8GwoQl0kEQ9Ze6uXfP9ea5xJ0X6LRp9BYsps8CbchCnEmu1iFH5bbtRElYpGSr8vPrWE0VPKC2qyLQ0HMeIXbvLdz4EcUDGwPHw6EtbQLr500k61WlfsA5c=
+	t=1743403803; cv=none; b=TKVcXXk554HdE2wqbl6vHzz3zvhLT/4blqwvu1kluk6JVoMXPusJw4DOl8AhvbQmi9WHC7AkB0auantIpxIIqgP7EWp6j+S7manBL7H7b2LbhDjr6dC3svRn9132Vrrb4/l7l8h633fzc8iG6UA45ZUjyuanRIDRYFdI/Ign8jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743402490; c=relaxed/simple;
-	bh=+eItXhKnWJeHMWExJ/x2UBbaDvLbu4bfKiG/3z5gTGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C7eoa7KTzdUwFRPuSEYYD2Hc4ecP6uAPkjHthOj0h0W+K4Bp2Jf7QbLR6VeKnEoHH6lcl9aU249scQSkkPLoQ05CJMaE7nkPlLO2px30iUoMYlt0vo4LS/cBDGskHfUZh2sPzh6/f0c9IGpy2ByADl09AGMh14log1x3ojEI9fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ey+hvM+9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E452C4CEE3;
-	Mon, 31 Mar 2025 06:28:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743402488;
-	bh=+eItXhKnWJeHMWExJ/x2UBbaDvLbu4bfKiG/3z5gTGU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ey+hvM+96L67Lbzr+/QMpIpNdVZOFirXL65HdnhdS6IGzs+ZgEZaBoWQawI61GDI6
-	 9Gpob2on3gvNEkpfNcOvxMLWXjxzRakxTMad9/BrwsBofc4gihwp9gwGdF4bC4AxiO
-	 9zkwfj3e2EDL8U4KWcNVl9dszGvmrqDNPrDHk6nC2K9oTAh/l+dghQP3QKVl0osbl7
-	 op8udcr5twUWJfRGB5EoBvipIDc8zuVn2vc9NmvL41qHjMsCntTa7orM4Ye2PT1WF9
-	 JB0kDrnsznX0v/CDVuuLD0I2FOSvT9w4uJOP3HkraisQMW03dUjvIXj9ln3LqwRomR
-	 EJZpnqFIq+FGw==
-Date: Sun, 30 Mar 2025 23:28:07 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: brauner@kernel.org, jack@suse.cz, tytso@mit.edu,
-	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-	riel@surriel.com, hannes@cmpxchg.org, oliver.sang@intel.com,
-	dave@stgolabs.net, david@redhat.com, axboe@kernel.dk, hare@suse.de,
-	david@fromorbit.com, djwong@kernel.org, ritesh.list@gmail.com,
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-mm@kvack.org, gost.dev@samsung.com, p.raghav@samsung.com,
-	da.gomez@samsung.com
-Subject: Re: [PATCH 1/3] mm/migrate: add might_sleep() on __migrate_folio()
-Message-ID: <Z-o196uWOVaZnf4w@bombadil.infradead.org>
-References: <20250330064732.3781046-1-mcgrof@kernel.org>
- <20250330064732.3781046-2-mcgrof@kernel.org>
- <Z-kzMlwJXG7V9lip@casper.infradead.org>
+	s=arc-20240116; t=1743403803; c=relaxed/simple;
+	bh=D3O5imBHUYGS5OxjuAF0+hlyxeWodMwjvFTbgrjbpe4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hEz9TwhGdJBGBfPRlbs1fb2fUVI1IFSeS7wy2aCTOQVyKG/FlsHTKkkzr3TFsRGx/wbeVrhZ8CBmCaJwlHQDN165Eeb5+49X3vnEr6e1zMe2SHYEuBeeZ9j8tvSgL6qD+xNcZ6iyJqv4GFMVaj7KuSELoErQPrtx46TL2C6Bu9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dMONIVjP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=09wHGfdY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dMONIVjP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=09wHGfdY; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id F417C21197;
+	Mon, 31 Mar 2025 06:49:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743403800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VPyRbVbHSj/XyzZeopPN7997hVKl+H5ekbnEEyjfIJ8=;
+	b=dMONIVjP1JvnMtyCaXJz14Doc1kvCQrENwA6aJevbGuvONuUHllbojuoNi3EBgzXYcPtrC
+	fF8cBDvhYBViCNzonwjDpmmqCwadnslTf4Rw72C6vqJsvRTaDNN3vr8xKiTvTwcFCGwmxG
+	2S5AjRuVa+V5aRhb6n4ZTRb/lCdT1nc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743403800;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VPyRbVbHSj/XyzZeopPN7997hVKl+H5ekbnEEyjfIJ8=;
+	b=09wHGfdYBGhExkIK3F9fic1Vec8G4MNx2hedWYJHCZXFey0Ign0shr6r4V2V177ZMMc4dv
+	WimDb9Ct9rEij6CQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=dMONIVjP;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=09wHGfdY
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743403800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VPyRbVbHSj/XyzZeopPN7997hVKl+H5ekbnEEyjfIJ8=;
+	b=dMONIVjP1JvnMtyCaXJz14Doc1kvCQrENwA6aJevbGuvONuUHllbojuoNi3EBgzXYcPtrC
+	fF8cBDvhYBViCNzonwjDpmmqCwadnslTf4Rw72C6vqJsvRTaDNN3vr8xKiTvTwcFCGwmxG
+	2S5AjRuVa+V5aRhb6n4ZTRb/lCdT1nc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743403800;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VPyRbVbHSj/XyzZeopPN7997hVKl+H5ekbnEEyjfIJ8=;
+	b=09wHGfdYBGhExkIK3F9fic1Vec8G4MNx2hedWYJHCZXFey0Ign0shr6r4V2V177ZMMc4dv
+	WimDb9Ct9rEij6CQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ED3C3139A1;
+	Mon, 31 Mar 2025 06:49:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id sLjWKBU76mcjHAAAD6G6ig
+	(envelope-from <ddiss@suse.de>); Mon, 31 Mar 2025 06:49:57 +0000
+Date: Mon, 31 Mar 2025 17:49:51 +1100
+From: David Disseldorp <ddiss@suse.de>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH] docs: initramfs: update compression and mtime
+ descriptions
+Message-ID: <20250331174951.7818afb1.ddiss@suse.de>
+In-Reply-To: <39c91e20-94b2-4103-8654-5a7bbb8e1971@infradead.org>
+References: <20250331050330.17161-1-ddiss@suse.de>
+	<39c91e20-94b2-4103-8654-5a7bbb8e1971@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-kzMlwJXG7V9lip@casper.infradead.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: F417C21197
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim,suse.de:mid]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
+X-Spam-Flag: NO
 
-On Sun, Mar 30, 2025 at 01:04:02PM +0100, Matthew Wilcox wrote:
-> On Sat, Mar 29, 2025 at 11:47:30PM -0700, Luis Chamberlain wrote:
-> > However tracing shows that folio_mc_copy() *isn't* being called
-> > as often as we'd expect from buffer_migrate_folio_norefs() path
-> > as we're likely bailing early now thanks to the check added by commit
-> > 060913999d7a ("mm: migrate: support poisoned recover from migrate
-> > folio").
+Thanks for the feedback, Randy...
+
+On Sun, 30 Mar 2025 22:13:19 -0700, Randy Dunlap wrote:
+
+> Hi,
 > 
-> Umm.  You're saying that most folios we try to migrate have extra refs?
-> That seems unexpected; does it indicate a bug in 060913999d7a?
-
-I've debugged this further, the migration does succeed and I don't see
-any failures due to the new refcheck added by 060913999d7a. I've added
-stats in a out of tree patch [0] in case folks find this useful, I could
-submit this. But the point is that even if you use dd against a large
-block device you won't always end up trying to migrate large folios
-*right away* even if you trigger folio migration through compaction,
-specially if you use a large bs on dd like bs=1M. Using a size matching
-more close to the logical block size will trigger large folio migration
-much faster.
-
-Example of the stats:
-
-# cat /sys/kernel/debug/mm/migrate/bh/stats
-
-[buffer_migrate_folio]
-                    calls       9874
-                  success       9854
-                    fails       20
-
-[buffer_migrate_folio_norefs]
-                    calls       3694
-                  success       1651
-                    fails       2043
-          no-head-success       532
-            no-head-fails       0
-                  invalid       2040
-                    valid       1119
-            valid-success       1119
-              valid-fails       0
-
-Success ratios:
-buffer_migrate_folio: 99% success (9854/9874)
-buffer_migrate_folio_norefs: 44% success (1651/3694)
-
-> > +++ b/mm/migrate.c
-> > @@ -751,6 +751,8 @@ static int __migrate_folio(struct address_space *mapping, struct folio *dst,
-> >  {
-> >  	int rc, expected_count = folio_expected_refs(mapping, src);
+> On 3/30/25 10:03 PM, David Disseldorp wrote:
+> > Update the document to reflect that initramfs didn't replace initrd
+> > following kernel 2.5.x.
+> > The initramfs buffer format now supports many compression types in
+> > addition to gzip, so include them in the grammar section.
+> > c_mtime use is dependent on CONFIG_INITRAMFS_PRESERVE_MTIME.
+> > 
+> > Signed-off-by: David Disseldorp <ddiss@suse.de>
+> > ---
+> >  .../early-userspace/buffer-format.rst         | 30 ++++++++++++-------
+> >  1 file changed, 19 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/Documentation/driver-api/early-userspace/buffer-format.rst b/Documentation/driver-api/early-userspace/buffer-format.rst
+> > index 7f74e301fdf35..cb31d617729c5 100644
+> > --- a/Documentation/driver-api/early-userspace/buffer-format.rst
+> > +++ b/Documentation/driver-api/early-userspace/buffer-format.rst
+> > @@ -4,20 +4,18 @@ initramfs buffer format
 > >  
-> > +	might_sleep();
+> >  Al Viro, H. Peter Anvin
+> >  
+> > -Last revision: 2002-01-13
+> > -
+> > -Starting with kernel 2.5.x, the old "initial ramdisk" protocol is
+> > -getting {replaced/complemented} with the new "initial ramfs"
+> > -(initramfs) protocol.  The initramfs contents is passed using the same
+> > -memory buffer protocol used by the initrd protocol, but the contents
+> > +With kernel 2.5.x, the old "initial ramdisk" protocol was complemented
+> > +with an "initial ramfs" protocol.  The initramfs contents is passed  
 > 
-> We deliberately don't sleep when the folio is only a single page.
-> So this needs to be:
+>                                                              are passed
 > 
-> 	might_sleep_if(folio_test_large(folio));
+> > +using the same memory buffer protocol used by initrd, but the contents
+> >  is different.  The initramfs buffer contains an archive which is  
+> 
+>   are different.
 
-That does reduce the scope of our test coverage but, sure.
+I've not really changed those sentences with this patch, so I don't mind
+if they stay as is, or switch "contents" to "content" or "is" to "are".
 
-[0] https://lore.kernel.org/all/20250331061306.4073352-1-mcgrof@kernel.org/
+> >  expanded into a ramfs filesystem; this document details the format of
+> >  the initramfs buffer format.  
+> 
+> Don't use "format" 2 times above.
 
-  Luis
+This is also not changed by the patch. I'm happy to send a v2 or have
+these clean-ups squashed in when applied. Will leave it up to the
+maintainers.
 
