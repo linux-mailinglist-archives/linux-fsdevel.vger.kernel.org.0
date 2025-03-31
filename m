@@ -1,226 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-45378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBEFDA76C6A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 19:08:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAF38A76C6C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 19:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 626A31664F5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 17:08:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 610A1188D14A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 17:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73EEE215073;
-	Mon, 31 Mar 2025 17:07:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD24216386;
+	Mon, 31 Mar 2025 17:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OnmGg3Qx"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fPehXRci"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55108214A7D;
-	Mon, 31 Mar 2025 17:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FADA21504A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 31 Mar 2025 17:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743440873; cv=none; b=moUJ3j+rKFCPEhKTHrUOd4IboNKxqlW1OqpNR9KbKCFuAEGfmXH+tV09XoZ8EajPAGWQEnMb/jToh/k9HGKNw4uhQ6NeuYFHZdeA8Nayqk80xQC15mCXMwFi20n5mCKegdbEpZPZBkY8YRnJYhrV8XkYc66lZn3Gm7Ku/Xvzjxs=
+	t=1743440864; cv=none; b=AxjLv1cjthXjgxh+5W+fwHNspLDzBTrDITvo2nzM3rUtahu20dCX/cnVQoE2lZh33MuFJjWl2EaoHGlzX9gFC9JvSavCrwuyRnEMzABgGERIPBfQzDPpVNfdMH9uBJ73zu72zO+I4vIpDf1/DN/r9i1f36/OCIl4jzC1bPpvvZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743440873; c=relaxed/simple;
-	bh=Ac5MStQWz5ZGSFJAWjJrRkS2cgVa+kWhUxEigbooqIk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=LERQqm+oo3TFE/spnPj5M3K8tVAMVThMNA3KBUyh16aDYulM1eCDWw85Uxd84lKQyOSpH1J7im2FN15JpsQuWX049Im5v/THo77iOWbbm8wPpFHbF2ny/tTjL1q6bESDkZpYQznZHnXYUcmY2dI+v1dI54A+5sw2M20JQcIFC5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OnmGg3Qx; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22423adf751so85978175ad.2;
-        Mon, 31 Mar 2025 10:07:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743440871; x=1744045671; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=aquQkKumd4VhkPXinf4JJ+BAI1iQnswaUODJpG5BEEc=;
-        b=OnmGg3QxGanZoOe8OH6uhwWuFtIdvv1MrWgG1GIGdZgF976XIHddpBV48/o1sGsfRX
-         a2H/A0nD7v6hIuI73YPW2Cg29wddHQR9VEQtLvpgW1AHvQXSMriI3jCqcC+4404sH5JF
-         SuX6XC1vr74frICHntbIMdm5cbUv7UagY2gHw+X44Y3aKtGW4mwYemcHB+hdP2qGvj51
-         eaMaTcG4KOm7TQX9BFAQrPh4zdYUUmeaIUPdu1LaNAzPjd3mpEidhKyLs+p/dcK/ZrwR
-         UKx2Sf/Ikqj/hAncDy57rVr0jUPbXxQHByAR9ZY5JidL+rlnYeg+l46JgcfeLq/d88uc
-         lm5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743440871; x=1744045671;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aquQkKumd4VhkPXinf4JJ+BAI1iQnswaUODJpG5BEEc=;
-        b=mtBh8wAosHRSq6yNygPV7b1cFXw6bjBs/JYjSdu0alcdN9ZtjsTRlIUIxIV0lGF+1P
-         0GJSK3H9eJHLtoTFel6lVyUywLYEOlaYLayCWx6xTEYqYuhfD46PEysjylMwLiH2lSuq
-         6X/U9QHLvHA0ia/Sn/qo76A747KvkkWcNdJ4etqTORp8KC/021JPKy3OzCSc0tdATOxA
-         dHdwCDn4NLYehehiSQoZf2zPuMbyhnSLpNKSAojSh2q2jw2zhg6qekEevzYbB0hy4rPZ
-         DWcOdYlFq0pmXTsZK7WeN5zGCUSbBYsJS0CzUWVt+8zCdUI4U2nmJxvYckAECd67JaVh
-         bH3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWOYbn4hXx8expwbV5dzz0v1JQN4dgDQAJLbMzXTivP7Ax3OfxBQ6nL6KP+x1YzB3dkvmT62denm/UVQIF0@vger.kernel.org, AJvYcCWixzgAe/jluOIuD/sX/+cg6LX75HtCigM/6HRfrSRb5WA0QSxwJzDTBZSfxOZxYFj/B/LPj5nZOEIy5IuS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2oEWL05xGfIlSQZMwFiQA+jOSYI6ouGUGAOqMsSeejnrGr7Y6
-	JIi0ooPUpmVXjsdgv19rdtv2dLHS2SULAK5kINO86V4kxWZ2Q1ed
-X-Gm-Gg: ASbGncuIAZoZgoiNjewJxuS8N5zFjUVJ5sTNeHYWMX4Fg0rNfBIsNzlG8mXJ7XtirIG
-	k5yg8/q21LwsG6qOgG7Pk0bBZF8O+ikwYgHwshO6T0oyWmNT4mWZgDo2cj/qpkMJ6vCMTiKdVQO
-	7ZUAz5nAhVdi3iZ9yyv3r3WngcuBwJqXB1BB7Nggsq4QVO3+4DqQsTPbjZ5PU4Dovk3/MbSjmTq
-	bq778XqsxuAfgDauyRCDjOrlETEGEMoH+Y+SrIG3xmtEDHdtWDfRc2VPNdKlKlEXElgueJA4tqE
-	qmqAzUTXVaRgmOzE/agDZh9H90vQij/dylTpk2kCLzuIFyOIkitZSdA2YIZQ1Tme6dJ51bBo1Q=
-	=
-X-Google-Smtp-Source: AGHT+IHzCNER8mRUkPyrZ9q6jFS0Z4BZCz8Kh5pS1gk7gv6cbwmjXQEH/vhMurcSH8lxyqLdEhPeyg==
-X-Received: by 2002:a05:6a21:9188:b0:1f5:55b7:1bb4 with SMTP id adf61e73a8af0-2009f5fdc52mr15349617637.11.1743440871528;
-        Mon, 31 Mar 2025 10:07:51 -0700 (PDT)
-Received: from localhost.localdomain ([221.214.202.225])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af93b69b127sm6584664a12.17.2025.03.31.10.07.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Mar 2025 10:07:51 -0700 (PDT)
-From: Penglei Jiang <superman.xpt@gmail.com>
-To: akpm@linux-foundation.org
-Cc: adrian.ratiu@collabora.com,
-	superman.xpt@gmail.com,
-	brauner@kernel.org,
-	felix.moessbauer@siemens.com,
-	jlayton@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lorenzo.stoakes@oracle.com,
-	mjguzik@gmail.com,
-	syzbot+02e64be5307d72e9c309@syzkaller.appspotmail.com,
-	syzbot+f9238a0a31f9b5603fef@syzkaller.appspotmail.com,
-	tglx@linutronix.de,
-	viro@zeniv.linux.org.uk,
-	xu.xin16@zte.com.cn
-Subject: [PATCH V4] proc: Fix the issue of proc_mem_open returning NULL
-Date: Mon, 31 Mar 2025 10:06:47 -0700
-Message-Id: <20250331170647.36285-1-superman.xpt@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250331091635.36547-1-superman.xpt@gmail.com>
-References: <20250331091635.36547-1-superman.xpt@gmail.com>
+	s=arc-20240116; t=1743440864; c=relaxed/simple;
+	bh=0XXHvVH3uTDCMxcR0WdIaNLdp3YBldH2uI8GRVxW53s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qldvBHQ16pCd+Rq4lnph4NfytBvSLcZb5XTkDUFXCnM3O1b2DvS4q9aJqkIS1UfJKIIDANAreQOmt4Xha/BGO4KE9cXbTkUP0BokXO1JVGtu7X1cj9FcRzoLPqw7QINmcZdyovTx035X+JMaXThgKY48o0UHjzXa5j5Z4793m94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fPehXRci; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 31 Mar 2025 13:07:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1743440859;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=5OupMGobLMAwcSJf51wqGLHPQ4jZkY1BiImmx9cF0Dg=;
+	b=fPehXRci0Usgern7GARpYrL022EgKSkHiT2ifiNiDLZ7nRJ9q7skctJBP84hIECOFcFSeb
+	ZViJuCPxxknN6nvxOkzNz+vwMfk7LpKtWqYVKbUP2x6UaSd+t+/L9g3JY21fGVsl06sM9l
+	nadt6Ba9UIp0BuEBMI7Y8UbigRqqDbU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs updates for 6.15 part 2
+Message-ID: <insmfmxhkgbdvnnqaxkxfllhrea25hojvjaetxgdu3jr6txyjv@i44r2xo2virt>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 31 Mar 2025 02:16:35 -0700 Penglei Jiang <superman.xpt@gmail.com> wrote:
+The following changes since commit d8bdc8daac1d1b0a4efb1ecc69bef4eb4fc5e050:
 
-> On Thu, 27 Mar 2025 12:24:45 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> > On Mon, 24 Mar 2025 21:14:48 -0700 Penglei Jiang <superman.xpt@gmail.com> wrote:
-> >
-> > > > >  if (IS_ERR(mm))
-> > > > > -return mm == ERR_PTR(-ESRCH) ? NULL : mm;
-> > > > > +return mm;
-> > > > >
-> > > > >  /* ensure this mm_struct can't be freed */
-> > > > >  mmgrab(mm);
-> > > > > --
-> > > > > 2.17.1
-> > > > >
-> > >
-> > > Mateusz Guzik provides valuable suggestions.
-> > >
-> > > Complete the missing NULL checks.
-> >
-> > proc_mem_open() can return errno, NULL or mm_struct*.  It isn't obvious
-> > why.
-> >
-> > While you're in there can you please add documentation to
-> > proc_mem_open() which explains its return values?
->
-> I apologize for the delayed response.
->
-> Add documentation comments to proc_mem_open() and add NULL checks in
-> several call sites.
+  bcachefs: Kill unnecessary bch2_dev_usage_read() (2025-03-24 09:50:37 -0400)
 
-Adjust comments based on the V3 patch.
+are available in the Git repository at:
 
-Signed-off-by: Penglei Jiang <superman.xpt@gmail.com>
----
- fs/proc/base.c       | 12 +++++++++---
- fs/proc/task_mmu.c   | 12 ++++++------
- fs/proc/task_nommu.c |  4 ++--
- 3 files changed, 17 insertions(+), 11 deletions(-)
+  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-03-31
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 5538c4aee8fa..c7619e8ef399 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -827,7 +827,13 @@ static const struct file_operations proc_single_file_operations = {
- 	.release	= single_release,
- };
- 
--
-+/*
-+ * proc_mem_open() can return errno, NULL or mm_struct*.
-+ *
-+ *   - Returns NULL if the task has no mm (PF_KTHREAD or PF_EXITING)
-+ *   - Returns mm_struct* on success
-+ *   - Returns error code on failure
-+ */
- struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
- {
- 	struct task_struct *task = get_proc_task(inode);
-@@ -854,8 +860,8 @@ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
- {
- 	struct mm_struct *mm = proc_mem_open(inode, mode);
- 
--	if (IS_ERR(mm))
--		return PTR_ERR(mm);
-+	if (IS_ERR_OR_NULL(mm))
-+		return mm ? PTR_ERR(mm) : -ESRCH;
- 
- 	file->private_data = mm;
- 	return 0;
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index f02cd362309a..14d1d8d3e432 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -212,8 +212,8 @@ static int proc_maps_open(struct inode *inode, struct file *file,
- 
- 	priv->inode = inode;
- 	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
--	if (IS_ERR(priv->mm)) {
--		int err = PTR_ERR(priv->mm);
-+	if (IS_ERR_OR_NULL(priv->mm)) {
-+		int err = priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
- 
- 		seq_release_private(inode, file);
- 		return err;
-@@ -1312,8 +1312,8 @@ static int smaps_rollup_open(struct inode *inode, struct file *file)
- 
- 	priv->inode = inode;
- 	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
--	if (IS_ERR(priv->mm)) {
--		ret = PTR_ERR(priv->mm);
-+	if (IS_ERR_OR_NULL(priv->mm)) {
-+		ret = priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
- 
- 		single_release(inode, file);
- 		goto out_free;
-@@ -2045,8 +2045,8 @@ static int pagemap_open(struct inode *inode, struct file *file)
- 	struct mm_struct *mm;
- 
- 	mm = proc_mem_open(inode, PTRACE_MODE_READ);
--	if (IS_ERR(mm))
--		return PTR_ERR(mm);
-+	if (IS_ERR_OR_NULL(mm))
-+		return mm ? PTR_ERR(mm) : -ESRCH;
- 	file->private_data = mm;
- 	return 0;
- }
-diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
-index bce674533000..59bfd61d653a 100644
---- a/fs/proc/task_nommu.c
-+++ b/fs/proc/task_nommu.c
-@@ -260,8 +260,8 @@ static int maps_open(struct inode *inode, struct file *file,
- 
- 	priv->inode = inode;
- 	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
--	if (IS_ERR(priv->mm)) {
--		int err = PTR_ERR(priv->mm);
-+	if (IS_ERR_OR_NULL(priv->mm)) {
-+		int err = priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
- 
- 		seq_release_private(inode, file);
- 		return err;
--- 
-2.17.1
+for you to fetch changes up to 650f5353dcc9b6e690a1c763754fa1e98d217bfc:
 
+  bcachefs: fix bch2_write_point_to_text() units (2025-03-30 20:04:16 -0400)
+
+----------------------------------------------------------------
+bcachefs updates for 6.15, part 2
+
+All bugfixes and logging improvements.
+
+Minor merge conflict, see:
+https://lore.kernel.org/linux-next/20250331092816.778a7c83@canb.auug.org.au/T/#u
+
+CI says the fs-next tree is good:
+https://evilpiepirate.org/~testdashboard/ci?user=fs-next&branch=master
+
+----------------------------------------------------------------
+Florian Albrechtskirchinger (1):
+      bcachefs: Fix bch2_fs_get_tree() error path
+
+Kent Overstreet (34):
+      bcachefs: Fix nonce inconsistency in bch2_write_prep_encoded_data()
+      bcachefs: Fix silent short reads in data read retry path
+      bcachefs: Fix duplicate checksum error messages in write path
+      bcachefs: Use print_string_as_lines() for journal stuck messages
+      bcachefs: Validate number of counters for accounting keys
+      bcachefs: Document disk accounting keys and conuters
+      bcachefs: Don't unnecessarily decrypt data when moving
+      bcachefs: Fix btree iter flags in data move (2)
+      bcachefs: Fix 'hung task' messages in btree node scan
+      bcachefs: cond_resched() in journal_key_sort_cmp()
+      bcachefs: Fix permissions on version modparam
+      bcachefs: Recovery no longer holds state_lock
+      bcachefs: Fix bch2_seek_hole() locking
+      bcachefs: Don't return 0 size holes from bch2_seek_hole()
+      bcachefs: Fix WARN() in bch2_bkey_pick_read_device()
+      bcachefs: print_string_as_lines: fix extra newline
+      bcachefs: add missing newline in bch2_trans_updates_to_text()
+      bcachefs: fix logging in journal_entry_err_msg()
+      bcachefs: bch2_time_stats_init_no_pcpu()
+      bcachefs: Add an "ignore unknown" option to bch2_parse_mount_opts()
+      bcachefs: Consistent indentation of multiline fsck errors
+      bcachefs: Better helpers for inconsistency errors
+      bcachefs: bch2_count_fsck_err()
+      bcachefs: Better printing of inconsistency errors
+      bcachefs: Change btree_insert_node() assertion to error
+      bcachefs: Clear fs_path_parent on subvolume unlink
+      bcachefs: bch2_ioctl_subvolume_destroy() fixes
+      bcachefs: fix units in rebalance_status
+      bcachefs: Silence errors after emergency shutdown
+      bcachefs: Don't use designated initializers for disk_accounting_pos
+      bcachefs: Reorder error messages that include journal debug
+      bcachefs: BCH_JSET_ENTRY_log_bkey
+      bcachefs: Log original key being moved in data updates
+      bcachefs: fix bch2_write_point_to_text() units
+
+ fs/bcachefs/alloc_background.c       |  22 ++--
+ fs/bcachefs/alloc_foreground.c       |   2 +-
+ fs/bcachefs/backpointers.c           |  43 ++++---
+ fs/bcachefs/bcachefs_format.h        |   3 +-
+ fs/bcachefs/btree_cache.c            |   2 +-
+ fs/bcachefs/btree_gc.c               |  23 ++--
+ fs/bcachefs/btree_io.c               |  63 +++++-----
+ fs/bcachefs/btree_iter.c             |  14 +--
+ fs/bcachefs/btree_iter.h             |   1 -
+ fs/bcachefs/btree_journal_iter.c     |   2 +
+ fs/bcachefs/btree_node_scan.c        |  14 ++-
+ fs/bcachefs/btree_update.c           |  13 ++
+ fs/bcachefs/btree_update.h           |   2 +
+ fs/bcachefs/btree_update_interior.c  |  91 ++++++++------
+ fs/bcachefs/buckets.c                | 161 ++++++++++++++-----------
+ fs/bcachefs/chardev.c                |   6 +-
+ fs/bcachefs/data_update.c            |  22 +++-
+ fs/bcachefs/data_update.h            |  12 ++
+ fs/bcachefs/disk_accounting.c        |  40 ++++---
+ fs/bcachefs/disk_accounting.h        |   8 +-
+ fs/bcachefs/disk_accounting_format.h |  80 +++++++++++--
+ fs/bcachefs/ec.c                     |  22 ++--
+ fs/bcachefs/errcode.h                |   3 +
+ fs/bcachefs/error.c                  | 226 ++++++++++++++++++++++++++---------
+ fs/bcachefs/error.h                  |  48 ++++----
+ fs/bcachefs/extents.c                |   7 +-
+ fs/bcachefs/fs-io-buffered.c         |   2 +-
+ fs/bcachefs/fs-io.c                  |  31 +++--
+ fs/bcachefs/fs-ioctl.c               |   6 +-
+ fs/bcachefs/fs.c                     |   9 +-
+ fs/bcachefs/fsck.c                   |  22 ++--
+ fs/bcachefs/io_read.c                |   4 +-
+ fs/bcachefs/io_read.h                |   6 +-
+ fs/bcachefs/io_write.c               |  44 ++++---
+ fs/bcachefs/journal.c                |  19 +--
+ fs/bcachefs/journal_io.c             |  38 ++++--
+ fs/bcachefs/lru.c                    |   7 +-
+ fs/bcachefs/move.c                   |  37 +++++-
+ fs/bcachefs/namei.c                  |   4 +-
+ fs/bcachefs/opts.c                   |  49 ++++----
+ fs/bcachefs/opts.h                   |   3 +-
+ fs/bcachefs/printbuf.c               |  19 +++
+ fs/bcachefs/printbuf.h               |   1 +
+ fs/bcachefs/progress.c               |   6 +-
+ fs/bcachefs/rebalance.c              |   5 +-
+ fs/bcachefs/recovery_passes.c        |  12 +-
+ fs/bcachefs/reflink.c                |  12 +-
+ fs/bcachefs/sb-errors_format.h       |   6 +-
+ fs/bcachefs/snapshot.c               |  16 +--
+ fs/bcachefs/str_hash.c               |   2 +-
+ fs/bcachefs/subvolume.c              |   1 +
+ fs/bcachefs/super.c                  |  38 +++---
+ fs/bcachefs/sysfs.c                  |   9 +-
+ fs/bcachefs/time_stats.c             |  20 +++-
+ fs/bcachefs/time_stats.h             |   1 +
+ fs/bcachefs/util.c                   |   2 +-
+ fs/bcachefs/util.h                   |   1 +
+ 57 files changed, 856 insertions(+), 506 deletions(-)
 
