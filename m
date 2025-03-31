@@ -1,222 +1,223 @@
-Return-Path: <linux-fsdevel+bounces-45320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45321-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EF9DA76311
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 11:17:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17D35A763A8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 11:58:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 747763A6D51
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 09:17:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67EDF3A9072
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 09:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664C71D9A49;
-	Mon, 31 Mar 2025 09:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4429B1DEFF5;
+	Mon, 31 Mar 2025 09:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T9r1LbAn"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JJy1Gy+c";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ss9aSS41";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JJy1Gy+c";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ss9aSS41"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68326259C;
-	Mon, 31 Mar 2025 09:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39EA41DEFE7
+	for <linux-fsdevel@vger.kernel.org>; Mon, 31 Mar 2025 09:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743412661; cv=none; b=oF9AoRvAKhXd4npsuBMTA2bIzviRhueNSV2JxGlGJ5vBvQfI1aIZaLDa5fD7vt3qHYZe/eGCJiPjHXcFCixzhuf4KGXGb7S20pHPHnkleWJmZ5q3w7q2NEdP4eLwmUsmnMjdrDjO2ZEHJ8pmf+yUoha/74Xijo3Vq+ifvuW52KI=
+	t=1743415074; cv=none; b=N72U9o3a7OnWc5Dlw3YaCxGKbvIb/uxz3X96LdEdsMuPLN+1nEKh5xfkG9PSs8YJwR7boeBRz2+Jd2TQDnlmoR/oSnlIJF7sKgHlX/if3ocgvYR1HcCWnSU9SSXKXR78Piv4uEHRLu4OpCBaxtuTLWnYoHw5Erz5UUD+eZ+fYyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743412661; c=relaxed/simple;
-	bh=kaiELQkqTr0E/qcyQ8OuqflCAPZzOhc6NAzCCXMQDE8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=rfrJ3qr1BR6WCRQ8u0kIKm1Vip/iEemdj0x8VU6OwEW4mVLeLfcJBVIOQu53Km6vJWblLMYdUg/J73Y5i4wvw0Zce67wMh9F0XwFf5zyqaK5ajNydws38crORWo6kHRYPIb/FMegTu9s3YXwik7s5e+ZjeEwiILcoRwDNurl2oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T9r1LbAn; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-223fd89d036so90006475ad.1;
-        Mon, 31 Mar 2025 02:17:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743412660; x=1744017460; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=QznPLJKqzWPL35Cepg1nAB4/tw1/hzZeJhITfjvZmpQ=;
-        b=T9r1LbAn6JdD0Qzi4lKRi6D378uAI9duAk1SXfw+HsXvsrY+jm2jgjqwSK9GXDFc8b
-         PqJT6H4izKeKvZXXm/e+KkJm+Z2olYi3323nCJag3RYTxeIzvEdrlNcIxkki7iFHqUGP
-         gx1RdHbc8p4JpxSjet+uUcQWuO6Avg82401uwSGigBHXZCD75rqVgyrB3lYfuTLGaQkN
-         Xbb2dcxR3PEEBwdTB+ZsgGgNb07xJ8WqCxT1Ddb0ZfaD5H8elFO6R2CLPJO7xnPoqk9J
-         AaQbrYhaLcnq5BTDMp6WX7eAuyS4cblp3kF0vDjTZCJDpR99dPi/6qOwKNddwQLCcNUw
-         ahsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743412660; x=1744017460;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QznPLJKqzWPL35Cepg1nAB4/tw1/hzZeJhITfjvZmpQ=;
-        b=gar/eknsqdG24yy5rFsCWluCbhEb8e+nKn6aNAZU0QkZqpsgu/3Cs8cR8snkeq2GsR
-         43ej3BR9Hdj1OAkOtazBfAMR1VSBSHa2AfCfjK8k37Yo8kvd5Ha/dI483egWHIaxjIsB
-         LCdsM5yK5K1GdHf5hNIIIWr3UCjc3OiD5qf/BHrC6iLTO1YtZOaEDct6HHJUzzNerB1I
-         LjYCuiFbfIjPIZvKE8kqa+aboX970NCRoy9BONVjT8MP+NohntG/3xS/pRZhqBUqmH4p
-         KAum5fL7qF06S7eLqtw4nDIkBMZAo56R4/aLQbWfZo6LE9hf7RxEULRkUiaDnWjQ0FON
-         LheQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXBbHR0Ax9C+eAqB3++zq/yF4OmNvZ48SeZVoFRy4vxZt7CJ43TJgF+TXgflq4pkNFwil78Wa9+GMXty/59@vger.kernel.org, AJvYcCXkFJqRCsE/cGa7gkreyEoINZsTbWDK4gpeS1m0vYivKkK4QzDK3FpnHPui5pUWw6XeLjmzT0AFR754DN4k@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywc/zuSr/Z04sM9x61KlvJzJqoK2Yt+JWvKn6EJBUEO0MH8iYez
-	DTiDy/5j1xCXscNxffNRGsWb1GD+QjIv8c0W4slvjSQ2UjX4841L
-X-Gm-Gg: ASbGncuLDuNV8Tt9CxLidhB+xePsC/JscA7insClMZvT0jq7CIHg7LFVcgakw5b8pZ0
-	eMCvrLbDsFVwlfK4oJEXw9Fui4+63ygYXJVos+mlDR+AE1ki9TIwuPmdwDoV2AOSciyH3cESeBW
-	DwiC2Rxhb14fc6FnuniaIhiYYbH1VSS3jN8YVohGELkJY9rbp/7pz1FbIolnR/LPgU9mjZBxxBx
-	TnoaoXGJOQ2b21vUR9tYrHwAKbMfiAEdoA429zre3seH8RroDBmEGvcqb5LlaxNUwCn7+r1jNaV
-	kR/pwceQPAK5fr2rmPDndvNteV1Q99+8t5s4QhsFYZHMqsbjgydwxy7W7ZZQxepLuZNWHBW9sQ=
-	=
-X-Google-Smtp-Source: AGHT+IH+90jBd+jyhuEi5x/gEVYfwAW5yK2+2Vf5DhsZy52DOKGxwEc7qUKBE9+aHjxyyxVburC4yw==
-X-Received: by 2002:a17:902:d550:b0:220:fe51:1aab with SMTP id d9443c01a7336-2292f9e84a5mr166869355ad.38.1743412659660;
-        Mon, 31 Mar 2025 02:17:39 -0700 (PDT)
-Received: from localhost.localdomain ([221.214.202.225])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30516d61799sm6754474a91.23.2025.03.31.02.17.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Mar 2025 02:17:39 -0700 (PDT)
-From: Penglei Jiang <superman.xpt@gmail.com>
-To: akpm@linux-foundation.org
-Cc: adrian.ratiu@collabora.com,
-	brauner@kernel.org,
-	felix.moessbauer@siemens.com,
-	jlayton@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lorenzo.stoakes@oracle.com,
-	mjguzik@gmail.com,
-	superman.xpt@gmail.com,
-	syzbot+02e64be5307d72e9c309@syzkaller.appspotmail.com,
-	syzbot+f9238a0a31f9b5603fef@syzkaller.appspotmail.com,
-	tglx@linutronix.de,
-	viro@zeniv.linux.org.uk,
-	xu.xin16@zte.com.cn
-Subject: [PATCH V3] proc: Fix the issue of proc_mem_open returning NULL
-Date: Mon, 31 Mar 2025 02:16:35 -0700
-Message-Id: <20250331091635.36547-1-superman.xpt@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250327122445.cbd211c3216aa754917f3677@linux-foundation.org>
-References: <20250327122445.cbd211c3216aa754917f3677@linux-foundation.org>
+	s=arc-20240116; t=1743415074; c=relaxed/simple;
+	bh=OcTHLvkTGaKUrpLGvtcFwEvIOA69PmtdXZKjZ2GHb3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h+4fRBRKm1R+iOjJ9e+Z0MWRwYtD830Kp9NDLUHUWGrVpJh5MuIRLuDST//QfBympz/FYwPCWI1v34RTUDaIpeDczi+U3K5xees3tVaU3WYU2+2utL+bsldXNzMgNz0q54ramiaqPLL23IU4kKus+8dI1wl1+hTCVrQzL46MB4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JJy1Gy+c; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ss9aSS41; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JJy1Gy+c; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ss9aSS41; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3BF421F397;
+	Mon, 31 Mar 2025 09:57:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743415071; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+/uVGROm7NbGf07qjMoGWaLre3v600WXXwwyGI557Dc=;
+	b=JJy1Gy+cltgTq3xDo62iRQYRKyDbychpPN2dBnegLZCFjrxOtulRrQV1qHtyOsdal93wzE
+	TSGO5G2xBrIeZqNAsOqP5/JOwsBRY0K7N9LRC4rLlEpUX5lUTz0nvKF5RpdpEzTLnbTtHM
+	Wzn6+0/xUBmpwFjt+yPuM77+hbY4sw8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743415071;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+/uVGROm7NbGf07qjMoGWaLre3v600WXXwwyGI557Dc=;
+	b=ss9aSS41uvpTReO6eiA/hpSddGvtPYEa1heZi+DyQ0qBd1Eq8lAjHeyQ5Mqu4ZUvZr6apW
+	xeIvGNzrLY6vmjCg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=JJy1Gy+c;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ss9aSS41
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743415071; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+/uVGROm7NbGf07qjMoGWaLre3v600WXXwwyGI557Dc=;
+	b=JJy1Gy+cltgTq3xDo62iRQYRKyDbychpPN2dBnegLZCFjrxOtulRrQV1qHtyOsdal93wzE
+	TSGO5G2xBrIeZqNAsOqP5/JOwsBRY0K7N9LRC4rLlEpUX5lUTz0nvKF5RpdpEzTLnbTtHM
+	Wzn6+0/xUBmpwFjt+yPuM77+hbY4sw8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743415071;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+/uVGROm7NbGf07qjMoGWaLre3v600WXXwwyGI557Dc=;
+	b=ss9aSS41uvpTReO6eiA/hpSddGvtPYEa1heZi+DyQ0qBd1Eq8lAjHeyQ5Mqu4ZUvZr6apW
+	xeIvGNzrLY6vmjCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 28E2B13A56;
+	Mon, 31 Mar 2025 09:57:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IvfyCR9n6mcEWwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 31 Mar 2025 09:57:51 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id C4C74A08D2; Mon, 31 Mar 2025 11:57:50 +0200 (CEST)
+Date: Mon, 31 Mar 2025 11:57:50 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	mcgrof@kernel.org, hch@infradead.org, david@fromorbit.com, rafael@kernel.org, 
+	djwong@kernel.org, pavel@kernel.org, peterz@infradead.org, mingo@redhat.com, 
+	will@kernel.org, boqun.feng@gmail.com
+Subject: Re: [PATCH v2 1/6] super: remove pointless s_root checks
+Message-ID: <qgq3uzlrllywodaazal2e6hde45pxz6jixp77uhi6lfkkpp6wt@uhf5zirhm3ex>
+References: <20250329-work-freeze-v2-0-a47af37ecc3d@kernel.org>
+ <20250329-work-freeze-v2-1-a47af37ecc3d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250329-work-freeze-v2-1-a47af37ecc3d@kernel.org>
+X-Rspamd-Queue-Id: 3BF421F397
+X-Spam-Score: -2.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,suse.cz,hansenpartnership.com,kernel.org,infradead.org,fromorbit.com,redhat.com,gmail.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Thu, 27 Mar 2025 12:24:45 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+On Sat 29-03-25 09:42:14, Christian Brauner wrote:
+> The locking guarantees that the superblock is alive and sb->s_root is
+> still set. Remove the pointless check.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-> On Mon, 24 Mar 2025 21:14:48 -0700 Penglei Jiang <superman.xpt@gmail.com> wrote:
->
-> > > >  if (IS_ERR(mm))
-> > > > -return mm == ERR_PTR(-ESRCH) ? NULL : mm;
-> > > > +return mm;
-> > > >
-> > > >  /* ensure this mm_struct can't be freed */
-> > > >  mmgrab(mm);
-> > > > --
-> > > > 2.17.1
-> > > >
-> >
-> > Mateusz Guzik provides valuable suggestions.
-> >
-> > Complete the missing NULL checks.
->
-> proc_mem_open() can return errno, NULL or mm_struct*.  It isn't obvious
-> why.
->
-> While you're in there can you please add documentation to
-> proc_mem_open() which explains its return values?
+Looks good. In fact most sb->s_root checks in fs/super.c look pointless
+these days since AFAICT if you have SB_BORN && !SB_DYING superblock (as
+super_lock_*() ascertains), then sb->s_root != NULL. Anyway feel free to
+add:
 
-I apologize for the delayed response.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Add documentation comments to proc_mem_open() and add NULL checks in
-several call sites.
+								Honza
 
-Signed-off-by: Penglei Jiang <superman.xpt@gmail.com>
----
- fs/proc/base.c       | 12 +++++++++---
- fs/proc/task_mmu.c   | 12 ++++++------
- fs/proc/task_nommu.c |  4 ++--
- 3 files changed, 17 insertions(+), 11 deletions(-)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 5538c4aee8fa..cbe4e7d557e1 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -827,7 +827,13 @@ static const struct file_operations proc_single_file_operations = {
- 	.release	= single_release,
- };
- 
--
-+/*
-+ * proc_mem_open() can return errno, NULL or mm_struct*.
-+ *
-+ *   - Returns NULL if the task has no mm (task->flags & PF_KTHREAD)
-+ *   - Returns mm_struct* on success
-+ *   - Returns error code on failure
-+ */
- struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
- {
- 	struct task_struct *task = get_proc_task(inode);
-@@ -854,8 +860,8 @@ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
- {
- 	struct mm_struct *mm = proc_mem_open(inode, mode);
- 
--	if (IS_ERR(mm))
--		return PTR_ERR(mm);
-+	if (IS_ERR_OR_NULL(mm))
-+		return mm ? PTR_ERR(mm) : -ESRCH;
- 
- 	file->private_data = mm;
- 	return 0;
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index f02cd362309a..14d1d8d3e432 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -212,8 +212,8 @@ static int proc_maps_open(struct inode *inode, struct file *file,
- 
- 	priv->inode = inode;
- 	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
--	if (IS_ERR(priv->mm)) {
--		int err = PTR_ERR(priv->mm);
-+	if (IS_ERR_OR_NULL(priv->mm)) {
-+		int err = priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
- 
- 		seq_release_private(inode, file);
- 		return err;
-@@ -1312,8 +1312,8 @@ static int smaps_rollup_open(struct inode *inode, struct file *file)
- 
- 	priv->inode = inode;
- 	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
--	if (IS_ERR(priv->mm)) {
--		ret = PTR_ERR(priv->mm);
-+	if (IS_ERR_OR_NULL(priv->mm)) {
-+		ret = priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
- 
- 		single_release(inode, file);
- 		goto out_free;
-@@ -2045,8 +2045,8 @@ static int pagemap_open(struct inode *inode, struct file *file)
- 	struct mm_struct *mm;
- 
- 	mm = proc_mem_open(inode, PTRACE_MODE_READ);
--	if (IS_ERR(mm))
--		return PTR_ERR(mm);
-+	if (IS_ERR_OR_NULL(mm))
-+		return mm ? PTR_ERR(mm) : -ESRCH;
- 	file->private_data = mm;
- 	return 0;
- }
-diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
-index bce674533000..59bfd61d653a 100644
---- a/fs/proc/task_nommu.c
-+++ b/fs/proc/task_nommu.c
-@@ -260,8 +260,8 @@ static int maps_open(struct inode *inode, struct file *file,
- 
- 	priv->inode = inode;
- 	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
--	if (IS_ERR(priv->mm)) {
--		int err = PTR_ERR(priv->mm);
-+	if (IS_ERR_OR_NULL(priv->mm)) {
-+		int err = priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
- 
- 		seq_release_private(inode, file);
- 		return err;
+> ---
+>  fs/super.c | 19 ++++++-------------
+>  1 file changed, 6 insertions(+), 13 deletions(-)
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index 97a17f9d9023..dc14f4bf73a6 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -930,8 +930,7 @@ void iterate_supers(void (*f)(struct super_block *, void *), void *arg)
+>  
+>  		locked = super_lock_shared(sb);
+>  		if (locked) {
+> -			if (sb->s_root)
+> -				f(sb, arg);
+> +			f(sb, arg);
+>  			super_unlock_shared(sb);
+>  		}
+>  
+> @@ -967,11 +966,8 @@ void iterate_supers_type(struct file_system_type *type,
+>  		spin_unlock(&sb_lock);
+>  
+>  		locked = super_lock_shared(sb);
+> -		if (locked) {
+> -			if (sb->s_root)
+> -				f(sb, arg);
+> -			super_unlock_shared(sb);
+> -		}
+> +		if (locked)
+> +			f(sb, arg);
+>  
+>  		spin_lock(&sb_lock);
+>  		if (p)
+> @@ -991,18 +987,15 @@ struct super_block *user_get_super(dev_t dev, bool excl)
+>  
+>  	spin_lock(&sb_lock);
+>  	list_for_each_entry(sb, &super_blocks, s_list) {
+> -		if (sb->s_dev ==  dev) {
+> +		if (sb->s_dev == dev) {
+>  			bool locked;
+>  
+>  			sb->s_count++;
+>  			spin_unlock(&sb_lock);
+>  			/* still alive? */
+>  			locked = super_lock(sb, excl);
+> -			if (locked) {
+> -				if (sb->s_root)
+> -					return sb;
+> -				super_unlock(sb, excl);
+> -			}
+> +			if (locked)
+> +				return sb; /* caller will drop */
+>  			/* nope, got unmounted */
+>  			spin_lock(&sb_lock);
+>  			__put_super(sb);
+> 
+> -- 
+> 2.47.2
+> 
 -- 
-2.17.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
