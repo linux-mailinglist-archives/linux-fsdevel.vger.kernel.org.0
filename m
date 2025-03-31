@@ -1,135 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-45311-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45312-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2DBCA75E4A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 05:52:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D624A75E71
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 07:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE5377A325C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 03:51:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D92D3A7CD0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 05:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02AB13C9D4;
-	Mon, 31 Mar 2025 03:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734A9158218;
+	Mon, 31 Mar 2025 05:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C7q+hAYM"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="U5P6y/Ob";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ol79eBre";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="U5P6y/Ob";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ol79eBre"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2B320E6;
-	Mon, 31 Mar 2025 03:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF8486338
+	for <linux-fsdevel@vger.kernel.org>; Mon, 31 Mar 2025 05:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743393137; cv=none; b=Mq/ciDnTrrhFjVX5Aff0nXNRnmS+r+ZOAP9A/pURfpsC7JkbUsOjHjle17+j03j4KEwNt7aC9QjXVGqoAee1WaPpVZaquaNp6+VEKZn1zQGTWip5dIZP77oaCPLnnJAAsZmUGyy1U2lGcGH0hdE5NM2rqoWfxqluUnvtX38VGDA=
+	t=1743397430; cv=none; b=XG1+77N9ZJkK13rpeoNNBtq3ocdQ1IpZHtGpN+uZXOZv3GAjNv/Lj4jX9dxnigbFgREC2JA13IOYtmCnBpvEzt9Ib2Bmm7ecpz7fpOO2DpFDbPPmaSlpOZVFCXKmHc+ZZ0mT/Mn+bnuzj7z3LvbgiykNTQExSVsrG8HwMbJQQOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743393137; c=relaxed/simple;
-	bh=prYBJ7EyvpaFZ3S/55s3P21HVzdoeTTd1doe67JZr4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=irud2u3hqatO1JH+0SNBH3nFDlbawRAlmjZMq1+CMuRgU/HiPpLlAzAMnH619aIi4aqqYnjWoLUc+ZWZZ6zLeduLa/5X50I39gLJawMQ4Ng8xFuVO2K58DvxAmLmqUAt3qFHOJ3BHc7UKoHMivCVaPBkxzEE9//ZTXo7RZxe6ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C7q+hAYM; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-54998f865b8so3993140e87.3;
-        Sun, 30 Mar 2025 20:52:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743393133; x=1743997933; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AGYkbNNYPJvEF/4iUZAE4nsCYBUBEw8w1lknk92z4UQ=;
-        b=C7q+hAYMklw0Pi9hBb9Cyyv0QD7H/MtKt+XwE9mxK66w7gIVYlKrkfxRuQku5LTsPM
-         yT4rXYm/b5c7RHDM+YVL5UprMCNybHLR3EyjxuPghdFYHKOFgRaVwaWvj/ZwVdornsbt
-         BIbaFUIpo/p+ohSLY7I7PcnMKV24tpClatDza7H6maJ7hqa6/zkA5EH4Yr+0gSNu4zsW
-         E8V3nF0T9gNtjIdHTvdPWHJHJMkcwMhf9bEn7LpwofTdUbXIMKfxtQQqkJTTCwm5y7xb
-         2qts1DNjYCQcetTWzmF1zq6Y25f7muX/+/P0dI890QHFAycRvf6ciVn/Fd2UIwXmMhsE
-         KNQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743393133; x=1743997933;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AGYkbNNYPJvEF/4iUZAE4nsCYBUBEw8w1lknk92z4UQ=;
-        b=vHoOd4Q58u1rg/1Udrm4rZS7ALCjbBlDCAbTycdzq0C0YIauD1ysZJNCTUdf16ghXC
-         dwBNHM6Bfu/z4Kj3f7AH3HGI//inPqjQ7odonj2PIN4fwhskoXA5K4w7xFpY2dA9h8ib
-         s3h5MHZrXfixpK+mh5aXDfCy/Hricoj6umMwrx7Tlx3dmr/MDhBxxdtC2yFsTT5lpRC5
-         OEsdlrevA7M+ayuxOdVQ3FJfhA9xYaNRwGmtO9+PCJApDp5DKl+tgzH5iux6qRqKlmmB
-         srXIZwUyYp0KNXaDONHrWEu5cAIafJR/sv/VY7Wi5nm0cZMoxWYKMB7EI4II37jxpyO+
-         qZzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUlX6rl/YKXDDrBX0bqSSrioua06kqU2+U+6TY5jNGZpo+bXV/3gPk63XeEf21cgVa5ehYc3iuuRqg04+kc@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/Qs6hFwgzqqnCm96N8/Tsglnmh50li/Q5YkzEnkGSneA+Hf7o
-	ub6Y4eKF/q9fFd2pHcrt4nsU5bjDjBQGU9tLE3juuMVOXyhG72A87tDsJuza
-X-Gm-Gg: ASbGncvonPQH2FqY0O/4hIQsgbSyHhhgPpJRXyWttKB0KCEQL4Wr1WwL7+i1ZnCCEcs
-	I2C6rSDDJCNV61afN6XdrYvcwajXl2NcJSpq9Xr1wJyAytve1t8Z5dgSToyfDuJn4etuSrFuuxg
-	VhqutFObSuOk6vvOvkTUZAV26MNidY2FZZtck8X9hqutmFWkWILExe9eegEjrm37AX6ycsSpBhB
-	i67Eww5J04/EuFW7Y+oRkxWYcPuPyEWXO/o2xoBo8UKcwr7u3AdWeGm/E7TMhi3cQ4gwi02EQ83
-	CyXoJzURly8g92oATbhm
-X-Google-Smtp-Source: AGHT+IHyUCjFJC7vE+0HBnoaPNa58HytIUzs9oqFAGvA0djiPOaWypb/clSX02GDWJQguNsMueDlKA==
-X-Received: by 2002:a05:6512:3b95:b0:545:3dd:aa69 with SMTP id 2adb3069b0e04-54b1112810amr2484075e87.36.1743393133090;
-        Sun, 30 Mar 2025 20:52:13 -0700 (PDT)
-Received: from elende (elende.valinor.li. [2a01:4f9:6a:1c47::2])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54b094c1b09sm1015766e87.96.2025.03.30.20.52.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Mar 2025 20:52:11 -0700 (PDT)
-Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
-Date: Mon, 31 Mar 2025 05:52:11 +0200
-From: Salvatore Bonaccorso <carnil@debian.org>
-To: Steve Dickson <steved@redhat.com>
-Cc: Linux NFS Mailing list <linux-nfs@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: ANNOUNCE: nfs-utils-2.8.3 released.
-Message-ID: <Z-oRa3cF97JCGkVo@lorien.valinor.li>
-References: <64a11de6-ca85-40ce-9235-954890b3a483@redhat.com>
+	s=arc-20240116; t=1743397430; c=relaxed/simple;
+	bh=kM0h3uBUOPgkpJ5JBHLk/JkyxoqZM3lgR27h3GeCfzw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gWPWmilHhfPwoBUuLKbF8u0+Wjovod12Ix9gML55WvDXEHGAO6JvFr9EIKXdyWQojLqV3mbf065qLBx3BdFEjRFkxGgyfTJsoBrdYZq/f3yJbPc/4iOJmBH9UUMwbzUy7arvi88OUOzT4tB3ncpj5fgoCsLu9vR1qHLiMbOqYm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=U5P6y/Ob; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ol79eBre; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=U5P6y/Ob; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ol79eBre; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0439A21186;
+	Mon, 31 Mar 2025 05:03:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743397427; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=HmWKMkt9Y89ko/jG/wBS1+lg6w+9nyUnY4rWTTkWcsg=;
+	b=U5P6y/OblGif2sfeKs7gdURDx2QiSqsHpDVUm0tAfTsX63gQpJndR9AbbM3rV/zsS7grwu
+	07s2M5y6iRDlkUBx9OMNpMfjJTBPf/633WFKy5PftuZVJUDjTvj0fV18/SyUa9BpnEEe4e
+	gsCoNNtnz687nt/J/ycI+kaNgOg74nw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743397427;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=HmWKMkt9Y89ko/jG/wBS1+lg6w+9nyUnY4rWTTkWcsg=;
+	b=ol79eBrezz0BNfdcCiv7uwMMnj9X5Pm1AMfd0wp9mf+oCu5BM2DY+KJIJ4SC9ss9y2nfSn
+	W7TwvfWwTB/xMjBA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743397427; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=HmWKMkt9Y89ko/jG/wBS1+lg6w+9nyUnY4rWTTkWcsg=;
+	b=U5P6y/OblGif2sfeKs7gdURDx2QiSqsHpDVUm0tAfTsX63gQpJndR9AbbM3rV/zsS7grwu
+	07s2M5y6iRDlkUBx9OMNpMfjJTBPf/633WFKy5PftuZVJUDjTvj0fV18/SyUa9BpnEEe4e
+	gsCoNNtnz687nt/J/ycI+kaNgOg74nw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743397427;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=HmWKMkt9Y89ko/jG/wBS1+lg6w+9nyUnY4rWTTkWcsg=;
+	b=ol79eBrezz0BNfdcCiv7uwMMnj9X5Pm1AMfd0wp9mf+oCu5BM2DY+KJIJ4SC9ss9y2nfSn
+	W7TwvfWwTB/xMjBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 02AE813927;
+	Mon, 31 Mar 2025 05:03:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8TlxKzAi6meTfQAAD6G6ig
+	(envelope-from <ddiss@suse.de>); Mon, 31 Mar 2025 05:03:44 +0000
+From: David Disseldorp <ddiss@suse.de>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	David Disseldorp <ddiss@suse.de>
+Subject: [PATCH] docs: initramfs: update compression and mtime descriptions
+Date: Mon, 31 Mar 2025 16:03:30 +1100
+Message-ID: <20250331050330.17161-1-ddiss@suse.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <64a11de6-ca85-40ce-9235-954890b3a483@redhat.com>
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-Hi Steve,
+Update the document to reflect that initramfs didn't replace initrd
+following kernel 2.5.x.
+The initramfs buffer format now supports many compression types in
+addition to gzip, so include them in the grammar section.
+c_mtime use is dependent on CONFIG_INITRAMFS_PRESERVE_MTIME.
 
-On Sun, Mar 30, 2025 at 03:37:33PM -0400, Steve Dickson wrote:
-> Hello,
-> 
-> The release has a number changes in time for
-> the upcoming Spring Bakeathon (May 12-16):
-> 
->     * A number of man pages updates
->     * Bug fixes for nfscld and gssd
->     * New argument to nfsdctl as well as some bug fixes
->     * Bug fixes to mountstats and nfsiostat
->     * Updates to rpcctl
-> 
-> As well as miscellaneous other bug fixes see
-> the Changelog for details.
-> 
-> The tarballs can be found in
->   https://www.kernel.org/pub/linux/utils/nfs-utils/2.8.3/
-> or
->   http://sourceforge.net/projects/nfs/files/nfs-utils/2.8.3
-> 
-> The change log is in
->    https://www.kernel.org/pub/linux/utils/nfs-utils/2.8.3/2.8.3-Changelog
-> or
->  http://sourceforge.net/projects/nfs/files/nfs-utils/2.8.2/2.8.3-Changelog
-> 
-> 
-> The git tree is at:
->    git://linux-nfs.org/~steved/nfs-utils
-> 
-> Please send comments/bugs to linux-nfs@vger.kernel.org
+Signed-off-by: David Disseldorp <ddiss@suse.de>
+---
+ .../early-userspace/buffer-format.rst         | 30 ++++++++++++-------
+ 1 file changed, 19 insertions(+), 11 deletions(-)
 
-Thansk for this new release!
+diff --git a/Documentation/driver-api/early-userspace/buffer-format.rst b/Documentation/driver-api/early-userspace/buffer-format.rst
+index 7f74e301fdf35..cb31d617729c5 100644
+--- a/Documentation/driver-api/early-userspace/buffer-format.rst
++++ b/Documentation/driver-api/early-userspace/buffer-format.rst
+@@ -4,20 +4,18 @@ initramfs buffer format
+ 
+ Al Viro, H. Peter Anvin
+ 
+-Last revision: 2002-01-13
+-
+-Starting with kernel 2.5.x, the old "initial ramdisk" protocol is
+-getting {replaced/complemented} with the new "initial ramfs"
+-(initramfs) protocol.  The initramfs contents is passed using the same
+-memory buffer protocol used by the initrd protocol, but the contents
++With kernel 2.5.x, the old "initial ramdisk" protocol was complemented
++with an "initial ramfs" protocol.  The initramfs contents is passed
++using the same memory buffer protocol used by initrd, but the contents
+ is different.  The initramfs buffer contains an archive which is
+ expanded into a ramfs filesystem; this document details the format of
+ the initramfs buffer format.
+ 
+ The initramfs buffer format is based around the "newc" or "crc" CPIO
+ formats, and can be created with the cpio(1) utility.  The cpio
+-archive can be compressed using gzip(1).  One valid version of an
+-initramfs buffer is thus a single .cpio.gz file.
++archive can be compressed using gzip(1), or any other algorithm provided
++via CONFIG_DECOMPRESS_*.  One valid version of an initramfs buffer is
++thus a single .cpio.gz file.
+ 
+ The full format of the initramfs buffer is defined by the following
+ grammar, where::
+@@ -25,12 +23,20 @@ grammar, where::
+ 	*	is used to indicate "0 or more occurrences of"
+ 	(|)	indicates alternatives
+ 	+	indicates concatenation
+-	GZIP()	indicates the gzip(1) of the operand
++	GZIP()	indicates gzip compression of the operand
++	BZIP2()	indicates bzip2 compression of the operand
++	LZMA()	indicates lzma compression of the operand
++	XZ()	indicates xz compression of the operand
++	LZO()	indicates lzo compression of the operand
++	LZ4()	indicates lz4 compression of the operand
++	ZSTD()	indicates zstd compression of the operand
+ 	ALGN(n)	means padding with null bytes to an n-byte boundary
+ 
+-	initramfs  := ("\0" | cpio_archive | cpio_gzip_archive)*
++	initramfs := ("\0" | cpio_archive | cpio_compressed_archive)*
+ 
+-	cpio_gzip_archive := GZIP(cpio_archive)
++	cpio_compressed_archive := (GZIP(cpio_archive) | BZIP2(cpio_archive)
++		| LZMA(cpio_archive) | XZ(cpio_archive) | LZO(cpio_archive)
++		| LZ4(cpio_archive) | ZSTD(cpio_archive))
+ 
+ 	cpio_archive := cpio_file* + (<nothing> | cpio_trailer)
+ 
+@@ -75,6 +81,8 @@ c_chksum      8 bytes		 Checksum of data field if c_magic is 070702;
+ The c_mode field matches the contents of st_mode returned by stat(2)
+ on Linux, and encodes the file type and file permissions.
+ 
++c_mtime is ignored unless CONFIG_INITRAMFS_PRESERVE_MTIME=y is set.
++
+ The c_filesize should be zero for any file which is not a regular file
+ or symlink.
+ 
+-- 
+2.43.0
 
-Noticed that the nfs-utils-2-8-3 and release commit is not yet in
-https://git.linux-nfs.org/?p=steved/nfs-utils.git . Could you push
-those as well?
-
-Regards,
-Salvatore
 
