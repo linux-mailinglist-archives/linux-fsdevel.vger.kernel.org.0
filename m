@@ -1,181 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-45377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAF38A76C6C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 19:08:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 538DCA76C9B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 19:36:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 610A1188D14A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 17:08:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5561A7A465F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 17:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD24216386;
-	Mon, 31 Mar 2025 17:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A96215073;
+	Mon, 31 Mar 2025 17:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fPehXRci"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TTJINWJR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FADA21504A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 31 Mar 2025 17:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0224E1DF270
+	for <linux-fsdevel@vger.kernel.org>; Mon, 31 Mar 2025 17:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743440864; cv=none; b=AxjLv1cjthXjgxh+5W+fwHNspLDzBTrDITvo2nzM3rUtahu20dCX/cnVQoE2lZh33MuFJjWl2EaoHGlzX9gFC9JvSavCrwuyRnEMzABgGERIPBfQzDPpVNfdMH9uBJ73zu72zO+I4vIpDf1/DN/r9i1f36/OCIl4jzC1bPpvvZM=
+	t=1743442607; cv=none; b=kMGL1GNvrbmU/wrWGSTNlGfXH0y6x4QrkZNMIdAy/mlfzpgkCKzJQHXGp0ReFZqErATSNswWBErLDhPUzbbS5mySu+gqw1mc1kY2kCdwLiYQkMIG8X0w/7IN+8kWCXMO1J/9O+VLOcftlwJK1md12sqfrJnbqcz/Vsqo8Hv5PXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743440864; c=relaxed/simple;
-	bh=0XXHvVH3uTDCMxcR0WdIaNLdp3YBldH2uI8GRVxW53s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qldvBHQ16pCd+Rq4lnph4NfytBvSLcZb5XTkDUFXCnM3O1b2DvS4q9aJqkIS1UfJKIIDANAreQOmt4Xha/BGO4KE9cXbTkUP0BokXO1JVGtu7X1cj9FcRzoLPqw7QINmcZdyovTx035X+JMaXThgKY48o0UHjzXa5j5Z4793m94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fPehXRci; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 31 Mar 2025 13:07:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743440859;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=5OupMGobLMAwcSJf51wqGLHPQ4jZkY1BiImmx9cF0Dg=;
-	b=fPehXRci0Usgern7GARpYrL022EgKSkHiT2ifiNiDLZ7nRJ9q7skctJBP84hIECOFcFSeb
-	ZViJuCPxxknN6nvxOkzNz+vwMfk7LpKtWqYVKbUP2x6UaSd+t+/L9g3JY21fGVsl06sM9l
-	nadt6Ba9UIp0BuEBMI7Y8UbigRqqDbU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs updates for 6.15 part 2
-Message-ID: <insmfmxhkgbdvnnqaxkxfllhrea25hojvjaetxgdu3jr6txyjv@i44r2xo2virt>
+	s=arc-20240116; t=1743442607; c=relaxed/simple;
+	bh=zyvtuCmcRMhTWypB7AR+uVmJcGhENlboVLFjpvkxJ4s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cQFvfUKBkefvAAQIXOuFDYoJqtzNRJYNy3gYCQFSrNu6heMGbBczroB543Y2q7V/f3d4SUOnqDrpk5tMaqNl0C+QeteBP+JP0a7gGxlCr2da3nR4DsSreFxArfVEw8rXOVUtinzpBuJdh9AqeY1cApeXXL1Vm6W/AWDeE6wrV4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TTJINWJR; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e3978c00a5aso3892173276.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Mar 2025 10:36:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743442603; x=1744047403; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CqlXJO8zAVBoHffmuW1fiD4O94qu5RKH8ImDdOEHU8E=;
+        b=TTJINWJRGlYD9/L4nc2c2abTj49J2ivhK0/LTlO+K++n/gLsGxII3ZZ7lKEF9ulbH5
+         wWutLnEJ79XNlXuraLQAzMA2xb0BIR8wcoU12+ejl2cgI6lSIVgLkWO2SXALmcO9WOIW
+         UlAXMwo/8m0rlCrC/Cn2KPLcm9b14nmR5B0JSzl4ADGp88Sgam9+qmO5JvYOYDolTKRi
+         HPoyjsFgLhcnZyr7AIc8RecsII1wvZUiGW7XmK19IXqOdRyUcm7vd17oP1XUPCXK3vdw
+         DK0lNCg+ZqKTYS73V/60jhUBDOYU6fYFdPLwQIj+520Ilp3FKWpIJDSph2WkrzMvUiLF
+         vmvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743442603; x=1744047403;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CqlXJO8zAVBoHffmuW1fiD4O94qu5RKH8ImDdOEHU8E=;
+        b=TrGTfw2u8shGbQRDZMkFW99V3L+a9n2foenOL7CI44TlhT2n7boifK8zrtT3iNsEfj
+         CNe2B6oJv9Y3x2xJVOiR6nxr5CPvVZ2tVNJh+V8tgl6dJVXwgtiw9mmbdSlx6Cq02UxS
+         Yr33GweCYuoZEZJlvoiSMkWuGEXml4njNa6jWnbScTc2MNctPZV4bCGuKEGY8nwymRsl
+         BIT78qetmkdegd9Z9C9uYrHy4acBPUnb/X3EUYKey00oHALdoMaKfMId545GGO3MnXaX
+         9uTpB/+nhs0TNUMRse/scYxPJ00g6iTKFkQ5JD1vRvd+wJ2pueZaFH6SrDszHWiLpe4u
+         MjXg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8BDjxUikS/nRU0yhbBNjUQsIgj4ZPM1WMN+6UMDJcOL5t1rgjeLgl53lYu0m5eVihHGrUz504Cr/N+Bc/@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwO8JwwXM8Mt+5+mnZMe4cLSdSGj4PwF0n5rEDnZDTIECunsQQ
+	HsX7XGpTQMQsLyvaqqz1OZgQS2gqYfFwSZnENPW4/iIjHQQwBqvM
+X-Gm-Gg: ASbGncsUFyYGegM8OXCYBnK94MQN9bqvKltqYKLj91uZlW9OklBGUvZef/UPs9J4ZNP
+	6SbeW+ayCbj+bXIYqg5e+U2O64DgmodXDz5ZmKdOPCr7I3wP7H+FWZflc/22YmbQ+rrH2AeTfOi
+	2Vr6BfMR5aNCUVfqxBlJRDjuI9YFp+634r3eqQ3RXNncVAPdcvRbdi1djRPBHAbWOH8DjLwE+e5
+	11OpLi1HDE/OQ2jZjxDIRM2d9cNDykMP2ljiQgslKa1+fa3TC9h8bpYqxdwc69YZPLYQegw28Ft
+	I6nPp3i/NfyasOcFLanMP1x+bLmL03Z6q6piQuobpQ==
+X-Google-Smtp-Source: AGHT+IHk6aWCFGHXE5h9KrwOJX6QjDf7ywP500620xCPyLlc5cgbphTPkgNEJ16zMjZmmB6z5JfAIw==
+X-Received: by 2002:a05:6902:168f:b0:e60:5d76:f79d with SMTP id 3f1490d57ef6-e6b83afd0demr12658918276.43.1743442602739;
+        Mon, 31 Mar 2025 10:36:42 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:6::])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e6b71352689sm1946350276.57.2025.03.31.10.36.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Mar 2025 10:36:42 -0700 (PDT)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: miklos@szeredi.hu,
+	linux-fsdevel@vger.kernel.org
+Cc: bernd.schubert@fastmail.fm,
+	kernel-team@meta.com,
+	Bernd Schubert <bernd@bsbernd.com>
+Subject: [PATCH RESEND v2] fuse: optimize over-io-uring request expiration check
+Date: Mon, 31 Mar 2025 10:36:22 -0700
+Message-ID: <20250331173622.2788500-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-The following changes since commit d8bdc8daac1d1b0a4efb1ecc69bef4eb4fc5e050:
+Currently, when checking whether a request has timed out, we check
+fpq processing, but fuse-over-io-uring has one fpq per core and 256
+entries in the processing table. For systems where there are a
+large number of cores, this may be too much overhead.
 
-  bcachefs: Kill unnecessary bch2_dev_usage_read() (2025-03-24 09:50:37 -0400)
+Instead of checking the fpq processing list, check ent_w_req_queue
+and ent_in_userspace.
 
-are available in the Git repository at:
+Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+Reviewed-by: Bernd Schubert <bernd@bsbernd.com>
 
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-03-31
+---
+Changelog:
+v2: https://lore.kernel.org/linux-fsdevel/20250203193022.2583830-1-joannelkoong@gmail.com/
+v1: https://lore.kernel.org/linux-fsdevel/20250123235251.1139078-1-joannelkoong@gmail.com/
+* Remove commit queue check, which should be fine since if the request
+  has expired while on this queue, it will be shortly processed anyways
+---
+ fs/fuse/dev.c        |  2 +-
+ fs/fuse/dev_uring.c  | 26 +++++++++++++++++++++-----
+ fs/fuse/fuse_dev_i.h |  1 +
+ 3 files changed, 23 insertions(+), 6 deletions(-)
 
-for you to fetch changes up to 650f5353dcc9b6e690a1c763754fa1e98d217bfc:
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 696ab0403120..3055af8089d7 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -45,7 +45,7 @@ bool fuse_request_expired(struct fuse_conn *fc, struct list_head *list)
+ 	return time_is_before_jiffies(req->create_time + fc->timeout.req_timeout);
+ }
+ 
+-bool fuse_fpq_processing_expired(struct fuse_conn *fc, struct list_head *processing)
++static bool fuse_fpq_processing_expired(struct fuse_conn *fc, struct list_head *processing)
+ {
+ 	int i;
+ 
+diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+index accdce2977c5..43d77a2c63de 100644
+--- a/fs/fuse/dev_uring.c
++++ b/fs/fuse/dev_uring.c
+@@ -140,6 +140,21 @@ void fuse_uring_abort_end_requests(struct fuse_ring *ring)
+ 	}
+ }
+ 
++static bool ent_list_request_expired(struct fuse_conn *fc, struct list_head *list)
++{
++	struct fuse_ring_ent *ent;
++	struct fuse_req *req;
++
++	ent = list_first_entry_or_null(list, struct fuse_ring_ent, list);
++	if (!ent)
++		return false;
++
++	req = ent->fuse_req;
++
++	return time_is_before_jiffies(req->create_time +
++				      fc->timeout.req_timeout);
++}
++
+ bool fuse_uring_request_expired(struct fuse_conn *fc)
+ {
+ 	struct fuse_ring *ring = fc->ring;
+@@ -157,7 +172,8 @@ bool fuse_uring_request_expired(struct fuse_conn *fc)
+ 		spin_lock(&queue->lock);
+ 		if (fuse_request_expired(fc, &queue->fuse_req_queue) ||
+ 		    fuse_request_expired(fc, &queue->fuse_req_bg_queue) ||
+-		    fuse_fpq_processing_expired(fc, queue->fpq.processing)) {
++		    ent_list_request_expired(fc, &queue->ent_w_req_queue) ||
++		    ent_list_request_expired(fc, &queue->ent_in_userspace)) {
+ 			spin_unlock(&queue->lock);
+ 			return true;
+ 		}
+@@ -494,7 +510,7 @@ static void fuse_uring_cancel(struct io_uring_cmd *cmd,
+ 	spin_lock(&queue->lock);
+ 	if (ent->state == FRRS_AVAILABLE) {
+ 		ent->state = FRRS_USERSPACE;
+-		list_move(&ent->list, &queue->ent_in_userspace);
++		list_move_tail(&ent->list, &queue->ent_in_userspace);
+ 		need_cmd_done = true;
+ 		ent->cmd = NULL;
+ 	}
+@@ -714,7 +730,7 @@ static int fuse_uring_send_next_to_ring(struct fuse_ring_ent *ent,
+ 	cmd = ent->cmd;
+ 	ent->cmd = NULL;
+ 	ent->state = FRRS_USERSPACE;
+-	list_move(&ent->list, &queue->ent_in_userspace);
++	list_move_tail(&ent->list, &queue->ent_in_userspace);
+ 	spin_unlock(&queue->lock);
+ 
+ 	io_uring_cmd_done(cmd, 0, 0, issue_flags);
+@@ -764,7 +780,7 @@ static void fuse_uring_add_req_to_ring_ent(struct fuse_ring_ent *ent,
+ 	clear_bit(FR_PENDING, &req->flags);
+ 	ent->fuse_req = req;
+ 	ent->state = FRRS_FUSE_REQ;
+-	list_move(&ent->list, &queue->ent_w_req_queue);
++	list_move_tail(&ent->list, &queue->ent_w_req_queue);
+ 	fuse_uring_add_to_pq(ent, req);
+ }
+ 
+@@ -1180,7 +1196,7 @@ static void fuse_uring_send(struct fuse_ring_ent *ent, struct io_uring_cmd *cmd,
+ 
+ 	spin_lock(&queue->lock);
+ 	ent->state = FRRS_USERSPACE;
+-	list_move(&ent->list, &queue->ent_in_userspace);
++	list_move_tail(&ent->list, &queue->ent_in_userspace);
+ 	ent->cmd = NULL;
+ 	spin_unlock(&queue->lock);
+ 
+diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
+index b3c2e32254ba..20f7c10102b2 100644
+--- a/fs/fuse/fuse_dev_i.h
++++ b/fs/fuse/fuse_dev_i.h
+@@ -65,6 +65,7 @@ bool fuse_remove_pending_req(struct fuse_req *req, spinlock_t *lock);
+ 
+ bool fuse_request_expired(struct fuse_conn *fc, struct list_head *list);
+ bool fuse_fpq_processing_expired(struct fuse_conn *fc, struct list_head *processing);
++bool fuse_request_expired(struct fuse_conn *fc, struct list_head *list);
+ 
+ #endif
+ 
+-- 
+2.47.1
 
-  bcachefs: fix bch2_write_point_to_text() units (2025-03-30 20:04:16 -0400)
-
-----------------------------------------------------------------
-bcachefs updates for 6.15, part 2
-
-All bugfixes and logging improvements.
-
-Minor merge conflict, see:
-https://lore.kernel.org/linux-next/20250331092816.778a7c83@canb.auug.org.au/T/#u
-
-CI says the fs-next tree is good:
-https://evilpiepirate.org/~testdashboard/ci?user=fs-next&branch=master
-
-----------------------------------------------------------------
-Florian Albrechtskirchinger (1):
-      bcachefs: Fix bch2_fs_get_tree() error path
-
-Kent Overstreet (34):
-      bcachefs: Fix nonce inconsistency in bch2_write_prep_encoded_data()
-      bcachefs: Fix silent short reads in data read retry path
-      bcachefs: Fix duplicate checksum error messages in write path
-      bcachefs: Use print_string_as_lines() for journal stuck messages
-      bcachefs: Validate number of counters for accounting keys
-      bcachefs: Document disk accounting keys and conuters
-      bcachefs: Don't unnecessarily decrypt data when moving
-      bcachefs: Fix btree iter flags in data move (2)
-      bcachefs: Fix 'hung task' messages in btree node scan
-      bcachefs: cond_resched() in journal_key_sort_cmp()
-      bcachefs: Fix permissions on version modparam
-      bcachefs: Recovery no longer holds state_lock
-      bcachefs: Fix bch2_seek_hole() locking
-      bcachefs: Don't return 0 size holes from bch2_seek_hole()
-      bcachefs: Fix WARN() in bch2_bkey_pick_read_device()
-      bcachefs: print_string_as_lines: fix extra newline
-      bcachefs: add missing newline in bch2_trans_updates_to_text()
-      bcachefs: fix logging in journal_entry_err_msg()
-      bcachefs: bch2_time_stats_init_no_pcpu()
-      bcachefs: Add an "ignore unknown" option to bch2_parse_mount_opts()
-      bcachefs: Consistent indentation of multiline fsck errors
-      bcachefs: Better helpers for inconsistency errors
-      bcachefs: bch2_count_fsck_err()
-      bcachefs: Better printing of inconsistency errors
-      bcachefs: Change btree_insert_node() assertion to error
-      bcachefs: Clear fs_path_parent on subvolume unlink
-      bcachefs: bch2_ioctl_subvolume_destroy() fixes
-      bcachefs: fix units in rebalance_status
-      bcachefs: Silence errors after emergency shutdown
-      bcachefs: Don't use designated initializers for disk_accounting_pos
-      bcachefs: Reorder error messages that include journal debug
-      bcachefs: BCH_JSET_ENTRY_log_bkey
-      bcachefs: Log original key being moved in data updates
-      bcachefs: fix bch2_write_point_to_text() units
-
- fs/bcachefs/alloc_background.c       |  22 ++--
- fs/bcachefs/alloc_foreground.c       |   2 +-
- fs/bcachefs/backpointers.c           |  43 ++++---
- fs/bcachefs/bcachefs_format.h        |   3 +-
- fs/bcachefs/btree_cache.c            |   2 +-
- fs/bcachefs/btree_gc.c               |  23 ++--
- fs/bcachefs/btree_io.c               |  63 +++++-----
- fs/bcachefs/btree_iter.c             |  14 +--
- fs/bcachefs/btree_iter.h             |   1 -
- fs/bcachefs/btree_journal_iter.c     |   2 +
- fs/bcachefs/btree_node_scan.c        |  14 ++-
- fs/bcachefs/btree_update.c           |  13 ++
- fs/bcachefs/btree_update.h           |   2 +
- fs/bcachefs/btree_update_interior.c  |  91 ++++++++------
- fs/bcachefs/buckets.c                | 161 ++++++++++++++-----------
- fs/bcachefs/chardev.c                |   6 +-
- fs/bcachefs/data_update.c            |  22 +++-
- fs/bcachefs/data_update.h            |  12 ++
- fs/bcachefs/disk_accounting.c        |  40 ++++---
- fs/bcachefs/disk_accounting.h        |   8 +-
- fs/bcachefs/disk_accounting_format.h |  80 +++++++++++--
- fs/bcachefs/ec.c                     |  22 ++--
- fs/bcachefs/errcode.h                |   3 +
- fs/bcachefs/error.c                  | 226 ++++++++++++++++++++++++++---------
- fs/bcachefs/error.h                  |  48 ++++----
- fs/bcachefs/extents.c                |   7 +-
- fs/bcachefs/fs-io-buffered.c         |   2 +-
- fs/bcachefs/fs-io.c                  |  31 +++--
- fs/bcachefs/fs-ioctl.c               |   6 +-
- fs/bcachefs/fs.c                     |   9 +-
- fs/bcachefs/fsck.c                   |  22 ++--
- fs/bcachefs/io_read.c                |   4 +-
- fs/bcachefs/io_read.h                |   6 +-
- fs/bcachefs/io_write.c               |  44 ++++---
- fs/bcachefs/journal.c                |  19 +--
- fs/bcachefs/journal_io.c             |  38 ++++--
- fs/bcachefs/lru.c                    |   7 +-
- fs/bcachefs/move.c                   |  37 +++++-
- fs/bcachefs/namei.c                  |   4 +-
- fs/bcachefs/opts.c                   |  49 ++++----
- fs/bcachefs/opts.h                   |   3 +-
- fs/bcachefs/printbuf.c               |  19 +++
- fs/bcachefs/printbuf.h               |   1 +
- fs/bcachefs/progress.c               |   6 +-
- fs/bcachefs/rebalance.c              |   5 +-
- fs/bcachefs/recovery_passes.c        |  12 +-
- fs/bcachefs/reflink.c                |  12 +-
- fs/bcachefs/sb-errors_format.h       |   6 +-
- fs/bcachefs/snapshot.c               |  16 +--
- fs/bcachefs/str_hash.c               |   2 +-
- fs/bcachefs/subvolume.c              |   1 +
- fs/bcachefs/super.c                  |  38 +++---
- fs/bcachefs/sysfs.c                  |   9 +-
- fs/bcachefs/time_stats.c             |  20 +++-
- fs/bcachefs/time_stats.h             |   1 +
- fs/bcachefs/util.c                   |   2 +-
- fs/bcachefs/util.h                   |   1 +
- 57 files changed, 856 insertions(+), 506 deletions(-)
 
