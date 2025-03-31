@@ -1,154 +1,222 @@
-Return-Path: <linux-fsdevel+bounces-45319-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9549BA762FE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 11:13:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EF9DA76311
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 11:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CFB3169E0B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 09:13:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 747763A6D51
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 09:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993BC1DACA7;
-	Mon, 31 Mar 2025 09:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664C71D9A49;
+	Mon, 31 Mar 2025 09:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y21qwdpz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T9r1LbAn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECFA713CA97;
-	Mon, 31 Mar 2025 09:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68326259C;
+	Mon, 31 Mar 2025 09:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743412408; cv=none; b=WKvJ9OB8QdtpriMkmwdCgxeVIoLKd+Ckd7szVT9StiAm3UaCXf4qcP5qz1cFmgV1ZwxaMDDUDGO48yDgqqurSMSIwIfyemdkyQihezpGPuQ/cgPcS04mDLR/L1HidLLKqN+GAsTtZ4qWj+p5w+7RhEVjL8dLJHaDj+zoeqBbkBE=
+	t=1743412661; cv=none; b=oF9AoRvAKhXd4npsuBMTA2bIzviRhueNSV2JxGlGJ5vBvQfI1aIZaLDa5fD7vt3qHYZe/eGCJiPjHXcFCixzhuf4KGXGb7S20pHPHnkleWJmZ5q3w7q2NEdP4eLwmUsmnMjdrDjO2ZEHJ8pmf+yUoha/74Xijo3Vq+ifvuW52KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743412408; c=relaxed/simple;
-	bh=P9fMSpSn4Svn5ww5bpg2gabNVZZWkbyy9tvOD2Nel8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q1XDssszRQD+TpC9YnzkkMsOD7GSyBjYBYV4/TKrgjbO12P5DoAkt617iVOdLM12beRsuPISaoC+Xqs9fV1jN7VFgy3HKN7TL+mVsaqUxqCMCT4MKGlp9qFLIjnXckkkL4OJKB3dxsCWqFq08wHsyRu4rdhyepLvkCN/nnilt6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y21qwdpz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A95E4C4CEE3;
-	Mon, 31 Mar 2025 09:13:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743412407;
-	bh=P9fMSpSn4Svn5ww5bpg2gabNVZZWkbyy9tvOD2Nel8I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y21qwdpzy3yp0rkjKWgyfcATC/8e28FkCoAaWRITgSNECYAorLOz4GR2pJ/ZVntc4
-	 +loHP0op04pdj4B6yAQqalZ9KCBCg+NZkNj3h5lx0jAgO1x8xWK7KFan+ZZffmRrr+
-	 mDf/yVgoWIlWT4RlmWmr7cdPF8v3Md1/KTGKSU6QLqOkSLBaTYXM4/GCkKEcH0ZyTH
-	 khT7mebsXCBUp/5O2QdBDV7aHioqQJveDJwfEuc1wibzCqozbEJPjtPJPuzSaVoNRZ
-	 e1Q9ms0+LNTiVeOVxK+ayaSIvvqCHP1UVEyVmsurbWb16XDgqUpGDH1lW1Z5GawjWW
-	 cRPip7WEwoKoA==
-Date: Mon, 31 Mar 2025 11:13:20 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mcgrof@kernel.org, hch@infradead.org, david@fromorbit.com, 
-	rafael@kernel.org, djwong@kernel.org, pavel@kernel.org, peterz@infradead.org, 
-	mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com
-Subject: Re: [PATCH v2 0/6] Extend freeze support to suspend and hibernate
-Message-ID: <20250331-inkrafttreten-lieder-5396ffd0af7a@brauner>
-References: <20250328-work-freeze-v1-0-a2c3a6b0e7a6@kernel.org>
- <20250329-work-freeze-v2-0-a47af37ecc3d@kernel.org>
- <12ce8c18f4e16b1de591cbdfb8f6e7844e42807b.camel@HansenPartnership.com>
- <9c0a24cd8b03539fd6b8ecd5a186a5cf98b5d526.camel@HansenPartnership.com>
- <20250330-heimweg-packen-b73908210f79@brauner>
- <3f140c076c3756e84d515b81ee9eeeaf13ca4b42.camel@HansenPartnership.com>
+	s=arc-20240116; t=1743412661; c=relaxed/simple;
+	bh=kaiELQkqTr0E/qcyQ8OuqflCAPZzOhc6NAzCCXMQDE8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=rfrJ3qr1BR6WCRQ8u0kIKm1Vip/iEemdj0x8VU6OwEW4mVLeLfcJBVIOQu53Km6vJWblLMYdUg/J73Y5i4wvw0Zce67wMh9F0XwFf5zyqaK5ajNydws38crORWo6kHRYPIb/FMegTu9s3YXwik7s5e+ZjeEwiILcoRwDNurl2oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T9r1LbAn; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-223fd89d036so90006475ad.1;
+        Mon, 31 Mar 2025 02:17:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743412660; x=1744017460; darn=vger.kernel.org;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QznPLJKqzWPL35Cepg1nAB4/tw1/hzZeJhITfjvZmpQ=;
+        b=T9r1LbAn6JdD0Qzi4lKRi6D378uAI9duAk1SXfw+HsXvsrY+jm2jgjqwSK9GXDFc8b
+         PqJT6H4izKeKvZXXm/e+KkJm+Z2olYi3323nCJag3RYTxeIzvEdrlNcIxkki7iFHqUGP
+         gx1RdHbc8p4JpxSjet+uUcQWuO6Avg82401uwSGigBHXZCD75rqVgyrB3lYfuTLGaQkN
+         Xbb2dcxR3PEEBwdTB+ZsgGgNb07xJ8WqCxT1Ddb0ZfaD5H8elFO6R2CLPJO7xnPoqk9J
+         AaQbrYhaLcnq5BTDMp6WX7eAuyS4cblp3kF0vDjTZCJDpR99dPi/6qOwKNddwQLCcNUw
+         ahsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743412660; x=1744017460;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QznPLJKqzWPL35Cepg1nAB4/tw1/hzZeJhITfjvZmpQ=;
+        b=gar/eknsqdG24yy5rFsCWluCbhEb8e+nKn6aNAZU0QkZqpsgu/3Cs8cR8snkeq2GsR
+         43ej3BR9Hdj1OAkOtazBfAMR1VSBSHa2AfCfjK8k37Yo8kvd5Ha/dI483egWHIaxjIsB
+         LCdsM5yK5K1GdHf5hNIIIWr3UCjc3OiD5qf/BHrC6iLTO1YtZOaEDct6HHJUzzNerB1I
+         LjYCuiFbfIjPIZvKE8kqa+aboX970NCRoy9BONVjT8MP+NohntG/3xS/pRZhqBUqmH4p
+         KAum5fL7qF06S7eLqtw4nDIkBMZAo56R4/aLQbWfZo6LE9hf7RxEULRkUiaDnWjQ0FON
+         LheQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBbHR0Ax9C+eAqB3++zq/yF4OmNvZ48SeZVoFRy4vxZt7CJ43TJgF+TXgflq4pkNFwil78Wa9+GMXty/59@vger.kernel.org, AJvYcCXkFJqRCsE/cGa7gkreyEoINZsTbWDK4gpeS1m0vYivKkK4QzDK3FpnHPui5pUWw6XeLjmzT0AFR754DN4k@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc/zuSr/Z04sM9x61KlvJzJqoK2Yt+JWvKn6EJBUEO0MH8iYez
+	DTiDy/5j1xCXscNxffNRGsWb1GD+QjIv8c0W4slvjSQ2UjX4841L
+X-Gm-Gg: ASbGncuLDuNV8Tt9CxLidhB+xePsC/JscA7insClMZvT0jq7CIHg7LFVcgakw5b8pZ0
+	eMCvrLbDsFVwlfK4oJEXw9Fui4+63ygYXJVos+mlDR+AE1ki9TIwuPmdwDoV2AOSciyH3cESeBW
+	DwiC2Rxhb14fc6FnuniaIhiYYbH1VSS3jN8YVohGELkJY9rbp/7pz1FbIolnR/LPgU9mjZBxxBx
+	TnoaoXGJOQ2b21vUR9tYrHwAKbMfiAEdoA429zre3seH8RroDBmEGvcqb5LlaxNUwCn7+r1jNaV
+	kR/pwceQPAK5fr2rmPDndvNteV1Q99+8t5s4QhsFYZHMqsbjgydwxy7W7ZZQxepLuZNWHBW9sQ=
+	=
+X-Google-Smtp-Source: AGHT+IH+90jBd+jyhuEi5x/gEVYfwAW5yK2+2Vf5DhsZy52DOKGxwEc7qUKBE9+aHjxyyxVburC4yw==
+X-Received: by 2002:a17:902:d550:b0:220:fe51:1aab with SMTP id d9443c01a7336-2292f9e84a5mr166869355ad.38.1743412659660;
+        Mon, 31 Mar 2025 02:17:39 -0700 (PDT)
+Received: from localhost.localdomain ([221.214.202.225])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30516d61799sm6754474a91.23.2025.03.31.02.17.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Mar 2025 02:17:39 -0700 (PDT)
+From: Penglei Jiang <superman.xpt@gmail.com>
+To: akpm@linux-foundation.org
+Cc: adrian.ratiu@collabora.com,
+	brauner@kernel.org,
+	felix.moessbauer@siemens.com,
+	jlayton@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lorenzo.stoakes@oracle.com,
+	mjguzik@gmail.com,
+	superman.xpt@gmail.com,
+	syzbot+02e64be5307d72e9c309@syzkaller.appspotmail.com,
+	syzbot+f9238a0a31f9b5603fef@syzkaller.appspotmail.com,
+	tglx@linutronix.de,
+	viro@zeniv.linux.org.uk,
+	xu.xin16@zte.com.cn
+Subject: [PATCH V3] proc: Fix the issue of proc_mem_open returning NULL
+Date: Mon, 31 Mar 2025 02:16:35 -0700
+Message-Id: <20250331091635.36547-1-superman.xpt@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20250327122445.cbd211c3216aa754917f3677@linux-foundation.org>
+References: <20250327122445.cbd211c3216aa754917f3677@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3f140c076c3756e84d515b81ee9eeeaf13ca4b42.camel@HansenPartnership.com>
 
-On Sun, Mar 30, 2025 at 10:00:56AM -0400, James Bottomley wrote:
-> On Sun, 2025-03-30 at 10:33 +0200, Christian Brauner wrote:
-> [...]
-> > > I found the systemd bug
-> > > 
-> > > https://github.com/systemd/systemd/issues/36888
-> > 
-> > I don't think that's a systemd bug.
-> 
-> Heh, well I have zero interest in refereeing a turf war between systemd
-> and dracut over mismatched expectations.  The point for anyone who
-> wants to run hibernate tests is that until they both sort this out the
-> bug can be fixed by removing the system identifier check from systemd-
-> hibernate-resume-generator.
-> 
-> > > And hacked around it, so I can confirm a simple hibernate/resume
-> > > works provided the sd_start_write() patches are applied (and the
-> > > hooks are plumbed in to pm).
-> > > 
-> > > There is an oddity: the systemd-journald process that would usually
-> > > hang hibernate in D wait goes into R but seems to be hung and can't
-> > > be killed by the watchdog even with a -9.  It's stack trace says
-> > > it's still stuck in sb_start_write:
-> > > 
-> > > [<0>] percpu_rwsem_wait.constprop.10+0xd1/0x140
-> > > [<0>] ext4_page_mkwrite+0x3c1/0x560 [ext4]
-> > > [<0>] do_page_mkwrite+0x38/0xa0
-> > > [<0>] do_wp_page+0xd5/0xba0
-> > > [<0>] __handle_mm_fault+0xa29/0xca0
-> > > [<0>] handle_mm_fault+0x16a/0x2d0
-> > > [<0>] do_user_addr_fault+0x3ab/0x810
-> > > [<0>] exc_page_fault+0x68/0x150
-> > > [<0>] asm_exc_page_fault+0x22/0x30
-> > > 
-> > > So I think there's something funny going on in thaw.
-> > 
-> > My uneducated guess is that it's probably an issue with ext4 freezing
-> > and unfreezing. xfs stops workqueues after all writes and pagefault
-> > writers have stopped. This is done in ->sync_fs() when it's called
-> > from freeze_super(). They are restarted when ->unfreeze_fs is called.
-> 
-> It is possible, but I note that if I do
-> 
-> fsfreeze --freeze /
+On Thu, 27 Mar 2025 12:24:45 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
 
-Freezing the root filesystem from userspace will inevitably lead to an
-odd form of deadlock eventually. Either the first accidental request for
-opening something as writable or even the call to fsfreeze --unfreeze /
-may deadlock.
+> On Mon, 24 Mar 2025 21:14:48 -0700 Penglei Jiang <superman.xpt@gmail.com> wrote:
+>
+> > > >  if (IS_ERR(mm))
+> > > > -return mm == ERR_PTR(-ESRCH) ? NULL : mm;
+> > > > +return mm;
+> > > >
+> > > >  /* ensure this mm_struct can't be freed */
+> > > >  mmgrab(mm);
+> > > > --
+> > > > 2.17.1
+> > > >
+> >
+> > Mateusz Guzik provides valuable suggestions.
+> >
+> > Complete the missing NULL checks.
+>
+> proc_mem_open() can return errno, NULL or mm_struct*.  It isn't obvious
+> why.
+>
+> While you're in there can you please add documentation to
+> proc_mem_open() which explains its return values?
 
-The most likely explanation for this stacktrace is that the root
-filesystem isn't unfrozen. In userspace it's easy enough to trigger by
-leaving the filesystem frozen without also freezing userspace processes
-accessing that filesystem:
+I apologize for the delayed response.
 
-[  243.232205] INFO: task systemd-journal:539 blocked for more than 120 seconds.
-[  243.239491]       Not tainted 6.14.0-g9ad3884269ca #131
-[  243.243771] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[  243.248517] task:systemd-journal state:D stack:0     pid:539   tgid:539   ppid:1      task_flags:0x400100 flags:0x00000006
-[  243.253480] Call Trace:
-[  243.254641]  <TASK>
-[  243.255663]  __schedule+0x61e/0x1080
-[  243.257071]  ? percpu_rwsem_wait+0x149/0x1b0
-[  243.258473]  schedule+0x3a/0x120
-[  243.259533]  percpu_rwsem_wait+0x155/0x1b0
-[  243.260844]  ? __pfx_percpu_rwsem_wake_function+0x10/0x10
-[  243.262620]  __percpu_down_read+0x83/0x1c0
-[  243.263968]  btrfs_page_mkwrite+0x45b/0x890 [btrfs]
-[  243.266828]  ? find_held_lock+0x2b/0x80
-[  243.267765]  do_page_mkwrite+0x4a/0xb0
-[  243.268698]  do_wp_page+0x331/0xdc0
-[  243.269559]  __handle_mm_fault+0xb15/0x11d0
-[  243.270566]  handle_mm_fault+0xb8/0x2b0
-[  243.271557]  do_user_addr_fault+0x20a/0x700
-[  243.272574]  exc_page_fault+0x6a/0x200
-[  243.273462]  asm_exc_page_fault+0x26/0x30
+Add documentation comments to proc_mem_open() and add NULL checks in
+several call sites.
 
-This happens because systemd-journald mmaps the journal file. It
-triggers a pagefault which wants to get pagefault based write access to
-the file. But it can't because pagefaults are frozen. So it hangs and as
-it's not frozen it will trigger hung task warnings.
+Signed-off-by: Penglei Jiang <superman.xpt@gmail.com>
+---
+ fs/proc/base.c       | 12 +++++++++---
+ fs/proc/task_mmu.c   | 12 ++++++------
+ fs/proc/task_nommu.c |  4 ++--
+ 3 files changed, 17 insertions(+), 11 deletions(-)
 
-IOW, the most likely explanation is that the root filesystem wasn't
-unfrozen and systemd-journald wasn't frozen.
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 5538c4aee8fa..cbe4e7d557e1 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -827,7 +827,13 @@ static const struct file_operations proc_single_file_operations = {
+ 	.release	= single_release,
+ };
+ 
+-
++/*
++ * proc_mem_open() can return errno, NULL or mm_struct*.
++ *
++ *   - Returns NULL if the task has no mm (task->flags & PF_KTHREAD)
++ *   - Returns mm_struct* on success
++ *   - Returns error code on failure
++ */
+ struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
+ {
+ 	struct task_struct *task = get_proc_task(inode);
+@@ -854,8 +860,8 @@ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
+ {
+ 	struct mm_struct *mm = proc_mem_open(inode, mode);
+ 
+-	if (IS_ERR(mm))
+-		return PTR_ERR(mm);
++	if (IS_ERR_OR_NULL(mm))
++		return mm ? PTR_ERR(mm) : -ESRCH;
+ 
+ 	file->private_data = mm;
+ 	return 0;
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index f02cd362309a..14d1d8d3e432 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -212,8 +212,8 @@ static int proc_maps_open(struct inode *inode, struct file *file,
+ 
+ 	priv->inode = inode;
+ 	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
+-	if (IS_ERR(priv->mm)) {
+-		int err = PTR_ERR(priv->mm);
++	if (IS_ERR_OR_NULL(priv->mm)) {
++		int err = priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
+ 
+ 		seq_release_private(inode, file);
+ 		return err;
+@@ -1312,8 +1312,8 @@ static int smaps_rollup_open(struct inode *inode, struct file *file)
+ 
+ 	priv->inode = inode;
+ 	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
+-	if (IS_ERR(priv->mm)) {
+-		ret = PTR_ERR(priv->mm);
++	if (IS_ERR_OR_NULL(priv->mm)) {
++		ret = priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
+ 
+ 		single_release(inode, file);
+ 		goto out_free;
+@@ -2045,8 +2045,8 @@ static int pagemap_open(struct inode *inode, struct file *file)
+ 	struct mm_struct *mm;
+ 
+ 	mm = proc_mem_open(inode, PTRACE_MODE_READ);
+-	if (IS_ERR(mm))
+-		return PTR_ERR(mm);
++	if (IS_ERR_OR_NULL(mm))
++		return mm ? PTR_ERR(mm) : -ESRCH;
+ 	file->private_data = mm;
+ 	return 0;
+ }
+diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
+index bce674533000..59bfd61d653a 100644
+--- a/fs/proc/task_nommu.c
++++ b/fs/proc/task_nommu.c
+@@ -260,8 +260,8 @@ static int maps_open(struct inode *inode, struct file *file,
+ 
+ 	priv->inode = inode;
+ 	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
+-	if (IS_ERR(priv->mm)) {
+-		int err = PTR_ERR(priv->mm);
++	if (IS_ERR_OR_NULL(priv->mm)) {
++		int err = priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
+ 
+ 		seq_release_private(inode, file);
+ 		return err;
+-- 
+2.17.1
+
 
