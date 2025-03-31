@@ -1,199 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-45316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45317-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 866A4A75F02
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 08:50:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7194A76120
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 10:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D97018891D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 06:50:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66B463A5F52
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 08:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39AA9192D96;
-	Mon, 31 Mar 2025 06:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8AD61D90C8;
+	Mon, 31 Mar 2025 08:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dMONIVjP";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="09wHGfdY";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dMONIVjP";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="09wHGfdY"
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="rn6gP9Tr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB7870805
-	for <linux-fsdevel@vger.kernel.org>; Mon, 31 Mar 2025 06:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFA0157A5A;
+	Mon, 31 Mar 2025 08:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743403803; cv=none; b=TKVcXXk554HdE2wqbl6vHzz3zvhLT/4blqwvu1kluk6JVoMXPusJw4DOl8AhvbQmi9WHC7AkB0auantIpxIIqgP7EWp6j+S7manBL7H7b2LbhDjr6dC3svRn9132Vrrb4/l7l8h633fzc8iG6UA45ZUjyuanRIDRYFdI/Ign8jU=
+	t=1743408919; cv=none; b=eL/ug6rFNneyuLbXx29QJZ0kkFA0927ziRgf2+glVzFRtrk0wyLsVe/2da9LFlVUV4toyLHcnaf4WBEXotZfLTsdG0PhW2Of4s20QamZmPlDv4MTaN6WNKFAQOFWe6RfAQ/eNIxWw4x1UmETsUZvY4iETtnQCSmcVS+fZV751qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743403803; c=relaxed/simple;
-	bh=D3O5imBHUYGS5OxjuAF0+hlyxeWodMwjvFTbgrjbpe4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hEz9TwhGdJBGBfPRlbs1fb2fUVI1IFSeS7wy2aCTOQVyKG/FlsHTKkkzr3TFsRGx/wbeVrhZ8CBmCaJwlHQDN165Eeb5+49X3vnEr6e1zMe2SHYEuBeeZ9j8tvSgL6qD+xNcZ6iyJqv4GFMVaj7KuSELoErQPrtx46TL2C6Bu9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dMONIVjP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=09wHGfdY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dMONIVjP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=09wHGfdY; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F417C21197;
-	Mon, 31 Mar 2025 06:49:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743403800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VPyRbVbHSj/XyzZeopPN7997hVKl+H5ekbnEEyjfIJ8=;
-	b=dMONIVjP1JvnMtyCaXJz14Doc1kvCQrENwA6aJevbGuvONuUHllbojuoNi3EBgzXYcPtrC
-	fF8cBDvhYBViCNzonwjDpmmqCwadnslTf4Rw72C6vqJsvRTaDNN3vr8xKiTvTwcFCGwmxG
-	2S5AjRuVa+V5aRhb6n4ZTRb/lCdT1nc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743403800;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VPyRbVbHSj/XyzZeopPN7997hVKl+H5ekbnEEyjfIJ8=;
-	b=09wHGfdYBGhExkIK3F9fic1Vec8G4MNx2hedWYJHCZXFey0Ign0shr6r4V2V177ZMMc4dv
-	WimDb9Ct9rEij6CQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=dMONIVjP;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=09wHGfdY
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743403800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VPyRbVbHSj/XyzZeopPN7997hVKl+H5ekbnEEyjfIJ8=;
-	b=dMONIVjP1JvnMtyCaXJz14Doc1kvCQrENwA6aJevbGuvONuUHllbojuoNi3EBgzXYcPtrC
-	fF8cBDvhYBViCNzonwjDpmmqCwadnslTf4Rw72C6vqJsvRTaDNN3vr8xKiTvTwcFCGwmxG
-	2S5AjRuVa+V5aRhb6n4ZTRb/lCdT1nc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743403800;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VPyRbVbHSj/XyzZeopPN7997hVKl+H5ekbnEEyjfIJ8=;
-	b=09wHGfdYBGhExkIK3F9fic1Vec8G4MNx2hedWYJHCZXFey0Ign0shr6r4V2V177ZMMc4dv
-	WimDb9Ct9rEij6CQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ED3C3139A1;
-	Mon, 31 Mar 2025 06:49:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id sLjWKBU76mcjHAAAD6G6ig
-	(envelope-from <ddiss@suse.de>); Mon, 31 Mar 2025 06:49:57 +0000
-Date: Mon, 31 Mar 2025 17:49:51 +1100
-From: David Disseldorp <ddiss@suse.de>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org
-Subject: Re: [PATCH] docs: initramfs: update compression and mtime
- descriptions
-Message-ID: <20250331174951.7818afb1.ddiss@suse.de>
-In-Reply-To: <39c91e20-94b2-4103-8654-5a7bbb8e1971@infradead.org>
-References: <20250331050330.17161-1-ddiss@suse.de>
-	<39c91e20-94b2-4103-8654-5a7bbb8e1971@infradead.org>
+	s=arc-20240116; t=1743408919; c=relaxed/simple;
+	bh=/K1LqsVggHmL0UhIvJIi4z7UtHYa7X4m1Mt1UAfv840=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=ijFZDtLLWLE2/hbZkTR3J8vJBVZSH2T1cEH73LpTT7s1A9nKTiwdqpEa/2sJ2iJ8v6aULzPKg2pPVFoeolTsnwtpwzcvYYQnDPpAiAnHBCKCYfLThRta06bnZExhmtrdJFJ4cemX2jOZZ2OiArC6zEEfOalZwjxNFBZjA1/4u/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=rn6gP9Tr; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1743408914; x=1744013714; i=quwenruo.btrfs@gmx.com;
+	bh=6+9wgwyWz1ODyntJIKBnB7YG1IaQT7gJbMSQb5t6zjc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:From:Subject:
+	 Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=rn6gP9Tray5TjP+E67J2mSKMkVfYYt+GRk5uMfa4EHdCRZdew1Qa+pehbSdrw5LQ
+	 x0LJssO0r30FUqtvWT9vRmYgAtph9jKtZ1E8TRRqnnzj2xN18gM+rXKCAZGyLrecf
+	 nfN0IPtvjkr068lqqxVr8IRqLb5ylbeuIcF2HAHT3cJXYX6nB0UToqfn+iZJZMtKR
+	 SCDu7sq5tNRXMr3fhq6R78nlAhrSl/3qi4LKtpUOqBrjNDTfKxMkmqC7DsNGREh9+
+	 Gea1FToDFLCrmEHyndwzdWrctYj8sQXPGEbgul7uzEpLPIoQ8oAzKT3BaidAqrBs9
+	 0/ckWM5nGCX8RB6pVQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1M5wPb-1u15yL0c6F-002zPq; Mon, 31
+ Mar 2025 10:15:14 +0200
+Message-ID: <17517804-1c6b-4b96-a608-8c3d80e5f6dd@gmx.com>
+Date: Mon, 31 Mar 2025 18:45:10 +1030
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: F417C21197
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim,suse.de:mid]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linux Memory Management List <linux-mm@kvack.org>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org, linux-btrfs <linux-btrfs@vger.kernel.org>
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
+ sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
+ xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
+ naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
+ tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
+ 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
+ VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
+ CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
+ B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
+ Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
+ +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
+ HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
+Subject: Proper way to copy de-compressed data into a bio, in folio style?
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Pa4eZ9t2BG9WOipM89ch+BIP1XwXRZchgff3EFxuT5AXR4Okz5q
+ jJFfpZO1Jx92mLwuXcbayJXYbzeBthY2ITTzDFwpJAXZ8mHdbt9ULRdhbaU+gUcUvz2rb8A
+ MimQ6d+dZ66eE7Lt6puoXE7i0LPJU8GcYoUSjA2bK63RaCo4Va9KD7uo/ORs+4mRn+CdTDO
+ B7PH3rU65lNdEvYhmCAuA==
 X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:3VKqjzBD2Qw=;v70ybC2+N2w66XEpL5vQYf0gqu9
+ agtAhwOgsibrjNR6MjyLDxxbu31pLTIQC5Mza+hmRTPk199PseFSxZ1/HMKyP5C08C9cgGHk2
+ 5joFU8ohOPnqR9T8BF6SIh9WyclM3Uh8TRdA25JcaEl4V6fpbNGA73/zHQwC8VqK/C5Un/slC
+ ARmZiKmlAfnwG0eMNR14pgsWPnv0jQVSLBb2CusvJAImXwaf1Zy+aWI9im94HLDspu/tWsW2K
+ pbYr4210lee3VdHRDh55/bLRwb5Ek9EbUsDqV0vf/2clphLKM6TbEb3FfprK9ZIK0C1OzRKjj
+ korKmp8PNz3P1UglynGWk9NjaibiBnNXxo9Lqz+C+H7gaxKJoL0CSgc98Qj7DxjGY1vvVqtEW
+ wzeeTym0kJYtpvQ6ojj+uJMadokPWP6H7i6/6PnBKxXaIFzRG/EmGpBQc0eNi3x9flWelC+Al
+ lVyokOjOHgUvMOZNKQVQO3EmaWQHOhQN3ZTYuSpqovJixVo0N+CI7/SwHxEKcSphHyu2PqQnW
+ eTkcAOCgKv2oPTedSNmtPi/dq2gK0qbCRyLjJeL1fYd9FF7zLFSQ9pkb9nNWzu2QTmxlv1G+o
+ 3jt7RsUkVSPgq1bdXUO+A5y5vA0TDvqCrNy5609Pj29M/KxU35NiiMQ19484dQBTNTAKIOyds
+ Nic1GQ00+E9crER3fKIoExEqgXLXrVHlh9G0mYns2ZLPF38Rggn9CHDUQH9zF0+GNnLZxjzwT
+ 3Tp37wvq0KAHf6k9fe0OFoq+qqC5jAtnqoS2Kaa7p2bGaTs+YmNkMcj2GDaGSqCqQ4u9sESzy
+ w4ySrWo2w+KvkJ/jSnm2BbvVwfPaLc3d+bVyN1dRFbJlZQMMlx/ehVGqRscep4++5fI85Mx87
+ vmDTbToj1faqrnL82m264aVZDZ0wKaF+aEwtvONB+ZPjyu/tj+zz20jHoktuzC5nXYh7eqzzO
+ YYPNIFp3dk5AqElYB1PaAEeLJcXYHIyqvBR9DWfXdCvtr9ojwumTVSCy2USjnJnCvYnnXUXkQ
+ vUQnO6qbIDSrb+IayO7ChgGXZALLoqarZH3j5wMRMLWsSiuGP8/jue5+6sQHL1liYPwyhJ3zr
+ 3bSYKQwEbfD07xXyirnlBh4UUdQhJT+wCZhRn2ttrw7a0B0uJcmmLn0ydeDsUQcvrAkz5nLkr
+ BoKVSDVHSXafD2al9EU2vrEsduDDFdUGU838fIY/Ub7BPrd2rBJeqmbs0u0PaqiEAy0j//yWm
+ 6H90CfjNhW7Hh3EnslGmUpIX0g1sQdLJ4kbJgxPORC8yrz72ge7S1qpxHLzgvlqivLCH+VhBF
+ mGlj3Rsa9up2N7czkgPBYOuWaLt10ub0TnBoxxqSJLsUXt4DdiMhW/FI0i90RdC/q/Oy2gRk0
+ Ca5UVdz55weef3osq9UxX6bwqdm3k0IemziT3AdNLS5ZvDgqh9C24cUts7brY/G081+Z56s8Y
+ qLnAsxA==
 
-Thanks for the feedback, Randy...
+Hi,
 
-On Sun, 30 Mar 2025 22:13:19 -0700, Randy Dunlap wrote:
+The seemingly easy question has some very interesting extra requirements:
 
-> Hi,
-> 
-> On 3/30/25 10:03 PM, David Disseldorp wrote:
-> > Update the document to reflect that initramfs didn't replace initrd
-> > following kernel 2.5.x.
-> > The initramfs buffer format now supports many compression types in
-> > addition to gzip, so include them in the grammar section.
-> > c_mtime use is dependent on CONFIG_INITRAMFS_PRESERVE_MTIME.
-> > 
-> > Signed-off-by: David Disseldorp <ddiss@suse.de>
-> > ---
-> >  .../early-userspace/buffer-format.rst         | 30 ++++++++++++-------
-> >  1 file changed, 19 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/Documentation/driver-api/early-userspace/buffer-format.rst b/Documentation/driver-api/early-userspace/buffer-format.rst
-> > index 7f74e301fdf35..cb31d617729c5 100644
-> > --- a/Documentation/driver-api/early-userspace/buffer-format.rst
-> > +++ b/Documentation/driver-api/early-userspace/buffer-format.rst
-> > @@ -4,20 +4,18 @@ initramfs buffer format
-> >  
-> >  Al Viro, H. Peter Anvin
-> >  
-> > -Last revision: 2002-01-13
-> > -
-> > -Starting with kernel 2.5.x, the old "initial ramdisk" protocol is
-> > -getting {replaced/complemented} with the new "initial ramfs"
-> > -(initramfs) protocol.  The initramfs contents is passed using the same
-> > -memory buffer protocol used by the initrd protocol, but the contents
-> > +With kernel 2.5.x, the old "initial ramdisk" protocol was complemented
-> > +with an "initial ramfs" protocol.  The initramfs contents is passed  
-> 
->                                                              are passed
-> 
-> > +using the same memory buffer protocol used by initrd, but the contents
-> >  is different.  The initramfs buffer contains an archive which is  
-> 
->   are different.
+1. The bio contains contig file map folios
+    The folios may be large.
+    So page_offset() on bv_page (using single-page bvec) is no longer
+    reliable, one has to call page_pgoff() instead.
 
-I've not really changed those sentences with this patch, so I don't mind
-if they stay as is, or switch "contents" to "content" or "is" to "are".
+2. The data may not cover the bio range
+    So we need some range comparison and skip if the data range doesn't
+    cover the bio range.
 
-> >  expanded into a ramfs filesystem; this document details the format of
-> >  the initramfs buffer format.  
-> 
-> Don't use "format" 2 times above.
+3. The bio may have been advanced
+    E.g. previous de-compressed range has been copied, but the remaining
+    part still needs to be fulfilled.
 
-This is also not changed by the patch. I'm happy to send a v2 or have
-these clean-ups squashed in when applied. Will leave it up to the
-maintainers.
+    And we need to use the bv_page's file offset to calculate the real
+    beginning of the range to copy.
+
+The current btrfs code is doing single page bvec iteration, and handling
+point 2 and 3 well.
+(btrfs_decompress_buf2page() in fs/btrfs/compression.c)
+
+Point 1 was not causing problem until the incoming large data folio
+support, and can be easily fixed with page_pgoff() convertion.
+
+
+But since we're here, I'm also wondering can we do it better with a
+folio or multi-page bvec way?
+
+The current folio bio iteration helper can only start from the beginning
+of a bio (bio_for_each_folio_all() and bio_first_folio()), thus it's not
+a good fit for point 3.
+
+On the other hand, I'm having some internal code to convert a bio_vec
+into a folio and offset inside the folio already.
+Thus I'm wondering can we provide something like bio_for_each_folio()?
+Or is it too niche that only certain fs can benefit from?
+
+Thanks,
+Qu
 
