@@ -1,108 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-45362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45363-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 072E1A76809
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 16:35:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B550A768CF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 16:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CBC2188CEE5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 14:35:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0491188ED83
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Mar 2025 14:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8FE21ABBA;
-	Mon, 31 Mar 2025 14:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E665121C9E7;
+	Mon, 31 Mar 2025 14:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0ce2Nax"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="fimggTkT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A2F21A44A;
-	Mon, 31 Mar 2025 14:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43269219A90
+	for <linux-fsdevel@vger.kernel.org>; Mon, 31 Mar 2025 14:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743431557; cv=none; b=fkIhQO1ujETJ2c6KIMt3eigNRcer+9KgKXKlNEJVzTti1Ot2J7yFlxDl+VJHG98ihldP45W/KoMDBw+1gTWMsDYBkvIc6So/p9dQ38SZMmxlFxY3ZzlxkOlLvRo/q/4spykxIvmd2v6HjNXOZaAmc/mqEpJFLzwddSOBHxEIWcQ=
+	t=1743431872; cv=none; b=mGTfisig/EnPLp54KC3xGGQeSVyxxDs44axZYmm+QrukV3dI17+VhGu3aUz7dAFq3ku/b29Hi92EYJnvE8HvmyFTL8y7+JbMWnKxYsqDt2izDMGSoTE/x43IGShMKj9QFeUOy06yLACzAlZRzR7FIYanLVi+1TJMSAVXr1gw7CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743431557; c=relaxed/simple;
-	bh=zORTvlJlx+KkHe9iE94PcQMRLf91J3RmqhTq+NrHcuc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uWBonV202xZP8Nzh7wZFyomNKpe6vSn06diR08p3GibS4KfUslF+AcaOuUwHS9K1+c/Wj08qiPxzEea7tZM9L+7W6FWgGbFlQwGt/wKlguKUHhSSefFVvDHqopJIPKEs2TEGxR8GjZJ71ntlIzU/7VRclSxzCA0YeNh7QRuadcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0ce2Nax; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 228E1C4CEE3;
-	Mon, 31 Mar 2025 14:32:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743431557;
-	bh=zORTvlJlx+KkHe9iE94PcQMRLf91J3RmqhTq+NrHcuc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=I0ce2NaxfAUE+95c2CalerRnYZYJ/LQRXtaEntm11+ElidZ6iEgyvEUdoccGxM/Yz
-	 cEWk6CVYAFYqoQLEKatEopkOp4+MHPpZqUAK8rwE4KM0FxMxdCqfFiHtBCnaE8lOdg
-	 DIraEJvuHZcZ+llv5pxMdJNCsdB1bqas8AcvXkQp5EBvHDE52IPajtFzSpJNmwyc7A
-	 W+M1qZsAIgJsPw19uuOfbpkbz8jdQGK96jQJxKhBOIOB4rjPVPNbVSZGC9YLO/fTgE
-	 F4/ut5NK/PS4v3ocu6bVjqjP6gazGpeP87B73KDCI1bEPiVL9pYL1Cx27tkBgcPkbN
-	 zx61MRMB63ODQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Trond Myklebust <trond.myklebust@hammerspace.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10] umount: Allow superblock owners to force umount
-Date: Mon, 31 Mar 2025 10:32:34 -0400
-Message-Id: <20250331143234.1667913-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1743431872; c=relaxed/simple;
+	bh=71ViRkEbimtS68hEM0zCoPE5dIe42SS6+H+37bl/+78=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QXjcqAEOjJGSMPMcHMKRvKSqUW9sQ1fIGgWI6pPSVzH1TGyf/zWbICNCq5lErAIMVg2L6Twja/wy2IQLER9FXg9axxPTc/YnvvgI3AdbCDcQQjYa/T9e+TWC0cr3CDoUwv/B4vR3XQpCtood4ZA9IrMRtyL3pu5n8BDcLuV9DoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=fimggTkT; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-476805acddaso49846201cf.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Mar 2025 07:37:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1743431869; x=1744036669; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CnXlPhrVT4wOniSOMU9J1q7+7W5L95cti0eD8SRQe8o=;
+        b=fimggTkTWlhA6iBc4SA+aH9CJNoTCefyUgtTkfFMOzns+UEAkg4fPOj+2+p7OhOgvx
+         p8iZuHm2pQt/BF/davaeJ+vw710AM54kI567Wqq2fz6ANMQyaTi92cUgICll94oyo2fH
+         V5BSmz2JUuJkBWr88VL72GPE2LQTaOVzB90Hs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743431869; x=1744036669;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CnXlPhrVT4wOniSOMU9J1q7+7W5L95cti0eD8SRQe8o=;
+        b=V+h2ulQpCe87SC0w6i6Ya2M6QosNvMhXcz57vyANwEfHn2CcEsb5QvqcHLd4aLu06W
+         LqCRzRwcFLP2ifjtKj83YeFXXudcM13FaQIT6M+hG2WZfFmU/1tc5f0OLwzUoF0wvVOw
+         r8aG2j0TJKJwlCFb1uI89Xgz+JBDnLUgv1AIVuyhwgNwu2DVnH27bYYkhRj9m53VqRaO
+         h9x3JIidHm5gSx6jQiVOmDXlxplIqxdbnqObQhIbV/ipC7K5OLKryN6xRiTVWMGXxLYG
+         gWTkvCkvkWeVy7idNgsEIluVg39hjz0EGjIBZCssS+nqLVdTFd0uswQP5wR4FNzMzc5p
+         Hz5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWI9FTfmKXsYR5C23NDneHF6p49iENwk4thSdOXjj4wH5NDWkoggpA0yhf66G3rh8xqvoGhFS0euGFeMAws@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxx+53HJhkVUXCPHuVOg/Ym5+7qn9xTSW8t0iqzTwhn40C7tPMa
+	b1f1LCXCAIhdbcFzjKTgrsMyM9TLitFCju+HEf3hH4HTzmlAWp97/uax0vaHh1yg5OFTPrqCQga
+	s8aT1Gm9ZxBNT8H6NQBkyxPjK9A7c0J80JKVdAA==
+X-Gm-Gg: ASbGncthmLsDrb3y12TsU94icGiPa2w/U+OzGvDmKsKZNd+5lP+h1TQvJtqzWAFKTXw
+	U7qzobWf6Bq1Nwh9y9OkVms3D2gD+WNUJV9j8giCF+GCj/dRmydPbm1+WdB+laK3b71vbNj16zn
+	rkaCacReydifypfS/LhzAwkUi23w==
+X-Google-Smtp-Source: AGHT+IEkBtF6DxJsAOmt7pllervm4RbDQDU2pWRUVXX+g4joezBSh5bLHINtLSXf5x69ZDzR9B+6JxI/JcXzVbfuEj0=
+X-Received: by 2002:a05:622a:19a0:b0:476:9483:feaf with SMTP id
+ d75a77b69052e-477e4b4c5c1mr132914261cf.19.1743431869092; Mon, 31 Mar 2025
+ 07:37:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.235
-Content-Transfer-Encoding: 8bit
+References: <20250331135101.1436770-1-amir73il@gmail.com>
+In-Reply-To: <20250331135101.1436770-1-amir73il@gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 31 Mar 2025 16:37:37 +0200
+X-Gm-Features: AQ5f1JoWhv7XoIQP7RwdVOIOm9srcRdTPQrUwCzk_3sXQKJ2Xu1yQu--3bOWOyo
+Message-ID: <CAJfpegsXBvQuJO29ESrED1CnccKSrcWrQw0Dk0XnuxoGOygwjQ@mail.gmail.com>
+Subject: Re: [PATCH] fanotify: Document mount namespace events
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Alejandro Colomar <alx@kernel.org>, Miklos Szeredi <mszeredi@redhat.com>, Jan Kara <jack@suse.cz>, 
+	Christian Brauner <brauner@kernel.org>, linux-man@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+On Mon, 31 Mar 2025 at 15:51, Amir Goldstein <amir73il@gmail.com> wrote:
 
-[ Upstream commit e1ff7aa34dec7e650159fd7ca8ec6af7cc428d9f ]
+> @@ -99,6 +100,20 @@ If the filesystem object to be marked is not a directory, the error
+>  .B ENOTDIR
+>  shall be raised.
+>  .TP
+> +.BR FAN_MARK_MNTNS " (since Linux 6.14)"
+> +.\" commit 0f46d81f2bce970b1c562aa3c944a271bbec2729
+> +Mark the mount namespace of the path specified by
+> +.IR pathname .
+> +If
+> +.I pathname
+> +is not itself a mount point,
+> +the mount namespace of the mount containing
+> +.I pathname
+> +will be marked.
 
-Loosen the permission check on forced umount to allow users holding
-CAP_SYS_ADMIN privileges in namespaces that are privileged with respect
-to the userns that originally mounted the filesystem.
+This was the original version, but it was changed to take an nsfs path
+(/proc/$PID/ns/mnt) instead.
 
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Link: https://lore.kernel.org/r/12f212d4ef983714d065a6bb372fbb378753bf4c.1742315194.git.trond.myklebust@hammerspace.com
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/namespace.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Looks good otherwise.  Thanks for working on this!
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 7e67db7456b3d..2f97112657adc 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1716,6 +1716,7 @@ static inline bool may_mandlock(void)
- static int can_umount(const struct path *path, int flags)
- {
- 	struct mount *mnt = real_mount(path->mnt);
-+	struct super_block *sb = path->dentry->d_sb;
- 
- 	if (!may_mount())
- 		return -EPERM;
-@@ -1725,7 +1726,7 @@ static int can_umount(const struct path *path, int flags)
- 		return -EINVAL;
- 	if (mnt->mnt.mnt_flags & MNT_LOCKED) /* Check optimistically */
- 		return -EINVAL;
--	if (flags & MNT_FORCE && !capable(CAP_SYS_ADMIN))
-+	if (flags & MNT_FORCE && !ns_capable(sb->s_user_ns, CAP_SYS_ADMIN))
- 		return -EPERM;
- 	return 0;
- }
--- 
-2.39.5
-
+Miklos
 
