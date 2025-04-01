@@ -1,124 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-45411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB3FA773A9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 06:59:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 898CEA773B0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 07:09:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CC9E168D8A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 04:59:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 908C17A3DA2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 05:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 232261BFE00;
-	Tue,  1 Apr 2025 04:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC24D1C6FFB;
+	Tue,  1 Apr 2025 05:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L79WPtzQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EFmAKe6F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E144BEACE;
-	Tue,  1 Apr 2025 04:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C272111;
+	Tue,  1 Apr 2025 05:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743483540; cv=none; b=INGPONApI4CrGjon4yLK82SFTNiq7It61q/tS6X6InsnsWT9bpNpPUenIh/o6tMnNSrM8/KpzngOxmKKw6jP0z6q22Sn3qGux/yKxM/eGUSr7/NBTovP++IjhU9bCTQTfVlFxnt7NMPIjj1ronsIiM1OllMX+VRerPrCwkwA/DA=
+	t=1743484160; cv=none; b=PiO7CYwnyvsqvvI3jty3+kRSKxvjoxOIX186EivJaiJILm6/WNDF/If+MzmVfgPXgO7BK1XzqWlA0bt2qwzos8dGtndXiu9eXxxRQMWqgi8Sizbohz8GPmbIxTfDtdCcqP+r5ej09J6FngsF+OjvrJ5djOEj5fOvNUuyx36t4QY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743483540; c=relaxed/simple;
-	bh=3z5XX5BtVoTMasfMWZlJkWa9WdOEmC51NhKM+qgU1+c=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=YxIYavJ7EKYG8S0A/EyTbAwOQLvCM6wA8CAudIsBwshAKiN7v1J0Hpe7XewWDavuJSTR3dqM5BkyGR9CF5QzlKZvD+ocpPzCpChCo4J4LxvzCcWshRuDZlE/4kAzBny2XKfOOWUTF3dQ3tCpAYJC7Hp7qMUWmOzL5z5l+Tn8NFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L79WPtzQ; arc=none smtp.client-ip=209.85.208.182
+	s=arc-20240116; t=1743484160; c=relaxed/simple;
+	bh=EwBGURhgN5l1abr65q54RpzxI5PfH2OdVdXQD/uleg4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eyyjvcMxUhXN6LtKQ0auIrDVJeBbPy6ybN0B04FHcSV08EUPhlJrNkRl3rjm6KnOp73lacYbxouiQYWe7pkDp5ih5i16io7ltz7Xet5tsg/a7ALL4a5lAuhkMXJqxEOM0iuzj6JKumYS+h9wSF3avLSVkpgQpTiUZ8UoXgkV93Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EFmAKe6F; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30db1bc464dso45786061fa.0;
-        Mon, 31 Mar 2025 21:58:58 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so50442875e9.3;
+        Mon, 31 Mar 2025 22:09:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743483536; x=1744088336; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=VWTENQzr2hZDJmgqPOZQRNlVCbiEyzezvQvSZ+qcZVY=;
-        b=L79WPtzQVMHmxt0S9rMHuOORQLP/kflg8S9LOt4yir57lXre/LSEWwAnLlYLZhsa7M
-         xIZAXXB01YT6JJtS0jYS+JTSMmZ7pcfqH3fPmWv+LcGienGp3XJRim+9b5WSMClL8NIi
-         8m47vyKIxGw5EdClPZcA2KQShcUP4plLjbBnNWA1x2lFf0DCxDvtxfGZxj8/g03K5Wcf
-         rljvylFBfpeO0zw8vvnQPnoalkk+wTYU/fd1rTd39y1kvwAy8g0fVjMVBTviqGbB4eM2
-         TM73eB8b5kQ/5gTIWxVGPztWCKwf00AR7X+MVmZmAswDnXe1I0TjetxvQOW+Y3QHuZuI
-         jykw==
+        d=gmail.com; s=20230601; t=1743484156; x=1744088956; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YlTnXiXgnLvzH66jyxciEQPnkqudlw3UyQ0edEOwwAc=;
+        b=EFmAKe6FBvVktYomj+azQgHO0SwqGJossMEt1ZMJzeOVNFJrppw+nWbmztMkt5pzvN
+         oyg5H1JWaNNeSSVPAtVjIr2hYWdKtLoKVhN+lg/3qLg7/yHafI19Gv3u+D3pA4lxtsYS
+         efmAlYp1jelQL+49b5zGQT3qDkjWXmKm8zGpOxfJwqtLmw1zljMJcWLCXg9fGJt5vpq/
+         +CBMD8OcrRBex+phLctk965Ywv/97Z5kVhIRKnO6r+wTLzrKDUe9HuxILve9drTdxKt9
+         Wp0PF78gYhjhVdSATJGLwxL/lMYnG4bDQWhnUykk6k+M9LwGNdiTG+ol5DHBCL99a1y9
+         BWLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743483536; x=1744088336;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VWTENQzr2hZDJmgqPOZQRNlVCbiEyzezvQvSZ+qcZVY=;
-        b=HbHgROJv69G/T4gL8jTPSVeePiVNzwTlIM7EmNkKscV70NFAj7vK+gWQvab5r8Ojb0
-         kEdeAs5HTv/9rEntTXV8PhAe/bDRnmvKovhgbG78c0qjyxlXhKvY0B2jUvk8zH7JsIkf
-         Ra7ZdIkYRbwoIfwaaC9A1EbOgIzFoqTGs3M8xVaiZDxE6VThmVn0zN049Z+Oy6b/L6F+
-         0W3xBPwvFJplcIsW1H+DXfHJZrOc4mrzNvzYg9tnAUjVO4NBcG2dci+GCDiiMusx/9Jl
-         1K0AdZKg8DLoxwJnzyEoffqlxcuCAh9NpZdw999hQX2yaaTJu7FXDLC3n12ZoVmOonTB
-         9ZUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxnq48vF3D96vnapYDGr0EJAHuJ+aXIdit6+xAO+9yDSqo+VO8G/iDKtF2IqmigATNL7Ehh3gJ0uH4Rtvo@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoxlR7IMy3LnF3uwXs5a0RbiRIwMhYjNZrBIfLhZtFa9u3OZeT
-	8Wxy/WEUReW8woKt9WZa+QgmomGbiSv454FDjOmFZam3vbF2W2cBwsTR/JXweXJByH0J8AsLtcN
-	hCYCIm2HMZrJMss2CNWJ2o23Pm0pYmSfl
-X-Gm-Gg: ASbGnctzG4KSAASXqjr2/+T+qm/zxmM9BGQUDVHuwYbmgoEkFc1PNw1vOFHxtpMAalt
-	a4oZ7zqyagt8mUfN+Kpy5daVTFHJ4XytGLh1Dd7tbNNwwt23flcF/VuPTxYwn41t9OPxUOWY9D0
-	xdCpxaSUzqkz0xNpMYVu6e3hQclCVCe/Qyo2wBaM15UxNTmLTXc1WuOobfZxuA
-X-Google-Smtp-Source: AGHT+IHMduVQM7Rv6Xiep2IbvUU3vM8bK7xyCH7L9lMJucSLkTrZLrMCHNVkofFdW6RqJ2xczm3thdlxaygGGHyICNA=
-X-Received: by 2002:a2e:858d:0:b0:30b:b7c3:949a with SMTP id
- 38308e7fff4ca-30de02655e6mr33587281fa.18.1743483535946; Mon, 31 Mar 2025
- 21:58:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743484156; x=1744088956;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YlTnXiXgnLvzH66jyxciEQPnkqudlw3UyQ0edEOwwAc=;
+        b=wofg18W4V6cUeCuqE/vjZJ5hJBMfthlvicpZcSFxMTtAWa3TORYcVWtkY1fa6Hlrdi
+         wo63lhfI50Aphh3+PuMb1nxjlKKyJIDLYhV9JZFjDoIE9T5osY+mEPXESTn36tCPGfFy
+         +/Wn5ohGBh+Rhu3fNUCwGS7A9yh6f+okMiPYPe9W70d16yK9CRfRn5XkeS8XSPcZmpSM
+         jXHDlsRchMxW519nB8Qa2Q4uc8tons10sMTn81KMmYz039ayRSg3i+ImxwW8YOuy7XlA
+         TNau5ZF294e81Jn22TACBshtumQUFrYpWw8pOIh0xIWzlvpY6blcSWstEHOpVgmB1VmF
+         xq/Q==
+X-Gm-Message-State: AOJu0YxWKSqNFvnL1OhH3OtfmdX5IdP9sbJGHlGyTZva/2S2raghiNVT
+	1JsUAaeIc6H0OXx6jS7/oZ0FUf7a9ElwAXB2Ux5JU3OYpgMxpeYR0iCUrg==
+X-Gm-Gg: ASbGncsvzxjFdZe5ka7lYb8CSyqUqZVAtwoPMLGLUlSYd8s2lsZmbnswJKXM0T0x87P
+	J5lWcAebDtPCPNqrPC9cISBYe/Y01jJc5SkrgHGIGLAKyPB8CFTSCRSb0VHp2V6y3V+FnFe11pe
+	NRxYzYLqhuXmuqKFoxVW1ALcPNifsK/pYIGC0nmVzsI+aXu3dN+8XBU1IbDuZ4wvZOTRudkhH6E
+	P8Bvjs+vhUVG8/qoaR2Bc2KE/aWEIhNRb/Ahcku8gAEaaDj2Yc28DTIhone+C9RUZIoOvQRufoZ
+	mTlNnMIClJhYLvUMxnavkRNw77PYekqC83qh93nq6IdX9CM1wNbfmdaAjw9W
+X-Google-Smtp-Source: AGHT+IGACq3hIRuPpIEbFhNdWy1BLwwW8WJufQ2mSMIdfxqi086MPY0ne0AYfpUTZOIj0JdAjymSrw==
+X-Received: by 2002:a05:600c:3d0a:b0:43d:fa59:be38 with SMTP id 5b1f17b1804b1-43dfa59c013mr90026475e9.32.1743484155649;
+        Mon, 31 Mar 2025 22:09:15 -0700 (PDT)
+Received: from f.. (cst-prg-92-82.cust.vodafone.cz. [46.135.92.82])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ea8d16049sm8540845e9.0.2025.03.31.22.09.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Mar 2025 22:09:15 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: remove stale log entries from fs/namei.c
+Date: Tue,  1 Apr 2025 07:08:46 +0200
+Message-ID: <20250401050847.1071675-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 31 Mar 2025 23:58:44 -0500
-X-Gm-Features: AQ5f1JrcVoDAoAIjWjhq1iuk122oVsMRc5QCcasmRDfbRNCFpyRC_6rrHibhPkA
-Message-ID: <CAH2r5mvre+ijjAQMbqezJ=PeNX-8-o228bh4SjyJjL8wGp70Yw@mail.gmail.com>
-Subject: SCSI circular lock dependency with current mainline
-To: LKML <linux-kernel@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-I saw the following circular lock dependency when running tests with
-current mainline from today.  The tests were not related to local fs
-(they were for smb3.1.1 mounts but the bug is not related to cifs.ko).
-  Presumably bug is due to locking problems for local I/O.
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+ fs/namei.c | 80 +-----------------------------------------------------
+ 1 file changed, 1 insertion(+), 79 deletions(-)
 
-[Mon Mar 31 23:12:21 2025] sd 0:0:0:0: [sda] Attached SCSI disk
-[Mon Mar 31 23:12:21 2025]
-======================================================
-[Mon Mar 31 23:12:21 2025] WARNING: possible circular locking
-dependency detected
-[Mon Mar 31 23:12:21 2025] 6.14.0 #1 Not tainted
-[Mon Mar 31 23:12:21 2025]
-------------------------------------------------------
-[Mon Mar 31 23:12:21 2025] (udev-worker)/423143 is trying to acquire lock:
-[Mon Mar 31 23:12:21 2025] ff1100013840f118
-(&q->elevator_lock){+.+.}-{4:4}, at: elv_iosched_store+0x13b/0x370
-[Mon Mar 31 23:12:21 2025]
-but task is already holding lock:
-[Mon Mar 31 23:12:21 2025] ff1100013840ebe8
-(&q->q_usage_counter(io)#13){++++}-{0:0}, at:
-blk_mq_freeze_queue_nomemsave+0x12/0x20
-[Mon Mar 31 23:12:21 2025]
-which lock already depends on the new lock.
-[Mon Mar 31 23:12:21 2025]
-the existing dependency chain (in reverse order) is:
-[Mon Mar 31 23:12:21 2025]
--> #2 (&q->q_usage_counter(io)#13){++++}-{0:0}:
-[Mon Mar 31 23:12:21 2025] blk_alloc_queue+0x3f4/0x440
-[Mon Mar 31 23:12:21 2025] blk_mq_alloc_queue+0xd6/0x160
-[Mon Mar 31 23:12:21 2025] scsi_alloc_sdev+0x4c0/0x660
-[Mon Mar 31 23:12:21 2025] scsi_probe_and_add_lun+0x2f4/0x690
-...
-
-More details on the log message:
-
-http://smb311-linux-testing.southcentralus.cloudapp.azure.com/#/builders/3/builds/438/steps/205/logs/stdio
-
+diff --git a/fs/namei.c b/fs/namei.c
+index 360a86ca1f02..b125dadd7100 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -5,14 +5,7 @@
+  *  Copyright (C) 1991, 1992  Linus Torvalds
+  */
+ 
+-/*
+- * Some corrections by tytso.
+- */
+-
+-/* [Feb 1997 T. Schoebel-Theuer] Complete rewrite of the pathname
+- * lookup logic.
+- */
+-/* [Feb-Apr 2000, AV] Rewrite to the new namespace architecture.
++/*[Apr 1 2024 Mateusz Guzik] Removed stale log entries.
+  */
+ 
+ #include <linux/init.h>
+@@ -44,77 +37,6 @@
+ #include "internal.h"
+ #include "mount.h"
+ 
+-/* [Feb-1997 T. Schoebel-Theuer]
+- * Fundamental changes in the pathname lookup mechanisms (namei)
+- * were necessary because of omirr.  The reason is that omirr needs
+- * to know the _real_ pathname, not the user-supplied one, in case
+- * of symlinks (and also when transname replacements occur).
+- *
+- * The new code replaces the old recursive symlink resolution with
+- * an iterative one (in case of non-nested symlink chains).  It does
+- * this with calls to <fs>_follow_link().
+- * As a side effect, dir_namei(), _namei() and follow_link() are now 
+- * replaced with a single function lookup_dentry() that can handle all 
+- * the special cases of the former code.
+- *
+- * With the new dcache, the pathname is stored at each inode, at least as
+- * long as the refcount of the inode is positive.  As a side effect, the
+- * size of the dcache depends on the inode cache and thus is dynamic.
+- *
+- * [29-Apr-1998 C. Scott Ananian] Updated above description of symlink
+- * resolution to correspond with current state of the code.
+- *
+- * Note that the symlink resolution is not *completely* iterative.
+- * There is still a significant amount of tail- and mid- recursion in
+- * the algorithm.  Also, note that <fs>_readlink() is not used in
+- * lookup_dentry(): lookup_dentry() on the result of <fs>_readlink()
+- * may return different results than <fs>_follow_link().  Many virtual
+- * filesystems (including /proc) exhibit this behavior.
+- */
+-
+-/* [24-Feb-97 T. Schoebel-Theuer] Side effects caused by new implementation:
+- * New symlink semantics: when open() is called with flags O_CREAT | O_EXCL
+- * and the name already exists in form of a symlink, try to create the new
+- * name indicated by the symlink. The old code always complained that the
+- * name already exists, due to not following the symlink even if its target
+- * is nonexistent.  The new semantics affects also mknod() and link() when
+- * the name is a symlink pointing to a non-existent name.
+- *
+- * I don't know which semantics is the right one, since I have no access
+- * to standards. But I found by trial that HP-UX 9.0 has the full "new"
+- * semantics implemented, while SunOS 4.1.1 and Solaris (SunOS 5.4) have the
+- * "old" one. Personally, I think the new semantics is much more logical.
+- * Note that "ln old new" where "new" is a symlink pointing to a non-existing
+- * file does succeed in both HP-UX and SunOs, but not in Solaris
+- * and in the old Linux semantics.
+- */
+-
+-/* [16-Dec-97 Kevin Buhr] For security reasons, we change some symlink
+- * semantics.  See the comments in "open_namei" and "do_link" below.
+- *
+- * [10-Sep-98 Alan Modra] Another symlink change.
+- */
+-
+-/* [Feb-Apr 2000 AV] Complete rewrite. Rules for symlinks:
+- *	inside the path - always follow.
+- *	in the last component in creation/removal/renaming - never follow.
+- *	if LOOKUP_FOLLOW passed - follow.
+- *	if the pathname has trailing slashes - follow.
+- *	otherwise - don't follow.
+- * (applied in that order).
+- *
+- * [Jun 2000 AV] Inconsistent behaviour of open() in case if flags==O_CREAT
+- * restored for 2.4. This is the last surviving part of old 4.2BSD bug.
+- * During the 2.4 we need to fix the userland stuff depending on it -
+- * hopefully we will be able to get rid of that wart in 2.5. So far only
+- * XEmacs seems to be relying on it...
+- */
+-/*
+- * [Sep 2001 AV] Single-semaphore locking scheme (kudos to David Holland)
+- * implemented.  Let's see if raised priority of ->s_vfs_rename_mutex gives
+- * any extra contention...
+- */
+-
+ /* In order to reduce some races, while at the same time doing additional
+  * checking and hopefully speeding things up, we copy filenames to the
+  * kernel data space before using them..
 -- 
-Thanks,
+2.43.0
 
-Steve
 
