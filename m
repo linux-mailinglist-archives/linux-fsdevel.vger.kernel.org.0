@@ -1,100 +1,222 @@
-Return-Path: <linux-fsdevel+bounces-45436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75427A7796D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 13:19:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAE22A77973
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 13:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3490516A60E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 11:19:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED0CB188B4F0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 11:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751F41F30C0;
-	Tue,  1 Apr 2025 11:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69351F236E;
+	Tue,  1 Apr 2025 11:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zz5ZUDem"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LQCzv7lw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+zx+wweq";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LQCzv7lw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+zx+wweq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4C11F236E;
-	Tue,  1 Apr 2025 11:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1701F1313
+	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Apr 2025 11:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743506349; cv=none; b=Hgb1GEDYeDUzkigMpWeLb3AJxJFZ0cCRLMf39i8FFtMS/dtcK20cBt+nu3ZXYrIIw5Zgkpf/Wx1nh+VhjKsZlrpRHZQvP9E7GRb52UvW4S9kTv2goB15h3aiv03T7IaRfdbUzHztn6Y70OZaTy0p02DIPTVOZebwHzingHjoMA8=
+	t=1743506442; cv=none; b=ocvtKuE12qW8pJdyx35ZjXzVabWkwsOOog/RofMYmJgQFQDddUhGaYcXfW5FznlLc1I2QXlqltuu3VHm+Ah6QSDXEDHgI285Cxr/wbdZwM2xuA9N+u4PlEiCcvliYIyqruUIE2KbA4R+cqZrENEqWBhkxqpxxVhhs0uCR9cBymU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743506349; c=relaxed/simple;
-	bh=130fS+pjMEoLm9UTm6FGySgpJVShC7ByY0ePlMWPIAs=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=pNwEfTc0WKNtsxdyqU9DHrqKKacs8Z6SFCkdQOLWLCskT29ssR/6fAQMsgUa37d6h2nNQxKle9jnd+GH8JkhlabGNYWv8f511HG78MezR3xGccW3qvliKHBcw2Ck7d0RXVydSpjPReOPicMYQcH+cWYkO8OCRjyrmoxDjVzZmis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zz5ZUDem; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54afb5fcebaso6633441e87.3;
-        Tue, 01 Apr 2025 04:19:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743506346; x=1744111146; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YKD52zm+gVaoIUanOq+CrDkg3TSttqWRUAHG2kVxgsU=;
-        b=Zz5ZUDemn5uD2mGvKGi5KzrmmsXA5Z3HYmp20j69hzpQiBLu1C5V8SFozsAlsSJ55C
-         /MjjtYBYIlZKciFgQpyNIN/g2EKtMrWfc9Fu2Y421PWIoXXGhh8y24HP7H5TcQlrZ9Qm
-         HoVxIBDf8IB9LN4lZXgoOSpeZcg9Kggum2Bi8xpunB8rf/6Yt0aDxaaDu3nUHaZNJYs2
-         qZHiCHrN4Z5Q8gH9pU8UyHWTgQAoONp9tNk+15WVr9XMGNyKkrKH9n6SKW1lQ0kfHRpY
-         EzxRz0vQyerhT8fR5n9ZS6puoi9fAHjobBvZDmoqrSAExAowwTJVQ7vjJWq6NDlbuY05
-         UXeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743506346; x=1744111146;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YKD52zm+gVaoIUanOq+CrDkg3TSttqWRUAHG2kVxgsU=;
-        b=LR3Ejji+ZfKIv/KH/eGoWKh0OQfPEEObwC7qP86JRluNSsbsi3epR11tn14DD1tC9i
-         cx+Ej4BrG+Nt26mLziyJsNowwqJv1UIhmWIwVzEFsh/4gVDvkBKGrM2iot5P+QMuCc8A
-         SM3S59SV/Wu8PO00j3IualEVFiM+NHX2+BOeo3qXK/zIkkCLXitGAlgt0vR2hh1KV3+O
-         XOmq06fwkuZh1emEs3QKSN0cOZWsL+abdh/IY479QLUQnV3iX6cIok91slm3scMTrVnf
-         Af5kEJO53FqdG9Mlyujt80BbEPc7AOvF4yBlGeOlrU8Za6htmMv79vzVF/Rh1cDcLiXI
-         Gr5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUd83DGY312gQq08mqlIeTqhZt57Xrh9Qo+us2/1XKR4PdtLW4pt36UPlVjM26eOPPh5js/ZLpm7DZpFSQo@vger.kernel.org, AJvYcCVbeCHqt+b1hxCZ7+9seuK9BESXC78K1kI31P8Z61/clkwnuux39uzAcSOoUUpyRUgtaLAalXEmqtk5lau+@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlXCwpSb61njYf0UoLtpqDsOPTgvgazppq8pVGK5eVDogdFPV7
-	5p6JvyCRj9ENT/BAyiiQBufhoB2/mphhq7AXh8tw1DG86k9b0KAg+/NcJGEO00nnIoXvT235Oa7
-	QWDh7PSI17k3y1JOFgSWWCdoQ/w==
-X-Gm-Gg: ASbGncsHwWcalaqRwEcKNdtshg8mwybNEVteeFYrM/BbV9+u2hLtDfNQ0UpqiEG/+pk
-	RJV190swpqVrgnlu7ZGBC6781wrQNE9Ww77SdUmyrfbIH3smQ4IO8SJRCIldmirsdgZttwNLa4S
-	HXPNHJkt0C1kJmCG04VlGfc6M=
-X-Google-Smtp-Source: AGHT+IHotLV8ha5asbhxquKWjZjYfeN4kY8EE7hc8DSh12SIfaKyzzOFond3b+xwwkIhiCk9vSQ46F31pgZX4W6+wyo=
-X-Received: by 2002:a05:6512:39ca:b0:545:2f0d:8836 with SMTP id
- 2adb3069b0e04-54b11010797mr3577310e87.40.1743506346144; Tue, 01 Apr 2025
- 04:19:06 -0700 (PDT)
+	s=arc-20240116; t=1743506442; c=relaxed/simple;
+	bh=4z0yWuovovzT4P0Rx5n7A0VZ8Le5ZD/+97cst0pdcGU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cDpmvjaNN7OLYgXYn0n/D8foCUk5I3Iwjm99gx979Nq0lX2LFgU1V2W3NNMDv2zR4dUgrr3YgVfYxX/SqdFWBidKqeSWA0O6RuQFFiMcjowq6UNMd5GaJvktTk05EpWrJ+CpcbEaJCMUm5N5K1lDJ8ZmFPtg9Ii3tn72CL32NxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LQCzv7lw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+zx+wweq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LQCzv7lw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+zx+wweq; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CF393211E8;
+	Tue,  1 Apr 2025 11:20:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743506437; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9Qm5ZIzmgsTH99+u6cTQsdFe97BWstocOSAgLAVKl+0=;
+	b=LQCzv7lw82pO8LAxuMgGur/XBrzsFQciXqJfRsQ/W2/02rA+j3khv6i2XoaYJKItUoBq1O
+	z2nFygqtd2f8f5K87Cc/UX3f0ricKqsk+XIkh7KwpXMLype29Q+FrpPZUk6tQda8eu3zl/
+	EXN8nW0/IhKReCadq4AYnt7JdVyS+vY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743506437;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9Qm5ZIzmgsTH99+u6cTQsdFe97BWstocOSAgLAVKl+0=;
+	b=+zx+wweqdmixvCE8O9nYTmgqZMsAcc+QjZJy85pfSYKYmRvDaXx2fx3llWMYBTAyIr7fbE
+	d686O1ZWJZOsXoBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743506437; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9Qm5ZIzmgsTH99+u6cTQsdFe97BWstocOSAgLAVKl+0=;
+	b=LQCzv7lw82pO8LAxuMgGur/XBrzsFQciXqJfRsQ/W2/02rA+j3khv6i2XoaYJKItUoBq1O
+	z2nFygqtd2f8f5K87Cc/UX3f0ricKqsk+XIkh7KwpXMLype29Q+FrpPZUk6tQda8eu3zl/
+	EXN8nW0/IhKReCadq4AYnt7JdVyS+vY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743506437;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9Qm5ZIzmgsTH99+u6cTQsdFe97BWstocOSAgLAVKl+0=;
+	b=+zx+wweqdmixvCE8O9nYTmgqZMsAcc+QjZJy85pfSYKYmRvDaXx2fx3llWMYBTAyIr7fbE
+	d686O1ZWJZOsXoBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C18DB13691;
+	Tue,  1 Apr 2025 11:20:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kYs7LwXM62d9JQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 01 Apr 2025 11:20:37 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 76DF4A07E6; Tue,  1 Apr 2025 13:20:37 +0200 (CEST)
+Date: Tue, 1 Apr 2025 13:20:37 +0200
+From: Jan Kara <jack@suse.cz>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Christian Brauner <brauner@kernel.org>, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, mcgrof@kernel.org, 
+	hch@infradead.org, david@fromorbit.com, rafael@kernel.org, djwong@kernel.org, 
+	pavel@kernel.org, peterz@infradead.org, mingo@redhat.com, will@kernel.org, 
+	boqun.feng@gmail.com
+Subject: Re: [RFC PATCH 1/4] locking/percpu-rwsem: add freezable alternative
+ to down_read
+Message-ID: <3bfnds6nsvxy5jfbcoy62uva6kebhacjuavqxvelbfs6ut6rqf@m4pzsudbqg6l>
+References: <20250327140613.25178-1-James.Bottomley@HansenPartnership.com>
+ <20250327140613.25178-2-James.Bottomley@HansenPartnership.com>
+ <77774eb380e343976de3de681204e2c7f3ab1926.camel@HansenPartnership.com>
+ <20250401-anwalt-dazugeben-18d8c3efd1fd@brauner>
+ <f6bdfa23b9f54055f8a539ce396f1134b0921417.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Tue, 1 Apr 2025 14:18:55 +0300
-X-Gm-Features: AQ5f1JoxDz6pgQoqfz8XSlOm5nLyhbCSjz0u2-yrYhLPhovDisMXIQUrHSAfsG0
-Message-ID: <CACVxJT_eXRNjp-2sEfuxYmzTMPvu7U1R2bsKYjadVfR-W691og@mail.gmail.com>
-Subject: Re: [PATCH 1/2] proc: add a helper for marking files as permanent by
- external consumers
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Linux Kernel <linux-kernel@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f6bdfa23b9f54055f8a539ce396f1134b0921417.camel@HansenPartnership.com>
+X-Spam-Score: -2.30
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,suse.cz,vger.kernel.org,infradead.org,fromorbit.com,redhat.com,gmail.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
->  static int __init proc_filesystems_init(void)
->  {
-> - proc_create_single("filesystems", 0, NULL, filesystems_proc_show);
-> + struct proc_dir_entry *pde;
-> +
-> + pde = proc_create_single("filesystems", 0, NULL, filesystems_proc_show);
-> + proc_make_permanent(pde);
+On Mon 31-03-25 21:13:20, James Bottomley wrote:
+> On Tue, 2025-04-01 at 01:32 +0200, Christian Brauner wrote:
+> > On Mon, Mar 31, 2025 at 03:51:43PM -0400, James Bottomley wrote:
+> > > On Thu, 2025-03-27 at 10:06 -0400, James Bottomley wrote:
+> > > [...]
+> > > > -static void percpu_rwsem_wait(struct percpu_rw_semaphore *sem,
+> > > > bool
+> > > > reader)
+> > > > +static void percpu_rwsem_wait(struct percpu_rw_semaphore *sem,
+> > > > bool
+> > > > reader,
+> > > > +			      bool freeze)
+> > > >  {
+> > > >  	DEFINE_WAIT_FUNC(wq_entry, percpu_rwsem_wake_function);
+> > > >  	bool wait;
+> > > > @@ -156,7 +157,8 @@ static void percpu_rwsem_wait(struct
+> > > > percpu_rw_semaphore *sem, bool reader)
+> > > >  	spin_unlock_irq(&sem->waiters.lock);
+> > > >  
+> > > >  	while (wait) {
+> > > > -		set_current_state(TASK_UNINTERRUPTIBLE);
+> > > > +		set_current_state(TASK_UNINTERRUPTIBLE |
+> > > > +				  freeze ? TASK_FREEZABLE : 0);
+> > > 
+> > > This is a bit embarrassing, the bug I've been chasing is here: the
+> > > ?
+> > > operator is lower in precedence than | meaning this expression
+> > > always
+> > > evaluates to TASK_FREEZABLE and nothing else (which is why the
+> > > process
+> > > goes into R state and never wakes up).
+> > > 
+> > > Let me fix that and redo all the testing.
+> > 
+> > I don't think that's it. I think you're missing making pagefault
+> > writers such
+> > as systemd-journald freezable:
+> > 
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index b379a46b5576..528e73f192ac 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -1782,7 +1782,8 @@ static inline void __sb_end_write(struct
+> > super_block *sb, int level)
+> >  static inline void __sb_start_write(struct super_block *sb, int
+> > level)
+> >  {
+> >         percpu_down_read_freezable(sb->s_writers.rw_sem + level - 1,
+> > -                                  level == SB_FREEZE_WRITE);
+> > +                                  (level == SB_FREEZE_WRITE ||
+> > +                                   level == SB_FREEZE_PAGEFAULT));
+> >  }
+> 
+> Yes, I was about to tell Jan that the condition here simply needs to be
+> true.  All our rwsem levels need to be freezable to avoid a hibernation
+> failure.
 
-The only function which should be used is pde_make_permanent()
-so that the flag is silently turned off when the code is modular.
+So there is one snag with this. SB_FREEZE_PAGEFAULT level is acquired under
+mmap_sem, SB_FREEZE_INTERNAL level is possibly acquired under some other
+filesystem locks. So if you freeze the filesystem, a task can block on
+frozen filesystem with e.g. mmap_sem held and if some other task then
+blocks on grabbing that mmap_sem, hibernation fails because we'll be unable
+to hibernate the task waiting for mmap_sem. So if you'd like to completely
+avoid these hibernation failures, you'd have to make a slew of filesystem
+related locks use freezable sleeping. I don't think that's feasible.
 
-Code is fine as-is in this very case but when people start copying it
-to real modules
-they will start mark PDEs as permanent when it is not true!
+I was hoping that failures due to SB_FREEZE_PAGEFAULT level not being
+freezable would be rare enough but you've proven they are quite frequent.
+We can try making SB_FREEZE_PAGEFAULT level (or even SB_FREEZE_INTERNAL)
+freezable and see whether that works good enough...
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
