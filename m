@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-45398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3522A771EB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 02:33:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28873A771EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 02:34:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 884E1188CCFC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 00:34:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42214188C608
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 00:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1CE14F9D6;
-	Tue,  1 Apr 2025 00:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA90118C936;
+	Tue,  1 Apr 2025 00:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VMON9pul"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IoCzgbjj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FC06F099;
-	Tue,  1 Apr 2025 00:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EBE215D5B6;
+	Tue,  1 Apr 2025 00:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743467611; cv=none; b=trmlSQB0tps86OR7HS4jtXjk8soJxxlrRgMCtua+geuVkFzGECRcfUAyLllhvTh9Jvl6gsaU94azOab3fXaC8Sb9rd4PBkFrU5UFHDISyTG5zsY0CgrfsetdW71m0OQAtAbThKlAdoCN/v7t8CVBiV8DnRncWZ/DW4NQS3veyU8=
+	t=1743467615; cv=none; b=sm/CuhECPyJNJqH7VpN6hcONDib7b5cXgCpfVCzcBrt4pz9Gx9fXFFHk4c6Hdm0hqGSF0dh7Yl33m+gWrndws9srfGG8cswGNXPa1csEN4CG+tb4bdgVwu+bem3lJpMo5AlzvSLsO91GF2pHhX4EY8nsFM8g+jrR7DPRrI4FNFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743467611; c=relaxed/simple;
-	bh=v/2U6Lf3UPg1q5dA8hz9DqjrfG65mtSGjt9qiHZK+iU=;
+	s=arc-20240116; t=1743467615; c=relaxed/simple;
+	bh=lCY/KJW9ikBmlJ/oV/9jDJ7hT8RIfBH0XkGe2K3kJYw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ow06JRjHbNIyPYZaYMw+lTgcsdOFE1/4oBnl5eBNRc7Vb/dZdkJ+13kkI50k9Bg9gxduPVocVMzyG3hVRIbgZuVbzBiWO4RqdkvGEdVGUGNefIGv24emv+s50FKGqOfKnFhJB38PQ09uL6iRzf+CkbfYYU03MEQ5NdMofIL6ypA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VMON9pul; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACBB9C4CEE5;
-	Tue,  1 Apr 2025 00:33:26 +0000 (UTC)
+	 MIME-Version:Content-Type; b=aKPlxz5UZkt7YxDrLL40f6YGRiyYTpYyA5peP7XVCVR4qnW84abl38X9FOogFOB40dV6ts82JmLtw1c/Z3wn6shWzrl9K9P0pc2n+MRokDK3u0+C/s1LWCbOlTO6SJ61wKSpRUKYyekT++4NWs+dZLWSz/IKNOaKH1TDvxAcZ5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IoCzgbjj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6BB4C4CEEE;
+	Tue,  1 Apr 2025 00:33:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743467610;
-	bh=v/2U6Lf3UPg1q5dA8hz9DqjrfG65mtSGjt9qiHZK+iU=;
+	s=k20201202; t=1743467614;
+	bh=lCY/KJW9ikBmlJ/oV/9jDJ7hT8RIfBH0XkGe2K3kJYw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VMON9pulmwp/ZtqWmuBSqNWW3AbYWmZblYTC16tKmiNm/DfBxsVKWe7vemiU7vmtB
-	 Vbho5t2kWOso3YuO9Ewm2dFB/yCISmcHT6Q8Bt3WH5lpzR+pru2o/mamdax8FfJ88K
-	 9uZQaDrFHjAhKxlCcLF6eUJKqXGWGoiSzXL81eVp0xyStBWrMGmjKaKAC4vbHjq6Nm
-	 PlpVqVa8z5f18Xji1kHV97U/uRsVEwsoSuK37ONHwje/dmgGce0D/Xy2xWCjrTpppg
-	 H1Om10HS2e28vKs+YFGDAM3epsU/WAwdo9HfHJvsJp/idze3nAY/24xDS7Amkjbl+k
-	 wicCjLOpFnQEw==
+	b=IoCzgbjjADfRLGcBq8tQxtzAh+nw9hJTYSo1OFfKB4zT7VsZ7m8xZ2SiorMmHZThc
+	 SLmeaXTjuyKa1TdRxX35IRjX15UZpeG9HVUtBU/xcfre0Gv9Wc1aPzr7rUs5buzYo9
+	 0DuBgxVLKBK0iGDuHdHmtQVjetfr13yVEE2W/AJQm3lsEde5QtUb+ikWQ3HEf81dI5
+	 zgtHLR6kRTNFpPKx2TMwnBMylSN2ArPzKVmLmOeNJp0UTn5cSuYKlsWeYOHIzjj1wf
+	 TxxXXEXIuCijpGfnm618zzUfdtioMA5rzPNGgL+qXH74cMfcHJaq1MGqSKPOsiArlb
+	 I/1kqtF+NJ5/A==
 From: Christian Brauner <brauner@kernel.org>
 To: linux-fsdevel@vger.kernel.org,
 	jack@suse.cz
@@ -59,9 +59,9 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	mingo@redhat.com,
 	will@kernel.org,
 	boqun.feng@gmail.com
-Subject: [PATCH 1/6] ext4: replace kthread freezing with auto fs freezing
-Date: Tue,  1 Apr 2025 02:32:46 +0200
-Message-ID: <20250401-work-freeze-v1-1-d000611d4ab0@kernel.org>
+Subject: [PATCH 2/6] btrfs: replace kthread freezing with auto fs freezing
+Date: Tue,  1 Apr 2025 02:32:47 +0200
+Message-ID: <20250401-work-freeze-v1-2-d000611d4ab0@kernel.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
 References: <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
@@ -73,7 +73,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4014; i=brauner@kernel.org; h=from:subject:message-id; bh=I1JUqV0XESLI2NYVo+JV4P0snp7i2H23CqsH/UPiKWY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS/NrHelvdCcjfHx9N1dcvOm27qSpK5cXHXtLtrkxec5 fywYlHU0Y5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJHPjC8M/owt23wbpxkhFT DX9zK76vdxSMPhq+2KW9cM/tDxlv3T4w/FM8l7HncLQBg4Dc4TrXxdUpTzVPmMp0+snfSPZfb+U pxwAA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4192; i=brauner@kernel.org; h=from:subject:message-id; bh=d3lub6zszyAvvsjIX6sIGC+CVKRgSmI0RRk0r2As0ac=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS/NrGZYPf7dvHUt8sULp+RD/Yp9+Y7vj/isdrjz+orO /luMnArdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEyk6TjDH87C7t13p9/JMjb6 y+32xnrnzAVls7eukwkx/Oq2olGgdSFQRUqbf0d048Kv7FZ2vUrJh6TrdKceNeHRYF+aYHPB/ws HAA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
@@ -93,7 +93,7 @@ it knows better than how the VFS handles it.
 The following Coccinelle rule was used as to remove the now superfluous
 freezer calls:
 
-make coccicheck MODE=patch SPFLAGS="--in-place --no-show-diff" COCCI=./fs-freeze-cleanup.cocci M=fs/ext4
+make coccicheck MODE=patch SPFLAGS="--in-place --no-show-diff" COCCI=./fs-freeze-cleanup.cocci M=fs/btrfs
 
 virtual patch
 
@@ -189,47 +189,41 @@ struct file_system_type fs_type = {
 
 Generated-by: Coccinelle SmPL
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-Link: https://lore.kernel.org/r/20250326112220.1988619-5-mcgrof@kernel.org
+Link: https://lore.kernel.org/r/20250326112220.1988619-6-mcgrof@kernel.org
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/ext4/mballoc.c | 2 +-
- fs/ext4/super.c   | 3 ---
- 2 files changed, 1 insertion(+), 4 deletions(-)
+ fs/btrfs/disk-io.c | 4 ++--
+ fs/btrfs/scrub.c   | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index 0d523e9fb3d5..ae235ec5ff3a 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -6782,7 +6782,7 @@ static ext4_grpblk_t ext4_last_grp_cluster(struct super_block *sb,
- 
- static bool ext4_trim_interrupted(void)
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 1a916716cefe..bce3ae569fe0 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -1962,8 +1962,8 @@ static void btrfs_init_qgroup(struct btrfs_fs_info *fs_info)
+ static int btrfs_init_workqueues(struct btrfs_fs_info *fs_info)
  {
--	return fatal_signal_pending(current) || freezing(current);
-+	return fatal_signal_pending(current);
- }
+ 	u32 max_active = fs_info->thread_pool_size;
+-	unsigned int flags = WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_UNBOUND;
+-	unsigned int ordered_flags = WQ_MEM_RECLAIM | WQ_FREEZABLE;
++	unsigned int flags = WQ_MEM_RECLAIM | WQ_UNBOUND;
++	unsigned int ordered_flags = WQ_MEM_RECLAIM;
  
- static int ext4_try_to_trim_range(struct super_block *sb,
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 8122d4ffb3b5..020c818078d7 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -3778,7 +3778,6 @@ static int ext4_lazyinit_thread(void *arg)
- 	unsigned long next_wakeup, cur;
+ 	fs_info->workers =
+ 		btrfs_alloc_workqueue(fs_info, "worker", flags, max_active, 16);
+diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
+index 2c5edcee9450..5790177b4c2f 100644
+--- a/fs/btrfs/scrub.c
++++ b/fs/btrfs/scrub.c
+@@ -2877,7 +2877,7 @@ static void scrub_workers_put(struct btrfs_fs_info *fs_info)
+ static noinline_for_stack int scrub_workers_get(struct btrfs_fs_info *fs_info)
+ {
+ 	struct workqueue_struct *scrub_workers = NULL;
+-	unsigned int flags = WQ_FREEZABLE | WQ_UNBOUND;
++	unsigned int flags = WQ_UNBOUND;
+ 	int max_active = fs_info->thread_pool_size;
+ 	int ret = -ENOMEM;
  
- 	BUG_ON(NULL == eli);
--	set_freezable();
- 
- cont_thread:
- 	while (true) {
-@@ -3837,8 +3836,6 @@ static int ext4_lazyinit_thread(void *arg)
- 		}
- 		mutex_unlock(&eli->li_list_mtx);
- 
--		try_to_freeze();
--
- 		cur = jiffies;
- 		if (!next_wakeup_initialized || time_after_eq(cur, next_wakeup)) {
- 			cond_resched();
 
 -- 
 2.47.2
