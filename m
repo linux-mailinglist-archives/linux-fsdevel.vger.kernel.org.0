@@ -1,402 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-45472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B208A781BC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 19:56:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA80BA781C8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 19:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41D327A40DA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 17:54:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5F947A5236
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 17:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9869220C00D;
-	Tue,  1 Apr 2025 17:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AB320E6E2;
+	Tue,  1 Apr 2025 17:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O+PyY+xP"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="I9LW7bYX";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eGntcb5E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECED1C5F11
-	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Apr 2025 17:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC7C2040A4
+	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Apr 2025 17:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743530153; cv=none; b=jkSkgq74d8dml1kGbBzCmxdlj/fbclwXtmifhjkzASZ6RfkuNkSa2zJAg7bi8HWISaoak2Vt/U/0a5djCcYdYBJlIIRg8130K3Bki6YfpIFo4TlETn8//uXsFjdTCSrqXzam/o76r+VUifq+wSA0o8UKxE+nomQIcGwEoWBtQg4=
+	t=1743530217; cv=none; b=ZYdWo8VUXJ1jiQcOJaFsg0TgAyccpPDY71bTw6UFEn91/AIGPEDJxIK6PxghHCVvsLLMuggulcqpp4a6F9YIMh6zhJ7gVe6BkoICJYy+MG8Mb4uGCwl9EkHYJiAiFPb52nnXGmOTLo+Iw9ColnlMCqRRJUIlG5Srm5g2yaSpAZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743530153; c=relaxed/simple;
-	bh=7ZL45eO6oHpoyPVq90+nMlQSH41tVCESqt7gfL6dfBc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R0TJ7ASsFpcNdJgHiCDNlZAGs3XgAHfHayHoPV9VPGVxBmaXcEzQfs4N/NGLpok2yMImqWaB09UuTMGTWyNYhOaR8byH4ObNwKpVS6Q16aP12DrmOcktEnKW0ruF4QwR8siVNbTFoEAiBg1SVeke8Z6eJ73h3RLXhx+3wvDRMJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O+PyY+xP; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2242ac37caeso15925ad.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Apr 2025 10:55:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743530151; x=1744134951; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qwhXc+3Mv33awoyK00ZHq4pdn0DYvpiatBKGbcRAOA4=;
-        b=O+PyY+xPZ1DBJRTIMVw6IWWtb6gGQn9B7pjz7e2tmS0GVmnaUxZhIl3Kw+VdGgBBPE
-         nFe/BpqFip7Ok4kZRb7uph3RU31A77xvYsW59b4uY/f24xXJRwVTyYRFfrBEJxCEzQwg
-         7zUcTQW6jAR6c4zBzfyLDl5BqD9oa23CDogZzcMtGw14NSiZcdCEsUCSoPuww68tYebH
-         ZQqg4cRKSvU8+1TeMyZsRhPjEUEuiMqCwnWkcwJrIbjSfE8/yLbwGofBq5RXLK5lchrm
-         obI3DLQ/JGeB50GvSe9Z2uI+2iXRu5/XlH96N8XFgRhNSTVvook6ScgR5Gf4m5/9Uksz
-         JOIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743530151; x=1744134951;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qwhXc+3Mv33awoyK00ZHq4pdn0DYvpiatBKGbcRAOA4=;
-        b=c99OTgqZ07XgqdOA/8PCgT44iKWgZavX9cum8sx/WeLF0DO7u1txC16tJO/OiRH6eU
-         FBDWomAsZ+taYQMndzM7y6qgkox9Y01immtWdNV4YTw4U0Bg6EWmjm78UctyorPcWF4b
-         luHOHp9NYNWkY35SDtCgQpB5smPWQFCAf3WGK3g1OYo6ixN6BNqNeoHOWFDF7WvG//5A
-         yQpWi/NedAb7T+AQkVoSYOW+3B7IsS4pYuntico/Mf/HXFWU6WLH+ysw9wx/qH0+O734
-         3F+DTkh34oxWYF02D/EvOQDLI7SI9xv7HVsB0Mrd1/Yz/AgLArNIaNzlVkmkm6pO1pAi
-         oJSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWYt+XpBSmPa7zFmDjrCLxkIJg2V2hciEg13RRvYyX0U9+fMOqy29H2Lyh+1ckWtLssOCt9W92veOvDgP+Z@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHA7Nt593dLY1JcS2lZrEVCfku1Rax8fa1BGv73vLO3xxLav88
-	gpwOJwKLasqHqIqoVGz4XmXFHy3IQF0T4f6JmDg+1Ljvn4C1ZMmUSHfVZUse35ViuaKbbkirRFY
-	xkDycfNcjyeEKmuDP1P0b/e86LTEaGGEJzb9q
-X-Gm-Gg: ASbGnctPr64IIHxrcRLuOfuHe6Jl/mcWaMKDAMXgszN1PurNUqfyZg3RdyBnKE8Wuxt
-	6jhTOzmhRVcBdM0yJNEuS7yGqfHhVyV4/OX+c8N2nU0HAcW3CVayk8Sm5PKn5aC4/j6FXUZZ3sf
-	cM8tDXlp2F3PTZgJzIB17IlGjXNiM1F7tEf0b8zQst6sqRav5yVjwwE8Ae
-X-Google-Smtp-Source: AGHT+IE7+lugkQoCFTK/A+4GPe77QGElu8c0EADC3mRhCAQpzpeh+IouIII0n0V1WBWVNUBlMFPnDVuVctKpkGKQbWQ=
-X-Received: by 2002:a17:902:dace:b0:215:65f3:27ef with SMTP id
- d9443c01a7336-22969ddb1e2mr140565ad.12.1743530150219; Tue, 01 Apr 2025
- 10:55:50 -0700 (PDT)
+	s=arc-20240116; t=1743530217; c=relaxed/simple;
+	bh=JyTduEP4DVwOkHOUSCQMBVfbbgfrYWGyYg2B+iIf4sc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cVZWeBxuD4JqCbqf9vYgjnmE1y5VgF4RVw+/RqMzpNSaSiHTdRT8UcdX0LUrTXUMkuQdxYAQy4axpP6g//xFstt55l2OM1iNVemEKa49t9gaOyNqmkKKWdEIlPY8xSVObMKCci8yOU+fXLjJG6HzAVNJ2H301J94PbMFfOvaU3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=I9LW7bYX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eGntcb5E; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 6EF57254015E;
+	Tue,  1 Apr 2025 13:56:54 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Tue, 01 Apr 2025 13:56:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1743530214;
+	 x=1743616614; bh=nr7MgYv14SRfGSC+Moo64TjflY+D/+d+5/wt5AIlXho=; b=
+	I9LW7bYXl4WBn2zmRsDTrAJ33aBRg2cSu5tdwp/9SOPm2lwiElHqDs0WDBGYAt1q
+	QpuPQBZPlvK2oCNZhIfSQnlElkth8VLoq32oqEXnROLodjZIJOtAgmXLsrxio5Vo
+	efk7Aohp0zge5dyFbkaQjtL9+MwAFWjA+BhNi1QaevmwzVlfowkspEnbSwRKZgXt
+	FzoJBdfkNkkr5m2bBMg+82mj2HXmMp+7TQJdCY301uYmgbcZOck2/65kpJVbxs3T
+	e61PNH3JcrWQ71KMOlr1SeH1rq7OeB5GHrfEYF03OFzzXhTE8vTMs0l7D4gpbpIG
+	rlriDpU+Fi/Rcqn2iZ/kgg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743530214; x=
+	1743616614; bh=nr7MgYv14SRfGSC+Moo64TjflY+D/+d+5/wt5AIlXho=; b=e
+	Gntcb5ERzFwvAgNs4ExpDMRrZvGHQkQbvV49nv69T7aoOU1n9gimXWviYYf8KPzs
+	8xwfN1g2MHOggZe2h6dH58fML+qw175sMchrSPBRaTAoiIP/Ey58Zoui8aizvCA8
+	vjgf0V0FDxn5eUlEPMbNhfSWHckU5y8ub+kPBNuZZbbiKhH9GOR9hYQ53su8IjYt
+	m0xOb7AvkyGWm02fi7aajiVXooHMthF2gPiKVqRHbw4JLBNER7L3ftT9RXocS/JF
+	0+kyo+4qfZfx6ZyNRvkyyvqkKxRvI52juvyLR98y++b07iMthmjjTo7g148ow9ec
+	RXqHFDNbXVoi0iib2Q5nA==
+X-ME-Sender: <xms:5SjsZyBasxfwCrBoBxrHFqQAjZCUzBSYAz9vSUtmpJnguQ6Celztag>
+    <xme:5SjsZ8g7zFdE3_FiSsl-8ZDoDpEeWezr0GpLYQRR_WKuJh2Pb_2enzE36euSSnm_C
+    bJyq4MRCS0Rr3q2>
+X-ME-Received: <xmr:5SjsZ1l8a2PxBOxL4gjuO8fi6cOuvjyBAy_e1vTZCXMhW0IHtiz7zx9LShpisFX7a3Udi_4jXOOjNlCqjIzSunlGMs8sibuv7goI6LSHkM0b5NRC_Uee>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukeefgeefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddt
+    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuh
+    gsvghrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudev
+    udevleegleffffekudekgeevlefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrh
+    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggv
+    rhhtsehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmth
+    hpohhuthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdp
+    rhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheplhhinh
+    hugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehk
+    vghrnhgvlhdqthgvrghmsehmvghtrgdrtghomh
+X-ME-Proxy: <xmx:5SjsZwxUa_s9qkr5doAyM8fAU2F_0Uf0-BDAmSUxhnTTqVLw7ey7CA>
+    <xmx:5SjsZ3RViZlMdmRL0NfjTzZ7Y3mgZkixugeh7jDbcAqKeTimIDB2Fw>
+    <xmx:5SjsZ7Y2FqJOfrUXUg3i7C2y5bHVW0nhn6kv5Giog0yssT-fysQgtA>
+    <xmx:5SjsZwRhAq-EztZ2qo0oCYW1TWThkOyouDCvljFvb9jQyI-isA8W7Q>
+    <xmx:5ijsZ1OMFeANmDgk-Zj6VLiQIyI1ot_2YRTwCbYxs4tdVjpqFazA10jJ>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 1 Apr 2025 13:56:53 -0400 (EDT)
+Message-ID: <1ae8b7c8-5feb-4b8d-bd89-b8e2ac3c4ab0@fastmail.fm>
+Date: Tue, 1 Apr 2025 19:56:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250327160700.1147155-1-ryan.roberts@arm.com>
- <Z-WAbWfZzG1GA-4n@casper.infradead.org> <5131c7ad-cc37-44fc-8672-5866ecbef65b@arm.com>
- <Z-b1FmZ5nHzh5huL@casper.infradead.org> <ee11907a-5bd7-44ec-844c-8f10ff406b46@arm.com>
- <CAC_TJveU2v+EcokLKJVVZ8Xje2nYmmUg8bvCD8KO1oC5MgmWCA@mail.gmail.com> <76f5ba9b-1a8c-4973-89ce-14f504819da1@arm.com>
-In-Reply-To: <76f5ba9b-1a8c-4973-89ce-14f504819da1@arm.com>
-From: Kalesh Singh <kaleshsingh@google.com>
-Date: Tue, 1 Apr 2025 10:55:38 -0700
-X-Gm-Features: AQ5f1Jr2CcyeaoQIJQrpxG5gMN7Sj5YaqmW2gOSH6C-Z8_Xxr2eNEVByBPGBvFo
-Message-ID: <CAC_TJvemG2XDky1HtA8g=SG0nv-sONOS-ssEchdymh-_xjBecw@mail.gmail.com>
-Subject: Re: [PATCH v3] mm/filemap: Allow arch to request folio size for exec memory
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Dave Chinner <david@fromorbit.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] fuse: add numa affinity for uring queues
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+References: <20250331205709.1148069-1-joannelkoong@gmail.com>
+ <CAJnrk1a4fzz=Z+yTtGXFUyWqkEhbfO1UjxcSk1t5sA7tr8Z-nw@mail.gmail.com>
+ <c2ab84de-84b7-4948-8842-21dd8e8904b3@fastmail.fm>
+ <CAJnrk1YgRVqQriykVRuburcGK5oN8bzGRNTvyKhr19P-siJ4xg@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1YgRVqQriykVRuburcGK5oN8bzGRNTvyKhr19P-siJ4xg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 1, 2025 at 3:35=E2=80=AFAM Ryan Roberts <ryan.roberts@arm.com> =
-wrote:
->
-> On 01/04/2025 03:19, Kalesh Singh wrote:
-> > On Sat, Mar 29, 2025 at 3:08=E2=80=AFAM Ryan Roberts <ryan.roberts@arm.=
-com> wrote:
-> >>
-> >> On 28/03/2025 15:14, Matthew Wilcox wrote:
-> >>> On Thu, Mar 27, 2025 at 04:23:14PM -0400, Ryan Roberts wrote:
-> >>>> + Kalesh
-> >>>>
-> >>>> On 27/03/2025 12:44, Matthew Wilcox wrote:
-> >>>>> On Thu, Mar 27, 2025 at 04:06:58PM +0000, Ryan Roberts wrote:
-> >>>>>> So let's special-case the read(ahead) logic for executable mapping=
-s. The
-> >>>>>> trade-off is performance improvement (due to more efficient storag=
-e of
-> >>>>>> the translations in iTLB) vs potential read amplification (due to
-> >>>>>> reading too much data around the fault which won't be used), and t=
-he
-> >>>>>> latter is independent of base page size. I've chosen 64K folio siz=
-e for
-> >>>>>> arm64 which benefits both the 4K and 16K base page size configs an=
-d
-> >>>>>> shouldn't lead to any read amplification in practice since the old
-> >>>>>> read-around path was (usually) reading blocks of 128K. I don't
-> >>>>>> anticipate any write amplification because text is always RO.
-> >>>>>
-> >>>>> Is there not also the potential for wasted memory due to ELF alignm=
-ent?
-> >>>>
-> >>>> I think this is an orthogonal issue? My change isn't making that any=
- worse.
-> >>>
-> >>> To a certain extent, it is.  If readahead was doing order-2 allocatio=
-ns
-> >>> before and is now doing order-4, you're tying up 0-12 extra pages whi=
-ch
-> >>> happen to be filled with zeroes due to being used to cache the conten=
-ts
-> >>> of a hole.
-> >>
-> >> Well we would still have read them in before, nothing has changed ther=
-e. But I
-> >> guess your point is more about reclaim? Because those pages are now co=
-ntained in
-> >> a larger folio, if part of the folio is in use then all of it remains =
-active.
-> >> Whereas before, if the folio was fully contained in the pad area and n=
-ever
-> >> accessed, it would fall down the LRU quickly and get reclaimed.
-> >>
-> >
-> >
-> > Hi Ryan,
-> >
-> > I agree this was happening before and we don't need to completely
-> > address it here. Though with the patch it's more likely that the holes
-> > will be cached. I'd like to minimize it if possible. Since this is for
-> > EXEC mappings, a simple check we could use is to limit this to the
-> > VM_EXEC vma.
-> >
-> > + if (vm_flags & VM_EXEC) {
-> > + int order =3D arch_exec_folio_order();
-> > +
-> > + if (order >=3D 0 && ((end-address)*2) >=3D 1<<order) { /* Fault aroun=
-d case */
->
-> I think the intent of this extra check is to ensure the folio will be ful=
-ly
-> contained within the exec vma? Assuming end is the VA of the end of the v=
-ma and
-> address is the VA of the fault, I don't think the maths are quite right? =
-What's
-> the "*2" for? And you probably mean PAGE_SIZE<<order ? But this also does=
-n't
-> account for alignment; the folio will be aligned down to a natural bounda=
-ry in
-> the file.
 
-Hi Ryan,
 
-Sorry for the pseudocode. You are right it should be PAGE_SIZE. *2 is
-because I missed that this isn't centered around the faulting address
-as the usual fault around logic.
+On 4/1/25 19:50, Joanne Koong wrote:
+> On Tue, Apr 1, 2025 at 1:11 AM Bernd Schubert
+> <bernd.schubert@fastmail.fm> wrote:
+>>
+>> On 4/1/25 01:42, Joanne Koong wrote:
+>>> On Mon, Mar 31, 2025 at 1:57 PM Joanne Koong <joannelkoong@gmail.com> wrote:
+>>>>
+>>>> There is a 1:1 mapping between cpus and queues. Allocate the queue on
+>>>> the numa node associated with the cpu to help reduce memory access
+>>>> latencies.
+>>>>
+>>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+>>>> ---
+>>>>  fs/fuse/dev_uring.c | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+>>>> index accdce2977c5..0762d6229ac6 100644
+>>>> --- a/fs/fuse/dev_uring.c
+>>>> +++ b/fs/fuse/dev_uring.c
+>>>> @@ -256,7 +256,7 @@ static struct fuse_ring_queue *fuse_uring_create_queue(struct fuse_ring *ring,
+>>>>         struct fuse_ring_queue *queue;
+>>>>         struct list_head *pq;
+>>>>
+>>>> -       queue = kzalloc(sizeof(*queue), GFP_KERNEL_ACCOUNT);
+>>>> +       queue = kzalloc_node(sizeof(*queue), GFP_KERNEL_ACCOUNT, cpu_to_node(qid));
+>>>>         if (!queue)
+>>>>                 return NULL;
+>>>>         pq = kcalloc(FUSE_PQ_HASH_SIZE, sizeof(struct list_head), GFP_KERNEL);
+>>>
+>>> On the same note I guess we should also allocate pq on the
+>>> corresponding numa node too.
+>>
+>> So this is supposed to be called from a thread that already runs on this
+>> numa node and then kmalloc will allocate anyway on the right node,
+>> afaik. Do you have a use case where this is called from another node? If
+>> you do, all allocations in this file should be changed.
+>>
+> 
+> I don't have a use case I'm using but imo it seems hardier to ensure
+> this at the kernel level for queue, pq, and ent allocations instead of
+> assuming userspace will always submit the registration from the thread
+> on the numa node corresponding to the qid it's registering. I don't
+> feel strongly about this though so if you think the responsibility
+> should be left to userspace, then that's fine with me.
+> 
 
->
-> But more fundamentally, I thought I suggested reducing the VMA bounds to =
-exclude
-> padding pages the other day at LSF/MM and you said you didn't want to do =
-that
-> because you didn't want to end up with something else mapped in the gap? =
-So
-> doesn't that mean the padding pages are part of the VMA and this check wo=
-n't help?
+What I basically mean is that these threads are going to send the
+initial SQE, shouldn't it? Sounds a bit weird to me if the setup and
+sending the registration SQE are from different threads than the later
+handling. 
 
-The intention was to check that we aren't reading past (more than we
-do today) into other subsequent segments (and holes) if the exec
-segment is small relative to 64K, in which case we fall back to the
-conventional readahead heuristics.
-
->
-> >
-> > For reference I found below (coincidentally? similar) distributions on
-> > my devices
-> >
-> > =3D=3D x86 Workstation =3D=3D
-> >
-> > Total unique exec segments:   906
-> >
-> > Exec segments >=3D 16 KB:   663 ( 73.18%)
-> > Exec segments >=3D 64 KB:   414 ( 45.70%)
->
-> What are those percentages? They don't add up to more than 100...
-
-The percent of segments with size >=3D16KB/64KB of the total number of
-exec mappings. "Exec segments >=3D 64 KB" is also a subset of "Exec
-segments >=3D 16 KB" it's why they don't add up to 100.
-
->
-> The numbers I included with the patch are caclulated based on actual mapp=
-ings so
-> if we end up with a partially mapped 64K folio (because it runs off the e=
-nd of
-> the VMA) it wouldn't have been counted as a 64K contiguous mapping. So I =
-don't
-> think this type of change would change my numbers at all.
-
-I don't think it should affect the results much (probably only a small
-benefit from the extra preread of other segments if we aren't under
-much memory pressure).
-
-Anyways I don't have a strong opinion, given that this shouldn't be an
-issue once we work out Matthew and Ted's idea for the holes. So we can
-keep it simple for now.
 
 Thanks,
-Kalesh
-
->
-> >
-> > =3D=3D arm64 Android Device =3D=3D
-> >
-> > Total unique exec segments:   2171
-> >
-> > Exec segments >=3D 16 KB:  1602 ( 73.79%)
-> > Exec segments >=3D 64 KB:   988 ( 45.51%)
-> >
-> > Result were using the below script:
-> >
-> > cat /proc/*/maps | grep 'r-xp' | \
-> > awk '
-> > BEGIN { OFS =3D "\t" }
-> > $NF ~ /^\// {
-> > path =3D $NF;
-> > split($1, addr, "-");
-> > size =3D strtonum("0x" addr[2]) - strtonum("0x" addr[1]);
-> > print size, path;
-> > }' | \
-> > sort -u | \
-> > awk '
-> > BEGIN {
-> > FS =3D "\t";
-> > total_segments =3D 0;
-> > segs_ge_16k =3D 0;
-> > segs_ge_64k =3D 0;
-> > }
-> > {
-> > total_segments++;
-> > size =3D $1;
-> > if (size >=3D 16384) segs_ge_16k++;
-> > if (size >=3D 65536) segs_ge_64k++;
-> > }
-> > END {
-> > if (total_segments > 0) {
-> > percent_gt_16k =3D (segs_ge_16k / total_segments) * 100;
-> > percent_gt_64k =3D (segs_ge_64k / total_segments) * 100;
-> >
-> > printf "Total unique exec segments: %d\n", total_segments;
-> > printf "\n";
-> > printf "Exec segments >=3D 16 KB: %5d (%6.2f%%)\n", segs_ge_16k, percen=
-t_gt_16k;
-> > printf "Exec segments >=3D 64 KB: %5d (%6.2f%%)\n", segs_ge_64k, percen=
-t_gt_64k;
-> > } else {
-> > print "No executable segments found.";
-> > }
-> > }'
-> >
-> >>>
-> >>>>> Kalesh talked about it in the MM BOF at the same time that Ted and =
-I
-> >>>>> were discussing it in the FS BOF.  Some coordination required (like
-> >>>>> maybe Kalesh could have mentioned it to me rathere than assuming I'=
-d be
-> >>>>> there?)
-> >>>>
-> >>>> I was at Kalesh's talk. David H suggested that a potential solution =
-might be for
-> >>>> readahead to ask the fs where the next hole is and then truncate rea=
-dahead to
-> >>>> avoid reading the hole. Given it's padding, nothing should directly =
-fault it in
-> >>>> so it never ends up in the page cache. Not sure if you discussed any=
-thing like
-> >>>> that if you were talking in parallel?
-> >>>
-> >>> Ted said that he and Kalesh had talked about that solution.  I have a
-> >>> more bold solution in mind which lifts the ext4 extent cache to the
-> >>> VFS inode so that the readahead code can interrogate it.
-> >>>
-> >
-> > Sorry about the hiccup in coordination, Matthew. It was my bad for not
-> > letting you know I planned to discuss it in the MM BoF. I'd like to
-> > hear Ted and your ideas on this when possible.
-> >
-> > Thanks,
-> > Kalesh
-> >
-> >>>> Anyway, I'm not sure if you're suggesting these changes need to be c=
-onsidered as
-> >>>> one somehow or if you're just mentioning it given it is loosely rela=
-ted? My view
-> >>>> is that this change is an improvement indepently and could go in muc=
-h sooner.
-> >>>
-> >>> This is not a reason to delay this patch.  It's just a downside which
-> >>> should be mentioned in the commit message.
-> >>
-> >> Fair point; I'll add a paragraph about the potential reclaim issue.
-> >>
-> >>>
-> >>>>>> +static inline int arch_exec_folio_order(void)
-> >>>>>> +{
-> >>>>>> +  return -1;
-> >>>>>> +}
-> >>>>>
-> >>>>> This feels a bit fragile.  I often expect to be able to store an or=
-der
-> >>>>> in an unsigned int.  Why not return 0 instead?
-> >>>>
-> >>>> Well 0 is a valid order, no? I think we have had the "is order signe=
-d or
-> >>>> unsigned" argument before. get_order() returns a signed int :)
-> >>>
-> >>> But why not always return a valid order?  I don't think we need a
-> >>> sentinel.  The default value can be 0 to do what we do today.
-> >>>
-> >>
-> >> But a single order-0 folio is not what we do today. Note that my chang=
-e as
-> >> currently implemented requests to read a *single* folio of the specifi=
-ed order.
-> >> And note that we only get the order we request to page_cache_ra_order(=
-) because
-> >> the size is limited to a single folio. If the size were bigger, that f=
-unction
-> >> would actually expand the requested order by 2. (although the paramete=
-r is
-> >> called "new_order", it's actually interpretted as "old_order").
-> >>
-> >> The current behavior is effectively to read 128K in order-2 folios (wi=
-th smaller
-> >> folios for boundary alignment).
-> >>
-> >> So I see a few options:
->
-> Matthew,
->
-> Did you have any thoughts on these options?
->
-> Thanks,
-> Ryan
->
-> >>
-> >>   - Continue to allow non-opted in arches to use the existing behaviou=
-r; in this
-> >> case we need a sentinel. This could be -1, UINT_MAX or 0. But in the l=
-atter case
-> >> you are preventing an opted-in arch from specifying that they want ord=
-er-0 -
-> >> it's meaning is overridden.
-> >>
-> >>   - Force all arches to use the new approach with a default folio orde=
-r (and
-> >> readahead size) of order-0. (The default can be overridden per-arch). =
-Personally
-> >> I'd be nervous about making this change.
-> >>
-> >>   - Decouple the read size from the folio order size; continue to use =
-the 128K
-> >> read size and only allow opting-in to a specific folio order. The defa=
-ult order
-> >> would be 2 (or 0). We would need to fix page_cache_async_ra() to call
-> >> page_cache_ra_order() with "order + 2" (the new order) and fix
-> >> page_cache_ra_order() to treat its order parameter as the *new* order.
-> >>
-> >> Perhaps we should do those fixes anyway (and then actually start with =
-a folio
-> >> order of 0 - which I think you said in the past was your original inte=
-ntion?).
-> >>
-> >> Thanks,
-> >> Ryan
-> >>
->
+Bernd
 
