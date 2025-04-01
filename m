@@ -1,213 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-45421-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45422-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99572A777DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 11:37:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E78A777E8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 11:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 096B43A6936
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 09:35:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FEA83A4275
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 09:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3101EF081;
-	Tue,  1 Apr 2025 09:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HlWn7NVt"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E829F1EF0A6;
+	Tue,  1 Apr 2025 09:40:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B775E1EDA2A;
-	Tue,  1 Apr 2025 09:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F121C38B
+	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Apr 2025 09:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743500163; cv=none; b=iumd72t14IpLHbHYS8IMXjgT1KhgDLtvkLM79y8VZKW2yviFFZ4w6lNGfqy1cEFIbB3KmJzoSFdbaW654lTDuAJb3CPOfcL0959WPUgtctFNBX3dV7t1x7LdYktcE1hZiM0t4r57VSWx1N7BM6YsaQ5KS4eOQV+jGSgG6LRQlAk=
+	t=1743500426; cv=none; b=C6v+wRw9+9/R/OMnKEbMg/UEAjOlFQrx6FBlVTqcRd5fveNq6O2tPx5QrVwJwSToyNLIskS56fk2p6qba29asngooopaO7456Z5Jwl2hE4kYJF5SgXG71f2eoeS0Wth3BrYS80AIppWhKVD3BFufbuWSa8gDocCSczBXxE81V1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743500163; c=relaxed/simple;
-	bh=DFQ7HshH4QnM8dvmnRm+NA4ujqJ40ylcRNKNzB5QSfs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mSUhweemf/2NmdXiVxzqx+A6Gd/usfYaFFYla7ItFs3oNZF1awyGeB4tBeI4zm8scnFyNEY4OP4x0OdSIR/Tsu7V+Hj6cUwCTycjTgMEfoKRf5qv/6N+1ETt8kr+8DOUj8HPCiLhojtWNvZf4LGhwnFOOVAczrhYSiFE0yHPq1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HlWn7NVt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7064DC4CEE4;
-	Tue,  1 Apr 2025 09:35:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743500163;
-	bh=DFQ7HshH4QnM8dvmnRm+NA4ujqJ40ylcRNKNzB5QSfs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HlWn7NVt6JvAN31lUXeKKjwIRzmyUuqlfMNqvmRVcMgsGBHgr7yUbGQJraOVgUxLo
-	 eu1GDIKt7uODK+cqJkBXXoIEu/L+CqaC23SCz9V9Sd1gcxiU4lOvm500GohqQNFW+Y
-	 PG68zgXebuDoSuxxaDeX03Bqt0T+5Js0LzKXXWbFVsYTs4DKJ2zXTCUyYk7oo5uTTi
-	 OmjLDwFc6fYWvCnl8tLPe1hXlX0pk9nN6BVNRF0XoPWiQqT5ZKOqQmVnC0FdASnfWR
-	 WnPLQiKGXTtu9yFqiit9Kme2g8BninIAH/szdOPZrQI4BGllS277JOD6UUKoOSu1dz
-	 6mB3kZlb/H3jg==
-Date: Tue, 1 Apr 2025 11:35:56 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, mcgrof@kernel.org, hch@infradead.org, david@fromorbit.com, 
-	rafael@kernel.org, djwong@kernel.org, pavel@kernel.org, peterz@infradead.org, 
-	mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com
-Subject: Re: [PATCH 1/6] ext4: replace kthread freezing with auto fs freezing
-Message-ID: <20250401-konsens-nahebringen-fa1c80956371@brauner>
-References: <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
- <20250401-work-freeze-v1-1-d000611d4ab0@kernel.org>
- <z3zqumhqgzq3agjps4ufdcqqrgip7t7xtr6v5kymchkdjfnwhp@i76pwshkydig>
+	s=arc-20240116; t=1743500426; c=relaxed/simple;
+	bh=bMvAYJXBmlVd+nxrsL+KEButwoB/DnD4Wb9PLyyDajw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZVAtdhuENwPbvrJQly9lBB+YnssvwcSkJOrf7Qk3B7Dn85Z/LO43kaNcnmfwN3voWkjXwmpnm9+QwO6FrV09ZYCK5nZE4hKmsuNPab2p1YrTBeXlxHR3l/EMz+OSDFcdCR1JurKT7N1KaAQJbbrnJqnx6pH1NLngOacvOLl3oEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d458e61faaso53403405ab.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Apr 2025 02:40:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743500424; x=1744105224;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=T99KLhRaT/zg5krqq6egVQGPY8M5vnskt1JQriQgYiU=;
+        b=RCHlJdFgzO417h7l3twO/ZpIRFfBnN57/de3WVckfEg2NsBkTj9mrsi42/p4Kc7fC9
+         ++nj34giq7fCBJPERjTStvYyDPcJbGbPWlEPt83iLaVB/0inTud9FxeHeumeDV/7xhsk
+         9IUQJSegrK9BKGQnFLdAZHCXx8Wvs+9N84wY4OIGR+wbJxf216cZlrOhgJJyYeauD+Vq
+         SbAWRfdtRcw9s+AaFdpEARZTPyfgD5cOJhtqTiaP7kBUTzFMzMKQlFHrVh1mJw7/cDp4
+         azelIjR3IfHpgStXRFo5zgedZ+INCr+Aeqea7ONcsusEb+lnlvTEIHeDTjSBlUce5n0B
+         U7uw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXKNR8Iuv7QDt9oxO1Kjcr88ftTu3OBx+kXI9A1y2Ia0DwVm+IWauUrtZ1z3JRXMwft3EIHvMiw9DZMSwB@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQ6JXXzrIyMtOOUhqBh7AFb104mRQTNPpQtKOlAamRXKXLFzrA
+	SraugRL0EoSWIf+kEGzCo94dezGaaWmU3IiwPaBLjIKHYQftO2B38d+/ck8sfOxcd1opY1DH1nD
+	YfXHlMKOzoXcsfChj57l9cGTTcmzKB4Q/aFKSe0hk7jwhUXaXu1tZPMA=
+X-Google-Smtp-Source: AGHT+IE2OVwt/Fi/HdMaxn9+dAXwdx2XZ6OX3zUiWvhr4o2huMhlCYQJ24LyTxTZ4x9N79CdkPXEiu2RZmWoBAwlYHvfeIggBhfN
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <z3zqumhqgzq3agjps4ufdcqqrgip7t7xtr6v5kymchkdjfnwhp@i76pwshkydig>
+X-Received: by 2002:a92:6812:0:b0:3d1:84ad:165e with SMTP id
+ e9e14a558f8ab-3d5d6cfd612mr117415665ab.7.1743500424049; Tue, 01 Apr 2025
+ 02:40:24 -0700 (PDT)
+Date: Tue, 01 Apr 2025 02:40:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67ebb488.050a0220.297a31.000a.GAE@google.com>
+Subject: [syzbot] [fs?] [mm?] KCSAN: data-race in mem_cgroup_track_foreign_dirty_slowpath
+ / mem_cgroup_track_foreign_dirty_slowpath (7)
+From: syzbot <syzbot+6f43371b62882ee50909@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Apr 01, 2025 at 11:16:18AM +0200, Jan Kara wrote:
-> On Tue 01-04-25 02:32:46, Christian Brauner wrote:
-> > From: Luis Chamberlain <mcgrof@kernel.org>
-> > 
-> > The kernel power management now supports allowing the VFS
-> > to handle filesystem freezing freezes and thawing. Take advantage
-> > of that and remove the kthread freezing. This is needed so that we
-> > properly really stop IO in flight without races after userspace
-> > has been frozen. Without this we rely on kthread freezing and
-> > its semantics are loose and error prone.
-> > 
-> > The filesystem therefore is in charge of properly dealing with
-> > quiescing of the filesystem through its callbacks if it thinks
-> > it knows better than how the VFS handles it.
-> > 
-> > The following Coccinelle rule was used as to remove the now superfluous
-> > freezer calls:
-> > 
-> > make coccicheck MODE=patch SPFLAGS="--in-place --no-show-diff" COCCI=./fs-freeze-cleanup.cocci M=fs/ext4
-> > 
-> > virtual patch
-> > 
-> > @ remove_set_freezable @
-> > expression time;
-> > statement S, S2;
-> > expression task, current;
-> > @@
-> > 
-> > (
-> > -       set_freezable();
-> > |
-> > -       if (try_to_freeze())
-> > -               continue;
-> > |
-> > -       try_to_freeze();
-> > |
-> > -       freezable_schedule();
-> > +       schedule();
-> > |
-> > -       freezable_schedule_timeout(time);
-> > +       schedule_timeout(time);
-> > |
-> > -       if (freezing(task)) { S }
-> > |
-> > -       if (freezing(task)) { S }
-> > -       else
-> > 	    { S2 }
-> > |
-> > -       freezing(current)
-> > )
-> > 
-> > @ remove_wq_freezable @
-> > expression WQ_E, WQ_ARG1, WQ_ARG2, WQ_ARG3, WQ_ARG4;
-> > identifier fs_wq_fn;
-> > @@
-> > 
-> > (
-> >     WQ_E = alloc_workqueue(WQ_ARG1,
-> > -                              WQ_ARG2 | WQ_FREEZABLE,
-> > +                              WQ_ARG2,
-> > 			   ...);
-> > |
-> >     WQ_E = alloc_workqueue(WQ_ARG1,
-> > -                              WQ_ARG2 | WQ_FREEZABLE | WQ_ARG3,
-> > +                              WQ_ARG2 | WQ_ARG3,
-> > 			   ...);
-> > |
-> >     WQ_E = alloc_workqueue(WQ_ARG1,
-> > -                              WQ_ARG2 | WQ_ARG3 | WQ_FREEZABLE,
-> > +                              WQ_ARG2 | WQ_ARG3,
-> > 			   ...);
-> > |
-> >     WQ_E = alloc_workqueue(WQ_ARG1,
-> > -                              WQ_ARG2 | WQ_ARG3 | WQ_FREEZABLE | WQ_ARG4,
-> > +                              WQ_ARG2 | WQ_ARG3 | WQ_ARG4,
-> > 			   ...);
-> > |
-> > 	    WQ_E =
-> > -               WQ_ARG1 | WQ_FREEZABLE
-> > +               WQ_ARG1
-> > |
-> > 	    WQ_E =
-> > -               WQ_ARG1 | WQ_FREEZABLE | WQ_ARG3
-> > +               WQ_ARG1 | WQ_ARG3
-> > |
-> >     fs_wq_fn(
-> > -               WQ_FREEZABLE | WQ_ARG2 | WQ_ARG3
-> > +               WQ_ARG2 | WQ_ARG3
-> >     )
-> > |
-> >     fs_wq_fn(
-> > -               WQ_FREEZABLE | WQ_ARG2
-> > +               WQ_ARG2
-> >     )
-> > |
-> >     fs_wq_fn(
-> > -               WQ_FREEZABLE
-> > +               0
-> >     )
-> > )
-> > 
-> > @ add_auto_flag @
-> > expression E1;
-> > identifier fs_type;
-> > @@
-> > 
-> > struct file_system_type fs_type = {
-> > 	.fs_flags = E1
-> > +                   | FS_AUTOFREEZE
-> > 	,
-> > };
-> > 
-> > Generated-by: Coccinelle SmPL
-> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> > Link: https://lore.kernel.org/r/20250326112220.1988619-5-mcgrof@kernel.org
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  fs/ext4/mballoc.c | 2 +-
-> >  fs/ext4/super.c   | 3 ---
-> >  2 files changed, 1 insertion(+), 4 deletions(-)
-> > 
-> > diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> > index 0d523e9fb3d5..ae235ec5ff3a 100644
-> > --- a/fs/ext4/mballoc.c
-> > +++ b/fs/ext4/mballoc.c
-> > @@ -6782,7 +6782,7 @@ static ext4_grpblk_t ext4_last_grp_cluster(struct super_block *sb,
-> >  
-> >  static bool ext4_trim_interrupted(void)
-> >  {
-> > -	return fatal_signal_pending(current) || freezing(current);
-> > +	return fatal_signal_pending(current);
-> >  }
-> 
-> This change should not happen. ext4_trim_interrupted() makes sure FITRIM
-> ioctl doesn't cause hibernation failures and has nothing to do with kthread
-> freezing...
-> 
-> Otherwise the patch looks good.
+Hello,
 
-Afaict, we don't have to do these changes now. Yes, once fsfreeze
-reliably works in the suspend/resume codepaths then we can switch all
-that off and remove the old freezer. But we should only do that once we
-have some experience with the new filesystem freezing during
-suspend/hibernate. So we should place this under a
-/sys/power/freeze_filesystems knob and wait a few kernel releases to see
-whether we see significant problems. How does that sound to you?
+syzbot found the following issue on:
+
+HEAD commit:    1e7857b28020 x86: don't re-generate cpufeaturemasks.h so e..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12bb8268580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bdb65086dcaf0454
+dashboard link: https://syzkaller.appspot.com/bug?extid=6f43371b62882ee50909
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/08333bdf2b6c/disk-1e7857b2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c798f117761a/vmlinux-1e7857b2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a2171375da2b/bzImage-1e7857b2.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6f43371b62882ee50909@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KCSAN: data-race in mem_cgroup_track_foreign_dirty_slowpath / mem_cgroup_track_foreign_dirty_slowpath
+
+write to 0xffff8881184b45d8 of 8 bytes by task 15048 on cpu 0:
+ mem_cgroup_track_foreign_dirty_slowpath+0x3bf/0x450 mm/memcontrol.c:-1
+ mem_cgroup_track_foreign_dirty include/linux/memcontrol.h:1586 [inline]
+ folio_account_dirtied mm/page-writeback.c:2756 [inline]
+ __folio_mark_dirty+0x3f5/0x4e0 mm/page-writeback.c:2797
+ mark_buffer_dirty+0x134/0x230 fs/buffer.c:1196
+ __block_commit_write fs/buffer.c:2189 [inline]
+ block_page_mkwrite+0x29b/0x3f0 fs/buffer.c:2621
+ ext4_page_mkwrite+0x75c/0xba0 fs/ext4/inode.c:6225
+ do_page_mkwrite mm/memory.c:3253 [inline]
+ wp_page_shared mm/memory.c:3654 [inline]
+ do_wp_page+0xcaf/0x2380 mm/memory.c:3804
+ handle_pte_fault mm/memory.c:5906 [inline]
+ __handle_mm_fault mm/memory.c:6033 [inline]
+ handle_mm_fault+0xc78/0x2b30 mm/memory.c:6202
+ do_user_addr_fault arch/x86/mm/fault.c:1337 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1480 [inline]
+ exc_page_fault+0x3b9/0x650 arch/x86/mm/fault.c:1538
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+
+read to 0xffff8881184b45d8 of 8 bytes by task 15063 on cpu 1:
+ mem_cgroup_track_foreign_dirty_slowpath+0xdb/0x450 mm/memcontrol.c:3291
+ mem_cgroup_track_foreign_dirty include/linux/memcontrol.h:1586 [inline]
+ folio_account_dirtied mm/page-writeback.c:2756 [inline]
+ __folio_mark_dirty+0x3f5/0x4e0 mm/page-writeback.c:2797
+ mark_buffer_dirty+0x134/0x230 fs/buffer.c:1196
+ __block_commit_write fs/buffer.c:2189 [inline]
+ block_write_end+0x123/0x210 fs/buffer.c:2265
+ ext4_da_do_write_end fs/ext4/inode.c:3015 [inline]
+ ext4_da_write_end+0x20a/0x810 fs/ext4/inode.c:3090
+ generic_perform_write+0x31e/0x4b0 mm/filemap.c:4135
+ ext4_buffered_write_iter+0x1ed/0x3c0 fs/ext4/file.c:299
+ ext4_file_write_iter+0x3b2/0xf80 include/linux/fs.h:-1
+ iter_file_splice_write+0x5f2/0x980 fs/splice.c:738
+ do_splice_from fs/splice.c:935 [inline]
+ direct_splice_actor+0x160/0x2c0 fs/splice.c:1158
+ splice_direct_to_actor+0x305/0x680 fs/splice.c:1102
+ do_splice_direct_actor fs/splice.c:1201 [inline]
+ do_splice_direct+0xd9/0x150 fs/splice.c:1227
+ do_sendfile+0x40a/0x690 fs/read_write.c:1368
+ __do_sys_sendfile64 fs/read_write.c:1429 [inline]
+ __se_sys_sendfile64 fs/read_write.c:1415 [inline]
+ __x64_sys_sendfile64+0x113/0x160 fs/read_write.c:1415
+ x64_sys_call+0xfc3/0x2e10 arch/x86/include/generated/asm/syscalls_64.h:41
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xc9/0x1c0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+value changed: 0x00000000ffffebe1 -> 0x00000000ffffef33
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 UID: 0 PID: 15063 Comm: syz.2.3982 Not tainted 6.14.0-syzkaller-11144-g1e7857b28020 #0 PREEMPT(voluntary) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
