@@ -1,186 +1,240 @@
-Return-Path: <linux-fsdevel+bounces-45478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45479-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD9EBA783DC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 23:17:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87EA0A78425
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 23:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0176F3A4AAA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 21:16:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3609616C50E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 21:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E41920E32B;
-	Tue,  1 Apr 2025 21:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749641EF378;
+	Tue,  1 Apr 2025 21:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="Mfp0yoJ8"
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="Tpv1vXyP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+Received: from bee.birch.relay.mailchannels.net (bee.birch.relay.mailchannels.net [23.83.209.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC589F4ED
-	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Apr 2025 21:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743542214; cv=none; b=P2YQdiVitUqdvnZKJnnjbFDRUk3ZtdyZ97TKwZ07Bkv7byDizfEG75bWHcWJcptkIdczEUc+b7v0sffEh9dMFv0SNUJtLheh46DSzjxq1nPWi8nzlBAcP+w2FuVze03J9LeKcTBnP9mLRu3+g3+MBOd9v8n/MqztOYX0Q6v6Ecg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743542214; c=relaxed/simple;
-	bh=1IsjK6xYFf5FbhIKfeaonN1Cs+Y9Lz84wgDKyhglZt4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zi9d/oCHq2jTmh339PiuEI1gzxsJrfTvV+1d19TLTRokcu+/TsUjXH6yytB9SssWy8NjEtrx2hfUrBof34mpTAVj0uYA5djyNL1tABu9GY/s2AhTJjrRoyf0AymR7IBTKTz2ySRPdOXmXYjAGz1K3347FxLWDovcaysbKbaPFqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=Mfp0yoJ8; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 531KGek1000475
-	for <linux-fsdevel@vger.kernel.org>; Tue, 1 Apr 2025 14:16:51 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=s2048-2021-q4;
-	 bh=b8enlN2i7m4bEWJSz90/GHX9HF325SS2ayjUnvDzDao=; b=Mfp0yoJ8/bqp
-	5yg+ZKXkqlTDJefMtSTWoGIztRysoJtU4XSZJMGvU7ji10QBl5cQFiUm8WRCuydN
-	4KzhT+BPqbjH5t0wlwcKUvyhvaxsw59AzwRBid3vaRHjacgRaCq2IqQUbTXQQ7r7
-	TD+Wrbj5Pgdmn/jezENc3MSjQiXpJ5H6N7EBF19STAoF4wM6/UlwPDun1cBk8w8M
-	O1AyotHjcWZGbep8KuMeY6HhThMdUpSVwPAmUVXU3fk7tEsw5UU4ISAmywd6L9HX
-	zpRLQXpJu7jj2wtWjxP/2yrRYeuv/B8useebo4l5zJNqHG1x6KRiFaKAyR4Otg8C
-	HdJOCPOmtQ==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 45rhrr3f27-3
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Tue, 01 Apr 2025 14:16:51 -0700 (PDT)
-Received: from twshared9216.15.frc2.facebook.com (2620:10d:c085:108::4) by
- mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.14; Tue, 1 Apr 2025 21:16:49 +0000
-Received: by devvm18334.vll0.facebook.com (Postfix, from userid 202792)
-	id 467D823EE9413; Tue,  1 Apr 2025 14:16:44 -0700 (PDT)
-From: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
-To: <jack@suse.cz>
-CC: <amir73il@gmail.com>, <ibrahimjirdeh@meta.com>, <josef@toxicpanda.com>,
-        <lesha@meta.com>, <linux-fsdevel@vger.kernel.org>, <sargun@meta.com>
-Subject: Re: Reseting pending fanotify events
-Date: Tue, 1 Apr 2025 14:16:09 -0700
-Message-ID: <20250401211609.2433022-1-ibrahimjirdeh@meta.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <6za2mngeqslmqjg3icoubz37hbbxi6bi44canfsg2aajgkialt@c3ujlrjzkppr>
-References: <6za2mngeqslmqjg3icoubz37hbbxi6bi44canfsg2aajgkialt@c3ujlrjzkppr>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915461E571A;
+	Tue,  1 Apr 2025 21:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.209.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743544199; cv=pass; b=cnf/bThPyqKxskh5l5ZFvAJAIWvIg6dXbJtkJaL4mvjAR98YDkQfVqeKJqU5r4dNt1MtnfxNdziJ2yMIrVTK39GGE9poff92p0exNEJWm44Gv5qNJBlA92kUpeoCrj4IBigKruFQZ3Hg/9KstoxaJo/otbiziepbQQ8HcR0Bamo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743544199; c=relaxed/simple;
+	bh=Ee7ZhrYrrPHbAR83ceWSSd6J0FdhYVvcZcaZgQUsS6g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CQccWjslaXpnmP+zCFp9bGz5Fp5m5oMgmx7BnerC716ZJfDQkBUK2KSbLA9utJYCHRZjFbp9zOIlEoOpZdRTBG3JZft2qyL6AAJB46TvH7u+x5FT3oNgKvaz4atotlaGFpTN8sS097TATHB7py955drHpD8unAows5jkZdtywjE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=Tpv1vXyP; arc=pass smtp.client-ip=23.83.209.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id B403E182C1C;
+	Tue,  1 Apr 2025 21:49:56 +0000 (UTC)
+Received: from pdx1-sub0-mail-a218.dreamhost.com (trex-1.trex.outbound.svc.cluster.local [100.125.203.131])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 24643182A7B;
+	Tue,  1 Apr 2025 21:49:56 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1743544196; a=rsa-sha256;
+	cv=none;
+	b=nichnOZxr1pyxuOeQ+iX6n/n3yRMk73ZWDnCx4p1tzBUqZWUjmZfJDXQe4BYVPooYiWPgo
+	iWR74060YGORvfdPgijP1hTCHX3tUfIb86pbA8RATZfs2p4xHpxF7dYuhKpCS7QvdONua0
+	Iyx6DvqnM70pyY37c2Y/ujeTOPnaUDNQf+b0egh9C4BEbs0JwPZfxK9DOpO60mkG/LaPoM
+	bde1WbyHb4F1xa+UI3yg+2WzwUQhUGXJSykoQrLkSgqci0iRg5N8jKQEdomEgCAqTi3xjz
+	tXDb4cW1YsBqoJUNjGtj3sUS8u4aXGBQZ1jK0zLsytHRkTyMdDroS0Kal1ToKQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1743544196;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=sGlWmBOhS2CwuQbgKM4hR9ROVp92Ooxj6PLZQlRbhm4=;
+	b=ye//Cm2L8aQZ0+DhVtlEacagJmMjBP2Tnx4d8fveuFzyQgd/7i6mACjRETwUKhR2WvYhdQ
+	sy/GwdwBJhWz7snEqwje0yfq7v8z8aF3ZoNeRHnmw0h1QwzUC5gQs+wCVt6yl7AsCTA3JR
+	jM7JXqg3wmQiZ1IvsNCUB1J1XGq71LHh7+2dnTBAqMBvGJedfi8KJncaVXIAbpc9/OldK2
+	I4c/XOodj9wT+AdyqfMdQlS89NDHG7LH7TGVHjb8Nut5ks8zkKcdqMr+AjPEO9BDDTLMXF
+	bZYlIi0hbHn1DODHX+OwFEURusTXdhQli6udQ1RZV2iI+thK1qel7y+dwbbxjg==
+ARC-Authentication-Results: i=1;
+	rspamd-7668cf9b8d-8g8x5;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Absorbed-Left: 768fd03f78a578da_1743544196578_3753900963
+X-MC-Loop-Signature: 1743544196578:1801671722
+X-MC-Ingress-Time: 1743544196578
+Received: from pdx1-sub0-mail-a218.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.125.203.131 (trex/7.0.3);
+	Tue, 01 Apr 2025 21:49:56 +0000
+Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a218.dreamhost.com (Postfix) with ESMTPSA id 4ZS1r25qzFzK5;
+	Tue,  1 Apr 2025 14:49:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1743544196;
+	bh=sGlWmBOhS2CwuQbgKM4hR9ROVp92Ooxj6PLZQlRbhm4=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=Tpv1vXyPmlYXrkZB6HH2lFjD1Ul4RH/H7pNsJmiOjDiQYQgb+QhJYhYsTB56Bu6cS
+	 FE6AiFUBIJpUFD8x1fdSHuRTdSpSdTe8pSUxKNIstEmp9FtRXRSdEMIJimM1EZHfQ0
+	 KbymcGPVJAId3EIfDw8vBX6yARkZm2mLaC09GmDfytO9rXlgpyi0850wK1JQadcuPK
+	 KZ2MY+1VUIIjsHnL7ZGOlyt9vPqITfPx060uUnGwaqklpbmyBdsOlnbIBEKYUCFToi
+	 MLRwfQc6zddBq7YHe06qwKlP9pxq9wZgb+8nU25wdnIXRb41VmMe+c/G9uuO6WGX4Y
+	 ZM8SdIs8UvRTg==
+Date: Tue, 1 Apr 2025 14:49:51 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Jan Kara <jack@suse.cz>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, brauner@kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+	riel@surriel.com, willy@infradead.org, hannes@cmpxchg.org,
+	oliver.sang@intel.com, david@redhat.com, axboe@kernel.dk,
+	hare@suse.de, david@fromorbit.com, djwong@kernel.org,
+	ritesh.list@gmail.com, linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-mm@kvack.org,
+	gost.dev@samsung.com, p.raghav@samsung.com, da.gomez@samsung.com
+Subject: Re: [PATCH 2/3] fs/buffer: avoid races with folio migrations on
+ __find_get_block_slow()
+Message-ID: <20250401214951.kikcrmu5k3q6qmcr@offworld>
+Mail-Followup-To: Jan Kara <jack@suse.cz>,
+	Luis Chamberlain <mcgrof@kernel.org>, brauner@kernel.org,
+	tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+	riel@surriel.com, willy@infradead.org, hannes@cmpxchg.org,
+	oliver.sang@intel.com, david@redhat.com, axboe@kernel.dk,
+	hare@suse.de, david@fromorbit.com, djwong@kernel.org,
+	ritesh.list@gmail.com, linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-mm@kvack.org,
+	gost.dev@samsung.com, p.raghav@samsung.com, da.gomez@samsung.com
+References: <20250330064732.3781046-1-mcgrof@kernel.org>
+ <20250330064732.3781046-3-mcgrof@kernel.org>
+ <lj6o73q6nev776uvy7potqrn5gmgtm4o2cev7dloedwasxcsmn@uanvqp3sm35p>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: zV6Oh4oWj8IpVljEcljN5MZn_MjOXvt0
-X-Proofpoint-ORIG-GUID: zV6Oh4oWj8IpVljEcljN5MZn_MjOXvt0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-01_09,2025-04-01_01,2024-11-22_01
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <lj6o73q6nev776uvy7potqrn5gmgtm4o2cev7dloedwasxcsmn@uanvqp3sm35p>
+User-Agent: NeoMutt/20220429
 
-Hopefully the formatting works well now. Also including some replies to
-questions from earlier in the thread in case they were lost.
+On Tue, 01 Apr 2025, Jan Kara wrote:
 
-> But what confuses me is the following: You have fanotify instance to wh=
-ich
-> you've got fd from fanotify_init(). For any process to be hanging, this=
- fd
-> must be still held open by some process. Otherwise the fanotify instanc=
-e
-> gets destroyed and all processes are free to run (they get FAN_ALLOW re=
-ply
-> if they were already waiting). So the fact that you see processes hangi=
-ng
-> when your fanotify listener crashes means that you have likely leaked t=
-he
-> fd to some other process (lsof should be able to tell you which process=
- has
-> still handle to fanotify instance). And the kernel has no way to know t=
-his
-> is not the process that will eventually read these events and reply...
+>I find this problematic. It fixes the race with migration, alright
+>(although IMO we should have a comment very well explaining the interplay
+>of folio lock and mapping->private_lock to make this work - probably in
+>buffer_migrate_folio_norefs() - and reference it from here), but there are
+>places which expect that if __find_get_block() doesn't return anything,
+>this block is not cached in the buffer cache. And your change breaks this
+>assumption. Look for example at write_boundary_block(), that will fail to
+>write the block it should write if it races with someone locking the folio
+>after your changes. Similarly the code tracking state of deleted metadata
+>blocks in fs/jbd2/revoke.c will fail to properly update buffer's state if
+>__find_get_block() suddently starts returning NULL although the buffer is
+>present in cache.
 
-I can clarify this further. In our case its important to not destroy the =
-fanotify
-instance during daemon shutdown as giving FAN_ALLOW to waiting processes =
-could
-enable accessing a file which has not actually been populated. To this en=
-d, we
-persist the fd from fanotify_init accross daemon restarts. In particular =
-since
-the daemon is a systemd unit, we rely on the systemd fd store (https://sy=
-stemd.io/FILE_DESCRIPTOR_STORE/)
-for this, which essentially will maintain a dup of the fanotify fd. This =
-is why
-we can run into the case of hanging events during planned restart or unin=
-tented
-crash. Heres a sample trace of D-state process I had linked in earlier re=
-ply:
+Yeah - one thing I was thinking about, _iff_ failing lookups (__find_get_block()
+returning nil) during migration is in fact permitted, was adding a BH_migrate
+flag and serialize vs __buffer_migrate_folio() entirely. Semantically there
+are no users, and none are added during this window, but as a consequence I
+suppose one thread could see the page not cached, act upon that, then see it
+cached once the migration is done and get confused(?). So I don't see a problem
+here for write_boundary_block() specifically, but I'm probably overlooking others.
 
-[<0>] fanotify_handle_event+0x8ac/0x10f0
-[<0>] fsnotify+0x5fb/0x8d0
-[<0>] __fsnotify_parent+0x17f/0x260
-[<0>] security_file_open+0x8f/0x130
-[<0>] vfs_open+0x109/0x4c0
-[<0>] path_openat+0x9a4/0x27d0
-[<0>] do_filp_open+0x91/0x120
-[<0>] bprm_execve+0x15c/0x690
-[<0>] do_execveat_common+0x22c/0x330
-[<0>] __x64_sys_execve+0x36/0x40
-[<0>] do_syscall_64+0x3d/0x90
-[<0>] entry_SYSCALL_64_after_hwframe+0x46/0xb0
+Now, if bailing on the lookup is not an option, meaning it must wait for the
+migration to complete, I'm not sure large folios will ever be compatible with
+the "Various filesystems appear to want __find_get_block to be non-blocking."
+comment.
 
-Confirmed it was killable per Jan's clarification.
+So the below could be tucked in for norefs only (because this is about the addr
+space i_private_lock), but this also shortens the hold time; if that matters
+at all, of course, vs changing the migration semantics.
 
-> > > In this case, any events that have been read but not yet responded =
-to would be lost.
-> > > Initially we considered handling this internally by saving the file=
- descriptors for pending events,
-> > > however this proved to be complex to do in a robust manner.
-> > >
-> > > A more robust solution is to add a kernel fanotify api which resets=
- the fanotify pending event queue,
-> > > thereby allowing us to recover pending events in the case of daemon=
- restart.
-> > > A strawman implementation of this approach is in
-> > > https://github.com/torvalds/linux/compare/master...ibrahim-jirdeh:l=
-inux:fanotify-reset-pending,
-> > > a new ioctl that resets `group->fanotify_data.access_list`.
-> > > One other alternative we considered is directly exposing the pendin=
-g event queue itself
-> > > (https://github.com/torvalds/linux/commit/cd90ff006fa2732d28ff6bb59=
-75ca5351ce009f1)
-> > > to support monitoring pending events, but simply resetting the queu=
-e is likely sufficient for our use-case.
-> > >
-> > > What do you think of exposing this functionality in fanotify?
-> > >
-> >
-> > Ignoring the pending events for start, how do you deal with access to
-> > non-populated files while the daemon is down?
-> >
-> > We were throwing some idea about having a mount option (something
-> > like a "moderate" mount) to determine the default response for specif=
-ic
-> > permission events (e.g. FAN_OPEN_PERM) in the case that there is
-> > no listener watching this event.
-> >
-> > If you have a filesystem which may contain non-populated files, you
-> > mount it with as "moderated" mount and then access to all files is
-> > denied until the daemon is running and also denied if daemon is down.
-> >
-> > For restart, it might make sense to start a new daemon to start liste=
-ning
-> > to events before stopping the old daemon.
-> > If the new daemon gets the events before the old daemon, things shoul=
-d
-> > be able to transition smoothly.
->
-> I agree this would be a sensible protocol for updates. For unplanned cr=
-ashes
-> I agree we need something like the "moderated" mount option.
+Thanks,
+Davidlohr
 
-We can definitely try out the suggested approach of starting up new daemo=
-n
-instance  alongside old one to prevent downtime during planned restart.
+---8<----------------------------
+diff --git a/fs/buffer.c b/fs/buffer.c
+index cc8452f60251..f585339ae2e4 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -208,6 +208,14 @@ __find_get_block_slow(struct block_device *bdev, sector_t block)
+	head = folio_buffers(folio);
+	if (!head)
+		goto out_unlock;
++
++	bh = head;
++	do {
++		if (test_bit(BH_migrate, &bh->b_state))
++			goto out_unlock;
++		bh = bh->b_this_page;
++	} while (bh != head);
++
+	bh = head;
+	do {
+		if (!buffer_mapped(bh))
+diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+index 932139c5d46f..e956a1509a05 100644
+--- a/include/linux/buffer_head.h
++++ b/include/linux/buffer_head.h
+@@ -34,6 +34,7 @@ enum bh_state_bits {
+	BH_Meta,	/* Buffer contains metadata */
+	BH_Prio,	/* Buffer should be submitted with REQ_PRIO */
+	BH_Defer_Completion, /* Defer AIO completion to workqueue */
++	BH_migrate,     /* Buffer is being migrated */
+
+	BH_PrivateStart,/* not a state bit, but the first bit available
+			 * for private allocation by other entities
+diff --git a/mm/migrate.c b/mm/migrate.c
+index a073eb6c5009..0ffa8b478fd3 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -846,6 +846,12 @@ static int __buffer_migrate_folio(struct address_space *mapping,
+	if (!buffer_migrate_lock_buffers(head, mode))
+		return -EAGAIN;
+
++	bh = head;
++	do {
++		set_bit(BH_migrate, &bh->b_state);
++		bh = bh->b_this_page;
++	} while (bh != head);
++
+	if (check_refs) {
+		bool busy;
+		bool invalidated = false;
+@@ -861,12 +867,12 @@ static int __buffer_migrate_folio(struct address_space *mapping,
+			}
+			bh = bh->b_this_page;
+		} while (bh != head);
++		spin_unlock(&mapping->i_private_lock);
+		if (busy) {
+			if (invalidated) {
+				rc = -EAGAIN;
+				goto unlock_buffers;
+			}
+-			spin_unlock(&mapping->i_private_lock);
+			invalidate_bh_lrus();
+			invalidated = true;
+			goto recheck_buffers;
+@@ -884,10 +890,9 @@ static int __buffer_migrate_folio(struct address_space *mapping,
+	} while (bh != head);
+
+  unlock_buffers:
+-	if (check_refs)
+-		spin_unlock(&mapping->i_private_lock);
+	bh = head;
+	do {
++		clear_bit(BH_migrate, &bh->b_state)
+		unlock_buffer(bh);
+		bh = bh->b_this_page;
+	} while (bh != head);
 
