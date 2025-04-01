@@ -1,268 +1,313 @@
-Return-Path: <linux-fsdevel+bounces-45468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 786D6A7811D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 19:08:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B3DA7812C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 19:09:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E37EB7A4B7E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 17:07:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EAA33AEAB2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 17:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319062144D7;
-	Tue,  1 Apr 2025 17:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209602144A5;
+	Tue,  1 Apr 2025 17:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="YyG2RaMD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FjZF7GYu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T7/smuaX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72ACA20E33F
-	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Apr 2025 17:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7816920E003;
+	Tue,  1 Apr 2025 17:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743527199; cv=none; b=bt41QiT5Y8MI0y2Qr/sYZC+JtqHUo/iG9nzCORVScfvtL1WuXMmDWLPLjmkFcbACMMbVz7QR3a4mavqVQzPyPGaWvR5q6hZpXUpEyXPlzar5PE1RiFOBKXTwZomGRtyVarZZeJeCMiOinG6nmzkshZR2Q5yDwJ9FeahUKpOjpq0=
+	t=1743527241; cv=none; b=TmMy4FM2YlEtnQjiOP6rqgWSfECQBf5w3n/ZqYYLHRdGS3wjnkzXsrR7Wx5VpJ3bQo4sPbjy9Ahb3svmz0DkcP8ENUQTossMa3oRPiALPCF9Y6fZ9ywj5II91oKvNIZ0d+cr05ud1byG564DBiPl/1SvtRYiW3NtQs1lP4Zpu94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743527199; c=relaxed/simple;
-	bh=3/PdOj53w6A9bVybOJKSs713KdNAxnyN/bqmxFTU0mg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Euee0yv36eZYfeI9FfYVxK3jvxgRcdnPmBa25PPzdhvCgJWmoHzXUXXxVxsNHE0GYN2qSyl+pbRvNCrA4xnTBhYHwoOoZ+pU3kvpQq8R8UpQWnqgoIF47che6NB7JCzAh8l2Nhe++gzJ3eGPmhBHO/g1fL07oesa/h11pwSOo6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=YyG2RaMD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FjZF7GYu; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 4A6CA2540108;
-	Tue,  1 Apr 2025 13:06:35 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Tue, 01 Apr 2025 13:06:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1743527195;
-	 x=1743613595; bh=Z2eRsbA9ie+kwY6ovGUM7UoczXtfT5eXLFXTtMV1zsg=; b=
-	YyG2RaMDlxt5Tj55Zos2UJDHYY7U5+lnMMb9U7JpwfXeMXBCd8i5APi/DzH6ZsUF
-	gGUXegsPZoDI+aUkL2+/yuhWKpkL/diVPr5viGFLeIzJkF5kdhvKV8xo9glU9J3G
-	8gjw6VtmGxgyht9fPyEMssv+dqjavDsRwFYn5yJfjIabdmo9AvzE3omQ15aLWiu6
-	3MDo25FgmXGhjSW7qf9ELV27BFGYW9rvszZ8i7fU9ga9Imr1pHuVn3YNtV7UHAiv
-	6Sp4sizqdj9AwZ4u6LXDJ6tfAbuIpRkGk0a5iWU5RWofIbJDaQCWTLnTjv47909d
-	zkAJsjM41O52JtD81PsEag==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743527195; x=
-	1743613595; bh=Z2eRsbA9ie+kwY6ovGUM7UoczXtfT5eXLFXTtMV1zsg=; b=F
-	jZF7GYufeq5HV0kdgFib4wv5NpMWbezHMZT25KYBsskx1FqdLPwZJ7udN66PumjB
-	MtpdoUadCIxDTmtiW/bCXEJR5h8+Vb2upmXh5N2vp3CNg20boZTCdjmd3DJC08E7
-	EgpnNO6fPlnI2thmyY6TVIRH+Y+XOLjTmSBhT4OIbo3+JeIY8UxeE0l453Ry8qk3
-	Y6mOQJeCab6l5iF8zOt19up4aqt5Pd5itWdY/nLZeER+A6bYdQ0kaB1a3FDYmqiC
-	vCgrcq/RHbfquQ7umMhl47O6fsj4ZhomtIQ1/AcFjVN0jzyvqxUqqaOMlIE8+qLf
-	bAyM3fFGBIdDItujiJuhA==
-X-ME-Sender: <xms:Gh3sZ8dGxzR9esxRbU7irWCmihLypuv_4DJ9o6-XQWfmVLNQ5wobFg>
-    <xme:Gh3sZ-MI2pt_djjNrxX_lqTAD3jCer2LCmGin5-gg8X-V99oCqyaz2uYGQZKB0MsB
-    bRAICNpXX0KmaVZ>
-X-ME-Received: <xmr:Gh3sZ9gSdkLU8Hcvzm3AGnoHiBuiMTwUmKFKKPMTJ1onDm0GZdspzrt_vWE6PWqDwjXfqrJ1HzST7EXHHxy5HEmJUORm8bYiVEcFcXjQmILt7w-6LWkQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukeeffeegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddt
-    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuh
-    gsvghrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudev
-    udevleegleffffekudekgeevlefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrh
-    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggv
-    rhhtsehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmth
-    hpohhuthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdp
-    rhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheplhhinh
-    hugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehk
-    vghrnhgvlhdqthgvrghmsehmvghtrgdrtghomh
-X-ME-Proxy: <xmx:Gh3sZx-CN1Xg-2jxQdAatxoA64-tF6MACn-_-7_pxD3LeD8SpDRxmA>
-    <xmx:Gh3sZ4sFYjrvU92llnZKXjlamyER3oVJGMgO4H8qYHPIcnY7DJy1uw>
-    <xmx:Gh3sZ4HawROzz4FLf82oeTfakmNGmILSBmIl-Az778Jk3sknsjXIpA>
-    <xmx:Gh3sZ3OAY1NB2GonOGle-xJHnur_eb21hUSTIZxZYt1T_-axRq-iJQ>
-    <xmx:Gx3sZ6KKK9-4u2hVW9dVBhzjH1fZHLt1rlqa9kLoDoCecS1QQ4G3hhsU>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 1 Apr 2025 13:06:34 -0400 (EDT)
-Message-ID: <2f0c63f9-4441-4dfe-adf5-5133757a8d92@fastmail.fm>
-Date: Tue, 1 Apr 2025 19:06:32 +0200
+	s=arc-20240116; t=1743527241; c=relaxed/simple;
+	bh=O/tiOQMe+BpDxEwKm1eC1nNVvOd2fMn+JfqqgztrtlE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p6LyyhUj1/tRjUprXqecJ/ElwAGFpvji32thb7NEVDF6NFAmGE2hTC1sjHAdoh9P4kSTejK46iSlMN85IzzDKThso4HG3Uub4Pj/Rylybyk2vpY7nzdgvtQHgLh0J4nDIVwgrjRFM1KGCd6HpecvxWU8j0UAPI97d3KB7p0FNeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T7/smuaX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D326C4CEE4;
+	Tue,  1 Apr 2025 17:07:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743527240;
+	bh=O/tiOQMe+BpDxEwKm1eC1nNVvOd2fMn+JfqqgztrtlE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T7/smuaXIRSPRyOnsvPLUEKbjDMp4hsP34jnTYsJgvtrHqKntGSe9iAo0+gFGC3Kx
+	 5vCMrSK6HGo2QRtyDfGRAsGxZ+2aZ14rPDV3EG6YzoljVz76c0BuDbGeoLZ3NufZFD
+	 tBO08/MZaP50qOsrGROuqnujj06CEcHylGdsU010ekh0OsMPjP2tN3+PRx++CM8m0E
+	 rqKuqzgmAldX/Wvq1tKpYmi3wq56IPDfmnTrH/MuCA0xfvV8aq7IZYV61/IjhqwoDO
+	 ZHsEKxAVt+EEgRqkfIWk4w8ZgpEYYvRp+U4LKlI1/Ly7sdaPDMed+kThHEHsBl+9vT
+	 gvTDZZzNHXa9g==
+Date: Tue, 1 Apr 2025 20:07:15 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: pr-tracker-bot@kernel.org, Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] vfs mount
+Message-ID: <20250401170715.GA112019@unreal>
+References: <20250322-vfs-mount-b08c842965f4@brauner>
+ <174285005920.4171303.15547772549481189907.pr-tracker-bot@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] fuse: support configurable number of uring queues
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-References: <20250314204437.726538-1-joannelkoong@gmail.com>
- <8aca27b0-609b-44c4-90ff-314e3c086b90@fastmail.fm>
- <CAJnrk1YoN6gayDQ6hBMa9NnxgkOpf9qYmMRg9kP=2iQR9_B8Ew@mail.gmail.com>
- <1b249021-c69c-4548-b01b-0321b241d434@fastmail.fm>
- <CAJnrk1azHgMXTaUjb+c4iZ-g7S-RqqfmNPQneZaOaZrQsy_cxQ@mail.gmail.com>
- <CAJnrk1aUXaYngs1XeGjGqbXkYkTiV_BF2CiwGy_rDtZznVw29g@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJnrk1aUXaYngs1XeGjGqbXkYkTiV_BF2CiwGy_rDtZznVw29g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <174285005920.4171303.15547772549481189907.pr-tracker-bot@kernel.org>
 
-
-
-On 4/1/25 02:22, Joanne Koong wrote:
-> On Tue, Mar 18, 2025 at 4:16 PM Joanne Koong <joannelkoong@gmail.com> wrote:
->>
->> On Tue, Mar 18, 2025 at 3:33 AM Bernd Schubert
->> <bernd.schubert@fastmail.fm> wrote:
->>>
->>> On 3/18/25 01:55, Joanne Koong wrote:
->>>> Hi Bernd,
->>>> Thanks for the quick turnaround on the review!
->>>>
->>>> On Fri, Mar 14, 2025 at 4:11 PM Bernd Schubert
->>>> <bernd.schubert@fastmail.fm> wrote:
->>>>>
->>>>> Thanks Joanne! That is rather close to what I wanted to add,
->>>>> just a few comments.
->>>>>
->>>>> On 3/14/25 21:44, Joanne Koong wrote:
->>>>>> In the current uring design, the number of queues is equal to the number
->>>>>> of cores on a system. However, on high-scale machines where there are
->>>>>> hundreds of cores, having such a high number of queues is often
->>>>>> overkill and resource-intensive. As well, in the current design where
->>>>>> the queue for the request is set to the cpu the task is currently
->>>>>> executing on (see fuse_uring_task_to_queue()), there is no guarantee
->>>>>> that requests for the same file will be sent to the same queue (eg if a
->>>>>> task is preempted and moved to a different cpu) which may be problematic
->>>>>> for some servers (eg if the server is append-only and does not support
->>>>>> unordered writes).
->>>>>>
->>>>>> In this commit, the server can configure the number of uring queues
->>>>>> (passed to the kernel through the init reply). The number of queues must
->>>>>> be a power of two, in order to make queue assignment for a request
->>>>>> efficient. If the server specifies a non-power of two, then it will be
->>>>>> automatically rounded down to the nearest power of two. If the server
->>>>>> does not specify the number of queues, then this will automatically
->>>>>> default to the current behavior where the number of queues will be equal
->>>>>> to the number of cores with core and numa affinity. The queue id hash
->>>>>> is computed on the nodeid, which ensures that requests for the same file
->>>>>> will be forwarded to the same queue.
->>>>>>
->>>>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
->>>>>> ---
->>>>>>  fs/fuse/dev_uring.c       | 48 +++++++++++++++++++++++++++++++++++----
->>>>>>  fs/fuse/dev_uring_i.h     | 11 +++++++++
->>>>>>  fs/fuse/fuse_i.h          |  1 +
->>>>>>  fs/fuse/inode.c           |  4 +++-
->>>>>>  include/uapi/linux/fuse.h |  6 ++++-
->>>>>>  5 files changed, 63 insertions(+), 7 deletions(-)
->>>>>>
->>>>>> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
->>>>>> index 64f1ae308dc4..f173f9e451ac 100644
->>>>>> --- a/fs/fuse/dev_uring.c
->>>>>> +++ b/fs/fuse/dev_uring.c
->>>>>> @@ -209,9 +209,10 @@ void fuse_uring_destruct(struct fuse_conn *fc)
->>>>>>  static struct fuse_ring *fuse_uring_create(struct fuse_conn *fc)
->>>>>>  {
->>>>>>       struct fuse_ring *ring;
->>>>>> -     size_t nr_queues = num_possible_cpus();
->>>>>> +     size_t nr_queues = fc->uring_nr_queues;
->>>>>>       struct fuse_ring *res = NULL;
->>>>>>       size_t max_payload_size;
->>>>>> +     unsigned int nr_cpus = num_possible_cpus();
->>>>>>
->>>>>>       ring = kzalloc(sizeof(*fc->ring), GFP_KERNEL_ACCOUNT);
->>>>>>       if (!ring)
->>>>>> @@ -237,6 +238,13 @@ static struct fuse_ring *fuse_uring_create(struct fuse_conn *fc)
->>>>>>
->>>>>>       fc->ring = ring;
->>>>>>       ring->nr_queues = nr_queues;
->>>>>> +     if (nr_queues == nr_cpus) {
->>>>>> +             ring->core_affinity = 1;
->>>>>> +     } else {
->>>>>> +             WARN_ON(!nr_queues || nr_queues > nr_cpus ||
->>>>>> +                     !is_power_of_2(nr_queues));
->>>>>> +             ring->qid_hash_bits = ilog2(nr_queues);
->>>>>> +     }
->>>>>>       ring->fc = fc;
->>>>>>       ring->max_payload_sz = max_payload_size;
->>>>>>       atomic_set(&ring->queue_refs, 0);
->>>>>> @@ -1217,12 +1225,24 @@ static void fuse_uring_send_in_task(struct io_uring_cmd *cmd,
->>>>>>       fuse_uring_send(ent, cmd, err, issue_flags);
->>>>>>  }
->>>>>>
->>>>>> -static struct fuse_ring_queue *fuse_uring_task_to_queue(struct fuse_ring *ring)
->>>>>> +static unsigned int hash_qid(struct fuse_ring *ring, u64 nodeid)
->>>>>> +{
->>>>>> +     if (ring->nr_queues == 1)
->>>>>> +             return 0;
->>>>>> +
->>>>>> +     return hash_long(nodeid, ring->qid_hash_bits);
->>>>>> +}
->>>>>> +
->>>>>> +static struct fuse_ring_queue *fuse_uring_task_to_queue(struct fuse_ring *ring,
->>>>>> +                                                     struct fuse_req *req)
->>>>>>  {
->>>>>>       unsigned int qid;
->>>>>>       struct fuse_ring_queue *queue;
->>>>>>
->>>>>> -     qid = task_cpu(current);
->>>>>> +     if (ring->core_affinity)
->>>>>> +             qid = task_cpu(current);
->>>>>> +     else
->>>>>> +             qid = hash_qid(ring, req->in.h.nodeid);
->>>>>
->>>>> I think we need to handle numa affinity.
->>>>>
->>>>
->>>> Could you elaborate more on this? I'm not too familiar with how to
->>>> enforce this in practice. As I understand it, the main goal of numa
->>>> affinity is to make sure processes access memory that's physically
->>>> closer to the CPU it's executing on. How does this usually get
->>>> enforced at the kernel level?
->>>
->>> The request comes on a specific core and that is on a numa node -
->>> we should try to avoid switching. If there is no queue for the
->>> current core we should try to stay on the same numa node.
->>> And we should probably also consider the waiting requests per
->>> queue and distribute between that, although that is a bit
->>> independent.
->>>
->>
->> In that case then, there's no guarantee that requests on the same file
->> will get sent to the same queue. But thinking more about this, maybe
->> it doesn't matter after all if they're sent to different queues. I
->> need to think some more about this. But I agree, if we don't care
->> about requests for the same inode getting routed to the same queue,
->> then we should aim for numa affinity. I'll look more into this.
->>
+On Mon, Mar 24, 2025 at 09:00:59PM +0000, pr-tracker-bot@kernel.org wrote:
+> The pull request you sent on Sat, 22 Mar 2025 11:13:18 +0100:
 > 
-> Thought about this some more... is this even worth doing? AFAICT,
-> there's no guarantee that the same number of CPUs are distributed
-> evenly across numa nodes. For example, one numa node may have CPUs 0
-> to 5 on them, then another numa node might have CPU 6 and 7. If
-> there's two queues, each associated with a numa node, then requests
-> will be disproportionately / unevenly allocated. Eg most of the
-> workload will be queued on the numa node with CPUs 0 to 5. Moreover, I
-> don't think there's a good way to enforce this in the cases where
-> number of queues < number of numa nodes. For example if there's 3 numa
-> nodes with say 3 CPUs each and there's 2 queues. The logic for which
-> cpu gets sent to which queue gets a little messy here.
+> > git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.15-rc1.mount
 > 
-> imo, this is an optimization that could be added in the future if the
-> need for this comes up. WDYT?
+> has been merged into torvalds/linux.git:
+> https://git.kernel.org/torvalds/c/fd101da676362aaa051b4f5d8a941bd308603041
 
+I didn't bisect, but this PR looks like the most relevant candidate.
+The latest Linus's master generates the following slab-use-after-free:
 
-I will eventually come to this this week. My plan is to use queue
-lengths for distribution. We should do that for background requests
-anyway. 
-I.e. first try the local core, if queue length to large or no queue.
-try queues within the same numa domain, if all queues are busy check
-if foreign queues are more suitable.
+ [ 1845.404658] ==================================================================
+ [ 1845.405460] BUG: KASAN: slab-use-after-free in clone_private_mount+0x309/0x390
+ [ 1845.406205] Read of size 8 at addr ffff8881507b5ab0 by task dockerd/8697
+ [ 1845.406847]
+ [ 1845.407081] CPU: 5 UID: 0 PID: 8697 Comm: dockerd Not tainted 6.14.0master_fbece6d #1 NONE
+ [ 1845.407086] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
+ [ 1845.407097] Call Trace:
+ [ 1845.407102]  <TASK>
+ [ 1845.407104]  dump_stack_lvl+0x69/0xa0
+ [ 1845.407114]  print_report+0x156/0x523
+ [ 1845.407120]  ? __virt_addr_valid+0x1de/0x3c0
+ [ 1845.407124]  ? clone_private_mount+0x309/0x390
+ [ 1845.407128]  kasan_report+0xc1/0xf0
+ [ 1845.407134]  ? clone_private_mount+0x309/0x390
+ [ 1845.407138]  clone_private_mount+0x309/0x390
+ [ 1845.407144]  ovl_fill_super+0x2965/0x59e0 [overlay]
+ [ 1845.407165]  ? ovl_workdir_create+0x900/0x900 [overlay]
+ [ 1845.407177]  ? wait_for_completion_io_timeout+0x20/0x20
+ [ 1845.407182]  ? lockdep_init_map_type+0x58/0x220
+ [ 1845.407186]  ? lockdep_init_map_type+0x58/0x220
+ [ 1845.407189]  ? shrinker_register+0x177/0x200
+ [ 1845.407194]  ? sget_fc+0x449/0xb30
+ [ 1845.407199]  ? ovl_workdir_create+0x900/0x900 [overlay]
+ [ 1845.407211]  ? get_tree_nodev+0xa5/0x130
+ [ 1845.407214]  get_tree_nodev+0xa5/0x130
+ [ 1845.407218]  ? cap_capable+0xd0/0x320
+ [ 1845.407223]  vfs_get_tree+0x83/0x2e0
+ [ 1845.407227]  ? ns_capable+0x55/0xb0
+ [ 1845.407232]  path_mount+0x891/0x1aa0
+ [ 1845.407237]  ? finish_automount+0x860/0x860
+ [ 1845.407240]  ? kmem_cache_free+0x14c/0x4f0
+ [ 1845.407245]  ? user_path_at+0x3d/0x50
+ [ 1845.407250]  __x64_sys_mount+0x2d4/0x3a0
+ [ 1845.407254]  ? path_mount+0x1aa0/0x1aa0
+ [ 1845.407259]  do_syscall_64+0x6d/0x140
+ [ 1845.407263]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+ [ 1845.407267] RIP: 0033:0x55e3487f1fea
+ [ 1845.407274] Code: e8 1b 96 fa ff 48 8b 7c 24 10 48 8b 74 24 18 48 8b 54 24 20 4c 8b 54 24 28 4c 8b 44 24 30 4c 8b 4c 24 38 48 8b 44 24 08 0f 05 <48> 3d 01 f0 ff ff 76 20 48 c7 44 24 40 ff ff ff ff 48 c7 44 24 48
+ [ 1845.407278] RSP: 002b:000000c000b563b8 EFLAGS: 00000212 ORIG_RAX: 00000000000000a5
+ [ 1845.407282] RAX: ffffffffffffffda RBX: 000000c00006c000 RCX: 000055e3487f1fea
+ [ 1845.407285] RDX: 000000c0012cf7d8 RSI: 000000c0012616c0 RDI: 000000c0012cf7d0
+ [ 1845.407287] RBP: 000000c000b56458 R08: 000000c0004fa600 R09: 0000000000000000
+ [ 1845.407289] R10: 0000000000000000 R11: 0000000000000212 R12: 000000c0012cf7d0
+ [ 1845.407291] R13: 0000000000000000 R14: 000000c00098b6c0 R15: ffffffffffffffff
+ [ 1845.407296]  </TASK>
+ [ 1845.407297]
+ [ 1845.431635] Allocated by task 17044:
+ [ 1845.432033]  kasan_save_stack+0x1e/0x40
+ [ 1845.432463]  kasan_save_track+0x10/0x30
+ [ 1845.432882]  __kasan_slab_alloc+0x62/0x70
+ [ 1845.433308]  kmem_cache_alloc_noprof+0x1a0/0x4a0
+ [ 1845.433781]  alloc_vfsmnt+0x23/0x6c0
+ [ 1845.434195]  vfs_create_mount+0x82/0x4a0
+ [ 1845.434623]  path_mount+0x939/0x1aa0
+ [ 1845.435018]  __x64_sys_mount+0x2d4/0x3a0
+ [ 1845.435440]  do_syscall_64+0x6d/0x140
+ [ 1845.435842]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+ [ 1845.436355]
+ [ 1845.436601] Freed by task 0:
+ [ 1845.436945]  kasan_save_stack+0x1e/0x40
+ [ 1845.437354]  kasan_save_track+0x10/0x30
+ [ 1845.437770]  kasan_save_free_info+0x37/0x60
+ [ 1845.438217]  __kasan_slab_free+0x33/0x40
+ [ 1845.438646]  kmem_cache_free+0x14c/0x4f0
+ [ 1845.439068]  rcu_core+0x605/0x1d50
+ [ 1845.439451]  handle_softirqs+0x192/0x810
+ [ 1845.439880]  irq_exit_rcu+0x106/0x190
+ [ 1845.440280]  sysvec_apic_timer_interrupt+0x7c/0xb0
+ [ 1845.440785]  asm_sysvec_apic_timer_interrupt+0x16/0x20
+ [ 1845.441300]
+ [ 1845.441544] Last potentially related work creation:
+ [ 1845.442048]  kasan_save_stack+0x1e/0x40
+ [ 1845.442465]  kasan_record_aux_stack+0x97/0xa0
+ [ 1845.442921]  __call_rcu_common.constprop.0+0x6d/0xb40
+ [ 1845.443437]  task_work_run+0x111/0x1f0
+ [ 1845.443851]  syscall_exit_to_user_mode+0x1df/0x1f0
+ [ 1845.444337]  do_syscall_64+0x79/0x140
+ [ 1845.444758]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+ [ 1845.445272]
+ [ 1845.445505] Second to last potentially related work creation:
+ [ 1845.446078]  kasan_save_stack+0x1e/0x40
+ [ 1845.446494]  kasan_record_aux_stack+0x97/0xa0
+ [ 1845.446947]  task_work_add+0x178/0x250
+ [ 1845.447356]  mntput_no_expire+0x4fc/0x9f0
+ [ 1845.447789]  path_umount+0x4ed/0x10d0
+ [ 1845.448190]  __x64_sys_umount+0xfb/0x120
+ [ 1845.448617]  do_syscall_64+0x6d/0x140
+ [ 1845.449016]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+ [ 1845.449529]
+ [ 1845.449766] The buggy address belongs to the object at ffff8881507b5a40
+ [ 1845.449766]  which belongs to the cache mnt_cache of size 368
+ [ 1845.450898] The buggy address is located 112 bytes inside of
+ [ 1845.450898]  freed 368-byte region [ffff8881507b5a40, ffff8881507b5bb0)
+ [ 1845.452009]
+ [ 1845.452250] The buggy address belongs to the physical page:
+ [ 1845.452808] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1507b4
+ [ 1845.453595] head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+ [ 1845.454363] anon flags: 0x200000000000040(head|node=0|zone=2)
+ [ 1845.454936] page_type: f5(slab)
+ [ 1845.455300] raw: 0200000000000040 ffff8881009f5680 0000000000000000 dead000000000001
+ [ 1845.456077] raw: 0000000000000000 0000000080240024 00000000f5000000 0000000000000000
+ [ 1845.456857] head: 0200000000000040 ffff8881009f5680 0000000000000000 dead000000000001
+ [ 1845.457616] head: 0000000000000000 0000000080240024 00000000f5000000 0000000000000000
+ [ 1845.458399] head: 0200000000000002 ffffea000541ed01 ffffffffffffffff 0000000000000000
+ [ 1845.459169] head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
+ [ 1845.459945] page dumped because: kasan: bad access detected
+ [ 1845.460506]
+ [ 1845.460745] Memory state around the buggy address:
+ [ 1845.461228]  ffff8881507b5980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc
+ [ 1845.461963]  ffff8881507b5a00: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
+ [ 1845.462759] >ffff8881507b5a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ [ 1845.463480]                                      ^
+ [ 1845.463968]  ffff8881507b5b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ [ 1845.464704]  ffff8881507b5b80: fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc
+ [ 1845.465430] ==================================================================
+ [ 1845.466181] Disabling lock debugging due to kernel taint
+ [ 1845.466717] ==================================================================
+ [ 1845.467443] BUG: KASAN: slab-use-after-free in clone_private_mount+0x313/0x390
+ [ 1845.468192] Read of size 8 at addr ffff8881507b5a58 by task dockerd/8697
+ [ 1845.468837]
+ [ 1845.469072] CPU: 5 UID: 0 PID: 8697 Comm: dockerd Tainted: G    B               6.14.0master_fbece6d #1 NONE
+ [ 1845.469078] Tainted: [B]=BAD_PAGE
+ [ 1845.469079] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
+ [ 1845.469082] Call Trace:
+ [ 1845.469084]  <TASK>
+ [ 1845.469086]  dump_stack_lvl+0x69/0xa0
+ [ 1845.469093]  print_report+0x156/0x523
+ [ 1845.469098]  ? __virt_addr_valid+0x1de/0x3c0
+ [ 1845.469103]  ? clone_private_mount+0x313/0x390
+ [ 1845.469107]  kasan_report+0xc1/0xf0
+ [ 1845.469112]  ? clone_private_mount+0x313/0x390
+ [ 1845.469116]  clone_private_mount+0x313/0x390
+ [ 1845.469121]  ovl_fill_super+0x2965/0x59e0 [overlay]
+ [ 1845.469140]  ? ovl_workdir_create+0x900/0x900 [overlay]
+ [ 1845.469152]  ? wait_for_completion_io_timeout+0x20/0x20
+ [ 1845.469157]  ? lockdep_init_map_type+0x58/0x220
+ [ 1845.469161]  ? lockdep_init_map_type+0x58/0x220
+ [ 1845.469164]  ? shrinker_register+0x177/0x200
+ [ 1845.469169]  ? sget_fc+0x449/0xb30
+ [ 1845.469174]  ? ovl_workdir_create+0x900/0x900 [overlay]
+ [ 1845.469185]  ? get_tree_nodev+0xa5/0x130
+ [ 1845.469189]  get_tree_nodev+0xa5/0x130
+ [ 1845.469192]  ? cap_capable+0xd0/0x320
+ [ 1845.469198]  vfs_get_tree+0x83/0x2e0
+ [ 1845.469202]  ? ns_capable+0x55/0xb0
+ [ 1845.469206]  path_mount+0x891/0x1aa0
+ [ 1845.469210]  ? finish_automount+0x860/0x860
+ [ 1845.469217]  ? kmem_cache_free+0x14c/0x4f0
+ [ 1845.469221]  ? user_path_at+0x3d/0x50
+ [ 1845.469227]  __x64_sys_mount+0x2d4/0x3a0
+ [ 1845.469231]  ? path_mount+0x1aa0/0x1aa0
+ [ 1845.469235]  do_syscall_64+0x6d/0x140
+ [ 1845.469239]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+ [ 1845.469242] RIP: 0033:0x55e3487f1fea
+ [ 1845.469246] Code: e8 1b 96 fa ff 48 8b 7c 24 10 48 8b 74 24 18 48 8b 54 24 20 4c 8b 54 24 28 4c 8b 44 24 30 4c 8b 4c 24 38 48 8b 44 24 08 0f 05 <48> 3d 01 f0 ff ff 76 20 48 c7 44 24 40 ff ff ff ff 48 c7 44 24 48
+ [ 1845.469249] RSP: 002b:000000c000b563b8 EFLAGS: 00000212 ORIG_RAX: 00000000000000a5
+ [ 1845.469253] RAX: ffffffffffffffda RBX: 000000c00006c000 RCX: 000055e3487f1fea
+ [ 1845.469256] RDX: 000000c0012cf7d8 RSI: 000000c0012616c0 RDI: 000000c0012cf7d0
+ [ 1845.469260] RBP: 000000c000b56458 R08: 000000c0004fa600 R09: 0000000000000000
+ [ 1845.469261] R10: 0000000000000000 R11: 0000000000000212 R12: 000000c0012cf7d0
+ [ 1845.469263] R13: 0000000000000000 R14: 000000c00098b6c0 R15: ffffffffffffffff
+ [ 1845.469268]  </TASK>
+ [ 1845.469269]
+ [ 1845.494368] Allocated by task 17044:
+ [ 1845.494768]  kasan_save_stack+0x1e/0x40
+ [ 1845.495185]  kasan_save_track+0x10/0x30
+ [ 1845.495594]  __kasan_slab_alloc+0x62/0x70
+ [ 1845.496024]  kmem_cache_alloc_noprof+0x1a0/0x4a0
+ [ 1845.496518]  alloc_vfsmnt+0x23/0x6c0
+ [ 1845.496911]  vfs_create_mount+0x82/0x4a0
+ [ 1845.497333]  path_mount+0x939/0x1aa0
+ [ 1845.497728]  __x64_sys_mount+0x2d4/0x3a0
+ [ 1845.498167]  do_syscall_64+0x6d/0x140
+ [ 1845.498563]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+ [ 1845.499064]
+ [ 1845.499295] Freed by task 0:
+ [ 1845.499636]  kasan_save_stack+0x1e/0x40
+ [ 1845.500052]  kasan_save_track+0x10/0x30
+ [ 1845.500494]  kasan_save_free_info+0x37/0x60
+ [ 1845.500934]  __kasan_slab_free+0x33/0x40
+ [ 1845.501355]  kmem_cache_free+0x14c/0x4f0
+ [ 1845.501774]  rcu_core+0x605/0x1d50
+ [ 1845.502162]  handle_softirqs+0x192/0x810
+ [ 1845.502587]  irq_exit_rcu+0x106/0x190
+ [ 1845.502995]  sysvec_apic_timer_interrupt+0x7c/0xb0
+ [ 1845.503487]  asm_sysvec_apic_timer_interrupt+0x16/0x20
+ [ 1845.504002]
+ [ 1845.504236] Last potentially related work creation:
+ [ 1845.504748]  kasan_save_stack+0x1e/0x40
+ [ 1845.505164]  kasan_record_aux_stack+0x97/0xa0
+ [ 1845.505621]  __call_rcu_common.constprop.0+0x6d/0xb40
+ [ 1845.506136]  task_work_run+0x111/0x1f0
+ [ 1845.506545]  syscall_exit_to_user_mode+0x1df/0x1f0
+ [ 1845.507038]  do_syscall_64+0x79/0x140
+ [ 1845.507439]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+ [ 1845.507949]
+ [ 1845.508187] Second to last potentially related work creation:
+ [ 1845.508760]  kasan_save_stack+0x1e/0x40
+ [ 1845.509175]  kasan_record_aux_stack+0x97/0xa0
+ [ 1845.509630]  task_work_add+0x178/0x250
+ [ 1845.510040]  mntput_no_expire+0x4fc/0x9f0
+ [ 1845.510468]  path_umount+0x4ed/0x10d0
+ [ 1845.510870]  __x64_sys_umount+0xfb/0x120
+ [ 1845.511298]  do_syscall_64+0x6d/0x140
+ [ 1845.511700]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+ [ 1845.512210]
+ [ 1845.512442] The buggy address belongs to the object at ffff8881507b5a40
+ [ 1845.512442]  which belongs to the cache mnt_cache of size 368
+ [ 1845.513553] The buggy address is located 24 bytes inside of
+ [ 1845.513553]  freed 368-byte region [ffff8881507b5a40, ffff8881507b5bb0)
+ [ 1845.514650]
+ [ 1845.514883] The buggy address belongs to the physical page:
+ [ 1845.515436] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1507b4
+ [ 1845.516221] head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+ [ 1845.516986] anon flags: 0x200000000000040(head|node=0|zone=2)
+ [ 1845.517549] page_type: f5(slab)
+ [ 1845.517912] raw: 0200000000000040 ffff8881009f5680 0000000000000000 dead000000000001
+ [ 1845.518684] raw: 0000000000000000 0000000080240024 00000000f5000000 0000000000000000
+ [ 1845.519445] head: 0200000000000040 ffff8881009f5680 0000000000000000 dead000000000001
+ [ 1845.520220] head: 0000000000000000 0000000080240024 00000000f5000000 0000000000000000
+ [ 1845.521006] head: 0200000000000002 ffffea000541ed01 ffffffffffffffff 0000000000000000
+ [ 1845.521812] head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
+ [ 1845.522581] page dumped because: kasan: bad access detected
+ [ 1845.523131]
+ [ 1845.523362] Memory state around the buggy address:
+ [ 1845.523851]  ffff8881507b5900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ [ 1845.524588]  ffff8881507b5980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc
+ [ 1845.525321] >ffff8881507b5a00: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
+ [ 1845.526059]                                                     ^
+ [ 1845.526651]  ffff8881507b5a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ [ 1845.527378]  ffff8881507b5b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ [ 1845.528095] ==================================================================
 
-Thanks,
-Bernd
+> 
+> Thank you!
+> 
+> -- 
+> Deet-doot-dot, I am a bot.
+> https://korg.docs.kernel.org/prtracker.html
 
