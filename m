@@ -1,194 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-45412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 898CEA773B0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 07:09:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72C9CA7747B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 08:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 908C17A3DA2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 05:08:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94A4D188BB3D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 06:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC24D1C6FFB;
-	Tue,  1 Apr 2025 05:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062DE1E260C;
+	Tue,  1 Apr 2025 06:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EFmAKe6F"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ay1vSseR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C272111;
-	Tue,  1 Apr 2025 05:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD4B131E2D;
+	Tue,  1 Apr 2025 06:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743484160; cv=none; b=PiO7CYwnyvsqvvI3jty3+kRSKxvjoxOIX186EivJaiJILm6/WNDF/If+MzmVfgPXgO7BK1XzqWlA0bt2qwzos8dGtndXiu9eXxxRQMWqgi8Sizbohz8GPmbIxTfDtdCcqP+r5ej09J6FngsF+OjvrJ5djOEj5fOvNUuyx36t4QY=
+	t=1743488958; cv=none; b=Dvh5QfTwTV5HitwO+9fttueyWEAM6UO4BOOrWmjf+PuAAorPf1HLAa/G5e1XMp/y+lO/96ZtmJHQ3Ueh889M7UIjOQKyzE18tpUlqqEqGzFHNmRKoy6k3XLCTGRYSR9A/wH5QYDrSnr8t7noTZnZM4gqLJDoEgP5M3okSn7WaFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743484160; c=relaxed/simple;
-	bh=EwBGURhgN5l1abr65q54RpzxI5PfH2OdVdXQD/uleg4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eyyjvcMxUhXN6LtKQ0auIrDVJeBbPy6ybN0B04FHcSV08EUPhlJrNkRl3rjm6KnOp73lacYbxouiQYWe7pkDp5ih5i16io7ltz7Xet5tsg/a7ALL4a5lAuhkMXJqxEOM0iuzj6JKumYS+h9wSF3avLSVkpgQpTiUZ8UoXgkV93Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EFmAKe6F; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1743488958; c=relaxed/simple;
+	bh=TVeq6PNEiePIMl+ttaOJNKTUK4jVxSm94Q1sT2OShj8=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=E5/qVLKe9b3LzmubjzLeGvArovHrU8Ao0Z2MU6AbedxUDFbwPW0LCVHU2IPGI5Fc89KLE2T7K2WBfvVOsjFG3aC0oVncKu9q3wymUHEjR6L11TPMG0S7/H9ipVuLhsbeCFcc9G8yOEHI4suBu3AJZqSL+LzzCxiCFc2V6eWBW9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ay1vSseR; arc=none smtp.client-ip=209.85.208.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so50442875e9.3;
-        Mon, 31 Mar 2025 22:09:17 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30bfb6ab47cso49798571fa.3;
+        Mon, 31 Mar 2025 23:29:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743484156; x=1744088956; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YlTnXiXgnLvzH66jyxciEQPnkqudlw3UyQ0edEOwwAc=;
-        b=EFmAKe6FBvVktYomj+azQgHO0SwqGJossMEt1ZMJzeOVNFJrppw+nWbmztMkt5pzvN
-         oyg5H1JWaNNeSSVPAtVjIr2hYWdKtLoKVhN+lg/3qLg7/yHafI19Gv3u+D3pA4lxtsYS
-         efmAlYp1jelQL+49b5zGQT3qDkjWXmKm8zGpOxfJwqtLmw1zljMJcWLCXg9fGJt5vpq/
-         +CBMD8OcrRBex+phLctk965Ywv/97Z5kVhIRKnO6r+wTLzrKDUe9HuxILve9drTdxKt9
-         Wp0PF78gYhjhVdSATJGLwxL/lMYnG4bDQWhnUykk6k+M9LwGNdiTG+ol5DHBCL99a1y9
-         BWLw==
+        d=gmail.com; s=20230601; t=1743488953; x=1744093753; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=iNphk2i9eSGihLD4c/ofcPRkoFOwL4x5wS5sCwun4uQ=;
+        b=Ay1vSseRX3sXHw3vrVXZjaJPpdE5d8R4b51dc/GVakt3StvfgUlVrXqqZoBBYnmHNh
+         yqQbDI/Y5pdJZCYVxpaoZE6Ic9+sPjBuQjJfOk8x1HOc1/jGErp60ixtk4qsTc5ZJ4QC
+         fiWAh9EtRw21GV/HsUV2xxNh0UkNdQbiArTombIFgahsjo6VdDNCVtNCYf1rxgSwpodw
+         zfPIpmvuysvcdg/FR0xYBvrh0T5rHW8v9AwpPIdJfK8aWoVmGznLRwfmiKTB2M9FEkCp
+         av34MWgsf0MBx9yJeWa7WzHDy9Th9wIjkjjd3V/tplsyblPM199YXaY22/li+jQt6sJO
+         xy0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743484156; x=1744088956;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YlTnXiXgnLvzH66jyxciEQPnkqudlw3UyQ0edEOwwAc=;
-        b=wofg18W4V6cUeCuqE/vjZJ5hJBMfthlvicpZcSFxMTtAWa3TORYcVWtkY1fa6Hlrdi
-         wo63lhfI50Aphh3+PuMb1nxjlKKyJIDLYhV9JZFjDoIE9T5osY+mEPXESTn36tCPGfFy
-         +/Wn5ohGBh+Rhu3fNUCwGS7A9yh6f+okMiPYPe9W70d16yK9CRfRn5XkeS8XSPcZmpSM
-         jXHDlsRchMxW519nB8Qa2Q4uc8tons10sMTn81KMmYz039ayRSg3i+ImxwW8YOuy7XlA
-         TNau5ZF294e81Jn22TACBshtumQUFrYpWw8pOIh0xIWzlvpY6blcSWstEHOpVgmB1VmF
-         xq/Q==
-X-Gm-Message-State: AOJu0YxWKSqNFvnL1OhH3OtfmdX5IdP9sbJGHlGyTZva/2S2raghiNVT
-	1JsUAaeIc6H0OXx6jS7/oZ0FUf7a9ElwAXB2Ux5JU3OYpgMxpeYR0iCUrg==
-X-Gm-Gg: ASbGncsvzxjFdZe5ka7lYb8CSyqUqZVAtwoPMLGLUlSYd8s2lsZmbnswJKXM0T0x87P
-	J5lWcAebDtPCPNqrPC9cISBYe/Y01jJc5SkrgHGIGLAKyPB8CFTSCRSb0VHp2V6y3V+FnFe11pe
-	NRxYzYLqhuXmuqKFoxVW1ALcPNifsK/pYIGC0nmVzsI+aXu3dN+8XBU1IbDuZ4wvZOTRudkhH6E
-	P8Bvjs+vhUVG8/qoaR2Bc2KE/aWEIhNRb/Ahcku8gAEaaDj2Yc28DTIhone+C9RUZIoOvQRufoZ
-	mTlNnMIClJhYLvUMxnavkRNw77PYekqC83qh93nq6IdX9CM1wNbfmdaAjw9W
-X-Google-Smtp-Source: AGHT+IGACq3hIRuPpIEbFhNdWy1BLwwW8WJufQ2mSMIdfxqi086MPY0ne0AYfpUTZOIj0JdAjymSrw==
-X-Received: by 2002:a05:600c:3d0a:b0:43d:fa59:be38 with SMTP id 5b1f17b1804b1-43dfa59c013mr90026475e9.32.1743484155649;
-        Mon, 31 Mar 2025 22:09:15 -0700 (PDT)
-Received: from f.. (cst-prg-92-82.cust.vodafone.cz. [46.135.92.82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ea8d16049sm8540845e9.0.2025.03.31.22.09.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Mar 2025 22:09:15 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] fs: remove stale log entries from fs/namei.c
-Date: Tue,  1 Apr 2025 07:08:46 +0200
-Message-ID: <20250401050847.1071675-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1743488953; x=1744093753;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iNphk2i9eSGihLD4c/ofcPRkoFOwL4x5wS5sCwun4uQ=;
+        b=tkroVjuwBNpZyXqn0++hUb3aaSmyErpjENM57SBzD+jn1e8lIOfzbqr1xqVwyWH5+K
+         JW1+zC0S48OuWdCw+ZCTZKTaVp00O3PndVhsN5aaqYlLSsiim51/lGsXehXao9m+1CBe
+         wgOfk+CuFXG1qjNEIzZWpXosPBTXQQYQxpHhjLiLkGkdW/c+pQnHHlQVHjbySYo3CA45
+         Uug6po4ll1rLQg2qr2v93sqdmkR1b5zVCvSzrYWfqxBtY2Cd/1WW3fGOzqsU65O0F364
+         z4EECaIEnxDGxlv00Y8Vz05axX14DV+WwkLenElcHDFyxpIrYS15NMfzXzg1UfIrtVpN
+         AXsg==
+X-Forwarded-Encrypted: i=1; AJvYcCVmhse57UEygeMLn6ayQSEdOSj/oiCyN3BbAOV5CQRGGddckmZVDZ55HlPwJB72z6ohuNHdzYQuzi0RIaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxPv2FpJmrkZLE4eRbTjetDFI1K8At3JDzvkHB4GeIyBJmuy5d
+	XLnYW4lFr+lXrxswYNcVI80D/curI1x1dLtevwRTbZQU40tZKZhULbZ1LOQy3z+3NeCp6t3uPxA
+	zjXUnwAMHKhE6B+uqLsM+gW7dGi+UPw==
+X-Gm-Gg: ASbGncv7ocwwOEYhYfnqZcFGxJedebnqH6v7fAgHAlkDddZTRHay8mxIFWjrPe6WEG+
+	2MnogFSeJKnTPoSBfixN51dAqWSd5s724tiGIRZPKhE0G6i6iVc95DyHP4SrKiqdGscGuZ8NNTb
+	08qIrE8qRKQMzlE5ajakBOJ5WTWizHiabw9jU0QmTInD6p7WnspcAsA6V2KLWk
+X-Google-Smtp-Source: AGHT+IHHb33VIGfYVihNIXGdVHC752JKSHLPixUm9AyM/V+3XusGXkJRkjpV7z3RF2DVCGWi7oJJOKFLv5ekMkl21bA=
+X-Received: by 2002:a05:651c:2210:b0:30b:bb45:6616 with SMTP id
+ 38308e7fff4ca-30de0313c4fmr38698831fa.29.1743488952364; Mon, 31 Mar 2025
+ 23:29:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Steve French <smfrench@gmail.com>
+Date: Tue, 1 Apr 2025 01:29:01 -0500
+X-Gm-Features: AQ5f1JrTpZiZZL9PwfxIh7sDKeUI2uOIEH5Ba6569lQs35KVPC0DdGGw8xtrPx4
+Message-ID: <CAH2r5muupgCHf99YziMCFrjYY0EJbT9W74TmUq74BtfR6kmOLA@mail.gmail.com>
+Subject: test generic/074 slowdown with current mainline
+To: CIFS <linux-cifs@vger.kernel.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- fs/namei.c | 80 +-----------------------------------------------------
- 1 file changed, 1 insertion(+), 79 deletions(-)
+I noticed that test generic/074 (which runs fstest with various
+options) runs almost twice as slow with current mainline, compared
+with 6.14 over smb3.1.1 mounts.  It doesn't appear to be related to
+changes to cifs.ko (as the cifs.ko code is almost identical in the
+test runs I did).  Anyone else noticing a perf regression for this?
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 360a86ca1f02..b125dadd7100 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -5,14 +5,7 @@
-  *  Copyright (C) 1991, 1992  Linus Torvalds
-  */
- 
--/*
-- * Some corrections by tytso.
-- */
--
--/* [Feb 1997 T. Schoebel-Theuer] Complete rewrite of the pathname
-- * lookup logic.
-- */
--/* [Feb-Apr 2000, AV] Rewrite to the new namespace architecture.
-+/*[Apr 1 2024 Mateusz Guzik] Removed stale log entries.
-  */
- 
- #include <linux/init.h>
-@@ -44,77 +37,6 @@
- #include "internal.h"
- #include "mount.h"
- 
--/* [Feb-1997 T. Schoebel-Theuer]
-- * Fundamental changes in the pathname lookup mechanisms (namei)
-- * were necessary because of omirr.  The reason is that omirr needs
-- * to know the _real_ pathname, not the user-supplied one, in case
-- * of symlinks (and also when transname replacements occur).
-- *
-- * The new code replaces the old recursive symlink resolution with
-- * an iterative one (in case of non-nested symlink chains).  It does
-- * this with calls to <fs>_follow_link().
-- * As a side effect, dir_namei(), _namei() and follow_link() are now 
-- * replaced with a single function lookup_dentry() that can handle all 
-- * the special cases of the former code.
-- *
-- * With the new dcache, the pathname is stored at each inode, at least as
-- * long as the refcount of the inode is positive.  As a side effect, the
-- * size of the dcache depends on the inode cache and thus is dynamic.
-- *
-- * [29-Apr-1998 C. Scott Ananian] Updated above description of symlink
-- * resolution to correspond with current state of the code.
-- *
-- * Note that the symlink resolution is not *completely* iterative.
-- * There is still a significant amount of tail- and mid- recursion in
-- * the algorithm.  Also, note that <fs>_readlink() is not used in
-- * lookup_dentry(): lookup_dentry() on the result of <fs>_readlink()
-- * may return different results than <fs>_follow_link().  Many virtual
-- * filesystems (including /proc) exhibit this behavior.
-- */
--
--/* [24-Feb-97 T. Schoebel-Theuer] Side effects caused by new implementation:
-- * New symlink semantics: when open() is called with flags O_CREAT | O_EXCL
-- * and the name already exists in form of a symlink, try to create the new
-- * name indicated by the symlink. The old code always complained that the
-- * name already exists, due to not following the symlink even if its target
-- * is nonexistent.  The new semantics affects also mknod() and link() when
-- * the name is a symlink pointing to a non-existent name.
-- *
-- * I don't know which semantics is the right one, since I have no access
-- * to standards. But I found by trial that HP-UX 9.0 has the full "new"
-- * semantics implemented, while SunOS 4.1.1 and Solaris (SunOS 5.4) have the
-- * "old" one. Personally, I think the new semantics is much more logical.
-- * Note that "ln old new" where "new" is a symlink pointing to a non-existing
-- * file does succeed in both HP-UX and SunOs, but not in Solaris
-- * and in the old Linux semantics.
-- */
--
--/* [16-Dec-97 Kevin Buhr] For security reasons, we change some symlink
-- * semantics.  See the comments in "open_namei" and "do_link" below.
-- *
-- * [10-Sep-98 Alan Modra] Another symlink change.
-- */
--
--/* [Feb-Apr 2000 AV] Complete rewrite. Rules for symlinks:
-- *	inside the path - always follow.
-- *	in the last component in creation/removal/renaming - never follow.
-- *	if LOOKUP_FOLLOW passed - follow.
-- *	if the pathname has trailing slashes - follow.
-- *	otherwise - don't follow.
-- * (applied in that order).
-- *
-- * [Jun 2000 AV] Inconsistent behaviour of open() in case if flags==O_CREAT
-- * restored for 2.4. This is the last surviving part of old 4.2BSD bug.
-- * During the 2.4 we need to fix the userland stuff depending on it -
-- * hopefully we will be able to get rid of that wart in 2.5. So far only
-- * XEmacs seems to be relying on it...
-- */
--/*
-- * [Sep 2001 AV] Single-semaphore locking scheme (kudos to David Holland)
-- * implemented.  Let's see if raised priority of ->s_vfs_rename_mutex gives
-- * any extra contention...
-- */
--
- /* In order to reduce some races, while at the same time doing additional
-  * checking and hopefully speeding things up, we copy filenames to the
-  * kernel data space before using them..
 -- 
-2.43.0
+Thanks,
 
+Steve
 
