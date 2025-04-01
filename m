@@ -1,124 +1,268 @@
-Return-Path: <linux-fsdevel+bounces-45467-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56750A780F8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 19:02:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 786D6A7811D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 19:08:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9EFB3AE055
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 17:02:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E37EB7A4B7E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 17:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8200220DD47;
-	Tue,  1 Apr 2025 17:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319062144D7;
+	Tue,  1 Apr 2025 17:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="jXqL/2yh"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="YyG2RaMD";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FjZF7GYu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B732EAF7;
-	Tue,  1 Apr 2025 17:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72ACA20E33F
+	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Apr 2025 17:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743526931; cv=none; b=pBqg2/UZjUn0xLrbJRwOYa3OhyhjmrcooffjIfDuqLOAFrOHjsvtSWH/y4CHAtweAPRBwqENqUIHP+R1pr+RovjaN6c02alRek4QXIjp9q2gumuNqqT9GHoEbs+1ktILqavlRv4ZoM8oGSiOmAQo0TAw/K5ppYEftRWa6Nkg7t4=
+	t=1743527199; cv=none; b=bt41QiT5Y8MI0y2Qr/sYZC+JtqHUo/iG9nzCORVScfvtL1WuXMmDWLPLjmkFcbACMMbVz7QR3a4mavqVQzPyPGaWvR5q6hZpXUpEyXPlzar5PE1RiFOBKXTwZomGRtyVarZZeJeCMiOinG6nmzkshZR2Q5yDwJ9FeahUKpOjpq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743526931; c=relaxed/simple;
-	bh=CenOX3ZG3axcJusNwTRyKjMpdi+GvSUx/ICXN9F7i/4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pwu5kDobYeZKvkmXgG/kIj6qUdqtxvuyTbAoTfgApW2itxAVPZRr+9ub23Ijl0/jJ5M149Bs0BdYCplqjnGbQOFP0ufqwoAK/rwYQv49lzlh4hRjzK7OIzqsPHJt8zbgy4C9IrJd/gxtzoWJFo7vMykpzi3Pn5+J2HLd6HD7nI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=jXqL/2yh; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1743526928;
-	bh=CenOX3ZG3axcJusNwTRyKjMpdi+GvSUx/ICXN9F7i/4=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=jXqL/2yhi/UG5mNgvzE8vWQx5cAFE/UzmVBGfmZfJuFmSVRkcBPrQg6u4GwavMxvN
-	 yNX53e6d5xSAK8g70s13sPqT18NTm1U7Cv5NadTZWgA/h/T6rYkJXongzqV1QH4X08
-	 WLQh45FUPb5+XyqXincBnfGR4nnBRT7CnVG27++Y=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 40CA11C02DF;
-	Tue, 01 Apr 2025 13:02:08 -0400 (EDT)
-Message-ID: <ddee7c1ce2d1ff1a8ced6e9b6ac707250f70e68b.camel@HansenPartnership.com>
-Subject: Re: [PATCH 0/6] power: wire-up filesystem freeze/thaw with
- suspend/resume
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	jack@suse.cz, rafael@kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org, 
- linux-kernel@vger.kernel.org, mcgrof@kernel.org, hch@infradead.org, 
- david@fromorbit.com, djwong@kernel.org, pavel@kernel.org,
- peterz@infradead.org,  mingo@redhat.com, will@kernel.org,
- boqun.feng@gmail.com
-Date: Tue, 01 Apr 2025 13:02:07 -0400
-In-Reply-To: <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
-References: <20250331-work-freeze-v1-0-6dfbe8253b9f@kernel.org>
-	 <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1743527199; c=relaxed/simple;
+	bh=3/PdOj53w6A9bVybOJKSs713KdNAxnyN/bqmxFTU0mg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Euee0yv36eZYfeI9FfYVxK3jvxgRcdnPmBa25PPzdhvCgJWmoHzXUXXxVxsNHE0GYN2qSyl+pbRvNCrA4xnTBhYHwoOoZ+pU3kvpQq8R8UpQWnqgoIF47che6NB7JCzAh8l2Nhe++gzJ3eGPmhBHO/g1fL07oesa/h11pwSOo6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=YyG2RaMD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FjZF7GYu; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 4A6CA2540108;
+	Tue,  1 Apr 2025 13:06:35 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Tue, 01 Apr 2025 13:06:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1743527195;
+	 x=1743613595; bh=Z2eRsbA9ie+kwY6ovGUM7UoczXtfT5eXLFXTtMV1zsg=; b=
+	YyG2RaMDlxt5Tj55Zos2UJDHYY7U5+lnMMb9U7JpwfXeMXBCd8i5APi/DzH6ZsUF
+	gGUXegsPZoDI+aUkL2+/yuhWKpkL/diVPr5viGFLeIzJkF5kdhvKV8xo9glU9J3G
+	8gjw6VtmGxgyht9fPyEMssv+dqjavDsRwFYn5yJfjIabdmo9AvzE3omQ15aLWiu6
+	3MDo25FgmXGhjSW7qf9ELV27BFGYW9rvszZ8i7fU9ga9Imr1pHuVn3YNtV7UHAiv
+	6Sp4sizqdj9AwZ4u6LXDJ6tfAbuIpRkGk0a5iWU5RWofIbJDaQCWTLnTjv47909d
+	zkAJsjM41O52JtD81PsEag==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743527195; x=
+	1743613595; bh=Z2eRsbA9ie+kwY6ovGUM7UoczXtfT5eXLFXTtMV1zsg=; b=F
+	jZF7GYufeq5HV0kdgFib4wv5NpMWbezHMZT25KYBsskx1FqdLPwZJ7udN66PumjB
+	MtpdoUadCIxDTmtiW/bCXEJR5h8+Vb2upmXh5N2vp3CNg20boZTCdjmd3DJC08E7
+	EgpnNO6fPlnI2thmyY6TVIRH+Y+XOLjTmSBhT4OIbo3+JeIY8UxeE0l453Ry8qk3
+	Y6mOQJeCab6l5iF8zOt19up4aqt5Pd5itWdY/nLZeER+A6bYdQ0kaB1a3FDYmqiC
+	vCgrcq/RHbfquQ7umMhl47O6fsj4ZhomtIQ1/AcFjVN0jzyvqxUqqaOMlIE8+qLf
+	bAyM3fFGBIdDItujiJuhA==
+X-ME-Sender: <xms:Gh3sZ8dGxzR9esxRbU7irWCmihLypuv_4DJ9o6-XQWfmVLNQ5wobFg>
+    <xme:Gh3sZ-MI2pt_djjNrxX_lqTAD3jCer2LCmGin5-gg8X-V99oCqyaz2uYGQZKB0MsB
+    bRAICNpXX0KmaVZ>
+X-ME-Received: <xmr:Gh3sZ9gSdkLU8Hcvzm3AGnoHiBuiMTwUmKFKKPMTJ1onDm0GZdspzrt_vWE6PWqDwjXfqrJ1HzST7EXHHxy5HEmJUORm8bYiVEcFcXjQmILt7w-6LWkQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukeeffeegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddt
+    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuh
+    gsvghrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudev
+    udevleegleffffekudekgeevlefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrh
+    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggv
+    rhhtsehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmth
+    hpohhuthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdp
+    rhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheplhhinh
+    hugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehk
+    vghrnhgvlhdqthgvrghmsehmvghtrgdrtghomh
+X-ME-Proxy: <xmx:Gh3sZx-CN1Xg-2jxQdAatxoA64-tF6MACn-_-7_pxD3LeD8SpDRxmA>
+    <xmx:Gh3sZ4sFYjrvU92llnZKXjlamyER3oVJGMgO4H8qYHPIcnY7DJy1uw>
+    <xmx:Gh3sZ4HawROzz4FLf82oeTfakmNGmILSBmIl-Az778Jk3sknsjXIpA>
+    <xmx:Gh3sZ3OAY1NB2GonOGle-xJHnur_eb21hUSTIZxZYt1T_-axRq-iJQ>
+    <xmx:Gx3sZ6KKK9-4u2hVW9dVBhzjH1fZHLt1rlqa9kLoDoCecS1QQ4G3hhsU>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 1 Apr 2025 13:06:34 -0400 (EDT)
+Message-ID: <2f0c63f9-4441-4dfe-adf5-5133757a8d92@fastmail.fm>
+Date: Tue, 1 Apr 2025 19:06:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-On Tue, 2025-04-01 at 02:32 +0200, Christian Brauner wrote:
-> The whole shebang can also be found at:
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=3D=
-work.freeze
->=20
-> I know nothing about power or hibernation. I've tested it as best as
-> I could. Works for me (TM).
-
-I'm testing the latest you have in work.freeze and it doesn't currently
-work for me.  Patch 7b315c39b67d ("power: freeze filesystems during
-suspend/resume") doesn't set filesystems_freeze_ptr so it ends up being
-NULL and tripping over this check=20
-
-+static inline bool may_unfreeze(struct super_block *sb, enum
-freeze_holder who,
-+                               const void *freeze_owner)
-+{
-+       WARN_ON_ONCE((who & ~FREEZE_FLAGS));
-+       WARN_ON_ONCE(hweight32(who & FREEZE_HOLDERS) > 1);
-+
-+       if (who & FREEZE_EXCL) {
-+               if (WARN_ON_ONCE(sb->s_writers.freeze_owner =3D=3D NULL))
-+                       return false;
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] fuse: support configurable number of uring queues
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+References: <20250314204437.726538-1-joannelkoong@gmail.com>
+ <8aca27b0-609b-44c4-90ff-314e3c086b90@fastmail.fm>
+ <CAJnrk1YoN6gayDQ6hBMa9NnxgkOpf9qYmMRg9kP=2iQR9_B8Ew@mail.gmail.com>
+ <1b249021-c69c-4548-b01b-0321b241d434@fastmail.fm>
+ <CAJnrk1azHgMXTaUjb+c4iZ-g7S-RqqfmNPQneZaOaZrQsy_cxQ@mail.gmail.com>
+ <CAJnrk1aUXaYngs1XeGjGqbXkYkTiV_BF2CiwGy_rDtZznVw29g@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1aUXaYngs1XeGjGqbXkYkTiV_BF2CiwGy_rDtZznVw29g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
-in f15a9ae05a71 ("fs: add owner of freeze/thaw") and failing to resume
-from hibernate.  Setting it to __builtin_return_address(0) in
-filesystems_freeze() makes everything work as expected, so that's what
-I'm testing now.
 
-I suppose one minor, minor nit is that the vagaries of English grammar
-mean that the verbs fail and succeed don't take the same grammatical
-construction, so failed can take the infinitive (failed to thaw)
-perfectly well, but succeeded takes a prepositional gerund construction
-instead: "succeeded at/in thawing" instead of the infinitive "succeeded
-to thaw" ... I've no idea why, but I'd probably blame the Victorians
-...
+On 4/1/25 02:22, Joanne Koong wrote:
+> On Tue, Mar 18, 2025 at 4:16 PM Joanne Koong <joannelkoong@gmail.com> wrote:
+>>
+>> On Tue, Mar 18, 2025 at 3:33 AM Bernd Schubert
+>> <bernd.schubert@fastmail.fm> wrote:
+>>>
+>>> On 3/18/25 01:55, Joanne Koong wrote:
+>>>> Hi Bernd,
+>>>> Thanks for the quick turnaround on the review!
+>>>>
+>>>> On Fri, Mar 14, 2025 at 4:11 PM Bernd Schubert
+>>>> <bernd.schubert@fastmail.fm> wrote:
+>>>>>
+>>>>> Thanks Joanne! That is rather close to what I wanted to add,
+>>>>> just a few comments.
+>>>>>
+>>>>> On 3/14/25 21:44, Joanne Koong wrote:
+>>>>>> In the current uring design, the number of queues is equal to the number
+>>>>>> of cores on a system. However, on high-scale machines where there are
+>>>>>> hundreds of cores, having such a high number of queues is often
+>>>>>> overkill and resource-intensive. As well, in the current design where
+>>>>>> the queue for the request is set to the cpu the task is currently
+>>>>>> executing on (see fuse_uring_task_to_queue()), there is no guarantee
+>>>>>> that requests for the same file will be sent to the same queue (eg if a
+>>>>>> task is preempted and moved to a different cpu) which may be problematic
+>>>>>> for some servers (eg if the server is append-only and does not support
+>>>>>> unordered writes).
+>>>>>>
+>>>>>> In this commit, the server can configure the number of uring queues
+>>>>>> (passed to the kernel through the init reply). The number of queues must
+>>>>>> be a power of two, in order to make queue assignment for a request
+>>>>>> efficient. If the server specifies a non-power of two, then it will be
+>>>>>> automatically rounded down to the nearest power of two. If the server
+>>>>>> does not specify the number of queues, then this will automatically
+>>>>>> default to the current behavior where the number of queues will be equal
+>>>>>> to the number of cores with core and numa affinity. The queue id hash
+>>>>>> is computed on the nodeid, which ensures that requests for the same file
+>>>>>> will be forwarded to the same queue.
+>>>>>>
+>>>>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+>>>>>> ---
+>>>>>>  fs/fuse/dev_uring.c       | 48 +++++++++++++++++++++++++++++++++++----
+>>>>>>  fs/fuse/dev_uring_i.h     | 11 +++++++++
+>>>>>>  fs/fuse/fuse_i.h          |  1 +
+>>>>>>  fs/fuse/inode.c           |  4 +++-
+>>>>>>  include/uapi/linux/fuse.h |  6 ++++-
+>>>>>>  5 files changed, 63 insertions(+), 7 deletions(-)
+>>>>>>
+>>>>>> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+>>>>>> index 64f1ae308dc4..f173f9e451ac 100644
+>>>>>> --- a/fs/fuse/dev_uring.c
+>>>>>> +++ b/fs/fuse/dev_uring.c
+>>>>>> @@ -209,9 +209,10 @@ void fuse_uring_destruct(struct fuse_conn *fc)
+>>>>>>  static struct fuse_ring *fuse_uring_create(struct fuse_conn *fc)
+>>>>>>  {
+>>>>>>       struct fuse_ring *ring;
+>>>>>> -     size_t nr_queues = num_possible_cpus();
+>>>>>> +     size_t nr_queues = fc->uring_nr_queues;
+>>>>>>       struct fuse_ring *res = NULL;
+>>>>>>       size_t max_payload_size;
+>>>>>> +     unsigned int nr_cpus = num_possible_cpus();
+>>>>>>
+>>>>>>       ring = kzalloc(sizeof(*fc->ring), GFP_KERNEL_ACCOUNT);
+>>>>>>       if (!ring)
+>>>>>> @@ -237,6 +238,13 @@ static struct fuse_ring *fuse_uring_create(struct fuse_conn *fc)
+>>>>>>
+>>>>>>       fc->ring = ring;
+>>>>>>       ring->nr_queues = nr_queues;
+>>>>>> +     if (nr_queues == nr_cpus) {
+>>>>>> +             ring->core_affinity = 1;
+>>>>>> +     } else {
+>>>>>> +             WARN_ON(!nr_queues || nr_queues > nr_cpus ||
+>>>>>> +                     !is_power_of_2(nr_queues));
+>>>>>> +             ring->qid_hash_bits = ilog2(nr_queues);
+>>>>>> +     }
+>>>>>>       ring->fc = fc;
+>>>>>>       ring->max_payload_sz = max_payload_size;
+>>>>>>       atomic_set(&ring->queue_refs, 0);
+>>>>>> @@ -1217,12 +1225,24 @@ static void fuse_uring_send_in_task(struct io_uring_cmd *cmd,
+>>>>>>       fuse_uring_send(ent, cmd, err, issue_flags);
+>>>>>>  }
+>>>>>>
+>>>>>> -static struct fuse_ring_queue *fuse_uring_task_to_queue(struct fuse_ring *ring)
+>>>>>> +static unsigned int hash_qid(struct fuse_ring *ring, u64 nodeid)
+>>>>>> +{
+>>>>>> +     if (ring->nr_queues == 1)
+>>>>>> +             return 0;
+>>>>>> +
+>>>>>> +     return hash_long(nodeid, ring->qid_hash_bits);
+>>>>>> +}
+>>>>>> +
+>>>>>> +static struct fuse_ring_queue *fuse_uring_task_to_queue(struct fuse_ring *ring,
+>>>>>> +                                                     struct fuse_req *req)
+>>>>>>  {
+>>>>>>       unsigned int qid;
+>>>>>>       struct fuse_ring_queue *queue;
+>>>>>>
+>>>>>> -     qid = task_cpu(current);
+>>>>>> +     if (ring->core_affinity)
+>>>>>> +             qid = task_cpu(current);
+>>>>>> +     else
+>>>>>> +             qid = hash_qid(ring, req->in.h.nodeid);
+>>>>>
+>>>>> I think we need to handle numa affinity.
+>>>>>
+>>>>
+>>>> Could you elaborate more on this? I'm not too familiar with how to
+>>>> enforce this in practice. As I understand it, the main goal of numa
+>>>> affinity is to make sure processes access memory that's physically
+>>>> closer to the CPU it's executing on. How does this usually get
+>>>> enforced at the kernel level?
+>>>
+>>> The request comes on a specific core and that is on a numa node -
+>>> we should try to avoid switching. If there is no queue for the
+>>> current core we should try to stay on the same numa node.
+>>> And we should probably also consider the waiting requests per
+>>> queue and distribute between that, although that is a bit
+>>> independent.
+>>>
+>>
+>> In that case then, there's no guarantee that requests on the same file
+>> will get sent to the same queue. But thinking more about this, maybe
+>> it doesn't matter after all if they're sent to different queues. I
+>> need to think some more about this. But I agree, if we don't care
+>> about requests for the same inode getting routed to the same queue,
+>> then we should aim for numa affinity. I'll look more into this.
+>>
+> 
+> Thought about this some more... is this even worth doing? AFAICT,
+> there's no guarantee that the same number of CPUs are distributed
+> evenly across numa nodes. For example, one numa node may have CPUs 0
+> to 5 on them, then another numa node might have CPU 6 and 7. If
+> there's two queues, each associated with a numa node, then requests
+> will be disproportionately / unevenly allocated. Eg most of the
+> workload will be queued on the numa node with CPUs 0 to 5. Moreover, I
+> don't think there's a good way to enforce this in the cases where
+> number of queues < number of numa nodes. For example if there's 3 numa
+> nodes with say 3 CPUs each and there's 2 queues. The logic for which
+> cpu gets sent to which queue gets a little messy here.
+> 
+> imo, this is an optimization that could be added in the future if the
+> need for this comes up. WDYT?
 
-Regards,
 
-James
+I will eventually come to this this week. My plan is to use queue
+lengths for distribution. We should do that for background requests
+anyway. 
+I.e. first try the local core, if queue length to large or no queue.
+try queues within the same numa domain, if all queues are busy check
+if foreign queues are more suitable.
 
+Thanks,
+Bernd
 
