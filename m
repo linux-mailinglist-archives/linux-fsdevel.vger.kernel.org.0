@@ -1,100 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-45456-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45457-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF5D7A77E06
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 16:40:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1266DA77E40
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 16:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFBB07A208D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 14:39:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CD823AF2F0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 14:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5B5204F71;
-	Tue,  1 Apr 2025 14:40:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB73205506;
+	Tue,  1 Apr 2025 14:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+MxI1w6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mV08XYM1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48331204F65;
-	Tue,  1 Apr 2025 14:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975581E47B3;
+	Tue,  1 Apr 2025 14:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743518443; cv=none; b=phHUWqDMGvala0Fnrmwk/MBrOk1RRLE8ghNNoPi0x+kbL52iLb/LiedFjnVFzjmehtw8dGFJMSmyt9nxfn5aUUcPcBFrcPiIQOMmwxNz9gUFWo4Jg3TnOVeyL8g3rYcSCDy371ikt5Zz8qCtJUX0mmMvwScIKBxZQaJNhTYqxQQ=
+	t=1743519084; cv=none; b=kC+8CAhSfBNJ1/D7d0qlJjee0138Y80G4JotgfOhPqc56CTkK+lmClomT7qh9dlesyxURT/CaQ1HNs6eP+VK/NgR4mgo2+WfNmgnTZLYg0USu5wnspeMJhVsoBx4HGlGh+gPi4ohh5zBaAusNedVlrr1MSFoXb1TLPkwwW/uzW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743518443; c=relaxed/simple;
-	bh=u+GoIqV+fjeT7z+mFVcbtJXhmpOHnpXRH54YzZYQbKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pj99mJICV5NeBZQnrePXe2erAAc/httIZzHq2nifxCJtSyj0sOamRDiRyKl0Cq1Oo0fw9FNqy+Z8eyWW3MIDJIemT03DswBKIcfIPBKubx8tr95IuXl3VnPxneFKZcbE+uLNhVvLA/kOsyLRO2DvW5+Mjqu8QNdtHw5JseeNlgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+MxI1w6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14F6BC4CEE4;
-	Tue,  1 Apr 2025 14:40:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743518440;
-	bh=u+GoIqV+fjeT7z+mFVcbtJXhmpOHnpXRH54YzZYQbKA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D+MxI1w6UD4FjVaB2IKN1ytV1rYCOD1i65vy0QScvgGG07MwjSnNOfkfD9a8fB8Ty
-	 84YFO1uBWW2teT17JKiBs5FMxSnT8EnnX6dHFXv0fRmnGzSw8CKzjBD7ciU0ulj4Hf
-	 Nlxpnlnmk9U8lSD9MZkfRZ825X061HAGCBAfk6uiTx2Gpjua4kSENYMErDdi2FxVZT
-	 B1SxF2x8j8aLcKZX4s6rw/UDbcNdqCh8/v881SVWZjUGfoGWdaqNGtT0gKOhDotjXI
-	 YW4IC95G+xlIfSB9aWiaHPJ5XTBHU9yfKjS8SF+Qhl6RpKJkfL/yaBQm2pf+T/+r2Z
-	 TEDfG2wycXd+g==
-Date: Tue, 1 Apr 2025 16:40:33 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, rafael@kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, mcgrof@kernel.org, hch@infradead.org, david@fromorbit.com, 
-	djwong@kernel.org, pavel@kernel.org, mingo@redhat.com, will@kernel.org, 
-	boqun.feng@gmail.com
-Subject: Re: [PATCH 0/6] power: wire-up filesystem freeze/thaw with
- suspend/resume
-Message-ID: <20250401-ballen-eulen-8d074cd8ca78@brauner>
-References: <20250331-work-freeze-v1-0-6dfbe8253b9f@kernel.org>
- <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
- <20250401141407.GE5880@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1743519084; c=relaxed/simple;
+	bh=j1fgVaCJnqMGHgW2lJcXX+aTDx2s2m878YtWc0fTvnU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eo4lrXEVZ/f2jS47+FDpkPzluw4ztUM1dTrPOSpsNxM6QPgAJ/ynCw+6kBAyez1BYVTNWa4P4OvvNwVqfIWZpC29qnEXtFqf1euXTSf2RQ6eVjTvhS0RMFtsEi6vgy0FbbvMmK2SHX8nOo4pmo/BcqxyxuiLAPuMXOZ4xLLGn1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mV08XYM1; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6e8f4c50a8fso50232906d6.1;
+        Tue, 01 Apr 2025 07:51:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743519081; x=1744123881; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w2PGIUWN8Qg4lwQqZjTaAHNRuRoKwS4SfvGv0EzV/1Q=;
+        b=mV08XYM1lIw5hS332jsC+hHH+WOcsyaKGEbwCMrSUTVELy1viaBbEmI7dYRywaPEcy
+         pL4ma0YIEvBf6eV8gYtqPCwwAXVrhlctetugzZ0/QZNyov0UOkwLv46n5IqyoWk+jaas
+         17ewU5NnS6EadVRLrTXD6Donca02NRrnaUc95oYRkZF3nESoLeo1xgFveuxqNMCkeLUU
+         dlsoKibEWRAM59HJFLUx9v9PhTEBngrZBG2ah16GBCfNPW/doKwtut7WouaigHDwWtpV
+         oE4+NoQwG280jSTUmk+QLGHnil+pUV0WglZsMxbydexOCeltV0EyOvVcAbx6e3Sy1Vp8
+         m2aA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743519081; x=1744123881;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w2PGIUWN8Qg4lwQqZjTaAHNRuRoKwS4SfvGv0EzV/1Q=;
+        b=vEssNtfrVlYiNt94vTqNiYi/i4ueVRLWCCRyMXKFbON6Uv3QvcDwNQGwkELIJe+jYT
+         3xUD1cPRA9WAeHscHhip4hVnyLlTHSMPTBH899kfXOSbN+Fp41R2zKM2nvXbMjPUN2zZ
+         5WVXCq8M9REQK4EcARARthgWwNuHPVtCrzYvZQ8/hx7NdiC1MppX8K5ddVWunmRSVm28
+         xR0wR7t++pgz0qjw08k17kH6lWIyEdzrxfNUK8a8J49PTO/Aoesg4au61+IsmfNuuc0e
+         9ZADf/CdiMaWqTl41j3zFUlwqWD+vtqAjTZQY0ATWP8EfVC/kH7enym6fmu2c6yf91yg
+         Qj3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVPRHC+r/wI/VDsB6a0kowz4Y4qM2jImHEYIXkZuc5r9gLhb6BV7WC0IhJVvRtzvzdgm3b2a8/1ZECKUq3f@vger.kernel.org, AJvYcCWwTs8Z1z+rmYpJJLMO0CNGoRRU2qXqf4pJvdVRbMYQHweTf4KVs7yCtW0LdfO0iCAbRlk6LYT9UFwqDty3@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS0LtfkAuWJJUgOVPI2di80GXiQHY/xR84rnTZM4jSRT7M+8SZ
+	qQQXateumFKn26nLaod4loQZx393iVJ1RZ26oCCYavFR1bqCZL1Y8enyxnjmaATOXL/9YHicz1a
+	dvrDcB1ZpE38zpmI16v3XtdjE7Jw=
+X-Gm-Gg: ASbGncseOfCa0oFjK5F4o31jNf2gJSRyiFwMgncoQaK4rJTmutrtlP6Cm6I8piRrFDt
+	Gcvz+9E4Fuki2UOx/PGu6aNE34JTrI0kSU+8CqWXwO498ZL9rb/dmhaBmBGOA16vf2rim4VkcP4
+	FmLtb3s6enPF0wTdeuP81d6vsAl9I=
+X-Google-Smtp-Source: AGHT+IG7pkQ1GzQpATG8QqTleJB4yNaHwHHE1zgVDQOR+ZgvIB8JI2BkCAG4FIMKSnZH4heOS1hQC/RjR8JUmqaXJsU=
+X-Received: by 2002:ad4:5684:0:b0:6e6:61a5:aa57 with SMTP id
+ 6a1803df08f44-6eed5fcb745mr166993946d6.14.1743519081478; Tue, 01 Apr 2025
+ 07:51:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250401141407.GE5880@noisy.programming.kicks-ass.net>
+References: <20250401073046.51121-1-laoar.shao@gmail.com> <3315D21B-0772-4312-BCFB-402F408B0EF6@kernel.org>
+In-Reply-To: <3315D21B-0772-4312-BCFB-402F408B0EF6@kernel.org>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Tue, 1 Apr 2025 22:50:45 +0800
+X-Gm-Features: AQ5f1JoxFVNGVjpqTbB8efeabk5Z3jz9ZAOuKNxTpHQhuIoFL3zlIvT5_Hlc1yA
+Message-ID: <CALOAHbBnC9VVECVUD_-J8q5fXfG6Krc32u+_WeoCj7PdwvspJg@mail.gmail.com>
+Subject: Re: [PATCH] proc: Avoid costly high-order page allocations when
+ reading proc files
+To: Kees Cook <kees@kernel.org>
+Cc: joel.granados@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 01, 2025 at 04:14:07PM +0200, Peter Zijlstra wrote:
-> On Tue, Apr 01, 2025 at 02:32:45AM +0200, Christian Brauner wrote:
-> > The whole shebang can also be found at:
-> > https://web.git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=work.freeze
-> > 
-> > I know nothing about power or hibernation. I've tested it as best as I
-> > could. Works for me (TM).
-> > 
-> > I need to catch some actual sleep now...
-> > 
-> > ---
-> > 
-> > Now all the pieces are in place to actually allow the power subsystem to
-> > freeze/thaw filesystems during suspend/resume. Filesystems are only
-> > frozen and thawed if the power subsystem does actually own the freeze.
-> 
-> Urgh, I was relying on all kthreads to be freezable for live-patching:
-> 
->   https://lkml.kernel.org/r/20250324134909.GA14718@noisy.programming.kicks-ass.net
-> 
-> So I understand the problem with freezing filesystems, but can't we
-> leave the TASK_FREEZABLE in the kthreads? The way I understand it, the
+On Tue, Apr 1, 2025 at 10:01=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
+>
+>
+>
+> On April 1, 2025 12:30:46 AM PDT, Yafang Shao <laoar.shao@gmail.com> wrot=
+e:
+> >While investigating a kcompactd 100% CPU utilization issue in production=
+, I
+> >observed frequent costly high-order (order-6) page allocations triggered=
+ by
+> >proc file reads from monitoring tools. This can be reproduced with a sim=
+ple
+> >test case:
+> >
+> >  fd =3D open(PROC_FILE, O_RDONLY);
+> >  size =3D read(fd, buff, 256KB);
+> >  close(fd);
+> >
+> >Although we should modify the monitoring tools to use smaller buffer siz=
+es,
+> >we should also enhance the kernel to prevent these expensive high-order
+> >allocations.
+> >
+> >Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> >Cc: Josef Bacik <josef@toxicpanda.com>
+> >---
+> > fs/proc/proc_sysctl.c | 10 +++++++++-
+> > 1 file changed, 9 insertions(+), 1 deletion(-)
+> >
+> >diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> >index cc9d74a06ff0..c53ba733bda5 100644
+> >--- a/fs/proc/proc_sysctl.c
+> >+++ b/fs/proc/proc_sysctl.c
+> >@@ -581,7 +581,15 @@ static ssize_t proc_sys_call_handler(struct kiocb *=
+iocb, struct iov_iter *iter,
+> >       error =3D -ENOMEM;
+> >       if (count >=3D KMALLOC_MAX_SIZE)
+> >               goto out;
+> >-      kbuf =3D kvzalloc(count + 1, GFP_KERNEL);
+> >+
+> >+      /*
+> >+       * Use vmalloc if the count is too large to avoid costly high-ord=
+er page
+> >+       * allocations.
+> >+       */
+> >+      if (count < (PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER))
+> >+              kbuf =3D kvzalloc(count + 1, GFP_KERNEL);
+>
+> Why not move this check into kvmalloc family?
 
-Yeah, we can.
+good suggestion.
 
-> power subsystem will first freeze the filesystems before it goes freeze
-> threads anyway. So them remaining freezable should not affect anything,
-> right?
+>
+> >+      else
+> >+              kbuf =3D vmalloc(count + 1);
+>
+> You dropped the zeroing. This must be vzalloc.
 
-Yes. I've dropped the other patches. I've discussed this later
-downthread with Jan.
-> 
+Nice catch.
+
+>
+> >       if (!kbuf)
+> >               goto out;
+> >
+>
+> Alternatively, why not force count to be <PAGE_SIZE? What uses >PAGE_SIZE=
+ writes in proc/sys?
+
+This would break backward compatibility with existing tools, so we
+cannot enforce this restriction.
+
+--=20
+Regards
+Yafang
 
