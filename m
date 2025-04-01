@@ -1,313 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-45469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45470-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9B3DA7812C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 19:09:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C6D4A781AC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 19:50:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EAA33AEAB2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 17:08:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6408B7A4616
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 17:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209602144A5;
-	Tue,  1 Apr 2025 17:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6871DA63D;
+	Tue,  1 Apr 2025 17:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T7/smuaX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HLM7CmWw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7816920E003;
-	Tue,  1 Apr 2025 17:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333D753AC
+	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Apr 2025 17:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743527241; cv=none; b=TmMy4FM2YlEtnQjiOP6rqgWSfECQBf5w3n/ZqYYLHRdGS3wjnkzXsrR7Wx5VpJ3bQo4sPbjy9Ahb3svmz0DkcP8ENUQTossMa3oRPiALPCF9Y6fZ9ywj5II91oKvNIZ0d+cr05ud1byG564DBiPl/1SvtRYiW3NtQs1lP4Zpu94=
+	t=1743529844; cv=none; b=s8G1oPQe9xYDTYjq+CeF2gf7VIBIieRnmLDGlYsKB1OUX6LlSBoICYyVG8wKdXOS3wk9MsbrFkCBqQtjWHPR7IKjpc+4Qn6uC2afDLghMyELdj2oa7JBRfs7srg9L4ohbk3+WJ5yosFsu1I+Am6905uHU6l9WCLVAmlQTaosZZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743527241; c=relaxed/simple;
-	bh=O/tiOQMe+BpDxEwKm1eC1nNVvOd2fMn+JfqqgztrtlE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p6LyyhUj1/tRjUprXqecJ/ElwAGFpvji32thb7NEVDF6NFAmGE2hTC1sjHAdoh9P4kSTejK46iSlMN85IzzDKThso4HG3Uub4Pj/Rylybyk2vpY7nzdgvtQHgLh0J4nDIVwgrjRFM1KGCd6HpecvxWU8j0UAPI97d3KB7p0FNeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T7/smuaX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D326C4CEE4;
-	Tue,  1 Apr 2025 17:07:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743527240;
-	bh=O/tiOQMe+BpDxEwKm1eC1nNVvOd2fMn+JfqqgztrtlE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T7/smuaXIRSPRyOnsvPLUEKbjDMp4hsP34jnTYsJgvtrHqKntGSe9iAo0+gFGC3Kx
-	 5vCMrSK6HGo2QRtyDfGRAsGxZ+2aZ14rPDV3EG6YzoljVz76c0BuDbGeoLZ3NufZFD
-	 tBO08/MZaP50qOsrGROuqnujj06CEcHylGdsU010ekh0OsMPjP2tN3+PRx++CM8m0E
-	 rqKuqzgmAldX/Wvq1tKpYmi3wq56IPDfmnTrH/MuCA0xfvV8aq7IZYV61/IjhqwoDO
-	 ZHsEKxAVt+EEgRqkfIWk4w8ZgpEYYvRp+U4LKlI1/Ly7sdaPDMed+kThHEHsBl+9vT
-	 gvTDZZzNHXa9g==
-Date: Tue, 1 Apr 2025 20:07:15 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: pr-tracker-bot@kernel.org, Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] vfs mount
-Message-ID: <20250401170715.GA112019@unreal>
-References: <20250322-vfs-mount-b08c842965f4@brauner>
- <174285005920.4171303.15547772549481189907.pr-tracker-bot@kernel.org>
+	s=arc-20240116; t=1743529844; c=relaxed/simple;
+	bh=4URA5JUkAja84JefUGv1UscyI0us/cjgYgZqf4d5nL4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bdIshdPVsT2qOiw+RtFAk7ODtil8wyJSsIt1ZbOkzoLzmEhmOKG8BWP7nnwHxqyh+7ptlNZvWijWmc0hPGy4rMTapDV3pNHnMUE7PdX/tlrrIJuV41dNxD/IFgG7rM9RLaB2B1hySHiP8sELaUIl3r1X03bq192dOC/bcGUEX00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HLM7CmWw; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c08f9d0ef3so344895485a.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Apr 2025 10:50:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743529842; x=1744134642; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=arHymE9A7OsBiq3X5/eFQgCjgnLCXPV6L5AwKoWFkdQ=;
+        b=HLM7CmWwiNgWutT5dvuXGDn3eIkwIp1/sOibXob/MM8tXLA/LB+Hkl9CZHkL+yUjQF
+         IATmAlW7yuhJuliUUIiObNfxgReLq2GkPXM/S+Giwue9538mlhgcRAo1gTUeR/bPJJaN
+         RTOcSXNyD5Xo0+0Vs7WvMRJTWwglcMSnYZ/QFWzfufu1rIOep2fLdVYcf4zul6oOSAPA
+         +KarbU9avv1d0DpZ551STumAY5J+drXShUgG4rUJ5mPqE4n1lxyNlSUUftfIPE2VDgjR
+         stKLsSgZzNhdr4/HtR+NN3ANCT8BOm+nH6Ahj65B9eh1z5QxLgcNVIN4XKMWD/JvFAWi
+         DNHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743529842; x=1744134642;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=arHymE9A7OsBiq3X5/eFQgCjgnLCXPV6L5AwKoWFkdQ=;
+        b=qC9r7IfSJT8Do472GWaYjo1G20l0lCvwcAbG4DrElOlvWhkfHRs5vz4F7qSRFMeR+R
+         65gK14RN4ZazA/y5nAhHDlNyR8yuPXDuHDo+gblx6VbxOkw5KtS5a5TqMJh538XIUWtY
+         0NTETQIGf+qG/QKdmadLDAw9WcL9OzRayUOg+1xRUGKzjb1xO1h6k3mlGAJobreHVFkm
+         n98+5XLGrrbQzR7mtLHbiWPR9gpjgryeIRB+xdkRwjzauW8lNT42bDIT24Q6zUm2vROK
+         LH3cEDGp47I1VPcK4E6wWHL8Jkuzehgnm+f4eUDHmJgiIjllOWDpTh4bv/NPVO57p2Js
+         uh7A==
+X-Forwarded-Encrypted: i=1; AJvYcCXvWp3TRN0UbXWoB4k6uXXRrZ2qAfu+HyaWh+a5h0QbZMzzcV65bGtvz7FFVOEUuiWtIfLhiJ/1aoIJOvVJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOaRW9lAt+v9Yl/6D+C6WidwC3bQCAf9MeJOWCiduC1vDhuTLL
+	Bx6iL86XoqFXaDh6Z1CTra8DiUWemBYrEfLIoNaBfYLYNNM4pGgSfoo2GXRWKI+H5BFHG3Ir6v+
+	qtyEEE7+Gr00y72FTUDCfSzCQNXo=
+X-Gm-Gg: ASbGncuzO4L4v2Bff4+x57uGfJRraL7Rhy3Cbthgm0RDnzuUvg0vtxVTYl0ha+PWtVD
+	Q1oWz9gKSqYIPYT8zlPKQ10FT2qoOmme4S72E07daZjPIiuAoKq4h47dh9HBK+2qQpZ4DyS7OR0
+	pbKCEPwpwkwd5jr8zoQr/3lxIFVg==
+X-Google-Smtp-Source: AGHT+IH017AVhgUApDuX1hqfbPHKHV5gM5yIudxXyreFBL7rfdttT7win+JVsRCCH76vvFdk+iCGbKm3aMa3SObKIgk=
+X-Received: by 2002:a05:620a:2688:b0:7c5:5670:bd77 with SMTP id
+ af79cd13be357-7c690895decmr2185277185a.55.1743529841948; Tue, 01 Apr 2025
+ 10:50:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <174285005920.4171303.15547772549481189907.pr-tracker-bot@kernel.org>
+References: <20250331205709.1148069-1-joannelkoong@gmail.com>
+ <CAJnrk1a4fzz=Z+yTtGXFUyWqkEhbfO1UjxcSk1t5sA7tr8Z-nw@mail.gmail.com> <c2ab84de-84b7-4948-8842-21dd8e8904b3@fastmail.fm>
+In-Reply-To: <c2ab84de-84b7-4948-8842-21dd8e8904b3@fastmail.fm>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 1 Apr 2025 10:50:31 -0700
+X-Gm-Features: AQ5f1JpwJfNKMKt4Uk-CKtdfHwNfA4F-D7bfmltn8H-WO-KvBiYBtT_cWQuRhKc
+Message-ID: <CAJnrk1YgRVqQriykVRuburcGK5oN8bzGRNTvyKhr19P-siJ4xg@mail.gmail.com>
+Subject: Re: [PATCH v1] fuse: add numa affinity for uring queues
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 24, 2025 at 09:00:59PM +0000, pr-tracker-bot@kernel.org wrote:
-> The pull request you sent on Sat, 22 Mar 2025 11:13:18 +0100:
-> 
-> > git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.15-rc1.mount
-> 
-> has been merged into torvalds/linux.git:
-> https://git.kernel.org/torvalds/c/fd101da676362aaa051b4f5d8a941bd308603041
+On Tue, Apr 1, 2025 at 1:11=E2=80=AFAM Bernd Schubert
+<bernd.schubert@fastmail.fm> wrote:
+>
+> On 4/1/25 01:42, Joanne Koong wrote:
+> > On Mon, Mar 31, 2025 at 1:57=E2=80=AFPM Joanne Koong <joannelkoong@gmai=
+l.com> wrote:
+> >>
+> >> There is a 1:1 mapping between cpus and queues. Allocate the queue on
+> >> the numa node associated with the cpu to help reduce memory access
+> >> latencies.
+> >>
+> >> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> >> ---
+> >>  fs/fuse/dev_uring.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> >> index accdce2977c5..0762d6229ac6 100644
+> >> --- a/fs/fuse/dev_uring.c
+> >> +++ b/fs/fuse/dev_uring.c
+> >> @@ -256,7 +256,7 @@ static struct fuse_ring_queue *fuse_uring_create_q=
+ueue(struct fuse_ring *ring,
+> >>         struct fuse_ring_queue *queue;
+> >>         struct list_head *pq;
+> >>
+> >> -       queue =3D kzalloc(sizeof(*queue), GFP_KERNEL_ACCOUNT);
+> >> +       queue =3D kzalloc_node(sizeof(*queue), GFP_KERNEL_ACCOUNT, cpu=
+_to_node(qid));
+> >>         if (!queue)
+> >>                 return NULL;
+> >>         pq =3D kcalloc(FUSE_PQ_HASH_SIZE, sizeof(struct list_head), GF=
+P_KERNEL);
+> >
+> > On the same note I guess we should also allocate pq on the
+> > corresponding numa node too.
+>
+> So this is supposed to be called from a thread that already runs on this
+> numa node and then kmalloc will allocate anyway on the right node,
+> afaik. Do you have a use case where this is called from another node? If
+> you do, all allocations in this file should be changed.
+>
 
-I didn't bisect, but this PR looks like the most relevant candidate.
-The latest Linus's master generates the following slab-use-after-free:
+I don't have a use case I'm using but imo it seems hardier to ensure
+this at the kernel level for queue, pq, and ent allocations instead of
+assuming userspace will always submit the registration from the thread
+on the numa node corresponding to the qid it's registering. I don't
+feel strongly about this though so if you think the responsibility
+should be left to userspace, then that's fine with me.
 
- [ 1845.404658] ==================================================================
- [ 1845.405460] BUG: KASAN: slab-use-after-free in clone_private_mount+0x309/0x390
- [ 1845.406205] Read of size 8 at addr ffff8881507b5ab0 by task dockerd/8697
- [ 1845.406847]
- [ 1845.407081] CPU: 5 UID: 0 PID: 8697 Comm: dockerd Not tainted 6.14.0master_fbece6d #1 NONE
- [ 1845.407086] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
- [ 1845.407097] Call Trace:
- [ 1845.407102]  <TASK>
- [ 1845.407104]  dump_stack_lvl+0x69/0xa0
- [ 1845.407114]  print_report+0x156/0x523
- [ 1845.407120]  ? __virt_addr_valid+0x1de/0x3c0
- [ 1845.407124]  ? clone_private_mount+0x309/0x390
- [ 1845.407128]  kasan_report+0xc1/0xf0
- [ 1845.407134]  ? clone_private_mount+0x309/0x390
- [ 1845.407138]  clone_private_mount+0x309/0x390
- [ 1845.407144]  ovl_fill_super+0x2965/0x59e0 [overlay]
- [ 1845.407165]  ? ovl_workdir_create+0x900/0x900 [overlay]
- [ 1845.407177]  ? wait_for_completion_io_timeout+0x20/0x20
- [ 1845.407182]  ? lockdep_init_map_type+0x58/0x220
- [ 1845.407186]  ? lockdep_init_map_type+0x58/0x220
- [ 1845.407189]  ? shrinker_register+0x177/0x200
- [ 1845.407194]  ? sget_fc+0x449/0xb30
- [ 1845.407199]  ? ovl_workdir_create+0x900/0x900 [overlay]
- [ 1845.407211]  ? get_tree_nodev+0xa5/0x130
- [ 1845.407214]  get_tree_nodev+0xa5/0x130
- [ 1845.407218]  ? cap_capable+0xd0/0x320
- [ 1845.407223]  vfs_get_tree+0x83/0x2e0
- [ 1845.407227]  ? ns_capable+0x55/0xb0
- [ 1845.407232]  path_mount+0x891/0x1aa0
- [ 1845.407237]  ? finish_automount+0x860/0x860
- [ 1845.407240]  ? kmem_cache_free+0x14c/0x4f0
- [ 1845.407245]  ? user_path_at+0x3d/0x50
- [ 1845.407250]  __x64_sys_mount+0x2d4/0x3a0
- [ 1845.407254]  ? path_mount+0x1aa0/0x1aa0
- [ 1845.407259]  do_syscall_64+0x6d/0x140
- [ 1845.407263]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
- [ 1845.407267] RIP: 0033:0x55e3487f1fea
- [ 1845.407274] Code: e8 1b 96 fa ff 48 8b 7c 24 10 48 8b 74 24 18 48 8b 54 24 20 4c 8b 54 24 28 4c 8b 44 24 30 4c 8b 4c 24 38 48 8b 44 24 08 0f 05 <48> 3d 01 f0 ff ff 76 20 48 c7 44 24 40 ff ff ff ff 48 c7 44 24 48
- [ 1845.407278] RSP: 002b:000000c000b563b8 EFLAGS: 00000212 ORIG_RAX: 00000000000000a5
- [ 1845.407282] RAX: ffffffffffffffda RBX: 000000c00006c000 RCX: 000055e3487f1fea
- [ 1845.407285] RDX: 000000c0012cf7d8 RSI: 000000c0012616c0 RDI: 000000c0012cf7d0
- [ 1845.407287] RBP: 000000c000b56458 R08: 000000c0004fa600 R09: 0000000000000000
- [ 1845.407289] R10: 0000000000000000 R11: 0000000000000212 R12: 000000c0012cf7d0
- [ 1845.407291] R13: 0000000000000000 R14: 000000c00098b6c0 R15: ffffffffffffffff
- [ 1845.407296]  </TASK>
- [ 1845.407297]
- [ 1845.431635] Allocated by task 17044:
- [ 1845.432033]  kasan_save_stack+0x1e/0x40
- [ 1845.432463]  kasan_save_track+0x10/0x30
- [ 1845.432882]  __kasan_slab_alloc+0x62/0x70
- [ 1845.433308]  kmem_cache_alloc_noprof+0x1a0/0x4a0
- [ 1845.433781]  alloc_vfsmnt+0x23/0x6c0
- [ 1845.434195]  vfs_create_mount+0x82/0x4a0
- [ 1845.434623]  path_mount+0x939/0x1aa0
- [ 1845.435018]  __x64_sys_mount+0x2d4/0x3a0
- [ 1845.435440]  do_syscall_64+0x6d/0x140
- [ 1845.435842]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
- [ 1845.436355]
- [ 1845.436601] Freed by task 0:
- [ 1845.436945]  kasan_save_stack+0x1e/0x40
- [ 1845.437354]  kasan_save_track+0x10/0x30
- [ 1845.437770]  kasan_save_free_info+0x37/0x60
- [ 1845.438217]  __kasan_slab_free+0x33/0x40
- [ 1845.438646]  kmem_cache_free+0x14c/0x4f0
- [ 1845.439068]  rcu_core+0x605/0x1d50
- [ 1845.439451]  handle_softirqs+0x192/0x810
- [ 1845.439880]  irq_exit_rcu+0x106/0x190
- [ 1845.440280]  sysvec_apic_timer_interrupt+0x7c/0xb0
- [ 1845.440785]  asm_sysvec_apic_timer_interrupt+0x16/0x20
- [ 1845.441300]
- [ 1845.441544] Last potentially related work creation:
- [ 1845.442048]  kasan_save_stack+0x1e/0x40
- [ 1845.442465]  kasan_record_aux_stack+0x97/0xa0
- [ 1845.442921]  __call_rcu_common.constprop.0+0x6d/0xb40
- [ 1845.443437]  task_work_run+0x111/0x1f0
- [ 1845.443851]  syscall_exit_to_user_mode+0x1df/0x1f0
- [ 1845.444337]  do_syscall_64+0x79/0x140
- [ 1845.444758]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
- [ 1845.445272]
- [ 1845.445505] Second to last potentially related work creation:
- [ 1845.446078]  kasan_save_stack+0x1e/0x40
- [ 1845.446494]  kasan_record_aux_stack+0x97/0xa0
- [ 1845.446947]  task_work_add+0x178/0x250
- [ 1845.447356]  mntput_no_expire+0x4fc/0x9f0
- [ 1845.447789]  path_umount+0x4ed/0x10d0
- [ 1845.448190]  __x64_sys_umount+0xfb/0x120
- [ 1845.448617]  do_syscall_64+0x6d/0x140
- [ 1845.449016]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
- [ 1845.449529]
- [ 1845.449766] The buggy address belongs to the object at ffff8881507b5a40
- [ 1845.449766]  which belongs to the cache mnt_cache of size 368
- [ 1845.450898] The buggy address is located 112 bytes inside of
- [ 1845.450898]  freed 368-byte region [ffff8881507b5a40, ffff8881507b5bb0)
- [ 1845.452009]
- [ 1845.452250] The buggy address belongs to the physical page:
- [ 1845.452808] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1507b4
- [ 1845.453595] head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
- [ 1845.454363] anon flags: 0x200000000000040(head|node=0|zone=2)
- [ 1845.454936] page_type: f5(slab)
- [ 1845.455300] raw: 0200000000000040 ffff8881009f5680 0000000000000000 dead000000000001
- [ 1845.456077] raw: 0000000000000000 0000000080240024 00000000f5000000 0000000000000000
- [ 1845.456857] head: 0200000000000040 ffff8881009f5680 0000000000000000 dead000000000001
- [ 1845.457616] head: 0000000000000000 0000000080240024 00000000f5000000 0000000000000000
- [ 1845.458399] head: 0200000000000002 ffffea000541ed01 ffffffffffffffff 0000000000000000
- [ 1845.459169] head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
- [ 1845.459945] page dumped because: kasan: bad access detected
- [ 1845.460506]
- [ 1845.460745] Memory state around the buggy address:
- [ 1845.461228]  ffff8881507b5980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc
- [ 1845.461963]  ffff8881507b5a00: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
- [ 1845.462759] >ffff8881507b5a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- [ 1845.463480]                                      ^
- [ 1845.463968]  ffff8881507b5b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- [ 1845.464704]  ffff8881507b5b80: fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc
- [ 1845.465430] ==================================================================
- [ 1845.466181] Disabling lock debugging due to kernel taint
- [ 1845.466717] ==================================================================
- [ 1845.467443] BUG: KASAN: slab-use-after-free in clone_private_mount+0x313/0x390
- [ 1845.468192] Read of size 8 at addr ffff8881507b5a58 by task dockerd/8697
- [ 1845.468837]
- [ 1845.469072] CPU: 5 UID: 0 PID: 8697 Comm: dockerd Tainted: G    B               6.14.0master_fbece6d #1 NONE
- [ 1845.469078] Tainted: [B]=BAD_PAGE
- [ 1845.469079] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
- [ 1845.469082] Call Trace:
- [ 1845.469084]  <TASK>
- [ 1845.469086]  dump_stack_lvl+0x69/0xa0
- [ 1845.469093]  print_report+0x156/0x523
- [ 1845.469098]  ? __virt_addr_valid+0x1de/0x3c0
- [ 1845.469103]  ? clone_private_mount+0x313/0x390
- [ 1845.469107]  kasan_report+0xc1/0xf0
- [ 1845.469112]  ? clone_private_mount+0x313/0x390
- [ 1845.469116]  clone_private_mount+0x313/0x390
- [ 1845.469121]  ovl_fill_super+0x2965/0x59e0 [overlay]
- [ 1845.469140]  ? ovl_workdir_create+0x900/0x900 [overlay]
- [ 1845.469152]  ? wait_for_completion_io_timeout+0x20/0x20
- [ 1845.469157]  ? lockdep_init_map_type+0x58/0x220
- [ 1845.469161]  ? lockdep_init_map_type+0x58/0x220
- [ 1845.469164]  ? shrinker_register+0x177/0x200
- [ 1845.469169]  ? sget_fc+0x449/0xb30
- [ 1845.469174]  ? ovl_workdir_create+0x900/0x900 [overlay]
- [ 1845.469185]  ? get_tree_nodev+0xa5/0x130
- [ 1845.469189]  get_tree_nodev+0xa5/0x130
- [ 1845.469192]  ? cap_capable+0xd0/0x320
- [ 1845.469198]  vfs_get_tree+0x83/0x2e0
- [ 1845.469202]  ? ns_capable+0x55/0xb0
- [ 1845.469206]  path_mount+0x891/0x1aa0
- [ 1845.469210]  ? finish_automount+0x860/0x860
- [ 1845.469217]  ? kmem_cache_free+0x14c/0x4f0
- [ 1845.469221]  ? user_path_at+0x3d/0x50
- [ 1845.469227]  __x64_sys_mount+0x2d4/0x3a0
- [ 1845.469231]  ? path_mount+0x1aa0/0x1aa0
- [ 1845.469235]  do_syscall_64+0x6d/0x140
- [ 1845.469239]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
- [ 1845.469242] RIP: 0033:0x55e3487f1fea
- [ 1845.469246] Code: e8 1b 96 fa ff 48 8b 7c 24 10 48 8b 74 24 18 48 8b 54 24 20 4c 8b 54 24 28 4c 8b 44 24 30 4c 8b 4c 24 38 48 8b 44 24 08 0f 05 <48> 3d 01 f0 ff ff 76 20 48 c7 44 24 40 ff ff ff ff 48 c7 44 24 48
- [ 1845.469249] RSP: 002b:000000c000b563b8 EFLAGS: 00000212 ORIG_RAX: 00000000000000a5
- [ 1845.469253] RAX: ffffffffffffffda RBX: 000000c00006c000 RCX: 000055e3487f1fea
- [ 1845.469256] RDX: 000000c0012cf7d8 RSI: 000000c0012616c0 RDI: 000000c0012cf7d0
- [ 1845.469260] RBP: 000000c000b56458 R08: 000000c0004fa600 R09: 0000000000000000
- [ 1845.469261] R10: 0000000000000000 R11: 0000000000000212 R12: 000000c0012cf7d0
- [ 1845.469263] R13: 0000000000000000 R14: 000000c00098b6c0 R15: ffffffffffffffff
- [ 1845.469268]  </TASK>
- [ 1845.469269]
- [ 1845.494368] Allocated by task 17044:
- [ 1845.494768]  kasan_save_stack+0x1e/0x40
- [ 1845.495185]  kasan_save_track+0x10/0x30
- [ 1845.495594]  __kasan_slab_alloc+0x62/0x70
- [ 1845.496024]  kmem_cache_alloc_noprof+0x1a0/0x4a0
- [ 1845.496518]  alloc_vfsmnt+0x23/0x6c0
- [ 1845.496911]  vfs_create_mount+0x82/0x4a0
- [ 1845.497333]  path_mount+0x939/0x1aa0
- [ 1845.497728]  __x64_sys_mount+0x2d4/0x3a0
- [ 1845.498167]  do_syscall_64+0x6d/0x140
- [ 1845.498563]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
- [ 1845.499064]
- [ 1845.499295] Freed by task 0:
- [ 1845.499636]  kasan_save_stack+0x1e/0x40
- [ 1845.500052]  kasan_save_track+0x10/0x30
- [ 1845.500494]  kasan_save_free_info+0x37/0x60
- [ 1845.500934]  __kasan_slab_free+0x33/0x40
- [ 1845.501355]  kmem_cache_free+0x14c/0x4f0
- [ 1845.501774]  rcu_core+0x605/0x1d50
- [ 1845.502162]  handle_softirqs+0x192/0x810
- [ 1845.502587]  irq_exit_rcu+0x106/0x190
- [ 1845.502995]  sysvec_apic_timer_interrupt+0x7c/0xb0
- [ 1845.503487]  asm_sysvec_apic_timer_interrupt+0x16/0x20
- [ 1845.504002]
- [ 1845.504236] Last potentially related work creation:
- [ 1845.504748]  kasan_save_stack+0x1e/0x40
- [ 1845.505164]  kasan_record_aux_stack+0x97/0xa0
- [ 1845.505621]  __call_rcu_common.constprop.0+0x6d/0xb40
- [ 1845.506136]  task_work_run+0x111/0x1f0
- [ 1845.506545]  syscall_exit_to_user_mode+0x1df/0x1f0
- [ 1845.507038]  do_syscall_64+0x79/0x140
- [ 1845.507439]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
- [ 1845.507949]
- [ 1845.508187] Second to last potentially related work creation:
- [ 1845.508760]  kasan_save_stack+0x1e/0x40
- [ 1845.509175]  kasan_record_aux_stack+0x97/0xa0
- [ 1845.509630]  task_work_add+0x178/0x250
- [ 1845.510040]  mntput_no_expire+0x4fc/0x9f0
- [ 1845.510468]  path_umount+0x4ed/0x10d0
- [ 1845.510870]  __x64_sys_umount+0xfb/0x120
- [ 1845.511298]  do_syscall_64+0x6d/0x140
- [ 1845.511700]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
- [ 1845.512210]
- [ 1845.512442] The buggy address belongs to the object at ffff8881507b5a40
- [ 1845.512442]  which belongs to the cache mnt_cache of size 368
- [ 1845.513553] The buggy address is located 24 bytes inside of
- [ 1845.513553]  freed 368-byte region [ffff8881507b5a40, ffff8881507b5bb0)
- [ 1845.514650]
- [ 1845.514883] The buggy address belongs to the physical page:
- [ 1845.515436] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1507b4
- [ 1845.516221] head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
- [ 1845.516986] anon flags: 0x200000000000040(head|node=0|zone=2)
- [ 1845.517549] page_type: f5(slab)
- [ 1845.517912] raw: 0200000000000040 ffff8881009f5680 0000000000000000 dead000000000001
- [ 1845.518684] raw: 0000000000000000 0000000080240024 00000000f5000000 0000000000000000
- [ 1845.519445] head: 0200000000000040 ffff8881009f5680 0000000000000000 dead000000000001
- [ 1845.520220] head: 0000000000000000 0000000080240024 00000000f5000000 0000000000000000
- [ 1845.521006] head: 0200000000000002 ffffea000541ed01 ffffffffffffffff 0000000000000000
- [ 1845.521812] head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
- [ 1845.522581] page dumped because: kasan: bad access detected
- [ 1845.523131]
- [ 1845.523362] Memory state around the buggy address:
- [ 1845.523851]  ffff8881507b5900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- [ 1845.524588]  ffff8881507b5980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc
- [ 1845.525321] >ffff8881507b5a00: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
- [ 1845.526059]                                                     ^
- [ 1845.526651]  ffff8881507b5a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- [ 1845.527378]  ffff8881507b5b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- [ 1845.528095] ==================================================================
+Thanks,
+Joanne
 
-> 
-> Thank you!
-> 
-> -- 
-> Deet-doot-dot, I am a bot.
-> https://korg.docs.kernel.org/prtracker.html
+>
+> Thanks,
+> Bernd
 
