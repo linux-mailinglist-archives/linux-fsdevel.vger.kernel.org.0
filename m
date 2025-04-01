@@ -1,150 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-45444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D29BEA77B50
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 14:51:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 763A2A77B57
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 14:52:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AEF03AEE58
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 12:49:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D34473AEBCC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 12:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C0A2036F5;
-	Tue,  1 Apr 2025 12:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2CA203705;
+	Tue,  1 Apr 2025 12:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sAyO0gDu"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="J+zaaqgK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D950A1EC01F;
-	Tue,  1 Apr 2025 12:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933F0202F9C;
+	Tue,  1 Apr 2025 12:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743511806; cv=none; b=sl8sdu39nENdaYdhVKQiDGFgn7toxSCuOZVIGmOpuDbWo0J/9wgAl1P8ctDRkty1HjLp72sGxFYG70fAVIVE2BFSW3c4B3lkTwVvgQNUyZscSb+Nr9ORjObyCfGXw6xIJGhvmIU971a0oY5iHCKZe0UmNs5lNKuDzXfoIkSUjFs=
+	t=1743511926; cv=none; b=NC+4lbAoUOepxaWuduDfcDVUR1jY3Be6QblEMLpjYr7g/7BLgOwlCbpTxOo130f1IqBeDSgx6cbOyzFutCm6aqT0lk+Gc+Gv24JEnj4f4bKIC1Wp2AY9vg05MJRu7s6wdOrZC46KKQt4GLbi7bMNuluBR2wxHf/FVEGsd23CBRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743511806; c=relaxed/simple;
-	bh=l8DS0pBZzqAHtujG932plENYbefs0MpGtb/A8hNqdIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bUoLQT9WXj5lrO8BwdqfpfhG74cvX8zIhR89g/upomBJACfFcmxe4I0LipLSXGR9ouyuAj8EmxtsZGe2FMnL7HaTIV5zefTS3e7R5G9GZ0EX4ntdecsEycBTnc5EvpeZOwc2Ktg6kGHwBt1Ld+lmymIJQIhsfslCwM8r9bIedXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sAyO0gDu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27D2AC4CEE4;
-	Tue,  1 Apr 2025 12:50:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743511806;
-	bh=l8DS0pBZzqAHtujG932plENYbefs0MpGtb/A8hNqdIM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sAyO0gDuVdOe0WRth80ZyFeJdlL2egix6OCNyQmWnotsN5AWmg0KlzH6YC33B0KPW
-	 0O4gFhFZjRTWNDDe4aSUh9zVR4hHmSoT6i5p2TpGS/ssl8FTaerXDnDbmfYrjItTRE
-	 g9q5vHkT1ljJZ7dJh5d3NlSgzau65ME4gs4Uq6GALpJ82L4IcAo41treGJpO+warca
-	 bgnvzTJRHi9l4REPeRaJUPb6kADqWR5s5Rf7p4ol8Zp0TiXAifq+IGacSnjF+THkt0
-	 1iDLczWeIo9X3z5dBeETFn3BLhANOK5fjp88x+hlfbVfWLxb9lCWIAO5rMHgxifvRY
-	 N6nU6mRzoWZ+Q==
-Date: Tue, 1 Apr 2025 14:50:00 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, mcgrof@kernel.org, 
-	hch@infradead.org, david@fromorbit.com, rafael@kernel.org, djwong@kernel.org, 
-	pavel@kernel.org, peterz@infradead.org, mingo@redhat.com, will@kernel.org, 
-	boqun.feng@gmail.com
+	s=arc-20240116; t=1743511926; c=relaxed/simple;
+	bh=9tHol7Arxf+PVEVyPLcwCk7fZkOSE8ni++N+d/Old+0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Z1Fn8OPyGZs9QqhYrUW3+PjY2AJoLci4i4R2zhqofXcKRqfSXIeIrIqCTZ0E5pqXdvARV3uXSeq148SXFkkQqogaDXVxasVeOtBVdU9XnpjZ3chXjIiL4wl1JLxNFiHVCWaSB57SeJgluHyopTvUIEYsxa4bnDc+MWYEsLoDvxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=J+zaaqgK; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1743511923;
+	bh=9tHol7Arxf+PVEVyPLcwCk7fZkOSE8ni++N+d/Old+0=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=J+zaaqgKmKuP3MElmaIHhiuW/qbExQW5vWvb5TDaSo2Zp79KZhVjrDJfHN6GvjCSf
+	 rB0WDRCepCuErZDXWWMfZVL0j6gyBiIv5J1GlyCRdWEuTWFf2KgmbWhsaCATtMUi2V
+	 99TgLA3Yp99zqYbgUBDQbA4iOeyMj2/bMhSSE96I=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 019181C0347;
+	Tue, 01 Apr 2025 08:52:02 -0400 (EDT)
+Message-ID: <1d913e99368039b77945d1be89e6626b4238f665.camel@HansenPartnership.com>
 Subject: Re: [RFC PATCH 1/4] locking/percpu-rwsem: add freezable alternative
  to down_read
-Message-ID: <20250401-entkernen-revitalisieren-fac4b67109e5@brauner>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, mcgrof@kernel.org, hch@infradead.org, 
+ david@fromorbit.com, rafael@kernel.org, djwong@kernel.org,
+ pavel@kernel.org,  peterz@infradead.org, mingo@redhat.com, will@kernel.org,
+ boqun.feng@gmail.com
+Date: Tue, 01 Apr 2025 08:52:02 -0400
+In-Reply-To: <3bfnds6nsvxy5jfbcoy62uva6kebhacjuavqxvelbfs6ut6rqf@m4pzsudbqg6l>
 References: <20250327140613.25178-1-James.Bottomley@HansenPartnership.com>
- <20250327140613.25178-2-James.Bottomley@HansenPartnership.com>
- <77774eb380e343976de3de681204e2c7f3ab1926.camel@HansenPartnership.com>
- <20250401-anwalt-dazugeben-18d8c3efd1fd@brauner>
- <f6bdfa23b9f54055f8a539ce396f1134b0921417.camel@HansenPartnership.com>
- <3bfnds6nsvxy5jfbcoy62uva6kebhacjuavqxvelbfs6ut6rqf@m4pzsudbqg6l>
+	 <20250327140613.25178-2-James.Bottomley@HansenPartnership.com>
+	 <77774eb380e343976de3de681204e2c7f3ab1926.camel@HansenPartnership.com>
+	 <20250401-anwalt-dazugeben-18d8c3efd1fd@brauner>
+	 <f6bdfa23b9f54055f8a539ce396f1134b0921417.camel@HansenPartnership.com>
+	 <3bfnds6nsvxy5jfbcoy62uva6kebhacjuavqxvelbfs6ut6rqf@m4pzsudbqg6l>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3bfnds6nsvxy5jfbcoy62uva6kebhacjuavqxvelbfs6ut6rqf@m4pzsudbqg6l>
 
-On Tue, Apr 01, 2025 at 01:20:37PM +0200, Jan Kara wrote:
+On Tue, 2025-04-01 at 13:20 +0200, Jan Kara wrote:
 > On Mon 31-03-25 21:13:20, James Bottomley wrote:
 > > On Tue, 2025-04-01 at 01:32 +0200, Christian Brauner wrote:
-> > > On Mon, Mar 31, 2025 at 03:51:43PM -0400, James Bottomley wrote:
-> > > > On Thu, 2025-03-27 at 10:06 -0400, James Bottomley wrote:
-> > > > [...]
-> > > > > -static void percpu_rwsem_wait(struct percpu_rw_semaphore *sem,
-> > > > > bool
-> > > > > reader)
-> > > > > +static void percpu_rwsem_wait(struct percpu_rw_semaphore *sem,
-> > > > > bool
-> > > > > reader,
-> > > > > +			      bool freeze)
-> > > > >  {
-> > > > >  	DEFINE_WAIT_FUNC(wq_entry, percpu_rwsem_wake_function);
-> > > > >  	bool wait;
-> > > > > @@ -156,7 +157,8 @@ static void percpu_rwsem_wait(struct
-> > > > > percpu_rw_semaphore *sem, bool reader)
-> > > > >  	spin_unlock_irq(&sem->waiters.lock);
-> > > > >  
-> > > > >  	while (wait) {
-> > > > > -		set_current_state(TASK_UNINTERRUPTIBLE);
-> > > > > +		set_current_state(TASK_UNINTERRUPTIBLE |
-> > > > > +				  freeze ? TASK_FREEZABLE : 0);
-> > > > 
-> > > > This is a bit embarrassing, the bug I've been chasing is here: the
-> > > > ?
-> > > > operator is lower in precedence than | meaning this expression
-> > > > always
-> > > > evaluates to TASK_FREEZABLE and nothing else (which is why the
-> > > > process
-> > > > goes into R state and never wakes up).
-> > > > 
-> > > > Let me fix that and redo all the testing.
-> > > 
-> > > I don't think that's it. I think you're missing making pagefault
-> > > writers such
-> > > as systemd-journald freezable:
-> > > 
+[...]
 > > > diff --git a/include/linux/fs.h b/include/linux/fs.h
 > > > index b379a46b5576..528e73f192ac 100644
 > > > --- a/include/linux/fs.h
 > > > +++ b/include/linux/fs.h
 > > > @@ -1782,7 +1782,8 @@ static inline void __sb_end_write(struct
 > > > super_block *sb, int level)
-> > >  static inline void __sb_start_write(struct super_block *sb, int
+> > > =C2=A0static inline void __sb_start_write(struct super_block *sb, int
 > > > level)
-> > >  {
-> > >         percpu_down_read_freezable(sb->s_writers.rw_sem + level - 1,
-> > > -                                  level == SB_FREEZE_WRITE);
-> > > +                                  (level == SB_FREEZE_WRITE ||
-> > > +                                   level == SB_FREEZE_PAGEFAULT));
-> > >  }
-> > 
-> > Yes, I was about to tell Jan that the condition here simply needs to be
-> > true.  All our rwsem levels need to be freezable to avoid a hibernation
-> > failure.
-> 
-> So there is one snag with this. SB_FREEZE_PAGEFAULT level is acquired under
-> mmap_sem, SB_FREEZE_INTERNAL level is possibly acquired under some other
-> filesystem locks. So if you freeze the filesystem, a task can block on
-> frozen filesystem with e.g. mmap_sem held and if some other task then
+> > > =C2=A0{
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 percpu_down_read_freezable=
+(sb->s_writers.rw_sem + level -
+> > > 1,
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 level =3D=3D SB_F=
+REEZE_WRITE);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (level =3D=3D SB_=
+FREEZE_WRITE ||
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 level =3D=
+=3D
+> > > SB_FREEZE_PAGEFAULT));
+> > > =C2=A0}
+> >=20
+> > Yes, I was about to tell Jan that the condition here simply needs
+> > to be true.=C2=A0 All our rwsem levels need to be freezable to avoid a
+> > hibernation failure.
+>=20
+> So there is one snag with this. SB_FREEZE_PAGEFAULT level is acquired
+> under mmap_sem, SB_FREEZE_INTERNAL level is possibly acquired under
+> some other filesystem locks.
 
-Yeah, I wondered about that yesterday.
+Just for SB_FREEZE_INTERNAL, I think there's no case of
+sb_start_intwrite() that can ever hold in D wait because by the time we
+acquire the semaphore for write, the internal freeze_fs should have
+been called and the filesystem should have quiesced itself.  On the
+other hand, if that theory itself is true, there's no real need for
+sb_start_intwrite() at all because it can never conflict.
 
-> blocks on grabbing that mmap_sem, hibernation fails because we'll be unable
-> to hibernate the task waiting for mmap_sem. So if you'd like to completely
-> avoid these hibernation failures, you'd have to make a slew of filesystem
-> related locks use freezable sleeping. I don't think that's feasible.
-> 
+>  So if you freeze the filesystem, a task can block on frozen
+> filesystem with e.g. mmap_sem held and if some other task then blocks
+> on grabbing that mmap_sem, hibernation fails because we'll be unable
+> to hibernate the task waiting for mmap_sem. So if you'd like to
+> completely avoid these hibernation failures, you'd have to make a
+> slew of filesystem related locks use freezable sleeping. I don't
+> think that's feasible.
+
+I wouldn't see that because I'm on x86_64 and that takes the vma_lock
+in page faults not the mmap_lock.  The granularity of all these locks
+is process level, so it's hard to see what they'd be racing with ...
+even if I conjecture two threads trying to write to something, they'd
+have to have some internal co-ordination which would likely prevent the
+second one from writing if the first got stuck on the page fault.=20
+
 > I was hoping that failures due to SB_FREEZE_PAGEFAULT level not being
-> freezable would be rare enough but you've proven they are quite frequent.
-> We can try making SB_FREEZE_PAGEFAULT level (or even SB_FREEZE_INTERNAL)
-> freezable and see whether that works good enough...
+> freezable would be rare enough but you've proven they are quite
+> frequent. We can try making SB_FREEZE_PAGEFAULT level (or even
+> SB_FREEZE_INTERNAL) freezable and see whether that works good
+> enough...
 
-I think that's fine and we'll see whether this causes a lot of issues.
-I've got the patchset written in a way now that userspace can just
-enable or disable freeze during migration.
+I'll try to construct a more severe test than systemd-journald ... it
+looks to be single threaded in its operation.
+
+Regards,
+
+James
+
 
