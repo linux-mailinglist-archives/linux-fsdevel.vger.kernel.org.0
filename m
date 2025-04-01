@@ -1,135 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-45416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45417-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B90BFA7753D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 09:31:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AFC8A775FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 10:12:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E16A73A6290
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 07:30:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B1563A9A5D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 08:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEC91E990E;
-	Tue,  1 Apr 2025 07:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83D01E9904;
+	Tue,  1 Apr 2025 08:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L48RJ2KA"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="aL4ctN68";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="A7R2s4NM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFD01E835B;
-	Tue,  1 Apr 2025 07:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66ED1E8329
+	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Apr 2025 08:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743492655; cv=none; b=LVoGzw2DqSYhzEP8TCEsrrZpgLy9RQuMs7CWN+b+jlTENc9UdMmmwJzS5n545cyKPZUE+ADBibVUda25tQc2cD+DsJBpm3eELk/eVzDCrIVVTN4Q0uN7CBpUwoP924pmK2p2+xvPvBAcOZ0da3+rWfUuN0Ed6Ayfb6iM7ZV76qo=
+	t=1743495109; cv=none; b=RFdsc4WPtdQxhZh2G2l6evlzEPMuQxL9mPX80AQMxHXc+SwNrLUETaPuUQyHNtImgSvxFfjdDtYbGjFyiA8xqry0VpunIDrtC95JiC2e94udU7Fny62tGt+uvL+Zb6NGE57E218ykfU/D8hAUu1aohkEnbG//AonVOl8I+I1+Ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743492655; c=relaxed/simple;
-	bh=U3HHCQTR4hsEPk4ft8i9Vq9tidtv/Ppf9J+q8Rxeg2I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A//GXGRrcIe29UaP83BAxFhp75TsB2STHK2uqphX2w881u307zpGhbUB63AMgrF9932IZmJcivvh+ZuFlUZSOMxsk2D84MWyRrc4xytAsN+dblp3XEmtBMuw1ghxDu1aT1TwSKEh+BuHD6SMMt7PsTL50Ka2y7fBT4MTcPlhCvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L48RJ2KA; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-225df540edcso115155395ad.0;
-        Tue, 01 Apr 2025 00:30:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743492653; x=1744097453; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1qzhK3OhtT1lPNTdi+fIJEPhQ6dJQGnicgcdnXsHADg=;
-        b=L48RJ2KAG/qyRYIUWQMpGTTw1WDwi0o+o6eCyKVLLnlKR/pKA0D3dfu2EKCd9HXi6Q
-         xwVYYwyiXfSuaQBkJrO/oFqsmn4oxDWFu1GfpI91b3UFiG3chLdCBfRHgeLeAfgo8ouY
-         CfD72W0ecexyFIYiWvp9tYJlUZidsNrA6lDRRdEgvUhG2g5+duwLVmaBgtk7Hjq08ytR
-         x3d3003xtT27W/y9Fi9PhlaHlGHyZE8cfscYyRMbRuY5anKrdsebDRQpUVxWkbQN1Y61
-         TGIN/jh91BHQfl13od1itVcrRDGDxzn0kyCZs/Rq0MEXg6H4BZRyUrGq/CocfXYLzlIq
-         4+Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743492653; x=1744097453;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1qzhK3OhtT1lPNTdi+fIJEPhQ6dJQGnicgcdnXsHADg=;
-        b=S094NQh7c65evdjZGcwZo+Qhc8VDua7H7WybS9HprmGX+oDJ0GQUfvyShR65wevaGD
-         ZUbHm3eBlLef18Vcl559GeGdapZlGiCSRDt2utNsH1b8xZoGrNSbi1IkTXeSpwTFYa3t
-         s7QpekIN0wqDqqEZOXnBKR22RBLi+LBxP8nGmC4bSZVMv5LO9kYvXhNwPWVM3N+akn4k
-         dcMbH9QzRAR+keObuM9hMO3sb987+BoMH0xRyRNY79s5r23JJUSM58YUt7zyFtrsqF6K
-         0Hqh2TdSX1J/cE5Gla+HywLcXDja8LBXGtc9AfQoYOQHE14TSv7TnCkWi/l6mlK6EPbh
-         /FKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxuS2UrCApBtRPQDMZwkkV7TDu3wMo4+NwxM5qWkrTxDr6W20rhGtLfgWyaDIdNb69XHC3dzXFO7fRTrg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2Vv8smk1zILnXC9CaMNtwYkAzoclyrj+yeIJzglVvNWb9ZBkJ
-	V1VWUzmBQuohqwFf1YQEmHmWTXIYMEteMJzc3rQCe3WioJu+UJjg
-X-Gm-Gg: ASbGncv6VV9NMDpVVUh5xnFCpQqjGsLkQrrbherccU/WSex0fZ0UQaoZ9mFrovcqvsn
-	IoDNShS8TnYNieZ+wc3CdjVKghr6CvqfY0PTosodwim8QEtetHakrO+Zpk8Cd42R6ibE7PkpCZm
-	YOGWseT5qF/hKAvhv/19IONvtAY1niCXoyz2L1M8Mh7CCZ0I+CLwexoJQ6HjAD0d1dEwtA2XhEF
-	BdpPYqEGj5lKpRy57hLbxOILEOtyYdh+7rX19jF99IfLcwdYDkHni0eVZmIKfuxvEnnXkuPL+3Y
-	IGCaBgQ5IfPqCJzNAw4H04EFMxu4zCXz3GG3YTUTKe0RZfBvm61b2EDKXNmKUMTFWe+OOQ==
-X-Google-Smtp-Source: AGHT+IFmoS/GQNWnKp0MwWOQjYKYWnfkhrisxxDx/k0nzODl/eQ/MI6IbCR0Wj7VB4nySIDL3wnI4A==
-X-Received: by 2002:a05:6a00:1411:b0:736:5969:2b6f with SMTP id d2e1a72fcca58-7397f369998mr17601420b3a.6.1743492653237;
-        Tue, 01 Apr 2025 00:30:53 -0700 (PDT)
-Received: from localhost.localdomain ([39.144.106.236])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7397106856bsm8416888b3a.105.2025.04.01.00.30.50
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 01 Apr 2025 00:30:52 -0700 (PDT)
-From: Yafang Shao <laoar.shao@gmail.com>
-To: kees@kernel.org,
-	joel.granados@kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH] proc: Avoid costly high-order page allocations when reading proc files
-Date: Tue,  1 Apr 2025 15:30:46 +0800
-Message-Id: <20250401073046.51121-1-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
+	s=arc-20240116; t=1743495109; c=relaxed/simple;
+	bh=fhoMrZwQOBY2tn24fbPrxM4hCH6eBNSp92X/4oJDAxk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ivd1M14WMXyc+YYt06QleBQCYMCR4sWOKaLpFXsiNrl7EKvaeImxbS1gaJk0tPRXUzUVPKaGxgAmHudK6eoxZO9zFukUXNWG9ASjjy/hNysFK98K29KQI1MKBRaU9/xOTHlGYc9MFtfAvQm1t1BFTCc6OfhpZ5v500JR9lOecOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=aL4ctN68; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=A7R2s4NM; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id AF9FD1140096;
+	Tue,  1 Apr 2025 04:11:45 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Tue, 01 Apr 2025 04:11:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1743495105;
+	 x=1743581505; bh=5D/NNCG8NNQZ5k7ii9jWZOrev9RUQkhAEROVbN0t7hg=; b=
+	aL4ctN68x23cXQ0bZmQuCNLRSucTfChU3gHGcxn4mANWKL6cej0F2KnbboEQQqtD
+	pDS2Bd5Etg578GrjsaEMZ0/JO/5J/huPwQwuAJNew+L+Hyg3JTsiUDaFWbkdxNKj
+	tYPnieh9bOv3TpDRGo+etiPlZcWlOevf9zHkGUVRzFVx2LChRop8a02VZ3sNwLQw
+	uL8tD/xJyePrsnRk6aZFfwMRTNPgWcFlQbbNUixJ8VY5YvzpCXaea4ZJifR3Ns+q
+	IJ6c2dhtKia6/4S+z7LveEJLA2paZh1oqzeU7bTRZt5o/y3Krtfud0KRjMx2u5cl
+	JotbICf4M0oJf+hDAxK89w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743495105; x=
+	1743581505; bh=5D/NNCG8NNQZ5k7ii9jWZOrev9RUQkhAEROVbN0t7hg=; b=A
+	7R2s4NMa0UNoyujLffasOIP8wbuRe8ar0n5VhIoYvwHa/BnFVWbp7gYE8V0/tl7p
+	rQzcw8Xkt5GqJuiWSNJItgo33YatE8BhWxCxs/Jd+6yn5WbR0L2dbTALPJ/C236+
+	0aA020QRKuAobcDolUMhXulo8v5iBMzrroDeYgTdFCxCwk1mzqRVOr19J7IaHv9r
+	qbq5YJk9/Jo6umgq+tx3a7Rb3ifiCfsD9MyVNkKo7BDLVezWj8QOopZbMDKwq8M2
+	Q5RPr+kIcS+GmbBr/I/h2Rj/Tj9zesyL9SM5JuzNp3tt+nO/U3VuhLfzXswrL2Fc
+	gS2ijO8fDoxAJi+6d60Bg==
+X-ME-Sender: <xms:wJ_rZxOI_fA3NkBHld8CUpVkZJbXQ5NQoXAa92vme0efbDOrr8m50g>
+    <xme:wJ_rZz8erpfkVRAzpIqmvzpICDyxkgw97z5TRQBASBalpQmMIiKJ9gGGKDHXpHVw3
+    MPzP0yk4CoaZ2w2>
+X-ME-Received: <xmr:wJ_rZwTTw3-lKMf9FVywhthUL2_QVgE87LfwZfs-CeiFL4c6-igcVYNKF8G7KS8vALYGDss70Nku4-Ns0a5HMIeWzFaobG4qMI7XEC2UAmk_GiooIzhN>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukedvvdelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddt
+    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuh
+    gsvghrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudev
+    udevleegleffffekudekgeevlefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrh
+    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggv
+    rhhtsehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmth
+    hpohhuthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdp
+    rhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheplhhinh
+    hugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehk
+    vghrnhgvlhdqthgvrghmsehmvghtrgdrtghomh
+X-ME-Proxy: <xmx:wJ_rZ9vciZrFsBWaOMdt0e1aKCVCmEsQ4ooF2Qejwa2G83vZbBczrw>
+    <xmx:wJ_rZ5ePR2kDxalPa83doT5On63HIxusGsnv8R1gXSBYl_kqZW1xqA>
+    <xmx:wJ_rZ51plPAkwgqv_q1Mn6VslqXZgpIe9WL5G8bxQlgkRfgN8cSdFQ>
+    <xmx:wJ_rZ1-Xbbt8FavguAJ2OMTgeZgsdx8W-nniJnR7hYotC8M0HNLkyg>
+    <xmx:wZ_rZw4T0XDLFi_7oh-KZFDnlFUWL5-jfDEKM0oPvNM-82uupcd64-_f>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 1 Apr 2025 04:11:44 -0400 (EDT)
+Message-ID: <c2ab84de-84b7-4948-8842-21dd8e8904b3@fastmail.fm>
+Date: Tue, 1 Apr 2025 10:11:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] fuse: add numa affinity for uring queues
+To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
+ linux-fsdevel@vger.kernel.org
+Cc: kernel-team@meta.com
+References: <20250331205709.1148069-1-joannelkoong@gmail.com>
+ <CAJnrk1a4fzz=Z+yTtGXFUyWqkEhbfO1UjxcSk1t5sA7tr8Z-nw@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1a4fzz=Z+yTtGXFUyWqkEhbfO1UjxcSk1t5sA7tr8Z-nw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-While investigating a kcompactd 100% CPU utilization issue in production, I
-observed frequent costly high-order (order-6) page allocations triggered by
-proc file reads from monitoring tools. This can be reproduced with a simple
-test case:
 
-  fd = open(PROC_FILE, O_RDONLY);
-  size = read(fd, buff, 256KB);
-  close(fd);
 
-Although we should modify the monitoring tools to use smaller buffer sizes,
-we should also enhance the kernel to prevent these expensive high-order
-allocations.
+On 4/1/25 01:42, Joanne Koong wrote:
+> On Mon, Mar 31, 2025 at 1:57 PM Joanne Koong <joannelkoong@gmail.com> wrote:
+>>
+>> There is a 1:1 mapping between cpus and queues. Allocate the queue on
+>> the numa node associated with the cpu to help reduce memory access
+>> latencies.
+>>
+>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+>> ---
+>>  fs/fuse/dev_uring.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+>> index accdce2977c5..0762d6229ac6 100644
+>> --- a/fs/fuse/dev_uring.c
+>> +++ b/fs/fuse/dev_uring.c
+>> @@ -256,7 +256,7 @@ static struct fuse_ring_queue *fuse_uring_create_queue(struct fuse_ring *ring,
+>>         struct fuse_ring_queue *queue;
+>>         struct list_head *pq;
+>>
+>> -       queue = kzalloc(sizeof(*queue), GFP_KERNEL_ACCOUNT);
+>> +       queue = kzalloc_node(sizeof(*queue), GFP_KERNEL_ACCOUNT, cpu_to_node(qid));
+>>         if (!queue)
+>>                 return NULL;
+>>         pq = kcalloc(FUSE_PQ_HASH_SIZE, sizeof(struct list_head), GFP_KERNEL);
+> 
+> On the same note I guess we should also allocate pq on the
+> corresponding numa node too.
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Cc: Josef Bacik <josef@toxicpanda.com>
----
- fs/proc/proc_sysctl.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+So this is supposed to be called from a thread that already runs on this
+numa node and then kmalloc will allocate anyway on the right node,
+afaik. Do you have a use case where this is called from another node? If
+you do, all allocations in this file should be changed.
 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index cc9d74a06ff0..c53ba733bda5 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -581,7 +581,15 @@ static ssize_t proc_sys_call_handler(struct kiocb *iocb, struct iov_iter *iter,
- 	error = -ENOMEM;
- 	if (count >= KMALLOC_MAX_SIZE)
- 		goto out;
--	kbuf = kvzalloc(count + 1, GFP_KERNEL);
-+
-+	/*
-+	 * Use vmalloc if the count is too large to avoid costly high-order page
-+	 * allocations.
-+	 */
-+	if (count < (PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER))
-+		kbuf = kvzalloc(count + 1, GFP_KERNEL);
-+	else
-+		kbuf = vmalloc(count + 1);
- 	if (!kbuf)
- 		goto out;
- 
--- 
-2.43.5
 
+Thanks,
+Bernd
 
