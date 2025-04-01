@@ -1,93 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-45413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72C9CA7747B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 08:29:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C07DA77517
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 09:18:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94A4D188BB3D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 06:29:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 724293A3AE2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 07:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062DE1E260C;
-	Tue,  1 Apr 2025 06:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9641E835B;
+	Tue,  1 Apr 2025 07:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ay1vSseR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C7DEBEBh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD4B131E2D;
-	Tue,  1 Apr 2025 06:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383B01E47A6;
+	Tue,  1 Apr 2025 07:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743488958; cv=none; b=Dvh5QfTwTV5HitwO+9fttueyWEAM6UO4BOOrWmjf+PuAAorPf1HLAa/G5e1XMp/y+lO/96ZtmJHQ3Ueh889M7UIjOQKyzE18tpUlqqEqGzFHNmRKoy6k3XLCTGRYSR9A/wH5QYDrSnr8t7noTZnZM4gqLJDoEgP5M3okSn7WaFg=
+	t=1743491840; cv=none; b=E3qa/vSCTlgj6sEI5sndjy0JAP2zV+bkE+kU7zpdTHaAL7BdNqm9bXb/N/Vr0UeAfBZXC6rB74ZiXFIENIC2R/4FZ4DdIMX1C30Ny3K+VdK604D8j7DOER6JRzOI+Rhzaye8b7CF8QCHm56Vpd5uS9XGhwfecn2MUht2TDfZP5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743488958; c=relaxed/simple;
-	bh=TVeq6PNEiePIMl+ttaOJNKTUK4jVxSm94Q1sT2OShj8=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=E5/qVLKe9b3LzmubjzLeGvArovHrU8Ao0Z2MU6AbedxUDFbwPW0LCVHU2IPGI5Fc89KLE2T7K2WBfvVOsjFG3aC0oVncKu9q3wymUHEjR6L11TPMG0S7/H9ipVuLhsbeCFcc9G8yOEHI4suBu3AJZqSL+LzzCxiCFc2V6eWBW9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ay1vSseR; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30bfb6ab47cso49798571fa.3;
-        Mon, 31 Mar 2025 23:29:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743488953; x=1744093753; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iNphk2i9eSGihLD4c/ofcPRkoFOwL4x5wS5sCwun4uQ=;
-        b=Ay1vSseRX3sXHw3vrVXZjaJPpdE5d8R4b51dc/GVakt3StvfgUlVrXqqZoBBYnmHNh
-         yqQbDI/Y5pdJZCYVxpaoZE6Ic9+sPjBuQjJfOk8x1HOc1/jGErp60ixtk4qsTc5ZJ4QC
-         fiWAh9EtRw21GV/HsUV2xxNh0UkNdQbiArTombIFgahsjo6VdDNCVtNCYf1rxgSwpodw
-         zfPIpmvuysvcdg/FR0xYBvrh0T5rHW8v9AwpPIdJfK8aWoVmGznLRwfmiKTB2M9FEkCp
-         av34MWgsf0MBx9yJeWa7WzHDy9Th9wIjkjjd3V/tplsyblPM199YXaY22/li+jQt6sJO
-         xy0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743488953; x=1744093753;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iNphk2i9eSGihLD4c/ofcPRkoFOwL4x5wS5sCwun4uQ=;
-        b=tkroVjuwBNpZyXqn0++hUb3aaSmyErpjENM57SBzD+jn1e8lIOfzbqr1xqVwyWH5+K
-         JW1+zC0S48OuWdCw+ZCTZKTaVp00O3PndVhsN5aaqYlLSsiim51/lGsXehXao9m+1CBe
-         wgOfk+CuFXG1qjNEIzZWpXosPBTXQQYQxpHhjLiLkGkdW/c+pQnHHlQVHjbySYo3CA45
-         Uug6po4ll1rLQg2qr2v93sqdmkR1b5zVCvSzrYWfqxBtY2Cd/1WW3fGOzqsU65O0F364
-         z4EECaIEnxDGxlv00Y8Vz05axX14DV+WwkLenElcHDFyxpIrYS15NMfzXzg1UfIrtVpN
-         AXsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVmhse57UEygeMLn6ayQSEdOSj/oiCyN3BbAOV5CQRGGddckmZVDZ55HlPwJB72z6ohuNHdzYQuzi0RIaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxPv2FpJmrkZLE4eRbTjetDFI1K8At3JDzvkHB4GeIyBJmuy5d
-	XLnYW4lFr+lXrxswYNcVI80D/curI1x1dLtevwRTbZQU40tZKZhULbZ1LOQy3z+3NeCp6t3uPxA
-	zjXUnwAMHKhE6B+uqLsM+gW7dGi+UPw==
-X-Gm-Gg: ASbGncv7ocwwOEYhYfnqZcFGxJedebnqH6v7fAgHAlkDddZTRHay8mxIFWjrPe6WEG+
-	2MnogFSeJKnTPoSBfixN51dAqWSd5s724tiGIRZPKhE0G6i6iVc95DyHP4SrKiqdGscGuZ8NNTb
-	08qIrE8qRKQMzlE5ajakBOJ5WTWizHiabw9jU0QmTInD6p7WnspcAsA6V2KLWk
-X-Google-Smtp-Source: AGHT+IHHb33VIGfYVihNIXGdVHC752JKSHLPixUm9AyM/V+3XusGXkJRkjpV7z3RF2DVCGWi7oJJOKFLv5ekMkl21bA=
-X-Received: by 2002:a05:651c:2210:b0:30b:bb45:6616 with SMTP id
- 38308e7fff4ca-30de0313c4fmr38698831fa.29.1743488952364; Mon, 31 Mar 2025
- 23:29:12 -0700 (PDT)
+	s=arc-20240116; t=1743491840; c=relaxed/simple;
+	bh=yGVuOK8QsrbzJeHeZyfdHkem1uNLnG6KfYUZfHdCoG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jxz3SrmZYixJspEefoFgKYvoKxMfuu3npjn9Iz1v8YIh00W0rjAi4fsC7uwrIi+UOPGOBvcetXyTJRVxiPQkNaj0QeQ8uZKukvk0MEWGuB8rp783Kbammp0ANm+vj0+ovtc7FjKyH57c10u+wQ0d3u4xkJqzVYIevJU9ugXQFko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C7DEBEBh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B8A2C4CEE8;
+	Tue,  1 Apr 2025 07:17:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743491839;
+	bh=yGVuOK8QsrbzJeHeZyfdHkem1uNLnG6KfYUZfHdCoG0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C7DEBEBh3oAtCdSwwszho06IfxX1ZpBRXC5zlUlXBKZFKeOhDBre8bA+ZZ1c2ddBC
+	 H1BK6RQGj2Xd0hzjrS3LwxQ5PnF/XkEs1O89lq7MtqZ8Mux027RH2odhXsGtFa4mGx
+	 Gs3zKhetuLRgetKrsEQEu8ZXmZhuuA+aZ+s4sV7KO+46J+OgsmchRxn6QPDxeOh+FR
+	 RKIqeCbPzTS7JBXF3c9MT2VDrUblR2bj54usuPMZ+JK3xC7zyKN6RTKsfWD1WaGITO
+	 0ghMzNrJtEdTRQSNLJb1A6H8wLaiQlZcKjUiwvHB56SpQsUF4BqlvODqbQ0CCXcPNX
+	 UC383ZZOgMEuQ==
+Date: Tue, 1 Apr 2025 09:17:12 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, 
+	Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, mcgrof@kernel.org, hch@infradead.org, rafael@kernel.org, 
+	djwong@kernel.org, pavel@kernel.org, peterz@infradead.org, mingo@redhat.com, 
+	will@kernel.org, boqun.feng@gmail.com
+Subject: Re: [PATCH 3/6] xfs: replace kthread freezing with auto fs freezing
+Message-ID: <20250401-baubeginn-ausdehnen-3a7387b756aa@brauner>
+References: <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
+ <20250401-work-freeze-v1-3-d000611d4ab0@kernel.org>
+ <Z-s9KG-URzB9DwUb@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 1 Apr 2025 01:29:01 -0500
-X-Gm-Features: AQ5f1JrTpZiZZL9PwfxIh7sDKeUI2uOIEH5Ba6569lQs35KVPC0DdGGw8xtrPx4
-Message-ID: <CAH2r5muupgCHf99YziMCFrjYY0EJbT9W74TmUq74BtfR6kmOLA@mail.gmail.com>
-Subject: test generic/074 slowdown with current mainline
-To: CIFS <linux-cifs@vger.kernel.org>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z-s9KG-URzB9DwUb@dread.disaster.area>
 
-I noticed that test generic/074 (which runs fstest with various
-options) runs almost twice as slow with current mainline, compared
-with 6.14 over smb3.1.1 mounts.  It doesn't appear to be related to
-changes to cifs.ko (as the cifs.ko code is almost identical in the
-test runs I did).  Anyone else noticing a perf regression for this?
+On Tue, Apr 01, 2025 at 12:11:04PM +1100, Dave Chinner wrote:
+> On Tue, Apr 01, 2025 at 02:32:48AM +0200, Christian Brauner wrote:
+> > From: Luis Chamberlain <mcgrof@kernel.org>
+> > 
+> > The kernel power management now supports allowing the VFS
+> > to handle filesystem freezing freezes and thawing. Take advantage
+> > of that and remove the kthread freezing. This is needed so that we
+> > properly really stop IO in flight without races after userspace
+> > has been frozen. Without this we rely on kthread freezing and
+> > its semantics are loose and error prone.
+> > 
+> > The filesystem therefore is in charge of properly dealing with
+> > quiescing of the filesystem through its callbacks if it thinks
+> > it knows better than how the VFS handles it.
+> > 
+> .....
+> 
+> > diff --git a/fs/xfs/xfs_trans_ail.c b/fs/xfs/xfs_trans_ail.c
+> > index 0fcb1828e598..ad8183db0780 100644
+> > --- a/fs/xfs/xfs_trans_ail.c
+> > +++ b/fs/xfs/xfs_trans_ail.c
+> > @@ -636,7 +636,6 @@ xfsaild(
+> >  	unsigned int	noreclaim_flag;
+> >  
+> >  	noreclaim_flag = memalloc_noreclaim_save();
+> > -	set_freezable();
+> >  
+> >  	while (1) {
+> >  		/*
+> > @@ -695,8 +694,6 @@ xfsaild(
+> >  
+> >  		__set_current_state(TASK_RUNNING);
+> >  
+> > -		try_to_freeze();
+> > -
+> >  		tout = xfsaild_push(ailp);
+> >  	}
+> >  
+> 
+> So what about the TASK_FREEZABLE flag that is set in this code
+> before sleeping?
+> 
+> i.e. this code before we schedule():
+> 
+>                 if (tout && tout <= 20)
+>                         set_current_state(TASK_KILLABLE|TASK_FREEZABLE);
+>                 else
+>                         set_current_state(TASK_INTERRUPTIBLE|TASK_FREEZABLE);
+> 
+> Shouldn't TASK_FREEZABLE go away, too?
 
--- 
-Thanks,
+Thanks for spotting! Yes, yesterday late at night I just took Luis
+patches as they are and had only gotten around to testing btrfs. The
+coccinelle scripts seemed to have missed those. I'll wait for comments
+and will do another pass and send out v2.
 
-Steve
+> > diff --git a/fs/xfs/xfs_zone_gc.c b/fs/xfs/xfs_zone_gc.c
+> > index c5136ea9bb1d..1875b6551ab0 100644
+> > --- a/fs/xfs/xfs_zone_gc.c
+> > +++ b/fs/xfs/xfs_zone_gc.c
+> > @@ -993,7 +993,6 @@ xfs_zone_gc_handle_work(
+> >  	}
+> >  
+> >  	__set_current_state(TASK_RUNNING);
+> > -	try_to_freeze();
+> >  
+> >  	if (reset_list)
+> >  		xfs_zone_gc_reset_zones(data, reset_list);
+> > @@ -1041,7 +1040,6 @@ xfs_zoned_gcd(
+> >  	unsigned int		nofs_flag;
+> >  
+> >  	nofs_flag = memalloc_nofs_save();
+> > -	set_freezable();
+> >  
+> >  	for (;;) {
+> >  		set_current_state(TASK_INTERRUPTIBLE | TASK_FREEZABLE);
+> 
+> Same question here for this newly merged code, too...
+
+I'm not sure if this is supposed to be a snipe or not but just in case
+this is a hidden question: This isn't merged. Per the cover letter this
+is in a work.* branch. Anything that is considered mergable is in
+vfs-6.16.* branches. But since we're pre -rc1 even those branches are
+not yet showing up in -next.
 
