@@ -1,143 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-45438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F73A779A6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 13:36:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D89EDA77A6B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 14:12:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F031C188FD6F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 11:36:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40E4B188CDD4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 12:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00951FAC55;
-	Tue,  1 Apr 2025 11:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA67202C52;
+	Tue,  1 Apr 2025 12:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="DB+RAUeq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KOeGSze7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690FD1FA26C
-	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Apr 2025 11:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB761EFFB2;
+	Tue,  1 Apr 2025 12:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743507366; cv=none; b=sNpvI6fI9Zgof1hWJOFOo6SEj90hjvxl8MkTRM922Hcw9JIFgG8jwhHQ6b9nJ3lDYEoOC9KZKosaXwGiSOESfnzJC84uuS8QGRsF6chhASY0XV/XqawQPFkb6OfsuIXcCdujSLkqoO8Nq6/iuHbH1MwbdHsXKoz7rEXWuLTEPZs=
+	t=1743509570; cv=none; b=nWdRCwYQKN9LjfPCW6neJNvaAwfrtpXXMAB1Wp/AacKKqGP6yFYhfzTEhpVN1qxxF1Tgs0zgwoU33m/bAS70HemjvjJsqNE28X0oPJq43tx9oeys3Yk0uL4m1nxqsFsMYSG22CsR/2GcdBjEHnkBVCuh2FPQ8E8DPplg2M6MXsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743507366; c=relaxed/simple;
-	bh=R7SoiPCBNIDNzLkKbNN/bk7U6Bot5GWsF1bFWcdnudY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FbRhjDJPzfcrbl8goy0QuCn0y4yRJhpy2WjuW0cafzK1QNKoWo97Za/ApL9XqawyftC6AgbR9OhAUdeC/3jnRoV1bWLZ8SrdDWMUBBbozfmC861Y/oCjFihPflrzwzx6ofJhWWvH3Y+UDcfbMFwkR9o/gLCNHeYpWodS61ZR4m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=DB+RAUeq; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22438c356c8so105406155ad.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Apr 2025 04:36:03 -0700 (PDT)
+	s=arc-20240116; t=1743509570; c=relaxed/simple;
+	bh=knCnkkwxfCa4lLEVbhONUxiuYykKQ35GfgIida0h9Z0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GGAkKAJTWTl1PaikRbqUU3kmsuhZpg3lXP1UYuE4XyxZFgTirAaNDaciQ3aG3hLIb5rXtYfX53qhfDi4Ww0noDK4NmvrvsSdhcWjW0hnsxdUwKpbNfaofPa3BAipd3Q9yk3X0OsIgEVJtrJgmlkjIq0ETOvxv2SKI8FUB0gDD5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KOeGSze7; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac73723b2d5so604227766b.3;
+        Tue, 01 Apr 2025 05:12:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1743507363; x=1744112163; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=g2+c00bn9QMrYYncqUoX4E1bu9uetuu45V5+u5h/AVY=;
-        b=DB+RAUeql1+nxpXAllys+DY0MWr8w5xmkNVokRa+THxevO3nJW98NCMMu9rLD+NfJf
-         x6Q+EWEP8Xhy79EyhyCbczCvb0zc/d9Y4S2+JNzogcfHDbSrjhhzjyHJkSIWplBAK7LS
-         hPhKwBZRNeMOofAfSXT6NtNKeGESU17JT7+/w+Iuir8ryjphV/WXfR/NnSJ6X5VPGd1j
-         eykZlspMb67ul8+M0gsCZ1cM21hOyAUXxnKy6EI/canQf7/0G4diLLqAoPDad07lrlUw
-         IdJS9Vyqq9/5YoQWDrLeDBzfHu7E47pMTHs+2+X3LT2l96UUysq0sw9Cs0en9Qyhglou
-         mkfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743507363; x=1744112163;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1743509567; x=1744114367; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=g2+c00bn9QMrYYncqUoX4E1bu9uetuu45V5+u5h/AVY=;
-        b=AoHZNk/hb88JRBMwb/K9DUPgNidaAh7QuWzrhHqlssPXDC1On/1A6Z6Xzx+NeSpKmo
-         CgBL2FFeZ2ptR+0ImcVuqFNY9h9eMH6UERyTBT1pND3u2UBx6uN9NotHBbgp7zYz8ur0
-         ACastM6KZOwdw+7uCPhqAW6ntYh5Hyv4sQmwfNDR/IlJ/tACImm1YdLCdoVlPymT0JLU
-         wUwExCrQgZp31GmAk+pxLGu4ycdRnchn20rHV1BUZEy4QW9KCG4oQVd+J7SGuJLLy5gZ
-         lfIia7UAs5nxDDwXMZH87RsmTyCGgsz+Yu3yEz2IP1HfzLjKiOTq9flBfCmOwanj7Pe7
-         Qgrw==
-X-Gm-Message-State: AOJu0Yxsh48gixuRXxqUI9wAr0zHlZV2cuk5NlJr+yIs4N9Jkqrxw0Tl
-	4we3HKGGvUP5nJaQtQQDVtU1reXdYITOkT2rCZ9yoeHTNeA/UQ6B95KrLph7POM=
-X-Gm-Gg: ASbGncujB2ozzZzbFHrqEq26L0GCqJwA9cs1Mt4XIR3CrICV/PUq2jS3dLZKjkgHLez
-	KH2uJh2RuzWn+ZOtRxvM+Yom38zy+uAgTLwXD42PMbCfxa2ihiAcbGE/akpSZADmL6bLra1dNb4
-	m7iJAmApZ1dkJBmWPZdHAl7JJ+I/Z8Xan6B+7b1JqSh8y7pI/JBoAMbkqM8JStBItYWbcR2ne+T
-	R9wGmkmyrtIcIzLKrl+pIgKaR5zUpwPGj6JA5UoGPLGVKeBAmXo+umD/E5nj+7NE5RP7/v0aaE/
-	FwAoo8xt1MwpkVTGPsw5C7PAh9fdyvCDcZ3/Sln1BKMk70WdW9pX5+QuvnT8XPuTkexW9Vj9+AJ
-	qojaJIhLcIK8mjk79oA==
-X-Google-Smtp-Source: AGHT+IGBEYa638WvHr8VMrPemZg8f/SzTMUOvkeQN2v3HXx0k+tLbTzE07k8CRKzbkFjDvvHpsuneg==
-X-Received: by 2002:a05:6a00:3a23:b0:736:3979:369e with SMTP id d2e1a72fcca58-73980387a87mr16755789b3a.9.1743507362409;
-        Tue, 01 Apr 2025 04:36:02 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-60-96.pa.nsw.optusnet.com.au. [49.181.60.96])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73970e22449sm8647733b3a.49.2025.04.01.04.36.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Apr 2025 04:36:01 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tzZuQ-000000035eq-3DKl;
-	Tue, 01 Apr 2025 22:35:58 +1100
-Date: Tue, 1 Apr 2025 22:35:58 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	mcgrof@kernel.org, hch@infradead.org, rafael@kernel.org,
-	djwong@kernel.org, pavel@kernel.org, peterz@infradead.org,
-	mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com
-Subject: Re: [PATCH 3/6] xfs: replace kthread freezing with auto fs freezing
-Message-ID: <Z-vPnmL7wn_8cFim@dread.disaster.area>
-References: <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
- <20250401-work-freeze-v1-3-d000611d4ab0@kernel.org>
- <Z-s9KG-URzB9DwUb@dread.disaster.area>
- <20250401-baubeginn-ausdehnen-3a7387b756aa@brauner>
+        bh=Ttvd/FU9GliLSJnLsshyif2Zg4QG1YVDozGF70kbh4w=;
+        b=KOeGSze7U8rF55WItYlqy004mIgyQMdABQ46Ai/COS9laYIwUfb1NOsHErOpEKCbyz
+         i8h6TnKgw8XH+tdZtNZ4VVhQbds9aWoYxaI2AyqNMqTEIhRrZa5liT6g2w9wzCa04gs9
+         tGDxZS4lZzZzI27PCRj3XOvJnW2xUumTn6b5eMcLAbAW6XstqaqPYXrFODiLyjWPoyZG
+         ezYZrvB6cIvv3tqMxmV3JkkKp1bRlq13I66nsGfScl7XlrEuDiQ3fY3lwgNHifq/ZXi0
+         NryZLJxt2XZwAiqgYQ3dLEtCNJnI+wW9TJg/K8jMNBOz8zRRYKd7UnxFSwB3ozUMz8nb
+         QbGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743509567; x=1744114367;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ttvd/FU9GliLSJnLsshyif2Zg4QG1YVDozGF70kbh4w=;
+        b=c4NR0DL3pUS8rmMPtgAw6TdBHie6Hj5sfrtjpGETj0tAY2T6R+t3o63M/gArEFCNny
+         Ut8JUybFeMGka+VGOHuEnzGT3b59Yc8ohDMuBFR8EiPUmOu4X/Rjbx4UDl9OJvYH5zq9
+         Du9eNDv0AKML20UBTofJVIm+3HsIMO/wTxxlIWBiZYzpCqRlZExhQLtXWXSz6P28aCoO
+         baKaDfrbjWlS47cDMkyaBTXppzWQGc8cBKVU+yeoVmueBq58OooXPJ1/6S/3JZz3Ws/K
+         0L57/WzF5hRgNCqhbQBfhMFEYzaxk6z+aml/EFdCh3qp8kWc/mZ1eUeFy8lOcwhlAP61
+         YQGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUh4A+FYEFRNn/Yc3VSn6s0XusxKGaPtR0H2puRhPttoLc4D4Sw0jOMGIyPl2FwrVSOrbGBq2hehn2y3D6g@vger.kernel.org, AJvYcCXTJ3WvaVr5VAgNRpIbjpWjoas43hmAFKu+bE5w2E1XUaEL0SMOz19T/Jx1TnIzVWxzGEkGdH4xL8I1q1MJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywwt2SamktlR3SC4pM9QZd+xSHHKJxLgRpSKGtYzWs/K0TTNPXv
+	gAz0YRARRAfYXyrdVzWrO7VTdcu0l80tXQ0As1uNcKoJF4Ko+V5NOkMq8I6tlyw77hF8jOqCxLQ
+	Sa3ngHGoW5nyGlHqxQ4q1pBE7fM0=
+X-Gm-Gg: ASbGncumolXMLnGDwGp29sv4W9Cg5Px7LAcZYlvmyS0cJ+Re/lXOCatLhsrE5RfDYsG
+	TauKRJ2sN3y+wW6NlXA1pG0q/VEnfdwjD58RjQ/wBmzVqHFqJX772pgUv8Cy3WLgfQRMY4RQiSY
+	0n8i26L3ZuzGUQZB7vUveLW9NX
+X-Google-Smtp-Source: AGHT+IGY6gqFjHlNJ0Psb1PqUb4iCC58bx68X71kLnLB+BblrscpEbBl1WGCDY68G4o8ArXnr51fyd+Oa6UBiG+CAM0=
+X-Received: by 2002:a17:907:d26:b0:ac3:bd68:24e4 with SMTP id
+ a640c23a62f3a-ac738c222a0mr1036879966b.53.1743509567100; Tue, 01 Apr 2025
+ 05:12:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250401-baubeginn-ausdehnen-3a7387b756aa@brauner>
+References: <20250329192821.822253-1-mjguzik@gmail.com> <20250329192821.822253-3-mjguzik@gmail.com>
+ <20250401-fernhalten-lockvogel-ba56b2b108d2@brauner>
+In-Reply-To: <20250401-fernhalten-lockvogel-ba56b2b108d2@brauner>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 1 Apr 2025 14:12:34 +0200
+X-Gm-Features: AQ5f1JomYiaVAhBSzMDo4Ka0dgwxOzGnw63hneixUfWHSIDBOrRIQVSlNKqu1kE
+Message-ID: <CAGudoHEEPYFUfSkBY93KWinOXQJeS89dMK+HKSwuzpeF8YZX_Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fs: cache the string generated by reading /proc/filesystems
+To: Christian Brauner <brauner@kernel.org>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 01, 2025 at 09:17:12AM +0200, Christian Brauner wrote:
-> On Tue, Apr 01, 2025 at 12:11:04PM +1100, Dave Chinner wrote:
-> > On Tue, Apr 01, 2025 at 02:32:48AM +0200, Christian Brauner wrote:
-> > > diff --git a/fs/xfs/xfs_zone_gc.c b/fs/xfs/xfs_zone_gc.c
-> > > index c5136ea9bb1d..1875b6551ab0 100644
-> > > --- a/fs/xfs/xfs_zone_gc.c
-> > > +++ b/fs/xfs/xfs_zone_gc.c
-> > > @@ -993,7 +993,6 @@ xfs_zone_gc_handle_work(
-> > >  	}
-> > >  
-> > >  	__set_current_state(TASK_RUNNING);
-> > > -	try_to_freeze();
-> > >  
-> > >  	if (reset_list)
-> > >  		xfs_zone_gc_reset_zones(data, reset_list);
-> > > @@ -1041,7 +1040,6 @@ xfs_zoned_gcd(
-> > >  	unsigned int		nofs_flag;
-> > >  
-> > >  	nofs_flag = memalloc_nofs_save();
-> > > -	set_freezable();
-> > >  
-> > >  	for (;;) {
-> > >  		set_current_state(TASK_INTERRUPTIBLE | TASK_FREEZABLE);
-> > 
-> > Same question here for this newly merged code, too...
+On Tue, Apr 1, 2025 at 12:31=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
 >
-> I'm not sure if this is supposed to be a snipe or not but just in case
-> this is a hidden question:
+> On Sat, Mar 29, 2025 at 08:28:21PM +0100, Mateusz Guzik wrote:
+> > It is being read surprisingly often (e.g., by mkdir, ls and even sed!).
+> >
+> > This is lock-protected pointer chasing over a linked list to pay for
+> > sprintf for every fs (32 on my boxen).
+> >
+> > Instead cache the result.
+> >
+> > While here mark the file as permanent to avoid atomic refs on each op
+> > (which can also degrade to taking a spinlock).
+> >
+> > open+read+close cycle single-threaded (ops/s):
+> > before:       450929
+> > after:        982308 (+117%)
+> >
+> > Here the main bottleneck is memcg.
+> >
+> > open+read+close cycle with 20 processes (ops/s):
+> > before:       578654
+> > after:        3163961 (+446%)
+> >
+> > The main bottleneck *before* is spinlock acquire in procfs eliminated b=
+y
+> > marking the file as permanent. The main bottleneck *after* is the
+> > spurious lockref trip on open.
+> >
+> > The file looks like a sterotypical C from the 90s, right down to an
+> > open-code and slightly obfuscated linked list. I intentionally did not
+> > clean up any of it -- I think the file will be best served by a Rust
+> > rewrite when the time comes.
+> >
+> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > ---
+>
+> > +     pde =3D proc_create_single("filesystems", 0, NULL, filesystems_pr=
+oc_show);
+> > +     proc_make_permanent(pde);
+> >       return 0;
+>
+> This all looks good enough for me especially if it's really that much of
+> a bottleneck for some workloads. But the above part is broken because
+> proc_create_single() may return NULL afair and that means
+> proc_make_permanent()->pde_make_permanent() will NULL-deref.
+>
+> I'll fix that up locally.
 
-No, I meant that this is changing shiny new just-merged XFS code
-(part of zone device support). It only just arrived this merge
-window and is largely just doing the same thing as the older aild
-code. It is probably safe to assume that this new code has never
-been tested against hibernate...
+oh huh, indeed my bad. But in that case it should perhaps complain? WARN_ON=
+?
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+I would argue if this fails then something really went wrong.
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
