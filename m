@@ -1,146 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-45424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 324AAA77893
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 12:15:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18208A77878
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 12:08:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FF423AB996
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 10:15:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C17CE16BA94
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 10:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B849A1F0982;
-	Tue,  1 Apr 2025 10:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3321F0994;
+	Tue,  1 Apr 2025 10:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="SVbcjRmk";
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="U9sHrC78"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PYY8ydHB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LKmuADDT";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PYY8ydHB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LKmuADDT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F08B1E0E13;
-	Tue,  1 Apr 2025 10:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF39C1EFFB9
+	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Apr 2025 10:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743502511; cv=none; b=BgpEkBDGtkV1KAWigBM158L4f9b5RwBv1oYmR7OQqOVUZyQmdWpd2y0dIvRZrkciKOLiwBOVzkjXVoKd6xOS3F5KQvHoiJNJmVV5YKTDfgLw4FA7Fee5/pLJX7tX+XLXm/9zCEWPQ1cfnqERPFgqAFy5mRBtdeh6lkBKD0ZW2X0=
+	t=1743502109; cv=none; b=GZ0/+93jDSD5HWGCuY5bqoXkxuJbF3Z69cuo3Y5zbm4mpI9tZsOaYWrng2kCqGDfjjT1a24jRRYyLtcOEQBOWYEr8Zm9P0mWqfOCa8KOHwTz9nMDSx639YdxUUBjspfuJfTqx5lxYSGmNXKoEatj49pZrkqcavlQBNvUjbPJqKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743502511; c=relaxed/simple;
-	bh=F2vsjXDI66wiWMktYwJdPzRHIUvzmNJpS21AxKHlksE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YwYt2X2IlfvM0lBLSNXdKw7Dq6nM/pL+FONcnfRE5o+Q12bI6L2AWVQitD+zmfLxcSA74Qu4cnXQXPlnEUY1xGpNo+NC6T88C5su/610MrET3rcXv1CJjuolGy5U95rZ1BxBHvjsVGy9OeSccZzoyJro2Rg+d1uG9yYeWZL5h7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=SVbcjRmk; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=U9sHrC78; arc=none smtp.client-ip=35.157.23.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
-Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
-	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id AD80D212F;
-	Tue,  1 Apr 2025 10:06:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1743501997;
-	bh=DsaYEb2nVtRuXrpsaOjMkKiSqaCyerjUxjRkdWT/QIE=;
-	h=From:To:CC:Subject:Date;
-	b=SVbcjRmk0v+p81nQYTrHsDqOw4sB68NfiaiS7vQTtas9YnSkSIxrdnRoixhYJxKgP
-	 Sxo9p3rddh4luaQkP4djQ5SKLvi8CQXTlkNG4GGMCREUWgSy6rWaq5de6kwQTtpKn9
-	 wroUd7ErWN/hasuD1sQiSMwpXpQ3XPQYR5q9GeXg=
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 6E78A25C5;
-	Tue,  1 Apr 2025 10:08:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1743502123;
-	bh=DsaYEb2nVtRuXrpsaOjMkKiSqaCyerjUxjRkdWT/QIE=;
-	h=From:To:CC:Subject:Date;
-	b=U9sHrC78BSVZ/eVDUxCts0ocSBo+monJg7oaO6lj+swHxijFk0mIlJo9yqquiTQWq
-	 j3ip7hMhgdAxM9jn0JrFdG6d6Jf5Sl9TampSrjIIrBRApKIeE8iBJSIxWYjpp2AwEk
-	 OIAXOwNSVRvHNA3y7mw0ITx5ad84sMtRAlc/Uuw8=
-Received: from ntfs3vm.localdomain (192.168.211.33) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Tue, 1 Apr 2025 13:08:42 +0300
-From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To: <torvalds@linux-foundation.org>
-CC: <ntfs3@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] ntfs3: bugfixes for 6.15
-Date: Tue, 1 Apr 2025 13:08:22 +0300
-Message-ID: <20250401100822.40050-1-almaz.alexandrovich@paragon-software.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1743502109; c=relaxed/simple;
+	bh=++urWKNC5cfWd08urLWmZ0ardJRYr+sbgQ55JmwHDrw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZCpMSWg1BpNdgaZj0yUdPltcF0DS2HuHXxJD4FMhJZucBwJ0aX6cIxf4J2W2bgG2pVNKX8ewIKBU/xloDRz6vftGd4rBWW+HkGZAfhtmjZU7befCWT43gfVJK9Jx5rvf7IpNTuZzIEyVOpW2Podi0xY8y0SZ0n0nyXhsoVODLUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PYY8ydHB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LKmuADDT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PYY8ydHB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LKmuADDT; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 15CEF1F38E;
+	Tue,  1 Apr 2025 10:08:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743502105; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=suSfpVgBId8IpI/9A13Qm+aO2xaK6bvk0WIrZ6mJqfA=;
+	b=PYY8ydHB/BRKkb/f3uJZM9WIn6uy/Nfx8TSP6hkW5iebHUuThEl8ebraeZsLbQ6sE/aQ/a
+	Q7OnyH7q+A2YF3dxvliPf9T0+yFPLqHXsNgc3h+o+p94GlxdiZDmy0LzB5RJmi0CsTqcqv
+	hNOmIXk6ftY7zJWt39c1JHaPRMEFt0E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743502105;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=suSfpVgBId8IpI/9A13Qm+aO2xaK6bvk0WIrZ6mJqfA=;
+	b=LKmuADDTSRI+wAfkOuD8IZKmzy14iQ//uKy8wxs4aZxgA3/E+p7wAEUCDZxwDoe5qKImX0
+	wRx/yN98+xBVuFBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743502105; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=suSfpVgBId8IpI/9A13Qm+aO2xaK6bvk0WIrZ6mJqfA=;
+	b=PYY8ydHB/BRKkb/f3uJZM9WIn6uy/Nfx8TSP6hkW5iebHUuThEl8ebraeZsLbQ6sE/aQ/a
+	Q7OnyH7q+A2YF3dxvliPf9T0+yFPLqHXsNgc3h+o+p94GlxdiZDmy0LzB5RJmi0CsTqcqv
+	hNOmIXk6ftY7zJWt39c1JHaPRMEFt0E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743502105;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=suSfpVgBId8IpI/9A13Qm+aO2xaK6bvk0WIrZ6mJqfA=;
+	b=LKmuADDTSRI+wAfkOuD8IZKmzy14iQ//uKy8wxs4aZxgA3/E+p7wAEUCDZxwDoe5qKImX0
+	wRx/yN98+xBVuFBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 043E9138A5;
+	Tue,  1 Apr 2025 10:08:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id XomxABm762cjDgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 01 Apr 2025 10:08:25 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id AAF3FA07E6; Tue,  1 Apr 2025 12:08:24 +0200 (CEST)
+Date: Tue, 1 Apr 2025 12:08:24 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, mcgrof@kernel.org, hch@infradead.org, david@fromorbit.com, 
+	rafael@kernel.org, djwong@kernel.org, pavel@kernel.org, peterz@infradead.org, 
+	mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com
+Subject: Re: [PATCH 1/6] ext4: replace kthread freezing with auto fs freezing
+Message-ID: <2nqlkokmbkvamnrza3fpjjmye3w3fy7gf5bqpjt2cxeviks5ax@u4wqm4ldxuy6>
+References: <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
+ <20250401-work-freeze-v1-1-d000611d4ab0@kernel.org>
+ <z3zqumhqgzq3agjps4ufdcqqrgip7t7xtr6v5kymchkdjfnwhp@i76pwshkydig>
+ <20250401-konsens-nahebringen-fa1c80956371@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250401-konsens-nahebringen-fa1c80956371@brauner>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,kernel.org,hansenpartnership.com,infradead.org,fromorbit.com,redhat.com,gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Score: -2.30
+X-Spam-Flag: NO
 
-Please pull this branch containing ntfs3 code for 6.15.
+On Tue 01-04-25 11:35:56, Christian Brauner wrote:
+> On Tue, Apr 01, 2025 at 11:16:18AM +0200, Jan Kara wrote:
+> > > ---
+> > >  fs/ext4/mballoc.c | 2 +-
+> > >  fs/ext4/super.c   | 3 ---
+> > >  2 files changed, 1 insertion(+), 4 deletions(-)
+> > > 
+> > > diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+> > > index 0d523e9fb3d5..ae235ec5ff3a 100644
+> > > --- a/fs/ext4/mballoc.c
+> > > +++ b/fs/ext4/mballoc.c
+> > > @@ -6782,7 +6782,7 @@ static ext4_grpblk_t ext4_last_grp_cluster(struct super_block *sb,
+> > >  
+> > >  static bool ext4_trim_interrupted(void)
+> > >  {
+> > > -	return fatal_signal_pending(current) || freezing(current);
+> > > +	return fatal_signal_pending(current);
+> > >  }
+> > 
+> > This change should not happen. ext4_trim_interrupted() makes sure FITRIM
+> > ioctl doesn't cause hibernation failures and has nothing to do with kthread
+> > freezing...
+> > 
+> > Otherwise the patch looks good.
+> 
+> Afaict, we don't have to do these changes now. Yes, once fsfreeze
+> reliably works in the suspend/resume codepaths then we can switch all
+> that off and remove the old freezer. But we should only do that once we
+> have some experience with the new filesystem freezing during
+> suspend/hibernate. So we should place this under a
+> /sys/power/freeze_filesystems knob and wait a few kernel releases to see
+> whether we see significant problems. How does that sound to you?
 
-Regards,
-Konstantin
+I agree that enabling this with some knob to allow easy way out if things
+don't work makes sense. And the removal of kthread freezing can be done
+somewhat later when we are more confident filesystem freezing on
+hibernation is solid.
 
-----------------------------------------------------------------
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
-
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
-
-are available in the Git repository at:
-
-  https://github.com/Paragon-Software-Group/linux-ntfs3.git tags/ntfs3_for_6.15
-
-for you to fetch changes up to 8b12017c1b9582db8c5833cf08d610e8f810f4b3:
-
-  fs/ntfs3: Remove unused ntfs_flush_inodes (2025-03-06 19:53:28 +0300)
-
-----------------------------------------------------------------
-Changes for 6.15-rc1
-
-Fixed:
-  integer overflows on 32-bit systems;
-  integer overflow in hdr_first_de();
-  'proc_info_root' leak when NTFS initialization failed.
-
-Removed:
-  unused functions ni_load_attr, ntfs_sb_read, ntfs_flush_inodes.
-
-Changed:
-  updated inode->i_mapping->a_ops on compression state;
-  ensured atomicity of write operations;
-  refactored ntfs_{create/remove}_procdir();
-  refactored ntfs_{create/remove}_proc_root().
-
-----------------------------------------------------------------
-Dan Carpenter (2):
-      fs/ntfs3: Fix a couple integer overflows on 32bit systems
-      fs/ntfs3: Prevent integer overflow in hdr_first_de()
-
-Dr. David Alan Gilbert (3):
-      fs/ntfs3: Remove unused ni_load_attr
-      fs/ntfs3: Remove unused ntfs_sb_read
-      fs/ntfs3: Remove unused ntfs_flush_inodes
-
-Edward Adam Davis (1):
-      fs/ntfs3: Fix WARNING in ntfs_extend_initialized_size
-
-Konstantin Komarov (1):
-      fs/ntfs3: Update inode->i_mapping->a_ops on compression state
-
-Lizhi Xu (1):
-      fs/ntfs3: Keep write operations atomic
-
-Ye Bin (3):
-      fs/ntfs3: Factor out ntfs_{create/remove}_procdir()
-      fs/ntfs3: Factor out ntfs_{create/remove}_proc_root()
-      fs/ntfs3: Fix 'proc_info_root' leak when init ntfs failed
-
- fs/ntfs3/attrib.c  |  3 +-
- fs/ntfs3/file.c    | 42 +++++++++++++++++++-------
- fs/ntfs3/frecord.c | 63 +++-----------------------------------
- fs/ntfs3/fsntfs.c  | 28 -----------------
- fs/ntfs3/index.c   |  4 +--
- fs/ntfs3/inode.c   | 40 ------------------------
- fs/ntfs3/ntfs.h    |  2 +-
- fs/ntfs3/ntfs_fs.h |  6 ----
- fs/ntfs3/super.c   | 89 ++++++++++++++++++++++++++++++++++--------------------
- 9 files changed, 96 insertions(+), 181 deletions(-)
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
