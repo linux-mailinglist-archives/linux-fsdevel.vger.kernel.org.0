@@ -1,61 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-45443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0937A77B30
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 14:46:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D29BEA77B50
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 14:51:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95A8216B12D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 12:46:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AEF03AEE58
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 12:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B708202C55;
-	Tue,  1 Apr 2025 12:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C0A2036F5;
+	Tue,  1 Apr 2025 12:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r4QkaICZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sAyO0gDu"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08F126AF3;
-	Tue,  1 Apr 2025 12:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D950A1EC01F;
+	Tue,  1 Apr 2025 12:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743511555; cv=none; b=YGlw0fJFLjEVySG9Hn8dxVnq06nkImjCjq8DGEfTnBCShNqrSuQhWdXv2dtUAfDbg7Y5Cye5EBykZ8fidN185G/6xD9EN2nEBuGzvrlKbeWRRGN4fikuvusVFByt+PknK4vGj5zHFeBgFkZbR+asqB15zRQYUr+KyZKgFyySqTg=
+	t=1743511806; cv=none; b=sl8sdu39nENdaYdhVKQiDGFgn7toxSCuOZVIGmOpuDbWo0J/9wgAl1P8ctDRkty1HjLp72sGxFYG70fAVIVE2BFSW3c4B3lkTwVvgQNUyZscSb+Nr9ORjObyCfGXw6xIJGhvmIU971a0oY5iHCKZe0UmNs5lNKuDzXfoIkSUjFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743511555; c=relaxed/simple;
-	bh=5kmgdEAsQqihiNsR3taaVx0rqImbTvhfajN7gqFQAHw=;
+	s=arc-20240116; t=1743511806; c=relaxed/simple;
+	bh=l8DS0pBZzqAHtujG932plENYbefs0MpGtb/A8hNqdIM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ABZE12v6hqMYJ8F1LXGPP9hpYi3AMIgEVbcR+ZOyO+TDNtFNpf/+fGOgp4rxgtx5qKtX1plP+u3RFZejZwCvyhGd4LzYT+P1XQvT1lgdbvLl3mAFODOCadR+zprRJLFCQQyHFBlmyfdgYduHCt9GV3tQFjY6S8PoAbI32pCNVcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r4QkaICZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA805C4CEE4;
-	Tue,  1 Apr 2025 12:45:50 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bUoLQT9WXj5lrO8BwdqfpfhG74cvX8zIhR89g/upomBJACfFcmxe4I0LipLSXGR9ouyuAj8EmxtsZGe2FMnL7HaTIV5zefTS3e7R5G9GZ0EX4ntdecsEycBTnc5EvpeZOwc2Ktg6kGHwBt1Ld+lmymIJQIhsfslCwM8r9bIedXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sAyO0gDu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27D2AC4CEE4;
+	Tue,  1 Apr 2025 12:50:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743511554;
-	bh=5kmgdEAsQqihiNsR3taaVx0rqImbTvhfajN7gqFQAHw=;
+	s=k20201202; t=1743511806;
+	bh=l8DS0pBZzqAHtujG932plENYbefs0MpGtb/A8hNqdIM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r4QkaICZKu94q1MuFUPbbFeHr7OkoHLxG7/scJsU9qQZ+/PyIVGpKP1XKXq+6e4nc
-	 1nJL4rSwMRCTBsV9mFCk+YfVoqPJrd/+EnOWJbXK9G+sQb0t9tRbNHxLTRtFQXwoRS
-	 TsMs+zymEBuszTRAAsvO06yYOO1rGcgX4ek6LxtzXcthpHWCMwG9HeaOpHeMO3CZCV
-	 giwYnpKnVKkfiwyrjAyxbXFIHiTtcDutO1o38Oz7uqfCTIlnqlEy2Yc8PHaw24NvZO
-	 wsMlfnE3nXLHqVJC0d8AHd5a5hd0yTaQJnhaLbrznojl5SvSO+toXT3L/+GWwoEXg4
-	 7tVe+K3bUlbAQ==
-Date: Tue, 1 Apr 2025 14:45:48 +0200
+	b=sAyO0gDuVdOe0WRth80ZyFeJdlL2egix6OCNyQmWnotsN5AWmg0KlzH6YC33B0KPW
+	 0O4gFhFZjRTWNDDe4aSUh9zVR4hHmSoT6i5p2TpGS/ssl8FTaerXDnDbmfYrjItTRE
+	 g9q5vHkT1ljJZ7dJh5d3NlSgzau65ME4gs4Uq6GALpJ82L4IcAo41treGJpO+warca
+	 bgnvzTJRHi9l4REPeRaJUPb6kADqWR5s5Rf7p4ol8Zp0TiXAifq+IGacSnjF+THkt0
+	 1iDLczWeIo9X3z5dBeETFn3BLhANOK5fjp88x+hlfbVfWLxb9lCWIAO5rMHgxifvRY
+	 N6nU6mRzoWZ+Q==
+Date: Tue, 1 Apr 2025 14:50:00 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, 
-	Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, mcgrof@kernel.org, hch@infradead.org, rafael@kernel.org, 
-	djwong@kernel.org, pavel@kernel.org, peterz@infradead.org, mingo@redhat.com, 
-	will@kernel.org, boqun.feng@gmail.com
-Subject: Re: [PATCH 3/6] xfs: replace kthread freezing with auto fs freezing
-Message-ID: <20250401-packung-kurzfassung-696cefc2e3da@brauner>
-References: <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
- <20250401-work-freeze-v1-3-d000611d4ab0@kernel.org>
- <Z-s9KG-URzB9DwUb@dread.disaster.area>
- <20250401-baubeginn-ausdehnen-3a7387b756aa@brauner>
- <Z-vPnmL7wn_8cFim@dread.disaster.area>
+To: Jan Kara <jack@suse.cz>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, mcgrof@kernel.org, 
+	hch@infradead.org, david@fromorbit.com, rafael@kernel.org, djwong@kernel.org, 
+	pavel@kernel.org, peterz@infradead.org, mingo@redhat.com, will@kernel.org, 
+	boqun.feng@gmail.com
+Subject: Re: [RFC PATCH 1/4] locking/percpu-rwsem: add freezable alternative
+ to down_read
+Message-ID: <20250401-entkernen-revitalisieren-fac4b67109e5@brauner>
+References: <20250327140613.25178-1-James.Bottomley@HansenPartnership.com>
+ <20250327140613.25178-2-James.Bottomley@HansenPartnership.com>
+ <77774eb380e343976de3de681204e2c7f3ab1926.camel@HansenPartnership.com>
+ <20250401-anwalt-dazugeben-18d8c3efd1fd@brauner>
+ <f6bdfa23b9f54055f8a539ce396f1134b0921417.camel@HansenPartnership.com>
+ <3bfnds6nsvxy5jfbcoy62uva6kebhacjuavqxvelbfs6ut6rqf@m4pzsudbqg6l>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,44 +66,85 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z-vPnmL7wn_8cFim@dread.disaster.area>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3bfnds6nsvxy5jfbcoy62uva6kebhacjuavqxvelbfs6ut6rqf@m4pzsudbqg6l>
 
-On Tue, Apr 01, 2025 at 10:35:58PM +1100, Dave Chinner wrote:
-> On Tue, Apr 01, 2025 at 09:17:12AM +0200, Christian Brauner wrote:
-> > On Tue, Apr 01, 2025 at 12:11:04PM +1100, Dave Chinner wrote:
-> > > On Tue, Apr 01, 2025 at 02:32:48AM +0200, Christian Brauner wrote:
-> > > > diff --git a/fs/xfs/xfs_zone_gc.c b/fs/xfs/xfs_zone_gc.c
-> > > > index c5136ea9bb1d..1875b6551ab0 100644
-> > > > --- a/fs/xfs/xfs_zone_gc.c
-> > > > +++ b/fs/xfs/xfs_zone_gc.c
-> > > > @@ -993,7 +993,6 @@ xfs_zone_gc_handle_work(
-> > > >  	}
-> > > >  
-> > > >  	__set_current_state(TASK_RUNNING);
-> > > > -	try_to_freeze();
-> > > >  
-> > > >  	if (reset_list)
-> > > >  		xfs_zone_gc_reset_zones(data, reset_list);
-> > > > @@ -1041,7 +1040,6 @@ xfs_zoned_gcd(
-> > > >  	unsigned int		nofs_flag;
-> > > >  
-> > > >  	nofs_flag = memalloc_nofs_save();
-> > > > -	set_freezable();
-> > > >  
-> > > >  	for (;;) {
-> > > >  		set_current_state(TASK_INTERRUPTIBLE | TASK_FREEZABLE);
+On Tue, Apr 01, 2025 at 01:20:37PM +0200, Jan Kara wrote:
+> On Mon 31-03-25 21:13:20, James Bottomley wrote:
+> > On Tue, 2025-04-01 at 01:32 +0200, Christian Brauner wrote:
+> > > On Mon, Mar 31, 2025 at 03:51:43PM -0400, James Bottomley wrote:
+> > > > On Thu, 2025-03-27 at 10:06 -0400, James Bottomley wrote:
+> > > > [...]
+> > > > > -static void percpu_rwsem_wait(struct percpu_rw_semaphore *sem,
+> > > > > bool
+> > > > > reader)
+> > > > > +static void percpu_rwsem_wait(struct percpu_rw_semaphore *sem,
+> > > > > bool
+> > > > > reader,
+> > > > > +			      bool freeze)
+> > > > >  {
+> > > > >  	DEFINE_WAIT_FUNC(wq_entry, percpu_rwsem_wake_function);
+> > > > >  	bool wait;
+> > > > > @@ -156,7 +157,8 @@ static void percpu_rwsem_wait(struct
+> > > > > percpu_rw_semaphore *sem, bool reader)
+> > > > >  	spin_unlock_irq(&sem->waiters.lock);
+> > > > >  
+> > > > >  	while (wait) {
+> > > > > -		set_current_state(TASK_UNINTERRUPTIBLE);
+> > > > > +		set_current_state(TASK_UNINTERRUPTIBLE |
+> > > > > +				  freeze ? TASK_FREEZABLE : 0);
+> > > > 
+> > > > This is a bit embarrassing, the bug I've been chasing is here: the
+> > > > ?
+> > > > operator is lower in precedence than | meaning this expression
+> > > > always
+> > > > evaluates to TASK_FREEZABLE and nothing else (which is why the
+> > > > process
+> > > > goes into R state and never wakes up).
+> > > > 
+> > > > Let me fix that and redo all the testing.
 > > > 
-> > > Same question here for this newly merged code, too...
-> >
-> > I'm not sure if this is supposed to be a snipe or not but just in case
-> > this is a hidden question:
+> > > I don't think that's it. I think you're missing making pagefault
+> > > writers such
+> > > as systemd-journald freezable:
+> > > 
+> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > > index b379a46b5576..528e73f192ac 100644
+> > > --- a/include/linux/fs.h
+> > > +++ b/include/linux/fs.h
+> > > @@ -1782,7 +1782,8 @@ static inline void __sb_end_write(struct
+> > > super_block *sb, int level)
+> > >  static inline void __sb_start_write(struct super_block *sb, int
+> > > level)
+> > >  {
+> > >         percpu_down_read_freezable(sb->s_writers.rw_sem + level - 1,
+> > > -                                  level == SB_FREEZE_WRITE);
+> > > +                                  (level == SB_FREEZE_WRITE ||
+> > > +                                   level == SB_FREEZE_PAGEFAULT));
+> > >  }
+> > 
+> > Yes, I was about to tell Jan that the condition here simply needs to be
+> > true.  All our rwsem levels need to be freezable to avoid a hibernation
+> > failure.
 > 
-> No, I meant that this is changing shiny new just-merged XFS code
-> (part of zone device support). It only just arrived this merge
-> window and is largely just doing the same thing as the older aild
-> code. It is probably safe to assume that this new code has never
-> been tested against hibernate...
+> So there is one snag with this. SB_FREEZE_PAGEFAULT level is acquired under
+> mmap_sem, SB_FREEZE_INTERNAL level is possibly acquired under some other
+> filesystem locks. So if you freeze the filesystem, a task can block on
+> frozen filesystem with e.g. mmap_sem held and if some other task then
 
-Ah, my brain is completely fried. Apparently reading English is a skill
-I've lost since coming back from Montreal. Thanks!
+Yeah, I wondered about that yesterday.
+
+> blocks on grabbing that mmap_sem, hibernation fails because we'll be unable
+> to hibernate the task waiting for mmap_sem. So if you'd like to completely
+> avoid these hibernation failures, you'd have to make a slew of filesystem
+> related locks use freezable sleeping. I don't think that's feasible.
+> 
+> I was hoping that failures due to SB_FREEZE_PAGEFAULT level not being
+> freezable would be rare enough but you've proven they are quite frequent.
+> We can try making SB_FREEZE_PAGEFAULT level (or even SB_FREEZE_INTERNAL)
+> freezable and see whether that works good enough...
+
+I think that's fine and we'll see whether this causes a lot of issues.
+I've got the patchset written in a way now that userspace can just
+enable or disable freeze during migration.
 
