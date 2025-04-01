@@ -1,271 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-45465-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45466-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB7CEA780DC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 18:53:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24D1FA780E5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 18:57:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E4273A859D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 16:53:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 539B8188A919
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 16:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA2520D503;
-	Tue,  1 Apr 2025 16:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2982920E005;
+	Tue,  1 Apr 2025 16:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XbCcIStI"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Eg2scSfM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="f/38+Ph+";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Eg2scSfM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="f/38+Ph+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B33194C96;
-	Tue,  1 Apr 2025 16:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05968F54
+	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Apr 2025 16:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743526397; cv=none; b=lHa5MDUWc7kn4KzGDpwPKYfgpPLynP25+h1ZYE2uBJG6xNNNKVfi4KuIRTT1fOUU+tgf0mtPGJ903pvcx+UZxPWut5Er6//mGPnI7MYR90KKkwXOiTt+0IsGH/TD8L/D63qHkGIi3GVF+pXemB4bJOvhSfjQGgPRZwHzFu/hg9c=
+	t=1743526649; cv=none; b=QXoVNU5dJN5es/7zonFWUXRRSGRbysmvLoTUeaZfmTwq6A/0ziVaAc5yFEFkFZSe7CwmLIpHZtKkgj+rSh9h3VqNiOjTeUzu1z7ibdCOxahPC0vbm+cpFQpta8dwuEaVM1cHwGggzf4T53sAGxtW0cPHR9yJaokYcfU2Y4UTiJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743526397; c=relaxed/simple;
-	bh=wry4Ntdt9WLx3hUbeFpnRHWZCyGnvXM8LuWSpa9I9AA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NRXeviP6Z0Nk14JK6stWf4HFCZg4RyjsDdsqKUlHb6j65ckT2+nx3VLED+S4yCjnw6HMaxEh4T3yOMAKSHvjyB5n7v3Is9ydvEuvUXJQI6nJEMQRMzqk78pgvxA7bQ6cR8RBJS9DjJuWIcHvrGbpdOpSs0S6AcSR3krCoS4oCSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XbCcIStI; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cef035a3bso42482915e9.1;
-        Tue, 01 Apr 2025 09:53:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743526394; x=1744131194; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tEhBookynFiDE+Bfy7pUPsUm353VzzV7ED0Kjv5pN+4=;
-        b=XbCcIStI6YEsykvHwup2HW3rJhWgYRV4ia4XsHDUFlhvol0Uun+feykCFJ+PHEoV+4
-         Uxu1KbiM31BckQVYHtQgf7v3w96aKBvXhCZ3pb7yqQMnwMV6SJroEzjRJyEQ+kpOZke/
-         e0l55avXe2vPLEiwepzfEcntniDeelrr88TaiFkKT2yogZ5BCRf0XY/sRTVcEw2fInLL
-         7PoldWXHwBy7tPtD17h9PFvgnqqL+rpEmgGjToY5Od/YOJlP9KO1UruFZK6DRsEzB6TJ
-         U0qp7rYdw+thZeBa0icAna5FS9x09kWG54j3It36EFgvH3iYoXlkkVndTirXG1dI/G2l
-         QO5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743526394; x=1744131194;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tEhBookynFiDE+Bfy7pUPsUm353VzzV7ED0Kjv5pN+4=;
-        b=smlxBp0lupK/U+mWDGZYGiyYPIci7AafpEb0mHv8JBwL+1w3vUREdyl/7jNnvnejp9
-         aZA2cpvaoeX2z0hm1h14w7TuoGCiHUoH8PzwU0UIoqUTp4NFiS2M+6UzydhAkt2P3AJl
-         7jeB2M6a18JjGJFO5VI5osj1ZFxzuvKAxy5eZKDQo2Dv41obnQsW/utlW/V4SrP9aLQ7
-         J84DTSPggAUkEBTnazyYXK+XJg5xpNAN8zzihXVSsfC+qo/A4Tjo9LE1+wH/lB64v5uR
-         ewh2gQ6MT7hz4s7l5mGROmZBTS3Y7apxbdlSZpNVQXAMZXXe9yl97MXrqhim/1x2FHIo
-         +S8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWqgv40qDCPiwyB/sFZlPGSaRqWqFvInqKD9Gyly/sLIbXVcRBSxONr/Wr7i5Y4rI8p4kFhp9GUNAYGnqTM@vger.kernel.org, AJvYcCXdqmxjqxfhrc6P/1w53EX9vhgE+np8r4dQV27RSAg2jS91wdPg7Bg4nKkAIHid22KPvLF7Wv9oxi8XKWBJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBiK1LVxaNyk4G5/onoD7lx+3PAeB5AJ8Utu1mF6dqq5fEWSYG
-	uLeB04RsCFtCu375VZXFaS1ma4WLjhUnmx0lYCUnqX38YdjvBMVl
-X-Gm-Gg: ASbGncvb+4VdVkTXSAgiTDNGyr9U0zR8pExtD1njR58BD0PKXoTo6h4YLLwrcjSYM/S
-	aG/oPZLmoF4r6dEWFvYvHrhGfwmPRA+Ms37cnH93HXcsBCzuyCml+lQqcn39YJvtHmcQKZk2Pvx
-	dAqja7Bs5dJi4MwZTc97/aS87SmRku3/HKtYOM1U8PaKzzwImMDkIm1EXlhxbX9AQmlhe1pelTp
-	lw18hkoEwd137kit7PPjCRVGGhslVa0eVu8fQ5vYeOVH+RUe6t7HvD0aNtmRgI5XC0K27N3JA5I
-	OSJRK7IDj4jvpyXXW/gIVDIou33i3PkUh0BLdqG0e7OnAqtFniFsa1GRSHrp
-X-Google-Smtp-Source: AGHT+IHl75hJhgNyJ1RJt/fywnYA/sERerAFghDEKA2XWLWfZ7WFTJyP3gzmLlwTGFJlr9+iHdVoDg==
-X-Received: by 2002:a05:600c:468c:b0:43c:fffc:7886 with SMTP id 5b1f17b1804b1-43db6222f89mr134005025e9.8.1743526394062;
-        Tue, 01 Apr 2025 09:53:14 -0700 (PDT)
-Received: from f.. (cst-prg-92-82.cust.vodafone.cz. [46.135.92.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c1845e66esm8638141f8f.18.2025.04.01.09.53.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Apr 2025 09:53:13 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v2] fs: make generic_fillattr() tail-callable and utilize it in ext2/ext4
-Date: Tue,  1 Apr 2025 18:52:52 +0200
-Message-ID: <20250401165252.1124215-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1743526649; c=relaxed/simple;
+	bh=MMl9sZ9TcvXoN/08mrc3Yi4oTPDGQrQlahZ4ufL1nOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GRVbO6D1L27rCx0HtSZ4gXRNLLQ5eADhKnxkT1opTYXhF50tiVHo0gsf1RViSGBiMqv1wEADR8xybu4GI6k8ktO9zOv73qkZ7v2h4kGJKhk06tpNmX4LIbBbuzhghv9ZJi0m4wTOYU3cLaiCasgm4l/UQOMdekt4ZnWh6JG565s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Eg2scSfM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=f/38+Ph+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Eg2scSfM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=f/38+Ph+; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B31D21F38E;
+	Tue,  1 Apr 2025 16:57:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743526644; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ayzTNmVENLwndkYJft8i/VMZKbCBHIAmAoLlfoj6JYQ=;
+	b=Eg2scSfMkFYdEHN/N6BO31Bxw8Nyj6glw0IFjcvw2GZ9uUMVpht84e/YTzbYtPr5bAbRg7
+	hy9N6si804sZxJsKGuBmKcUXMdcSrAPg+/jcg+rPCkojPjYrLvIy7I/sbFAbTT0QQfvYZ+
+	mdADexIvOZkjr3V2H67BUc85A+/QuOE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743526644;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ayzTNmVENLwndkYJft8i/VMZKbCBHIAmAoLlfoj6JYQ=;
+	b=f/38+Ph+vbt+nvyT2hsUhChjs1hfvfza0Cn9YulLycc7GgeScyh+Ue+5qcxnpwOdvKrrgc
+	i6ZAhTIQJxee8ZBg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Eg2scSfM;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="f/38+Ph+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743526644; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ayzTNmVENLwndkYJft8i/VMZKbCBHIAmAoLlfoj6JYQ=;
+	b=Eg2scSfMkFYdEHN/N6BO31Bxw8Nyj6glw0IFjcvw2GZ9uUMVpht84e/YTzbYtPr5bAbRg7
+	hy9N6si804sZxJsKGuBmKcUXMdcSrAPg+/jcg+rPCkojPjYrLvIy7I/sbFAbTT0QQfvYZ+
+	mdADexIvOZkjr3V2H67BUc85A+/QuOE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743526644;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ayzTNmVENLwndkYJft8i/VMZKbCBHIAmAoLlfoj6JYQ=;
+	b=f/38+Ph+vbt+nvyT2hsUhChjs1hfvfza0Cn9YulLycc7GgeScyh+Ue+5qcxnpwOdvKrrgc
+	i6ZAhTIQJxee8ZBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 41FB113691;
+	Tue,  1 Apr 2025 16:57:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nIzQD/Qa7GdDFgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 01 Apr 2025 16:57:24 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 167F3A07E6; Tue,  1 Apr 2025 18:57:19 +0200 (CEST)
+Date: Tue, 1 Apr 2025 18:57:19 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	rafael@kernel.org, Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	mcgrof@kernel.org, hch@infradead.org, david@fromorbit.com, djwong@kernel.org, 
+	pavel@kernel.org, peterz@infradead.org, mingo@redhat.com, will@kernel.org, 
+	boqun.feng@gmail.com
+Subject: Re: [PATCH 0/6] power: wire-up filesystem freeze/thaw with
+ suspend/resume
+Message-ID: <5tiim72iyudzgmjbyvavfumprrifydt2mfb3h3wycsnqybek23@2ftdyt47yhyl>
+References: <20250331-work-freeze-v1-0-6dfbe8253b9f@kernel.org>
+ <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
+ <s6rnz3ysjlu3rp6m56vua3vnlj53hbgxbbe3nj7v2ib5fg4l2i@py4pkvsgk2lr>
+ <20250401-kindisch-lagen-cd19c8f66103@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250401-kindisch-lagen-cd19c8f66103@brauner>
+X-Rspamd-Queue-Id: B31D21F38E
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,kernel.org,hansenpartnership.com,infradead.org,fromorbit.com,redhat.com,gmail.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.51
+X-Spam-Flag: NO
 
-Unfortunately the other filesystems I checked make adjustments after
-their own call to generic_fillattr() and consequently can't benefit.
+On Tue 01-04-25 15:03:33, Christian Brauner wrote:
+> On Tue, Apr 01, 2025 at 11:32:49AM +0200, Jan Kara wrote:
+> > On Tue 01-04-25 02:32:45, Christian Brauner wrote:
+> > > The whole shebang can also be found at:
+> > > https://web.git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=work.freeze
+> > > 
+> > > I know nothing about power or hibernation. I've tested it as best as I
+> > > could. Works for me (TM).
+> > > 
+> > > I need to catch some actual sleep now...
+> > > 
+> > > ---
+> > > 
+> > > Now all the pieces are in place to actually allow the power subsystem to
+> > > freeze/thaw filesystems during suspend/resume. Filesystems are only
+> > > frozen and thawed if the power subsystem does actually own the freeze.
+> > > 
+> > > Othwerwise it risks thawing filesystems it didn't own. This could be
+> > > done differently be e.g., keeping the filesystems that were actually
+> > > frozen on a list and then unfreezing them from that list. This is
+> > > disgustingly unclean though and reeks of an ugly hack.
+> > > 
+> > > If the filesystem is already frozen by the time we've frozen all
+> > > userspace processes we don't care to freeze it again. That's userspace's
+> > > job once the process resumes. We only actually freeze filesystems if we
+> > > absolutely have to and we ignore other failures to freeze.
+> > 
+> > Hum, I don't follow here. I supposed we'll use FREEZE_MAY_NEST |
+> > FREEZE_HOLDER_KERNEL for freezing from power subsystem. As far as I
+> > remember we have specifically designed nesting of freeze counters so that
+> > this way power subsystem can be sure freezing succeeds even if the
+> > filesystem is already frozen (by userspace or the kernel) and similarly
+> > power subsystem cannot thaw a filesystem frozen by somebody else. It will
+> > just drop its freeze refcount... What am I missing?
+> 
+> If we have 10 filesystems and suspend/hibernate manges to freeze 5 and
+> then fails on the 6th for whatever odd reason (current or future) then
+> power needs to undo the freeze of the first 5 filesystems. We can't just
+> walk the list again because while it's unlikely that a new filesystem
+> got added in the meantime we still cannot tell what filesystems the
+> power subsystem actually managed to get a freeze reference count on that
+> we need to drop during thaw.
+> 
+> There's various ways out of this ugliness. Either we record the
+> filesystems the power subsystem managed to freeze on a temporary list in
+> the callbacks and then walk that list backwards during thaw to undo the
+> freezing or we make sure that the power subsystem just actually
+> exclusively freezes things it can freeze and marking such filesystems as
+> being owned by power for the duration of the suspend or resume cycle. I
+> opted for the latter as that seemed the clean thing to do even if it
+> means more code changes. What are your thoughts on this?
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
+Ah, I see. Thanks for explanation. So failure to freeze filesystem should
+be rare (mostly only due to IO errors or similar serious issues) hence
+I'd consider failing hibernation in case we fail to freeze some filesystem
+appropriate. The function that's walking all superblocks and freezing them
+could just walk from the superblock where freezing failed towards the end
+and thaw all filesystems. That way the function also has the nice property
+that it either freezes everything or keeps things as they were.
 
-v2:
-- also patch vfs_getattr_nosec
+But you've touched on an interesting case I didn't consider: New
+superblocks can be added to the end of the list while we are walking it.
+These superblocks will not be frozen and on resume (or error recovery) this
+will confuse things. Your "freeze owner" stuff deals with this problem
+nicely. Somewhat lighter fix for this may be to provide the superblock to
+start from / end with to these loops iterating and freezing / thawing
+superblocks. It doesn't seem too hacky but if you prefer your freeze owner
+approach I won't object.
 
-There are weird slowdowns on fstat, this submission is a byproduct of
-trying to straighten out the fast path.
-
-Not benchmarked, but I did confirm the compiler jmps out to the routine
-instead of emitting a call which is the right thing to do here.
-
-that said I'm not going to argue, but I like to see this out of the way.
-
-there are nasty things which need to be addressed separately
-
- fs/ext2/inode.c    | 3 +--
- fs/ext4/inode.c    | 3 +--
- fs/stat.c          | 6 +++++-
- include/linux/fs.h | 2 +-
- 4 files changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-index 30f8201c155f..cf1f89922207 100644
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -1629,8 +1629,7 @@ int ext2_getattr(struct mnt_idmap *idmap, const struct path *path,
- 			STATX_ATTR_IMMUTABLE |
- 			STATX_ATTR_NODUMP);
- 
--	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
--	return 0;
-+	return generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- }
- 
- int ext2_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 1dc09ed5d403..3edd6e60dd9b 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5687,8 +5687,7 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
- 				  STATX_ATTR_NODUMP |
- 				  STATX_ATTR_VERITY);
- 
--	generic_fillattr(idmap, request_mask, inode, stat);
--	return 0;
-+	return generic_fillattr(idmap, request_mask, inode, stat);
- }
- 
- int ext4_file_getattr(struct mnt_idmap *idmap,
-diff --git a/fs/stat.c b/fs/stat.c
-index f13308bfdc98..581a95376e70 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -78,8 +78,11 @@ EXPORT_SYMBOL(fill_mg_cmtime);
-  * take care to map the inode according to @idmap before filling in the
-  * uid and gid filds. On non-idmapped mounts or if permission checking is to be
-  * performed on the raw inode simply pass @nop_mnt_idmap.
-+ *
-+ * The routine always succeeds. We make it return a value so that consumers can
-+ * tail-call it.
-  */
--void generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
-+int generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
- 		      struct inode *inode, struct kstat *stat)
- {
- 	vfsuid_t vfsuid = i_uid_into_vfsuid(idmap, inode);
-@@ -110,6 +113,7 @@ void generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
- 		stat->change_cookie = inode_query_iversion(inode);
- 	}
- 
-+	return 0;
- }
- EXPORT_SYMBOL(generic_fillattr);
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 016b0fe1536e..754893d8d2a8 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3471,7 +3471,7 @@ extern int page_symlink(struct inode *inode, const char *symname, int len);
- extern const struct inode_operations page_symlink_inode_operations;
- extern void kfree_link(void *);
- void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode *inode);
--void generic_fillattr(struct mnt_idmap *, u32, struct inode *, struct kstat *);
-+int generic_fillattr(struct mnt_idmap *, u32, struct inode *, struct kstat *);
- void generic_fill_statx_attr(struct inode *inode, struct kstat *stat);
- void generic_fill_statx_atomic_writes(struct kstat *stat,
- 				      unsigned int unit_min,
+								Honza
 -- 
-2.43.0
-
- fs/ext2/inode.c    | 3 +--
- fs/ext4/inode.c    | 3 +--
- fs/stat.c          | 9 ++++++---
- include/linux/fs.h | 2 +-
- 4 files changed, 9 insertions(+), 8 deletions(-)
-
-diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-index 30f8201c155f..cf1f89922207 100644
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -1629,8 +1629,7 @@ int ext2_getattr(struct mnt_idmap *idmap, const struct path *path,
- 			STATX_ATTR_IMMUTABLE |
- 			STATX_ATTR_NODUMP);
- 
--	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
--	return 0;
-+	return generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- }
- 
- int ext2_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 1dc09ed5d403..3edd6e60dd9b 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5687,8 +5687,7 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
- 				  STATX_ATTR_NODUMP |
- 				  STATX_ATTR_VERITY);
- 
--	generic_fillattr(idmap, request_mask, inode, stat);
--	return 0;
-+	return generic_fillattr(idmap, request_mask, inode, stat);
- }
- 
- int ext4_file_getattr(struct mnt_idmap *idmap,
-diff --git a/fs/stat.c b/fs/stat.c
-index f13308bfdc98..7d390bcd74ab 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -78,8 +78,11 @@ EXPORT_SYMBOL(fill_mg_cmtime);
-  * take care to map the inode according to @idmap before filling in the
-  * uid and gid filds. On non-idmapped mounts or if permission checking is to be
-  * performed on the raw inode simply pass @nop_mnt_idmap.
-+ *
-+ * The routine always succeeds. We make it return a value so that consumers can
-+ * tail-call it.
-  */
--void generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
-+int generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
- 		      struct inode *inode, struct kstat *stat)
- {
- 	vfsuid_t vfsuid = i_uid_into_vfsuid(idmap, inode);
-@@ -110,6 +113,7 @@ void generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
- 		stat->change_cookie = inode_query_iversion(inode);
- 	}
- 
-+	return 0;
- }
- EXPORT_SYMBOL(generic_fillattr);
- 
-@@ -209,8 +213,7 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
- 					    request_mask,
- 					    query_flags);
- 
--	generic_fillattr(idmap, request_mask, inode, stat);
--	return 0;
-+	return generic_fillattr(idmap, request_mask, inode, stat);
- }
- EXPORT_SYMBOL(vfs_getattr_nosec);
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 016b0fe1536e..754893d8d2a8 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3471,7 +3471,7 @@ extern int page_symlink(struct inode *inode, const char *symname, int len);
- extern const struct inode_operations page_symlink_inode_operations;
- extern void kfree_link(void *);
- void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode *inode);
--void generic_fillattr(struct mnt_idmap *, u32, struct inode *, struct kstat *);
-+int generic_fillattr(struct mnt_idmap *, u32, struct inode *, struct kstat *);
- void generic_fill_statx_attr(struct inode *inode, struct kstat *stat);
- void generic_fill_statx_atomic_writes(struct kstat *stat,
- 				      unsigned int unit_min,
--- 
-2.43.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
