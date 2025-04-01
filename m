@@ -1,225 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-45466-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45467-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24D1FA780E5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 18:57:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56750A780F8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 19:02:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 539B8188A919
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 16:57:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9EFB3AE055
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Apr 2025 17:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2982920E005;
-	Tue,  1 Apr 2025 16:57:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8200220DD47;
+	Tue,  1 Apr 2025 17:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Eg2scSfM";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="f/38+Ph+";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Eg2scSfM";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="f/38+Ph+"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="jXqL/2yh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05968F54
-	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Apr 2025 16:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B732EAF7;
+	Tue,  1 Apr 2025 17:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743526649; cv=none; b=QXoVNU5dJN5es/7zonFWUXRRSGRbysmvLoTUeaZfmTwq6A/0ziVaAc5yFEFkFZSe7CwmLIpHZtKkgj+rSh9h3VqNiOjTeUzu1z7ibdCOxahPC0vbm+cpFQpta8dwuEaVM1cHwGggzf4T53sAGxtW0cPHR9yJaokYcfU2Y4UTiJA=
+	t=1743526931; cv=none; b=pBqg2/UZjUn0xLrbJRwOYa3OhyhjmrcooffjIfDuqLOAFrOHjsvtSWH/y4CHAtweAPRBwqENqUIHP+R1pr+RovjaN6c02alRek4QXIjp9q2gumuNqqT9GHoEbs+1ktILqavlRv4ZoM8oGSiOmAQo0TAw/K5ppYEftRWa6Nkg7t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743526649; c=relaxed/simple;
-	bh=MMl9sZ9TcvXoN/08mrc3Yi4oTPDGQrQlahZ4ufL1nOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GRVbO6D1L27rCx0HtSZ4gXRNLLQ5eADhKnxkT1opTYXhF50tiVHo0gsf1RViSGBiMqv1wEADR8xybu4GI6k8ktO9zOv73qkZ7v2h4kGJKhk06tpNmX4LIbBbuzhghv9ZJi0m4wTOYU3cLaiCasgm4l/UQOMdekt4ZnWh6JG565s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Eg2scSfM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=f/38+Ph+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Eg2scSfM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=f/38+Ph+; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1743526931; c=relaxed/simple;
+	bh=CenOX3ZG3axcJusNwTRyKjMpdi+GvSUx/ICXN9F7i/4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pwu5kDobYeZKvkmXgG/kIj6qUdqtxvuyTbAoTfgApW2itxAVPZRr+9ub23Ijl0/jJ5M149Bs0BdYCplqjnGbQOFP0ufqwoAK/rwYQv49lzlh4hRjzK7OIzqsPHJt8zbgy4C9IrJd/gxtzoWJFo7vMykpzi3Pn5+J2HLd6HD7nI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=jXqL/2yh; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1743526928;
+	bh=CenOX3ZG3axcJusNwTRyKjMpdi+GvSUx/ICXN9F7i/4=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=jXqL/2yhi/UG5mNgvzE8vWQx5cAFE/UzmVBGfmZfJuFmSVRkcBPrQg6u4GwavMxvN
+	 yNX53e6d5xSAK8g70s13sPqT18NTm1U7Cv5NadTZWgA/h/T6rYkJXongzqV1QH4X08
+	 WLQh45FUPb5+XyqXincBnfGR4nnBRT7CnVG27++Y=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B31D21F38E;
-	Tue,  1 Apr 2025 16:57:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1743526644; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ayzTNmVENLwndkYJft8i/VMZKbCBHIAmAoLlfoj6JYQ=;
-	b=Eg2scSfMkFYdEHN/N6BO31Bxw8Nyj6glw0IFjcvw2GZ9uUMVpht84e/YTzbYtPr5bAbRg7
-	hy9N6si804sZxJsKGuBmKcUXMdcSrAPg+/jcg+rPCkojPjYrLvIy7I/sbFAbTT0QQfvYZ+
-	mdADexIvOZkjr3V2H67BUc85A+/QuOE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1743526644;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ayzTNmVENLwndkYJft8i/VMZKbCBHIAmAoLlfoj6JYQ=;
-	b=f/38+Ph+vbt+nvyT2hsUhChjs1hfvfza0Cn9YulLycc7GgeScyh+Ue+5qcxnpwOdvKrrgc
-	i6ZAhTIQJxee8ZBg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Eg2scSfM;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="f/38+Ph+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1743526644; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ayzTNmVENLwndkYJft8i/VMZKbCBHIAmAoLlfoj6JYQ=;
-	b=Eg2scSfMkFYdEHN/N6BO31Bxw8Nyj6glw0IFjcvw2GZ9uUMVpht84e/YTzbYtPr5bAbRg7
-	hy9N6si804sZxJsKGuBmKcUXMdcSrAPg+/jcg+rPCkojPjYrLvIy7I/sbFAbTT0QQfvYZ+
-	mdADexIvOZkjr3V2H67BUc85A+/QuOE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1743526644;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ayzTNmVENLwndkYJft8i/VMZKbCBHIAmAoLlfoj6JYQ=;
-	b=f/38+Ph+vbt+nvyT2hsUhChjs1hfvfza0Cn9YulLycc7GgeScyh+Ue+5qcxnpwOdvKrrgc
-	i6ZAhTIQJxee8ZBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 41FB113691;
-	Tue,  1 Apr 2025 16:57:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id nIzQD/Qa7GdDFgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 01 Apr 2025 16:57:24 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 167F3A07E6; Tue,  1 Apr 2025 18:57:19 +0200 (CEST)
-Date: Tue, 1 Apr 2025 18:57:19 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	rafael@kernel.org, Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	mcgrof@kernel.org, hch@infradead.org, david@fromorbit.com, djwong@kernel.org, 
-	pavel@kernel.org, peterz@infradead.org, mingo@redhat.com, will@kernel.org, 
-	boqun.feng@gmail.com
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 40CA11C02DF;
+	Tue, 01 Apr 2025 13:02:08 -0400 (EDT)
+Message-ID: <ddee7c1ce2d1ff1a8ced6e9b6ac707250f70e68b.camel@HansenPartnership.com>
 Subject: Re: [PATCH 0/6] power: wire-up filesystem freeze/thaw with
  suspend/resume
-Message-ID: <5tiim72iyudzgmjbyvavfumprrifydt2mfb3h3wycsnqybek23@2ftdyt47yhyl>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	jack@suse.cz, rafael@kernel.org
+Cc: Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, mcgrof@kernel.org, hch@infradead.org, 
+ david@fromorbit.com, djwong@kernel.org, pavel@kernel.org,
+ peterz@infradead.org,  mingo@redhat.com, will@kernel.org,
+ boqun.feng@gmail.com
+Date: Tue, 01 Apr 2025 13:02:07 -0400
+In-Reply-To: <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
 References: <20250331-work-freeze-v1-0-6dfbe8253b9f@kernel.org>
- <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
- <s6rnz3ysjlu3rp6m56vua3vnlj53hbgxbbe3nj7v2ib5fg4l2i@py4pkvsgk2lr>
- <20250401-kindisch-lagen-cd19c8f66103@brauner>
+	 <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250401-kindisch-lagen-cd19c8f66103@brauner>
-X-Rspamd-Queue-Id: B31D21F38E
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,kernel.org,hansenpartnership.com,infradead.org,fromorbit.com,redhat.com,gmail.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
-X-Spam-Flag: NO
 
-On Tue 01-04-25 15:03:33, Christian Brauner wrote:
-> On Tue, Apr 01, 2025 at 11:32:49AM +0200, Jan Kara wrote:
-> > On Tue 01-04-25 02:32:45, Christian Brauner wrote:
-> > > The whole shebang can also be found at:
-> > > https://web.git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=work.freeze
-> > > 
-> > > I know nothing about power or hibernation. I've tested it as best as I
-> > > could. Works for me (TM).
-> > > 
-> > > I need to catch some actual sleep now...
-> > > 
-> > > ---
-> > > 
-> > > Now all the pieces are in place to actually allow the power subsystem to
-> > > freeze/thaw filesystems during suspend/resume. Filesystems are only
-> > > frozen and thawed if the power subsystem does actually own the freeze.
-> > > 
-> > > Othwerwise it risks thawing filesystems it didn't own. This could be
-> > > done differently be e.g., keeping the filesystems that were actually
-> > > frozen on a list and then unfreezing them from that list. This is
-> > > disgustingly unclean though and reeks of an ugly hack.
-> > > 
-> > > If the filesystem is already frozen by the time we've frozen all
-> > > userspace processes we don't care to freeze it again. That's userspace's
-> > > job once the process resumes. We only actually freeze filesystems if we
-> > > absolutely have to and we ignore other failures to freeze.
-> > 
-> > Hum, I don't follow here. I supposed we'll use FREEZE_MAY_NEST |
-> > FREEZE_HOLDER_KERNEL for freezing from power subsystem. As far as I
-> > remember we have specifically designed nesting of freeze counters so that
-> > this way power subsystem can be sure freezing succeeds even if the
-> > filesystem is already frozen (by userspace or the kernel) and similarly
-> > power subsystem cannot thaw a filesystem frozen by somebody else. It will
-> > just drop its freeze refcount... What am I missing?
-> 
-> If we have 10 filesystems and suspend/hibernate manges to freeze 5 and
-> then fails on the 6th for whatever odd reason (current or future) then
-> power needs to undo the freeze of the first 5 filesystems. We can't just
-> walk the list again because while it's unlikely that a new filesystem
-> got added in the meantime we still cannot tell what filesystems the
-> power subsystem actually managed to get a freeze reference count on that
-> we need to drop during thaw.
-> 
-> There's various ways out of this ugliness. Either we record the
-> filesystems the power subsystem managed to freeze on a temporary list in
-> the callbacks and then walk that list backwards during thaw to undo the
-> freezing or we make sure that the power subsystem just actually
-> exclusively freezes things it can freeze and marking such filesystems as
-> being owned by power for the duration of the suspend or resume cycle. I
-> opted for the latter as that seemed the clean thing to do even if it
-> means more code changes. What are your thoughts on this?
+On Tue, 2025-04-01 at 02:32 +0200, Christian Brauner wrote:
+> The whole shebang can also be found at:
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=3D=
+work.freeze
+>=20
+> I know nothing about power or hibernation. I've tested it as best as
+> I could. Works for me (TM).
 
-Ah, I see. Thanks for explanation. So failure to freeze filesystem should
-be rare (mostly only due to IO errors or similar serious issues) hence
-I'd consider failing hibernation in case we fail to freeze some filesystem
-appropriate. The function that's walking all superblocks and freezing them
-could just walk from the superblock where freezing failed towards the end
-and thaw all filesystems. That way the function also has the nice property
-that it either freezes everything or keeps things as they were.
+I'm testing the latest you have in work.freeze and it doesn't currently
+work for me.  Patch 7b315c39b67d ("power: freeze filesystems during
+suspend/resume") doesn't set filesystems_freeze_ptr so it ends up being
+NULL and tripping over this check=20
 
-But you've touched on an interesting case I didn't consider: New
-superblocks can be added to the end of the list while we are walking it.
-These superblocks will not be frozen and on resume (or error recovery) this
-will confuse things. Your "freeze owner" stuff deals with this problem
-nicely. Somewhat lighter fix for this may be to provide the superblock to
-start from / end with to these loops iterating and freezing / thawing
-superblocks. It doesn't seem too hacky but if you prefer your freeze owner
-approach I won't object.
++static inline bool may_unfreeze(struct super_block *sb, enum
+freeze_holder who,
++                               const void *freeze_owner)
++{
++       WARN_ON_ONCE((who & ~FREEZE_FLAGS));
++       WARN_ON_ONCE(hweight32(who & FREEZE_HOLDERS) > 1);
++
++       if (who & FREEZE_EXCL) {
++               if (WARN_ON_ONCE(sb->s_writers.freeze_owner =3D=3D NULL))
++                       return false;
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+in f15a9ae05a71 ("fs: add owner of freeze/thaw") and failing to resume
+from hibernate.  Setting it to __builtin_return_address(0) in
+filesystems_freeze() makes everything work as expected, so that's what
+I'm testing now.
+
+I suppose one minor, minor nit is that the vagaries of English grammar
+mean that the verbs fail and succeed don't take the same grammatical
+construction, so failed can take the infinitive (failed to thaw)
+perfectly well, but succeeded takes a prepositional gerund construction
+instead: "succeeded at/in thawing" instead of the infinitive "succeeded
+to thaw" ... I've no idea why, but I'd probably blame the Victorians
+...
+
+Regards,
+
+James
+
 
