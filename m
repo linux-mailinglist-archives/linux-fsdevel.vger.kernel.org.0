@@ -1,165 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-45511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D5B3A78DBC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 14:03:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F57FA78E0C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 14:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D6733B34DA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 12:00:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7BBE1711A2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 12:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485D423A990;
-	Wed,  2 Apr 2025 12:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C487238D5A;
+	Wed,  2 Apr 2025 12:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="AZOEzLoA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pbzbP/jd"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NzRbdd68"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F45923956E;
-	Wed,  2 Apr 2025 11:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D97420E01D
+	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Apr 2025 12:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743595200; cv=none; b=eSBllvcUOFkq22LzgziynYImxnq0QOx4cRLEiPk2qu42D63hXw9YfjPsqHISCxm6Un0d95sBqGkymaV2tbmd3EGYj7xW6ohcfVdVNPvhUCGO0hX5Udq0prNEfbKSDlT71eqoeryH52yUqKMjuo7DGI2Si8XGSAFhJ5UNSpVXzLw=
+	t=1743596245; cv=none; b=pAC9lHjjgSlJbRHUUE9eRNfQyXqnoJWzv49T0hdDL6agsGf2G/sTS0DihX5y9UOD8NBIzUrWEakiQM0C5dxIe8FW42kgEpzU5JphLKSWd62z2+HvimFOzURu6X9VgObqKjFG6smccSil1m0WLposKIDaEzbU5k/yQ0PZvg9NYnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743595200; c=relaxed/simple;
-	bh=vKsrwMMUSVkpYl3Wjc7iXyjyDZ/VVLnSOVOfX+Qs+WM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hPaR/1c0Oikxyr/FO0yRY5UcVC/0n3HSNSwGJ4JfpSRNtBvKhPnt+O3ZD1r2yWTFqLlcwK+sHjcd0PxvNwV8R4hszkcABUiIxcyOc4Va2UOxlyeSjg/V/wUztFUULceYFAtnKrZbkuNbtQXHBToq1NToWnJvqd6ciCUbT5x2IyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=AZOEzLoA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pbzbP/jd; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 2A89725401C1;
-	Wed,  2 Apr 2025 07:59:57 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Wed, 02 Apr 2025 07:59:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1743595197;
-	 x=1743681597; bh=v92FjPBWjebyZcMwb5OIw0ehvZf97+SV1L6dSZLgD8Q=; b=
-	AZOEzLoA7QUVKb5shewnFGBFgw89klcM9Y1m2+zFKF7aCC2zYpH6Iz/UyUHaBvrh
-	x5fvAO7Bo1BKzcVrWjePRm0F2LZReoPqkQmjloKfbVd7dQywtirkZX3A6TW+YtNz
-	UoIVPXN1/PbEuXxTEiPGPO1MGWUCiFuYQC6f70Fu7a/A6mr9d5vyvWFEkfZfFUvI
-	Nyo9I5qVJ61+y14gMufrwCWR4k4bxHZL8ixK2DvLRuUM/7mUEuOpNiEdy67OEOmh
-	79B1OB6x6Eyb3NTHaQJpmPU7jy9NReHesScQYvHX4J44EDNk5xkJhlVJOu+lXiDL
-	OjliMcHihYJBjC8EiZbOAg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743595197; x=
-	1743681597; bh=v92FjPBWjebyZcMwb5OIw0ehvZf97+SV1L6dSZLgD8Q=; b=p
-	bzbP/jd+lIqiZ3u5udtNVNXsVvC+Prq5lWYYt4Fq2cZ+vCFehUMPsAmdbGTDr5F1
-	Sjsdy+Q7sIjIZv1XwjmSuhkAP5MS/l6IUTGxEcuMzqS075APYA+e4rrrU0OYV+MC
-	Yf9m3e/YOh/zlFgoBCVsA31hYS+h6sp8Vi4Eeo2E1PQQbO2yHt3xejoP1+chIryz
-	bhQ8fPIjrAHF83+1xXa/6x3DwHs3KbQxaMtUOyyX1YA3PM7Y7DsyJ5WaZhUrcMu1
-	iASmnYY3gxGGDZizV5MXfeK7NDjTHVljVBvFJKBrM6bM1p2G0pX5Hi3LCqLqtoDU
-	ah09p6+c46CRjdD8esk3Q==
-X-ME-Sender: <xms:vCbtZ_DxDpvl_xxHg8jAOo8ku2myQK5qZESS5TQmu4qTa703eG5__A>
-    <xme:vCbtZ1i_8ONZJD6Rympc0yLmKrhaC0_PFJ1tHwHhVIKJbztU1ZD-QLyVY3IudJ4pB
-    nVLoMPzWFybWlWe>
-X-ME-Received: <xmr:vCbtZ6ng6gVt7D0w1GnmBfovTJMbnNp_AtXIs86KloLsJh_XsxpdJE-niKrRUIGYEAnqRLm2FnNqKH2lvIDzE_S118jaW_G-AiMuZLy55_xZYS3T_s3M>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukeehieduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddt
-    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuh
-    gsvghrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudev
-    udevleegleffffekudekgeevlefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrh
-    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggv
-    rhhtsehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmth
-    hpohhuthdprhgtphhtthhopehjrggtohesuhhlshdrtghordiirgdprhgtphhtthhopehm
-    ihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheplhhinhhugidqfhhsuggvvh
-    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghr
-    nhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegthhhrihhsthhoph
-    hhvgdrjhgrihhllhgvthesfigrnhgrughoohdrfhhrpdhrtghpthhtohepjhhorghnnhgv
-    lhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhguuhhnlhgrphesihhnfh
-    hrrgguvggrugdrohhrghdprhgtphhtthhopehtrhgrphgvgihithesshhprgifnhdrlhhi
-    nhhkpdhrtghpthhtohepuggrvhhiugdrlhgrihhghhhtrdhlihhnuhigsehgmhgrihhlrd
-    gtohhm
-X-ME-Proxy: <xmx:vCbtZxzqiHmhAbL5HnOPDoFMEY8KQzKUJMVPQVQRp4nOsEGh1q260A>
-    <xmx:vCbtZ0SatBdiyWWwltRb0dwmMxslrJ7eiwIcAZ8bPMjrKWLIyaGl6Q>
-    <xmx:vCbtZ0ZjFQoXmgZarF03DcoSeyF88ik-CaqrP25yDK4dT-GBK3t7Vw>
-    <xmx:vCbtZ1S6cS20eVI9rS-Fp5u91Vahu9HehSpLZeTXAPg_z8GFsIaDOQ>
-    <xmx:vSbtZ6ZEsbgJWxtystLd_OgRGHKV6QeWuh0ml0JqAl_zwL8fOOr06xLE>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 2 Apr 2025 07:59:55 -0400 (EDT)
-Message-ID: <cbc597b2-52a4-4c29-b240-427d353eb442@fastmail.fm>
-Date: Wed, 2 Apr 2025 13:59:54 +0200
+	s=arc-20240116; t=1743596245; c=relaxed/simple;
+	bh=HQGjOlzvci/jDuFTBkrPI44ZTebsBLaao/xXoxWcPnw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cCb7aULgBaCQnroK9WKLM/P16Z0aRz6O5a1fRG8cc3iOij2s7Zs5NdQH8e0I/SLh5nuWv/NaFyFrZO/Vtmmz1Hg1e48qMWBUPS1cAUNjgli7YjqSGHIpHjW5GKVLRC4wgmPT9CYq+aAeymq9YK009v9Q7Tmph7xYH+JtSihekq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NzRbdd68; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4394036c0efso45539775e9.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Apr 2025 05:17:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1743596242; x=1744201042; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=u+KkYGiRVTeKTKTukwG7gqG5k92Sb1BtHpbYVZQpWnQ=;
+        b=NzRbdd68w/3cF3pfboU0wmUuH71+V+SMeqlZNsXE1auOEArhOpUEAHn+BqbSb2agEd
+         pgy6C8kN5Zp8lYLNNHT3YS6kpuLyXEw9+XVNH9INSTDR+xBTa+36BBgsLn6lU9PkIaMN
+         0dG44DI6R1lNfG48++w2PaTTRUCWcvnePw+uclOq18uMANbrL5GaWUr45k7GP1Okphl8
+         Ku7U5N0a+geqOgnCXGVcEPRiVOzzOQg0Ma6vqRb2hfTsRUn0hIyPVFO6z0Kz6ygWQP5p
+         zCz8JlKatPuNhLIlMvfSMKkQt9tn9AAYTHopjAw30CzulrTw6yKmsKPSOkCwYPY6pdA5
+         GXOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743596242; x=1744201042;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u+KkYGiRVTeKTKTukwG7gqG5k92Sb1BtHpbYVZQpWnQ=;
+        b=cAZ41QeS+h8CEgiwvXBJEY8RY1UNCl60bjgKYlLCV8Nd6npXYM54vQW1ESwFq57XxO
+         BkPeB6Xe/d/JBiHsvsQrDtBUeDHcDJz4/YNtsD+GOO0YdUKZvs1sZfnsRhir7tW7YH6C
+         La77flo6pHfqu+YxJNLutYwsrgvRiY5vpoc/GdGWoQ1rLBgOBw2Rqubg6wIPjwt9OdQA
+         Oj41szM4nBp+8oJ8E2ypCL06ArMrlJfaTYxr1vVEjqltQTpOx4S/jTNNu7VfJkfFwch7
+         3hJHXjW346/IV1ndNyhGu3f46Wgd2nPFvVVnhqDUbvkeqtrBqtAWHMhDCM1A2Q3i5VVr
+         E1qw==
+X-Forwarded-Encrypted: i=1; AJvYcCUW7A0TAGkqbZ7OQ0/vfpyTatjlhPIyJAjKJDnUDJzj49vpy1P3KYedEfV2dmyCNRmKghRq5j+43zjAsDXs@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH0FsPxasZt0tvdqVSpSrIIbo2qUH3YCWqBtXrbCLMO3VUY0L2
+	Xktulatv7DjQ1m3R6x8SYoWUtAhf0lEnjW4W2Suedpo2RxQGdpbe5Ezyb0hwyZM=
+X-Gm-Gg: ASbGncvXqny7ZpfnVp6ePqwnSR4hLUGxjxlgVeN3FUayy7BUoGri626EzGc98RRs4JX
+	aaa6opV8G1DS2hsg4ckmOVJL3LIxTYFbunvPbe34b980a/g1+xYUlXdx9Kr73nXroROa/+Md1nz
+	UARbWqLUDGz0Sg6itdMEpzzVD1mWP8B95us6uGZM4wFFzg0k1BOVRXScDDr1oxl5SHkD35FYh0W
+	BhylLNiqQmOz7DMQ2Qr8raZEEoX/fShxIygFN0OClPs5Ji1KawL2Ve+VF2Vo/lEHmTRh4D/RpNN
+	7Pw80FN7pzsDcz5qcJ1xElxvhGuW+WFylDrr447d1dd6Y6bwKX+uTq5wwA==
+X-Google-Smtp-Source: AGHT+IEzL1dLp6w4/vrpTpg8YH1leTJhRx3ESY+EtSrwaEQ5UAajY5nV9dBkST09FFg5gDba1jeZjA==
+X-Received: by 2002:a05:600c:3d0c:b0:43d:8ea:8d7a with SMTP id 5b1f17b1804b1-43e8eeb6696mr111382655e9.28.1743596241822;
+        Wed, 02 Apr 2025 05:17:21 -0700 (PDT)
+Received: from localhost (109-81-92-185.rct.o2.cz. [109.81.92.185])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43eb5fd138esm18831065e9.13.2025.04.02.05.17.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Apr 2025 05:17:21 -0700 (PDT)
+Date: Wed, 2 Apr 2025 14:17:20 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Yafang Shao <laoar.shao@gmail.com>, Harry Yoo <harry.yoo@oracle.com>,
+	Kees Cook <kees@kernel.org>, joel.granados@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Josef Bacik <josef@toxicpanda.com>, linux-mm@kvack.org
+Subject: Re: [PATCH] proc: Avoid costly high-order page allocations when
+ reading proc files
+Message-ID: <Z-0q0LIsb03f9TfC@tiehlicka>
+References: <20250401073046.51121-1-laoar.shao@gmail.com>
+ <3315D21B-0772-4312-BCFB-402F408B0EF6@kernel.org>
+ <Z-y50vEs_9MbjQhi@harry>
+ <CALOAHbBSvMuZnKF_vy3kGGNOCg5N2CgomLhxMxjn8RNwMTrw7A@mail.gmail.com>
+ <c6823186-9267-418c-a676-390be9d4524d@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] fuse: Adjust readdir() buffer to requesting buffer
- size.
-To: Jaco Kroon <jaco@uls.co.za>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- christophe.jaillet@wanadoo.fr, joannelkoong@gmail.com,
- rdunlap@infradead.org, trapexit@spawn.link, david.laight.linux@gmail.com
-References: <20250314221701.12509-1-jaco@uls.co.za>
- <20250401142831.25699-1-jaco@uls.co.za>
- <20250401142831.25699-3-jaco@uls.co.za>
- <CAJfpegtOGWz_r=7dbQiCh2wqjKh59BqzqJ0ruhtYtsYBB+GG2Q@mail.gmail.com>
- <19df312f-06a2-4e71-960a-32bc952b0ed2@uls.co.za>
- <CAJfpegseKMRLpu3-yS6PeU2aTmh_qKyAvJUWud_SLz1aCHY_tw@mail.gmail.com>
- <3f71532b-4fed-458a-a951-f631155c0107@uls.co.za>
- <CAJfpegtutvpYYzkW91SscwULcLt_xHeqCGLPmUHKAjozPAQQ8A@mail.gmail.com>
- <0cf44936-57ef-42f2-a484-7f69b87b2520@uls.co.za>
- <0b0a6adf-348e-425d-b375-23da3d6668d0@fastmail.fm>
- <f22c14e1-43d9-4976-b13e-a664f5195233@uls.co.za>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <f22c14e1-43d9-4976-b13e-a664f5195233@uls.co.za>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <c6823186-9267-418c-a676-390be9d4524d@suse.cz>
 
-
-
-On 4/2/25 13:13, Jaco Kroon wrote:
-> Hi,
+On Wed 02-04-25 11:25:12, Vlastimil Babka wrote:
+> On 4/2/25 10:42, Yafang Shao wrote:
+> > On Wed, Apr 2, 2025 at 12:15 PM Harry Yoo <harry.yoo@oracle.com> wrote:
+> >>
+> >> On Tue, Apr 01, 2025 at 07:01:04AM -0700, Kees Cook wrote:
+> >> >
+> >> >
+> >> > On April 1, 2025 12:30:46 AM PDT, Yafang Shao <laoar.shao@gmail.com> wrote:
+> >> > >While investigating a kcompactd 100% CPU utilization issue in production, I
+> >> > >observed frequent costly high-order (order-6) page allocations triggered by
+> >> > >proc file reads from monitoring tools. This can be reproduced with a simple
+> >> > >test case:
+> >> > >
+> >> > >  fd = open(PROC_FILE, O_RDONLY);
+> >> > >  size = read(fd, buff, 256KB);
+> >> > >  close(fd);
+> >> > >
+> >> > >Although we should modify the monitoring tools to use smaller buffer sizes,
+> >> > >we should also enhance the kernel to prevent these expensive high-order
+> >> > >allocations.
+> >> > >
+> >> > >Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> >> > >Cc: Josef Bacik <josef@toxicpanda.com>
+> >> > >---
+> >> > > fs/proc/proc_sysctl.c | 10 +++++++++-
+> >> > > 1 file changed, 9 insertions(+), 1 deletion(-)
+> >> > >
+> >> > >diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> >> > >index cc9d74a06ff0..c53ba733bda5 100644
+> >> > >--- a/fs/proc/proc_sysctl.c
+> >> > >+++ b/fs/proc/proc_sysctl.c
+> >> > >@@ -581,7 +581,15 @@ static ssize_t proc_sys_call_handler(struct kiocb *iocb, struct iov_iter *iter,
+> >> > >     error = -ENOMEM;
+> >> > >     if (count >= KMALLOC_MAX_SIZE)
+> >> > >             goto out;
+> >> > >-    kbuf = kvzalloc(count + 1, GFP_KERNEL);
+> >> > >+
+> >> > >+    /*
+> >> > >+     * Use vmalloc if the count is too large to avoid costly high-order page
+> >> > >+     * allocations.
+> >> > >+     */
+> >> > >+    if (count < (PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER))
+> >> > >+            kbuf = kvzalloc(count + 1, GFP_KERNEL);
+> >> >
+> >> > Why not move this check into kvmalloc family?
+> >>
+> >> Hmm should this check really be in kvmalloc family?
+> > 
+> > Modifying the existing kvmalloc functions risks performance regressions.
+> > Could we instead introduce a new variant like vkmalloc() (favoring
+> > vmalloc over kmalloc) or kvmalloc_costless()?
 > 
-> On 2025/04/02 11:10, Bernd Schubert wrote:
->>
->> On 4/2/25 10:52, Jaco Kroon wrote:
->>> Hi,
->>>
->>> On 2025/04/02 10:18, Miklos Szeredi wrote:
->>>> On Wed, 2 Apr 2025 at 09:55, Jaco Kroon <jaco@uls.co.za> wrote:
->>>>> Hi,
->>>>>
->>>>> I can definitely build on that, thank you.
->>>>>
->>>>> What's the advantage of kvmalloc over folio's here, why should it be
->>>>> preferred?
->>>> It offers the best of both worlds: first tries plain malloc (which
->>>> just does a folio alloc internally for size > PAGE_SIZE) and if that
->>>> fails, falls back to vmalloc, which should always succeed since it
->>>> uses order 0 pages.
->>> So basically assigns the space, but doesn't commit physical pages for
->>> the allocation, meaning first access will cause a page fault, and single
->>> page allocation at that point in time?  Or is it merely the fact that
->>> vmalloc may return a virtual contiguous block that's not physically
->>> contiguous?
->>
->> Yes vmalloc return buffers might not be physically contiguous - not
->> suitable for hardware DMA. And AFAIK it is also a blocking allocation.
-> How do I go about confirming?  Can that behaviour be stopped so that in
-> the case where it would block we can return an EAGAIN or EWOULDBLOCK
-> error code instead?  Is that even desired?
+> We have gfp flags and kmalloc_gfp_adjust() to moderate how aggressive
+> kmalloc() is before the vmalloc() fallback. It does e.g.:
 > 
-> Don't think hardware DMA is an issue here, so that's at least not an
-> issue, but the blocking might be?
+>                 if (!(flags & __GFP_RETRY_MAYFAIL))
+>                         flags |= __GFP_NORETRY;
+> 
+> However if your problem is kcompactd utilization then the kmalloc() attempt
+> would have to avoid ___GFP_KSWAPD_RECLAIM to avoid waking up kswapd and then
+> kcompactd. Should we remove the flag for costly orders? Dunno. Ideally the
+> deferred compaction mechanism would limit the issue in the first place.
 
-I was just writing what vmalloc does - neither of its disadvantages will
-have an issue here
+Yes, triggering heavy compation for costly allocations seems to be quite
+bad. We have GFP_RETRY_MAYFAIL for that purpose if the caller really
+needs the allocation to try really hard.
+
+> The ad-hoc fixing up of a particular place (/proc files reading) or creating
+> a new vkmalloc() and then spreading its use as you see other places
+> triggering the issue seems quite suboptimal to me.
+
+Yes I absolutely agree.
+-- 
+Michal Hocko
+SUSE Labs
 
