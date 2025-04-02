@@ -1,197 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-45572-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45573-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BE65A797B6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 23:35:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2311A797E7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 23:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BD6A3ACE6F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 21:34:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 708B87A5090
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 21:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F73C1F417E;
-	Wed,  2 Apr 2025 21:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053401F4CA9;
+	Wed,  2 Apr 2025 21:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jEYNXtDW"
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="bBbnKpj4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DC71EEA57
-	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Apr 2025 21:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46EA1F4625;
+	Wed,  2 Apr 2025 21:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743629704; cv=none; b=QmPfoh6cRcWTq1EAfFEIpj6Ov0/CcL5ZMhNgaeb5JXJfdQLzeEho7k/jWCmxwkRMbxYBh9E2tWjRvwV4w3eNi31Y/5vv+KQXGXbXE/GYNBX2Y4oxyHE7azgqQeTu1+gKYIR/6zukwm3tAQDl2E1ZZXSMfcikcX3/eygsav7CCrQ=
+	t=1743631155; cv=none; b=oblt9dVY6bpGXsNLXcJ4SP3axhRGQt5jPb4zpIhBAeKXxAHbDK8uWCI9DLnPBytLMO90IrXpnGZVp/Md9NpoqgRHDSczN1uNe+7HfiP0TqxxepafzKCP6/gF9AQF9bAIpai1DfaaYAHepLBnCyF9I7kx2vlqilEU6VpW8pT6jLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743629704; c=relaxed/simple;
-	bh=96bZsdwcCTNpY/AwePC+plVbqSMLpQV/crqKoou/0U4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HlOOUOY9XCgttKoGikWNIn2sPopqnVwlu3r4go6EXpbsdHpsn+b56I/HQzgHbhNPcIadGmpQA/ZVV+baV5SJJS5q3g9x76JxWmcxx4Xh0irWibf/6CUQKK+kvXwPLjx1jRwgmkeivHMMEVzMrwKBXngmUMwhd4pISl/CAxQdc34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jEYNXtDW; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4775ce8a4b0so3228931cf.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Apr 2025 14:35:02 -0700 (PDT)
+	s=arc-20240116; t=1743631155; c=relaxed/simple;
+	bh=gZR/lUCfu7BfhLrh0H0NV5UuBc0uNwuknUip/HsM9TU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mn616sMqekvrFQW0h+sYgaApsYrT5Sicsnw8YQDzURRAEiTvhlL2clGCDpPkJNuFMg5cdHoNwiFIVaArnld+M/rvtVUZJwpWZxNfZeJU1mQWY7P3w7ebrCnWs1ccywK8dGSXhB8pCUX9aMxuQA9Db7w1OFA+XJbZsiOprkUqS2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=bBbnKpj4; arc=none smtp.client-ip=99.78.197.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743629701; x=1744234501; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wXV/4KLKryL+mkVEiJtNLsehrS83f48ro1ic7SlOiFE=;
-        b=jEYNXtDWOu0O3VKY591NB/dQiUM5/66xl/PzV5T35bRM4CLde6t69WwP7IC4B09WBa
-         O7Fe3Eae2nLwCCV5w1txKrTXmjQr7nLh22ASUb7ZVwHl8Sf1noMcZsIpWxrktWskbvnF
-         QHcsQj7PU+IZhRqbZ05Fux8XkEu31+BUT4/iBFDJEcktdWnaB7cS+PEWASal6HKS/0e+
-         swP2csULc/TSh5JYdIh5mk0BlPUpY3oJXBzqZTk6bKNfX3uLLKakdbahC7Yd6gLC6jPp
-         rS9HDL8esc9M9i/dRW1bbk2Vd8FlOF2tfPCWF1If4iCKuovxe5IsRi0AjbKcpK9gUsTj
-         BVHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743629701; x=1744234501;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wXV/4KLKryL+mkVEiJtNLsehrS83f48ro1ic7SlOiFE=;
-        b=O9//9J63GhwLKZiRIDA/Rtswx8jcHZVezryDGed3Qk5DaV5tVMaPs5fSW2eG30L3O+
-         By7t0xMbuKxzLjF58/CYgL9/1/fM61GR3oqqgyQ/09iS069cOW/JV4+NiYjrS0XTf6Gj
-         OMUPweNSPK1if80klH5a4aIE8R+MbhIRUdTplKwz3dsvaVeYT51ihsr9QghBGlsPTo6k
-         sx1vngAaCKXV2wkZfbIzdjUxMXKSOjUgKzUIG+n/sEkty6WcboUM1qI36/u/oGP8W/MR
-         vord/KN3pO4EoPpPzyymz8maVxkIN5Za15wyV0f7CwiTNSSRLQk6e/K8E+yR/WNw0HUV
-         ylLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXz900D0scStBIxRj9QectnRpg/0ACpfZ0h0ZggT6yQDs8o2bSvR43ctdY8AdbPn1bGnMoorSU7rNBv2oV3@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFTcJD6ZvBRt8sX/5O+eJGzEvXWCV+ILqBo1WZzaZoC56eGwKE
-	7xtCQsECG392dVJLMaWi2uz/9HwBc7tjVeYxpw0v8C2GsPNOj4yZnh7HMCzsjcdJ7XQFCkQ6+CF
-	imvftYT3qY2yPUFHnBxvksfArRsg=
-X-Gm-Gg: ASbGnctN11uVM2MSDSHCKq3pQOEqgCyzjLMY5wsFQ4XEjJaqENlyxqq05nEwPoD8NVz
-	CctV07tgCrIi+NhO8yVvSMD4K6eRk/6bKAXhb4UQ/ZEQ7z7z2FmW3fLJcSBPq1/BhSl6f3obrKe
-	QFDUQJVmBkF2L/u3eaUV/shS85DMF6qwCI3c2EHRCMmA==
-X-Google-Smtp-Source: AGHT+IH9RyuryqLYFr0sIwVsygMGNs86XJCPy1oK+2U+8CmMAUnEX5hK4KYSSBIuRZHQCki5QzjSDdLx2KVBYQ2iQyI=
-X-Received: by 2002:a05:622a:281:b0:476:9377:17aa with SMTP id
- d75a77b69052e-4791961be70mr3772321cf.52.1743629701194; Wed, 02 Apr 2025
- 14:35:01 -0700 (PDT)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1743631153; x=1775167153;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=qbseHlUeh+wI3W4Lnm3HLIl0X8Puvw62VR4kgEDnHcU=;
+  b=bBbnKpj4ZCvqGPcLTUOivixmVgL7hVVmCKVYwlSsZpkKUEMvorYoMcTg
+   VdP975AWYD/9Zi/IZzRUW+SQfo8x4NNLO1Kv+XGlXk6f+3yYN12rJdKwK
+   WKUDwpAF0JAkPlY6dJ/j36UCyN2yNFcrYuJRgi3wq9SZfu+AlTsWmATYP
+   c=;
+X-IronPort-AV: E=Sophos;i="6.15,183,1739836800"; 
+   d="scan'208";a="184340993"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 21:59:11 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:52418]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.27.18:2525] with esmtp (Farcaster)
+ id 4a897196-90c0-4ea2-919a-6cf1e06e4c38; Wed, 2 Apr 2025 21:59:10 +0000 (UTC)
+X-Farcaster-Flow-ID: 4a897196-90c0-4ea2-919a-6cf1e06e4c38
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 2 Apr 2025 21:59:07 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.106.101.8) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 2 Apr 2025 21:59:03 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <gregkh@linuxfoundation.org>
+CC: <cve@kernel.org>, <edumazet@google.com>, <ematsumiya@suse.de>,
+	<kuniyu@amazon.com>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-net@vger.kernel.org>,
+	<sfrench@samba.org>, <smfrench@gmail.com>, <wangzhaolong1@huawei.com>,
+	<zhangchangzhong@huawei.com>
+Subject: Re: Fwd: [PATCH][SMB3 client] fix TCP timers deadlock after rmmod
+Date: Wed, 2 Apr 2025 14:58:49 -0700
+Message-ID: <20250402215855.18968-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <2025040207-yippee-unlearned-4b1c@gregkh>
+References: <2025040207-yippee-unlearned-4b1c@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122232359.429647-1-joannelkoong@gmail.com>
- <20241122232359.429647-5-joannelkoong@gmail.com> <c9a76cb3-5827-4b2c-850f-8c830a090196@redhat.com>
-In-Reply-To: <c9a76cb3-5827-4b2c-850f-8c830a090196@redhat.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 2 Apr 2025 14:34:49 -0700
-X-Gm-Features: AQ5f1JrYVHMlDWZJxH4-18lt1qU_d4NlCtPkRQrCGOovJWEhE1ANrmdC3YBUzu8
-Message-ID: <CAJnrk1aXOJ-dAUdSmP07ZP6NPBJrdjPPJeaGbBULZfY=tBdn=Q@mail.gmail.com>
-Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
- with AS_WRITEBACK_INDETERMINATE mappings
-To: David Hildenbrand <david@redhat.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, shakeel.butt@linux.dev, 
-	jefflexu@linux.alibaba.com, josef@toxicpanda.com, bernd.schubert@fastmail.fm, 
-	linux-mm@kvack.org, kernel-team@meta.com, 
-	Matthew Wilcox <willy@infradead.org>, Zi Yan <ziy@nvidia.com>, Oscar Salvador <osalvador@suse.de>, 
-	Michal Hocko <mhocko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D041UWA001.ant.amazon.com (10.13.139.124) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Thu, Dec 19, 2024 at 5:05=E2=80=AFAM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 23.11.24 00:23, Joanne Koong wrote:
-> > For migrations called in MIGRATE_SYNC mode, skip migrating the folio if
-> > it is under writeback and has the AS_WRITEBACK_INDETERMINATE flag set o=
-n its
-> > mapping. If the AS_WRITEBACK_INDETERMINATE flag is set on the mapping, =
-the
-> > writeback may take an indeterminate amount of time to complete, and
-> > waits may get stuck.
-> >
-> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
-> > ---
-> >   mm/migrate.c | 5 ++++-
-> >   1 file changed, 4 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/mm/migrate.c b/mm/migrate.c
-> > index df91248755e4..fe73284e5246 100644
-> > --- a/mm/migrate.c
-> > +++ b/mm/migrate.c
-> > @@ -1260,7 +1260,10 @@ static int migrate_folio_unmap(new_folio_t get_n=
-ew_folio,
-> >                */
-> >               switch (mode) {
-> >               case MIGRATE_SYNC:
-> > -                     break;
-> > +                     if (!src->mapping ||
-> > +                         !mapping_writeback_indeterminate(src->mapping=
-))
-> > +                             break;
-> > +                     fallthrough;
-> >               default:
-> >                       rc =3D -EBUSY;
-> >                       goto out;
->
-> Ehm, doesn't this mean that any fuse user can essentially completely
-> block CMA allocations, memory compaction, memory hotunplug, memory
-> poisoning... ?!
->
-> That sounds very bad.
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Wed, 2 Apr 2025 22:32:58 +0100
+> On Wed, Apr 02, 2025 at 01:50:05PM -0700, Kuniyuki Iwashima wrote:
+> > From: Greg KH <gregkh@linuxfoundation.org>
+> > Date: Wed, 2 Apr 2025 21:28:51 +0100
+> > > On Wed, Apr 02, 2025 at 01:22:11PM -0700, Kuniyuki Iwashima wrote:
+> > > > From: Greg KH <gregkh@linuxfoundation.org>
+> > > > Date: Wed, 2 Apr 2025 21:15:58 +0100
+> > > > > On Wed, Apr 02, 2025 at 01:09:19PM -0700, Kuniyuki Iwashima wrote:
+> > > > > > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > > > Date: Wed, 2 Apr 2025 16:18:37 +0100
+> > > > > > > On Wed, Apr 02, 2025 at 05:15:44PM +0800, Wang Zhaolong wrote:
+> > > > > > > > > On Wed, Apr 02, 2025 at 12:49:50PM +0800, Wang Zhaolong wrote:
+> > > > > > > > > > Yes, it seems the previous description might not have been entirely clear.
+> > > > > > > > > > I need to clearly point out that this patch, intended as the fix for CVE-2024-54680,
+> > > > > > > > > > does not actually address any real issues. It also fails to resolve the null pointer
+> > > > > > > > > > dereference problem within lockdep. On top of that, it has caused a series of
+> > > > > > > > > > subsequent leakage issues.
+> > > > > > > > > 
+> > > > > > > > > If this cve does not actually fix anything, then we can easily reject
+> > > > > > > > > it, please just let us know if that needs to happen here.
+> > > > > > > > > 
+> > > > > > > > > thanks,
+> > > > > > > > > 
+> > > > > > > > > greg k-h
+> > > > > > > > Hi Greg,
+> > > > > > > > 
+> > > > > > > > Yes, I can confirm that the patch for CVE-2024-54680 (commit e9f2517a3e18)
+> > > > > > > > should be rejected. Our analysis shows:
+> > > > > > > > 
+> > > > > > > > 1. It fails to address the actual null pointer dereference in lockdep
+> > > > > > > > 
+> > > > > > > > 2. It introduces multiple serious issues:
+> > > > > > > >    1. A socket leak vulnerability as documented in bugzilla #219972
+> > > > > > > >    2. Network namespace refcount imbalance issues as described in
+> > > > > > > >      bugzilla #219792 (which required the follow-up mainline fix
+> > > > > > > >      4e7f1644f2ac "smb: client: Fix netns refcount imbalance
+> > > > > > > >      causing leaks and use-after-free")
+> > > > > > > > 
+> > > > > > > > The next thing we should probably do is:
+> > > > > > > >    - Reverting e9f2517a3e18
+> > > > > > > >    - Reverting the follow-up fix 4e7f1644f2ac, as it's trying to fix
+> > > > > > > >      problems introduced by the problematic CVE patch
+> > > > > > > 
+> > > > > > > Great, can you please send patches now for both of these so we can
+> > > > > > > backport them to the stable kernels properly?
+> > > > > > 
+> > > > > > Sent to CIFS tree:
+> > > > > > https://lore.kernel.org/linux-cifs/20250402200319.2834-1-kuniyu@amazon.com/
+> > > > > 
+> > > > > You forgot to add a Cc: stable@ on the patches to ensure that they get
+> > > > > picked up properly for all stable trees :(
+> > > > 
+> > > > Ah sorry, I did the same with netdev.  netdev patches usually do
+> > > > not have the tag but are backported fine, maybe netdev local rule ?
+> > > 
+> > > Nope, that's the "old" way of dealing with netdev patches, the
+> > > documentation was changed years ago, please always put a cc: stable on
+> > > it.  Otherwise you are just at the whim of our "hey, I'm board, let's
+> > > look for Fixes: only tags!" script to catch them, which will also never
+> > > notify you of failures.
+> > 
+> > Good to know that, thanks!
+> > 
+> > My concern was that I could spam the list if I respin the patches,
+> > and incomplete patch could be backported.
+> > 
+> > >From stable-kernel-rules.rst, such an accident can be prevented if
+> > someone points out a problem within 48 hours ?
+> > 
+> > For example, if v1 is posted with Cc:stable, and a week later
+> > v2 is posted, then the not-yet-upstreamed v1 could be backported ?
+> > 
+> 
+> Anything can be asked to be applied to stable once it is in Linus's
+> tree, but if you add the cc: stable stuff to the original patch, it will
+> be done automatically for you.
 
-I took a closer look at the migration code and the FUSE code. In the
-migration code in migrate_folio_unmap(), I see that any MIGATE_SYNC
-mode folio lock holds will block migration until that folio is
-unlocked. This is the snippet in migrate_folio_unmap() I'm looking at:
+Now I understood.  The process is triggered only after the patch
+is merged to Linus' tree.  I assumed the workflow is triggered by
+the patch email itself.
 
-        if (!folio_trylock(src)) {
-                if (mode =3D=3D MIGRATE_ASYNC)
-                        goto out;
-
-                if (current->flags & PF_MEMALLOC)
-                        goto out;
-
-                if (mode =3D=3D MIGRATE_SYNC_LIGHT && !folio_test_uptodate(=
-src))
-                        goto out;
-
-                folio_lock(src);
-        }
-
-If this is all that is needed for a malicious FUSE server to block
-migration, then it makes no difference if AS_WRITEBACK_INDETERMINATE
-mappings are skipped in migration. A malicious server has easier and
-more powerful ways of blocking migration in FUSE than trying to do it
-through writeback. For a malicious fuse server, we in fact wouldn't
-even get far enough to hit writeback - a write triggers
-aops->write_begin() and a malicious server would deliberately hang
-forever while the folio is locked in write_begin().
-
-I looked into whether we could eradicate all the places in FUSE where
-we may hold the folio lock for an indeterminate amount of time,
-because if that is possible, then we should not add this writeback way
-for a malicious fuse server to affect migration. But I don't think we
-can, for example taking one case, the folio lock needs to be held as
-we read in the folio from the server when servicing page faults, else
-the page cache would contain stale data if there was a concurrent
-write that happened just before, which would lead to data corruption
-in the filesystem. Imo, we need a more encompassing solution for all
-these cases if we're serious about preventing FUSE from blocking
-migration, which probably looks like a globally enforced default
-timeout of some sort or an mm solution for mitigating the blast radius
-of how much memory can be blocked from migration, but that is outside
-the scope of this patchset and is its own standalone topic.
-
-I don't see how this patch has any additional negative impact on
-memory migration for the case of malicious servers that the server
-can't already (and more easily) do. In fact, this patchset if anything
-helps memory given that malicious servers now can't also trigger page
-allocations for temp pages that would never get freed.
-
-
-Thanks,
-Joanne
-
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+Thanks for explaining!
 
