@@ -1,338 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-45516-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDA6CA7900B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 15:40:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAA9BA79044
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 15:51:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7819C7A2A7B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 13:39:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1401D1889C77
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 13:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9226723A98E;
-	Wed,  2 Apr 2025 13:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6484F23BCE8;
+	Wed,  2 Apr 2025 13:46:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE8A23A98A;
-	Wed,  2 Apr 2025 13:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38CF023AE7C
+	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Apr 2025 13:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743601241; cv=none; b=BV+aMg4zE0GYlgONgFcllN4COfI44vBC/vBObhpcfF66U4d3UNllgiydFdIeh4cloZ6JOOvRorQyzbYU8iLY5MBc7vGs6pKyr36pZf0LnZGazdrIKGBvRbQUb68sRE6lM3OqeGAJTKiRFDhd1WzOVI6pbj66sAxCmTgyjAakc6k=
+	t=1743601589; cv=none; b=jQ/ldQE4bKWsMHsHojZQ5Jr/UCIAgJsYT7TFdaZQE88IdC/2ZAQkhtV7rcSnuz48/7/da79EISxb2vqpJUxs0DuCMs6lTI7cogaff6BGdjs5Gag5jBYTGNhpcbOOBGrwLwyXGPp7WkuGBaoLsYYZcoF7FLJMM4wee/LFpbGDTVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743601241; c=relaxed/simple;
-	bh=W2P+CWHKXjW9H17MAtHSuWWdCgwkZBG/UPqA/eLiqmo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AExynKa+PcIbWLg2zijBLHAAYFj7vF+g6exXR1IjmhJEp1mPLvtP2n078NvX/ElODNEHpzTpw0gP4UzDtvxnPklPyys5MJe4yYT1Yt4CCPxL36cmHoyB9ZSxPzbjIIiLs3xFMEypt+KU/DrjXzDRO7TrrXXm9U1tdvi43SeN1NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FF67FEC;
-	Wed,  2 Apr 2025 06:40:40 -0700 (PDT)
-Received: from [10.57.88.195] (unknown [10.57.88.195])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E601F3F694;
-	Wed,  2 Apr 2025 06:40:35 -0700 (PDT)
-Message-ID: <e809c355-7f3c-4c7b-acee-852d5b64d1c7@arm.com>
-Date: Wed, 2 Apr 2025 14:40:34 +0100
+	s=arc-20240116; t=1743601589; c=relaxed/simple;
+	bh=LkVDSPltO/4LKS8g7rkHP+IaIzHSM36i6RLISeeESSc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=eVrERej95WTc6qX7N6qByzmPaKqTp2CXQMqZ67BzJI+WPdnRZw2ohv2TaDwjwS1Bu56KKwQfaCT0bJlSBbBulhoNvLDQIAeU/++EfsjZypaj7o/ZoFMO17b1D0SVsvTAtas9HQDoOWejcq2xLKDJtzFk7rg1d2rp/bldwgheYws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d44ba1c2b5so72611065ab.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Apr 2025 06:46:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743601587; x=1744206387;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0ktRWU455sF5wpDF7EHmHRc0yXQjU7v9FJ6vP0iuNis=;
+        b=fKP5gpB1m7NFPNYycNP0+x4nNKwmuM5TdYvQP2SE6RlTxCXGygd+eVzk4+W5p5Ta1E
+         L8mE20qqvAqMmxda7Poz1bPYdAxXtrJW+EQJR5PCwIwwMoMXtcaUS0vqLJY8UfEVYbSR
+         uin8oHMv7FQZMJhp++2k8U/CjmI4FokIhQ6sd+j5xj+tgpbnDXqgEP9CBb6neIBb+fVn
+         RBnNNvfqi+Ui63um1+EQpw7+wo87RvtNFSOf3hJivWA5pwF9Wtz0VBCjRMYMr8mFeJSR
+         I0BDDDf9LlmQPM7pipiLw+DWGFKasGBchFyw+fUsXNP10OdkuUWgjEh/e9l+0CwZ3fua
+         FyUA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5julJP5E6xWYJZ7yNroG9TVOZUGSF5VLSqwzmJ4xw+RbXx5lfT83RTjKJanWXFEESICXlau7qBkZB5PCX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4bRn/cRtZ0olZwxbVIvq0xnjbLKHOoPAhTHS4GssL/lvYdpxN
+	hn1n7Tra999nUSIPW1z7jkILOK1kYxx4fIgjHVkbUSNI4h4ZRlU8Bv7TD1kkvgD7inVrP7ATFNN
+	0VSAsnmO4gpmqen9A7nPUdH8feDiGt69IjyGK4o1f6uhdcbPVX0q+bsM=
+X-Google-Smtp-Source: AGHT+IFGsE0AL/83BoJ5UblCfEht5ofdX0GbyWWuVbVWeyX65H6x8faNZkXFRcgGCcUUY+JN1STCtArBpf5LVJuOAdkwRKMxbXCb
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mm/filemap: Allow arch to request folio size for exec
- memory
-Content-Language: en-GB
-To: Kalesh Singh <kaleshsingh@google.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Dave Chinner <david@fromorbit.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20250327160700.1147155-1-ryan.roberts@arm.com>
- <Z-WAbWfZzG1GA-4n@casper.infradead.org>
- <5131c7ad-cc37-44fc-8672-5866ecbef65b@arm.com>
- <Z-b1FmZ5nHzh5huL@casper.infradead.org>
- <ee11907a-5bd7-44ec-844c-8f10ff406b46@arm.com>
- <CAC_TJveU2v+EcokLKJVVZ8Xje2nYmmUg8bvCD8KO1oC5MgmWCA@mail.gmail.com>
- <76f5ba9b-1a8c-4973-89ce-14f504819da1@arm.com>
- <CAC_TJvemG2XDky1HtA8g=SG0nv-sONOS-ssEchdymh-_xjBecw@mail.gmail.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <CAC_TJvemG2XDky1HtA8g=SG0nv-sONOS-ssEchdymh-_xjBecw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1a67:b0:3d4:3ab3:5574 with SMTP id
+ e9e14a558f8ab-3d5e08ede54mr206189425ab.3.1743601587266; Wed, 02 Apr 2025
+ 06:46:27 -0700 (PDT)
+Date: Wed, 02 Apr 2025 06:46:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67ed3fb3.050a0220.14623d.0009.GAE@google.com>
+Subject: [syzbot] [fs?] kernel BUG in may_open
+From: syzbot <syzbot+5d8e79d323a13aa0b248@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On 01/04/2025 13:55, Kalesh Singh wrote:
-> On Tue, Apr 1, 2025 at 3:35 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>
->> On 01/04/2025 03:19, Kalesh Singh wrote:
->>> On Sat, Mar 29, 2025 at 3:08 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>>>
->>>> On 28/03/2025 15:14, Matthew Wilcox wrote:
->>>>> On Thu, Mar 27, 2025 at 04:23:14PM -0400, Ryan Roberts wrote:
->>>>>> + Kalesh
->>>>>>
->>>>>> On 27/03/2025 12:44, Matthew Wilcox wrote:
->>>>>>> On Thu, Mar 27, 2025 at 04:06:58PM +0000, Ryan Roberts wrote:
->>>>>>>> So let's special-case the read(ahead) logic for executable mappings. The
->>>>>>>> trade-off is performance improvement (due to more efficient storage of
->>>>>>>> the translations in iTLB) vs potential read amplification (due to
->>>>>>>> reading too much data around the fault which won't be used), and the
->>>>>>>> latter is independent of base page size. I've chosen 64K folio size for
->>>>>>>> arm64 which benefits both the 4K and 16K base page size configs and
->>>>>>>> shouldn't lead to any read amplification in practice since the old
->>>>>>>> read-around path was (usually) reading blocks of 128K. I don't
->>>>>>>> anticipate any write amplification because text is always RO.
->>>>>>>
->>>>>>> Is there not also the potential for wasted memory due to ELF alignment?
->>>>>>
->>>>>> I think this is an orthogonal issue? My change isn't making that any worse.
->>>>>
->>>>> To a certain extent, it is.  If readahead was doing order-2 allocations
->>>>> before and is now doing order-4, you're tying up 0-12 extra pages which
->>>>> happen to be filled with zeroes due to being used to cache the contents
->>>>> of a hole.
->>>>
->>>> Well we would still have read them in before, nothing has changed there. But I
->>>> guess your point is more about reclaim? Because those pages are now contained in
->>>> a larger folio, if part of the folio is in use then all of it remains active.
->>>> Whereas before, if the folio was fully contained in the pad area and never
->>>> accessed, it would fall down the LRU quickly and get reclaimed.
->>>>
->>>
->>>
->>> Hi Ryan,
->>>
->>> I agree this was happening before and we don't need to completely
->>> address it here. Though with the patch it's more likely that the holes
->>> will be cached. I'd like to minimize it if possible. Since this is for
->>> EXEC mappings, a simple check we could use is to limit this to the
->>> VM_EXEC vma.
->>>
->>> + if (vm_flags & VM_EXEC) {
->>> + int order = arch_exec_folio_order();
->>> +
->>> + if (order >= 0 && ((end-address)*2) >= 1<<order) { /* Fault around case */
->>
->> I think the intent of this extra check is to ensure the folio will be fully
->> contained within the exec vma? Assuming end is the VA of the end of the vma and
->> address is the VA of the fault, I don't think the maths are quite right? What's
->> the "*2" for? And you probably mean PAGE_SIZE<<order ? But this also doesn't
->> account for alignment; the folio will be aligned down to a natural boundary in
->> the file.
-> 
-> Hi Ryan,
-> 
-> Sorry for the pseudocode. You are right it should be PAGE_SIZE. *2 is
-> because I missed that this isn't centered around the faulting address
-> as the usual fault around logic.
-> 
->>
->> But more fundamentally, I thought I suggested reducing the VMA bounds to exclude
->> padding pages the other day at LSF/MM and you said you didn't want to do that
->> because you didn't want to end up with something else mapped in the gap? So
->> doesn't that mean the padding pages are part of the VMA and this check won't help?
-> 
-> The intention was to check that we aren't reading past (more than we
-> do today) into other subsequent segments (and holes) if the exec
-> segment is small relative to 64K, in which case we fall back to the
-> conventional readahead heuristics.
+Hello,
 
-Gottya. I think this is probably a reasonable thing to do.
+syzbot found the following issue on:
 
-> 
->>
->>>
->>> For reference I found below (coincidentally? similar) distributions on
->>> my devices
->>>
->>> == x86 Workstation ==
->>>
->>> Total unique exec segments:   906
->>>
->>> Exec segments >= 16 KB:   663 ( 73.18%)
->>> Exec segments >= 64 KB:   414 ( 45.70%)
->>
->> What are those percentages? They don't add up to more than 100...
-> 
-> The percent of segments with size >=16KB/64KB of the total number of
-> exec mappings. "Exec segments >= 64 KB" is also a subset of "Exec
-> segments >= 16 KB" it's why they don't add up to 100.
+HEAD commit:    08733088b566 Merge tag 'rust-fixes-6.15-merge' of git://gi..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=10c8a178580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=acce2ca43d1e8c46
+dashboard link: https://syzkaller.appspot.com/bug?extid=5d8e79d323a13aa0b248
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15bb094c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c2b7b0580000
 
-Ahh got it.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2ec0ad16833c/disk-08733088.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/aaa58ee04595/vmlinux-08733088.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9799f5b55d91/bzImage-08733088.xz
 
-> 
->>
->> The numbers I included with the patch are caclulated based on actual mappings so
->> if we end up with a partially mapped 64K folio (because it runs off the end of
->> the VMA) it wouldn't have been counted as a 64K contiguous mapping. So I don't
->> think this type of change would change my numbers at all.
-> 
-> I don't think it should affect the results much (probably only a small
-> benefit from the extra preread of other segments if we aren't under
-> much memory pressure).
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5d8e79d323a13aa0b248@syzkaller.appspotmail.com
 
-I was referring to the my numbers that show the percentage of text mapped by
-contpte, not to the performance numbers. But I agree I wouldn't expect either to
-change.
+VFS_BUG_ON_INODE(1) encountered for inode ffff888148c44000
+------------[ cut here ]------------
+kernel BUG at fs/namei.c:3432!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 0 UID: 0 PID: 5828 Comm: syz-executor329 Not tainted 6.14.0-syzkaller-11270-g08733088b566 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+RIP: 0010:may_open+0x450/0x460 fs/namei.c:3432
+Code: 38 c1 0f 8c 95 fe ff ff 48 89 df e8 aa 3c eb ff e9 88 fe ff ff e8 10 b3 84 ff 4c 89 ef 48 c7 c6 c0 f6 58 8c e8 81 21 05 00 90 <0f> 0b 66 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90
+RSP: 0018:ffffc90003ce78d8 EFLAGS: 00010246
+RAX: 000000000000003a RBX: 00000000000fffff RCX: 8d133bf8e6cb7a00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffffffff8ee96300 R08: ffffffff81a29bdc R09: 1ffff9200079ceb8
+R10: dffffc0000000000 R11: fffff5200079ceb9 R12: 0000000000000006
+R13: ffff888148c44000 R14: dffffc0000000000 R15: ffffc90003ce7ba0
+FS:  0000555582428380(0000) GS:ffff888124fe2000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000056466efce608 CR3: 0000000033c36000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ do_open fs/namei.c:3843 [inline]
+ path_openat+0x2b39/0x35d0 fs/namei.c:4004
+ do_filp_open+0x284/0x4e0 fs/namei.c:4031
+ do_sys_openat2+0x12b/0x1d0 fs/open.c:1429
+ do_sys_open fs/open.c:1444 [inline]
+ __do_sys_openat fs/open.c:1460 [inline]
+ __se_sys_openat fs/open.c:1455 [inline]
+ __x64_sys_openat+0x249/0x2a0 fs/open.c:1455
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5d8acfc7e1
+Code: 75 57 89 f0 25 00 00 41 00 3d 00 00 41 00 74 49 80 3d 8a 88 07 00 00 74 6d 89 da 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 0f 87 93 00 00 00 48 8b 54 24 28 64 48 2b 14 25
+RSP: 002b:00007fff2f6ce680 EFLAGS: 00000202 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f5d8acfc7e1
+RDX: 0000000000000002 RSI: 00007fff2f6ce700 RDI: 00000000ffffff9c
+RBP: 00007fff2f6ce700 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000001
+R13: 00007fff2f6ce938 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:may_open+0x450/0x460 fs/namei.c:3432
+Code: 38 c1 0f 8c 95 fe ff ff 48 89 df e8 aa 3c eb ff e9 88 fe ff ff e8 10 b3 84 ff 4c 89 ef 48 c7 c6 c0 f6 58 8c e8 81 21 05 00 90 <0f> 0b 66 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90
+RSP: 0018:ffffc90003ce78d8 EFLAGS: 00010246
+RAX: 000000000000003a RBX: 00000000000fffff RCX: 8d133bf8e6cb7a00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffffffff8ee96300 R08: ffffffff81a29bdc R09: 1ffff9200079ceb8
+R10: dffffc0000000000 R11: fffff5200079ceb9 R12: 0000000000000006
+R13: ffff888148c44000 R14: dffffc0000000000 R15: ffffc90003ce7ba0
+FS:  0000555582428380(0000) GS:ffff888124fe2000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000056466efce608 CR3: 0000000033c36000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-> 
-> Anyways I don't have a strong opinion, given that this shouldn't be an
-> issue once we work out Matthew and Ted's idea for the holes. So we can
-> keep it simple for now.
 
-I'll add it in and verify it doesn't affect the numbers. I think there is a
-wider decision that needs to be made below first though, so will wait for
-opinions on that.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Thanks,
-Ryan
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-> 
-> Thanks,
-> Kalesh
-> 
->>
->>>
->>> == arm64 Android Device ==
->>>
->>> Total unique exec segments:   2171
->>>
->>> Exec segments >= 16 KB:  1602 ( 73.79%)
->>> Exec segments >= 64 KB:   988 ( 45.51%)
->>>
->>> Result were using the below script:
->>>
->>> cat /proc/*/maps | grep 'r-xp' | \
->>> awk '
->>> BEGIN { OFS = "\t" }
->>> $NF ~ /^\// {
->>> path = $NF;
->>> split($1, addr, "-");
->>> size = strtonum("0x" addr[2]) - strtonum("0x" addr[1]);
->>> print size, path;
->>> }' | \
->>> sort -u | \
->>> awk '
->>> BEGIN {
->>> FS = "\t";
->>> total_segments = 0;
->>> segs_ge_16k = 0;
->>> segs_ge_64k = 0;
->>> }
->>> {
->>> total_segments++;
->>> size = $1;
->>> if (size >= 16384) segs_ge_16k++;
->>> if (size >= 65536) segs_ge_64k++;
->>> }
->>> END {
->>> if (total_segments > 0) {
->>> percent_gt_16k = (segs_ge_16k / total_segments) * 100;
->>> percent_gt_64k = (segs_ge_64k / total_segments) * 100;
->>>
->>> printf "Total unique exec segments: %d\n", total_segments;
->>> printf "\n";
->>> printf "Exec segments >= 16 KB: %5d (%6.2f%%)\n", segs_ge_16k, percent_gt_16k;
->>> printf "Exec segments >= 64 KB: %5d (%6.2f%%)\n", segs_ge_64k, percent_gt_64k;
->>> } else {
->>> print "No executable segments found.";
->>> }
->>> }'
->>>
->>>>>
->>>>>>> Kalesh talked about it in the MM BOF at the same time that Ted and I
->>>>>>> were discussing it in the FS BOF.  Some coordination required (like
->>>>>>> maybe Kalesh could have mentioned it to me rathere than assuming I'd be
->>>>>>> there?)
->>>>>>
->>>>>> I was at Kalesh's talk. David H suggested that a potential solution might be for
->>>>>> readahead to ask the fs where the next hole is and then truncate readahead to
->>>>>> avoid reading the hole. Given it's padding, nothing should directly fault it in
->>>>>> so it never ends up in the page cache. Not sure if you discussed anything like
->>>>>> that if you were talking in parallel?
->>>>>
->>>>> Ted said that he and Kalesh had talked about that solution.  I have a
->>>>> more bold solution in mind which lifts the ext4 extent cache to the
->>>>> VFS inode so that the readahead code can interrogate it.
->>>>>
->>>
->>> Sorry about the hiccup in coordination, Matthew. It was my bad for not
->>> letting you know I planned to discuss it in the MM BoF. I'd like to
->>> hear Ted and your ideas on this when possible.
->>>
->>> Thanks,
->>> Kalesh
->>>
->>>>>> Anyway, I'm not sure if you're suggesting these changes need to be considered as
->>>>>> one somehow or if you're just mentioning it given it is loosely related? My view
->>>>>> is that this change is an improvement indepently and could go in much sooner.
->>>>>
->>>>> This is not a reason to delay this patch.  It's just a downside which
->>>>> should be mentioned in the commit message.
->>>>
->>>> Fair point; I'll add a paragraph about the potential reclaim issue.
->>>>
->>>>>
->>>>>>>> +static inline int arch_exec_folio_order(void)
->>>>>>>> +{
->>>>>>>> +  return -1;
->>>>>>>> +}
->>>>>>>
->>>>>>> This feels a bit fragile.  I often expect to be able to store an order
->>>>>>> in an unsigned int.  Why not return 0 instead?
->>>>>>
->>>>>> Well 0 is a valid order, no? I think we have had the "is order signed or
->>>>>> unsigned" argument before. get_order() returns a signed int :)
->>>>>
->>>>> But why not always return a valid order?  I don't think we need a
->>>>> sentinel.  The default value can be 0 to do what we do today.
->>>>>
->>>>
->>>> But a single order-0 folio is not what we do today. Note that my change as
->>>> currently implemented requests to read a *single* folio of the specified order.
->>>> And note that we only get the order we request to page_cache_ra_order() because
->>>> the size is limited to a single folio. If the size were bigger, that function
->>>> would actually expand the requested order by 2. (although the parameter is
->>>> called "new_order", it's actually interpretted as "old_order").
->>>>
->>>> The current behavior is effectively to read 128K in order-2 folios (with smaller
->>>> folios for boundary alignment).
->>>>
->>>> So I see a few options:
->>
->> Matthew,
->>
->> Did you have any thoughts on these options?
->>
->> Thanks,
->> Ryan
->>
->>>>
->>>>   - Continue to allow non-opted in arches to use the existing behaviour; in this
->>>> case we need a sentinel. This could be -1, UINT_MAX or 0. But in the latter case
->>>> you are preventing an opted-in arch from specifying that they want order-0 -
->>>> it's meaning is overridden.
->>>>
->>>>   - Force all arches to use the new approach with a default folio order (and
->>>> readahead size) of order-0. (The default can be overridden per-arch). Personally
->>>> I'd be nervous about making this change.
->>>>
->>>>   - Decouple the read size from the folio order size; continue to use the 128K
->>>> read size and only allow opting-in to a specific folio order. The default order
->>>> would be 2 (or 0). We would need to fix page_cache_async_ra() to call
->>>> page_cache_ra_order() with "order + 2" (the new order) and fix
->>>> page_cache_ra_order() to treat its order parameter as the *new* order.
->>>>
->>>> Perhaps we should do those fixes anyway (and then actually start with a folio
->>>> order of 0 - which I think you said in the past was your original intention?).
->>>>
->>>> Thanks,
->>>> Ryan
->>>>
->>
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
