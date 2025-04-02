@@ -1,98 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-45502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E93AA78ABC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 11:11:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8DEEA78AD9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 11:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A87547A45CA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 09:10:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C88127A5084
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 09:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A09C2356D7;
-	Wed,  2 Apr 2025 09:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="TYycLM0v";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HM9bPB+M"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0D621ABC3;
+	Wed,  2 Apr 2025 09:15:51 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF0720E00B;
-	Wed,  2 Apr 2025 09:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F307205AD7;
+	Wed,  2 Apr 2025 09:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743585059; cv=none; b=hzLScNtSlSQaII0FF+Aur13841RK4WlJaQcUJ0C1pFtbUV2Zu/Oe7A1DJZH6DdLZ/JiAoGgNgPxxSJxgLUD3Lb83ZxFz8ItpkaxcUNQ9pFDzJT/Ds58fGROXj9cXEZZNGz0TkuTr5pxdB/AZtT8uGz0KasER4hMp7dNc2tY73rY=
+	t=1743585351; cv=none; b=uJxRMS4vDz4ClWao4Qlnr/HYXj89cfGdlpjV0NDm66BYwH8Mr2QoZB/F3O0PoGEMmTNViUx1u5FsItBSrQre5gcDZoprD1lFk8G+DHvfHKD68Ji0cGzGxpBVsFTvr3O0+pi/4x4w3cZNHvAAHLQjmJDrvpoucocHVluSVs7nldw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743585059; c=relaxed/simple;
-	bh=VSe3OeVWWnLk2r3FC4J7BJMmPc/Q2MEG9Hs1eEpSz2A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K9gG74cA6GEDfl/vEqxCGvnUgSx6Vub3l2EdNikqUhyUKCU0GyT4x5asSHGPbIQ7u3Yr1nQi7Bm3odzT29syd6i5R/glGWoxRI49pq+0Xa9AnfK37ViDpQZ04s3iN+jJSPPBJUeIoCwKI9u12i5PBsgYVuQzncw3FlO9oRwsZBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=TYycLM0v; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HM9bPB+M; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfout.stl.internal (Postfix) with ESMTP id B7704114011A;
-	Wed,  2 Apr 2025 05:10:55 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Wed, 02 Apr 2025 05:10:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1743585055;
-	 x=1743671455; bh=jUcSKZNgP+Sg/DbCPgXX4khSpS1DYk5lWGNv40G5oaI=; b=
-	TYycLM0vHgClioRO+V1aCV3RpEHvVzc2wW+b7rbdK7g83WOxAie9aBNrqurSQZYx
-	VGzQGtoliTjk2XFf+g1muwvANWGHcLRxlmeF0tNvuGS9Fu0+/yjgcYf3powpXu/S
-	keKjTTyc8fhIk949Qr+RtOI4mtpmGygKw81vVP0cCL/WFDqeV9scuroDdaLngPyz
-	3ZKb/DYJoeFLwOu6poas7lKX6dCgnWYuGApajrGy3ZQ4Xr2hQ6shEQ7o4h4jaG2F
-	ywG2n9Tzf+EgWyhLfWOg0voW/pYyabd+x3K2CevizZKeeBbnrA8hY+131JY3I/0o
-	ydTFVTI6oyw0f+H5hmE7qQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743585055; x=
-	1743671455; bh=jUcSKZNgP+Sg/DbCPgXX4khSpS1DYk5lWGNv40G5oaI=; b=H
-	M9bPB+MD7WOfJKSm9LbHnYaDx1S2wIBeP1aUYeqmRb3ftWGD4jLVJvDg4MPNZNaI
-	tS83pafPiSm45eTXg8wVVxW5ZbkoMOJc9MVbmRUEuMgBSqi1/1MXCWZDyDGxhz8X
-	SdzDDFyzbTL1ysRsKfjIZN9PeOnnyoTIlfWGlqm/yQ55ePpFwVfJOIxWvIdkfQXN
-	30TcODpqI0mGB5seOlZQGwY/lgO7StGbMTjLqw5LW34R3tx+WDduiAygqtZkW6ZI
-	Za21ou6niA1Jtcw2knzb+yfRzqPVZIuCtCEOkJ/NxPipWN5C73JiLeLqP4fp+yP2
-	q+5zU5Mk7zObJ3SgSmRfA==
-X-ME-Sender: <xms:Hv_sZyQvn7HkvJfNdnGs_meUZQBRg_NtmTzYTuAx3SuOYGPAG4v6_g>
-    <xme:Hv_sZ3yGR5ptWUUhjYu_Ox-uoFJ4VWVbg7Z96DY3mM3POSdR52IjHxzqVQWzJ4h2y
-    VMj4iIGKQJLRYME>
-X-ME-Received: <xmr:Hv_sZ_0C-GzncG3R2lblJ4BAPnwO9DH57mL7tTqe-snV5wNMyz9i02uyHaEUn9YE_yN7ucnan7SLAE5J-IctbvePngcpHW7scfTdFkZnNC6qc_41-HqY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukeehvdekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddt
-    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuh
-    gsvghrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudev
-    udevleegleffffekudekgeevlefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrh
-    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggv
-    rhhtsehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmth
-    hpohhuthdprhgtphhtthhopehjrggtohesuhhlshdrtghordiirgdprhgtphhtthhopehm
-    ihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheplhhinhhugidqfhhsuggvvh
-    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghr
-    nhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegthhhrihhsthhoph
-    hhvgdrjhgrihhllhgvthesfigrnhgrughoohdrfhhrpdhrtghpthhtohepjhhorghnnhgv
-    lhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhguuhhnlhgrphesihhnfh
-    hrrgguvggrugdrohhrghdprhgtphhtthhopehtrhgrphgvgihithesshhprgifnhdrlhhi
-    nhhkpdhrtghpthhtohepuggrvhhiugdrlhgrihhghhhtrdhlihhnuhigsehgmhgrihhlrd
-    gtohhm
-X-ME-Proxy: <xmx:H__sZ-D_Z6Q2psY0YA439HNCyavSC38TJ7Whb_y8v-F8cAIO0hksRw>
-    <xmx:H__sZ7j27s5vINVZI2ZZfoBGMgfe968pFn4DGcTOzHp3ou-_DN5N8A>
-    <xmx:H__sZ6r47k-ziJw5inLc20YGY-mHULEfNJSvrnuco0rxG9MYQ6YXpA>
-    <xmx:H__sZ-gtftfwRV8CELCSFGvpDR5VmOFG5dCnE6xOsE5lal6LpVH4bw>
-    <xmx:H__sZ8qGwNo9cRmwYSV5WpJYOCQXkbOdiYNr1vup8BThFeZeqp8WRcL7>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 2 Apr 2025 05:10:53 -0400 (EDT)
-Message-ID: <0b0a6adf-348e-425d-b375-23da3d6668d0@fastmail.fm>
-Date: Wed, 2 Apr 2025 11:10:52 +0200
+	s=arc-20240116; t=1743585351; c=relaxed/simple;
+	bh=L9sjaXrfYSgQgRa1e9C5yEIG6VacKfIGXFkTXEok4qE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LcV/qydnprjJcXN0v0glAF/jjwYZf0pSZTuD3k+28nqIokH9ZmaorASGhDOJexc/3eYL2my/N7IcTswoqh7c6grdfjvo6V4ujBYdl1bFk7Bmk84K0DsfJkTKZDKafJEJXfJvLkeahyNFoLPAP01b6DQxiwQEo8Ch0cEyqIp5z9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZSJxs6rsLz2TS1p;
+	Wed,  2 Apr 2025 17:10:57 +0800 (CST)
+Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 32A021402C4;
+	Wed,  2 Apr 2025 17:15:46 +0800 (CST)
+Received: from [10.174.178.209] (10.174.178.209) by
+ kwepemg500010.china.huawei.com (7.202.181.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 2 Apr 2025 17:15:45 +0800
+Message-ID: <e6537aa9-6fe7-47e4-afd3-9da549ce12a1@huawei.com>
+Date: Wed, 2 Apr 2025 17:15:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -100,55 +48,65 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] fuse: Adjust readdir() buffer to requesting buffer
- size.
-To: Jaco Kroon <jaco@uls.co.za>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- christophe.jaillet@wanadoo.fr, joannelkoong@gmail.com,
- rdunlap@infradead.org, trapexit@spawn.link, david.laight.linux@gmail.com
-References: <20250314221701.12509-1-jaco@uls.co.za>
- <20250401142831.25699-1-jaco@uls.co.za>
- <20250401142831.25699-3-jaco@uls.co.za>
- <CAJfpegtOGWz_r=7dbQiCh2wqjKh59BqzqJ0ruhtYtsYBB+GG2Q@mail.gmail.com>
- <19df312f-06a2-4e71-960a-32bc952b0ed2@uls.co.za>
- <CAJfpegseKMRLpu3-yS6PeU2aTmh_qKyAvJUWud_SLz1aCHY_tw@mail.gmail.com>
- <3f71532b-4fed-458a-a951-f631155c0107@uls.co.za>
- <CAJfpegtutvpYYzkW91SscwULcLt_xHeqCGLPmUHKAjozPAQQ8A@mail.gmail.com>
- <0cf44936-57ef-42f2-a484-7f69b87b2520@uls.co.za>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <0cf44936-57ef-42f2-a484-7f69b87b2520@uls.co.za>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: Fwd: [PATCH][SMB3 client] fix TCP timers deadlock after rmmod
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Kuniyuki Iwashima <kuniyu@amazon.com>, <edumazet@google.com>,
+	<ematsumiya@suse.de>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-net@vger.kernel.org>,
+	<smfrench@gmail.com>, <zhangchangzhong@huawei.com>, <cve@kernel.org>,
+	<sfrench@samba.org>
+References: <ac39f5a1-664a-4812-bb50-ceb9771d1d66@huawei.com>
+ <20250402020807.28583-1-kuniyu@amazon.com>
+ <36dc113c-383e-4b8a-88c1-6a070e712086@huawei.com>
+ <2025040200-unchanged-roaming-52b3@gregkh>
+From: Wang Zhaolong <wangzhaolong1@huawei.com>
+In-Reply-To: <2025040200-unchanged-roaming-52b3@gregkh>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemg500010.china.huawei.com (7.202.181.71)
 
-
-
-On 4/2/25 10:52, Jaco Kroon wrote:
-> Hi,
+> On Wed, Apr 02, 2025 at 12:49:50PM +0800, Wang Zhaolong wrote:
+>> Yes, it seems the previous description might not have been entirely clear.
+>> I need to clearly point out that this patch, intended as the fix for CVE-2024-54680,
+>> does not actually address any real issues. It also fails to resolve the null pointer
+>> dereference problem within lockdep. On top of that, it has caused a series of
+>> subsequent leakage issues.
 > 
-> On 2025/04/02 10:18, Miklos Szeredi wrote:
->> On Wed, 2 Apr 2025 at 09:55, Jaco Kroon <jaco@uls.co.za> wrote:
->>> Hi,
->>>
->>> I can definitely build on that, thank you.
->>>
->>> What's the advantage of kvmalloc over folio's here, why should it be
->>> preferred?
->> It offers the best of both worlds: first tries plain malloc (which
->> just does a folio alloc internally for size > PAGE_SIZE) and if that
->> fails, falls back to vmalloc, which should always succeed since it
->> uses order 0 pages.
+> If this cve does not actually fix anything, then we can easily reject
+> it, please just let us know if that needs to happen here.
 > 
-> So basically assigns the space, but doesn't commit physical pages for
-> the allocation, meaning first access will cause a page fault, and single
-> page allocation at that point in time?  Or is it merely the fact that
-> vmalloc may return a virtual contiguous block that's not physically
-> contiguous?
+> thanks,
+> 
+> greg k-h
+Hi Greg,
 
+Yes, I can confirm that the patch for CVE-2024-54680 (commit e9f2517a3e18)
+should be rejected. Our analysis shows:
 
-Yes vmalloc return buffers might not be physically contiguous - not
-suitable for hardware DMA. And AFAIK it is also a blocking allocation.
+1. It fails to address the actual null pointer dereference in lockdep
 
+2. It introduces multiple serious issues:
+    1. A socket leak vulnerability as documented in bugzilla #219972
+    2. Network namespace refcount imbalance issues as described in
+      bugzilla #219792 (which required the follow-up mainline fix
+      4e7f1644f2ac "smb: client: Fix netns refcount imbalance
+      causing leaks and use-after-free")
 
-Bernd
+The next thing we should probably do is:
+    - Reverting e9f2517a3e18
+    - Reverting the follow-up fix 4e7f1644f2ac, as it's trying to fix
+      problems introduced by the problematic CVE patch
+    - Addressing the original lockdep issue properly (Kuniyuki is working
+      on a module ownership tracking patch, though it hasn't been merged yet)
+
+Regardless of the status of Kuniyuki's lockdep fix, the CVE patch itself
+is fundamentally flawed and should be rejected as it creates more problems
+than it solves.
+
+Thank you for your attention to this matter.
+
+Best regards.
+Wang Zhaolong
+
 
