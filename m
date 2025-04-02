@@ -1,153 +1,243 @@
-Return-Path: <linux-fsdevel+bounces-45558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 684C1A796DF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 22:51:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18289A796F2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 22:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 808903B2403
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 20:50:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A21E77A24EE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 20:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188FC1F2B8E;
-	Wed,  2 Apr 2025 20:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAC91F3B82;
+	Wed,  2 Apr 2025 20:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="AynC7A59"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WpEz5LSe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819C7193436;
-	Wed,  2 Apr 2025 20:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4710E193436;
+	Wed,  2 Apr 2025 20:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743627057; cv=none; b=pljA/rsdEnBi4ctiDT7uNAcnsjBW03mVWZRY1kxZqD57Z2RfNTkK1pJBu4osw4Ji1ofkxz2xUkMUd3uERcxHBQIIYJ+CTLO64bCRNdzCKgp/FEWfi9wx+Vrwkh7mqjCUgMqfzEW//F/Twr3KceMxblRvzydVd8E1H/7tu33QO4g=
+	t=1743627502; cv=none; b=rDRDQp2gDdUyv3bPHsgMsjfpC8HegGV7o9S366v/0Ns5/ekTTh44jjz9qjh/6xyCIEmM3i5TFNFlyjoVFgWtORtQ/prRGT4SkFo7vB0IDG8nXcaC/KgiVMGUX3J5yllNW8XLdLGuNEY2nrGohObG/myroQfOMOhcrZa5JOe16Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743627057; c=relaxed/simple;
-	bh=0djtFdo5h3fDieUNKNXazTKddt+w5retjfkch5CCArs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=je8v2Hj5DWTxkJdlNR4ztHA8nvsxZ806jQeyE0CiYSJKUgbEyV0e9R/W5nQGZ/ozR693eVIwrkY01E8Rm0CzXo0CalQwaRDXRwDA02MAIWjgjcLs7DM8zrXAwFmGADbA3RNbl9Y3/sb4G1g2F1NCBSGNsyN13zi9G81oD+eIT0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=AynC7A59; arc=none smtp.client-ip=52.119.213.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1743627056; x=1775163056;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=PZgBsjQbBUgfbfilglLiHgWwr6bb2rCEcoxzjvzGR6M=;
-  b=AynC7A59OJeewNtH7GpGr6OMCNGJl5Dk5Q8OUgl65rLu+qBqiFBQ1Li0
-   w9gS4nulRNMxFTx9VvR52st/HmcfrXCh1q3UC41iQrGghISVbv2J86H4y
-   yYtyYIo66IsY75br+jH9XvzHPBt8msYQMwZE9Qfpg0JItA07rwXtwjsFq
-   M=;
-X-IronPort-AV: E=Sophos;i="6.15,183,1739836800"; 
-   d="scan'208";a="285094299"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 20:50:52 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.7.35:63875]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.57.231:2525] with esmtp (Farcaster)
- id 58bbd771-3e95-48f9-9ba9-001f711cdfcd; Wed, 2 Apr 2025 20:50:51 +0000 (UTC)
-X-Farcaster-Flow-ID: 58bbd771-3e95-48f9-9ba9-001f711cdfcd
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 2 Apr 2025 20:50:51 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.106.101.8) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 2 Apr 2025 20:50:48 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <gregkh@linuxfoundation.org>
-CC: <cve@kernel.org>, <edumazet@google.com>, <ematsumiya@suse.de>,
-	<kuniyu@amazon.com>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-net@vger.kernel.org>,
-	<sfrench@samba.org>, <smfrench@gmail.com>, <wangzhaolong1@huawei.com>,
-	<zhangchangzhong@huawei.com>
-Subject: Re: Fwd: [PATCH][SMB3 client] fix TCP timers deadlock after rmmod
-Date: Wed, 2 Apr 2025 13:50:05 -0700
-Message-ID: <20250402205039.9933-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <2025040256-spindle-cornea-60ec@gregkh>
-References: <2025040256-spindle-cornea-60ec@gregkh>
+	s=arc-20240116; t=1743627502; c=relaxed/simple;
+	bh=LS8lzPuSVwy6U6TgTLTTjZjd5YvFHYJurAtikdh5Zf0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QZ27StBbbtjF3JRLx/gevjbkD8Xmzh4s2Dhf5cpL9mKz/HLDcpk/FHsPKFGDdGHSUkLzIupSx5GMdTJ5y1hweZBIz2JGSFuXnK/Wjm7Jg3wSLhEHCMYUbhzWBq5QVgqXCXPUBXwv4gqeH0v6VIboimTHi5cPPfR8PrJAx0J1Z0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WpEz5LSe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 393F8C4CEDD;
+	Wed,  2 Apr 2025 20:58:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743627501;
+	bh=LS8lzPuSVwy6U6TgTLTTjZjd5YvFHYJurAtikdh5Zf0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WpEz5LSe3zK2P1+s3bvr9He6kGU8WGtTbJuycJ6AFl4Vw8xQTWpKq+KjR3g0FxIQh
+	 hGfQa71VfING6ReA23S/t2vkVlO4zhCSBe8SHUBDnGJubJyLlBc9Q8/d18tklah8uE
+	 z8Cul559z+Xf2nt9jQX7gK7x5c5ezXrtQH9E4dtne7SnsmH0OjtwDmz8oNAg2dMUpt
+	 +mPYZ/2MZNIiYtVGaQpA4V8rD7eKzEQlqN09g3PHgwmadQORGAq75qakd1LXEbqwG3
+	 tnKIVRb3x3+tFwkm8yv4Soin7XZDm0obSvLtsNd7hX66wV3YLFUMaCesl+fgkVSVQW
+	 ybwX3W2wDwCrA==
+Date: Wed, 2 Apr 2025 22:58:17 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Alejandro Colomar <alx.manpages@gmail.com>, Jan Kara <jack@suse.cz>, 
+	Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>, 
+	linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fanotify: Document FAN_PRE_ACCESS event
+Message-ID: <de54ad3do3vz3mi7swdojhwzrpssxk6rzqrfzlrmjaxz4pud6r@ha64lyrespvy>
+References: <20250330125536.1408939-1-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D035UWA004.ant.amazon.com (10.13.139.109) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2wrlxfpkdvy6jait"
+Content-Disposition: inline
+In-Reply-To: <20250330125536.1408939-1-amir73il@gmail.com>
 
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Wed, 2 Apr 2025 21:28:51 +0100
-> On Wed, Apr 02, 2025 at 01:22:11PM -0700, Kuniyuki Iwashima wrote:
-> > From: Greg KH <gregkh@linuxfoundation.org>
-> > Date: Wed, 2 Apr 2025 21:15:58 +0100
-> > > On Wed, Apr 02, 2025 at 01:09:19PM -0700, Kuniyuki Iwashima wrote:
-> > > > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > Date: Wed, 2 Apr 2025 16:18:37 +0100
-> > > > > On Wed, Apr 02, 2025 at 05:15:44PM +0800, Wang Zhaolong wrote:
-> > > > > > > On Wed, Apr 02, 2025 at 12:49:50PM +0800, Wang Zhaolong wrote:
-> > > > > > > > Yes, it seems the previous description might not have been entirely clear.
-> > > > > > > > I need to clearly point out that this patch, intended as the fix for CVE-2024-54680,
-> > > > > > > > does not actually address any real issues. It also fails to resolve the null pointer
-> > > > > > > > dereference problem within lockdep. On top of that, it has caused a series of
-> > > > > > > > subsequent leakage issues.
-> > > > > > > 
-> > > > > > > If this cve does not actually fix anything, then we can easily reject
-> > > > > > > it, please just let us know if that needs to happen here.
-> > > > > > > 
-> > > > > > > thanks,
-> > > > > > > 
-> > > > > > > greg k-h
-> > > > > > Hi Greg,
-> > > > > > 
-> > > > > > Yes, I can confirm that the patch for CVE-2024-54680 (commit e9f2517a3e18)
-> > > > > > should be rejected. Our analysis shows:
-> > > > > > 
-> > > > > > 1. It fails to address the actual null pointer dereference in lockdep
-> > > > > > 
-> > > > > > 2. It introduces multiple serious issues:
-> > > > > >    1. A socket leak vulnerability as documented in bugzilla #219972
-> > > > > >    2. Network namespace refcount imbalance issues as described in
-> > > > > >      bugzilla #219792 (which required the follow-up mainline fix
-> > > > > >      4e7f1644f2ac "smb: client: Fix netns refcount imbalance
-> > > > > >      causing leaks and use-after-free")
-> > > > > > 
-> > > > > > The next thing we should probably do is:
-> > > > > >    - Reverting e9f2517a3e18
-> > > > > >    - Reverting the follow-up fix 4e7f1644f2ac, as it's trying to fix
-> > > > > >      problems introduced by the problematic CVE patch
-> > > > > 
-> > > > > Great, can you please send patches now for both of these so we can
-> > > > > backport them to the stable kernels properly?
-> > > > 
-> > > > Sent to CIFS tree:
-> > > > https://lore.kernel.org/linux-cifs/20250402200319.2834-1-kuniyu@amazon.com/
-> > > 
-> > > You forgot to add a Cc: stable@ on the patches to ensure that they get
-> > > picked up properly for all stable trees :(
-> > 
-> > Ah sorry, I did the same with netdev.  netdev patches usually do
-> > not have the tag but are backported fine, maybe netdev local rule ?
-> 
-> Nope, that's the "old" way of dealing with netdev patches, the
-> documentation was changed years ago, please always put a cc: stable on
-> it.  Otherwise you are just at the whim of our "hey, I'm board, let's
-> look for Fixes: only tags!" script to catch them, which will also never
-> notify you of failures.
 
-Good to know that, thanks!
+--2wrlxfpkdvy6jait
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Alejandro Colomar <alx.manpages@gmail.com>, Jan Kara <jack@suse.cz>, 
+	Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>, 
+	linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fanotify: Document FAN_PRE_ACCESS event
+References: <20250330125536.1408939-1-amir73il@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20250330125536.1408939-1-amir73il@gmail.com>
 
-My concern was that I could spam the list if I respin the patches,
-and incomplete patch could be backported.
+Hi Amir,
 
-From stable-kernel-rules.rst, such an accident can be prevented if
-someone points out a problem within 48 hours ?
+On Sun, Mar 30, 2025 at 02:55:36PM +0200, Amir Goldstein wrote:
+> The new FAN_PRE_ACCESS events are created before access to a file range,
+> to provides an opportunity for the event listener to modify the content
+> of the object before the user can accesss it.
+>=20
+> Those events are available for group in class FAN_CLASS_PRE_CONTENT
+> They are reported with FAN_EVENT_INFO_TYPE_RANGE info record.
+>=20
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  man/man2/fanotify_init.2 |  4 ++--
+>  man/man2/fanotify_mark.2 | 14 +++++++++++++
+>  man/man7/fanotify.7      | 43 ++++++++++++++++++++++++++++++++++++++--
+>  3 files changed, 57 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/man/man2/fanotify_init.2 b/man/man2/fanotify_init.2
+> index 23fbe126f..b1ef8018c 100644
+> --- a/man/man2/fanotify_init.2
+> +++ b/man/man2/fanotify_init.2
+> @@ -57,8 +57,8 @@ Only one of the following notification classes may be s=
+pecified in
+>  .B FAN_CLASS_PRE_CONTENT
+>  This value allows the receipt of events notifying that a file has been
+>  accessed and events for permission decisions if a file may be accessed.
+> -It is intended for event listeners that need to access files before they
+> -contain their final data.
+> +It is intended for event listeners that may need to write data to files
+> +before their final data can be accessed.
+>  This notification class might be used by hierarchical storage managers,
+>  for example.
+>  Use of this flag requires the
+> diff --git a/man/man2/fanotify_mark.2 b/man/man2/fanotify_mark.2
+> index 47cafb21c..edbcdc592 100644
+> --- a/man/man2/fanotify_mark.2
+> +++ b/man/man2/fanotify_mark.2
+> @@ -445,6 +445,20 @@ or
+>  .B FAN_CLASS_CONTENT
+>  is required.
+>  .TP
+> +.BR FAN_PRE_ACCESS " (since Linux 6.14)"
+> +.\" commit 4f8afa33817a6420398d1c177c6e220a05081f51
+> +Create an event before read or write access to a file range,
+> +that provides an opportunity for the event listener
+> +to modify the content of the file
+> +before access to the content
+> +in the specified range.
+> +An additional information record of type
+> +.B FAN_EVENT_INFO_TYPE_RANGE
+> +is returned for each event in the read buffer.
+> +An fanotify file descriptor created with
+> +.B FAN_CLASS_PRE_CONTENT
+> +is required.
+> +.TP
+>  .B FAN_ONDIR
+>  Create events for directories\[em]for example, when
+>  .BR opendir (3),
+> diff --git a/man/man7/fanotify.7 b/man/man7/fanotify.7
+> index 7844f52f6..6f3a9496e 100644
+> --- a/man/man7/fanotify.7
+> +++ b/man/man7/fanotify.7
+> @@ -247,6 +247,26 @@ struct fanotify_event_info_error {
+>  .EE
+>  .in
+>  .P
+> +In case of
+> +.B FAN_PRE_ACCESS
+> +events,
+> +an additional information record describing the access range
+> +is returned alongside the generic
+> +.I fanotify_event_metadata
+> +structure within the read buffer.
+> +This structure is defined as follows:
+> +.P
+> +.in +4n
+> +.EX
+> +struct fanotify_event_info_range {
+> +    struct fanotify_event_info_header hdr;
+> +    __u32 pad;
+> +    __u64 offset;
+> +    __u64 count;
+> +};
+> +.EE
+> +.in
+> +.P
+>  All information records contain a nested structure of type
+>  .IR fanotify_event_info_header .
+>  This structure holds meta-information about the information record
+> @@ -509,8 +529,9 @@ The value of this field can be set to one of the foll=
+owing:
+>  .BR FAN_EVENT_INFO_TYPE_FID ,
+>  .BR FAN_EVENT_INFO_TYPE_DFID ,
+>  .BR FAN_EVENT_INFO_TYPE_DFID_NAME ,
+> -or
+> -.BR FAN_EVENT_INFO_TYPE_PIDFD .
+> +.BR FAN_EVENT_INFO_TYPE_PIDFD ,
+> +.BR FAN_EVENT_INFO_TYPE_ERROR ,
+> +.BR FAN_EVENT_INFO_TYPE_RANGE .
+>  The value set for this field
+>  is dependent on the flags that have been supplied to
+>  .BR fanotify_init (2).
+> @@ -711,6 +732,24 @@ Identifies the type of error that occurred.
+>  This is a counter of the number of errors suppressed
+>  since the last error was read.
+>  .P
+> +The fields of the
+> +.I fanotify_event_info_range
+> +structure are as follows:
+> +.TP
+> +.I hdr
 
-For example, if v1 is posted with Cc:stable, and a week later
-v2 is posted, then the not-yet-upstreamed v1 could be backported ?
+We should use .hdr here too (and in the fields below, '.' too), right?
+
+
+Cheers,
+Alex
+
+> +This is a structure of type
+> +.IR fanotify_event_info_header .
+> +The
+> +.I info_type
+> +field is set to
+> +.BR FAN_EVENT_INFO_TYPE_RANGE .
+> +.TP
+> +.I count
+> +The number of bytes being read or written to the file.
+> +.TP
+> +.I offset
+> +The offset from which bytes are read or written to the file.
+> +.P
+>  The following macros are provided to iterate over a buffer containing
+>  fanotify event metadata returned by a
+>  .BR read (2)
+> --=20
+> 2.34.1
+>=20
+
+--=20
+<https://www.alejandro-colomar.es/>
+<https://www.alejandro-colomar.es:8443/>
+<http://www.alejandro-colomar.es:8080/>
+
+--2wrlxfpkdvy6jait
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmftpOkACgkQ64mZXMKQ
+wqmidhAAiT4GKNxVG6x2KKMPRhXSusiwpH1jGmwC+yeKVvLpK7cH6REeQUUrmBRk
+QhdEIQzoLtwubV6QWMm+ahltMfJRVWx52kBCRiHMb1o0xpue4X7XOnb6lsWVPhum
+H70bkyHe9MH1UiAASTuNl7yJYM2496rNk9KBYRXr+BgWVv1spU6HCO09v0StYr2l
+NPXkdJY0pdYCC2SiOqwPtNqBORTOGPnvQN1PseEV+OP9DqVP+cP/hT4GISoCAz9+
+nVbSB370EmOj//0CZSery0GrVomTVt0Skrl9Wz87h1tyHcHnJC6AQ1EG2uRW+ZQ9
+bd2vBrWEHAyrVtoJA+WPH6yTKrkMrhFwP+wvncewBoCAdzZUbUCgS+JI/AhLgAXz
+iXoehT+woXFXhawG6Y64uwTIfCHosBu0EVS0q/nqmK9HB5ug28KV8O3WdQG0J2OX
+9A4VjVzr2chlSCRYxML/TAdpjAebkI7rdRsemKzFIi0u5D9wwa0hX9juH6tuCk8L
+hcCdU8XT2w+moa9qmFXs7sTMfMWES4W2/VY6XDl0YkWnY9Dm86FknwWUyMKdlaR4
+/SNVjIdS6fk8JsgVjquOPzyQtHzGZUyh7kFSDFM+pKIUWC9fXDfo1Ir7tXQ/13G3
+1DcVwWNEWs+4Wz0RSP3lb/CIOkLxk0yxNgD9JDgYgcU2BkT6gkk=
+=lx52
+-----END PGP SIGNATURE-----
+
+--2wrlxfpkdvy6jait--
 
