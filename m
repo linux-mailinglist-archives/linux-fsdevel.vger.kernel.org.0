@@ -1,102 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-45550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC337A79525
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 20:33:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F805A79566
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 20:48:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FA591890A37
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 18:33:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 481FE1895E2D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 18:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53FAC1C7009;
-	Wed,  2 Apr 2025 18:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACCF1E8325;
+	Wed,  2 Apr 2025 18:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="gvb7ZoND"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HRaUuztW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E99A19E826
-	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Apr 2025 18:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B605F1C6FF4;
+	Wed,  2 Apr 2025 18:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743618816; cv=none; b=N2CEPp6Xmnu7ciinl8VYS3hU7cEO6BTX5U3ckorHa2S0b4rtqr//VegUrIbnCxR7IlazH6k90euybRJnZlCTX/71qKgzZtGVmlliXBxuZ2Ei78l8Y1bqfKyLDPyGAwEk+QW28uiEGnyz+vbISjIHoxfvXL7TwwL+teK+ZfpgrGU=
+	t=1743619594; cv=none; b=JUR3VEkhOfbxjD1T20/l9/Emf90KIORgDkz5qYTrog8i847kMFX0/TewXs0WbViWoDaHqHM5n5GqOGfsxknl1e7j+L0ldCNVZbXaOijv8O6+IjV63ecDsY+nvSVJqKgESFNOtgFdpvsvmiTeD3RkgWGoXuPLIg7PJ3VxuQTma7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743618816; c=relaxed/simple;
-	bh=wqi6nGu8pUXznFhgWtoqTXFFKD9sn7Y6HiqC1464LAA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mb9ghrqucV8SI0ySh1dNa0xoN9/oRx8gml2gn5UYhIxtWTVbLK70PesnCFpMwxJMCduefkUHieWRgSHRCyl6LUWsbcFYAImFQZEh+mps3sVwWFa7Lh3uIg1MFiraxlacBHEmNjftxPIr1mD2AGXnA/nuy5Jiga2+HNS1GObo2qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=gvb7ZoND; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4769bbc21b0so413961cf.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Apr 2025 11:33:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1743618813; x=1744223613; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mh4t8UhrAnxvgxnJaPo/M7iBrdK2Iqc4GNc5uJL4yPc=;
-        b=gvb7ZoNDf+7Rv2KW5E2RpnHVOhDtj6L95Z1ErAFbeJih2DvINxgbU+DFmjP9Z8ysdB
-         qafetjqaKZAB+azbemJ/un2qOstbcl7+Ww9cnnI29Ul6aHt3qCFZtdtFJKRBV4y7RDqD
-         JGXNCMi65PdCKlEYYX5Ztud8fRmCBANBZW4m4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743618813; x=1744223613;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mh4t8UhrAnxvgxnJaPo/M7iBrdK2Iqc4GNc5uJL4yPc=;
-        b=GjphBPMYP0g+AYQBsqmpqkFUQknbM6bd6QWnGjTZv6cHpuZxEAzeEikmr+MeVGN9IO
-         r9s0l5QFRFiW7L2+xFgatehvfmLUb/TAt6xDr9Fu8FJTI3pVggIv9K9WA9y3rjy3TtsY
-         CjicsKJ181pa7tAOiBHcwxhn3x4wK99WxeLsBsPttqnnko8ytaP40jJUrMy98wzNOjsY
-         oGbTnmqO20JKSwBjk0cPbA/kz5/3U+9DFNzomSi2OYChyJp2gqXfEKz+Z0B/JhuOmOKk
-         36duifgamd3NUAP15cBx4SNamUPoq1mO+f/G09rWCQYzs3Ldr7beuarQ2yW4xTUtQ3J+
-         S5dw==
-X-Forwarded-Encrypted: i=1; AJvYcCWm2S/vX2uGrS0NYws3f3RUPm8xUIoEpZ5VBrSuXpR4/at7oD16HixCdpzWWm/VB22/CCLF5j6W8vsUtC6O@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUpUkFV9AI4LBt5a4cAFSGjFdiNay7lHSHGw/MLalllWCT20BC
-	LOkJX8cHzBFOhb8bEHH7CQnZp9tTe+NUGffdAw4teRvU30TFXa2ntG6s3E+sspIBMJ7RzS41UYl
-	GGFUYcI+QhkXdyxd4oMW5RILnT6YSD52AagPh0g==
-X-Gm-Gg: ASbGncuQMGF0fQaIM3h+FxFJxnQOEfbxsjlqD6OqsfJ43Rk02HZUZaleKimErNxP1jR
-	wCoDZnoZYPq0ApX44j4I5XAwPujVayqAPKlFqWF8Vsfm/Fz9V0BpsTa5JQSkhqAukgLOjUF6/1b
-	xZQH98j3TbHx+2AXI2/XKjRgdp0Q==
-X-Google-Smtp-Source: AGHT+IEVPZGuS7E8zjeanmyoZ0TzSSjqi4+yIa9XqOLN+47hqk465L+EhhgZrDVkMbJ7zCmvXdyGiiVCRBD0V5vYbYc=
-X-Received: by 2002:ac8:7d45:0:b0:476:9847:7c73 with SMTP id
- d75a77b69052e-47909faa711mr47825501cf.26.1743618813131; Wed, 02 Apr 2025
- 11:33:33 -0700 (PDT)
+	s=arc-20240116; t=1743619594; c=relaxed/simple;
+	bh=NNPty5+Jk65JZUZnsiMLdlKG62MVsZ4Q1CPSxTdXSVQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BBf/p0zOvOV0xmZWyHMjD3+2qbcjNQzfeg8H8haOc/21CJZQDE0PvpLbNu6MX5VNMfiPQnfniACjiO6Jj+4fibL/kJ4sOCMDKGdovMBu+Vm8/M8mpqTFeUZySel9LZb6m8dbmkh3pe/j3mqmG1E/Ae3ipOtA0zMVwrdaytw4N3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HRaUuztW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA941C4CEDD;
+	Wed,  2 Apr 2025 18:46:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743619594;
+	bh=NNPty5+Jk65JZUZnsiMLdlKG62MVsZ4Q1CPSxTdXSVQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HRaUuztWyrdPRc7bajAwH4tX/vtfwV6F+3BQsT2pLqVZDZUchZfUthg1Ftv8fH+j6
+	 enThnkTPnt+DWtegk1EaWz5V1llQHVwd2yfZNvyhrhRC3Pnzw+8agSGyoqJb4QsOo+
+	 jC/1WY91NHGWHkQTzcA8/iV9JAskd8+vJr7dy9wVyRO/SIRwBKbKpaPVMBHPAg9bJ2
+	 bmch0zMqSkhrSPECsOzsemboDnNAh17ZONMk7GTskADvLSBMYwGs8mz7gbtXU8Jr/m
+	 +gO/SW239OjQ/rnr5cUgn3PZap73LIUDOXtIwMrBTmJZ/j637ljG+ED0B0FQl6K6AO
+	 Zx0+BflnqglpA==
+Date: Wed, 2 Apr 2025 11:46:32 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Swarna Prabhu <sw.prabhu6@gmail.com>
+Cc: patches@lists.linux.dev, fstests@vger.kernel.org, linux-mm@kvack.org,
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org, xiang@kernel.org, david@redhat.com,
+	huang.ying.caritas@gmail.com, willy@infradead.org, jack@suse.cz,
+	p.raghav@samsung.com, da.gomez@samsung.com, dave@stgolabs.net,
+	gost.dev@samsung.com, Swarna Prabhu <s.prabhu@samsung.com>
+Subject: Re: [PATCH v2] generic/750 : add missing _fixed_by_git_commit line
+ to the test
+Message-ID: <Z-2GCKT5_U-ZjU94@bombadil.infradead.org>
+References: <20250402183034.2334125-1-s.prabhu@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250402-fuse-io-uring-trace-points-v1-0-11b0211fa658@ddn.com> <20250402-fuse-io-uring-trace-points-v1-2-11b0211fa658@ddn.com>
-In-Reply-To: <20250402-fuse-io-uring-trace-points-v1-2-11b0211fa658@ddn.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 2 Apr 2025 20:33:22 +0200
-X-Gm-Features: AQ5f1Jprv7glnIoVkEmyhn6zcWHQ0FqcM2qwTL08mG-5PlqMqZbpYTb-Eiw6jLE
-Message-ID: <CAJfpegt5VGcSPOFA10YhGq6W+pZR8m+YEfhLSL8uFbJhqT7kuA@mail.gmail.com>
-Subject: Re: [PATCH RFC 2/4] fuse: Set request unique on allocation
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Vivek Goyal <vgoyal@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	linux-fsdevel@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250402183034.2334125-1-s.prabhu@samsung.com>
 
-On Wed, 2 Apr 2025 at 19:41, Bernd Schubert <bschubert@ddn.com> wrote:
->
-> This is especially needed for better ftrace analysis,
-> for example to build histograms. So far the request unique
-> was missing, because it was added after the first trace message.
->
-> IDs/req-unique now might not come up perfectly sequentially
-> anymore, but especially  with cloned device or io-uring this
-> did not work perfectly anyway.
+On Wed, Apr 02, 2025 at 06:30:34PM +0000, Swarna Prabhu wrote:
+> Testing generic/750 with older kernels indicated that more work has to
+> be done, since we were able to reproduce a hang with v6.10-rc7 with 2.5
+> hours soak duration. We tried to reproduce the same issue on v6.12 and could
+> no longer reproduce the original hang. This motivated us to identify the commit
+> 2e6506e1c4ee ("mm/migrate: fix deadlock in migrate_pages_batch() on large folios")
+> that fixes the originally reported deadlock hang annotated as pending work
+> to evaluate on generic/750. Hence if you are using kernel older than v6.11-rc4
+> this commit is needed.
+> 
+> Below is the kernel trace collected on v6.10-rc7 without the above
+> commit and CONFGI_PROVE_LOCKING enabled:
+> 
+> [ 8942.920967]  ret_from_fork_asm+0x1a/0x30
+> [ 8942.921450]  </TASK>
+> [ 8942.921711] INFO: task 750:2532 blocked for more than 241 seconds.                                                                                         [ 8942.922413]       Not tainted 6.10.0-rc7 #9
+> [ 8942.922894] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.                                                                      [ 8942.923770] task:750             state:D stack:0     pid:2532  tgid:2532  ppid:2349   flags:0x00004002                                                     [ 8942.924820] Call Trace:
+> [ 8942.925109]  <TASK>
+> [ 8942.925362]  __schedule+0x465/0xe10
+> [ 8942.925756]  schedule+0x39/0x140
+> [ 8942.926114]  io_schedule+0x42/0x70
+> [ 8942.926493]  folio_wait_bit_common+0x10e/0x330
+> [ 8942.926986]  ? __pfx_wake_page_function+0x10/0x10
+> [ 8942.927506]  migrate_pages_batch+0x765/0xeb0
+> [ 8942.927986]  ? __pfx_compaction_alloc+0x10/0x10
+> [ 8942.928488]  ? __pfx_compaction_free+0x10/0x10
+> [ 8942.928983]  migrate_pages+0xbfd/0xf50
+> [ 8942.929377]  ? __pfx_compaction_alloc+0x10/0x10
+> [ 8942.929838]  ? __pfx_compaction_free+0x10/0x10
+> [ 8942.930553]  compact_zone+0xa4d/0x11d0
+> [ 8942.930936]  ? rcu_is_watching+0xd/0x40
+> [ 8942.931332]  compact_node+0xa9/0x120
+> [ 8942.931704]  sysctl_compaction_handler+0x71/0xd0
+> [ 8942.932177]  proc_sys_call_handler+0x1b8/0x2d0
+> [ 8942.932641]  vfs_write+0x281/0x530
+> [ 8942.932993]  ksys_write+0x67/0xf0
+> [ 8942.933381]  do_syscall_64+0x69/0x140
+> [ 8942.933822]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [ 8942.934415] RIP: 0033:0x7f8a460215c7
+> [ 8942.934843] RSP: 002b:00007fff75cf7bb0 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+> [ 8942.935720] RAX: ffffffffffffffda RBX: 00007f8a45f8f740 RCX: 00007f8a460215c7
+> [ 8942.936550] RDX: 0000000000000002 RSI: 000055e89e3a7790 RDI: 0000000000000001
+> [ 8942.937405] RBP: 000055e89e3a7790 R08: 0000000000000000 R09: 0000000000000000                                                                              [ 8942.938236] R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000002
+> [ 8942.939068] R13: 00007f8a4617a5c0 R14: 00007f8a46177e80 R15: 0000000000000000
+> [ 8942.939902]  </TASK>
+> [ 8942.940169] Future hung task reports are suppressed, see sysctl kernel.hung_task_warnings
+> [ 8942.941150] INFO: lockdep is turned off.
+> 
+> With the commit cherry picked to v6.10-rc7 , the test passes
+> successfully without any hang/deadlock, however
+> with CONFIG_PROVE_LOCKING enabled we do see the below trace for the
+> passing case:
+> 
+>  BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!
+>  turning off the locking correctness validator.
+>  CPU: 1 PID: 2959 Comm: kworker/u34:5 Not tainted 6.10.0-rc7+ #12
+>  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 2024.11-5 01/28/2025
+>  Workqueue: btrfs-endio-write btrfs_work_helper [btrfs]
+>  Call Trace:
+>   <TASK>
+>   dump_stack_lvl+0x68/0x90
+>   __lock_acquire.cold+0x186/0x1b1
+>   lock_acquire+0xd6/0x2e0
+>   ? btrfs_get_alloc_profile+0x27/0x90 [btrfs]
+>   seqcount_lockdep_reader_access+0x70/0x90 [btrfs]
+>   ? btrfs_get_alloc_profile+0x27/0x90 [btrfs]
+>   btrfs_get_alloc_profile+0x27/0x90 [btrfs]
+>   btrfs_reserve_extent+0xa9/0x290 [btrfs]
+>   btrfs_alloc_tree_block+0xa5/0x520 [btrfs]
+>   ? lockdep_unlock+0x5e/0xd0
+>   ? __lock_acquire+0xc6f/0x1fa0
+>   btrfs_force_cow_block+0x111/0x5f0 [btrfs]
+>   btrfs_cow_block+0xcc/0x2d0 [btrfs]
+>   btrfs_search_slot+0x502/0xd00 [btrfs]
+>   ? stack_depot_save_flags+0x24/0x8a0
+>   btrfs_lookup_file_extent+0x48/0x70 [btrfs]
+>   btrfs_drop_extents+0x108/0xce0 [btrfs]
+>   ? _raw_spin_unlock_irqrestore+0x35/0x60
+>   ? __create_object+0x5e/0x90
+>   ? rcu_is_watching+0xd/0x40
+>   ? kmem_cache_alloc_noprof+0x280/0x320
+>   insert_reserved_file_extent+0xea/0x3a0 [btrfs]
+>   ? btrfs_init_block_rsv+0x51/0x60 [btrfs]
+>   btrfs_finish_one_ordered+0x3ea/0x840 [btrfs]
+>   btrfs_work_helper+0x103/0x4b0 [btrfs]
+>   ? lock_release+0x177/0x2e0
+>   process_one_work+0x21a/0x590
+>   ? lock_is_held_type+0xd5/0x130
+>   worker_thread+0x1bf/0x3c0
+>   ? __pfx_worker_thread+0x10/0x10
+>   kthread+0xdd/0x110
+>   ? __pfx_kthread+0x10/0x10
+>   ret_from_fork+0x2d/0x50
+>   ? __pfx_kthread+0x10/0x10
+>   ret_from_fork_asm+0x1a/0x30
+>   </TASK>
+>  Started fstests-check.scope - [systemd-run] /usr/bin/bash -c "exit 77".
+>  fstests-check.scope: Deactivated successfully.
+> 
+> Signed-off-by: Swarna Prabhu <s.prabhu@samsung.com>
 
-Well, we can try in any case.  It would be a pretty insane server that
-actually looks at the h->unique value, but not impossible.
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
-Thanks,
-Miklos
+  Luis
 
