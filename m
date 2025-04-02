@@ -1,176 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-45512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45513-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F57FA78E0C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 14:18:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDCF1A78E10
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 14:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7BBE1711A2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 12:17:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AD10171917
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 12:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C487238D5A;
-	Wed,  2 Apr 2025 12:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F09239096;
+	Wed,  2 Apr 2025 12:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NzRbdd68"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cLsHekaW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D97420E01D
-	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Apr 2025 12:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86EC235360
+	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Apr 2025 12:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743596245; cv=none; b=pAC9lHjjgSlJbRHUUE9eRNfQyXqnoJWzv49T0hdDL6agsGf2G/sTS0DihX5y9UOD8NBIzUrWEakiQM0C5dxIe8FW42kgEpzU5JphLKSWd62z2+HvimFOzURu6X9VgObqKjFG6smccSil1m0WLposKIDaEzbU5k/yQ0PZvg9NYnk=
+	t=1743596287; cv=none; b=NZh2U+4hul1DR7qW9qwnt83dabTSlgXASG42VbJ/8L6O5agINIIzigj6VgNuDpZdDbLDthNzOb7u++MWVZsxonvv2Q5yKBPuvA6fnthQ9p3FaIATyAV8NkwwxlxZtrCc9rKgcd1AlWwegAtvZ2zmjE796aoRbaiL87lq9eHzIcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743596245; c=relaxed/simple;
-	bh=HQGjOlzvci/jDuFTBkrPI44ZTebsBLaao/xXoxWcPnw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cCb7aULgBaCQnroK9WKLM/P16Z0aRz6O5a1fRG8cc3iOij2s7Zs5NdQH8e0I/SLh5nuWv/NaFyFrZO/Vtmmz1Hg1e48qMWBUPS1cAUNjgli7YjqSGHIpHjW5GKVLRC4wgmPT9CYq+aAeymq9YK009v9Q7Tmph7xYH+JtSihekq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NzRbdd68; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4394036c0efso45539775e9.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Apr 2025 05:17:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1743596242; x=1744201042; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=u+KkYGiRVTeKTKTukwG7gqG5k92Sb1BtHpbYVZQpWnQ=;
-        b=NzRbdd68w/3cF3pfboU0wmUuH71+V+SMeqlZNsXE1auOEArhOpUEAHn+BqbSb2agEd
-         pgy6C8kN5Zp8lYLNNHT3YS6kpuLyXEw9+XVNH9INSTDR+xBTa+36BBgsLn6lU9PkIaMN
-         0dG44DI6R1lNfG48++w2PaTTRUCWcvnePw+uclOq18uMANbrL5GaWUr45k7GP1Okphl8
-         Ku7U5N0a+geqOgnCXGVcEPRiVOzzOQg0Ma6vqRb2hfTsRUn0hIyPVFO6z0Kz6ygWQP5p
-         zCz8JlKatPuNhLIlMvfSMKkQt9tn9AAYTHopjAw30CzulrTw6yKmsKPSOkCwYPY6pdA5
-         GXOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743596242; x=1744201042;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u+KkYGiRVTeKTKTukwG7gqG5k92Sb1BtHpbYVZQpWnQ=;
-        b=cAZ41QeS+h8CEgiwvXBJEY8RY1UNCl60bjgKYlLCV8Nd6npXYM54vQW1ESwFq57XxO
-         BkPeB6Xe/d/JBiHsvsQrDtBUeDHcDJz4/YNtsD+GOO0YdUKZvs1sZfnsRhir7tW7YH6C
-         La77flo6pHfqu+YxJNLutYwsrgvRiY5vpoc/GdGWoQ1rLBgOBw2Rqubg6wIPjwt9OdQA
-         Oj41szM4nBp+8oJ8E2ypCL06ArMrlJfaTYxr1vVEjqltQTpOx4S/jTNNu7VfJkfFwch7
-         3hJHXjW346/IV1ndNyhGu3f46Wgd2nPFvVVnhqDUbvkeqtrBqtAWHMhDCM1A2Q3i5VVr
-         E1qw==
-X-Forwarded-Encrypted: i=1; AJvYcCUW7A0TAGkqbZ7OQ0/vfpyTatjlhPIyJAjKJDnUDJzj49vpy1P3KYedEfV2dmyCNRmKghRq5j+43zjAsDXs@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH0FsPxasZt0tvdqVSpSrIIbo2qUH3YCWqBtXrbCLMO3VUY0L2
-	Xktulatv7DjQ1m3R6x8SYoWUtAhf0lEnjW4W2Suedpo2RxQGdpbe5Ezyb0hwyZM=
-X-Gm-Gg: ASbGncvXqny7ZpfnVp6ePqwnSR4hLUGxjxlgVeN3FUayy7BUoGri626EzGc98RRs4JX
-	aaa6opV8G1DS2hsg4ckmOVJL3LIxTYFbunvPbe34b980a/g1+xYUlXdx9Kr73nXroROa/+Md1nz
-	UARbWqLUDGz0Sg6itdMEpzzVD1mWP8B95us6uGZM4wFFzg0k1BOVRXScDDr1oxl5SHkD35FYh0W
-	BhylLNiqQmOz7DMQ2Qr8raZEEoX/fShxIygFN0OClPs5Ji1KawL2Ve+VF2Vo/lEHmTRh4D/RpNN
-	7Pw80FN7pzsDcz5qcJ1xElxvhGuW+WFylDrr447d1dd6Y6bwKX+uTq5wwA==
-X-Google-Smtp-Source: AGHT+IEzL1dLp6w4/vrpTpg8YH1leTJhRx3ESY+EtSrwaEQ5UAajY5nV9dBkST09FFg5gDba1jeZjA==
-X-Received: by 2002:a05:600c:3d0c:b0:43d:8ea:8d7a with SMTP id 5b1f17b1804b1-43e8eeb6696mr111382655e9.28.1743596241822;
-        Wed, 02 Apr 2025 05:17:21 -0700 (PDT)
-Received: from localhost (109-81-92-185.rct.o2.cz. [109.81.92.185])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43eb5fd138esm18831065e9.13.2025.04.02.05.17.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 05:17:21 -0700 (PDT)
-Date: Wed, 2 Apr 2025 14:17:20 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Yafang Shao <laoar.shao@gmail.com>, Harry Yoo <harry.yoo@oracle.com>,
-	Kees Cook <kees@kernel.org>, joel.granados@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Josef Bacik <josef@toxicpanda.com>, linux-mm@kvack.org
-Subject: Re: [PATCH] proc: Avoid costly high-order page allocations when
- reading proc files
-Message-ID: <Z-0q0LIsb03f9TfC@tiehlicka>
-References: <20250401073046.51121-1-laoar.shao@gmail.com>
- <3315D21B-0772-4312-BCFB-402F408B0EF6@kernel.org>
- <Z-y50vEs_9MbjQhi@harry>
- <CALOAHbBSvMuZnKF_vy3kGGNOCg5N2CgomLhxMxjn8RNwMTrw7A@mail.gmail.com>
- <c6823186-9267-418c-a676-390be9d4524d@suse.cz>
+	s=arc-20240116; t=1743596287; c=relaxed/simple;
+	bh=cXmfE8Zo73fyB/QHPWw+99Wun31tm3+a46xHnHmRHs0=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=oNLxZ8kdfkzJMChrx+MGitrOZpAA+aPNpR9/cFm0NIY0oHHQy0C2OqZs8K2chRYs9caxFQT4DFq+oiBPUhsy5Ia+139H8DORr4RCAYBoE7fa5qdYtWWOtkC2hP+XGmR75DQc4ydRTY0soXE3L8cSmCAW5DMArD+9n0HVkQ64k6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cLsHekaW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743596284;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=68lHblWFUM177oZ82WUmwq6fKcjyGzBb+/ilfrtKAuU=;
+	b=cLsHekaWgSXX8qAnQe1mjgBbBA2oPRhH5ooR2sntazdnWAQnZ/gg/D4xliWkSZbwDEMAaS
+	5TNE7DgqBUHlfU4HWQ8kZg2eskSkqnlyeQzPgZJuXC6w4QV6hqzqOc3jjHe4bRyUjDYqL9
+	EvJ56quJGyTYaPrQtFQ8dm52shwknSI=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-335-aCqRoR2WMt2CF3Di-QaNGQ-1; Wed,
+ 02 Apr 2025 08:18:01 -0400
+X-MC-Unique: aCqRoR2WMt2CF3Di-QaNGQ-1
+X-Mimecast-MFC-AGG-ID: aCqRoR2WMt2CF3Di-QaNGQ_1743596278
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 69F24180AF52;
+	Wed,  2 Apr 2025 12:17:58 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.40])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D46033001D14;
+	Wed,  2 Apr 2025 12:17:55 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+cc: dhowells@redhat.com, Giuseppe Scrivano <gscrivan@redhat.com>,
+    Debarshi Ray <dray@redhat.com>, Eric Sandeen <sandeen@redhat.com>,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] devpts: Fix type for uid and gid params
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c6823186-9267-418c-a676-390be9d4524d@suse.cz>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <759133.1743596274.1@warthog.procyon.org.uk>
+Date: Wed, 02 Apr 2025 13:17:54 +0100
+Message-ID: <759134.1743596274@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Wed 02-04-25 11:25:12, Vlastimil Babka wrote:
-> On 4/2/25 10:42, Yafang Shao wrote:
-> > On Wed, Apr 2, 2025 at 12:15 PM Harry Yoo <harry.yoo@oracle.com> wrote:
-> >>
-> >> On Tue, Apr 01, 2025 at 07:01:04AM -0700, Kees Cook wrote:
-> >> >
-> >> >
-> >> > On April 1, 2025 12:30:46 AM PDT, Yafang Shao <laoar.shao@gmail.com> wrote:
-> >> > >While investigating a kcompactd 100% CPU utilization issue in production, I
-> >> > >observed frequent costly high-order (order-6) page allocations triggered by
-> >> > >proc file reads from monitoring tools. This can be reproduced with a simple
-> >> > >test case:
-> >> > >
-> >> > >  fd = open(PROC_FILE, O_RDONLY);
-> >> > >  size = read(fd, buff, 256KB);
-> >> > >  close(fd);
-> >> > >
-> >> > >Although we should modify the monitoring tools to use smaller buffer sizes,
-> >> > >we should also enhance the kernel to prevent these expensive high-order
-> >> > >allocations.
-> >> > >
-> >> > >Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> >> > >Cc: Josef Bacik <josef@toxicpanda.com>
-> >> > >---
-> >> > > fs/proc/proc_sysctl.c | 10 +++++++++-
-> >> > > 1 file changed, 9 insertions(+), 1 deletion(-)
-> >> > >
-> >> > >diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> >> > >index cc9d74a06ff0..c53ba733bda5 100644
-> >> > >--- a/fs/proc/proc_sysctl.c
-> >> > >+++ b/fs/proc/proc_sysctl.c
-> >> > >@@ -581,7 +581,15 @@ static ssize_t proc_sys_call_handler(struct kiocb *iocb, struct iov_iter *iter,
-> >> > >     error = -ENOMEM;
-> >> > >     if (count >= KMALLOC_MAX_SIZE)
-> >> > >             goto out;
-> >> > >-    kbuf = kvzalloc(count + 1, GFP_KERNEL);
-> >> > >+
-> >> > >+    /*
-> >> > >+     * Use vmalloc if the count is too large to avoid costly high-order page
-> >> > >+     * allocations.
-> >> > >+     */
-> >> > >+    if (count < (PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER))
-> >> > >+            kbuf = kvzalloc(count + 1, GFP_KERNEL);
-> >> >
-> >> > Why not move this check into kvmalloc family?
-> >>
-> >> Hmm should this check really be in kvmalloc family?
-> > 
-> > Modifying the existing kvmalloc functions risks performance regressions.
-> > Could we instead introduce a new variant like vkmalloc() (favoring
-> > vmalloc over kmalloc) or kvmalloc_costless()?
-> 
-> We have gfp flags and kmalloc_gfp_adjust() to moderate how aggressive
-> kmalloc() is before the vmalloc() fallback. It does e.g.:
-> 
->                 if (!(flags & __GFP_RETRY_MAYFAIL))
->                         flags |= __GFP_NORETRY;
-> 
-> However if your problem is kcompactd utilization then the kmalloc() attempt
-> would have to avoid ___GFP_KSWAPD_RECLAIM to avoid waking up kswapd and then
-> kcompactd. Should we remove the flag for costly orders? Dunno. Ideally the
-> deferred compaction mechanism would limit the issue in the first place.
+    
+Fix devpts to parse uid and gid params using the correct type so that they
+get interpreted in the context of the user namespace.
 
-Yes, triggering heavy compation for costly allocations seems to be quite
-bad. We have GFP_RETRY_MAYFAIL for that purpose if the caller really
-needs the allocation to try really hard.
+Fixes: cc0876f817d6 ("vfs: Convert devpts to use the new mount API")
+Reported-by: Debarshi Ray <dray@redhat.com>
+Closes: https://github.com/containers/podman/issues/25751
+Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Eric Sandeen <sandeen@redhat.com>
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/devpts/inode.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> The ad-hoc fixing up of a particular place (/proc files reading) or creating
-> a new vkmalloc() and then spreading its use as you see other places
-> triggering the issue seems quite suboptimal to me.
+diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
+index 42e4d6eeb29f..9c20d78e41f6 100644
+--- a/fs/devpts/inode.c
++++ b/fs/devpts/inode.c
+@@ -89,12 +89,12 @@ enum {
+ };
+ 
+ static const struct fs_parameter_spec devpts_param_specs[] = {
+-	fsparam_u32	("gid",		Opt_gid),
++	fsparam_gid	("gid",		Opt_gid),
+ 	fsparam_s32	("max",		Opt_max),
+ 	fsparam_u32oct	("mode",	Opt_mode),
+ 	fsparam_flag	("newinstance",	Opt_newinstance),
+ 	fsparam_u32oct	("ptmxmode",	Opt_ptmxmode),
+-	fsparam_u32	("uid",		Opt_uid),
++	fsparam_uid	("uid",		Opt_uid),
+ 	{}
+ };
+ 
 
-Yes I absolutely agree.
--- 
-Michal Hocko
-SUSE Labs
 
