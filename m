@@ -1,50 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-45553-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45554-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BACEA7964A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 22:10:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35AB5A7965E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 22:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 236943B1002
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 20:10:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F072D170D3D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 20:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA8A1EFFA7;
-	Wed,  2 Apr 2025 20:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72AB91F0E4B;
+	Wed,  2 Apr 2025 20:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ohven9T5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82A919CCEC;
-	Wed,  2 Apr 2025 20:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D271F03C7;
+	Wed,  2 Apr 2025 20:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743624646; cv=none; b=erN32zZHcOcgYPNHV4QAfDEeebNEJrktQ8bV3WtEIWz/Ojngv9VdaWKTUstH4psEzbw/AosDPnjQXuYiR2LgSFPj0yA8EuR0zqsYBtBvpPHBAaOxgDFSzoPIWQbpx4oL0OssjYENaQPJ1DJucXuOwg5prx1lL9infG5IVppAs0c=
+	t=1743625046; cv=none; b=MBZXevEx+y0A30SKEEmwmBcuhoKH2vHxVKjQtibqdolC2cY0tDeb9K4d5dTOB48WSmOTakd/gPDKk8PSufZXv/DaySEJ8vJpg7yg+9WQhEbIDo9W2U4DBA3Uz82f/3iKUsyX1YMegjZ2zLia7GSQNo5Ye21YsFzjqEoopCMQXM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743624646; c=relaxed/simple;
-	bh=8zW6/RMnhtv8yr1yURreD6JKFTv60EVXaB39y2/XfEw=;
+	s=arc-20240116; t=1743625046; c=relaxed/simple;
+	bh=5wXMy1iTEVmwG+CHMzwtyEKHWRMwlIFCl6N/GqhB6A8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jiiEfW2inKvroxdxCddJLWr29Lo0LDHRHlV/VpmUPSc99FGsVxR3S3OESGvdzMIfMl9rADkP2sZm8vpWsNIrWEgqosKwo+OFS/6YL7mHQQmSvWzU2dji6NDCv7uOek3u6az1qi3BCMInf0+8MHrpSguPUdvtbUvP/dsiMaGbwbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC11FC4CEDD;
-	Wed,  2 Apr 2025 20:10:43 +0000 (UTC)
-Date: Wed, 2 Apr 2025 21:10:41 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Peter Collingbourne <pcc@google.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] string: Add load_unaligned_zeropad() code path to
- sized_strscpy()
-Message-ID: <Z-2ZwThH-7rkQW86@arm.com>
-References: <20250329000338.1031289-1-pcc@google.com>
- <20250329000338.1031289-2-pcc@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gJcCPK6pkd1QHGvpeP3cMfgMWRrK7s3DiSpUeVQ8mgmnuCqeG9Yw6MtMydwOl4/9vqLv/E+2R2c2TcRnWfZTL0EvmEfpGMO4e91EDpSVnSl5sROgglTlEgs/0KeTGQU3BqUvyknJ6Q/6NLU2R4ZYMwpgwdG6Sy2kINzWYVm99nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ohven9T5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7076C4CEDD;
+	Wed,  2 Apr 2025 20:17:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1743625046;
+	bh=5wXMy1iTEVmwG+CHMzwtyEKHWRMwlIFCl6N/GqhB6A8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ohven9T5xPGuF2Yc19Bj7YvBHPiSxr7t3lVEB23ICJzsm1WbWhFKasYdAgirQoqUf
+	 wI0ToMFeB4Z03EYUmjIJJhP/bxFigPYZDr8XzTn1T7VDghIKFwpQe50Rhyk+ySv7LD
+	 XqXXJA6c/pjqkQRZ2qHjFvhTFSHCh7/43ekI0ObA=
+Date: Wed, 2 Apr 2025 21:15:58 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: cve@kernel.org, edumazet@google.com, ematsumiya@suse.de,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-net@vger.kernel.org, sfrench@samba.org, smfrench@gmail.com,
+	wangzhaolong1@huawei.com, zhangchangzhong@huawei.com
+Subject: Re: Fwd: [PATCH][SMB3 client] fix TCP timers deadlock after rmmod
+Message-ID: <2025040233-tuesday-regroup-5c66@gregkh>
+References: <2025040248-tummy-smilingly-4240@gregkh>
+ <20250402200928.4320-1-kuniyu@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,73 +57,56 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250329000338.1031289-2-pcc@google.com>
+In-Reply-To: <20250402200928.4320-1-kuniyu@amazon.com>
 
-On Fri, Mar 28, 2025 at 05:03:36PM -0700, Peter Collingbourne wrote:
-> diff --git a/lib/string.c b/lib/string.c
-> index eb4486ed40d25..b632c71df1a50 100644
-> --- a/lib/string.c
-> +++ b/lib/string.c
-> @@ -119,6 +119,7 @@ ssize_t sized_strscpy(char *dest, const char *src, size_t count)
->  	if (count == 0 || WARN_ON_ONCE(count > INT_MAX))
->  		return -E2BIG;
->  
-> +#ifndef CONFIG_DCACHE_WORD_ACCESS
->  #ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
->  	/*
->  	 * If src is unaligned, don't cross a page boundary,
-> @@ -133,12 +134,14 @@ ssize_t sized_strscpy(char *dest, const char *src, size_t count)
->  	/* If src or dest is unaligned, don't do word-at-a-time. */
->  	if (((long) dest | (long) src) & (sizeof(long) - 1))
->  		max = 0;
-> +#endif
->  #endif
->  
->  	/*
-> -	 * read_word_at_a_time() below may read uninitialized bytes after the
-> -	 * trailing zero and use them in comparisons. Disable this optimization
-> -	 * under KMSAN to prevent false positive reports.
-> +	 * load_unaligned_zeropad() or read_word_at_a_time() below may read
-> +	 * uninitialized bytes after the trailing zero and use them in
-> +	 * comparisons. Disable this optimization under KMSAN to prevent
-> +	 * false positive reports.
->  	 */
->  	if (IS_ENABLED(CONFIG_KMSAN))
->  		max = 0;
-> @@ -146,7 +149,11 @@ ssize_t sized_strscpy(char *dest, const char *src, size_t count)
->  	while (max >= sizeof(unsigned long)) {
->  		unsigned long c, data;
->  
-> +#ifdef CONFIG_DCACHE_WORD_ACCESS
-> +		c = load_unaligned_zeropad(src+res);
-> +#else
->  		c = read_word_at_a_time(src+res);
-> +#endif
->  		if (has_zero(c, &data, &constants)) {
->  			data = prep_zero_mask(c, data, &constants);
->  			data = create_zero_mask(data);
+On Wed, Apr 02, 2025 at 01:09:19PM -0700, Kuniyuki Iwashima wrote:
+> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Date: Wed, 2 Apr 2025 16:18:37 +0100
+> > On Wed, Apr 02, 2025 at 05:15:44PM +0800, Wang Zhaolong wrote:
+> > > > On Wed, Apr 02, 2025 at 12:49:50PM +0800, Wang Zhaolong wrote:
+> > > > > Yes, it seems the previous description might not have been entirely clear.
+> > > > > I need to clearly point out that this patch, intended as the fix for CVE-2024-54680,
+> > > > > does not actually address any real issues. It also fails to resolve the null pointer
+> > > > > dereference problem within lockdep. On top of that, it has caused a series of
+> > > > > subsequent leakage issues.
+> > > > 
+> > > > If this cve does not actually fix anything, then we can easily reject
+> > > > it, please just let us know if that needs to happen here.
+> > > > 
+> > > > thanks,
+> > > > 
+> > > > greg k-h
+> > > Hi Greg,
+> > > 
+> > > Yes, I can confirm that the patch for CVE-2024-54680 (commit e9f2517a3e18)
+> > > should be rejected. Our analysis shows:
+> > > 
+> > > 1. It fails to address the actual null pointer dereference in lockdep
+> > > 
+> > > 2. It introduces multiple serious issues:
+> > >    1. A socket leak vulnerability as documented in bugzilla #219972
+> > >    2. Network namespace refcount imbalance issues as described in
+> > >      bugzilla #219792 (which required the follow-up mainline fix
+> > >      4e7f1644f2ac "smb: client: Fix netns refcount imbalance
+> > >      causing leaks and use-after-free")
+> > > 
+> > > The next thing we should probably do is:
+> > >    - Reverting e9f2517a3e18
+> > >    - Reverting the follow-up fix 4e7f1644f2ac, as it's trying to fix
+> > >      problems introduced by the problematic CVE patch
+> > 
+> > Great, can you please send patches now for both of these so we can
+> > backport them to the stable kernels properly?
+> 
+> Sent to CIFS tree:
+> https://lore.kernel.org/linux-cifs/20250402200319.2834-1-kuniyu@amazon.com/
 
-Kees mentioned the scenario where this crosses the page boundary and we
-pad the source with zeros. It's probably fine but there are 70+ cases
-where the strscpy() return value is checked, I only looked at a couple.
+You forgot to add a Cc: stable@ on the patches to ensure that they get
+picked up properly for all stable trees :(
 
-Could we at least preserve the behaviour with regards to page boundaries
-and keep the existing 'max' limiting logic? If I read the code
-correctly, a fall back to reading one byte at a time from an unmapped
-page would panic. We also get this behaviour if src[0] is reading from
-an invalid address, though for arm64 the panic would be in
-ex_handler_load_unaligned_zeropad() when count >= 8.
+Can you redo them?
 
-Reading across tag granule (but not across page boundary) and causing a
-tag check fault would result in padding but we can live with this and
-only architectures that do MTE-style tag checking would get the new
-behaviour.
+thanks,
 
-What I haven't checked is whether a tag check fault in
-ex_handler_load_unaligned_zeropad() would confuse the KASAN logic for
-MTE (it would be a second tag check fault while processing the first).
-At a quick look, it seems ok but it might be worth checking.
-
--- 
-Catalin
+greg k-h
 
