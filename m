@@ -1,178 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-45586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45587-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FBD6A7999A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 03:23:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3991FA799DA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 04:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C28203AC50C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 01:22:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C273189318F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 02:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84CA7F7FC;
-	Thu,  3 Apr 2025 01:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500EC14EC46;
+	Thu,  3 Apr 2025 02:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="0E3LJfFd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQ3L3+FL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0CCD26D
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Apr 2025 01:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47538610B;
+	Thu,  3 Apr 2025 02:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743643358; cv=none; b=Zw0TpXmVIU+XeH+Yq65IZhPwIOx+UKjhRqliiVDq2rlh5PbbfwszChxCIS+iNCqa0IPkmlXp2P7JTQ5JDbXu08CZ2pmSVxex0s498hl2hB/XvIwUnyctr9tnueTL17QzD/kG+4nYi34jT4vZhEHEVzQBJ+eCr4M/0021bNlFUtw=
+	t=1743645650; cv=none; b=qKrDXnSlPYXicWwW5IpxAp4IeKtrtq4/nZ827evc7XzGIDHc5xU6pX9xeQVUNUzCtaGBEh99+qQQJEgXAWDtpVE3AWoHQXXLGWwDTLxyD98gc4/vRB43BfIC7F15UBtNhT2CMgCdcC/q9opF21z68pdNeH8i8FtU0Vub4luqdXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743643358; c=relaxed/simple;
-	bh=R8DoRHeCqkdDoh1zmRk66sV3y9QX4YBRKQLRivDDbzo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k6Y0OEWqGCSJ6NZcTaEERAzYSEAFhXqfR2yRhNxqWkA9fVoQmWo+vLpspZL9JRtRH6xLQbOXo5qhBNf7c5KBKQTnVKTivA/DAnt5ITsc1phYbMw1KcmRqHZZ+sKn7gPDpQoHIDxqhIWzOz9fsk835DDmC3Kvn+JFF4SStVs0zj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=0E3LJfFd; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-af6a315b491so367249a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Apr 2025 18:22:36 -0700 (PDT)
+	s=arc-20240116; t=1743645650; c=relaxed/simple;
+	bh=0ba+sRGF2jAkbc+QseTQRVmQ9JgKzPa2R2booIqtf0U=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=H2Bvan61P6FLEtU8LYe+lsTdn+8aYWn6LpH7MDEteTNjHz2vaQ/fSnMBxID8LkNhZakrk+WIUihhAa0pVS6ltNf4tD5KJ5xFmzEeQM4ixGAqW2iGqVhnwZszcJH2HhkLxJ3DISV2NR0oy1su/S8AOEhZO0DmWLd1pF5/9Y1ry3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQ3L3+FL; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-301e05b90caso381490a91.2;
+        Wed, 02 Apr 2025 19:00:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1743643356; x=1744248156; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=H4rcAW6CiUL4EGwBHYCgCAM1aNdXUEavAlcbulq5QK8=;
-        b=0E3LJfFdjJafcIs//Rs4tJKQOVEQV3xy7BGRprMxth/zweCnJNldaWlqtR6x4cRK6S
-         UDytfkbDH+uTX5K60dwUsv0zmnG8vzGci9gB50uvAeXuBPQdFqk0z2pJB7NjsjACA2s+
-         OcaZHKC9a99hP3g19Za9tEeXrgJMQDtYgEhNSkCj6ZztsSiMcz7T5sxfSym5PMHeEG8v
-         0t4+SOlvZoJnXZ8GgJn3Jw/fqDeQpQWqMiXX/rpB7fFX9cMg1SpxXQgc3Pnic0KGOzMx
-         ACwKB/5y0uPpUvEc1k6Ki4XtqDOHKNnyJclVj6Y78HePgrWfrHz/J6Gy/1AFiERpiYt1
-         rp5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743643356; x=1744248156;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1743645648; x=1744250448; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=H4rcAW6CiUL4EGwBHYCgCAM1aNdXUEavAlcbulq5QK8=;
-        b=CyxketJwyNv8d7e0Jqda7giO0Z/q+bF+jpcI2f2HByGq7ngFr5Z+51n9/wcMYib1se
-         BpSQLngiodWXyQ+tDWsOTzWGlTKFS/npHoF5KuyVPhq6tHiv5kzeZi8gg/5fWExLijA7
-         7iEPa7iCv2KokB5uhB3Nwx+sNQnjvt9LI9sbqAJIbYS7XmXwhNGagX7vqsDOANd+DLtl
-         J3LearQb+e3WTQ4JfRibp3vx/tL0HNLTRpOvq8qzCGFYU4SmL6QzqNgaMs1P1aiLNL+/
-         guMZ+z8oJGMANiQil4sv/DYxfH3VF7HRELUa+GHZLdp4Dr6b5WZBdt449vFzAblQuX7C
-         7UAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgrSjdJ8T/y5whDgOORhGVJFz14VuTrGZSIs+krUo/sL5ruyTt6YwC76/NIh+YKQ/bdcbfBsU3MSiH4E2B@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZhdBhuocgmU7UIBDEx/bIYctZEbY8bgb3r6Ke7oh2f64Ae19y
-	xuK+P6oBV9PnxNaU86/FnKYLsV8/YpPtm64yFNKUnDJ6UT6lRNEYAE4jHZm9Vww=
-X-Gm-Gg: ASbGncsV0Q6j7AkpuNY4ygKI9i3txZ6CchfBeVrj05nVlQF5a0OF5YqGDaFNvRi9cya
-	G5Qyvj3l4q6yLx1fLssxOSasa6t2CM2C+qwnaSJDAIQg4UX7C5yibY+yPWLe6Sj9U8hxOin8QZf
-	EmIpul9oY7xSHUq2IcYYn+nW5M9wS19CXlpWsa79Tu1jheA2YG5FIjJgMPPW55uFHLPVo16yScs
-	JDv3i/O5L5pMUaCs672xmS6XQhWzAcsGvAWYX1HEIsTymG0opj9kLBezVuE3/HR74/ERteRefPg
-	l1aZ5fPWSN4xg587B00g2zytbKmuk2IfHCiXbP+61asQGEPLj3SCm/AcxM7CUvb7o1vKAglQnSR
-	8hvbWobc=
-X-Google-Smtp-Source: AGHT+IHMRa3sFAfbWro38Uxsf5pzpkFaygYzxLs0JzIu4oVQOmbGGlje/VbuGD8ibb/J/RjYbjK44Q==
-X-Received: by 2002:a17:90b:2e0b:b0:2fe:a515:4a98 with SMTP id 98e67ed59e1d1-3057cbef71dmr1095737a91.31.1743643355647;
-        Wed, 02 Apr 2025 18:22:35 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-60-96.pa.nsw.optusnet.com.au. [49.181.60.96])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3058494a321sm162810a91.19.2025.04.02.18.22.35
+        bh=gcde5Nyi6TaMVAZ5o62Gx5sjG4xeY8R/Cdn03wkDkWw=;
+        b=YQ3L3+FLKFcQl6XiBmS+nezQPQVoXoGztN/6YCD4IulVs/KU0IrtaMtdGvTt1+451y
+         GdVNtOQXzBaBazKoo49xmMB/2ruCKNm3XeYiSN6H55MiYrGOmc6n8HNiRkNBhxQIocRn
+         ipXlT0fdamXMU7rwIj4/F/ddjVKBNbvm+nLegIZGwlNpbYnF6jr4nI01uCEPwiQk+ALS
+         i9JvaoUheh3zfeekE8Cw2x0Ot1Ter5yJMJ5Dc3tq5/X8dsD9SfxqqfD3sGU2/6XI2CnA
+         +lF9q5z5CG3s6+8SsXzdAsyFq46F5wUsOAZrrFHXHHYCLjQzojIrGOp1Vlcazzxct2t5
+         0FPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743645648; x=1744250448;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gcde5Nyi6TaMVAZ5o62Gx5sjG4xeY8R/Cdn03wkDkWw=;
+        b=Uli1unKBSg4x9KanwDxVBzyaTJsnQj1UpczVla5rkBpqWk4xGyM21T96fFNNrdJs8O
+         A9ite7rgHf7ySOpSavktHm5SM691FSIrxSh6I8p5vHUcr1jB0IXIrjsQCNVMDqxCkA9+
+         VLF6GWNSvdAYCE3VZ2vBOaOVzYP4vHyAW/NGxu/6Fv8WfzxCzvP/CLT5t8vaLIk9C5wE
+         +PPwP2BTvLthlYogbCFM9/cUEtZvR3SrJdKtsuirYRpt03zCHccGfpM1lngotAisElGO
+         tp59Z+C4cpaj0nCMpy1Rp0tBQqXBVHt0Zm/DHu1tPojoe+c8CdPMVanvPDBYFWBmBCfQ
+         z78A==
+X-Forwarded-Encrypted: i=1; AJvYcCUjFBJDDAnFcMR2mcu/Oom2kUKIdFlV8t349zMaUrPgVcdLHfrjUe4N572NrVGJLF/P7byqPYmJakpGCygY@vger.kernel.org, AJvYcCUqAi8vZ0U/tWbqwqw/PVbxxQ102OPYVu/zUct2Wc5MZgdplM2L99pAYPT0nWe94l9l3GLoVswm1h4NF7dX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyjw0E5PTjAGFHzlbBbxnx2uEN0qwyFv9dGD49PrhO5Top2gVxo
+	3oX3XRVrTjz8kv4aRFE0R2az4yIIZ9gGXgQ3b6/WZsxY/yyMHro1
+X-Gm-Gg: ASbGnctQIKkMxfDLsWqw28g8nxaCbWNnO2P6avKzXvnduwBPMwIAwZ5avjjyH+oJ/0Z
+	j83IsTSLtoMVLWtln/4cZ4nuqc2vb6Y+LGwIbLd/F6TCOvVWc30wtdt/2o9W1QKSaDParq6ogt2
+	6FZDlj+glGCECv7yV4lAFoHoGQdOCogOsUJz7GHkD7Uc4j8w2OIXWsOk4pXIS9n8XD+mIecSxDz
+	TCD7GX7NkRtdIArjMrIDF7jz/26ykUgdiOtwgyWoms41FACNOMeFGq71aVnTA3hGQbCMwXdsJxL
+	xMTP/IWHSgxiEUx5sF9+JOag7wCGVpGXKrsLJSAgbSEi8x3FhfsBPHSAsn+bwfE1XlLh1CfyBA=
+	=
+X-Google-Smtp-Source: AGHT+IHuQHtWHcO53kS5e5zZEuKi16tpySHAaverruz/vmyToXsfN39bOqzs8qlfsj43naZCs0Vs6w==
+X-Received: by 2002:a17:90b:51c7:b0:2ff:72f8:3708 with SMTP id 98e67ed59e1d1-3057cb39169mr1470671a91.17.1743645648421;
+        Wed, 02 Apr 2025 19:00:48 -0700 (PDT)
+Received: from localhost.localdomain ([221.214.202.225])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3057cb8dda5sm385727a91.40.2025.04.02.19.00.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 18:22:35 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1u09Hr-00000003lXk-0oE4;
-	Thu, 03 Apr 2025 12:22:31 +1100
-Date: Thu, 3 Apr 2025 12:22:31 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Michal Hocko <mhocko@suse.com>, Yafang Shao <laoar.shao@gmail.com>,
-	Harry Yoo <harry.yoo@oracle.com>, Kees Cook <kees@kernel.org>,
-	joel.granados@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-	linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] proc: Avoid costly high-order page allocations when
- reading proc files
-Message-ID: <Z-3i1wATGh6vI8x8@dread.disaster.area>
-References: <20250401073046.51121-1-laoar.shao@gmail.com>
- <3315D21B-0772-4312-BCFB-402F408B0EF6@kernel.org>
- <Z-y50vEs_9MbjQhi@harry>
- <CALOAHbBSvMuZnKF_vy3kGGNOCg5N2CgomLhxMxjn8RNwMTrw7A@mail.gmail.com>
- <Z-0gPqHVto7PgM1K@dread.disaster.area>
- <Z-0sjd8SEtldbxB1@tiehlicka>
- <Z-2pSF7Zu0CrLBy_@dread.disaster.area>
- <b7qr6djsicpkecrkjk6473btzztfrvxifiy34u2vdb4cp5ktjf@lvg3rtwrbmsx>
+        Wed, 02 Apr 2025 19:00:47 -0700 (PDT)
+From: Penglei Jiang <superman.xpt@gmail.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org
+Cc: jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+5d8e79d323a13aa0b248@syzkaller.appspotmail.com,
+	Penglei Jiang <superman.xpt@gmail.com>
+Subject: [PATCH 2/2] vfs: Fix anon_inode triggering VFS_BUG_ON_INODE in may_open()
+Date: Wed,  2 Apr 2025 18:59:46 -0700
+Message-Id: <20250403015946.5283-1-superman.xpt@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b7qr6djsicpkecrkjk6473btzztfrvxifiy34u2vdb4cp5ktjf@lvg3rtwrbmsx>
 
-On Wed, Apr 02, 2025 at 04:10:06PM -0700, Shakeel Butt wrote:
-> On Thu, Apr 03, 2025 at 08:16:56AM +1100, Dave Chinner wrote:
-> > On Wed, Apr 02, 2025 at 02:24:45PM +0200, Michal Hocko wrote:
-> > > On Wed 02-04-25 22:32:14, Dave Chinner wrote:
-> > > > Have a look at xlog_kvmalloc() in XFS. It implements a basic
-> > > > fast-fail, no retry high order kmalloc before it falls back to
-> > > > vmalloc by turning off direct reclaim for the kmalloc() call.
-> > > > Hence if the there isn't a high-order page on the free lists ready
-> > > > to allocate, it falls back to vmalloc() immediately.
-> > > > 
-> > > > For XFS, using xlog_kvmalloc() reduced the high-order per-allocation
-> > > > overhead by around 80% when compared to a standard kvmalloc()
-> > > > call. Numbers and profiles were documented in the commit message
-> > > > (reproduced in whole below)...
-> > > 
-> > > Btw. it would be really great to have such concerns to be posted to the
-> > > linux-mm ML so that we are aware of that.
-> > 
-> > I have brought it up in the past, along with all the other kvmalloc
-> > API problems that are mentioned in that commit message.
-> > Unfortunately, discussion focus always ended up on calling context
-> > and API flags (e.g. whether stuff like GFP_NOFS should be supported
-> > or not) no the fast-fail-then-no-fail behaviour we need.
-> > 
-> > Yes, these discussions have resulted in API changes that support
-> > some new subset of gfp flags, but the performance issues have never
-> > been addressed...
-> > 
-> > > kvmalloc currently doesn't support GFP_NOWAIT semantic but it does allow
-> > > to express - I prefer SLAB allocator over vmalloc.
-> > 
-> > The conditional use of __GFP_NORETRY for the kmalloc call is broken
-> > if we try to use __GFP_NOFAIL with kvmalloc() - this causes the gfp
-> > mask to hold __GFP_NOFAIL | __GFP_NORETRY....
-> > 
-> > We have a hard requirement for xlog_kvmalloc() to provide
-> > __GFP_NOFAIL semantics.
-> > 
-> > IOWs, we need kvmalloc() to support kmalloc(GFP_NOWAIT) for
-> > performance with fallback to vmalloc(__GFP_NOFAIL) for
-> > correctness...
-> 
-> Are you asking the above kvmalloc() semantics just for xfs or for all
-> the users of kvmalloc() api? 
+may_open()
+{
+        ...
+        switch (inode->i_mode & S_IFMT) {
+        case S_IFLNK:
+        case S_IFDIR:
+        case S_IFBLK:
+        case S_IFCHR:
+        case S_IFIFO:
+        case S_IFSOCK:
+        case S_IFREG:
+        default:
+                VFS_BUG_ON_INODE(1, inode);
+        }
+        ...
+}
 
-I'm suggesting that fast-fail should be the default behaviour for
-everyone.
+Since some anonymous inodes do not have S_IFLNK, S_IFDIR, S_IFBLK,
+S_IFCHR, S_IFIFO, S_IFSOCK, or S_IFREG flags set when created, they
+end up in the default case branch.
 
-If you look at __vmalloc() internals, you'll see that it turns off
-__GFP_NOFAIL for high order allocations because "reclaim is too
-costly and it's far cheaper to fall back to order-0 pages".
+When creating some anon_inode instances, the i_mode in the switch
+statement is not properly set, which causes the open operation to
+follow the default branch when opening anon_inode.
 
-That's pretty much exactly what we are doing with xlog_kvmalloc(),
-and what I'm suggesting that kvmalloc should be doing by default.
+We could check whether the inode is an anon_inode before VFS_BUG_ON_INODE
+and trigger the assertion only if it's not. However, a more reasonable
+approach might be to set a flag during creation in alloc_anon_inode(),
+such as inode->i_flags |= S_ANON, to explicitly mark anonymous inodes.
 
-i.e. If it's necessary for mm internal implementations to avoid
-high-order reclaim when there is a faster order-0 allocation
-fallback path available for performance reasons, then we should be
-using that same behaviour anywhere optimisitic high-order allocation
-is used as an optimisation for those same performance reasons.
+The code that triggers the BUG:
 
-The overall __GFP_NOFAIL requirement is something XFS needs, but it
-is most definitely not something that should be enabled by default.
-However, it needs to work with kvmalloc(), and it is not possible to
-do so right now.
+    #include <stdio.h>
+    #include <unistd.h>
+    #include <fcntl.h>
+    #include <sys/timerfd.h>
 
--Dave.
+    int main(int argc, char **argv) {
+        int fd = timerfd_create(CLOCK_MONOTONIC, 0);
+        if (fd != -1) {
+            char path[256];
+            sprintf(path, "/proc/self/fd/%d", fd);
+            open(path, O_RDONLY);
+        }
+
+        return 0;
+    }
+
+Thank you!
+
+Fixes: af153bb63a336 ("vfs: catch invalid modes in may_open()")
+Reported-by: syzbot+5d8e79d323a13aa0b248@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/67ed3fb3.050a0220.14623d.0009.GAE@google.com"
+Signed-off-by: Penglei Jiang <superman.xpt@gmail.com>
+---
+ fs/anon_inodes.c            | 4 ++++
+ fs/namei.c                  | 5 ++++-
+ include/linux/anon_inodes.h | 1 +
+ 3 files changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
+index 583ac81669c2..c29eca6106d2 100644
+--- a/fs/anon_inodes.c
++++ b/fs/anon_inodes.c
+@@ -303,6 +303,10 @@ int anon_inode_create_getfd(const char *name, const struct file_operations *fops
+ 	return __anon_inode_getfd(name, fops, priv, flags, context_inode, true);
+ }
+ 
++inline bool is_default_anon_inode(const struct inode *inode)
++{
++    return anon_inode_inode == inode;
++}
+ 
+ static int __init anon_inode_init(void)
+ {
+diff --git a/fs/namei.c b/fs/namei.c
+index 360a86ca1f02..81cea4901a2f 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -40,6 +40,7 @@
+ #include <linux/bitops.h>
+ #include <linux/init_task.h>
+ #include <linux/uaccess.h>
++#include <linux/anon_inodes.h>
+ 
+ #include "internal.h"
+ #include "mount.h"
+@@ -3429,7 +3430,9 @@ static int may_open(struct mnt_idmap *idmap, const struct path *path,
+ 			return -EACCES;
+ 		break;
+ 	default:
+-		VFS_BUG_ON_INODE(1, inode);
++		if (!is_default_anon_inode(inode)
++			&& !(inode->i_flags & S_PRIVATE))
++			VFS_BUG_ON_INODE(1, inode);
+ 	}
+ 
+ 	error = inode_permission(idmap, inode, MAY_OPEN | acc_mode);
+diff --git a/include/linux/anon_inodes.h b/include/linux/anon_inodes.h
+index edef565c2a1a..eca4a3913ba7 100644
+--- a/include/linux/anon_inodes.h
++++ b/include/linux/anon_inodes.h
+@@ -30,6 +30,7 @@ int anon_inode_create_getfd(const char *name,
+ 			    const struct file_operations *fops,
+ 			    void *priv, int flags,
+ 			    const struct inode *context_inode);
++bool is_default_anon_inode(const struct inode *inode);
+ 
+ #endif /* _LINUX_ANON_INODES_H */
+ 
 -- 
-Dave Chinner
-david@fromorbit.com
+2.17.1
+
 
