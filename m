@@ -1,95 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-45617-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45618-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 936B7A79FCB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 11:16:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5750A79FD6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 11:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6833F1641B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 09:16:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A41423B211A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 09:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61881242936;
-	Thu,  3 Apr 2025 09:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE1624418D;
+	Thu,  3 Apr 2025 09:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="P8CRbVRv";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TQRg07i5"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g9u2zVaw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD2F2CA6
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Apr 2025 09:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31572CA6
+	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Apr 2025 09:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743671769; cv=none; b=UBoYoGXxChJnIlQ5zxaV01C9mhfPmVTfUapg8+Z6Q1v4oPWrR+IzuIM0ucHlZ5/nYaUnAC6TJq8TiQilgVETP3OxNzBsN4Y1Bb3KYrEcMl4vJZARv31KymcPX8/GbFTM5+ge4PsEU1eVMJ/yh8KLafCOlhV0kWAZsQ5UV20TkXw=
+	t=1743671941; cv=none; b=COW/6ik6MygnSOZFbStezGUAX0pV7wUPsO0DnfN7LkUoMFWdM3TSgsGehWm3VyLqKsY22vSQCQZr/veQYu+n/kBCrG/HwLalMvJLpxuqDU9K/3GLgi1FgDG+vf948J0Gt5AW08kT3G2ihiIvDAnpMUPt35hzhSUSJhueNrcWycY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743671769; c=relaxed/simple;
-	bh=5HjRxBu0r1qRE2N9HjkX5OJxMvhXmWgahcLbPcqYunw=;
+	s=arc-20240116; t=1743671941; c=relaxed/simple;
+	bh=Xur9xbovK84+k4dXVBd9kT7lSd/F1YDm6MAoo8L0RsM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sBZYu78GrioztfdgocjaJM4DR7VrW5lTF39j/a/rUYW03/0k18QY7RH7mGfx5++MgfE4ltACZVbAG0pxvrBCQOemV6L7uNdfVCgNOz/rQpy32ONOm5J9xoSssnQ9qjUtdW6/Vq0Pb4Uj3EknoZISUSusWX1lz/V4yIsGs0y3r+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=P8CRbVRv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TQRg07i5; arc=none smtp.client-ip=202.12.124.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id D67E52540271;
-	Thu,  3 Apr 2025 05:16:04 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Thu, 03 Apr 2025 05:16:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1743671764;
-	 x=1743758164; bh=ffaEaMQYCnbRZPuCVFBvqnzi3mMC+nEJW0y/ozKy3ec=; b=
-	P8CRbVRvul7OLxKGgfDVpY+qfWaO76HsQ/W1V1/3bXQVcofCBsBziShAWVps8E67
-	0JM95SD2yfqbMew5L38naiNwfhBCvE10qKPEkUt4LN5HxQ5x8yYkfcKqzlOcTkdZ
-	9LU+tcIdAbZO1u5sn7JzfmOiCfzV7rRNMVjP0YDt0jnY+VjGEdENib8BE2kpRN/h
-	Wkms883uPCYw0R3xdoEyHk/1MyjDiK20JIb/dLyEMlekfFDbEmNkDFzY6oKIkXue
-	xUux8PDS3QFgF6d7H0qp9NrCF4l7lrwqB9V+9f9iyeMFZDsCyxsfHE6QGpo4wlRE
-	cZLJFHQZxuWSG0HVAn5KLQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743671764; x=
-	1743758164; bh=ffaEaMQYCnbRZPuCVFBvqnzi3mMC+nEJW0y/ozKy3ec=; b=T
-	QRg07i5MNzw/kutWqpFT0X+MYljKbczdxJx64mLPEQ8eETuAxQCJd/PV1rL03O9z
-	IOrG/VCmpjgsGDeFZBdFSWg9V8h3GUj+jeWe0vw0+BzzZTkbr4u/c3MIxErGuu4p
-	CG/zyODZjd5aDd6o5hWXD9csxKoR+13BKPBsS7/2pAjnL2mDyfx92Qc9v7GiMcXV
-	CPAytIiCGJsOqBcIcFwAIfGLK0isOabarBUnxGkoyi3WZL+YhhtrbeMbAOJdLwrb
-	+uMbQW7dXI7n4R+1YGqwiMBuVjhYfrRVFW9VqNHjQilYdspPfyN79ryux49rXxzK
-	T2qp8dNyNGoE7wiAFaLPA==
-X-ME-Sender: <xms:1FHuZ32E8aZr4rJdyVLzriTVO3lhVvZ1sJJoXn4NlPwq2PtgU1MHUA>
-    <xme:1FHuZ2HTD-P4irpwMxFmqCoNAxErHMQuQHVciDU8RBeptz40r4T7Lw28GsxMfCnW4
-    pzjzSovG25_ZWOy>
-X-ME-Received: <xmr:1FHuZ35-ctheOQjMaR7g2b0AsizbzD-9UCbXlnZ3LNjNzeNdy1012eXCc7mrJGw4dn1I-t5__b6YBV8STfnkK87BkBy0c18uKIFqNxV1SOmSi-1GSJ65>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukeekudekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
-    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvg
-    hrnhgurdgtohhmqeenucggtffrrghtthgvrhhnpeehhfejueejleehtdehteefvdfgtdel
-    ffeuudejhfehgedufedvhfehueevudeugeenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggp
-    rhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihhklhhosh
-    esshiivghrvgguihdrhhhupdhrtghpthhtohepsghstghhuhgsvghrthesuggunhdrtgho
-    mhdprhgtphhtthhopehvghhohigrlhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepsh
-    htvghfrghnhhgrsehrvgguhhgrthdrtghomhdprhgtphhtthhopegvphgvrhgviihmrges
-    rhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvg
-    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhm
-    rghilhdrtghomhdprhgtphhtthhopehjohhsvghfsehtohigihgtphgrnhgurgdrtghomh
-X-ME-Proxy: <xmx:1FHuZ817cCuYoiz8md2gCgYBuq4BBobjV_UH0R8JzTgNW0o7r5HgUw>
-    <xmx:1FHuZ6GoXrFVpBzivAFJfWuGL4nUlcdRDUh1JP04cbzi2yECvnUxFA>
-    <xmx:1FHuZ98OISTdoBI2o-D_fzYeEB5jJQuDPPyzREwvoI-Tq4ZDridtQQ>
-    <xmx:1FHuZ3lAoZ-GMWcdO0a8qNu5hUYqX_QAYL0U9oA_D3Q_plOgj1XKGw>
-    <xmx:1FHuZxp27_qcISZ-V_J1VASxEcX4yFxCbZLdEmulR1pe88n8Xf7pzpYb>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 3 Apr 2025 05:16:03 -0400 (EDT)
-Message-ID: <b1f59622-5d4b-48d5-b153-a8e124979879@bsbernd.com>
-Date: Thu, 3 Apr 2025 11:16:02 +0200
+	 In-Reply-To:Content-Type; b=BiRQkRnOx9TCM0b/zb3tH389hZI8uYZQDPrTDsHlZt/ykrHX3erax8UmWeiVBOUvoxhndVYx+FvndRoszaIZoOc+HKOkCHSNuqd0v3NQHKuyg8xBUxULjab0ayQVVuwfUQem1n5Kgtk2NdKJwKh+dCW1uhX6y7XtiqQO1lCOSmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g9u2zVaw; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743671938;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=qNhiJ0TVTyzy7hyORBz5mXEdNK4x/LjCdeFZeLz+l/4=;
+	b=g9u2zVawb5SO5rMZHxZje3zIkO0I3ExFtmwfc8nH21yoJNjEAfnrZGvwPrACZo7LcCg5BN
+	CYOz/T6fqRl1rm8q3sLmGsjPlWIDY54qM1YnBxnSj5MgYKU2BoU0g9lfPWtlTnvQjt1T1v
+	OKfO+9ORvogXlThZ6K1cqVFPZaK8tKs=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-414--WmxpeY1OFOseCEZ0cVqcg-1; Thu, 03 Apr 2025 05:18:55 -0400
+X-MC-Unique: -WmxpeY1OFOseCEZ0cVqcg-1
+X-Mimecast-MFC-AGG-ID: -WmxpeY1OFOseCEZ0cVqcg_1743671934
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43ceeaf1524so3738595e9.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Apr 2025 02:18:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743671934; x=1744276734;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qNhiJ0TVTyzy7hyORBz5mXEdNK4x/LjCdeFZeLz+l/4=;
+        b=SXicUsTEQyGUKmo/ZM2OojOcpaElu5n7N7CvpZroknTLnd4zJmRte3oQzsnuz0bZXt
+         D5PdAjEwCbYfHnsZTY+jyjM+9EMNG5ldwCpISzwIcgG8OTOS2Yf8g8SfVXD1YmJto9BF
+         zjKRZiHPNUSQ94xpkol0N1SgMBf+LIQ3LlWHoZOLhfa6LO139MyjtUZFSyDwwP2fvjIg
+         XQfsuVGtK1i63jz498tqtDOdor9OdXJJw7VqSfHGxj/Bok937cE8fUWmqS3+YsaDXaCM
+         yMASPPfMzPeweDkaYSAiNYcmlZf+WeaIexU0psZAVUakhaf/Q24GIyjVt4E75x+rfI8f
+         d+ng==
+X-Forwarded-Encrypted: i=1; AJvYcCV3YutU91/8/rUPd0nimyaaNwgJNHTcSVqG/m2G3fhCN6p8xkt6keqaSjtV6J4CVhxdwLrtPxeYGarvF3Bn@vger.kernel.org
+X-Gm-Message-State: AOJu0YzID95mKHWRwVBV24etnhMdMDOdLK1uZj5zIX73JbtvJfPxQo+x
+	nTdUr0T/heulSTOggUZT70eWSqPnn9ghrlCqXxROL1aOqqtffwV+G8/0asehRZoFryUfBSlPd1w
+	58J+iavRFJFVUxLm2cqzwW0kQvBlKTOoNVMUhOKacF9Ku8z5EANHQS3X5VGqK8dM=
+X-Gm-Gg: ASbGncs/jynXXwemQwydwKKbX+08N2BNf2rKGlqlckkGcTZ0RRHeHNNOfxKUy0Sf7cn
+	50MkXia9xOY9tz+j/c/OaRvmqLxrcN0gp4xXuPmcka3E3SI3RCo0E+yGWUAjKpSf1Q2JaJGXxLM
+	4FEGi2BuCMTHmJk22mEuFZ92cfYrAoC9pwzCb+pQqCPyUwfnl+P8Bw5ZAQM2tnbKHscCzxTLc5v
+	qa102nh56R8bBAU/0YZYNo04w7kOWf0He5THg4cJ5mM0RbFyBd1G6jBluzZzLibyBp3Kj6nHqEO
+	SsnbiJgTbMbOptoFmdD49X36/gi2hDFMMzDof/G4SNk5
+X-Received: by 2002:a05:600c:83c3:b0:43c:ed33:a500 with SMTP id 5b1f17b1804b1-43ec630446dmr11271835e9.10.1743671934239;
+        Thu, 03 Apr 2025 02:18:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHjyoyF1GHQQlY2uXtE3gHeNZFz3BliaRjpJ0lsHL1dj5dQyGSumuJ7TXlq43bEhE+fmiBc1A==
+X-Received: by 2002:a05:600c:83c3:b0:43c:ed33:a500 with SMTP id 5b1f17b1804b1-43ec630446dmr11271445e9.10.1743671933764;
+        Thu, 03 Apr 2025 02:18:53 -0700 (PDT)
+Received: from [192.168.3.141] (p4ff23029.dip0.t-ipconnect.de. [79.242.48.41])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec1630f21sm16096415e9.8.2025.04.03.02.18.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Apr 2025 02:18:53 -0700 (PDT)
+Message-ID: <1577c4be-c6ee-4bc6-bb9c-d0a6d553b156@redhat.com>
+Date: Thu, 3 Apr 2025 11:18:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -97,87 +89,208 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] fuse: Make the fuse_send_one request counter atomic
-To: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>
-Cc: Vivek Goyal <vgoyal@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- linux-fsdevel@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
- Josef Bacik <josef@toxicpanda.com>
-References: <20250402-fuse-io-uring-trace-points-v1-0-11b0211fa658@ddn.com>
- <20250402-fuse-io-uring-trace-points-v1-1-11b0211fa658@ddn.com>
- <CAJfpegsZmx2f8XVJDNLBYmGd+oAtiov9p9NjpGZ4f9-D_3q_PA@mail.gmail.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJfpegsZmx2f8XVJDNLBYmGd+oAtiov9p9NjpGZ4f9-D_3q_PA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
+ with AS_WRITEBACK_INDETERMINATE mappings
+To: Jingbo Xu <jefflexu@linux.alibaba.com>,
+ Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, shakeel.butt@linux.dev,
+ josef@toxicpanda.com, bernd.schubert@fastmail.fm, linux-mm@kvack.org,
+ kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>,
+ Zi Yan <ziy@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
+ Michal Hocko <mhocko@kernel.org>
+References: <20241122232359.429647-1-joannelkoong@gmail.com>
+ <20241122232359.429647-5-joannelkoong@gmail.com>
+ <c9a76cb3-5827-4b2c-850f-8c830a090196@redhat.com>
+ <CAJnrk1aXOJ-dAUdSmP07ZP6NPBJrdjPPJeaGbBULZfY=tBdn=Q@mail.gmail.com>
+ <1036199a-3145-464b-8bbb-13726be86f46@linux.alibaba.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <1036199a-3145-464b-8bbb-13726be86f46@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Miklos,
-
-thanks for the quick reply.
-
-On 4/2/25 20:29, Miklos Szeredi wrote:
-> On Wed, 2 Apr 2025 at 19:41, Bernd Schubert <bschubert@ddn.com> wrote:
+On 03.04.25 05:31, Jingbo Xu wrote:
+> 
+> 
+> On 4/3/25 5:34 AM, Joanne Koong wrote:
+>> On Thu, Dec 19, 2024 at 5:05 AM David Hildenbrand <david@redhat.com> wrote:
+>>>
+>>> On 23.11.24 00:23, Joanne Koong wrote:
+>>>> For migrations called in MIGRATE_SYNC mode, skip migrating the folio if
+>>>> it is under writeback and has the AS_WRITEBACK_INDETERMINATE flag set on its
+>>>> mapping. If the AS_WRITEBACK_INDETERMINATE flag is set on the mapping, the
+>>>> writeback may take an indeterminate amount of time to complete, and
+>>>> waits may get stuck.
+>>>>
+>>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+>>>> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+>>>> ---
+>>>>    mm/migrate.c | 5 ++++-
+>>>>    1 file changed, 4 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/mm/migrate.c b/mm/migrate.c
+>>>> index df91248755e4..fe73284e5246 100644
+>>>> --- a/mm/migrate.c
+>>>> +++ b/mm/migrate.c
+>>>> @@ -1260,7 +1260,10 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
+>>>>                 */
+>>>>                switch (mode) {
+>>>>                case MIGRATE_SYNC:
+>>>> -                     break;
+>>>> +                     if (!src->mapping ||
+>>>> +                         !mapping_writeback_indeterminate(src->mapping))
+>>>> +                             break;
+>>>> +                     fallthrough;
+>>>>                default:
+>>>>                        rc = -EBUSY;
+>>>>                        goto out;
+>>>
+>>> Ehm, doesn't this mean that any fuse user can essentially completely
+>>> block CMA allocations, memory compaction, memory hotunplug, memory
+>>> poisoning... ?!
+>>>
+>>> That sounds very bad.
 >>
->> No need to take lock, we can have that in atomic way.
->> fuse-io-uring and virtiofs especially benefit from it
->> as they don't need the fiq lock at all.
+>> I took a closer look at the migration code and the FUSE code. In the
+>> migration code in migrate_folio_unmap(), I see that any MIGATE_SYNC
+>> mode folio lock holds will block migration until that folio is
+>> unlocked. This is the snippet in migrate_folio_unmap() I'm looking at:
+>>
+>>          if (!folio_trylock(src)) {
+>>                  if (mode == MIGRATE_ASYNC)
+>>                          goto out;
+>>
+>>                  if (current->flags & PF_MEMALLOC)
+>>                          goto out;
+>>
+>>                  if (mode == MIGRATE_SYNC_LIGHT && !folio_test_uptodate(src))
+>>                          goto out;
+>>
+>>                  folio_lock(src);
+>>          }
+>>
+
+Right, I raised that also in my LSF/MM talk: waiting for readahead 
+currently implies waiting for the folio lock (there is no separate 
+readahead flag like there would be for writeback).
+
+The more I look into this and fuse, the more I realize that what fuse 
+does is just completely broken right now.
+
+>> If this is all that is needed for a malicious FUSE server to block
+>> migration, then it makes no difference if AS_WRITEBACK_INDETERMINATE
+>> mappings are skipped in migration. A malicious server has easier and
+>> more powerful ways of blocking migration in FUSE than trying to do it
+>> through writeback. For a malicious fuse server, we in fact wouldn't
+>> even get far enough to hit writeback - a write triggers
+>> aops->write_begin() and a malicious server would deliberately hang
+>> forever while the folio is locked in write_begin().
 > 
-> This is good.
+> Indeed it seems possible.  A malicious FUSE server may already be
+> capable of blocking the synchronous migration in this way.
+
+Yes, I think the conclusion is that we should advise people from not 
+using unprivileged FUSE if they care about any features that rely on 
+page migration or page reclaim.
+
 > 
-> It would be even better to have per-cpu counters, each initialized to
-> a cpuid * FUSE_REQ_ID_STEP and jumping by NR_CPU * FUSE_REQ_ID_STEP.
 > 
-> Hmm?
+>>
+>> I looked into whether we could eradicate all the places in FUSE where
+>> we may hold the folio lock for an indeterminate amount of time,
+>> because if that is possible, then we should not add this writeback way
+>> for a malicious fuse server to affect migration. But I don't think we
+>> can, for example taking one case, the folio lock needs to be held as
+>> we read in the folio from the server when servicing page faults, else
+>> the page cache would contain stale data if there was a concurrent
+>> write that happened just before, which would lead to data corruption
+>> in the filesystem. Imo, we need a more encompassing solution for all
+>> these cases if we're serious about preventing FUSE from blocking
+>> migration, which probably looks like a globally enforced default
+>> timeout of some sort or an mm solution for mitigating the blast radius
+>> of how much memory can be blocked from migration, but that is outside
+>> the scope of this patchset and is its own standalone topic.
 
-/**
- * Get the next unique ID for a request
- */
-static inline u64 fuse_get_unique(struct fuse_iqueue *fiq)
-{
-	int step = FUSE_REQ_ID_STEP * (task_cpu(current) + 1);
-	u64 cntr = this_cpu_inc_return(*fiq->reqctr);
+I'm still skeptical about timeouts: we can only get it wrong.
 
-	return cntr * step;
-}
+I think a proper solution is making these pages movable, which does seem 
+feasible if (a) splice is not involved and (b) we can find a way to not 
+hold the folio lock forever e.g., in the readahead case.
 
+Maybe readahead would have to be handled more similar to writeback 
+(e.g., having a separate flag, or using a combination of e.g., 
+writeback+uptodate flag, not sure)
 
+In both cases (readahead+writeback), we'd want to call into the FS to 
+migrate a folio that is under readahread/writeback. In case of fuse 
+without splice, a migration might be doable, and as discussed, splice 
+might just be avoided.
 
-  passthrough_hp-10113   [028] ...1. 79978.381908: fuse_request_bg_enqueue: connection 43 req 58 opcode 26 (FUSE_INIT) len 0 
-  passthrough_hp-10113   [028] ...2. 79978.382032: fuse_request_enqueue: connection 43 req 58 opcode 26 (FUSE_INIT) len 104 
-     fuse_worker-10115   [008] ...1. 79978.485348: fuse_request_send: connection 43 req 58 opcode 26 (FUSE_INIT) len 104 
-     fuse_worker-10115   [008] ...1. 79978.489948: fuse_request_end: connection 43 req 58 len 80 error 0
-              df-10153   [012] ...1. 79981.776173: fuse_request_enqueue: connection 43 req 26 opcode 3 (FUSE_GETATTR) len 56 
-    fuse-ring-12-10131   [012] ...1. 79981.776345: fuse_request_send: connection 43 req 26 opcode 3 (FUSE_GETATTR) len 56 
-    fuse-ring-12-10131   [012] ...1. 79981.776628: fuse_request_end: connection 43 req 26 len 56 error 0
-              df-10153   [012] ...1. 79981.778866: fuse_request_enqueue: connection 43 req 52 opcode 17 (FUSE_STATFS) len 40 
-    fuse-ring-12-10131   [012] ...1. 79981.778887: fuse_request_send: connection 43 req 52 opcode 17 (FUSE_STATFS) len 40 
-    fuse-ring-12-10131   [012] ...1. 79981.779050: fuse_request_end: connection 43 req 52 len 40 error 0
-              ls-10154   [013] ...1. 79986.145078: fuse_request_enqueue: connection 43 req 28 opcode 22 (FUSE_GETXATTR) len 65 
-    fuse-ring-13-10132   [013] ...1. 79986.145440: fuse_request_send: connection 43 req 28 opcode 22 (FUSE_GETXATTR) len 65 
-    fuse-ring-13-10132   [013] ...1. 79986.146932: fuse_request_end: connection 43 req 28 len 65 error -95
-              ls-10154   [013] ...1. 79986.147172: fuse_request_enqueue: connection 43 req 56 opcode 22 (FUSE_GETXATTR) len 72 
-    fuse-ring-13-10132   [013] ...1. 79986.147219: fuse_request_send: connection 43 req 56 opcode 22 (FUSE_GETXATTR) len 72 
-    fuse-ring-13-10132   [013] ...1. 79986.148048: fuse_request_end: connection 43 req 56 len 72 error -95
-              ls-10154   [013] ...1. 79986.152345: fuse_request_enqueue: connection 43 req 84 opcode 27 (FUSE_OPENDIR) len 48 
-    fuse-ring-13-10132   [013] ...1. 79986.152385: fuse_request_send: connection 43 req 84 opcode 27 (FUSE_OPENDIR) len 48 
-    fuse-ring-13-10132   [013] ...1. 79986.153214: fuse_request_end: connection 43 req 84 len 48 error 0
-              ls-10154   [013] ...1. 79986.154291: fuse_request_enqueue: connection 43 req 112 opcode 44 (FUSE_READDIRPLUS) len 80 
-    fuse-ring-13-10132   [013] ...1. 79986.154405: fuse_request_send: connection 43 req 112 opcode 44 (FUSE_READDIRPLUS) len 80 
-    fuse-ring-13-10132   [013] ...1. 79986.171515: fuse_request_end: connection 43 req 112 len 80 error 0
-              ls-10154   [013] ...1. 79986.174221: fuse_request_enqueue: connection 43 req 140 opcode 44 (FUSE_READDIRPLUS) len 80 
-    fuse-ring-13-10132   [013] ...1. 79986.174264: fuse_request_send: connection 43 req 140 opcode 44 (FUSE_READDIRPLUS) len 80 
-    fuse-ring-13-10132   [013] ...1. 79986.174510: fuse_request_end: connection 43 req 140 len 80 error 0
-              ls-10154   [013] ...1. 79986.174739: fuse_request_bg_enqueue: connection 43 req 168 opcode 29 (FUSE_RELEASEDIR) len 0 
-    fuse-ring-13-10132   [013] ...1. 79986.179691: fuse_request_send: connection 43 req 168 opcode 29 (FUSE_RELEASEDIR) len 64 
-    fuse-ring-13-10132   [013] ...1. 79986.180011: fuse_request_end: connection 43 req 168 len 64 error 0
+>>
+>> I don't see how this patch has any additional negative impact on
+>> memory migration for the case of malicious servers that the server
+>> can't already (and more easily) do. In fact, this patchset if anything
+>> helps memory given that malicious servers now can't also trigger page
+>> allocations for temp pages that would never get freed.
+>>
+> 
+> If that's true, maybe we could drop this patch out of this patchset? So
+> that both before and after this patchset, synchronous migration could be
+> blocked by a malicious FUSE server, while the usability of continuous
+> memory (CMA) won't be affected.
 
+I had exactly the same thought: if we can block forever on the folio 
+lock, there is no need for AS_WRITEBACK_INDETERMINATE. It's already all 
+completely broken.
 
+-- 
+Cheers,
 
-Slight issue is that request IDs now have quite an up down,
-even more than patch 2/4. Ok with you?
+David / dhildenb
 
-
-Thanks,
-Bernd
 
