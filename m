@@ -1,204 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-45587-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3991FA799DA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 04:01:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEE75A799E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 04:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C273189318F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 02:01:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FA8B16F040
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 02:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500EC14EC46;
-	Thu,  3 Apr 2025 02:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4B015C140;
+	Thu,  3 Apr 2025 02:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQ3L3+FL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GZ/jDKFa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47538610B;
-	Thu,  3 Apr 2025 02:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF456F31E;
+	Thu,  3 Apr 2025 02:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743645650; cv=none; b=qKrDXnSlPYXicWwW5IpxAp4IeKtrtq4/nZ827evc7XzGIDHc5xU6pX9xeQVUNUzCtaGBEh99+qQQJEgXAWDtpVE3AWoHQXXLGWwDTLxyD98gc4/vRB43BfIC7F15UBtNhT2CMgCdcC/q9opF21z68pdNeH8i8FtU0Vub4luqdXg=
+	t=1743645866; cv=none; b=FKlmscMDYDLfDN8NmBGF1SzulqCngYbPEd7d93zfx5QevX83G7QWKKJmHBkWRuLX3Gabhz3+4EAofqKba1iRdA+HDkluRnC+x1C5ttTf8uzahy1BI8vOrl/kk4nSKfVQxLhfrDJba/73TzSKuGz3MikqX+4ypKzo6eVDe2ue4pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743645650; c=relaxed/simple;
-	bh=0ba+sRGF2jAkbc+QseTQRVmQ9JgKzPa2R2booIqtf0U=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=H2Bvan61P6FLEtU8LYe+lsTdn+8aYWn6LpH7MDEteTNjHz2vaQ/fSnMBxID8LkNhZakrk+WIUihhAa0pVS6ltNf4tD5KJ5xFmzEeQM4ixGAqW2iGqVhnwZszcJH2HhkLxJ3DISV2NR0oy1su/S8AOEhZO0DmWLd1pF5/9Y1ry3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQ3L3+FL; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-301e05b90caso381490a91.2;
-        Wed, 02 Apr 2025 19:00:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743645648; x=1744250448; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gcde5Nyi6TaMVAZ5o62Gx5sjG4xeY8R/Cdn03wkDkWw=;
-        b=YQ3L3+FLKFcQl6XiBmS+nezQPQVoXoGztN/6YCD4IulVs/KU0IrtaMtdGvTt1+451y
-         GdVNtOQXzBaBazKoo49xmMB/2ruCKNm3XeYiSN6H55MiYrGOmc6n8HNiRkNBhxQIocRn
-         ipXlT0fdamXMU7rwIj4/F/ddjVKBNbvm+nLegIZGwlNpbYnF6jr4nI01uCEPwiQk+ALS
-         i9JvaoUheh3zfeekE8Cw2x0Ot1Ter5yJMJ5Dc3tq5/X8dsD9SfxqqfD3sGU2/6XI2CnA
-         +lF9q5z5CG3s6+8SsXzdAsyFq46F5wUsOAZrrFHXHHYCLjQzojIrGOp1Vlcazzxct2t5
-         0FPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743645648; x=1744250448;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gcde5Nyi6TaMVAZ5o62Gx5sjG4xeY8R/Cdn03wkDkWw=;
-        b=Uli1unKBSg4x9KanwDxVBzyaTJsnQj1UpczVla5rkBpqWk4xGyM21T96fFNNrdJs8O
-         A9ite7rgHf7ySOpSavktHm5SM691FSIrxSh6I8p5vHUcr1jB0IXIrjsQCNVMDqxCkA9+
-         VLF6GWNSvdAYCE3VZ2vBOaOVzYP4vHyAW/NGxu/6Fv8WfzxCzvP/CLT5t8vaLIk9C5wE
-         +PPwP2BTvLthlYogbCFM9/cUEtZvR3SrJdKtsuirYRpt03zCHccGfpM1lngotAisElGO
-         tp59Z+C4cpaj0nCMpy1Rp0tBQqXBVHt0Zm/DHu1tPojoe+c8CdPMVanvPDBYFWBmBCfQ
-         z78A==
-X-Forwarded-Encrypted: i=1; AJvYcCUjFBJDDAnFcMR2mcu/Oom2kUKIdFlV8t349zMaUrPgVcdLHfrjUe4N572NrVGJLF/P7byqPYmJakpGCygY@vger.kernel.org, AJvYcCUqAi8vZ0U/tWbqwqw/PVbxxQ102OPYVu/zUct2Wc5MZgdplM2L99pAYPT0nWe94l9l3GLoVswm1h4NF7dX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyjw0E5PTjAGFHzlbBbxnx2uEN0qwyFv9dGD49PrhO5Top2gVxo
-	3oX3XRVrTjz8kv4aRFE0R2az4yIIZ9gGXgQ3b6/WZsxY/yyMHro1
-X-Gm-Gg: ASbGnctQIKkMxfDLsWqw28g8nxaCbWNnO2P6avKzXvnduwBPMwIAwZ5avjjyH+oJ/0Z
-	j83IsTSLtoMVLWtln/4cZ4nuqc2vb6Y+LGwIbLd/F6TCOvVWc30wtdt/2o9W1QKSaDParq6ogt2
-	6FZDlj+glGCECv7yV4lAFoHoGQdOCogOsUJz7GHkD7Uc4j8w2OIXWsOk4pXIS9n8XD+mIecSxDz
-	TCD7GX7NkRtdIArjMrIDF7jz/26ykUgdiOtwgyWoms41FACNOMeFGq71aVnTA3hGQbCMwXdsJxL
-	xMTP/IWHSgxiEUx5sF9+JOag7wCGVpGXKrsLJSAgbSEi8x3FhfsBPHSAsn+bwfE1XlLh1CfyBA=
-	=
-X-Google-Smtp-Source: AGHT+IHuQHtWHcO53kS5e5zZEuKi16tpySHAaverruz/vmyToXsfN39bOqzs8qlfsj43naZCs0Vs6w==
-X-Received: by 2002:a17:90b:51c7:b0:2ff:72f8:3708 with SMTP id 98e67ed59e1d1-3057cb39169mr1470671a91.17.1743645648421;
-        Wed, 02 Apr 2025 19:00:48 -0700 (PDT)
-Received: from localhost.localdomain ([221.214.202.225])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3057cb8dda5sm385727a91.40.2025.04.02.19.00.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 19:00:47 -0700 (PDT)
-From: Penglei Jiang <superman.xpt@gmail.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org
-Cc: jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+5d8e79d323a13aa0b248@syzkaller.appspotmail.com,
-	Penglei Jiang <superman.xpt@gmail.com>
-Subject: [PATCH 2/2] vfs: Fix anon_inode triggering VFS_BUG_ON_INODE in may_open()
-Date: Wed,  2 Apr 2025 18:59:46 -0700
-Message-Id: <20250403015946.5283-1-superman.xpt@gmail.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1743645866; c=relaxed/simple;
+	bh=a96SlvwEBzJj+2DnKMwsTwDZGhq08Zv/n7EyUk+W7Rs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gd0HKfqSoUqEigUXdshvSd2h5CR6MKEzyiBniEhIu/jok1AX1J4slZnBsXLhuvtTSh3SPBL2o/nr+O48fEFg2B9AsB96bCNVbWTpA75g21wcWhM0DaLAbTjZwtu9WWARsNTcX8jwRxcTPuiRRElO79MWPOMmPIgr6YJTMkutPLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GZ/jDKFa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A600C4CEDD;
+	Thu,  3 Apr 2025 02:04:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743645865;
+	bh=a96SlvwEBzJj+2DnKMwsTwDZGhq08Zv/n7EyUk+W7Rs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GZ/jDKFaDLc097kSITEFAQ6NhhyOGIJG3yaklFbH+MEfC/ySGAZ/45xfBAgNi3XVB
+	 n4V6J65QqB1NCOGquu1iiluGCY7h47njXbzBhYbo/hKA5GyJeDTXj27rkq5OThV2+q
+	 L8zB1DX5jdqsXcB8wRLMKZ51RdJcB0UhyjyeoJfqGihVuNjw6aOKNXHxytumXTcwPV
+	 XuFpklC0UtxfwxG9BzQlAxNaL+3vK1/syQk4KhQ8wIIJhJOMsjbjno5q91werBEMle
+	 /eoP1p1iWA2SQ42DYlBDj4/QPH5fvY63ddBeg8MLGfn6e8vELEAjnp3TmeuFsoSAdp
+	 Zz/K3YI8eqJDA==
+Date: Wed, 2 Apr 2025 19:04:23 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+	riel@surriel.com, hannes@cmpxchg.org, oliver.sang@intel.com,
+	david@redhat.com, axboe@kernel.dk, hare@suse.de,
+	david@fromorbit.com, djwong@kernel.org, ritesh.list@gmail.com,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-mm@kvack.org, gost.dev@samsung.com, p.raghav@samsung.com,
+	da.gomez@samsung.com
+Subject: Re: [PATCH 2/3] fs/buffer: avoid races with folio migrations on
+ __find_get_block_slow()
+Message-ID: <Z-3spxNHYe_CbLgP@bombadil.infradead.org>
+References: <20250330064732.3781046-1-mcgrof@kernel.org>
+ <20250330064732.3781046-3-mcgrof@kernel.org>
+ <lj6o73q6nev776uvy7potqrn5gmgtm4o2cev7dloedwasxcsmn@uanvqp3sm35p>
+ <20250401214951.kikcrmu5k3q6qmcr@offworld>
+ <Z-yZxMVJgqOOpjHn@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-yZxMVJgqOOpjHn@casper.infradead.org>
 
-may_open()
-{
-        ...
-        switch (inode->i_mode & S_IFMT) {
-        case S_IFLNK:
-        case S_IFDIR:
-        case S_IFBLK:
-        case S_IFCHR:
-        case S_IFIFO:
-        case S_IFSOCK:
-        case S_IFREG:
-        default:
-                VFS_BUG_ON_INODE(1, inode);
-        }
-        ...
-}
+On Wed, Apr 02, 2025 at 02:58:28AM +0100, Matthew Wilcox wrote:
+> On Tue, Apr 01, 2025 at 02:49:51PM -0700, Davidlohr Bueso wrote:
+> > So the below could be tucked in for norefs only (because this is about the addr
+> > space i_private_lock), but this also shortens the hold time; if that matters
+> > at all, of course, vs changing the migration semantics.
+> 
+> I like this approach a lot better.  One wrinkle is that it doesn't seem
+> that we need to set the BH_Migrate bit on every buffer; we could define
+> that it's only set on the head BH, right?
 
-Since some anonymous inodes do not have S_IFLNK, S_IFDIR, S_IFBLK,
-S_IFCHR, S_IFIFO, S_IFSOCK, or S_IFREG flags set when created, they
-end up in the default case branch.
+Yes, we are also only doing this for block devices, and for migration
+purposes. Even though a bit from one buffer may be desirable it makes
+no sense to allow for that in case migration is taking place.  So indeed
+we have no need to add the flag for all buffers.
 
-When creating some anon_inode instances, the i_mode in the switch
-statement is not properly set, which causes the open operation to
-follow the default branch when opening anon_inode.
+I think the remaining question is what users of __find_get_block_slow()
+can really block, and well I've started trying to determine that with
+coccinelle [0], its gonna take some more time.
 
-We could check whether the inode is an anon_inode before VFS_BUG_ON_INODE
-and trigger the assertion only if it's not. However, a more reasonable
-approach might be to set a flag during creation in alloc_anon_inode(),
-such as inode->i_flags |= S_ANON, to explicitly mark anonymous inodes.
+Perhaps its easier to ask, why would a block device mapping want to
+allow __find_get_block_slow() to not block?
 
-The code that triggers the BUG:
+[0] https://lkml.kernel.org/r/20250403020123.1806887-1-mcgrof@kernel.org
 
-    #include <stdio.h>
-    #include <unistd.h>
-    #include <fcntl.h>
-    #include <sys/timerfd.h>
-
-    int main(int argc, char **argv) {
-        int fd = timerfd_create(CLOCK_MONOTONIC, 0);
-        if (fd != -1) {
-            char path[256];
-            sprintf(path, "/proc/self/fd/%d", fd);
-            open(path, O_RDONLY);
-        }
-
-        return 0;
-    }
-
-Thank you!
-
-Fixes: af153bb63a336 ("vfs: catch invalid modes in may_open()")
-Reported-by: syzbot+5d8e79d323a13aa0b248@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/67ed3fb3.050a0220.14623d.0009.GAE@google.com"
-Signed-off-by: Penglei Jiang <superman.xpt@gmail.com>
----
- fs/anon_inodes.c            | 4 ++++
- fs/namei.c                  | 5 ++++-
- include/linux/anon_inodes.h | 1 +
- 3 files changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-index 583ac81669c2..c29eca6106d2 100644
---- a/fs/anon_inodes.c
-+++ b/fs/anon_inodes.c
-@@ -303,6 +303,10 @@ int anon_inode_create_getfd(const char *name, const struct file_operations *fops
- 	return __anon_inode_getfd(name, fops, priv, flags, context_inode, true);
- }
- 
-+inline bool is_default_anon_inode(const struct inode *inode)
-+{
-+    return anon_inode_inode == inode;
-+}
- 
- static int __init anon_inode_init(void)
- {
-diff --git a/fs/namei.c b/fs/namei.c
-index 360a86ca1f02..81cea4901a2f 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -40,6 +40,7 @@
- #include <linux/bitops.h>
- #include <linux/init_task.h>
- #include <linux/uaccess.h>
-+#include <linux/anon_inodes.h>
- 
- #include "internal.h"
- #include "mount.h"
-@@ -3429,7 +3430,9 @@ static int may_open(struct mnt_idmap *idmap, const struct path *path,
- 			return -EACCES;
- 		break;
- 	default:
--		VFS_BUG_ON_INODE(1, inode);
-+		if (!is_default_anon_inode(inode)
-+			&& !(inode->i_flags & S_PRIVATE))
-+			VFS_BUG_ON_INODE(1, inode);
- 	}
- 
- 	error = inode_permission(idmap, inode, MAY_OPEN | acc_mode);
-diff --git a/include/linux/anon_inodes.h b/include/linux/anon_inodes.h
-index edef565c2a1a..eca4a3913ba7 100644
---- a/include/linux/anon_inodes.h
-+++ b/include/linux/anon_inodes.h
-@@ -30,6 +30,7 @@ int anon_inode_create_getfd(const char *name,
- 			    const struct file_operations *fops,
- 			    void *priv, int flags,
- 			    const struct inode *context_inode);
-+bool is_default_anon_inode(const struct inode *inode);
- 
- #endif /* _LINUX_ANON_INODES_H */
- 
--- 
-2.17.1
-
+  Luis
 
