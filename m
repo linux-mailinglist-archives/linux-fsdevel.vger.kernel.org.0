@@ -1,171 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-45669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B906DA7A88A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 19:25:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61C24A7A8CE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 19:44:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1842A1885D8A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 17:25:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 054A37A6245
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 17:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13EC25178E;
-	Thu,  3 Apr 2025 17:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0B62517BE;
+	Thu,  3 Apr 2025 17:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gtt8EJ9S"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nl/vq4hP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D2D1547C3
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Apr 2025 17:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77AB92512D7;
+	Thu,  3 Apr 2025 17:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743701112; cv=none; b=uVwLNutWl5iTIUGqljNXiz2jsBJkKSHVXty1mFutjrXu3KuQdvPfxUcNLsVfhPJSA3nKc/hjGoj62MGOB8ysL484oCcmeyejsQiLudkiNyTEOYUckBkUTCFg0oZ+1wnBv92lxz8Yc69Wt2Q2T+ksY6Ej7Wxv2ydxbIetCZPxdsA=
+	t=1743702266; cv=none; b=ZkgjLiUNXg17IRHZ7dhp2ICnB5aDISL5m78vFgDZ4hLLF41nTgcEwgZTgVqbMYkGIWDooepS2cEXpB2NTkZFYGArHiiX5W3M1ido2SDsnzUUxeYYQ6fdqfoqxTgASl99Y6GWKdxvbW+mzUdd62UKW6Ph0z6Cml/6ZY273wvRaAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743701112; c=relaxed/simple;
-	bh=ccRtAb+SViMVWgobZYGfg6sxXfop3Vut5KFsT+hO/28=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nRM0KX7K0rlRLvROc3Q4Hmt9LLBRX21Kd0vnOed9RtxMzWMdkMeEhbZLbz08Phfhgb378ZiXiMEjmLPV63UEMjP3zzUGpLbD6SMcZm3bofkE1Pl2e4G8jLN8meYrQdGdFkS364TyNxsEX11Y4fjcPfLsGXh7NPM1btZUny/GGSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gtt8EJ9S; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac3fcf5ab0dso188440866b.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Apr 2025 10:25:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743701109; x=1744305909; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ccRtAb+SViMVWgobZYGfg6sxXfop3Vut5KFsT+hO/28=;
-        b=gtt8EJ9StbQC4qSp71FQsWWk+hDWPufgscR9cRdfWEu4fN/MMLOAx4cs+UU6MQkDqI
-         smjkPIAiGFZGcSEkn4SfE2qOEsU2aYqwzILzI9jEqlGsNMjhyko6XelL1cBKjDdXBSeD
-         4lbIkY8C2v+eRP8LhjuoCf6kkpYKpMkaqO2STHr7wSJc8UXWV1ryfaLkDgWFZCfVbwhy
-         j02/rEcl0AeM+EVk/J+apPS+6hVMDTexOlK4F1ini6LwptwajBHomYeBx7P/9G4ivd0N
-         t4hUBMwsMaj3CUnLbq4GplW5ZNl9OpcHZJYYDoHf0yN0TwSsmceRJF0CBVNIGy7IUq1S
-         q/4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743701109; x=1744305909;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ccRtAb+SViMVWgobZYGfg6sxXfop3Vut5KFsT+hO/28=;
-        b=egsvPrKHFLaZNs9z+kZ8STkOEz/ER4chDhSTLYrWnNrt5dvWxldDko1i47S2uMRE7o
-         xbHn8+Sa7eAVYlmuQJl9qNgpDDk/ai1KIyoDcrXe1cXH4Z0djzRxj0QBTc8i23bzK+Dy
-         uFfyreGO8W1iyguT3SXMUmfjndFeFsnA6+O8tsvXamge+/Cp+XNd1iypnVJt/D33Hfem
-         oFWdyMGGO4H9dFE494jcIKHv41+WnqolafoSdUb2SD0d3U9JvnhLJegbmOGQS+vD7xJL
-         vJSd8JPkcvoiz85hCfjQN39rOQKb6VcT74jxNJg+zQLUz/TKofZ6ez6tlGwwLYVG1Jw6
-         J/vw==
-X-Forwarded-Encrypted: i=1; AJvYcCVm61xvYiORPH6gy4iWrKo8oQC15VSQ29fRDWxDwDR7G2LjJ/+S7Qc9drB1e87pXUEMB4tq8nltIE6yJbBB@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbrXxxLNbf2H+gPifqg0VSmPArSxw6yU9R8IkS3IhvBGvc4Or9
-	c7em6aAmyTxL7Ql8xEKdjhiau7iU933oJzw75WEyrGZqpPHIN5mxtPUnJS9IvGGCGQ4v2N+VgU1
-	9zccF4vDU244SufIGGH8JJUnPVZNZFEy4DyI=
-X-Gm-Gg: ASbGncu1e2WmaY+yaCBum96zwp5PkppG9MQeFGVI2wpMCMz+VhyE33EBa3lvlPi1jtd
-	uUWuZuAfoWhygf1sC1bLAvSQACyO7bSn6aOEEgB+OCsHIQrzoVOEruNSPe2JmrIn+gtjHRy7qbs
-	t0kbX3vkg9bJNZG4xJ48I6mGapIw==
-X-Google-Smtp-Source: AGHT+IFHprkgXyaRTP58WfSePMbjF2fBR7p5LHVSGmWoyuUwi5BOZysL0LAU2zdMnscghoK6rBz2YARt3Zh7xjkg+nM=
-X-Received: by 2002:a17:907:7b97:b0:ac7:cc21:48f9 with SMTP id
- a640c23a62f3a-ac7d166c346mr39795666b.5.1743701108281; Thu, 03 Apr 2025
- 10:25:08 -0700 (PDT)
+	s=arc-20240116; t=1743702266; c=relaxed/simple;
+	bh=2k/M/IytbGPTT46+syVtjeXIilg4EhbveiCgLEZgIoc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pcfC9Eu+DOgcf/nh0wdBgYN3uoEc8UFSVEop4pTCAs4zeE/IK53ig3HpUjagom4MdLKkTNNoaxJPBzrlp9fk78bU6lA2awukM+/b3iHc6cqeckYnbXhaOJMBX68xjq3HTf69YRX3XVptEVgA8/MW/NPXe+uK2uP8C7EFWWw138w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nl/vq4hP; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5bCE/e2+eVXHTwCCmYdkChzX3931MOPxX+eV7bSag/U=; b=nl/vq4hPPV2slo8lQS9KTGLAhW
+	6HT134e/y+NZ35rY3CdmUXCSkbL80OApd2x+j6ZZdgRWFNVvK+Oo7UKFGHIA+Oa806RrDdDmAb3bV
+	izWJCkr2/Of7CnP3qDjiTLx+h8IBMTVhDYyeVgJaVZ0jLmK6uf4URDQvcX+vym6kRYEFRgybeh0hQ
+	w+XUonev7HTQeJOpUVPYihT/xxjQD60dOfBP/1tb3PmewCtnuRPQxfL+6KSruHCKZzAWT6wlrs60U
+	SfvbpVqqbcmErdNuypbivLXijOP3Wsk6g9/2vCP/Op8cpATSj62osNgmmHqRyweRtPSMw6Eh9rTXq
+	vJqZSuTg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u0Oc2-0000000DPFq-29E2;
+	Thu, 03 Apr 2025 17:44:22 +0000
+Date: Thu, 3 Apr 2025 18:44:22 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: Linux Memory Management List <linux-mm@kvack.org>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-btrfs <linux-btrfs@vger.kernel.org>
+Subject: Re: Proper way to copy de-compressed data into a bio, in folio style?
+Message-ID: <Z-7I9hOcGzQMV3hq@casper.infradead.org>
+References: <17517804-1c6b-4b96-a608-8c3d80e5f6dd@gmx.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250402062707.1637811-1-amir73il@gmail.com> <u3myluuaylejsfidkkajxni33w2ezwcfztlhjmavdmpcoir45o@ew32e4yra6xb>
-In-Reply-To: <u3myluuaylejsfidkkajxni33w2ezwcfztlhjmavdmpcoir45o@ew32e4yra6xb>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 3 Apr 2025 19:24:57 +0200
-X-Gm-Features: ATxdqUGl7YhlJ6HQsxhckfl8xppuHgAVx-9gAj-j7rsHieiopYEeIzVHvDHYKN4
-Message-ID: <CAOQ4uxh7JhGMjoMpFWvHyEZ0j2kJUgLf9PjyvLeNbSAzVbDyQA@mail.gmail.com>
-Subject: Re: [PATCH] fanotify: allow creating FAN_PRE_ACCESS events on directories
-To: Jan Kara <jack@suse.cz>
-Cc: Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <17517804-1c6b-4b96-a608-8c3d80e5f6dd@gmx.com>
 
-On Thu, Apr 3, 2025 at 7:10=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 02-04-25 08:27:07, Amir Goldstein wrote:
-> > Like files, a FAN_PRE_ACCESS event will be generated before every
-> > read access to directory, that is on readdir(3).
-> >
-> > Unlike files, there will be no range info record following a
-> > FAN_PRE_ACCESS event, because the range of access on a directory
-> > is not well defined.
-> >
-> > FAN_PRE_ACCESS events on readdir are only generated when user opts-in
-> > with FAN_ONDIR request in event mask and the FAN_PRE_ACCESS events on
-> > readdir report the FAN_ONDIR flag, so user can differentiate them from
-> > event on read.
-> >
-> > An HSM service is expected to use those events to populate directories
-> > from slower tier on first readdir access. Having to range info means
-> > that the entire directory will need to be populated on the first
-> > readdir() call.
-> >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ---
-> >
-> > Jan,
-> >
-> > IIRC, the reason we did not allow FAN_ONDIR with FAN_PRE_ACCESS event
-> > in initial API version was due to uncertainty around reporting range in=
-fo.
-> >
-> > Circling back to this, I do not see any better options other than not
-> > reporting range info and reporting the FAN_ONDIR flag.
-> >
-> > HSM only option is to populate the entire directory on first access.
-> > Doing a partial range populate for directories does not seem practical
-> > with exising POSIX semantics.
->
-> I agree that range info for directory events doesn't make sense (or bette=
-r
-> there's no way to have a generic implementation since everything is prett=
-y
-> fs specific). If I remember our past discussion, filling in directory
-> content on open has unnecessarily high overhead because the user may then
-> just do e.g. lookup in the opened directory and not full readdir. That's
-> why you want to generate it on readdir. Correct?
->
+On Mon, Mar 31, 2025 at 06:45:10PM +1030, Qu Wenruo wrote:
+> Hi,
+> 
+> The seemingly easy question has some very interesting extra requirements:
+> 
+> 1. The bio contains contig file map folios
+>    The folios may be large.
+>    So page_offset() on bv_page (using single-page bvec) is no longer
+>    reliable, one has to call page_pgoff() instead.
 
-Right.
+page_offset() is on my hitlist.  It actually is correct now (commit
+12851bd921d4) but it's on its way out.  Don't use bv_page.
 
-> > If you accept this claim, please consider fast tracking this change int=
-o
-> > 6.14.y.
->
-> Hum, why the rush? It is just additional feature to allow more efficient
-> filling in of directory entries...
->
+> 2. The data may not cover the bio range
+>    So we need some range comparison and skip if the data range doesn't
+>    cover the bio range.
 
-Well, no rush really.
+I have no idea what this means.
 
-My incentive is not having to confuse users with documentation that
-version X supports FAN_PRE_ACCESS but only version Y supports
-it with FAN_ONDIR.
+> 3. The bio may have been advanced
+>    E.g. previous de-compressed range has been copied, but the remaining
+>    part still needs to be fulfilled.
+> 
+>    And we need to use the bv_page's file offset to calculate the real
+>    beginning of the range to copy.
+> 
+> The current btrfs code is doing single page bvec iteration, and handling
+> point 2 and 3 well.
+> (btrfs_decompress_buf2page() in fs/btrfs/compression.c)
+> 
+> Point 1 was not causing problem until the incoming large data folio
+> support, and can be easily fixed with page_pgoff() convertion.
+> 
+> 
+> But since we're here, I'm also wondering can we do it better with a
+> folio or multi-page bvec way?
+> 
+> The current folio bio iteration helper can only start from the beginning
+> of a bio (bio_for_each_folio_all() and bio_first_folio()), thus it's not
+> a good fit for point 3.
+> 
+> On the other hand, I'm having some internal code to convert a bio_vec
+> into a folio and offset inside the folio already.
+> Thus I'm wondering can we provide something like bio_for_each_folio()?
+> Or is it too niche that only certain fs can benefit from?
 
-It's not a big deal, but if we have no reason to delay this, I'd just
-treat it as a fix to the new api (removing unneeded limitations).
-
-I would point out that FAN_ACCESS_PERM already works
-for directories and in effect provides (almost) the exact same
-functionality as FAN_PRE_ACCESS without range info.
-
-But in order to get the FAN_ACCESS_PERM events on directories
-listener would also be forced to get FAN_ACCESS_PERM on
-special files and regular files
-and assuming that this user is an HSM, it cannot request
-FAN_ACCESS_PERM|FAN_ONDIR in the same mask as
-FAN_PRE_ACCESS (which it needs for files) so it will need to
-open another group for populating directories.
-
-So that's why I would maybe consider this a last minute fix to the new API.
-
-Thanks,
-Amir.
+I don't understand your requirements. but doing something different that
+fills in a folio_iter along the lines of bio_for_each_folio_all()
+would make sense.
 
