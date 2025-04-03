@@ -1,97 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-45590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45591-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51CF0A79A21
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 04:48:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBDB9A79A71
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 05:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72A8F7A59AC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 02:47:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 780A91721B7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 03:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2EF18A6AD;
-	Thu,  3 Apr 2025 02:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B423178372;
+	Thu,  3 Apr 2025 03:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="CcUAl6+E"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="tvekliCN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC85149E13;
-	Thu,  3 Apr 2025 02:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BFE54F81
+	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Apr 2025 03:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743648487; cv=none; b=u5um8yXN2HCNN1/VrINtnJ+c4RN6p9FiEr+XAMJrNd9EYJNb9PaHqVldDe+c+CDqePBjFs7Std8ipmQZv1Tq40RAu988vcjJtWrDu0/EqlOR2pODybDQ2yO4PGciWspMMOrwv68GnUpoZknWQwsOAZNFbuAjVzg1u8D2OgsgE00=
+	t=1743651129; cv=none; b=QA6ZNQEdx1VZA2lkRpS1olxmCKWaykN0vamBXhy6xMkQ3puTzdMUoZBU4DVCJQHHGtX9EmrrBbNoC784MNsuEWSi/t5Y6UmK+HrSRFEwJSxScV55X+M/MGf4U2AfO7LxsggF/F93yEQZR+CREJRP5fh/B+3KNkFkyU0b9btuK3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743648487; c=relaxed/simple;
-	bh=JiZ0yPlBWbC5qsQiWdQY4dY24O4HAbX6YfiLK1mqrMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rT+R7PPy8Agwt2hMgThFUXj0iGCzwtXFvtUoiI9ec15fT0G8GPWRLeFKRX0NVjCKxx7CDR3BsT25/FLsw0sHirrBNjcWwPUuuHcHp+KCpZHtzqVtHkHDrgeOsE0liIGzE77I0/fhZKQ4DbIcONpjowm4cRB41hp0AFFS02GZzGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=CcUAl6+E; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=roPnxm69DeI/ZOuBMC0ueKqZy9g2rUju3cPHwkdIQ/Y=; b=CcUAl6+E/ERnHURJdS+ub+D08w
-	ctBSZqWZHa5wa1ieAfXu4NhaVhBuKj76uDOf/xD9Q+p1KKrKL/x/OKV2ltHAYCjC/Hzx8thK3WFqx
-	m08QxpFdtzIiu7ZIKgAeKIyVv3I7k8QUiPZgUPlW8I2h3aCwBKZJOE3Fp4BZ0hF2iFVpabmT3oOM2
-	Rws6l6Ql0vMdjeDkpPUI95//bEwZePnlZV4Vb1srfZRqYiklg7enVZrk4oavcVAiujCl8+eeoa1Oz
-	j4Y/I9lSlF7N3qIZnFM4VxMcF8vZgU6TfAbSq858hEe2+O9hKMFyk+X8rtUdUA1AFiQCZMvkllpvd
-	qvOaCzpg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u0AcW-0000000A0S1-0Zkd;
-	Thu, 03 Apr 2025 02:47:56 +0000
-Date: Thu, 3 Apr 2025 03:47:56 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Xiaole He <hexiaole1994@126.com>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"jack@suse.cz" <jack@suse.cz>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] fs/super.c: Add NULL check for type in
- iterate_supers_type
-Message-ID: <20250403024756.GL2023217@ZenIV>
-References: <20250402034529.12642-1-hexiaole1994@126.com>
- <35a8d2093ba4c4b60ce07f1efc17ff2595f6964d.camel@HansenPartnership.com>
- <4ee2fdcb.1854a.195f9828c86.Coremail.hexiaole1994@126.com>
+	s=arc-20240116; t=1743651129; c=relaxed/simple;
+	bh=JwsE8VrZU0kcvl3BlQUge0q6kvrDHCU000Av6sTY14Y=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=BUNugoa77QamgzeCRM4rRYEb7/F1dtWq5XFXfMbD4ikBd9+gtD5f2diOBqDYNBly+QxUsqqm+nhPy6zDJSoYtJrvMI8U5y6MM1+3H9F2hh8jncHq2n4aU6LyoSWCfUzYBdN2JvBpZQNSfMzA197KriZhISJR7rfVPatxtho3LEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=tvekliCN; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1743651122; h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type;
+	bh=4HRLqzOVDnJA3M8Jj1I2PRudQxaI3/HlAG7E5faBSZE=;
+	b=tvekliCNxw2VMYb63/PkAT6Wtz9b7hG1MiaH67QSft2F8X2T1TgbQsezQFLvWBiYsXmo1Te16yw41ruazRS6XsHyGNtY330oFuh5qgPKexlJk2gLzL2LZ32ruaf5Up27t7A97Be0YBuAABzAQ2mY1LwVLnt/JOGNwzH2/9+clg0=
+Received: from 30.221.145.143(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WUYlogQ_1743651120 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 03 Apr 2025 11:32:01 +0800
+Message-ID: <1036199a-3145-464b-8bbb-13726be86f46@linux.alibaba.com>
+Date: Thu, 3 Apr 2025 11:31:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4ee2fdcb.1854a.195f9828c86.Coremail.hexiaole1994@126.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
+ with AS_WRITEBACK_INDETERMINATE mappings
+To: Joanne Koong <joannelkoong@gmail.com>,
+ David Hildenbrand <david@redhat.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, shakeel.butt@linux.dev,
+ josef@toxicpanda.com, bernd.schubert@fastmail.fm, linux-mm@kvack.org,
+ kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>,
+ Zi Yan <ziy@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
+ Michal Hocko <mhocko@kernel.org>
+References: <20241122232359.429647-1-joannelkoong@gmail.com>
+ <20241122232359.429647-5-joannelkoong@gmail.com>
+ <c9a76cb3-5827-4b2c-850f-8c830a090196@redhat.com>
+ <CAJnrk1aXOJ-dAUdSmP07ZP6NPBJrdjPPJeaGbBULZfY=tBdn=Q@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAJnrk1aXOJ-dAUdSmP07ZP6NPBJrdjPPJeaGbBULZfY=tBdn=Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 03, 2025 at 10:37:17AM +0800, Xiaole He wrote:
-> Thank you for your feedback.
-> While I acknowledge your points, I would like to clarify the rationale
-> behind submitting this patch.
-> During my experimentation with an external module interacting with the
-> superblock, I utilized iterate_supers_type (from fs/super.c) as it is
-> an exported symbol. However, I observed a potential vulnerability in
-> its implementation: the type argument can be passed as NULL, leading
-> to a null pointer dereference. To verify this, I deliberately triggered
-> a scenario where type was set to NULL, resulting in the following dmesg
-> output:
 
-> After this observasion, I worry about if this vulnerability can cause
-> the whole kernel crash if the type argument is passed by a
-> unintentional NULL in the kernel code rather than in the external
-> module.
-> Thus I submitted the patch to address the missing null-check.
-> Thank you for your review.
 
-You do realize that passing it NULL as the second (function pointer) argument
-would also oops, right?  Passing (void (*)(struct super_block *))kfree
-there would do even more unpleasant things, etc.
+On 4/3/25 5:34 AM, Joanne Koong wrote:
+> On Thu, Dec 19, 2024 at 5:05 AM David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 23.11.24 00:23, Joanne Koong wrote:
+>>> For migrations called in MIGRATE_SYNC mode, skip migrating the folio if
+>>> it is under writeback and has the AS_WRITEBACK_INDETERMINATE flag set on its
+>>> mapping. If the AS_WRITEBACK_INDETERMINATE flag is set on the mapping, the
+>>> writeback may take an indeterminate amount of time to complete, and
+>>> waits may get stuck.
+>>>
+>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+>>> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+>>> ---
+>>>   mm/migrate.c | 5 ++++-
+>>>   1 file changed, 4 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/mm/migrate.c b/mm/migrate.c
+>>> index df91248755e4..fe73284e5246 100644
+>>> --- a/mm/migrate.c
+>>> +++ b/mm/migrate.c
+>>> @@ -1260,7 +1260,10 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
+>>>                */
+>>>               switch (mode) {
+>>>               case MIGRATE_SYNC:
+>>> -                     break;
+>>> +                     if (!src->mapping ||
+>>> +                         !mapping_writeback_indeterminate(src->mapping))
+>>> +                             break;
+>>> +                     fallthrough;
+>>>               default:
+>>>                       rc = -EBUSY;
+>>>                       goto out;
+>>
+>> Ehm, doesn't this mean that any fuse user can essentially completely
+>> block CMA allocations, memory compaction, memory hotunplug, memory
+>> poisoning... ?!
+>>
+>> That sounds very bad.
+> 
+> I took a closer look at the migration code and the FUSE code. In the
+> migration code in migrate_folio_unmap(), I see that any MIGATE_SYNC
+> mode folio lock holds will block migration until that folio is
+> unlocked. This is the snippet in migrate_folio_unmap() I'm looking at:
+> 
+>         if (!folio_trylock(src)) {
+>                 if (mode == MIGRATE_ASYNC)
+>                         goto out;
+> 
+>                 if (current->flags & PF_MEMALLOC)
+>                         goto out;
+> 
+>                 if (mode == MIGRATE_SYNC_LIGHT && !folio_test_uptodate(src))
+>                         goto out;
+> 
+>                 folio_lock(src);
+>         }
+> 
+> If this is all that is needed for a malicious FUSE server to block
+> migration, then it makes no difference if AS_WRITEBACK_INDETERMINATE
+> mappings are skipped in migration. A malicious server has easier and
+> more powerful ways of blocking migration in FUSE than trying to do it
+> through writeback. For a malicious fuse server, we in fact wouldn't
+> even get far enough to hit writeback - a write triggers
+> aops->write_begin() and a malicious server would deliberately hang
+> forever while the folio is locked in write_begin().
 
-Sure, it's exported - so's strlen().  While we are at it, checking just for
-NULL is not the limit - what if the caller gives it ERR_PTR(...) as argument?
+Indeed it seems possible.  A malicious FUSE server may already be
+capable of blocking the synchronous migration in this way.
+
+
+> 
+> I looked into whether we could eradicate all the places in FUSE where
+> we may hold the folio lock for an indeterminate amount of time,
+> because if that is possible, then we should not add this writeback way
+> for a malicious fuse server to affect migration. But I don't think we
+> can, for example taking one case, the folio lock needs to be held as
+> we read in the folio from the server when servicing page faults, else
+> the page cache would contain stale data if there was a concurrent
+> write that happened just before, which would lead to data corruption
+> in the filesystem. Imo, we need a more encompassing solution for all
+> these cases if we're serious about preventing FUSE from blocking
+> migration, which probably looks like a globally enforced default
+> timeout of some sort or an mm solution for mitigating the blast radius
+> of how much memory can be blocked from migration, but that is outside
+> the scope of this patchset and is its own standalone topic.
+> 
+> I don't see how this patch has any additional negative impact on
+> memory migration for the case of malicious servers that the server
+> can't already (and more easily) do. In fact, this patchset if anything
+> helps memory given that malicious servers now can't also trigger page
+> allocations for temp pages that would never get freed.
+> 
+
+If that's true, maybe we could drop this patch out of this patchset? So
+that both before and after this patchset, synchronous migration could be
+blocked by a malicious FUSE server, while the usability of continuous
+memory (CMA) won't be affected.
+
+-- 
+Thanks,
+Jingbo
 
