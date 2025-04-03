@@ -1,65 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-45594-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45595-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3DDBA79AA2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 05:50:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B3ECA79AA6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 05:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8E743B2C15
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 03:50:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C41F77A36DA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 03:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50ECD197558;
-	Thu,  3 Apr 2025 03:50:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FDA2198A29;
+	Thu,  3 Apr 2025 03:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hyOq+BzP"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZXf9CJuv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB47B2581;
-	Thu,  3 Apr 2025 03:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1262581;
+	Thu,  3 Apr 2025 03:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743652247; cv=none; b=Rs0M/LTbXB4cf2HGL62/sBk2zziqtUI25uwQdf6ocuVCyLBy2SJOlv+JI7J+2aXTL7IytPc9uc7oHCnQbsSyYhBTu7nO4ga6ZEmLAhmH0jWwwwyfg2TOo0/l54Rm4abM9BXxbwyXU8fO316ZuEIQafS2P5dFriD8ZaTOC5V+HGk=
+	t=1743652421; cv=none; b=MuW7oSwPowvS9TWQUqr2KUm42dGVQQYHyk9B7XxvzOx9MzXXFDKsknqpnPNkrqzAHvZnaz+Opz4FasSabRaz0Bgg7ZMiJdNscSniC9sxtYXXnwJClYR2pZoKXo0ho5ycec+Hs1jZhw+JyOzEmOZQ9jlKFV+Ao/JU0uD+050ET/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743652247; c=relaxed/simple;
-	bh=bqZuM5lPtkFFl5BW3C27cWg9aVz5id/woq/3m2/1HII=;
+	s=arc-20240116; t=1743652421; c=relaxed/simple;
+	bh=KsxRYSkadP8sKUIJYSpYSNBgBpJHnNbRA1oUJqF+TxM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bcZkJTbnukZtTD/XYnesE/LuAY4kKHwB8qrY3ArkkSPgHd0mtgm4do7XgMACfZq0K/guteehXdad8qxV2NnuP2817JiKFz0Nq06wvuKRHSgB9abQeVrZLYhO+HwBMlc8glmrA7DwHmppRoBfDKJB1Zbfcui0vXyTkKlkiIsiAdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hyOq+BzP; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=XPRN4bo3X71xP4+H/SufN2QKdIrBr/6uh6q5gxASX4B+Zls7NMzRwX40fZPxXuq/SwCMImNfiCcD/nVjeC0x0qePZpa7OO9HPt1SdMkvQH7jd+AS11KbmhQry9YrivZ1HLEfyRDwi8iLVEpr2uG9hMN1zGB6GftmV57DXieOj4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZXf9CJuv; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=DeK8Kuf5tprwuRtqHOlQKfmPUg7DzKRX9Vs7L5+3uEA=; b=hyOq+BzPufZTrboJE+EMz6Ov5Z
-	v2H9hxTCr8TCsvjt3qEX9eFde71Uyr2saAt2H5oQ5ErOdcCXvv4STcYKlHhOQFZCN5GjNwUGYjlFM
-	Is1qhsK3Aa9YsFFXuSG52pEZ+rGKe5UZdc6c73NtA7YscNXF5feOKfJWBvO9qPmLzVEj5FNLAgXNL
-	hhEJws4JiVHPJrYQLXdKGf2QhqyBs6G96Ytq5A8A24J0xFVrPLw7q0iDoyDZNjKQr0GEjAw0/mFzF
-	gZzm2/mVa5acrXfycjTwhH3pv2Evej6K1bIlxhZ2hCyTh1wz8shEuVIAEMCwzt+LcO8XHJ9YdklTw
-	A5P0D/3g==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u0BbE-0000000APBV-1SkC;
-	Thu, 03 Apr 2025 03:50:40 +0000
-Date: Thu, 3 Apr 2025 04:50:40 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Xiaole He <hexiaole1994@126.com>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"jack@suse.cz" <jack@suse.cz>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] fs/super.c: Add NULL check for type in
- iterate_supers_type
-Message-ID: <20250403035040.GM2023217@ZenIV>
-References: <20250402034529.12642-1-hexiaole1994@126.com>
- <35a8d2093ba4c4b60ce07f1efc17ff2595f6964d.camel@HansenPartnership.com>
- <4ee2fdcb.1854a.195f9828c86.Coremail.hexiaole1994@126.com>
- <20250403024756.GL2023217@ZenIV>
- <75a45193.18746.195f9a088c4.Coremail.hexiaole1994@126.com>
+	bh=j98rwQL7G8di/BtMjoHWfEqONBrRzM9ADm8HabBJsPs=; b=ZXf9CJuvoUH/YE50tXTG4O7y7B
+	rgnnIdzHH4ih+uy9q+Zxo+7Bycoq/fP9k7VVNa89ePhRcOL6u3/fY/0qMnMssb+xaTLwHZgMR7e6h
+	tEzEDVFicwQVGYeucAIE2BgpVdl/BcTayDpYZYejpY4HgBrrT/PLkoS3ED4PbzhupuG8PrkfYXJxG
+	7IH30YgiWnEqITe6xTrx6b6fNflMNeHp3uBRsfLxd/7u+hcQ/gFnxD/lZp8k53eAf42bm51EDsrgf
+	Cj88ngx2F139E/LMxJ4YlS1/vMQZ8WWC9AE52UurF+GhIU1CZvYHdkahDQNrcfyee89PBN7aPll4k
+	qY+38SkQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u0Be4-0000000Aw2v-1G9j;
+	Thu, 03 Apr 2025 03:53:36 +0000
+Date: Thu, 3 Apr 2025 04:53:36 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Dominique Martinet <asmadeus@codewreck.org>
+Cc: linux-fsdevel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	linux-mm@kvack.org, dri-devel@lists.freedesktop.org,
+	stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+	v9fs@lists.linux.dev
+Subject: Re: [PATCH v2 1/9] 9p: Add a migrate_folio method
+Message-ID: <Z-4GQO_HcmcRqWnD@casper.infradead.org>
+References: <20250402150005.2309458-1-willy@infradead.org>
+ <20250402150005.2309458-2-willy@infradead.org>
+ <Z-4EiVQ6klHkkMoy@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,40 +64,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <75a45193.18746.195f9a088c4.Coremail.hexiaole1994@126.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <Z-4EiVQ6klHkkMoy@codewreck.org>
 
-On Thu, Apr 03, 2025 at 11:10:02AM +0800, Xiaole He wrote:
-> Thank you for your thoughtfully feedback.
-> I think you are right, and I'm sorry for my pedantic anxiety.
-> So if we just ignore this patch for now, or I should submit a bug
-> report to kernel community in order to invite more thorough fix?
-> Thanks for your patient again.
+On Thu, Apr 03, 2025 at 12:46:17PM +0900, Dominique Martinet wrote:
+> Matthew Wilcox (Oracle) wrote on Wed, Apr 02, 2025 at 03:59:55PM +0100:
+> > The migration code used to be able to migrate dirty 9p folios by writing
+> > them back using writepage.  When the writepage method was removed,
+> > we neglected to add a migrate_folio method, which means that dirty 9p
+> > folios have been unmovable ever since.  This reduced our success at
+> > defragmenting memory on machines which use 9p heavily.
+> 
+> Given I'm not in Cc of the whole series I'm lacking context but I assume
+> that means I'm not supposed to take this in.
 
-I don't believe that adding random checks would make any sense -
-same as for any library function, really.
+Right; I'm routing this whole series via Christian.  There's various
+bits of the VFS that need to be touched as part of this series, and
+it'd take forever to get it all merged by going through individual
+maintainer trees.
 
-Having the documentation slightly more clear would make sense,
-though; currently it's
+> I won't pretend I understand folios anyway, but commit messages makes
+> sense to me:
+> Acked-by: Dominique Martinet <asmadeus@codewreck.org>
 
- *      iterate_supers_type - call function for superblocks of given type
- *      @type: fs type
- *      @f: function to call
- *      @arg: argument to pass to it
- *
- *      Scans the superblock list and calls given function, passing it
- *      locked superblock and given argument.
+Thanks!  Folios aren't really that hard a concept for a filesystem
+developer to understand, but dhowells has done a great job of insulating
+you from even having to understand them with netfs.  All they are is
+a container of one-or-more pages which maintain all the filesystem
+state which used to be managed per-page.  eg dirty, writeback, locked,
+offset-in-file, number-of-mappings.
 
-and description could've been better.  The weakest part in there is,
-IMO, "the superblock list" - there is a global list of all superblocks
-(inventively called 'super_blocks'), but that's not what gets scanned;
-the list of superblocks of given type (type->fs_supers) we iterate
-through.
-
-Something along the lines of "Call given callback @f for all superblocks
-of given type.  The first argument passed to @f points to a locked superblock
-that belongs to @type; the second is a caller-supplied opaque pointer @arg.
-The caller is responsible for passing @arg that would make a valid second
-argument for @f - compiler can't help here" might be a starting point,
-but I'm not up to turning that into proper English.
+There's more to it from a MM point of view, but as a filesystem
+developer, that's all you really need to understand.
 
