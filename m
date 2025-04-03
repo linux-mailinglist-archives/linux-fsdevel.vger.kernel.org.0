@@ -1,211 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-45621-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45622-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF5F0A7A023
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 11:35:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A81A7A029
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 11:37:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B3FD7A6986
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 09:34:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C73E03A8F9B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 09:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DEB52CA6;
-	Thu,  3 Apr 2025 09:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410D22475C8;
+	Thu,  3 Apr 2025 09:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6MQjqC9"
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="JCKANCoH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93821224B14
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Apr 2025 09:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3CD241693;
+	Thu,  3 Apr 2025 09:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743672930; cv=none; b=mVKaZTcfrZo+ZKG/VTfi/MSW3kw+gh0ccS1OrxibcH9S01qRL+9pti3qJuV+6ieYOw2yHWH/velPhtWxXd2Z3W1V7IrLh0uQJBlj0ZOXY7e+oIUYepxwmweuJ0OmydTFNEmFdyl+7gqEGibCJJCup+xjljruZ7QiwC+YYtjGr8Q=
+	t=1743673026; cv=none; b=BjMVyFtfbunlTn2V+pEnGQpDndJaQSQR01Zy1u3ObjyKVcQfTMAifSYmxD2B7Di863bKFDZxcN31h1YhTGs4Mj+zfklsb3quKyyTueEjqI2y7CSL+QnVNx+pkul4U9V81hgutzPGBWm1MRC4DfQVBT07yp2EPRjIW+JaRZPvlss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743672930; c=relaxed/simple;
-	bh=YRlZ/NiPqcpQjk4lOYinYlI/Xb3uAZaKYuWB144x+lE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tNrHY9ehEOG1Zf5/qxbyzCBgkqje+mf70Nh3MeChFAJ7mAXfUpZHQT6T1Ukz7kTEzo7o2fUCYxCYXOOYT9nxpeQreCe5GWDq8TffGOZ8QerSskoJ2KWRl6ht9BYhKk3RV5H7/HIoTEGcOzAf89Qi8mwDWkjnvB7B4fk40b7JTbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6MQjqC9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 915E7C4CEE3;
-	Thu,  3 Apr 2025 09:35:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743672930;
-	bh=YRlZ/NiPqcpQjk4lOYinYlI/Xb3uAZaKYuWB144x+lE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l6MQjqC9OdDz+McSWUx8DvTcR+uW4VY3zyuNFut/w45QXKgRWf7OgKXsURfsUEtaq
-	 mp8iYogfRmneelF0cDPbW05E+BDPjpDwFZUXl1zxVhmyd0aSOakkwiVtDuAokS09CB
-	 8OXEivZshjlD05rIFLZcWMXvhCfZaUQT62fRDqSxoIax3UEuvSlVOKEzUvaJJqr3cC
-	 ifB0V2ILU83mM+m5hsO3i31TnQpzgAH9J6DLfgBlw6QlrBF53+eK++z3PY4uZw113X
-	 oK6oyeR0B/jij6sm+Oo0OAdY2SPCTcUFR4K6b3gvtjM5jQawcTfw34IZRneg9y2+Vb
-	 RhBpbsxiyYBCQ==
-Date: Thu, 3 Apr 2025 11:35:23 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: David Hildenbrand <david@redhat.com>, 
-	Jingbo Xu <jefflexu@linux.alibaba.com>, Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu, 
-	linux-fsdevel@vger.kernel.org, shakeel.butt@linux.dev, josef@toxicpanda.com, linux-mm@kvack.org, 
-	kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>, Zi Yan <ziy@nvidia.com>, 
-	Oscar Salvador <osalvador@suse.de>, Michal Hocko <mhocko@kernel.org>, 
-	Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCH v6 4/5] mm/migrate: skip migrating folios under writeback
- with AS_WRITEBACK_INDETERMINATE mappings
-Message-ID: <20250403-option-holztisch-de5d88079f59@brauner>
-References: <20241122232359.429647-1-joannelkoong@gmail.com>
- <20241122232359.429647-5-joannelkoong@gmail.com>
- <c9a76cb3-5827-4b2c-850f-8c830a090196@redhat.com>
- <CAJnrk1aXOJ-dAUdSmP07ZP6NPBJrdjPPJeaGbBULZfY=tBdn=Q@mail.gmail.com>
- <1036199a-3145-464b-8bbb-13726be86f46@linux.alibaba.com>
- <1577c4be-c6ee-4bc6-bb9c-d0a6d553b156@redhat.com>
- <cb6a5eb4-582b-42ba-a4b8-7ecaccbf5ba2@fastmail.fm>
+	s=arc-20240116; t=1743673026; c=relaxed/simple;
+	bh=FowseTNKm1Rf50n9OBGGpoUltNQ9BNFQ15Jybp6GZS0=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=TnYlWrFUT5D3j6FuZrsbUuHftKzfC1Uljza64CWX3nf1cJ4IUjQD7k55w26OPMKQ+DsQWgHzcJFnWgmIuahYby9rC6NYv50FzdPZFM+u1cr3VlpXvS6vch6rjQ+OXtTVQ5amyTElBPiQIdT+7YY0p6AFVqY/dfh4E6aVonejeTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=JCKANCoH; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1743673018; x=1744277818; i=quwenruo.btrfs@gmx.com;
+	bh=FowseTNKm1Rf50n9OBGGpoUltNQ9BNFQ15Jybp6GZS0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:From:Subject:
+	 Cc:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=JCKANCoHPPLtuiw3G5m5nWQZp4gbMJ4gcyylL6yqdcv73Bz0296zUHH5ZVWSF3LQ
+	 kzFIggL+40k2N1c/UuNsnnK0ll0sE3gx3QXeUMC/IIoI18lW4QzUhm7rHIws4XaYH
+	 DGtxA10/vHX3z99jPP1B+zu6AUeWuvdlQizYLTwcmo1IfdUMzc5zXLUasWdmYgLX5
+	 sQQLCHk6TZxu36t8qpPW9R6BuTsHvtlo0gYQw/N7NaPohXoGUhXx0Ni3oA9iIfKhM
+	 ReHOay+g5Olu5f7JWylnqGgtNxrq5EUvmhW0KnpvuegVwGJVkNx3N2OQE+zNzBHl8
+	 CTgC/NuNiqbW4gmqAg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MnJhU-1tHLKf3oGK-00jClG; Thu, 03
+ Apr 2025 11:36:58 +0200
+Message-ID: <b714e4de-2583-4035-b829-72cfb5eb6fc6@gmx.com>
+Date: Thu, 3 Apr 2025 20:06:53 +1030
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cb6a5eb4-582b-42ba-a4b8-7ecaccbf5ba2@fastmail.fm>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linux Memory Management List <linux-mm@kvack.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ linux-btrfs <linux-btrfs@vger.kernel.org>
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Subject: Large folios and filemap_get_folios_contig()
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
+ sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
+ xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
+ naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
+ tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
+ 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
+ VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
+ CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
+ B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
+ Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
+ +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
+ HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
+Cc: vivek.kasireddy@intel.com, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:qJB/sKShH+0bNXSIlI6Q/N4tTfHmVL4W2blVYDqEQzW4Radz3W2
+ eT9K/R5IfOQ+sdXOfteMkFIxJ0+LOsFklarlr1AF7zaAPPfRW5bPKKF/7jVF49sG6Z7tXWh
+ oG330PwyXIbACcTv/iZFI++GNU7lcejr0jvYHhglqNgJTiyXuKaG/vfs7oEC35vBkuNpzWJ
+ 7EFXMGjAX2o7YvpAUVpkw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:wsaRdeIBf5E=;gv/9/d3G1MuzaZaq7T60G4kXQ68
+ DNEPKHcsEHH5BhiT/2vykl2TFWp2n/OwKD17axvNOYJxKOYcofKkbxRFBmCCaZdVZuwka773B
+ CgzgJzwXIACl+UydpUq6uYwkDnxoBQ183ixGi8GIeCRoy93yqTdVJuEZxh9VE4eQD1SPxOgXs
+ tepZ9AjCyJmgLPyDvlwrXIe4NE9i0zSPotuDieZ0B20Hc5GihSHnTpWaS5Dd4Or7l9m/E1w+b
+ QmRViSog1xIvtu4hcQFYAcFD9MBe9VXyrJJurLXfoWvESc+YV06u+35CkpEIHg4FaL0L3f06e
+ vSyYN/k45oR9rtXAUmjazlGGr4B6Q/ajR3ougpY6caJi4n2N1jooFJYqIgVbzOachvQWOsWku
+ 1EhGFaLLIN6IR7Rd8967L54cWoOk2ruoTdwn/YI9IaXEsHtzTzR4XudW3VxJzV+VVUjcm7h35
+ iR3O1SQe9h6ZrsA6vJtr0XxIpVzKhDkUyDSSQEwzfZbmjQkcuLs293VC8NqPGKRmOtuzBzzsH
+ FtknuN3x2xa4i//LoiFDu6YvxSayMdKJtCyz0U4BRYti7+gX/amfqZyIJXHgwSC/XF2dUNaNd
+ LE2HRmYfTXL0LcLiFJJsjNd4ezTFo+M645/BmaixjVEBaQ2hHPFdD0gGn1aqs+GGf6OlUm6GA
+ Cjsj2PGg8g3BTe5RWrVlJT9jSIIXQXXc3rvrSDKm5PkFAberzuactGQv0p9Cm9kFaGC/pN5J7
+ +Bl07+OhT+lV1fmhC8jxSurWLndYhc68mfuf9A7CJ4+Oys7C7fCw8ESBYkW3z5yzZ5GVnrljS
+ /VrP/RQ72ujKBnDKafY4UHMf7PVCBg8FIVDw17WzJN6Rv+zRINL/uG04Hn+VaAiiwex+KUEYl
+ 5xLRi6tsbKQYKoKiBtXFEWve6h5Tk8nCtss3HJV9o+U/aCUsvk+p+5Bh/layDPwHLnqeCgply
+ U/2YfqRS8N4CzxJVQSgdjsD7N3bpo25CI4hnV0Rr/pdUk0j1WDsR3MzKtItF1TVPJPpWoT7bV
+ j13QbbPQpLpMqykwDlyR3/jXxbSslmtHfsjN0CYlIqDxvW8VLhdQmDZUUT6nSJ0bwBSM7P0FW
+ Lxnd2HETEfvF+VyA988gHgfvH7gglVBhHKGMdq0Xs3Kx3xy0KCeaRnn0caGanAX/63kRdjNBV
+ 7hqSNJ4pR3UbNj87Xj+vJ5Yre/wtO7D07SFZWhMbMzrjAsOx1Krxg6RyVv5ajygRD3uvN9tvM
+ cL9KqAI63qjjzwOOWNCSTohkD9gziXRW48D/IKz+Cg51+SluNCAMSBFulgjvKZBoVm50LtXAN
+ 2Lfxtp0OeNV2wNAFxLYLZ5wQDHXRUMdUKjqCaqjNyb/Ih/ywotWYSVcFoHDM0nPqcKI8r20TY
+ D1bxvonCK+1oPxbzlNINIM7F0OAR3AHh7ZXXAXoXYdyVqYEeIE7nfwttJ4aiH4CwC6pE2hW58
+ U4FysDKKURRe3okLwh8FqaxPoc0M=
 
-On Thu, Apr 03, 2025 at 11:25:17AM +0200, Bernd Schubert wrote:
-> 
-> 
-> On 4/3/25 11:18, David Hildenbrand wrote:
-> > On 03.04.25 05:31, Jingbo Xu wrote:
-> >>
-> >>
-> >> On 4/3/25 5:34 AM, Joanne Koong wrote:
-> >>> On Thu, Dec 19, 2024 at 5:05 AM David Hildenbrand <david@redhat.com>
-> >>> wrote:
-> >>>>
-> >>>> On 23.11.24 00:23, Joanne Koong wrote:
-> >>>>> For migrations called in MIGRATE_SYNC mode, skip migrating the
-> >>>>> folio if
-> >>>>> it is under writeback and has the AS_WRITEBACK_INDETERMINATE flag
-> >>>>> set on its
-> >>>>> mapping. If the AS_WRITEBACK_INDETERMINATE flag is set on the
-> >>>>> mapping, the
-> >>>>> writeback may take an indeterminate amount of time to complete, and
-> >>>>> waits may get stuck.
-> >>>>>
-> >>>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> >>>>> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
-> >>>>> ---
-> >>>>>    mm/migrate.c | 5 ++++-
-> >>>>>    1 file changed, 4 insertions(+), 1 deletion(-)
-> >>>>>
-> >>>>> diff --git a/mm/migrate.c b/mm/migrate.c
-> >>>>> index df91248755e4..fe73284e5246 100644
-> >>>>> --- a/mm/migrate.c
-> >>>>> +++ b/mm/migrate.c
-> >>>>> @@ -1260,7 +1260,10 @@ static int migrate_folio_unmap(new_folio_t
-> >>>>> get_new_folio,
-> >>>>>                 */
-> >>>>>                switch (mode) {
-> >>>>>                case MIGRATE_SYNC:
-> >>>>> -                     break;
-> >>>>> +                     if (!src->mapping ||
-> >>>>> +                         !mapping_writeback_indeterminate(src-
-> >>>>> >mapping))
-> >>>>> +                             break;
-> >>>>> +                     fallthrough;
-> >>>>>                default:
-> >>>>>                        rc = -EBUSY;
-> >>>>>                        goto out;
-> >>>>
-> >>>> Ehm, doesn't this mean that any fuse user can essentially completely
-> >>>> block CMA allocations, memory compaction, memory hotunplug, memory
-> >>>> poisoning... ?!
-> >>>>
-> >>>> That sounds very bad.
-> >>>
-> >>> I took a closer look at the migration code and the FUSE code. In the
-> >>> migration code in migrate_folio_unmap(), I see that any MIGATE_SYNC
-> >>> mode folio lock holds will block migration until that folio is
-> >>> unlocked. This is the snippet in migrate_folio_unmap() I'm looking at:
-> >>>
-> >>>          if (!folio_trylock(src)) {
-> >>>                  if (mode == MIGRATE_ASYNC)
-> >>>                          goto out;
-> >>>
-> >>>                  if (current->flags & PF_MEMALLOC)
-> >>>                          goto out;
-> >>>
-> >>>                  if (mode == MIGRATE_SYNC_LIGHT && !
-> >>> folio_test_uptodate(src))
-> >>>                          goto out;
-> >>>
-> >>>                  folio_lock(src);
-> >>>          }
-> >>>
-> > 
-> > Right, I raised that also in my LSF/MM talk: waiting for readahead
-> > currently implies waiting for the folio lock (there is no separate
-> > readahead flag like there would be for writeback).
-> > 
-> > The more I look into this and fuse, the more I realize that what fuse
-> > does is just completely broken right now.
-> > 
-> >>> If this is all that is needed for a malicious FUSE server to block
-> >>> migration, then it makes no difference if AS_WRITEBACK_INDETERMINATE
-> >>> mappings are skipped in migration. A malicious server has easier and
-> >>> more powerful ways of blocking migration in FUSE than trying to do it
-> >>> through writeback. For a malicious fuse server, we in fact wouldn't
-> >>> even get far enough to hit writeback - a write triggers
-> >>> aops->write_begin() and a malicious server would deliberately hang
-> >>> forever while the folio is locked in write_begin().
-> >>
-> >> Indeed it seems possible.  A malicious FUSE server may already be
-> >> capable of blocking the synchronous migration in this way.
-> > 
-> > Yes, I think the conclusion is that we should advise people from not
-> > using unprivileged FUSE if they care about any features that rely on
-> > page migration or page reclaim.
-> > 
-> >>
-> >>
-> >>>
-> >>> I looked into whether we could eradicate all the places in FUSE where
-> >>> we may hold the folio lock for an indeterminate amount of time,
-> >>> because if that is possible, then we should not add this writeback way
-> >>> for a malicious fuse server to affect migration. But I don't think we
-> >>> can, for example taking one case, the folio lock needs to be held as
-> >>> we read in the folio from the server when servicing page faults, else
-> >>> the page cache would contain stale data if there was a concurrent
-> >>> write that happened just before, which would lead to data corruption
-> >>> in the filesystem. Imo, we need a more encompassing solution for all
-> >>> these cases if we're serious about preventing FUSE from blocking
-> >>> migration, which probably looks like a globally enforced default
-> >>> timeout of some sort or an mm solution for mitigating the blast radius
-> >>> of how much memory can be blocked from migration, but that is outside
-> >>> the scope of this patchset and is its own standalone topic.
-> > 
-> > I'm still skeptical about timeouts: we can only get it wrong.
-> > 
-> > I think a proper solution is making these pages movable, which does seem
-> > feasible if (a) splice is not involved and (b) we can find a way to not
-> > hold the folio lock forever e.g., in the readahead case.
-> > 
-> > Maybe readahead would have to be handled more similar to writeback
-> > (e.g., having a separate flag, or using a combination of e.g.,
-> > writeback+uptodate flag, not sure)
-> > 
-> > In both cases (readahead+writeback), we'd want to call into the FS to
-> > migrate a folio that is under readahread/writeback. In case of fuse
-> > without splice, a migration might be doable, and as discussed, splice
-> > might just be avoided.
-> 
-> My personal take is here that we should move away from splice.
-> Keith (or colleague) is working on ZC with io-uring anyway, so
-> maybe a good timing. We should just ensure that the new approach
-> doesn't have the same issue.
+Hi,
 
-splice is problematic in a lot of other ways too. It's easy to abuse it
-for weird userspace hangs since it clings onto the pipe_lock() and no
-one wants to do the invasive surgery to wean it off of that. So +1 on
-avoiding splice.
+Recently I hit a bug when developing the large folios support for btrfs.
+
+That we call filemap_get_folios_contig(), then lock each returned folio.
+(We also have a case where we unlock each returned folio)
+
+However since a large folio can be returned several times in the batch,
+this obviously makes a deadlock, as btrfs is trying to lock the same
+folio more than once.
+
+Then I looked into the caller of filemap_get_folios_contig() inside
+mm/gup, and it indeed does the correct skip.
+
+
+This makes me wonder, since we have large folios, why we still go
+filemap_get_folios_contig() and skip duplicated large folios?
+
+Isn't the purpose of large folios to handle a much large range in just
+one go, without going through multiple pages?
+
+
+And there are only 3 call sites, two of them are nilfs and ramfs,
+neither support large folios, the only caller with large folio support
+is the memfd_pin_folios(), which skip duplicated folios manually.
+
+I'm wondering if it's possible to make filemap_get_folios_contig() to
+avoid filling the batch with duplicated folios completely?
+
+Thanks,
+Qu
 
