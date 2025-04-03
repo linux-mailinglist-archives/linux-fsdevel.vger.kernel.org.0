@@ -1,234 +1,220 @@
-Return-Path: <linux-fsdevel+bounces-45626-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3F0BA7A08E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 11:59:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60ACAA7A0A2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 12:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 222C1174041
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 09:58:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6073C3B4611
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 10:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2177A2459E9;
-	Thu,  3 Apr 2025 09:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB94243387;
+	Thu,  3 Apr 2025 10:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RYlSvCFA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bLVh+OZh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948FB186E54
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Apr 2025 09:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E493C0B;
+	Thu,  3 Apr 2025 10:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743674321; cv=none; b=gAwxgthzM6tgWxhlPSuSeKlw5oF+z8d3PFo9Kb4GDiB7ohlnllWP3WJRSa01vaBgNcWkEIniGxMYu8Nqv0rXNlR9BgSbt+Ak3/MmxMqwAo0mrrQ5wVF8HH8XV4s7qiEyVAXIC0Xf6769dVpH0cnbabHv0Y/A2u1iYVv2Pw7TJfU=
+	t=1743674794; cv=none; b=Fmg2ZZLbOxGnZUxPCL1BlDDSjVXNyAXOBmrXcmJRUhhZstMNNGLTTu+bxDeX3tsLpP6vw/F1eu2hBmDuNmzumdGFaB+Vx6b/ks+oNgdOPQqRv99Ty8JnkIAOaVtEAnucP3E1F3+t7Xm0moizoVOyfrg2NLJef85vZmcrAX6aG38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743674321; c=relaxed/simple;
-	bh=F5DiJ1kp59dDGAsbeEezosSO6tyWLCradNmw6f9z1nA=;
+	s=arc-20240116; t=1743674794; c=relaxed/simple;
+	bh=gYZrtpuyChSlZBcE+uwVPR47Bv/VGpJQBcO4x4coLu8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VrsKOv78ZnNhAQ3tkWAYDCrWmNrYJOL+lUhuyCKnsZ5mi2PVasadmBWnMMISeNpET5qBDtGXr7vVKROqnspYZXIH7FVSUAm+3ZFEvlG2Ans/gCKwcs0lsOYN0pvLu4SjFgymLzdPfSj5MhAXiiw4bjhK/ZSKw3bCLmXNuzmP7YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RYlSvCFA; arc=none smtp.client-ip=209.85.218.49
+	 To:Cc:Content-Type; b=ox+4UgZwDZvEOqWTk9MW0ckXTc41Ige0YjgYpIJbOX23b2H1IRs5WuiGqi60Gyr9Q7vf0YaX2ne1gEhpGENsP+Y4zGv6nfZFH1q1Z4pBFzXb30UpNS/TyNCcUS8zK1BBs6zKFGWw+PLcnp4KXiydTdQS1ZEKWOgbRi7nToBjYWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bLVh+OZh; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac73723b2d5so132235966b.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Apr 2025 02:58:39 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e6f4b3ebe5so1347440a12.0;
+        Thu, 03 Apr 2025 03:06:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743674318; x=1744279118; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1743674790; x=1744279590; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=F5DiJ1kp59dDGAsbeEezosSO6tyWLCradNmw6f9z1nA=;
-        b=RYlSvCFAmDGMDHIr5T5JnqQy3L1swDUs+3SQNuTKoUZz3efINu8SEmJTuPm8ktlj8Z
-         HKVFjSyvRgPKkkZXEWb1KNU8ZCtt+I0qCMJBJDqSGgvRjTQ/IfUNsd8bV6GfGDa4qXZN
-         aymbXGn9o9zQwPUdNp8PVoRQ7r49NCaaqb7ugsCS/cu3JhmM3+MeItmggQ2kK8g/puaF
-         EgRNte9wGGowDy2BIHjNMNCC58qOtm04xCfI9E2XXrGFzZXk9sfpHb9vxl+baqsNmQXp
-         Y0C/QhlhlKu2bx3Ep3d92PuNcnHyUqfFB7U5uMe+d1WhXLJnjXjgv2JrECY9YsUpUzD/
-         zjQA==
+        bh=BW4HJh5TQsbwyhxoNGo8Vn28Ag5k9m/e5obY0huku+w=;
+        b=bLVh+OZhZqb69Trw0x/3v7DQRIrF8+7OXrYIMgeuSNlmFUzV1CkDGR0uZrHrBxcT8Q
+         fGztc1rRsE+B/KJjNmmnAQ3kzaBhwrqb6IyJkR4WLT6gBAKoTe7XAkakEQwK3amQTWfB
+         wfzSeENHQPxA2WNy51/rjsMOovqu5417LX9bwDYcP1E+gneGV9LIlS0lbDHAubD60ik+
+         t/PgxbvPtqivosOiPR7+4B2mCphKR2MApCGgmPWSlnkahruEA25a+aVnYTaXEyxwmJ6s
+         6uglL09lygHZ5yXWlYWk62WZxml+3Dg0yNwAYi54ozBW19YohgJr+rizU/qPBZ97LHp/
+         90CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743674318; x=1744279118;
+        d=1e100.net; s=20230601; t=1743674790; x=1744279590;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=F5DiJ1kp59dDGAsbeEezosSO6tyWLCradNmw6f9z1nA=;
-        b=I/S/uB4mUtgu/bGhCStIUUPChWVYz6utnM0/T6qWnWV94+xpzJD7YQKv9/PPKmhk8N
-         mZnxQvESGIzIJ+qo0EKC8gfJtEuPjQgWRLXqS7H52erTdzjm2ybjk+8buI3zg38mMbN5
-         3lm6mp0yEPzUEpsXs+Z94lno1Kz1PJj8eTqSp9qIRQErZP21B/3XedE1wPE1O4JCI7rJ
-         ww/Qf1v51CGT0/lC4PfLYk3PrOo9xPanFzpllVnCijMCCYhogVLjjzbuFuEqZ/430PgD
-         Xi4JbCeFxJR8AGxI/LE+ztHcZRysK5Q5rE6ECXx8gRHntCe14USaNp8sDQcYsgj7ZiXz
-         mIdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXfFd222zz53qaOAAo/QLYLgOOLkTKcQ2XxKsQVLnId0YoxcZtLLXEM+CI0SmH25F4gOhpLL1MLYCdOQKf@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLY7TLsN5X5e4ai4jBL/WJdb7hF1qoNtTW9+LBc4fDxMXypHqb
-	ZISrERRYO0vSI/bQ2/B1CygBrQ3mYI1OCt+eKmVXHtjLpvK9tnCdftWiKMMeLUGrJcUlJnkA2AK
-	NQr36yyLpWgWm+u6oUAIVb746iJ4=
-X-Gm-Gg: ASbGncuCZB6/ZVMXAZKozihuw+pELJ2QzLAg1fFHAZD9UKnIYeJjOHqUOAMqJDtSfKu
-	ImD/Bsj7X1h7y9Tk0kUumGUjH3HtDDM5jo2EOaBNmnZE6JWDN8XcpUqC21byb2XmlPdcKs7+Wnr
-	YGcWEu/dRzhrAMM2/v95QtY8pm+g==
-X-Google-Smtp-Source: AGHT+IHrQ+/gPjF1uOtJVsIRXB1hKkVRpnJ1ZMpmBvzQRh3CcVCa1wegDigCkAHWC2dnzAphZjbGlxpI+jVZ/jSiuT0=
-X-Received: by 2002:a17:907:97ce:b0:ac4:16a:1863 with SMTP id
- a640c23a62f3a-ac7a1720c92mr549573666b.26.1743674317361; Thu, 03 Apr 2025
- 02:58:37 -0700 (PDT)
+        bh=BW4HJh5TQsbwyhxoNGo8Vn28Ag5k9m/e5obY0huku+w=;
+        b=SAq2rPIo26b9dWGF3KbdujOr+Lp4SDc7wI++G7sDrwuGWUUxr42e8yqKVdHeAHcFLK
+         mSCx6PcRe0kza9J7ThGizrnBK9m4fMXOqtiQa3l8CAvPdoquAMrgOLo7JbPLZos2eWGr
+         JEGiwm+h3Ca09WIJpTHJJzP1ZL4m7K8ZJKwhnTDtnDfmZGbiFei3y5McjDVsdyRATpCX
+         /HM4LyweoP6+XwuDRXsIxfmcC/wJKhqW6ov0YF8QA4wgK4OAX3A6K7kyB3vRPWwKrcVm
+         5KsIptEcvtyrb83mHX5xs2R5+S6na6Z9/LgyqLW/8/IFiRhVaePvUj1BGj5Iy4LpF7uH
+         uy/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWIJnpyOyp1hUysJu4BHiW9egNP6dkV/nRkAE1hqEtbycCp76sfDGwD3NYRNeRLo1uzshcIpB5MrPkpgx8b@vger.kernel.org, AJvYcCWfOhsnrrzoi97IPbG2jSo4nGFFFZ4pGp17yNgfrj53GUbtlscG1N9Z5LCR/DDawKB3vnTe89u9bEY6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1zFH7zD1srPRjyEcLYHsvaj7o27Rtpiy53j2wP/R0bY8ef5d4
+	FP4F57dKZvqUa0NeAmMhb56OqdvUGMxv11Z9Iaup6XZNjF+FGD8YNLLUxEqhEvIDw1mukIH7bPC
+	2CCModmDGQ7+RlbncNi3egO0T5+XTdW4+
+X-Gm-Gg: ASbGncuz8/uG66cesTJWd1+QmGk2QJbUfDelFqojpYVXoap5wWohmIXLS7flAOu4KJa
+	m+Yfy23olcdIimLjP82gQsaE7NTsrblTeBYWkCig400Sn7gSlvIFjdBMqig5qjP9DJsyMNqNX+j
+	144kYj11SODB1krhpL+Ezo1+0ttA==
+X-Google-Smtp-Source: AGHT+IH5TofJhGxSJMpvFZfSY4wrwSaZ3M1/bEkXd8abTMdEjzpBkhwVb3nruC6GKiwdXhtGnfTvcf1fvwzD8ToaTP4=
+X-Received: by 2002:a05:6402:1e8a:b0:5e5:bbd5:676a with SMTP id
+ 4fb4d7f45d1cf-5f087224c0dmr1772585a12.22.1743674790199; Thu, 03 Apr 2025
+ 03:06:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <BY1PR15MB61023E97919A597059EA473CC4AD2@BY1PR15MB6102.namprd15.prod.outlook.com>
- <CAOQ4uxihnLqagEX_PXA0pssQ=inPxSz-GDLcuJ9zs603LryKfw@mail.gmail.com>
- <6za2mngeqslmqjg3icoubz37hbbxi6bi44canfsg2aajgkialt@c3ujlrjzkppr> <20250403-video-halsband-9b9d0e0c95c3@brauner>
-In-Reply-To: <20250403-video-halsband-9b9d0e0c95c3@brauner>
+References: <20250330125536.1408939-1-amir73il@gmail.com> <de54ad3do3vz3mi7swdojhwzrpssxk6rzqrfzlrmjaxz4pud6r@ha64lyrespvy>
+In-Reply-To: <de54ad3do3vz3mi7swdojhwzrpssxk6rzqrfzlrmjaxz4pud6r@ha64lyrespvy>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 3 Apr 2025 11:58:26 +0200
-X-Gm-Features: ATxdqUHqOI79aghVDa2fKZ75g87Rt-xtrWzhkiYHWE5a20lWDeiFRpM45-Rghtw
-Message-ID: <CAOQ4uxjVNuR2dWLv+f98TuHcqsr77K3Y36zgRBBhUrer4ikWqA@mail.gmail.com>
-Subject: Re: Reseting pending fanotify events
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Ibrahim Jirdeh <ibrahimjirdeh@meta.com>, 
-	Sargun Dhillon <sargun@meta.com>, Alexey Spiridonov <lesha@meta.com>, Josef Bacik <josef@toxicpanda.com>, 
+Date: Thu, 3 Apr 2025 12:06:18 +0200
+X-Gm-Features: ATxdqUGrHuHJygO2Fh4JKzKf5KR7S8Ekl9s_I7gmHC-WMZ3ExBTFM68JRPXge_4
+Message-ID: <CAOQ4uxgpvJDYfvRxO-AG43hkDKeKAvbH6YgPF+Au83JHM6vGJg@mail.gmail.com>
+Subject: Re: [PATCH] fanotify: Document FAN_PRE_ACCESS event
+To: Alejandro Colomar <alx@kernel.org>
+Cc: Alejandro Colomar <alx.manpages@gmail.com>, Jan Kara <jack@suse.cz>, 
+	Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>, linux-man@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 3, 2025 at 10:25=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
+On Wed, Apr 2, 2025 at 10:58=E2=80=AFPM Alejandro Colomar <alx@kernel.org> =
+wrote:
 >
-> On Tue, Apr 01, 2025 at 06:28:11PM +0200, Jan Kara wrote:
-> > On Mon 31-03-25 21:08:51, Amir Goldstein wrote:
-> > > [CC Jan and Josef]
+> Hi Amir,
+>
+> On Sun, Mar 30, 2025 at 02:55:36PM +0200, Amir Goldstein wrote:
+> > The new FAN_PRE_ACCESS events are created before access to a file range=
+,
+> > to provides an opportunity for the event listener to modify the content
+> > of the object before the user can accesss it.
 > >
-> > CCed fsdevel. Actually replying here because the quoting in Ibrahim's e=
-mail
-> > got somehow broken which made it very hard to understand.
+> > Those events are available for group in class FAN_CLASS_PRE_CONTENT
+> > They are reported with FAN_EVENT_INFO_TYPE_RANGE info record.
 > >
-> > > I am keeping this discussion private because you did not post it to
-> > > the public list,
-> > > but if you can CC fsdevel in your reply that would be great, because =
-it seems
-> > > like a question with interest to a wider audience.
-> > >
-> > > On Mon, Mar 31, 2025 at 8:19=E2=80=AFPM Ibrahim Jirdeh <ibrahimjirdeh=
-@meta.com> wrote:
-> > > >
-> > > > Hi Amir,
-> > > >
-> > > > We have been using fanotify to support lazily loading file contents=
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > ---
+> >  man/man2/fanotify_init.2 |  4 ++--
+> >  man/man2/fanotify_mark.2 | 14 +++++++++++++
+> >  man/man7/fanotify.7      | 43 ++++++++++++++++++++++++++++++++++++++--
+> >  3 files changed, 57 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/man/man2/fanotify_init.2 b/man/man2/fanotify_init.2
+> > index 23fbe126f..b1ef8018c 100644
+> > --- a/man/man2/fanotify_init.2
+> > +++ b/man/man2/fanotify_init.2
+> > @@ -57,8 +57,8 @@ Only one of the following notification classes may be=
+ specified in
+> >  .B FAN_CLASS_PRE_CONTENT
+> >  This value allows the receipt of events notifying that a file has been
+> >  accessed and events for permission decisions if a file may be accessed=
 .
-> > > > We are struggling with the problem that pending permission events c=
-annot be recovered on daemon restart.
-> > > >
-> > > > We have a long-lived daemon that marks files with FAN_OPEN_PERM and=
- populates their contents on access.
-> > > > It needs a reliable path for updates & crash recovery.
-> > > > The happy path for fanotify event processing is as follows:
-> > > >
-> > > > A notification is read from fanotify file descriptor
-> > > > File contents are populated
-> > > > We write back FAN_ALLOW to fanotify file descriptor, or DENY if con=
-tent population failed.
-> > > >
-> > > > We would like to guarantee that all file accesses receive an ALLOW =
-or DENY response, and no events are lost.
-> > >
-> > > Makes sense.
-> > >
-> > > > Unfortunately, today a filesystem client can hang (in D state)
-> > > > if the event-handler daemon crashes or restarts at the wrong time.
-> > >
-> > > Can you provide exact stack traces for those cases?
-> > >
-> > > I wonder how process gets to D state with commit fabf7f29b3e2
-> > > ("fanotify: Use interruptible wait when waiting for permission events=
-")
-> >
-> > So D state is expected when waiting for response. We are using
-> > TASK_UNINTERRUPTIBLE sleep (the above commit had to be effectively
-> > reverted). But we are also setting TASK_KILLABLE and TASK_FREEZABLE so =
-that
-> > we don't block hibernation and tasks can be killed when fanotify listen=
-er
-> > misbehaves.
-> >
-> > But what confuses me is the following: You have fanotify instance to wh=
-ich
-> > you've got fd from fanotify_init(). For any process to be hanging, this=
- fd
-> > must be still held open by some process. Otherwise the fanotify instanc=
-e
-> > gets destroyed and all processes are free to run (they get FAN_ALLOW re=
-ply
-> > if they were already waiting). So the fact that you see processes hangi=
-ng
-> > when your fanotify listener crashes means that you have likely leaked t=
-he
-> > fd to some other process (lsof should be able to tell you which process=
- has
-> > still handle to fanotify instance). And the kernel has no way to know t=
-his
-> > is not the process that will eventually read these events and reply...
-> >
-> > > > In this case, any events that have been read but not yet responded =
-to would be lost.
-> > > > Initially we considered handling this internally by saving the file=
- descriptors for pending events,
-> > > > however this proved to be complex to do in a robust manner.
-> > > >
-> > > > A more robust solution is to add a kernel fanotify api which resets=
- the fanotify pending event queue,
-> > > > thereby allowing us to recover pending events in the case of daemon=
- restart.
-> > > > A strawman implementation of this approach is in
-> > > > https://github.com/torvalds/linux/compare/master...ibrahim-jirdeh:l=
-inux:fanotify-reset-pending,
-> > > > a new ioctl that resets `group->fanotify_data.access_list`.
-> > > > One other alternative we considered is directly exposing the pendin=
-g event queue itself
-> > > > (https://github.com/torvalds/linux/commit/cd90ff006fa2732d28ff6bb59=
-75ca5351ce009f1)
-> > > > to support monitoring pending events, but simply resetting the queu=
-e is likely sufficient for our use-case.
-> > > >
-> > > > What do you think of exposing this functionality in fanotify?
-> > > >
-> > >
-> > > Ignoring the pending events for start, how do you deal with access to
-> > > non-populated files while the daemon is down?
-> > >
-> > > We were throwing some idea about having a mount option (something
-> > > like a "moderate" mount) to determine the default response for specif=
-ic
-> > > permission events (e.g. FAN_OPEN_PERM) in the case that there is
-> > > no listener watching this event.
-> > >
-> > > If you have a filesystem which may contain non-populated files, you
-> > > mount it with as "moderated" mount and then access to all files is
-> > > denied until the daemon is running and also denied if daemon is down.
-> > >
-> > > For restart, it might make sense to start a new daemon to start liste=
-ning
-> > > to events before stopping the old daemon.
-> > > If the new daemon gets the events before the old daemon, things shoul=
-d
-> > > be able to transition smoothly.
-> >
-> > I agree this would be a sensible protocol for updates. For unplanned cr=
-ashes
-> > I agree we need something like the "moderated" mount option.
+> > -It is intended for event listeners that need to access files before th=
+ey
+> > -contain their final data.
+> > +It is intended for event listeners that may need to write data to file=
+s
+> > +before their final data can be accessed.
+> >  This notification class might be used by hierarchical storage managers=
+,
+> >  for example.
+> >  Use of this flag requires the
+> > diff --git a/man/man2/fanotify_mark.2 b/man/man2/fanotify_mark.2
+> > index 47cafb21c..edbcdc592 100644
+> > --- a/man/man2/fanotify_mark.2
+> > +++ b/man/man2/fanotify_mark.2
+> > @@ -445,6 +445,20 @@ or
+> >  .B FAN_CLASS_CONTENT
+> >  is required.
+> >  .TP
+> > +.BR FAN_PRE_ACCESS " (since Linux 6.14)"
+> > +.\" commit 4f8afa33817a6420398d1c177c6e220a05081f51
+> > +Create an event before read or write access to a file range,
+> > +that provides an opportunity for the event listener
+> > +to modify the content of the file
+> > +before access to the content
+> > +in the specified range.
+> > +An additional information record of type
+> > +.B FAN_EVENT_INFO_TYPE_RANGE
+> > +is returned for each event in the read buffer.
+> > +An fanotify file descriptor created with
+> > +.B FAN_CLASS_PRE_CONTENT
+> > +is required.
+> > +.TP
+> >  .B FAN_ONDIR
+> >  Create events for directories\[em]for example, when
+> >  .BR opendir (3),
+> > diff --git a/man/man7/fanotify.7 b/man/man7/fanotify.7
+> > index 7844f52f6..6f3a9496e 100644
+> > --- a/man/man7/fanotify.7
+> > +++ b/man/man7/fanotify.7
+> > @@ -247,6 +247,26 @@ struct fanotify_event_info_error {
+> >  .EE
+> >  .in
+> >  .P
+> > +In case of
+> > +.B FAN_PRE_ACCESS
+> > +events,
+> > +an additional information record describing the access range
+> > +is returned alongside the generic
+> > +.I fanotify_event_metadata
+> > +structure within the read buffer.
+> > +This structure is defined as follows:
+> > +.P
+> > +.in +4n
+> > +.EX
+> > +struct fanotify_event_info_range {
+> > +    struct fanotify_event_info_header hdr;
+> > +    __u32 pad;
+> > +    __u64 offset;
+> > +    __u64 count;
+> > +};
+> > +.EE
+> > +.in
+> > +.P
+> >  All information records contain a nested structure of type
+> >  .IR fanotify_event_info_header .
+> >  This structure holds meta-information about the information record
+> > @@ -509,8 +529,9 @@ The value of this field can be set to one of the fo=
+llowing:
+> >  .BR FAN_EVENT_INFO_TYPE_FID ,
+> >  .BR FAN_EVENT_INFO_TYPE_DFID ,
+> >  .BR FAN_EVENT_INFO_TYPE_DFID_NAME ,
+> > -or
+> > -.BR FAN_EVENT_INFO_TYPE_PIDFD .
+> > +.BR FAN_EVENT_INFO_TYPE_PIDFD ,
+> > +.BR FAN_EVENT_INFO_TYPE_ERROR ,
+> > +.BR FAN_EVENT_INFO_TYPE_RANGE .
+> >  The value set for this field
+> >  is dependent on the flags that have been supplied to
+> >  .BR fanotify_init (2).
+> > @@ -711,6 +732,24 @@ Identifies the type of error that occurred.
+> >  This is a counter of the number of errors suppressed
+> >  since the last error was read.
+> >  .P
+> > +The fields of the
+> > +.I fanotify_event_info_range
+> > +structure are as follows:
+> > +.TP
+> > +.I hdr
 >
-> I hope you mean as a superblock option, not an actual mount option.
-> Because a per-mount option is not something I want us to do. We're not
-> giving a specific subsystem a way to alter per-mount behavior.
+> We should use .hdr here too (and in the fields below, '.' too), right?
+>
 
-I don't think that mount option is the right API for this.
-I think if we ever need to implement the semantics of
-"never allow unmoderated access to this fs or via this mount"
-to close the window of time until an fanotify permission mark is set
-then we will need to implement what you proposed once
-to allow setting an fanotify mark on a sb/mount before
-they are attached to the mount namespace.
+Sure that was your idea.
+I am fine with it.
 
-If I am ever saying "moderated mount" in an email, then this
-is actually what I mean.
+I guess it could be changed later with other instances,
 
 Thanks,
 Amir.
