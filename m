@@ -1,104 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-45663-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B22DA7A7FA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 18:29:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C91B2A7A801
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 18:30:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C59DD174563
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 16:29:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67F067A4949
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 16:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC602512D4;
-	Thu,  3 Apr 2025 16:29:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C6B2E3387;
+	Thu,  3 Apr 2025 16:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gAcihRh8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TT6TN0jz";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gAcihRh8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TT6TN0jz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJxNpYzI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAD92512C6
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Apr 2025 16:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18FF2D052;
+	Thu,  3 Apr 2025 16:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743697751; cv=none; b=PUASibf0p7GhmZ2NRsvJ0yf2esgsEZl7NVdZxSMjC17CW5ncVFJ+CYv137UFwaZspo/1mO0MQ+UxFBup3OS6uVmxgqlY09h46kJj1vjbdpMJEm9V2E67MmBycLwk9A45Ykv07GJejg+n99oWdHgaLD7s4RUl5uMMxGgKOCoTVL0=
+	t=1743697827; cv=none; b=NCFcR5R8mu/Rxs0RMXBtHdwNLFyxaIMWoHLK/xyDT+VJekOWCvO9R+Itogmh2WW9mXJmyrB4AYNujdNsm8Dbd5kzDY+zNiIp++CHRIlCYzcTz72XeNkbAjK4BlQXCJffQQpqGULSmCJSrpTsA4jT5n5w2U4J4wwmJR4TDSYjgzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743697751; c=relaxed/simple;
-	bh=KIY8LnB7WAm/BQ1Q2Vw0vdS9UTmNMU0NZZe7fWuFRgs=;
+	s=arc-20240116; t=1743697827; c=relaxed/simple;
+	bh=od+jl7zVZvKgoDBSmlp+LMyewxJFQr/Zo9tM+HJKCps=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FszpRYsNQX8Ntnc9CQO7jWzIcsM9eu3i/FBbr+nVkwFpWYHVu6cNuu/pbPq0nJnno9/wP227fMI6ctDf1OruYIcoLJ53YVKE0HUyeJZsSyKxKR2qVFm3MOgox6uRYslz6K439ABsRA7dF2lWJ0+MVz8ZcYvcS1mt50Ud4Y/WWLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gAcihRh8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TT6TN0jz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gAcihRh8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TT6TN0jz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2A069211B3;
-	Thu,  3 Apr 2025 16:29:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1743697748; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q90m6+jZdvic6rFB3YQnFwqWZDa0z8FHkLLvfPDCnCQ=;
-	b=gAcihRh8xwK1dDQiaCzHgGZt0a/CMsKsQnWyyAjItw6FHxocfbECPItjb2l6OCLwjxxBPb
-	V9dFc84t9NwYJ3bsZBG7bkXBJB75zMSEXHPf0/LP2Tly33tFbqy0B2PjHOlEyAoPs6KVlq
-	5AlqOQrVO0ISbnWIYN2SXoPhrk3yknY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1743697748;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q90m6+jZdvic6rFB3YQnFwqWZDa0z8FHkLLvfPDCnCQ=;
-	b=TT6TN0jz0ZqPVNpsXtnCr2aRVBAkBJggervUKD9j+NC+xDaPj+ymJ748GOUkFNQfKtvwfu
-	JJUP3Fnh0tMATCCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=gAcihRh8;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=TT6TN0jz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1743697748; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q90m6+jZdvic6rFB3YQnFwqWZDa0z8FHkLLvfPDCnCQ=;
-	b=gAcihRh8xwK1dDQiaCzHgGZt0a/CMsKsQnWyyAjItw6FHxocfbECPItjb2l6OCLwjxxBPb
-	V9dFc84t9NwYJ3bsZBG7bkXBJB75zMSEXHPf0/LP2Tly33tFbqy0B2PjHOlEyAoPs6KVlq
-	5AlqOQrVO0ISbnWIYN2SXoPhrk3yknY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1743697748;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q90m6+jZdvic6rFB3YQnFwqWZDa0z8FHkLLvfPDCnCQ=;
-	b=TT6TN0jz0ZqPVNpsXtnCr2aRVBAkBJggervUKD9j+NC+xDaPj+ymJ748GOUkFNQfKtvwfu
-	JJUP3Fnh0tMATCCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E6DDC1392A;
-	Thu,  3 Apr 2025 16:29:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id SyATOFO37me4fAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 03 Apr 2025 16:29:07 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 5F3AFA07E6; Thu,  3 Apr 2025 18:29:07 +0200 (CEST)
-Date: Thu, 3 Apr 2025 18:29:07 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, 
-	Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, mcgrof@kernel.org, hch@infradead.org, david@fromorbit.com, 
-	rafael@kernel.org, djwong@kernel.org, pavel@kernel.org, peterz@infradead.org, 
-	mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com
-Subject: Re: [PATCH v2 3/4] power: freeze filesystems during suspend/resume
-Message-ID: <ezkuxt2rcvvj7ws34gvbkscqzbopwrdybq5sohm6zs3rezch5g@7yeuaa7kh5r7>
-References: <20250402-work-freeze-v2-0-6719a97b52ac@kernel.org>
- <20250402-work-freeze-v2-3-6719a97b52ac@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=X34KOPXMWGCBMPecgu0koci/QUgC/I4hl57miQoA3ZasNdiDwpVsQ2uo8mz0XFluXKee69wHVRS2ibCKsmMFZ71eNKILUGzP3ouQp8RZ1Ea5k/IsuaBbAlS9RvheaFXEzjBIqU4RCRk9tUW2PfR8KYRaU2opLzL2n+LovlI6n4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bJxNpYzI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 184DDC4CEE3;
+	Thu,  3 Apr 2025 16:30:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743697826;
+	bh=od+jl7zVZvKgoDBSmlp+LMyewxJFQr/Zo9tM+HJKCps=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bJxNpYzI0tSBL5Fd29YBqt79bpQuPHJNkgU4HWnA1ipoJVQQZT04gS6GlTXUNKCwy
+	 3rcJdbbtZ1g5w0e2VEc4waAwbeLBmoazhpr56/B+rqY2+09YmOSm3SK7rhCp68n+Lr
+	 R3G+z+RTFDsgCo2N5w5VeWUNyc9m/eisSE7A4xc0VMJ4DNcGiXJgqitCxfSFpKrmqM
+	 lpbZ7wkGZQgQbumA5YCATMoACJohz5/36tiJVZuB6+isXlsuNB3XJ80QqhbjYcEkut
+	 buu/3pAZLr+gH0MryQDouwotjTR47MnGIKmSAPS7JraCOv/Tq9a4zA0NG4H1RtoHU7
+	 yE9OI/ry0AzBg==
+Date: Thu, 3 Apr 2025 09:30:22 -0700
+From: Kees Cook <kees@kernel.org>
+To: Bhupesh <bhupesh@igalia.com>
+Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
+	laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
+	alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
+	mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
+	david@redhat.com, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
+	brauner@kernel.org, jack@suse.cz, mingo@redhat.com,
+	juri.lelli@redhat.com, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com
+Subject: Re: [PATCH v2 1/3] exec: Dynamically allocate memory to store task's
+ full name
+Message-ID: <202504030924.50896AD12@keescook>
+References: <20250331121820.455916-1-bhupesh@igalia.com>
+ <20250331121820.455916-2-bhupesh@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -107,313 +69,130 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250402-work-freeze-v2-3-6719a97b52ac@kernel.org>
-X-Rspamd-Queue-Id: 2A069211B3
-X-Spam-Score: -2.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	FREEMAIL_CC(0.00)[vger.kernel.org,suse.cz,kernel.org,hansenpartnership.com,infradead.org,fromorbit.com,redhat.com,gmail.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20250331121820.455916-2-bhupesh@igalia.com>
 
-On Wed 02-04-25 16:07:33, Christian Brauner wrote:
-> Now all the pieces are in place to actually allow the power subsystem
-> to freeze/thaw filesystems during suspend/resume. Filesystems are only
-> frozen and thawed if the power subsystem does actually own the freeze.
+On Mon, Mar 31, 2025 at 05:48:18PM +0530, Bhupesh wrote:
+> Provide a parallel implementation for get_task_comm() called
+> get_task_full_name() which allows the dynamically allocated
+> and filled-in task's full name to be passed to interested
+> users such as 'gdb'.
 > 
-> We could bubble up errors and fail suspend/resume if the error isn't
-> EBUSY (aka it's already frozen) but I don't think that this is worth it.
-> Filesystem freezing during suspend/resume is best-effort. If the user
-> has 500 ext4 filesystems mounted and 4 fail to freeze for whatever
-> reason then we simply skip them.
+> Currently while running 'gdb', the 'task->comm' value of a long
+> task name is truncated due to the limitation of TASK_COMM_LEN.
 > 
-> What we have now is already a big improvement and let's see how we fare
-> with it before making our lives even harder (and uglier) than we have
-> to.
+> For example using gdb to debug a simple app currently which generate
+> threads with long task names:
+>   # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
+>   # cat log
 > 
-> We add a new sysctl know /sys/power/freeze_filesystems that will allow
-> userspace to freeze filesystems during suspend/hibernate. For now it
-> defaults to off. The thaw logic doesn't require checking whether
-> freezing is enabled because the power subsystem exclusively owns frozen
-> filesystems for the duration of suspend/hibernate and is able to skip
-> filesystems it doesn't need to freeze.
+>   NameThatIsTooLo
 > 
-> Also it is technically possible that filesystem
-> filesystem_freeze_enabled is true and power freezes the filesystems but
-> before freezing all processes another process disables
-> filesystem_freeze_enabled. If power were to place the filesystems_thaw()
-> call under filesystems_freeze_enabled it would fail to thaw the
-> fileystems it frozw. The exclusive holder mechanism makes it possible to
-> iterate through the list without any concern making sure that no
-> filesystems are left frozen.
+> This patch does not touch 'TASK_COMM_LEN' at all, i.e.
+> 'TASK_COMM_LEN' and the 16-byte design remains untouched. Which means
+> that all the legacy / existing ABI, continue to work as before using
+> '/proc/$pid/task/$tid/comm'.
 > 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-
-Looks good modulo the nesting issue I've mentioned in my comments to patch
-1. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+> This patch only adds a parallel, dynamically-allocated
+> 'task->full_name' which can be used by interested users
+> via '/proc/$pid/task/$tid/full_name'.
+> 
+> After this change, gdb is able to show full name of the task:
+>   # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
+>   # cat log
+> 
+>   NameThatIsTooLongForComm[4662]
+> 
+> Signed-off-by: Bhupesh <bhupesh@igalia.com>
 > ---
->  fs/super.c               | 14 ++++++++++----
->  kernel/power/hibernate.c | 16 +++++++++++++++-
->  kernel/power/main.c      | 31 +++++++++++++++++++++++++++++++
->  kernel/power/power.h     |  4 ++++
->  kernel/power/suspend.c   |  7 +++++++
->  5 files changed, 67 insertions(+), 5 deletions(-)
+>  fs/exec.c             | 21 ++++++++++++++++++---
+>  include/linux/sched.h |  9 +++++++++
+>  2 files changed, 27 insertions(+), 3 deletions(-)
 > 
-> diff --git a/fs/super.c b/fs/super.c
-> index 3ddded4360c6..b4bdbc509dba 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -1187,6 +1187,8 @@ static inline bool get_active_super(struct super_block *sb)
->  	return active;
->  }
->  
-> +static const char *filesystems_freeze_ptr = "filesystems_freeze";
-> +
->  static void filesystems_freeze_callback(struct super_block *sb, void *unused)
+> diff --git a/fs/exec.c b/fs/exec.c
+> index f45859ad13ac..4219d77a519c 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1208,6 +1208,9 @@ int begin_new_exec(struct linux_binprm * bprm)
 >  {
->  	if (!sb->s_op->freeze_fs && !sb->s_op->freeze_super)
-> @@ -1196,9 +1198,11 @@ static void filesystems_freeze_callback(struct super_block *sb, void *unused)
->  		return;
+>  	struct task_struct *me = current;
+>  	int retval;
+> +	va_list args;
+> +	char *name;
+> +	const char *fmt;
 >  
->  	if (sb->s_op->freeze_super)
-> -		sb->s_op->freeze_super(sb, FREEZE_MAY_NEST | FREEZE_HOLDER_KERNEL, NULL);
-> +		sb->s_op->freeze_super(sb, FREEZE_EXCL | FREEZE_HOLDER_KERNEL,
-> +				       filesystems_freeze_ptr);
->  	else
-> -		freeze_super(sb, FREEZE_MAY_NEST | FREEZE_HOLDER_KERNEL, NULL);
-> +		freeze_super(sb, FREEZE_EXCL | FREEZE_HOLDER_KERNEL,
-> +			     filesystems_freeze_ptr);
->  
->  	deactivate_super(sb);
->  }
-> @@ -1218,9 +1222,11 @@ static void filesystems_thaw_callback(struct super_block *sb, void *unused)
->  		return;
->  
->  	if (sb->s_op->thaw_super)
-> -		sb->s_op->thaw_super(sb, FREEZE_MAY_NEST | FREEZE_HOLDER_KERNEL, NULL);
-> +		sb->s_op->thaw_super(sb, FREEZE_EXCL | FREEZE_HOLDER_KERNEL,
-> +				     filesystems_freeze_ptr);
->  	else
-> -		thaw_super(sb, FREEZE_MAY_NEST | FREEZE_HOLDER_KERNEL, NULL);
-> +		thaw_super(sb, FREEZE_EXCL | FREEZE_HOLDER_KERNEL,
-> +			   filesystems_freeze_ptr);
->  
->  	deactivate_super(sb);
->  }
-> diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
-> index 50ec26ea696b..37d733945c59 100644
-> --- a/kernel/power/hibernate.c
-> +++ b/kernel/power/hibernate.c
-> @@ -777,6 +777,8 @@ int hibernate(void)
->  		goto Restore;
->  
->  	ksys_sync_helper();
-> +	if (filesystem_freeze_enabled)
-> +		filesystems_freeze();
->  
->  	error = freeze_processes();
->  	if (error)
-> @@ -845,6 +847,7 @@ int hibernate(void)
->  	/* Don't bother checking whether freezer_test_done is true */
->  	freezer_test_done = false;
->   Exit:
-> +	filesystems_thaw();
->  	pm_notifier_call_chain(PM_POST_HIBERNATION);
->   Restore:
->  	pm_restore_console();
-> @@ -881,6 +884,9 @@ int hibernate_quiet_exec(int (*func)(void *data), void *data)
->  	if (error)
->  		goto restore;
->  
-> +	if (filesystem_freeze_enabled)
-> +		filesystems_freeze();
+>  	/* Once we are committed compute the creds */
+>  	retval = bprm_creds_from_file(bprm);
+> @@ -1348,11 +1351,22 @@ int begin_new_exec(struct linux_binprm * bprm)
+>  		 * detecting a concurrent rename and just want a terminated name.
+>  		 */
+>  		rcu_read_lock();
+> -		__set_task_comm(me, smp_load_acquire(&bprm->file->f_path.dentry->d_name.name),
+> -				true);
+> +		fmt = smp_load_acquire(&bprm->file->f_path.dentry->d_name.name);
+> +		name = kvasprintf(GFP_KERNEL, fmt, args);
+> +		if (!name)
+> +			return -ENOMEM;
 > +
->  	error = freeze_processes();
->  	if (error)
->  		goto exit;
-> @@ -940,6 +946,7 @@ int hibernate_quiet_exec(int (*func)(void *data), void *data)
->  	thaw_processes();
->  
->  exit:
-> +	filesystems_thaw();
->  	pm_notifier_call_chain(PM_POST_HIBERNATION);
->  
->  restore:
-> @@ -1028,19 +1035,26 @@ static int software_resume(void)
->  	if (error)
->  		goto Restore;
->  
-> +	if (filesystem_freeze_enabled)
-> +		filesystems_freeze();
+> +		me->full_name = name;
+> +		__set_task_comm(me, fmt, true);
+
+I don't want to add new allocations to the default exec path unless we
+absolutely must.
+
+In the original proposal this was about setting thread names (after
+exec), and I think that'll be fine.
+
+>  		rcu_read_unlock();
+>  	} else {
+> -		__set_task_comm(me, kbasename(bprm->filename), true);
+> +		fmt = kbasename(bprm->filename);
+> +		name = kvasprintf(GFP_KERNEL, fmt, args);
+> +		if (!name)
+> +			return -ENOMEM;
 > +
->  	pm_pr_dbg("Preparing processes for hibernation restore.\n");
->  	error = freeze_processes();
-> -	if (error)
-> +	if (error) {
-> +		filesystems_thaw();
->  		goto Close_Finish;
-> +	}
->  
->  	error = freeze_kernel_threads();
->  	if (error) {
->  		thaw_processes();
-> +		filesystems_thaw();
->  		goto Close_Finish;
+> +		me->full_name = name;
+> +		__set_task_comm(me, fmt, true);
 >  	}
+
+I think we can just set me->full_name = me->comm by default.
+
 >  
->  	error = load_image_and_restore();
->  	thaw_processes();
-> +	filesystems_thaw();
->   Finish:
->  	pm_notifier_call_chain(PM_POST_RESTORE);
->   Restore:
-> diff --git a/kernel/power/main.c b/kernel/power/main.c
-> index 6254814d4817..0b0e76324c43 100644
-> --- a/kernel/power/main.c
-> +++ b/kernel/power/main.c
-> @@ -962,6 +962,34 @@ power_attr(pm_freeze_timeout);
+>  	/* An exec changes our domain. We are no longer part of the thread
+> @@ -1399,6 +1413,7 @@ int begin_new_exec(struct linux_binprm * bprm)
+>  	return 0;
 >  
->  #endif	/* CONFIG_FREEZER*/
+>  out_unlock:
+> +	kfree(me->full_name);
+>  	up_write(&me->signal->exec_update_lock);
+>  	if (!bprm->cred)
+>  		mutex_unlock(&me->signal->cred_guard_mutex);
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 56ddeb37b5cd..053b52606652 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1166,6 +1166,9 @@ struct task_struct {
+>  	 */
+>  	char				comm[TASK_COMM_LEN];
 >  
-> +#if defined(CONFIG_SUSPEND) || defined(CONFIG_HIBERNATION)
-> +bool filesystem_freeze_enabled = false;
+> +	/* To store the full name if task comm is truncated. */
+> +	char				*full_name;
 > +
-> +static ssize_t freeze_filesystems_show(struct kobject *kobj,
-> +				       struct kobj_attribute *attr, char *buf)
-> +{
-> +	return sysfs_emit(buf, "%d\n", filesystem_freeze_enabled);
-> +}
-> +
-> +static ssize_t freeze_filesystems_store(struct kobject *kobj,
-> +					struct kobj_attribute *attr,
-> +					const char *buf, size_t n)
-> +{
-> +	unsigned long val;
-> +
-> +	if (kstrtoul(buf, 10, &val))
-> +		return -EINVAL;
-> +
-> +	if (val > 1)
-> +		return -EINVAL;
-> +
-> +	filesystem_freeze_enabled = !!val;
-> +	return n;
-> +}
-> +
-> +power_attr(freeze_filesystems);
-> +#endif /* CONFIG_SUSPEND || CONFIG_HIBERNATION */
-> +
->  static struct attribute * g[] = {
->  	&state_attr.attr,
->  #ifdef CONFIG_PM_TRACE
-> @@ -991,6 +1019,9 @@ static struct attribute * g[] = {
->  #endif
->  #ifdef CONFIG_FREEZER
->  	&pm_freeze_timeout_attr.attr,
-> +#endif
-> +#if defined(CONFIG_SUSPEND) || defined(CONFIG_HIBERNATION)
-> +	&freeze_filesystems_attr.attr,
->  #endif
->  	NULL,
->  };
-> diff --git a/kernel/power/power.h b/kernel/power/power.h
-> index c352dea2f67b..2eb81662b8fa 100644
-> --- a/kernel/power/power.h
-> +++ b/kernel/power/power.h
-> @@ -18,6 +18,10 @@ struct swsusp_info {
->  	unsigned long		size;
->  } __aligned(PAGE_SIZE);
+>  	struct nameidata		*nameidata;
 >  
-> +#if defined(CONFIG_SUSPEND) || defined(CONFIG_HIBERNATION)
-> +extern bool filesystem_freeze_enabled;
-> +#endif
-> +
->  #ifdef CONFIG_HIBERNATION
->  /* kernel/power/snapshot.c */
->  extern void __init hibernate_reserved_size_init(void);
-> diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-> index 8eaec4ab121d..76b141b9aac0 100644
-> --- a/kernel/power/suspend.c
-> +++ b/kernel/power/suspend.c
-> @@ -30,6 +30,7 @@
->  #include <trace/events/power.h>
->  #include <linux/compiler.h>
->  #include <linux/moduleparam.h>
-> +#include <linux/fs.h>
+>  #ifdef CONFIG_SYSVIPC
+> @@ -2007,6 +2010,12 @@ extern void __set_task_comm(struct task_struct *tsk, const char *from, bool exec
+>  	buf;						\
+>  })
 >  
->  #include "power.h"
->  
-> @@ -374,6 +375,8 @@ static int suspend_prepare(suspend_state_t state)
->  	if (error)
->  		goto Restore;
->  
-> +	if (filesystem_freeze_enabled)
-> +		filesystems_freeze();
->  	trace_suspend_resume(TPS("freeze_processes"), 0, true);
->  	error = suspend_freeze_processes();
->  	trace_suspend_resume(TPS("freeze_processes"), 0, false);
-> @@ -550,6 +553,7 @@ int suspend_devices_and_enter(suspend_state_t state)
->  static void suspend_finish(void)
->  {
->  	suspend_thaw_processes();
-> +	filesystems_thaw();
->  	pm_notifier_call_chain(PM_POST_SUSPEND);
->  	pm_restore_console();
->  }
-> @@ -588,6 +592,8 @@ static int enter_state(suspend_state_t state)
->  		ksys_sync_helper();
->  		trace_suspend_resume(TPS("sync_filesystems"), 0, false);
->  	}
-> +	if (filesystem_freeze_enabled)
-> +		filesystems_freeze();
->  
->  	pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_labels[state]);
->  	pm_suspend_clear_flags();
-> @@ -609,6 +615,7 @@ static int enter_state(suspend_state_t state)
->  	pm_pr_dbg("Finishing wakeup.\n");
->  	suspend_finish();
->   Unlock:
-> +	filesystems_thaw();
->  	mutex_unlock(&system_transition_mutex);
->  	return error;
->  }
-> 
-> -- 
-> 2.47.2
-> 
+> +#define get_task_full_name(buf, buf_size, tsk) ({	\
+> +	BUILD_BUG_ON(sizeof(buf) < TASK_COMM_LEN);	\
+> +	strscpy_pad(buf, (tsk)->full_name, buf_size);	\
+> +	buf;						\
+> +})
+
+I think it should be possible to just switch get_task_comm() to use
+(tsk)->full_name.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Kees Cook
 
