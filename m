@@ -1,144 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-45616-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45617-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B5FAA79F8E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 11:08:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 936B7A79FCB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 11:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DAE03B23FF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 09:06:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6833F1641B5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 09:16:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554252459D8;
-	Thu,  3 Apr 2025 08:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61881242936;
+	Thu,  3 Apr 2025 09:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DXV6Yn3+"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="P8CRbVRv";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TQRg07i5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49362451F0
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Apr 2025 08:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD2F2CA6
+	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Apr 2025 09:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743670793; cv=none; b=t4Gwqlldg9m+3yty6XB8cMQiJ2Ez6DKtOzm+oFpFzGR7Ho+WdP4TfNSNrxPwoQP1xafW0UN7QWlPtE1Ta2K3g9XwjA/GRRYFs5vhM9u2gxk4mtQHpL2sS3484NKcQqL8RLMrjsceS4gR8nkOuV+FE04S6ZpvvlKS0ybi8CARelU=
+	t=1743671769; cv=none; b=UBoYoGXxChJnIlQ5zxaV01C9mhfPmVTfUapg8+Z6Q1v4oPWrR+IzuIM0ucHlZ5/nYaUnAC6TJq8TiQilgVETP3OxNzBsN4Y1Bb3KYrEcMl4vJZARv31KymcPX8/GbFTM5+ge4PsEU1eVMJ/yh8KLafCOlhV0kWAZsQ5UV20TkXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743670793; c=relaxed/simple;
-	bh=mGUq16/UmGEEMYrIY2tCZfZXSIRhMmrpOz9HB+k/VcI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R5lgnFYmokppZXXfIkIwcoUdxkp70/jgz9Ic6cYK2UvIixQ35YJv68xJ+3Swf7byJoJ10jfHN6/1q5MeRxlqYm6WdEk1g2G5AAwFgEXmQVVsgO6ytsn6y5YmmyQHFg41GeSH95Wu9Nvrw4uZKgutCPgM4Ifm9wBaykYh8xCQz9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DXV6Yn3+; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-39c31e4c3e5so147054f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Apr 2025 01:59:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1743670790; x=1744275590; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ICyC3s+pJ3fIMtUsu9o7pDmgGeOfPEFH4SmR3vdTuEY=;
-        b=DXV6Yn3+5S0ihm7HYWBo6LFOlRmBONcNjHz37fbA5B+9HOzwUgILrSBqkb0xSwcToA
-         5zkid2oWr0MBjJnt4v7QTmKiRcG9b4W7baVLFIa6HthbZ87/+xOBjTT4OLSGts8InM4a
-         3cDlxfHlezx4895cqH7hI1+POYSNkdyrSyCuCzJhsz5+LQzMI625FtOiab7CZAbJ0Wa5
-         DSIc0aqhij7k4BHQopLFTtrSVMRnHj4/79G7QAcl/FUknd/9I8KsmT5BS9aNqKt1EYdn
-         O74YGGrrieXh61xjpuffq9Emd2Xm9j5OoDSQQmqZHWpnvh8HMA313ZBOoedJYUW4wIoL
-         1cpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743670790; x=1744275590;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ICyC3s+pJ3fIMtUsu9o7pDmgGeOfPEFH4SmR3vdTuEY=;
-        b=tOeEM8Mmi1mSREycNrj6VxKLl+Cdr89mpHtrAOLDqZOJ1RHXngBq7shT9pXKfDpH+r
-         2BlLhvjZlujnsnSm80NLpRorLBYxvEOr/s9ptgDCW8UMvXc7991qRXW5OaDRiGghCHwi
-         n4qaDCWqk3a2kN9FG08ksYcA1u0qM/WaGNe97sJuaNstY1iHnpv1bL/ozk1wrcBln6bM
-         FcnmbsV7Ism61hilr5/x3z//WDydk5r9ibTM1TzScJ9x38UpGx47544M6MnKyNE/sDtw
-         cirnwQxCuTTM07WWBruo6sbGtgvTov+6uV6TJyB6vFmt0hdzU3qIOkkg+J0XyJu/sIRc
-         h1Og==
-X-Forwarded-Encrypted: i=1; AJvYcCWuHxKj0GeDRVbgKSVSbaBYn/UmBoOvAE3B//v3Z5QVK+a7utVSPJe3IxAwZh1HZXh1O/we1wpx7OLu+nAZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsP9vpCe7qGcJHTzgV1Zt1Q2Hdg+oOJWs7ATSs04Vb8TbGGrMk
-	Kp2gV3lEJcZ/IR022/fDlOfrkY1oUkDp8sqR9ihWW7UrpyF/L+YBWDLlD7TdgOE=
-X-Gm-Gg: ASbGncu/K3vU33/8VDSJfjUFGhIvAfSjvFUEk/zcpTcmLVdHHwW4dIla3M0iom+sFiL
-	CiUPcp0tlws5gu3nQ4H2epuQxbHIbKjY0swRayzmAWpGscm6nuC+Tgm41fcouDLkrdZ2ui9W57b
-	/CWOI2mGadcU/euAzfZEIepnC7bKK10VrsCAfdut6TGFrhUk3e66dnjd0UYIqwR1fJrboWw8XX+
-	Eu/tPCXWEorwklKEtqFHKuDv7MMiGlcK0VNfO7pBx0L0E+P9hWPgl+6T6BcispzZyXh2uIVxdD0
-	UiSIv1P2Id6k5qb1oc7tpuV2QxQmvr13GhP0Ep8W3eA5Zf/aR34w4YE=
-X-Google-Smtp-Source: AGHT+IF6/cKhg/tRYLRyYy0gd6WLgBem2gk7vTyRY7tWsUc2r/1wFw8LOKnBmlJm7eilsE2eyynOmQ==
-X-Received: by 2002:adf:f40d:0:b0:391:49f6:dad4 with SMTP id ffacd0b85a97d-39c2f945f61mr1028102f8f.41.1743670789943;
-        Thu, 03 Apr 2025 01:59:49 -0700 (PDT)
-Received: from localhost (109-81-82-69.rct.o2.cz. [109.81.82.69])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39c30226dfesm1199443f8f.97.2025.04.03.01.59.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 01:59:49 -0700 (PDT)
-Date: Thu, 3 Apr 2025 10:59:48 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>,
-	Dave Chinner <david@fromorbit.com>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Harry Yoo <harry.yoo@oracle.com>, Kees Cook <kees@kernel.org>,
-	joel.granados@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-	linux-mm@kvack.org
-Subject: Re: [PATCH] mm: kvmalloc: make kmalloc fast path real fast path
-Message-ID: <Z-5OBJrdjDBj_nrr@tiehlicka>
-References: <20250401073046.51121-1-laoar.shao@gmail.com>
- <3315D21B-0772-4312-BCFB-402F408B0EF6@kernel.org>
- <Z-y50vEs_9MbjQhi@harry>
- <CALOAHbBSvMuZnKF_vy3kGGNOCg5N2CgomLhxMxjn8RNwMTrw7A@mail.gmail.com>
- <Z-0gPqHVto7PgM1K@dread.disaster.area>
- <Z-0sjd8SEtldbxB1@tiehlicka>
- <zeuszr6ot5qdi46f5gvxa2c5efy4mc6eaea3au52nqnbhjek7o@l43ps2jtip7x>
- <Z-43Q__lSUta2IrM@tiehlicka>
- <Z-48K0OdNxZXcnkB@tiehlicka>
- <ad7b308e-64aa-4bd4-be1c-fbcdd02a0f10@suse.cz>
+	s=arc-20240116; t=1743671769; c=relaxed/simple;
+	bh=5HjRxBu0r1qRE2N9HjkX5OJxMvhXmWgahcLbPcqYunw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sBZYu78GrioztfdgocjaJM4DR7VrW5lTF39j/a/rUYW03/0k18QY7RH7mGfx5++MgfE4ltACZVbAG0pxvrBCQOemV6L7uNdfVCgNOz/rQpy32ONOm5J9xoSssnQ9qjUtdW6/Vq0Pb4Uj3EknoZISUSusWX1lz/V4yIsGs0y3r+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=P8CRbVRv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TQRg07i5; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id D67E52540271;
+	Thu,  3 Apr 2025 05:16:04 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Thu, 03 Apr 2025 05:16:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1743671764;
+	 x=1743758164; bh=ffaEaMQYCnbRZPuCVFBvqnzi3mMC+nEJW0y/ozKy3ec=; b=
+	P8CRbVRvul7OLxKGgfDVpY+qfWaO76HsQ/W1V1/3bXQVcofCBsBziShAWVps8E67
+	0JM95SD2yfqbMew5L38naiNwfhBCvE10qKPEkUt4LN5HxQ5x8yYkfcKqzlOcTkdZ
+	9LU+tcIdAbZO1u5sn7JzfmOiCfzV7rRNMVjP0YDt0jnY+VjGEdENib8BE2kpRN/h
+	Wkms883uPCYw0R3xdoEyHk/1MyjDiK20JIb/dLyEMlekfFDbEmNkDFzY6oKIkXue
+	xUux8PDS3QFgF6d7H0qp9NrCF4l7lrwqB9V+9f9iyeMFZDsCyxsfHE6QGpo4wlRE
+	cZLJFHQZxuWSG0HVAn5KLQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743671764; x=
+	1743758164; bh=ffaEaMQYCnbRZPuCVFBvqnzi3mMC+nEJW0y/ozKy3ec=; b=T
+	QRg07i5MNzw/kutWqpFT0X+MYljKbczdxJx64mLPEQ8eETuAxQCJd/PV1rL03O9z
+	IOrG/VCmpjgsGDeFZBdFSWg9V8h3GUj+jeWe0vw0+BzzZTkbr4u/c3MIxErGuu4p
+	CG/zyODZjd5aDd6o5hWXD9csxKoR+13BKPBsS7/2pAjnL2mDyfx92Qc9v7GiMcXV
+	CPAytIiCGJsOqBcIcFwAIfGLK0isOabarBUnxGkoyi3WZL+YhhtrbeMbAOJdLwrb
+	+uMbQW7dXI7n4R+1YGqwiMBuVjhYfrRVFW9VqNHjQilYdspPfyN79ryux49rXxzK
+	T2qp8dNyNGoE7wiAFaLPA==
+X-ME-Sender: <xms:1FHuZ32E8aZr4rJdyVLzriTVO3lhVvZ1sJJoXn4NlPwq2PtgU1MHUA>
+    <xme:1FHuZ2HTD-P4irpwMxFmqCoNAxErHMQuQHVciDU8RBeptz40r4T7Lw28GsxMfCnW4
+    pzjzSovG25_ZWOy>
+X-ME-Received: <xmr:1FHuZ35-ctheOQjMaR7g2b0AsizbzD-9UCbXlnZ3LNjNzeNdy1012eXCc7mrJGw4dn1I-t5__b6YBV8STfnkK87BkBy0c18uKIFqNxV1SOmSi-1GSJ65>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukeekudekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
+    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvg
+    hrnhgurdgtohhmqeenucggtffrrghtthgvrhhnpeehhfejueejleehtdehteefvdfgtdel
+    ffeuudejhfehgedufedvhfehueevudeugeenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggp
+    rhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihhklhhosh
+    esshiivghrvgguihdrhhhupdhrtghpthhtohepsghstghhuhgsvghrthesuggunhdrtgho
+    mhdprhgtphhtthhopehvghhohigrlhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepsh
+    htvghfrghnhhgrsehrvgguhhgrthdrtghomhdprhgtphhtthhopegvphgvrhgviihmrges
+    rhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhm
+    rghilhdrtghomhdprhgtphhtthhopehjohhsvghfsehtohigihgtphgrnhgurgdrtghomh
+X-ME-Proxy: <xmx:1FHuZ817cCuYoiz8md2gCgYBuq4BBobjV_UH0R8JzTgNW0o7r5HgUw>
+    <xmx:1FHuZ6GoXrFVpBzivAFJfWuGL4nUlcdRDUh1JP04cbzi2yECvnUxFA>
+    <xmx:1FHuZ98OISTdoBI2o-D_fzYeEB5jJQuDPPyzREwvoI-Tq4ZDridtQQ>
+    <xmx:1FHuZ3lAoZ-GMWcdO0a8qNu5hUYqX_QAYL0U9oA_D3Q_plOgj1XKGw>
+    <xmx:1FHuZxp27_qcISZ-V_J1VASxEcX4yFxCbZLdEmulR1pe88n8Xf7pzpYb>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 3 Apr 2025 05:16:03 -0400 (EDT)
+Message-ID: <b1f59622-5d4b-48d5-b153-a8e124979879@bsbernd.com>
+Date: Thu, 3 Apr 2025 11:16:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ad7b308e-64aa-4bd4-be1c-fbcdd02a0f10@suse.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] fuse: Make the fuse_send_one request counter atomic
+To: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>
+Cc: Vivek Goyal <vgoyal@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ linux-fsdevel@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
+ Josef Bacik <josef@toxicpanda.com>
+References: <20250402-fuse-io-uring-trace-points-v1-0-11b0211fa658@ddn.com>
+ <20250402-fuse-io-uring-trace-points-v1-1-11b0211fa658@ddn.com>
+ <CAJfpegsZmx2f8XVJDNLBYmGd+oAtiov9p9NjpGZ4f9-D_3q_PA@mail.gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJfpegsZmx2f8XVJDNLBYmGd+oAtiov9p9NjpGZ4f9-D_3q_PA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu 03-04-25 10:24:56, Vlastimil Babka wrote:
-[...]
-> - to replace xlog_kvmalloc(), we need to deal with kvmalloc() passing
-> VM_ALLOW_HUGE_VMAP, so we don't end up with GFP_KERNEL huge allocation
-> anyway (in practice maybe it wouldn't happen because "size >= PMD_SIZE"
-> required for the huge vmalloc is never true for current xlog_kvmalloc()
-> users but dunno if we can rely on that).
+Hi Miklos,
 
-I would just make that its own patch. Ideally with some numbers showing
-there are code paths benefiting from the change.
+thanks for the quick reply.
 
-> Maybe it's a bad idea to use VM_ALLOW_HUGE_VMAP in kvmalloc() anyway? Since
-> we're in a vmalloc fallback which means the huge allocations failed anyway
-> for the kmalloc() part. Maybe there's some grey area where it makes sense,
-> with size much larger than PMD_SIZE, e.g. exceeding MAX_PAGE_ORDER where we
-> can't kmalloc() anyway so at least try to assemble the allocation from huge
-> vmalloc. Maybe tie it to such a size check, or require __GFP_RETRY_MAYFAIL
-> to activate VM_ALLOW_HUGE_VMAP?
+On 4/2/25 20:29, Miklos Szeredi wrote:
+> On Wed, 2 Apr 2025 at 19:41, Bernd Schubert <bschubert@ddn.com> wrote:
+>>
+>> No need to take lock, we can have that in atomic way.
+>> fuse-io-uring and virtiofs especially benefit from it
+>> as they don't need the fiq lock at all.
+> 
+> This is good.
+> 
+> It would be even better to have per-cpu counters, each initialized to
+> a cpuid * FUSE_REQ_ID_STEP and jumping by NR_CPU * FUSE_REQ_ID_STEP.
+> 
+> Hmm?
 
-We didn't have that initially. 9becb6889130 ("kvmalloc: use vmalloc_huge
-for vmalloc allocations") has added it. I thought large allocations are
-very optimistic (ie. NOWAIT like) but that doesn't seem to be the case.
+/**
+ * Get the next unique ID for a request
+ */
+static inline u64 fuse_get_unique(struct fuse_iqueue *fiq)
+{
+	int step = FUSE_REQ_ID_STEP * (task_cpu(current) + 1);
+	u64 cntr = this_cpu_inc_return(*fiq->reqctr);
 
-As said above, I would just change that after we have any numbers to
-support the removal.
+	return cntr * step;
+}
 
-> - we're still not addressing the original issue of high kcompactd activity,
-> but maybe the answer is that it needs to be investigated more (why deferred
-> compaction doesn't limit it) instead of trying to suppress it from kvmalloc()
 
-yes this seems like something that should be investigated on the
-compaction side.
 
-Thanks!
+  passthrough_hp-10113   [028] ...1. 79978.381908: fuse_request_bg_enqueue: connection 43 req 58 opcode 26 (FUSE_INIT) len 0 
+  passthrough_hp-10113   [028] ...2. 79978.382032: fuse_request_enqueue: connection 43 req 58 opcode 26 (FUSE_INIT) len 104 
+     fuse_worker-10115   [008] ...1. 79978.485348: fuse_request_send: connection 43 req 58 opcode 26 (FUSE_INIT) len 104 
+     fuse_worker-10115   [008] ...1. 79978.489948: fuse_request_end: connection 43 req 58 len 80 error 0
+              df-10153   [012] ...1. 79981.776173: fuse_request_enqueue: connection 43 req 26 opcode 3 (FUSE_GETATTR) len 56 
+    fuse-ring-12-10131   [012] ...1. 79981.776345: fuse_request_send: connection 43 req 26 opcode 3 (FUSE_GETATTR) len 56 
+    fuse-ring-12-10131   [012] ...1. 79981.776628: fuse_request_end: connection 43 req 26 len 56 error 0
+              df-10153   [012] ...1. 79981.778866: fuse_request_enqueue: connection 43 req 52 opcode 17 (FUSE_STATFS) len 40 
+    fuse-ring-12-10131   [012] ...1. 79981.778887: fuse_request_send: connection 43 req 52 opcode 17 (FUSE_STATFS) len 40 
+    fuse-ring-12-10131   [012] ...1. 79981.779050: fuse_request_end: connection 43 req 52 len 40 error 0
+              ls-10154   [013] ...1. 79986.145078: fuse_request_enqueue: connection 43 req 28 opcode 22 (FUSE_GETXATTR) len 65 
+    fuse-ring-13-10132   [013] ...1. 79986.145440: fuse_request_send: connection 43 req 28 opcode 22 (FUSE_GETXATTR) len 65 
+    fuse-ring-13-10132   [013] ...1. 79986.146932: fuse_request_end: connection 43 req 28 len 65 error -95
+              ls-10154   [013] ...1. 79986.147172: fuse_request_enqueue: connection 43 req 56 opcode 22 (FUSE_GETXATTR) len 72 
+    fuse-ring-13-10132   [013] ...1. 79986.147219: fuse_request_send: connection 43 req 56 opcode 22 (FUSE_GETXATTR) len 72 
+    fuse-ring-13-10132   [013] ...1. 79986.148048: fuse_request_end: connection 43 req 56 len 72 error -95
+              ls-10154   [013] ...1. 79986.152345: fuse_request_enqueue: connection 43 req 84 opcode 27 (FUSE_OPENDIR) len 48 
+    fuse-ring-13-10132   [013] ...1. 79986.152385: fuse_request_send: connection 43 req 84 opcode 27 (FUSE_OPENDIR) len 48 
+    fuse-ring-13-10132   [013] ...1. 79986.153214: fuse_request_end: connection 43 req 84 len 48 error 0
+              ls-10154   [013] ...1. 79986.154291: fuse_request_enqueue: connection 43 req 112 opcode 44 (FUSE_READDIRPLUS) len 80 
+    fuse-ring-13-10132   [013] ...1. 79986.154405: fuse_request_send: connection 43 req 112 opcode 44 (FUSE_READDIRPLUS) len 80 
+    fuse-ring-13-10132   [013] ...1. 79986.171515: fuse_request_end: connection 43 req 112 len 80 error 0
+              ls-10154   [013] ...1. 79986.174221: fuse_request_enqueue: connection 43 req 140 opcode 44 (FUSE_READDIRPLUS) len 80 
+    fuse-ring-13-10132   [013] ...1. 79986.174264: fuse_request_send: connection 43 req 140 opcode 44 (FUSE_READDIRPLUS) len 80 
+    fuse-ring-13-10132   [013] ...1. 79986.174510: fuse_request_end: connection 43 req 140 len 80 error 0
+              ls-10154   [013] ...1. 79986.174739: fuse_request_bg_enqueue: connection 43 req 168 opcode 29 (FUSE_RELEASEDIR) len 0 
+    fuse-ring-13-10132   [013] ...1. 79986.179691: fuse_request_send: connection 43 req 168 opcode 29 (FUSE_RELEASEDIR) len 64 
+    fuse-ring-13-10132   [013] ...1. 79986.180011: fuse_request_end: connection 43 req 168 len 64 error 0
 
--- 
-Michal Hocko
-SUSE Labs
+
+
+Slight issue is that request IDs now have quite an up down,
+even more than patch 2/4. Ok with you?
+
+
+Thanks,
+Bernd
 
