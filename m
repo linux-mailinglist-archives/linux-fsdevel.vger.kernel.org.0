@@ -1,66 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-45664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45665-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C91B2A7A801
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 18:30:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90130A7A86A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 19:10:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67F067A4949
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 16:29:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 815D23B60AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 17:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C6B2E3387;
-	Thu,  3 Apr 2025 16:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B5A25178F;
+	Thu,  3 Apr 2025 17:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJxNpYzI"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="S3+AShCl";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BNRKwwYY";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="S3+AShCl";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BNRKwwYY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18FF2D052;
-	Thu,  3 Apr 2025 16:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FAE42A96
+	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Apr 2025 17:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743697827; cv=none; b=NCFcR5R8mu/Rxs0RMXBtHdwNLFyxaIMWoHLK/xyDT+VJekOWCvO9R+Itogmh2WW9mXJmyrB4AYNujdNsm8Dbd5kzDY+zNiIp++CHRIlCYzcTz72XeNkbAjK4BlQXCJffQQpqGULSmCJSrpTsA4jT5n5w2U4J4wwmJR4TDSYjgzk=
+	t=1743700242; cv=none; b=SW9/vXsCU/Z09pCQGRhCtIzJXjJ59GG4TpLQl2CIiJjRRRyP5gpDcNckGZJSEZ70DyAzNY++liDC3yeiwVLjrI/ezlsEV5ckS7eaEJ8bt4hv+gCRaO0hxtvsEG8SeOJ+10lqZRpoDwv0prTdLx9ZrMY+lEcJ0+pNRV9ep6nMt7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743697827; c=relaxed/simple;
-	bh=od+jl7zVZvKgoDBSmlp+LMyewxJFQr/Zo9tM+HJKCps=;
+	s=arc-20240116; t=1743700242; c=relaxed/simple;
+	bh=e2/+6wxZhaTK5mg+Q77UFV2V+f1eixUaYJCYhmdQ42w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X34KOPXMWGCBMPecgu0koci/QUgC/I4hl57miQoA3ZasNdiDwpVsQ2uo8mz0XFluXKee69wHVRS2ibCKsmMFZ71eNKILUGzP3ouQp8RZ1Ea5k/IsuaBbAlS9RvheaFXEzjBIqU4RCRk9tUW2PfR8KYRaU2opLzL2n+LovlI6n4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bJxNpYzI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 184DDC4CEE3;
-	Thu,  3 Apr 2025 16:30:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743697826;
-	bh=od+jl7zVZvKgoDBSmlp+LMyewxJFQr/Zo9tM+HJKCps=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bJxNpYzI0tSBL5Fd29YBqt79bpQuPHJNkgU4HWnA1ipoJVQQZT04gS6GlTXUNKCwy
-	 3rcJdbbtZ1g5w0e2VEc4waAwbeLBmoazhpr56/B+rqY2+09YmOSm3SK7rhCp68n+Lr
-	 R3G+z+RTFDsgCo2N5w5VeWUNyc9m/eisSE7A4xc0VMJ4DNcGiXJgqitCxfSFpKrmqM
-	 lpbZ7wkGZQgQbumA5YCATMoACJohz5/36tiJVZuB6+isXlsuNB3XJ80QqhbjYcEkut
-	 buu/3pAZLr+gH0MryQDouwotjTR47MnGIKmSAPS7JraCOv/Tq9a4zA0NG4H1RtoHU7
-	 yE9OI/ry0AzBg==
-Date: Thu, 3 Apr 2025 09:30:22 -0700
-From: Kees Cook <kees@kernel.org>
-To: Bhupesh <bhupesh@igalia.com>
-Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
-	laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
-	alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
-	mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
-	david@redhat.com, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
-	brauner@kernel.org, jack@suse.cz, mingo@redhat.com,
-	juri.lelli@redhat.com, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com
-Subject: Re: [PATCH v2 1/3] exec: Dynamically allocate memory to store task's
- full name
-Message-ID: <202504030924.50896AD12@keescook>
-References: <20250331121820.455916-1-bhupesh@igalia.com>
- <20250331121820.455916-2-bhupesh@igalia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WBxVRNh368VkBhyAOAdlLSPhDW3GlF6M03EkFBUqDcFV40TqMClkMMTPz0jJsiDC8A+t2fx+BIRsbGZKbfd1aqr37b72oKjG2RwL5sj9xKB4hHZUNzzyw3H6xURqO2PcDRnH3Qb0DHjVayFOkP7dfJjR41Fm5F332Ae1+crMP+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=S3+AShCl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BNRKwwYY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=S3+AShCl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BNRKwwYY; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D4D121F385;
+	Thu,  3 Apr 2025 17:10:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743700237; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vd0AEqJoKxLhteiVJ9eS3U6vcnnn5VSsymo3cjREyME=;
+	b=S3+AShCl4qIwgYxsOH3h07HeWOWeb4EjMioxrU0z17nc7unxsVu4eBToiuDaJyXeX0p8tB
+	Hwld4ZvOzgX4GBY5oDHIIofXscrLpNII/pDupynNsmO6uUGFrMAdMJbFbDxiaVifS8CpuW
+	C1uHzdl0cCWMzlXnb2aVCT1/cUCQLDk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743700237;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vd0AEqJoKxLhteiVJ9eS3U6vcnnn5VSsymo3cjREyME=;
+	b=BNRKwwYYmYT7CLMmECCZNSxZapyi5MzwMD6uQt7bNkbpaO0K4rRe44eCulFKFP8ah3WzKC
+	Tej40BtTn/MkrUAg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743700237; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vd0AEqJoKxLhteiVJ9eS3U6vcnnn5VSsymo3cjREyME=;
+	b=S3+AShCl4qIwgYxsOH3h07HeWOWeb4EjMioxrU0z17nc7unxsVu4eBToiuDaJyXeX0p8tB
+	Hwld4ZvOzgX4GBY5oDHIIofXscrLpNII/pDupynNsmO6uUGFrMAdMJbFbDxiaVifS8CpuW
+	C1uHzdl0cCWMzlXnb2aVCT1/cUCQLDk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743700237;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vd0AEqJoKxLhteiVJ9eS3U6vcnnn5VSsymo3cjREyME=;
+	b=BNRKwwYYmYT7CLMmECCZNSxZapyi5MzwMD6uQt7bNkbpaO0K4rRe44eCulFKFP8ah3WzKC
+	Tej40BtTn/MkrUAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C4CBA13A2C;
+	Thu,  3 Apr 2025 17:10:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id EUfELw3B7mdkCgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 03 Apr 2025 17:10:37 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 74629A07E6; Thu,  3 Apr 2025 19:10:37 +0200 (CEST)
+Date: Thu, 3 Apr 2025 19:10:37 +0200
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Josef Bacik <josef@toxicpanda.com>, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fanotify: allow creating FAN_PRE_ACCESS events on
+ directories
+Message-ID: <u3myluuaylejsfidkkajxni33w2ezwcfztlhjmavdmpcoir45o@ew32e4yra6xb>
+References: <20250402062707.1637811-1-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,130 +103,159 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250331121820.455916-2-bhupesh@igalia.com>
+In-Reply-To: <20250402062707.1637811-1-amir73il@gmail.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-0.998];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.995];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon, Mar 31, 2025 at 05:48:18PM +0530, Bhupesh wrote:
-> Provide a parallel implementation for get_task_comm() called
-> get_task_full_name() which allows the dynamically allocated
-> and filled-in task's full name to be passed to interested
-> users such as 'gdb'.
+On Wed 02-04-25 08:27:07, Amir Goldstein wrote:
+> Like files, a FAN_PRE_ACCESS event will be generated before every
+> read access to directory, that is on readdir(3).
 > 
-> Currently while running 'gdb', the 'task->comm' value of a long
-> task name is truncated due to the limitation of TASK_COMM_LEN.
+> Unlike files, there will be no range info record following a
+> FAN_PRE_ACCESS event, because the range of access on a directory
+> is not well defined.
 > 
-> For example using gdb to debug a simple app currently which generate
-> threads with long task names:
->   # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
->   # cat log
+> FAN_PRE_ACCESS events on readdir are only generated when user opts-in
+> with FAN_ONDIR request in event mask and the FAN_PRE_ACCESS events on
+> readdir report the FAN_ONDIR flag, so user can differentiate them from
+> event on read.
 > 
->   NameThatIsTooLo
+> An HSM service is expected to use those events to populate directories
+> from slower tier on first readdir access. Having to range info means
+> that the entire directory will need to be populated on the first
+> readdir() call.
 > 
-> This patch does not touch 'TASK_COMM_LEN' at all, i.e.
-> 'TASK_COMM_LEN' and the 16-byte design remains untouched. Which means
-> that all the legacy / existing ABI, continue to work as before using
-> '/proc/$pid/task/$tid/comm'.
-> 
-> This patch only adds a parallel, dynamically-allocated
-> 'task->full_name' which can be used by interested users
-> via '/proc/$pid/task/$tid/full_name'.
-> 
-> After this change, gdb is able to show full name of the task:
->   # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
->   # cat log
-> 
->   NameThatIsTooLongForComm[4662]
-> 
-> Signed-off-by: Bhupesh <bhupesh@igalia.com>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 > ---
->  fs/exec.c             | 21 ++++++++++++++++++---
->  include/linux/sched.h |  9 +++++++++
->  2 files changed, 27 insertions(+), 3 deletions(-)
 > 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index f45859ad13ac..4219d77a519c 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1208,6 +1208,9 @@ int begin_new_exec(struct linux_binprm * bprm)
+> Jan,
+> 
+> IIRC, the reason we did not allow FAN_ONDIR with FAN_PRE_ACCESS event
+> in initial API version was due to uncertainty around reporting range info.
+> 
+> Circling back to this, I do not see any better options other than not
+> reporting range info and reporting the FAN_ONDIR flag.
+> 
+> HSM only option is to populate the entire directory on first access.
+> Doing a partial range populate for directories does not seem practical
+> with exising POSIX semantics.
+
+I agree that range info for directory events doesn't make sense (or better
+there's no way to have a generic implementation since everything is pretty
+fs specific). If I remember our past discussion, filling in directory
+content on open has unnecessarily high overhead because the user may then
+just do e.g. lookup in the opened directory and not full readdir. That's
+why you want to generate it on readdir. Correct?
+
+> If you accept this claim, please consider fast tracking this change into
+> 6.14.y.
+
+Hum, why the rush? It is just additional feature to allow more efficient
+filling in of directory entries...
+
+> LTP tests pushed to my fan_hsm branch.
+
+Thanks.
+
+Otherwise the patch itself looks good so if my understanding is correct,
+I'll pick it to my tree.
+
+								Honza
+
+>  fs/notify/fanotify/fanotify.c      | 11 +++++++----
+>  fs/notify/fanotify/fanotify_user.c |  9 ---------
+>  2 files changed, 7 insertions(+), 13 deletions(-)
+> 
+> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> index 6c877b3646ec..531c038eed7c 100644
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -303,8 +303,7 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+>  				     struct inode *dir)
 >  {
->  	struct task_struct *me = current;
->  	int retval;
-> +	va_list args;
-> +	char *name;
-> +	const char *fmt;
->  
->  	/* Once we are committed compute the creds */
->  	retval = bprm_creds_from_file(bprm);
-> @@ -1348,11 +1351,22 @@ int begin_new_exec(struct linux_binprm * bprm)
->  		 * detecting a concurrent rename and just want a terminated name.
->  		 */
->  		rcu_read_lock();
-> -		__set_task_comm(me, smp_load_acquire(&bprm->file->f_path.dentry->d_name.name),
-> -				true);
-> +		fmt = smp_load_acquire(&bprm->file->f_path.dentry->d_name.name);
-> +		name = kvasprintf(GFP_KERNEL, fmt, args);
-> +		if (!name)
-> +			return -ENOMEM;
-> +
-> +		me->full_name = name;
-> +		__set_task_comm(me, fmt, true);
-
-I don't want to add new allocations to the default exec path unless we
-absolutely must.
-
-In the original proposal this was about setting thread names (after
-exec), and I think that'll be fine.
-
->  		rcu_read_unlock();
->  	} else {
-> -		__set_task_comm(me, kbasename(bprm->filename), true);
-> +		fmt = kbasename(bprm->filename);
-> +		name = kvasprintf(GFP_KERNEL, fmt, args);
-> +		if (!name)
-> +			return -ENOMEM;
-> +
-> +		me->full_name = name;
-> +		__set_task_comm(me, fmt, true);
+>  	__u32 marks_mask = 0, marks_ignore_mask = 0;
+> -	__u32 test_mask, user_mask = FANOTIFY_OUTGOING_EVENTS |
+> -				     FANOTIFY_EVENT_FLAGS;
+> +	__u32 test_mask, user_mask = FANOTIFY_OUTGOING_EVENTS;
+>  	const struct path *path = fsnotify_data_path(data, data_type);
+>  	unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
+>  	struct fsnotify_mark *mark;
+> @@ -356,6 +355,9 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+>  	 * the child entry name information, we report FAN_ONDIR for mkdir/rmdir
+>  	 * so user can differentiate them from creat/unlink.
+>  	 *
+> +	 * For pre-content events we report FAN_ONDIR for readdir, so user can
+> +	 * differentiate them from read.
+> +	 *
+>  	 * For backward compatibility and consistency, do not report FAN_ONDIR
+>  	 * to user in legacy fanotify mode (reporting fd) and report FAN_ONDIR
+>  	 * to user in fid mode for all event types.
+> @@ -368,8 +370,9 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+>  		/* Do not report event flags without any event */
+>  		if (!(test_mask & ~FANOTIFY_EVENT_FLAGS))
+>  			return 0;
+> -	} else {
+> -		user_mask &= ~FANOTIFY_EVENT_FLAGS;
+> +		user_mask |= FANOTIFY_EVENT_FLAGS;
+> +	} else if (test_mask & FANOTIFY_PRE_CONTENT_EVENTS) {
+> +		user_mask |= FAN_ONDIR;
 >  	}
-
-I think we can just set me->full_name = me->comm by default.
-
 >  
->  	/* An exec changes our domain. We are no longer part of the thread
-> @@ -1399,6 +1413,7 @@ int begin_new_exec(struct linux_binprm * bprm)
+>  	return test_mask & user_mask;
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index f2d840ae4ded..38cb9ba54842 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -1410,11 +1410,6 @@ static int fanotify_may_update_existing_mark(struct fsnotify_mark *fsn_mark,
+>  	    fsn_mark->flags & FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY)
+>  		return -EEXIST;
+>  
+> -	/* For now pre-content events are not generated for directories */
+> -	mask |= fsn_mark->mask;
+> -	if (mask & FANOTIFY_PRE_CONTENT_EVENTS && mask & FAN_ONDIR)
+> -		return -EEXIST;
+> -
 >  	return 0;
+>  }
 >  
->  out_unlock:
-> +	kfree(me->full_name);
->  	up_write(&me->signal->exec_update_lock);
->  	if (!bprm->cred)
->  		mutex_unlock(&me->signal->cred_guard_mutex);
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 56ddeb37b5cd..053b52606652 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1166,6 +1166,9 @@ struct task_struct {
->  	 */
->  	char				comm[TASK_COMM_LEN];
+> @@ -1956,10 +1951,6 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+>  	if (mask & FAN_RENAME && !(fid_mode & FAN_REPORT_NAME))
+>  		return -EINVAL;
 >  
-> +	/* To store the full name if task comm is truncated. */
-> +	char				*full_name;
-> +
->  	struct nameidata		*nameidata;
->  
->  #ifdef CONFIG_SYSVIPC
-> @@ -2007,6 +2010,12 @@ extern void __set_task_comm(struct task_struct *tsk, const char *from, bool exec
->  	buf;						\
->  })
->  
-> +#define get_task_full_name(buf, buf_size, tsk) ({	\
-> +	BUILD_BUG_ON(sizeof(buf) < TASK_COMM_LEN);	\
-> +	strscpy_pad(buf, (tsk)->full_name, buf_size);	\
-> +	buf;						\
-> +})
-
-I think it should be possible to just switch get_task_comm() to use
-(tsk)->full_name.
-
+> -	/* Pre-content events are not currently generated for directories. */
+> -	if (mask & FANOTIFY_PRE_CONTENT_EVENTS && mask & FAN_ONDIR)
+> -		return -EINVAL;
+> -
+>  	if (mark_cmd == FAN_MARK_FLUSH) {
+>  		if (mark_type == FAN_MARK_MOUNT)
+>  			fsnotify_clear_vfsmount_marks_by_group(group);
+> -- 
+> 2.34.1
+> 
 -- 
-Kees Cook
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
