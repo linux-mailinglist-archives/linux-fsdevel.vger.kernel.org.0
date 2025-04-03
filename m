@@ -1,58 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-45610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45611-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B539A79E17
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 10:25:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F4F7A79E2E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 10:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5732D1893E2F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 08:25:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84ADC1898423
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 08:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB83241CA6;
-	Thu,  3 Apr 2025 08:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD819242900;
+	Thu,  3 Apr 2025 08:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+eVwNuz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="loTtuiX9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6652417F8
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Apr 2025 08:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B30A241CA0;
+	Thu,  3 Apr 2025 08:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743668727; cv=none; b=Ce0iQil0Z0uj4IMXHDw+KpAnGEg8QQlQtS26sn1N2xGwuVeZsK161HMKVnfhvN3Sma1wAbrALvgIbZk9vwGepHszkqI488N1scH/3sH7yoBNssUH8439TwuIry0xZIuHMkVdGwK5pRFW0ic6JFQCseEPkl986ETJ5tKsXKazhYk=
+	t=1743668954; cv=none; b=myVPcHWAu4ZsiRP+P7ff9smiWFCbySEuaYST+tMLCfjql+xG09BIgm0CZfDPPH+u+/kZNsN60vSBppXEUyNlAqkrA/gEPacEOZIrdXINu9qRJ4dmLhV0OKTlurct747jRQgbQaym+3XIOh5ARYiH5wFyqMgX/w3wWFzDPTUr9dU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743668727; c=relaxed/simple;
-	bh=gSLHv2L6jjrB0GwsmQpFBN0CROeUs1dmVNHWgLuNjLs=;
+	s=arc-20240116; t=1743668954; c=relaxed/simple;
+	bh=6Q0o/wQZri1Pyt2xHdfoIcLzBUXXSfJYHFcZ/T1SrAs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i/ODySeF3f1+AfS0yL+d81ikvsMfff4kP5uSaXyuElFlLWfP1Wu9nwjt15lc3pK4wY01gY8UYy+ZelwU68DdAjq+VS+ZJSaYxgwuYd93ZW0wwWSNNZvUnaMX0USv1T5mNeHfV9rwCG7uv3m+lNtYmWzp662a3yUcVa2Dxvf/FDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+eVwNuz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76340C4CEE3;
-	Thu,  3 Apr 2025 08:25:25 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AXGg2JkPE9YS9zFaF7Wh+kbxDaDaoAdnQ8LP8aItRDhYyu7ijkg9E2F5Jt4IDm2+mrVf2WOVjQ+z26lJ5uUQluxjwzXjBTun45UEIk4emFLuaqFScmT5xdShnA68sN/IOp9ZLJG+8W2NWeM6PBzmks7ERINqZukATsZCHBPfDDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=loTtuiX9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EF75C4CEE3;
+	Thu,  3 Apr 2025 08:29:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743668727;
-	bh=gSLHv2L6jjrB0GwsmQpFBN0CROeUs1dmVNHWgLuNjLs=;
+	s=k20201202; t=1743668953;
+	bh=6Q0o/wQZri1Pyt2xHdfoIcLzBUXXSfJYHFcZ/T1SrAs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T+eVwNuzPdaj4M3DAAppcrYQS7G8NcsDsrMPA0G68pUeBM6I438UIQjKHr/b4F+JQ
-	 VZzVBf9afbuesynUthlRuIQKyWOHCAa8nE3wvtI5uj6yCM7/Y760ljKeYPgUafBgca
-	 imNqXjCNaeyHVh6kjgdOqpGrZ552WJTUwRVXsUg8MPgqIXtp+CkAULCQe4EeMQuVAM
-	 1Ab4CVTUssrjkRKKh5LDaS6uCFDsXlnrdHq/DZLwjeNBGNxLCOGKzD5oReI12pvtyg
-	 k2D3m9EAC11CFcc57n2VDiUP3oHm7obUwSQt1Cs1mPahjJ64U6RWQFZNIIA/WmIyGM
-	 NZFh+8+kSqOsA==
-Date: Thu, 3 Apr 2025 10:25:22 +0200
+	b=loTtuiX9XmfuQGA0az8bjKDUu+NtWlEwvlVhODlRMMCmPwcklfnDRFVadarrNIov4
+	 xvgB5UP6JlyCiSudM4rZAu/a97d1ZYb8zxDEmQVNTqeYBju7cVCoCp3/Hhoh1I2J0S
+	 Dge32ZVYG7YN/bDTpdi9yqe8w02jM0IiMjS7VJ7jpZFKF5nmCA61qIkpK4duuvMgU1
+	 +6oBIimpFhPEP4QdB1OIN2OKmZyyzuIbtE7dFLNYYFi58DDUMuKirIHV//ir5sxXvp
+	 exFdNFJatapTdoTTzY1ouJs00TGLQzA/M78vjTLVEFUE9gOYZT4paULxzcfGB74wCi
+	 Evo+xkPTYT+ig==
+Date: Thu, 3 Apr 2025 10:29:08 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Amir Goldstein <amir73il@gmail.com>, 
-	Ibrahim Jirdeh <ibrahimjirdeh@meta.com>, Sargun Dhillon <sargun@meta.com>, 
-	Alexey Spiridonov <lesha@meta.com>, Josef Bacik <josef@toxicpanda.com>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: Reseting pending fanotify events
-Message-ID: <20250403-video-halsband-9b9d0e0c95c3@brauner>
-References: <BY1PR15MB61023E97919A597059EA473CC4AD2@BY1PR15MB6102.namprd15.prod.outlook.com>
- <CAOQ4uxihnLqagEX_PXA0pssQ=inPxSz-GDLcuJ9zs603LryKfw@mail.gmail.com>
- <6za2mngeqslmqjg3icoubz37hbbxi6bi44canfsg2aajgkialt@c3ujlrjzkppr>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "dan.carpenter@linaro.org" <dan.carpenter@linaro.org>, 
+	"lkp@intel.com" <lkp@intel.com>, David Howells <dhowells@redhat.com>, 
+	Patrick Donnelly <pdonnell@redhat.com>, "slava@dubeyko.com" <slava@dubeyko.com>, 
+	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	Alex Markuze <amarkuze@redhat.com>, "willy@infradead.org" <willy@infradead.org>, 
+	"idryomov@gmail.com" <idryomov@gmail.com>
+Subject: Re: [PATCH] ceph: fix variable dereferenced before check in
+ ceph_umount_begin()
+Message-ID: <20250403-quast-anpflanzen-efe6b672fc24@brauner>
+References: <20250328183359.1101617-1-slava@dubeyko.com>
+ <Z-bt2HBqyVPqA5b-@casper.infradead.org>
+ <202939a01321310a9491eb566af104f17df73c22.camel@ibm.com>
+ <20250401-wohnraum-willen-de536533dd94@brauner>
+ <3eca2c6b9824e5bf9b2535850be0f581f709a3ba.camel@ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,101 +66,53 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6za2mngeqslmqjg3icoubz37hbbxi6bi44canfsg2aajgkialt@c3ujlrjzkppr>
+In-Reply-To: <3eca2c6b9824e5bf9b2535850be0f581f709a3ba.camel@ibm.com>
 
-On Tue, Apr 01, 2025 at 06:28:11PM +0200, Jan Kara wrote:
-> On Mon 31-03-25 21:08:51, Amir Goldstein wrote:
-> > [CC Jan and Josef]
+On Tue, Apr 01, 2025 at 06:29:06PM +0000, Viacheslav Dubeyko wrote:
+> On Tue, 2025-04-01 at 12:38 +0200, Christian Brauner wrote:
+> > On Fri, Mar 28, 2025 at 07:30:11PM +0000, Viacheslav Dubeyko wrote:
+> > > On Fri, 2025-03-28 at 18:43 +0000, Matthew Wilcox wrote:
+> > > > On Fri, Mar 28, 2025 at 11:33:59AM -0700, Viacheslav Dubeyko wrote:
+> > > > > This patch moves pointer check before the first
+> > > > > dereference of the pointer.
+> > > > > 
+> > > > > Reported-by: kernel test robot <lkp@intel.com>
+> > > > > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > > > > Closes: https://lore.kernel.org/r/202503280852.YDB3pxUY-lkp@intel.com/   
+> > > > 
+> > > > Ooh, that's not good.  Need to figure out a way to defeat the proofpoint
+> > > > garbage.
+> > > > 
+> > > 
+> > > Yeah, this is not good.
+> > > 
+> > > > > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> > > > > index f3951253e393..6cbc33c56e0e 100644
+> > > > > --- a/fs/ceph/super.c
+> > > > > +++ b/fs/ceph/super.c
+> > > > > @@ -1032,9 +1032,11 @@ void ceph_umount_begin(struct super_block *sb)
+> > > > >  {
+> > > > >  	struct ceph_fs_client *fsc = ceph_sb_to_fs_client(sb);
+> > > > >  
+> > > > > -	doutc(fsc->client, "starting forced umount\n");
+> > > > >  	if (!fsc)
+> > > > >  		return;
+> > > > > +
+> > > > > +	doutc(fsc->client, "starting forced umount\n");
+> > > > 
+> > > > I don't think we should be checking fsc against NULL.  I don't see a way
+> > > > that sb->s_fs_info can be set to NULL, do you?
+> > > 
+> > > I assume because forced umount could happen anytime, potentially, we could have
+> > > sb->s_fs_info not set. But, frankly speaking, I started to worry about fsc-
+> > 
+> > No, it must be set. The VFS guarantees that the superblock is still
+> > alive when it calls into ceph via ->umount_begin().
 > 
-> CCed fsdevel. Actually replying here because the quoting in Ibrahim's email
-> got somehow broken which made it very hard to understand.
-> 
-> > I am keeping this discussion private because you did not post it to
-> > the public list,
-> > but if you can CC fsdevel in your reply that would be great, because it seems
-> > like a question with interest to a wider audience.
-> > 
-> > On Mon, Mar 31, 2025 at 8:19 PM Ibrahim Jirdeh <ibrahimjirdeh@meta.com> wrote:
-> > >
-> > > Hi Amir,
-> > >
-> > > We have been using fanotify to support lazily loading file contents.
-> > > We are struggling with the problem that pending permission events cannot be recovered on daemon restart.
-> > >
-> > > We have a long-lived daemon that marks files with FAN_OPEN_PERM and populates their contents on access.
-> > > It needs a reliable path for updates & crash recovery.
-> > > The happy path for fanotify event processing is as follows:
-> > >
-> > > A notification is read from fanotify file descriptor
-> > > File contents are populated
-> > > We write back FAN_ALLOW to fanotify file descriptor, or DENY if content population failed.
-> > >
-> > > We would like to guarantee that all file accesses receive an ALLOW or DENY response, and no events are lost.
-> > 
-> > Makes sense.
-> > 
-> > > Unfortunately, today a filesystem client can hang (in D state)
-> > > if the event-handler daemon crashes or restarts at the wrong time.
-> > 
-> > Can you provide exact stack traces for those cases?
-> > 
-> > I wonder how process gets to D state with commit fabf7f29b3e2
-> > ("fanotify: Use interruptible wait when waiting for permission events")
-> 
-> So D state is expected when waiting for response. We are using
-> TASK_UNINTERRUPTIBLE sleep (the above commit had to be effectively
-> reverted). But we are also setting TASK_KILLABLE and TASK_FREEZABLE so that
-> we don't block hibernation and tasks can be killed when fanotify listener
-> misbehaves.
-> 
-> But what confuses me is the following: You have fanotify instance to which
-> you've got fd from fanotify_init(). For any process to be hanging, this fd
-> must be still held open by some process. Otherwise the fanotify instance
-> gets destroyed and all processes are free to run (they get FAN_ALLOW reply
-> if they were already waiting). So the fact that you see processes hanging
-> when your fanotify listener crashes means that you have likely leaked the
-> fd to some other process (lsof should be able to tell you which process has
-> still handle to fanotify instance). And the kernel has no way to know this
-> is not the process that will eventually read these events and reply...
-> 
-> > > In this case, any events that have been read but not yet responded to would be lost.
-> > > Initially we considered handling this internally by saving the file descriptors for pending events,
-> > > however this proved to be complex to do in a robust manner.
-> > >
-> > > A more robust solution is to add a kernel fanotify api which resets the fanotify pending event queue,
-> > > thereby allowing us to recover pending events in the case of daemon restart.
-> > > A strawman implementation of this approach is in
-> > > https://github.com/torvalds/linux/compare/master...ibrahim-jirdeh:linux:fanotify-reset-pending,
-> > > a new ioctl that resets `group->fanotify_data.access_list`.
-> > > One other alternative we considered is directly exposing the pending event queue itself
-> > > (https://github.com/torvalds/linux/commit/cd90ff006fa2732d28ff6bb5975ca5351ce009f1)
-> > > to support monitoring pending events, but simply resetting the queue is likely sufficient for our use-case.
-> > >
-> > > What do you think of exposing this functionality in fanotify?
-> > >
-> > 
-> > Ignoring the pending events for start, how do you deal with access to
-> > non-populated files while the daemon is down?
-> > 
-> > We were throwing some idea about having a mount option (something
-> > like a "moderate" mount) to determine the default response for specific
-> > permission events (e.g. FAN_OPEN_PERM) in the case that there is
-> > no listener watching this event.
-> > 
-> > If you have a filesystem which may contain non-populated files, you
-> > mount it with as "moderated" mount and then access to all files is
-> > denied until the daemon is running and also denied if daemon is down.
-> > 
-> > For restart, it might make sense to start a new daemon to start listening
-> > to events before stopping the old daemon.
-> > If the new daemon gets the events before the old daemon, things should
-> > be able to transition smoothly.
-> 
-> I agree this would be a sensible protocol for updates. For unplanned crashes
-> I agree we need something like the "moderated" mount option.
+> So, if we have the guarantee of fsc pointer validity, then we need to change
+> this checking of fsc->client pointer. Or, probably, completely remove this check
+> here?
 
-I hope you mean as a superblock option, not an actual mount option.
-Because a per-mount option is not something I want us to do. We're not
-giving a specific subsystem a way to alter per-mount behavior.
+If the fsc->client pointer can be NULLed before the mount is shut down
+then yes. If it can't then the check can be removed completely.
 
