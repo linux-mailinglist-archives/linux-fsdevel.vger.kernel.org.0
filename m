@@ -1,93 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-45593-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45594-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B99B5A79A9F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 05:48:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3DDBA79AA2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 05:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12586188B604
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 03:47:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8E743B2C15
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 03:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A722519007F;
-	Thu,  3 Apr 2025 03:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50ECD197558;
+	Thu,  3 Apr 2025 03:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="0HBoscdF"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hyOq+BzP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3C55103F;
-	Thu,  3 Apr 2025 03:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB47B2581;
+	Thu,  3 Apr 2025 03:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743652007; cv=none; b=kVWH4wdaGOz7ZTqC8KkIq7IT/BiRX85bzaIdXU1B4cJdr1BEkb0eV0mRBm/fY1BO85bMDOmlykFdvSP4RH88/RJ/AL5GFv1dfIqVHTrZ+bGa9YdXBBdltf+OjBjmKRASIUu24s/Wb9nA3VBGp5qINrg2BIEdoYL5vgf1cGZm6EQ=
+	t=1743652247; cv=none; b=Rs0M/LTbXB4cf2HGL62/sBk2zziqtUI25uwQdf6ocuVCyLBy2SJOlv+JI7J+2aXTL7IytPc9uc7oHCnQbsSyYhBTu7nO4ga6ZEmLAhmH0jWwwwyfg2TOo0/l54Rm4abM9BXxbwyXU8fO316ZuEIQafS2P5dFriD8ZaTOC5V+HGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743652007; c=relaxed/simple;
-	bh=qst9VgxRGd0q8EAb17usxcFzrBpJMSqzamr6wE60npA=;
+	s=arc-20240116; t=1743652247; c=relaxed/simple;
+	bh=bqZuM5lPtkFFl5BW3C27cWg9aVz5id/woq/3m2/1HII=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T6PSsNdH/0EKJIjwZ9OaQ8R+233y99NpSboKpsWXw3Ifw++RI5MxLRzDPzG1pDbvznrlfNLQkdYGRjE0npbVHyKMROLrG3OR+RaERnbPdNJS1lHs83m+k3LsSFcpQFMSKcK3KuzYJvGQLB5ti9OHvrz68j3AMjk3VPodbZjoPzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=0HBoscdF; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 67B0E14C2DB;
-	Thu,  3 Apr 2025 05:46:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1743651996;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ITcMLIFP5tKAjz41ehoKWCF5eQQiDYMOb1fN5yVdzj8=;
-	b=0HBoscdFpgxuQgZl92opSENbMA9Pk+zXKbOYbpRJnb2fOIuhEQ1bwZ5rGPvmlYb+8wVHw8
-	wHc2273ChihnbkPMTZ1/DAooFHD2hJ+0yffsGhHC9Cy9veCKiE8j7cW1KdfmCPrBKGxCoy
-	Qn3m8QJ0MYx70hWGhV57dz2ZTADFzPnA6CZqQO0W6iJCwIBiDSjDSOwrvW/d4+WTVhVAcH
-	g6HcnkJSY+HEZzS8B0uR8bH0QBVA+A0ZU2VyhxlEvsqXe3FXAMaHh6g4yHfkceyrco8IVL
-	7ipXZTHnksTxDqR7U3ceJDpBoPzzk84gVw3dN7X3aD3CMOZtc1b/HQqenuVM/Q==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 72519fa4;
-	Thu, 3 Apr 2025 03:46:32 +0000 (UTC)
-Date: Thu, 3 Apr 2025 12:46:17 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	linux-mm@kvack.org, dri-devel@lists.freedesktop.org,
-	stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
-	v9fs@lists.linux.dev
-Subject: Re: [PATCH v2 1/9] 9p: Add a migrate_folio method
-Message-ID: <Z-4EiVQ6klHkkMoy@codewreck.org>
-References: <20250402150005.2309458-1-willy@infradead.org>
- <20250402150005.2309458-2-willy@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bcZkJTbnukZtTD/XYnesE/LuAY4kKHwB8qrY3ArkkSPgHd0mtgm4do7XgMACfZq0K/guteehXdad8qxV2NnuP2817JiKFz0Nq06wvuKRHSgB9abQeVrZLYhO+HwBMlc8glmrA7DwHmppRoBfDKJB1Zbfcui0vXyTkKlkiIsiAdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hyOq+BzP; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=DeK8Kuf5tprwuRtqHOlQKfmPUg7DzKRX9Vs7L5+3uEA=; b=hyOq+BzPufZTrboJE+EMz6Ov5Z
+	v2H9hxTCr8TCsvjt3qEX9eFde71Uyr2saAt2H5oQ5ErOdcCXvv4STcYKlHhOQFZCN5GjNwUGYjlFM
+	Is1qhsK3Aa9YsFFXuSG52pEZ+rGKe5UZdc6c73NtA7YscNXF5feOKfJWBvO9qPmLzVEj5FNLAgXNL
+	hhEJws4JiVHPJrYQLXdKGf2QhqyBs6G96Ytq5A8A24J0xFVrPLw7q0iDoyDZNjKQr0GEjAw0/mFzF
+	gZzm2/mVa5acrXfycjTwhH3pv2Evej6K1bIlxhZ2hCyTh1wz8shEuVIAEMCwzt+LcO8XHJ9YdklTw
+	A5P0D/3g==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u0BbE-0000000APBV-1SkC;
+	Thu, 03 Apr 2025 03:50:40 +0000
+Date: Thu, 3 Apr 2025 04:50:40 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Xiaole He <hexiaole1994@126.com>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"jack@suse.cz" <jack@suse.cz>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] fs/super.c: Add NULL check for type in
+ iterate_supers_type
+Message-ID: <20250403035040.GM2023217@ZenIV>
+References: <20250402034529.12642-1-hexiaole1994@126.com>
+ <35a8d2093ba4c4b60ce07f1efc17ff2595f6964d.camel@HansenPartnership.com>
+ <4ee2fdcb.1854a.195f9828c86.Coremail.hexiaole1994@126.com>
+ <20250403024756.GL2023217@ZenIV>
+ <75a45193.18746.195f9a088c4.Coremail.hexiaole1994@126.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250402150005.2309458-2-willy@infradead.org>
+In-Reply-To: <75a45193.18746.195f9a088c4.Coremail.hexiaole1994@126.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Matthew Wilcox (Oracle) wrote on Wed, Apr 02, 2025 at 03:59:55PM +0100:
-> The migration code used to be able to migrate dirty 9p folios by writing
-> them back using writepage.  When the writepage method was removed,
-> we neglected to add a migrate_folio method, which means that dirty 9p
-> folios have been unmovable ever since.  This reduced our success at
-> defragmenting memory on machines which use 9p heavily.
-> 
-> Fixes: 80105ed2fd27 (9p: Use netfslib read/write_iter)
-> Cc: stable@vger.kernel.org
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: v9fs@lists.linux.dev
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+On Thu, Apr 03, 2025 at 11:10:02AM +0800, Xiaole He wrote:
+> Thank you for your thoughtfully feedback.
+> I think you are right, and I'm sorry for my pedantic anxiety.
+> So if we just ignore this patch for now, or I should submit a bug
+> report to kernel community in order to invite more thorough fix?
+> Thanks for your patient again.
 
-Given I'm not in Cc of the whole series I'm lacking context but I assume
-that means I'm not supposed to take this in.
+I don't believe that adding random checks would make any sense -
+same as for any library function, really.
 
-I won't pretend I understand folios anyway, but commit messages makes
-sense to me:
-Acked-by: Dominique Martinet <asmadeus@codewreck.org>
+Having the documentation slightly more clear would make sense,
+though; currently it's
 
-Thanks,
--- 
-Dominique Martinet | Asmadeus
+ *      iterate_supers_type - call function for superblocks of given type
+ *      @type: fs type
+ *      @f: function to call
+ *      @arg: argument to pass to it
+ *
+ *      Scans the superblock list and calls given function, passing it
+ *      locked superblock and given argument.
+
+and description could've been better.  The weakest part in there is,
+IMO, "the superblock list" - there is a global list of all superblocks
+(inventively called 'super_blocks'), but that's not what gets scanned;
+the list of superblocks of given type (type->fs_supers) we iterate
+through.
+
+Something along the lines of "Call given callback @f for all superblocks
+of given type.  The first argument passed to @f points to a locked superblock
+that belongs to @type; the second is a caller-supplied opaque pointer @arg.
+The caller is responsible for passing @arg that would make a valid second
+argument for @f - compiler can't help here" might be a starting point,
+but I'm not up to turning that into proper English.
 
