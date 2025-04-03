@@ -1,217 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-45576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 790E0A7988F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 01:11:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 237ADA7992E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 02:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 320B2171341
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Apr 2025 23:11:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 309E03B2157
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 00:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6936A1F7098;
-	Wed,  2 Apr 2025 23:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BAA3D6D;
+	Thu,  3 Apr 2025 00:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kX+KudVK"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VZhxgYnK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC0E1EBA18;
-	Wed,  2 Apr 2025 23:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD71163
+	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Apr 2025 00:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743635470; cv=none; b=kYXriX7J33WHNMmQhitHl9+31/tZeroyYjNlyY2SBcqEhUOvXMJqZte0oJtcjluJoHw1gD2QPvl8Pw2OLGU/zdFyGlHh2mGQjQTbxq5hsDgaQ1a4q9863JpHZDny8kdixPq0mqu5d0gEYOaOFy6IeK23fZ+sLtepn3yN+Eo7W9E=
+	t=1743638792; cv=none; b=jmyy86OwGkY+8HWHFDzkEEdh1NnLgxd9gTDnNXoqNOl++6cEsuWz9SR6NfPRTnyaTYkpfTqeOuhGlvoHM8mSqMyQaIrOY3q6/OCk4+i2+zAgBml3tgzD1NpkwPYpijS7YbkhDOYhMtI+OQx6eCQl62d0rio3fdSFWYM6IEbcokg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743635470; c=relaxed/simple;
-	bh=2FZJD0MOnLxxLnxB/GDmxgCJDt3KQiHUaMXpCRwWbkg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YRMm42qkDsFJomEpncFH02EH0XPLnOchw4gHBa+FYaS40FGCF0WeTBz156ckm3oWCkf7k1mjiOjtFokrtkDo8D9n3NjoFRm9nXzQbxg4H4MDXewQO93hWPdtqBZ8KEkpKMTu2tfSWIIdFQuwSaTdd1T6znXOAWwkEINlv4fJdYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kX+KudVK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8085C4CEDD;
-	Wed,  2 Apr 2025 23:11:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743635470;
-	bh=2FZJD0MOnLxxLnxB/GDmxgCJDt3KQiHUaMXpCRwWbkg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kX+KudVKmOtXkPVDhqrqZ1wZ7xTaNrtQm2pfF/aInNMhCXR/gNFRqjTMAczsezThz
-	 1GBe7Q6M4fAZsPzw+nvDxPmQtnETSxasCXcWbfhHh86xLyOdiaCoaz1sgLOXNYBtxU
-	 uiWyyQwWo4NgUlv7zoA3Qx71KgpNaKApHALTUXuUtnLDtEDWx+aqNFT6AnCCOGXfBy
-	 Pu7o47bD8MBYR3TEDkGVQqhv1kYTvHmn9yDuax2HtpUXyrT1YlhLs3Pe1xTn4XSTWV
-	 RP85YTt3LzW7ay5+nf/Sm32ZfcR098EJH7FL9puZfihOssWV3yFNTPw9atV7K8mg1B
-	 qp6KMZhnHOZww==
-Date: Wed, 2 Apr 2025 16:11:08 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: brauner@kernel.org, jack@suse.cz, tytso@mit.edu,
-	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-	riel@surriel.com
-Cc: willy@infradead.org, hannes@cmpxchg.org, oliver.sang@intel.com,
-	dave@stgolabs.net, david@redhat.com, axboe@kernel.dk, hare@suse.de,
-	david@fromorbit.com, djwong@kernel.org, ritesh.list@gmail.com,
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-mm@kvack.org, gost.dev@samsung.com, p.raghav@samsung.com,
-	da.gomez@samsung.com
-Subject: Re: [PATCH 2/3] fs/buffer: avoid races with folio migrations on
- __find_get_block_slow()
-Message-ID: <Z-3EDGCLMtCV-szJ@bombadil.infradead.org>
-References: <20250330064732.3781046-1-mcgrof@kernel.org>
- <20250330064732.3781046-3-mcgrof@kernel.org>
- <Z-rzyrS0Jr7t984Y@bombadil.infradead.org>
+	s=arc-20240116; t=1743638792; c=relaxed/simple;
+	bh=nhly9Oo98XoTVMa6E6OYtYSm01eN5GH5P0vWzI1XMTg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VSb+BcEhI6JLS1xTQogucx854KBo/va/qCKcZGO5s+D0CeGIfQWv8jSXh5stkB3CLvZwAvGpsRi70kJFsAzVQy9lr6hor4xA6B5Iv3tniXpkKmvz5JYMtpV62Wx98zou1EmtRkXa5xvQeTiWXucZtIIFNxMCdqOYorEs8jnrmbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VZhxgYnK; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac29fd22163so51356766b.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Apr 2025 17:06:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1743638788; x=1744243588; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WDME24yiYohb1xBflLrOYtprUkMulUfhOxUWN86ggD8=;
+        b=VZhxgYnKigDkHmPaz3LTGq3drg4E1UMeUc//U5llagqf+Ps0/xGfFYnrj8OcZYfwjp
+         3AOM7Bz5AGFpHGp+sgTuP5MXkUCKpuXYjqkVRljtUkFXME6jPmW1FQY1KImQj1LJBoHt
+         k1Hp+gXkxa889onjKMRk5iM9TbhUfZMQP7XK8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743638788; x=1744243588;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WDME24yiYohb1xBflLrOYtprUkMulUfhOxUWN86ggD8=;
+        b=mYu1uKtl4zbPTSLT9ShslTpEdW3qP7FotCHSBu29JBdH5KgT5r4yQgNrNCN6ne2wB9
+         siEySPb1sVO6zA2kCxEDI8TINcvUuq/Vbdnfsg2FV8/YW6FhwD2Il/5JgRBfoJa23cp5
+         KbeMM83u8wHTWueLPIpfkczqAEdDoVYjIzPAPCsgQYTxlx/DYCsnK9xjUfF11J7ofe2t
+         kB3I0mnXZ5C6VyZTYHPXht92a9N5wf9R1q81jt38ywzKrR4SMJPUM/QV6xyWxctCTCeL
+         Ot1Pmxr/VP93Ecub5wfn3x7L224rrRIgzxyfOFRdpIKv9vOWSz3/XzbpppwStkgJmG+x
+         aeEA==
+X-Gm-Message-State: AOJu0YwS4hfluG3FaUSaF7dASZxDSxtCTKeFtjYQ2heavxMh+AZvUGLF
+	MKchyibXqCaf6uqyZ9mz9uWOQuFa/C+oUtxs82HF9CUgnRajm85vRpK6uhkm9/EWdUfcAu9YKcm
+	oLeo=
+X-Gm-Gg: ASbGncsYcSZEmp+1iw45KQHTxOpmTZsGdy4ay7u+C/hM+q62Fb2sSEF7ho3QlHoPJd0
+	v9FoBKCeSuSX10iKQ1ziF1W66tnBpyAbw/NdW1Tk+Vydc8cKKHpobkNfP3GE+0EakOHlVLS7jrO
+	rFOpztFQ7EbWOX1eEGb5hSAYHKzYQjU+ctzlk7fERJs0kZI2osV4ix0EV/+CJ0jUuw7U9lSeFSP
+	evIy/BYF8yKkiThkujwtCuYVQ49VHC/GzpgKsM08jPVsmV3waM/7Q6pnY/3fKDu1FxYtih1VHlh
+	zmEsj0rom5IWr7/eX4KbWDI80qPP5Bzi0LKiDD+RuuS5bFqHeq2l8WtmzjGuSYiZYelvZ5Xs4Ad
+	e3YXjmv1m/0m1YAeEzx8=
+X-Google-Smtp-Source: AGHT+IGA4vtBTw7HhExlEa2AbTiIEwECo/UWm21wLwIXaANNIUWfgajBvbTdCTHMx4tYAdMUHJCjrw==
+X-Received: by 2002:a17:906:f85b:b0:ac7:3912:5ea5 with SMTP id a640c23a62f3a-ac739125f39mr1462126166b.58.1743638788336;
+        Wed, 02 Apr 2025 17:06:28 -0700 (PDT)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7c01862e7sm4790866b.139.2025.04.02.17.06.27
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Apr 2025 17:06:27 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac29af3382dso46610866b.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Apr 2025 17:06:27 -0700 (PDT)
+X-Received: by 2002:a17:907:3da9:b0:ac2:912d:5a80 with SMTP id
+ a640c23a62f3a-ac7389ea3e0mr1522405866b.5.1743638787221; Wed, 02 Apr 2025
+ 17:06:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-rzyrS0Jr7t984Y@bombadil.infradead.org>
+References: <CAJfpegsQDTYsEWHMK9skpNzUO=GA_DR7zGHftyO2sZH5wjaZLA@mail.gmail.com>
+In-Reply-To: <CAJfpegsQDTYsEWHMK9skpNzUO=GA_DR7zGHftyO2sZH5wjaZLA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 2 Apr 2025 17:06:09 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wihf7K7JhOsm2R6SSRbHuxzpMG+q87nVyD-jZnd+7-0gg@mail.gmail.com>
+X-Gm-Features: AQ5f1JqHxQ4y8QfdVOkyBy-Gm3oH8OTY9Em8Hq2QRv5vKqVBHYB0rPkvn3Y6piA
+Message-ID: <CAHk-=wihf7K7JhOsm2R6SSRbHuxzpMG+q87nVyD-jZnd+7-0gg@mail.gmail.com>
+Subject: Re: [GIT PULL] fuse update for 6.15
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 31, 2025 at 12:58:04PM -0700, Luis Chamberlain wrote:
-> On Sat, Mar 29, 2025 at 11:47:31PM -0700, Luis Chamberlain wrote:
-> > Although we don't have exact traces of the filesystem corruption we
-> > can can reproduce fs corruption one ext4 by just removing the spinlock
-> > and stress testing the filesystem with generic/750, we eventually end
-> > up after 3 hours of testing with kdevops using libvirt on the ext4
-> > profile ext4-4k. Things like the below as reported recently [1]:
-> > 
-> > Mar 28 03:36:37 extra-ext4-4k unknown: run fstests generic/750 at 2025-03-28 03:36:37
-> > <-- etc -->
-> > Mar 28 05:57:09 extra-ext4-4k kernel: EXT4-fs error (device loop5): ext4_get_first_dir_block:3538: inode #5174: comm fsstress: directory missing '.'
-> > Mar 28 06:04:43 extra-ext4-4k kernel: EXT4-fs warning (device loop5): ext4_empty_dir:3088: inode #5176: comm fsstress: directory missing '.'
-> > Mar 28 06:42:05 extra-ext4-4k kernel: EXT4-fs error (device loop5): __ext4_find_entry:1626: inode #5173: comm fsstress: checksumming directory block 0
-> > Mar 28 08:16:43 extra-ext4-4k kernel: EXT4-fs error (device loop5): ext4_find_extent:938: inode #1104560: comm fsstress: pblk 4932229 bad header/extent: invalid magic - magic 8383, entries 33667, max 33667(0), depth 33667(0)
-> 
-> I reproduced again a corruption with ext4 when we remove the spin lock
-> alone with generic/750, the trace looks slightly different, and
-> this time I ran the test with ext4 with 2k block size filesystem. I
-> also reverted both "mm: migrate: remove folio_migrate_copy()" and
-> "mm: migrate: support poisoned recover from migrate folio" just in case
-> the extra check added by the later was helping avoid the corruption.
+On Tue, 1 Apr 2025 at 04:02, Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> Commit 1dfe2a220e9c ("fuse: fix uring race condition for null
+> dereference of fc") in this queue has already been merged into
+> v6.14-final through Christian's tree (commit d9ecc77193ca).   For some
+> reason this causes a merge conflict, the resolution of which is to
+> just take the version from this pull (i.e. remove the atomic_set()).
 
-Since we didn't have much data over this filesystem corruption I figured
-it would be good to expand on that with more information. I reproduced yet
-again with just generic/750 and the spinlock removed in about ~6 hours:
+Yup, those "made in both branches" kinds of conflicts are trivial to resolve.
 
-Apr 01 18:17:16 fix-ext4-2k kernel: Linux version 6.14.0-12246-g6ee4cc7e5950-dirty (mcgrof@beef) (gcc (Debian 14.2.0-6) 14.2.0, GNU ld (GNU Binutils for Debian) 2.43.1) #9 SMP PREEMPT_DYNAMIC Tue Apr  1 18:12:51 PDT 2025
-<-- snip -->
-Apr 01 18:17:43 fix-ext4-2k unknown: run fstests generic/750 at 2025-04-01 18:17:43
-Apr 01 18:17:44 fix-ext4-2k kernel: EXT4-fs (loop5): mounted filesystem 218f1368-a3fd-42d5-9869-82b1539c5e74 r/w with ordered data mode. Quota mode: none.
-Apr 02 00:18:24 fix-ext4-2k kernel: ------------[ cut here ]------------
-Apr 02 00:18:24 fix-ext4-2k kernel: WARNING: CPU: 5 PID: 5588 at fs/jbd2/transaction.c:1552 jbd2_journal_dirty_metadata+0x21c/0x230 [jbd2]
-Apr 02 00:18:24 fix-ext4-2k kernel: Modules linked in: loop sunrpc nls_iso8859_1 kvm_intel nls_cp437 9p vfat fat kvm crc32c_generic ghash_clmulni_intel sha512_ssse3 sha256_ssse3 sha1_ssse3 aesni_intel gf128mul crypto_simd cryptd 9pnet_virtio virtio_console virtio_balloon button evdev joydev serio_raw nvme_fabrics dm_mod nvme_core drm nfnetlink vsock_loopback vmw_vsock_virtio_transport_common vsock autofs4 ext4 crc16 mbcache jbd2 btrfs blake2b_generic efivarfs raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq raid1 raid0 md_mod virtio_net net_failover failover virtio_blk psmouse virtio_pci virtio_pci_legacy_dev virtio_pci_modern_dev virtio virtio_ring
-Apr 02 00:18:24 fix-ext4-2k kernel: CPU: 5 UID: 0 PID: 5588 Comm: kworker/u38:0 Not tainted 6.14.0-12246-g6ee4cc7e5950-dirty #9 PREEMPT(full) 
-Apr 02 00:18:24 fix-ext4-2k kernel: Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 2024.08-2 10/04/2024
-Apr 02 00:18:24 fix-ext4-2k kernel: Workqueue: writeback wb_workfn (flush-7:5)
-Apr 02 00:18:24 fix-ext4-2k kernel: RIP: 0010:jbd2_journal_dirty_metadata+0x21c/0x230 [jbd2]
-Apr 02 00:18:24 fix-ext4-2k kernel: Code: 30 0f 84 5b fe ff ff 0f 0b 41 bc 8b ff ff ff e9 69 fe ff ff 48 8b 04 24 4c 8b 48 70 4d 39 cf 0f 84 53 ff ff ff e9 42 c5 00 00 <0f> 0b 41 bc e4 ff ff ff e9 41 ff ff ff 0f 0b 90 0f 1f 40 00 90 90
-Apr 02 00:18:24 fix-ext4-2k kernel: RSP: 0018:ffffb44046157588 EFLAGS: 00010246
-Apr 02 00:18:24 fix-ext4-2k kernel: RAX: 0000000000000001 RBX: ffff9a73d04a58e8 RCX: 00000000000000fd
-Apr 02 00:18:24 fix-ext4-2k kernel: RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-Apr 02 00:18:24 fix-ext4-2k kernel: RBP: ffff9a74c2c4e478 R08: ffff9a74c2c4e478 R09: 0000000000000000
-Apr 02 00:18:24 fix-ext4-2k kernel: R10: 000000007b4f6d91 R11: 0000000000003151 R12: 0000000000000000
-Apr 02 00:18:24 fix-ext4-2k kernel: R13: ffff9a74c8d44460 R14: ffff9a73d04a58f0 R15: ffff9a74e92be300
-Apr 02 00:18:24 fix-ext4-2k kernel: FS:  0000000000000000(0000) GS:ffff9a7597a0c000(0000) knlGS:0000000000000000
-Apr 02 00:18:24 fix-ext4-2k kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-Apr 02 00:18:24 fix-ext4-2k kernel: CR2: 00007ff766871000 CR3: 0000000116e6a002 CR4: 0000000000772ef0
-Apr 02 00:18:24 fix-ext4-2k kernel: DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-Apr 02 00:18:24 fix-ext4-2k kernel: DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 0000000000000400
-Apr 02 00:18:24 fix-ext4-2k kernel: PKRU: 55555554
-Apr 02 00:18:24 fix-ext4-2k kernel: Call Trace:
-Apr 02 00:18:24 fix-ext4-2k kernel:  <TASK>
-Apr 02 00:18:24 fix-ext4-2k kernel:  __ext4_handle_dirty_metadata+0x6d/0x190 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel:  ext4_ext_insert_extent+0x5c1/0x1510 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? ext4_cache_extents+0x5a/0xd0 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? ext4_find_extent+0x37c/0x3a0 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel:  ext4_ext_map_blocks+0x51e/0x1900 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? mpage_map_and_submit_buffers+0x23f/0x270 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel:  ext4_map_blocks+0x11a/0x4d0 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? kmem_cache_alloc_noprof+0x321/0x3e0
-Apr 02 00:18:24 fix-ext4-2k kernel:  ext4_do_writepages+0x762/0xd40 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? __pfx_stack_trace_consume_entry+0x10/0x10
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? arch_stack_walk+0x88/0xf0
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? ext4_writepages+0xd7/0x1b0 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel:  ext4_writepages+0xd7/0x1b0 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel:  do_writepages+0xdd/0x250
-Apr 02 00:18:24 fix-ext4-2k kernel:  __writeback_single_inode+0x41/0x330
-Apr 02 00:18:24 fix-ext4-2k kernel:  writeback_sb_inodes+0x21b/0x4e0
-Apr 02 00:18:24 fix-ext4-2k kernel:  wb_writeback+0x89/0x320
-Apr 02 00:18:24 fix-ext4-2k kernel:  wb_workfn+0xbe/0x440
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? queue_delayed_work_on+0x6b/0x80
-Apr 02 00:18:24 fix-ext4-2k kernel:  process_one_work+0x188/0x350
-Apr 02 00:18:24 fix-ext4-2k kernel:  worker_thread+0x255/0x3a0
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? __pfx_worker_thread+0x10/0x10
-Apr 02 00:18:24 fix-ext4-2k kernel:  kthread+0x112/0x250
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? __pfx_kthread+0x10/0x10
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? _raw_spin_unlock+0x15/0x30
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? finish_task_switch.isra.0+0x94/0x290
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? __pfx_kthread+0x10/0x10
-Apr 02 00:18:24 fix-ext4-2k kernel:  ret_from_fork+0x2d/0x50
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? __pfx_kthread+0x10/0x10
-Apr 02 00:18:24 fix-ext4-2k kernel:  ret_from_fork_asm+0x1a/0x30
-Apr 02 00:18:24 fix-ext4-2k kernel:  </TASK>
-Apr 02 00:18:24 fix-ext4-2k kernel: ---[ end trace 0000000000000000 ]---
-Apr 02 00:18:24 fix-ext4-2k kernel: ------------[ cut here ]------------
-Apr 02 00:18:24 fix-ext4-2k kernel: WARNING: CPU: 5 PID: 5588 at fs/ext4/ext4_jbd2.c:360 __ext4_handle_dirty_metadata+0x102/0x190 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel: Modules linked in: loop sunrpc nls_iso8859_1 kvm_intel nls_cp437 9p vfat fat kvm crc32c_generic ghash_clmulni_intel sha512_ssse3 sha256_ssse3 sha1_ssse3 aesni_intel gf128mul crypto_simd cryptd 9pnet_virtio virtio_console virtio_balloon button evdev joydev serio_raw nvme_fabrics dm_mod nvme_core drm nfnetlink vsock_loopback vmw_vsock_virtio_transport_common vsock autofs4 ext4 crc16 mbcache jbd2 btrfs blake2b_generic efivarfs raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq raid1 raid0 md_mod virtio_net net_failover failover virtio_blk psmouse virtio_pci virtio_pci_legacy_dev virtio_pci_modern_dev virtio virtio_ring
-Apr 02 00:18:24 fix-ext4-2k kernel: CPU: 5 UID: 0 PID: 5588 Comm: kworker/u38:0 Tainted: G        W           6.14.0-12246-g6ee4cc7e5950-dirty #9 PREEMPT(full) 
-Apr 02 00:18:24 fix-ext4-2k kernel: Tainted: [W]=WARN
-Apr 02 00:18:24 fix-ext4-2k kernel: Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 2024.08-2 10/04/2024
-Apr 02 00:18:24 fix-ext4-2k kernel: Workqueue: writeback wb_workfn (flush-7:5)
-Apr 02 00:18:24 fix-ext4-2k kernel: RIP: 0010:__ext4_handle_dirty_metadata+0x102/0x190 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel: Code: 00 00 00 44 89 fa 4c 89 f6 49 c7 c1 3b 1c 77 c0 4c 89 e7 41 bd fb ff ff ff e8 5a ce 05 00 eb 97 48 89 df e8 c0 a4 4a e2 eb 8a <0f> 0b 48 c7 c2 a0 32 76 c0 45 89 e8 48 89 e9 44 89 fe 4c 89 f7 e8
-Apr 02 00:18:24 fix-ext4-2k kernel: RSP: 0018:ffffb440461575c8 EFLAGS: 00010286
-Apr 02 00:18:24 fix-ext4-2k kernel: RAX: ffff9a74e1d5d800 RBX: ffff9a74c2c4e478 RCX: 0000000000000000
-Apr 02 00:18:24 fix-ext4-2k kernel: RDX: 0000000000000001 RSI: 0000000000000000 RDI: 00000000ffffffff
-Apr 02 00:18:24 fix-ext4-2k kernel: RBP: ffff9a74c8d44460 R08: ffff9a74c2c4e478 R09: 0000000000000000
-Apr 02 00:18:24 fix-ext4-2k kernel: R10: 000000007b4f6d91 R11: 0000000000003151 R12: ffff9a73c12236c8
-Apr 02 00:18:24 fix-ext4-2k kernel: R13: 00000000ffffffe4 R14: ffffffffc0763760 R15: 0000000000000556
-Apr 02 00:18:24 fix-ext4-2k kernel: FS:  0000000000000000(0000) GS:ffff9a7597a0c000(0000) knlGS:0000000000000000
-Apr 02 00:18:24 fix-ext4-2k kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-Apr 02 00:18:24 fix-ext4-2k kernel: CR2: 00007ff766871000 CR3: 0000000116e6a002 CR4: 0000000000772ef0
-Apr 02 00:18:24 fix-ext4-2k kernel: DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-Apr 02 00:18:24 fix-ext4-2k kernel: DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 0000000000000400
-Apr 02 00:18:24 fix-ext4-2k kernel: PKRU: 55555554
-Apr 02 00:18:24 fix-ext4-2k kernel: Call Trace:
-Apr 02 00:18:24 fix-ext4-2k kernel:  <TASK>
-Apr 02 00:18:24 fix-ext4-2k kernel:  ext4_ext_insert_extent+0x5c1/0x1510 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? ext4_cache_extents+0x5a/0xd0 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? ext4_find_extent+0x37c/0x3a0 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel:  ext4_ext_map_blocks+0x51e/0x1900 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? mpage_map_and_submit_buffers+0x23f/0x270 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel:  ext4_map_blocks+0x11a/0x4d0 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? kmem_cache_alloc_noprof+0x321/0x3e0
-Apr 02 00:18:24 fix-ext4-2k kernel:  ext4_do_writepages+0x762/0xd40 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? __pfx_stack_trace_consume_entry+0x10/0x10
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? arch_stack_walk+0x88/0xf0
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? ext4_writepages+0xd7/0x1b0 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel:  ext4_writepages+0xd7/0x1b0 [ext4]
-Apr 02 00:18:24 fix-ext4-2k kernel:  do_writepages+0xdd/0x250
-Apr 02 00:18:24 fix-ext4-2k kernel:  __writeback_single_inode+0x41/0x330
-Apr 02 00:18:24 fix-ext4-2k kernel:  writeback_sb_inodes+0x21b/0x4e0
-Apr 02 00:18:24 fix-ext4-2k kernel:  wb_writeback+0x89/0x320
-Apr 02 00:18:24 fix-ext4-2k kernel:  wb_workfn+0xbe/0x440
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? queue_delayed_work_on+0x6b/0x80
-Apr 02 00:18:24 fix-ext4-2k kernel:  process_one_work+0x188/0x350
-Apr 02 00:18:24 fix-ext4-2k kernel:  worker_thread+0x255/0x3a0
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? __pfx_worker_thread+0x10/0x10
-Apr 02 00:18:24 fix-ext4-2k kernel:  kthread+0x112/0x250
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? __pfx_kthread+0x10/0x10
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? _raw_spin_unlock+0x15/0x30
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? finish_task_switch.isra.0+0x94/0x290
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? __pfx_kthread+0x10/0x10
-Apr 02 00:18:24 fix-ext4-2k kernel:  ret_from_fork+0x2d/0x50
-Apr 02 00:18:24 fix-ext4-2k kernel:  ? __pfx_kthread+0x10/0x10
-Apr 02 00:18:24 fix-ext4-2k kernel:  ret_from_fork_asm+0x1a/0x30
-Apr 02 00:18:24 fix-ext4-2k kernel:  </TASK>
-Apr 02 00:18:24 fix-ext4-2k kernel: ---[ end trace 0000000000000000 ]---
-Apr 02 00:18:24 fix-ext4-2k kernel: EXT4-fs: ext4_ext_grow_indepth:1366: aborting transaction: error 28 in __ext4_handle_dirty_metadata
-Apr 02 00:18:24 fix-ext4-2k kernel: EXT4-fs error (device loop5): ext4_ext_grow_indepth:1366: inode #1010806: block 3112384: comm kworker/u38:0: journal_dirty_metadata failed: handle type 2 started at line 2721, credits 11/0, errcode -28
-Apr 02 00:18:24 fix-ext4-2k kernel: EXT4-fs error (device loop5) in ext4_mb_clear_bb:6550: Readonly filesystem
-Apr 02 00:18:24 fix-ext4-2k kernel: EXT4-fs error (device loop5) in ext4_reserve_inode_write:5870: Readonly filesystem
-Apr 02 00:18:24 fix-ext4-2k kernel: EXT4-fs error (device loop5): mpage_map_and_submit_extent:2336: inode #1010806: comm kworker/u38:0: mark_inode_dirty error
-Apr 02 00:18:24 fix-ext4-2k kernel: EXT4-fs error (device loop5): mpage_map_and_submit_extent:2338: comm kworker/u38:0: Failed to mark inode 1010806 dirty
-Apr 02 00:18:24 fix-ext4-2k kernel: EXT4-fs error (device loop5) in ext4_do_writepages:2751: error 28
+In case you wonder about the "for some reason" part: I say that they
+are "trivial to resolve", but they are trivial to resolve only when
+it's clear that you should take the *other* changes that the other
+branch does.
 
+So put another way: both branches did X (that "fix race condition"
+thing) but as different commits, so they had separate history.
+
+But then only one branch did Y (the "remove unneeded atomic set in
+uring creation") that is right next to X.
+
+Now, when I look at it and understand the semantics of the patch, I go
+"oh, ok, both sides did X, but you also did Y, so I'll take that X+Y
+thing". Simple.
+
+But it's simple only because I understand the semantics of the
+patches, and I see that I should take the union of the work.
+
+git won't do that, because while there are "patch queue" systems that
+do in fact use that exact logic of "both did patch X, the other side
+also did patch Y", git is not a patch queue system - and I think patch
+queue systems are actually wrong for anything more complicated.
+
+So git will look at the original shared state, and the state of both
+sides at the *end*, and make the merge decisions on that basis
+(resolving things with a three-way merge if both sides did changes -
+that's the simplified case for the simple history situation, at
+least).
+
+And in that model, you don't have "both did X, and then one side did
+Y". You have "one side did A, the other side did B, and they weren't
+the same".
+
+I also will claim that it's the safer thing to do, because who knows
+*why* one side did Y and the other side didn't? Without understanding
+the semantics of Y, it's very much not clear.
+
+For example, maybe the other side didn't do Y because Y was a quick
+hack bug-fix to get things working, and instead simply fixed it at
+some deeper level elsewhere that made the quick hack pointless and
+possibly even wrong.
+
+So just automatically doing some patch algebra can cause problems.
+
+Of course, the git model of merging can *also* cause problems.
+
+For an example of something that the git merge model will get wrong is
+if both sides do 'X', but one side notices that 'X' was horribly buggy
+and reverts it, and the other side doesn't.
+
+Now when you merge the two, git will see "one side made no changes at
+all, the other side did X" and at that point will merge 'X' and
+basically undo the revert.
+
+That *may* be the right thing to do. Again, maybe the other side
+didn't revert because the other side fixed the bug properly. But the
+*safe* thing would probably have been to treat it as that X+Y vs X
+thing, and ask for manual intervention by marking it as a conflict.
+
+But git won't do that, because git will see X+Y as being no change at
+all, and then the logic is "one side did nothing, the other side did
+new development, when you merge the two you obviously take the new
+development".
+
+And that's ignoring the whole issue with three-way merging that git
+then does for when there are changes on both sides: it's a traditional
+and generally very good strategy, but it can certainly also end up
+doing mis-merges when there are semantic conflicts that don't show up
+as overlapping changes.
+
+End result: there are no automated merge models that always get the
+right answer. The git merge model does work well, but there is no
+perfect.
+
+One good thing about the git model is that it tends to be fairly
+simple to explain *why* it does something. It's not rocket science.
+Merge conflicts really are fairly simple: both sides changed the same
+area in different ways.
+
+Of course, things get complicated when code movement or complex
+history is involved. Or when the two changes simply clash on a
+fundamental level and weren't at all about that kind of "A+B" vs "just
+A" situation.
+
+         Linus
 
