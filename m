@@ -1,62 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-45596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15477A79ADD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 06:38:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E35EA79B13
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 07:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FC487A5B8E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 04:37:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3044C1895CE4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 05:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84151990AF;
-	Thu,  3 Apr 2025 04:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0600219B5A3;
+	Thu,  3 Apr 2025 05:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FHn1TOTU"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UM5R2RfB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8539134CF
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Apr 2025 04:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DB119DF41
+	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Apr 2025 05:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743655080; cv=none; b=K8VSrMh4COpFy26/+hUMkhjvFgmuvLojtjdtiMnKlQDgBDzl6F22LQunNUCC/nsRkBG85Mh+nad30kM5Qt/3d2BXkGaGItAYIOmaqnuqsuXxew6HGIn1QayshRJK88UvFZ8E+EuVpxEitpYAP3+sLLMqw3vOQyOdNM234oik3nQ=
+	t=1743656771; cv=none; b=OcJvbM7nwn6hSHPaM2HXeXXIrkrGu6wRnLto25JsRz/RpKtphOMr2ZdhyCmhC5VamXaYpKSJMzRKAt4cFnFqVnoxfg/OvKKCg5Gdhwti5+QNswiD6d1+slcKNcMjM+yZs0uAKcScSyzTO28RVu1NSrtSyU/Ku4ZUeH7ZvzacuvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743655080; c=relaxed/simple;
-	bh=65mgTgXyakqVGK6V/KPoe6wVrJLNqccqmkDx6o1nmPQ=;
+	s=arc-20240116; t=1743656771; c=relaxed/simple;
+	bh=fNy2ULDybDVWnQvFoGLYUCTR5hbLLshqpI25XobBWkU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VJZia9w8CLEJN3P5GVacthMCx58uGI3pwxJqw0tD3OT8UzduFsYICo5GbGcBBGDSuf1YAi6TBPO7NNlCFpJIofuG2pOLowuSNc/o2Z2hs4PsYd/9lwhM4hKAjsr8MFJEBVL/Uf4mkQL0Dwls9ugyKah7XW3CSWCytV5ZML5g8Qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FHn1TOTU; arc=none smtp.client-ip=91.218.175.170
+	 Content-Type:Content-Disposition:In-Reply-To; b=VZhzqY/biJHC5C7aDjbEJC3IHMzRJTBuLmQgIEtHbOmlx+ztFlijMqPBWWuwaslIX6+JJg8Z4Ohn4XuNEguRa+vAAPNtm/OSuHs3CkWp/AooyEavbaHL232QvYcG6UxHvWAKHxQO2krwKWEVAP+1exbpjJ6yztpWEV5Sx0vA+GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UM5R2RfB; arc=none smtp.client-ip=91.218.175.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 2 Apr 2025 21:37:40 -0700
+Date: Wed, 2 Apr 2025 22:05:57 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743655065;
+	t=1743656762;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=EqjBm8UI34Pk1sLBpujvX1ZrayvDU7fkd+T64DGWC1I=;
-	b=FHn1TOTUCWFWHcHkaAxmhzZeDrzOFzWqsKhKW3fEVlc/hkwtVMRbCYPazPt96dZRLud7YI
-	LwUaB+9kS65MHR1Pd526w0qNgsicQWtNt176kBUlBDT8rzbn2ZrG0SsaCmEJlvTI8v9qDg
-	x3SMNAhi+5Ko2pNLx+8BA6yjygsN56Q=
+	bh=WNARpdbUPSnkit1inDWc8sAf3hL37+HU5+sK+taKmoU=;
+	b=UM5R2RfBpH6yPzHKqknVCKOCncJLrdg9ocpISSNbAYz7MLL2hbCVvQX6PBX4usBOn0zU2L
+	8MHr5mVrg6/I1q6MSk7W9FeejHGO+MmGmTl8YMa0IUeHhWwZUE/i5h8yBhEvoC3b6LrvFR
+	cb2pdD8edbA/7FBrH00mWy3iIyab1Ks=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Dave Chinner <david@fromorbit.com>, Yafang Shao <laoar.shao@gmail.com>, 
+To: Dave Chinner <david@fromorbit.com>
+Cc: Michal Hocko <mhocko@suse.com>, Yafang Shao <laoar.shao@gmail.com>, 
 	Harry Yoo <harry.yoo@oracle.com>, Kees Cook <kees@kernel.org>, joel.granados@kernel.org, 
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
 	linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>
 Subject: Re: [PATCH] proc: Avoid costly high-order page allocations when
  reading proc files
-Message-ID: <zeuszr6ot5qdi46f5gvxa2c5efy4mc6eaea3au52nqnbhjek7o@l43ps2jtip7x>
+Message-ID: <7gmvaxj5hpd7aal4xgcis7j7jicwxtlaqjatshrwrorit3jwn6@67j2mc6itkm6>
 References: <20250401073046.51121-1-laoar.shao@gmail.com>
  <3315D21B-0772-4312-BCFB-402F408B0EF6@kernel.org>
  <Z-y50vEs_9MbjQhi@harry>
  <CALOAHbBSvMuZnKF_vy3kGGNOCg5N2CgomLhxMxjn8RNwMTrw7A@mail.gmail.com>
  <Z-0gPqHVto7PgM1K@dread.disaster.area>
  <Z-0sjd8SEtldbxB1@tiehlicka>
+ <Z-2pSF7Zu0CrLBy_@dread.disaster.area>
+ <b7qr6djsicpkecrkjk6473btzztfrvxifiy34u2vdb4cp5ktjf@lvg3rtwrbmsx>
+ <Z-3i1wATGh6vI8x8@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,44 +68,81 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z-0sjd8SEtldbxB1@tiehlicka>
+In-Reply-To: <Z-3i1wATGh6vI8x8@dread.disaster.area>
 X-Migadu-Flow: FLOW_OUT
 
-On Wed, Apr 02, 2025 at 02:24:45PM +0200, Michal Hocko wrote:
-> diff --git a/mm/util.c b/mm/util.c
-> index 60aa40f612b8..8386f6976d7d 100644
-> --- a/mm/util.c
-> +++ b/mm/util.c
-> @@ -601,14 +601,18 @@ static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
->  	 * We want to attempt a large physically contiguous block first because
->  	 * it is less likely to fragment multiple larger blocks and therefore
->  	 * contribute to a long term fragmentation less than vmalloc fallback.
-> -	 * However make sure that larger requests are not too disruptive - no
-> -	 * OOM killer and no allocation failure warnings as we have a fallback.
-> +	 * However make sure that larger requests are not too disruptive - i.e.
-> +	 * do not direct reclaim unless physically continuous memory is preferred
-> +	 * (__GFP_RETRY_MAYFAIL mode). We still kick in kswapd/kcompactd to start
-> +	 * working in the background but the allocation itself.
->  	 */
->  	if (size > PAGE_SIZE) {
->  		flags |= __GFP_NOWARN;
->  
->  		if (!(flags & __GFP_RETRY_MAYFAIL))
->  			flags |= __GFP_NORETRY;
-> +		else
-> +			flags &= ~__GFP_DIRECT_RECLAIM;
+On Thu, Apr 03, 2025 at 12:22:31PM +1100, Dave Chinner wrote:
+> On Wed, Apr 02, 2025 at 04:10:06PM -0700, Shakeel Butt wrote:
+> > On Thu, Apr 03, 2025 at 08:16:56AM +1100, Dave Chinner wrote:
+> > > On Wed, Apr 02, 2025 at 02:24:45PM +0200, Michal Hocko wrote:
+> > > > On Wed 02-04-25 22:32:14, Dave Chinner wrote:
+> > > > > Have a look at xlog_kvmalloc() in XFS. It implements a basic
+> > > > > fast-fail, no retry high order kmalloc before it falls back to
+> > > > > vmalloc by turning off direct reclaim for the kmalloc() call.
+> > > > > Hence if the there isn't a high-order page on the free lists ready
+> > > > > to allocate, it falls back to vmalloc() immediately.
+> > > > > 
+> > > > > For XFS, using xlog_kvmalloc() reduced the high-order per-allocation
+> > > > > overhead by around 80% when compared to a standard kvmalloc()
+> > > > > call. Numbers and profiles were documented in the commit message
+> > > > > (reproduced in whole below)...
+> > > > 
+> > > > Btw. it would be really great to have such concerns to be posted to the
+> > > > linux-mm ML so that we are aware of that.
+> > > 
+> > > I have brought it up in the past, along with all the other kvmalloc
+> > > API problems that are mentioned in that commit message.
+> > > Unfortunately, discussion focus always ended up on calling context
+> > > and API flags (e.g. whether stuff like GFP_NOFS should be supported
+> > > or not) no the fast-fail-then-no-fail behaviour we need.
+> > > 
+> > > Yes, these discussions have resulted in API changes that support
+> > > some new subset of gfp flags, but the performance issues have never
+> > > been addressed...
+> > > 
+> > > > kvmalloc currently doesn't support GFP_NOWAIT semantic but it does allow
+> > > > to express - I prefer SLAB allocator over vmalloc.
+> > > 
+> > > The conditional use of __GFP_NORETRY for the kmalloc call is broken
+> > > if we try to use __GFP_NOFAIL with kvmalloc() - this causes the gfp
+> > > mask to hold __GFP_NOFAIL | __GFP_NORETRY....
+> > > 
+> > > We have a hard requirement for xlog_kvmalloc() to provide
+> > > __GFP_NOFAIL semantics.
+> > > 
+> > > IOWs, we need kvmalloc() to support kmalloc(GFP_NOWAIT) for
+> > > performance with fallback to vmalloc(__GFP_NOFAIL) for
+> > > correctness...
+> > 
+> > Are you asking the above kvmalloc() semantics just for xfs or for all
+> > the users of kvmalloc() api? 
+> 
+> I'm suggesting that fast-fail should be the default behaviour for
+> everyone.
+> 
+> If you look at __vmalloc() internals, you'll see that it turns off
+> __GFP_NOFAIL for high order allocations because "reclaim is too
+> costly and it's far cheaper to fall back to order-0 pages".
+> 
+> That's pretty much exactly what we are doing with xlog_kvmalloc(),
+> and what I'm suggesting that kvmalloc should be doing by default.
+> 
+> i.e. If it's necessary for mm internal implementations to avoid
+> high-order reclaim when there is a faster order-0 allocation
+> fallback path available for performance reasons, then we should be
+> using that same behaviour anywhere optimisitic high-order allocation
+> is used as an optimisation for those same performance reasons.
+> 
 
-I think you wanted the following instead:
+I am convinced and I think Michal is onboard as well for the above. At
+least we should try and see how it goes.
 
-		if (!(flags & __GFP_RETRY_MAYFAIL))
-			flags &= ~__GFP_DIRECT_RECLAIM;
+> The overall __GFP_NOFAIL requirement is something XFS needs, but it
+> is most definitely not something that should be enabled by default.
+> However, it needs to work with kvmalloc(), and it is not possible to
+> do so right now.
 
-This is what Dave is asking as well for kmalloc() case of kvmalloc().
+After the kmalloc(GFP_NOWAIT) being default in kvmalloc(), what remains
+to support kvmalloc(__GFP_NOFAIL)? (Yafang mentioned vmap_huge)
 
->  
->  		/* nofail semantic is implemented by the vmalloc fallback */
->  		flags &= ~__GFP_NOFAIL;
-> -- 
-> Michal Hocko
-> SUSE Labs
 
