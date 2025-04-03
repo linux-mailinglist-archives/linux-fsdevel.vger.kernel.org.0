@@ -1,144 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-45598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45599-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4781CA79B43
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 07:28:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90CFAA79CCC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 09:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06DA91749B2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 05:28:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCE261897049
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Apr 2025 07:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A7D19E7F8;
-	Thu,  3 Apr 2025 05:28:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32D12405E4;
+	Thu,  3 Apr 2025 07:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IH4G765w"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="agKpocDz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3234519D065;
-	Thu,  3 Apr 2025 05:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5135D23F439
+	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Apr 2025 07:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743658095; cv=none; b=kR8qT3Uyz07UuAKE3d0D3RgsrclHfYRsQ8WDhPh9WnlINhSk/IbvY4G/ARBWQviqeDYv80TtLlGxj2QNzjGeYK+YWmIZWLj4oYXDl51BU0NbtSeSqkwJ9KGG8rPISvSV4anV+V/+lxU0dU1urLT2xm0Xn9AvnYakkdO0aoD4jk8=
+	t=1743664852; cv=none; b=W+R2rWV0R3wicC2c7ZixSM87YeTvBhdzCAIdo29GDDvTv4W7365bHkblqbh0Rp/SiMJ0Esborn6FRYqkRlHJs4BGB1TOxBUujeVXJBcr4FAuKF1mXTG6IZGH26X5HR5TQjBlTU5nW/CYsEGorDLPDg4GG9aw138p5JoFY0YX1cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743658095; c=relaxed/simple;
-	bh=ablVFuA06C0J29dzcF/q8RicjJAWLm1LkqyJq3zLGb8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NCuoyVioqt6SVvqgpoqHcBDl+7KVs2Ou0M/s0B+0VU6LUFdCoUjSud9OgdshKka5VnWQvCUIJINdSCFt6ihIDHP7LFRyRMT30brk0cmeoT3XLa76Ze1hb86ZNZfmVu23fvGyuLd/nCohwntMYv1otJW9eITOnI8KIhymQESiUeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IH4G765w; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-739b3fe7ce8so449332b3a.0;
-        Wed, 02 Apr 2025 22:28:14 -0700 (PDT)
+	s=arc-20240116; t=1743664852; c=relaxed/simple;
+	bh=TDd8xyaBgEDCBfuCTjYEiIFUCJncStQ1dkceRj+++oM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UEQ9ShRcwg5iv6SxZige/60vXKdomwxDou0TLp2XBOwgyvgfU9q+Q9/+S/ms32aDy4JCnVtorI7GdYpU7y5YoQ49laEkF3dkgdJ3YvfTGTvYb+8JqQj1ITemCeh0DViJKAmiPSERONtScy3/NwXCqQ+PLgt0bYt/3AdsY/wBXHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=agKpocDz; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3914aba1ce4so484694f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Apr 2025 00:20:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743658093; x=1744262893; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=StDYUD7CYFFKgLT10v5qHsCOJxby6VYxth9kuac+LSM=;
-        b=IH4G765wa5X2PMk6GCi4vyKgIN92b+fLsCrIRPPH1bH1jfByiLqjTAV17EGEZceR++
-         fEPGFNKDS4ld3Gox8CgWUZmWitDpKzUzUx3AMig1KQN+z63JCxSiIX92XttwwHP3A3+O
-         5Is7a9+TvvVzS4CIwckBoYZnkNzC5LjCTMa5TgfixIRusI9/9JrTVTr7uuGte2iNqLu8
-         VaafArp8H308SUV0BSFfsXU3fUeNl1LENarrEjsqmMRei7CjcwEKIaDr4uSV9dUSgQxP
-         uZJWwZ2hQCXAp/yGU+6eIrhiLbeJv0U0fk9iPdVelf9WKCq6UiBL4FBh8hQvWmWLu8RI
-         uJxw==
+        d=suse.com; s=google; t=1743664848; x=1744269648; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BD756zHr8WEGmTWHUM//ivzbI/qlnCFevZCrnf/WSH0=;
+        b=agKpocDz+G3CdxzdhcmDvJ0LrcO/BzPV0zL3/zhw020oUIipit4+cBnA7Ppo0EVeEe
+         u8zfnJAfBg3tTgfqDCXwwYHDq9ezvk3xVgxeOLARfqLpg423sti3Yg1P66ZjSp/t1+4n
+         o/a7V/n/7h5jQvY66pRDFooBn43gBn3CwUI9RTnTWV1m4MOGYusHvdDu5n7sz0yQcZW4
+         mxj2YaWf2QKppsZU48utv1tZesINe4nb9bRuQMUA+256YgK2n1kF9xz33eJLB4msjDPZ
+         F24Xu4bTqYUaMJQaSgu8fjO6w3VigHSRTusah1S7UJbIimOrCcOrXImpdCr7FTBE69NS
+         ZZyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743658093; x=1744262893;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=StDYUD7CYFFKgLT10v5qHsCOJxby6VYxth9kuac+LSM=;
-        b=F0BRLdDXb8G041+ErjOVOg6RwWLayXLLoDW1Zy0/0+0XoJEdQZjDcfdi+KdL6Wkz/J
-         W/ViCE0et2JuKc8Xy7muwn1dHa2HeL/YDvOWzLS7ZvEFnkT4SnJbS2DRWrIrOQgQl/xC
-         LDxMYN2QUCYhosH2gjhrJHV7hP5sM2ARWTcBOwmxH6G6qQpR1Y1FmY17ASf29mtgiNed
-         +kj368z0wJs3q2Xxz9xK7/Rk5U5B7AJ8d/F6DfLzkvIWB7N5PD1w93Qj9R/9aaW/XiCR
-         a6eve+gIWSbOVjrA+H6SVbvh3TgBSlw+4tqdUEtgq8/OybeEp/ZXqM31xWBmeltdgSHJ
-         OaiA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2guNXjzOORlKyE+JFYdw5yY/36yeAGOzrykTJ1rRKoEAq/tdOgodVlR7cLbLxjBOZeMNmtKtOF6uhMiuW@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywyud5v0OwyW8rVE7+QOopdnIc1vpTeDNmDPHGb1dGzI/lluCpB
-	EYdgteYweXK3bi470py27GZ+AR/py1Njx2nYv5hr5/T/sY1CmDBdPwmXuA==
-X-Gm-Gg: ASbGncvy1PGFJY6TBI1MixWP+5z3Izs3Tt3yRDLZ+yjRbtfNKs54n4KPhbNWGdmFDbl
-	jkPcl5YpKNER6JL5L/JuRpJaN5QCWLk4EpzF9uPmU5d0kjiF1tt47OCzhIqcCTdul1RrLptFtwO
-	Ih6yDksQlvys63b1ioyO2Pjw8f+vD8Tra5/NipCeCl/15b5kJCKB4rrJWsA7RWT1JKPJxMco803
-	rhbu6ozST6GFoB2sIY3GInFoBneSCxsrl1yPgvzSJVAV8r4BfcQbeEMAUqPH0i7+u+46oaSt5qk
-	xVl0Oa1nPjOoZooE/t3Boifi9i1NLq4eWajJHNEHRFCnyUsNCg==
-X-Google-Smtp-Source: AGHT+IH76oAzOf2n/1347hmtRzYUYFyy8et/1n6aBjDfBicof8YbnylTMps1+zfYM71ktapq7D722Q==
-X-Received: by 2002:a05:6a00:398f:b0:736:ab48:5b0 with SMTP id d2e1a72fcca58-739c78430demr5736643b3a.2.1743658092660;
-        Wed, 02 Apr 2025 22:28:12 -0700 (PDT)
-Received: from dw-tp.ibmuc.com ([171.76.86.91])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739d9ea09a5sm541830b3a.107.2025.04.02.22.28.09
+        d=1e100.net; s=20230601; t=1743664848; x=1744269648;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BD756zHr8WEGmTWHUM//ivzbI/qlnCFevZCrnf/WSH0=;
+        b=AFudKPbTwfj03Sqouv+yrY5LaSt/QzeuEGr5zBlWegJHO1WUmY6wWYWEH11MM5fPDk
+         Us6XB5hal2IefS0h2fxiia6UnEvwfOq6jt60FUPj1z4CAYsT4YusDDqgxHdexyJkRGrr
+         +yx9Fkzg3Vog4GDSUAvHJTodqBs2u7pwz8vp5evFoVJbJIJ+JsYm/0QSPjj3AUYCg20t
+         2K/X4WIfE/K+Tz0Hgzuj1bW6NvgzdLvdqWatRLFUq0d8ofh7/I+g+DgWJ6BUgwh8AK3O
+         TpdR8tESftBKMkZWVXR2AdSDBsSTU6/bKKOB2LF5JwE8kjwXLSfZaOrdGTWly2AnvQwD
+         ahrg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqFYIXd6nKVDI4ClObOnLtJ3/Ak9Vzg35XG+4XdYYv0tldtVl7QgkL7/CvLWzTYxamQFlwWS5TX8E4fe64@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUHRs3iu80HuoucCKD8xtHVnvmj1WCjQ5f3qZvwHVdzWGHrU/3
+	MCbUmsCcHF94H402cDyDbrc4pxkSHFTl95lQ/v4HDrCK5B1caZ3C3xrQtSX5U9g=
+X-Gm-Gg: ASbGncsM3UzVSl6OSaR6ACF2QdM4hd2M3caUi9QoETyvJynfNMXLSTchpV3bcPi8X0a
+	oNQ5Z78HSplVo8v934RuBLp9uRaQcxLwz234F62hulkQIBTOQrJz3bW4cVtMIQjEkpg4hFA6aXm
+	sQA1+UuTvIKKEb4RZHWytcDVslkhuk62vWX26FAl/sBjdHont7kYxLk7792YE262BbuPB/SFQoB
+	GGwqc++qRdlcT8t2LYe5e0L7NNp/ZCa4C40haM21JXNPJl55RNnKf+HwAhy2Hw9UCDyLzTnrT6Y
+	4ggAPpxQXN9D4k8Vx93Tb7Rf7RbZctpoZrGOPooJH3f0uoAvI9wozOw=
+X-Google-Smtp-Source: AGHT+IESfTm4RoUHFqxbeSvl1MMbpOP8xDKxRWMnDQTPhoCmLYL/Nciczkpwk4voGMuKlOVx9Z7g9A==
+X-Received: by 2002:a05:6000:4021:b0:391:38a5:efa with SMTP id ffacd0b85a97d-39c120e07e4mr15863646f8f.23.1743664848526;
+        Thu, 03 Apr 2025 00:20:48 -0700 (PDT)
+Received: from localhost (109-81-82-69.rct.o2.cz. [109.81.82.69])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43ec1663053sm13180535e9.15.2025.04.03.00.20.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 22:28:11 -0700 (PDT)
-From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To: linux-block@vger.kernel.org
-Cc: John Garry <john.g.garry@oracle.com>,
-	axboe@kernel.dk,
-	djwong@kernel.org,
-	ojaswin@linux.ibm.com,
-	linux-fsdevel@vger.kernel.org,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [RFC] traceevent/block: Add REQ_ATOMIC flag to block trace events
-Date: Thu,  3 Apr 2025 10:58:03 +0530
-Message-ID: <1cbcee1a6a39abb41768a6b1c69ec8751ed0215a.1743656654.git.ritesh.list@gmail.com>
-X-Mailer: git-send-email 2.48.1
+        Thu, 03 Apr 2025 00:20:48 -0700 (PDT)
+Date: Thu, 3 Apr 2025 09:20:46 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Dave Chinner <david@fromorbit.com>, Yafang Shao <laoar.shao@gmail.com>,
+	Harry Yoo <harry.yoo@oracle.com>, Kees Cook <kees@kernel.org>,
+	joel.granados@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+	linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] proc: Avoid costly high-order page allocations when
+ reading proc files
+Message-ID: <Z-42znN1q7dVNM-h@tiehlicka>
+References: <20250401073046.51121-1-laoar.shao@gmail.com>
+ <3315D21B-0772-4312-BCFB-402F408B0EF6@kernel.org>
+ <Z-y50vEs_9MbjQhi@harry>
+ <CALOAHbBSvMuZnKF_vy3kGGNOCg5N2CgomLhxMxjn8RNwMTrw7A@mail.gmail.com>
+ <Z-0gPqHVto7PgM1K@dread.disaster.area>
+ <Z-0sjd8SEtldbxB1@tiehlicka>
+ <Z-2pSF7Zu0CrLBy_@dread.disaster.area>
+ <b7qr6djsicpkecrkjk6473btzztfrvxifiy34u2vdb4cp5ktjf@lvg3rtwrbmsx>
+ <Z-3i1wATGh6vI8x8@dread.disaster.area>
+ <7gmvaxj5hpd7aal4xgcis7j7jicwxtlaqjatshrwrorit3jwn6@67j2mc6itkm6>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7gmvaxj5hpd7aal4xgcis7j7jicwxtlaqjatshrwrorit3jwn6@67j2mc6itkm6>
 
-Filesystems like XFS can implement atomic write I/O using either REQ_ATOMIC
-flag set in the bio or via CoW operation. It will be useful if we have a
-flag in trace events to distinguish between the two. This patch adds
-char 'a' to rwbs field of the trace events if REQ_ATOMIC flag is set in
-the bio.
+On Wed 02-04-25 22:05:57, Shakeel Butt wrote:
+> On Thu, Apr 03, 2025 at 12:22:31PM +1100, Dave Chinner wrote:
+> > On Wed, Apr 02, 2025 at 04:10:06PM -0700, Shakeel Butt wrote:
+> > > On Thu, Apr 03, 2025 at 08:16:56AM +1100, Dave Chinner wrote:
+> > > > On Wed, Apr 02, 2025 at 02:24:45PM +0200, Michal Hocko wrote:
+> > > > > On Wed 02-04-25 22:32:14, Dave Chinner wrote:
+> > > > > > Have a look at xlog_kvmalloc() in XFS. It implements a basic
+> > > > > > fast-fail, no retry high order kmalloc before it falls back to
+> > > > > > vmalloc by turning off direct reclaim for the kmalloc() call.
+> > > > > > Hence if the there isn't a high-order page on the free lists ready
+> > > > > > to allocate, it falls back to vmalloc() immediately.
+> > > > > > 
+> > > > > > For XFS, using xlog_kvmalloc() reduced the high-order per-allocation
+> > > > > > overhead by around 80% when compared to a standard kvmalloc()
+> > > > > > call. Numbers and profiles were documented in the commit message
+> > > > > > (reproduced in whole below)...
+> > > > > 
+> > > > > Btw. it would be really great to have such concerns to be posted to the
+> > > > > linux-mm ML so that we are aware of that.
+> > > > 
+> > > > I have brought it up in the past, along with all the other kvmalloc
+> > > > API problems that are mentioned in that commit message.
+> > > > Unfortunately, discussion focus always ended up on calling context
+> > > > and API flags (e.g. whether stuff like GFP_NOFS should be supported
+> > > > or not) no the fast-fail-then-no-fail behaviour we need.
+> > > > 
+> > > > Yes, these discussions have resulted in API changes that support
+> > > > some new subset of gfp flags, but the performance issues have never
+> > > > been addressed...
 
-<W/ REQ_ATOMIC>
-=================
-xfs_io-1107    [002] .....   406.206441: block_rq_issue: 8,48 WSa 16384 () 768 + 32 none,0,0 [xfs_io]
-<idle>-0       [002] ..s1.   406.209918: block_rq_complete: 8,48 WSa () 768 + 32 none,0,0 [0]
+I, at least, was not aware of the performance aspect. We are trying to
+make kvmalloc as usable as possible to prevent its open coded variants
+to grow in subystems.
 
-<W/O REQ_ATOMIC>
-===============
-xfs_io-1108    [002] .....   411.212317: block_rq_issue: 8,48 WS 16384 () 1024 + 32 none,0,0 [xfs_io]
-<idle>-0       [002] ..s1.   411.215842: block_rq_complete: 8,48 WS () 1024 + 32 none,0,0 [0]
+> > > > > kvmalloc currently doesn't support GFP_NOWAIT semantic but it does allow
+> > > > > to express - I prefer SLAB allocator over vmalloc.
+> > > > 
+> > > > The conditional use of __GFP_NORETRY for the kmalloc call is broken
+> > > > if we try to use __GFP_NOFAIL with kvmalloc() - this causes the gfp
+> > > > mask to hold __GFP_NOFAIL | __GFP_NORETRY....
 
-Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
----
- include/trace/events/block.h | 2 +-
- kernel/trace/blktrace.c      | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+Correct.
 
-diff --git a/include/trace/events/block.h b/include/trace/events/block.h
-index bd0ea07338eb..de538b110ea1 100644
---- a/include/trace/events/block.h
-+++ b/include/trace/events/block.h
-@@ -11,7 +11,7 @@
- #include <linux/tracepoint.h>
- #include <uapi/linux/ioprio.h>
+> > > > We have a hard requirement for xlog_kvmalloc() to provide
+> > > > __GFP_NOFAIL semantics.
+> > > > 
+> > > > IOWs, we need kvmalloc() to support kmalloc(GFP_NOWAIT) for
+> > > > performance with fallback to vmalloc(__GFP_NOFAIL) for
+> > > > correctness...
 
--#define RWBS_LEN	8
-+#define RWBS_LEN	9
+Understood.
 
- #define IOPRIO_CLASS_STRINGS \
- 	{ IOPRIO_CLASS_NONE,	"none" }, \
-diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-index 3679a6d18934..6badf296ab2b 100644
---- a/kernel/trace/blktrace.c
-+++ b/kernel/trace/blktrace.c
-@@ -1896,6 +1896,8 @@ void blk_fill_rwbs(char *rwbs, blk_opf_t opf)
- 		rwbs[i++] = 'S';
- 	if (opf & REQ_META)
- 		rwbs[i++] = 'M';
-+	if (opf & REQ_ATOMIC)
-+		rwbs[i++] = 'a';
+> > > Are you asking the above kvmalloc() semantics just for xfs or for all
+> > > the users of kvmalloc() api? 
+> > 
+> > I'm suggesting that fast-fail should be the default behaviour for
+> > everyone.
+> > 
+> > If you look at __vmalloc() internals, you'll see that it turns off
+> > __GFP_NOFAIL for high order allocations because "reclaim is too
+> > costly and it's far cheaper to fall back to order-0 pages".
+> > 
+> > That's pretty much exactly what we are doing with xlog_kvmalloc(),
+> > and what I'm suggesting that kvmalloc should be doing by default.
+> > 
+> > i.e. If it's necessary for mm internal implementations to avoid
+> > high-order reclaim when there is a faster order-0 allocation
+> > fallback path available for performance reasons, then we should be
+> > using that same behaviour anywhere optimisitic high-order allocation
+> > is used as an optimisation for those same performance reasons.
+> > 
+> 
+> I am convinced and I think Michal is onboard as well for the above. At
+> least we should try and see how it goes.
 
- 	rwbs[i] = '\0';
- }
---
-2.48.1
+If we find out that this doesn't really work because a fragmentation
+of page blocks is a real problem then we might need to reconsider this.
 
+> > The overall __GFP_NOFAIL requirement is something XFS needs, but it
+> > is most definitely not something that should be enabled by default.
+> > However, it needs to work with kvmalloc(), and it is not possible to
+> > do so right now.
+> 
+> After the kmalloc(GFP_NOWAIT) being default in kvmalloc(), what remains
+> to support kvmalloc(__GFP_NOFAIL)? (Yafang mentioned vmap_huge)
+
+We already do support kvmalloc(__GFP_NOFAIL) since 9376130c390a7 IIRC.
+
+-- 
+Michal Hocko
+SUSE Labs
 
