@@ -1,206 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-45717-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29724A7B750
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 07:31:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48EFAA7B768
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 07:37:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEFC518855E0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 05:32:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2674189D2A2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 05:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA53166F1A;
-	Fri,  4 Apr 2025 05:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731371632E6;
+	Fri,  4 Apr 2025 05:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Q9kDdsYy"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="lEjdKZB1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5A72E62C0;
-	Fri,  4 Apr 2025 05:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2939DDDC1;
+	Fri,  4 Apr 2025 05:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743744702; cv=none; b=ExgHfS1++KRJJiuBOrmfYrTQmRMEatR0nnNOhRFTtCF/Xhqunme6jR6d1vEWm7+skdr1S/AGapyNUqE4z5JSvDUq3z8ssCkQisTbknI+RuaUct8H1jKyoilBjzcXX0r9GdQHZ5cdscI6IeTn2me6hxqQAgsNpDmLiU5FNZ33Trw=
+	t=1743745066; cv=none; b=R2FbgTYmo4rvS9lehGKP1ka46f2KtyCUDNVfHBwUtAVmngA370XYRAvH0tbCbDZEIqPOHncP3bGx+1wtIcC0u4V/288EBzNZoI2Any6PBO9vyWLI6XMccdtKfVC/9nhCWjKoLXST6kBm+cSnC0bATH1ZGZVgriu1EVk6rdJsyC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743744702; c=relaxed/simple;
-	bh=BvmulAeaabO85X4ftFXFh02y82mIVRxbrUS0v/w2564=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h+/hF+RAhYcGRaYHxEVhuDf8V+d5MHXQMP97Yj/F8KSG4LRn5PJ299jqWXe0U6AIXQuoWXRsdcsLM8QAU69ucY4prlbMLSnESntDCWdDjOoMDCCW3wEGn3tamcJEfZrBNH0XiOagIfYMaGE25lt8w9eNUZmRqNux0v2arBgde8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Q9kDdsYy; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=m0feoZm9sH9aLLi6evQGqxqekCHH6wsr0FesFAZnxp4=; b=Q9kDdsYyKLrg2ePBI8QxjnP7KP
-	GOYdGm5/f7zZ9ffUbfAV7N69r5XFuMhC0InQJnxVvTa/PfYKsiQRphAmszK5f5NB/1nTNjxKg8I36
-	85ajkImalrnc+KtkGTFiEwriI/+NKUzAvxV9hHZrH8L78oN2JIktMfZKPA3/BaiiF6zarJzhKCJds
-	hV6i9URQjew2dz59SGm+BKyxl68ginscXCoyWXF+X224TiObOnGYGbKpCkewaHMiDuyWbsdKNlGy5
-	ZTx3qWo+X9YOhDJIonXIKRLzeJi6eso0wFUH0Md/m9vj6RJFbFv37WzZTOtfGr+AfVuG+vjd79dAo
-	fXZTxY2A==;
-Received: from [223.233.74.223] (helo=[192.168.1.12])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1u0Ze9-00BBxp-Gj; Fri, 04 Apr 2025 07:31:17 +0200
-Message-ID: <daa87c96-546d-c3c1-ef45-9213959ae629@igalia.com>
-Date: Fri, 4 Apr 2025 11:01:09 +0530
+	s=arc-20240116; t=1743745066; c=relaxed/simple;
+	bh=v2K3Ci6Hqa/XaBgTwF7fn5YXxKcOQtRT8RTrXCQP4Cw=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=EwzXoj9dnjyP0Wst/vAntHYGtGeHusAnW8uXdwSN1hoEHbWTQttgOeWsG2pp4xOsfnGka3vt0VoeoPNMTmsZV1KiquKDuwyM3HAgKBn3ocUICrMQBuH2E/lok0kjYyET7wdEHLkqb3Zt8YPtNmy2fqft5oMuG5P/ep0BTcUNdx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=lEjdKZB1; arc=none smtp.client-ip=162.62.57.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1743745056; bh=wrSj9PzWh2wVzoWv3XkhoWrvov00Rs2DfdHlLI0RZ/k=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=lEjdKZB11l3Mx7QWXWEFV84QBrUlzgPRk6ngIRu/ZAnVTJquac7Wkfm5D491TaPC4
+	 bMf/5SqLd1BDuqpSjET/W8CCl0gNiUSeLW5z3EtSNxKSqWrcZ3ethUP1F+DnbvI+sH
+	 u5EU9aCuwEoI7toUPi1maCZQT/t5eK8pDhuXAnpE=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 7DCAA611; Fri, 04 Apr 2025 13:31:28 +0800
+X-QQ-mid: xmsmtpt1743744688tomd71bwx
+Message-ID: <tencent_9C8CB8A7E7C6C512C7065DC98B6EDF6EC606@qq.com>
+X-QQ-XMAILINFO: MiwL2wmyONS9vtXwWrRJ1j3yBQKHJJvDrdoSgeiSARMKVgikB3klDMnagz4rab
+	 9Utwb0i2hGs0PnYpOh9ZFzfaYTj3VtD7g9zoPHIcamlzaHFIEjxD6wRx+NSMVsGsVg9bcHYxDSQv
+	 gfUrXQRo/fncdt5xei+d8uML0vouOHMFLSaLIc35lbwzV9Hjd/66riDveY0t3H4ZhIuyyjXHLkMF
+	 csUVT2Gijz/AY9rdDSfOGBhagWpPKFur8RVz58G/3NszzY3IwjoVS7yq7YdWRXsmd2mS+7DKK35N
+	 QvmyjmZt3hkEedNUKLL9fYgOX+x6mGhjHHVfNCxi0c6NCMtjQCGOBnodHhQ/eWh7YQNW6IwxetZj
+	 ZeCDmEn1PEnbNZZPNswUfYeccI4yS0hlvwuSkeuzPTp7oDEFbrV4H4rax7VY5JBKNVoGcmCEWwu3
+	 msKkRd2dK5xn8UXPhmixWJJ0oVmzz2pDk0sIPdeV4+ECYJj7ja8WdjJsmFaC8/kSYakQ+SRuZx50
+	 bp+mARe0uVOSdvs7fUNiSNvykVRHHu5Mqoi9MnfTsDKi3ANucO1+R5G1bgrg8qBNQIpEKcUBVuS9
+	 CVLYdpUn4pCXga/eUPN7BcM9s4oZ6vnZB4fhNZjTAvyGVmBh2kFLOXa9TsrbFhuYmlYvDXu97N26
+	 zRmEXgYrxqUb+25rilvfaFGW9Nhm7pARKbD4qun8dY8cQyJm3BX7mRgd11kd4zzRA3F7W6TOCa9J
+	 AV6A16ctJd+DGWKNBa3XRjgHFxFMmwneUk4TYfQviThywESBxluedaAj9zI+7Nz+I/EqgszIiJkp
+	 N5owYYKYYqqURgndfLBioxVvA8LuEg1ZeP/qMxl3fL68/8x5BnHL9a9vjNZVruf9XudNQNWOb4hW
+	 BgrLSM3fCY/mA05dodmlt7JIuPTuzOKZfk10/7gyOxEYf+8alYur9kIZNW6GU8IlM1R+bFsc41
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+4d7cd7dd0ce1aa8d5c65@syzkaller.appspotmail.com
+Cc: jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] isofs: Prevent the use of too small fid
+Date: Fri,  4 Apr 2025 13:31:29 +0800
+X-OQ-MSGID: <20250404053128.2801269-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <67eee51c.050a0220.9040b.0240.GAE@google.com>
+References: <67eee51c.050a0220.9040b.0240.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v2 1/3] exec: Dynamically allocate memory to store task's
- full name
-Content-Language: en-US
-To: Harry Yoo <harry.yoo@oracle.com>, Bhupesh <bhupesh@igalia.com>
-Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
- laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
- mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
- alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
- mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
- david@redhat.com, viro@zeniv.linux.org.uk, keescook@chromium.org,
- ebiederm@xmission.com, brauner@kernel.org, jack@suse.cz, mingo@redhat.com,
- juri.lelli@redhat.com, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com
-References: <20250331121820.455916-1-bhupesh@igalia.com>
- <20250331121820.455916-2-bhupesh@igalia.com> <Z-tlVsM2Dq70gC4r@harry>
-From: Bhupesh Sharma <bhsharma@igalia.com>
-In-Reply-To: <Z-tlVsM2Dq70gC4r@harry>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 4/1/25 9:32 AM, Harry Yoo wrote:
-> On Mon, Mar 31, 2025 at 05:48:18PM +0530, Bhupesh wrote:
->> Provide a parallel implementation for get_task_comm() called
->> get_task_full_name() which allows the dynamically allocated
->> and filled-in task's full name to be passed to interested
->> users such as 'gdb'.
->>
->> Currently while running 'gdb', the 'task->comm' value of a long
->> task name is truncated due to the limitation of TASK_COMM_LEN.
->>
->> For example using gdb to debug a simple app currently which generate
->> threads with long task names:
->>    # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
->>    # cat log
->>
->>    NameThatIsTooLo
->>
->> This patch does not touch 'TASK_COMM_LEN' at all, i.e.
->> 'TASK_COMM_LEN' and the 16-byte design remains untouched. Which means
->> that all the legacy / existing ABI, continue to work as before using
->> '/proc/$pid/task/$tid/comm'.
->>
->> This patch only adds a parallel, dynamically-allocated
->> 'task->full_name' which can be used by interested users
->> via '/proc/$pid/task/$tid/full_name'.
->>
->> After this change, gdb is able to show full name of the task:
->>    # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
->>    # cat log
->>
->>    NameThatIsTooLongForComm[4662]
->>
->> Signed-off-by: Bhupesh <bhupesh@igalia.com>
->> ---
->>   fs/exec.c             | 21 ++++++++++++++++++---
->>   include/linux/sched.h |  9 +++++++++
->>   2 files changed, 27 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/exec.c b/fs/exec.c
->> index f45859ad13ac..4219d77a519c 100644
->> --- a/fs/exec.c
->> +++ b/fs/exec.c
->> @@ -1208,6 +1208,9 @@ int begin_new_exec(struct linux_binprm * bprm)
->>   {
->>   	struct task_struct *me = current;
->>   	int retval;
->> +	va_list args;
->> +	char *name;
->> +	const char *fmt;
->>   
->>   	/* Once we are committed compute the creds */
->>   	retval = bprm_creds_from_file(bprm);
->> @@ -1348,11 +1351,22 @@ int begin_new_exec(struct linux_binprm * bprm)
->>   		 * detecting a concurrent rename and just want a terminated name.
->>   		 */
->>   		rcu_read_lock();
->> -		__set_task_comm(me, smp_load_acquire(&bprm->file->f_path.dentry->d_name.name),
->> -				true);
->> +		fmt = smp_load_acquire(&bprm->file->f_path.dentry->d_name.name);
->> +		name = kvasprintf(GFP_KERNEL, fmt, args);
->> +		if (!name)
->> +			return -ENOMEM;
-> Is it safe to return error here, instead of jumping to 'out_unlock' label
-> and then releasing locks?
+syzbot reported a slab-out-of-bounds Read in isofs_fh_to_parent. [1]
 
-Ok, let me modify this in v3 to ensure that locks are released properly.
+The handle_bytes value passed in by the reproducing program is equal to 12.
+In handle_to_path(), only 12 bytes of memory are allocated for the structure
+file_handle->f_handle member, which causes an out-of-bounds access when
+accessing the member parent_block of the structure isofs_fid in isofs,
+because accessing parent_block requires at least 16 bytes of f_handle.
+Here, fh_len is used to indirectly confirm that the value of handle_bytes
+is greater than 3 before accessing parent_block.
 
->> +		me->full_name = name;
->> +		__set_task_comm(me, fmt, true);
->>   		rcu_read_unlock();
->>   	} else {
->> -		__set_task_comm(me, kbasename(bprm->filename), true);
->> +		fmt = kbasename(bprm->filename);
->> +		name = kvasprintf(GFP_KERNEL, fmt, args);
->> +		if (!name)
->> +			return -ENOMEM;
->> +
->> +		me->full_name = name;
->> +		__set_task_comm(me, fmt, true);
->>   	}
->>   
->>   	/* An exec changes our domain. We are no longer part of the thread
->> @@ -1399,6 +1413,7 @@ int begin_new_exec(struct linux_binprm * bprm)
->>   	return 0;
->>   
->>   out_unlock:
->> +	kfree(me->full_name);
->>   	up_write(&me->signal->exec_update_lock);
->>   	if (!bprm->cred)
->>   		mutex_unlock(&me->signal->cred_guard_mutex);
->> diff --git a/include/linux/sched.h b/include/linux/sched.h
->> index 56ddeb37b5cd..053b52606652 100644
->> --- a/include/linux/sched.h
->> +++ b/include/linux/sched.h
->> @@ -1166,6 +1166,9 @@ struct task_struct {
->>   	 */
->>   	char				comm[TASK_COMM_LEN];
->>   
->> +	/* To store the full name if task comm is truncated. */
->> +	char				*full_name;
->> +
->>   	struct nameidata		*nameidata;
->>   
->>   #ifdef CONFIG_SYSVIPC
->> @@ -2007,6 +2010,12 @@ extern void __set_task_comm(struct task_struct *tsk, const char *from, bool exec
->>   	buf;						\
->>   })
->>   
->> +#define get_task_full_name(buf, buf_size, tsk) ({	\
->> +	BUILD_BUG_ON(sizeof(buf) < TASK_COMM_LEN);	\
->> +	strscpy_pad(buf, (tsk)->full_name, buf_size);	\
->> +	buf;						\
->> +})
->> +
->>   #ifdef CONFIG_SMP
->>   static __always_inline void scheduler_ipi(void)
->>   {
->> -- 
->> 2.38.1
->>
->>
+[1]
+BUG: KASAN: slab-out-of-bounds in isofs_fh_to_parent+0x1b8/0x210 fs/isofs/export.c:183
+Read of size 4 at addr ffff0000cc030d94 by task syz-executor215/6466
+CPU: 1 UID: 0 PID: 6466 Comm: syz-executor215 Not tainted 6.14.0-rc7-syzkaller-ga2392f333575 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call trace:
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:408 [inline]
+ print_report+0x198/0x550 mm/kasan/report.c:521
+ kasan_report+0xd8/0x138 mm/kasan/report.c:634
+ __asan_report_load4_noabort+0x20/0x2c mm/kasan/report_generic.c:380
+ isofs_fh_to_parent+0x1b8/0x210 fs/isofs/export.c:183
+ exportfs_decode_fh_raw+0x2dc/0x608 fs/exportfs/expfs.c:523
+ do_handle_to_path+0xa0/0x198 fs/fhandle.c:257
+ handle_to_path fs/fhandle.c:385 [inline]
+ do_handle_open+0x8cc/0xb8c fs/fhandle.c:403
+ __do_sys_open_by_handle_at fs/fhandle.c:443 [inline]
+ __se_sys_open_by_handle_at fs/fhandle.c:434 [inline]
+ __arm64_sys_open_by_handle_at+0x80/0x94 fs/fhandle.c:434
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
+ el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
 
-Thanks.
+Allocated by task 6466:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x40/0x78 mm/kasan/common.c:68
+ kasan_save_alloc_info+0x40/0x50 mm/kasan/generic.c:562
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0xac/0xc4 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __do_kmalloc_node mm/slub.c:4294 [inline]
+ __kmalloc_noprof+0x32c/0x54c mm/slub.c:4306
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ handle_to_path fs/fhandle.c:357 [inline]
+ do_handle_open+0x5a4/0xb8c fs/fhandle.c:403
+ __do_sys_open_by_handle_at fs/fhandle.c:443 [inline]
+ __se_sys_open_by_handle_at fs/fhandle.c:434 [inline]
+ __arm64_sys_open_by_handle_at+0x80/0x94 fs/fhandle.c:434
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
+ el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+
+Reported-by: syzbot+4d7cd7dd0ce1aa8d5c65@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=4d7cd7dd0ce1aa8d5c65
+Tested-by: syzbot+4d7cd7dd0ce1aa8d5c65@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/isofs/export.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/isofs/export.c b/fs/isofs/export.c
+index 35768a63fb1d..421d247fae52 100644
+--- a/fs/isofs/export.c
++++ b/fs/isofs/export.c
+@@ -180,7 +180,7 @@ static struct dentry *isofs_fh_to_parent(struct super_block *sb,
+ 		return NULL;
+ 
+ 	return isofs_export_iget(sb,
+-			fh_len > 2 ? ifid->parent_block : 0,
++			fh_len > 3 ? ifid->parent_block : 0,
+ 			ifid->parent_offset,
+ 			fh_len > 4 ? ifid->parent_generation : 0);
+ }
+-- 
+2.43.0
+
 
