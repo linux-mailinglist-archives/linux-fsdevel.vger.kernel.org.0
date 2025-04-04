@@ -1,270 +1,314 @@
-Return-Path: <linux-fsdevel+bounces-45745-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45746-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DA0EA7BA70
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 12:10:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE58A7BA98
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 12:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76E377A7153
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 10:09:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 700AB3B562C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 10:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC191B0F31;
-	Fri,  4 Apr 2025 10:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762E11AB6C8;
+	Fri,  4 Apr 2025 10:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SwxFxrkZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXYP1zPz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB95C188CB1
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Apr 2025 10:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA4219D8B7;
+	Fri,  4 Apr 2025 10:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743761445; cv=none; b=OAakl+Q1rUjGvXnqDRuwoNPAIpGhPLN98tn2ciCemjV8Qt5bqO6v97tKNiK2wsNdF0oQlDEhw2E9aSnWbuo/jof9hhE8HibPkaDMmqt98GjVTCGp55Hwt4gHbquyKKK0+S93DLGjMA+77yC2cRwdMy18ar8VDfxhRoEbzBfZPcE=
+	t=1743762079; cv=none; b=uKy6QlL9fiR7RQYIctpQ8/j4PYX6R4dw9AqD1ZqPwWPnva+WELVmNYJ//OS26Ey54qC0nLC/KYFGb7bLUmiXy/f0nL5o/0PbTNyx3o1v4J9VWSMsyj1bjEd7Dd1hxMUVmqoA7DcJAVLbmR67q/AkYBFStqaezAU92ocXBoCW4fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743761445; c=relaxed/simple;
-	bh=7TN2xKokra0Co3+U5mHRojMhA8uKTFn+eNeDef4ckqw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gLyXmw3I7B9N9Rnacd8aTmh9acFdzK2YvoTrn6AjTjA+fwFgIyCYhFCXtrcvVTRFfW/pjg02xxnBjXxJyC1kp8Cw9QJ4RqMw2M9tgBcCzIX6Zo1R4sAEu6n8pdRDB05vLN1+qc8LsLyNgYrhdkwsHzh+qp+8CKDm5U1AgALKYk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SwxFxrkZ; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e5e8274a74so3014709a12.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Apr 2025 03:10:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743761442; x=1744366242; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0j39rcrQQX7VYAbWj/7FGeUOEXUr2kSkns//tDQI0+8=;
-        b=SwxFxrkZ7qhLmXTZdAUWE605z00jGinK6DiB69TMUhAiLMJ2bzzzzdsnz3rNKtlg4t
-         Rh54yFxacBvBOC5rq7ldYgsUC/cH7ijagp7Sv/ClHtTWGRyk+SuADVL7ypUEg496ItHP
-         p3Po7O+Y9nsGj5tEMEizPOxHSBEHJw30iRK2ZCqrLC8IJsuGUUwrUxv5Pl3gatAqQutq
-         2GEJ1C4KtNnbKd++3cMIUCljVg7rvFAP3rZPIDqr7y2Mpcok7wlau/Q78pmOEuA62xkL
-         Vkdjvj1IQ0JL2Dl/YXOAKXNQt6X6kVnj9vNAGQUMAkiOLVOMuvOoyAAOOMJnJqKdafRg
-         UJCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743761442; x=1744366242;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0j39rcrQQX7VYAbWj/7FGeUOEXUr2kSkns//tDQI0+8=;
-        b=dJ9fnMCtbMfvijG4XCtD9vGpwqymPa+23wCaqav3NlnZCW4kbNrZUoE1H7fignuINW
-         hMgc/ZMA1kEQsAdPdiReslipME4S4FqAqN1qgDIw0gsDjEVicwwaE7626gjjJynu5Efl
-         9ewVtsnhjZDJ6qiPyWt6VDZ12j7O4q7bn96L90YphRp3LaZXZ9qtQoiKlL6yoRCq9XBz
-         VbfbynDxu/bcm+gElxnufrwtqFqlwWA9JvYksUZyqLvLe3fDLod3Cz4bU+d/kgRVjBUD
-         ftlMSEMEJg1QlboSwKbchIzIeAG+o0X78cezZw/yNR5+plksq4iP4LGuoaE5kTPv/xSa
-         0m6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVo1zQMxo2WGfP/fW3SjPSzEA9+BzWKlCvcFcVyllAqbyC04+42zSroI+Uw8T1qGw1jkfwbpUpiOJxuGTOu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9HgsZtcmUX70mg1HA+7dAPj06mYV5Nj8Ldzp1vRRLWQyPz0C2
-	v5qXEFfcLIDlMxT70qrHUHihur1l8UiPkxuz31rC/za6OFehexIV5+e7HI32QjM6AE+TsaNWeiM
-	4t++6Mxm6HgSvwxqXSXDYyLvxeOuXrzZnqmM=
-X-Gm-Gg: ASbGncuLWg2iPZDJGsuFHNN//CwuxsTIhOF2CPpa7Grh13Yn7i7ZWFy6LJgtfhrG0R1
-	QP62ML9Ajglc3i2u/hKAvjNI9GJILHfpD9l2n2Jloy0kwb/h7RrayONqLz48pyqqfVT88v77IC5
-	BPZWEg3gfiz0ZK1ulXzaP0F+Otop+rlzMfqfVG
-X-Google-Smtp-Source: AGHT+IFcUMstHuduU2FoXMzqplbezuSSgr6RsAw6knGEVVTR5nkxq4OtphHg8r+MysfG5q7YhSb+PyQx344LTYxUwuo=
-X-Received: by 2002:a17:906:c153:b0:ac7:c73a:be40 with SMTP id
- a640c23a62f3a-ac7d1751be6mr236377566b.14.1743761441377; Fri, 04 Apr 2025
- 03:10:41 -0700 (PDT)
+	s=arc-20240116; t=1743762079; c=relaxed/simple;
+	bh=XQt8eIVqv+Q06AlV7asbsPZVuoUnLefv21PDw0t3Zho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UsJZfyzwD7aLHCK6eUgZNSpJ+7VBBjlhJYpj6LDSig835EBl02WbaB+lg68DVUSpTIewyzBourL1GpCAbYnLQAlE2QQAR3EuW4aFDOJUs8q1OrKcGsmZXyuqhZFeWWYOxcX3FZLXJTpSvnTggu7QnHbaPVmMV9BUQxuUWg1E28g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXYP1zPz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5495C4CEDD;
+	Fri,  4 Apr 2025 10:21:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743762077;
+	bh=XQt8eIVqv+Q06AlV7asbsPZVuoUnLefv21PDw0t3Zho=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RXYP1zPzvjrm87YdaZ7lJiHYyBC1QkTzTNocCG4WC/oIsKydmh5yDD+Tdlretk65t
+	 vDr9xr4f4JWfYrrAlr7bz+a0UETlZAAF1meN/PZm31190cWWa4/an/H3nZa4mT1iJT
+	 Z8+C+1UmP5YeJLooWO8EqnserKCEHypH8dyToqMBmDkiJewVV5jriaKQBfFQjDigP2
+	 hYKEENbd4JDJqfIyaZakOFtgZ7hVXMG5oiy6ydbUSQyYl4CRKYH329/tcR8U1lGipq
+	 MUvBuE1ppiVO8yEcqG8DSywVbKLl0BjNZa6JnQ0pG4RyDSCZxMUaGHz5BjSCOxDO7h
+	 g5ybKRq0Iksng==
+Date: Fri, 4 Apr 2025 12:21:13 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, Jan Kara <jack@suse.cz>, 
+	Christian Brauner <brauner@kernel.org>, linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3] fanotify: Document mount namespace events
+Message-ID: <wrrbbdfca6j7bxbtyghf56cjjgwir6slf25s2amha7uxp3zgxc@6jicin3vldaw>
+References: <20250404075624.1700284-1-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOQ4uxi6PvAcT1vL0d0e+7YjvkfU-kwFVVMAN-tc-FKXe1wtSg@mail.gmail.com>
- <20250403180405.1326087-1-ibrahimjirdeh@meta.com>
-In-Reply-To: <20250403180405.1326087-1-ibrahimjirdeh@meta.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 4 Apr 2025 12:10:30 +0200
-X-Gm-Features: ATxdqUEwq73WP_VphHJGrfO1lvTd_pdIOORW3Dw64JDADUImUhoE6i_tE_hmsFM
-Message-ID: <CAOQ4uxgXO0XJzYmijXu=3yDF_hq3E1yPUxHqhwka19-_jeaNFA@mail.gmail.com>
-Subject: Re: Reseting pending fanotify events
-To: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
-Cc: jack@suse.cz, josef@toxicpanda.com, lesha@meta.com, 
-	linux-fsdevel@vger.kernel.org, sargun@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xc75cfsa7xwbutvq"
+Content-Disposition: inline
+In-Reply-To: <20250404075624.1700284-1-amir73il@gmail.com>
+
+
+--xc75cfsa7xwbutvq
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, Jan Kara <jack@suse.cz>, 
+	Christian Brauner <brauner@kernel.org>, linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3] fanotify: Document mount namespace events
+References: <20250404075624.1700284-1-amir73il@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20250404075624.1700284-1-amir73il@gmail.com>
 
-On Thu, Apr 3, 2025 at 8:04=E2=80=AFPM Ibrahim Jirdeh <ibrahimjirdeh@meta.c=
-om> wrote:
->
-> > Let me list a few approaches to this problem that were floated in the p=
-ast.
-> > You may choose bits and parts that you find useful to your use case.
->
-> Thanks for sharing these approaches for smoothly recovering pending event=
-s.
->
-> > 3. Change the default response to pending events on group fd close
-> > Support writing a response with
-> > .fd =3D FAN_NOFD
-> > .response =3D FAN_DENY | FAN_DEFAULT
-> > to set a group parameter fanotify_data.default_response.
->
-> > Instead of setting pending events response to FAN_ALLOW,
-> > could set it to FAN_DENY, or to descriptive error like
-> > FAN_DENY(ECONNRESET).
->
->
-> I think that the approach of customizing group close behavior would likel=
-y
-> address the problem of pending events in case of daemon restart / crash
-> encountered by our use case. It gives us the same guarantee of clearing
-> out pending event queue that we wanted while preventing any access of
-> unpopulated content. The one ask related to this approach would be around
-> the handover from old to new group fd. Would it be possible to provide an=
- easy
-> way to initialize one group from another (ie an fanotify_mark option).
-> In our case we have an interested mount as well as a set of ignore marks
-> for populated files to avoid regenerating events for.
->
+Hi Amir,
 
-I think this case would be better handled by handing over the old fd to the
-new server instance.
+On Fri, Apr 04, 2025 at 09:56:24AM +0200, Amir Goldstein wrote:
+> Used to subscribe for notifications for when mounts
+> are attached/detached from a mount namespace.
+>=20
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Reviewed-by: Miklos Szeredi <mszeredi@redhat.com>
+> Reviewed-by: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
 
-1. Start a new server instance
-2. Set default response in case of new instance crash
-3. Hand over a ref of the existing group fd to the new instance if the
-old instance is running
-4. Start handling events in new instance (*)
-5. Stop handling new events in old instance, but complete pending events
-6. Shutdown old instance
+The patches don't apply, and there are so many that I lost track of in
+which order I should apply them.  Could you please rebase everything you
+have on top of current master, and resend everything in the order in
+which I should apply?  Sorry for the inconveniences!
 
-Is there some problem with that approach that I do not see?
 
-(*) You have a multitude of choices on how to collaborate the
-handover of event handling responsibilities from old to new server.
-The handover can either be over a strong ordering barrier -
-new start handling only after old completes pending,
-or weaker ordering - old can start handling new events while
-old is completing pending events.
-In this case, you'd need some synchronization at file level (e.g. flock),
-so the two instances will not try to populate the same file.
+Have a lovely day!
+Alex
 
-> The moderated mount functionality discussed in this thread would also be =
-helpful
-> for better handling when the daemon is down.
+>=20
+> Changes since v2:
+> - Added more RVB
+> - Formatting review fixes
+>=20
+>  man/man2/fanotify_init.2 | 20 ++++++++++++++++++
+>  man/man2/fanotify_mark.2 | 37 ++++++++++++++++++++++++++++++++-
+>  man/man7/fanotify.7      | 45 ++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 101 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/man/man2/fanotify_init.2 b/man/man2/fanotify_init.2
+> index b90e91707..93887b875 100644
+> --- a/man/man2/fanotify_init.2
+> +++ b/man/man2/fanotify_init.2
+> @@ -331,6 +331,26 @@ that the directory entry is referring to.
+>  This is a synonym for
+>  .RB ( FAN_REPORT_DFID_NAME | FAN_REPORT_FID | FAN_REPORT_TARGET_FID ).
+>  .TP
+> +.BR FAN_REPORT_MNT " (since Linux 6.14)"
+> +.\" commit 0f46d81f2bce970b1c562aa3c944a271bbec2729
+> +This value allows the receipt of events which contain additional informa=
+tion
+> +about the underlying mount correlated to an event.
+> +An additional record of type
+> +.B FAN_EVENT_INFO_TYPE_MNT
+> +encapsulates the information about the mount and is included alongside t=
+he
+> +generic event metadata structure.
+> +The use of
+> +.BR FAN_CLASS_CONTENT ,
+> +.BR FAN_CLASS_PRE_CONTENT,
+> +or any of the
+> +.B FAN_REPORT_DFID_NAME_TARGET
+> +flags along with this flag is not permitted
+> +and will result in the error
+> +.BR EINVAL .
+> +See
+> +.BR fanotify (7)
+> +for additional details.
+> +.TP
+>  .BR FAN_REPORT_PIDFD " (since Linux 5.15 and 5.10.220)"
+>  .\" commit af579beb666aefb17e9a335c12c788c92932baf1
+>  Events for fanotify groups initialized with this flag will contain
+> diff --git a/man/man2/fanotify_mark.2 b/man/man2/fanotify_mark.2
+> index a6d80ad68..2c9d6e9b9 100644
+> --- a/man/man2/fanotify_mark.2
+> +++ b/man/man2/fanotify_mark.2
+> @@ -67,7 +67,8 @@ contains
+>  all marks for filesystems are removed from the group.
+>  Otherwise, all marks for directories and files are removed.
+>  No flag other than, and at most one of, the flags
+> -.B FAN_MARK_MOUNT
+> +.BR FAN_MARK_MNTNS ,
+> +.BR FAN_MARK_MOUNT ,
+>  or
+>  .B FAN_MARK_FILESYSTEM
+>  can be used in conjunction with
+> @@ -99,6 +100,20 @@ If the filesystem object to be marked is not a direct=
+ory, the error
+>  .B ENOTDIR
+>  shall be raised.
+>  .TP
+> +.BR FAN_MARK_MNTNS " (since Linux 6.14)"
+> +.\" commit 0f46d81f2bce970b1c562aa3c944a271bbec2729
+> +Mark the mount namespace specified by
+> +.IR pathname .
+> +If the
+> +.I pathname
+> +is not a path that represents a mount namespace (e.g.
+> +.IR /proc/ pid /ns/mnt ),
+> +the call fails with the error
+> +.BR EINVAL .
+> +An fanotify group that was initialized with flag
+> +.B FAN_REPORT_MNT
+> +is required.
+> +.TP
+>  .B FAN_MARK_MOUNT
+>  Mark the mount specified by
+>  .IR path .
+> @@ -395,6 +410,26 @@ Create an event when a marked file or directory itse=
+lf has been moved.
+>  An fanotify group that identifies filesystem objects by file handles
+>  is required.
+>  .TP
+> +.B FAN_MNT_ATTACH
+> +.TQ
+> +.BR FAN_MNT_DETACH " (both since Linux 6.14)"
+> +.\" commit 0f46d81f2bce970b1c562aa3c944a271bbec2729
+> +Create an event when a mount was attached to or detached from a marked m=
+ount namespace, respectively.
+> +An attempt to set this flag on an inode, mount, or filesystem mark
+> +will result in the error
+> +.BR EINVAL .
+> +An fanotify group that was initialized with flag
+> +.B FAN_REPORT_MNT
+> +and the mark flag
+> +.B FAN_MARK_MNTNS
+> +are required.
+> +An additional information record of type
+> +.B FAN_EVENT_INFO_TYPE_MNT
+> +is returned with the event.
+> +See
+> +.BR fanotify (7)
+> +for additional details.
+> +.TP
+>  .BR FAN_FS_ERROR " (since Linux 5.16, 5.15.154, and 5.10.220)"
+>  .\" commit 9709bd548f11a092d124698118013f66e1740f9b
+>  Create an event when a filesystem error
+> diff --git a/man/man7/fanotify.7 b/man/man7/fanotify.7
+> index 68e930930..de0ea8e55 100644
+> --- a/man/man7/fanotify.7
+> +++ b/man/man7/fanotify.7
+> @@ -228,6 +228,23 @@ struct fanotify_event_info_pidfd {
+>  .EE
+>  .in
+>  .P
+> +In cases where an fanotify group is initialized with
+> +.BR FAN_REPORT_MNT ,
+> +event listeners should expect to receive the below
+> +information record object alongside the generic
+> +.I fanotify_event_metadata
+> +structure within the read buffer.
+> +This structure is defined as follows:
+> +.P
+> +.in +4n
+> +.EX
+> +struct fanotify_event_info_mnt {
+> +    struct fanotify_event_info_header hdr;
+> +    __u64 mnt_id;
+> +};
+> +.EE
+> +.in
+> +.P
+>  In case of a
+>  .B FAN_FS_ERROR
+>  event,
+> @@ -442,6 +459,12 @@ A file or directory that was opened read-only
+>  .RB ( O_RDONLY )
+>  was closed.
+>  .TP
+> +.BR FAN_MNT_ATTACH
+> +A mount was attached to mount namespace.
+> +.TP
+> +.BR FAN_MNT_DETACH
+> +A mount was detached from mount namespace.
+> +.TP
+>  .B FAN_FS_ERROR
+>  A filesystem error was detected.
+>  .TP
+> @@ -540,6 +563,8 @@ The value of this field can be set to one of the foll=
+owing.
+>  .B FAN_EVENT_INFO_TYPE_ERROR
+>  .TQ
+>  .B FAN_EVENT_INFO_TYPE_RANGE
+> +.TQ
+> +.B FAN_EVENT_INFO_TYPE_MNT
+>  .RE
+>  .IP
+>  The value set for this field
+> @@ -725,6 +750,26 @@ in case of a terminated process, the value will be
+>  .BR \-ESRCH .
+>  .P
+>  The fields of the
+> +.I fanotify_event_info_mnt
+> +structure are as follows:
+> +.TP
+> +.I .hdr
+> +This is a structure of type
+> +.IR fanotify_event_info_header .
+> +The
+> +.I .info_type
+> +field is set to
+> +.BR FAN_EVENT_INFO_TYPE_MNT .
+> +.TP
+> +.I .mnt_id
+> +Identifies the mount associated with the event.
+> +It is a 64-bit unique mount id as the one returned by
+> +.BR statx (2)
+> +with the
+> +.B STATX_MNT_ID_UNIQUE
+> +flag.
+> +.P
+> +The fields of the
+>  .I fanotify_event_info_error
+>  structure are as follows:
+>  .TP
+> --=20
+> 2.34.1
+>=20
 
-The terminology "moderated mount" freaks out some vfs maintainers ;)
-So let me clarify what I think *might* be reasonable.
-This untested sketch of a patch below demonstrates how we can use existing
-fsnotify data structures to set up and implement a "moderated" sb.
+--=20
+<https://www.alejandro-colomar.es/>
+<https://www.alejandro-colomar.es:8443/>
+<http://www.alejandro-colomar.es:8080/>
 
-There is currently no existing fanotify API to set this up, but it should
-not be hard to implement such an API.
+--xc75cfsa7xwbutvq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-For example:
+-----BEGIN PGP SIGNATURE-----
 
-fanotify_mark(fd, FAN_MARK_ADD | FAN_MARK_FILESYSTEM | FAN_MARK_DEFAULT, ..=
-.
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmfvspMACgkQ64mZXMKQ
+wqmlEQ//dm+cmRmOTFhBSds6nroeLRBGi7ETJbd+OtE1PTPAAjLtQ3IBoN9UYpDy
+a2qanhZVPxYdye2GquA2OufiJpo3mymMhtxfYJgDaCHcku4ru3cWLZKM1FsAUBbY
+/AMLYdCUDid7BSp8g3grNPTJqmB6wxVtHhzSaE/+/eStnLxDhfaP4HvavPxyTyLT
+yp/aotFsyZazwNjhoD1Do/Mxuwy/Ik+Majl81u5+JgaYCzBnwLul8P5QzDbPfgUE
+Vn3jHwLLHU90Qyn8F3ju+b+uJ4AStXyb0VJEXvzcKUTrkjyxLfb1FxHDV6zg3vAb
+TJb6zZ7w3lfDpj4m+M8CM4QP/gOXLZmOzMPvfvoDr/EUhZnUfavKdHR50kiC7D4K
+G8zQUtSj5xQJNsZtUp1JBTItjxAbOOX/Lgtt2VCXpDknPX/l7Z7pCUJPTD9F9W1m
+Bl10uALaZLfGY7HsifoJI2GkHzgIxcY765GlNTMiDr6IyG75D4zwMuCZgFWobyiN
+L8wvxYW+ytFjZ43WwaV1NQjP8Pe9CFqO7lj3rgz4yYZhyDH+Hy2xuNIXVlncsFoc
+2vi7tqC4fPxJW1LD3JKeAq+m+OJJ5BYpEVhdYGynDscBUY+wnlCjtUIu4Lyv3p/k
+HJFupqSdW6+j3JPP83qeqrLyVQJR3yV5c4q7p31OPwHQ9SnZPq4=
+=Urw2
+-----END PGP SIGNATURE-----
 
-I might have had some patches similar to this floating around.
-If you are interested in this feature, I could write and test a proper patc=
-h.
-
-Doing this for the mount level would be possible, but TBH, it does not look
-like the right object to be setting the moderation on, because even if we d=
-id
-set a default mask on a mount, it would have been easy to escape it by
-creating a bind mount, cloning a new mount namespace, etc.
-
-What is the reason that you are marking the mount?
-Is it so that you could have another "unmoderated" mount to
-populate the file conten?
-In that case you can opt-in for permission events on sb
-and opt-out from permission events on the "unmoderated" mount
-and you can also populate the file content with the FMODE_NONOTIFY
-fd provided in the permission event.
-
-WDYT?
-
-Thanks,
-Amir.
-
-diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index 7b364f965650..9fc1235bbc47 100644
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -585,7 +585,8 @@ int fsnotify(__u32 mask, const void *data, int
-data_type, struct inode *dir,
-         * SRCU because we have no references to any objects and do not
-         * need SRCU to keep them "alive".
-         */
--       if ((!sbinfo || !sbinfo->sb_marks) &&
-+       if ((!sbinfo || (!sbinfo->sb_marks &&
-+                        !READ_ONCE(sbinfo->default_mask))) &&
-            (!mnt || !mnt->mnt_fsnotify_marks) &&
-            (!inode || !inode->i_fsnotify_marks) &&
-            (!inode2 || !inode2->i_fsnotify_marks) &&
-@@ -641,6 +642,7 @@ int fsnotify(__u32 mask, const void *data, int
-data_type, struct inode *dir,
-         * ignore masks are properly reflected for mount/sb mark notificati=
-ons.
-         * That's why this traversal is so complicated...
-         */
-+       ret =3D 1;
-        while (fsnotify_iter_select_report_types(&iter_info)) {
-                ret =3D send_to_group(mask, data, data_type, dir, file_name=
-,
-                                    cookie, &iter_info);
-@@ -650,6 +652,21 @@ int fsnotify(__u32 mask, const void *data, int
-data_type, struct inode *dir,
-
-                fsnotify_iter_next(&iter_info);
-        }
-+
-+       /*
-+        * The sb default mask has permission events and there currently no
-+        * groups with marks handling permission events for this object.
-+        * That could mean that an "access modertating" service was stopped
-+        * or died without the chance or desire to allow sb access.
-+        * Err on the side of caution and deny access until another access
-+        * moderating service has started.
-+        */
-+       if (ret > 0 && (mask & ALL_FSNOTIFY_PERM_EVENTS) &&
-+           sbinfo && (mask & READ_ONCE(sbinfo->default_mask))) {
-+               ret =3D -EPERM;
-+               goto out;
-+       }
-+
-        ret =3D 0;
- out:
-        srcu_read_unlock(&fsnotify_mark_srcu, iter_info.srcu_idx);
-diff --git a/fs/notify/mark.c b/fs/notify/mark.c
-index 798340db69d7..317e21581e0a 100644
---- a/fs/notify/mark.c
-+++ b/fs/notify/mark.c
-@@ -255,6 +255,14 @@ static void *__fsnotify_recalc_mask(struct
-fsnotify_mark_connector *conn)
-                    !(mark->flags & FSNOTIFY_MARK_FLAG_NO_IREF))
-                        want_iref =3D true;
-        }
-+
-+       if (conn->type =3D=3D FSNOTIFY_OBJ_TYPE_SB) {
-+               struct fsnotify_sb_info *sbinfo =3D fsnotify_sb_info(sb);
-+
-+               if (sbinfo)
-+                       new_mask |=3D sbinfo->default_mask;
-+       }
-+
-        /*
-         * We use WRITE_ONCE() to prevent silly compiler optimizations from
-         * confusing readers not holding conn->lock with partial updates.
-diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_back=
-end.h
-index 396943093373..476b506d6b4a 100644
---- a/include/linux/fsnotify_backend.h
-+++ b/include/linux/fsnotify_backend.h
-@@ -560,6 +560,7 @@ struct fsnotify_mark_connector {
-  */
- struct fsnotify_sb_info {
-        struct fsnotify_mark_connector __rcu *sb_marks;
-+       __u32 default_mask;
-        /*
-         * Number of inode/mount/sb objects that are being watched in this =
-sb.
-         * Note that inodes objects are currently double-accounted.
+--xc75cfsa7xwbutvq--
 
