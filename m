@@ -1,158 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-45740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45741-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5FCFA7B99F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 11:09:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C17F0A7B9A2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 11:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78C623B6AD9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 09:09:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB6E53B7191
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 09:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85931A315C;
-	Fri,  4 Apr 2025 09:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCCB1A315C;
+	Fri,  4 Apr 2025 09:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bbUOMP2t";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SBUolRlj";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aFY1hGgJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2r3TDU1l"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t+L7kr28"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95091A2393
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Apr 2025 09:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373AF1C68F;
+	Fri,  4 Apr 2025 09:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743757781; cv=none; b=PVLPAwgxND/vhGAcS2rQuNP8SkccXpCSCcnz+V1zRVknsRzJF86RTS8V1U9rQgk56iKQLTpCeHYkTWBW3qOtU7f2E6HwUJvBbbi5QoGOL0wj5mOmKgXWiRpn3JheKSgVVbSAUVuFzKX1DvSIqLgw9+XUC2CrZVyKumkZETjJUFQ=
+	t=1743757803; cv=none; b=E7yCnZmGS2oFULY13Rnm+/tL1VpHvy0TyGRZ6cWKx1JSSLMzDJO6uw9laUHx6MNV0uDcmcx6aI/Opo6LlWmOoEo/xo0vaQK/PpLM2qvzGoFTML6iCX7Xq1nEDZa9UeXRurYDarwkv4KtmcR5ClpEVPAoYvki9FUZlxP4/d9x2ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743757781; c=relaxed/simple;
-	bh=xRhh91DIyRAUo3LsDmS/xvomtv4de/pK6MLY94wbvyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BfJy4VgaHGtTzGrpxts8AoY8BgXSSdfHOs47V0Ge6dBbXnzncznLVr5mHjBDMct5e0ETYJ5C/bRzNjhrHohMlzFVuEG/+qxEl4u0StKfyHQxtwGiMdlSnjyZzJGwTQIbNfFLetinM0L4MlPN+9mBhuQ5YkmkO4KtnbUlqsR/X8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bbUOMP2t; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SBUolRlj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aFY1hGgJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2r3TDU1l; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id EB5E61F385;
-	Fri,  4 Apr 2025 09:09:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1743757778; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZKInD56e0AOZxjyXASXarYwfeLkmZUcVHsDa4PAeMHs=;
-	b=bbUOMP2tjK8IXTCJh4i/u0N+WjzQC/vaDLj3GzreavKtHT2pdUWGiIjcLWP55/DMujiVzt
-	z+/NSiard5TBZduU2w0rsIiPphKCBELVmdH8gCZDP7PWSx6CC2pj2SEWYL7UDcFjMjakTr
-	AxqVbhflbZGmM23CoDFhBIIHv7HqnMQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1743757778;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZKInD56e0AOZxjyXASXarYwfeLkmZUcVHsDa4PAeMHs=;
-	b=SBUolRljcNb8TbKwDRwuecMN860fiUs2u9jud6r3CHEtf4IvnIdsmacP4NcckirPhyES6V
-	D2OFzrx6fQBI3hAA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1743757777; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZKInD56e0AOZxjyXASXarYwfeLkmZUcVHsDa4PAeMHs=;
-	b=aFY1hGgJfg8i0e/djJRElR2nYPgno+1KIw8QzwOtU0rx2y3OAQXR4ymxYRfsPi+sxmK3Qu
-	plzkVRLQMI2w8pmXPQmVnAB/T7x9s5hxR7plHFPkEP0SVFuYdKq42PNvi2BFF8ionYJqCM
-	JiGYfwV63A5P5zEaO4mo0sA0JP8YKFI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1743757777;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZKInD56e0AOZxjyXASXarYwfeLkmZUcVHsDa4PAeMHs=;
-	b=2r3TDU1lWiv/omvmcMpYcOZLK4/0lworNmvcxkE1CnYblgOUf1fVVPVc4nwvhehOTrDL3f
-	1XmR01ZhAnJ9s9AQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C29B613691;
-	Fri,  4 Apr 2025 09:09:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id yYgrL9Gh72fxBwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 04 Apr 2025 09:09:37 +0000
-Message-ID: <aadb65f3-7656-4051-99a4-909fc1f61fc7@suse.cz>
-Date: Fri, 4 Apr 2025 11:09:37 +0200
+	s=arc-20240116; t=1743757803; c=relaxed/simple;
+	bh=S/teuTD2v8oRiTzTg+SzTiOtVjFtdknPG646smxU3vw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WddV9qp4SPKh8rmtidDZz2AlyLnBiRWX4NFQ6PjlCDxVu+RSirnVVkbm5cEnPBqNRgMvFIsHzPfKH8CKXZEwOKYitHE4xd6c6tyCJ7M3QHpsRZJ3FkDmmR2smSviTHk26L/DdvdtbUQYMes76l+d6bwWPtpaD1kpmIVHUheg6+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t+L7kr28; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1885C4CEE9;
+	Fri,  4 Apr 2025 09:10:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743757802;
+	bh=S/teuTD2v8oRiTzTg+SzTiOtVjFtdknPG646smxU3vw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t+L7kr28Zm3mRKOff+3I4JASslHt+iskWPDl7jrVw2HRzxlEg7zrOQEiFzH8NPwkF
+	 OujqNbNXGZO+dMvB6xmYA+F8XBDbkeBk/Wh+NS3tI5z7LPLvQ847v0WD8EsCnghd9M
+	 MP3NFXG2jRuqWFZv8yW/7pb8Nu61lQADsHGr4kc3xykr+MOInWHq04c6YwXHdDHEGd
+	 d/sXzUud4mWZEh5bqpWWx6oz4kViECoM6KgUI6DxEMHTcNyCxQ3AhU7hCWD641Y1LH
+	 NI+36vKaoo+5C70FedPEUIrfM/HqHFqxHDSspvbxbZFTYyd4gQj4T3rVtK9p1nZ668
+	 4C6r1ote/D5VQ==
+Date: Fri, 4 Apr 2025 11:09:57 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Penglei Jiang <superman.xpt@gmail.com>, viro@zeniv.linux.org.uk, 
+	jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzbot+5d8e79d323a13aa0b248@syzkaller.appspotmail.com
+Subject: Re: [PATCH 2/2] vfs: Fix anon_inode triggering VFS_BUG_ON_INODE in
+ may_open()
+Message-ID: <20250404-entflammen-report-f8797ac37cde@brauner>
+References: <20250403015946.5283-1-superman.xpt@gmail.com>
+ <Z--Y_pEL9NAXWloL@infradead.org>
+ <20250404-kammer-fahrrad-516fe910491e@brauner>
+ <Z--ckIgXpv_-tE1l@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Potential Linux Crash: WARNING in ext4_dirty_folio in Linux
- kernel v6.13-rc5
-Content-Language: en-US
-To: Matthew Wilcox <willy@infradead.org>, Matt Fleming <matt@readmodwrite.com>
-Cc: adilger.kernel@dilger.ca, akpm@linux-foundation.org,
- linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, luka.2016.cs@gmail.com,
- tytso@mit.edu, Barry Song <baohua@kernel.org>, kernel-team@cloudflare.com,
- Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
- Dave Chinner <david@fromorbit.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-References: <Z8kvDz70Wjh5By7c@casper.infradead.org>
- <20250326105914.3803197-1-matt@readmodwrite.com>
- <CAENh_SSbkoa3srjkAMmJuf-iTFxHOtwESHoXiPAu6bO7MLOkDA@mail.gmail.com>
- <Z-7BengoC1j6WQBE@casper.infradead.org>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <Z-7BengoC1j6WQBE@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[dilger.ca,linux-foundation.org,vger.kernel.org,kvack.org,gmail.com,mit.edu,kernel.org,cloudflare.com,szeredi.hu,fromorbit.com,bytedance.com,linux.dev,HansenPartnership.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z--ckIgXpv_-tE1l@infradead.org>
 
-On 4/3/25 19:12, Matthew Wilcox wrote:
-> Ideas still on the table:
+On Fri, Apr 04, 2025 at 01:47:12AM -0700, Christoph Hellwig wrote:
+> On Fri, Apr 04, 2025 at 10:45:43AM +0200, Christian Brauner wrote:
+> > On Fri, Apr 04, 2025 at 01:31:58AM -0700, Christoph Hellwig wrote:
+> > > Please make sure anon inodes have a valid mode set.  Leaving this
+> > > landmine around where we have inodes without a valid mode is just going
+> > > to create more problems in the future.
+> > 
+> > We've tried to change it, it immediately leads to userspace tools
+> > regressions as they've started to rely on that behavior because it's been
+> > like that since the dawn of time. We even had to work around that crap
+> > in pidfs because lsof regressed. So now, we can't do this.
 > 
->  - Convert all filesystems to use the XFS inode management scheme.
->    Nobody is thrilled by this large amount of work.
->  - Find a simpler version of the XFS scheme to implement for other
->    filesystems.
+> Just because i_mode has something useful, we don't need to report that
+> to userspace.  We can still clear kstat.mode (with a big fat comment
+> explaining why).
 
-I don't know the XFS scheme, but this situation seems like a match for the
-mempool semantics? (I assume it's also a lot of work to implement)
+Yes, that's what we do in pidfs. I can do this for anon_inode as well.
+> 
 
