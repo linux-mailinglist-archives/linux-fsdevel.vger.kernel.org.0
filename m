@@ -1,79 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-45733-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45734-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92B12A7B8F6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 10:34:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F5DAA7B91B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 10:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAD1C3B3FFF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 08:33:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59507189A0C3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 08:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D84199FAF;
-	Fri,  4 Apr 2025 08:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DA819DF48;
+	Fri,  4 Apr 2025 08:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gCNN7D+G"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xrkeCsbF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4896A2E62B4;
-	Fri,  4 Apr 2025 08:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCF4190462;
+	Fri,  4 Apr 2025 08:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743755640; cv=none; b=jfRo4KRAUvPKZNIxem/aH+tUC8X9DlBSsuR2MX1hiYcTtVButnk/k/4yY4Fw6cFRglf2tx+gdw24SlTD9q3sdx5JDuxghqmfqSbOJ7ln2YSgEUged7RvQktNNUf1qhreKtjaoICgwqL2zbkjiCFmITicK+asE8NaY1uvGAcKdcY=
+	t=1743756091; cv=none; b=Q2XHnIC9+GNzwDv0mUdmFl2bmrSFhMMC+hEY9rEtzON/mGNTv3uN7vesge7v+HctgQERXig42MtZDP8Oi60r9jKRcJ7zXDsPKBpZdJ0vfy59DzSEtPEW9KXhCrqYXJ9u0iPiDaTwYMNtFK6id2cJx4RAR35K7W1bhcCRxWFRDoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743755640; c=relaxed/simple;
-	bh=UbqfnnkJ2RFypDS2Iog8rU6ytZMzuPUyz+6AiTrt8Q4=;
+	s=arc-20240116; t=1743756091; c=relaxed/simple;
+	bh=RBISfYxq+Tt92jGYsQSu/LEo5kK/QPuFRMtiyjl9NnI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PDKWmBDgd1tAhFVis0vBYD2JLny6ZlXxILD6gEdzpR8qu+w9Wg4bwgyTNWFaIUKB57NsjPEP38d0+vEiSBh4Uuj4XjM5kaYQCIAiVRPeBGWHVpNmqVdy9PPqYYtqVLiq18dvvxBISlLYElfvHmu28WOQC2oimwXz9l/KgEfisk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gCNN7D+G; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nr8ReJRbw60tRrEAOpO/nTouJOx6U89k3s6xIFB2LhbNiiycSGaStGO7dJMZasrtEuv57Gb9LB+7ENBlwWQauM2HGVHN9J/9lbjlS0TAHpYNXN1bdOr7o5084eZ6fo/P+JYD6lnDdv3trPNTPH3SKiG1QWAKglYOFcZx/4ke8v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xrkeCsbF; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ljHeP2QjLQYjOwUf2t9iT8m27ihNQpRMtfPnzhtYbSU=; b=gCNN7D+GlDbsCNVp8qmn6rs4ip
-	oxELllm96uq2C1wKLIDMcsLhsPWrwUf1+cPgdLVvEpV074nF4ZulKrUt/E/D5iDIeojhgKPeXC+FS
-	WAgBhZvKsrggu0SUAiAJZ3Fd1Cz+FlWB4tbb4OpDQjdVQVGZFc775rxgc4m73Ce5Gy5KQavzm+YTn
-	KA4Md1H8zsSzYsk8Br8Zpa9uHj+xOPq2dFigO3gvv61u6ausjtjkYioayiqDcvMX6MWvtrgW6QmH2
-	q1/MRO6oMr6Y0Z7uIcJZqpVIdjJNvKRMrSF+9whdJrlLIcZLmNU3ul/z8+OX5GjVvu5Aky90iYugb
-	sNjLprgQ==;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=hfehnCfQM6q1kv57vTplEJ1zzuNM6ali28S5Ie+bjJw=; b=xrkeCsbFAdbec+iPrIUS6dSJKf
+	PJ3zTWXW4LSPxtqiSGXRBaIyBVd6ZrIN+0snan2M5KES0r2gVec6tWofV0kfoiue/iN2xGCKLmy3v
+	NO/V6b2VTdEHMrjmw84Jm3bnq0e3/2O3J5/FkDHqS1T3+SGNgyMznzPVv3YggMLrOalJR9YS/4GMS
+	7EwiK5wjjCrA6w83nKJCw8MhIKcniUsv3EL5nhHcolNYC4M7VnS/YSeLRQIi6FBmNStYVwpRLOVrJ
+	OoktbceTFJ/x3pSES82/74eOgm76bSBd53N6YThxnNxr0S+gR49abY7pXkURfhOBnyAMY9K9WobSr
+	OlynjY/g==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u0cUw-0000000BA95-0zWJ;
-	Fri, 04 Apr 2025 08:33:58 +0000
-Date: Fri, 4 Apr 2025 01:33:58 -0700
+	id 1u0ccB-0000000BAwY-1Smo;
+	Fri, 04 Apr 2025 08:41:27 +0000
+Date: Fri, 4 Apr 2025 01:41:27 -0700
 From: Christoph Hellwig <hch@infradead.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] fs: make generic_fillattr() tail-callable and utilize
- it in ext2/ext4
-Message-ID: <Z--ZdiXwzCBskXQK@infradead.org>
-References: <20250401165252.1124215-1-mjguzik@gmail.com>
+To: Andreas Schwab <schwab@linux-m68k.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] fs: cache the string generated by reading
+ /proc/filesystems
+Message-ID: <Z--bN3WetGcsQmnx@infradead.org>
+References: <20250329192821.822253-1-mjguzik@gmail.com>
+ <20250329192821.822253-3-mjguzik@gmail.com>
+ <87h63bpnib.fsf@igel.home>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250401165252.1124215-1-mjguzik@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87h63bpnib.fsf@igel.home>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Apr 01, 2025 at 06:52:52PM +0200, Mateusz Guzik wrote:
-> Unfortunately the other filesystems I checked make adjustments after
-> their own call to generic_fillattr() and consequently can't benefit.
+On Sat, Mar 29, 2025 at 09:53:16PM +0100, Andreas Schwab wrote:
+> On Mär 29 2025, Mateusz Guzik wrote:
+> 
+> > It is being read surprisingly often (e.g., by mkdir, ls and even sed!).
+> 
+> It is part of libselinux (selinuxfs_exits), called by its library
+> initializer.
 
-This is in no way a useful commit message.
-
-Why do you even do this change?  What's the point of it?  And why do you
-think making a function tail callable for two callers, one of which is
-basically irrelevant warrants adding a pointless return that now needs
-to be generated and checked by all other callers (which this patch fails
-to do)?
+Can we please fix libselinux instead of working around this really
+broken behavior in the kernel?
 
 
