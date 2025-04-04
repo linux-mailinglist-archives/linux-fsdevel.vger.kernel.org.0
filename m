@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-45799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50AC8A7C537
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 22:58:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEEA2A7C533
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 22:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C49CD189FD78
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 20:58:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C50A3B50D5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 20:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900BA1F5423;
-	Fri,  4 Apr 2025 20:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D801E7C01;
+	Fri,  4 Apr 2025 20:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PJgABkhV"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gswuXfyw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0CA634
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Apr 2025 20:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85728634
+	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Apr 2025 20:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743800299; cv=none; b=sciBy1u7liLTABFrYVjAS5eQ9Hg8vcX99bwU99fATqUWIm3m07/FqQVzxyJzmTJrdEij3w5aLyT1y8CHPKW2Tj4fHB9WFujd+DwygD9U1pKf4LXT8XpX64HVZ1w1DLa4ku0HvA20JwB8+rcZeTvi2TVdENHawjzmgLgB2PRmUlk=
+	t=1743800239; cv=none; b=jCuLWKf5A7YmQ7Fm2bhse0ZkSEdVapBGWeW0b4dm+3YOAvd7QzwwIM7fbfsnCXYBrZOQXHZf4SNV6lvK/Q+WDtM/+6sek5IQCUizbfGoMRau0lvcGfCx4mcF99ypIQdJmtXSrPXzlNt0d0QthtrU6t00yE+2NM4UlVAHSujMIjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743800299; c=relaxed/simple;
-	bh=5rAP454n25zcPYfawRjoBw4lRLm9+VrdJM4e/KKIkA8=;
+	s=arc-20240116; t=1743800239; c=relaxed/simple;
+	bh=1L65CVvSDOW0m7Wy5dDPouXQ+g9QF9hjdnfAenXJ8kg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JIh7F7pADPsvoQORRc1HlcM9/BD7U0496n0h+Zq5s6Y8AcwK0OnEw0aJjXsbX9lmIBFoz33ugSfWEbsRJms7yeSsYSQTN8IJRKgGGoeUZTIm+2NmvtAmqNYujRgX7/Mi/d4WwwDrr1tG59tVVBF60u8xeV9HkN5WrvEuURLn81A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PJgABkhV; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=NsX/Xzw+GI7h0i+4eFXlF26aBHT5qGf71TPkAt9bvbRnBkOO3CaAz/noIppoJaFRorgIriAEi2vTTXOCQkSTpg+QmnWX7MPCcI89coTsimta40pZIGHRT5FB+4j/ZF+QoO2pmSIbRURV3o4HrsyCLPzSMY/i95QDvKchblaQluA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gswuXfyw; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743800297;
+	s=mimecast20190719; t=1743800236;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sO3UQqypsxo1Y61Nt/Ug7nFQr6xB1gJPZRCYoB22hZg=;
-	b=PJgABkhVgAaJyTY7zj3cBrragENTt6s62mAdjZ0sln0/fHpusV594XEU1eZUhbXl3b4Zv0
-	koL23KuNrM3ogcXb+zW6CjnxsQcSAI3L0ucTOfGO1noTaiZa4rgsxJ19puem3yxXjReuO8
-	urPgBdB9PRFv/Gg9Mw1p1K7rZwt02bc=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=MphuJnClTuz/wgauAZ/+9UOOoNZwVFrAJq5GFOCDfKo=;
+	b=gswuXfywXEGk01K8pJJoQJXrEhQwgmi2fzrLHAqr4uI5/HVWqJcJ0a5NIGtjikv0+rvzQS
+	/9cUjHo5aPNj/VUd1Eb1Jd4Sl/AZ1OcbjHPQkwysmAA/uY6MIQ0Wc00GmZxHd0iKxb0vWF
+	lKwbUfI8lF5FZI4dt9wIeKQq6JAPMcI=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-605-pWaVj2VDNOqQFRv70xhj7g-1; Fri, 04 Apr 2025 16:56:57 -0400
-X-MC-Unique: pWaVj2VDNOqQFRv70xhj7g-1
-X-Mimecast-MFC-AGG-ID: pWaVj2VDNOqQFRv70xhj7g_1743800217
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-39ac9b0cb6aso1724764f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Apr 2025 13:56:57 -0700 (PDT)
+ us-mta-101-AZct-kwZN7SGT7kvP65qhQ-1; Fri, 04 Apr 2025 16:57:15 -0400
+X-MC-Unique: AZct-kwZN7SGT7kvP65qhQ-1
+X-Mimecast-MFC-AGG-ID: AZct-kwZN7SGT7kvP65qhQ_1743800234
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43ce245c5acso29180005e9.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Apr 2025 13:57:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743800217; x=1744405017;
+        d=1e100.net; s=20230601; t=1743800234; x=1744405034;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=sO3UQqypsxo1Y61Nt/Ug7nFQr6xB1gJPZRCYoB22hZg=;
-        b=wPXvYV2KaA7+4DBS3//AjTU3GVCbnW4cUAKKoRb2opQm0AvnMZKq7XCkAfenB0pEkS
-         UnMpA7qKMhD+q6dLMaLIR7lEgmlQAEBnL7FSyBXQDd7Pj2UZ9QRYWswpS65vZ6fDzOWK
-         MIFMtdM1kNgO2bLY5VEBcASTyUsrfEa3JPj5gaI85aTw8nxJbQENboKWd3LPneuZ9oQH
-         f1Ov6HjTbiKP0TusVI6oNbCdRMdaMZCXZUpq/96rZdRvH3p7yOlWJW2/BHCn800k04mY
-         bIENc8PdRGIdzA1Ptthtrhoa5pYkuMeBjl/yoG1ZFMndrMELaPlTwYOV5SzC2gCOLTGN
-         OEzw==
-X-Forwarded-Encrypted: i=1; AJvYcCXq2pzUPJbvnSksNky/Nnh8KBcmOu8H9hc/7yWWa/nC16nCwJtvTbitpgv8JhtL4Gm0Xw6R4e4XkGFhlpmI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr8q1yzgnwh62EWBXZuqhYSF6g8Ur9+xT23YEXpO2r8aO05LVm
-	C/hTlVjLPalKC0hyyv+GdaAQO0JjapX2UTFy1bg7tx/H4f17Pg9cRYr1tkDEWqrbkig3S4cF3aA
-	rLeUpCgskmQKrFfaTIw7iu56+TY/gwWdIbeSa+POkt05guZO8U/oxkDO6qzW2SeE=
-X-Gm-Gg: ASbGncuxITWSWHyovGdvdihUfX6GYVxwBBEk5pmGAuy0dv9o+x9Boj9kuIZzjRBRI7p
-	FOhOVXOcwjjVEjresjDb/rgLIcQcsBmmLgaTCTHixPXB9XrzhnL7JrQSfSZE5lcETrjZHUGnfDC
-	f0Bs0G69fEavEWCDKlbf0wH3BNEn85G+J0GDfhWhb9MH6MgCxszYo0lLh/sggzbU9w3iR4ZJXq1
-	7XxJT0xNmgpGOL2VUAVB42QjrpZwkVbmdQ6dwaXlxuPonAn0XDnSWBqulxCuzBk42vyv2/wfzrW
-	qqI455G/OUeqUmvkZQI1xm6nY861GHjXDIlxKPn9N9ofRj2FWBuyGxfd189s6ttmjtV3ZUHW5fs
-	+NyhJekihBIgi47peoNrCgFH2cgk/m7pxx1kx+8hRqtQ=
-X-Received: by 2002:a5d:6d84:0:b0:391:20ef:6300 with SMTP id ffacd0b85a97d-39d6fd18c1fmr555082f8f.37.1743800216836;
-        Fri, 04 Apr 2025 13:56:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEhMC9Q1PpfIla1nLJoN6o8Xo5pYx7vsN93z+bf9YyETVOZPvKV2nCp4AMMA3VNwSYsJ6ZcJQ==
-X-Received: by 2002:a5d:6d84:0:b0:391:20ef:6300 with SMTP id ffacd0b85a97d-39d6fd18c1fmr555076f8f.37.1743800216475;
-        Fri, 04 Apr 2025 13:56:56 -0700 (PDT)
+        bh=MphuJnClTuz/wgauAZ/+9UOOoNZwVFrAJq5GFOCDfKo=;
+        b=jb30nDREg5c9SzUmdjMfEGYYYqm93ghO9WAFSx31jr+d8pUu3vSKBaOftPhEMCCq5+
+         hS5bUmey/2ABYPKmaQ6BFSq4c69Pxbsq/mjJnm3GScNxeQcL3iBuHv8fQDzV98adD9DU
+         RVkkUlXcxSE06+gzHvptClM9ha8pnrfVMF+toTOy9kMlGjXS0MJ6ypDgxdpYKFl3ptlX
+         plCnp6Eut0arqdNdTTQY8bRBnlkXufIbMkcDqL1jBel4zDmIkGNsdkxQjQbxryyYcjKq
+         Vfn4bWXBwuuYPqEll7vH7FFY8AOBNERt0YpptzChIygoJFdH3bc0G+KlAB0shFKzTZxR
+         29lw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGH1mScQgw+7osWyocjJzmU220lfUmvQ7XxUgcbT/+OKG2qXhYleWewg65SIpzXL7LfZcZeKx6iB5TSgW8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+qq4Djw3xolb2YnW1DmJJctAeeyeG3t3KKzXrK/mJLaCkn6zR
+	diG68X3yNzVTZpH886CEwQlHS+0u/pmLU5a10o1e2B0w2DS16aV1KXlqHWg4G+RaIseXmyhpoq1
+	vAwNiMCY9ZYv1X19i+Ix07FF7dW5OP4lbVLCroHWPTTa6T545viygVqHIkx3Wbx0=
+X-Gm-Gg: ASbGncuduTae+cOefwKLusFQYA7EY7bi6Vu4CcO8pqFwr+LbdzSYbxqRGO82aQex/jv
+	CdnsI68WJ96sm1zTkwniUeV3Rha63dyL2f/S6Nz/X/3HW5u9Ah3ePOOvLFu3qYMiNbPQRj/ueBS
+	Dq84f5LrI7CK/o0Jzwb9iLyHFA/NjgJ8s85fsBkGyFOiWEGQ/r9Yn/pKDnrN1qoj1qRQjrRwkm/
+	HWhSSAOhfy1n8gy3b3MLYZJ/mHJodK+c/C6GXMUVYXZTyYMaknXlL33+TOf4gm71QTx2nfjvNlo
+	PEG27PjFD2zFN9L9jduFMSt+53IQfKzY80ayUrA0frIXRSj58kL7LGqj9bB6FFO36UVgKCqZGwK
+	tw/iN3lnBBI94ZJ42ynLR6Ba39YtbSTGJUtUROmucly0=
+X-Received: by 2002:a05:600c:500a:b0:43b:ce3c:19d0 with SMTP id 5b1f17b1804b1-43ed0da06f1mr38086195e9.29.1743800233992;
+        Fri, 04 Apr 2025 13:57:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEzTanrLml12tr3IDgF64xmkRK9hrhYqlKSSITwWBy2in93k0ucTZ0z5PncEDD99Q7+/SAkdg==
+X-Received: by 2002:a05:600c:500a:b0:43b:ce3c:19d0 with SMTP id 5b1f17b1804b1-43ed0da06f1mr38086075e9.29.1743800233684;
+        Fri, 04 Apr 2025 13:57:13 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c71b:7900:8752:fae3:f9c9:a07e? (p200300cbc71b79008752fae3f9c9a07e.dip0.t-ipconnect.de. [2003:cb:c71b:7900:8752:fae3:f9c9:a07e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c300968cfsm5300264f8f.16.2025.04.04.13.56.55
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec1795205sm59026895e9.30.2025.04.04.13.57.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Apr 2025 13:56:55 -0700 (PDT)
-Message-ID: <9338b7ca-13ba-4831-a257-2b081c375de9@redhat.com>
-Date: Fri, 4 Apr 2025 22:56:55 +0200
+        Fri, 04 Apr 2025 13:57:13 -0700 (PDT)
+Message-ID: <c749b632-5b53-4e01-96a9-8193988879c5@redhat.com>
+Date: Fri, 4 Apr 2025 22:57:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,13 +90,12 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/8] iov_iter: Convert iov_iter_extract_xarray_pages() to
- use folios
+Subject: Re: [PATCH 5/8] filemap: Remove find_subpage()
 To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
  Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
 References: <20250402210612.2444135-1-willy@infradead.org>
- <20250402210612.2444135-5-willy@infradead.org>
+ <20250402210612.2444135-6-willy@infradead.org>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -144,66 +143,43 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20250402210612.2444135-5-willy@infradead.org>
+In-Reply-To: <20250402210612.2444135-6-willy@infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 02.04.25 23:06, Matthew Wilcox (Oracle) wrote:
-> ITER_XARRAY is exclusively used with xarrays that contain folios,
-> not pages, so extract folio pointers from it, not page pointers.
-> Removes a use of find_subpage().
+> All users of this function now call folio_file_page() instead.
+> Delete it.
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > ---
->   lib/iov_iter.c | 16 ++++++++--------
->   1 file changed, 8 insertions(+), 8 deletions(-)
+>   include/linux/pagemap.h | 13 -------------
+>   1 file changed, 13 deletions(-)
 > 
-> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-> index 7c50691fc5bb..a56bbf71a5d6 100644
-> --- a/lib/iov_iter.c
-> +++ b/lib/iov_iter.c
-> @@ -1650,11 +1650,11 @@ static ssize_t iov_iter_extract_xarray_pages(struct iov_iter *i,
->   					     iov_iter_extraction_t extraction_flags,
->   					     size_t *offset0)
->   {
-> -	struct page *page, **p;
-> +	struct page **p;
-> +	struct folio *folio;
->   	unsigned int nr = 0, offset;
->   	loff_t pos = i->xarray_start + i->iov_offset;
-> -	pgoff_t index = pos >> PAGE_SHIFT;
-> -	XA_STATE(xas, i->xarray, index);
-> +	XA_STATE(xas, i->xarray, pos >> PAGE_SHIFT);
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index cd4bd0f8e5f6..0ddd4bd8cdf8 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -945,19 +945,6 @@ static inline bool folio_contains(struct folio *folio, pgoff_t index)
+>   	return index - folio_index(folio) < folio_nr_pages(folio);
+>   }
 >   
->   	offset = pos & ~PAGE_MASK;
->   	*offset0 = offset;
-> @@ -1665,17 +1665,17 @@ static ssize_t iov_iter_extract_xarray_pages(struct iov_iter *i,
->   	p = *pages;
->   
->   	rcu_read_lock();
-> -	for (page = xas_load(&xas); page; page = xas_next(&xas)) {
-> -		if (xas_retry(&xas, page))
-> +	for (folio = xas_load(&xas); folio; folio = xas_next(&xas)) {
-> +		if (xas_retry(&xas, folio))
->   			continue;
->   
-> -		/* Has the page moved or been split? */
-> -		if (unlikely(page != xas_reload(&xas))) {
-> +		/* Has the folio moved or been split? */
-> +		if (unlikely(folio != xas_reload(&xas))) {
->   			xas_reset(&xas);
->   			continue;
->   		}
->   
-> -		p[nr++] = find_subpage(page, xas.xa_index);
-> +		p[nr++] = folio_file_page(folio, xas.xa_index);
->   		if (nr == maxpages)
->   			break;
->   	}
-
-I'm curious, if we would have a large folio in there, and we'd want to 
-extract multiple pages ... wouldn't we only extract one page per large 
-folio only? :/
+> -/*
+> - * Given the page we found in the page cache, return the page corresponding
+> - * to this index in the file
+> - */
+> -static inline struct page *find_subpage(struct page *head, pgoff_t index)
+> -{
+> -	/* HugeTLBfs wants the head page regardless */
+> -	if (PageHuge(head))
+> -		return head;
+> -
+> -	return head + (index & (thp_nr_pages(head) - 1));
+> -}
+> -
+>   unsigned filemap_get_folios(struct address_space *mapping, pgoff_t *start,
+>   		pgoff_t end, struct folio_batch *fbatch);
+>   unsigned filemap_get_folios_contig(struct address_space *mapping,
 
 Reviewed-by: David Hildenbrand <david@redhat.com>
 
