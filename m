@@ -1,125 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-45738-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23F5CA7B96A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 10:58:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04835A7B995
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 11:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C0697A6F8A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 08:56:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C16F77A8099
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 09:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546891A2398;
-	Fri,  4 Apr 2025 08:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b="lb20VlKf"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CBD611E;
+	Fri,  4 Apr 2025 09:06:09 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596E719D081;
-	Fri,  4 Apr 2025 08:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.129.21.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBF916132F;
+	Fri,  4 Apr 2025 09:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743757071; cv=none; b=jW+yyNWOsMhFFA4VHdgK/Bom4FR0CzXtamNO1p6w3BQxjbvR4uqQ5jVUIRQJJg+JgRX/MX3ZQ1djy1TsD98FPhZSiFqgld4wHdf2w82Gv+FOH3vDvlcu9gNd0z3hp3rJLfyKUZqfYFItptu1zU4awtIvTNhJOIermpYIHm1oHJs=
+	t=1743757569; cv=none; b=ZULCZim+55f5bxUPsl0FdXBt4LaCg7j/UTV/wvB9RtRVDGkms6ncvnJHcQCYmHrwjl7/ckZsfuOwTLvkQ2vRXozk554hyjMnRK40if1vF5DdhUC5IXupq2h8DbM+v5Ay86OZxaUXCaGIr+ICEgB/Z18hoECS6n5LJ3LncAHYOQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743757071; c=relaxed/simple;
-	bh=qGpiBlKk4gUz7SGt4N7XSRFqC2Dp6ovYU5+SiSPQizM=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=oSRHVbAWEB4F7MrU7nN8kjBM2Z3OAH1vOv/0Q5zy7EjHUbWOt7wT0/gkBnQGjQv6tf0LJHyHyUpbyDzi4DdKMxdPcESE9I+taXUrlVM14RC7YWj9u9FBmXfJ5x5+yRhOtWfqyOR+tr/J18TXcvcRhCBZqsugQHc/+hKSuglo0K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr; spf=pass smtp.mailfrom=3xo.fr; dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b=lb20VlKf; arc=none smtp.client-ip=212.129.21.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xo.fr
-Received: from localhost (mail.3xo.fr [212.129.21.66])
-	by mail.3xo.fr (Postfix) with ESMTP id 98EECCD;
-	Fri,  4 Apr 2025 10:50:29 +0200 (CEST)
-X-Virus-Scanned: Debian amavis at nxo2.3xo.fr
-Received: from mail.3xo.fr ([212.129.21.66])
- by localhost (mail.3xo.fr [212.129.21.66]) (amavis, port 10024) with ESMTP
- id 8mSLMhAe8CKe; Fri,  4 Apr 2025 10:50:27 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.3xo.fr 83FED8D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xo.fr; s=3xo;
-	t=1743756627; bh=CRAJN8+XEA5p31GSsFqFuEJaey0yqN9dDs07tGG1jQA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lb20VlKfcjY8a7J/mtS3DUFvklSqJjYHbNOpvr5mvDuUiTcUAZTrS4jvwIYi8pDbd
-	 jngz7iyj2q4qcYbEo0GDpo08Z9QRGAjpQdVAP4VFFDrkW8nKXq1Eo/bYXKZQyW/m7B
-	 XtHudX59MBoF8M+9EXMuM/86MpKMuPEiXhr+YP1CU432PwUleI3pWhJKH/mAgcVGfr
-	 mdDYTpedNVvrT51XQzQsffn4Jv0RJ4oEF+cxyX+4fVC8705kTxtdIRIKH8XCDQCNsY
-	 a6gvuy2X4ZE69DNF8SCmUBX3heBPxYDV9qklLKzRt+nmF+63iq/i6DC6LOg1J4dW24
-	 aayyaaredgRCQ==
-Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3xo.fr (Postfix) with ESMTPSA id 83FED8D;
-	Fri,  4 Apr 2025 10:50:27 +0200 (CEST)
+	s=arc-20240116; t=1743757569; c=relaxed/simple;
+	bh=3KuxW5QTAuQ13ScJFuxAKFZQrv/QjQev0J4mopx8Gnc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sf2KK1WZ2KS2qrBxj5kM5uB7gFw82UHDL+QNiZ6l0Ocpe/VHTx2bi/TQ2lDXfgt44b10RgGP0uYgTjsxW+K4XccqKzTvuJFkr0NLAAMwTh9rfK1IqiFOndUsWeI691rBCltp3cMorRgMgA6ja00JFcl6T6pUms4pzTNlLXTsLuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id D978A68BEB; Fri,  4 Apr 2025 11:06:01 +0200 (CEST)
+Date: Fri, 4 Apr 2025 11:06:01 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>, alx@kernel.org, brauner@kernel.org,
+	djwong@kernel.org, dchinner@redhat.com, linux-man@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, martin.petersen@oracle.com,
+	linux-api@vger.kernel.org
+Subject: Re: [PATCH RFC] statx.2: Add stx_atomic_write_unit_max_opt
+Message-ID: <20250404090601.GA12163@lst.de>
+References: <20250319114402.3757248-1-john.g.garry@oracle.com> <20250320070048.GA14099@lst.de> <c656fa4d-eb76-4caa-8a71-a8d8a2ba6206@oracle.com> <20250320141200.GC10939@lst.de> <7311545c-e169-4875-bc6c-97446eea2c45@oracle.com> <20250323064029.GA30848@lst.de> <5485c1ad-8a20-40bc-aa75-68b820de5e1c@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 04 Apr 2025 10:50:27 +0200
-From: Nicolas Baranger <nicolas.baranger@3xo.fr>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: hch@lst.de, David Howells <dhowells@redhat.com>, netfs@lists.linux.dev,
- linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Steve French <smfrench@gmail.com>, Jeff Layton
- <jlayton@kernel.org>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [netfs/cifs - Linux 6.14] loop on file cat + file copy when files
- are on CIFS share
-In-Reply-To: <Z-Z95ePf3KQZ2MnB@infradead.org>
-References: <10bec2430ed4df68bde10ed95295d093@3xo.fr>
- <35940e6c0ed86fd94468e175061faeac@3xo.fr> <Z-Z95ePf3KQZ2MnB@infradead.org>
-Message-ID: <48685a06c2608b182df3b7a767520c1d@3xo.fr>
-X-Sender: nicolas.baranger@3xo.fr
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5485c1ad-8a20-40bc-aa75-68b820de5e1c@oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hi Christoph
+On Thu, Apr 03, 2025 at 04:07:04PM +0100, John Garry wrote:
+> So I am thinking one of these:
+> a. stx_atomic_write_unit_max_dev
+> b. stx_atomic_write_unit_max_bdev
+> c. stx_atomic_write_unit_max_align
+> d. stx_atomic_write_unit_max_hw
+>
+> The terms dev (or device) and bdev are already used in the meaning of some 
+> members in struct statx, so not too bad. However, when we support large 
+> atomic writes for XFS rtvol, the bdev atomic write limit and rtextsize 
+> would influence this value (so just bdev might be a bit misleading in the 
+> name).
 
-Thanks for answer and help
-Did someone reproduced the issue (very easy) ?
+Don't.  Especially when you have a natively out of write file system
+that optimized case will not involve the usual hardware offload.
 
-
-CIFS SHARE is mounted as /mnt/fbx/FBX-24T
-echo toto >/mnt/fbx/FBX-24T/toto
-
-ls -l /mnt/fbx/FBX-24T/toto
--rw-rw-rw- 1 root root 5 20 mars  09:20 /mnt/fbx/FBX-24T/toto
-
-cat /mnt/fbx/FBX-24T/toto
-toto
-toto
-toto
-toto
-toto
-toto
-toto
-^C
-
-
-CIFS mount options:
-grep cifs /proc/mounts
-//10.0.10.100/FBX24T /mnt/fbx/FBX-24T cifs 
-rw,nosuid,nodev,noexec,relatime,vers=3.1.1,cache=none,upcall_target=app,username=fbx,domain=HOMELAN,uid=0,noforceuid,gid=0,noforcegid,addr=10.0.10.100,file_mode=0666,dir_mode=0755,iocharset=utf8,soft,nounix,serverino,mapposix,mfsymlinks,reparse=nfs,nativesocket,symlink=mfsymlinks,rsize=65536,wsize=65536,bsize=16777216,retrans=1,echo_interval=60,actimeo=1,closetimeo=1 
-0 0
-
-KERNEL: uname -a
-Linux 14RV-SERVER.14rv.lan 6.14.0-rc2-amd64 #0 SMP PREEMPT_DYNAMIC Wed 
-Feb 12 18:23:00 CET 2025 x86_64 GNU/Linux
-
-
-Kind regards
-Nicolas Baranger
-
-
-Le 2025-03-28 11:45, Christoph Hellwig a écrit :
-
-> Hi Nicolas,
-> 
-> please wait a bit, many file system developers where at a conference
-> this week.
 
