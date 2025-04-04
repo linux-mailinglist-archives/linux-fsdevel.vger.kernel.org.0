@@ -1,75 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-45787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45788-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5BF2A7C320
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 20:15:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54FE8A7C323
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 20:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A9353BA556
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 18:14:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFD571640B1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 18:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FAA219A90;
-	Fri,  4 Apr 2025 18:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629F121B9D8;
+	Fri,  4 Apr 2025 18:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H/ayOn7c"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C/Z06cZO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881F215DBB3
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Apr 2025 18:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6403420E33E
+	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Apr 2025 18:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743790495; cv=none; b=k/cnUU6fvyO0d/cvpCuxlfpB25SySSrYlg4TC7QQ+LxywTAEXUUnPLg91isUE6rvEeyIepCnoNghmqlImlJJmIYMVUGSx3j7dtl+65FHx3feLD2hEO/Tkwe+XMwTaKYHy7DSTdbl74lbFepxILecz0SdwqxV2uYVecjh9CDnWto=
+	t=1743790495; cv=none; b=QyokNck1cdrEa6IIpHwG4VgrRY1Ql5nbJcJWL0kffiLacTJT/N2IXWl9es7UpW90Ti082AbLq/74u6V5DQ8bfw7bh1MxyoIwkjrwmXfVw9DwhTTkFHxOHfu0L6cnzQ13bi8P3Pd+7QfXRy0/URkg00q71HsecBD7w05LTO0zPOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1743790495; c=relaxed/simple;
-	bh=9Hqqk1GoZMxIjJgyDmuHUXWph483mRGdsuzxtkwvh9A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W45gpn+sJAZMoDvX3mpdYuYS/sjhy1/eI4J20G5l/N+fCHWpK0zZS65cEULY+r0JwI+jMFXtP5FH7wAfN1fqIZPbg2IA97jPoJNcmukma0uIUlxfq5udoMaVcAGx1jGolLWxeduEBpFUmLapv32CfdmUWA3OdFnIUDxGC2AMWyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H/ayOn7c; arc=none smtp.client-ip=209.85.214.176
+	bh=/UNkyJBVkBHaYMkjltKdmVgH3/7G53OsFpnwdChW2JM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mMigKC3osYFTt2L/XvtAlxQSFfYCBoqvXB7vhVjV5I2wuQ+fzBO89N6MdUlJj+zAgVpu1R9tK9Nli1mQjzH6zYljm45246YPt/PRvXsxPTbci7B27I10u6XFEKMmL2+nRwecMNzN667O37YB7xcX1BcTpSDtBoGff9E9gyl18i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C/Z06cZO; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-224341bbc1dso22524525ad.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Apr 2025 11:14:52 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22622ddcc35so31412875ad.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Apr 2025 11:14:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743790492; x=1744395292; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aSkmJg5ac6Byx1YjNxRyiIUlORI2T8jiR1BS3qTlfTs=;
-        b=H/ayOn7coryTMMrh2vdIoV2xDMt29zTFwifSu8Ma0SuGlObSdJZKhhwUgcvqEZ63CU
-         fcNEu/CJM3BslSzXiLWyRxt5zYTF8BVyibuHnLqs3YgU4CPWThKtlBpECJTUDkm+IxBE
-         I0wtrVZXuJEMCvzaHTGYmQpR5fdWM+Yzk/LTYndYDV/sXol5TVncYbeZ7jFoPvHtU4/o
-         UrOsjhL1QeJdfXHgVKdQsvSbXj/ye/0In6so4+Mfij5Auekw0SEi23y83GSRR3AGugVh
-         ZTC4a1bB1WMrlue8ujkaMnfPDVzse+4WB4QseAldEB/OrTXGiSM/s3IfPXPuuDi+27E5
-         919A==
+        d=gmail.com; s=20230601; t=1743790493; x=1744395293; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fl8QoDkWZfm8DTTKNPo/wCbrE6y7cAAPOUh+ANXI66Q=;
+        b=C/Z06cZOcPNtMKpDPng1Rv1SQZZWS5jFSxsFjHe7IYdGbj9rCINqcs+9mjh7NBm6Pd
+         +MNOfYC27WNh8eCUdnpC2OLTHQABpmd2GvboXZJCf6DC62iy2U0IizNg8Lw1bODobL5w
+         T/thlvb2EupcoJBCO+AJVZ57I9rdeZ3AnnqhHbIbaxMIp93kAbYIOJlkanBgwI2cUcpk
+         j3KVIS0ODo70Oqzb/WLhKENPdDR6Vinlhg9JJ6c+pmj5uuUm3k/xokc2s72lHYvsxIv/
+         nBY3ubiSBWDIvpBsuoUd/xubrw7nzd8IXMuyQamWIYSaGbpkfoixEZYuB8VDKqXUMEtx
+         AfEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743790492; x=1744395292;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aSkmJg5ac6Byx1YjNxRyiIUlORI2T8jiR1BS3qTlfTs=;
-        b=iHbEk2pLEzFS67IAQko2b7HdjiTUn2OmecRBT+BhPg9IEApnyPDB2OKhITUeoJeIQi
-         uqIhqKV0Aj/6W5LPc487RFKwvE9YO6ucYY0LlROPLPBdduRiWmQM8w2mkyufv0MI2Hy3
-         lwgvYxzzHe4mBCsqIKdjHNVMAWGr1AzdJkP6zut0sRgcVuL1ZXCyIzodyTEkzvL+KwGC
-         hIhxsatT4d5ze8sOSjYigJuwzELsUbW6XAc9ZscefhLeUW1Fh6FjqhU1PuCSgEg5ZqM0
-         euEgYqJdo1Q/W5MKKdmryu0LB3/UekJPBGZqdmlcC9nl7z5t2/0LDw72CGrT91xBPNj/
-         hahA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNlZWh4vDnrhKMcjgprsXbkpW7/EIPbEeYTciRvw6csJuv+fsFlshJVMex2n6y/F7UeFYtwBnSuhXwE6tR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzdn50p8Q1ZVo5Z0DNWzz/F/P+XBddaebR/O2ZXvyd6pRf5DEu5
-	9/sLAyNdtvFE3NXKlvjfjEN1NK1zXAH/VGMWt74u6RYUrhTKGwjU
-X-Gm-Gg: ASbGncszHVEFeA2dqLqcsHVz2cOx9IBN6aajCOAHUUVs7RtKN1d4lKGhEWdr1uLT7bz
-	MP20Mn4mOhLO48UtJUCKub3CeVBncgsjzl8YE73zonBYgh3a1uOE5MEvq6N22EHA3IKrcjzq4zv
-	JjOsIDgEuIVRtrkWwlBiuk4QEiVSqpq/3do7OCnPzXuNqLDAKfugyGrnNqztV0KDfBwe97Dm4U3
-	wKY99UYUJjz1Fg1mA3D5j5PBpIWe1+NDJaQCCtJZkihqJWEO72xL9HHVSWHnrgKLOFJMWISzmPY
-	i4sCLR7dRsRDyFBU7pk5R3VbM/hFKhYGQkKv
-X-Google-Smtp-Source: AGHT+IHSQAEQV/dX5KqHjaKvV26q7I4AlYPFvdyP8SsLzg/2MiZDHrqrK2H6tGhfXxDyKO9uEtwhEA==
-X-Received: by 2002:a17:902:cf0b:b0:220:ea90:191e with SMTP id d9443c01a7336-22a955141b4mr7487475ad.4.1743790491637;
-        Fri, 04 Apr 2025 11:14:51 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229785ad982sm35448425ad.25.2025.04.04.11.14.50
+        d=1e100.net; s=20230601; t=1743790493; x=1744395293;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fl8QoDkWZfm8DTTKNPo/wCbrE6y7cAAPOUh+ANXI66Q=;
+        b=wzjb9XiNJq27ZDhcR5yWNntvhMYMSHQZEHYx6Fjb8bWyLMPwM/CEWCHiSvMzw8kcC7
+         ZDsRp6SpVO4H7cFONmBso6w7mwjzNsSA5/e+bbUdEW+tG+jRd0jsQAa9qJ7TvhufyjWD
+         3GZmpD9r6LdTsd6uQxE5eHVmmTHWPs578iVdJ7DL41aRjXGpaaFsIU4xo1umjdXfBsNt
+         i051T83+1B6F3vzpFGtNLrrSpJrRt3YXf1rTyZjhf+dp8dMT9Bb8lUck2ZU5lF0TiSR7
+         +W0DxPJIa5XJAWuBeTXofJ0Vm2CLmsVM1jBpgtN0Zd/wX1V3flxwkHa+9eZqAPsHCU0E
+         J1NA==
+X-Forwarded-Encrypted: i=1; AJvYcCWpCJtyYg0qiGeME7YKSR2CKpG0iKuxsQVCqiPs3Rp18zDOeBduXc80FUrRTYvXojeAQu5MfS69TAIqg+La@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwBagcuk1zM7hKdoFeB4Qsb8i7F2S5iKFk7Hfpsg59k5bGki7l
+	WgbRGLFHlGSf7dzW5mFQOfReoailvGcgeBFg+DHPurSWEvEgV5W0
+X-Gm-Gg: ASbGncsAH/pjreSG+YEqpTytFKwdEvj254pXSx7MdgpRMj3O6GPnjFGAkDBZctIHI4d
+	yvOAiFeCxWc/MMuALbp4bwrxdUI9txDfyDGX879719r9tnAqo03U339QjH/Sn9C0RO/s8aFQDW5
+	7taV71NcZQXzgyhaRzRxoIgxhhlW+zULGE57GXxxKZTdE6TQnFdKL23DRFMQB5LvxQ8eg+Qi9qu
+	L4HYYmmYt9k57hnRyCEFAeFP3WUj+lX0bEnToAXgzOMHpZ1Hk4aivmpEkIbEmEL7CvPf9T2E29F
+	88AHdXkZxnE1CqALs9M3yzP8IrGa94cNQ+JXFfk=
+X-Google-Smtp-Source: AGHT+IFQWuRUYtqQ9PYQeKB91kmnnsp+MBvvTBYSFVfsYjy2EJYrTFwForkG0Fjr8XsdVucFtVIK+w==
+X-Received: by 2002:a17:902:ce84:b0:223:397f:46be with SMTP id d9443c01a7336-22a955881b8mr5396015ad.47.1743790493629;
+        Fri, 04 Apr 2025 11:14:53 -0700 (PDT)
+Received: from localhost ([2a03:2880:ff:5::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2297866e173sm35372415ad.192.2025.04.04.11.14.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Apr 2025 11:14:51 -0700 (PDT)
+        Fri, 04 Apr 2025 11:14:53 -0700 (PDT)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: miklos@szeredi.hu,
 	akpm@linux-foundation.org,
@@ -81,11 +83,14 @@ Cc: jefflexu@linux.alibaba.com,
 	bernd.schubert@fastmail.fm,
 	ziy@nvidia.com,
 	jlayton@kernel.org,
-	kernel-team@meta.com
-Subject: [PATCH v7 0/3] fuse: remove temp page copies in writeback
-Date: Fri,  4 Apr 2025 11:14:40 -0700
-Message-ID: <20250404181443.1363005-1-joannelkoong@gmail.com>
+	kernel-team@meta.com,
+	Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH v7 1/3] mm: add AS_WRITEBACK_INDETERMINATE mapping flag
+Date: Fri,  4 Apr 2025 11:14:41 -0700
+Message-ID: <20250404181443.1363005-2-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250404181443.1363005-1-joannelkoong@gmail.com>
+References: <20250404181443.1363005-1-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -94,115 +99,47 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The purpose of this patchset is to help make writeback in FUSE filesystems as
-fast as possible.
+Add a new mapping flag AS_WRITEBACK_INDETERMINATE which filesystems may
+set to indicate that writing back to disk may take an indeterminate
+amount of time to complete. Extra caution should be taken when waiting
+on writeback for folios belonging to mappings where this flag is set.
 
-In the current FUSE writeback design (see commit 3be5a52b30aa
-("fuse: support writable mmap"))), a temp page is allocated for every dirty
-page to be written back, the contents of the dirty page are copied over to the
-temp page, and the temp page gets handed to the server to write back. This is
-done so that writeback may be immediately cleared on the dirty page, and this 
-in turn is done in order to mitigate the following deadlock scenario that may
-arise if reclaim waits on writeback on the dirty page to complete (more details
-can be found in this thread [1]):
-* single-threaded FUSE server is in the middle of handling a request
-  that needs a memory allocation
-* memory allocation triggers direct reclaim
-* direct reclaim waits on a folio under writeback
-* the FUSE server can't write back the folio since it's stuck in
-  direct reclaim
+Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+Acked-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ include/linux/pagemap.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Allocating and copying dirty pages to temp pages is the biggest performance
-bottleneck for FUSE writeback. This patchset aims to get rid of the temp page
-altogether (which will also allow us to get rid of the internal FUSE rb tree
-that is needed to keep track of writeback status on the temp pages).
-Benchmarks show approximately a 20% improvement in throughput for 4k
-block-size writes and a 45% improvement for 1M block-size writes.
-
-In the current reclaim code, there is one scenario where writeback is waited
-on, which is the case where the system is running legacy cgroupv1 and reclaim
-encounters a folio that already has the reclaim flag set and the caller did
-not have __GFP_FS (or __GFP_IO if swap) set.
-
-This patchset adds a new mapping flag, AS_WRITEBACK_INDETERMINATE, which
-filesystems may set on its inode mappings to indicate that writeback
-operations may take an indeterminate amount of time to complete. FUSE will set
-this flag on its mappings. Reclaim for the legacy cgroup v1 case described
-above will skip reclaim of folios with that flag set.
-
-With this change, writeback state is now only cleared on the dirty page after
-the server has written it back to disk. If the server is deliberately
-malicious or well-intentioned but buggy, this may stall sync(2) and page
-migration, but for sync(2), a malicious server may already stall this by not
-replying to the FUSE_SYNCFS request and for page migration, there are already
-many easier ways to stall this by having FUSE permanently hold the folio lock.
-A fuller discussion on this can be found in [2]. Long-term, there needs to be
-a more comprehensive solution for addressing migration of FUSE pages that
-handles all scenarios where FUSE may permanently hold the lock, but that is
-outside the scope of this patchset and will be done as future work. Please
-also note that this change also now ensures that when sync(2) returns, FUSE
-filesystems will have persisted writeback changes.
-
-[1] https://lore.kernel.org/linux-kernel/495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com/
-[2] https://lore.kernel.org/linux-fsdevel/20241122232359.429647-1-joannelkoong@gmail.com/
-
-Changelog
----------
-v6:
-https://lore.kernel.org/linux-fsdevel/20241122232359.429647-1-joannelkoong@gmail.com/
-Changes from v6 -> v7:
-* Drop migration and sync patches, as they are useless if a server is
-  determined to be malicious
-
-v5:
-https://lore.kernel.org/linux-fsdevel/20241115224459.427610-1-joannelkoong@gmail.com/
-Changes from v5 -> v6:
-* Add Shakeel and Jingbo's reviewed-bys 
-* Move folio_end_writeback() to fuse_writepage_finish() (Jingbo)
-* Embed fuse_writepage_finish_stat() logic inline (Jingbo)
-* Remove node_stat NR_WRITEBACK inc/sub (Jingbo)
-
-v4:
-https://lore.kernel.org/linux-fsdevel/20241107235614.3637221-1-joannelkoong@gmail.com/
-Changes from v4 -> v5:
-* AS_WRITEBACK_MAY_BLOCK -> AS_WRITEBACK_INDETERMINATE (Shakeel)
-* Drop memory hotplug patch (David and Shakeel)
-* Remove some more kunnecessary writeback waits in fuse code (Jingbo)
-* Make commit message for reclaim patch more concise - drop part about
-  deadlock and just focus on how it may stall waits
-
-v3:
-https://lore.kernel.org/linux-fsdevel/20241107191618.2011146-1-joannelkoong@gmail.com/
-Changes from v3 -> v4:
-* Use filemap_fdatawait_range() instead of filemap_range_has_writeback() in
-  readahead
-
-v2:
-https://lore.kernel.org/linux-fsdevel/20241014182228.1941246-1-joannelkoong@gmail.com/
-Changes from v2 -> v3:
-* Account for sync and page migration cases as well (Miklos)
-* Change AS_NO_WRITEBACK_RECLAIM to the more generic AS_WRITEBACK_MAY_BLOCK
-* For fuse inodes, set mapping_writeback_may_block only if fc->writeback_cache
-  is enabled
-
-v1:
-https://lore.kernel.org/linux-fsdevel/20241011223434.1307300-1-joannelkoong@gmail.com/T/#t
-Changes from v1 -> v2:
-* Have flag in "enum mapping_flags" instead of creating asop_flags (Shakeel)
-* Set fuse inodes to use AS_NO_WRITEBACK_RECLAIM (Shakeel)
-
-Joanne Koong (3):
-  mm: add AS_WRITEBACK_INDETERMINATE mapping flag
-  mm: skip reclaiming folios in legacy memcg writeback indeterminate
-    contexts
-  fuse: remove tmp folio for writebacks and internal rb tree
-
- fs/fuse/file.c          | 360 ++++------------------------------------
- fs/fuse/fuse_i.h        |   3 -
- include/linux/pagemap.h |  11 ++
- mm/vmscan.c             |  10 +-
- 4 files changed, 46 insertions(+), 338 deletions(-)
-
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 26baa78f1ca7..762575f1d195 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -210,6 +210,7 @@ enum mapping_flags {
+ 	AS_STABLE_WRITES = 7,	/* must wait for writeback before modifying
+ 				   folio contents */
+ 	AS_INACCESSIBLE = 8,	/* Do not attempt direct R/W access to the mapping */
++	AS_WRITEBACK_INDETERMINATE = 9, /* Use caution when waiting on writeback */
+ 	/* Bits 16-25 are used for FOLIO_ORDER */
+ 	AS_FOLIO_ORDER_BITS = 5,
+ 	AS_FOLIO_ORDER_MIN = 16,
+@@ -335,6 +336,16 @@ static inline bool mapping_inaccessible(struct address_space *mapping)
+ 	return test_bit(AS_INACCESSIBLE, &mapping->flags);
+ }
+ 
++static inline void mapping_set_writeback_indeterminate(struct address_space *mapping)
++{
++	set_bit(AS_WRITEBACK_INDETERMINATE, &mapping->flags);
++}
++
++static inline bool mapping_writeback_indeterminate(struct address_space *mapping)
++{
++	return test_bit(AS_WRITEBACK_INDETERMINATE, &mapping->flags);
++}
++
+ static inline gfp_t mapping_gfp_mask(struct address_space * mapping)
+ {
+ 	return mapping->gfp_mask;
 -- 
 2.47.1
 
