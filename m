@@ -1,786 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-45790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95C71A7C327
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 20:15:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32CF7A7C3AF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 21:14:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A24081773D8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 18:15:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76F131781F2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 19:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9245321A436;
-	Fri,  4 Apr 2025 18:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7808214230;
+	Fri,  4 Apr 2025 19:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VbnaX8+5"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hMdtlQal"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB4C21C171
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Apr 2025 18:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2DD13D531
+	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Apr 2025 19:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743790501; cv=none; b=VKbhZqdeNGx12Dy7zm6utGLVeaHfldBrOcTHeNvXiF6fs0Uh8+LttMwspFyfIqGvH9mlOJMlHAVnePrzboOr7ejoLbzsTNOJRFS4UujoqOax9wnVcG7XAz++EfdAyrWOxZVJjpz60PrGZOhIR6nf40j2uAddDus3lBGwzzmZLXg=
+	t=1743794035; cv=none; b=W8tW9HdWWnr5J5BsnhutBXy8x3rSF8AMdqLUmT85+K8Vbw7Jwoyk040yyY4ejtBgB0r1BRwQd2gdMxVrhkgwTQnRNwyCsML5iyyBdqbXTOAFxC1R0kuBNCCmsyOwKd0lj/F+rPczM3nqE5+yu9Eaq3sVy8qU5h4jf7sUKTEG1/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743790501; c=relaxed/simple;
-	bh=PocwMwfthKm2K2U00xXQZcA/MzoSSBw7AFBkMCKsEP8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iTpWT7iSlqT9zO6kVsFDEXcZFEpHf9EGyJ82D4dVHC6FnA5oh5mYMI4w51W7yF445ftBPSQO0Jmc6RZ+IMJveQdw2Wh4M583pfrGMma8d5PZ6wnXz7zEmtpKAGO5cjaAN3EuEXFEGwds+US5W9R7yscXbrcCg3Ng+MufIMylKPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VbnaX8+5; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2240b4de12bso32739835ad.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Apr 2025 11:14:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743790498; x=1744395298; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ro6dJ4GoZF5GCiGEcpg9UJuR608idQkDGAMhopK9Xk8=;
-        b=VbnaX8+5yyr97T7nQwpwboLGAO+dcNwE+koy1LDTJDZmAkVDIFzDxkvy/wQa7eVLS9
-         m0KQGbeAGmn2KoX01B/c62d42opCLd2cgtBjpnymoZKOLydBonZUzsYbfH79vDAaGY+c
-         RBcGeSeg24Iv6r9ZDTY/SIuocBDgH1q/bZXFccIKLKa4wfVdKEORaRB4XKtfmGnynrVs
-         vEpoP4X3D4R+vhfCtbAuN7IyXBiV9XbM8U5BywX47IFfbXKvTplo63pJanT7LWNFwtUY
-         OD5PDsH3vwTtOrQr+oXTirksjB7TY/BhaiglrAz6b/px4l+JKrfG3+XKdVJFymYPlCpK
-         +iSw==
+	s=arc-20240116; t=1743794035; c=relaxed/simple;
+	bh=Ow3w7puAPYmR4ya4uhG1A7z3mxIP4ldwHHM8iWgHUC0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MUkVI1++3gbFtzgC3luGuqQ/NVxbi8DPkYV0tWh4ZRoJmL2zZAjxZq/GnY4VhYAKJi6tPYEVdZgS/IBtahtfVbZzahYrfDN/ArQTn1zIcL5zfrZswVJmf/kJAlv6RiJQUXBC61jXkY0I5n16chwvcSZwIwxEQMK7C4xpDQ5j0fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hMdtlQal; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743794032;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4Uy2wHSKFxr5oiJfdGGGRkItfd9HfMRo1HowWXsXdLI=;
+	b=hMdtlQalMdG+96jLyHh2Xnx3V6dtzSGFyupgeER8rKRureb3DGyHvzRCvxgm6PLX8TwJyD
+	9joZ5mioVJmHjYP2uMDVs8GXDcniI92QDtnrLGobxHtHjk2bEO3hjvGfQG6a1sGjsrwkiA
+	5csYlERUsCxMBJHgLUedJhqIZ5Enyvc=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-578-Ts8jPTFlNcWjfy1mpktdgw-1; Fri, 04 Apr 2025 15:13:49 -0400
+X-MC-Unique: Ts8jPTFlNcWjfy1mpktdgw-1
+X-Mimecast-MFC-AGG-ID: Ts8jPTFlNcWjfy1mpktdgw_1743794028
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-438e180821aso11218615e9.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Apr 2025 12:13:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743790498; x=1744395298;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ro6dJ4GoZF5GCiGEcpg9UJuR608idQkDGAMhopK9Xk8=;
-        b=FDmVkvcRIZlNCXDHtR56hRME0xvvcHmGSslFluL7mV0Qc4CKYa5KiSMzg/UxEDxMqo
-         0MSfGqfb3bGo/8lgm9fe3UujKkS/HcVP2XCASLP0w3K5gUbZI1TAlfjid1letvQpRRzf
-         isXYsyKnKQFCnFto+EnuB6mXSQY7VPdkCl/r8YOSoRl8JHKCxMwV5d/G1LGGwFkTNm4J
-         20dM3xppW2qrfeoESGxgZfRdeIuVxfZwtLGgi9Chd+X8T6kop+XPbRsb0MitMDYeea6L
-         czD8/V9q6VT/He3VsPMT6lToA8KcEO3maJcShJ8p0npCL6458bNC9zkqKneQMMRaU/Ul
-         j/RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYMkT5cYQJXCA5rlCYr8EynZcduGG4QkM2nuIQAjr3Hxyk6BYKyC68GRtKYuBqGDdliibHUzE7v4HFDSHA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyri127PhReHqLiJMV11Fjz8vGRicVrMjAHkCyFi2JGQUyw6SYQ
-	GkBDHYRD37tsLmNaZg1PESa+4IxDEYD/qIfT3TdsFozpeHFRErc3
-X-Gm-Gg: ASbGncuKEndNmLkicKvwfIBiOdm9S2eEwbNIk0ruwKeA7WZz55OEi0Kj79qhUnJjkD6
-	rk448iipaHthnRxNXyWk3C/SgPHEEe45Wh0NOEuIIUeD26PQ5CpoYmlENrtSYfAlZ+/grQ9GHxm
-	lyWjysdv9+dZGuW9w7m40SHIttrLX4BsFX56+8TMEV0BZobq+K9pHxx7Gx9gScmGtqB5dIdzj9F
-	JbHGNyG59RZ6nd4iYPcrklm1NEBJyV9QP79zJyzb68tQalH8c8xKi2W40jWigc6dHi8JURkoWEo
-	yl7qLuOmlpFy0Lyh6M+5SnXY7gjJtdH5J3ZsJqw=
-X-Google-Smtp-Source: AGHT+IGkN0PRjt/OSbDEHn8IomnvUJ855I+Gfmi28p8+UH+Wi59dJqBErOB3hRXspe1aOB+8PEZLGw==
-X-Received: by 2002:a17:902:c94e:b0:224:5a8:ba29 with SMTP id d9443c01a7336-22a8a0b38bdmr46533995ad.43.1743790497957;
-        Fri, 04 Apr 2025 11:14:57 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:3::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229785bffedsm35700125ad.63.2025.04.04.11.14.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Apr 2025 11:14:57 -0700 (PDT)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: miklos@szeredi.hu,
-	akpm@linux-foundation.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: jefflexu@linux.alibaba.com,
-	shakeel.butt@linux.dev,
-	david@redhat.com,
-	bernd.schubert@fastmail.fm,
-	ziy@nvidia.com,
-	jlayton@kernel.org,
-	kernel-team@meta.com,
-	Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH v7 3/3] fuse: remove tmp folio for writebacks and internal rb tree
-Date: Fri,  4 Apr 2025 11:14:43 -0700
-Message-ID: <20250404181443.1363005-4-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250404181443.1363005-1-joannelkoong@gmail.com>
-References: <20250404181443.1363005-1-joannelkoong@gmail.com>
+        d=1e100.net; s=20230601; t=1743794028; x=1744398828;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4Uy2wHSKFxr5oiJfdGGGRkItfd9HfMRo1HowWXsXdLI=;
+        b=umuoN6V7bjKPllVF4Up6XOZBr0m3DHTgM+IXGORi3Y5E5py4G29sJ8n5AL+Vhow0Sc
+         leTVCXCjwRnEw5r1FsPPo06gbUw5ux8Kjo2jk6dlsJROmyvux5l0O0RkaDszGcT49oHh
+         6YUuFbRUIsStWxpsdTz7/npwoBKr+tug1jfBkLBRGRCc6k71rJSuSJT9+UyMIRhzv0b/
+         /h91hfidO+o+b0eKFEmBkgWqbDogHKfTuEb8dSc1SH1XNZDWYSC0sYeoFjRzWJUx90+O
+         N8wNIPAeTep2XH8Egcrtmie83KPNN6Bn3N9KqPpmSIiAcCo9BnJB2jgZRldgQ3Q7aqbw
+         zLXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVw8qfz3W94yrv2IKqR3ISj/UBxcxJ22kz+W+szJYEZK0kOO0tCP23gG16sZFUXNY3ONYii6HcFVGAWWvD5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyg9FigiIaprP+2f7iK/WHgAR42LWoyvEuJw0Af+/FO3Q/vAnPb
+	FQNwnmqGuZP/7mK5wY1yWcF3HUZFn1i3bP0cKdkVSmAXHwFkxLrwqWAKrZc7s4qZZEoEFi8mB2x
+	SUCKR2Gc1VdUsgdWQv6xeRJ81bu4RMHXBwKwyVXkBCacKApkNUqqdHY6Dd4wEzOc=
+X-Gm-Gg: ASbGncseK9mS0GdyC4mLku0IkN7laruRdlXxmS8b+GfC36Uq3kmwWEqWxhjQR40ZfnI
+	Eag92gorLv/hS2iZRjuN9+2QgOzYD/9wucgABQfW3NG6Vk4U/zFP7ZwMtx3ZIoGACUE0YYWEgBU
+	hGxjLUe0AU5Hd4QSjind8K6vL1cK+IOlpdklWUteSnzmCxw+1fjrO6O87yF0rLn+wM/CW3/emER
+	SaODFTXdAF9Mjv1JtG1+1dYFG51/MhwIIX9vNuy5MfqmE41BUbwwz37ZVvlcucPzW+uNnDzpCBy
+	Mn3OoPWAIU9Oet9hBS+VONo9JIKm+AtAWidYVIfzeqHTt5PzJ8ZxtDGqqjfj2hpQBMr2ec5MtOg
+	QO9eVwKc+qHD4LtkcdUQcyeTXR9XvJPh99EZ2zSOOPt0=
+X-Received: by 2002:a05:600c:c8a:b0:43c:f597:d584 with SMTP id 5b1f17b1804b1-43ecfa0704amr41245665e9.29.1743794028309;
+        Fri, 04 Apr 2025 12:13:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IELfkuER9ESk4TdalV1jYd6GtkeagBadty4TD/jhIAe8Xs7iHMaS5LzRniMKdR72jsrWtR/vg==
+X-Received: by 2002:a05:600c:c8a:b0:43c:f597:d584 with SMTP id 5b1f17b1804b1-43ecfa0704amr41245465e9.29.1743794027953;
+        Fri, 04 Apr 2025 12:13:47 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c71b:7900:8752:fae3:f9c9:a07e? (p200300cbc71b79008752fae3f9c9a07e.dip0.t-ipconnect.de. [2003:cb:c71b:7900:8752:fae3:f9c9:a07e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c3020d6c8sm4982169f8f.73.2025.04.04.12.13.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Apr 2025 12:13:47 -0700 (PDT)
+Message-ID: <0462bb5b-c728-4aef-baaf-a9da7398479f@redhat.com>
+Date: Fri, 4 Apr 2025 21:13:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/3] mm: add AS_WRITEBACK_INDETERMINATE mapping flag
+To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
+ akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Cc: jefflexu@linux.alibaba.com, shakeel.butt@linux.dev,
+ bernd.schubert@fastmail.fm, ziy@nvidia.com, jlayton@kernel.org,
+ kernel-team@meta.com, Miklos Szeredi <mszeredi@redhat.com>
+References: <20250404181443.1363005-1-joannelkoong@gmail.com>
+ <20250404181443.1363005-2-joannelkoong@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250404181443.1363005-2-joannelkoong@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In the current FUSE writeback design (see commit 3be5a52b30aa
-("fuse: support writable mmap")), a temp page is allocated for every
-dirty page to be written back, the contents of the dirty page are copied over
-to the temp page, and the temp page gets handed to the server to write back.
+On 04.04.25 20:14, Joanne Koong wrote:
+> Add a new mapping flag AS_WRITEBACK_INDETERMINATE which filesystems may
+> set to indicate that writing back to disk may take an indeterminate
+> amount of time to complete. Extra caution should be taken when waiting
+> on writeback for folios belonging to mappings where this flag is set.
+> 
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Acked-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>   include/linux/pagemap.h | 11 +++++++++++
+>   1 file changed, 11 insertions(+)
+> 
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 26baa78f1ca7..762575f1d195 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -210,6 +210,7 @@ enum mapping_flags {
+>   	AS_STABLE_WRITES = 7,	/* must wait for writeback before modifying
+>   				   folio contents */
+>   	AS_INACCESSIBLE = 8,	/* Do not attempt direct R/W access to the mapping */
+> +	AS_WRITEBACK_INDETERMINATE = 9, /* Use caution when waiting on writeback */
+>   	/* Bits 16-25 are used for FOLIO_ORDER */
+>   	AS_FOLIO_ORDER_BITS = 5,
+>   	AS_FOLIO_ORDER_MIN = 16,
+> @@ -335,6 +336,16 @@ static inline bool mapping_inaccessible(struct address_space *mapping)
+>   	return test_bit(AS_INACCESSIBLE, &mapping->flags);
+>   }
+>   
+> +static inline void mapping_set_writeback_indeterminate(struct address_space *mapping)
+> +{
+> +	set_bit(AS_WRITEBACK_INDETERMINATE, &mapping->flags);
+> +}
+> +
+> +static inline bool mapping_writeback_indeterminate(struct address_space *mapping)
+> +{
+> +	return test_bit(AS_WRITEBACK_INDETERMINATE, &mapping->flags);
+> +}
+> +
+>   static inline gfp_t mapping_gfp_mask(struct address_space * mapping)
+>   {
+>   	return mapping->gfp_mask;
 
-This is done so that writeback may be immediately cleared on the dirty page,
-and this in turn is done in order to mitigate the following deadlock scenario
-that may arise if reclaim waits on writeback on the dirty page to complete:
-* single-threaded FUSE server is in the middle of handling a request
-  that needs a memory allocation
-* memory allocation triggers direct reclaim
-* direct reclaim waits on a folio under writeback
-* the FUSE server can't write back the folio since it's stuck in
-  direct reclaim
+Staring at this again reminds me of my comment in [1]
 
-With a recent change that added AS_WRITEBACK_INDETERMINATE and mitigates
-the situations described above, FUSE writeback does not need to use
-temp pages if it sets AS_WRITEBACK_INDETERMINATE on its inode mappings.
+"
+b) Call it sth. like AS_WRITEBACK_MIGHT_DEADLOCK_ON_RECLAIM to express
+      that very deadlock problem.
+"
 
-This commit sets AS_WRITEBACK_INDETERMINATE on the inode mappings
-and removes the temporary pages + extra copying and the internal rb
-tree.
+In the context here now, where we really only focus on the reclaim 
+deadlock that can happen for trusted FUSE servers during reclaim, would 
+it make sense to call it now something like that?
 
-fio benchmarks --
-(using averages observed from 10 runs, throwing away outliers)
+[1] 
+https://lore.kernel.org/linux-mm/0ed5241e-10af-43ee-baaf-87a5b4dc9694@redhat.com/
 
-Setup:
-sudo mount -t tmpfs -o size=30G tmpfs ~/tmp_mount
- ./libfuse/build/example/passthrough_ll -o writeback -o max_threads=4 -o source=~/tmp_mount ~/fuse_mount
-
-fio --name=writeback --ioengine=sync --rw=write --bs={1k,4k,1M} --size=2G
---numjobs=2 --ramp_time=30 --group_reporting=1 --directory=/root/fuse_mount
-
-        bs =  1k          4k            1M
-Before  351 MiB/s     1818 MiB/s     1851 MiB/s
-After   341 MiB/s     2246 MiB/s     2685 MiB/s
-% diff        -3%          23%         45%
-
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
-Acked-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/fuse/file.c   | 360 ++++-------------------------------------------
- fs/fuse/fuse_i.h |   3 -
- 2 files changed, 28 insertions(+), 335 deletions(-)
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 754378dd9f71..91ada0208863 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -415,89 +415,11 @@ u64 fuse_lock_owner_id(struct fuse_conn *fc, fl_owner_t id)
- 
- struct fuse_writepage_args {
- 	struct fuse_io_args ia;
--	struct rb_node writepages_entry;
- 	struct list_head queue_entry;
--	struct fuse_writepage_args *next;
- 	struct inode *inode;
- 	struct fuse_sync_bucket *bucket;
- };
- 
--static struct fuse_writepage_args *fuse_find_writeback(struct fuse_inode *fi,
--					    pgoff_t idx_from, pgoff_t idx_to)
--{
--	struct rb_node *n;
--
--	n = fi->writepages.rb_node;
--
--	while (n) {
--		struct fuse_writepage_args *wpa;
--		pgoff_t curr_index;
--
--		wpa = rb_entry(n, struct fuse_writepage_args, writepages_entry);
--		WARN_ON(get_fuse_inode(wpa->inode) != fi);
--		curr_index = wpa->ia.write.in.offset >> PAGE_SHIFT;
--		if (idx_from >= curr_index + wpa->ia.ap.num_folios)
--			n = n->rb_right;
--		else if (idx_to < curr_index)
--			n = n->rb_left;
--		else
--			return wpa;
--	}
--	return NULL;
--}
--
--/*
-- * Check if any page in a range is under writeback
-- */
--static bool fuse_range_is_writeback(struct inode *inode, pgoff_t idx_from,
--				   pgoff_t idx_to)
--{
--	struct fuse_inode *fi = get_fuse_inode(inode);
--	bool found;
--
--	if (RB_EMPTY_ROOT(&fi->writepages))
--		return false;
--
--	spin_lock(&fi->lock);
--	found = fuse_find_writeback(fi, idx_from, idx_to);
--	spin_unlock(&fi->lock);
--
--	return found;
--}
--
--static inline bool fuse_page_is_writeback(struct inode *inode, pgoff_t index)
--{
--	return fuse_range_is_writeback(inode, index, index);
--}
--
--/*
-- * Wait for page writeback to be completed.
-- *
-- * Since fuse doesn't rely on the VM writeback tracking, this has to
-- * use some other means.
-- */
--static void fuse_wait_on_page_writeback(struct inode *inode, pgoff_t index)
--{
--	struct fuse_inode *fi = get_fuse_inode(inode);
--
--	wait_event(fi->page_waitq, !fuse_page_is_writeback(inode, index));
--}
--
--static inline bool fuse_folio_is_writeback(struct inode *inode,
--					   struct folio *folio)
--{
--	pgoff_t last = folio_next_index(folio) - 1;
--	return fuse_range_is_writeback(inode, folio_index(folio), last);
--}
--
--static void fuse_wait_on_folio_writeback(struct inode *inode,
--					 struct folio *folio)
--{
--	struct fuse_inode *fi = get_fuse_inode(inode);
--
--	wait_event(fi->page_waitq, !fuse_folio_is_writeback(inode, folio));
--}
--
- /*
-  * Wait for all pending writepages on the inode to finish.
-  *
-@@ -886,13 +808,6 @@ static int fuse_do_readfolio(struct file *file, struct folio *folio)
- 	ssize_t res;
- 	u64 attr_ver;
- 
--	/*
--	 * With the temporary pages that are used to complete writeback, we can
--	 * have writeback that extends beyond the lifetime of the folio.  So
--	 * make sure we read a properly synced folio.
--	 */
--	fuse_wait_on_folio_writeback(inode, folio);
--
- 	attr_ver = fuse_get_attr_version(fm->fc);
- 
- 	/* Don't overflow end offset */
-@@ -1005,17 +920,12 @@ static void fuse_send_readpages(struct fuse_io_args *ia, struct file *file)
- static void fuse_readahead(struct readahead_control *rac)
- {
- 	struct inode *inode = rac->mapping->host;
--	struct fuse_inode *fi = get_fuse_inode(inode);
- 	struct fuse_conn *fc = get_fuse_conn(inode);
- 	unsigned int max_pages, nr_pages;
--	pgoff_t first = readahead_index(rac);
--	pgoff_t last = first + readahead_count(rac) - 1;
- 
- 	if (fuse_is_bad(inode))
- 		return;
- 
--	wait_event(fi->page_waitq, !fuse_range_is_writeback(inode, first, last));
--
- 	max_pages = min_t(unsigned int, fc->max_pages,
- 			fc->max_read / PAGE_SIZE);
- 
-@@ -1181,7 +1091,7 @@ static ssize_t fuse_send_write_pages(struct fuse_io_args *ia,
- 	int err;
- 
- 	for (i = 0; i < ap->num_folios; i++)
--		fuse_wait_on_folio_writeback(inode, ap->folios[i]);
-+		folio_wait_writeback(ap->folios[i]);
- 
- 	fuse_write_args_fill(ia, ff, pos, count);
- 	ia->write.in.flags = fuse_write_flags(iocb);
-@@ -1638,7 +1548,7 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
- 			return res;
- 		}
- 	}
--	if (!cuse && fuse_range_is_writeback(inode, idx_from, idx_to)) {
-+	if (!cuse && filemap_range_has_writeback(mapping, pos, (pos + count - 1))) {
- 		if (!write)
- 			inode_lock(inode);
- 		fuse_sync_writes(inode);
-@@ -1835,38 +1745,34 @@ static ssize_t fuse_splice_write(struct pipe_inode_info *pipe, struct file *out,
- static void fuse_writepage_free(struct fuse_writepage_args *wpa)
- {
- 	struct fuse_args_pages *ap = &wpa->ia.ap;
--	int i;
- 
- 	if (wpa->bucket)
- 		fuse_sync_bucket_dec(wpa->bucket);
- 
--	for (i = 0; i < ap->num_folios; i++)
--		folio_put(ap->folios[i]);
--
- 	fuse_file_put(wpa->ia.ff, false);
- 
- 	kfree(ap->folios);
- 	kfree(wpa);
- }
- 
--static void fuse_writepage_finish_stat(struct inode *inode, struct folio *folio)
--{
--	struct backing_dev_info *bdi = inode_to_bdi(inode);
--
--	dec_wb_stat(&bdi->wb, WB_WRITEBACK);
--	node_stat_sub_folio(folio, NR_WRITEBACK_TEMP);
--	wb_writeout_inc(&bdi->wb);
--}
--
- static void fuse_writepage_finish(struct fuse_writepage_args *wpa)
- {
- 	struct fuse_args_pages *ap = &wpa->ia.ap;
- 	struct inode *inode = wpa->inode;
- 	struct fuse_inode *fi = get_fuse_inode(inode);
-+	struct backing_dev_info *bdi = inode_to_bdi(inode);
- 	int i;
- 
--	for (i = 0; i < ap->num_folios; i++)
--		fuse_writepage_finish_stat(inode, ap->folios[i]);
-+	for (i = 0; i < ap->num_folios; i++) {
-+		/*
-+		 * Benchmarks showed that ending writeback within the
-+		 * scope of the fi->lock alleviates xarray lock
-+		 * contention and noticeably improves performance.
-+		 */
-+		folio_end_writeback(ap->folios[i]);
-+		dec_wb_stat(&bdi->wb, WB_WRITEBACK);
-+		wb_writeout_inc(&bdi->wb);
-+	}
- 
- 	wake_up(&fi->page_waitq);
- }
-@@ -1877,7 +1783,6 @@ static void fuse_send_writepage(struct fuse_mount *fm,
- __releases(fi->lock)
- __acquires(fi->lock)
- {
--	struct fuse_writepage_args *aux, *next;
- 	struct fuse_inode *fi = get_fuse_inode(wpa->inode);
- 	struct fuse_write_in *inarg = &wpa->ia.write.in;
- 	struct fuse_args *args = &wpa->ia.ap.args;
-@@ -1914,19 +1819,8 @@ __acquires(fi->lock)
- 
-  out_free:
- 	fi->writectr--;
--	rb_erase(&wpa->writepages_entry, &fi->writepages);
- 	fuse_writepage_finish(wpa);
- 	spin_unlock(&fi->lock);
--
--	/* After rb_erase() aux request list is private */
--	for (aux = wpa->next; aux; aux = next) {
--		next = aux->next;
--		aux->next = NULL;
--		fuse_writepage_finish_stat(aux->inode,
--					   aux->ia.ap.folios[0]);
--		fuse_writepage_free(aux);
--	}
--
- 	fuse_writepage_free(wpa);
- 	spin_lock(&fi->lock);
- }
-@@ -1954,43 +1848,6 @@ __acquires(fi->lock)
- 	}
- }
- 
--static struct fuse_writepage_args *fuse_insert_writeback(struct rb_root *root,
--						struct fuse_writepage_args *wpa)
--{
--	pgoff_t idx_from = wpa->ia.write.in.offset >> PAGE_SHIFT;
--	pgoff_t idx_to = idx_from + wpa->ia.ap.num_folios - 1;
--	struct rb_node **p = &root->rb_node;
--	struct rb_node  *parent = NULL;
--
--	WARN_ON(!wpa->ia.ap.num_folios);
--	while (*p) {
--		struct fuse_writepage_args *curr;
--		pgoff_t curr_index;
--
--		parent = *p;
--		curr = rb_entry(parent, struct fuse_writepage_args,
--				writepages_entry);
--		WARN_ON(curr->inode != wpa->inode);
--		curr_index = curr->ia.write.in.offset >> PAGE_SHIFT;
--
--		if (idx_from >= curr_index + curr->ia.ap.num_folios)
--			p = &(*p)->rb_right;
--		else if (idx_to < curr_index)
--			p = &(*p)->rb_left;
--		else
--			return curr;
--	}
--
--	rb_link_node(&wpa->writepages_entry, parent, p);
--	rb_insert_color(&wpa->writepages_entry, root);
--	return NULL;
--}
--
--static void tree_insert(struct rb_root *root, struct fuse_writepage_args *wpa)
--{
--	WARN_ON(fuse_insert_writeback(root, wpa));
--}
--
- static void fuse_writepage_end(struct fuse_mount *fm, struct fuse_args *args,
- 			       int error)
- {
-@@ -2010,41 +1867,6 @@ static void fuse_writepage_end(struct fuse_mount *fm, struct fuse_args *args,
- 	if (!fc->writeback_cache)
- 		fuse_invalidate_attr_mask(inode, FUSE_STATX_MODIFY);
- 	spin_lock(&fi->lock);
--	rb_erase(&wpa->writepages_entry, &fi->writepages);
--	while (wpa->next) {
--		struct fuse_mount *fm = get_fuse_mount(inode);
--		struct fuse_write_in *inarg = &wpa->ia.write.in;
--		struct fuse_writepage_args *next = wpa->next;
--
--		wpa->next = next->next;
--		next->next = NULL;
--		tree_insert(&fi->writepages, next);
--
--		/*
--		 * Skip fuse_flush_writepages() to make it easy to crop requests
--		 * based on primary request size.
--		 *
--		 * 1st case (trivial): there are no concurrent activities using
--		 * fuse_set/release_nowrite.  Then we're on safe side because
--		 * fuse_flush_writepages() would call fuse_send_writepage()
--		 * anyway.
--		 *
--		 * 2nd case: someone called fuse_set_nowrite and it is waiting
--		 * now for completion of all in-flight requests.  This happens
--		 * rarely and no more than once per page, so this should be
--		 * okay.
--		 *
--		 * 3rd case: someone (e.g. fuse_do_setattr()) is in the middle
--		 * of fuse_set_nowrite..fuse_release_nowrite section.  The fact
--		 * that fuse_set_nowrite returned implies that all in-flight
--		 * requests were completed along with all of their secondary
--		 * requests.  Further primary requests are blocked by negative
--		 * writectr.  Hence there cannot be any in-flight requests and
--		 * no invocations of fuse_writepage_end() while we're in
--		 * fuse_set_nowrite..fuse_release_nowrite section.
--		 */
--		fuse_send_writepage(fm, next, inarg->offset + inarg->size);
--	}
- 	fi->writectr--;
- 	fuse_writepage_finish(wpa);
- 	spin_unlock(&fi->lock);
-@@ -2131,19 +1953,16 @@ static void fuse_writepage_add_to_bucket(struct fuse_conn *fc,
- }
- 
- static void fuse_writepage_args_page_fill(struct fuse_writepage_args *wpa, struct folio *folio,
--					  struct folio *tmp_folio, uint32_t folio_index)
-+					  uint32_t folio_index)
- {
- 	struct inode *inode = folio->mapping->host;
- 	struct fuse_args_pages *ap = &wpa->ia.ap;
- 
--	folio_copy(tmp_folio, folio);
--
--	ap->folios[folio_index] = tmp_folio;
-+	ap->folios[folio_index] = folio;
- 	ap->descs[folio_index].offset = 0;
- 	ap->descs[folio_index].length = PAGE_SIZE;
- 
- 	inc_wb_stat(&inode_to_bdi(inode)->wb, WB_WRITEBACK);
--	node_stat_add_folio(tmp_folio, NR_WRITEBACK_TEMP);
- }
- 
- static struct fuse_writepage_args *fuse_writepage_args_setup(struct folio *folio,
-@@ -2178,18 +1997,12 @@ static int fuse_writepage_locked(struct folio *folio)
- 	struct fuse_inode *fi = get_fuse_inode(inode);
- 	struct fuse_writepage_args *wpa;
- 	struct fuse_args_pages *ap;
--	struct folio *tmp_folio;
- 	struct fuse_file *ff;
--	int error = -ENOMEM;
--
--	tmp_folio = folio_alloc(GFP_NOFS | __GFP_HIGHMEM, 0);
--	if (!tmp_folio)
--		goto err;
-+	int error = -EIO;
- 
--	error = -EIO;
- 	ff = fuse_write_file_get(fi);
- 	if (!ff)
--		goto err_nofile;
-+		goto err;
- 
- 	wpa = fuse_writepage_args_setup(folio, ff);
- 	error = -ENOMEM;
-@@ -2200,22 +2013,17 @@ static int fuse_writepage_locked(struct folio *folio)
- 	ap->num_folios = 1;
- 
- 	folio_start_writeback(folio);
--	fuse_writepage_args_page_fill(wpa, folio, tmp_folio, 0);
-+	fuse_writepage_args_page_fill(wpa, folio, 0);
- 
- 	spin_lock(&fi->lock);
--	tree_insert(&fi->writepages, wpa);
- 	list_add_tail(&wpa->queue_entry, &fi->queued_writes);
- 	fuse_flush_writepages(inode);
- 	spin_unlock(&fi->lock);
- 
--	folio_end_writeback(folio);
--
- 	return 0;
- 
- err_writepage_args:
- 	fuse_file_put(ff, false);
--err_nofile:
--	folio_put(tmp_folio);
- err:
- 	mapping_set_error(folio->mapping, error);
- 	return error;
-@@ -2225,7 +2033,6 @@ struct fuse_fill_wb_data {
- 	struct fuse_writepage_args *wpa;
- 	struct fuse_file *ff;
- 	struct inode *inode;
--	struct folio **orig_folios;
- 	unsigned int max_folios;
- };
- 
-@@ -2260,69 +2067,11 @@ static void fuse_writepages_send(struct fuse_fill_wb_data *data)
- 	struct fuse_writepage_args *wpa = data->wpa;
- 	struct inode *inode = data->inode;
- 	struct fuse_inode *fi = get_fuse_inode(inode);
--	int num_folios = wpa->ia.ap.num_folios;
--	int i;
- 
- 	spin_lock(&fi->lock);
- 	list_add_tail(&wpa->queue_entry, &fi->queued_writes);
- 	fuse_flush_writepages(inode);
- 	spin_unlock(&fi->lock);
--
--	for (i = 0; i < num_folios; i++)
--		folio_end_writeback(data->orig_folios[i]);
--}
--
--/*
-- * Check under fi->lock if the page is under writeback, and insert it onto the
-- * rb_tree if not. Otherwise iterate auxiliary write requests, to see if there's
-- * one already added for a page at this offset.  If there's none, then insert
-- * this new request onto the auxiliary list, otherwise reuse the existing one by
-- * swapping the new temp page with the old one.
-- */
--static bool fuse_writepage_add(struct fuse_writepage_args *new_wpa,
--			       struct folio *folio)
--{
--	struct fuse_inode *fi = get_fuse_inode(new_wpa->inode);
--	struct fuse_writepage_args *tmp;
--	struct fuse_writepage_args *old_wpa;
--	struct fuse_args_pages *new_ap = &new_wpa->ia.ap;
--
--	WARN_ON(new_ap->num_folios != 0);
--	new_ap->num_folios = 1;
--
--	spin_lock(&fi->lock);
--	old_wpa = fuse_insert_writeback(&fi->writepages, new_wpa);
--	if (!old_wpa) {
--		spin_unlock(&fi->lock);
--		return true;
--	}
--
--	for (tmp = old_wpa->next; tmp; tmp = tmp->next) {
--		pgoff_t curr_index;
--
--		WARN_ON(tmp->inode != new_wpa->inode);
--		curr_index = tmp->ia.write.in.offset >> PAGE_SHIFT;
--		if (curr_index == folio->index) {
--			WARN_ON(tmp->ia.ap.num_folios != 1);
--			swap(tmp->ia.ap.folios[0], new_ap->folios[0]);
--			break;
--		}
--	}
--
--	if (!tmp) {
--		new_wpa->next = old_wpa->next;
--		old_wpa->next = new_wpa;
--	}
--
--	spin_unlock(&fi->lock);
--
--	if (tmp) {
--		fuse_writepage_finish_stat(new_wpa->inode,
--					   folio);
--		fuse_writepage_free(new_wpa);
--	}
--
--	return false;
- }
- 
- static bool fuse_writepage_need_send(struct fuse_conn *fc, struct folio *folio,
-@@ -2331,15 +2080,6 @@ static bool fuse_writepage_need_send(struct fuse_conn *fc, struct folio *folio,
- {
- 	WARN_ON(!ap->num_folios);
- 
--	/*
--	 * Being under writeback is unlikely but possible.  For example direct
--	 * read to an mmaped fuse file will set the page dirty twice; once when
--	 * the pages are faulted with get_user_pages(), and then after the read
--	 * completed.
--	 */
--	if (fuse_folio_is_writeback(data->inode, folio))
--		return true;
--
- 	/* Reached max pages */
- 	if (ap->num_folios == fc->max_pages)
- 		return true;
-@@ -2349,7 +2089,7 @@ static bool fuse_writepage_need_send(struct fuse_conn *fc, struct folio *folio,
- 		return true;
- 
- 	/* Discontinuity */
--	if (data->orig_folios[ap->num_folios - 1]->index + 1 != folio_index(folio))
-+	if (ap->folios[ap->num_folios - 1]->index + 1 != folio_index(folio))
- 		return true;
- 
- 	/* Need to grow the pages array?  If so, did the expansion fail? */
-@@ -2368,7 +2108,6 @@ static int fuse_writepages_fill(struct folio *folio,
- 	struct inode *inode = data->inode;
- 	struct fuse_inode *fi = get_fuse_inode(inode);
- 	struct fuse_conn *fc = get_fuse_conn(inode);
--	struct folio *tmp_folio;
- 	int err;
- 
- 	if (!data->ff) {
-@@ -2383,54 +2122,23 @@ static int fuse_writepages_fill(struct folio *folio,
- 		data->wpa = NULL;
- 	}
- 
--	err = -ENOMEM;
--	tmp_folio = folio_alloc(GFP_NOFS | __GFP_HIGHMEM, 0);
--	if (!tmp_folio)
--		goto out_unlock;
--
--	/*
--	 * The page must not be redirtied until the writeout is completed
--	 * (i.e. userspace has sent a reply to the write request).  Otherwise
--	 * there could be more than one temporary page instance for each real
--	 * page.
--	 *
--	 * This is ensured by holding the page lock in page_mkwrite() while
--	 * checking fuse_page_is_writeback().  We already hold the page lock
--	 * since clear_page_dirty_for_io() and keep it held until we add the
--	 * request to the fi->writepages list and increment ap->num_folios.
--	 * After this fuse_page_is_writeback() will indicate that the page is
--	 * under writeback, so we can release the page lock.
--	 */
- 	if (data->wpa == NULL) {
- 		err = -ENOMEM;
- 		wpa = fuse_writepage_args_setup(folio, data->ff);
--		if (!wpa) {
--			folio_put(tmp_folio);
-+		if (!wpa)
- 			goto out_unlock;
--		}
- 		fuse_file_get(wpa->ia.ff);
- 		data->max_folios = 1;
- 		ap = &wpa->ia.ap;
- 	}
- 	folio_start_writeback(folio);
- 
--	fuse_writepage_args_page_fill(wpa, folio, tmp_folio, ap->num_folios);
--	data->orig_folios[ap->num_folios] = folio;
-+	fuse_writepage_args_page_fill(wpa, folio, ap->num_folios);
- 
- 	err = 0;
--	if (data->wpa) {
--		/*
--		 * Protected by fi->lock against concurrent access by
--		 * fuse_page_is_writeback().
--		 */
--		spin_lock(&fi->lock);
--		ap->num_folios++;
--		spin_unlock(&fi->lock);
--	} else if (fuse_writepage_add(wpa, folio)) {
-+	ap->num_folios++;
-+	if (!data->wpa)
- 		data->wpa = wpa;
--	} else {
--		folio_end_writeback(folio);
--	}
- out_unlock:
- 	folio_unlock(folio);
- 
-@@ -2457,13 +2165,6 @@ static int fuse_writepages(struct address_space *mapping,
- 	data.wpa = NULL;
- 	data.ff = NULL;
- 
--	err = -ENOMEM;
--	data.orig_folios = kcalloc(fc->max_pages,
--				   sizeof(struct folio *),
--				   GFP_NOFS);
--	if (!data.orig_folios)
--		goto out;
--
- 	err = write_cache_pages(mapping, wbc, fuse_writepages_fill, &data);
- 	if (data.wpa) {
- 		WARN_ON(!data.wpa->ia.ap.num_folios);
-@@ -2472,7 +2173,6 @@ static int fuse_writepages(struct address_space *mapping,
- 	if (data.ff)
- 		fuse_file_put(data.ff, false);
- 
--	kfree(data.orig_folios);
- out:
- 	return err;
- }
-@@ -2497,8 +2197,6 @@ static int fuse_write_begin(struct file *file, struct address_space *mapping,
- 	if (IS_ERR(folio))
- 		goto error;
- 
--	fuse_wait_on_page_writeback(mapping->host, folio->index);
--
- 	if (folio_test_uptodate(folio) || len >= folio_size(folio))
- 		goto success;
- 	/*
-@@ -2561,13 +2259,9 @@ static int fuse_launder_folio(struct folio *folio)
- {
- 	int err = 0;
- 	if (folio_clear_dirty_for_io(folio)) {
--		struct inode *inode = folio->mapping->host;
--
--		/* Serialize with pending writeback for the same page */
--		fuse_wait_on_page_writeback(inode, folio->index);
- 		err = fuse_writepage_locked(folio);
- 		if (!err)
--			fuse_wait_on_page_writeback(inode, folio->index);
-+			folio_wait_writeback(folio);
- 	}
- 	return err;
- }
-@@ -2611,7 +2305,7 @@ static vm_fault_t fuse_page_mkwrite(struct vm_fault *vmf)
- 		return VM_FAULT_NOPAGE;
- 	}
- 
--	fuse_wait_on_folio_writeback(inode, folio);
-+	folio_wait_writeback(folio);
- 	return VM_FAULT_LOCKED;
- }
- 
-@@ -3429,9 +3123,12 @@ static const struct address_space_operations fuse_file_aops  = {
- void fuse_init_file_inode(struct inode *inode, unsigned int flags)
- {
- 	struct fuse_inode *fi = get_fuse_inode(inode);
-+	struct fuse_conn *fc = get_fuse_conn(inode);
- 
- 	inode->i_fop = &fuse_file_operations;
- 	inode->i_data.a_ops = &fuse_file_aops;
-+	if (fc->writeback_cache)
-+		mapping_set_writeback_indeterminate(&inode->i_data);
- 
- 	INIT_LIST_HEAD(&fi->write_files);
- 	INIT_LIST_HEAD(&fi->queued_writes);
-@@ -3439,7 +3136,6 @@ void fuse_init_file_inode(struct inode *inode, unsigned int flags)
- 	fi->iocachectr = 0;
- 	init_waitqueue_head(&fi->page_waitq);
- 	init_waitqueue_head(&fi->direct_io_waitq);
--	fi->writepages = RB_ROOT;
- 
- 	if (IS_ENABLED(CONFIG_FUSE_DAX))
- 		fuse_dax_inode_init(inode, flags);
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index fee96fe7887b..28a101a5c558 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -141,9 +141,6 @@ struct fuse_inode {
- 
- 			/* waitq for direct-io completion */
- 			wait_queue_head_t direct_io_waitq;
--
--			/* List of writepage requestst (pending or sent) */
--			struct rb_root writepages;
- 		};
- 
- 		/* readdir cache (directory only) */
 -- 
-2.47.1
+Cheers,
+
+David / dhildenb
 
 
