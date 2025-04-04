@@ -1,182 +1,231 @@
-Return-Path: <linux-fsdevel+bounces-45752-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45747-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B664A7BB5F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 13:12:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9186CA7BAA9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 12:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A1C6178EC0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 11:12:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76D883B4F95
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 10:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E791D95B4;
-	Fri,  4 Apr 2025 11:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B86A1B3950;
+	Fri,  4 Apr 2025 10:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nG6f7mXt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ixYM1hnu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18141A315C;
-	Fri,  4 Apr 2025 11:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A9B19DF66;
+	Fri,  4 Apr 2025 10:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743765166; cv=none; b=Soyla0uOmvQGF/HYy9mU1gNwWdG7hJX+VerZY2b6U28QWb/qwA3kS4Lm2uJEPQep2TIzxDBsBkEzSrhg0oTguSujIKtsPv5i9orB94wFX51r2fn9vlouDBQRNJfdrCWCHVauhmh5J6PHZv2SgN7BojD07ZUx/EQHumM7VvsTECY=
+	t=1743762280; cv=none; b=SVZgH+T+K2TezqjYITNCC0PwFnwx9g+HhNY2+p5h0ULXcUNwRky4D0Q9PtJJYk8BNcLaqZBTMTYdYwohW0Hzt3vYiqS61nd3ntm/gGk4J3qKrO9AZ8jyTVnbOplGotnRlX8psYB17FsfRcAM0xttfg5EyAWaKY93E2zTc36T0cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743765166; c=relaxed/simple;
-	bh=JdMvni59cKETAkfx+9g0kSjEtVX79NsMaYWZpjyaBrc=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=GTQExQ5y6Ond46I5bOfHbqw1Y3H1n4VDW+wNC0kT+bTsQJK2em8ZXF1UzWy5TEFiM7Cn3S4ZoAHPLrIPrpImr/Gu7MmDT+fWDloLWzcasKLdYahrpbNmxs+ZpzynQ5hfziSItgZSdiPpGk0W1CaaXtEwXT3nZ6w49HBgU5yPKhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nG6f7mXt; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7399a2dc13fso2463522b3a.2;
-        Fri, 04 Apr 2025 04:12:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743765163; x=1744369963; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=cJ884e+6+ThAhT/tgtu6Fq7dwkXhsFnLWZFjjMBf/SY=;
-        b=nG6f7mXttAjoRMLr12XVG892vFW80GMICALMCDT9fdh3Xtc9bbQzITH1DkevYqFL36
-         oSUj8nWUrWViq0VpBD/o0k3WyhTyO0oXB1rjVFnKSEBQ0klOvDgML8X1sw+gllS9r3bR
-         NrnEfYTDs5y8++5BScHEAw7cNx1AetZDj2+vYdZNIgFbVoQdlV+7f4CjklcJFIdk5uFW
-         97Ie3/twWqaxjLAx2HzVlA3oaEbZQ7/5p5qYFM7bQWR3Q+7fbDspWjk319Lhkvd+knPp
-         lv8FJvYiVhup9iJyuoF3n1dQ+ggSkeyoM/lX+axVknLwE1lSTgywWGwXqbXZLXWHKyXe
-         7pwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743765163; x=1744369963;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cJ884e+6+ThAhT/tgtu6Fq7dwkXhsFnLWZFjjMBf/SY=;
-        b=C05OSmX9mAGkTSAQg0qo6yR8eqYFnOrIN38Tro6OOzWaq7eC3vmFpeyLpTWWYLihzE
-         AQF7yl3a5O1pmNXf6Yaxx7JQKKcyM/lWCOzewYmgz5ZBYN7i80g8WNCjN4AiiMLMetOM
-         H9UnedX/LAUY2aGU5UqM7NDkM3i8AcN6TOfyJ2nI00QFu/v/lL3X/no/V0sT4NmkuXFw
-         98eEo9Wg2lSVrtWGyy96Ys3rfDaPkCuvLqeOvjI78usahW2W+j6lHbTCLchDnbIgGRvt
-         aLciH+Ssf+5mWqucZJLk1A3FtnKNFmCCqVzZX8ZUQ58mO/abtFe/ceLvG22PDKBqV9yc
-         Xc8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWHYXMtzQi52vFTx5OXt3tCC2qR/aSpwPYDrbj8P70l7oUGUDCQ2KaCPVxqy30AKKGGw8/o5QC0tRxz@vger.kernel.org, AJvYcCWKzklffVepdZNy643Wxwz/Qm6LbFFFpoWGRIjT/hty+a7zTv/eUi6sLzoyQanc8wLAmnjBDuIia+qax7uj@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKGq7nOPXF5e5SIuC9IMc+aDce9ye2/nfiiqZg61UR+ex1UXvU
-	c8+LTMk0bmwZ2ZweBnuoZ8kGvB40SBo+AZDqCZL92KrK1XPwTwdClJKWM5Q0
-X-Gm-Gg: ASbGnctHRc3DKSeYZricFaNzguQifHWJA4tvIpZ0or870QKc4bTuY8gdNSNOrZkYgab
-	2yVA3J8XolOSnY4yklb2G5e3M8UYRHjPyVG8mEswOSz8tjcsv3GMoaNxcI2k3rvbjIJAlV7BI2/
-	2CzMH8uGaZp+kjqcogBvqWg/AjOH8WcLkHfz1SeXtqGgONeiitLdYguVIm0DaVvYsmI6fRksgcY
-	a7sUheHD+o6malJxFKC/8GNe0nX8qvaPd6cVeaIebSYIB8pb+YdlNJCAczDylGZMhMn3LP+vRes
-	NUwvFHYFkS3smrQnhYrGG7Dla6ADSBhYNmTt
-X-Google-Smtp-Source: AGHT+IGAy77BYb2sj28kul03uzYpgVhloteM6XMaZRCsF/CCUubw48jERhj8bT+n/DRoL9slGyKfCA==
-X-Received: by 2002:a05:6a00:4b05:b0:736:4cde:5c0e with SMTP id d2e1a72fcca58-739e4922df6mr3211945b3a.10.1743765162934;
-        Fri, 04 Apr 2025 04:12:42 -0700 (PDT)
-Received: from dw-tp ([171.76.86.91])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739d97ee818sm3192000b3a.55.2025.04.04.04.12.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Apr 2025 04:12:42 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: John Garry <john.g.garry@oracle.com>, linux-xfs@vger.kernel.org
-Cc: djwong@kernel.org, ojaswin@linux.ibm.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] Documentation: iomap: Add missing flags description
-In-Reply-To: <cfd156b3-e166-4f2c-9cb2-c3dfd29c7f5b@oracle.com>
-Date: Fri, 04 Apr 2025 15:53:24 +0530
-Message-ID: <87ldsguswz.fsf@gmail.com>
-References: <3170ab367b5b350c60564886a72719ccf573d01c.1743691371.git.ritesh.list@gmail.com> <cfd156b3-e166-4f2c-9cb2-c3dfd29c7f5b@oracle.com>
+	s=arc-20240116; t=1743762280; c=relaxed/simple;
+	bh=7XhvsaAR1vcF0yyiP58bhi1Lq1t+C31IiBxcJ1YTFd0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ebr7kyCrdwnLi6TFf8yLkK6uykVkH7CtpgrILOZt8nRzJfQ2L8T+5J1oVgrgwSkQhPLw9tTK3waN6ps5SF2F4icIFBmgrf1ki3pDKSFj/sJxEL5k9aVaXaXTtAR1K9L51Ij1GXslkT5FBkCgsbezm5ucvfzRSUB3xJC05uzkYRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ixYM1hnu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 813E6C4CEDD;
+	Fri,  4 Apr 2025 10:24:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743762280;
+	bh=7XhvsaAR1vcF0yyiP58bhi1Lq1t+C31IiBxcJ1YTFd0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ixYM1hnuNyixIb7Ehti6HV/1A1n4LO9AHCzk4LSVvDq1DfBBZvh36tt7u54aWD1mS
+	 UDOkVj1nD1IxTSiHzT/MMjftL48YTbvDM39pHNtEIl0Hu4yRxE42AVtpbX9rNzExSJ
+	 8MP1O1VkDSzkL13dsN4bEdJ7kER0vs4/e4t3YNF3yYjXxTkf6704R1s0LRJXVjd5qd
+	 ls9QVYB9AJPtveEvQ3JckTQvvdLPgIQkcbXBKOBUbSEFimVhZd84VKr2QkgCNctzgk
+	 m1mUN6VMt1UwMHE3rPDj/tp79Q9OsRh+aPSG7OoleTFvqIZfm8hRnMNuvg7xIgK3kb
+	 2BVwJX7nJYwQQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	linux-efi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	mcgrof@kernel.org,
+	hch@infradead.org,
+	david@fromorbit.com,
+	rafael@kernel.org,
+	djwong@kernel.org,
+	pavel@kernel.org,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	will@kernel.org,
+	boqun.feng@gmail.com
+Subject: [PATCH] fs: allow nesting with FREEZE_EXCL
+Date: Fri,  4 Apr 2025 12:24:09 +0200
+Message-ID: <20250404-work-freeze-v1-1-31f9a26f7bc9@kernel.org>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <ilwyxf34ixfkhbylev6d76tz5ufzg2sdxxhy6i3tr4ko5dbefr@57yuviqrftzr>
+References: <ilwyxf34ixfkhbylev6d76tz5ufzg2sdxxhy6i3tr4ko5dbefr@57yuviqrftzr>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20250404-work-freeze-5eacb515f044
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5320; i=brauner@kernel.org; h=from:subject:message-id; bh=7XhvsaAR1vcF0yyiP58bhi1Lq1t+C31IiBxcJ1YTFd0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS/3xzDZb7MRtpzQfyEmY0Cu/ZeM40yU4/OKVrp+XvbN J7+64a5HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNRLWJkmD7Tq4Wn8LYYI3t8 5NMkCy/7ReKX+5qzlmixO25SzL9exfDfad/X2eGMrlnhsfefKR8OeLT8xNWU2mctH/Zw5059JdP IBQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-John Garry <john.g.garry@oracle.com> writes:
+If hibernation races with filesystem freezing (e.g. DM reconfiguration),
+then hibernation need not freeze a filesystem because it's already
+frozen but userspace may thaw the filesystem before hibernation actually
+happens.
 
-> On 03/04/2025 19:22, Ritesh Harjani (IBM) wrote:
->
-> IMHO, This document seems to be updated a lot, to the point where I 
-> think that it has too much detail.
->
+If the race happens the other way around, DM reconfiguration may
+unexpectedly fail with EBUSY.
 
-Perhaps this [1] can change your mind? Just the second paragraph of this
-article might be good reason to keep the design doc updated with latest
-changes in the iomap code.
+So allow FREEZE_EXCL to nest with other holders. An exclusive freezer
+cannot be undone by any of the other concurrent freezers.
 
-[1]: https://lwn.net/Articles/935934/
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/super.c         | 71 ++++++++++++++++++++++++++++++++++++++++++------------
+ include/linux/fs.h |  2 +-
+ 2 files changed, 56 insertions(+), 17 deletions(-)
 
->> Let's document the use of these flags in iomap design doc where other
->> flags are defined too -
->> 
->> - IOMAP_F_BOUNDARY was added by XFS to prevent merging of ioends
->>    across RTG boundaries.
->> - IOMAP_F_ATOMIC_BIO was added for supporting atomic I/O operations
->>    for filesystems to inform the iomap that it needs HW-offload based
->>    mechanism for torn-write protection
->> 
->> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
->> ---
->>   Documentation/filesystems/iomap/design.rst | 10 ++++++++++
->>   1 file changed, 10 insertions(+)
->> 
->> diff --git a/Documentation/filesystems/iomap/design.rst b/Documentation/filesystems/iomap/design.rst
->> index e29651a42eec..b916e85bc930 100644
->> --- a/Documentation/filesystems/iomap/design.rst
->> +++ b/Documentation/filesystems/iomap/design.rst
->> @@ -243,6 +243,11 @@ The fields are as follows:
->>        regular file data.
->>        This is only useful for FIEMAP.
->>   
->> +   * **IOMAP_F_BOUNDARY**: This indicates that I/O and I/O completions
->> +     for this iomap must never be merged with the mapping before it.
->> +     Currently XFS uses this to prevent merging of ioends across RTG
->> +     (realtime group) boundaries.
+diff --git a/fs/super.c b/fs/super.c
+index b4bdbc509dba..e2fee655fbed 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1979,26 +1979,34 @@ static inline int freeze_dec(struct super_block *sb, enum freeze_holder who)
+ 	return sb->s_writers.freeze_kcount + sb->s_writers.freeze_ucount;
+ }
+ 
+-static inline bool may_freeze(struct super_block *sb, enum freeze_holder who)
++static inline bool may_freeze(struct super_block *sb, enum freeze_holder who,
++			      const void *freeze_owner)
+ {
++	lockdep_assert_held(&sb->s_umount);
++
+ 	WARN_ON_ONCE((who & ~FREEZE_FLAGS));
+ 	WARN_ON_ONCE(hweight32(who & FREEZE_HOLDERS) > 1);
+ 
+ 	if (who & FREEZE_EXCL) {
+ 		if (WARN_ON_ONCE(!(who & FREEZE_HOLDER_KERNEL)))
+ 			return false;
+-
+-		if (who & ~(FREEZE_EXCL | FREEZE_HOLDER_KERNEL))
++		if (WARN_ON_ONCE(who & ~(FREEZE_EXCL | FREEZE_HOLDER_KERNEL)))
+ 			return false;
+-
+-		return (sb->s_writers.freeze_kcount +
+-			sb->s_writers.freeze_ucount) == 0;
++		if (WARN_ON_ONCE(!freeze_owner))
++			return false;
++		/* This freeze already has a specific owner. */
++		if (sb->s_writers.freeze_owner)
++			return false;
++		/*
++		 * This is already frozen multiple times so we're just
++		 * going to take a reference count and mark it as
++		 * belonging to use.
++		 */
++		if (sb->s_writers.freeze_kcount + sb->s_writers.freeze_ucount)
++			sb->s_writers.freeze_owner = freeze_owner;
++		return true;
+ 	}
+ 
+-	/* This filesystem is already exclusively frozen. */
+-	if (sb->s_writers.freeze_owner)
+-		return false;
+-
+ 	if (who & FREEZE_HOLDER_KERNEL)
+ 		return (who & FREEZE_MAY_NEST) ||
+ 		       sb->s_writers.freeze_kcount == 0;
+@@ -2011,20 +2019,51 @@ static inline bool may_freeze(struct super_block *sb, enum freeze_holder who)
+ static inline bool may_unfreeze(struct super_block *sb, enum freeze_holder who,
+ 				const void *freeze_owner)
+ {
++	lockdep_assert_held(&sb->s_umount);
++
+ 	WARN_ON_ONCE((who & ~FREEZE_FLAGS));
+ 	WARN_ON_ONCE(hweight32(who & FREEZE_HOLDERS) > 1);
+ 
+ 	if (who & FREEZE_EXCL) {
+-		if (WARN_ON_ONCE(sb->s_writers.freeze_owner == NULL))
+-			return false;
+ 		if (WARN_ON_ONCE(!(who & FREEZE_HOLDER_KERNEL)))
+ 			return false;
+-		if (who & ~(FREEZE_EXCL | FREEZE_HOLDER_KERNEL))
++		if (WARN_ON_ONCE(who & ~(FREEZE_EXCL | FREEZE_HOLDER_KERNEL)))
++			return false;
++		if (WARN_ON_ONCE(!freeze_owner))
++			return false;
++		if (WARN_ON_ONCE(sb->s_writers.freeze_kcount == 0))
+ 			return false;
+-		return sb->s_writers.freeze_owner == freeze_owner;
++		/* This isn't exclusively frozen. */
++		if (!sb->s_writers.freeze_owner)
++			return false;
++		/* This isn't exclusively frozen by us. */
++		if (sb->s_writers.freeze_owner != freeze_owner)
++			return false;
++		/*
++		 * This is still frozen multiple times so we're just
++		 * going to drop our reference count and undo our
++		 * exclusive freeze.
++		 */
++		if ((sb->s_writers.freeze_kcount + sb->s_writers.freeze_ucount) > 1)
++			sb->s_writers.freeze_owner = NULL;
++		return true;
++	}
++
++	if (who & FREEZE_HOLDER_KERNEL) {
++		/*
++		 * Someone's trying to steal the reference belonging to
++		 * @sb->s_writers.freeze_owner.
++		 */
++		if (sb->s_writers.freeze_kcount == 1 &&
++		    sb->s_writers.freeze_owner)
++			return false;
++		return sb->s_writers.freeze_kcount > 0;
+ 	}
+ 
+-	return sb->s_writers.freeze_owner == NULL;
++	if (who & FREEZE_HOLDER_USERSPACE)
++		return sb->s_writers.freeze_ucount > 0;
++
++	return false;
+ }
+ 
+ /**
+@@ -2095,7 +2134,7 @@ int freeze_super(struct super_block *sb, enum freeze_holder who, const void *fre
+ 
+ retry:
+ 	if (sb->s_writers.frozen == SB_FREEZE_COMPLETE) {
+-		if (may_freeze(sb, who))
++		if (may_freeze(sb, who, freeze_owner))
+ 			ret = !!WARN_ON_ONCE(freeze_inc(sb, who) == 1);
+ 		else
+ 			ret = -EBUSY;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 1edcba3cd68e..7a3f821d2723 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2270,7 +2270,7 @@ extern loff_t vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
+  * @FREEZE_HOLDER_KERNEL: kernel wants to freeze or thaw filesystem
+  * @FREEZE_HOLDER_USERSPACE: userspace wants to freeze or thaw filesystem
+  * @FREEZE_MAY_NEST: whether nesting freeze and thaw requests is allowed
+- * @FREEZE_EXCL: whether actual freezing must be done by the caller
++ * @FREEZE_EXCL: a freeze that can only be undone by the owner
+  *
+  * Indicate who the owner of the freeze or thaw request is and whether
+  * the freeze needs to be exclusive or can nest.
 
->
-> This is just effectively the same comment as in the code -
+---
+base-commit: a83fe97e0d53f7d2b0fc62fd9a322a963cb30306
+change-id: 20250404-work-freeze-5eacb515f044
 
-I am happy to add/update if you would like to add more details.
-
-> what's the use in this?
->
-
-To keep the iomap design doc updated with the latest changes.
-
->> +
->>      * **IOMAP_F_PRIVATE**: Starting with this value, the upper bits can
->>        be set by the filesystem for its own purposes.
->
-> Is this comment now out of date according to your change in 923936efeb74?
->
-
-Yup. Thanks for catching that. I am thinking we can update this to:
-
-   * **IOMAP_F_PRIVATE**: This flag is reserved for filesystem private use.
-     Currently only gfs2 uses this for implementing buffer head metadata
-     boundary. This is done by gfs2 to avoid fetching the next mapping as
-     otherwise it could likely incur an additional I/O to fetch the
-     indirect metadata block.
-
-If this looks good to others too I will update this in the v2.
-
-Though, I now wonder whether gfs2 can also just use the IOMAP_F_BOUNDARY
-flag instead of using IOMAP_F_PRIVATE? 
-
->>   
->> @@ -250,6 +255,11 @@ The fields are as follows:
->>        block assigned to it yet and the file system will do that in the bio
->>        submission handler, splitting the I/O as needed.
->>   
->> +   * **IOMAP_F_ATOMIC_BIO**: Indicates that write I/O must be submitted
->> +     with the ``REQ_ATOMIC`` flag set in the bio.
->
-> This is effectively the same comment as iomap.h
->
->> Filesystems need to set
->> +     this flag to inform iomap that the write I/O operation requires
->> +     torn-write protection based on HW-offload mechanism.
->
-> Personally I think that this is obvious. If not, the reader should check 
-> the xfs and ext4 example in the code.
->
-
-It's just my opinion, but sometimes including examples of how such flags
-are used in the code - within the design document, can help the reader
-better understand their context and purpose. 
-
-Thanks for the review!
-
--ritesh
 
