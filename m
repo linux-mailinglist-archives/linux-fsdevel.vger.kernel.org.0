@@ -1,215 +1,209 @@
-Return-Path: <linux-fsdevel+bounces-45722-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 470D6A7B7D2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 08:36:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E41DA7B7D3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 08:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EB801786E2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 06:35:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 928113B6C09
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 06:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748F018CC10;
-	Fri,  4 Apr 2025 06:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5469842AB4;
+	Fri,  4 Apr 2025 06:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Km/dTclp"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="VLtktzyg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C1B18BC3D;
-	Fri,  4 Apr 2025 06:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5F9847B;
+	Fri,  4 Apr 2025 06:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743748527; cv=none; b=AEBBoK+/yGmQmX1+Z3GSgno0+nvbY85yKcnTQwQcczNlIGPJijxwbL6V3uDupdyv3vliR76EFdiYWCj0JPkl5NxwfgOZQZnE4XW5DPD91vtV4Ya1p14tccFjSq4CImz3B5mILEFKzhiyyqTMz6oI8+DRNBxJnsEVz5V4oxcejsI=
+	t=1743748549; cv=none; b=IzSJel+XuOqdbmmkaKkVzQN0wuur9nlZlGUAYEaX44wQjTMzhWSoR0wMPnYynniIrvOGrrr2c/LeoscFU1n8hSuae+3uNXWxexIUSH5e2n7ARKzvhSf9dDJpS8CjWAyw7IcvRFKTrX215Rpi8LQd5OBvl1uE8IErmtH8FJ9kPXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743748527; c=relaxed/simple;
-	bh=uf4rYD9t2gn5zV19MtRg0HceEF4u822rbbG6f5CZEoM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=nhw9IsH//af5ru7+/nIU+Ub/Zo8Thj7zOGUTKdnwaZaRDYiuiSfr3O+VVU7GXVCX6wYoADwk2GctrAXj6+aYHedwOyi+16wD5W8UX9GcGH171wmRETLN1ZB+ezDlY/cfoB4Pbl0jo9JRN+k2I4F4yzj7ZKjKOTFPab5+p5zYkfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Km/dTclp; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-224191d92e4so16346385ad.3;
-        Thu, 03 Apr 2025 23:35:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743748525; x=1744353325; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=L6lJnoTkwzdjXsC0+52u0ropQ0W1YSxIsAMlZ25CPTk=;
-        b=Km/dTclpeejlfW4FI0B/oTuTQndM4RiMswu7RetEv9TqH/CvesYdQzflKai6dYxVAT
-         5LDGCR+ktHKDkmMc1xug0ophdvp5XiiA3s9FE0CgguM+zVjSIBh4ZSZo8VvEh8xne7l+
-         JHF0jsw3SBWEHbsQlMHCndU/pG1+pZhExcgoWAKtsjHyw+xjOVk05XEJhNmqnv3tUINo
-         SYZcCvxTU5l119Zq4ZtCSVLl0hWvs3MxWcw7PCEf6qNZ263hDXXyPAEvaoi0ImfmQEhw
-         OdcsR+qsQXRJmGejpoe3OU5yN76/QyQEA8yg+TlcscLn+wP0/MY98pBTqkyqLjuwZYjs
-         5Sog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743748525; x=1744353325;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L6lJnoTkwzdjXsC0+52u0ropQ0W1YSxIsAMlZ25CPTk=;
-        b=QfulELwYfxzy9GTprNvKLFHCkYvwBqy01SkVeONqK8Gz2cb3WC0j6/Ph1UXd/jNq6t
-         5QxsEAyageOVs10CvyJTnwv00vVrU69b6xMITWdu4uqN7XWCxjBcRU2dIGD+8VZpunZA
-         2iGBCjdV0odQfimF9KYb9AlTTYBhgf+KgAythovGGr0pIUnTK+rKVnRoc2iYnv7eQeic
-         4AlJwkag0dC2KBYwL4I4CBfeHHkwowqfEuTyI4DN1qarximeF+EmQLG8UyIpPqf+B5ZC
-         CFBqnu6JreaYR2N073G42tptiB/HaGZ6ivCpt2Ej2zg52wrCLhWVacxgwYHhWcQAHl5w
-         230g==
-X-Forwarded-Encrypted: i=1; AJvYcCX9vosNNNsBz7M0BdKnq8gGdU8v4inBIL3k1bbPGy7V4jFfo8P97qs9TVyDT+eDJnaXQxhjhEe6Te8k5qvo@vger.kernel.org, AJvYcCXei4IVD5w+hldKyfO+o34Q2o6015eX7z8LCSrNWCpx9kmwqDQ4FjUPpS/72qNVHdnK/BYdd4eYURJbrtEi@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6i54twEKvIaZFF6rUW5upvIvK1VEZRXYsKij3q7IYCMhDDo1P
-	bn+S60Oy9MJh9yKlQn164ZGmXr8DgpkglgiMP7JG8YC7Y9taDm+j
-X-Gm-Gg: ASbGncsN32DIZ3QPA91AQnLIKXpxQCgTlBVYln/7aZLg3Cu3d6DxCD+FHLY63L6hyto
-	3JMmKx2YdqcqS+Ru1nUM3euK4eqLukV0lC5n4ANRcSA0OUVPb8ZUjPQMlmelELOwl7xzqf8a5Sm
-	pGQdadI/e6+XH1tBt0m2wJ38M1B2S8w2wZCC6WVrfPF+/lvZMgscVx3FCaWmAZzw0PSy+2uzEYB
-	zapH9kQmmxA3hGtP0kxcmqdz80367QT+MzpQwSBaPyUJ9JImeANuELahGaIkJ0pEB7qck9Y/D+d
-	GHw8QaSk73qFBzZ983GNVa/8LhSMnipH9jIZxTEGBvr6rxqehuuNZdAbVG54tu7lA3uRD4Ai6g=
-	=
-X-Google-Smtp-Source: AGHT+IEx1KAgPqM1x7d8Wskej+UazaVhLKu8QqS4ldLsoA80gD3oBB5ji46YWPEQp1hH+Z3aRdYE9A==
-X-Received: by 2002:a17:903:2ec5:b0:216:6283:5a8c with SMTP id d9443c01a7336-22a8a0a3599mr29852915ad.39.1743748525461;
-        Thu, 03 Apr 2025 23:35:25 -0700 (PDT)
-Received: from localhost.localdomain ([221.214.202.225])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2297866e1b4sm25105335ad.181.2025.04.03.23.35.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 23:35:25 -0700 (PDT)
-From: Penglei Jiang <superman.xpt@gmail.com>
-To: superman.xpt@gmail.com
-Cc: adrian.ratiu@collabora.com,
-	akpm@linux-foundation.org,
-	brauner@kernel.org,
-	felix.moessbauer@siemens.com,
-	jlayton@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lorenzo.stoakes@oracle.com,
-	mjguzik@gmail.com,
-	syzbot+02e64be5307d72e9c309@syzkaller.appspotmail.com,
-	syzbot+f9238a0a31f9b5603fef@syzkaller.appspotmail.com,
-	tglx@linutronix.de,
-	viro@zeniv.linux.org.uk,
-	xu.xin16@zte.com.cn
-Subject: [PATCH V5] proc: Fix the issue of proc_mem_open returning NULL
-Date: Thu,  3 Apr 2025 23:33:57 -0700
-Message-Id: <20250404063357.78891-1-superman.xpt@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250331170647.36285-1-superman.xpt@gmail.com>
-References: <20250331170647.36285-1-superman.xpt@gmail.com>
+	s=arc-20240116; t=1743748549; c=relaxed/simple;
+	bh=hD8174uOH2T+lsYS2evpeGfkcl1Wpip1zHGbv8j2Ef8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rqBtrXnrax2vdCgMJb8G/Y62IDbhlsXSgMjbKpdPsWcAcScbVaja0Gnec65rD8+NszaMbInTo60q9mPOKk12wx69ID4rvMkdFU+U7CFKKHnjy8NFTIDpAaaLfWUHjkgKKWlQy00tE3I0ZU+qG1munhVxk0uEP394kgjIJVmqIec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=VLtktzyg; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=0rog/nxboMHnwuFuI69UvOFfP3CGYosW55e+1Io3x50=; b=VLtktzygHenGP22YTGx9UMPXIs
+	obpPCT9aIas2r7evBpL2D0bb1js6q0i/B4uC2opnWfDUipcfONy+0g0IbelLJS8aWQuyS2PsuDIdm
+	7w0cjzbWLsM7LHRK3mT51Cc3k9Ln/ZQIsH1KX/wq6HZzUcbB72ZYToUAJurnXWcFJEdpGZUbdw3BA
+	eh4hfAftwtmwzZFx1nZQs65zJEKslflvY7h601Fs48wxfKauy8fCWwVUIJ5I1FVouXn1lFW/1ES93
+	UOhDoOM9fSM2eyYscL3Uhqe7g8Qpi9xnwtjK0geFQUNqmvLdom5iBDTzulTdeQFl3ou1zbJmbqssb
+	K7OyNpGw==;
+Received: from [223.233.74.223] (helo=[192.168.1.12])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1u0aeJ-00BDab-Pv; Fri, 04 Apr 2025 08:35:32 +0200
+Message-ID: <6beead5a-8c21-af57-0304-1bf825588481@igalia.com>
+Date: Fri, 4 Apr 2025 12:05:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v2 1/3] exec: Dynamically allocate memory to store task's
+ full name
+Content-Language: en-US
+To: Yafang Shao <laoar.shao@gmail.com>, Bhupesh <bhupesh@igalia.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com, pmladek@suse.com,
+ rostedt@goodmis.org, mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
+ alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
+ mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
+ david@redhat.com, viro@zeniv.linux.org.uk, keescook@chromium.org,
+ ebiederm@xmission.com, brauner@kernel.org, jack@suse.cz, mingo@redhat.com,
+ juri.lelli@redhat.com, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com
+References: <20250331121820.455916-1-bhupesh@igalia.com>
+ <20250331121820.455916-2-bhupesh@igalia.com>
+ <CALOAHbB51b-reG6+ypr43sBJ-QpQhF39r5WPjuEp5rgabgRmoA@mail.gmail.com>
+From: Bhupesh Sharma <bhsharma@igalia.com>
+In-Reply-To: <CALOAHbB51b-reG6+ypr43sBJ-QpQhF39r5WPjuEp5rgabgRmoA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The function proc_mem_open() can return an errno, NULL, or mm_struct*.
-If it fails to acquire mm, it returns NULL, but the caller does not
-check for the case when the return value is NULL.
 
-The following conditions lead to failure in acquiring mm:
+On 4/1/25 7:37 AM, Yafang Shao wrote:
+> On Mon, Mar 31, 2025 at 8:18 PM Bhupesh <bhupesh@igalia.com> wrote:
+>> Provide a parallel implementation for get_task_comm() called
+>> get_task_full_name() which allows the dynamically allocated
+>> and filled-in task's full name to be passed to interested
+>> users such as 'gdb'.
+>>
+>> Currently while running 'gdb', the 'task->comm' value of a long
+>> task name is truncated due to the limitation of TASK_COMM_LEN.
+>>
+>> For example using gdb to debug a simple app currently which generate
+>> threads with long task names:
+>>    # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
+>>    # cat log
+>>
+>>    NameThatIsTooLo
+>>
+>> This patch does not touch 'TASK_COMM_LEN' at all, i.e.
+>> 'TASK_COMM_LEN' and the 16-byte design remains untouched. Which means
+>> that all the legacy / existing ABI, continue to work as before using
+>> '/proc/$pid/task/$tid/comm'.
+>>
+>> This patch only adds a parallel, dynamically-allocated
+>> 'task->full_name' which can be used by interested users
+>> via '/proc/$pid/task/$tid/full_name'.
+>>
+>> After this change, gdb is able to show full name of the task:
+>>    # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
+>>    # cat log
+>>
+>>    NameThatIsTooLongForComm[4662]
+>>
+>> Signed-off-by: Bhupesh <bhupesh@igalia.com>
+>> ---
+>>   fs/exec.c             | 21 ++++++++++++++++++---
+>>   include/linux/sched.h |  9 +++++++++
+>>   2 files changed, 27 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/exec.c b/fs/exec.c
+>> index f45859ad13ac..4219d77a519c 100644
+>> --- a/fs/exec.c
+>> +++ b/fs/exec.c
+>> @@ -1208,6 +1208,9 @@ int begin_new_exec(struct linux_binprm * bprm)
+>>   {
+>>          struct task_struct *me = current;
+>>          int retval;
+>> +       va_list args;
+>> +       char *name;
+>> +       const char *fmt;
+>>
+>>          /* Once we are committed compute the creds */
+>>          retval = bprm_creds_from_file(bprm);
+>> @@ -1348,11 +1351,22 @@ int begin_new_exec(struct linux_binprm * bprm)
+>>                   * detecting a concurrent rename and just want a terminated name.
+>>                   */
+>>                  rcu_read_lock();
+>> -               __set_task_comm(me, smp_load_acquire(&bprm->file->f_path.dentry->d_name.name),
+>> -                               true);
+>> +               fmt = smp_load_acquire(&bprm->file->f_path.dentry->d_name.name);
+>> +               name = kvasprintf(GFP_KERNEL, fmt, args);
+>> +               if (!name)
+>> +                       return -ENOMEM;
+>> +
+>> +               me->full_name = name;
+>> +               __set_task_comm(me, fmt, true);
+>>                  rcu_read_unlock();
+>>          } else {
+>> -               __set_task_comm(me, kbasename(bprm->filename), true);
+>> +               fmt = kbasename(bprm->filename);
+>> +               name = kvasprintf(GFP_KERNEL, fmt, args);
+>> +               if (!name)
+>> +                       return -ENOMEM;
+>> +
+>> +               me->full_name = name;
+>> +               __set_task_comm(me, fmt, true);
+>>          }
+>>
+>>          /* An exec changes our domain. We are no longer part of the thread
+>> @@ -1399,6 +1413,7 @@ int begin_new_exec(struct linux_binprm * bprm)
+>>          return 0;
+>>
+>>   out_unlock:
+>> +       kfree(me->full_name);
+>>          up_write(&me->signal->exec_update_lock);
+>>          if (!bprm->cred)
+>>                  mutex_unlock(&me->signal->cred_guard_mutex);
+>> diff --git a/include/linux/sched.h b/include/linux/sched.h
+>> index 56ddeb37b5cd..053b52606652 100644
+>> --- a/include/linux/sched.h
+>> +++ b/include/linux/sched.h
+>> @@ -1166,6 +1166,9 @@ struct task_struct {
+>>           */
+>>          char                            comm[TASK_COMM_LEN];
+>>
+>> +       /* To store the full name if task comm is truncated. */
+>> +       char                            *full_name;
+>> +
+> Adding another field to store the task name isn’t ideal. What about
+> combining them into a single field, as Linus suggested [0]?
+>
+> [0]. https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/
+>
 
-  - The task is a kernel thread (PF_KTHREAD)
-  - The task is exiting (PF_EXITING)
+Thanks for sharing Linus's suggestion. I went through the suggested 
+changes in the related threads and came up with the following set of points:
 
-Changes:
+1. struct task_struct would contain both 'comm' and 'full_name',
+2. Remove the task_lock() inside __get_task_comm(),
+3. Users of task->comm will be affected in the following ways:
+     (a). Printing with '%s' and tsk->comm would just continue to 
+work,but will get a longer max string.
+     (b). For users of memcpy.*->comm\>', we should change 'memcpy()' to 
+'copy_comm()' which would look like:
 
-  - Add documentation comments for the return value of proc_mem_open().
-  - Add checks in the caller to return -ESRCH when proc_mem_open()
-    returns NULL.
+         memcpy(dst, src, TASK_COMM_LEN);
+         dst[TASK_COMM_LEN-1] = 0;
 
-Reported-by: syzbot+f9238a0a31f9b5603fef@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/000000000000f52642060d4e3750@google.com
-Signed-off-by: Penglei Jiang <superman.xpt@gmail.com>
----
-V4 -> V5: Completed the changelog
-V3 -> V4: Revised the comments
-V2 -> V3: Added comments to explain the proc_mem_open() return value
-V1 -> V2: Added the missing NULL check, dropped the proc_mem_open() modification
+    (c). Users which use "sizeof(->comm)" will continue to get the old value because of the hacky union.
 
- fs/proc/base.c       | 12 +++++++++---
- fs/proc/task_mmu.c   | 12 ++++++------
- fs/proc/task_nommu.c |  4 ++--
- 3 files changed, 17 insertions(+), 11 deletions(-)
+Am I missing something here. Please let me know your views.
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index b0d4e1908b22..85a3f5e253d4 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -827,7 +827,13 @@ static const struct file_operations proc_single_file_operations = {
- 	.release	= single_release,
- };
- 
--
-+/*
-+ * proc_mem_open() can return errno, NULL or mm_struct*.
-+ *
-+ *   - Returns NULL if the task has no mm (PF_KTHREAD or PF_EXITING)
-+ *   - Returns mm_struct* on success
-+ *   - Returns error code on failure
-+ */
- struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
- {
- 	struct task_struct *task = get_proc_task(inode);
-@@ -854,8 +860,8 @@ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
- {
- 	struct mm_struct *mm = proc_mem_open(inode, mode);
- 
--	if (IS_ERR(mm))
--		return PTR_ERR(mm);
-+	if (IS_ERR_OR_NULL(mm))
-+		return mm ? PTR_ERR(mm) : -ESRCH;
- 
- 	file->private_data = mm;
- 	return 0;
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 994cde10e3f4..b9e3bd006346 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -212,8 +212,8 @@ static int proc_maps_open(struct inode *inode, struct file *file,
- 
- 	priv->inode = inode;
- 	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
--	if (IS_ERR(priv->mm)) {
--		int err = PTR_ERR(priv->mm);
-+	if (IS_ERR_OR_NULL(priv->mm)) {
-+		int err = priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
- 
- 		seq_release_private(inode, file);
- 		return err;
-@@ -1325,8 +1325,8 @@ static int smaps_rollup_open(struct inode *inode, struct file *file)
- 
- 	priv->inode = inode;
- 	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
--	if (IS_ERR(priv->mm)) {
--		ret = PTR_ERR(priv->mm);
-+	if (IS_ERR_OR_NULL(priv->mm)) {
-+		ret = priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
- 
- 		single_release(inode, file);
- 		goto out_free;
-@@ -2069,8 +2069,8 @@ static int pagemap_open(struct inode *inode, struct file *file)
- 	struct mm_struct *mm;
- 
- 	mm = proc_mem_open(inode, PTRACE_MODE_READ);
--	if (IS_ERR(mm))
--		return PTR_ERR(mm);
-+	if (IS_ERR_OR_NULL(mm))
-+		return mm ? PTR_ERR(mm) : -ESRCH;
- 	file->private_data = mm;
- 	return 0;
- }
-diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
-index bce674533000..59bfd61d653a 100644
---- a/fs/proc/task_nommu.c
-+++ b/fs/proc/task_nommu.c
-@@ -260,8 +260,8 @@ static int maps_open(struct inode *inode, struct file *file,
- 
- 	priv->inode = inode;
- 	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
--	if (IS_ERR(priv->mm)) {
--		int err = PTR_ERR(priv->mm);
-+	if (IS_ERR_OR_NULL(priv->mm)) {
-+		int err = priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
- 
- 		seq_release_private(inode, file);
- 		return err;
--- 
-2.17.1
+Thanks,
+Bhupesh
 
 
