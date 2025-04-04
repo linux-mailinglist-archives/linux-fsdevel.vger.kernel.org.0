@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-45798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEEA2A7C533
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 22:57:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3B72A7C539
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 23:00:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C50A3B50D5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 20:57:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74811189FCBA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 21:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D801E7C01;
-	Fri,  4 Apr 2025 20:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EED91F5423;
+	Fri,  4 Apr 2025 20:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gswuXfyw"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RxYByMab"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85728634
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Apr 2025 20:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2ED21624E9
+	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Apr 2025 20:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743800239; cv=none; b=jCuLWKf5A7YmQ7Fm2bhse0ZkSEdVapBGWeW0b4dm+3YOAvd7QzwwIM7fbfsnCXYBrZOQXHZf4SNV6lvK/Q+WDtM/+6sek5IQCUizbfGoMRau0lvcGfCx4mcF99ypIQdJmtXSrPXzlNt0d0QthtrU6t00yE+2NM4UlVAHSujMIjA=
+	t=1743800394; cv=none; b=uqdxQrh9/XVGzbAqEfdNHz7q0AVT92aFsrh/gQucQ520nrJEMx8ha7dh9U1g99FA/7XEV+zrYlSPJpOjpwdS+CB1AoR4pUzgHNLxtHTeszQ96BTHwxkzaq17+3kbcvr9E5qKGA1bMYvx5IMJbaIL5MQ/aLiiSRNAoqHLp8d/mZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743800239; c=relaxed/simple;
-	bh=1L65CVvSDOW0m7Wy5dDPouXQ+g9QF9hjdnfAenXJ8kg=;
+	s=arc-20240116; t=1743800394; c=relaxed/simple;
+	bh=w9mxxE+o8hf/9m+pn6mM9TIL+92Vh8m8dZFamW6ee6g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NsX/Xzw+GI7h0i+4eFXlF26aBHT5qGf71TPkAt9bvbRnBkOO3CaAz/noIppoJaFRorgIriAEi2vTTXOCQkSTpg+QmnWX7MPCcI89coTsimta40pZIGHRT5FB+4j/ZF+QoO2pmSIbRURV3o4HrsyCLPzSMY/i95QDvKchblaQluA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gswuXfyw; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=nGIamdR1v3uYq4C8n9AXUpm+7ShqvG2+rR0vQbhvAhl+MSeteVbHVNdjUqVpoYAe+DGG+AW6nUffkTkJZyiPO01nT68examjSccmAls9gDJWpdheMllQOpOWuSeiLDrGjXCkpkR8KQfbkWZbhgjERL6RNozeN/f2anwA6QsYRBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RxYByMab; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743800236;
+	s=mimecast20190719; t=1743800391;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MphuJnClTuz/wgauAZ/+9UOOoNZwVFrAJq5GFOCDfKo=;
-	b=gswuXfywXEGk01K8pJJoQJXrEhQwgmi2fzrLHAqr4uI5/HVWqJcJ0a5NIGtjikv0+rvzQS
-	/9cUjHo5aPNj/VUd1Eb1Jd4Sl/AZ1OcbjHPQkwysmAA/uY6MIQ0Wc00GmZxHd0iKxb0vWF
-	lKwbUfI8lF5FZI4dt9wIeKQq6JAPMcI=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=DT50UaJCIq5HARWoxsA+lE7/KQIdkexcgQqBk8IUtYk=;
+	b=RxYByMabiVEcO6wq8t2ZktSdGZfI+1h/PYgPraWwF8Td0ptXvEcJDCuiu2ZcazeAcJO45I
+	hlGfF/K7ckMIvFta4U7NvxJH4TCmdaJWWHIhSvJWJf3ZAA1M1ktvw/MBh9acvtFCgZt65U
+	IVORYTl7+X1PFeiPsYPFimotoYrmZHA=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-101-AZct-kwZN7SGT7kvP65qhQ-1; Fri, 04 Apr 2025 16:57:15 -0400
-X-MC-Unique: AZct-kwZN7SGT7kvP65qhQ-1
-X-Mimecast-MFC-AGG-ID: AZct-kwZN7SGT7kvP65qhQ_1743800234
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43ce245c5acso29180005e9.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Apr 2025 13:57:14 -0700 (PDT)
+ us-mta-472-4a8-J_O8OpKF9aktNbaIHw-1; Fri, 04 Apr 2025 16:59:50 -0400
+X-MC-Unique: 4a8-J_O8OpKF9aktNbaIHw-1
+X-Mimecast-MFC-AGG-ID: 4a8-J_O8OpKF9aktNbaIHw_1743800389
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43d209dc2d3so16277805e9.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Apr 2025 13:59:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743800234; x=1744405034;
+        d=1e100.net; s=20230601; t=1743800389; x=1744405189;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=MphuJnClTuz/wgauAZ/+9UOOoNZwVFrAJq5GFOCDfKo=;
-        b=jb30nDREg5c9SzUmdjMfEGYYYqm93ghO9WAFSx31jr+d8pUu3vSKBaOftPhEMCCq5+
-         hS5bUmey/2ABYPKmaQ6BFSq4c69Pxbsq/mjJnm3GScNxeQcL3iBuHv8fQDzV98adD9DU
-         RVkkUlXcxSE06+gzHvptClM9ha8pnrfVMF+toTOy9kMlGjXS0MJ6ypDgxdpYKFl3ptlX
-         plCnp6Eut0arqdNdTTQY8bRBnlkXufIbMkcDqL1jBel4zDmIkGNsdkxQjQbxryyYcjKq
-         Vfn4bWXBwuuYPqEll7vH7FFY8AOBNERt0YpptzChIygoJFdH3bc0G+KlAB0shFKzTZxR
-         29lw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGH1mScQgw+7osWyocjJzmU220lfUmvQ7XxUgcbT/+OKG2qXhYleWewg65SIpzXL7LfZcZeKx6iB5TSgW8@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+qq4Djw3xolb2YnW1DmJJctAeeyeG3t3KKzXrK/mJLaCkn6zR
-	diG68X3yNzVTZpH886CEwQlHS+0u/pmLU5a10o1e2B0w2DS16aV1KXlqHWg4G+RaIseXmyhpoq1
-	vAwNiMCY9ZYv1X19i+Ix07FF7dW5OP4lbVLCroHWPTTa6T545viygVqHIkx3Wbx0=
-X-Gm-Gg: ASbGncuduTae+cOefwKLusFQYA7EY7bi6Vu4CcO8pqFwr+LbdzSYbxqRGO82aQex/jv
-	CdnsI68WJ96sm1zTkwniUeV3Rha63dyL2f/S6Nz/X/3HW5u9Ah3ePOOvLFu3qYMiNbPQRj/ueBS
-	Dq84f5LrI7CK/o0Jzwb9iLyHFA/NjgJ8s85fsBkGyFOiWEGQ/r9Yn/pKDnrN1qoj1qRQjrRwkm/
-	HWhSSAOhfy1n8gy3b3MLYZJ/mHJodK+c/C6GXMUVYXZTyYMaknXlL33+TOf4gm71QTx2nfjvNlo
-	PEG27PjFD2zFN9L9jduFMSt+53IQfKzY80ayUrA0frIXRSj58kL7LGqj9bB6FFO36UVgKCqZGwK
-	tw/iN3lnBBI94ZJ42ynLR6Ba39YtbSTGJUtUROmucly0=
-X-Received: by 2002:a05:600c:500a:b0:43b:ce3c:19d0 with SMTP id 5b1f17b1804b1-43ed0da06f1mr38086195e9.29.1743800233992;
-        Fri, 04 Apr 2025 13:57:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEzTanrLml12tr3IDgF64xmkRK9hrhYqlKSSITwWBy2in93k0ucTZ0z5PncEDD99Q7+/SAkdg==
-X-Received: by 2002:a05:600c:500a:b0:43b:ce3c:19d0 with SMTP id 5b1f17b1804b1-43ed0da06f1mr38086075e9.29.1743800233684;
-        Fri, 04 Apr 2025 13:57:13 -0700 (PDT)
+        bh=DT50UaJCIq5HARWoxsA+lE7/KQIdkexcgQqBk8IUtYk=;
+        b=UVC5b2Dv13d6Plp5H3xXt29dag7TviKw/4dWSAFj9e0vZN2m3+KCBma4PiLrORlo+N
+         /qh6h0W11m9TBXc/05/XHAjtsfIj6hTvFCf/LJJ2YH9J8haD06lworkjMLleS6Buwc7G
+         0Ir865iuk6iCig1AQx65DUQ9AmqzEGLMKuSPQu+EGTecOfv59RQcWX9XzI5VNUrRBUV3
+         8gaRqLysmphrVs8EFdIJB93/RVTuwx61qVU2NYelCniirrk2NJsciZwkIa9MBuzGPNGt
+         Irl7RRSTNlK4rV7tIX+xEW28ZFd+QLUq4cOASrm+W6wETDSTsZE06UHP0EExFVSh3kZh
+         jpng==
+X-Forwarded-Encrypted: i=1; AJvYcCWs/FFS+gT/EWQ0JS2IiLoGtFqQMgei/HDEYFZoPS0a2+1Ht0lwBvaKhSzdna0xzNtKZXbvemV5wIJyA/+u@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZeQFsZMYltWYfJNj3vf0aWHJeeD+g+QAlCvKqnvSO5AkdFsAU
+	B651GSI2PxQHXDh03+0V/K/mWvcqIASZs2Blb1pTnavi20TfT39eA6uJG9gXLCPdZUUdIHbT2CL
+	sHY/3EFwWYvNQiXAAp6rAGnILZv0nBAu1depxJzvt4HFtfDEfzVQUIOUICYR4jKg=
+X-Gm-Gg: ASbGnctcdNgyvALR+pR9RLtWKWljZobvp0/Mb6X4ohQsWj1icTRNNP0L/9V+bN6W+sR
+	2uX2almhsDok3QAAM1wz9uXNkGi2Na+z/7CMQ51iPHFr3xYf9EBcQ1Hk+uB7n6eCfwrA+ySLeDW
+	AtShY/M5wFch+BOsnfvTGPn7/zJXnLXZRK0Ij2I/Y3lt6jXGxi9fnAI7EkemINyZPqRiFHZ8CGh
+	z98n5VkzQ5sDZ0k4WI7gMDV7QfqQcGnQIPhYq7XEzC0bTyrDVymBs38BrnSYVpOxDc6Nn0lCf8I
+	cjA13MPHZs951COzQkIJM4xVdkDIIgLNC1Se0vZr7ACEHGG4XyeSL1IjLfw+Mm/cYmLlAXPqLAA
+	VMZiecMxDBmSigQHCjXdSEzZwH7ba1qMKPA4D99Z4kPU=
+X-Received: by 2002:a05:600c:4f05:b0:43d:7588:6687 with SMTP id 5b1f17b1804b1-43ee0664696mr7199615e9.12.1743800388861;
+        Fri, 04 Apr 2025 13:59:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEkcAs1DUKd0rZsZ3LUSfxY+03wV4lPDMB6Pxb8j9SZzHr/jh4TuFsN+iKvDHZB+gYAQ45Ruw==
+X-Received: by 2002:a05:600c:4f05:b0:43d:7588:6687 with SMTP id 5b1f17b1804b1-43ee0664696mr7199505e9.12.1743800388506;
+        Fri, 04 Apr 2025 13:59:48 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c71b:7900:8752:fae3:f9c9:a07e? (p200300cbc71b79008752fae3f9c9a07e.dip0.t-ipconnect.de. [2003:cb:c71b:7900:8752:fae3:f9c9:a07e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec1795205sm59026895e9.30.2025.04.04.13.57.12
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec1660eb3sm59007305e9.11.2025.04.04.13.59.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Apr 2025 13:57:13 -0700 (PDT)
-Message-ID: <c749b632-5b53-4e01-96a9-8193988879c5@redhat.com>
-Date: Fri, 4 Apr 2025 22:57:12 +0200
+        Fri, 04 Apr 2025 13:59:47 -0700 (PDT)
+Message-ID: <a7e46516-b94d-44b5-b0f6-14b8f6e2eaa5@redhat.com>
+Date: Fri, 4 Apr 2025 22:59:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,12 +90,12 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/8] filemap: Remove find_subpage()
+Subject: Re: [PATCH 6/8] filemap: Convert __readahead_batch() to use a folio
 To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
  Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
 References: <20250402210612.2444135-1-willy@infradead.org>
- <20250402210612.2444135-6-willy@infradead.org>
+ <20250402210612.2444135-7-willy@infradead.org>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -143,43 +143,52 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20250402210612.2444135-6-willy@infradead.org>
+In-Reply-To: <20250402210612.2444135-7-willy@infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 02.04.25 23:06, Matthew Wilcox (Oracle) wrote:
-> All users of this function now call folio_file_page() instead.
-> Delete it.
+> Extract folios from i_mapping, not pages.  Removes a hidden call to
+> compound_head(), a use of thp_nr_pages() and an unnecessary assertion
+> that we didn't find a tail page in the page cache.
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > ---
->   include/linux/pagemap.h | 13 -------------
->   1 file changed, 13 deletions(-)
+>   include/linux/pagemap.h | 13 ++++++-------
+>   1 file changed, 6 insertions(+), 7 deletions(-)
 > 
 > diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index cd4bd0f8e5f6..0ddd4bd8cdf8 100644
+> index 0ddd4bd8cdf8..c5c9b3770d75 100644
 > --- a/include/linux/pagemap.h
 > +++ b/include/linux/pagemap.h
-> @@ -945,19 +945,6 @@ static inline bool folio_contains(struct folio *folio, pgoff_t index)
->   	return index - folio_index(folio) < folio_nr_pages(folio);
->   }
+> @@ -1424,7 +1424,7 @@ static inline unsigned int __readahead_batch(struct readahead_control *rac,
+>   {
+>   	unsigned int i = 0;
+>   	XA_STATE(xas, &rac->mapping->i_pages, 0);
+> -	struct page *page;
+> +	struct folio *folio;
 >   
-> -/*
-> - * Given the page we found in the page cache, return the page corresponding
-> - * to this index in the file
-> - */
-> -static inline struct page *find_subpage(struct page *head, pgoff_t index)
-> -{
-> -	/* HugeTLBfs wants the head page regardless */
-> -	if (PageHuge(head))
-> -		return head;
-> -
-> -	return head + (index & (thp_nr_pages(head) - 1));
-> -}
-> -
->   unsigned filemap_get_folios(struct address_space *mapping, pgoff_t *start,
->   		pgoff_t end, struct folio_batch *fbatch);
->   unsigned filemap_get_folios_contig(struct address_space *mapping,
+>   	BUG_ON(rac->_batch_count > rac->_nr_pages);
+>   	rac->_nr_pages -= rac->_batch_count;
+> @@ -1433,13 +1433,12 @@ static inline unsigned int __readahead_batch(struct readahead_control *rac,
+>   
+>   	xas_set(&xas, rac->_index);
+>   	rcu_read_lock();
+> -	xas_for_each(&xas, page, rac->_index + rac->_nr_pages - 1) {
+> -		if (xas_retry(&xas, page))
+> +	xas_for_each(&xas, folio, rac->_index + rac->_nr_pages - 1) {
+> +		if (xas_retry(&xas, folio))
+>   			continue;
+> -		VM_BUG_ON_PAGE(!PageLocked(page), page);
+> -		VM_BUG_ON_PAGE(PageTail(page), page);
+> -		array[i++] = page;
+> -		rac->_batch_count += thp_nr_pages(page);
+> +		VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+> +		array[i++] = folio_page(folio, 0);
+> +		rac->_batch_count += folio_nr_pages(folio);
+>   		if (i == array_sz)
+>   			break;
+>   	}
 
 Reviewed-by: David Hildenbrand <david@redhat.com>
 
