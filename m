@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-45734-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F5DAA7B91B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 10:42:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A025FA7B91C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 10:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59507189A0C3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 08:41:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CFBB17A613
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 08:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DA819DF48;
-	Fri,  4 Apr 2025 08:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC6F1A0711;
+	Fri,  4 Apr 2025 08:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xrkeCsbF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dj96f99r"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCF4190462;
-	Fri,  4 Apr 2025 08:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FD9190462;
+	Fri,  4 Apr 2025 08:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743756091; cv=none; b=Q2XHnIC9+GNzwDv0mUdmFl2bmrSFhMMC+hEY9rEtzON/mGNTv3uN7vesge7v+HctgQERXig42MtZDP8Oi60r9jKRcJ7zXDsPKBpZdJ0vfy59DzSEtPEW9KXhCrqYXJ9u0iPiDaTwYMNtFK6id2cJx4RAR35K7W1bhcCRxWFRDoo=
+	t=1743756155; cv=none; b=pd8alwKpxj8ibO5YaUf/y7GNeVbi9/mBOMSp4qWRimhojkFGFrYnCzfb1ZhTzdD0eVWVXr/9YzXB5PX11B93+3b4vr1/43c+lxGov+B5xEksGV9h3yohKshYUCml6iVNCfIBhWFB+jIusW5BDK35LZFVfAfE31ktDOFdagHENHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743756091; c=relaxed/simple;
-	bh=RBISfYxq+Tt92jGYsQSu/LEo5kK/QPuFRMtiyjl9NnI=;
+	s=arc-20240116; t=1743756155; c=relaxed/simple;
+	bh=RgJixkR04iKIsejh5yldwMV/SMTQE2HdrbwYhuj/Atk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nr8ReJRbw60tRrEAOpO/nTouJOx6U89k3s6xIFB2LhbNiiycSGaStGO7dJMZasrtEuv57Gb9LB+7ENBlwWQauM2HGVHN9J/9lbjlS0TAHpYNXN1bdOr7o5084eZ6fo/P+JYD6lnDdv3trPNTPH3SKiG1QWAKglYOFcZx/4ke8v8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xrkeCsbF; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=hfehnCfQM6q1kv57vTplEJ1zzuNM6ali28S5Ie+bjJw=; b=xrkeCsbFAdbec+iPrIUS6dSJKf
-	PJ3zTWXW4LSPxtqiSGXRBaIyBVd6ZrIN+0snan2M5KES0r2gVec6tWofV0kfoiue/iN2xGCKLmy3v
-	NO/V6b2VTdEHMrjmw84Jm3bnq0e3/2O3J5/FkDHqS1T3+SGNgyMznzPVv3YggMLrOalJR9YS/4GMS
-	7EwiK5wjjCrA6w83nKJCw8MhIKcniUsv3EL5nhHcolNYC4M7VnS/YSeLRQIi6FBmNStYVwpRLOVrJ
-	OoktbceTFJ/x3pSES82/74eOgm76bSBd53N6YThxnNxr0S+gR49abY7pXkURfhOBnyAMY9K9WobSr
-	OlynjY/g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u0ccB-0000000BAwY-1Smo;
-	Fri, 04 Apr 2025 08:41:27 +0000
-Date: Fri, 4 Apr 2025 01:41:27 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Andreas Schwab <schwab@linux-m68k.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] fs: cache the string generated by reading
- /proc/filesystems
-Message-ID: <Z--bN3WetGcsQmnx@infradead.org>
-References: <20250329192821.822253-1-mjguzik@gmail.com>
- <20250329192821.822253-3-mjguzik@gmail.com>
- <87h63bpnib.fsf@igel.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ueD76XEMT0tCZWOpe63jR15S3b7Narvfia5dFj8amj2IO9RbeCnRllQ0or9y7S/66NI8OqHaG4SL9fPPNuJZm+0J0e/4DJoIQ3236xdOazrBxfstQCT46/MrtUtKUOUKwkUB6DK5lbMURGgRUMDfYVcR5FoPLgniUAJaodq292U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dj96f99r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 221C9C4CEEA;
+	Fri,  4 Apr 2025 08:42:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743756153;
+	bh=RgJixkR04iKIsejh5yldwMV/SMTQE2HdrbwYhuj/Atk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dj96f99rwas08z2n+1In5u0cV1BW5ido3bSR9VEEdeCWTde7CfhH33Wxl5CeivJF+
+	 CufSRBRy1AMA1otAtCLnnAWBWn25IKdNpPY+GeXWNUTWCsYP1Q3b3CXQ70//wyYDd/
+	 SYisxlDsswDxdRQiQoLAk7AXeSCeAZiA+EGODzqQQDdMHAhRNCsGXcagGgHToWsSyh
+	 yoPWJfzfAWOqfSJZVlM1q2PWQK4E3C4T4jdTrl8NTNFLstVU30bggJzsX1XtJpMQgP
+	 DIe+rfd/CIh5lm9F9eyo6HALpI/mvgokTSWRv9aft+30TJAyeQTPenwLCJ7s8nQYgD
+	 2Aie6oxZZAq0w==
+Date: Fri, 4 Apr 2025 10:42:29 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Breno Leitao <leitao@debian.org>, 
+	Joel Becker <jlbec@evilplan.org>
+Subject: Re: [PATCH] MAINTAINERS: configfs: add Andreas Hindborg as maintainer
+Message-ID: <20250404-komodowaran-erspielen-cc2dcbcda3e3@brauner>
+References: <bHDR61l3TdaMVptxe5z4Q_3_EsRteMfNoygbiFYZ8AzNolk9DPRCG2YDD3_kKYP6kAYel9tPGsq9J8x7gpb-ww==@protonmail.internalid>
+ <Z-aDV4ae3p8_C6k7@infradead.org>
+ <87frix5dk3.fsf@kernel.org>
+ <20250403-sauer-himmel-df90d0e9047c@brauner>
+ <Z--Ae5-C8xlUeX8t@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87h63bpnib.fsf@igel.home>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <Z--Ae5-C8xlUeX8t@infradead.org>
 
-On Sat, Mar 29, 2025 at 09:53:16PM +0100, Andreas Schwab wrote:
-> On Mär 29 2025, Mateusz Guzik wrote:
+On Thu, Apr 03, 2025 at 11:47:23PM -0700, Christoph Hellwig wrote:
+> On Thu, Apr 03, 2025 at 01:27:27PM +0200, Christian Brauner wrote:
+> > There's no need to get upset. Several people pointed out that Joel
+> > Becker retired and since he hasn't responded this felt like the right
+> > thing to do. Just send a patch to add him back. I see no reason to not
+> > have Andreas step up to maintain it.
 > 
-> > It is being read surprisingly often (e.g., by mkdir, ls and even sed!).
-> 
-> It is part of libselinux (selinuxfs_exits), called by its library
-> initializer.
+> Removing someone just because they have retired feels odd, but hey who
+> am I to complain.  I did reach out to him when giving maintainership
+> and he replied although it did indeed take a while.
 
-Can we please fix libselinux instead of working around this really
-broken behavior in the kernel?
-
+I mean, we can surely put Joel back in. My take would be to remove
+that person from the maintainer entry because people will get confused
+when they don't receive a reply. But I'm totally fine if we should leave
+Joel in.
 
