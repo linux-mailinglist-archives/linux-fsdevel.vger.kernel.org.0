@@ -1,214 +1,229 @@
-Return-Path: <linux-fsdevel+bounces-45749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45750-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3098A7BB16
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 12:40:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07EE4A7BB24
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 12:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6C4616CE95
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 10:39:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA0A13B7AA3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Apr 2025 10:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3E21D959B;
-	Fri,  4 Apr 2025 10:39:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A137A1B4254;
+	Fri,  4 Apr 2025 10:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wk1vR+zt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ljK7Z3ME"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F3B1D7E54;
-	Fri,  4 Apr 2025 10:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46202B672
+	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Apr 2025 10:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743763163; cv=none; b=tG2fG9p+OddDDX663JaF4vLE5Gnv3X0dPvzV+ooiXK4ICEJnGCDKG2YbXXEmvwWtKqyeBc6dIOS/rwOvnoAe0fOhyboi8+EjEJOD+CvUG+0f5Ggf9qbexFgAgAvUYJaydy/SW2nECcSr+jfWZ5PadI4MjRc5T0miEg/cyChdBEI=
+	t=1743763467; cv=none; b=kdHW+sRpNcpv77I5XS9wcbwLNuTEGMjSwDW58FPck/Co/KrnP6pp6aqPLvUB2UsskYpjFUUi5vqCC/0TwWyGAsDsxOzXZ2Lw+HJrzPxJLPqAb3yDB7bmpVFEfMbyCJuIWzxBKXaC7SZJ4xhNEFl3Wk2RPOkFuoCmjJ6vOjdCPIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743763163; c=relaxed/simple;
-	bh=4AdbkdDVyBX6jEBtq4y9rlrM1Cu82MlcstjsBSpa4gA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SoDOfb9YzErKKXA6WS5pZNc+3yWn08oNRHSBen2/wzvICiTTSbX9rEVu3ClVe7f4grqMWG5wYDWKx3VOqKhxwG1wi7PDwdQDBy9Skyq5X8UEXn3klr0SByFG6q/CW7X+FaoJxRkP0rvis9X8Mv50UkN9qOuH5G3u5yhwP+ns/Y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wk1vR+zt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3DB9C4CEDD;
-	Fri,  4 Apr 2025 10:39:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743763162;
-	bh=4AdbkdDVyBX6jEBtq4y9rlrM1Cu82MlcstjsBSpa4gA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Wk1vR+zt8m2HitztpAjsi6Rr6Vz3v6/VfErgrusAcabl6MMcq1qgLLpe8IKkjbBPs
-	 J2MhMMT0zGhiuz95OqH8oTabjlHHkNu58urxqsj+VVxsCCwDIZiByQnKPPUwl7iLG1
-	 zjTXnXU4lz+SNVaMWnLPqy5ylfTI0U1O/RLh0DKHpXSDDrsBGZdWLC/UMQL1vqh9Dc
-	 RyZBZSPd/pnNnr+enJv38/PoiYFoS4+KHcbVYlmDa/XqfXCgcDJAeaJTBt6jh/ThFI
-	 lsbmOWVcMLC3+Ig0QHOtTCvsiPdj5phTnfOIv4nehtcHcXM29H5vZhq5Ad7+MwHviM
-	 tOhowTkLptFDg==
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>,
-	Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Penglei Jiang <superman.xpt@gmail.com>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+5d8e79d323a13aa0b248@syzkaller.appspotmail.com
-Subject: [PATCH] anon_inode: use a proper mode internally
-Date: Fri,  4 Apr 2025 12:39:14 +0200
-Message-ID: <20250404-aphorismen-reibung-12028a1db7e3@brauner>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1743763467; c=relaxed/simple;
+	bh=5ycnbXyC4hAWEohn6B0vdF6BodfCKpqPGneKwCnec8c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q83GxrPJUXIzJOb+mDnIChDUo5ccbhTJHOs07c5MfhcVzBIwCHB2akL4a26HSTPpUZ7ONtGGvfDMAFLAQNSZ33pX+ml3sFGrAqDzhsT2/HgECKQudN1FrXtp12vs/48wJlW67mDCANAworh5m3PDcpDlBHOG5vxS6ASRx6s94wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ljK7Z3ME; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5edc07c777eso2416490a12.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Apr 2025 03:44:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743763463; x=1744368263; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Il3wHs+cVuLTp7IjVBcrk4KyAa8PBUKn0zbBssHigS4=;
+        b=ljK7Z3MEm/oVScMcT82QghnNxyMhBWNEiNHCr+AWAdJKfuxfD3Vp0VBzApcvjTKWCI
+         Wx9Q+JvA49DWB+fawlw5V6wQlkCl+F4gTR6U94w7LGpUSDCdUvwMPCK2wB4ftzo5MvnX
+         2z4cmEUmeUYvc2VwSf8WVusJrKy918JlrxxCWCVrVW/jE4fLkQLtwuikZCnp/lTJzC3r
+         21xU0FZeMTVn6nwvXHojHhRFyiZn9zKUEw0Fs/no4avurcU7Oa1UMiDu0jsYCOXJnDa5
+         tCPhVXrn974hEND7jmQXo03rtcVrBL06GFTNaruEavzjzIfx3nNYKuBO9qC8YjhGKg7F
+         vXqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743763463; x=1744368263;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Il3wHs+cVuLTp7IjVBcrk4KyAa8PBUKn0zbBssHigS4=;
+        b=t+YlonlTpHDOoWb7GdCZW55kfh+qypELEK1lxX8d6dba9dCqGdbIrDlcA7dv5pML+D
+         N51UX6+JDLlqu2rwSBEEx78MqhRrFuf2xw+olpLIh0ghBurjJ/ZAjo9UBzzC1iePYbUL
+         qDJDDPf/4OeIyBlyFe9mcut4SVqx5AQUIOdG4FUSCtlMq180/aSsOfypR19UOgbf8fym
+         npOMzzHsLmSWykJOBOH3YnLMO1sAixOuen3tnbnXT12ZIjPdkaIyr7f0+IUqQ8C2WzWx
+         rRB+d1Hh2q3BDPL0eex1k5E6VtYQkLgCUTNLkYNrDs7A1VBDTooQU91oTmhZfr9QSfVR
+         JvgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUiGNPN7hPoHfVtnbhwrGajUeM7LiDZ4q4xBSWohRauJdllIxk7gzzVrzr/zy0DgfuhsDBjdIB5W3xqNsKW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyykk+YxRQcj2V3DosactBPMcjGH0OdAuSFVA0mOTJlvZVbFvgM
+	IHFU2R5E4/JaD1UmJdQUzojvzpTTAQ+EV7fU3gw45qLseokwRSZDzAdo7YljD+9ru+6mwmZ31rE
+	16LJOGx7AHMefsc6cbyodlF3dm9A=
+X-Gm-Gg: ASbGnctPB9EV90Elns38BnlZ60Hg+y7c5F+ofBPaSlx6TigEYXTq8vERz3jKcbw0VBr
+	fECgJM5giG0euP9Jzt0nLQy2Dmef3lwJJH/fbKWeyqak5UWxXLRMDpNuVvT73CXehquMHcH0+OL
+	C846xQAqYKi/Jmo/zw9AXwgt4Chg==
+X-Google-Smtp-Source: AGHT+IGwY+kUxbjLwMUhGW6FcToYaGX5MAPURs//LAo+LDM7pZtyhuA51GiYzI77/O7DPyY9dcYSpnoqbXXg/OBu1gs=
+X-Received: by 2002:a05:6402:524c:b0:5f0:7290:394b with SMTP id
+ 4fb4d7f45d1cf-5f0b3e34895mr1927637a12.27.1743763463035; Fri, 04 Apr 2025
+ 03:44:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4980; i=brauner@kernel.org; h=from:subject:message-id; bh=4AdbkdDVyBX6jEBtq4y9rlrM1Cu82MlcstjsBSpa4gA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS/33ZJbpXHxW0Hnnxs1c+V/Hj0+Y8EBc0TO06embq+5 kH7TQtZl45SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJfDFj+M3iPffxxrvHfBde uirsbRstf3jTPYlSodBzPdybtbYsZdzD8Jv9bo1PWmx7t+C6m921+6XOPuOapHy8a8mLRS5h+sw r3rEBAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20250402062707.1637811-1-amir73il@gmail.com> <u3myluuaylejsfidkkajxni33w2ezwcfztlhjmavdmpcoir45o@ew32e4yra6xb>
+ <CAOQ4uxh7JhGMjoMpFWvHyEZ0j2kJUgLf9PjyvLeNbSAzVbDyQA@mail.gmail.com> <ba4cmwymyiived2xrxxlo5mi2hnnljkiy5mvlbzws2w2vpwwdm@pkekpc5d2apu>
+In-Reply-To: <ba4cmwymyiived2xrxxlo5mi2hnnljkiy5mvlbzws2w2vpwwdm@pkekpc5d2apu>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 4 Apr 2025 12:44:11 +0200
+X-Gm-Features: ATxdqUHTyPevR9L9OjwxKolYT3IBEsZvbPBJicJUVVD2fSgZ4jIUVUCtjaLCf_s
+Message-ID: <CAOQ4uxgcv+1zaRKFgWQJYkEUt0pKs9Uuw8Pw0CvEoYHm2OQ7nw@mail.gmail.com>
+Subject: Re: [PATCH] fanotify: allow creating FAN_PRE_ACCESS events on directories
+To: Jan Kara <jack@suse.cz>
+Cc: Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This allows the VFS to not trip over anonymous inodes and we can add
-asserts based on the mode into the vfs. When we report it to userspace
-we can simply hide the mode to avoid regressions. I've audited all
-direct callers of alloc_anon_inode() and only secretmen overrides i_mode
-and i_op inode operations but it already uses a regular file.
+On Fri, Apr 4, 2025 at 11:53=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
+>
+> On Thu 03-04-25 19:24:57, Amir Goldstein wrote:
+> > On Thu, Apr 3, 2025 at 7:10=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > On Wed 02-04-25 08:27:07, Amir Goldstein wrote:
+> > > > Like files, a FAN_PRE_ACCESS event will be generated before every
+> > > > read access to directory, that is on readdir(3).
+> > > >
+> > > > Unlike files, there will be no range info record following a
+> > > > FAN_PRE_ACCESS event, because the range of access on a directory
+> > > > is not well defined.
+> > > >
+> > > > FAN_PRE_ACCESS events on readdir are only generated when user opts-=
+in
+> > > > with FAN_ONDIR request in event mask and the FAN_PRE_ACCESS events =
+on
+> > > > readdir report the FAN_ONDIR flag, so user can differentiate them f=
+rom
+> > > > event on read.
+> > > >
+> > > > An HSM service is expected to use those events to populate director=
+ies
+> > > > from slower tier on first readdir access. Having to range info mean=
+s
+> > > > that the entire directory will need to be populated on the first
+> > > > readdir() call.
+> > > >
+> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > > > ---
+> > > >
+> > > > Jan,
+> > > >
+> > > > IIRC, the reason we did not allow FAN_ONDIR with FAN_PRE_ACCESS eve=
+nt
+> > > > in initial API version was due to uncertainty around reporting rang=
+e info.
+> > > >
+> > > > Circling back to this, I do not see any better options other than n=
+ot
+> > > > reporting range info and reporting the FAN_ONDIR flag.
+> > > >
+> > > > HSM only option is to populate the entire directory on first access=
+.
+> > > > Doing a partial range populate for directories does not seem practi=
+cal
+> > > > with exising POSIX semantics.
+> > >
+> > > I agree that range info for directory events doesn't make sense (or b=
+etter
+> > > there's no way to have a generic implementation since everything is p=
+retty
+> > > fs specific). If I remember our past discussion, filling in directory
+> > > content on open has unnecessarily high overhead because the user may =
+then
+> > > just do e.g. lookup in the opened directory and not full readdir. Tha=
+t's
+> > > why you want to generate it on readdir. Correct?
+> > >
+> >
+> > Right.
+> >
+> > > > If you accept this claim, please consider fast tracking this change=
+ into
+> > > > 6.14.y.
+> > >
+> > > Hum, why the rush? It is just additional feature to allow more effici=
+ent
+> > > filling in of directory entries...
+> > >
+> >
+> > Well, no rush really.
+> >
+> > My incentive is not having to confuse users with documentation that
+> > version X supports FAN_PRE_ACCESS but only version Y supports
+> > it with FAN_ONDIR.
+> >
+> > It's not a big deal, but if we have no reason to delay this, I'd just
+> > treat it as a fix to the new api (removing unneeded limitations).
+>
+> The patch is easy enough so I guess we may push it for rc2. When testing
+> it, I've noticed a lot of LTP test cases fail (e.g. fanotify02) because t=
+hey
+> get unexpected event. So likely the patch actually breaks something in
+> reporting of other events. I don't have time to analyze it right now so I=
+'m
+> just reporting it in case you have time to have a look...
+>
 
-Fixes: af153bb63a336 ("vfs: catch invalid modes in may_open()")
-Reported-by: syzbot+5d8e79d323a13aa0b248@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/67ed3fb3.050a0220.14623d.0009.GAE@google.com"
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/anon_inodes.c | 36 ++++++++++++++++++++++++++++++++++++
- fs/internal.h    |  3 +++
- fs/libfs.c       |  2 +-
- fs/pidfs.c       | 24 +-----------------------
- 4 files changed, 41 insertions(+), 24 deletions(-)
+Damn I should have tested that.
+Patch seemed so irrelevant for non pre-content events that it eluded me.
 
-diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-index 583ac81669c2..42e4b9c34f89 100644
---- a/fs/anon_inodes.c
-+++ b/fs/anon_inodes.c
-@@ -24,9 +24,43 @@
- 
- #include <linux/uaccess.h>
- 
-+#include "internal.h"
-+
- static struct vfsmount *anon_inode_mnt __ro_after_init;
- static struct inode *anon_inode_inode __ro_after_init;
- 
-+/*
-+ * User space expects anonymous inodes to have no file type in st_mode.
-+ *
-+ * In particular, 'lsof' has this legacy logic:
-+ *
-+ *	type = s->st_mode & S_IFMT;
-+ *	switch (type) {
-+ *	  ...
-+ *	case 0:
-+ *		if (!strcmp(p, "anon_inode"))
-+ *			Lf->ntype = Ntype = N_ANON_INODE;
-+ *
-+ * to detect our old anon_inode logic.
-+ *
-+ * Rather than mess with our internal sane inode data, just fix it
-+ * up here in getattr() by masking off the format bits.
-+ */
-+int anon_inode_getattr(struct mnt_idmap *idmap, const struct path *path,
-+		       struct kstat *stat, u32 request_mask,
-+		       unsigned int query_flags)
-+{
-+	struct inode *inode = d_inode(path->dentry);
-+
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
-+	stat->mode &= ~S_IFMT;
-+	return 0;
-+}
-+
-+static const struct inode_operations anon_inode_operations = {
-+	.getattr = anon_inode_getattr,
-+};
-+
- /*
-  * anon_inodefs_dname() is called from d_path().
-  */
-@@ -66,6 +100,7 @@ static struct inode *anon_inode_make_secure_inode(
- 	if (IS_ERR(inode))
- 		return inode;
- 	inode->i_flags &= ~S_PRIVATE;
-+	inode->i_op = &anon_inode_operations;
- 	error =	security_inode_init_security_anon(inode, &QSTR(name),
- 						  context_inode);
- 	if (error) {
-@@ -313,6 +348,7 @@ static int __init anon_inode_init(void)
- 	anon_inode_inode = alloc_anon_inode(anon_inode_mnt->mnt_sb);
- 	if (IS_ERR(anon_inode_inode))
- 		panic("anon_inode_init() inode allocation failed (%ld)\n", PTR_ERR(anon_inode_inode));
-+	anon_inode_inode->i_op = &anon_inode_operations;
- 
- 	return 0;
- }
-diff --git a/fs/internal.h b/fs/internal.h
-index b9b3e29a73fd..717dc9eb6185 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -343,3 +343,6 @@ static inline bool path_mounted(const struct path *path)
- void file_f_owner_release(struct file *file);
- bool file_seek_cur_needs_f_lock(struct file *file);
- int statmount_mnt_idmap(struct mnt_idmap *idmap, struct seq_file *seq, bool uid_map);
-+int anon_inode_getattr(struct mnt_idmap *idmap, const struct path *path,
-+		       struct kstat *stat, u32 request_mask,
-+		       unsigned int query_flags);
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 6393d7c49ee6..0ad3336f5b49 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1647,7 +1647,7 @@ struct inode *alloc_anon_inode(struct super_block *s)
- 	 * that it already _is_ on the dirty list.
- 	 */
- 	inode->i_state = I_DIRTY;
--	inode->i_mode = S_IRUSR | S_IWUSR;
-+	inode->i_mode = S_IFREG | S_IRUSR | S_IWUSR;
- 	inode->i_uid = current_fsuid();
- 	inode->i_gid = current_fsgid();
- 	inode->i_flags |= S_PRIVATE;
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index d64a4cbeb0da..809c3393b6a3 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -572,33 +572,11 @@ static int pidfs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 	return -EOPNOTSUPP;
- }
- 
--
--/*
-- * User space expects pidfs inodes to have no file type in st_mode.
-- *
-- * In particular, 'lsof' has this legacy logic:
-- *
-- *	type = s->st_mode & S_IFMT;
-- *	switch (type) {
-- *	  ...
-- *	case 0:
-- *		if (!strcmp(p, "anon_inode"))
-- *			Lf->ntype = Ntype = N_ANON_INODE;
-- *
-- * to detect our old anon_inode logic.
-- *
-- * Rather than mess with our internal sane inode data, just fix it
-- * up here in getattr() by masking off the format bits.
-- */
- static int pidfs_getattr(struct mnt_idmap *idmap, const struct path *path,
- 			 struct kstat *stat, u32 request_mask,
- 			 unsigned int query_flags)
- {
--	struct inode *inode = d_inode(path->dentry);
--
--	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
--	stat->mode &= ~S_IFMT;
--	return 0;
-+	return anon_inode_getattr(idmap, path, stat, request_mask, query_flags);
- }
- 
- static const struct inode_operations pidfs_inode_operations = {
--- 
-2.47.2
+It took me a good amount of staring time until I realized that both
+FANOTIFY_OUTGOING_EVENTS and FANOTIFY_EVENT_FLAGS
+include the FAN_ONDIR flag.
 
+This diff fixes the failing tests:
+
+diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+index 531c038eed7c..f90598044ec9 100644
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -373,6 +373,8 @@ static u32 fanotify_group_event_mask(struct
+fsnotify_group *group,
+                user_mask |=3D FANOTIFY_EVENT_FLAGS;
+        } else if (test_mask & FANOTIFY_PRE_CONTENT_EVENTS) {
+                user_mask |=3D FAN_ONDIR;
++       } else {
++               user_mask &=3D ~FANOTIFY_EVENT_FLAGS;
+        }
+
+        return test_mask & user_mask;
+--
+
+I don't know if this needs to be further clarified to avoid confusion
+when reading this code in the future?
+
+> > I would point out that FAN_ACCESS_PERM already works
+> > for directories and in effect provides (almost) the exact same
+> > functionality as FAN_PRE_ACCESS without range info.
+> >
+> > But in order to get the FAN_ACCESS_PERM events on directories
+> > listener would also be forced to get FAN_ACCESS_PERM on
+> > special files and regular files
+> > and assuming that this user is an HSM, it cannot request
+> > FAN_ACCESS_PERM|FAN_ONDIR in the same mask as
+> > FAN_PRE_ACCESS (which it needs for files) so it will need to
+> > open another group for populating directories.
+> >
+> > So that's why I would maybe consider this a last minute fix to the new =
+API.
+>
+> Yeah, this would be really a desperate way to get the functionality :)
+
+Indeed :)
+
+Thanks,
+Amir.
 
