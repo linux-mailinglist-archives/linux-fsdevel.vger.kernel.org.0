@@ -1,92 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-45820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB278A7D073
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Apr 2025 22:45:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D5C2A7D075
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Apr 2025 22:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 548B3188C3B8
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Apr 2025 20:46:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB053188C53C
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Apr 2025 20:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB55B189BB5;
-	Sun,  6 Apr 2025 20:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4951A1AA1EC;
+	Sun,  6 Apr 2025 20:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="jM7FGVDk";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="D4Or0SQ1"
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="Z6eU+TSY";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tFX5OLvk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from flow-a4-smtp.messagingengine.com (flow-a4-smtp.messagingengine.com [103.168.172.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FEB03597A;
-	Sun,  6 Apr 2025 20:45:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B040157A48;
+	Sun,  6 Apr 2025 20:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743972345; cv=none; b=mxmb0MLOCoB4erLO7l4iCKGIoziDuVixS+tR4yNyzTM4OmhUwxc7gvmDwSDDlFEur1taw69EiUBPf4XU+5MSb3c5xjopiEihd33m9/3LCcYba6xcADIGfrv8KVw4jjbyP/QRyPTeaR+osUFzuIsea1Tjpas4/CPgmdbk/NzU0V4=
+	t=1743972351; cv=none; b=Yjj0N7icJPafO4eQs8IO6rzujax0gyeC0+ufJA3UbJBCE64GoyHMuHjETPPEoOBaLqNpoQ+NYXEH39wMnMLfj9F7v7NNHNRp/i9WQO+DR15LiaQhyb6EL0kCCTTr0KxbKzBCVRht206G5p0pwyvoHbTF7k/9pF6pYyFZpfFILgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743972345; c=relaxed/simple;
-	bh=Bzy1s34T17INh5SKuVX7lteVwwMyQcXK3g+IZAI0FYI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=up99Kmtg0qm6IbORKfD7DfnJZG9DBnVC5+qwd67j1EoFtt3mBz+awgurmfp511tyrEThEcrHdsSySjP8DVWrJEF8PXGTNhGKVmtkuP2q0SZ7G5Z1NFTFVrA4y/jUBu9bDfFNVdUGQE8Uw+WxCGiiQ81SjTclX3sITnp8R2xBJB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=jM7FGVDk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=D4Or0SQ1; arc=none smtp.client-ip=103.168.172.139
+	s=arc-20240116; t=1743972351; c=relaxed/simple;
+	bh=XLFo39BVEoAoBBqV9syYijIuPWDZsYIEBwJfJJ9SE7c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=no88pUzG6JDkyEzey1VWP8FYBPZxI8FpFi1etZqPI54+CkOgkqSZlizN+QVUBdqUs15iIeuI/y8NftNywYl5VcpSlOBVQWhvPgsxuv2ueOGeWlsMGRYBYH7eUpN5jjs3AhXFRzasDJLtcv22vCnQ4cer9IoklKYTKlhaR6bmk1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=Z6eU+TSY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tFX5OLvk; arc=none smtp.client-ip=103.168.172.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailflow.phl.internal (Postfix) with ESMTP id 24BE4202428;
-	Sun,  6 Apr 2025 16:45:42 -0400 (EDT)
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailflow.phl.internal (Postfix) with ESMTP id 689D0202428;
+	Sun,  6 Apr 2025 16:45:48 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Sun, 06 Apr 2025 16:45:42 -0400
+  by phl-compute-01.internal (MEProxy); Sun, 06 Apr 2025 16:45:48 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
 	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm2; t=1743972342; x=1743975942; bh=RctfrBa+5alH5q5+Q5uTR
-	uK4Px3YhFHtfDoG3yrpcbc=; b=jM7FGVDkeGNONUj2HqIdPMpjXj7iVPQtlkE5S
-	W7tYiXzu0rJA8dBgEbjjoR5kWNys4UtWzBNvh167ihb9CR/bU6AQogdxOOMIpFfl
-	Wy7HGrTDVrSuXRGhxlgtt7O3txUc+kJXlBpZdfrAgZLMS7we1DE2B/XnILjnKUYs
-	8srXGAB68LbJVpz87sKQb14kr3BnCBMCM7qPWCJr9CrkXcHTgghNlhRbiHAVZChg
-	ks4z5bw+/g3eIIZ7EqOfCPknS9GLvbokmneM264pfr7PZCjTgJ5tl3JWQ23IUpLo
-	0tk+ZikaTPve/wank8BV/f3LKmEDVzLn+2+sNU0AupIUqcu1A==
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1743972348; x=
+	1743975948; bh=QTBCQns44FbkVkYYlhRmyTJiJhR3fKsYOUyxwrjONOk=; b=Z
+	6eU+TSYjzvhSATxKOv4qeVP8Fp6YdlM5ZPqEaY8eD3viFzVBy2c4FX0rK2TJVB/4
+	PahRk80cuzQZ6QaDiMpTnQ96jOoOKy4UnxWKB+HrUljCZayFPHlHlqm7Za+FyQyE
+	8XpU25HTPh6zTQcucX0TUyKOV1fSFGMR68O09AyO0/uwH9TCZzjcW2TWRaYOTgVp
+	GFgswoHMON938DmgTgyRI3OxTg0Nresc0snJHkzA3vXyMme8M1unfS85jwCWSIAX
+	NOviCzcFEdaGgMwSk4oFLhyJSmpc0pruimhDSnPd1TfIOpZ01OTyE7GPUo3BByEs
+	+y2SUutmf0Gg06MYUE2YA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1743972342; x=1743975942; bh=RctfrBa+5alH5q5+Q5uTRuK4Px3YhFHtfDo
-	G3yrpcbc=; b=D4Or0SQ1UTjvpetunEpwNGGGIQUYJksPw1/O4CCS70g4XB5OuWw
-	/l3IfHkkfs38EGe8NzYwHjyw9LA8M2avLiJefWN+iXHlktpYx5GWT6cbLzZho/bU
-	eMSULhU3hEweTExxDVasZ/30Gawv01Fm4wIJZZvjut7QWpmbBrjImDshSKpoNAUx
-	Zvm56DvfgJMKUwmgqziM91qUoVRdcpuBP/Hr0PIgD1oAFeDjWqjmzwJL/25DILhl
-	b8R28mNjDnMOlJF21zl5+Q9zlNr0xmEtdHocX7V63m61IArWJBojpkLENvsiSWFj
-	IonoKI20924IzDaw+jTo5ZiKNuM7dQivh7g==
-X-ME-Sender: <xms:9OfyZ2UGpCNDOkxTpJwt9pEqNaBUue3XtEZILEeuxKjOtzvFyK2ItA>
-    <xme:9OfyZymTp02MnArv8YXLX6x3ttqj3XjknzUp0uMLTSxK049FRI0HU_hGHXDQoyjl0
-    YrbsQGtv4zmV40-yg0>
-X-ME-Received: <xmr:9OfyZ6bWvM3cBECrwNSE8VPTe9E_9ZgBaNb-y2yb-88UZO060Vg8abxx_OknDq4JqLNr99emkEd_z7PSSMHuzDWOYWnycxO5LA2F3cMJ_nyk73GvrvazEsc>
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm2; t=1743972348; x=1743975948; bh=Q
+	TBCQns44FbkVkYYlhRmyTJiJhR3fKsYOUyxwrjONOk=; b=tFX5OLvkNpa63wFdf
+	lzxXEiUsPQ0MEPkQP818VH0+J4TGfWRyW6ckhHt0qYiizUTlR8Re+uslC8N61JFy
+	SDTIi89oREambWYknuw2C0BPWqU2P8hwUFGG5NjZl3xLSX3PDj/fVgVZfYTKGGsz
+	LGLGf9r9ckgMFYOcoZeEphrq7xM9sMra34W7QW1TMKq4O+nf64zPh5UP25rdsD8J
+	ykCAR5a1G9ryN8VijtbKmQFk8/tK6A1iC0aozQ++fK6IT5qaPpwwLvf4zPKXf9V3
+	y0iKIh5wPQ9+/URy61oA+M42rxFgGDtYuR//dSRlXZtPlI5MgYDfVdmtfOk2aVk7
+	3WR4A==
+X-ME-Sender: <xms:9-fyZ9w2WnKfPbS8Tx1etmyIgbFtvKpGDHhGz6NmfMmjirbj2PCHuw>
+    <xme:9-fyZ9QfeWDZw6FXorJf1MCQFyX1ZLUfWDD3xk7Aj33nEW5kLPAoFOFha6MSbaYjO
+    loP2WyXQbT0rWPnmAY>
+X-ME-Received: <xmr:9-fyZ3Vd-wwYCM3qYxcVnFcAdrzaL1kQmveRQuzSGwQDUDkHxtmEb4tCwjps5FjQsL-EFJcch0RUjNjdtj_EbGrbTccbj4YZNSmfpVuyMYbWOJOSDCqZaro>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduleekvdekucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
     pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttden
-    ucfhrhhomhepvfhinhhgmhgrohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqeenuc
-    ggtffrrghtthgvrhhnpeeigfdvkeefvddugfehleehvedvgeehheefheevueegfeefueff
-    teetieeijeevkeenucffohhmrghinhepghhithhhuhgsrdgtohhmpdhkvghrnhgvlhdroh
-    hrghdpqhgvmhhurdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehm
-    rghilhhfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopedufedpmh
-    houggvpehsmhhtphhouhhtpdhrtghpthhtohepvghrihgtvhhhsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopegrshhmrgguvghushestghouggvfihrvggtkhdrohhrghdprhgtph
-    htthhopehluhgthhhosehiohhnkhhovhdrnhgvthdprhgtphhtthhopehlihhnuhigpgho
-    shhssegtrhhuuggvsgihthgvrdgtohhmpdhrtghpthhtohepmhesmhgrohifthhmrdhorh
-    hgpdhrtghpthhtohepvhelfhhssehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthht
-    ohepmhhitgesughighhikhhougdrnhgvthdprhgtphhtthhopehgnhhorggtkhesghhooh
-    hglhgvrdgtohhmpdhrtghpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhl
-    vgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:9OfyZ9X0K1xpEHYuroGCdKUcKmjVWRo8i2ydJpwhmOrUgFjS3L5JQw>
-    <xmx:9OfyZwlhTmPPttvwxr_HKG0L_wEXa2w5keyhqy2GU-_yGQB3xIK3CA>
-    <xmx:9OfyZycDwHai1MLWlRRrfhK0ZipyXhkLgVQNGJjM7rNizYsB0X3pCA>
-    <xmx:9OfyZyHzJz80NKgqAv91XOgbJ_tGxH2oXFJhFMoIgwvd6QJnXS81Qg>
-    <xmx:9efyZ1mO1krWtUCIh2H4GMJoORLYOheAdxnmFLoX1G9OtCib0rMIvqLK>
+    gvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredt
+    tdenucfhrhhomhepvfhinhhgmhgrohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqe
+    enucggtffrrghtthgvrhhnpeeuuddthefhhefhvdejteevvddvteefffegteetueegueel
+    jeefueekjeetieeuleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
+    hlfhhrohhmpehmsehmrghofihtmhdrohhrghdpnhgspghrtghpthhtohepudefpdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopegvrhhitghvhheskhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtoheprghsmhgruggvuhhssegtohguvgifrhgvtghkrdhorhhgpdhrtghpthht
+    oheplhhutghhohesihhonhhkohhvrdhnvghtpdhrtghpthhtoheplhhinhhugigpohhssh
+    estghruhguvggshihtvgdrtghomhdprhgtphhtthhopehmsehmrghofihtmhdrohhrghdp
+    rhgtphhtthhopehvlehfsheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhope
+    hmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepghhnohgrtghksehgohhoghhl
+    vgdrtghomhdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:9-fyZ_hUvT9v7vPnQjh0KqPlUcHK_dFAKwocHkEBoBRqbH_nAwK7Cg>
+    <xmx:9-fyZ_DB194p2WK61_9QoBzuruZUc94hrW1jc7T6n8SL-k1PkSV_Nw>
+    <xmx:9-fyZ4LPQSRmLLBlE5CGBTvl25Ej-lXkdmM2s3SdM6K27FI0qDGDEQ>
+    <xmx:9-fyZ-C36QqA_9VqxleDGbuKtuJDtTkEvhS9YradxJT8BgVoSazhdA>
+    <xmx:-OfyZ-CCy9hZF2DLlKCjOpzkJ4kYT1YA5XevOJSAdI0ijnHSuJV1rz6m>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 6 Apr 2025 16:45:38 -0400 (EDT)
+ 6 Apr 2025 16:45:42 -0400 (EDT)
 From: Tingmao Wang <m@maowtm.org>
 To: Eric Van Hensbergen <ericvh@kernel.org>,
 	Dominique Martinet <asmadeus@codewreck.org>,
@@ -101,10 +103,12 @@ Cc: Tingmao Wang <m@maowtm.org>,
 	Amir Goldstein <amir73il@gmail.com>,
 	Matthew Bobrowski <repnop@google.com>,
 	linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH 0/6] fs/9p: Reuse inode based on path (in addition to qid)
-Date: Sun,  6 Apr 2025 21:43:01 +0100
-Message-ID: <cover.1743971855.git.m@maowtm.org>
+Subject: [RFC PATCH 1/6] fs/9p: Add ability to identify inode by path for .L
+Date: Sun,  6 Apr 2025 21:43:02 +0100
+Message-ID: <e839a49e0673b12eb5a1ed2605a0a5267ff644db.1743971855.git.m@maowtm.org>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <cover.1743971855.git.m@maowtm.org>
+References: <cover.1743971855.git.m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -113,305 +117,538 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi 9p-fs maintainers,
+Creating a new file for shared code between vfs_inode.c and
+vfs_inode_dotl.c.  Same change for non-.L will be added in a following
+commit.
 
-(CC'ing Landlock and Fanotify/inotify people as this affects both use
-cases, although most of my investigation has been on Landlock)
-
-Previously [1], I noticed that when using 9pfs filesystems, the Landlock
-LSM is blocking access even for files / directories allowed by rules, and
-that this has something to do with 9pfs creating new inodes despite
-Landlock holding a reference to the existing one.  Because Landlock uses
-inodes' in-memory state (i_security) to identify allowed fs
-objects/hierarchies, this causes Landlock to partially break on 9pfs, at
-least in uncached mode, which is the default:
-
-    # mount -t 9p -o trans=virtio test /mnt
-    # env LL_FS_RO=/etc:/usr:/bin:/lib:/mnt/readme LL_FS_RW= /sandboxer bash
-    Executing the sandboxed command...
-    bash: cannot set terminal process group (164): Inappropriate ioctl for device
-    bash: no job control in this shell
-    # cat /mnt/readme
-    cat: /mnt/readme: Permission denied
-
-This, however, works if somebody is holding onto the dentry (and it also
-works with cache=loose), as in both cases the inode is reused:
-
-    # tail -f /mnt/readme &
-    [1] 196
-    # env LL_FS_RO=/etc:/usr:/bin:/lib:/mnt/readme LL_FS_RW= /sandboxer bash
-    Executing the sandboxed command...
-    bash: cannot set terminal process group (164): Inappropriate ioctl for device
-    bash: no job control in this shell
-    # cat /mnt/readme
-    aa
-
-It also works on directories if one have a shell that cd into the
-directory.  Note that this means only certain usage of Landlock are
-affected - for example, sandboxing applications that takes a list of files
-to allow, landlocks itself, then evecve.  On the other hand, this does not
-affect applications that opens a file, then Landlocks itself while keeping
-the file it needs open.
-
-While the above is a very simple example, this is problematic in
-real-world use cases if Landlock is used to sandox applications on system
-that has files mounted via 9pfs, or use 9pfs as the root filesystem.  In
-addition, this also affects fanotify / inotify when using inode mark (for
-local access):
-
-    root@d8c28a676d72:/# ./fanotify-basic-open /readme & # on virtiofs
-    [1] 173
-    root@d8c28a676d72:/# cat readme
-    aa
-    FAN_OPEN: File /readme
-    root@d8c28a676d72:/# mount -t 9p -o trans=virtio test /mnt
-    root@d8c28a676d72:/# ./fanotify-basic-open /mnt/readme & # on 9pfs
-    [2] 176
-    root@d8c28a676d72:/# cat /mnt/readme
-    aa
-    root@d8c28a676d72:/#
-
-Same can be demonstrated with inotifywait.  The source code for
-fanotify-basic-open, adopted from the fanotify man page, is available at
-the end of this email.
-
-Note that this is not a security bug for Landlock since it can only cause
-legitimate access to be denied, but might be a problem for fanotify perm
-(although I do recognize that using perm on individual inodes is already
-perhaps a bit unreliable?)
-
-It seems that there was an attempt at making 9pfs reuse inodes, based on
-qid.path, however it was reverted [2] due to issues with servers that
-present duplicate qids, for example on a QEMU host that has multiple
-filesystems mounted under a single 9pfs export without multidevs=remap, or
-in the case of other servers that doesn't necessarily support remapping
-qids ([3] and more).  I've done some testing on v6.12-rc4 which has the
-simplified 9pfs inode code before it was reverted, and found that Landlock
-works (however, we of course then have the issue demonstrated in [2]).
-
-Unrelated to the above problem, it also seems like even with the revert in
-[2], because in cached mode inode are still reused based on qid (and type,
-version (aka mtime), etc), the setup mentioned in [2] still causes
-problems in th latest kernel with cache=loose:
-
-    host # cd /tmp/linux-test
-    host # mkdir m1 m2
-    host # mount -t tmpfs tmpfs m1
-    host # mount -t tmpfs tmpfs m2
-    host # mkdir m1/dir m2/dir  # needs to be done together so that they have the same mtime
-    host # echo foo > m1/dir/foo
-    host # echo bar > m2/dir/bar
-
-    guest # mount -t 9p -o trans=virtio,cache=loose test /mnt
-    guest # cd /mnt/m1/dir
-    qemu-system-x86_64: warning: 9p: Multiple devices detected in same VirtFS export, which might lead to file ID collisions and severe misbehaviours on guest! You should either use a separate export for each device shared from host or use virtfs option 'multidevs=remap'!
-    guest # ls
-    foo
-    guest # ls /mnt/m2/dir
-    foo # <- should be bar
-    guest # uname -a
-    Linux d8c28a676d72 6.14.0-dev #92 SMP PREEMPT_DYNAMIC Sun Apr  6 18:47:54 BST 2025 x86_64 GNU/Linux
-
-With the above in mind, I have a proposal for 9pfs to:
-1. Reuse inodes even in uncached mode
-2. However, reuse them based on qid.path AND the actual pathname, by doing
-   the appropriate testing in v9fs_test(_new)?_inode(_dotl)?
-
-The main problem here is how to store the pathname in a sensible way and
-tie it to the inode.  For now I opted with an array of names acquired with
-take_dentry_name_snapshot, which reuses the same memory as the dcache to
-store the actual strings, but doesn't tie the lifetime of the dentry with
-the inode (I thought about holding a reference to the dentry in the
-v9fs_inode, but it seemed like a wrong approach and would cause dentries
-to not be evicted/released).
-
-Maybe ideally there could be a general way for filesystems to tell
-VFS/dcache to "pin" a dentry as long as the inode is alive, but still
-allows the dentry and inode to be evicted based on memory pressure?  In
-fact, if the dentry is alive, we might not even need to do this in 9pfs,
-as we will automatically get the same inode pointed to by the dentry.
-
-Currently this pathname is immutable once attached to an inode, and
-therefore it is not protected by locks or RCU, but this might have to
-change for us to support renames that preserve the inode on next access.
-This is not in this patchset yet.  Also let me know if I've missed any
-locks etc (I'm new to VFS, or for that matter, the kernel).
-
-Storing one pathname per inode also means we don't reuse the same inode
-for hardlinks -- maybe this can be fixed as well in a future version, if
-this approach sounds good?
-
-From some QEMU documentation I read [4] it seems like there is a plan to
-resolve these kind of problems in a new version of the protocol, by
-expanding the qid to include the filesystem identifier of a file on the
-host, so maybe this can be disabled after a successful protocol version
-check with the host?  For now this is implemented as a default option,
-inodeident=path, which can be set to 'none' to instead get the previous
-behaviour.
-
-This patchset is still a bit of a work in progress, and I've not tested
-the performance impact.  It currently uses strncmp to compare paths but
-this might be able to be optimized into a hash comparison first.  It
-should also normally only need to do it for one pair of filenames, as the
-test is only done if qid.path matches in the first place.
-
-Also, currently the inode is not reused in cached mode if mtime changed
-AND the dentry was evicted -- I considered removing the qid.version test
-in v9fs_test_inode_dotl but I think perhaps care needs to be taken to
-ensure we can refresh an inode that potentially has data cached?  This is
-a TODO for this patchset.
-
-Another TODO is to maybe add support for case-insensitive matching?
-
-For this patch series I've tested modifying files on both host and guest,
-changing a file from regular file to dir then back while preserving ino,
-keeping a file open in the guest with a fd, and using Landlock (which
-results in an ihold but does not keep the dentry) then trying to access
-the file from both inside and outside the Landlocked shell.
-
-Let me know what's your thought on this -- if this is a viable approach
-I'm happy to work on it more and do more testing.  The main motivation
-behind this is getting Landlock to work "out of the box" on 9pfs.
-
-This patch series was based on, and tested on v6.14 + [5]
-
-Kind regards,
-Tingmao
-
-[1]: https://github.com/landlock-lsm/linux/issues/45
-[2]: https://lore.kernel.org/all/20241024-revert_iget-v1-4-4cac63d25f72@codewreck.org/
-[3]: https://lore.kernel.org/all/20240923100508.GA32066@willie-the-truck/
-[4]: https://wiki.qemu.org/Documentation/9p#Protocol_Plans
-[5]: https://lore.kernel.org/all/cover.1743956147.git.m@maowtm.org/
-
-fanotify-basic-open.c:
-
-    #define _GNU_SOURCE /* Needed to get O_LARGEFILE definition */
-    #include <errno.h>
-    #include <fcntl.h>
-    #include <limits.h>
-    #include <poll.h>
-    #include <stdio.h>
-    #include <stdlib.h>
-    #include <sys/fanotify.h>
-    #include <unistd.h>
-
-    /* Read all available fanotify events from the file descriptor 'fd'. */
-
-    static void handle_events(int fd)
-    {
-        const struct fanotify_event_metadata *metadata;
-        struct fanotify_event_metadata buf[200];
-        ssize_t size;
-        char path[PATH_MAX];
-        ssize_t path_len;
-        char procfd_path[PATH_MAX];
-        struct fanotify_response response;
-
-        for (;;) {
-            size = read(fd, buf, sizeof(buf));
-            if (size == -1 && errno != EAGAIN) {
-                perror("read");
-                exit(EXIT_FAILURE);
-            }
-
-            /* Check if end of available data reached. */
-
-            if (size <= 0)
-                break;
-
-            /* Point to the first event in the buffer. */
-
-            metadata = buf;
-
-            /* Loop over all events in the buffer. */
-
-            while (FAN_EVENT_OK(metadata, size)) {
-                if (metadata->fd >= 0) {
-                    if (metadata->mask & FAN_OPEN) {
-                        printf("FAN_OPEN: ");
-                    }
-
-                    /* Retrieve and print pathname of the accessed file. */
-
-                    snprintf(procfd_path, sizeof(procfd_path),
-                        "/proc/self/fd/%d", metadata->fd);
-                    path_len = readlink(procfd_path, path,
-                                sizeof(path) - 1);
-                    if (path_len == -1) {
-                        perror("readlink");
-                        exit(EXIT_FAILURE);
-                    }
-
-                    path[path_len] = '\0';
-                    printf("File %s\n", path);
-
-                    /* Close the file descriptor of the event. */
-
-                    close(metadata->fd);
-                }
-
-                /* Advance to next event. */
-
-                metadata = FAN_EVENT_NEXT(metadata, size);
-            }
-        }
-    }
-
-    int main(int argc, char *argv[])
-    {
-        char buf;
-        int fd, poll_num;
-        nfds_t nfds;
-        struct pollfd fds[2];
-
-        /* Check mount point is supplied. */
-
-        if (argc != 2) {
-            fprintf(stderr, "Usage: %s FILE\n", argv[0]);
-            exit(EXIT_FAILURE);
-        }
-
-        fd = fanotify_init(0, O_RDONLY | O_LARGEFILE);
-        if (fd == -1) {
-            perror("fanotify_init");
-            exit(EXIT_FAILURE);
-        }
-
-        if (fanotify_mark(fd, FAN_MARK_ADD | FAN_MARK_INODE, FAN_OPEN, AT_FDCWD,
-                argv[1]) == -1) {
-            perror("fanotify_mark");
-            exit(EXIT_FAILURE);
-        }
-
-        while (1) {
-            handle_events(fd);
-        }
-    }
-
-Tingmao Wang (6):
-  fs/9p: Add ability to identify inode by path for .L
-  fs/9p: add default option for path-based inodes
-  fs/9p: Hide inodeident=path from show_options as it is the default
-  fs/9p: Add ability to identify inode by path for non-.L
-  fs/9p: .L: Refresh stale inodes on reuse
-  fs/9p: non-.L: Refresh stale inodes on reuse
-
+Signed-off-by: Tingmao Wang <m@maowtm.org>
+---
  fs/9p/Makefile         |   3 +-
- fs/9p/ino_path.c       | 114 ++++++++++++++++++++++++++++++++++++++
- fs/9p/v9fs.c           |  33 ++++++++++-
- fs/9p/v9fs.h           |  63 +++++++++++++++------
- fs/9p/vfs_inode.c      | 122 +++++++++++++++++++++++++++++++++++------
- fs/9p/vfs_inode_dotl.c | 108 +++++++++++++++++++++++++++++++++---
+ fs/9p/ino_path.c       | 114 +++++++++++++++++++++++++++++++++++++++++
+ fs/9p/v9fs.h           |  54 +++++++++++++------
+ fs/9p/vfs_inode.c      |  20 ++++++--
+ fs/9p/vfs_inode_dotl.c |  91 +++++++++++++++++++++++++++++---
  fs/9p/vfs_super.c      |  10 +++-
- 7 files changed, 406 insertions(+), 47 deletions(-)
+ 6 files changed, 262 insertions(+), 30 deletions(-)
  create mode 100644 fs/9p/ino_path.c
 
-
-base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
-prerequisite-patch-id: 12dc6676db52ff32eed082b1e5d273f297737f61
-prerequisite-patch-id: 93ab54c52a41fa44b8d0baf55df949d0ad27e99a
-prerequisite-patch-id: 5f558bf969e6eaa3d011c98de0806ca8ad369efe
---
+diff --git a/fs/9p/Makefile b/fs/9p/Makefile
+index e7800a5c7395..38c3ceb26274 100644
+--- a/fs/9p/Makefile
++++ b/fs/9p/Makefile
+@@ -11,7 +11,8 @@ obj-$(CONFIG_9P_FS) := 9p.o
+ 	vfs_dentry.o \
+ 	v9fs.o \
+ 	fid.o  \
+-	xattr.o
++	xattr.o \
++	ino_path.o
+ 
+ 9p-$(CONFIG_9P_FSCACHE) += cache.o
+ 9p-$(CONFIG_9P_FS_POSIX_ACL) += acl.o
+diff --git a/fs/9p/ino_path.c b/fs/9p/ino_path.c
+new file mode 100644
+index 000000000000..a4e0aef81618
+--- /dev/null
++++ b/fs/9p/ino_path.c
+@@ -0,0 +1,114 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Specific operations on the v9fs_ino_path structure.
++ *
++ * Copyright (C) 2025 by Tingmao Wang <m@maowtm.org>
++ */
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/fs.h>
++#include <linux/string.h>
++#include <linux/dcache.h>
++
++#include <linux/posix_acl.h>
++#include <net/9p/9p.h>
++#include <net/9p/client.h>
++#include "v9fs.h"
++
++/*
++ * Must hold rename_sem due to traversing parents
++ */
++struct v9fs_ino_path *make_ino_path(struct dentry *dentry)
++{
++	struct v9fs_ino_path *path;
++	size_t path_components = 0;
++	struct dentry *curr = dentry;
++	ssize_t i;
++
++	lockdep_assert_held_read(&v9fs_dentry2v9ses(dentry)->rename_sem);
++
++	rcu_read_lock();
++
++    /* Don't include the root dentry */
++	while (curr->d_parent != curr) {
++		path_components++;
++		curr = curr->d_parent;
++	}
++	if (WARN_ON(path_components > SSIZE_MAX)) {
++		rcu_read_unlock();
++		return NULL;
++	}
++
++	path = kmalloc(struct_size(path, names, path_components),
++		       GFP_KERNEL);
++	if (!path) {
++		rcu_read_unlock();
++		return NULL;
++	}
++
++	path->nr_components = path_components;
++	curr = dentry;
++	for (i = path_components - 1; i >= 0; i--) {
++		take_dentry_name_snapshot(&path->names[i], curr);
++		curr = curr->d_parent;
++	}
++	WARN_ON(curr != curr->d_parent);
++	rcu_read_unlock();
++	return path;
++}
++
++void free_ino_path(struct v9fs_ino_path *path)
++{
++	if (path) {
++		for (size_t i = 0; i < path->nr_components; i++)
++			release_dentry_name_snapshot(&path->names[i]);
++		kfree(path);
++	}
++}
++
++/*
++ * Must hold rename_sem due to traversing parents
++ */
++bool ino_path_compare(struct v9fs_ino_path *ino_path,
++			     struct dentry *dentry)
++{
++	struct dentry *curr = dentry;
++	struct qstr *curr_name;
++	struct name_snapshot *compare;
++	ssize_t i;
++
++	lockdep_assert_held_read(&v9fs_dentry2v9ses(dentry)->rename_sem);
++
++	rcu_read_lock();
++	for (i = ino_path->nr_components - 1; i >= 0; i--) {
++		if (curr->d_parent == curr) {
++			/* We're supposed to have more components to walk */
++			rcu_read_unlock();
++			return false;
++		}
++		curr_name = &curr->d_name;
++		compare = &ino_path->names[i];
++		/*
++		 * We can't use hash_len because it is salted with the parent
++		 * dentry pointer.  We could make this faster by pre-computing our
++		 * own hashlen for compare and ino_path outside, probably.
++		 */
++		if (curr_name->len != compare->name.len) {
++			rcu_read_unlock();
++			return false;
++		}
++		if (strncmp(curr_name->name, compare->name.name,
++			    curr_name->len) != 0) {
++			rcu_read_unlock();
++			return false;
++		}
++		curr = curr->d_parent;
++	}
++	rcu_read_unlock();
++	if (curr != curr->d_parent) {
++		/* dentry is deeper than ino_path */
++		return false;
++	}
++	return true;
++}
+diff --git a/fs/9p/v9fs.h b/fs/9p/v9fs.h
+index f28bc763847a..5c85923aa2dd 100644
+--- a/fs/9p/v9fs.h
++++ b/fs/9p/v9fs.h
+@@ -10,6 +10,7 @@
+ 
+ #include <linux/backing-dev.h>
+ #include <linux/netfs.h>
++#include <linux/dcache.h>
+ 
+ /**
+  * enum p9_session_flags - option flags for each 9P session
+@@ -31,16 +32,17 @@
+ #define V9FS_ACL_MASK V9FS_POSIX_ACL
+ 
+ enum p9_session_flags {
+-	V9FS_PROTO_2000U    = 0x01,
+-	V9FS_PROTO_2000L    = 0x02,
+-	V9FS_ACCESS_SINGLE  = 0x04,
+-	V9FS_ACCESS_USER    = 0x08,
+-	V9FS_ACCESS_CLIENT  = 0x10,
+-	V9FS_POSIX_ACL      = 0x20,
+-	V9FS_NO_XATTR       = 0x40,
+-	V9FS_IGNORE_QV      = 0x80, /* ignore qid.version for cache hints */
+-	V9FS_DIRECT_IO      = 0x100,
+-	V9FS_SYNC           = 0x200
++	V9FS_PROTO_2000U      = 0x01,
++	V9FS_PROTO_2000L      = 0x02,
++	V9FS_ACCESS_SINGLE    = 0x04,
++	V9FS_ACCESS_USER      = 0x08,
++	V9FS_ACCESS_CLIENT    = 0x10,
++	V9FS_POSIX_ACL        = 0x20,
++	V9FS_NO_XATTR         = 0x40,
++	V9FS_IGNORE_QV        = 0x80, /* ignore qid.version for cache hints */
++	V9FS_DIRECT_IO        = 0x100,
++	V9FS_SYNC             = 0x200,
++	V9FS_INODE_IDENT_PATH = 0x400,
+ };
+ 
+ /**
+@@ -133,11 +135,27 @@ struct v9fs_session_info {
+ /* cache_validity flags */
+ #define V9FS_INO_INVALID_ATTR 0x01
+ 
++struct v9fs_ino_path {
++	size_t nr_components;
++	struct name_snapshot names[] __counted_by(nr_components);
++};
++
++extern struct v9fs_ino_path *make_ino_path(struct dentry *dentry);
++extern void free_ino_path(struct v9fs_ino_path *path);
++extern bool ino_path_compare(struct v9fs_ino_path *ino_path,
++	struct dentry *dentry);
++
+ struct v9fs_inode {
+ 	struct netfs_inode netfs; /* Netfslib context and vfs inode */
+ 	struct p9_qid qid;
+ 	unsigned int cache_validity;
+ 	struct mutex v_mutex;
++
++	/*
++	 * Only for filesystems with inode_ident=path.  Lifetime is the same as
++	 * this inode
++	 */
++	struct v9fs_ino_path *path;
+ };
+ 
+ static inline struct v9fs_inode *V9FS_I(const struct inode *inode)
+@@ -188,7 +206,8 @@ extern const struct inode_operations v9fs_symlink_inode_operations_dotl;
+ extern const struct netfs_request_ops v9fs_req_ops;
+ extern struct inode *v9fs_inode_from_fid_dotl(struct v9fs_session_info *v9ses,
+ 					      struct p9_fid *fid,
+-					      struct super_block *sb, int new);
++					      struct super_block *sb,
++					      struct dentry *dentry, int new);
+ 
+ /* other default globals */
+ #define V9FS_PORT	564
+@@ -217,6 +236,11 @@ static inline int v9fs_proto_dotl(struct v9fs_session_info *v9ses)
+ 	return v9ses->flags & V9FS_PROTO_2000L;
+ }
+ 
++static inline int v9fs_inode_ident_path(struct v9fs_session_info *v9ses)
++{
++	return v9ses->flags & V9FS_INODE_IDENT_PATH;
++}
++
+ /**
+  * v9fs_get_inode_from_fid - Helper routine to populate an inode by
+  * issuing a attribute request
+@@ -227,10 +251,10 @@ static inline int v9fs_proto_dotl(struct v9fs_session_info *v9ses)
+  */
+ static inline struct inode *
+ v9fs_get_inode_from_fid(struct v9fs_session_info *v9ses, struct p9_fid *fid,
+-			struct super_block *sb)
++			struct super_block *sb, struct dentry *dentry)
+ {
+ 	if (v9fs_proto_dotl(v9ses))
+-		return v9fs_inode_from_fid_dotl(v9ses, fid, sb, 0);
++		return v9fs_inode_from_fid_dotl(v9ses, fid, sb, dentry, 0);
+ 	else
+ 		return v9fs_inode_from_fid(v9ses, fid, sb, 0);
+ }
+@@ -245,10 +269,10 @@ v9fs_get_inode_from_fid(struct v9fs_session_info *v9ses, struct p9_fid *fid,
+  */
+ static inline struct inode *
+ v9fs_get_new_inode_from_fid(struct v9fs_session_info *v9ses, struct p9_fid *fid,
+-			    struct super_block *sb)
++			    struct super_block *sb, struct dentry *dentry)
+ {
+ 	if (v9fs_proto_dotl(v9ses))
+-		return v9fs_inode_from_fid_dotl(v9ses, fid, sb, 1);
++		return v9fs_inode_from_fid_dotl(v9ses, fid, sb, dentry, 1);
+ 	else
+ 		return v9fs_inode_from_fid(v9ses, fid, sb, 1);
+ }
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index 1640765563e9..72fd72a2ff06 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -243,6 +243,7 @@ struct inode *v9fs_alloc_inode(struct super_block *sb)
+ 
+ void v9fs_free_inode(struct inode *inode)
+ {
++	free_ino_path(V9FS_I(inode)->path);
+ 	kmem_cache_free(v9fs_inode_cache, V9FS_I(inode));
+ }
+ 
+@@ -607,15 +608,17 @@ v9fs_create(struct v9fs_session_info *v9ses, struct inode *dir,
+ 			goto error;
+ 		}
+ 		/*
+-		 * instantiate inode and assign the unopened fid to the dentry
++		 * Instantiate inode.  On .L fs, pass in dentry for inodeident=path.
+ 		 */
+-		inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
++		inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb,
++			v9fs_proto_dotl(v9ses) ? dentry : NULL);
+ 		if (IS_ERR(inode)) {
+ 			err = PTR_ERR(inode);
+ 			p9_debug(P9_DEBUG_VFS,
+ 				   "inode creation failed %d\n", err);
+ 			goto error;
+ 		}
++		/* Assign the unopened fid to the dentry */
+ 		v9fs_fid_add(dentry, &fid);
+ 		d_instantiate(dentry, inode);
+ 	}
+@@ -733,14 +736,21 @@ struct dentry *v9fs_vfs_lookup(struct inode *dir, struct dentry *dentry,
+ 	name = dentry->d_name.name;
+ 	fid = p9_client_walk(dfid, 1, &name, 1);
+ 	p9_fid_put(dfid);
++
++	/*
++	 * On .L fs, pass in dentry to v9fs_get_inode_from_fid in case it is
++	 * needed by inodeident=path
++	 */
+ 	if (fid == ERR_PTR(-ENOENT))
+ 		inode = NULL;
+ 	else if (IS_ERR(fid))
+ 		inode = ERR_CAST(fid);
+-	else if (v9ses->cache & (CACHE_META|CACHE_LOOSE))
+-		inode = v9fs_get_inode_from_fid(v9ses, fid, dir->i_sb);
++	else if (v9ses->cache & (CACHE_META | CACHE_LOOSE))
++		inode = v9fs_get_inode_from_fid(v9ses, fid, dir->i_sb,
++			v9fs_proto_dotl(v9ses) ? dentry : NULL);
+ 	else
+-		inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
++		inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb,
++			v9fs_proto_dotl(v9ses) ? dentry : NULL);
+ 	/*
+ 	 * If we had a rename on the server and a parallel lookup
+ 	 * for the new name, then make sure we instantiate with
+diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
+index 2d025e561ba1..c1cc3553f2fb 100644
+--- a/fs/9p/vfs_inode_dotl.c
++++ b/fs/9p/vfs_inode_dotl.c
+@@ -52,10 +52,17 @@ static kgid_t v9fs_get_fsgid_for_create(struct inode *dir_inode)
+ 	return current_fsgid();
+ }
+ 
++struct iget_data {
++	struct p9_stat_dotl *st;
++	struct dentry *dentry;
++};
++
+ static int v9fs_test_inode_dotl(struct inode *inode, void *data)
+ {
+ 	struct v9fs_inode *v9inode = V9FS_I(inode);
+-	struct p9_stat_dotl *st = (struct p9_stat_dotl *)data;
++	struct p9_stat_dotl *st = ((struct iget_data *)data)->st;
++	struct dentry *dentry = ((struct iget_data *)data)->dentry;
++	struct v9fs_session_info *v9ses = v9fs_inode2v9ses(inode);
+ 
+ 	/* don't match inode of different type */
+ 	if (inode_wrong_type(inode, st->st_mode))
+@@ -74,22 +81,74 @@ static int v9fs_test_inode_dotl(struct inode *inode, void *data)
+ 
+ 	if (v9inode->qid.path != st->qid.path)
+ 		return 0;
++
++	if (v9fs_inode_ident_path(v9ses)) {
++		if (!ino_path_compare(v9inode->path, dentry)) {
++			p9_debug(P9_DEBUG_VFS, "Refusing to reuse inode %p based on path mismatch",
++				 inode);
++			return 0;
++		}
++	}
+ 	return 1;
+ }
+ 
+ /* Always get a new inode */
+ static int v9fs_test_new_inode_dotl(struct inode *inode, void *data)
+ {
++	struct v9fs_inode *v9inode = V9FS_I(inode);
++	struct p9_stat_dotl *st = ((struct iget_data *)data)->st;
++	struct dentry *dentry = ((struct iget_data *)data)->dentry;
++	struct v9fs_session_info *v9ses = v9fs_inode2v9ses(inode);
++
++	/*
++	 * Don't reuse inode of different type, even if we have
++	 * inodeident=path and path matches.
++	 */
++	if (inode_wrong_type(inode, st->st_mode))
++		return 0;
++
++	/*
++	 * We're only getting here if QID2INO stays the same anyway, so
++	 * mirroring the qid checks in v9fs_test_inode_dotl
++	 * (but maybe that check is unnecessary anyway? at least on 64bit)
++	 */
++
++	if (v9inode->qid.type != st->qid.type)
++		return 0;
++
++	if (v9inode->qid.path != st->qid.path)
++		return 0;
++
++	if (v9fs_inode_ident_path(v9ses) && dentry && v9inode->path) {
++		if (ino_path_compare(V9FS_I(inode)->path, dentry)) {
++			p9_debug(P9_DEBUG_VFS,
++				 "Reusing inode %p based on path match", inode);
++			return 1;
++		}
++	}
++
+ 	return 0;
+ }
+ 
+ static int v9fs_set_inode_dotl(struct inode *inode,  void *data)
+ {
+ 	struct v9fs_inode *v9inode = V9FS_I(inode);
+-	struct p9_stat_dotl *st = (struct p9_stat_dotl *)data;
++	struct v9fs_session_info *v9ses = v9fs_inode2v9ses(inode);
++	struct iget_data *idata = data;
++	struct p9_stat_dotl *st = idata->st;
++	struct dentry *dentry = idata->dentry;
+ 
+ 	memcpy(&v9inode->qid, &st->qid, sizeof(st->qid));
+ 	inode->i_generation = st->st_gen;
++	if (v9fs_inode_ident_path(v9ses)) {
++		if (dentry) {
++			v9inode->path = make_ino_path(dentry);
++			if (!v9inode->path)
++				return -ENOMEM;
++		} else {
++			v9inode->path = NULL;
++		}
++	}
+ 	return 0;
+ }
+ 
+@@ -97,19 +156,35 @@ static struct inode *v9fs_qid_iget_dotl(struct super_block *sb,
+ 					struct p9_qid *qid,
+ 					struct p9_fid *fid,
+ 					struct p9_stat_dotl *st,
++					struct dentry *dentry,
+ 					int new)
+ {
+ 	int retval;
+ 	struct inode *inode;
+ 	struct v9fs_session_info *v9ses = sb->s_fs_info;
+ 	int (*test)(struct inode *inode, void *data);
++	struct iget_data data = {
++		.st = st,
++		.dentry = dentry,
++	};
++
+ 
+ 	if (new)
+ 		test = v9fs_test_new_inode_dotl;
+ 	else
+ 		test = v9fs_test_inode_dotl;
+ 
+-	inode = iget5_locked(sb, QID2INO(qid), test, v9fs_set_inode_dotl, st);
++	if (v9fs_inode_ident_path(v9ses) && dentry) {
++		/*
++		 * We have to take the rename_sem lock here as iget5_locked has
++		 * spinlock in it (inode_hash_lock)
++		 */
++		down_read(&v9ses->rename_sem);
++	}
++	inode = iget5_locked(sb, QID2INO(qid), test, v9fs_set_inode_dotl, &data);
++	if (v9fs_inode_ident_path(v9ses) && dentry)
++		up_read(&v9ses->rename_sem);
++
+ 	if (!inode)
+ 		return ERR_PTR(-ENOMEM);
+ 	if (!(inode->i_state & I_NEW))
+@@ -142,7 +217,7 @@ static struct inode *v9fs_qid_iget_dotl(struct super_block *sb,
+ 
+ struct inode *
+ v9fs_inode_from_fid_dotl(struct v9fs_session_info *v9ses, struct p9_fid *fid,
+-			 struct super_block *sb, int new)
++			 struct super_block *sb, struct dentry *dentry, int new)
+ {
+ 	struct p9_stat_dotl *st;
+ 	struct inode *inode = NULL;
+@@ -151,7 +226,7 @@ v9fs_inode_from_fid_dotl(struct v9fs_session_info *v9ses, struct p9_fid *fid,
+ 	if (IS_ERR(st))
+ 		return ERR_CAST(st);
+ 
+-	inode = v9fs_qid_iget_dotl(sb, &st->qid, fid, st, new);
++	inode = v9fs_qid_iget_dotl(sb, &st->qid, fid, st, dentry, new);
+ 	kfree(st);
+ 	return inode;
+ }
+@@ -305,7 +380,7 @@ v9fs_vfs_atomic_open_dotl(struct inode *dir, struct dentry *dentry,
+ 		p9_debug(P9_DEBUG_VFS, "p9_client_walk failed %d\n", err);
+ 		goto out;
+ 	}
+-	inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
++	inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb, dentry);
+ 	if (IS_ERR(inode)) {
+ 		err = PTR_ERR(inode);
+ 		p9_debug(P9_DEBUG_VFS, "inode creation failed %d\n", err);
+@@ -400,7 +475,7 @@ static int v9fs_vfs_mkdir_dotl(struct mnt_idmap *idmap,
+ 	}
+ 
+ 	/* instantiate inode and assign the unopened fid to the dentry */
+-	inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
++	inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb, dentry);
+ 	if (IS_ERR(inode)) {
+ 		err = PTR_ERR(inode);
+ 		p9_debug(P9_DEBUG_VFS, "inode creation failed %d\n",
+@@ -838,7 +913,7 @@ v9fs_vfs_mknod_dotl(struct mnt_idmap *idmap, struct inode *dir,
+ 			 err);
+ 		goto error;
+ 	}
+-	inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
++	inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb, dentry);
+ 	if (IS_ERR(inode)) {
+ 		err = PTR_ERR(inode);
+ 		p9_debug(P9_DEBUG_VFS, "inode creation failed %d\n",
+diff --git a/fs/9p/vfs_super.c b/fs/9p/vfs_super.c
+index 489db161abc9..566d9ae6255f 100644
+--- a/fs/9p/vfs_super.c
++++ b/fs/9p/vfs_super.c
+@@ -139,7 +139,7 @@ static struct dentry *v9fs_mount(struct file_system_type *fs_type, int flags,
+ 	else
+ 		sb->s_d_op = &v9fs_dentry_operations;
+ 
+-	inode = v9fs_get_new_inode_from_fid(v9ses, fid, sb);
++	inode = v9fs_get_new_inode_from_fid(v9ses, fid, sb, NULL);
+ 	if (IS_ERR(inode)) {
+ 		retval = PTR_ERR(inode);
+ 		goto release_sb;
+@@ -151,6 +151,14 @@ static struct dentry *v9fs_mount(struct file_system_type *fs_type, int flags,
+ 		goto release_sb;
+ 	}
+ 	sb->s_root = root;
++
++	if (v9fs_inode_ident_path(v9ses)) {
++		/* Probably not necessary, just to satisfy lockdep_assert */
++		down_read(&v9ses->rename_sem);
++		V9FS_I(inode)->path = make_ino_path(root);
++		up_read(&v9ses->rename_sem);
++	}
++
+ 	retval = v9fs_get_acl(inode, fid);
+ 	if (retval)
+ 		goto release_sb;
+-- 
 2.39.5
+
 
