@@ -1,75 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-45828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A4CA7D134
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 01:58:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B1BBA7D137
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 01:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7C5C3ACEF1
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Apr 2025 23:58:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 098C7164383
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Apr 2025 23:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00171ADC8F;
-	Sun,  6 Apr 2025 23:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47AD41C32EA;
+	Sun,  6 Apr 2025 23:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KsFq4f81"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WCsMhiOG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF8D2914;
-	Sun,  6 Apr 2025 23:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C99F1B4F08;
+	Sun,  6 Apr 2025 23:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743983903; cv=none; b=jMH2bcURj8+jcq7Q9/9yWOJ/le5k+976SVoUbce5YJ0M6Xsw48XaUT/vEdcfEWt98bkuIwhKXwe0dQejoKtXnWv1/pPit7Lit8CtYph9FZuGITeKRrRvJD+mBq/0znxoMl9cCob6veCzY2blEbp5HtmTcxLaUsr8Ymuz7jWcLj0=
+	t=1743983905; cv=none; b=qJQkCPlRCtEI474EpDKgAqO4MhwKQqC+EeCPbrUHuC9HhiqiM7tYRsKKQ93Hr+SSUewDKTiRJXHuhLoTIgBJXfz/+yOqiXKzsgL+rv6oiGHnx9DCYMRWpfoVgX69ghjeeWgJqCOB3hwP5LgseTCL1bnPq3vF9Gqxbnpo0ZCEyZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743983903; c=relaxed/simple;
-	bh=3vJ0PhPQJDAHHBp34zlETqLTK59+q+zcQB9UoX1OA84=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XQCTkc5u7TDTubO7ouAMPAC7KlUhE2Ugfvit55MNc9Z3qbOiO7NUc7XUvVdUIN/BfmXhxEpCJkibwtHNMT5lECDVepSstJ6paiSb0H8CAK91vTgh96RV7G7EYkGk+UD9nftYd+wtStzjb/84DMSQd8ITeYrzDpwNY6EGORyoT78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KsFq4f81; arc=none smtp.client-ip=209.85.221.41
+	s=arc-20240116; t=1743983905; c=relaxed/simple;
+	bh=f4GK1bZfYEOHX+GKwkkO9F3l4/+qzrSXQSWbSN8r3BE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=W49u1w0iqODf3aqiCA9c0gLEYNr6IVIeBLnidTAtEFFT+R0aUxwAyI9yx8+gex5jR+u8PI1mCKWpFq5acmMAbTw/YbCVR+Pzfe+VnKEaCnTtO9G6vM0RL6W09/mOBRa74jVnb2YaklwrMjprwtkhuAFPapDnsIzSR4ohDxfoDxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WCsMhiOG; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-39ac8e7688aso2792425f8f.2;
-        Sun, 06 Apr 2025 16:58:20 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43edecbfb94so18567255e9.1;
+        Sun, 06 Apr 2025 16:58:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743983899; x=1744588699; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CSPJ55mQnJHBWXMVfv1wTZBwCdfK1gZI3qG8kiSxktQ=;
-        b=KsFq4f812N5xsvN4dfy/Pp1PsaH9KWVW6wBS9lQ9s6xfn1MbV4WewGPL24Wnp7VOjm
-         gXF+Im+HGDRwuQitmfq+XItnfj7jbXTS6BOHrF9rsnABP8pG7K/NAJJuiGHC79SDBkV5
-         jNEn5Aa0jYXP8egO4dZykZA/4qJFOTwFB1MdZyQI9yZgeMXezU0HTs9eK/ad3aBZ+W2V
-         n3l20veJs5X3+WcOLiISBOB8ABbi/lDDC8Kagb9hhbm+gu1nRbWKyNPFBcjfC15zFOTL
-         MQgsemsGh1Riv3Y6VYNrJD57FmtPja8crBLMXQw5OcN7Oi/H3oiunBAmVfXCpkj6D9aP
-         vcMQ==
+        d=gmail.com; s=20230601; t=1743983902; x=1744588702; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B3FvIjS8Ct3GgSEMwvbC8rj20GUnEzJRZeANZTDwOXM=;
+        b=WCsMhiOGnKeym+XabsL6farxtBFzOac92E3J50J+74kP+0hx0Sv4N/0rMY7iX8fQUI
+         2ADT9a4h553C+JF04eF101eAp4qoMhdAs/s2rYpbzJjNSx0rqHoaAHz3J33u35JHg/Xp
+         0rxnfNjb7M4/cnCugmKjiI/jlhdUXSd1iEETX/nYjUdUdoBeq2P8sQZqFs8eQbl2Gyg+
+         /PNu/ZzIY9sGxlCul1rRmEm9TELNG77zwv3rbLlwKJL3m0F1b5oZYa3qNmwQDmPmQcW2
+         cVVfcIm7q02mQD4To1h98MJ+xAxn9mw8fvdeIRhbhJg5ruBgVLUkRWzazQ3MfNwQ44gW
+         ivWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743983899; x=1744588699;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CSPJ55mQnJHBWXMVfv1wTZBwCdfK1gZI3qG8kiSxktQ=;
-        b=ElCWRI3AdKLJp1VPLQgdzZuUGeac8R+Q0mmB4Rfl1HARflt8P9vclVgRLLO6mT43up
-         nbnJf0OFVNYUczyJG0K5RYuGQMg5GP3Zp94lwsIM2ty2DgxDBVlUVqZ/rXsV3mMk28Pg
-         fltZ1pH/76avUlUfr1KokYUfqLPdIQIm3+6l8jmA9cznKb8DL7DTGA0Cc1ORUXS2N3KJ
-         LRqeir5KKJq4bHyFW31leqVIesoj+lpjqk41fGrldsPag7aYBuvCr5lbBoNjmGvwfl3c
-         N+QjZMLd6PtGJTE1/uLpmuu365VFAgRwd8pCPElMJiqwwuhKtH2HWTLX1u2DH3n3l1H4
-         /Jog==
-X-Forwarded-Encrypted: i=1; AJvYcCV7zVTDelKXTl/L4Y5FCEjyYyaVMPfKnM1KjMZnfcbAP1jv8WaqYMCa4RlIk6ZSatxjkML4Rs+KTSYtj4wp@vger.kernel.org, AJvYcCVd+v5jzP3HTMpbS0l7v/3uW3sxgMPm9PV7ZgcyGhChMJdhwz2hQxIW/TZnkF4GMtSlZiN9ettgzw+8fUP5@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE2SGLR6kDlkCfTIfavOtQuJthxAtejURzbfYZ5dmW/lmiC5ro
-	XLfI1JBGVeOI7sjREW1clX8s9NLSvvStshuFbftaghXvUG95YUNy
-X-Gm-Gg: ASbGncuY8zLur1eH4h73BYhdRuuSRLKLXFoMCIdvuCjDqU5pY9VTbnvrCgullU5T7w6
-	2mwiM4MmDYtOo0UdmTiKsg8lCvKspsVr2IW11c65E0J0afTvqtzc1iMbt4rInz5R1/OLODxWPKu
-	OK/0QO0adU8r9N/kEDIDSxLjj03tLsAz2dLGPgYrWx4YYS3xLTOLvmrZJpz1TvM/FQ7RO+7/uDH
-	OAosXvvDPHbwaE0Gj9yz/wWi7qTQItjQ7K/0SZddztwneUnAeDnCNrvgSPe+iDCT5/OaRtySaHI
-	QV4Gofg6KcAL61klJOGZTNsoJVCKLdLE3eUy9L3SBj4ZdxbI30804egVwe5QSnU=
-X-Google-Smtp-Source: AGHT+IHE/mprPiDDQrjQanTxQzaFcKx+eLhU58wequg9acYfUBCLpa/iEq7/tkvYJd+8TWq0bbG36A==
-X-Received: by 2002:a05:6000:1849:b0:391:2c0c:1270 with SMTP id ffacd0b85a97d-39d6fc00c82mr5829910f8f.1.1743983899331;
-        Sun, 06 Apr 2025 16:58:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743983902; x=1744588702;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B3FvIjS8Ct3GgSEMwvbC8rj20GUnEzJRZeANZTDwOXM=;
+        b=g+zf4gg3zT31BerMklWwkTcj8YV/IszETxTTxOS/d31uWr8+/yGU55ULC6OK7JXwGA
+         E/fmmJkVK9kxN9WLcRCYkO1B9LzFkMMCViZvvTDJhy6Pwkk1b45aRS4dt/+OaYVDR1Pj
+         NX42QJvNdeyV0SHW2bqePgPnmdm0eb/MzUel9Q5MeMm/rsIOY5oaLJEoOD3NoqPbRlOU
+         hKGRh28/pqfJ+nF4g1Qd373hfYB/ujZ8s6vce2piAK1CBF11uwFsHg3qwwWO/Lo2T633
+         CdN3Qa1JCud0heN0+9g1NOQ+brYI7Sj99tbXUmhOOiLnFPRSM7GSM7Bwh81naU0nILzg
+         PqKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVH2ZuUrNSsJZFexclgRUDrLANwp+G1RADUwq2VKhzzaUeDqhdVPA1mwRxBR8A5icRk3Ux3TBwPIrET+oLR@vger.kernel.org, AJvYcCW4HZAQyA3dI6bK4Hwr/vLh/K2+0QeCdfzqwykrblVZm5LLrdwedDaVlqrsoeVjFSa5JKyra6ijiM8rBTTH@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCFieomqg6M9FeIz2n0lUQzNtdGeuJXle0fruRRDE6S3gi2e5t
+	MrXoovcUiukufc0zm01WFcsJTxN6xdxZ1p+Hn4Ge+h75aZuBuYT0
+X-Gm-Gg: ASbGncvJeOpQ6VBcz6a+9W0dxfkRvoW0sGA1pm68Tx36UML6F27EXQOdtKZXDEB/ERl
+	50OoRme2Yuwqp4e/TTucNmCW61KcW63NOudrM7poCLZ3c7IwJT9FbcU2ICtSyvtaS0slV3bKitC
+	phiPvm6gVrGvmkoIUTHAOmIbvgzUfPvb6Owh5fEcycZI2xoSAuMOvTbtYtyb5lrtXxAiNo8ymXb
+	E5TsYbbGB1OdDK70VF+Go9GXE+EeXnFELIqfSbEiF9hmVfPKdKSppdiWp9d0rF1OpSGFjWJtNz9
+	fIyJsHhXxOeHc7VNijfcnANkNVYk+/W5TP44GjPCkX8Y+IgsNcuwxL/Y2qecawo=
+X-Google-Smtp-Source: AGHT+IENn2R0pbmEOwK9Ce8QYGEKO3b7BdowJK5Mm9O5+xyBysr6iZrhHkiXtlbjrTUtw/bPljo2AQ==
+X-Received: by 2002:a05:600c:4f45:b0:43d:7588:6688 with SMTP id 5b1f17b1804b1-43ed0bc8db0mr99515035e9.12.1743983902170;
+        Sun, 06 Apr 2025 16:58:22 -0700 (PDT)
 Received: from f.. (cst-prg-74-157.cust.vodafone.cz. [46.135.74.157])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c30096b9csm10576598f8f.13.2025.04.06.16.58.16
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c30096b9csm10576598f8f.13.2025.04.06.16.58.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Apr 2025 16:58:18 -0700 (PDT)
+        Sun, 06 Apr 2025 16:58:21 -0700 (PDT)
 From: Mateusz Guzik <mjguzik@gmail.com>
 To: brauner@kernel.org
 Cc: viro@zeniv.linux.org.uk,
@@ -77,10 +79,12 @@ Cc: viro@zeniv.linux.org.uk,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH 1/3] fs: sort out cosmetic differences between stat funcs and add predicts
-Date: Mon,  7 Apr 2025 01:58:04 +0200
-Message-ID: <20250406235806.1637000-1-mjguzik@gmail.com>
+Subject: [PATCH 2/3] fs: predict not having to do anything in fdput()
+Date: Mon,  7 Apr 2025 01:58:05 +0200
+Message-ID: <20250406235806.1637000-2-mjguzik@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250406235806.1637000-1-mjguzik@gmail.com>
+References: <20250406235806.1637000-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,114 +93,25 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This is a nop, but I did verify asm improves.
+This matches the annotation in fdget().
 
 Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
- fs/stat.c | 35 ++++++++++++++++++++---------------
- 1 file changed, 20 insertions(+), 15 deletions(-)
+ include/linux/file.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/stat.c b/fs/stat.c
-index f13308bfdc98..b79ddb83914b 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -241,7 +241,7 @@ int vfs_getattr(const struct path *path, struct kstat *stat,
- 	int retval;
+diff --git a/include/linux/file.h b/include/linux/file.h
+index 302f11355b10..af1768d934a0 100644
+--- a/include/linux/file.h
++++ b/include/linux/file.h
+@@ -59,7 +59,7 @@ static inline struct fd CLONED_FD(struct file *f)
  
- 	retval = security_inode_getattr(path);
--	if (retval)
-+	if (unlikely(retval))
- 		return retval;
- 	return vfs_getattr_nosec(path, stat, request_mask, query_flags);
- }
-@@ -421,7 +421,7 @@ SYSCALL_DEFINE2(stat, const char __user *, filename,
- 	int error;
- 
- 	error = vfs_stat(filename, &stat);
--	if (error)
-+	if (unlikely(error))
- 		return error;
- 
- 	return cp_old_stat(&stat, statbuf);
-@@ -434,7 +434,7 @@ SYSCALL_DEFINE2(lstat, const char __user *, filename,
- 	int error;
- 
- 	error = vfs_lstat(filename, &stat);
--	if (error)
-+	if (unlikely(error))
- 		return error;
- 
- 	return cp_old_stat(&stat, statbuf);
-@@ -443,12 +443,13 @@ SYSCALL_DEFINE2(lstat, const char __user *, filename,
- SYSCALL_DEFINE2(fstat, unsigned int, fd, struct __old_kernel_stat __user *, statbuf)
+ static inline void fdput(struct fd fd)
  {
- 	struct kstat stat;
--	int error = vfs_fstat(fd, &stat);
-+	int error;
- 
--	if (!error)
--		error = cp_old_stat(&stat, statbuf);
-+	error = vfs_fstat(fd, &stat);
-+	if (unlikely(error))
-+		return error;
- 
--	return error;
-+	return cp_old_stat(&stat, statbuf);
+-	if (fd.word & FDPUT_FPUT)
++	if (unlikely(fd.word & FDPUT_FPUT))
+ 		fput(fd_file(fd));
  }
- 
- #endif /* __ARCH_WANT_OLD_STAT */
-@@ -502,10 +503,12 @@ SYSCALL_DEFINE2(newstat, const char __user *, filename,
- 		struct stat __user *, statbuf)
- {
- 	struct kstat stat;
--	int error = vfs_stat(filename, &stat);
-+	int error;
- 
--	if (error)
-+	error = vfs_stat(filename, &stat);
-+	if (unlikely(error))
- 		return error;
-+
- 	return cp_new_stat(&stat, statbuf);
- }
- 
-@@ -516,7 +519,7 @@ SYSCALL_DEFINE2(newlstat, const char __user *, filename,
- 	int error;
- 
- 	error = vfs_lstat(filename, &stat);
--	if (error)
-+	if (unlikely(error))
- 		return error;
- 
- 	return cp_new_stat(&stat, statbuf);
-@@ -530,8 +533,9 @@ SYSCALL_DEFINE4(newfstatat, int, dfd, const char __user *, filename,
- 	int error;
- 
- 	error = vfs_fstatat(dfd, filename, &stat, flag);
--	if (error)
-+	if (unlikely(error))
- 		return error;
-+
- 	return cp_new_stat(&stat, statbuf);
- }
- #endif
-@@ -539,12 +543,13 @@ SYSCALL_DEFINE4(newfstatat, int, dfd, const char __user *, filename,
- SYSCALL_DEFINE2(newfstat, unsigned int, fd, struct stat __user *, statbuf)
- {
- 	struct kstat stat;
--	int error = vfs_fstat(fd, &stat);
-+	int error;
- 
--	if (!error)
--		error = cp_new_stat(&stat, statbuf);
-+	error = vfs_fstat(fd, &stat);
-+	if (unlikely(error))
-+		return error;
- 
--	return error;
-+	return cp_new_stat(&stat, statbuf);
- }
- #endif
  
 -- 
 2.43.0
