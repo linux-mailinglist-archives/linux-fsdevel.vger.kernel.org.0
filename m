@@ -1,165 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-45815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E153A7CD0C
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Apr 2025 09:14:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69670A7CD7C
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Apr 2025 11:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBB34188A789
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Apr 2025 07:14:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9798C3AECA1
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Apr 2025 09:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A727191F72;
-	Sun,  6 Apr 2025 07:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480CA1A08DB;
+	Sun,  6 Apr 2025 09:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o7BHyot3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nXUe2Wr4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF0C1CD1F;
-	Sun,  6 Apr 2025 07:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03C0380;
+	Sun,  6 Apr 2025 09:28:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743923666; cv=none; b=M2Rxchvims8Yx1q6kBpp1CDZ0BUq3jcuKystLILtWzWkF8RAVoNjC3890ocZluhqeJ3Y5X8ckJCksEttB4/2xXQsTaYAiAxcw1Ib1xAG9bvbSu84HNQOIrIUai+BqiHhALpzSqtj15sF0toOpz22m8x/A9Dp1KXLsn8VE67McBY=
+	t=1743931706; cv=none; b=ju9yykiUnEkXqN85zm58Oc29Lo1OwBoi8EInA2MvUVmQcCEq2R+YDaSgimtBH7izjm0b+phUUNF5Lhl019sI1fs0VLlm3sIM4CRwQivMBnehifbW+PQWlpTIRr7B9WkWszm7R3UnmWSflYFh+EFnEx99WmxXtz9zLN0XSzjOWHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743923666; c=relaxed/simple;
-	bh=xyheJqHVSb0yuy/N+Ze7eNy0LUuR9Dn/m3N8SB/4dfc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Es+Ugv91pV4TeW78UI7DLidD1PlyTaG/vJxJ6cdGTJo9rx9xQgsChYNe+t0oOrXX0VxrTWR3wTiLD0YJvDNL+e+UYWvWw1eTgqZivtpzV9c44TTmAXLESLP25UaU+L06pGz7VEV1r0PWokko++oHFjEV+SIsi4blxPRFzlqXOPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o7BHyot3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B61C0C4CEE3;
-	Sun,  6 Apr 2025 07:14:23 +0000 (UTC)
+	s=arc-20240116; t=1743931706; c=relaxed/simple;
+	bh=tv/XKtzE84bfEwG93vmPkQR34gA4snTu06MHF+O50a0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=VIlGT0rCyDfZmSyliF+rpktV3MXlch0n0gdXkMZnBumSEynMNkiVhRaSSRhlBBoHXH44DSdLJ5Tk9C+kgeJSnYKZX+8R45QCpkE6sLn7IzQZxurGfEcA/MOlHTuE0cYqpJWgNqa4llFUaqG4OQjC116qWgPX8kczXcrCi1bbtbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nXUe2Wr4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94B89C4CEE3;
+	Sun,  6 Apr 2025 09:28:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743923665;
-	bh=xyheJqHVSb0yuy/N+Ze7eNy0LUuR9Dn/m3N8SB/4dfc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o7BHyot3yR1ippB0dV38oSBDp/3FEyjBWlVHrw8VU7FjRh7uokzNs8dWU/yKt3OXX
-	 k3pXmybARjW6MM+VXCIoZAEM5lVxQ4cxPaBB8ImBGzbOjk7Hh7qO+Urdcx3qoQHRug
-	 feBEsmRGJEzvVcTSJ4jMi9FB/PDvjS3mLUNQeAMIHDJxdaZ/h3eJOCdD2ykQOraMQs
-	 D2ILrs776BqAZQV2dOuXhhBXTfTwkAdLT4i1KZstaGI47yp1LFzgcpKMAF2r/55SJ/
-	 esLtjI+KH+jRaI/sEpIOFde79mSfAZ8+TSEgRQPpWJTHEN4A5xtxkYxzwvJGPZU68k
-	 nTyIh5M798arQ==
-Date: Sun, 6 Apr 2025 09:14:20 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>, 
-	Penglei Jiang <superman.xpt@gmail.com>, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzbot+5d8e79d323a13aa0b248@syzkaller.appspotmail.com
-Subject: Re: [PATCH] anon_inode: use a proper mode internally
-Message-ID: <20250406-reime-kneifen-11714c0a421d@brauner>
-References: <20250404-aphorismen-reibung-12028a1db7e3@brauner>
- <CAGudoHErv6sX+Tq=NNLL3b61Q70TeZxi93Nx_MEcMrQSg47JGA@mail.gmail.com>
+	s=k20201202; t=1743931706;
+	bh=tv/XKtzE84bfEwG93vmPkQR34gA4snTu06MHF+O50a0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=nXUe2Wr49C2PKBjf3LbSQUSjcb7AiZGOmBcOKp+KX0nXFE9ZiQd+zhuphTgngPCkd
+	 XKTmfsw21URdz5chZHPwpoczRTnl9aYYwUmhYFH/RJfQkj5LUOuekqNCsH9AMx0zBO
+	 Is97X+hsAJVkNAsSlUVT2j/6/nkdYY9UTat92KFE3ccOgMtByHNbQbdt1OPT5wi/8k
+	 sV/64sK50L5s2cY12EoNAjaT3sSRwscN9PNOlYeh8EHIZPYiDsQU7KZ7PW+pK1JQQw
+	 144xxa0jque5kBBuNWWbk4Yk95quUaHE3KN/Gm4S3hus6AWdDhN87SV6+RuZqeD/77
+	 arlt47b44PuwA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  Breno Leitao <leitao@debian.org>
+Subject: Re: [PATCH] MAINTAINERS: configfs: add Andreas Hindborg as maintainer
+In-Reply-To: <Z_GSpcn3bMRStzf4@google.com> (Joel Becker's message of "Sat, 05
+	Apr 2025 13:29:25 -0700")
+References: <bHDR61l3TdaMVptxe5z4Q_3_EsRteMfNoygbiFYZ8AzNolk9DPRCG2YDD3_kKYP6kAYel9tPGsq9J8x7gpb-ww==@protonmail.internalid>
+	<Z-aDV4ae3p8_C6k7@infradead.org> <87frix5dk3.fsf@kernel.org>
+	<20250403-sauer-himmel-df90d0e9047c@brauner>
+	<Z--Ae5-C8xlUeX8t@infradead.org>
+	<20250404-komodowaran-erspielen-cc2dcbcda3e3@brauner>
+	<SA4Crt0QV7AKViqF1UCGYRtpvL-BX9dKVY0rAB0VrZuyA6IY2KBUfS8JJ3sNGn46Fb9SoqIQUPA-p2h1HfvvUQ==@protonmail.internalid>
+	<Z_GSpcn3bMRStzf4@google.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Sun, 06 Apr 2025 11:28:15 +0200
+Message-ID: <871pu5vdu8.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHErv6sX+Tq=NNLL3b61Q70TeZxi93Nx_MEcMrQSg47JGA@mail.gmail.com>
+Content-Type: text/plain
 
-On Sat, Apr 05, 2025 at 06:54:28AM +0200, Mateusz Guzik wrote:
-> On Fri, Apr 4, 2025 at 12:39 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > This allows the VFS to not trip over anonymous inodes and we can add
-> > asserts based on the mode into the vfs. When we report it to userspace
-> > we can simply hide the mode to avoid regressions. I've audited all
-> > direct callers of alloc_anon_inode() and only secretmen overrides i_mode
-> > and i_op inode operations but it already uses a regular file.
-> >
-> [snip]
-> > diff --git a/fs/libfs.c b/fs/libfs.c
-> > index 6393d7c49ee6..0ad3336f5b49 100644
-> > --- a/fs/libfs.c
-> > +++ b/fs/libfs.c
-> > @@ -1647,7 +1647,7 @@ struct inode *alloc_anon_inode(struct super_block *s)
-> >          * that it already _is_ on the dirty list.
-> >          */
-> >         inode->i_state = I_DIRTY;
-> > -       inode->i_mode = S_IRUSR | S_IWUSR;
-> > +       inode->i_mode = S_IFREG | S_IRUSR | S_IWUSR;
-> >         inode->i_uid = current_fsuid();
-> >         inode->i_gid = current_fsgid();
-> >         inode->i_flags |= S_PRIVATE;
-> 
-> Switching the mode to S_IFREG imo can open a can of worms (perhaps a
-> dedicated in-kernel only mode would be better? S_IFANON?), but that's
+Hi Joel,
 
-No, I don't think we should have weird kernel-only things in i_mode.
-That's what i_flags is for.
+"Joel Becker" <jlbec@evilplan.org> writes:
 
-> a long and handwave-y subject, so I'm going to stop at this remark.
-> 
-> I think the key here is to provide an invariant that anon inodes don't
-> pass MAY_EXEC in may_open() regardless of their specific i_mode and
-> which the kernel fails to provide at the moment afaics.
+> On Fri, Apr 04, 2025 at 10:42:29AM +0200, Christian Brauner wrote:
+>> On Thu, Apr 03, 2025 at 11:47:23PM -0700, Christoph Hellwig wrote:
+>> > On Thu, Apr 03, 2025 at 01:27:27PM +0200, Christian Brauner wrote:
+>> > > There's no need to get upset. Several people pointed out that Joel
+>> > > Becker retired and since he hasn't responded this felt like the right
+>> > > thing to do. Just send a patch to add him back. I see no reason to not
+>> > > have Andreas step up to maintain it.
+>> >
+>> > Removing someone just because they have retired feels odd, but hey who
+>> > am I to complain.  I did reach out to him when giving maintainership
+>> > and he replied although it did indeed take a while.
+>>
+>> I mean, we can surely put Joel back in. My take would be to remove
+>> that person from the maintainer entry because people will get confused
+>> when they don't receive a reply. But I'm totally fine if we should leave
+>> Joel in.
+>
+> Howdy folks,
+>
+> I do apologize for my delayed responses.  I try to review patches as I
+> find them, but I haven't yet set up a dedicated tree -- a bit out of
+> practice.
 
-The current way of relying on IS_REG() in do_open_execat() is broken
-with current kernel semantics ever since commit 633fb6ac3980 ("exec:
-move S_ISREG() check earlier"). That commit introduced a WARN_ON_ONCE()
-around the S_ISREG() check which indicates that it wasn't clear to the
-authors that this is very likely a reachable WARN_ON_ONCE() via e.g.:
+How would you like the maintainer entry to look:
 
-int main(int argc, char *argv[])
-{
-	int ret, sfd;
-	sigset_t mask;
-	struct signalfd_siginfo fdsi;
+ - Are you OK with me taking up maintenance of configfs?
+   - If yes,
+     - would you like to be added as a reviewer?
+     - would you prefer to be listed as co-maintainer?
+   - If no,
+     - would you have me as a co-maintainer?
+     - or would you have me as a reviewer?
 
-	sigemptyset(&mask);
-	sigaddset(&mask, SIGINT);
-	sigaddset(&mask, SIGQUIT);
+I set up a tree according to the patch I submitted. I did not switch out
+linux-next yet, but I was about to send a request to do that. I will
+stall that pending your response on the above.
 
-	ret = sigprocmask(SIG_BLOCK, &mask, NULL);
-	if (ret < 0)
-		_exit(1);
+> The Rust patches gave me pause.  I have no context to review them --
+> even the little Rust I am familiar with looks nothing like the complex
+> stuff the kernel bindings are doing.  For that part, all I can do is
+> hope someone other than I knows what the Rust should be doing.
 
-	sfd = signalfd(-1, &mask, 0);
-	if (sfd < 0)
-		_exit(2);
+That job is part of what I just signed up for, so we have that covered.
+If you do not want/need my help in maintaining the C part of configfs,
+we can add a sub-entry for the rust parts.
 
-	ret = fchown(sfd, 5555, 5555);
-        if (ret < 0)
-		_exit(3);
 
-	ret = fchmod(sfd, 0777);
-	if (ret < 0)
-		_exit(3);
+Best regards,
+Andreas Hindborg
 
-	/* trigger the WARN_ON_ONCE() */
-	execveat(sfd, "", NULL, NULL, AT_EMPTY_PATH);
-	_exit(4);
-}
 
-Because the mode and owner of the single anonymous inode in the
-kernel can be changed by anonyone with suitable privileges. That of
-course it itself a bug although not a really meaningful one because
-anonymous inodes don't really figure into path lookup. They cannot be
-reopened via /proc/<pid>/fd/<nr> and can't be used for lookup itself. So
-they can only ever serve as direct references. But I'm going to fix
-that. Similar to pidfs we should simply fail setattr [1]. Given that noone has
-been hitting the execveat() WARN_ON_ONCE() it's safe to say that no one
-ever bothered chowning/chmoding anonymous inodes. With that removed it's
-not possible to exec anonymous inodes but we should harden this by
-setting SB_I_NOEXEC as well (Secretmem is another very fun example
-because it uses anonymous inodes but does set S_ISREG already. So
-chmod() on such an inode and passing it to execveat() could be fun.)
-
-Anyway, I'm finishing the patch and testing tomorrow and will send out
-with all the things I mentioned (unless I find out I'm wrong).
-
-[1]: That's been a constant sore spot for me. We currently simply
-     fallback to simple_setattr() if the fs doesn't provide a dedicated
-     ->setattr() function. Imho that's broken and we need to remove
-     that. All fses that need it need to set ->setattr() and if it isn't
-     set EOPNOTSUPP will be returned. So that would need some code audit
-     which fses definitely don't need or expect it. Otherwise we risk
-     setting attributes on things that don't want them changed. That's
-     patch I had on my backlog for quite a while ever since the big
-     xattr/acl rework.
 
