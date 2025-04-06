@@ -1,77 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-45825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3118A7D07D
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Apr 2025 22:46:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10285A7D07F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Apr 2025 22:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 451B83AE479
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Apr 2025 20:46:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2F543AE565
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Apr 2025 20:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6211B0F19;
-	Sun,  6 Apr 2025 20:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26EC31ACEA6;
+	Sun,  6 Apr 2025 20:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="bRgQ2tQp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="T0tDGW2z"
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="KTCzxLKz";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lUJP7ILA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from flow-a4-smtp.messagingengine.com (flow-a4-smtp.messagingengine.com [103.168.172.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94051B042E;
-	Sun,  6 Apr 2025 20:46:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D802E1B415F;
+	Sun,  6 Apr 2025 20:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743972364; cv=none; b=afOFMurtx8sPV5oQJ3TzRz7gKqFIwtz5aaGXH9zPHH96oY25ccoN1UGbA5NfaWWy5LBI/5Oy8zPx7y+EWtdOJyGPJBExcKsEIqyXMJ+rU4LwXY2flezMEtBqpq+yIEiKVUC0w59Pg6kiPQV9Nza2yCxSzZspFPTmDIO5khJI8Pg=
+	t=1743972366; cv=none; b=hB6aKVjtjSEeEC3+ZSjdBB2CgFhphFyFQMoQ0zhFesvu9r8sUIUuhToOR9DkB3nkdZWWn+UH6IP0WXYFeNDrPIy61dAG1xIDR5YGq+okHEje9MlRZ+o0aq0IP9tkn0Dt68JvByxKfyKzHrofzU0IpPxgnZS42sfrkMs22D4IKbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743972364; c=relaxed/simple;
-	bh=hR94pmqglUX1HDCAhc0UZm/zg++tvdt+zW5ZJZPAMr4=;
+	s=arc-20240116; t=1743972366; c=relaxed/simple;
+	bh=WBJTNTYjycyxp1ti192OEN39iD9bsjfkFPcfWB+pqBc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JYxXKGQ0XHiRPNoKylObGb/NO8dN7Hgp0FIYqM1yOvVTM3RCVwZT40yEBgJjp1r1rDb7N0SVC9CwFXoHO+4fUHOq3dX5fCKMNdovqWCHbpy26PonK8KXBn9kh6JbL6ekz/pvjGtzibhgDOnwHhGw2u5b78opCa9IqPGd7UC3MyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=bRgQ2tQp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=T0tDGW2z; arc=none smtp.client-ip=103.168.172.139
+	 MIME-Version; b=CvciJDcd/rzGVjsYHapiBARDzCTDjJvi/jM4HJG8TxEf6nfaIvC13J8gtCPxLJu/khu5CoALYySRYM5383a/B5kYpV13gOILb+9m8KdvxtJrcQD935zGZEBQzrn+ef2gdtMMdFoyVd8HmBQeykUwQn1RV7RZSM+Fe/CoMgzHN0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=KTCzxLKz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lUJP7ILA; arc=none smtp.client-ip=103.168.172.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailflow.phl.internal (Postfix) with ESMTP id D78F6202430;
-	Sun,  6 Apr 2025 16:46:01 -0400 (EDT)
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailflow.phl.internal (Postfix) with ESMTP id EBAC1202428;
+	Sun,  6 Apr 2025 16:46:03 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Sun, 06 Apr 2025 16:46:01 -0400
+  by phl-compute-08.internal (MEProxy); Sun, 06 Apr 2025 16:46:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
 	:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1743972361; x=
-	1743975961; bh=90xMjucamVsewCSQDP8SkIIi9Yg3hTLJZtFtNjvjA/o=; b=b
-	RgQ2tQpB5siKPyAeJ82ADpl/dRdmJ7HVy1HwuqWjUhWvxs8GqT6Onhv0Ho6F1v1g
-	neyVSl7zpUmYTkvwPPGdrF5mWLgn3WvbJ0kuqBoXQfMjkMiP8TDFke+W4GEarfzW
-	9cdM5uZ7qv+oZtE8niooffj4qn2Xsq5pvB5GDVrrSggjUxQGalSk/wqqbasFrSUr
-	SOCjph6i2mYBev0OPe7UEMEkeZ2MS7BLP2b7z3wLaBCRwrKR/Ux5d2e5rdvoViKD
-	7TL4a+iDcnEAYeiRk9PToSzAgb7FGEq/xj2io4+iKeOx7pjwPFOFnYQctFV6TYlo
-	5hPCrjoDsdXFznLLa97lg==
+	:reply-to:subject:subject:to:to; s=fm2; t=1743972363; x=
+	1743975963; bh=ygHy4tWC00SI2EYsxDY2Q33xgQ0DwhcTe1RbaWpNvdI=; b=K
+	TCzxLKznBd0TKZD8GtPqhv7yuPovdwLeDrBhtgLK4X0JB8hO/sZ7PpnYEShqvOMi
+	UWUfCyF626POe4hK0h+D7FAKqu76g6ZNZRzdUXERu3Z733RNcV3XlM1WgYoVk4YE
+	thcE+81LnUaUechPPZ61/OiGBdT9D/rM+ScTFSk2qR6tNUZc7WqZ91xdhkWjEwld
+	yGT+77BrGaEHeGxAfBg/72pOv0wHMK3Uvx5MYMOukcyjNV8k7DuXHea2sT1h2GjL
+	6tX7HC4xUJP/xdLQ1zRCYDXlYPIW5bO4Zn6lgBV94N96gxm8AlIzOVUcBL4CNsQ1
+	sNmZzl71jvZgeYo9hBFag==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm2; t=1743972361; x=1743975961; bh=9
-	0xMjucamVsewCSQDP8SkIIi9Yg3hTLJZtFtNjvjA/o=; b=T0tDGW2zHORFDFzbR
-	hhmwqdaE9h6uaQqBiq6YVm8jHPsZlysXwp23GL5BEPrp+Ba7nq3DUZdyZKRvPeFe
-	e1vvsBwOLUuCs5ml6u9bKBqaD9Iu/OS3u/KzIMsi9hdR4XOGEQdUUGBwrqT0Q5Ku
-	Jq/5fk8x2hkkX2dDtOTSy27qHNH1N3QkytJVzdZovoc6dtdQ71Uc0p096tzVgEl0
-	WzZ93O1ZfgdSHl04so/wcKl6cj+vAeAl/VX+vUX24bilEcO3QlA1O5PJiZNIozgQ
-	Diq4Nylvy3A+yfsFxby/ERs8BCeIKqFih/J5SAnHD7yBgXvvq4a3/qMhB5CdLODY
-	A34uQ==
-X-ME-Sender: <xms:CejyZ7CZ7JQ5_7bbomT9L7GJIVjbzugmhKBso-WysYmcL5F_0H-Hdw>
-    <xme:CejyZxisB5HbsyFPR3ylf9YzhIwercQJqrQ51220ZRUA3dEYlLQ6sEyXW5DH2xrn6
-    WpCoXmlxKoRV6ZngzI>
-X-ME-Received: <xmr:CejyZ2kuYhIMJuA8bwIRc1NfPbjhGh94Bue_c6j-rfkQXbpQDKthRMJq9Gn9Pl78ksgnvYLDkBmVDuVQkRSYxT9Sg7PxmDZsuXZpMRh9hzXX3MGj7Ymrc9g>
+	:x-me-sender:x-sasl-enc; s=fm2; t=1743972363; x=1743975963; bh=y
+	gHy4tWC00SI2EYsxDY2Q33xgQ0DwhcTe1RbaWpNvdI=; b=lUJP7ILAF/EgPoXAO
+	Znqn6os9HnSdDtmGt+y7Mq91rFGaSSjkh4VCMCv/NnVuxSyVYxG6LDPJblO/mWNN
+	5kZiXovBeGq23LynvFEdlullEyZnXRwj1M1eXDZ6F8KvkurB9sju1rwLR1pVftdC
+	ZDM44lRgtTVbZGA/ewxAFupiZza5G9z+Sv4pqsl1tp13ljojHuDyswdD0/qW4U8j
+	m+3Zuc26roWnG2WHIlZQdkmJz2rkYWRmA9NI67oqie8yf9OMpYjJ+uNh0kuetu4Y
+	4tCu9SoQbriTgsgQ7zjioAiHcLz3v8q14ZtrCgSUjC43ICJLKofCSRS4ldlLXMpI
+	+TAdA==
+X-ME-Sender: <xms:C-jyZ0lkHwqyVYDt2RTpxT14yInHa8vnt503xAsRGbOaLb6f05MVjQ>
+    <xme:C-jyZz1luYzY_uAKjv_a0BX5b5MAdvpX1q9z2C087G6QQuX-AcgU6MIz1LNOHRFHb
+    7CJpuuewWkC9ZencCM>
+X-ME-Received: <xmr:C-jyZypBga1RzRKpHSJzasX_G2b9_7d2ofp4taE-yurNEGkoM-hxhP_YUMc2kvmjJOkOIdNOHKrBDqOPJlbX0vQSnvaH7dCqHGdKdZVPkOYX8xHp8OwpTqU>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduleekvdejucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
     pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
     gvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredt
     tdenucfhrhhomhepvfhinhhgmhgrohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqe
     enucggtffrrghtthgvrhhnpeeuuddthefhhefhvdejteevvddvteefffegteetueegueel
-    jeefueekjeetieeuleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
+    jeefueekjeetieeuleenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrih
     hlfhhrohhmpehmsehmrghofihtmhdrohhrghdpnhgspghrtghpthhtohepudefpdhmohgu
     vgepshhmthhpohhuthdprhgtphhtthhopegvrhhitghvhheskhgvrhhnvghlrdhorhhgpd
     hrtghpthhtoheprghsmhgruggvuhhssegtohguvgifrhgvtghkrdhorhhgpdhrtghpthht
@@ -81,14 +81,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduleekvdejucetufdote
     hmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepghhnohgrtghksehgohhoghhl
     vgdrtghomhdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvse
     hvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:CejyZ9yELyWd9E2GBU5Awzyk-nZ6UrKYDd7kFkdSXK35hyNEd-ChWQ>
-    <xmx:CejyZwT-rAWKxgvNbozX2r4m9oR081JuIUXd6eFpaXaquDjwUBDC3g>
-    <xmx:CejyZwZcdvsfQBUoJMun9U6Dk69g5NRMLK7psvPLRZAcbpfd1V825w>
-    <xmx:CejyZxQkOOQFBhdufQgGB9GGLz-vMTTeCPqh6quowxhjIe-mrDiHSQ>
-    <xmx:CejyZ3Tix1weLh8UK0oviksdQC-Njpn_294nIHwMxlud5KqHsMDSyQO1>
+X-ME-Proxy: <xmx:C-jyZwnnL8QVCv__5KeDJdQAX4rxOk2RDTq32-wYJL5uQTOTzYICFw>
+    <xmx:C-jyZy05h5hXr_AIEdNPCAGkAyaluc4Tc2d6flWEFS1t8XbbYP71_A>
+    <xmx:C-jyZ3tiVKuP_U4fy--CCCv7MjjW1cRycxblCgkTDu5Fu5-l_UGLxw>
+    <xmx:C-jyZ-UBaql1_8QzSOTPPCPcrH-FFD673kzvSq6M27JQAJ38XmlbEg>
+    <xmx:C-jyZ_2_aJnAvJfLe3nyGw89fSupbpqLuwZ5zIylCQ7rQ-RktC4LiGy1>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 6 Apr 2025 16:45:59 -0400 (EDT)
+ 6 Apr 2025 16:46:02 -0400 (EDT)
 From: Tingmao Wang <m@maowtm.org>
 To: Eric Van Hensbergen <ericvh@kernel.org>,
 	Dominique Martinet <asmadeus@codewreck.org>,
@@ -103,9 +103,9 @@ Cc: Tingmao Wang <m@maowtm.org>,
 	Amir Goldstein <amir73il@gmail.com>,
 	Matthew Bobrowski <repnop@google.com>,
 	linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH 5/6] fs/9p: .L: Refresh stale inodes on reuse
-Date: Sun,  6 Apr 2025 21:43:06 +0100
-Message-ID: <c294acbe9cce13c87b732b7b5c9cef0d8e113b37.1743971855.git.m@maowtm.org>
+Subject: [RFC PATCH 6/6] fs/9p: non-.L: Refresh stale inodes on reuse
+Date: Sun,  6 Apr 2025 21:43:07 +0100
+Message-ID: <e9c49c3dd0359196fff8bd6321b431e9a890fe7a.1743971855.git.m@maowtm.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1743971855.git.m@maowtm.org>
 References: <cover.1743971855.git.m@maowtm.org>
@@ -117,39 +117,26 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Only for uncached mode for now.  We will need to revisit this for cached
-mode once we sort out reusing an old inode with changed qid.version.
-
-Note that v9fs_test(_new)?_inode_dotl already makes sure we don't reuse
-inodes of the wrong type or different qid.
+This replicates the previous .L commit for non-.L
 
 Signed-off-by: Tingmao Wang <m@maowtm.org>
 ---
- fs/9p/vfs_inode_dotl.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ fs/9p/vfs_inode.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-index c1cc3553f2fb..20434a25cb22 100644
---- a/fs/9p/vfs_inode_dotl.c
-+++ b/fs/9p/vfs_inode_dotl.c
-@@ -187,8 +187,23 @@ static struct inode *v9fs_qid_iget_dotl(struct super_block *sb,
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index 1137a5960ac2..3f087b0bf1bf 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -498,8 +498,14 @@ static struct inode *v9fs_qid_iget(struct super_block *sb, struct p9_qid *qid,
  
  	if (!inode)
  		return ERR_PTR(-ENOMEM);
 -	if (!(inode->i_state & I_NEW))
 +	if (!(inode->i_state & I_NEW)) {
-+		/*
-+		 * If we're returning an existing inode, we might as well refresh
-+		 * it with the metadata we just got.  Refreshing the i_size also
-+		 * prevents read errors.
-+		 *
-+		 * We only do this for uncached mode, since in cached move, any
-+		 * change on the inode will bump qid.version, which will result in
-+		 * us getting a new inode in the first place.  If we got an old
-+		 * inode, let's not touch it for now.
-+		 */
++		/* See explanation in v9fs_qid_iget_dotl */
 +		if (new) {
-+			v9fs_stat2inode_dotl(st, inode,
++			v9fs_stat2inode(st, inode, sb,
 +				(v9ses->cache & CACHE_LOOSE) ?  V9FS_STAT2INODE_KEEP_ISIZE : 0);
 +		}
  		return inode;
