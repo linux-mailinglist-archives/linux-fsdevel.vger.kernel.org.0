@@ -1,56 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-45913-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45914-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A9EA7EC32
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 21:12:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10587A7ED26
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 21:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D25E87A2A68
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 19:11:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBE9B3BD868
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 19:22:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AABD265CD6;
-	Mon,  7 Apr 2025 18:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A1F255236;
+	Mon,  7 Apr 2025 19:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LrQSd1y4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXlYIfTV"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A803B2571D2;
-	Mon,  7 Apr 2025 18:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AC72550D3;
+	Mon,  7 Apr 2025 19:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744051732; cv=none; b=UDhpiGPeatX/16kKlWPDmm1XD3gOS9BQdTSDruVDMggceHZG/+eB6PhS/ma79b4Fmqe0yAwTsnaF36cu21MNCiUSkx63RDsNFUFtLkFRDdt/zZJl8TQMaRDX17+485LkW2O0DdP+xRs5LObXLvuOVdsM1qs4NBbxFZPgjaKTneg=
+	t=1744052897; cv=none; b=Kj1uJ9/Oe3ETjqh0tzVWOFIXvA16IsZbND2BLO9dXt+DQmL5QD5Dr4o442hyqNa8zZJVxAEeNf8jxlqSFos/+O6xmGtWwRaXc/QGRdfotqShv8e9+VIhaFQDYrVkFsqQufxuHc1UWRdE7cPwpp2T7Q/lWl1TFWFHDXhw4JFRQnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744051732; c=relaxed/simple;
-	bh=jtIwDlss0DPTJBXwiMczuUfLJ5vhGoUdZnfSp7ZHYws=;
+	s=arc-20240116; t=1744052897; c=relaxed/simple;
+	bh=lJf9zIuif4BIo222tcqoPJFmlvYQSPEu41tH6umSAus=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tcyfb/V75cGhi+mUN4VpQrGJ/n1mkRTrXK7d/e6xYggMC68tMTwFz1aksopqQrFg2sYCA5e5VfK2sn+AhgdIC+kr9htPD7uMN0Aq+MCcOwME7VCY7GRYqINAlPcyGBhnytXo56hwJziU2JouzwZFaxWmlEeYxb88DMTYdiom2c8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LrQSd1y4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 273C9C4CEDD;
-	Mon,  7 Apr 2025 18:48:52 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=clo/adyqg19H3NqxmYQtIGmTd73PmOyEFFrm/oSMA0MYCg2qbmEUNmrrsVK9DN1QwCQ+iV0lGa22f1j+WK+YG8QkquoaDuQ1ve6iVLjrmZjMrgbt8bGWLs4tU1Yz9006h08FfGrcN0W7MSgBv+UYTOqf8YRbPXXBf1NwQn1zBkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GXlYIfTV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 151FCC4CEED;
+	Mon,  7 Apr 2025 19:08:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744051732;
-	bh=jtIwDlss0DPTJBXwiMczuUfLJ5vhGoUdZnfSp7ZHYws=;
+	s=k20201202; t=1744052897;
+	bh=lJf9zIuif4BIo222tcqoPJFmlvYQSPEu41tH6umSAus=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LrQSd1y4pCP1ak0sAjGQ58K99qeM0zLwKdKFlV5GQh8YiSnZFo6kAACNIDZ/yGbku
-	 gwlA/dK0CGRoJxFD5B98yc7cDxXCPFogdmHQHnA8QI5LnE9Ib36FFOI+Wt5MzuyYPF
-	 QgdwGcGRaFpFguop24NCs9vd0Mw4cODsUwV7wMUnfee9oBNDhK4lL3ZkYNtIct4X9u
-	 Rz/W1/vtpEkMzBzu+auPPk/vhm4kmZ+bm073x4RRtNsUiD0rlCOyd9N3vyj8GWRkOq
-	 roiB7miZXqURjFH8NpDyXmTT27gBstXZR5jb12J9rtqOT6TM13pMX8owkOxcXwWDWp
-	 B4WLwC+Th5jig==
-Date: Mon, 7 Apr 2025 11:48:51 -0700
+	b=GXlYIfTVJKXqN2qD047swvCaFJSit8J6wOo6LunFbsCP9bp/spYa+In5fUGqLnjG9
+	 6IRJmbTSnMUfCWP2So/dGWRxmdV+cjMaOH/uO3Mibf626rTk+6KVgfuU1IzNZzbwCK
+	 cxA0ko9h1DeFn8RQ3uYcFeGeMUHO6rIW9GQoqGL1QP5dkmY/moKFKaGNmX+LcheeHD
+	 0HIGoR7CaEGMvlayPRa0M4AeiYEhh4xDrdbbr8dFnNm+vpM4NWh/Kyq11l9+33dvaF
+	 khEfonlWb4KrahuzZEbM+AsekpMCE7EMT0qiray5GNm0TNF+NFRT4ClFSdE+8/RPT7
+	 bs61KNTWmInxg==
+Date: Mon, 7 Apr 2025 12:08:14 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Cc: linux-xfs@vger.kernel.org, John Garry <john.g.garry@oracle.com>,
-	ojaswin@linux.ibm.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] iomap: trace: Add missing flags to
- [IOMAP_|IOMAP_F_]FLAGS_STRINGS
-Message-ID: <20250407184851.GF6266@frogsfrogsfrogs>
-References: <3170ab367b5b350c60564886a72719ccf573d01c.1743691371.git.ritesh.list@gmail.com>
- <bf67e3e6af1cdc3c6cba83e204f440db1cbfda24.1743691371.git.ritesh.list@gmail.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Cengiz Can <cengiz.can@canonical.com>,
+	Attila Szasz <szasza.contact@gmail.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Salvatore Bonaccorso <carnil@debian.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	lvc-patches@linuxtesting.org, dutyrok@altlinux.org,
+	syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com,
+	stable@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
+Message-ID: <20250407190814.GB6258@frogsfrogsfrogs>
+References: <20241019191303.24048-1-kovalev@altlinux.org>
+ <Z9xsx-w4YCBuYjx5@eldamar.lan>
+ <d4mpuomgxqi7xppaewlpey6thec7h2fk4sm2iktqsx6bhwu5ph@ctkjksxmkgne>
+ <2025032402-jam-immovable-2d57@gregkh>
+ <7qi6est65ekz4kjktvmsbmywpo5n2kla2m3whbvq4dsckdcyst@e646jwjazvqh>
+ <2025032404-important-average-9346@gregkh>
+ <dzmprnddbx2qaukb7ukr5ngdx6ydwxynaq6ctxakem43yrczqb@y7dg7kzxsorc>
+ <20250407-biegung-furor-e7313ca9d712@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,105 +70,94 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bf67e3e6af1cdc3c6cba83e204f440db1cbfda24.1743691371.git.ritesh.list@gmail.com>
+In-Reply-To: <20250407-biegung-furor-e7313ca9d712@brauner>
 
-On Thu, Apr 03, 2025 at 11:52:28PM +0530, Ritesh Harjani (IBM) wrote:
-> This adds missing iomap flags to IOMAP_FLAGS_STRINGS &
-> IOMAP_F_FLAGS_STRINGS for tracing. While we are at it, let's also print
-> values of iomap->type & iomap->flags.
+On Mon, Apr 07, 2025 at 12:59:18PM +0200, Christian Brauner wrote:
+> On Sun, Apr 06, 2025 at 07:07:57PM +0300, Cengiz Can wrote:
+> > On 24-03-25 11:53:51, Greg KH wrote:
+> > > On Mon, Mar 24, 2025 at 09:43:18PM +0300, Cengiz Can wrote:
+> > > > In the meantime, can we get this fix applied?
+> > > 
+> > > Please work with the filesystem maintainers to do so.
+> > 
+> > Hello Christian, hello Alexander
+> > 
+> > Can you help us with this?
+> > 
+> > Thanks in advance!
 > 
-> e.g. trace for ATOMIC_BIO flag set
-> xfs_io-1203    [000] .....   183.001559: iomap_iter_dstmap: dev 8:32 ino 0xc bdev 8:32 addr 0x84200000 offset 0x0 length 0x10000 type MAPPED (0x2) flags DIRTY|ATOMIC_BIO (0x102)
+> Filesystem bugs due to corrupt images are not considered a CVE for any
+> filesystem that is only mountable by CAP_SYS_ADMIN in the initial user
+> namespace. That includes delegated mounting.
 > 
-> e.g. trace with DONTCACHE flag set
-> xfs_io-1110    [007] .....   238.780532: iomap_iter: dev 8:16 ino 0x83 pos 0x1000 length 0x1000 status 0 flags WRITE|DONTCACHE (0x401) ops xfs_buffered_write_iomap_ops caller iomap_file_buffered_write+0xab/0x0
+> Now, quoting from [1]:
 > 
-> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> "So, for the record, the Linux kernel in general only allows mounts for
+> those with CAP_SYS_ADMIN, however, it is true that desktop and even
+> server environments allow regular non-privileged users to mount and
+> automount filesystems.
+> 
+> In particular, both the latest Ubuntu Desktop and Server versions come
+> with default polkit rules that allow users with an active local session
+> to create loop devices and mount a range of block filesystems commonly
+> found on USB flash drives with udisks2. Inspecting
+> /usr/share/polkit-1/actions/org.freedesktop.UDisks2.policy shows:"
+> 
+> So what this saying is:
+> 
+> A distribution is shipping tooling that allows unprivileged users to mount
+> arbitrary filesystems including hpfsplus. Or to rephrase this: A
+> distribution is allowing unprivileged users to mount orphaned
+> filesystems. Congratulations on the brave decision to play Russian
+> Roulette with a fully-loaded gun.
 
-Seems reasonable to me
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+It's also the default policy on Debian 12 and RHEL9 that if you're
+logged into the GUI, any program can run:
+
+$ truncate -s 3g /tmp/a
+$ mkfs.hfs /tmp/a
+$ <write evil stuff on /tmp/a>
+$ udisksctl loop-setup -f /tmp/a
+$ udisksctl mount -b /dev/loopX
+
+and the user never sees a prompt.  GNOME and KDE both display a
+notification when the mount finishes, but by then it could be too late.
+Someone should file a CVE against them too.
+
+You can tighten this up by doing this:
+
+# cat > /usr/share/polkit-1/rules.d/always-ask-mount.rules << ENDL
+// don't allow mounting, reformatting, or loopdev creation without asking
+polkit.addRule(function(action, subject) {
+        if ((action.id == "org.freedesktop.udisks2.loop-setup" ||
+             action.id == "org.freedesktop.udisks2.filesystem-mount" ||
+             action.id == "org.freedesktop.udisks2.modify-device") &&
+            subject.local == true) {
+                return polkit.Result.AUTH_ADMIN_KEEP;
+        }
+});
+ENDL
+
+so at least you have to authenticate with an admin account.  We do love
+our footguns, don't we?  At least it doesn't let you do that if you're
+ssh'd in...
 
 --D
 
-> ---
->  fs/iomap/trace.h | 27 +++++++++++++++++++++------
->  1 file changed, 21 insertions(+), 6 deletions(-)
+> The VFS doesn't allow mounting arbitrary filesystems by unprivileged
+> users. Every FS_REQUIRES_DEV filesystem requires global CAP_SYS_ADMIN
+> privileged at which point you can also do sudo rm -rf --no-preserve-root /
+> or a million other destructive things.
 > 
-> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
-> index 9eab2c8ac3c5..455cc6f90be0 100644
-> --- a/fs/iomap/trace.h
-> +++ b/fs/iomap/trace.h
-> @@ -99,7 +99,11 @@ DEFINE_RANGE_EVENT(iomap_dio_rw_queued);
->  	{ IOMAP_FAULT,		"FAULT" }, \
->  	{ IOMAP_DIRECT,		"DIRECT" }, \
->  	{ IOMAP_NOWAIT,		"NOWAIT" }, \
-> -	{ IOMAP_ATOMIC,		"ATOMIC" }
-> +	{ IOMAP_OVERWRITE_ONLY,	"OVERWRITE_ONLY" }, \
-> +	{ IOMAP_UNSHARE,	"UNSHARE" }, \
-> +	{ IOMAP_DAX,		"DAX" }, \
-> +	{ IOMAP_ATOMIC,		"ATOMIC" }, \
-> +	{ IOMAP_DONTCACHE,	"DONTCACHE" }
+> The blogpost is aware that the VFS maintainers don't accept CVEs like
+> this. Yet a CVE was still filed against the upstream kernel. IOW,
+> someone abused the fact that a distro chose to allow mounting arbitrary
+> filesystems including orphaned ones by unprivileged user as an argument
+> to gain a kernel CVE.
 > 
->  #define IOMAP_F_FLAGS_STRINGS \
->  	{ IOMAP_F_NEW,		"NEW" }, \
-> @@ -107,7 +111,14 @@ DEFINE_RANGE_EVENT(iomap_dio_rw_queued);
->  	{ IOMAP_F_SHARED,	"SHARED" }, \
->  	{ IOMAP_F_MERGED,	"MERGED" }, \
->  	{ IOMAP_F_BUFFER_HEAD,	"BH" }, \
-> -	{ IOMAP_F_SIZE_CHANGED,	"SIZE_CHANGED" }
-> +	{ IOMAP_F_XATTR,	"XATTR" }, \
-> +	{ IOMAP_F_BOUNDARY,	"BOUNDARY" }, \
-> +	{ IOMAP_F_ANON_WRITE,	"ANON_WRITE" }, \
-> +	{ IOMAP_F_ATOMIC_BIO,	"ATOMIC_BIO" }, \
-> +	{ IOMAP_F_PRIVATE,	"PRIVATE" }, \
-> +	{ IOMAP_F_SIZE_CHANGED,	"SIZE_CHANGED" }, \
-> +	{ IOMAP_F_STALE,	"STALE" }
-> +
+> Revoke that CVE against the upstream kernel. This is a CVE against a
+> distro. There's zero reason for us to hurry with any fix.
 > 
->  #define IOMAP_DIO_STRINGS \
->  	{IOMAP_DIO_FORCE_WAIT,	"DIO_FORCE_WAIT" }, \
-> @@ -138,7 +149,7 @@ DECLARE_EVENT_CLASS(iomap_class,
->  		__entry->bdev = iomap->bdev ? iomap->bdev->bd_dev : 0;
->  	),
->  	TP_printk("dev %d:%d ino 0x%llx bdev %d:%d addr 0x%llx offset 0x%llx "
-> -		  "length 0x%llx type %s flags %s",
-> +		  "length 0x%llx type %s (0x%x) flags %s (0x%x)",
->  		  MAJOR(__entry->dev), MINOR(__entry->dev),
->  		  __entry->ino,
->  		  MAJOR(__entry->bdev), MINOR(__entry->bdev),
-> @@ -146,7 +157,9 @@ DECLARE_EVENT_CLASS(iomap_class,
->  		  __entry->offset,
->  		  __entry->length,
->  		  __print_symbolic(__entry->type, IOMAP_TYPE_STRINGS),
-> -		  __print_flags(__entry->flags, "|", IOMAP_F_FLAGS_STRINGS))
-> +		  __entry->type,
-> +		  __print_flags(__entry->flags, "|", IOMAP_F_FLAGS_STRINGS),
-> +		  __entry->flags)
->  )
-> 
->  #define DEFINE_IOMAP_EVENT(name)		\
-> @@ -185,7 +198,7 @@ TRACE_EVENT(iomap_writepage_map,
->  		__entry->bdev = iomap->bdev ? iomap->bdev->bd_dev : 0;
->  	),
->  	TP_printk("dev %d:%d ino 0x%llx bdev %d:%d pos 0x%llx dirty len 0x%llx "
-> -		  "addr 0x%llx offset 0x%llx length 0x%llx type %s flags %s",
-> +		  "addr 0x%llx offset 0x%llx length 0x%llx type %s (0x%x) flags %s (0x%x)",
->  		  MAJOR(__entry->dev), MINOR(__entry->dev),
->  		  __entry->ino,
->  		  MAJOR(__entry->bdev), MINOR(__entry->bdev),
-> @@ -195,7 +208,9 @@ TRACE_EVENT(iomap_writepage_map,
->  		  __entry->offset,
->  		  __entry->length,
->  		  __print_symbolic(__entry->type, IOMAP_TYPE_STRINGS),
-> -		  __print_flags(__entry->flags, "|", IOMAP_F_FLAGS_STRINGS))
-> +		  __entry->type,
-> +		  __print_flags(__entry->flags, "|", IOMAP_F_FLAGS_STRINGS),
-> +		  __entry->flags)
->  );
-> 
->  TRACE_EVENT(iomap_iter,
-> --
-> 2.48.1
-> 
+> [1]: https://ssd-disclosure.com/ssd-advisory-linux-kernel-hfsplus-slab-out-of-bounds-write/
 > 
 
