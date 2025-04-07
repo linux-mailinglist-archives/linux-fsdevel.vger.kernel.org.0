@@ -1,164 +1,326 @@
-Return-Path: <linux-fsdevel+bounces-45833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56A72A7D25C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 05:13:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 467E1A7D325
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 06:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5294F1670A6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 03:13:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1632416E0CB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 04:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94BF213254;
-	Mon,  7 Apr 2025 03:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AEE221F29;
+	Mon,  7 Apr 2025 04:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="erqqHE6C"
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="MdUy3juS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E43212F8A
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Apr 2025 03:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B17F17BD9
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Apr 2025 04:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743995617; cv=none; b=rUtO4kdmwmwSShRYuhfMU4kmy+XOYHcCPE/CG/XOv3k8ACjk8HZqUTo8VytEnsdOUzaGY1oWPq8vZtjTRzo0A6nAdH1LFZhjBTktbK04FRLvZpNdaeRe2T2R9PvyRdCGUAAzjH9zOk52v50G51odYt1g+awARW9gB0UA5mcjuxU=
+	t=1744001449; cv=none; b=vCRQF4z5R8ZCW/S3joPtLm4oGG4I7VeupiwUh07KZ3CaMmuCOFvvx/IJ3EWLQgBsDENHFbUM03DJZgpzykw3etuYuxYDb2SxtZ+/zbVTCGpac8kdXz8DQyjVGaY9kvzuXUktmBVNK04SOj7aEyJJr4rVq7K+97kF9GB53MjuD+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743995617; c=relaxed/simple;
-	bh=yGC7W48pGIR14uwgfpwb5QbtLcySgKLjTGaKrunxkxU=;
+	s=arc-20240116; t=1744001449; c=relaxed/simple;
+	bh=e2ODKiwGGGuPiOhZAw5LSSd25eK8cxcMLz1IG/9vd+E=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=HKoAD0tvAcU06YRx3NPqJrBT4pcA2FyLMFSogJqiSI6q59izUdFZlzDEG9PFAp4m4T4SYYZfk/6WJD+U5jAdDjXMBobHncb7yTjwF7/ZEkNQjc0b3fZHDFpNVoYM04IUd8sjSXg+HgQ+ync1JDDL0AQ7hDnevGg9ksG7T2DKBpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=erqqHE6C; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4766631a6a4so39449791cf.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Apr 2025 20:13:34 -0700 (PDT)
+	 To:Cc:Content-Type; b=G64l/MTVEJ+runJ5NNA6bdMZQGvBl5JhaSrnXqFS7QskANkD1IC60wW6S4nuLhCrkbwMMoHN/wcjCaRMKIYEuGJ2KzFhmIjKjQDDMxWizv9MaFKHPifx20T3D4jpLSc9djdlFBfasbfvnHF6fy2QkMBIGV6uDkAuitGeXDaz7qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=MdUy3juS; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-8613f456960so15714639f.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Apr 2025 21:50:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743995613; x=1744600413; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=sifive.com; s=google; t=1744001446; x=1744606246; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vPQVY4WOstGEl2DC9PQd1EMUw4jAZBuklAEaNTH+0Os=;
-        b=erqqHE6CEZNHNfbN8pVGcw6iiWQPKEa3as02LXDoDVdOMpVYwYTidCX+LD2SumAaVB
-         xdH488uFT2I7WIWNtrymiDd3nYIi6mfdVhLZyrVHmM1H8XhF5y5cin8sXn69DYwqy47u
-         Sjh+yFrgW3Zwe2bx0wA9rnvG71SRdbzagLKOFGEtlqKs4an3ZftbwFF38KMgsDxjVi4g
-         T2/90Y1oCToX37SjvAJ1irrtTqwXdK7cLtkfg5xDk5EsxnrZ3CFGFUrhtYRV8XrXVVw8
-         o1Xtx6wwR92e2/RCp+QiyX2qSnwCVB5TEJoG/9mMcyRPwMx795DkRRjwdfZQPd91fXsf
-         JDSA==
+        bh=CSbT54uFLuQxmkO99JJbKmBYJPhP8w1aIEAoXHHJX9k=;
+        b=MdUy3juS95eGjSHENJfsgXigio0nMQB/8oryG9WsH/mW1swIpHpUy0YhDoJKmSPDU/
+         53SkzdBe5JEqwK8hC248DPNFigCeKXWZpX9H8N67Vd8zzXuiww7SNjLWHySXO+pRLiZz
+         w2pPmZhk8uRio3b6zVkAT09VoQQkKrIfmrphX0vmhqUmGYnU0yHFYmgovBc7MD6U51XE
+         CJcrAJ2NF9Ai3FV+dKvbnTiXbW09vtN2wAaiUcpjiZv8dv7qoMgUFxDQaUczJ6DqVQ8Q
+         PF3a2H6R4OKSpAzV/60Hnp/JmThV1b2sPSwRc4RD9RZZi2G3Kk6YnZVPmLJzwONGMAnV
+         4qUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743995613; x=1744600413;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1744001446; x=1744606246;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vPQVY4WOstGEl2DC9PQd1EMUw4jAZBuklAEaNTH+0Os=;
-        b=dwC3yzkdQT/HsaI5fe//crXrkWDflTxmHWXg8NfBw0RADKk7xGUNfRfUuBMF7kj+HO
-         fWX8L2SSTkb/pR1T/yOAocNNHrfkPIrp+FxzftNEo86G3n2kzmIcMenLcR5AvUyvUs1Z
-         h5vxxEGbXlPpsnAX8reSZvWMfjDQnbTOp3B+ooCwFwxv9WUEBbIcS5UbmjyH5Yr9g8Do
-         BYS9xx2fvYTgbJfQw0iAuLh56CJLBbvJ3UrInCh23V60boQL0fGoLCOkfEJ2LfoCXQeC
-         HzuUZjFGEvRkumXmABmOW4cDCaJyi7Y7nbLLXtLfG2C0dcckljmEgI+esUyC6bBuch0Z
-         HLYw==
-X-Forwarded-Encrypted: i=1; AJvYcCVGfeIH22KFj/ifxhhSRZUuaGMcAP6igeFruNyTWlu0sQhztNH7E2JZWlaTBN4eqnPViFgDUmt5ctK62b9N@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQTUdNMvRzfcC8BHX6KXS6ngsni4iWdTFa9wJvctigSMcZbcx4
-	wDy+CT2w4jOQl9lway4u8dROoQdnHbaUFicDnCrV+yD1Dz6wB8Jb48eUyzuFCBgp0gyJA7uPtMi
-	jXTsC/6+TnE0wjwFfzUzinIuqMGc=
-X-Gm-Gg: ASbGncvIXzP39tk5WNHLozkgF2mDTi3YxPQMlHpA38P0jApPV7w9YFO7GAVy3H2ew05
-	wLF4/nZYXZjvdPc+8JAQ81TdjtzsPEiwU5l88yP4daucZ5rkyPserR9F/JXmP3Enl9WqbHIrzWR
-	00ny30sk3Qscm/FQ0+tPjglJt1+3M=
-X-Google-Smtp-Source: AGHT+IHNm4DcMOYCFt5CSjMwqq0XExLgak27FoxSmqtjNEkPsxuFQudJxcHK3Hljvd54+UWbfKkumfHlYBjnulyZ+oQ=
-X-Received: by 2002:ac8:58c2:0:b0:476:7b0b:3110 with SMTP id
- d75a77b69052e-47930f97387mr105228281cf.20.1743995613351; Sun, 06 Apr 2025
- 20:13:33 -0700 (PDT)
+        bh=CSbT54uFLuQxmkO99JJbKmBYJPhP8w1aIEAoXHHJX9k=;
+        b=JUAa/38j8wMRkEehDE3/K6u5IUSSU4UTapbfwlGUBU/FuZt7YFrVR6SauX5hSWXPzP
+         +1tcYO1HGjDmdT6W3bOarl9nzrGGhZfzqY/UeYlNchwh9Cgey/1utvtPqWd+w+vLRzTz
+         7hM6n5xiAjYCUc5EYF5ZJZhuNW13Z/ZXwIfMh9+xd4m3arJdaZZHxt1jblUVor8i1+Y0
+         sXgcYzwKMJbnW5qzK9d7+/28dXvCmBPHs1R7we1Lfhrl/zQsHGqWDcPFGfft0o7KghrJ
+         2fYhIdcq6uU1SoYCzqnWiH6XwzVmH1xeS8GfUzZAEXCq5SkekZvw7JdRC7m56tT++roA
+         TLcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKrhDG1svOw8p6e8whVAWcPxeghaPNWaLkzYBjQatk+wgpqwRqm+EQf2C/LaFf6c5OXubWPzjpSmIpI+A2@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVyMd1DkPE1PCP4bgDjbAsS4JRmfnXHv0MIs4ZLWMGGWwHmWRY
+	gXFzqmOWjS03nrovWC0MjZI/1GVqs74Wl6sgNXIkH8WDj6y6AVNluR/Q3XQCglQc47PYn5LN4PD
+	n7MVJDTfckFdY8nEHc+lQ5OwxxkXWqNePHVrdhQ==
+X-Gm-Gg: ASbGncvwBNAkk1zNcPaYbFrZ3ergdpPw8At61x9xSO1MwV5RkJw9NaFh+q2RzVp6Nev
+	PlSz/iankB06eVN+WivIqJooWaCdH6lksk+kk0BwG4n+fWcKwDiIzbKc2NmAPDsWDp4hxoTejI8
+	at5SVpTiKEIWqlz5zAcBVB7iYig57R
+X-Google-Smtp-Source: AGHT+IHhVdalfJg/Z7eY6UsCfbBA0DkGD01gM9P/N23DqqMhnu+Yb+G3qK68lvaA0KDDPK6sloLhNYPOVe1kjlQCo1M=
+X-Received: by 2002:a05:6602:4009:b0:85e:201e:3e35 with SMTP id
+ ca18e2360f4ac-8611c2a4dc8mr1200799239f.3.1744001446586; Sun, 06 Apr 2025
+ 21:50:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALf2hKtnFskBvmZeigK_=mqq9Vd4TWT+YOXcwfNNt1ydOY=0Yg@mail.gmail.com>
-In-Reply-To: <CALf2hKtnFskBvmZeigK_=mqq9Vd4TWT+YOXcwfNNt1ydOY=0Yg@mail.gmail.com>
-From: Zhiyu Zhang <zhiyuzhang999@gmail.com>
-Date: Mon, 7 Apr 2025 11:13:22 +0800
-X-Gm-Features: ATxdqUHw2AYcYwDncI101N28YFmcnPdXhi2dhhGFlrzPD-Y6Dyb5mAtf5TeKAuM
-Message-ID: <CALf2hKtNemTQPCGkbCfRZj3Lkd_2-L2QX+Y2rUxGgxMgdpJ8Jw@mail.gmail.com>
-Subject: Re: [Kernel Bug] BUG: unable to handle kernel paging request in const_folio_flags
-To: mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	ocfs2-devel@lists.linux.dev, willy@infradead.org, akpm@linux-foundation.org, 
-	linux-fsdevel@vger.kernel.org, gregkh@linuxfoundation.org
+References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com> <20250314-v5_user_cfi_series-v12-10-e51202b53138@rivosinc.com>
+In-Reply-To: <20250314-v5_user_cfi_series-v12-10-e51202b53138@rivosinc.com>
+From: Zong Li <zong.li@sifive.com>
+Date: Mon, 7 Apr 2025 12:50:35 +0800
+X-Gm-Features: ATxdqUEcEvSvDd4YNmxt5x00v_2QFe_U7ZYW7BCOZdpLL6G50qHXNh2VbNcPJLM
+Message-ID: <CANXhq0rpHMWvJhWNUKuiMvJZoqN5iTz7USmZYHff=se-+-H+3w@mail.gmail.com>
+Subject: Re: [PATCH v12 10/28] riscv/mm: Implement map_shadow_stack() syscall
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Jann Horn <jannh@google.com>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
+	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
+	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
+	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
+	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Sat, Mar 15, 2025 at 5:39=E2=80=AFAM Deepak Gupta <debug@rivosinc.com> w=
+rote:
+>
+> As discussed extensively in the changelog for the addition of this
+> syscall on x86 ("x86/shstk: Introduce map_shadow_stack syscall") the
+> existing mmap() and madvise() syscalls do not map entirely well onto the
+> security requirements for shadow stack memory since they lead to windows
+> where memory is allocated but not yet protected or stacks which are not
+> properly and safely initialised. Instead a new syscall map_shadow_stack()
+> has been defined which allocates and initialises a shadow stack page.
+>
+> This patch implements this syscall for riscv. riscv doesn't require token
+> to be setup by kernel because user mode can do that by itself. However to
+> provide compatibility and portability with other architectues, user mode
+> can specify token set flag.
+>
+> Reviewed-by: Zong Li <zong.li@sifive.com>
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>  arch/riscv/kernel/Makefile  |   1 +
+>  arch/riscv/kernel/usercfi.c | 144 ++++++++++++++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 145 insertions(+)
+>
+> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+> index 8d186bfced45..3a861d320654 100644
+> --- a/arch/riscv/kernel/Makefile
+> +++ b/arch/riscv/kernel/Makefile
+> @@ -125,3 +125,4 @@ obj-$(CONFIG_ACPI)          +=3D acpi.o
+>  obj-$(CONFIG_ACPI_NUMA)        +=3D acpi_numa.o
+>
+>  obj-$(CONFIG_GENERIC_CPU_VULNERABILITIES) +=3D bugs.o
+> +obj-$(CONFIG_RISCV_USER_CFI) +=3D usercfi.o
+> diff --git a/arch/riscv/kernel/usercfi.c b/arch/riscv/kernel/usercfi.c
+> new file mode 100644
+> index 000000000000..24022809a7b5
+> --- /dev/null
+> +++ b/arch/riscv/kernel/usercfi.c
+> @@ -0,0 +1,144 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2024 Rivos, Inc.
+> + * Deepak Gupta <debug@rivosinc.com>
+> + */
+> +
+> +#include <linux/sched.h>
+> +#include <linux/bitops.h>
+> +#include <linux/types.h>
+> +#include <linux/mm.h>
+> +#include <linux/mman.h>
+> +#include <linux/uaccess.h>
+> +#include <linux/sizes.h>
+> +#include <linux/user.h>
+> +#include <linux/syscalls.h>
+> +#include <linux/prctl.h>
+> +#include <asm/csr.h>
+> +#include <asm/usercfi.h>
+> +
+> +#define SHSTK_ENTRY_SIZE sizeof(void *)
+> +
+> +/*
+> + * Writes on shadow stack can either be `sspush` or `ssamoswap`. `sspush=
+` can happen
+> + * implicitly on current shadow stack pointed to by CSR_SSP. `ssamoswap`=
+ takes pointer to
+> + * shadow stack. To keep it simple, we plan to use `ssamoswap` to perfor=
+m writes on shadow
+> + * stack.
+> + */
+> +static noinline unsigned long amo_user_shstk(unsigned long *addr, unsign=
+ed long val)
+> +{
+> +       /*
+> +        * Never expect -1 on shadow stack. Expect return addresses and z=
+ero
+> +        */
+> +       unsigned long swap =3D -1;
+> +
+> +       __enable_user_access();
+> +       asm goto(
+> +               ".option push\n"
+> +               ".option arch, +zicfiss\n"
+> +               "1: ssamoswap.d %[swap], %[val], %[addr]\n"
 
-Is there any update on this issue? Shall I sumit a patch for it? If
-there is anything that I can help with please let me know.
+Hi Deepak,
+It just came to my mind, do we need to ensure that menvcfg.SSE is not
+zero before executing the ssamoswap instruction? Since ssamoswap is
+not encoded using MOP, I=E2=80=99m wondering if we should make sure that
+executing ssamoswap won=E2=80=99t accidentally trigger an illegal instructi=
+on
+exception. Thanks.
 
-Wish you have a nice day!
-
-Best,
-Zhiyu Zhang
-
-Zhiyu Zhang <zhiyuzhang999@gmail.com> =E4=BA=8E2025=E5=B9=B43=E6=9C=8823=E6=
-=97=A5=E5=91=A8=E6=97=A5 01:52=E5=86=99=E9=81=93=EF=BC=9A
+> +               _ASM_EXTABLE(1b, %l[fault])
+> +               RISCV_ACQUIRE_BARRIER
+> +               ".option pop\n"
+> +               : [swap] "=3Dr" (swap), [addr] "+A" (*addr)
+> +               : [val] "r" (val)
+> +               : "memory"
+> +               : fault
+> +               );
+> +       __disable_user_access();
+> +       return swap;
+> +fault:
+> +       __disable_user_access();
+> +       return -1;
+> +}
+> +
+> +/*
+> + * Create a restore token on the shadow stack.  A token is always XLEN w=
+ide
+> + * and aligned to XLEN.
+> + */
+> +static int create_rstor_token(unsigned long ssp, unsigned long *token_ad=
+dr)
+> +{
+> +       unsigned long addr;
+> +
+> +       /* Token must be aligned */
+> +       if (!IS_ALIGNED(ssp, SHSTK_ENTRY_SIZE))
+> +               return -EINVAL;
+> +
+> +       /* On RISC-V we're constructing token to be function of address i=
+tself */
+> +       addr =3D ssp - SHSTK_ENTRY_SIZE;
+> +
+> +       if (amo_user_shstk((unsigned long __user *)addr, (unsigned long)s=
+sp) =3D=3D -1)
+> +               return -EFAULT;
+> +
+> +       if (token_addr)
+> +               *token_addr =3D addr;
+> +
+> +       return 0;
+> +}
+> +
+> +static unsigned long allocate_shadow_stack(unsigned long addr, unsigned =
+long size,
+> +                                          unsigned long token_offset, bo=
+ol set_tok)
+> +{
+> +       int flags =3D MAP_ANONYMOUS | MAP_PRIVATE;
+> +       struct mm_struct *mm =3D current->mm;
+> +       unsigned long populate, tok_loc =3D 0;
+> +
+> +       if (addr)
+> +               flags |=3D MAP_FIXED_NOREPLACE;
+> +
+> +       mmap_write_lock(mm);
+> +       addr =3D do_mmap(NULL, addr, size, PROT_READ, flags,
+> +                      VM_SHADOW_STACK | VM_WRITE, 0, &populate, NULL);
+> +       mmap_write_unlock(mm);
+> +
+> +       if (!set_tok || IS_ERR_VALUE(addr))
+> +               goto out;
+> +
+> +       if (create_rstor_token(addr + token_offset, &tok_loc)) {
+> +               vm_munmap(addr, size);
+> +               return -EINVAL;
+> +       }
+> +
+> +       addr =3D tok_loc;
+> +
+> +out:
+> +       return addr;
+> +}
+> +
+> +SYSCALL_DEFINE3(map_shadow_stack, unsigned long, addr, unsigned long, si=
+ze, unsigned int, flags)
+> +{
+> +       bool set_tok =3D flags & SHADOW_STACK_SET_TOKEN;
+> +       unsigned long aligned_size =3D 0;
+> +
+> +       if (!cpu_supports_shadow_stack())
+> +               return -EOPNOTSUPP;
+> +
+> +       /* Anything other than set token should result in invalid param *=
+/
+> +       if (flags & ~SHADOW_STACK_SET_TOKEN)
+> +               return -EINVAL;
+> +
+> +       /*
+> +        * Unlike other architectures, on RISC-V, SSP pointer is held in =
+CSR_SSP and is available
+> +        * CSR in all modes. CSR accesses are performed using 12bit index=
+ programmed in instruction
+> +        * itself. This provides static property on register programming =
+and writes to CSR can't
+> +        * be unintentional from programmer's perspective. As long as pro=
+grammer has guarded areas
+> +        * which perform writes to CSR_SSP properly, shadow stack pivotin=
+g is not possible. Since
+> +        * CSR_SSP is writeable by user mode, it itself can setup a shado=
+w stack token subsequent
+> +        * to allocation. Although in order to provide portablity with ot=
+her architecture (because
+> +        * `map_shadow_stack` is arch agnostic syscall), RISC-V will foll=
+ow expectation of a token
+> +        * flag in flags and if provided in flags, setup a token at the b=
+ase.
+> +        */
+> +
+> +       /* If there isn't space for a token */
+> +       if (set_tok && size < SHSTK_ENTRY_SIZE)
+> +               return -ENOSPC;
+> +
+> +       if (addr && (addr & (PAGE_SIZE - 1)))
+> +               return -EINVAL;
+> +
+> +       aligned_size =3D PAGE_ALIGN(size);
+> +       if (aligned_size < size)
+> +               return -EOVERFLOW;
+> +
+> +       return allocate_shadow_stack(addr, aligned_size, size, set_tok);
+> +}
 >
-> Dear Developers and Maintainers,
+> --
+> 2.34.1
 >
-> We would like to report a Linux kernel bug titled "BUG: unable to
-> handle kernel paging request in const_folio_flags" found in
-> Linux-6.14-rc7 by our modified tool. We have reproduced the crash and
-> applied a patch that can avoid the kernel panic. Here are the relevant
-> attachments:
->
-> kernel config: https://drive.google.com/file/d/1vHuHlQyiKlXbyuo03sZTiuaA5=
-jZ5MtV6/view?usp=3Dsharing
-> report: https://drive.google.com/file/d/11LD1uFid1u3r7brsvd85-SrBzvXwH-w2=
-/view?usp=3Dsharing
-> syz reproducer:
-> https://drive.google.com/file/d/10v3FtkewHcAnTjsUGqFCDl7k7hiCJ12-/view?us=
-p=3Dsharing
-> C reproducer: https://drive.google.com/file/d/1L9WTVbO2pfqXLjXyQcMy4f-Am3=
-obTJcN/view?usp=3Dsharing
-> crash log: https://drive.google.com/file/d/1zwYU3061pnTSVIEpuZ-EBR7FYvWPx=
-X4z/view?usp=3Dsharing
->
-> We speculate this vulnerability arises from a missing check for error
-> pointers in the array folios[i] within the function
-> ocfs2_unlock_and_free_folios(). When the kernel fails to write or
-> allocate folios for writing (e.g., due to OOM), the wc->w_folios[i]
-> may be assigned an error pointer (e.g., -ENOMEM) in
-> fs/ocfs2/aops.c:1075, which is then returned as an error to
-> ocfs2_write_begin_nolock(). Within ocfs2_unlock_and_free_folios(),
-> there is no proper handling for error pointers, so the function
-> attempts to process folios[i] directly. This results in the kernel
-> attempting to dereference an invalid pointer during the call chain:
-> ocfs2_unlock_and_free_folios->folio_unlock->folio_test_locked->const_foli=
-o_flags.
-> Specifically, during debugging, we observe that the kernel attempts to
-> read data from rbx+0x8 (where rbx =3D 0xfffffffffffffff4), causing a
-> page fault and kernel panic.
->
-> I tested the following patch, which prevents the kernel panic by
-> checking for error pointers before accessing folios[i]:
->
-> --- a/fs/ocfs2/aops.c
-> +++ b/fs/ocfs2/aops.c
-> @@ -767,7 +767,7 @@ void ocfs2_unlock_and_free_folios(struct folio
-> **folios, int num_folios)
->         int i;
->
->         for(i =3D 0; i < num_folios; i++) {
-> -               if (!folios[i])
-> +               if (!folios[i] || IS_ERR(folios[i]))    // or use
-> IS_ERR_OR_NULL instead
->                         continue;
->                 folio_unlock(folios[i]);
->                 folio_mark_accessed(folios[i]);
->
-> However, I am not sure if the analysis and patch are appropriate.
-> Could you check this issue? With the verification, I would like to
-> submit a patch.
->
-> Wish you a nice day!
->
-> Best,
-> Zhiyu Zhang
 
