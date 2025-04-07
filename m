@@ -1,135 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-45905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45906-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A832A7E7F3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 19:15:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3B61A7E822
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 19:26:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C56A6168003
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 17:15:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59B04188BFFF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 17:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9289216E26;
-	Mon,  7 Apr 2025 17:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A1B217657;
+	Mon,  7 Apr 2025 17:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E07sSCSA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lPt77zdh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEDB1C36;
-	Mon,  7 Apr 2025 17:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5812B2163B6;
+	Mon,  7 Apr 2025 17:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744046132; cv=none; b=ZcHjYoO4HGkZxeMSUEcvbobduSODYvxGXgYtDXrietWbPs+lt2RnVfwwRmyk9CwwQegVTOCQTSHZzmPJdWN7Bmt4BvEJ8V8/1ExPL2Ceirp07IvqJbj2uDCcW2guKzT/TwNcPhk2Sh3gvCVHNDduQVHnD8r5rR8frw+ihBRGLh4=
+	t=1744046779; cv=none; b=TZwtc4bw8UtPcEVm0jI9bCGFnrTnAnBs8uY7pfpia+WL+kEoP5oLic8I8cZG7jjq483JgKpg5ghbLzfW9IoNmq2mYC2w1QypKOTidYt0oJmAJQh2sNnytKbCckV4XL71GvmijQDe//fB6eGGxuv6csipWLstR32nTQux5/C99Hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744046132; c=relaxed/simple;
-	bh=njTr8RbcFgdvmq7pMd62rzNVCZwMFJrNvhEZS3Hn1pM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bLTJbYj6C4M2VJ3XqDqlGAROMQ/hoH7tucdwGWN7TMenLOv5A+ZbEP44lggXe0bvMsqMXtTxFpxbIPrtHW7KBtx0nOqzG51hbK7bpUXkv2H0oB3X03YaQ8Zo4InXULbaobehkCelR8OP67Bappd5UZL9YAmDvFq/k6iETEdhGyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E07sSCSA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AF5DC4CEDD;
-	Mon,  7 Apr 2025 17:15:29 +0000 (UTC)
+	s=arc-20240116; t=1744046779; c=relaxed/simple;
+	bh=raL/UzKm/bH/RfBRNJdvfTVJ8Y8kROU3/R6LPqOJIDw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gPq1JHsXpzxSLvgqy/ubBbBrGsdjxoir2zgKK7le/7ONQ1shvjbzPdHvR6fHF9HBFo3GzH6wTE1Ua4HBE/xOl475yZIfXEW3/kmBiIA/eDDh8SAjvaCJqps6r41xv2HzaIgGcGVFo2vRWpl+arTjMe0l93CiQFHMhH0pmwp/GNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lPt77zdh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BC53C4CEDD;
+	Mon,  7 Apr 2025 17:26:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744046131;
-	bh=njTr8RbcFgdvmq7pMd62rzNVCZwMFJrNvhEZS3Hn1pM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E07sSCSAHmYy+HGr343lvKCdv4oMSfWMIniSAvNNlu7zZ7O0aGtRR9NV5Yzb/3Rrt
-	 LnRRws/fegpkMeO1wL+Dk3n5Gx7w2u7MFN+oiBYgUXe0KCohZNZaLw+8dNWN3e58qR
-	 G5fMXaRR0dSmHtl9vwQzzSqSwZy3YKqdpq5E7w5xv+hMN9kInoUHYIXE2iUwttJADy
-	 mY2Ip3+yt8+pVvvqF8shaxuIL9KETesDEo6w/toRNVEoX8iwfrERLU8hxOP35MOoo0
-	 6KqosoILviXo1SdpYKMd6kanmUNiKaeuo+OHFuVsX8xO+I6G2XWp9z3/4RQndZdvpz
-	 ZgLrWjUnymSRA==
-Date: Mon, 7 Apr 2025 19:15:26 +0200
+	s=k20201202; t=1744046778;
+	bh=raL/UzKm/bH/RfBRNJdvfTVJ8Y8kROU3/R6LPqOJIDw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=lPt77zdh9NLNlTtH1QEsWEAH06SHbbi4uV4VJ7YBmIAU+UvIzEcRfiSZ1r3J0WMbN
+	 T13ijgF/UvprSSK66VthX1YY3JB7K6E4Stv+dgTL+3Mw/Uo/rUFEY5sIy/6PLnvBU/
+	 MCx+5gYJapd5/CcebC3kb9YyI+a3RI9HcmkmdZDI9LidxMykxtqkgVyoI2hdLxDt6T
+	 iE9PoNI8YaAZVhuzi1z7tjv8+pqhebvr+iIgCUtY2swbLoqdrRfm4Ms32npFCeoVtG
+	 V+uj8ViPqEIdFLxc30A873eqk0XOgtluMoSQbNRhKyEeZd4KXsU/jCf7S1kc/T/7Ox
+	 tLVC2QxRiXTPw==
 From: Christian Brauner <brauner@kernel.org>
-To: Cengiz Can <cengiz.can@canonical.com>, 
-	Attila Szasz <szasza.contact@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, 
-	Salvatore Bonaccorso <carnil@debian.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lvc-patches@linuxtesting.org, dutyrok@altlinux.org, 
-	syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com, stable@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Vasiliy Kovalev <kovalev@altlinux.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	lvc-patches@linuxtesting.org,
+	dutyrok@altlinux.org,
+	gerben@altlinux.org,
+	syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
 Subject: Re: [PATCH] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
-Message-ID: <20250407-kumpel-klirren-ad0db3c77321@brauner>
+Date: Mon,  7 Apr 2025 19:25:03 +0200
+Message-ID: <20250407-chorkonzert-ankam-80ebcdbffd20@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20241019191303.24048-1-kovalev@altlinux.org>
 References: <20241019191303.24048-1-kovalev@altlinux.org>
- <Z9xsx-w4YCBuYjx5@eldamar.lan>
- <d4mpuomgxqi7xppaewlpey6thec7h2fk4sm2iktqsx6bhwu5ph@ctkjksxmkgne>
- <2025032402-jam-immovable-2d57@gregkh>
- <7qi6est65ekz4kjktvmsbmywpo5n2kla2m3whbvq4dsckdcyst@e646jwjazvqh>
- <2025032404-important-average-9346@gregkh>
- <dzmprnddbx2qaukb7ukr5ngdx6ydwxynaq6ctxakem43yrczqb@y7dg7kzxsorc>
- <20250407-biegung-furor-e7313ca9d712@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250407-biegung-furor-e7313ca9d712@brauner>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1346; i=brauner@kernel.org; h=from:subject:message-id; bh=raL/UzKm/bH/RfBRNJdvfTVJ8Y8kROU3/R6LPqOJIDw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR/4VqbHsCRUn/y7rwf/9IV1i9MmnNns17Phk+eOzz8L 7mt0tja2VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAnCTXzIyHP3/4vxE39io7xpH O5w796ZtXu/NtLAtgcutZw8nx1WByQz/dJLmWGZJTDn0N/B5hGPhae6DdtfdH1veFrgo43dH5fw xVgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Apr 07, 2025 at 12:59:18PM +0200, Christian Brauner wrote:
-> On Sun, Apr 06, 2025 at 07:07:57PM +0300, Cengiz Can wrote:
-> > On 24-03-25 11:53:51, Greg KH wrote:
-> > > On Mon, Mar 24, 2025 at 09:43:18PM +0300, Cengiz Can wrote:
-> > > > In the meantime, can we get this fix applied?
-> > > 
-> > > Please work with the filesystem maintainers to do so.
-> > 
-> > Hello Christian, hello Alexander
-> > 
-> > Can you help us with this?
-> > 
-> > Thanks in advance!
+On Sat, 19 Oct 2024 22:13:03 +0300, Vasiliy Kovalev wrote:
+> Syzbot reported an issue in hfs subsystem:
 > 
-> Filesystem bugs due to corrupt images are not considered a CVE for any
-> filesystem that is only mountable by CAP_SYS_ADMIN in the initial user
-> namespace. That includes delegated mounting.
+> BUG: KASAN: slab-out-of-bounds in memcpy_from_page include/linux/highmem.h:423 [inline]
+> BUG: KASAN: slab-out-of-bounds in hfs_bnode_read fs/hfs/bnode.c:35 [inline]
+> BUG: KASAN: slab-out-of-bounds in hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
+> Write of size 94 at addr ffff8880123cd100 by task syz-executor237/5102
 > 
-> Now, quoting from [1]:
-> 
-> "So, for the record, the Linux kernel in general only allows mounts for
-> those with CAP_SYS_ADMIN, however, it is true that desktop and even
-> server environments allow regular non-privileged users to mount and
-> automount filesystems.
-> 
-> In particular, both the latest Ubuntu Desktop and Server versions come
-> with default polkit rules that allow users with an active local session
-> to create loop devices and mount a range of block filesystems commonly
-> found on USB flash drives with udisks2. Inspecting
-> /usr/share/polkit-1/actions/org.freedesktop.UDisks2.policy shows:"
-> 
-> So what this saying is:
-> 
-> A distribution is shipping tooling that allows unprivileged users to mount
-> arbitrary filesystems including hpfsplus. Or to rephrase this: A
-> distribution is allowing unprivileged users to mount orphaned
-> filesystems. Congratulations on the brave decision to play Russian
-> Roulette with a fully-loaded gun.
-> 
-> The VFS doesn't allow mounting arbitrary filesystems by unprivileged
-> users. Every FS_REQUIRES_DEV filesystem requires global CAP_SYS_ADMIN
-> privileged at which point you can also do sudo rm -rf --no-preserve-root /
-> or a million other destructive things.
-> 
-> The blogpost is aware that the VFS maintainers don't accept CVEs like
-> this. Yet a CVE was still filed against the upstream kernel. IOW,
-> someone abused the fact that a distro chose to allow mounting arbitrary
-> filesystems including orphaned ones by unprivileged user as an argument
-> to gain a kernel CVE.
-> 
-> Revoke that CVE against the upstream kernel. This is a CVE against a
-> distro. There's zero reason for us to hurry with any fix.
+> [...]
 
-Before that gets misinterpreted: This is not intended to either
-implicitly or explicitly imply that patch pickup is dependend on the
-revocation of this CVE.
+Stop-gap measure at best. I expect there to be plenty of other ways for
+syzbot to trigger issues in hpfsplus.
 
-Since this isn't a valid CVE there's no reason to hurry-up merging this
-into mainline within the next 24 hours. It'll get there whenever the
-next fixes pr is ready.
+---
 
-> 
-> [1]: https://ssd-disclosure.com/ssd-advisory-linux-kernel-hfsplus-slab-out-of-bounds-write/
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
+      https://git.kernel.org/vfs/vfs/c/bb5e07cb9277
 
