@@ -1,78 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-45845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C8EA7D94D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 11:17:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C36ACA7DA73
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 11:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F3917A31E6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 09:16:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C63E16E8A3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 09:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F75237718;
-	Mon,  7 Apr 2025 09:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729DE231A2B;
+	Mon,  7 Apr 2025 09:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gWQqKVXA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qArOxwDl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354CF2309A3;
-	Mon,  7 Apr 2025 09:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAA823098D;
+	Mon,  7 Apr 2025 09:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744017348; cv=none; b=hH5CLq5YwC/iU5KsKyV+/26N5IDp3Cm8m5MPUPoKIYJ00ud9wYFt/7+Fv3mHzZ7CqiUsGYi+I+lD6Vy/p4tstP6oxYf9fynq5kEFOdCl5fOcyssVGGibJX+JDd3VHPEyg68NRzlHr2TTrNj9x6UHnVxovDDFZNpvazT4nf1tSEI=
+	t=1744019675; cv=none; b=nLdf9pHQuWH1YXr85YM7jB1fMJBUsKzOSHEavSm3uqe977Is+Rsa1PhCB73ZhGQBKtwno2Zz5OE6YwCD8R4XoRbpQ2Y53aNwL8W5jicrrak/jaCv/cc5wRBFh9WzkkGiiSyI6gMAWRTXPyicmlXeK28nXK2qKt/+CBmrnNRMMZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744017348; c=relaxed/simple;
-	bh=ND5TFDjwajhpW3p14uRN8gBouffujWQSboBCcOhvDB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZTmjpwwDSsl6l1bcfC9ekImkP78PwSZC8DuBja61Ef8mm1EjNtGdZwd0nPsBFZBU3s1+ea3su69hreuTNTYK3gNqxG+J8FjGHBOBm5uoPpk6lyXJVs0iyCwFhVQxgUfq5uoNo9OdgoBqljOLeMPTyjEOAtYKzceaA+3fsxh/Xk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gWQqKVXA; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ofqWwqYhXMMlq9izH/X2Vybg9guxywDxyDKd2Dx3UiE=; b=gWQqKVXAMd8yKk5YBfYHP8zEkI
-	vzJHXkuDQWitK/baGDY1h7cbxIaGjM1d+Sn59xfQp2R0n36Z2LKWbjq/QUep+k1dchsKnkA4mqqSk
-	MLCiavZQM1PGpkgxshtqMpZqQsxMlM9nkhRM1+AyhpdfaxbiyvumrD3TmhcEuOFp9kIpYx72LmCvt
-	l/8JZquo6wT0nZFH5lKmhoY30BtmcaNnnXNOKJJ3leYs+/4cgieFpeG47l3SAYLiqResroUBXDnCX
-	x/yCb1VIhwYFYq9ovuhn8NuO6ZOXcUespBWbVPEPhgT8/YXXUznrHpfjRI6hRVvC5r6/q1CUxXC4i
-	PuhrNIqg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u1ia2-0000000H9UD-25Dq;
-	Mon, 07 Apr 2025 09:15:46 +0000
-Date: Mon, 7 Apr 2025 02:15:46 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Alistair Popple <apopple@nvidia.com>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/6] Allow file-backed or shared device private pages
-Message-ID: <Z_OXwvGS3o70YxpA@infradead.org>
-References: <cover.24b48fced909fe1414e83b58aa468d4393dd06de.1742099301.git-series.apopple@nvidia.com>
- <Z9e7Vye7OHSbEEx_@infradead.org>
- <Z-NjI8DO6bvWphO3@casper.infradead.org>
+	s=arc-20240116; t=1744019675; c=relaxed/simple;
+	bh=W1GQjaNtsMtwRDBCK9P9pv77FM0gjd/w8nwBlGfuh2o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sAjXf7mcIKUQN8gMhs5/XYATfMzo1mG0lYQVOFzOpyK53Bxwb75UiX6EeKb9n8JOkHsmv6HVZN0xTHyaCq/HFqW1Sqj3s3ox3Jm0ZIGENoOfoIZ67J8X8J+DQoti/mi58vBmGiAgTw2UQ122K58YGDn/xM1BjV0UhJzQaIf8pFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qArOxwDl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1210AC4CEDD;
+	Mon,  7 Apr 2025 09:54:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744019674;
+	bh=W1GQjaNtsMtwRDBCK9P9pv77FM0gjd/w8nwBlGfuh2o=;
+	h=From:Subject:Date:To:Cc:From;
+	b=qArOxwDlOXBur9XIDOl7H9lqhnLsauoGdjp8+bDfDamKpVPpYIDg9mtVjbJEsqH/F
+	 MpmRdkmZ7Klhy/LFBN5O+jIkrhHd5uOo1P7RopQH8PXip/QZh9Xe5x7Ev+gsSpnHA6
+	 Bfz4xTdI2fsWQhS76Lp2hpbItpaceNHnPK9jR03WMiwdbMyXTOpcDtJg9S73VOONkB
+	 dBe5Rhe/6/IZuQCtl/Wcb8XDF721NNp43GQ4BPF5UvzfVfmgvkh+nMZ1sdUv1HprJN
+	 33bL64gs2VdYBb5pRclE2F1hEC1ocBA3GsHK1fRBOeTfGiI8LmvFxLWujkSiZ4UBpE
+	 lSakzi9Bw4H3w==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 0/9] fs: harden anon inodes
+Date: Mon, 07 Apr 2025 11:54:14 +0200
+Message-Id: <20250407-work-anon_inode-v1-0-53a44c20d44e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-NjI8DO6bvWphO3@casper.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMeg82cC/x3M0QrCMAxA0V8ZeTajLZtj/ooMSbvogphKKlMY+
+ 3erj+fh3g0Km3CBU7OB8SpFslb4QwNpIb0xylwNwYXedW7Ad7Y7kma9iOaZkUOI0dPQjWOAWj2
+ Nr/L5H89TdaTCGI00Lb/Pg8qLrV2Pre/Rkod9/wLqUA/6hAAAAA==
+X-Change-ID: 20250407-work-anon_inode-e22bb1a74992
+To: linux-fsdevel@vger.kernel.org
+Cc: Christoph Hellwig <hch@infradead.org>, 
+ Mateusz Guzik <mjguzik@gmail.com>, Penglei Jiang <superman.xpt@gmail.com>, 
+ Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
+ syzbot+5d8e79d323a13aa0b248@syzkaller.appspotmail.com, 
+ Christian Brauner <brauner@kernel.org>, stable@vger.kernel.org
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2120; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=W1GQjaNtsMtwRDBCK9P9pv77FM0gjd/w8nwBlGfuh2o=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR/XnDdbu/iFRPqI5t5fm/Tfdel6rQ1/UToZ2On/SsvC
+ N+7cLHbq6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiOjMY/hcVslgIaRo+NCyK
+ +DdJifF2xtro9qmNHEpC/Zm+DbO2FTH8017q/XjnpRc6ya9XblnuKKReZLZv+4Qf7+u55bgD78T
+ aMwEA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Wed, Mar 26, 2025 at 02:14:59AM +0000, Matthew Wilcox wrote:
-> So, there's no need to put DEVICE_PRIVATE pages in the page cache.
-> Instead the GPU will take a copy of the page(s).  We agreed that there
-> will have to be some indication (probably a folio flag?) that the GPU has
-> or may have a copy of (some of) the folio so that it can be invalidated
-> if the page is removed due to truncation / eviction.
+* Anonymous inodes currently don't come with a proper mode causing
+  issues in the kernel when we want to add useful VFS debug assert. Fix
+  that by giving them a proper mode and masking it off when we report it
+  to userspace which relies on them not having any mode.
 
-Sounds like layout leases used for pnfs.
+* Anonymous inodes currently allow to change inode attributes because
+  the VFS falls back to simple_setattr() if i_op->setattr isn't
+  implemented. This means the ownership and mode for every single user
+  of anon_inode_inode can be changed. Block that as it's either useless
+  or actively harmful. If specific ownership is needed the respective
+  subsystem should allocate anonymous inodes from their own private
+  superblock.
+
+* Port pidfs to the new anon_inode_{g,s}etattr() helpers.
+
+* Add proper tests for anonymous inode behavior.
+
+The anonymous inode specific fixes should ideally be backported to all
+LTS kernels.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Christian Brauner (9):
+      anon_inode: use a proper mode internally
+      pidfs: use anon_inode_getattr()
+      anon_inode: explicitly block ->setattr()
+      pidfs: use anon_inode_setattr()
+      anon_inode: raise SB_I_NODEV and SB_I_NOEXEC
+      selftests/filesystems: add first test for anonymous inodes
+      selftests/filesystems: add second test for anonymous inodes
+      selftests/filesystems: add third test for anonymous inodes
+      selftests/filesystems: add fourth test for anonymous inodes
+
+ fs/anon_inodes.c                                   | 45 ++++++++++++++
+ fs/internal.h                                      |  5 ++
+ fs/libfs.c                                         |  2 +-
+ fs/pidfs.c                                         | 26 +-------
+ tools/testing/selftests/filesystems/.gitignore     |  1 +
+ tools/testing/selftests/filesystems/Makefile       |  2 +-
+ .../selftests/filesystems/anon_inode_test.c        | 69 ++++++++++++++++++++++
+ 7 files changed, 124 insertions(+), 26 deletions(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250407-work-anon_inode-e22bb1a74992
 
 
