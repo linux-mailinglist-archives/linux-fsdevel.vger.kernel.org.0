@@ -1,38 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-45895-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC97A7E540
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 17:53:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36B5EA7E554
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 17:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97390189795D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 15:46:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D96A1172C2A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 15:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02F32045BD;
-	Mon,  7 Apr 2025 15:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA81204876;
+	Mon,  7 Apr 2025 15:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HpHR4CG0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56564203718;
-	Mon,  7 Apr 2025 15:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572D52046AA;
+	Mon,  7 Apr 2025 15:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744040742; cv=none; b=D/5i+oIiviIvk7gwzZgVsiQSEP5/LsXg6T7glNgR6jEFGs/nk3qra9PMuTjraeWX1TgMZO24PfXFY8xnHC3YsVGWri+kpWZKr0z6396hf9nZrq6oB3TiZrjX0v7105a326OqG9pvSXIHSFWB3+UIr2/gwatDC92aQJyOrcvKpC4=
+	t=1744040901; cv=none; b=CButkm4GdCeryILRPb1aIinQsjT85gFNii6Sg2Tx1N+WQVkiPPtH6fv1wjATTxDRcXqjIxGqJHvZfpzDP4TBxhfTBdhrqR1deSkPCpd3d15Zr1BGUoc+k/EoANVht5qj8OdcJkHmdSyZ8pl9Bcxupw91uaO2V3KbqZVtZx69T5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744040742; c=relaxed/simple;
-	bh=zi9iY0G5Dbazg2U9eGztUFd8+hYK+LP/BqQ/QTap2CM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W0XHas/lNDkUl0TJ+Ujt4R0lg8Td+KfsniYY3fv22xq+12GSzNWWBV2grnrZkSXHvB6hmyEq7fZrYJtUdhTMrEw8WnaDJLGGHHuqjTR1CjiJSIqgyRutvyIvmYbXHlE84WLBN2d/b3It2kyrvbeZwxKt9E0HMadgEyJDCWulolE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B8CF241E0D;
-	Mon,  7 Apr 2025 15:45:19 +0000 (UTC)
-Message-ID: <7b6d895a-d19e-4f2c-8e12-6fe933b26189@ghiti.fr>
-Date: Mon, 7 Apr 2025 17:45:13 +0200
+	s=arc-20240116; t=1744040901; c=relaxed/simple;
+	bh=0xZHHNwv3RIwMon1qNVJ/iIZQy46OVS+Hb6QNCUTxw8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=WokxjWxcRiCJAEUhwiL0zVhL2S8NhhBerrYirJWavpXocH2sBy33+b9Web+rOtkPQjn0lfg+ferC/3ttf5c8eJRyjCWclgedFYsL4DswSJ2jws+HULdPlSlV85i+kTW1V0A7QxsS1SZ64s9ZdgdVsY28jXEMPWZjryvuIj71KOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HpHR4CG0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF859C4CEDD;
+	Mon,  7 Apr 2025 15:48:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744040901;
+	bh=0xZHHNwv3RIwMon1qNVJ/iIZQy46OVS+Hb6QNCUTxw8=;
+	h=Date:To:Cc:From:Subject:From;
+	b=HpHR4CG0qbzHp1H06ZEFpYZlEc0NeIzKlUAoAtDUUANGJ/pZDm0alh/ONUMEArczS
+	 meWzHq/LJmRGPzb+lPeo9Tep0ZmzLd/46TqswjcyE5VCovbhFbtaCJti5+FmUFK4Nm
+	 /8aLk4pde9Qin2uacuytXNq+TyGBsP9xSQSBWL0T74H6mvT0O1yW0JOftKwgRjor9a
+	 Lkd+R5HigEt0sjA4Qp3G2C92wng0GW6D5Vg7OgG2GqqVihkECc2GQWUYj8gk9THwnb
+	 pOCzr2uj+UMgEEERXqZQk75boDLv0pRarsUESngHUHGw8Kn6b/GK1pVNm/j+OUOqol
+	 srAz3LCOZxteA==
+Message-ID: <0cfeab74-9197-4709-8620-78df7875cc9b@kernel.org>
+Date: Mon, 7 Apr 2025 10:48:19 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -40,79 +49,31 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 01/28] mm: VM_SHADOW_STACK definition for riscv
 Content-Language: en-US
-To: Deepak Gupta <debug@rivosinc.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Christian Brauner <brauner@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>,
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
- Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-riscv@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
- alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com,
- andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com,
- atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com,
- alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org,
- rick.p.edgecombe@intel.com, Zong Li <zong.li@sifive.com>
-References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com>
- <20250314-v5_user_cfi_series-v12-1-e51202b53138@rivosinc.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250314-v5_user_cfi_series-v12-1-e51202b53138@rivosinc.com>
+To: Linux kernel regressions list <regressions@lists.linux.dev>,
+ David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ yaneti@declera.com
+From: Mario Limonciello <superm1@kernel.org>
+Subject: distrobox / podman / toolbox not working anymore with 6.15-rc1
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddtheelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpedthfelfeejgeehveegleejleelgfevhfekieffkeeujeetfedvvefhledvgeegieenucfkphepudejiedrudegjedrudeghedrgeegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudejiedrudegjedrudeghedrgeegpdhhvghloheplgduledvrdduieekrddurdduheefngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeegledprhgtphhtthhopeguvggsuhhgsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtghomhdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprhgtphhtthhopegurghvvgdrhhgrnhhsvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhhpr
- gesiiihthhorhdrtghomhdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
-X-GND-Sasl: alex@ghiti.fr
 
-Hi Deepak,
+Hello,
 
-On 14/03/2025 22:39, Deepak Gupta wrote:
-> VM_HIGH_ARCH_5 is used for riscv
->
-> Reviewed-by: Zong Li <zong.li@sifive.com>
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> ---
->   include/linux/mm.h | 7 +++++++
->   1 file changed, 7 insertions(+)
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 7b1068ddcbb7..1ef231cbc8fe 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -378,6 +378,13 @@ extern unsigned int kobjsize(const void *objp);
->   # define VM_SHADOW_STACK	VM_HIGH_ARCH_6
->   #endif
->   
-> +#if defined(CONFIG_RISCV_USER_CFI)
-> +/*
-> + * Following x86 and picking up the same bitpos.
-> + */
-> +# define VM_SHADOW_STACK	VM_HIGH_ARCH_5
-> +#endif
-> +
->   #ifndef VM_SHADOW_STACK
->   # define VM_SHADOW_STACK	VM_NONE
->   #endif
->
+With upgrading to 6.15-rc1, the tools in the subject have stopped 
+working [1].  The following error is encountered when trying to enter a 
+container (reproduced using distrobox)
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+crun: chown /dev/pts/0: Operation not permitted: OCI permission denied
+
+This has been root caused to:
+
+commit cc0876f817d6d ("vfs: Convert devpts to use the new mount API")
+
+Reverting this commit locally fixes the issue.
+
+Link: https://github.com/89luca89/distrobox/issues/1722 [1]
 
 Thanks,
-
-Alex
-
 
