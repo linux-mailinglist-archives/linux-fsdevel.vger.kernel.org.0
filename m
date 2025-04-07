@@ -1,102 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-45893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45894-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6A45A7E432
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 17:26:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 404C0A7E4AD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 17:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FB533AFA69
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 15:16:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37AEC16FC6B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 15:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861991FC0E4;
-	Mon,  7 Apr 2025 15:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E691FFC6D;
+	Mon,  7 Apr 2025 15:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JYkImPgY";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="a1mnBLnn"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OMCM0pz7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319361F76B9;
-	Mon,  7 Apr 2025 15:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744038931; cv=fail; b=ovjn/eJWM/jJM3O1g9BcNZRQHdLHK+SyH6DAHWOQiyggr/EREKpUqwp9kcIJcZJFnEEW77KcST8qhTWFUalYsWIZOe9yXh3G74+nQrQjM/UJ4uVZ7qgw7vmER/0nI+xTJoVMiUzKSoU9n0BKc8iqEXGnPhd5Qb1OACPt37WyDak=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744038931; c=relaxed/simple;
-	bh=2AGzF0ffBnv9NHAhUGvROeW6Z6qRYE78KevcYcbo3W0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=oK5H3heO1HsxhYK+5cejOSC1Dnx2JFciXDv9lnxhXPGqqi2vbsol43INXe9vnTYNbQ7NBrPcBvv/EH6wgQpcAF2ez3BvpLPSFNk4dmcSqDM/wCS7qPMVAqN/8BZKoLYE1Lzubsipece43rT8MTH9m39o6wBrYGbUV9eEccpvPuQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=JYkImPgY; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=a1mnBLnn; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 537DH0jf000842;
-	Mon, 7 Apr 2025 15:14:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=Jb9vfMzix//eEOtnBN
-	itd4BMUj1MvoaMMX2PXa9KG2U=; b=JYkImPgYfapicUlKeOa4CtBF4x2aRDive/
-	CYnAlAdG7UhOwopeNb+ycCnBevyLdFSBsdfwUwd7AqPyaQQjl6iOQWbv0BZC6YUv
-	8yr/X+4pTh7ELxcxxgjJb3pgAjCprVnoF1u1IeTior8VCJJzF1dLDZEYT0bXDavJ
-	hOcUqSHEwnRu59XTo+XiiU4Lm++/9YmT9UmdMy1mdT1EE6Spc/FT31oOpS5S5P6J
-	uk457EdeIdeBaauhLM3dpLh1R44gqYDt9Zf2qxGgpbg6N9iUpV2EEsEIZ6J/dFlg
-	0aBKGx5RcklX45LwkOahQZjozl8E+tz/QBKadIVK6jIZUpb+gdXQ==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45tu41avd6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 07 Apr 2025 15:14:39 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 537F95HM020931;
-	Mon, 7 Apr 2025 15:14:37 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2175.outbound.protection.outlook.com [104.47.59.175])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 45ttye78nw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 07 Apr 2025 15:14:37 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fm4nXUJjNBWwYgPe17UimcX/9gr8R1xod55JFN6UvQoKjEyznr4/D6PCDB5SMjJAvhvQpUD+k75AWHc1Hq8IlpMT2wKsBbqLiezoPivybuUxqSdi43i3gv8xqKfri+AVBlg76DPg+7C7SEoAllLry8drS/EHg4+aaCyT6y4TTFpVpxJdnVL4AsRfJsnY5w+SZNq6UmJxKsNWqwQBmSeIuVOrnNs/wNZau+D8Y4zK274vDOlSGEkLY+mvYCFRajmQ15VskYVk9jiVDdGIaakSnStUhDmv22d+wsLys7QoipsAUCw30AAHmXfu0+CHGPj4cFrtbZ1m53EXoYz45F+iiw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Jb9vfMzix//eEOtnBNitd4BMUj1MvoaMMX2PXa9KG2U=;
- b=JXdTRZ3blKE3mgwKxPBw9vT/hQdtUlXQP0UCqdH5ELUGP31bHBj4qvRnc/0yKy6VcoFeYNtTU4TpiggstTY2T+VyYB2Z6OQEvOE72luedRNn9EpvI4kfMBQ8WO/NBXtiFTFit58gYe0TUGruQSv00y8BXYsyh9Gwg+d65/Ao7lY65k04Q39vWgA1aXPOQwvfhYU15mns+jfmQdGUeJUo45hD1V4lMFQMixwlqwkakoXzlm8ftbQYGarfZzUlcMrlYYHtZM++Quj37L5snaQCuTVdk+OF7o+muTwKMw6rGpM34LnHRiSySIwj5GkixzPIr5YE/W7utGtHLSfd5IUzqw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Jb9vfMzix//eEOtnBNitd4BMUj1MvoaMMX2PXa9KG2U=;
- b=a1mnBLnnTy2zfEdfrSnt9KtFE9u8c4QPk9xouia0b0YaS13TJocIyNkNdImsN5+FH9mP4T6gCgRqNxliYad4HJRWmQYYRPiI1u+0txTHhhkphZScwLP2oth1TD7GC6Z/OtTslga2Ize6fbIuMjuwDyLe8yY2qNDzswdU4Wo02nA=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by DS0PR10MB6248.namprd10.prod.outlook.com (2603:10b6:8:d0::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.35; Mon, 7 Apr
- 2025 15:14:35 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%7]) with mapi id 15.20.8606.033; Mon, 7 Apr 2025
- 15:14:34 +0000
-Date: Mon, 7 Apr 2025 16:14:28 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Nikita Kalyazin <kalyazin@amazon.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Fuad Tabba <tabba@google.com>, akpm@linux-foundation.org,
-        pbonzini@redhat.com, shuah@kernel.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, muchun.song@linux.dev, hughd@google.com,
-        kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, jack@suse.cz, jannh@google.com,
-        ryan.roberts@arm.com, jthoughton@google.com, peterx@redhat.com,
-        graf@amazon.de, jgowans@amazon.com, roypat@amazon.co.uk,
-        derekmn@amazon.com, nsaenz@amazon.es, xmarcalx@amazon.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0151FF7DD
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Apr 2025 15:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744039595; cv=none; b=rZZ/f5vXH8sLUAlvSDiZ3j9kR+B4nrNtA+L1vLtqc+M72Gy4NCv/bKtkd6hHqAv4ADtHUiChExan0AatPVxbggvocDHXs7TjK6HVpqrO71y2wnqHClfxKKZdZKGczwS3hH1GZo3oKFAKu2piCACadimSFeZhLuKje4FVXYkLObs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744039595; c=relaxed/simple;
+	bh=2yxu2ftjhLgwXt5BOs8JdGombJJ2m7SBqpDFhpHKPDs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=isC1eB9PzsAa/JmrGa1ZVNOf6n4MAm8nUkokHo7ML77p903LRegeJREi3se63Ntc6jymz9zvK6ngGSgjxaosB1ad204D45pA0phXUSHsqCXCwu4ikAMk6C/yjLkAegMME6hElm79Mu/9FqfzbEFFAkZ/8iqm6Tha4BZz0Ke9cLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OMCM0pz7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744039592;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=EL83hwHGluELeTGZxMlRpvKaRrcq3aVK0an6BMkeimc=;
+	b=OMCM0pz7zQbeYuUvADuqLz8tO2k3EF3fqDWkJI44bLntashajnR07kfPyUb1rOS/EhCfVF
+	vIIV8BuBhUSFcRrNqcvx6BLVXQDQjB7SEcrlokBTW/mG/8aZGQM4iNAc4SVlEiPZFXYPt3
+	bWHaQt63PInW2fgDaNR7MVPw4L3HYG4=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-627-1CStQAT-NU6NcQPqM63fMg-1; Mon, 07 Apr 2025 11:26:29 -0400
+X-MC-Unique: 1CStQAT-NU6NcQPqM63fMg-1
+X-Mimecast-MFC-AGG-ID: 1CStQAT-NU6NcQPqM63fMg_1744039589
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43d01024089so38440745e9.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Apr 2025 08:26:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744039588; x=1744644388;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=EL83hwHGluELeTGZxMlRpvKaRrcq3aVK0an6BMkeimc=;
+        b=DPMq7TyzZMu49exiaXieC+WQqC1GZjzhz+3Ap4HZEO9sSdSwrVKZfCxc1FxJMLcdkv
+         NIldp8QwzwiWYw667gBvM3AaSaN1wzobOypOJ2Xnlw/eZL+tVdCJ/V3LeSXcIvwVTNax
+         7zg5BIxiBOyiuo7fg44/xJ3njYdR/dJY19iTR4pteIdG/g/zm14TN+gbRLesdAzJc1XN
+         Qqg+c5wr/9TVFDJjcLuLcHWwOnrj5ik7ibCF6GEQaU/FUPXSrcUi6MkkIGKxZzemxpQQ
+         TlfvY8pST06cNc1T4s9av8OwBkkfmmgIRTu6q+zy+iCaWgEIOav9GW1xzxojuuZk9S12
+         lFPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwt6yUdekGd5JkIj7I4e/RigWm/EIZ7mOKXmlmvjCi4VJD5tmlHOHy3mfhBkhGFmaSd6aABDaatMJ4E+SP@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf5Cs2HNJHm1usZTsdSQQsqeq1RcjEH6Ag388LQb4VN7gcmkaY
+	7j2kzxmxeoG7iP+Bl2REoTGlx0lZXA0h+1faEaY+YxiS5MmSCD6XWZkWxPC3CkQsbT8vf1xP/0v
+	0kHfeu1d0KPsZ8iExOmCA/mrSeS9JvVZwbquPz66Eok2KEAHmrxNUZyV8IbqJuZU=
+X-Gm-Gg: ASbGncv/V9MVjKxo+laQyMSgOLV/Uz/GB9Ix9sqldQRfVfy+2YCj5+L8sX13Tp+7lY/
+	rSJida30HJlcMkswkSwpz8LjpYof0KS3TKwPCJ1P3THSGqC1u9DpfmQDOmJz6RTN5nG69nQZPga
+	Bm4fXvkdZ9sZ0j+qY9ixBH/NBAd9W1fNGjybNb9Y04PGqIeMypGVqbe6oNXfQNpSbyiZvmHphAO
+	B1lG0moPHC8AYKJdm6Iaii2V+JMu3J65hHyC+H8tqbJybeT9zDJhKBSFQxTj8TaxW1REbMF7Vm6
+	at4pg3oELWf8f75fVO+mU4+cUIJfEkBUwn625yC+nlT3LVqXKmbhP1Q1kCzJ3zLMy3mN/5uzZNk
+	dXEqlRPglxI9Ag79GlIfNuPSjt+3RYSFSKJhwowVY9KY=
+X-Received: by 2002:a05:600c:c11:b0:43c:ea36:9840 with SMTP id 5b1f17b1804b1-43ecf9c7c07mr100253845e9.22.1744039588646;
+        Mon, 07 Apr 2025 08:26:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHfumRvr1iRJJdKTk3cEqLk0Y+KSAfeVeyGf/7z7Mi5OFfXT9g/jtX7HqDJVzz2LCJZt3F8pw==
+X-Received: by 2002:a05:600c:c11:b0:43c:ea36:9840 with SMTP id 5b1f17b1804b1-43ecf9c7c07mr100253405e9.22.1744039588139;
+        Mon, 07 Apr 2025 08:26:28 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c738:3c00:8b01:4fd9:b833:e1e9? (p200300cbc7383c008b014fd9b833e1e9.dip0.t-ipconnect.de. [2003:cb:c738:3c00:8b01:4fd9:b833:e1e9])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec1663060sm137771335e9.14.2025.04.07.08.26.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Apr 2025 08:26:27 -0700 (PDT)
+Message-ID: <e6971cb8-b3da-4453-bda3-a555b670c8ea@redhat.com>
+Date: Mon, 7 Apr 2025 17:26:25 +0200
+Precedence: bulk
+X-Mailing-List: linux-fsdevel@vger.kernel.org
+List-Id: <linux-fsdevel.vger.kernel.org>
+List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v3 0/6] KVM: guest_memfd: support for uffd minor
-Message-ID: <4a32724c-0891-4ce5-81b1-dfce9cfb91f2@lucifer.local>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Nikita Kalyazin <kalyazin@amazon.com>, Ackerley Tng
+ <ackerleytng@google.com>, Vishal Annapurve <vannapurve@google.com>,
+ Fuad Tabba <tabba@google.com>, akpm@linux-foundation.org,
+ pbonzini@redhat.com, shuah@kernel.org, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, muchun.song@linux.dev, hughd@google.com,
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, jack@suse.cz, jannh@google.com,
+ ryan.roberts@arm.com, jthoughton@google.com, peterx@redhat.com,
+ graf@amazon.de, jgowans@amazon.com, roypat@amazon.co.uk, derekmn@amazon.com,
+ nsaenz@amazon.es, xmarcalx@amazon.com
 References: <20250404154352.23078-1-kalyazin@amazon.com>
  <2iggdfimgfke5saxs74zmfrswgrxmmsyxzphq4mdfpj54wu4pl@5uiia4pzkxem>
  <e8abe599-f48f-4203-8c60-9ee776aa4a24@amazon.com>
@@ -104,176 +111,158 @@ References: <20250404154352.23078-1-kalyazin@amazon.com>
  <ba93b9c1-cb2b-442f-a4c4-b5530e94f88a@amazon.com>
  <2bohfxnbthvf3w4kz5u72wj5uxh5sb5s3mbhdk5eg2ingkpkqg@ylykphugpydy>
  <9326367c-977d-4d55-80bd-f1ad3673f375@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9326367c-977d-4d55-80bd-f1ad3673f375@redhat.com>
-X-ClientProxiedBy: LO4P123CA0513.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:272::23) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
-Precedence: bulk
-X-Mailing-List: linux-fsdevel@vger.kernel.org
-List-Id: <linux-fsdevel.vger.kernel.org>
-List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
-List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DS0PR10MB6248:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5e63e45d-4358-4756-8c31-08dd75e6e786
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?K/RboZbU7CJijmCS6KIXggbukKA/Y3cTDNz6Md3eI+AZ4YWlKFQeDiurmsvr?=
- =?us-ascii?Q?ZQT5odO/GKCvjfhsgdTlEfQs8VGm9aeT0wlNJ7IVJNVZ+OD2JmIyP9+5nXIk?=
- =?us-ascii?Q?YJWyUbmvZzn8GWrY+Aao16YJ3vE6LovBIJTF74+nOXSRRY51kep2SvJza7op?=
- =?us-ascii?Q?LCNVIdoTKaaUmyFBX1sd5y/2I1t+ZlSGAAe63XxZDAQBwCro3oohYFU6qAD4?=
- =?us-ascii?Q?Tl9tOSmHGoy9mY4hd9UcyGuHrQLwM7W/SQgW1paia0MY5kdP/WpvmrOLjxE3?=
- =?us-ascii?Q?Qi+WH+Iygj+ikRFmXMEtIL0UpNJgbbxBNLkFoYqF4FdNHBsbursZcMIiKxKd?=
- =?us-ascii?Q?gqriSlozycYa1+8DLOyxxevzyeYuR1F3e9OYYh5AxuW/cWLIowhtmf4TIm6i?=
- =?us-ascii?Q?LyzhFUHNVcBQW0A//UZLY3bfJaxFEt7r0OaVu0n0qZ94Xh+HKKJxMjY6FuTJ?=
- =?us-ascii?Q?pVhalx6qMkZViuVnvLDf1f8o0stP2u0a8VA38QHjjtwxgpFW9n/GEvTJVRQr?=
- =?us-ascii?Q?6wvwwk5B2ID1u2RUXzHq5/iW3KvMe+b+8Vs8jWsSGevf0OTVgPZ+KcELEmS/?=
- =?us-ascii?Q?3CM0fXzp335Ilc9Bc4hrwrdlLpYM9sHgws9sy/RAd2bFnXreL+l0VI6jgQ5V?=
- =?us-ascii?Q?GDnWILvOVfwgqNOB1ivOtAtAuK+vfS6Lk9OyKKlPJMlobV8ayqdih2aOMKIS?=
- =?us-ascii?Q?lL8g6mDwzSgGd8DO9h4CDvrL+5meo8X9XXaksseS7YUtdDRSWlyDITrKGbLC?=
- =?us-ascii?Q?tsrILE7NNHJL/U5xEX2u5Q0FJB11GCYs5PmcW6gGc4CyDzS+gNu+6WUDlmzg?=
- =?us-ascii?Q?lirB+RWzygDwXWrIBVP88ttrBZtW/c9WfuG/VOnxUvbEkX+AdCwz5+maZq4w?=
- =?us-ascii?Q?9JmRx3rT4dewX6XHiMbZgfHcMoT1w26kBumhwdJ/MwG1PzBhcHzTVyMmwkja?=
- =?us-ascii?Q?8I8wOErCAw73MHV2FZWr8gohlg5eiJHmWIPi1IrlhEPMKi5NtOHs00ncCcXc?=
- =?us-ascii?Q?iGI92wTs9L1AVsekNj3pv9AuTZMiwjYcFfQFkydAxtTar2eKzR++N2E9jbri?=
- =?us-ascii?Q?7yJ2cHrU4Yb5Psa/a4eP8VO5uNGvoMQg5RWFnmXMsSc+i88+xTIGaBHjblZN?=
- =?us-ascii?Q?kgUWMlJid8OcByY9cDVhCvBIA6OlLB9xeSgdD1OUcr8w/bnTiUw8DXGx/6Rg?=
- =?us-ascii?Q?+jbMjv6TMb5oESI5evcy6OZ+qogQ0Vv/UTBZB40AsMcARQy9PfnOeGz/v62n?=
- =?us-ascii?Q?s3l20sFauA31vZSOPVaRmPZLY2qlFFQaMPBigQAmCuJI4wMv2fQSdZUwivQp?=
- =?us-ascii?Q?+YFgRqeiZMVQEUkSRD18vZ4b+9gEWGH0iVz9H950DK3jt7m7Z3y65DQappod?=
- =?us-ascii?Q?8AIBqVCXRde4gGyFxKAkqnVVt42n?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?QsV3Achm51duLaBfqdlM7/8/LBz0+694e5ux84ByfreSTNS3yfqqpjhFFFDQ?=
- =?us-ascii?Q?xXo3A9Zu1dszwmq5uj1F/aIAjpD9bNcfjQv9wU0bl4aDTkq80u49pt+4OALp?=
- =?us-ascii?Q?rYfb2JdccroDLwTBzhcRPDz4nLxin7LUBUhc1LZBen9PJdKoyiVhS0GVACGL?=
- =?us-ascii?Q?Pv5FXQNM1gq25XEaTafGMOG5g2m+zFyFGnnq/5bmdcypI9401wlaEPlDj+Rk?=
- =?us-ascii?Q?9jyhHhoGBrMMOLvQfXKL0BTn1gqseYa+85qhTPSxpoqKplAuXJfiuGR4865+?=
- =?us-ascii?Q?QffNCXmr05dMpvB3cIRDiz7xOhZfPxdEQrso9oSIQ04WC6iJLiCUO270i86Y?=
- =?us-ascii?Q?TTsxMNx+V05FNSHyq+B7fDus8PFvUm2d7Lyo/GwYRssnuPJGE+8T0BR15SCf?=
- =?us-ascii?Q?l0QsniiLx1xDt1OzXxaEFpiOqx3RtUwiCDwhtbWtRLYR6JNphauqK3iWWaGf?=
- =?us-ascii?Q?sI5EewEbqCqmpTgAWTyMhmh0JNpDAefg2xGV4mayxmFreti5UnXDkgkCMK2s?=
- =?us-ascii?Q?mwM36B1bFiHwUembo62bx0DgxZ60RnF2X/MWOJfHhj9hDBFrhyKuPrnlSa0a?=
- =?us-ascii?Q?TyUIw8t3BygitS6QFMawAQBC2E4k+V5HRg9mmi281kP8MIL15u2KqSO//CJN?=
- =?us-ascii?Q?96XN1xc7KqoyqTAOuJivmWEjOMK3Yijevrj0IIUO6dmOk5EXTiqMWoa3o4bg?=
- =?us-ascii?Q?VI1vnzK7wVUbBD7pALvcpTF/ntHb1LRCvY80dMg9D2EWzwqGKoDFc9ttBKdg?=
- =?us-ascii?Q?5UkXDx0THYqSdQUje2qVuZ6XNbxd0Fp0XZqIo+j8r7iqn/YFkugCMzVZO1JO?=
- =?us-ascii?Q?7h0oSVzzAsjqPYPAx511rTEwbTvh6HUtGif/MH1LF/GsB4G0WliEhgw170b5?=
- =?us-ascii?Q?CjIqviM4ABLR5aOox0xZA2BJ3grrY6upgoHxNQHfH/EWWMWCH+z9/nqPnO0m?=
- =?us-ascii?Q?aW6qYJzHvfF2gGyvTGUH6NvRx2aanQvqnlwkYYnQTgum2zYLwu6ODRY9ejCm?=
- =?us-ascii?Q?9UhTTeBCOpedLAnCwKffa/jNB/vhT/L8dSzw435AjH8e6yPp5hnMHGoEvaUU?=
- =?us-ascii?Q?kXeK53TsIPkrzlLnTIMZDSpT1mH6MZcQCrPbfXerCzMQgSS/64Bt2x/v8tb/?=
- =?us-ascii?Q?/AgFEwEvQvcLs7aJM1gZMgtfNkAfk55QjMPk3db1mB6FrylbKCBogvv5KlqV?=
- =?us-ascii?Q?oALqObb2+DixyJl5hEgRVvK0ShkJiozQ86OqlCWFCxhyrav3SOHzmbK5Tugl?=
- =?us-ascii?Q?3ABeMEwJpxEo+taf8dX2vc6KJzFb9Me9FsWgFso1qwcgkdkL6Gj/3dke05rr?=
- =?us-ascii?Q?slyFkUHIbNtNY1IlKFMq5Lmu4JOERcqPwW/idTqshvVny5QlEuXwCiMih3qE?=
- =?us-ascii?Q?Lv3ClWeXvDHfgpQKuUNdUHW7yFJI9gWH0HBTTLuwkctOsCc3nlPi7fqsTIc7?=
- =?us-ascii?Q?MpP8Iw3wJJrAD81/jtH7LrnLs+aAbA3ZYztMOqDjIT8yzUrOhp6FKCXGm7Vo?=
- =?us-ascii?Q?oiyuHHFyzDLUBRV7CPDuB2+kE0Zll5DkMnvkXFraSgmQSlaOHT54q4jXbYJk?=
- =?us-ascii?Q?atm4D0Zg9sWHhEgP/yETytBuo2TV6N5RyAj6zqqhqcy/itxdToi+vzI7HB8k?=
- =?us-ascii?Q?hQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	rr8yEqMLrBo6OPuDBq4moPj4jCQLp/07EPTNTGYfAWjkbwNU6Bvy0EFxRwNB8y3uIFQ61/yq3mQXEH7pZEhee5X4OeRgG1ra+mQBAlqERCv1xrfQ3dtGB88FAmxiRpFDw8cKv7AkL1vGDYUA3TJsFc/twTC1ctmUFEQNTuv+tGLk7SlpI+IXMTjmlFMKnQUgDBtMoH0IV+LqpFyJWShQMVOJreMQdv3Vp3IWh57qxqeHCRE6CRDr6WGznX2exy07uN0FoaxiL+oZ5YyTbpFsoaLODmKZC0k8hyjKkKFL6ipan40Sman3iu+nI7AGKRm3RwD/RydYTfEzYupqWMXnDbUfNMd+G4fODwKj267vGYEZYiV8TLRo2+Zprwy6obbWgIf4AKkjf0kIWZrxjiooi06eUaRHqjrRH9Hd/hFnDtPtYsMTSHGOITbjvaecem+Y1S7qoRlcgFQseHfPqBQq3v5PHsDKvECeYXtDGKGsm74yrdCcu5Sw5GFdLNW41XlV2DBdHluOvWHlmcCU7g93FnFaxsWgIEG6wubUvMyK8nLpFbyHsB5I8EC1KBSMnfZyMrRoxTil0Gf/WlTAo+6Bz6ztrXnyUaMWqlZcpbpZnTE=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5e63e45d-4358-4756-8c31-08dd75e6e786
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2025 15:14:34.6005
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pVzdUprJQV0S+EZCzmlj1Ti86Okeazb7ce4x4RyDGbvmWxD6t5KL6z8wsU/HiqF7XgAIad8Z6kUqw0Sw7OcnD+hG5BlXU3MiDkhUB8hWOUg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6248
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-07_04,2025-04-03_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0
- mlxlogscore=999 phishscore=0 bulkscore=0 adultscore=0 malwarescore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2502280000 definitions=main-2504070106
-X-Proofpoint-ORIG-GUID: UVN_UlojEaQQ8Ex5st0MFMwyTcKwUcSv
-X-Proofpoint-GUID: UVN_UlojEaQQ8Ex5st0MFMwyTcKwUcSv
+ <4a32724c-0891-4ce5-81b1-dfce9cfb91f2@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <4a32724c-0891-4ce5-81b1-dfce9cfb91f2@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Apr 07, 2025 at 04:46:48PM +0200, David Hildenbrand wrote:
-> On 07.04.25 16:24, Liam R. Howlett wrote:
-> > * Nikita Kalyazin <kalyazin@amazon.com> [250407 10:05]:
-> > >
-> >
-> > ...
-> >
-> > > >
-> > > > All of this is extremely confusing because the onus of figuring out what
-> > > > the final code will look like is put on the reviewer.  As it is, we have
-> > > > issues with people not doing enough review of the code (due to limited
-> > > > time).  One way to get reviews is to make the barrier of entry as low as
-> > > > possible.
-> > > >
-> > > > I spent Friday going down a rabbit hole of patches referring to each
-> > > > other as dependencies and I gave up.  It looks like I mistook one set of
-> > > > patches as required vs them requiring the same in-flight ones as your
-> > > > patches.
-> > > >
-> > > > I am struggling to see how we can adequately support all of you given
-> > > > the way the patches are sent out in batches with dependencies - it is
-> > > > just too time consuming to sort out.
-> > >
-> > > I'm happy to do whatever I can to make the review easier.  I suppose the
-> > > extreme case is to wait for the dependencies to get accepted, effectively
-> > > serialising submissions, but that slows the process down significantly.  For
-> > > example, I received very good feedback on v1 and v2 of this series and was
-> > > able to address it instead of waiting for the dependency.  Would including
-> > > the required patches directly in the series help?  My only concern is in
-> > > that case the same patch will be submitted multiple times (as a part of
-> > > every depending series), but if it's better, I'll be doing that instead.
-> >
-> > Don't resend patches that someone else is upstreaming, that'll cause
-> > other problems.
-> >
-> > Three methods come to mind:
-> >
-> > 1. As you stated, wait for the dependencies to land.  This is will mean
-> > what you are working against is well tested and won't change (and you
-> > won't have to re-spin due to an unstable base).
-> >
-> > 2. Combine them into a bigger patch set.  I can then pull one patch set
-> > and look at the parts of interest to the mm side.
-> >
-> > 3. Provide a git repo with the necessary changes together.
-> >
-> > I think 2 and 3 together should be used for the guest_memfd patches.
-> > Someone needs to be managing these to send upstream.  See the discussion
-> > in another patch set on guest_memfd here [1].
->
-> The issue is that most extensions are fairly independent from each other,
-> except that they built up on Fuad's mmap support,
->
-> Sending all together as one thing might not be the best option.
->
-> Once basic mmap support is upstream, some of the extensions (e.g., directmap
-> removal) can go in next.
->
-> So until that is upstream, I agree that tagging the stuff that builds up on
-> that is the right thing to do, and providing git trees is another very good
-> idea.
->
-> I'll prioritize getting Fuad's mmap stuff reviewed. (I keep saying that, I
-> know)
+On 07.04.25 17:14, Lorenzo Stoakes wrote:
+> On Mon, Apr 07, 2025 at 04:46:48PM +0200, David Hildenbrand wrote:
+>> On 07.04.25 16:24, Liam R. Howlett wrote:
+>>> * Nikita Kalyazin <kalyazin@amazon.com> [250407 10:05]:
+>>>>
+>>>
+>>> ...
+>>>
+>>>>>
+>>>>> All of this is extremely confusing because the onus of figuring out what
+>>>>> the final code will look like is put on the reviewer.  As it is, we have
+>>>>> issues with people not doing enough review of the code (due to limited
+>>>>> time).  One way to get reviews is to make the barrier of entry as low as
+>>>>> possible.
+>>>>>
+>>>>> I spent Friday going down a rabbit hole of patches referring to each
+>>>>> other as dependencies and I gave up.  It looks like I mistook one set of
+>>>>> patches as required vs them requiring the same in-flight ones as your
+>>>>> patches.
+>>>>>
+>>>>> I am struggling to see how we can adequately support all of you given
+>>>>> the way the patches are sent out in batches with dependencies - it is
+>>>>> just too time consuming to sort out.
+>>>>
+>>>> I'm happy to do whatever I can to make the review easier.  I suppose the
+>>>> extreme case is to wait for the dependencies to get accepted, effectively
+>>>> serialising submissions, but that slows the process down significantly.  For
+>>>> example, I received very good feedback on v1 and v2 of this series and was
+>>>> able to address it instead of waiting for the dependency.  Would including
+>>>> the required patches directly in the series help?  My only concern is in
+>>>> that case the same patch will be submitted multiple times (as a part of
+>>>> every depending series), but if it's better, I'll be doing that instead.
+>>>
+>>> Don't resend patches that someone else is upstreaming, that'll cause
+>>> other problems.
+>>>
+>>> Three methods come to mind:
+>>>
+>>> 1. As you stated, wait for the dependencies to land.  This is will mean
+>>> what you are working against is well tested and won't change (and you
+>>> won't have to re-spin due to an unstable base).
+>>>
+>>> 2. Combine them into a bigger patch set.  I can then pull one patch set
+>>> and look at the parts of interest to the mm side.
+>>>
+>>> 3. Provide a git repo with the necessary changes together.
+>>>
+>>> I think 2 and 3 together should be used for the guest_memfd patches.
+>>> Someone needs to be managing these to send upstream.  See the discussion
+>>> in another patch set on guest_memfd here [1].
+>>
+>> The issue is that most extensions are fairly independent from each other,
+>> except that they built up on Fuad's mmap support,
+>>
+>> Sending all together as one thing might not be the best option.
+>>
+>> Once basic mmap support is upstream, some of the extensions (e.g., directmap
+>> removal) can go in next.
+>>
+>> So until that is upstream, I agree that tagging the stuff that builds up on
+>> that is the right thing to do, and providing git trees is another very good
+>> idea.
+>>
+>> I'll prioritize getting Fuad's mmap stuff reviewed. (I keep saying that, I
+>> know)
+> 
+> Which series is this? Sorry maybe lost track of this one.
 
-Which series is this? Sorry maybe lost track of this one.
+Heh, not your fault :)
 
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+The most important one for basic mmap support is "KVM: Mapping 
+guest_memfd backed memory at the host for software protected VMs" [1]. 
+Some stuff (e.g., direct map removal) should be able to make progress 
+once that landed.
+
+I do expect the MM-specific patch in there ("mm: Consolidate freeing of 
+typed folios on final folio_put()") to not be included as part of that work.
+
+[I shared the feedback from the LSF/MM session in the upstream 
+guest_memfd call, and we decided to minimize the usage of the 
+folio_put() callback to where absolutely required; that will simplify 
+things and avoid issues as pointed out by Willy, which is great]
+
+The next important one will be "[PATCH v7 0/7] KVM: Restricted mapping 
+of guest_memfd at the host and arm64 support" [2], but I similarly 
+expect a simplification as we try moving away from folio_put() for the 
+"shared <-> private" page conversion case.
+
+
+So I expect a v8 of [1] (and that also [2] needs to be updated).
+
+@Fuad, please let me know if I am wrong.
+
+[1] 
+https://lore.kernel.org/all/20250318161823.4005529-1-tabba@google.com/T/#u
+[2] https://lore.kernel.org/all/20250328153133.3504118-1-tabba@google.com/
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
