@@ -1,193 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-45859-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45860-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEA58A7DBBF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 13:01:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B78E9A7DBD8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 13:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A479A188BA2D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 11:01:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2E6E16919B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 11:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB34A23AE83;
-	Mon,  7 Apr 2025 11:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD46123AE70;
+	Mon,  7 Apr 2025 11:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qOwKMHFx"
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="pW79+9FK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A71334CF5;
-	Mon,  7 Apr 2025 11:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1FC22B8C3;
+	Mon,  7 Apr 2025 11:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744023679; cv=none; b=Ae9PM6jCmD+bMN4GztJK8l19GTvRg2zVToZemyptiCh6T4felys54/c+r4wQTIB17mGu9ePE53ZWsph22swGdPLLwklvSKm9ShKBqX692iEYnDPrJMlvPSyqdtdi+alucPbGtwd1sknWid4XcfAYqDKNzN1E9kUD5J5vYXvv7dU=
+	t=1744023877; cv=none; b=SHaItzAMLb0KxMHIbYVPS+PiD7DVjUNyjhQJx1h8Rd4XLUFERgauh/bgsvFIdgKWxtg2k1Fs998HVsXtysBYEwBASr25pwr8m4tmjeUN/VNvkPVK+IbhzbqgSA2PBIUr8gz2M75qFYV6nc3iUTYFv4S9ROJam6cb0vckEX6Unhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744023679; c=relaxed/simple;
-	bh=V7ona84w4jSuNFXXibo8D2BeRebQZTbFHfPOFhk3dc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k1prTg0Gwo21CUIwAkT5t12x+VmbzSPMuLk2e7PnOM7rMvE3+Zwo/Z4OxlVU7ksph+Ock84/RhLogpdyOTXvtR4RvnGVzstSKYgUi1kKPIBjJw9owR1PMxPCNuSVgDe9dq6ToES593rPlPnRDA9lMhDd+WR/LasDf0KFfTLV8Qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qOwKMHFx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06FA9C4CEDD;
-	Mon,  7 Apr 2025 11:01:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744023678;
-	bh=V7ona84w4jSuNFXXibo8D2BeRebQZTbFHfPOFhk3dc4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qOwKMHFxVKuAwBdIguoFqgkI1kcfx3gSWZljnkiDHwa3njNxkfvhVWttdkZtXkrE+
-	 eOYIyoUF5zTYRHdAJwPsn4yVSbyCssBE4wCX61Ub0OcdoMDFvOITdGakVm8+y1dTew
-	 VhLnOaFtabVcbrUnbK99xIRtOCkDQCSOyvBRISP5vAzoowO21U+Z0IrsD3v7r6N291
-	 Ocellf1RmlnfzoyhO37Fwi2PLX+AcogNDXAMd+RfHH75sULbkliaZIW9UUL6l7Zo3O
-	 ZqAQBHewJ40z6b6nZKiS555sK9LNkZG8IX5RJnzq5MKqNg/A68v0EyiHeSiNlWYO8/
-	 YeVic5cvvbLFw==
-Date: Mon, 7 Apr 2025 13:01:14 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Paul Menzel <pmenzel@molgen.mpg.de>, Takashi Iwai <tiwai@suse.de>, 
-	linux-fsdevel@vger.kernel.org, stable@vger.kernel.org, regressions@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [REGRESSION] Chrome and VSCode breakage with the commit
- b9b588f22a0c
-Message-ID: <20250407-irrwitzig-seilschaft-9eaa7d0b1f09@brauner>
-References: <874j0lvy89.wl-tiwai@suse.de>
- <87wmc83uaf.wl-tiwai@suse.de>
- <445aeb83-5d84-4b4b-8d87-e7f17c97e6bf@oracle.com>
- <16e0466d-1f16-4e9a-9799-4c01bd2bb005@molgen.mpg.de>
- <2025040551-catatonic-reflex-2ebf@gregkh>
- <417f41b3-b343-46ca-9efe-fa815e85bdd3@molgen.mpg.de>
- <57eec58a-6aae-4958-996d-2785da985f04@oracle.com>
+	s=arc-20240116; t=1744023877; c=relaxed/simple;
+	bh=qVVkFfVrP9/MjErGai73dJ7oVrtY/oNm438X3fdHpF0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=gwoLnJvvb1hyCTP8zjtnKBYP68lL9onZkw2t5YJbpG6rVJQU9rhYJx48wF27ZVMKLUJJyCf0bH1Texavbj1pNrGxE+8YQUl0qRJyZLM+cLdNYvhUfcrbS3dGGl/eHPmVTdNstSTHjctSzYpXjxv4Uu2sX1XsI1ekJGz6A4mO9qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=pW79+9FK; arc=none smtp.client-ip=52.95.48.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1744023875; x=1775559875;
+  h=message-id:date:mime-version:reply-to:subject:to:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=ZjRA+PTfzs7vIA+H3U+wmpf+wbxMWwp7rlbhH+fAXlM=;
+  b=pW79+9FKDLMj8MRdRhImqGcxfHO1NHgKr9Np3Fk3KhjNrfKBc/h6piz2
+   b4KntKsdmZzpjbvT/T0yotu4Ej8lCCrflO9+H2E9QOfL1YEtFSKmr1jTF
+   Ova2hqPVfC+In9QeJ8O4ZdqByT1DWearDbxfF+I1NnTzVc5/Hrxhrj6nn
+   g=;
+X-IronPort-AV: E=Sophos;i="6.15,194,1739836800"; 
+   d="scan'208";a="478128755"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 11:04:31 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [10.0.10.100:44174]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.10.171:2525] with esmtp (Farcaster)
+ id 6feef606-9eb5-46eb-875a-5973d50aa482; Mon, 7 Apr 2025 11:04:30 +0000 (UTC)
+X-Farcaster-Flow-ID: 6feef606-9eb5-46eb-875a-5973d50aa482
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUB001.ant.amazon.com (10.252.51.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Mon, 7 Apr 2025 11:04:30 +0000
+Received: from [192.168.3.31] (10.106.83.24) by EX19D022EUC002.ant.amazon.com
+ (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14; Mon, 7 Apr 2025
+ 11:04:29 +0000
+Message-ID: <e8abe599-f48f-4203-8c60-9ee776aa4a24@amazon.com>
+Date: Mon, 7 Apr 2025 12:04:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <57eec58a-6aae-4958-996d-2785da985f04@oracle.com>
+User-Agent: Mozilla Thunderbird
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [PATCH v3 0/6] KVM: guest_memfd: support for uffd minor
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Ackerley Tng
+	<ackerleytng@google.com>, Vishal Annapurve <vannapurve@google.com>, "Fuad
+ Tabba" <tabba@google.com>, <akpm@linux-foundation.org>,
+	<pbonzini@redhat.com>, <shuah@kernel.org>, <viro@zeniv.linux.org.uk>,
+	<brauner@kernel.org>, <muchun.song@linux.dev>, <hughd@google.com>,
+	<kvm@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-fsdevel@vger.kernel.org>, <jack@suse.cz>,
+	<lorenzo.stoakes@oracle.com>, <jannh@google.com>, <ryan.roberts@arm.com>,
+	<david@redhat.com>, <jthoughton@google.com>, <peterx@redhat.com>,
+	<graf@amazon.de>, <jgowans@amazon.com>, <roypat@amazon.co.uk>,
+	<derekmn@amazon.com>, <nsaenz@amazon.es>, <xmarcalx@amazon.com>
+References: <20250404154352.23078-1-kalyazin@amazon.com>
+ <2iggdfimgfke5saxs74zmfrswgrxmmsyxzphq4mdfpj54wu4pl@5uiia4pzkxem>
+Content-Language: en-US
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
+ CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
+ i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
+In-Reply-To: <2iggdfimgfke5saxs74zmfrswgrxmmsyxzphq4mdfpj54wu4pl@5uiia4pzkxem>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D010EUC002.ant.amazon.com (10.252.51.160) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
-On Sat, Apr 05, 2025 at 12:25:00PM -0400, Chuck Lever wrote:
-> On 4/5/25 3:43 AM, Paul Menzel wrote:
-> > Dear Greg,
-> > 
-> > 
-> > Thank you for replying on a Saturday.
-> > 
-> > Am 05.04.25 um 09:29 schrieb Greg KH:
-> >> On Sat, Apr 05, 2025 at 08:32:13AM +0200, Paul Menzel wrote:
-> > 
-> >>> Am 29.03.25 um 15:57 schrieb Chuck Lever:
-> >>>> On 3/29/25 8:17 AM, Takashi Iwai wrote:
-> >>>>> On Sun, 23 Feb 2025 09:53:10 +0100, Takashi Iwai wrote:
-> >>>
-> >>>>>> we received a bug report showing the regression on 6.13.1 kernel
-> >>>>>> against 6.13.0.  The symptom is that Chrome and VSCode stopped
-> >>>>>> working
-> >>>>>> with Gnome Scaling, as reported on openSUSE Tumbleweed bug tracker
-> >>>>>>     https://bugzilla.suse.com/show_bug.cgi?id=1236943
-> >>>>>>
-> >>>>>> Quoting from there:
-> >>>>>> """
-> >>>>>> I use the latest TW on Gnome with a 4K display and 150%
-> >>>>>> scaling. Everything has been working fine, but recently both Chrome
-> >>>>>> and VSCode (installed from official non-openSUSE channels) stopped
-> >>>>>> working with Scaling.
-> >>>>>> ....
-> >>>>>> I am using VSCode with:
-> >>>>>> `--enable-features=UseOzonePlatform --enable-
-> >>>>>> features=WaylandWindowDecorations --ozone-platform-hint=auto` and
-> >>>>>> for Chrome, I select `Preferred Ozone platform` == `Wayland`.
-> >>>>>> """
-> >>>>>>
-> >>>>>> Surprisingly, the bisection pointed to the backport of the commit
-> >>>>>> b9b588f22a0c049a14885399e27625635ae6ef91 ("libfs: Use d_children list
-> >>>>>> to iterate simple_offset directories").
-> >>>>>>
-> >>>>>> Indeed, the revert of this patch on the latest 6.13.4 was
-> >>>>>> confirmed to
-> >>>>>> fix the issue.  Also, the reporter verified that the latest 6.14-rc
-> >>>>>> release is still affected, too.
-> >>>>>>
-> >>>>>> For now I have no concrete idea how the patch could break the
-> >>>>>> behavior
-> >>>>>> of a graphical application like the above.  Let us know if you need
-> >>>>>> something for debugging.  (Or at easiest, join to the bugzilla entry
-> >>>>>> and ask there; or open another bug report at whatever you like.)
-> >>>>>>
-> >>>>>> BTW, I'll be traveling tomorrow, so my reply will be delayed.
-> >>>
-> >>>>>> #regzbot introduced: b9b588f22a0c049a14885399e27625635ae6ef91
-> >>>>>> #regzbot monitor: https://bugzilla.suse.com/show_bug.cgi?id=1236943
-> >>>>>
-> >>>>> After all, this seems to be a bug in Chrome and its variant, which was
-> >>>>> surfaced by the kernel commit above: as the commit changes the
-> >>>>> directory enumeration, it also changed the list order returned from
-> >>>>> libdrm drmGetDevices2(), and it screwed up the application that worked
-> >>>>> casually beforehand.  That said, the bug itself has been already
-> >>>>> present.  The Chrome upstream tracker:
-> >>>>>     https://issuetracker.google.com/issues/396434686
-> >>>>>
-> >>>>> #regzbot invalid: problem has always existed on Chrome and related
-> >>>>> code
-> >>>
-> >>>> Thank you very much for your report and for chasing this to conclusion.
-> >>> Doesn’t marking this an invalid contradict Linux’ no regression
-> >>> policy to
-> >>> never break user space, so users can always update the Linux kernel?
-> >>> Shouldn’t this commit still be reverted, and another way be found
-> >>> keeping
-> >>> the old ordering?
-> >>>
-> >>> Greg, Sasha, in stable/linux-6.13.y the two commits below would need
-> >>> to be
-> >>> reverted:
-> >>>
-> >>> 180c7e44a18bbd7db89dfd7e7b58d920c44db0ca
-> >>> d9da7a68a24518e93686d7ae48937187a80944ea
-> >>>
-> >>> For stable/linux-6.12.y:
-> >>>
-> >>> 176d0333aae43bd0b6d116b1ff4b91e9a15f88ef
-> >>> 639b40424d17d9eb1d826d047ab871fe37897e76
-> >>
-> >> Unless the changes are also reverted in Linus's tree, we'll be keeping
-> >> these in.  Please work with the maintainers to resolve this in mainline
-> >> and we will be glad to mirror that in the stable trees as well.
-> > 
-> > Commit b9b588f22a0c (libfs: Use d_children list to iterate simple_offset
-> > directories) does not have a Fixes: tag or Cc: stable@vger.kernel.org. I
-> > do not understand, why it was applied to the stable series at all [1],
-> > and cannot be reverted when it breaks userspace?
-> I NACK'd the upstream revert because I expected an RCA before 6.14
-> final (that didn't happen), and the Chrome issue was the only reported
-> problem and it was specific to a particular hardware configuration and
-> the /latest developer release/ of Chrome. Neither v6.14.0 nor a Chrome
-> developer release are going to be put in front of users who do not
-> expect to encounter issues.
 
-Exactly.
+
+On 04/04/2025 18:12, Liam R. Howlett wrote:
+> +To authors of v7 series referenced in [1]
+> 
+> * Nikita Kalyazin <kalyazin@amazon.com> [250404 11:44]:
+>> This series is built on top of the Fuad's v7 "mapping guest_memfd backed
+>> memory at the host" [1].
+> 
+> I didn't see their addresses in the to/cc, so I added them to my
+> response as I reference the v7 patch set below.
+
+Hi Liam,
+
+Thanks for the feedback and for extending the list.
 
 > 
-> Note that the libfs series addresses several issues. Commit b9b588f22a0c
-> itself addresses CVE-2024-46701 [1] (in v6.6). I did not add a "Cc:
-> stable" for commit b9b588f22a0c because it cannot be cherry picked to
-> apply to v6.6, it has to be manually adjusted to apply.
+>>
+>> With James's KVM userfault [2], it is possible to handle stage-2 faults
+>> in guest_memfd in userspace.  However, KVM itself also triggers faults
+>> in guest_memfd in some cases, for example: PV interfaces like kvmclock,
+>> PV EOI and page table walking code when fetching the MMIO instruction on
+>> x86.  It was agreed in the guest_memfd upstream call on 23 Jan 2025 [3]
+>> that KVM would be accessing those pages via userspace page tables.
 > 
-> The final RCA reported in [2] shows that there is nothing incorrect
-> about b9b588f22a0c.
-> 
-> In addition, the next Chrome release will carry a fix for the clearly
-> incorrect library behavior -- applications cannot depend on the order
-> of directory entry iteration, because that can change arbitrarily, and
-> not just because of file system implementation quirks. You will note
-> that even after sorting the directory entries, the library still had
-> problems discovering the accelerated graphics device.
-> 
-> Reverting now might follow the letter of the rule about "no regressions"
-> but IMHO moving forward from here seems to me to be the more
-> constructive approach.
+> Thanks for being open about the technical call, but it would be better
+> to capture the reasons and not the call date.  I explain why in the
+> linking section as well.
 
-I agree.
+Thanks for bringing that up.  The document mostly contains the decision 
+itself.  The main alternative considered previously was a temporary 
+reintroduction of the pages to the direct map whenever a KVM-internal 
+access is required.  It was coming with a significant complexity of 
+guaranteeing correctness in all cases [1].  Since the memslot structure 
+already contains a guest memory pointer supplied by the userspace, KVM 
+can use it directly when in the VMM or vCPU context.  I will add this in 
+the cover for the next version.
+
+[1] 
+https://lore.kernel.org/kvm/20240709132041.3625501-1-roypat@amazon.co.uk/T/#m4f367c52bbad0f0ba7fb07ca347c7b37258a73e5
+
+> 
+>> In
+>> order for such faults to be handled in userspace, guest_memfd needs to
+>> support userfaultfd.
+>>
+>> Changes since v2 [4]:
+>>   - James: Fix sgp type when calling shmem_get_folio_gfp
+>>   - James: Improved vm_ops->fault() error handling
+>>   - James: Add and make use of the can_userfault() VMA operation
+>>   - James: Add UFFD_FEATURE_MINOR_GUEST_MEMFD feature flag
+>>   - James: Fix typos and add more checks in the test
+>>
+>> Nikita
+> 
+> Please slow down...
+> 
+> This patch is at v3, the v7 patch that you are building off has lockdep
+> issues [1] reported by one of the authors, and (sorry for sounding harsh
+> about the v7 of that patch) the cover letter reads a bit more like an
+> RFC than a set ready to go into linux-mm.
+
+AFAIK the lockdep issue was reported on a v7 of a different change.
+I'm basing my series on [2] ("KVM: Mapping guest_memfd backed memory at 
+the host for software protected VMs"), while the issue was reported on 
+[2] ("KVM: Restricted mapping of guest_memfd at the host and arm64 
+support"), which is also built on top of [2].  Please correct me if I'm 
+missing something.
+
+The key feature that is required by my series is the ability to mmap 
+guest_memfd when the VM type allows.  My understanding is no-one is 
+opposed to that as of now, that's why I assumed it's safe to build on 
+top of that.
+
+[2] https://lore.kernel.org/kvm/20250318161823.4005529-1-tabba@google.com/T/
+[3] 
+https://lore.kernel.org/all/diqz1puanquh.fsf@ackerleytng-ctop.c.googlers.com/T/
+
+> 
+> Maybe the lockdep issue is just a patch ordering thing or removed in a
+> later patch set, but that's not mentioned in the discovery email?
+> 
+> What exactly is the goal here and the path forward for the rest of us
+> trying to build on this once it's in mm-new/mm-unstable?
+> 
+> Note that mm-unstable is shared with a lot of other people through
+> linux-next, and we are really trying to stop breaking stuff on them.
+> 
+> Obviously v7 cannot go in until it works with lockdep - otherwise none
+> of us can use lockdep which is not okay.
+> 
+> Also, I am concerned about the amount of testing in the v7 and v3 patch
+> sets that did not bring up a lockdep issue..
+> 
+>>
+>> [1] https://lore.kernel.org/kvm/20250318161823.4005529-1-tabba@google.com/T/
+>> [2] https://lore.kernel.org/kvm/20250109204929.1106563-1-jthoughton@google.com/T/
+>> [3] https://docs.google.com/document/d/1M6766BzdY1Lhk7LiR5IqVR8B8mG3cr-cxTxOrAosPOk/edit?tab=t.0#heading=h.w1126rgli5e3
+> 
+> If there is anything we need to know about the decisions in the call and
+> that document, can you please pull it into this change log?
+> 
+> I don't think anyone can ensure google will not rename docs to some
+> other office theme tomorrow - as they famously ditch basically every
+> name and application.
+> 
+> Also, most of the community does not want to go to a 17 page (and
+> growing) spreadsheet to hunt down the facts when there is an acceptable
+> and ideal place to document them in git.  It's another barrier of entry
+> on reviewing your code as well.
+> 
+> But please, don't take this suggestion as carte blanche for copying a
+> conversation from the doc, just give us the technical reasons for your
+> decisions as briefly as possible.
+> 
+> 
+>> [4] https://lore.kernel.org/kvm/20250402160721.97596-1-kalyazin@amazon.com/T/
+> 
+> [1]. https://lore.kernel.org/all/diqz1puanquh.fsf@ackerleytng-ctop.c.googlers.com/
+> 
+> Thanks,
+> Liam
+
 
