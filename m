@@ -1,232 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-45891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45892-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0B97A7E2B2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 16:54:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B4A1A7E369
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 17:11:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4376C189BB8B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 14:48:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8E427A85F6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 15:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80F51E1DF4;
-	Mon,  7 Apr 2025 14:46:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962861EB5FB;
+	Mon,  7 Apr 2025 15:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KHQgICTf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ai8ZGwTv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C821DED5F
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Apr 2025 14:46:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416ED1D5AB8
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Apr 2025 15:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744037219; cv=none; b=HcbP5MT58eII+dujKfaPKpJJk4zwGjXSYXCTJtm+vjpkg4V34mFJcxFMNaREFnrgG6YQoasChxmO0ZPWMdYvwluLEQ2pQ6eTTz5gYYiau7T3lkjnFC6gZjIjpGeTrxXs+ac5u5FelQ4PJ36MkHdMRswCNJeuHUite83fwvsgMU4=
+	t=1744038226; cv=none; b=JdGHgdYQQfxQYgw7HaMMEhGfKmrj1hpNnH/HxB8by5ygeEY+CsewpC5N97SoUDmYBr0z3npI4KMsEiNSCpoFPUyEUtXQ8JR5dS8YJZmGf5MUVzCkHlNMfomtjiD81dKmvQDQ+GVKWV+XteaVAA/Z4xQUCFc52rtJE7IrptIKhJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744037219; c=relaxed/simple;
-	bh=W2t77E0tmbGgfvb+IN2IWQmKxzIvGnpJmucLEFBRxzQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=tBv3UA53uUh/Mc3MkjPx53E5YYbr2D/Mm6TUd6ZtM6jTmtq5MZef/8aun9jDLoKoVOqb14m/SwvAWc/i8Alu7xdGKFjMcl9szJHVg/lZJG/UAaXjLyleHCRlpsVv/S5kMmj2TDJADJ2YGqaRmSFvqmwhQTVsKgL9NzEOFydzi4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KHQgICTf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744037216;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=+JBzs/lfPTMTyDZad0L+1TztRElX/AUHjw0pErz4yOQ=;
-	b=KHQgICTfBazRwxbYA1W+4N/rbjzsRLVsyI6+cXtd01mYIUceGynpo3lxojpxgnHyRXg6kw
-	YA2UPEoBNWcLxhvDGNk7d2RDvyITUF/4z4ZeyoUq9GnD6lGsrwlXBdmr+e+XP2rnsGZ3rM
-	P2/e5dcmtUCcfouKgV1CBT+gaDykNWo=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-696-8Rx203h6P2e_PGyOXZ8dKw-1; Mon, 07 Apr 2025 10:46:53 -0400
-X-MC-Unique: 8Rx203h6P2e_PGyOXZ8dKw-1
-X-Mimecast-MFC-AGG-ID: 8Rx203h6P2e_PGyOXZ8dKw_1744037212
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43cf446681cso32287685e9.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Apr 2025 07:46:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744037212; x=1744642012;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1744038226; c=relaxed/simple;
+	bh=ZkzKgBtVnXhC0u3nRk5kh0mdncLkbXCSTVcfy47EVlg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aEvlUPOH8uLPskse76c3LmlZpvFhodW8bAxqsr9oGAwR0R5EgvTVrrgyrUcvw5zDrcDrA0Jvjs5NXqK0l4i+9a9Yrul7QzMVuGmx/Ue46yFDIOLozaRvnldxnQkwuDhpq6awQWbWAPETb0lEQhxgosBjN1V0wQsBVov75C8E1aA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ai8ZGwTv; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3913d129c1aso3098537f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Apr 2025 08:03:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744038222; x=1744643022; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+JBzs/lfPTMTyDZad0L+1TztRElX/AUHjw0pErz4yOQ=;
-        b=mNzZj9FGGp5YCY2kqf9DRSDu245+u0HwKlQiaeK8rWiTpB0vu6ygGdz43KsFI0dcM3
-         VOs4gIZmLmA8lv4QPcs7G1yV34Iprf3gV2b3xbx7CaFdK2mA7KNYFdlYkk5jQo+UnaWk
-         xuJuFQdYlBiNBSTqBSS9fO6sqXNzw5LbcSlIYKCFz0nehnAQxkP0k81wb1ZJO/Nh5RA9
-         WXWHrJF/LFlRewTBdtG2b+b6jRGLJ5V8wz2YkBxksUDbBjBmA6J8lqbdqLFhgUIEyQ3C
-         8HLkksZ+hhGVkkuy+5ex522QfD2qJZMjwXZQcpIKEK/7nziZffJzXnraRAnh1kKzs/QZ
-         6GUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYkEcLThhWJ7zCTKgCS0fQMi3ULNjqZJyf23qQ96jnHILRWNuTTSb0U7Ragr2zcUtb0b3XMyUvpXUdlnts@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIB7SP4JQZsTPL91JmrtAB2heKvoZueJcXkz+YCQLnJHv+3TTF
-	fy6CYvNMLSseQBVTvbly2bPChJOJrLWOf2t/nqeEBNuiDwNeSIN50wDtne5/DlAIbByHNb357s6
-	WL0eA5Eyy9udNtcY5YpGjMo7+86rt5ArxxNdW6yqykfL0KAobdEVeXHgzSjQLrWA=
-X-Gm-Gg: ASbGncuizfCo7/N4Syy7r1ttCcniUpNtQXO8grlNdbAF6rbOClR+fozzYgfSdrAOfLV
-	lhUu7N3Tr1VEkmToQAfmYnP+osYD/pqosYK6d1BPSKhhstMlcdj8LJgSSvWJNAj87Of2otWRYaW
-	vDTo9fW8uaWRs+uTke9oeZnF3Iwi6ZREkybi/jGrIYLsX1PsjAay+3CSfPg5FnrcDXDGimAid5+
-	kB57BvC4z58wpUWshmKArFVjGn4WxNVx/+BWc43WOcvSIhrtUF90G4Frl5GpSwU/yHl49wVDX4C
-	0w8ruy01tC32bpjeojVk+i8cJgVr0iNYllsTgUGLf+p5u2zBIF+yAZhSM6qKz1tUARhcJ52o66t
-	5ESW2ONdCgAE+gNwlj04Z1r/H3lfcizr0WMoGSjCoisc=
-X-Received: by 2002:a05:600c:4fcd:b0:43d:abd:ad1c with SMTP id 5b1f17b1804b1-43eda5d4356mr89961925e9.6.1744037211693;
-        Mon, 07 Apr 2025 07:46:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGkMDYiysHhg4FAH45/4sqicxO4DSMEK914rVRpEQcqCPyzF4nOkGiqDPxNFvJdev5DmLnpWQ==
-X-Received: by 2002:a05:600c:4fcd:b0:43d:abd:ad1c with SMTP id 5b1f17b1804b1-43eda5d4356mr89961405e9.6.1744037211224;
-        Mon, 07 Apr 2025 07:46:51 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c738:3c00:8b01:4fd9:b833:e1e9? (p200300cbc7383c008b014fd9b833e1e9.dip0.t-ipconnect.de. [2003:cb:c738:3c00:8b01:4fd9:b833:e1e9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec36699e0sm132802575e9.35.2025.04.07.07.46.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Apr 2025 07:46:50 -0700 (PDT)
-Message-ID: <9326367c-977d-4d55-80bd-f1ad3673f375@redhat.com>
-Date: Mon, 7 Apr 2025 16:46:48 +0200
+        bh=ZkzKgBtVnXhC0u3nRk5kh0mdncLkbXCSTVcfy47EVlg=;
+        b=Ai8ZGwTvXXknFE3ko0i2+/XVS/8VtlAh+QdItnahkwuH+M6cqRZTy8fsxlp53KoLTt
+         Oozk8LwjPANwSlGyTD5J34ueZclaPIFC9AkapZbTxWQf1nMAknnN6hU4ToMtkr9fa6+t
+         UWH4Zwhk2oCAkXOtg0u/xFd81giecw/vC7rK2+JQmjoGfKna6SyAD5N2sUAwdYHVDKzk
+         KYCbLMJ0+mkc0ndWFwtI6Qv0hI+CmraPNVHn6EzFmExj+YHos32WH3uwQg7+bGjhe5/d
+         SmYhD5XDtVe5Yc1fQ2YCZNwtmzNM22Yhlm3FccMu5BhogzPkKnuIuzZ5M31/4FOZuVIj
+         9qWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744038222; x=1744643022;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZkzKgBtVnXhC0u3nRk5kh0mdncLkbXCSTVcfy47EVlg=;
+        b=d3mzi/SlWscZpB3Ooze2mQHSc/qbRnjor4pioWrqFHfCMSwPlAUzpm8YS03O+fAw7t
+         xhHzPgO3DFSXwlzkbqeJSgV/Rryw+jZ283KQOKdquv3HapzA0kQuDW/fAiUqzdLkx9An
+         T0pqdhgR2XiKZEQqo0m9VEIgulVG+IbM1BE+nTo/GBWZ1XX32KOWKzqYp6ijnooEtCSg
+         td4cbqbL4RNb2Vk4vY7kO+4QUhTc8iLXA/ZvFOW3zCqnHcdc40CUbz0vzytJ/LWi+Pc7
+         fk6zKHdlq5SCodN/fw9Lrz/u85h00G1nM9UgJwsCG4AZJaM3NgKk5TtxkSk6pWQwXcyv
+         DvIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrg9IJcJBvsM1slPz2QKQ159a1/qMIo8CoFAt/RAZ2un7++bSvl5txvHgTqcIhvo7qnYFUT6cMpIw8cFpS@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8iISoKj1XrCt265J+AhbGS1dKab+dnnagvblZoeWqt1LW7POy
+	f+PcKZ3ErOH0DEUxPvb31pZ0ZMb9UVL9fsog/P1Rggm2KyfCKuT39c9wDvR0g+Npr8BZ8dAlmul
+	nkmOsw5Fcls1Q+vG7CQNXnk72kyI=
+X-Gm-Gg: ASbGncsJlJuZeNHUH8vXIxos9t3R0t8fDex0Ct4j+3b6M3d2j/cRfe1DWATEo95o5O+
+	uGpqAaIBKu90XRYL3i5v+B0D3QPgLpSc7Ss1TUXKznIv5I9BGjYSJWFtj0Jh4+4Cm/1tThX4Wwn
+	DJb1UsQj2vEmit0Asp/wlqPg3iOw==
+X-Google-Smtp-Source: AGHT+IFoYQ642qkKuExSytuNUNWixnfWZVdQeQJbbZQYaCIiz49LSrMOCDXhk72ndfsIcHq/1SqsvI7PVE8MEXQgmLY=
+X-Received: by 2002:a05:6000:240a:b0:391:bc8:564a with SMTP id
+ ffacd0b85a97d-39c2e6510f0mr15240823f8f.22.1744038221590; Mon, 07 Apr 2025
+ 08:03:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/6] KVM: guest_memfd: support for uffd minor
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Nikita Kalyazin <kalyazin@amazon.com>, Ackerley Tng
- <ackerleytng@google.com>, Vishal Annapurve <vannapurve@google.com>,
- Fuad Tabba <tabba@google.com>, akpm@linux-foundation.org,
- pbonzini@redhat.com, shuah@kernel.org, viro@zeniv.linux.org.uk,
- brauner@kernel.org, muchun.song@linux.dev, hughd@google.com,
- kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, jack@suse.cz, lorenzo.stoakes@oracle.com,
- jannh@google.com, ryan.roberts@arm.com, jthoughton@google.com,
- peterx@redhat.com, graf@amazon.de, jgowans@amazon.com, roypat@amazon.co.uk,
- derekmn@amazon.com, nsaenz@amazon.es, xmarcalx@amazon.com
-References: <20250404154352.23078-1-kalyazin@amazon.com>
- <2iggdfimgfke5saxs74zmfrswgrxmmsyxzphq4mdfpj54wu4pl@5uiia4pzkxem>
- <e8abe599-f48f-4203-8c60-9ee776aa4a24@amazon.com>
- <63j2cdjh6oxzb5ehtetiaolobp6zzev7emgqvvfkf5tuwlnspx@7h5u4nrqwvsc>
- <ba93b9c1-cb2b-442f-a4c4-b5530e94f88a@amazon.com>
- <2bohfxnbthvf3w4kz5u72wj5uxh5sb5s3mbhdk5eg2ingkpkqg@ylykphugpydy>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <2bohfxnbthvf3w4kz5u72wj5uxh5sb5s3mbhdk5eg2ingkpkqg@ylykphugpydy>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250331165231.1466680-1-amir73il@gmail.com> <aqagpfsdqt3prcruoypvcehtvux3qbzbz22wbirgftnp66i7ig@or2ntpsizmri>
+In-Reply-To: <aqagpfsdqt3prcruoypvcehtvux3qbzbz22wbirgftnp66i7ig@or2ntpsizmri>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 7 Apr 2025 17:03:30 +0200
+X-Gm-Features: ATxdqUFmReN2LRoRfuAgpJxd4MJMjpN8Q3OX2zZQrW4AmAPnUgNSikWBHQgYSX8
+Message-ID: <CAOQ4uxh0N-zQ2VXHZ1ahpr_ej3EAB6fiO3Lftc0XUYoRmsCbMQ@mail.gmail.com>
+Subject: Re: [PATCH] fanotify: report FAN_PRE_MODIFY event before write to
+ file range
+To: Jan Kara <jack@suse.cz>
+Cc: Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07.04.25 16:24, Liam R. Howlett wrote:
-> * Nikita Kalyazin <kalyazin@amazon.com> [250407 10:05]:
->>
-> 
-> ...
-> 
->>>
->>> All of this is extremely confusing because the onus of figuring out what
->>> the final code will look like is put on the reviewer.  As it is, we have
->>> issues with people not doing enough review of the code (due to limited
->>> time).  One way to get reviews is to make the barrier of entry as low as
->>> possible.
->>>
->>> I spent Friday going down a rabbit hole of patches referring to each
->>> other as dependencies and I gave up.  It looks like I mistook one set of
->>> patches as required vs them requiring the same in-flight ones as your
->>> patches.
->>>
->>> I am struggling to see how we can adequately support all of you given
->>> the way the patches are sent out in batches with dependencies - it is
->>> just too time consuming to sort out.
->>
->> I'm happy to do whatever I can to make the review easier.  I suppose the
->> extreme case is to wait for the dependencies to get accepted, effectively
->> serialising submissions, but that slows the process down significantly.  For
->> example, I received very good feedback on v1 and v2 of this series and was
->> able to address it instead of waiting for the dependency.  Would including
->> the required patches directly in the series help?  My only concern is in
->> that case the same patch will be submitted multiple times (as a part of
->> every depending series), but if it's better, I'll be doing that instead.
-> 
-> Don't resend patches that someone else is upstreaming, that'll cause
-> other problems.
-> 
-> Three methods come to mind:
-> 
-> 1. As you stated, wait for the dependencies to land.  This is will mean
-> what you are working against is well tested and won't change (and you
-> won't have to re-spin due to an unstable base).
-> 
-> 2. Combine them into a bigger patch set.  I can then pull one patch set
-> and look at the parts of interest to the mm side.
-> 
-> 3. Provide a git repo with the necessary changes together.
-> 
-> I think 2 and 3 together should be used for the guest_memfd patches.
-> Someone needs to be managing these to send upstream.  See the discussion
-> in another patch set on guest_memfd here [1].
+On Mon, Apr 7, 2025 at 4:39=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Mon 31-03-25 18:52:31, Amir Goldstein wrote:
+> > In addition to FAN_PRE_ACCESS event before any access to a file range,
+> > also report the FAN_PRE_MODIFY event in case of a write access.
+> >
+> > This will allow userspace to subscribe only to pre-write access
+> > notifications and to respond with error codes associated with write
+> > operations using the FAN_DENY_ERRNO macro.
+> >
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > ---
+> >
+> > Jan,
+> >
+> > I was looking on th list for the reason we decided to drop FAN_PRE_MODI=
+FY
+> > from the pre-content patch set and I couldn't find it. It may have been
+> > related to complications ot page fault hooks that are not not relevant?
+>
+> Two reasons really:
+> 1) Defining semantics of FAN_PRE_MODIFY when it is generated on page faul=
+t
+> was hard and was making the changes even more complex.
+>
+> 2) Without a real user of the event in userspace, I have doubts we'll get
+> the semantics right.
+>
 
-The issue is that most extensions are fairly independent from each 
-other, except that they built up on Fuad's mmap support,
+Good now we have the reasons documented :)
 
-Sending all together as one thing might not be the best option.
+> > I did find the decision to generate FAN_PRE_ACCESS on both read()/write=
+(),
+> > so maybe we thought there was no clear value for the FAN_PRE_MODIFY eve=
+nt?
+> >
+> > In any case, I realized that we allowed returning custom errors with
+> > FAN_DENY_ERRNO(ENOSPC), but that chosing the right error does require
+> > knowing whether the call was read() or write().
+>
+> I see your point but if someone wants to read a file, your HSM server
+> fetches the data and wants to store them in the filesystem and gets ENOSP=
+C,
+> then what do you want to return? I agree returning ENOSPC is confusing bu=
+t
+> OTOH anything else will be confusing even more (in the sense "why did I g=
+et
+> this error?")?
+>
 
-Once basic mmap support is upstream, some of the extensions (e.g., 
-directmap removal) can go in next.
+Good question.
 
-So until that is upstream, I agree that tagging the stuff that builds up 
-on that is the right thing to do, and providing git trees is another 
-very good idea.
+One option (ENOSPC) may confuse applications and another option (EIO)
+will lack the information of the real underlying reason.
 
-I'll prioritize getting Fuad's mmap stuff reviewed. (I keep saying that, 
-I know)
+I guess the only way would be to leave this decision to userspace, only
+userspace cannot make that decision now :-/
 
--- 
-Cheers,
+But overall, I agree that this is probably not a very urgent issue and that
+we can deal with it later and backport FAN_PRE_MODIFY if people really
+need it.
 
-David / dhildenb
+I mostly wanted to make sure that we all understood why FAN_PRE_MODIFY
+was postponed for now and that it wasn't just a page fault hook left over.
 
+> > Becaue mmap() cannot return write() errors like ENOSPC, I decided not
+> > to generate FAN_PRE_MODIFY for writably-shared maps, but maybe we shoul=
+d
+> > consider this.
+>
+> Generally, the semantics of events for mmap needs a careful thinking so
+> that we provide all the needed events while maintaining sensible
+> performance. And for that I think we need a better formulated understandi=
+ng
+> of what is the event going to be used for? For example for FAN_PRE_ACCESS
+> event we now generate the event on mmap(2). Now what should userspace do =
+if
+> it wants to move some file to "slow tier" and get the event again when th=
+e
+> file is used again? Is that even something we plan to support?
+
+I don't think that we should.
+
+My HSM POC takes an exclusive write lease on a file before evicting its con=
+tent
+so any read/write refcount on the inode would keep the content on the
+file pinned.
+
+I did have a problem with another use case - for change tracking, generatin=
+g
+FAN_PRE_MODIFY on mmap() of writably shared mem does not quite cut it.
+For that use case, it may make more sense to generate one FAN_PRE_ACCESS
+range event on mmap() and page range FAN_PRE_MODIFY on write faults.
+
+I am starting to remember why we dropped FAN_PRE_MODIFY...
+
+Thanks,
+Amir.
 
