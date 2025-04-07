@@ -1,156 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-45912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45913-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2E45A7EC72
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 21:16:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08A9EA7EC32
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 21:12:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CA9344539A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 19:11:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D25E87A2A68
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 19:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873D7223701;
-	Mon,  7 Apr 2025 18:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AABD265CD6;
+	Mon,  7 Apr 2025 18:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SdulYC15"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LrQSd1y4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A41223710;
-	Mon,  7 Apr 2025 18:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A803B2571D2;
+	Mon,  7 Apr 2025 18:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744051661; cv=none; b=s+SSroRYUn5b0j8KY62SxM8BIdHPxXxIsiprZ/jBSUgIThfPj9xhTRppW7nxF3va135Fbwf1C0Wd9WPi1lzqgeOUlEAZV8cabEg5fZ9d2K8HJemkBR4qQE/2++WCLv3Ia/ez1AjGoLdNXWjeliHybfbUW4399L8w9T0BWamUQLY=
+	t=1744051732; cv=none; b=UDhpiGPeatX/16kKlWPDmm1XD3gOS9BQdTSDruVDMggceHZG/+eB6PhS/ma79b4Fmqe0yAwTsnaF36cu21MNCiUSkx63RDsNFUFtLkFRDdt/zZJl8TQMaRDX17+485LkW2O0DdP+xRs5LObXLvuOVdsM1qs4NBbxFZPgjaKTneg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744051661; c=relaxed/simple;
-	bh=iYdKnTLk1c8N6rB1/bxBpjUsc37PO7bqR4dC86w0XcY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mnk5c55WzLha5tCBpg1QQheEdQcTglNPzd4pH+DFxTFgXnPpRgI5uiFvxmZO/Bb0DY8/B5tAfj2B3c6YvtMwapa4swpi736T7QFxJaKhkPZhhB6Yq+RvR0asum8cFSTLvfKhxmeN/avoi0Aci6eigTmAmrhS9gmaa1ZtyrB9y8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SdulYC15; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D851FC4CEDD;
-	Mon,  7 Apr 2025 18:47:39 +0000 (UTC)
+	s=arc-20240116; t=1744051732; c=relaxed/simple;
+	bh=jtIwDlss0DPTJBXwiMczuUfLJ5vhGoUdZnfSp7ZHYws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tcyfb/V75cGhi+mUN4VpQrGJ/n1mkRTrXK7d/e6xYggMC68tMTwFz1aksopqQrFg2sYCA5e5VfK2sn+AhgdIC+kr9htPD7uMN0Aq+MCcOwME7VCY7GRYqINAlPcyGBhnytXo56hwJziU2JouzwZFaxWmlEeYxb88DMTYdiom2c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LrQSd1y4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 273C9C4CEDD;
+	Mon,  7 Apr 2025 18:48:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744051660;
-	bh=iYdKnTLk1c8N6rB1/bxBpjUsc37PO7bqR4dC86w0XcY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=SdulYC152hvv73DRAz146h090so5vl3MZFu3A8wzEp4gAkjejjivVdDmVgCMWzYtK
-	 Z+Tkg1BFxBA9Un1qtI9dKUScRUxqbKqYKHeOf7aX5PoWLP+bx5KDHeYXFqcpaZB10z
-	 fLyBnbKYipVAXUhlbqHP0bK+q/e3qaOTaX8IOsmM6oI7BaF6fLqlNGPzDRPzkK3AFc
-	 6BgEhkaObogeTH9W01CPT5EoayCQhBahXIfw/cmyFzbU3m8R/Osd9irZAxuZm0sV1B
-	 pklivA89LMSjetm6UW7jE4shw3X/1/FL9MQ8RAPG6lW8T1MYrbF7NdhdbTDy93JckE
-	 CMFB38v8lx7EQ==
-From: Song Liu <song@kernel.org>
-To: netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org
-Cc: dhowells@redhat.com,
-	pc@manguebit.com,
-	kernel-team@fb.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH] netfs: Let netfs depends on PROC_FS
-Date: Mon,  7 Apr 2025 11:47:30 -0700
-Message-ID: <20250407184730.3568147-1-song@kernel.org>
-X-Mailer: git-send-email 2.47.1
+	s=k20201202; t=1744051732;
+	bh=jtIwDlss0DPTJBXwiMczuUfLJ5vhGoUdZnfSp7ZHYws=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LrQSd1y4pCP1ak0sAjGQ58K99qeM0zLwKdKFlV5GQh8YiSnZFo6kAACNIDZ/yGbku
+	 gwlA/dK0CGRoJxFD5B98yc7cDxXCPFogdmHQHnA8QI5LnE9Ib36FFOI+Wt5MzuyYPF
+	 QgdwGcGRaFpFguop24NCs9vd0Mw4cODsUwV7wMUnfee9oBNDhK4lL3ZkYNtIct4X9u
+	 Rz/W1/vtpEkMzBzu+auPPk/vhm4kmZ+bm073x4RRtNsUiD0rlCOyd9N3vyj8GWRkOq
+	 roiB7miZXqURjFH8NpDyXmTT27gBstXZR5jb12J9rtqOT6TM13pMX8owkOxcXwWDWp
+	 B4WLwC+Th5jig==
+Date: Mon, 7 Apr 2025 11:48:51 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Cc: linux-xfs@vger.kernel.org, John Garry <john.g.garry@oracle.com>,
+	ojaswin@linux.ibm.com, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] iomap: trace: Add missing flags to
+ [IOMAP_|IOMAP_F_]FLAGS_STRINGS
+Message-ID: <20250407184851.GF6266@frogsfrogsfrogs>
+References: <3170ab367b5b350c60564886a72719ccf573d01c.1743691371.git.ritesh.list@gmail.com>
+ <bf67e3e6af1cdc3c6cba83e204f440db1cbfda24.1743691371.git.ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bf67e3e6af1cdc3c6cba83e204f440db1cbfda24.1743691371.git.ritesh.list@gmail.com>
 
-When testing a special config:
+On Thu, Apr 03, 2025 at 11:52:28PM +0530, Ritesh Harjani (IBM) wrote:
+> This adds missing iomap flags to IOMAP_FLAGS_STRINGS &
+> IOMAP_F_FLAGS_STRINGS for tracing. While we are at it, let's also print
+> values of iomap->type & iomap->flags.
+> 
+> e.g. trace for ATOMIC_BIO flag set
+> xfs_io-1203    [000] .....   183.001559: iomap_iter_dstmap: dev 8:32 ino 0xc bdev 8:32 addr 0x84200000 offset 0x0 length 0x10000 type MAPPED (0x2) flags DIRTY|ATOMIC_BIO (0x102)
+> 
+> e.g. trace with DONTCACHE flag set
+> xfs_io-1110    [007] .....   238.780532: iomap_iter: dev 8:16 ino 0x83 pos 0x1000 length 0x1000 status 0 flags WRITE|DONTCACHE (0x401) ops xfs_buffered_write_iomap_ops caller iomap_file_buffered_write+0xab/0x0
+> 
+> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 
-CONFIG_NETFS_SUPPORTS=y
-CONFIG_PROC_FS=n
+Seems reasonable to me
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
-The system crashes with something like:
+--D
 
-[    3.766197] ------------[ cut here ]------------
-[    3.766484] kernel BUG at mm/mempool.c:560!
-[    3.766789] Oops: invalid opcode: 0000 [#1] SMP NOPTI
-[    3.767123] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W
-[    3.767777] Tainted: [W]=WARN
-[    3.767968] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-[    3.768523] RIP: 0010:mempool_alloc_slab.cold+0x17/0x19
-[    3.768847] Code: 50 fe ff 58 5b 5d 41 5c 41 5d 41 5e 41 5f e9 93 95 13 00
-[    3.769977] RSP: 0018:ffffc90000013998 EFLAGS: 00010286
-[    3.770315] RAX: 000000000000002f RBX: ffff888100ba8640 RCX: 0000000000000000
-[    3.770749] RDX: 0000000000000000 RSI: 0000000000000003 RDI: 00000000ffffffff
-[    3.771217] RBP: 0000000000092880 R08: 0000000000000000 R09: ffffc90000013828
-[    3.771664] R10: 0000000000000001 R11: 00000000ffffffea R12: 0000000000092cc0
-[    3.772117] R13: 0000000000000400 R14: ffff8881004b1620 R15: ffffea0004ef7e40
-[    3.772554] FS:  0000000000000000(0000) GS:ffff8881b5f3c000(0000) knlGS:0000000000000000
-[    3.773061] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    3.773443] CR2: ffffffff830901b4 CR3: 0000000004296001 CR4: 0000000000770ef0
-[    3.773884] PKRU: 55555554
-[    3.774058] Call Trace:
-[    3.774232]  <TASK>
-[    3.774371]  mempool_alloc_noprof+0x6a/0x190
-[    3.774649]  ? _printk+0x57/0x80
-[    3.774862]  netfs_alloc_request+0x85/0x2ce
-[    3.775147]  netfs_readahead+0x28/0x170
-[    3.775395]  read_pages+0x6c/0x350
-[    3.775623]  ? srso_alias_return_thunk+0x5/0xfbef5
-[    3.775928]  page_cache_ra_unbounded+0x1bd/0x2a0
-[    3.776247]  filemap_get_pages+0x139/0x970
-[    3.776510]  ? srso_alias_return_thunk+0x5/0xfbef5
-[    3.776820]  filemap_read+0xf9/0x580
-[    3.777054]  ? srso_alias_return_thunk+0x5/0xfbef5
-[    3.777368]  ? srso_alias_return_thunk+0x5/0xfbef5
-[    3.777674]  ? find_held_lock+0x32/0x90
-[    3.777929]  ? netfs_start_io_read+0x19/0x70
-[    3.778221]  ? netfs_start_io_read+0x19/0x70
-[    3.778489]  ? srso_alias_return_thunk+0x5/0xfbef5
-[    3.778800]  ? lock_acquired+0x1e6/0x450
-[    3.779054]  ? srso_alias_return_thunk+0x5/0xfbef5
-[    3.779379]  netfs_buffered_read_iter+0x57/0x80
-[    3.779670]  __kernel_read+0x158/0x2c0
-[    3.779927]  bprm_execve+0x300/0x7a0
-[    3.780185]  kernel_execve+0x10c/0x140
-[    3.780423]  ? __pfx_kernel_init+0x10/0x10
-[    3.780690]  kernel_init+0xd5/0x150
-[    3.780910]  ret_from_fork+0x2d/0x50
-[    3.781156]  ? __pfx_kernel_init+0x10/0x10
-[    3.781414]  ret_from_fork_asm+0x1a/0x30
-[    3.781677]  </TASK>
-[    3.781823] Modules linked in:
-[    3.782065] ---[ end trace 0000000000000000 ]---
-
-This is caused by the following error path in netfs_init():
-
-        if (!proc_mkdir("fs/netfs", NULL))
-                goto error_proc;
-
-Fix this by letting netfs depends on PROC_FS.
-
-Signed-off-by: Song Liu <song@kernel.org>
----
- fs/netfs/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/netfs/Kconfig b/fs/netfs/Kconfig
-index 7701c037c328..df9d2a8739e7 100644
---- a/fs/netfs/Kconfig
-+++ b/fs/netfs/Kconfig
-@@ -2,6 +2,7 @@
- 
- config NETFS_SUPPORT
- 	tristate
-+	depends on PROC_FS
- 	help
- 	  This option enables support for network filesystems, including
- 	  helpers for high-level buffered I/O, abstracting out read
-@@ -9,7 +10,7 @@ config NETFS_SUPPORT
- 
- config NETFS_STATS
- 	bool "Gather statistical information on local caching"
--	depends on NETFS_SUPPORT && PROC_FS
-+	depends on NETFS_SUPPORT
- 	help
- 	  This option causes statistical information to be gathered on local
- 	  caching and exported through file:
--- 
-2.47.1
-
+> ---
+>  fs/iomap/trace.h | 27 +++++++++++++++++++++------
+>  1 file changed, 21 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+> index 9eab2c8ac3c5..455cc6f90be0 100644
+> --- a/fs/iomap/trace.h
+> +++ b/fs/iomap/trace.h
+> @@ -99,7 +99,11 @@ DEFINE_RANGE_EVENT(iomap_dio_rw_queued);
+>  	{ IOMAP_FAULT,		"FAULT" }, \
+>  	{ IOMAP_DIRECT,		"DIRECT" }, \
+>  	{ IOMAP_NOWAIT,		"NOWAIT" }, \
+> -	{ IOMAP_ATOMIC,		"ATOMIC" }
+> +	{ IOMAP_OVERWRITE_ONLY,	"OVERWRITE_ONLY" }, \
+> +	{ IOMAP_UNSHARE,	"UNSHARE" }, \
+> +	{ IOMAP_DAX,		"DAX" }, \
+> +	{ IOMAP_ATOMIC,		"ATOMIC" }, \
+> +	{ IOMAP_DONTCACHE,	"DONTCACHE" }
+> 
+>  #define IOMAP_F_FLAGS_STRINGS \
+>  	{ IOMAP_F_NEW,		"NEW" }, \
+> @@ -107,7 +111,14 @@ DEFINE_RANGE_EVENT(iomap_dio_rw_queued);
+>  	{ IOMAP_F_SHARED,	"SHARED" }, \
+>  	{ IOMAP_F_MERGED,	"MERGED" }, \
+>  	{ IOMAP_F_BUFFER_HEAD,	"BH" }, \
+> -	{ IOMAP_F_SIZE_CHANGED,	"SIZE_CHANGED" }
+> +	{ IOMAP_F_XATTR,	"XATTR" }, \
+> +	{ IOMAP_F_BOUNDARY,	"BOUNDARY" }, \
+> +	{ IOMAP_F_ANON_WRITE,	"ANON_WRITE" }, \
+> +	{ IOMAP_F_ATOMIC_BIO,	"ATOMIC_BIO" }, \
+> +	{ IOMAP_F_PRIVATE,	"PRIVATE" }, \
+> +	{ IOMAP_F_SIZE_CHANGED,	"SIZE_CHANGED" }, \
+> +	{ IOMAP_F_STALE,	"STALE" }
+> +
+> 
+>  #define IOMAP_DIO_STRINGS \
+>  	{IOMAP_DIO_FORCE_WAIT,	"DIO_FORCE_WAIT" }, \
+> @@ -138,7 +149,7 @@ DECLARE_EVENT_CLASS(iomap_class,
+>  		__entry->bdev = iomap->bdev ? iomap->bdev->bd_dev : 0;
+>  	),
+>  	TP_printk("dev %d:%d ino 0x%llx bdev %d:%d addr 0x%llx offset 0x%llx "
+> -		  "length 0x%llx type %s flags %s",
+> +		  "length 0x%llx type %s (0x%x) flags %s (0x%x)",
+>  		  MAJOR(__entry->dev), MINOR(__entry->dev),
+>  		  __entry->ino,
+>  		  MAJOR(__entry->bdev), MINOR(__entry->bdev),
+> @@ -146,7 +157,9 @@ DECLARE_EVENT_CLASS(iomap_class,
+>  		  __entry->offset,
+>  		  __entry->length,
+>  		  __print_symbolic(__entry->type, IOMAP_TYPE_STRINGS),
+> -		  __print_flags(__entry->flags, "|", IOMAP_F_FLAGS_STRINGS))
+> +		  __entry->type,
+> +		  __print_flags(__entry->flags, "|", IOMAP_F_FLAGS_STRINGS),
+> +		  __entry->flags)
+>  )
+> 
+>  #define DEFINE_IOMAP_EVENT(name)		\
+> @@ -185,7 +198,7 @@ TRACE_EVENT(iomap_writepage_map,
+>  		__entry->bdev = iomap->bdev ? iomap->bdev->bd_dev : 0;
+>  	),
+>  	TP_printk("dev %d:%d ino 0x%llx bdev %d:%d pos 0x%llx dirty len 0x%llx "
+> -		  "addr 0x%llx offset 0x%llx length 0x%llx type %s flags %s",
+> +		  "addr 0x%llx offset 0x%llx length 0x%llx type %s (0x%x) flags %s (0x%x)",
+>  		  MAJOR(__entry->dev), MINOR(__entry->dev),
+>  		  __entry->ino,
+>  		  MAJOR(__entry->bdev), MINOR(__entry->bdev),
+> @@ -195,7 +208,9 @@ TRACE_EVENT(iomap_writepage_map,
+>  		  __entry->offset,
+>  		  __entry->length,
+>  		  __print_symbolic(__entry->type, IOMAP_TYPE_STRINGS),
+> -		  __print_flags(__entry->flags, "|", IOMAP_F_FLAGS_STRINGS))
+> +		  __entry->type,
+> +		  __print_flags(__entry->flags, "|", IOMAP_F_FLAGS_STRINGS),
+> +		  __entry->flags)
+>  );
+> 
+>  TRACE_EVENT(iomap_iter,
+> --
+> 2.48.1
+> 
+> 
 
