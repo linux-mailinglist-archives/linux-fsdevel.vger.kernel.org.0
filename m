@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-45846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C36ACA7DA73
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 11:57:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00781A7DA5F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 11:55:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C63E16E8A3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 09:55:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12E92188ED14
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 09:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729DE231A2B;
-	Mon,  7 Apr 2025 09:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5AD9232363;
+	Mon,  7 Apr 2025 09:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qArOxwDl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rmfUyDnb"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAA823098D;
-	Mon,  7 Apr 2025 09:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2AD230993;
+	Mon,  7 Apr 2025 09:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744019675; cv=none; b=nLdf9pHQuWH1YXr85YM7jB1fMJBUsKzOSHEavSm3uqe977Is+Rsa1PhCB73ZhGQBKtwno2Zz5OE6YwCD8R4XoRbpQ2Y53aNwL8W5jicrrak/jaCv/cc5wRBFh9WzkkGiiSyI6gMAWRTXPyicmlXeK28nXK2qKt/+CBmrnNRMMZI=
+	t=1744019678; cv=none; b=o3QBWqBG2b3VaKxkKQv6sYD2ajZlvCnGA4GPN8BT4oEekGUopCy0PA5XxSP65PYTjUYRmcSyyO4m/TMK11PdkKSED3S0c/Do1z7bLUBtoygvZG6IJtBvCqTN0gEmNjJMgOGBl7DP2+hyDZziBjIf41MzJs+O1RE/88NhoqKEaTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744019675; c=relaxed/simple;
-	bh=W1GQjaNtsMtwRDBCK9P9pv77FM0gjd/w8nwBlGfuh2o=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sAjXf7mcIKUQN8gMhs5/XYATfMzo1mG0lYQVOFzOpyK53Bxwb75UiX6EeKb9n8JOkHsmv6HVZN0xTHyaCq/HFqW1Sqj3s3ox3Jm0ZIGENoOfoIZ67J8X8J+DQoti/mi58vBmGiAgTw2UQ122K58YGDn/xM1BjV0UhJzQaIf8pFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qArOxwDl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1210AC4CEDD;
-	Mon,  7 Apr 2025 09:54:31 +0000 (UTC)
+	s=arc-20240116; t=1744019678; c=relaxed/simple;
+	bh=NYh0DihgsxzRcHuA1zI/gQF/Wj+Z5uW0uYxJfjAB+IU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=W7CfJIq9CNyP568FmyGP6bLiYCVBIzJt8Wa4wqWgvKnojyhVvY6wCtO/ckCG+DmedbSal5MSGZ7t5RpTDfU9WtdL/8PJeJhV1Og6Ze1iXiLy/CiDy3/U1vGA/245lfXJLZ8ZF1vdB5hG6WGtFK23t93Pp2Ig7wR8Z1Bt+HiVj2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rmfUyDnb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D844C4CEEB;
+	Mon,  7 Apr 2025 09:54:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744019674;
-	bh=W1GQjaNtsMtwRDBCK9P9pv77FM0gjd/w8nwBlGfuh2o=;
-	h=From:Subject:Date:To:Cc:From;
-	b=qArOxwDlOXBur9XIDOl7H9lqhnLsauoGdjp8+bDfDamKpVPpYIDg9mtVjbJEsqH/F
-	 MpmRdkmZ7Klhy/LFBN5O+jIkrhHd5uOo1P7RopQH8PXip/QZh9Xe5x7Ev+gsSpnHA6
-	 Bfz4xTdI2fsWQhS76Lp2hpbItpaceNHnPK9jR03WMiwdbMyXTOpcDtJg9S73VOONkB
-	 dBe5Rhe/6/IZuQCtl/Wcb8XDF721NNp43GQ4BPF5UvzfVfmgvkh+nMZ1sdUv1HprJN
-	 33bL64gs2VdYBb5pRclE2F1hEC1ocBA3GsHK1fRBOeTfGiI8LmvFxLWujkSiZ4UBpE
-	 lSakzi9Bw4H3w==
+	s=k20201202; t=1744019677;
+	bh=NYh0DihgsxzRcHuA1zI/gQF/Wj+Z5uW0uYxJfjAB+IU=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=rmfUyDnbB4VL+bkpmQu9Mdqr2jnm6FTbz+eephcuqznnHd5xOCSrxlQqda+a9ZXE6
+	 VQmedmy9JUy95NAGqLTjOOPVKPuEjjvqmiKAqmGvm4/6p3f36li0w3NJNP5yAiXM6D
+	 MJnPVz8rNgKXvukFbh97SaApXaHOhmkdRPbAhkirOsaaAKEHbrQQAvgYkRmET5iNlk
+	 n08guH6qJCBXc/22F4LRvz03hnLFzxi7D57rcWqyBA8C4SOiD+MGLxlLN/URSebyZ2
+	 dp4UFeBUsD8VDn8+e3FDifQrNGo/jfAtOyKfP8DpD7913ts1QAmsA9mZCMp5hH6LGR
+	 HWcpEBgSYViVA==
 From: Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 0/9] fs: harden anon inodes
-Date: Mon, 07 Apr 2025 11:54:14 +0200
-Message-Id: <20250407-work-anon_inode-v1-0-53a44c20d44e@kernel.org>
+Date: Mon, 07 Apr 2025 11:54:15 +0200
+Subject: [PATCH 1/9] anon_inode: use a proper mode internally
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,10 +52,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAMeg82cC/x3M0QrCMAxA0V8ZeTajLZtj/ooMSbvogphKKlMY+
- 3erj+fh3g0Km3CBU7OB8SpFslb4QwNpIb0xylwNwYXedW7Ad7Y7kma9iOaZkUOI0dPQjWOAWj2
- Nr/L5H89TdaTCGI00Lb/Pg8qLrV2Pre/Rkod9/wLqUA/6hAAAAA==
-X-Change-ID: 20250407-work-anon_inode-e22bb1a74992
+Message-Id: <20250407-work-anon_inode-v1-1-53a44c20d44e@kernel.org>
+References: <20250407-work-anon_inode-v1-0-53a44c20d44e@kernel.org>
+In-Reply-To: <20250407-work-anon_inode-v1-0-53a44c20d44e@kernel.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: Christoph Hellwig <hch@infradead.org>, 
  Mateusz Guzik <mjguzik@gmail.com>, Penglei Jiang <superman.xpt@gmail.com>, 
@@ -64,58 +63,122 @@ Cc: Christoph Hellwig <hch@infradead.org>,
  syzbot+5d8e79d323a13aa0b248@syzkaller.appspotmail.com, 
  Christian Brauner <brauner@kernel.org>, stable@vger.kernel.org
 X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2120; i=brauner@kernel.org;
- h=from:subject:message-id; bh=W1GQjaNtsMtwRDBCK9P9pv77FM0gjd/w8nwBlGfuh2o=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR/XnDdbu/iFRPqI5t5fm/Tfdel6rQ1/UToZ2On/SsvC
- N+7cLHbq6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiOjMY/hcVslgIaRo+NCyK
- +DdJifF2xtro9qmNHEpC/Zm+DbO2FTH8017q/XjnpRc6ya9XblnuKKReZLZv+4Qf7+u55bgD78T
- aMwEA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3800; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=NYh0DihgsxzRcHuA1zI/gQF/Wj+Z5uW0uYxJfjAB+IU=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR/XnD9U/q5575WCxSW8Z29p8Z0ZMusC9zRv3ezdMbP7
+ t92sqPQvaOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiWo8Y/qel/XUo3Rheqfxk
+ r8iZ7XpHX6frn3VW2zm970ansLa2lQkjw/OXCj8P+Xa8zS2Y1++4JVuKvdTu2nxV76+fzvmvDzH
+ ZzwoA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-* Anonymous inodes currently don't come with a proper mode causing
-  issues in the kernel when we want to add useful VFS debug assert. Fix
-  that by giving them a proper mode and masking it off when we report it
-  to userspace which relies on them not having any mode.
+This allows the VFS to not trip over anonymous inodes and we can add
+asserts based on the mode into the vfs. When we report it to userspace
+we can simply hide the mode to avoid regressions. I've audited all
+direct callers of alloc_anon_inode() and only secretmen overrides i_mode
+and i_op inode operations but it already uses a regular file.
 
-* Anonymous inodes currently allow to change inode attributes because
-  the VFS falls back to simple_setattr() if i_op->setattr isn't
-  implemented. This means the ownership and mode for every single user
-  of anon_inode_inode can be changed. Block that as it's either useless
-  or actively harmful. If specific ownership is needed the respective
-  subsystem should allocate anonymous inodes from their own private
-  superblock.
-
-* Port pidfs to the new anon_inode_{g,s}etattr() helpers.
-
-* Add proper tests for anonymous inode behavior.
-
-The anonymous inode specific fixes should ideally be backported to all
-LTS kernels.
-
+Fixes: af153bb63a336 ("vfs: catch invalid modes in may_open()")
+Cc: <stable@vger.kernel.org> # all LTS kernels
+Reported-by: syzbot+5d8e79d323a13aa0b248@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/67ed3fb3.050a0220.14623d.0009.GAE@google.com
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
-Christian Brauner (9):
-      anon_inode: use a proper mode internally
-      pidfs: use anon_inode_getattr()
-      anon_inode: explicitly block ->setattr()
-      pidfs: use anon_inode_setattr()
-      anon_inode: raise SB_I_NODEV and SB_I_NOEXEC
-      selftests/filesystems: add first test for anonymous inodes
-      selftests/filesystems: add second test for anonymous inodes
-      selftests/filesystems: add third test for anonymous inodes
-      selftests/filesystems: add fourth test for anonymous inodes
+ fs/anon_inodes.c | 36 ++++++++++++++++++++++++++++++++++++
+ fs/internal.h    |  3 +++
+ fs/libfs.c       |  2 +-
+ 3 files changed, 40 insertions(+), 1 deletion(-)
 
- fs/anon_inodes.c                                   | 45 ++++++++++++++
- fs/internal.h                                      |  5 ++
- fs/libfs.c                                         |  2 +-
- fs/pidfs.c                                         | 26 +-------
- tools/testing/selftests/filesystems/.gitignore     |  1 +
- tools/testing/selftests/filesystems/Makefile       |  2 +-
- .../selftests/filesystems/anon_inode_test.c        | 69 ++++++++++++++++++++++
- 7 files changed, 124 insertions(+), 26 deletions(-)
----
-base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-change-id: 20250407-work-anon_inode-e22bb1a74992
+diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
+index 583ac81669c2..42e4b9c34f89 100644
+--- a/fs/anon_inodes.c
++++ b/fs/anon_inodes.c
+@@ -24,9 +24,43 @@
+ 
+ #include <linux/uaccess.h>
+ 
++#include "internal.h"
++
+ static struct vfsmount *anon_inode_mnt __ro_after_init;
+ static struct inode *anon_inode_inode __ro_after_init;
+ 
++/*
++ * User space expects anonymous inodes to have no file type in st_mode.
++ *
++ * In particular, 'lsof' has this legacy logic:
++ *
++ *	type = s->st_mode & S_IFMT;
++ *	switch (type) {
++ *	  ...
++ *	case 0:
++ *		if (!strcmp(p, "anon_inode"))
++ *			Lf->ntype = Ntype = N_ANON_INODE;
++ *
++ * to detect our old anon_inode logic.
++ *
++ * Rather than mess with our internal sane inode data, just fix it
++ * up here in getattr() by masking off the format bits.
++ */
++int anon_inode_getattr(struct mnt_idmap *idmap, const struct path *path,
++		       struct kstat *stat, u32 request_mask,
++		       unsigned int query_flags)
++{
++	struct inode *inode = d_inode(path->dentry);
++
++	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
++	stat->mode &= ~S_IFMT;
++	return 0;
++}
++
++static const struct inode_operations anon_inode_operations = {
++	.getattr = anon_inode_getattr,
++};
++
+ /*
+  * anon_inodefs_dname() is called from d_path().
+  */
+@@ -66,6 +100,7 @@ static struct inode *anon_inode_make_secure_inode(
+ 	if (IS_ERR(inode))
+ 		return inode;
+ 	inode->i_flags &= ~S_PRIVATE;
++	inode->i_op = &anon_inode_operations;
+ 	error =	security_inode_init_security_anon(inode, &QSTR(name),
+ 						  context_inode);
+ 	if (error) {
+@@ -313,6 +348,7 @@ static int __init anon_inode_init(void)
+ 	anon_inode_inode = alloc_anon_inode(anon_inode_mnt->mnt_sb);
+ 	if (IS_ERR(anon_inode_inode))
+ 		panic("anon_inode_init() inode allocation failed (%ld)\n", PTR_ERR(anon_inode_inode));
++	anon_inode_inode->i_op = &anon_inode_operations;
+ 
+ 	return 0;
+ }
+diff --git a/fs/internal.h b/fs/internal.h
+index b9b3e29a73fd..717dc9eb6185 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -343,3 +343,6 @@ static inline bool path_mounted(const struct path *path)
+ void file_f_owner_release(struct file *file);
+ bool file_seek_cur_needs_f_lock(struct file *file);
+ int statmount_mnt_idmap(struct mnt_idmap *idmap, struct seq_file *seq, bool uid_map);
++int anon_inode_getattr(struct mnt_idmap *idmap, const struct path *path,
++		       struct kstat *stat, u32 request_mask,
++		       unsigned int query_flags);
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 6393d7c49ee6..0ad3336f5b49 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1647,7 +1647,7 @@ struct inode *alloc_anon_inode(struct super_block *s)
+ 	 * that it already _is_ on the dirty list.
+ 	 */
+ 	inode->i_state = I_DIRTY;
+-	inode->i_mode = S_IRUSR | S_IWUSR;
++	inode->i_mode = S_IFREG | S_IRUSR | S_IWUSR;
+ 	inode->i_uid = current_fsuid();
+ 	inode->i_gid = current_fsgid();
+ 	inode->i_flags |= S_PRIVATE;
+
+-- 
+2.47.2
 
 
