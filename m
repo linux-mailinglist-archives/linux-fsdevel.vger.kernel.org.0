@@ -1,129 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-45885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42CCEA7E186
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 16:30:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FFDBA7E1E4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 16:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 937ED3BD39A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 14:18:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 560DF44076E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Apr 2025 14:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653611D6DB1;
-	Mon,  7 Apr 2025 14:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9FA1F63DD;
+	Mon,  7 Apr 2025 14:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ToxMgYRM"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="HekbsPYU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D2E1C7004;
-	Mon,  7 Apr 2025 14:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51DA1F7911
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Apr 2025 14:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744035510; cv=none; b=UeDf0ItB7GSouh5yFbp2VW948/RYIYV8CdJ/iVVAVaEA0/h5B6woLYzP6Qn4iEDSJvaYqHPhiraNCM8Qqs831xSg2oIQCWfP250+zuOGMrlm6C7NVqEKud/3IUeC0TvlZbqdgar0BQKxHl7vG8r3Y05j8J8FLJRGG+oFT/uTd7w=
+	t=1744035888; cv=none; b=lT7yhdKniYtN29LuVL29LWvnqIof4d5LsNEabMe7aUt4eptumE0RlA+SsTm8GXeonqvzHw/kz3sQ2/napYVkhvTisNNwIxyRiET9xyQordPUoEp/XE0NJWG1zfrUHhYep+z3704OM22+oQh59K9FUneDyVE50VkfxEBPOv/4mfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744035510; c=relaxed/simple;
-	bh=59sWNcTjgZdwjwObEU6f0L2NNY5UxzU/QXOnj0Z2qaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=COuHOAJHoNrZwHv5OkPk1XE1SRhrkqJnXSi+qiG7xdMvFfU0bMoPsg2Od+BuFR1eCsbV0XUdAvV7j1LbqO+kR7dIlxQ1KcRjwY5EeDwI6fDjNKkeMkb0kP9F0awz5CNGa8VjJS6956WBXiZlixxw87rkvhvgMAOf7WVUHg4uTEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ToxMgYRM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3992DC4CEDD;
-	Mon,  7 Apr 2025 14:18:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744035510;
-	bh=59sWNcTjgZdwjwObEU6f0L2NNY5UxzU/QXOnj0Z2qaE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ToxMgYRMd4oK97VdZjMKEwFHs2sSdp/0eJy4nn2ksysNsV1n6ocpPhZd2PgRJtCba
-	 am1cz7Re8WuNmVG/kXtqGMw453mflNErnstrx/NNQ2ra1hBhv4X5AiMsZe+TeytDik
-	 ZCO1Mo62093bnMp+HzDG6XvlH+b5tlhsT6eWD6iMICLi/jE+twLfymQy5vSjFw61f5
-	 qD9LyVYwgBMoqVCEFl6NpnCYnaJ/RHHE/V2tbklsiBcmVw3oBP1oyhriG0HB3gQv0K
-	 3TQkhygT5u/taU7TIxHJkhpk+1qyyW94TZbRH0IcLJtzuIr+xI4zIFBFUAPrZPBiYi
-	 cQ1Wi+Ho1BA3w==
-Date: Mon, 7 Apr 2025 16:18:25 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Penglei Jiang <superman.xpt@gmail.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>, syzbot+5d8e79d323a13aa0b248@syzkaller.appspotmail.com, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH 5/9] anon_inode: raise SB_I_NODEV and SB_I_NOEXEC
-Message-ID: <20250407-bushaltestelle-haltlos-49982774e760@brauner>
-References: <20250407-work-anon_inode-v1-0-53a44c20d44e@kernel.org>
- <20250407-work-anon_inode-v1-5-53a44c20d44e@kernel.org>
- <znozbhmeuz5sp24ksqsm5vsd4xlbuqfkbf5qwo6djle57gsnks@z274bu2spsxz>
+	s=arc-20240116; t=1744035888; c=relaxed/simple;
+	bh=FNL+NAWFI0GxoBJ167yJeoBFSWA7FvYgScloIAzLUeo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EFGRb2pyikfA/B1ZG5bHuK3EuDLv9R4Bpm1Acyq8GuJ4rd45dldjlJf8jr8dQDfcbZCPq6FynBaQuCKgnc5huyfIhZVvdDivspMFbzbCk4t2jdu9ughPpxmzOoa+X4lBUuFfpuFrrrNoXiXW3nLM28+gRZ6rc0excTZPbCA08zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=HekbsPYU; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4766631a6a4so44284211cf.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Apr 2025 07:24:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1744035884; x=1744640684; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=FNL+NAWFI0GxoBJ167yJeoBFSWA7FvYgScloIAzLUeo=;
+        b=HekbsPYUXk7zhTOruFnRnQckKhfaxTWzEjMmsaJBlgqabCZ6jjZ+LqGVA1xI/whr50
+         LIx8t49SNes4OXnO8Nr0MCEy1a+9jhSQt/D1vYdIOKlHDUTcA0QOF8uLj6eKXxnWFsXl
+         hSW+mdJEr0QcPCOm/WX4dHqoW581abar4frAk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744035884; x=1744640684;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FNL+NAWFI0GxoBJ167yJeoBFSWA7FvYgScloIAzLUeo=;
+        b=lGNQ7fUvrCn4NPQr8X5LWN1tS2WcYw+4f+1cd/C6r3uFXx8ztGhbgvWfa1jCkBFtpO
+         0vS550Smiuoj+sCmpCAgKTM5UVoUfvHIhBiX0NuN/Vr+MxaHCdCj30Gj1n8hfK2KnQkL
+         frw56JYQ/LtAJpWUTUxy1etyjM6eoTcMhieg1vgPKDFHQDxpgpOmY6TS0TNi+NFXnNaL
+         1clw8coVsRPYAfl/2BQHHrElj+HWY4MZySdz+/9Dj/4nTggUtq5qe6PDqEb+weK9Z/jy
+         ng8vLNOA44sTW5YxKoCgWzuYlP8hJQIbxae4cUQvVuPsYgspfGWqcDF5Zvzpq53SqMUn
+         E+TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUEpXkQHHRf6koxq19y8PMpGlMrj97ra8a4WFGUjVDsEKUEXJZnYKnSvtiswO6NWLLv4kUGjQoTIJJNEWmp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzn9aNkQmloikj+taW9NUiN839wiRljYtqmyYbzbHIxXwnpZJWC
+	yZlYOYkgsYSoi+ICJYnqAnEl+KTRwn3uengR5iauXBefX+vQrHNCHr4PFhCdQm4nkYEO1x39obA
+	esKt1YHODuuQ+YU/94J0psFQbzvblT2ibemvSPQ==
+X-Gm-Gg: ASbGnctK0khZRJgCuyb9qITZ+Sie4y6cTnVAKNZhUN1N7x6RoIlq4b0tFY/prdaiuzK
+	trt4+K9PnGXw0S0eOe/crvjqyM4rYo8wRqNt7Ufj9lyWlI5GyPcNsd/j//tGRxvn7jlzGwrz1Si
+	KqRG7sNUMwZSwyEC+/0ojuSp7iFVU=
+X-Google-Smtp-Source: AGHT+IFQd4jHNyMbSuzJ059jvOO/iExVzCO/KphR667EKFZiLjHNp+k+91snAGwPCrKp9DxvzNZfuI0F/c1qQXQ410A=
+X-Received: by 2002:a05:622a:199f:b0:472:bbb:1bab with SMTP id
+ d75a77b69052e-47930fe7403mr104524641cf.24.1744035883851; Mon, 07 Apr 2025
+ 07:24:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <znozbhmeuz5sp24ksqsm5vsd4xlbuqfkbf5qwo6djle57gsnks@z274bu2spsxz>
+References: <20250407115111.25535-1-xiangsheng.hou@mediatek.com>
+In-Reply-To: <20250407115111.25535-1-xiangsheng.hou@mediatek.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 7 Apr 2025 16:24:32 +0200
+X-Gm-Features: ATxdqUEaLGT2M3QdvlukIOwAEuscXulm8_kXjOV6iVYrWf5p1vewCG0W1HdKGiE
+Message-ID: <CAJfpegsN47xDbVFsu=-TLW+A2=-33fNY83zt5bhebFqH67LAVA@mail.gmail.com>
+Subject: Re: [RESEND] virtiofs: add filesystem context source name check
+To: Xiangsheng Hou <xiangsheng.hou@mediatek.com>
+Cc: Vivek Goyal <vgoyal@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, eperezma@redhat.com, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, virtualization@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	benliang.zhao@mediatek.com, bin.zhang@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Apr 07, 2025 at 04:07:47PM +0200, Jan Kara wrote:
-> On Mon 07-04-25 11:54:19, Christian Brauner wrote:
-> > It isn't possible to execute anoymous inodes because they cannot be
-> 				^^ anonymous
-> 
-> > opened in any way after they have been created. This includes execution:
-> > 
-> > execveat(fd_anon_inode, "", NULL, NULL, AT_EMPTY_PATH)
-> > 
-> > Anonymous inodes have inode->f_op set to no_open_fops which sets
-> > no_open() which returns ENXIO. That means any call to do_dentry_open()
-> > which is the endpoint of the do_open_execat() will fail. There's no
-> > chance to execute an anonymous inode. Unless a given subsystem overrides
-> > it ofc.
-> > 
-> > Howerver, we should still harden this and raise SB_I_NODEV and
->   ^^^ However
-> 
-> > SB_I_NOEXEC on the superblock itself so that no one gets any creative
-> > ideas.
-> 
-> ;)
+On Mon, 7 Apr 2025 at 13:51, Xiangsheng Hou <xiangsheng.hou@mediatek.com> wrote:
+>
+> In certain scenarios, for example, during fuzz testing, the source
+> name may be NULL, which could lead to a kernel panic. Therefore, an
+> extra check for the source name should be added.
+>
+> Signed-off-by: Xiangsheng Hou <xiangsheng.hou@mediatek.com>
 
-I've told our new AI overloards to sprinkle-in some typos so no one
-realizes I've been mostly replaced by a bot.
+Acked-by: Miklos Szeredi <mszeredi@redhat.com>
 
-Or I'm just generally tired so I fat-finger a lot more than usual. :D
-
-> 
-> Feel free to add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> 
-> 								Honza
-> 
-> > 
-> > Cc: <stable@vger.kernel.org> # all LTS kernels
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  fs/anon_inodes.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-> > index cb51a90bece0..e51e7d88980a 100644
-> > --- a/fs/anon_inodes.c
-> > +++ b/fs/anon_inodes.c
-> > @@ -86,6 +86,8 @@ static int anon_inodefs_init_fs_context(struct fs_context *fc)
-> >  	struct pseudo_fs_context *ctx = init_pseudo(fc, ANON_INODE_FS_MAGIC);
-> >  	if (!ctx)
-> >  		return -ENOMEM;
-> > +	fc->s_iflags |= SB_I_NOEXEC;
-> > +	fc->s_iflags |= SB_I_NODEV;
-> >  	ctx->dops = &anon_inodefs_dentry_operations;
-> >  	return 0;
-> >  }
-> > 
-> > -- 
-> > 2.47.2
-> > 
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+Thanks,
+Miklos
 
