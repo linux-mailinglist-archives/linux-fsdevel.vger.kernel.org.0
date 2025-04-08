@@ -1,127 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-45928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF8BA7F68C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 09:40:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C3BCA7F73B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 10:05:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74F02174955
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 07:39:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 828C43AD41A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 08:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7FF264F89;
-	Tue,  8 Apr 2025 07:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF494263C84;
+	Tue,  8 Apr 2025 08:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aooWy6bP"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="I+l49Ad1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125E3263C74;
-	Tue,  8 Apr 2025 07:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D548C202996;
+	Tue,  8 Apr 2025 08:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744097846; cv=none; b=B/FpvNSA1prz060YAbc5ovnh11OFv0vZA0QClySTXNicc0NXNgAEd3iG0nWf5XqBbhNifrEb8KaCHzOh8+IcCYxyz2xOHwtq+sOFv8317egY1ENJsE2zJSkJtqEJCGjMi0nRA+GEL07OkyYDHLOxO29LGJWRelJcP1vAst8hvbs=
+	t=1744099523; cv=none; b=HXjKJQPvYFYrC5rqkvJ6c663wTQ3h72U/WuxFY0vAskOlpphYElYnNUhcQqdkhSDT8HjK5n5WlLq0ZqbRt2tYpij3oZumhovgdvR3/bYIFrhXE7zSdjBeYDoGagsNSctKG3nJk2bONvMnk4XRf7AsHpbQ9XMNbuqsauxxjO3cMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744097846; c=relaxed/simple;
-	bh=ar5XQBlEF7k0tqNfubHLeA/je1jwcPGbfwtzEwWTm8o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TU3UMWKXY3YkfkOPUjnBdEUaQXdfuphVUH63WRtky4YvsDu0LDimpqXAKpaYmnZdJebvWkhmgXYkfKRO7EzHnsg/YLvrtGlcAWg1cQ3ICQfbSKiUB7EPAm8dzBaqOUKaHRPcS97Ptt4/qdTzDrU1N69mmDKdlL5eTcp1GHq36pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aooWy6bP; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cf680d351so36388435e9.0;
-        Tue, 08 Apr 2025 00:37:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744097843; x=1744702643; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+bV3HaOye67+5wSUQFO1LCTh5AfAgyxfb2bNbTE+s74=;
-        b=aooWy6bP2KOKNR8vK5NP7K/kwlqCqVOn7j7bMiKBhmazL8tF4KOvw7jHHRuvMg2nO/
-         /hn9t4hrvwonSY0jCubLchgKsHMus5PSKtpQKJYtdF7I87XWfRZoVN8HNSwhJperXJXT
-         kw5qNzoLB6fVEX9kxWKwZf0FTlRDIH/r/RhlqcUbxnS67Ge62ZDkFOcKkiTN3UNZxEla
-         yVgNxT0KTNxZtLF5l/SItrdLJpBC+pIFLaZLYjRl8OOUzBnQFY+tXGnp+GahNy4Y9pbq
-         2u3qPFLA4a1DvUYifB7FDqbrUxZz2CpmfvBxUSZYg7L1jbzM8eLVcq4kGon8DRYocaVm
-         pAHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744097843; x=1744702643;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+bV3HaOye67+5wSUQFO1LCTh5AfAgyxfb2bNbTE+s74=;
-        b=mHfT50cZ2o+3nMsn/fh9smwQxGIcvN3doyg+hJ807ItMvliyuJvWEqhpo04s+DaYSz
-         DXZGslESp2zAuczkagnubP0G/k/MZvwhh/TsWUq05MdA3Ko6709L4uvhjQoCKA/ZDm1D
-         h1oZ45mWBumvEUrGEtDTnB00wVfHpnponGXbwQHN97FGcJHwNzcgw6UkIW618P7IUpCG
-         wOiC0HTu3qOotrgLHKT4m3A4+aX6/0Pr/CLgcBKkHdJh0J1TDl1u715XKqGYDjFYyuc5
-         1Rmvnmje5G+VW2aob0LXTGI9AWvLLscCvZ6HHx6RSrTwZKBV3zMHwR37FzOdFCHFsHAx
-         LNAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUV1uZ/U5Iys27BuHxjgLcHJMeR713okT66p9O/hjHpxC63irFOcyo6vkdvLs3ZbTZffg18KMbRHJbB6I1f@vger.kernel.org, AJvYcCXphyaIXYUxzIGUXPDUyP7RnydNPU3k5DUFmrIuxIKPehTxlQNksZ1uIygF8RmJOPSCiGAnYs9CX86RKE8C@vger.kernel.org
-X-Gm-Message-State: AOJu0YznlCvoQJfZ+FDJqE4TK1+kLXWxTPa7FEWP/1VZxyq5/C9SjQ+Z
-	ZQcXsltwRQ0XhQAbg3P8LBY5QASODh5wBLwAZX4yKcZIf03c0y7R
-X-Gm-Gg: ASbGnctLJztQpSACwxwDSVRHWZf6Br96VnTgy3qJe4MuAZmV6gx4IGYJXpgFHfs9vbE
-	cMJQ8xcKYh3nzFZcHfQfuw1+gagkkdQPz2Ph5R4RZ5mkBMYo2cd8TYGIfufJr33voBtGL1DMETz
-	Z2TUktN9+yoVUIMi517BxpU0kM9jnB0OF6rCNU90eVH6OKYgDpftTmNALGi+cZ+YKLsMXZyuB8t
-	J0PUxL9uZhccdIhJjF82CT5Zi3pHjIOb9NfYFbUbwkKhyGjns+qYMRVhx26wXYe51iEcMFts8qW
-	7bb6VNVeg6F+QpEmJgrltCdKMBz6B3q/FY1098LTv/MHvWobltuY3snkzIxQAm5HohlxJMQ=
-X-Google-Smtp-Source: AGHT+IHzV7lgRhl3LcbHjjyj7Zx8jLcnrpxEQQSh7UM3VRWVmNsHnrWx+IPdYbdIeKdplyQbnDd2qQ==
-X-Received: by 2002:a05:6000:184d:b0:39c:266c:434 with SMTP id ffacd0b85a97d-39d82110daemr1768446f8f.27.1744097843073;
-        Tue, 08 Apr 2025 00:37:23 -0700 (PDT)
-Received: from f.. (cst-prg-66-32.cust.vodafone.cz. [46.135.66.32])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec34a7615sm151512065e9.9.2025.04.08.00.37.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 00:37:22 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] fs: unconditionally use atime_needs_update() in pick_link()
-Date: Tue,  8 Apr 2025 09:36:41 +0200
-Message-ID: <20250408073641.1799151-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1744099523; c=relaxed/simple;
+	bh=yeJ5Lab9tWLRKPloPFY4ioCGI82IURnAJ9FlA0hr9wE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KhfesCqdW49Qk8Z0/K0nb3qGettQoZQNlCDqVtKRxyWW2pjMzcULksfsY8cuOP1N+UUJ7XKrjqi0VocvLdCDKLoPRbqX7fh7xksiPfkAhkRjztn3MENWtyooYvAZ7jBdzq1SdKaQFzyXZuuEXOeEoMYuoyMl9Di/QqjJXcbxqfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=I+l49Ad1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47952C4CEE5;
+	Tue,  8 Apr 2025 08:05:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744099522;
+	bh=yeJ5Lab9tWLRKPloPFY4ioCGI82IURnAJ9FlA0hr9wE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I+l49Ad1DesnHBe0imd7XRlS5oJGkuoArtJdPjqMxx5/Z5K4TYwlYxmZLwHmkTGwF
+	 55CUzIzfm3+9DFRghWh5teA9+udDd9zevONTnJR4lHR//NFtdiHicHTUObSpzwOQaO
+	 10mtxdofsxLbdzocSjI667M3jTnBsAQPS8+iE7uQ=
+Date: Tue, 8 Apr 2025 10:03:50 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Christian Brauner <brauner@kernel.org>, cve@kernel.org
+Cc: Cengiz Can <cengiz.can@canonical.com>,
+	Attila Szasz <szasza.contact@gmail.com>,
+	Salvatore Bonaccorso <carnil@debian.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	lvc-patches@linuxtesting.org, dutyrok@altlinux.org,
+	syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com,
+	stable@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
+Message-ID: <2025040801-finalize-headlock-669d@gregkh>
+References: <20241019191303.24048-1-kovalev@altlinux.org>
+ <Z9xsx-w4YCBuYjx5@eldamar.lan>
+ <d4mpuomgxqi7xppaewlpey6thec7h2fk4sm2iktqsx6bhwu5ph@ctkjksxmkgne>
+ <2025032402-jam-immovable-2d57@gregkh>
+ <7qi6est65ekz4kjktvmsbmywpo5n2kla2m3whbvq4dsckdcyst@e646jwjazvqh>
+ <2025032404-important-average-9346@gregkh>
+ <dzmprnddbx2qaukb7ukr5ngdx6ydwxynaq6ctxakem43yrczqb@y7dg7kzxsorc>
+ <20250407-biegung-furor-e7313ca9d712@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250407-biegung-furor-e7313ca9d712@brauner>
 
-Vast majority of the time the func returns false.
+On Mon, Apr 07, 2025 at 12:59:18PM +0200, Christian Brauner wrote:
+> On Sun, Apr 06, 2025 at 07:07:57PM +0300, Cengiz Can wrote:
+> > On 24-03-25 11:53:51, Greg KH wrote:
+> > > On Mon, Mar 24, 2025 at 09:43:18PM +0300, Cengiz Can wrote:
+> > > > In the meantime, can we get this fix applied?
+> > > 
+> > > Please work with the filesystem maintainers to do so.
+> > 
+> > Hello Christian, hello Alexander
+> > 
+> > Can you help us with this?
+> > 
+> > Thanks in advance!
+> 
+> Filesystem bugs due to corrupt images are not considered a CVE for any
+> filesystem that is only mountable by CAP_SYS_ADMIN in the initial user
+> namespace. That includes delegated mounting.
 
-This avoids a branch to determine whether we are in RCU mode.
+Thank you for the concise summary of this.  We (i.e. the kernel CVE
+team) will try to not assign CVEs going forward that can only be
+triggered in this way.
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- fs/namei.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+> The blogpost is aware that the VFS maintainers don't accept CVEs like
+> this. Yet a CVE was still filed against the upstream kernel. IOW,
+> someone abused the fact that a distro chose to allow mounting arbitrary
+> filesystems including orphaned ones by unprivileged user as an argument
+> to gain a kernel CVE.
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 360a86ca1f02..ae2643ff14dc 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1905,13 +1905,13 @@ static const char *pick_link(struct nameidata *nd, struct path *link,
- 			unlikely(link->mnt->mnt_flags & MNT_NOSYMFOLLOW))
- 		return ERR_PTR(-ELOOP);
- 
--	if (!(nd->flags & LOOKUP_RCU)) {
-+	if (unlikely(atime_needs_update(&last->link, inode))) {
-+		if (nd->flags & LOOKUP_RCU) {
-+			if (!try_to_unlazy(nd))
-+				return ERR_PTR(-ECHILD);
-+		}
- 		touch_atime(&last->link);
- 		cond_resched();
--	} else if (atime_needs_update(&last->link, inode)) {
--		if (!try_to_unlazy(nd))
--			return ERR_PTR(-ECHILD);
--		touch_atime(&last->link);
- 	}
- 
- 	error = security_inode_follow_link(link->dentry, inode,
--- 
-2.43.0
+Yes, Canonical abused their role as a CNA and created this CVE without
+going through the proper processes.  kernel.org is now in charge of this
+CVE, and:
 
+> Revoke that CVE against the upstream kernel. This is a CVE against a
+> distro. There's zero reason for us to hurry with any fix.
+
+I will go reject this now.
+
+Note, there might be some older CVEs that we have accidentally assigned
+that can only be triggered by hand-crafted filesystem images.  If anyone
+wants to dig through the 5000+ different ones we have, we will be glad
+to reject them as well.
+
+thanks,
+
+greg k-h
 
