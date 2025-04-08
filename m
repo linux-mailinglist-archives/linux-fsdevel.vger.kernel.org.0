@@ -1,147 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-45988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C7F8A80DB5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 16:22:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D80BA80E17
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 16:33:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D46F4A390F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 14:20:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 851358847F7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 14:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBF31DE2AD;
-	Tue,  8 Apr 2025 14:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2764A1FCFF3;
+	Tue,  8 Apr 2025 14:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="Arb62mbC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aYdFIflE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JDEPcFNC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8C11AB52D;
-	Tue,  8 Apr 2025 14:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A251D61B9;
+	Tue,  8 Apr 2025 14:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744121998; cv=none; b=UdPdBslmeqMxEG2E/IYP4fH4pLgZdqkv2iYDcTfZtosbNi0ZsNywDxw6E7oqcSur08Qfcn71N5AW6dJxjUkU71JF33cC87sI/mTSDnKvWOYzrtSKtTs6h4AhQ8yyQVWGcRpYCiM9zSZPa8sg0KEwh1DL81668yY0k7YskPB6Un0=
+	t=1744122430; cv=none; b=V74VQz5+R+YKuORpR8Z2tm4OsSKS+23cBAnU6XStMAlvrXAxN+5BU8O+UkJMC5GhgtwpivI5LeCW98eT0PoJD9x3991pO4O+EaXptIyPOxTJ8zksYSQ8xOJe/jixOedmBCw7j9Njkex/FpkMJpPFaw34rmLLQ9TKTm7WU6H3r2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744121998; c=relaxed/simple;
-	bh=vroccB3hc8QzTkaFSHAFq7lrOUzJlHXBEtovGQKNZvI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iQ/Kq3JD5ktDutrbx/1pI2qZS18EOBKOM5If3xlga1HxQU/5FsPWa0XPmAznRqEBRfxGnRTTeL68A/e8LgjmEDI5E+KeVobeUVSxkcEffn+kRzQY4Y6dYb1vm9Tn3WTiyh2bc9sjSM2m4r7raxQb5FlCKqfemZJfklyld8vPapQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=Arb62mbC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aYdFIflE; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id 2FDFD1380195;
-	Tue,  8 Apr 2025 10:19:55 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Tue, 08 Apr 2025 10:19:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1744121995;
-	 x=1744208395; bh=+b3ara2Q4q4NRQ8QLp9VAkPjxaW2oDNH02MnnVA+1J4=; b=
-	Arb62mbCN7yk6PXSyxSd2tYJQ6ZHVLyurUQCu2mhJYth+eYNEC7ozGRt1DCqvDar
-	UGiYgLesw+vEa8PzJCf9n8EEA+hOkqaB6UpK1KdNCSR2mKWg0MBlGysosptDbJ1w
-	WlG8r061J3pG6mzTo+cAwguEyUwGoEUvcOKwwGvNJzDXnbWwtw/EODEsiW7ijahL
-	AKOE7//RucSxKXRbbzbO6VVoorzOs+5eX2iXtePzo5wG2TPw0Jgyghrm6di/FeLu
-	P5R2D93GViY9+8ZWCg805Glp/+AXYHujXMA4u/7qzNa8ZVEbtfQjpvBmjdHy/WDQ
-	7otjK2HI8epnFGE3OYMwXg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1744121995; x=
-	1744208395; bh=+b3ara2Q4q4NRQ8QLp9VAkPjxaW2oDNH02MnnVA+1J4=; b=a
-	YdFIflEf0cK6J2o0jo1ZqQWGhCSWxdgewT6TcdQDloi2dKHLVQhck+FU6BgCYEe7
-	njBZebN6MNbPt5r9qfnyuiP6ewC2J4hKeoF8gK1XIXrsXgsDuAbQaR2doONbi5MZ
-	Gc+2NinAisPcfhqim2qUTC7lleUv4kPw1ehV4a1f3xJYE17tON8Nep4DUSIQasLK
-	DRRROBya1MJvBwnvtkBR1Cc7MOhEsD5bw0SLrJrWuCDcrQ4wFHiUrpUZ+Wlq34b2
-	sB7KPeZ+c2lHUrl/P1djNNLRVFRr+WyW8xuacRSPFOcXR1vLFXE+4Y/6x1xIrqet
-	epQtl5V9jl+UHm6TN425Q==
-X-ME-Sender: <xms:iTD1Z_Bf64ty3rC326EqAGfmLhhbbz5uJ_Ny9MKjp-r6d20P9s1LQQ>
-    <xme:iTD1Z1iVn-SRmxfvRLAXYTut45rmGIMl1j8JeJg84oqyoXJ3XKYZkamos4PnrPUIi
-    9Ef6B5cW9pMY6JI>
-X-ME-Received: <xmr:iTD1Z6n-n6xAJ8pXOcGcPUBCuBMvzPcisqzr-ORquOf8l0oNHZKv5-eTkZKZbGcvesBWzdxYK9a_UIUPHxX6LRn65F2E3h5klHQTHBOFNx0pjRfFYu0A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdeffeduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
-    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuh
-    gsvghrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledt
-    udfgtdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrh
-    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggv
-    rhhtsehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmth
-    hpohhuthdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthht
-    ohepjhgrtghosehulhhsrdgtohdriigrpdhrtghpthhtoheplhhinhhugidqfhhsuggvvh
-    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghr
-    nhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegthhhrihhsthhoph
-    hhvgdrjhgrihhllhgvthesfigrnhgrughoohdrfhhrpdhrtghpthhtohepjhhorghnnhgv
-    lhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhguuhhnlhgrphesihhnfh
-    hrrgguvggrugdrohhrghdprhgtphhtthhopehtrhgrphgvgihithesshhprgifnhdrlhhi
-    nhhkpdhrtghpthhtohepuggrvhhiugdrlhgrihhghhhtrdhlihhnuhigsehgmhgrihhlrd
-    gtohhm
-X-ME-Proxy: <xmx:iTD1ZxywmtVD2Yw28OjqZ-XQ_lcbZqeSD4BBtlKFYB_a9vp5ATwXKA>
-    <xmx:iTD1Z0ToKctKC9p8g6Cl5mHk_CtKmWO92tbEIyl_jwV0Yxysh1Srbg>
-    <xmx:iTD1Z0aZG7-b2bxhK0aM2pl4boXRyxRTcFzlTACEf-MQofW6zz7LSg>
-    <xmx:iTD1Z1S4mp1cj5_ot_RZwVi5MHi2dCnNOqyymZBBEVV_Wn1AomD47A>
-    <xmx:izD1Z6aaMCKQflOtEHEHWlXxELXxF-apVqCmTWOJ_WODNzSIr0U1D-rT>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 8 Apr 2025 10:19:52 -0400 (EDT)
-Message-ID: <d42dec00-513c-49d4-b4f3-d7a6ae387a6b@fastmail.fm>
-Date: Tue, 8 Apr 2025 16:19:51 +0200
+	s=arc-20240116; t=1744122430; c=relaxed/simple;
+	bh=cVpTdGnP0KIUTbNGzea/9qqOn5Y4PbaMHe7VyHIYg/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qCJxyxitAfkAIyWW6bvMMlDd0Yb/npntwKHO7W3CamDT/s74L84DxJCxL0ckJexyxquSSsTM+Tb9hWqBoKNXDwQMjvtUrMiFHB6mUeUhNKE79wZnH+KzA0D2viTiuoZljV7y+hLymFauCyvJxeMpK3e1vHST4Q5BcDlgUYoYmq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JDEPcFNC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3A39C4CEE7;
+	Tue,  8 Apr 2025 14:27:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744122430;
+	bh=cVpTdGnP0KIUTbNGzea/9qqOn5Y4PbaMHe7VyHIYg/4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JDEPcFNCGxu0UwBMWVA5T0l0zhGFI5QwaNvwXop+VOWCS3TwUZoUt5SelfFO3Ax3h
+	 TESuvm1/iF/THATzLhtGzGqJzHL5EpHc1uNwW82Bb1dQCGkWmi6bFzVdbLGxatkDha
+	 mEmoGvSLi7jMDS9PrNBvObkMGg/6vVlI+zCKBYHpTqa9pr3wTmGPlex6TE3oIXNQUU
+	 xB52jUSYiI5hU/d2JvNRoSLZ+c2bInUjfJ6KHQKR7h+dgpUc91KesNlUydCFQgwrbE
+	 gfbbAJTw10wmY30lz3XKKy2XY5bXnOQ0DsgLZGssLJwyoCJwIUVGaSRqzCwiIjpDgl
+	 sCdjcLzuugh9A==
+Date: Tue, 8 Apr 2025 07:27:09 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: axboe@kernel.dk, dlemoal@kernel.org, linux-block@vger.kernel.org,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: Weird loop device behavior in 6.15-rc1?
+Message-ID: <20250408142709.GH6266@frogsfrogsfrogs>
+References: <20250407233007.GG6266@frogsfrogsfrogs>
+ <Z_TF0vYWljwlWxoY@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] fuse: Adjust readdir() buffer to requesting buffer
- size.
-To: Miklos Szeredi <miklos@szeredi.hu>, Jaco Kroon <jaco@uls.co.za>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- christophe.jaillet@wanadoo.fr, joannelkoong@gmail.com,
- rdunlap@infradead.org, trapexit@spawn.link, david.laight.linux@gmail.com
-References: <20250314221701.12509-1-jaco@uls.co.za>
- <20250401142831.25699-1-jaco@uls.co.za>
- <20250401142831.25699-3-jaco@uls.co.za>
- <CAJfpegtOGWz_r=7dbQiCh2wqjKh59BqzqJ0ruhtYtsYBB+GG2Q@mail.gmail.com>
- <19df312f-06a2-4e71-960a-32bc952b0ed2@uls.co.za>
- <CAJfpegseKMRLpu3-yS6PeU2aTmh_qKyAvJUWud_SLz1aCHY_tw@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJfpegseKMRLpu3-yS6PeU2aTmh_qKyAvJUWud_SLz1aCHY_tw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_TF0vYWljwlWxoY@infradead.org>
 
-
-
-On 4/1/25 17:33, Miklos Szeredi wrote:
-> On Tue, 1 Apr 2025 at 17:04, Jaco Kroon <jaco@uls.co.za> wrote:
+On Mon, Apr 07, 2025 at 11:44:34PM -0700, Christoph Hellwig wrote:
+> On Mon, Apr 07, 2025 at 04:30:07PM -0700, Darrick J. Wong wrote:
+> > Hey Christoph,
+> > 
+> > I have a ... weird test setup where loop devices have directio enabled
+> > unconditionally on a system with 4k-lba disks, and now that I pulled
+> > down 6.15-rc1, I see failures in xfs/259:
 > 
->> Because fuse_simple_request via fuse_args_pages (ap) via fuse_io_args
->> (ia) expects folios and changing that is more than what I'm capable off,
->> and has larger overall impact.
+> Hmm, this works just fine for with a 4k LBA size NVMe setup on -rc1
+> with latest xfsprogs and xfstests for-next.
+
+Yeah, fstests works fine with loop in buffered mode. :)
+
+I /think/ the (separate) problem is that prior to 6.15, the logican and
+physical blocksizes of the loop device would be set to 512b in
+direct-io=on mode.  Now it's set to either the STATX_DIOALIGN size or
+the underlying bdev's logical block size, which means 4k.  mkfs.xfs runs
+BLKSSZGET, compares that to the -b size= argument, and rejects when
+blocksize < loop device logical block size.
+
+I don't know if the loop device should behave more like 512e drives,
+where we advertise a (potentially slow) 512b LBA and a 4k physical block
+size?  Or just stick with the way things are right now because 512e mode
+sucks.  The first means I don't have to patch fstests here, the second
+means I'd have to adjust _create_loop to take a desired blocksize and
+try to set up the loopdev with that block size, even if it means
+dropping dio mode.
+
+> > Then trying to format an XFS filesystem fails:
 > 
-> Attaching a minimally tested patch.
+> That on the other hand I can reproduce locally.
+> 
+> > I think there's a bug in the loop driver where changing
+> > LO_FLAGS_DIRECT_IO doesn't actually try to change the O_DIRECT state of
+> > the underlying lo->lo_backing_file->f_flags.  So I can try to set a 2k
+> > block size on the loop dev, which turns off LO_FLAGS_DIRECT_IO but the
+> > fd is still open O_DIRECT so the writes fail.  But this isn't a
+> > regression in -rc1, so maybe this is the expected behavior?
+> 
+> This does look old, but also I would not call it expected.
+> 
+> > On 6.15-rc1, you actually /can/ change the sector size:
+> 
+> > But the backing file still has O_DIRECT on, so formatting fails:
+> 
+> Looks like the fact that fixing the silent failure to change the sector
+> size exposed the not clear O_DIRECT bug..
+> 
+> I'll cook up a patch to clear O_DIRECT.
 
-Just tested this and looks good to me. Could we change to
+Thanks!
 
--	size_t bufsize = 131072;
-+	size_t bufsize = fc->max_pages << PAGE_SHIFT;
+> > Thoughts?
+> > 
+> > --D
+> > 
+> > (/me notes that xfs/801 is failing across the board, and I don't know
+> > what changed about THPs in tmpfs but clearly something's corrupting
+> > memory.)
+> 
+> That one always failed for me because it uses a sysfs-dump tool that
+> simply doesn't seem to exist.
 
-?
+Ooops.  I meant to take that out before committing and left it in.
+Maybe I should just paste a stupid version into xfs/801:
 
-I'm testing with that in my branch, going to run xfstests over night.
+$ sysfs-dump /sys/block/sda/queue/
+/sys/block/sda/queue//add_random = 0
+/sys/block/sda/queue//chunk_sectors : 0
+/sys/block/sda/queue//dax : 0
+/sys/block/sda/queue//discard_granularity : 512
+/sys/block/sda/queue//discard_max_bytes = 0
+/sys/block/sda/queue//discard_max_hw_bytes : 0
+/sys/block/sda/queue//discard_zeroes_data : 0
+/sys/block/sda/queue//dma_alignment : 511
+<etc>
 
+Full version below.
 
-Reviewed-by: Bernd Schubert <bschubert@ddn.com>
+--D
 
+#!/bin/sh
 
-Thanks,
-Bernd
+# Dump a sysfs directory as a key: value stream.
+
+WANT_NEWLINE=
+
+print_help() {
+        echo "Usage: $0 [-n] files..."
+        exit 1
+}
+
+dump() {
+        test -f "$1" || return
+        SEP='?'
+        test -r "$1" && SEP=':'
+        stat -c '%A' "$1" | grep -q 'w' && SEP='='
+        if [ -n "${WANT_NEWLINE}" ]; then
+                echo "$1 ${SEP}"
+                cat "$1" 2> /dev/null
+        else
+                echo "$1 ${SEP} $(cat "$1" 2> /dev/null)"
+        fi
+}
+
+for i in "$@"; do
+        if [ "$i" = "--help" ]; then
+                print_help
+        fi
+        if [ "$i" = "-n" ]; then
+                WANT_NEWLINE=1
+        fi
+        if [ -d "$i" ]; then
+                for x in "$i/"*; do
+                        dump "$x"
+                done
+        else
+                dump "$i"
+        fi
+done
+
+exit 0
+
 
