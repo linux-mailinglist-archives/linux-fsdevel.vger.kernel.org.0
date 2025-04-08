@@ -1,85 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-46012-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC055A813CF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 19:36:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4095A8140F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 19:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 017487AD7CB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 17:35:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 606073BE367
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 17:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2441D23BD1C;
-	Tue,  8 Apr 2025 17:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631E523E25B;
+	Tue,  8 Apr 2025 17:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fg8mg9gE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r011JZJ1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E457236433
-	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Apr 2025 17:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D141A8407;
+	Tue,  8 Apr 2025 17:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744133805; cv=none; b=r0l1EceFluy20jZh8/jhf8ZcMVaibI/xEeBNnVp7CAV+OPMW2PPsql4bt54TutyK7E6jPFtAW2Vl27XWiZGOxi3QxfEEq4gfMCk6TYSQx4Zg5x8HEdeOCHpRq7pjvlt3nQeVmgHwpqStEynJhoJTdxIU8oef2UEKRbQDxSDC6sA=
+	t=1744134535; cv=none; b=BTNBpjPgLJYjNDtsnVUOnKRyDYoJA56y18i3K8HoZuB0fng6KtOOjxGK8T0DYSUrUkYNlpoERbHuJN8O0hz7Mbcr4Ls4JlTddcjPHSd0meUMd+JKvy/t8VsLkljHIv5proVmAYKF4kX96Q3rZJp2hCAR1x0tZUqBLgbfwV3kUFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744133805; c=relaxed/simple;
-	bh=e1v03qhoKHe5NlE/St2NS6gkQC+osDJD17p9pFuJSoo=;
+	s=arc-20240116; t=1744134535; c=relaxed/simple;
+	bh=TdcykO/mghNf7CApPAPiGbc4Ap+76aFjaQ1G0ZF/1Fw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QKxk40+a0X9dx9VknnLKXidrgCnB/BUHpMDJivYZ5Fl65/eh2U8CTi6n6z0sdBmS8+JnD4psbGaKgvbwJgGSm0mJ4lw5HGiBxzzM3Ty7rGkWbmaqiJx4BO6SIwei0MXtKQROUBSzpauwesvh+aVYFhaadHMmmcyNhaX0pwwEf20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fg8mg9gE; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 8 Apr 2025 13:36:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744133791;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YiTj+TYMMrnw1KVdV+/Tp51hNrHvFavfK7rU6JmuP/8=;
-	b=fg8mg9gEmWQ8T8G3GlTPaHrVH0lKp9cL+mxLgUqeAPE+fL3Mqw+vqjiPGr5eYr3VIGYaJd
-	awCFAWoL3gBEldkX/wLwKOR3bvK81dNYUTock/dTngzseMmnH96uiw72FZEaK6G+IIkvq7
-	50gtJzIvPVGm9GA1ogMfbS9gZ8Mzo7Y=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Phillip Lougher <phillip@squashfs.org.uk>
-Cc: Jan Kara <jack@suse.cz>, Andreas Gruenbacher <agruenba@redhat.com>, 
-	Namjae Jeon <linkinjeon@kernel.org>, Sungjong Seo <sj1557.seo@samsung.com>, 
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, Carlos Maiolino <cem@kernel.org>, 
-	"Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Luis Chamberlain <mcgrof@kernel.org>
-Subject: Re: Recent changes mean sb_min_blocksize() can now fail
-Message-ID: <z3tovmo2cxgkvesiyrrvhnd3nk2qgogt6553hyxrmmodoiptdh@4hahwdkhx7da>
-References: <86290c9b-ba40-4ebd-96c1-d3a258abe9d4@squashfs.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qAw8hynYVbvTZXKV9PJ5wuU2hzVTIHxiZMwBCJw/4MLPL8VL9I7+WLzUw6d49Vnkj7169IKJVI6B+mcaHdiWTzen2UO6iwmwMK6eHTqhqQ4hxqrFugRgHTCwtvGFau6diyEKc4GnJ6MEDS/ug1dtLJo4vD4MWpSPsyBmOFB3phM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r011JZJ1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90F30C4CEE5;
+	Tue,  8 Apr 2025 17:48:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744134535;
+	bh=TdcykO/mghNf7CApPAPiGbc4Ap+76aFjaQ1G0ZF/1Fw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r011JZJ1Bwu5Q3CTglhODEsz9xvCkNNFznG4hJq0zj2FGM9UvvS6i18OLvLwe9EIW
+	 wbciFnly4IhqfzgqcxVGhGbTXEPXWtX2tSZsbyJQCDrZj0lsAvc1ctVYf4zeFktpIZ
+	 3vZm/cpmUHcjicVH0gPjtT+TAKnAPx/IS2GpFhx4eiyBRRwaYtosGcFp+8vzy3Bw+N
+	 XTN8eS0glsG4Jmqi5/T5CorQajBJXZ0O9B3f/BZ4GGrHHd3u+4exvp31qgZ7FBuoU8
+	 kzzNFYOm4wswHtUy1uL8Clg7ln3OgJeic63egQay8Be9BmABHamxhE98z7PlVQxf2P
+	 JtSj3XxUtX+og==
+Date: Tue, 8 Apr 2025 10:48:55 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: David Bueso <dave@stgolabs.net>, Jan Kara <jack@suse.cz>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>, Tso Ted <tytso@mit.edu>,
+	Ritesh Harjani <ritesh.list@gmail.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Oliver Sang <oliver.sang@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Alistair Popple <apopple@nvidia.com>, linux-mm@kvack.org,
+	Christian Brauner <brauner@kernel.org>,
+	Hannes Reinecke <hare@suse.de>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, John Garry <john.g.garry@oracle.com>,
+	linux-block@vger.kernel.org, ltp@lists.linux.it,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Dave Chinner <david@fromorbit.com>, gost.dev@samsung.com,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [linux-next:master] [block/bdev] 3c20917120:
+ BUG:sleeping_function_called_from_invalid_context_at_mm/util.c
+Message-ID: <20250408174855.GI6307@frogsfrogsfrogs>
+References: <20250331074541.gK4N_A2Q@linutronix.de>
+ <20250408164307.GK6266@frogsfrogsfrogs>
+ <Z_VXpD-d8iC57dBc@bombadil.infradead.org>
+ <CAB=NE6X2QztC4OGnJwxRWdeCVEekLBcnFf7JcgV1pKDn6DqhcA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <86290c9b-ba40-4ebd-96c1-d3a258abe9d4@squashfs.org.uk>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAB=NE6X2QztC4OGnJwxRWdeCVEekLBcnFf7JcgV1pKDn6DqhcA@mail.gmail.com>
 
-On Tue, Apr 08, 2025 at 06:33:53AM +0100, Phillip Lougher wrote:
-> Hi,
+On Tue, Apr 08, 2025 at 10:24:40AM -0700, Luis Chamberlain wrote:
+> On Tue, Apr 8, 2025 at 10:06 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> > Fun
+> > puzzle for the community is figuring out *why* oh why did a large folio
+> > end up being used on buffer-heads for your use case *without* an LBS
+> > device (logical block size) being present, as I assume you didn't have
+> > one, ie say a nvme or virtio block device with logical block size  >
+> > PAGE_SIZE. The area in question would trigger on folio migration *only*
+> > if you are migrating large buffer-head folios. We only create those
 > 
-> A recent (post 6.14) change to the kernel means sb_min_blocksize() can now fail,
-> and any filesystem which doesn't check the result may behave unexpectedly as a
-> result.  This change has recently affected Squashfs, and checking the kernel code,
-> a number of other filesystems including isofs, gfs2, exfat, fat and xfs do not
-> check the result.  This is a courtesy email to warn others of this change.
-> 
-> The following emails give the relevant details.
-> 
-> https://lore.kernel.org/all/2a13ea1c-08df-4807-83d4-241831b7a2ec@squashfs.org.uk/
-> https://lore.kernel.org/all/129d4f39-6922-44e9-8b1c-6455ee564dda@squashfs.org.uk/
-> 
-> Regards
-> 
-> Phillip
+> To be clear, large folios for buffer-heads.
+> > if
+> > you have an LBS device and are leveraging the block device cache or a
+> > filesystem with buffer-heads with LBS (they don't exist yet other than
+> > the block device cache).
 
-this would be a good time to use __must_check
+My guess is that udev or something tries to read the disk label in
+response to some uevent (mkfs, mount, unmount, etc), which creates a
+large folio because min_order > 0, and attaches a buffer head.  There's
+a separate crash report that I'll cc you on.
+
+--D
 
