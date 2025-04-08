@@ -1,57 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-46025-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46027-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7286AA81797
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 23:29:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F131A818F5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 00:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 102553BE5A1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 21:28:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AF58177A23
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 22:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE4C2550B5;
-	Tue,  8 Apr 2025 21:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01FB2561DB;
+	Tue,  8 Apr 2025 22:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKTQVZnH"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="1eFAvur0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5820B15855E;
-	Tue,  8 Apr 2025 21:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EAE255E52
+	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Apr 2025 22:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744147716; cv=none; b=u7qViVa62b6B4Qwatw4z9IoZKQBCaiq+XZPBdIXOgeTmOd1cgIuPlWoVKZMnB6FW+P0uVjQk77slQ25xbeisYhaw0zGL6vo1jPZqKMU61i9K8SG/D31ix/+Iedg9Ex9qH/XeYtmOaxjqZxh9YvQr+6ftHPcTujAC9RK1OOWtJXM=
+	t=1744152435; cv=none; b=J64fZko+HTgHuIHZj+DUmUygc4mchkMQxGJxqI3A7yeo0sNsvywy051YB5b+F/Okerl5ztg8fgzz6VJqIaDoDXFVbNJn8o/UVHE7EGW/2WfeTZN0bDKCe46wJYETg7z9W+l4zoZpaqm2yv6L6vm59MVf7UibuE1bL4baxaKTtX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744147716; c=relaxed/simple;
-	bh=fUiuAdzgAvJkJyMAViYiCN4SfiPs4C8OlBeFxDAE6xw=;
+	s=arc-20240116; t=1744152435; c=relaxed/simple;
+	bh=Uy6csq/iZO0iF/avJnW6XXU0ZKj+Jg8iaWCbQWtkHLE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KqxoNAStPukIvzomU1HXV/Ze8djRGb947ZjsDDy717cbOEdC1QSrnlpeNLy2P8gv275gUJ2zSHwVvsOXyo3i80mZPcz9zE7nrnK9sjKlIrZi2O9qcwhi1ZdH8Tl717gdF8odNJ/LYxYh9WL2WSa3RjiuTqFwe32HxxXRYYWmoD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lKTQVZnH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7A0AC4CEE5;
-	Tue,  8 Apr 2025 21:28:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744147715;
-	bh=fUiuAdzgAvJkJyMAViYiCN4SfiPs4C8OlBeFxDAE6xw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lKTQVZnHmujoe68jhZqAMHRZL4V3fo6Xmm+t0Fr62vc5bYCLeeScd1Oxo0oN3Qej1
-	 GewP55rwrU3Rb1ZlMCzPl1RDr+sy4wJrJn551kWC7EdufuV4OpWd1Kw3MDarzo9Ugj
-	 rbBl7NHwdbhWuiT50z68cjggenkX+KlbzTRt/c0j4w8ihcI7L3rNJGLxq6acM/tFim
-	 9zccAeMw8ydrg3XdRcbRaRVY8dOEsB3f4tr+asrwadX5KI642jE9yZ90DhIyRCZ7wg
-	 qyxxNjXo/Rm7lU3HHTLdhGk44fQPRoFgdy9LyJdGSixIDp1TRUJ04zGIZtFLje6/Y1
-	 In0YrRJ2c0MJA==
-Date: Tue, 8 Apr 2025 14:28:35 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gwi8OSSLFZc+cfocaPOeTg/ZpL4eWWZ+TNH4GltcirSdKte2UrH0HGm5QkKjVy+VeBs0qXl/1A3gBAFqKkhRqpLO/Xjk9QfPawu/xF9CRVOH8YlySV/piV3hH4ucHNYUwF85v+57+x2RqYbIna1XJ/sRTQ94vEC7a0fg1J4O9XI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=1eFAvur0; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2295d78b433so61053645ad.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Apr 2025 15:47:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1744152432; x=1744757232; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o6NRZ+eIBvD2ygB/RFw901KQrONh8kxWwYZ7rUvs968=;
+        b=1eFAvur0uvXIdBCtJvaz6H8SigyTFohvXCKvsXpzWYHkGOZ/mnXG65nf+BeRcCFycZ
+         G4a9py3Qet1t+lh0XcWRCxwfrGwHMcs3x4Sm4gDmSBlP4SAV0/qtAWhoeH59+BWVpD5J
+         QtcSwdOUsByIuOFokVyODL2mqALqPzA6860MQnRmWE9+z29yatYP3uafpO5GFA0Budv6
+         bRV+ERyuhK6aYo6Yn0ojWEAEacmB35XWCE5j3JlXudPCsKtOPU4Jef+Fnttg0f7yO43b
+         fFvofDDv3vIiGQnDyfKl2YCKUwXxWU6JhFN90I6b+l1Pxb8NDpM24D6PvXuAg3G4Pr+7
+         2WeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744152432; x=1744757232;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o6NRZ+eIBvD2ygB/RFw901KQrONh8kxWwYZ7rUvs968=;
+        b=m2v1mUBmYs9Gbu2FmjRbwIvRR0EgbrbdVHrxwqAlwfbqDk03PikyXwYpVHE0HBOup2
+         HMAoFhS8vvrGlrMbJVQNJOPC2xovdiwiZpA13rPASMFEQ293UfNJYil1xd3qkiOQKIFM
+         xStGSppqTiVjlX4FPuQeplxNUBQP9hbrAzD3oF/ESNcF3Jg3vMW1/rMa9SjqQfBCiR6H
+         f5CerjCrpRstbh5S+DUjHXsjmZAkKY8eUjpDSz68cAbmXk7dYRyGqEbai3EMR2oxqkjc
+         SouBamPTwlYCAQjl+589d8F7Lb0vHdZ+xgQQpPDZhV3i2C2xzsVqce9N3cyRkBTA0xAl
+         lz/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXOus491Jgjg3J0bUoNSCgmwQ9fP23849AgTZVfwm5oALpqMDT8moPu1jZXrknOXvFBguD3a0Kb3m2djHfi@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzj0FAvaJ7j6Ddn3/ED6UvX8jIC7riQshbyH8mLOGRVKPRMuWIj
+	Z+bJGkqDWBnLWKGvamM+Li8GwayCOjIdqoyjnP1mhI10EfwISCGs/UZXihO40bQ=
+X-Gm-Gg: ASbGncsFQ3053YOmX+dqnexw173HXW8A/MudZD+pvwY4F6hugJw2lLm7YY2Ot1hA+fG
+	lmL1ioxPhMFqV9AHl7U/wEjSoOl/lJO2N05K3dDgDvnnqmmn1PM0Rfo25HGDLZE4chJ1xc662XB
+	ZNSAv6jOegQZZFCXYRAEwOIO4xhusB7/kvmOjfNKxm5JUySNuRK3YeAp1debNXDq17TpfHA4dvl
+	urhwoy0aygHf9L5ggOnoU7Xj2pGZk4TofgE7jhI1dey9vIhnOSoldrUbLBXPp21E/ofd9Jis8ha
+	ycyVanTt0Xwkt03rsj4GoizSXSTTFYT7brU0fkRxIYwR3b16XNFrSVIu0PzNi+6V8KRbEuLHjtq
+	zRJmDWoAnuwVwhu1hJcKwwLAuKFWE
+X-Google-Smtp-Source: AGHT+IGurDzqMih/v0exHbuE7Zr5SXTWizgQjwosdkoAtELLC7VfyDCiglM0XFRzA9ZoR+zeRWPrvw==
+X-Received: by 2002:a17:902:cecc:b0:223:4341:a994 with SMTP id d9443c01a7336-22ac3f34df7mr4238895ad.9.1744152432520;
+        Tue, 08 Apr 2025 15:47:12 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-60-96.pa.nsw.optusnet.com.au. [49.181.60.96])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2297866e2a0sm106697685ad.180.2025.04.08.15.47.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 15:47:11 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1u2Hin-00000006F62-0WE5;
+	Wed, 09 Apr 2025 08:47:09 +1000
+Date: Wed, 9 Apr 2025 08:47:09 +1000
+From: Dave Chinner <david@fromorbit.com>
 To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk, jack@suse.cz,
-	cem@kernel.org, linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
+Cc: brauner@kernel.org, djwong@kernel.org, hch@lst.de,
+	viro@zeniv.linux.org.uk, jack@suse.cz, cem@kernel.org,
+	linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
 	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
 	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
 	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
 	linux-block@vger.kernel.org, catherine.hoang@oracle.com
 Subject: Re: [PATCH v6 11/12] xfs: add xfs_compute_atomic_write_unit_max()
-Message-ID: <20250408212835.GH6283@frogsfrogsfrogs>
+Message-ID: <Z_WnbfRhKR6RQsSA@dread.disaster.area>
 References: <20250408104209.1852036-1-john.g.garry@oracle.com>
  <20250408104209.1852036-12-john.g.garry@oracle.com>
 Precedence: bulk
@@ -70,105 +106,20 @@ On Tue, Apr 08, 2025 at 10:42:08AM +0000, John Garry wrote:
 > 
 > The limit of a CoW-based atomic write will be the limit of the number of
 > logitems which can fit into a single transaction.
-> 
-> In addition, the max atomic write size needs to be aligned to the agsize.
-> Limit the size of atomic writes to the greatest power-of-two factor of the
-> agsize so that allocations for an atomic write will always be aligned
-> compatibly with the alignment requirements of the storage.
-> 
-> rtvol is not commonly used, so it is not very important to support large
-> atomic writes there initially.
-> 
-> Furthermore, adding large atomic writes for rtvol would be complicated due
-> to alignment already offered by rtextsize and also the limitation of
-> reflink support only be possible for rtextsize is a power-of-2.
-> 
-> Function xfs_atomic_write_logitems() is added to find the limit the number
-> of log items which can fit in a single transaction.
-> 
-> Darrick Wong contributed the changes in xfs_atomic_write_logitems()
-> originally, but may now be outdated by [0].
-> 
-> [0] https://lore.kernel.org/linux-xfs/20250406172227.GC6307@frogsfrogsfrogs/
-> 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->  fs/xfs/xfs_mount.c | 36 ++++++++++++++++++++++++++++++++++++
->  fs/xfs/xfs_mount.h |  5 +++++
->  fs/xfs/xfs_super.c | 22 ++++++++++++++++++++++
->  fs/xfs/xfs_super.h |  1 +
->  4 files changed, 64 insertions(+)
-> 
-> diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-> index 00b53f479ece..27a737202637 100644
-> --- a/fs/xfs/xfs_mount.c
-> +++ b/fs/xfs/xfs_mount.c
-> @@ -666,6 +666,37 @@ xfs_agbtree_compute_maxlevels(
->  	mp->m_agbtree_maxlevels = max(levels, mp->m_refc_maxlevels);
->  }
->  
-> +static inline void
-> +xfs_compute_atomic_write_unit_max(
-> +	struct xfs_mount	*mp)
-> +{
-> +	xfs_agblock_t		agsize = mp->m_sb.sb_agblocks;
-> +	unsigned int		max_extents_logitems;
-> +	unsigned int		max_agsize;
-> +
-> +	if (!xfs_has_reflink(mp)) {
-> +		mp->m_atomic_write_unit_max = 1;
-> +		return;
-> +	}
-> +
-> +	/*
-> +	 * Find limit according to logitems.
-> +	 */
-> +	max_extents_logitems = xfs_atomic_write_logitems(mp);
-> +
-> +	/*
-> +	 * Also limit the size of atomic writes to the greatest power-of-two
-> +	 * factor of the agsize so that allocations for an atomic write will
-> +	 * always be aligned compatibly with the alignment requirements of the
-> +	 * storage.
-> +	 * The greatest power-of-two is the value according to the lowest bit
-> +	 * set.
-> +	 */
-> +	max_agsize = 1 << (ffs(agsize) - 1);
-> +
-> +	mp->m_atomic_write_unit_max = min(max_extents_logitems, max_agsize);
-> +}
-> +
->  /* Compute maximum possible height for realtime btree types for this fs. */
->  static inline void
->  xfs_rtbtree_compute_maxlevels(
-> @@ -842,6 +873,11 @@ xfs_mountfs(
->  	 */
->  	xfs_trans_init(mp);
->  
-> +	/*
-> +	 * Pre-calculate atomic write unit max.
-> +	 */
-> +	xfs_compute_atomic_write_unit_max(mp);
-> +
->  	/*
->  	 * Allocate and initialize the per-ag data.
->  	 */
-> diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-> index 799b84220ebb..4462bffbf0ff 100644
-> --- a/fs/xfs/xfs_mount.h
-> +++ b/fs/xfs/xfs_mount.h
-> @@ -230,6 +230,11 @@ typedef struct xfs_mount {
->  	bool			m_update_sb;	/* sb needs update in mount */
->  	unsigned int		m_max_open_zones;
->  
-> +	/*
-> +	 * data device max atomic write.
-> +	 */
-> +	xfs_extlen_t		m_atomic_write_unit_max;
-> +
->  	/*
->  	 * Bitsets of per-fs metadata that have been checked and/or are sick.
->  	 * Callers must hold m_sb_lock to access these two fields.
+
+I still think this is the wrong way to define the maximum
+size of a COW-based atomic write because it is going to change from
+filesystem to filesystem and that variability in supported maximum
+length will be exposed to userspace...
+
+i.e. Maximum supported atomic write size really should be defined as
+a well documented fixed size (e.g. 16MB). Then the transaction
+reservations sizes needed to perform that conversion can be
+calculated directly from that maximum size and optimised directly
+for the conversion operation that atomic writes need to perform.
+
+.....
+
 > diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
 > index b2dd0c0bf509..42b2b7540507 100644
 > --- a/fs/xfs/xfs_super.c
@@ -185,19 +136,6 @@ On Tue, Apr 08, 2025 at 10:42:08AM +0000, John Garry wrote:
 > +	unsigned int		rui = xfs_rui_item_overhead(1);
 > +	unsigned int		cui = xfs_cui_item_overhead(1);
 > +	unsigned int		bui = xfs_bui_item_overhead(1);
-
-Intent items can be relogged during a transaction roll, so you need to
-add the done item overhead too, e.g.
-
-	const unsigned int	efi = xfs_efi_item_overhead(1) +
-				      xfs_efd_item_overhead(1);
-	const unsigned int	rui = xfs_rui_item_overhead(1) +
-				      xfs_rud_item_overhead();
-	const unsigned int	cui = xfs_cui_item_overhead(1) +
-				      xfs_cud_item_overhead();
-	const unsigned int	bui = xfs_bui_item_overhead(1) +
-				      xfs_bud_item_overhead();
-
 > +	unsigned int		logres = M_RES(mp)->tr_write.tr_logres;
 > +
 > +	/*
@@ -208,122 +146,35 @@ add the done item overhead too, e.g.
 > +	unsigned int		atomic_logitems =
 > +		(bui + cui + rui + efi) + (cui + rui) + (bui + rui);
 
-You still have to leave enough space to finish at least one step of the
-intent types that can be attached to the untorn cow ioend.  Assuming
-that you have functions to compute the reservation needed to finish one
-step of each of the four intent item types, the worst case reservation
-to finish one item is:
+This seems wrong. Unmap from the data fork only logs a (bui + cui)
+pair, we don't log a RUI or an EFI until the transaction that
+processes the BUI or CUI actually frees an extent from the the BMBT
+or removes a block from the refcount btree.
 
-	/* Overhead to finish one step of each intent item type */
-	const unsigned int	f1 = xfs_calc_finish_efi_reservation(mp, 1);
-	const unsigned int	f2 = xfs_calc_finish_rui_reservation(mp, 1);
-	const unsigned int	f3 = xfs_calc_finish_cui_reservation(mp, 1);
-	const unsigned int	f4 = xfs_calc_finish_bui_reservation(mp, 1);
+We also need to be able to relog all the intents and everything that
+was modified, so we effectively have at least one
+xfs_allocfree_block_count() reservation needed here as well. Even
+finishing an invalidation BUI can result in BMBT block allocation
+occurring if the operation splits an existing extent record and the
+insert of the new record causes a BMBT block split....
 
-	/* We only finish one item per transaction in a chain */
-	const unsigned int	step_size = max(f4, max3(f1, f2, f3));
-
-So the worst case limit on the number of loops through
-xfs_reflink_remap_extent is:
-
-	return rounddown_pow_of_two((logres - step_size) /
-			atomic_logitems);
-
-and that's the maximum software untorn write unit.  On my system that
-gets you 128 blocks, but YMMY.  Those xfs_calc_finish_*_reservation
-helpers look something like this:
-
-/*
- * Finishing an EFI can free the blocks and bmap blocks (t2):
- *    the agf for each of the ags: nr * sector size
- *    the agfl for each of the ags: nr * sector size
- *    the super block to reflect the freed blocks: sector size
- *    worst case split in allocation btrees per extent assuming nr extents:
- *		nr exts * 2 trees * (2 * max depth - 1) * block size
- */
-inline unsigned int
-xfs_calc_finish_efi_reservation(
-	struct xfs_mount	*mp,
-	unsigned int		nr)
-{
-	return xfs_calc_buf_res((2 * nr) + 1, mp->m_sb.sb_sectsize) +
-	       xfs_calc_buf_res(xfs_allocfree_block_count(mp, nr),
-			       mp->m_sb.sb_blocksize);
-}
-
-/*
- * Finishing an RUI is the same as an EFI.  We can split the rmap btree twice
- * on each end of the record, and that can cause the AGFL to be refilled or
- * emptied out.
- */
-inline unsigned int
-xfs_calc_finish_rui_reservation(
-	struct xfs_mount	*mp,
-	unsigned int		nr)
-{
-	if (!xfs_has_rmapbt(mp))
-		return 0;
-	return xfs_calc_finish_efi_reservation(mp, nr);
-}
-
-/*
- * In finishing a BUI, we can modify:
- *    the inode being truncated: inode size
- *    dquots
- *    the inode's bmap btree: (max depth + 1) * block size
- */
-inline unsigned int
-xfs_calc_finish_bui_reservation(
-	struct xfs_mount	*mp,
-	unsigned int		nr)
-{
-	return xfs_calc_inode_res(mp, 1) + XFS_DQUOT_LOGRES +
-	       xfs_calc_buf_res(XFS_BM_MAXLEVELS(mp, XFS_DATA_FORK) + 1,
-			       mp->m_sb.sb_blocksize);
-}
-
-
-/*
- * Finishing a data device refcount updates (t1):
- *    the agfs of the ags containing the blocks: nr_ops * sector size
- *    the refcount btrees: nr_ops * 1 trees * (2 * max depth - 1) * block size
- */
-inline unsigned int
-xfs_calc_finish_cui_reservation(
-	struct xfs_mount	*mp,
-	unsigned int		nr_ops)
-{
-	if (!xfs_has_reflink(mp))
-		return 0;
-
-	return xfs_calc_buf_res(nr_ops, mp->m_sb.sb_sectsize) +
-	       xfs_calc_buf_res(xfs_refcountbt_block_count(mp, nr_ops),
-			       mp->m_sb.sb_blocksize);
-}
-
---D
 
 > +
 > +	/* atomic write limits are always a power-of-2 */
 > +	return rounddown_pow_of_two(logres / (2 * atomic_logitems));
+
+What is the magic 2 in that division?
+
 > +}
-> +
->  STATIC void
->  xfs_destroy_mount_workqueues(
->  	struct xfs_mount	*mp)
-> diff --git a/fs/xfs/xfs_super.h b/fs/xfs/xfs_super.h
-> index c0e85c1e42f2..e0f82be9093a 100644
-> --- a/fs/xfs/xfs_super.h
-> +++ b/fs/xfs/xfs_super.h
-> @@ -100,5 +100,6 @@ extern struct workqueue_struct *xfs_discard_wq;
->  #define XFS_M(sb)		((struct xfs_mount *)((sb)->s_fs_info))
->  
->  struct dentry *xfs_debugfs_mkdir(const char *name, struct dentry *parent);
-> +unsigned int xfs_atomic_write_logitems(struct xfs_mount *mp);
->  
->  #endif	/* __XFS_SUPER_H__ */
-> -- 
-> 2.31.1
-> 
-> 
+
+Also this function does not belong in xfs_super.c - that file is for
+interfacing with the VFS layer.  Calculating log reservation
+constants at mount time is done in xfs_trans_resv.c - I suspect most
+of the code in this patch should probably be moved there and run
+from xfs_trans_resv_calc()...
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
