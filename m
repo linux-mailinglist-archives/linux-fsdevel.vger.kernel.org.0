@@ -1,158 +1,805 @@
-Return-Path: <linux-fsdevel+bounces-45999-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46000-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D1BA810A8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 17:51:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E6FA810B7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 17:53:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A1F01BC24EF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 15:46:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84B5E1891495
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 15:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4014422C325;
-	Tue,  8 Apr 2025 15:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB9C23236A;
+	Tue,  8 Apr 2025 15:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="k+7maSEj"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gpjZfva9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22FC227EBD;
-	Tue,  8 Apr 2025 15:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4FB22DFA3
+	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Apr 2025 15:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744127031; cv=none; b=SzIvzJeibbKs9RR26cgncFAVUuf6h5BKnHvQxBRuUj/jbz8pq2Hxlwnu6706y5Ean9AQ7zpKE4pimMjiGvKWfxIJFYfu0YbHibJBRs3Kl+zMzP/pmSSN8158TD4bSYn+VBz7PsWMztmsAiPLsMrlgRDrX/7FPCwNXChNnjR1eq8=
+	t=1744127118; cv=none; b=eJxKdFvaMRPQL6obkaYT5c4BKxmFAJ+vS2VdC9/3zyGpB/+KebUqQkwyI4XChThlDNhNB0Fj2G9hr+Yg5F/JeMxbJEkgPB97BPcRA6WHEyiVEJI9JzgRv5wwfAz6qAllxMD4kDj0Qt+oY3eZxbAL/Nicv+4gtAjMPAoY3KyDyZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744127031; c=relaxed/simple;
-	bh=AcZ2C2C0XSsI/v3cxrk8dyMTMg0f8C5NNc5fj7GMS4M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Led0jL6JIPNlNnei/OYh7HzB2/jVJDP4puFlWsn1oNO8glc59xW3khOi5gP4T6S12+yLZ24aFPM2lakt8Trkgj8tDMe6Eke/mHnZHUMwo/vLN/jl5faGqm6e9yky9KFJEfy64GPJaQb9WUpOwvErWzvFpDY/H7EYpI8XIzUWkcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=k+7maSEj; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1744127027;
-	bh=AcZ2C2C0XSsI/v3cxrk8dyMTMg0f8C5NNc5fj7GMS4M=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=k+7maSEjS9+ilPeovK3jo8yREr7sXYgUuBp4SFLqfbUH3wVQOjDGEHYgK66MGMkp4
-	 Na87tJwN4hXyeDKN/A7TOwvK2fZioGLo+4egUTqHyP/lhSTF49EKayMn+CIEor0x99
-	 CS7WlwSfWRVg6zWf5zx/T+PLo6bAhwU+78hNDiqE=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 25D691C0033;
-	Tue, 08 Apr 2025 11:43:47 -0400 (EDT)
-Message-ID: <2d698820ebd2e82abe8551425d82e9c387aefd66.camel@HansenPartnership.com>
-Subject: Re: [PATCH 0/6] power: wire-up filesystem freeze/thaw with
- suspend/resume
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, rafael@kernel.org, Ard
- Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org,
- linux-kernel@vger.kernel.org, mcgrof@kernel.org,  hch@infradead.org,
- david@fromorbit.com, djwong@kernel.org, pavel@kernel.org, 
- peterz@infradead.org, mingo@redhat.com, will@kernel.org,
- boqun.feng@gmail.com
-Date: Tue, 08 Apr 2025 11:43:46 -0400
-In-Reply-To: <20250402-radstand-neufahrzeuge-198b40c2d073@brauner>
-References: <20250331-work-freeze-v1-0-6dfbe8253b9f@kernel.org>
-	 <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
-	 <ddee7c1ce2d1ff1a8ced6e9b6ac707250f70e68b.camel@HansenPartnership.com>
-	 <20250402-radstand-neufahrzeuge-198b40c2d073@brauner>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1744127118; c=relaxed/simple;
+	bh=gWY4qYVuXQYpPu6DnRt5fyW/q+BaOUkelmZHAk9QMdY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aynhqTetbquZZp+huV+UAJ9yn9FHahvRhvVkZrfTv8ccKO25CuElM41VnKGPcR/w3qSNlea2P9P1Fi3cPaD+ksKIvvhr3Yzt9ey/V2xTMEE5G2mzSgpooh22/ZVhcKfNA8piyqhgKU+GcSbA7YihQJHKe0u/NAqsQGWeBsZe0c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gpjZfva9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744127114;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=IrZXw4h7RzYFuAaDUglqcvWIlh71sQKcQYaM+0JCMGE=;
+	b=gpjZfva9x1eunVOAlYMiQGLZGUvgcc+XAnteLE7U+cBG6ZAJwKveQa2SWyx/Qjkz70nLoM
+	EUwJpiRM+PN63URWGgJs/7kXUVcfIrNxZBgaQnJdMSwygEdk99TgfrJzEzGz/cdvhvr7ya
+	ReZufWMB041N2iVlEh6FTv3PG0EU6GI=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-111--F8IlXz1M4evSfYBcdK8vQ-1; Tue, 08 Apr 2025 11:45:13 -0400
+X-MC-Unique: -F8IlXz1M4evSfYBcdK8vQ-1
+X-Mimecast-MFC-AGG-ID: -F8IlXz1M4evSfYBcdK8vQ_1744127112
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-ab68fbe53a4so815831966b.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Apr 2025 08:45:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744127112; x=1744731912;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IrZXw4h7RzYFuAaDUglqcvWIlh71sQKcQYaM+0JCMGE=;
+        b=sEWHERGpx4PuTB8nupthk4Tm8za/spERNuUfIMM8ZlF8ez36UVmlCavq33t2oe1Pr1
+         cpY2enLi4fz5V5jMnGoQfrdCmoNKTC1FRSz6D5sKhVd/z88wTqM+3hQCjFaq/oo81S9t
+         zqTjZeWJclB+oMmfYju+3uAUHddRCmweIKAHO+xbG9ni25eakuNnAtXSKWfZBf+H90sC
+         RvhuQGBigukhVTGg8fHgunniFSkrTh9HEgjpwi+rsjWq/AKPiJ6mx5GKo2TchQYKmkZa
+         StjVoobFZBqMYgyMLOrIRQUvVPYjuWD5YwA7fyYoXP9WHWOghEqG4Pr/pXnqGFLODQQt
+         SKlg==
+X-Forwarded-Encrypted: i=1; AJvYcCXps/xsCf0kzGy65SDys7MvyjnWpj5+ZgGBTwA7nMzgOhH//xJ9DGE0Jaco4wKXnLSqmc6+/6y3pzGJykkw@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+3zRwEkR8+3lUS+pSKZvweQvBSVz7k5POOoN1cK0z6vkcU1j5
+	CKhdDKNTUPaP8pMow6Z98K5vmkylxCwcnP3yaJ5gFfvHNNVC/2J35iekmEgakuFBJzlwtyYyZfE
+	oorovWWOiH+e/EHjKOjabsk/oWmS0AzLKZc1bINa31gCXFSqdHCEMV/prQp/8ERc=
+X-Gm-Gg: ASbGnctqWheuQmT2KtPL6TQrAFwUBVdbrA32v53+c9HpHC5U50EEJcP0lYyhKyhK+PP
+	6zq2ZxHxwLlvKXL+uIzXc2vM3PLM0NzhoD8w7t5FEMteNWD8cIiRQ4C17WS6+WqIZu7XE3j6lHw
+	kSA7WfO1ZSZYfHrbI8w65ci+6dxOERsVnauzPmXbYWABrAEV4pia0hDGxS5IgHA4g+7uLqHoWKl
+	cnnKT1foEMtqdp5mZs5KeJ+DLqrq8Z3NCNBmCqOyuV0TJcyCBw96DaZoQJUsk+bczMB7zA+kNBx
+	zVimFN9v2drmVxlhz8cSpyoYwo42eOPRZBo+Lzh3wXnQVt33SAjVQ/PDxDwtc1qHjrG4r9UQ
+X-Received: by 2002:a17:906:d269:b0:ac7:971b:ffd with SMTP id a640c23a62f3a-ac7d185cf4cmr1668860066b.10.1744127111469;
+        Tue, 08 Apr 2025 08:45:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGDc6EzCTSkM9P/vQ+vGwy/jjsGfTUHUm6bbSMoWasW+rQPa2zAsD/FTj4XJmfMvcIznGslTQ==
+X-Received: by 2002:a17:906:d269:b0:ac7:971b:ffd with SMTP id a640c23a62f3a-ac7d185cf4cmr1668856666b.10.1744127110932;
+        Tue, 08 Apr 2025 08:45:10 -0700 (PDT)
+Received: from maszat.piliscsaba.szeredi.hu (193-226-212-63.pool.digikabel.hu. [193.226.212.63])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7c01c20f1sm949630666b.177.2025.04.08.08.45.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 08:45:10 -0700 (PDT)
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: fstests@vger.kernel.org
+Cc: linux-unionfs@vger.kernel.org,
+	Amir Goldstein <amir73il@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	Giuseppe Scrivano <gscrivan@redhat.com>,
+	Alexander Larsson <alexl@redhat.com>
+Subject: [PATCH] overlay/08[89]: add tests for data-only redirect with userxattr
+Date: Tue,  8 Apr 2025 17:45:09 +0200
+Message-ID: <20250408154509.674118-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2025-04-02 at 09:46 +0200, Christian Brauner wrote:
-> On Tue, Apr 01, 2025 at 01:02:07PM -0400, James Bottomley wrote:
-> > On Tue, 2025-04-01 at 02:32 +0200, Christian Brauner wrote:
-> > > The whole shebang can also be found at:
-> > > https://web.git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?=
-h=3Dwork.freeze
-> > >=20
-> > > I know nothing about power or hibernation. I've tested it as best
-> > > as I could. Works for me (TM).
-> >=20
-> > I'm testing the latest you have in work.freeze and it doesn't
-> > currently work for me.=C2=A0 Patch 7b315c39b67d ("power: freeze
-> > filesystems during suspend/resume") doesn't set
-> > filesystems_freeze_ptr so it ends up being NULL and tripping over
-> > this check=20
->=20
-> I haven't pushed the new version there. Sorry about that. I only have
-> it locally.
->=20
-> >=20
-> > +static inline bool may_unfreeze(struct super_block *sb, enum
-> > freeze_holder who,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const void *freeze_owner)
-> > +{
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 WARN_ON_ONCE((who & ~FREEZE_FLAGS=
-));
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 WARN_ON_ONCE(hweight32(who & FREE=
-ZE_HOLDERS) > 1);
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (who & FREEZE_EXCL) {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 if (WARN_ON_ONCE(sb->s_writers.freeze_owner =3D=3D
-> > NULL))
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return fals=
-e;
-> >=20
-> >=20
-> > in f15a9ae05a71 ("fs: add owner of freeze/thaw") and failing to
-> > resume from hibernate.=C2=A0 Setting it to __builtin_return_address(0)
-> > in filesystems_freeze() makes everything work as expected, so
-> > that's what I'm testing now.
->=20
-> +1
->=20
-> I'll send the final version out in a bit.
+New kernel feature (target release is v6.16) allows data-only redirect to
+be enabled without metacopy and redirect_dir turned on.  This works with or
+without verity enabled.
 
-I've now done some extensive testing on loop nested filesystems with
-fio load on the upper. I've tried xfs on ext4 and ext4 on ext4.
-Hibernate/Resume has currently worked on these without a hitch (and the
-fio load burps a bit but then starts running at full speed within a few
-seconds). What I'm doing is a single round of hibernate/resume followed
-by a reboot. I'm relying on the fschecks to detect any filesystem
-corruption. I've also tried doing a couple of fresh starts of the
-hibernated image to check that we did correctly freeze the filesystems.
+Tests are done with the userxattr option, to verify that it will work in a
+user namespace.
 
-The problems I've noticed are:
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ common/overlay        |  29 +++++
+ tests/overlay/088     | 296 ++++++++++++++++++++++++++++++++++++++++++
+ tests/overlay/088.out |  39 ++++++
+ tests/overlay/089     | 272 ++++++++++++++++++++++++++++++++++++++
+ tests/overlay/089.out |   5 +
+ 5 files changed, 641 insertions(+)
+ create mode 100755 tests/overlay/088
+ create mode 100644 tests/overlay/088.out
+ create mode 100755 tests/overlay/089
+ create mode 100644 tests/overlay/089.out
 
-   1. I'm using 9p to push host directories throught and that
-      completely hangs after a resume. This is expected because the
-      virtio server is out of sync, but it does indicate a need to
-      address Jeff's question of what we should be doing for network
-      filesystems (and is also the reason I have to reboot after
-      resuming).
-   2. Top doesn't show any CPU activity after resume even though fio is
-      definitely running. =C2=A0This seems to be a suspend issue and
-      unrelated to filesystems, but I'll continue investigating.
-
-Regards,
-
-James
+diff --git a/common/overlay b/common/overlay
+index 01b6622f5573..a6d37a933e6b 100644
+--- a/common/overlay
++++ b/common/overlay
+@@ -268,6 +268,22 @@ _require_scratch_overlay_lowerdir_add_layers()
+ 	_scratch_unmount
+ }
+ 
++# Check kernel support for datadir+=<datadir> without "metacopy=on" option
++_require_scratch_overlay_datadir_without_metacopy()
++{
++	local lowerdir="$OVL_BASE_SCRATCH_MNT/$OVL_UPPER"
++	local datadir="$OVL_BASE_SCRATCH_MNT/$OVL_LOWER"
++
++	_scratch_mkfs > /dev/null 2>&1
++	_overlay_scratch_mount_opts \
++		-o"lowerdir+=$lowerdir,datadir+=$datadir" > /dev/null 2>&1 || \
++	        _notrun "overlay datadir+ without metacopy not supported on ${SCRATCH_DEV}"
++
++	_scratch_unmount
++
++}
++
++
+ # Helper function to check underlying dirs of overlay filesystem
+ _overlay_fsck_dirs()
+ {
+@@ -467,6 +483,19 @@ _require_unionmount_testsuite()
+ 		_notrun "newer version of unionmount testsuite required to support OVERLAY_MOUNT_OPTIONS."
+ }
+ 
++# transform overlay xattrs (trusted.overlay -> user.overlay)
++_overlay_trusted_to_user()
++{
++	local dir=$1
++
++	for file in `find $dir`; do
++		_getfattr --absolute-names -d -m '^trusted.overlay.(redirect|metacopy)$' $file  | sed 's/^trusted/user/' | setfattr --restore=-
++		for xattr in `_getfattr --absolute-names -d -m '^trusted.overlay.' $file  | tail -n +2 | cut -d= -f1`; do
++			setfattr -x $xattr $file;
++		done
++	done
++}
++
+ _unionmount_testsuite_run()
+ {
+ 	[ "$FSTYP" = overlay ] || \
+diff --git a/tests/overlay/088 b/tests/overlay/088
+new file mode 100755
+index 000000000000..05944e71b3d5
+--- /dev/null
++++ b/tests/overlay/088
+@@ -0,0 +1,296 @@
++#! /bin/bash
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
++# Copyright (C) 2023 CTERA Networks. All Rights Reserved.
++#
++# FS QA Test No. 088
++#
++# Test data-only layers functionality.
++# This is a variant of test overlay/085 with userxattr and without
++# redirect_dir/metacopy options
++#
++. ./common/preamble
++_begin_fstest auto quick metacopy redirect prealloc
++
++# Import common functions.
++. ./common/filter
++. ./common/attr
++
++# We use non-default scratch underlying overlay dirs, we need to check
++# them explicity after test.
++_require_scratch_nocheck
++_require_scratch_overlay_features redirect_dir metacopy
++_require_scratch_overlay_lowerdir_add_layers
++_require_scratch_overlay_datadir_without_metacopy
++_require_xfs_io_command "falloc"
++
++# remove all files from previous tests
++_scratch_mkfs
++
++# File size on lower
++dataname="datafile"
++sharedname="shared"
++datacontent="data"
++dataname2="datafile2"
++datacontent2="data2"
++datasize="4096"
++
++# Number of blocks allocated by filesystem on lower. Will be queried later.
++datarblocks=""
++datarblocksize=""
++estimated_datablocks=""
++
++udirname="pureupper"
++ufile="upperfile"
++
++
++# Check redirect xattr
++check_redirect()
++{
++	local target=$1
++	local expect=$2
++
++	value=$(_getfattr --absolute-names --only-values -n \
++		user.overlay.redirect $target)
++
++	[[ "$value" == "$expect" ]] || echo "Redirect xattr incorrect. Expected=\"$expect\", actual=\"$value\""
++}
++
++# Check size
++check_file_size()
++{
++	local target=$1 expected_size=$2 actual_size
++
++	actual_size=$(_get_filesize $target)
++
++	[ "$actual_size" == "$expected_size" ] || echo "Expected file size $expected_size but actual size is $actual_size"
++}
++
++check_file_blocks()
++{
++	local target=$1 expected_blocks=$2 nr_blocks
++
++	nr_blocks=$(stat -c "%b" $target)
++
++	[ "$nr_blocks" == "$expected_blocks" ] || echo "Expected $expected_blocks blocks but actual number of blocks is ${nr_blocks}."
++}
++
++check_file_contents()
++{
++	local target=$1 expected=$2
++	local actual target_f
++
++	target_f=`echo $target | _filter_scratch`
++
++	read actual<$target
++
++	[ "$actual" == "$expected" ] || echo "Expected file $target_f contents to be \"$expected\" but actual contents are \"$actual\""
++}
++
++check_no_file_contents()
++{
++	local target=$1
++	local actual target_f out_f
++
++	target_f=`echo $target | _filter_scratch`
++	out_f=`cat $target 2>&1 | _filter_scratch`
++	msg="cat: $target_f: No such file or directory"
++
++	[ "$out_f" == "$msg" ] && return
++
++	echo "$target_f unexpectedly has content"
++}
++
++
++check_file_size_contents()
++{
++	local target=$1 expected_size=$2 expected_content=$3
++
++	check_file_size $target $expected_size
++	check_file_contents $target $expected_content
++}
++
++mount_overlay()
++{
++	local _lowerdir=$1 _datadir2=$2 _datadir=$3
++
++	_overlay_scratch_mount_opts \
++		-o"lowerdir+=$_lowerdir,datadir+=$_datadir2,datadir+=$_datadir" \
++		-o"upperdir=$upperdir,workdir=$workdir" \
++		-o userxattr
++}
++
++mount_ro_overlay()
++{
++	local _lowerdir=$1 _datadir2=$2 _datadir=$3
++
++	_overlay_scratch_mount_opts \
++		-o"lowerdir+=$_lowerdir,datadir+=$_datadir2,datadir+=$_datadir" \
++		-o userxattr
++}
++
++umount_overlay()
++{
++	$UMOUNT_PROG $SCRATCH_MNT
++}
++
++test_no_access()
++{
++	local _target=$1
++
++	mount_ro_overlay "$lowerdir" "$datadir2" "$datadir"
++
++	stat $SCRATCH_MNT/$_target >> $seqres.full 2>&1 || \
++		echo "No access to lowerdata layer $_target"
++
++	echo "Unmount and Mount rw"
++	umount_overlay
++	mount_overlay "$lowerdir" "$datadir2" "$datadir"
++	stat $SCRATCH_MNT/$_target >> $seqres.full 2>&1 || \
++		echo "No access to lowerdata layer $_target"
++	umount_overlay
++}
++
++test_common()
++{
++	local _lowerdir=$1 _datadir2=$2 _datadir=$3
++	local _target=$4 _size=$5 _blocks=$6 _data="$7"
++	local _redirect=$8
++
++	echo "Mount ro"
++	mount_ro_overlay $_lowerdir $_datadir2 $_datadir
++
++	# Check redirect xattr to lowerdata
++	[ -n "$_redirect" ] && check_redirect $lowerdir/$_target "$_redirect"
++
++	echo "check properties of metadata copied up file $_target"
++	check_file_size_contents $SCRATCH_MNT/$_target $_size "$_data"
++	check_file_blocks $SCRATCH_MNT/$_target $_blocks
++
++	# Do a mount cycle and check size and contents again.
++	echo "Unmount and Mount rw"
++	umount_overlay
++	mount_overlay $_lowerdir $_datadir2 $_datadir
++	echo "check properties of metadata copied up file $_target"
++	check_file_size_contents $SCRATCH_MNT/$_target $_size "$_data"
++	check_file_blocks $SCRATCH_MNT/$_target $_blocks
++
++	# Trigger metadata copy up and check absence of metacopy xattr.
++	chmod 400 $SCRATCH_MNT/$_target
++	umount_overlay
++	check_file_size_contents $upperdir/$_target $_size "$_data"
++}
++
++test_lazy()
++{
++	local _target=$1
++
++	mount_overlay "$lowerdir" "$datadir2" "$datadir"
++
++	# Metadata should be valid
++	check_file_size $SCRATCH_MNT/$_target $datasize
++	check_file_blocks $SCRATCH_MNT/$_target $estimated_datablocks
++
++	# But have no content
++	check_no_file_contents $SCRATCH_MNT/$_target
++
++	umount_overlay
++}
++
++create_basic_files()
++{
++	_scratch_mkfs
++	mkdir -p $datadir/subdir $datadir2/subdir $lowerdir $lowerdir2 $upperdir $workdir $workdir2
++	mkdir -p $upperdir/$udirname
++	echo "$datacontent" > $datadir/$dataname
++	chmod 600 $datadir/$dataname
++	echo "$datacontent2" > $datadir2/$dataname2
++	chmod 600 $datadir2/$dataname2
++
++	echo "$datacontent" > $datadir/$sharedname
++	echo "$datacontent2" > $datadir2/$sharedname
++	chmod 600 $datadir/$sharedname  $datadir2/$sharedname
++
++	# Create files of size datasize.
++	for f in $datadir/$dataname $datadir2/$dataname2 $datadir/$sharedname $datadir2/$sharedname; do
++		$XFS_IO_PROG -c "falloc 0 $datasize" $f
++		$XFS_IO_PROG -c "fsync" $f
++	done
++
++	# Query number of block
++	datablocks=$(stat -c "%b" $datadir/$dataname)
++
++	# For lazy lookup file the block count is estimated based on size and block size
++	datablocksize=$(stat -c "%B" $datadir/$dataname)
++	estimated_datablocks=$(( ($datasize + $datablocksize - 1)/$datablocksize ))
++}
++
++prepare_midlayer()
++{
++	local _redirect=$1
++
++	_scratch_mkfs
++	create_basic_files
++	if [ -n "$_redirect" ]; then
++		mv "$datadir/$dataname" "$datadir/$_redirect"
++		mv "$datadir2/$dataname2" "$datadir2/$_redirect.2"
++		mv "$datadir/$sharedname" "$datadir/$_redirect.shared"
++		mv "$datadir2/$sharedname" "$datadir2/$_redirect.shared"
++	fi
++	# Create midlayer
++	_overlay_scratch_mount_dirs $datadir2:$datadir $lowerdir $workdir2 -o redirect_dir=on,index=on,metacopy=on
++	# Trigger a metacopy with or without redirect
++	if [ -n "$_redirect" ]; then
++		mv "$SCRATCH_MNT/$_redirect" "$SCRATCH_MNT/$dataname"
++		mv "$SCRATCH_MNT/$_redirect.2" "$SCRATCH_MNT/$dataname2"
++		mv "$SCRATCH_MNT/$_redirect.shared" "$SCRATCH_MNT/$sharedname"
++	else
++		chmod 400 $SCRATCH_MNT/$dataname
++		chmod 400 $SCRATCH_MNT/$dataname2
++		chmod 400 $SCRATCH_MNT/$sharedname
++	fi
++	umount_overlay
++
++	_overlay_trusted_to_user $lowerdir
++}
++
++# Create test directories
++datadir=$OVL_BASE_SCRATCH_MNT/data
++datadir2=$OVL_BASE_SCRATCH_MNT/data2
++lowerdir=$OVL_BASE_SCRATCH_MNT/lower
++upperdir=$OVL_BASE_SCRATCH_MNT/upper
++workdir=$OVL_BASE_SCRATCH_MNT/workdir
++workdir2=$OVL_BASE_SCRATCH_MNT/workdir2
++
++echo -e "\n== Check no follow to lowerdata layer without redirect =="
++prepare_midlayer
++test_no_access "$dataname"
++test_no_access "$dataname2"
++test_no_access "$sharedname"
++
++echo -e "\n== Check no follow to lowerdata layer with relative redirect =="
++prepare_midlayer "$dataname.renamed"
++test_no_access "$dataname"
++test_no_access "$dataname2"
++test_no_access "$sharedname"
++
++echo -e "\n== Check follow to lowerdata layer with absolute redirect =="
++prepare_midlayer "/subdir/$dataname"
++test_common "$lowerdir" "$datadir2" "$datadir" "$dataname" $datasize $datablocks \
++		"$datacontent" "/subdir/$dataname"
++test_common "$lowerdir" "$datadir2" "$datadir" "$dataname2" $datasize $datablocks \
++		"$datacontent2" "/subdir/$dataname.2"
++# Shared file should be picked from upper datadir
++test_common "$lowerdir" "$datadir2" "$datadir" "$sharedname" $datasize $datablocks \
++		"$datacontent2" "/subdir/$dataname.shared"
++
++echo -e "\n== Check lazy follow to lowerdata layer =="
++
++prepare_midlayer "/subdir/$dataname"
++rm $datadir/subdir/$dataname
++test_lazy $dataname
++
++
++# success, all done
++status=0
++exit
+diff --git a/tests/overlay/088.out b/tests/overlay/088.out
+new file mode 100644
+index 000000000000..c85c998d503a
+--- /dev/null
++++ b/tests/overlay/088.out
+@@ -0,0 +1,39 @@
++QA output created by 088
++
++== Check no follow to lowerdata layer without redirect ==
++No access to lowerdata layer datafile
++Unmount and Mount rw
++No access to lowerdata layer datafile
++No access to lowerdata layer datafile2
++Unmount and Mount rw
++No access to lowerdata layer datafile2
++No access to lowerdata layer shared
++Unmount and Mount rw
++No access to lowerdata layer shared
++
++== Check no follow to lowerdata layer with relative redirect ==
++No access to lowerdata layer datafile
++Unmount and Mount rw
++No access to lowerdata layer datafile
++No access to lowerdata layer datafile2
++Unmount and Mount rw
++No access to lowerdata layer datafile2
++No access to lowerdata layer shared
++Unmount and Mount rw
++No access to lowerdata layer shared
++
++== Check follow to lowerdata layer with absolute redirect ==
++Mount ro
++check properties of metadata copied up file datafile
++Unmount and Mount rw
++check properties of metadata copied up file datafile
++Mount ro
++check properties of metadata copied up file datafile2
++Unmount and Mount rw
++check properties of metadata copied up file datafile2
++Mount ro
++check properties of metadata copied up file shared
++Unmount and Mount rw
++check properties of metadata copied up file shared
++
++== Check lazy follow to lowerdata layer ==
+diff --git a/tests/overlay/089 b/tests/overlay/089
+new file mode 100755
+index 000000000000..2259f917ecf8
+--- /dev/null
++++ b/tests/overlay/089
+@@ -0,0 +1,272 @@
++#! /bin/bash
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (C) 2023 Red Hat, Inc. All Rights Reserved.
++# Copyright (C) 2023 CTERA Networks. All Rights Reserved.
++#
++# FS QA Test No. 089
++#
++# Test fs-verity functionallity
++# This is a variant of test overlay/080 with userxattr and without
++# redirect_dir/metacopy options
++#
++. ./common/preamble
++_begin_fstest auto quick metacopy redirect verity
++
++# Import common functions.
++. ./common/filter
++. ./common/attr
++. ./common/verity
++
++# We use non-default scratch underlying overlay dirs, we need to check
++# them explicity after test.
++_require_scratch_nocheck
++_require_scratch_overlay_features redirect_dir metacopy
++_require_scratch_overlay_lowerdata_layers
++_require_scratch_overlay_datadir_without_metacopy
++_require_scratch_overlay_verity
++
++# remove all files from previous tests
++_scratch_mkfs
++
++verityname="verityfile"
++noverityname="noverityfile"
++wrongverityname="wrongverityfile"
++missingverityname="missingverityfile"
++lowerdata="data1"
++lowerdata2="data2"
++lowerdata3="data3"
++lowerdata4="data4"
++lowersize="5"
++
++# Create test directories
++lowerdir=$OVL_BASE_SCRATCH_MNT/lower
++lowerdir2=$OVL_BASE_SCRATCH_MNT/lower2
++upperdir=$OVL_BASE_SCRATCH_MNT/upper
++workdir=$OVL_BASE_SCRATCH_MNT/workdir
++workdir2=$OVL_BASE_SCRATCH_MNT/workdir2
++
++# Check metacopy xattr
++check_metacopy()
++{
++	local target=$1 exist=$2 dataonlybase=$3
++	local out_f target_f
++	local msg
++
++	out_f=$( { _getfattr --absolute-names --only-values -n \
++		"user.overlay.metacopy" $target 2>&3 | od -A n -t x1 -w256 ; } 3>&1 | _filter_scratch)
++        has_version0=`echo $out_f | awk 'NR==1{print $1 == 0}'`
++
++	if [ "$exist" == "y" ];then
++		[ "$out_f" == "" -o "$has_version0" == "1" ] && return
++		echo "Metacopy xattr does not exist on ${target}. stdout=$out_f"
++		return
++	fi
++
++	if [ "$out_f" == ""  -o "$has_version0" == "1" ];then
++		echo "Metacopy xattr exists on ${target} unexpectedly."
++		return
++	fi
++
++	target_f=`echo $target | _filter_scratch`
++	msg="$target_f: user.overlay.metacopy: No such attribute"
++
++	[ "$out_f" == "$msg" ] && return
++
++	echo "Error while checking xattr on ${target}. stdout=$out"
++}
++
++# Check verity set in metacopy
++check_verity()
++{
++	local target=$1 exist=$2
++	local out_f target_f
++	local msg
++
++	out_f=$( { _getfattr --absolute-names --only-values -n "user.overlay.metacopy" $target 2>&3 | od -A n -t x1 -w256 ; } 3>&1 | _filter_scratch)
++
++	target_f=`echo $target | _filter_scratch`
++	msg="$target_f: user.overlay.metacopy: No such attribute"
++	has_digest=`echo $out_f | awk 'NR==1{print $4 == 1}'`
++
++	if [ "$exist" == "y" ]; then
++		[ "$out_f" == "$msg" -o "$has_digest" == "0" ] && echo "No verity on ${target}. stdout=$out_f"
++		return
++	fi
++
++	[ "$out_f" == "$msg" -o "$has_digest" == "0" ] && return
++	echo "Verity xattr exists on ${target} unexpectedly. stdout=$out_f"
++}
++
++# Check redirect xattr
++check_redirect()
++{
++	local target=$1
++	local expect=$2
++
++	value=$(_getfattr --absolute-names --only-values -n \
++		"user.overlay.redirect" $target)
++
++	[[ "$value" == "$expect" ]] || echo "Redirect xattr incorrect. Expected=\"$expect\", actual=\"$value\""
++}
++
++# Check size
++check_file_size()
++{
++	local target=$1 expected_size=$2 actual_size
++
++	actual_size=$(_get_filesize $target)
++
++	[ "$actual_size" == "$expected_size" ] || echo "Expected file size of $target $expected_size but actual size is $actual_size"
++}
++
++check_file_contents()
++{
++	local target=$1 expected=$2
++	local actual target_f
++
++	target_f=`echo $target | _filter_scratch`
++
++	read actual<$target
++
++	[ "$actual" == "$expected" ] || echo "Expected file $target_f contents to be \"$expected\" but actual contents are \"$actual\""
++}
++
++check_file_size_contents()
++{
++	local target=$1 expected_size=$2 expected_content=$3
++
++	check_file_size $target $expected_size
++	check_file_contents $target $expected_content
++}
++
++check_io_error()
++{
++	local target=$1
++	local actual target_f out_f
++
++	target_f=`echo $target | _filter_scratch`
++	out_f=`cat $target 2>&1 | _filter_scratch`
++	msg="cat: $target_f: Input/output error"
++
++	[ "$out_f" == "$msg" ] && return
++
++	echo "$target_f unexpectedly has no I/O error"
++}
++
++create_basic_files()
++{
++	local subdir=$1
++
++	_scratch_mkfs
++	mkdir -p $lowerdir $lowerdir2 $upperdir $workdir $workdir2
++
++	if [ "$subdir" != "" ]; then
++	    mkdir $lowerdir/$subdir
++	fi
++
++	echo -n "$lowerdata" > $lowerdir/$subdir$verityname
++	echo -n "$lowerdata2" > $lowerdir/$subdir$noverityname
++	echo -n "$lowerdata3" > $lowerdir/$subdir$wrongverityname
++	echo -n "$lowerdata4" > $lowerdir/$subdir$missingverityname
++
++	for f in $verityname $noverityname $wrongverityname $missingverityname; do
++		chmod 600 $lowerdir/$subdir$f
++
++		if [ "$f" != "$noverityname" ]; then
++			_fsv_enable $lowerdir/$subdir$f
++		fi
++        done
++}
++
++prepare_midlayer()
++{
++	subdir="base/"
++
++	create_basic_files "$subdir"
++	# Create midlayer
++	_overlay_scratch_mount_dirs $lowerdir $lowerdir2 $workdir2 -o redirect_dir=on,index=on,verity=on,metacopy=on
++	for f in $verityname $noverityname $wrongverityname $missingverityname; do
++		mv $SCRATCH_MNT/base/$f $SCRATCH_MNT/$f
++	done
++	umount_overlay
++
++	_overlay_trusted_to_user $lowerdir2
++
++	rm -rf $lowerdir2/base
++
++	for f in $verityname $noverityname $wrongverityname $missingverityname; do
++		# Ensure we have right metacopy and verity xattrs
++		check_metacopy $lowerdir2/$f "y"
++
++		if [ "$f" == "$noverityname" ]; then
++		    check_verity $lowerdir2/$f "n"
++		else
++		    check_verity $lowerdir2/$f "y"
++		fi
++
++		check_redirect $lowerdir2/$f "/base/$f"
++
++		check_file_size_contents $lowerdir2/$f $lowersize ""
++	done
++
++	# Fixup missing and wrong verity in lowerdir
++	rm -f $lowerdir/$subdir$wrongverityname $lowerdir/$subdir$missingverityname
++	echo -n "changed" > $lowerdir/$subdir$wrongverityname
++	_fsv_enable $lowerdir/$subdir$wrongverityname
++	echo "$lowerdata4" > $lowerdir/$subdir$missingverityname
++}
++
++test_common()
++{
++	local verity=$1
++
++	mount_overlay "$lowerdir2::$lowerdir" $verity
++
++	check_file_size_contents $SCRATCH_MNT/$verityname $lowersize "$lowerdata"
++
++	if [ "$verity" == "require" ]; then
++		check_io_error $SCRATCH_MNT/$noverityname
++	else
++		check_file_size_contents $SCRATCH_MNT/$noverityname $lowersize "$lowerdata2"
++	fi
++
++	if [ "$verity" == "off" ]; then
++		check_file_size_contents $SCRATCH_MNT/$wrongverityname $lowersize "changed"
++		check_file_size_contents $SCRATCH_MNT/$missingverityname $lowersize "$lowerdata4"
++	else
++		check_io_error $SCRATCH_MNT/$missingverityname
++		check_io_error $SCRATCH_MNT/$wrongverityname
++	fi
++
++	umount_overlay
++}
++
++mount_overlay()
++{
++	local _lowerdir=$1
++	local _verity=$2
++
++	_overlay_scratch_mount_dirs "$_lowerdir" $upperdir $workdir -o userxattr,verity=$_verity
++}
++
++umount_overlay()
++{
++	$UMOUNT_PROG $SCRATCH_MNT
++}
++
++
++echo -e "\n== Check fsverity validation =="
++
++prepare_midlayer
++test_common "off"
++prepare_midlayer
++test_common "on"
++
++echo -e "\n== Check fsverity require =="
++
++prepare_midlayer
++test_common "require"
++
++# success, all done
++status=0
++exit
+diff --git a/tests/overlay/089.out b/tests/overlay/089.out
+new file mode 100644
+index 000000000000..0c3eee7103b1
+--- /dev/null
++++ b/tests/overlay/089.out
+@@ -0,0 +1,5 @@
++QA output created by 089
++
++== Check fsverity validation ==
++
++== Check fsverity require ==
+-- 
+2.49.0
 
 
