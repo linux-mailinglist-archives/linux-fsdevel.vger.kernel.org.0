@@ -1,129 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-45947-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45948-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB619A7FC0F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 12:32:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5C76A7FC8F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 12:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADB317AC5CE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 10:31:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 143A7189CF5F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 10:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857E2266B52;
-	Tue,  8 Apr 2025 10:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j2DkVjpI"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB64267B83;
+	Tue,  8 Apr 2025 10:39:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDCC8266EE5;
-	Tue,  8 Apr 2025 10:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17EA266595;
+	Tue,  8 Apr 2025 10:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744108168; cv=none; b=F++O3d1MwquTFMW4c+JFwQH9IDYFKoM/wF7SZstcf2zUIoszwDF5eT2CWVRpn1OqMoYKm+LTVUYx7zMpIK6y5vjZBKPibpnNb2htBRSvKeUlWSDidATuEg8n+CkWx4caBzcCQYx47XmfUuIFDPeFOMGfRHRCSyoad9fK3Blo8G4=
+	t=1744108774; cv=none; b=SDd8YRvXAfZ78/vRJRh8Q0uNweibTjpVCJ35P1njqucvvG/TC1RxFQak9tft+07olMH2LJbaZQGWGsFSM5NnMgtGQJGyudC9DXGIAkns3syPca3XjHx2q0/ag5fg/cM8E7KqNksqF5VEC+T3majLC4BKysUbashG3MPZpyXZqec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744108168; c=relaxed/simple;
-	bh=edxylfQ2WiiwTwhhDLOhVgB9utDb9GDYQ5gc4aOpUlU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gnD82e0OY5IZIfEh+G5j3bsB6XVfUOifZUEb1lMRPHAcr6xNwEFBrRqgLwwFQROPHRB+rnRN4M79P/1KzDsfzVhXDhNOXqKgG3vyg1nugTH2Xcdx/VZon54pfBsQ1YS1U4ix/8BdTGSqRx9fC1g4N90dDlloKD5CpitOo0fnZ88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j2DkVjpI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6DDBC4CEE8;
-	Tue,  8 Apr 2025 10:29:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744108167;
-	bh=edxylfQ2WiiwTwhhDLOhVgB9utDb9GDYQ5gc4aOpUlU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j2DkVjpIXREkl9uM95E7Wh+5van1lz4rDd4L7/hcT+oSd+f6n5xt6mFctmr3V328V
-	 JLE6kVuxK2nkiFWdbMLsU2OIABs/W1E65sPKLSb2Jy0LwX+kiURChKA3I/iPC7LfDK
-	 3eaUtOwH4r8JCxy2Z432a1KdaVLBp2K64+nSq/9nO5hgrR4O5evBKXEjE+Sy2d6kAD
-	 cpQ6nQRFsoNjUx1BKZOD0JFTsPvA1NF0O2zjv2k6sm47FUeAmfHeROjJxriVMRumpQ
-	 rYL+7Vf12UZxwVLY4WxEvKYH8px9/2bTkDVft7T8VcR1+2Y3L5PUSvb7PUu272x3rq
-	 O4ez5LxpcpgXg==
-Date: Tue, 8 Apr 2025 12:29:23 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: syzbot <syzbot+dbb3b5b8e91c5be8daad@syzkaller.appspotmail.com>
-Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [fs?] KCSAN: data-race in file_end_write /
- posix_acl_update_mode
-Message-ID: <20250408-stirn-wettkampf-1111f59d44e7@brauner>
-References: <67f4e5e9.050a0220.396535.055c.GAE@google.com>
+	s=arc-20240116; t=1744108774; c=relaxed/simple;
+	bh=9MjVRH9gj1+f5MDFfIfL7UmI6wmnt2YXQolaQypXD3Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E3k6JKch2w+NtQF9CAXS2qh3/yHLomEwRRZwmxJ20leEggAe5aRFyPohUkgwPj1NIAdReHMkcf4jpSoGMGEzYtkki9eeJuFww7jPUHc5HSashNHIS5qI4evvNTsivcBnEfcTKNJ3If4RyQEqcxuWe4p+Y698D38DFgMLK97NcI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1670043280;
+	Tue,  8 Apr 2025 10:39:16 +0000 (UTC)
+Message-ID: <2c0a0c3a-368c-44cb-9d4b-245f5b3dada1@ghiti.fr>
+Date: Tue, 8 Apr 2025 12:39:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <67f4e5e9.050a0220.396535.055c.GAE@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 06/28] riscv/mm : ensure PROT_WRITE leads to VM_READ |
+ VM_WRITE
+Content-Language: en-US
+To: Deepak Gupta <debug@rivosinc.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Christian Brauner <brauner@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>,
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+ Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com,
+ andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com,
+ atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com,
+ alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org,
+ rick.p.edgecombe@intel.com, Zong Li <zong.li@sifive.com>
+References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com>
+ <20250314-v5_user_cfi_series-v12-6-e51202b53138@rivosinc.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250314-v5_user_cfi_series-v12-6-e51202b53138@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddvkeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpedthfelfeejgeehveegleejleelgfevhfekieffkeeujeetfedvvefhledvgeegieenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmeehsgegieemkeeludekmegtledujeemjeekjedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmeehsgegieemkeeludekmegtledujeemjeekjedvpdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmeehsgegieemkeeludekmegtledujeemjeekjedvngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeegledprhgtphhtthhopeguvggsuhhgsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtghomhdprhgtphhtthhopegsp
+ hesrghlihgvnhekrdguvgdprhgtphhtthhopegurghvvgdrhhgrnhhsvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhhprgesiiihthhorhdrtghomhdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
+X-GND-Sasl: alex@ghiti.fr
 
-On Tue, Apr 08, 2025 at 02:01:29AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    0af2f6be1b42 Linux 6.15-rc1
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10c98070580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e5bf3e2a48bfe768
-> dashboard link: https://syzkaller.appspot.com/bug?extid=dbb3b5b8e91c5be8daad
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/d90ae40aa6df/disk-0af2f6be.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/616ed7a70804/vmlinux-0af2f6be.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/ed2c418afc9a/bzImage-0af2f6be.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+dbb3b5b8e91c5be8daad@syzkaller.appspotmail.com
-> 
-> ==================================================================
-> BUG: KCSAN: data-race in file_end_write / posix_acl_update_mode
-> 
-> write to 0xffff888118513aa0 of 2 bytes by task 16080 on cpu 1:
->  posix_acl_update_mode+0x220/0x250 fs/posix_acl.c:720
->  simple_set_acl+0x6c/0x120 fs/posix_acl.c:1022
->  set_posix_acl fs/posix_acl.c:954 [inline]
->  vfs_set_acl+0x581/0x720 fs/posix_acl.c:1133
->  do_set_acl+0xab/0x130 fs/posix_acl.c:1278
->  do_setxattr fs/xattr.c:633 [inline]
->  filename_setxattr+0x1f1/0x2b0 fs/xattr.c:665
->  path_setxattrat+0x28a/0x320 fs/xattr.c:713
->  __do_sys_setxattr fs/xattr.c:747 [inline]
->  __se_sys_setxattr fs/xattr.c:743 [inline]
->  __x64_sys_setxattr+0x6e/0x90 fs/xattr.c:743
->  x64_sys_call+0x28e7/0x2e10 arch/x86/include/generated/asm/syscalls_64.h:189
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xc9/0x1c0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> read to 0xffff888118513aa0 of 2 bytes by task 16073 on cpu 0:
->  file_end_write+0x1f/0x110 include/linux/fs.h:3059
->  vfs_fallocate+0x3a5/0x3b0 fs/open.c:350
->  ksys_fallocate fs/open.c:362 [inline]
->  __do_sys_fallocate fs/open.c:367 [inline]
->  __se_sys_fallocate fs/open.c:365 [inline]
->  __x64_sys_fallocate+0x78/0xc0 fs/open.c:365
->  x64_sys_call+0x295f/0x2e10 arch/x86/include/generated/asm/syscalls_64.h:286
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xc9/0x1c0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> value changed: 0x8000 -> 0x8072
 
-This race is benign.
-file_end_write() and similar helpers check whether this is a regular
-file or not. And the type of a file can never change. The only thing
-that can change here are the permission bits of course.
+On 14/03/2025 22:39, Deepak Gupta wrote:
+> `arch_calc_vm_prot_bits` is implemented on risc-v to return VM_READ |
+> VM_WRITE if PROT_WRITE is specified. Similarly `riscv_sys_mmap` is
+> updated to convert all incoming PROT_WRITE to (PROT_WRITE | PROT_READ).
+> This is to make sure that any existing apps using PROT_WRITE still work.
+>
+> Earlier `protection_map[VM_WRITE]` used to pick read-write PTE encodings.
+> Now `protection_map[VM_WRITE]` will always pick PAGE_SHADOWSTACK PTE
+> encodings for shadow stack. Above changes ensure that existing apps
+> continue to work because underneath kernel will be picking
+> `protection_map[VM_WRITE|VM_READ]` PTE encodings.
+>
+> Reviewed-by: Zong Li <zong.li@sifive.com>
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>   arch/riscv/include/asm/mman.h    | 25 +++++++++++++++++++++++++
+>   arch/riscv/include/asm/pgtable.h |  1 +
+>   arch/riscv/kernel/sys_riscv.c    | 10 ++++++++++
+>   arch/riscv/mm/init.c             |  2 +-
+>   4 files changed, 37 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/include/asm/mman.h b/arch/riscv/include/asm/mman.h
+> new file mode 100644
+> index 000000000000..392c9c2d2e78
+> --- /dev/null
+> +++ b/arch/riscv/include/asm/mman.h
+> @@ -0,0 +1,25 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __ASM_MMAN_H__
+> +#define __ASM_MMAN_H__
+> +
+> +#include <linux/compiler.h>
+> +#include <linux/types.h>
+> +#include <uapi/asm/mman.h>
+> +
+> +static inline unsigned long arch_calc_vm_prot_bits(unsigned long prot,
+> +						   unsigned long pkey __always_unused)
+> +{
+> +	unsigned long ret = 0;
+> +
+> +	/*
+> +	 * If PROT_WRITE was specified, force it to VM_READ | VM_WRITE.
+> +	 * Only VM_WRITE means shadow stack.
+> +	 */
+> +	if (prot & PROT_WRITE)
+> +		ret = (VM_READ | VM_WRITE);
+> +	return ret;
+> +}
+> +
+> +#define arch_calc_vm_prot_bits(prot, pkey) arch_calc_vm_prot_bits(prot, pkey)
+> +
+> +#endif /* ! __ASM_MMAN_H__ */
+> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+> index 050fdc49b5ad..8c528cd7347a 100644
+> --- a/arch/riscv/include/asm/pgtable.h
+> +++ b/arch/riscv/include/asm/pgtable.h
+> @@ -178,6 +178,7 @@ extern struct pt_alloc_ops pt_ops __meminitdata;
+>   #define PAGE_READ_EXEC		__pgprot(_PAGE_BASE | _PAGE_READ | _PAGE_EXEC)
+>   #define PAGE_WRITE_EXEC		__pgprot(_PAGE_BASE | _PAGE_READ |	\
+>   					 _PAGE_EXEC | _PAGE_WRITE)
+> +#define PAGE_SHADOWSTACK       __pgprot(_PAGE_BASE | _PAGE_WRITE)
+>   
+>   #define PAGE_COPY		PAGE_READ
+>   #define PAGE_COPY_EXEC		PAGE_READ_EXEC
+> diff --git a/arch/riscv/kernel/sys_riscv.c b/arch/riscv/kernel/sys_riscv.c
+> index d77afe05578f..43a448bf254b 100644
+> --- a/arch/riscv/kernel/sys_riscv.c
+> +++ b/arch/riscv/kernel/sys_riscv.c
+> @@ -7,6 +7,7 @@
+>   
+>   #include <linux/syscalls.h>
+>   #include <asm/cacheflush.h>
+> +#include <asm-generic/mman-common.h>
+>   
+>   static long riscv_sys_mmap(unsigned long addr, unsigned long len,
+>   			   unsigned long prot, unsigned long flags,
+> @@ -16,6 +17,15 @@ static long riscv_sys_mmap(unsigned long addr, unsigned long len,
+>   	if (unlikely(offset & (~PAGE_MASK >> page_shift_offset)))
+>   		return -EINVAL;
+>   
+> +	/*
+> +	 * If PROT_WRITE is specified then extend that to PROT_READ
+> +	 * protection_map[VM_WRITE] is now going to select shadow stack encodings.
+> +	 * So specifying PROT_WRITE actually should select protection_map [VM_WRITE | VM_READ]
+> +	 * If user wants to create shadow stack then they should use `map_shadow_stack` syscall.
+> +	 */
+> +	if (unlikely((prot & PROT_WRITE) && !(prot & PROT_READ)))
+> +		prot |= PROT_READ;
+> +
+>   	return ksys_mmap_pgoff(addr, len, prot, flags, fd,
+>   			       offset >> (PAGE_SHIFT - page_shift_offset));
+>   }
+> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> index 15b2eda4c364..9d6661638d0b 100644
+> --- a/arch/riscv/mm/init.c
+> +++ b/arch/riscv/mm/init.c
+> @@ -342,7 +342,7 @@ pgd_t early_pg_dir[PTRS_PER_PGD] __initdata __aligned(PAGE_SIZE);
+>   static const pgprot_t protection_map[16] = {
+>   	[VM_NONE]					= PAGE_NONE,
+>   	[VM_READ]					= PAGE_READ,
+> -	[VM_WRITE]					= PAGE_COPY,
+> +	[VM_WRITE]					= PAGE_SHADOWSTACK,
+>   	[VM_WRITE | VM_READ]				= PAGE_COPY,
+>   	[VM_EXEC]					= PAGE_EXEC,
+>   	[VM_EXEC | VM_READ]				= PAGE_READ_EXEC,
+>
 
-The only thing to worry about would be torn writes where somehow the
-file type is written back after the permission bits and so S_ISREG()
-could fail and the freeze protection semaphore wouldn't be released. If
-that is an actual possibility we'd need to READ_ONCE()/WRITE_ONCE() the
-hell out of this. Can this really happen with an unsigned short though?
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
 
