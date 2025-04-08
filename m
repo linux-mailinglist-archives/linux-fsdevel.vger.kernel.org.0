@@ -1,141 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-46005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4513A81343
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 19:10:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC6B6A8134F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 19:14:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6992A1BA5722
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 17:10:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB4278A145E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 17:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1292356D0;
-	Tue,  8 Apr 2025 17:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B01235C04;
+	Tue,  8 Apr 2025 17:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nOQ1kAhN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gdv3uxZw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5A7191F79;
-	Tue,  8 Apr 2025 17:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4DF123372D;
+	Tue,  8 Apr 2025 17:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744132199; cv=none; b=g+8HLNFPFS4Qfe24pqPRu4AgmqRAtGJVOdtQyO6veeAmZdPuTzwLgdqTTgBrFz1mpwwyncHhUgL8KCWCoLPQgPM6EQD2G2Hix7xUKGmZSaloF8qdCe3aK9suGHmXaLFslQvJhpArx2zZoSyVOwtwG76xNDpp2wVmIZDA7RX8NT0=
+	t=1744132433; cv=none; b=GJycXKrWBkahbcAfHxEVNTB+iOipC0luG1aP7RiVw71UnhoAH72YAtbwUuGkpmZhRCx0tRpLB3HpDGxrAgT7C+rmh0AazAr93pV5u4h+d3ZN7jJ4Jl2EKyXuK2hbKJqaC2icSZmgLH5iB7rvQEgRgTWKHSJkmHrvZuLtq2CVYGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744132199; c=relaxed/simple;
-	bh=EgmeW83G8jhcI4IjVa+l3i7sUzA33Jc14b4TmgoCBZU=;
+	s=arc-20240116; t=1744132433; c=relaxed/simple;
+	bh=zMsBri3MCQyGuUFjFhMfP7oC09omGu5tlgKMnWc55OI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YEMmTaLQqeyJh0s0sTkbxL4Yz1S7lS3sbwWaiRW3h0H1wJ7QdFHShIxnmZgBN1E/iOi7PwJTGJXrUhAl3vkfJkQPi3Yaw3K22UVINFVEw3rBgae8rTjmf1mu7BLdQwKDrkdDSwMX9ym/72zzlnb+gZEsFbwBEFxirFOPM64KVMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nOQ1kAhN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF252C4CEE5;
-	Tue,  8 Apr 2025 17:09:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=WimQZ3m+NYcUVDq3laqAbIYqkKJCV6nhFmxQKMbqncyzgVSDlUqpeSWvbw8Oe3GAi1a09KpwS8NAuIomlD1CT2GuCq4Tzi+1QBjQ1/yhXfsJ0d424V/S2AsADKKJEcHLHMZzQQ65ufvtOI1LNN8iUONgI8b/5d95AOydKduVWLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gdv3uxZw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04AD7C4CEE5;
+	Tue,  8 Apr 2025 17:13:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744132198;
-	bh=EgmeW83G8jhcI4IjVa+l3i7sUzA33Jc14b4TmgoCBZU=;
+	s=k20201202; t=1744132433;
+	bh=zMsBri3MCQyGuUFjFhMfP7oC09omGu5tlgKMnWc55OI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nOQ1kAhN0C5XGe3KPvC5Jz8AcGjCoYiY1qudcrTwiItZIvCUC4PYJz0QiuxrJ+TWT
-	 RGLFIV3C068/dBUbqsqMWtdAh/OjbAEUn62/QneV+2K0dPRjs8mtA770yGnsx5GhP5
-	 2sy/XecRKrE/sJEed8v/MSFp7kGuLH9XMI99fx/6tRvTL30zdR4kvp5ChXDcJC6cSx
-	 GZDUUxiDxNUbUAb09AD4itsPJ2mdaNftB+UEWicIHhLB40lfFXGHXk1cTLjbAL+qHT
-	 ac6naQNjuGeb77Po+2RSrFTL0zyBoQ8DeTaVNSYvCt5UJ1wYgWuItnldmSPuW8huNl
-	 GnQUO2jxse6Ew==
-Date: Tue, 8 Apr 2025 10:09:56 -0700
+	b=gdv3uxZwyyd06KpRj9uYbprjrPc6GutaFkXCtxht9Ch7Ff4m7bP0ZWv56nVKgTZJx
+	 O6zsbj+ACBVOmIcBL0SwZ6idGd1Bg486CI+6qs0TZTPHudi30jPJo0IH0dz+aH80f9
+	 XrB/vcRpWIBokuEUBfubh9egpqpIsyhbJc4RuVAJKkCqbjoxNDF0MlpwhGPZM+3GsC
+	 FfQqoBdrLvJMalZFkxadzSbg5I/zziHjoyx7Hjx0elDAGlj9CBLWA6bsfbgJv4KeAk
+	 BrGt0/O72S/IzRW3SplTfAdDYrxW+fA++IK5+H/b8otl7r10U1O0HYCRZFgdVZ+rwa
+	 9LwnhyqLUq73w==
+Date: Tue, 8 Apr 2025 10:13:51 -0700
 From: Luis Chamberlain <mcgrof@kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
-	jack@suse.cz, rafael@kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	hch@infradead.org, david@fromorbit.com, djwong@kernel.org,
-	pavel@kernel.org, peterz@infradead.org, mingo@redhat.com,
-	will@kernel.org, boqun.feng@gmail.com
-Subject: Re: [PATCH 0/6] power: wire-up filesystem freeze/thaw with
- suspend/resume
-Message-ID: <Z_VYZAgHNGEqF7ZB@bombadil.infradead.org>
-References: <20250331-work-freeze-v1-0-6dfbe8253b9f@kernel.org>
- <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
- <ddee7c1ce2d1ff1a8ced6e9b6ac707250f70e68b.camel@HansenPartnership.com>
- <20250402-radstand-neufahrzeuge-198b40c2d073@brauner>
- <2d698820ebd2e82abe8551425d82e9c387aefd66.camel@HansenPartnership.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Phillip Lougher <phillip@squashfs.org.uk>,
+	Andreas Gruenbacher <agruenba@redhat.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Sungjong Seo <sj1557.seo@samsung.com>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Carlos Maiolino <cem@kernel.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Recent changes mean sb_min_blocksize() can now fail
+Message-ID: <Z_VZT9UhPdLT-rk_@bombadil.infradead.org>
+References: <86290c9b-ba40-4ebd-96c1-d3a258abe9d4@squashfs.org.uk>
+ <ormbk7uxe7v4givkz6ylo46aacfbrcy5zbasmti5tsqcirgijs@ulgt66vb2wbg>
+ <mnrpsfnhhp2xag62qmgdscbmtmskd6wcgytf6p44snkgdjeejc@ohpom722mvpn>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2d698820ebd2e82abe8551425d82e9c387aefd66.camel@HansenPartnership.com>
+In-Reply-To: <mnrpsfnhhp2xag62qmgdscbmtmskd6wcgytf6p44snkgdjeejc@ohpom722mvpn>
 
-On Tue, Apr 08, 2025 at 11:43:46AM -0400, James Bottomley wrote:
-> On Wed, 2025-04-02 at 09:46 +0200, Christian Brauner wrote:
-> > On Tue, Apr 01, 2025 at 01:02:07PM -0400, James Bottomley wrote:
-> > > On Tue, 2025-04-01 at 02:32 +0200, Christian Brauner wrote:
-> > > > The whole shebang can also be found at:
-> > > > https://web.git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=work.freeze
-> > > > 
-> > > > I know nothing about power or hibernation. I've tested it as best
-> > > > as I could. Works for me (TM).
-> > > 
-> > > I'm testing the latest you have in work.freeze and it doesn't
-> > > currently work for me.  Patch 7b315c39b67d ("power: freeze
-> > > filesystems during suspend/resume") doesn't set
-> > > filesystems_freeze_ptr so it ends up being NULL and tripping over
-> > > this check 
+On Tue, Apr 08, 2025 at 12:51:37PM +0200, Jan Kara wrote:
+> On Tue 08-04-25 12:39:52, Jan Kara wrote:
+> > Hi!
 > > 
-> > I haven't pushed the new version there. Sorry about that. I only have
-> > it locally.
-> > 
+> > On Tue 08-04-25 06:33:53, Phillip Lougher wrote:
+> > > A recent (post 6.14) change to the kernel means sb_min_blocksize() can now fail,
+> > > and any filesystem which doesn't check the result may behave unexpectedly as a
+> > > result.  This change has recently affected Squashfs, and checking the kernel code,
+> > > a number of other filesystems including isofs, gfs2, exfat, fat and xfs do not
+> > > check the result.  This is a courtesy email to warn others of this change.
 > > > 
-> > > +static inline bool may_unfreeze(struct super_block *sb, enum
-> > > freeze_holder who,
-> > > +                               const void *freeze_owner)
-> > > +{
-> > > +       WARN_ON_ONCE((who & ~FREEZE_FLAGS));
-> > > +       WARN_ON_ONCE(hweight32(who & FREEZE_HOLDERS) > 1);
-> > > +
-> > > +       if (who & FREEZE_EXCL) {
-> > > +               if (WARN_ON_ONCE(sb->s_writers.freeze_owner ==
-> > > NULL))
-> > > +                       return false;
+> > > The following emails give the relevant details.
 > > > 
-> > > 
-> > > in f15a9ae05a71 ("fs: add owner of freeze/thaw") and failing to
-> > > resume from hibernate.  Setting it to __builtin_return_address(0)
-> > > in filesystems_freeze() makes everything work as expected, so
-> > > that's what I'm testing now.
+> > > https://lore.kernel.org/all/2a13ea1c-08df-4807-83d4-241831b7a2ec@squashfs.org.uk/
+> > > https://lore.kernel.org/all/129d4f39-6922-44e9-8b1c-6455ee564dda@squashfs.org.uk/
 > > 
-> > +1
-> > 
-> > I'll send the final version out in a bit.
+> > Indeed. Thanks for the heads up!
 > 
-> I've now done some extensive testing on loop nested filesystems with
-> fio load on the upper. I've tried xfs on ext4 and ext4 on ext4.
-> Hibernate/Resume has currently worked on these without a hitch (and the
-> fio load burps a bit but then starts running at full speed within a few
-> seconds). What I'm doing is a single round of hibernate/resume followed
-> by a reboot. I'm relying on the fschecks to detect any filesystem
-> corruption. I've also tried doing a couple of fresh starts of the
-> hibernated image to check that we did correctly freeze the filesystems.
+> But isofs is actually fine since setting bdev block size needs exclusive open
+> (i.e., has to happen before filesystem mount begins and claims bdev) and
+> isofs does:
 > 
-> The problems I've noticed are:
+> 	if (bdev_logical_block_size(s->s_bdev) > 2048)
+> 		bail
 > 
->    1. I'm using 9p to push host directories throught and that
->       completely hangs after a resume. This is expected because the
->       virtio server is out of sync, but it does indicate a need to
->       address Jeff's question of what we should be doing for network
->       filesystems (and is also the reason I have to reboot after
->       resuming).
->    2. Top doesn't show any CPU activity after resume even though fio is
->       definitely running.  This seems to be a suspend issue and
->       unrelated to filesystems, but I'll continue investigating.
+> in its isofs_fill_super().
 
-To be clear, on the fio run -- are you running fio *while*
-suspend/resume cycle on XFS? That used to stall / break suspend
-resume. We may want to test dd against a drive too, that will use
-the block device cache, and I forget if we have a freeze/thaw for it.
+Regardless, we added commit a64e5a596067bddb ("bdev: add back PAGE_SIZE
+block size validation for sb_set_blocksize()" to effectively revert back
+to the original behaviour, and so only filesystems which have FS_LBS are
+not blocked by PAGE_SIZE.
+
+Let me know if you still are seeing issues even with this patch merged.
 
   Luis
 
