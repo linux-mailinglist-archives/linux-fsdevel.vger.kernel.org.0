@@ -1,115 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-46004-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E17AA8133D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 19:06:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4513A81343
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 19:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 031611BA34DB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 17:07:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6992A1BA5722
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 17:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4F22356C2;
-	Tue,  8 Apr 2025 17:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1292356D0;
+	Tue,  8 Apr 2025 17:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RwD72MB+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nOQ1kAhN"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F941E5219;
-	Tue,  8 Apr 2025 17:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5A7191F79;
+	Tue,  8 Apr 2025 17:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744132007; cv=none; b=m2U9J2Ed7sRqCgENXEq12pUSOTc+d+uMtkfOj2MNJm9MwNNliemnHS9uBmzptnFtH7tYstreV1tg2a04314kysfZiGC8bawfhJA7Nzz3ldcRRsyIQX/nJ3JG8snE4T8sXtBQlTXbGpg2hrzp3VWsTVC+H0LRJpdxk5sOESPHHR0=
+	t=1744132199; cv=none; b=g+8HLNFPFS4Qfe24pqPRu4AgmqRAtGJVOdtQyO6veeAmZdPuTzwLgdqTTgBrFz1mpwwyncHhUgL8KCWCoLPQgPM6EQD2G2Hix7xUKGmZSaloF8qdCe3aK9suGHmXaLFslQvJhpArx2zZoSyVOwtwG76xNDpp2wVmIZDA7RX8NT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744132007; c=relaxed/simple;
-	bh=/3eBMgubv0Yka0P/WzdDOXB50+TOIWFo5UCsRYv5O6Y=;
+	s=arc-20240116; t=1744132199; c=relaxed/simple;
+	bh=EgmeW83G8jhcI4IjVa+l3i7sUzA33Jc14b4TmgoCBZU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k/mWrtKUyyWOopWPi6JxEN3QMWqxIxjUK9vmINVXOTfeq/pKaQeeQTgJbcF2EGuXOLZmr32VoEtTMKpEqBJMOhcCJNLx1C/9MYuPOZWkGYLQB2lzh4y+hScdX0Xat6OP9Fv9KvKjOUyN9BbJ/WfNKE7/U5i498u45WUePdmm/Uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RwD72MB+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A75D0C4CEE5;
-	Tue,  8 Apr 2025 17:06:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=YEMmTaLQqeyJh0s0sTkbxL4Yz1S7lS3sbwWaiRW3h0H1wJ7QdFHShIxnmZgBN1E/iOi7PwJTGJXrUhAl3vkfJkQPi3Yaw3K22UVINFVEw3rBgae8rTjmf1mu7BLdQwKDrkdDSwMX9ym/72zzlnb+gZEsFbwBEFxirFOPM64KVMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nOQ1kAhN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF252C4CEE5;
+	Tue,  8 Apr 2025 17:09:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744132007;
-	bh=/3eBMgubv0Yka0P/WzdDOXB50+TOIWFo5UCsRYv5O6Y=;
+	s=k20201202; t=1744132198;
+	bh=EgmeW83G8jhcI4IjVa+l3i7sUzA33Jc14b4TmgoCBZU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RwD72MB+BLnSoW4IRomJp7Ix0Bjzj4kV+VhvB0wuUGsxqlzuVsRsQsocnqYiQUwdt
-	 +31xpEKLmAjD/rDiUgNxpng4/1mhIqwM0gmMZgoBDuQdFhb3OILdr9wPBtIcwi6WGd
-	 KQuiv/YxK6+xoFs1un5HzHmCG5i2X2L/p/USUzcH60z1/4nmmEDKI8gCy+9KbAtjen
-	 o83YtH3vHx4ew7p5JAkCmQ0sQvzLVGhyDm7PA6YEc9Xi0HPweYqtgNtcB3RMcVBjd9
-	 cdIIlqMXA+tuhAkRqxDvAHIRZ95wXGWoDHFD66LrEThTktBuifVsVEb/82Oo8mKM4D
-	 GmfjnfjwmCVCQ==
-Date: Tue, 8 Apr 2025 10:06:44 -0700
+	b=nOQ1kAhN0C5XGe3KPvC5Jz8AcGjCoYiY1qudcrTwiItZIvCUC4PYJz0QiuxrJ+TWT
+	 RGLFIV3C068/dBUbqsqMWtdAh/OjbAEUn62/QneV+2K0dPRjs8mtA770yGnsx5GhP5
+	 2sy/XecRKrE/sJEed8v/MSFp7kGuLH9XMI99fx/6tRvTL30zdR4kvp5ChXDcJC6cSx
+	 GZDUUxiDxNUbUAb09AD4itsPJ2mdaNftB+UEWicIHhLB40lfFXGHXk1cTLjbAL+qHT
+	 ac6naQNjuGeb77Po+2RSrFTL0zyBoQ8DeTaVNSYvCt5UJ1wYgWuItnldmSPuW8huNl
+	 GnQUO2jxse6Ew==
+Date: Tue, 8 Apr 2025 10:09:56 -0700
 From: Luis Chamberlain <mcgrof@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>, David Bueso <dave@stgolabs.net>
-Cc: Jan Kara <jack@suse.cz>, Kefeng Wang <wangkefeng.wang@huawei.com>,
-	David Bueso <dave@stgolabs.net>, Tso Ted <tytso@mit.edu>,
-	Ritesh Harjani <ritesh.list@gmail.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Oliver Sang <oliver.sang@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Alistair Popple <apopple@nvidia.com>, linux-mm@kvack.org,
-	Christian Brauner <brauner@kernel.org>,
-	Hannes Reinecke <hare@suse.de>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, John Garry <john.g.garry@oracle.com>,
-	linux-block@vger.kernel.org, ltp@lists.linux.it,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Dave Chinner <david@fromorbit.com>, gost.dev@samsung.com,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [linux-next:master] [block/bdev]  3c20917120:
- BUG:sleeping_function_called_from_invalid_context_at_mm/util.c
-Message-ID: <Z_VXpD-d8iC57dBc@bombadil.infradead.org>
-References: <20250331074541.gK4N_A2Q@linutronix.de>
- <20250408164307.GK6266@frogsfrogsfrogs>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+	jack@suse.cz, rafael@kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	hch@infradead.org, david@fromorbit.com, djwong@kernel.org,
+	pavel@kernel.org, peterz@infradead.org, mingo@redhat.com,
+	will@kernel.org, boqun.feng@gmail.com
+Subject: Re: [PATCH 0/6] power: wire-up filesystem freeze/thaw with
+ suspend/resume
+Message-ID: <Z_VYZAgHNGEqF7ZB@bombadil.infradead.org>
+References: <20250331-work-freeze-v1-0-6dfbe8253b9f@kernel.org>
+ <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
+ <ddee7c1ce2d1ff1a8ced6e9b6ac707250f70e68b.camel@HansenPartnership.com>
+ <20250402-radstand-neufahrzeuge-198b40c2d073@brauner>
+ <2d698820ebd2e82abe8551425d82e9c387aefd66.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250408164307.GK6266@frogsfrogsfrogs>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2d698820ebd2e82abe8551425d82e9c387aefd66.camel@HansenPartnership.com>
 
-On Tue, Apr 08, 2025 at 09:43:07AM -0700, Darrick J. Wong wrote:
-> Hi Luis,
+On Tue, Apr 08, 2025 at 11:43:46AM -0400, James Bottomley wrote:
+> On Wed, 2025-04-02 at 09:46 +0200, Christian Brauner wrote:
+> > On Tue, Apr 01, 2025 at 01:02:07PM -0400, James Bottomley wrote:
+> > > On Tue, 2025-04-01 at 02:32 +0200, Christian Brauner wrote:
+> > > > The whole shebang can also be found at:
+> > > > https://web.git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=work.freeze
+> > > > 
+> > > > I know nothing about power or hibernation. I've tested it as best
+> > > > as I could. Works for me (TM).
+> > > 
+> > > I'm testing the latest you have in work.freeze and it doesn't
+> > > currently work for me.  Patch 7b315c39b67d ("power: freeze
+> > > filesystems during suspend/resume") doesn't set
+> > > filesystems_freeze_ptr so it ends up being NULL and tripping over
+> > > this check 
+> > 
+> > I haven't pushed the new version there. Sorry about that. I only have
+> > it locally.
+> > 
+> > > 
+> > > +static inline bool may_unfreeze(struct super_block *sb, enum
+> > > freeze_holder who,
+> > > +                               const void *freeze_owner)
+> > > +{
+> > > +       WARN_ON_ONCE((who & ~FREEZE_FLAGS));
+> > > +       WARN_ON_ONCE(hweight32(who & FREEZE_HOLDERS) > 1);
+> > > +
+> > > +       if (who & FREEZE_EXCL) {
+> > > +               if (WARN_ON_ONCE(sb->s_writers.freeze_owner ==
+> > > NULL))
+> > > +                       return false;
+> > > 
+> > > 
+> > > in f15a9ae05a71 ("fs: add owner of freeze/thaw") and failing to
+> > > resume from hibernate.  Setting it to __builtin_return_address(0)
+> > > in filesystems_freeze() makes everything work as expected, so
+> > > that's what I'm testing now.
+> > 
+> > +1
+> > 
+> > I'll send the final version out in a bit.
 > 
-> I'm not sure if this is related, but I'm seeing the same "BUG: sleeping
-> function called from invalid context at mm/util.c:743" message when
-> running fstests on XFS.  Nothing exciting with fstests here other than
-> the machine is arm64 with 64k basepages and 4k fsblock size:
-
-How exotic :D
-
-> MKFS_OPTIONS="-m metadir=1,autofsck=1,uquota,gquota,pquota"
+> I've now done some extensive testing on loop nested filesystems with
+> fio load on the upper. I've tried xfs on ext4 and ext4 on ext4.
+> Hibernate/Resume has currently worked on these without a hitch (and the
+> fio load burps a bit but then starts running at full speed within a few
+> seconds). What I'm doing is a single round of hibernate/resume followed
+> by a reboot. I'm relying on the fschecks to detect any filesystem
+> corruption. I've also tried doing a couple of fresh starts of the
+> hibernated image to check that we did correctly freeze the filesystems.
 > 
-> --D
+> The problems I've noticed are:
 > 
-> [18182.889554] run fstests generic/457 at 2025-04-07 23:06:25
+>    1. I'm using 9p to push host directories throught and that
+>       completely hangs after a resume. This is expected because the
+>       virtio server is out of sync, but it does indicate a need to
+>       address Jeff's question of what we should be doing for network
+>       filesystems (and is also the reason I have to reboot after
+>       resuming).
+>    2. Top doesn't show any CPU activity after resume even though fio is
+>       definitely running.  This seems to be a suspend issue and
+>       unrelated to filesystems, but I'll continue investigating.
 
-Me and Davidlohr have some fixes brewed up now, before we post we just
-want to run one more test for metrics on success rate analysis for folio
-migration. Other than that, given the exotic nature of your system we'll
-Cc you on preliminary patches, in case you can test to see if it also
-fixes your issue. It should given your splat is on the buffer-head side
-of things! See _buffer_migrate_folio() reference on the splat. Fun
-puzzle for the community is figuring out *why* oh why did a large folio
-end up being used on buffer-heads for your use case *without* an LBS
-device (logical block size) being present, as I assume you didn't have
-one, ie say a nvme or virtio block device with logical block size  >
-PAGE_SIZE. The area in question would trigger on folio migration *only*
-if you are migrating large buffer-head folios. We only create those if
-you have an LBS device and are leveragin the block device cache or a
-filesystem with buffer-heads with LBS (they don't exist yet other than
-the block device cache).
-
-Regardless, the patches we have brewed up should fix this, regardless
-of the puzzle described above. We'll cc you for testing before we
-post patches to address this.
+To be clear, on the fio run -- are you running fio *while*
+suspend/resume cycle on XFS? That used to stall / break suspend
+resume. We may want to test dd against a drive too, that will use
+the block device cache, and I forget if we have a freeze/thaw for it.
 
   Luis
 
