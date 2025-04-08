@@ -1,1871 +1,434 @@
-Return-Path: <linux-fsdevel+bounces-45993-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE3F5A80F7D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 17:14:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE37A80FEE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 17:28:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 156B9444C9A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 15:10:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 722EF424D42
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 15:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3842288D3;
-	Tue,  8 Apr 2025 15:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4076722B8B3;
+	Tue,  8 Apr 2025 15:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IAHgL9kY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J6C7hk8L"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DFE149DFF
-	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Apr 2025 15:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAD722ACE3;
+	Tue,  8 Apr 2025 15:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744125012; cv=none; b=FLFQbjF7uyoDSZPSRs7/B/XqsFYHTMIMTcuXnIrGgBXiApBIdL8g9NCL8MpdHuBAXYDf9oMx0KE3E7Shtb/ftu90sCdU8W32PrEQ5U4JT9i14e0iroVQahYswsT/GuBcA//KuuYRLGSZMNsAU7ZNQiqVXLQFn2+NvF0f5u8g6Pg=
+	t=1744125669; cv=none; b=tC0SS5HzHQg1/qws2nIXDNz2GqOdVbq3EWY3NG2J0JSnOh7yxmOD/Iy0HTSDBC/Kr6nybZ+wKCxDwadnpclJ5FUhgvQnV+ybIDuvUYpEbg5SkH88CuJ/DCF3vrsbYRUpv+0zGXDx7TZkC4rSUhM21YR2n14ITNxQ6YWoAuyWBjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744125012; c=relaxed/simple;
-	bh=Y8qKm9svxRBWFKwsb+bRFZT5RyIqhNjk7DeYyIiQ5gY=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=RKo5qrjSlw24YInqzZI2rt41XbXM4mywiXtKa5WIwNotIQuPUEMM91vWKIAuXg4ZJnr2ss/nfbFR7xRearZ9UNVoJuvaryR1ADCt+REFrcSwvfsGhRUy0NBTdSx5dLhwyaFg4xmVdNwg0rsud2QwRv5AQqe11wnxxnYpQm02JeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IAHgL9kY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744125007;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=G6kR6dQzrDDSDStLjcrnt0DilvBG9z+YTsxPWbSGIGk=;
-	b=IAHgL9kYcd9RO2wx4lmYO3tQ8eOwenRIqpQxyuXAASiUIn4/ALBMzzR/9I+ZZIx/7aRtqj
-	ryBNBE5ugqci5/j3GK8EEdH9xciWvHpEL7nGheKzd0xuLek/0a3VnD7k0yR3ovdxNp8V5t
-	tmAVXgWDNirRHKWoQitX0PxoOf1VpeY=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-373-VhyCDbd9MLarFtsZPSNeZA-1; Tue,
- 08 Apr 2025 11:10:04 -0400
-X-MC-Unique: VhyCDbd9MLarFtsZPSNeZA-1
-X-Mimecast-MFC-AGG-ID: VhyCDbd9MLarFtsZPSNeZA_1744125002
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4C8EE19560AB;
-	Tue,  8 Apr 2025 15:10:02 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.40])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 18209180174E;
-	Tue,  8 Apr 2025 15:09:58 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-cc: dhowells@redhat.com, Paulo Alcantara (Red Hat) <pc@manguebit.com>,
-    Jeff Layton <jlayton@kernel.org>,
-    Viacheslav Dubeyko <slava@dubeyko.com>,
-    Alex Markuze <amarkuze@redhat.com>, Timothy Day <timday@amazon.com>,
-    Jonathan Corbet <corbet@lwn.net>, netfs@lists.linux.dev,
-    linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] netfs: Update main API document
+	s=arc-20240116; t=1744125669; c=relaxed/simple;
+	bh=tlASbFsigJX3SSXNOR5BwZ6wBMU9hlwNoPLD0u+SAzE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oF3PROHwPBYjal8gjrtxg7UKPshsP+V2sIpvvUIBs1dIf3Vn9BG5mOpHbNHv8ldWkMp9KgWA4vtIUp+au1+Qb5MdTUUGBSQtHsgpTcqasa26DlEoVd3VzvZaSUgxwTHudntavRuLJ6rLA9xuMmu85a3uRf7suBYEzwjOCyvJi/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J6C7hk8L; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-301918a4e1bso4021499a91.1;
+        Tue, 08 Apr 2025 08:21:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744125667; x=1744730467; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AyM5QAkblowIQiFcHDeZQk/KXFh+UxVQpiVBK0Pf8CQ=;
+        b=J6C7hk8Lp0V4W530EXrjSxT5NSm2BR9m0eo932g/k8qRaUDS/mOCHKE6g+TsEN3WXV
+         CwyV6vwrhspj44vo+QRFA2sqSmk3zeVRP6XdTUNIBZ7OCqdb812jMREqmplkSwLojJnV
+         DAiycGzES8JX8Q8HnZoy4k5awilZtz1dKwfBqDGU86Hb5PQaS+JF3ZQAxS2LXkpRCToo
+         qjQjHpkDI5jHkj4FfSarB8JU4gZAZE3jsr02BGAURw6YzTJCep0oDH0YUiNyBnNHonDu
+         mNj4rzx2MFQWnXsMp+Qrb9cm3CiN9YtjzGmxu+FAaKM4KN1yTFTFVjKXLQMVNlBVQjCX
+         q12A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744125667; x=1744730467;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AyM5QAkblowIQiFcHDeZQk/KXFh+UxVQpiVBK0Pf8CQ=;
+        b=PrVRBhI14vsV/rfr6ZlwkDGlPWSnlj5vgaBdVdQLhfAms4TFKiFrQjfRP0zwWRGXHk
+         Q9F9UDiV1bBCZvsbKRKVROyE42kromJXk018pP1f/9FmraFif7qjTOp/tvaYNMobXsPS
+         YiKhCBHBt9Wfp0haARukpboXq3wMk4ntkdSkP8Nlu7u8eCBGKwGcQhAl0bx2pFEEvUxi
+         d1lF+L441IPJT4VwY37Izttol8sCUuoRGAuPSZFwKUbbvSC9XV8wtqHes03KJMyal02R
+         AY/RRVK+Fqapm2LYuJxFqGoOI9Q6rnhyDpjzMvlnkKDtcllKFOb/dD2A4T5sbiH1OdvI
+         XSbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZNYl0o9qcQOHxsJ7ISCPv/U3oG2ZGlrrTQ28VTZthoWtzBLTPtYk0lcrawxUigOIQh9sz5x0jDHsXLTFB@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVRgP3dTEitjb0FQ4s2XrhmPeJLIbVfQXLRc1pF5hyJjA00IJ2
+	O65EwZ/jTUe6qXDBdJ0Z4hWF0yE8v/2FRxee7EdddmRGcKbJemiNvzVcyKlxgz2p5qB3KJYsPTz
+	NEDfgRW33EVVkoUO5Y99B3D/wSs4=
+X-Gm-Gg: ASbGncsQxpO+VjTA/7ssE1tJHqBz4bi4jEBoOu+OAOS+SwGMCPoU/382D51EsZ5VLuE
+	i4plHX6vPcnHHlHC7ZPf/N496GXEdva5ui6WHPJdP8pzPHJdFiD9G1MdCSnbTyoo5qEQVd2q+K6
+	q88z5mHH71m3Ffl3WFCK83AtAgxw==
+X-Google-Smtp-Source: AGHT+IFQXUIp2gr0kTVRugpWYUZRGkMW/vPlZXC2oJneTy/OvnPV7+1fEK78WZjYFPPoxY15nDZi2ZDqGYYOlngkGbk=
+X-Received: by 2002:a17:90b:5490:b0:2ff:62b7:dcc0 with SMTP id
+ 98e67ed59e1d1-306a615b74dmr23025985a91.15.1744125666775; Tue, 08 Apr 2025
+ 08:21:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1565251.1744124997.1@warthog.procyon.org.uk>
+References: <20250305194437.59309-1-slava@dubeyko.com>
+In-Reply-To: <20250305194437.59309-1-slava@dubeyko.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Tue, 8 Apr 2025 17:20:54 +0200
+X-Gm-Features: ATxdqUGpFH2a3r_TvNkWPXpg08ymvx9r0VWR3gtLCDa6JKV2o0wnUBtNkr6WhFI
+Message-ID: <CAOi1vP_=TAq_2iECmp9hn9fV2JF5=1CzM_U+kdax4atx6A6wEA@mail.gmail.com>
+Subject: Re: [PATCH v4] ceph: fix slab-use-after-free in have_mon_and_osd_map()
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: ceph-devel@vger.kernel.org, dhowells@redhat.com, amarkuze@redhat.com, 
+	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 08 Apr 2025 16:09:57 +0100
-Message-ID: <1565252.1744124997@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Bring the netfs documentation up to date.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: Viacheslav Dubeyko <slava@dubeyko.com>
-cc: Alex Markuze <amarkuze@redhat.com>
-cc: Timothy Day <timday@amazon.com>
-cc: Jonathan Corbet <corbet@lwn.net>
-cc: netfs@lists.linux.dev
-cc: linux-doc@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
----
- Documentation/filesystems/netfs_library.rst |  995 ++++++++++++++++++++--=
-------
- 1 file changed, 718 insertions(+), 277 deletions(-)
-
-diff --git a/Documentation/filesystems/netfs_library.rst b/Documentation/f=
-ilesystems/netfs_library.rst
-index 3886c14f89f4..ce6a7109e941 100644
---- a/Documentation/filesystems/netfs_library.rst
-+++ b/Documentation/filesystems/netfs_library.rst
-@@ -1,33 +1,185 @@
- .. SPDX-License-Identifier: GPL-2.0
- =
-
--=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
--Network Filesystem Helper Library
--=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+Network Filesystem Services Library
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
- =
-
- .. Contents:
- =
-
-  - Overview.
-+   - Requests and streams.
-+   - Subrequests.
-+   - Result collection and retry.
-+   - Local caching.
-+   - Content encryption (fscrypt).
-  - Per-inode context.
-    - Inode context helper functions.
-- - Buffered read helpers.
--   - Read helper functions.
--   - Read helper structures.
--   - Read helper operations.
--   - Read helper procedure.
--   - Read helper cache API.
-+   - Inode locking.
-+   - Inode writeback.
-+ - High-level VFS API.
-+   - Unlocked read/write iter.
-+   - Pre-locked read/write iter.
-+   - Monolithic files API.
-+   - Memory-mapped I/O API.
-+ - High-level VM API.
-+   - Deprecated PG_private2 API.
-+ - I/O request API.
-+   - Request structure.
-+   - Stream structure.
-+   - Subrequest structure.
-+   - Filesystem methods.
-+   - Terminating a subrequest.
-+   - Local cache API.
-+ - API function reference.
- =
-
- =
-
- Overview
- =3D=3D=3D=3D=3D=3D=3D=3D
- =
-
--The network filesystem helper library is a set of functions designed to a=
-id a
--network filesystem in implementing VM/VFS operations.  For the moment, th=
-at
--just includes turning various VM buffered read operations into requests t=
-o read
--from the server.  The helper library, however, can also interpose other
--services, such as local caching or local data encryption.
-+The network filesystem services library, netfslib, is a set of functions
-+designed to aid a network filesystem in implementing VM/VFS API operation=
-s.  It
-+takes over the normal buffered read, readahead, write and writeback and a=
-lso
-+handles unbuffered and direct I/O.
- =
-
--Note that the library module doesn't link against local caching directly,=
- so
--access must be provided by the netfs.
-+The library provides support for (re-)negotiation of I/O sizes and retryi=
-ng
-+failed I/O as well as local caching and will, in the future, provide cont=
-ent
-+encryption.
-+
-+It insulates the filesystem from VM interface changes as much as possible=
- and
-+handles VM features such as large multipage folios.  The filesystem basic=
-ally
-+just has to provide a way to perform read and write RPC calls.
-+
-+The way I/O is organised inside netfslib consists of a number of objects:
-+
-+ * A *request*.  A request is used to track the progress of the I/O overa=
-ll and
-+   to hold on to resources.  The collection of results is done at the req=
-uest
-+   level.  The I/O within a request is divided into a number of parallel
-+   streams of subrequests.
-+
-+ * A *stream*.  A non-overlapping series of subrequests.  The subrequests
-+   within a stream do not have to be contiguous.
-+
-+ * A *subrequest*.  This is the basic unit of I/O.  It represents a singl=
-e RPC
-+   call or a single cache I/O operation.  The library passes these to the
-+   filesystem and the cache to perform.
-+
-+Requests and Streams
-+--------------------
-+
-+When actually performing I/O (as opposed to just copying into the pagecac=
-he),
-+netfslib will create one or more requests to track the progress of the I/=
-O and
-+to hold resources.
-+
-+A read operation will have a single stream and the subrequests within tha=
-t
-+stream may be of mixed origins, for instance mixing RPC subrequests and c=
-ache
-+subrequests.
-+
-+On the other hand, a write operation may have multiple streams, where eac=
-h
-+stream targets a different destination.  For instance, there may be one s=
-tream
-+writing to the local cache and one to the server.  Currently, only two st=
-reams
-+are allowed, but this could be increased if parallel writes to multiple s=
-ervers
-+is desired.
-+
-+The subrequests within a write stream do not need to match alignment or s=
-ize
-+with the subrequests in another write stream and netfslib performs the ti=
-ling
-+of subrequests in each stream over the source buffer independently.  Furt=
-her,
-+each stream may contain holes that don't correspond to holes in the other
-+stream.
-+
-+In addition, the subrequests do not need to correspond to the boundaries =
-of the
-+folios or vectors in the source/destination buffer.  The library handles =
-the
-+collection of results and the wrangling of folio flags and references.
-+
-+Subrequests
-+-----------
-+
-+Subrequests are at the heart of the interaction between netfslib and the
-+filesystem using it.  Each subrequest is expected to correspond to a sing=
-le
-+read or write RPC or cache operation.  The library will stitch together t=
-he
-+results from a set of subrequests to provide a higher level operation.
-+
-+Netfslib has two interactions with the filesystem or the cache when setti=
-ng up
-+a subrequest.  First, there's an optional preparatory step that allows th=
-e
-+filesystem to negotiate the limits on the subrequest, both in terms of ma=
-ximum
-+number of bytes and maximum number of vectors (e.g. for RDMA).  This may
-+involve negotiating with the server (e.g. cifs needing to acquire credits=
-).
-+
-+And, secondly, there's the issuing step in which the subrequest is handed=
- off
-+to the filesystem to perform.
-+
-+Note that these two steps are done slightly differently between read and =
-write:
-+
-+ * For reads, the VM/VFS tells us how much is being requested up front, s=
-o the
-+   library can preset maximum values that the cache and then the filesyst=
-em can
-+   then reduce.  The cache also gets consulted first on whether it wants =
-to do
-+   a read before the filesystem is consulted.
-+
-+ * For writeback, it is unknown how much there will be to write until the
-+   pagecache is walked, so no limit is set by the library.
-+
-+Once a subrequest is completed, the filesystem or cache informs the libra=
-ry of
-+the completion and then collection is invoked.  Depending on whether the
-+request is synchronous or asynchronous, the collection of results will be=
- done
-+in either the application thread or in a work queue.
-+
-+Result Collection and Retry
-+---------------------------
-+
-+As subrequests complete, the results are collected and collated by the li=
-brary
-+and folio unlocking is performed progressively (if appropriate).  Once th=
-e
-+request is complete, async completion will be invoked (again, if appropri=
-ate).
-+It is possible for the filesystem to provide interim progress reports to =
-the
-+library to cause folio unlocking to happen earlier if possible.
-+
-+If any subrequests fail, netfslib can retry them.  It will wait until all
-+subrequests are completed, offer the filesystem the opportunity to fiddle=
- with
-+the resources/state held by the request and poke at the subrequests befor=
-e
-+re-preparing and re-issuing the subrequests.
-+
-+This allows the tiling of contiguous sets of failed subrequest within a s=
-tream
-+to be changed, adding more subrequests or ditching excess as necessary (f=
-or
-+instance, if the network sizes change or the server decides it wants smal=
-ler
-+chunks).
-+
-+Further, if a read from the cache fails, the library will ask the filesys=
-tem to
-+do the read instead, renegotiating and retiling the subrequests as necess=
-ary.
-+
-+Local Caching
-+-------------
-+
-+One of the services netfslib provides, via ``fscache``, is the option to =
-cache
-+on local disk a copy of the data obtained from/written to a network files=
-ystem.
-+The library will manage the storing, retrieval and some invalidation of d=
-ata
-+automatically on behalf of the filesystem if a cookie is attached to the
-+``netfs_inode``.
-+
-+Note that local caching used to use the PG_private_2 (aliased as PG_fscac=
-he) to
-+keep track of a page that was being written to the cache, but this is now
-+deprecated as PG_private_2 will be removed.
-+
-+Instead, folios that are read from the server for which there was no data=
- in
-+the cache will be marked as dirty and will have ``folio->private`` set to=
- a
-+special value (``NETFS_FOLIO_COPY_TO_CACHE``) and left to writeback to wr=
-ite.
-+If the folio is modified before that happened, the special value will be
-+cleared and the write will become normally dirty.
-+
-+When writeback occurs, folios that are so marked will only be written to =
-the
-+cache and not to the server.  Writeback handles mixed cache-only writes a=
-nd
-+server-and-cache writes by using two streams, sending one to the cache an=
-d one
-+to the server.  The server stream will have gaps in it corresponding to t=
-hose
-+folios.
-+
-+Content Encryption (fscrypt)
-+----------------------------
-+
-+Though it does not do so yet, at some point netfslib will acquire the abi=
-lity
-+to do client-side content encryption on behalf of the network filesystem =
-(Ceph,
-+for example).  fscrypt can be used for this if appropriate (it may not be=
- -
-+cifs, for example).
-+
-+The data will be stored encrypted in the local cache using the same manne=
-r of
-+encryption as the data written to the server and the library will impose =
-bounce
-+buffering and RMW cycles as necessary.
- =
-
- =
-
- Per-Inode Context
-@@ -40,10 +192,13 @@ structure is defined::
- 	struct netfs_inode {
- 		struct inode inode;
- 		const struct netfs_request_ops *ops;
--		struct fscache_cookie *cache;
-+		struct fscache_cookie * cache;
-+		loff_t remote_i_size;
-+		unsigned long flags;
-+		...
- 	};
- =
-
--A network filesystem that wants to use netfs lib must place one of these =
-in its
-+A network filesystem that wants to use netfslib must place one of these i=
-n its
- inode wrapper struct instead of the VFS ``struct inode``.  This can be do=
-ne in
- a way similar to the following::
- =
-
-@@ -56,7 +211,8 @@ This allows netfslib to find its state by using ``conta=
-iner_of()`` from the
- inode pointer, thereby allowing the netfslib helper functions to be point=
-ed to
- directly by the VFS/VM operation tables.
- =
-
--The structure contains the following fields:
-+The structure contains the following fields that are of interest to the
-+filesystem:
- =
-
-  * ``inode``
- =
-
-@@ -71,6 +227,37 @@ The structure contains the following fields:
-    Local caching cookie, or NULL if no caching is enabled.  This field do=
-es not
-    exist if fscache is disabled.
- =
-
-+ * ``remote_i_size``
-+
-+   The size of the file on the server.  This differs from inode->i_size i=
-f
-+   local modifications have been made but not yet written back.
-+
-+ * ``flags``
-+
-+   A set of flags, some of which the filesystem might be interested in:
-+
-+   * ``NETFS_ICTX_MODIFIED_ATTR``
-+
-+     Set if netfslib modifies mtime/ctime.  The filesystem is free to ign=
-ore
-+     this or clear it.
-+
-+   * ``NETFS_ICTX_UNBUFFERED``
-+
-+     Do unbuffered I/O upon the file.  Like direct I/O but without the
-+     alignment limitations.  RMW will be performed if necessary.  The pag=
-ecache
-+     will not be used unless mmap() is also used.
-+
-+   * ``NETFS_ICTX_WRITETHROUGH``
-+
-+     Do writethrough caching upon the file.  I/O will be set up and dispa=
-tched
-+     as buffered writes are made to the page cache.  mmap() does the norm=
-al
-+     writeback thing.
-+
-+   * ``NETFS_ICTX_SINGLE_NO_UPLOAD``
-+
-+     Set if the file has a monolithic content that must be read entirely =
-in a
-+     single go and must not be written back to the server, though it can =
-be
-+     cached (e.g. AFS directories).
- =
-
- Inode Context Helper Functions
- ------------------------------
-@@ -84,117 +271,234 @@ set the operations table pointer::
- =
-
- then a function to cast from the VFS inode structure to the netfs context=
-::
- =
-
--	struct netfs_inode *netfs_node(struct inode *inode);
-+	struct netfs_inode *netfs_inode(struct inode *inode);
- =
-
- and finally, a function to get the cache cookie pointer from the context
- attached to an inode (or NULL if fscache is disabled)::
- =
-
- 	struct fscache_cookie *netfs_i_cookie(struct netfs_inode *ctx);
- =
-
-+Inode Locking
-+-------------
-+
-+A number of functions are provided to manage the locking of i_rwsem for I=
-/O and
-+to effectively extend it to provide more separate classes of exclusion::
-+
-+	int netfs_start_io_read(struct inode *inode);
-+	void netfs_end_io_read(struct inode *inode);
-+	int netfs_start_io_write(struct inode *inode);
-+	void netfs_end_io_write(struct inode *inode);
-+	int netfs_start_io_direct(struct inode *inode);
-+	void netfs_end_io_direct(struct inode *inode);
-+
-+The exclusion breaks down into four separate classes:
-+
-+ 1) Buffered reads and writes.
-+
-+    Buffered reads can run concurrently each other and with buffered writ=
-es,
-+    but buffered writes cannot run concurrently with each other.
-+
-+ 2) Direct reads and writes.
-+
-+    Direct (and unbuffered) reads and writes can run concurrently since t=
-hey do
-+    not share local buffering (i.e. the pagecache) and, in a network
-+    filesystem, are expected to have exclusion managed on the server (tho=
-ugh
-+    this may not be the case for, say, Ceph).
-+
-+ 3) Other major inode modifying operations (e.g. truncate, fallocate).
-+
-+    These should just access i_rwsem directly.
- =
-
--Buffered Read Helpers
--=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+ 4) mmap().
- =
-
--The library provides a set of read helpers that handle the ->read_folio()=
-,
--->readahead() and much of the ->write_begin() VM operations and translate=
- them
--into a common call framework.
-+    mmap'd accesses might operate concurrently with any of the other clas=
-ses.
-+    They might form the buffer for an intra-file loopback DIO read/write.=
-  They
-+    might be permitted on unbuffered files.
- =
-
--The following services are provided:
-+Inode Writeback
-+---------------
- =
-
-- * Handle folios that span multiple pages.
-+Netfslib will pin resources on an inode for future writeback (such as pin=
-ning
-+use of an fscache cookie) when an inode is dirtied.  However, this needs
-+managing.  Firstly, a function is provided to unpin the writeback in
-+``->write_inode()``::
- =
-
-- * Insulate the netfs from VM interface changes.
-+	int netfs_unpin_writeback(struct inode *inode, struct writeback_control =
-*wbc);
- =
-
-- * Allow the netfs to arbitrarily split reads up into pieces, even ones t=
-hat
--   don't match folio sizes or folio alignments and that may cross folios.
-+and, indeed, this may be set as a filesystem's ``.write_inode`` method.
- =
-
-- * Allow the netfs to expand a readahead request in both directions to me=
-et its
--   needs.
-+Further, if an inode is deleted, the filesystem's write_inode method may =
-not
-+get called, so::
- =
-
-- * Allow the netfs to partially fulfil a read, which will then be resubmi=
-tted.
-+	void netfs_clear_inode_writeback(struct inode *inode, const void *aux);
- =
-
-- * Handle local caching, allowing cached data and server-read data to be
--   interleaved for a single request.
-+must be called from ``->evict_inode()`` *before* ``clear_inode()`` is cal=
-led.
- =
-
-- * Handle clearing of bufferage that isn't on the server.
- =
-
-- * Handle retrying of reads that failed, switching reads from the cache t=
-o the
--   server as necessary.
-+High-Level VFS API
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
- =
-
-- * In the future, this is a place that other services can be performed, s=
-uch as
--   local encryption of data to be stored remotely or in the cache.
-+Netfslib provides a number of sets of API calls for the filesystem to del=
-egate
-+VFS operations to.  Netfslib, in turn, will call out to the filesystem an=
-d the
-+cache to negotiate I/O sizes, issue RPCs and provide places for it to int=
-ervene
-+at various times.
- =
-
--From the network filesystem, the helpers require a table of operations.  =
-This
--includes a mandatory method to issue a read operation along with a number=
- of
--optional methods.
-+Unlocked Read/Write Iter
-+------------------------
- =
-
-+The first API set is for the delegation of operations to netfslib when th=
-e
-+filesystem is called through the standard VFS read/write_iter methods::
- =
-
--Read Helper Functions
-+	ssize_t netfs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter);
-+	ssize_t netfs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)=
-;
-+	ssize_t netfs_buffered_read_iter(struct kiocb *iocb, struct iov_iter *it=
-er);
-+	ssize_t netfs_unbuffered_read_iter(struct kiocb *iocb, struct iov_iter *=
-iter);
-+	ssize_t netfs_unbuffered_write_iter(struct kiocb *iocb, struct iov_iter =
-*from);
-+
-+They can be assigned directly to ``.read_iter`` and ``.write_iter``.  The=
-y
-+perform the inode locking themselves and the first two will switch betwee=
-n
-+buffered I/O and DIO as appropriate.
-+
-+Pre-Locked Read/Write Iter
-+--------------------------
-+
-+The second API set is for the delegation of operations to netfslib when t=
-he
-+filesystem is called through the standard VFS methods, but needs to do so=
-me
-+other stuff before or after calling netfslib whilst still inside locked s=
-ection
-+(e.g. Ceph negotiating caps).  The unbuffered read function is::
-+
-+	ssize_t netfs_unbuffered_read_iter_locked(struct kiocb *iocb, struct iov=
-_iter *iter);
-+
-+This must not be assigned directly to ``.read_iter`` and the filesystem i=
-s
-+responsible for performing the inode locking before calling it.  In the c=
-ase of
-+buffered read, the filesystem should use ``filemap_read()``.
-+
-+There are three functions for writes::
-+
-+	ssize_t netfs_buffered_write_iter_locked(struct kiocb *iocb, struct iov_=
-iter *from,
-+						 struct netfs_group *netfs_group);
-+	ssize_t netfs_perform_write(struct kiocb *iocb, struct iov_iter *iter,
-+				    struct netfs_group *netfs_group);
-+	ssize_t netfs_unbuffered_write_iter_locked(struct kiocb *iocb, struct io=
-v_iter *iter,
-+						   struct netfs_group *netfs_group);
-+
-+These must not be assigned directly to ``.write_iter`` and the filesystem=
- is
-+responsible for performing the inode locking before calling them.
-+
-+The first two functions are for buffered writes; the first just adds some
-+standard write checks and jumps to the second, but if the filesystem want=
-s to
-+do the checks itself, it can use the second directly.  The third function=
- is
-+for unbuffered or DIO writes.
-+
-+On all three write functions, there is a writeback group pointer (which s=
-hould
-+be NULL if the filesystem doesn't use this).  Writeback groups are set on
-+folios when they're modified.  If a folio to-be-modified is already marke=
-d with
-+a different group, it is flushed first.  The writeback API allows writing=
- back
-+of a specific group.
-+
-+Memory-Mapped I/O API
- ---------------------
- =
-
--Three read helpers are provided::
-+An API for support of mmap()'d I/O is provided::
-+
-+	vm_fault_t netfs_page_mkwrite(struct vm_fault *vmf, struct netfs_group *=
-netfs_group);
-+
-+This allows the filesystem to delegate ``.page_mkwrite`` to netfslib.  Th=
-e
-+filesystem should not take the inode lock before calling it, but, as with=
- the
-+locked write functions above, this does take a writeback group pointer.  =
-If the
-+page to be made writable is in a different group, it will be flushed firs=
-t.
-+
-+Monolithic Files API
-+--------------------
-+
-+There is also a special API set for files for which the content must be r=
-ead in
-+a single RPC (and not written back) and is maintained as a monolithic blo=
-b
-+(e.g. an AFS directory), though it can be stored and updated in the local=
- cache::
-+
-+	ssize_t netfs_read_single(struct inode *inode, struct file *file, struct=
- iov_iter *iter);
-+	void netfs_single_mark_inode_dirty(struct inode *inode);
-+	int netfs_writeback_single(struct address_space *mapping,
-+				   struct writeback_control *wbc,
-+				   struct iov_iter *iter);
-+
-+The first function reads from a file into the given buffer, reading from =
-the
-+cache in preference if the data is cached there; the second function allo=
-ws the
-+inode to be marked dirty, causing a later writeback; and the third functi=
-on can
-+be called from the writeback code to write the data to the cache, if ther=
-e is
-+one.
-+
-+The inode should be marked ``NETFS_ICTX_SINGLE_NO_UPLOAD`` if this API is=
- to be
-+used.  The writeback function requires the buffer to be of ITER_FOLIOQ ty=
-pe.
-+
-+High-Level VM API
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+
-+Netfslib also provides a number of sets of API calls for the filesystem t=
-o
-+delegate VM operations to.  Again, netfslib, in turn, will call out to th=
-e
-+filesystem and the cache to negotiate I/O sizes, issue RPCs and provide p=
-laces
-+for it to intervene at various times::
- =
-
--	void netfs_readahead(struct readahead_control *ractl);
--	int netfs_read_folio(struct file *file,
--			     struct folio *folio);
--	int netfs_write_begin(struct netfs_inode *ctx,
--			      struct file *file,
--			      struct address_space *mapping,
--			      loff_t pos,
--			      unsigned int len,
--			      struct folio **_folio,
--			      void **_fsdata);
-+	void netfs_readahead(struct readahead_control *);
-+	int netfs_read_folio(struct file *, struct folio *);
-+	int netfs_writepages(struct address_space *mapping,
-+			     struct writeback_control *wbc);
-+	bool netfs_dirty_folio(struct address_space *mapping, struct folio *foli=
-o);
-+	void netfs_invalidate_folio(struct folio *folio, size_t offset, size_t l=
-ength);
-+	bool netfs_release_folio(struct folio *folio, gfp_t gfp);
- =
-
--Each corresponds to a VM address space operation.  These operations use t=
-he
--state in the per-inode context.
-+These are ``address_space_operations`` methods and can be set directly in=
- the
-+operations table.
- =
-
--For ->readahead() and ->read_folio(), the network filesystem just point d=
-irectly
--at the corresponding read helper; whereas for ->write_begin(), it may be =
-a
--little more complicated as the network filesystem might want to flush
--conflicting writes or track dirty data and needs to put the acquired foli=
-o if
--an error occurs after calling the helper.
-+Deprecated PG_private_2 API
-+---------------------------
- =
-
--The helpers manage the read request, calling back into the network filesy=
-stem
--through the supplied table of operations.  Waits will be performed as
--necessary before returning for helpers that are meant to be synchronous.
-+There is also a deprecated function for filesystems that still use the
-+``->write_begin`` method::
- =
-
--If an error occurs, the ->free_request() will be called to clean up the
--netfs_io_request struct allocated.  If some parts of the request are in
--progress when an error occurs, the request will get partially completed i=
-f
--sufficient data is read.
-+	int netfs_write_begin(struct netfs_inode *inode, struct file *file,
-+			      struct address_space *mapping, loff_t pos, unsigned int len,
-+			      struct folio **_folio, void **_fsdata);
- =
-
--Additionally, there is::
-+It uses the deprecated PG_private_2 flag and so should not be used.
- =
-
--  * void netfs_subreq_terminated(struct netfs_io_subrequest *subreq,
--				 ssize_t transferred_or_error,
--				 bool was_async);
- =
-
--which should be called to complete a read subrequest.  This is given the =
-number
--of bytes transferred or a negative error code, plus a flag indicating whe=
-ther
--the operation was asynchronous (ie. whether the follow-on processing can =
-be
--done in the current context, given this may involve sleeping).
-+I/O Request API
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
- =
-
-+The I/O request API comprises a number of structures and a number of func=
-tions
-+that the filesystem may need to use.
- =
-
--Read Helper Structures
------------------------
-+Request Structure
-+-----------------
- =
-
--The read helpers make use of a couple of structures to maintain the state=
- of
--the read.  The first is a structure that manages a read request as a whol=
-e::
-+The request structure manages the request as a whole, holding some resour=
-ces
-+and state on behalf of the filesystem and tracking the collection of resu=
-lts.
-+If the filesystem wants more private data than is afforded by this struct=
-ure,
-+then it should wrap it and provide its own allocator.
-+
-+The fields generally of interest to a filesystem are::
- =
-
- 	struct netfs_io_request {
-+		enum netfs_io_origin	origin;
- 		struct inode		*inode;
- 		struct address_space	*mapping;
--		struct netfs_cache_resources cache_resources;
-+		struct netfs_group	*group;
-+		struct netfs_io_stream	io_streams[];
- 		void			*netfs_priv;
--		loff_t			start;
--		size_t			len;
--		loff_t			i_size;
--		const struct netfs_request_ops *netfs_ops;
-+		void			*netfs_priv2;
-+		unsigned long long	start;
-+		unsigned long long	len;
-+		unsigned long long	i_size;
- 		unsigned int		debug_id;
-+		unsigned long		flags;
- 		...
- 	};
- =
-
--The above fields are the ones the netfs can use.  They are:
-+They are:
-+
-+ * ``origin``
-+
-+   The origin of the request (readahead, read_folio, DIO read, writeback,=
- ...).
- =
-
-  * ``inode``
-  * ``mapping``
-@@ -202,11 +506,19 @@ The above fields are the ones the netfs can use.  Th=
-ey are:
-    The inode and the address space of the file being read from.  The mapp=
-ing
-    may or may not point to inode->i_data.
- =
-
-- * ``cache_resources``
-+ * ``group``
- =
-
--   Resources for the local cache to use, if present.
-+   The writeback group this request is dealing with or NULL.  This holds =
-a ref
-+   on the group.
-+
-+ * ``io_streams``
-+
-+   The parallel streams of subrequests available to the request.  Current=
-ly two
-+   are available, but this may be made extensible in future.  ``NR_IO_STR=
-EAMS``
-+   indicates the size of the array.
- =
-
-  * ``netfs_priv``
-+ * ``netfs_priv2``
- =
-
-    The network filesystem's private data.  The value for this can be pass=
-ed in
-    to the helper functions or set during the request.
-@@ -221,37 +533,118 @@ The above fields are the ones the netfs can use.  T=
-hey are:
- =
-
-    The size of the file at the start of the request.
- =
-
-- * ``netfs_ops``
--
--   A pointer to the operation table.  The value for this is passed into t=
-he
--   helper functions.
--
-  * ``debug_id``
- =
-
-    A number allocated to this operation that can be displayed in trace li=
-nes
-    for reference.
- =
-
-+ * ``flags``
-+
-+   Flags for managing and controlling the operation of the request.  Some=
- of
-+   these may be of interest to the filesystem:
-+
-+   * ``NETFS_RREQ_RETRYING``
-+
-+     Netfslib sets this when generating retries.
-+
-+   * ``NETFS_RREQ_PAUSE``
-+
-+     The filesystem can set this to request to pause the library's subreq=
-uest
-+     issuing loop - but care needs to be taken as netfslib may also set i=
-t.
-+
-+   * ``NETFS_RREQ_NONBLOCK``
-+   * ``NETFS_RREQ_BLOCKED``
-+
-+     Netfslib sets the first to indicate that non-blocking mode was set b=
-y the
-+     caller and the filesystem can set the second to indicate that it wou=
-ld
-+     have had to block.
-+
-+   * ``NETFS_RREQ_USE_PGPRIV2``
-+
-+     The filesystem can set this if it wants to use PG_private_2 to track
-+     whether a folio is being written to the cache.  This is deprecated a=
-s
-+     PG_private_2 is going to go away.
- =
-
--The second structure is used to manage individual slices of the overall r=
-ead
--request::
-+Stream Structure
-+----------------
-+
-+A request is comprised of one or more parallel streams and each stream ma=
-y be
-+aimed at a different target.
-+
-+For read requests, only stream 0 is used.  This can contain a mixture of
-+subrequests aimed at different sources.  For write requests, stream 0 is =
-used
-+for the server and stream 1 is used for the cache.  For buffered writebac=
-k,
-+stream 0 is not enabled unless a normal dirty folio is encountered, at wh=
-ich
-+point ->begin_writeback() will be invoked and the filesystem can mark the
-+stream available.
-+
-+The stream struct looks like::
-+
-+	struct netfs_io_stream {
-+		unsigned char		stream_nr;
-+		bool			avail;
-+		size_t			sreq_max_len;
-+		unsigned int		sreq_max_segs;
-+		unsigned int		submit_extendable_to;
-+		...
-+	};
-+
-+A number of members are available for access/use by the filesystem:
-+
-+ * ``stream_nr``
-+
-+   The number of the stream within the request.
-+
-+ * ``avail``
-+
-+   True if the stream is available for use.  The filesystem should set th=
-is on
-+   stream zero if in ->begin_writeback().
-+
-+ * ``sreq_max_len``
-+ * ``sreq_max_segs``
-+
-+   These are set by the filesystem or the cache in ->prepare_read() or
-+   ->prepare_write() for each subrequest to indicate the maximum number o=
-f
-+   bytes and, optionally, the maximum number of segments (if not 0) that =
-that
-+   subrequest can support.
-+
-+ * ``submit_extendable_to``
-+
-+   The size that a subrequest can be rounded up to beyond the EOF, given =
-the
-+   available buffer.  This allows the cache to work out if it can do a DI=
-O read
-+   or write that straddles the EOF marker.
-+
-+Subrequest Structure
-+--------------------
-+
-+Individual units of I/O are managed by the subrequest structure.  These
-+represent slices of the overall request and run independently::
- =
-
- 	struct netfs_io_subrequest {
- 		struct netfs_io_request *rreq;
--		loff_t			start;
-+		struct iov_iter		io_iter;
-+		unsigned long long	start;
- 		size_t			len;
- 		size_t			transferred;
- 		unsigned long		flags;
-+		short			error;
- 		unsigned short		debug_index;
-+		unsigned char		stream_nr;
- 		...
- 	};
- =
-
--Each subrequest is expected to access a single source, though the helpers=
- will
-+Each subrequest is expected to access a single source, though the library=
- will
- handle falling back from one source type to another.  The members are:
- =
-
-  * ``rreq``
- =
-
-    A pointer to the read request.
- =
-
-+ * ``io_iter``
-+
-+   An I/O iterator representing a slice of the buffer to be read into or
-+   written from.
-+
-  * ``start``
-  * ``len``
- =
-
-@@ -260,241 +653,300 @@ handle falling back from one source type to anothe=
-r.  The members are:
- =
-
-  * ``transferred``
- =
-
--   The amount of data transferred so far of the length of this slice.  Th=
-e
--   network filesystem or cache should start the operation this far into t=
-he
--   slice.  If a short read occurs, the helpers will call again, having up=
-dated
--   this to reflect the amount read so far.
-+   The amount of data transferred so far for this subrequest.  This shoul=
-d be
-+   added to with the length of the transfer made by this issuance of the
-+   subrequest.  If this is less than ``len`` then the subrequest may be
-+   reissued to continue.
- =
-
-  * ``flags``
- =
-
--   Flags pertaining to the read.  There are two of interest to the filesy=
-stem
--   or cache:
-+   Flags for managing the subrequest.  There are a number of interest to =
-the
-+   filesystem or cache:
-+
-+   * ``NETFS_SREQ_MADE_PROGRESS``
-+
-+     Set by the filesystem to indicates that at least one byte of data wa=
-s read
-+     or written.
-+
-+   * ``NETFS_SREQ_HIT_EOF``
-+
-+     The filesystem should set this if a read hit the EOF on the file (in=
- which
-+     case ``transferred`` should stop at the EOF).  Netfslib may expand t=
-he
-+     subrequest out to the size of the folio containing the EOF on the of=
-f
-+     chance that a third party change happened or a DIO read may have ask=
-ed for
-+     more than is available.  The library will clear any excess pagecache=
-.
- =
-
-    * ``NETFS_SREQ_CLEAR_TAIL``
- =
-
--     This can be set to indicate that the remainder of the slice, from
--     transferred to len, should be cleared.
-+     The filesystem can set this to indicate that the remainder of the sl=
-ice,
-+     from transferred to len, should be cleared.  Do not set if HIT_EOF i=
-s set.
-+
-+   * ``NETFS_SREQ_NEED_RETRY``
-+
-+     The filesystem can set this to tell netfslib to retry the subrequest=
-.
-+
-+   * ``NETFS_SREQ_BOUNDARY``
-+
-+     This can be set by the filesystem on a subrequest to indicate that i=
-t ends
-+     at a boundary with the filesystem structure (e.g. at the end of a Ce=
-ph
-+     object).  It tells netfslib not to retile subrequests across it.
- =
-
-    * ``NETFS_SREQ_SEEK_DATA_READ``
- =
-
--     This is a hint to the cache that it might want to try skipping ahead=
- to
--     the next data (ie. using SEEK_DATA).
-+     This is a hint from netfslib to the cache that it might want to try
-+     skipping ahead to the next data (ie. using SEEK_DATA).
-+
-+ * ``error``
-+
-+   This is for the filesystem to store result of the subrequest.  It shou=
-ld be
-+   set to 0 if successful and a negative error code otherwise.
- =
-
-  * ``debug_index``
-+ * ``stream_nr``
- =
-
-    A number allocated to this slice that can be displayed in trace lines =
-for
--   reference.
-+   reference and the number of the request stream that it belongs to.
-+
-+If necessary, the filesystem can get and put extra refs on the subrequest=
- it is
-+given::
- =
-
-+	void netfs_get_subrequest(struct netfs_io_subrequest *subreq,
-+				  enum netfs_sreq_ref_trace what);
-+	void netfs_put_subrequest(struct netfs_io_subrequest *subreq,
-+				  enum netfs_sreq_ref_trace what);
- =
-
--Read Helper Operations
------------------------
-+using netfs trace codes to indicate the reason.  Care must be taken, howe=
-ver,
-+as once control of the subrequest is returned to netfslib, the same subre=
-quest
-+can be reissued/retried.
- =
-
--The network filesystem must provide the read helpers with a table of oper=
-ations
--through which it can issue requests and negotiate::
-+Filesystem Methods
-+------------------
-+
-+The filesystem sets a table of operations in ``netfs_inode`` for netfslib=
- to
-+use::
- =
-
- 	struct netfs_request_ops {
--		void (*init_request)(struct netfs_io_request *rreq, struct file *file);
-+		mempool_t *request_pool;
-+		mempool_t *subrequest_pool;
-+		int (*init_request)(struct netfs_io_request *rreq, struct file *file);
- 		void (*free_request)(struct netfs_io_request *rreq);
-+		void (*free_subrequest)(struct netfs_io_subrequest *rreq);
- 		void (*expand_readahead)(struct netfs_io_request *rreq);
--		bool (*clamp_length)(struct netfs_io_subrequest *subreq);
-+		int (*prepare_read)(struct netfs_io_subrequest *subreq);
- 		void (*issue_read)(struct netfs_io_subrequest *subreq);
--		bool (*is_still_valid)(struct netfs_io_request *rreq);
--		int (*check_write_begin)(struct file *file, loff_t pos, unsigned len,
--					 struct folio **foliop, void **_fsdata);
- 		void (*done)(struct netfs_io_request *rreq);
-+		void (*update_i_size)(struct inode *inode, loff_t i_size);
-+		void (*post_modify)(struct inode *inode);
-+		void (*begin_writeback)(struct netfs_io_request *wreq);
-+		void (*prepare_write)(struct netfs_io_subrequest *subreq);
-+		void (*issue_write)(struct netfs_io_subrequest *subreq);
-+		void (*retry_request)(struct netfs_io_request *wreq,
-+				      struct netfs_io_stream *stream);
-+		void (*invalidate_cache)(struct netfs_io_request *wreq);
- 	};
- =
-
--The operations are as follows:
--
-- * ``init_request()``
-+The table starts with a pair of optional pointers to memory pools from wh=
-ich
-+requests and subrequests can be allocated.  If these are not given, netfs=
-lib
-+has default pools that it will use.  If the filesystem wraps the netfs st=
-ructs
-+in its own larger structs, then it will need to use its own pools.  Netfs=
-lib
-+will allocate directly from the pools.
- =
-
--   [Optional] This is called to initialise the request structure.  It is =
-given
--   the file for reference.
-+The methods defined in the table are:
- =
-
-+ * ``init_request()``
-  * ``free_request()``
-+ * ``free_subrequest()``
- =
-
--   [Optional] This is called as the request is being deallocated so that =
-the
--   filesystem can clean up any state it has attached there.
-+   [Optional] A filesystem may implement these to initialise or clean up =
-any
-+   resources that it attaches to the request or subrequest.
- =
-
-  * ``expand_readahead()``
- =
-
-    [Optional] This is called to allow the filesystem to expand the size o=
-f a
--   readahead read request.  The filesystem gets to expand the request in =
-both
--   directions, though it's not permitted to reduce it as the numbers may
--   represent an allocation already made.  If local caching is enabled, it=
- gets
--   to expand the request first.
-+   readahead request.  The filesystem gets to expand the request in both
-+   directions, though it must retain the initial region as that may repre=
-sent
-+   an allocation already made.  If local caching is enabled, it gets to e=
-xpand
-+   the request first.
- =
-
-    Expansion is communicated by changing ->start and ->len in the request
-    structure.  Note that if any change is made, ->len must be increased b=
-y at
-    least as much as ->start is reduced.
- =
-
-- * ``clamp_length()``
--
--   [Optional] This is called to allow the filesystem to reduce the size o=
-f a
--   subrequest.  The filesystem can use this, for example, to chop up a re=
-quest
--   that has to be split across multiple servers or to put multiple reads =
-in
--   flight.
--
--   This should return 0 on success and an error code on error.
--
-- * ``issue_read()``
-+ * ``prepare_read()``
- =
-
--   [Required] The helpers use this to dispatch a subrequest to the server=
- for
--   reading.  In the subrequest, ->start, ->len and ->transferred indicate=
- what
--   data should be read from the server.
-+   [Optional] This is called to allow the filesystem to limit the size of=
- a
-+   subrequest.  It may also limit the number of individual regions in ite=
-rator,
-+   such as required by RDMA.  This information should be set on stream ze=
-ro in::
- =
-
--   There is no return value; the netfs_subreq_terminated() function shoul=
-d be
--   called to indicate whether or not the operation succeeded and how much=
- data
--   it transferred.  The filesystem also should not deal with setting foli=
-os
--   uptodate, unlocking them or dropping their refs - the helpers need to =
-deal
--   with this as they have to coordinate with copying to the local cache.
-+	rreq->io_streams[0].sreq_max_len
-+	rreq->io_streams[0].sreq_max_segs
- =
-
--   Note that the helpers have the folios locked, but not pinned.  It is
--   possible to use the ITER_XARRAY iov iterator to refer to the range of =
-the
--   inode that is being operated upon without the need to allocate large b=
-vec
--   tables.
-+   The filesystem can use this, for example, to chop up a request that ha=
-s to
-+   be split across multiple servers or to put multiple reads in flight.
- =
-
-- * ``is_still_valid()``
-+   Zero should be returned on success and an error code otherwise.
- =
-
--   [Optional] This is called to find out if the data just read from the l=
-ocal
--   cache is still valid.  It should return true if it is still valid and =
-false
--   if not.  If it's not still valid, it will be reread from the server.
-+ * ``issue_read()``
- =
-
-- * ``check_write_begin()``
-+   [Required] Netfslib calls this to dispatch a subrequest to the server =
-for
-+   reading.  In the subrequest, ->start, ->len and ->transferred indicate=
- what
-+   data should be read from the server and ->io_iter indicates the buffer=
- to be
-+   used.
- =
-
--   [Optional] This is called from the netfs_write_begin() helper once it =
-has
--   allocated/grabbed the folio to be modified to allow the filesystem to =
-flush
--   conflicting state before allowing it to be modified.
-+   There is no return value; the ``netfs_read_subreq_terminated()`` funct=
-ion
-+   should be called to indicate that the subrequest completed either way.
-+   ->error, ->transferred and ->flags should be updated before completing=
-.  The
-+   termination can be done asynchronously.
- =
-
--   It may unlock and discard the folio it was given and set the caller's =
-folio
--   pointer to NULL.  It should return 0 if everything is now fine (``*fol=
-iop``
--   left set) or the op should be retried (``*foliop`` cleared) and any ot=
-her
--   error code to abort the operation.
-+   Note: the filesystem must not deal with setting folios uptodate, unloc=
-king
-+   them or dropping their refs - the library deals with this as it may ha=
-ve to
-+   stitch together the results of multiple subrequests that variously ove=
-rlap
-+   the set of folios.
- =
-
-- * ``done``
-+ * ``done()``
- =
-
--   [Optional] This is called after the folios in the request have all bee=
-n
-+   [Optional] This is called after the folios in a read request have all =
-been
-    unlocked (and marked uptodate if applicable).
- =
-
-+ * ``update_i_size()``
-+
-+   [Optional] This is invoked by netfslib at various points during the wr=
-ite
-+   paths to ask the filesystem to update its idea of the file size.  If n=
-ot
-+   given, netfslib will set i_size and i_blocks and update the local cach=
-e
-+   cookie.
-+   =
-
-+ * ``post_modify()``
-+
-+   [Optional] This is called after netfslib writes to the pagecache or wh=
-en it
-+   allows an mmap'd page to be marked as writable.
-+   =
-
-+ * ``begin_writeback()``
-+
-+   [Optional] Netfslib calls this when processing a writeback request if =
-it
-+   finds a dirty page that isn't simply marked NETFS_FOLIO_COPY_TO_CACHE,
-+   indicating it must be written to the server.  This allows the filesyst=
-em to
-+   only set up writeback resources when it knows it's going to have to pe=
-rform
-+   a write.
-+   =
-
-+ * ``prepare_write()``
- =
-
-+   [Optional] This is called to allow the filesystem to limit the size of=
- a
-+   subrequest.  It may also limit the number of individual regions in ite=
-rator,
-+   such as required by RDMA.  This information should be set on stream to=
- which
-+   the subrequest belongs::
- =
-
--Read Helper Procedure
-----------------------
--
--The read helpers work by the following general procedure:
--
-- * Set up the request.
--
-- * For readahead, allow the local cache and then the network filesystem t=
-o
--   propose expansions to the read request.  This is then proposed to the =
-VM.
--   If the VM cannot fully perform the expansion, a partially expanded rea=
-d will
--   be performed, though this may not get written to the cache in its enti=
-rety.
--
-- * Loop around slicing chunks off of the request to form subrequests:
--
--   * If a local cache is present, it gets to do the slicing, otherwise th=
-e
--     helpers just try to generate maximal slices.
--
--   * The network filesystem gets to clamp the size of each slice if it is=
- to be
--     the source.  This allows rsize and chunking to be implemented.
-+	rreq->io_streams[subreq->stream_nr].sreq_max_len
-+	rreq->io_streams[subreq->stream_nr].sreq_max_segs
- =
-
--   * The helpers issue a read from the cache or a read from the server or=
- just
--     clears the slice as appropriate.
-+   The filesystem can use this, for example, to chop up a request that ha=
-s to
-+   be split across multiple servers or to put multiple writes in flight.
- =
-
--   * The next slice begins at the end of the last one.
-+   This is not permitted to return an error.  In the event of failure,
-+   ``netfs_prepare_write_failed()`` must be called.
- =
-
--   * As slices finish being read, they terminate.
-+ * ``issue_write()``
- =
-
-- * When all the subrequests have terminated, the subrequests are assessed=
- and
--   any that are short or have failed are reissued:
-+   [Required] This is used to dispatch a subrequest to the server for wri=
-ting.
-+   In the subrequest, ->start, ->len and ->transferred indicate what data
-+   should be written to the server and ->io_iter indicates the buffer to =
-be
-+   used.
- =
-
--   * Failed cache requests are issued against the server instead.
-+   There is no return value; the ``netfs_write_subreq_terminated()`` func=
-tion
-+   should be called to indicate that the subrequest completed either way.
-+   ->error, ->transferred and ->flags should be updated before completing=
-.  The
-+   termination can be done asynchronously.
- =
-
--   * Failed server requests just fail.
-+   Note: the filesystem must not deal with removing the dirty or writebac=
-k
-+   marks on folios involved in the operation and should not take refs or =
-pins
-+   on them, but should leave retention to netfslib.
- =
-
--   * Short reads against either source will be reissued against that sour=
-ce
--     provided they have transferred some more data:
-+ * ``retry_request()``
- =
-
--     * The cache may need to skip holes that it can't do DIO from.
-+   [Optional] Netfslib calls this at the beginning of a retry cycle.  Thi=
-s
-+   allows the filesystem to examine the state of the request, the subrequ=
-ests
-+   in the indicated stream and of its own data and make adjustments or
-+   renegotiate resources.
-+   =
-
-+ * ``invalidate_cache()``
- =
-
--     * If NETFS_SREQ_CLEAR_TAIL was set, a short read will be cleared to =
-the
--       end of the slice instead of reissuing.
-+   [Optional] This is called by netfslib to invalidate data stored in the=
- local
-+   cache in the event that writing to the local cache fails, providing up=
-dated
-+   coherency data that netfs can't provide.
- =
-
-- * Once the data is read, the folios that have been fully read/cleared:
-+Terminating a subrequest
-+------------------------
- =
-
--   * Will be marked uptodate.
-+When a subrequest completes, there are a number of functions that the cac=
-he or
-+subrequest can call to inform netfslib of the status change.  One functio=
-n is
-+provided to terminate a write subrequest at the preparation stage and act=
-s
-+synchronously:
- =
-
--   * If a cache is present, will be marked with PG_fscache.
-+ * ``void netfs_prepare_write_failed(struct netfs_io_subrequest *subreq);=
-``
- =
-
--   * Unlocked
-+   Indicate that the ->prepare_write() call failed.  The ``error`` field =
-should
-+   have been updated.
- =
-
-- * Any folios that need writing to the cache will then have DIO writes is=
-sued.
-+Note that ->prepare_read() can return an error as a read can simply be ab=
-orted.
-+Dealing with writeback failure is trickier.
- =
-
-- * Synchronous operations will wait for reading to be complete.
-+The other functions are used for subrequests that got as far as being iss=
-ued:
- =
-
-- * Writes to the cache will proceed asynchronously and the folios will ha=
-ve the
--   PG_fscache mark removed when that completes.
-+ * ``void netfs_read_subreq_terminated(struct netfs_io_subrequest *subreq=
-);``
- =
-
-- * The request structures will be cleaned up when everything has complete=
-d.
-+   Tell netfslib that a read subrequest has terminated.  The ``error``,
-+   ``flags`` and ``transferred`` fields should have been updated.
- =
-
-+ * ``void netfs_write_subrequest_terminated(void *_op, ssize_t transferre=
-d_or_error);``
- =
-
--Read Helper Cache API
-----------------------
-+   Tell netfslib that a write subrequest has terminated.  Either the amou=
-nt of
-+   data processed or the negative error code can be passed in.  This is
-+   can be used as a kiocb completion function.
- =
-
--When implementing a local cache to be used by the read helpers, two thing=
-s are
--required: some way for the network filesystem to initialise the caching f=
-or a
--read request and a table of operations for the helpers to call.
-+ * ``void netfs_read_subreq_progress(struct netfs_io_subrequest *subreq);=
-``
- =
-
--To begin a cache operation on an fscache object, the following function i=
-s
--called::
-+   This is provided to optionally update netfslib on the incremental prog=
-ress
-+   of a read, allowing some folios to be unlocked early and does not actu=
-ally
-+   terminate the subrequest.  The ``transferred`` field should have been
-+   updated.
- =
-
--	int fscache_begin_read_operation(struct netfs_io_request *rreq,
--					 struct fscache_cookie *cookie);
-+Local Cache API
-+---------------
- =
-
--passing in the request pointer and the cookie corresponding to the file. =
- This
--fills in the cache resources mentioned below.
-+Netfslib provides a separate API for a local cache to implement, though i=
-t
-+provides some somewhat similar routines to the filesystem request API.
- =
-
--The netfs_io_request object contains a place for the cache to hang its
-+Firstly, the netfs_io_request object contains a place for the cache to ha=
-ng its
- state::
- =
-
- 	struct netfs_cache_resources {
- 		const struct netfs_cache_ops	*ops;
- 		void				*cache_priv;
- 		void				*cache_priv2;
-+		unsigned int			debug_id;
-+		unsigned int			inval_counter;
- 	};
- =
-
--This contains an operations table pointer and two private pointers.  The
--operation table looks like the following::
-+This contains an operations table pointer and two private pointers plus t=
-he
-+debug ID of the fscache cookie for tracing purposes and an invalidation c=
-ounter
-+that is cranked by calls to ``fscache_invalidate()`` allowing cache subre=
-quests
-+to be invalidated after completion.
-+
-+The cache operation table looks like the following::
- =
-
- 	struct netfs_cache_ops {
- 		void (*end_operation)(struct netfs_cache_resources *cres);
--
- 		void (*expand_readahead)(struct netfs_cache_resources *cres,
- 					 loff_t *_start, size_t *_len, loff_t i_size);
--
- 		enum netfs_io_source (*prepare_read)(struct netfs_io_subrequest *subreq=
-,
--						       loff_t i_size);
--
-+						     loff_t i_size);
- 		int (*read)(struct netfs_cache_resources *cres,
- 			    loff_t start_pos,
- 			    struct iov_iter *iter,
- 			    bool seek_data,
- 			    netfs_io_terminated_t term_func,
- 			    void *term_func_priv);
--
--		int (*prepare_write)(struct netfs_cache_resources *cres,
--				     loff_t *_start, size_t *_len, loff_t i_size,
--				     bool no_space_allocated_yet);
--
--		int (*write)(struct netfs_cache_resources *cres,
--			     loff_t start_pos,
--			     struct iov_iter *iter,
--			     netfs_io_terminated_t term_func,
--			     void *term_func_priv);
--
--		int (*query_occupancy)(struct netfs_cache_resources *cres,
--				       loff_t start, size_t len, size_t granularity,
--				       loff_t *_data_start, size_t *_data_len);
-+		void (*prepare_write_subreq)(struct netfs_io_subrequest *subreq);
-+		void (*issue_write)(struct netfs_io_subrequest *subreq);
- 	};
- =
-
- With a termination handler function pointer::
-@@ -511,10 +963,16 @@ The methods defined in the table are:
- =
-
-  * ``expand_readahead()``
- =
-
--   [Optional] Called at the beginning of a netfs_readahead() operation to=
- allow
--   the cache to expand a request in either direction.  This allows the ca=
-che to
-+   [Optional] Called at the beginning of a readahead operation to allow t=
-he
-+   cache to expand a request in either direction.  This allows the cache =
-to
-    size the request appropriately for the cache granularity.
- =
-
-+ * ``prepare_read()``
-+
-+   [Required] Called to configure the next slice of a request.  ->start a=
-nd
-+   ->len in the subrequest indicate where and how big the next slice can =
-be;
-+   the cache gets to reduce the length to match its granularity requireme=
-nts.
-+
-    The function is passed pointers to the start and length in its paramet=
-ers,
-    plus the size of the file for reference, and adjusts the start and len=
-gth
-    appropriately.  It should return one of:
-@@ -528,12 +986,6 @@ The methods defined in the table are:
-    downloaded from the server or read from the cache - or whether slicing
-    should be given up at the current point.
- =
-
-- * ``prepare_read()``
--
--   [Required] Called to configure the next slice of a request.  ->start a=
-nd
--   ->len in the subrequest indicate where and how big the next slice can =
-be;
--   the cache gets to reduce the length to match its granularity requireme=
-nts.
--
-  * ``read()``
- =
-
-    [Required] Called to read from the cache.  The start file offset is gi=
-ven
-@@ -547,44 +999,33 @@ The methods defined in the table are:
-    indicating whether the termination is definitely happening in the call=
-er's
-    context.
- =
-
-- * ``prepare_write()``
-+ * ``prepare_write_subreq()``
- =
-
--   [Required] Called to prepare a write to the cache to take place.  This
--   involves checking to see whether the cache has sufficient space to hon=
-our
--   the write.  ``*_start`` and ``*_len`` indicate the region to be writte=
-n; the
--   region can be shrunk or it can be expanded to a page boundary either w=
-ay as
--   necessary to align for direct I/O.  i_size holds the size of the objec=
-t and
--   is provided for reference.  no_space_allocated_yet is set to true if t=
-he
--   caller is certain that no data has been written to that region - for e=
-xample
--   if it tried to do a read from there already.
-+   [Required] This is called to allow the cache to limit the size of a
-+   subrequest.  It may also limit the number of individual regions in ite=
-rator,
-+   such as required by DIO/DMA.  This information should be set on stream=
- to
-+   which the subrequest belongs::
- =
-
-- * ``write()``
-+	rreq->io_streams[subreq->stream_nr].sreq_max_len
-+	rreq->io_streams[subreq->stream_nr].sreq_max_segs
- =
-
--   [Required] Called to write to the cache.  The start file offset is giv=
-en
--   along with an iterator to write from, which gives the length also.
--
--   Also provided is a pointer to a termination handler function and priva=
-te
--   data to pass to that function.  The termination function should be cal=
-led
--   with the number of bytes transferred or an error code, plus a flag
--   indicating whether the termination is definitely happening in the call=
-er's
--   context.
-+   The filesystem can use this, for example, to chop up a request that ha=
-s to
-+   be split across multiple servers or to put multiple writes in flight.
- =
-
-- * ``query_occupancy()``
-+   This is not permitted to return an error.  In the event of failure,
-+   ``netfs_prepare_write_failed()`` must be called.
- =
-
--   [Required] Called to find out where the next piece of data is within a
--   particular region of the cache.  The start and length of the region to=
- be
--   queried are passed in, along with the granularity to which the answer =
-needs
--   to be aligned.  The function passes back the start and length of the d=
-ata,
--   if any, available within that region.  Note that there may be a hole a=
-t the
--   front.
-+ * ``issue_write()``
- =
-
--   It returns 0 if some data was found, -ENODATA if there was no usable d=
-ata
--   within the region or -ENOBUFS if there is no caching on this file.
-+   [Required] This is used to dispatch a subrequest to the cache for writ=
-ing.
-+   In the subrequest, ->start, ->len and ->transferred indicate what data
-+   should be written to the cache and ->io_iter indicates the buffer to b=
-e
-+   used.
- =
-
--Note that these methods are passed a pointer to the cache resource struct=
-ure,
--not the read request structure as they could be used in other situations =
-where
--there isn't a read request structure as well, such as writing dirty data =
-to the
--cache.
-+   There is no return value; the ``netfs_write_subreq_terminated()`` func=
-tion
-+   should be called to indicate that the subrequest completed either way.
-+   ->error, ->transferred and ->flags should be updated before completing=
-.  The
-+   termination can be done asynchronously.
- =
-
- =
-
- API Function Reference
-
+On Wed, Mar 5, 2025 at 8:44=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko.co=
+m> wrote:
+>
+> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+>
+> The generic/395 and generic/397 is capable of generating
+> the oops is on line net/ceph/ceph_common.c:794 with
+> KASAN enabled.
+>
+> BUG: KASAN: slab-use-after-free in have_mon_and_osd_map+0x56/0x70
+> Read of size 4 at addr ffff88811012d810 by task mount.ceph/13305
+>
+> CPU: 2 UID: 0 PID: 13305 Comm: mount.ceph Not tainted 6.14.0-rc2-build2+ =
+#1266
+> Hardware name: ASUS All Series/H97-PLUS, BIOS 2306 10/09/2014
+> Call Trace:
+> <TASK>
+> dump_stack_lvl+0x57/0x80
+> ? have_mon_and_osd_map+0x56/0x70
+> print_address_description.constprop.0+0x84/0x330
+> ? have_mon_and_osd_map+0x56/0x70
+> print_report+0xe2/0x1e0
+> ? rcu_read_unlock_sched+0x60/0x80
+> ? kmem_cache_debug_flags+0xc/0x20
+> ? fixup_red_left+0x17/0x30
+> ? have_mon_and_osd_map+0x56/0x70
+> kasan_report+0x8d/0xc0
+> ? have_mon_and_osd_map+0x56/0x70
+> have_mon_and_osd_map+0x56/0x70
+> ceph_open_session+0x182/0x290
+> ? __pfx_ceph_open_session+0x10/0x10
+> ? __init_swait_queue_head+0x8d/0xa0
+> ? __pfx_autoremove_wake_function+0x10/0x10
+> ? shrinker_register+0xdd/0xf0
+> ceph_get_tree+0x333/0x680
+> vfs_get_tree+0x49/0x180
+> do_new_mount+0x1a3/0x2d0
+> ? __pfx_do_new_mount+0x10/0x10
+> ? security_capable+0x39/0x70
+> path_mount+0x6dd/0x730
+> ? __pfx_path_mount+0x10/0x10
+> ? kmem_cache_free+0x1e5/0x270
+> ? user_path_at+0x48/0x60
+> do_mount+0x99/0xe0
+> ? __pfx_do_mount+0x10/0x10
+> ? lock_release+0x155/0x190
+> __do_sys_mount+0x141/0x180
+> do_syscall_64+0x9f/0x100
+> entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> RIP: 0033:0x7f01b1b14f3e
+> Code: 48 8b 0d d5 3e 0f 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 0=
+0 00 00 00 00 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff=
+ ff 73 01 c3 48 8b 0d a2 3e 0f 00 f7 d8 64 89 01 48
+> RSP: 002b:00007fffd129fa08 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 0000564ec01a7850 RCX: 00007f01b1b14f3e
+> RDX: 0000564ec00f2225 RSI: 00007fffd12a1964 RDI: 0000564ec0147a20
+> RBP: 00007fffd129fbd0 R08: 0000564ec014da90 R09: 0000000000000080
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007fffd12a194e
+> R13: 0000000000000000 R14: 00007fffd129fa50 R15: 00007fffd129fa40
+> </TASK>
+>
+> Allocated by task 13305:
+> stack_trace_save+0x8c/0xc0
+> kasan_save_stack+0x1e/0x40
+> kasan_save_track+0x10/0x30
+> __kasan_kmalloc+0x3a/0x50
+> __kmalloc_noprof+0x247/0x290
+> ceph_osdmap_alloc+0x16/0x130
+> ceph_osdc_init+0x27a/0x4c0
+> ceph_create_client+0x153/0x190
+> create_fs_client+0x50/0x2a0
+> ceph_get_tree+0xff/0x680
+> vfs_get_tree+0x49/0x180
+> do_new_mount+0x1a3/0x2d0
+> path_mount+0x6dd/0x730
+> do_mount+0x99/0xe0
+> __do_sys_mount+0x141/0x180
+> do_syscall_64+0x9f/0x100
+> entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>
+> Freed by task 9475:
+> stack_trace_save+0x8c/0xc0
+> kasan_save_stack+0x1e/0x40
+> kasan_save_track+0x10/0x30
+> kasan_save_free_info+0x3b/0x50
+> __kasan_slab_free+0x18/0x30
+> kfree+0x212/0x290
+> handle_one_map+0x23c/0x3b0
+> ceph_osdc_handle_map+0x3c9/0x590
+> mon_dispatch+0x655/0x6f0
+> ceph_con_process_message+0xc3/0xe0
+> ceph_con_v1_try_read+0x614/0x760
+> ceph_con_workfn+0x2de/0x650
+> process_one_work+0x486/0x7c0
+> process_scheduled_works+0x73/0x90
+> worker_thread+0x1c8/0x2a0
+> kthread+0x2ec/0x300
+> ret_from_fork+0x24/0x40
+> ret_from_fork_asm+0x1a/0x30
+>
+> The buggy address belongs to the object at ffff88811012d800
+> which belongs to the cache kmalloc-512 of size 512
+> The buggy address is located 16 bytes inside of
+> freed 512-byte region [ffff88811012d800, ffff88811012da00)
+>
+> The buggy address belongs to the physical page:
+> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1101=
+2c
+> head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+> flags: 0x200000000000040(head|node=3D0|zone=3D2)
+> page_type: f5(slab)
+> raw: 0200000000000040 ffff888100042c80 dead000000000100 dead000000000122
+> raw: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
+> head: 0200000000000040 ffff888100042c80 dead000000000100 dead000000000122
+> head: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
+> head: 0200000000000002 ffffea0004404b01 ffffffffffffffff 0000000000000000
+> head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
+> page dumped because: kasan: bad access detected
+>
+> Memory state around the buggy address:
+> ffff88811012d700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff88811012d780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>
+>     ffff88811012d800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>
+> ^
+> ffff88811012d880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff88811012d900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb =3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> Disabling lock debugging due to kernel taint
+> libceph: client274326 fsid 8598140e-35c2-11ee-b97c-001517c545cc
+> libceph: mon0 (1)90.155.74.19:6789 session established
+> libceph: client274327 fsid 8598140e-35c2-11ee-b97c-001517c545cc
+>
+> We have such scenario:
+>
+> Thread 1:
+> void ceph_osdmap_destroy(...) {
+>     <skipped>
+>     kfree(map);
+> }
+> Thread 1 sleep...
+>
+> Thread 2:
+> static bool have_mon_and_osd_map(struct ceph_client *client) {
+>     return client->monc.monmap && client->monc.monmap->epoch &&
+>         client->osdc.osdmap && client->osdc.osdmap->epoch;
+> }
+> Thread 2 has oops...
+>
+> Thread 1 wake up:
+> static int handle_one_map(...) {
+>     <skipped>
+>     osdc->osdmap =3D newmap;
+>     <skipped>
+> }
+>
+> This patch fixes the issue by means of locking
+> client->osdc.lock and client->monc.mutex before
+> the checking client->osdc.osdmap and
+> client->monc.monmap in have_mon_and_osd_map() function.
+> Patch adds locking in the ceph_osdc_stop()
+> method during the destructruction of osdc->osdmap and
+> assigning of NULL to the pointer. The lock is used
+> in the ceph_monc_stop() during the freeing of monc->monmap
+> and assigning NULL to the pointer too. The monmap_show()
+> and osdmap_show() methods were reworked to prevent
+> the potential race condition during the methods call.
+>
+> Reported-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> ---
+>  net/ceph/ceph_common.c | 14 ++++++++++++--
+>  net/ceph/debugfs.c     | 33 +++++++++++++++++++--------------
+>  net/ceph/mon_client.c  |  9 ++++++++-
+>  net/ceph/osd_client.c  |  4 ++++
+>  4 files changed, 43 insertions(+), 17 deletions(-)
+>
+> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+> index 4c6441536d55..5c8fd78d6bd5 100644
+> --- a/net/ceph/ceph_common.c
+> +++ b/net/ceph/ceph_common.c
+> @@ -790,8 +790,18 @@ EXPORT_SYMBOL(ceph_reset_client_addr);
+>   */
+>  static bool have_mon_and_osd_map(struct ceph_client *client)
+>  {
+> -       return client->monc.monmap && client->monc.monmap->epoch &&
+> -              client->osdc.osdmap && client->osdc.osdmap->epoch;
+> +       bool have_mon_map =3D false;
+> +       bool have_osd_map =3D false;
+> +
+> +       mutex_lock(&client->monc.mutex);
+
+Hi Slava,
+
+This introduces a potential sleep into a function that is used as
+a wait_event condition in __ceph_open_session() which could result in
+a nested sleep.  This is frowned up by the scheduler because the task
+state may get reset to TASK_RUNNING when not desired:
+
+  do not call blocking ops when !TASK_RUNNING; state=3D1 set at
+[<ffffffff819c19fc>] prepare_to_wait_event+0x3ac/0x460
+kernel/sched/wait.c:298
+
+You would probably need to open-code waiting in __ceph_open_session()
+per [1].
+
+> +       have_mon_map =3D client->monc.monmap && client->monc.monmap->epoc=
+h;
+> +       mutex_unlock(&client->monc.mutex);
+> +
+> +       down_read(&client->osdc.lock);
+> +       have_osd_map =3D client->osdc.osdmap && client->osdc.osdmap->epoc=
+h;
+> +       up_read(&client->osdc.lock);
+> +
+> +       return have_mon_map && have_osd_map;
+>  }
+>
+>  /*
+> diff --git a/net/ceph/debugfs.c b/net/ceph/debugfs.c
+> index 2110439f8a24..6e2014c813ca 100644
+> --- a/net/ceph/debugfs.c
+> +++ b/net/ceph/debugfs.c
+> @@ -36,18 +36,20 @@ static int monmap_show(struct seq_file *s, void *p)
+>         int i;
+>         struct ceph_client *client =3D s->private;
+>
+> -       if (client->monc.monmap =3D=3D NULL)
+> -               return 0;
+> -
+> -       seq_printf(s, "epoch %d\n", client->monc.monmap->epoch);
+> -       for (i =3D 0; i < client->monc.monmap->num_mon; i++) {
+> -               struct ceph_entity_inst *inst =3D
+> -                       &client->monc.monmap->mon_inst[i];
+> -
+> -               seq_printf(s, "\t%s%lld\t%s\n",
+> -                          ENTITY_NAME(inst->name),
+> -                          ceph_pr_addr(&inst->addr));
+> +       mutex_lock(&client->monc.mutex);
+> +       if (client->monc.monmap) {
+> +               seq_printf(s, "epoch %d\n", client->monc.monmap->epoch);
+> +               for (i =3D 0; i < client->monc.monmap->num_mon; i++) {
+> +                       struct ceph_entity_inst *inst =3D
+> +                               &client->monc.monmap->mon_inst[i];
+> +
+> +                       seq_printf(s, "\t%s%lld\t%s\n",
+> +                                  ENTITY_NAME(inst->name),
+> +                                  ceph_pr_addr(&inst->addr));
+> +               }
+>         }
+> +       mutex_unlock(&client->monc.mutex);
+
+Nit: I'd prefer
+
+        mutex_lock(&client->monc.mutex);
+        if (client->monc.monmap =3D=3D NULL)
+                goto out_unlock;
+
+        ...
+
+out_unlock:
+        mutex_unlock(&client->monc.mutex);
+        return 0;
+
+to an additional level of indentation here.
+
+> +
+>         return 0;
+>  }
+>
+> @@ -56,13 +58,15 @@ static int osdmap_show(struct seq_file *s, void *p)
+>         int i;
+>         struct ceph_client *client =3D s->private;
+>         struct ceph_osd_client *osdc =3D &client->osdc;
+> -       struct ceph_osdmap *map =3D osdc->osdmap;
+> +       struct ceph_osdmap *map =3D NULL;
+>         struct rb_node *n;
+>
+> +       down_read(&osdc->lock);
+> +
+> +       map =3D osdc->osdmap;
+>         if (map =3D=3D NULL)
+> -               return 0;
+> +               goto finish_osdmap_show;
+>
+> -       down_read(&osdc->lock);
+>         seq_printf(s, "epoch %u barrier %u flags 0x%x\n", map->epoch,
+>                         osdc->epoch_barrier, map->flags);
+>
+> @@ -131,6 +135,7 @@ static int osdmap_show(struct seq_file *s, void *p)
+>                 seq_printf(s, "]\n");
+>         }
+>
+> +finish_osdmap_show:
+
+Nit: I'd rename this label to out_unlock so that name communicates what
+the label is for.
+
+>         up_read(&osdc->lock);
+>         return 0;
+>  }
+> diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
+> index ab66b599ac47..b299e5bbddb1 100644
+> --- a/net/ceph/mon_client.c
+> +++ b/net/ceph/mon_client.c
+> @@ -1232,6 +1232,7 @@ int ceph_monc_init(struct ceph_mon_client *monc, st=
+ruct ceph_client *cl)
+>         ceph_auth_destroy(monc->auth);
+>  out_monmap:
+>         kfree(monc->monmap);
+> +       monc->monmap =3D NULL;
+>  out:
+>         return err;
+>  }
+> @@ -1239,6 +1240,8 @@ EXPORT_SYMBOL(ceph_monc_init);
+>
+>  void ceph_monc_stop(struct ceph_mon_client *monc)
+>  {
+> +       struct ceph_monmap *old_monmap;
+> +
+>         dout("stop\n");
+>
+>         mutex_lock(&monc->mutex);
+> @@ -1266,7 +1269,11 @@ void ceph_monc_stop(struct ceph_mon_client *monc)
+>         ceph_msg_put(monc->m_subscribe);
+>         ceph_msg_put(monc->m_subscribe_ack);
+>
+> -       kfree(monc->monmap);
+> +       mutex_lock(&monc->mutex);
+
+Did you have a specific reason for adding locking here and in
+ceph_osdc_stop()?  I see that David inquired about this in a comment
+on v2 and I think the answer to his question is no.  By this point we
+are long past the point of no return and no new messages can arrive for
+e.g. handle_one_map() to be called.
+
+[1] https://lwn.net/Articles/628628/
+
+Thanks,
+
+                Ilya
 
