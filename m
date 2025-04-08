@@ -1,120 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-45942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E53A7FA17
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 11:44:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5493A7FB7F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 12:17:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72E3E3BE104
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 09:40:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F0817A4AE0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 10:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AAF1266562;
-	Tue,  8 Apr 2025 09:34:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF673267AF2;
+	Tue,  8 Apr 2025 10:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TESI965T"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gMoltob2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6ECD263C8E;
-	Tue,  8 Apr 2025 09:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C163F7FBD6;
+	Tue,  8 Apr 2025 10:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744104890; cv=none; b=ILSPJCgPbZ2FKPfSxWF/H8IBFifS1b9ZbDcHJLAZKMLsMyT0Oi3iHQOyBDRoiszABxC7A6Wrapfsj7uTg4pW+frXJvQIyoW+taLZlW6h1VHdEt5RIl0GOAhpkKBr1BJUXO8gL+bfr19Pu2JD2EX8sEe2lpYxrPeJjUvHAWT4dwQ=
+	t=1744107111; cv=none; b=qje83R6Vedwub53pTdPlb/sYxGGPWfN6Sc574qkY02d5bukFAqYWDOqtDGPwMjP4rcNb+820rYIEKC1m6gGsxTPFlnMlBH/MaO/0fGS2/oOM3wfyMw36+kTHdcv6ImIX/j8hl7ubA3KNsEk5oLrJajasQxi9gEMVpmjx7g2aYTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744104890; c=relaxed/simple;
-	bh=PtTeReiTLp+RqAL/cLFtmFLCbjN4w5rpWp84zoyWVVo=;
+	s=arc-20240116; t=1744107111; c=relaxed/simple;
+	bh=rEOk4CBly4AlRVttK5V5QQUlaR69H0x+24xY/q+krdg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SBiy5kufmFb3e+WcMTht0PRjOQwvUoh6tOjuFjFY6sHBnwcz0HAiyp/oxDfmfVFggpn7ztzWIIXAyoL741bWLzz1sLO7xjwGAkWvR8PayCsFDmi8NLIyVH/p0WNpAHLVPAGLQQhQfGpX3phfGDZOsANI+WwSfNlIE6hamV0JdZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TESI965T; arc=none smtp.client-ip=209.85.210.44
+	 To:Cc:Content-Type; b=p+cYqmrJY4l+WtgYNPZ6NNt7AcluE49kzvdjC5kngxdXK2hUkZgQPsMgZSvviOt0efWqYA+oM716D7gQXYPWOBp6J3pHVZFRuGFjLVIQ9i5OMg2Pty4hvjQgpiTGbb8T8ErBhkjnkfNETG70y1HHbe62gtymzjwIoJUQmHioY9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gMoltob2; arc=none smtp.client-ip=209.85.210.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-72c0cf1922bso613841a34.0;
-        Tue, 08 Apr 2025 02:34:48 -0700 (PDT)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-739b3fe7ce8so4549849b3a.0;
+        Tue, 08 Apr 2025 03:11:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744104888; x=1744709688; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744107109; x=1744711909; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=g7Bg64jM6tSWnXjFr3goi8956rwlNjPV/077kclDS9I=;
-        b=TESI965Thjp7J12xnvY6T6sWo+7ztWU7FgzEgfkKwA5B/gm74mnQmV04Nn9/IZScEL
-         FTY27fFz+9Uz4M/Vsc8snJjOr5+eh7UCz+Y42voJ1kpnxlMbaZrFVnWIL125rE8oEoRT
-         a0plu39udGtdbQcglFmTnnF10asXbWgfr6Ix9TZs+J0RQZHea7E8U3PvXadnRoTa0BGO
-         Yf20xSNV7UxD3eAdSqJLrPNOS29e/fjL9WabH753dG1XjyVAQUw5dj0M2Iw1REYKBaMQ
-         Q00snLVscY8msZgDf9bxZ2572pZfPBlHllZCsGubuZ/8Vjyy6TPDwfsH73iFDU+jLZN7
-         ybkg==
+        bh=LTVPSXCmMLq6EC4r2uIbhTrhstuJngMRN9cKMT6ddPE=;
+        b=gMoltob2ydWJ7IxtVcYbmMWbu3bdZ+ZcLQV+irFkbPPJFS3YX9JmFWIBgiEdGPm7vp
+         fwiK7SeEPnrgwk7iizIG9XFAiqFWyB4Av1lqLNTb69CJ7aITXtxE/M9fgLza4VnrmBOL
+         8R1+jw/CRnrXmIHVXCJopk3IPgRhQhuhhzkYyVwz4gBqxGfBfchOk9e8Wj1aaRMpP2Az
+         IFjHOGsOANS+CN8ruM35vEFDI/RGAQQshubjxt8H7AZtgI9gD/GyMlqVXKhi00Ebih1Z
+         Q5ktPUQWU5cqOSnVOyKTYQVTd8JEScPN69bRsosKJJU6yHgn3JBIEGWbyA0lnayyZa/Y
+         SdvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744104888; x=1744709688;
+        d=1e100.net; s=20230601; t=1744107109; x=1744711909;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=g7Bg64jM6tSWnXjFr3goi8956rwlNjPV/077kclDS9I=;
-        b=M1bkVFo9nCDi15RYXZT6sSMlZj/OnzzhQ33+7hnZlVp+3iCLKuASjZttFSsHdl/iBW
-         lm3D1YBGe2vJEpgcK3NVf0fGOWyvKfU657LcR+ctOx0tk+9NH3r0CtnLoG+5ZiJhvJCs
-         u4hIErErxzqRnMbeu0L6pyRwfXwXhTh3PeQMcWuB7Mjrbfu8OzCjVkZ63U2wq5qMRwqj
-         bM4Qlp/OVubiXTCws5W64Da0HAR39g4Da6AbG9wOTjml/sat1XTVIDYTMFgXMCgpmmiP
-         M5+XqQJbgK2wls6m2r6JHypC668HWasYvz8w5Mh5qkuIHnvfw4k3sUMGzCwWXOuP1uea
-         bIrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNjMW52JnhZ3mYp7UhlZhUXYoh9YD7ZnI9dsRN2CNBXpNRImXuYCgBHWpxjojW37zeMFb+gYPWDe+GPW34@vger.kernel.org, AJvYcCWwSY90ciCn3kWFnqnVfoTT0LrHx+3wpzuinoLu6ttXJYvvPCIffLONkcvcYApn0lLN6n4S+FbO6sg8ZZEO@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPZTy8pOSwYD/vwln0LwGs13QKno98j6m3ePhqIcIi8aEGA4e+
-	YCDTf9hthsgHlzVYUq281PmCCk5TiarfyYWfW5THec5Zlo7mVYQPZFpY9XjvbtZAKLFDYiOr1/j
-	q3qFvw7DZOdIf1icsU2Z0fbejY5Q=
-X-Gm-Gg: ASbGncswbf/rJ/Kj25V40VO5ImMJ7yi3/y1Dz0zgjHLdz1hftkuQyeNGdvB7EuehRFb
-	kHFrYd4Z1Tof6oQQ4XsdntI+z6IveuBdxzlXW2sASl28c+Cq6U3PNwwrDsKngCvZ7A0UZ/+lnbB
-	qXLVKuhInczWwVgZQQWkNuLHUgiqM9
-X-Google-Smtp-Source: AGHT+IF0RL92qSZNzUfU40xIFIvrvGm2xvag6WpHMC5o7D5ttqQSxe1/GUnQ2Gjqq953tDRmDPDtxGBEWbXMsdqtCLE=
-X-Received: by 2002:a05:6830:6c10:b0:72b:a3f3:deb6 with SMTP id
- 46e09a7af769-72e3665915emr9937036a34.4.1744104887890; Tue, 08 Apr 2025
- 02:34:47 -0700 (PDT)
+        bh=LTVPSXCmMLq6EC4r2uIbhTrhstuJngMRN9cKMT6ddPE=;
+        b=OAnj1BDPbpeY4TGMzm2iAFhoP0MgQPRa19EtEkhQehp/+s7UinfBOLooxXX2GTUxYo
+         XKQACKWaa05zQr1CoC3xPoA+mj3s9eFyB+wvCmikw1/RA7pdYznLcZ4XQ4K0OGb+sIJQ
+         W4k6elmc3ynHvpkiU7M56bTY+Y+AdiocV2Ct6ynIc49d+syl8tGZPD55b3WjytP1jbQb
+         EyfoQorFp1UpCx2EVcywkYWe7b5/6ebv9F1EeOgG83jwFTJ2dZQs0Fw4fWTu/Szwhh05
+         yLIRYb+ZCWMKSNGh1EQ49dJba4t5BoGH/UU5vxjToMNH2b9kcde4ZD26ztzxnClkAHKw
+         W5Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjfSrZYvyC0oXPO4hKqW5xZsP1XNf9n0YPigt5qy0rnME+8hG52pN7TuhA7CKzsz+kWKb8BSG/WqfC0sj6@vger.kernel.org, AJvYcCWg9F9gtKo+VuAawO7glmNhiA7pfPKcpQrM6vBlpGvdxTxJw0tPZFFMdkWk4jBoEl1ax6FHsOQXwjW03MfI@vger.kernel.org, AJvYcCXgNQm+TzemmgJsBPryUSZMbfGIyUx89yR9zFOmdUGu9HpsKg8QEKvncS9K7iYWpDYmDNC78461@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIUw6kkk1GyzSzosfE/+GYYrEtU+I2zdkMKwBlR5bJnVwEhmr/
+	jl5tNnHT3PxiI3FlgKCjiGwpivnc7qymSbYfUOd3z7nhSYAmv+LUe4MJNTqUL3N1z4YeAr21UHT
+	OskJQ5HONilwM2wki+ZJB/EkCrM0=
+X-Gm-Gg: ASbGncsdMt7gZ/L2z7tb8oxy8e2+HTswUsQmNgWN7Pqf0DkHdtjDqgah/KqUPXCX8eA
+	bgJ4ItB8sVOPR0OSaejMugAYyom1aJ3ophpSdTrEnc1c1asqquqTuuMFC1C/Dz5+c91cYXIGl19
+	3APsHGP0Oz58FlOucir3V2QXA5
+X-Google-Smtp-Source: AGHT+IFhEirAccPm6diooe5A56ckmlLwkK2C0zEsLm8HntfBxz5BRD+WrLEptloFT/6kAAaD8cz1blHSA7D0fDgTFCY=
+X-Received: by 2002:a17:90b:2711:b0:2ee:d433:7c50 with SMTP id
+ 98e67ed59e1d1-306af788dbbmr12565246a91.23.1744107108986; Tue, 08 Apr 2025
+ 03:11:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsPXitW-5USFdP4fTGt5vh5J8MRZV+8J873tn7NYXU61wQ@mail.gmail.com>
- <20250407-unmodern-abkam-ce0395573fc2@brauner> <CABXGCsNk2ycAKBtOG6fum016sa_-O9kD04betBVyiUTWwuBqsQ@mail.gmail.com>
- <20250408-regal-kommt-724350b8a186@brauner> <CABXGCsPzb3KzJQph_PCg6N7526FEMqtidejNRZ0heF6Mv2xwdA@mail.gmail.com>
- <20250408-vorher-karnickel-330646f410bd@brauner>
-In-Reply-To: <20250408-vorher-karnickel-330646f410bd@brauner>
-From: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Date: Tue, 8 Apr 2025 14:34:37 +0500
-X-Gm-Features: ATxdqUE9g2rEeeo1yAbwscarMFto7S559Ky8HZPkBzoWbN-Fw3wbmzlUemspT4o
-Message-ID: <CABXGCsO56m1e6EO82JNxT6-DGt6isp-9Wf1fk4Pk10ju=-zmVA@mail.gmail.com>
-Subject: Re: 6.15-rc1/regression/bisected - commit 474f7825d533 is broke
- systemd-nspawn on my system
-To: Christian Brauner <brauner@kernel.org>
-Cc: sforshee@kernel.org, linux-fsdevel@vger.kernel.org, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, lennart@poettering.net
+References: <20241019191303.24048-1-kovalev@altlinux.org> <Z9xsx-w4YCBuYjx5@eldamar.lan>
+ <d4mpuomgxqi7xppaewlpey6thec7h2fk4sm2iktqsx6bhwu5ph@ctkjksxmkgne>
+ <2025032402-jam-immovable-2d57@gregkh> <7qi6est65ekz4kjktvmsbmywpo5n2kla2m3whbvq4dsckdcyst@e646jwjazvqh>
+ <2025032404-important-average-9346@gregkh> <dzmprnddbx2qaukb7ukr5ngdx6ydwxynaq6ctxakem43yrczqb@y7dg7kzxsorc>
+ <20250407-biegung-furor-e7313ca9d712@brauner> <20250407190814.GB6258@frogsfrogsfrogs>
+In-Reply-To: <20250407190814.GB6258@frogsfrogsfrogs>
+From: Richard Weinberger <richard.weinberger@gmail.com>
+Date: Tue, 8 Apr 2025 12:11:36 +0200
+X-Gm-Features: ATxdqUGUflWhsc7_t9EwiCgdbFbM8FViOml_3iPU3I88ZbHoy2WAA1j9TB8rW0o
+Message-ID: <CAFLxGvxH=4rHWu-44LSuWaGA_OB0FU0Eq4fedVTj3tf2D3NgYQ@mail.gmail.com>
+Subject: Re: [PATCH] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Cengiz Can <cengiz.can@canonical.com>, 
+	Attila Szasz <szasza.contact@gmail.com>, Greg KH <gregkh@linuxfoundation.org>, 
+	Salvatore Bonaccorso <carnil@debian.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lvc-patches@linuxtesting.org, 
+	dutyrok@altlinux.org, syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com, 
+	stable@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 8, 2025 at 2:18=E2=80=AFPM Christian Brauner <brauner@kernel.or=
-g> wrote:
-> I'm confused why that's an issue:
+On Mon, Apr 7, 2025 at 9:08=E2=80=AFPM Darrick J. Wong <djwong@kernel.org> =
+wrote:
+> It's also the default policy on Debian 12 and RHEL9 that if you're
+> logged into the GUI, any program can run:
 >
-> > git reset --hard 474f7825d5335798742b92f067e1d22365013107
-> HEAD is now at 474f7825d533 fs: add copy_mount_setattr() helper
+> $ truncate -s 3g /tmp/a
+> $ mkfs.hfs /tmp/a
+> $ <write evil stuff on /tmp/a>
+> $ udisksctl loop-setup -f /tmp/a
+> $ udisksctl mount -b /dev/loopX
 >
-> > git revert --no-edit 474f7825d5335798742b92f067e1d22365013107
-> [work.bisect e5673958d85c] Revert "fs: add copy_mount_setattr() helper"
->  Date: Tue Apr 8 11:14:31 2025 +0200
->  1 file changed, 33 insertions(+), 40 deletions(-)
+> and the user never sees a prompt.  GNOME and KDE both display a
+> notification when the mount finishes, but by then it could be too late.
+> Someone should file a CVE against them too.
 
-> git reset --hard v6.15-rc1
-HEAD is now at 0af2f6be1b42 Linux 6.15-rc1
-> git revert -n 474f7825d5335798742b92f067e1d22365013107
-Auto-merging fs/namespace.c
-CONFLICT (content): Merge conflict in fs/namespace.c
-error: could not revert 474f7825d533... fs: add copy_mount_setattr() helper
-hint: after resolving the conflicts, mark the corrected paths
-hint: with 'git add <paths>' or 'git rm <paths>'
-hint: Disable this message with "git config set advice.mergeConflict false"
+At least on SUSE orphaned and other problematic filesystem kernel modules
+are blacklisted. I wonder why other distros didn't follow this approach.
 
---=20
-Best Regards,
-Mike Gavrilov.
+> You can tighten this up by doing this:
+>
+> # cat > /usr/share/polkit-1/rules.d/always-ask-mount.rules << ENDL
+> // don't allow mounting, reformatting, or loopdev creation without asking
+> polkit.addRule(function(action, subject) {
+>         if ((action.id =3D=3D "org.freedesktop.udisks2.loop-setup" ||
+>              action.id =3D=3D "org.freedesktop.udisks2.filesystem-mount" =
+||
+>              action.id =3D=3D "org.freedesktop.udisks2.modify-device") &&
+>             subject.local =3D=3D true) {
+>                 return polkit.Result.AUTH_ADMIN_KEEP;
+>         }
+> });
+> ENDL
+
+Thanks for sharing this!
+
+> so at least you have to authenticate with an admin account.  We do love
+> our footguns, don't we?  At least it doesn't let you do that if you're
+> ssh'd in...
+
+IMHO guestmount and other userspace filesystem implementations should
+be the default
+for such mounts.
+
+//richard
 
