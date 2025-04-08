@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-46008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC5EDA81392
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 19:25:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB4CA81394
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 19:26:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 157BF7B207F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 17:23:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDD3F4A1BD9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 17:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C79F237163;
-	Tue,  8 Apr 2025 17:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D906A23C361;
+	Tue,  8 Apr 2025 17:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="PzGPopyG"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="j/ai8+S0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F31522A7FA;
-	Tue,  8 Apr 2025 17:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CCC1D61A2;
+	Tue,  8 Apr 2025 17:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744133091; cv=none; b=pzpTPw/mvV8lZXETxK5YAZTGMvsHWk/lcu8TS/qPcggiitCuC4sY4ec22q+SVCLnISvn3WLY8dUyi8vC6lz+2wK2HRcRTHVHlKix9XtN8AayZJj0L0FygO8woUH1xGcI85BEQrlrYIyYS/E8ifD7iB3thjyhGKijvVAzaPv1PI8=
+	t=1744133209; cv=none; b=A6cICv/frG4mdTDbizbbBGYP7E8KWfmiq/WzZnueYMD3h0x7Zuyrq81KGTQmSWdjP5vrXFbzq9ttxd/ULspSWtiNAbWehKPVm8MjZ7jCMdvjxLaH6p2MfNYp2J65B5lq1NDDY6u0R6NeN5+Rqhx6/zxKIJXrSlrSFKYaEFipfY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744133091; c=relaxed/simple;
-	bh=Hwp978ajQsGoLbpsfDONtdujNEh5AccQYgLJWjEKFMs=;
+	s=arc-20240116; t=1744133209; c=relaxed/simple;
+	bh=GX8WBRwTFC1RFjBVa5IRL/pHVndd3v3IwtcIP2uE7VM=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SJL6ElMvic+A8uQlsQ83ib8rs1msth6cM8uOrwzf0NCT+jGjCys0ZPTjk1ZCsdb1RRUzJQZz5G80psBM3sg4yFVGlEbCZmiZduYgTBxHCR0BOo60fqvMyovSpCnNFYmkFoolnHV5akVIE67Pzy5pm920PvHUxYmfZam4BkmalR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=PzGPopyG; arc=none smtp.client-ip=198.37.111.173
+	 Content-Type:MIME-Version; b=B4xIIx+6eSOVXfvuYUmfihvnB2Ixe69R5wTqIACV9q43IfsgOAaOe03Wwph1luHFYmryO4UkoE2hquzHeSIyTOJk0IZWjkGUNRpsdX2G8bGbuQEIXPBGhrUILAE4bC76EXgcuD9XmrYYiit4jZcJS+j6Yibm4d5wHRQpwdAiPXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=j/ai8+S0; arc=none smtp.client-ip=198.37.111.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1744133088;
-	bh=Hwp978ajQsGoLbpsfDONtdujNEh5AccQYgLJWjEKFMs=;
+	d=hansenpartnership.com; s=20151216; t=1744133206;
+	bh=GX8WBRwTFC1RFjBVa5IRL/pHVndd3v3IwtcIP2uE7VM=;
 	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=PzGPopyGHZk2VlBmW2GRxRnLxqzYCvtQuO8zdcB3kBUg1R33eI4CLQiqcwLebFEev
-	 FdVohXuopYYQLxvZGkCEN71LqmuoYYXxDcKsAF0fYDybVo5DOPpFTNgXC7T5/YPV13
-	 D84sOdJRj/Tl8KsThmsJsuBNAAkenjg2fU8JmYw0=
+	b=j/ai8+S0lLcIjK6ybN/IkWyjzC5oFm6RSFDsHNBJH5XD5PqFaek+D3Q8KUqlu2cQR
+	 Cl/5gDunPKlzYBGDOp6Oox22ozVc8kaXD/D2N4/KBySCqCIMdVXg8d3eggKR7ZZYdx
+	 QHT+OEE5Qr/hpQvNw2qGbEFNvU1Qv0/Adg5mNwdQ=
 Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange x25519)
 	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id CCC4D1C028E;
-	Tue, 08 Apr 2025 13:24:47 -0400 (EDT)
-Message-ID: <89ee0561d668c0c10f118a73084c619ef385a040.camel@HansenPartnership.com>
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 2BB301C02CF;
+	Tue, 08 Apr 2025 13:26:46 -0400 (EDT)
+Message-ID: <8514f2beca0e3fdb4994b5e0943dd8fccf70baf6.camel@HansenPartnership.com>
 Subject: Re: [PATCH 0/6] power: wire-up filesystem freeze/thaw with
  suspend/resume
 From: James Bottomley <James.Bottomley@HansenPartnership.com>
@@ -55,14 +55,15 @@ Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
   david@fromorbit.com, djwong@kernel.org, pavel@kernel.org,
  peterz@infradead.org,  mingo@redhat.com, will@kernel.org,
  boqun.feng@gmail.com
-Date: Tue, 08 Apr 2025 13:24:47 -0400
-In-Reply-To: <Z_VYZAgHNGEqF7ZB@bombadil.infradead.org>
+Date: Tue, 08 Apr 2025 13:26:45 -0400
+In-Reply-To: <Z_Va-ilQPuysfdhS@bombadil.infradead.org>
 References: <20250331-work-freeze-v1-0-6dfbe8253b9f@kernel.org>
 	 <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
 	 <ddee7c1ce2d1ff1a8ced6e9b6ac707250f70e68b.camel@HansenPartnership.com>
 	 <20250402-radstand-neufahrzeuge-198b40c2d073@brauner>
 	 <2d698820ebd2e82abe8551425d82e9c387aefd66.camel@HansenPartnership.com>
 	 <Z_VYZAgHNGEqF7ZB@bombadil.infradead.org>
+	 <Z_Va-ilQPuysfdhS@bombadil.infradead.org>
 Autocrypt: addr=James.Bottomley@HansenPartnership.com;
  prefer-encrypt=mutual;
  keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNElecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHURfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvdHRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmBLmY0FCRs1hL0ACgkQgUrkfCFIVNaEiQgAg18F4G7PGWQ68xqnIrccke7Reh5thjUz6kQIii6Dh64BDW6/UvXn20UxK2uSs/0TBLO81k1mV4c6rNE+H8b7IEjieGR9frBsp/+Q01JpToJfzzMUY7ZTDV1IXQZ+AY9L7vRzyimnJHx0Ba4JTlAyHB+Ly5i4Ab2+uZcnNfBXquWrG3oPWz+qPK88LJLya5Jxse1m1QT6R/isDuPivBzntLOooxPk+Cwf5sFAAJND+idTAzWzslexr9j7rtQ1UW6FjO4CvK9yVNz7dgG6FvEZl6J/HOr1rivtGgpCZTBzKNF8jg034n49zGfKkkzWLuXbPUOp3/oGfsKv8pnEu1c2GbQpSmFtZXMgQm90dG9tbGV5IDxqZWpiQGxpbnV4LnZuZXQuaWJtLmNvbT6JAVYEEwEIAEACGwMHCwkIBwMCAQYVC
@@ -83,53 +84,13 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Tue, 2025-04-08 at 10:09 -0700, Luis Chamberlain wrote:
-> On Tue, Apr 08, 2025 at 11:43:46AM -0400, James Bottomley wrote:
-[...]
-> > I've now done some extensive testing on loop nested filesystems
-> > with fio load on the upper. I've tried xfs on ext4 and ext4 on
-> > ext4. Hibernate/Resume has currently worked on these without a
-> > hitch (and the fio load burps a bit but then starts running at full
-> > speed within a few seconds). What I'm doing is a single round of
-> > hibernate/resume followed by a reboot. I'm relying on the fschecks
-> > to detect any filesystem corruption. I've also tried doing a couple
-> > of fresh starts of the hibernated image to check that we did
-> > correctly freeze the filesystems.
-> >=20
-> > The problems I've noticed are:
-> >=20
-> > =C2=A0=C2=A0 1. I'm using 9p to push host directories throught and that
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 completely hangs after a resume. This is=
- expected because the
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 virtio server is out of sync, but it doe=
-s indicate a need to
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 address Jeff's question of what we shoul=
-d be doing for
-> > network
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 filesystems (and is also the reason I ha=
-ve to reboot after
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 resuming).
-> > =C2=A0=C2=A0 2. Top doesn't show any CPU activity after resume even tho=
-ugh
-> > fio is
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 definitely running. =C2=A0This seems to =
-be a suspend issue and
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unrelated to filesystems, but I'll conti=
-nue investigating.
->=20
-> To be clear, on the fio run -- are you running fio *while*
-> suspend/resume cycle on XFS?
+On Tue, 2025-04-08 at 10:20 -0700, Luis Chamberlain wrote:
+> And in case its useful, to test this on a VM you'll need on libvirt:
 
-Yes, that's why I said "the fio load burps a bit" (as in after resume)
-"but then starts running full speed after a few seconds".
-
->  That used to stall / break suspend resume. We may want to test dd
-> against a drive too, that will use the block device cache, and I
-> forget if we have a freeze/thaw for it.
-
-fio is running a read/write test, but I think all my caches are write
-through for safety (although I have verified that the device cache
-flush is sent as the last sequence of hibernate).
+Just so we're clear, I'm only doing hibernate, not suspend tests.  I
+figure they should be a bit harsher, but you never know.  The reason is
+I set up my test rig for efivarfs, which only has a testable problem on
+hibernate.
 
 Regards,
 
