@@ -1,140 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-45991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-45992-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF4F9A80EDA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 16:51:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82606A80F4F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 17:09:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCEF37AFAB7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 14:50:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 787D6188ED27
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Apr 2025 15:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDED1EBA03;
-	Tue,  8 Apr 2025 14:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D071EB194;
+	Tue,  8 Apr 2025 15:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yb1uNjcl"
+	dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b="KjLe255x"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx.manguebit.com (mx.manguebit.com [167.235.159.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA141B6CE5;
-	Tue,  8 Apr 2025 14:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB121ADC8D
+	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Apr 2025 15:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.235.159.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744123854; cv=none; b=A2UA8JcsjYe1iWrNxsx3tJ8Kjp4XImxol6FoTI5B18xkA1z4WWLKyqvSZxvzYSU4AAYFzHaZxTXZVssaubGXrglQV4BLq8msISvrQtB0VMZsrwoQLuWpB8RajYV5W2eN+w6bsZ20ojXIGs7MPkCGnpVwarr8u5tHhWlvow9rgb4=
+	t=1744124759; cv=none; b=srBdzrVp+Y0QqPdjQQYJu4TFa51CkkEMOy1KmvX0pDSapAJ3I4jqp9SNhnnl4rgs4eSTfgTbWfmOZIeCD+L8bxoV2txiYh1EVHwxmvVenM3qDUYmAAroiKXA2rrKelLREIZBT4+OMSXMnwsHy2Cf+1k55N+Hqr2fojOYu7oDK1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744123854; c=relaxed/simple;
-	bh=F1gXfDTkprcTVTuQ1eClCfByLT07tIDnQSkinFWdSag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qClfc+v1KNeaqqCYok9GWaEwRqEA70eTZtPCcZ4SMg25dtaKkgN9t2XQXZXLWQUWquASUqlD8OFod8JTAW9XNWfk2gUOj/lguc3y0R9v7zQa+pB0A8XqHhrQFwDw8Uww2Nz5sKz3GmWr0iGH1TpNU3gdjsgJZ9zirJmS4RtIRDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yb1uNjcl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEFAAC4CEE5;
-	Tue,  8 Apr 2025 14:50:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744123853;
-	bh=F1gXfDTkprcTVTuQ1eClCfByLT07tIDnQSkinFWdSag=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Yb1uNjclOMw/7/4tbGQjBfBRgfbioiToBykUskc2CHJlW490ftj23eQdN6rxxIIuY
-	 fUkfXMB52HKOnOJByUOhyo18QqdkGptlSXi10WUetNcuX4ACT/dJbzkaycvG02ka0p
-	 OjgyxDCa1bfEtkSzZTP6XBqs6UclD15OBCp4u95nh9+TL7KAAXoPFeWw2useLNgn+T
-	 O034SUJD2Af1O9UZIbM+CT8Rl1bJlFvgLr3RAqahoH3DuWOw8D9l8ARNPC+n0DKoxc
-	 y8lxEYvTvKdRYJqa49Y3XDu3HVn3Wz7lSMiuB2WaAJr/YXKyRioEwfHjrFNVJ28KE1
-	 aL8TBcQHVnyiA==
-Date: Tue, 8 Apr 2025 07:50:53 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Richard Weinberger <richard.weinberger@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Cengiz Can <cengiz.can@canonical.com>,
-	Attila Szasz <szasza.contact@gmail.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Salvatore Bonaccorso <carnil@debian.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	lvc-patches@linuxtesting.org, dutyrok@altlinux.org,
-	syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com,
-	stable@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
-Message-ID: <20250408145053.GJ6266@frogsfrogsfrogs>
-References: <20241019191303.24048-1-kovalev@altlinux.org>
- <Z9xsx-w4YCBuYjx5@eldamar.lan>
- <d4mpuomgxqi7xppaewlpey6thec7h2fk4sm2iktqsx6bhwu5ph@ctkjksxmkgne>
- <2025032402-jam-immovable-2d57@gregkh>
- <7qi6est65ekz4kjktvmsbmywpo5n2kla2m3whbvq4dsckdcyst@e646jwjazvqh>
- <2025032404-important-average-9346@gregkh>
- <dzmprnddbx2qaukb7ukr5ngdx6ydwxynaq6ctxakem43yrczqb@y7dg7kzxsorc>
- <20250407-biegung-furor-e7313ca9d712@brauner>
- <20250407190814.GB6258@frogsfrogsfrogs>
- <CAFLxGvxH=4rHWu-44LSuWaGA_OB0FU0Eq4fedVTj3tf2D3NgYQ@mail.gmail.com>
+	s=arc-20240116; t=1744124759; c=relaxed/simple;
+	bh=s2X/9rFzJB4T3PChsgKoZEg1SwVf5WwlWcXjxLCBXl0=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
+	 MIME-Version:Content-Type; b=ltyvAP7zSoF1o0Yc4P7WpfwV1dvMyARWMcx7EuWZe8rAa33PYUDHnghjol2St0ciORteRh22utbwTGSL+eZtoFDa99NnIXkRpla8/Bq4ghO/ZJaqg3nc7CpgHDEl2O2Wr/Jx61jLGoC3Ot00C9pIPx9/4fZAEYvFfwE3T8UmNhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com; spf=pass smtp.mailfrom=manguebit.com; dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b=KjLe255x; arc=none smtp.client-ip=167.235.159.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.com
+Message-ID: <05f5b9f694ca9b1573ea8e1801098b65@manguebit.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
+	s=dkim; t=1744124755;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1dkAA8mupzq/5aCDd5/oD6P2hZ0bxNUpRBtqdkEU3AI=;
+	b=KjLe255xmFm5rKE5iQE2Rdol+nbQi5OqdeQ2rrQDx24FkiykWUHhGzKYsZ1G6iZNcJptAC
+	nlAUwtkc5Wg68fLdk1jXyJ9+gTGbZtQnP3T4WHff/p6UI3qoXodq92ULMp512V20NEbMvR
+	I67WUUu0v5c6Po0h6P91B1WS0Nq/y6+qlPN//R6x/PPcQHnqFrcnC3JwBmObDZTD1U8SZM
+	b0TFKbrvz+/eg8Dm80QM+GewCnHHBKrRk9V7uYsmak0o/WdOXjXn7DxFNHVhDZQOZ9asvI
+	bSwIypqpX1d3vbL0oUGj6SqalcPirmFfrwDeqjvxsrI/+kz6jKFiGwc8S7H/rA==
+From: Paulo Alcantara <pc@manguebit.com>
+To: David Howells <dhowells@redhat.com>
+Cc: dhowells@redhat.com, Song Liu <song@kernel.org>, netfs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, kernel-team@fb.com
+Subject: Re: [PATCH] netfs: Let netfs depends on PROC_FS
+In-Reply-To: <1478622.1744097510@warthog.procyon.org.uk>
+References: <b395436343d8df2efdebb737580fe976@manguebit.com>
+ <20250407184730.3568147-1-song@kernel.org>
+ <1478622.1744097510@warthog.procyon.org.uk>
+Date: Tue, 08 Apr 2025 12:05:52 -0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFLxGvxH=4rHWu-44LSuWaGA_OB0FU0Eq4fedVTj3tf2D3NgYQ@mail.gmail.com>
+Content-Type: text/plain
 
-On Tue, Apr 08, 2025 at 12:11:36PM +0200, Richard Weinberger wrote:
-> On Mon, Apr 7, 2025 at 9:08 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> > It's also the default policy on Debian 12 and RHEL9 that if you're
-> > logged into the GUI, any program can run:
-> >
-> > $ truncate -s 3g /tmp/a
-> > $ mkfs.hfs /tmp/a
-> > $ <write evil stuff on /tmp/a>
-> > $ udisksctl loop-setup -f /tmp/a
-> > $ udisksctl mount -b /dev/loopX
-> >
-> > and the user never sees a prompt.  GNOME and KDE both display a
-> > notification when the mount finishes, but by then it could be too late.
-> > Someone should file a CVE against them too.
-> 
-> At least on SUSE orphaned and other problematic filesystem kernel modules
-> are blacklisted. I wonder why other distros didn't follow this approach.
+David Howells <dhowells@redhat.com> writes:
 
-Maximal flexibility, I'm assuming.  It's at least somewhat comforting
-that RHEL doesn't enable HFS in Kconfig so it's a nonissue for them, but
-some day it's going to be ext4/XFS/btrfs that creates a compromise
-widget.
+> Paulo Alcantara <pc@manguebit.com> wrote:
+>
+>> (2) There's a wrong assumption in the API that @netfs_request_pool and
+>> @netfs_subrequest_pool will always be initialized.  For example, we
+>> should return an error from netfs_alloc_[sub]rquest() functions in case
+>> @mempool == NULL.
+>
+> No.  The assumption is correct.  The problem is that if the module is built in
+> (ie. CONFIG_NETFS_SUPPORT=y), then there is no consequence of netfs_init()
+> failing - and fail it does if CONFIG_PROC_FS=n - and 9p, afs and cifs will
+> call into it anyway, despite the fact it deinitialised itself.
+>
+> It should marked be module_init(), not fs_initcall().
 
-> > You can tighten this up by doing this:
-> >
-> > # cat > /usr/share/polkit-1/rules.d/always-ask-mount.rules << ENDL
-> > // don't allow mounting, reformatting, or loopdev creation without asking
-> > polkit.addRule(function(action, subject) {
-> >         if ((action.id == "org.freedesktop.udisks2.loop-setup" ||
-> >              action.id == "org.freedesktop.udisks2.filesystem-mount" ||
-> >              action.id == "org.freedesktop.udisks2.modify-device") &&
-> >             subject.local == true) {
-> >                 return polkit.Result.AUTH_ADMIN_KEEP;
-> >         }
-> > });
-> > ENDL
-> 
-> Thanks for sharing this!
-> 
-> > so at least you have to authenticate with an admin account.  We do love
-> > our footguns, don't we?  At least it doesn't let you do that if you're
-> > ssh'd in...
-> 
-> IMHO guestmount and other userspace filesystem implementations should
-> be the default
-> for such mounts.
-
-Agree.  I don't know if they (udisks upstream) have any good way to
-detect that a userspace filesystem driver is available for a given
-filesystem.  Individual fuse drivers don't seem to have a naming
-convention (fusefat, fuse2fs) though at least on Debian some of them
-seem to end up as /sbin/mount.fuse.$FSTYPE.
-
-guestmount seems to boot the running kernel in qemu and use that?  So I
-guess it's hard for guestmount itself even to tell you what formats it
-supports?  I'm probably just ignorant on that issue.
-
---D
-
-> //richard
-> 
+Makes sense, thanks.  I tried to reproduce it with cifs.ko and it didn't
+oops as netfslib ended up not using the default memory pools as cifs.ko
+already provide its own memory pools via netfs_request_ops.
 
