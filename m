@@ -1,155 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-46111-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46112-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E99A82A70
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 17:33:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC997A82AC9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 17:42:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B44597B364E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 15:30:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F96D17A668
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 15:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E760525F78F;
-	Wed,  9 Apr 2025 15:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99ACD267B7C;
+	Wed,  9 Apr 2025 15:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WOvNArT7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VzPDUykg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DB51482F5;
-	Wed,  9 Apr 2025 15:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011E026770E;
+	Wed,  9 Apr 2025 15:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744212654; cv=none; b=uiApqznbEZYjdd0/hOdnKB2gb7MabIZ+e5xLMe4lSPZkmJYD/GUx/EUvxTLPRFc6HVl9f7otPYn3Vy86aP+DG3zoTEGvd0VaT43XeE4ydNRfsB1dkw3QjsAU2IRklS/E3Z32+plTscODDwYpmDRiXPvOsPx+2doEoihz++KMblY=
+	t=1744213092; cv=none; b=W4wWBr2BU2lerwCR/DiW3GCpD2d8wi+KygnT2HcKUC/qCHWPTIb9m6QV34FwOSsryAFJbiPzWhj9sxZAWt1P90IGdTL4gpLga6AVM4BJjEbseIxZ8YVxApayOgPad5UDtJ0h/ORuImPkQOGwDz0UIHvgccuQTkOUakCsKOB/LVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744212654; c=relaxed/simple;
-	bh=Lv3aR6y91VqMNyNN60Ebth9lnnvzEykRZA0nfMOulkk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n79u4ofxSR5Bir0oBQPV0VvgAMkI82SsFz2IHCCcY8dkpDoTMoge89169diTfRRxYEReCDzKs58gQRHtoRKB7uiFMbnhimo0xuVtO/YHpvau040GUKdp0eQ8vBGjjNn84RVH1XwuVaXsyXJax6h1HcFl8H7eg6dBe41eU2iC2lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WOvNArT7; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e5e1a38c1aso9170335a12.2;
-        Wed, 09 Apr 2025 08:30:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744212651; x=1744817451; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lv3aR6y91VqMNyNN60Ebth9lnnvzEykRZA0nfMOulkk=;
-        b=WOvNArT7uiRamzQ4HVSJesvogUTqdlwKFFJ8OdshzziznDxKWnjGCI2U7titCmyVhd
-         mbipdnNc/8eIdICUHN91ixz+xYkSNg+ENM/OeOVT+6RCep6jfA1uUZ9NGNflfCZ/MLA5
-         syeCQxxcu0wy8xxGrTFMpDmrlQ2/ZQDA+sJrrBsSuJp4YL3v5VzYq1WoHNOcjRQWg1q3
-         IOGVW1l978KEycmPTBEYaKbcQkWRWm4pAIFce4zHdICvfhPo7iymppP9seHdRFikz6xb
-         rBxbH2hPZaRi6bnEEZol4PFD/KD75S/sbsmGGMcgoWg8xhFM7X3bVwD/sdtqsSiMefEZ
-         22fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744212651; x=1744817451;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Lv3aR6y91VqMNyNN60Ebth9lnnvzEykRZA0nfMOulkk=;
-        b=IVdvfRgVUjUKdArsFbqNZImeQNa4O5zG6GiOXw+Jfigk8f25aIXj2wdS7R3z1moIec
-         8gfmbbAa99hsqfRdbSbtv4N3u/X8rQ0n2twrGGMsGI+8UTznVcxEOLtQ5AwVh+va0+qX
-         5vWmnUsEVZyJvucARdMkdlnL9MFhnIqkB+xhm6fRBr8B00DkZisqws33GLlSlwyBfILi
-         GFb9360IhfNkVOJaWyAP9vM/hKB3WUopRJd0mMvaVMnNk2VWSu+w8F9ygwhlgb7MHkYV
-         CL5T8zJ/pZ/gqM06Y5Ah79e/K2OmqaBSBXkPvZZ2pxIMEHP+KEPQxae5hfPsH9EVLnCo
-         BDYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZXt/vkFZu80/LMF4cFC1QZG8b0gwS4IZirN1C9D39OfHUoK75xrLNY+d1qZZEDakXqdBxCN6ys5/OdSAs@vger.kernel.org, AJvYcCVqWr2leQ1wUjasW788RgYAecd60aqiyAqA3dTpPQ0ZfbTLhHHFkAKh0e/wfaezbJVs5DsFGrt4wjjNUf3gag==@vger.kernel.org, AJvYcCWQEXj0qv9zi8iuLiMb89kpmX+8VHBhFUG1Ps/n/87HSCvTXKEVWYk3/oDMz5DGYirJYzNh4Ah8QN4n9aER2rs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn8qZwP1sztkxoAuggnjnVwS0cxSrOTY0f+CgX7VQbl9++y5gE
-	FqOdQoyYJqTi7AN1HJQ4Kss+gkZ8RTzv1vlAW1sxhT2sPP5G40v/CDKi3jYS/z9m1Og8J6dXthh
-	PLb+WgOZkZT6QfnOu3jBiIzDelnQ=
-X-Gm-Gg: ASbGnctxVGH7qogkKh6PVy7AT1af+6y0k5xJTMGeSvUIYVsTAGbuSUajPeTZnAfE8vo
-	CBTKHX0J/d914wxJ+qWlUrEytrgmyXGFwHIQ87qm27flNbacYyIwEemjCMfITYQZxzg0inpJUAJ
-	jBUYo3r/PGfLAXCV/21n+1Sg==
-X-Google-Smtp-Source: AGHT+IHvitnv+3/0mIo+f9FNqlfRXpjgvjdKkr98dNctXmoT602f2ON2oacvhL/Ld8WjlnYa782gHamRenVh9cWvU0E=
-X-Received: by 2002:a05:6402:90e:b0:5f0:a6bd:78d3 with SMTP id
- 4fb4d7f45d1cf-5f2f8674ceamr2197377a12.34.1744212650437; Wed, 09 Apr 2025
- 08:30:50 -0700 (PDT)
+	s=arc-20240116; t=1744213092; c=relaxed/simple;
+	bh=fqfH1kvrY0NprE4Wf6dbWb0UT2mQUYVQx6Gs7AkqODg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rV0NzyfqbzcIv3jnaJ43/lcvr28/YHJl8W8x7pxAtoFEwsH6CBvkzS9sHuuGzuviCYvcQ0+bRLqRjKPosyHtOutotyV4pQgjyh50x2LYAwI+gZj07AM5wbM/ddQEduEZ+Q7P2Rc8egX3qrruEk5IbFJqrZhxdGriDw4U+XNIMXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VzPDUykg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79A34C4CEE2;
+	Wed,  9 Apr 2025 15:38:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744213091;
+	bh=fqfH1kvrY0NprE4Wf6dbWb0UT2mQUYVQx6Gs7AkqODg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VzPDUykgYlNJ9VEOYJEoxdfu6RVmeanMWYFbIEtNmKYLRtebJrUstrCN/ItySJLx1
+	 iTrG/qxrLQy33IHXySaYWxl4X4XIxz9btWkwjrTe+mE3bOEhCcEXI/kgCn7091qSZp
+	 uz8paIAFq1AqvpooGWnCMRDPXdMPSCCI2V1uvCGVxdxYFasuG0HkDscVOl8VuWLXJJ
+	 ACGXaSTxVURARgJYwG1G6ZKrSiZCLdkGXjZf9TgFWU2TbqtOKjHnkMJ6uz3SGHaldl
+	 cWclysuAKuxG7b9j3NG1/GenKh0zPVx5EhCPcm3HUgWzx0iAT/rVGVpsdEqg5ApYbm
+	 ulAHyhy1crTmA==
+Date: Wed, 9 Apr 2025 17:38:06 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	Lennart Poettering <lennart@poettering.net>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
+	Mike Yuan <me@yhndnzj.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 3/4] pidfd: improve uapi when task isn't found
+Message-ID: <20250409-sesshaft-absurd-35d97607142c@brauner>
+References: <20250403-work-pidfd-fixes-v1-0-a123b6ed6716@kernel.org>
+ <20250403-work-pidfd-fixes-v1-3-a123b6ed6716@kernel.org>
+ <20250404123737.GC3720@redhat.com>
+ <20250404-roben-zoodirektor-13cb8d1acefe@brauner>
+ <20250404145323.GE3720@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250409143138.568173-1-colin.i.king@gmail.com>
- <llt32u2qdjyu3giwhxesrahsh5a2ks6behzzkjky7fe7k6xync@pvixqbom73il> <1862386e-fca2-470e-929c-0205a56c0f2f@gmail.com>
-In-Reply-To: <1862386e-fca2-470e-929c-0205a56c0f2f@gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 9 Apr 2025 17:30:38 +0200
-X-Gm-Features: ATxdqUFmWRtzhqbsKBUX-0gwa5_W82rtqfbTr3CbdFnp_ZZuDQDYdYUrvU09SeA
-Message-ID: <CAGudoHFafkZ5DRoAeP0-7M9DPEvnwfPVwGN5aKoxYPcF=mEszA@mail.gmail.com>
-Subject: Re: [PATCH] select: do_pollfd: add unlikely branch hint return path
-To: "Colin King (gmail)" <colin.i.king@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250404145323.GE3720@redhat.com>
 
-On Wed, Apr 9, 2025 at 5:23=E2=80=AFPM Colin King (gmail)
-<colin.i.king@gmail.com> wrote:
->
-> On 09/04/2025 16:18, Mateusz Guzik wrote:
-> > On Wed, Apr 09, 2025 at 03:31:38PM +0100, Colin Ian King wrote:
-> >> Adding an unlikely() hint on the fd < 0 comparison return path improve=
-s
-> >> run-time performance of the mincore system call. gcov based coverage
-> >> analysis shows that this path return path is highly unlikely.
-> >>
-> >> Benchmarking on an Debian based Intel(R) Core(TM) Ultra 9 285K with
-> >> a 6.15-rc1 kernel and a poll of 1024 file descriptors with zero timeou=
-t
-> >> shows an call reduction from 32818 ns down to 32635 ns, which is a ~0.=
-5%
-> >> performance improvement.
-> >>
-> >> Results based on running 25 tests with turbo disabled (to reduce clock
-> >> freq turbo changes), with 30 second run per test and comparing the num=
-ber
-> >> of poll() calls per second. The % standard deviation of the 25 tests
-> >> was 0.08%, so results are reliable.
-> >>
+On Fri, Apr 04, 2025 at 04:53:24PM +0200, Oleg Nesterov wrote:
+> On 04/04, Christian Brauner wrote:
 > >
-> > I don't think adding a branch hint warrants benchmarking of the sort.
+> > On Fri, Apr 04, 2025 at 02:37:38PM +0200, Oleg Nesterov wrote:
+> > > And... the code looks a bit overcomplicated to me, why not simply
+> > >
+> > > 	int pidfd_prepare(struct pid *pid, unsigned int flags, struct file **ret)
+> > > 	{
+> > > 		if (!pid_has_task(pid, PIDTYPE_PID))
+> > > 			return -ESRCH;
+> > >
+> > > 		if (!(flags & PIDFD_THREAD) && !pid_has_task(pid, PIDTYPE_TGID))
+> > > 			return -ENOENT;
 > >
-> > Instead the thing to do is to check if the prediction matches real worl=
-d
-> > uses.
-> >
-> > While it is impossible to check this for all programs out there, it
-> > should not be a significant time investment to look to check some of th=
-e
-> > popular ones out there. Normally I would do it with bpftrace, but this
-> > comes from a user-backed area instead of func args, so involved hackery
-> > may be needed which is not warranted the change. Perhaps running strace
-> > on a bunch of network progs would also do it (ssh, browser?).
-> >
-> > I have to say I did not even know one can legally pass a fd < 0 to poll
-> > and I never seen it in action, so I don't expect many users. ;)
->
-> I did check this based on gcov coverage (mentioned in the commit
-> message) and this is based on running gcov data from running stress-ng
-> and kernel builds and I've been looking for branch hint performance wins
-> based on the top 250 if statements that are not already hinted using
-> likely/unlikely.
->
+> > I thought that checking PIDTYPE_PID first could cause misleading results
+> > where we report ENOENT where we should report ESRCH: If the task was
+> > released after the successful PIDTYPE_PID check for a pid that was never
+> > a thread-group leader we report ENOENT.
+> 
+> Hmm... but the code above can only return ENOENT if !(flags & PIDFD_THREAD),
+> so in this case -ENOENT is correct?
+> 
+> I guess -ENOENT would be wrong if this pid _was_ a leader pid and we
+> race with __unhash_process() which does
+> 
+> 	detach_pid(post->pids, p, PIDTYPE_PID);
+> 	if (group_dead)
+> 		detach_pid(post->pids, p, PIDTYPE_TGID);
 
-Well now that you mention it, the commit message claims *mincore*. :)
-I presume not edited from a different submission.
+Yes, exactly.
 
-You did not specify what you fed to gcov in there though.
+> 
+> but without tasklist_lock (or additional barries in both pidfd_prepare() and
+> __unhash_process() pidfd_prepare() can see the result of these 2 detach_pid()'s
+> in any order anyway. So I don't think the code above is "more" racy.
 
-The kernel build is fine.
+Right... Hm, I don't like the inherent raciness of this. I think we
+should fix this. I'm playing with something. I'll try to get it out
+today.
 
-However, stress-ng intentionally does weird things and can't be used
-as an argument here. It just may or may not accidentally line up with
-reality and any wins/loses have to be analyzed for legitimacy.
-
-I just straced ssh and firefox, both of which poll and only with
-non-negative fds [that I have seen], so I think the patch is fine.
---=20
-Mateusz Guzik <mjguzik gmail.com>
+> 
+> Although perhaps we can rely on the fact the the 1st detach_pid(PIDTYPE_PID)
+> does wake_up(pid->wait_pidfd) and use pid->wait_pidfd->lock to avoid the
+> races, not sure...
+> 
+> But,
+> 
+> > But I can adapt that to you scheme.
+> 
+> Again, up to you, whatever you prefer.
+> 
+> Oleg.
+> 
 
