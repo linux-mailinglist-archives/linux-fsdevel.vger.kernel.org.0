@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-46102-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46103-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C504A8299D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 17:12:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E13AA829A4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 17:12:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38145178510
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 15:06:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C54D17595E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 15:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE4A2676C1;
-	Wed,  9 Apr 2025 15:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A2A26773C;
+	Wed,  9 Apr 2025 15:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="qJFa6PuU"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="kho+6j4Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A2A264603;
-	Wed,  9 Apr 2025 15:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE70A266B56;
+	Wed,  9 Apr 2025 15:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744210860; cv=none; b=Vo/vsDhasHP5oao5ZsVKlOAap+zX10Il6oSOVJ6AHy9YfQqmyWv5Tfnx8w6AoCGJlih8NubaIFPHM+pXb6H6D4mVIcSgAWDB/fcCPnPKigwyOGvldukksrA6HdkF55QWAyFsAS090JU6E7B1y3pAw3sDmdQIrdDr7YODJHDOxe8=
+	t=1744210861; cv=none; b=lAzIBqZlsw6iey0E1jBTJHXx6ou4ENljmVPrnthParADIOrNhixsHJ9+NbibUXjJSWYdayPVp3C6m2bDhXO2ZQlZ32kCsX1M7GYL2llZ8sUo85oVl4Qbuh/9BFzmNm5gl0JB+nmRqNpavYw3sCPhGkkBsZZPEndPWX84Y4Fsuv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744210860; c=relaxed/simple;
-	bh=GiipiJO8p0lYp7crpmIzr6VfZgHQAs666AOVaoGECtI=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dH0sB3agNr5+LvEQ5NA2Zpl5oVUxlA5tZnEAz3LRunh/IEirHjXkyJjyyWycFymxRqunjqRiDqphjq0Gh5QL6D/gOTNTBuDtZtJd/8+ZzcOjneIta5JZM5wmSK71ee6Z+fIqGVZVG/2dKxaUAliMfcVd0AI11sjZqT61dSapME0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=qJFa6PuU; arc=none smtp.client-ip=178.60.130.6
+	s=arc-20240116; t=1744210861; c=relaxed/simple;
+	bh=c0N6Fza0g9HjjjobGuVNSq/z9YsYE454v/mgmkIlmvg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ZKfUSS4WXyztX4d1Uvj371TFpG3KXkIvAlwN8spagMuhjKU4V7/M7P1cBt69WGc+B/+LKQkVnoCz4tdAXFqly/KZNWSn8QHgkKAle0TSqizcqkb5hUM6SfleD96CCZ9B7brCJE17IcPmUAT4+MZ+e7ULuOeiPUY+mey7YN6Brcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=kho+6j4Y; arc=none smtp.client-ip=178.60.130.6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
-	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=5CEaKRGjI93msX9Jpav0RJs0AF+4W1KNPIEqhLX+xL8=; b=qJFa6PuUEn+FsEOzPd5dYyyudZ
-	mmaekCRwe4uNtClXDtrgH2TxjVpbypNdWckvd6JDOiyT6RhgiwuGvu2x+c0FDTiDMph7oX86F+c1T
-	sinfHUOiwq3ctZbH2FumjFe2HddlJF60SYAG8FoDzzhHyiVUchZktMEIa5d8Me8FU8oeksmzOf+w8
-	78pxNkN37GaBUGTlUhV2YRVArp4GuAYS+n+oOT0THCgLOmj92qnV4+Be2fGUMSuUZ74EyOE2YuKBx
-	/vPb3Wou80NCsvseilCnW+2+8oKNR/tfGiq/tcnUvMhtQgmF8fiP+AhWung7bqh46LxcXLbjegAwQ
-	DCLPapTg==;
+	s=20170329; h=Cc:To:In-Reply-To:References:Message-Id:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=0kPV6Tj4EuIgJXikf2OOLqOU4d8vMhpT68L7Cbr79NM=; b=kho+6j4Ye5KDTWD9hmZAleaf0h
+	OyKh98TkbISHF2M4PIm/0M1ZQmDQpaS52b7sA6WDKAxEp4KkELgFnRzch1XHnVJkWfrtfR5YxMOTi
+	tA5AF5r+apGbnph/p+9THcHj00M29u21eYCV7uT7h3pzaLX+EgiGAImVRLYvwkhmm+bEpGGzC/niC
+	4f5LWxc+xmNPrWVOHUqyTcRMe/tB6iENkDACyqt2BJu/SfRVvFtKZI6AB+jRdt0HP/rAufnK5FMLL
+	mzeLPjgE7sixMdmIEzj6We/7GWAAVjOuZ8SnZ1RT8L+/CEGawQH2L4h0VoqkvVXpNTueFh6F/BWy0
+	wVswWZ3g==;
 Received: from [191.204.192.64] (helo=[192.168.15.100])
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1u2Wv0-00EBVR-Vi; Wed, 09 Apr 2025 17:00:47 +0200
+	id 1u2Wv4-00EBVR-8P; Wed, 09 Apr 2025 17:00:50 +0200
 From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH 0/3] ovl: Enable support for casefold filesystems
-Date: Wed, 09 Apr 2025 12:00:40 -0300
-Message-Id: <20250409-tonyk-overlayfs-v1-0-3991616fe9a3@igalia.com>
+Date: Wed, 09 Apr 2025 12:00:41 -0300
+Subject: [PATCH 1/3] ovl: Make ovl_cache_entry_find support casefold
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,10 +58,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAJiL9mcC/x3MQQqAIBBA0avIrBMslLCrRAvJsYZCQ0OS8O5Jy
- 7f4/4WEkTDBxF6ImClR8A19x2Ddjd+Qk22GQQxKSKH5HXw5eMgYT1Nc4kr3TqG0UowGWnVFdPT
- 8x3mp9QM2JJNpYQAAAA==
-X-Change-ID: 20250409-tonyk-overlayfs-591f5e4d407a
+Message-Id: <20250409-tonyk-overlayfs-v1-1-3991616fe9a3@igalia.com>
+References: <20250409-tonyk-overlayfs-v1-0-3991616fe9a3@igalia.com>
+In-Reply-To: <20250409-tonyk-overlayfs-v1-0-3991616fe9a3@igalia.com>
 To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
  Theodore Tso <tytso@mit.edu>, Gabriel Krisman Bertazi <krisman@kernel.org>
 Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -71,65 +70,101 @@ Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org,
  =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
 X-Mailer: b4 0.14.2
 
-Hi all,
+To add overlayfs support casefold filesystems, make
+ovl_cache_entry_find() support casefold dentries.
 
-We would like to support the usage of casefold filesystems with
-overlayfs. This patchset do some of the work needed for that, but I'm
-sure there are more places that need to be tweaked so please share your
-feedback for this work.
+For the casefold support, just comparing the strings does not work
+because we need the dentry enconding, so make this function find the
+equivalent dentry for a giving directory, if any.
 
-* Implementation
+Also, if two strings are not equal, strncmp() return value sign can be
+either positive or negative and this information can be used to optimize
+the walk in the rb tree. utf8_strncmp(), in the other hand, just return
+true or false, so replace the rb walk with a normal rb_next() function.
 
-The most obvious place that required change was the strncmp() inside of
-ovl_cache_entry_find(), that I managed to convert to use d_same_name(),
-that will then call the generic_ci_d_compare function if it's set for
-the dentry. There are more strncmp() around ovl, but I would rather hear
-feedback about this approach first than already implementing this around
-the code.
-
-* Testing
-
-I used tmpfs to create a small ovl like this:
-
-sudo mount -t tmpfs -o casefold tmpfs mnt/
-cd mnt/
-mkdir dir
-chattr +F dir
-cd dir/
-mkdir upper lower
-mkdir lower/A lower/b lower/c
-mkdir upper/a upper/b upper/d
-mkdir merged work
-sudo mount -t overlay overlay -olowerdir=lower,upperdir=upper,workdir=work, merged
-ls /tmp/mnt/dir/merged/
-a  b  c  d
-
-And ovl is respecting the equivalent names. `a` points to a merged dir
-between `A` and `a`, but giving that upperdir has a lowercase `a`, this
-is the name displayed here.
-
-Thanks,
-	André
-
+Signed-off-by: André Almeida <andrealmeid@igalia.com>
 ---
-André Almeida (3):
-      ovl: Make ovl_cache_entry_find support casefold
-      ovl: Make ovl_dentry_weird() accept casefold dentries
-      ovl: Enable support for casefold filesystems
-
- fs/overlayfs/namei.c     | 11 ++++++-----
- fs/overlayfs/overlayfs.h |  2 +-
  fs/overlayfs/ovl_entry.h |  1 +
- fs/overlayfs/params.c    |  5 +++--
  fs/overlayfs/readdir.c   | 32 +++++++++++++++++++++-----------
- fs/overlayfs/util.c      | 12 +++++++-----
- 6 files changed, 39 insertions(+), 24 deletions(-)
----
-base-commit: a24588245776dafc227243a01bfbeb8a59bafba9
-change-id: 20250409-tonyk-overlayfs-591f5e4d407a
+ 2 files changed, 22 insertions(+), 11 deletions(-)
 
-Best regards,
+diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
+index cb449ab310a7a89aafa0ee04ee7ff6c8141dd7d5..2ee52da85ba3e3fd704415a7ee4e9b7da88bb019 100644
+--- a/fs/overlayfs/ovl_entry.h
++++ b/fs/overlayfs/ovl_entry.h
+@@ -90,6 +90,7 @@ struct ovl_fs {
+ 	bool no_shared_whiteout;
+ 	/* r/o snapshot of upperdir sb's only taken on volatile mounts */
+ 	errseq_t errseq;
++	bool casefold;
+ };
+ 
+ /* Number of lower layers, not including data-only layers */
+diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+index 881ec5592da52dfb27a588496582e7084b2fbd3b..68f4a83713e9beab604fd23319d60567ef1feeca 100644
+--- a/fs/overlayfs/readdir.c
++++ b/fs/overlayfs/readdir.c
+@@ -92,21 +92,31 @@ static bool ovl_cache_entry_find_link(const char *name, int len,
+ }
+ 
+ static struct ovl_cache_entry *ovl_cache_entry_find(struct rb_root *root,
+-						    const char *name, int len)
++						    const char *name, int len,
++						    struct dentry *upper)
+ {
++	struct ovl_fs *ofs = OVL_FS(upper->d_sb);
+ 	struct rb_node *node = root->rb_node;
+-	int cmp;
++	struct qstr q = { .name = name, .len = len };
+ 
+ 	while (node) {
+ 		struct ovl_cache_entry *p = ovl_cache_entry_from_node(node);
++		struct dentry *p_dentry, *real_dentry = NULL;
++
++		if (ofs->casefold && upper) {
++			p_dentry = ovl_lookup_upper(ofs, p->name, upper, p->len);
++			if (!IS_ERR(p_dentry)) {
++				real_dentry = ovl_dentry_real(p_dentry);
++				if (d_same_name(real_dentry, real_dentry->d_parent, &q))
++					return p;
++			}
++		}
+ 
+-		cmp = strncmp(name, p->name, len);
+-		if (cmp > 0)
+-			node = p->node.rb_right;
+-		else if (cmp < 0 || len < p->len)
+-			node = p->node.rb_left;
+-		else
+-			return p;
++		if (!real_dentry)
++			if (!strncmp(name, p->name, len))
++				return p;
++
++		node = rb_next(&p->node);
+ 	}
+ 
+ 	return NULL;
+@@ -204,7 +214,7 @@ static bool ovl_fill_lowest(struct ovl_readdir_data *rdd,
+ {
+ 	struct ovl_cache_entry *p;
+ 
+-	p = ovl_cache_entry_find(rdd->root, name, namelen);
++	p = ovl_cache_entry_find(rdd->root, name, namelen, rdd->dentry);
+ 	if (p) {
+ 		list_move_tail(&p->l_node, &rdd->middle);
+ 	} else {
+@@ -678,7 +688,7 @@ static bool ovl_fill_real(struct dir_context *ctx, const char *name,
+ 	} else if (rdt->cache) {
+ 		struct ovl_cache_entry *p;
+ 
+-		p = ovl_cache_entry_find(&rdt->cache->root, name, namelen);
++		p = ovl_cache_entry_find(&rdt->cache->root, name, namelen, NULL);
+ 		if (p)
+ 			ino = p->ino;
+ 	} else if (rdt->xinobits) {
+
 -- 
-André Almeida <andrealmeid@igalia.com>
+2.49.0
 
 
