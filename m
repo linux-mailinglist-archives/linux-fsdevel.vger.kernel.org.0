@@ -1,99 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-46077-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46078-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9DDDA8240E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 13:57:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 594FDA82485
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 14:21:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96DD34A249D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 11:57:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B258C1BA6E73
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 12:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4766B25E471;
-	Wed,  9 Apr 2025 11:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D55C25EF9C;
+	Wed,  9 Apr 2025 12:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D1BPhc5r"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MVriHJ0t"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF7225E455
-	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Apr 2025 11:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D89C25EF86
+	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Apr 2025 12:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744199825; cv=none; b=WbCQGkmcy/H44hALwEZwQtybnKIVquY3toxOQOb368sWuVIk9/hy7PpbpLXvKgASYDRyBdaaVgdHH2Cz8F+OR+pwop7/mvwQFKe9o2o0KhOjrljosuVJoHa99ogE4dr6lAnMZ5H9Nq5bAmRk0duD5iML4UGAZmP72U9SFs/c4/k=
+	t=1744201261; cv=none; b=tzpe0oo9VpKbe3J4hPMLc4Tle6K/D6p5tGBdYb1+7kUB0X8/SvpFIXK01T3a6GQ3wsBxaUBFzrftrYkG8CxWRAghvNSTccsJb7qTjjiHdNIs5RuIri8uFi9D5zOuvL06QyVebrAgfAqhDtQnAd71gYfFUTwkyfegfOOb8U19QPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744199825; c=relaxed/simple;
-	bh=bYsI9fKny4SxKbP5giJ46oTfBA030R5OcsLlxdPQ3rc=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=i1vIG4j5Z3S/v6LnqaYCkHCNaN0jJ94gEecTvz7337MCvmvoIm8RePv/4dPJqirkK12gaLomk9UT4Ka7ifROk9xjCd7/LLGwr3LQ2u6W1VM5g7cQWJafXs0/jAcRdnYatxlWkkbzzgrZTnrZpF1f4sAxilFti4qAdCOPhHJpCus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D1BPhc5r; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744199822;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9NW6RqANC34MSybPlsfK/Ojrrpi57Btk5nqfiDMR41o=;
-	b=D1BPhc5r6gHhxPCeVQ1FV6bsQwkycTA+sO3vT/YV1p/zaGX2XEDBnSDFrLAYvivKWq0b1z
-	tuJGl1H2FPT2lYzYyHR839OkPXzZ1gxz+jrrznFkH3PA9fYe9M53H9h0UTD+zRTB86VQxZ
-	9SF7WZbpcTrfVmve+Hmi5wt5wKO4CQ0=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-509-DD6Y0lk6PsChPzmI_5p8DQ-1; Wed,
- 09 Apr 2025 07:56:57 -0400
-X-MC-Unique: DD6Y0lk6PsChPzmI_5p8DQ-1
-X-Mimecast-MFC-AGG-ID: DD6Y0lk6PsChPzmI_5p8DQ_1744199816
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4E9BE195609E;
-	Wed,  9 Apr 2025 11:56:56 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.40])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7B71A180B488;
-	Wed,  9 Apr 2025 11:56:54 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <1BEAB585-4A65-475C-85CC-332C98859546@fb.com>
-References: <1BEAB585-4A65-475C-85CC-332C98859546@fb.com> <b395436343d8df2efdebb737580fe976@manguebit.com> <20250407184730.3568147-1-song@kernel.org> <1478622.1744097510@warthog.procyon.org.uk> <05f5b9f694ca9b1573ea8e1801098b65@manguebit.com>
-To: Song Liu <songliubraving@meta.com>
-Cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.com>,
-    Song Liu <song@kernel.org>,
-    "netfs@lists.linux.dev" <netfs@lists.linux.dev>,
-    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-    Kernel Team <kernel-team@meta.com>
-Subject: Re: [PATCH] netfs: Let netfs depends on PROC_FS
+	s=arc-20240116; t=1744201261; c=relaxed/simple;
+	bh=F8E53MMpOVzOsej7NjcLqtRiFyu+Wm3a327Y/mYBGu0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lCi7V8t5AwfB8nzAjIyPXEMZ5DBTrn4d/8fsGk8aHa2/25poHll0KBOqjGdCP7tJoNMu281dxXfHAYjtjYXikRyvrM8J3mVBsKCIWN4VYk/MW/nEtaRMogKdUv6FKHB6mErYfZeiQ5M+ns6brJ/fSwrMj7i8+2CcJupShk5ACSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MVriHJ0t; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e5bc066283so10779588a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Apr 2025 05:20:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1744201258; x=1744806058; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6dvih7wvfynVrebiFBdW92QzhqAPsR5BNAa5PflLdh8=;
+        b=MVriHJ0tECKyDnWE0ksBLJXdjOFKqaPkn2DeAa2YSXDmqFVKEjKvgWXj9PbMOjy7J6
+         NUPH1mKwUYNr6Vnjwz5rUUtG8elftzaEyMBxswGMa4N5H1tkow27ygWFCK2knDAu0MaU
+         fEyrGYL4ekuG6L/TxOMTbfjZjacS0OIynfFbFwkMtHDr6kwt1ofDttOm86WfJd6Dndlb
+         ZuLYcEr5EWVqb4LKF8t4mVFj7PkRmebyZeELs0++VfGXMaCww6LY6edQ3xqutC0RhvQ0
+         bAbuiS2nhk59ZqAAxO91iuZXrGVEap+mu8g7HixkWWmPcbEcttYeGhhltRtu7sHWY8Tc
+         /Flg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744201258; x=1744806058;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6dvih7wvfynVrebiFBdW92QzhqAPsR5BNAa5PflLdh8=;
+        b=k4PjNPn14pYu2o+7a13OTOEAfKbsot3xuXZcUXyggkDsFg1e4dW8u4l6CR9jnY5dlj
+         nk7PvLUoJFQcVmxSUpBsEUz6CV3b1oRry1E0N3lHkLZrXzz8WIsNheoSrIQg+qnxiyrq
+         nV5a0rFRz9a6gamAmSzfNQXMubHSj2YcQC+rqOALoaTXLu+Wt2Ysd/EH4gEAvQaB3Vmu
+         FdT34gJF4VhykBHCzI8dPLTTADOQJLgogz1jbsoWJTC+l4N/CxZYrmO1DXz14PNHGiLw
+         lLrc2o8sNYGTUyb3jZO5i4sllZgElVya2ZFCWS++qqG9VtDa3TY3bKqdi1oAl24e1nm+
+         lQxA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtkijChSas/Wfg+GOf6cbcwA3NIjMhrq7KlWxZhcvRLRMXT+xHxpqj3CHuMPk4UpuFsjqh3p2+tWaD7IG6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHQyIYrmIxzMcci989Au6W42LjTx+x9s/txr4CGVuoV+A8GGA4
+	XNbrH0KpF2zFJNyOq7YWqhktLdbKgGi2CZhTFWcAxLm5Uxcb2PkAPhJ6233Bj0k=
+X-Gm-Gg: ASbGnctquwaJY1rB+xC/FJjOQn4+RmrxlI5DnNcykvBDrfMemC8CkhJghQbwMkZ/o12
+	a93/0q6u99NE+zGh5wU7Gm0LeZvNNQJuw8QzgnqLFnagpmMjrlITOm/px68ibXeTfcTqY/tSSzB
+	gsptUN3OF6tUuox0FhKmAm/9OHXyOInwPQUnXq0RlDVWVITLqz69WHHsim2NQkFImIZqC3K1JD3
+	cDEcy14pTfMjoI91AVCpwPdq3WyLSAN61Uf0Ff5WCYXZJjUhveRLBpyuSxlfyEXEd6qIdg02D1P
+	PQPsRrBceAWbdFs3fjak8PToTChCOww=
+X-Google-Smtp-Source: AGHT+IHcrfDARD/MHD5XsauPp3j7VEdQ5ZRLkRjXHq7l1FQPMOUEjrzGco+PCPpFDVA8lCBV/861Vw==
+X-Received: by 2002:a17:907:3cc3:b0:ac2:47f7:4ad7 with SMTP id a640c23a62f3a-aca9b6c1498mr315806266b.36.1744201257862;
+        Wed, 09 Apr 2025 05:20:57 -0700 (PDT)
+Received: from localhost ([193.86.92.181])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-acaa1cb4104sm88487366b.99.2025.04.09.05.20.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Apr 2025 05:20:57 -0700 (PDT)
+Date: Wed, 9 Apr 2025 14:20:57 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Dave Chinner <david@fromorbit.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Harry Yoo <harry.yoo@oracle.com>, Kees Cook <kees@kernel.org>,
+	joel.granados@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+	linux-mm@kvack.org
+Subject: Re: [PATCH] mm: kvmalloc: make kmalloc fast path real fast path
+Message-ID: <Z_ZmKcA2CvMiZnSG@tiehlicka>
+References: <Z-y50vEs_9MbjQhi@harry>
+ <CALOAHbBSvMuZnKF_vy3kGGNOCg5N2CgomLhxMxjn8RNwMTrw7A@mail.gmail.com>
+ <Z-0gPqHVto7PgM1K@dread.disaster.area>
+ <Z-0sjd8SEtldbxB1@tiehlicka>
+ <zeuszr6ot5qdi46f5gvxa2c5efy4mc6eaea3au52nqnbhjek7o@l43ps2jtip7x>
+ <Z-43Q__lSUta2IrM@tiehlicka>
+ <Z-48K0OdNxZXcnkB@tiehlicka>
+ <Z-7m0CjNWecCLDSq@tiehlicka>
+ <Z_YjKs5YPk66vmy8@tiehlicka>
+ <0f2091ba-0a43-4dd3-aa48-fe284530044a@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1672920.1744199813.1@warthog.procyon.org.uk>
-Date: Wed, 09 Apr 2025 12:56:53 +0100
-Message-ID: <1672921.1744199813@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0f2091ba-0a43-4dd3-aa48-fe284530044a@suse.cz>
 
-Song Liu <songliubraving@meta.com> wrote:
+On Wed 09-04-25 11:11:37, Vlastimil Babka wrote:
+> On 4/9/25 9:35 AM, Michal Hocko wrote:
+> > On Thu 03-04-25 21:51:46, Michal Hocko wrote:
+> >> Add Andrew
+> > 
+> > Andrew, do you want me to repost the patch or can you take it from this
+> > email thread?
+> 
+> I'll take it as it's now all in mm/slub.c
 
-> Thanks for the review. I guess we will need the following changes, 
-
-You need a little bit more.  The error handling in the init function also
-needs #ifdef'ing too lest the compiler warn about unused goto labels.
-
-> probably in two separate patches?
-
-Hmmm... yes.  I'm suddenly uncertain about the order modules are inited.  It
-might actually need to be fs_initcall().
-
-David
-
+Thanks that will work as well.
+-- 
+Michal Hocko
+SUSE Labs
 
