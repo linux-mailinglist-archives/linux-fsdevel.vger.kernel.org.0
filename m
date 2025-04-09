@@ -1,280 +1,264 @@
-Return-Path: <linux-fsdevel+bounces-46095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 038D0A827B7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 16:25:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F225FA827CA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 16:26:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5811A1B668E4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 14:25:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6DA34A3556
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 14:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A627D25E836;
-	Wed,  9 Apr 2025 14:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E9126658F;
+	Wed,  9 Apr 2025 14:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="PA9SlHDO"
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="umQqvzTV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outbound-ip191a.ess.barracuda.com (outbound-ip191a.ess.barracuda.com [209.222.82.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2854318CBE1
-	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Apr 2025 14:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744208741; cv=fail; b=IoDr/bgGZo21FRrnoG8g0ni33e4vvi5Vy3jhSO059CKEA36ujo6AjTRBi5KRSo70uI386HZ8WkGrXNoW650n7RPGL17NkfoR/vqJ2QUY2zotgrky/FjKfE8kZhwMUi0eK5RErgkcxl7eYJvxLvi2EhIwe4fei8wyLiFGg1my8og=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744208741; c=relaxed/simple;
-	bh=vZZHpnIh7QiPr5t08T3Brjy1p0cqtQEqeYKAK9DAPNw=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=tY4AcU5XfNJn48Z/gwXn01OfWRCTNER0u24izHwpKs8VLyaaxhGm+oJIoLJB7Rp8k7E7yrM1PZ7Bb3gvBC2GnEq3pPjYEnKKfObZtgH1v3vAAHnineJSIVTBQBguOswMitdspyvn8sGysEKqNy1smHowe0d2rVmcTn1vr8wifbc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=PA9SlHDO; arc=fail smtp.client-ip=209.222.82.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11lp2174.outbound.protection.outlook.com [104.47.56.174]) by mx-outbound-ea8-37.us-east-2a.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Wed, 09 Apr 2025 14:25:32 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zDxr2qDnOKNUYfY90qPDhROlUh2Gxgg5FMbHXjJVFpvL2vdJCRoQMZQd/5rsK9bIyXpZfbqGcntC8Mq4lDc532I3xVQw5I4XP9ss5aA/E62LnCGohBUY6Th7qLRA6DWwQu7hbVS3sglzqcwgwhtvwv1gH709ZUUvFbbgrNk09GpQabfvVhRx5Obd45+CVbqVotzovCmVWdyqnVxCLOaJekpNV6PgOG6uEkgE8eva13lHjWtZQzwZNe+CCCmFH0pdnwJGhu6EKyioik9ZeCpCgNvB+xIVo2BM3b5aGaLwTzYyFil8lemoL056onzRR/OJYZVJi0mCXVKL9aEHLVdB/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vZZHpnIh7QiPr5t08T3Brjy1p0cqtQEqeYKAK9DAPNw=;
- b=HSveP+g8Z16HNrnozH0QThY2XRaXPyqL+rsXHVygwiQ2CGjY93L0u3AjpcMn0MBPynIfdJZ89DrF9LhDWvyUS6o6OC0fcZnicqLk3WBX4fqPBs3WUIVuA7vsP7tkMzucN3AmWtWAnYEG3eSdPbjO+Tdvk1neUDj0fYu60YM/vTok0n9aduWw504eJC3xTPRw43fR50iCEXnVX/wR0Nf00rgtHfnZgmL9jsHtr4U9x2eu7X9k6yf4L+R+1UbCPKI4Y5xYlq8eXZVHcGBfh3tS2Zfzo2huEnsaxDIhmDPYjn1RIBwocQ4g2lrW7vj6sLcaoyzEEWrnpu7uUB96xLyKBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ddn.com; dmarc=pass action=none header.from=ddn.com; dkim=pass
- header.d=ddn.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vZZHpnIh7QiPr5t08T3Brjy1p0cqtQEqeYKAK9DAPNw=;
- b=PA9SlHDOOugZjNsc/s9nqaTrKmSQrWFkFa1iRXXkBWu1yPKmHLivIiMHGVmkj88wBkYHbB2U25eCMF82glLVGks0loACftmVMVwoTHPnDbjOWA8B3iGBu83NBmwg3syxmOk07tNMAyKNSH8koabvl7vKHp7lPvSK1P2pTJibcUQ=
-Received: from BN6PR19MB3187.namprd19.prod.outlook.com (2603:10b6:405:7d::33)
- by DS7PR19MB5686.namprd19.prod.outlook.com (2603:10b6:8:71::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.33; Wed, 9 Apr
- 2025 14:25:26 +0000
-Received: from BN6PR19MB3187.namprd19.prod.outlook.com
- ([fe80::c650:f908:78e0:fb00]) by BN6PR19MB3187.namprd19.prod.outlook.com
- ([fe80::c650:f908:78e0:fb00%5]) with mapi id 15.20.8606.033; Wed, 9 Apr 2025
- 14:25:26 +0000
-From: Guang Yuan Wu <gwu@ddn.com>
-To: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-CC: "mszeredi@redhat.com" <mszeredi@redhat.com>, Bernd Schubert
-	<bschubert@ddn.com>
-Subject: [PATCH] fs/fuse: fix race between concurrent setattr from multiple
- nodes
-Thread-Topic: [PATCH] fs/fuse: fix race between concurrent setattr from
- multiple nodes
-Thread-Index: AQHbqVp0M67N/vLLOUi6vmMAtVcZEw==
-Date: Wed, 9 Apr 2025 14:25:26 +0000
-Message-ID:
- <BN6PR19MB3187A23CBCF47675F539ADB6BEB42@BN6PR19MB3187.namprd19.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=ddn.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN6PR19MB3187:EE_|DS7PR19MB5686:EE_
-x-ms-office365-filtering-correlation-id: c88b2553-f837-461e-7f31-08dd77725f7a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?nGGtDHQkAtlPwkdwxQCubGgeV1vBKKxu3I+HymHa3cRRKw0VcQ+dTGSX9x?=
- =?iso-8859-1?Q?uo/ua/OqOhhLhPTSSfkIRXXj7brP95YD/EjH8yHLM3KDrAISaWhuT7Od6n?=
- =?iso-8859-1?Q?JGtuLiOQKMeOjOeDbvejAnNPJ4Hlh3G96HbV7wxoB1rCsIO59oZx+eM7AP?=
- =?iso-8859-1?Q?BuEXU7/S3PDNCPOHkc+cKPcqQhQSVgpOytR0sgVivJw2SYWeZfsK55u7gK?=
- =?iso-8859-1?Q?aHO1z4Lsv53EKWC6eBdxzj/Zt9MkKoo5iZwp4uYuVC0q7yqv7Wm+8/s1gC?=
- =?iso-8859-1?Q?xCIXgMnal71h3QoneRhXHp1mEnJJX6LtRNWLseVH10dvL1w48gad+P4RaW?=
- =?iso-8859-1?Q?o7XnQvUyzugseAZl7b9sUsKip3MaWJAVUNOwGGRyoI+iFkue0Oc9S7sag7?=
- =?iso-8859-1?Q?CCVtfhsNLoJTu3SsbHekjCRlBewlK+CCNoRc2TzHtiRqvfRObi0uF0mXOC?=
- =?iso-8859-1?Q?X7AjiASIMrCYGxsZoSlPwHrNenh2SyAzTb+iZaAmOTeq26PQZ+KgDrmSR3?=
- =?iso-8859-1?Q?JRy7QXxCHtAI/+KeY0MTVJmv2m7wajJgzTlxl6yU3v3oQ7C77CI3jlOMaZ?=
- =?iso-8859-1?Q?LDToAT8/oL6Py4TRHpq7zPRTR1bgRQBLIWMbq3u0pCCTfInxn7k70WrM3R?=
- =?iso-8859-1?Q?53wzkPVz8xs4z7C7uRa3e8xwkK48RLEZL238voJE8as9lH5bag+FN1hahf?=
- =?iso-8859-1?Q?2ajlezhxPAAwjXN83U8Rl7hNO/XT7ck52/MTYi6vbe+GXLKHyvxpTBlsRj?=
- =?iso-8859-1?Q?gVT3aO6XubrMSHVDa4Mu1G4+8yXW+uKlinqX9jjnYSy94qbwGSRNg0cg4v?=
- =?iso-8859-1?Q?JbBBZAjlc2MyPaQlb810XAhRbp+9hHWEVZiHlqb8lMdgcjQFba3NRyTERb?=
- =?iso-8859-1?Q?E6X6aR6xuPGXIHEz90fRE8zeKMqOjPv0H6vWI/eJGXmJ6o/cArL6YsZE+/?=
- =?iso-8859-1?Q?02RPOSvSsOhSrXZ6x/vehA7WBSFnghoWqELCCNrPqiWrpeey4QfM9Ua7FG?=
- =?iso-8859-1?Q?NRqArvq1kMTa38USd3o9O5J42uYLGjhhozSrXcmmQn35Y8nMekSNs4Pr+z?=
- =?iso-8859-1?Q?2huabzl50GJ6PJc781+je37x3aQhkNZTeU/ri2gT+5EJ/dRyO4nkV586a7?=
- =?iso-8859-1?Q?2N9s3+XmC03/TR5DyjV87PfG/QOvKhVtwAiIU7oiJzuabxi514icDMmxje?=
- =?iso-8859-1?Q?L49ezhWEKZoHJHKvK3Pb119RdY05+YI0RDzwizP8GpqKWSCCm7L7kvf+E3?=
- =?iso-8859-1?Q?Mbwa/5F/K5YTrWi5OmKndfSNN+wEJrUFBeuACoZ8lQtUNspJkyOom0OoXO?=
- =?iso-8859-1?Q?ihPOSjmuPegLXDyNL75e4o/Fsm+JomMPzDuR4aZvavUa7UOypatjroVt6m?=
- =?iso-8859-1?Q?QEgiz1z+CubC4Tb018uj4dbS9ktWybWkHsrjn7YtUIDzgzx3SAW3gBGz/L?=
- =?iso-8859-1?Q?I1nmEuOsHAmX2A5AY/ZlcpnPSxVtZ+bOxuyHHT6/0KKjBSfU52B1VKYtyS?=
- =?iso-8859-1?Q?foPre6PlC8zQrZXhn3RL3fdt0Q7qXrxHIkasxaqWF6wLxRO7gjYV5l5I1e?=
- =?iso-8859-1?Q?F7UXO6c=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR19MB3187.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?1OglKFpep4TwcIMciW0P9JQQJsCtJcr0Obemo3c3Q9ESCDWuXunmZuBtnZ?=
- =?iso-8859-1?Q?S9b71pbk+xxi7ly0gd8b9AZQ4UfXF9NMT9QmY8EQtSdTkxCFLTB0gYgakL?=
- =?iso-8859-1?Q?f9gXE129C3kZ/tKi+9a8WqT0DF7/01cUkyC/pI13coE5Jxt5MvnZCnANLI?=
- =?iso-8859-1?Q?/fR24XVzRbgIeixMivj3FJBhUu6bCG90+9aJQhSO0oFTJJNY4Q/A/BrjPE?=
- =?iso-8859-1?Q?I1lIIsSXafSPAi/MpJXFNAZaFIMIG6K/bRUVYdNmf8aVvG0A+NaVRdVnuC?=
- =?iso-8859-1?Q?JJm0A82+NX/MwESiKUWQaUKKn7soFcWNus60SIj+2ROnQobqU0HUWsy6fA?=
- =?iso-8859-1?Q?kamvr36QBAn2o/wZOC8IW2CDvq9BptnFwIZFId9OwmkBjUNaeVc5K0oWJK?=
- =?iso-8859-1?Q?kWZLkcSsyRL3KmsdEj5nZS5z96iEZGSa+qAVQ/gXVtY9MsQRDnIN9BOZXD?=
- =?iso-8859-1?Q?ztcPIMzPZlIHmQEfkmBdw/5ghKxRl1+amH5t3xHKiualkS5YPr5wdxXIaF?=
- =?iso-8859-1?Q?5BNuTlX0l4ppRx8OmHrJIe8oRcDsTL/0tCDkzTbYXepnC0M+VZEUALOWyM?=
- =?iso-8859-1?Q?FT4UOk8u/7BMfOhBKRGpMwx3596J21zEn0ayNinVr2wD1+/x1tp5a8vxLf?=
- =?iso-8859-1?Q?16jLBbpI1PDTyE6v9GNcSDS++Iol7FLF7xopw7cnY7L0ITO3fZC7WS1HxA?=
- =?iso-8859-1?Q?EsYCOoafdXIfGjnd1Kk45Pd3g2H4DVmv+K6Qt+UIHfAMT4o1U92jjMdk90?=
- =?iso-8859-1?Q?qB9rTjqrVwwZwBAD2gR2UA/8sF4isiiTCTiFrxBfPnhqhRNmFygh2soTwc?=
- =?iso-8859-1?Q?dzY90uueZNFpGSrrNAL/ehFMxVKFfwRpdp3r1g0B6tAGyvS73J5oCcoCRl?=
- =?iso-8859-1?Q?ON3/DWi6dVQQzfjHHPSVeWlhmfWl1dhjIT3uelfcqiHG92RSn7bMf+Uucl?=
- =?iso-8859-1?Q?uKWmH6qMAmYR3eiNnJ3DPSW68eqgei/19ktESJfxbeWhbFjZKuZzcQGdiQ?=
- =?iso-8859-1?Q?MrfX1VdHrPpixMHxrCH12YXVHYSnLF/xJO3oK5rQ/CREvaqLYAu4AlZNwM?=
- =?iso-8859-1?Q?WGCFxfrKtDZvp1fYjZ9MLOcP0tqROWVN1XERmAPelWmnMsHDvv50eLsrQA?=
- =?iso-8859-1?Q?wZMDs0Itfxm/AGmgj4rmeU03Sfh2XUfS/vYODAqS3AJuHnTA9qQ8RrKaTD?=
- =?iso-8859-1?Q?PTwXRNHYIUkbqz8z3EEB3K+xvzOEz6l5cNsa//ZwJ3e6iB2ghbhl1YAvhj?=
- =?iso-8859-1?Q?texmYL0MHW8TIIMt/yVi42it1y2vztVsfOf33XqDdVYVcdP/ZcicuWPTQ9?=
- =?iso-8859-1?Q?W0w3n3/LElWTnV5M0+MPn9NvQ6pFv3fiyQM6Qrfyg9B1KlYr1VqmMcJos8?=
- =?iso-8859-1?Q?3XgsKlKuopvDswcIaQZYgPbIiph0ZAVSci/0mALB4USSDSDT38ZB9k4pb9?=
- =?iso-8859-1?Q?pC2HMMOapEmGjoFje3ED0+HNAOmzTbyF/52FG9uer2Tb3VP7zYIRwRif+2?=
- =?iso-8859-1?Q?A+dRfBSrAcp22Qtv0dCy1Yr8Y7zii5VvRQYyZeACRvNnoHS0YG/iWIOI3v?=
- =?iso-8859-1?Q?RksYVAcTwdcKVyyM2OUWYLuItt3qrTZv+pV20Ijwki6Wl0qvjiufdypssd?=
- =?iso-8859-1?Q?uzECoU+5HMRi4=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6B2265CA0
+	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Apr 2025 14:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744208779; cv=none; b=Iqv19jTsG2Rb/rl3xZ3XCFpJ8T47ba38dYdKfwRvI8YBzTCe/WfOEioM5ze7kqWUCQwXmc0Nft0HfH7ZdNn1b8cdBszCYhrPrtttfY4QvK3oGp5wb3FIDwku06wvey1yCmRA7MdYyb/u4D8m9BYra/PtLD91qGcOoyagP7KRfrY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744208779; c=relaxed/simple;
+	bh=XzrQ0mp7WLZBCaR1QiDf7RGSn7Hx8B/2cG3auHEmO9A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fkgHlQ+H+7lAX0CVrLjE16cM2obu1e+Q6q8VU+SimLEUUhWnVhoL5S9xWGE7bvzb5x5c3vXCC1f/3IJHd65hznPxDRhthQzZPQKHzSfWdF+Lqw5G2gC+haRYUVaJUiMBuVSjMFj5HiiiAEfySB/ifG6B9TheW+EBiwNEZs22xkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=umQqvzTV; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-736ab1c43c4so6677326b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Apr 2025 07:26:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1744208774; x=1744813574; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VWCFSwSJdWVyuiq1FZlofUemWkrK3y3F0Kcxx42yGpc=;
+        b=umQqvzTVILzhPynzAwi5LSrvh4hAJ6dAjyd8WMlFATXucc4vGYSGANwv1sIoGsv9Ag
+         QxpMMWyRhT1lbu7asOtH7joFr8NY0vj0RGMAWyNztZMKNdY3sSLYSaz/JFGFY6UYG+vo
+         6G4tZadO83UvhefAdvC+nDbItDx9Uv0NQx6rqOxvAxuTWUHaBuz0/JdQet30IEpFqqh7
+         HrLAbiCLj+nJHnoYaTGkwdM5DedcPbDHsEhXNZslw7gpU64Y9LinYhCQz1+VkIlXBkpn
+         DPQNEoVV/yts7C3SPaJYmHRvuFjaTWKRR/zPcvTTniYNkdiMGtFTwQkg+xHpf9RdXHC8
+         2L9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744208774; x=1744813574;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VWCFSwSJdWVyuiq1FZlofUemWkrK3y3F0Kcxx42yGpc=;
+        b=Dt4ZEqcz8tKhIuAbpxFw0/5Y3JAM3AMSmiMR6GVOkwkBM27bpKMoQ+mNaZs73uGxir
+         pL6MDh/y6qRIeyMzMRA9W4DxPg7kBZppthfiY5AqMEA6CDntCNri0iTk9sh4GvrWSiI/
+         tVzb+Fw0DIcWxVY5rT5aXf+4v2qxCW08WcU2nC2n/JQzPY2NZ+JexN8PyYPIT2wz1bTo
+         fyVd+j5FR6gKWzzPR0RMSq3ATCsx//kH7nn5Fi/gEHcGJJ5RpUXjbK3tJzqyldJDUZlq
+         rlGUqYZxbawdSxhQvnj5d/kjLB2gMPXpFGgzeObB/KHMqqAstALzEKUnF+Bjo02F5pvv
+         mTTA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdfAEtr2TBsHWvLNIcwS08NUj4YbY8+40at04RvjlBlzUEdZ7oyyb6f+3gkQAA+8/weoKV6YPRVHWAgoPf@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvJp58VHXSD3BobpI2mXTa6w2FtoJ0dH2r7ZCZeMnaY+2Ln+Lj
+	dOf2+t8wYV/CaVBnNgboN5EgNrXTDtp86TygPSXpsd2Ey/ioOIzbxS9E54/z/Uk=
+X-Gm-Gg: ASbGncsDz27BHgqdcDLYX7ypHpW5UDtLjl6yto3/TUNp8tPjjDbdSiYfW3UbuWG9Wqz
+	RW/BZgsv6j2V81XAIZ+mYcbwd/m3SLZpjd/Q/FCAB3pdtQmFcYE0GlG6Yksu1g4WJ3qvnpBOdxU
+	P9Mm6dsytuBUF4Y82j5dYrU5E8NfJ5cTDqZryLNgJxToE0+LFoKd4TohI4UQFpuCUtXEPO/tCoK
+	vpc2Xsp28pYtgMd4uk16GLV5NfoNtf0zCQHNM3loXtDzMSRqEu57ZWEYK4HFcomsh2i5IDisMLe
+	oUP4SPB1PqyRG5jZMenuPRY68ZrUmNkTxlfpYQSV+wg+YWT5UrQ=
+X-Google-Smtp-Source: AGHT+IHFFMUtgc5GdaqhKowOEcwpQuVaNNQv/0+QvYg71I8MlHsNAHS1sjVjRx/1bLRC7yOHjj+PuA==
+X-Received: by 2002:a05:6a00:e12:b0:736:a973:748 with SMTP id d2e1a72fcca58-73bafd6a4a1mr3511930b3a.22.1744208774241;
+        Wed, 09 Apr 2025 07:26:14 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bb1d2b108sm1426136b3a.19.2025.04.09.07.26.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Apr 2025 07:26:13 -0700 (PDT)
+Date: Wed, 9 Apr 2025 07:26:10 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	alistair.francis@wdc.com, richard.henderson@linaro.org,
+	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
+	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
+	cleger@rivosinc.com, alexghiti@rivosinc.com,
+	samitolvanen@google.com, broonie@kernel.org,
+	rick.p.edgecombe@intel.com
+Subject: Re: [PATCH v12 13/28] prctl: arch-agnostic prctl for indirect branch
+ tracking
+Message-ID: <Z_aDgnfI3_LKHdfb@debug.ba.rivosinc.com>
+References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com>
+ <20250314-v5_user_cfi_series-v12-13-e51202b53138@rivosinc.com>
+ <fdf8f812-ae36-4327-b345-2df047b85e7a@ghiti.fr>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	gacutVEweVKjtuvL31HcFx72OGvnUajbs7qy7qV18k+5je0EkeCdOI7ULySEEb+VKG7O7FcjU+/GG4pQ4pkeQ7fQKCBsoUe7WNVD3Xc6HK3zqJFyuZktJCkzK1DtmVPk1ds16+aNXt2eX+t+e3KHjvMvefnqYwrK93P1b5LOYr73gib5HszUcb1pXBM9wgqjaTckNIHTUatF4QhG0eno+A43NhJ6VHPibLR2+BEeP64TxQzj5bOGVUhvb2YPWyXPVjimxhMd8UuioKLCwNGoIFpNVK7aLVL/NLUmt6DuWRE0g43JSuTFjp0ymKpoLLGH1kFM42N8BwecAsEqcKdvFgZY/E8/2sj5XiQOqR3C0eOMNut+Jx1VOFSb6vpYM/LcnfYCuIeFzodRwoSYI6U20l1nxmthNluyEqOiIbFZBOLu4ognYirmTBO6oDDcS/yNtX398TyO3h5I1mji3I+xM5SgL1w3DLsHLw++W76oX14H4kOI2biJi8tN7yWbUGZKeAH1KPoele5Qm6cDP/ImMqtkGgVB5YMwziY2EzRTELnLcDmhdgHAfBFsNi8d+5aajPARrE9dB1f/qgbt0fTNKKvzAIoiOfwnASqKovrg/RVOM/6KaW9pNpdeRMjCzdb3aNtsJkld0bini7Aouzw/IA==
-X-OriginatorOrg: ddn.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN6PR19MB3187.namprd19.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c88b2553-f837-461e-7f31-08dd77725f7a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2025 14:25:26.7832
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Hc0iR//KWI5qKc/MkJeE2UCupdTLBWCUbhFtAnEdsX4RFuXWJatgO2DnHNxGOo91
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR19MB5686
-X-BESS-ID: 1744208732-102085-5643-8472-1
-X-BESS-VER: 2019.3_20250402.1543
-X-BESS-Apparent-Source-IP: 104.47.56.174
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVsZGFuZAVgZQ0DQtLSnZyCLZyN
-	w8OckYSKalGSdamqcmmhpbGKaZWCjVxgIAma3D20EAAAA=
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.263765 [from 
-	cloudscan12-84.us-east-2a.ess.aws.cudaops.com]
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------
-	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status:1
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <fdf8f812-ae36-4327-b345-2df047b85e7a@ghiti.fr>
 
-=A0fuse: fix race between concurrent setattrs from multiple nodes=0A=
-=0A=
-=A0 =A0 When mounting a user-space filesystem on multiple clients, after=0A=
-=A0 =A0 concurrent ->setattr() calls from different node, stale inode attri=
-butes=0A=
-=A0 =A0 may be cached in some node.=0A=
-=0A=
-=A0 =A0 This is caused by fuse_setattr() racing with fuse_reverse_inval_ino=
-de().=0A=
-=0A=
-=A0 =A0 When filesystem server receives setattr request, the client node wi=
-th=0A=
-=A0 =A0 valid iattr cached will be required to update the fuse_inode's attr=
-_version=0A=
-=A0 =A0 and invalidate the cache by fuse_reverse_inval_inode(), and at the =
-next=0A=
-=A0 =A0 call to ->getattr() they will be fetched from user-space.=0A=
-=0A=
-=A0 =A0 The race scenario is:=0A=
-=A0 =A0 =A0 1. client-1 sends setattr (iattr-1) request to server=0A=
-=A0 =A0 =A0 2. client-1 receives the reply from server=0A=
-=A0 =A0 =A0 3. before client-1 updates iattr-1 to the cached attributes by=
-=0A=
-=A0 =A0 =A0 =A0 =A0fuse_change_attributes_common(), server receives another=
- setattr=0A=
-=A0 =A0 =A0 =A0 =A0(iattr-2) request from client-2=0A=
-=A0 =A0 =A0 4. server requests client-1 to update the inode attr_version an=
-d=0A=
-=A0 =A0 =A0 =A0 =A0invalidate the cached iattr, and iattr-1 becomes staled=
-=0A=
-=A0 =A0 =A0 5. client-2 receives the reply from server, and caches iattr-2=
-=0A=
-=A0 =A0 =A0 6. continue with step 2, client-1 invokes fuse_change_attribute=
-s_common(),=0A=
-=A0 =A0 =A0 =A0 =A0and caches iattr-1=0A=
-=0A=
-=A0 =A0 The issue has been observed from concurrent of chmod, chown, or tru=
-ncate,=0A=
-=A0 =A0 which all invoke ->setattr() call.=0A=
-=0A=
-=A0 =A0 The solution is to use fuse_inode's attr_version to check whether t=
-he=0A=
-=A0 =A0 attributes have been modified during the setattr request's lifetime=
-. If so,=0A=
-=A0 =A0 mark the attributes as stale after fuse_change_attributes_common().=
-=0A=
-=0A=
-=A0 =A0 Signed-off-by: Guang Yuan Wu <gwu@ddn.com>=0A=
----=0A=
-=A0fs/fuse/dir.c | 12 ++++++++++++=0A=
-=A01 file changed, 12 insertions(+)=0A=
-=0A=
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c=0A=
-index d58f96d1e9a2..df3a6c995dc6 100644=0A=
---- a/fs/fuse/dir.c=0A=
-+++ b/fs/fuse/dir.c=0A=
-@@ -1889,6 +1889,8 @@ int fuse_do_setattr(struct dentry *dentry, struct iat=
-tr *attr,=0A=
-=A0 =A0 =A0 =A0 int err;=0A=
-=A0 =A0 =A0 =A0 bool trust_local_cmtime =3D is_wb;=0A=
-=A0 =A0 =A0 =A0 bool fault_blocked =3D false;=0A=
-+ =A0 =A0 =A0 bool invalidate_attr =3D false;=0A=
-+ =A0 =A0 =A0 u64 attr_version;=0A=
-=0A=
-=A0 =A0 =A0 =A0 if (!fc->default_permissions)=0A=
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 attr->ia_valid |=3D ATTR_FORCE;=0A=
-@@ -1973,6 +1975,8 @@ int fuse_do_setattr(struct dentry *dentry, struct iat=
-tr *attr,=0A=
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (fc->handle_killpriv_v2 && !capable(CAP_=
-FSETID))=0A=
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 inarg.valid |=3D FATTR_KILL=
-_SUIDGID;=0A=
-=A0 =A0 =A0 =A0 }=0A=
-+=0A=
-+ =A0 =A0 =A0 attr_version =3D fuse_get_attr_version(fm->fc);=0A=
-=A0 =A0 =A0 =A0 fuse_setattr_fill(fc, &args, inode, &inarg, &outarg);=0A=
-=A0 =A0 =A0 =A0 err =3D fuse_simple_request(fm, &args);=0A=
-=A0 =A0 =A0 =A0 if (err) {=0A=
-@@ -1998,9 +2002,17 @@ int fuse_do_setattr(struct dentry *dentry, struct ia=
-ttr *attr,=0A=
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 /* FIXME: clear I_DIRTY_SYNC? */=0A=
-=A0 =A0 =A0 =A0 }=0A=
-=0A=
-+ =A0 =A0 =A0 if ((attr_version !=3D 0 && fi->attr_version > attr_version) =
-||=0A=
-+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 test_bit(FUSE_I_SIZE_UNSTABLE, &fi->state))=
-=0A=
-+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 invalidate_attr =3D true;=0A=
-+=0A=
-=A0 =A0 =A0 =A0 fuse_change_attributes_common(inode, &outarg.attr, NULL,=0A=
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- ATTR_TIMEOUT(&outarg),=0A=
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- fuse_get_cache_mask(inode), 0);=0A=
-+=0A=
-+ =A0 =A0 =A0 if (invalidate_attr)=0A=
-+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 fuse_invalidate_attr(inode);=0A=
-+=0A=
-=A0 =A0 =A0 =A0 oldsize =3D inode->i_size;=0A=
-=A0 =A0 =A0 =A0 /* see the comment in fuse_change_attributes() */=0A=
-=A0 =A0 =A0 =A0 if (!is_wb || is_truncate)=0A=
+On Wed, Apr 09, 2025 at 10:03:05AM +0200, Alexandre Ghiti wrote:
+>On 14/03/2025 22:39, Deepak Gupta wrote:
+>>Three architectures (x86, aarch64, riscv) have support for indirect branch
+>>tracking feature in a very similar fashion. On a very high level, indirect
+>>branch tracking is a CPU feature where CPU tracks branches which uses
+>>memory operand to perform control transfer in program. As part of this
+>>tracking on indirect branches, CPU goes in a state where it expects a
+>>landing pad instr on target and if not found then CPU raises some fault
+>>(architecture dependent)
+>>
+>>x86 landing pad instr - `ENDBRANCH`
+>>arch64 landing pad instr - `BTI`
+>>riscv landing instr - `lpad`
+>>
+>>Given that three major arches have support for indirect branch tracking,
+>>This patch makes `prctl` for indirect branch tracking arch agnostic.
+>>
+>>To allow userspace to enable this feature for itself, following prtcls are
+>>defined:
+>>  - PR_GET_INDIR_BR_LP_STATUS: Gets current configured status for indirect
+>>    branch tracking.
+>>  - PR_SET_INDIR_BR_LP_STATUS: Sets a configuration for indirect branch
+>>    tracking.
+>>    Following status options are allowed
+>>        - PR_INDIR_BR_LP_ENABLE: Enables indirect branch tracking on user
+>>          thread.
+>>        - PR_INDIR_BR_LP_DISABLE; Disables indirect branch tracking on user
+>>          thread.
+>>  - PR_LOCK_INDIR_BR_LP_STATUS: Locks configured status for indirect branch
+>>    tracking for user thread.
+>>
+>>Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+>>Reviewed-by: Mark Brown <broonie@kernel.org>
+>>---
+>>  include/linux/cpu.h        |  4 ++++
+>>  include/uapi/linux/prctl.h | 27 +++++++++++++++++++++++++++
+>>  kernel/sys.c               | 30 ++++++++++++++++++++++++++++++
+>>  3 files changed, 61 insertions(+)
+>>
+>>diff --git a/include/linux/cpu.h b/include/linux/cpu.h
+>>index 6a0a8f1c7c90..fb0c394430c6 100644
+>>--- a/include/linux/cpu.h
+>>+++ b/include/linux/cpu.h
+>>@@ -204,4 +204,8 @@ static inline bool cpu_mitigations_auto_nosmt(void)
+>>  }
+>>  #endif
+>>+int arch_get_indir_br_lp_status(struct task_struct *t, unsigned long __user *status);
+>>+int arch_set_indir_br_lp_status(struct task_struct *t, unsigned long status);
+>>+int arch_lock_indir_br_lp_status(struct task_struct *t, unsigned long status);
+>>+
+>>  #endif /* _LINUX_CPU_H_ */
+>>diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+>>index 5c6080680cb2..6cd90460cbad 100644
+>>--- a/include/uapi/linux/prctl.h
+>>+++ b/include/uapi/linux/prctl.h
+>>@@ -353,4 +353,31 @@ struct prctl_mm_map {
+>>   */
+>>  #define PR_LOCK_SHADOW_STACK_STATUS      76
+>>+/*
+>>+ * Get the current indirect branch tracking configuration for the current
+>>+ * thread, this will be the value configured via PR_SET_INDIR_BR_LP_STATUS.
+>>+ */
+>>+#define PR_GET_INDIR_BR_LP_STATUS      77
+>>+
+>>+/*
+>>+ * Set the indirect branch tracking configuration. PR_INDIR_BR_LP_ENABLE will
+>>+ * enable cpu feature for user thread, to track all indirect branches and ensure
+>>+ * they land on arch defined landing pad instruction.
+>>+ * x86 - If enabled, an indirect branch must land on `ENDBRANCH` instruction.
+>>+ * arch64 - If enabled, an indirect branch must land on `BTI` instruction.
+>>+ * riscv - If enabled, an indirect branch must land on `lpad` instruction.
+>>+ * PR_INDIR_BR_LP_DISABLE will disable feature for user thread and indirect
+>>+ * branches will no more be tracked by cpu to land on arch defined landing pad
+>>+ * instruction.
+>>+ */
+>>+#define PR_SET_INDIR_BR_LP_STATUS      78
+>>+# define PR_INDIR_BR_LP_ENABLE		   (1UL << 0)
+>
+>
+>Are we missing PR_INDIR_BR_LP_DISABLE definition here?
+
+PR_SET_INDIR_BR_LP_STATUS with parameter's bit0 clear will disable branch tracking.
+This is what arm and riscv settled on for shadow stack enable and disable as well.
+>
+>
+>>+
+>>+/*
+>>+ * Prevent further changes to the specified indirect branch tracking
+>>+ * configuration.  All bits may be locked via this call, including
+>>+ * undefined bits.
+>>+ */
+>>+#define PR_LOCK_INDIR_BR_LP_STATUS      79
+>>+
+>>  #endif /* _LINUX_PRCTL_H */
+>>diff --git a/kernel/sys.c b/kernel/sys.c
+>>index cb366ff8703a..f347f3518d0b 100644
+>>--- a/kernel/sys.c
+>>+++ b/kernel/sys.c
+>>@@ -2336,6 +2336,21 @@ int __weak arch_lock_shadow_stack_status(struct task_struct *t, unsigned long st
+>>  	return -EINVAL;
+>>  }
+>>+int __weak arch_get_indir_br_lp_status(struct task_struct *t, unsigned long __user *status)
+>>+{
+>>+	return -EINVAL;
+>>+}
+>>+
+>>+int __weak arch_set_indir_br_lp_status(struct task_struct *t, unsigned long status)
+>>+{
+>>+	return -EINVAL;
+>>+}
+>>+
+>>+int __weak arch_lock_indir_br_lp_status(struct task_struct *t, unsigned long status)
+>>+{
+>>+	return -EINVAL;
+>>+}
+>>+
+>>  #define PR_IO_FLUSHER (PF_MEMALLOC_NOIO | PF_LOCAL_THROTTLE)
+>>  #ifdef CONFIG_ANON_VMA_NAME
+>>@@ -2811,6 +2826,21 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+>>  			return -EINVAL;
+>>  		error = arch_lock_shadow_stack_status(me, arg2);
+>>  		break;
+>>+	case PR_GET_INDIR_BR_LP_STATUS:
+>>+		if (arg3 || arg4 || arg5)
+>>+			return -EINVAL;
+>>+		error = arch_get_indir_br_lp_status(me, (unsigned long __user *)arg2);
+>>+		break;
+>>+	case PR_SET_INDIR_BR_LP_STATUS:
+>>+		if (arg3 || arg4 || arg5)
+>>+			return -EINVAL;
+>>+		error = arch_set_indir_br_lp_status(me, arg2);
+>>+		break;
+>>+	case PR_LOCK_INDIR_BR_LP_STATUS:
+>>+		if (arg3 || arg4 || arg5)
+>>+			return -EINVAL;
+>>+		error = arch_lock_indir_br_lp_status(me, arg2);
+>>+		break;
+>>  	default:
+>>  		trace_task_prctl_unknown(option, arg2, arg3, arg4, arg5);
+>>  		error = -EINVAL;
+>>
 
