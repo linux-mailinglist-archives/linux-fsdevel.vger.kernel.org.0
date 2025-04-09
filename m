@@ -1,91 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-46107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46108-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75F1FA829AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 17:13:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0EA0A82A76
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 17:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C0767B0918
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 15:07:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DF739C0D16
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 15:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32C0266B75;
-	Wed,  9 Apr 2025 15:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A3C267393;
+	Wed,  9 Apr 2025 15:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FUcVthHm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jyh/lUEU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD2A26E170
-	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Apr 2025 15:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD4C1482F5;
+	Wed,  9 Apr 2025 15:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744211046; cv=none; b=ufJ52sNvuk5cgyXmKUtiS8pZS4JZntaOl8NsIWZWyAMqCTGO9fxZEk0ZkTimnfpsTKc47FXjT/ng5K9EFDfb39Zc/lwjbTNeZ8n+23GQZs+FA5N/qt86MIv1NQpLAWf/8FePx6l4CO6xtCJnQu5g5Jh08e9ptBtrICsp9PK4lko=
+	t=1744211918; cv=none; b=ZAHdSFdg6xNVe9mDMdASGlHPlIBBIS+L4ZgLlMMhO0RoOAZlp5UFO3XV3vIa7uckHTsNRn88KluE2nsQgXb0pf0s/77h8iuvQq6zGrHErGUH8aGMczoLlpkOCJ8PzB0RBS8TyER3Iy21eFfPYI3zGgJ/n5GLocrT9ZHsaFm/ylE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744211046; c=relaxed/simple;
-	bh=oqpWJBYbkroHFEUQdjREHV/huht+JSeb/D4fycGG8dM=;
-	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
-	 Date:Message-ID; b=dubVEzOt7AKo4Q9CT/3jx3eY7wPXUr67qfnHIHLiZPxp3wXrXtEwjaq118S4hukDk3WY2SzLK0iaZCvbAGR+gjTK2eQcnkwxkVXLVG92rpBNLSA20CTAcypWQzynxs5ZbjeQvv17WBoL8MVyVZtiBWy361/Rq/U0P5XQD5a553E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FUcVthHm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744211043;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oqpWJBYbkroHFEUQdjREHV/huht+JSeb/D4fycGG8dM=;
-	b=FUcVthHmEA0NKQK+6Tq2ezdXrrsvYZ1QQwSwXjk5B/Wgm/sgkV+WlfYPDqrm/ISdpwdXlc
-	7cx1g/eWIirDhLkRRvO7uQV3K9qTWFi9+iFZmD/TRdPf5k308/wDTHgdtfloBghgV7aX3R
-	75e1FUHANwbMieHyoITc5D6vUWqMA3I=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-385-DD8Pc8seNeObwO6PoCHcqg-1; Wed,
- 09 Apr 2025 11:03:49 -0400
-X-MC-Unique: DD8Pc8seNeObwO6PoCHcqg-1
-X-Mimecast-MFC-AGG-ID: DD8Pc8seNeObwO6PoCHcqg_1744211028
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ECD5B19560B3;
-	Wed,  9 Apr 2025 15:03:47 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.40])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 89B3D1955D81;
-	Wed,  9 Apr 2025 15:03:46 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <1478622.1744097510@warthog.procyon.org.uk>
-References: <1478622.1744097510@warthog.procyon.org.uk> <b395436343d8df2efdebb737580fe976@manguebit.com> <20250407184730.3568147-1-song@kernel.org>
-Cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.com>,
-    Song Liu <song@kernel.org>, netfs@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [PATCH] netfs: Let netfs depends on PROC_FS
+	s=arc-20240116; t=1744211918; c=relaxed/simple;
+	bh=uViSNOAqAkmUraE/cJ3HBL1B127TQ8IrrZ680tfIqa0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jstc3qorrCrZt9qkEyx+jJ3ySlSxTjHy32hqBR6bd9ukQzpmKfZXGbAEH/c8tBYVjawK0qlqFYL3mRmnwFlw+3ejDB8QTCyTWqM05Pgw8j/GPcdS1K2SnfrloQuC6XFQMqBvQRzOYxJ5lqlfHN/iOTjbCPcBiZOpGut2J46jHDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jyh/lUEU; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-39ac56756f6so5814031f8f.2;
+        Wed, 09 Apr 2025 08:18:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744211915; x=1744816715; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lGKy6jggFaaAC/3IEsCxAnoHmSQ+hWKoUuhM5yojB78=;
+        b=jyh/lUEUMXjodMiPtgY7ZlrlZ5zeRkqbtV9XTnlT5KyBCnsWGk/emTJpDVf+sNwuGJ
+         KPp5FNJOlSIy45ciFBSWtHg0Ge0xaYQbHKQJ57V2DvldixxRilA7D4MGn3QUba62yxtI
+         ENKrME6gmPVv8V0esZ8Es9gByAskdXTrBy9SRqIiQLp1TbXlnKukpnA5ejbgAmp5Il5n
+         aNprz1C2FPz34ZTsT1KyiedkNjReTxPZZd/K5W6dTZl7Sk32REvF4C5uwl1FXopS6w1l
+         kS7XNRvRNS/2+CREW6TQDgGE8NmkuItHPOqm/giAT4QGSgLHboatRhLqzOtYBmwGfNGN
+         iRrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744211915; x=1744816715;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lGKy6jggFaaAC/3IEsCxAnoHmSQ+hWKoUuhM5yojB78=;
+        b=rvBP8LG4htj2rqf1x94TK1pGX2V3GSFFrmlGFuVKAe34UbyugYyt5OJ2+OfmtS18NE
+         HnTaeuQF4TY7Je1/0DF1P/jqbBWI1qV+AGHUoMxRQQkw1VH6kodcqmO4lF13lU4wOYmG
+         eYs8DxBh/nW6idrFjZU1CGYKiKlwde1cXIj/9WXwkusgHd3Uo8U7zTWCPVl9bR/Lrynd
+         Q76zyX0oKtX5Rb67nd+AFmWGACpM22TTEhcnyHq69HAN3gma2CcancYAvqOhO9o9+Kqz
+         rUsMJWcrO7MjvCQuo+7gCG8qBO3u/VezbJwBrlIcuFiBfcJ3sCo0+aU9+ypswK2Vj8Ad
+         ASFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWel++a2OA7xxrHR7843PKborGbt0dGuzLi63p9pSnJZEHOiEXDlOiBv92LFlzEkyphx8G4cV6MwACOnpyp@vger.kernel.org, AJvYcCX0OVvzCMec4dhhR/tNPG+IliWfokSBIJHZaVOG2N7SaIgoajdFaydASIovaXr3Xl+RfmZ1nMG9BE2TFhtcguY=@vger.kernel.org, AJvYcCXQpRF2vF0LYhadjis22FfgMmgty3RtW6O1ISIQkWTz1UjX5WskxWjXOS3NHNkEsHx8dtYO4KqW5e5Rx03hew==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyrkKFdaLaGzjfQxtf1mIbc0J9dDVRwyPVZJWaiieOdT3K0PIo
+	RQcQFXY7C5C9h+T8eKsNJvrBMc8P4yoNyfuPwL4V/CI8X5cAR3LH
+X-Gm-Gg: ASbGncs8TFBlPHbsFjBz8UOCRJ0ffdzb5rVQRK2V+CMZm4ORCsJCDjv/lyMEbjbgwDS
+	Imo2WpqCcRGcNA1OQgzna9E3pFG20uot/exdn+8PsFEhZLmeaPrK8KsDggwH+iqv1BHHA8z4tGo
+	K46RJCEPKSqOos3CS0D3Cw5g78ZjFMky3h7Ke7bNsW7cUCN0qhEvTQXVhQ5akXgrnie32MPMCIE
+	EEBTDXcb0chQ6kyGd1+0ym8LEjS7KKZlOCGPBT39nMFMddDueO8Gapz0Yy5cZG7zzAWwc2LTDM9
+	81rcF9QF+zT3zQVtYWLrr7VkRMFMRJr8U1KXm06dMAFCRdF1UE7hzxVZ
+X-Google-Smtp-Source: AGHT+IHrWEeUbn/ofyzKeGsGVmMQyyF7VSvjS6DBt2BYcu1AMBMUwUXtdCBz1agZtaaqRgeeGIh58g==
+X-Received: by 2002:a05:6000:2aa:b0:391:158f:3d59 with SMTP id ffacd0b85a97d-39d8852ecc6mr2918176f8f.15.1744211914798;
+        Wed, 09 Apr 2025 08:18:34 -0700 (PDT)
+Received: from f (cst-prg-17-207.cust.vodafone.cz. [46.135.17.207])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39d89402a08sm1881192f8f.100.2025.04.09.08.18.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Apr 2025 08:18:34 -0700 (PDT)
+Date: Wed, 9 Apr 2025 17:18:26 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] select: do_pollfd: add unlikely branch hint return path
+Message-ID: <llt32u2qdjyu3giwhxesrahsh5a2ks6behzzkjky7fe7k6xync@pvixqbom73il>
+References: <20250409143138.568173-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1691553.1744211025.1@warthog.procyon.org.uk>
-Date: Wed, 09 Apr 2025 16:03:45 +0100
-Message-ID: <1691554.1744211025@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250409143138.568173-1-colin.i.king@gmail.com>
 
-David Howells <dhowells@redhat.com> wrote:
+On Wed, Apr 09, 2025 at 03:31:38PM +0100, Colin Ian King wrote:
+> Adding an unlikely() hint on the fd < 0 comparison return path improves
+> run-time performance of the mincore system call. gcov based coverage
+> analysis shows that this path return path is highly unlikely.
+> 
+> Benchmarking on an Debian based Intel(R) Core(TM) Ultra 9 285K with
+> a 6.15-rc1 kernel and a poll of 1024 file descriptors with zero timeout
+> shows an call reduction from 32818 ns down to 32635 ns, which is a ~0.5%
+> performance improvement.
+> 
+> Results based on running 25 tests with turbo disabled (to reduce clock
+> freq turbo changes), with 30 second run per test and comparing the number
+> of poll() calls per second. The % standard deviation of the 25 tests
+> was 0.08%, so results are reliable.
+> 
 
-> It should marked be module_init(), not fs_initcall().
+I don't think adding a branch hint warrants benchmarking of the sort.
 
-Actually, it does need to use fs_initcall() so that when it's built in, it
-gets initialised before any filesystems that use module_init().
+Instead the thing to do is to check if the prediction matches real world
+uses.
 
-David
+While it is impossible to check this for all programs out there, it
+should not be a significant time investment to look to check some of the
+popular ones out there. Normally I would do it with bpftrace, but this
+comes from a user-backed area instead of func args, so involved hackery
+may be needed which is not warranted the change. Perhaps running strace
+on a bunch of network progs would also do it (ssh, browser?).
 
+I have to say I did not even know one can legally pass a fd < 0 to poll
+and I never seen it in action, so I don't expect many users. ;)
 
