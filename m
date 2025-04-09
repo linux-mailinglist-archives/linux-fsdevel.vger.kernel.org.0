@@ -1,128 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-46106-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01F80A829A2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 17:12:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75F1FA829AB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 17:13:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFD0A7B7468
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 15:07:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C0767B0918
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 15:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6569B26E155;
-	Wed,  9 Apr 2025 15:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32C0266B75;
+	Wed,  9 Apr 2025 15:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FUcVthHm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from ida.uls.co.za (ida.uls.co.za [154.73.32.4])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B4026E145;
-	Wed,  9 Apr 2025 15:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.73.32.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD2A26E170
+	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Apr 2025 15:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744211042; cv=none; b=LvRp/M7PHLo9BeNylGQPhM2qMt0BtXhlzPrfI3yqVxYS87OrrSRrcFeH69jhyuMQ0ttj1eptOZHrsGzFYqBYv8cMToRcx0kHoUrIQGWYp2r9ZHLN6kTrEicXqtlUTPyEiMIaeViUfg/EJEIjmMpjnlE4fqEOsJFUFsqD4RqNJgQ=
+	t=1744211046; cv=none; b=ufJ52sNvuk5cgyXmKUtiS8pZS4JZntaOl8NsIWZWyAMqCTGO9fxZEk0ZkTimnfpsTKc47FXjT/ng5K9EFDfb39Zc/lwjbTNeZ8n+23GQZs+FA5N/qt86MIv1NQpLAWf/8FePx6l4CO6xtCJnQu5g5Jh08e9ptBtrICsp9PK4lko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744211042; c=relaxed/simple;
-	bh=xp03X4No9qThx9XdMZj4Dy4FJH4lxTikgBtxivQrSHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nqlVrOayxerLHOfXkipO8WvggncIDR0emvs4S35uMMZR6WN1HPiqqeMZGs5kDO0iKhayb1jvFHvXWlg9zrwqSlmRhV+nZtP6c+TUstfEfVdZCRDHWU3YzDYg26tFn6Em84jRXey3LwOxbHfvNyU4akhIciMQDof18nzbMMtLuMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uls.co.za; spf=pass smtp.mailfrom=uls.co.za; arc=none smtp.client-ip=154.73.32.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uls.co.za
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uls.co.za
-Received: from [192.168.42.21]
-	by ida.uls.co.za with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.97.1)
-	(envelope-from <jaco@uls.co.za>)
-	id 1u2Wxo-000000000Rn-2NdV;
-	Wed, 09 Apr 2025 17:03:40 +0200
-Message-ID: <ecef521a-985d-4824-8bcb-2f5cbd3477f2@uls.co.za>
-Date: Wed, 9 Apr 2025 17:03:37 +0200
+	s=arc-20240116; t=1744211046; c=relaxed/simple;
+	bh=oqpWJBYbkroHFEUQdjREHV/huht+JSeb/D4fycGG8dM=;
+	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
+	 Date:Message-ID; b=dubVEzOt7AKo4Q9CT/3jx3eY7wPXUr67qfnHIHLiZPxp3wXrXtEwjaq118S4hukDk3WY2SzLK0iaZCvbAGR+gjTK2eQcnkwxkVXLVG92rpBNLSA20CTAcypWQzynxs5ZbjeQvv17WBoL8MVyVZtiBWy361/Rq/U0P5XQD5a553E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FUcVthHm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744211043;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oqpWJBYbkroHFEUQdjREHV/huht+JSeb/D4fycGG8dM=;
+	b=FUcVthHmEA0NKQK+6Tq2ezdXrrsvYZ1QQwSwXjk5B/Wgm/sgkV+WlfYPDqrm/ISdpwdXlc
+	7cx1g/eWIirDhLkRRvO7uQV3K9qTWFi9+iFZmD/TRdPf5k308/wDTHgdtfloBghgV7aX3R
+	75e1FUHANwbMieHyoITc5D6vUWqMA3I=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-385-DD8Pc8seNeObwO6PoCHcqg-1; Wed,
+ 09 Apr 2025 11:03:49 -0400
+X-MC-Unique: DD8Pc8seNeObwO6PoCHcqg-1
+X-Mimecast-MFC-AGG-ID: DD8Pc8seNeObwO6PoCHcqg_1744211028
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ECD5B19560B3;
+	Wed,  9 Apr 2025 15:03:47 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.40])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 89B3D1955D81;
+	Wed,  9 Apr 2025 15:03:46 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <1478622.1744097510@warthog.procyon.org.uk>
+References: <1478622.1744097510@warthog.procyon.org.uk> <b395436343d8df2efdebb737580fe976@manguebit.com> <20250407184730.3568147-1-song@kernel.org>
+Cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.com>,
+    Song Liu <song@kernel.org>, netfs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org, kernel-team@fb.com
+Subject: Re: [PATCH] netfs: Let netfs depends on PROC_FS
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] fuse: Adjust readdir() buffer to requesting buffer
- size.
-To: Bernd Schubert <bernd.schubert@fastmail.fm>,
- Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- christophe.jaillet@wanadoo.fr, joannelkoong@gmail.com,
- rdunlap@infradead.org, trapexit@spawn.link, david.laight.linux@gmail.com
-References: <20250314221701.12509-1-jaco@uls.co.za>
- <20250401142831.25699-1-jaco@uls.co.za>
- <20250401142831.25699-3-jaco@uls.co.za>
- <CAJfpegtOGWz_r=7dbQiCh2wqjKh59BqzqJ0ruhtYtsYBB+GG2Q@mail.gmail.com>
- <19df312f-06a2-4e71-960a-32bc952b0ed2@uls.co.za>
- <CAJfpegseKMRLpu3-yS6PeU2aTmh_qKyAvJUWud_SLz1aCHY_tw@mail.gmail.com>
- <d42dec00-513c-49d4-b4f3-d7a6ae387a6b@fastmail.fm>
- <b812fec3-8736-4005-918e-318e955c1902@uls.co.za>
- <e8659104-54de-4155-bac1-f45df440e468@fastmail.fm>
-Content-Language: en-GB
-From: Jaco Kroon <jaco@uls.co.za>
-Autocrypt: addr=jaco@uls.co.za; keydata=
- xsBNBFXtplYBCADM6RTLCOSPiclevkn/gdf8h9l+kKA6N+WGIIFuUtoc9Gaf8QhXWW/fvUq2
- a3eo4ULVFT1jJ56Vfm4MssGA97NZtlOe3cg8QJMZZhsoN5wetG9SrJvT9Rlltwo5nFmXY3ZY
- gXsdwkpDr9Y5TqBizx7DGxMd/mrOfXeql57FWFeOc2GuJBnHPZQMJsQ66l2obPn36hWEtHYN
- gcUSPH3OOusSEGZg/oX/8WSDQ/b8xz1JKTEgcnu/JR0FxzjY19zSHmbnyVU+/gF3oeJFcEUk
- HvZu776LRVdcZ0lb1bHQB2K9rTZBVeZLitgAefPVH2uERVSO8EZO1I5M7afV0Kd/Vyn9ABEB
- AAHNG0phY28gS3Jvb24gPGphY29AdWxzLmNvLnphPsLAdwQTAQgAIQUCVe2mVgIbAwULCQgH
- AgYVCAkKCwIEFgIDAQIeAQIXgAAKCRAILcSxr/fungCPB/sHrfufpRbrVTtHUjpbY4bTQLQE
- bVrh4/yMiKprALRYy0nsMivl16Q/3rNWXJuQ0gR/faC3yNlDgtEoXx8noXOhva9GGHPGTaPT
- hhpcp/1E4C9Ghcaxw3MRapVnSKnSYL+zOOpkGwye2+fbqwCkCYCM7Vu6ws3+pMzJNFK/UOgW
- Tj8O5eBa3DiU4U26/jUHEIg74U+ypYPcj5qXG0xNXmmoDpZweW41Cfo6FMmgjQBTEGzo9e5R
- kjc7MH3+IyJvP4bzE5Paq0q0b5zZ8DUJFtT7pVb3FQTz1v3CutLlF1elFZzd9sZrg+mLA5PM
- o8PG9FLw9ZtTE314vgMWJ+TTYX0kzsBNBFXtplYBCADedX9HSSJozh4YIBT+PuLWCTJRLTLu
- jXU7HobdK1EljPAi1ahCUXJR+NHvpJLSq/N5rtL12ejJJ4EMMp2UUK0IHz4kx26FeAJuOQMe
- GEzoEkiiR15ufkApBCRssIj5B8OA/351Y9PFore5KJzQf1psrCnMSZoJ89KLfU7C5S+ooX9e
- re2aWgu5jqKgKDLa07/UVHyxDTtQKRZSFibFCHbMELYKDr3tUdUfCDqVjipCzHmLZ+xMisfn
- yX9aTVI3FUIs8UiqM5xlxqfuCnDrKBJjQs3uvmd6cyhPRmnsjase48RoO84Ckjbp/HVu0+1+
- 6vgiPjbe4xk7Ehkw1mfSxb79ABEBAAHCwF8EGAEIAAkFAlXtplYCGwwACgkQCC3Esa/37p7u
- XwgAjpFzUj+GMmo8ZeYwHH6YfNZQV+hfesr7tqlZn5DhQXJgT2NF6qh5Vn8TcFPR4JZiVIkF
- o0je7c8FJe34Aqex/H9R8LxvhENX/YOtq5+PqZj59y9G9+0FFZ1CyguTDC845zuJnnR5A0lw
- FARZaL8T7e6UGphtiT0NdR7EXnJ/alvtsnsNudtvFnKtigYvtw2wthW6CLvwrFjsuiXPjVUX
- 825zQUnBHnrED6vG67UG4z5cQ4uY/LcSNsqBsoj6/wsT0pnqdibhCWmgFimOsSRgaF7qsVtg
- TWyQDTjH643+qYbJJdH91LASRLrenRCgpCXgzNWAMX6PJlqLrNX1Ye4CQw==
-Organization: Ultimate Linux Solutions (Pty) Ltd
-In-Reply-To: <e8659104-54de-4155-bac1-f45df440e468@fastmail.fm>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-report: Relay access (ida.uls.co.za).
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1691553.1744211025.1@warthog.procyon.org.uk>
+Date: Wed, 09 Apr 2025 16:03:45 +0100
+Message-ID: <1691554.1744211025@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hi,
+David Howells <dhowells@redhat.com> wrote:
 
-On 2025/04/09 10:31, Bernd Schubert wrote:
-> Hi Jaco,
->
-> On 4/9/25 09:12, Jaco Kroon wrote:
->> Hi Bernd,
->>
->> You sure you're looking at the newest version?
->>
->> Or where does the below need to get applied?
->>
->> I'm not seeing that in the patch to which you replied.
->
-> I just applied Miklos' patch that uses vmalloc. It applies
-> to the repo without your patch
-Ok, I was looking at the wrong patch.
->
-> I also
-> pushed to a branch
->
-> https://github.com/bsbernd/linux/commit/2b5ca68656a4a47e35b8cf1dfcf39c4335066497
-Eyebal on that looks good, I'll test in the next few days too.
->
-> In this branch: https://github.com/bsbernd/linux/tree/fuse-large-readdir
+> It should marked be module_init(), not fs_initcall().
 
-https://github.com/torvalds/linux/commit/fb34f89d8a8635ae0fed6568269d319b32155fdb
+Actually, it does need to use fs_initcall() so that when it's built in, it
+gets initialised before any filesystems that use module_init().
 
-I think that should be authored by/attributed to Mikros, not myself.  I 
-did test and verified as best I can so happy to sign-off on it, but I 
-was not the original author here.
+David
 
-Kind regards,
-Jaco
 
