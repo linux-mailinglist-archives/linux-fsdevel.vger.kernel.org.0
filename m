@@ -1,466 +1,242 @@
-Return-Path: <linux-fsdevel+bounces-46089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46090-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA2C0A82674
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 15:41:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E224EA826CB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 15:55:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2557D4C48A4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 13:41:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1ABFF7A8B45
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 13:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FBB25F7B0;
-	Wed,  9 Apr 2025 13:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62746263C71;
+	Wed,  9 Apr 2025 13:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="PHAtXMI9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/FXtdxm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDB5264612
-	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Apr 2025 13:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484E425D8F7;
+	Wed,  9 Apr 2025 13:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744206070; cv=none; b=hZdE2XI/WPl22ptUCKYB1d4BR7GFj1fwrKroXspBJ89OMTRnJ6galy1+sHhVPrCypSNMWPXhqWiguzuYJqeCrhXvvgpbJ9tdMw00aFhpQHuk7QI2jtleb+sDSpuXqn0a6S5tsdeT7x1hVmfkWDkiQA5iDlJSDjgq/QgrIk+iAy8=
+	t=1744206895; cv=none; b=GEw8BqNdUtLgPWWzXEo2cAqKNkX5TtDWT7RvMursZd4z+Dd0F6xKZlhR0cVvn5nDoYZ51X5d2FRQ2pyS0QI50moDCaWSfzwSy50OH40KxgcUCObU95bxvUznFx42Aa+tvlrWeeOntzP9YAYIYw4UOiCcMkaDALZgDDwin7Cbl2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744206070; c=relaxed/simple;
-	bh=bNUswGMrRBywSA9q8tHpCOtLHsm0JdawTIqhKFbCOXA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RYV0gj4ee0VZ3M44ON54gW8edeoYMROQMnBUxRktILIL6BRwZ0/pQSiYE9gUO5lY8+sGajTfMWVYCLWmTH6zFSTOjPIqaffIhK23OJI83ai5NoD28gbCDt1sLK1G9Ta3axhe1sfPaicqPop1/qxVFt5DvpfUp3UolH4mNqOPcBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=PHAtXMI9; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-85b41281b50so185186339f.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Apr 2025 06:41:08 -0700 (PDT)
+	s=arc-20240116; t=1744206895; c=relaxed/simple;
+	bh=l62lfA+qsXO3Hty6YOKap+JHa82eWUyqYR7tITdVoW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UdJXNemPPVXkDJTx5VKhyYaHdWwtGpNVlZH/Ul78sqMZoQyJU1cAsm/weaNPe0TNMOKhdNn1MBk+pO8hqY5Ycz5pOL7pc8SfjIXNhLOQGWd6f0USnjQ0SRhdsOeUiyH0qSJQpR2alkzUNZiUT0Y6qR7j3C1Myyy6IA8rLxmKdow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a/FXtdxm; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-736b98acaadso6769342b3a.1;
+        Wed, 09 Apr 2025 06:54:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1744206067; x=1744810867; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P2ddNOKe/CjnvbH2FCKVac1wky9jTUmQl0vfrBQN8UU=;
-        b=PHAtXMI9+5LUiYWwg/KftzwtxEinZ0H0FQYPsTWEFTuZMahwOEyGxNr9P8gN2Pzf9B
-         Tv3ucKoFribONCsjMrU3uFYUwLE+haVFAqOr+va2eHeIRTkUilIcU5KE81xBoZghuhar
-         hNLytURMdwfok2hkEqzuA3IN9cxh62xl3JfFpU1eMtskvgMcwB9ITtSU5+dyyNYjWNyF
-         yBP81Ehd3AY438uoUurOnZNygVz0FUlfky7k9hGOzIhEoKw1LB9D7/FQHH3pwAT7Ix0e
-         xePQKgGlVYuHhlta92s95lh4MER2flndr46lcVXvYLnhypcS6537UQCdRvp0goQaZziq
-         PNTA==
+        d=gmail.com; s=20230601; t=1744206893; x=1744811693; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ck5x1Os3XZK/0cyOU2zPrzfxe2MOfnv7kkKaywV0D1M=;
+        b=a/FXtdxmzgWgTyhSE7zM7K/wEU34v+F5oImMEWZKlFWLC9xltx/0zgVxNvI42u2CB/
+         Y3HqZt8duf3HvRVBzalODJAUIaaGPcQLscVAXFjyAISljqvdp3GQNWNYyu3OOLocOESi
+         oamMf+D69sHydttXNuEuOAV0+t0bf+mjszsGRDC7QDL6uUH5mdMS9TSPDrD/I2jz2di3
+         sB3QEskHOmVSht+sG9ciu1kdN19tEoVOEPZU9BD7Hs7PSZ8SdZq1COHqc/c1nNPAwelU
+         /0fQasQ1nVho0nj6YERyUYuAbiLLx+PYSwFb1kGMiizgR59UNmKWAyb6b18iWvmLtto0
+         9Wcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744206067; x=1744810867;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P2ddNOKe/CjnvbH2FCKVac1wky9jTUmQl0vfrBQN8UU=;
-        b=tXhdEaQPzO81fOLnSnT23ZXXVO0klx2NuOfdhEU9iVLORPwBQNm28BG1gLk2MshwCI
-         W2N8/R4ECAG23t+K+4fZIZ4YivB/zoPOtAsQU7FyN/cUHyCVpB3xkyFWK0rLQmVMCaHS
-         o0wPxAh/7vq0bi5kfFUcMLiK2BaLQpcyaRIH0K5fk5J2b+Vog7ygfOGByNJTRBMUiJTJ
-         kHbublTBD6W8ZHD5fBMTeNeB9nhe6L9865Njz8zM99Wb+viWYLrXBQqefjZM9oTou6Ad
-         KBPbZQUzLBFZKyuPdevkLsPROhJTddDqAH7tsSFTHdB++dClAp2wVL2jlU03UWIYFbpp
-         ki+w==
-X-Forwarded-Encrypted: i=1; AJvYcCW6ewKJ97uB9FK+tO1QIXG2d7CH2iCH6vD7t60sYDnniTRdiR8XLT731ztacj1ullzMXI8RjM9V+5OhNL4J@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQqaBmE7QNvuLp2WeuTNhHgRTZWePh9QbhDk44Ak/z2WI9D4ai
-	bMw5XQlCnCruFlT/LQIj+fyys6Mt7PqLcLVW3L/fjJY82zvFQubJtMSfyb/3Vo4=
-X-Gm-Gg: ASbGnctTrSRkQLxW4mqDlUH9jpLrxrQxUU5jiTbFsJjg6+RlK2gxn53oSKvjvAq3RIE
-	rebYup1L7wAF0I0j3f6trA5QtOcrYjtr4RAIzcPDqKvR+i45+92PEC2JFZSux5Z6PwO52ju6KsK
-	ZQYX5dqeD6e8/tA9sDHWDzBjyCCC2c6jjNq2ggStLceRV1ZYJPZh4/ZTIptw5BcaDpWa2F/xwtB
-	WIiP6UXwRxw+LaY5Yo0Z7omWxOetyrQ3cupgZ4Gw+0hPtTCJUm3Gp0aJszUHS5jgPJF2DQmTUsg
-	sJQSJK8dhl48cCzJSguIfYBcNb7Y5KmIJ1lICd8CTw7E1ygpZCa7UmU=
-X-Google-Smtp-Source: AGHT+IEN3JUq4v6oDxM51FqvQxj3GrioM+dxBZerBvqnUOao/pNwkPCyLmECD6Z3/lbRjnvehjTJkg==
-X-Received: by 2002:a05:6602:358c:b0:855:5e3a:e56b with SMTP id ca18e2360f4ac-86161288497mr343783839f.12.1744206067402;
-        Wed, 09 Apr 2025 06:41:07 -0700 (PDT)
-Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f505e2eaeesm242546173.126.2025.04.09.06.41.05
+        d=1e100.net; s=20230601; t=1744206893; x=1744811693;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ck5x1Os3XZK/0cyOU2zPrzfxe2MOfnv7kkKaywV0D1M=;
+        b=bsmp/p3dj3FsWcX7872Vn69emyNfy2ntU6OyfLbiqKBtY7qjun8Ogtn7bnk/tFgGBW
+         6PoFmA8JTa3wKrg2718oZpFoFM8yxDkOFkncV8SQuvvZiHmo4sDnOeUj3SKb0/11bzlk
+         1PZpACoYzREriBd0B6jP3ekTXOKs/EuFQgnWMc/Ts2NM9XclTIlebxRTN6NBZr8u/wKb
+         hxjEo84gpfnxHd0kZ0f+P95vB2HPkwYdfdt9Bg+z85hM62pPgKF5IT1Vx6JC70z/tau9
+         vM4COTe5Ho6k4U6umHjHiO/cdmBJxjODHRKmz8vxncWlCmi+8evTq2G0s867gG/Qf0Px
+         Js5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVugcnmzf7UpJfBcyBYt/f9TL3NzjynKVPuR7nU+X2WJEf7K5Ds8ZKI5xVSJrSiw2nTqX8+4sIukaLJ2mV4SQ==@vger.kernel.org, AJvYcCWhwbGGlQIcrJA7onkPyjgD3DiDc8WgZEWE7C3gWygudAcGzhz2zPHZJ7nZEt0zYlrI8ANEQJXOYs0=@vger.kernel.org, AJvYcCXUIHslFNSx2dASn/s8UMvQlz7X4Gg7fO52UMHfUnz8cHbnjYZWVF837azB0qD+FKAYKhaBspAo0ap8VT0O@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAAfWeMoZmfIitHkjYsQAtr35cHzIsTRi3BNnzufJ4XPwE9u49
+	OCdahCTQ51gwinr1i8SpRZ1my0OApLn9PeOVywZIGiKSdeFjdVtS
+X-Gm-Gg: ASbGncstsRiu09GTYYY4GlKnKqomflujBDkUr6c1BOdTL6uurxU83nHO5ifCce2QvLB
+	NQO9j65rC3jNNYE90tDnSNP+x1NDLBCE49fVKiZ85/1D5L0ctSQwc6DGO1Uh9B7tnCYggeQlLRp
+	7HGLDwzfLG4YJg4O6FO8WZtKg1vgAtFGSSJITFml85nKLfVoT1zxw9sRedTFsG159sN2BhbphXF
+	Hh4tXsjOfrB2ZZGhS90Gltks1UZ4KEYrBjWMeJPjxpInzIWmiYx201zvrW1LoseGNEiUNcy+mWD
+	GfAMilpfE5zDRC4bki3WFS5fL/GTK+54d8SwzivT
+X-Google-Smtp-Source: AGHT+IFEi7SqRiamwHVaIArODOzildac58F8STHvutYU/t9tuBTrTIgwu0rNZ9BjKuR7FVoLvQ6nVA==
+X-Received: by 2002:a05:6a00:2186:b0:736:5dae:6b0d with SMTP id d2e1a72fcca58-73bae4c410bmr4085500b3a.10.1744206893312;
+        Wed, 09 Apr 2025 06:54:53 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bb1d469aesm1368048b3a.50.2025.04.09.06.54.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 06:41:06 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com,
-	brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5/5] io_uring: switch away from percpu refcounts
-Date: Wed,  9 Apr 2025 07:35:23 -0600
-Message-ID: <20250409134057.198671-6-axboe@kernel.dk>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250409134057.198671-1-axboe@kernel.dk>
-References: <20250409134057.198671-1-axboe@kernel.dk>
+        Wed, 09 Apr 2025 06:54:52 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id CBF324236D23; Wed, 09 Apr 2025 20:54:49 +0700 (WIB)
+Date: Wed, 9 Apr 2025 20:54:49 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Viacheslav Dubeyko <slava@dubeyko.com>,
+	Alex Markuze <amarkuze@redhat.com>, Timothy Day <timday@amazon.com>,
+	Jonathan Corbet <corbet@lwn.net>, netfs@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfs: Update main API document
+Message-ID: <Z_Z8KVgaH-ksEKog@archie.me>
+References: <Z_ZHoCgi2BY5lVjN@archie.me>
+ <Z_XOr4Ak4S0EOdrw@archie.me>
+ <1565252.1744124997@warthog.procyon.org.uk>
+ <1657441.1744189529@warthog.procyon.org.uk>
+ <1676060.1744205063@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mw29LLaiVHxc5DtG"
+Content-Disposition: inline
+In-Reply-To: <1676060.1744205063@warthog.procyon.org.uk>
 
-For the common cases, the io_uring ref counts are all batched and hence
-need not be a percpu reference. This saves some memory on systems, but
-outside of that, it gets rid of needing a full RCU grace period on
-tearing down the reference. With io_uring now waiting on cancelations
-and IO during exit, this slows down the tear down a lot, up to 100x
-as slow.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- include/linux/io_uring_types.h |  2 +-
- io_uring/io_uring.c            | 47 ++++++++++++----------------------
- io_uring/io_uring.h            |  3 ++-
- io_uring/msg_ring.c            |  4 +--
- io_uring/refs.h                | 43 +++++++++++++++++++++++++++++++
- io_uring/register.c            |  2 +-
- io_uring/rw.c                  |  2 +-
- io_uring/sqpoll.c              |  2 +-
- io_uring/zcrx.c                |  4 +--
- 9 files changed, 70 insertions(+), 39 deletions(-)
+--mw29LLaiVHxc5DtG
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 4d26aef281fb..bcafd7cc8c26 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -256,7 +256,7 @@ struct io_ring_ctx {
- 
- 		struct task_struct	*submitter_task;
- 		struct io_rings		*rings;
--		struct percpu_ref	refs;
-+		atomic_long_t		refs;
- 
- 		clockid_t		clockid;
- 		enum tk_offsets		clock_offset;
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 4b3e3ff774d6..8b2f8a081ef6 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -252,13 +252,6 @@ static __cold void io_kworker_tw_end(void)
- 	current->flags |= PF_NO_TASKWORK;
- }
- 
--static __cold void io_ring_ctx_ref_free(struct percpu_ref *ref)
--{
--	struct io_ring_ctx *ctx = container_of(ref, struct io_ring_ctx, refs);
--
--	complete(&ctx->ref_comp);
--}
--
- static __cold void io_fallback_req_func(struct work_struct *work)
- {
- 	struct io_ring_ctx *ctx = container_of(work, struct io_ring_ctx,
-@@ -269,13 +262,13 @@ static __cold void io_fallback_req_func(struct work_struct *work)
- 
- 	io_kworker_tw_start();
- 
--	percpu_ref_get(&ctx->refs);
-+	io_ring_ref_get(ctx);
- 	mutex_lock(&ctx->uring_lock);
- 	llist_for_each_entry_safe(req, tmp, node, io_task_work.node)
- 		req->io_task_work.func(req, ts);
- 	io_submit_flush_completions(ctx);
- 	mutex_unlock(&ctx->uring_lock);
--	percpu_ref_put(&ctx->refs);
-+	io_ring_ref_put(ctx);
- 	io_kworker_tw_end();
- }
- 
-@@ -333,10 +326,8 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	hash_bits = clamp(hash_bits, 1, 8);
- 	if (io_alloc_hash_table(&ctx->cancel_table, hash_bits))
- 		goto err;
--	if (percpu_ref_init(&ctx->refs, io_ring_ctx_ref_free,
--			    0, GFP_KERNEL))
--		goto err;
- 
-+	io_ring_ref_init(ctx);
- 	ctx->flags = p->flags;
- 	ctx->hybrid_poll_time = LLONG_MAX;
- 	atomic_set(&ctx->cq_wait_nr, IO_CQ_WAKE_INIT);
-@@ -360,7 +351,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	ret |= io_futex_cache_init(ctx);
- 	ret |= io_rsrc_cache_init(ctx);
- 	if (ret)
--		goto free_ref;
-+		goto err;
- 	init_completion(&ctx->ref_comp);
- 	xa_init_flags(&ctx->personalities, XA_FLAGS_ALLOC1);
- 	mutex_init(&ctx->uring_lock);
-@@ -386,9 +377,6 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	mutex_init(&ctx->mmap_lock);
- 
- 	return ctx;
--
--free_ref:
--	percpu_ref_exit(&ctx->refs);
- err:
- 	io_free_alloc_caches(ctx);
- 	kvfree(ctx->cancel_table.hbs);
-@@ -556,7 +544,7 @@ static void io_queue_iowq(struct io_kiocb *req)
- 	 * worker for it).
- 	 */
- 	if (WARN_ON_ONCE(!same_thread_group(tctx->task, current) ||
--			 percpu_ref_is_dying(&req->ctx->refs)))
-+			 io_ring_ref_is_dying(req->ctx)))
- 		atomic_or(IO_WQ_WORK_CANCEL, &req->work.flags);
- 
- 	trace_io_uring_queue_async_work(req, io_wq_is_hashed(&req->work));
-@@ -991,7 +979,7 @@ __cold bool __io_alloc_req_refill(struct io_ring_ctx *ctx)
- 		ret = 1;
- 	}
- 
--	percpu_ref_get_many(&ctx->refs, ret);
-+	io_ring_ref_get_many(ctx, ret);
- 	while (ret--) {
- 		struct io_kiocb *req = reqs[ret];
- 
-@@ -1046,7 +1034,7 @@ static void ctx_flush_and_put(struct io_ring_ctx *ctx, io_tw_token_t tw)
- 
- 	io_submit_flush_completions(ctx);
- 	mutex_unlock(&ctx->uring_lock);
--	percpu_ref_put(&ctx->refs);
-+	io_ring_ref_put(ctx);
- }
- 
- /*
-@@ -1070,7 +1058,7 @@ struct llist_node *io_handle_tw_list(struct llist_node *node,
- 			ctx_flush_and_put(ctx, ts);
- 			ctx = req->ctx;
- 			mutex_lock(&ctx->uring_lock);
--			percpu_ref_get(&ctx->refs);
-+			io_ring_ref_get(ctx);
- 		}
- 		INDIRECT_CALL_2(req->io_task_work.func,
- 				io_poll_task_func, io_req_rw_complete,
-@@ -1099,10 +1087,10 @@ static __cold void __io_fallback_tw(struct llist_node *node, bool sync)
- 		if (sync && last_ctx != req->ctx) {
- 			if (last_ctx) {
- 				flush_delayed_work(&last_ctx->fallback_work);
--				percpu_ref_put(&last_ctx->refs);
-+				io_ring_ref_put(last_ctx);
- 			}
- 			last_ctx = req->ctx;
--			percpu_ref_get(&last_ctx->refs);
-+			io_ring_ref_get(last_ctx);
- 		}
- 		if (llist_add(&req->io_task_work.node,
- 			      &req->ctx->fallback_llist))
-@@ -1111,7 +1099,7 @@ static __cold void __io_fallback_tw(struct llist_node *node, bool sync)
- 
- 	if (last_ctx) {
- 		flush_delayed_work(&last_ctx->fallback_work);
--		percpu_ref_put(&last_ctx->refs);
-+		io_ring_ref_put(last_ctx);
- 	}
- }
- 
-@@ -1247,7 +1235,7 @@ static void io_req_normal_work_add(struct io_kiocb *req)
- 		return;
- 	}
- 
--	if (!percpu_ref_is_dying(&ctx->refs) &&
-+	if (!io_ring_ref_is_dying(ctx) &&
- 	    !task_work_add(tctx->task, &tctx->task_work, ctx->notify_method))
- 		return;
- 
-@@ -2736,7 +2724,7 @@ static void io_req_caches_free(struct io_ring_ctx *ctx)
- 		nr++;
- 	}
- 	if (nr)
--		percpu_ref_put_many(&ctx->refs, nr);
-+		io_ring_ref_put_many(ctx, nr);
- 	mutex_unlock(&ctx->uring_lock);
- }
- 
-@@ -2770,7 +2758,6 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
- 	if (!(ctx->flags & IORING_SETUP_NO_SQARRAY))
- 		static_branch_dec(&io_key_has_sqarray);
- 
--	percpu_ref_exit(&ctx->refs);
- 	free_uid(ctx->user);
- 	io_req_caches_free(ctx);
- 	if (ctx->hash_map)
-@@ -2795,7 +2782,7 @@ static __cold void io_activate_pollwq_cb(struct callback_head *cb)
- 	 * might've been lost due to loose synchronisation.
- 	 */
- 	wake_up_all(&ctx->poll_wq);
--	percpu_ref_put(&ctx->refs);
-+	io_ring_ref_put(ctx);
- }
- 
- __cold void io_activate_pollwq(struct io_ring_ctx *ctx)
-@@ -2813,9 +2800,9 @@ __cold void io_activate_pollwq(struct io_ring_ctx *ctx)
- 	 * only need to sync with it, which is done by injecting a tw
- 	 */
- 	init_task_work(&ctx->poll_wq_task_work, io_activate_pollwq_cb);
--	percpu_ref_get(&ctx->refs);
-+	io_ring_ref_get(ctx);
- 	if (task_work_add(ctx->submitter_task, &ctx->poll_wq_task_work, TWA_SIGNAL))
--		percpu_ref_put(&ctx->refs);
-+		io_ring_ref_put(ctx);
- out:
- 	spin_unlock(&ctx->completion_lock);
- }
-@@ -3002,7 +2989,7 @@ static __cold void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
- 	struct creds *creds;
- 
- 	mutex_lock(&ctx->uring_lock);
--	percpu_ref_kill(&ctx->refs);
-+	io_ring_ref_kill(ctx);
- 	xa_for_each(&ctx->personalities, index, creds)
- 		io_unregister_personality(ctx, index);
- 	mutex_unlock(&ctx->uring_lock);
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index e4050b2d0821..f8500221dd82 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -13,6 +13,7 @@
- #include "slist.h"
- #include "filetable.h"
- #include "opdef.h"
-+#include "refs.h"
- 
- #ifndef CREATE_TRACE_POINTS
- #include <trace/events/io_uring.h>
-@@ -142,7 +143,7 @@ static inline void io_lockdep_assert_cq_locked(struct io_ring_ctx *ctx)
- 		 * Not from an SQE, as those cannot be submitted, but via
- 		 * updating tagged resources.
- 		 */
--		if (!percpu_ref_is_dying(&ctx->refs))
-+		if (!io_ring_ref_is_dying(ctx))
- 			lockdep_assert(current == ctx->submitter_task);
- 	}
- #endif
-diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
-index 50a958e9c921..00d6a9ed2431 100644
---- a/io_uring/msg_ring.c
-+++ b/io_uring/msg_ring.c
-@@ -83,7 +83,7 @@ static void io_msg_tw_complete(struct io_kiocb *req, io_tw_token_t tw)
- 	}
- 	if (req)
- 		kmem_cache_free(req_cachep, req);
--	percpu_ref_put(&ctx->refs);
-+	io_ring_ref_put(ctx);
- }
- 
- static int io_msg_remote_post(struct io_ring_ctx *ctx, struct io_kiocb *req,
-@@ -96,7 +96,7 @@ static int io_msg_remote_post(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	req->opcode = IORING_OP_NOP;
- 	req->cqe.user_data = user_data;
- 	io_req_set_res(req, res, cflags);
--	percpu_ref_get(&ctx->refs);
-+	io_ring_ref_get(ctx);
- 	req->ctx = ctx;
- 	req->tctx = NULL;
- 	req->io_task_work.func = io_msg_tw_complete;
-diff --git a/io_uring/refs.h b/io_uring/refs.h
-index 0d928d87c4ed..9cda88a0a0d5 100644
---- a/io_uring/refs.h
-+++ b/io_uring/refs.h
-@@ -59,4 +59,47 @@ static inline void io_req_set_refcount(struct io_kiocb *req)
- {
- 	__io_req_set_refcount(req, 1);
- }
-+
-+#define IO_RING_REF_DEAD	(1UL << (BITS_PER_LONG - 1))
-+#define IO_RING_REF_MASK	(~IO_RING_REF_DEAD)
-+
-+static inline bool io_ring_ref_is_dying(struct io_ring_ctx *ctx)
-+{
-+	return atomic_long_read(&ctx->refs) & IO_RING_REF_DEAD;
-+}
-+
-+static inline void io_ring_ref_put_many(struct io_ring_ctx *ctx, int nr_refs)
-+{
-+	unsigned long refs;
-+
-+	refs = atomic_long_sub_return(nr_refs, &ctx->refs);
-+	if (!(refs & IO_RING_REF_MASK))
-+		complete(&ctx->ref_comp);
-+}
-+
-+static inline void io_ring_ref_put(struct io_ring_ctx *ctx)
-+{
-+	io_ring_ref_put_many(ctx, 1);
-+}
-+
-+static inline void io_ring_ref_kill(struct io_ring_ctx *ctx)
-+{
-+	atomic_long_xor(IO_RING_REF_DEAD, &ctx->refs);
-+	io_ring_ref_put(ctx);
-+}
-+
-+static inline void io_ring_ref_init(struct io_ring_ctx *ctx)
-+{
-+	atomic_long_set(&ctx->refs, 1);
-+}
-+
-+static inline void io_ring_ref_get_many(struct io_ring_ctx *ctx, int nr_refs)
-+{
-+	atomic_long_add(nr_refs, &ctx->refs);
-+}
-+
-+static inline void io_ring_ref_get(struct io_ring_ctx *ctx)
-+{
-+	atomic_long_inc(&ctx->refs);
-+}
- #endif
-diff --git a/io_uring/register.c b/io_uring/register.c
-index cc23a4c205cd..54fe94a0101b 100644
---- a/io_uring/register.c
-+++ b/io_uring/register.c
-@@ -637,7 +637,7 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
- 	 * We don't quiesce the refs for register anymore and so it can't be
- 	 * dying as we're holding a file ref here.
- 	 */
--	if (WARN_ON_ONCE(percpu_ref_is_dying(&ctx->refs)))
-+	if (WARN_ON_ONCE(io_ring_ref_is_dying(ctx)))
- 		return -ENXIO;
- 
- 	if (ctx->submitter_task && ctx->submitter_task != current)
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 039e063f7091..e010d548edea 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -496,7 +496,7 @@ static bool io_rw_should_reissue(struct io_kiocb *req)
- 	 * Don't attempt to reissue from that path, just let it fail with
- 	 * -EAGAIN.
- 	 */
--	if (percpu_ref_is_dying(&ctx->refs))
-+	if (io_ring_ref_is_dying(ctx))
- 		return false;
- 
- 	io_meta_restore(io, &rw->kiocb);
-diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-index d037cc68e9d3..b71f8d52386e 100644
---- a/io_uring/sqpoll.c
-+++ b/io_uring/sqpoll.c
-@@ -184,7 +184,7 @@ static int __io_sq_thread(struct io_ring_ctx *ctx, bool cap_entries)
- 		 * Don't submit if refs are dying, good for io_uring_register(),
- 		 * but also it is relied upon by io_ring_exit_work()
- 		 */
--		if (to_submit && likely(!percpu_ref_is_dying(&ctx->refs)) &&
-+		if (to_submit && likely(!io_ring_ref_is_dying(ctx)) &&
- 		    !(ctx->flags & IORING_SETUP_R_DISABLED))
- 			ret = io_submit_sqes(ctx, to_submit);
- 		mutex_unlock(&ctx->uring_lock);
-diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index 0f46e0404c04..e8dbed7b8171 100644
---- a/io_uring/zcrx.c
-+++ b/io_uring/zcrx.c
-@@ -630,7 +630,7 @@ static int io_pp_zc_init(struct page_pool *pp)
- 	if (pp->p.dma_dir != DMA_FROM_DEVICE)
- 		return -EOPNOTSUPP;
- 
--	percpu_ref_get(&ifq->ctx->refs);
-+	io_ring_ref_get(ifq->ctx);
- 	return 0;
- }
- 
-@@ -641,7 +641,7 @@ static void io_pp_zc_destroy(struct page_pool *pp)
- 
- 	if (WARN_ON_ONCE(area->free_count != area->nia.num_niovs))
- 		return;
--	percpu_ref_put(&ifq->ctx->refs);
-+	io_ring_ref_put(ifq->ctx);
- }
- 
- static int io_pp_nl_fill(void *mp_priv, struct sk_buff *rsp,
--- 
-2.49.0
+On Wed, Apr 09, 2025 at 02:24:23PM +0100, David Howells wrote:
+> Bagas Sanjaya <bagasdotme@gmail.com> wrote:
+>=20
+> > > > > +Further, if a read from the cache fails, the library will ask th=
+e filesystem to
+> > > > > +do the read instead, renegotiating and retiling the subrequests =
+as necessary.
+> > > > Read from the filesystem itself or direct read?
+> > >=20
+> > > I'm not sure what you mean.  Here, I'm talking about read subrequests=
+ - i.e. a
+> > > subrequest that corresponds to a BIO issued to the cache or a single =
+RPC
+> > > issued to the server.  Things like DIO and pagecache are at a higher =
+level and
+> > > not directly exposed to the filesystem.
+> > >=20
+> > > Maybe I should amend the text to read:
+> > >=20
+> > > 	Further, if one or more subrequests issued to read from the cache
+> > > 	fail, the library will issue them to the filesystem instead,
+> > > 	renegotiating and retiling the subrequests as necessary.
+> >=20
+> > That one sounds better to me.
+>=20
+> I think I like this better:
+>=20
+> 	Further, if one or more contiguous cache-read subrequests fail, the
+> 	library will pass them to the filesystem to perform instead,
+> 	renegotiating and retiling them as necessary to fit with the
+> 	filesystem's parameters rather than those of the cache.
 
+I prefer that above too as it is more explicit.
+
+>=20
+> > > > > +Netfslib will pin resources on an inode for future writeback (su=
+ch as pinning
+> > > > > +use of an fscache cookie) when an inode is dirtied.  However, th=
+is needs
+> > > > > +managing.  Firstly, a function is provided to unpin the writebac=
+k in
+> > > > inode management?
+> > > > > +``->write_inode()``::
+> > >=20
+> > > Is "inode management" meant to be a suggested insertion or an alterna=
+tive for
+> > > the subsection title?
+> >=20
+> > I mean "However, this needs managing the inode (inode management)". Is =
+it
+> > correct to you?
+>=20
+> Um.  "However, this needs managing the inode (inode management)" isn't va=
+lid
+> English and "(inode management)" is superfluous with "managing the inode"=
+ also
+> in the sentence.
+>=20
+> How about:
+>=20
+> 	Netfslib will pin resources on an inode for future writeback (such as pi=
+nning
+> 	use of an fscache cookie) when an inode is dirtied.  However, this pinni=
+ng
+> 	needs careful management.  To manage the pinning, the following sequence
+> 	occurs:
+>=20
+> 	 1) An inode state flag ``I_PINNING_NETFS_WB`` is set by netfslib when t=
+he
+> 	    pinning begins (when a folio is dirtied, for example) if the cache is
+> 	    active to stop the cache structures from being discarded and the cac=
+he
+> 	    space from being culled.  This also prevents re-getting of cache res=
+ources
+> 	    if the flag is already set.
+>=20
+> 	 2) This flag then cleared inside the inode lock during inode writeback =
+in the
+> 	    VM - and the fact that it was set is transferred to ``->unpinned_net=
+fs_wb``
+> 	    in ``struct writeback_control``.
+>=20
+> 	 3) If ``->unpinned_netfs_wb`` is now set, the write_inode procedure is =
+forced.
+>=20
+> 	 4) The filesystem's ``->write_inode()`` function is invoked to do the c=
+leanup.
+>=20
+> 	 5) The filesystem invokes netfs to do its cleanup.
+>=20
+> 	To do the cleanup, netfslib provides a function to do the resource unpin=
+ning::
+>=20
+> 		int netfs_unpin_writeback(struct inode *inode, struct writeback_control=
+ *wbc);
+>=20
+> 	If the filesystem doesn't need to do anything else, this may be set as a=
+ its
+> 	``.write_inode`` method.
+>=20
+> 	Further, if an inode is deleted, the filesystem's write_inode method may=
+ not
+> 	get called, so::
+>=20
+> 		void netfs_clear_inode_writeback(struct inode *inode, const void *aux);
+>=20
+> 	must be called from ``->evict_inode()`` *before* ``clear_inode()`` is ca=
+lled.
+>=20
+>=20
+> instead?
+
+Oh, that's what you mean. I'm leaning toward that.
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--mw29LLaiVHxc5DtG
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZ/Z8IgAKCRD2uYlJVVFO
+o5HPAQDy1q+hkQLGUz2eIQuYUYZGJRqgXajUmKCcHO/UePy89AEA2vX0c8cV0sWf
+wkzObFZq/dAFvmxB5foaGxCw0X9M8Q8=
+=RmrE
+-----END PGP SIGNATURE-----
+
+--mw29LLaiVHxc5DtG--
 
