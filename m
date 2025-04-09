@@ -1,329 +1,362 @@
-Return-Path: <linux-fsdevel+bounces-46041-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46042-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DC4EA81C23
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 07:30:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2CDA81CAF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 08:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 952D4885D91
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 05:30:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B6731B66D4B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 06:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B81E1D6DBF;
-	Wed,  9 Apr 2025 05:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 763CC1DED54;
+	Wed,  9 Apr 2025 06:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="2VSortwh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VaxFpIAy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B441D9A54
-	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Apr 2025 05:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0EA515A85E;
+	Wed,  9 Apr 2025 06:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744176636; cv=none; b=g/mbeeNGT0B3lEDNxUrOxwfArX4VVfZ/F2Kf+bcU1thOW/6qKzRhoNiqVpcAqOFSZqlA3kNXI4L04rsA0EFbBeJn+ZnoLOe6FON2byjkY5sgmJqceZPTle6RQJcXFu4sU1bePqtpOAefed1wqJ7cuQWjRehyZN46yHPcFf4eJFE=
+	t=1744178958; cv=none; b=LANhviyB852+9Q2U2K9+JyN2rsMnEC3bGZyIKWoKKotj7gV02Y/77BG/JuWDlr5sKy6aDlwIjEX0V03nWo4bOszTWw+v4j/qZfocsrcprgyRWaT7E28PuuCc2qj/t3WcglM0GMHB7kA6uNdpZZLGg2zYLqklbKA9aLrJHTzv3TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744176636; c=relaxed/simple;
-	bh=R7hiJCkatJysWFE6sFi+boDLQC0QCBTx8/v67EiLvO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q2Bh3ZwVZcdPf0VchPl8FQQBTU7036KGkayl59msVgsdwF4G+vvrsk5pSrD9kuoDGh6gXNZo1XShtH2R3yIuEuNydMU8gKkh+ljq46l8xSKpgyu/svSmRS21zzThZ6yZ2tb7UJ0a/51/wUzqde8UD3PP1465nUoJVXWYkKiysQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=2VSortwh; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-736b34a71a1so7432922b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Apr 2025 22:30:32 -0700 (PDT)
+	s=arc-20240116; t=1744178958; c=relaxed/simple;
+	bh=jM8OD4HM9d+9zUOqW5Nz/zC6iHQDo765ocSa73hEqEs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GLbcxRmflk1VHfKcrnl5wrAcVT+pBWaH0GRop4dLXGEAKQhcQZHKxaC7FGWryWISpW8r+BpndKAmyL4YF0rwzJ9I+oFe1+fF7XubNWYacu2rr1trEDt3F8ziEgc+2msWGiBB/cUXR3LFVaPPqmjSSJzeAIF3SOcq0zQF00IPR/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VaxFpIAy; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac289147833so1063527566b.2;
+        Tue, 08 Apr 2025 23:09:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1744176632; x=1744781432; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aA07albMhL3fFH5QzUo/KeZ0yw8nrVP+2r3FD61bWYo=;
-        b=2VSortwhnJjEW2ZWRYsN5FPlEqgseal3/1e84GQirIoBdTratk/mLbOxehfARk13Az
-         sZ92L1Ia86zsnNRqEbS8O0joZTvVBJoaYB+nFGgf5rq/covf60Tc0vhmxaixhY/+ZtUb
-         WALnPmEnAcpiJxU2kNbckvgdzGR6b2TgSUMVFwlloUrqf7nG/GJEVAqf/cY234LsB614
-         gJm9akfNmGIPLHioaG0sOg8iC9F/isBNY9MgzCCy0nS07HBLLgYMaftjq+02YgUF1VGv
-         ZOYjeILGat/yC9vcaloZwOyT6CCqE9nnw22UD3rTLVQNNvH6NdRzxv2bC03LFjlk73Y3
-         XYiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744176632; x=1744781432;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1744178955; x=1744783755; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aA07albMhL3fFH5QzUo/KeZ0yw8nrVP+2r3FD61bWYo=;
-        b=S6BXr5yBmSPifP9reX8UTlWVyH0HDz09MGkB/JU7Q/oab4xMmEUGaVwDakxGVxI/3i
-         xCpz6ocRCe4sUEKpZfubuBdY6uYprNAv17dx0b8ms0Qf0QSKroBWwYll1OPQzVi1M6i9
-         VXIqQ8uJxz591+pNs24rgdEPevoxR5+8FXtxeTO+Hr3RvI/Vi7ym7FlD8Xt/lpZ+AS/f
-         ImVfrAd6wupgdKUjGzZgsvHmRFvjiViW03unTjWcryU9t/X3FU6aZTlVlCSJaB1t8CsN
-         DPsdc7gOPMO3+gg0X83BKlex3Cds1MeA8xasQrsVsyF8pETuYnDWL25uAmmFZK+7d8JD
-         gshw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPh/YIfWQtRHGw0xW5TkHpfHn53INDTHTBg9c3k/Zi+a4A7WzQZSB1izgR/NZsmxlDClb3HlOWv2/kQHN/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy44a1q8rI3voIo+2L9PrE1kgqsPTGJpbVyZBT8dEhS88aUas9O
-	Wzfzqbqdll6uWgb9Gs4mApJS1VRcfUenruG8bLNAnG8Hm5g/Ei2KKSfSE40/gdY=
-X-Gm-Gg: ASbGncuIXOrkzEMyO8jem4MUSBJe8Psz+tBSnHDHb0WVLPshOH+4Q4++wNZM8eZraoi
-	AsdPcH/gUdhRmOfvPe6EoEV3OFO70q9zCd+wLhXIHNsuZeEiG2Z7XW9XBAjXAIRQKpr/ZvhISfv
-	xA6ikvlAcoYWb3Tz0nfuSF8pJixLTgSSAO3iwPArSChCdhlFkrz86w1FvYV5L00SdwVPJqGAltQ
-	OoI4i6uKAOLd05zqH/NJAJ+YzQkOhZHWsgcG2w+IzOeG8ckUU0WMUx6XTEzcqfZ+oZLVNTl6C4S
-	HoAcr8nev3+hS0NcbfHAMUuYufaob6j6mrbSKIu8iwrxar9MEwMcB6NIzjcM+sEQo84U49tcoF9
-	BJAKIrfNwE+EmqHUawQ==
-X-Google-Smtp-Source: AGHT+IFZgHcaCsesio4fOj1pttogbZE5YtveLF4WEKUpmqgVHeONG2Il5NKIs/SWKZoNNmD8aQrvmQ==
-X-Received: by 2002:a05:6a00:e12:b0:736:a973:748 with SMTP id d2e1a72fcca58-73bafd6a4a1mr1539346b3a.22.1744176632136;
-        Tue, 08 Apr 2025 22:30:32 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-60-96.pa.nsw.optusnet.com.au. [49.181.60.96])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bb1e66c6csm361081b3a.158.2025.04.08.22.30.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 22:30:31 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1u2O16-00000006MBb-1BzD;
-	Wed, 09 Apr 2025 15:30:28 +1000
-Date: Wed, 9 Apr 2025 15:30:28 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: John Garry <john.g.garry@oracle.com>, brauner@kernel.org, hch@lst.de,
-	viro@zeniv.linux.org.uk, jack@suse.cz, cem@kernel.org,
-	linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org, catherine.hoang@oracle.com
-Subject: Re: [PATCH v6 11/12] xfs: add xfs_compute_atomic_write_unit_max()
-Message-ID: <Z_YF9HpdbkJDLeuR@dread.disaster.area>
-References: <20250408104209.1852036-1-john.g.garry@oracle.com>
- <20250408104209.1852036-12-john.g.garry@oracle.com>
- <Z_WnbfRhKR6RQsSA@dread.disaster.area>
- <20250409004156.GL6307@frogsfrogsfrogs>
+        bh=i8a2ffX23jEbnViJJp1bHsuHmbprTP/8SlZIzCp4vio=;
+        b=VaxFpIAy9+vkm71mMbQbwkB8lMzPAGhfJAR1tZIx+5YfksT6J+/4sKA1QFmkm28THX
+         P0Dl2hBSxf2PMsSCeeN97cI8o6AjKPeuGwJ2yb1T5ftHxvIsWgY/x5LriGR2O8kye3tF
+         7cSH/JtQcXQMG7WtznPBD5h4VPKlNk1Jg9k1wPANHOIQVyORg0PywE3AAOhPk9KcAcRj
+         ae1pNRvJY6NAwVobscflkhkCnwYHd13xUbSD0bWkAdTKWjXlIvXDrgmIIZ4X7fcBsTul
+         O9I6tKg7yzjTJQpMqYJALqafQvVZBX9ng/Tk6dIlwS7DWP18U3PUBlPp/tYAaZBKg1+L
+         uijQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744178955; x=1744783755;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i8a2ffX23jEbnViJJp1bHsuHmbprTP/8SlZIzCp4vio=;
+        b=E6/vc1UlDEAMz/kustYQMxNsI9rQ5d80431b1LLIvzRxaIVTo4chHLvOQ860lC8qQ9
+         qH5xjkjVWex0bUiBreqCWpcs7C0bU1uTvRGXDdw62pUaNxpIgN0NaxvF/+GFGK/k9KNC
+         70iYJ0YBLOVxfccJrU96wIi8SgMgyovSwaMZ7eZ0/3TtCb7QN5NekSqvYwzgBZ9gVQZH
+         bdEo8etQ8FKBDLF9ov8liwsWiIjGGTFXCEtYVm21i7f93Q86HolSuERV7kIGLppXobGo
+         NDaLXsFpekx0svqVuR8jDkhKlBWGyAbq53YW498JQBkgor+s19Ftp/9ajAAcZH2NmDLs
+         dw2g==
+X-Forwarded-Encrypted: i=1; AJvYcCW3/1HjF40YDtST8srLs+jR4IAtbTNTPDekVhY3Vq5nIGg91tRGDLu9CrT8rwKEyVBbg0GCr2zqbo7qfA8e@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKfH0oEN6xYep6EwFHOp2Gn2zHyBJkOzUr3r3CWzleBAtTJQYG
+	TcYM1kfeC5E/VRhJQgnxXheUVHu5UdmOdHczMB9xQEqi4QuLfOBoiFTsLk1mg5qXpBSx05UFQ2/
+	4zQTB+e+sr5ygPv6kP4Tqf6IKUJs=
+X-Gm-Gg: ASbGncso6dH74tOLxSildV5sB64SJdBQoDly8JOo4Z24dSzbtQEEnkF0L2NshD/Fbx0
+	fDg9FG9Txu2pQDD2qzMuydfFLZzgofqPOGKRaJ5pmmQB2hSGdjv5jPIa6a9SrBvkSLAa9mUlLuB
+	hW41UEeCzcdRFeF1lnJm80xw==
+X-Google-Smtp-Source: AGHT+IFdHBBqhwKP4Tl6JZjeTXLPr9L0gRdGF6JvWih1BHcq8/LkOKiDZ73D5O3SqKuAwbvi/FGg4dOWom4H3Out854=
+X-Received: by 2002:a17:907:d87:b0:ac7:391a:e159 with SMTP id
+ a640c23a62f3a-aca9d73c032mr86955366b.60.1744178954385; Tue, 08 Apr 2025
+ 23:09:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250409004156.GL6307@frogsfrogsfrogs>
+References: <20250408154011.673891-1-mszeredi@redhat.com> <20250408154011.673891-2-mszeredi@redhat.com>
+In-Reply-To: <20250408154011.673891-2-mszeredi@redhat.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 9 Apr 2025 08:09:02 +0200
+X-Gm-Features: ATxdqUHEgtJh6K0qrSJCBBQh4q29yp7zi4OG4srh4bUD0WEbNScRW7j8mb-6ARU
+Message-ID: <CAOQ4uxjOT=m7ZsdLod3KEYe+69K--fGTUegSNwQg0fU7TeVbsQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] ovl: make redirect/metacopy rejection consistent
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Giuseppe Scrivano <gscrivan@redhat.com>, Alexander Larsson <alexl@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 08, 2025 at 05:41:56PM -0700, Darrick J. Wong wrote:
-> On Wed, Apr 09, 2025 at 08:47:09AM +1000, Dave Chinner wrote:
-> > On Tue, Apr 08, 2025 at 10:42:08AM +0000, John Garry wrote:
-> > > Now that CoW-based atomic writes are supported, update the max size of an
-> > > atomic write for the data device.
-> > > 
-> > > The limit of a CoW-based atomic write will be the limit of the number of
-> > > logitems which can fit into a single transaction.
-> > 
-> > I still think this is the wrong way to define the maximum
-> > size of a COW-based atomic write because it is going to change from
-> > filesystem to filesystem and that variability in supported maximum
-> > length will be exposed to userspace...
-> > 
-> > i.e. Maximum supported atomic write size really should be defined as
-> > a well documented fixed size (e.g. 16MB). Then the transaction
-> > reservations sizes needed to perform that conversion can be
-> > calculated directly from that maximum size and optimised directly
-> > for the conversion operation that atomic writes need to perform.
-> 
-> I'll get to this below...
-
-I'll paste it here so it's all in one context.
-
-> This is why I don't agree with adding a static 16MB limit -- we clearly
-> don't need it to emulate current hardware, which can commit up to 64k
-> atomically.  Future hardware can increase that by 64x and we'll still be
-> ok with using the existing tr_write transaction type.
-> 
-> By contrast, adding a 16MB limit would result in a much larger minimum
-> log size.  If we add that to struct xfs_trans_resv for all filesystems
-> then we run the risk of some ancient filesystem with a 12M log failing
-> suddenly failing to mount on a new kernel.
-> 
-> I don't see the point.
-
-You've got stuck on ithe example size of 16MB I gave, not
-the actual reason I gave that example.
-
-That is: we should not be exposing some unpredictable, filesystem
-geometry depending maximum atomic size to a userspace API.  We need
-to define a maximum size that we support, that we can clearly
-document and guarantee will work on all filesystem geometries.
-
-What size that is needs to be discussed - all you've done is
-demonstrate that 16MB would require a larger minimum log size for a
-small set of historic/legacy filesystem configs.
-
-I'm actually quite fine with adding new reservations that change
-minimum required log sizes - this isn't a show-stopper in any way.
-
-Atomic writes are optional functionality, so if the log size is too
-small for the atomic write transaction requirements, then we don't
-enable the atomic write functionality on that filesystem. Hence the
-minimum required log size for the filesystem -does not change- and
-the filesystem mounts as normal..
-
-i.e. the user hasn't lost anything on these tiny log filesystems
-when the kernel is upgraded to support software atomic writes.
-All that happens is that the legacy filesystem will never support
-atomic writes....
-
-Such a mount time check allows us to design the atomic write
-functionality around a fixed upper size bound that we can guarantee
-will work correctly. i.e. the size of the transaction reservation
-needed for it is irrelevant because we guarantee to only run that
-transaction on filesytsems with logs large enough to support it.
-
-Having a consistent maximum atomic write size makes it easier for
-userspace to create logic and algorithms around, and it makes it
-much easier for us to do boundary condition testing as we don't have
-to reverse engineer the expected boundaries from filesysetm geometry
-in test code. Fixed sizes make API verification and testing a whole
-lot simpler.
-
-And, finally, if everything is sized from an single API constant, it
-makes it easy to modify the supported size in future. The 64MB
-minimum log size gives us lots of headroom to increase supported
-atomic write sizes, so if userspace finds that it really needs
-larger sizes than what we initially support, it's trivial to change
-both the kernel and the test code to support a larger size...
-
-> > > diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> > > index b2dd0c0bf509..42b2b7540507 100644
-> > > --- a/fs/xfs/xfs_super.c
-> > > +++ b/fs/xfs/xfs_super.c
-> > > @@ -615,6 +615,28 @@ xfs_init_mount_workqueues(
-> > >  	return -ENOMEM;
-> > >  }
-> > >  
-> > > +unsigned int
-> > > +xfs_atomic_write_logitems(
-> > > +	struct xfs_mount	*mp)
-> > > +{
-> > > +	unsigned int		efi = xfs_efi_item_overhead(1);
-> > > +	unsigned int		rui = xfs_rui_item_overhead(1);
-> > > +	unsigned int		cui = xfs_cui_item_overhead(1);
-> > > +	unsigned int		bui = xfs_bui_item_overhead(1);
-> > > +	unsigned int		logres = M_RES(mp)->tr_write.tr_logres;
-> > > +
-> > > +	/*
-> > > +	 * Maximum overhead to complete an atomic write ioend in software:
-> > > +	 * remove data fork extent + remove cow fork extent +
-> > > +	 * map extent into data fork
-> > > +	 */
-> > > +	unsigned int		atomic_logitems =
-> > > +		(bui + cui + rui + efi) + (cui + rui) + (bui + rui);
-> > 
-> > This seems wrong. Unmap from the data fork only logs a (bui + cui)
-> > pair, we don't log a RUI or an EFI until the transaction that
-> > processes the BUI or CUI actually frees an extent from the the BMBT
-> > or removes a block from the refcount btree.
-> 
-> This is tricky -- the first transaction in the chain creates a BUI and a
-> CUI and that's all it needs.
-> 
-> Then we roll to finish the BUI.  The second transaction needs space for
-> the BUD, an RUI, and enough space to relog the CUI (== CUI + CUD).
-> 
-> Then we roll again to finish the RUI.  This third transaction needs
-> space for the RUD and space to relog the CUI.
-> 
-> Roll again, fourth transaction needs space for the CUD and possibly a
-> new EFI.
-> 
-> Roll again, fifth transaction needs space for an EFD.
-
-Yes, that is exactly the point I was making.
-
-> > > +
-> > > +	/* atomic write limits are always a power-of-2 */
-> > > +	return rounddown_pow_of_two(logres / (2 * atomic_logitems));
-> > 
-> > What is the magic 2 in that division?
-> 
-> That's handwaving the lack of a computation involving
-> xfs_allocfree_block_count.  A better version would be to figure out the
-> log space needed:
-> 
-> 	/* Overhead to finish one step of each intent item type */
-> 	const unsigned int	f1 = libxfs_calc_finish_efi_reservation(mp, 1);
-> 	const unsigned int	f2 = libxfs_calc_finish_rui_reservation(mp, 1);
-
-Yup, those should be a single call to xfs_calc_buf_res(xfs_allocfree_block_count())
-
-> 	const unsigned int	f3 = libxfs_calc_finish_cui_reservation(mp, 1);
-
-Similarly, xfs_calc_refcountbt_reservation().
-
-> 	const unsigned int	f4 = libxfs_calc_finish_bui_reservation(mp, 1);
-
-xfs_calc_write_reservation() but for a single extent instead of 2.
-Also, I think the bui finish needs to take into account dquots, too.
-
-> 	/* We only finish one item per transaction in a chain */
-> 	const unsigned int	step_size = max(f4, max3(f1, f2, f3));
-
-And that is xfs_calc_itruncate_reservation(), except it reserves
-space for 1 extent to be processed instead of 4.
-
-FWIW, I'd suggest that these helpers make for a better way of
-calculating high level reservations such as
-xfs_calc_write_reservation() and xfs_calc_itruncate_reservation()
-because those functions currently don't take into account how
-intents are relogged during those operations.
-
-> and then you have what you need to figure out the logres needed to
-> support a given awu_max, or vice versa:
-> 
-> 	if (desired_max) {
-> 		dbprintf(
->  "desired_max: %u\nstep_size: %u\nper_intent: %u\nlogres: %u\n",
-> 				desired_max, step_size, per_intent,
-> 				(desired_max * per_intent) + step_size);
-> 	} else if (logres) {
-> 		dbprintf(
->  "logres: %u\nstep_size: %u\nper_intent: %u\nmax_awu: %u\n",
-> 				logres, step_size, per_intent,
-> 				logres >= step_size ? (logres - step_size) / per_intent : 0);
-> 	}
-> 
-> I hacked this into xfs_db so that I could compute a variety of
-> scenarios.  Let's pretend I have a 10T filesystem with 4k fsblocks and
-> the default configuration.
-> 
-> # xfs_db /dev/mapper/moo -c logres -c "untorn_max -b $(( (16 * 1048576) / 4096 ))" -c "untorn_max -l 244216"
-> type 0 logres 244216 logcount 5 flags 0x4
-> type 1 logres 428928 logcount 5 flags 0x4
-> <snip>
-> minlogsize logres 648576 logcount 8
-> 
-> To emulate a 16MB untorn write, you'd need a logres of:
-> 
-> desired_max: 4096
-> step_size: 107520
-> per_intent: 208
-> logres: 959488
+On Tue, Apr 8, 2025 at 5:40=E2=80=AFPM Miklos Szeredi <mszeredi@redhat.com>=
+ wrote:
 >
-> 959488 > 648576, which would alter the minlogsize calculation.  I know
-> we banned tiny filesystems a few years ago, but there's still a risk in
-> increasing it.
+> When overlayfs finds a file with metacopy and/or redirect attributes and
+> the metacopy and/or redirect features are not enabled, then it refuses to
+> act on those attributes while also issuing a warning.
+>
+> There was an inconsistency in not checking metacopy found from the index.
+>
+> And also only warning on an upper metacopy if it found the next file on t=
+he
+> lower layer, while always warning for metacopy found on a lower layer.
+>
+> Fix these inconsistencies and make the logic more straightforward, paving
+> the way for following patches to change when dataredirects are allowed.
 
-Yeah, it's a bit under a megabyte of reservation space. That's no
-big deal, as log reservations get much larger than this as block
-size and log stripe units are increased.
+missing space: dataredirects
 
-<snip the rest, they all show roughly the same thing>
+>
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/overlayfs/namei.c | 81 +++++++++++++++++++++++++++++++-------------
+>  1 file changed, 57 insertions(+), 24 deletions(-)
+>
+> diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+> index be5c65d6f848..5cebdd05ab3a 100644
+> --- a/fs/overlayfs/namei.c
+> +++ b/fs/overlayfs/namei.c
+> @@ -16,6 +16,7 @@
+>
+>  struct ovl_lookup_data {
+>         struct super_block *sb;
+> +       struct dentry *dentry;
+>         const struct ovl_layer *layer;
+>         struct qstr name;
+>         bool is_dir;
+> @@ -23,6 +24,8 @@ struct ovl_lookup_data {
+>         bool xwhiteouts;
+>         bool stop;
+>         bool last;
+> +       bool nextredirect;
+> +       bool nextmetacopy;
 
-Ok, these numbers pretty much prove my point - that a fixed max
-atomic write size somewhere around 16MB isn't going to be a problem
-for any filesystem that uses the historic small fs default log size
-(10MB) or larger.
+I think these are not needed
 
-Let's avoid the internal XFS minlogsize problems by disabling the
-atomic write functionality on the increasingly rare legacy
-filesystems where the log is too small. That allows us to design and
-implement sane userspace API bounds and guarantees for atomic writes
-and not expose internal filesystem constraints and inconsistencies
-to applications...
+>         char *redirect;
+>         int metacopy;
+>         /* Referring to last redirect xattr */
+> @@ -1024,6 +1027,31 @@ int ovl_verify_lowerdata(struct dentry *dentry)
+>         return ovl_maybe_validate_verity(dentry);
+>  }
+>
+> +/*
+> + * Following redirects/metacopy can have security consequences: it's lik=
+e a
+> + * symlink into the lower layer without the permission checks.
+> + *
+> + * This is only a problem if the upper layer is untrusted (e.g comes fro=
+m an USB
+> + * drive).  This can allow a non-readable file or directory to become re=
+adable.
+> + *
+> + * Only following redirects when redirects are enabled disables this att=
+ack
+> + * vector when not necessary.
+> + */
+> +static bool ovl_check_nextredirect(struct ovl_lookup_data *d)
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Looks much better with the helper.
+May I suggest ovl_check_follow_redirect()
+
+> +{
+> +       struct ovl_fs *ofs =3D OVL_FS(d->sb);
+> +
+> +       if (d->nextmetacopy && !ofs->config.metacopy) {
+
+Should be equivalent to
+       if (d->metacopy && !ofs->config.metacopy) {
+
+In current code
+
+> +               pr_warn_ratelimited("refusing to follow metacopy origin f=
+or (%pd2)\n", d->dentry);
+> +               return false;
+> +       }
+> +       if (d->nextredirect && !ovl_redirect_follow(ofs)) {
+
+Should be equivalent to
+       if (d->redirect && !ovl_redirect_follow(ofs)) {
+
+With minor changes to index lookup code
+
+
+> +               pr_warn_ratelimited("refusing to follow redirect for (%pd=
+2)\n", d->dentry);
+> +               return false;
+> +       }
+> +       return true;
+> +}
+> +
+>  struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+>                           unsigned int flags)
+>  {
+> @@ -1047,6 +1075,7 @@ struct dentry *ovl_lookup(struct inode *dir, struct=
+ dentry *dentry,
+>         int metacopy_size =3D 0;
+>         struct ovl_lookup_data d =3D {
+>                 .sb =3D dentry->d_sb,
+> +               .dentry =3D dentry,
+>                 .name =3D dentry->d_name,
+>                 .is_dir =3D false,
+>                 .opaque =3D false,
+> @@ -1054,6 +1083,8 @@ struct dentry *ovl_lookup(struct inode *dir, struct=
+ dentry *dentry,
+>                 .last =3D ovl_redirect_follow(ofs) ? false : !ovl_numlowe=
+r(poe),
+>                 .redirect =3D NULL,
+>                 .metacopy =3D 0,
+> +               .nextredirect =3D false,
+> +               .nextmetacopy =3D false,
+>         };
+>
+>         if (dentry->d_name.len > ofs->namelen)
+> @@ -1087,8 +1118,10 @@ struct dentry *ovl_lookup(struct inode *dir, struc=
+t dentry *dentry,
+>                         if (err)
+>                                 goto out_put_upper;
+>
+> -                       if (d.metacopy)
+> +                       if (d.metacopy) {
+>                                 uppermetacopy =3D true;
+> +                               d.nextmetacopy =3D true;
+
+always set IFF (d.metacopy)
+
+> +                       }
+>                         metacopy_size =3D d.metacopy;
+>                 }
+>
+> @@ -1099,6 +1132,7 @@ struct dentry *ovl_lookup(struct inode *dir, struct=
+ dentry *dentry,
+>                                 goto out_put_upper;
+>                         if (d.redirect[0] =3D=3D '/')
+>                                 poe =3D roe;
+> +                       d.nextredirect =3D true;
+
+mostly set IFF (d.redirect)
+
+>                 }
+>                 upperopaque =3D d.opaque;
+>         }
+> @@ -1113,6 +1147,11 @@ struct dentry *ovl_lookup(struct inode *dir, struc=
+t dentry *dentry,
+>         for (i =3D 0; !d.stop && i < ovl_numlower(poe); i++) {
+>                 struct ovl_path lower =3D ovl_lowerstack(poe)[i];
+>
+> +               if (!ovl_check_nextredirect(&d)) {
+> +                       err =3D -EPERM;
+> +                       goto out_put;
+> +               }
+> +
+>                 if (!ovl_redirect_follow(ofs))
+>                         d.last =3D i =3D=3D ovl_numlower(poe) - 1;
+>                 else if (d.is_dir || !ofs->numdatalayer)
+> @@ -1126,12 +1165,8 @@ struct dentry *ovl_lookup(struct inode *dir, struc=
+t dentry *dentry,
+>                 if (!this)
+>                         continue;
+>
+> -               if ((uppermetacopy || d.metacopy) && !ofs->config.metacop=
+y) {
+> -                       dput(this);
+> -                       err =3D -EPERM;
+> -                       pr_warn_ratelimited("refusing to follow metacopy =
+origin for (%pd2)\n", dentry);
+> -                       goto out_put;
+> -               }
+> +               if (d.metacopy)
+> +                       d.nextmetacopy =3D true;
+>
+>                 /*
+>                  * If no origin fh is stored in upper of a merge dir, sto=
+re fh
+> @@ -1185,22 +1220,8 @@ struct dentry *ovl_lookup(struct inode *dir, struc=
+t dentry *dentry,
+>                         ctr++;
+>                 }
+>
+> -               /*
+> -                * Following redirects can have security consequences: it=
+'s like
+> -                * a symlink into the lower layer without the permission =
+checks.
+> -                * This is only a problem if the upper layer is untrusted=
+ (e.g
+> -                * comes from an USB drive).  This can allow a non-readab=
+le file
+> -                * or directory to become readable.
+> -                *
+> -                * Only following redirects when redirects are enabled di=
+sables
+> -                * this attack vector when not necessary.
+> -                */
+> -               err =3D -EPERM;
+> -               if (d.redirect && !ovl_redirect_follow(ofs)) {
+> -                       pr_warn_ratelimited("refusing to follow redirect =
+for (%pd2)\n",
+> -                                           dentry);
+> -                       goto out_put;
+> -               }
+> +               if (d.redirect)
+> +                       d.nextredirect =3D true;
+>
+>                 if (d.stop)
+>                         break;
+> @@ -1218,6 +1239,11 @@ struct dentry *ovl_lookup(struct inode *dir, struc=
+t dentry *dentry,
+>                 ctr++;
+>         }
+>
+> +       if (!ovl_check_nextredirect(&d)) {
+> +               err =3D -EPERM;
+> +               goto out_put;
+> +       }
+> +
+>         /*
+>          * For regular non-metacopy upper dentries, there is no lower
+>          * path based lookup, hence ctr will be zero. If a dentry is foun=
+d
+> @@ -1307,11 +1333,18 @@ struct dentry *ovl_lookup(struct inode *dir, stru=
+ct dentry *dentry,
+>                         upperredirect =3D NULL;
+>                         goto out_free_oe;
+>                 }
+> +               d.nextredirect =3D upperredirect;
+> +
+>                 err =3D ovl_check_metacopy_xattr(ofs, &upperpath, NULL);
+>                 if (err < 0)
+>                         goto out_free_oe;
+> -               uppermetacopy =3D err;
+> +               d.nextmetacopy =3D uppermetacopy =3D err;
+
+Could be changed to:
++               d.metacopy =3D uppermetacopy =3D err;
+
+
+>                 metacopy_size =3D err;
+> +
+> +               if (!ovl_check_nextredirect(&d)) {
+> +                       err =3D -EPERM;
+> +                       goto out_free_oe;
+> +               }
+>         }
+>
+
+
+We never really follow redirect from index
+All upperredirect is ever used for is to suppress ovl_set_redirect()
+after copy up of another lower hardlink and rename,
+but also in that case, upperredirect is not going to be followed
+(or trusted for that matter) until a new lookup of the copied up
+alias and at that point  ovl_check_follow_redirect() will be
+called when upperdentry is found.
+
+I think we do not need to check follow of redirect from index
+I think it is enough to check follow of metacopy from index.
+
+Therefore, I think there d.nextmetacopy and d.nextredirect are
+completely implied from d.metacopy and d.redirect.
+
+Thanks,
+Amir.
 
