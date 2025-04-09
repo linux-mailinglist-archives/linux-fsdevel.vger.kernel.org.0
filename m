@@ -1,86 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-46087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BE68A8266F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 15:41:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3141A82670
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 15:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C5157B2C5E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 13:40:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D1B217B22A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 13:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1772F2641FF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DD5264A73;
 	Wed,  9 Apr 2025 13:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="RenqEk3j"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="g3mwdPSh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CF92620D1
-	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Apr 2025 13:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A221B2627EC
+	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Apr 2025 13:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744206067; cv=none; b=hwWRtREa7yMJMpk3jO8Bfr5iXe4yQqs5Xdx/QJuKe0A+suwEvj0dCVEOQKzXVkdN3LpUQiAGQv6Fue4qNv1o5ilPw96crIs5NEycHWEwPJoJiENFjnRgp0rddV54BW5Q71VU1aoye6orbkadWtvAlV4C8VXDytHi83t69OkW5lo=
+	t=1744206068; cv=none; b=rJsopHtKPew3FhTK5iSdv1jbIGPbUtujhFi0AHpJcBoLSprB3TTumLSHPLH0KvhELGoOYhVsZqZO2HqiRjlOozMtHRNNgWnJiY5/t9JPrzNfoMU84pQ+x4pLfGBJdzxn5zVWKY/weT979idQ72qLWR7SWrdFv5Q3JM/uCY5bOxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744206067; c=relaxed/simple;
-	bh=3scP3JHTuKX1LZ4+gl8oT4+aiKvSKIdIVZ57eA9iTDc=;
+	s=arc-20240116; t=1744206068; c=relaxed/simple;
+	bh=27DHst1S12oqLMIhtZ9NLeDleZ1uTNSrSckCS8D3bdg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CzYt9cUUNqrnqSU18AzAH4GEFZ5MAlWHgnAhk7uTaJkQNw7B3VtUqynDwAWP0jf1hU5EH6zVBYgEGH1Kwiln0aA3fFe06bBIDP1PBq/1vlgrw7tsXODd2X6in/RXemlhOBias4SIWpBFcbywoZ0kngYbz6TTUBg9It7KB8bKMfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=RenqEk3j; arc=none smtp.client-ip=209.85.166.50
+	 MIME-Version; b=MD775pKEWGAdKCIJpV6aUvM4HEY1yG8mMi7SccUWegSCmzXL9U+I1p/yu2doH5xFJsKwP5U/hujudYt+uGG7N+kzPsId50zHqieCvMaSh6KOlM+42M/6PdHH6lfoPOVAl1cFSVWj9XCzIEAl611sn8q/p5Eo8b2T5YNVeVIjQws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=g3mwdPSh; arc=none smtp.client-ip=209.85.166.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-855bd88ee2cso170042739f.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Apr 2025 06:41:05 -0700 (PDT)
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-85b3f92c866so126829339f.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Apr 2025 06:41:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1744206064; x=1744810864; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1744206066; x=1744810866; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=U7pPynJaQneGDwKYEd+0PbGH80xVi4jqqdOU/lGU1TE=;
-        b=RenqEk3j0y5ZB3ukjFNp7ZntxRdplKt0NDMahUueFfhMOhQm0nUgL41gzz8J41KJDp
-         qH4vYRnpNh9nybaxnmCQd9TzdmoZNRHJslFVfna/Wk5vhQW6aEwAEpthDttEucT0njlC
-         mdH7P0IX+PSZHo7az94zDQx4q+w9dyO99jy9D468fvOjH6XhJFesC6Krg3anEy2PfrYh
-         gG0WHoQ070bof3d3jTRULwsusG9QVJ8PjgL+8627c7lWwvuZXbsJ5sXg3p6OMVUThVaV
-         Q5oDDYUBpyxJI6xps5OKTADPn+wDwv+BYn8CwhidmJ2r9Xkbrdt1sSTyFRDoODlsIyWw
-         VCXg==
+        bh=1Ez1BnkBDoh4P/XSdyZjO5+p/KT887tz530CwsgerFI=;
+        b=g3mwdPSh3gffxljaZdwwAhV/99lm0jGV7XmCV8AP7OaL3+RJkUHf76Yserd8NTHUAJ
+         Uh51e+tOOBzM/Xlso3o7VxNqNkfKov299R3DCa7gHhAyN/GuzZhpOl7M0C+7PVGDQZZ6
+         tZXrIJE7P4KCei0CV9gSKVzB0LxavMTWESfKQoyS4j1mw0eYk8gwLvZUsVUU4TptvPZL
+         VKWB5Awd6YhLn+OzhQ2LykKd3gPUGxuMyOUtvi6uISESbISQDV/Yj2lIy/Yim7UkfHCE
+         0yE8CSJ5yqsH3MixguLWE72yBjzOBrfCVmmHnZh7WVZqoVZbM60UUPYA564M7gvAoOvl
+         OxYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744206064; x=1744810864;
+        d=1e100.net; s=20230601; t=1744206066; x=1744810866;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=U7pPynJaQneGDwKYEd+0PbGH80xVi4jqqdOU/lGU1TE=;
-        b=J6xlycF3UxQJi0o9pSo03NZI8Cn2LrBBPFVAci8sRlx+bYVOpKguftwy20Ru8N4IBF
-         7k8SCwU8/5PcY8Zc8DZw/7+I90AcqtjAG8s7/x9kXHDPlDfMyIK+FaTX8MJry69a8wVU
-         Jm6FLSkRYqXdTI/zhVeLQLigTAY1kX3hGRaq6WnamtEfinLUEUytHY3Xv5UNOKXUpeCn
-         v2moKnvQWVl8vw4XV0TB0I3dQ2ARgsdgy+KZYBWQBSpuRMafslBbKtDzWSWRy7E5eDoj
-         GdCbd5+qmYaCe/e8PDx91Xtnt6rN7Th2mV//Hrmr3YXT8iHtq8O2DGGXaS/IK+ZAuo4y
-         Fbqw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/ryPTowodR8tZxiw5x/WquFl92tXVI36/6JxlK/IYq2sTW2KUCk04VkgzHDOwWpRDVQcBCxUrax4sSBWD@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHHvSypFdpFvCo1tHrkFpzl8cOsxLTjLcW/GXsmdel6CKruixw
-	mZYciOI9VvIVA6I4CtoPFYPmiSrPcG94HTj60FtJc5GBQJJDqKlQ/CcqJv+Qdt8=
-X-Gm-Gg: ASbGncsU1xYc+qZNLNFv265XycQgMm/MEHM+KxZF/BM2+m4cx/7EhsJyflcCvORsgGV
-	LSOOs+5+ZnHD8OaHE550RdfEODIMqvnSajAr+d2ojCZR1NS964UEVRJkrUiRf+ezQmBEBMG5lQM
-	XyLn4nQIcYu35IuF38tTXYNStTA6d2YQT5+iS3hGsKWDT+w6we4A9A4UOOnJOoTjZazrO7jEari
-	Zi5wvAZkCnDSvjzMlv5b5zqOofX641KmxxXg71ZaeY+V1sAfSo9FBX4cCZf8y0O62LTloVfeBwQ
-	4rjSafiZ8wU6SD0GwwIdNzCkERy6iLh14ejKMNgDad8c
-X-Google-Smtp-Source: AGHT+IGc8av/+BjU0ISRwrY4urN6ol/l4Tr3rEkGJdZOwGQ9e/may1bZRc7w9EEl9F0YL9kZtdqp7g==
-X-Received: by 2002:a05:6602:b97:b0:861:1ba3:cba4 with SMTP id ca18e2360f4ac-86160f544bamr272566239f.0.1744206064440;
-        Wed, 09 Apr 2025 06:41:04 -0700 (PDT)
+        bh=1Ez1BnkBDoh4P/XSdyZjO5+p/KT887tz530CwsgerFI=;
+        b=O7xO7onYMgxW75+Ht7LFM0cmf2FsA7rUDVeV1pLf9t/c/YMXIy3JpHXNDKDi78ju25
+         lhniU4P+eDyhoGc5SezhbEPCIx7+5AmTEfTPckrN2b7C5F4KhRQ/TWed0nRBoU4zY9lO
+         h/Ndh4e8FfwfkoYOsiKxi/7lWBsXk/hEt4e5DOmr3Z8yImJ+pm0GMPA6GPHaQA+idXgE
+         4urYaEN8sx+jjhGYkjCfkK2QRrUbAU293r80n14KUwZ+b+uFAIRJ9BtWev4cx13edcSQ
+         zyjesnc9h2xvyhzbJi4Oq9HW42YLt1EJ82YzZyHEBAeMITlK8K2PzZJEbnjjaudiXz9u
+         +TIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVRaUQMZ37Z7wwrBowDWTpP/GUbmEDC1sn6xW76ozCqjOyUWPymsxm36BR7IMCxXpX0edxza93N6MQu9/V1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzgbyp7sFjAGFsvmgePYJzOocyWcU/wC8JtTqxrOCAX704+REzr
+	pabYmnD5P7zCfXGqb61niO9xTxUetAnsw8DjngIF8v4vKqq59E4ehmb5e3jgSA94RdvgYJ1Rm+j
+	f
+X-Gm-Gg: ASbGncue7ixsjkvRkPBKZUXEE/tGt2jUPGTFibZfxmcyRxjyZ6xGbg0i51Payp+zksn
+	IGM7ANnFakRvA4h1SU4Efl6Tn2EdMCL3fQxWsMNbIDl4ucEM/HpteHKV6jGfdJsE8MZP2kPKjrQ
+	vuZ37eqYD1FyOYhIZuluTbmUTKmaYOaWCEmkLbD36AuqM5hwfB1T6yELIfIYuLPXsa+w7kNtp1Y
+	81XFAzf52bNTOf0VHTjJIAvG+pcyWUsrGXLk56wOjbvdVmzFZflChTMOgeq081otdy/4QnUBv7Y
+	uav4J0q3vbRQbls4WZ4Yz6md8YKsUlHvhbioOY5sRadjIvm8SWT70j8=
+X-Google-Smtp-Source: AGHT+IFW2Fyl8Ve7PRrc2IiSrj0fh4NJ12qB3srO6FA/0CYOgdkfnTwoGNdFBJf7eo1f/sG8hS25RA==
+X-Received: by 2002:a05:6602:4019:b0:85b:46d7:1886 with SMTP id ca18e2360f4ac-86162828f69mr289311339f.7.1744206065750;
+        Wed, 09 Apr 2025 06:41:05 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f505e2eaeesm242546173.126.2025.04.09.06.41.03
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f505e2eaeesm242546173.126.2025.04.09.06.41.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 06:41:03 -0700 (PDT)
+        Wed, 09 Apr 2025 06:41:04 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
 	brauner@kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/5] io_uring: consider ring dead once the ref is marked dying
-Date: Wed,  9 Apr 2025 07:35:21 -0600
-Message-ID: <20250409134057.198671-4-axboe@kernel.dk>
+Subject: [PATCH 4/5] io_uring: wait for cancelations on final ring put
+Date: Wed,  9 Apr 2025 07:35:22 -0600
+Message-ID: <20250409134057.198671-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250409134057.198671-1-axboe@kernel.dk>
 References: <20250409134057.198671-1-axboe@kernel.dk>
@@ -92,43 +93,79 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-For queueing work to io-wq or adding normal task_work, io_uring will
-cancel the work items if the task is going away. If the ring is starting
-to go through teardown, the ref is marked as dying. Use that as well for
-the fallback/cancel mechanism.
+We still offload the cancelation to a workqueue, as not to introduce
+dependencies between the exiting task waiting on cleanup, and that
+task needing to run task_work to complete the process.
 
-For deferred task_work, this is done out-of-line as part of the exit
-work handling. Hence it doesn't need any extra checks in the hot path.
+This means that once the final ring put is done, any request that was
+inflight and needed cancelation will be done as well. Notably requests
+that hold references to files - once the ring fd close is done, we will
+have dropped any of those references too.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/io_uring.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ include/linux/io_uring_types.h |  2 ++
+ io_uring/io_uring.c            | 17 +++++++++++++++++
+ 2 files changed, 19 insertions(+)
 
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index b44d201520d8..4d26aef281fb 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -450,6 +450,8 @@ struct io_ring_ctx {
+ 	struct io_mapped_region		param_region;
+ 	/* just one zcrx per ring for now, will move to io_zcrx_ifq eventually */
+ 	struct io_mapped_region		zcrx_region;
++
++	struct completion		*exit_comp;
+ };
+ 
+ /*
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index bff99e185217..ce00b616e138 100644
+index ce00b616e138..4b3e3ff774d6 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -555,7 +555,8 @@ static void io_queue_iowq(struct io_kiocb *req)
- 	 * procedure rather than attempt to run this request (or create a new
- 	 * worker for it).
- 	 */
--	if (WARN_ON_ONCE(!same_thread_group(tctx->task, current)))
-+	if (WARN_ON_ONCE(!same_thread_group(tctx->task, current) ||
-+			 percpu_ref_is_dying(&req->ctx->refs)))
- 		atomic_or(IO_WQ_WORK_CANCEL, &req->work.flags);
+@@ -2891,6 +2891,7 @@ static __cold void io_ring_exit_work(struct work_struct *work)
+ 	struct io_ring_ctx *ctx = container_of(work, struct io_ring_ctx, exit_work);
+ 	unsigned long timeout = jiffies + HZ * 60 * 5;
+ 	unsigned long interval = HZ / 20;
++	struct completion *exit_comp;
+ 	struct io_tctx_exit exit;
+ 	struct io_tctx_node *node;
+ 	int ret;
+@@ -2955,6 +2956,10 @@ static __cold void io_ring_exit_work(struct work_struct *work)
  
- 	trace_io_uring_queue_async_work(req, io_wq_is_hashed(&req->work));
-@@ -1246,7 +1247,8 @@ static void io_req_normal_work_add(struct io_kiocb *req)
- 		return;
- 	}
+ 	io_kworker_tw_end();
  
--	if (likely(!task_work_add(tctx->task, &tctx->task_work, ctx->notify_method)))
-+	if (!percpu_ref_is_dying(&ctx->refs) &&
-+	    !task_work_add(tctx->task, &tctx->task_work, ctx->notify_method))
- 		return;
++	exit_comp = READ_ONCE(ctx->exit_comp);
++	if (exit_comp)
++		complete(exit_comp);
++
+ 	init_completion(&exit.completion);
+ 	init_task_work(&exit.task_work, io_tctx_exit_cb);
+ 	exit.ctx = ctx;
+@@ -3017,9 +3022,21 @@ static __cold void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
+ static int io_uring_release(struct inode *inode, struct file *file)
+ {
+ 	struct io_ring_ctx *ctx = file->private_data;
++	DECLARE_COMPLETION_ONSTACK(exit_comp);
  
- 	io_fallback_tw(tctx, false);
+ 	file->private_data = NULL;
++	WRITE_ONCE(ctx->exit_comp, &exit_comp);
+ 	io_ring_ctx_wait_and_kill(ctx);
++
++	/*
++	 * Wait for cancel to run before exiting task
++	 */
++	do {
++		if (current->io_uring)
++			io_fallback_tw(current->io_uring, false);
++		cond_resched();
++	} while (wait_for_completion_interruptible(&exit_comp));
++
+ 	return 0;
+ }
+ 
 -- 
 2.49.0
 
