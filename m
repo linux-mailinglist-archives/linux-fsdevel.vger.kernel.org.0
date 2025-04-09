@@ -1,109 +1,230 @@
-Return-Path: <linux-fsdevel+bounces-46070-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46071-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A53D9A82340
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 13:14:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 681CEA82353
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 13:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 431801B865A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 11:13:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA9F98C3B25
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Apr 2025 11:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1323B25DD01;
-	Wed,  9 Apr 2025 11:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB2225DD0D;
+	Wed,  9 Apr 2025 11:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="DafZc5pQ"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="lPwBvp7w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A460A25DCE6
-	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Apr 2025 11:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5D125DAFC;
+	Wed,  9 Apr 2025 11:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744197160; cv=none; b=bjSiurqbGpikYe76hnmwfk0AIMBVM5fNgQQbfIi31/B3zpubPvgRO8tI/5nwaGD/ht6mdxmzWsdTxpVRJCsdfCKhyu0MX/Q2zC/Po6okx7/8SGYiy/EqaNl8PywFSG0oetaKUptk+FtsfVjaGpzX3J4BUCher6BpZ5hzBk7xsgY=
+	t=1744197235; cv=none; b=KUAE9i8y8KQJTf1w3IEbGVg4HTfON4wzXYx8XCay5FQg0tqd+l16wxRDSoDfwxOIiGQJpNPtyNtSTsOWQl6EAKjB3JXPs8Cdkez+BsNpUi/AIRhMA65ZdRrm7GxMFYDdfkJr84wrceyqZe7kXnEE6zl1t5j43zVF/j6ekobDMFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744197160; c=relaxed/simple;
-	bh=jReOz4zTlDC+vp4+1C79SPrvtefHrjCMTGFO5ZFNR1g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dNgYBqJtg8e+DAIA3TMMjHE3QCrDFCezkaXviUWOue4PMGKbbyyf0/nZET4XJXS1RXxVgrm32CCxTRBJ31jb+J+VDg7q4XaIOG35aNutzhskk3YbqPZugJE5AkWeYzlaB9Px0nernl0U7jC5RkJ6ibHHCzPkiTrgC93ukRM2ypk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=DafZc5pQ; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c6a59a515aso408278885a.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Apr 2025 04:12:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1744197156; x=1744801956; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=L8zsW3p1jBNAHNun3l5be4SanrUasHqeykfYH6FqnEU=;
-        b=DafZc5pQnPXbnyykZqw3YlHMpSJmkxHUc8AoMnPnKMB0RL5O6lD85gQkJSnhLGASyc
-         Iaeo4hhxrSZ4cIMMxNlK+MRYft1a1zth8dC60oZZbgH0xg9WJqWpbNYkqmXpe/fOCWf/
-         bKxl3KZpAx1KMNFo2mufzxXmJE/ezQWUNEcow=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744197156; x=1744801956;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L8zsW3p1jBNAHNun3l5be4SanrUasHqeykfYH6FqnEU=;
-        b=Ry15Uo1QRbBfMGtQMNJWDTKt7LQojiQCYHXmE61Nd2fJUH3iMyQ3fILOqRKBk03/Pa
-         QYvozkJN1M2abqc0iEkyqJUBHl1VSMaj1ILg4RxjKYp7Lc3tr6EQdqrd4YV4javg8ptR
-         DjwOSYUP/umizcQbraJ2+4rdo5/+Klj9K6As/pCq1zKprwffanMNAoElXOJIPTzeDUNV
-         zPHbnxrYVIzzbE0b/fc+hAqZ0r0RTLJyv4cW6/sFR/ihD+tpPU6xbP//lw8leqhO/njO
-         6HGb15gAFlv/CQY4+0bEjqoms8SPhsiKnjRzD6rabfkLtdANmicFOOsc94Svgb8bhaVj
-         o6Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3J8John+FMA2lV+4Cp2XyjfidS8lIb8PRlQwq0fMblWOmb+29sLDo/qepBFg46RLrFI3jqNXpzj3wO+tF@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMLu40Lim9vZ+SCJw5w7X6JKkvF620fahOaUBpiFx4vx56VZvf
-	II6XuXDHGWaagOSIIW+Iwgjqxv68C7VVzXQqx8Ays/R8GroTjiC+Ht41JfVT7H6kmHzvbCz03aR
-	XkffAu/hf+NvzXNwvOBO1LxM8ucWchUwAZI634w==
-X-Gm-Gg: ASbGncvS/E7Mgcs7G3nyPlVngwOy0avvYRMiDGD7V13L3BZgVTp909lPsEEn3xzm5jj
-	YOdWeeqUfB/w4oOq6z8kEx5bnxkmudYqKK3vlU1QqcbQ74EiU/BCxN1lYwWUWm2Hx0MXP2t82RH
-	UTF4UcUDNrVdpZgSTP7YuQfRo=
-X-Google-Smtp-Source: AGHT+IFCBgrParqX0ZG9CNIMWiic4Ir0oxdyqswfZdFAmyVwVuOSJkQOYeEm1stvtQWP8T1Vue7LLE8yCoz+pDLEfU4=
-X-Received: by 2002:a05:620a:8396:b0:7c0:9f12:2b7e with SMTP id
- af79cd13be357-7c79cbc982dmr390955985a.11.1744197156157; Wed, 09 Apr 2025
- 04:12:36 -0700 (PDT)
+	s=arc-20240116; t=1744197235; c=relaxed/simple;
+	bh=QQMSu1RCT898ArNxU5I0BXfdQk0esa4ZXQ/Zgtj8Ybc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GEuyNnPL+1gJ6sZXeGAK5EehhqUhwbK3JL9dBIrAw08V8LVX2mZP5St2rKKzKsnf19tr9MwXMVSKiyNlZkzQklqojWsIy+kS1DfooufwevabV2fkyaAuBczTcdeqziN385SgQ/zo0KRKBjEj+3p5ubUc65VDfer2J25DyMPL+A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=lPwBvp7w; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=nbWNq/RLzzKzZ2KkueCY6+uffxtwVhPAqo4sWOTuLvA=; b=lPwBvp7wDj1PjvkYVVZ1IJRzm3
+	eCXgydKqgou4/VGUKF3OWu35o1GIERWRV/09swmmLdLmF09GczekLL2ZCJtGCCUN08kbfBAsTfnSh
+	0N9p1v8dePu9GFUJk1Ubdvr5zcBPBTSQ+/guOJfhrLfYDbB6yepHCAy4XoyWqAsxOD66vum+aCEA3
+	1e6+9FJhx8vGXUp8w5RNFgNvm7R61YtGYnU4/1ESeOubSkvBEDZJOOFXHZSN6QA7gyMuc0mekUYX4
+	99X3rSUP0Qp2MFOejz3jXfZVY/132eI739bzjP3hsljRqHx/xg/LZMcvXBFTj7D2yXQvQjY18rmJn
+	IhD8R+Iw==;
+Received: from [223.233.71.56] (helo=[192.168.1.12])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1u2TNF-00E3lT-6J; Wed, 09 Apr 2025 13:13:41 +0200
+Message-ID: <e6a9f8fc-e816-2b23-a4e5-74d5e5b86e6f@igalia.com>
+Date: Wed, 9 Apr 2025 16:43:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250408154011.673891-1-mszeredi@redhat.com> <20250408154011.673891-2-mszeredi@redhat.com>
- <CAOQ4uxjOT=m7ZsdLod3KEYe+69K--fGTUegSNwQg0fU7TeVbsQ@mail.gmail.com> <CAOQ4uxhXAxRBxRh9FT0prURdbRTGmmb4FWSs9zz2Rnk6U+0ZTA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhXAxRBxRh9FT0prURdbRTGmmb4FWSs9zz2Rnk6U+0ZTA@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 9 Apr 2025 13:12:25 +0200
-X-Gm-Features: ATxdqUEAcTzVg4sJVoHeL5Fk3obPSpX5b0DIQNje9s51kPl6cVWASYAguFsEsd8
-Message-ID: <CAJfpegsKAsNFgJMK4oS+gjD_XmhscjdTtmx0uW2GkCPC+kf6ug@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] ovl: make redirect/metacopy rejection consistent
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-unionfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Giuseppe Scrivano <gscrivan@redhat.com>, 
-	Alexander Larsson <alexl@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v2 1/3] exec: Dynamically allocate memory to store task's
+ full name
+Content-Language: en-US
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: Bhupesh <bhupesh@igalia.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, akpm@linux-foundation.org,
+ kernel-dev@igalia.com, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com, pmladek@suse.com,
+ rostedt@goodmis.org, mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
+ alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
+ mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
+ david@redhat.com, viro@zeniv.linux.org.uk, keescook@chromium.org,
+ ebiederm@xmission.com, brauner@kernel.org, jack@suse.cz, mingo@redhat.com,
+ juri.lelli@redhat.com, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com
+References: <20250331121820.455916-1-bhupesh@igalia.com>
+ <20250331121820.455916-2-bhupesh@igalia.com>
+ <CALOAHbB51b-reG6+ypr43sBJ-QpQhF39r5WPjuEp5rgabgRmoA@mail.gmail.com>
+ <6beead5a-8c21-af57-0304-1bf825588481@igalia.com>
+ <CALOAHbDE3ToDc0knbUtGu0on9n9uUiWfKZEb-bgm1mW57VTZvg@mail.gmail.com>
+From: Bhupesh Sharma <bhsharma@igalia.com>
+In-Reply-To: <CALOAHbDE3ToDc0knbUtGu0on9n9uUiWfKZEb-bgm1mW57VTZvg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 9 Apr 2025 at 10:25, Amir Goldstein <amir73il@gmail.com> wrote:
+Sorry for the delay in reply, I was out for a couple of days.
 
-> On second thought, if unpriv user suppresses ovl_set_redirect()
-> by setting some mock redirect value on index maybe that lead to some
-> risk. Not worth overthinking about it.
+On 4/6/25 7:58 AM, Yafang Shao wrote:
+> On Fri, Apr 4, 2025 at 2:35 PM Bhupesh Sharma <bhsharma@igalia.com> wrote:
+>>
+>> On 4/1/25 7:37 AM, Yafang Shao wrote:
+>>> On Mon, Mar 31, 2025 at 8:18 PM Bhupesh <bhupesh@igalia.com> wrote:
+>>>> Provide a parallel implementation for get_task_comm() called
+>>>> get_task_full_name() which allows the dynamically allocated
+>>>> and filled-in task's full name to be passed to interested
+>>>> users such as 'gdb'.
+>>>>
+>>>> Currently while running 'gdb', the 'task->comm' value of a long
+>>>> task name is truncated due to the limitation of TASK_COMM_LEN.
+>>>>
+>>>> For example using gdb to debug a simple app currently which generate
+>>>> threads with long task names:
+>>>>     # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
+>>>>     # cat log
+>>>>
+>>>>     NameThatIsTooLo
+>>>>
+>>>> This patch does not touch 'TASK_COMM_LEN' at all, i.e.
+>>>> 'TASK_COMM_LEN' and the 16-byte design remains untouched. Which means
+>>>> that all the legacy / existing ABI, continue to work as before using
+>>>> '/proc/$pid/task/$tid/comm'.
+>>>>
+>>>> This patch only adds a parallel, dynamically-allocated
+>>>> 'task->full_name' which can be used by interested users
+>>>> via '/proc/$pid/task/$tid/full_name'.
+>>>>
+>>>> After this change, gdb is able to show full name of the task:
+>>>>     # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
+>>>>     # cat log
+>>>>
+>>>>     NameThatIsTooLongForComm[4662]
+>>>>
+>>>> Signed-off-by: Bhupesh <bhupesh@igalia.com>
+>>>> ---
+>>>>    fs/exec.c             | 21 ++++++++++++++++++---
+>>>>    include/linux/sched.h |  9 +++++++++
+>>>>    2 files changed, 27 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/fs/exec.c b/fs/exec.c
+>>>> index f45859ad13ac..4219d77a519c 100644
+>>>> --- a/fs/exec.c
+>>>> +++ b/fs/exec.c
+>>>> @@ -1208,6 +1208,9 @@ int begin_new_exec(struct linux_binprm * bprm)
+>>>>    {
+>>>>           struct task_struct *me = current;
+>>>>           int retval;
+>>>> +       va_list args;
+>>>> +       char *name;
+>>>> +       const char *fmt;
+>>>>
+>>>>           /* Once we are committed compute the creds */
+>>>>           retval = bprm_creds_from_file(bprm);
+>>>> @@ -1348,11 +1351,22 @@ int begin_new_exec(struct linux_binprm * bprm)
+>>>>                    * detecting a concurrent rename and just want a terminated name.
+>>>>                    */
+>>>>                   rcu_read_lock();
+>>>> -               __set_task_comm(me, smp_load_acquire(&bprm->file->f_path.dentry->d_name.name),
+>>>> -                               true);
+>>>> +               fmt = smp_load_acquire(&bprm->file->f_path.dentry->d_name.name);
+>>>> +               name = kvasprintf(GFP_KERNEL, fmt, args);
+>>>> +               if (!name)
+>>>> +                       return -ENOMEM;
+>>>> +
+>>>> +               me->full_name = name;
+>>>> +               __set_task_comm(me, fmt, true);
+>>>>                   rcu_read_unlock();
+>>>>           } else {
+>>>> -               __set_task_comm(me, kbasename(bprm->filename), true);
+>>>> +               fmt = kbasename(bprm->filename);
+>>>> +               name = kvasprintf(GFP_KERNEL, fmt, args);
+>>>> +               if (!name)
+>>>> +                       return -ENOMEM;
+>>>> +
+>>>> +               me->full_name = name;
+>>>> +               __set_task_comm(me, fmt, true);
+>>>>           }
+>>>>
+>>>>           /* An exec changes our domain. We are no longer part of the thread
+>>>> @@ -1399,6 +1413,7 @@ int begin_new_exec(struct linux_binprm * bprm)
+>>>>           return 0;
+>>>>
+>>>>    out_unlock:
+>>>> +       kfree(me->full_name);
+>>>>           up_write(&me->signal->exec_update_lock);
+>>>>           if (!bprm->cred)
+>>>>                   mutex_unlock(&me->signal->cred_guard_mutex);
+>>>> diff --git a/include/linux/sched.h b/include/linux/sched.h
+>>>> index 56ddeb37b5cd..053b52606652 100644
+>>>> --- a/include/linux/sched.h
+>>>> +++ b/include/linux/sched.h
+>>>> @@ -1166,6 +1166,9 @@ struct task_struct {
+>>>>            */
+>>>>           char                            comm[TASK_COMM_LEN];
+>>>>
+>>>> +       /* To store the full name if task comm is truncated. */
+>>>> +       char                            *full_name;
+>>>> +
+>>> Adding another field to store the task name isn’t ideal. What about
+>>> combining them into a single field, as Linus suggested [0]?
+>>>
+>>> [0]. https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/
+>>>
+>> Thanks for sharing Linus's suggestion. I went through the suggested
+>> changes in the related threads and came up with the following set of points:
+>>
+>> 1. struct task_struct would contain both 'comm' and 'full_name',
+> Correct.
 >
-> Attached patch removed next* variables without this compromise.
+>> 2. Remove the task_lock() inside __get_task_comm(),
+> This has been implemented in the patch series titled "Improve the copy
+> of task comm". For details, please refer to:
+> https://lore.kernel.org/linux-mm/20240828030321.20688-1-laoar.shao@gmail.com/.
 >
-> Tested it squashed to patch 1 and minor rebase conflicts fixes in patch 2.
-> It passed your tests.
+>> 3. Users of task->comm will be affected in the following ways:
+> Correct.
+>
+>>       (a). Printing with '%s' and tsk->comm would just continue to
+>> work,but will get a longer max string.
+>>       (b). For users of memcpy.*->comm\>', we should change 'memcpy()' to
+>> 'copy_comm()' which would look like:
+>>
+>>           memcpy(dst, src, TASK_COMM_LEN);
+>>           dst[TASK_COMM_LEN-1] = 0;
+>>
+>>      (c). Users which use "sizeof(->comm)" will continue to get the old value because of the hacky union.
+> Using a separate pointer rather than a union could simplify the
+> implementation. I’m open to introducing a new pointer if you believe
+> it’s the better approach.
 
-Thanks.
+Right, that's what I was thinking of earlier as well, i.e. having a new 
+pointer like tsk->full_name, however
+allocating it outside the exec() hot-path may be tricky.
 
-One more change:  in this patch we just want the consistency fix, not
-the behavior change introduced in 2/3.  So move the
-ovl_check_follow_redirect() to before the lazy-data check here and
-restore the order in the next patch.
-
-Pushed to overlayfs/vfs.git#overlayfs-next
+Let me try that though and come up with a v3, that addresses (a), (b) as 
+mentioned above and (c) with a pointer instead of union.
 
 Thanks,
-Miklos
+Bhupesh
+
 
