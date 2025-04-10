@@ -1,211 +1,265 @@
-Return-Path: <linux-fsdevel+bounces-46204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F7CA8450E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 15:41:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F474A8452C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 15:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5290B1890D1C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 13:37:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6872717AA7D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 13:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF4F28A41A;
-	Thu, 10 Apr 2025 13:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1959228C5B4;
+	Thu, 10 Apr 2025 13:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lnFwWNrJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="m2543pVU";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lnFwWNrJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="m2543pVU"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B9ETxxgc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB9E28A3F2
-	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Apr 2025 13:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC792857FA
+	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Apr 2025 13:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744292195; cv=none; b=UOoGJZoYmWXpO+sKlXjroe1MVGd2JZB68lK1QS4Zmb/k7rvVDOxdTu6is7cvny6XV1mNzQtQi0Cc7FSBEX7BlUgX9jjy2UmQcNwIjAYl2etZ7s4WO0mr8tkb9UzDgk3ehNAB69ZGzQxIVlqXyy2CT3vnfEomyn3sVWa2R0lvkSY=
+	t=1744292441; cv=none; b=CHLzjIGb+0KN1b35XGri2toTgfGsuIbdoGLMA2kcBo4LIdyNLfXJZKBGQMoZn/p1OWAAUsQxbLinqLriYpL0JsM3TsE/2wvPDS48AEyMuAZXaJrQ4zi+gx06PkH9Fw9MO+gFWX0l7/3RrVl6kC8U5IxJvz/F+jpwuvGChRHFIvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744292195; c=relaxed/simple;
-	bh=G3JCsHTEIDMSrzwxuJNVbrGum619sm/V+oMoFrGL6q4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VmIK4vnjJSm92gch68g9iRZoI1+krUR2GyrL4nBhy4XedbLbtR0G+7kOw3SAilSdLpr/rxQY0OQFg+ufTQvPowzDfcQ4jIK4lDRRg0Nf4sdpJzzK9YOJ/EFyDv6w2rZj2yQsTLREd5tVaYVqUCLbx4HpLmOqyMKb0Zg5aPTwP/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lnFwWNrJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=m2543pVU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lnFwWNrJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=m2543pVU; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BB3891F395;
-	Thu, 10 Apr 2025 13:36:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744292190; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6X3ZizTCtne9HGkeErFZvJrpS/23t7UWALSWxnxHkPg=;
-	b=lnFwWNrJbWGFz+wygGgWYJe6+phUedIcMwJZN8NrkUzaOvYvwvOIX4eF8IqbUG2x5a6EdL
-	r15/fdvxBplYKXxhaxA388elj4zmLXci1rG6PcJHrtWvfxuY9y6dNAkT+ziJbHjkDCDjFQ
-	rwyBpSBZS1/a8Ne/6pug3GxqSIsC498=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744292190;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6X3ZizTCtne9HGkeErFZvJrpS/23t7UWALSWxnxHkPg=;
-	b=m2543pVUozaVCe53yZQh25q4eN+MyjMrKJyM2grOmtVY3XaoFEaaOtFXZJPQ/ZOuozIokD
-	flJc+v8dylpROsAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744292190; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6X3ZizTCtne9HGkeErFZvJrpS/23t7UWALSWxnxHkPg=;
-	b=lnFwWNrJbWGFz+wygGgWYJe6+phUedIcMwJZN8NrkUzaOvYvwvOIX4eF8IqbUG2x5a6EdL
-	r15/fdvxBplYKXxhaxA388elj4zmLXci1rG6PcJHrtWvfxuY9y6dNAkT+ziJbHjkDCDjFQ
-	rwyBpSBZS1/a8Ne/6pug3GxqSIsC498=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744292190;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6X3ZizTCtne9HGkeErFZvJrpS/23t7UWALSWxnxHkPg=;
-	b=m2543pVUozaVCe53yZQh25q4eN+MyjMrKJyM2grOmtVY3XaoFEaaOtFXZJPQ/ZOuozIokD
-	flJc+v8dylpROsAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 974B8132D8;
-	Thu, 10 Apr 2025 13:36:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id U6fmJF7J92fkagAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 10 Apr 2025 13:36:30 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E23B9A0910; Thu, 10 Apr 2025 15:36:25 +0200 (CEST)
-Date: Thu, 10 Apr 2025 15:36:25 +0200
-From: Jan Kara <jack@suse.cz>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: brauner@kernel.org, jack@suse.cz, tytso@mit.edu, 
-	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, riel@surriel.com, dave@stgolabs.net, 
-	willy@infradead.org, hannes@cmpxchg.org, oliver.sang@intel.com, david@redhat.com, 
-	axboe@kernel.dk, hare@suse.de, david@fromorbit.com, djwong@kernel.org, 
-	ritesh.list@gmail.com, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-mm@kvack.org, gost.dev@samsung.com, p.raghav@samsung.com, da.gomez@samsung.com
-Subject: Re: [PATCH v2 6/8] fs/ext4: use sleeping version of
- __find_get_block()
-Message-ID: <g2xj2du3t226jve57mw4wiig4zpqqsvomtbzeu4wk37dfqbp47@3l66fjg736yy>
-References: <20250410014945.2140781-1-mcgrof@kernel.org>
- <20250410014945.2140781-7-mcgrof@kernel.org>
+	s=arc-20240116; t=1744292441; c=relaxed/simple;
+	bh=RyXiF/jkRIj400dJ7AmDNhGbCH7VL8l8ltE6ndzB2ag=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=nz1vsawBMcZxV4sftyZ9dzeJ6taDOE1WABuj2OTggMhyY2qyXkBslA9w2XQJDk+OGfu67EO5fMc4EHY09lc0K4FRDYb80UrFTplmtmGSIwvEv9fZ9YqTdZgCN2zDpzcD5sNgpec59zp+7AbjY3phcjwWKz+S8sJqD28dw9cdrkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B9ETxxgc; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-736c89461d1so1169745b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Apr 2025 06:40:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744292436; x=1744897236; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NAdkgo+26TLCNZdpvTsQI8wpHzhqkKGWGAXIQv7DOuE=;
+        b=B9ETxxgcpob74poHujyQ6niCcx87Bg925/BVqnEMQ15WZIXIdaywXzbPrhK77jEHo7
+         mAL0pAB7fXO01+v0aY+q+61QbzkPMDau0h2zqnQai15oynUogkauwlgID+wUHYjHiDMU
+         q7CMVskcTB6FYdZ8v6uoPehyBidXTn7AqEdt8Gh9T7WB3xn/ux824PwpkMPRb1YlDr++
+         rOasQmFgnJWaWvZQZE2k93SSZPuBM1D7h4fBiKi5hu8lvT3yquZEtfLp6/NjqFm26VOS
+         tVu8LHdHZsqUaE3cQszQMjPXcrjZpTexiTQhxYISVv4b2jsuKeS/KE5vUMZk6Dt/QLBe
+         Z9Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744292436; x=1744897236;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NAdkgo+26TLCNZdpvTsQI8wpHzhqkKGWGAXIQv7DOuE=;
+        b=fNA8GlJyG/hXHkt/HU+3oKFNVnWzrh2YrPrzpUUSAa3fpV4WAv2k+KseS7cEAqH+BL
+         sIrFM73WslHBboe8a+F6ca+vU4KYN68dw8YZfaQ7tEYPLX1u4QCkVYuLQJjN5S84GEcv
+         ZgXjZtxE/1BYMZ5LB7nFc4C+cU7uL44UPPedA/jzfZupdf+PNrwx2hSPjwsWQM2xnfzM
+         Mg3aMobrFB0WIZk10GWdFfZAFp98W+v2ykqS8zQiVIfCDKyRstXvVUXM0XFIFq307yqb
+         01TIUK/KKm0NralUe8Jz2XV1V5lv3do4nCOm2kxkPfc7OfIA+yA9rlddQ4yTPZhGml3Q
+         be1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUaz/CS6PvGbhLx44sGEW7zYcxr98Ogw3jvGPVe4XIYv15R92qSJj5LdhkeSYBiNZpKR0YRWAULL6U0cuKi@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOUOxPiTujblwE+crrfpuDS/tTW6heVeujZPFWmhc5yG5ZRXIe
+	3AQdnQPc3Jj0D4i3AKc9S/QabPr0dVgvZ1x8O8qgdcjHWHoKJ4uIgxlYrherMuHZ1oGG0bLKY74
+	lIcD8ZVOXEmqGi/fSO+5rLQ==
+X-Google-Smtp-Source: AGHT+IHA1HgsCl6z98FoXuuYkPI1df6L0N/s2mcX4Y5/lnvzb/BxqximvQNI8RQed9Y9suGb1/1qvHayYMY3eco6Ww==
+X-Received: from pfbgj26.prod.google.com ([2002:a05:6a00:841a:b0:736:3d80:7076])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a00:244c:b0:732:a24:7354 with SMTP id d2e1a72fcca58-73bc09faeb8mr2766392b3a.4.1744292436406;
+ Thu, 10 Apr 2025 06:40:36 -0700 (PDT)
+Date: Thu, 10 Apr 2025 06:40:34 -0700
+In-Reply-To: <20250408112402.181574-8-shivankg@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250410014945.2140781-7-mcgrof@kernel.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[23];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,suse.cz,mit.edu,dilger.ca,vger.kernel.org,surriel.com,stgolabs.net,infradead.org,cmpxchg.org,intel.com,redhat.com,kernel.dk,suse.de,fromorbit.com,gmail.com,kvack.org,samsung.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -2.30
-X-Spam-Flag: NO
+Mime-Version: 1.0
+References: <20250408112402.181574-1-shivankg@amd.com> <20250408112402.181574-8-shivankg@amd.com>
+Message-ID: <diqz7c3s5e3x.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [PATCH RFC v7 7/8] KVM: guest_memfd: Enforce NUMA mempolicy using
+ shared policy
+From: Ackerley Tng <ackerleytng@google.com>
+To: Shivank Garg <shivankg@amd.com>, seanjc@google.com, david@redhat.com, vbabka@suse.cz, 
+	willy@infradead.org, akpm@linux-foundation.org, shuah@kernel.org, 
+	pbonzini@redhat.com
+Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, 
+	bfoster@redhat.com, tabba@google.com, vannapurve@google.com, 
+	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com, 
+	yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, 
+	michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, 
+	peterx@redhat.com, shivankg@amd.com, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed 09-04-25 18:49:43, Luis Chamberlain wrote:
-> From: Davidlohr Bueso <dave@stgolabs.net>
-> 
-> Trivially introduce the wrapper and enable ext4_free_blocks() to use
-> it, which has a cond_resched to begin with. Convert to the new nonatomic
-> flavor to benefit from potential performance benefits and adapt in the
-> future vs migration such that semantics are kept.
-> 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+Shivank Garg <shivankg@amd.com> writes:
+
+> Previously, guest-memfd allocations followed local NUMA node id in absence
+> of process mempolicy, resulting in arbitrary memory allocation.
+> Moreover, mbind() couldn't be used since memory wasn't mapped to userspace
+> in the VMM.
+>
+> Enable NUMA policy support by implementing vm_ops for guest-memfd mmap
+> operation. This allows the VMM to map the memory and use mbind() to set the
+> desired NUMA policy. The policy is stored in the inode structure via
+> kvm_gmem_inode_info, as memory policy is a property of the memory (struct
+> inode) itself. The policy is then retrieved via mpol_shared_policy_lookup()
+> and passed to filemap_grab_folio_mpol() to ensure that allocations follow
+> the specified memory policy.
+>
+> This enables the VMM to control guest memory NUMA placement by calling
+> mbind() on the mapped memory regions, providing fine-grained control over
+> guest memory allocation across NUMA nodes.
+>
+> The policy change only affect future allocations and does not migrate
+> existing memory. This matches mbind(2)'s default behavior which affects
+> only new allocations unless overridden with MPOL_MF_MOVE/MPOL_MF_MOVE_ALL
+> flags, which are not supported for guest_memfd as it is unmovable.
+>
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Shivank Garg <shivankg@amd.com>
 > ---
->  fs/ext4/inode.c             | 2 ++
->  fs/ext4/mballoc.c           | 3 ++-
->  include/linux/buffer_head.h | 6 ++++++
->  3 files changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 1dc09ed5d403..b7acb5d3adcb 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -860,6 +860,8 @@ struct buffer_head *ext4_getblk(handle_t *handle, struct inode *inode,
->  		return sb_find_get_block(inode->i_sb, map.m_pblk);
+>  virt/kvm/guest_memfd.c | 75 ++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 73 insertions(+), 2 deletions(-)
+>
+> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> index 0ccbb152483a..233d3fd5781c 100644
+> --- a/virt/kvm/guest_memfd.c
+> +++ b/virt/kvm/guest_memfd.c
+> @@ -4,6 +4,7 @@
+>  #include <linux/backing-dev.h>
+>  #include <linux/falloc.h>
+>  #include <linux/kvm_host.h>
+> +#include <linux/mempolicy.h>
+>  #include <linux/pseudo_fs.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/anon_inodes.h>
+> @@ -19,6 +20,7 @@ struct kvm_gmem {
+>  };
 >  
->  	/*
-> +	 * Potential TODO: use sb_find_get_block_nonatomic() instead.
-> +	 *
+>  struct kvm_gmem_inode_info {
+> +	struct shared_policy policy;
+>  	struct inode vfs_inode;
+>  };
 
-Yes, please. Since we are behind nowait check, we are fine with blocking...
+What are the pros and cons that you see of storing struct shared_policy
+in a containing struct kvm_gmem_inode_info, as opposed to storing it in
+inode->i_private?
 
-								Honza
+I've just been using inode->i_private for sharability and hugetlb
+metadata and didn't consider this option.
 
->  	 * Since bh could introduce extra ref count such as referred by
->  	 * journal_head etc. Try to avoid using __GFP_MOVABLE here
->  	 * as it may fail the migration when journal_head remains.
-> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> index 0d523e9fb3d5..6f4265b21e19 100644
-> --- a/fs/ext4/mballoc.c
-> +++ b/fs/ext4/mballoc.c
-> @@ -6644,7 +6644,8 @@ void ext4_free_blocks(handle_t *handle, struct inode *inode,
->  		for (i = 0; i < count; i++) {
->  			cond_resched();
->  			if (is_metadata)
-> -				bh = sb_find_get_block(inode->i_sb, block + i);
-> +				bh = sb_find_get_block_nonatomic(inode->i_sb,
-> +								 block + i);
->  			ext4_forget(handle, is_metadata, inode, bh, block + i);
->  		}
->  	}
-> diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-> index 2b5458517def..8db10ca288fc 100644
-> --- a/include/linux/buffer_head.h
-> +++ b/include/linux/buffer_head.h
-> @@ -399,6 +399,12 @@ sb_find_get_block(struct super_block *sb, sector_t block)
->  	return __find_get_block(sb->s_bdev, block, sb->s_blocksize);
+Could one reason be that struct shared_policy is a requirement for all
+inodes (not a CONFIG flag) but sharability and hugetlb metadata are both
+configurable, possibly at runtime?
+
+>  
+> @@ -27,6 +29,9 @@ static inline struct kvm_gmem_inode_info *KVM_GMEM_I(struct inode *inode)
+>  	return container_of(inode, struct kvm_gmem_inode_info, vfs_inode);
 >  }
 >  
-> +static inline struct buffer_head *
-> +sb_find_get_block_nonatomic(struct super_block *sb, sector_t block)
+> +static struct mempolicy *kvm_gmem_get_pgoff_policy(struct kvm_gmem_inode_info *info,
+> +						   pgoff_t index);
+> +
+>  /**
+>   * folio_file_pfn - like folio_file_page, but return a pfn.
+>   * @folio: The folio which contains this index.
+> @@ -113,7 +118,24 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
+>  static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
+>  {
+>  	/* TODO: Support huge pages. */
+> -	return filemap_grab_folio(inode->i_mapping, index);
+> +	struct mempolicy *policy;
+> +	struct folio *folio;
+> +
+> +	/*
+> +	 * Fast-path: See if folio is already present in mapping to avoid
+> +	 * policy_lookup.
+> +	 */
+> +	folio = __filemap_get_folio(inode->i_mapping, index,
+> +				    FGP_LOCK | FGP_ACCESSED, 0);
+> +	if (!IS_ERR(folio))
+> +		return folio;
+> +
+> +	policy = kvm_gmem_get_pgoff_policy(KVM_GMEM_I(inode), index);
+> +	folio = filemap_grab_folio_mpol(inode->i_mapping, index, policy,
+> +					NO_INTERLEAVE_INDEX);
+> +	mpol_cond_put(policy);
+> +
+> +	return folio;
+>  }
+>  
+>  static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
+> @@ -336,12 +358,14 @@ static struct inode *kvm_gmem_alloc_inode(struct super_block *sb)
+>  	if (!info)
+>  		return NULL;
+>  
+> +	mpol_shared_policy_init(&info->policy, NULL);
+> +
+>  	return &info->vfs_inode;
+>  }
+>  
+>  static void kvm_gmem_destroy_inode(struct inode *inode)
+>  {
+> -
+> +	mpol_free_shared_policy(&KVM_GMEM_I(inode)->policy);
+>  }
+>  
+>  static void kvm_gmem_free_inode(struct inode *inode)
+> @@ -384,7 +408,54 @@ static void kvm_gmem_init_mount(void)
+>  	kvm_gmem_mnt->mnt_flags |= MNT_NOEXEC;
+>  }
+>  
+> +#ifdef CONFIG_NUMA
+> +static int kvm_gmem_set_policy(struct vm_area_struct *vma, struct mempolicy *mpol)
 > +{
-> +	return __find_get_block_nonatomic(sb->s_bdev, block, sb->s_blocksize);
+> +	struct inode *inode = file_inode(vma->vm_file);
+> +
+> +	return mpol_set_shared_policy(&KVM_GMEM_I(inode)->policy, vma, mpol);
 > +}
 > +
-
-This hunk probably belongs to some introductory patch implementing
-nonatomic helpers.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> +static struct mempolicy *kvm_gmem_get_policy(struct vm_area_struct *vma,
+> +					     unsigned long addr, pgoff_t *pgoff)
+> +{
+> +	struct inode *inode = file_inode(vma->vm_file);
+> +
+> +	*pgoff = vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT);
+> +	return mpol_shared_policy_lookup(&KVM_GMEM_I(inode)->policy, *pgoff);
+> +}
+> +
+> +static struct mempolicy *kvm_gmem_get_pgoff_policy(struct kvm_gmem_inode_info *info,
+> +						   pgoff_t index)
+> +{
+> +	struct mempolicy *mpol;
+> +
+> +	mpol = mpol_shared_policy_lookup(&info->policy, index);
+> +	return mpol ? mpol : get_task_policy(current);
+> +}
+> +#else
+> +static struct mempolicy *kvm_gmem_get_pgoff_policy(struct kvm_gmem_inode_info *info,
+> +						   pgoff_t index)
+> +{
+> +	return NULL;
+> +}
+> +#endif /* CONFIG_NUMA */
+> +
+> +static const struct vm_operations_struct kvm_gmem_vm_ops = {
+> +#ifdef CONFIG_NUMA
+> +	.get_policy	= kvm_gmem_get_policy,
+> +	.set_policy	= kvm_gmem_set_policy,
+> +#endif
+> +};
+> +
+> +static int kvm_gmem_mmap(struct file *file, struct vm_area_struct *vma)
+> +{
+> +	vma->vm_ops = &kvm_gmem_vm_ops;
+> +	return 0;
+> +}
+> +
+>  static struct file_operations kvm_gmem_fops = {
+> +	.mmap		= kvm_gmem_mmap,
+>  	.open		= generic_file_open,
+>  	.release	= kvm_gmem_release,
+>  	.fallocate	= kvm_gmem_fallocate,
+> -- 
+> 2.34.1
 
