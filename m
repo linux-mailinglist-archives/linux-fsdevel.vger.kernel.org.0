@@ -1,98 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-46157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46158-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F064A83725
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 05:20:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32423A83765
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 05:52:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCB908A7D51
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 03:18:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF6B719E310C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 03:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BEE71F09B2;
-	Thu, 10 Apr 2025 03:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mCEElIs0"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D4F1F151E;
+	Thu, 10 Apr 2025 03:52:27 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5D71E5B66;
-	Thu, 10 Apr 2025 03:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1F81F0E34;
+	Thu, 10 Apr 2025 03:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744255138; cv=none; b=hsBG9n5GZswNkJEPB480xvs+TFb0uY/8MlUXbu+Ps9cYqdb/JkGLdIfTobrcHxDk8DrXXDllAES/5prbRdSwpY2wqJkeyw2yoZT298txCfWpEwszXW/2GSgZ/3sbGe+cQmCDC4lhP78R3YYyCSxs4jGGgzkBkz5iv5JxTGjBpGE=
+	t=1744257147; cv=none; b=K8th+mNkO3W5wg3SM5YVRhZ9oIJk07VRYbHbxHsfTDYFyYD0Tf2bYFVu4u8ZCp/UoFKH8vibfva/2DRSauTwWYrOQGhgyfeyZOhdMX1N/2cfey5JSIsNB037Um8Gz1pMzCPaQLAARWrn0bLqO3YWra7x3zPzLvn2eTK/rQ3Uowk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744255138; c=relaxed/simple;
-	bh=EMtW09fUhktkO2AOepqHbaCDe31Ls1yt+zdCaTHXZtc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SBcHwGN3TCAMLjsd5BQ6StV65CHgldvdxF3Wz9QnlcyfBETlnrd9iQ7B2VO9sZD5K6D03SY3kDfOD2t7QivKHJ7Y0ABYV2g1oG6lKhKmbG321FdYuT1bFY20DCBCxgpB9ygsCGwV6gQD9M0dnaq80ngse1I4uPqwZ2yM3j6qyT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mCEElIs0; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ljKJOmsWbynBd4FZmekRdfQrkUbaBvmD89GjQhG0uSQ=; b=mCEElIs0+DTDV1eWLUS5E0AV8R
-	htQrK03I82aCZqN+M+naQeahCg6yyCX1lOVqwE2ETxdfWtgwhqNPU6aj6aIn/7AsCSKql0y4gi4PH
-	fg+WELo9aqTGP5UYddpzzl90Vj2tQYjyeNcS7WusDxzKS9aSp0ilHwdtmM5dBb78lPHAJKNiYTprT
-	m2ZCiFf6d4qK4wvzNFrIFa/HnBbWFkzbuVbLuUSMYv2UMZGTP6Qvz94SXNmEFOJA9sBXa2ouIh+0h
-	W2VOuruSeS2OE2BvNcQ90SAlj+IWck2DtnUjo+KHFLd8zu2p1+E2nu5QwwVcZdqZkB3IGnyDwjQi/
-	QpQkB2GQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u2iRF-00000002Jfz-0HTT;
-	Thu, 10 Apr 2025 03:18:49 +0000
-Date: Thu, 10 Apr 2025 04:18:48 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: brauner@kernel.org, jack@suse.cz, tytso@mit.edu,
-	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-	riel@surriel.com, dave@stgolabs.net, hannes@cmpxchg.org,
-	oliver.sang@intel.com, david@redhat.com, axboe@kernel.dk,
-	hare@suse.de, david@fromorbit.com, djwong@kernel.org,
-	ritesh.list@gmail.com, linux-fsdevel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-mm@kvack.org,
-	gost.dev@samsung.com, p.raghav@samsung.com, da.gomez@samsung.com,
-	syzbot+f3c6fda1297c748a7076@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2 1/8] migrate: fix skipping metadata buffer heads on
- migration
-Message-ID: <Z_c4mPrGnrED5lb3@casper.infradead.org>
-References: <20250410014945.2140781-1-mcgrof@kernel.org>
- <20250410014945.2140781-2-mcgrof@kernel.org>
+	s=arc-20240116; t=1744257147; c=relaxed/simple;
+	bh=8UR0rCYcem4Ns+qpODAMEUGXyGRLAyiltIyTO13LKmo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=at1qXZXy8xHzZG1iZEYddrbZOs95a1Hb6qpgdr0BMp6NfFByYxKsrUpbhlL5S0/oxd+VuiAGsMq5c0M2kwuKZ/9Omu8+1Yak6JDLqeUOx9pP4i0KCcjqB2dzdbCf71kQbjraQq0YgUFzN5qwAMG6erIdszTNDg5F7UVhhEbPDbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZY5V93kgHz4f3jtT;
+	Thu, 10 Apr 2025 11:52:01 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 8AE731A13CE;
+	Thu, 10 Apr 2025 11:52:19 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgD3Wl9xQPdn5yMjJA--.22084S3;
+	Thu, 10 Apr 2025 11:52:19 +0800 (CST)
+Message-ID: <43a34aa8-3f2f-4d86-be53-8a832be8532f@huaweicloud.com>
+Date: Thu, 10 Apr 2025 11:52:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250410014945.2140781-2-mcgrof@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH -next v3 01/10] block: introduce
+ BLK_FEAT_WRITE_ZEROES_UNMAP to queue limits features
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
+ djwong@kernel.org, john.g.garry@oracle.com, bmarzins@redhat.com,
+ chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+References: <20250318073545.3518707-1-yi.zhang@huaweicloud.com>
+ <20250318073545.3518707-2-yi.zhang@huaweicloud.com>
+ <20250409103148.GA4950@lst.de>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250409103148.GA4950@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgD3Wl9xQPdn5yMjJA--.22084S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxGFWxXw43Jr1DWF47Zw4xZwb_yoW5WFW5p3
+	yfJF1jyrnaqw1fC3Z7Zw48Wr109ws7GF43Gw4aqryjvwnxXF1xKF1S93WYvFWkurs3G3W0
+	qFWjqF9rCw1qvF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	s2-5UUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Wed, Apr 09, 2025 at 06:49:38PM -0700, Luis Chamberlain wrote:
-> +++ b/mm/migrate.c
-> @@ -841,6 +841,9 @@ static int __buffer_migrate_folio(struct address_space *mapping,
->  	if (folio_ref_count(src) != expected_count)
->  		return -EAGAIN;
->  
-> +	if (buffer_meta(head))
-> +		return -EAGAIN;
+On 2025/4/9 18:31, Christoph Hellwig wrote:
+> On Tue, Mar 18, 2025 at 03:35:36PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Currently, disks primarily implement the write zeroes command (aka
+>> REQ_OP_WRITE_ZEROES) through two mechanisms: the first involves
+>> physically writing zeros to the disk media (e.g., HDDs), while the
+>> second performs an unmap operation on the logical blocks, effectively
+>> putting them into a deallocated state (e.g., SSDs). The first method is
+>> generally slow, while the second method is typically very fast.
+>>
+>> For example, on certain NVMe SSDs that support NVME_NS_DEAC, submitting
+>> REQ_OP_WRITE_ZEROES requests with the NVME_WZ_DEAC bit can accelerate
+>> the write zeros operation by placing disk blocks into
+> 
+> Note that this is a can, not a must.  The NVMe definition of Write
+> Zeroes is unfortunately pretty stupid.
+> 
+>> +		[RO] Devices that explicitly support the unmap write zeroes
+>> +		operation in which a single write zeroes request with the unmap
+>> +		bit set to zero out the range of contiguous blocks on storage
+>> +		by freeing blocks, rather than writing physical zeroes to the
+>> +		media.
+> 
+> This is not actually guaranteed for nvme or scsi.
 
-This isn't enough on filesystems with bs<PS.  You're only testing the
-meta bit on the first buffer_head on the folio and not on the rest of
-them.  If this is the right approach to take, then we want:
+Thank you for your review and comments. However, I'm not sure I fully
+understand your points. Could you please provide more details?
 
-+++ b/mm/migrate.c
-@@ -799,6 +799,8 @@ static bool buffer_migrate_lock_buffers(struct buffer_head *head,
-        struct buffer_head *failed_bh;
+AFAIK, the NVMe protocol has the following description in the latest
+NVM Command Set Specification Figure 82 and Figure 114:
 
-        do {
-+               if (buffer_meta(bh))
-+                       goto unlock;
-                if (!trylock_buffer(bh)) {
-                        if (mode == MIGRATE_ASYNC)
-                                goto unlock;
+===
+Deallocate (DEAC): If this bit is set to ‘1’, then the host is
+requesting that the controller deallocate the specified logical blocks.
+If this bit is cleared to ‘0’, then the host is not requesting that
+the controller deallocate the specified logical blocks...
+
+DLFEAT:
+Write Zeroes Deallocation Support (WZDS): If this bit is set to ‘1’,
+then the controller supports the Deallocate bit in the Write Zeroes
+command for this namespace...
+Deallocation Read Behavior (DRB): This field indicates the deallocated
+logical block read behavior. For a logical block that is deallocated,
+this field indicates the values read from that deallocated logical block
+and its metadata (excluding protection information)...
+
+  Value  Definition
+  001b   A deallocated logical block returns all bytes cleared to 0h
+===
+
+At the same time, the current kernel determines whether to set the
+unmap bit when submitting the write zeroes command based on the above
+protocol. So I think this rules should be clear now.
+
+Were you saying that what is described in this protocol is not a
+mandatory requirement? Which means the disks that claiming to support
+the UNMAP write zeroes command(WZDS=1,DRB=1), but in fact, they still
+write actual zeroes data to the storage media? Or were you referring
+to some irregular disks that do not obey the protocol and mislead
+users?
+
+Thanks,
+Yi.
 
 
