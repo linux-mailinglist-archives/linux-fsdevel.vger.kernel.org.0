@@ -1,265 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-46205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F474A8452C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 15:44:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C99F1A84522
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 15:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6872717AA7D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 13:41:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BF5A1890D1C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 13:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1959228C5B4;
-	Thu, 10 Apr 2025 13:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5D128C5C4;
+	Thu, 10 Apr 2025 13:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B9ETxxgc"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qcxx7Lkr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pHJaBBi5";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qcxx7Lkr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pHJaBBi5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC792857FA
-	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Apr 2025 13:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C59F28C5C3
+	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Apr 2025 13:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744292441; cv=none; b=CHLzjIGb+0KN1b35XGri2toTgfGsuIbdoGLMA2kcBo4LIdyNLfXJZKBGQMoZn/p1OWAAUsQxbLinqLriYpL0JsM3TsE/2wvPDS48AEyMuAZXaJrQ4zi+gx06PkH9Fw9MO+gFWX0l7/3RrVl6kC8U5IxJvz/F+jpwuvGChRHFIvc=
+	t=1744292445; cv=none; b=diWeQhLD+GwRqAnHOeVRZFxMaArovabpmMbLDVJ38GjbJSa7LnpLM8rvtgR3jVLfFWrkN2jE6FBptbnxsExWMGRxxHpdqcBKSnlHK1ou2xpMSVwfZVpS+wV520HKai1JxRJ7FcWzw7rBlDHZ+WTLxouUb7CMvo6KimbQGTEjyL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744292441; c=relaxed/simple;
-	bh=RyXiF/jkRIj400dJ7AmDNhGbCH7VL8l8ltE6ndzB2ag=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nz1vsawBMcZxV4sftyZ9dzeJ6taDOE1WABuj2OTggMhyY2qyXkBslA9w2XQJDk+OGfu67EO5fMc4EHY09lc0K4FRDYb80UrFTplmtmGSIwvEv9fZ9YqTdZgCN2zDpzcD5sNgpec59zp+7AbjY3phcjwWKz+S8sJqD28dw9cdrkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B9ETxxgc; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-736c89461d1so1169745b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Apr 2025 06:40:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744292436; x=1744897236; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NAdkgo+26TLCNZdpvTsQI8wpHzhqkKGWGAXIQv7DOuE=;
-        b=B9ETxxgcpob74poHujyQ6niCcx87Bg925/BVqnEMQ15WZIXIdaywXzbPrhK77jEHo7
-         mAL0pAB7fXO01+v0aY+q+61QbzkPMDau0h2zqnQai15oynUogkauwlgID+wUHYjHiDMU
-         q7CMVskcTB6FYdZ8v6uoPehyBidXTn7AqEdt8Gh9T7WB3xn/ux824PwpkMPRb1YlDr++
-         rOasQmFgnJWaWvZQZE2k93SSZPuBM1D7h4fBiKi5hu8lvT3yquZEtfLp6/NjqFm26VOS
-         tVu8LHdHZsqUaE3cQszQMjPXcrjZpTexiTQhxYISVv4b2jsuKeS/KE5vUMZk6Dt/QLBe
-         Z9Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744292436; x=1744897236;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NAdkgo+26TLCNZdpvTsQI8wpHzhqkKGWGAXIQv7DOuE=;
-        b=fNA8GlJyG/hXHkt/HU+3oKFNVnWzrh2YrPrzpUUSAa3fpV4WAv2k+KseS7cEAqH+BL
-         sIrFM73WslHBboe8a+F6ca+vU4KYN68dw8YZfaQ7tEYPLX1u4QCkVYuLQJjN5S84GEcv
-         ZgXjZtxE/1BYMZ5LB7nFc4C+cU7uL44UPPedA/jzfZupdf+PNrwx2hSPjwsWQM2xnfzM
-         Mg3aMobrFB0WIZk10GWdFfZAFp98W+v2ykqS8zQiVIfCDKyRstXvVUXM0XFIFq307yqb
-         01TIUK/KKm0NralUe8Jz2XV1V5lv3do4nCOm2kxkPfc7OfIA+yA9rlddQ4yTPZhGml3Q
-         be1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUaz/CS6PvGbhLx44sGEW7zYcxr98Ogw3jvGPVe4XIYv15R92qSJj5LdhkeSYBiNZpKR0YRWAULL6U0cuKi@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOUOxPiTujblwE+crrfpuDS/tTW6heVeujZPFWmhc5yG5ZRXIe
-	3AQdnQPc3Jj0D4i3AKc9S/QabPr0dVgvZ1x8O8qgdcjHWHoKJ4uIgxlYrherMuHZ1oGG0bLKY74
-	lIcD8ZVOXEmqGi/fSO+5rLQ==
-X-Google-Smtp-Source: AGHT+IHA1HgsCl6z98FoXuuYkPI1df6L0N/s2mcX4Y5/lnvzb/BxqximvQNI8RQed9Y9suGb1/1qvHayYMY3eco6Ww==
-X-Received: from pfbgj26.prod.google.com ([2002:a05:6a00:841a:b0:736:3d80:7076])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:244c:b0:732:a24:7354 with SMTP id d2e1a72fcca58-73bc09faeb8mr2766392b3a.4.1744292436406;
- Thu, 10 Apr 2025 06:40:36 -0700 (PDT)
-Date: Thu, 10 Apr 2025 06:40:34 -0700
-In-Reply-To: <20250408112402.181574-8-shivankg@amd.com>
+	s=arc-20240116; t=1744292445; c=relaxed/simple;
+	bh=/z1Dxc/gPFoQk0tHAmLU9NdqOZTDLpJgMceTXVZvpZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fAEFg014IW5OhDyWzkDiHMCSw8FQpHR3y+3ETfiQiKOVF73TIs2LpQq7uKmKkcdqBUHUZpKsJdeoKchdHK9bubSh4zzlHZQCe8XmGbU2faxXg4YhghtnI34rVgeYT4rVp5bI9q9sdD7dHw62xWVsW6hX7G9QnnR5iv3IQ1KzVcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qcxx7Lkr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pHJaBBi5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qcxx7Lkr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pHJaBBi5; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 76E6B1F38C;
+	Thu, 10 Apr 2025 13:40:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744292441; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lEW/4t0fah9hh4ytyQQ4jogiOr/8+G0+ynUBVfQmIL0=;
+	b=qcxx7LkrBge3ML8u/3xGayWdW+uSIJpUrCghWo+4xJ/SYGD5HSRa1CYU9AtlcXv0iE40lD
+	QFugZjjpa3mhIKWobHz7xpbARuSaEiG8D5xogNgMWX/+rpDyLenwX6YoLidp4tYBLBDFkq
+	w+lKj0PcFrFHHsCpMs1+sXyKx9q4/PI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744292441;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lEW/4t0fah9hh4ytyQQ4jogiOr/8+G0+ynUBVfQmIL0=;
+	b=pHJaBBi5BKo95YTHZLOK8XrhXGX6mRe1JPV+Aj7hI3VboiFPJuJiQZYUiiT8uso8L8q0Ln
+	QvQ0spqVY8MiJ6DA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=qcxx7Lkr;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=pHJaBBi5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744292441; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lEW/4t0fah9hh4ytyQQ4jogiOr/8+G0+ynUBVfQmIL0=;
+	b=qcxx7LkrBge3ML8u/3xGayWdW+uSIJpUrCghWo+4xJ/SYGD5HSRa1CYU9AtlcXv0iE40lD
+	QFugZjjpa3mhIKWobHz7xpbARuSaEiG8D5xogNgMWX/+rpDyLenwX6YoLidp4tYBLBDFkq
+	w+lKj0PcFrFHHsCpMs1+sXyKx9q4/PI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744292441;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lEW/4t0fah9hh4ytyQQ4jogiOr/8+G0+ynUBVfQmIL0=;
+	b=pHJaBBi5BKo95YTHZLOK8XrhXGX6mRe1JPV+Aj7hI3VboiFPJuJiQZYUiiT8uso8L8q0Ln
+	QvQ0spqVY8MiJ6DA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 69B5A132D8;
+	Thu, 10 Apr 2025 13:40:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 18ndGVnK92d0bAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 10 Apr 2025 13:40:41 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 17607A0910; Thu, 10 Apr 2025 15:40:41 +0200 (CEST)
+Date: Thu, 10 Apr 2025 15:40:41 +0200
+From: Jan Kara <jack@suse.cz>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: brauner@kernel.org, jack@suse.cz, tytso@mit.edu, 
+	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, riel@surriel.com, dave@stgolabs.net, 
+	willy@infradead.org, hannes@cmpxchg.org, oliver.sang@intel.com, david@redhat.com, 
+	axboe@kernel.dk, hare@suse.de, david@fromorbit.com, djwong@kernel.org, 
+	ritesh.list@gmail.com, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-mm@kvack.org, gost.dev@samsung.com, p.raghav@samsung.com, da.gomez@samsung.com
+Subject: Re: [PATCH v2 7/8] mm/migrate: enable noref migration for jbd2
+Message-ID: <rnhdk7ytdiiodckgc344novyknixn6jqeoy6bk4jjhtijjnc7z@qwofsm5ponwn>
+References: <20250410014945.2140781-1-mcgrof@kernel.org>
+ <20250410014945.2140781-8-mcgrof@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250408112402.181574-1-shivankg@amd.com> <20250408112402.181574-8-shivankg@amd.com>
-Message-ID: <diqz7c3s5e3x.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [PATCH RFC v7 7/8] KVM: guest_memfd: Enforce NUMA mempolicy using
- shared policy
-From: Ackerley Tng <ackerleytng@google.com>
-To: Shivank Garg <shivankg@amd.com>, seanjc@google.com, david@redhat.com, vbabka@suse.cz, 
-	willy@infradead.org, akpm@linux-foundation.org, shuah@kernel.org, 
-	pbonzini@redhat.com
-Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, 
-	bfoster@redhat.com, tabba@google.com, vannapurve@google.com, 
-	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com, 
-	yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, 
-	michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, 
-	peterx@redhat.com, shivankg@amd.com, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250410014945.2140781-8-mcgrof@kernel.org>
+X-Rspamd-Queue-Id: 76E6B1F38C
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_TWELVE(0.00)[23];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[kernel.org,suse.cz,mit.edu,dilger.ca,vger.kernel.org,surriel.com,stgolabs.net,infradead.org,cmpxchg.org,intel.com,redhat.com,kernel.dk,suse.de,fromorbit.com,gmail.com,kvack.org,samsung.com];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.51
+X-Spam-Flag: NO
 
-Shivank Garg <shivankg@amd.com> writes:
+On Wed 09-04-25 18:49:44, Luis Chamberlain wrote:
+> From: Davidlohr Bueso <dave@stgolabs.net>
+> 
+> Add semantics to enable future optimizations for buffer head noref jbd2
+> migration. This adds a new BH_Migrate flag which ensures we can bail
+> on the lookup path. This should enable jbd2 to get semantics of when
+> a buffer head is under folio migration, and should yield to it and to
+> eventually remove the buffer_meta() check skipping current jbd2 folio
+> migration.
+> 
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Co-developed-by: Luis Chamberlain <mcgrof@kernel.org>
+> Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 
-> Previously, guest-memfd allocations followed local NUMA node id in absence
-> of process mempolicy, resulting in arbitrary memory allocation.
-> Moreover, mbind() couldn't be used since memory wasn't mapped to userspace
-> in the VMM.
->
-> Enable NUMA policy support by implementing vm_ops for guest-memfd mmap
-> operation. This allows the VMM to map the memory and use mbind() to set the
-> desired NUMA policy. The policy is stored in the inode structure via
-> kvm_gmem_inode_info, as memory policy is a property of the memory (struct
-> inode) itself. The policy is then retrieved via mpol_shared_policy_lookup()
-> and passed to filemap_grab_folio_mpol() to ensure that allocations follow
-> the specified memory policy.
->
-> This enables the VMM to control guest memory NUMA placement by calling
-> mbind() on the mapped memory regions, providing fine-grained control over
-> guest memory allocation across NUMA nodes.
->
-> The policy change only affect future allocations and does not migrate
-> existing memory. This matches mbind(2)'s default behavior which affects
-> only new allocations unless overridden with MPOL_MF_MOVE/MPOL_MF_MOVE_ALL
-> flags, which are not supported for guest_memfd as it is unmovable.
->
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Shivank Garg <shivankg@amd.com>
-> ---
->  virt/kvm/guest_memfd.c | 75 ++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 73 insertions(+), 2 deletions(-)
->
-> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index 0ccbb152483a..233d3fd5781c 100644
-> --- a/virt/kvm/guest_memfd.c
-> +++ b/virt/kvm/guest_memfd.c
-> @@ -4,6 +4,7 @@
->  #include <linux/backing-dev.h>
->  #include <linux/falloc.h>
->  #include <linux/kvm_host.h>
-> +#include <linux/mempolicy.h>
->  #include <linux/pseudo_fs.h>
->  #include <linux/pagemap.h>
->  #include <linux/anon_inodes.h>
-> @@ -19,6 +20,7 @@ struct kvm_gmem {
->  };
->  
->  struct kvm_gmem_inode_info {
-> +	struct shared_policy policy;
->  	struct inode vfs_inode;
->  };
+..
 
-What are the pros and cons that you see of storing struct shared_policy
-in a containing struct kvm_gmem_inode_info, as opposed to storing it in
-inode->i_private?
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 32fa72ba10b4..8fed2655f2e8 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -851,6 +851,8 @@ static int __buffer_migrate_folio(struct address_space *mapping,
+>  		bool busy;
+>  		bool invalidated = false;
+>  
+> +		VM_WARN_ON_ONCE(test_and_set_bit_lock(BH_Migrate,
+> +						      &head->b_state));
 
-I've just been using inode->i_private for sharability and hugetlb
-metadata and didn't consider this option.
+Careful here. This breaks the logic with !CONFIG_DEBUG_VM.
 
-Could one reason be that struct shared_policy is a requirement for all
-inodes (not a CONFIG flag) but sharability and hugetlb metadata are both
-configurable, possibly at runtime?
-
->  
-> @@ -27,6 +29,9 @@ static inline struct kvm_gmem_inode_info *KVM_GMEM_I(struct inode *inode)
->  	return container_of(inode, struct kvm_gmem_inode_info, vfs_inode);
->  }
->  
-> +static struct mempolicy *kvm_gmem_get_pgoff_policy(struct kvm_gmem_inode_info *info,
-> +						   pgoff_t index);
-> +
->  /**
->   * folio_file_pfn - like folio_file_page, but return a pfn.
->   * @folio: The folio which contains this index.
-> @@ -113,7 +118,24 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
->  static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
->  {
->  	/* TODO: Support huge pages. */
-> -	return filemap_grab_folio(inode->i_mapping, index);
-> +	struct mempolicy *policy;
-> +	struct folio *folio;
-> +
-> +	/*
-> +	 * Fast-path: See if folio is already present in mapping to avoid
-> +	 * policy_lookup.
-> +	 */
-> +	folio = __filemap_get_folio(inode->i_mapping, index,
-> +				    FGP_LOCK | FGP_ACCESSED, 0);
-> +	if (!IS_ERR(folio))
-> +		return folio;
-> +
-> +	policy = kvm_gmem_get_pgoff_policy(KVM_GMEM_I(inode), index);
-> +	folio = filemap_grab_folio_mpol(inode->i_mapping, index, policy,
-> +					NO_INTERLEAVE_INDEX);
-> +	mpol_cond_put(policy);
-> +
-> +	return folio;
->  }
->  
->  static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
-> @@ -336,12 +358,14 @@ static struct inode *kvm_gmem_alloc_inode(struct super_block *sb)
->  	if (!info)
->  		return NULL;
->  
-> +	mpol_shared_policy_init(&info->policy, NULL);
-> +
->  	return &info->vfs_inode;
->  }
->  
->  static void kvm_gmem_destroy_inode(struct inode *inode)
->  {
-> -
-> +	mpol_free_shared_policy(&KVM_GMEM_I(inode)->policy);
->  }
->  
->  static void kvm_gmem_free_inode(struct inode *inode)
-> @@ -384,7 +408,54 @@ static void kvm_gmem_init_mount(void)
->  	kvm_gmem_mnt->mnt_flags |= MNT_NOEXEC;
->  }
->  
-> +#ifdef CONFIG_NUMA
-> +static int kvm_gmem_set_policy(struct vm_area_struct *vma, struct mempolicy *mpol)
-> +{
-> +	struct inode *inode = file_inode(vma->vm_file);
-> +
-> +	return mpol_set_shared_policy(&KVM_GMEM_I(inode)->policy, vma, mpol);
-> +}
-> +
-> +static struct mempolicy *kvm_gmem_get_policy(struct vm_area_struct *vma,
-> +					     unsigned long addr, pgoff_t *pgoff)
-> +{
-> +	struct inode *inode = file_inode(vma->vm_file);
-> +
-> +	*pgoff = vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT);
-> +	return mpol_shared_policy_lookup(&KVM_GMEM_I(inode)->policy, *pgoff);
-> +}
-> +
-> +static struct mempolicy *kvm_gmem_get_pgoff_policy(struct kvm_gmem_inode_info *info,
-> +						   pgoff_t index)
-> +{
-> +	struct mempolicy *mpol;
-> +
-> +	mpol = mpol_shared_policy_lookup(&info->policy, index);
-> +	return mpol ? mpol : get_task_policy(current);
-> +}
-> +#else
-> +static struct mempolicy *kvm_gmem_get_pgoff_policy(struct kvm_gmem_inode_info *info,
-> +						   pgoff_t index)
-> +{
-> +	return NULL;
-> +}
-> +#endif /* CONFIG_NUMA */
-> +
-> +static const struct vm_operations_struct kvm_gmem_vm_ops = {
-> +#ifdef CONFIG_NUMA
-> +	.get_policy	= kvm_gmem_get_policy,
-> +	.set_policy	= kvm_gmem_set_policy,
-> +#endif
-> +};
-> +
-> +static int kvm_gmem_mmap(struct file *file, struct vm_area_struct *vma)
-> +{
-> +	vma->vm_ops = &kvm_gmem_vm_ops;
-> +	return 0;
-> +}
-> +
->  static struct file_operations kvm_gmem_fops = {
-> +	.mmap		= kvm_gmem_mmap,
->  	.open		= generic_file_open,
->  	.release	= kvm_gmem_release,
->  	.fallocate	= kvm_gmem_fallocate,
-> -- 
-> 2.34.1
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
